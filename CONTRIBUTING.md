@@ -1,12 +1,5 @@
 # How do I get involved?
 
-- Submit feedback on [official documentation](#submit-feedback) pages
-- Submit [tutorials](#write-tutorials) to https://cloud.google.com/community
-- Contribute fixes and features to open source Google Cloud Platform
-[projects](#contribute-on-github)
-- Answer Google Cloud Platform questions on [Stack Overflow](#ask-and-answer-on-stack-overflow)
-- Answer questions on the Google Cloud Platform [Slack channel](#discuss-on-slack)
-
 ## Submit Feedback
 
 We want to hear from you! Each page of official documentation on
@@ -182,6 +175,10 @@ Not:
 
 > "On the VM instances page in the Compute Engine section of the Cloud Console..."
 
+## Publish Datasets
+
+TODO
+
 ## Contribute on GitHub
 
 The [github.com/GoogleCloudPlatform]() organization houses open source Google
@@ -204,7 +201,7 @@ Many Google Cloud Platform products have their own tags on Stack Overflow, and
 you can also find a general [google-cloud-platform][gcp] tag. Most tags are have
 the following format: `google-cloud-<product>`. You can find links to the Stack
 Overflow channels for various Google Cloud Platform products on the
-[Community Resources][help] page.
+[Community Support][support] page.
 
 ## Discuss on Slack
 
@@ -221,4 +218,4 @@ TODO
 [corp_cla]: https://developers.google.com/open-source/cla/corporate
 [so]: http://stackoverflow.com/
 [gcp]: http://stackoverflow.com/questions/tagged/google-cloud-platform
-[help]: https://cloud.google.com/community/help
+[support]: https://cloud.google.com/support/#community
