@@ -1,10 +1,9 @@
 ---
+title: Run Restify.js on Google App Engine
 author: jmdobry
 tags: App Engine, Node.js
 date_published: 12/15/2015
 ---
-# Run Restify.js on Google App Engine
-
 ## Restify.js
 
 > [Restify](http://restify.com/) is a Node.js module built specifically to

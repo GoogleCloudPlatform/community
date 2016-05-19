@@ -1,9 +1,8 @@
 ---
+title: GDELT Global Knowledge Graph v2
 medium: BigQuery
 size: 2.4 TB
 ---
-# GDELT Global Knowledge Graph v2
-
 GDELT 2.0: Global Knowledge Graph
 
 ## Provider

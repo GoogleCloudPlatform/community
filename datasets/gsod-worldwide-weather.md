@@ -1,9 +1,8 @@
 ---
+title: GSOD Worldwide Weather 1929-present
 medium: BigQuery
 size: 25.8 GB
 ---
-# GSOD Worldwide Weather 1929-present
-
 FEDERAL CLIMATE COMPLEX GLOBAL SURFACE SUMMARY OF DAY DATA. Data starts 1929-present.
 
 [Reddit discussion][reddit].

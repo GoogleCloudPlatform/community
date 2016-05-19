@@ -1,9 +1,8 @@
 ---
+title: Wikipedia Page Views & Page Counts
 medium: BigQuery
 size: 23.1 TB
 ---
-# Wikipedia Page Views & Page Counts
-
 Wikipedia Page Views. Data starts in 2011.
 
 ## Dataset access

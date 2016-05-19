@@ -1,9 +1,8 @@
 ---
+title: GDELT Historical American Books Archive (Hathitrust)
 medium: BigQuery
 size: 497 GB
 ---
-# GDELT Historical American Books Archive (Hathitrust)
-
 2.2 million digitized books processed using the GDELT Global Knowledge Graph covering the years 1800-2012.
 
 ## Provider

@@ -1,9 +1,8 @@
 ---
+title: GDELT Visual Knowledge Graph
 medium: BigQuery
 size: 100 GB
 ---
-# GDELT Visual Knowledge Graph
-
 [Google Cloud Vision API](https://cloud.google.com/vision/) categorization of
 all of GDELT's imagery.
 

@@ -1,10 +1,9 @@
 ---
+title: Run Hapi.js on Google App Engine
 author: jmdobry
 tags: App Engine, Node.js
 date_published: 12/17/2015
 ---
-# Run Hapi.js on Google App Engine
-
 ## Hapi.js
 
 > [Hapi](http://hapijs.com/) is a rich framework for building applications and
@@ -37,14 +36,14 @@ Create a `server.js` file with the following contents:
 
     // Create a server with a host and port
     var server = new Hapi.Server();
-    server.connection({ 
-      host: '0.0.0.0', 
+    server.connection({
+      host: '0.0.0.0',
       port: process.env.PORT || 8080
     });
 
     server.route({
       method: 'GET',
-      path:'/', 
+      path:'/',
       handler: function (request, reply) {
         reply('Hello World!');
       }
