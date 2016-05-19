@@ -16,8 +16,8 @@ Found out how you can contribute at
 
 * [Browse tutorials][tutorials]
 * [Request a tutorial][request]
-* [Submit a new tutorial][submit]
-* [Submit a new dataset][submit2]
+* [Submit a tutorial][write]
+* [Publish a dataset][publish]
 
 ## License
 
@@ -27,7 +27,7 @@ _Except as otherwise noted, the content in this repository is licensed under the
 [Creative Commons Attribution 4.0 International (CC BY 4.0) License][cca], and
 code samples are licensed under the [Apache 2.0 License][apache]._
 
-See [LICENSE](https://github.com/GoogleCloudPlatform/community/blob/master/LICENSE.md).
+See [LICENSE](LICENSE.md).
 
 [folder]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials
 [folder2]: https://github.com/GoogleCloudPlatform/community/tree/master/datasets
@@ -36,8 +36,8 @@ See [LICENSE](https://github.com/GoogleCloudPlatform/community/blob/master/LICEN
 [datasets]: https://cloud.google.com/community/datasets/
 [contribute]: https://cloud.google.com/community/contribute/
 [request]: https://github.com/GoogleCloudPlatform/community/issues/new?title=Tutorial%20Request:%20<title>&body=Description%0A%0ATechnical%20Level%0Abeginner%20%7C%20intermediate%20%7C%20advanced%0A%0ALength%0Ashort%20(<%20250%20words)%20%7C%20medium%20(250-500%20words)%20%7C%20long%20(1000%20words+)%0A
-[submit]: https://github.com/GoogleCloudPlatform/community/new/master/tutorials
-[submit2]: https://github.com/GoogleCloudPlatform/community/new/master/dataset
+[write]: https://github.com/GoogleCloudPlatform/community/write
+[publish]: https://github.com/GoogleCloudPlatform/community/publish-dataset
 [cca]: https://creativecommons.org/licenses/by/4.0/
 [apache]: http://www.apache.org/licenses/LICENSE-2.0
 [authors]: https://github.com/GoogleCloudPlatform/community/blob/master/AUTHORS
