@@ -1,9 +1,8 @@
 ---
+title: GDELT American Television Global Knowledge Graph
 medium: BigQuery
 size: 30 GB
 ---
-# GDELT American Television Global Knowledge Graph
-
 740,000 broadcasts from the [Internet Archive's Television News Archive][iatvna] going back to 2009.
 
 ## Provider

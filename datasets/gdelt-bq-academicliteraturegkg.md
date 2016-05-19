@@ -1,9 +1,8 @@
 ---
+title: GDELT Africa and Middle East Global Knowledge Graph
 medium: BigQuery
 size: 95 GB
 ---
-# GDELT Africa and Middle East Global Knowledge Graph
-
 Socio-cultural knowledge from more than 21 billion words of material in Africa
 and the Middle East.
 

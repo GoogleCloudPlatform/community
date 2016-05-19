@@ -1,9 +1,8 @@
 ---
+title: GitHub Archive (Day)
 medium: BigQuery
 size: 673 GB
 ---
-# GitHub Archive (Day)
-
 Archive of GitHub event data by day. Data starts in 2011.
 
 ## Provider

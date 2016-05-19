@@ -1,10 +1,9 @@
 ---
+title: How to Roll Your App Engine Managed VMs App Back to a Previous Version Part 1
 author: jmdobry
 tags: App Engine
 date_published: 12/18/2015
 ---
-# How to Roll Your App Engine Managed VMs App Back to a Previous Version Part 1
-
 ## Disaster scenario
 
 You've deployed an app using Google App Engine ManagedVMs, and things are going

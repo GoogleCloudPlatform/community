@@ -1,9 +1,8 @@
 ---
+title: GDELT Global Knowledge Graph v2 Events
 medium: BigQuery
 size: 44.3 GB
 ---
-# GDELT Global Knowledge Graph v2 Events
-
 GDELT 2.0: Event Database. Data starts February 19, 2015-present.
 
 ## Provider

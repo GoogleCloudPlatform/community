@@ -1,9 +1,8 @@
 ---
+title: GDELT Historical American Books Archive (InternetArchive)
 medium: BigQuery
 size: 640 GB
 ---
-# GDELT Historical American Books Archive (InternetArchive)
-
 1.3 million digitized books processed using the GDELT Global Knowledge Graph covering the years 1800-2014.
 
 ## Provider
