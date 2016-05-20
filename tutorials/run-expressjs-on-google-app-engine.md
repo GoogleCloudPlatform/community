@@ -1,7 +1,7 @@
 ---
 title: Run Express.js on Google Cloud Platform
 author: jmdobry
-tags: App Engine, Node.js
+tags: App Engine, Node.js, Express.js
 date_published: 01/07/2016
 ---
 ## Express.js

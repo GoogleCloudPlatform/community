@@ -75,10 +75,10 @@ Console and installed the gcloud sdk locally, you should be ready to deploy.
 
 Run the following command to deploy:
 
-    gcloud preview app deploy app.yaml --promote
+    gcloud preview app deploy app.yaml
 
-The `--promote` flag says that this new deployment should start receiving all
-traffic (any previously deployed version would stop receiving traffic).
+The new deployment should start receiving all traffic, and any previously
+deployed version should stop receiving traffic.
 
 Now view the deployed app at `http://<your-project-id>.appspot.com/`.
 
@@ -104,7 +104,7 @@ our app. Edit the first line of `server.js` to say the following:
 
 This will cause the app to fail to start. Now deploy:
 
-    gcloud preview app deploy app.yaml --promote
+    gcloud preview app deploy app.yaml
 
 You should now see two versions listed, the most recent one of which has the
 `(default)` tag. Even though the new version is receiving all traffic, the first
@@ -131,6 +131,9 @@ Let's summarize:
 - If you don't specify a version when you a deploy then a version will be
 generated for you.
 - The `--promote` flag causes a newly deployed version to start receiving all
+traffic, and is set by default.
+- The `--no-promote` flag causes a newly deployed version to NOT start receiving
+all traffic. Whatever is currently receiving traffic will continue to receive
 traffic.
 - At any given time, the version with the `(default)` tag is the version
 receiving traffic.
