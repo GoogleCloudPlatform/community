@@ -1,7 +1,7 @@
 ---
 title: Run Hapi.js on Google App Engine
 author: jmdobry
-tags: App Engine, Node.js
+tags: App Engine, Node.js, Hapi.js
 date_published: 12/17/2015
 ---
 ## Hapi.js
