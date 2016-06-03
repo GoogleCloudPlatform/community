@@ -11,7 +11,7 @@ Documentation submitted by contributors is usually one of two types:
 
 +  **Tutorial**: Walks a user through a real-world, industry-specific, or end-to-end development scenario that uses your product. Tutorials teach, "How to do Y in the context of ABC." Tutorials contain numbered steps that prescribe what to do. They can have enough supporting conceptual information, interspersed among the steps, to help the reader understand what they're doing, why they're doing it, and how and why it works. The end result is a working example. Usually, code on GitHub supports the document.
 
-  **Example**: [Setting Up PostgreSQL](https://cloud.google.com/solutions/setting-up-postgres)
+  **Example**: [Setting Up PostgreSQL](https://cloud.google.com/solutions/set-up-postgres)
 
 
 ## Designing a doc
