@@ -6,12 +6,12 @@ Documentation submitted by contributors is usually one of two types:
 
 +  **Concept**: Helps the user gain deeper understanding of a product or architecture. Concept docs answer questions such as "What is X?" and "How does X work?" Concept docs are mainly prose and images. They don't provide specific walkthroughs. They might contain numbered steps as generic examples, but this is rare.
 
-**Example: **[https://cloud.google.com/solutions/scalable-and-resilient-apps](https://cloud.google.com/solutions/scalable-and-resilient-apps)
+  **Example**: [Building Scalable and Resilient Apps](https://cloud.google.com/solutions/scalable-and-resilient-apps)
 
 
 +  **Tutorial**: Walks a user through a real-world, industry-specific, or end-to-end development scenario that uses your product. Tutorials teach, "How to do Y in the context of ABC." Tutorials contain numbered steps that prescribe what to do. They can have enough supporting conceptual information, interspersed among the steps, to help the reader understand what they're doing, why they're doing it, and how and why it works. The end result is a working example. Usually, code on GitHub supports the document.
 
-  **Example: **[https://cloud.google.com/solutions/set-up-postgres](https://cloud.google.com/solutions/set-up-postgres)
+  **Example**: [Setting Up PostgreSQL](https://cloud.google.com/solutions/setting-up-postgres)
 
 
 ## Designing a doc
@@ -34,7 +34,7 @@ As you develop your outline, ask yourself:
 The following sections show the main, top-level organization for the concept and tutorial doc types. Use these sections to start your outlines.
 
 
-## Writing a Concept doc
+### Writing a Concept doc
 
 A Concept doc has these major sections. The item in bold below is a literal heading name:
 
@@ -56,7 +56,7 @@ A Concept doc has these major sections. The item in bold below is a literal head
    +  Can be just a link, if appropriate, or a sentence or two in each bullet describing what the link leads to.
 
 
-## Writing a Tutorial
+### Writing a Tutorial
 
 A Tutorial doc has these major sections. Items in bold below are literal heading names:
 
@@ -64,7 +64,7 @@ A Tutorial doc has these major sections. Items in bold below are literal heading
    +  Keep it short, and use keywords that you think your audience will search for
    +  Focus on what the user wants to do.
    +  Use gerunds: "Using", "Building", and so on.
-   +  Avoid using "on Google Cloud Platform". The doc is already on the GCP site and our build system appends "Google Cloud Platform" to titles used in search engine result pages.
+   +  Avoid using "on Google Cloud Platform". The doc is already on the GCP site.
 
 +  Overview
    +  First sentence tells what the page is about: "This tutorial demonstrates a Python app that runs on Google App Engine with Python Flask and interacts with the Google Books API." This sentence is used by search engines as part of the abstract.
@@ -115,7 +115,7 @@ GCP documentation seeks technical content. While it's fine and often appropriate
 +  Avoid superlatives. Don't say "the best", "amazing", "fantastic", and so on. No exclamation points.
 
 
-## Ambiguity
+### Ambiguity
 
 Ambiguity is the enemy of technical content. Re-read what you've written to check whether it can be read to mean more than one thing.
 
@@ -134,7 +134,7 @@ In the example sentence, it might not be clear what "this" refers to: Cloud Data
 Similar words that can introduce ambiguity include "that", "these", "those", "them", "they", "each", "both", "many", "some", and "several". Beware of such words that can be used by themselves or as a modifier for a noun. Include the noun, whenever possible.
 
 
-## Repetition
+### Repetition
 
 Avoid needless repetition. Telling the reader a fact one time usually suffices. If the doc is long, you might choose to remind the reader of a fact. Otherwise, don't repeat facts and concepts. If you find yourself doing that, revisit your outline and ask yourself whether the doc is well organized.
 
@@ -144,7 +144,7 @@ Avoid needless repetition. Telling the reader a fact one time usually suffices. 
 Here are style guidelines to help you craft a great article.
 
 
-## Headings
+### Headings
 
 Use headings to organize your page into sections and subsections. Headings make it easier for readers to skim and understand what the article is about. Capitalize only the first word and product names in your headings.
 
@@ -157,7 +157,7 @@ Creating a new object
 Creating a New Object
 
 
-## Lists
+### Lists
 
 Lists help make your page more scannable.
 
@@ -171,7 +171,9 @@ Use numbered lists when it’s essential that the items be done in a specific or
 1. Do this.
 1. Do that.
 1. Do another thing.
+
 **Not:**
+
 There are three colors that I like:
 
 1. Red
@@ -181,9 +183,12 @@ There are three colors that I like:
 **Think about the order**. When writing instructions, give the reader orientation cues in the proper order. Think about moving someone's eyes around the screen.
 
 **For example:**
-_"_Click the OK button in the Cloud Console, on the VM instances page, in the Compute Engine section._"_
+
+"Click the OK button in the Cloud Console, on the VM instances page, in the Compute Engine section."
+
 **Not this**, because it causes someone to visually search backwards:
-_"_Click the OK button in the Compute Engine section of the VM instances page of the Cloud Console._"_
+
+"Click the OK button in the Compute Engine section of the VM instances page of the Cloud Console."
 
 
 ### Bulleted lists
@@ -216,21 +221,21 @@ Try to keep your language across list items in a similar format. For example, st
 +  You can have fun writing the docs.
 
 
-## Tables
+### Tables
 
 Tables are a great way to help the reader compare a set of items, such as mutually exclusive options. Tables work well when there's a consistent set of properties for each item in a list.
 
 Use the parallelism principle previously described for table headings and the first column.
 
 
-## Images
+### Images
 
 A well-designed diagram or a screen shot can save you a lot of writing and help the reader better understand a complex idea. Make sure any text is legible at the display size in the doc (800 pixels wide or less). If the image itself becomes too complex, consider breaking it up into more than one picture.
 
 Google Cloud Platform documentation prefers the SVG format because of its display resolution independence. Otherwise, use the PNG format.
 
 
-## Code
+### Code
 
 Format code, command lines, paths, and file names as follows:
 
@@ -301,8 +306,11 @@ It's okay to use passive voice when you'd have to go out of your way to use acti
 **Keep it simple**. Use short, simple sentences. They are easier for readers to parse and understand. Omit unnecessary words.
 
 **For example:**
+
 "Click Change to set a new owner."
+
 **Not:**
+
 "It is possible for you to set a different owner by clicking the Change button."
 Also keep your paragraphs short and to the point. On the web, people skim more and expect shorter content than when they read books. Five sentences or less per paragraph is a good guideline.
 
@@ -326,7 +334,7 @@ Provide direct links to pages in the Google Cloud Console when you give Cloud Co
 
 This section contains common grammar and writing styles used in technical writing. Getting these details right in the original doc can save editing and production time.
 
-+  Use the [serial comma](https://wikipedia.org/wiki/Serial_comma). Use a comma after the second-to-last item in a comma-separated list. For example: “This, that****, and the other thing.” not “This, that and the other thing.”
++  Use the [serial comma](https://wikipedia.org/wiki/Serial_comma). Use a comma after the second-to-last item in a comma-separated list. For example: “This, that**,** and the other thing.” not “This, that and the other thing.”
 
 +  Avoid Latin words and their abbreviations.
 
