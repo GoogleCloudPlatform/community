@@ -16,15 +16,15 @@ can be reviewed and edited by the community.
 
 To submit a tutorial:
 
-1. Accept [the CLA][cla]
-1. Ensure your tutorial adheres to the [styleguide][styleguide]
+1. Accept [the CLA][cla].
+1. Ensure your tutorial adheres to the [styleguide][styleguide].
 1. You can fork and add a new tutorial in one step by clicking [this link][fork_quick].
 
 Alternatively, you can fork the repo to start a pull request:
 
-1. [Fork][fork_how] the community repository: [github.com/GoogleCloudPlatform/community]()
-1. Add a new file to the `tutorials/` folder
-1. Commit your changes and open a [pull request][pr]
+1. [Fork][fork_how] the community repository: [github.com/GoogleCloudPlatform/community]().
+1. Add a new file to the `tutorials/` folder.
+1. Commit your changes and open a [pull request][pr].
 
 [github]: https://github.com/GoogleCloudPlatform/community
 [cla]: /community/github#contributor_license_agreements
