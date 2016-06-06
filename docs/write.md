@@ -18,7 +18,8 @@ To submit a tutorial:
 
 1. Accept [the CLA][cla].
 1. Ensure your tutorial adheres to the [styleguide][styleguide].
-1. You can fork and add a new tutorial in one step by clicking [this link][fork_quick].
+1. You can [fork and add a new tutorial in one step][fork_quick]. Simply add your
+markdown to the GitHub editor and then commit.
 
 Alternatively, you can fork the repo to start a pull request:
 
