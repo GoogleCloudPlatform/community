@@ -25,17 +25,17 @@ to set up  PostgreSQL on Compute Engine with just a few clicks.
 You'll need a Google Cloud Console project. You can use an existing project or
  click the button to create a new project.
 
-<a href="https://console.cloud.google.com/project" target="console"><strong>Create a project</strong></a>
+**[Create a project](https://console.cloud.google.com/project)**
 
 ## Costs
 
 This tutorial uses billable components of Cloud Platform,
 including:
 
-<ul> <li>Google Compute Engine </li> </ul>
++ Google Compute Engine
 
-Use the <a href="https://cloud.google.com/products/calculator/#id=411d8ca1-210f-4f2c-babd-34c6af2b5538"
-target="_blank">Pricing Calculator</a> to generate a cost
+Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=411d8ca1-210f-4f2c-babd-34c6af2b5538)
+to generate a cost
 estimate based on your projected usage. New Cloud Platform users might be
 eligible for a [free trial](https://cloud.google.com/free-trial).
 
@@ -53,7 +53,7 @@ their package managers. For this tutorial, you use Ubuntu Trusty because
 it includes PostgreSQL 9.3, which has some helpful tools that aren't
 available in earlier versions.
 
-1. In the Cloud Platform Console, go to the [VM Instances](https://console.cloud.google.com/compute/instances) page.
+1. In the Cloud Platform Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
 1. Click the **Create instance** button.
 1. Set Name to `postgres-tutorial`.
 1. In the **Boot disk** section, click **Change** to begin configuring your boot disk.
@@ -111,9 +111,9 @@ user doesn't yet have a password, so you'll need to set one.
 
 1. When prompted, enter and confirm the password you've chosen.
 
-    <aside class="caution"><strong>Important</strong>:
+    **Important**:
      For any system with an Internet connection, use a
-     strong password to help keep the system secure.</aside>
+     strong password to help keep the system secure.
 
 1. Install the `adminpack` extension to enable the server instrumentation that
 you installed earlier. The console prints `CREATE EXTENSION` when successful.
@@ -201,7 +201,7 @@ text in the console after closing `nano`, enter `clear` to clear the screen.
 PostgreSQL accepts remote connections on port 5432. Follow these steps to add
 a firewall rule that enables traffic on this port.
 
-1. In the {{ console_name_short }}, navigate to the **Create a firewall rule**
+1. In the Cloud Console, navigate to the **Create a firewall rule**
 page.
 
     **[Create a firewall rule](https://console.cloud.google.com/networking/firewalls/add)**
@@ -305,13 +305,11 @@ To delete the project:
 1. In the Cloud Platform Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
 1. Click the trash can icon to the right of the project name.
 
-<div style="background:#FBE9E7">
-    <p><strong>Warning</strong>: Deleting a project has the following consequences:</p>
+**Warning**: Deleting a project has the following consequences:
+      
+If you used an existing project, you'll also delete any other work you've done in the project.
+You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, you should delete the resources inside the project instead. This ensures that URLs that use the project ID, such as an appspot.com URL, remain available.
 
-    
-      <p>If you used an existing project, you'll also delete any other work you've done in the project.
-      You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, you should delete the resources inside the project instead. This ensures that URLs that use the project ID, such as an appspot.com URL, remain available.</p>
-</div>
 
 ### Deleting instances
 
