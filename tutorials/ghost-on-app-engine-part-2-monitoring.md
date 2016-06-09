@@ -4,26 +4,35 @@ author: jmdobry
 tags: App Engine, Ghost
 date_published: 05/26/2016
 ---
-See [Ghost on App Engine Part 1 - Deploying][deploying].
 
 This tutorial explains how to monitor a [Ghost blog][ghost] deployed on [Google App Engine Flexible Environment][flex].
 
-## Monitoring
+## Objectives
+
+* Understand Stackdriver Monitoring with Ghost.
+* Understand Stackdriver Logging with Ghost.
+* Activate Stackdriver Trace.
+
+## Before you begin
+
+Complete the tutorial [Ghost on App Engine Part 1 - Deploying][deploying].
+
+## Understanding Stackdriver Monitoring
 
 Monitoring is powered by [Stackdriver Monitoring][monitoring].
 
-You do not have to install the monitoring agent on Google App Engine Flexible Environment, as Stackdriver monitoring support is built-in.
+You don't have to install the monitoring agent on Google App Engine Flexible Environment because Stackdriver monitoring support is built-in.
 
 You can [view the monitoring dashboard][mon_dash] for your Ghost blog in the Google Stackdriver Console.
 
 [monitoring]: https://cloud.google.com/monitoring/
 [mon_dash]: https://app.google.stackdriver.com/services/app-engine/
 
-## Logging
+## Understanding Stackdriver Logging
 
 Logging is powered by [Stackdriver Logging][logging].
 
-You do not have to install the logging agent on Google App Engine Flexible Environment, as Stackdriver Logging support is built-in. See [Stackdriver Logging in App Engine Apps for more information][logging].
+You don't have to install the logging agent on Google App Engine Flexible Environment because Stackdriver Logging support is built-in. See [Stackdriver Logging in App Engine Apps for more information][logging].
 
 You can [view the logs][logs] for your Ghost blog in the Google Cloud Platform Console.
 
@@ -31,7 +40,7 @@ You can [view the logs][logs] for your Ghost blog in the Google Cloud Platform C
 [gae_logging]: https://cloud.google.com/appengine/articles/logging
 [logs]: https://console.cloud.google.com/logs?service=appengine.googleapis.com
 
-## Trace
+## Using Stackdriver Trace
 
 Tracing of HTTP requests and RPC calls in your Ghost blog is powered by [Stackdriver Trace][trace].
 
@@ -80,7 +89,7 @@ To begin tracing what goes on in your Ghost blog you must import the [Node.js tr
 
         gcloud preview app deploy
 
-1. After a few minutes, activity in your application will cause traces to begin appearing in the [Trace Dashboard][trace_dashboard].
+1. After a few minutes, activity in your application causes traces to appear in the [Trace Dashboard][trace_dashboard].
 
 [trace_dashboard]: https://console.cloud.google.com/traces/traces
 
