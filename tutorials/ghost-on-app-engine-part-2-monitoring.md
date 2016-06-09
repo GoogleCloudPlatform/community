@@ -40,7 +40,7 @@ To begin tracing what goes on in your Ghost blog you must import the [Node.js tr
 [trace]: https://cloud.google.com/trace/
 [trace_agent]: https://github.com/GoogleCloudPlatform/cloud-trace-nodejs
 
-### Activate Trace
+### Enable Trace
 
 1. To install the `@google/cloud-trace` module during deployment, edit the `package.json` file and add a `postinstall` script:
 
@@ -67,6 +67,15 @@ To begin tracing what goes on in your Ghost blog you must import the [Node.js tr
 
     The application will now use Stackdriver Trace when it is deployed to App Engine.
 
+1. Update `app.yaml` to include the `GCLOUD_PROJECT` environment variable:
+
+        runtime: nodejs
+        vm: true
+        manual_scaling:
+          instances: 1
+        env_variables:
+          GCLOUD_PROJECT: <your-project-id>
+
 1. Re-deploy the application:
 
         gcloud preview app deploy
@@ -79,13 +88,116 @@ To begin tracing what goes on in your Ghost blog you must import the [Node.js tr
 
 Error reporting in your Ghost blog is powered by [Stackdriver Error Reporting][errorreporting].
 
+Error reporting works by capturing logs written to a certain location. We will use the [winston][winston] library to write the logs to the right location.
+
+[winston]: https://github.com/winstonjs/winston
+
+### Enable Error Reporting
+
+1. To install the `winston` module during deployment, edit the `package.json` file and add `winston` to the `postinstall` script you added earlier:
+
+        "scripts": {
+          "preinstall": "...",
+          "postinstall": "npm install @google/cloud-trace winston",
+          "start": "...",
+          "test": "..."
+        }
+
+1. Create an `errorreporting.js` file with the following contents:
+
+        var logFile = '/var/log/app_engine/custom_logs/ghost.errors.log.json';
+        var winston = require('winston');
+
+        winston.add(winston.transports.File, {
+          filename: logFile
+        });
+
+        function report (err, req) {
+          var payload = {
+            serviceContext: {
+              service: 'ghost'
+            },
+            message: err ? err.stack : '',
+            context: {
+              httpRequest: {
+                url: req.originalUrl,
+                method: req.method,
+                referrer: req.header('Referer'),
+                userAgent: req.header('User-Agent'),
+                remoteIp: req.ip,
+                responseStatusCode: 500
+              }
+            }
+          };
+          winston.error(payload);
+        }
+
+        function skip (req, res) {
+          if (res.statusCode >= 400) {
+            report(null, req);
+          }
+          return false
+        }
+
+        exports.logging = {
+          skip: skip
+        };
+
+1. To start collecting errors when the deployed application starts, the error reporting code needs to be added to the Express application. Add the following `logging` setting to `config.json`:
+
+        production: {
+          // Other settings hidden
+
+          logging: require('./errorreporting').logging
+        }
+
+1. Re-deploy the application:
+
+        gcloud preview app deploy
+
+1. Any request errors will now be reported in the [Error Reporting Dashboard][error_dashboard].
+
 [errorreporting]: https://cloud.google.com/error-reporting/
+[error_dashboard]: https://console.cloud.google.com/errors
 
 ## Debugging
 
 Debugging your Ghost blog is powered by [Stackdriver Debugger][debugger].
 
+To make Stackdriver Debugger available to your Ghost blog you must import the [Node.js debugger agent][debugger_agent] into the application.
+
+### Enable Debugger
+
+1. To install the `@google/cloud-debug` module during deployment, edit the `package.json` file and add `@google/cloud-debug` to the `postinstall` script you added earlier:
+
+        "scripts": {
+          "preinstall": "...",
+          "postinstall": "npm install @google/cloud-trace winston @google/cloud-debug",
+          "start": "...",
+          "test": "..."
+        }
+
+1. Create a `debug.js` file with the following contents:
+
+        if (process.env.NODE_ENV === 'production') {
+          require('@google/cloud-debug');
+        }
+
+1. To make Stackdriver Debugger available to the deployed application, the `@google/cloud-debug` module must be imported as the very first thing the application does (right after where Trace is imported). Add the following to the top of `index.js` after `require('./trace');`:
+
+        require('./debug');
+
+    The application will now be able to use Stackdriver Debugger when it is deployed to App Engine.
+
+1. Re-deploy the application:
+
+        gcloud preview app deploy
+
+1. You can debug the application using the [Stackdriver Debugger Dashboard][debugger_dashboard].
+
 [debugger]: https://cloud.google.com/debugger/
+[debugger_agent]: https://github.com/GoogleCloudPlatform/cloud-debug-nodejs
+[debugger_dashboard]: https://console.cloud.google.com/debug
 
 [deploying]: https://cloud.google.com/community/tutorials/ghost-on-app-engine-part-1-deploying
 [ghost]: https://ghost.org/

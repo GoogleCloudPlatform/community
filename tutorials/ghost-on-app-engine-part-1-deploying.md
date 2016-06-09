@@ -6,7 +6,7 @@ date_published: 05/26/2016
 ---
 This tutorial explains how to deploy and scale a [Ghost blog][ghost] on [Google App Engine Flexible Environment][flex].
 
-Ghost is a simple blogging platform that can be self-hosted. It's built with Ember.js and Node.js, and can be customized or transformed into a bigger site. It serves as a template for a larger application.
+Ghost is a simple blogging platform that can be self hosted. It's built with Node.js, and can be customized or transformed into a bigger site. It serves as a template for a larger application.
 
 Google App Engine makes it easy to run web applications that must scale to meet worldwide demand. It lets you focus on your code without having to worry about operations, load balancing, servers, or scaling to satisfy incoming traffic.
 
@@ -14,20 +14,38 @@ App Engine can take a Ghost web application and scale it to handle your growing 
 
 ## Objectives
 
+* Create a Cloud SQL instance, a database, and a user.
 * Download Ghost.
 * Configure Ghost for App Engine.
-* Deploy your app.
+* Deploy Ghost to App Engine.
+
+## Costs
+
+This tutorial uses billable components of Cloud Platform, including:
+
+* Google Cloud SQL
+* Google App Engine Flexible Environment
+
+Use the [Pricing Calculator][pricing] to generate a cost estimate based on your projected usage.
+
+[pricing]: https://cloud.google.com/products/calculator
 
 ## Before you begin
 
-1. Create a project in the [Google Cloud Platform Console][console].
-1. Enable billing for your project.
+1. Select or create a [Google Cloud Platform Console][console] project. [Go to the projects page][projects].
+1. Enable billing for your project. [Enable billing][billing].
 1. Install the [Google Cloud SDK][sdk].
+1. Authenticate `gcloud` with Google Cloud Platform.
+
+        gcloud init
+
 1. Create a new [Cloud SQL instance][sql].
   1. Create a user.
   1. Create a database called `ghost` (or another name if you prefer).
 
 [console]: https://console.cloud.google.com/
+[projects]: https://console.cloud.google.com/project
+[billing]: https://support.google.com/cloud/answer/6293499#enable-billing
 [sdk]: https://cloud.google.com/sdk/
 [sql]:  https://cloud.google.com/sql/docs/quickstart
 
@@ -82,11 +100,11 @@ App Engine can take a Ghost web application and scale it to handle your growing 
             port: process.env.PORT || '2368'
           }
         }
-        
+
     Here's some information about each setting:
 
     * `url` - The url at which the blog will be deployed. This is the url users will use to access the blog.
-    * `fileStorage` - Setting this value to `false` forces image uploads to use an image url because App Engine doesn't have persistent disks.  Without this setting, any photos uploaded to the blog will eventually disappear. 
+    * `fileStorage` - Setting this value to `false` forces image uploads to use an image url because App Engine doesn't have persistent disks.  Without this setting, any photos uploaded to the blog will eventually disappear.
     * `mail` - Configure this setting according to the instructions at http://support.ghost.org/mail/.
     * `database` - Tells Ghost how to connect to the Cloud SQL instance.
     * `server` - Tells Ghost how to listen for web traffic.
@@ -153,7 +171,7 @@ App Engine can take a Ghost web application and scale it to handle your growing 
           instances: 1
 
    Here's some information about each setting:
-   
+
     * `runtime` - Tells App Engine to use the Node.js runtime.
     * `manual_scaling` - Forces App Engine to run one and only one instance. To automatically scale, remove this setting or change to `automatic_scaling` and configure according to [the documentation][scaling].
     * `resources` - You didn't change this setting, but the default instance size corresponds to a `g1.small` virtual machine. You can configure smaller or larger instances sizes as required. See the [documentation][resources].
