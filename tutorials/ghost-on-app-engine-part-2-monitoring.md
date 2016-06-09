@@ -208,6 +208,11 @@ To make Stackdriver Debugger available to your Ghost blog you must import the [N
 [debugger_agent]: https://github.com/GoogleCloudPlatform/cloud-debug-nodejs
 [debugger_dashboard]: https://console.cloud.google.com/debug
 
+## Cleanup
+
+See the [cleanup guide][cleanup] for the Bookshelf Node.js tutorial.
+
+[cleanup]: https://cloud.google.com/nodejs/getting-started/delete-tutorial-resources
 [deploying]: https://cloud.google.com/community/tutorials/ghost-on-app-engine-part-1-deploying
 [ghost]: https://ghost.org/
 [flex]: https://cloud.google.com/appengine/docs/flexible/nodejs/
