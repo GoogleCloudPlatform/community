@@ -1,7 +1,8 @@
 ---
 title: Run Express.js on Google Cloud Platform
+description: Learn how to deploy a Express.js app to App Engine Flexible Environment
 author: jmdobry
-tags: App Engine, Node.js, Express.js
+tags: App Engine, Express.js, Node.js
 date_published: 01/07/2016
 ---
 ## Express.js

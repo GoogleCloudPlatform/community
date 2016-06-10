@@ -1,7 +1,8 @@
 ---
 title: Run Koa.js on Google App Engine
+description: Learn how to deploy a Koa.js app to App Engine Flexible Environment
 author: jmdobry
-tags: App Engine, Node.js, Koa.js
+tags: App Engine, Koa.js, Node.js
 date_published: 12/16/2015
 ---
 ## Koa.js

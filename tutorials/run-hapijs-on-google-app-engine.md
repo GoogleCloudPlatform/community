@@ -1,7 +1,8 @@
 ---
 title: Run Hapi.js on Google App Engine
+description: Learn how to deploy a Hapi.js app to App Engine Flexible Environment
 author: jmdobry
-tags: App Engine, Node.js, Hapi.js
+tags: App Engine, Hapi.js, Node.js
 date_published: 12/17/2015
 ---
 ## Hapi.js

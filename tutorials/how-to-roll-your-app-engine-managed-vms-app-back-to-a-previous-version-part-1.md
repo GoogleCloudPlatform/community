@@ -1,5 +1,6 @@
 ---
-title: How to Roll Your App Engine Managed VMs App Back to a Previous Version Part 1
+title: How to Roll Your App Engine Flexible Environment App Back to a Previous Version
+description: Learn how to utilize versions and rollbacks in App Engine Flexible Environment
 author: jmdobry
 tags: App Engine
 date_published: 12/18/2015
@@ -139,8 +140,8 @@ traffic.
 receiving traffic.
 - A previously deployed version continues running and consuming resources even
 after a new version is deployed and starts receiving traffic. If you want to
-avoid the expense of keeping more than one version running, see [Part 2][part2]
-for cheaper rollback strategies.
+avoid the expense of keeping more than one version running, then make sure to
+stop previously running versions.
 - Switching traffic between versions is as quick and easy as checking a box and
 clicking a button. This is only possible if more than one version is running.
 - Non-default versions that aren't receiving traffic will idle at the minimum
@@ -148,5 +149,3 @@ number of instances configured in your auto-scaling settings (default is 2).
 - If you specify a version during deployment that has already been deployed,
 then the deployed version will be deleted and the new deployment will take its
 place and be assigned the same version.
-
-[part2]: how-to-roll-your-app-engine-managed-vms-app-back-to-a-previous-version-part-2
