@@ -1,5 +1,6 @@
 ---
 title: Run Sails.js on Google App Engine
+description: Learn how to deploy a Sails.js app to App Engine Flexible Environment
 author: jmdobry
 tags: App Engine, Node.js, Sails.js
 date_published: 05/20/2016

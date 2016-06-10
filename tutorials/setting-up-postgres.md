@@ -1,17 +1,15 @@
 ---
 title: How to Set Up PostgreSQL on Compute Engine
+description: Learn how to get PostgreSQL running on Compute Engine
 author: jimtravisgoog
-tags: Compute Engine, Postgres
+tags: Compute Engine, PostgreSQL
 date_published: 6/3/2016
 ---
-
-This tutorial shows how to set up
-[PostgreSQL](https://www.postgresql.org)
-on Google Cloud Platform in
-just a few minutes. Follow this tutorial to configure PostgreSQL on an
-Ubuntu virtual machine instance on Compute Engine. Alternatively, you can use
-[Cloud Launcher](https://cloud.google.com/launcher/?q=postgres)
-to set up  PostgreSQL on Compute Engine with just a few clicks.
+This tutorial shows how to set up [PostgreSQL](https://www.postgresql.org) on
+Google Cloud Platform in just a few minutes. Follow this tutorial to configure
+PostgreSQL on an Ubuntu virtual machine instance on Compute Engine.
+Alternatively, you can use [Cloud Launcher](https://cloud.google.com/launcher/?q=postgres)
+to set up PostgreSQL on Compute Engine with just a few clicks.
 
 ## Objectives
 
@@ -23,7 +21,7 @@ to set up  PostgreSQL on Compute Engine with just a few clicks.
 ## Before you begin
 
 You'll need a Google Cloud Console project. You can use an existing project or
- click the button to create a new project.
+click the button to create a new project.
 
 **[Create a project](https://console.cloud.google.com/project)**
 
@@ -81,7 +79,7 @@ Follow these steps to install PostgreSQL on your Compute Engine instance.
 1. Update the packages. In the SSH terminal, enter the following command:
 
         sudo apt-get update
-        
+
 1. Install PostgreSQL, including the PSQL client and server instrumentation:
 
         sudo apt-get -y install postgresql postgresql-client postgresql-contrib
@@ -306,7 +304,7 @@ To delete the project:
 1. Click the trash can icon to the right of the project name.
 
 **Warning**: Deleting a project has the following consequences:
-      
+
 If you used an existing project, you'll also delete any other work you've done in the project.
 You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, you should delete the resources inside the project instead. This ensures that URLs that use the project ID, such as an appspot.com URL, remain available.
 
