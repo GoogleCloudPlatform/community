@@ -3,7 +3,7 @@ title: How to Set Up PostgreSQL on Compute Engine
 description: Learn how to get PostgreSQL running on Compute Engine
 author: jimtravisgoog
 tags: Compute Engine, PostgreSQL
-date_published: 6/3/2016
+date_published: 06/03/2016
 ---
 This tutorial shows how to set up [PostgreSQL](https://www.postgresql.org) on
 Google Cloud Platform in just a few minutes. Follow this tutorial to configure

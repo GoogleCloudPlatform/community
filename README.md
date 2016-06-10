@@ -1,4 +1,6 @@
-# Google Cloud Platform Community
+<img src="https://avatars2.githubusercontent.com/u/2810941?v=3&s=96" alt="Google Cloud Platform logo" title="Google Cloud Platform" align="right" height="96" width="96"/>
+
+# Google Cloud Platform Community [![Slack][slack_badge]][slack_link] [![Build][build_badge]][build_link]
 
 This repository holds the content submitted to
 [cloud.google.com/community][community].
@@ -29,6 +31,10 @@ code samples are licensed under the [Apache 2.0 License][apache]._
 
 See [LICENSE](LICENSE.md).
 
+[slack_badge]: https://img.shields.io/badge/slack-gcp-E01563.svg
+[slack_link]: https://gcp-slack.appspot.com/
+[build_badge]: https://img.shields.io/travis/GoogleCloudPlatform/community.svg?style=flat
+[build_link]: https://travis-ci.org/GoogleCloudPlatform/community
 [folder]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials
 [folder2]: https://github.com/GoogleCloudPlatform/community/tree/master/datasets
 [community]: https://cloud.google.com/community/
