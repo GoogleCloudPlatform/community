@@ -47,7 +47,7 @@ describe('tutorials/', function () {
       });
       it('frontmatter', function () {
         const matches = TUTORIAL_YAML_REGEXP.exec(this.content);
-        assert(TUTORIAL_YAML_REGEXP.test(this.content), `frontmatter should be of the form ${TUTORIAL_YAML_REGEXP}. Actual: ${matches[0]}`);
+        assert(TUTORIAL_YAML_REGEXP.test(this.content), `frontmatter should be of the form ${TUTORIAL_YAML_REGEXP}. Actual: ${this.content}`);
         const [
           ,
           title,
