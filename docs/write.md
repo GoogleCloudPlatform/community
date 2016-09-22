@@ -27,7 +27,7 @@ markdown to the GitHub editor and then commit.
 
 Alternatively, you can fork the repo to start a pull request:
 
-1. [Fork][fork_how] the community repository: [github.com/GoogleCloudPlatform/community]().
+1. [Fork][fork_how] the community repository: [github.com/GoogleCloudPlatform/community][github].
 1. Add a new file to the `tutorials/` folder.
 1. Commit your changes and open a [pull request][pr].
 
