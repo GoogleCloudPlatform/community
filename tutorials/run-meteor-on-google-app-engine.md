@@ -1,6 +1,6 @@
 ---
 title: Run Meteor on Google Cloud Platform
-description: Learn how to deploy a Meteor app to App Engine Flexible Environment
+description: Learn how to deploy a Meteor app to App Engine
 author: anassri
 tags: App Engine, Meteor, Node.js
 date_published: 10/10/2016
