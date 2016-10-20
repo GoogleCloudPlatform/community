@@ -1,6 +1,6 @@
 ---
-title: Run Meteor on Google Cloud Platform
-description: Learn how to deploy a Meteor app to App Engine
+title: Run Meteor on Google App Engine
+description: Learn how to deploy a Meteor app to App Engine Flexible
 author: anassri
 tags: App Engine, Meteor, Node.js
 date_published: 10/25/2016
@@ -138,7 +138,7 @@ Then, configure a [custom runtime](/appengine/docs/flexible/custom-runtimes/) by
     # Install dependencies
     RUN npm install --unsafe-perm
 
-The `app.yaml` makes the app deployable to Google App Engine Managed VMs, while the Dockerfile specifies the steps to take during the deployment.
+The `app.yaml` makes the app deployable to Google App Engine Flexible, while the Dockerfile specifies the steps to take during the deployment.
 
 ### Configure Meteor for Deployment
 In order for Meteor to work on App Engine, it must run on the port indicated by the $PORT environment variable. We can configure Meteor to run on a specific port by adding a `port` flag to the `start` script in `package.json` as follows:
@@ -148,6 +148,6 @@ In order for Meteor to work on App Engine, it must run on the port indicated by 
 ## Deployment
 Run the following command to deploy your app:
 
-    gcloud app deploy app.yaml --promote
+    gcloud app deploy
 
 Once the deployment process completes, go to `http://<your-project-id>.appspot.com` to see the `Welcome to Meteor!` message. To test database functionality, click on the button a few times and refresh the page. You should see your previous button-click count appear after a few seconds.
