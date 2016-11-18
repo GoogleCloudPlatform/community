@@ -1,5 +1,29 @@
 This document provides guidance for contributors to the Google Cloud Platform (GCP) Community site.
 
+* [Caveats](#caveats)
+* [Types of documentation](#types-of-documentation)
+* [Designing a doc](#designing-a-doc)
+* [File organization in GitHub](#file-organization-in-github)
+* [General content guidelines](#general-content-guidelines)
+* [General style guidelines](#general-style-guidelines)
+* [Voice and tone](#voice-and-tone)
+* [Writing resources](#writing-resources)
+
+## Caveats
+
+Let's get these things out of the way right up front:
+
+* Don't sell or do marketing.
+* Don't editorialize. Document.
+* Don't make assumptions about your reader unless you state the assumptions up front.
+* Don’t use absolutes, such as instantaneously, perfectly, absolutely, totally, 100%, unless you can back up what you’re saying with documentation.
+* Don't use superlatives, such as "the best solution", "the perfect answer", and so on.
+* Don’t use logos or trademarks unless you have explicit permission.
+* Don't make performance claims unless you back them up with current data. This means either external links, or links to benchmarking code.
+* Don't include diagrams or pictures that you have no legal rights to include.
+* Don’t alter or truncate Google Cloud Platform product names. For example, it’s Cloud Bigtable, not Bigtable.
+* Don’t alter or truncate other Google names. For example, it’s Google Apps, not Apps.
+
 ## Types of documentation
 
 Documentation submitted by contributors is usually one of two types:
@@ -79,6 +103,19 @@ A Tutorial doc has these major sections. Items in bold below are literal heading
    +  Omit this section if you stated there are no costs in the Costs section.
    +  Tell the user how to shut down what they built to avoid incurring further costs.
 
+## File organization in GitHub
+
+Follow these guidlines for how to organize your documents:
+
+* Create a new folder for your document.
+* Name the folder by [slugifying](http://slugify.net/) your doc's title. You can omit articles such as "and" and "the".
+* Name your new doc `index.md`. 
+* Store images in the same folder.
+
+For example, if you submit a tutorial named "Using Cloud SQL to Conquer the World":
+
+* **Folder name**: `using-cloud-sql-conquer-world`
+* **URL**: `https://cloud.google.com/community/tutorials/using-cloud-sql-conquer-world/`
 
 ## General content guidelines
 
@@ -188,11 +225,24 @@ Use the parallelism principle previously described for table headings and the fi
 
 A well-designed diagram or a screen shot can save you a lot of writing and help the reader better understand a complex idea. Make sure any text is legible at the display size in the doc (800 pixels wide or less). If the image itself becomes too complex, consider breaking it up into more than one picture.
 
+* Don't use images you don't have rights to use.
+* Store the images in the same folder where your document's index.md file is stored.
+
 
 ### Code
 
 Format code, command lines, paths, and file names as code font.
 
+
+### Linking
+
+Provide inline links to relevant information, where appropriate. For example, link to:
+
++  "One source of truth" content.
++  Anything that's likely to go out of date quickly if you copied it into your article.
++  Information that gives more depth than is appropriate for the current context.
+
+Provide direct links to pages in the Google Cloud Console when you give Cloud Console-based instructions. These _deep links_ save the reader time spent looking for the right page and can save you time writing descriptions of how to find the page. Deep links open the page with the project set to the user's last-used project.
 
 ## Voice and tone
 
@@ -263,18 +313,7 @@ If a sentence is long, even with  straightforward word choices, break it up into
 Re-read what you wrote and then eliminate all the unnecessary words.
 
 
-## Linking
-
-Provide inline links to relevant information, where appropriate. For example, link to:
-
-+  "One source of truth" content.
-+  Anything that's likely to go out of date quickly if you copied it into your article.
-+  Information that gives more depth than is appropriate for the current context.
-
-Provide direct links to pages in the Google Cloud Console when you give Cloud Console-based instructions. These _deep links_ save the reader time spent looking for the right page and can save you time writing descriptions of how to find the page. Deep links open the page with the project set to the user's last-used project.
-
-
-## What’s next
+## Writing resources
 
 Learn more about strong writing.
 
