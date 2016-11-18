@@ -20,10 +20,18 @@ and has read access to https://github.com/GoogleCloudPlatform/community.**
 
 To submit a tutorial:
 
-1. Accept [the CLA][cla].
-1. Ensure your tutorial adheres to the [styleguide][styleguide].
-1. You can [fork and add a new tutorial in one step][fork_quick]. Simply add your
+1. Accept the Contributor License Agreement (CLA).
+
+   [**CLA**][cla]
+   
+1. Ensure your tutorial adheres to the style guide.
+
+   [**STYLE GUIDE**][styleguide]
+   
+1. You can fork and add a new tutorial in one step. Simply add your
 markdown to the GitHub editor and then commit.
+
+   [**FORK**][fork_quick]
 
 Alternatively, you can fork the repo to start a pull request:
 
