@@ -27,10 +27,10 @@ code samples are licensed under the [Apache 2.0 License][apache]._
 
 See [LICENSE](LICENSE.md).
 
-[slack_badge]: https://img.shields.io/badge/slack-gcp-E01563.svg
+[slack_badge]: https://img.shields.io/badge/slack-gcp-E01563.svg?style=flat
 [slack_link]: https://gcp-slack.appspot.com/
-[build_badge]: https://img.shields.io/travis/GoogleCloudPlatform/community.svg?style=flat
-[build_link]: https://travis-ci.org/GoogleCloudPlatform/community
+[build_badge]: https://img.shields.io/circleci/project/github/GoogleCloudPlatform/community/master.svg?style=flat
+[build_link]: https://circleci.com/gh/GoogleCloudPlatform/community
 [folder]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials
 [community]: https://cloud.google.com/community/
 [tutorials]: https://cloud.google.com/community/tutorials/
