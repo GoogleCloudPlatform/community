@@ -153,4 +153,3 @@ tutorial.
 - Explore the other [Slack APIs](https://api.slack.com/).
 - Check out the [other Slack samples for Google Cloud
   Platform](https://github.com/GoogleCloudPlatform/slack-samples)
-
