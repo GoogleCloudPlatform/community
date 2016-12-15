@@ -57,6 +57,13 @@ directory.
     git clone https://github.com/GoogleCloudPlatform/slack-samples.git
     cd slack-samples/notify
 
+If git is not installed, download and extract the code.
+
+    # Alternative if git is not installed.
+    wget https://github.com/GoogleCloudPlatform/slack-samples/archive/master.tar.gz
+    tar -xzf master.tar.gz
+    cd slack-samples-master/notify
+
 ## Creating a Slack incoming webhook
 
 Create a [Slack incoming webhook](https://api.slack.com/incoming-webhooks) from
@@ -80,22 +87,22 @@ script.
 
     script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-Then, check to see what kind of authentication event is happening. Notify on
-all events except closing an SSH connection.
+Then it checks to see what kind of authentication event is happening. The
+script notifies on all events except closing an SSH connection.
 
     if [[ $PAM_TYPE != "close_session" ]] ; then
 
-Construct a plain-text message to send. Include the username and remote IP
-address in the message.
+Then it constructs a plain-text message to send. The message include the
+username and remote IP address.
 
     host=$(hostname)
     message="SSH Login: ${PAM_USER} from ${PAM_RHOST} on ${host}"
 
-Read the webhook URL from the `slack-hook` file.
+It reads the webhook URL from the `slack-hook` file.
 
     hook=$(cat "${script_dir}/slack-hook")
 
-Send a POST HTTP request with the message to the Slack webhook.
+Finally, it send a POST HTTP request with the message to the Slack webhook.
 
     curl -X POST --data-urlencode "payload={\"text\": \"${message}\"}" "${hook}"
     fi
@@ -138,7 +145,8 @@ tutorial.
 
 1. [Delete any Compute Engine
    instances](https://cloud.google.com/compute/docs/instances/stopping-or-deleting-an-instance).
-2. Remove the custom integration from Slack.
+2. Remove the [custom integration from
+   Slack](https://slack.com/apps/manage/custom-integrations).
 
 ## Next steps
 
