@@ -136,7 +136,7 @@ connected.
 To prevent unnecessary charges, clean up the resources created for this
 tutorial.
 
-1. [Delete any compute engine
+1. [Delete any Compute Engine
    instances](https://cloud.google.com/compute/docs/instances/stopping-or-deleting-an-instance).
 2. Remove the custom integration from Slack.
 
