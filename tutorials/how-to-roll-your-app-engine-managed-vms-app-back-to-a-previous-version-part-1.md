@@ -10,7 +10,7 @@ date_published: 12/18/2015
 You've deployed an app using Google App Engine flexible environment, and things
 are going great. You make some change to your app and re-deploy, only to
 discover that something broke! You forgot a semicolon and now your users are
-mad. What do you do?
+upset. What do you do?
 
 One option would be to quickly add the semicolon, commit the fix, and deploy
 again. Hopefully, your app only suffered a few minutes of downtime, depending on
@@ -63,7 +63,7 @@ Create a file named `app.yaml` with the following contents:
     runtime: nodejs
     env: flex
 
-This configuration file tells APp Engine how to run our app.
+This configuration file tells App Engine how to run our app.
 
 Now create a file named `package.json with the following contents:
 
@@ -81,19 +81,19 @@ Run the following command to deploy:
 The new deployment should start receiving all traffic, and any previously
 deployed version should stop receiving traffic.
 
-Now view the deployed app at `http://YOUR_PROJECT_ID.appspot.com/`.
+Now view the deployed app at `http://[YOUR_PROJECT_ID].appspot.com/`.
 
 We didn't specify a version with the `--version` flag, so one was generated
 automatically. The generated version might look something like `20151005t21174`.
 To see the generated version go to:
 
-    https://console.developers.google.com/appengine/versions?project=YOUR_PROJECT_ID
+    https://console.developers.google.com/appengine/versions?project=[YOUR_PROJECT_ID]
 
 There you'll see a list of all deployed versions of your app. The version with
 the `(default)` tag next to it is the version that is currently receiving
 traffic. You can view any other deployed version at the following url:
 
-    http://VERSION-dot-YOUR_PROJECT_ID.appspot.com/
+    http://VERSION-dot-[YOUR_PROJECT_ID].appspot.com/
 
 ## Broken deploy
 
@@ -101,7 +101,7 @@ Since we've only deployed once you probably only see one version. Let's deploy
 again to see another version, but before we deploy let's introduce a bug into
 our app. Edit the first line of `server.js` to say the following:
 
-    const httptypo = require('http');
+    const httpTypo = require('http');
 
 This will cause the app to fail to start. Now deploy:
 
@@ -110,13 +110,13 @@ This will cause the app to fail to start. Now deploy:
 You should now see two versions listed, the most recent one of which has the
 `(default)` tag. Even though the new version is receiving all traffic, the first
 version we deployed is still running and consuming resources. If you visit
-`http://YOUR_PROJECT_ID.appspot.com/` you should see something that suggests
+`http://[YOUR_PROJECT_ID].appspot.com/` you should see something that suggests
 that the app isn't working. Time to rollback!
 
 ## Rollback
 
 We don't want to mess around with our code, we need to fix this right now. Users
-are mad! Go back to the list of versions and check the box next to the version
+are upset! Go back to the list of versions and check the box next to the version
 that was deployed first. Now click the `MAKE DEFAULT` button located above the
 list. Traffic immediately switches over to the stable version. Crisis averted!
 
