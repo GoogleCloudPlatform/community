@@ -1,6 +1,6 @@
 ---
-title: Run Express.js on Google Cloud Platform
-description: Learn how to deploy a Express.js app to App Engine Flexible Environment
+title: Run Express.js on Google App Engine Flexible Environment
+description: Learn how to deploy a Express.js app to Google App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Express.js, Node.js
 date_published: 01/07/2016
@@ -12,6 +12,10 @@ date_published: 01/07/2016
 > mobile applications.
 >
 > – expressjs.com
+
+You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
+overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
+Platform.
 
 ## Prerequisites
 
@@ -33,39 +37,42 @@ Install Express.js:
 
 Create a `server.js` file with the following contents:
 
-    var express = require('express');
-    var app = express();
+    const express = require('express');
+    const app = express();
 
-    app.get('/', function (req, res) {
+    app.get('/', (req, res) => {
       res.send('Hello World!');
     });
 
-    var server = app.listen(8080, function () {
-      var host = server.address().address;
-      var port = server.address().port;
+    const server = app.listen(8080, () => {
+      const host = server.address().address;
+      const port = server.address().port;
 
-      console.log('Example app listening at http://%s:%s', host, port);
+      console.log(`Example app listening at http://${host}:${port}`);
     });
 
 ## Run
 
 Run the app with the following command:
 
-    node server.js
+    npm start
 
-Go to `http://localhost:8080` to see the `Hello World!` message.
+Visit [http://localhost:8080](http://localhost:8080) to see the `Hello World!`
+message.
 
 ## Deploy
 
 Create an `app.yaml` file with the following contents:
 
     runtime: nodejs
-    vm: true
+    env: flex
 
 The `app.yaml` makes the app deployable to Google App Engine Managed VMs.
 
 Run the following command to deploy your app:
 
-    gcloud preview app deploy app.yaml --promote
+    gcloud app deploy
 
-Go to `http://<your-project-id>.appspot.com` to see the `Hello World!` message.
+Visit `http://YOUR_PROJECT_ID.appspot.com` to see the `Hello World!` message.
+
+[nodejs-gcp]: running-nodejs-on-google-cloud

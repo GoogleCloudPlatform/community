@@ -1,6 +1,6 @@
 ---
-title: Run Restify.js on Google App Engine
-description: Learn how to deploy a Restify.js app to App Engine Flexible Environment
+title: Run Restify.js on Google App Engine Flexible Environment
+description: Learn how to deploy a Restify.js app to Google App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Node.js, Restify.js
 date_published: 12/15/2015
@@ -11,6 +11,10 @@ date_published: 12/15/2015
 > enable you to build correct REST web services.
 >
 > – restify.com
+
+You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
+overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
+Platform.
 
 ## Prerequisites
 
@@ -73,3 +77,5 @@ Run the following command to deploy your app:
     gcloud preview app deploy app.yaml
 
 Go to `http://<your-project-id>.appspot.com` to see the `Hello World!` message.
+
+[nodejs-gcp]: running-nodejs-on-google-cloud

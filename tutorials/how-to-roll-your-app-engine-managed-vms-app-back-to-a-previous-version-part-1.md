@@ -1,16 +1,16 @@
 ---
 title: How to Roll Your App Engine Flexible Environment App Back to a Previous Version
-description: Learn how to utilize versions and rollbacks in App Engine Flexible Environment
+description: Learn how to utilize versions and rollbacks in App Engine flexible environment.
 author: jmdobry
 tags: App Engine
 date_published: 12/18/2015
 ---
 ## Disaster scenario
 
-You've deployed an app using Google App Engine ManagedVMs, and things are going
-great. You make some change to your app and re-deploy, only to discover that
-something broke! You forgot a semicolon and now your users are mad. What do you
-do?
+You've deployed an app using Google App Engine flexible environment, and things
+are going great. You make some change to your app and re-deploy, only to
+discover that something broke! You forgot a semicolon and now your users are
+upset. What do you do?
 
 One option would be to quickly add the semicolon, commit the fix, and deploy
 again. Hopefully, your app only suffered a few minutes of downtime, depending on
@@ -21,15 +21,15 @@ major feature and you don't yet know what the problem is? In this scenario it
 might be better to quickly rollback to the stable version of your app that was
 running before things broke.
 
-So how do we do that with App Engine ManagedVMs? A naive approach might be to
-search your source control for the last point in time where your code was stable
-and re-deploy that code. The pressure of downtime turns such a search into a
-nightmare—you could be losing users and dollars by the second! There must be a
-better way.
+So how do we do that with App Engine flexible environment? A naive approach
+might be to search your source control for the last point in time where your
+code was stable and re-deploy that code. The pressure of downtime turns such a
+search into a nightmare—you could be losing users and dollars by the second!
+There must be a better way.
 
-Enter _versions_, a feature of App Engine ManagedVMs. Every time you deploy a
-ManagedVMs app, the deployment is associated with a version. If you don't
-specify a version then one will be generated for you. Let's try it.
+Enter _versions_, a feature of App Engine flexible environment. Every time you
+deploy an app, the deployment is associated with a version. If you don't specify
+a version then one will be generated for you. Let's try it.
 
 ## Sample app
 
@@ -53,17 +53,17 @@ Let's test it to make sure it works:
 
     node app.js
 
-Point your browser to [http://localhost:8080]() to see a `Hello World!` message.
-Press CTRL+C to stop the app.
+Point your browser to [http://localhost:8080](http://localhost:8080) to see a
+`Hello World!` message. Press CTRL+C to stop the app.
 
 ## Deploy
 
 Create a file named `app.yaml` with the following contents:
 
     runtime: nodejs
-    vm: true
+    env: flex
 
-This configuration file tells ManagedVMs how to run our app.
+This configuration file tells App Engine how to run our app.
 
 Now create a file named `package.json with the following contents:
 
@@ -76,24 +76,24 @@ Console and installed the gcloud sdk locally, you should be ready to deploy.
 
 Run the following command to deploy:
 
-    gcloud preview app deploy app.yaml
+    gcloud app deploy
 
 The new deployment should start receiving all traffic, and any previously
 deployed version should stop receiving traffic.
 
-Now view the deployed app at `http://<your-project-id>.appspot.com/`.
+Now view the deployed app at `http://[YOUR_PROJECT_ID].appspot.com/`.
 
 We didn't specify a version with the `--version` flag, so one was generated
 automatically. The generated version might look something like `20151005t21174`.
 To see the generated version go to:
 
-    https://console.developers.google.com/appengine/versions?project=<your-project-id>
+    https://console.developers.google.com/appengine/versions?project=[YOUR_PROJECT_ID]
 
 There you'll see a list of all deployed versions of your app. The version with
 the `(default)` tag next to it is the version that is currently receiving
 traffic. You can view any other deployed version at the following url:
 
-    http://<version>-dot-<your-project-id>.appspot.com/
+    http://VERSION-dot-[YOUR_PROJECT_ID].appspot.com/
 
 ## Broken deploy
 
@@ -101,22 +101,22 @@ Since we've only deployed once you probably only see one version. Let's deploy
 again to see another version, but before we deploy let's introduce a bug into
 our app. Edit the first line of `server.js` to say the following:
 
-    const httptypo = require('http');
+    const httpTypo = require('http');
 
 This will cause the app to fail to start. Now deploy:
 
-    gcloud preview app deploy app.yaml
+    gcloud app deploy
 
 You should now see two versions listed, the most recent one of which has the
 `(default)` tag. Even though the new version is receiving all traffic, the first
 version we deployed is still running and consuming resources. If you visit
-`http://<your-project-id>.appspot.com/` you should see something that suggests
+`http://[YOUR_PROJECT_ID].appspot.com/` you should see something that suggests
 that the app isn't working. Time to rollback!
 
 ## Rollback
 
 We don't want to mess around with our code, we need to fix this right now. Users
-are mad! Go back to the list of versions and check the box next to the version
+are upset! Go back to the list of versions and check the box next to the version
 that was deployed first. Now click the `MAKE DEFAULT` button located above the
 list. Traffic immediately switches over to the stable version. Crisis averted!
 
