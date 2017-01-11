@@ -5,18 +5,27 @@ author: jmdobry
 tags: App Engine, Ghost, Node.js
 date_published: 05/26/2016
 ---
-This tutorial explains how to deploy and scale a [Ghost blog][ghost] on [Google App Engine Flexible Environment][flex].
+This tutorial explains how to deploy and scale a [Ghost blog][ghost] on
+[Google App Engine Flexible Environment][flex].
 
-Ghost is a simple blogging platform that can be self hosted. It's built with Node.js, and can be customized or transformed into a bigger site. It serves as a template for a larger application.
+Ghost is a simple blogging platform that can be self hosted. It's built with
+Node.js, and can be customized or transformed into a bigger site. It serves as a
+template for a larger application.
 
-Google App Engine makes it easy to run web applications that must scale to meet worldwide demand. It lets you focus on your code without having to worry about operations, load balancing, servers, or scaling to satisfy incoming traffic.
+Google App Engine makes it easy to run web applications that must scale to meet
+worldwide demand. It lets you focus on your code without having to worry about
+operations, load balancing, servers, or scaling to satisfy incoming traffic.
 
-App Engine can take a Ghost web application and scale it to handle your growing global demand, while giving you all the benefits of Google Cloud Platform, including Cloud SQL, Cloud Source Repositories, Stackdriver Logging, Monitoring, Error Reporting, Trace, and Debugging, and more.
+App Engine can take a Ghost web application and scale it to handle your growing
+global demand, while giving you all the benefits of Google Cloud Platform,
+including Cloud SQL, Cloud Source Repositories, Stackdriver Debugger, Error
+Reporting, Logging, Monitoring, Trace, and more.
 
 ## Objectives
 
 * Create a Cloud SQL instance, a database, and a user.
 * Download Ghost.
+* Run Ghost locally.
 * Configure Ghost for App Engine.
 * Deploy Ghost to App Engine.
 
@@ -27,27 +36,80 @@ This tutorial uses billable components of Cloud Platform, including:
 * Google Cloud SQL
 * Google App Engine Flexible Environment
 
-Use the [Pricing Calculator][pricing] to generate a cost estimate based on your projected usage.
+Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
+projected usage.
 
 [pricing]: https://cloud.google.com/products/calculator
 
 ## Before you begin
 
-1. Select or create a [Google Cloud Platform Console][console] project. [Go to the projects page][projects].
+1. Select or create a [Google Cloud Platform Console][console] project.
+[Go to the projects page][projects].
 1. Enable billing for your project. [Enable billing][billing].
 1. Install the [Google Cloud SDK][sdk].
 1. Authenticate `gcloud` with Google Cloud Platform.
 
         gcloud init
 
-1. Create a new [Cloud SQL instance][sql].
-  1. Create a user.
-  1. Create a database called `ghost` (or another name if you prefer).
+1. Create a new [Second Generation Cloud SQL instance][sql]. You can do this
+from the [Cloud Console][console] or via the [Cloud SDK][sdk].
+    1. In order for some of the commands below to work, you need to enable the
+    [Cloud SQL Admin API](https://console.cloud.google.com/apis/api/sqladmin-json.googleapis.com/overview).
+    1. Create it via the following SDK command:
+
+            gcloud sql instances create YOUR_INSTANCE_NAME \
+                --activation-policy=ALWAYS \
+                --tier=db-n1-standard-1
+
+        where `YOUR_INSTANCE_NAME` is a name of your choice.
+
+    1. Set the root password on your Cloud SQL instance:
+
+            gcloud sql instances set-root-password YOUR_INSTANCE_NAME --password YOUR_INSTANCE_ROOT_PASSWORD
+
+        where `YOUR_INSTANCE_NAME` is the name you chose in step 1 and
+        `YOUR_INSTANCE_ROOT_PASSWORD` is a password of your choice.
+
+    1. Create and download a [Service Account key file][service] for your
+    project. You will use this service account to connect to your Cloud SQL
+    instance locally.
+
+    1. Download and install the [Cloud SQL Proxy][proxy].
+
+    1. [Start the proxy][start] to allow connecting to your instance from your
+    local machine:
+
+            ./cloud_sql_proxy \
+                -instances=YOUR_INSTANCE_CONNECTION_NAME=tcp:3306 \
+                -credential_file=PATH_TO_YOUR_SERVICE_ACCOUNT_JSON_FILE
+
+        where `YOUR_INSTANCE_CONNECTION_NAME` is the connection name of your
+        instance on its Overview page in the Google Cloud Platform Console, or
+        use `YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME`.
+
+    1. Use the MySQL command line tools (or a management tool of your choice) to
+    create a [new user][user] and [database][database] for your application:
+
+            mysql -h 127.0.0.1 -P 3306 -u root -p
+              mysql> create database `YOUR_DATABASE`;
+              mysql> create user 'YOUR_USER'@'%' identified by 'PASSWORD';
+              mysql> grant all on YOUR_DATABASE.* to 'YOUR_USER'@'%';
+
+        Note: you will be asked to enter the root password you chose earlier.
+
+    1. Set the `MYSQL_USER`, `MYSQL_PASSWORD`, and `MYSQL_DATABASE` environment
+    variables (see below). This allows your local Ghost app to connect to your
+    Cloud SQL instance through the proxy.
 
 [console]: https://console.cloud.google.com/
 [projects]: https://console.cloud.google.com/project
 [billing]: https://support.google.com/cloud/answer/6293499#enable-billing
 [sdk]: https://cloud.google.com/sdk/
+[service]: https://cloud.google.com/sql/docs/external#createServiceAccount
+[proxy]: https://cloud.google.com/sql/docs/external#install
+[start]: https://cloud.google.com/sql/docs/external#6_start_the_proxy
+[user]: https://cloud.google.com/sql/docs/create-user
+[database]: https://cloud.google.com/sql/docs/create-database
 [sql]:  https://cloud.google.com/sql/docs/quickstart
 
 ## Download Ghost
@@ -66,17 +128,19 @@ Use the [Pricing Calculator][pricing] to generate a cost estimate based on your 
 
 ## Configure
 
-1. Create a `config.js` file from the default config file:
+Create a `config.js` file from the default config file:
 
-        cp config.example.js config.js
+    cp config.example.js config.js
 
-1. Edit the `production` configuration in `config.js` and set it to the following:
+### Run the app locally
 
-        // Production configuration, activated when deployed to App Engine
-        production: {
+1. Edit the `development` configuration in `config.js` and set it to the following:
+
+        // Development configuration, activated when you run locally
+        development: {
           // If you've configured a custom domain, set this to https://your-custom-domain.com
-          url: 'https://<your-project-id>.appspot.com',
-          // Disable file storage, as App Engine disks are not persistent
+          url: 'http://localhost:2368',
+          // Disable file storage
           fileStorage: false,
           // Configure email. See   http://support.ghost.org/mail/
           mail: {},
@@ -84,11 +148,55 @@ Use the [Pricing Calculator][pricing] to generate a cost estimate based on your 
           database: {
             client: 'mysql',
             connection: {
-              host: '<ip-address-of-cloud-sql-instance>',
-              user: '<your-user>',
-              password: '<your-password>',
-              // "ghost", or whatever you named the database
-              database: 'ghost',
+              host: '127.0.0.1',
+              user: process.env.MYSQL_USER,
+              password: process.env.MYSQL_PASSWORD,
+              database: process.env.MYSQL_DATABASE,
+              charset  : 'utf8'
+            },
+            debug: true
+          },
+          server: {
+            host: '127.0.0.1',
+            port: '2368'
+          }
+        }
+
+1. Install Dependencies:
+
+        npm install --production
+
+1. Start the app:
+
+        npm start
+
+1. To view the app, browse to:
+
+        http://localhost:2368
+
+1. Now stop your app by pressing Ctrl+C.
+
+
+## Deploy
+
+1. Edit the `production` configuration in `config.js` and set it to the following:
+
+        // Production configuration, activated when deployed to App Engine
+        production: {
+          // If you've configured a custom domain, set this to https://your-custom-domain.com
+          url: 'https://' + process.env.GCLOUD_PROJECT + '.appspot.com',
+          // Disable file storage, as App Engine disks are not persistent
+          fileStorage: false,
+          // Configure email. See http://support.ghost.org/mail/
+          mail: {},
+          // Configure Ghost to use the Cloud SQL instance
+          database: {
+            client: 'mysql',
+            connection: {
+              socketPath: '/cloudsql/' + process.env.INSTANCE_CONNECTION_NAME;
+              user: process.env.MYSQL_USER,
+              password: process.env.MYSQL_PASSWORD,
+              database: process.env.MYSQL_DATABASE,
               charset  : 'utf8'
             },
             debug: false
@@ -110,23 +218,11 @@ Use the [Pricing Calculator][pricing] to generate a cost estimate based on your 
     * `database` - Tells Ghost how to connect to the Cloud SQL instance.
     * `server` - Tells Ghost how to listen for web traffic.
 
-1. Optimize the Ghost web application for deployment on App Engine. Create an `appengine.js` file with the following contents:
+1. Optimize the Ghost web application for deployment on App Engine. Create an
+`appengine.js` file with the following contents:
 
         var express = require('express');
         var router = module.exports = express.Router();
-
-        /**
-         * App Engine doesn't set the X-Forwarded-Proto header, but instead sets the
-         * X-AppEngine-Https header to "on" if the request was made over https, in which
-         * case we update the X-Forwarded-Proto header to "https" because that's what
-         * Express expects to find for https requests.
-         */
-        router.use(function (req, res, next) {
-          if (req.get('x-appengine-https') === 'on' && !req.get('x-forwarded-proto')) {
-            req.headers['x-forwarded-proto'] = 'https';
-          }
-          next();
-        });
 
         /**
          * App Engine lifecycle event. See the following for more information:
@@ -167,9 +263,19 @@ Use the [Pricing Calculator][pricing] to generate a cost estimate based on your 
 1. Prepare for deployment. Create an `app.yaml` file with the following contents:
 
         runtime: nodejs
-        vm: true
+        env: flex
         manual_scaling:
           instances: 1
+        env_variables:
+          MYSQL_USER: YOUR_MYSQL_USER
+          MYSQL_PASSWORD: YOUR_MYSQL_PASSWORD
+          MYSQL_DATABASE: YOUR_MYSQL_DATABASE
+          # e.g. my-awesome-project:us-central1:my-cloud-sql-instance-name
+          INSTANCE_CONNECTION_NAME: YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME
+        beta_settings:
+          # The connection name of your instance on its Overview page in the Google
+          # Cloud Platform Console, or use `YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME`
+          cloud_sql_instances: YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME
 
     Here's some information about each setting:
 
@@ -179,15 +285,19 @@ Use the [Pricing Calculator][pricing] to generate a cost estimate based on your 
 
     Read more about [using `app.yaml`][appyaml].
 
+1. Run the following command to deploy the app:
+
+    gcloud app deploy
+
 [scaling]: https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml#auto-scaling
 [resources]: https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml#resource-settings
 [appyaml]: https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml
 
-## Deploy
+1. After deployment completes, view your deployed app at:
 
-Run the following command to deploy the app:
+        https://YOUR_PROJECT_ID.appspot.com
 
-    gcloud preview app deploy
+    Where `YOUR_PROJECT_ID` is your Google Cloud Platform project ID.
 
 ## What's next
 
