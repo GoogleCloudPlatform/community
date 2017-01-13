@@ -7,7 +7,7 @@ date_published: 05/20/2016
 ---
 ## Sails.js
 
-> [Sails](http://sailsjs.org/) makes it easy to build custom, enterprise-grade
+> [Sails][sails] makes it easy to build custom, enterprise-grade
 > Node.js apps.
 >
 > – sailsjs.org
@@ -19,41 +19,47 @@ Platform.
 ## Prerequisites
 
 1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
-1. Enabled billing for your project.
+1. Enable billing for your project.
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Prepare
 
-Install the Sails.js CLI tool:
+1. Install the Sails.js CLI tool:
 
-    npm install -g sails
+        npm install -g sails
 
-Create a new Sails.js project (this may take a moment):
+1. Create a new Sails.js project (this may take a moment):
 
-    sails new testProject
+        sails new testProject
 
-Change directory into the new project:
+1. Change directory into the new project:
 
-    cd testProject
+        cd testProject
 
 ## Run
 
-Run the app with the following command:
+1. Run the app with the following command:
 
-    sails lift
+        sails lift
 
-Visit [http://localhost:1337](http://localhost:1337) to see the new project's
+1. Visit [http://localhost:1337](http://localhost:1337) to see the new project's
 home page.
 
 ## Deploy
 
-Run the following command to deploy your app:
+1. Create an `app.yaml` file with the following contents:
 
-    gcloud app deploy
+        runtime: nodejs
+        env: flex
 
-Visit `http://YOUR_PROJECT_ID.appspot.com` to see the `Hello World!` message.
+1. Run the following command to deploy your app:
+
+        gcloud app deploy
+
+1. Visit `http://YOUR_PROJECT_ID.appspot.com` to see the `Hello World!` message.
 
 Note: When the the Sails.js app is deployed it will automatically switch to
 production mode and listen on the correct port.
 
+[sails]: http://sailsjs.org/
 [nodejs-gcp]: running-nodejs-on-google-cloud

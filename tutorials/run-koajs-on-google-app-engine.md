@@ -7,7 +7,7 @@ date_published: 12/16/2015
 ---
 ## Koa.js
 
-> [koa](http://koajs.com) is a next generation web framework for Node.js.
+> [koa][koa] is a next generation web framework for Node.js.
 >
 > – koajs.com
 
@@ -18,18 +18,18 @@ Platform.
 ## Prerequisites
 
 1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
-1. Enabled billing for your project.
+1. Enable billing for your project.
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Prepare
 
-Initialize a `package.json` file with the following command:
+1. Initialize a `package.json` file with the following command:
 
-    npm init
+        npm init
 
-Install Koa.js:
+1. Install Koa.js:
 
-    npm install --save koa
+        npm install --save koa
 
 ## Create
 
@@ -46,26 +46,25 @@ Create a `server.js` file with the following contents:
 
 ## Run
 
-Run the app with the following command:
+1. Run the app with the following command:
 
-    npm start
+        npm start
 
-Visit [http://localhost:8080](http://localhost:8080) to see the `Hello World!`
+1. Visit [http://localhost:8080](http://localhost:8080) to see the `Hello World!`
 message.
 
 ## Deploy
 
-Create an `app.yaml` file with the following contents:
+1. Create an `app.yaml` file with the following contents:
 
-    runtime: nodejs
-    env: flex
+        runtime: nodejs
+        env: flex
 
-The `app.yaml` makes the app deployable to Google App Engine Managed VMs.
+1. Run the following command to deploy your app:
 
-Run the following command to deploy your app:
+        gcloud app deploy
 
-    gcloud app deploy
+1. Visit `http://YOUR_PROJECT_ID.appspot.com` to see the `Hello World!` message.
 
-Visit `http://YOUR_PROJECT_ID.appspot.com` to see the `Hello World!` message.
-
+[koa]: http://koajs.com
 [nodejs-gcp]: running-nodejs-on-google-cloud
