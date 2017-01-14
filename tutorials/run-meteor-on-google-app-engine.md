@@ -1,15 +1,20 @@
 ---
 title: Run Meteor on Google App Engine
-description: Learn how to deploy a Meteor app to App Engine Flexible
+description: Learn how to deploy a Meteor app to App Engine flexible environment.
 author: anassri
 tags: App Engine, Meteor, Node.js
 date_published: 10/25/2016
 ---
 ## Meteor
 
-> [Meteor](https://meteor.com) is an open source platform for web, mobile, and desktop.
+> [Meteor](https://meteor.com) is an open source platform for web, mobile, and
+> desktop.
 >
 > – meteor.com
+
+You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
+overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
+Platform.
 
 ## Prerequisites
 
@@ -18,136 +23,152 @@ date_published: 10/25/2016
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Prepare
-[Install Meteor](https://meteor.com/install).
 
-## Creation
+1. [Install Meteor](https://meteor.com/install) on your local machine.
 
-### Initialize a Meteor project
-Initialize a Meteor project by `cd`ing to the target folder and running the following command:
+1. Create a MongoDB instance as described [here][deploy-mongodb]. Remember your
+`MONGO_URL`, you will need that later. An example MongoDB URI would be
+`mongodb://username:password@host:port`.
 
-    meteor create [YOUR_APP_NAME]
-    cd [YOUR_APP_NAME]
-    meteor add reactive-dict
-    meteor remove autopublish
+## Create
 
-Replace `[YOUR_APP_NAME]` with your app name.
+1. Initialize a Meteor project by running the following commands:
 
-### Add database functionality
-If you want to make sure MongoDB is working correctly, you can add some simple database functionality to your app by editing the `main.js` files `[YOUR_APP_NAME]/client` and `[YOUR_APP_NAME]/server`.
+        meteor create [YOUR_APP_NAME]
+        cd [YOUR_APP_NAME]
+        meteor add reactive-dict
+        meteor remove autopublish
 
-If you are not interested in adding database functionality to your app, then you can skip to the Running section. Otherwise, change `[YOUR_APP_NAME]/client/main.js` to look like:
+    replacing `[YOUR_APP_NAME]` with your app name.
 
-    import { Template } from 'meteor/templating';
-    import { ReactiveVar } from 'meteor/reactive-var';
-    import { Meteor } from 'meteor/meteor'
+1. To add database functionality, edit `[YOUR_APP_NAME]/client/main.js` to look
+like:
 
-    import './main.html';
+        import { Template } from 'meteor/templating';
+        import { ReactiveVar } from 'meteor/reactive-var';
+        import { Meteor } from 'meteor/meteor'
 
-    Template.hello.onCreated(function helloOnCreated() {
-      // counter starts at 0
-      this.counter = new ReactiveDict({value: '0' });
-      var instance = this;
+        import './main.html';
 
-      Meteor.subscribe('counters', function () {
-        var counterConn = new Mongo.Collection('counters');
-        instance.counterConn = counterConn;
+        Template.hello.onCreated(function helloOnCreated() {
+          // counter starts at 0
+          this.counter = new ReactiveDict({value: '0' });
+          var instance = this;
 
-        var counterList = counterConn.find({}).fetch();
-        var dbCounter = counterList[0];
-        instance.dbCounter = dbCounter;
+          Meteor.subscribe('counters', function () {
+            var counterConn = new Mongo.Collection('counters');
+            instance.counterConn = counterConn;
 
-        instance.counter.set('_id', dbCounter._id);
-        instance.counter.set('value', dbCounter.value);
-      });
-    });
+            var counterList = counterConn.find({}).fetch();
+            var dbCounter = counterList[0];
+            instance.dbCounter = dbCounter;
 
-    Template.hello.helpers({
-      counter() {
-        return Template.instance().counter.get('value');
-      },
-    });
-
-    Template.hello.events({
-      'click button'(event, instance) {
-
-        // Increment counter
-        instance.counter.set('value', instance.counter.get('value') + 1);
-
-        // Update counter on DB
-        instance.counterConn.update(instance.dbCounter._id, {
-          '$set': {'value': instance.counter.get('value') }
+            instance.counter.set('_id', dbCounter._id);
+            instance.counter.set('value', dbCounter.value);
+          });
         });
-      },
-    });
 
-You'll also need to edit `[APP_NAME]/server/main.js` so that it looks like:
+        Template.hello.helpers({
+          counter() {
+            return Template.instance().counter.get('value');
+          },
+        });
 
-    import { Meteor } from 'meteor/meteor';
-    import { Mongo } from 'meteor/mongo';
+        Template.hello.events({
+          'click button'(event, instance) {
 
-    Meteor.startup(() => {
-      // code to run on server at startup
-      const Counters = new Mongo.Collection('counters');
+            // Increment counter
+            instance.counter.set('value', instance.counter.get('value') + 1);
 
-      // Make sure a Counter entry exists
-      if (Counters.find({}).fetch().length == 0)
-        Counters.insert({value: 0})
+            // Update counter on DB
+            instance.counterConn.update(instance.dbCounter._id, {
+              '$set': {'value': instance.counter.get('value') }
+            });
+          },
+        });
 
-      // Publish counters
-      Meteor.publish('counters', function () {
-        return Counters.find({});
-      })
-    });
+1. Edit `[APP_NAME]/server/main.js` so that it looks like:
 
-## Running
+        import { Meteor } from 'meteor/meteor';
+        import { Mongo } from 'meteor/mongo';
 
-Run the Meteor project by `cd`ing into the project's directory (if necessary) and running the commands below:
+        Meteor.startup(() => {
+          // code to run on server at startup
+          const Counters = new Mongo.Collection('counters');
 
-    cd [YOUR_APP_NAME] # if necessary
-    meteor
+          // Make sure a Counter entry exists
+          if (Counters.find({}).fetch().length == 0)
+            Counters.insert({value: 0})
 
-Go to your Meteor app's location (`http://localhost:3000` by default) to see the `Welcome to Meteor!` message.
+          // Publish counters
+          Meteor.publish('counters', function () {
+            return Counters.find({});
+          })
+        });
 
-When you're done, use CTRL-C to exit Meteor.
+## Run
 
-## Configuration
+1. Run the app with the following command:
 
-### Initialize a Mongo instance
-Create a Mongo instance as described [here](https://cloud.google.com/nodejs/getting-started/deploy-mongodb). Remember your `MONGO_URL` - you'll need that for the next step.
+        MONGO_URL=[MONGO_URL] meteor run
 
-### Configure a custom runtime
-Create an `app.yaml` file with the following contents:
+    replacing `[MONGO_URL]` with your MongoDB URI.
 
-    runtime: custom
-    vm: true
-    env_variables:
-        MONGO_URL: [MONGO_URL]
-        DISABLE_WEBSOCKETS: "1"
+1. Visit [http://localhost:3000](http://localhost:3000) to see the
+`Welcome to Meteor!` message.
 
-Replace `[MONGO_URL]` with a valid Mongo URL as described in [this tutorial](/nodejs/getting-started/deploy-mongodb).
+    When you're done, use CTRL-C to exit Meteor.
 
-Then, configure a [custom runtime](/appengine/docs/flexible/custom-runtimes/) by creating a `Dockerfile` as follows:
+## Deploy
 
-    # Extending the generic Node.js image
-    FROM gcr.io/google_appengine/nodejs
-    COPY . /app/
+1. Add the following to the `package.json` file:
 
-    # Install Meteor
-    RUN curl "https://install.meteor.com" | sh
+        "scripts": {
+          "cleanup": "rm -rf ../bundle/",
+          "dist": "npm run cleanup && meteor build ../ --directory --architecture os.linux.x86_64 --server-only",
+          "predeploy": "npm run dist && cp app.yaml ../bundle/ && cp Dockerfile ../bundle/",
+          "deploy": "npm run predeploy && (cd ../bundle && gcloud app deploy -q)"
+        },
 
-    # Install dependencies
-    RUN npm install --unsafe-perm
+    These scripts provide you with some tasks that prepare the app for
+    deployment to Google App Engine flexible environment. See
+    [Custom deployment][custom] for more information about custom Meteor
+    deployments.
 
-The `app.yaml` makes the app deployable to Google App Engine Flexible, while the Dockerfile specifies the steps to take during the deployment.
+1. Configure a [custom runtime](/appengine/docs/flexible/custom-runtimes/) by
+running the following command:
 
-### Configure Meteor for Deployment
-In order for Meteor to work on App Engine, it must run on the port indicated by the $PORT environment variable. We can configure Meteor to run on a specific port by adding a `port` flag to the `start` script in `package.json` as follows:
+        gcloud beta app gen-config --custom
 
-    "start": "meteor run --port $PORT"
+1. Replace the contents of the `Dockerfile` file with the following:
 
-## Deployment
-Run the following command to deploy your app:
+        FROM gcr.io/google_appengine/nodejs
+        COPY . /app/
+        RUN (cd programs/server && npm install --unsafe-perm)
+        CMD node main.js
 
-    gcloud app deploy
+    The custom `Dockerfile` is required in order to properly build the Meteor
+    app in production.
 
-Once the deployment process completes, go to `http://<your-project-id>.appspot.com` to see the `Welcome to Meteor!` message. To test database functionality, click on the button a few times and refresh the page. You should see your previous button-click count appear after a few seconds.
+1. Add the following to the generated `app.yaml` file:
+
+        env_variables:
+          ROOT_URL: https://[YOUR_PROJECT_ID].appspot-preview.com
+          MONGO_URL: [MONGO_URL]
+          DISABLE_WEBSOCKETS: "1"
+
+    replacing `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID and
+    `[MONGO_URL]` with your MongoDB URI.
+
+1. Run the following command to deploy your app:
+
+        npm run deploy
+
+1. Visit `https://[YOUR_PROJECT_ID].appspot.com` to see the `Welcome to Meteor!`
+message, replacing `[YOUR_PROJECT_ID]` with your Google Cloud Platform project
+ID. To test database functionality, click on the button a few times and refresh
+the page. You should see your previous button-click count appear after a few
+seconds.
+
+[deploy-mongodb]: https://cloud.google.com/nodejs/getting-started/deploy-mongodb
+[custom]: https://guide.meteor.com/deployment.html#custom-deployment
