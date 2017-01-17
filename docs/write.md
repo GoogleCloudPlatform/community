@@ -22,20 +22,22 @@ To submit a tutorial:
 
 1. Accept the Contributor License Agreement (CLA).
 
-   [**CLA**][cla]
-   
+      [**View the CLA**][cla]
+
 1. Ensure your tutorial adheres to the style guide.
 
-   [**STYLE GUIDE**][styleguide]
-   
+      [**View the style guide**][styleguide]
+
 1. You can fork and add a new tutorial in one step. Simply add your
 markdown to the GitHub editor and then commit.
 
-   [**FORK**][fork_quick]
+      [**Fork and start writing**][fork_quick]
 
-Alternatively, you can fork the repo to start a pull request:
+Alternatively, you can manually fork and clone the repo, make and commit your
+changes, and then open a pull request:
 
 1. [Fork][fork_how] the community repository: [github.com/GoogleCloudPlatform/community][github].
+1. Clone your fork to your local machine.
 1. Add a new file to the `tutorials/` folder.
 1. Commit your changes and open a [pull request][pr].
 
