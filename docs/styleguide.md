@@ -7,6 +7,7 @@ This document provides guidance for contributors to the Google Cloud Platform (G
 * [General content guidelines](#general-content-guidelines)
 * [General style guidelines](#general-style-guidelines)
 * [Voice and tone](#voice-and-tone)
+* [Inlcuding source code](#includeing-source-code)
 * [Writing resources](#writing-resources)
 
 ## Caveats
@@ -313,6 +314,35 @@ Also keep your paragraphs short and to the point. On the web, people skim more a
 If a sentence is long, even with  straightforward word choices, break it up into multiple, shorter sentences.
 
 Re-read what you wrote and then eliminate all the unnecessary words.
+
+## Inluding source code
+
+If you would like to include source code within your tutorial, you have two
+options:
+
+### Option 1
+
+Just embed the source code directly in the tutorial. Wrap the code in three
+backticks or indent by four spaces to achieve proper formatting.
+
+This option is the simplest, but offer no way to test the code, and does not
+allow the user to view actual source code files as they might exist in a real
+project.
+
+For an example, see [Run Koa.js on Google App Engine Flexible Environment](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/run-koajs-on-google-app-engine.md).
+
+### Option 2
+
+Instead of a markdown file in the `tutorials/` directory, create a folder for
+your files. The markdown for the tutorial should be in an `index.md` file within
+the new folder, and the rest of the source code files must be in the new folder
+as well. Snippets from the source code files can be included in the markdown
+file using [EmbedMd](https://github.com/campoy/embedmd).
+
+This option is more complicated, but allows us to test the code, and allows the
+user to view real source code files.
+
+For an example, see [Using Node.js to Calculate the Size of a BigQuery Dataset](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/using-nodejs-to-calculate-the-size-of-a-bigquery-dataset).
 
 ## Writing resources
 

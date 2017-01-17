@@ -2,7 +2,8 @@
   "private": true,
   "scripts": {
     "lint": "semistandard \"**/*.js\"",
-    "test": "npm run lint && mocha --recursive -t 30000"
+    "build": "node ./bin/build",
+    "test": "npm run lint && mocha -t 120000 ./test/*"
   },
   "semistandard": {
     "globals": [
@@ -18,7 +19,7 @@
     ]
   },
   "devDependencies": {
-    "mocha": "^2.5.3",
-    "semistandard": "^8.0.0"
+    "mocha": "3.2.0",
+    "semistandard": "9.2.1"
   }
 }
