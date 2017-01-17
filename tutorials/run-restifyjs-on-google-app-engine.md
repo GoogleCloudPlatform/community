@@ -7,7 +7,7 @@ date_published: 12/15/2015
 ---
 ## Restify.js
 
-> [Restify](http://restify.com/) is a Node.js module built specifically to
+> [Restify][restify] is a Node.js module built specifically to
 > enable you to build correct REST web services.
 >
 > – restify.com
@@ -19,26 +19,26 @@ Platform.
 ## Prerequisites
 
 1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
-1. Enabled billing for your project.
+1. Enable billing for your project.
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Prepare
 
-Initialize a `package.json` file with the following command:
+1. Initialize a `package.json` file with the following command:
 
-    npm init
+        npm init
 
-Install Restify.js:
+1. Install Restify.js:
 
-    npm install --save restify
+        npm install --save restify
 
 ## Create
 
 Create a `server.js` file with the following contents:
 
-    var restify = require('restify');
+    const restify = require('restify');
 
-    var server = restify.createServer({
+    const server = restify.createServer({
       name: 'appengine-restify',
       version: '1.0.0'
     });
@@ -47,35 +47,35 @@ Create a `server.js` file with the following contents:
     server.use(restify.queryParser());
     server.use(restify.bodyParser());
 
-    server.get('/', function (req, res) {
+    server.get('/', (req, res) => {
       res.send('Hello World!');
     });
 
-    server.listen(process.env.PORT || 8080, function () {
-      console.log('%s listening at %s', server.name, server.url);
+    server.listen(process.env.PORT || 8080, () => {
+      console.log(`${server.name} listening at ${server.url}`);
     });
 
 ## Run
 
-Run the app with the following command:
+1. Run the app with the following command:
 
-    node server.js
+        node server.js
 
-Go to `http://localhost:8080` to see the `Hello World!` message.
+1. Visit [http://localhost:8080](http://localhost:8080) to see the `Hello World!`
+message.
 
 ## Deploy
 
-Create an `app.yaml` file with the following contents:
+1. Create an `app.yaml` file with the following contents:
 
-    runtime: nodejs
-    vm: true
+        runtime: nodejs
+        env: flex
 
-The `app.yaml` makes the app deployable to Google App Engine Managed VMs.
+1. Run the following command to deploy your app:
 
-Run the following command to deploy your app:
+        gcloud app deploy
 
-    gcloud preview app deploy app.yaml
+1. Go to `http://YOUR_PROJECT_ID.appspot.com` to see the `Hello World!` message.
 
-Go to `http://<your-project-id>.appspot.com` to see the `Hello World!` message.
-
+[restify]: http://restify.com/
 [nodejs-gcp]: running-nodejs-on-google-cloud
