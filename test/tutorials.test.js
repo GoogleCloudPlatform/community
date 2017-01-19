@@ -1,15 +1,17 @@
-// Copyright 2015-2016, Google, Inc.
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/**
+ * Copyright 2017, Google, Inc.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 'use strict';
 
@@ -19,6 +21,7 @@ const path = require('path');
 const utils = require('./utils');
 const {
   FILENAME_REGEXP,
+  DIR_REGEXP,
   TUTORIAL_YAML_REGEXP,
   TITLE_REGEXP,
   DESCRIPTION_REGEXP,
@@ -30,24 +33,61 @@ const {
 
 const files = fs.readdirSync(TUTORIALS_PATH);
 
-describe('tutorials/', function () {
-  files.forEach(function (entry, i) {
-    describe(entry, function () {
-      before(function (done) {
-        fs.readFile(path.join(TUTORIALS_PATH, '/', entry), { encoding: 'utf8' }, (err, content) => {
+describe('tutorials/', () => {
+  files.forEach((entry, i) => {
+    describe(entry, () => {
+      let content, filename;
+      const dir = path.join(TUTORIALS_PATH, '/', entry);
+      const stats = fs.statSync(dir);
+
+      if (stats.isDirectory()) {
+        filename = path.join(dir, 'index.md');
+      } else if (stats.isFile()) {
+        filename = dir;
+      } else {
+        throw new Error(`Unrecognized file: ${entry}`);
+      }
+
+      before((done) => {
+        fs.readFile(filename, { encoding: 'utf8' }, (err, _content) => {
           if (err) {
-            return done(err);
+            done(err);
+            return;
           }
-          this.content = content;
-          return done();
+          content = _content;
+          done();
         });
       });
-      it('filename', function () {
-        assert(FILENAME_REGEXP.test(entry), `filename should be of the form ${FILENAME_REGEXP}. Actual: ${entry}.`);
+
+      it('tests pass, if any', (done) => {
+        // TODO: Handle tests for other languages
+        fs.stat(path.join(dir, 'package.json'), (err, stats) => {
+          if (err) {
+            // Ignore error
+            done();
+            return;
+          }
+
+          utils.runAsync('npm install', dir)
+            .then(() => utils.runAsync('npm test', dir))
+            .then((output) => {
+              console.log(output);
+              done();
+            }).catch(done);
+        });
       });
-      it('frontmatter', function () {
-        const matches = TUTORIAL_YAML_REGEXP.exec(this.content);
-        assert(TUTORIAL_YAML_REGEXP.test(this.content), `frontmatter should be of the form ${TUTORIAL_YAML_REGEXP}. Actual: ${this.content}`);
+
+      it('filename', () => {
+        if (stats.isDirectory()) {
+          assert(DIR_REGEXP.test(entry), `filename should be of the form ${DIR_REGEXP}. Actual: ${entry}.`);
+        } else {
+          assert(FILENAME_REGEXP.test(entry), `filename should be of the form ${FILENAME_REGEXP}. Actual: ${entry}.`);
+        }
+      });
+
+      it('frontmatter', () => {
+        const matches = TUTORIAL_YAML_REGEXP.exec(content);
+        assert(TUTORIAL_YAML_REGEXP.test(content), `frontmatter should be of the form ${TUTORIAL_YAML_REGEXP}. Actual: ${content}`);
         const [
           ,
           title,
