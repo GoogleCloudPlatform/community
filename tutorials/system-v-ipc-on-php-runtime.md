@@ -1,8 +1,8 @@
 ---
-title: Use System V shared memory on Google Cloud PHP runtime
-description: Learn how to use System V shared memory in a PHP App Engine Flexible Environment app
+title: Using System V Shared Memory on the Google App Engine Flexible PHP Runtime
+description: Learn how to use System V shared memory in a PHP App Engine flexible environment app
 author: tmatsuo
-tags: App Engine, PHP
+tags: App Engine Flexible, PHP
 date_published: 01/23/2017
 ---
 ## System V IPC family
@@ -13,8 +13,8 @@ details, visit
 [the official documentation](http://php.net/manual/en/intro.sem.php).
 
 [Our PHP runtime](https://github.com/googlecloudplatform/php-docker)
-provides these feature out of the box, so you can immediately start
-using them on [App Engine Flexible Environment](https://cloud.google.com/appengine/docs/flexible/).
+provides these features out of the box, so you can immediately start
+using them on [App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/).
 We'll walk through a small demo app to learn how to use them.
 
 ## Prerequisites
@@ -71,8 +71,7 @@ We'll walk through a small demo app to learn how to use them.
         gcloud app deploy app.yaml
 
 
-1. Access the app and see the counts
-   For example, you can use `ab`
+1. Access the app and see the counts. For example, you can use `ab`:
    
         ab -n100 -c10 http://your-project-id.appspot-preview.com/
    
