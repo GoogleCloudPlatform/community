@@ -2,7 +2,7 @@
 title: Run Restify.js on Google App Engine Flexible Environment
 description: Learn how to deploy a Restify.js app to Google App Engine flexible environment.
 author: jmdobry
-tags: App Engine, Node.js, Restify.js
+tags: App Engine Flexible, Node.js, Restify.js
 date_published: 12/15/2015
 ---
 ## Restify.js
