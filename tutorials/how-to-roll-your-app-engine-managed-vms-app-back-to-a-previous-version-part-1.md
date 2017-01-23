@@ -2,7 +2,7 @@
 title: How to Roll Your App Engine Flexible Environment App Back to a Previous Version
 description: Learn how to utilize versions and rollbacks in App Engine flexible environment.
 author: jmdobry
-tags: App Engine
+tags: App Engine Flexible
 date_published: 12/18/2015
 ---
 ## Disaster scenario
