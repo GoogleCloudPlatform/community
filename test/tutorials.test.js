@@ -31,7 +31,8 @@ const {
   TUTORIALS_PATH
 } = utils;
 
-const files = fs.readdirSync(TUTORIALS_PATH);
+const files = fs.readdirSync(TUTORIALS_PATH)
+  .filter((name) => !name.startsWith('.'));
 
 describe('tutorials/', () => {
   files.forEach((entry, i) => {
