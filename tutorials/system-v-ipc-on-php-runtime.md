@@ -1,6 +1,6 @@
 ---
 title: Using System V Shared Memory on the Google App Engine Flexible PHP Runtime
-description: Learn how to use System V shared memory in a PHP App Engine flexible environment app
+description: Learn how to use System V shared memory in a PHP App Engine flexible environment app.
 author: tmatsuo
 tags: App Engine Flexible, PHP
 date_published: 01/23/2017
@@ -72,9 +72,9 @@ We'll walk through a small demo app to learn how to use them.
 
 
 1. Access the app and see the counts. For example, you can use `ab`:
-   
+
         ab -n100 -c10 http://your-project-id.appspot-preview.com/
-   
+
    and access the same URL with a browser to see the counter.
 
 ## Caveats
