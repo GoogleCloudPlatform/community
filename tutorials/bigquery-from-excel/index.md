@@ -1,18 +1,18 @@
 ---
-title: Connecting to BigQuery from Microsoft Excel® using ODBC
-description: Learn how to use the ODBC drivers for Google BigQuery to load query results into Microsoft Excel® for analysis and visualization.
+title: Connecting to BigQuery from Microsoft Excel using ODBC
+description: Learn how to use the ODBC drivers for Google BigQuery to load query results into Microsoft Excel for analysis and visualization.
 author: tswast
 tags: BigQuery, Excel, ODBC
 date_published: 01/26/2017
 ---
 [Google BigQuery](https://cloud.google.com/bigquery/) enables [standard SQL
 queries](https://cloud.google.com/bigquery/docs/reference/standard-sql/) to
-[petabytes of data](https://youtu.be/6Nv18xmJirs), but what if software you
+[petabytes of data](https://youtu.be/6Nv18xmJirs). But what if software you
 depend on doesn't support the BigQuery API? The [BigQuery ODBC
 drivers](https://cloud.google.com/bigquery/partners/simba-drivers/) enable you
 to connect tools that support the [Open Database Connectivity
-(ODBC)](https://en.wikipedia.org/wiki/Open_Database_Connectivity) API to
-BigQuery, such as Microsoft Excel®.
+(ODBC)](https://wikipedia.org/wiki/Open_Database_Connectivity) API to
+BigQuery, such as Microsoft Excel.
 
 ## Objectives
 
@@ -22,16 +22,16 @@ BigQuery, such as Microsoft Excel®.
 
 ## Before you begin
 
-This tutorial assumes you are using the Windows operating system.
+This tutorial assumes you are using the Microsoft Windows operating system.
 
 1. Create a project in the [Google Cloud Platform
    Console](https://console.cloud.google.com/).
 
-   See the [blog post on getting started with the BigQuery free
+1. See the [blog post on getting started with the BigQuery free
    tier](https://cloud.google.com/blog/big-data/2017/01/how-to-run-a-terabyte-of-google-bigquery-queries-each-month-without-a-credit-card)
    or [video for more detailed
    instructions](https://youtu.be/w4mzE--sprY?list=PLIivdWyY5sqI6Jd0SbqviEgoA853EvDsq).
-1. Install [Microsoft Excel® 2016 for
+1. Install [Microsoft Excel 2016 for
    Windows](https://products.office.com/en-us/excel).
 
 ## Costs
@@ -48,23 +48,23 @@ to limit your costs](https://cloud.google.com/bigquery/cost-controls).
 
 ## Downloading the driver
 
-* Check whether your version of Excel is [32-bit or
+1. Check whether your version of Excel is [32-bit or
   64-bit](https://liberty.service-now.com/kb_view.do?sys_kb_id=7e56d58e358829405af1cb6de5727f5a).
-* Download the latest version  of the
+1. Download the latest version  of the
   ODBC driver from the [Simba Drivers for Google BigQuery
   page](https://cloud.google.com/bigquery/partners/simba-drivers/) which
   matches your version of Excel.
-* Run the ODBC driver installer.
+1. Run the ODBC driver installer.
 
 ## Configuring the driver
 
-* Run the ODBC Data Sources Administrator program as the
+1. Run the ODBC Data Sources Administrator program as the
   Windows administrator.
-* Select the System DSN tab.
-* Configure the BigQuery driver.
-* Provide credentials with user authentication. Follow the prompts to log in
+1. Select the System DSN tab.
+1. Configure the BigQuery driver.
+1. Provide credentials with user authentication. Follow the prompts to log in
   and authorize the driver to access the BigQuery API.
-* Set the Project (Catalog) to your [Google Cloud project
+1. Set the Project (Catalog) to your [Google Cloud project
   ID](https://support.google.com/cloud/answer/6158840?hl=en).
 
 Note that the installer writes a user guide to the installation directory (in
@@ -77,41 +77,41 @@ Once the ODBC driver is configured, open Excel.
 
 ### Opening the query dialog
 
-* Go to the **Data** tab.
-* Select **New Query -> From Other Sources -> From ODBC**.
+1. Go to the **Data** tab.
+1. Select **New Query -> From Other Sources -> From ODBC**.
   ![Query from ODBC in Excel screenshot](query-from-odbc.png)
-* Choose **Google BigQuery** as the data source.
-* Don't supply a username or password. Instead, select the connection type tab
+1. Choose **Google BigQuery** as the data source.
+1. Don't supply a username or password. Instead, select the connection type tab
   for **Default or Custom**.
 
 ### Entering a query
 
-* Select **Advanced Options**.
-* Enter your query in the **SQL statement** text box.
+1. Select **Advanced Options**.
+1. Enter your query in the **SQL statement** text box.
   ![Enter SQL statement screenshot](sql-statement.png)
 
-As an example, query the [USA names public
-dataset](https://cloud.google.com/bigquery/public-data/usa-names) for the most
-popular names during the [baby boomer
-generation](https://en.wikipedia.org/wiki/Baby_boomers).
+   As an example, query the [USA names public
+   dataset](https://cloud.google.com/bigquery/public-data/usa-names) for the most
+   popular names during the [baby boomer
+   generation](https://wikipedia.org/wiki/Baby_boomers).
 
-```
-#standardSQL
-SELECT
-  name, SUM(number) as total_number
-FROM
-  `bigquery-public-data.usa_names.usa_1910_2013`
-WHERE
-  year >= 1946
-  AND year <= 1964
-GROUP BY
-  name
-ORDER BY
-  total_number
-DESC
-```
+   ```
+   #standardSQL
+   SELECT
+     name, SUM(number) as total_number
+   FROM
+     `bigquery-public-data.usa_names.usa_1910_2013`
+   WHERE
+     year >= 1946
+     AND year <= 1964
+   GROUP BY
+     name
+   ORDER BY
+     total_number
+   DESC
+   ```
 
-* Click **OK**. When the query completes, you will have a new sheet with about 7,400 rows.
+1. Click **OK**. When the query completes, you will have a new sheet with about 7,400 rows.
 
 ## Next Steps
 
