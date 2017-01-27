@@ -79,7 +79,7 @@ Once the ODBC driver is configured, open Excel.
 
 1. Go to the **Data** tab.
 1. Select **New Query -> From Other Sources -> From ODBC**.
-  ![Query from ODBC in Excel screenshot](query-from-odbc.png)
+  ![Query from ODBC in Excel screenshot](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/query-from-odbc.png)
 1. Choose **Google BigQuery** as the data source.
 1. Don't supply a username or password. Instead, select the connection type tab
   for **Default or Custom**.
@@ -88,7 +88,7 @@ Once the ODBC driver is configured, open Excel.
 
 1. Select **Advanced Options**.
 1. Enter your query in the **SQL statement** text box.
-  ![Enter SQL statement screenshot](sql-statement.png)
+  ![Enter SQL statement screenshot](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/sql-statement.png)
 
    As an example, query the [USA names public
    dataset](https://cloud.google.com/bigquery/public-data/usa-names) for the most
