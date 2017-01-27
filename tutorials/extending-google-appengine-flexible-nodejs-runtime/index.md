@@ -1,5 +1,5 @@
 ---
-title: Extending the Node.js Runtime of the Google App Engine Flexible Environment.
+title: Extending the Node.js Runtime of the Google App Engine Flexible Environment
 description: Learn how to extend the Node.js runtime of the Google App Engine flexible environment.
 author: jmdobry
 tags: App Engine Flexible, Node.js, Docker
@@ -8,9 +8,8 @@ date_published: 01/23/2017
 This tutorial shows how to extend the Node.js runtime of the Google App Engine
 flexible environment.
 
-We will create a small Node.js web application that requires customizations to
-the default Node.js runtime of the [Google App Engine flexible environment][flex]
-in order to run.
+You will create a small Node.js web application that requires customizations to
+the default Node.js runtime of the [Google App Engine flexible environment][flex].
 
 ## Prerequisites
 
@@ -73,8 +72,8 @@ module.exports = app;
 
 Notice how the app shells out to `/usr/games/fortune` in order to respond to the
 request. The `fortune` binary is not available in the default Node.js runtime,
-so we need to extend the runtime in order to make the binary available to our
-app once it's deployed.
+so you need to extend the runtime in order to make the binary available to your
+app after it's deployed.
 
 ## Extending the runtime
 
