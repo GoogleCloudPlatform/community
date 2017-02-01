@@ -8,15 +8,16 @@ date_published: 02/01/2017
 ## Google Cloud Container Builder
 
 [Google Cloud Container Builder][builder] lets you create [Docker][docker]
-container images from your source code. Google Cloud SDK provides
+container images from your source code. [Google Cloud SDK][cloudsdk] provides
 `container builds` subcommand for utilizing this service easily.
 
 [builder]: https://cloud.google.com/container-builder
 [docker]: https://www.docker.com/
+[cloudsdk]: https://cloud.google.com/sdk/
 
 For example, here is a simple command to build a docker image:
 
-    gcloud beta container builds submit -t gcr.io/my-project/my-image .
+    gcloud container builds submit -t gcr.io/my-project/my-image .
 
 This command will send the files in the current directory to Google Cloud
 Storage, then on one of the Container Builder VMs, fetch the source code, run
@@ -40,9 +41,9 @@ configuration file.
 ## Running tests in a build step
 
 If we can use any arbitrary Docker image as the Build Step, and the source code
-is available, then there is nothing preventing us from running tests. Since you
-always run the test with the same docker image, you don't have to worry about
-environment differences on CI systems any more.
+is available, then we can run unit tests as a Build Step. By doing so, you always 
+run the test with the same docker image. You don't have to worry about environment
+differences on CI systems any more.
 
 There is a demo repository at [cloudbuild-test-runner-example][repo]. This
 tutorial uses the demo repository as part of its instructions.
@@ -51,8 +52,10 @@ tutorial uses the demo repository as part of its instructions.
 
 ## Test runner for phpunit
 
-The test runner is in `php/test/runner` subdirectory of the repo with following
-two files.
+The test runner is in the [`php/test/runner`][testrunner] subdirectory with the 
+following two files.
+
+[testrunner]: https://github.com/GoogleCloudPlatform/cloudbuild-test-runner-example/tree/master/php/test/runner
 
 The first file is `Dockerfile`:
 
@@ -79,7 +82,7 @@ COPY run_tests.sh /run_tests.sh
 ENTRYPOINT ["/run_tests.sh"]
 ```
 
-and `run_tests.sh`:
+The second file is `run_tests.sh`:
 
 ```bash
 #!/bin/bash
@@ -90,6 +93,7 @@ if [ "$#" -eq 0 ]; then
 else
   TEST_DIR=${1}
 fi
+
 cd ${TEST_DIR}
 
 if [ -f composer.json ]; then
@@ -108,7 +112,7 @@ We have already built and pushed this image to
 `gcr.io/cloud-dpes/phpunit-test-runner` with the following command:
 
 ```
-gcloud beta container builds submit -t gcr.io/cloud-dpes/phpunit-test-runner .
+gcloud container builds submit -t gcr.io/cloud-dpes/phpunit-test-runner .
 ```
 
 ## Configuration file for Cloud Container Builder
@@ -125,24 +129,24 @@ steps:
 
 Here is an excerpt from `.travis.yml`:
 
-```
+```yaml
 install:
 - php scripts/dump_credentials.php
 - scripts/install_gcloud.sh
 
 script:
 - pushd php
-- gcloud beta container builds submit --config=cloudbuild.yaml .
+- gcloud container builds submit --config=cloudbuild.yaml .
 - popd
 ```
 
-To use `gcloud beta container builds` command, we need to install Google Cloud
+To use `gcloud container builds` command, we need to install Google Cloud
 SDK and configure it to use a service account. For more details about
 prerequisites, see [the TRAVIS.md file in the repo][travis].
 
 [travis]: https://github.com/GoogleCloudPlatform/cloudbuild-test-runner-example/blob/master/TRAVIS.md
 
-The `gcloud beta container builds submit` command in the `script` section
+The `gcloud container builds submit` command in the `script` section
 actually runs our test. If test fails on the Container Builder VM, the whole
 test build will fail too.
 
