@@ -1,0 +1,249 @@
+---
+title: Running a Botkit Slack Bot on Google Container Engine
+description: Learn how to run a Botkit Slack bot on Google Container Engine.
+author: tswast
+tags: Container Engine, Node.js, Botkit, Slack
+date_published: 02/03/2017
+---
+This tutorial shows how to build a [Slack bot](https://api.slack.com/bot-users)
+using the [Botkit toolkit](https://howdy.ai/botkit/) and run it on [Google
+Container Engine](https://cloud.google.com/container-engine/).
+
+You will build a "Hello World" Slack bot which responds with a greeting in
+response to messages.
+
+## Objectives
+
+1. Create a bot custom integration in Slack.
+1. Build a Node.js image in Docker.
+1. Upload a Docker image to a private Google Container Registry.
+1. Run a Slack bot on Google Container Engine.
+
+## Costs
+
+This tutorial uses billable components of Google Cloud Platform, including:
+
+- Google Container Engine
+- Google Cloud Storage (via the Google Container Registry)
+
+Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
+projected usage.
+
+[pricing]: https://cloud.google.com/products/calculator
+
+## Before you begin
+
+1.  Select or create a [Google Cloud Platform Console][console] project.
+    [Go to the projects page][projects].
+1.  Enable billing for your project. [Enable billing][billing].
+1.  Install the [Google Cloud SDK][sdk].
+1.  Authenticate `gcloud` with Google Cloud Platform.
+
+        gcloud init
+
+1.  Install [Node.js](https://nodejs.org/en/). See [how to prepare a Node.js
+    development
+    environment](https://cloud.google.com/community/tutorials/how-to-prepare-a-nodejs-dev-environment)
+    for more detailed instructions.
+1.  Install [Docker](https://www.docker.com/products/overview).
+
+1.  [Create a new Slack team][new-slack-team], or use one you already have if
+    you have permissions to [add new custom
+    integrations][manage-custom-integrations] to it.
+
+[console]: https://console.cloud.google.com/
+[projects]: https://console.cloud.google.com/project
+[billing]: https://support.google.com/cloud/answer/6293499#enable-billing
+[sdk]: https://cloud.google.com/sdk/
+[new-slack-team]: https://slack.com/create
+[manage-custom-integrations]: https://my.slack.com/apps/manage/custom-integrations
+
+## Getting the sample code
+
+The code for this tutorial is [hosted on GitHub][repo].
+
+1.  Clone the repository with Git or [download and extract the code as a ZIP file][repo-zip].
+
+        git clone https://github.com/googlecodelabs/cloud-slack-bot.git
+
+1.  Change to the sample code directory `cloud-slack-bot/start`.
+
+        cd cloud-slack-bot/start
+
+[repo]: https://github.com/googlecodelabs/cloud-slack-bot
+[repo-zip]: https://github.com/googlecodelabs/cloud-slack-bot/archive/master.zip
+
+## Creating a Slack bot custom integration
+
+A [bot user][bot-user] can listen to messages on Slack, post messages, and
+upload files. In this tutorial, you will create a bot post a simple greeting
+message.
+
+1.  Create a new Slack bot integration from the [Slack configuration page][new-slack-bot].
+1.  Give it a nice username, like @kittenbot.
+
+    ![create a new bot](add-custom-integration.png)
+
+    Click **Add bot integration**.
+
+1.  Customize the bot however you like. You can give it an icon based on an
+    emoji, for example the `:smile_cat:` emoji, or an image.
+
+1.  Add a description to let your teammates know the purpose of this bot.
+
+    ![add a description](custom-integration-description.png)
+
+1.  Copy the API token text into your clipboard.
+
+    ![copy api token](api-token.png)
+
+    You'll use it in the next step. Don't worry. You can come back to the bot
+    configuration page from the [custom integrations management
+    page](https://my.slack.com/apps/manage/custom-integrations) if you need to
+    get this token again.
+
+    **Caution** Be careful with your bot user tokens! Do not share tokens with
+    users or anyone else. For example, do not commit this token to version
+    control. Bot user tokens grant expansive permissions beyond those of
+    typical user tokens.
+
+[bot-user]: https://api.slack.com/bot-users
+[new-slack-bot]: http://my.slack.com/services/new/bot
+
+## Running the bot locally
+
+To run the bot locally on your development machine,
+
+1.  Install the dependencies, including Botkit. Run this command in the
+    `cloud-slack-bot/start` directory.
+
+        npm install
+
+1.  Edit the [kittenbot.js
+    file](https://github.com/googlecodelabs/cloud-slack-bot/blob/master/start/kittenbot.js)
+    and enter your Slack bot token.
+
+1.  Run your bot using Node.js.
+
+        node kittenbot.js
+
+    In your Slack team, you should now see that Kitten Bot is online. If you do
+    not see Kitten Bot in your direct messages list, open a direct message to the
+    bot with the + icon.
+
+    ![open direct message](open-direct-message.png)
+
+    ![add kittenbot](open-direct-message-2.png)
+
+1.  Say hello to `@kittenbot` in a direct message (or if you added Kitten Bot
+    to a channel, the bot will respond to mentions there, too). It should meow
+    back at you.
+
+    ![meow](meow.png)
+
+1.  In your terminal, press Control-C to stop the bot server.
+
+## Loading the API token from a file
+
+Hard-coding an API token in the source code makes it likely to accidentally
+expose your token by publishing it to version control. Instead, you can load
+the token from a file, which is in the `.gitignore` file to prevent accidentally
+checking it into version control.
+
+1.  Write your API token to a plain text file called `slack-token` (no file
+    extension).
+
+1.  Modify
+    [kittenbot.js](https://github.com/googlecodelabs/cloud-slack-bot/blob/master/step-1-token-file/kittenbot.js)
+    to load the API token from the path specified by the `slack_token_path`
+    environment variable.
+
+        cp ../step-1-token-file/kittenbot.js kittenbot.js
+
+1.  Run the bot locally to test it out.
+
+        export slack_token_path=./slack-token
+        node kittenbot.js
+
+    You should see the bot online again in Slack and be able to chat with it.
+
+1.  Press Ctrl-C to shut down the bot.
+
+## Containerizing your bot
+
+Use Docker to containerize your bot. A Docker image bundles all of your
+dependencies (even the compiled ones) so that it can run in a lightweight
+sandbox.
+
+### Building a Docker container image
+
+1.  Create the
+    [Dockerfile](https://github.com/googlecodelabs/cloud-slack-bot/blob/master/step-2-docker/Dockerfile).
+
+        cp ../step-2-docker/Dockerfile Dockerfile
+
+1.  Save your Google Cloud Project ID to the `PROJECT_ID` environment variable.
+    To [get your project ID with the Cloud
+    SDK](http://stackoverflow.com/a/35606433/101923), run
+
+        export PROJECT_ID=$(gcloud config list --format 'value(core.project)')
+
+1.  Build the Docker image.
+
+        docker build -t gcr.io/${PROJECT_ID}/slack-codelab:v1 .
+
+    This step takes some time to download and extract everything.
+
+### Running a Docker container locally
+
+1.  Run the newly-created container image as a daemon.
+
+        docker run -d \
+            -v $(pwd)/:/config \
+            -e slack_token_path=/config/slack-token \
+            gcr.io/${PROJECT_ID}/slack-codelab:v1
+
+    The `-v` argument mounts the current directory as a volume inside the
+    container to give it access to the `slack-token` file. The `-e` argument
+    sets the `slack_token_path` environment variable within the running
+    container.
+
+    See the [full documentation for the `docker
+    run`](https://docs.docker.com/engine/reference/run/) command for details.
+
+1.  You should see that Kitten Bot is online again.
+
+### Stopping a Docker container
+
+1.  Get the ID of the running container.
+
+        docker ps
+
+1.  Stop the container. Replace the docker container ID (`fab8b7a0d6ee` in the
+    example) with the ID of your container.
+
+        docker stop fab8b7a0d6ee
+
+### Pushing a Docker image to Google Container Registry
+
+Now that the image works as intended, push it to the [Google Container
+Registry])(https://cloud.google.com/container-registry/), a private repository
+for your Docker images.
+
+    gcloud docker -- push gcr.io/${PROJECT_ID}/slack-codelab:v1
+
+If all goes well, you should be able to see the container image listed in the
+[Google Cloud console](https://console.cloud.google.com/gcr).
+
+Your Docker image is now published to your private repository, which
+Kubernetes can access and orchestrate.
+
+## Deploying a bot to Container Engine
+
+### Creating a Kubernetes cluster with Container Engine
+
+### Deploying to Container Engine
+
+## Cleaning up
+
+## Next steps
