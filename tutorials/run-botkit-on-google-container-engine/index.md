@@ -240,10 +240,121 @@ Kubernetes can access and orchestrate.
 
 ## Deploying a bot to Container Engine
 
+Now that the Docker image is in Google Container Registry, you can run the
+[`gcloud docker -- pull`
+command](https://cloud.google.com/container-registry/docs/pulling) to save this
+image on any machine and run it with the Docker command-line tool.
+
+If you want to make sure your bot keeps running after it is started, you'll have
+to run another service to monitor your Docker container and restarts it if it
+stops. This gets even harder if you want to make sure the bot keeps running even
+if the machine it is running on fails.
+
+Kubernetes solves this. You tell it that you want there to always be a replica
+of your bot running, and the Kubernetes master will keep that target state. It
+starts the bot up when there aren't enough running, and shuts bot replicas down
+when there are too many.
+
 ### Creating a Kubernetes cluster with Container Engine
+
+A Container Engine cluster is a managed Kubernetes cluster. It consists of a
+Kubernetes master API server hosted by Google and a set of worker nodes. The
+worker nodes are Compute Engine virtual machines.
+
+Create a cluster with two
+[n1-standard-1](https://cloud.google.com/compute/docs/machine-types) nodes (this
+will take a few minutes to complete):
+
+    gcloud container clusters create my-cluster \
+          --num-nodes=2 \
+          --machine-type n1-standard-1
+
+Alternatively, you could create this cluster [via the Cloud
+Console](https://console.cloud.google.com/kubernetes/add).
 
 ### Deploying to Container Engine
 
+Kubernetes has a [Secrets](https://kubernetes.io/docs/user-guide/secrets/#creating-a-secret-using-kubectl-create-secret)
+API for storing secret information such as passwords that containers need at
+runtime. Create a secret to store your Slack API token.
+
+    kubectl create secret generic slack-token --from-file=./slack-token
+
+Next, create a [Kubernetes
+Deployment](https://kubernetes.io/docs/user-guide/deployments/) for your bot. A
+deployment describes how to configure the container and configures a replication
+controller to keep the bot running.
+
+1.  Copy the [deployment.yaml](https://github.com/googlecodelabs/cloud-slack-bot/blob/master/step-3-kubernetes/slack-codelab-deployment.yaml) file.
+
+        cp ../step-3-kubernetes/slack-codelab-deployment.yaml slack-codelab-deployment.yaml
+
+2.  Modify the image name in `slack-codelab-deployment.yaml` with your project
+    ID.
+
+        # Replace PROJECT_ID with your project ID.
+        image: gcr.io/PROJECT_ID/slack-codelab:v1
+
+3.  Deploy your bot to Kubernetes.
+
+        kubectl create -f slack-codelab-deployment.yaml --record
+
+4.  Check that the bot is running.
+
+        kubectl get pods
+
+    When the bot is running, the output will be similar to
+
+        NAME                             READY     STATUS    RESTARTS   AGE
+        slack-codelab-3871250905-dknvp   1/1       Running   0          3m
+
+    You should also see that the bot is online in Slack.
+
+**Troubleshooting** See the Kubernetes documentation for help with [debugging
+a pod that is stuck
+pending](https://kubernetes.io/docs/user-guide/debugging-pods-and-replication-controllers/).
+
 ## Cleaning up
 
+Congratulations, you now have a Slack bot running on Google Container Engine.
+
+You can follow these steps to clean up resources and save on costs.
+
+1.  Delete the Deployment (which also deletes the running pods).
+
+        kubectl delete deployment slack-codelab
+
+2.  Delete your cluster.
+
+        gcloud container clusters delete my-cluster
+
+    This deletes all the Google Compute Engine instances that are running the
+    cluster.
+
+3.  Delete the Docker registry storage bucket hosting your image(s).
+
+    1.  List the Google Cloud Storage buckets to get the bucket path.
+
+            gsutil ls
+
+        Command output
+
+            gs://artifacts.<PROJECT_ID>.appspot.com/
+
+    2.  Delete the bucket and all the images it contains.
+
+            gsutil rm -r gs://artifacts.${PROJECT_ID}.appspot.com/
+
+Of course, you can also delete the entire project but you would lose any billing
+setup you have done (disabling project billing first is required). Additionally,
+deleting a project will only happen after the current billing cycle ends.
+
+
 ## Next steps
+
+- Learn more about Kubernetes with the [Kubernetes interactive
+  tutorials](https://kubernetes.io/docs/tutorials/kubernetes-basics/).
+- Try out other [Slack samples for Google Cloud
+  Platform](https://github.com/GoogleCloudPlatform/slack-samples).
+- Read the [Slack API reference](https://api.slack.com/) for other ways to
+  integrate your app with Slack.
