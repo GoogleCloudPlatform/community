@@ -46,14 +46,21 @@ exports.runAsync = (cmd, cwd, cb) => {
   return new Promise((resolve, reject) => {
     childProcess.exec(cmd, { cwd: cwd }, (err, stdout, stderr) => {
       if (err) {
+        console.error(err);
         reject(err);
         return;
       }
       if (stdout) {
-        resolve(stdout.toString().trim());
+        stdout = stdout.toString().trim();
       } else {
-        resolve(stdout);
+        stdout = '';
       }
+      if (stderr) {
+        stderr = stderr.toString().trim();
+      } else {
+        stderr = '';
+      }
+      resolve(`${stdout}\n${stderr}`);
     });
   });
 };
