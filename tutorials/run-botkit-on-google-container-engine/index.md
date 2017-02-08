@@ -46,7 +46,6 @@ projected usage.
     environment](https://cloud.google.com/community/tutorials/how-to-prepare-a-nodejs-dev-environment)
     for more detailed instructions.
 1.  Install [Docker](https://www.docker.com/products/overview).
-
 1.  [Create a new Slack team][new-slack-team], or use one you already have if
     you have permissions to [add new custom
     integrations][manage-custom-integrations] to it.
@@ -82,7 +81,7 @@ message.
 1.  Create a new Slack bot integration from the [Slack configuration page][new-slack-bot].
 1.  Give it a nice username, like @kittenbot.
 
-    ![create a new bot](add-custom-integration.png)
+    ![create a new bot](https://storage.googleapis.com/gcp-community/tutorials/run-botkit-on-google-container-engine/add-custom-integration.png)
 
     Click **Add bot integration**.
 
@@ -91,11 +90,11 @@ message.
 
 1.  Add a description to let your teammates know the purpose of this bot.
 
-    ![add a description](custom-integration-description.png)
+    ![add a description](https://storage.googleapis.com/gcp-community/tutorials/run-botkit-on-google-container-engine/custom-integration-description.png)
 
 1.  Copy the API token text into your clipboard.
 
-    ![copy api token](api-token.png)
+    ![copy api token](https://storage.googleapis.com/gcp-community/tutorials/run-botkit-on-google-container-engine/api-token.png)
 
     You'll use it in the next step. Don't worry. You can come back to the bot
     configuration page from the [custom integrations management
@@ -131,15 +130,15 @@ To run the bot locally on your development machine,
     not see Kitten Bot in your direct messages list, open a direct message to the
     bot with the + icon.
 
-    ![open direct message](open-direct-message.png)
+    ![open direct message](https://storage.googleapis.com/gcp-community/tutorials/run-botkit-on-google-container-engine/open-direct-message.png)
 
-    ![add kittenbot](open-direct-message-2.png)
+    ![add kittenbot](https://storage.googleapis.com/gcp-community/tutorials/run-botkit-on-google-container-engine/open-direct-message-2.png)
 
 1.  Say hello to `@kittenbot` in a direct message (or if you added Kitten Bot
     to a channel, the bot will respond to mentions there, too). It should meow
     back at you.
 
-    ![meow](meow.png)
+    ![meow](https://storage.googleapis.com/gcp-community/tutorials/run-botkit-on-google-container-engine/meow.png)
 
 1.  In your terminal, press Control-C to stop the bot server.
 
@@ -348,7 +347,6 @@ You can follow these steps to clean up resources and save on costs.
 Of course, you can also delete the entire project but you would lose any billing
 setup you have done (disabling project billing first is required). Additionally,
 deleting a project will only happen after the current billing cycle ends.
-
 
 ## Next steps
 
