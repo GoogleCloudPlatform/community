@@ -34,7 +34,7 @@ Compute Engine's built-in HTTP(S) load balancing solution:
     failure. In contrast, Compute Engine's HTTP(S) load balancing solution is a
     managed service with built-in redundancy and fault tolerance.
 *   Because Compute Engine instances are tied to specific Compute Engine
-    [zones][zones], all traffic will be funneled through the zone in which your
+    [zones][zones], all traffic is funneled through the zone in which your
     load balancer instance resides, regardless of the traffic's point of origin.
     In contrast, Compute Engine's HTTP(S) load balancing solution can receive
     and route traffic in the zone nearest to the client making the request. See
@@ -46,10 +46,10 @@ Compute Engine's built-in HTTP(S) load balancing solution:
 
 ## Implementation overview
 
-In this tutorial, you will build a simple NGINX-based HTTP(S) load balancer.
-This load balancer will feature end-to-end SSL/TLS encryption; traffic will be
+In this tutorial, you build a simple NGINX-based HTTP(S) load balancer.
+This load balancer features end-to-end SSL/TLS encryption; traffic is
 routed to one of three SSL/TLS-enabled Apache web servers, and incoming HTTP
-traffic will be encrypted as it passes through the load balancer.
+traffic is encrypted as it passes through the load balancer.
 
 The following diagram illustrates the load balancer architecture:
 
@@ -61,7 +61,7 @@ Figure 1: Architecture of NGINX-based HTTPS load balancer
 
 Important:  This tutorial uses Google Compute Engine virtual machine instances,
             a billable component of Google Cloud Platform. The cost of running
-            this tutorial will vary depending on run time, number of instances,
+            this tutorial varies depending on run time, number of instances,
             and machine type. Use the [pricing calculator][pricing] to generate
             a cost estimate based on your projected usage. New Google Cloud
             users may be eligible for a [free trial][trial].
@@ -94,7 +94,7 @@ command.
 [self_signed]: https://wikipedia.org/wiki/Self-signed_certificate
 
 Caution:  Self-signed certificates are not suitable for public sites. While
-          a self-signed certificate implements full encryption, it will cause
+          a self-signed certificate implements full encryption, it causes
           most browsers to present a warning or error when visitors try to
           access your site.
 
@@ -116,7 +116,7 @@ To create a new private key:
 
         openssl rsa -in example.key -out example.key
 
-To generate a signed certificate, you will need a certificate signing request
+To generate a signed certificate, you need a certificate signing request
 (CSR). Run the following command to create one:
 
     openssl req -new -key example.key -out example.csr
@@ -131,9 +131,9 @@ the following:
 
 Before you create the load balancer, you need to have some backend server
 instances to which the load balancer can route traffic. In this section, you
-will create three identical Compute Engine virtual machine instances that you
+create three identical Compute Engine virtual machine instances that you
 can use as backends for your load balancer. After the backends have been
-created, you will configure their respective Apache servers to use SSL.
+created, you configure their respective Apache servers to use SSL.
 
 ### Create your load balancer backends
 
@@ -232,7 +232,7 @@ To create your NGINX instance:
           --region us-central1
 
 1.  Create a firewall rule to allow external HTTP traffic to reach your load
-    balancer instance. Later in this tutorial, you will configure the load
+    balancer instance. Later in this tutorial, you configure the load
     balancer to redirect this traffic through your HTTPS proxy:
 
         gcloud compute firewall-rules create http-firewall \
@@ -278,7 +278,7 @@ balancer:
 
         gcloud compute instances list
 
-    Take note of each target instance's internal IP. You will need these IPs
+    Take note of each target instance's internal IP. You need these IPs
     when you begin configuring NGINX.
 
 1.  Establish an SSH connection to the **nginx-lb** instance:
@@ -425,12 +425,12 @@ following load balancing methods:
 
 * **Least-connected**
 
-    Incoming traffic will be sent to the target server with the lowest number of
+    Incoming traffic is sent to the target server with the lowest number of
     active connections.
 
 * **IP Hash**
 
-    Incoming traffic will be routed according to hash function that uses the
+    Incoming traffic is routed according to hash function that uses the
     client's IP address as input. This method is particularly useful for use
     cases that require [session persistence][session].
 
@@ -438,7 +438,7 @@ following load balancing methods:
 
 You can substitute the default round-robin method with an alternative method by
 adding the appropriate directive to your virtual host's `upstream` block. To use
-the least-connected method, add the `least_conn directive:
+the least-connected method, add the `least_conn` directive:
 
     upstream {
       least_conn;
@@ -467,13 +467,13 @@ specific `server` in your `upstream` directive:
     }
 
 If you use this configuration with the default round-robin load balancing
-method, for every six incoming requests, three will be sent to `1.2.3.4`, one
-will be sent to `2.3.4.5`, and two will be sent to `3.4.5.6`. The IP hash method
+method, for every six incoming requests, three are sent to `1.2.3.4`, one
+is sent to `2.3.4.5`, and two are sent to `3.4.5.6`. The IP hash method
 and least-connected method also support weighting.
 
 #### Configure health checks
 
-NGINX automatically performs server health checks. By default, NGINX will mark a
+NGINX automatically performs server health checks. By default, NGINX marks a
 server as failed if the server fails to respond within ten seconds. You can
 customize the health checks for individual servers by using the `max_fails` and
 `fail_timeout` parameters.
