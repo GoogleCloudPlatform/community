@@ -126,7 +126,7 @@ function getPullRequests (repo, page) {
       pr.requested_reviewers || (pr.requested_reviewers = []);
       // Filter out reviewers not found in "settings.reviewers"
       pr.requested_reviewers = pr.requested_reviewers.filter((reviewer) => {
-        return settings.reviewers.includes(reviewer);
+        return settings.reviewers.includes(reviewer.login);
       });
     });
 
@@ -182,21 +182,27 @@ function calculateWorkloads (pullRequests) {
   });
   pullRequests.forEach((pr, i) => {
     // These are awaiting the reviewer's initial review
-    pr.requested_reviewers.forEach((reviewer) => reviewers[reviewer.login]++);
+    pr.requested_reviewers.forEach((reviewer) => {
+      reviewers[reviewer.login]++;
+    });
     // For these the reviewer has requested changes, and has yet to approve the
     // pull request
-    pr.reviews.forEach((review) => reviewers[review.user.login]++);
+    pr.reviews.forEach((review) => {
+      reviewers[review.user.login]++;
+    });
   });
 
+  console.log(JSON.stringify(reviewers, null, 2));
+
   // Calculate the reviewer with the smallest workload
-  const workloads = [];
+  let workloads = [];
   Object.keys(reviewers).forEach((login) => {
     workloads.push({
       login: login,
-      workload: reviewers[login]
+      reviews: reviewers[login]
     });
   });
-  workloads.sort((a, b) => a.workload - b.workload);
+  workloads.sort((a, b) => a.reviews - b.reviews);
 
   console.log(`Calculated workloads for ${workloads.length} reviewers.`);
 
@@ -210,21 +216,22 @@ function calculateWorkloads (pullRequests) {
  * @param {object[]} pullRequests
  */
 function getNextReviewer (pullRequest, pullRequests) {
-  const workloads = calculateWorkloads(pullRequests);
-  let currentChoice = 0;
+  let workloads = calculateWorkloads(pullRequests);
 
-  while (currentChoice < workloads.length) {
-    if (workloads[currentChoice].login === pullRequest.user.login) {
-      console.log(`${workloads[currentChoice].login} can't review their own pull request.`);
-    } else {
-      break;
-    }
-    currentChoice++;
-  }
+  workloads = workloads
+    // Remove reviewers who have a higher workload than the reviewer at the
+    // front of the queue:
+    .filter((workload) => workload.reviews === workloads[0].reviews)
+    // Remove the opener of the pull request from review eligibility:
+    .filter((workload) => workload.login !== pullRequest.user.login);
 
-  // The reviewer at the front of the sorted array has the least amount of
-  // currently assigned reviews
-  return workloads[currentChoice].login;
+  const MIN = 0;
+  const MAX = workloads.length - 1;
+
+  // Randomly choose from the remaining eligible reviewers:
+  const choice = Math.floor(Math.random() * (MAX - MIN + 1)) + MIN;
+
+  return workloads[choice].login;
 }
 
 /**
