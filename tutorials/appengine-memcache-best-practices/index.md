@@ -1,9 +1,9 @@
 ---
 title: Best Practices for App Engine Standard Environment Memcache
-description: Learn about best Practices for App Engine standard environment Memcache For Thread Safety, Performance, and Code Migration.
+description: Learn about Best Practices for App Engine standard environment Memcache For Thread Safety, Performance, and Code Migration.
 author: devlance
 tags: App Engine Standard, Memcache
-date_published: 12/02/2013
+date_published: 02/09/2017
 ---
 
 This article outlines some best practices for using the Google App Engine
@@ -22,7 +22,7 @@ any time, so applications should be structured in a way that does not depend on
 the presence of entries. Memcache can serve concurrent requests to multiple,
 remote clients accessing the same data. For this reason, data consistency should
 be kept in mind. Memcache statistics, including hit rate, are shown on the App
-Engine console, and can aid in optimizing performance.
+Engine console and can aid in optimizing performance.
 
 There are two classes of Memcache service, shared and dedicated. Shared Memcache
 is a no-cost, best-effort service, and data stored with this service can be
@@ -146,9 +146,12 @@ happen when migrating between different versions of application code. Testing is
 needed whenever making changes to classes where objects are serialized with an
 older structure.
 
-There are four ways of avoiding problems like this: (1) make compatible changes
-to objects, (2) handle errors properly, (3) flush the cache before deploying new
-code, or (4) use namespaces to isolate data in a multitenant-like way.
+There are four ways of avoiding problems like this:
+
+1.  Make compatible changes to objects.
+1.  Handle errors properly.
+1.  Flush the cache before deploying new code.
+1.  Use namespaces to isolate data in a multitenant-like way.
 
 If the application uses modules developed with multiple languages, follow the
 best practices for key and value compatibility discussed in the section
@@ -156,9 +159,9 @@ best practices for key and value compatibility discussed in the section
 
 ### Recommendations
 
-Make compatible changes to object structures, handle errors properly when
-reading objects from Memcache, and flush Memcache when deploying new code with
-major changes.
+* Make compatible changes to object structures.
+* Handle errors properly when reading objects from Memcache.
+* Flush Memcache when deploying new code with major changes.
 
 ### Example
 
@@ -467,7 +470,7 @@ for details of dedicated Memcache and its limitations.) Developers may need to
 be mindful of this limit for App Engine applications that handle a large number
 of requests. The 10k ops/s limit may be large enough to process several hundred
 HTTP requests per second, but some applications have a skewed distribution
-pattern for key usage. For example, 80 percent of Memcache access calls may be
+pattern for key usage. For example, 80% of Memcache access calls may be
 concentrated on only 20 keys. This may be a problem if the keys are concentrated
 on particular servers due to poor key name distribution, and can lead to errors
 and performance slowdowns.
