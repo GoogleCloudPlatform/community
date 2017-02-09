@@ -20,7 +20,7 @@ branches or loops. Workflows can be large and may span many seconds, minutes,
 hours or even days. Because of this fact, workflows must also be resilient and
 lightweight.
 
-Google App Engine is an excellent platform and provides APIs that are the
+Google App Engine provides APIs that are the
 building blocks for a wide array of applications. One API in particular,
 [Task Queue API][task_queue], provides mechanisms to queue work which allows a
 workflow to be separated into discrete steps. Additionally, the Task Queue API
@@ -32,7 +32,7 @@ tools necessary to build resilient and scalable workflows.
 
 Large-scale systems can often have correspondingly large-scale workflows. While
 Task Queue has the necessary building blocks, it does not directly provide
-facility to build these workflows in a normal, predictable manner. On the
+a facility to build these workflows in a normal, predictable manner. On the
 contrary, the flexibility of Task Queue, while powerful, often leads to a
 spiderweb of process flows and subtle differences in implementations.
 
@@ -70,7 +70,7 @@ like partially computed results or keys to Datastore entries.
 
 ## Comparing and contrasting the Pipeline API
 
-The recently released [App Engine Pipeline API][pipeline_api] is aimed at
+The [App Engine Pipeline API][pipeline_api] is aimed at
 solving very similar issues as Fantasm: namely, leveraging the TaskQueue API to
 harness the power of the distributed, massively-scalable App Engine
 infrastructure to implement regular, testable and operationally accessible
@@ -159,7 +159,7 @@ This has some direct implications on machine design. First, and most
 importantly, you should build a state action that is [idempotent][idempotent].
 Knowing that a state will be retried on a failure, you must write state action
 code that is safe to be rerun possibly many times. In particular, you need to
-think about the side-effects of your code — writing a record to datastore,
+think about the side-effects of your code — writing a record to Cloud Datastore,
 sending an email, `POST`ing something to an external server — and take
 appropriate precautions.
 
@@ -184,7 +184,7 @@ As a final note, it is important to know that Task Queue task size is limited to
 10kB. Machine context is serialized into the task on each transition. Therefore,
 your machine context is subject to this 10kB limitation. If you need to pass
 large contexts between states of a machine, you will likely have to write this
-context to Datastore and pass a key on the context instead.
+context to Cloud Datastore and pass a key on the context instead.
 
 ## Starting a machine
 
@@ -343,7 +343,7 @@ the counter safely. So we might write something like this:
         db.run_in_transaction(tx)
 
 While this code works fine in the happy path, we need to consider what possible
-failures may occur. Transactional updates to the Datastore are expensive and
+failures may occur. Transactional updates to the Cloud Datastore are expensive and
 slow (use 1 transaction per second as a rule of thumb), so there is a high
 likelihood of an exception being thrown in the code after the `send_email()`.
 When this occurs, our task is requeued, and on the retry, the `execute()` method
