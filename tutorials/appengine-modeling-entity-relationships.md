@@ -24,7 +24,7 @@ book where users can store their contacts. For each contact the user stores, you
 want to capture the contact's name, birthday (which they mustn't forget!),
 address, telephone number, and company they work for.
 
-When the user wants to add an address, they enter the information in to a form
+When the user wants to add an address, they enter the information into a form
 and the form saves the information in a model that looks something like this:
 
     class Contact(db.Model):
@@ -218,7 +218,7 @@ There are a few limitations to implementing many-to-many relationships this way.
 First, you must explicitly retrieve the values on the side of the collection
 where the list is stored since all you have available are `Key` objects. Another
 more important one is that you want to avoid storing overly large lists of keys
-in a `ListProperty`. This means you should place the list on side of the
+in a `ListProperty`. This means you should place the list on the side of the
 relationship which you expect to have fewer values. In the example above, the
 `Contact` side was chosen because a single person is not likely to belong to too
 many groups, whereas in a large contacts database, a group might contain
