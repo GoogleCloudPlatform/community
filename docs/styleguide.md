@@ -7,7 +7,7 @@ This document provides guidance for contributors to the Google Cloud Platform (G
 * [General content guidelines](#general-content-guidelines)
 * [General style guidelines](#general-style-guidelines)
 * [Voice and tone](#voice-and-tone)
-* [Inlcuding source code](#includeing-source-code)
+* [Including source code](#including-source-code)
 * [Writing resources](#writing-resources)
 
 ## Caveats
@@ -17,13 +17,13 @@ Let's get these things out of the way right up front:
 * Don't sell or do marketing.
 * Don't editorialize. Document.
 * Don't make assumptions about your reader unless you state the assumptions up front.
-* Don’t use absolutes, such as instantaneously, perfectly, absolutely, totally, 100%, unless you can back up what you’re saying with documentation.
-* Don't use superlatives, such as "the best solution", "the perfect answer", and so on.
-* Don’t use logos or trademarks unless you have explicit permission.
+* Don't use absolutes, such as "instantaneously," "perfectly," "absolutely," "totally," or "100%," unless you can back up what you're saying with documentation.
+* Don't use superlatives, such as "the best solution," "the perfect answer," and so on.
+* Don't use logos or trademarks unless you have explicit permission.
 * Don't make performance claims unless you back them up with current data. This means either external links, or links to benchmarking code.
 * Don't include diagrams or pictures that you have no legal rights to include.
-* Don’t alter or truncate Google Cloud Platform product names. For example, it’s Cloud Bigtable, not Bigtable.
-* Don’t alter or truncate other Google names. For example, it’s Google Apps, not Apps.
+* Don't alter or truncate Google Cloud Platform product names. For example, it’s Cloud Bigtable, not Bigtable.
+* Don't alter or truncate other Google names. For example, it's Google Apps, not Apps.
 
 ## Types of documentation
 
@@ -37,7 +37,7 @@ Documentation submitted by contributors is usually one of two types:
     **Example**: [Building Scalable and Resilient Apps](https://cloud.google.com/solutions/scalable-and-resilient-apps)
 
 * **Tutorial**: Walks a user through a real-world, industry-specific, or
-  end-to-end development scenario that uses your product. Tutorials teach, "How
+  end-to-end development scenario that uses your product. Tutorials teach "how
   to do Y in the context of ABC." Tutorials contain numbered steps that
   prescribe what to do. They can have enough supporting conceptual information,
   interspersed among the steps, to help the reader understand what they're
@@ -51,7 +51,7 @@ Documentation submitted by contributors is usually one of two types:
 Just as you design an app before you start coding, designing how your doc works
 before you write saves you writing time, helps focus your document, and helps to
 make sure you're giving the reader the right information.
-[A good way to designyour document is by outlining](https://owl.english.purdue.edu/owl/resource/544/02/).
+[A good way to design your document is by outlining](https://owl.english.purdue.edu/owl/resource/544/02/).
 
 As you develop your outline, ask yourself:
 
@@ -73,10 +73,10 @@ A Concept doc has these major sections:
 
 * Title
 * Overview
-  * Don't use the heading "Overview" or any other heading. Just start at the first sentence.
+    * Don't use the heading "Overview" or any other heading. Just start at the first sentence.
 * Body
-  * Provides the details.
-  * Contains headings and subheadings as needed to make the content easy to skim.
+    * Provides the details.
+    * Contains headings and subheadings as needed to make the content easy to skim.
 
 ### Writing a Tutorial
 
@@ -84,42 +84,42 @@ A Tutorial doc has these major sections. Items in bold below are literal heading
 
 * Title
 * Overview
-  * First sentence tells what the page is about
-  * Tell the user what they're going to learn and provide any concise background information that's helpful.
-  * Don't use the heading "Overview." Just get right to it.
+    * First sentence tells what the page is about
+    * Tell the user what they're going to learn and provide any concise background information that's helpful.
+    * Don't use the heading "Overview." Just get right to it.
 
 * **Objectives**
-  * A short, bulleted list of what the tutorial teaches the reader.
+    * A short, bulleted list of what the tutorial teaches the reader.
 
 * **Before you begin**
-  * A numbered list of steps required to set up for the tutorial.
-  * Any general prerequisites.
-  * Don't assume anything about the user's environment. Assume that the user has only basic operating system installed. If doing the tutorial requires the user to have a specific environment, state what is required. For easy-to-install environment bits, just give them the instructions, such as "Run apt-get install…". For more-complex setups, link to official documentation.
+    * A numbered list of steps required to set up for the tutorial.
+    * Any general prerequisites.
+    * Don't assume anything about the user's environment. Assume that the user has only basic operating system installed. If doing the tutorial requires the user to have a specific environment, state what is required. For easy-to-install environment bits, just give them the instructions, such as "Run apt-get install…". For more complex setups, link to official documentation.
 
 * **Costs** (optional)
-  * Tell the reader which technologies will be used and what it costs to use them.
-  * Link to the [Pricing Calculator](https://cloud.google.com/products/calculator/), preconfigured, if possible.
-  * If there are no costs to be incurred, state that.
+    * Tell the reader which technologies will be used and what it costs to use them.
+    * Link to the [Pricing Calculator](https://cloud.google.com/products/calculator/), preconfigured, if possible.
+    * If there are no costs to be incurred, state that.
 
 * Body
-  * Use as many headings and subheadings as needed.
-  * Use numbered steps in each section.
-  * Start each step with the action: "Click", "Run", "Enter", and so on.
-  * Keep numbered step lists to around 7 or less, if possible. If you need more steps, break it up into subheadings.
-  * Provide context and explain what's going on.
-  * Use screenshots when they help the reader. Don't provide a screenshot for every step.
-  * Show what success looks like along the way. For example, showing console output or describing what happens helps the reader to feel like they're doing it right and help them know things are working so far.
+    * Use as many headings and subheadings as needed.
+    * Use numbered steps in each section.
+    * Start each step with the action: "Click," "Run," "Enter," and so on.
+    * Keep numbered step lists to around 7 or less, if possible. If you need more steps, break it up into subheadings.
+    * Provide context and explain what's going on.
+    * Use screenshots when they help the reader. Don't provide a screenshot for every step.
+    * Show what success looks like along the way. For example, showing console output or describing what happens helps the reader to feel like they're doing it right and help them know things are working so far.
 
 * **Cleaning up**
-  * Omit this section if you stated there are no costs in the Costs section.
-  * Tell the user how to shut down what they built to avoid incurring further costs.
+    * Omit this section if you stated there are no costs in the Costs section.
+    * Tell the user how to shut down what they built to avoid incurring further costs.
 
 ## File organization in GitHub
 
-Follow these guidlines for how to organize your documents:
+Follow these guidelines for how to organize your documents:
 
 * Create a new folder for your document.
-* Name the folder by [slugifying](http://slugify.net/) your doc's title. You can omit articles such as "and" and "the".
+* Name the folder by [slugifying](http://slugify.net/) your doc's title. You can omit articles such as "and" and "the."
 * Name your new doc `index.md`.
 * Store images in the same folder.
 
@@ -134,7 +134,7 @@ This site seeks technical content. While it's fine and often appropriate to poin
 
 +  Write for a technical audience.
 +  If the document looks like a sales brochure, it's not appropriate as GCP content.
-+  Avoid superlatives. Don't say "the best", "amazing", "fantastic", and so on. No exclamation points.
++  Avoid superlatives. Don't say "the best," "amazing," "fantastic," and so on. No exclamation points.
 
 ### Ambiguity
 
@@ -168,7 +168,7 @@ Lists help make your page more scannable.
 
 ### Numbered lists
 
-Use numbered lists when it’s essential that the items be done in a specific order. Otherwise, use a bulleted list. Don't use a numbered list as a way to count the things in the list.
+Use numbered lists when it's essential that the items be done in a specific order. Otherwise, use a bulleted list. Don't use a numbered list as a way to count the things in the list.
 
 **For example:**
 
@@ -234,7 +234,7 @@ Use the parallelism principle previously described for table headings and the fi
 A well-designed diagram or a screen shot can save you a lot of writing and help the reader better understand a complex idea. Make sure any text is legible at the display size in the doc (800 pixels wide or less). If the image itself becomes too complex, consider breaking it up into more than one picture.
 
 * Don't use images you don't have rights to use.
-* Store the images in the same folder where your document's index.md file is stored.
+* Store the images in the same folder where your document's `index.md` file is stored.
 
 ### Code
 
@@ -276,7 +276,7 @@ It's okay to use passive voice when you'd have to go out of your way to use acti
 
 ### Direct
 
-**Speak to the reader**. Documentation reads better if you speak to the reader in the second person. That means use "you" and avoid "I" or "we".
+**Speak to the reader**. Documentation reads better if you speak to the reader in the second person. That means use "you" and avoid "I" or "we."
 
 **For example:**
 
@@ -309,13 +309,14 @@ It's okay to use passive voice when you'd have to go out of your way to use acti
 **Not:**
 
 "It is possible for you to set a different owner by clicking the Change button."
-Also keep your paragraphs short and to the point. On the web, people skim more and expect shorter content than when they read books. Five sentences or less per paragraph is a good guideline.
 
-If a sentence is long, even with  straightforward word choices, break it up into multiple, shorter sentences.
+Also, keep your paragraphs short and to the point. On the web, people skim more and expect shorter content than when they read books. Five sentences or less per paragraph is a good guideline.
+
+If a sentence is long, even with straightforward word choices, break it up into multiple, shorter sentences.
 
 Re-read what you wrote and then eliminate all the unnecessary words.
 
-## Inluding source code
+## Including source code
 
 If you would like to include source code within your tutorial, you have two
 options:
@@ -333,11 +334,11 @@ For an example, see [Run Koa.js on Google App Engine Flexible Environment](https
 
 ### Option 2
 
-Instead of a markdown file in the `tutorials/` directory, create a folder for
-your files. The markdown for the tutorial should be in an `index.md` file within
+Instead of a Markdown file in the `tutorials/` directory, create a folder for
+your files. The Markdown for the tutorial should be in an `index.md` file within
 the new folder, and the rest of the source code files must be in the new folder
-as well. Snippets from the source code files can be included in the markdown
-file using [EmbedMd](https://github.com/campoy/embedmd).
+as well. You can use [EmbedMd](https://github.com/campoy/embedmd) to include
+snippets from the source code files in the Markdown file.
 
 This option is more complicated, but allows us to test the code, and allows the
 user to view real source code files.
