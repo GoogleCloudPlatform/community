@@ -1,6 +1,6 @@
 ---
 title: Use Memcache for Sessions with Express.js on Google App Engine Flexible Environment
-description: Learn how to deploy a Express.js app to Google App Engine flexible environment that uses Memcache for user sessions.
+description: Learn how to deploy an Express.js app to Google App Engine flexible environment that uses Memcache for user sessions.
 author: jmdobry
 tags: App Engine Flexible, Express.js, Node.js, Memcache
 date_published: 02/08/2017
@@ -70,7 +70,7 @@ Platform.
           # USE_GAE_MEMCACHE: 1
 
           MEMCACHE_URL: your-memcache-url
-          # If you are using a Memcached server with SASL authentiation enabled,
+          # If you are using a Memcached server with SASL authentication enabled,
           # fill in these values with your username and password.
           MEMCACHE_USERNAME: your-memcache-username
           MEMCACHE_PASSWORD: your-memcache-password
