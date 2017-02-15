@@ -1,6 +1,6 @@
 ---
 title: How to Run Symfony Hello World on App Engine
-description: Run Symfony Standard on Google App Engine. Symfony is is a popular set of reusable PHP components and a PHP framework for websites and web applications.
+description: Run Symfony Standard on Google App Engine. Symfony is a popular set of reusable PHP components and a PHP framework for websites and web applications.
 author: jimtravisgoog
 tags: App Engine, Symfony, PHP
 date_published: 02/08/2017
@@ -158,7 +158,7 @@ URL is requested; in this case, it is `clear_cache.php`.
 ### Specifying the database
 
 App Engine provides [Google Cloud SQL](https://cloud.google.com/sql/docs/)
-as a managed, relational MySQL database. CloudSQL can be used with Doctrine the
+as a managed, relational MySQL database. Cloud SQL can be used with Doctrine the
 same as any other MySQL database in `app/config/config_prod.yml`.
 
 ### Overriding directories to use Cloud Storage
