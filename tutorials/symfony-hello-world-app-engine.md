@@ -100,7 +100,7 @@ When the page loads, you see a simple text message that says
 **Homepage.**, which is Symfony's "hello world" text.
 
 Note: If the page fails to load, select **Logs** in the Google App Engine
-Launcher.
+Launcher to see what error conditions caused the failure.
 
 ### Deploy the app to the cloud
 
