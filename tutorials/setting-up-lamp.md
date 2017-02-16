@@ -26,6 +26,8 @@ Alternatively, you can use the
 + Select or create a Google Cloud Platform project.
 + Enable billing for your project.
 
+## Costs
+
 This tutorial uses billable components of Cloud Platform,
 including:
 
