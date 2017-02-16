@@ -140,7 +140,7 @@ Install MySQL and related PHP components:
 
         sudo yum -y install httpd mysql-server php php-mysql
 
-1. Start the MySQL service
+1. Start the MySQL service:
 
         sudo service mysqld start
 
