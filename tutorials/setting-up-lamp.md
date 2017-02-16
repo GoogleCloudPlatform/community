@@ -38,7 +38,7 @@ to generate a cost estimate based on your projected usage.
 
 ## Creating a virtual machine instance
 
-Alternatively, you can use these steps to deploy the LAMP stack using
+You can use these steps to deploy the LAMP stack using
 the Google Cloud Platform Console:
 
 1. In the Cloud Platform Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
