@@ -203,7 +203,7 @@ to an IP address. The `CNAME` record creates an alias for the `A` record. This l
 in the Cloud Platform Console](https://console.cloud.google.com/compute/instances).
 1. Sign in to your provider's DNS management interface and find the domain that you want to manage.
 Refer to your DNS provider's documentation for specific steps.
-1. Create an A record and set the value to your external IP address. The name or host field can be set to `@`,
+1. Create an `A` record and set the value to your external IP address. The name or host field can be set to `@`,
 which represents the naked domain. For more information, 
 the [Google Apps support page](https://support.google.com/a/answer/2579934) provides help
 for completing various DNS tasks.
