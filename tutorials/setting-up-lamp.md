@@ -1,4 +1,10 @@
-# Setting Up LAMP on Compute Engine
+---
+title: Setting Up LAMP on Compute Engine
+description: Learn how to set up a LAMP stack on a virtual machine.
+author: jimtravis
+tags: Compute Engine, LAMP
+date_published: 2/15/2017
+---
 
 This page shows you how to get a LAMP stack running on a Google Compute Engine
 virtual machine instance. Follow the steps in this tutorial to configure LAMP
