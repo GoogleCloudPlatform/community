@@ -70,7 +70,7 @@ This paper is intended for systems architects, developers, and technical
 decision-makers already familiar with RTB and its concepts.
 
 
-## Solution Overview
+## Overview
 
 This section covers the key functional components of a multi-region RTB bidder
 and outlines two solutions for building and deploying on Cloud Platform.
@@ -81,7 +81,7 @@ bidders. The second offers a contrasting set of architectural choices that
 aren’t typically considered possible but that become plausible when building
 on Google’s infrastructure.
 
-### Functional Components
+### Functional components
 
 The solutions proposed in this paper are developed around a set of high-level
 functional areas common to most, if not all, bidders that are designed for deployment
@@ -93,7 +93,7 @@ Platform products and services.
 
 **Figure 1**: _Functional components of a real-time bidder_
 
-#### Bidding Components
+#### Bidding components
 
 The core bidder components are those that handle bid and pixel requests, and are involved in storing and serving data as, if not all, fast as possible to these handlers. These components include the load balancers, bid and pixel servers, usually a distributed key-value store, and, in some cases, the database itself.
 
@@ -158,7 +158,7 @@ instances, and load balancers.
 +  **An API for Java** &mdash; for extending Open Bidder’s functionality with custom interceptors that implement bidding, impression, and click-through logic. It also provides support for cross-exchange bidding through dependency injection.
 +  **A Server** &mdash; for receiving bid, impression and click-through requests, and executing custom interceptors.
 
-##### Distributed Stores
+##### Distributed stores
 
 Many bidders rely on distributed key-value stores like
 [Memcached](http://memcached.org),
@@ -200,7 +200,7 @@ Ad Exchange customers from which they stand to gain the following benefits:
     form in bid requests.
 +  **Enabling of pre-targeting filtering** based on the existence of the cookie.
 
-#### Data Management
+#### Data management
 
 The bidder database stores everything from the trained bidding model, campaign
 data (active and historical), and exchange-specific data sets (such as categories, labels, agencies, vendors), to transient bid stores and event logs. Different bidder architectures rely on the database in different ways. This paper presents two alternative approaches centered around data access and
@@ -209,7 +209,7 @@ replication strategies.
 Each of the reference architectures employ additional _proxy_ nodes for
 brokering and handling data events between the database and other components.
 
-#### Analysis and Modeling
+#### Analysis and modeling
 
 Analysis and modeling components make up the other segment of the platform’s
 data stack. Bidding platforms generate large volumes of log data that can offer
@@ -234,7 +234,7 @@ Finally, advanced bidding platforms could develop and refine models by taking
 advantage of Google’s Prediction API, a unique service offering that opens up
 the power of Google’s machine learning algorithms.
 
-#### Campaign Management
+#### Campaign management
 
 The App Engine platform hosts the campaign management application and
 other client-facing features, such as reporting and dashboards. App Engine offers
@@ -254,7 +254,7 @@ data local to either U.S. or Europe for serving static ad content.
 [Nearline and Coldline Storage](https://cloud.google.com/storage/docs/storage-classes)
 are ideal for third-party database backups and disaster recovery.
 
-### Managed Database Solution
+### Managed database solution
 
 This solution leverages a highly available and scalable database service fully
 managed by Google and the reduced operational overhead that comes with it.
@@ -270,13 +270,13 @@ location-based searches. Cloud SQL is a secure, fully managed, highly
 available MySQL service with built-in, automatic
 replication across geographic regions.
 
-#### Reference Architecture
+#### Reference architecture
 
 ![Real-Time Bidder (Managed Database) Architecture](real-time-bidder-solution-for-google-cloud-platform_image_1.png)
 
  **Figure 2**: _Real-time bidder (managed database) architecture_
 
-#### Implementation Details
+#### Implementation details
 
 One common practice among bidders is loading campaign data such as inventory,
 budgets, and preferences, from the database onto the bid servers themselves
@@ -299,7 +299,7 @@ campaign or to satisfy a client’s retargeting request.
 
 **Figure 3**: _Managed database solution walkthrough_
 
-##### Diagram Walkthrough
+##### Diagram walkthrough
 
 ###### Bootstrapping
 
@@ -307,7 +307,7 @@ campaign or to satisfy a client’s retargeting request.
 The data proxy servers manage the query and collation of results from the
 managed database(s).
 
-###### Exchange Bid Requests
+###### Exchange bid requests
 
 **B1.** User browser or device requests an ad placement from Google’s
 DoubleClick or another ad exchange.
@@ -332,7 +332,7 @@ responding to the exchange.
 
 **B5.** Ad payloads can be served directly from Cloud Storage.
 
-###### User Browser Requests
+###### User browser requests
 
 **C1.** User actions trigger requests such as tracking pixels, impressions,
 click-through, and conversions, from their browser to the bidder directly,
@@ -365,7 +365,7 @@ flow can be accessed to provide real-time updates for visualization. It’s more
 common that offline processing will update the data store periodically, which
 could reduce I/O and overall cost.
 
-###### Client Workflow
+###### Client workflow
 
 **D1.** The platform’s clients access the campaign management tools, view
 dashboards, and obtain reports through the web application running on Google App Engine. The bidder may also expose a REST API for some of these features.
@@ -406,7 +406,7 @@ four as recommended in step D5).
 **D9.** Bid servers receive the new campaign and related messages and update
 their internal data structures.
 
-###### Analysis Workflow
+###### Analysis workflow
 
 **E1.** Frontend and backend server logs are pushed directly by using an optional aggregation subsystem into Cloud Storage.
 
@@ -424,7 +424,7 @@ logic and fraudulent request detection, for instance, can take advantage of
 the data processing pipeline to generate input for the Prediction API, the
 results of which are fed back into the database.
 
-### Third-Party Database Solution
+### Third-Party database solution
 
 This solution offers an alternative approach to the previous one, relying on a
 self-managed, distributed database instead of a hosted service. This
@@ -432,13 +432,13 @@ architecture forgoes the use of the distributed key-value store and messaging
 subsystems as well, leveraging the capabilities of the database system and
 the performance of Google infrastructure to support the design.
 
-#### Reference Architecture
+#### Reference architecture
 
 ![Real-Time Bidder (Third-Party Database) Architecture](real-time-bidder-solution-for-google-cloud-platform_image_3.png)
 
 **Figure 4**: _Real-time bidder (third-party database) architecture_
 
-#### Implementation Details
+#### Implementation details
 
 The previous solution demonstrated the practice of preloading from the database
 into the bid servers. While effective in many cases, it is a limiting design.
@@ -452,8 +452,8 @@ of explicit synchronization across many individual nodes. The additional
 messaging and non-persistent storage subsystem contribute to an increase in
 the total complexity in design, development and management of the bidder.
 
-Modern distributed databases, like
-[Apache Cassandra](http://cassandra.apache.org) for example,
+Modern distributed databases, such as
+[Apache Cassandra](http://cassandra.apache.org),
 running on Cloud Platform are capable of satisfying the performance
 requirements of many bidders. In particular, the databases:
 
@@ -493,7 +493,7 @@ scalability characteristics of different third-party systems.
 
 **Figure 5**: _Third-party database solution walkthrough_
 
-##### Diagram Walkthrough
+##### Diagram walkthrough
 
 This walkthrough highlights only the differences compared to the managed solution.
 
@@ -501,13 +501,13 @@ This walkthrough highlights only the differences compared to the managed solutio
 
 **A1.** Bid servers load only the trained model data for the bid engine.
 
-###### Bid Request
+###### Bid request
 
 **B4.** The bid server queries the user database for user information indexed
 by the domain cookie, and the bid database for all matching campaigns and
 inventory.
 
-###### User Browser Requests
+###### User browser requests
 
 **C5.** The previous solution used a message bus to facilitate
 replication across regions. In this solution, the database performs its own
@@ -515,7 +515,7 @@ asynchronous replication across datacenters.
 
 _Figure 3 steps_ C6-9 _are not applicable in this solution._
 
-###### Client Workflow
+###### Client workflow
 
 **D7.** Updates to user information, retargeting being the canonical example,
 are made by the data proxy on the user database.
@@ -525,12 +525,12 @@ made by the data proxy on the bid database.
 
 _Figure 3 steps D4, D9 are not applicable in this solution._
 
-###### Analysis Workflow
+###### Analysis workflow
 
 **E6.** For those databases that support it, the Hadoop cluster can be
 integrated to work with active and historical data directly.
 
-###### Backup and Disaster Recovery
+###### Backup and disaster recovery
 
 **F1.** The persistent disks used for database servers can be periodically
 snapshotted into Cloud Storage. Additionally, files and logs for
@@ -552,7 +552,7 @@ by Forrester Consulting, January 2013.
 2.  [Real-Time Bidding to Take Ever-Bigger Slice of Display Pie](http://www.emarketer.com/Article/Real-Time-Bidding-Take-Ever-Bigger-Slice-of-Display-Pie/1009484#vQAiDfjoTiA5BQDL.99),
 by eMarketer.com, posted on November 15, 2012.
 
-## Appendix I - Best Practices
+## Appendix I &mdash; Best practices
 
 Consider he following best practices for all Google DoubleClick
 Ad Exchange bidders, though they may apply equally well for other exchanges.
@@ -560,7 +560,7 @@ Please refer to the DoubleClick Ad Exchange RTB
 [best practices guide](https://developers.google.com/ad-exchange/rtb/practices-guide)
 for additional details and recommendations.
 
-### Take Advantage of the Exchange APIs
+### Take advantage of the Exchange APIs
 
 +  **Set accurate QPS quota **to avoid overloading the bidder and being
     throttled for excessive errors. Not responding to a bid request in a timely
@@ -589,7 +589,7 @@ for additional details and recommendations.
     reduce unwanted bid requests and eliminate additional overhead in request
     handling.
 
-### Networking Configuration
+### Networking configuration
 
 +  **DNS - Keep it Simple** and avoid the use of "smart" DNS services that use
     tricks, very short TTL settings or geo- or latency-based switching.
@@ -605,7 +605,7 @@ for additional details and recommendations.
     small number of IP addresses, so use an input that will exhibit a high
     degree of variance such as cookies or URL parameters.
 
-### Server Configuration
+### Server configuration
 
 +  **Tune servers** by maximizing requests per connection and raising the
     limit on the number of connections to the highest value your RAM can
@@ -638,7 +638,7 @@ for additional details and recommendations.
     connection close behavior, latency, and more. Do not close connections
     after responding to a ping request.
 
-### System Design
+### System design
 
 +  **Cross-region communication isn’t free so be smart about shaping this traffic.** Understand how chatty different systems, such as a message bus
     or database, are and create a cost model.
