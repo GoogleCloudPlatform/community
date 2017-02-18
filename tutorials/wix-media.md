@@ -39,9 +39,9 @@ Google Cloud Platform Service Level Agreements.
 
 ## Get started
 
-+ [**JAVASCRIPT**](javascript)
++ [**JAVASCRIPT**](wix-media-js)
 
-+ [**PYTHON**](python)
++ [**PYTHON**](wix-media-python)
 
 ## Costs
 
