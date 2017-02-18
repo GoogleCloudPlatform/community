@@ -223,7 +223,7 @@ Follow these steps to verify that the database works:
 
 ## Cleaning up
 
-After you've finished the LEMP tutorial, you can clean up the resources you
+After you've finished the tutorial, you can clean up the resources you
 created on Google Cloud Platform so you won't be billed for them in the future.
 The following sections describe how to delete or turn off these resources.
 
