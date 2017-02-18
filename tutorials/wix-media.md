@@ -92,5 +92,5 @@ SDK works with Node.js as well as natively in the browser. In both cases, you
 can use the SDKs in apps on either Google App Engine or Google Compute Engine.
 The following documentation demonstrates getting started with each SDK:
 
-+ [JavaScript](javascript)
-+ [Python](python)
++ [JavaScript](wix-media-js)
++ [Python](wix-media-python)
