@@ -452,7 +452,7 @@ from the folder that you renamed to `main_old_2`:
 
 ## Cleaning up
 
-After you've finished the LAMP tutorial, you can clean up the resources you created on
+After you've finished the tutorial, you can clean up the resources you created on
 Google Cloud Platform so you won't be billed for them in the future. The following sections
 describe how to delete or turn off these resources.
 
