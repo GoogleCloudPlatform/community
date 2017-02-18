@@ -1,6 +1,7 @@
 ---
 title: Real-Time Bidder Solution for Google Cloud Platform
 description: This paper presents a pair of solutions that can be used as references for building and deploying multi-region, real-time bidders on Google Cloud Platform.
+author: jimtravis
 tags: Compute Engine, App Engine, Cloud Storage, BigQuery, Prediction API, OpenBidder
 date_published: 09/01/2014
 ---
