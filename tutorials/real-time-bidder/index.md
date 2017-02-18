@@ -90,7 +90,7 @@ across availability zones in multiple geographic regions. This section provides
 an overview of these components and their implementation on Google Cloud
 Platform products and services.
 
-![Functional Components of a Real-Time Bidder](real-time-bidder-solution-for-google-cloud-platform_image_0.png)
+![Functional Components of a Real-Time Bidder](https://storage.googleapis.com/gcp-community/tutorials/real-time-bidder/real-time-bidder-solution-for-google-cloud-platform_image_0.png)
 
 **Figure 1**: _Functional components of a real-time bidder_
 
@@ -273,7 +273,7 @@ replication across geographic regions.
 
 #### Reference architecture
 
-![Real-Time Bidder (Managed Database) Architecture](real-time-bidder-solution-for-google-cloud-platform_image_1.png)
+![Real-Time Bidder (Managed Database) Architecture](https://storage.googleapis.com/gcp-community/tutorials/real-time-bidder/real-time-bidder-solution-for-google-cloud-platform_image_1.png)
 
  **Figure 2**: _Real-time bidder (managed database) architecture_
 
@@ -296,7 +296,7 @@ also enable communication to flow back into the messaging system from the App
 Engine application in case, for example, you might want to create a new
 campaign or to satisfy a client’s retargeting request.
 
-  ![Managed Database Solution Walkthrough](real-time-bidder-solution-for-google-cloud-platform_image_2.png)
+  ![Managed Database Solution Walkthrough](https://storage.googleapis.com/gcp-community/tutorials/real-time-bidder/real-time-bidder-solution-for-google-cloud-platform_image_2.png)
 
 **Figure 3**: _Managed database solution walkthrough_
 
@@ -435,7 +435,7 @@ the performance of Google infrastructure to support the design.
 
 #### Reference architecture
 
-![Real-Time Bidder (Third-Party Database) Architecture](real-time-bidder-solution-for-google-cloud-platform_image_3.png)
+![Real-Time Bidder (Third-Party Database) Architecture](https://storage.googleapis.com/gcp-community/tutorials/real-time-bidder/real-time-bidder-solution-for-google-cloud-platform_image_3.png)
 
 **Figure 4**: _Real-time bidder (third-party database) architecture_
 
@@ -490,7 +490,7 @@ You might find [this paper](http://vldb.org/pvldb/vol5/p1724_tilmannrabl_vldb201
 helpful in providing some background on latency and throughput
 scalability characteristics of different third-party systems.
 
-![Third-Party Database Solution Walkthrough](real-time-bidder-solution-for-google-cloud-platform_image_4.png)
+![Third-Party Database Solution Walkthrough](https://storage.googleapis.com/gcp-community/tutorials/real-time-bidder/real-time-bidder-solution-for-google-cloud-platform_image_4.png)
 
 **Figure 5**: _Third-party database solution walkthrough_
 
