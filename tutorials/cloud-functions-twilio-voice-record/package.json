@@ -1,0 +1,15 @@
+{
+  "name": "cloud-functions-twilio-voice-record",
+  "private": true,
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@google-cloud/language": "0.8.0",
+    "@google-cloud/speech": "0.6.0",
+    "@google-cloud/storage": "0.7.0",
+    "got": "6.7.1",
+    "twilio": "2.11.1"
+  },
+  "engines": {
+    "node": ">=6.9.0"
+  }
+}
