@@ -9,14 +9,14 @@ date_published: 09/09/2015
 A [content delivery network](https://wikipedia.org/wiki/Content_delivery_network),
 or CDN, offers an efficient, cost-effective way of reducing both network
 I/O costs and content delivery latency for regularly accessed website
-assets. A CDN can be understood as group of geographically-distributed
+assets. A CDN can be understood as group of geographically distributed
 caches, with each cache locaœted in one of several global points of presence
 (POPs). The CDN service pulls assets from an origin server at regular
 intervals and distributes them to these caches. When a client requests an
 asset, the asset is served from the nearest cache.
 
 Though CDNs often greatly improve the speed of content delivery, they are
-usually at the mercy of the public Internet—that is, when they pull
+usually at the mercy of the public Internet; that is, when they pull
 content from an origin server, they have to compete with other network
 traffic for bandwidth. To mitigate this issue, the CDN provider
 [Fastly](https://www.fastly.com/) has
