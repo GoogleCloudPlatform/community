@@ -6,7 +6,7 @@ tags: Wix, media, Wix Media Python SDK
 date_published: 11/13/2014
 ---
 
-You can use Wix Media Platform in client, server, and mobile applications on
+You can use [Wix Media Platform](wix-media.md) in client, server, and mobile applications on
 various platforms and backend technologies. The Python SDK is useful for
 applications on Google App Engine and custom runtimes hosted on Google Compute
 Engine. [Learn more](wix-media)
