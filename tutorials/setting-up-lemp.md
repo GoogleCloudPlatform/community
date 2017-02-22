@@ -8,13 +8,20 @@ date_published: 02/15/2017
 
 
 This page shows you how to get a LEMP stack running on a virtual machine. Follow
-the steps in this tutorial to configure LEMP on a Debian or Ubuntu
+the steps in this tutorial to configure LEMP on a Debian, Ubuntu, or CentOS
 instance. Generally, these instructions will be similar
 on other operating systems.
 
 Alternatively, you can use the [Google Cloud
 Launcher](https://cloud.google.com/launcher) to deploy a LEMP stack
 automatically.
+
+For this tutorial, the LEMP stack has the following components:
+
++ Linux
++ NGINX
++ MySQL
++ PHP
 
 ## Objectives
 
@@ -39,15 +46,13 @@ This tutorial uses billable components of Cloud Platform, including:
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/)
 to generate a cost estimate based on your projected usage.
 
-
-
 ## Creating a virtual machine instance
 
 You can use these steps to deploy the LEMP stack using
 the Google Cloud Platform Console:
 
 1. In the Cloud Platform Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
-1. Click the Create instance button.
+1. Click the **Create instance** button.
 1. Set **Name** to **lemp-tutorial**.
 1. Set **Machine type** to **f1-micro**.
 1. In the **Boot disk** section, click **Change** to begin configuring your boot disk.
@@ -70,9 +75,9 @@ Cloud Platform Console or using the `gcloud compute ssh` command, which is
 part of the [Cloud SDK](https://cloud.google.com/sdk).
 This tutorial demonstrates the steps in the Cloud Platform Console.
 
-1. In the [Cloud Platform Console](https://console.cloud.google.com/compute/instances), 
+1. In the [Cloud Platform Console](https://console.cloud.google.com/compute/instances),
 go to the **VM Instances** page.
-1. In the list of virtual machine instances, click the *SSH* button in the row
+1. In the list of virtual machine instances, click the **SSH** button in the row
    of the instance to which you want to connect.
 
 Make a note of the IP address of your VM instance. You can see this address in
@@ -127,12 +132,12 @@ look up the address in the
     You should see **Welcome to nginx!**
 
 1. Create a test file in the default web server root:
-      
+
     * Debian 7
 
             sudo sh -c 'echo "<?php phpinfo();?>" > /usr/share/nginx/www/phpinfo.php'
 
-    * Ubuntu 14.04
+    * Ubuntu 14.04 or CentOS 6
 
             sudo sh -c 'echo "<?php phpinfo();?>" > /usr/share/nginx/html/phpinfo.php'
 
@@ -292,7 +297,7 @@ To delete the project:
    page](https://console.cloud.google.com/iam-admin/projects).
 1. In the project list, select the project you want to delete and click **Delete
    project**. After selecting the checkbox next to the project name, click
-   **Delete project**.
+   the trash can icon.
 1. In the dialog, type the project ID, and then click **Shut down** to delete
    the project.
 
@@ -301,21 +306,15 @@ To delete the project:
 To delete a Compute Engine instance:
 
 1. In the Cloud Platform Console, go to the [**VM Instances**
-   page](https://cloud.google.com/compute/instances).
+   page](https://console.cloud.google.com/compute/instances).
 1. Click the checkbox next to your `lemp-tutorial` instance.
 1. Click the **Delete** button at the top of the page to delete the instance.
-
-+ By default, the web server document root is owned by the `root` user. You might
-want to configure your document root for another user or want to change
-the directory location in the `nginx` configuration file. The web server document
-root is at `/usr/share/nginx/www`, and the `nginx` configuration file is at
-`/etc/nginx/sites-available`.
 
 ## Next steps
 
 + By default, the web server document root is owned by the `root` user. You
   might want to configure your document root for another user or want to change
-  the directory location in the Apache configuration file. The web server
+  the directory location in the NGINIX configuration file. The web server
   document root is at `/usr/share/nginx/www`, and the `nginx` configuration file
   is at `/etc/nginx/sites-available`.
 
