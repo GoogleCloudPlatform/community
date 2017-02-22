@@ -147,7 +147,7 @@ The `reply` function does the following:
 
     Replacing `[YOUR_STAGE_BUCKET]` with your Cloud Functions staging bucket.
 
-1.  Send an SMS message to your Twilio phone number an observe the response you
+1.  Send an SMS message to your Twilio phone number and observe the response you
     receive from the Cloud Function.
 
 To view the logs for the Cloud Function, run the following:
