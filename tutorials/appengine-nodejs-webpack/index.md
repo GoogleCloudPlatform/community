@@ -24,7 +24,24 @@ Platform.
 [webpack]: https://webpack.github.io/
 [nodejs-gcp]: running-nodejs-on-google-cloud
 
-## Prerequisites
+## Objectives
+
+1. Create a Node.js app that uses Webpack to bundle the app's frontend assets.
+1. Run the Node.js app locally.
+1. Deploy the Node.js app to Google App Engine flexible environment.
+
+## Costs
+
+This tutorial uses billable components of Google Cloud Platform, including:
+
+- Google App Engine flexible environment
+
+Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
+projected usage.
+
+[pricing]: https://cloud.google.com/products/calculator
+
+## Before you begin
 
 1.  Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
 1.  Enable billing for your project.
@@ -35,7 +52,7 @@ Platform.
 1.  Download the sample [`server.js`][server] file.
 1.  Prepare the `package.json` file:
 
-    1.  Create a `package.json` file with NPM or Yarn:
+    1.  Create a `package.json` file with `npm` or `yarn`:
 
             npm init
 
@@ -43,7 +60,7 @@ Platform.
 
             yarn init
 
-    1.  Install dependencies with `npm` or Yarn:
+    1.  Install dependencies with `npm` or `yarn`:
 
             npm install --save webpack express pug
 
@@ -130,7 +147,7 @@ At this point your directory structure should look like this:
 
 ## Running the app
 
-1.  Start the app with `npm` or Yarn:
+1.  Start the app with `npm` or `yarn`:
 
         npm start
 
@@ -147,17 +164,18 @@ At this point your directory structure should look like this:
 
 ## Deploying the app
 
-1. Create an `app.yaml` file with the following contents:
+1.  Create an `app.yaml` file with the following contents:
 
         runtime: nodejs
         env: flex
 
-1. Run the following command to deploy your app:
+1.  Run the following command to deploy your app:
 
         gcloud app deploy
 
-1. Visit `http://[YOUR_PROJECT_ID].appspot.com` to see the deployed app.
+1.  Visit `http://[YOUR_PROJECT_ID].appspot.com` to see the deployed app.
 
+    Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
 
 [server]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-nodejs-webpack/server.js
 [index]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-nodejs-webpack/views/index.pug
