@@ -128,6 +128,11 @@ For example, if you submit a tutorial named "Using Cloud SQL to Conquer the Worl
 * **Folder name**: `using-cloud-sql-conquer-world`
 * **URL**: `https://cloud.google.com/community/tutorials/using-cloud-sql-conquer-world/`
 
+If you don't have any additional files that go along with your tutorial, you can
+simply make a top-level Markdown file within the `tutorials/` folder, e.g.
+`tutorials/using-cloud-sql-conquer-world.md` instead of
+`tutorials/using-cloud-sql-conquer-world/index.md`.
+
 ## General content guidelines
 
 This site seeks technical content. While it's fine and often appropriate to point out the advantages of a particular product or Cloud Platform, don't give sales pitches in the document. Here are some guidelines:
