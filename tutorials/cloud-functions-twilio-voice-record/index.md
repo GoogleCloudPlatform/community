@@ -24,7 +24,7 @@ transcribed by the [Google Cloud Speech API][speech] and analyzed by the
 The sample Cloud Function is triggered by a webhook request from Twilio when a
 voice call is made to your Twilio phone number. The webhook validates that the
 request came from Twilio, prompts the user to leave a recording, then records
-the call. When the recording becomes available, the recording is transcribed,
+the call. When the recording becomes available, the recording is transcribed
 and analyzed for sentiment, entities, and syntax. The final results are stored
 in a Cloud Storage bucket.
 
@@ -35,7 +35,7 @@ in a Cloud Storage bucket.
 1.  Deploy a Cloud Function that can download voice recordings from Twilio and
     save them to Cloud Storage.
 1.  Deploy a Cloud Function that can transcribe the voice recordings, analyze
-    them, and save the results to Cloud Storage..
+    them, and save the results to Cloud Storage.
 
 ## Costs
 
@@ -75,7 +75,7 @@ projected usage.
 
 1.  Install and initialize the [Google Cloud SDK][sdk].
 
-    1. After initializing the SDK install the Beta components:
+    1. After initializing the SDK, install the Beta components:
 
             gcloud components install beta
 
@@ -243,7 +243,7 @@ function isValidRequest (req, res, pathname) {
 Next, you need to retrieve the voice recording from Twilio. You'll add a second
 function that will:
 
-1.  Trigger when the audio recording is available for retrievel. Twilio will
+1.  Trigger when the audio recording is available for retrieval. Twilio will
     send a webhook request to this function.
 1.  Download the audio file from Twilio and save it to Cloud Storage.
 
@@ -407,8 +407,8 @@ You can follow these steps to clean up resources and save on costs.
     * Replace `[RESULTS_BUCKET]` with the name of the bucket you created in step
       7 of the **Prerequisites** section.
 
-Of course, you can also delete the entire project but you would lose any billing
-setup you have done (disabling project billing first is required). Additionally,
+Of course, you can also delete the entire project, but you would have to disable billing and lose any
+setup you have done. Additionally,
 deleting a project will only happen after the current billing cycle ends.
 
 ## Next steps
