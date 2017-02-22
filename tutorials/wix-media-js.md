@@ -6,7 +6,7 @@ tags: Wix, media, Wix Media JavaScript SDK
 date_published: 11/13/2014
 ---
 
-The Wix Media JavaScript SDK is an isomorphic library: it works in Node.js and
+The [Wix Media](wix-media.md) JavaScript SDK is an isomorphic library: it works in Node.js and
 in the browser. The SDK provides a convenient API to access the Wix Media
 Services image manipulation APIs. [Learn more](wix-media)
 
