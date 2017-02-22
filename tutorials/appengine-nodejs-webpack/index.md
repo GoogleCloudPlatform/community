@@ -1,22 +1,16 @@
 ---
-title: Webpack on Google App Engine Flexible Environment
-description: Learn how to bundle frontend assets for an Express.js app on Google App Engine flexible environment.
+title: Webpack on App Engine Flexible Environment
+description: Learn how to bundle frontend assets for an Express.js app in the Google App Engine flexible environment.
 author: jmdobry
 tags: App Engine Flexible, Express.js, Node.js, Webpack
 date_published: 02/16/2017
 ---
 This tutorial shows a sample Node.js app built with [Express.js][express] that
-uses Webpack to bundle frontend assets on deployment to Google App Engine
+uses Webpack to bundle frontend assets on deployment to the Google App Engine
 flexible environment.
 
 [Webpack][webpack] is a module bundler. Webpack takes modules with dependencies
 and generates static assets representing those modules.
-
-It's easy to get started developing Webpack.js apps running on Google Cloud
-Platform. And because the apps you create will be running on the same
-infrastructure that powers all of Google's products, you can be confident that
-they will scale to serve all of your users, whether there are a few or millions
-of them.
 
 This tutorial gets you going fast by deploying a simple Webpack.js app. This
 tutorial assumes that you are familiar with Node.js programming and that you
@@ -30,7 +24,24 @@ Platform.
 [webpack]: https://webpack.github.io/
 [nodejs-gcp]: running-nodejs-on-google-cloud
 
-## Prerequisites
+## Objectives
+
+1. Create a Node.js app that uses Webpack to bundle the app's frontend assets.
+1. Run the Node.js app locally.
+1. Deploy the Node.js app to Google App Engine flexible environment.
+
+## Costs
+
+This tutorial uses billable components of Google Cloud Platform, including:
+
+- Google App Engine flexible environment
+
+Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
+projected usage.
+
+[pricing]: https://cloud.google.com/products/calculator
+
+## Before you begin
 
 1.  Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
 1.  Enable billing for your project.
@@ -41,7 +52,7 @@ Platform.
 1.  Download the sample [`server.js`][server] file.
 1.  Prepare the `package.json` file:
 
-    1.  Create a `package.json` file with NPM or Yarn:
+    1.  Create a `package.json` file with `npm` or `yarn`:
 
             npm init
 
@@ -49,7 +60,7 @@ Platform.
 
             yarn init
 
-    1.  Install dependencies with NPM or Yarn:
+    1.  Install dependencies with `npm` or `yarn`:
 
             npm install --save webpack express pug
 
@@ -57,7 +68,7 @@ Platform.
 
             yarn add webpack express pug
 
-        Note: Webpack must be listed in the `dependencies` of the `package.json`
+        **Note**: Webpack must be listed in the `dependencies` of the `package.json`
         file, as by default `devDependencies` are not installed when the app is
         deployed to Google App Engine.
 
@@ -112,7 +123,7 @@ Platform.
               name: 'foo'
             };
 
-    `app.js` imports and uses `foo.js`, but they will be bundled and deployed as
+    `app.js` imports and uses `foo.js`, but these files will be bundled and deployed as
     one file.
 
 1.  Prepare the app's views:
@@ -136,7 +147,7 @@ At this point your directory structure should look like this:
 
 ## Running the app
 
-1.  Start the app with NPM or Yarn:
+1.  Start the app with `npm` or `yarn`:
 
         npm start
 
@@ -149,22 +160,22 @@ At this point your directory structure should look like this:
 
 1.  Visit [http://localhost:8080](http://localhost:8080) to see the running app.
 
-1.  Press Ctrl+C to stop the app.
+1.  Press Control+C to stop the app.
 
 ## Deploying the app
 
-1. Create an `app.yaml` file with the following contents:
+1.  Create an `app.yaml` file with the following contents:
 
         runtime: nodejs
         env: flex
 
-1. Run the following command to deploy your app:
+1.  Run the following command to deploy your app:
 
         gcloud app deploy
 
-1. Visit `http://YOUR_PROJECT_ID.appspot.com` to see the deployed app.
+1.  Visit `http://[YOUR_PROJECT_ID].appspot.com` to see the deployed app.
 
-## Next steps
+    Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
 
 [server]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-nodejs-webpack/server.js
 [index]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-nodejs-webpack/views/index.pug
