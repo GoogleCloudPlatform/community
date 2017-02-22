@@ -11,7 +11,7 @@ buyers that allows networks to evaluate and bid on an impression by impression
 basis. It enables consolidated buying-and-measurement and real-time algorithmic
 optimization in a
 [transparent, directly accessible platform](http://static.googleusercontent.com/external_content/untrusted_dlcp/www.google.com/en/us/doubleclick/pdfs/consolidated-buying-platform.pdf). Technology innovation
-by ad exchanges, demand-side platforms and supply-side platforms has driven the
+by ad exchanges, demand-side platforms, and supply-side platforms has driven the
 uptick in adoption of RTB but has also created barriers through technical complexity.
 
 Real-time bidding applications, or _bidders_, are non-trivial, global distributed
@@ -27,13 +27,13 @@ bidding logic.
 
 This paper presents a pair of solutions that can be used as references for
 building and deploying multi-region, real-time bidders on
-Google Cloud Platform. The solution uses the following products and services :
+Google Cloud Platform. The solution uses the following products and services:
 
 +  [Google Compute Engine](https://cloud.google.com/compute/docs)
     +  Bidders will experience no latency in responding to bid requests from
-        Google Ad Exchange, giving them full 100ms to compute their response.
+        Google Ad Exchange, giving them a full 100ms to compute their response.
     +  Bidders run in standard Cloud Platform availability zones that
-        supports the use of other Google services such as the use of data
+        support the use of other Google services such as data
         analytics to maximize profits.
     +  Bidders can take advantage of high-performance virtual machines and
         networks to handle more bid requests with fewer instances.
@@ -56,14 +56,14 @@ Google Cloud Platform. The solution uses the following products and services :
     +  Preserve disk snapshots and database backups for zone migration and
         disaster recovery.
 +  [Google BigQuery](https://cloud.google.com/bigquery/docs) and [Prediction API](https://cloud.google.com/prediction/)
-    +  Analyze server logs and exchange reports for generating reports and
-        dashboards, and tuning the bid model.
+    +  Analyze server logs and exchange reports for tuning the bid model and generating reports and
+        dashboards.
 
 Alternative components include:
 
 +  [Google Cloud Datastore](https://cloud.google.com/datastore/docs) and
    [Google Cloud SQL](https://cloud.google.com/sql/docs)
-    +  Store bid model, campaigns and user tracking data.
+    +  Store bid model, campaigns, and user tracking data.
 +  Third-party databases
     +  Preserve existing implementation and expertise and run MySQL, PostgreSQL, Cassandra, or other databases on Compute Engine.
 
@@ -96,14 +96,13 @@ Platform products and services.
 
 #### Bidding components
 
-The core bidder components are those that handle bid and pixel requests, and are involved in storing and serving data as, if not all, fast as possible to these handlers. These components include the load balancers, bid and pixel servers, usually a distributed key-value store, and, in some cases, the database itself.
+The core bidder components are those that handle bid and pixel requests, and are involved in storing and serving data as fast as possible to these handlers. These components include the load balancers, bid and pixel servers, usually a distributed key-value store, and, in some cases, the database itself.
 
-Exchanges impose strict deadlines (typically on the order of 100ms) within
+Exchanges impose strict deadlines, typically 100ms, within
 which the system must respond. DoubleClick Ad Exchange (AdX)
 uses a 100ms limit. Bidders that exceed the response deadline have fewer
-opportunities and less time to respond.  AdX will also throttle traffic to
-bidders with high error rates (greater than 15%) affording those that are
-overloaded the opportunity to stabilize; other exchanges may not. Therefore
+opportunities and less time to respond.  AdX also throttles traffic to
+bidders with error rates higher than 15% so overloaded bidders can stabilize; other exchanges may not. Therefore
 it is important to have excellent network connectivity to the exchange servers,
 predictable execution characteristics, and a scalable architecture.
 Additionally, publishers will favor buyer platforms with low latency responses
@@ -112,7 +111,7 @@ also important that bidders have fast, reliable connectivity to the Internet.
 
 Bidder core components are deployed on Compute Engine, which
 provides a great experience for hosting bidding logic for the DoubleClick Ad
-Exchange (bidders for other exchanges can be hosted as well). Compute Engine
+Exchange or other exchanges. Compute Engine
 enables bidders to run virtual machines in multiple availability zones.
 It allows bidders to take advantage of Google’s global network for its high
 bandwidth and low latency connectivity among VMs and to other Cloud
@@ -125,7 +124,7 @@ software load balancers (such as [HAProxy](http://haproxy.1wt.eu/)
 and [Nginx](http://wiki.nginx.org/HttpUpstreamModule))
 running on Compute Engine virtual machines handle all request traffic from
 exchanges and user browsers. Load balancing is particularly important for
-maximizing aggregate effectiveness of the bidder, as well as, minimizing error
+maximizing aggregate effectiveness of the bidder and minimizing error
 rates and request pressure on individual bid servers.
 
 ##### Backends
@@ -133,14 +132,14 @@ rates and request pressure on individual bid servers.
 Frontend load balancers route traffic to backend bid servers that execute the
 platform’s custom bidding logic. Each exchange request is evaluated against
 the proprietary bid model, set of active campaigns, information the bidder
-holds about the user and other data points.
+holds about the user, and other data points.
 
 Pixel servers handle tracking, impression, click-through, and conversion
-requests directly from the user’s browser and may also perform additional
+requests directly from the user’s browser and may perform additional
 fraud detection. This paper includes, in its use of the term _pixel servers_,
-those additional nodes that actually perform the specific processing that
+those additional nodes that perform the specific processing that
 results from these requests, such as updating data stores, campaign budgets,
-user cookies and tracking information.
+user cookies, and tracking information.
 
 Running on Compute Engine means that you are free to
 choose your own server technology stack and stand-up existing solutions with
@@ -157,7 +156,7 @@ comprised of three components:
 system components, including Compute Engine networks and firewalls, server
 instances, and load balancers.
 +  **An API for Java** &mdash; for extending Open Bidder’s functionality with custom interceptors that implement bidding, impression, and click-through logic. It also provides support for cross-exchange bidding through dependency injection.
-+  **A Server** &mdash; for receiving bid, impression and click-through requests, and executing custom interceptors.
++  **A Server** &mdash; for receiving bid, impression, and click-through requests, and executing custom interceptors.
 
 ##### Distributed stores
 
@@ -167,8 +166,8 @@ Many bidders rely on distributed key-value stores like
 [Voldemort](https://github.com/voldemort/voldemort)
 for low latency access to
 data such as match tables and cookie stores that are consulted on every bid
-request, and must therefore be as fast as possible so as not to adversely
-impact the bidding engine. Some bidders will use a non-persistent store for
+request, so they must be as fast as possible to avoid adversely
+impacting the bidding engine. Some bidders use a non-persistent store for
 recording information related to its bid offers for later reconciliation
 against the corresponding impression won. This technique can be used, for
 example, to update cross-exchange campaigns, and refine bidding behavior
@@ -181,18 +180,18 @@ bidder, which is considered when making bidding decisions about the user. This
 can be useful when creating
 [remarketing](https://support.google.com/adxbuyer/bin/answer.py?answer=166635)
 campaigns, refining targeting, and adjusting bid decisions on impressions as
-they become available in real time. User data itself can be left entirely
+they become available in real time. User data can be left entirely
 transient in the distributed key-value store or kept more permanently in a
-database. The decision is largely reflective of the developer’s tolerance
-for data loss. Some platforms will favor a simple design and rebuild lost
-information; others will opt for durability. A product like Redis, which can
+database. The decision largely reflects the developer’s tolerance
+for data loss. Some platforms favor a simple design and rebuild lost
+information; others opt for durability. A product like Redis, which can
 serve requests from memory-only on the master node and perform persistence
 on the slave node, is a popular choice for a blended approach.
 
-Compute Engine offers a high performance, scalable and efficient
+Compute Engine offers a high performance, scalable, and efficient
 infrastructure upon which you can deploy distributed key-value stores.
 Additionally, Google offers a Hosted Match Table service for DoubleClick
-Ad Exchange customers from which they stand to gain the following benefits:
+Ad Exchange customers that provides the following benefits:
 
 +  **Less infrastructure** to support if the key-value store is only needed for
     match tables.
@@ -207,7 +206,7 @@ The bidder database stores everything from the trained bidding model, campaign
 data (active and historical), and exchange-specific data sets (such as categories, labels, agencies, vendors), to transient bid stores and event logs. Different bidder architectures rely on the database in different ways. This paper presents two alternative approaches centered around data access and
 replication strategies.
 
-Each of the reference architectures employ additional _proxy_ nodes for
+Each reference architecture employs additional _proxy_ nodes for
 brokering and handling data events between the database and other components.
 
 #### Analysis and modeling
@@ -215,7 +214,7 @@ brokering and handling data events between the database and other components.
 Analysis and modeling components make up the other segment of the platform’s
 data stack. Bidding platforms generate large volumes of log data that can offer
 vital insight into the performance of systems, and the effectiveness of bidding
-and fraud detection algorithms. Additionally, they provide critical input to
+and fraud detection algorithms. They also provide critical input to
 model training and tuning.
 
 You can use BigQuery to aggregate, transform, and analyze server logs and
@@ -263,7 +262,7 @@ Either Google Cloud Datastore or Cloud SQL, or possibly both, can be
 used&mdash;the choice is driven by the nature of the data schema and
 application usage semantics. Cloud Datastore is a NoSQL data solution, built
 on Google’s [Megastore](http://research.google.com/pubs/pub36971.html),
-and offers massive scalability, high availability and strong write consistency.
+and offers massive scalability, high availability, and strong write consistency.
 It is accessible from many other Google Cloud Platform services, including App
 Engine and Compute Engine, and can be used with hosted MapReduce and other
 data pipelines, as well as with the Search API for full-text and
@@ -280,7 +279,7 @@ replication across geographic regions.
 #### Implementation details
 
 One common practice among bidders is loading campaign data such as inventory,
-budgets, and preferences, from the database onto the bid servers themselves
+budgets, and preferences, from the database onto the bid servers
 during initialization. Having this data accessible directly in the server’s
 process space can eliminate extra network calls and the overhead associated
 with transferring non-trivial payload on every bid request. This solution
@@ -310,7 +309,7 @@ managed database(s).
 
 ###### Exchange bid requests
 
-**B1.** User browser or device requests an ad placement from Google’s
+**B1.** User browser or device requests an ad placement from Google
 DoubleClick or another ad exchange.
 
 **B2.** The exchange checks the bidder pre-targeting (including filtering
@@ -327,17 +326,15 @@ and round-robin.
 user from the cookie store. If the request is not coming from an exchange
 that hosts match tables, the bidder’s match table is used to obtain the
 domain cookie from the user’s exchange identifier. If the bid engine decides
-to bid for the placement, it will store information about the bid such as
-original request, decision indicators, or offer price, in the bid store after
-responding to the exchange.
+to bid for the placement, it responds to the exchange and then stores bid information such as
+original request, decision indicators, or offer price in the bid store.
 
 **B5.** Ad payloads can be served directly from Cloud Storage.
 
 ###### User browser requests
 
-**C1.** User actions trigger requests such as tracking pixels, impressions,
-click-through, and conversions, from their browser to the bidder directly,
-and are handled by the load balancers.
+**C1.** User actions trigger requests from their browser directly to the bidder. Requests are handled by the load balancers and include tracking pixels, impressions,
+click-through, and conversions.
 
 **C2.** An appropriate pixel server receives the request from the load balancer.
 
@@ -347,8 +344,7 @@ correlating to the ad impression.
 **C4.** After processing the request, the pixel server uses the messaging
 system to broadcast various update events including, for instance, updates for
 budgets based on bids won, user information, and campaign data. Certain types
-of events will be batched to lessen pressure on the message system, as well as
-to prevent overloading the receivers with high frequency interruptions.
+of events are batched to lessen pressure on the message system and prevent overloading the receivers with high frequency interruptions.
 
 **C5.** The messaging system relays the events across all regions.
 
@@ -380,17 +376,17 @@ performance and status reports from DoubleClick can be retrieved and made
 available for client download if desired.
 
 **D4.** As clients create new campaigns, perform remarketing and other related
-ctivities, the web application accesses the database directly from App Engine.
+activities, the web application accesses the database directly from App Engine.
 
 **D5.** After storing the new information in the database, tasks carrying these
 changes are queued for delivery to the data proxy servers. While it is now
 possible to create outbound sockets from App Engine via the Sockets API, a
 solution designed to enable point-to-point communication to data proxy servers
-cross all regions is fragile. This solution recommends using App Engine Task
+across all regions is fragile. This solution recommends using App Engine Task
 Queues, one per region, to hold these tasks.
 
-**D6.** Data proxy servers in each region independently (from those in located
-other regions) poll for data update tasks. The fault-tolerant approach requires
+**D6.** Data proxy servers in each region poll for data update tasks independently from servers located in
+other regions. The fault-tolerant approach requires
 the proxy node to query the queue for its region. No task is delivered more
 than once, and should a server go down, the updates will continue to flow
 into the backends.
@@ -422,8 +418,7 @@ reports.
 
 **E5.** Bidders that use machine-learning techniques for optimizing bidding
 logic and fraudulent request detection, for instance, can take advantage of
-the data processing pipeline to generate input for the Prediction API, the
-results of which are fed back into the database.
+the data processing pipeline to generate input for the Prediction API and feed results back into the database.
 
 ### Third-Party database solution
 
@@ -473,7 +468,7 @@ requirements of many bidders. In particular, the databases:
 
 Cloud Platform provides:
 
-+  Numerous virtual machine [configurations](https://cloud.google.com/compute/docs/pricing#machinetype) to suit the systems requirements,
++  Numerous virtual machine [configurations](https://cloud.google.com/compute/docs/pricing#machinetype) to suit the systems requirements.
 +  High-performance local and persistent disks with transparent at-rest
     encryption for data security.
 +  High-bandwidth, low-latency networking that can support synchronous
@@ -486,8 +481,9 @@ clusters, one for bid data, which was preloaded in the previous solution,
 and one for user data, which was kept in the key-value store in the previous
 solution. This approach affords partitioning of database I/O better
 correlated to usage.
-You might find [this paper](http://vldb.org/pvldb/vol5/p1724_tilmannrabl_vldb2012.pdf)
-helpful in providing some background on latency and throughput
+[Solving Big Data Challenges for Enterprise Application
+Performance Management](http://vldb.org/pvldb/vol5/p1724_tilmannrabl_vldb2012.pdf)
+may be helpful in providing some background on latency and throughput
 scalability characteristics of different third-party systems.
 
 ![Third-Party Database Solution Walkthrough](https://storage.googleapis.com/gcp-community/tutorials/real-time-bidder/real-time-bidder-solution-for-google-cloud-platform_image_4.png)
@@ -542,7 +538,7 @@ in Nearline or Coldline Storage.
 
 Real-time bidders are complex distributed systems that have very specific
 performance and availability requirements. Cloud Platform offers the
-performance, consistency, scale and reliability at the infrastructure and
+performance, consistency, scale, and reliability at the infrastructure and
 product levels on which demand-side platforms can count to build rock-solid
 bidding solutions.
 
@@ -555,7 +551,7 @@ by eMarketer.com, posted on November 15, 2012.
 
 ## Appendix I &mdash; Best practices
 
-Consider he following best practices for all Google DoubleClick
+Consider the following best practices for all Google DoubleClick
 Ad Exchange bidders, though they may apply equally well for other exchanges.
 Please refer to the DoubleClick Ad Exchange RTB
 [best practices guide](https://developers.google.com/ad-exchange/rtb/practices-guide)
@@ -602,8 +598,8 @@ for additional details and recommendations.
     associated with establishing new connections. An idle timeout of two
     minutes is recommended. Confirm that the bidder is not closing connections
     needlessly, for example, when returning "no bid" responses.
-+  **Do not hash source IP** as bidder frontends will receive traffic from a
-    small number of IP addresses, so use an input that will exhibit a high
++  **Do not hash source IP**, as bidder frontends will receive traffic from a
+    small number of IP addresses. Instead, use an input that will exhibit a high
     degree of variance such as cookies or URL parameters.
 
 ### Server configuration
@@ -629,11 +625,11 @@ for additional details and recommendations.
 +  **Enable GZIP compression** to reduce the amount of payload sent across
     the API.
 +  **Handle overload gracefully** by returning errors or no-bid responses when
-    pressure and latencies exceed the servers ability to respond in time. The
+    pressure and latencies exceed the server's ability to respond in time. The
     first strategy enables Google to throttle traffic to the bidder, which
     allows it to recover immediately when load drops to expected levels. The
-    second strategy achieves the same goal as the first (that of reducing the
-    number of bid requests that get processed) with the difference that
+    second strategy achieves the same goal as the first by reducing the
+    number of bid requests that get processed, with the difference that
     overload must be absorbed by the bidder.
 +  **Respond to ping requests that Google sends** to measure bidder status,
     connection close behavior, latency, and more. Do not close connections
@@ -641,12 +637,12 @@ for additional details and recommendations.
 
 ### System design
 
-+  **Cross-region communication isn’t free so be smart about shaping this traffic.** Understand how chatty different systems, such as a message bus
++  **Cross-region communication isn’t free, so be smart about shaping this traffic.** Understand how chatty different systems, such as a message bus
     or database, are and create a cost model.
 +  **Batch events and messages into single broadcasts or API calls whenever possible.** For example, campaign budgets can be updated once per minute
     rather than on every impression event. Likewise, identify where message
     payload compression will not impact response times and use it to expedite
     processing and reduce costs. Finally, pay attention to communication and
-    call failures (don’t assume every message gets delivered and every call
-    succeeds). Use randomized exponential backoff retry behavior to prevent
+    call failures: don’t assume every message gets delivered and every call
+    succeeds. Use randomized exponential backoff retry behavior to prevent
     flooding your receiver and overburdening the sender.
