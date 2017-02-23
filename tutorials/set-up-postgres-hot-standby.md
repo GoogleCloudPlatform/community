@@ -101,7 +101,7 @@ Note the following items:
 
 * You won't need to use pgAdmin for this tutorial.
 * Follow the installation steps twice, once for each server.
-* Follow the steps in **Connecting remotely**.
+* Follow the steps in [**Connecting remotely**](setting-up-postgres#connecting-remotely).
 * You'll need to open the network port only once, not once for each server.
 * Note the IP address of each server. You'll need these values when you
 modify the configuration files.
