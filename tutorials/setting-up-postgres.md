@@ -328,6 +328,6 @@ To delete a firewall rule:
 ## Next steps
 
 * [Set up a new persistent disk for your PostgreSQL Data](setting-up-postgres-data-disk).
-* [Set up Postgres for high availability and replication with Hot Standby](set-up-postgres-hot-standby).
+* [Set up Postgres for high availability and replication with Hot Standby](setting-up-postgres-hot-standby).
 * Explore the [PostgreSQL documentation](https://www.postgresql.org/docs/).
 * Learn more about [pgAdmin](http://www.pgadmin.org/docs/).
