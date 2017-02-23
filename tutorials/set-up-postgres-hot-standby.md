@@ -12,10 +12,10 @@ primary PostgreSQL server and the other instance will run the standby server.
 
 For most applications, data is a critical commodity. Storing data in one place
 is a risky proposition, so [you need to have a strategy and a plan in
-place](https://cloud.google.com/designing-a-disaster-recovery-plan) to ensure
-that you can recover from a failure as quickly as possible. One way to help
-prevent data loss is to store the same data on multiple servers and keep those
-databases synchronized.
+place](https://cloud.google.com/solutions/designing-a-disaster-recovery-plan) to
+ensure that you can recover from a failure as quickly as possible. One way to
+help prevent data loss is to store the same data on multiple servers and keep
+those databases synchronized.
 
 PostgreSQL, or Postgres, offers [various
 ways](http://www.postgresql.org/docs/9.3/static/different-replication-solutions.html)
@@ -54,7 +54,7 @@ short, synchronization between the servers is not instantaneous. If your
 application requires strict consistency between the database instances, you
 should consider another approach.
 
-* Postgres doesn't provide software to automatically fail over when the
+* Postgres doesn't provide functionality to automatically fail over when the
 primary server fails. This is a manual operation unless you use a third-party
 solution to manage failover.
 
@@ -104,7 +104,7 @@ Note the following items:
 * Follow the steps in **Connecting remotely**.
 * You'll need to open the network port only once, not once for each server.
 * Note the IP address of each server. You'll need these values when you
-modify configuration files.
+modify the configuration files.
 * Keep an SSH window open for each server as you work through this tutorial.
 
 ## Creating the guestbook table
@@ -482,7 +482,7 @@ After selecting the checkbox next to the project name, click **Delete project**.
 
 To delete a Compute Engine instance:
 
-1. In the Cloud Platform Console, go to the [**VM Instances** page](https://cloud.google.com/compute/instances).
+1. In the Cloud Platform Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
 1. Click the checkbox next to your `lamp-tutorial` instance.
 1. Click the **Delete** button at the top of the page to delete the instance.
 
