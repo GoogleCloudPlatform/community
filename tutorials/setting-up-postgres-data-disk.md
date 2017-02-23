@@ -277,4 +277,5 @@ To delete a Compute Engine disk:
 
 ## Next steps
 
+* [Set up hot standby mode](setting-up-postgres-hot-standby)
 * Explore the [PostgreSQL documentation](https://www.postgresql.org/docs/).
