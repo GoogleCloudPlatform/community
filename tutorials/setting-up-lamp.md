@@ -64,7 +64,7 @@ Cloud Platform Console or using the `gcloud compute ssh` command, which is
 part of the [Cloud SDK](https://cloud.google.com/sdk).
 This tutorial demonstrates the steps in the Cloud Platform Console.
 
-1. In the [Cloud Platform Console](https://console.cloud.google.com/compute/instances), 
+1. In the [Cloud Platform Console](https://console.cloud.google.com/compute/instances),
 go to the **VM Instances** page.
 1. In the list of virtual machine instances, click the *SSH* button in the row of the instance
 to which you want to connect.
@@ -161,7 +161,7 @@ the local machine, and removing the test database.
 
 ## Transferring files
 
-There are several ways to transfer files to your VM instance that runs your web server, 
+There are several ways to transfer files to your VM instance that runs your web server,
 including FTP and the `gcloud` command. For full details, see
 [Transferring files to Linux Instances](https://cloud.google.com/compute/docs/instances/transfer-files).
 This tutorial uses the `gcloud` command, which is part of the Cloud SDK.
@@ -204,13 +204,13 @@ in the Cloud Platform Console](https://console.cloud.google.com/compute/instance
 1. Sign in to your provider's DNS management interface and find the domain that you want to manage.
 Refer to your DNS provider's documentation for specific steps.
 1. Create an `A` record and set the value to your external IP address. The name or host field can be set to `@`,
-which represents the naked domain. For more information, 
+which represents the naked domain. For more information,
 the [Google Apps support page](https://support.google.com/a/answer/2579934) provides help
 for completing various DNS tasks.
 1. Create a `CNAME` record, set the name to `www`, and set the value to `@` or to your hostname followed by a period:
 `example.com.`. Read the [Google Apps support](https://support.google.com/a/answer/112037)
 for help creating the `A` record with various providers.
-1. If appropriate for your provider, increment the serial number in your `SOA` 
+1. If appropriate for your provider, increment the serial number in your `SOA`
 record to reflect that changes have been made so that your records will propagate.
 
 ### Verify your DNS changes
