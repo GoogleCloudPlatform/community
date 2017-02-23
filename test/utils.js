@@ -22,8 +22,8 @@ exports.TUTORIALS_PATH = path.join(__dirname, '../tutorials');
 
 exports.FILENAME_REGEXP = /^[a-z0-9-]+\.md$/; // e.g. setting-up-postgres.md
 exports.DIR_REGEXP = /^[a-z0-9-]+$/; // e.g. using-nodejs-to-calculate-the-size-of-a-bigquery-dataset
-exports.TITLE_REGEXP = /^[a-zA-Z0-9\s.\-()&!]+$/; // e.g. How to Set Up PostgreSQL on Compute Engine
-exports.DESCRIPTION_REGEXP = /^[a-zA-Z0-9\s.,\-()&!]+\.$/; // e.g. Learn how to get PostgreSQL running on Compute Engine
+exports.TITLE_REGEXP = /^[a-zA-Z0-9\s.\-()&'"/!]+$/; // e.g. How to Set Up PostgreSQL on Compute Engine
+exports.DESCRIPTION_REGEXP = /^[a-zA-Z0-9\s.,\-()&'"/!]+\.$/; // e.g. Learn how to get PostgreSQL running on Compute Engine
 exports.GITHUB_REGEXP = /^[a-zA-Z0-9-]+$/; // e.g. jimtravisgoog
 exports.TAGS_REGEXP = /^[a-zA-Z0-9.,\s-]+$/; // e.g. Compute Engine, PostgreSQL
 exports.DATE_REGEXP = /^[0-1]\d\/[0-3]\d\/\d\d\d\d$/; // e.g. 03/31/2016
