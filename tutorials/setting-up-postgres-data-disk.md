@@ -6,15 +6,15 @@ tags: Compute Engine, PostgreSQL, persistent disk
 date_published: 02/16/2017
 ---
 
-Learn how to add a separate persistent disk for your PostgreSQL database on
-Google Cloud Platform in just a few minutes.
+This tutorial shows how to add a separate persistent disk for your PostgreSQL database on
+Google Cloud Platform.
 
 The tutorial [How to Set Up PostgreSQL on Compute Engine](setting-up-postgres)
 shows how to set up a basic installation of PostgreSQL, or Postgres, on a
 single disk, which is also the boot disk. For better performance and data
 safety, you can install the PostgreSQL database engine on the boot disk and then
 set up the data storage on a separate persistent disk. This tutorial shows you
-how to move your exisitng database to a new persistent disk on
+how to move your existing database to a new persistent disk on
 Cloud Platform.
 
 
@@ -260,7 +260,7 @@ To delete the project:
 To delete a Compute Engine instance:
 
 1. In the Cloud Platform Console, go to the [**VM Instances**
-   page](https://cloud.google.com/compute/instances).
+   page](https://console.cloud.google.com/compute/instances).
 1. Click the checkbox next to your `lemp-tutorial` instance.
 1. Click the **Delete** button at the top of the page to delete the instance.
 
