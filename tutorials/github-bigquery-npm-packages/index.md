@@ -38,11 +38,11 @@ to start running queries.
 
 [bigquery_console]: https://bigquery.cloud.google.com/welcome/YOUR_PROJECT_ID
 
-When querying data BigQuery charges $5 (USD) per-terabyte of data processed,
+When querying data BigQuery charges $5 (USD) per terabyte of data processed,
 where the first terabyte (1 TB) per month is free.
 
-The queries in this tutorial will process more than 1 TB, hence why billing must
-be enabled.
+The queries in this tutorial will process more than 1 TB, which is why billing
+must be enabled.
 
 ## How many package.json files are on GitHub?
 
