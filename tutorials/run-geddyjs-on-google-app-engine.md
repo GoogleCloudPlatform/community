@@ -2,7 +2,7 @@
 title: Run Geddy.js on Google App Engine Flexible Environment
 description: Learn how to deploy a Sails.js app to Google App Engine flexible environment.
 author: jmdobry
-tags: App Engine Flexible, Geddy.js, Sails.js
+tags: App Engine, Geddy.js, Sails.js
 date_published: 01/10/2017
 ---
 ## Geddy.js

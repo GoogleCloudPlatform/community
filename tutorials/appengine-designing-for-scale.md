@@ -2,7 +2,7 @@
 title: Designing for Scale on Google App Engine Standard Environment
 description: Learn some best practices to ensure that your app will scale to high load on Google App Engine standard environment.
 author: alexium
-tags: App Engine Standard
+tags: App Engine
 date_published: 01/27/2017
 ---
 

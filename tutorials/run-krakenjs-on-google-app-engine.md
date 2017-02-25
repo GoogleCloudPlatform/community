@@ -2,7 +2,7 @@
 title: Run Kraken.js on Google App Engine Flexible Environment
 description: Learn how to deploy a Kraken.js app to Google App Engine flexible environment.
 author: jmdobry
-tags: App Engine Flexible, Kraken.js, Node.js
+tags: App Engine, Kraken.js, Node.js
 date_published: 01/10/2017
 ---
 ## Kraken.js
