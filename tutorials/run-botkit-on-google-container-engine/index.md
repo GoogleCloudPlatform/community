@@ -3,7 +3,7 @@ title: Running a Botkit Slack Bot on Google Container Engine
 description: Learn how to run a Botkit Slack bot on Google Container Engine.
 author: tswast
 tags: Container Engine, Node.js, Botkit, Slack
-date_published: 02/03/2017
+date_published: 2017-02-03
 ---
 This tutorial shows how to build a [Slack bot](https://api.slack.com/bot-users)
 using the [Botkit toolkit](https://howdy.ai/botkit/) and run it on [Google

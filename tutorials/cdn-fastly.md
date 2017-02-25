@@ -3,7 +3,7 @@ title: Content Delivery with Fastly and Google Cloud Storage
 description: This tutorial walks you through the process of setting up Fastly to pull assets from Google Cloud Storage.
 author: tzero
 tags: Fastly, Cloud Storage, CDN
-date_published: 09/09/2015
+date_published: 2015-09-09
 ---
 
 A [content delivery network](https://wikipedia.org/wiki/Content_delivery_network),
@@ -68,7 +68,7 @@ you need to create a Cloud Storage bucket and populate it with assets.
 
 To create a Cloud Storage bucket:
 
-1. In the Cloud Storage Browser in the 
+1. In the Cloud Storage Browser in the
    [Cloud Platform Console](https://console.cloud.google.com/storage/browser),
    click **Create Bucket**.
 1. In the **Create Bucket** dialog, fill out the form as follows:

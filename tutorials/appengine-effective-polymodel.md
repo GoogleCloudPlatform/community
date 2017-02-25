@@ -3,7 +3,7 @@ title: Effective PolyModel on App Engine Standard Environment
 description: Learn how to build effective polymodels on Google App Engine standard environment.
 author: devlance
 tags: App Engine, Datastore
-date_published: 08/01/2009
+date_published: 2009-08-01
 ---
 
 *Rafe Kaplan*

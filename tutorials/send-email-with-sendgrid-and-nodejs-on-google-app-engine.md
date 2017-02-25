@@ -3,7 +3,7 @@ title: Send Email with SendGrid and Node.js on Google App Engine Flexible Enviro
 description: Learn how to send email via SendGrid from a Node.js app to Google App Engine flexible environment.
 author: jmdobry
 tags: App Engine, SendGrid, Express.js, Node.js
-date_published: 01/13/2017
+date_published: 2017-12-13
 ---
 ## SendGrid
 

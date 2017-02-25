@@ -3,7 +3,7 @@ title: Using Node.js to Calculate the Size of a BigQuery Dataset
 description: Learn how to use Node.js to calculate the size of a BigQuery dataset.
 author: jmdobry
 tags: BigQuery, Node.js
-date_published: 01/18/2016
+date_published: 2016-01-18
 ---
 This tutorial shows how to use Node.js to calculate the size of a BigQuery
 dataset.

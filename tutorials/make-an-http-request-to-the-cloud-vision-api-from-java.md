@@ -3,7 +3,7 @@ title: Make an HTTP Request to the Google Cloud Vision API from Java
 description: Learn how to make an HTTP request to the Google Cloud Vision API from a Java program.
 author: lauriewhite
 tags: Cloud Vision API, Java, education
-date_published: 11/03/2016
+date_published: 2016-11-03
 ---
 ## The Cloud Vision API
 

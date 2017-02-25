@@ -3,7 +3,7 @@ title: Using System V Shared Memory on the Google App Engine Flexible PHP Runtim
 description: Learn how to use System V shared memory in a PHP App Engine flexible environment app.
 author: tmatsuo
 tags: App Engine, PHP
-date_published: 01/23/2017
+date_published: 2017-01-23
 ---
 ## System V IPC family
 

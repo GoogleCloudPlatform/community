@@ -3,7 +3,7 @@ title: Real-Time Bidder Solution for Google Cloud Platform
 description: This paper presents a pair of solutions that can be used as references for building and deploying multi-region, real-time bidders on Google Cloud Platform.
 author: jimtravis
 tags: Compute Engine, App Engine, Cloud Storage, BigQuery, Prediction API, OpenBidder
-date_published: 09/01/2014
+date_published: 2014-09-01
 ---
 
 Real-time bidding (RTB) is a server-to-server integration option for network ad
@@ -518,7 +518,7 @@ _Figure 3 steps_ C6-9 _are not applicable in this solution._
 are made by the data proxy on the user database.
 
 **D8.** Campaign updates and other tasks related to the bidding process are
-made by the data proxy on the bid database. 
+made by the data proxy on the bid database.
 
 _Figure 3 steps D4, D9 are not applicable in this solution._
 
