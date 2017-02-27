@@ -1,6 +1,6 @@
 ---
 title: Using Node.js to Calculate the Size of a BigQuery Dataset
-description: Learn how to deploy a Express.js app to Google App Engine flexible environment.
+description: Learn how to use Node.js to calculate the size of a BigQuery dataset.
 author: jmdobry
 tags: BigQuery, Node.js
 date_published: 01/18/2016

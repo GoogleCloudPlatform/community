@@ -2,7 +2,7 @@
 title: Implementing Workflows on Google App Engine Standard Environment with Fantasm
 description: Learn how to implement Workflows on Google App Engine standard environment with Fantasm.
 author: squee1945
-tags: App Engine Standard, Task Queue
+tags: App Engine, Task Queue
 date_published: 03/01/2011
 ---
 *Jason A. Collins & Shawn Rusaw (VendAsta Technologies, Inc.)*
