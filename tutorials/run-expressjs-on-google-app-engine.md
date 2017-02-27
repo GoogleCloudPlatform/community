@@ -3,7 +3,7 @@ title: Run Express.js on Google App Engine Flexible Environment
 description: Learn how to deploy a Express.js app to Google App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Express.js, Node.js
-date_published: 01/07/2016
+date_published: 2016-01-07
 ---
 ## Express.js
 

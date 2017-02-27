@@ -3,7 +3,7 @@ title: How to Prepare a Node.js Development Environment
 description: Learn how to prepare your computer for Node.js development, including development on Google Cloud Platform.
 author: jmdobry
 tags: Node.js
-date_published: 12/14/2016
+date_published: 2016-12-14
 ---
 This tutorial shows how to prepare your computer for [Node.js][nodejs]
 development, including development on Google Cloud Platform. Follow this

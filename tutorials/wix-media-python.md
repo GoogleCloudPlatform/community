@@ -3,7 +3,7 @@ title: Wix Media Platform Python SDK
 description: The Wix Media Python SDK is useful for applications on Google App Engine and custom runtimes hosted on Google Compute Engine.
 author: devlance
 tags: Wix, media, Wix Media Python SDK
-date_published: 11/13/2014
+date_published: 2014-11-13
 ---
 
 You can use [Wix Media Platform](wix-media.md) in client, server, and mobile applications on

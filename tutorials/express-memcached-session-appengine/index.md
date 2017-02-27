@@ -3,7 +3,7 @@ title: Use Memcache for Sessions with Express.js on Google App Engine Flexible E
 description: Learn how to deploy an Express.js app to Google App Engine flexible environment that uses Memcache for user sessions.
 author: jmdobry
 tags: App Engine, Express.js, Node.js, Memcache
-date_published: 02/08/2017
+date_published: 2017-02-08
 ---
 This tutorial shows a sample Node.js app built with Express.js that uses
 Memcache for user sessions. The end of the tutorial shows deploying the app to

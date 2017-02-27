@@ -3,7 +3,7 @@ title: Setting up Drupal on Google Compute Engine
 description: Learn how to get Drupal running on a virtual machine instance on Google Compute Engine easily in just a few minutes.
 author: jimtravisgoog
 tags: Compute Engine, SendGrid, Drupal
-date_published: 01/17/2017
+date_published: 2017-01-17
 ---
 Get Drupal running on a virtual machine instance on Google Compute Engine
 easily in just a few minutes. You can use automated tools or follow the detailed

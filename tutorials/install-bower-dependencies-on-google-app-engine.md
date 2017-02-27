@@ -3,7 +3,7 @@ title: Install Bower dependencies on Google App Engine Flexible Environment
 description: Learn how to use Bower in a Node.js App Engine flexible environment app.
 author: jmdobry
 tags: App Engine, Bower, Node.js
-date_published: 05/20/2016
+date_published: 2016-05-20
 ---
 ## Bower
 

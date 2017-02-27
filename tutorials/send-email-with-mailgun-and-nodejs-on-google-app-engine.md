@@ -3,7 +3,7 @@ title: Send Email with Mailgun and Node.js on Google App Engine Flexible Environ
 description: Learn how to send email via Mailgun from a Node.js app to Google App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Mailgun, Express.js, Node.js
-date_published: 01/10/2017
+date_published: 2017-01-10
 ---
 ## Mailgun
 

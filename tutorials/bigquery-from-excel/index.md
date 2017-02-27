@@ -3,7 +3,7 @@ title: Connecting to BigQuery from Microsoft Excel using ODBC
 description: Learn how to use the ODBC drivers for Google BigQuery to load query results into Microsoft Excel for analysis and visualization.
 author: tswast
 tags: BigQuery, Excel, ODBC
-date_published: 01/26/2017
+date_published: 2017-01-26
 ---
 [Google BigQuery](https://cloud.google.com/bigquery/) enables [standard SQL
 queries](https://cloud.google.com/bigquery/docs/reference/standard-sql/) to

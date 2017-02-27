@@ -3,7 +3,7 @@ title: Querying the Most Popular NPM Packages on GitHub with Google BigQuery
 description: Learn how to find the most popular NPM packages on GitHub by querying Google BigQuery's public GitHub datasets.
 author: JustinBeckwith
 tags: BigQuery, GitHub, NPM
-date_published: 02/08/2017
+date_published: 2017-02-08
 ---
 This tutorial shows how to query the public GitHub dataset on Google BigQuery
 in order to determine the most popular NPM packages among public projects on

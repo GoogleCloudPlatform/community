@@ -3,7 +3,7 @@ title: Sending Connection Notifications to Slack from Google Compute Engine
 description: Learn how to send notifications to Slack with incoming webhooks from Google Compute Engine.
 author: tswast
 tags: Compute Engine, Slack
-date_published: 09/22/2016
+date_published: 2016-09-22
 ---
 This tutorial demonstrates how to send a [Slack](https://slack.com)
 notification when someone SSHs into a [Google Compute

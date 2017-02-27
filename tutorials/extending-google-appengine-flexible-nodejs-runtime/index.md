@@ -3,7 +3,7 @@ title: Extending the Node.js Runtime of the Google App Engine Flexible Environme
 description: Learn how to extend the Node.js runtime of the Google App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Node.js, Docker
-date_published: 01/23/2017
+date_published: 2017-01-23
 ---
 This tutorial shows how to extend the Node.js runtime of the Google App Engine
 flexible environment.

@@ -3,7 +3,7 @@ title: Using Google Cloud Functions to Auto-Assign Reviewers to GitHub Pull Requ
 description: Learn how to use Google Cloud Functions to automatically assign reviewers to new GitHub pull requests.
 author: jmdobry
 tags: Node.js, Cloud Functions, GitHub
-date_published: 02/03/2017
+date_published: 2017-02-03
 ---
 ## Introduction
 
