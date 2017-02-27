@@ -3,7 +3,7 @@ title: Record and Analyze Voice Calls with Twilio and the Google Machine Learnin
 description: Learn how to record, transcribe, and analyze voice calls with Twilio and the Google Machine Learning APIs on Google Cloud Functions.
 author: jmdobry
 tags: Cloud Functions, Twilio, Cloud Speech API, Cloud Natural Language API, Node.js
-date_published: 02/20/2017
+date_published: 2017-02-20
 ---
 ## Introduction
 

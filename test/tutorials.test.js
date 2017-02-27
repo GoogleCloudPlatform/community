@@ -102,7 +102,7 @@ describe('tutorials/', () => {
         assert(DESCRIPTION_REGEXP.test(description), `description should be of the form ${DESCRIPTION_REGEXP}. Actual: ${description}.`);
         assert(GITHUB_REGEXP.test(author), `author should be of the form ${GITHUB_REGEXP}. Actual: ${author}.`);
         assert(TAGS_REGEXP.test(tags), `tags should be of the form ${TAGS_REGEXP}. Actual: ${tags}.`);
-        assert(DATE_REGEXP.test(datePublished), `datePublished should be of the form ${DATE_REGEXP}. Actual: ${datePublished}.`);
+        assert(DATE_REGEXP.test(datePublished), `datePublished should be of the form YYYY-MM-DD. Actual: ${datePublished}.`);
       });
     });
   });

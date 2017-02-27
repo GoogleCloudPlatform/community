@@ -3,7 +3,7 @@ title: HTTPS Load Balancing using NGINX and Google Compute Engine
 description: Learn about HTTPS Load Balancing using NGINX and Google Compute Engine.
 author: tzero
 tags: Compute Engine, Nginx
-date_published: 08/14/2015
+date_published: 2015-08-14
 ---
 HTTP(S) load balancing is an invaluable tool for scaling your website or web
 application, allowing you to route your traffic through a single IP and

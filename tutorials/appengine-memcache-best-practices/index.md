@@ -3,7 +3,7 @@ title: Best Practices for App Engine Standard Environment Memcache
 description: Learn about Best Practices for App Engine standard environment Memcache For Thread Safety, Performance, and Code Migration.
 author: devlance
 tags: App Engine, Memcache
-date_published: 02/09/2017
+date_published: 2017-02-09
 ---
 
 This article outlines some best practices for using the Google App Engine

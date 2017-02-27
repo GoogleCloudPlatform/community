@@ -3,7 +3,7 @@ title: Respond to SMS Messages with Twilio and Google Cloud Functions
 description: Learn how to receive and respond to SMS messages with Twilio and Google Cloud Functions.
 author: jmdobry
 tags: Cloud Functions, Twilio, Node.js
-date_published: 02/17/2017
+date_published: 2017-02-17
 ---
 ## Introduction
 

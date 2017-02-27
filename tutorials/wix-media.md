@@ -3,7 +3,7 @@ title: Wix Media Platform on Google Cloud Platform
 description: Wix Media Platform is a collection of services for storing, serving, uploading, and managing image, audio, and video files.
 author: devlance
 tags: Wix, media
-date_published: 11/13/2014
+date_published: 2014-11-13
 ---
 
 Wix Media Platform is a collection of services for storing, serving, uploading,

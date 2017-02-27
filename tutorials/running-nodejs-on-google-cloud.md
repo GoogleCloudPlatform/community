@@ -3,7 +3,7 @@ title: Node.js and Google Cloud Platform
 description: Get an overview of Node.js and learn ways to run Node.js apps on Google Cloud Platform.
 author: jmdobry
 tags: Node.js, Compute Engine, Container Engine, App Engine, Cloud Functions
-date_published: 12/14/2016
+date_published: 2016-12-14
 ---
 This tutorial shows how to prepare your computer for [Node.js][nodejs]
 development. Follow this tutorial to install Node.js and relevant tools.

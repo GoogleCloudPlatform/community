@@ -3,7 +3,7 @@ title: Using Google Cloud Container Builder as a Test Runner
 description: Learn how to use Google Cloud Container Builder as a test runner.
 author: tmatsuo
 tags: Google Cloud Container Builder, Testing, PHP
-date_published: 02/01/2017
+date_published: 2017-02-01
 ---
 ## Google Cloud Container Builder
 
@@ -41,7 +41,7 @@ configuration file.
 ## Running tests in a build step
 
 If we can use any arbitrary Docker image as the Build Step, and the source code
-is available, then we can run unit tests as a Build Step. By doing so, you always 
+is available, then we can run unit tests as a Build Step. By doing so, you always
 run the test with the same docker image. You don't have to worry about environment
 differences on CI systems any more.
 
@@ -52,7 +52,7 @@ tutorial uses the demo repository as part of its instructions.
 
 ## Test runner for phpunit
 
-The test runner is in the [`php/test/runner`][testrunner] subdirectory with the 
+The test runner is in the [`php/test/runner`][testrunner] subdirectory with the
 following two files.
 
 [testrunner]: https://github.com/GoogleCloudPlatform/cloudbuild-test-runner-example/tree/master/php/test/runner
