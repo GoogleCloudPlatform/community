@@ -2,7 +2,7 @@
 title: Webpack on App Engine Flexible Environment
 description: Learn how to bundle frontend assets for an Express.js app in the Google App Engine flexible environment.
 author: jmdobry
-tags: App Engine Flexible, Express.js, Node.js, Webpack
+tags: App Engine, Express.js, Node.js, Webpack
 date_published: 02/16/2017
 ---
 This tutorial shows a sample Node.js app built with [Express.js][express] that

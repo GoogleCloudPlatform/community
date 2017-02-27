@@ -1,8 +1,8 @@
 ---
-title: Run Meteor on Google App Engine
+title: Run Meteor on Google App Engine Flexible Environment
 description: Learn how to deploy a Meteor app to App Engine flexible environment.
 author: anassri
-tags: App Engine Flexible, Meteor, Node.js
+tags: App Engine, Meteor, Node.js
 date_published: 10/25/2016
 ---
 ## Meteor
