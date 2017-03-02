@@ -1,6 +1,6 @@
 ---
 title: How to Set Up MySQL on Google Compute Engine
-description: This tutorial walks you through the process of setting up Fastly to pull assets from Google Cloud Storage.
+description: This document provides guidance on MySQL options on Cloud Platform and walks through the manual installation of a MySQL database on Compute Engine.
 author: jimtravis
 tags: Compute Engine, MySQL
 date_published: 2015-08-25
