@@ -1,3 +1,13 @@
+---
+title: How to Write a Tutorial for the Google Cloud Platform Community
+description: Learn how to write a tutorial for the Google Cloud Platform community.
+author: jmdobry
+tags: Tutorial, Write
+date_published: 2017-03-03
+---
+
+**Beta: This is a Beta release of the Google Cloud Platform Community tutorials. This site might be changed and is not subject to any SLA or deprecation policy.**
+
 ## Introduction
 
 Beyond the official documentation there are endless possiblities for combining
@@ -67,7 +77,7 @@ instructions for how to sign and return it. Once we receive it, we'll be able to
 accept your pull requests.
 
 [repo]: https://github.com/GoogleCloudPlatform/community
-[styleguide]: /community/styleguide
+[styleguide]: styleguide
 [fork_quick]: https://github.com/GoogleCloudPlatform/community/new/master/tutorials
 [fork_btn]: https://github.com/GoogleCloudPlatform/community
 [pr]: https://help.github.com/articles/using-pull-requests/
