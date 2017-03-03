@@ -1,6 +1,6 @@
 ---
 title: Google Cloud Platform Community Tutorial Style Guide
-description: Learn about the style guide for Google Cloud Platform community tutorials.
+description: Learn about proper style for writing Google Cloud Platform community tutorials.
 author: jimtravis
 tags: Tutorial, Write, Styleguide
 date_published: 2017-03-03
