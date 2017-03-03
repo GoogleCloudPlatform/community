@@ -6,12 +6,12 @@ This repository holds the content submitted to
 [cloud.google.com/community][community].
 
 Files added to the [`tutorials/`][folder] will appear at
-[cloud.google.com/community/tutorials/search][tutorials].
+[cloud.google.com/community/tutorials][tutorials].
 
 ## Contributing
 
 Found out how you can contribute at
-[cloud.google.com/community/contribute][contribute].
+[cloud.google.com/community/tutorials/write][contribute].
 
 * [Browse tutorials][tutorials]
 * [Request a tutorial][request]
@@ -34,9 +34,9 @@ See [LICENSE](LICENSE.md).
 [folder]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials
 [community]: https://cloud.google.com/community/
 [tutorials]: https://cloud.google.com/community/tutorials/
-[contribute]: https://cloud.google.com/community/contribute/
+[contribute]: https://cloud.google.com/community/tutorials/write
 [request]: https://github.com/GoogleCloudPlatform/community/issues/new?title=Tutorial%20Request:%20<title>&body=Description%0A%0ATechnical%20Level%0Abeginner%20%7C%20intermediate%20%7C%20advanced%0A%0ALength%0Ashort%20(<%20250%20words)%20%7C%20medium%20(250-500%20words)%20%7C%20long%20(1000%20words+)%0A
-[write]: https://cloud.google.com/community/write
+[write]: https://cloud.google.com/community/tutorials/write
 [cca]: https://creativecommons.org/licenses/by/4.0/
 [apache]: http://www.apache.org/licenses/LICENSE-2.0
 [authors]: https://github.com/GoogleCloudPlatform/community/blob/master/AUTHORS
