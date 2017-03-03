@@ -29,7 +29,7 @@ installation of a MySQL database on Compute Engine.
 
 ## How to choose the right MySQL deployment option
 
-Google Cloud SQL is a great option if you want the convenience of having
+Cloud SQL is a great option if you want the convenience of having
 Cloud Platform take care of the backend database and server administration
 chores. For example, Cloud SQL provides automated backups and point-in-time
 recovery. Moreover, your data is replicated across multiple zones for greater
@@ -41,7 +41,7 @@ does not support user defined functions or the SUPER privilege. For more
 information, see
 [the Cloud SQL FAQ](https://cloud.google.com/sql/faq#supportmysqlfeatures).
 
-If you decide to install MySQL on Compute Engine, you can either use Google
+If you decide to install MySQL on Compute Engine, you can either use
 Cloud Launcher to deploy a MySQL installation, or you can manually install
 MySQL on a Compute Engine instance. Cloud Launcher provides a convenient way to
 deploy MySQL as part of larger development stacks. Cloud Launcher offers several
