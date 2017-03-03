@@ -1,3 +1,11 @@
+---
+title: Google Cloud Platform Community Tutorial Style Guide
+description: Learn about proper style for writing Google Cloud Platform community tutorials.
+author: jimtravis
+tags: Tutorial, Write, Styleguide
+date_published: 2017-03-03
+---
+
 This document provides guidance for contributors to the Google Cloud Platform (GCP) Community site.
 
 * [Caveats](#caveats)
@@ -34,7 +42,7 @@ Documentation submitted by contributors is usually one of two types:
   does X work?" They don't provide specific walkthroughs. They might contain
   numbered steps as generic examples, but this is rare.
 
-    **Example**: [Building Scalable and Resilient Apps](https://cloud.google.com/solutions/scalable-and-resilient-apps)
+    **Example**: [Modeling Entity Relationships on Google App Engine Standard Environment](appengine-modeling-entity-relationships)
 
 * **Tutorial**: Walks a user through a real-world, industry-specific, or
   end-to-end development scenario that uses your product. Tutorials teach "how
@@ -44,7 +52,7 @@ Documentation submitted by contributors is usually one of two types:
   doing, why they're doing it, and how and why it works. The end result is a
   working example. Usually, code on GitHub supports the document.
 
-    **Example**: [Setting Up PostgreSQL](https://cloud.google.com/solutions/set-up-postgres)
+    **Example**: [Setting Up PostgreSQL](setting-up-postgres)
 
 ## Designing a doc
 
