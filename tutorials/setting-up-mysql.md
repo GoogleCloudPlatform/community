@@ -16,7 +16,7 @@ your MySQL database in Google's cloud, and let Google Cloud Platform handle
 administrative duties like replication, patch management, and database
 management.
 
-[Google Cloud Launcher](https://cloud.google.com/launcher/?q=mysql)
+[Google Cloud Launcher](https://console.cloud.google.com/launcher/search?q=mysql)
 provides a simple, click-to-deploy interface that makes it easy to install
 MySQL onto a Compute Engine instance. Cloud Launcher includes not only a standalone MySQL
 installation, but also several web development stacks that use
@@ -49,7 +49,7 @@ deploy MySQL as part of larger development stacks. Cloud Launcher offers several
 including a stand alone MySQL installation, LAMP stacks, LEMP stacks, Nginx
 Stacks, a Percona MySQL Cluster installation, and several other options.
 
-If the Cloud Launcher offerings don't meed your needs, you can manually install
+If the Cloud Launcher offerings don't meet your needs, you can manually install
 MySQL on a Compute Engine instance. You might, for example, want to deploy
 MySQL on a custom image that you have created, or you might want to have
 complete control of the installation process.
@@ -65,14 +65,24 @@ Compute Engine instance.
 * Install MySQL
 * Connect to MySQL
 
+## Costs
+
+This tutorial uses Google Compute Engine, which is a billable component of Cloud Platform.
+Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost
+estimate based on your projected usage. New Cloud Platform users may be eligible
+for a [free trial](https://cloud.google.com/free-trial).
+
+
 ## Before you begin
 
 1. Create a new project in the [Google Cloud Platform Console](https://console.cloud.google.com/project).
    You can use an existing project, but creating a new project makes cleanup easier.
 
-    You can complete all of the steps in this document using the Cloud Platform Console,
-    but if you prefer to use the `gcloud` command line tool, follow these steps to
-    enable the Compute Engine API and install the Google Cloud SDK.
+    You can complete all of the steps in this document using the Cloud Platform
+    Console, but if you prefer to use the
+    [`gcloud` command line tool](https://cloud.google.com/sdk/gcloud/), follow the
+    rest of these steps to enable the Compute Engine API and install the Google
+    Cloud SDK.
 
 1. Use the Cloud Platform console to
    [enable the Compute Engine API](
@@ -81,32 +91,25 @@ Compute Engine instance.
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/).
 
 1. Configure your workspace to make commands less verbose.
-   Substitute your project's values for `project-id` and `my-zone` in
+   Substitute your project's values for `[PROJECT_ID]` and `[MY_ZONE]` in
    the following commands. For the full list of zones, see
    [Available regions & zones](https://cloud.google.com/compute/docs/regions-zones/regions-zones#available).
 
-        me@local:~$ gcloud config set project project-id
-        me@local:~$ gcloud config set compute/zone my-zone
-
-## Costs
-
-This tutorial uses Google Compute Engine, which is a billable component of Cloud Platform.
-Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost
-estimate based on your projected usage. New Cloud Platform users may be eligible
-for a [free trial](https://cloud.google.com/free-trial).
+        me@local:~$ gcloud config set project [PROJECT_ID]
+        me@local:~$ gcloud config set compute/zone [MY_ZONE]
 
 ## Create a Compute Engine Instance
 
-Create a Compute Engine instance for MySQL and establish an SSH connection to
-the newly created instance. The default operating system is Debian version 7.
-If you prefer to use a different operating system for this tutorial, you can
-choose from the options described on the
-[Images](https://cloud.google.com/compute/docs/images/) page
-in the Compute Engine documentation.
+The following steps describe how to create a Compute Engine instance for MySQL
+and establish an SSH connection to the newly created instance. The default
+operating system is Debian version 7. If you prefer to use a different operating
+system for this tutorial, you can choose from the options described on the
+[Images](https://cloud.google.com/compute/docs/images/) page in the Compute
+Engine documentation.
 
 ### Using the Cloud Platform Console
 
-To create a Compute Engine instance in the [Cloud Platform console](https://console.cloud.google.com/):
+To create a Compute Engine instance in the Cloud Platform console:
 
 1. Open the [Cloud Platform console](https://console.cloud.google.com/compute/instances).
 
@@ -145,7 +148,7 @@ parameter followed by the image name. For example, to use Debian 8, add
 
 The following steps describe how to install MySQL on a Compute Engine instance.
 
-## Using Debian or Ubuntu
+### Using Debian or Ubuntu
 
 1. Update the `apt-get` package manager.
 
@@ -165,7 +168,7 @@ The following steps describe how to install MySQL on a Compute Engine instance.
 
         sudo service mysqld start
 
-Using CentOS 7 and RHEL 7
+### Using CentOS 7 and RHEL 7
 
 Version 7 of CentOS and RHEL contain MariaDB instead of MySQL as part of its
 package management system. To install MySQL on CentOS 7, you must first update
@@ -181,7 +184,7 @@ the package manager.
 
 1. Start MySQL server.
 
-        $ sudo /usr/bin/systemctl start mysqld                  
+        $ sudo /usr/bin/systemctl start mysqld
 
 
 ## Improve MySQL Installation Security
@@ -206,23 +209,23 @@ instance.
 1. When you connect to MySQL, the prompt changes to:
 
         mysql>
-   
+
    You can then run MySQL commands. For example, the following command shows
    the threads running, including the current connection.
 
         mysql> show processlist;
-        
+
         +----+------+-----------+------+---------+------+-------+------------------+
         | Id | User | Host      | db   | Command | Time | State | Info             |
         +----+------+-----------+------+---------+------+-------+------------------+
         | 51 | root | localhost | NULL | Query   |    0 | NULL  | show processlist |
         +----+------+-----------+------+---------+------+-------+------------------+
         1 row in set (0.00 sec)
-        
+
    You can use the following command to generate a list of users.
 
         mysql> SELECT User, Host, Password FROM mysql.user;
-        
+
         +------------------+------------+-------------------------------------------+
         | User             | Host       | Password                                  |
         +------------------+------------+-------------------------------------------+
@@ -249,16 +252,15 @@ After you've finished the PostgreSQL tutorial, you can clean up the resources yo
 
 The easiest way to eliminate billing is to delete the project you created for the tutorial.
 
-To delete the project:
-
-1. In the Cloud Platform Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
-1. Click the trash can icon to the right of the project name.
-
 **Warning**: Deleting a project has the following consequences:
 
 If you used an existing project, you'll also delete any other work you've done in the project.
 You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, you should delete the resources inside the project instead. This ensures that URLs that use the project ID, such as an appspot.com URL, remain available.
 
+To delete the project:
+
+1. In the Cloud Platform Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
+1. Click the trash can icon to the right of the project name.
 
 ### Deleting instances
 
@@ -267,23 +269,20 @@ To delete a Compute Engine instance:
 1. In the Cloud Platform Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
 1. Click the checkbox next to your postgres-tutorial instance.
 1. Click the Delete button at the top of the page to delete the instance.
-1. Deleting firewall rules for the default network
-
-To delete a firewall rule:
 
 
 ## Next Steps
 
 You've now seen how to install MySQL server on Compute Engine. To see more
 complex applications that use MySQL, browse the
-[wide variety of development stacks](https://cloud.google.com/launcher/?q=mysql)
+[wide variety of development stacks](https://console.cloud.google.com/launcher/search?q=mysql)
 on Cloud Launcher that use MySQL.
 
 If your requirements include high availability and scalability, consider
 installing [MySQL Cluster](https://www.mysql.com/products/cluster/)
 on Compute Engine. MySQL Cluster provides high availability and scalability
 through shared-nothing clustering and auto-sharding. Cloud Launcher
-provides a click-to-deploy option for [Percona](https://cloud.google.com/launcher/?q=percona),
+provides a click-to-deploy option for [Percona](https://console.cloud.google.com/launcher/search?q=percona),
 an open source solution for MySQL clustering.
 
 Another open source solution for MySQL scalability is [Vitess](http://vitess.io/),
