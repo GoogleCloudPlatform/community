@@ -284,7 +284,7 @@ For better performance and data safety, install the database engine on the boot
 disk as this tutorial showed, and then set up the  data storage on a separate
 persistent disk. To learn how to add a disk for your database, see the follow-up
 tutorial
-[How to Set Up a New Persistent Disk for PostgreSQL Data](https://cloud.google.com/setup-postgres-data-disk).
+[How to Set Up a New Persistent Disk for PostgreSQL Data](setting-up-postgres-data-disk).
 
 For machines that have an Internet connection, use only strong passwords and
 limit access only to trusted IP ranges.
