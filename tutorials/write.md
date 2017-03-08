@@ -28,7 +28,7 @@ To submit a tutorial:
 
 1.  Accept the Contributor License Agreement (CLA):
 
-    [**View the CLA**](#contributor-licence-agreements)
+    [**View the CLA**](#contributor-license-agreements)
 
 1.  Read the style guide before preparing your submission:
 
