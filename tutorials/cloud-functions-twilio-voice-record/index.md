@@ -79,7 +79,6 @@ projected usage.
             gcloud components install beta
 
 [console]: https://console.cloud.google.com/
-[alpha]: https://docs.google.com/a/google.com/forms/d/1WQNWPK3xdLnw4oXPT_AIVR9-gd6DLo5ZIucyxzSQ5fQ/viewform
 [enable_functions]: https://console.cloud.google.com/apis/api/cloudfunctions.googleapis.com/overview
 [enable_speech]: https://console.cloud.google.com/apis/api/speech.googleapis.com/overview
 [enable_nl]: https://console.cloud.google.com/apis/api/language.googleapis.com/overview
