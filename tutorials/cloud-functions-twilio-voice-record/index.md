@@ -58,7 +58,6 @@ projected usage.
 
 1.  Create a project in the [Google Cloud Platform Console][console].
 1.  Enable billing for your project.
-1.  Sign up for the [Cloud Functions Alpha][alpha].
 1.  [Enable the Google Cloud Functions API][enable_functions].
 1.  [Enable the Google Cloud Speech API][enable_speech].
 1.  [Enable the Google Cloud Natural Language API][enable_nl].
@@ -80,7 +79,6 @@ projected usage.
             gcloud components install beta
 
 [console]: https://console.cloud.google.com/
-[alpha]: https://docs.google.com/a/google.com/forms/d/1WQNWPK3xdLnw4oXPT_AIVR9-gd6DLo5ZIucyxzSQ5fQ/viewform
 [enable_functions]: https://console.cloud.google.com/apis/api/cloudfunctions.googleapis.com/overview
 [enable_speech]: https://console.cloud.google.com/apis/api/speech.googleapis.com/overview
 [enable_nl]: https://console.cloud.google.com/apis/api/language.googleapis.com/overview
