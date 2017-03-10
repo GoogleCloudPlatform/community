@@ -26,7 +26,6 @@ request came from Twilio and then sends a simple reply.
 1.  Install the [Google Cloud SDK][sdk].
 
 [console]: https://console.cloud.google.com/
-[alpha]: https://docs.google.com/a/google.com/forms/d/1WQNWPK3xdLnw4oXPT_AIVR9-gd6DLo5ZIucyxzSQ5fQ/viewform
 [sdk]: https://cloud.google.com/sdk/
 
 ## Getting Started with Twilio
