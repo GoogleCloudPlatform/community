@@ -278,7 +278,7 @@ installation of PostgreSQL. In a production environment, it's a good idea to
 employ strategies for high availability, scalability, archiving, backup, load
 balancing, and disaster recovery. For information about disaster recovery
 planning, see
-[How to Design a Disaster Recovery Plan](https://cloud.google.com/designing-a-disaster-recovery-plan).
+[How to Design a Disaster Recovery Plan](https://cloud.google.com/solutions/designing-a-disaster-recovery-plan).
 
 For better performance and data safety, install the database engine on the boot
 disk as this tutorial showed, and then set up the  data storage on a separate
