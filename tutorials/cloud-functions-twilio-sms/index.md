@@ -23,7 +23,6 @@ request came from Twilio and then sends a simple reply.
 
 1.  Create a project in the [Google Cloud Platform Console][console].
 1.  Enable billing for your project.
-1.  Sign up for the [Cloud Functions Alpha][alpha].
 1.  Install the [Google Cloud SDK][sdk].
 
 [console]: https://console.cloud.google.com/
