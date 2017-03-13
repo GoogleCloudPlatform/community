@@ -1,6 +1,6 @@
 ---
 title: Automated Static Website Publishing with Cloud Container Builder
-description: Learn how to automate publishing your static website to Google Cloud Storage with Cloud Container Builder
+description: Learn how to automate publishing your static website to Google Cloud Storage with Cloud Container Builder.
 author: ahmetb
 tags: Cloud Container Builder, Hosting, Cloud Storage
 date_published: 2017-03-13
@@ -32,26 +32,26 @@ By uploading your website contents as files to Google Cloud Storage, you can
 bucket. Head to [Storage][p6n-storage] section of Google Cloud Console and type
 in your domain name (e.g. `www.example.com`) and create the bucket:
 
-![Create a bucket named as your domain name](./create-bucket.png)
+![Create a bucket named as your domain name](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/create-bucket.png)
 
 After the bucket is created, we need to make it readable by everyone. Go to the
 [Storage Browser][p6n-storage] on Cloud Console and click the menu icon to the
 right of the bucket, then select “Edit Object Default Permissions”:
 
-![Change object default permissions of the bucket](./change-defacl.png)
+![Change object default permissions of the bucket](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/change-defacl.png)
 
 Then add the user `allUsers` with “Reader” role and click “Save”:
 
-![Add allUsers as Reader](./add-allUsers.png)
+![Add allUsers as Reader](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/add-allUsers.png)
 
 Now, we need to configure the storage bucket with serving a static website.
 Click the “Edit Website Configuration” button on the bucket list:
 
-![Edit Website Configuration](./configure-website-button.png)
+![Edit Website Configuration](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/configure-website-button.png)
 
 Specify Main page as "index.html" and Save:
 
-![Specify main page](./configure-website.png)
+![Specify main page](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/configure-website.png)
 
 Now, configure your domain name’s DNS records to [create a CNAME
 record][gcs-hosting] that points to the Google Cloud Storage. This makes clients
@@ -69,19 +69,19 @@ new git commit to our source repository.
 Head over to the Container Registry &rarr; [Build Triggers][p6n-triggers]
 section on Google Cloud Console and click “Add trigger”:
 
-![Add build trigger on Container Registry section](./add-trigger-button.png)
+![Add build trigger on Container Registry section](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/add-trigger-button.png)
 
 Then select GitHub as the source of your repository. In the next screen you may
 be asked to authorize access to your GitHub account and repositories. This is
 needed for Google Cloud Source Repositories to mirror and create commit hooks on
 your GitHub repositories.
 
-![Select GitHub as the source](./select-source.png)
+![Select GitHub as the source](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/select-source.png)
 
 Then, pick your repository from the list. If you forked the sample repository
 above, pick it here:
 
-![Select the Git repository](./select-repo.png)
+![Select the Git repository](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/select-repo.png)
 
 In the next screen
 
@@ -90,7 +90,7 @@ In the next screen
 - choose Trigger Type ”Branch”
 - type cloudbuild.yaml to the file location
 
-![Create build trigger](./create-trigger.png)
+![Create build trigger](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/create-trigger.png)
 
 Now, create a `cloudbuild.yaml` file with the following contents on your
 repository. Note that you can add files to your repository on GitHub website, or
@@ -127,12 +127,12 @@ Trigger, we can now kick off the first build manually. Head over to the Google
 Cloud Console [Build Triggers][p6n-triggers] section, click “Run Trigger” and
 choose the the branch (i.e. master) to build.
 
-![Trigger the first build manually](./trigger-build.png)
+![Trigger the first build manually](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/trigger-build.png)
 
 Now click the “Build history” on the left and watch the build job execute and
 succeeed:
 
-![Build history shows the executing or completed builds](./build-history.png)
+![Build history shows the executing or completed builds](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/build-history.png)
 
 Remember that after now, every commit pushed to any branch of your GitHub
 repository will trigger a new build and publish contents to your website. If you
@@ -143,7 +143,7 @@ the Build Trigger configuration.
 
 Point your browser to your website URL and see if it works
 
-![See if your website works](./browser.png)
+![See if your website works](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/browser.png)
 
 ## Clean up
 
