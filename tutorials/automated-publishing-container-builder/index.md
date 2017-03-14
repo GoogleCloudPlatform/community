@@ -28,11 +28,11 @@ Builder][gcb].
 
 ## Set up a storage bucket
 
-By uploading your website contents as files to Google Cloud Platform Storage,
-you can [host your static website][gcs-hosting] on buckets. First, you need to
-create a bucket. Head to the [Storage][p6n-storage] section of Google Cloud
-Platform Console and type in your domain name (e.g. `www.example.com`) and
-create the bucket:
+By uploading your website contents as files to Google Cloud Storage, you can
+[host your static website][gcs-hosting] on buckets. First, you need to create a
+bucket. Head to the [Storage][p6n-storage] section of Google Cloud Platform
+Console and type in your domain name (e.g. `www.example.com`) and create the
+bucket:
 
 ![Create a bucket named as your domain
 name](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/create-bucket.png)
@@ -98,7 +98,7 @@ In the next screen
 - give this Build Trigger a name (e.g. publish-website)
 - choose Build Configuration "cloudbuild.yaml"
 - choose Trigger Type ”Branch”
-- Set the fiel location to `cloudbuild.yaml`
+- Set the file location to `cloudbuild.yaml`
 
 ![Create build
 trigger](https://storage.googleapis.com/gcp-community/tutorials/automated-publishing-container-builder/create-trigger.png)
@@ -118,8 +118,8 @@ makes sure that the website is uploaded to the storage bucket. The `-m` flag
 accelerates upload by processing multiple files in parallel and the `-c` flag
 avoids re-uploading unchanged files.
 
-If you are using the sample repository, you should upload the directory
-`vision/explore-api/` directory. If you would like to upload your entire
+If you are using the sample repository, you should upload the
+`./vision/explore-api/` directory. If you would like to upload your entire
 repository to the storage bucket, make sure to change this value to `.` in the
 YAML file.
 
