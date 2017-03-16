@@ -18,9 +18,9 @@ Platform.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/)
+1. [Create a project][create-project] in the Google Cloud Platform Console
    and make note of your project ID.
-1. Enable billing for your project.
+1. [Enable billing][enable-billing] for your project.
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Prepare
@@ -71,6 +71,8 @@ Welcome page.
 
     ![Symfony welcome page][symfony-welcome]
 
+[create-project]: https://cloud.google.com/resource-manager/docs/creating-managing-projects
+[enable-billing]: https://support.google.com/cloud/answer/6293499?hl=en
 [php-gcp]: https://cloud.google.com/php
 [symfony]: http://symfony.com
 [symfony-install]: http://symfony.com/doc/current/setup.html
