@@ -76,7 +76,7 @@ Welcome page.
 ## Set up Database Sessions
 
 1. Follow the instructions to set up a
-[CloudSQL Second Generation instance for MySQL][cloudsql-create].
+[Cloud SQL Second Generation instance for MySQL][cloudsql-create].
 
 1. Follow the instructions to
 [install the Cloud SQL proxy client on your local machine][cloudsql-install].
