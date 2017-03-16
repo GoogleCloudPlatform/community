@@ -83,7 +83,8 @@ configured channel or direct message.
     webhook](https://api.slack.com/incoming-webhooks) feature in the **Add
     features and functionality** section.
     1.  Click the **Off** switch in the upper right-hand corner to activate the
-        incoming webhooks feature.
+        incoming webhooks feature. The switch will turn green to indicate the
+        feature is now **On**.
 1.  Click the **Add new webhook to team** button at the bottom of the incoming
     webhooks feature page.
     1.  In the authorization dialog, select the channel where you want the SSH
