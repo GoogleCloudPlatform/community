@@ -61,6 +61,7 @@ Welcome page.
         ]
 
     In the context of Symfony's `composer.json`, it will look like this:
+
     ![Add post-deploy-cmd scripts to composer.json][composer-json]
 
 1. Run the following command to deploy your app:
@@ -77,4 +78,4 @@ Welcome page.
 [symfony]: http://symfony.com
 [symfony-install]: http://symfony.com/doc/current/setup.html
 [symfony-welcome]: http://symfony.com/doc/current/_images/welcome.png
-[composer-json]: https://storage.googleapis.com/gcp-community/tutorials/run-symfony-on-google-app-engine/composer-json.png
+[composer-json]: https://storage.googleapis.com/gcp-community/tutorials/run-symfony-on-appengine-flexible/composer-json.png
