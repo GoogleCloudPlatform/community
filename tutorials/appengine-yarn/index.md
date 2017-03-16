@@ -23,7 +23,7 @@ Running this command will save the dependency into your `package.json`, and crea
 
 ## Deploying to App Engine
 
-To use yarn for your deployments to App Engine - all you need is a `yarn.lock` in your application directory. Then, just deploy:
+To use yarn for your deployments to App Engine, all you need is a `yarn.lock` in your application directory. Then, just deploy:
 
     gcloud app deploy
 
