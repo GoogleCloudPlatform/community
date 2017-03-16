@@ -29,8 +29,14 @@ Slack is a messaging application for working with teams, and it provides a
     Engine Linux quickstart
     guide](https://cloud.google.com/compute/docs/quickstart-linux) to create
     one.
+
+    When choosing a machine size, note that the [Google Cloud Platform free
+    tier](https://cloud.google.com/free/) includes 1
+    [f1-micro](https://cloud.google.com/compute/docs/machine-types#sharedcore)
+    instance per month. This tutorial requires very little CPU or memory
+    resources.
 2.  Create a [new Slack team](https://slack.com/create), or use an team where
-    you have permissions to add custom integrations.
+    you have permissions to add integrations.
 
 ## Costs
 
@@ -66,17 +72,42 @@ If git is not installed, download and extract the code.
 
 ## Creating a Slack incoming webhook
 
-Create a [Slack incoming webhook](https://api.slack.com/incoming-webhooks) from
-the [custom integrations page for your Slack
-team](https://slack.com/apps/manage/custom-integrations). You should see a
-webhook URL, like
-`https://hooks.slack.com/services/T000000/B00000/XXXXXXXX`.
+An [incoming webhook](https://api.slack.com/incoming-webhooks) creates an HTTPS
+endpoint where you can send messages. These messages will post the the
+configured channel or direct message.
 
-Write this webhook URL to a file called `slack-hook` in the `notify` directory.
+1.  Create a [new Slack app](https://api.slack.com/apps).
+    1.  Give the app a name, such as "SSH Notifier".
+    1.  Choose the Slack team where you want it installed.
+1.  Select the [Slack incoming
+    webhook](https://api.slack.com/incoming-webhooks) feature in the **Add
+    features and functionality** section.
+    1.  Click the **Off** switch in the upper right-hand corner to activate the
+        incoming webhooks feature. The switch will turn green to indicate the
+        feature is now **On**.
+1.  Click the **Add new webhook to team** button at the bottom of the incoming
+    webhooks feature page.
+    1.  In the authorization dialog, select the channel where you want the SSH
+        notifications to appear, such as #cloud or #botdev.
+1.  You should now see a webhook URL, like
+    `https://hooks.slack.com/services/T000000/B00000/XXXXXXXX`. Copy it to your
+    clipboard by clicking the **Copy** button.
+1.  Switch back to the SSH connection on the Compute Engine instance.
+    1.  Write the webhook URL to a file called `slack-hook` in the `notify` directory.
 
-    echo 'https://hooks.slack.com/services/T000000/B00000/XXXXXXXX' > slack-hook
+            echo 'https://hooks.slack.com/services/T000000/B00000/XXXXXXXX' > slack-hook
+
+[Be careful](https://api.slack.com/docs/oauth-safety) with your webhook URL.
+Treat it like you would any other secret token. Do not store tokens in version
+control or share them publicly.
 
 ## Examining the notification script
+
+*This section explains the script used to send notifications to Slack. It
+should be easy to understand if you are familiar with [Bash
+syntax](https://tiswww.case.edu/php/chet/bash/bashtop.html). You may skip to
+the **Testing the notification script** section if you only wish to try out the
+code.*
 
 Examine the [`login-notify.sh`
 script](https://github.com/GoogleCloudPlatform/slack-samples/blob/master/notify/login-notify.sh).
@@ -110,7 +141,7 @@ Finally, it send a POST HTTP request with the message to the Slack webhook.
 ## Testing the notification script
 
 Test the script by setting the `PAM_USER` and `PAM_RHOST` variables and running
-the script.
+the script from the Compute Engine instance SSH terminal.
 
     PAM_USER=$USER PAM_RHOST=testhost ./login-notify.sh
 
@@ -120,20 +151,26 @@ You should receive a Slack message notifying you that there as a login from
 ## Adding the PAM hook.
 
 A PAM hook can run a script to run whenever someone SSHs into the machine.
-Verify that SSH is using PAM by making sure there is a line `UsePAM yes` in
-the `/etc/ssh/sshd_config` file. You can use whatever text editor you would
-like. This tutorial uses `nano`.
 
-    sudo nano /etc/ssh/sshd_config
+1.  Verify that SSH is using PAM by making sure there is a line `UsePAM yes` in
+    the `/etc/ssh/sshd_config` file.
 
--   Use the [`install.sh`
+        grep UsePAM /etc/ssh/sshd_config
+
+    If you do not see `UsePAM yes` or it is commented out with a `#`, you can
+    use whatever text editor you would like to edit the file. This tutorial
+    uses `nano`.
+
+        sudo nano /etc/ssh/sshd_config
+
+1.  Use the [`install.sh`
     script](https://github.com/GoogleCloudPlatform/slack-samples/blob/master/notify/install.sh)
     to set up the PAM hook.
 
-        ./install.sh
+        sudo ./install.sh
 
--   Keep this SSH window open in case something went wrong.
--   Verify that you can login from another SSH terminal.
+1.  Keep this SSH window open in case something went wrong.
+1.  Verify that you can login from another SSH terminal.
 
 You should receive another notification on Slack, indicating that you just
 connected.
