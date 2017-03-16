@@ -23,7 +23,7 @@ Platform.
 
 ## Prepare
 
-1. Follow the official documentation for [installing Laravel][laravel-install]
+Follow the official documentation for [installing Laravel][laravel-install]
 from laravel.com.
 
 ## Run
@@ -55,13 +55,14 @@ Welcome page.
           APP_LOG: errorlog
           STORAGE_DIR: /tmp
 
-1. Add the following under "scripts" in `composer.json`:
+1. Add the following under `scripts` in `composer.json`:
 
         "post-deploy-cmd": [
             "chmod -R 755 bootstrap\/cache"
         ]
 
     In the context of Laravel's `composer.json`, it will look like this:
+
     ![Add post-deploy-cmd scripts to composer.json][composer-json]
 
 1. Run the following command to deploy your app:
@@ -75,47 +76,47 @@ Welcome page.
 ## Set up Database Sessions
 
 1. Follow the instructions to set up a
-[CloudSQL Second Generation instance][cloudsql-create]
+[CloudSQL Second Generation instance for MySQL][cloudsql-create].
 
 1. Follow the instructions to
-[install the Cloud SQL Proxy client on your local machine][cloudsql-install].
-The Cloud SQL Proxy is used to connect to your Cloud SQL instance when running
+[install the Cloud SQL proxy client on your local machine][cloudsql-install].
+The Cloud SQL proxy is used to connect to your Cloud SQL instance when running
 locally.
 
-1. Use the Cloud SDK from command-line to run the following command. Copy the
-`connectionName` value for the next step.
-  ```sh
-  gcloud beta sql instances describe YOUR_INSTANCE_NAME
-  ```
+1. Use the Cloud SDK from the command line to run the following command. Copy
+the `connectionName` value for the next step.
+    ```sh
+    gcloud beta sql instances describe YOUR_INSTANCE_NAME
+    ```
 
-1. Start the Cloud SQL Proxy using the connection name from the previous step:
-  ```sh
-  cloud_sql_proxy -instances=YOUR_INSTANCE_CONNECTION_NAME=tcp:3306
-  ```
+1. Start the Cloud SQL proxy using the connection name from the previous step:
+    ```sh
+    cloud_sql_proxy -instances=YOUR_INSTANCE_CONNECTION_NAME=tcp:3306
+    ```
 
-1. Use the MySQL client or similar program to connect to your instance and
+1. Use the MySQL client or a similar program to connect to your instance and
   create a database for the application. When prompted, use the root password
   you configured.
-  ```sh
-  mysql -h 127.0.0.1 -u root -p -e "CREATE DATABASE laravel;"
-  ```
+    ```sh
+    mysql -h 127.0.0.1 -u root -p -e "CREATE DATABASE laravel;"
+    ```
 
 1. Run the database migrations for Laravel. This can be done by setting your
-  parameters in `.env` or by passing them in as environemnt variables. Be sure
+  parameters in `.env` or by passing them in as environment variables. Be sure
   to replace `YOUR_DB_PASSWORD` below with the root password you configured:
-  ```sh
-  # create a migration for the session table
-  php artisan session:table
-  DB_DATABASE=laravel DB_USERNAME=root DB_PASSWORD=YOUR_DB_PASSWORD php artisan migrate --force
-  ```
+    ```sh
+    # create a migration for the session table
+    php artisan session:table
+    DB_DATABASE=laravel DB_USERNAME=root DB_PASSWORD=YOUR_DB_PASSWORD php artisan migrate --force
+    ```
 
-1. Edit `config/database.php` and add a line for "unix_socket" to the
+1. Edit `config/database.php` and add a line for `unix_socket` to the
   'mysql' connection configuration:
-  ```php
-  'mysql' => [
-      // ...
-      'unix_socket' => env('DB_SOCKET', ''),
-  ```
+    ```php
+    'mysql' => [
+        // ...
+        'unix_socket' => env('DB_SOCKET', ''),
+    ```
 
 1. Modify your `app.yaml` file with the following contents:
 
@@ -149,13 +150,13 @@ locally.
             cloud_sql_instances: "YOUR_CLOUDSQL_CONNECTION_NAME"
 
 1. Replace each instance of `YOUR_DB_PASSWORD` and `YOUR_CLOUDSQL_CONNECTION_NAME`
-with the appropriate you created for your CloudSQL instance above.
+with the values you created for your CloudSQL instance above.
 
 [php-gcp]: https://cloud.google.com/php
 [laravel]: http://laravel.com
 [laravel-install]: https://laravel.com/docs/5.4/installation
 [laravel-welcome]: https://storage.googleapis.com/gcp-community/tutorials/run-laravel-on-appengine-flexible/welcome-page.png
 [composer-json]: https://storage.googleapis.com/gcp-community/tutorials/run-laravel-on-appengine-flexible/composer-json.png
-[cloudsql-create]: https://cloud.google.com/sql/docs/create-instance
-[cloudsql-install]: https://cloud.google.com/sql/docs/external#install
+[cloudsql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
+[cloudsql-install]: https://cloud.google.com/sql/docs/mysql/connect-external-app#install
 
