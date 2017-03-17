@@ -1,7 +1,7 @@
 ---
 title: Setting up Joomla! on Google Compute Engine
 description: Learn how to get Joomla! running on a virtual machine instance on Google Compute Engine easily in just a few minutes.
-author: jimtravisgoog
+author: jimtravis
 tags: Compute Engine, SendGrid, Joomla
 date_published: 2017-01-17
 ---
