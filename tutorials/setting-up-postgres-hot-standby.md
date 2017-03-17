@@ -1,7 +1,7 @@
 ---
 title: How to Set Up PostgreSQL for High Availability and Replication with Hot Standby
 description: Learn how to configure PostgreSQL to run in Hot Standby mode on Google Cloud Platform. You use two Compute Engine instances. One instance runs the primary PostgreSQL server and the other instance runs the standby server.
-author: jimtravisgoog
+author: jimtravis
 tags: Compute Engine, PostgreSQL, HA
 date_published: 2017-02-18
 ---
