@@ -1,7 +1,7 @@
 ---
 title: Setting Up LEMP on Compute Engine
 description: Learn how to set up a LEMP stack on a virtual machine.
-author: jimtravis
+author: steveperry-53
 tags: Compute Engine, LEMP
 date_published: 2017-02-15
 ---
