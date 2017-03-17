@@ -14,7 +14,7 @@ response to messages.
 
 ## Objectives
 
-1. Create a bot custom integration in Slack.
+1. Create a bot internal integration in Slack.
 1. Build a Node.js image in Docker.
 1. Upload a Docker image to a private Google Container Registry.
 1. Run a Slack bot on Google Container Engine.
@@ -24,6 +24,7 @@ response to messages.
 This tutorial uses billable components of Google Cloud Platform, including:
 
 - Google Container Engine
+- Google Compute Engine (via Google Container Engine)
 - Google Cloud Storage (via the Google Container Registry)
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
@@ -33,29 +34,28 @@ projected usage.
 
 ## Before you begin
 
-1.  Select or create a [Google Cloud Platform Console][console] project.
-    [Go to the projects page][projects].
-1.  Enable billing for your project. [Enable billing][billing].
-1.  Install the [Google Cloud SDK][sdk].
-1.  Authenticate `gcloud` with Google Cloud Platform.
+1.  Set up your development environment.
+    1.  Select or create a [Google Cloud Platform Console][console] project.
+        [Go to the projects page][projects].
+    1.  Enable billing for your project. [Enable billing][billing].
+    1.  Install the [Google Cloud SDK][sdk].
+    1.  Authenticate `gcloud` with Google Cloud Platform.
 
-        gcloud init
+            gcloud init
 
-1.  Install [Node.js](https://nodejs.org/en/). See [how to prepare a Node.js
-    development
-    environment](https://cloud.google.com/community/tutorials/how-to-prepare-a-nodejs-dev-environment)
-    for more detailed instructions.
-1.  Install [Docker](https://www.docker.com/products/overview).
+    1.  Install [Node.js](https://nodejs.org/en/). See [how to prepare a Node.js
+        development
+        environment](https://cloud.google.com/community/tutorials/how-to-prepare-a-nodejs-dev-environment)
+        for more detailed instructions.
+    1.  Install [Docker](https://www.docker.com/products/overview).
 1.  [Create a new Slack team][new-slack-team], or use one you already have if
-    you have permissions to [add new custom
-    integrations][manage-custom-integrations] to it.
+    you have permissions to add new integrations to it.
 
 [console]: https://console.cloud.google.com/
 [projects]: https://console.cloud.google.com/project
 [billing]: https://support.google.com/cloud/answer/6293499#enable-billing
 [sdk]: https://cloud.google.com/sdk/
 [new-slack-team]: https://slack.com/create
-[manage-custom-integrations]: https://my.slack.com/apps/manage/custom-integrations
 
 ## Getting the sample code
 
@@ -69,54 +69,54 @@ The code for this tutorial is [hosted on GitHub][repo].
 
         cd cloud-slack-bot/start
 
+1.  Install the dependencies, including Botkit. Run this command in the
+    `cloud-slack-bot/start` directory.
+
+        npm install
+
 [repo]: https://github.com/googlecodelabs/cloud-slack-bot
 [repo-zip]: https://github.com/googlecodelabs/cloud-slack-bot/archive/master.zip
 
-## Creating a Slack bot custom integration
+## Creating a Slack bot
 
 A [bot user][bot-user] can listen to messages on Slack, post messages, and
 upload files. In this tutorial, you will create a bot post a simple greeting
 message.
 
-1.  Create a new Slack bot integration from the [Slack configuration page][new-slack-bot].
-1.  Give it a nice username, like @kittenbot.
+1.  Create a [new Slack app](https://api.slack.com/apps).
+    1.  Give the app a name, such as "Kittenbot".
+    1.  Choose the Slack team where you want it installed.
+1.  Add a new bot user to the app.
+    1.  Select **Bot users** under the features heading on the left-hand side
+        navigation of the app configuration page.
+    1.  Click the **Add a bot user** button.
+    1.  Give it a nice username, like @kittenbot.
+    1.  This tutorial uses the RTM API, so do not always show the bot as
+        online. Instead, it will show as online only when there is a
+        connection from the bot.
+    1.  Click the **Add bot user** button.
+1.  Get the OAuth access token to allow the bot to connect to your team.
+    1.  Select **OAuth & Permissions** under the features heading on the
+        left-hand side navigation of the app configuration page.
+    1.  Click the **Reinstall app** button. This will reinstall the app to your
+        team and add the bot user you just created.
+    1.  Click the **Copy** button to copy the **Bot user OAuth access token**
+        text into your clipboard. 
 
-    ![create a new bot](https://storage.googleapis.com/gcp-community/tutorials/run-botkit-on-google-container-engine/add-custom-integration.png)
+        You'll use the token in the next step. Don't worry. You can come back
+        this configuration page from the [apps management
+        page](https://api.slack.com/apps) if you need to get this token again.
 
-    Click **Add bot integration**.
-
-1.  Customize the bot however you like. You can give it an icon based on an
-    emoji, for example the `:smile_cat:` emoji, or an image.
-
-1.  Add a description to let your teammates know the purpose of this bot.
-
-    ![add a description](https://storage.googleapis.com/gcp-community/tutorials/run-botkit-on-google-container-engine/custom-integration-description.png)
-
-1.  Copy the API token text into your clipboard.
-
-    ![copy api token](https://storage.googleapis.com/gcp-community/tutorials/run-botkit-on-google-container-engine/api-token.png)
-
-    You'll use it in the next step. Don't worry. You can come back to the bot
-    configuration page from the [custom integrations management
-    page](https://my.slack.com/apps/manage/custom-integrations) if you need to
-    get this token again.
-
-    **Caution** Be careful with your bot user tokens! Do not share tokens with
-    users or anyone else. For example, do not commit this token to version
-    control. Bot user tokens grant expansive permissions beyond those of
-    typical user tokens.
+[Be careful](https://api.slack.com/docs/oauth-safety) with your bot user OAuth
+access token. Treat it like you would any other secret token. Do not store
+tokens in version control or share them publicly.
 
 [bot-user]: https://api.slack.com/bot-users
-[new-slack-bot]: http://my.slack.com/services/new/bot
 
 ## Running the bot locally
 
 To run the bot locally on your development machine,
 
-1.  Install the dependencies, including Botkit. Run this command in the
-    `cloud-slack-bot/start` directory.
-
-        npm install
 
 1.  Edit the [kittenbot.js
     file](https://github.com/googlecodelabs/cloud-slack-bot/blob/master/start/kittenbot.js)
@@ -266,6 +266,7 @@ will take a few minutes to complete):
 
     gcloud container clusters create my-cluster \
           --num-nodes=2 \
+          --zone=us-central1-f \
           --machine-type n1-standard-1
 
 Alternatively, you could create this cluster [via the Cloud
