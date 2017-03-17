@@ -8,7 +8,7 @@ date_published: 2017-03-16
 
 [Yarn](https://yarnpkg.com/) is a package management tool that makes it easy and fast to install [NPM](https://www.npmjs.com/) modules for [Node.js](https://nodejs.org).
 
-You can use Yarn to manage your dependencies on App Engine. This tutorials provides a quick demonstration.
+You can use Yarn to manage your Node.js dependencies on App Engine flexible environment. This tutorials provides a quick demonstration.
 
 ## Getting started
 
@@ -28,7 +28,7 @@ You can use Yarn to manage your dependencies on App Engine. This tutorials provi
 
 ## Deploying to App Engine
 
-To use Yarn for your deployments to App Engine, all you need is a `yarn.lock` in your application directory. Then, just deploy:
+To use Yarn for your deployments to App Engine flexible environment, all you need is a `yarn.lock` in your application directory. Then, just deploy:
 
     gcloud app deploy
 
