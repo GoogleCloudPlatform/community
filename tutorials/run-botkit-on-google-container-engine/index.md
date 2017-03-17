@@ -91,9 +91,9 @@ message.
         navigation of the app configuration page.
     1.  Click the **Add a bot user** button.
     1.  Give it a nice username, like @kittenbot.
-    1.  This tutorial uses the RTM API, so do not always show the bot as
-        online. Instead, it will show as online only when there is a
-        connection from the bot.
+    1.  This tutorial uses the Realtime Messaging (RTM) API, so keep the
+        **Always show the bot as online** option selected as **Off**. The bot
+        user will show as online only when there is a connection from the bot.
     1.  Click the **Add bot user** button.
 1.  Get the OAuth access token to allow the bot to connect to your team.
     1.  Select **OAuth & Permissions** under the features heading on the
