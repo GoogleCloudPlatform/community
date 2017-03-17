@@ -1,7 +1,7 @@
 ---
 title: How to Set Up a New Persistent Disk for PostgreSQL Data
 description: Learn how to add a separate persistent disk for your PostgreSQL database on Google Cloud Platform in just a few minutes.
-author: jimtravisgoog
+author: jimtravis
 tags: Compute Engine, PostgreSQL, persistent disk
 date_published: 2017-02-16
 ---
