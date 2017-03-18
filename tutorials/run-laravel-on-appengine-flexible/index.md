@@ -85,38 +85,33 @@ locally.
 
 1. Use the Cloud SDK from the command line to run the following command. Copy
 the `connectionName` value for the next step.
-    ```sh
-    gcloud beta sql instances describe YOUR_INSTANCE_NAME
-    ```
+
+        gcloud beta sql instances describe YOUR_INSTANCE_NAME
 
 1. Start the Cloud SQL proxy using the connection name from the previous step:
-    ```sh
-    cloud_sql_proxy -instances=YOUR_INSTANCE_CONNECTION_NAME=tcp:3306
-    ```
+
+        cloud_sql_proxy -instances=YOUR_INSTANCE_CONNECTION_NAME=tcp:3306
 
 1. Use the MySQL client or a similar program to connect to your instance and
   create a database for the application. When prompted, use the root password
   you configured.
-    ```sh
-    mysql -h 127.0.0.1 -u root -p -e "CREATE DATABASE laravel;"
-    ```
+
+        mysql -h 127.0.0.1 -u root -p -e "CREATE DATABASE laravel;"
 
 1. Run the database migrations for Laravel. This can be done by setting your
   parameters in `.env` or by passing them in as environment variables. Be sure
   to replace `YOUR_DB_PASSWORD` below with the root password you configured:
-    ```sh
-    # create a migration for the session table
-    php artisan session:table
-    DB_DATABASE=laravel DB_USERNAME=root DB_PASSWORD=YOUR_DB_PASSWORD php artisan migrate --force
-    ```
+
+        # create a migration for the session table
+        php artisan session:table
+        DB_DATABASE=laravel DB_USERNAME=root DB_PASSWORD=YOUR_DB_PASSWORD php artisan migrate --force
 
 1. Edit `config/database.php` and add a line for `unix_socket` to the
   'mysql' connection configuration:
-    ```php
-    'mysql' => [
-        // ...
-        'unix_socket' => env('DB_SOCKET', ''),
-    ```
+
+        'mysql' => [
+            // ...
+            'unix_socket' => env('DB_SOCKET', ''),
 
 1. Modify your `app.yaml` file with the following contents:
 
