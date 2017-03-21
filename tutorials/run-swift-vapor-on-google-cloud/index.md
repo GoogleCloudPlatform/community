@@ -100,7 +100,7 @@ drop.get("/_ah/health") { request in
 // Basic GET request
 drop.get("/hello") { request in
     print("GET - /hello route handler...")
-    return "Hello from Vapor on GAE"
+    return "Hello from Vapor on GAE!"
 }
 ```
 
