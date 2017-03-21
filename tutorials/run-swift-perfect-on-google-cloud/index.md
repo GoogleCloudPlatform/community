@@ -48,6 +48,7 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
 
 1.  Create a `package.swift` file with the following contents:
 
+```swift
 import PackageDescription
 
 let package = Package(
@@ -60,6 +61,7 @@ let package = Package(
 majorVersion: 2, minor: 0)
     ]
 )
+```
 
 [spm]: https://github.com/apple/swift-package-manager
 
@@ -67,6 +69,7 @@ majorVersion: 2, minor: 0)
 
 1.  Create a `main.swift` with the following contents:
 
+```swift
 import Foundation
 import PerfectLib
 import PerfectHTTP
@@ -94,24 +97,29 @@ do {
 } catch PerfectError.networkError(let err, let msg) {
     print("Network error thrown: \(err) \(msg)")
 }
+```
 
 1.  Create a route to handle GAE "health check" requests" (per the [custom runtime docs][custom-runtime]):
 
+```swift
 // Respond to GAE health check requests
 routes.add(method: .get, uri: "/_ah/health", handler: { request, response in
     print("GET - /_ah/health route handler...")
     response.setBody(string: "OK")
     response.completed()
 })
+```
 
 1.  Create a route to handle `GET` requests to `/hello`:
 
+```swift
 // Basic GET request
 routes.add(method: .get, uri: "/hello", handler: { request, response in
     print("GET - /hello route handler...")
     response.setBody(string: "Hello from Swift on GAE Flex!")
     response.completed()
 })
+```
 
 [custom-runtime]: https://cloud.google.com/appengine/docs/flexible/custom-runtimes/build#lifecycle_events
 
@@ -122,6 +130,7 @@ own.
 
 1.  Create a `Dockerfile` with the following contents:
 
+```
 FROM ibmcom/swift-ubuntu:latest
 LABEL Description="Docker image for Swift + Perfect on GAE Flex."
 
@@ -145,17 +154,22 @@ RUN cd /root/PerfectGAE && swift build
 # Run the app
 USER root
 CMD ["/root/PerfectGAE/.build/debug/PerfectGAE"]
+```
 
 ## Deploying the app
 
 1.  Create an `app.yaml` file with the following contents:
 
+```
 runtime: custom
 env: flex
+```
 
 1.  Run the following command to deploy your app (make take several minutes):
 
+```
 gcloud app deploy
+```
 
 1.  Visit `http://[YOUR_PROJECT_ID].appspot.com/hello` to see the deployed app.
 
