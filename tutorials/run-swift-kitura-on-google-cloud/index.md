@@ -48,17 +48,19 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
 
 1.  Create a `package.swift` file with the following contents:
 
+```swift
 import PackageDescription
 
 let package = Package(
-name: "KituraGAE",
-targets: [
-Target(name: "KituraGAE", dependencies: [])
-],
-dependencies: [
-.Package(url: "https://github.com/IBM-Swift/Kitura.git", majorVersion: 1, minor: 3),
-]
+    name: "KituraGAE",
+    targets: [
+        Target(name: "KituraGAE", dependencies: [])
+    ],
+    dependencies: [
+        .Package(url: "https://github.com/IBM-Swift/Kitura.git", majorVersion: 1, minor: 3),
+    ]
 )
+```
 
 [spm]: https://github.com/apple/swift-package-manager
 
@@ -66,6 +68,7 @@ dependencies: [
 
 1.  Create a `main.swift` with the following contents:
 
+```swift
 import Foundation
 import Kitura
 
@@ -81,22 +84,27 @@ let router = Router()
 // Start server on 8080
 Kitura.addHTTPServer(onPort: 8080, with: router)
 Kitura.run()
+```
 
 1.  Create a route to handle GAE "health check" requests" (per the [custom runtime docs][custom-runtime]):
 
+```swift
 // Respond to GAE health check requests
 router.all("/_ah/health") { request, response, _ in
-Print("ALL - /_ah/health route handler...")
-try response.send("OK").end()
+    print("ALL - /_ah/health route handler...")
+    try response.send("OK").end()
 }
+```
 
 1.  Create a route to handle `GET` requests to `/hello`:
 
+```swift
 // Basic GET request
 router.get("/hello") { request, response, _ in
-Print("GET - /hello route handler...")
-try response.status(.OK).send("Hello from Swift on GAE Flex!").end()
+    print("GET - /hello route handler...")
+    try response.status(.OK).send("Hello from Swift on GAE Flex!").end()
 }
+```
 
 [custom-runtime]: https://cloud.google.com/appengine/docs/flexible/custom-runtimes/build#lifecycle_events
 
@@ -107,6 +115,7 @@ own.
 
 1.  Create a `Dockerfile` with the following contents:
 
+```
 FROM ibmcom/swift-ubuntu:latest
 LABEL Description="Docker image for Swift + Kitura on GAE Flex."
 
@@ -124,17 +133,22 @@ RUN cd /root/KituraGAE && swift build
 # Run the app
 USER root
 CMD ["/root/KituraGAE/.build/debug/KituraGAE"]
+```
 
 ## Deploying the app
 
 1.  Create an `app.yaml` file with the following contents:
 
+```
 runtime: custom
 env: flex
+```
 
 1.  Run the following command to deploy your app (make take several minutes):
 
+```
 gcloud app deploy
+```
 
 1.  Visit `http://[YOUR_PROJECT_ID].appspot.com/hello` to see the deployed app.
 
