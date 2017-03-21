@@ -3,7 +3,7 @@ title: Kitura on Google App Engine Flex Tutorial
 description: Learn how to build an app with Swift and Kitura in the Google App Engine flexible environment.
 author: mpmcdonald
 tags: App Engine, Swift, Kitura
-date_published: 2017-03-20
+date_published: 2017-03-21
 ---
 This tutorial shows a sample [Swift][swift] app built with [Kitura][kitura]
 deployed to the Google App Engine flexible environment.
