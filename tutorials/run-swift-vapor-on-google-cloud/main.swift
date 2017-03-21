@@ -12,7 +12,7 @@ drop.get("/_ah/health") { request in
 // Basic GET request
 drop.get("/hello") { request in
     print("GET - /hello route handler...")
-    return "Hello from Swift on GAE Flex!!"
+    return "Hello from Swift on GAE Flex!"
 }
 
 // Start server on 8080 (default)
