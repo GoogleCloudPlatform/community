@@ -1,7 +1,7 @@
 FROM ibmcom/swift-ubuntu:latest
-LABEL Description="Docker image for Swift + Kitura on GAE Flex."
+LABEL Description="Docker image for Swift + Kitura on Google App Engine flexible environment."
 
-# Expose default port for GAE
+# Expose default port for App Engine
 EXPOSE 8080
 
 # Copy sources
