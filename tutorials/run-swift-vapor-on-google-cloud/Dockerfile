@@ -1,7 +1,7 @@
 FROM ibmcom/swift-ubuntu:latest
-LABEL Description="Docker image for Swift + Vapor on Google App Engine."
+LABEL Description="Docker image for Swift + Vapor on Google App Engine flexible environment."
 
-# Expose default port for GAE
+# Expose default port for App Engine
 EXPOSE 8080
 
 # Add app source
