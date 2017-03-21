@@ -19,14 +19,14 @@ This tutorial assumes basic familiarity with Swift programming.
 
 ## Objectives
 
-1. Create a Swift "Hello, world" app that uses the Kitura framework.
-1. Deploy the app to Google App Engine flexible environment.
++ Create a Swift "Hello, world" app that uses the Kitura framework.
++ Deploy the app to the App Engine flexible environment.
 
 ## Costs
 
 This tutorial uses billable components of Google Cloud Platform, including:
 
-- Google App Engine flexible environment
++ Google App Engine flexible environment
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
 projected usage.
@@ -39,7 +39,7 @@ projected usage.
 1.  Enable billing for your project.
 1.  Install the [Google Cloud SDK][cloud-sdk].
 
-[console]: https://console.cloud.google.com/
+[console]: https://console.cloud.google.com/project
 [cloud-sdk]: https://cloud.google.com/sdk/
 
 ## Handling dependencies
@@ -64,7 +64,7 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
 
 ## Writing the server
 
-1.  Create a `main.swift` with the following contents:
+1.  Create a `main.swift` file with the following contents:
 
         import Foundation
         import Kitura
@@ -72,7 +72,7 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         // All apps need a Router instance
         let router = Router()
 
-        // Respond to App Engine health check requests
+        // Respond to GAE health check requests
         ...
 
         // Basic GET request
@@ -82,9 +82,9 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         Kitura.addHTTPServer(onPort: 8080, with: router)
         Kitura.run()
 
-1.  Create a route to handle App Engine "health check" requests" (per the [custom runtime docs][custom-runtime]):
+1.  Create a route to handle App Engine health-check requests (per the [custom runtime docs][custom-runtime]):
 
-        // Respond to App Engine health check requests
+        // Respond to GAE health check requests
         router.all("/_ah/health") { request, response, _ in
             print("ALL - /_ah/health route handler...")
             try response.send("OK").end()
@@ -95,22 +95,22 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         // Basic GET request
         router.get("/hello") { request, response, _ in
             print("GET - /hello route handler...")
-            try response.status(.OK).send("Hello from Swift on Google App Engine flexible environment!").end()
+            try response.status(.OK).send("Hello from Swift on GAE Flex!").end()
         }
 
 [custom-runtime]: https://cloud.google.com/appengine/docs/flexible/custom-runtimes/build#lifecycle_events
 
 ## Creating the `Dockerfile`
 
-Since Swift doesn't have an officially supported App Engine runtime, we'll
-create our own.
+Since Swift doesn't have an officially supported App Engine runtime, we'll create our
+own.
 
 1.  Create a `Dockerfile` with the following contents:
 
         FROM ibmcom/swift-ubuntu:latest
-        LABEL Description="Docker image for Swift + Kitura on Google App Engine flexible environment."
+        LABEL Description="Docker image for Swift + Kitura on GAE Flex."
 
-        # Expose default port for App Engine
+        # Expose default port for GAE
         EXPOSE 8080
 
         # Copy sources
@@ -132,12 +132,12 @@ create our own.
         runtime: custom
         env: flex
 
-1.  Run the following command to deploy your app (make take several minutes):
+1.  Run the following command to deploy your app. It might take several minutes:
 
         gcloud app deploy
 
 1.  Visit `http://[YOUR_PROJECT_ID].appspot.com/hello` to see the deployed app.
 
-        Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
+    Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
 
-If all goes well, you should see "Hello from Swift on Google App Engine flexible environment!"
+If all goes well, you should see "Hello from Swift on GAE Flex!".
