@@ -6,7 +6,7 @@ tags: App Engine, Swift, Vapor
 date_published: 2017-03-21
 ---
 This tutorial shows a sample [Swift][swift] app built with [Vapor][vapor]
-deployed to the Google App Engine flexible environment.
+deployed to Google App Engine.
 
 Vapor is "a web framework and server for Swift that works on macOS and Ubuntu."
 It is [open source on GitHub][vapor-github].
@@ -20,7 +20,7 @@ This tutorial assumes basic familiarity with Swift programming.
 ## Objectives
 
 1. Create a Swift "Hello, world" app that uses the Vapor framework.
-1. Deploy the app to Google App Engine flexible environment.
+1. Deploy the app to Google App Engine.
 
 ## Costs
 
@@ -115,7 +115,7 @@ own.
 
 ```
 FROM ibmcom/swift-ubuntu:latest
-LABEL Description="Docker image for Swift + Kitura on GAE."
+LABEL Description="Docker image for Swift + Kitura on Google App Engine."
 
 # Expose default port for GAE
 EXPOSE 8080
