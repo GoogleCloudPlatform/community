@@ -103,11 +103,9 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
             response.setBody(string: "OK")
             response.completed()
         })
-        ```
 
-        1.  Create a route to handle `GET` requests to `/hello`:
+1.  Create a route to handle `GET` requests to `/hello`:
 
-        ```swift
         // Basic GET request
         routes.add(method: .get, uri: "/hello", handler: { request, response in
             print("GET - /hello route handler...")
