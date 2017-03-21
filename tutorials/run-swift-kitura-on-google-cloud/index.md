@@ -72,7 +72,7 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         // All apps need a Router instance
         let router = Router()
 
-        // Respond to GAE health check requests
+        // Respond to App Engine health check requests
         ...
 
         // Basic GET request
@@ -82,9 +82,9 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         Kitura.addHTTPServer(onPort: 8080, with: router)
         Kitura.run()
 
-1.  Create a route to handle GAE "health check" requests" (per the [custom runtime docs][custom-runtime]):
+1.  Create a route to handle App Engine "health check" requests" (per the [custom runtime docs][custom-runtime]):
 
-        // Respond to GAE health check requests
+        // Respond to App Engine health check requests
         router.all("/_ah/health") { request, response, _ in
             print("ALL - /_ah/health route handler...")
             try response.send("OK").end()
@@ -95,22 +95,22 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         // Basic GET request
         router.get("/hello") { request, response, _ in
             print("GET - /hello route handler...")
-            try response.status(.OK).send("Hello from Swift on GAE Flex!").end()
+            try response.status(.OK).send("Hello from Swift on Google App Engine flexible environment!").end()
         }
 
 [custom-runtime]: https://cloud.google.com/appengine/docs/flexible/custom-runtimes/build#lifecycle_events
 
 ## Creating the `Dockerfile`
 
-Since Swift doesn't have an officially supported GAE runtime, we'll create our
-own.
+Since Swift doesn't have an officially supported App Engine runtime, we'll
+create our own.
 
 1.  Create a `Dockerfile` with the following contents:
 
         FROM ibmcom/swift-ubuntu:latest
-        LABEL Description="Docker image for Swift + Kitura on GAE Flex."
+        LABEL Description="Docker image for Swift + Kitura on Google App Engine flexible environment."
 
-        # Expose default port for GAE
+        # Expose default port for App Engine
         EXPOSE 8080
 
         # Copy sources
@@ -138,6 +138,6 @@ own.
 
 1.  Visit `http://[YOUR_PROJECT_ID].appspot.com/hello` to see the deployed app.
 
-    Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
+        Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
 
-If all goes well, you should see "Hello from Swift on GAE Flex!"
+If all goes well, you should see "Hello from Swift on Google App Engine flexible environment!"
