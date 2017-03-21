@@ -159,6 +159,6 @@ create our own.
 
 1.  Visit `http://[YOUR_PROJECT_ID].appspot.com/hello` to see the deployed app.
 
-Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
+        Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
 
 If all goes well, you should see "Hello from Swift on Google App Engine flexible environment!"
