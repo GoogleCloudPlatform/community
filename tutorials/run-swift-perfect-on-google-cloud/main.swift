@@ -7,7 +7,7 @@ import PerfectHTTPServer
 let server = HTTPServer()
 var routes = Routes()
 
-// Respond to GAE health check requests
+// Respond to App Engine health check requests
 routes.add(method: .get, uri: "/_ah/health", handler: {
     request, response in
     print("GET - /_ah/health route handler...")
@@ -19,7 +19,7 @@ routes.add(method: .get, uri: "/_ah/health", handler: {
 routes.add(method: .get, uri: "/hello", handler: {
     request, response in
     print("GET - /hello route handler...")
-    response.setBody(string: "Hello from Swift on GAE Flex!")
+    response.setBody(string: "Hello from Swift on Google App Engine flexible environment!")
     response.completed()
 })
 
