@@ -1,5 +1,5 @@
 FROM ibmcom/swift-ubuntu:latest
-LABEL Description="Docker image for Swift + Perfect on GAE Flex."
+LABEL Description="Docker image for Swift + Perfect on Google App Engine flexible environment."
 
 # Get extra dependencies for Perfect
 RUN apt-get update && apt-get install -y \
@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     uuid-dev
 
-# Expose default port for GAE
+# Expose default port for App Engine
 EXPOSE 8080
 
 # Copy sources
