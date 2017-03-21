@@ -1,17 +1,15 @@
 FROM ibmcom/swift-ubuntu:latest
-LABEL Description="Docker image for Swift + Vapor on GAE Flex."
+LABEL Description="Docker image for Swift + Vapor on GAE."
 
 # Expose default port for GAE
 EXPOSE 8080
 
-# Copy sources
-RUN mkdir /root/VaporGAE
-ADD main.swift /root/VaporGAE
-ADD Package.swift /root/VaporGAE
+# Add app source
+ADD . /app
+WORKDIR /app
 
-# Build the app
-RUN cd /root/VaporGAE && swift build
+# Build release
+RUN swift build --configuration release
 
 # Run the app
-USER root
-CMD ["/root/VaporGAE/.build/debug/VaporGAE"]
+ENTRYPOINT [".build/release/VaporGAE"]

@@ -1,6 +1,6 @@
 ---
-title: Vapor on Google App Engine Flex Tutorial
-description: Learn how to build an app with Swift and Vapor in the Google App Engine flexible environment.
+title: Vapor on Google App Engine Tutorial
+description: Learn how to build an app with Swift and Vapor in the Google App Engine environment.
 author: mpmcdonald
 tags: App Engine, Swift, Vapor
 date_published: 2017-03-21
@@ -100,7 +100,7 @@ drop.get("/_ah/health") { request in
 // Basic GET request
 drop.get("/hello") { request in
     print("GET - /hello route handler...")
-    return "Hello from Swift on GAE Flex!!"
+    return "Hello from Vapor on GAE"
 }
 ```
 
@@ -115,22 +115,20 @@ own.
 
 ```
 FROM ibmcom/swift-ubuntu:latest
-LABEL Description="Docker image for Swift + Kitura on GAE Flex."
+LABEL Description="Docker image for Swift + Kitura on GAE."
 
 # Expose default port for GAE
 EXPOSE 8080
 
-# Copy sources
-RUN mkdir /root/VaporGAE
-ADD main.swift /root/VaporGAE
-ADD Package.swift /root/VaporGAE
+# Add app source
+ADD . /app
+WORKDIR /app
 
-# Build the app
-RUN cd /root/VaporGAE && swift build
+# Build release
+RUN swift build --configuration release
 
 # Run the app
-USER root
-CMD ["/root/VaporGAE/.build/debug/VaporGAE"]
+ENTRYPOINT [".build/release/VaporGAE"]
 ```
 
 ## Deploying the app
@@ -148,8 +146,11 @@ env: flex
 gcloud app deploy
 ```
 
-1.  Visit `http://[YOUR_PROJECT_ID].appspot.com/hello` to see the deployed app.
+1.  Run the following command to see your deployed app:
 
-Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
+```
+gcloud app browse
+```
 
-If all goes well, you should see "Hello from Swift on GAE Flex!"
+Add `/hello` to the end of the URL, and if all goes well, you should see
+"Hello from Vapor on GAE!" in your browser.
