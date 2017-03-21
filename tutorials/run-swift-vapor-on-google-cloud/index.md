@@ -71,7 +71,7 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
 
         let drop = Droplet()
 
-        // Respond to GAE health check requests
+        // Respond to App Engine health check requests
         ...
 
         // Basic GET request
@@ -80,9 +80,9 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         // Start server on 8080 (default)
         drop.run()
 
-1.  Create a route to handle GAE "health check" requests" (per the [custom runtime docs][custom-runtime]):
+1.  Create a route to handle App Engine "health check" requests" (per the [custom runtime docs][custom-runtime]):
 
-        // Respond to GAE health check requests
+        // Respond to App Engine health check requests
         drop.get("/_ah/health") { request in
             print("ALL - /_ah/health route handler...")
             return "OK"
@@ -93,22 +93,22 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         // Basic GET request
         drop.get("/hello") { request in
             print("GET - /hello route handler...")
-            return "Hello from Vapor on GAE!"
+            return "Hello from Vapor on Google App Engine flexible environment!"
         }
 
 [custom-runtime]: https://cloud.google.com/appengine/docs/flexible/custom-runtimes/build#lifecycle_events
 
 ## Creating the `Dockerfile`
 
-Since Swift doesn't have an officially supported GAE runtime, we'll create our
-own.
+Since Swift doesn't have an officially supported App Engine runtime, we'll
+create our own.
 
 1.  Create a `Dockerfile` with the following contents:
 
         FROM ibmcom/swift-ubuntu:latest
-        LABEL Description="Docker image for Swift + Kitura on Google App Engine."
+        LABEL Description="Docker image for Swift + Kitura on Google App Engine flexible environment."
 
-        # Expose default port for GAE
+        # Expose default port for App Engine
         EXPOSE 8080
 
         # Add app source
@@ -137,4 +137,4 @@ own.
         gcloud app browse
 
 Add `/hello` to the end of the URL, and if all goes well, you should see
-"Hello from Vapor on GAE!" in your browser.
+"Hello from Vapor on Google App Engine flexible environment!" in your browser.
