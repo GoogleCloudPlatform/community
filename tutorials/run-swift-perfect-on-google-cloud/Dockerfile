@@ -10,14 +10,12 @@ RUN apt-get update && apt-get install -y \
 # Expose default port for App Engine
 EXPOSE 8080
 
-# Copy sources
-RUN mkdir /root/PerfectGAE
-ADD main.swift /root/PerfectGAE
-ADD Package.swift /root/PerfectGAE
+# Add app source
+ADD . /app
+WORKDIR /app
 
-# Build the app
-RUN cd /root/PerfectGAE && swift build
+# Build release
+RUN swift build --configuration release
 
 # Run the app
-USER root
-CMD ["/root/PerfectGAE/.build/debug/PerfectGAE"]
+ENTRYPOINT [".build/release/PerfectGAE"]
