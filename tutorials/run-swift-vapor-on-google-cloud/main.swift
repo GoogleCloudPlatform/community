@@ -5,7 +5,7 @@ let drop = Droplet()
 
 // Respond to GAE health check requests
 drop.get("/_ah/health") { request in
-    print("ALL - /_ah/health route handler...")
+    print("GET - /_ah/health route handler...")
     return "OK"
 }
 
