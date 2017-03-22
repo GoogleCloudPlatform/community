@@ -1,7 +1,7 @@
 ---
 title: Perfect on Google App Engine Tutorial
 description: Learn how to build an app with Swift and Perfect in the Google App Engine flexible environment.
-author: mpmcdonald
+author: mcdonamp
 tags: App Engine, Swift, Perfect
 date_published: 2017-03-21
 ---
@@ -157,8 +157,10 @@ create our own.
 
         gcloud app deploy
 
-1.  Visit `http://[YOUR_PROJECT_ID].appspot.com/hello` to see the deployed app.
+1.  Run the following command to view your app, then append `/hello` to the URL:
 
-        Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
+        gcloud app browse
+
+If all goes well, you should see "Hello from Swift on Google App Engine flexible environment!".
 
 If all goes well, you should see "Hello from Swift on Google App Engine flexible environment!"
