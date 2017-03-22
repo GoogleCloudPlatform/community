@@ -132,9 +132,8 @@ create our own.
 
         gcloud app deploy
 
-1.  Run the following command to see your deployed app:
+1.  Run the following command to view your app, then append `/hello` to the URL:
 
         gcloud app browse
 
-Add `/hello` to the end of the URL, and if all goes well, you should see
-"Hello from Vapor on Google App Engine flexible environment!" in your browser.
+If all goes well, you should see "Hello from Swift on Google App Engine flexible environment!".
