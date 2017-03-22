@@ -1,7 +1,7 @@
 ---
 title: Vapor on Google App Engine Tutorial
 description: Learn how to build an app with Swift and Vapor in the Google App Engine environment flexible environment.
-author: mpmcdonald
+author: mcdonamp
 tags: App Engine, Swift, Vapor
 date_published: 2017-03-21
 ---
@@ -72,10 +72,10 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         let drop = Droplet()
 
         // Respond to App Engine health check requests
-        ...
+        ... see #2
 
         // Basic GET request
-        ...
+        ... see #3
 
         // Start server on 8080 (default)
         drop.run()
