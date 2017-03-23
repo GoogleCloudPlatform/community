@@ -77,5 +77,5 @@ Welcome page.
 [php-gcp]: https://cloud.google.com/php
 [symfony]: http://symfony.com
 [symfony-install]: http://symfony.com/doc/current/setup.html
-[symfony-welcome]: http://symfony.com/doc/current/_images/welcome.png
+[symfony-welcome]: https://symfony.com/doc/current/_images/welcome.png
 [composer-json]: https://storage.googleapis.com/gcp-community/tutorials/run-symfony-on-appengine-flexible/composer-json.png
