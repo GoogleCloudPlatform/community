@@ -106,13 +106,6 @@ the `connectionName` value for the next step.
         php artisan session:table
         DB_DATABASE=laravel DB_USERNAME=root DB_PASSWORD=YOUR_DB_PASSWORD php artisan migrate --force
 
-1. Edit `config/database.php` and add a line for `unix_socket` to the
-  'mysql' connection configuration:
-
-        'mysql' => [
-            // ...
-            'unix_socket' => env('DB_SOCKET', ''),
-
 1. Modify your `app.yaml` file with the following contents:
 
         runtime: php
