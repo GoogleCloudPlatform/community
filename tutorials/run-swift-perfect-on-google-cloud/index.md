@@ -19,8 +19,8 @@ This tutorial assumes basic familiarity with Swift programming.
 
 ## Objectives
 
-1. Create a Swift "Hello, world" app that uses the Perfect framework.
-1. Deploy the app to Google App Engine flexible environment.
++ Create a Swift "Hello, world" app that uses the Perfect framework.
++ Deploy the app to Google App Engine flexible environment.
 
 ## Costs
 
@@ -95,7 +95,7 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
             print("Network error thrown: \(err) \(msg)")
         }
 
-1.  Create a route to handle App Engine "health check" requests" (per the [custom runtime docs][custom-runtime]):
+1.  Create a route to handle App Engine health-check requests" (per the [custom runtime docs][custom-runtime]):
 
         // Respond to App Engine health check requests
         routes.add(method: .get, uri: "/_ah/health", handler: { request, response in
@@ -162,5 +162,3 @@ create our own.
         gcloud app browse
 
 If all goes well, you should see "Hello from Swift on Google App Engine flexible environment!".
-
-If all goes well, you should see "Hello from Swift on Google App Engine flexible environment!"
