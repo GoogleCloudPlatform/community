@@ -20,13 +20,13 @@ This tutorial assumes basic familiarity with Swift programming.
 ## Objectives
 
 + Create a Swift "Hello, world" app that uses the Perfect framework.
-+ Deploy the app to Google App Engine flexible environment.
++ Deploy the app to the Google App Engine flexible environment.
 
 ## Costs
 
 This tutorial uses billable components of Google Cloud Platform, including:
 
-- Google App Engine flexible environment
++ Google App Engine flexible environment
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
 projected usage.
