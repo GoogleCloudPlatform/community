@@ -19,14 +19,14 @@ This tutorial assumes basic familiarity with Swift programming.
 
 ## Objectives
 
-1. Create a Swift "Hello, world" app that uses the Vapor framework.
-1. Deploy the app to Google App Engine flexible environment.
++ Create a Swift "Hello, world" app that uses the Vapor framework.
++ Deploy the app to the Google App Engine flexible environment.
 
 ## Costs
 
 This tutorial uses billable components of Google Cloud Platform, including:
 
-- Google App Engine flexible environment
++ Google App Engine flexible environment
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
 projected usage.
@@ -80,7 +80,7 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         // Start server on 8080 (default)
         drop.run()
 
-1.  Create a route to handle App Engine "health check" requests" (per the [custom runtime docs][custom-runtime]):
+1.  Create a route to handle App Engine health-check requests" (per the [custom runtime docs][custom-runtime]):
 
         // Respond to App Engine health check requests
         drop.get("/_ah/health") { request in
