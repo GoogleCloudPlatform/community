@@ -174,6 +174,6 @@ additional charges:
 [gwc]: https://www.google.com/webmasters/verification/
 [gcs-hosting]: https://cloud.google.com/storage/docs/hosting-static-website
 [p6n-storage]: https://console.cloud.google.com/storage/browser
-[p6n-triggers]: https://pantheon.corp.google.com/gcr/triggers
+[p6n-triggers]: https://console.cloud.google.com/gcr/triggers
 [bt]: https://cloud.google.com/container-builder/docs/creating-build-triggers
 [sample-repo]: https://github.com/GoogleCloudPlatform/web-docs-samples
