@@ -8,10 +8,10 @@ author: lauriewhite
 tags: Cloud Natural Language API, APCS, REST, Magpie, education
 date_published: 2017-03-28
 ---
-## On Beyond Magpie, Part 0: Setup and API exploration
+# On Beyond Magpie, Part 0: Setup and API exploration
 
 The Advanced Placement Computer Science A program provides 
-the [Magpie lab](http://media.collegeboard.com/digitalServices/pdf/ap/ap-compscia-magpie-lab-student-guide.pdf) for students to practice using basic control structures to parse user input as part of a chatbot.  This is designed to be an additional enrichment exercise (typically used after the AP exam) to go beyond the basic parsing abilities and instead use [Google's Cloud Natural Language API][nlp], a pretrained machine learning model that will do text analysis for the user.  The lab demonstrates how to use the Cloud Natural Language API to extend the Magpie lab.
+the [Magpie lab](http://media.collegeboard.com/digitalServices/pdf/ap/ap-compscia-magpie-lab-student-guide.pdf) for students to practice using basic control structures to parse user input as part of a chatbot.  This tutorial is designed to be an additional enrichment exercise (typically used after the AP exam) to go beyond  basic parsing and instead use [Google's Cloud Natural Language API][nlp], a pretrained machine learning model that will do text analysis for the user.  The lab demonstrates how to use the Cloud Natural Language API to extend the Magpie lab.
 
 This tutorial is written for an audience of CS teachers who are exposing their students to REST-ful APIs in general and the Cloud Natural Language API specifically, but should be usable by any interested party.
 
@@ -19,7 +19,7 @@ The NLP API provides a variety of functionalities that can be used in different 
 
 * Sentiment analysis:  This is perhaps the easiest to add to Magpie: taken text, the API will return its sentiment and the strength of that sentiment.  The Magpie can then respond if a user's comments seem exceptionally positive or negative.
 * Entity analysis: The API will analyze the text for known entities (like France, Paris,or Eiffel Tower) and provide links to appropriate Wikipedia articles.  Make the Magpie exceptionally smart using the [Wikipedia API](https://www.mediawiki.org/wiki/API:Main_page) to find out much more about entities.
-* Syntax analysis: Magpie does very simple syntax analysis.  The Cloud Natural Language does full analysis of sentences. 
+* Syntax analysis: Magpie does very simple syntax analysis.  The Cloud Natural Language API does full analysis of sentences. 
 
 This exercise shows you how to prepare to use the Cloud Natural Language API for use in programs and illustrates how to introduce it to a class using web-based tools.  If you are only going to use the web-based tools, you can skip the Prerequisites and Authentication sections.
 
@@ -44,11 +44,11 @@ Generate an API key for your project.
 
 ## Accessing the API Interactively 
 
-If you are not familiar with the Cloud Natural Language, first examine its abilities using the interactive feature in the ["Try the API"][nlp] section of the overview.  Notice it can extract entities, detect sentiment, and parse syntax.
+If you are not familiar with the Cloud Natural Language API, first examine its abilities using the interactive feature in the ["Try the API"][nlp] section of the overview.  Notice it can extract entities, detect sentiment, and parse syntax.
 
 ### Entity Detection
 
-While entity detection may seem to be a simple task, there's actually some significant processing going on.  Try using the sentence "The Eiffel Tower is one of many highlights in Paris, France." and examine the entities it extracts.  These should include "Paris" and "France."  While this may seem obvious, change the sentence to "The Eiffel Tower is one of many highlights in Paris, Texas."  The API no longer finds the entity Paris (the city in France).  Instead, it just finds the city "Paris, Texas."
+While entity detection may seem to be a simple task, there's actually some significant processing going on.  Try using the sentence "The Eiffel Tower is one of many highlights in Paris, France." and examine the entities it extracts.  These should include "Paris" and "France."  While this may seem obvious, change the sentence to "The Eiffel Tower is one of many highlights in Paris, Texas."  The API no longer finds the entity "Paris" (the city in France).  Instead, it just finds the city "Paris, Texas."
 
 ### Syntax Analysis
 Syntax analysis can handle some very complicated sentences.  Try something like the first sentence of [Alice in Wonderland][alice]:
@@ -78,19 +78,19 @@ The `Response` data will appear below the call in JSON format.
 
 ## Summary
 
-* If you want to use the Cloud Natural Language in a program, you will need to:
+* If you want to use the Cloud Natural Language API in a program, you will need to:
 
   * create a GCP project
   * enable the API
   * arrange for authentication (in this case using an API key)
 
-* from the WWW interface, you can use the Cloud Natural Language to analyze sentiment, extract entities, and parse the syntax of text
-* you can also call the Cloud Natural Language from the API Explorer
+* from the WWW interface, you can use the Cloud Natural Language API to analyze sentiment, extract entities, and parse the syntax of text
+* you can also call the Cloud Natural Language API from the API Explorer
 
 ## Next Steps 
-To use the different features of the Cloud Natural Language, see tkwasilenkohe following Community articles:
-* On Beyond Magpie: Part 1, Sentiment Analysis
-* On Beyond Magpie: Part 2, Entity Analysis
+To use the different features of the Cloud Natural Language, see the following Community articles:
+* [On Beyond Magpie: Part 1, Sentiment Analysis][magpie1]
+* [On Beyond Magpie: Part 2, Entity Analysis][magpie2]
 
 
 
@@ -102,6 +102,8 @@ To use the different features of the Cloud Natural Language, see tkwasilenkohe f
 [auth]:https://cloud.google.com/natural-language/docs/common/auth
 [console]:https://console.cloud.google.com/
 [explorer]:https://apis-explorer.appspot.com/apis-explorer/#search/natural/language/v1/
+[magpie1]:https://cloud.google.com/community/tutorials/on-beyond-magpie1
+[magpie2]:https://cloud.google.com/community/tutorials/on-beyond-magpie2
 [manager]:https://console.cloud.google.com/apis/
 [nlp]:https://cloud.google.com/natural-language/
 [pricing]: https://cloud.google.com/natural-language/pricing
