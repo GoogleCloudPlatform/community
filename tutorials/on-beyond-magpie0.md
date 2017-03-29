@@ -65,12 +65,12 @@ The interactive feature of the WWW page does not show the JSON value returned by
 
 This provides a way to introduce students to HTTP calls.  The details of the call parameters can be found [on-line][annotateapi].  In the API explorer, the context menu will show the properties that can be used.  As a minimum, in the `Request` body:
 
-* add a `document` property.  Within the `document` property 
-  * add a `type` property with the value  `PLAIN_TEXT`
-  * add a `content` property with the text to be examined
-* add an `encodingType` property with the value `UTF8`
-* add a `features` property.  Within the `features` property
-  * add at least one of the properties `extractDocumentSentiment`, `extractEntities` and `extractSyntax` and check the box to set the property to true.
+* Add a `document` property.  Within the `document` property. 
+  * Add a `type` property with the value  `PLAIN_TEXT`.
+  * Add a `content` property with the text to be examined.
+* Add an `encodingType` property with the value `UTF8`.
+* Add a `features` property.  Within the `features` property.
+  * Add at least one of the properties `extractDocumentSentiment`, `extractEntities` and `extractSyntax` and check the box to set the property to true.
 
 Use the `Execute` button to execute the API call.
 
@@ -80,12 +80,12 @@ The `Response` data will appear below the call in JSON format.
 
 * If you want to use the Cloud Natural Language API in a program, you will need to:
 
-  * create a GCP project
-  * enable the API
-  * arrange for authentication (in this case using an API key)
+  * Create a GCP project.
+  * Enable the API
+  * Arrange for authentication (in this case using an API key).
 
-* from the WWW interface, you can use the Cloud Natural Language API to analyze sentiment, extract entities, and parse the syntax of text
-* you can also call the Cloud Natural Language API from the API Explorer
+* From the web interface, you can use the Cloud Natural Language API to analyze sentiment, extract entities, and parse the syntax of text.
+* You can also call the Cloud Natural Language API from the API Explorer.
 
 ## Next Steps 
 To use the different features of the Cloud Natural Language, see the following Community articles:
