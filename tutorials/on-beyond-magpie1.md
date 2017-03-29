@@ -31,69 +31,68 @@ If you've completed [On Beyond Magpie, Part 0][magpie0], you should have all of 
 Students who have used the Magpie lab already should have a chatbot with which they can work.  Otherwise, the following Java code provides a simple (but not very interesting) chatbot.
 
 ### Magpie Runner
-```
-import java.util.Scanner;
 
-/**
- * A simple class to run the Magpie class.
- */
-public class MagpieRunner
-{
+	import java.util.Scanner;
 
 	/**
-	 * Create a Magpie, give it user input, and print its replies.
+	 * A simple class to run the Magpie class.
 	 */
-	public static void main(String[] args)
+	public class MagpieRunner
 	{
-		Magpie maggie = new Magpie();
-		
-		Scanner in = new Scanner (System.in);
-		String statement = in.nextLine();
-		
-		while (!statement.equals("Bye"))
+
+		/**
+		 * Create a Magpie, give it user input, and print its replies.
+		 */
+		public static void main(String[] args)
 		{
-			System.out.println (maggie.getResponse(statement));
-			statement = in.nextLine();
+			Magpie maggie = new Magpie();
+
+			Scanner in = new Scanner (System.in);
+			String statement = in.nextLine();
+
+			while (!statement.equals("Bye"))
+			{
+				System.out.println (maggie.getResponse(statement));
+				statement = in.nextLine();
+			}
 		}
 	}
-}
-```
+
 
 ### Magpie class 
 
-```
-public class Magpie
-{
-	/**
-	 * Gives a response to a user statement
-	 * 
-	 * @param statement
-	 *            the user statement
-	 * @return a response based on the rules given
-	 */
-	public String getResponse(String statement)
-	{
-		String response = "";
-		if (statement.indexOf("cats") >= 0)
-		{
-			response = "I love cats!  Tell me more about cats!";
-		}
-		else 
-		{
-			response = getRandomResponse();
-		}
-		return response;
-	}
 
-	/**
-	 * Pick a default response to use if nothing else fits.
-	 */
-	private String getRandomResponse()
+	public class Magpie
 	{
-		return "Hmmm";
+		/**
+		 * Gives a response to a user statement
+		 * 
+		 * @param statement
+		 *            the user statement
+		 * @return a response based on the rules given
+		 */
+		public String getResponse(String statement)
+		{
+			String response = "";
+			if (statement.indexOf("cats") >= 0)
+			{
+				response = "I love cats!  Tell me more about cats!";
+			}
+			else 
+			{
+				response = getRandomResponse();
+			}
+			return response;
+		}
+
+		/**
+		 * Pick a default response to use if nothing else fits.
+		 */
+		private String getRandomResponse()
+		{
+			return "Hmmm";
+		}
 	}
-}
-```
 
 ## Accessing the API
 
@@ -105,93 +104,93 @@ For simplicity, this example shows how to make an HTTP request using just the co
 
 First, create constants for the API key and URL.  Be sure to put your API key in the place indicated.
 
-```
-final String TARGET_URL =
-               "https://language.googleapis.com/v1/documents:analyzeSentiment?";
-final String API_KEY =
-               "key=YOUR_API_KEY";
-```
+
+	final String TARGET_URL =
+		       "https://language.googleapis.com/v1/documents:analyzeSentiment?";
+	final String API_KEY =
+		       "key=YOUR_API_KEY";
+
 
 Next, create a URL object with the target URL and create a connection to that URL:
 
-```
-URL serverUrl = new URL(TARGET_URL + API_KEY);
-URLConnection urlConnection = serverUrl.openConnection();
-HttpURLConnection httpConnection = (HttpURLConnection)urlConnection;
-```
+
+	URL serverUrl = new URL(TARGET_URL + API_KEY);
+	URLConnection urlConnection = serverUrl.openConnection();
+	HttpURLConnection httpConnection = (HttpURLConnection)urlConnection;
+
 
 This will require the `java.net.HttpURLConnection`, `java.net.URL`, and `java.net.URLConnection` libraries be imported. 
 
 The URL constructor may throw a `MalformedURLException`.  You can handle this with either a try/catch block or adding `throws MalformedURLException` to the method header and importing the exception.  Different teachers may have different preferences; either works.  Similarly, the `openConnection` may throw an `IOException` that should be handled before moving on.  If you opt to throw the error, be sure to also handle it in the runner.
 
 Set the method and Content-Type of the connection:
-```
-httpConnection.setRequestMethod("POST");
-httpConnection.setRequestProperty("Content-Type", "application/json");
-```
+
+	httpConnection.setRequestMethod("POST");
+	httpConnection.setRequestProperty("Content-Type", "application/json");
+
 
 And then prepare the connection to be written to to enable creation of the data portion of the request:
-```
-httpConnection.setDoOutput(true);
-```
+
+	httpConnection.setDoOutput(true);
+
 
 Create a writer and use it to write the data portion of the request:
-```
-BufferedWriter httpRequestBodyWriter = new BufferedWriter(new
-                   OutputStreamWriter(httpConnection.getOutputStream()));
-httpRequestBodyWriter.write("{\"document\":  { \"type\": \"PLAIN_TEXT\", \"content\":\""
-						+ statement + "\"}, \"encodingType\": \"UTF8\"}");
-httpRequestBodyWriter.close();
-```
+
+	BufferedWriter httpRequestBodyWriter = new BufferedWriter(new
+			   OutputStreamWriter(httpConnection.getOutputStream()));
+	httpRequestBodyWriter.write("{\"document\":  { \"type\": \"PLAIN_TEXT\", \"content\":\""
+							+ statement + "\"}, \"encodingType\": \"UTF8\"}");
+	httpRequestBodyWriter.close();
+
 
 This will require importing `java.io.BufferedWriter` and `java.io.OutputStreamWriter`.  Notice the line being written is the same as the data provided to the API Explorer in [Part 0][magpie0].
 
 Finally, make the request and get the response:
-```
-httpConnection.getResponseMessage();
-```
+
+	httpConnection.getResponseMessage();
+
 
 The returned data is sent in an input stream. Build a string containing it.
-```
-String results = "";
-if (httpConnection.getInputStream() != null) 
-{
-    Scanner httpResponseScanner = new Scanner (httpConnection.getInputStream());
-    while (httpResponseScanner.hasNext()) {
-       String line = httpResponseScanner.nextLine();
-       results += line;
-   }
-   httpResponseScanner.close();
-}
-```
+
+	String results = "";
+	if (httpConnection.getInputStream() != null) 
+	{
+	    Scanner httpResponseScanner = new Scanner (httpConnection.getInputStream());
+	    while (httpResponseScanner.hasNext()) {
+	       String line = httpResponseScanner.nextLine();
+	       results += line;
+	   }
+	   httpResponseScanner.close();
+	}
+
 
 Yes, you'll need to import `java.util.Scanner`.
 
 Once you have the results in a single string, you can access parts of it to determine the score and potentially the magnitude.  (Parsing the JSON is covered in the [next part of this tutorial][magpie2]). Recall, if there are multiple sentences, there will be multiple scores.  A simple solution to get the first score is below.
 
-```
-int psn = results.indexOf("\"score\":");
-double score = 0.0;
-if (psn >= 0) 
-{
-	int bracePsn = results.indexOf('}', psn);  //  Find the closing brace
-	String scoreStr = results.substring(psn+8, bracePsn).trim();
-	score = Double.parseDouble(scoreStr);
-}
-```
+
+	int psn = results.indexOf("\"score\":");
+	double score = 0.0;
+	if (psn >= 0) 
+	{
+		int bracePsn = results.indexOf('}', psn);  //  Find the closing brace
+		String scoreStr = results.substring(psn+8, bracePsn).trim();
+		score = Double.parseDouble(scoreStr);
+	}
+
 
 You can then use the score in creating your response to the user.  If you've done part 0, you should have ideas about what thresholds to use.  Otherwise, work with the values for score to find reasonable values.  You can also use them in conjunction with other clauses in determining the response.  Now that you can tell the sentiment of the user, it's up to you to find creative ways to use it!
-```
-String response = "";
-if (score > 0.5) {
-	response = "Wow, that sounds great!"; 
-}
-else if (score < -0.5)
-{
-	response = "Ugh, that's too bad";
-}
-else if (statement.indexOf("cats") >= 0) {...
-```
+
+	String response = "";
+	if (score > 0.5) {
+		response = "Wow, that sounds great!"; 
+	}
+	else if (score < -0.5)
+	{
+		response = "Ugh, that's too bad";
+	}
+	else if (statement.indexOf("cats") >= 0) {...
+
 
 ## Summary
 
