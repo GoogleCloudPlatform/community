@@ -1,5 +1,5 @@
 ---
-title: On Beyond Magpie 2: Entity Analysis 
+title: On Beyond Magpie 2 — Entity Analysis 
 description: An introduction to the Cloud Natural Language API, aimed at Advanced Placement Computer Science classes who have worked on the Magpie lab, but suitable for most people starting with the Cloud Natural Language API. Demonstrates how to parse JSON results from the  Cloud Natural Language API.
 author: lauriewhite
 tags: Cloud Natural Language API, APCS, JSON, Magpie, education
