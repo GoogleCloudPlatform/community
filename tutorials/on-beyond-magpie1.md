@@ -1,10 +1,7 @@
 ---
 title: On Beyond Magpie 1: Sentiment analysis 
-description: An introduction to the Cloud Natural Language API, aimed at Advanced Placement Computer
-Science classes who have worked on the Magpie lab, but suitable for most people starting with the
-Cloud Natural Language API. Demonstrates how to make a POST request in Java to access the Cloud Natural 
-Language API and make simple use of the results.
-author: lauriewhite
+description: An introduction to the Cloud Natural Language API, aimed at Advanced Placement Computer Science classes who have worked on the Magpie lab, but suitable for most people starting with the Cloud Natural Language API. Demonstrates how to make a POST request in Java to access the Cloud Natural Language API and make simple use of the results.
+author: annie29
 tags: Cloud Natural Language API, APCS, REST, Magpie, education
 date_published: 2017-03-28
 ---
