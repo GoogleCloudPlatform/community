@@ -11,6 +11,7 @@ This document provides guidance for contributors to the Google Cloud Platform (G
 * [Caveats](#caveats)
 * [Types of documentation](#types-of-documentation)
 * [Designing a doc](#designing-a-doc)
+* [Visual assets](#visual-assets)
 * [File organization in GitHub](#file-organization-in-github)
 * [General content guidelines](#general-content-guidelines)
 * [General style guidelines](#general-style-guidelines)
@@ -121,6 +122,12 @@ A Tutorial doc has these major sections. Items in bold below are literal heading
 * **Cleaning up**
     * Omit this section if you stated there are no costs in the Costs section.
     * Tell the user how to shut down what they built to avoid incurring further costs.
+
+## Visual assets
+
+GCP offers a set of logos and architectural diagram assets for your use:
+
+[https://cloud.google.com/icons/](https://cloud.google.com/icons/)
 
 ## File organization in GitHub
 
