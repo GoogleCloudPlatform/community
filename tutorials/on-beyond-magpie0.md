@@ -6,8 +6,6 @@ tags: Cloud Natural Language API, APCS, REST, Magpie, education
 date_published: 2017-03-28
 ---
 
-# On Beyond Magpie, Part 0 - Setup and API Exploration
-
 The Advanced Placement Computer Science A program provides
 the [Magpie lab](http://media.collegeboard.com/digitalServices/pdf/ap/ap-compscia-magpie-lab-student-guide.pdf) for students to practice using basic control structures to parse user input as part of a chatbot. This tutorial is designed to be an additional enrichment exercise (typically used after the AP exam) to go beyond  basic parsing and instead use [Google's Cloud Natural Language API][nlp], a pretrained machine learning model that will do text analysis for the user. The lab demonstrates how to use the Cloud Natural Language API to extend the Magpie lab.
 
