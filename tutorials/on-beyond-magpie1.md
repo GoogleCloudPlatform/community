@@ -1,22 +1,22 @@
 ---
-title: On Beyond Magpie 1 — Sentiment analysis 
+title: On Beyond Magpie 1 - Sentiment analysis
 description: An introduction to the Cloud Natural Language API, aimed at Advanced Placement Computer Science classes who have worked on the Magpie lab, but suitable for most people starting with the Cloud Natural Language API. Demonstrates how to make a POST request in Java to access the Cloud Natural Language API and make simple use of the results.
-author: annie29
+author: Annie29
 tags: Cloud Natural Language API, APCS, REST, Magpie, education
 date_published: 2017-03-28
 ---
 
-# On Beyond Magpie, Part 1 — Sentiment analysis
+# On Beyond Magpie, Part 1 - Sentiment analysis
 
 The Advanced Placement Computer Science A program provides the [Magpie lab](http://media.collegeboard.com/digitalServices/pdf/ap/ap-compscia-magpie-lab-student-guide.pdf) for students to practice using basic control structures to parse user input as part of a chatbot. This tutorial is designed to be an additional enrichment exercise (typically used after the AP exam) to go beyond  basic parsing and instead use Google's [Cloud Natural Language API][nlp], a pretrained machine learning model that will do text analysis for the user. The lab demonstrates how to use the Cloud Natural Language API to determine the user sentiment.
 
 The major new skill covered in this lab is how to make HTTP POST requests from Java.
 
-This tutorial is written for an audience of CS teachers who are exposing their students to the Cloud Natural Language API, but should be usable by any interested individual. 
+This tutorial is written for an audience of CS teachers who are exposing their students to the Cloud Natural Language API, but should be usable by any interested individual.
 
-## Prerequisites 
+## Prerequisites
 
-If you've completed [On Beyond Magpie, Part 0][magpie0], you should have all of the prerequisites completed. Otherwise, 
+If you've completed [On Beyond Magpie, Part 0][magpie0], you should have all of the prerequisites completed. Otherwise,
 
 1. Create a project in the [Google Cloud Platform Console][console].
 1. Enable billing for your project.
@@ -56,14 +56,14 @@ Students who have used the Magpie lab already should have a chatbot with which t
 	}
 
 
-### Magpie class 
+### Magpie class
 
 
 	public class Magpie
 	{
 		/**
 		 * Gives a response to a user statement
-		 * 
+		 *
 		 * @param statement
 		 *            the user statement
 		 * @return a response based on the rules given
@@ -75,7 +75,7 @@ Students who have used the Magpie lab already should have a chatbot with which t
 			{
 				response = "I love cats!  Tell me more about cats!";
 			}
-			else 
+			else
 			{
 				response = getRandomResponse();
 			}
@@ -116,7 +116,7 @@ Next, create a URL object with the target URL and create a connection to that UR
 	HttpURLConnection httpConnection = (HttpURLConnection)urlConnection;
 
 
-This will require the `java.net.HttpURLConnection`, `java.net.URL`, and `java.net.URLConnection` libraries be imported. 
+This will require the `java.net.HttpURLConnection`, `java.net.URL`, and `java.net.URLConnection` libraries be imported.
 
 The URL constructor may throw a `MalformedURLException`. You can handle this with either a try/catch block or adding `throws MalformedURLException` to the method header and importing the exception. Different teachers may have different preferences; either works. Similarly, the `openConnection` may throw an `IOException` that should be handled before moving on. If you opt to throw the error, be sure to also handle it in the runner.
 
@@ -150,7 +150,7 @@ Finally, make the request and get the response:
 The returned data is sent in an input stream. Build a string containing it.
 
 	String results = "";
-	if (httpConnection.getInputStream() != null) 
+	if (httpConnection.getInputStream() != null)
 	{
 	    Scanner httpResponseScanner = new Scanner (httpConnection.getInputStream());
 	    while (httpResponseScanner.hasNext()) {
@@ -168,7 +168,7 @@ Once you have the results in a single string, you can access parts of it to dete
 
 	int psn = results.indexOf("\"score\":");
 	double score = 0.0;
-	if (psn >= 0) 
+	if (psn >= 0)
 	{
 		int bracePsn = results.indexOf('}', psn);  //  Find the closing brace
 		String scoreStr = results.substring(psn+8, bracePsn).trim();
@@ -180,7 +180,7 @@ You can then use the score in creating your response to the user. If you've done
 
 	String response = "";
 	if (score > 0.5) {
-		response = "Wow, that sounds great!"; 
+		response = "Wow, that sounds great!";
 	}
 	else if (score < -0.5)
 	{
@@ -195,7 +195,7 @@ You can then use the score in creating your response to the user. If you've done
 * Making a POST call requires set the method and content type and writing the data section
 * The results of the call come back in JSON format that can be concatenated into a single string. For simple cases, this text can just be searched to find the properties of interest.
 
-## Next steps 
+## Next steps
 To use the different features of the Cloud Natural Language API, see the following Community articles:
 
 * [On Beyond Magpie: Part 2, Entity Analysis][magpie2]
