@@ -1,5 +1,5 @@
 ---
-title: On Beyond Magpie 0 - Setup and API exploration
+title: On Beyond Magpie 0 - Setup and API Exploration
 description: An introduction to the Cloud Natural Language API, aimed at Advanced Placement Computer Science classes who have worked on the Magpie lab, but suitable for most people starting with the Cloud Natural Language API. Demonstrates how to access the Cloud Natural Language API interatively and create credentials for use with later tutorials in this sequence.
 author: Annie29
 tags: Cloud Natural Language API, APCS, REST, Magpie, education
