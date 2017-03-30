@@ -60,7 +60,7 @@ describe('tutorials/', () => {
         });
       });
 
-      it('tests pass, if any', (done) => {
+      it.skip('tests pass, if any', (done) => {
         // TODO: Handle tests for other languages
         fs.stat(path.join(dir, 'package.json'), (err, stats) => {
           if (err) {
