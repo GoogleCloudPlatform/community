@@ -18,6 +18,7 @@ Platform.
 ## Prerequisites
 
 1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+    Remember to take note of your project ID; you'll need it later to access your app at http://YOUR_PROJECT_ID.appspot.com
 1. Enable billing for your project.
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
 
@@ -41,7 +42,7 @@ Platform.
 
 ## Create
 
-1. Create an `server.js` file with the following contents:
+1. Create a `server.js` file with the following contents:
 
     ```js
     'use strict';
@@ -137,6 +138,8 @@ following contents:
 
 ## Deploy
 
+1. Create a file named `app.yaml` with the following contents:
+
     ```yaml
     runtime: nodejs
     env: flex
@@ -144,7 +147,7 @@ following contents:
       SPARKPOST_API_KEY: your-sparkpost-api-key
     ```
 
-    The `app.yaml` makes the app deployable to Google App Engine Managed VMs.
+`app.yaml` describes how to deploy your app to Google App Engine. Read more about that [here](https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml).
 
 1. Run the following command to deploy your app:
 
@@ -152,7 +155,7 @@ following contents:
     gcloud app deploy
     ```
 
-1. Visit `http://YOUR_PROJECT_ID.appspot.com` to try sending an email.
+1. Visit `http://YOUR_PROJECT_ID.appspot.com` to try sending email. `YOUR_PROJECT_ID` is the project ID you created earlier in the [Google Cloud Platform Console](https://console.cloud.google.com/).
 
 [sparkpost]: https://www.sparkpost.com/
-[nodejs-gcp]: running-nodejs-on-google-cloud
+[nodejs-gcp]: https://cloud.google.com/nodejs/
