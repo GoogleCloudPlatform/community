@@ -2,7 +2,7 @@
 title: Locally developing microservices with Google Container Engine
 description: Learn how to set up a dev environment that lets you code/test changes locally, while connecting to other services running in GKE
 author: richarddli
-tags: microservices, Compute Engine, telepresence, PHP, Redis
+tags: microservices, Container Engine, telepresence, PHP, Redis
 date_published: 2017-04-05
 ---
 
