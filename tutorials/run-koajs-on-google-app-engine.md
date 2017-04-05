@@ -35,11 +35,11 @@ Platform.
 
 Create a `server.js` file with the following contents:
 
-    const koa = require('koa');
-    const app = koa();
+    const Koa = require('koa');
+    const app = new Koa();
 
-    app.use(function *() {
-      this.body = 'Hello World!';
+    app.use((ctx) => {
+      ctx.body = 'Hello World!';
     });
 
     app.listen(process.env.PORT || 8080);
