@@ -69,7 +69,7 @@ Platform.
             content: {
               from: 'appengine-node-demo@sparkpostbox.com',
               subject: 'Hello from Google AppEngine!',
-              html:'<html><body><p>Google AppEngine + Node.js + SparkPost = awesome!</p></body></html>'
+              text: 'Google AppEngine + Node.js + SparkPost = awesome!'
             },
             recipients: [
               {address: req.body.email} 
