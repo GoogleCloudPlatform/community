@@ -45,10 +45,10 @@ Next, we're going to want to install the `gcloud` and `kubectl` commands. Follow
 % sudo gcloud components update kubectl
 ```
 
-We need to install Telepresence, which will proxy your locally running service to GKE.
+We need to install Telepresence, which will proxy your locally running service to GKE (for the latest install instructions and version, visit [the website](http://www.telepresence.io)).
 
 ```
-% curl -L https://github.com/datawire/telepresence/raw/0.23/cli/telepresence -o telepresence
+% curl -L https://github.com/datawire/telepresence/raw/0.26/cli/telepresence -o telepresence
 % chmod +x telepresence
 ```
 
