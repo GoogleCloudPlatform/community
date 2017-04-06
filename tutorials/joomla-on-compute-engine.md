@@ -31,9 +31,9 @@ Next, open port 80 to allow HTTP traffic to your server. Follow these steps:
 
 1. View your virtual machine instances in the
 [Compute Engine instances page][instances].
-1. In the External IP column, click the external IP address for your LAMP server
+1. In the **External IP** column, click the external IP address for your LAMP server
 name.
-1. In the dialog box that opens, select the Allow HTTP traffic check box.
+1. In the dialog box that opens, select the **Allow HTTP traffic** check box.
 1. Click Apply to close the dialog box.
 
 ## Downloading Joomla!
