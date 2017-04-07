@@ -36,7 +36,7 @@ In this tutorial, we're going to use the [Guestbook](https://cloud.google.com/co
 
 To set up your laptop, you'll need to install a few basic components.
 
-First, we're going to want to install the `gcloud` and `kubectl` command line tool. Follow the instructions at [https://cloud.google.com/sdk/downloads](https://cloud.google.com/sdk/downloads]) to download and install the Cloud SDK. Then, insure `kubectl` is installed:
+First, install the `gcloud` and `kubectl` command line tools. Follow the instructions at [https://cloud.google.com/sdk/downloads](https://cloud.google.com/sdk/downloads) to download and install the Cloud SDK. Then, insure `kubectl` is installed:
 
 ```
 % sudo gcloud components update kubectl
