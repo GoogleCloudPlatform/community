@@ -1,0 +1,308 @@
+---
+title: Running an NGINX Reverse Proxy with Docker and Let's Encrypt on Google Compute Engine
+description: Learn to run multiple services on a Google Compute Engine virtual machine using Docker and a reverse proxy.
+author: tswast
+tags: Compute Engine, NGINX, Docker, Let's Encrypt
+date_published: 2017-04-14
+---
+This tutorial will guide you through running multiple services, secured with
+free SSL/TLS certificates from Let's Encrypt on a Google Compute Engine virtual
+machine using Docker.
+
+## Objectives
+
+- Create a Compute Engine instance.
+- Run an NGINX reverse proxy.
+- Run multiple web services in Docker.
+- Install SSL/TLS certificates with Let's Encrypt.
+
+## Before you begin
+
+1.  Create or select a Cloud Platform project from the [Google Cloud Platform
+    console's projects page](https://console.cloud.google.com/project).
+1.  [Enable
+    billing](https://support.google.com/cloud/answer/6293499#enable-billing)
+    for your project.
+
+## Costs
+
+This tutorial uses billable components of Cloud Platform including
+
+- [Google Compute Engine](https://cloud.google.com/compute/pricing)
+
+Use the [Pricing
+Calculator](https://cloud.google.com/products/calculator/#id=bb109d69-241c-4262-afdf-a6604401e053)
+to estimate the costs for your usage.
+
+## Setting up the virtual machine
+
+Create a new Compute Engine instance using the [CoreOS](https://coreos.com/why)
+stable image. CoreOS comes with [Docker](https://www.docker.com/what-docker)
+pre-installed and supports automatic system updates.
+
+1.  Open the [Google Cloud Platform console](https://console.cloud.google.com).
+1.  [Create a new Compute Engine instance](https://console.cloud.google.com/compute/instancesAdd).
+1.  Select the desired **Zone**, such as "us-central1-f".
+1.  Select the desired **Machine type**, such as "micro" (f1-micro).
+1.  Change the **Boot disk** to "CoreOS stable".
+1.  Check the boxes to allow HTTP and HTTPS traffic in the **Firewall** section.
+1.  Expand the **Management, disk, networking** section.
+1.  Click the **Networking** tab.
+1.  Select **New static IP address** under **External IP**.
+1.  Give the IP address a name, such as "reverse-proxy".
+1.  Click the **Create** button to create the Compute Engine instance.
+
+## Set up some domains for your instance
+
+Create multiple [A type DNS
+records](https://en.wikipedia.org/wiki/List_of_DNS_record_types) for various
+domains/subdomains on your DNS provider pointing at the external IP address for
+your new instance.
+
+For example, in [Google Domains](https://domains.google.com/registrar), open
+**DNS** for your domain, scroll to [Custom resource
+records](https://support.google.com/domains/answer/3251147) and add an **A**
+type record. The name "@" corresponds to the root of your domain or you can
+change it to a subdomain, such as "a" and "b".
+
+This tutorial will assume you have two subdomains with A records:
+
+- a.example.com
+- b.example.com
+
+## Deploying your projects
+
+The reverse proxy will work for any webservice running in Docker. This tutorial
+hosts two different static websites as an example.
+
+1.  SSH into your Compute Engine instance by clicking the **SSH** button on the
+    [instances page](https://console.cloud.google.com/compute/instances).
+1.  Create directory for "site A".
+
+        mkdir site-a
+        cd site-a
+
+1.  Configure a Docker image for "site A." This tutorial uses
+    [docker-nginx](https://github.com/KyleAMathews/docker-nginx) to host a
+    static site.
+
+        echo "FROM kyma/docker-nginx
+        COPY src/ /var/www
+        CMD 'nginx'" > Dockerfile
+
+1.  Make the static site pages.
+
+        mkdir src
+        echo "Hello Project Alpha" > src/index.html
+
+1.  Build the Docker image.
+
+        docker build -t site-a .
+
+1.  Run the Docker container.
+
+        docker run -d --name site-a -p 80:80 site-a
+
+1.  View the running site at http://EXTERNAL_IP_ADDRESS, http://a.example.com,
+    or http://b.example.com.
+
+1.  Stop the container.
+
+        docker stop site-a
+
+1.  Remove the container.
+
+        docker rm site-a
+
+You now have a static website which you can run in a Docker container. Repeat
+these steps to get a second project set up.
+
+1.  Create directory for "site B".
+
+        cd
+        mkdir site-b
+        cd site-b
+
+1.  Configure a Docker image for "site B."
+
+        echo "FROM kyma/docker-nginx
+        COPY src/ /var/www
+        CMD 'nginx'" > Dockerfile
+
+1.  Make the static site pages.
+
+        mkdir src
+        echo "Hello Project Beta" > src/index.html
+
+1.  Build the Docker image. This time will be faster because the base image is
+    cached.
+
+        docker build -t site-b .
+
+1.  Run the Docker container.
+
+        docker run -d --name site-b -p 80:80 site-b
+
+1.  View the running site at http://EXTERNAL_IP_ADDRESS, http://a.example.com,
+    or http://b.example.com.
+
+1.  Stop the container.
+
+        docker stop site-b
+
+1.  Remove the container.
+
+        docker rm site-b
+
+Now you have two projects, but since they both listen to port 80, you can't run
+them both at the same time. Also both projects respond to requests to
+http://a.example.com and http://b.example.com. Ideally `site-a` would listen to
+http://a.example.com and `site-b` would listen to http://b.example.com.
+
+## Setting up the reverse proxy
+
+To have the separate projects respond only to their respective hosts, you'll
+use a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy). This
+tutorial uses the [nginx-proxy Docker
+container](https://github.com/jwilder/nginx-proxy).
+
+1.  Run the reverse proxy.
+
+        docker run -d \
+            --name nginx-proxy \
+            -p 80:80 \
+            -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy
+
+1.  Start the container for project A, specifying the domain name in the
+    `VIRTUAL_HOST` variable.
+
+        docker run -d --name site-a -e VIRTUAL_HOST=a.example.com site-a
+
+1.  Check out your project at http://a.example.com.
+1.  With `site-a` still running, start the container for project B.
+
+        docker run -d --name site-b -e VIRTUAL_HOST=b.example.com site-b
+
+1.  Check out project B at http://b.example.com.
+
+Congratulations, you are running multiple projects on the same host using
+Docker and an [nginx reverse proxy](https://github.com/jwilder/nginx-proxy).
+You can do even better, though.
+
+Plain HTTP is not secure. It is not encrypted and is vulnerable to
+[man-in-the-middle
+attacks](https://en.wikipedia.org/wiki/Man-in-the-middle_attack). In the next
+step, you'll add support for the HTTPS protocol.
+
+1.  Stop the containers.
+
+        docker stop site-a
+        docker stop site-b
+        docker stop nginx-proxy
+
+1.  Remove the containers.
+
+        docker rm site-a
+        docker rm site-b
+        docker rm nginx-proxy
+
+## Setting up HTTPS with Let's Encrypt
+
+To enable HTTPS via
+[TLS/SSL](https://en.wikipedia.org/wiki/Transport_Layer_Security), your reverse
+proxy requires cryptographic certificates. You'll use [Let's
+Encrypt](https://letsencrypt.org/) and the [Docker Let's Encrypt nginx-proxy
+companion](https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion) to
+automatically issue and use signed certificates.
+
+1.  Create a directory to hold the certificates.
+
+        cd
+        mkdir certs
+
+1.  Run the proxy, but this time declaring volumes so that the 
+    [Let's Encrypt
+    companion](https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion)
+    can populate them with certificates.
+
+        docker run -d -p 80:80 -p 443:443 \
+            --name nginx-proxy \
+            -v $HOME/certs:/etc/nginx/certs:ro \
+            -v /etc/nginx/vhost.d \
+            -v /usr/share/nginx/html \
+            -v /var/run/docker.sock:/tmp/docker.sock:ro \
+            --label com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy=true \
+            jwilder/nginx-proxy
+
+1.  Run the Let's Encrypt companion container.
+
+        docker run -d \
+            --name nginx-letsencrypt \
+            --volumes-from nginx-proxy \
+            -v $HOME/certs:/etc/nginx/certs:rw \
+            -v /var/run/docker.sock:/var/run/docker.sock:ro \
+            jrcs/letsencrypt-nginx-proxy-companion
+
+1.  Run project A.
+
+    In addition to `VIRTUAL_HOST`, specify `LETSENCRYPT_HOST` to declare the
+    host name to use for the HTTPS certificate. Specify the `LETSENCRYPT_EMAIL`
+    so that [Let's Encrypt can email you about certificate
+    expirations](https://letsencrypt.org/docs/expiration-emails/).
+
+        docker run -d \
+            --name site-a \
+            -e 'LETSENCRYPT_EMAIL=webmaster@example.com' \
+            -e 'LETSENCRYPT_HOST=a.example.com' \
+            -e 'VIRTUAL_HOST=a.example.com' site-a
+
+1.  You can watch the companion creator request new certificates by watching the logs.
+
+        docker logs nginx-letsencrypt
+
+    You should eventually see a log which says `Saving cert.pem`.
+
+1.  After the certificate is issued, check out your project at
+    https://a.example.com.
+
+1.  Run project B.
+
+        docker run -d \
+            --name site-b \
+            -e 'LETSENCRYPT_EMAIL=webmaster@example.com' \
+            -e 'LETSENCRYPT_HOST=b.example.com' \
+            -e 'VIRTUAL_HOST=b.example.com' site-b
+
+1.  You can watch the companion creator request new certificates by watching the logs.
+
+        docker logs nginx-letsencrypt
+
+    You should eventually see a log which says `Saving cert.pem`.
+
+1.  After the certificate is issued, check out your project at
+    https://b.example.com.
+
+Congratulations, your projects are now running behind an HTTPS reverse proxy.
+
+## Surviving reboots
+
+When your Compute Engine instance restarts, the Docker containers will not
+automatically restart. Use the `--restart` flag for the `docker run` command to
+specify a [Docker restart
+policy](https://docs.docker.com/engine/reference/run/#restart-policies---restart).
+I suggest `always` or `unless-stopped` so that Docker restarts the containers
+on reboot.
+
+## Next steps
+
+Running many projects on a single host behind a reverse proxy is an efficient
+way to run hobby projects, but it will not scale to projects which require high
+availability or many queries per second.
+
+Try out some more scalable ways of hosting.
+
+1.  Deploy a scalable web app using [App Engine flexible
+    environment](https://cloud.google.com/appengine/docs/flexible/python/quickstart).
+1.  Host a [static site using Firebase Hosting](https://firebase.google.com/docs/hosting/quickstart).
+1.  Host a [static site using Cloud Storage](https://cloud.google.com/storage/docs/hosting-static-website).
+
