@@ -13,7 +13,7 @@ machine using Docker.
 
 - Create a Compute Engine instance.
 - Run an NGINX reverse proxy.
-- Run multiple web services in Docker.
+- Run multiple web applications in Docker.
 - Install SSL/TLS certificates with Let's Encrypt.
 
 ## Before you begin
@@ -70,30 +70,30 @@ This tutorial will assume you have two subdomains with A records:
 - a.example.com
 - b.example.com
 
-## Deploying your projects
+## Deploying your web applications
 
-The reverse proxy will work for any webservice running in Docker. This tutorial
+The reverse proxy will work for any web app running in Docker. This tutorial
 hosts two different static websites as an example.
 
 1.  SSH into your Compute Engine instance by clicking the **SSH** button on the
     [instances page](https://console.cloud.google.com/compute/instances).
-1.  Create directory for "site A".
+1.  Create directory for "site A."
 
         mkdir site-a
         cd site-a
 
 1.  Configure a Docker image for "site A." This tutorial uses
     [docker-nginx](https://github.com/KyleAMathews/docker-nginx) to host a
-    static site.
+    static website.
 
         echo "FROM kyma/docker-nginx
         COPY src/ /var/www
         CMD 'nginx'" > Dockerfile
 
-1.  Make the static site pages.
+1.  Make the static website pages.
 
         mkdir src
-        echo "Hello Project Alpha" > src/index.html
+        echo "Hello from site A" > src/index.html
 
 1.  Build the Docker image.
 
@@ -103,8 +103,8 @@ hosts two different static websites as an example.
 
         docker run -d --name site-a -p 80:80 site-a
 
-1.  View the running site at http://EXTERNAL_IP_ADDRESS, http://a.example.com,
-    or http://b.example.com.
+1.  View the running website at http://EXTERNAL_IP_ADDRESS,
+    http://a.example.com, or http://b.example.com.
 
 1.  Stop the container.
 
@@ -115,9 +115,9 @@ hosts two different static websites as an example.
         docker rm site-a
 
 You now have a static website which you can run in a Docker container. Repeat
-these steps to get a second project set up.
+these steps to get a second site set up.
 
-1.  Create directory for "site B".
+1.  Create directory for "site B."
 
         cd
         mkdir site-b
@@ -129,10 +129,10 @@ these steps to get a second project set up.
         COPY src/ /var/www
         CMD 'nginx'" > Dockerfile
 
-1.  Make the static site pages.
+1.  Make the static website pages.
 
         mkdir src
-        echo "Hello Project Beta" > src/index.html
+        echo "Hello from site B" > src/index.html
 
 1.  Build the Docker image. This time will be faster because the base image is
     cached.
@@ -143,8 +143,8 @@ these steps to get a second project set up.
 
         docker run -d --name site-b -p 80:80 site-b
 
-1.  View the running site at http://EXTERNAL_IP_ADDRESS, http://a.example.com,
-    or http://b.example.com.
+1.  View the running website at http://EXTERNAL_IP_ADDRESS,
+    http://a.example.com, or http://b.example.com.
 
 1.  Stop the container.
 
@@ -154,14 +154,14 @@ these steps to get a second project set up.
 
         docker rm site-b
 
-Now you have two projects, but since they both listen to port 80, you can't run
-them both at the same time. Also both projects respond to requests to
-http://a.example.com and http://b.example.com. Ideally `site-a` would listen to
-http://a.example.com and `site-b` would listen to http://b.example.com.
+Now you have two web apps, but since they both listen to port 80, you can't run
+them both at the same time. Also, both apps respond to requests to
+http://a.example.com and http://b.example.com. Ideally "site A" would listen to
+http://a.example.com and "site B" would listen to http://b.example.com.
 
 ## Setting up the reverse proxy
 
-To have the separate projects respond only to their respective hosts, you'll
+To have the separate apps respond only to their respective hosts, you'll
 use a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy). This
 tutorial uses the [nginx-proxy Docker
 container](https://github.com/jwilder/nginx-proxy).
@@ -173,19 +173,19 @@ container](https://github.com/jwilder/nginx-proxy).
             -p 80:80 \
             -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy
 
-1.  Start the container for project A, specifying the domain name in the
+1.  Start the container for site A, specifying the domain name in the
     `VIRTUAL_HOST` variable.
 
         docker run -d --name site-a -e VIRTUAL_HOST=a.example.com site-a
 
-1.  Check out your project at http://a.example.com.
-1.  With `site-a` still running, start the container for project B.
+1.  Check out your website at http://a.example.com.
+1.  With site A still running, start the container for site B.
 
         docker run -d --name site-b -e VIRTUAL_HOST=b.example.com site-b
 
-1.  Check out project B at http://b.example.com.
+1.  Check out site B at http://b.example.com.
 
-Congratulations, you are running multiple projects on the same host using
+Congratulations, you are running multiple apps on the same host using
 Docker and an [nginx reverse proxy](https://github.com/jwilder/nginx-proxy).
 You can do even better, though.
 
@@ -243,7 +243,7 @@ automatically issue and use signed certificates.
             -v /var/run/docker.sock:/var/run/docker.sock:ro \
             jrcs/letsencrypt-nginx-proxy-companion
 
-1.  Run project A.
+1.  Run site A.
 
     In addition to `VIRTUAL_HOST`, specify `LETSENCRYPT_HOST` to declare the
     host name to use for the HTTPS certificate. Specify the `LETSENCRYPT_EMAIL`
@@ -262,10 +262,10 @@ automatically issue and use signed certificates.
 
     You should eventually see a log which says `Saving cert.pem`.
 
-1.  After the certificate is issued, check out your project at
+1.  After the certificate is issued, check out your website at
     https://a.example.com.
 
-1.  Run project B.
+1.  Run site B.
 
         docker run -d \
             --name site-b \
@@ -279,10 +279,10 @@ automatically issue and use signed certificates.
 
     You should eventually see a log which says `Saving cert.pem`.
 
-1.  After the certificate is issued, check out your project at
+1.  After the certificate is issued, check out your website at
     https://b.example.com.
 
-Congratulations, your projects are now running behind an HTTPS reverse proxy.
+Congratulations, your web apps are now running behind an HTTPS reverse proxy.
 
 ## Surviving reboots
 
@@ -295,14 +295,16 @@ on reboot.
 
 ## Next steps
 
-Running many projects on a single host behind a reverse proxy is an efficient
-way to run hobby projects, but it will not scale to projects which require high
-availability or many queries per second.
+Running many web apps on a single host behind a reverse proxy is an efficient
+way to run hobby applications, but it will not scale. In additiona, a single VM
+instance is not highly available. None of the apps hosted on this VM will be
+available during a system reboot.
 
-Try out some more scalable ways of hosting.
+To see how to run an app which requires high availability or many queries per
+second, try out some more scalable ways of hosting.
 
 1.  Deploy a scalable web app using [App Engine flexible
     environment](https://cloud.google.com/appengine/docs/flexible/python/quickstart).
-1.  Host a [static site using Firebase Hosting](https://firebase.google.com/docs/hosting/quickstart).
-1.  Host a [static site using Cloud Storage](https://cloud.google.com/storage/docs/hosting-static-website).
+1.  Host a [static website using Firebase Hosting](https://firebase.google.com/docs/hosting/quickstart).
+1.  Host a [static website using Cloud Storage](https://cloud.google.com/storage/docs/hosting-static-website).
 
