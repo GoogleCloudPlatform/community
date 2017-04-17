@@ -284,6 +284,88 @@ automatically issue and use signed certificates.
 
 Congratulations, your web apps are now running behind an HTTPS reverse proxy.
 
+## Proxying composed web apps
+
+In order to proxy the `nginx-proxy` container and the web app container must be on
+the same [Docker network](https://runnable.com/docker/basic-docker-networking).
+
+When you run a multi-container web app with `docker-compose`, [Docker attaches the
+containers to a default network](https://runnable.com/docker/docker-compose-networking).
+The default network is different from the bridge network that containers run with
+the `docker run` command attach to.
+
+If you run the `docker-compose` and have specified a `VIRTUAL_HOST`
+environment variable in the `docker-compose.yml` configuration file,
+you'll see this error message in the `docker logs nginx-proxy` output:
+
+     no servers are inside upstream
+
+The proxy will also stop working. To resolve this,
+
+1.  Create a new Docker network.
+
+        docker network create --driver bridge reverse-proxy
+ 
+1.  Stop and remove your web application containers, the `nginx-proxy` container,
+    and the `nginx-letsencrypt` container.
+    
+        docker stop my-container
+        docker rm my-container
+        docker stop nginx-proxy
+        docker rm nginx-proxy
+        docker stop nginx-letsencrypt
+        docker rm nginx-letsencrypt
+
+1.  Run the proxy and other containers, specifying the network with the
+    `--net reverse-proxy` command-line parameter.
+
+1.  Modify the `docker-compose.yml` file to include the network you created
+    in the networks definition.
+
+        networks:
+          reverse-proxy:
+            external:
+              name: reverse-proxy
+          back:
+            driver: bridge
+
+    In the container definitions, specify the appropriate networks. Only
+    the web server needs to be on the reverse-proxy network. The other
+    containers can stay on their own network.
+    
+    The final `docker-compose.yml` file will look something like this:
+    
+        version: '2'
+        services:
+
+          db:
+            restart: always
+            image: my_database
+            networks:
+              - back
+
+          web:
+            restart: always
+            image: my_webserver
+            networks:
+              - reverse-proxy
+              - back
+            environment:
+              - VIRTUAL_PORT=1234
+              - VIRTUAL_HOST=c.example.com
+              - LETSENCRYPT_HOST=c.example.com
+              - LETSENCRYPT_EMAIL=webmaster@example.com
+      
+        networks:
+          reverse-proxy:
+            external:
+              name: reverse-proxy
+          back:
+            driver: bridge
+
+1.  Run the `docker-compose up -d` command to run your composed containers
+    with the new configuration.
+
 ## Surviving reboots
 
 When your Compute Engine instance restarts, the Docker containers will not
