@@ -233,6 +233,37 @@ The proxy will also stop working. To resolve this,
 
 1.  Run the proxy and other containers, specifying the network with the
     `--net reverse-proxy` command-line parameter.
+    
+    Run the proxy container.
+    
+        docker run -d -p 80:80 -p 443:443 \
+            --name nginx-proxy \
+            --net reverse-proxy \
+            -v $HOME/certs:/etc/nginx/certs:ro \
+            -v /etc/nginx/vhost.d \
+            -v /usr/share/nginx/html \
+            -v /var/run/docker.sock:/tmp/docker.sock:ro \
+            --label com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy=true \
+            jwilder/nginx-proxy
+
+    Run the Let's Encrypt helper container.
+    
+        docker run -d \
+            --name nginx-letsencrypt \
+            --net reverse-proxy \
+            --volumes-from nginx-proxy \
+            -v $HOME/certs:/etc/nginx/certs:rw \
+            -v /var/run/docker.sock:/var/run/docker.sock:ro \
+            jrcs/letsencrypt-nginx-proxy-companion
+
+    Run your website containers.
+    
+        docker run -d \
+            --name site-a \
+            --net reverse-proxy \
+            -e 'LETSENCRYPT_EMAIL=webmaster@example.com' \
+            -e 'LETSENCRYPT_HOST=a.example.com' \
+            -e 'VIRTUAL_HOST=a.example.com' nginx
 
 1.  Modify the `docker-compose.yml` file to include the network you created
     in the networks definition.
