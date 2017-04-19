@@ -1,9 +1,9 @@
 ---
 title: Running an NGINX Reverse Proxy with Docker and Let's Encrypt on Google Compute Engine
-description: Learn to serve multiple websites simultaneously in a single Compute Engine instance with Docker and NGINX.
+description: Learn to serve multiple websites simultaneously in a single Compute Engine instance with Docker and NGINX. Also, learn how to secure the sites with Let's Encrypt.
 author: tswast
 tags: Compute Engine, NGINX, Docker, Let's Encrypt
-date_published: 2017-04-14
+date_published: 2017-04-19
 ---
 This tutorial will guide you through running multiple websites on a Google Compute
 Engine instance using Docker. You will secure the websites using free SSL/TLS
@@ -102,12 +102,15 @@ site A and a [plain Apache server](https://hub.docker.com/_/httpd/) running as s
 
 Congratulations, you are running multiple apps on the same host using
 Docker and an [nginx reverse proxy](https://github.com/jwilder/nginx-proxy).
-You can do even better, though.
+
+**Note:** If you do not wish to set up HTTPS for your websites using [Let's Encrypt](https://letsencrypt.org/), you can skip reading the rest of this tutorial.
+
+## Setting up HTTPS with Let's Encrypt
 
 Plain HTTP is not secure. It is not encrypted and is vulnerable to
 [man-in-the-middle
-attacks](https://en.wikipedia.org/wiki/Man-in-the-middle_attack). In the next
-step, you'll add support for the HTTPS protocol.
+attacks](https://en.wikipedia.org/wiki/Man-in-the-middle_attack). In this step,
+you'll add support for the HTTPS protocol.
 
 1.  Stop the containers.
 
@@ -121,12 +124,10 @@ step, you'll add support for the HTTPS protocol.
         docker rm site-b
         docker rm nginx-proxy
 
-## Setting up HTTPS with Let's Encrypt
-
 To enable HTTPS via
 [TLS/SSL](https://en.wikipedia.org/wiki/Transport_Layer_Security), your reverse
-proxy requires cryptographic certificates. You'll use [Let's
-Encrypt](https://letsencrypt.org/) and the [Docker Let's Encrypt nginx-proxy
+proxy requires cryptographic certificates. Use [Let's
+Encrypt](https://letsencrypt.org/) via the [Docker Let's Encrypt nginx-proxy
 companion](https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion) to
 automatically issue and use signed certificates.
 
@@ -324,7 +325,7 @@ on reboot.
 ## Next steps
 
 Running many web apps on a single host behind a reverse proxy is an efficient
-way to run hobby applications, but it will not scale. In additiona, a single VM
+way to run hobby applications, but it will not scale. In addition, a single VM
 instance is not highly available. None of the apps hosted on this VM will be
 available during a system reboot.
 
