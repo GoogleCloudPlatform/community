@@ -70,101 +70,16 @@ This tutorial will assume you have two subdomains with A records:
 - a.example.com
 - b.example.com
 
-## Deploying your web applications
-
-The reverse proxy will work for any web app running in Docker. This tutorial
-hosts two different static websites as an example.
-
-1.  SSH into your Compute Engine instance by clicking the **SSH** button on the
-    [instances page](https://console.cloud.google.com/compute/instances).
-1.  Create directory for "site A."
-
-        mkdir site-a
-        cd site-a
-
-1.  Configure a Docker image for "site A." This tutorial uses
-    [docker-nginx](https://github.com/KyleAMathews/docker-nginx) to host a
-    static website.
-
-        echo "FROM kyma/docker-nginx
-        COPY src/ /var/www
-        CMD 'nginx'" > Dockerfile
-
-1.  Make the static website pages.
-
-        mkdir src
-        echo "Hello from site A" > src/index.html
-
-1.  Build the Docker image.
-
-        docker build -t site-a .
-
-1.  Run the Docker container.
-
-        docker run -d --name site-a -p 80:80 site-a
-
-1.  View the running website at http://EXTERNAL_IP_ADDRESS,
-    http://a.example.com, or http://b.example.com.
-
-1.  Stop the container.
-
-        docker stop site-a
-
-1.  Remove the container.
-
-        docker rm site-a
-
-You now have a static website which you can run in a Docker container. Repeat
-these steps to get a second site set up.
-
-1.  Create directory for "site B."
-
-        cd
-        mkdir site-b
-        cd site-b
-
-1.  Configure a Docker image for "site B."
-
-        echo "FROM kyma/docker-nginx
-        COPY src/ /var/www
-        CMD 'nginx'" > Dockerfile
-
-1.  Make the static website pages.
-
-        mkdir src
-        echo "Hello from site B" > src/index.html
-
-1.  Build the Docker image. This time will be faster because the base image is
-    cached.
-
-        docker build -t site-b .
-
-1.  Run the Docker container.
-
-        docker run -d --name site-b -p 80:80 site-b
-
-1.  View the running website at http://EXTERNAL_IP_ADDRESS,
-    http://a.example.com, or http://b.example.com.
-
-1.  Stop the container.
-
-        docker stop site-b
-
-1.  Remove the container.
-
-        docker rm site-b
-
-Now you have two web apps, but since they both listen to port 80, you can't run
-them both at the same time. Also, both apps respond to requests to
-http://a.example.com and http://b.example.com. Ideally "site A" would listen to
-http://a.example.com and "site B" would listen to http://b.example.com.
-
 ## Setting up the reverse proxy
 
-To have the separate apps respond only to their respective hosts, you'll
+To have the separate websites respond only to their respective hosts, you'll
 use a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy). This
 tutorial uses the [nginx-proxy Docker
-container](https://github.com/jwilder/nginx-proxy).
+container](https://github.com/jwilder/nginx-proxy) to automatically configure
+NGINX to forward requests to the corresponding website.
+
+As an example, this tutorial will show a plain NGINX server running as
+site A and a [plain Apache server](https://hub.docker.com/_/httpd/) running as site B.
 
 1.  Run the reverse proxy.
 
@@ -176,12 +91,12 @@ container](https://github.com/jwilder/nginx-proxy).
 1.  Start the container for site A, specifying the domain name in the
     `VIRTUAL_HOST` variable.
 
-        docker run -d --name site-a -e VIRTUAL_HOST=a.example.com site-a
+        docker run -d --name site-a -e VIRTUAL_HOST=a.example.com nginx
 
 1.  Check out your website at http://a.example.com.
 1.  With site A still running, start the container for site B.
 
-        docker run -d --name site-b -e VIRTUAL_HOST=b.example.com site-b
+        docker run -d --name site-b -e VIRTUAL_HOST=b.example.com httpd
 
 1.  Check out site B at http://b.example.com.
 
@@ -254,7 +169,7 @@ automatically issue and use signed certificates.
             --name site-a \
             -e 'LETSENCRYPT_EMAIL=webmaster@example.com' \
             -e 'LETSENCRYPT_HOST=a.example.com' \
-            -e 'VIRTUAL_HOST=a.example.com' site-a
+            -e 'VIRTUAL_HOST=a.example.com' nginx
 
 1.  You can watch the companion creator request new certificates by watching the logs.
 
@@ -271,7 +186,7 @@ automatically issue and use signed certificates.
             --name site-b \
             -e 'LETSENCRYPT_EMAIL=webmaster@example.com' \
             -e 'LETSENCRYPT_HOST=b.example.com' \
-            -e 'VIRTUAL_HOST=b.example.com' site-b
+            -e 'VIRTUAL_HOST=b.example.com' httpd
 
 1.  You can watch the companion creator request new certificates by watching the logs.
 
