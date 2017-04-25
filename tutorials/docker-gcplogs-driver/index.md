@@ -37,7 +37,7 @@ your usage.
 ## Setting up the virtual machine
 
 Create a new Compute Engine instance using the [Container-Optimized
-OS](/container-optimized-os/docs/) stable image. Container-Optimized OS comes
+OS](/container-optimized-os/) stable image. Container-Optimized OS comes
 with [Docker](https://www.docker.com/what-docker) pre-installed and supports
 automatic system updates.
 
@@ -134,24 +134,13 @@ Container-Optimized OS starts [Docker using
 systemd](https://docs.docker.com/engine/admin/systemd/).  To configure Docker
 to use the Google Cloud logging driver when it is started by systemd:
 
-1.  Create or edit `/etc/docker/daemon.json`.
+1.  Create `/etc/docker/daemon.json`.
 
-        sudo vim /etc/docker/daemon.json
-
-    Note that the `vim` command comes with Container-Optimized OS. To use other
-    editors, use the bundled [CoreOS
-    toolbox](/container-optimized-os/docs/how-to/toolbox).
-
-1.  Write the following contents:
-
-        {
-          "log-driver": "gcplogs"
-        }
+        echo '{"log-driver":"gcplogs"}' | sudo tee /etc/docker/daemon.json
 
 1.  Restart the docker service.
 
-        sudo systemctl stop docker
-        sudo systemctl start docker
+        sudo systemctl restart docker
 
 1.  Test it out by running a container without specifying an explicit
     `--log-driver`.
