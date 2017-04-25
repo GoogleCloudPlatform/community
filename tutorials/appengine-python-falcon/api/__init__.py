@@ -1,20 +1,18 @@
-""" API MODULE """
+"""API MODULE"""
 
-import json
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+from api.middleware import AuthMiddleware
+from api.resources import Resource
+
 import falcon
 
-class QuoteResource(object):
-    """TODO"""
 
-    def on_get(self, req, resp):
-        """Handles GET requests"""
-        quote = {
-            'quote': 'I\'ve always been more interested in the future than in the past.',
-            'author': 'Grace Hopper'
-        }
+app = falcon.API(middleware=[
+    AuthMiddleware()
+])
 
-        resp.body = json.dumps(quote)
-
-
-API = falcon.API()
-API.add_route('/', QuoteResource())
+resource = Resource()
+app.add_route('/', resource)

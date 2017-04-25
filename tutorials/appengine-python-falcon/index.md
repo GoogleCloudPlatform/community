@@ -5,9 +5,9 @@ author: archelogos
 tags: App Engine, Python, Falcon, API
 date_published: 2017-04-25
 ---
-This tutorial shows a sample Python app built with [Falcon][falcon].
+This tutorial shows how to build Python api built with [Falcon][falcon].
 
-Falcon is known as one of the most powerful Python web frameworks in terms of performance.
+Falcon is a high-performance Python framework for building cloud APIs. It encourages the REST architectural style, and tries to do as little as possible while remaining highly effective.
 
 In order to follow this guide, you will need to previously installed Python in your local machine.
 
@@ -22,13 +22,13 @@ In order to follow this guide, you will need to previously installed Python in y
 
 ## Costs
 
-This tutorial does not use billable components of Google Cloud Platform.
-so you will not need to enable the billing for your project to complete the tutorial.
+This tutorial does not use billable components of Google Cloud Platform,
+so you will not need to enable the billing for your project to complete this tutorial.
 
 ## Before you begin
 
 1.  Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
-2.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+2.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/)
 
 ## Preparing the app
 

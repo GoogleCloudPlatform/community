@@ -4,4 +4,4 @@ threadsafe: true
 
 handlers:
   - url: /.*
-    script: api.API
+    script: api.app
