@@ -10,9 +10,19 @@ from api.resources import Resource
 import falcon
 
 
+def generic_error_handler(ex, req, resp, params):
+
+    if isinstance(ex, falcon.HTTPNotFound):
+        raise falcon.HTTPNotFound(description='Not Found')
+    elif isinstance(ex, falcon.HTTPMethodNotAllowed):
+        raise falcon.HTTPMethodNotAllowed(falcon.HTTP_405, description='Method Not Allowed')
+    else:
+        raise
+
+
 app = falcon.API(middleware=[
     AuthMiddleware()
 ])
 
-resource = Resource()
-app.add_route('/', resource)
+app.add_route('/', Resource())
+app.add_error_handler(Exception, generic_error_handler)

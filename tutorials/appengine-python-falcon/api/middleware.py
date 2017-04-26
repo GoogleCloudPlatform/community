@@ -16,4 +16,4 @@ class AuthMiddleware(object):
             raise falcon.HTTPUnauthorized(description='Auth token required')
 
     def _token_is_valid(self):
-        return True  # Just return True
+        return True  # You should do this better!
