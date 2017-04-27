@@ -10,7 +10,7 @@ This sample app uses Google's OAuth 2.0 java lib to authenticate with 23andMe. O
  
 ## Create a 23andMe client
 
-Follow the instructions at https://api.23andme.com/apply/ to create a 23andMe Oauth client. Make sure to set your `redirect_uri` to http://127.0.0.1:8080/Callback . You will be given a `client_id` and a `client_secret`.
+Follow the instructions at [https://api.23andme.com/apply/](https://api.23andme.com/apply/) to create a 23andMe Oauth client. Make sure to set your `redirect_uri` to [http://127.0.0.1:8080/Callback](http://127.0.0.1:8080/Callback). You will be given a `client_id` and a `client_secret`.
 
 ## Clone the community repo
 
