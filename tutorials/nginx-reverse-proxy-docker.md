@@ -325,15 +325,20 @@ on reboot.
 ## Next steps
 
 Running many web apps on a single host behind a reverse proxy is an efficient
-way to run hobby applications, but it will not scale. In addition, a single VM
-instance is not highly available. None of the apps hosted on this VM will be
-available during a system reboot.
+way to run hobby applications. To make your experience even better,
 
-To see how to run an app which requires high availability or many queries per
-second, try out some more scalable ways of hosting.
+- [Set up the Google Cloud logging driver for Docker to upload your containers'
+  logs to Stackdriver
+  Logging](/community/tutorials/docker-gcplogs-driver).
+
+Note that apps deployed to a single instance are not highly available. For
+example, your applications will not be available during a system reboot.
+
+To see how to run an app which requires high availability or scaling to many
+queries per second, try out some more scalable ways of hosting.
 
 1.  Deploy a scalable web app using [App Engine flexible
-    environment](https://cloud.google.com/appengine/docs/flexible/python/quickstart).
+    environment](/appengine/docs/flexible/python/quickstart).
 1.  Host a [static website using Firebase Hosting](https://firebase.google.com/docs/hosting/quickstart).
-1.  Host a [static website using Cloud Storage](https://cloud.google.com/storage/docs/hosting-static-website).
+1.  Host a [static website using Cloud Storage](/storage/docs/hosting-static-website).
 
