@@ -3,7 +3,7 @@ title: Falcon API on App Engine Standard Environment
 description: Learn how to build a Falcon API in the Google App Engine standard environment.
 author: archelogos
 tags: App Engine, Python, Falcon, API
-date_published: 2017-04-25
+date_published: 2017-04-27
 ---
 This tutorial shows how to build Python api built with [Falcon][falcon].
 
@@ -32,16 +32,16 @@ you do not need to enable the billing for your project to complete this tutorial
 
 ## Preparing the app
 
-1. Create a [`requirements.txt`][requirements] file with the following content:
+1. Create a [`requirements.txt`][requirements] file with the following contents:
 
         falcon==1.1.0
 
-2. Create an [`appengine_config.py`][appengine_config] file with the following content:
+2. Create an [`appengine_config.py`][appengine_config] file with the following contents:
 
         from google.appengine.ext import vendor
         vendor.add('lib')
 
-3. Create an [`app.yaml`][app] file with the following content:
+3. Create an [`app.yaml`][app] file with the following contents:
 
         runtime: python27
         api_version: 1
@@ -51,23 +51,23 @@ you do not need to enable the billing for your project to complete this tutorial
           - url: /.*
             script: api.app
 
-4. Copy the [`api`][api] module in your folder
+4. Copy the [`api`][api] module in your workspace
 
     This module contains the following files:
 
-    1. [`__init__.py`][init]. This is where the api module is initialized and its routes created.
+    1. [`__init__.py`][init]. This is where the api module is initialized and its routes are created.
     You can see how the app variable is defined using the falcon library.
 
                 app = falcon.API(middleware=[
                     AuthMiddleware()
                 ])
 
-        There is also an example of how to set a route in the API.
+        You can just add a route doing the following:
 
                 app.add_route('/', Resource())
 
-    2. The resources are defined in the [`resources.py`][resources] file. The `Resource` class
-    implements four different functions `on_get`, `on_post`, `on_patch` and `on_delete`
+    2. The resources can be defined in the [`resources.py`][resources] file. The `Resource` class
+    implements four different methods `on_get`, `on_post`, `on_patch` and `on_delete`
     that define the endpoints for each HTTP method.
 
                 def on_get(self, req, resp):
@@ -80,12 +80,18 @@ you do not need to enable the billing for your project to complete this tutorial
                     ...
 
                 def on_delete(self, req, resp):
-                ...
+                    ...
 
     3. In the [`middleware.py`][middleware] file you can find the `AuthMiddleware` class
     which is used to ensure that all requests are authenticated.
     Because this is just an example, it is not implemented any kind
-    of JWT validation.
+    of validation.
+
+                class AuthMiddleware(object):
+
+                    def process_request(self, req, resp):
+                        token = req.get_header('Authorization')
+                        ...
 
     4. The [`hooks.py`][hooks] file contains definitions of custom functions that can be called
     before or after an endpoint function is executed. They can be used, for instance, to validate
@@ -93,25 +99,36 @@ you do not need to enable the billing for your project to complete this tutorial
 
 ## Running the app
 
-1.  Install the dependencies into the `lib` folder with pip
+1. Install the dependencies into the `lib` folder with pip
 
         pip install -t lib -r requirements.txt
 
-2.  Execute the following command to run the app
+2. Execute the following command to run the app
 
         dev_appserver.py .
 
-3.  Visit http://localhost:8080 to see the app running.
+3. Visit http://localhost:8080 to see the app running.
+
+4. Run the following command to test one of the endpoints:
+
+        curl -X GET \
+        http://localhost:8080/ \
+        -H 'authorization: Bearer 1234' \
+        -H 'cache-control: no-cache'
 
 ## Deploying the app
 
-1.  Run the following command to deploy your app:
+1. Run the following command to deploy your app:
 
         gcloud app deploy
 
-2.  Visit `http://[YOUR_PROJECT_ID].appspot.com` to see the deployed app.
+2. Visit `http://[YOUR_PROJECT_ID].appspot.com` to see the deployed app.
 
     Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
+
+3. Run the following command to view your app
+
+    gcloud app browse
 
 [requirements]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-falcon/requirements.txt
 [appengine_config]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-falcon/appengine_config.py
