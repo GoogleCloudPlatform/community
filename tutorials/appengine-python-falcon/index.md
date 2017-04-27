@@ -5,7 +5,7 @@ author: archelogos
 tags: App Engine, Python, Falcon, API
 date_published: 2017-04-27
 ---
-This tutorial shows how to build Python api built with [Falcon][falcon].
+This tutorial shows how to build a Python api with [Falcon][falcon].
 
 Falcon is a high-performance Python framework for building cloud APIs. It encourages the REST architectural style, and tries to do as little as possible while remaining highly effective.
 
