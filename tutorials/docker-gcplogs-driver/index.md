@@ -102,22 +102,22 @@ Viewer](https://console.cloud.google.com/logs/viewer).
     Viewer](https://console.cloud.google.com/logs/viewer) via that link or by
     opening **Logging** from the left menu.
 
-    ![logging menu](logging-menu.png)
+    ![logging menu](https://storage.googleapis.com/gcp-community/tutorials/docker-gcplogs-driver/logging-menu.png)
 
 2.  Select the **Global** logs.
 
-    ![global logs](logging-global.jpg)
+    ![global logs](https://storage.googleapis.com/gcp-community/tutorials/docker-gcplogs-driver/logging-global.jpg)
 
 3.  Select the `gcplogs-docker-driver` label to limit to just the logs from your
     Docker containers.
 
-    ![gcplogs docker driver logs](logging-driver.jpg)
+    ![gcplogs docker driver logs](https://storage.googleapis.com/gcp-community/tutorials/docker-gcplogs-driver/logging-driver.jpg)
 
 4.  Enter a search filter to narrow the logs further. Enter
     `jsonPayload.container.name:nginx-proxy` to limit to logs just from containers
     with the name `nginx-proxy`.
 
-    ![logging container name filter](logging-container-name.jpg)
+    ![logging container name filter](https://storage.googleapis.com/gcp-community/tutorials/docker-gcplogs-driver/logging-container-name.jpg)
 
 ## Setting the default logging driver
 
