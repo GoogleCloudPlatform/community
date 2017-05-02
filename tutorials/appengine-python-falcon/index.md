@@ -5,9 +5,9 @@ author: archelogos
 tags: App Engine, Python, Falcon, API
 date_published: 2017-04-27
 ---
-This tutorial shows how to build a Python api with [Falcon][falcon].
+This tutorial shows how to build a Python API with [Falcon][falcon].
 
-Falcon is a high-performance Python framework for building cloud APIs. It encourages the REST architectural style, and tries to do as little as possible while remaining highly effective.
+Falcon is a high-performance Python framework for building cloud APIs. It follows the REST architectural style, and tries to do as little as possible while remaining highly effective.
 
 In order to follow this guide, you will need to install Python in your local machine.
 
@@ -16,7 +16,7 @@ In order to follow this guide, you will need to install Python in your local mac
 
 ## Objectives
 
-1. Create a Python app that uses falcon as a framework.
+1. Create a Python app that uses Falcon as a framework.
 2. Run the app locally.
 3. Deploy the Python app to Google App Engine standard environment.
 
@@ -27,7 +27,7 @@ you do not need to enable the billing for your project to complete this tutorial
 
 ## Before you begin
 
-1.  Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1.  Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/) and make note of the project ID.
 2.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/)
 
 ## Preparing the app
@@ -56,13 +56,13 @@ you do not need to enable the billing for your project to complete this tutorial
     This module contains the following files:
 
     1. [`__init__.py`][init]. This is where the api module is initialized and its routes are created.
-    You can see how the app variable is defined using the falcon library.
+    You can see how the app variable is defined using the Falcon library.
 
                 app = falcon.API(middleware=[
                     AuthMiddleware()
                 ])
 
-        You can just add a route doing the following:
+        You can add a route with the following method:
 
                 app.add_route('/', Resource())
 
@@ -84,7 +84,7 @@ you do not need to enable the billing for your project to complete this tutorial
 
     3. In the [`middleware.py`][middleware] file you can find the `AuthMiddleware` class
     which is used to ensure that all requests are authenticated.
-    Because this is just an example, it is not implemented any kind
+    Because this is just an example, it is not implemented with any kind
     of validation.
 
                 class AuthMiddleware(object):
@@ -99,11 +99,11 @@ you do not need to enable the billing for your project to complete this tutorial
 
 ## Running the app
 
-1. Install the dependencies into the `lib` folder with pip
+1. Install the dependencies into the `lib` folder with pip.
 
         pip install -t lib -r requirements.txt
 
-2. Execute the following command to run the app
+2. Execute the following command to run the app.
 
         dev_appserver.py .
 
@@ -126,9 +126,9 @@ you do not need to enable the billing for your project to complete this tutorial
 
     Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
 
-3. Run the following command to view your app
+3. Run the following command to view your app:
 
-    gcloud app browse
+        gcloud app browse
 
 [requirements]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-falcon/requirements.txt
 [appengine_config]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-falcon/appengine_config.py
