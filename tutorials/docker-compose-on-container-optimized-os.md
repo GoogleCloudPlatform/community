@@ -6,8 +6,8 @@ tags: Docker,Docker Compose,Container-Optimized OS,Compute Engine
 date_published: 2017-05-03
 ---
 
-This tutorial guides you through running the [Docker
-Compose](https://docs.docker.com/compose/) command via Docker on a
+This tutorial guides you through running [Docker
+Compose](https://docs.docker.com/compose/) in a container on a
 [Container-Optimized OS](/container-optimized-os/) instance.
 
 ## Objectives
