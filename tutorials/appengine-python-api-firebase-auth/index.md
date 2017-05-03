@@ -1,8 +1,8 @@
 ---
-title: Falcon API on App Engine Standard Environment
-description: Learn how to build a Falcon API in the Google App Engine standard environment.
+title: Firebase Auth on your App Engine Pyhton Application
+description: Learn how to authenticate API requests using Firebase Auth on App Engine
 author: archelogos
-tags: App Engine, Python, Falcon, API
+tags: App Engine, Python, Falcon, API, Firebase, Auth, JWT
 date_published: 2017-04-27
 ---
 This tutorial shows how to build a Python API with [Falcon][falcon].
@@ -31,6 +31,8 @@ you do not need to enable the billing for your project to complete this tutorial
 2.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/)
 
 ## Preparing the app
+
+0. firebase_admin
 
 1. Create a [`requirements.txt`][requirements] file with the following contents:
 

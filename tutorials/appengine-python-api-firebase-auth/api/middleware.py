@@ -5,15 +5,22 @@ from __future__ import division
 from __future__ import print_function
 
 import falcon
+from firebase_admin import auth
 
 
 class AuthMiddleware(object):
     """."""
 
     def process_request(self, req, resp):
-        token = req.get_header('Authorization')
-        if token is None or not self._token_is_valid():
-            raise falcon.HTTPUnauthorized(description='Auth token required')
+        auth_value = req.get_header('Authorization', None)
+        if auth_value is None or len(auth_value.split(' ')) != 2 or not self._token_is_valid(auth_value.split(' ')[1]):
+            raise falcon.HTTPUnauthorized(description='Unauthorized')
 
-    def _token_is_valid(self):
-        return True  # You should do this better!
+    def _token_is_valid(self, token):
+        try:
+            decoded_token = auth.verify_id_token(id_token)
+        except Exception as e:
+            return False
+        if not decoded_token:
+            return False
+        return True
