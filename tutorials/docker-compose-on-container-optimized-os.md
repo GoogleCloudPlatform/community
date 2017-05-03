@@ -1,12 +1,14 @@
 ---
 title: Running Docker Compose with Docker
-description: Learn how to run the Docker Compose command using Docker on a Container-Optimized OS Google Compute Engine instance.
+description: Running Docker Compose on a Container-Optimized OS instance.
 author: tswast
 tags: Docker,Docker Compose,Container-Optimized OS,Compute Engine
 date_published: 2017-05-03
 ---
 
-This tutorial guides you through running the Docker Compose command via Docker.
+This tutorial guides you through running the [Docker
+Compose](https://docs.docker.com/compose/) command via Docker on a
+[Container-Optimized OS](/container-optimized-os/) instance.
 
 ## Objectives
 
@@ -79,13 +81,13 @@ image](https://hub.docker.com/r/docker/compose/).
     option.
 
     To make the current directory available to the container, use the `-v
-    "$(pwd):$(pwd)"` option to mount it as a volume and the `-w="$(pwd)"` to
+    "$PWD:/rootfs/$PWD"` option to mount it as a volume and the `-w="/rootfs/$PWD"` to
     change the working directory.
 
         docker run -it \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -v "$(pwd):$(pwd)" \
-            -w="$(pwd)" \
+            -v "$PWD:/rootfs/$PWD" \
+            -w="/rootfs/$PWD" \
             docker/compose:1.13.0 up
 
 1.  With the `docker run` command still running, open the [Google Cloud
@@ -100,24 +102,18 @@ image](https://hub.docker.com/r/docker/compose/).
 
 ## Making an alias to Docker Compose
 
-The command
+The `docker run ... docker/compose:1.13.0 up` command is equivalent to running
+the `docker-compose up` command on systems where Docker Compose is installed by
+the usual method. So that you don't have to remember or type this long command,
+create an alias for it.
 
-    docker run -it \
-        -v /var/run/docker.sock:/var/run/docker.sock \
-        -v "$(pwd):$(pwd)" \
-        -w="$(pwd)" \
-        docker/compose:1.13.0 up
-
-is equivalent to running the `docker-compose up` command on systems where
-Docker Compose is installed by the usual method. So that you don't have to
-remember or type this long command, create an alias for it.
-
-1.  Add a `docker-compose` alias to your `.bashrc` file.
+1.  Add a `docker-compose` alias to your shell configuration file, e.g.
+    `.bashrc`.
 
         echo alias docker-compose="'"'docker run -it \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -v "$(pwd):$(pwd)" \
-            -w="$(pwd)" \
+            -v "$PWD:/rootfs/$PWD" \
+            -w="/rootfs/$PWD" \
             docker/compose:1.13.0'"'" >> ~/.bashrc
 
 1.  Reload the Bash configuration.
