@@ -65,7 +65,7 @@ const dataset = bigquery.dataset(datasetId);
 ## Calculating the dataset size
 
 Finally, we can load the dataset's table and sum their sizes. Add the following
-to `size.js`:
+to `index.js`:
 
 [embedmd]:# (index.js /.*Lists.*/ /}\);/)
 ```js
@@ -87,9 +87,9 @@ dataset.getTables()
 
 ## Run the script
 
-Run the `size.js` script against BigQuery's public Hacker News dataset:
+Run the `index.js` script against BigQuery's public Hacker News dataset:
 
-    node size.js bigquery-public-data hacker_news
+    node index.js bigquery-public-data hacker_news
 
 ## The complete code
 
