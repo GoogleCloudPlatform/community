@@ -29,15 +29,7 @@ app = falcon.API(middleware=[
 ])
 
 # JWT using Firebase Auth
-current = os.path.dirname(os.path.realpath(__file__))
-file_path = os.path.abspath(os.path.join(current, 'config/serviceAccount.json'))
-cred = firebase_admin.credentials.Certificate(file_path)
-
-default_app = firebase_admin.initialize_app(cred)
-
-custom_token = firebase_admin.auth.create_custom_token('WvA0NQs8tFSkZkGXR6CrnNhEDz82')
-logging.info('TOKEN: ' + custom_token)
-
+default_app = firebase_admin.initialize_app()
 
 app.add_route('/', Resource())
 app.add_error_handler(Exception, generic_error_handler)

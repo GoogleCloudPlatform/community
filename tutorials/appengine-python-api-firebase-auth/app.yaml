@@ -5,3 +5,6 @@ threadsafe: true
 handlers:
   - url: /.*
     script: api.app
+
+env_variables:
+  GCLOUD_PROJECT: 'clear-beacon-145712'

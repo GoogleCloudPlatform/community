@@ -18,8 +18,9 @@ class AuthMiddleware(object):
 
     def _token_is_valid(self, token):
         try:
-            decoded_token = auth.verify_id_token(id_token)
+            decoded_token = auth.verify_id_token(token)
         except Exception as e:
+            print (str(e))
             return False
         if not decoded_token:
             return False

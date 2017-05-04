@@ -33,6 +33,10 @@ you do not need to enable the billing for your project to complete this tutorial
 ## Preparing the app
 
 0. firebase_admin
+1. GCLOUD_PROJECT env
+2. firebase app
+3. validate token id
+4. jwt generator http-server npm and node
 
 1. Create a [`requirements.txt`][requirements] file with the following contents:
 
