@@ -21,7 +21,6 @@ class AuthMiddleware(object):
             decoded_token = auth.verify_id_token(token)
             req.context['auth_user'] = decoded_token
         except Exception as e:
-            print (str(e))
             return False
         if not decoded_token:
             return False

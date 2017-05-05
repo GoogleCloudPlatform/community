@@ -6,20 +6,22 @@ tags: App Engine, Python, Falcon, API, Firebase, Auth, JWT
 date_published: 2017-05-05
 ---
 In this tutorial you will learn how to authenticate the requests that hit your API with JSON Web Tokens (JWT) using
-[Firebase][Firebase] Auth.
+Firebase Auth.
 
-The guide takes the basic components of an API described in this tutorial: [][]
+[Firebase][Firebase] is a platform that provides you tools and infrastructure to build your apps easily.
+
+To understand properly what a JWT is, you can find more information about it here: [JWT][https://jwt.io/]
+
+This guide takes the basic concepts of an API from this tutorial: [Previous Tutorial][https://cloud.google.com/community/tutorials/appengine-python-falcon]
 
 [Firebase]: https://firebase.google.com/
-[python]: https://www.python.org/
-[falcon]: https://falconframework.org/
 
 ## Objectives
 
 1. Create a Python app that uses Falcon as a framework.
 2. Run the app locally.
-4. 
-3. Deploy the Python app to Google App Engine standard environment.
+3. Use Firebase Auth to authenticate and validate the requests.
+4. Deploy the Python app to Google App Engine standard environment.
 
 ## Costs
 
@@ -30,79 +32,86 @@ you do not need to enable the billing for your project to complete this tutorial
 
 1.  Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/) and make note of the project ID.
 2.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/)
+3.  Import the existing Google Cloud Project in the [Firebase Console](https://console.firebase.google.com/)
+4.  Go to the Authentication Section in the Firebase Console and enable at least a Sign-in provider. Follow this link
+in case you need some information about how to do it [https://firebase.google.com/docs/auth/][https://firebase.google.com/docs/auth/]
 
 ## Preparing the app
 
-0. firebase_admin
-1. GCLOUD_PROJECT env
-2. firebase app
-3. validate token id
-4. jwt generator http-server npm and node
+1. Follow the steps described in the [Previous Tutorial][https://cloud.google.com/community/tutorials/appengine-python-falcon]. Once the app is running locally, move on to the next steps.
 
-1. Create a [`requirements.txt`][requirements] file with the following contents:
+2. Add the following line to the [`requirements.txt`][requirements] file:
 
-        falcon==1.1.0
+        firebase-admin==1.0.0
 
-2. Create an [`appengine_config.py`][appengine_config] file with the following contents:
+3. Modify the [`app.yaml`][app] file adding the following contents:
 
-        from google.appengine.ext import vendor
-        vendor.add('lib')
+        env_variables:
+          GCLOUD_PROJECT: '[YOUR_PROJECT_ID]'
 
-3. Create an [`app.yaml`][app] file with the following contents:
+4. Import the firebase-admin library to the [`__init__.py`][init] file and intialize the Firebase app.
 
-        runtime: python27
-        api_version: 1
-        threadsafe: true
 
-        handlers:
-          - url: /.*
-            script: api.app
+        import firebase_admin
 
-4. Copy the [`api`][api] module in your workspace
+        ...
 
-    This module contains the following files:
+        default_app = firebase_admin.initialize_app()
 
-    1. [`__init__.py`][init]. This is where the api module is initialized and its routes are created.
-    You can see how the app variable is defined using the Falcon library.
+5. Modify now the [```AuthMiddleware```][middleware] using the Firebase ID Token Validator.
 
-                app = falcon.API(middleware=[
-                    AuthMiddleware()
-                ])
+        ...
 
-        You can add a route with the following method:
+        from firebase_admin import auth
 
-                app.add_route('/', Resource())
+        class AuthMiddleware(object):
+            """."""
 
-    2. The resources can be defined in the [`resources.py`][resources] file. The `Resource` class
-    implements four different methods `on_get`, `on_post`, `on_patch` and `on_delete`
-    that define the endpoints for each HTTP method.
+            def process_request(self, req, resp):
+                auth_value = req.get_header('Authorization', None)
+                if auth_value is None or len(auth_value.split(' ')) != 2 or not self.token_is_valid(req, auth_value.split(' ')[1]):
+                    raise falcon.HTTPUnauthorized(description='Unauthorized')
 
-                def on_get(self, req, resp):
-                    ...
+            def token_is_valid(self, req, token):
+                try:
+                    decoded_token = auth.verify_id_token(token)
+                    req.context['auth_user'] = decoded_token
+                except Exception as e:
+                    return False
+                if not decoded_token:
+                    return False
+                return True   
 
-                def on_post(self, req, resp):
-                    ...
+    Because this middleware applies to all endpoints, from now you will need to send your requests with
+    an Authorization header that contains a valid JWT Token.
 
-                def on_patch(self, req, resp):
-                    ...
+            Header['Authorization'] = 'Bearer [JWT_TOKEN]'
 
-                def on_delete(self, req, resp):
-                    ...
+    You could also verify the user role in separated Falcon hook to determine if the user has enough permission.
 
-    3. In the [`middleware.py`][middleware] file you can find the `AuthMiddleware` class
-    which is used to ensure that all requests are authenticated.
-    Because this is just an example, it is not implemented with any kind
-    of validation.
+        def is_admin(req, resp, resource, params):
+            # Good place to check the user role
+            logging.info(req.context['auth_user'])
 
-                class AuthMiddleware(object):
+        ...
 
-                    def process_request(self, req, resp):
-                        token = req.get_header('Authorization')
-                        ...
+        @falcon.before(api_key)
+        @falcon.before(is_admin)
+        @falcon.after(say_bye_after_operation)
+        def on_post(self, req, resp):
 
-    4. The [`hooks.py`][hooks] file contains definitions of custom functions that can be called
-    before or after an endpoint function is executed. They can be used, for instance, to validate
-    the input data or serialize the API responses.
+        ...
+
+    As you can see, we are using the ```req.context``` to pass variables from the middleware layer
+    to the hooks.        
+
+6. To generate ID Tokens and because of Firebase does not provide an API to generate them,
+   we have to simulate a client sign in.
+
+   To do that you can use several Firebase client libraries like [AngularFire][https://github.com/firebase/angularfire]
+   or [FirebaseUI][https://github.com/firebase/FirebaseUI].
+   You can find a sample in this repo [jwt][jwt]. Be sure that you set your Firebase Credentials before generate
+   a token.
 
 ## Running the app
 
@@ -116,11 +125,26 @@ you do not need to enable the billing for your project to complete this tutorial
 
 3. Visit http://localhost:8080 to see the app running.
 
+4. Run the JWT generator using (for instance) a NodeJS http server.
+
+   Be sure that you have already installed NodeJS in your local machine.
+   and a http-server module globally:
+
+        node -v
+
+        npm -g install http-server
+
+        cd jwt
+
+        http-server . -p 9000
+
+   Visit http://localhost:9000 in the browser, sign in and copy the JWT.
+
 4. Run the following command to test one of the endpoints:
 
         curl -X GET \
         http://localhost:8080/ \
-        -H 'authorization: Bearer 1234' \
+        -H 'authorization: Bearer [JWT_TOKEN]' \
         -H 'cache-control: no-cache'
 
 ## Deploying the app
@@ -137,11 +161,8 @@ you do not need to enable the billing for your project to complete this tutorial
 
         gcloud app browse
 
-[requirements]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-falcon/requirements.txt
-[appengine_config]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-falcon/appengine_config.py
-[app]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-falcon/app.yaml
-[api]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-falcon/api
-[init]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-falcon/api/__init__.py
-[resources]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-falcon/api/resources.py
-[middleware]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-falcon/api/middleware.py
-[hooks]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-falcon/api/hooks.py
+[requirements]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-api-firebase-auth/requirements.txt
+[app]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-api-firebase-auth/app.yaml
+[init]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-api-firebase-auth/api/__init__.py
+[middleware]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-api-firebase-auth/api/middleware.py
+[jwt]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-python-api-firebase-auth/jwt
