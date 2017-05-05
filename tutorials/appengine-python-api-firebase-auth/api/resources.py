@@ -7,12 +7,13 @@ from __future__ import print_function
 import logging
 import json
 
-from api.hooks import api_key, say_bye_after_operation
+from api.hooks import api_key, say_bye_after_operation, is_admin
 
 import falcon
 
 class Resource(object):
 
+    @falcon.before(api_key)
     def on_get(self, req, resp):
         logging.info('Getting the resource')
         resource = {
@@ -23,6 +24,7 @@ class Resource(object):
         resp.status = falcon.HTTP_200
 
     @falcon.before(api_key)
+    @falcon.before(is_admin)
     @falcon.after(say_bye_after_operation)
     def on_post(self, req, resp):
         logging.info('Creating a new resource')
@@ -34,6 +36,7 @@ class Resource(object):
         resp.status = falcon.HTTP_201
 
     @falcon.before(api_key)
+    @falcon.before(is_admin)
     @falcon.after(say_bye_after_operation)
     def on_patch(self, req, resp):
         logging.info('Updating the resource')
@@ -45,6 +48,7 @@ class Resource(object):
         resp.status = falcon.HTTP_200
 
     @falcon.before(api_key)
+    @falcon.before(is_admin)
     @falcon.after(say_bye_after_operation)
     def on_delete(self, req, resp):
         logging.info('Deleting the resource')

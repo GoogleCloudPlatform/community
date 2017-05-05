@@ -3,14 +3,14 @@ title: Firebase Auth on your App Engine Pyhton Application
 description: Learn how to authenticate API requests using Firebase Auth on App Engine
 author: archelogos
 tags: App Engine, Python, Falcon, API, Firebase, Auth, JWT
-date_published: 2017-04-27
+date_published: 2017-05-05
 ---
-This tutorial shows how to build a Python API with [Falcon][falcon].
+In this tutorial you will learn how to authenticate the requests that hit your API with JSON Web Tokens (JWT) using
+[Firebase][Firebase] Auth.
 
-Falcon is a high-performance Python framework for building cloud APIs. It follows the REST architectural style, and tries to do as little as possible while remaining highly effective.
+The guide takes the basic components of an API described in this tutorial: [][]
 
-In order to follow this guide, you will need to install Python in your local machine.
-
+[Firebase]: https://firebase.google.com/
 [python]: https://www.python.org/
 [falcon]: https://falconframework.org/
 
@@ -18,6 +18,7 @@ In order to follow this guide, you will need to install Python in your local mac
 
 1. Create a Python app that uses Falcon as a framework.
 2. Run the app locally.
+4. 
 3. Deploy the Python app to Google App Engine standard environment.
 
 ## Costs

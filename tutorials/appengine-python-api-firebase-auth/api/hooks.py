@@ -18,6 +18,11 @@ def api_key(req, resp, resource, params):
             description='API KEY is required')
 
 
+def is_admin(req, resp, resource, params):
+    # Good place to check the user role
+    logging.info(req.context['auth_user'])
+
+
 def say_bye_after_operation(req, resp, resource):
 
     logging.info('Bye there at ' + str(time.time()) + ' and api_key=' + req.params.get('api_key'))
