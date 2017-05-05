@@ -1,23 +1,20 @@
 ---
 title: How to Write a Tutorial for the Google Cloud Platform Community
 description: Learn how to write a tutorial for the Google Cloud Platform community.
-author: jmdobry
+author: Hector David (@davidgreens)
 tags: Tutorial, Write
-date_published: 2017-03-03
+date_published: 2017-05-
 ---
 
 **Beta: This is a Beta release of the Google Cloud Platform Community tutorials. This site might be changed and is not subject to any SLA or deprecation policy.**
 
 ## Introduction
 
-Beyond the official documentation there are endless possiblities for combining
-tools, platforms, languages and products. Ultimately, everything you build is
-unique, but very often projects share a lot in common. By submitting a tutorial
-you can share your experience and help others who are solving similar problems.
+Beyond the official documentation there are endless amounts of possible tool combinations, environment, ecosystems, native languages and product solutions. Mathematically, component solutions you build are
+unique, but very often projects/instances share common attributes/fundamentals. By submitting a tutorial
+you can help others gain insight knowledge to handling and solving problematic instances.
 
-Tutorials can be short or long, but in every case they provide context for
-using Google Cloud Platform in the real world and show how to solve a particular
-problem that may not have been discussed in the official documentation.
+Tutorials can be short or long, but in every case they provide useful context for applying best practices when collaborating elements on Google Cloud Platform, best placed practices when conforming to distinct protocols that may not have been discussed in the official documentation.
 
 ## Submitting a tutorial
 
@@ -83,3 +80,4 @@ accept your pull requests.
 [pr]: https://help.github.com/articles/using-pull-requests/
 [in_cla]: https://developers.google.com/open-source/cla/individual
 [corp_cla]: https://developers.google.com/open-source/cla/corporate
+[![CLA assistant check](https://cla-assistant.io/pull/badge/signed)](https://cla-assistant.io/davidgreens/BuildKite-Chat?pullRequest=19) 
