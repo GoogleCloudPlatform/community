@@ -28,7 +28,7 @@ Although this document describes how you can set up a JMeter test environment, i
 Load Test and JMeter Basics
 ---------------------------
 
-The following section introduces the basics of load testing and JMeter, and the next section dives into some specifics of using JMeter with Google Compute Engine.
+The following section introduces the basics of load testing and JMeter, and the next section dives into some specifics of using JMeter with Compute Engine.
 
 ### Load Testing Basics
 
@@ -75,7 +75,7 @@ JMeter is equipped with other kinds of result handlers in addition to the one sh
 JMeter Server Configuration on Google Compute Engine
 ----------------------------------------------------
 
-The rest of this tutorial discusses how to configure JMeter Servers on Compute Engine. This tutorial assumes you will set up multiple JMeter Servers on Compute Engine Linux instances and run the JMeter client on a Mac.
+The rest of this tutorial discusses how to configure JMeter Servers on Compute Engine. This tutorial assumes you will set up multiple JMeter servers on Compute Engine Linux instances and run the JMeter client on a Mac.
 
 ### Connections between JMeter Client and JMeter Servers
 
@@ -173,7 +173,7 @@ You can create test cases using the JMeter UI, as usual. The JMeter client autom
 
 ### Setting up JMeter Servers on Google Compute Engine
 
-Because a Compute Engine instance works as a regular Linux box, no special configuration is required. However, the easiest way to ssh into it is to use the [gcloud compute ssh](https://cloud.google.com/compute/docs/instances/connecting-to-instance) command rather than the vanilla ssh command, because `gcloud compute ssh` pre-sets some options for connecting to Compute Engine.
+Because a Compute Engine instance works as a regular Linux box, no special configuration is required. However, the easiest way to ssh into it is to use the [gcloud compute ssh](https://cloud.google.com/compute/docs/instances/connecting-to-instance#sshingcloud) command rather than the vanilla ssh command, because `gcloud compute ssh` pre-sets some options for connecting to Compute Engine.
 
 With the `gcloud compute ssh` command you need to specify the `--` option to pass parameters to ssh.
 
