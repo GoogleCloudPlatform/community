@@ -86,7 +86,7 @@ Figure 4. Connections between the JMeter Client and the JMeter Server
 
 It can be challenging to configure the connections when the JMeter client is running behind a firewall using 1:N NAT (Network Address Translation) and is connected to JMeter servers on Compute Engine, which are also behind a firewall.
 
-Compute Engines uses 1:1 NAT for its external IP address. Each Compute Engine instance uses its internal private IP address as its IP address. This prevents the JMeter remote server from being able to connect to the JMeter client because the client is behind a firewall and has no public address. The client, on the other hand, cannot connect to the remote server because the server reports its internal private IP address as its public address (Fig. 5).
+Compute Engine uses 1:1 NAT for its external IP address. Each Compute Engine instance uses its internal private IP address as its IP address. This prevents the JMeter remote server from being able to connect to the JMeter client because the client is behind a firewall and has no public address. The client, on the other hand, cannot connect to the remote server because the server reports its internal private IP address as its public address (Fig. 5).
 
 Figure 5. Firewalls pose a communication challenge between the JMeter client and JMeter servers
 ![firewalls](firewalls.jpeg)
