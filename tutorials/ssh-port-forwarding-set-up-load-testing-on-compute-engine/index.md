@@ -1,3 +1,10 @@
+---
+title: How to Configure SSH Port Forwarding and Set Up Load Testing on Google Compute Engine
+description: Learn how to use SSH port forwarding to set up a distributed load test environment with JMeter on Compute Engine instances.
+author: debsaunders
+tags: Compute Engine, SSH, port forwarding
+date_published: 2017-05-05
+---
 Google Compute Engine provides virtual machines on demand. With Compute Engine you can do large scale computational work and achieve high performance. It is useful to be able to communicate bidirectionally between virtual machines on Compute Engine and remote machines, such as a local personal computer.
 
 This document uses JMeter as an example of this scenario and explains how to configure SSH port forwarding to enable the bidirectional connections. With this technique, you can set up a JMeter server cluster on Compute Engine for load testing and control the cluster from a JMeter client, running on your local personal computer.
@@ -187,7 +194,7 @@ Note that an `-L` or `-R` argument must be combined with the parameter that foll
 
 ### Configuring Multiple JMeter Servers
 
-So far, you have seeen an example of how to successfully set up the JMeter server on the Compute Engine instance. However, the main objective of using remote JMeter servers is to enable a single JMeter client to orchestrate multiple JMeter servers to stress the tested server in such a way that would otherwise be impossible to achieve with a single computer.
+So far, you have seen an example of how to successfully set up the JMeter server on the Compute Engine instance. However, the main objective of using remote JMeter servers is to enable a single JMeter client to orchestrate multiple JMeter servers to stress the tested server in such a way that would otherwise be impossible to achieve with a single computer.
 
 If the JMeter client and JMeter servers are on the same side of a firewall (for example, they’re both on-premises at a company), all the JMeter servers can use the same port. However, this example enabled SSH port forwarding, so each server needs to be configured to use a different forwarding port and corresponding RMI listening local port.
 
@@ -233,7 +240,7 @@ Here is an introduction to the sample implementation of such a script, jmeter\_c
 
 -   [Google APIs Client Library for Python](https://developers.google.com/api-client-library/python/) to control Compute Engine instances
 -   [gcloud](https://cloud.google.com/compute/docs/gcloud-compute/) command line tool to set up SSH port forwarding
--   [Google Cloud Storage](https://cloud.google.com/storage/) to store Compute Engine instance’s startup script and JMeter server package
+-   [Google Cloud Storage](https://cloud.google.com/storage/) to store the Compute Engine instance’s startup script and JMeter server package
 
 The JMeter server package includes pre-configured jmeter.properties in the “bin” subdirectory. However, port numbers must be customized per instance. The startup script will overwrite the port numbers for you.
 
