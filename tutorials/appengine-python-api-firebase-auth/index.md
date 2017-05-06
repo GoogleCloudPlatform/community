@@ -1,6 +1,6 @@
 ---
 title: Firebase Auth on your App Engine Python Application
-description: Learn how to authenticate API requests using Firebase Auth on App Engine
+description: Learn how to authenticate API requests using Firebase Auth on App Engine.
 author: archelogos
 tags: App Engine, Python, Falcon, API, Firebase, Auth, JWT
 date_published: 2017-05-05
