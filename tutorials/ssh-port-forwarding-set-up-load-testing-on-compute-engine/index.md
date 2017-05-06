@@ -120,7 +120,7 @@ JMeter uses three connections: one from the client to the server using JMeter Co
 -   Port 26000 for RMI from client to server
 
 Figure 7. An example of a port forwarding configuration for three connections
-![forward config](forw-config.png)
+![forward config](forw-conf.png)
 
 The example command below sets up forwarding for 3 ports. Because you only need to set up SSH port forwarding and will not need to execute remote commands, you might want to add -N and -f options.
 
@@ -132,7 +132,7 @@ To use the proper port numbers, all that is left to do is to configure the JMete
 
 #### Configure the Client 
 
-In the JMeter client configuration, bin/jmeter.properties, change the following items:
+To configure the JMeter client, change the following items in bin/jmeter.properties:
 
     remote_hosts=127.0.0.1:24000
     client.rmi.localport=25000
@@ -150,7 +150,7 @@ Because you will send massive amounts of requests from the JMeter servers to the
 
 #### Configure the Server 
 
-You also need to edit the bin/jmeter.property as follows to configure the remote JMeter server:
+To configure the remote JMeter server, you also need to edit bin/jmeter.property as follows:
 
     server_port=24000
     server.rmi.localhostname=127.0.0.1
@@ -174,7 +174,7 @@ You can create test cases using the JMeter UI, as usual. The JMeter client autom
 
 ### Setting up JMeter Servers on Google Compute Engine
 
-Because a Compute Engine instance works as a regular Linux box, no special configuration is required. However, the easiest way to ssh into it is to use the `[gcloud compute ssh](https://cloud.google.com/compute/docs/instances/connecting-to-instance)` command rather than the vanilla `ssh` command, because `gcloud ssh` pre-sets some options for connecting to Compute Engine.
+Because a Compute Engine instance works as a regular Linux box, no special configuration is required. However, the easiest way to ssh into it is to use the [gcloud compute ssh](https://cloud.google.com/compute/docs/instances/connecting-to-instance) command rather than the vanilla ssh command, because `gcloud compute ssh` pre-sets some options for connecting to Compute Engine.
 
 With the `gcloud compute ssh` command you need to specify the `--` option to pass parameters to ssh.
 
@@ -184,13 +184,13 @@ To set up the SSH port forwarding for Compute Engine, use the following command:
     -R 25000:127.0.0.1:25000 \
     -L 26000:127.0.0.1:26000  -N -f
 
-Note `-L` or `-R`, that corresponds to arguments to `ssh` command, must be combined with the parameter that follows it so that they are passed to `ssh` as a single parameter. Otherwise, the parameter part is interpreted as parameter for`gcloud`.
+Note that an `-L` or `-R` argument must be combined with the parameter that follows it, so they are passed as a single parameter to ssh. Otherwise, the parameter is interpreted as a parameter for gcloud.
 
 ### Configuring Multiple JMeter Servers
 
 So far, you have seeen an example of how to successfully set up the JMeter server on the Compute Engine instance. However, the main objective of using remote JMeter servers is to enable a single JMeter client to orchestrate multiple JMeter servers to stress the tested server in such a way that would otherwise be impossible to achieve with a single computer.
 
-If the JMeter client and JMeter servers are on the same side of a firewall (for example, they’re both on-premises at a company) all the JMeter servers can use the same port. However, this example enabled SSH port forwarding, so each server needs to be configured to use a different forwarding port and corresponding RMI listening local port.
+If the JMeter client and JMeter servers are on the same side of a firewall (for example, they’re both on-premises at a company), all the JMeter servers can use the same port. However, this example enabled SSH port forwarding, so each server needs to be configured to use a different forwarding port and corresponding RMI listening local port.
 
 All servers can still use the same number for the RMI port to connect to the client, like 25000, as was the case in our example.
 
@@ -271,8 +271,7 @@ Start a cluster and set SSH port forwarding
     Compute Engine instances.
 -   Also sets SSH port forwarding.
 
-After running the start command to start the JMeter server, run the
-client command to start the JMeter client.
+After running the start command to start the JMeter server, run the client command to start the JMeter client.
 
 #### Set SSH port forwarding if the terminal is interrupted 
 
@@ -283,7 +282,7 @@ client command to start the JMeter client.
     loses connection to the instances which, in turn, cancels SSH port
     forwarding.
 
-After running the portforward command to re-establish port forwarding,run the client command to restart the JMeter client.
+After running the portforward command to re-establish port forwarding, run the client command to restart the JMeter client.
 
 #### Start the JMeter Client 
 
@@ -301,7 +300,7 @@ After running the portforward command to re-establish port forwarding,run the cl
 
 ./jmeter\_cluster.py -h
 
--   Shows command usage
+-   Shows command usage.
 
 ./jmeter\_cluster \[start|shutdown|portforward|client\] -h
 
