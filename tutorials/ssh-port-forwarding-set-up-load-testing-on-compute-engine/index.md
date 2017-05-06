@@ -24,7 +24,7 @@ Although this document describes how you can set up a JMeter test environment, i
 -   [Scaling for Multiple Remote Servers](#scale)    
 -   [Additional Resources](#resources)
 
-[](#loadtest)
+<a name="loadtest"></a>
 Load Test and JMeter Basics
 ---------------------------
 
@@ -71,8 +71,7 @@ Figure 3. Screenshot of consolidated load testing results on the JMeter Client
 
 JMeter is equipped with other kinds of result handlers in addition to the one shown.
 
-[](#server-config)
-
+<a name="server-config"></a>
 JMeter Server Configuration on Google Compute Engine
 ----------------------------------------------------
 
@@ -214,7 +213,7 @@ And, finally, the configuration for the JMeter client with two servers would be 
 
 Note that the example presented in this tutorial specified port numbers of 24000, 25000, and 26000, where the maximum number of servers is 1000 to avoid an overlap of port numbers. If your cluster has more than 1000 servers, you would need to use a different set of port numbers with a larger gap between them.
 
-[](#scale)
+<a name="scale"></a>
 Scaling for Multiple Remote Servers
 -----------------------------------
 
@@ -306,8 +305,7 @@ After running the portforward command to re-establish port forwarding, run the c
 
 -   Shows usage of subcommand.
 
-[](#resources)
-
+<a name="resources"></a>
 Additional Resources
 --------------------
 
