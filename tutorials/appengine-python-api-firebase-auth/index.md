@@ -1,18 +1,17 @@
 ---
-title: Firebase Auth on your App Engine Pyhton Application
+title: Firebase Auth on your App Engine Python Application
 description: Learn how to authenticate API requests using Firebase Auth on App Engine
 author: archelogos
 tags: App Engine, Python, Falcon, API, Firebase, Auth, JWT
 date_published: 2017-05-05
 ---
-In this tutorial you will learn how to authenticate the requests that hit your API with JSON Web Tokens (JWT) using
-Firebase Auth.
+In this tutorial you will learn how to authenticate the requests that hit your API with JSON Web Tokens (JWT) using Firebase Auth.
 
 [Firebase][Firebase] is a platform that provides you tools and infrastructure to build your apps easily.
 
-To understand properly what a JWT is, you can find more information about it here: [JWT][https://jwt.io/]
+To understand properly what a JWT is, you can find more information about it here: [JWT](https://jwt.io/)
 
-This guide takes the basic concepts of an API from this tutorial: [Previous Tutorial][https://cloud.google.com/community/tutorials/appengine-python-falcon]
+This guide takes the basic concepts of an API from this tutorial: [Previous Tutorial](https://cloud.google.com/community/tutorials/appengine-python-falcon)
 
 [Firebase]: https://firebase.google.com/
 
@@ -34,11 +33,11 @@ you do not need to enable the billing for your project to complete this tutorial
 2.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/)
 3.  Import the Google Cloud Project in the [Firebase Console](https://console.firebase.google.com/)
 4.  Go to the Authentication section in the Firebase Console and enable, at least, one Sign-in provider. Follow this link
-in case you need some information about how to do it [https://firebase.google.com/docs/auth/][https://firebase.google.com/docs/auth/]
+in case you need some information about how to do it [https://firebase.google.com/docs/auth/](https://firebase.google.com/docs/auth/)
 
 ## Preparing the app
 
-1. Follow the steps described in the [Previous Tutorial][https://cloud.google.com/community/tutorials/appengine-python-falcon]. Once the app is running locally, move on to the next steps.
+1. Follow the steps described in the [previous tutorial](https://cloud.google.com/community/tutorials/appengine-python-falcon). Once the app is running locally, move on to the next steps.
 
 2. Add the following line to the [`requirements.txt`][requirements] file:
 
@@ -50,7 +49,6 @@ in case you need some information about how to do it [https://firebase.google.co
           GCLOUD_PROJECT: '[YOUR_PROJECT_ID]'
 
 4. Import the firebase-admin library to the [`__init__.py`][init] file and intialize the Firebase app.
-
 
         import firebase_admin
 
@@ -82,13 +80,11 @@ in case you need some information about how to do it [https://firebase.google.co
                     return False
                 return True   
 
-    Because this middleware applies to all endpoints, from now you will need to send your requests with
-    an 'Authorization' header which contains a valid JWT Token.
+    Because this middleware applies to all endpoints, from now you will need to send your requests with an 'Authorization' header which contains a valid JWT Token.
 
             Header['Authorization'] = 'Bearer [JWT_TOKEN]'
 
-    You could also verify the user role in a separated Falcon hook to determine if the user has enough permission to do
-    the operation.
+    You could also verify the user role in a separated Falcon hook to determine if the user has enough permission to do the operation.
 
         def is_admin(req, resp, resource, params):
             # Good place to check the user role.
@@ -103,16 +99,14 @@ in case you need some information about how to do it [https://firebase.google.co
 
         ...
 
-    As you can see, we are using the ```req.context``` to pass variables from the middleware layer
-    to the hooks.        
+    As you can see, we are using the ```req.context``` to pass variables from the middleware layer to the hooks.        
 
 6. To generate ID Tokens and because of Firebase does not provide an API to generate them,
    we have to simulate a client sign in.
 
-   To do that you can use several Firebase client libraries like [AngularFire][https://github.com/firebase/angularfire]
-   or [FirebaseUI][https://github.com/firebase/FirebaseUI].
-   You can find a sample in this repo [jwt][jwt]. Be sure that you set your Firebase Credentials before generate
-   a token.
+   To do that you can use several Firebase client libraries like [AngularFire](https://github.com/firebase/angularfire)
+   or [FirebaseUI](https://github.com/firebase/FirebaseUI).
+   You can find a sample in this repo [jwt][jwt]. Be sure that you set your Firebase Credentials before generate a token.
 
 ## Running the app
 
