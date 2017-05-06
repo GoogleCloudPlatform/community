@@ -262,7 +262,7 @@ Here’s of an overview of what the script does:
 
 ### Usage
 
-Start a cluster and set SSH port forwarding
+#### Start a cluster and set SSH port forwarding
 
 ./jmeter\_cluster.py start \[cluster size] \[--project \<project name>] \[--prefix \<prefix>] \[--image \<image>] \[--zone \<zone>] \[--machinetype \<machine type>]
 
