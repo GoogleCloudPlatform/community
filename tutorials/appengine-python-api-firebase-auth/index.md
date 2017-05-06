@@ -32,8 +32,8 @@ you do not need to enable the billing for your project to complete this tutorial
 
 1.  Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/) and make note of the project ID.
 2.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/)
-3.  Import the existing Google Cloud Project in the [Firebase Console](https://console.firebase.google.com/)
-4.  Go to the Authentication Section in the Firebase Console and enable at least a Sign-in provider. Follow this link
+3.  Import the Google Cloud Project in the [Firebase Console](https://console.firebase.google.com/)
+4.  Go to the Authentication section in the Firebase Console and enable, at least, one Sign-in provider. Follow this link
 in case you need some information about how to do it [https://firebase.google.com/docs/auth/][https://firebase.google.com/docs/auth/]
 
 ## Preparing the app
@@ -83,14 +83,15 @@ in case you need some information about how to do it [https://firebase.google.co
                 return True   
 
     Because this middleware applies to all endpoints, from now you will need to send your requests with
-    an Authorization header that contains a valid JWT Token.
+    an 'Authorization' header which contains a valid JWT Token.
 
             Header['Authorization'] = 'Bearer [JWT_TOKEN]'
 
-    You could also verify the user role in separated Falcon hook to determine if the user has enough permission.
+    You could also verify the user role in a separated Falcon hook to determine if the user has enough permission to do
+    the operation.
 
         def is_admin(req, resp, resource, params):
-            # Good place to check the user role
+            # Good place to check the user role.
             logging.info(req.context['auth_user'])
 
         ...
@@ -127,8 +128,8 @@ in case you need some information about how to do it [https://firebase.google.co
 
 4. Run the JWT generator using (for instance) a NodeJS http server.
 
-   Be sure that you have already installed NodeJS in your local machine.
-   and a http-server module globally:
+   Be sure that you have already installed Node.js in your local machine and
+   install a http-server module globally.
 
         node -v
 
