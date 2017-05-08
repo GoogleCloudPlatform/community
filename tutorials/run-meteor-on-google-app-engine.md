@@ -127,7 +127,7 @@ like:
           "cleanup": "rm -rf ../bundle/",
           "dist": "npm run cleanup && meteor build ../ --directory --architecture os.linux.x86_64 --server-only",
           "predeploy": "npm run dist && cp app.yaml ../bundle/ && cp Dockerfile ../bundle/",
-          "deploy": "npm run predeploy && (cd ../bundle && gcloud app deploy -q)"
+          "deploy": "npm run predeploy && (cd ../bundle && gcloud app deploy --verbosity=info -q)"
         },
 
     These scripts provide you with some tasks that prepare the app for
@@ -142,7 +142,8 @@ running the following command:
 
 1. Replace the contents of the `Dockerfile` file with the following:
 
-        FROM gcr.io/google_appengine/nodejs
+        FROM launcher.gcr.io/google/nodejs
+        RUN install_node v4.6.2
         COPY . /app/
         RUN (cd programs/server && npm install --unsafe-perm)
         CMD node main.js
@@ -150,12 +151,24 @@ running the following command:
     The custom `Dockerfile` is required in order to properly build the Meteor
     app in production.
 
-1. Add the following to the generated `app.yaml` file:
+1. Replace the contents of the generated `app.yaml` file:
 
+        env: flex
+        runtime: custom
+        threadsafe: true
         env_variables:
-          ROOT_URL: https://[YOUR_PROJECT_ID].appspot-preview.com
+          ROOT_URL: https://[YOUR_PROJECT_ID].appspot.com
           MONGO_URL: [MONGO_URL]
           DISABLE_WEBSOCKETS: "1"
+        skip_files:
+        - ^(.*/)?\.dockerignore$
+        - ^(.*/)?\npm-debug.log$
+        - ^(.*/)?\yarn-error.log$
+        - ^(.*/)?\.git$
+        - ^(.*/)?\.hg$
+        - ^(.*/)?\.svn$
+
+          
 
     replacing `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID and
     `[MONGO_URL]` with your MongoDB URI.
