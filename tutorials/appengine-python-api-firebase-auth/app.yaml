@@ -7,4 +7,4 @@ handlers:
     script: api.app
 
 env_variables:
-  GCLOUD_PROJECT: 'clear-beacon-145712'
+  GCLOUD_PROJECT: 'YOUR_PROJECT_ID'
