@@ -1,7 +1,7 @@
 ---
 title: How to Configure SSH Port Forwarding and Set Up Load Testing on Google Compute Engine
 description: Learn how to use SSH port forwarding to set up a distributed load test environment with JMeter on Compute Engine instances.
-author: debsaunders
+author: s/debsaunders/deb-saunders/
 tags: Compute Engine, SSH, port forwarding
 date_published: 2017-05-08
 ---
