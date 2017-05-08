@@ -25,10 +25,10 @@ This document provides a detailed description of how you can set up a JMeter loa
 Although this document describes how you can set up a JMeter test environment, it doesn’t go into any detail about JMeter itself. Building a test plan and executing tests on JMeter are outside the scope of this document.
 
 ## Contents
--   [Load Test and JMeter Basics](#loadtest)
--   [JMeter Server Configuration on Google Compute Engine](#server-config)
--   [Scaling for Multiple Remote Servers](#scale)    
--   [Additional Resources](#resources)
+- Load Test and JMeter Basics
+- JMeter Server Configuration on Google Compute Engine
+- Scaling for Multiple Remote Servers    
+- Additional Resources
 
 ## Load Test and JMeter Basics
 
@@ -124,7 +124,8 @@ Figure 7. An example of a port forwarding configuration for three connections
 
 The example command below sets up forwarding for 3 ports. Because you only need to set up SSH port forwarding and will not need to execute remote commands, you might want to add -N and -f options.
 
-```ssh -L 24000:127.0.0.1:24000   \
+```
+ssh -L 24000:127.0.0.1:24000   \
 -R 25000:127.0.0.1:25000   \
 -L 26000:127.0.0.1:26000 -N -f <username>@<server>
 ```
@@ -135,7 +136,8 @@ To use the proper port numbers, all that is left to do is to configure the JMete
 
 To configure the JMeter client, change the following items in bin/jmeter.properties:
 
-```remote_hosts=127.0.0.1:24000
+```
+remote_hosts=127.0.0.1:24000
 client.rmi.localport=25000
 mode=Statistical
 ```
@@ -154,7 +156,8 @@ Because you will send massive amounts of requests from the JMeter servers to the
 
 To configure the remote JMeter server, you also need to edit bin/jmeter.property as follows:
 
-```server_port=24000
+```
+server_port=24000
 server.rmi.localhostname=127.0.0.1
 server.rmi.localport=26000
 ```
@@ -183,7 +186,8 @@ With the `gcloud compute ssh` command you need to specify the `--` option to pas
 
 To set up the SSH port forwarding for Compute Engine, use the following command:
 
-```gcloud compute ssh <instance name> --zone <zone> -- -L 24000:127.0.0.1:24000  \
+```
+gcloud compute ssh <instance name> --zone <zone> -- -L 24000:127.0.0.1:24000  \
 -R 25000:127.0.0.1:25000 \
 -L 26000:127.0.0.1:26000  -N -f
 ```
@@ -200,20 +204,23 @@ All servers can still use the same number for the RMI port to connect to the cli
 
 Suppose the second JMeter server uses 24001 and 26001 for the JMeter connection and the RMI from client to server respectively. In this case, the SSH port forward setup command for the second server should be:
 
-```gcloud compute ssh <instance name> --zone <zone> -- -L 24001:127.0.0.1:24001  \
+```
+gcloud compute ssh <instance name> --zone <zone> -- -L 24001:127.0.0.1:24001  \
 -R 25000:127.0.0.1:25000  \
 -L 26001:127.0.0.1:26001 -N -f
 ```
 The second server should have the following JMeter configuration:
 
-```server_port=24001
+```
+server_port=24001
 server.rmi.localhostname=127.0.0.1
 server.rmi.localport=26001
 ```
 
 And, finally, the configuration for the JMeter client with two servers would be as follows:
 
-```remote_hosts=127.0.0.1:24000,127.0.0.1:24001
+```
+remote_hosts=127.0.0.1:24000,127.0.0.1:24001
 client.rmi.localport=25000
 mode=Statistical
 ```
@@ -245,17 +252,17 @@ The JMeter server package includes pre-configured jmeter.properties in the “bi
 Here’s of an overview of what the script does:
 
 1. Starts up the cluster
-  - Starts Compute Engine instances.
-  - Startup script downloads JMeter server package from Cloud Storage.
-  - Startup script modifies port numbers in JMeter configuration based on its server ID number in the cluster (0, 1, 2, …). The server ID is passed to each instance as custom [metadata](https://cloud.google.com/compute/docs/metadata) of Compute Engine instance.
-  - Startup script starts JMeter server process.
+    - Starts Compute Engine instances.
+    - Startup script downloads JMeter server package from Cloud Storage.
+    - Startup script modifies port numbers in JMeter configuration based on its server ID number in the cluster (0, 1, 2, …). The server ID is passed to each instance as custom [metadata](https://cloud.google.com/compute/docs/metadata) of Compute Engine instance.
+    - Startup script starts JMeter server process.
 2. Sets SSH port forwarding
-  - Runs `gcloud compute ssh`commands to setup SSH port forwarding.
-  - Updates server list as a remote\_host JMeter configuration.
+    - Runs `gcloud compute ssh`commands to setup SSH port forwarding.
+    - Updates server list as a remote\_host JMeter configuration.
 3. Starts JMeter client
-  - Starts JMeter client on local machine from JMeter client package.
+    - Starts JMeter client on local machine from JMeter client package.
 4. Tears down the cluster
-  - Delete JMeter server instances.
+    - Delete JMeter server instances.
 
 ### Usage
 
