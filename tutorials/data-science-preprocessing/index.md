@@ -1,6 +1,6 @@
 ---
 title: Cleaning data in a data processing pipeline
-description: TODO @jerjou.
+description: Automate the cleaning of data using Cloud Dataflow.
 author: jerjou
 tags: Data Science, Cloud Dataflow
 date_published: 2017-05-10

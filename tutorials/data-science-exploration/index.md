@@ -1,6 +1,6 @@
 ---
 title: Exploratory queries with Google BigQuery
-description: TODO @jerjou.
+description: Use BigQuery to investigate arbitrarily large datasets.
 author: jerjou
 tags: Data Science, BigQuery
 date_published: 2017-05-10

@@ -1,6 +1,6 @@
 ---
 title: Data extraction from audio and text
-description: TODO @jerjou.
+description: Extract structured data from audio and text.
 author: jerjou
 tags: Data Science
 date_published: 2017-05-10

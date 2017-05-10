@@ -1,6 +1,6 @@
 ---
 title: Data Science on Google Cloud Platform
-description: TODO @jerjou.
+description: Use Google Cloud Platform tools to automate, share, and scale Data Science workflows.
 author: jerjou
 tags: Data Science
 date_published: 2017-05-10
