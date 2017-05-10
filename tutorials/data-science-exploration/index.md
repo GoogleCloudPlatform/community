@@ -1,6 +1,11 @@
-# Exploratory queries with BigQuery
-
-[Google BigQuery](//g.co/cloud/bigquery) is a fully-managed service for data
+---
+title: Exploratory queries with Google BigQuery
+description: TODO @jerjou.
+author: jerjou
+tags: Data Science, BigQuery
+date_published: 2017-05-10
+---
+[Google BigQuery](/bigquery) is a fully-managed service for data
 exploration using an SQL syntax. Once data has been loaded into the service, it
 can be queried at interactive speeds, without having to know beforehand what
 you're looking for.
@@ -8,14 +13,12 @@ you're looking for.
 There has been much already written about using BigQuery for data analysis - for
 example:
 
-* [Analyzing Financial Time Series using BigQuery](/g.co/cloud//solutions/time-series/bigquery-financial-forex)
-* [How to forecast demand with Google BigQuery, public datasets and TensorFlow](/g.co/cloud//blog/big-data/2016/05/how-to-forecast-demand-with-google-bigquery-public-datasets-and-tensorflow)
-* Any of the articles around the [BigQuery Public Datasets](/g.co/cloud//bigquery/public-data/)
+* [Analyzing Financial Time Series using BigQuery](/solutions/time-series/bigquery-financial-forex)
+* [How to forecast demand with Google BigQuery, public datasets and TensorFlow](/blog/big-data/2016/05/how-to-forecast-demand-with-google-bigquery-public-datasets-and-tensorflow)
+* Any of the articles around the [BigQuery Public Datasets](/bigquery/public-data/)
 
 For the purposes of this tutorial, we'll focus on finding meaning in the data
 that we've ingested from [previous](preprocessing.md) [articles](extraction.md).
-
-[TODO]: javascript:alert('TODO');
 
 ## Meteorite Landing data
 
@@ -28,7 +31,7 @@ For this tutorial, we'll reference the public BigQuery table
 with the table you created as well.
 
 Let's start exploring this data. You can use either the `bq` command included in
-the [Cloud SDK](//g.co/cloud/sdk), or head over to the [web interface][bq-web].
+the [Cloud SDK](/sdk), or head over to the [web interface][bq-web].
 Let's get an idea of our data first:
 
     $ bq query "select * \
@@ -148,7 +151,7 @@ def filter_suspicious(record):
 
 You might then ask whether the 2006 figure is normal. BigQuery provides a
 function to approximate
-[quantiles](//g.co/cloud/bigquery/docs/reference/legacy-sql#quantiles), which
+[quantiles](/bigquery/docs/reference/legacy-sql#quantiles), which
 gives us an idea of the distribution:
 
     $ bq query "select quantiles(c, 11) \
@@ -245,7 +248,7 @@ Finally, one might be concerned, when researching a new place to live or
 establish a business, the rate you might expect meteors to land in your area.
 Fortunately, BigQuery provides some functions to help compute distances between
 latitude and logitude coordinates. Adapted from the [advanced
-examples](//g.co/cloud/bigquery/docs/reference/legacy-sql#math-adv-examples) in the docs, we
+examples](/bigquery/docs/reference/legacy-sql#math-adv-examples) in the docs, we
 can find the number of meteors within an approximately 50-mile radius of
 Google's Kirkland campus (at 47.669861, -122.197355):
 
@@ -273,7 +276,7 @@ Kirkland is relatively safe from meteor landings.
 
 The natural next step in making this information useful and presentable might be
 to create a visualization of this on a map, since this is inherently geographic
-data. For more on this, check out [Cloud Datalab](//g.co/cloud/datalab) and [Datastudio](//www.google.com/analytics/data-studio/)
+data. For more on this, check out [Cloud Datalab](/datalab) and [Datastudio](//www.google.com/analytics/data-studio/)
 
 [TODO]:# (Head over to the [notebooks] or [dashboards] tutorials for more on this.)
 
@@ -282,17 +285,17 @@ data. For more on this, check out [Cloud Datalab](//g.co/cloud/datalab) and [Dat
 BigQuery is not just a command-line sql querying tool -
 
 * As we've seen, in addition to support for [standard
-  SQL](//g.co/cloud/bigquery/docs/reference/standard-sql/) (and its [legacy
-  SQL](//g.co/cloud/bigquery/docs/reference/legacy-sql) syntax used in this
+  SQL](/bigquery/docs/reference/standard-sql/) (and its [legacy
+  SQL](/bigquery/docs/reference/legacy-sql) syntax used in this
   tutorial), BigQuery also provides some useful additional aggregate functions.
 * There's also has an extensive [REST API with client
-  libraries](//g.co/cloud/bigquery/docs/reference/) for programmatic management
+  libraries](/bigquery/docs/reference/) for programmatic management
   and querying of data within BigQuery.
 * Other Google Cloud Platform tools integrate with BigQuery, such as
     * using BigQuery as a data source and/or sink in a [Cloud
-      Dataflow](//g.co/cloud/dataflow) pipeline, as demonstrated in the
+      Dataflow](/dataflow) pipeline, as demonstrated in the
       [preprocessing](preprocessing.md) tutorial.
     * performing BigQuery queries directly from a [Cloud Datalab
       notebook](//cloud.google.com/bigquery/docs/visualize-datalab)
     * creating graphs in [Data
-      Studio](//g.co/cloud/bigquery/docs/visualize-data-studio).
+      Studio](/bigquery/docs/visualize-data-studio).

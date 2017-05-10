@@ -1,5 +1,10 @@
-# Cleaning data in a data processing pipeline
-
+---
+title: Cleaning data in a data processing pipeline
+description: TODO @jerjou.
+author: jerjou
+tags: Data Science, Cloud Dataflow
+date_published: 2017-05-10
+---
 When gathering information from the real world, the data will often contain
 errors, omissions, or inconsistencies that should be corrected before you can
 analyze it effectively. Instead of doing it by hand, or performing a separate
@@ -32,7 +37,7 @@ function for sourcing the data, and one for saving it:
 * Chunk the json array into its individual elements
 * Save the results in a queryable format
 
-[dataflow]: http://g.co/cloud/dataflow
+[dataflow]: /dataflow
 [meteors]: https://catalog.data.gov/dataset/meteorite-landings-api
 
 ### Prerequisites
@@ -40,13 +45,13 @@ function for sourcing the data, and one for saving it:
 * You have basic familiarity with [Python][python] programming.
 * You've installed [pip][pip].
 * You've installed [virtualenv][virtualenv].
-* You've installed the [Google Cloud SDK](//g.co/cloud/sdk).
+* You've installed the [Google Cloud SDK](/sdk).
 * You've enabled the [BigQuery API][bq-api]
 * For running the pipeline in the cloud, you also must enable the [Cloud
   Dataflow, Compute Engine, Cloud Logging, Cloud Storage, and Cloud Storage
   JSON APIs][dataflow-apis].
 
-[setup]: //g.co/cloud/getting-started#set_up_a_project
+[setup]: /getting-started#set_up_a_project
 [python]: https://www.python.org/
 [pip]: https://pip.pypa.io/en/latest/installing/
 [virtualenv]: http://virtualenv.pypa.io
@@ -151,10 +156,10 @@ def massage_rec(record):
 
 ## Define a Dataflow pipeline
 
-[Google Cloud Dataflow](//g.co/cloud/dataflow) uses the [Apache Beam SDK][beam]
+[Google Cloud Dataflow](/dataflow) uses the [Apache Beam SDK][beam]
 to define a processing pipeline for the data to go through. In this case, the
 data needs to be processed by each of these functions in succession and then
-inserted into [Google BigQuery](//g.co/bigquery), after being read from its
+inserted into [Google BigQuery](/bigquery), after being read from its
 original raw format.
 
 ### Create a `Source` for JSON objects
@@ -243,8 +248,8 @@ emitting the json objects that begin within the range assigned to it, and should
 stop once it reaches the end of its range.
 
 [beam]: http://beam.incubator.apache.org/
-[filebasedsource]: //g.co/cloud/dataflow/model/custom-io-python#convenience-source-base-classes
-[rangetracker]: //g.co/cloud/dataflow/model/custom-io-python#implementing-the-rangetracker-subclass
+[filebasedsource]: /dataflow/model/custom-io-python#convenience-source-base-classes
+[rangetracker]: /dataflow/model/custom-io-python#implementing-the-rangetracker-subclass
 
 ### Attach the functions in series
 
@@ -406,7 +411,7 @@ We've only touched on a couple of the capabilities of Apache Beam and Cloud
 Dataflow. Take a look at the API documentation, and experiment with the other
 features.
 
-* Cloud Dataflow ([API Docs](//g.co/cloud/dataflow/docs))
+* Cloud Dataflow ([API Docs](/dataflow/docs))
 * Apache Beam ([Project page][beam] | [Python Docs][beam-py] | [Java Docs][beam-java])
 
 [beam-py]: https://github.com/apache/incubator-beam/tree/python-sdk/sdks/python

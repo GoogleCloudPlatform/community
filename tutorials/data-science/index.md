@@ -1,5 +1,10 @@
-# Data Science on Google Cloud Platform
-
+---
+title: Data Science on Google Cloud Platform
+description: TODO @jerjou.
+author: jerjou
+tags: Data Science
+date_published: 2017-05-10
+---
 Data Science - a process for gleaning insight from data, and using said data to
 perform actions - comprises a number of steps, any (or all) of which can aided
 by tools provided by the Google Cloud Platform.
@@ -20,17 +25,17 @@ steps of which Data Science is commonly comprised. To wit:
   [<img src="../../resources/images/speech.png" title="Speech API" height=25 align=center />][speech]
   [<img src="../../resources/images/translate.png" title="Translate API" height=25 align=center />][translate]
   [<img src="../../resources/images/language.png" title="Natural Language API" height=25 align=center />][nl]
-  * [Extracting data from audio and text](extraction.md)
+  * [Extracting data from audio and text](/community/tutorials/data-science-extraction)
 * Cleaning & preprocessing
   [<img src="../../resources/images/dataprep.png" title="Cloud Dataprep" height=25 align=center />][dataprep]
   [<img src="../../resources/images/dataflow.png" title="Cloud Dataflow" height=25 align=center />][dataflow]
   [<img src="../../resources/images/dataproc.png" title="Dataproc" height=25 align=center />][dataproc]
   [<img src="../../resources/images/beam.png" title="Apache Beam" height=25 align=center />][beam]
-  * [Cleaning & preprocessing in a pipeline](preprocessing.md)
+  * [Cleaning & preprocessing in a pipeline](/community/tutorials/data-science-preprocessing)
 * Exploration
   [<img src="../../resources/images/bigquery.png" title="BigQuery" height=25 align=center />][bigquery]
   [<img src="../../resources/images/datalab.png" title="Cloud DataLab" height=25 align=center />][datalab]
-  * [Exploring data in BigQuery](bigquery.md)
+  * [Exploring data in BigQuery](/community/tutorials/data-science-exploration)
 * *Sharing, collaboration, visualization*
   [<img src="../../resources/images/datalab.png" title="Cloud DataLab" height=25 align=center />][datalab]
   [<img src="../../resources/images/jupyter.png" title="Jupyter Notebooks" height=25 align=center />][jupyter]
@@ -51,21 +56,21 @@ This document (like Data Science) is a work in progress, and as such is not
 comprehensive in its mapping of Data Science steps to available tools. Please
 contribute where there are gaps :-)
 
-[appengine]: http://g.co/cloud/appengine
+[appengine]: /appengine
 [beam]: http://beam.apache.org
-[bigquery]: http://g.co/cloud/bigquery
-[dataflow]: http://g.co/cloud/dataflow
-[datalab]: http://g.co/cloud/datalab
-[dataprep]: http://g.co/cloud/dataprep
-[dataproc]: http://g.co/cloud/dataproc
+[bigquery]: /bigquery
+[dataflow]: /dataflow
+[datalab]: /datalab
+[dataprep]: /dataprep
+[dataproc]: /dataproc
 [datastudio]: http://datastudio.google.com
-[gcs]: http://g.co/cloud/storage
+[gcs]: /storage
 [jupyter]: http://jupyter.org
-[logging]: http://g.co/cloud/logging
-[ml-engine]: http://g.co/cloud/ml-engine
-[nl]: http://g.co/cloud/natural-language
-[pubsub]: http://g.co/cloud/pubsub
-[speech]: http://g.co/cloud/speech
+[logging]: /logging
+[ml-engine]: /ml-engine
+[nl]: /natural-language
+[pubsub]: /pubsub
+[speech]: /speech
 [tf]: http://tensorflow.org
-[translate]: http://g.co/cloud/translate
-[vision]: http://g.co/cloud/vision
+[translate]: /translate
+[vision]: /vision

@@ -1,5 +1,10 @@
-# Data extraction from audio and text
-
+---
+title: Data extraction from audio and text
+description: TODO @jerjou.
+author: jerjou
+tags: Data Science
+date_published: 2017-05-10
+---
 Oftentimes, the raw data you've gathered is not in a form that is directly
 explorable using the data exploration tools at your disposal. Making it usable
 may require converting the format, extracting the information type you're
@@ -17,10 +22,10 @@ queryable data. These functions can then be easily combined together into a
 reusable data ingestion pipeline, as described in the
 [preprocessing](preprocessing.md) tutorial.
 
-[speech]: http://g.co/cloud/speech
-[vision]: http://g.co/cloud/vision
-[translate]: http://g.co/cloud/translate
-[natural-language]: http://g.co/cloud/natural-language
+[speech]: /speech
+[vision]: /vision
+[translate]: /translate
+[natural-language]: /natural-language
 
 ### Objectives
 
@@ -51,7 +56,7 @@ steps:
 [python]: https://www.python.org/
 [pip]: https://pip.pypa.io/en/latest/installing/
 [virtualenv]: http://virtualenv.pypa.io
-[auth]: http://g.co/cloud/docs/authentication#developer_workflow
+[auth]: /docs/authentication#developer_workflow
 
 ## Download the tutorial data
 
@@ -66,7 +71,7 @@ Storage][storage] bucket:
 
 [aesop1.zip]: https://storage.cloud.google.com/data-science-getting-started/aesop_fables_volume_one_librivox_64kb_mp3.zip
 [aesop-gcs]: https://console.cloud.google.com/storage/browser/data-science-getting-started/?project=_
-[storage]: http://g.co/cloud/storage
+[storage]: /storage
 
 ## Convert the file
 
@@ -184,7 +189,7 @@ can access it asynchronously. We could use the
 do it programatically from our code. Because we'd like to eventually [automate
 this process in a pipeline](preprocessing.md), we'll do this in code:
 
-[gsutil]: //g.co/cloud/storage/docs/quickstart-gsutil
+[gsutil]: /storage/docs/quickstart-gsutil
 [embedmd]:# (src/extraction/stage_raw.py /def stage_audio/ /return.*/)
 ```py
 def stage_audio(data, metadata, destination_bucket=DESTINATION_BUCKET):
@@ -361,15 +366,15 @@ Take a look at the API documentation, and experiment with the other features.
 Also, take a look at the [Structuring Unstructured text][unstructured-text] demo
 for another example of using the Natural Language API.
 
-[speech-docs]: //g.co/cloud/speech/docs
-[natural-language-docs]: //g.co/cloud/natural-language/docs
-[vision-docs]: //g.co/cloud/vision/docs
-[translate-docs]: //g.co/cloud/translate/docs
+[speech-docs]: /speech/docs
+[natural-language-docs]: /natural-language/docs
+[vision-docs]: /vision/docs
+[translate-docs]: /translate/docs
 [speech-client]: //googlecloudplatform.github.io/google-cloud-python/stable/speech-usage.html
 [language-client]: //googlecloudplatform.github.io/google-cloud-python/stable/language-usage.html
 [vision-client]: //googlecloudplatform.github.io/google-cloud-python/stable/vision-usage.html
 [translate-client]: //googlecloudplatform.github.io/google-cloud-python/stable/translate-usage.html
-[unstructured-text]: //g.co/cloud/blog/big-data/2016/08/structuring-unstructured-text-with-the-google-cloud-natural-language-api
+[unstructured-text]: /blog/big-data/2016/08/structuring-unstructured-text-with-the-google-cloud-natural-language-api
 
 ## What's next
 
@@ -382,4 +387,4 @@ In fact, the [next step](preprocessing.md) describes how to tie functions like
 these together into a preprocessing pipeline, using the [Google Cloud
 Dataflow][dataflow] service.
 
-[dataflow]: http://g.co/cloud/dataflow
+[dataflow]: /dataflow
