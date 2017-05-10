@@ -10,34 +10,34 @@ explore these tools in the Data Science context, it's helpful to enumerate the
 steps of which Data Science is commonly comprised. To wit:
 
 * *Data collection*
-  [<img src="../../resources/images/pubsub.png" title="Pub/Sub" height=25 align=center />][pubsub]
-  [<img src="../../resources/images/gae.png" title="App Engine" height=25 align=center />][appengine]
-  [<img src="../../resources/images/logging.png" title="Logging" height=25 align=center />][logging]
-  [<img src="../../resources/images/gcs.png" title="Storage" height=25 align=center />][gcs]
-  [<img src="../../resources/images/bigquery.png" title="BigQuery" height=25 align=center />][bigquery]
+  [![Pub/Sub](../../resources/images/pubsub.png "Pub/Sub")][pubsub]
+  [![App Engine](../../resources/images/gae.png "App Engine")][appengine]
+  [![Logging](../../resources/images/logging.png "Logging")][logging]
+  [![Storage](../../resources/images/gcs.png "Storage")][gcs]
+  [![BigQuery](../../resources/images/bigquery.png "BigQuery")][bigquery]
 * Data extraction & transformation
-  [<img src="../../resources/images/vision.png" title="Vision API" height=25 align=center />][vision]
-  [<img src="../../resources/images/speech.png" title="Speech API" height=25 align=center />][speech]
-  [<img src="../../resources/images/translate.png" title="Translate API" height=25 align=center />][translate]
-  [<img src="../../resources/images/language.png" title="Natural Language API" height=25 align=center />][nl]
+  [![Vision API](../../resources/images/vision.png "Vision API")][vision]
+  [![Speech API](../../resources/images/speech.png "Speech API")][speech]
+  [![Translate API](../../resources/images/translate.png "Translate API")][translate]
+  [![Natural Language API](../../resources/images/language.png "Natural Language API")][nl]
   * [Extracting data from audio and text](extraction.md)
 * Cleaning & preprocessing
-  [<img src="../../resources/images/dataprep.png" title="Cloud Dataprep" height=25 align=center />][dataprep]
-  [<img src="../../resources/images/dataflow.png" title="Cloud Dataflow" height=25 align=center />][dataflow]
-  [<img src="../../resources/images/dataproc.png" title="Dataproc" height=25 align=center />][dataproc]
-  [<img src="../../resources/images/beam.png" title="Apache Beam" height=25 align=center />][beam]
+  [![Cloud Dataprep](../../resources/images/dataprep.png "Cloud Dataprep")][dataprep]
+  [![Cloud Dataflow](../../resources/images/dataflow.png "Cloud Dataflow")][dataflow]
+  [![Dataproc](../../resources/images/dataproc.png "Dataproc")][dataproc]
+  [![Apache Beam](../../resources/images/beam.png "Apache Beam")][beam]
   * [Cleaning & preprocessing in a pipeline](preprocessing.md)
 * Exploration
-  [<img src="../../resources/images/bigquery.png" title="BigQuery" height=25 align=center />][bigquery]
-  [<img src="../../resources/images/datalab.png" title="Cloud DataLab" height=25 align=center />][datalab]
+  [![BigQuery](../../resources/images/bigquery.png "BigQuery")][bigquery]
+  [![Cloud DataLab](../../resources/images/datalab.png "Cloud DataLab")][datalab]
   * [Exploring data in BigQuery](bigquery.md)
 * *Sharing, collaboration, visualization*
-  [<img src="../../resources/images/datalab.png" title="Cloud DataLab" height=25 align=center />][datalab]
-  [<img src="../../resources/images/jupyter.png" title="Jupyter Notebooks" height=25 align=center />][jupyter]
-  [<img src="../../resources/images/datastudio.png" title="Data Studio" height=25 align=center />][datastudio]
+  [![Cloud DataLab](../../resources/images/datalab.png "Cloud DataLab")][datalab]
+  [![Jupyter Notebooks](../../resources/images/jupyter.png "Jupyter Notebooks")][jupyter]
+  [![Data Studio](../../resources/images/datastudio.png "Data Studio")][datastudio]
 * *Using data to train machines to do your dirty work*
-  [<img src="../../resources/images/ml.png" title="Cloud Machine Learning" height=25 align=center />][ml-engine]
-  [<img src="../../resources/images/tensorflow.png" title="Tensorflow" height=25 align=center />][tf]
+  [![Cloud Machine Learning](../../resources/images/ml.png "Cloud Machine Learning")][ml-engine]
+  [![Tensorflow](../../resources/images/tensorflow.png "Tensorflow")][tf]
 
 [comment]:# (Some suggested article titles)
 [comment]:# (* A/B testing with Google App Engine and Cloud Logging)
