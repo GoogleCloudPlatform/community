@@ -15,34 +15,42 @@ explore these tools in the Data Science context, it's helpful to enumerate the
 steps of which Data Science is commonly comprised. To wit:
 
 * *Data collection*
-  [![Pub/Sub](../../resources/images/pubsub.png "Pub/Sub")][pubsub]
-  [![App Engine](../../resources/images/gae.png "App Engine")][appengine]
-  [![Logging](../../resources/images/logging.png "Logging")][logging]
-  [![Storage](../../resources/images/gcs.png "Storage")][gcs]
-  [![BigQuery](../../resources/images/bigquery.png "BigQuery")][bigquery]
+  [![Pub/Sub](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-PubSub_25.png "Pub/Sub")][pubsub]
+  [![App Engine](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/compute/App-Engine_25.png "App Engine")][appengine]
+  [![Logging](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/management_tools/Logging_25.png "Logging")][logging]
+  [![Storage](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/storage_and_databases/Cloud-Storage_25.png "Storage")][gcs]
+  [![BigQuery](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/BigQuery_25.png "BigQuery")][bigquery]
+
 * Data extraction & transformation
-  [![Vision API](../../resources/images/vision.png "Vision API")][vision]
-  [![Speech API](../../resources/images/speech.png "Speech API")][speech]
-  [![Translate API](../../resources/images/translate.png "Translate API")][translate]
-  [![Natural Language API](../../resources/images/language.png "Natural Language API")][nl]
+  [![Vision API](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/machine_learning/Cloud-Vision-API_25.png "Vision API")][vision]
+  [![Speech API](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/machine_learning/Cloud-Speech-API_25.png "Speech API")][speech]
+  [![Translate API](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/machine_learning/Cloud-Translation-API_25.png "Translate API")][translate]
+  [![Natural Language API](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/machine_learning/Cloud-Natural-Language-API_25.png "Natural Language API")][nl]
+
   * [Extracting data from audio and text](/community/tutorials/data-science-extraction)
+
 * Cleaning & preprocessing
-  [![Cloud Dataprep](../../resources/images/dataprep.png "Cloud Dataprep")][dataprep]
-  [![Cloud Dataflow](../../resources/images/dataflow.png "Cloud Dataflow")][dataflow]
-  [![Dataproc](../../resources/images/dataproc.png "Dataproc")][dataproc]
-  [![Apache Beam](../../resources/images/beam.png "Apache Beam")][beam]
+  [![Cloud Dataprep](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-Dataprep_25.png "Cloud Dataprep")][dataprep]
+  [![Cloud Dataflow](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-Dataflow_25.png "Cloud Dataflow")][dataflow]
+  [![Dataproc](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-Dataproc_25.png "Dataproc")][dataproc]
+  [![Apache Beam](https://storage.googleapis.com/gcp-community/tutorials/data-science/beam.png "Apache Beam")][beam]
+
   * [Cleaning & preprocessing in a pipeline](/community/tutorials/data-science-preprocessing)
+
 * Exploration
-  [![BigQuery](../../resources/images/bigquery.png "BigQuery")][bigquery]
-  [![Cloud DataLab](../../resources/images/datalab.png "Cloud DataLab")][datalab]
-  * [Exploring data in BigQuery](/community/tutorials/data-science-exploration)
+  [![BigQuery](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/BigQuery_25.png "BigQuery")][bigquery]
+  [![Cloud DataLab](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-Datalab_25.png "Cloud DataLab")][datalab]
+
+    * [Exploring data in BigQuery](/community/tutorials/data-science-exploration)
+
 * *Sharing, collaboration, visualization*
-  [![Cloud DataLab](../../resources/images/datalab.png "Cloud DataLab")][datalab]
-  [![Jupyter Notebooks](../../resources/images/jupyter.png "Jupyter Notebooks")][jupyter]
-  [![Data Studio](../../resources/images/datastudio.png "Data Studio")][datastudio]
+  [![Cloud DataLab](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-Datalab_25.png "Cloud DataLab")][datalab]
+  [![Jupyter Notebooks](https://storage.googleapis.com/gcp-community/tutorials/data-science/jupyter.png "Jupyter Notebooks")][jupyter]
+  [![Data Studio](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Data-Studio_25.png "Data Studio")][datastudio]
+
 * *Using data to train machines to do your dirty work*
-  [![Cloud Machine Learning](../../resources/images/ml.png "Cloud Machine Learning")][ml-engine]
-  [![Tensorflow](../../resources/images/tensorflow.png "Tensorflow")][tf]
+  [![Cloud Machine Learning](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/machine_learning/Cloud-Machine-Learning_25.png "Cloud Machine Learning")][ml-engine]
+  [![Tensorflow](https://storage.googleapis.com/gcp-community/tutorials/data-science/tensorflow.png "Tensorflow")][tf]
 
 [comment]:# (Some suggested article titles)
 [comment]:# (* A/B testing with Google App Engine and Cloud Logging)
