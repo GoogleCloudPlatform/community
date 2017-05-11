@@ -48,28 +48,28 @@ The actual performance can be affected by many factors, including network perfor
 
 JMeter runs on Windows, Mac, and Linux. It supports various protocols for testing and provides a visual UI (User Interface) for configuring the load tests. See Figure 1 for a screenshot of the JMeter UI:
 
-Figure 1. Screenshot of the JMeter UI
+**Figure 1.** *Screenshot of the JMeter UI*
 ![jmeter ui](jmeter-ui.png)
 
 JMeter supports distributed tests where the load test system consists of the following:
 
-- JMeter servers that throw requests to the tested server
+- JMeter servers that send requests to the tested server
 - A JMeter client that controls load level and aggregates test results from the JMeter servers
 
 The JMeter client is the workstation running the JMeter UI. The JMeter servers can sit elsewhere on remote servers (Fig. 2). You can mix server types in the configuration. For example, your Mac can be set up as the JMeter client and Linux servers as JMeter servers.
 
-Although JMeter simulates HTTP requests, where each JMeter server thread acts as an HTTP client, JMeter neither renders the page nor runs JavaScript. Therefore, embedded files, such as images or data downloaded by Ajax, are not automatically downloaded.
+Although JMeter simulates HTTP requests, where each JMeter server thread acts as an HTTP client, JMeter neither renders the page nor runs JavaScript. Therefore, embedded files, such as images or data downloaded by AJAX, are not automatically downloaded.
 
 To simulate an actual load situation, the test scenario must be carefully built in such a way that the system can mimic the behavior of actual users as closely as possible.
 
-Figure 2. Using JMeter for load testing
+**Figure 2.** *Using JMeter for load testing*
 ![load testing](load-testing.jpeg)
 
-To use a JMeter distributed setup, first list all the JMeter servers in the configuration file of your JMeter client remote\_hosts entry in bin/jmeter.properties. To start the tests, use **remote start all** instead of start. When you use the remote start all command, the JMeter client connects to all the remote JMeter servers listed, starts running tests, and receives all the results.
+To use a JMeter distributed setup, first list all the JMeter servers in the configuration file of your JMeter client remote_hosts entry in bin/jmeter.properties. To start the tests, use **remote start all** instead of start. When you use the remote start all command, the JMeter client connects to all the remote JMeter servers listed, starts running tests, and receives all the results.
 
 During the load test, results from all servers in the JMeter cluster are sent to the client. Results are consolidated and shown on the JMeter client screen (Fig. 3).
 
-Figure 3. Screenshot of consolidated load testing results on the JMeter Client
+**Figure 3.** *Screenshot of consolidated load testing results on the JMeter Client*
 ![apache jmeter](apache-jmeter.png)
 
 JMeter is equipped with other kinds of result handlers in addition to the one shown.
@@ -82,24 +82,24 @@ The rest of this tutorial discusses how to configure JMeter Servers on Compute E
 
 When the JMeter client remotely starts the test, communication between the JMeter client and the JMeter server is established via the JMeter connection and Java Remote Method Invocation (RMI). The JMeter connection is always initiated by the JMeter client. The TCP connection for RMI, on the other hand, is started in both directions. This results in the creation of a total of three connections (Fig. 4).
 
-Figure 4. Connections between the JMeter Client and the JMeter Server
+**Figure 4.** *Connections between the JMeter Client and the JMeter Server*
 ![jmeter connections](jmeter-connections.png)
 
 It can be challenging to configure the connections when the JMeter client is running behind a firewall using 1:N NAT (Network Address Translation) and is connected to JMeter servers on Compute Engine, which are also behind a firewall.
 
 Compute Engine uses 1:1 NAT for its external IP address. Each Compute Engine instance uses its internal private IP address as its IP address. This prevents the JMeter remote server from being able to connect to the JMeter client because the client is behind a firewall and has no public address. The client, on the other hand, cannot connect to the remote server because the server reports its internal private IP address as its public address (Fig. 5).
 
-Figure 5. Firewalls pose a communication challenge between the JMeter client and JMeter servers
+**Figure 5.** *Firewalls pose a communication challenge between the JMeter Client and JMeter Servers*
 ![firewalls](firewalls.jpeg)
 
 ### SSH Port Forwarding Technique
 
 Secure Shell (SSH) has a functionality called SSH port forwarding (or SSH tunneling), where a connection is forwarded to a different port where the actual communication is made on the SSH connection. The port forwarding can be done either on the SSH client or the SSH server side. With port forwarding, you can set up ports that allow the JMeter client and server to connect to each other.
 
-Figure 6. Forwarding connections to a different port
+**Figure 6.** *Forwarding connections to a different port*
 ![forward connections](forw-connections.jpeg)
 
-Note that the examples “A” and “B” in Figure 6 refer to port numbers.
+Note that “A” and “B” in Figure 6 refer to port numbers.
 
 To set up server side SSH port forwarding as shown in the examples above, you would execute the following command on your client machine (-L indicates local and -R indicates remote).
 
@@ -109,20 +109,20 @@ Similarly, the following command sets up the client side port forwarding.
 
 `ssh -R  B:127.0.0.1:A <username>@<server>`
 
-On Windows, you can configure SSH port forwarding by using PuTTY from “Connection” - “SSH” - “Tunnels” of PuTTY configuration in a similar manner.
+On Windows, you can configure SSH port forwarding by using [PuTTY](http://www.putty.org/) from “Connection” - “SSH” - “Tunnels” of PuTTY configuration in a similar manner.
 
 ### SSH Port Forwarding Configuration for JMeter
 
-JMeter uses three connections: one from the client to the server using JMeter Connection, and two additional connections, one for each direction between the client and the server for RMI. You need, then, to configure three port forwardings to cover all connections. For the sake of an example, use the following port numbers as shown in Figure 7:
+JMeter uses three connections: one from the client to the server using JMeter Connection, and two additional connections, one for each direction between the client and the server for RMI. You need, then, to configure three port forwardings to cover all connections. For the sake of the example, use the following port numbers as shown in Figure 7:
 
 - Port 24000 for the JMeter connection
 - Port 25000 for RMI from server to client
 - Port 26000 for RMI from client to server
 
-Figure 7. An example of a port forwarding configuration for three connections
+**Figure 7.** *An example of a port forwarding configuration for three connections*
 ![forward config](forw-conf.png)
 
-The example command below sets up forwarding for 3 ports. Because you only need to set up SSH port forwarding and will not need to execute remote commands, you might want to add -N and -f options.
+The example command below sets up forwarding for 3 ports. You might want to add the -N option to only forward ports and the -f option to run ssh in the background.
 
 ```
 ssh -L 24000:127.0.0.1:24000   \
@@ -144,13 +144,13 @@ mode=Statistical
 
 Here are some configuration details:
 
-- **remote\_hosts** tells the JMeter client which JMeter server to use
+- **remote_hosts** tells the JMeter client which JMeter server to use
 - **client.rmi.localport** specifies the JMeter connection port number for the client
 - **mode** indicates how the results are sent back from the server to the client
 
 The previous section discussed port forwarding for the JMeter connection. Here, specify port 24000 of the localhost (127.0.0.1) as a remote host and specify the client RMI listening port to 25000 because that’s the port number that the RMI connection from JMeter server is forwarded to.
 
-Because you will send massive amounts of requests from the JMeter servers to the target system, you don’t want to send back an equal number of results to the JMeter client. So, you will need to set data transfer to a “Statistical” mode. The statistical mode specifies that statistical information is sent from the JMeter server, resulting in a reduction of transfer between the JMeter server and client. Otherwise, the JMeter client would be the bottleneck of the load test. For more details about the configuration, see the [JMeter document](http://jmeter.apache.org/usermanual/remote-test.html#sendermode).
+Because you will send massive amounts of requests from the JMeter servers to the target system, you don’t want to send back an equal number of results to the JMeter client. So, you will need to set data transfer to a “Statistical” mode. The statistical mode specifies that statistical information is sent from the JMeter server, resulting in a reduction of transfers between the JMeter server and client. Otherwise, the JMeter client would be the bottleneck of the load test. For more details about the configuration, see the [JMeter document](http://jmeter.apache.org/usermanual/remote-test.html#sendermode).
 
 **2. Configure the Server** 
 
@@ -239,9 +239,9 @@ Up to this point, you have learned how to configure JMeter to use Google Compute
 
 ### Design of the Automated Script
 
-Here is an introduction to the sample implementation of such a script, jmeter\_cluster.py. The sample application is available on [GitHub](https://github.com/GoogleCloudPlatform/solutions-google-compute-engine-cluster-for-jmeter).
+Here is an introduction to the sample implementation of such a script, jmeter_cluster.py. The sample application is available on [GitHub](https://github.com/GoogleCloudPlatform/solutions-google-compute-engine-cluster-for-jmeter).
 
-“jmeter\_cluster.py” uses:
+jmeter_cluster.py uses:
 
 - [Google APIs Client Library for Python](https://developers.google.com/api-client-library/python/) to control Compute Engine instances
 - [gcloud](https://cloud.google.com/compute/docs/gcloud-compute/) command line tool to set up SSH port forwarding
@@ -257,8 +257,8 @@ Here’s of an overview of what the script does:
     - Startup script modifies port numbers in JMeter configuration based on its server ID number in the cluster (0, 1, 2, …). The server ID is passed to each instance as custom [metadata](https://cloud.google.com/compute/docs/metadata) of Compute Engine instance.
     - Startup script starts JMeter server process.
 2. Sets SSH port forwarding
-    - Runs `gcloud compute ssh`commands to setup SSH port forwarding.
-    - Updates server list as a remote\_host JMeter configuration.
+    - Runs `gcloud compute ssh` commands to setup SSH port forwarding.
+    - Updates server list as a remote_host JMeter configuration.
 3. Starts JMeter client
     - Starts JMeter client on local machine from JMeter client package.
 4. Tears down the cluster
