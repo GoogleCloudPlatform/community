@@ -48,7 +48,7 @@ We will be using the [Java 8 runtime environment](https://cloud.google.com/appen
 
 1. Enable the [Cloud SQL API](https://console.cloud.google.com/flows/enableapi?apiid=sqladmin).
 
-1. Create a Second Generation Cloud SQL (MySQL) instance and set the root user password following [these](https://cloud.google.com/sql/docs/mysql/create-instance#create-2nd-gen) instructions.
+1. Create a Second Generation Cloud SQL (MySQL) instance and set the root user password following [these instructions](https://cloud.google.com/sql/docs/mysql/create-instance#create-2nd-gen).
 
 1. Create the `petclinic` database.
 ```
