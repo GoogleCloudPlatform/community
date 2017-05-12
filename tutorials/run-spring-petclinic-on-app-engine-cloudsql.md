@@ -77,7 +77,9 @@ We will be using the [Java 8 runtime environment](https://cloud.google.com/appen
 1. Restart the Spring Boot application using the mysql [profile](http://docs.spring.io/spring-boot/docs/current/maven-plugin/examples/run-profiles.html):
 
         ./mvnw -Drun.profiles=mysql spring-boot:run
-  Access the application homepage http://localhost:8080 via your web browser and add some data.
+
+   Access the application homepage http://localhost:8080 via your web browser and add some data.
+   
 1. You can verify the data exists in Cloud SQL by running queries agains the `petclinic` database using the [Cloud Shell](https://cloud.google.com/sql/docs/mysql/quickstart#connect_to_your_instance_using_the_db_client_client_in_the_cloud_shell).
 
 
@@ -111,7 +113,6 @@ For more on configuring `app.yaml`, refer to [this resource](https://cloud.googl
 (Note: A `200` or`404` status is interpreted as the application being healthy.)
 Because Spring Boot automatically provides a [health check endpoint](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html#production-ready-health),
 we can hook that up as our health check endpoint.
-
 Update the following fields in `src/main/resources/application.properties`:
 
          management.contextPath=/_ah
