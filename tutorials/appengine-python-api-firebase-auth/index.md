@@ -30,9 +30,9 @@ you do not need to enable the billing for your project to complete this tutorial
 ## Before you begin
 
 1.  Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/) and make note of the project ID.
-2.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/)
-3.  Import the Google Cloud Project in the [Firebase Console](https://console.firebase.google.com/)
-4.  Go to the Authentication section in the Firebase Console and enable, at least, one Sign-in provider. Follow this link
+2.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+3.  Import the Google Cloud Project in the [Firebase Console](https://console.firebase.google.com/).
+4.  Go to the Authentication section in the Firebase Console and enable at least one Sign-in provider. Follow this link
 in case you need some information about how to do it [https://firebase.google.com/docs/auth/](https://firebase.google.com/docs/auth/)
 
 ## Preparing the app
@@ -48,7 +48,7 @@ in case you need some information about how to do it [https://firebase.google.co
         env_variables:
           GCLOUD_PROJECT: '[YOUR_PROJECT_ID]'
 
-4. Import the firebase-admin library to the [`__init__.py`][init] file and intialize the Firebase app.
+4. Import the `firebase-admin` library to the [`__init__.py`][init] file and intialize the Firebase app.
 
         import firebase_admin
 
@@ -56,7 +56,7 @@ in case you need some information about how to do it [https://firebase.google.co
 
         default_app = firebase_admin.initialize_app()
 
-5. Modify now the [```AuthMiddleware```][middleware] using the Firebase ID Token Validator.
+5. Modify now the [`AuthMiddleware`][middleware] using the Firebase ID Token Validator.
 
         ...
 
@@ -99,7 +99,7 @@ in case you need some information about how to do it [https://firebase.google.co
 
         ...
 
-    As you can see, we are using the ```req.context``` to pass variables from the middleware layer to the hooks.        
+    As you can see, we are using the `req.context` to pass variables from the middleware layer to the hooks.        
 
 6. To generate ID Tokens and because of Firebase does not provide an API to generate them,
    we have to simulate a client sign in.
