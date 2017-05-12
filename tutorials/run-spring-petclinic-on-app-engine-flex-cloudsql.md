@@ -3,10 +3,10 @@ title: Run Spring Pet Clinic with CloudSQL on Google App Engine Flexible Environ
 description: Learn how to deploy Spring Boot Pet Clinic application to Google App Engine flexible environment and use CloudSQL.
 author: jishaa
 tags: App Engine Flex, CloudSQL, Spring Boot
+date_published: 2017-05-12
 ---
 
-### Overview
-This tutorial will demonstrate getting Spring Pet Clinic application up and running on App Engine Flex with CloudSQL.
+This tutorial will walk you through getting Spring Pet Clinic application up and running on App Engine Flex with CloudSQL.
 
 ### Spring Boot and Spring Pet Clinic
 [Spring Boot](https://projects.spring.io/spring-boot/) provides Java developers a quick annotation driven way to deploy services using minimal code.
