@@ -66,7 +66,7 @@ We will be using the [Java 8 runtime environment](https://cloud.google.com/appen
     spring.datasource.username=root
     spring.datasource.password=my-smart-password
 ```
-1. Update `pom.xml` to include the [Cloud SQL MySQL Socket Factory socket library](https://github.com/GoogleCloudPlatform/cloud-sql-mysql-socket-factory).
+1. Update `pom.xml` to include the [Cloud SQL MySQL Socket Factory socket library](https://github.com/GoogleCloudPlatform/cloud-sql-mysql-socket-factory):
 ```
     <dependency>
         <groupId>com.google.cloud.sql</groupId>
