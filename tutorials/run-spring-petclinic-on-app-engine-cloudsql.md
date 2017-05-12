@@ -1,5 +1,5 @@
 ---
-title: Run Spring Pet Clinic with Cloud SQL on Google App Engine flexible Environment
+title: Run Spring Pet Clinic with Cloud SQL on Google App Engine Flexible Environment
 description: Learn how to deploy Spring Boot Pet Clinic application to Google App Engine flexible environment and use Cloud SQL.
 author: jabubake
 tags: App Engine, Cloud SQL, Spring Boot
@@ -79,7 +79,7 @@ We will be using the [Java 8 runtime environment](https://cloud.google.com/appen
         ./mvnw -Drun.profiles=mysql spring-boot:run
 
    Access the application homepage http://localhost:8080 via your web browser and add some data.
-   
+
 1. You can verify the data exists in Cloud SQL by running queries agains the `petclinic` database using the [Cloud Shell](https://cloud.google.com/sql/docs/mysql/quickstart#connect_to_your_instance_using_the_db_client_client_in_the_cloud_shell).
 
 
