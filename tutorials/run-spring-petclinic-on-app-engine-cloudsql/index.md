@@ -92,15 +92,7 @@ Cloud Platform (GCP).
         spring.datasource.username=root
         spring.datasource.password=my-smart-password
 
-1.  Update `pom.xml` to include the
-    [Cloud SQL MySQL Socket Factory socket library][socket]:
-
-         <dependency>
-           <groupId>com.google.cloud.sql</groupId>
-           <artifactId>mysql-socket-factory</artifactId>
-           <version>1.0.2</version>
-         </dependency>
-
+1.  Update `pom.xml` to include [Cloud SQL MySQL Socket Factory][socket].
     The socket library allows you to connect to your Cloud SQL instance for
     local testing and deployment.
 
@@ -116,7 +108,7 @@ Cloud Platform (GCP).
 
 [api]: https://console.cloud.google.com/flows/enableapi?apiid=sqladmin
 [instructions]: /sql/docs/mysql/create-instance#create-2nd-gen
-[socket]: https://github.com/GoogleCloudPlatform/cloud-sql-mysql-socket-factory
+[socket]: https://mvnrepository.com/artifact/com.google.cloud.sql/mysql-socket-factory
 [profile]: http://docs.spring.io/spring-boot/docs/current/maven-plugin/examples/run-profiles.html
 [shell]: /sql/docs/mysql/quickstart#connect_to_your_instance_using_the_db_client_client_in_the_cloud_shell
 
@@ -127,14 +119,9 @@ to the App Engine flexible environment. Once deployed, it will be accessible at
 https://YOUR_PROJECT_ID.appspot.com.
 
 1.  App Engine flexible environment provides Maven plugins to make your build
-    and deploy process extremely easy. Add the following plugin to your
-    `pom.xml`'s `build` plugins section:
-
-        <plugin>
-          <groupId>com.google.cloud.tools</groupId>
-          <artifactId>appengine-maven-plugin</artifactId>
-          <version>1.3.1</version>
-        </plugin>
+    and deploy process extremely easy.
+    Add [`appengine-maven-plugin`][appengine-maven] to your
+    `pom.xml`'s `build` plugins section.
 
 1.  Create an `app.yaml` under `src/main/appengine` with the following contents.
     For more on configuring `app.yaml`, refer to [this resource][yaml]:
@@ -170,6 +157,7 @@ https://YOUR_PROJECT_ID.appspot.com.
 [yaml]: /appengine/docs/flexible/java/configuring-your-app-with-app-yaml
 [health]: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html#production-ready-health
 [logs]: https://console.cloud.google.com/logs/viewer
+[appengine-maven]: http://mvnrepository.com/artifact/com.google.cloud.tools/appengine-maven-plugin
 
 ### Next steps
 
