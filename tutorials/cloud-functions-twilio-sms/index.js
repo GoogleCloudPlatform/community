@@ -1,8 +1,9 @@
 'use strict';
 
-const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const twilio = require('twilio');
 const config = require('./config.json');
+
+const MessagingResponse = twilio.twiml.MessagingResponse;
 
 const projectId = process.env.GCLOUD_PROJECT;
 const region = 'us-central1';
