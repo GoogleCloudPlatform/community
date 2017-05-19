@@ -3,13 +3,20 @@
 const twilio = require('twilio');
 const config = require('./config.json');
 
+const MessagingResponse = twilio.twiml.MessagingResponse;
+
+const projectId = process.env.GCLOUD_PROJECT;
+const region = 'us-central1';
+
 exports.reply = (req, res) => {
   let isValid = true;
 
   // Only validate that requests came from Twilio when the function has been
   // deployed to production.
   if (process.env.NODE_ENV === 'production') {
-    isValid = twilio.validateExpressRequest(req, config.TWILIO_AUTH_TOKEN);
+    isValid = twilio.validateExpressRequest(req, config.TWILIO_AUTH_TOKEN, {
+      url: `https://${region}-${projectId}.cloudfunctions.net/reply`
+    });
   }
 
   // Halt early if the request was not sent from Twilio
@@ -23,7 +30,7 @@ exports.reply = (req, res) => {
   }
 
   // Prepare a response to the SMS message
-  const response = new twilio.TwimlResponse();
+  const response = new MessagingResponse();
 
   // Add text to the response
   response.message('Hello from Google Cloud Functions!');
