@@ -1,11 +1,10 @@
 import argparse
 
 from google.cloud import storage
-import six
 
 
 # TODO: set this as a parameter to the dataflow job? side-input?
-DESTINATION_BUCKET='data-science-getting-started'
+DESTINATION_BUCKET = 'data-science-getting-started'
 
 
 def stage_audio(data, metadata, destination_bucket=DESTINATION_BUCKET):
@@ -22,6 +21,7 @@ def main(audio_files, destination_bucket):
         with open(filename, 'rb') as f:
             print(stage_audio(
                 f.read(), {'name': filename}, destination_bucket))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(

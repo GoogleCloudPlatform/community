@@ -1,7 +1,6 @@
 import argparse
 import fileinput
 import logging
-from pprint import pprint
 import sys
 
 from google.cloud import language
@@ -14,6 +13,7 @@ def _get_native_encoding_type():
     else:
         return language.Encoding.UTF32
 
+
 def extract_syntax(transcriptions, metadata):
     """Extracts tokens in transcriptions using the GCP Natural Language API."""
     client = language.Client()
@@ -22,7 +22,7 @@ def extract_syntax(transcriptions, metadata):
             '\n'.join(transcriptions), language='en',
             encoding=_get_native_encoding_type())
     # Only extracting tokens here, but the API also provides these other things
-    sentences, tokens, sentiment, entities, language = document.annotate_text(
+    sentences, tokens, sentiment, entities, lang = document.annotate_text(
             include_syntax=True, include_entities=False,
             include_sentiment=False)
 

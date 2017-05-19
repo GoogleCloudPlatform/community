@@ -11,7 +11,8 @@ may require converting the format, extracting the information type you're
 seeking, or adding metadata to further structure the data.
 
 Google Cloud Platform makes it easy to write specialized functions to transform
-your data and chain them into a [pipeline](preprocessing.md), and provides a
+your data and chain them into a
+[pipeline](/community/tutorials/data-science-preprocessing/), and provides a
 number of Machine Learning APIs that enable you to [transcribe audio][speech];
 [identify faces, landmarks, and text][vision] in images; [translate][translate]
 between languages; and [provide structure to prose][natural-language].
@@ -20,7 +21,7 @@ In this tutorial, you'll write several functions to perform various
 transformations and extraction to turn raw audio files into structured,
 queryable data. These functions can then be easily combined together into a
 reusable data ingestion pipeline, as described in the
-[preprocessing](preprocessing.md) tutorial.
+[preprocessing](/community/tutorials/data-science-preprocessing/) tutorial.
 
 [speech]: /speech
 [vision]: /vision
@@ -79,7 +80,7 @@ The file as downloaded from LibriVox is in a zip archive, which we'll need to
 convert into a format that the API accepts. In order to do this, we'll first
 define a function that unzips the archive, producing each file successively:
 
-[embedmd]:# (src/extraction/unzip.py /def unzip/ /^$/)
+[embedmd]:# (unzip.py /def unzip/ /^$/)
 ```py
 def unzip(filename):
     """Generator that yields files in the given zip archive."""
@@ -92,16 +93,16 @@ def unzip(filename):
 
 We'll also define a `main` function to verify the function works as expected:
 
-[embedmd]:# (src/extraction/unzip.py /def main/ /^$/)
+[embedmd]:# (unzip.py /def main/ /^$/)
 ```py
 def main(filenames):
     for filename in filenames:
-        for zipfile, metadata in unzip(filename):
+        for srcfile, metadata in unzip(filename):
             with open(metadata['name'], 'w') as f:
-                f.write(zipfile.read())
+                f.write(srcfile.read())
 ```
 
-Running this produces:
+You can find the complete file [here][unzip.py]. Running it produces:
 
     $ python unzip.py aesop_fables_volume_one_librivox_64kb_mp3.zip
     $ ls
@@ -119,7 +120,7 @@ to a format the API accepts. Currently, for audio longer than 1 minute, the
 audio must be in raw, monoaural, 16-bit little-endian format. We'll also make an
 attempt to preserve the original sample rate.
 
-[embedmd]:# (src/extraction/convert_audio.py /def mp3_to_raw/ /^ *}/)
+[embedmd]:# (convert_audio.py /def mp3_to_raw/ /^ *}/)
 ```py
 def mp3_to_raw(data, metadata):
     # Write the data to a tmpfile, for conversion
@@ -151,7 +152,7 @@ def mp3_to_raw(data, metadata):
 
 Again, we can define a `main` function to verify the function works as expected:
 
-[embedmd]:# (src/extraction/convert_audio.py /def main/ /print.metadata.*/)
+[embedmd]:# (convert_audio.py /def main/ /print.metadata.*/)
 ```py
 def main(mp3_filenames):
     for mp3_filename in mp3_filenames:
@@ -165,7 +166,7 @@ def main(mp3_filenames):
         print(metadata)
 ```
 
-This produces:
+You can find the complete file [here][convert_audio.py]. Running it produces:
 
     $ python convert_audio.py fables_01_02_aesop_64kb.mp3
     Converting fables_01_02_aesop_64kb.mp3
@@ -187,10 +188,11 @@ first upload the raw audio files to [Cloud Storage][storage], so the Speech API
 can access it asynchronously. We could use the
 [gsutil][gsutil] tool to do this manually, or we could
 do it programatically from our code. Because we'd like to eventually [automate
-this process in a pipeline](preprocessing.md), we'll do this in code:
+this process in a pipeline](/community/tutorials/data-science-preprocessing/),
+we'll do this in code:
 
 [gsutil]: /storage/docs/quickstart-gsutil
-[embedmd]:# (src/extraction/stage_raw.py /def stage_audio/ /return.*/)
+[embedmd]:# (stage_raw.py /def stage_audio/ /return.*/)
 ```py
 def stage_audio(data, metadata, destination_bucket=DESTINATION_BUCKET):
     client = storage.Client()
@@ -200,7 +202,7 @@ def stage_audio(data, metadata, destination_bucket=DESTINATION_BUCKET):
     return destination_bucket, metadata['name'], metadata
 ```
 
-This produces:
+You can find the complete file [here][stage_raw.py]. Running it produces:
 
     $ python stage_raw.py fables_01_02_aesop_64kb.raw --bucket=your-bucket
     Uploading fables_01_02_aesop_64kb.raw
@@ -214,7 +216,7 @@ your service account correctly, as mentioned in the
 [client library][speech-client] to create an authenticated service object, which
 we'll use to make the API call.
 
-[embedmd]:# (src/extraction/transcribe.py /def transcribe/ /return.*/)
+[embedmd]:# (transcribe.py /def transcribe/ /return.*/)
 ```py
 def transcribe(bucket, path, metadata):
     client = speech.Client()
@@ -231,8 +233,8 @@ def transcribe(bucket, path, metadata):
 
     if operation.error:
         logging.error('Error transcribing gs://{}/{}: {}'.format(
-            bucket, path, error))
-        raise TranscriptionError(error)
+            bucket, path, operation.error))
+        raise TranscriptionError(operation.error)
     else:
         best_transcriptions = [r.alternatives[0] for r in operation.results
                                if r.alternatives]
@@ -242,7 +244,7 @@ def transcribe(bucket, path, metadata):
 Since the audio files are longer than a minute, we make the call asynchronously,
 and must poll the API for the result:
 
-[embedmd]:# (src/extraction/transcribe.py /def _poll/ /return.*/)
+[embedmd]:# (transcribe.py /def _poll/ /return.*/)
 ```py
 def _poll(operation, upper_bounds):
     retry_count = 100
@@ -267,7 +269,7 @@ def _poll(operation, upper_bounds):
     return operation
 ```
 
-Running this produces:
+You can find the complete file [here][transcribe.py]. Running it produces:
 
     $ python transcribe.py --rate=24000 gs://data-science-getting-started/fables_01_02_aesop_64kb.raw --size=3214080
     (0.982679188251): this is a LibriVox recording all LibriVox recordings are in the public domain for more information or to volunteer please visit librivox.org
@@ -288,7 +290,7 @@ API][natural-language] to extract the syntax from the text.
 With the Natural Language API, parsing the syntax of the text is a simple API
 call:
 
-[embedmd]:# (src/extraction/sentence_structure.py /def extract_syntax/ /return.*/)
+[embedmd]:# (sentence_structure.py /def extract_syntax/ /return.*/)
 ```py
 def extract_syntax(transcriptions, metadata):
     """Extracts tokens in transcriptions using the GCP Natural Language API."""
@@ -297,7 +299,8 @@ def extract_syntax(transcriptions, metadata):
     document = client.document_from_text(
             '\n'.join(transcriptions), language='en',
             encoding=_get_native_encoding_type())
-    _, tokens, _, _, _ = document.annotate_text(
+    # Only extracting tokens here, but the API also provides these other things
+    sentences, tokens, sentiment, entities, lang = document.annotate_text(
             include_syntax=True, include_entities=False,
             include_sentiment=False)
 
@@ -306,7 +309,7 @@ def extract_syntax(transcriptions, metadata):
 
 We can write a short `main` function to confirm it works:
 
-[embedmd]:# (src/extraction/sentence_structure.py /def main/ /print.*/)
+[embedmd]:# (sentence_structure.py /def main/ /print.*/)
 ```py
 def main(input_files):
     for line in fileinput.input(input_files):
@@ -317,7 +320,8 @@ def main(input_files):
             print('{}: {}'.format(token.text_content, token.part_of_speech))
 ```
 
-Running this on a sample phrase produces:
+You can find the complete file [here][sentence_structure.py]. Running it on a
+sample phrase produces:
 
     $ python sentence_structure.py - <<EOF
     Everyone shall sit under their own vine and fig tree, and no one shall make them afraid.
@@ -346,12 +350,13 @@ Running this on a sample phrase produces:
 We've now gone from a stream of spoken prose, transformed it into a form
 readable by our tools, and came out with a structured catalog of its contents.
 In this form, we can unleash our exploratory tools, as described in [Exploration
-using queries](bigquery.md).
+using queries](/community/tutorials/data-science-exploration/).
 
 [comment]: # (and [Visualization with interactive notebooks].)
 
 But first, it's imperative that we go from manually transforming this data with
-a series of scripts, to [automating this process](preprocessing.md).
+a series of scripts, to [automating this
+process](/community/tutorials/data-science-preprocessing/).
 
 ## API Documentation & other resources
 
@@ -383,8 +388,14 @@ feeds right into the arguments to the next. Indeed - it would make sense to tie
 all these functions together into a pipeline that can be automated, depositing
 the results into a database for later querying.
 
-In fact, the [next step](preprocessing.md) describes how to tie functions like
-these together into a preprocessing pipeline, using the [Google Cloud
-Dataflow][dataflow] service.
+In fact, the [next step](/community/tutorials/data-science-preprocessing/)
+describes how to tie functions like these together into a preprocessing
+pipeline, using the [Google Cloud Dataflow][dataflow] service.
 
 [dataflow]: /dataflow
+
+[convert_audio.py]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/data-science-extraction/convert_audio.py
+[sentence_structure.py]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/data-science-extraction/sentence_structure.py
+[stage_raw.py]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/data-science-extraction/stage_raw.py
+[transcribe.py]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/data-science-extraction/transcribe.py
+[unzip.py]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/data-science-extraction/unzip.py

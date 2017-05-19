@@ -6,6 +6,7 @@ import tempfile
 
 import pydub
 
+
 @contextlib.contextmanager
 def tempdir():
     dirname = tempfile.mkdtemp()
@@ -51,6 +52,7 @@ def main(mp3_filenames):
             f.write(raw_data)
 
         print(metadata)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(

@@ -1,17 +1,3 @@
-# Copyright 2016 Google Inc. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 """Cleans Meteorite Landings json data.
 
 See http://catalog.data.gov/dataset/meteorite-landings-api to download the
@@ -21,13 +7,13 @@ data this script is expecting.
 import argparse
 import json
 import re
-import textwrap
 
 import apache_beam
 from apache_beam.io import filebasedsource
 
 
 BIGQUERY_TABLE_FORMAT = re.compile(r'[\w.:-]+:\w+\.\w+$')
+
 
 class JsonFileSource(filebasedsource.FileBasedSource):
     """A Beam source for JSON that emits all top-level json objects.
@@ -37,9 +23,9 @@ class JsonFileSource(filebasedsource.FileBasedSource):
     or comma (,); and possibly with spaces between the bracket/comma and the
     beginning of the object.
 
-    A custom source is necessary to enable parallelization of processing for the
-    elements. The existing TextFileSource emits lines, but the Meteorite Landing
-    data is a giant json array, where elements span multiple lines.
+    A custom source is necessary to enable parallelization of processing for
+    the elements. The existing TextFileSource emits lines, but the Meteorite
+    Landing data is a giant json array, where elements span multiple lines.
     """
     JSON_OBJECT_START = re.compile(r'^([\[,] *)?{')
 
@@ -49,9 +35,10 @@ class JsonFileSource(filebasedsource.FileBasedSource):
     @staticmethod
     def _iterable_gcs(f):
         """Create an generator for a not-quite-filelike object.
-        FileBasedSource.open_file returns an object that doesn't implement the file
-        interface completely, so we need this utility function in order to iterate
-        over lines, while keeping the .tell() accurate.
+
+        FileBasedSource.open_file returns an object that doesn't implement the
+        file interface completely, so we need this utility function in order to
+        iterate over lines, while keeping the .tell() accurate.
         """
         while True:
             line = f.readline()

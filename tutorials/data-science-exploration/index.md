@@ -18,13 +18,16 @@ example:
 * Any of the articles around the [BigQuery Public Datasets](/bigquery/public-data/)
 
 For the purposes of this tutorial, we'll focus on finding meaning in the data
-that we've ingested from [previous](preprocessing.md) [articles](extraction.md).
+that we've ingested from
+[previous](/community/tutorials/data-science-preprocessing/)
+[articles](/community/tutorials/data-science-extraction/).
 
 ## Meteorite Landing data
 
-In the [preprocessing](preprocessing.md) tutorial, we cleaned and ingested
-records of every meteorite landing known to The Meteoritical Society. Now that
-it's in BigQuery, let's see what we can learn from it.
+In the [preprocessing](/community/tutorials/data-science-preprocessing/)
+tutorial, we cleaned and ingested records of every meteorite landing known to
+The Meteoritical Society.  Now that it's in BigQuery, let's see what we can
+learn from it.
 
 For this tutorial, we'll reference the public BigQuery table
 `[data-science-getting-started:preprocessing.meteors]`, but you can replace that
@@ -106,9 +109,10 @@ falling:
 It looks like 2006 was a good year for meteors.
 
 **Aside**: Doing queries like this can serve to inform the
-[preprocessing](preprocessing.md) step, revealing bugs and dirty data. For
-example, the first draft of this article revealed some bad `year` data, which
-led directly to filters incorporated into the cleansing pipeline.
+[preprocessing](/community/tutorials/data-science-preprocessing/) step,
+revealing bugs and dirty data. For example, the first draft of this article
+revealed some bad `year` data, which led directly to filters incorporated into
+the [cleansing pipeline][clean.py].
 
     $ bq query "select year, count(*) \
       from [data-science-getting-started:preprocessing.meteors] \
@@ -132,7 +136,7 @@ led directly to filters incorporated into the cleansing pipeline.
     | 1520 |   1 |
     +------+-----+
 
-[embedmd]:# (src/preprocessing/clean.py /def filter_suspicious/ /yield.*$/)
+[embedmd]:# (/community/tutorials/data-science-preprocessing/clean.py /def filter_suspicious/ /yield.*$/)
 ```py
 def filter_suspicious(record):
     """Filters records with suspicious values."""
@@ -148,6 +152,8 @@ def filter_suspicious(record):
 
     yield record
 ```
+
+[clean.py]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/data-science-preprocessing/clean.py
 
 You might then ask whether the 2006 figure is normal. BigQuery provides a
 function to approximate
@@ -294,8 +300,7 @@ BigQuery is not just a command-line sql querying tool -
 * Other Google Cloud Platform tools integrate with BigQuery, such as
     * using BigQuery as a data source and/or sink in a [Cloud
       Dataflow](/dataflow) pipeline, as demonstrated in the
-      [preprocessing](preprocessing.md) tutorial.
+      [preprocessing](/community/tutorials/data-science-preprocessing/) tutorial.
     * performing BigQuery queries directly from a [Cloud Datalab
       notebook](//cloud.google.com/bigquery/docs/visualize-datalab)
-    * creating graphs in [Data
-      Studio](/bigquery/docs/visualize-data-studio).
+    * creating graphs in [Data Studio](/bigquery/docs/visualize-data-studio).

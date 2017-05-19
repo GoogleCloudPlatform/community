@@ -15,7 +15,8 @@ data ingestion pipeline for automatic cleansing.
 In this tutorial, you'll write functions to perform various data cleansing
 tasks, which you'll then string together into a pipeline to be run in series on
 [Cloud Dataflow][dataflow]. Note that you could also plug arbitrary functions -
-such as those from the [data extraction](extraction.md) tutorial - into this
+such as those from the [data
+extraction](/community/tutorials/data-science-extraction/) tutorial - into this
 pipeline as well. We leave as an exercise for the reader.
 
 For this example, you'll define a series of simple filters on a sample dirty
@@ -77,7 +78,7 @@ the meteorite in space-time, so it might make sense to remove them. Define a
 function that takes in the record, and yields it only if it has both a location
 and a year defined:
 
-[embedmd]:# (src/preprocessing/clean.py /def discard_incomplete/ /^$/)
+[embedmd]:# (clean.py /def discard_incomplete/ /^$/)
 ```py
 def discard_incomplete(record):
     """Filters out records that don't have geolocation information."""
@@ -90,7 +91,7 @@ you want to compare numerical fields as numbers, you'll need them to be
 interpreted as such. Define a function that casts the relevant fields to the
 appropriate types:
 
-[embedmd]:# (src/preprocessing/clean.py /def convert_types/ /return.*/)
+[embedmd]:# (clean.py /def convert_types/ /return.*/)
 ```py
 def convert_types(record):
     """Converts string values to their appropriate type."""
@@ -109,11 +110,12 @@ def convert_types(record):
 After having completed the preprocessing step and gone on to explore the data,
 you may notice that there are some suspicious values. For example, some entries
 have the value `0.0` for both `latitude` and `longitude`. Your explorations in
-the [exploratory section](bigquery.md) of the process will inform the filters
-you'll need to clean the data up - in this case, by discarding invalid values,
-and making educated guesses for the correct value when you can:
+the [exploratory section](/community/tutorials/data-science-exploration/) of the
+process will inform the filters you'll need to clean the data up - in this case,
+by discarding invalid values, and making educated guesses for the correct value
+when you can:
 
-[embedmd]:# (src/preprocessing/clean.py /def filter_suspicious/ /yield.*/)
+[embedmd]:# (clean.py /def filter_suspicious/ /yield.*/)
 ```py
 def filter_suspicious(record):
     """Filters records with suspicious values."""
@@ -133,7 +135,7 @@ def filter_suspicious(record):
 Finally, clean up some redundant fields, and flatten the record in preparation
 for insertion into a queryable database:
 
-[embedmd]:# (src/preprocessing/clean.py /def massage_rec/ /return.*/)
+[embedmd]:# (clean.py /def massage_rec/ /return.*/)
 ```py
 def massage_rec(record):
     """Massage keys with the 'rec' prefix."""
@@ -170,7 +172,7 @@ you'll need to define one. From [the documentation][filebasedsource], you must
 define a subclass of `FileBasedSource` that implements the method
 `read_records`:
 
-[embedmd]:# (src/preprocessing/clean.py /class JsonFileSource/ /^# end JsonFileSource/)
+[embedmd]:# (clean.py /class JsonFileSource/ /^# end JsonFileSource/)
 ```py
 class JsonFileSource(filebasedsource.FileBasedSource):
     """A Beam source for JSON that emits all top-level json objects.
@@ -180,9 +182,9 @@ class JsonFileSource(filebasedsource.FileBasedSource):
     or comma (,); and possibly with spaces between the bracket/comma and the
     beginning of the object.
 
-    A custom source is necessary to enable parallelization of processing for the
-    elements. The existing TextFileSource emits lines, but the Meteorite Landing
-    data is a giant json array, where elements span multiple lines.
+    A custom source is necessary to enable parallelization of processing for
+    the elements. The existing TextFileSource emits lines, but the Meteorite
+    Landing data is a giant json array, where elements span multiple lines.
     """
     JSON_OBJECT_START = re.compile(r'^([\[,] *)?{')
 
@@ -192,9 +194,10 @@ class JsonFileSource(filebasedsource.FileBasedSource):
     @staticmethod
     def _iterable_gcs(f):
         """Create an generator for a not-quite-filelike object.
-        FileBasedSource.open_file returns an object that doesn't implement the file
-        interface completely, so we need this utility function in order to iterate
-        over lines, while keeping the .tell() accurate.
+
+        FileBasedSource.open_file returns an object that doesn't implement the
+        file interface completely, so we need this utility function in order to
+        iterate over lines, while keeping the .tell() accurate.
         """
         while True:
             line = f.readline()
@@ -257,7 +260,7 @@ Now that you've defined the source of data, you can now pipe it through to the
 filtering functions, in series. Apache Beam uses the pipe operator (`|`) to do
 this (with the double angle bracket operator (`>>`) to add a description):
 
-[embedmd]:# (src/preprocessing/clean.py /def main/ / p\.run.*/)
+[embedmd]:# (clean.py /def main/ / p\.run.*/)
 ```py
 def main(src_path, dest_table, pipeline_args):
     p = apache_beam.Pipeline(argv=pipeline_args)
@@ -315,6 +318,9 @@ locally for sample datasets, or datasets that are otherwise relatively small.
 But then you can take the same code, add a couple extra flags, and run it using
 Cloud Dataflow which can handle orders of magnitude more data at a time.
 
+You can find the complete pipeline file [here][clean.py], along with its
+[requirements.txt][requirements.txt].
+
 Because this sample uses a `BigQuerySink` for its output, you must first perform
 some setup:
 
@@ -344,6 +350,9 @@ some setup:
 
 With the BigQuery dataset created and your requirements installed, you are ready
 to run your pipeline.
+
+[clean.py]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/data-science-preprocessing/clean.py
+[requirements.txt]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/data-science-preprocessing/requirements.txt
 
 ### Running locally
 
@@ -380,8 +389,9 @@ dashboard](https://console.cloud.google.com/dataflow?project=_).
 
 Now that the data has been ingested into BigQuery, it's available to explore.
 We'll go into more detail about this in the next section on [data
-exploration](exploration.md), but to give you an idea, here is a sample query we
-could do to find the number of meteor landings per year:
+exploration](/community/tutorials/data-science-exploration/), but to give you an
+idea, here is a sample query we could do to find the number of meteor landings
+per year:
 
      $ bq query "select year, count(*) from \
          [$PROJECT:meteor_dataset.cleansed] \
@@ -425,7 +435,7 @@ To avoid recurring charges for resources created in this tutorial:
 * Delete the BigQuery table the data was outputted to. **Note**, though, that
   this table will be used in subsequent tutorials in this series, so you might
   want to hold off on this until you've gone through the [next
-  tutorial](bigquery.md):
+  tutorial](/community/tutorials/data-science-exploration/):
 
       $ bq rm -r meteor_dataset
       rm: remove dataset 'your-project-id:meteor_dataset'? (y/N) y

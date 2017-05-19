@@ -1,9 +1,8 @@
 """Functions for unzipping zip archives."""
 
 import argparse
-import pickle
-import tempfile
 import zipfile
+
 
 def unzip(filename):
     """Generator that yields files in the given zip archive."""
@@ -16,9 +15,10 @@ def unzip(filename):
 
 def main(filenames):
     for filename in filenames:
-        for zipfile, metadata in unzip(filename):
+        for srcfile, metadata in unzip(filename):
             with open(metadata['name'], 'w') as f:
-                f.write(zipfile.read())
+                f.write(srcfile.read())
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(

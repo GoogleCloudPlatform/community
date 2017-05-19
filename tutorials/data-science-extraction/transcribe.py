@@ -1,7 +1,5 @@
 import argparse
-import json
 import logging
-import os
 import random
 import time
 
@@ -54,8 +52,8 @@ def transcribe(bucket, path, metadata):
 
     if operation.error:
         logging.error('Error transcribing gs://{}/{}: {}'.format(
-            bucket, path, error))
-        raise TranscriptionError(error)
+            bucket, path, operation.error))
+        raise TranscriptionError(operation.error)
     else:
         best_transcriptions = [r.alternatives[0] for r in operation.results
                                if r.alternatives]
