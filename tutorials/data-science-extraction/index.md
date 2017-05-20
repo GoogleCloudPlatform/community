@@ -42,11 +42,11 @@ steps:
 
 ### Prerequisites
 
-* You've enabled the [Cloud Speech API][speech-api] and the [Cloud Natural
-  Language API][nl-api] in your Cloud Console project.
+* You've enabled the [Cloud Speech API][speech-api] and the
+  [Cloud Natural Language API][nl-api] in your Cloud Console project.
 * You've downloaded [service account credentials][service-account] and set the
-  `GOOGLE_APPLICATION_DEFAULT` environment variable to point to them. ([More
-  details][auth])
+  `GOOGLE_APPLICATION_DEFAULT` environment variable to point to them.
+  ([More details][auth])
 * You have basic familiarity with [Python][python] programming.
 * You've installed [pip][pip].
 * You've installed [virtualenv][virtualenv]
@@ -63,8 +63,8 @@ steps:
 
 For this tutorial, we'll extract data from readings of Aesop's Fables from
 [LibriVox](//librivox.org/author/181) for demonstration purposes. For
-convenience, we've cached a copy of the zip files in a [Google Cloud
-Storage][storage] bucket:
+convenience, we've cached a copy of the zip files in a
+[Google Cloud Storage][storage] bucket:
 
 * [Download][aesop1.zip] the first audio file, to use while writing and testing
   your preprocessing functions.
@@ -187,8 +187,8 @@ Because the audio we're transcribing is longer than a minute in length, we must
 first upload the raw audio files to [Cloud Storage][storage], so the Speech API
 can access it asynchronously. We could use the
 [gsutil][gsutil] tool to do this manually, or we could
-do it programatically from our code. Because we'd like to eventually [automate
-this process in a pipeline](/community/tutorials/data-science-preprocessing/),
+do it programatically from our code. Because we'd like to eventually
+[automate this process in a pipeline](/community/tutorials/data-science-preprocessing/),
 we'll do this in code:
 
 [gsutil]: /storage/docs/quickstart-gsutil
@@ -284,8 +284,9 @@ You can find the complete file [here][transcribe.py]. Running it produces:
 
 A text transcription of audio is fine and good, but natural language is hard to
 glean meaningful insight from, since it's difficult for machines to glean its
-structure. For this, we can leverage the [Cloud Natural Language
-API][natural-language] to extract the syntax from the text.
+structure. For this, we can leverage the
+[Cloud Natural Language API][natural-language] to extract the syntax from the
+text.
 
 With the Natural Language API, parsing the syntax of the text is a simple API
 call:
@@ -349,14 +350,14 @@ sample phrase produces:
 
 We've now gone from a stream of spoken prose, transformed it into a form
 readable by our tools, and came out with a structured catalog of its contents.
-In this form, we can unleash our exploratory tools, as described in [Exploration
-using queries](/community/tutorials/data-science-exploration/).
+In this form, we can unleash our exploratory tools, as described in
+[Exploration using queries](/community/tutorials/data-science-exploration/).
 
 [comment]: # (and [Visualization with interactive notebooks].)
 
 But first, it's imperative that we go from manually transforming this data with
-a series of scripts, to [automating this
-process](/community/tutorials/data-science-preprocessing/).
+a series of scripts, to
+[automating this process](/community/tutorials/data-science-preprocessing/).
 
 ## API Documentation & other resources
 

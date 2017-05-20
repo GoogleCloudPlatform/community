@@ -253,10 +253,10 @@ Quantiles are useful for getting a quick feel for the distribution of your data
 Finally, one might be concerned, when researching a new place to live or
 establish a business, the rate you might expect meteors to land in your area.
 Fortunately, BigQuery provides some functions to help compute distances between
-latitude and logitude coordinates. Adapted from the [advanced
-examples](/bigquery/docs/reference/legacy-sql#math-adv-examples) in the docs, we
-can find the number of meteors within an approximately 50-mile radius of
-Google's Kirkland campus (at 47.669861, -122.197355):
+latitude and logitude coordinates. Adapted from the
+[advanced examples](/bigquery/docs/reference/legacy-sql#math-adv-examples) in
+the docs, we can find the number of meteors within an approximately 50-mile
+radius of Google's Kirkland campus (at 47.669861, -122.197355):
 
     $ bq query "select fall, year, mass, name, class, distance_miles \
       from (select *, \
@@ -290,17 +290,17 @@ data. For more on this, check out [Cloud Datalab](/datalab) and [Datastudio](//w
 
 BigQuery is not just a command-line sql querying tool -
 
-* As we've seen, in addition to support for [standard
-  SQL](/bigquery/docs/reference/standard-sql/) (and its [legacy
-  SQL](/bigquery/docs/reference/legacy-sql) syntax used in this
+* As we've seen, in addition to support for
+  [standard SQL](/bigquery/docs/reference/standard-sql/) (and its
+  [legacy SQL](/bigquery/docs/reference/legacy-sql) syntax used in this
   tutorial), BigQuery also provides some useful additional aggregate functions.
-* There's also has an extensive [REST API with client
-  libraries](/bigquery/docs/reference/) for programmatic management
-  and querying of data within BigQuery.
+* There's also has an extensive
+  [REST API with client libraries](/bigquery/docs/reference/) for programmatic
+  management and querying of data within BigQuery.
 * Other Google Cloud Platform tools integrate with BigQuery, such as
-    * using BigQuery as a data source and/or sink in a [Cloud
-      Dataflow](/dataflow) pipeline, as demonstrated in the
+    * using BigQuery as a data source and/or sink in a
+      [Cloud Dataflow](/dataflow) pipeline, as demonstrated in the
       [preprocessing](/community/tutorials/data-science-preprocessing/) tutorial.
-    * performing BigQuery queries directly from a [Cloud Datalab
-      notebook](//cloud.google.com/bigquery/docs/visualize-datalab)
+    * performing BigQuery queries directly from a
+      [Cloud Datalab notebook](//cloud.google.com/bigquery/docs/visualize-datalab)
     * creating graphs in [Data Studio](/bigquery/docs/visualize-data-studio).

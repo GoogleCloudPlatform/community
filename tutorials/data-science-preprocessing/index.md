@@ -15,9 +15,9 @@ data ingestion pipeline for automatic cleansing.
 In this tutorial, you'll write functions to perform various data cleansing
 tasks, which you'll then string together into a pipeline to be run in series on
 [Cloud Dataflow][dataflow]. Note that you could also plug arbitrary functions -
-such as those from the [data
-extraction](/community/tutorials/data-science-extraction/) tutorial - into this
-pipeline as well. We leave as an exercise for the reader.
+such as those from the
+[data extraction](/community/tutorials/data-science-extraction/) tutorial - into
+this pipeline as well. We leave as an exercise for the reader.
 
 For this example, you'll define a series of simple filters on a sample dirty
 dataset. The dataset used in this tutorial is [Meteorite Landing data][meteors]
@@ -48,9 +48,8 @@ function for sourcing the data, and one for saving it:
 * You've installed [virtualenv][virtualenv].
 * You've installed the [Google Cloud SDK](/sdk).
 * You've enabled the [BigQuery API][bq-api]
-* For running the pipeline in the cloud, you also must enable the [Cloud
-  Dataflow, Compute Engine, Cloud Logging, Cloud Storage, and Cloud Storage
-  JSON APIs][dataflow-apis].
+* For running the pipeline in the cloud, you also must enable the
+  [Cloud Dataflow, Compute Engine, Cloud Logging, Cloud Storage, and Cloud Storage JSON APIs][dataflow-apis].
 
 [setup]: /getting-started#set_up_a_project
 [python]: https://www.python.org/
@@ -61,12 +60,12 @@ function for sourcing the data, and one for saving it:
 
 ## Download the tutorial data
 
-The [Meteorite Landings
-API](https://catalog.data.gov/dataset/meteorite-landings-api) provides
-information in JSON format from The Meteoritical Society on all known meteorite
-landings. You can download the first page of 1000 objects (according to the
-[developer documentation](https://dev.socrata.com/docs/paging.html)) using the
-link on the landing page, or with the following:
+The
+[Meteorite Landings API](https://catalog.data.gov/dataset/meteorite-landings-api)
+provides information in JSON format from The Meteoritical Society on all known
+meteorite landings. You can download the first page of 1000 objects (according
+to the [developer documentation](https://dev.socrata.com/docs/paging.html))
+using the link on the landing page, or with the following:
 
     curl -O 'https://data.nasa.gov/resource/gh4g-9sfh.json?$limit=50000'
 
@@ -111,8 +110,8 @@ After having completed the preprocessing step and gone on to explore the data,
 you may notice that there are some suspicious values. For example, some entries
 have the value `0.0` for both `latitude` and `longitude`. Your explorations in
 the [exploratory section](/community/tutorials/data-science-exploration/) of the
-process will inform the filters you'll need to clean the data up - in this case,
-by discarding invalid values, and making educated guesses for the correct value
+process will inform the filters you'll need to clean the data up - for example,
+by discarding invalid values, or making educated guesses for the correct value
 when you can:
 
 [embedmd]:# (clean.py /def filter_suspicious/ /yield.*/)
@@ -167,10 +166,10 @@ original raw format.
 ### Create a `Source` for JSON objects
 
 Apache Beam provides certain `Source` objects that can read entries from a file
-and emit them, but unfortunately does not provide one for json objects. So
-you'll need to define one. From [the documentation][filebasedsource], you must
-define a subclass of `FileBasedSource` that implements the method
-`read_records`:
+and emit them one by one, but unfortunately does not provide one for json
+objects. So you'll need to define one. To do this,
+[the documentation][filebasedsource] says you must define a subclass of
+`FileBasedSource` that implements the method `read_records`:
 
 [embedmd]:# (clean.py /class JsonFileSource/ /^# end JsonFileSource/)
 ```py
@@ -193,7 +192,7 @@ class JsonFileSource(filebasedsource.FileBasedSource):
 
     @staticmethod
     def _iterable_gcs(f):
-        """Create an generator for a not-quite-filelike object.
+        """Create a generator for a not-quite-filelike object.
 
         FileBasedSource.open_file returns an object that doesn't implement the
         file interface completely, so we need this utility function in order to
@@ -256,7 +255,7 @@ stop once it reaches the end of its range.
 
 ### Attach the functions in series
 
-Now that you've defined the source of data, you can now pipe it through to the
+Now that you've defined the source of data, you can pipe it through to the
 filtering functions, in series. Apache Beam uses the pipe operator (`|`) to do
 this (with the double angle bracket operator (`>>`) to add a description):
 
@@ -307,7 +306,7 @@ def main(src_path, dest_table, pipeline_args):
 ```
 
 Note that this example takes advantage of the built-in [`BigQuerySink`][bq-sink]
-to output the result into BigQuery, to analyze later.
+to output the result into BigQuery, for later analysis.
 
 [bq-sink]: https://github.com/apache/incubator-beam/tree/python-sdk/sdks/python#bigquery
 
@@ -338,8 +337,8 @@ some setup:
       $
 
 * To ensure that this example's dependencies don't conflict with any existing
-  libraries on your system, create a virtualenv and install the script
-  dependencies:
+  libraries on your system, create a [virtualenv][virtualenv] and install the
+  script dependencies:
 
       $ virtualenv venv
       ...
@@ -355,6 +354,9 @@ to run your pipeline.
 [requirements.txt]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/data-science-preprocessing/requirements.txt
 
 ### Running locally
+
+To run your preprocessing pipeline on your computer, simply run your script like
+so:
 
     python clean.py meteors.json your-project-id:meteor_dataset.cleansed
 
@@ -382,16 +384,16 @@ Then run:
         --temp_location $BUCKET/temp \
         --output $BUCKET/output
 
-You can check the status of your job on the [Dataflow
-dashboard](https://console.cloud.google.com/dataflow?project=_).
+You can check the status of your job on the
+[Dataflow dashboard](https://console.cloud.google.com/dataflow?project=_).
 
 ## Sample query
 
 Now that the data has been ingested into BigQuery, it's available to explore.
-We'll go into more detail about this in the next section on [data
-exploration](/community/tutorials/data-science-exploration/), but to give you an
-idea, here is a sample query we could do to find the number of meteor landings
-per year:
+We'll go into more detail about this in the next section on
+[data exploration](/community/tutorials/data-science-exploration/), but to give
+you an idea, here is a sample query we could do to find the number of meteor
+landings per year:
 
      $ bq query "select year, count(*) from \
          [$PROJECT:meteor_dataset.cleansed] \
@@ -434,8 +436,8 @@ To avoid recurring charges for resources created in this tutorial:
 
 * Delete the BigQuery table the data was outputted to. **Note**, though, that
   this table will be used in subsequent tutorials in this series, so you might
-  want to hold off on this until you've gone through the [next
-  tutorial](/community/tutorials/data-science-exploration/):
+  want to hold off on this until you've gone through the
+  [next tutorial](/community/tutorials/data-science-exploration/):
 
       $ bq rm -r meteor_dataset
       rm: remove dataset 'your-project-id:meteor_dataset'? (y/N) y

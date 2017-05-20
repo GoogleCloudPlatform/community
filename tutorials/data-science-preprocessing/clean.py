@@ -34,7 +34,7 @@ class JsonFileSource(filebasedsource.FileBasedSource):
 
     @staticmethod
     def _iterable_gcs(f):
-        """Create an generator for a not-quite-filelike object.
+        """Create a generator for a not-quite-filelike object.
 
         FileBasedSource.open_file returns an object that doesn't implement the
         file interface completely, so we need this utility function in order to
