@@ -434,9 +434,9 @@ features.
 
 To avoid recurring charges for resources created in this tutorial:
 
-* Delete the BigQuery table the data was outputted to. **Note**, though, that
-  this table will be used in subsequent tutorials in this series, so you might
-  want to hold off on this until you've gone through the
+* Delete the BigQuery table that you used for your data output. **Note**,
+  though, that this table will be used in subsequent tutorials in this series,
+  so you might want to hold off on this until you've gone through the
   [next tutorial](/community/tutorials/data-science-exploration/):
 
       $ bq rm -r meteor_dataset

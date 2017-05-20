@@ -5,9 +5,9 @@ author: jerjou
 tags: Data Science
 date_published: 2017-05-10
 ---
-Data Science - a process for gleaning insight from data, and using said data to
-perform actions - comprises a number of steps, any (or all) of which can aided
-by tools provided by the Google Cloud Platform.
+Data Science - gleaning insight from data to perform and inform action -
+comprises a number of steps, any (or all) of which can aided by tools provided
+by the Google Cloud Platform.
 
 [Google Cloud Platform](https://cloud.google.com) provides a grip of tools to
 enable you to glean actionable insight from arbitrarily large sets of data. To

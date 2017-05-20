@@ -15,12 +15,13 @@ example:
 
 * [Analyzing Financial Time Series using BigQuery](/solutions/time-series/bigquery-financial-forex)
 * [How to forecast demand with Google BigQuery, public datasets and TensorFlow](/blog/big-data/2016/05/how-to-forecast-demand-with-google-bigquery-public-datasets-and-tensorflow)
-* Any of the articles around the [BigQuery Public Datasets](/bigquery/public-data/)
+* The interesting sample queries for the
+  [BigQuery Public Datasets](/bigquery/public-data/)
 
-For the purposes of this tutorial, we'll focus on finding meaning in the data
-that we've ingested from
-[previous](/community/tutorials/data-science-preprocessing/)
-[articles](/community/tutorials/data-science-extraction/).
+In this tutorial, we'll explore the data that we've
+[preprocessed](/community/tutorials/data-science-preprocessing/) and
+[extracted](/community/tutorials/data-science-extraction/) as part of other
+tutorials in this series.
 
 ## Meteorite Landing data
 
@@ -282,7 +283,8 @@ Kirkland is relatively safe from meteor landings.
 
 The natural next step in making this information useful and presentable might be
 to create a visualization of this on a map, since this is inherently geographic
-data. For more on this, check out [Cloud Datalab](/datalab) and [Datastudio](//www.google.com/analytics/data-studio/)
+data. For more on this, check out [Cloud Datalab](/datalab) and
+[Datastudio](//www.google.com/analytics/data-studio/).
 
 [TODO]:# (Head over to the [notebooks] or [dashboards] tutorials for more on this.)
 
