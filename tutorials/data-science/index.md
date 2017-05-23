@@ -29,7 +29,7 @@ steps of which Data Science is commonly comprised. To wit:
 
   * [Extracting data from audio and text](/community/tutorials/data-science-extraction)
 
-* Cleaning & preprocessing
+* **Cleaning & preprocessing**
   [![Cloud Dataprep](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-Dataprep_25.png "Cloud Dataprep")][dataprep]
   [![Cloud Dataflow](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-Dataflow_25.png "Cloud Dataflow")][dataflow]
   [![Dataproc](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-Dataproc_25.png "Dataproc")][dataproc]
@@ -37,7 +37,7 @@ steps of which Data Science is commonly comprised. To wit:
 
   * [Cleaning & preprocessing in a pipeline](/community/tutorials/data-science-preprocessing)
 
-* Exploration
+* **Exploration**
   [![BigQuery](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/BigQuery_25.png "BigQuery")][bigquery]
   [![Cloud DataLab](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-Datalab_25.png "Cloud DataLab")][datalab]
 
