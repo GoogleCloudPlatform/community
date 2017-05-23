@@ -3,7 +3,7 @@ title: Cleaning data in a data processing pipeline
 description: Automate the cleaning of data using Cloud Dataflow.
 author: jerjou
 tags: Data Science, Cloud Dataflow
-date_published: 2017-05-10
+date_published: 2017-05-23
 ---
 When gathering information from the real world, the data will often contain
 errors, omissions, or inconsistencies that should be corrected before you can
@@ -336,9 +336,10 @@ some setup:
       Dataset 'your-project-id:meteor_dataset' successfully created
       $
 
-* To ensure that this example's dependencies don't conflict with any existing
-  libraries on your system, create a [virtualenv][virtualenv] and install the
-  script dependencies:
+* You should use a [virtual Python environment][h2g2-venv] to ensure that this
+  example's dependencies don't conflict with any existing libraries on your
+  system. The example commands below show how to set up a virtual environment
+  using [virtualenv][virtualenv], though you can use another tool if you prefer.
 
       $ virtualenv venv
       ...
@@ -350,6 +351,7 @@ some setup:
 With the BigQuery dataset created and your requirements installed, you are ready
 to run your pipeline.
 
+[h2g2-venv]: http://python-guide-pt-br.readthedocs.io/en/latest/dev/virtualenvs/
 [clean.py]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/data-science-preprocessing/clean.py
 [requirements.txt]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/data-science-preprocessing/requirements.txt
 

@@ -3,7 +3,7 @@ title: Data extraction from audio and text
 description: Extract structured data from audio and text.
 author: jerjou
 tags: Data Science
-date_published: 2017-05-10
+date_published: 2017-05-23
 ---
 Oftentimes, the raw data you've gathered is not in a form that is directly
 explorable using the data exploration tools at your disposal. Making it usable

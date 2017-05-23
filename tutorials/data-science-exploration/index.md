@@ -3,12 +3,14 @@ title: Exploratory queries with Google BigQuery
 description: Use BigQuery to investigate arbitrarily large datasets.
 author: jerjou
 tags: Data Science, BigQuery
-date_published: 2017-05-10
+date_published: 2017-05-23
 ---
-[Google BigQuery](/bigquery) is a fully-managed service for data
-exploration using an SQL syntax. Once data has been loaded into the service, it
-can be queried at interactive speeds, without having to know beforehand what
-you're looking for.
+Google Cloud Platform includes a variety of data services. When you're
+encountering new data you'd like to explore, [Google BigQuery](/bigquery) allows
+you to do so easily and scalably. It is a fully-managed service for data
+exploration on arbitrarily-large datasets using an SQL syntax. Once data
+has been loaded into the service, it can be queried at interactive speeds,
+without having to know beforehand what you're looking for.
 
 There has been much already written about using BigQuery for data analysis - for
 example:
