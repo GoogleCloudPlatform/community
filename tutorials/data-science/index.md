@@ -62,7 +62,7 @@ steps of which Data Science is commonly comprised. To wit:
 
 This document (like Data Science) is a work in progress, and as such is not
 comprehensive in its mapping of Data Science steps to available tools. Please
-contribute where there are gaps :-)
+contribute where there are gaps.
 
 [appengine]: /appengine
 [beam]: http://beam.apache.org
