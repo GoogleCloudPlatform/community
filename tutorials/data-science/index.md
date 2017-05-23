@@ -27,7 +27,7 @@ steps of which Data Science is commonly comprised. To wit:
   [![Translate API](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/machine_learning/Cloud-Translation-API_25.png "Translate API")][translate]
   [![Natural Language API](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/machine_learning/Cloud-Natural-Language-API_25.png "Natural Language API")][nl]
 
-  * [Extracting data from audio and text](/community/tutorials/data-science-extraction)
+   + [Extracting data from audio and text](/community/tutorials/data-science-extraction)
 
 * **Cleaning & preprocessing**
   [![Cloud Dataprep](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-Dataprep_25.png "Cloud Dataprep")][dataprep]
@@ -35,13 +35,13 @@ steps of which Data Science is commonly comprised. To wit:
   [![Dataproc](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-Dataproc_25.png "Dataproc")][dataproc]
   [![Apache Beam](https://storage.googleapis.com/gcp-community/tutorials/data-science/beam.png "Apache Beam")][beam]
 
-  * [Cleaning & preprocessing in a pipeline](/community/tutorials/data-science-preprocessing)
+   + [Cleaning & preprocessing in a pipeline](/community/tutorials/data-science-preprocessing)
 
 * **Exploration**
   [![BigQuery](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/BigQuery_25.png "BigQuery")][bigquery]
   [![Cloud DataLab](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-Datalab_25.png "Cloud DataLab")][datalab]
 
-   * [Exploring data in BigQuery](/community/tutorials/data-science-exploration)
+   + [Exploring data in BigQuery](/community/tutorials/data-science-exploration)
 
 * **Sharing, collaboration, visualization**
   [![Cloud DataLab](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-Datalab_25.png "Cloud DataLab")][datalab]
