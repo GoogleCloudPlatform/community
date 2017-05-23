@@ -9,7 +9,7 @@ Data Science - gleaning insight from data to perform and inform action -
 comprises a number of steps, any (or all) of which can aided by tools provided
 by the Google Cloud Platform.
 
-[Google Cloud Platform](https://cloud.google.com) provides a grip of tools to
+[Google Cloud Platform](https://cloud.google.com) provides a set of tools to
 enable you to glean actionable insight from arbitrarily large sets of data. To
 explore these tools in the Data Science context, it's helpful to enumerate the
 steps of which Data Science is commonly comprised. To wit:
