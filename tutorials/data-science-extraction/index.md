@@ -247,12 +247,6 @@ and must poll the API for the result:
 [embedmd]:# (transcribe.py /def _poll/ /return.*/)
 ```py
 def _poll(operation, upper_bounds):
-    retry_count = 100
-    while retry_count > 0 and not operation.complete:
-        retry_count -= 1
-        time.sleep(10)
-        operation.poll()  # API call
-    operation.complete
     n = 0
     while not operation.complete:
         sleep_secs = random.triangular(
@@ -350,8 +344,8 @@ sample phrase produces:
 
 We've now gone from a stream of spoken prose, transformed it into a form
 readable by our tools, and came out with a structured catalog of its contents.
-In this form, we can unleash our exploratory tools, as described in
-[Exploration using queries](/community/tutorials/data-science-exploration/).
+In this form, we can unleash our exploratory tools, as described in the
+[Exploratory Queries](/community/tutorials/data-science-exploration/) article.
 
 [comment]: # (and [Visualization with interactive notebooks].)
 
