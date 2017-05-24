@@ -236,7 +236,7 @@ class JsonFileSource(filebasedsource.FileBasedSource):
 # end JsonFileSource
 ```
 
-This `Source` looks for the beginning of a json object by searcing for a
+This `Source` looks for the beginning of a json object by searching for a
 top-level open-curly-brace (`{`), and collects all subsequent lines until it
 finds a top-level close-curly-brace (`}`), whereupon it creates a json object
 from the accumulated string and emits it. The result is an iterator that emits
@@ -251,7 +251,7 @@ stop once it reaches the end of its range.
 
 [beam]: http://beam.incubator.apache.org/
 [filebasedsource]: /dataflow/model/custom-io-python#convenience-source-base-classes
-[rangetracker]: /dataflow/model/custom-io-python#implementing-the-rangetracker-subclass
+[rangetracker]: https://beam.apache.org/documentation/sdks/python-custom-io/#implementing-the-rangetracker-subclass
 
 ### Attach the functions in series
 
@@ -308,7 +308,7 @@ def main(src_path, dest_table, pipeline_args):
 Note that this example takes advantage of the built-in [`BigQuerySink`][bq-sink]
 to output the result into BigQuery, for later analysis.
 
-[bq-sink]: https://github.com/apache/incubator-beam/tree/python-sdk/sdks/python#bigquery
+[bq-sink]: https://beam.apache.org/documentation/sdks/pydoc/2.0.0/apache_beam.io.gcp.html?highlight=bigquerysink#apache_beam.io.gcp.bigquery.BigQuerySink
 
 ## Run the data cleansing pipeline
 
@@ -325,28 +325,28 @@ some setup:
 
 * First, make sure you're using the correct project:
 
-      $ gcloud config set project your-project-id
-      Updated property [core/project]
-      $
+        $ gcloud config set project your-project-id
+        Updated property [core/project]
+        $
 
 * Now, create a BigQuery dataset using the `bq` command provided by the Google
   Cloud SDK:
 
-      $ bq mk meteor_dataset
-      Dataset 'your-project-id:meteor_dataset' successfully created
-      $
+        $ bq mk meteor_dataset
+        Dataset 'your-project-id:meteor_dataset' successfully created
+        $
 
 * You should use a [virtual Python environment][h2g2-venv] to ensure that this
   example's dependencies don't conflict with any existing libraries on your
   system. The example commands below show how to set up a virtual environment
   using [virtualenv][virtualenv], though you can use another tool if you prefer.
 
-      $ virtualenv venv
-      ...
-      $ source venv/bin/activate
-      (venv) $ pip install -r requirements.txt
-      ...
-      (venv) $
+        $ virtualenv venv
+        ...
+        $ source venv/bin/activate
+        (venv) $ pip install -r requirements.txt
+        ...
+        (venv) $
 
 With the BigQuery dataset created and your requirements installed, you are ready
 to run your pipeline.
@@ -428,7 +428,7 @@ features.
 * Cloud Dataflow ([API Docs](/dataflow/docs))
 * Apache Beam ([Project page][beam] | [Python Docs][beam-py] | [Java Docs][beam-java])
 
-[beam-py]: https://github.com/apache/incubator-beam/tree/python-sdk/sdks/python
+[beam-py]: https://beam.apache.org/documentation/sdks/pydoc/2.0.0/
 [beam]: http://beam.incubator.apache.org/
 [beam-java]: http://beam.incubator.apache.org/documentation/programming-guide/
 
@@ -441,11 +441,11 @@ To avoid recurring charges for resources created in this tutorial:
   so you might want to hold off on this until you've gone through the
   [next tutorial](/community/tutorials/data-science-exploration/):
 
-      $ bq rm -r meteor_dataset
-      rm: remove dataset 'your-project-id:meteor_dataset'? (y/N) y
+        $ bq rm -r meteor_dataset
+        rm: remove dataset 'your-project-id:meteor_dataset'? (y/N) y
 
 * Delete the objects created in Cloud Storage when running the script on Cloud
   Dataflow:
 
-      gsutil rm -r gs://$BUCKET/staging gs://$BUCKET/temp gs://$BUCKET/output \
-          gs://$BUCKET/meteors.json
+        gsutil rm -r gs://$BUCKET/staging gs://$BUCKET/temp gs://$BUCKET/output \
+            gs://$BUCKET/meteors.json

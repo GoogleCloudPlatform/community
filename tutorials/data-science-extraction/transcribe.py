@@ -15,12 +15,6 @@ def TranscriptionError(Error):
 
 
 def _poll(operation, upper_bounds):
-    retry_count = 100
-    while retry_count > 0 and not operation.complete:
-        retry_count -= 1
-        time.sleep(10)
-        operation.poll()  # API call
-    operation.complete
     n = 0
     while not operation.complete:
         sleep_secs = random.triangular(
