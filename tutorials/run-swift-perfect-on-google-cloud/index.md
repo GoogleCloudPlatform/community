@@ -77,10 +77,10 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         var routes = Routes()
 
         // Respond to App Engine health check requests
-        ... see #2
+        // TODO: see #2
 
         // Basic GET request
-        ... see #3
+        // TODO: see #3
 
         // Add the routes to the server.
         server.addRoutes(routes)
