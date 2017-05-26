@@ -143,11 +143,12 @@ terraform init
 ```
 
 ## Use Terraform to create a new project and compute instance
- 
-Create the `project.tf` file:
 
-```sh
-cat > project.tf <<EOF
+The `project.tf` file:
+
+[embedmd]:# (project.tf /variable/ //)
+
+```hcl
 variable "project_name" {}
 variable "billing_account" {}
 variable "org_id" {}
@@ -179,8 +180,9 @@ resource "google_project_services" "project" {
 output "project_id" {
  value = "${google_project.project.project_id}"
 }
-EOF
 ```
+ 
+*View the code [on GitHub](./project.tf).*
 
 Terraform resources used:
 
@@ -190,10 +192,11 @@ Terraform resources used:
 - [`resource "google_project_services"`](https://www.terraform.io/docs/providers/google/r/google_project_services.html): Services and APIs enabled within the new project. Note that if you visit the web console after running terraform, additional APIs may be implicitly enabled and terraform would become out of sync. Re-running `terraform plan` will show you these changes before terraform attempts to disable the APIs that were implicitly enabled. You can also set the full set of expected APIs beforehand to avoid the synchronization issue. 
 - [`output "project_id"`](https://www.terraform.io/intro/getting-started/outputs.html): The project id is randomly generated for uniqueness, use an output variable to display it after terraform runs for later reference. 
  
-Create the `compute.tf` file:
+The `compute.tf` file:
 
-```sh
-cat > compute.tf <<EOF
+[embedmd]:# (compute.tf /data/ //)
+
+```hcl
 data "google_compute_zones" "available" {}
  
 resource "google_compute_instance" "default" {
@@ -214,8 +217,9 @@ resource "google_compute_instance" "default" {
 output "instance_id" {
  value = "${google_compute_instance.default.self_link}"
 }
-EOF
 ```
+
+*View the code [on GitHub](./compute.tf).*
  
 Terraform resources used:
 
