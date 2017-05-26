@@ -151,6 +151,70 @@ to use the Google Cloud logging driver when it is started by systemd:
     the [Logs Viewer](https://console.cloud.google.com/logs/viewer) as you did
     before.
 
+## Persisting configuration across reboots
+
+On Container-Optimized OS, files in `/etc/` are writable, but [data does not
+persist across
+reboots](/container-optimized-os/docs/concepts/security#filesystem).
+Instead, [use cloud-init to configure Container-Optimized OS
+instances](/container-optimized-os/docs/how-to/create-configure-instance#using_cloud-init).
+
+To configure cloud-init, [update the instance
+metadata](/compute/docs/storing-retrieving-metadata#updatinginstancemetadata)
+by writing a configuration to the `user-data` key.
+
+### Writing metadata from the command-line
+
+From [Google Cloud Shell](/shell/docs/quickstart) or a development machine
+where you have [installed and initialized the Google Cloud SDK](/sdk/docs/),
+use the [gcloud compute intances
+add-metadata](https://cloud.google.com/sdk/gcloud/reference/compute/instances/add-metadata)
+command to add the `user-data` key to your instance.
+
+1.  Create a file `instance-config.txt` with the contents:
+
+        #cloud-config
+
+        write_files:
+          - path: /etc/docker/daemon.json
+            content: '{"log-driver":"gcplogs"}'
+
+        runcmd:
+          - systemctl restart docker
+
+1.  Add the `user-data` key to your instance.
+
+        gcloud compute instances add-metadata INSTANCE_NAME \
+            --metadata-from-file user-data=./instance-config.txt
+
+    Replace `INSTANCE_NAME` with the name of your instance.
+
+1.  Reboot the instance.
+1.  Verify that the `/etc/docker/daemon.json` file is present.
+
+        sudo ls /etc/docker
+
+### Writing metadata from the Cloud Platform Console
+
+1.  Go to the [VM instances page](https://console.cloud.google.com/compute/instances).
+1.  Edit the instance.
+1.  Add a **Custom metadata** item with the key `user-data` and the value
+
+        #cloud-config
+
+        write_files:
+          - path: /etc/docker/daemon.json
+            content: '{"log-driver":"gcplogs"}'
+
+        runcmd:
+          - systemctl restart docker
+
+1.  Save the changes to the instance.
+1.  Reboot the instance.
+1.  Verify that the `/etc/docker/daemon.json` file is present.
+
+        sudo ls /etc/docker
+
 ## Next steps
 
 - [Install the Stackdriver Logging Agent to stream system logs to Stackdriver
