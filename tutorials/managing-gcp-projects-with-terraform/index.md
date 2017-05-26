@@ -47,8 +47,10 @@ export TF_VAR_billing_account=YOUR_BILLING_ACCOUNT_ID
 export TF_ADMIN=${USER}-terraform-admin
 export TF_CREDS=~/.config/gcloud/terraform-admin.json
 ```
+
+> NOTE: The `TF_ADMIN` variable will be used for the name of the Terraform admin project and must be unique.
  
-The org id and billing account id can be found using the following commands:
+The values for `YOUR_ORG_ID` and `YOUR_BILLING_ACCOUNT_ID` can be found using the following commands:
  
 ```sh
 gcloud beta organizations list
@@ -119,7 +121,7 @@ gcloud beta organizations add-iam-policy-binding ${TF_VAR_org_id} \
 
 ## Setup remote state in GCS
 
-Create the remote backend bucket in GCS and the backend.tf file for storage of the terraform.tfstate file:
+Create the remote backend bucket in GCS and the `backend.tf` file for storage of the terraform.tfstate file:
 
 ```sh
 gsutil mb gs://${TF_BACKEND_BUCKET}
