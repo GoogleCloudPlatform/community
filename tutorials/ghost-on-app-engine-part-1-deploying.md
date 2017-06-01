@@ -101,9 +101,7 @@ from the [Cloud Console][console] or via the [Cloud SDK][sdk].
     variables (see below). This allows your local Ghost app to connect to your
     Cloud SQL instance through the proxy.
     
-    1. In adding Cloud SQL, dependencies need to be added in `package.json` for Google Cloud Node
-     
-Also, as you are adding Cloud SQL, don't forget to add your dependencies in package.json for the Google Cloud Node:
+    1. In adding Cloud SQL, dependencies need to be added in `package.json` for Google Cloud Node.
 
             "dependencies": {
               "express": "4.14.1",
