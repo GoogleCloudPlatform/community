@@ -7,7 +7,7 @@ date_published: 2017-02-16
 ---
 
 This tutorial shows how to add a separate persistent disk for your PostgreSQL database on
-Google Cloud Platform.
+Google Compute Engine.
 
 The tutorial [How to Set Up PostgreSQL on Compute Engine](setting-up-postgres)
 shows how to set up a basic installation of PostgreSQL, or Postgres, on a
@@ -16,6 +16,8 @@ safety, you can install the PostgreSQL database engine on the boot disk and then
 set up the data storage on a separate persistent disk. This tutorial shows you
 how to move your existing database to a new persistent disk on
 Cloud Platform.
+
+Note that you can also use Postgres as a service through [Google Cloud SQL](https://cloud.google.com/sql/docs/postgres/).
 
 
 ## Objectives
