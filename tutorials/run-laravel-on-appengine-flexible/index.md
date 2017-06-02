@@ -96,7 +96,7 @@ locally.
 1. Use the [Cloud SDK][cloud_sdk] from the command line to run the following command. Copy
 the `connectionName` value for the next step.
 
-        gcloud beta sql instances describe YOUR_INSTANCE_NAME
+        gcloud sql instances describe YOUR_INSTANCE_NAME
 
 1. Start the Cloud SQL proxy using the connection name from the previous step:
 
