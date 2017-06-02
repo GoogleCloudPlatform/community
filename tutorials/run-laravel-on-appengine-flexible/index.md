@@ -19,7 +19,7 @@ Platform.
 
 1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1. Install the [Google Cloud SDK][cloud_sdk].
 
 ## Prepare
 
@@ -45,15 +45,25 @@ Welcome page.
         runtime_config:
           document_root: public
 
-        # required on some platforms so ".env" is not skipped
-        skip_files: false
+        # Ensure we skip ".env", which is only for local development
+        skip_files:
+          - .env
 
         env_variables:
-          # The values here will override those in ".env". This is useful for
-          # production-specific configuration. However, feel free to set these
-          # values in ".env" instead if you prefer.
+          # Put production environment variables here.
           APP_LOG: errorlog
+          APP_KEY: YOUR_APP_KEY
           STORAGE_DIR: /tmp
+
+1. Replace `YOUR_APP_KEY` in `app.yaml` with an application key you generate
+  with the following command:
+
+        php artisan key:generate --show
+
+    > If you're on Linux or Mac OSX, the following command will automatically
+      update your `app.yaml`:
+
+            sed -i '' "s#YOUR_APP_KEY#$(php artisan key:generate --show --no-ansi)#" app.yaml
 
 1. Add the following under `scripts` in `composer.json`:
 
@@ -83,7 +93,7 @@ Welcome page.
 The Cloud SQL proxy is used to connect to your Cloud SQL instance when running
 locally.
 
-1. Use the Cloud SDK from the command line to run the following command. Copy
+1. Use the [Cloud SDK][cloud_sdk] from the command line to run the following command. Copy
 the `connectionName` value for the next step.
 
         gcloud beta sql instances describe YOUR_INSTANCE_NAME
@@ -98,9 +108,10 @@ the `connectionName` value for the next step.
 
         mysql -h 127.0.0.1 -u root -p -e "CREATE DATABASE laravel;"
 
-1. Run the database migrations for Laravel. This can be done by setting your
-  parameters in `.env` or by passing them in as environment variables. Be sure
-  to replace `YOUR_DB_PASSWORD` below with the root password you configured:
+1. Run the database migrations for Laravel. This can be done locally by setting
+  your parameters in `.env` or by passing them in as environment variables. Be
+  sure to replace `YOUR_DB_PASSWORD` below with the root password you
+  configured:
 
         # create a migration for the session table
         php artisan session:table
@@ -114,13 +125,14 @@ the `connectionName` value for the next step.
         runtime_config:
           document_root: public
 
-        # required on some platforms so ".env" is not skipped
-        skip_files: false
+        # Ensure we skip ".env", which is only for local development
+        skip_files:
+          - .env
 
         env_variables:
-          # The values here will override those in ".env". This is useful for
-          # production-specific configuration. However, feel free to set these values
-          # in ".env" instead if you prefer.
+          # Put production environment variables here.
+          APP_LOG: errorlog
+          APP_KEY: YOUR_APP_KEY
           APP_LOG: errorlog
           STORAGE_DIR: /tmp
           CACHE_DRIVER: database
@@ -130,7 +142,7 @@ the `connectionName` value for the next step.
           DB_DATABASE: laravel
           DB_USERNAME: root
           DB_PASSWORD: YOUR_DB_PASSWORD
-          DB_SOCKET: /cloudsql/YOUR_CLOUDSQL_CONNECTION_NAME
+          DB_SOCKET: "/cloudsql/YOUR_CLOUDSQL_CONNECTION_NAME"
 
         beta_settings:
             # for Cloud SQL, set this value to the Cloud SQL connection name,
@@ -144,6 +156,7 @@ with the values you created for your CloudSQL instance above.
 [laravel]: http://laravel.com
 [laravel-install]: https://laravel.com/docs/5.4/installation
 [laravel-welcome]: https://storage.googleapis.com/gcp-community/tutorials/run-laravel-on-appengine-flexible/welcome-page.png
+[cloud_sdk]: https://cloud.google.com/sdk/
 [composer-json]: https://storage.googleapis.com/gcp-community/tutorials/run-laravel-on-appengine-flexible/composer-json.png
 [cloudsql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
 [cloudsql-install]: https://cloud.google.com/sql/docs/mysql/connect-external-app#install
