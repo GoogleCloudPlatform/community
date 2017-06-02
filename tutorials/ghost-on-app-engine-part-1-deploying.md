@@ -107,7 +107,7 @@ from the [Cloud Console][console] or via the [Cloud SDK][sdk].
               "express": "4.14.1",
               "mysql": "2.13.0",
               "prompt": "1.0.0"
-              }
+            }
 
 [console]: https://console.cloud.google.com/
 [projects]: https://console.cloud.google.com/project
