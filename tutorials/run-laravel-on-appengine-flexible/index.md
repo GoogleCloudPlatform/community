@@ -62,8 +62,8 @@ Welcome page.
 
     > If you're on Linux or Mac OSX, the following command will automatically
       update your `app.yaml`:
-
-            sed -i '' "s#YOUR_APP_KEY#$(php artisan key:generate --show --no-ansi)#" app.yaml
+    >
+    >     sed -i '' "s#YOUR_APP_KEY#$(php artisan key:generate --show --no-ansi)#" app.yaml
 
 1. Add the following under `scripts` in `composer.json`:
 
