@@ -8,8 +8,10 @@ date_published: 2016-06-03
 This tutorial shows how to set up [PostgreSQL](https://www.postgresql.org) on
 Google Cloud Platform in just a few minutes. Follow this tutorial to configure
 PostgreSQL on an Ubuntu virtual machine instance on Compute Engine.
-Alternatively, you can use [Cloud Launcher](https://cloud.google.com/launcher/?q=postgres)
+
+You can also use Postgres as a service through [Google Cloud SQL](https://cloud.google.com/sql/docs/postgres/). Or you can use [Cloud Launcher](https://cloud.google.com/launcher/?q=postgres)
 to set up PostgreSQL on Compute Engine with just a few clicks.
+
 
 ## Objectives
 
