@@ -83,8 +83,8 @@ from laravel.com.
 
 ## Set up Database Sessions
 
-> Note: This section only works with Laravel 5.4.16. To use earlier versions of
-Laravel, you will need to manually add the `DB_SOCKET` value to
+Note: This section only works with Laravel 5.4.16. To use earlier versions of
+Laravel, you need to manually add the `DB_SOCKET` value to
 `config/database.php` (see [#4178](https://github.com/laravel/laravel/pull/4179/files))
 
 1. Follow the instructions to set up a
