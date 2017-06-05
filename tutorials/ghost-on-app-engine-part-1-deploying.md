@@ -100,6 +100,14 @@ from the [Cloud Console][console] or via the [Cloud SDK][sdk].
     1. Set the `MYSQL_USER`, `MYSQL_PASSWORD`, and `MYSQL_DATABASE` environment
     variables (see below). This allows your local Ghost app to connect to your
     Cloud SQL instance through the proxy.
+    
+    1. In adding Cloud SQL, dependencies need to be added in `package.json` for Google Cloud Node.
+
+            "dependencies": {
+              "express": "4.14.1",
+              "mysql": "2.13.0",
+              "prompt": "1.0.0"
+            }
 
 [console]: https://console.cloud.google.com/
 [projects]: https://console.cloud.google.com/project
@@ -193,7 +201,7 @@ Create a `config.js` file from the default config file:
           database: {
             client: 'mysql',
             connection: {
-              socketPath: '/cloudsql/' + process.env.INSTANCE_CONNECTION_NAME;
+              socketPath: '/cloudsql/' + process.env.INSTANCE_CONNECTION_NAME,
               user: process.env.MYSQL_USER,
               password: process.env.MYSQL_PASSWORD,
               database: process.env.MYSQL_DATABASE,

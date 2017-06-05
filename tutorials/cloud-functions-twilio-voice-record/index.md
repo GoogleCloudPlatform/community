@@ -166,6 +166,8 @@ Create a file named `index.js` with the following contents:
 const config = require('./config.json');
 const twilio = require('twilio');
 
+const VoiceResponse = twilio.twiml.VoiceResponse;
+
 const projectId = process.env.GCLOUD_PROJECT;
 const region = 'us-central1';
 
@@ -177,7 +179,7 @@ exports.handleCall = (req, res) => {
   const recordingStatusCallbackUrl = `https://${region}-${projectId}.cloudfunctions.net/getRecording`;
 
   // Prepare a response to the voice call
-  const response = new twilio.TwimlResponse();
+  const response = new VoiceResponse();
 
   // Prompt the user to leave a message
   response.say('Hello from Cloud Functions. Please leave a message after the beep.');
@@ -323,8 +325,9 @@ exports.analyzeRecording = (event) => {
 
   // Configure audio settings for Twilio voice recordings
   const audioConfig = {
-    sampleRate: 8000,
-    encoding: 'LINEAR16'
+    sampleRateHertz: 8000,
+    encoding: 'LINEAR16',
+    languageCode: 'en-US'
   };
 
   // Transcribe the audio file

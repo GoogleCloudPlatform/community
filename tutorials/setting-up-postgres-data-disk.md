@@ -7,7 +7,7 @@ date_published: 2017-02-16
 ---
 
 This tutorial shows how to add a separate persistent disk for your PostgreSQL database on
-Google Cloud Platform.
+Google Compute Engine.
 
 The tutorial [How to Set Up PostgreSQL on Compute Engine](setting-up-postgres)
 shows how to set up a basic installation of PostgreSQL, or Postgres, on a
@@ -16,6 +16,8 @@ safety, you can install the PostgreSQL database engine on the boot disk and then
 set up the data storage on a separate persistent disk. This tutorial shows you
 how to move your existing database to a new persistent disk on
 Cloud Platform.
+
+Note that you can also use Postgres as a service through [Google Cloud SQL](https://cloud.google.com/sql/docs/postgres/).
 
 
 ## Objectives
@@ -142,11 +144,7 @@ the following command:
 
         $ ls -l /dev/disk/by-id/google-*
 
-1. Run the Compute Engine `safe_format_and_mount` tool to format and mount the
-disk. Replace `<device-location>` with the location of the new disk you created,
-such as `sdb`:
-
-        sudo ../../usr/share/google/safe_format_and_mount -m "mkfs.ext4 -F" /dev/[DEVICE_LOCATION] ../../media/postgres-data
+1. Format and mount the disk, as described in the [Compute Engine documentation](https://cloud.google.com/compute/docs/disks/add-persistent-disk#formatting).
 
 1. Change the owner for the new disk so Postgres can access it:
 
