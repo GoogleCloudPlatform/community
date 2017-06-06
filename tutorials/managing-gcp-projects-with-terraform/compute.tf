@@ -18,7 +18,7 @@ resource "google_compute_instance" "default" {
  project = "${google_project_services.project.project}"
  zone = "${data.google_compute_zones.available.names[0]}"
  name = "tf-compute-1"
- machine_type = "n1-standard-1"
+ machine_type = "f1-micro"
  disk {
    image = "ubuntu-1604-xenial-v20170328"
  }
