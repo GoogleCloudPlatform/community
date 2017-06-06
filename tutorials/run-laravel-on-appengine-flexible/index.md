@@ -66,6 +66,7 @@ from laravel.com.
 
         "post-deploy-cmd": [
             "chmod -R 755 bootstrap\/cache"
+            "php artisan cache:clear"
         ]
 
     In the context of Laravel's `composer.json` file, it will look like this:
