@@ -59,12 +59,12 @@ To begin tracing what goes on in your Ghost blog you must import the
 
 ### Enable Trace
 
-1. To install the `@google/cloud-trace` module during deployment, edit the
+1. To install the `@google-cloud/trace-agent` module during deployment, edit the
 `package.json` file and add a `postinstall` script:
 
         "scripts": {
           "preinstall": "...",
-          "postinstall": "npm install @google/cloud-trace",
+          "postinstall": "npm install @google-cloud/trace-agent",
           "start": "...",
           "test": "..."
         }
@@ -75,13 +75,13 @@ To begin tracing what goes on in your Ghost blog you must import the
 1. Create a `trace.js` file with the following contents:
 
         if (process.env.NODE_ENV === 'production') {
-          require('@google/cloud-trace').start({
+          require('@google-cloud/trace-agent').start({
             enhancedDatabaseReporting: true
           });
         }
 
 1. To start Stackdriver Trace when the deployed application starts, the
-`@google/cloud-trace` module must be imported as the very first thing the
+`@google-cloud/trace-agent` module must be imported as the very first thing the
 application does. Add the following to the _very first line_ of `index.js`:
 
         require('./trace');
@@ -114,7 +114,7 @@ file and add `winston` to the `postinstall` script you added earlier:
 
         "scripts": {
           "preinstall": "...",
-          "postinstall": "npm install @google/cloud-trace winston",
+          "postinstall": "npm install @google-cloud/trace-agent winston",
           "start": "...",
           "test": "..."
         }
@@ -187,13 +187,13 @@ To make Stackdriver Debugger available to your Ghost blog you must import the
 
 ### Enable Debugger
 
-1. To install the `@google/cloud-debug` module during deployment, edit the
-`package.json` file and add `@google/cloud-debug` to the `postinstall` script
+1. To install the `@google-cloud/debug-agent` module during deployment, edit the
+`package.json` file and add `@google-cloud/debug-agent` to the `postinstall` script
 you added earlier:
 
         "scripts": {
           "preinstall": "...",
-          "postinstall": "npm install @google/cloud-trace winston @google/cloud-debug",
+          "postinstall": "npm install @google/cloud-trace winston @google-cloud/debug-agent",
           "start": "...",
           "test": "..."
         }
@@ -201,11 +201,11 @@ you added earlier:
 1. Create a `debug.js` file with the following contents:
 
         if (process.env.NODE_ENV === 'production') {
-          require('@google/cloud-debug').start();
+          require('@google-cloud/debug-agent').start();
         }
 
 1. To make Stackdriver Debugger available to the deployed application, the
-`@google/cloud-debug` module must be imported as the second thing the
+`@google-cloud/debug-agent` module must be imported as the second thing the
 application does (right after where Trace is imported). Add the following to the
 top of `index.js` after `require('./trace');`:
 
