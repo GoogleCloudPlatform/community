@@ -61,11 +61,11 @@ If you have an existing instance, you can use it, or create a new a compute
 instance named `tunnel` from Google Cloud Platform Console or from `gcloud`:
 
     gcloud compute instances create --zone us-west1-a tunnel
-    
+
 Start an SSH tunnel on your machine on a local port, such as 5000, that
 connects to a GCE instance on its SSH port 22:
 
-    gcloud instances ssh --zone us-west1-a tunnel -- -N -p 22 -D localhost:5000
+    gcloud compute ssh --zone us-west1-a tunnel -- -N -p 22 -D localhost:5000
 
 This command works out of the box on macOS, Windows and Linux, and starts an
 SSH tunnel which can be used as a SOCKS proxy. This command will keep running

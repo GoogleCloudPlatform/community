@@ -3,11 +3,11 @@
   "private": true,
   "license": "Apache-2.0",
   "dependencies": {
-    "@google-cloud/language": "0.8.0",
-    "@google-cloud/speech": "0.6.0",
-    "@google-cloud/storage": "0.7.0",
+    "@google-cloud/language": "0.10.4",
+    "@google-cloud/speech": "0.9.2",
+    "@google-cloud/storage": "1.1.1",
     "got": "6.7.1",
-    "twilio": "2.11.1"
+    "twilio": "3.0.0"
   },
   "engines": {
     "node": ">=6.9.0"

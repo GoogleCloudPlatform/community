@@ -72,10 +72,10 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         let drop = Droplet()
 
         // Respond to App Engine health check requests
-        ... see #2
+        // TODO: see #2
 
         // Basic GET request
-        ... see #3
+        // TODO: see #3
 
         // Start server on 8080 (default)
         drop.run()
