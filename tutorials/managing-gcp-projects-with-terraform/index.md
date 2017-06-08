@@ -8,8 +8,6 @@ date_published: --
 
 This tutorial demonstrates how to create and manage projects on Google Cloud Platform with Terraform. With Terraform, many of your resources such as projects, IAM policies, networks, Compute Engine instances, and Container Engine clusters can be managed, versioned, and easily recreated for your organization or teams. The state that Terraform generates is saved to Google Cloud Storage for persistence.
 
-Incremental changes made from the cloud console or gcloud command-line tool are difficult to track and recreate if needed later down the road. With Terraform, many of your resources like Projects, IAM policies, Networks, Compute Instances, and Container Engine Clusters can be managed and versioned and easily recreated for your organization or teams. The state that Terraform generates is saved to Google Cloud Storage for persistence.
-
 ## Objectives
 
 - Create a Terraform Admin Project for the service account and remote state bucket.
@@ -20,7 +18,7 @@ Incremental changes made from the cloud console or gcloud command-line tool are 
 Architecture diagram for tutorial components:
 
 **Figure 1.** *Architecture diagram for tutorial components*
-![architecture diagram](./diagram.png)
+![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/managing-gcp-projects-with-terraform/diagram.png)
 
 ## Before you begin
 
@@ -136,13 +134,13 @@ terraform {
 EOF
 ```
  
-Next, initialized the backend:
+Next, initialize the backend:
 
 ```sh
 terraform init
 ```
 
-## Use Terraform to create a new project and compute instance
+## Use Terraform to create a new project and Compute Engine instance
 
 The `project.tf` file:
 
@@ -189,7 +187,7 @@ Terraform resources used:
 - [`provider "google"`](https://www.terraform.io/docs/providers/google/index.html): The Google cloud provider config. The credentials will be pulled from the `GOOGLE_CREDENTIALS` environment variable (set later in tutorial).
 - [`resource "random_id"`](https://www.terraform.io/docs/providers/random/r/id.html): Project IDs must be unique. Generate a random one prefixed by the desired project ID. 
 - [`resource "google_project"`](https://www.terraform.io/docs/providers/google/r/google_project.html): The new project to create, bound to the desired organization ID and billing account.
-- [`resource "google_project_services"`](https://www.terraform.io/docs/providers/google/r/google_project_services.html): Services and APIs enabled within the new project. Note that if you visit the web console after running terraform, additional APIs may be implicitly enabled and Terraform would become out of sync. Re-running `terraform plan` will show you these changes before terraform attempts to disable the APIs that were implicitly enabled. You can also set the full set of expected APIs beforehand to avoid the synchronization issue. 
+- [`resource "google_project_services"`](https://www.terraform.io/docs/providers/google/r/google_project_services.html): Services and APIs enabled within the new project. Note that if you visit the web console after running Terraform, additional APIs may be implicitly enabled and Terraform would become out of sync. Re-running `terraform plan` will show you these changes before Terraform attempts to disable the APIs that were implicitly enabled. You can also set the full set of expected APIs beforehand to avoid the synchronization issue. 
 - [`output "project_id"`](https://www.terraform.io/intro/getting-started/outputs.html): The project ID is randomly generated for uniqueness. Use an output variable to display it after Terraform runs for later reference. 
  
 The `compute.tf` file:
@@ -224,7 +222,7 @@ output "instance_id" {
 Terraform resources used:
 
 - [`data "google_compute_zones"`](https://www.terraform.io/docs/providers/google/d/google_compute_zones.html): Data resource used to lookup available Compute Engine zones, bound to the desired region. Avoids hard-coding of zone names.
-- [`resource "google_compute_instance"`](https://www.terraform.io/docs/providers/google/r/compute_instance.html): The compute instance bound to the newly created project. Note that the project is referenced from the `google_project_services.project` resource. This is to tell Terraform to create it after the Compute Engine API has been enabled. Otherwise, Terraform would try to enable Compute Engine API and create the instance at the same time, leading to an attempt to create the instance before the Compute Engine API is fully enabled.
+- [`resource "google_compute_instance"`](https://www.terraform.io/docs/providers/google/r/compute_instance.html): The Compute Engine instance bound to the newly created project. Note that the project is referenced from the `google_project_services.project` resource. This is to tell Terraform to create it after the Compute Engine API has been enabled. Otherwise, Terraform would try to enable the Compute Engine API and create the instance at the same time, leading to an attempt to create the instance before the Compute Engine API is fully enabled.
 - [`output "instance_id"`](https://www.terraform.io/intro/getting-started/outputs.html): The `self_link` is output to make it easier to ssh into the instance after Terraform completes.
  
 Configure your environment for the Google Cloud Terraform provider:
