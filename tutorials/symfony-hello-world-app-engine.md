@@ -184,4 +184,4 @@ Engine documentation.
 
 ## Next steps
 
-* Try the [App Engine PHP tutorial](https://cloud.google.com/gettingstarted/introduction)
+* Try the [App Engine PHP tutorial](https://cloud.google.com/appengine/docs/standard/php/tutorials)
