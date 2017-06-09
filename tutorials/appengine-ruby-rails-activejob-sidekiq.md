@@ -11,7 +11,6 @@ background processing jobs on Google App Engine Flexible Environment using
 
 ## Objectives
 
-* Create a Ruby on Rails application
 * Create a background processing job
 * Deploy your application to Google App Engine Flexible Environment
 * Verify background jobs are running
@@ -22,6 +21,8 @@ You'll need the following:
 
 * A Google Cloud Console project. You can use an existing project or click the button to create a new project
 * [Ruby 2.2.2+ installed](https://www.ruby-lang.org/en/documentation/installation/)
+* A Rails 4.2+ application. Follow the
+  [official "Getting Started with Rails" guide](http://guides.rubyonrails.org/getting_started.html) to get started.
 * [Google Cloud SDK installed](https://cloud.google.com/sdk/downloads)
 * A Redis instance running in your project. Follow [this guide](setting-up-redis.md)
   to set up Redis on Google Compute Engine. This tutorial assumes the Redis instance is running in the *default*
@@ -37,29 +38,9 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator/)
 to generate a cost estimate based on your projected usage. New Cloud Platform users might be eligible for a
 [free trial](https://cloud.google.com/free-trial).
 
-## Installing Rails and creating your application
-
-If you already have a Rails application, you can skip to [Creating your background job](#creating-your-background-job).
-For this tutorial, we will be using the latest version of Rails (currently 5.1.1).
-
-1. Install the `rails` gem:
-
-        gem install rails
-
-1. Create a new rails application called `rails-background-jobs`:
-
-        rails new rails-background-jobs
-
-1. The rest of the tutorial command line tools will run from the Rails project root. Change directories into
-   the Rails project root:
-
-        cd rails-background-jobs
-
-Congratulations, you have created a new skeleton Rails application called `rails-background-jobs`.
-
 ## Creating your background job
 
-Starting with version 4.2, Rails includes an abstraction layer around background job processing called
+Starting with version 4.2, Ruby on Rails includes an abstraction layer around background job processing called
 [ActiveJob](http://guides.rubyonrails.org/active_job_basics.html). This abstraction allows you to write the queuing
 and execution logic independently of queue and job runner implementations.
 
@@ -68,7 +49,7 @@ controllers, and even background jobs.
 
 You will create a job named `HelloJob` that will accept a `name` argument and "Hello #{name}" to standard output.
 
-1. Use the rails generator feature to create `HelloJob`:
+1. Use the Rails generator feature to create `HelloJob`:
 
         bin/rails generate job Hello
 
@@ -92,8 +73,30 @@ You will create a job named `HelloJob` that will accept a `name` argument and "H
 
 ## Create a test url to queue the job
 
-1. Create a controller/action for queuing `HelloJob`. Create a file `app/controllers/hello_controller.rb`
-   with the following:
+You will create a controller named `HelloController` that will provide an action called `say` which will queue
+our `HelloJob` to execute in the background.
+
+1. Use the Rails generator feature to create `HelloController`:
+
+        bin/rails generate controller Hello
+
+   Rails creates stub files from templates:
+
+        create  app/controllers/hello_controller.rb
+        invoke  erb
+        create    app/views/hello
+        invoke  test_unit
+        create    test/controllers/hello_controller_test.rb
+        invoke  helper
+        create    app/helpers/hello_helper.rb
+        invoke    test_unit
+        invoke  assets
+        invoke    coffee
+        create      app/assets/javascripts/hello.coffee
+        invoke    scss
+        create      app/assets/stylesheets/hello.scss
+
+1. Add a `say` action to `HelloController`. Edit your `app/controllers/hello_controller.rb` with the following:
 
         class HelloController < ApplicationController
           def say
@@ -102,7 +105,7 @@ You will create a job named `HelloJob` that will accept a `name` argument and "H
           end
         end
 
-   This action will queue our `HelloJob` with the parameter name provided.
+   This action will queue our `HelloJob` with the provided request parameter `name`.
 
 1. Create a route to this action. In `config/routes.rb`, add:
 
@@ -122,11 +125,6 @@ You will create a job named `HelloJob` that will accept a `name` argument and "H
 ActiveJob can be configured with various different background job runners. This tutorial will cover Sidekiq which
 requires a Redis instance to manage the job queue.
 
-1. Obtain the internal address of your redis instance. In the Cloud Platform Console, go to the
-   **[VM Instances](https://console.cloud.google.com/compute/instances)** page and find the internal IP address of
-   your Compute Engine instance with Redis installed. This IP address will be provided via environment variables
-   at deploy time to configure Sidekiq.
-
 1. Add `sidekiq` gem to your `Gemfile`:
 
         bundle add sidekiq
@@ -139,6 +137,12 @@ requires a Redis instance to manage the job queue.
         end
 
 ## Deploying to App Engine Flexible Environment
+
+For Sidekiq, the Redis connection configuration can be provided as an environment variable at runtime. You will
+need to obtain the internal address of your redis instance. In the Cloud Platform Console, go to the
+**[VM Instances](https://console.cloud.google.com/compute/instances)** page and find the internal IP address of
+your Compute Engine instance with Redis installed. This IP address will be provided via environment variables
+at deploy time to configure Sidekiq.
 
 ### Option A: Shared worker and web application
 
