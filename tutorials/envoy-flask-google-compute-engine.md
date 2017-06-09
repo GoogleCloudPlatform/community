@@ -37,11 +37,14 @@ Google Compute Engine runs code from Docker images, so you'll need the Docker CL
 
 ### The Application
 
-Everything we'll use in this demo is in GitHub at
+Everything we'll use in this demo is in [Datawire's `envoy-steps` repo](https://github.com/datawire/envoy-steps), so you'll need to clone that and `cd` into your clone:
 
-<https://github.com/datawire/envoy-steps>
+```
+git clone https://github.com/datawire/envoy-steps.git
+cd envoy-steps
+```
 
-Clone that and `cd` into it -- you should see `README.md` and directories named `postgres`, `usersvc`, etc. Each of the directories contains a service to be deployed, and can be brought up or down independently with
+In your `envoy-steps` directory, you should see `README.md` and directories named `postgres`, `usersvc`, etc. Each of those directories contains a service to be deployed, and each can be brought up or down independently with
 
 ```
 sh up.sh $service
