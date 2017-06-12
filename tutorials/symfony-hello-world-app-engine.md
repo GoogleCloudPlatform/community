@@ -154,11 +154,10 @@ to read and write to a Cloud Storage bucket as if it was a filesystem.
 ## Configuring the App Engine application
 
 App Engine applications require a configuration file, named `app.yaml`, to
-[configure the app](https://cloud.google.com/config/appconfig). The Symfony
-project adds this file to the code from the original branch. In the `handlers`
-section of the file, you can see the URL routing handlers for the app. For
-example, you'll find the handler for your static assets and front controller
-there. The handlers look like this:
+[configure the app][app_config]. The Symfony project adds this file to the code
+from the original branch. In the `handlers` section of the file, you can see the
+URL routing handlers for the app. For example, you'll find the handler for your
+static assets and front controller there. The handlers look like this:
 
     handlers:
     # tell appengine where our static assets live
@@ -176,6 +175,7 @@ URL is requested.
 
 * Take a look at the [App Engine PHP tutorials][app_engine_php_tutorials]
 
+[app_config]: https://cloud.google.com/appengine/docs/standard/php/config/appref
 [app_engine_php_tutorials]: https://cloud.google.com/appengine/docs/standard/php/tutorials
 [cloud_storage]: https://cloud.google.com/storage/docs/overview
 [cloud_storage_setup]: https://cloud.google.com/googlestorage/setup
