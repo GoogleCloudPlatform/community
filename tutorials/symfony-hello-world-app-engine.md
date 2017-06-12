@@ -39,14 +39,14 @@ Ensure that your system meets the [system requirements](https://getcomposer.org/
 Composer will require that your PHP installation supports
 [cURL](http://php.net/manual/en/book.curl.php).
 
+* Install and then initialize the
+ [Google Cloud SDK](https://cloud.google.com/sdk/docs).
+
 * Create a new Google Cloud Platform project or retrieve the project ID of
 an existing project from the [Google Cloud Platform Console](https://console.cloud.google.com/iam-admin/projects). You can retrieve a
 list of your existing project IDs by using the `gcloud` command-line tool. From the command line, run:
 
         gcloud projects list
-
-* Install and then initialize the
- [Google Cloud SDK](https://cloud.google.com/sdk/docs).
 
 ## Deploying Hello World with Symfony on App Engine
 
@@ -149,9 +149,7 @@ specified in `parameters.yml`, and then reads it back and displays it in the
 browser.
 
 By registering Cloud Storage as a stream wrapper, the `gs://` path can be used
-to read and write to a Cloud Storage bucket as if it was a filesystem. For more
-information about the default bucket, see [Setup][cloud_storage_setup], in the
-App Engine documentation.
+to read and write to a Cloud Storage bucket as if it was a filesystem.
 
 ## Configuring the App Engine application
 
