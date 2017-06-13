@@ -104,14 +104,14 @@ Launcher to see what error conditions caused the failure.
 Note: If the page fails to load,
 [check the logs](https://console.cloud.google.com/project/_/logs).
 
-#### Building the Cache
+### Building the Cache
 
 This application includes two helper scripts, [`scripts/deploy.php`][deploy]
-and [`scripts/server.php`][server]. Both of these are used to prime the file
-cache before deploying or running the application. They are not necessary, but
-the cache must be primed before deploying Symfony to App Engine Standard due to
-App Engine Standard's read-only filesystem. Alternatively, this can be done
-using the `app/console cache:warmup` command:
+and [`scripts/server.php`][server], which can be run with `composer run-script`.
+Both of these are used to prime the file cache, which is required for the
+application to run due to App Engine Standard's read-only filesystem. The
+scripts are convenient wrappers for Symfony's `cache:clear` and `cache:warmup`
+commands, and are the equivalent to the following:
 
 ```sh
 # This is equivalent to running `composer run-script server`
@@ -138,8 +138,8 @@ App Engine doesn't provide access to a file system, like the one you might
 use on a local computer or a server. You can use [Cloud Storage][cloud_storage]
 in place of a local file system.
 
-* Create and retrieve the name of your
-  [Google Cloud Storage bucket][app_engine_cloud_storage_setup].
+1. Create and retrieve the name of your
+   [Google Cloud Storage bucket][app_engine_cloud_storage_setup].
 1. Edit `app/config/parameters.yml` and replace `YOUR_GCS_BUCKET_NAME` with the
    bucket name you created above.
 1. Browse to `/storage`
