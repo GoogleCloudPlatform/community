@@ -23,7 +23,7 @@ be found in the Bigtable console, as well as in the Stackdriver
 'Metrics Explorer'.
 
 However, as an alternative
-approach, the Python library `matplotlib` can be uesd in conjunction with the
+approach, the Python library [matplotlib](https://matplotlib.org/) can be uesd in conjunction with the
 [Google Cloud Python client library](https://github.com/GoogleCloudPlatform/google-cloud-python/tree/master/monitoring)
 and its built-in integration with the  [pandas](http://pandas.pydata.org/)
 data science library to make sophisticated graphs. This tutorial demonstrates
