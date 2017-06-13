@@ -88,7 +88,7 @@ projected usage.
 
 1. Create and activate a virtualenv
 
-1. Download the ['requirements.txt`][requirements.txt] and use `pip` to install
+1. Download the ['requirements.txt`](requirements.txt) and use `pip` to install
 the requirements:
 
     pip install -r requirements.txt
