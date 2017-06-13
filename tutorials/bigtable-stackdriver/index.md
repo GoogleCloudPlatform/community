@@ -42,8 +42,7 @@ with your data will be automatically re-populated with the data of the users
 you share the notebook with when they run your notebook.
 
 Follow this link for [a more in-depth introduction to Stackdriver Monitoring
-client using [
-Cloud Datalab](https://github.com/googledatalab/notebooks/tree/master/tutorials/Stackdriver%20Monitoring).
+client using Cloud Datalab](https://github.com/googledatalab/notebooks/tree/master/tutorials/Stackdriver%20Monitoring).
 
 ## Prerequisites
 
