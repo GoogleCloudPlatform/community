@@ -44,6 +44,9 @@ you share the notebook with when they run your notebook.
 Follow this link for [a more in-depth introduction to Stackdriver Monitoring
 client using Cloud Datalab](https://github.com/googledatalab/notebooks/tree/master/tutorials/Stackdriver%20Monitoring).
 
+This specific tutorial explores Cloud Bigtable metrics during a loadtest
+and while running the [autoscaling sample](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/bigtable/autoscaler).
+
 ## Prerequisites
 
 This tutorial assumes some familiarity with Python development, including
@@ -106,4 +109,4 @@ Jupyter notebook:
 
 Open the Jupyter notebook in the browser. From there you can follow the
  tutorial to see how basic Bigtable metrics were plotted, and how they
- responded to autosacling.
+ responded to autoscaling.
