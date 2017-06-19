@@ -6,11 +6,11 @@ tags: Stackdriver, Bigtable, matplotlib
 date_published: 2017-06-13
 ---
 
-[Google Stackdriver Monitoring](https://cloud.google.com/monitoring/docs/) is
+[Google Stackdriver Monitoring](https://cloud.google.com/monitoring/) is
 a service that collects metrics, events, and metadata from Google Cloud Platform or
 Amazon Web Services (AWS).
 
-Stackdriver Monitoring comes with a built in console for exploring metrics and
+Stackdriver Monitoring comes with a built-in console for exploring metrics and
 plotting figures. The console can be found by first going to the
 [Google Cloud Console](https://console.cloud.google.com), clicking on the
 top left menu navigation, selecting Monitoring, then clicking through
@@ -19,7 +19,7 @@ the various screens.
 Many useful charts will automatically be created for you, and many more custom
 graphs can be built within the Stackdriver console. For
 [Google Cloud Bigtable](https://cloud.google.com/bigtable/), some charts can
-be found in the Bigtable console, as well as in the Stackdriver
+be found in the Cloud Bigtable console, as well as in the Stackdriver
 'Metrics Explorer'.
 
 However, as an alternative
@@ -27,8 +27,8 @@ approach, the Python library [matplotlib](https://matplotlib.org/) can be uesd i
 [Google Cloud Python client library](https://github.com/GoogleCloudPlatform/google-cloud-python/tree/master/monitoring)
 and its built-in integration with the  [pandas](http://pandas.pydata.org/)
 data science library to make sophisticated graphs. This tutorial demonstrates
- some simple plotting to get started, in conjunction with the Bigtable
- autoscaler sample.
+ some simple plotting to get started, in conjunction with the
+ sample code for scaling Cloud Bigtable programmatically.
 
 The Stackdriver Python client library can be used either in vanilla
 [Jupyter](http://jupyter.org/) notebooks or with
@@ -36,7 +36,7 @@ The Stackdriver Python client library can be used either in vanilla
 focuses on vanilla Jupyter.
 
 Jupyter notebook allow you to create interactive, annotated notebooks that
-can be shared with others. Since the sample notebook relies on default
+can be shared with others. Because the sample notebook relies on default
 authentication and project configurations, plots and figures created
 with your data will be automatically re-populated with the data of the users
 you share the notebook with when they run your notebook.
@@ -45,7 +45,7 @@ Follow this link for [a more in-depth introduction to Stackdriver Monitoring
 client using Cloud Datalab](https://github.com/googledatalab/notebooks/tree/master/tutorials/Stackdriver%20Monitoring).
 
 This specific tutorial explores Cloud Bigtable metrics during a loadtest
-and while running the [autoscaling sample](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/bigtable/autoscaler).
+and while running the [sample code for scaling Cloud Bigtable programmatically](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/bigtable/autoscaler).
 
 ## Prerequisites
 
@@ -56,7 +56,7 @@ pandas, and matplotlib will also be helpful.
 ## Objectives
 
 1.  Install Jupyter and the Python Stackdriver dependencies
-1.  Explore basic plotting of Cloud Bigtable metrics during an autoscaling event
+1.  Explore basic plotting of Cloud Bigtable metrics during an scaling event
 
 ## Costs
 
@@ -90,7 +90,7 @@ projected usage.
 
 1. Create and activate a virtualenv
 
-1. Download the ['requirements.txt`](requirements.txt) and use `pip` to install
+1. Download the [`requirements.txt`](requirements.txt) and use `pip` to install
 the requirements:
 
     pip install -r requirements.txt
@@ -108,5 +108,5 @@ Jupyter notebook:
     jupyter notebook
 
 Open the Jupyter notebook in the browser. From there you can follow the
- tutorial to see how basic Bigtable metrics were plotted, and how they
- responded to autoscaling.
+ tutorial to see how basic Cloud Bigtable metrics were plotted, and how they
+ responded to programmatic scaling.
