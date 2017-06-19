@@ -3,7 +3,7 @@ title: Deploying Envoy with a Python Flask webapp and Google Container Engine
 description: Learn how to use Envoy in Google Container Engine as a foundation for adding resilience and observability to a microservice-based application.
 author: flynn
 tags: microservices, Container Engine, Envoy, Flask, Python
-date_published: 2017-05-30
+date_published: 2017-06-19
 ---
 
 One of the recurring problems with using microservices is managing communications. Your clients need to be able to speak to your services, and in most cases services need to speak amongst themselves. When things go wrong, the system as a whole needs to be resilient, so that it degrades gracefully instead of catastrophically, but it also needs to be observable so that you can figure out what's wrong.
@@ -16,16 +16,16 @@ Our application is a super simple REST-based user service: it can create users, 
 
 * It requires persistent storage.
 * It will let us explore scaling the different pieces of the application.
-* It will let us explore Envoy at the edge, where the user’s client talks to our application, and
+* It will let us explore Envoy at the edge, where the user’s client talks to our application.
 * It will let us explore Envoy internally, brokering communications between the various parts of the application.
 
-Envoy runs as a sidecar, so it's language-agnostic. For this tutorial, we’ll use Python and Flask -- they're simple and because I like Python. We’ll use PostgreSQL for persistence – it has good Python support, and it’s easy to get running both locally and in the cloud. And of course, running on Google Container Engine means managing everything with Kubernetes.
+Envoy runs as a sidecar, so it's language-agnostic. For this tutorial, we’ll use Python and Flask for simplicity. We’ll use PostgreSQL for persistence because it has good Python support and it’s easy to get running both locally and in the cloud. And of course, running on Google Container Engine means managing everything with Kubernetes.
 
 ## Setting Up
 
 ### Google Container Engine
 
-You'll need a Google Cloud Platform account for this, so that you can set up a Google Container Engine cluster -- just visit the [Google Cloud Platform Console](https://console.cloud.google.com/kubernetes) and use the UI to create a new cluster. Picking the defaults should be fine for our purposes.
+You'll need a Google Cloud Platform account for this, so that you can set up a Google Container Engine cluster, just visit the [Google Cloud Platform Console](https://console.cloud.google.com/kubernetes) and use the UI to create a new cluster. Picking the defaults should be fine for our purposes.
 
 ### Kubernetes
 
@@ -60,21 +60,21 @@ Obviously I’d prefer to simply include everything you need here in this articl
 
 ## The Docker Registry
 
-Since Kubernetes needs to pull Docker images to run in its containers, we'll need to push the Docker images we use in this article to some Docker registry that Google Container Engine can access. `gcr.io`, `dockerhub`, whatever -- any will work for this now, although for production use you might want to minimize traffic across boundaries as a cost-reduction effort.
+Since Kubernetes needs to pull Docker images to run in its containers, we'll need to push the Docker images we use in this article to some Docker registry that Google Container Engine can access. `gcr.io`, `dockerhub`, etc. will work for this now, although for production use you might want to minimize traffic across boundaries as a cost-reduction effort.
 
-Whatever you have set up, you'll need to push to the correct registry, and you'll need to use the correct registry when telling Kubernetes where to go for images. Unfortunately, `kubectl` doesn't have a provision for parameterizing the YAML files we're using to tell it what to do. We'll dealt with this annoyance by just using a script to set everything up for us:
+Whatever you have set up, you'll need to push to the correct registry, and you'll need to use the correct registry when telling Kubernetes where to go for images. Unfortunately, `kubectl` doesn't have a provision for parameterizing the YAML files we're using to tell it what to do. We'll deal with this annoyance by just using a script to set everything up for us:
 
 ```
 sh prep.sh registry-info
 ```
 
-where `registry-info` is the appropriate prefix for the `docker push` command -- e.g., I use the `dwflynn` DockerHub organization as my scratchpad, so I'll do
+where `registry-info` is the appropriate prefix for the `docker push` command. I use the `dwflynn` DockerHub organization as my scratchpad, so I would run:
 
 ```
 sh prep.sh dwflynn
 ```
 
-I could use Datawire's public repository under `gcr.io` with
+And I could use Datawire's public repository under `gcr.io` with:
 
 ```
 sh prep.sh gcr.io/datawireio
@@ -82,13 +82,11 @@ sh prep.sh gcr.io/datawireio
 
 Obviously you'll need to have permissions to push to whatever you use here! Once `prep.sh` finishes, though, all the configuration files we use will be updated with the correct image names.
 
-If you need to, you can use
+If you need to, you can use the following to clean everything up and start over:
 
 ```
 sh clean.sh
 ```
-
-to clean everything up and start over.
 
 ## Database Matters
 
@@ -117,7 +115,7 @@ spec:
 
 Note that this service is type `ClusterIP`, so that it can be seen only within the cluster.
 
-To start the database, just run
+To start the database, just run:
 
 ```
 bash up.sh postgres
@@ -182,9 +180,9 @@ spec:
     service: usersvc
 ```
 
-Starting with `LoadBalancer` may seem odd — after all, we want to use Envoy to do load balancing, right? It's good to walk before running, though: our first test will be to talk to our service *without* Envoy, and for that we need to expose the port to the outside world.
+Starting with `LoadBalancer` may seem odd—after all, we want to use Envoy to do load balancing, right? It's good to walk before running, however, so our first test will be to talk to our service *without* Envoy, and for that we need to expose the port to the outside world.
 
-To build the Docker image and start the `usersvc`, you can run
+To build the Docker image and start the `usersvc`, you can run:
 
 ```
 bash up.sh usersvc
@@ -216,7 +214,7 @@ Given the URL, let’s start with a basic health check using `curl` *from the ho
 curl ${USERSVC_URL}/user/health
 ```
 
-If all goes well, the health check should give you something like
+If all goes well, the health check should give you something like:
 
 ```
 {
@@ -267,7 +265,7 @@ Naturally, Bob should have a different UUID:
 }
 ```
 
-Finally, we'll check reading both users back (again, minus passwords!) with
+Finally, we'll check reading both users back (again, minus passwords!) with:
 
 ```
 curl ${USERSVC_URL}/user/alice
@@ -280,7 +278,7 @@ Once all of that is working (whew!), it’s time to stick Envoy in front of ever
 
 * First, we have an "edge Envoy" running all by itself somewhere, to give the rest of the world a single point of ingress. Incoming connections from outside come to the edge Envoy, and it decides where they go internally.
    * Adding a little more functionality in this layer gets us a proper [API Gateway](http://getambassador.io/). We'll do everything by hand here, though, to really see how it all works.
-* Second, each instance of a service has an "service Envoy" running alongside it, as a separate process next to the service itself. These keep an eye on their services, and remember what’s running and what’s not.
+* Second, each instance of a service has a "service Envoy" running alongside it, as a separate process next to the service itself. These keep an eye on their services, and remember what’s running and what’s not.
 * All the Envoys form a mesh, and share routing information amongst themselves.
 * Interservice calls can (and usually will) go through the Envoy mesh as well, though we won't really get into this in this article.
 
@@ -305,20 +303,20 @@ Envoy is configured with a JSON dictionary that primarily describes *listeners* 
 
 The two big complicating factors are:
 
-* Filters can – and usually do – have their own configuration, which is often more complex than the listener’s configuration!
+* Filters can (and usually do) have their own configuration, which is often more complex than the listener’s configuration!
 * Clusters get tangled up with load balancing and external things like DNS.
 
 Since we're working with HTTP proxying here, we'll be using the `http_connection_manager` filter. It knows how to parse HTTP headers and figure out which Envoy cluster should handle a given connection, for both HTTP/1.1 and HTTP/2. The filter configuration for `http_connection_manager` is a dictionary with quite a few options, but at the moment, the most critical one for our purposes is the `virtual_hosts` array, which defines how exactly the filter will make routing decisions. Each element in the array is another dictionary containing the following attributes:
 
-* `name`: a human-readable name for this service
-* `domains`: an array of DNS-style domain names, one of which must match the domain name in the URL for this `virtual_host` to match (or '*' to match any domain)
-* `routes`: an array of route dictionaries (see below)
+* `name`: a human-readable name for this service.
+* `domains`: an array of DNS-style domain names, one of which must match the domain name in the URL for this `virtual_host` to match (or '*' to match any domain).
+* `routes`: an array of route dictionaries (see below).
 
 Each route dictionary needs to include at minimum:
 
-* `prefix`: the URL path prefix for this route
-* `cluster`: the Envoy cluster to handle this request
-* `timeout_ms`: the timeout for giving up if something goes wrong
+* `prefix`: the URL path prefix for this route.
+* `cluster`: the Envoy cluster to handle this request.
+* `timeout_ms`: the timeout for giving up if something goes wrong.
 
 We'll set up a single `listener` for our edge Envoy:
 
@@ -366,10 +364,10 @@ We still need to define the `usersvc` cluster referenced in the `virtual_hosts` 
 
 The possible `type` values:
 
-* `static`: every host is listed in the `cluster` definition
-* `strict_dns`: Envoy monitors DNS, and every matching A record will be assumed valid
-* `logical_dns`: Envoy uses the DNS to add hosts, but will not discard them if they’re no longer returned by DNS (we won't cover this in this article, but think round-robin DNS with hundreds of hosts)
-* `sds`: Envoy will use an external REST service to find cluster members
+* `static`: every host is listed in the `cluster` definition.
+* `strict_dns`: Envoy monitors DNS, and every matching A record will be assumed valid.
+* `logical_dns`: Envoy uses the DNS to add hosts, but will not discard them if they’re no longer returned by DNS (we won't cover this in this article, but think round-robin DNS with hundreds of hosts).
+* `sds`: Envoy will use an external REST service to find cluster members.
 
 And the possible `lb_type` values are:
 
@@ -394,7 +392,7 @@ Here's how to put it all together for the `usersvc` cluster:
 ]
 ```
 
-We're using `strict_dns`, which means that we’re relying on every instance of the `usersvc` appearing in the DNS. Hopefully this will work for us -- we'll find out when we test!
+We're using `strict_dns`, which means that we’re relying on every instance of the `usersvc` appearing in the DNS. Hopefully this will work for us—we'll find out when we test!
 
 As usual, it's a single command to start the edge Envoy running:
 
@@ -402,18 +400,18 @@ As usual, it's a single command to start the edge Envoy running:
 bash up.sh edge-envoy
 ```
 
-Sadly we can’t really test anything yet, since the edge Envoy is going to try to talk to service Envoys that aren’t running yet -- so let's get them going.
+Sadly we can’t really test anything yet, since the edge Envoy is going to try to talk to service Envoys that aren’t running yet, so let's get them going.
 
 ## App Changes for Envoy
 
-Once the edge Envoy is running, we need to switch our Flask app to use an service Envoy. We'll keep things simple for now, and just run the service Envoy as a separate process in the Flask app's container. That means that we needn’t change the database at all, but we do need a few tweaks to the Flask app:
+Once the edge Envoy is running, we need to switch our Flask app to use a service Envoy. We'll keep things simple for now, and just run the service Envoy as a separate process in the Flask app's container. That means that we needn’t change the database at all, but we do need a few tweaks to the Flask app:
 
 * We need to have the Dockerfile copy in the Envoy config file.
 * We need to have the `entrypoint.sh` script start the service Envoy as well as the Flask app.
 * While we’re at it, we'll switch back to having Flask listen only on the loopback interface, and
 * We’ll switch the service to type `ClusterIP` instead `LoadBalancer`.
 
-This will give us a running Envoy through which we can talk to the Flask app — but also, that Envoy will be the *only* way to talk to the Flask app. Trying to talk directly will be blocked in the network layer.
+This will give us a running Envoy through which we can talk to the Flask app, but also, that Envoy will be the *only* way to talk to the Flask app. Trying to talk directly will be blocked in the network layer.
 
 The service Envoy’s config, while we’re at it, is very similar to the edge Envoy’s. The `listeners` section is identical, and the `clusters` section nearly so:
 
@@ -445,7 +443,6 @@ bash up.sh usersvc2
 
 Once all that is done, it's time to repeat our monstrosity from before to get the URL of the edge Envoy:
 
-
 ```
 ENVOY_IP=$(kubectl get svc edge-envoy -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 ENVOY_PORT=$(kubectl get svc edge-envoy -o jsonpath='{.spec.ports[0].port}')
@@ -459,7 +456,7 @@ curl $ENVOY_URL/user/alice
 curl $ENVOY_URL/user/bob
 ```
 
-Note, though, that we’re using the `edge-envoy` service here, not the `usersvc`! This means that we are indeed talking through the Envoy mesh -- and in fact, if you try talking directly to `usersvc`, it will fail. That’s part of how we can be sure that Envoy is doing its job.
+Note, though, that we’re using the `edge-envoy` service here, not the `usersvc`! This means that we are indeed talking through the Envoy mesh, and in fact, if you try talking directly to `usersvc`, it will fail. That’s part of how we can be sure that Envoy is doing its job.
 
 ## Scaling the Flask App
 
@@ -498,15 +495,15 @@ kubectl exec usersvc-2016583945-h7hqz /usr/bin/nslookup usersvc
 
 (You'll need to use one of your actual pod names when you run this! Simply pasting the line above is extremely unlikely to work.)
 
-Sure enough, only one address comes back — so Envoy’s DNS-based service discovery simply isn’t going to work. Envoy can’t round-robin among three service instances if it never hears about two of them.
+Sure enough, only one address comes back, so Envoy’s DNS-based service discovery simply isn’t going to work. Envoy can’t round-robin among three service instances if it never hears about two of them.
 
 ## The Service Discovery Service
 
-What’s happening is that Kubernetes puts each *service* into its DNS, but it doesn’t put each *service endpoint* into its DNS — and Envoy needs to know about the endpoints in order to load-balance. Kubernetes does know the service endpoints for each service, of course, and Envoy knows how to query a REST service for discovery information... so we can make this work with a simple Python shim that bridges from the Envoy “Service Discovery Service” (SDS) to the Kubernetes API.
+What’s happening is that Kubernetes puts each *service* into its DNS, but it doesn’t put each *service endpoint* into its DNS, and Envoy needs to know about the endpoints in order to load-balance. Kubernetes does know the service endpoints for each service, of course, and Envoy knows how to query a REST service for discovery information, so we can make this work with a simple Python shim that bridges from the Envoy “Service Discovery Service” (SDS) to the Kubernetes API.
 
 A simple SDS is in the `usersvc-sds` directory. It’s pretty straightforward: Envoy asks it for service information, it uses the `requests` Python module to query the Kubernetes endpoints API, and finally it reformats the results and returns them to Envoy. The most surprising bit might be the token it reads at the start: Kubernetes is polite enough to install an authentication token on every container it starts, precisely so that this sort of thing is possible.
 
-We'll also need to modify the edge Envoy’s config slightly: rather than using `strict_dns` mode, we need `sds` mode. That, in turn, means that we have to define an `sds` cluster (which uses DNS to locate its server at the moment — we may have to tackle that later, too, as we scale the SDS out!):
+We'll also need to modify the edge Envoy’s config slightly: rather than using `strict_dns` mode, we need `sds` mode. That, in turn, means that we have to define an `sds` cluster (which uses DNS to locate its server at the moment, we may have to tackle that later, too, as we scale the SDS out!):
 
 ```
 "cluster_manager": {
