@@ -46,7 +46,7 @@ and execution logic independently of queue and job runner implementations.
 Ruby on Rails provides command-line tools for generating templated skeletons for things such as database migrations,
 controllers, and even background jobs.
 
-You will create a job named `HelloJob` that will accept a `name` argument and "Hello #{name}" to standard output.
+You will create a job named `HelloJob` that will accept a `name` argument and print "Hello #{name}" to standard output.
 
 1. Use the Rails generator feature to create `HelloJob`:
 
@@ -66,7 +66,7 @@ You will create a job named `HelloJob` that will accept a `name` argument and "H
 
           def perform(name)
             # Do something later
-            puts "Hello, #{name} from ActiveJob!"
+            puts "Hello, #{name}"
           end
         end
 
@@ -112,12 +112,6 @@ our `HelloJob` to execute in the background.
 
    When you make an HTTP GET request to `/hello/Jeff`, the `HelloController` will handle the request using the `say`
    action with parameter `:name` as "Jeff"
-
-1. Add a route for Google App Engine health checks. In `config/routes.rb`, add:
-
-        get '/_ah/health', to: proc { [200, {}, ['ok']]}
-
-   Without this route, Google App Engine will think your application is crashing and will not send any traffic to it.
 
 ## Configuring your background worker to use Cloud Pub/Sub
 
@@ -193,7 +187,7 @@ your web workers at the cost of potentially using more resources.
         env: flex
         service: workers
 
-        entrypoint: activejob-google_cloud_pubsub-worker
+        entrypoint: bundle exec activejob-google_cloud_pubsub-worker
 
         env_variables:
           SECRET_KEY_BASE: [SECRET_KEY]
