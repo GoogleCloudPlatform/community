@@ -153,8 +153,8 @@ to use the Google Cloud logging driver when it is started by systemd:
 
 ## Persisting configuration across reboots
 
-On Container-Optimized OS, files in `/etc/` are writable, but [data does not
-persist across
+On [Container-Optimized OS](/container-optimized-os/), files in `/etc/` are
+writable, but [data does not persist across
 reboots](/container-optimized-os/docs/concepts/security#filesystem).
 Instead, [use cloud-init to configure Container-Optimized OS
 instances](/container-optimized-os/docs/how-to/create-configure-instance#using_cloud-init).
@@ -163,7 +163,35 @@ To configure cloud-init, [update the instance
 metadata](/compute/docs/storing-retrieving-metadata#updatinginstancemetadata)
 by writing a configuration to the `user-data` key.
 
+You can write the configuration to the instance metadata from the command line
+or from the Cloud Platform Console. Both methods are described in the following
+sections.
+
+### Writing metadata from the Cloud Platform Console
+
+1.  Go to the [VM instances page](https://console.cloud.google.com/compute/instances).
+1.  Edit the instance.
+1.  Add a **Custom metadata** item with the key `user-data` and the value
+
+        #cloud-config
+
+        write_files:
+          - path: /etc/docker/daemon.json
+            content: '{"log-driver":"gcplogs"}'
+
+        runcmd:
+          - systemctl restart docker
+
+1.  Save the changes to the instance.
+1.  Reboot the instance.
+1.  Verify that the `/etc/docker/daemon.json` file is present.
+
+        sudo ls /etc/docker
+
 ### Writing metadata from the command-line
+
+*If you have already written the metadata using the Cloud Platform Console,
+you can skip this section.*
 
 From [Google Cloud Shell](/shell/docs/quickstart) or a development machine
 where you have [installed and initialized the Google Cloud SDK](/sdk/docs/),
@@ -189,27 +217,6 @@ command to add the `user-data` key to your instance.
 
     Replace `INSTANCE_NAME` with the name of your instance.
 
-1.  Reboot the instance.
-1.  Verify that the `/etc/docker/daemon.json` file is present.
-
-        sudo ls /etc/docker
-
-### Writing metadata from the Cloud Platform Console
-
-1.  Go to the [VM instances page](https://console.cloud.google.com/compute/instances).
-1.  Edit the instance.
-1.  Add a **Custom metadata** item with the key `user-data` and the value
-
-        #cloud-config
-
-        write_files:
-          - path: /etc/docker/daemon.json
-            content: '{"log-driver":"gcplogs"}'
-
-        runcmd:
-          - systemctl restart docker
-
-1.  Save the changes to the instance.
 1.  Reboot the instance.
 1.  Verify that the `/etc/docker/daemon.json` file is present.
 
