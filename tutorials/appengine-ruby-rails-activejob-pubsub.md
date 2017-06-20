@@ -6,21 +6,21 @@ tags: App Engine, Ruby, Ruby on Rails, ActiveJob, PubSub
 date_published: 2017-06-08
 ---
 This tutorial shows how to create and configure a [Ruby on Rails](http://rubyonrails.org/) application to run
-background processing jobs on Google App Engine Flexible Environment using
+background processing jobs on Google App Engine flexible environment using
 [ActiveJob](http://guides.rubyonrails.org/active_job_basics.html) and
 [Google Cloud Pub/Sub](https://cloud.google.com/pubsub/).
 
 ## Objectives
 
 * Create a background processing job
-* Deploy your application to Google App Engine Flexible Environment
+* Deploy your application to Google App Engine flexible environment
 * Verify background jobs are running
 
 ## Before you begin
 
 You'll need the following:
 
-* A Google Cloud Console project. You can use an existing project or click the button to create a new project
+* A Google Cloud Platform (GCP) project. You can use an existing project or click the button to create a new project
 * [Ruby 2.4.0+ installed](https://www.ruby-lang.org/en/documentation/installation/)
 * A Rails 4.2+ application. Follow the
   [official "Getting Started with Rails" guide](http://guides.rubyonrails.org/getting_started.html) to get started.
@@ -30,11 +30,11 @@ You'll need the following:
 
 This tutorial uses billable components of Cloud Platform including:
 
-* Google App Engine Flexible Environment
+* Google App Engine flexible environment
 * Google Cloud Pub/Sub
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator/)
-to generate a cost estimate based on your projected usage. New Cloud Platform users might be eligible for a
+to generate a cost estimate based on your projected usage. New GCP users might be eligible for a
 [free trial](https://cloud.google.com/free-trial).
 
 ## Creating your background job
@@ -70,7 +70,7 @@ You will create a job named `HelloJob` that will accept a `name` argument and pr
           end
         end
 
-## Create a test url to queue the job
+## Create a test URL to queue the job
 
 You will create a controller named `HelloController` that will provide an action called `say` which will queue
 our `HelloJob` to execute in the background.
@@ -130,7 +130,7 @@ to manage the job queue.
           config.active_job.queue_adapter = :google_cloud_pubsub
         end
 
-## Deploying to App Engine Flexible Environment
+## Deploying to App Engine flexible environment
 
 ### Option A: Shared worker and web application
 
@@ -253,12 +253,12 @@ To delete an App Engine service:
 
 1. In the Cloud Platform Console, go to the **[App Engine Services](https://console.cloud.google.com/appengine/services)** page.
 1. Click the checkbox next to the service you wish to delete.
-1. Click the Delete button at the top of the page to delete the service.
+1. Click **Delete** at the top of the page to delete the service.
 
 If you are trying to delete the *default* service, you cannot. Instead:
 
-1. Click on the number of versions which will navigate you to App Engine Versions page.
-1. Select all the versions you wish to disable and click the Stop button at the top of the page. This will free
+1. Click on the number of versions which will navigate you to the App Engine Versions page.
+1. Select all the versions you wish to disable and click **Stop** at the top of the page. This will free
    all of the Google Compute Engine resources used for this App Engine service.
 
 ## Next steps
