@@ -166,8 +166,8 @@ instances together.
 ### Option B: Separate worker and web application
 
 For this option, you are creating 2 App Engine services - one runs the web server and one runs worker processes. Both
-services use the same application code. This configuration allows you to scale background workers independently of
-your web workers at the cost of potentially using more resources.
+services use the same application code. This configuration allows you to scale background worker instances independently
+of your web instances at the cost of potentially using more resources.
 
 1. Create an `app.yaml` for deploying the web service to Google App Engine:
 
@@ -181,11 +181,11 @@ your web workers at the cost of potentially using more resources.
 
    Be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
-1. Create a `workers.yaml` for deploying the workers service to Google App Engine:
+1. Create a `worker.yaml` for deploying the worker service to Google App Engine:
 
         runtime: ruby
         env: flex
-        service: workers
+        service: worker
 
         entrypoint: bundle exec activejob-google_cloud_pubsub-worker
 
@@ -195,14 +195,23 @@ your web workers at the cost of potentially using more resources.
         health_check:
           enable_health_check: False
 
+        # Optional scaling configuration
+        automatic_scaling:
+          min_num_instances: 1
+
    Be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
-   Note that the health check is disabled here because the workers service is not running a web server and cannot
+   Note that the health check is disabled here because the worker service is not running a web server and cannot
    respond to the health check ping.
+
+   As mentioned above, you can configure scaling for the worker service independently of the default (web) service.
+   In the `automatic_scaling` section, you have configured the worker service to start with 1 worker instance
+   and dynamically increase the number of worker instances if CPU utilization surpasses the configured threshold
+   (defaults to 0.5). For more information, see [scaling configuration options in app.yaml](https://cloud.google.com/appengine/docs/flexible/ruby/configuring-your-app-with-app-yaml#services).
 
 1. Deploy both services to App Engine
 
-        gcloud app deploy app.yaml workers.yaml
+        gcloud app deploy app.yaml worker.yaml
 
 ## Verify your background queuing works
 
