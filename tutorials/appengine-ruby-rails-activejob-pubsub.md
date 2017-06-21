@@ -215,13 +215,13 @@ your web workers at the cost of potentially using more resources.
 
 1. In a separate window, navigate to your deployed Rails application at:
 
-        https://[YOUR_PROJECT_ID].appspot.com/say/Jeff
+        https://[YOUR_PROJECT_ID].appspot.com/hello/Jeff
 
    Be sure to replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
 
 1. Navigate back to the Logs dashboard and you should see a logging statement like:
 
-        13:13:52.000 Hello, Jeff from ActiveJob!
+        13:13:52.000 Hello, Jeff
 
 Congratulations, you have successfully set up background job processing on Google App Engine with Google Cloud Pub/Sub.
 
