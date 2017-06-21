@@ -21,8 +21,8 @@ The sample Cloud Function is triggered by a webhook request from SNS when a
 message is published to the corresponding SNS topic. The function validates the
 sender and topic.
 
-The function then publishes the message to Cloud Pubsub - decorating with
-attributes of SNS subject, and message id.
+The function then publishes the message to Cloud Pubsub - tagging the message
+with attributes of SNS subject, and message id.
 
 ## Prerequisites
 
@@ -37,8 +37,8 @@ attributes of SNS subject, and message id.
 ## Setting up the SNS topic
 
 For this section it is assumed that you are already familiar with AWS SNS,
-please see the documentation for creating topics. We will come back to the AWS
-console to create the subscription.
+please see the [AWS SNS][documentation] for creating topics. We will come back
+to the AWS console to create the subscription.
 
 ## Create your Cloud Pubsub topic and subscription
 
@@ -63,10 +63,12 @@ console to create the subscription.
         npm install --save sns-validator
 
     This dependency is used by the Cloud Function to validate the request.
-    
+
         npm install --save google-cloud/pubsub
 
     This dependency is used by the Cloud Function to publish to Cloud Pubsub
+
+[AWS SNS]: https://aws.amazon.com/sns/
 
 ### Writing the Function Code
 
@@ -74,65 +76,24 @@ Create a file named `index.js` with the following contents:
 
 [embedmd]:# (index.js)
 ```js
-'use strict';
-
-const twilio = require('twilio');
-const config = require('./config.json');
-
-const MessagingResponse = twilio.twiml.MessagingResponse;
-
-const projectId = process.env.GCLOUD_PROJECT;
-const region = 'us-central1';
-
-exports.reply = (req, res) => {
-  let isValid = true;
-
-  // Only validate that requests came from Twilio when the function has been
-  // deployed to production.
-  if (process.env.NODE_ENV === 'production') {
-    isValid = twilio.validateExpressRequest(req, config.TWILIO_AUTH_TOKEN, {
-      url: `https://${region}-${projectId}.cloudfunctions.net/reply`
-    });
-  }
-
-  // Halt early if the request was not sent from Twilio
-  if (!isValid) {
-    res
-      .type('text/plain')
-      .status(403)
-      .send('Twilio Request Validation Failed.')
-      .end();
-    return;
-  }
-
-  // Prepare a response to the SMS message
-  const response = new MessagingResponse();
-
-  // Add text to the response
-  response.message('Hello from Google Cloud Functions!');
-
-  // Send the response
-  res
-    .status(200)
-    .type('text/xml')
-    .end(response.toString());
-};
+TODO - embed
 ```
 
-Notice the named export `receiveNotification`—this is the function that will be executed
-whenever an SNS message is sent to your SNS topic.
+Notice the named export `receiveNotification` - this is the function that will
+be executed whenever an SNS message is sent to your SNS topic.
 
 The `receiveNotification` function does the following:
 
-1.  Validates that the request came from SNS, SNS signs all messages.
+1.  Validates that the request came from SNS, as SNS signs all messages.
 1.  Confirms a pending subscription if this is the first time the function is
-	being set up
+	being set up as an SNS subscription.
 1.  Relays messages published to the SNS topic into Cloud Pubsub
 
-Be sure to update the Cloud Pubsub topic if it different, and update the
-`expectedTopicArn` to match the ARN of your SNS topic. This is an important
-security point as HTTP Cloud Function endpoints are world reachable and you
-only want to relay messages into Cloud Pubsub from your intended SNS origins.
+Be sure to update the Cloud Pubsub topic if it different in your project, and
+update the `expectedTopicArn` to match the ARN of your SNS topic. This is an
+important security point as HTTPS Cloud Function endpoints are world reachable
+and you only want to relay messages into Cloud Pubsub from your intended SNS
+points of origin.
 
 ## Deploying the Cloud Function
 
@@ -154,23 +115,21 @@ only want to relay messages into Cloud Pubsub from your intended SNS origins.
 1.  Click "Create Subscription"
 
 You will see the new subscription created in a pending state. SNS sends
-a confirmation to the Cloud Function, and the Function confirms this
-subscription by calling back to a specific URL. If you refresh your topic's
-subscription list you will see the pending state replaced with a subscription
-ARN.
+a confirmation request to the Cloud Function, and the Function confirms this
+subscription by calling back to a specific URL provided by SNS. If you refresh
+your topic's subscription list in a moment, you will see the pending state
+replaced with a subscription ARN.
 
 ## Testing the integration
 
 Use the Publish feature in AWS console to generate a test message in raw
 format. In a few seconds you can confirm this message was relayed by the
-Function into Pubsub by running the following:
+cloud function into Pubsub by running the following:
 
 	gcloud beta pubsub subscriptions pull sns-watcher --auto-ack
 
 Note that the SNS subject was converted to a Cloud Pubsub attribute.
 
-
-
 [deploying]: https://cloud.google.com/functions/docs/deploying/filesystem
-[pubsubconcepts]: 
-[ARN]: 
+[pubsubconcepts]: https://cloud.google.com/pubsub/docs/overview#concepts
+[ARN]: http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html 
