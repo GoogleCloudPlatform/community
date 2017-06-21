@@ -233,9 +233,7 @@ of your web instances at the cost of potentially using more resources.
 1. In the Cloud Platform Console, go to the
    **[App Engine Services](https://console.cloud.google.com/appengine/services)** page. Locate the service that is
    running your background workers (if option A, it should be the *default* service, if option B, it should be
-   the *workers* service). Click Tools -> Logs for that service.
-
-1. On the Logs dashboard, click the Play icon to start streaming the logs.
+   the *worker* service). Click Tools -> Logs for that service.
 
 1. In a separate window, navigate to your deployed Rails application at:
 
@@ -243,7 +241,12 @@ of your web instances at the cost of potentially using more resources.
 
    Be sure to replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
 
-1. Navigate back to the Logs dashboard and you should see a logging statement like:
+1. Navigate back to the Logs dashboard. In the **Filter by label or text search** field, add `"Hello, Jeff"`
+   and you should see a logging statement like the following if using foreman:
+
+        13:13:52.000 worker.1 | Hello, Jeff
+
+   or if using a second service:
 
         13:13:52.000 Hello, Jeff
 
