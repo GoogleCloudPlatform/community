@@ -49,7 +49,7 @@ $ go get github.com/micahhausler/k8s-oidc-helper
 
 ### 3.2 Generate a user’s credentials for kube config:
 
-```
+```yaml
 $ k8s-oidc-helper -c path/to/client_secret_<client_id>.json
 Would open the browser and ask permissions. After that, it provides you a token in the browser. Copy it and paste to the terminal for k8s-oidc-helper. The output of the command should look like:
 
@@ -63,7 +63,7 @@ users:
         client-secret: ZdyKxYW-tCzuRWwB3l665cLY
         id-token: eyJhbGciOiJSUzI19fvTKfPraZ7yzn.....HeLnf26MjA
         idp-issuer-url: https://accounts.google.com
-        refresh-token: 1/8mxeZ5_AE-jkYklrMAf5IMXnB_DsBY5up4WbYNF2PrY
+        refresh-token: 18mxeZ5_AE.jkYklrMAf5.IMXnB_DsBY5up4WbYNF2PrY
       name: oidc
 ```
 
