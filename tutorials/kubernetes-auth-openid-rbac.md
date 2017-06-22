@@ -6,7 +6,8 @@ tags: Kubernetes
 date_published: 2017-05-10
 ---
 
-In this tutorial we will setup authentication and authorization using [RBAC] and [OpenID Connect]. [RBAC] introduced in the Kubernetes 1.6 [article](http://blog.kubernetes.io/2017/04/rbac-support-in-kubernetes.html). The article based on Micah Hausle’s [Reduce administrative toil with Kubernetes 1.3](https://www.skuid.com/blog/reduce-administrative-toil-with-kubernetes-1-3/)
+In this tutorial you will setup authentication and authorization using Role Based Access-Control ([RBAC]) and [OpenID Connect].
+RBAC was introduced in the Kubernetes 1.6 article, RBAC Support in Kubernetes, and was based on Micah Hausle’s [Reduce administrative toil with Kubernetes 1.3](https://www.skuid.com/blog/reduce-administrative-toil-with-kubernetes-1-3/).
 
 ### Objectives
 - Creating a Google API Console project and client ID
