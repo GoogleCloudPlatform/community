@@ -6,7 +6,7 @@ tags: Kubernetes
 date_published: 2017-05-10
 ---
 
-In this tutorial you will setup authentication and authorization using Role Based Access-Control ([RBAC]) and [OpenID Connect].
+In this tutorial you will setup authentication and authorization to your own Kubernetes cluster using your Google account with the help of Role Based Access-Control ([RBAC]) and [OpenID Connect].
 RBAC was introduced in the Kubernetes 1.6 article, RBAC Support in Kubernetes, and was based on Micah Hausle’s [Reduce administrative toil with Kubernetes 1.3](https://www.skuid.com/blog/reduce-administrative-toil-with-kubernetes-1-3/).
 
 ### Objectives
