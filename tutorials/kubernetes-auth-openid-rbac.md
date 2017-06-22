@@ -105,7 +105,8 @@ roleRef:
   name: admin-role
 ```
 
-After applying changes via `kubectl apply -f admin.yaml — validate=false`. Do the test again:
+After applying changes via `kubectl create -f admin.yaml`.
+Do the test again:
 
 ```
 $ kubectl --user=name@example.com get nodes
