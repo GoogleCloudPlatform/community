@@ -26,7 +26,8 @@ RBAC was introduced in the Kubernetes 1.6 article, RBAC Support in Kubernetes, a
 - Download the client secret JSON file of the credentials.
 
 ## Step 2: Setup a Kubernetes cluster
-After initializing the master instance, you need to update the `kube api server` arguments in the `/etc/kubernetes/manifests/kube-apiserver.yaml`. Each argument should be on a separate line. More details about OIDC attributes you can find in the references [Authenticating](https://kubernetes.io/docs/admin/authentication/#option-1---oidc-authenticator).
+After initializing the master instance, you need to update the `kube api server` arguments in the `/etc/kubernetes/manifests/kube-apiserver.yaml`. Each argument should be on a separate line. 
+More information about the OIDC attributes can be found in the [Authenticating](https://kubernetes.io/docs/admin/authentication/#option-1---oidc-authenticator) reference documentation.
 
 ```
 $ sed -i "/- kube-apiserver/a\    - --oidc-issuer-url=https://accounts.google.com\n    - --oidc-username-claim=email\n    - --oidc-client-id=<Your Google Client ID>" /etc/kubernetes/manifests/kube-apiserver.yaml
