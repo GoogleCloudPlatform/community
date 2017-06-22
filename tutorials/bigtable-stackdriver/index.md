@@ -13,7 +13,7 @@ Amazon Web Services (AWS).
 Stackdriver Monitoring comes with a built-in console for exploring metrics and
 plotting figures. To see this console:
 
-1. Open the [Google Cloud Plataform Console](https://console.cloud.google.com).
+1. Open the [Google Cloud Platform Console](https://console.cloud.google.com).
 1. Click on the top left menu navigation.
 1. In the Stackdriver section, click Monitoring.
 1. Sign in and create or select an account, if prompted.
