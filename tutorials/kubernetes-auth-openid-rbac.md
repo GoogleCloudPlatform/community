@@ -15,8 +15,6 @@ RBAC was introduced in the Kubernetes 1.6 article, RBAC Support in Kubernetes, a
 - Generate a local user credentials
 - Grant permissions
 
-We need a Kubernetes cluster to work setup via [kubeadm].
-
 ## Step 1: Creating a Google API Console project and client ID
 - Go to https://console.developers.google.com/projectselector/apis/library
 - From the project drop-down, select an existing project, or create a new one by selecting **Create a new project**
