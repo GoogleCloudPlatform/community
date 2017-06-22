@@ -55,14 +55,14 @@ On Ubuntu (16.04 or later):
 
 ```
 curl -s https://packagecloud.io/install/repositories/datawireio/telepresence/script.deb.sh | sudo bash
-apt install --no-install-recommends telepresence
+sudo apt install --no-install-recommends telepresence
 ```
 
 On Fedora (25 or later):
 
 ```
 curl -s https://packagecloud.io/install/repositories/datawireio/telepresence/script.rpm.sh | sudo bash
-dnf install telepresence
+sudo dnf install telepresence
 ```
 
 We'll also need to configure a local development environment for PHP. The Guestbook application is fairly simple, but it does depend on the Predis library. We'll need to install the [PEAR package manager](https://pear.php.net/manual/en/installation.getting.php), and then install the Predis library.
@@ -141,7 +141,7 @@ Next, we need to deploy an externally visible load balancer. The [`frontend-serv
 Now, we're going to start the local Telepresence client, which will spawn a special shell which connects to the proxy in the remote Kubernetes cluster.
 
 ```
-% telepresence --deployment telepresence-deployment --expose 8080 --run-shell
+% telepresence --method inject-tcp --deployment telepresence-deployment --expose 8080 --run-shell
 ```
 
 In this special shell, change to the `examples/guestbook` directory, and start the frontend application as follows. We'll need to know the directory where PHP can load its dependencies, e.g., Predis. You can figure this out by typing:
