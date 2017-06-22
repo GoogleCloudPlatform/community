@@ -70,14 +70,14 @@ users:
 Copy everything after `users:` and append it to your existing user list in the `~/.kube/config`. Now you have 2 users: one from the new cluster configuration and one that you added.
 
 ### 3.3 Verify token
-Test the id-token using https://jwt.io/. Be sure that you have “email_verified”: true in the decoded message. Test connection of the new user:
+Test the id-token using https://jwt.io/. Be sure that you have `"email_verified": true` in the decoded message. Test connection of the new user:
 
 ```
 $ kubectl --user=name@example.com get nodes
 Error from server (Forbidden): User "name@example.com" cannot list nodes at the cluster scope. (get nodes)
 ```
 
-It proves that id-token and api server arguments work and email is extracted from a request.
+It proves that `id-token` and api server arguments work and email is extracted from a request.
 
 ## Step 4: Grant permissions
 For now, we grant Admin rights to the user name@example.com. We created an authorization specification:
