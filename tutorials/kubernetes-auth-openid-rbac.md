@@ -67,7 +67,7 @@ users:
       name: oidc
 ```
 
-Copy everything after users and append to you existing user list in the `~/.kube/config`. Now we have 2 users. One from the new cluster configuration and one we added.
+Copy everything after `users:` and append it to your existing user list in the `~/.kube/config`. Now you have 2 users: one from the new cluster configuration and one that you added.
 
 ### 3.3 Verify token
 Test the id-token using https://jwt.io/. Be sure that you have “email_verified”: true in the decoded message. Test connection of the new user:
