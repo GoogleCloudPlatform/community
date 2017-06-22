@@ -80,7 +80,7 @@ Error from server (Forbidden): User "name@example.com" cannot list nodes at the 
 It proves that `id-token` and api server arguments work and email is extracted from a request.
 
 ## Step 4: Grant permissions
-For now, we grant Admin rights to the user name@example.com. We created an authorization specification:
+For now, grant admin rights to the user name@example.com with an authorization specification:
 
 ```
 kind: ClusterRole
