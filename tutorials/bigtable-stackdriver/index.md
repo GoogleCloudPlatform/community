@@ -1,13 +1,13 @@
 ---
-title: Using matplotlib to visualize Stackdriver Monitoring metrics for Cloud Bigtable
-description: Learn about using matplotlib to plot Stackdriver Monitoring metrics for Cloud Bigtable
+title: Using Matplotlib to visualize Stackdriver Monitoring metrics for Cloud Bigtable
+description: Learn about using Matplotlib to plot Stackdriver Monitoring metrics for Cloud Bigtable
 author: waprin
 tags: Stackdriver, Bigtable, matplotlib
 date_published: 2017-06-13
 ---
 
 [Google Stackdriver Monitoring](https://cloud.google.com/monitoring/) is
-a service that collects metrics, events, and metadata from Google Cloud Platform or
+a service that collects metrics, events, and metadata from Google Cloud Platform (GCP) or
 Amazon Web Services (AWS).
 
 Stackdriver Monitoring comes with a built-in console for exploring metrics and
@@ -25,7 +25,7 @@ be found in the Cloud Bigtable console, as well as in the Stackdriver
 'Metrics Explorer'.
 
 As an alternative
-approach, you can use the Python library [matplotlib](https://matplotlib.org/) in conjunction with the
+approach, you can use the Python library [Matplotlib](https://matplotlib.org/) in conjunction with the
 [Google Cloud Python client library](https://github.com/GoogleCloudPlatform/google-cloud-python/tree/master/monitoring),
 and its built-in integration with the [pandas](http://pandas.pydata.org/)
 data science library, to make sophisticated graphs. 
@@ -54,8 +54,8 @@ and while running the [sample code for scaling Cloud Bigtable programmatically](
 ## Prerequisites
 
 This tutorial assumes some familiarity with Python development, including
-virtualenv and pip. Previous knowledge of Google Cloud Platform, Jupyter,
-pandas, and matplotlib is helpful.
+`virtualenv` and `pip`. Previous knowledge of Google Cloud Platform, Jupyter,
+pandas, and Matplotlib is helpful.
 
 ## Objectives
 
@@ -64,10 +64,10 @@ pandas, and matplotlib is helpful.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including:
+This tutorial uses billable components of GCP, including:
 
 - Google Cloud Bigtable
-- Google Stackdriver Monitoring
+- Stackdriver Monitoring
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
 projected usage.
@@ -90,9 +90,9 @@ projected usage.
 
 1.  Install Jupyter by following the [installation instructions](jupyter).
 
-1. Install virtualenv by following the [installation instructions](virtualenv).
+1. Install `virtualenv` by following the [installation instructions](virtualenv).
 
-1. Create and activate a virtualenv.
+1. Create and activate a `virtualenv` virtual environment.
 
 1. Download the [`requirements.txt`](requirements.txt) and use `pip` to install
 the requirements:
@@ -106,7 +106,7 @@ the requirements:
 
 Download the [tutorial notebook](monitoring_metrics.ipynb).
 
-With the necessary dependencies installed into the virtualenv, start a new
+With the necessary dependencies installed into the `virtualenv` environment, start a new
 Jupyter notebook:
 
     jupyter notebook
