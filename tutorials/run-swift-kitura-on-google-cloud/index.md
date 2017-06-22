@@ -73,10 +73,10 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         let router = Router()
 
         // Respond to App Engine health check requests
-        ...
+        // TODO: see #2
 
         // Basic GET request
-        ...
+        // TODO: see #3
 
         // Start server on 8080
         Kitura.addHTTPServer(onPort: 8080, with: router)
