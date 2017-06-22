@@ -36,8 +36,8 @@ Add any network CNI plugin and the cluster is ready. Copy `/etc/kubernetes/admin
 
 ```
 $ kubectl get nodes
-NAME                         STATUS    AGE       VERSION
-ip-10-9-11-30.ec2.internal   Ready     15m       v1.6.1
+NAME            STATUS    AGE       VERSION
+ip-10-9-11-30   Ready     15m       v1.6.1
 ```
 
 ## Step 3: Generate a local user credentials
@@ -108,8 +108,8 @@ After applying changes via `kubectl apply -f admin.yaml — validate=false`.
 
 ```
 $ kubectl --user=name@example.com get nodes
-NAME                         STATUS    AGE       VERSION
-ip-10-9-11-30.ec2.internal   Ready     20m       v1.6.1
+NAME            STATUS    AGE       VERSION
+ip-10-9-11-30   Ready     20m       v1.6.1
 ```
 
 [RBAC]: https://en.wikipedia.org/wiki/Role-based_access_control
