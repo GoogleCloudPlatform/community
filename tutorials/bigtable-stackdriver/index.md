@@ -6,7 +6,7 @@ tags: Stackdriver, Bigtable, matplotlib
 date_published: 2017-06-13
 ---
 
-[Google Stackdriver Monitoring](https://cloud.google.com/monitoring/) is
+[Stackdriver Monitoring](https://cloud.google.com/monitoring/) is
 a service that collects metrics, events, and metadata from Google Cloud Platform (GCP) or
 Amazon Web Services (AWS).
 
