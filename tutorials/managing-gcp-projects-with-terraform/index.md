@@ -180,7 +180,7 @@ output "project_id" {
 }
 ```
  
-*View the code [on GitHub](./project.tf).*
+*View the code [on GitHub](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/managing-gcp-projects-with-terraform/project.tf).*
 
 Terraform resources used:
 
@@ -217,7 +217,7 @@ output "instance_id" {
 }
 ```
 
-*View the code [on GitHub](./compute.tf).*
+*View the code [on GitHub](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/managing-gcp-projects-with-terraform/compute.tf).*
  
 Terraform resources used:
 
