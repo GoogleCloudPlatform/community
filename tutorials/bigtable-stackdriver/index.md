@@ -11,52 +11,56 @@ a service that collects metrics, events, and metadata from Google Cloud Platform
 Amazon Web Services (AWS).
 
 Stackdriver Monitoring comes with a built-in console for exploring metrics and
-plotting figures. The console can be found by first going to the
-[Google Cloud Console](https://console.cloud.google.com), clicking on the
-top left menu navigation, selecting Monitoring, then clicking through
-the various screens.
+plotting figures. To see this console:
 
-Many useful charts will automatically be created for you, and many more custom
+1. Open the [Google Cloud Plataform Console](https://console.cloud.google.com).
+1. Click on the top left menu navigation.
+1. In the Stackdriver section, click Monitoring.
+1. Sign in and create or select an account, if prompted.
+
+Many useful charts are automatically created for you, and many more custom
 graphs can be built within the Stackdriver console. For
 [Google Cloud Bigtable](https://cloud.google.com/bigtable/), some charts can
 be found in the Cloud Bigtable console, as well as in the Stackdriver
 'Metrics Explorer'.
 
-However, as an alternative
-approach, the Python library [matplotlib](https://matplotlib.org/) can be uesd in conjunction with the
-[Google Cloud Python client library](https://github.com/GoogleCloudPlatform/google-cloud-python/tree/master/monitoring)
-and its built-in integration with the  [pandas](http://pandas.pydata.org/)
-data science library to make sophisticated graphs. This tutorial demonstrates
- some simple plotting to get started, in conjunction with the
- sample code for scaling Cloud Bigtable programmatically.
+As an alternative
+approach, you can use the Python library [matplotlib](https://matplotlib.org/) in conjunction with the
+[Google Cloud Python client library](https://github.com/GoogleCloudPlatform/google-cloud-python/tree/master/monitoring),
+and its built-in integration with the [pandas](http://pandas.pydata.org/)
+data science library, to make sophisticated graphs. 
 
-The Stackdriver Python client library can be used either in vanilla
+This tutorial demonstrates
+some simple plotting to help you get started, in conjunction with the
+sample code for programmatically scaling Cloud Bigtable.
+
+The Stackdriver Python client library can be used either in standard
 [Jupyter](http://jupyter.org/) notebooks or with
 [Google Cloud Datalab](https://cloud.google.com/datalab/). This tutorial
 focuses on vanilla Jupyter.
 
-Jupyter notebook allow you to create interactive, annotated notebooks that
+Jupyter notebooks allow you to create interactive, annotated notebooks that
 can be shared with others. Because the sample notebook relies on default
 authentication and project configurations, plots and figures created
-with your data will be automatically re-populated with the data of the users
-you share the notebook with when they run your notebook.
+using your data are automatically repopulated with the data of the users
+you share the notebook with, when they run your notebook.
 
-Follow this link for [a more in-depth introduction to Stackdriver Monitoring
+You can read [a more in-depth introduction to Stackdriver Monitoring
 client using Cloud Datalab](https://github.com/googledatalab/notebooks/tree/master/tutorials/Stackdriver%20Monitoring).
 
-This specific tutorial explores Cloud Bigtable metrics during a loadtest
+This tutorial explores Cloud Bigtable metrics during a loadtest
 and while running the [sample code for scaling Cloud Bigtable programmatically](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/bigtable/autoscaler).
 
 ## Prerequisites
 
 This tutorial assumes some familiarity with Python development, including
 virtualenv and pip. Previous knowledge of Google Cloud Platform, Jupyter,
-pandas, and matplotlib will also be helpful.
+pandas, and matplotlib is helpful.
 
 ## Objectives
 
-1.  Install Jupyter and the Python Stackdriver dependencies
-1.  Explore basic plotting of Cloud Bigtable metrics during an scaling event
+1.  Install Jupyter and the Python Stackdriver dependencies.
+1.  Explore basic plotting of Cloud Bigtable metrics during a scaling event.
 
 ## Costs
 
@@ -72,12 +76,12 @@ projected usage.
 
 ## Before you begin
 
-1.  Create a project in the [Google Cloud Platform Console][console].
+1.  Create a project in the [Cloud Platform Console][console].
 1.  Enable billing for your project.
 1.  Install the [Google Cloud SDK][cloud-sdk].
 1.  Create a client ID to run the sample code:
 
-     gcloud auth application-default login
+        gcloud auth application-default login
 
 [console]: https://console.cloud.google.com/
 [cloud-sdk]: https://cloud.google.com/sdk/
@@ -86,14 +90,14 @@ projected usage.
 
 1.  Install Jupyter by following the [installation instructions](jupyter).
 
-1. Install virtualenv by following the [installation instructions](virtualenv)
+1. Install virtualenv by following the [installation instructions](virtualenv).
 
-1. Create and activate a virtualenv
+1. Create and activate a virtualenv.
 
 1. Download the [`requirements.txt`](requirements.txt) and use `pip` to install
 the requirements:
 
-    pip install -r requirements.txt
+        pip install -r requirements.txt
 
 [jupyter]: http://jupyter.readthedocs.io/en/latest/install.html
 [virutalenv]: https://virtualenv.pypa.io/en/stable/installation/
