@@ -1,6 +1,6 @@
 ---
-title: Using Matplotlib to visualize Stackdriver Monitoring metrics for Cloud Bigtable
-description: Learn about using Matplotlib to plot Stackdriver Monitoring metrics for Cloud Bigtable
+title: Using Matplotlib to Visualize Stackdriver Monitoring Metrics for Cloud Bigtable
+description: Learn about using Matplotlib to plot Stackdriver Monitoring metrics for Cloud Bigtable.
 author: waprin
 tags: Stackdriver, Bigtable, matplotlib
 date_published: 2017-06-13
