@@ -9,7 +9,7 @@ date_published: 2017-06-23
 
 This tutorial and sample function demonstrates using [Google Cloud
 Functions][functions] as an integration point between the [Amazon Simple
-Notification Service][sns] (SNS) and Google Cloud Pub/Sub (Cloud Pub/Sub). The
+Notification Service][sns] (SNS) and Google Cloud Pub/Sub. The
 function is implemented in [Node.js][node].
 
 [functions]: https://cloud.google.com/functions
