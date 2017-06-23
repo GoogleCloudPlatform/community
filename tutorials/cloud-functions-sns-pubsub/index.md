@@ -1,5 +1,5 @@
 ---
-title: Connect Google Cloud Pub/Sub to AWS SNS topics through Cloud Functions
+title: Connect Google Cloud Pub/Sub to AWS SNS Topics Through Cloud Functions
 description: Learn how to integrate Google Cloud Pub/Sub with AWS SNS using Google Cloud Functions.
 author: ptone
 tags: Cloud Functions, AWS, SNS, Node.js
@@ -9,7 +9,7 @@ date_published: 2017-06-23
 
 This tutorial and sample function demonstrates using [Google Cloud
 Functions][functions] as an integration point between the [Amazon Simple
-Notification Service][sns] (SNS) and Google Cloud Pub/Sub (Cloud Pub/Sub).  The
+Notification Service][sns] (SNS) and Google Cloud Pub/Sub (Cloud Pub/Sub). The
 function is implemented in [Node.js][node].
 
 [functions]: https://cloud.google.com/functions
@@ -21,8 +21,8 @@ The SNS service makes a POST request to the Cloud Function URL when a
 message is published to the corresponding SNS topic. The function validates the
 sender and topic.
 
-The function then publishes the message to Cloud Pub/Sub - tagging the message
-with attributes of SNS subject, and message id.
+The function then publishes the message to Cloud Pub/Sub, tagging the message
+with attributes of SNS subject, and message ID.
 
 ## Prerequisites
 
@@ -38,24 +38,24 @@ with attributes of SNS subject, and message id.
 
 ## Setting up the SNS topic
 
-For this section it is assumed that you are already familiar with AWS SNS,
-[create an SNS topic for this tutorial][sns-create] if you do not already have
-one you want to use. We will come back to the AWS console to create the
+For this section you should already be familiar with AWS SNS.
+[Create an SNS topic for this tutorial][sns-create], if you do not already have
+one you want to use. You will come back to the AWS console to create the
 subscription.
 
 [sns-create]: http://docs.aws.amazon.com/sns/latest/dg/CreateTopic.html
 
 ## Create your Cloud Pub/Sub topic and subscription
 
-1.  Read about [Cloud Pubsub concepts][pubsubconcepts].
+1.  Read about [Cloud Pub/Sub concepts][pubsubconcepts].
 1.  Run the following command to create the topic that will receive SNS messages:
 
-	gcloud beta pubsub topics create sns-events
+        gcloud beta pubsub topics create sns-events
 
 1.  Run the following commands to create a subscription to test the
 	integration:
 
-	gcloud beta pubsub subscriptions create sns-watcher --topic sns-events
+        gcloud beta pubsub subscriptions create sns-watcher --topic sns-events
 
 
 ## Preparing the Cloud Function
@@ -72,7 +72,7 @@ subscription.
 1.  Run the following command to install the dependencies that the function
 	uses to communicate with Cloud Pub/Sub service:
 
-		npm install --save @google-cloud/pubsub
+        npm install --save @google-cloud/pubsub
 
 [AWS SNS]: https://aws.amazon.com/sns/
 
@@ -85,14 +85,14 @@ Create a file named `index.js` with the following contents:
 TODO - embed
 ```
 
-Notice the named export `receiveNotification` - this function executes when an
+Notice the named export `receiveNotification`. This function executes when an
 SNS message is sent to your SNS topic.
 
 The `receiveNotification` function does the following:
 
 1.  Validates that the request came from SNS. SNS signs each message.
 1.  Confirms a pending subscription when the function is first set up as an SNS
-	subscription.
+subscription.
 1.  Relays messages published to the SNS topic into Cloud Pub/Sub
 
 Be sure to update the Cloud Pub/Sub topic if it is different in your project, and
@@ -111,15 +111,15 @@ points of origin can relay messages into Cloud Pub/Sub.
 
     Replace `[YOUR_STAGE_BUCKET]` with your Cloud Functions staging bucket.
 
-1.  Copy the httpsTrigger URL in the output after the function deploys. You
-	will use the URL in the next step.
+1.  Copy the `httpsTrigger` URL in the output after the function deploys. You
+use the URL in the next step.
 
 ## Creating the SNS subscription
 
 1.  In the AWS console, go to your SNS topic and create a subscription.
-1.  Choose `HTTPS` as the protocol.
+1.  Choose HTTPS as the protocol.
 1.  Enter the Cloud Function URL that you copied earlier.
-1.  Click *Create Subscription*.
+1.  Click **Create Subscription**.
 
 The new subscription is created in a pending state. SNS sends a confirmation
 request to the Cloud Function. The function recognizes the request as
@@ -129,7 +129,7 @@ pending state replaced with a subscription ARN.
 
 ## Testing the integration
 
-Use the Publish feature in SNS section of the AWS console to generate a test
+Use the Publish feature in the SNS section of the AWS console to generate a test
 message in raw format. Wait a few seconds and then run the following command to
 confirm that Cloud Function relayed the message to Cloud Pub/Sub:
 
