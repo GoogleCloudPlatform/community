@@ -1,5 +1,5 @@
-/*jslint es6 */
-/*jslint white:true */
+/* jslint es6 */
+/* jslint white:true */
 
 'use strict';
 
@@ -22,15 +22,13 @@ const topic = pubsub.topic(topicName);
 
 const expectedTopicArn = 'arn:aws:sns:us-west-2:681196457733:new-demo';
 
-
 /**
  * Cloud Function.
  *
  * @param {req} request The web request from SNS.
  * @param {res} The response returned from this function.
  */
-exports.receiveNotification = function receiveNotification(req, res) {
-
+exports.receiveNotification = function receiveNotification (req, res) {
   // we only respond to POST method HTTP requests
   if (req.method !== 'POST') {
     res.status(405).end('only post method accepted');
@@ -40,7 +38,6 @@ exports.receiveNotification = function receiveNotification(req, res) {
   var snsHeader = req.get('x-amz-sns-message-type');
   if (snsHeader === undefined) {
     res.status(403).end('invalid SNS message');
-
   }
 
   // use the sns-validator library to verify signature
@@ -78,7 +75,6 @@ exports.receiveNotification = function receiveNotification(req, res) {
             res.status(200).end('ok');
             return;
           });
-
         }).on('error', (e) => {
           console.error(e);
           res.status(500).end('confirmation failed');
@@ -100,7 +96,7 @@ exports.receiveNotification = function receiveNotification(req, res) {
           raw: true
         };
 
-        topic.publish(message, options).then(function(data) {
+        topic.publish(message, options).then(function (data) {
           console.log('message published ' + data[0]);
           // var messageIds = data[0];
           // var apiResponse = data[1];
