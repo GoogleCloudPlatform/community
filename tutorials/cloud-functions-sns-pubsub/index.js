@@ -14,7 +14,7 @@ var MessageValidator = require('sns-validator');
 var validator = new MessageValidator();
 
 // our pubsub client
-const pubsub = new PubSub();
+const pubsub = PubSub();
 
 // the cloud pubsub topic we will publish messages to
 const topicName = 'sns-events';
