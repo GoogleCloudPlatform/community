@@ -79,7 +79,7 @@ LAMP. Next, install Apache and PHP.
 #### Debian/Ubuntu
 
     sudo apt-get update
-    sudo apt-get install apache2 php5
+    sudo apt-get install apache2 php libapache2-mod-php
 
 #### CentOS 6
 

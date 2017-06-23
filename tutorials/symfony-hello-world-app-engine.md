@@ -39,17 +39,14 @@ Ensure that your system meets the [system requirements](https://getcomposer.org/
 Composer will require that your PHP installation supports
 [cURL](http://php.net/manual/en/book.curl.php).
 
+* Install and then initialize the
+ [Google Cloud SDK](https://cloud.google.com/sdk/docs).
+
 * Create a new Google Cloud Platform project or retrieve the project ID of
 an existing project from the [Google Cloud Platform Console](https://console.cloud.google.com/iam-admin/projects). You can retrieve a
 list of your existing project IDs by using the `gcloud` command-line tool. From the command line, run:
 
         gcloud projects list
-
-* Install and then initialize the
- [Google Cloud SDK](https://cloud.google.com/sdk/docs).
-
-* Create and retrieve the name of your
-  [Google Cloud Storage bucket](https://cloud.google.com/appengine/docs/php/googlestorage/setup).
 
 ## Deploying Hello World with Symfony on App Engine
 
@@ -66,37 +63,21 @@ terminal window, enter the following command:
 
         cd appengine-symfony-starter-project
 
-### Modify the app configuration
-
-1. Edit `app.yaml` and replace `YOUR_GCS_BUCKET_NAME` with the bucket name you
-   created above.
-1. Edit `php.ini` and replace `YOUR_GCS_BUCKET_NAME` with the bucket name you
-   created above.
-
 ### Run the app on your local computer
 
-To run the app locally, use Google App Engine Launcher. Follow these steps.
+The following steps will serve your application on `http://localhost:8080` using
+the script `dev_appserver.py`, which was installed with the Google Cloud SDK.
 
-1. Run **GoogleAppEngineLauncher**. This application was installed with the App
-   Engine SDK.
+1. Run the following command from the root of the project:
 
-1. Select **File** > **Add Existing Application**.
+        composer run-script server --timeout=0
 
-1. Set "Application ID" to `appengine-symfony-starter-project`.
+    This step is critical, as App Engine uses a read-only filesystem, so the
+    cache files must be written first.
 
-1. Set "Application Directory" to the *parent directory* of your project.
+1. After the instance starts, open your browser to `http://localhost:8080`.
 
-1. Verify "Runtime" is set to **PHP**.
-
-1. Select **Create**. You should see the app in the list, now. Note the **Port**.
-
-1. To start the local web server, select **Run**.
-
-1. After the instance starts, select **Browse**. This will open a default
-   browser window to `http://localhost:[PORT]`, where `[PORT]` is
-   the port number of your instance, usually `8080`.
-
-When the page loads, you see a simple text message that says
+1. When the page loads, you see a simple text message that says
 **Homepage.**, which is Symfony's "hello world" text.
 
 Note: If the page fails to load, select **Logs** in the Google App Engine
@@ -106,7 +87,10 @@ Launcher to see what error conditions caused the failure.
 
 1. To deploy the code to App Engine, enter the following command:
 
-        gcloud app deploy
+        composer run-script deploy --timeout=0
+
+    Just like above, this script warms the Symfony file cache before deploying
+    to App Engine, as App Engine uses a read-only filesystem.
 
 1. When the deployment finishes, your app will be serving traffic at
 `http://[YOUR_PROJECT_ID].appspot.com`.
@@ -115,73 +99,84 @@ Launcher to see what error conditions caused the failure.
 
         gcloud app browse
 
-    It can take some time for the app to load for the first time, while the
-    Cloud Platform Console generates cache files in Cloud Storage. When the page
-    loads, you will see the message: **Homepage**.
+1. When the page loads, you will see the message: **Homepage**.
 
 Note: If the page fails to load,
 [check the logs](https://console.cloud.google.com/project/_/logs).
-If you see an error message that tells
-you the Cloud Storage bucket can't be found, follow the instructions in
-[Setup](https://cloud.google.com/googlestorage/setup).
 
-#### Redeploying the app
+### Building the Cache
 
-When you redeploy your Symfony app, you might need to clear the cache afterwards.
-The app includes a handler that enables you to clear the cache by browsing to
-the following URL:
+This application includes two helper scripts, [`scripts/deploy.php`][deploy]
+and [`scripts/server.php`][server], which can be run with `composer run-script`.
+Both of these are used to prime the file cache, which is required for the
+application to run due to App Engine Standard's read-only filesystem. The
+scripts are convenient wrappers for Symfony's `cache:clear` and `cache:warmup`
+commands, and are the equivalent to the following:
 
-    http://[YOUR-PROJECT-ID].appspot.com/clear_cache.php
+```sh
+# This is equivalent to running `composer run-script server`
+app/console cache:clear --no-debug --env=dev
+app/console cache:warmup --no-debug --env=dev
+dev_appserver.py .
+```
 
-App Engine prompts you for your administrator credentials.
+```sh
+# This is equivalent to running `composer run-script deploy`
+app/console cache:clear --no-debug --env=prod
+app/console cache:warmup --no-debug --env=prod
+gcloud app deploy
+```
 
-### Configuring the App Engine application
+[deploy]: https://github.com/GoogleCloudPlatform/appengine-symfony-starter-project/blob/master/scripts/deploy.php
+[server]: https://github.com/GoogleCloudPlatform/appengine-symfony-starter-project/blob/master/scripts/server.php
+
+## Using Cloud Storage as your Filesystem
+
+### Setup
+
+App Engine doesn't provide access to a file system, like the one you might
+use on a local computer or a server. You can use [Cloud Storage][cloud_storage]
+in place of a local file system.
+
+1. Create and retrieve the name of your
+   [Google Cloud Storage bucket][app_engine_cloud_storage_setup].
+1. Edit `app/config/parameters.yml` and replace `YOUR_GCS_BUCKET_NAME` with the
+   bucket name you created above.
+1. Browse to `/storage`
+
+This script will write a file "helloworld.txt" to the Cloud Storage bucket
+specified in `parameters.yml`, and then reads it back and displays it in the
+browser.
+
+By registering Cloud Storage as a stream wrapper, the `gs://` path can be used
+to read and write to a Cloud Storage bucket as if it was a filesystem.
+
+## Configuring the App Engine application
 
 App Engine applications require a configuration file, named `app.yaml`, to
-[configure the app](https://cloud.google.com/config/appconfig). The Symfony project adds this file to the
-code from the original branch. In the `handlers` section of the file, you can
-see the URL routing handlers for the app. For example, you'll find the handler
-for the `clear_cache` command there. The handler for clearing the cache looks
-like this:
+[configure the app][app_config]. The Symfony project adds this file to the code
+from the original branch. In the `handlers` section of the file, you can see the
+URL routing handlers for the app. For example, you'll find the handler for your
+static assets and front controller there. The handlers look like this:
 
     handlers:
-    # a script to clear our cache
-    - url: /clear_cache
-      script: web/clear_cache.php
-      login: admin
-
+    # tell appengine where our static assets live
+    - url: /bundles
+      static_dir: web/bundles
+    # the symfony front controller
+    - url: /.*
+      script: web/app.php
 
 The **url** setting defines the URL that is being handled. The value for
 **script** points to the file that contains the scripting code to run when the
-URL is requested; in this case, it is `clear_cache.php`.
-
-### Specifying the database
-
-App Engine provides [Google Cloud SQL](https://cloud.google.com/sql/docs/)
-as a managed, relational MySQL database. Cloud SQL can be used with Doctrine the
-same as any other MySQL database in `app/config/config_prod.yml`.
-
-### Overriding directories to use Cloud Storage
-
-App Engine doesn't provide access to a file system, like the one you might
-use on a local computer or a server. The Symfony app uses
-[Cloud Storage](https://cloud.google.com/storage/docs/overview) in place of a local file system.
-
-Cloud Storage organizes data storage into *buckets*, and each App Engine
-application has a default bucket. In the `env_variables` section of `app.yaml`,
-the declarations for `CACHE_DIR` and `LOG_DIR` specify the paths where cached
-data and logs are stored.
-
-    env_variables:
-      GCS_BUCKET_NAME: "YOUR_GCS_BUCKET_NAME"
-
-The `gs://` protocol signifies that the URI for the location is pointing to a
-Cloud Storage bucket, and `#default#` is replaced by the default bucket name, at
-run time. You can change the paths of these environment variables to point to
-specific Cloud Storage buckets, if you prefer. For more information about the
-default bucket, see [Setup](https://cloud.google.com/googlestorage/setup), in the App
-Engine documentation.
+URL is requested.
 
 ## Next steps
 
-* Try the [App Engine PHP tutorial](https://cloud.google.com/gettingstarted/introduction)
+* Take a look at the [App Engine PHP tutorials][app_engine_php_tutorials]
+
+[app_config]: https://cloud.google.com/appengine/docs/standard/php/config/appref
+[app_engine_php_tutorials]: https://cloud.google.com/appengine/docs/standard/php/tutorials
+[cloud_storage]: https://cloud.google.com/storage/docs/overview
+[cloud_storage_setup]: https://cloud.google.com/googlestorage/setup
+[app_engine_cloud_storage_setup]: https://cloud.google.com/appengine/docs/php/googlestorage/setup

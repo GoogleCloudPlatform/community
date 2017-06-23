@@ -1,0 +1,10 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+  - url: /.*
+    script: api.app
+
+env_variables:
+  GCLOUD_PROJECT: 'YOUR_PROJECT_ID'
