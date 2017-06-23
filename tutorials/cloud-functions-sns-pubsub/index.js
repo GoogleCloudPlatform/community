@@ -20,7 +20,7 @@ const pubsub = PubSub();
 const topicName = 'sns-events';
 const topic = pubsub.topic(topicName);
 
-const expectedTopicArn = "arn:aws:sns:us-west-2:681196457733:new-demo";
+const expectedTopicArn = 'arn:aws:sns:us-west-2:681196457733:new-demo';
 
 
 /**
@@ -32,14 +32,14 @@ const expectedTopicArn = "arn:aws:sns:us-west-2:681196457733:new-demo";
 exports.receiveNotification = function receiveNotification(req, res) {
 
   // we only respond to POST method HTTP requests
-  if (req.method !== "POST") {
-    res.status(405).end("only post method accepted");
+  if (req.method !== 'POST') {
+    res.status(405).end('only post method accepted');
   }
 
   // all valid SNS requests should have this header
   var snsHeader = req.get('x-amz-sns-message-type');
   if (snsHeader === undefined) {
-    res.status(403).end("invalid SNS message");
+    res.status(403).end('invalid SNS message');
 
   }
 
@@ -48,7 +48,7 @@ exports.receiveNotification = function receiveNotification(req, res) {
   validator.validate(JSON.parse(req.body), function (err, message) {
     if (err) {
       // the message did not validate
-      res.status(403).end("invalid SNS message");
+      res.status(403).end('invalid SNS message');
       return;
     }
     if (message.TopicArn !== expectedTopicArn) {
@@ -57,7 +57,7 @@ exports.receiveNotification = function receiveNotification(req, res) {
       // one could adapt this to accept an array, but if you do not check
       // the origin of the message, anyone could end up publishing to your
       // cloud function
-      res.status(403).end("invalid SNS Topic");
+      res.status(403).end('invalid SNS Topic');
       return;
     }
 
@@ -66,7 +66,7 @@ exports.receiveNotification = function receiveNotification(req, res) {
     var options;
     switch (message.Type.toLowerCase()) {
       case 'subscriptionconfirmation':
-        console.log("confirming subscription " + message.SubscribeURL);
+        console.log('confirming subscription ' + message.SubscribeURL);
         // SNS subscriptions are confirmed by requesting the special URL sent
         // by the service as a confirmation
         https.get(message.SubscribeURL, (subRes) => {
@@ -75,13 +75,13 @@ exports.receiveNotification = function receiveNotification(req, res) {
 
           subRes.on('data', (d) => {
             console.log(d);
-            res.status(200).end("ok");
+            res.status(200).end('ok');
             return;
           });
 
         }).on('error', (e) => {
           console.error(e);
-          res.status(500).end("confirmation failed");
+          res.status(500).end('confirmation failed');
           return;
         });
         break;
@@ -101,15 +101,15 @@ exports.receiveNotification = function receiveNotification(req, res) {
         };
 
         topic.publish(message, options).then(function(data) {
-          console.log("message published " + data[0]);
+          console.log('message published ' + data[0]);
           // var messageIds = data[0];
           // var apiResponse = data[1];
         });
-        res.status(200).end("ok");
+        res.status(200).end('ok');
         return;
       default:
-        console.error("should not have gotten to default block");
-        res.status(400).end("invalid SNS message");
+        console.error('should not have gotten to default block');
+        res.status(400).end('invalid SNS message');
     }
   });
 };
