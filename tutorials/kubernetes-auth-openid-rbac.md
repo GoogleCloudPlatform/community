@@ -114,6 +114,10 @@ NAME            STATUS    AGE       VERSION
 ip-10-9-11-30   Ready     20m       v1.6.1
 ```
 
+## Summary
+
+You have a kubernetes cluster with authorization by email. Plus you don't need to generate a new OpenID for new clusters and skip Step 4. 
+
 [RBAC]: https://en.wikipedia.org/wiki/Role-based_access_control
 [OpenID Connect]: http://openid.net/connect/
 [kubeadm]: https://kubernetes.io/docs/getting-started-guides/kubeadm/
