@@ -6,26 +6,29 @@ tags: Kubernetes
 date_published: 2017-05-10
 ---
 
-In this tutorial you will setup authentication and authorization to your own Kubernetes cluster using your Google account with the help of Role Based Access-Control ([RBAC]) and [OpenID Connect].
+In this tutorial you set up authentication and authorization to your own Kubernetes cluster using your Google account with the help of Role Based Access-Control ([RBAC]) and [OpenID Connect].
 RBAC was introduced in the Kubernetes 1.6 article, RBAC Support in Kubernetes, and was based on Micah Hausle’s [Reduce administrative toil with Kubernetes 1.3](https://www.skuid.com/blog/reduce-administrative-toil-with-kubernetes-1-3/).
 
-### Objectives
-- Creating a Google API Console project and client ID
-- Setup a Kubernetes cluster with kubeadm
-- Generate a local user credentials
-- Grant permissions
+## Objectives
 
-## Step 1: Creating a Google API Console project and client ID
-- Go to https://console.developers.google.com/projectselector/apis/library
-- From the project drop-down, select an existing project, or create a new one by selecting **Create a new project**
-- In the sidebar under **API Manager**, select **Credentials**, then select the **OAuth consent screen** tab.
-- Choose an **Email Address**, specify a **Product Name**, and submit **Save**.
-- In the **Credentials** tab, select the **New credentials** drop-down list, and choose **OAuth client ID**.
-- Under **Application type**, select **Other**.
-- From the resulting **OAuth client dialog box**, copy the **Client ID**. The **Client ID** lets your app access enabled Google APIs.
-- Download the client secret JSON file of the credentials.
+* Creating a Google API Console project and client ID.
+* Setup a Kubernetes cluster with `kubeadm`.
+* Generate a local user credentials.
+* Grant permissions.
 
-## Step 2: Setup a Kubernetes cluster
+## Creating a Google API Console project and client ID
+
+1. Go to https://console.developers.google.com/projectselector/apis/library.
+1. From the project drop-down, select an existing project, or create a new one by selecting **Create a new project**.
+1. In the sidebar under **API Manager**, select **Credentials**, then select the **OAuth consent screen** tab.
+1. Choose an **Email Address**, specify a **Product Name**, and submit **Save**.
+1. In the **Credentials** tab, select the **New credentials** drop-down list, and choose **OAuth client ID**.
+1. Under **Application type**, select **Other**.
+1. From the resulting **OAuth client dialog box**, copy the **Client ID**. The **Client ID** lets your app access enabled Google APIs.
+1. Download the client secret JSON file of the credentials.
+
+## Setup a Kubernetes cluster
+
 After initializing the master instance, you need to update the `kube api server` arguments in the `/etc/kubernetes/manifests/kube-apiserver.yaml`. Each argument should be on a separate line. 
 More information about the OIDC attributes can be found in the [Authenticating](https://kubernetes.io/docs/admin/authentication/#option-1---oidc-authenticator) reference documentation.
 
@@ -41,14 +44,15 @@ NAME            STATUS    AGE       VERSION
 ip-10-9-11-30   Ready     15m       v1.6.1
 ```
 
-## Step 3: Generate a local user credentials
-### 3.1 Install the k8s helper on the client machine:
+## Generate a local user credentials
+
+### Install the helper on the client machine:
 
 ```
 $ go get github.com/micahhausler/k8s-oidc-helper
 ```
 
-### 3.2 Generate a user’s credentials for kube config:
+### Generate a user’s credentials for `kube config`
 
 ```yaml
 $ k8s-oidc-helper -c path/to/client_secret_<client_id>.json
@@ -80,8 +84,9 @@ Error from server (Forbidden): User "name@example.com" cannot list nodes at the 
 
 It proves that `id-token` and api server arguments work and email is extracted from a request.
 
-## Step 4: Grant permissions
-For now, grant admin rights to the user name@example.com with an authorization specification:
+## Grant permissions
+
+For now, grant admin rights to the user `name@example.com` with an authorization specification:
 
 ```
 kind: ClusterRole
@@ -114,9 +119,7 @@ NAME            STATUS    AGE       VERSION
 ip-10-9-11-30   Ready     20m       v1.6.1
 ```
 
-## Summary
-
-You have a kubernetes cluster with authorization by email. Plus you don't need to generate a new OpenID for new clusters and skip Step 4. 
+You now have a kubernetes cluster with authorization by email. Plus, you don't need to generate a new OpenID for new clusters and skip Step 4. 
 
 [RBAC]: https://en.wikipedia.org/wiki/Role-based_access_control
 [OpenID Connect]: http://openid.net/connect/
