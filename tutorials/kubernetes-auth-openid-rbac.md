@@ -120,6 +120,9 @@ After applying changes by using `kubectl create -f admin.yaml`,
 Do the test again:
 
     $ kubectl --user=name@example.com get nodes
+   
+Output:
+
     NAME            STATUS    AGE       VERSION
     ip-10-9-11-30   Ready     20m       v1.6.1
 
