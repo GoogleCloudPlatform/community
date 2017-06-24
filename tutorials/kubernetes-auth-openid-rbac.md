@@ -28,7 +28,7 @@ RBAC was introduced in the Kubernetes 1.6 article, RBAC Support in Kubernetes, a
 1. From the resulting **OAuth client dialog box**, copy the **Client ID**. The **Client ID** lets your app access enabled Google APIs.
 1. Download the client secret JSON file of the credentials.
 
-## Setup a Kubernetes cluster
+## Set up a Kubernetes cluster
 
 After initializing the master instance, you need to update the `kube api server` arguments in the `/etc/kubernetes/manifests/kube-apiserver.yaml`. Each argument should be on a separate line. 
 More information about the OIDC attributes can be found in the [Authenticating](https://kubernetes.io/docs/admin/authentication/#option-1---oidc-authenticator) reference documentation.
@@ -49,37 +49,32 @@ Output appears as follows:
 
 ## Generate local user credentials
 
-### Install the helper on the client machine
+1. Install the helper on the client machine. Run the following command:
 
-Run the following command:
-
-    go get github.com/micahhausler/k8s-oidc-helper
+        go get github.com/micahhausler/k8s-oidc-helper
 
 
-### Generate a user's credentials for `kube config`
+1. Generate a user's credentials for `kube config`. Run the following command:
 
-Run the following command:
+        k8s-oidc-helper -c path/to/client_secret_[CLIENT_ID].json
 
-    k8s-oidc-helper -c path/to/client_secret_[CLIENT_ID].json
+    This command should open the browser and ask permissions. After that, it provides you a token in the browser. Copy it and   paste to the terminal for `k8s-oidc-helper`. The output of the command should look as follows:
 
-This command should open the browser and ask permissions. After that, it provides you a token in the browser. Copy it and paste to the terminal for `k8s-oidc-helper`. The output of the command should look as follows:
+        # Add the following to your ~/.kube/config
 
-    # Add the following to your ~/.kube/config
+        users:
+        - name: name@example.com
+          user:
+            auth-provider:
+              config:
+                client-id: 32934980234312-9ske1sskq89423480922scag3hutrv7.apps.googleusercontent.com
+                client-secret: ZdyKxYW-tCzuRWwB3l665cLY
+                id-token: eyJhbGciOiJSUzI19fvTKfPraZ7yzn.....HeLnf26MjA
+                idp-issuer-url: https://accounts.google.com
+                refresh-token: 18mxeZ5_AE.jkYklrMAf5.IMXnB_DsBY5up4WbYNF2PrY
+              name: oidc
 
-    users:
-    - name: name@example.com
-      user:
-        auth-provider:
-          config:
-            client-id: 32934980234312-9ske1sskq89423480922scag3hutrv7.apps.googleusercontent.com
-            client-secret: ZdyKxYW-tCzuRWwB3l665cLY
-            id-token: eyJhbGciOiJSUzI19fvTKfPraZ7yzn.....HeLnf26MjA
-            idp-issuer-url: https://accounts.google.com
-            refresh-token: 18mxeZ5_AE.jkYklrMAf5.IMXnB_DsBY5up4WbYNF2PrY
-          name: oidc
-
-
-Copy everything after `users:` and append it to your existing user list in the `~/.kube/config`. Now you have 2 users: one from the new cluster configuration and one that you added.
+1. Copy everything after `users:` and append it to your existing user list in the `~/.kube/config`. Now you have 2 users: one from the new cluster configuration and one that you added.
 
 ### Verify the token
 
@@ -87,11 +82,11 @@ Test the id-token using https://jwt.io/. Be sure that you have `"email_verified"
 
     kubectl --user=name@example.com get nodes
   
-Results in the following output:
+This results in the following output:
 
     Error from server (Forbidden): User "name@example.com" cannot list nodes at the cluster scope. (get nodes)
 
-This proves that `id-token` and api server arguments work and email is extracted from a request.
+This error message proves that `id-token` and api server arguments work and email is extracted from a request.
 
 ## Grant permissions
 
