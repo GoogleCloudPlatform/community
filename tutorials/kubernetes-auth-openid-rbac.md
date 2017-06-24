@@ -58,6 +58,8 @@ Run the following command:
 
 ### Generate a user's credentials for `kube config`
 
+Run the following command:
+
     k8s-oidc-helper -c path/to/client_secret_[CLIENT_ID].json
 
 This command should open the browser and ask permissions. After that, it provides you a token in the browser. Copy it and paste to the terminal for `k8s-oidc-helper`. The output of the command should look as follows:
