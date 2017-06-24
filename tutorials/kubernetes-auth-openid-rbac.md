@@ -12,10 +12,10 @@ RBAC was introduced in the Kubernetes 1.6 article, RBAC Support in Kubernetes, a
 
 ## Objectives
 
-+ Creating a Google API Console project and client ID.
-+ Set up a Kubernetes cluster with `kubeadm`.
-+ Generate a local user's credentials.
-+ Grant permissions.
+* Creating a Google API Console project and client ID
+* Setting up a Kubernetes cluster with `kubeadm`
+* Generating a local user's credentials
+* Granting permissions
 
 ## Creating a Google API Console project and client ID
 
