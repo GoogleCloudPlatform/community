@@ -3,7 +3,7 @@ title: Kubernetes 1.6.1 Authentication via Google OpenID
 description: A sample process how to use Google Accounts with Kubernetes cluster with Role Based Access-Control (RBAC) authorization mode.
 author: miry
 tags: Kubernetes
-date_published: 2017-05-10
+date_published: 2017-06-24
 ---
 
 In this tutorial you set up authentication and authorization to your own Kubernetes cluster using your Google account with the help of Role Based Access-Control ([RBAC]) and [OpenID Connect].
