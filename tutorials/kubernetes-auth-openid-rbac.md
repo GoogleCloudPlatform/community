@@ -1,5 +1,5 @@
 ---
-title: Kubernetes 1.6.1 Authentication via Google OpenID
+title: Kubernetes 1.6.1 Authentication by using Google OpenID
 description: A sample process how to use Google Accounts with Kubernetes cluster with Role Based Access-Control (RBAC) authorization mode.
 author: miry
 tags: Kubernetes
