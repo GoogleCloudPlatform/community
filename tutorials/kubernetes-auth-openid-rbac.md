@@ -127,7 +127,7 @@ Output:
     NAME            STATUS    AGE       VERSION
     ip-10-9-11-30   Ready     20m       v1.6.1
 
-You now have a Kubernetes cluster with authorization by email. Plus, you don't need to generate a new OpenID for new clusters and skip Step 4. 
+You now have a Kubernetes cluster with authorization by email. Plus, you don't need to generate a new OpenID for new clusters. 
 
 [RBAC]: https://wikipedia.org/wiki/Role-based_access_control
 [OpenID Connect]: http://openid.net/connect/
