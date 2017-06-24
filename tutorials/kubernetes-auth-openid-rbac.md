@@ -29,7 +29,7 @@ RBAC was introduced in the Kubernetes 1.6 article, RBAC Support in Kubernetes, a
 
 ## Set up a Kubernetes cluster
 
-After initializing the master instance, you need to update the `kube api server` arguments in the `/etc/kubernetes/manifests/kube-apiserver.yaml`. Each argument should be on a separate line. 
+After initializing the master instance, you need to update the `kube api server` arguments in the `/etc/kubernetes/manifests/kube-apiserver.yaml`. Each argument should be on a separate line.
 More information about the OIDC attributes can be found in the [Authenticating](https://kubernetes.io/docs/admin/authentication/#option-1---oidc-authenticator) reference documentation.
 
 
@@ -80,7 +80,7 @@ Output appears as follows:
 Test the id-token using https://jwt.io/. Be sure that you have `"email_verified": true` in the decoded message. Test connection of the new user:
 
     kubectl --user=name@example.com get nodes
-  
+
 This results in the following output:
 
     Error from server (Forbidden): User "name@example.com" cannot list nodes at the cluster scope. (get nodes)
@@ -117,13 +117,13 @@ After applying changes by using `kubectl create -f admin.yaml`,
 Do the test again:
 
     $ kubectl --user=name@example.com get nodes
-   
+
 Output:
 
     NAME            STATUS    AGE       VERSION
     ip-10-9-11-30   Ready     20m       v1.6.1
 
-You now have a Kubernetes cluster with authorization by email. Plus, you don't need to generate a new OpenID for new clusters. 
+You now have a Kubernetes cluster with authorization by email. Plus, you don't need to generate a new OpenID for new clusters.
 
 [RBAC]: https://wikipedia.org/wiki/Role-based_access_control
 [OpenID Connect]: http://openid.net/connect/
