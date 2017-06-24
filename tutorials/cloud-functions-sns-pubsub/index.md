@@ -7,7 +7,9 @@ date_published: 2017-06-23
 ---
 
 By Preston Holmes
+
 Senior Technical Solutions Consultant
+
 Google, Inc.
 
 This tutorial and sample function demonstrates using [Google Cloud
