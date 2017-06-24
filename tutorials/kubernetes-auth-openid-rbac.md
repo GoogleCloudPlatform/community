@@ -27,7 +27,7 @@ RBAC was introduced in the Kubernetes 1.6 article, RBAC Support in Kubernetes, a
 1. From the resulting **OAuth client dialog box**, copy the **Client ID**. The **Client ID** lets your app access enabled Google APIs.
 1. Download the client secret JSON file of the credentials.
 
-## Set up a Kubernetes cluster
+## Setting up a Kubernetes cluster
 
 After initializing the master instance, you need to update the `kube api server` arguments in the `/etc/kubernetes/manifests/kube-apiserver.yaml`. Each argument should be on a separate line.
 More information about the OIDC attributes can be found in the [Authenticating](https://kubernetes.io/docs/admin/authentication/#option-1---oidc-authenticator) reference documentation.
@@ -46,7 +46,7 @@ Output appears as follows:
     ip-10-9-11-30   Ready     15m       v1.6.1
 
 
-## Generate local user credentials
+## Generating local user credentials
 
 1. Install the helper on the client machine. Run the following command:
 
@@ -75,7 +75,7 @@ Output appears as follows:
 
 1. Copy everything after `users:` and append it to your existing user list in the `~/.kube/config`. Now you have 2 users: one from the new cluster configuration and one that you added.
 
-### Verify the token
+### Verifying the token
 
 Test the id-token using https://jwt.io/. Be sure that you have `"email_verified": true` in the decoded message. Test connection of the new user:
 
@@ -87,7 +87,7 @@ This results in the following output:
 
 This error message proves that `id-token` and api server arguments work and email is extracted from a request.
 
-## Grant permissions
+## Granting permissions
 
 For now, grant admin rights to the user `name@example.com` with an authorization specification:
 
