@@ -124,11 +124,11 @@ gcloud beta organizations add-iam-policy-binding ${TF_VAR_org_id} \
 Create the remote backend bucket in Cloud Storage and the `backend.tf` file for storage of the `terraform.tfstate` file:
 
 ```sh
-gsutil mb gs://${TF_BACKEND_BUCKET}
+gsutil mb gs://${TF_ADMIN}
  
 cat > backend.tf <<EOF
-terraform {
- backend "cloud_storage" {
+terraform {  
+ backend "gcs" {
    bucket = "${TF_ADMIN}"
    path   = "/"
  }
@@ -258,6 +258,8 @@ SSH into the instance created:
 ```sh
 gcloud compute ssh $(terraform output | grep instance_id | cut -d = -f2)
 ```
+
+> Note that SSH may not work unless your organization user also has access to the newly created project resources.
 
 ## Cleaning up
 First, destroy the resources created by Terraform:
