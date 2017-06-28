@@ -312,7 +312,7 @@ The two big complicating factors are:
 When working with HTTP proxying, you'll be using the `http_connection_manager` filter. It knows how to parse HTTP headers and figure out which Envoy cluster should handle a given connection, for both HTTP/1.1 and HTTP/2. The filter configuration for `http_connection_manager` is a dictionary with quite a few options, but the most critical one for basic proxying is the `virtual_hosts` array, which defines how exactly the filter will make routing decisions. Each element in the array is another dictionary containing the following attributes:
 
 * `name`: a human-readable name for this service.
-* `domains`: an array of DNS-style domain names, one of which must match the domain name in the URL for this `virtual_host` to match (or '*' to match any domain).
+* `domains`: an array of DNS-style domain names, one of which must match the domain name in the URL for this `virtual_host` to match (or `"*"` to match any domain).
 * `routes`: an array of route dictionaries (see below).
 
 Each route dictionary needs to include at minimum:
