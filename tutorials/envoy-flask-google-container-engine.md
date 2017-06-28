@@ -3,7 +3,7 @@ title: Deploying Envoy with a Python Flask webapp and Google Container Engine
 description: Learn how to use Envoy in Google Container Engine as a foundation for adding resilience and observability to a microservice-based application.
 author: flynn
 tags: microservices, Container Engine, Envoy, Flask, Python
-date_published: 2017-06-19
+date_published: 2017-06-28
 ---
 
 One of the recurring problems with using microservices is managing communications. Your clients need to be able to speak to your services, and in most cases services need to speak amongst themselves. When things go wrong, the system as a whole needs to be resilient, so that it degrades gracefully instead of catastrophically, but it also needs to be observable so that you can figure out what's wrong.
