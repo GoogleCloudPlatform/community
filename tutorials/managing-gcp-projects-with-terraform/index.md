@@ -124,7 +124,7 @@ gcloud beta organizations add-iam-policy-binding ${TF_VAR_org_id} \
 Create the remote backend bucket in Cloud Storage and the `backend.tf` file for storage of the `terraform.tfstate` file:
 
 ```sh
-gsutil mb gs://${TF_ADMIN}
+gsutil mb -p ${TF_ADMIN} gs://${TF_ADMIN}
  
 cat > backend.tf <<EOF
 terraform {  
