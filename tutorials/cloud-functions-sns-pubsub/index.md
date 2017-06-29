@@ -6,7 +6,7 @@ tags: Cloud Functions, AWS, SNS, Node.js
 date_published: 2017-06-23
 ---
 
-Preston Holmes | Senior Technical Solutions Consultant | Google, Inc.
+Preston Holmes | Senior Technical Solutions Consultant | Google
 
 This tutorial and sample function demonstrates using [Google Cloud
 Functions][functions] as an integration point between the [Amazon Simple
