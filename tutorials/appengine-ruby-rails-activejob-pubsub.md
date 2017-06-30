@@ -196,8 +196,8 @@ of your web instances at the cost of potentially using more resources.
           enable_health_check: False
 
         # Optional scaling configuration
-        automatic_scaling:
-          min_num_instances: 1
+        manual_scaling:
+          instances: 1
 
    Be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
@@ -205,9 +205,10 @@ of your web instances at the cost of potentially using more resources.
    respond to the health check ping.
 
    As mentioned above, you can configure scaling for the worker service independently of the default (web) service.
-   In the `automatic_scaling` section, you have configured the worker service to start with 1 worker instance
-   and dynamically increase the number of worker instances if CPU utilization surpasses the configured threshold
-   (defaults to 0.5). For more information, see [scaling configuration options in app.yaml](https://cloud.google.com/appengine/docs/flexible/ruby/configuring-your-app-with-app-yaml#services).
+   In the `manual_scaling` section, you have configured the worker service to start with 1 worker instance. For
+   more information on scaling options, see [scaling configuration options in app.yaml](https://cloud.google.com/appengine/docs/flexible/ruby/configuring-your-app-with-app-yaml#services).
+   If you choose an `automatic_scaling` option, be aware that scaling for the background processing is based off
+   of CPU utilization, not queue size.
 
 1. Deploy both services to App Engine
 
