@@ -46,6 +46,7 @@ you don't need to change the default setting.
 In production, you need to decide how much computing power is required
 for your application. In general, database systems tend to be more
 constrained by I/O bottlenecks and hard disk speed than by CPU capabilities.
+Redis, in particular, relies heavily on memory so be sure to allocate enough memory for your use case.
 
 Most Linux distributions have some version of Redis integrated with
 their package managers. For this tutorial, you use Debian 8 (jessie) which includes Redis 2.8.
