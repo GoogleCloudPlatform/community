@@ -1,6 +1,6 @@
 ---
 title: How to deploy Ruby Discourse app onto Google Cloud Platform
-description: Learn how to setup a Ruby Discourse app on Google Cloud Platform
+description: Learn how to setup a Ruby Discourse app on Google Cloud Platform.
 author: hxiong388
 tags: App Engine, Ruby, Ruby on Rails, Discourse, Redis, Postgres
 date_published: 2017-06-30
