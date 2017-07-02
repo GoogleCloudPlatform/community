@@ -1,0 +1,24 @@
+{
+  "name": "gcp-alert-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doitintl/gcp-alert-service.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/doitintl/gcp-alert-service/issues"
+  },
+  "homepage": "https://github.com/doitintl/gcp-alert-service#readme",
+  "dependencies": {
+    "@google-cloud/datastore": "^1.0.2",
+    "base-64": "^0.1.0",
+    "slack-node": "^0.1.8"
+  }
+}
