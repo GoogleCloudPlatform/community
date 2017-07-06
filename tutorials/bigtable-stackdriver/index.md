@@ -101,6 +101,7 @@ the requirements:
 
 [jupyter]: http://jupyter.readthedocs.io/en/latest/install.html
 [virutalenv]: https://virtualenv.pypa.io/en/stable/installation/
+[requirements.txt]: https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/bigtable-stackdriver/requirements.txt
 
 ## Loading the notebook
 
@@ -114,3 +115,5 @@ Jupyter notebook:
 Open the Jupyter notebook in the browser. From there you can follow the
  tutorial to see how basic Cloud Bigtable metrics were plotted, and how they
  responded to programmatic scaling.
+
+[monitoring_metrics.ipynb](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/bigtable-stackdriver/monitoring_metrics.ipynb)
