@@ -39,22 +39,16 @@ Google Container Engine runs code from Docker images, so you'll need the Docker 
 
 Everything you'll use in this demo is in [Datawire's `envoy-steps` repo](https://github.com/datawire/envoy-steps), so you'll need to clone that and `cd` into your clone:
 
-```
-git clone https://github.com/datawire/envoy-steps.git
-cd envoy-steps
-```
+    git clone https://github.com/datawire/envoy-steps.git
+    cd envoy-steps
 
 In your `envoy-steps` directory, you should see `README.md` and directories named `postgres`, `usersvc`, etc. Each of those directories contains a service to be deployed, and each can be brought up or down independently with
 
-```
-sh up.sh $service
-```
+    sh up.sh $service
 
 or
 
-```
-sh down.sh $service
-```
+    sh down.sh $service
 
 Between Python code, Kubernetes configs, docs, etc, there’s simply too much to include everything in one document, so this tutorial will just hit the highlights here, and you can look at all the details in your clone of the repo.
 
@@ -64,29 +58,21 @@ Since Kubernetes needs to pull Docker images to run in its containers, you'll ne
 
 Whatever you have set up, you'll need to push to the correct registry, and you'll need to use the correct registry when telling Kubernetes where to go for images. Unfortunately, `kubectl` doesn't have a provision for parameterizing the YAML files it uses to figure out what to do, so `envoy-steps` contains scripts to set things up correctly:
 
-```
-sh prep.sh registry-info
-```
+    sh prep.sh registry-info
 
 where `registry-info` is the appropriate prefix for the `docker push` command. For example, if you want to use the `example` organization in DockerHub, you'd do
 
-```
-sh prep.sh example
-```
+    sh prep.sh example
 
 To use the `example` repository under `gcr.io`, you'd do
 
-```
-sh prep.sh gcr.io/example
-```
+    sh prep.sh gcr.io/example
 
 You'll need to have permissions to push to whatever you use here. Once `prep.sh` finishes, though, all the configuration files will be updated with the correct image names.
 
 If you need to, you can use the following to clean everything up and start over:
 
-```
-sh clean.sh
-```
+    sh clean.sh
 
 ## Database Matters
 
@@ -94,46 +80,36 @@ The Flask app you'll be deploying is a very, very simple service that allows cre
 
 So for Postgres, all that's necessary is a way to spin up a Postgres server in our Kubernetes cluster. Postgres actually publishes a prebuilt Docker image for Postgres 9.6 on DockerHub, which makes this very easy. The relevant config file is `postgres/deployment.yaml`, which includes in its spec section the specifics of the image to use:
 
-```
-spec:
-  containers:
-  - name: postgres
-    image: postgres:9.6
-```
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:9.6
 
 For the Flask app to talk to the Postgres server, it needs a Kubernetes `service` opening the port within the cluster. That’s defined in `postgres/service.yaml` with highlights:
 
-```
-spec:
-  type: ClusterIP
-  ports:
-  - name: postgres
-    port: 5432
-  selector:
-    service: postgres
-```
+    spec:
+      type: ClusterIP
+      ports:
+      - name: postgres
+        port: 5432
+      selector:
+        service: postgres
 
 Note that this service is type `ClusterIP`, so that it can be seen only within the cluster.
 
 To start the database, just run:
 
-```
-sh up.sh postgres
-```
+    sh up.sh postgres
 
 Once that’s done, then `kubectl get pods` should show a `postgres` pod running:
 
-```
-NAME                       READY  STATUS   RESTARTS AGE
-postgres-1385931004-p3szz  1/1    Running  0        5s
-```
+    NAME                       READY  STATUS   RESTARTS AGE
+    postgres-1385931004-p3szz  1/1    Running  0        5s
 
 and `kubectl get services` should show its service:
 
-```
-NAME      CLUSTER-IP     EXTERNAL-IP  PORT(S)   AGE
-postgres  10.107.246.55  <none>       5432/TCP  5s
-```
+    NAME      CLUSTER-IP     EXTERNAL-IP  PORT(S)   AGE
+    postgres  10.107.246.55  <none>       5432/TCP  5s
 
 At this point the Postgres server is running, reachable from anywhere in the cluster at `postgres:5432`.
 
@@ -143,134 +119,108 @@ Our Flask app just responds to `PUT` requests to create users, and `GET` request
 
 Building a Flask app into a Docker image is relatively straightforward. The biggest question is which image to use as a base, but if you already know you're going to be using Envoy later, the easiest thing is just to base the image on the `lyft/envoy` image. So the Dockerfile (sans comments) ends up looking like this:
 
-```
-FROM lyft/envoy:latest
-RUN apt-get update && apt-get -q install -y
-    curl
-    python-pip
-    dnsutils
-WORKDIR /application
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY service.py .
-COPY entrypoint.sh .
-RUN chmod +x entrypoint.sh
-ENTRYPOINT [ "./entrypoint.sh" ]
-```
+    FROM lyft/envoy:latest
+    RUN apt-get update && apt-get -q install -y
+        curl
+        python-pip
+        dnsutils
+    WORKDIR /application
+    COPY requirements.txt .
+    RUN pip install -r requirements.txt
+    COPY service.py .
+    COPY entrypoint.sh .
+    RUN chmod +x entrypoint.sh
+    ENTRYPOINT [ "./entrypoint.sh" ]
 
 To get the Flask app going in Kubernetes requires building the Docker image, pushing it to `usersvc:step1` in your chosen Docker registry, then setting up a Kubernetes deployment and service with it. The deployment, in `usersvc/deployment.yaml`, looks almost the same as the one for `postgres`, just with a different image name:
 
-```
-spec:
-  containers:
-  - name: usersvc
-    image: usersvc:step1
-```
+    spec:
+      containers:
+      - name: usersvc
+        image: usersvc:step1
 
 Likewise, `usersvc/service.yaml` is almost the same as its `postgres` sibling, but it uses type `LoadBalancer` to indicate that the service should be exposed to users outside the cluster:
 
-```
-spec:
-  type: LoadBalancer
-  ports:
-  - name: usersvc
-    port: 5000
-    targetPort: 5000
-  selector:
-    service: usersvc
-```
+    spec:
+      type: LoadBalancer
+      ports:
+      - name: usersvc
+        port: 5000
+        targetPort: 5000
+      selector:
+        service: usersvc
 
 Starting with `LoadBalancer` may seem odd — after all, the goal is to use Envoy to do load balancing, right? It's good to walk before running, though, so the first test will be to talk to the Flask app *without* Envoy, and for that, the port needs to be open to the outside world.
 
 To build the Docker image and start the `usersvc`, you can run:
 
-```
-sh up.sh usersvc
-```
+    sh up.sh usersvc
 
 which will build the Docker image, push it so that Google Container Engine can see it, and then launch the new `usersvc` deployment. At this point, `kubectl get pods` should show both a `usersvc` pod and a `postgres` pod running:
 
-```
-NAME                       READY  STATUS   RESTARTS AGE
-postgres-1385931004-p3szz  1/1    Running  0        5m
-usersvc-1941676296-kmglv   1/1    Running  0        5s
-```
+    NAME                       READY  STATUS   RESTARTS AGE
+    postgres-1385931004-p3szz  1/1    Running  0        5m
+    usersvc-1941676296-kmglv   1/1    Running  0        5s
 
 ## First Test!
 
 And now the moment of truth: make sure it works *without* Envoy before moving on! You'll need the IP address and mapped port number for our `usersvc` service. Using Google Container Engine, the following monstrosity will build a neatly-formed URL to the load balancer created for the `usersvc`:
 
-```
-USERSVC_IP=$(kubectl get svc usersvc -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-USERSVC_PORT=$(kubectl get svc usersvc -o jsonpath='{.spec.ports[0].port}')
-USERSVC_URL="http://${USERSVC_IP}:${USERSVC_PORT}"
-```
+    USERSVC_IP=$(kubectl get svc usersvc -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    USERSVC_PORT=$(kubectl get svc usersvc -o jsonpath='{.spec.ports[0].port}')
+    USERSVC_URL="http://${USERSVC_IP}:${USERSVC_PORT}"
 
 (This is one of the things that may change depending on your cluster type. On Minikube, you'll need `minikube service --url`; on AWS, you'll need `...ingress[0].hostname`. Other cluster providers may be different still. You can always start by reading the output of `kubectl describe service usersvc` to get a sense of what's up.)
 
 Given the URL, you can try a basic health check using `curl` *from the host system*, reaching into the cluster to the `usersvc`, which in turn is talking within the cluster to `postgres`:
 
-```
-curl ${USERSVC_URL}/user/health
-```
+    curl ${USERSVC_URL}/user/health
 
 If all goes well, the health check should give you something like:
 
-```
-{
-  "hostname": "usersvc-1941676296-kmglv",
-  "msg": "user health check OK",
-  "ok": true,
-  "resolvedname": "172.17.0.10"
-}
-```
+    {
+      "hostname": "usersvc-1941676296-kmglv",
+      "msg": "user health check OK",
+      "ok": true,
+      "resolvedname": "172.17.0.10"
+    }
 
 Next up, try saving and retrieving a user:
 
-```
-curl -X PUT -H "Content-Type: application/json" \
-     -d '{ "fullname": "Alice", "password": "alicerules" }' \
-     ${USERSVC_URL}/user/alice
-```
+    curl -X PUT -H "Content-Type: application/json" \
+         -d '{ "fullname": "Alice", "password": "alicerules" }' \
+         ${USERSVC_URL}/user/alice
 
 This should return a user record for Alice, including her UUID but not her password:
 
-```
-{
-  "fullname": "Alice",
-  "hostname": "usersvc-1941676296-kmglv",
-  "ok": true,
-  "resolvedname": "172.17.0.10",
-  "uuid": "44FD5687B15B4AF78753E33E6A2B033B"
-}
-```
+    {
+      "fullname": "Alice",
+      "hostname": "usersvc-1941676296-kmglv",
+      "ok": true,
+      "resolvedname": "172.17.0.10",
+      "uuid": "44FD5687B15B4AF78753E33E6A2B033B"
+    }
 
 Repeating this for Bob should be much the same:
 
-```
-curl -X PUT -H "Content-Type: application/json" \
-     -d '{ "fullname": "Bob", "password": "bobrules" }' \
-     ${USERSVC_URL}/user/bob
-```
+    curl -X PUT -H "Content-Type: application/json" \
+         -d '{ "fullname": "Bob", "password": "bobrules" }' \
+         ${USERSVC_URL}/user/bob
 
 Naturally, Bob should have a different UUID:
 
-```
-{
-  "fullname": "Bob",
-  "hostname": "usersvc-1941676296-kmglv",
-  "ok": true,
-  "resolvedname": "172.17.0.10",
-  "uuid": "72C77A08942D4EADA61B6A0713C1624F"
-}
-```
+    {
+      "fullname": "Bob",
+      "hostname": "usersvc-1941676296-kmglv",
+      "ok": true,
+      "resolvedname": "172.17.0.10",
+      "uuid": "72C77A08942D4EADA61B6A0713C1624F"
+    }
 
 Finally, you can try reading both users back (again, minus passwords!) with
 
-```
-curl ${USERSVC_URL}/user/alice
-curl ${USERSVC_URL}/user/bob
-```
+    curl ${USERSVC_URL}/user/alice
+    curl ${USERSVC_URL}/user/bob
 
 ## Enter Envoy
 
@@ -286,14 +236,12 @@ Only the edge Envoy is actually required, but with the full mesh, the service En
 
 The edge Envoy and the service Envoys run the same code, but have separate configurations. The edge Envoy, running it as a Kubernetes service in its own container, can be built with the following Dockerfile:
 
-```
-FROM lyft/envoy:latest
-RUN apt-get update && apt-get -q install -y
-    curl
-    dnsutils
-COPY envoy.json /etc/envoy.json
-CMD /usr/local/bin/envoy -c /etc/envoy.json
-```
+    FROM lyft/envoy:latest
+    RUN apt-get update && apt-get -q install -y
+        curl
+        dnsutils
+    COPY envoy.json /etc/envoy.json
+    CMD /usr/local/bin/envoy -c /etc/envoy.json
 
 which is to say, take `lyft/envoy:latest`, copy in our edge Envoy config, and start Envoy running.
 
@@ -323,38 +271,34 @@ Each route dictionary needs to include at minimum:
 
 The Flask app requires only a single `listener` for our edge Envoy:
 
-```
-"listeners": [
-  {
-    "address": "tcp://0.0.0.0:80",
-    "filters": [
+    "listeners": [
       {
-        "type": "read",
-        "name": "http_connection_manager",
-        "config": { . . . }
+        "address": "tcp://0.0.0.0:80",
+        "filters": [
+          {
+            "type": "read",
+            "name": "http_connection_manager",
+            "config": { . . . }
+          }
+        ]
       }
     ]
-  }
-],
-```
 
 This tells Envoy to listen for any connection on TCP port 80, and use the `http_connection_manager` to handle incoming requests. You can see the whole filter configuration in `edge-envoy/envoy.json`, but here's how to set up its `virtual_hosts` to get the edge Envoy to proxy any URL starting with `/user` to the `usersvc`:
 
-```
-"virtual_hosts": [
-  {
-    "name": "service",
-    "domains": [ "*" ],
-    "routes": [
+    "virtual_hosts": [
       {
-        "timeout_ms": 0,
-        "prefix": "/user",
-        "cluster": “usersvc"
+        "name": "service",
+        "domains": [ "*" ],
+        "routes": [
+          {
+            "timeout_ms": 0,
+            "prefix": "/user",
+            "cluster": “usersvc"
+          }
+        ]
       }
     ]
-  }
-]
-```
 
 Note `domains [“*”]` to indicate that the host being requested doesn't matter, and also note that you can always add more routes if needed.
 
@@ -380,28 +324,24 @@ And the possible `lb_type` values are:
 
 Here's how to put it all together for the `usersvc` cluster:
 
-```
-"clusters": [
-  {
-    "name": “usersvc”,
-    "type": "strict_dns",
-    "lb_type": "round_robin",
-    "hosts": [
+    "clusters": [
       {
-        "url": “tcp://usersvc:80”
+        "name": “usersvc”,
+        "type": "strict_dns",
+        "lb_type": "round_robin",
+        "hosts": [
+          {
+            "url": “tcp://usersvc:80”
+          }
+        ]
       }
     ]
-  }
-]
-```
 
 Note the `type: strict_dns` there -- for this to work, every instance of the `usersvc` must appear in the DNS. This clearly will require some testing!
 
 As usual, it's a single command to start the edge Envoy running:
 
-```
-sh up.sh edge-envoy
-```
+    sh up.sh edge-envoy
 
 You won't be able to easily test this yet, since the edge Envoy is going to try to talk to service Envoys that aren’t running yet... but they will be after the next step.
 
@@ -418,46 +358,38 @@ This will give us a running Envoy through which you can talk to the Flask app �
 
 The service Envoy’s config is very similar to the edge Envoy’s. The `listeners` section is identical, and the `clusters` section nearly so:
 
-```
-"clusters": [
-  {
-    "name": “usersvc”,
-    "type": "static",
-    "lb_type": "round_robin",
-    "hosts": [
+    "clusters": [
       {
-        "url": “tcp://127.0.0.1:80”
+        "name": “usersvc”,
+        "type": "static",
+        "lb_type": "round_robin",
+        "hosts": [
+          {
+            "url": “tcp://127.0.0.1:80”
+          }
+        ]
       }
     ]
-  }
-]
-```
 
 Since the edge Envoy proxies only to localhost, it's easiest to use a static single-member cluster.
 
 All the changes to the Flask side of the world can be found in the `usersvc2` directory, which is literally a copy of the `usersvc` directory with the changes above applied (and it tags its image `usersvc:step2` instead of `usersvc:step1`). You need to drop the old `usersvc` and bring up the new one:
 
-```
-sh down.sh usersvc
-sh up.sh usersvc2
-```
+    sh down.sh usersvc
+    sh up.sh usersvc2
 
 ## Second Test!
 
 Once all that is done, it's time to repeat our monstrosity from before to get the URL of the edge Envoy:
 
-```
-ENVOY_IP=$(kubectl get svc edge-envoy -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-ENVOY_PORT=$(kubectl get svc edge-envoy -o jsonpath='{.spec.ports[0].port}')
-ENVOY_URL="http://${ENVOY_IP}:${ENVOY_PORT}"
-```
+    ENVOY_IP=$(kubectl get svc edge-envoy -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    ENVOY_PORT=$(kubectl get svc edge-envoy -o jsonpath='{.spec.ports[0].port}')
+    ENVOY_URL="http://${ENVOY_IP}:${ENVOY_PORT}"
 
 and then voilà! Try retrieving Alice and Bob from before:
 
-```
-curl $ENVOY_URL/user/alice
-curl $ENVOY_URL/user/bob
-```
+    curl $ENVOY_URL/user/alice
+    curl $ENVOY_URL/user/bob
 
 Note, though, that `$ENVOY_URL` uses the `edge-envoy` service here, not the `usersvc`! This means that you're indeed talking through the Envoy mesh -- and in fact, if you try talking directly to `usersvc`, it will fail. That’s part of how to be sure that Envoy is doing its job.
 
@@ -465,26 +397,20 @@ Note, though, that `$ENVOY_URL` uses the `edge-envoy` service here, not the `use
 
 Envoy is meant to gracefully handle scaling services, so bringing up a few more instances of the Flask app is probably a good test to see how well it handles that:
 
-```
-kubectl scale --replicas=3 deployment/usersvc
-```
+    kubectl scale --replicas=3 deployment/usersvc
 
 Once that’s done, `kubectl get pods` should show more `usersvc` instances running:
 
-```
-NAME                         READY STATUS   RESTARTS  AGE
-edge-envoy-2874730579-7vrp4  1/1   Running  0         3m
-postgres-1385931004-p3szz    1/1   Running  0         5m
-usersvc-2016583945-h7hqz     1/1   Running  0         6s
-usersvc-2016583945-hxvrn     1/1   Running  0         6s
-usersvc-2016583945-pzq2x     1/1   Running  0         3m
-```
+    NAME                         READY STATUS   RESTARTS  AGE
+    edge-envoy-2874730579-7vrp4  1/1   Running  0         3m
+    postgres-1385931004-p3szz    1/1   Running  0         5m
+    usersvc-2016583945-h7hqz     1/1   Running  0         6s
+    usersvc-2016583945-hxvrn     1/1   Running  0         6s
+    usersvc-2016583945-pzq2x     1/1   Running  0         3m
 
 and you should be able to verify that `curl` requests get routed to multiple hosts. Try
 
-```
-curl $ENVOY_URL/user/health
-```
+    curl $ENVOY_URL/user/health
 
 multiple times, and look at the returned `hostname` element. It should cycle across the three `usersvc` nodes.
 
@@ -492,9 +418,7 @@ But... it doesn't. What’s going on here?
 
 Remember that the edge Envoy is running in `strict_dns` mode, so a good first check would be to look at the DNS. The easy way to do this is to run `nslookup` from inside the cluster, say on one of the `usersvc` pods:
 
-```
-kubectl exec usersvc-2016583945-h7hqz /usr/bin/nslookup usersvc
-```
+    kubectl exec usersvc-2016583945-h7hqz /usr/bin/nslookup usersvc
 
 (You'll need to use one of your actual pod names when you run this! Simply pasting the line above is extremely unlikely to work.)
 
@@ -508,34 +432,32 @@ A simple SDS is in the `usersvc-sds` directory. It’s pretty straightforward: E
 
 The edge Envoy's config needs to change slightly: rather than using `strict_dns` mode, you need `sds` mode. That, in turn, means defining an `sds` cluster – here's the one for the `usersvc-sds`:
 
-```
-"cluster_manager": {
-  "sds": {
-    "cluster": {
-      "name": "usersvc-sds",
-      "connect_timeout_ms": 250,
-      "type": "strict_dns",
-      "lb_type": "round_robin",
-      "hosts": [
+    "cluster_manager": {
+      "sds": {
+        "cluster": {
+          "name": "usersvc-sds",
+          "connect_timeout_ms": 250,
+          "type": "strict_dns",
+          "lb_type": "round_robin",
+          "hosts": [
+            {
+              "url": "tcp://usersvc-sds:5000"
+            }
+          ]
+        },
+        "refresh_delay_ms": 15000
+      },
+      "clusters": [
         {
-          "url": "tcp://usersvc-sds:5000"
+          "name": "usersvc",
+          "connect_timeout_ms": 250,
+          "type": "sds",
+          "service_name": "usersvc",
+          "lb_type": "round_robin",
+          "features": "http2"
         }
       ]
-    },
-    "refresh_delay_ms": 15000
-  },
-  "clusters": [
-    {
-      "name": "usersvc",
-      "connect_timeout_ms": 250,
-      "type": "sds",
-      "service_name": "usersvc",
-      "lb_type": "round_robin",
-      "features": "http2"
     }
-  ]
-}
-```
 
 Look carefully and you'll see that the `sds` cluster is not defined inside the `clusters` dictionary, but as a peer of `clusters`. Its value, though, is a cluster definition. Also note that the `sds` cluster uses `strict_dns` and thus relies on the DNS being sane for the `usersvc-sds` itself – there are use cases where this won't be OK, but they're considerably beyond the scope of this tutorial.
 
@@ -543,28 +465,22 @@ Once the `sds` cluster is defined, you can use `"type": "sds"` in a service clus
 
 The `edge-envoy2` directory has everything set up for an edge Envoy running this configuration. To get it all going, start the SDS running, then down the old edge Envoy and fire up the new:
 
-```
-sh up.sh usersvc-sds
-sh down.sh edge-envoy
-sh up.sh edge-envoy2
-```
+    sh up.sh usersvc-sds
+    sh down.sh edge-envoy
+    sh up.sh edge-envoy2
 
 Sadly, you'll have to reset the `ENVOY_URL` when you do this:
 
-```
-ENVOY_IP=$(kubectl get svc edge-envoy -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-ENVOY_PORT=$(kubectl get svc edge-envoy -o jsonpath='{.spec.ports[0].port}')
-ENVOY_URL="http://${ENVOY_IP}:${ENVOY_PORT}"
-```
+    ENVOY_IP=$(kubectl get svc edge-envoy -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    ENVOY_PORT=$(kubectl get svc edge-envoy -o jsonpath='{.spec.ports[0].port}')
+    ENVOY_URL="http://${ENVOY_IP}:${ENVOY_PORT}"
 
 (In a production setup, you'd leave the Kubernetes `service` for the edge Envoy in place, and probably not have to do this. The scripting here is deliberately very simple, though, so `down.sh` makes sure that nothing is left behind.)
 
 
 Once the new Envoy is running, repeating the health check really should show you round-robining around the hosts. Of course, asking for the details of user Alice or Bob should always give the same results, no matter which host does the database lookup:
 
-```
-curl $ENVOY_URL/user/alice
-```
+    curl $ENVOY_URL/user/alice
 
 Repeat that a few times: the host information should change, but the user information should not.
 
