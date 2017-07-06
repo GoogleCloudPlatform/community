@@ -12,12 +12,12 @@ A useful pattern is to enlist a proxy, like [Envoy](https://lyft.github.io/envoy
 
 ## The Application
 
-Our application is a super simple REST-based user service: it can create users, read information about a user, and process simple logins. Even a trivial application like this involves several real-world concerns, though:
+Our application is a super simple REST-based user service: it can create, fetch, and delete users. Even a trivial application like this involves several real-world concerns, though:
 
 * It requires persistent storage.
-* It will let us explore scaling the different pieces of the application.
-* It will let us explore Envoy at the edge, where the user’s client talks to our application.
-* It will let us explore Envoy internally, brokering communications between the various parts of the application.
+* It lets us explore scaling the different pieces of the application.
+* It lets us explore Envoy at the edge, where the user’s client talks to our application.
+* It lets us explore Envoy internally, brokering communications between the various parts of the application.
 
 Envoy runs as a sidecar, so it's language-agnostic. For this tutorial, the REST service will use Python and Flask, with PostgreSQL for persistence, all of which play nicely together. And of course, running on Google Container Engine means managing everything with Kubernetes.
 
@@ -76,16 +76,16 @@ If you need to, you can use the following to clean everything up and start over:
 
 ## Database Matters
 
-The Flask app you'll be deploying is a very, very simple service that allows creating and reading back users. Each user has a UUID, a `username`, a `fullname`, and a `password`, so the app needs just a single database table to store everything. For now, the Flask app just checks at boot time, and creates this table if it doesn’t exist, relying on Postgres itself to prevent duplicate tables. (This is best suited for a single Postgres instance, but that's OK for now.)
+The Flask app you'll deploy uses PostgreSQL for its storage needs. For now, it checks at every startup to make sure that its single table exists, relying on Postgres itself to prevent duplicate tables. (This is best suited for a single Postgres instance, but that's OK for now.) 
 
-So for Postgres, all that's necessary is a way to spin up a Postgres server in our Kubernetes cluster. Postgres actually publishes a prebuilt Docker image for Postgres 9.6 on DockerHub, which makes this very easy. The relevant config file is `postgres/deployment.yaml`, which includes in its spec section the specifics of the image to use:
+So all you need for PostgreSQL is to spin up the server in your Kubernetes cluster. Postgres publishes a prebuilt Docker image for Postgres 9.6 on DockerHub, which makes this very easy. The relevant config file is `postgres/deployment.yaml`, and its `spec` section declares the image to use:
 
     spec:
       containers:
       - name: postgres
         image: postgres:9.6
 
-For the Flask app to talk to the Postgres server, it needs a Kubernetes `service` opening the port within the cluster. That’s defined in `postgres/service.yaml` with highlights:
+You also need to use a Kubernetes `service` to expose the PostgreSQL port within the cluster, so that the Flask app can talk to the database. That’s defined in `postgres/service.yaml` with highlights:
 
     spec:
       type: ClusterIP
@@ -115,7 +115,9 @@ At this point the Postgres server is running, reachable from anywhere in the clu
 
 ## The Flask App
 
-Our Flask app just responds to `PUT` requests to create users, and `GET` requests to read users and respond to health checks. You can see it in full in the GitHub repo. It's very simple: the only real gotcha is that Flask, by default, will listen only on the loopback address, which will prevent any connections from outside the Flask app’s container. To fix that, explicitly tell Flask to listen on `0.0.0.0` instead.
+The Flask app is a simple user-management service. It responds to `PUT` requests to create users, and to `GET` requests to read users and respond to health checks. Each user has a UUID, a `username`, a `fullname`, and a `password`. The UUID is auto-generated, and the `password` is never returned on fetch.
+
+You can see the app in full in the GitHub repo. It's very simple: the only real gotcha is that if you don't explicitly tell Flask to listen on '0.0.0.0', it will default to listening on the loopback address, and you won't be able to talk to it from elsewhere in the cluster! 
 
 Building a Flask app into a Docker image is relatively straightforward. The biggest question is which image to use as a base, but if you already know you're going to be using Envoy later, the easiest thing is just to base the image on the `lyft/envoy` image. So the Dockerfile (sans comments) ends up looking like this:
 
@@ -132,7 +134,13 @@ Building a Flask app into a Docker image is relatively straightforward. The bigg
     RUN chmod +x entrypoint.sh
     ENTRYPOINT [ "./entrypoint.sh" ]
 
-To get the Flask app going in Kubernetes requires building the Docker image, pushing it to `usersvc:step1` in your chosen Docker registry, then setting up a Kubernetes deployment and service with it. The deployment, in `usersvc/deployment.yaml`, looks almost the same as the one for `postgres`, just with a different image name:
+To get the Flask app going in Kubernetes, you need to:
+
+- Build the Docker image
+- Push it to `usersvc:step1` in your chosen Docker registry
+- Set up a Kubernetes deployment and service with it.
+
+The deployment, in `usersvc/deployment.yaml`, looks almost the same as the one for `postgres`, just with a different image name:
 
     spec:
       containers:
@@ -152,11 +160,11 @@ Likewise, `usersvc/service.yaml` is almost the same as its `postgres` sibling, b
 
 Starting with `LoadBalancer` may seem odd — after all, the goal is to use Envoy to do load balancing, right? It's good to walk before running, though, so the first test will be to talk to the Flask app *without* Envoy, and for that, the port needs to be open to the outside world.
 
-To build the Docker image and start the `usersvc`, you can run:
+You can use the `up.sh` script to build and push the Docker image, then start the `usersvc`:
 
     sh up.sh usersvc
 
-which will build the Docker image, push it so that Google Container Engine can see it, and then launch the new `usersvc` deployment. At this point, `kubectl get pods` should show both a `usersvc` pod and a `postgres` pod running:
+At this point, `kubectl get pods` should show both a `usersvc` pod and a `postgres` pod running:
 
     NAME                       READY  STATUS   RESTARTS AGE
     postgres-1385931004-p3szz  1/1    Running  0        5m
@@ -164,13 +172,13 @@ which will build the Docker image, push it so that Google Container Engine can s
 
 ## First Test!
 
-And now the moment of truth: make sure it works *without* Envoy before moving on! You'll need the IP address and mapped port number for our `usersvc` service. Using Google Container Engine, the following monstrosity will build a neatly-formed URL to the load balancer created for the `usersvc`:
+First things first: make sure it works *without* Envoy before moving on! You need the IP address and mapped port number for the `usersvc` service. Using Google Container Engine, the following monstrosity will build a neatly-formed URL to the load balancer created for the `usersvc`:
 
     USERSVC_IP=$(kubectl get svc usersvc -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
     USERSVC_PORT=$(kubectl get svc usersvc -o jsonpath='{.spec.ports[0].port}')
     USERSVC_URL="http://${USERSVC_IP}:${USERSVC_PORT}"
 
-(This is one of the things that may change depending on your cluster type. On Minikube, you'll need `minikube service --url`; on AWS, you'll need `...ingress[0].hostname`. Other cluster providers may be different still. You can always start by reading the output of `kubectl describe service usersvc` to get a sense of what's up.)
+(This may change depending on your cluster type. On Minikube, you'll need `minikube service --url`; on AWS, you'll need `...ingress[0].hostname`. Other cluster providers may be different still. You can always start by reading the output of `kubectl describe service usersvc` to get a sense of what's up.)
 
 Given the URL, you can try a basic health check using `curl` *from the host system*, reaching into the cluster to the `usersvc`, which in turn is talking within the cluster to `postgres`:
 
@@ -224,15 +232,14 @@ Finally, you can try reading both users back (again, minus passwords!) with
 
 ## Enter Envoy
 
-Once all of that is working (whew!), it’s time to stick Envoy in front of everything, so it can manage routing when you start scaling the front end. This usually involves two layers of Envoys, not one:
+Once all of that is working (whew!), it’s time to stick Envoy in front of everything, so it can manage routing when you start scaling the front end. Production use usually involves two layers of Envoys, not one:
 
-* First, you'll have an "edge Envoy" running all by itself somewhere, to give the rest of the world a single point of ingress. Incoming connections from outside come to the edge Envoy, and it decides where they go internally.
-   * Adding a little more functionality in this layer gets us a proper [API Gateway](http://getambassador.io/). This tutorial will keep things simple, though, doing everything by hand so you can really see how it all works.
-* Second, each instance of a service has an "service Envoy" running alongside it, as a separate process next to the service itself. These keep an eye on their services, and remember what’s running and what’s not.
-* All the Envoys form a mesh, and share routing information amongst themselves.
-* Interservice calls can (and usually will) go through the Envoy mesh as well, though that's beyond the scope of this article.
+* The "edge Envoy" runs by itself somewhere, to give the rest of the world a single point of ingress. Incoming connections from outside come to the edge Envoy, and it decides where they go internally.
+    * Adding a little more functionality in this layer gets us a proper [API Gateway](http://getambassador.io/). This tutorial will keep things simple, though, doing everything by hand so you can really see how it all works.
+* Each instance of a service has a "service Envoy" running alongside it, as a separate process.
+    * The multiple Envoys form a mesh, sharing routing information and providing uniform statistics and logging.
 
-Only the edge Envoy is actually required, but with the full mesh, the service Envoys can do health monitoring and such, and let the mesh know if it’s pointless to try to contact a down service. Also, Envoy’s statistics gathering works best with the full mesh (more on that in a separate article, though).
+Only the edge Envoy is actually required, and really taking advantage of the Envoy mesh requires an article of its own. This tutorial, though, will cover deploying both edge and service Envoys for the Flask app, to show how to configure the simplest case.
 
 The edge Envoy and the service Envoys run the same code, but have separate configurations. The edge Envoy, running it as a Kubernetes service in its own container, can be built with the following Dockerfile:
 
@@ -247,9 +254,9 @@ which is to say, take `lyft/envoy:latest`, copy in our edge Envoy config, and st
 
 ### Envoy Configuration
 
-Envoy is configured with a JSON dictionary that primarily describes _listeners_ and _clusters_. Again, a really deep dive is outside the scope of this tutorial, but basically:
+You configure Envoy with a JSON dictionary that primarily describes _listeners_ and _clusters_. Again, a really deep dive is outside the scope of this tutorial, but basically:
 
-* a _listener_ tells Envoy an _address_ on which it should listen and a set of *filters* with which Envoy should process what it hears
+* a _listener_ tells Envoy an _address_ on which it should listen and a set of _filters_ with which Envoy should process what it hears
 * a _cluster_ tells Envoy about one or more _hosts_ to which Envoy can proxy incoming requests.
 
 The two big complicating factors are:
@@ -257,7 +264,7 @@ The two big complicating factors are:
 * Filters can (and usually do) have their own configuration, which is often more complex than the listener’s configuration!
 * Clusters get tangled up with load balancing and external things like DNS.
 
-When working with HTTP proxying, you'll be using the `http_connection_manager` filter. It knows how to parse HTTP headers and figure out which Envoy cluster should handle a given connection, for both HTTP/1.1 and HTTP/2. The filter configuration for `http_connection_manager` is a dictionary with quite a few options, but the most critical one for basic proxying is the `virtual_hosts` array, which defines how exactly the filter will make routing decisions. Each element in the array is another dictionary containing the following attributes:
+The `http_connection_manager` filter handles HTTP proxying. It knows how to parse HTTP headers and figure out which Envoy cluster should handle a given connection, for both HTTP/1.1 and HTTP/2. The filter configuration for `http_connection_manager` is a dictionary with quite a few options, but the most critical one for basic proxying is the `virtual_hosts` array, which defines how requests will be routed. Each element in the array is another dictionary containing the following attributes:
 
 * `name`: a human-readable name for this service.
 * `domains`: an array of DNS-style domain names, one of which must match the domain name in the URL for this `virtual_host` to match (or `"*"` to match any domain).
@@ -426,9 +433,15 @@ Sure enough, only one address comes back, so Envoy’s DNS-based service discove
 
 ## The Service Discovery Service
 
-What’s happening is that Kubernetes puts each *service* into its DNS, but it doesn’t put each *service endpoint* into its DNS — and Envoy needs to know about the endpoints in order to load-balance. Kubernetes does know the service endpoints for each service, of course, and Envoy knows how to query a REST service for discovery information... so it's possbile to make this work with a simple Python shim that bridges from the Envoy “Service Discovery Service” (SDS) to the Kubernetes API.
+The problem is that Kubernetes puts **services** into its DNS -- not **service endpoints**. Envoy needs to know about the endpoints in order to load-balance, though. Kubernetes does know the service endpoints for each service, of course, and Envoy knows how to query a REST service for discovery information... so it's possible to make this work with a simple Python shim that bridges from the Envoy “Service Discovery Service” (SDS) to the Kubernetes API.
 
-A simple SDS is in the `usersvc-sds` directory. It’s pretty straightforward: Envoy asks it for service information, it uses the `requests` Python module to query the Kubernetes endpoints API, and finally it reformats the results and returns them to Envoy. The most surprising bit might be the token it reads at the start: Kubernetes is polite enough to install an authentication token on every container it starts, precisely so that this sort of thing is possible.
+The `usersvc-sds` directory contains a simple SDS:
+
+* Envoy uses a `GET` request to ask for service information;
+* The SDS uses the Python `requests` module to query the Kubernetes endpoints API; and
+* It then reformats the results and returns them to Envoy.
+
+The most surprising bit might be the token that the SDS reads when it starts. Kubernetes requires the token for access control, but it's polite enough to install it on every container it starts, precisely so that this sort of thing is possible.
 
 The edge Envoy's config needs to change slightly: rather than using `strict_dns` mode, you need `sds` mode. That, in turn, means defining an `sds` cluster – here's the one for the `usersvc-sds`:
 
@@ -475,8 +488,7 @@ Sadly, you'll have to reset the `ENVOY_URL` when you do this:
     ENVOY_PORT=$(kubectl get svc edge-envoy -o jsonpath='{.spec.ports[0].port}')
     ENVOY_URL="http://${ENVOY_IP}:${ENVOY_PORT}"
 
-(In a production setup, you'd leave the Kubernetes `service` for the edge Envoy in place, and probably not have to do this. The scripting here is deliberately very simple, though, so `down.sh` makes sure that nothing is left behind.)
-
+(In a production setup, you'd leave the Kubernetes `service` for the edge Envoy in place to avoid needing to do this. The scripting here is deliberately very simple, though, so `down.sh` makes sure that nothing is left behind.)
 
 Once the new Envoy is running, repeating the health check really should show you round-robining around the hosts. Of course, asking for the details of user Alice or Bob should always give the same results, no matter which host does the database lookup:
 
