@@ -127,7 +127,7 @@ Create the remote backend bucket in Cloud Storage and the `backend.tf` file for 
 gsutil mb -p ${TF_ADMIN} gs://${TF_ADMIN}
  
 cat > backend.tf <<EOF
-terraform {  
+terraform {
  backend "gcs" {
    bucket = "${TF_ADMIN}"
    path   = "/"
@@ -259,7 +259,7 @@ SSH into the instance created:
 gcloud compute ssh $(terraform output | grep instance_id | cut -d = -f2)
 ```
 
-> Note that SSH may not work unless your organization user also has access to the newly created project resources.
+Note that SSH may not work unless your organization user also has access to the newly created project resources.
 
 ## Cleaning up
 First, destroy the resources created by Terraform:
