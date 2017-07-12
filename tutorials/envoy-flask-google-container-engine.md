@@ -1,84 +1,86 @@
 ---
 title: Deploying Envoy with a Python Flask webapp and Google Container Engine
-description: Learn how to use Envoy in Google Container Engine as a foundation for adding resilience and observability to a microservice-based application.
+description: Learn how to use Envoy in Google Container Engine as a foundation for adding resilience and observability to a microservices-based application.
 author: flynn
 tags: microservices, Container Engine, Envoy, Flask, Python
 date_published: 2017-06-28
 ---
 
-One of the recurring problems with using microservices is managing communications. Your clients need to be able to speak to your services, and in most cases services need to speak amongst themselves. When things go wrong, the system as a whole needs to be resilient, so that it degrades gracefully instead of catastrophically, but it also needs to be observable so that you can figure out what's wrong.
+One of the recurring problems with using microservices is managing communications. Your clients must be able to speak to your services, and in most cases services need to speak among themselves. When things go wrong, the system as a whole needs to be resilient, so it degrades gracefully instead of catastrophically. It also must be observable so you can figure out what's wrong.
 
-A useful pattern is to enlist a proxy, like [Envoy](https://lyft.github.io/envoy/) to help [make your application more resilient and observable](https://www.datawire.io/guide/traffic/getting-started-lyft-envoy-microservices-resilience/). Envoy can be a bit daunting to set up, so this tutorial will walk you through deploying a Python Flask webapp with Envoy on Google Container Engine.
+A useful pattern is to enlist a proxy, like [Envoy](https://lyft.github.io/envoy/), to help [make your application more resilient and observable](https://www.datawire.io/guide/traffic/getting-started-lyft-envoy-microservices-resilience/). Envoy can be a bit daunting to set up, so this tutorial walks you through deploying a Python Flask webapp with Envoy on Google Container Engine.
 
 ## The Application
 
-Our application is a super simple REST-based user service: it can create, fetch, and delete users. Even a trivial application like this involves several real-world concerns, though:
+The application is a simple REST-based user service. It can create, fetch, and delete users. Even such a trivial application involves several real-world concerns:
 
 * It requires persistent storage.
-* It lets us explore scaling the different pieces of the application.
-* It lets us explore Envoy at the edge, where the user’s client talks to our application.
-* It lets us explore Envoy internally, brokering communications between the various parts of the application.
+* It lets you explore scaling the different pieces of the application.
+* It lets you explore Envoy at the edge, where the user’s client talks to your application.
+* It lets you explore Envoy internally, brokering communications between the various parts of the application.
 
-Envoy runs as a sidecar, so it's language-agnostic. For this tutorial, the REST service will use Python and Flask, with PostgreSQL for persistence, all of which play nicely together. And of course, running on Google Container Engine means managing everything with Kubernetes.
+Envoy runs as a sidecar, so it's language-agnostic. For this tutorial, the REST service uses Python and Flask, with PostgreSQL for persistence, all of which play nicely together. And of course, running on Container Engine means managing everything with Kubernetes.
 
-## Setting Up
+## Before you begin
 
-### Google Container Engine
+### Container Engine
 
-You'll need a Google Cloud Platform account for this, so that you can set up a Google Container Engine cluster. Just visit the [Google Cloud Platform Console](https://console.cloud.google.com/kubernetes) and use the UI to create a new cluster. Picking the defaults should be fine for our purposes.
+You need a Google Cloud Platform account to set up a Container Engine cluster. Visit the [Google Cloud Platform Console](https://console.cloud.google.com/kubernetes) and use the UI to create a new cluster. Picking the defaults should be fine for this tutorial.
 
 ### Kubernetes
 
-You'll need `kubectl`, the Kubernetes CLI, to work with Google Container Engine. On a Mac you can use `brew install kubernetes-cli`, else you'll need to follow the [Kubernetes installation intructions](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+You need `kubectl`, the Kubernetes CLI, to work with Container Engine. On a Mac you can use `brew install kubernetes-cli`. Otherwise, follow the [Kubernetes installation intructions](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
 
 ### Docker
 
-Google Container Engine runs code from Docker images, so you'll need the Docker CLI, `docker`, to build your own images. [Docker Community Edition](https://www.docker.com/community-edition) is fine if you're just getting started (again, on a Mac, the easy way is `brew install docker`).
+Container Engine runs code from Docker images, so you need the Docker CLI, `docker`, to build your own images. [Docker Community Edition](https://www.docker.com/community-edition) is fine if you're just getting started (again, on a Mac, the easy way is to run `brew install docker`).
 
-### The Application
+### The application
 
-Everything you'll use in this demo is in [Datawire's `envoy-steps` repo](https://github.com/datawire/envoy-steps), so you'll need to clone that and `cd` into your clone:
+Everything you use in this tutorial is in [Datawire's `envoy-steps` repo](https://github.com/datawire/envoy-steps).
 
-    git clone https://github.com/datawire/envoy-steps.git
-    cd envoy-steps
+1. Clone that repo and `cd` into your clone:
 
-In your `envoy-steps` directory, you should see `README.md` and directories named `postgres`, `usersvc`, etc. Each of those directories contains a service to be deployed, and each can be brought up or down independently with
+        git clone https://github.com/datawire/envoy-steps.git
+        cd envoy-steps
 
-    sh up.sh $service
+1. In your `envoy-steps` directory, you should see `README.md` and directories named `postgres`, `usersvc`, and so on. Each of those directories contains a service to be deployed, and each can be brought up or down independently with
 
-or
+        sh up.sh $service
 
-    sh down.sh $service
+    or
 
-Between Python code, Kubernetes configs, docs, etc, there’s simply too much to include everything in one document, so this tutorial will just hit the highlights here, and you can look at all the details in your clone of the repo.
+        sh down.sh $service
 
-## The Docker Registry
+Between Python code, Kubernetes configs, docs, and so on, there’s too much to include everything in one document. This tutorial just covers the highlights, and you can look at all the details in your clone of the repo.
 
-Since Kubernetes needs to pull Docker images to run in its containers, you'll need to push the Docker images used in this article to some Docker registry that Google Container Engine can access. `gcr.io`, `dockerhub`, etc. will all work fine for this now, although for production use you might want to minimize traffic across boundaries as a cost-reduction effort.
+## The Docker registry
 
-Whatever you have set up, you'll need to push to the correct registry, and you'll need to use the correct registry when telling Kubernetes where to go for images. Unfortunately, `kubectl` doesn't have a provision for parameterizing the YAML files it uses to figure out what to do, so `envoy-steps` contains scripts to set things up correctly:
+Since Kubernetes needs to pull Docker images to run in its containers, you must push the Docker images used in this article to a Docker registry that Container Engine can access. For example, `gcr.io` or `dockerhub` will work fine, but for production use you might want to minimize traffic across boundaries as a cost-reduction effort.
 
-    sh prep.sh registry-info
+Whatever you set up, you need to push to the correct registry, and you need to use the correct registry when telling Kubernetes where to go for images. Unfortunately, `kubectl` doesn't have a provision for parameterizing the YAML files it uses to figure out what to do, so `envoy-steps` contains scripts to set things up correctly:
 
-where `registry-info` is the appropriate prefix for the `docker push` command. For example, if you want to use the `example` organization in DockerHub, you'd do
+    sh prep.sh [REGISTRY_INFO]
+
+where `[REGISTRY_INFO]` is the appropriate prefix for the `docker push` command. For example, if you want to use the `example` organization in DockerHub, run:
 
     sh prep.sh example
 
-To use the `example` repository under `gcr.io`, you'd do
+To use the `example` repository under `gcr.io`, run:
 
     sh prep.sh gcr.io/example
 
-You'll need to have permissions to push to whatever you use here. Once `prep.sh` finishes, though, all the configuration files will be updated with the correct image names.
+You need to have permissions to push to whatever you use. When `prep.sh` finishes, all the configuration files will be updated with the correct image names.
 
-If you need to, you can use the following to clean everything up and start over:
+You can use the following command to clean everything up and start over, if needed:
 
     sh clean.sh
 
-## Database Matters
+## Database matters
 
-The Flask app you'll deploy uses PostgreSQL for its storage needs. For now, it checks at every startup to make sure that its single table exists, relying on Postgres itself to prevent duplicate tables. (This is best suited for a single Postgres instance, but that's OK for now.) 
+The Flask app uses PostgreSQL for its storage. For now, it checks at every startup to make sure that its single table exists, relying on Postgres to prevent duplicate tables. This approach is best suited for a single Postgres instance, but that's OK for now. 
 
-So all you need for PostgreSQL is to spin up the server in your Kubernetes cluster. Postgres publishes a prebuilt Docker image for Postgres 9.6 on DockerHub, which makes this very easy. The relevant config file is `postgres/deployment.yaml`, and its `spec` section declares the image to use:
+All you need for PostgreSQL is to spin up the server in your Kubernetes cluster. Postgres publishes a prebuilt Docker image for Postgres 9.6 on DockerHub, which makes this very easy. The relevant config file is `postgres/deployment.yaml`, and its `spec` section declares the image to use:
 
     spec:
       containers:
@@ -97,19 +99,19 @@ You also need to use a Kubernetes `service` to expose the PostgreSQL port within
 
 Note that this service is type `ClusterIP`, so that it can be seen only within the cluster.
 
-To start the database, just run:
+1. To start the database, run:
 
-    sh up.sh postgres
+        sh up.sh postgres
 
-Once that’s done, then `kubectl get pods` should show a `postgres` pod running:
+1. Run `kubectl get pods`, which should show a `postgres` pod running:
 
-    NAME                       READY  STATUS   RESTARTS AGE
-    postgres-1385931004-p3szz  1/1    Running  0        5s
+        NAME                       READY  STATUS   RESTARTS AGE
+        postgres-1385931004-p3szz  1/1    Running  0        5s
 
-and `kubectl get services` should show its service:
+1. Run `kubectl get services`, which should show its service:
 
-    NAME      CLUSTER-IP     EXTERNAL-IP  PORT(S)   AGE
-    postgres  10.107.246.55  <none>       5432/TCP  5s
+        NAME      CLUSTER-IP     EXTERNAL-IP  PORT(S)   AGE
+        postgres  10.107.246.55  <none>       5432/TCP  5s
 
 At this point the Postgres server is running, reachable from anywhere in the cluster at `postgres:5432`.
 
@@ -117,9 +119,9 @@ At this point the Postgres server is running, reachable from anywhere in the clu
 
 The Flask app is a simple user-management service. It responds to `PUT` requests to create users, and to `GET` requests to read users and respond to health checks. Each user has a UUID, a `username`, a `fullname`, and a `password`. The UUID is auto-generated, and the `password` is never returned on fetch.
 
-You can see the app in full in the GitHub repo. It's very simple: the only real gotcha is that if you don't explicitly tell Flask to listen on '0.0.0.0', it will default to listening on the loopback address, and you won't be able to talk to it from elsewhere in the cluster! 
+You can see the app in full in the GitHub repo. It's very simple; the only real gotcha is that if you don't explicitly tell Flask to listen on '0.0.0.0', it will default to listening on the loopback address, and you won't be able to talk to it from elsewhere in the cluster. 
 
-Building a Flask app into a Docker image is relatively straightforward. The biggest question is which image to use as a base, but if you already know you're going to be using Envoy later, the easiest thing is just to base the image on the `lyft/envoy` image. So the Dockerfile (sans comments) ends up looking like this:
+Building a Flask app into a Docker image is relatively straightforward. The biggest question is which image to use as a base, but if you already know you're going to be using Envoy later, the easiest thing is just to base the image on the `lyft/envoy` image. So the Dockerfile (without comments) looks like this:
 
     FROM lyft/envoy:latest
     RUN apt-get update && apt-get -q install -y
@@ -136,8 +138,8 @@ Building a Flask app into a Docker image is relatively straightforward. The bigg
 
 To get the Flask app going in Kubernetes, you need to:
 
-- Build the Docker image
-- Push it to `usersvc:step1` in your chosen Docker registry
+- Build the Docker image.
+- Push it to `usersvc:step1` in your chosen Docker registry.
 - Set up a Kubernetes deployment and service with it.
 
 The deployment, in `usersvc/deployment.yaml`, looks almost the same as the one for `postgres`, just with a different image name:
@@ -158,21 +160,21 @@ Likewise, `usersvc/service.yaml` is almost the same as its `postgres` sibling, b
       selector:
         service: usersvc
 
-Starting with `LoadBalancer` may seem odd — after all, the goal is to use Envoy to do load balancing, right? It's good to walk before running, though, so the first test will be to talk to the Flask app *without* Envoy, and for that, the port needs to be open to the outside world.
+Starting with `LoadBalancer` may seem odd. After all, the goal is to use Envoy to do load balancing. It's good to walk before running, though, so the first test will be to talk to the Flask app without Envoy, and for that, the port needs to be open to the outside world.
 
-You can use the `up.sh` script to build and push the Docker image, then start the `usersvc`:
+1. Run `up.sh` script to build and push the Docker image, then start the `usersvc`:
 
-    sh up.sh usersvc
+        sh up.sh usersvc
 
-At this point, `kubectl get pods` should show both a `usersvc` pod and a `postgres` pod running:
+1. Run `kubectl get pods`, which should show both a `usersvc` pod and a `postgres` pod running:
 
-    NAME                       READY  STATUS   RESTARTS AGE
-    postgres-1385931004-p3szz  1/1    Running  0        5m
-    usersvc-1941676296-kmglv   1/1    Running  0        5s
+        NAME                       READY  STATUS   RESTARTS AGE
+        postgres-1385931004-p3szz  1/1    Running  0        5m
+        usersvc-1941676296-kmglv   1/1    Running  0        5s
 
-## First Test!
+## First test
 
-First things first: make sure it works *without* Envoy before moving on! You need the IP address and mapped port number for the `usersvc` service. Using Google Container Engine, the following monstrosity will build a neatly-formed URL to the load balancer created for the `usersvc`:
+First things first: make sure it works without Envoy before moving on. You need the IP address and mapped port number for the `usersvc` service. Using Container Engine, the following will build a neatly-formed URL to the load balancer created for the `usersvc`:
 
     USERSVC_IP=$(kubectl get svc usersvc -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
     USERSVC_PORT=$(kubectl get svc usersvc -o jsonpath='{.spec.ports[0].port}')
