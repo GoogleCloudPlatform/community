@@ -115,7 +115,7 @@ Note that this service is type `ClusterIP`, so that it can be seen only within t
 
 At this point the Postgres server is running, reachable from anywhere in the cluster at `postgres:5432`.
 
-## The Flask App
+## The Flask app
 
 The Flask app is a simple user-management service. It responds to `PUT` requests to create users, and to `GET` requests to read users and respond to health checks. Each user has a UUID, a `username`, a `fullname`, and a `password`. The UUID is auto-generated, and the `password` is never returned on fetch.
 
@@ -195,7 +195,7 @@ If all goes well, the health check should give you something like:
       "resolvedname": "172.17.0.10"
     }
 
-Next up, try saving and retrieving a user:
+Next, try saving and retrieving a user:
 
     curl -X PUT -H "Content-Type: application/json" \
          -d '{ "fullname": "Alice", "password": "alicerules" }' \
@@ -227,23 +227,23 @@ Naturally, Bob should have a different UUID:
       "uuid": "72C77A08942D4EADA61B6A0713C1624F"
     }
 
-Finally, you can try reading both users back (again, minus passwords!) with
+Finally, you can try reading both users back (again, minus passwords) with
 
     curl ${USERSVC_URL}/user/alice
     curl ${USERSVC_URL}/user/bob
 
 ## Enter Envoy
 
-Once all of that is working (whew!), it’s time to stick Envoy in front of everything, so it can manage routing when you start scaling the front end. Production use usually involves two layers of Envoys, not one:
+Now it’s time to put Envoy in front of everything, so it can manage routing when you start scaling the front end. Production use usually involves two layers of Envoys, not one:
 
-* The "edge Envoy" runs by itself somewhere, to give the rest of the world a single point of ingress. Incoming connections from outside come to the edge Envoy, and it decides where they go internally.
-    * Adding a little more functionality in this layer gets us a proper [API Gateway](http://getambassador.io/). This tutorial will keep things simple, though, doing everything by hand so you can really see how it all works.
-* Each instance of a service has a "service Envoy" running alongside it, as a separate process.
+* The _edge_ Envoy runs by itself somewhere, to give the rest of the world a single point of ingress. Incoming connections from outside come to the edge Envoy, and it decides where they go internally.
+    * Adding a little more functionality in this layer provides a proper [API Gateway](http://getambassador.io/). This tutorial will keep things simple, doing everything by hand so you can see how it all works.
+* Each instance of a service has a _service Envoy_ running alongside it, as a separate process.
     * The multiple Envoys form a mesh, sharing routing information and providing uniform statistics and logging.
 
-Only the edge Envoy is actually required, and really taking advantage of the Envoy mesh requires an article of its own. This tutorial, though, will cover deploying both edge and service Envoys for the Flask app, to show how to configure the simplest case.
+Only the edge Envoy is actually required, and really taking advantage of the Envoy mesh requires an article of its own. This tutorial covers deploying both edge and service Envoys for the Flask app, to show how to configure the simplest case.
 
-The edge Envoy and the service Envoys run the same code, but have separate configurations. The edge Envoy, running it as a Kubernetes service in its own container, can be built with the following Dockerfile:
+The edge Envoy and the service Envoys run the same code, but have separate configurations. The edge Envoy, running as a Kubernetes service in its own container, can be built with the following Dockerfile:
 
     FROM lyft/envoy:latest
     RUN apt-get update && apt-get -q install -y
@@ -252,33 +252,33 @@ The edge Envoy and the service Envoys run the same code, but have separate confi
     COPY envoy.json /etc/envoy.json
     CMD /usr/local/bin/envoy -c /etc/envoy.json
 
-which is to say, take `lyft/envoy:latest`, copy in our edge Envoy config, and start Envoy running.
+Which is to say: take `lyft/envoy:latest`, copy in our edge Envoy config, and start Envoy running.
 
-### Envoy Configuration
+### Envoy configuration
 
-You configure Envoy with a JSON dictionary that primarily describes _listeners_ and _clusters_. Again, a really deep dive is outside the scope of this tutorial, but basically:
+You configure Envoy with a JSON dictionary that primarily describes _listeners_ and _clusters_. 
 
-* a _listener_ tells Envoy an _address_ on which it should listen and a set of _filters_ with which Envoy should process what it hears
-* a _cluster_ tells Envoy about one or more _hosts_ to which Envoy can proxy incoming requests.
+* A _listener_ tells Envoy an _address_ on which it should listen and a set of _filters_ with which Envoy should process what it hears.
+* A _cluster_ tells Envoy about one or more _hosts_ to which Envoy can proxy incoming requests.
 
 The two big complicating factors are:
 
-* Filters can (and usually do) have their own configuration, which is often more complex than the listener’s configuration!
+* Filters can (and usually do) have their own configuration, which is often more complex than the listener’s configuration.
 * Clusters get tangled up with load balancing and external things like DNS.
 
 The `http_connection_manager` filter handles HTTP proxying. It knows how to parse HTTP headers and figure out which Envoy cluster should handle a given connection, for both HTTP/1.1 and HTTP/2. The filter configuration for `http_connection_manager` is a dictionary with quite a few options, but the most critical one for basic proxying is the `virtual_hosts` array, which defines how requests will be routed. Each element in the array is another dictionary containing the following attributes:
 
-* `name`: a human-readable name for this service.
-* `domains`: an array of DNS-style domain names, one of which must match the domain name in the URL for this `virtual_host` to match (or `"*"` to match any domain).
-* `routes`: an array of route dictionaries (see below).
+* `name`: A human-readable name for the service.
+* `domains`: An array of DNS-style domain names, one of which must match the domain name in the URL for the `virtual_host` to match (or `"*"` to match any domain).
+* `routes`: An array of route dictionaries (see below).
 
-Each route dictionary needs to include at minimum:
+Each route dictionary needs to include, at a minimum:
 
-* `prefix`: the URL path prefix for this route.
-* `cluster`: the Envoy cluster to handle this request.
-* `timeout_ms`: the timeout for giving up if something goes wrong.
+* `prefix`: The URL path prefix for this route.
+* `cluster`: The Envoy cluster to handle this request.
+* `timeout_ms`: The timeout for giving up if something goes wrong.
 
-The Flask app requires only a single `listener` for our edge Envoy:
+The Flask app requires only a single `listener` for your edge Envoy:
 
     "listeners": [
       {
@@ -309,7 +309,7 @@ This tells Envoy to listen for any connection on TCP port 80, and use the `http_
       }
     ]
 
-Note `domains [“*”]` to indicate that the host being requested doesn't matter, and also note that you can always add more routes if needed.
+Note `domains [“*”]` indicates that the host being requested doesn't matter. Also note that you can always add more routes if needed.
 
 Envoy also needs a definition for the `usersvc` cluster referenced in the `virtual_hosts` section above. You do this in the `cluster_manager` configuration section, which is also a dictionary and also has one critical component, called `clusters`. Its value is also an array of dictionaries:
 
