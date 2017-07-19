@@ -106,6 +106,17 @@ We'll configure the Discourse app to run on Google Cloud App Engine Flex with th
 
 1. Save and close the file.
 
+1. Add the `appengine` gem to the application's `Gemfile`:
+
+   ```ruby
+   gem "appengine", "~> 0.4"
+   ```
+
+1. Install the gems:
+
+   ```sh
+   $ bundle install
+   ```
 
 ## Deploy Discourse app to App Engine Flex
 
@@ -123,7 +134,7 @@ We'll configure the Discourse app to run on Google Cloud App Engine Flex with th
   ```sh
     $ VERSION=$(date +%Y%m%dt%H%M%S); \
         gcloud app deploy --version=$VERSION --no-promote \
-        && gcloud app exec --service=default -- bin/rails db:migrate \
+        && bundle exec rake appengine:exec -- bundle exec rake db:migrate \
         && gcloud app services set-traffic default $VERSION=1
   ```
   This will deploy the app to App Engine Flex, run database migration, then switch over load balancer to the new deployment.
