@@ -5,7 +5,7 @@ author: hxiong388
 tags: App Engine, Ruby, Ruby on Rails, Discourse, Redis, Postgres
 date_published: 2017-06-30
 ---
-This tutorial shows how to create and configure a [Ruby Discourse](http://www.discourse.org/) application 
+This tutorial shows how to create and configure a [Ruby Discourse](http://www.discourse.org/) application
 to run on Google Cloud Platform (GCP) using the App Engine flexible environment.
 
 ## Objectives
@@ -23,7 +23,7 @@ You'll need the following:
 * [Cloud SDK installation](https://cloud.google.com/sdk/downloads).
 * A Redis instance running in your project. To set up Redis on Compute Engine, see [Setting up Redis](setting-up-redis.md). This tutorial assumes the Redis instance is running in the *default*
   network so that the App Engine services can access it without restriction. Note the internal IPv4 address for later use.
-* A Postgres Cloud SQL instance running in your project. To set up a Postgres instance, see [Creating instances](https://cloud.google.com/sql/docs/postgres/create-instance). 
+* A Postgres Cloud SQL instance running in your project. To set up a Postgres instance, see [Creating instances](https://cloud.google.com/sql/docs/postgres/create-instance).
 
 ## Costs
 
@@ -52,17 +52,13 @@ database your Discourse app will use.
 
 1. In the Cloud Shell terminal that appears, run:
 
-  ```sh
-  gcloud beta sql connect <The Cloud SQL instance name> --user=discourse
-  ```
+        gcloud beta sql connect <The Cloud SQL instance name> --user=discourse
 
 1. When prompted, type in the password `discourse`.
 
 1. After you connect to the instance, run:
 
-  ```sh
-  discourse=> GRANT ALL PRIVILEGES ON DATABASE discourse TO discourse;
-  ```
+        discourse=> GRANT ALL PRIVILEGES ON DATABASE discourse TO discourse;
 
 1. Close the Cloud Shell when done.
 
@@ -70,34 +66,31 @@ database your Discourse app will use.
 
 ## Configure Discourse Rails application
 
-To download and install the Discourse Rails application locally, 
+To download and install the Discourse Rails application locally,
 follow the official [Discourse Advanced Developer Install Guide](https://github.com/discourse/discourse/blob/master/docs/DEVELOPER-ADVANCED.md). You can
-also set up the local Postgres database and Redis server to test the app on your local machine in a development environment. 
+also set up the local Postgres database and Redis server to test the app on your local machine in a development environment.
 We'll configure the Discourse app to run on the App Engine flexible environment with the production environment.
 
 1. Under the `config/` directory in the Discourse app, create a file with name `discourse.conf`:
 
-  ```
-  # password used to access the db
-  db_password = discourse
+        # password used to access the db
+        db_password = discourse
 
-  # socket name for database connection
-  db_host = /cloudsql/<Cloud SQL instance connection name>
+        # socket name for database connection
+        db_host = /cloudsql/<Cloud SQL instance connection name>
 
-  # Redis host address
-  redis_host = <Redis instance internal IPv4 address>
+        # Redis host address
+        redis_host = <Redis instance internal IPv4 address>
 
-  # enable serve_static_assets for dockerized app
-  serve_static_assets = true
-  ```
+        # enable serve_static_assets for dockerized app
+        serve_static_assets = true
 
   This file sets configuration parameters in the production environment for Discourse.
 
 1. Open the `config/puma.rb` file, then change `APP_ROOT = '/home/discourse/discourse':
 
-  ```ruby
-  APP_ROOT = Rails.root
-  ```
+        APP_ROOT = Rails.root
+
 1. In the same `config/puma.rb` file, delete the line that says `daemonize true`.
    This is because we shouldn't run a daemonized process in Docker container.
 
@@ -105,35 +98,30 @@ We'll configure the Discourse app to run on the App Engine flexible environment 
 
 1. Add the `appengine` gem to the application's `Gemfile`:
 
-   ```ruby
-   gem "appengine", "~> 0.4"
-   ```
+        gem "appengine", "~> 0.4"
 
 1. Install the gems:
 
-   ```sh
-   $ bundle install
-   ```
+        $ bundle install
 
 ## Deploy Discourse app to the App Engine flexible environment
 
 
 1. Under the application root directory of the Discourse app, create a file named `app.yaml`:
-  ```
-    runtime: ruby
-    env: flex
-    entrypoint: bundle exec rails s -p 8080
-    beta_settings:
-      cloud_sql_instances: <Cloud SQL Instance connection name>
-  ```
+
+        runtime: ruby
+        env: flex
+        entrypoint: bundle exec rails s -p 8080
+        beta_settings:
+          cloud_sql_instances: <Cloud SQL Instance connection name>
 
 1. In the same application root directory, run this gcloud SDK command to deploy:
-  ```sh
-    VERSION=$(date +%Y%m%dt%H%M%S); \
-        gcloud app deploy --version=$VERSION --no-promote \
-        && bundle exec rake appengine:exec -- bundle exec rake db:migrate \
-        && gcloud app services set-traffic default $VERSION=1
-  ```
+
+        VERSION=$(date +%Y%m%dt%H%M%S); \
+            gcloud app deploy --version=$VERSION --no-promote \
+            && bundle exec rake appengine:exec -- bundle exec rake db:migrate \
+            && gcloud app services set-traffic default $VERSION=1
+
   This will deploy the app to the App Engine flexible environment, run database migration, and then switch the load balancer to the new deployment.
 
 
