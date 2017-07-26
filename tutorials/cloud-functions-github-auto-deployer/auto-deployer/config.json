@@ -1,0 +1,16 @@
+{
+  "secretToken":"test4req", 
+  "stageBucket":"a-tutorial",
+  "location":"us-central1",
+  "deployments": [
+     {
+       "functionName":"helloHttp",
+       "path":"CFG-helloWorld"
+     },
+     {
+       "functionName":"helloHttp2",
+       "path":"GCF_test/examples/helloWorld"
+     }
+  ]
+}
+

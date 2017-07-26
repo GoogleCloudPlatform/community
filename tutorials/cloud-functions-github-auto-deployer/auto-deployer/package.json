@@ -1,0 +1,21 @@
+{
+  "name": "autodeployer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@google-cloud/storage": "^1.1.1",
+    "download-git-repo": "^1.0.1",
+    "googleapis": "^19.0.0",
+    "randomstring": "^1.1.5",
+    "zip-folder": "^1.0.0",
+    "crypto":"^0.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ancavulpe",
+  "license": "ISC"
+}
+
