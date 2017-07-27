@@ -203,7 +203,7 @@ exports.deployHttp = function deployHttp (req, res) {
    *
    *   repoName: The name of the github repository. E.g. 'myRepository'
    *   user: The name of the github user. E.g. 'user1'
-   *   filePath: The path to the directoty wich contains the function that has
+   *   filePath: The path to the directoty wich contains the function that has 
    * to be deployed.
    */
   var obj = JSON.parse(JSON.stringify(req.body));
