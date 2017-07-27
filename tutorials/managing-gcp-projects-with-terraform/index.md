@@ -6,7 +6,7 @@ tags: Terraform
 date_published: 2017-06-19
 ---
 
-Dan Isla | Google Cloud Solution Architect | Google, Inc.
+Dan Isla | Google Cloud Solution Architect | Google
 
 This tutorial demonstrates how to create and manage projects on Google Cloud Platform with Terraform. With Terraform, many of your resources such as projects, IAM policies, networks, Compute Engine instances, and Container Engine clusters can be managed, versioned, and easily recreated for your organization or teams. The state that Terraform generates is saved to Google Cloud Storage for persistence.
 
@@ -124,11 +124,11 @@ gcloud beta organizations add-iam-policy-binding ${TF_VAR_org_id} \
 Create the remote backend bucket in Cloud Storage and the `backend.tf` file for storage of the `terraform.tfstate` file:
 
 ```sh
-gsutil mb gs://${TF_BACKEND_BUCKET}
+gsutil mb -p ${TF_ADMIN} gs://${TF_ADMIN}
  
 cat > backend.tf <<EOF
 terraform {
- backend "cloud_storage" {
+ backend "gcs" {
    bucket = "${TF_ADMIN}"
    path   = "/"
  }
@@ -258,6 +258,8 @@ SSH into the instance created:
 ```sh
 gcloud compute ssh $(terraform output | grep instance_id | cut -d = -f2)
 ```
+
+Note that SSH may not work unless your organization user also has access to the newly created project resources.
 
 ## Cleaning up
 First, destroy the resources created by Terraform:
