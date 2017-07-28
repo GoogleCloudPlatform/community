@@ -1,16 +1,17 @@
 {
-  "secretToken":"test4req", 
-  "stageBucket":"a-tutorial",
-  "location":"us-central1",
+  "secretToken" : "[YOUR_SECRET_TOKEN]",
+  "stageBucket" : "[YOUR_STAGING_BUCKET_NAME]",
+  "location" : "[YOUR_REGION]",
   "deployments": [
-     {
-       "functionName":"helloHttp",
-       "path":"CFG-helloWorld"
-     },
-     {
-       "functionName":"helloHttp2",
-       "path":"GCF_test/examples/helloWorld"
-     }
+    {
+      "repository":"[YOUR_REPOSITORY_1]",
+      "path":"[YOUR_FUNCTION_PATH_1]",
+      "functionName":"[YOUR_FUNCTION_NAME_1]"
+    },
+    {
+      "repository":"[YOUR_REPOSITORY_N]",
+      "path":"[YOUR_FUNCTION_PATH_N]",
+      "functionName":"[YOUR_FUNCTION_NAME_N]"
+    }
   ]
 }
-
