@@ -73,12 +73,10 @@ exports.receiveNotification = function receiveNotification (req, res) {
           subRes.on('data', (d) => {
             console.log(d);
             res.status(200).end('ok');
-            return;
           });
         }).on('error', (e) => {
           console.error(e);
           res.status(500).end('confirmation failed');
-          return;
         });
         break;
       case 'notification':
