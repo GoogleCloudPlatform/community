@@ -66,12 +66,12 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- MySQL connector for Cloud SQL -->
-    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+    <!-- MySQL Socket Factory for Cloud SQL -->
+    <!-- https://mvnrepository.com/artifact/com.google.cloud.sql/mysql-socket-factory -->
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>6.0.6</version>
+      <groupId>com.google.cloud.sql</groupId>
+      <artifactId>mysql-socket-factory</artifactId>
+      <version>1.0.3</version>
     </dependency>
 
     <!-- Databases - Uses HSQL by default -->
