@@ -65,6 +65,9 @@ Cloud Platform (GCP).
     [HyperSQL database][hyper]. You will now switch from HyperSQL to using Cloud
     SQL as your database.
 
+1. Note: [spring-petclinic](spring-petclinic) provides a copy of the source code
+ with the required changes already completed to run Spring PetClinic using Cloud SQL.
+
 [hyper]: http://hsqldb.org/
 
 ### Using Cloud SQL as your database
@@ -92,9 +95,11 @@ Cloud Platform (GCP).
         spring.datasource.username=root
         spring.datasource.password=my-smart-password
 
+    See updated file [here](spring-petclinic/src/main/resources/application-mysql.properties).
+
 1.  Update `pom.xml` to include [Cloud SQL MySQL Socket Factory][socket].
     The socket library allows you to connect to your Cloud SQL instance for
-    local testing and deployment.
+    local testing and deployment. See updated `pom.xml` [here](spring-petclinic/pom.xml).
 
 1.  Restart the Spring Boot application using the mysql [profile][profile]:
 
@@ -122,6 +127,7 @@ https://YOUR_PROJECT_ID.appspot.com.
     and deploy process extremely easy.
     Add [`appengine-maven-plugin`][appengine-maven] to your
     `pom.xml`'s `build` plugins section.
+    The sample [`pom.xml`](spring-petclinic/pom.xml) already contains this plugin configuration.
 
 1.  Create an `app.yaml` under `src/main/appengine` with the following contents.
     For more on configuring `app.yaml`, refer to [this resource][yaml]:
@@ -136,6 +142,8 @@ https://YOUR_PROJECT_ID.appspot.com.
           - url: /.*
             script: this field is required, but ignored
 
+    Optionally, you can use the sample [app.yaml](spring-petclinic/src/main/appengine/app.yaml).
+
 1.  App Engine flexible environment monitors the health of your application
     using the `/_ah/health` endpoint. (Note: A `200` or`404` status is
     interpreted as the application being healthy.) Because Spring Boot
@@ -145,6 +153,9 @@ https://YOUR_PROJECT_ID.appspot.com.
 
          management.contextPath=/_ah
          spring.profiles.active=mysql
+
+    [Here](spring-petclinic/src/main/resources/application.properties) is an updated
+    `application.properties`.
 
 1.  Run the following command to deploy your app:
 
