@@ -1,6 +1,6 @@
 ---
 title: Using Pusher on Google App Engine Standard Java 7 Environment
-description: Learn how to use Pusher in place of the deprecated Channels API on App Engine Standard
+description: Learn how to use Pusher in place of the deprecated Channels API on App Engine Standard.
 author: jabubake
 tags: App Engine, Pusher, Channels API, Java
 date_published: 2017-08-09
