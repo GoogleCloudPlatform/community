@@ -109,7 +109,7 @@ All users subscribed to the channel receive updates of users connecting or disco
 channel.
 
 ## Using Pusher on your server
-The server-side REST SDKs is used to initialize a Pusher instance, 
+The server-side REST SDK is used to initialize a Pusher instance, 
 authorize secure presence channels and provide clients an endpoint to trigger events.
 
 ### Connecting to Pusher
@@ -117,8 +117,8 @@ The following code provides examples of initializing and connecting to Pusher.
 Use the credentials from the application you created to initialize and connect to Pusher,
 as shown in this example.
 
-It is important to provide the cluster information if not using the default `mt1` (us-east-1) cluster.
-Messages sent over Pusher can be encrypted.
+It is important to provide the cluster information if not using the default `mt1` (`us-east-1`) cluster.
+You can encrypt messages sent over Pusher.
 
 [embedmd]:# (java/src/main/java/com/example/appengine/pusher/PusherService.java /public abstract/ $)
 ```java
