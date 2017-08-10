@@ -1,6 +1,6 @@
 ---
 title: Deploy a Grails app to Google Cloud
-description: Learn how to deploy a Grails 3 application to Google App Engine Java Flexible Environment, integrate with Google Cloud Storage and Cloud SQL
+description: Deploy a Grails 3 app to GAE Java Flexible Environment and learn how to use Google Cloud Storage and Cloud SQL.
 author: sdelamo
 tags: Cloud SQL, Google App Engine Java Flexible Environment, Grails, Google Cloud Storage
 date_published: 2017-08-08
