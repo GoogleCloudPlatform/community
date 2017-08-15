@@ -365,21 +365,21 @@ The app allows users to upload a book cover image. To store the images in the Cl
 
 [Enable Cloud Storage API](https://console.cloud.google.com/flows/enableapi?apiid=storage_api,logging,sqladmin.googleapis.com&redirect=https://console.cloud.google.com&_ga=1.20629880.1963584502.1488379440) for the project, if you have not enabled it already.
 
-![Enable Cloud Storage API](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-1.png)
+![Screenshot showing how to locate API Manager](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-1.png)
 
-![Enable Cloud Storage API](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-2.png)
+![Screenshot showing how to search for Cloud Storage](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-2.png)
 
-![Enable Cloud Storage API](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-3.png)
+![Screenshot showing Enable button](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-3.png)
 
 
 
 You can create a Cloud Storage Bucket as illustrated in the images below. Name the bucket _grailsbucket_
 
-![Enable Cloud Storage API](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-4.png)
+![Screenshot showing the Storage menu](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-4.png)
 
-![Enable Cloud Storage API](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-5.png)
+![Screenshot showing the create bucket option](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-5.png)
 
-![Enable Cloud Storage API](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-6.png)
+![Screenshot showing how to name and create a bucket](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-6.png)
 
 Add Cloud Storage dependency to your project dependencies
 
