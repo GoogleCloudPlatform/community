@@ -47,26 +47,6 @@ To complete the guide, go to the initial folder
 
     cd initial
 
-and follow the instructions in the next sections.
-
-or you can go right to the completed example:
-
-    cd complete
-
-Although you can go right to the completed example, in order to deploy the app you would need to complete several configuration steps in Google Cloud:
-
-- Signup for Cloud SDK and install Cloud SDK.
-
-- Initialize an App Engine application within the current Google Cloud project.
-
-- Create a Mysql Database in an instance of Cloud SQL.
-
-- Enable Cloud Datastore API for the project
-
--  Create a Cloud Datastore bucket
-
-Moreover, You would need to modify your _application.yml_ configuration to point to the correct Cloud SQL database and Cloud Storage Bucket. Checkout the guide steps for more details.
-
 ## Writing the Application
 
 ### Domain Class
