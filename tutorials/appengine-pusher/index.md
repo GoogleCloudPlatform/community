@@ -298,7 +298,7 @@ The following example illustrates how to instantiate a Pusher connection using a
 A client can subscribe to multiple channels. A subscription to a private or presence channel auto-triggers the
 authentication endpoint. 
 
-The following example illustrates subscribing to a channel.
+The following example illustrates subscribing to a channel:
 
 [embedmd]:# (java/src/main/webapp/WEB-INF/view/chat.jsp /\/\/ subscribe to the chat room/ /\);/)
 ```jsp
