@@ -66,7 +66,7 @@ public class AuthorizeServlet extends HttpServlet {
     Map<String, String> userInfo = new HashMap<>();
     userInfo.put("displayName", displayName);
 
-    // Inject custom authentication code for your application here to allow /deny current request
+    // Inject custom authentication code for your application here to allow/deny current request
 
     String auth =
         pusher.authenticate(socketId, channelId, new PresenceUser(currentUserId, userInfo));

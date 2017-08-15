@@ -44,7 +44,7 @@ public class SendMessageServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Parse POST request body received in the format :
+    // Parse POST request body received in the format:
     // [{"message": "my-message", "socket_id": "1232.24", "channel": "presence-my-channel"}]
 
     String body = CharStreams.readLines(request.getReader()).toString();
@@ -55,7 +55,7 @@ public class SendMessageServlet extends HttpServlet {
     String channelId = data.get("channel_id");
 
     User user = UserServiceFactory.getUserService().getCurrentUser();
-    // user email prefix as display name for current logged in user
+    // User email prefix as display name for current currently authenticated user
     String displayName = user.getNickname().replaceFirst("@.*", "");
 
     // Create a message including the user email prefix to display in the chat window
@@ -70,7 +70,7 @@ public class SendMessageServlet extends HttpServlet {
                 channelId,
                 "new_message", // name of event
                 messageData,
-                socketId); // (optional) use client socket_id to exclude the sender from receiving the message
+                socketId); // (Optional) Use client socket_id to exclude the sender from receiving the message
 
     // result.getStatus() == SUCCESS indicates successful transmission
     messageData.put("status", result.getStatus().name());

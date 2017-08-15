@@ -6,24 +6,26 @@ tags: App Engine, Pusher, Channels API, Java
 date_published: 2017-08-09
 ---
 
-This tutorial shows you how to use [Pusher](https://pusher.com) on  [Google App Engine](/appengine)
-to send real-time bi-directional messages via WebSockets to web and mobile apps,
-or any other Internet connected device.
-It describes the features you need to replicate the deprecated 
-[Channel API](/appengine/docs/java/channel/)’s real-time functionality by using Pusher, instead.
+This tutorial demonstrate how to use [Pusher](https://pusher.com) on [Google App Engine](/appengine).
+Pusher is a hosted API for sending real-time, bi-directional messages via WebSockets to apps and
+other Internet-connected devices.
 
-This functionality is useful for applications that update users about new information in real time.
-Example use cases include collaborative applications, multi-player games, and
-chat rooms.
+Pusher's real-time functionality replicates the deprecated [Channel API](/appengine/docs/java/channel/)
+and is useful for applications that send information in real time,
+such as collaborative applications, multi-player games, and chat rooms.
 
 Using Pusher is a better choice than polling in situations where updates can't be predicted or 
-scripted, such as when relaying information between human users,or when events aren't generated 
+scripted, such as when relaying information between human users, or when events aren't generated
 systematically.
 
+Using WebSockets, Pusher is able to deliver server-side events to clients.
+Pusher also offers  HTTP REST API based server-side SDKs to enable sending events from server to a
+public or secured channel.
+
 In this tutorial you’ll learn how to complete the following tasks on the server:
-+  Set up your server to use the Pusher service.
-+  Authenticate subscriptions to secure channels.
-+  Send messages over the channel.
++  Set up your server to use the Pusher service
++  Authenticate subscriptions to secure channels
++  Send messages over the channel
 
 You'll also learn how to complete the following tasks in the web browser:
 +  Set up your client to use the Pusher service
@@ -35,32 +37,27 @@ You'll also learn how to complete the following tasks in the web browser:
 ## Before you begin  
 
 1.  Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
-2.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/) and run:
+1.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/) and run:
     ```
        gcloud init
     ```
-    If this is your first time creating an App engine application:
+    If this is your first time creating an App Engine application, run the following command
+    to create a new application:
     ```
        gcloud app create
     ```
 
-## Getting started with Pusher service
+The following sections walk you through setting up Pusher.
 
-Pusher offers the ability to create realtime bi-directional functionality via WebSockets to web and
- mobile apps, or any other Internet connected device. 
-Using WebSockets, Pusher is able to deliver server-side events to clients.
-Pusher also offers  HTTP REST API based server-side SDKs to enable sending events from server to a 
-public or secured channel.
+### Setting up a Pusher account
 
-### Setting up your Pusher account.
+To set up a Pusher account, perform these steps:
 
-Follow these steps:
-
-1. [Create](https://pusher.com/signup) a Pusher account.
-1. Once signed in, you will be directed to a [dashboard](https://dashboard.pusher.com/).
+1. [Create a Pusher account](https://pusher.com/signup).
+1. Once signed in, you are directed to a [dashboard](https://dashboard.pusher.com/).
    The dashboard provides a convenient way to retrieve application settings, view errors
-   and a console to debug calls to your application.
-1. Using the left panel on the dashboard, create a new application and note down the cluster,
+   and a console to debug calls to your application. From the dashboard's left panel,
+   create a new application using "Your apps" and note down the cluster,
    application id, key and secret.
 1. Update [appengine-web.xml](java/src/main/webapp/WEB-INF/appengine-web.xml) with your Pusher
    account credentials.
@@ -78,12 +75,13 @@ Pusher provides a [range of libraries in different languages](https://pusher.com
 A [channel](https://pusher.com/docs/client_api_guide/client_channels) is automatically created 
 when an application publishes or subscribes to the channel by name. 
 They do not need to be explicitly created or deleted.
+
 There are three types of channels:
 
-- Public : Any one can join the channel using the channel name and requires no authentication
-- Private: Server-side authentication is enforced, channel names must be prefixed with "private-"
-- Presence: Server-side authentication is enforced, channel names must be prefixed with "presence-",
-   and all members can view who have connected / disconnected from the channel.
+- **Public**: Anyone can join the channel without authentication using the channel name
+- **Private**: Server-side authentication is enforced, channel names must be prefixed with `private-`
+- **Presence**: Server-side authentication is enforced, channel names must be prefixed with `presence-`,
+   and all members can view who have connected/disconnected from the channel.
 
 ### Events
 
@@ -93,31 +91,30 @@ This allows for efficient event routing in the clients.
 Note: A subscriber will receive all messages published over a channel.
 
 Events may be trigged by the user or Pusher.
-In case of Pusher triggered events on a channel, the event name is
-prefixed with `pusher:`, for example: `pusher:subscription-succeeded`.
+In case of Pusher-triggered events on a channel, the event name is
+prefixed with `pusher:`, such as `pusher:subscription-succeeded`.
 
 ## Chat application
-The sample application demonstrates presence channels in Pusher for a chat application:
+The sample application demonstrates presence channels in Pusher for a chat application.
 View complete source code [here](java).
      
 The [Java server-side SDK](https://github.com/pusher/pusher-http-java) is used for authorizing 
-Pusher subscriptions and publishing events to the channel and the 
+Pusher subscriptions and publishing events to the channel, and the
 [JavaScript WebSocket SDK](https://github.com/pusher/pusher-js) is used to 
 subscribe to the events.
      
-All users subscribed to the channel receive updates of users connecting or disconnecting from the 
-channel.
+All users subscribed to the channel receive updates when users connect or disconnect from the channel.
 
 ## Using Pusher on your server
 The server-side REST SDK is used to initialize a Pusher instance, 
-authorize secure presence channels and provide clients an endpoint to trigger events.
+authorize secure presence channels, and provide clients an endpoint to trigger events.
 
 ### Connecting to Pusher
 The following code provides examples of initializing and connecting to Pusher.
 Use the credentials from the application you created to initialize and connect to Pusher,
 as shown in this example.
 
-It is important to provide the cluster information if not using the default `mt1` (`us-east-1`) cluster.
+Note: It is important to provide the cluster information if not using the default `mt1` (`us-east-1`) cluster.
 You can encrypt messages sent over Pusher.
 
 [embedmd]:# (java/src/main/java/com/example/appengine/pusher/PusherService.java /public abstract/ $)
@@ -152,7 +149,7 @@ The authentication endpoint can be implemented in your server as shown in this e
 The REST SDK provides methods to retrieve the required authentication JSON.
 
 Note: Private channels do not require user information to be provided as part of the authentication.
-Read more about Pusher authentication [here](https://pusher.com/docs/authenticating_users).
+To learn more about authentication in Pusher, see [Pusher's documentation](https://pusher.com/docs/authenticating_users).
 
 [embedmd]:# (java/src/main/java/com/example/appengine/pusher/AuthorizeServlet.java /public class/ $)
 ```java
@@ -185,7 +182,7 @@ public class AuthorizeServlet extends HttpServlet {
     Map<String, String> userInfo = new HashMap<>();
     userInfo.put("displayName", displayName);
 
-    // Inject custom authentication code for your application here to allow /deny current request
+    // Inject custom authentication code for your application here to allow/deny current request
 
     String auth =
         pusher.authenticate(socketId, channelId, new PresenceUser(currentUserId, userInfo));
@@ -218,11 +215,11 @@ Authenticated clients can submit messages to the channel over HTTP using a serve
 as shown in the following example.
 
 The sender can be [excluded](https://pusher.com/docs/server_api_guide/server_excluding_recipients)
-from receiving the broadcast message , by passing in its own socket ID when triggering an event.
+from receiving the broadcast message by passing in its own socket ID when triggering an event.
 Individual messages are limited to 10KB in size.
 
 For more on publishing messages to multiple channels or batching multiple messages, refer to
-[this resource](https://pusher.com/docs/server_api_guide/interact_rest_api#publishing-events).
+[this page](https://pusher.com/docs/server_api_guide/interact_rest_api#publishing-events).
 
 [embedmd]:# (java/src/main/java/com/example/appengine/pusher/SendMessageServlet.java /public class/ $)
 ```java
@@ -234,7 +231,7 @@ public class SendMessageServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Parse POST request body received in the format :
+    // Parse POST request body received in the format:
     // [{"message": "my-message", "socket_id": "1232.24", "channel": "presence-my-channel"}]
 
     String body = CharStreams.readLines(request.getReader()).toString();
@@ -245,7 +242,7 @@ public class SendMessageServlet extends HttpServlet {
     String channelId = data.get("channel_id");
 
     User user = UserServiceFactory.getUserService().getCurrentUser();
-    // user email prefix as display name for current logged in user
+    // User email prefix as display name for currently authenticated user
     String displayName = user.getNickname().replaceFirst("@.*", "");
 
     // Create a message including the user email prefix to display in the chat window
@@ -260,7 +257,7 @@ public class SendMessageServlet extends HttpServlet {
                 channelId,
                 "new_message", // name of event
                 messageData,
-                socketId); // (optional) use client socket_id to exclude the sender from receiving the message
+                socketId); // (Optional) Use client socket_id to exclude the sender from receiving the message
 
     // result.getStatus() == SUCCESS indicates successful transmission
     messageData.put("status", result.getStatus().name());
@@ -272,14 +269,18 @@ public class SendMessageServlet extends HttpServlet {
 
 ## Using Pusher on your client
 
+The following sections explain how to subscribe to Pusher channels on your client using the
+JavaScript Websocket SDK.
+
 ### Connecting to Pusher
 
-Client connections require the application key to be provided. If the client will be subscribing
-to private or presence channels, a server-side authentication endpoint must be  provided as well.
-The client will attempt to use `/pusher/auth` path for the endpoint, if one is not explicitly provided.
+Client connections require an application key to be provided. If the client will be subscribing
+to private or presence channels, a server-side authentication endpoint must be provided as well.
+The client attempts to use `/pusher/auth` path for the endpoint if one is not explicitly provided.
 
 The following example illustrates how to instantiate a Pusher connection using a custom authentication
- endpoint. For more on client connections, refer to [this resource](https://pusher.com/docs/client_api_guide/client_connect).
+ endpoint. For more information about connections, refer to
+ [this page](https://pusher.com/docs/client_api_guide/client_connect).
 
 [embedmd]:# (java/src/main/webapp/WEB-INF/view/chat.jsp /\/\/ Connect to Pusher/ /}\);/)
 ```jsp
@@ -301,19 +302,19 @@ The following example illustrates subscribing to a channel.
 
 [embedmd]:# (java/src/main/webapp/WEB-INF/view/chat.jsp /\/\/ subscribe to the chat room/ /\);/)
 ```jsp
-// subscribe to the chat room presence channel, eg. "presence-my-room"
+// Subscribe to the chat room presence channel, eg. "presence-my-room"
     var channel = pusher.subscribe(channel_name);
 ```
 
 ### Bind to Pusher events
 
 On subscription success/error, Pusher sends events that a client can easily attach
-to an event callback as shown in this example.
+to an event handler.
 
 In the case of presence channels, Pusher sends additional events when a user connects 
 or disconnects from the channel.
 
-The following code snippets show to bind event handlers to Pusher events.
+The following code snippets show to bind event handlers to Pusher events:
 
 [embedmd]:# (java/src/main/webapp/WEB-INF/view/chat.jsp /\/\/ bind to successful Pusher connection/ /}\);\n\n/)
 ```jsp
@@ -351,13 +352,14 @@ The following code snippets show to bind event handlers to Pusher events.
 
 ```
 
-### Bind to channel events
+### Receive events
 
-[Event binding](https://pusher.com/docs/client_api_guide/client_events#bind-events) may be done bound to a channel
-or to all channels subscribed by a client.
+Clients can receive events triggered over a channel by
+[binding](https://pusher.com/docs/client_api_guide/client_events#bind-events) to the channel
+using the event name and attaching an event handler that is triggered on receiving the event.
 
-The following example shows attaching an event callback to a user triggered event.
-In the case of the chat application, the event callback will be used to update the messages 
+The following example demonstrates attaching an event callback to a user-triggered event.
+In the case of the chat application, the event callback is used to update the messages
 displayed by the chat application.
 
 [embedmd]:# (java/src/main/webapp/WEB-INF/view/chat.jsp /\/\/ bind to successful subscription/ /}\);/)
@@ -376,8 +378,7 @@ displayed by the chat application.
 
 ### Trigger server-side endpoint to send messages
 
-Now use a server-side endpoint as described earlier to trigger an event on a chat message
- that is submitted.
+Now you can use a server-side endpoint as described earlier to trigger an event on a chat message.
 The client can be excluded from receiving the broadcast message by providing the socket ID.
 
 [embedmd]:# (java/src/main/webapp/WEB-INF/view/chat.jsp /\/\/ track socket_id/ /false;\n.*}\);/)
@@ -414,9 +415,9 @@ The client can be excluded from receiving the broadcast message by providing the
 ## Disconnecting from Pusher
 
 Pusher automatically closes connections when a user navigates to another web page or closes their
- web browser, this need n't be done manually.
-If required, can be done as described [here](https://pusher.com/docs/client_api_guide/client_connect#disconnecting).
-
+web browser.
+If you need to close a client connection manually,
+refer to [this page](https://pusher.com/docs/client_api_guide/client_connect#disconnecting).
 
 ## Running the application locally
   
@@ -427,7 +428,7 @@ to test and deploy to the Google Cloud App Engine Standard environment.
      mvn clean appengine:run
   ```
   
-Access [http://localhost:8080](http://localhost:8080) via the browser, login and join the chat room.
+Access [http://localhost:8080](http://localhost:8080) via the browser, login, and join the chat room.
 
 The chat window will contain a link you can use to join the room as a different user in another browser.
 
@@ -435,7 +436,7 @@ You should now be able to view both the users within the chat application window
 
 ## Deploying
   
-  - Deploy the application to the project
+  - Deploy the application to the project:
     ```
          mvn clean appengine:deploy
         

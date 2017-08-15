@@ -73,7 +73,7 @@
         encrypted: true
     });
 
-    // subscribe to the chat room presence channel, eg. "presence-my-room"
+    // Subscribe to the chat room presence channel, eg. "presence-my-room"
     var channel = pusher.subscribe(channel_name);
 
     // bind to successful Pusher connection
