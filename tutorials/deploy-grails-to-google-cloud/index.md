@@ -390,12 +390,11 @@ _build.gradle_
 _build.gradle_
 Exclude _com.google.guava:guava-jdk5_ too:
 
- ```configurations {
-    compile.exclude module: "tomcat-juli"
-    compile.exclude module: "spring-boot-starter-tomcat"
-    compile.exclude(group: "com.google.guava", module: "guava-jdk5")
-}```
-
+    configurations {
+        compile.exclude module: "tomcat-juli"
+        compile.exclude module: "spring-boot-starter-tomcat"
+        compile.exclude(group: "com.google.guava", module: "guava-jdk5")
+    }
 
 Append these configuration (Cloud Storage Bucket and Project id) parameters to _application.yml_ 
 
