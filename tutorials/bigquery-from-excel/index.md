@@ -86,30 +86,27 @@ Once the ODBC driver is configured, open Excel.
 
 ### Entering a query
 
-1. Select **Advanced Options**.
-1. Enter your query in the **SQL statement** text box.
-  ![Enter SQL statement screenshot](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/sql-statement.png)
+1.  Select **Advanced Options**.
+1.  Enter your query in the **SQL statement** text box.
 
-   As an example, query the [USA names public
-   dataset](https://cloud.google.com/bigquery/public-data/usa-names) for the most
-   popular names during the [baby boomer
-   generation](https://wikipedia.org/wiki/Baby_boomers).
+    ![Enter SQL statement screenshot](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/sql-statement.png)
 
-   ```
-   #standardSQL
-   SELECT
-     name, SUM(number) as total_number
-   FROM
-     `bigquery-public-data.usa_names.usa_1910_2013`
-   WHERE
-     year >= 1946
-     AND year <= 1964
-   GROUP BY
-     name
-   ORDER BY
-     total_number
-   DESC
-   ```
+    As an example, query the [USA names public dataset](https://cloud.google.com/bigquery/public-data/usa-names)
+    for the most popular names during the [baby boomer generation](https://wikipedia.org/wiki/Baby_boomers).
+
+        #standardSQL
+        SELECT
+          name, SUM(number) as total_number
+        FROM
+          `bigquery-public-data.usa_names.usa_1910_2013`
+        WHERE
+          year >= 1946
+          AND year <= 1964
+        GROUP BY
+          name
+        ORDER BY
+          total_number
+        DESC
 
 1. Click **OK**. When the query completes, you will have a new sheet with about 7,400 rows.
 
