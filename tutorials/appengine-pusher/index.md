@@ -6,7 +6,7 @@ tags: App Engine, Pusher, Channels API, Java
 date_published: 2017-08-09
 ---
 
-This tutorial demonstrate how to use [Pusher](https://pusher.com) on [Google App Engine](/appengine).
+This tutorial demonstrates how to use [Pusher](https://pusher.com) on [Google App Engine](/appengine).
 Pusher is a hosted API for sending real-time, bi-directional messages via WebSockets to apps and
 other Internet-connected devices.
 
