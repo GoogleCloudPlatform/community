@@ -13,9 +13,9 @@ date_published: 2017-08-08
 
 ## Getting Started
 In this guide, you deploy a Grails 3 application
-to [Google App Engine Flexible Environment](https://cloud.google.com/appengine/docs/flexible/), upload
+to the [Google App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/), upload
 images to [Google Cloud Storage](https://cloud.google.com/storage/)
-and use a MySQL database provided by [Cloud SQL](https://cloud.google.com/sql/).
+and use a MySQL database provided by [Google Cloud SQL](https://cloud.google.com/sql/).
 
 ## Costs
 
@@ -39,19 +39,19 @@ To get started do the following:
 
 The Grails guides repositories contain two folders:
 
-- _initial_ An initial project. A Grails app with additional code to give you a head-start.
+- `initial`: An initial project. A Grails app with additional code to give you a head start.
 
-- _complete_ A completed example. It is the result of working through the steps presented by the guide and applying those changes to the initial folder.
+- `complete`: A completed example. It is the result of working through the steps presented by the guide and applying those changes to the `initial` folder.
 
-To complete the guide, go to the initial folder
+To complete the guide, go to the `initial` folder:
 
     cd initial
 
-## Writing the Application
+## Writing the application
 
-### Domain Class
+### Domain class
 
-The initial project includes a Grails Domain Class to map _Book_ instances to a MySQL table.
+The `initial` project includes a Grails domain class to map `Book` instances to a MySQL table.
 
 > A domain class fulfills the M in the Model View Controller (MVC) pattern and represents a persistent entity that is mapped onto an underlying database table. In Grails a domain is a class that lives in the grails-app/domain directory.
 
@@ -74,11 +74,11 @@ _grails-app/domain/demo/Book.groovy_
         }
     }
 
-### Seed Data
+### Seed data
 
 When the application starts, it loads some seed data. In particular, it loads a list of books.
 
-Modify _BootStrap.groovy_.
+Modify `BootStrap.groovy`:
 
 _grails-app/init/demo/BootStrap.groovy_
     
@@ -103,11 +103,11 @@ _grails-app/init/demo/BootStrap.groovy_
     }
 
 
-### Root Url
+### Root URL
 
-You want to display the books persisted when the Grails app starts (_BootStrap.groovy_.) in the home page of the application.
+You want to display the books persisted when the Grails app starts (`BootStrap.groovy`) in the home page of the application.
 
-Map the home page to be resolved by _BookController_ by modifying _UrlMappings.groovy_
+Map the home page to be resolved by `BookController` by modifying `UrlMappings.groovy`
 
 Replace: 
 
@@ -122,11 +122,11 @@ _grails-app/controllers/demo/UrlMappings.groovy_
     '/'(controller: 'book')
     
 
-The _initial_ project modifies slightly the output of the Grails static scaffolding command _generate-all_ to provide CRUD functionality for the domain class _Book_.
+The `initial` project modifies slightly the output of the Grails static scaffolding command `generate-all` to provide CRUD functionality for the domain class `Book`.
 
-You can find the code: _BookController_, _BookGormService_ and GSP views in the initial project.
+You can find the code: `BookController`, `BookGormService` and GSP views in the `initial` project.
 
-## Cloud SDK
+## Google Cloud SDK
 
 Signup for [Google Cloud Platform](https://console.cloud.google.com/) and create a new project:
 
@@ -134,19 +134,19 @@ Signup for [Google Cloud Platform](https://console.cloud.google.com/) and create
 
 ![Create Project](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/create-project-2.png)
 
-The previous image shows a project named _grailsgooglecloud_
+The previous image shows a project named **grailsgooglecloud**.
 
-Install [Cloud SDK](https://cloud.google.com/sdk/downloads) for your operating system.
+Install the [Cloud SDK](https://cloud.google.com/sdk/downloads) for your operating system.
 
-After you have installed the SDK, run the init command in your terminal:
+After you have installed the SDK, run the `init` command in your terminal:
 
-    $ gcloud init
+    gcloud init
 
 It prompts you to select the Google account and the project which you want to use.
 
 ## Google App Engine
 
-This guide deploys a Grails application to [Google App Engine Flexible Environment](https://cloud.google.com/appengine/docs/flexible/)
+This guide deploys a Grails application to the [Google App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/)
 
 > App Engine allows developers to focus on doing what they do best: writing code. Based on Google Compute Engine, the App Engine flexible environment automatically scales your app up and down while balancing the load. Microservices, authorization, SQL and NoSQL databases, traffic splitting, logging, versioning, security scanning, and content delivery networks are all supported natively.
 
@@ -156,13 +156,13 @@ Run the command:
     
 to initialize an App Engine application within the current Google Cloud project.
 
-NOTE: You need to choose the region where you want your App Engine Application located.
+NOTE: You need to choose the region where you want your App Engine application located.
 
-### Google App Engine Gradle Plugin
+### Google App Engine Gradle plugin
 
-To deploy to App Engine, add the [Google App Engine Gradle Plugin](https://github.com/GoogleCloudPlatform/app-gradle-plugin) to your project.
+To deploy to App Engine, add the [Google App Engine Gradle plugin](https://github.com/GoogleCloudPlatform/app-gradle-plugin) to your project.
 
-Add the plugin as a _buildscript_ dependency.  
+Add the plugin as a `buildscript` dependency:
 
 _build.gradle_
 
@@ -193,9 +193,9 @@ _build.gradle_
     apply plugin: 'com.google.cloud.tools.appengine' 
 
 
-### Application Deployment Configuration
+### Application deployment configuration
 
-To deploy to Google App Engine, add the file _src/main/appengine/app.yaml_
+To deploy to Google App Engine, add the file `src/main/appengine/app.yaml`.
 
 It describes the application’s deployment configuration:
 
@@ -218,7 +218,7 @@ _src/main/appengine/app.yaml_
     manual_scaling:
         instances: 1
 
-Here, _app.yaml_ specifies the runtime used by the app, and sets _env: flex_, specifying that the app uses the [flexible environment](https://cloud.google.com/appengine/docs/flexible/).
+Here, `app.yaml` specifies the runtime used by the app, and sets `env: flex`, specifying that the app uses the [flexible environment](https://cloud.google.com/appengine/docs/flexible/).
 
 > The minimal _app.yaml_ application configuration file shown above is sufficient for a simple Grails application. Depending on the size, complexity, and features that your application uses, you may need to change and extend this basic configuration file. For more information on what can be configured via _app.yaml_, please see the [Configuring Your App with app.yaml](https://cloud.google.com/appengine/docs/flexible/java/configuring-your-app-with-app-yaml) guide.
 
@@ -254,12 +254,12 @@ _build.gradle_
 
 ## Cloud SQL
 
-This guide’s Grails application uses a MySQL database created with [Cloud SQL](https://cloud.google.com/sql/)
+This guide’s Grails application uses a MySQL database created with [Cloud SQL](https://cloud.google.com/sql/).
 
 > Cloud SQL is a fully-managed database service that makes it easy to set up, maintain, manage, and administer your relational PostgreSQL BETA and MySQL databases in the cloud. Cloud SQL offers high performance, scalability, and convenience. Hosted on Google Cloud Platform, Cloud SQL provides a database infrastructure for applications running anywhere.
 
-### Enable Cloud SQL API
-If you have not enabled **Cloud SQL** and **Cloud SQL API already**, go to your project dashboard and enable them.
+### Enable the Cloud SQL API
+If you have not enabled Cloud SQL and the Cloud SQL API already, go to your project dashboard and enable them.
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudsql-1.png)
 
@@ -271,7 +271,7 @@ If you have not enabled **Cloud SQL** and **Cloud SQL API already**, go to your 
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudsqlapi-1.png)
 
-### Create Cloud SQL Instance
+### Create a Cloud SQL Instance
 
 [Create a new instance of Cloud SQL](https://console.cloud.google.com/sql) associated to the same project which you created before.
 
@@ -279,7 +279,7 @@ Go to the Cloud SQL section of the console:
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudsql-5.png)
 
-Next screenshots illustrate the process:
+The next screenshots illustrate the process:
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudsql-6.png)
 
@@ -299,9 +299,9 @@ Once the instance is ready, create a database:
 
 ### Datasource using Cloud SQL
 
-As described in [Using Cloud SQL with a Flexible Environment](https://cloud.google.com/appengine/docs/flexible/java/using-cloud-sql) documentation, you need to add several runtime dependencies and configure the production url to use the Cloud SQL MySQL database which you created before.
+As described in [Using Cloud SQL with a flexible environment](https://cloud.google.com/appengine/docs/flexible/java/using-cloud-sql) documentation, you need to add several runtime dependencies and configure the production URL to use the Cloud SQL MySQL database which you created before.
 
-Add MySQL dependencies; JDBC library
+Add MySQL dependencies: JDBC library
 and Cloud SQL MySQL Socket Factory.
 
  
@@ -310,7 +310,7 @@ _build.gradle_
     runtime 'mysql:mysql-connector-java:6.0.5' 
     runtime 'com.google.cloud.sql:mysql-socket-factory-connector-j-6:1.0.3'
 
-Replace the _production_ environment _datasource_ configuration to point to the Cloud SQL MySQL database in _application.yml_
+Replace the `production` environment `datasource` configuration to point to the Cloud SQL MySQL database in `application.yml`:
 
 _grails-app/conf/application.yml_
 
@@ -323,19 +323,19 @@ _grails-app/conf/application.yml_
             username: root
             password: grailsgooglecloud
 
-The production datasource url uses a custom url which is built with several components:
+The production datasource URL uses a custom URL which is built with several components:
 
-    jdbc:mysql://google/{DATABASE_NAME}?socketFactory=com.google.cloud.sql.mysql.SocketFactory&cloudSqlInstance={INSTANCE_NAME}&useSSL=true
+    jdbc:mysql://google/[DATABASE_NAME]?socketFactory=com.google.cloud.sql.mysql.SocketFactory&cloudSqlInstance=[INSTANCE_NAME]&useSSL=true
 
-- **DATABASE_NAME** Use the database name you used when you created the database.
+- For `[DATABASE_NAME], use the database name you used when you created the database.
 
-- **INSTANCE_NAME** You can find your instance name in your Cloud SQL instance details:
+- For `[INSTANCE_NAME]`, use your instance name, which is visible in your Cloud SQL instance details:
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudsql-13.png)
 
-- **USERNAME / PASSWORD** For this guide, you use username: _root_ and the password which you entered when you created the SQL instance; see previous sections.
+- For this guide, use username `root`, and use the password which you entered when you created the SQL instance; see previous sections.
 
-[Cloud SQL Socket Factory for JDBC drivers Github Repository](https://github.com/GoogleCloudPlatform/cloud-sql-jdbc-socket-factory) contains a tool in _examples/getting-started_ that can help generate the JDBC URL and verify that connectivity can be established.
+The [Cloud SQL Socket Factory for JDBC drivers Github repository](https://github.com/GoogleCloudPlatform/cloud-sql-jdbc-socket-factory) contains a tool in `examples/getting-started` that can help generate the JDBC URL and verify that connectivity can be established.
 
 ## Cloud Storage
 
@@ -343,7 +343,7 @@ The app allows users to upload a book cover image. To store the images in the Cl
 
 > Google Cloud Storage is unified object storage for developers and enterprises, from live data serving to data analytics/ML to data archiving.
 
-[Enable Cloud Storage API](https://console.cloud.google.com/flows/enableapi?apiid=storage_api,logging,sqladmin.googleapis.com&redirect=https://console.cloud.google.com&_ga=1.20629880.1963584502.1488379440) for the project, if you have not enabled it already.
+[Enable the Cloud Storage API](https://console.cloud.google.com/flows/enableapi?apiid=storage_api,logging,sqladmin.googleapis.com&redirect=https://console.cloud.google.com&_ga=1.20629880.1963584502.1488379440) for the project, if you have not enabled it already.
 
 ![Screenshot showing how to locate API Manager](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-1.png)
 
@@ -351,7 +351,7 @@ The app allows users to upload a book cover image. To store the images in the Cl
 
 ![Screenshot showing Enable button](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-3.png)
 
-You can create a Cloud Storage Bucket as illustrated in the images below. Name the bucket _grailsbucket_
+You can create a Cloud Storage bucket as illustrated in the images below. Name the bucket **grailsbucket**.
 
 ![Screenshot showing the Storage menu](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-4.png)
 
@@ -359,14 +359,15 @@ You can create a Cloud Storage Bucket as illustrated in the images below. Name t
 
 ![Screenshot showing how to name and create a bucket](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/cloudstorage-6.png)
 
-Add Cloud Storage dependency to your project dependencies
+Add Cloud Storage dependency to your project dependencies:
 
 _build.gradle_
 
     compile 'com.google.cloud:google-cloud-storage:1.2.3'
 
+Exclude `com.google.guava:guava-jdk5` too:
+
 _build.gradle_
-Exclude _com.google.guava:guava-jdk5_ too:
 
     configurations {
         compile.exclude module: "tomcat-juli"
@@ -374,7 +375,7 @@ Exclude _com.google.guava:guava-jdk5_ too:
         compile.exclude(group: "com.google.guava", module: "guava-jdk5")
     }
 
-Append these configuration (Cloud Storage Bucket and Project id) parameters to _application.yml_ 
+Append these configuration (Cloud Storage Bucket and Project id) parameters to `application.yml`:
 
 _grails-app/conf/application.yml_
 
@@ -387,7 +388,7 @@ _grails-app/conf/application.yml_
 
 These configuration parameters are used by the services described below.
 
-Create a Grails Command Object to manage file upload parameters. 
+Create a Grails command object to manage file upload parameters:
 
 _grails-app/controllers/demo/FeaturedImageCommand.groovy_
 
@@ -421,7 +422,7 @@ _grails-app/controllers/demo/FeaturedImageCommand.groovy_
         }
     }
 
-Add two controller actions to _BookController_:
+Add two controller actions to `BookController`:
 
 _grails-app/controllers/demo/BookController.groovy_
 
@@ -459,7 +460,7 @@ _grails-app/controllers/demo/BookController.groovy_
         }
     }
 
-The previous controller actions use a service to manage our business logic. Create _UploadBookFeaturedImageService.groovy_:
+The previous controller actions use a service to manage the business logic. Create `UploadBookFeaturedImageService.groovy`:
 
 _grails-app/services/demo/UploadBookFeaturedImageService.groovy_
 
@@ -558,9 +559,9 @@ _grails-app/services/demo/GoogleCloudStorageService.groovy_
        }
     }
 
-If the upload of an image to Google Cloud is successful, save the reference to the media url in our domain class.
+If the upload of an image to Google Cloud is successful, save the reference to the media URL in your domain class.
 
-Add this method to the _BookGormService_ class
+Add this method to the `BookGormService` class:
 
 _grails-app/services/demo/BookGormService.groovy_
 
@@ -627,24 +628,24 @@ _grails-app/views/book/editFeaturedImage.gsp_
 
 To deploy the app to Google App Engine run:
 
-    $ ./gradlew appengineDeploy
+    ./gradlew appengineDeploy
     
 
 Initial deployment may take a while. When finished, you can access your app:
 
 ![Grails app deployed in Google Cloud](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/welcometograils.png)
 
-Go to [Versions](https://console.cloud.google.com/appengine/versions) section in the App Engine administration panel and see the deployed app.
+Go to the [Versions](https://console.cloud.google.com/appengine/versions) section in the App Engine administration panel and see the deployed app.
 
 ## Logging
 
-For the version which you would like to inspect, select Logs in the diagnose dropdown:
+For the version which you would like to inspect, select **Logs** in the diagnose dropdown:
 
 ![Logs dropdown](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/logs.png)
 
 Application log messages written to stdout and stderr are automatically collected and can be viewed in the Logs Viewer.
 
-Create a controller and log with level INFO and verify the log statement is visible in the Log Viewer.
+Create a controller and log with level INFO and verify the log statement is visible in the Log Viewer:
 
 _grails-app/controllers/demo/LegalController.groovy_
 
@@ -662,17 +663,17 @@ _grails-app/controllers/demo/LegalController.groovy_
         }
     }
 
-Add the next line to _grails-app/conf/logback.groovy_
+Add the next line to `grails-app/conf/logback.groovy`:
 
     logger 'demo', INFO, ['STDOUT'], false 
 
-to log _INFO_ statements of classes under package _demo_ to _STDOUT_ appender with additivity _false_
+to log `INFO` statements of classes under package `demo` to `STDOUT` appender with additivity `false`.
 
-If you redeploy the app to App Engine and access the _/legal_ end point, you will see the logging statements in Log Viewer.
+If you redeploy the app to App Engine and access the `/legal` end point, you will see the logging statements in Log Viewer.
 
-Check [Writing Application Logs](https://cloud.google.com/appengine/docs/flexible/java/writing-application-logs) documentation to read more about logs in the Flexible Environment.
+Check the [Writing Application Logs](https://cloud.google.com/appengine/docs/flexible/java/writing-application-logs) documentation to read more about logs in the flexible environment.
 
-_Write your application logs using stdout for output and stderr for errors. Note that this does not provide log levels that you can use for filtering in the Logs Viewer; however, the Logs Viewer does provide other filtering, such as text, timestamp, etc._
+Write your application logs using stdout for output and stderr for errors. Note that this does not provide log levels that you can use for filtering in the Logs Viewer; however, the Logs Viewer does provide other filtering, such as text, timestamp, etc.
 
 ## Cleaning up
 
@@ -694,7 +695,7 @@ In the Cloud Platform Console, go to the Projects page.
 
 [GO TO THE PROJECTS PAGE](https://console.cloud.google.com/iam-admin/projects)
 
-In the project list, select the project you want to delete and click Delete project. After selecting the checkbox next to the project name, click _Delete project_
+In the project list, select the project you want to delete and click **Delete project**. After selecting the checkbox next to the project name, click **Delete project**.
 
 In the dialog, type the project ID, and then click Shut down to delete the project.
 
@@ -716,7 +717,7 @@ Note: The only way you can delete the default version of your App Engine app is 
 
 In the App Engine standard environment, you can stop the default version only if your app has manual or basic scaling.
 
-Click the Delete button at the top of the page to delete the app version.
+Click the **Delete** button at the top of the page to delete the app version.
 
 ### Deleting Cloud SQL instances
 
@@ -726,8 +727,8 @@ In the Cloud Platform Console, go to the SQL Instances page.
 
 [GO TO THE SQL INSTANCES PAGE](https://console.cloud.google.com/sql/instances)
 
-Click the name of the SQL instance you want to delete.
-Click the Delete button at the top of the page to delete the instance.
+Click the name of the Cloud SQL instance you want to delete.
+Click the **Delete** button at the top of the page to delete the instance.
 
 ### Deleting Cloud Storage buckets
 
@@ -738,13 +739,13 @@ In the Cloud Platform Console, go to the Cloud Storage browser.
 [GO TO THE CLOUD STORAGE BROWSER](https://console.cloud.google.com/storage/browser)
 
 Click the checkbox next to the bucket you want to delete.
-Click the Delete button at the top of the page to delete the bucket.
+Click the **Delete** button at the top of the page to delete the bucket.
 
 ## Learn More
 
-Visit http://guides.grails.org[Grails Guides] to learn more.
+Visit [Grails Guides](http://guides.grails.org) to learn more.
 
-Moreover, if you want to learn more about Google Cloud and Grails integration, checkout a more complete sample app.
+Moreover, if you want to learn more about Google Cloud and Grails integration, check out a more complete sample app.
 
 The [Google Cloud Bookshelf with Grails](https://grails-samples.github.io/google-bookshelf/) application shows how to use a variety of Google Cloud Platform products, including some of the services described in this guides and other services such as:
 
