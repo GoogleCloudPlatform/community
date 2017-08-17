@@ -87,7 +87,7 @@ There are three types of channels:
 An [Event](https://pusher.com/docs/client_api_guide/client_events) is a  message with a named type.
 Custom event handlers can be attached to a given event type. 
 This allows for efficient event routing in the clients.
-Note: A subscriber will receive all messages published over a channel.
+**Note**: A subscriber will receive all messages published over a channel.
 
 Events may be trigged by the user or Pusher.
 In case of Pusher-triggered events on a channel, the event name is
@@ -113,7 +113,7 @@ The following code provides examples of initializing and connecting to Pusher.
 Use the credentials from the application you created to initialize and connect to Pusher,
 as shown in this example.
 
-Note: It is important to provide the cluster information if not using the default `mt1` (`us-east-1`) cluster.
+**Note**: It is important to provide the cluster information if not using the default `mt1` (`us-east-1`) cluster.
 You can encrypt messages sent over Pusher.
 
 [embedmd]:# (java/src/main/java/com/example/appengine/pusher/PusherService.java /public abstract/ $)
@@ -147,7 +147,7 @@ Clients connecting to private or presence channels require server-side authentic
 The authentication endpoint can be implemented in your server as shown in this example.
 The REST SDK provides methods to retrieve the required authentication JSON.
 
-Note: Private channels do not require user information to be provided as part of the authentication.
+**Note**: Private channels do not require user information to be provided as part of the authentication.
 To learn more about authentication in Pusher, refer to Pusher's
 [Authenticating users](https://pusher.com/docs/authenticating_users) documentation.
 
@@ -418,8 +418,8 @@ The client can be excluded from receiving the broadcast message by providing the
 
 Pusher automatically closes connections when a user navigates to another web page or closes their
 web browser.
-If you need to close a client connection manually,
-refer to [this page](https://pusher.com/docs/client_api_guide/client_connect#disconnecting).
+If you need to close a client connection manually, refer to Pusher's
+[Disconnecting from Pusher](https://pusher.com/docs/client_api_guide/client_connect#disconnecting) documentation.
 
 ## Running the application locally
   
