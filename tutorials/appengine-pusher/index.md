@@ -19,8 +19,8 @@ scripted, such as when relaying information between human users, or when events 
 systematically.
 
 Using WebSockets, Pusher is able to deliver server-side events to clients.
-Pusher also offers  HTTP REST API based server-side SDKs to enable sending events from server to a
-public or secured channel.
+Pusher also offers REST API-based, server-side SDKs to enable sending events from a server
+to a public or secured channel
 
 In this tutorial you’ll learn how to complete the following tasks on the server:
 +  Set up your server to use the Pusher service
@@ -41,7 +41,7 @@ You'll also learn how to complete the following tasks in the web browser:
     ```
        gcloud init
     ```
-    If this is your first time creating an App Engine application, run the following command
+1.  If this is your first time creating an App Engine application, run the following command
     to create a new application:
     ```
        gcloud app create
@@ -49,7 +49,7 @@ You'll also learn how to complete the following tasks in the web browser:
 
 The following sections walk you through setting up Pusher.
 
-### Setting up a Pusher account
+## Setting up a Pusher account
 
 To set up a Pusher account, perform these steps:
 
@@ -57,20 +57,19 @@ To set up a Pusher account, perform these steps:
 1. Once signed in, you are directed to a [dashboard](https://dashboard.pusher.com/).
    The dashboard provides a convenient way to retrieve application settings, view errors
    and a console to debug calls to your application. From the dashboard's left panel,
-   create a new application using "Your apps" and note down the cluster,
-   application id, key and secret.
+   click Your apps to create a new application. Copy the cluster, application ID, key,
+   and secret for later use
 1. Update [appengine-web.xml](java/src/main/webapp/WEB-INF/appengine-web.xml) with your Pusher
    account credentials.
    
-### Pusher SDKs
+## Pusher SDKs
 
 Pusher provides a [range of libraries in different languages](https://pusher.com/docs/libraries):
 
-- Their REST SDKs provide the ability to authenticate clients and 
-  publish HTTP events from your server.
-- The WebSocket SDKs handle subscription.
+- Pusher's REST SDKs provide the ability to authenticate clients and publish HTTP events from your server.
+- Pusher's WebSocket SDKs handle subscription.
 
-### Channels
+## Channels
 
 A [channel](https://pusher.com/docs/client_api_guide/client_channels) is automatically created 
 when an application publishes or subscribes to the channel by name. 
@@ -83,7 +82,7 @@ There are three types of channels:
 - **Presence**: Server-side authentication is enforced, channel names must be prefixed with `presence-`,
    and all members can view who have connected/disconnected from the channel.
 
-### Events
+## Events
 
 An [Event](https://pusher.com/docs/client_api_guide/client_events) is a  message with a named type.
 Custom event handlers can be attached to a given event type. 
@@ -149,7 +148,8 @@ The authentication endpoint can be implemented in your server as shown in this e
 The REST SDK provides methods to retrieve the required authentication JSON.
 
 Note: Private channels do not require user information to be provided as part of the authentication.
-To learn more about authentication in Pusher, see [Pusher's documentation](https://pusher.com/docs/authenticating_users).
+To learn more about authentication in Pusher, refer to Pusher's
+[Authenticating users](https://pusher.com/docs/authenticating_users) documentation.
 
 [embedmd]:# (java/src/main/java/com/example/appengine/pusher/AuthorizeServlet.java /public class/ $)
 ```java
@@ -218,8 +218,10 @@ The sender can be [excluded](https://pusher.com/docs/server_api_guide/server_exc
 from receiving the broadcast message by passing in its own socket ID when triggering an event.
 Individual messages are limited to 10KB in size.
 
-For more on publishing messages to multiple channels or batching multiple messages, refer to
-[this page](https://pusher.com/docs/server_api_guide/interact_rest_api#publishing-events).
+For more on publishing messages to multiple channels or batching multiple messages,
+refer to Pusher's
+[Publishing events](https://pusher.com/docs/server_api_guide/interact_rest_api#publishing-events)
+documentation.
 
 [embedmd]:# (java/src/main/java/com/example/appengine/pusher/SendMessageServlet.java /public class/ $)
 ```java
@@ -274,13 +276,13 @@ JavaScript Websocket SDK.
 
 ### Connecting to Pusher
 
-Client connections require an application key to be provided. If the client will be subscribing
+Client connections require an application key. If the client is subscribing
 to private or presence channels, a server-side authentication endpoint must be provided as well.
 The client attempts to use `/pusher/auth` path for the endpoint if one is not explicitly provided.
 
 The following example illustrates how to instantiate a Pusher connection using a custom authentication
- endpoint. For more information about connections, refer to
- [this page](https://pusher.com/docs/client_api_guide/client_connect).
+endpoint. For more information about connections, refer to Pusher's
+[Connection](https://pusher.com/docs/client_api_guide/client_connect) documentation.
 
 [embedmd]:# (java/src/main/webapp/WEB-INF/view/chat.jsp /\/\/ Connect to Pusher/ /}\);/)
 ```jsp
