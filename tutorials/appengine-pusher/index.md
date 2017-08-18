@@ -23,16 +23,15 @@ Pusher also offers REST API-based, server-side SDKs to enable sending events fro
 to a public or secured channel
 
 In this tutorial you’ll learn how to complete the following tasks on the server:
-+  Set up your server to use the Pusher service
-+  Authenticate subscriptions to secure channels
-+  Send messages over the channel
+-  Set up your server to use the Pusher service
+-  Authenticate subscriptions to secure channels
+-  Send messages over the channel
 
 You'll also learn how to complete the following tasks in the web browser:
-+  Set up your client to use the Pusher service
-+  Subscribe to Pusher events
-+  Subscribe to channels
-+  Send messages to the server so they can be passed on to remote
-   clients.
+-  Set up your client to use the Pusher service
+-  Subscribe to Pusher events
+-  Subscribe to channels
+-  Send messages to the server so they can be passed on to remote clients.
 
 ## Before you begin
 
@@ -424,9 +423,9 @@ If you need to close a client connection manually, refer to Pusher's
 
 The application uses the [App Engine Maven Plugin](/appengine/docs/standard/java/tools/using-maven)
 to test and deploy to the Google Cloud App Engine Standard environment.
-
+```
     mvn clean appengine:run
-
+```
 Access [http://localhost:8080](http://localhost:8080) via the browser, login, and join the chat room.
 
 The chat window will contain a link you can use to join the room as a different user in another browser.
@@ -436,9 +435,9 @@ You should now be able to view both the users within the chat application window
 ## Deploying
 
   - Deploy the application to the project:
-
+```
         mvn clean appengine:deploy
-
+```
   - Access `https://YOUR_PROJECT_ID.appspot.com`
 
 
