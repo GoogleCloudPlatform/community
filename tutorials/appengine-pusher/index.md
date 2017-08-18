@@ -434,12 +434,11 @@ You should now be able to view both the users within the chat application window
 
 ## Deploying
 
-  - Deploy the application to the project:
-```
-        mvn clean appengine:deploy
-```
-  - Access `https://YOUR_PROJECT_ID.appspot.com`
+- Deploy the application to the project:
 
+      mvn clean appengine:deploy
+
+- Access `https://YOUR_PROJECT_ID.appspot.com`
 
 ### Additional Resources
 - [Java on Google Cloud App Engine](/appengine/docs/java/)
