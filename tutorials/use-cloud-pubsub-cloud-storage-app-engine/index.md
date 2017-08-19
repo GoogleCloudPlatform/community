@@ -12,6 +12,7 @@ Some sort of intro here.
 * Store photos in Google Cloud Storage buckets.
 * Store entities in Datastore.
 * Configure Cloud Pub/Sub notifications.
+* Use Google Cloud Vision to implement a photos search.
 * Create and deploy a shared photo album as an App Engine project to display actions performed through the Cloud Platform Console.
 
 ## Costs
