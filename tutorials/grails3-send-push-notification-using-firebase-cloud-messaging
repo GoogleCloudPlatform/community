@@ -1,0 +1,196 @@
+# Grails 3 Sending Push Notification using Google Firebase Cloud Messaging
+
+This tutorials shows how to send push notification using [Firebase Cloud Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging) and [Grails 3 Framework](https://grails.org/) Web Application.
+
+## Objectives
+
+- Configure Firebase for ability to send push notification via Web Application
+- Create New Grails 3.3.0 Web Application
+- Create function for sending push notification on Grails 3.3.0
+
+## Before You Begin
+
+The following is required for this tutorial:
+
+- Terminal or Command Line
+- Text Editor or IDE ([Atom](https://atom.io/), [Netbeans](https://netbeans.org/))
+- [Java Development Kit 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+- Grails 3.3.0 SDK (https://grails.org/download.html)
+- Google or Gmail account for accessing Firebase dashboard
+
+## Costs
+
+This tutorial uses Firebase Cloud Messaging service which is a free for limited features and capacities.
+
+## Configure Firebase Cloud Messaging
+
+1. Open your browser then go to [Firebase](https://firebase.google.com/).
+2. Login using your Gmail account then click Go to Console button.
+3. Click add project button then give it a name. For this tutorial we give it name "GrailsFCM" then click Create Project button.
+4. It will redirected to Project dashboard. Click gear icon on the left menu then click Project Settings.
+5. Click Cloud Messaging tab then write down Legacy Server Key to your notepad. We will use it later in the Grails web application.
+6. Next configuration is for Android and iOS app. You can find Android configuration [here](https://firebase.google.com/docs/cloud-messaging/android/client) and iOS [here](https://firebase.google.com/docs/cloud-messaging/ios/client).
+
+## Create New Grails 3.3.0 Web Application
+
+We assume that you already installed JDK 8 and Grails 3.3.0 on your computer and added to your environment path. Now, we ready to create the new Grails 3.3.0 application.
+
+1. Open terminal or command line then go to your projects folder.
+2. Type this command.
+   ```
+   grails create-app grails-fcm
+   ```
+3. Go to the newly created Grails 3 application folder.
+   ```
+   cd grails-fcm
+   ```
+4. Enter Grails 3 interactive console by type this command.
+   ```
+   grails
+   ```
+5. Now the you are in Grails interactive console.
+   ```
+   | Resolving Dependencies. Please wait...
+   
+   CONFIGURE SUCCESSFUL
+
+   | Enter a command name to run. Use TAB for completion:
+   grails>
+   ```
+6. Run the Grails web application to make sure everything working properly by type this command in the Grails interactive console.
+   ```
+   run-app
+   ```
+## Add Grails Datastore Rest Client Dependency
+
+We will accessing Firebase using REST API, for that we need to add Grails Datastore Client Rest Dependency in our Grails 3 application. To do that, open and edit build.gradle then add this dependency inside dependencies section. There are two dependencies, one inside buildscript and the other out side buildscripts.
+```
+dependencies {
+    ...
+    compile "org.hibernate:hibernate-core:5.1.2.Final"
+    compile "org.hibernate:hibernate-ehcache:5.1.2.Final"
+    compile 'org.grails:grails-datastore-rest-client:5.0.0.RC2'
+    console "org.grails:grails-console"
+    profile "org.grails.profiles:web"
+    runtime "com.bertramlabs.plugins:asset-pipeline-grails:2.11.6"
+    ...
+}
+```
+Compile the Grails 3 application by type this command in the Grails interactive console.
+```
+compile
+```
+## Create Grails Controller and View for Sending Push Notification
+
+Do this following tasks:
+
+1. Create controller by type this command.
+   ```
+   create-controller Fcm
+   ```
+2. Add import to the file "grails-app/controllers/grails/fcm/FcmController.groovy".
+   ```
+   import grails.plugins.rest.client.RestBuilder
+   ```
+3. Create a method to FcmController, so it will looks like this.
+   ```
+    package grails.fcm
+
+    import grails.plugins.rest.client.RestBuilder
+
+    class FcmController {
+
+    def index() { }
+
+    def sendPushNotification() {
+     def regid = params.regid
+     def title = params.title
+     def body = params.body
+
+     def rest = new RestBuilder(connectTimeout:1000, readTimeout:20000)
+     def resp = rest.post("https://fcm.googleapis.com/fcm/send") {
+       header 'Content-Type', 'application/json'
+       header 'Authorization', 'key=AIza*****'
+       json {
+         notification = {
+           title = title
+           body = body
+           sound = "default"
+           click_action = "FCM_PLUGIN_ACTIVITY"
+           icon = "fcm_push_icon"
+         }
+         to = regid
+       }
+     }
+
+     flash.message = "Notification sent"
+     redirect action: "index"
+    }
+   }
+   ```
+    Your previous written FCM legacy server key write on this line include with 'key='.
+   ```
+   header 'Authorization', 'key=AIza*****'
+   ```
+
+4. Create a view file "grails-app/views/fcm/index.gsp" and make this file like this.
+   ```
+    <!doctype html>
+    <html>
+    <head>
+     <meta name="layout" content="main"/>
+     <title>FCM Sender</title>
+
+     <asset:link rel="icon" href="favicon.ico" type="image/x-ico" />
+    </head>
+    <body>
+     <div id="content" role="main">
+         <section class="row colset-2-its">
+             <h1>Send Push Notification</h1>
+             <g:if test="${flash.message}">
+               <div class="message" role="alert">
+                 ${flash.message}
+               </div>
+             </g:if>
+             <g:form action="sendPushNotification">
+               <fieldset>
+                 <div class="fieldcontain">
+                   <label for="regid">FCM Registration ID</label>
+                   <g:textField name="regid" />
+                 </div>
+                 <div class="fieldcontain">
+                   <label for="title">Title</label>
+                   <g:textField name="title" />
+                 </div>
+                 <div class="fieldcontain">
+                   <label for="body">Message Body</label>
+                   <g:textField name="body" />
+                 </div>
+               </fieldset>
+               <fieldset>
+                 <div class="buttons">
+                   <g:submitButton class="save" name="submit" value="Send" />
+                 </div>
+               </fieldset>
+             </g:form>
+         </section>
+     </div>
+    </body>
+   </html>
+   ```
+5. Run and test push notification from the browser.
+
+## Cleaning Up
+
+After you have finished this tutorial, you might be want to clean up your Firebase project because the free tier limited to 3 projects. Just do the following:
+
+1. Go to Firebase Console again.
+2. Choose the project that want to remove.
+3. Click gear icon on the left menu then click Project Settings menu.
+4. Scroll down the you will find delete project button.
+
+## Learn More
+
+Visit [Grails Guides](http://guides.grails.org/) to learn more on official Grails guides or if you want different tutorial style you can find [here](https://www.djamware.com/post-sub-category/585b3fa380aca73b19a2efd4/groovy-and-grails).
+
+This tutorial come with example source code on the [GitHub](https://github.com/didinj/grails3-fcm-push-notification.git).
