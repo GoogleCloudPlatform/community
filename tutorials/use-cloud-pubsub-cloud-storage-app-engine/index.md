@@ -303,4 +303,58 @@ You now have all of the information needed to create the necessary notification 
 
 ### Creating and Storing the Notification
 
-1. 
+1. Write a `create_notification` helper method to generate notifications. Note that if the `event_type` is `OBJECT_UPDATE`, the `message` field is blank.
+
+    ```py
+    def create_notification(photo_name, event_type, generation, overwrote_generation=None, overwritten_by_generation=None):
+      if event_type == 'OBJECT_FINALIZE':
+        if overwrote_generation is not None:
+          message = photo_name + ' was uploaded and overwrote an older version of itself.'
+        else:
+          message = photo_name + ' was uploaded.'
+      elif event_type == 'OBJECT_ARCHIVE':
+        if overwritten_by_generation is not None:
+          message = photo_name + ' was overwritten by a newer version.'
+        else:
+          message = photo_name + ' was archived.'
+      elif event_type == 'OBJECT_DELETE':
+        if overwritten_by_generation is not None:
+          message = photo_name + ' was overwritten by a newer version.'
+        else:
+          message = photo_name + ' was deleted.'
+      else:
+        message = ''
+
+    return Notification(message=message, generation=generation)
+    ```
+    
+1. Call the `create_notification` helper method in the `ReceiveMessage` class.
+
+    ```py
+    new_notification = create_notification(photo_name, event_type, generation_number,   
+        overwrote_generation=overwrote_generation, overwritten_by_generation=overwritten_by_generation)
+    ```
+    
+1. Check if the new notification has already been stored. Cloud Pub/Sub messaging guarantees at-least-once delivery, meaning a Pub/Sub notification may be received more than once. If the notification already exists, there has been no new change to the GCS photo bucket, and the Pub/Sub notification can be ignored.
+
+    ```py
+    exists_notification = Notification.query(Notification.message==new_notification.message,        
+        Notification.generation==new_notification.generation).get()
+    if exists_notification:
+      return
+    ```
+    
+1. Do not act for `OBJECT_UPDATE` events, as they signal no change to the GCS photo bucket images themselves.
+
+    ```py
+    if new_notification.message == '':
+      return
+    ```
+    
+1. Store the new notification in Cloud Datastore. This, and all further code in the `ReceiveMessage` class, is only executed if the new notification is not a repeat and is not for an `OBJECT_UPDATE` event.
+
+    ```py
+    new_notification.put()
+    ```
+    
+### Photo Upload
