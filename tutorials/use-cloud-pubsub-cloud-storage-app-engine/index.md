@@ -261,6 +261,46 @@ To create the application from scratch:
     gcloud app browse
     ```
     
-## Receiving Cloud Pub/Sub Messages
+## The ReceiveMessage Class
 
+### Receiving Cloud Pub/Sub Messages
 
+During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cloud.google.com/pubsub/docs/push#receive_push) to be sent to the url you specified for the `ReceiveMessage` class in your `main.py` file. When you receive a Pub/Sub message, you must get necessary information from it and acknowledge its reception.
+
+1. In the your `main.py` file, in the `ReceiveMessage` class, in your `post` method, obtain the [notification attributes](https://cloud.google.com/storage/docs/pubsub-notifications) from the incoming Cloud Pub/Sub message.
+
+    ```py
+    message = json.loads(urllib.unquote(self.request.body).rstrip('='))
+    attributes = message['message']['attributes']
+    ```
+    
+    `attributes` is a key:value dictionary where the keys are the Pub/Sub attribute names and the values are the attribute values.
+    
+1. Acknowledge the reception of the Cloud Pub/Sub message.
+
+    ```py
+    self.response.status = 204
+    ```
+    
+1. Save the relevant values from the `attributes` dictionary for later use.
+
+    ```py
+    event_type = attributes.get('eventType')
+    photo_name = attributes.get('objectId')
+    generation_number = str(attributes.get('objectGeneration'))
+    overwrote_generation = attributes.get('overwroteGeneration')
+    overwritten_by_generation = attributes.get('overwrittenByGeneration')
+    ```
+    
+1. Create the thumbnail_key using the `photo_name` and `generation_number`. Note that using the following logic, only photos with the extensions `.jpg` can be uploaded effectively.
+
+    ```py
+    index = photo_name.index(".jpg")
+    thumbnail_key = photo_name[:index] + generation_number + photo_name[index:]
+    ```
+    
+You now have all of the information needed to create the necessary notification and communicate with GCS.
+
+### Creating and Storing the Notification
+
+1. 
