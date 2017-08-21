@@ -35,7 +35,7 @@ This tutorial teaches you how to integrate several Google products to simulate a
 
 Two buckets exist in [Cloud Storage](https://cloud.google.com/storage/) (GCS): one to store the uploaded photos themselves, and the other to store the thumbnails of the uploaded photos. [Cloud Datastore](https://cloud.google.com/datastore/) stores all non-image entities needed for the web application, which is hosted on [App Engine](https://cloud.google.com/appengine/). Notifications of changes to the GCS photo bucket are sent to the application via [Cloud Pub/Sub](https://cloud.google.com/pubsub/). The [Google Cloud Vision API Client Library](https://developers.google.com/api-client-library/python/apis/vision/v1) is used to label photos for search. Further detail is revealed in later portions of this tutorial.
 
-Note: Basic coding and command line knowledge is necessary to complete this tutorial.
+Note: Basic coding (Python, HTML, CSS, Javascript) and command line knowledge is necessary to complete this tutorial.
 
 ## Set Up
 
@@ -92,7 +92,7 @@ To create the application from scratch:
     1. Create a blank `__init__.py` file in the lib directory to mark `cloudstorage` as importable.
     1. In your host directory, run the following command to install the Google Cloud Vision API Client library:
         
-        ```
+        ```sh
         pip install --upgrade -t lib google-api-python-client
         ```
         
@@ -156,7 +156,6 @@ To create the application from scratch:
     1. Add the required imports to the top of the file:
         
         ```py
-        # Import all necessary libraries.
         import webapp2
         import jinja2
         import os
@@ -169,6 +168,49 @@ To create the application from scratch:
         from google.appengine.ext import ndb
         from google.appengine.ext import blobstore
         from google.appengine.api import images
+        ```
+        
+    1. Set up [jinja2](http://jinja.pocoo.org/docs/2.9/templates/) for `HTML` templating.
+    
+        ```py
+        template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+        jinja_environment = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))
+        ```
+        
+    1. Add constants. `THUMBNAIL_BUCKET` is the name of the GCS bucket you created in Set Up step #8 to store the thumbnails of photos uploaded to your GCS photos bucket. `PHOTO_BUCKET` is the name of the GCS bucket you created in Set Up step #5 to store the photos uploaded to your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the maximum number of notifications displayed on the home/notifications page of your web application. `MAX_LABELS` regulates the maximum number of labels obtained for each photo using Cloud Vision.
+    
+        ```py
+        THUMBNAIL_BUCKET = '[GCS THUMBNAIL BUCKET NAME]'
+        PHOTO_BUCKET = '[GCS PHOTO BUCKET NAME]'
+        NUM_NOTIFICATIONS_TO_DISPLAY = [SOME NUMBER]
+        MAX_LABELS = [SOME NUMBER]
+        ```
+    
+    1. Create the `Notification` class. Notifications are created from Cloud Pub/Sub messages and stored in Cloud Datastore, to be displayed on the home page of your application. Notifications have a message, date of posting, and generation number, which is used to distinguish between similar notifications and prevent the display of repeated notifications. Information on NDB properties can be found [here](https://cloud.google.com/appengine/docs/standard/python/ndb/).
+    
+        ```py
+        class Notification(ndb.Model):
+            message = ndb.StringProperty()
+            date = ndb.DateTimeProperty(auto_now_add=True)
+            generation = ndb.StringProperty()
+        ```
+        
+    1. Create the `ThumbnailReference` class. ThumbnailReferences are stored in Cloud Datastore and contain information about the thumbnails stored in your GCS thumbnails bucket. ThumbnailReferences have a thumbnail_name (the name of the uploaded photo), a thumbnail_key (a concatenation of the name and generation number of an uploaded photo, used to distinguish similarly named photos), a list of labels assigned to the corresponding photo using Google Cloud Vision, and the url of the original photo that is stored in GCS.
+    
+        ```py
+        class ThumbnailReference(ndb.Model):
+            thumbnail_name = ndb.StringProperty()
+            thumbnail_key = ndb.StringProperty()
+            labels = ndb.StringProperty(repeated=True)
+            original_photo = ndb.StringProperty()
+        ```
+        
+    1. Create the `Label` class. Labels are stored in Cloud Datastore and describe the labels assigned to an uploaded photo by the Google Cloud Vision API. Labels have a label_name (description of the label) and labeled_thumbnails (a list of the thumbnail_keys of photos labeled by Google Cloud Vision with label_name).
+    
+        ```py
+        class Label(ndb.Model):
+            label_name = ndb.StringProperty()
+            labeled_thumbnails = ndb.StringProperty(repeated=True)
         ```
         
     1. 
