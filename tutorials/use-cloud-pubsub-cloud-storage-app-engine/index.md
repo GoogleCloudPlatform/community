@@ -59,12 +59,7 @@ The following instructions assume no prior set up has been done. Skip steps appr
     
 1. Create another bucket with `Multi-Regional` or `Regional` storage. This bucket is for storing the thumbnails of the photos in your shared photo album.
 1. Open the `Products & Services` menu and click on `Pub/Sub`. Create a new topic with the same name as your photos bucket.
-1. Click on the three-dots icon for your photo album topic and click on `New subscription`. Change the `Delivery Type` to `Push into an endpoint url`. This is the url that receives your Cloud Pub/Sub messages. Your url should be something of the format
-
-    ```sh
-    https://[PROJECT ID].appspot.com/_ah/push-handlers/receive_message
-    ```
-
+1. Click on the three-dots icon for your photo album topic and click on `New subscription`. Change the `Delivery Type` to `Push into an endpoint url`. This is the url that receives your Cloud Pub/Sub messages. Your url should be something of the format `http://[PROJECT ID].appspot.com/_ah/push-handlers/receive_message`.
 1. Configure Cloud Pub/Sub notifications for your photos bucket by using the command line to run
 
     ```sh
@@ -103,7 +98,7 @@ To create the application from scratch:
         vendor.add('lib')
         ```
       
-1. In your host directory, create an `app.yaml` file and copy in the following code:
+1. (TODO: decide whether to include instructions about index.yaml) In your host directory, create an `app.yaml` file and copy in the following code:
 
     ```yaml
     runtime: python27
@@ -123,7 +118,7 @@ To create the application from scratch:
       version: latest
     - name: jinja2
       version: latest
-    ```
+    ```  
   
 1. In your host directory, create a `templates` directory to hold all of your HTML files. Each HTML file should have the same basic layout, with a title and links to the other pages of your application:
     
@@ -195,7 +190,7 @@ To create the application from scratch:
             generation = ndb.StringProperty()
         ```
         
-    1. Create the `ThumbnailReference` class. ThumbnailReferences are stored in Cloud Datastore and contain information about the thumbnails stored in your GCS thumbnails bucket. ThumbnailReferences have a thumbnail_name (the name of the uploaded photo), a thumbnail_key (a concatenation of the name and generation number of an uploaded photo, used to distinguish similarly named photos), a list of label descriptions assigned to the corresponding photo using Google Cloud Vision, and the url of the original photo that is stored in GCS.
+    1. Create the `ThumbnailReference` class. ThumbnailReferences are stored in Cloud Datastore and contain information about the thumbnails stored in your GCS thumbnails bucket. ThumbnailReferences have a thumbnail_name (the name of the uploaded photo), a thumbnail_key (a concatenation of the name and generation number of an uploaded photo, used to distinguish similarly named photos), date of posting, a list of label descriptions assigned to the corresponding photo using Google Cloud Vision, and the url of the original photo that is stored in GCS.
     
         ```py
         class ThumbnailReference(ndb.Model):
@@ -222,4 +217,50 @@ To create the application from scratch:
             template = jinja_environment.get_template("[NAME OF YOUR HOME PAGE HTML FILE]")
             self.response.write(template.render(template_values))
         ```
-    1. 
+        
+    1. Create a `PhotosHandler` class with a `get` method for getting information from the server and writing it to the photos page HTML file. This should look similar to the `MainHandler`.
+    1. Create a `SearchHandler` class with a `get` method for getting information from the server and writing it to the search page HTML file. This should look similar to the `MainHandler` and `PhotosHandler`.
+    1. Create a `ReceiveMessage` class with a `post` method for posting information to ther server. This `post` method will receive Cloud Pub/Sub messages and perform necessary logic using the information. Further detail is in the next section.
+    
+        ```py
+        class ReceiveMessage(webapp2.RequestHandler):
+            def post(self):
+                # This method will be filled out in the next section.
+        ```
+        
+    1. Add the following code at the end of your `main.py` file to connect the web page urls with their corresponding classes.
+    
+        ```py
+        app = webapp2.WSGIApplication([
+            ('/', MainHandler),
+            ('/photos', PhotosHandler),
+            ('/search', SearchHandler),
+            ('/_ah/push-handlers/receive_message', ReceiveMessage)
+        ], debug=True)
+        ```
+        
+#### Checkpoint
+
+1. [Run your application locally](https://cloud.google.com/appengine/docs/standard/python/tools/using-local-server) by running the following command from your host directory:
+
+    ```sh
+    dev_appserver.py .
+    ```
+    
+    Visit `localhost:8080` in your web browser to view your web application. You should be able to click on the links to  navigate between the pages of your website, which should all be blank except for the navigation links and page titles.
+
+1. [Deploy your application](https://cloud.google.com/appengine/docs/standard/python/getting-started/deploying-the-application) by running
+
+    ```sh
+    gcloud app deploy
+    ```
+    
+    Your web application should be viewable at `http://[PROJECT ID].appspot.com`. You can either navigate there directly through your web browser or launch your browser and view the app by running the command
+
+    ```sh
+    gcloud app browse
+    ```
+    
+## Receiving Cloud Pub/Sub Messages
+
+
