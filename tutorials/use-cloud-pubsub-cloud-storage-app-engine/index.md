@@ -78,7 +78,7 @@ Note that if you choose this option, some parts of the code still need to be cha
 
 To create the application from scratch:
 1. Choose a directory to house your project. From this point forward, this will be referred to as the host directory. Inside your host directory, create a new directory called `lib` for the storage of external libraries.
-    1. Copy the `cloudstorage` library into your `lib` directory from the [Google Cloud Storage client library](https://cloud.google.com/appengine/docs/standard/python/googlecloudstorageclient/setting-up-cloud-storage) using the command
+    1. Copy the `cloudstorage` library into your `lib` directory from the [Google Cloud Storage client library](https://github.com/GoogleCloudPlatform/appengine-gcs-client) using the command
     
         ```sh
         svn export https://github.com/GoogleCloudPlatform/appengine-gcs-client/trunk/python/src/cloudstorage
@@ -98,7 +98,7 @@ To create the application from scratch:
         vendor.add('lib')
         ```
       
-1. (TODO: decide whether to include instructions about index.yaml) In your host directory, create an `app.yaml` file and copy in the following code:
+1. In your host directory, create an `app.yaml` file and copy in the following code:
 
     ```yaml
     runtime: python27
@@ -144,9 +144,9 @@ To create the application from scratch:
     </html>
     ```
     
-    1. Create an HTML file for the home/notifications page of your application (url: https://[PROJECT ID].appspot.com) using the template given above. The notifications page will have a news feed listing all recent actions performed on your GCS photo bucket.
-    1. Create an HTML file for the photos page of your application (url: https://[PROJECT ID].appspot.com/photos) using the template given above. The photos page will display the thumbnails and names of all photos uploaded to your GCS photo bucket.
-    1. Create an HTML file for the search page of your application (url: https://[PROJECT ID].appspot.com/search) using the template given above. The search page will display the thumbnails and names of the photos uploaded to your GCS photo bucket that match the entered search term.
+    1. Create an HTML file for the home/notifications page of your application (url: http://[PROJECT ID].appspot.com) using the template given above. The notifications page will have a news feed listing all recent actions performed on your GCS photo bucket.
+    1. Create an HTML file for the photos page of your application (url: http://[PROJECT ID].appspot.com/photos) using the template given above. The photos page will display the thumbnails and names of all photos uploaded to your GCS photo bucket.
+    1. Create an HTML file for the search page of your application (url: http://[PROJECT ID].appspot.com/search) using the template given above. The search page will display the thumbnails and names of the photos uploaded to your GCS photo bucket that match the entered search term.
 1. Create a `main.py` file in your host directory.
     1. Add the required imports to the top of the file:
         
