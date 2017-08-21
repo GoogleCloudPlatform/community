@@ -83,10 +83,10 @@ Note that if you choose this option, some parts of the code still need to be cha
 
 To create the application from scratch:
 1. Choose a directory to house your project. From this point forward, this will be referred to as the host directory. Inside your host directory, create a new directory called `lib` for the storage of external libraries.
-    1. Copy the `cloudstorage` library into your `lib` directory using the command
+    1. Copy the `cloudstorage` library into your `lib` directory from the [Google Cloud Storage client library](https://cloud.google.com/appengine/docs/standard/python/googlecloudstorageclient/setting-up-cloud-storage) using the command
     
         ```sh
-        Some command here
+        svn export https://github.com/GoogleCloudPlatform/appengine-gcs-client/trunk/python/src/cloudstorage
         ```
       
     2. Create a blank `__init__.py` file in the lib directory to mark `cloudstorage` as importable.
@@ -128,4 +128,28 @@ To create the application from scratch:
       version: latest
     ```
   
-3. 
+3. In your host directory, create a `templates` directory to hold all of your `HTML` files. Each `HTML` file should have the same basic layout, with a title and links to the other pages of your application:
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    
+      <head>
+        <title>Page Title</title>
+      </head>
+
+      <body>
+
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/photos">Photos</a></li>
+          <li><a href="/search">Search</a></li>
+        </ul>
+
+        <h1>Page Title</h1>
+
+      </body>
+    </html>
+    ```
+    
+    1. Create an `HTML` file for the home/notifications page of your application. The notifications page will have a news feed listing all recent actions performed on your GCS photo bucket.
