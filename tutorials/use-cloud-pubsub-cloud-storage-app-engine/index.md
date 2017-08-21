@@ -49,7 +49,7 @@ The following instructions assume no prior set up has been done. Skip steps appr
     gcloud config set project [PROJECT ID]
     ```
     
-1. In Pantheon, click on the ![alt text](insert three bar icon link "Products & Services") icon in the upper left hand corner to open the `Products & Services` menu. Click on `Storage`. In the browser, create a bucket with `Multi-Regional` or `Regional` storage. This bucket is for storing the photos of your shared photo album.
+1. In Pantheon, click on the three-bar icon in the upper left hand corner to open the `Products & Services` menu. Click on `Storage`. In the browser, create a bucket with `Multi-Regional` or `Regional` storage. This bucket is for storing the photos of your shared photo album.
 1. If you want collaborators on your photo album, click on the three-dots icon for your photo bucket on the right side of the screen. Click `Edit bucket permissions` and add the email addresses of the collaborators as `Storage Admins`.
 1. Change the photos bucket permissions to make it publicly readable so that the photos may be viewed on your website. in the command line, run:
 
@@ -125,7 +125,7 @@ To create the application from scratch:
       version: latest
     ```
   
-1. In your host directory, create a `templates` directory to hold all of your `HTML` files. Each `HTML` file should have the same basic layout, with a title and links to the other pages of your application:
+1. In your host directory, create a `templates` directory to hold all of your HTML files. Each HTML file should have the same basic layout, with a title and links to the other pages of your application:
     
     ```html
     <!DOCTYPE html>
@@ -149,9 +149,9 @@ To create the application from scratch:
     </html>
     ```
     
-    1. Create an `HTML` file for the home/notifications page of your application (url: https://[PROJECT ID].appspot.com) using the template given above. The notifications page will have a news feed listing all recent actions performed on your GCS photo bucket.
-    1. Create an `HTML` file for the photos page of your application (url: https://[PROJECT ID].appspot.com/photos) using the template given above. The photos page will display the thumbnails and names of all photos uploaded to your GCS photo bucket.
-    1. Create an `HTML` file for the search page of your application (url: https://[PROJECT ID].appspot.com/search) using the template given above. The search page will display the thumbnails and names of the photos uploaded to your GCS photo bucket that match the entered search term.
+    1. Create an HTML file for the home/notifications page of your application (url: https://[PROJECT ID].appspot.com) using the template given above. The notifications page will have a news feed listing all recent actions performed on your GCS photo bucket.
+    1. Create an HTML file for the photos page of your application (url: https://[PROJECT ID].appspot.com/photos) using the template given above. The photos page will display the thumbnails and names of all photos uploaded to your GCS photo bucket.
+    1. Create an HTML file for the search page of your application (url: https://[PROJECT ID].appspot.com/search) using the template given above. The search page will display the thumbnails and names of the photos uploaded to your GCS photo bucket that match the entered search term.
 1. Create a `main.py` file in your host directory.
     1. Add the required imports to the top of the file:
         
@@ -170,7 +170,7 @@ To create the application from scratch:
         from google.appengine.api import images
         ```
         
-    1. Set up [jinja2](http://jinja.pocoo.org/docs/2.9/templates/) for `HTML` templating.
+    1. Set up [jinja2](http://jinja.pocoo.org/docs/2.9/templates/) for HTML templating.
     
         ```py
         template_dir = os.path.join(os.path.dirname(__file__), 'templates')
@@ -195,7 +195,7 @@ To create the application from scratch:
             generation = ndb.StringProperty()
         ```
         
-    1. Create the `ThumbnailReference` class. ThumbnailReferences are stored in Cloud Datastore and contain information about the thumbnails stored in your GCS thumbnails bucket. ThumbnailReferences have a thumbnail_name (the name of the uploaded photo), a thumbnail_key (a concatenation of the name and generation number of an uploaded photo, used to distinguish similarly named photos), a list of labels assigned to the corresponding photo using Google Cloud Vision, and the url of the original photo that is stored in GCS.
+    1. Create the `ThumbnailReference` class. ThumbnailReferences are stored in Cloud Datastore and contain information about the thumbnails stored in your GCS thumbnails bucket. ThumbnailReferences have a thumbnail_name (the name of the uploaded photo), a thumbnail_key (a concatenation of the name and generation number of an uploaded photo, used to distinguish similarly named photos), a list of label descriptions assigned to the corresponding photo using Google Cloud Vision, and the url of the original photo that is stored in GCS.
     
         ```py
         class ThumbnailReference(ndb.Model):
@@ -213,4 +213,13 @@ To create the application from scratch:
             labeled_thumbnails = ndb.StringProperty(repeated=True)
         ```
         
+    1. Create a `MainHandler` with a `get` method for getting information from the server and writing it to the home/notification page HTML file. There are no values to pass into the template yet.
+    
+        ```py
+        class MainHandler(webapp2.RequestHandler):
+          def get(self):
+            template_values = {}
+            template = jinja_environment.get_template("[NAME OF YOUR HOME PAGE HTML FILE]")
+            self.response.write(template.render(template_values))
+        ```
     1. 
