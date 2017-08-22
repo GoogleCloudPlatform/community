@@ -390,3 +390,37 @@ If you encounter errors, open the `Products & services` menu and navigate to `Lo
 
 ## Implementing Photo Upload Functionality
 
+When a Cloud Pub/Sub notification is received, different actions occur depending on the `eventType`. If the notification indicates an `OBJECT_FINALIZE` event, the uploaded photo must be shrunk to a thumbnail, the thumbnail of the photo must be stored in the GCS thumbnails bucket, the photo must be labeled using the Google Cloud Vision API, a `ThumbnailReference` must be stored in Datastore, and the required `Label` entities must be updated or created to be stored in Datastore.
+
+Because these actions only occur in the case of a photo upload, an `if` block should be used inside the `ReceiveMessage` class of `main.py`.
+
+```py
+if event_type == 'OBJECT_FINALIZE':
+  # Photo upload-specific code here.
+```
+    
+### Creating the Thumbnail
+
+To create the thumbnail, the original image from the GCS photo bucket should be resized. Use the [Images Python API](https://cloud.google.com/appengine/docs/standard/python/images/) to perform the required transformations.
+
+1. Write the `create_thumbnail` helper method.
+
+    ```py
+    def create_thumbnail(self, photo_name):
+      filename = '/gs/' + PHOTO_BUCKET + '/' + photo_name
+      image = images.Image(filename=filename)
+      image.resize(width=180, height=200)
+      return image.execute_transforms(output_encoding=images.JPEG)
+    ```
+    
+    This returns the thumbnail in a `string` format.
+    
+1. Call the `create_thumbnail` helper function in `ReceiveMessage`.
+
+    ```py
+    thumbnail = create_thumbnail(self, photo_name)
+    ```
+    
+### Storing the Thumbnail in GCS
+
+1. 
