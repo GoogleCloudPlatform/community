@@ -76,28 +76,33 @@ If you do not feel like coding the entire application from scratch, feel free to
 
 Note that if you choose this option, some parts of the code still need to be changed to suit your GCS bucket names.
 
-To create the application from scratch:
+From this point forward, it is assumed that you did not clone the above git repository, and are building the application from scratch.
+
+### Libraries and `app.yaml`
+
+The external library and `app.yaml` files are necessary for the configuring your App Engine application and importing the required libraries.
+
 1. Choose a directory to house your project. From this point forward, this will be referred to as the host directory. Inside your host directory, create a new directory called `lib` for the storage of external libraries.
-    1. Copy the `cloudstorage` library into your `lib` directory from the [Google Cloud Storage client library](https://github.com/GoogleCloudPlatform/appengine-gcs-client) using the command
+1. Copy the `cloudstorage` library into your `lib` directory from the [Google Cloud Storage client library](https://github.com/GoogleCloudPlatform/appengine-gcs-client) using the command
     
-        ```sh
-        svn export https://github.com/GoogleCloudPlatform/appengine-gcs-client/trunk/python/src/cloudstorage
-        ```
+    ```sh
+    svn export https://github.com/GoogleCloudPlatform/appengine-gcs-client/trunk/python/src/cloudstorage
+    ```
       
-    1. Create a blank `__init__.py` file in the lib directory to mark `cloudstorage` as importable.
-    1. In your host directory, run the following command to install the Google Cloud Vision API Client library:
+1. Create a blank `__init__.py` file in the lib directory to mark `cloudstorage` as importable.
+1. In your host directory, run the following command to install the Google Cloud Vision API Client library:
         
-        ```sh
-        pip install --upgrade -t lib google-api-python-client
-        ```
+    ```sh
+    pip install --upgrade -t lib google-api-python-client
+    ```
         
-    1. In your host directory, create the file `appengine_config.py` and copy in the following code:
+1. In your host directory, create the file `appengine_config.py` and copy in the following code:
     
-        ```py
-        from google.appengine.ext import vendor
-        vendor.add('lib')
-        ```
-      
+    ```py
+    from google.appengine.ext import vendor
+    vendor.add('lib')
+    ```
+     
 1. In your host directory, create an `app.yaml` file and copy in the following code:
 
     ```yaml
@@ -118,7 +123,11 @@ To create the application from scratch:
       version: latest
     - name: jinja2
       version: latest
-    ```  
+    ```
+    
+### HTML Files
+  
+The HTML files represent the different pages of your web application.
   
 1. In your host directory, create a `templates` directory to hold all of your HTML files. Each HTML file should have the same basic layout, with a title and links to the other pages of your application:
     
@@ -144,100 +153,105 @@ To create the application from scratch:
     </html>
     ```
     
-    1. Create an HTML file for the home/notifications page of your application (url: `http://[PROJECT ID].appspot.com`) using the template given above. The notifications page will have a news feed listing all recent actions performed on your GCS photo bucket.
-    1. Create an HTML file for the photos page of your application (url: `http://[PROJECT ID].appspot.com/photos`) using the template given above. The photos page will display the thumbnails and names of all photos uploaded to your GCS photo bucket.
-    1. Create an HTML file for the search page of your application (url: `http://[PROJECT ID].appspot.com/search`) using the template given above. The search page will display the thumbnails and names of the photos uploaded to your GCS photo bucket that match the entered search term.
+1. Create an HTML file for the home/notifications page of your application (url: `http://[PROJECT ID].appspot.com`) using the template given above. The notifications page will have a news feed listing all recent actions performed on your GCS photo bucket.
+1. Create an HTML file for the photos page of your application (url: `http://[PROJECT ID].appspot.com/photos`) using the template given above. The photos page will display the thumbnails and names of all photos uploaded to your GCS photo bucket.
+1. Create an HTML file for the search page of your application (url: `http://[PROJECT ID].appspot.com/search`) using the template given above. The search page will display the thumbnails and names of the photos uploaded to your GCS photo bucket that match the entered search term.
+    
+### The `main.py` File
+
+The `main.py` file contains the backend logic of the website, including the reception of Cloud Pub/Sub messages, the communication with GCS and Datastore, and the rendering of HTML templates.
+
 1. Create a `main.py` file in your host directory.
-    1. Add the required imports to the top of the file:
+1. Add the required imports to the top of the file:
         
-        ```py
-        import webapp2
-        import jinja2
-        import os
-        import logging
-        import json
-        import urllib
-        import collections
-        import cloudstorage as gcs
-        import googleapiclient.discovery
-        from google.appengine.ext import ndb
-        from google.appengine.ext import blobstore
-        from google.appengine.api import images
-        ```
+    ```py
+    import webapp2
+    import jinja2
+    import os
+    import logging
+    import json
+    import urllib
+    import collections
+    import cloudstorage as gcs
+    import googleapiclient.discovery
+    from google.appengine.ext import ndb
+    from google.appengine.ext import blobstore
+    from google.appengine.api import images
+    ```
         
-    1. Set up [jinja2](http://jinja.pocoo.org/docs/2.9/templates/) for HTML templating.
+1. Set up [jinja2](http://jinja.pocoo.org/docs/2.9/templates/) for HTML templating.
     
-        ```py
-        template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-        jinja_environment = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))
-        ```
+    ```py
+    template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+    jinja_environment = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))
+    ```
         
-    1. Add constants. `THUMBNAIL_BUCKET` is the name of the GCS bucket you created in Set Up step #8 to store the thumbnails of photos uploaded to your GCS photo bucket. `PHOTO_BUCKET` is the name of the GCS bucket you created in Set Up step #5 to store the photos uploaded to your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the maximum number of notifications displayed on the home/notifications page of your web application. `MAX_LABELS` regulates the maximum number of labels obtained for each photo using Cloud Vision.
+1. Add constants. `THUMBNAIL_BUCKET` is the name of the GCS bucket you created in Set Up step #8 to store the thumbnails of photos uploaded to your GCS photo bucket. `PHOTO_BUCKET` is the name of the GCS bucket you created in Set Up step #5 to store the photos uploaded to your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the maximum number of notifications displayed on the home/notifications page of your web application. `MAX_LABELS` regulates the maximum number of labels obtained for each photo using Cloud Vision.
     
-        ```py
-        THUMBNAIL_BUCKET = '[GCS THUMBNAIL BUCKET NAME]'
-        PHOTO_BUCKET = '[GCS PHOTO BUCKET NAME]'
-        NUM_NOTIFICATIONS_TO_DISPLAY = [SOME NUMBER]
-        MAX_LABELS = [SOME NUMBER]
-        ```
+    ```py
+    THUMBNAIL_BUCKET = '[GCS THUMBNAIL BUCKET NAME]'
+    PHOTO_BUCKET = '[GCS PHOTO BUCKET NAME]'
+    NUM_NOTIFICATIONS_TO_DISPLAY = [SOME NUMBER]
+    MAX_LABELS = [SOME NUMBER]
+    ```
     
-    1. Create the `Notification` class. Notifications are created from Cloud Pub/Sub messages and stored in Cloud Datastore, to be displayed on the home page of your application. Notifications have a message, date of posting, and generation number, which is used to distinguish between similar notifications and prevent the display of repeated notifications. Information on NDB properties can be found [here](https://cloud.google.com/appengine/docs/standard/python/ndb/).
+1. Create the `Notification` class. Notifications are created from Cloud Pub/Sub messages and stored in Cloud Datastore, to be displayed on the home page of your application. Notifications have a message, date of posting, and generation number, which is used to distinguish between similar notifications and prevent the display of repeated notifications. Information on NDB properties can be found [here](https://cloud.google.com/appengine/docs/standard/python/ndb/).
     
-        ```py
-        class Notification(ndb.Model):
-            message = ndb.StringProperty()
-            date = ndb.DateTimeProperty(auto_now_add=True)
-            generation = ndb.StringProperty()
-        ```
+    ```py
+    class Notification(ndb.Model):
+        message = ndb.StringProperty()
+        date = ndb.DateTimeProperty(auto_now_add=True)
+        generation = ndb.StringProperty()
+    ```
         
-    1. Create the `ThumbnailReference` class. ThumbnailReferences are stored in Cloud Datastore and contain information about the thumbnails stored in your GCS thumbnail bucket. ThumbnailReferences have a thumbnail_name (the name of the uploaded photo), a thumbnail_key (a concatenation of the name and generation number of an uploaded photo, used to distinguish similarly named photos), date of posting, a list of label descriptions assigned to the corresponding photo using Google Cloud Vision, and the url of the original photo that is stored in GCS.
+1. Create the `ThumbnailReference` class. ThumbnailReferences are stored in Cloud Datastore and contain information about the thumbnails stored in your GCS thumbnail bucket. ThumbnailReferences have a thumbnail_name (the name of the uploaded photo), a thumbnail_key (a concatenation of the name and generation number of an uploaded photo, used to distinguish similarly named photos), date of posting, a list of label descriptions assigned to the corresponding photo using Google Cloud Vision, and the url of the original photo that is stored in GCS.
     
-        ```py
-        class ThumbnailReference(ndb.Model):
-            thumbnail_name = ndb.StringProperty()
-            thumbnail_key = ndb.StringProperty()
-            labels = ndb.StringProperty(repeated=True)
-            original_photo = ndb.StringProperty()
-        ```
+    ```py
+    class ThumbnailReference(ndb.Model):
+        thumbnail_name = ndb.StringProperty()
+        thumbnail_key = ndb.StringProperty()
+        labels = ndb.StringProperty(repeated=True)
+        original_photo = ndb.StringProperty()
+    ```
         
-    1. Create the `Label` class. Labels are stored in Cloud Datastore and describe the labels assigned to an uploaded photo by the Google Cloud Vision API. Labels have a label_name (description of the label) and labeled_thumbnails (a list of the thumbnail_keys of photos labeled by Google Cloud Vision with label_name).
+1. Create the `Label` class. Labels are stored in Cloud Datastore and describe the labels assigned to an uploaded photo by the Google Cloud Vision API. Labels have a label_name (description of the label) and labeled_thumbnails (a list of the thumbnail_keys of photos labeled by Google Cloud Vision with label_name).
     
-        ```py
-        class Label(ndb.Model):
-            label_name = ndb.StringProperty()
-            labeled_thumbnails = ndb.StringProperty(repeated=True)
-        ```
+    ```py
+    class Label(ndb.Model):
+        label_name = ndb.StringProperty()
+        labeled_thumbnails = ndb.StringProperty(repeated=True)
+    ```
         
-    1. Create a `MainHandler` with a `get` method for getting information from the server and writing it to the home/notification page HTML file. There are no values to pass into the template yet.
+1. Create a `MainHandler` with a `get` method for getting information from the server and writing it to the home/notification page HTML file. There are no values to pass into the template yet.
     
-        ```py
-        class MainHandler(webapp2.RequestHandler):
-          def get(self):
-            template_values = {}
-            template = jinja_environment.get_template("[NAME OF YOUR HOME PAGE HTML FILE]")
-            self.response.write(template.render(template_values))
-        ```
+    ```py
+    class MainHandler(webapp2.RequestHandler):
+      def get(self):
+        template_values = {}
+        template = jinja_environment.get_template("[NAME OF YOUR HOME PAGE HTML FILE]")
+        self.response.write(template.render(template_values))
+    ```
         
-    1. Create a `PhotosHandler` class with a `get` method for getting information from the server and writing it to the photos page HTML file. This should look similar to the `MainHandler`.
-    1. Create a `SearchHandler` class with a `get` method for getting information from the server and writing it to the search page HTML file. This should look similar to the `MainHandler` and `PhotosHandler`.
-    1. Create a `ReceiveMessage` class with a `post` method for posting information to ther server. This `post` method will receive Cloud Pub/Sub messages and perform necessary logic using the information. Further detail is in the next section.
+1. Create a `PhotosHandler` class with a `get` method for getting information from the server and writing it to the photos page HTML file. This should look similar to the `MainHandler`.
+1. Create a `SearchHandler` class with a `get` method for getting information from the server and writing it to the search page HTML file. This should look similar to the `MainHandler` and `PhotosHandler`.
+1. Create a `ReceiveMessage` class with a `post` method for posting information to ther server. This `post` method will receive Cloud Pub/Sub messages and perform necessary logic using the information. Further detail is in the next section.
     
-        ```py
-        class ReceiveMessage(webapp2.RequestHandler):
-            def post(self):
-                # This method will be filled out in the next section.
-        ```
+    ```py
+    class ReceiveMessage(webapp2.RequestHandler):
+        def post(self):
+            # This method will be filled out in the next section.
+    ```
         
-    1. Add the following code at the end of your `main.py` file to connect the web page urls with their corresponding classes.
+1. Add the following code at the end of your `main.py` file to connect the web page urls with their corresponding classes.
     
-        ```py
-        app = webapp2.WSGIApplication([
-            ('/', MainHandler),
-            ('/photos', PhotosHandler),
-            ('/search', SearchHandler),
-            ('/_ah/push-handlers/receive_message', ReceiveMessage)
-        ], debug=True)
-        ```
+    ```py
+    app = webapp2.WSGIApplication([
+        ('/', MainHandler),
+        ('/photos', PhotosHandler),
+        ('/search', SearchHandler),
+        ('/_ah/push-handlers/receive_message', ReceiveMessage)
+    ], debug=True)
+    ```
         
 ### Checkpoint
 
