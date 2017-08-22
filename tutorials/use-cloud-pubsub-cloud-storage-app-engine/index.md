@@ -209,6 +209,7 @@ The `main.py` file contains the backend logic of the website, including the rece
     class ThumbnailReference(ndb.Model):
         thumbnail_name = ndb.StringProperty()
         thumbnail_key = ndb.StringProperty()
+        date = ndb.DateTimeProperty(auto_now_add=True)
         labels = ndb.StringProperty(repeated=True)
         original_photo = ndb.StringProperty()
     ```
