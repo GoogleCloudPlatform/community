@@ -49,7 +49,7 @@ The following instructions assume no prior set up has been done. Skip steps appr
     gcloud config set project [PROJECT ID]
     ```
     
-1. In Pantheon, click on the three-bar icon in the upper left hand corner to open the `Products & Services` menu. Click on `Storage`. In the browser, create a bucket with `Multi-Regional` or `Regional` storage. This bucket is for storing the photos of your shared photo album.
+1. In Pantheon, click on the three-bar icon in the upper left hand corner to open the `Products & services` menu. Click on `Storage`. In the browser, create a bucket with `Multi-Regional` or `Regional` storage. This bucket is for storing the photos of your shared photo album.
 1. If you want collaborators on your photo album, click on the three-dots icon for your photo bucket on the right side of the screen. Click `Edit bucket permissions` and add the email addresses of the collaborators as `Storage Admins`.
 1. Change the photos bucket permissions to make it publicly readable so that the photos may be viewed on your website. in the command line, run:
 
@@ -58,7 +58,7 @@ The following instructions assume no prior set up has been done. Skip steps appr
     ```
     
 1. Create another bucket with `Multi-Regional` or `Regional` storage. This bucket is for storing the thumbnails of the photos in your shared photo album.
-1. Open the `Products & Services` menu and click on `Pub/Sub`. Create a new topic with the same name as your photos bucket.
+1. Open the `Products & services` menu and click on `Pub/Sub`. Create a new topic with the same name as your photos bucket.
 1. Click on the three-dots icon for your photo album topic and click on `New subscription`. Change the `Delivery Type` to `Push into an endpoint url`. This is the url that receives your Cloud Pub/Sub messages. Your url should be something of the format `http://[PROJECT ID].appspot.com/_ah/push-handlers/receive_message`.
 1. Configure Cloud Pub/Sub notifications for your photos bucket by using the command line to run
 
@@ -267,9 +267,11 @@ To create the application from scratch:
 
 During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cloud.google.com/pubsub/docs/push#receive_push) to be sent to the url you specified for the `ReceiveMessage` class in your `main.py` file. When you receive a Pub/Sub message, you must get necessary information from it and acknowledge its reception.
 
-1. In the your `main.py` file, in the `ReceiveMessage` class, in your `post` method, obtain the [notification attributes](https://cloud.google.com/storage/docs/pubsub-notifications) from the incoming Cloud Pub/Sub message.
+1. In the your `main.py` file, in the `ReceiveMessage` class, in your `post` method, obtain the [notification attributes](https://cloud.google.com/storage/docs/pubsub-notifications) from the incoming Cloud Pub/Sub message. A logging statement can be used for easier debugging.
 
     ```py
+    # Logging statement is optional.
+    logging.debug('Post body: {}'.format(self.request.body))
     message = json.loads(urllib.unquote(self.request.body).rstrip('='))
     attributes = message['message']['attributes']
     ```
@@ -377,4 +379,14 @@ You now have all of the information needed to create the necessary notification 
     ```
     
 ### Checkpoint
+
+1. Run your application locally to check for basic errors, then deploy your application.
+1. In the [Cloud Platform Console](https://console.cloud.google.com/), use the three-bar icon in the top left corner to open the `Products & services` menu and navigate to `Storage`.
+1. Click on the name of your GCS photo bucket. Click `UPLOAD FILES` and upload an image with the extension `.jpg`.
+1. Open the `Products & services` menu again and navigate to `Datastore`. There should be a Notification listed with the message `[UPLOADED PHOTO NAME] was uploaded.`.
+1. View your deployed application in your web browser. There should be a notification listed on the home page. You may need to refresh the page.
+
+If you encounter errors, open the `Products & services` menu and navigate to `Logging`. Use the messages there to debug your application.
+
+## Implementing Photo Upload Functionality
 
