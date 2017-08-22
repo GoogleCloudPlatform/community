@@ -660,3 +660,15 @@ If you encounter errors, use the `Logging` messages to debug your application.
 
 ## Implementing photo delete/archive functionality
 
+Alternatively, if the received Cloud Pub/Sub notification indicates an `OBJECT_DELETE` or `OBJECT_ARCHIVE` event, the corresponding `thumbnail_key` must be removed from all necessary `Labels`, the thumbnail must be deleted from the GCS thumbnail bucket, and the `ThumbnailReference` must be deleted from Datastore.
+
+Because these actions only occur in the case of a photo delete or archive, an `elif` statement can be used inside the `ReceiveMessage` class of `main.py`, where the initial `if` statement of the block is the one specifying the event type as `OBJECT_FINALIZE`.
+
+```py
+elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
+    # Photo delete/archive-specific code here.
+```
+    
+### Removing the thumbnail from `Labels`
+
+1. 
