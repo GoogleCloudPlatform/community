@@ -28,11 +28,40 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=41
 
 ## Overview
 
-This tutorial teaches you how to integrate several Google products to simulate a shared photo album, hosted on App Engine and managed through the Cloud Platform Console. The diagram below shows the overall flow of the application:
+This tutorial teaches you how to integrate several Google products to simulate a shared photo album, hosted on App Engine and managed through the Cloud Platform Console.
+
+Users interact with the web application only through the Cloud Platform Console; photos cannot be uploaded or deleted through the application itself. Two buckets exist in [Cloud Storage](https://cloud.google.com/storage/) (GCS): one to store the uploaded photos themselves, and the other to store the thumbnails of the uploaded photos. [Cloud Datastore](https://cloud.google.com/datastore/) stores all non-image entities needed for the web application, which is hosted on [App Engine](https://cloud.google.com/appengine/). Notifications of changes to the GCS photo bucket are sent to the application via [Cloud Pub/Sub](https://cloud.google.com/pubsub/). The [Google Cloud Vision API Client Library](https://developers.google.com/api-client-library/python/apis/vision/v1) is used to label photos for search.
+
+The overall workflow of the application is shown in the diagram below:
 
 ![alt text](link to image here "Shared Photo App Workflow")
 
-Two buckets exist in [Cloud Storage](https://cloud.google.com/storage/) (GCS): one to store the uploaded photos themselves, and the other to store the thumbnails of the uploaded photos. [Cloud Datastore](https://cloud.google.com/datastore/) stores all non-image entities needed for the web application, which is hosted on [App Engine](https://cloud.google.com/appengine/). Notifications of changes to the GCS photo bucket are sent to the application via [Cloud Pub/Sub](https://cloud.google.com/pubsub/). The [Google Cloud Vision API Client Library](https://developers.google.com/api-client-library/python/apis/vision/v1) is used to label photos for search. Further detail is revealed in later portions of this tutorial.
+Receiving a Notification (purple arrows):
+1. A user uploads or deletes something from their GCS bucket.
+1. A Cloud Pub/Sub message is sent.
+1. The Cloud Pub/Sub message is received by App Engine.
+1. The Cloud Pub/Sub message is formatted and stored as a `Notification` in Datastore.
+1. If the event type from the message is `OBJECT_FINALIZE`, the uploaded photo is compressed and stored as a thumbnail in a separate GCS thumbnail bucket. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, the thumbnail matching the name and generation number of the deleted or archived photo is deleted from the GCS thumbnail bucket.
+1. If the event type from the message is `OBJECT_FINALIZE`, then the Google Cloud Vision API is used to generate labels for the uploaded photo.
+1. If the event type from the message is `OBJECT_FINALIZE`, then a new `ThumbnailReference` is created and stored in Datastore. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, then the appropriate `ThumbnailReference` is removed from all `Labels` that contain it.
+1. If the event type from the message is `OBJECT_FINALIZE`, then the `ThumbnailReference` is added to all applicable `Labels`. New Labels are created and added to Datastore as needed. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, then the appropriate `ThumbnailReference` is deleted from Datastore.
+
+Loading the Home Page (green arrows)\*:
+1. A previously-specified number of `Notifications` are queried from Datastore, ordered by date and time, most recent first.
+1. The queried `Notifications` are sent to the front-end to be formatted and displayed on the home page.
+
+Loading the Photos Page (red arrows)\*:
+1. All the `ThumbnailReferences` are fetched from Datastore, ordered by date and time, most recent first.
+1. Each `ThumbnailReference` is used to get a serving url for the corresponding thumbnail stored in GCS.
+1. A dictionary of `ThumbnailReferences` and their serving urls is sent to the front-end to be formatted and displayed on the photos page.
+
+Loading the Search Page (pink arrows)\*:
+1. A Datastore query attempts to find a `Label` that matches the search term entered in the search box.
+1. If a matching `Label` is found, Datastore is queried for each `ThumbnailReference` that `Label` contains.
+1. Each `ThumbnailReference` queried is used to get a serving url for the corresponding thumbnail stored in GCS.
+1. A dictionary of `ThumbnailReferences` and their serving urls is sent to the front-end to be formatted and displayed on the search page.
+
+\* Step 0: The user navigates to the url that causes the page to load.
 
 Note: Basic coding (Python, HTML, CSS, Javascript) and command line knowledge is necessary to complete this tutorial.
 
