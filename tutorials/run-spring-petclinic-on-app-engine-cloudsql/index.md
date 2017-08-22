@@ -70,7 +70,7 @@ Cloud Platform (GCP).
 
 [hyper]: http://hsqldb.org/
 
-### Using Cloud SQL as your database
+### Setup Cloud SQL
 
 1.  Enable the [Cloud SQL API][api].
 
@@ -86,7 +86,15 @@ Cloud Platform (GCP).
 
         gcloud beta sql instances describe INSTANCE_NAME
 
-1.  Update `src/main/resources/application-mysql.properties`, replacing
+### Using Cloud SQL as your database
+
+Once Cloud SQL is setup and initialized, you can configure your application to use Cloud SQL
+as the primary database either using Spring Datasource or the snapshot version of
+Spring Integration for Cloud SQL. The following sections demonstrate both options.
+
+#### Using Spring Datasource
+
+1.  Update `src/main/resources/application-mysql-datasource.properties`, replacing
     INSTANCE_CONNECTION_NAME with the `connectionName` from the previous step:
 
         database=mysql
@@ -95,17 +103,43 @@ Cloud Platform (GCP).
         spring.datasource.username=root
         spring.datasource.password=my-smart-password
 
-    See updated file [here](spring-petclinic/src/main/resources/application-mysql.properties).
+    See updated file [here](spring-petclinic/src/main/resources/application-mysql-datasource.properties).
 
 1.  Update `pom.xml` to include [Cloud SQL MySQL Socket Factory][socket].
     The socket library allows you to connect to your Cloud SQL instance for
-    local testing and deployment. See updated `pom.xml` [here](spring-petclinic/pom.xml).
+    local testing and deployment. See reference `pom.xml` [here](spring-petclinic/pom-spring-datasource.xml).
 
-1.  Restart the Spring Boot application using the mysql [profile][profile]:
+1.  Restart the Spring Boot application using the `mysql-datasource` [profile][profile]:
 
-        ./mvnw -Drun.profiles=mysql spring-boot:run
+        ./mvnw -Drun.profiles=mysql-datasource spring-boot:run
 
-    Access the application homepage http://localhost:8080 via your web browser
+#### Using Spring Cloud integration for Cloud SQL
+
+You can also now use the [Spring Cloud SQL starter](https://github.com/spring-cloud/spring-cloud-gcp/tree/master/spring-cloud-gcp-starters/spring-cloud-gcp-starter-sql)
+to configure Cloud SQL in your application.
+
+Note: This is currently a SNAPSHOT release, add the dependency from [Spring SNAPSHOT repository](http://maven.springframework.org/snapshot/).
+
+You also need to add the [Spring Boot JDBC starter](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc/1.5.6.RELEASE)
+to your `pom.xml` as shown [here](spring-petclinic/pom-spring-cloud.xml).
+
+1.  Update `src/main/resources/application-mysql-spring-cloud.properties`, replacing
+    INSTANCE_CONNECTION_NAME with the `connectionName` from the previous step:
+    
+        database=mysql
+        spring.cloud.gcp.sql.instanceName=INSTANCE_NAME
+        spring.cloud.gcp.sql.databaseName=petclinic
+        spring.cloud.gcp.sql.password=my-smart-password
+
+    See updated file [here](spring-petclinic/src/main/resources/application-mysql-datasource.properties).
+
+1.  Restart the Spring Boot application using the `mysql-spring-cloud` [profile][profile]:
+
+        ./mvnw -Drun.profiles=mysql-spring-cloud spring-boot:run
+
+
+### Testing PetClinic locally
+1.  Access the application homepage http://localhost:8080 via your web browser
     and add some data.
 
 1.   You can verify the data exists in Cloud SQL by running queries agains the

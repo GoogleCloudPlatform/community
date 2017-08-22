@@ -83,6 +83,7 @@
             <artifactId>spring-cloud-gcp-starter-sql</artifactId>
             <version>1.0.0.BUILD-SNAPSHOT</version>
         </dependency>
+
         <!-- caching -->
         <dependency>
             <groupId>javax.cache</groupId>
