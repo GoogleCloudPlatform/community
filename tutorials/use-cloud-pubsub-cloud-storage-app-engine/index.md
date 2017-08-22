@@ -144,9 +144,9 @@ To create the application from scratch:
     </html>
     ```
     
-    1. Create an HTML file for the home/notifications page of your application (url: http://[PROJECT ID].appspot.com) using the template given above. The notifications page will have a news feed listing all recent actions performed on your GCS photo bucket.
-    1. Create an HTML file for the photos page of your application (url: http://[PROJECT ID].appspot.com/photos) using the template given above. The photos page will display the thumbnails and names of all photos uploaded to your GCS photo bucket.
-    1. Create an HTML file for the search page of your application (url: http://[PROJECT ID].appspot.com/search) using the template given above. The search page will display the thumbnails and names of the photos uploaded to your GCS photo bucket that match the entered search term.
+    1. Create an HTML file for the home/notifications page of your application (url: `http://[PROJECT ID].appspot.com`) using the template given above. The notifications page will have a news feed listing all recent actions performed on your GCS photo bucket.
+    1. Create an HTML file for the photos page of your application (url: `http://[PROJECT ID].appspot.com/photos`) using the template given above. The photos page will display the thumbnails and names of all photos uploaded to your GCS photo bucket.
+    1. Create an HTML file for the search page of your application (url: `http://[PROJECT ID].appspot.com/search`) using the template given above. The search page will display the thumbnails and names of the photos uploaded to your GCS photo bucket that match the entered search term.
 1. Create a `main.py` file in your host directory.
     1. Add the required imports to the top of the file:
         
