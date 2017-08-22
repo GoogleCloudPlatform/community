@@ -172,7 +172,7 @@ To create the application from scratch:
         jinja_environment = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))
         ```
         
-    1. Add constants. `THUMBNAIL_BUCKET` is the name of the GCS bucket you created in Set Up step #8 to store the thumbnails of photos uploaded to your GCS photos bucket. `PHOTO_BUCKET` is the name of the GCS bucket you created in Set Up step #5 to store the photos uploaded to your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the maximum number of notifications displayed on the home/notifications page of your web application. `MAX_LABELS` regulates the maximum number of labels obtained for each photo using Cloud Vision.
+    1. Add constants. `THUMBNAIL_BUCKET` is the name of the GCS bucket you created in Set Up step #8 to store the thumbnails of photos uploaded to your GCS photo bucket. `PHOTO_BUCKET` is the name of the GCS bucket you created in Set Up step #5 to store the photos uploaded to your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the maximum number of notifications displayed on the home/notifications page of your web application. `MAX_LABELS` regulates the maximum number of labels obtained for each photo using Cloud Vision.
     
         ```py
         THUMBNAIL_BUCKET = '[GCS THUMBNAIL BUCKET NAME]'
@@ -190,7 +190,7 @@ To create the application from scratch:
             generation = ndb.StringProperty()
         ```
         
-    1. Create the `ThumbnailReference` class. ThumbnailReferences are stored in Cloud Datastore and contain information about the thumbnails stored in your GCS thumbnails bucket. ThumbnailReferences have a thumbnail_name (the name of the uploaded photo), a thumbnail_key (a concatenation of the name and generation number of an uploaded photo, used to distinguish similarly named photos), date of posting, a list of label descriptions assigned to the corresponding photo using Google Cloud Vision, and the url of the original photo that is stored in GCS.
+    1. Create the `ThumbnailReference` class. ThumbnailReferences are stored in Cloud Datastore and contain information about the thumbnails stored in your GCS thumbnail bucket. ThumbnailReferences have a thumbnail_name (the name of the uploaded photo), a thumbnail_key (a concatenation of the name and generation number of an uploaded photo, used to distinguish similarly named photos), date of posting, a list of label descriptions assigned to the corresponding photo using Google Cloud Vision, and the url of the original photo that is stored in GCS.
     
         ```py
         class ThumbnailReference(ndb.Model):
@@ -390,7 +390,7 @@ If you encounter errors, open the `Products & services` menu and navigate to `Lo
 
 ## Implementing Photo Upload Functionality
 
-When a Cloud Pub/Sub notification is received, different actions occur depending on the `eventType`. If the notification indicates an `OBJECT_FINALIZE` event, the uploaded photo must be shrunk to a thumbnail, the thumbnail of the photo must be stored in the GCS thumbnails bucket, the photo must be labeled using the Google Cloud Vision API, a `ThumbnailReference` must be stored in Datastore, and the required `Label` entities must be updated or created to be stored in Datastore.
+When a Cloud Pub/Sub notification is received, different actions occur depending on the `eventType`. If the notification indicates an `OBJECT_FINALIZE` event, the uploaded photo must be shrunk to a thumbnail, the thumbnail of the photo must be stored in the GCS thumbnail bucket, the photo must be labeled using the Google Cloud Vision API, a `ThumbnailReference` must be stored in Datastore, and the required `Label` entities must be updated or created to be stored in Datastore.
 
 Because these actions only occur in the case of a photo upload, an `if` block should be used inside the `ReceiveMessage` class of `main.py`.
 
@@ -423,4 +423,23 @@ To create the thumbnail, the original image from the GCS photo bucket should be 
     
 ### Storing the Thumbnail in GCS
 
-1. 
+The thumbnail should be stored in the GCS thumbnail bucket under the name `thumbnail_key` in order to distinguish between different versions of the same photo. Since two Cloud Pub/Sub notifications, an `OBJECT_FINALIZE` and an `OBJECT_DELETE`/`OBJECT_ARCHIVE`, are sent in an arbitrary order in the case of an overwrite, it is possible for two thumbnails with the same `thumbnail_name` to exist in storage at once. Utilizing the `generation_number` of the photo in the `thumbnail_key` ensures that the correct thumbnail is deleted when necessary.
+
+1. Write the `store_thumbnail_in_gcs` helper function.
+
+    ```py
+    def store_thumbnail_in_gcs(self, thumbnail_key, thumbnail):
+      write_retry_params = gcs.RetryParams(backoff_factor=1.1)
+      filename = '/' + THUMBNAIL_BUCKET + '/' + thumbnail_key
+      with gcs.open(filename, 'w') as filehandle:
+        filehandle.write(thumbnail)
+    ```
+    
+1. Call the `store_thumbnail_in_gcs` helper function in `ReceiveMessage`.
+
+    ```py
+    store_thumbnail_in_gcs(self, thumbnail_key, thumbnail)
+    ```
+    
+### Labeling the Photo Using Google Cloud Vision
+
