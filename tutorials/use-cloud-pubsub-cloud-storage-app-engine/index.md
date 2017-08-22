@@ -34,7 +34,7 @@ Users interact with the web application only through the Cloud Platform Console;
 
 The overall workflow of the application is shown in the diagram below:
 
-![alt text](link to image here "Shared Photo App Workflow")
+![Shared Photo App Workflow](https://storage.googleapis.com/gcp-community/tutorials/use-cloud-pubsub-cloud-storage-app-engine/tutorial-workflow.png)
 
 Receiving a Notification (purple arrows):
 1. A user uploads or deletes something from their GCS bucket.
