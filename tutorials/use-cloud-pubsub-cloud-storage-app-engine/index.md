@@ -404,7 +404,7 @@ You now have all of the information needed to create the necessary notification 
     
 ### Writing `Notifications` to the HTML file
 
-1. In `main.py`, in the `MainHandler`, in the `get` method, fetch all Notifications from Cloud Datastore in reverse date order and include them in `template_values`, to be written to the home/notifications page HTML file.
+1. In `main.py`, in the `MainHandler`, in the `get` method, fetch all `Notifications` from Cloud Datastore in reverse date order and include them in `template_values`, to be written to the home/notifications page HTML file.
 
     ```py
     notifications = Notification.query().order(-Notification.date).fetch(NUM_NOTIFICATIONS_TO_DISPLAY)
@@ -415,9 +415,9 @@ You now have all of the information needed to create the necessary notification 
 
     ```html
     {% for notification in notifications %}
-    <div>
-      <p><small>{{notification.date.strftime('%B %d %Y %I:%M')}} UTC: </small>{{notification.message}}</p>
-    </div>
+      <div>
+        <p><small>{{notification.date.strftime('%B %d %Y %I:%M')}} UTC: </small>{{notification.message}}</p>
+      </div>
     {% endfor %}
     ```
     
@@ -426,7 +426,7 @@ You now have all of the information needed to create the necessary notification 
 1. Run your application locally to check for basic errors, then deploy your application.
 1. In the [Cloud Platform Console](https://console.cloud.google.com/), use the three-bar icon in the top left corner to open the `Products & services` menu and navigate to `Storage`.
 1. Click on the name of your GCS photo bucket. Click `UPLOAD FILES` and upload an image with the extension `.jpg`.
-1. Open the `Products & services` menu again and navigate to `Datastore`. There should be a Notification listed with the message `[UPLOADED PHOTO NAME] was uploaded.`.
+1. Open the `Products & services` menu again and navigate to `Datastore`. There should be a `Notification` listed with the message `[UPLOADED PHOTO NAME] was uploaded.`.
 1. View your deployed application in your web browser. There should be a notification listed on the home page. You may need to refresh the page.
 
 If you encounter errors, open the `Products & services` menu and navigate to `Logging`. Use the messages there to debug your application.
@@ -553,4 +553,110 @@ Therefore, in the case of a photo upload, `label_names` must be added to the `Th
         ```
         
 1. Add the `thumbnail_key` of the photo to the `labeled_thumbnails` lists of the required `Labels`.
-    1. Write the add 
+    1. Write the `add_thumbnail_reference_to_labels` helper function.
+    
+        ```py
+        def add_thumbnail_reference_to_labels(labels, thumbnail_key):
+          for label in labels:
+            label_to_append_to = Label.query(Label.label_name==label).get()
+            if label_to_append_to is None:
+              # Create and store new Label if does not already exist.
+              thumbnail_list_for_new_label = []
+              thumbnail_list_for_new_label.append(thumbnail_key)
+              new_label = Label(label_name=label, labeled_thumbnails=thumbnail_list_for_new_label)
+              new_label.put()
+            else:
+              # Add thumbnail to Label list if Label already exists.
+              label_to_append_to.labeled_thumbnails.append(thumbnail_key)
+              label_to_append_to.put()
+        ```
+        
+    1. Call the `add_thumbnail_reference_to_labels` helper function in the `post` method of the `ReceiveMessage` class.
+    
+        ```py
+        add_thumbnail_reference_to_labels(labels, thumbnail_key)
+        ```
+        
+Although the `thumbnail_keys` have now been added to the appropriate `Labels`, it is still necessary to add the `label_names` to the `ThumbnailReference`. This is further elaborated in the next section.
+
+### Creating and storing the `ThumbnailReference`
+
+At this point, the only other thing you need to create the required `ThumbnailReference` is the url of the original photo. Obtain this, and the `ThumbnailReference` can be created and stored.
+
+1. Write the `get_original` helper function to return the url of the original photo.
+
+    ```py
+    def get_original(photo_name, generation):
+      return 'https://storage.googleapis.com/' + PHOTO_BUCKET + '/' + photo_name + '?generation=' + generation
+    ```
+    
+1. Call the `get_original` helper function in the `post` method of the `ReceiveMessage` class.
+
+    ```py
+    original_photo = get_original(photo_name, generation_number)
+    ```
+    
+1. Create the `ThumbnailReference` using the information gathered from the Cloud Pub/Sub message, `get_labels` function, and `get_original` function.
+
+    ```py
+    thumbnail_reference = ThumbnailReference(thumbnail_name=photo_name, thumbnail_key=thumbnail_key, labels=labels, 
+        original_photo=original_photo)
+    ```
+    
+1. Store the newly created `ThumbnailReference` in Datastore.
+
+    ```py
+    thumbnail_reference.put()
+    ```
+    
+You have now completed all of the code necessary to store the information about an uploaded photo in GCS and Datastore.
+
+### Writing thumbnails to the photos HTML file
+
+1. Write the `get_thumbnail` helper function. This function returns a [serving url](https://cloud.google.com/appengine/docs/standard/python/images/#get-serving-url) that accesses the thumbnail from the GCS thumbnail bucket.
+
+    ```py
+    def get_thumbnail(photo_name):
+      filename = '/gs/' + THUMBNAIL_BUCKET + '/' + photo_name
+      blob_key = blobstore.create_gs_key(filename)
+      return images.get_serving_url(blob_key)
+    ```
+
+1. In `main.py`, in the `PhotosHandler`, in the `get` method, fetch all `ThumbnailReferences` from Cloud Datastore in reverse date order. Create an ordered dictionary, calling upon the `get_thumbnail` helper function, with the thumbnail serving urls as keys and the `thumbnail_references` as values. Include the dictionary in `template_values`, to be written to the appropriate HTML file.
+
+    ```py
+    thumbnail_references = ThumbnailReference.query().order(-ThumbnailReference.date).fetch()
+    thumbnails = collections.OrderedDict()
+    for thumbnail_reference in thumbnail_references:
+      img_url = get_thumbnail(thumbnail_reference.thumbnail_key)
+      thumbnails[img_url] = thumbnail_reference
+    template_values = {'thumbnails':thumbnails}
+    ```
+    
+1. In the `templates` directory, in the photos page HTML file, loop through the thumbnails dictionary you rendered to the template in `main.py` and display the thumbnail image and its name.
+
+    ```html
+    {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
+      <div>
+        <img src='{{img_url}}'>
+        <div>{{thumbnail_reference.thumbnail_name}}</div>
+      </div>
+    {% endfor %}
+    ```
+    
+### Checkpoint
+
+1. Run your application locally to check for basic errors, then deploy your application.
+1. Upload an image with the extension `.jpg` to your GCS photo bucket.
+1. Check that the thumbnail version of your newly uploaded photo is in your GCS thumbnail bucket under the correct name.
+1. Check that in Datastore, there is a `Notification` listed with the message `[UPLOADED PHOTO NAME] was uploaded.`.
+1. Check that in Datastore, there is a `ThumbnailReference` listed with the appropriate information.
+1. Check that in Datastore, there are `Labels` corresponding with the ones listed in the new `ThumbnailReference` entity.
+1. View your deployed application in your web browser.
+    1. Check that there is a new notification listed on the home page. You may need to refresh the page.
+    1. Check that the thumbnail and name of the uploaded photo are displayed on the Photos page.
+
+If you encounter errors, use the `Logging` messages to debug your application.
+
+## Implementing photo delete/archive functionality
+
