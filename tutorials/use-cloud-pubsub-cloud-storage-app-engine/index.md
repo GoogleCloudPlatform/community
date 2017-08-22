@@ -5,7 +5,6 @@ author: ggchien, cmwoods
 tags: App Engine, Cloud Pub/Sub, Cloud Storage, GCS, Datastore, photo album
 date published:
 ---
-Some sort of intro here.
 
 ## Objectives
 
@@ -37,7 +36,7 @@ Two buckets exist in [Cloud Storage](https://cloud.google.com/storage/) (GCS): o
 
 Note: Basic coding (Python, HTML, CSS, Javascript) and command line knowledge is necessary to complete this tutorial.
 
-## Set Up
+## Set up
 
 The following instructions assume no prior set up has been done. Skip steps appropriately if you have already completed them.
 1. [Install the Google Cloud SDK](https://cloud.google.com/sdk/downloads) for necessary commands such as `gcloud` and `gsutil`.
@@ -66,7 +65,7 @@ The following instructions assume no prior set up has been done. Skip steps appr
     gsutil notification create -f json gs://[PHOTO BUCKET NAME]
     ```
 
-## Basic Application Layout
+## Basic application layout
 
 If you do not feel like coding the entire application from scratch, feel free to clone the git repository with a default application by running
 
@@ -125,7 +124,7 @@ The external library and `app.yaml` files are necessary for the configuring your
       version: latest
     ```
     
-### HTML Files
+### HTML files
   
 The HTML files represent the different pages of your web application.
   
@@ -157,7 +156,7 @@ The HTML files represent the different pages of your web application.
 1. Create an HTML file for the photos page of your application (url: `http://[PROJECT ID].appspot.com/photos`) using the template given above. The photos page will display the thumbnails and names of all photos uploaded to your GCS photo bucket.
 1. Create an HTML file for the search page of your application (url: `http://[PROJECT ID].appspot.com/search`) using the template given above. The search page will display the thumbnails and names of the photos uploaded to your GCS photo bucket that match the entered search term.
     
-### The `main.py` File
+### The `main.py` file
 
 The `main.py` file contains the backend logic of the website, including the reception of Cloud Pub/Sub messages, the communication with GCS and Datastore, and the rendering of HTML templates.
 
@@ -275,9 +274,9 @@ The `main.py` file contains the backend logic of the website, including the rece
     gcloud app browse
     ```
     
-## Creating the Notifications Page
+## Creating the notifications page
 
-### Receiving Cloud Pub/Sub Messages
+### Receiving Cloud Pub/Sub messages
 
 During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cloud.google.com/pubsub/docs/push#receive_push) to be sent to the url you specified for the `ReceiveMessage` class in your `main.py` file. When you receive a Pub/Sub message, you must get necessary information from it and acknowledge its reception.
 
@@ -317,7 +316,7 @@ During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cl
     
 You now have all of the information needed to create the necessary notification and communicate with GCS.
 
-### Creating and Storing Notifications
+### Creating and storing `Notifications`
 
 1. Write a `create_notification` helper function to generate notifications. Note that if the `event_type` is `OBJECT_UPDATE`, the `message` field is blank.
 
@@ -373,7 +372,7 @@ You now have all of the information needed to create the necessary notification 
     new_notification.put()
     ```
     
-### Writing Notifications to the HTML File
+### Writing `Notifications` to the HTML file
 
 1. In `main.py`, in the `MainHandler`, in the `get` method, fetch all Notifications from Cloud Datastore in reverse date order and include them in `template_values`, to be written to the home/notifications page HTML file.
 
@@ -402,7 +401,7 @@ You now have all of the information needed to create the necessary notification 
 
 If you encounter errors, open the `Products & services` menu and navigate to `Logging`. Use the messages there to debug your application.
 
-## Implementing Photo Upload Functionality
+## Implementing photo upload functionality
 
 When a Cloud Pub/Sub notification is received, different actions occur depending on the `eventType`. If the notification indicates an `OBJECT_FINALIZE` event, the uploaded photo must be shrunk to a thumbnail, the thumbnail of the photo must be stored in the GCS thumbnail bucket, the photo must be labeled using the Google Cloud Vision API, a `ThumbnailReference` must be stored in Datastore, and the required `Label` entities must be updated or created to be stored in Datastore.
 
@@ -413,7 +412,7 @@ if event_type == 'OBJECT_FINALIZE':
   # Photo upload-specific code here.
 ```
     
-### Creating the Thumbnail
+### Creating the thumbnail
 
 To create the thumbnail, the original image from the GCS photo bucket should be resized. Use the [Images Python API](https://cloud.google.com/appengine/docs/standard/python/images/) to perform the required transformations.
 
@@ -435,7 +434,7 @@ To create the thumbnail, the original image from the GCS photo bucket should be 
     thumbnail = create_thumbnail(self, photo_name)
     ```
     
-### Storing the Thumbnail in GCS
+### Storing the thumbnail in GCS
 
 The thumbnail should be stored in the GCS thumbnail bucket under the name `thumbnail_key` in order to distinguish between different versions of the same photo. Since two Cloud Pub/Sub notifications, an `OBJECT_FINALIZE` and an `OBJECT_DELETE`/`OBJECT_ARCHIVE`, are sent in an arbitrary order in the case of an overwrite, it is possible for two thumbnails with the same `thumbnail_name` to exist in storage at once. Utilizing the `generation_number` of the photo in the `thumbnail_key` ensures that the correct thumbnail is deleted when necessary.
 
@@ -455,7 +454,7 @@ The thumbnail should be stored in the GCS thumbnail bucket under the name `thumb
     store_thumbnail_in_gcs(self, thumbnail_key, thumbnail)
     ```
     
-### Labeling the Photo Using Google Cloud Vision
+### Labeling the photo using Google Cloud Vision
 
 The [Google Cloud Vision API Client Library for Python](https://developers.google.com/api-client-library/python/apis/vision/v1) can be used to [annotate](https://developers.google.com/resources/api-libraries/documentation/vision/v1/python/latest/vision_v1.images.html) images, assigning them labels that describe the contents of the picture. You will later use these labels to search for specific photos.
 
