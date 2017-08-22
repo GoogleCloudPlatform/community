@@ -427,7 +427,7 @@ You now have all of the information needed to create the necessary notification 
 1. In the [Cloud Platform Console](https://console.cloud.google.com/), use the three-bar icon in the top left corner to open the `Products & services` menu and navigate to `Storage`.
 1. Click on the name of your GCS photo bucket. Click `UPLOAD FILES` and upload an image with the extension `.jpg`.
 1. Open the `Products & services` menu again and navigate to `Datastore`. There should be a `Notification` listed with the message `[UPLOADED PHOTO NAME] was uploaded.`.
-1. View your deployed application in your web browser. There should be a notification listed on the home page. You may need to refresh the page.
+1. View your deployed application in your web browser. The new notification should be listed on the home page. You may need to refresh the page.
 
 If you encounter errors, open the `Products & services` menu and navigate to `Logging`. Use the messages there to debug your application.
 
@@ -653,8 +653,8 @@ You have now completed all of the code necessary to store the information about 
 1. Check that in Datastore, there is a `ThumbnailReference` listed with the appropriate information.
 1. Check that in Datastore, there are `Labels` corresponding with the ones listed in the new `ThumbnailReference` entity.
 1. View your deployed application in your web browser.
-    1. Check that there is a new notification listed on the home page. You may need to refresh the page.
-    1. Check that the thumbnail and name of the uploaded photo are displayed on the Photos page.
+    1. Check that the new notification is listed on the home page. You may need to refresh the page.
+    1. Check that the thumbnail and name of the uploaded photo are displayed on the photos page.
 
 If you encounter errors, use the `Logging` messages to debug your application.
 
@@ -671,4 +671,65 @@ elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
     
 ### Removing the thumbnail from `Labels`
 
-1. 
+1. Write the `remove_thumbnail_from_labels` helper function to remove the given `thumbnail_key` from all applicable `Labels`.
+
+    ```py
+    def remove_thumbnail_from_labels(thumbnail_key):
+      thumbnail_reference = ThumbnailReference.query(ThumbnailReference.thumbnail_key==thumbnail_key).get()
+      labels_to_delete_from = thumbnail_reference.labels
+      for label_name in labels_to_delete_from:
+        label = Label.query(Label.label_name==label_name).get()
+        labeled_thumbnails = label.labeled_thumbnails
+        labeled_thumbnails.remove(thumbnail_key)
+        # If there are no more thumbnails with a given Label, delete the Label.
+        if not labeled_thumbnails:
+          label.key.delete()
+        else:
+          label.put()
+    ```
+
+1. Call the `remove_thumbnail_from_labels` helper function in the `post` method of the `ReceiveMessage` class.
+
+    ```py
+    remove_thumbnail_from_labels(thumbnail_key)
+    ```
+    
+### Deleting the thumbnail and `ThumbnailReference`
+
+1. Write the `delete_thumbnail` helper function to delete the specified thumbnail from the GCS thumbnail bucket and delete the `ThumbnailReference` from Datastore.
+
+    ```py
+    def delete_thumbnail(thumbnail_key):
+      # Delete the serving url of the thumbnail.
+      filename = '/gs/' + THUMBNAIL_BUCKET + '/' + thumbnail_key
+      blob_key = blobstore.create_gs_key(filename)
+      images.delete_serving_url(blob_key)
+      # Delete the ThumbnailReference from Datastore.
+      thumbnail_reference = ThumbnailReference.query(ThumbnailReference.thumbnail_key==thumbnail_key).get()
+      thumbnail_reference.key.delete()
+      # Delete the thumbnail from the GCS thumbnail bucket.
+      filename = '/' + THUMBNAIL_BUCKET + '/' + thumbnail_key
+      gcs.delete(filename)
+    ```
+    
+1. Call the `delete_thumbnail` helper function in the `post` method of the `ReceiveMessage` class.
+
+    ```py
+    delete_thumbnail(thumbnail_key)
+    ```
+    
+### Checkpoint
+
+1. Run your application locally to check for basic errors, then deploy your application.
+1. Delete an image from your GCS photo bucket.
+1. Check that the thumbnail version of your deleted photo is no longer in your GCS thumbnail bucket.
+1. Check that in Datastore, there is a `Notification` listed with the message `[DELETED PHOTO NAME] was deleted.`.
+1. Check that in Datastore, the `ThumbnailReference` for your deleted photo is no longer listed.
+1. Check that in Datastore, none of the `Labels` contain the name of your recently deleted photo, and none of the `Labels` are blank.
+1. View your deployed application in your web browser.
+    1. Check that the new notification is listed on the home page. You may need to refresh the page.
+    1. Check that the thumbnail and name of the uploaded photo are no longer displayed on the photos page.
+
+If you encounter errors, use the `Logging` messages to debug your application.
+
+## Creating the search page
