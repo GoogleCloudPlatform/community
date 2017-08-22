@@ -3,7 +3,7 @@ title: How to Use Cloud Pub/Sub Notifications and Cloud Storage with App Engine
 description: Create a shared photo album using Cloud Pub/Sub, Cloud Storage, Datastore, and App Engine.
 author: ggchien, cmwoods
 tags: App Engine, Cloud Pub/Sub, Cloud Storage, GCS, Datastore, photo album
-date published: 2017-08-17
+date published:
 ---
 Some sort of intro here.
 
@@ -305,7 +305,7 @@ You now have all of the information needed to create the necessary notification 
 
 ### Creating and Storing Notifications
 
-1. Write a `create_notification` helper method to generate notifications. Note that if the `event_type` is `OBJECT_UPDATE`, the `message` field is blank.
+1. Write a `create_notification` helper function to generate notifications. Note that if the `event_type` is `OBJECT_UPDATE`, the `message` field is blank.
 
     ```py
     def create_notification(photo_name, event_type, generation, overwrote_generation=None, overwritten_by_generation=None):
@@ -330,7 +330,7 @@ You now have all of the information needed to create the necessary notification 
     return Notification(message=message, generation=generation)
     ```
     
-1. Call the `create_notification` helper method in the `ReceiveMessage` class.
+1. Call the `create_notification` helper function in the `ReceiveMessage` class.
 
     ```py
     new_notification = create_notification(photo_name, event_type, generation_number,   
@@ -403,7 +403,7 @@ if event_type == 'OBJECT_FINALIZE':
 
 To create the thumbnail, the original image from the GCS photo bucket should be resized. Use the [Images Python API](https://cloud.google.com/appengine/docs/standard/python/images/) to perform the required transformations.
 
-1. Write the `create_thumbnail` helper method.
+1. Write the `create_thumbnail` helper function.
 
     ```py
     def create_thumbnail(self, photo_name):
