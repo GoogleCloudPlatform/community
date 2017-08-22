@@ -344,7 +344,7 @@ You now have all of the information needed to create the necessary notification 
     return Notification(message=message, generation=generation)
     ```
     
-1. Call the `create_notification` helper function in the `ReceiveMessage` class.
+1. Call the `create_notification` helper function in the `post` method of the `ReceiveMessage` class.
 
     ```py
     new_notification = create_notification(photo_name, event_type, generation_number,   
@@ -429,7 +429,7 @@ To create the thumbnail, the original image from the GCS photo bucket should be 
     
     This returns the thumbnail in a `string` format.
     
-1. Call the `create_thumbnail` helper function in `ReceiveMessage`.
+1. Call the `create_thumbnail` helper function in the `post` method of the `ReceiveMessage` class.
 
     ```py
     thumbnail = create_thumbnail(self, photo_name)
@@ -449,7 +449,7 @@ The thumbnail should be stored in the GCS thumbnail bucket under the name `thumb
         filehandle.write(thumbnail)
     ```
     
-1. Call the `store_thumbnail_in_gcs` helper function in `ReceiveMessage`.
+1. Call the `store_thumbnail_in_gcs` helper function in the `post` method of the `ReceiveMessage` class.
 
     ```py
     store_thumbnail_in_gcs(self, thumbnail_key, thumbnail)
@@ -457,3 +457,71 @@ The thumbnail should be stored in the GCS thumbnail bucket under the name `thumb
     
 ### Labeling the Photo Using Google Cloud Vision
 
+The [Google Cloud Vision API Client Library for Python](https://developers.google.com/api-client-library/python/apis/vision/v1) can be used to [annotate](https://developers.google.com/resources/api-libraries/documentation/vision/v1/python/latest/vision_v1.images.html) images, assigning them labels that describe the contents of the picture. You will later use these labels to search for specific photos.
+
+The design of this shared photo album web application uses cross referencing to allow for faster search for and deletion of thumbnails. Since every `Label` has the property `labeled_thumbnails`, a list of `thumbnail_keys` representing photos labeled with the applicable `label_name`, it is relatively simple to obtain the thumbnails that should be displayed for a given search term. Similarly, since every `ThumbnailReference` has the property `labels`, a list of `label_names` representing the labels given by Cloud Vision to the corresponding photo, `thumbnail_keys` can be deleted from the appropriate `labels` lists efficiently in the case of an `OBJECT_DELETE` or `OBJECT_ARCHIVE`.
+
+Therefore, in the case of a photo upload, `label_names` must be added to the `ThumbnailReference`, and `thumbnail_keys` must be added to the appropriate `Labels`.
+
+1. Obtain the `labels` list for a given photo.
+    1. Create the `uri` to reference the appropriate photo in the GCS photo bucket.
+        
+        ```py
+        uri = 'gs://' + PHOTO_BUCKET + '/' + photo_name
+        ```
+        
+    1. Write the `get_labels` helper function.
+    
+        ```py
+        def get_labels(uri, photo_name):
+          service = googleapiclient.discovery.build('vision', 'v1')
+          labels = []
+
+          # Label photo with its own name, sans extension.
+          # This allows you to search a photo by its name.
+          index = photo_name.index(".jpg")
+          photo_name_label = photo_name[:index]
+          labels.append(photo_name_label)
+
+          service_request = service.images().annotate(body={
+              'requests': [{
+                  'image': {
+                      'source': {
+                          'imageUri': uri
+                      }
+                  },
+                  'features': [{
+                      'type': 'LABEL_DETECTION',
+                      'maxResults': MAX_LABELS
+                  }]
+              }]
+          })
+          response = service_request.execute()
+          labels_full = response['responses'][0].get('labelAnnotations')
+
+          ignore = ['of', 'like', 'the', 'and', 'a', 'an', 'with']
+
+          # Add labels to the labels list if they are not already in the list and are
+          # not in the ignore list.
+          if labels_full is not None:
+            for label in labels_full:
+              if label['description'] not in labels:
+                labels.append(label['description'])
+                # Split the label into individual words, also to be added to labels list
+                # if not already.
+                descriptors = label['description'].split()
+                  for descript in descriptors:
+                    if descript not in labels and descript not in ignore:
+                      labels.append(descript)
+
+           return labels
+        ```
+        
+    1. Call the `get_labels` helper function in the `post` method of the `ReceiveMessage` class.
+    
+        ```py
+        labels = get_labels(uri, photo_name)
+        ```
+        
+1. Add the `thumbnail_key` of the photo to the `labeled_thumbnails` lists of the required `Labels`.
+    1. Write the add 
