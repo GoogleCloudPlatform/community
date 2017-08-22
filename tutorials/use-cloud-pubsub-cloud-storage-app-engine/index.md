@@ -239,7 +239,7 @@ To create the application from scratch:
         ], debug=True)
         ```
         
-#### Checkpoint
+### Checkpoint
 
 1. [Run your application locally](https://cloud.google.com/appengine/docs/standard/python/tools/using-local-server) by running the following command from your host directory:
 
@@ -261,7 +261,7 @@ To create the application from scratch:
     gcloud app browse
     ```
     
-## The ReceiveMessage Class
+## Creating the Notifications Page
 
 ### Receiving Cloud Pub/Sub Messages
 
@@ -301,7 +301,7 @@ During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cl
     
 You now have all of the information needed to create the necessary notification and communicate with GCS.
 
-### Creating and Storing the Notification
+### Creating and Storing Notifications
 
 1. Write a `create_notification` helper method to generate notifications. Note that if the `event_type` is `OBJECT_UPDATE`, the `message` field is blank.
 
@@ -357,4 +357,24 @@ You now have all of the information needed to create the necessary notification 
     new_notification.put()
     ```
     
-### Photo Upload
+### Writing Notifications to the HTML File
+
+1. In `main.py`, in the `MainHandler`, in the `get` method, fetch all Notifications from Cloud Datastore in reverse date order and include them in `template_values`, to be written to the home/notifications page HTML file.
+
+    ```py
+    notifications = Notification.query().order(-Notification.date).fetch(NUM_NOTIFICATIONS_TO_DISPLAY)
+    template_values = {'notifications':notifications}
+    ```
+    
+1. In the home/notifications page HTML file, loop through the `notifications` list you rendered to the template in `main.py` and print the formatted date/time of the notification and the notification message.
+
+    ```html
+    {% for notification in notifications %}
+    <div>
+      <p><small>{{notification.date.strftime('%B %d %Y %I:%M')}} UTC: </small>{{notification.message}}</p>
+    </div>
+    {% endfor %}
+    ```
+    
+### Checkpoint
+
