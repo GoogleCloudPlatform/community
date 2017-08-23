@@ -1227,8 +1227,85 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
 1. Check that the search page has the same behavior.
 
 ### Make photos scrollable
+The last feature to add to your website is scrolling. After clicking on a thumbnail, the original photo appears. In this section, you'll add the ability to scroll to either side of that photo and see the original photos of other thumbnails without having to close the modal and reopen it by clicking on another thumbnail.
 
-1. Add HTML
-1. Add CSS
-1. Add JavaScript
+1. Add HTML for both the photos and search pages. The instructions for this step should be implemented in your two HTML files responsible for the photos and search pages. 
+    1. Within the 'mySlides' class add the class 'numbertext'. This will display the current number of the photo displayed,     i.e. `1/5`. 
+        ```html
+        <div class="numbertext">{{loop.index}} / {{loop.length}}</div>
+        ```
+        `loop.index` is the current iteration of the for loop, and `loop.length` is the total number of iterations the for           loop will go through.
+    1. After the for loop containing `mySlides` and classes for previous and next buttons:
+    
+        ```html
+         <a class="prev" onclick="plusSlides(-1)">&#10094</a>
+         <a class="next" onclick="plusSlides(1)">&#10095</a>
+        ```
+        `&#10094` and `&#10095` are the HTML codes for previous and next arrows, respectively. The plusSlides() function             will be implemented in Step 3.
+        
+1. Add styling to your external CSS file. This will format both the photos and search pages as long as they have the same class names for the HTML you just added.
+    1. Place the `numbertext` class in the top left of the original photo:
+        ```css
+        .numbertext {
+          color: #f2f2f2;
+          font-size: 12px;
+          padding: 8px 12px;
+          position: absolute;
+          top: 0;
+        }
+        ```
+    1. Place the next and previous arrows over the photo:
+        ```css
+        .prev,
+        .next {
+          cursor: pointer;
+          position: absolute;
+          top: 50%;
+          width: auto;
+          padding: 15px;
+          margin-top: -50px;
+          color: white;
+          font-weight: bold;
+          font-size: 20px;
+          transition: 0.6s ease;
+          border-radius: 0 3px 3px 0;
+          user-select: none;
+          -webkit-user-select: none;
+        }
+        ```
+    1. Reposition the next arrow to be on the right side of the photo:
+        ```css
+        .next {
+          right: 0;
+          border-radius: 3px 0 0 3px;
+        }
+        ```
+    1. Add hover effects to arrows:
+        ```css
+        .prev:hover,
+        .next:hover {
+          background-color: rgba(0, 0, 0, 0.8);
+        }
+        ```
+1. Add JavaScript embedded within the HTML. The instructions in this section will need to be implemented in both HTML files associated with the photos and search pages.
+    1. Implement the plusSlides function:
+        ```javascript
+        function plusSlides(n) {
+          slideIndex +=n;
+          showSlides(slideIndex);
+        }
+        ```
+    1. Additional logic needs to be added to showSlides to allow wrapping around from the last photo to the first photo and when the next arrow is clicked and vice versa. Add the following two lines of code above where `var image` is declared.
+        ```javascript
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
+        ```
+        
+### Checkpoint
+1. Run your application locally to check for basic errors, then deploy your application.
+1. Navigate to the photos page and click on a thumbnail. The photo that appears should now have next and previous arrows as well as a number in the top left corner. Click the arrows to scroll through the photos. Check that the caption updates correctly as you scroll.
+1. Verify that when you click the previous arrow on the first photo, the last photo appears, and that when you click the next arrow on the last photo, the first photo appears.
+1. Navigate to the search page and search for something. Clicking on the thumbnail results should display the same behavior as on the photos page.
+
+#### Congratulations! You've completed this tutorial and now have a functioning, user-friendly website!
 
