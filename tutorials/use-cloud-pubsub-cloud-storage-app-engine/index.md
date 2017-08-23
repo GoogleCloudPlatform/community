@@ -733,3 +733,65 @@ elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
 If you encounter errors, use the `Logging` messages to debug your application.
 
 ## Creating the search page
+
+The search page of the web application has a search bar users can enter a `search-term` into. The `Label` with the `label_name` corresponding to the `search-term` is queried from Datastore, and the `labeled_thumbnails` list is used to obtain and display the appropriate thumbnails on the search page.
+
+1. In `main.py`, in the `SearchHandler` class, fill out the `get` method.
+    1. Get the `search-term` from the user and use it to query the appropriate `Label`.
+    
+        ```py
+        search_term = self.request.get('search-term').lower()
+        label = Label.query(Label.label_name==search_term).get()
+        ```
+        
+    1. In a similar manner as in the `PhotosHandler`, build an ordered dictionary of thumbnail serving urls as keys and `ThumbnailReferences` as values. However, unlike in the `PhotosHandler`, you should only add to the dictionary the thumbnails under the appropriate `Label`.
+    
+        ```py
+        thumbnails = collections.OrderedDict()
+        if label is not None:
+          thumbnail_keys = label.labeled_thumbnails
+          for thumbnail_key in thumbnail_keys:
+            img_url = get_thumbnail(thumbnail_key)
+            thumbnails[img_url] = ThumbnailReference.query(ThumbnailReference.thumbnail_key==thumbnail_key).get()
+        ```
+        
+    1. Reverse the order of the thumbnails dictionary and include it in `template_values`, to be written to the search page HTML file. The dictionary order needs to be reversed because `thumbnail_keys` were added to the `Label` in order from oldest to newest, but should be displayed on the search page starting with the most recent first.
+    
+        ```py
+        thumbnails = collections.OrderedDict(reversed(list(thumbnails.items())))
+        template_values = {'thumbnails':thumbnails}
+        ```
+        
+1. Fill out the search page HTML file.
+    1. Set up the search bar.
+    
+        ```html
+        <form action="/search" method="get">
+          <input name="search-term" placeholder="Search">
+          <button>Search</button>
+        </form>
+        ```
+        
+    1. Like in the photos page HTML file, loop through the thumbnails dictionary you rendered to the template in `main.py` and display the thumbnail image and its name. Include an `else` statement as part of your loop to specify behavior in the case the thumbnails dictionary is empty (no search results returned).
+
+    ```html
+    {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
+      <div>
+        <img src='{{img_url}}'>
+        <div>{{thumbnail_reference.thumbnail_name}}</div>
+      </div>
+    {% else %}
+      <h2>No Search Results</h2>
+    {% endfor %}
+    ```
+    
+### Checkpoint
+
+1. Run your application locally to check for basic errors, then deploy your application.
+1. View your deployed application in your web browser. Try using the search bar. When you search, the applicable photos should appear in a similar manner as the photos page, else the text `No Search Results` should be displayed.
+
+Note: Examining the `Labels` and `ThumbnailReferences` in Datastore helps you determine whether or not the search is functioning as it is meant to.
+
+If you encounter errors, use the `Logging` messages to debug your application.
+
+#### Congratulations! You now have a functioning shared photo album.
