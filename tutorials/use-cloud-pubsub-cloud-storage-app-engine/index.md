@@ -795,3 +795,31 @@ Note: Examining the `Labels` and `ThumbnailReferences` in Datastore helps you de
 If you encounter errors, use the `Logging` messages to debug your application.
 
 #### Congratulations! You now have a functioning shared photo album.
+
+## Style
+
+### Set-Up
+
+### Add style common to every page
+
+### Style the home (notifications) page
+
+### Style the search bar on the search page
+
+### Style the thumbnails for both the photos and search pages
+
+1. Add HTML
+1. Add CSS
+
+### Make thumbnails clickable
+
+1. Add HTML
+1. Add CSS
+1. Add JavaScript
+
+### Make photos scrollable
+
+1. Add HTML
+1. Add CSS
+1. Add JavaScript
+
