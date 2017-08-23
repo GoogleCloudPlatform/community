@@ -798,7 +798,7 @@ If you encounter errors, use the `Logging` messages to debug your application.
 
 ## Style
 
-Now that you a functioning website, it's time to add formatting to it. We'll do this by adding CSS and JavaScript to your already existing HTML files. 
+Now that you a functioning website, it's time to add formatting to it. You'll do this by adding CSS and JavaScript to your already existing HTML files. 
 
 ### Set-Up
 
@@ -821,7 +821,7 @@ Before you start incorporating CSS, you have to tell your app to expect a CSS fi
       script: main.app
     ```
         
-1. Inside the directory you created, create a CSS file. Leave it blank for now; we'll add code to it in the next section. Note that your file must have the extension `.css`.
+1. Inside the directory you created, create a CSS file. Leave it blank for now; you'll add code to it in the following sections. Note that your file must have the extension `.css`.
 1. In each HTML file (you should have three) add the following code inside the `<head>` section, replacing [DIRECTORY NAME] and [FILE NAME] with the appropriate directory and file.
 
     ```html
@@ -830,7 +830,7 @@ Before you start incorporating CSS, you have to tell your app to expect a CSS fi
 
 ### Add style common to every page
 
-First, we'll style the HTML components present on every page of the website. This includes the body, the links to other pages, and the title of the page. You should run your app locally after each step to see the changes.
+First, you'll style the HTML components present on every page of the website. This includes the body, the links to other pages, and the title of the page. You should run your app locally after each step to see the changes.
 
 1. Add the following code to your `CSS` file to set the background color. Replace [COLOR] with a color of your choice. 
 
@@ -842,7 +842,7 @@ First, we'll style the HTML components present on every page of the website. Thi
 
    You can specify the color by typing in the name of it, such as `blue`, by specifying the rgb configuration, or by giving    a hexadecimal representation. You can find more information on how colors work in CSS [here]
    (https://www.w3schools.com/css/css_colors.asp). 
-1. Next you'll create a box to hold the links to other pages. Add the following code your `CSS` file.
+1. Next you'll create a box to hold the links to other pages. Add the following code to your `CSS` file.
 
     ```css
     ul {
@@ -908,7 +908,7 @@ First, we'll style the HTML components present on every page of the website. Thi
 
 ### Style the home (notifications) page
 
-Now that you have the basic styling done for the website as a whole, you can focus on styling the elements unique to each page. Let's start with the home page. This time we'll embed the style directly into the HTML instead of placing it in a separate file.
+Now that you have the basic styling done for the website as a whole, you can focus on styling the elements unique to each page, starting with the home page. This time you'll embed the style directly into the HTML instead of placing it in a separate file.
 1. Indent and set the font size for the notification messages. In your html file that controls the home page, modify the `<div>` to include a style instruction:
 
     ```html
@@ -955,8 +955,81 @@ Because the search bar is only a feature of the search page, you could style it 
 
 ### Style the thumbnails for both the photos and search pages
 
-1. Add HTML
-1. Add CSS
+The thumbnails displayed on your website currently should appear in a single vertical column on the left of the page. In this section you'll reformat them to appear in a table format. 
+
+1. Add HTML in the files that control the photos and search pages. The code instructions for this step should be implemented in both the photos page HTML file and the search page HTML file.
+    1. Add a gallery class outside the for loop to hold all the thumbnails:
+    
+        ```html
+        <div class="gallery">
+          {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
+          ...
+          {% endfor %}
+        </div>
+        ```
+        
+    1. Add class names to the `<div>` tags inside the for loop. For example:
+    
+        ```html
+        <div class="thumbnail">
+          <img src='{{img_url}}'>
+          <div class="descent">{{thumbnail_reference.thumbnail_name}}</div>
+        </div>
+        ```
+1. Add CSS to format the classes you just added. The code instructions for this step only need to be implemented once in your external CSS file. As long as you have the same class names in the two HTML files from step 1, the code in this section will be applied to both pages automatically.
+    1. Set the margins on the gallery class so the thumbnails don't appear too far on the left of the page (they would           interfere with the links if the page scrolled down) and appear centered, i.e. not too far on the right of the page           either.
+    
+        ```css
+        div.gallery {
+          margin-left: 12%;
+          margin-right: 10%;
+        }
+        ```
+        
+    1. Use the thumbnail class to create a kind of box to hold the thumbnail image and its caption:
+    
+        ```css
+        div.thumbnail {
+          margin: 5px;
+          float: left;
+          width: 180px;
+          height: 240px;
+          border: 1px solid [COLOR];
+        }
+        ```
+        `margin` sets the spacing between the thumbnails. The `width` and `height` properties match the width and height             that thumbnails are sized to in `main.py`. 
+    1. Further format the thumbnail class to display thumbnails in a table:
+    
+        ```css
+        div.thumbnail:after {
+          content: "";
+          display: table;
+          clear: both;
+        }
+        ```
+    1. Center the thumbnail image within the thumbnail box:
+    
+        ```css
+        div.thumbnail img {
+          display: block;
+          margin: auto;
+        }
+        ```
+        Note that while the width of the thumbnail box is to 180 pixels, the same width thumbnails are resized to in                `main.py`, portrait oriented photos may have a smaller width. This ensures that photos are centered within the 180          pixels even when they do not occupy 180 pixels.
+    1. Center the caption 10 pixels below the thumbnail image using the descent class:
+    
+        ```css
+        div.descent {
+          padding: 10px;
+          text-align: center;
+        }
+        ```
+        
+### Checkpoint
+
+1. Run your application locally to check for basic errors, then deploy your application.
+1. Navigate to the photos page and check that the thumbnails displayed there now appear in a table format with their captions centered underneath.
+1. Navigate to the search page and enter a search term that will yield results. The displayed thumbnails should appear in the same format as on the photos page.
 
 ### Make thumbnails clickable
 
