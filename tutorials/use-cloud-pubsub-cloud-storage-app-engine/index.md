@@ -1084,7 +1084,6 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
           width: 100%;
           height: 100%;
           overflow: auto;
-          background-color: rgb(0,0,0);
           background-color: rgba(0,0,0,0.8);
         }
         ```
