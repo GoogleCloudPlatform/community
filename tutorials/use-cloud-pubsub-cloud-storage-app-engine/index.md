@@ -1033,9 +1033,198 @@ The thumbnails displayed on your website currently should appear in a single ver
 
 ### Make thumbnails clickable
 
-1. Add HTML
-1. Add CSS
-1. Add JavaScript
+Now that your thumbnails are nicely formatted, you can make your webpage display the original photo when a thumbnail is clicked on by incorporating JavaScript into your HTML files.
+
+1. Add HTML for both the photos and search pages. The instructions for this step should be implemented in your two HTML files responsible for the photos and search pages. 
+    1. Add an id to the thumbnail image:
+    
+        ```html
+        <img id='{{thumbnail_reference.thumbnail_name}}' src='{{img_url}}' >
+        ```
+        This will allow the image to be looked up by id, which is how you will implement an onclick function to display the         original photo when its thumbnail is clicked.
+    1. Within the gallery class, after the end of the for loop, insert
+    
+        ```html
+        <div id='myModal' class="modal">
+          <span class="close" onclick="closeModal()">&times;</span>
+          <div class="modal-content">
+          {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
+            <div class="mySlides">
+              <img id='{{loop.index}}' src='{{thumbnail_reference.original_photo}}'                                         
+              alt='{{thumbnail_reference.thumbnail_name}}'>
+            </div>
+          {% endfor %}
+            <div class="caption-container">
+              <p id="caption"></p>
+            </div>
+          </div>
+        </div>
+        ```
+        `myModal` is what will be displayed when a thumbnail is clicked on. The `close` class is what restores the thumbnail         view when it is clicked on. `closeModal()` is a JavaScript function you'll define in step 3. The class `modal-               content` includes `mySlides` and the `caption-container`. Only one `mySlides` will be displayed at a time with its           image. The `caption` will be updated to match the `mySlides` being displayed.
+
+1. Add styling to your external CSS file. This will format both the photos and search pages as long as they have the same class names for the HTML you just added.
+    1. Add an effect to the thumbnails so that when the cursor hovers over them, they turn slightly transparent and the         cursor changes to a pointer to indicate to the user that they can click on thumbnails.
+    
+        ```css
+        div.thumbnail img:hover {
+          opacity: 0.7;
+          cursor: pointer;
+        }
+        ```
+    1. Format the modal that takes over the whole page when a thumbnail is clicked:
+    
+        ```css
+        div.modal {
+          display: none;
+          position: fixed;
+          z-index: 1;
+          padding-top: 100px;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          overflow: auto;
+          background-color: rgb(0,0,0);
+          background-color: rgba(0,0,0,0.8);
+        }
+        ```
+        `display` is initially set to none because the modal should only be displayed when a thumbnail is clicked. The logic         for this will be added in step 3. `width` and `height` are set to 100% to take up the whole page. `background-color`         is set to a somewhat transparent black so thumbnails will still be partially visible behind the modal.
+    1. Place the `close` button in the top right corner of the modal:
+    
+        ```css
+        span.close {
+          position: absolute;
+          top: 15px;
+          right: 35px;
+          color: #f1f1f1;
+          font-size: 40px;
+          font-weight: bold;
+          transition: 0.3s;
+        }
+        ```
+    1. Add hover and focus effects to the `close` button:
+    
+        ```css
+        span.close:hover,
+        span.close:focus {
+          color: #bbb;
+          text-decoration: none;
+          cursor: pointer;
+        }
+        ```
+    1. Format modal-content, the box that will hold the original photo and caption.
+    
+        ```css
+        div.modal-content {
+          position: relative;
+          margin: auto;
+          padding: 0;
+          width: 55%;
+          max-width: 700px;
+        }
+        ```
+        This centers modal-content and sets it to take up 55% of the page, with a max width of 700 pixels. This means that           even if 700 pixels is less than 55% of the page, modal-content will never be wider than 700 pixels.
+    1. Set the default display of mySlides to none:
+    
+        ```css
+        div.mySlides {
+          display: none;
+        }
+        ```
+    1. Format the image in mySlides to match the width of modal-content:
+    
+        ```css
+        div.mySlides img {
+          display: block;
+          margin: auto;
+          width: 100%;
+          max-width: 700px;
+          height: auto;
+        }
+        ```
+        `height` is set to auto so the image will retain its original proportions.
+    1. Position `caption-container` below the image in the `modal-content` box, where [COLOR] is the color the caption text     will be.
+    
+        ```css
+        .caption-container {
+          text-align: center;
+          padding: 2px 16px;
+          color: [COLOR];
+        }
+        ```
+    1. Format the caption to be centered in `caption-container` and have a height of 50 pixels:
+    
+        ```css
+        #caption {
+          margin: auto;
+          display: block;
+          width: 80%;
+          max-width: 700px;
+          text-align: center;
+          padding: 10px 0;
+          height: 50px;
+        }
+        ```
+1. Add JavaScript embedded within the HTML. The instructions in this section will need to be implemented in both HTML files associated with the photos and search pages.
+    1. Implement the function to close the modal after the end of the `gallery` class.
+    
+        ```javascript
+        <script>
+          function closeModal() {
+            document.getElementById('myModal').style.display = "none";
+          }
+        </script>
+        ```
+        This function is called whenever the close button is clicked on and resets the `modal` class to not be displayed.
+    1. Within the `gallery` class still, but after the `modal` class, add the following for loop and embedded script:
+    
+        ```html
+        {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
+        <script>
+          var modal = document.getElementById('myModal');
+          var img = document.getElementById('{{thumbnail_reference.thumbnail_name}}');
+          img.onclick = function(){
+            modal.style.display = "block";
+            currentSlide({{loop.index}});
+          }
+        </script>
+        {% endfor %}
+        ```
+        This defines a function that gets called whenever a thumbnail is clicked on. The `modal` class is displayed and             another function, `currentSlide` is called.
+    1. Add a variable and implement currentSlide() in the same script that contains closeModal().
+    
+        ```javascript
+        var slideIndex;
+        
+        function currentSlide(n) {
+          slideIndex = n;
+          showSlides(slideIndex);
+        }
+        ```
+        Note that currentSlide() calls another function, showSlides(). You'll implement this next.
+    1. Implement showSlides:
+        
+        ```javascript
+        function showSlides(n) {
+          var i;
+          var slides = document.getElementsByClassName('mySlides');
+          var captionText = document.getElementById("caption");
+          var image = document.getElementById(slideIndex + "");
+          for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+          }
+          slides[slideIndex-1].style.display = "block";
+          captionText.innerHTML = image.alt;
+        }
+        ```
+        This function sets every `mySlides` class to not be displayed except for the one that contains the original photo of         the thumbnail that was clicked. The caption is set to the name of the image displayed.
+        
+### Checkpoint
+1. Run your application locally to check for basic errors, then deploy your application.
+1. Navigate to the photos page and hover over a thumbnail. It should become less opaque and your cursor should change.
+1. Click on a thumbnail. Observe that the original photo with caption appears over the photos page.
+1. Close the modal and restore the thumbnail view.
+1. Check that the search page has the same behavior.
 
 ### Make photos scrollable
 
