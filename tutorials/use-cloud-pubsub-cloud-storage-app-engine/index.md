@@ -14,6 +14,8 @@ The overall workflow of the application is shown in the diagram below:
 
 ![Shared Photo App Workflow](https://storage.googleapis.com/gcp-community/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-app-workflow.png)
 
+![Shared Photo App Diagram](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-app-workflow.png)
+
 Receiving a Notification (purple arrows):
 1. A user uploads or deletes something from their GCS photo bucket.
 1. A Cloud Pub/Sub message is sent.
