@@ -830,6 +830,81 @@ Before you start incorporating CSS, you have to tell your app to expect a CSS fi
 
 ### Add style common to every page
 
+First, we'll style the HTML components present on every page of the website. This includes the body, the links to other pages, and the title of the page. You should run your app locally after each step to see the changes.
+
+1. Add the following code to your `CSS` file to set the background color. Replace [COLOR] with a color of your choice. 
+
+        ```css
+        body{
+            background-color: [COLOR];
+        }
+        ```
+
+   You can specify the color by typing in the name of it, such as `blue`, by specifying the rgb configuration, or by giving    a hexadecimal representation. You can find more information on how colors work in CSS [here]
+   (https://www.w3schools.com/css/css_colors.asp). 
+1. Next you'll create a box to hold the links to other pages. Add the following code your `CSS` file.
+
+        ```css
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 10%;
+            background-color: [COLOR];
+            position: fixed;
+        }
+        ```
+    Note that you should make the background-color here different from the color in step 1; otherwise it won't look any         different than before. Setting the width to 10% makes the links box take up 10% of the page. If you change the width of     your browser around, you should see the links box change with it. Setting the position to fixed keeps the link box in       the top left corner of your webpage even if you scroll down.
+1. You can center the links within their box and change their color by adding the following code.
+
+        ```css
+        li a {
+            display: block;
+            color: [COLOR];
+            padding: 8px 8px;
+            text-align: center;
+            border-bottom: 1px solid [COLOR];
+        }
+        ```
+    The border-bottom property adds a dividing line between each link. To avoid having an extra line at the bottom of the       links box, add 
+
+        ```css
+        li:last-child {
+            border-bottom: none;
+        }
+        ```
+1. To change the color of each link and its background when it is hovered over with the cursor, add
+
+        ```css
+        li a:hover {
+            background-color: [COLOR];
+            color: [COLOR];
+        }
+        ```
+        
+1. The title of the page is contained in the `<h1>` HTML blocks. You can center it, set the color and font size, and add an underline with the following block of code.
+
+        ```css
+        h1 {
+            color: [COLOR];
+            text-align: center;
+            font-size: [SIZE]px;
+            border-bottom: 3px solid [COLOR];
+            padding: 15px;
+            width: 60%;
+            margin: auto;
+            margin-bottom: 30px;
+        }
+        ```
+        
+   `text-align: center` centers the title in the middle of the page. `border-bottom` adds the underline. `padding` sets the     space between the title and the underline. `width` sets how much of the screen the underline occupies. `margin: auto`       centers the underline. `margin-bottom` sets the spacing between the underline and anything that might go below it. This     will be applicable in later sections.
+   
+### Checkpoint
+
+1. Run your application locally to check for basic errors, then deploy your application.
+1. Click through the links on each page and make sure the colors and placement remain consistent. 
+1. Resize your browser window and observe how the components dynamically change to account for this.
+
 ### Style the home (notifications) page
 
 ### Style the search bar on the search page
