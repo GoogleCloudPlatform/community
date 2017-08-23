@@ -665,24 +665,27 @@ If you encounter errors, use the `Logging` messages to debug your application.
 
 ## Creating the search page
 
-The search page of the web application has a search bar users can enter a `search-term` into. The `ThumbnailReferences` with the `search-term` in their `labels` lists are queried from Datastore and used to obtain and display the correct thumbnails to the search page.
+The search page of the web application has a search bar users can enter a `search-term` into. The `ThumbnailReferences` with the `search-term` in their `labels` lists are added to the thumbnails dictionary and used to obtain and display the correct thumbnails to the search page.
 
 1. In `main.py`, in the `SearchHandler` class, fill out the `get` method.
-    1. Get the `search-term` from the user and use it to query the appropriate `ThumbnailReferences`. The `search-term` should be converted to lower case to avoid case sensitivity.
+    1. Get the `search-term` from the user. The `search-term` should be converted to lower case to avoid case sensitivity.
     
         ```py
         search_term = self.request.get('search-term').lower()
-        thumbnail_references = some query statement here
         ```
         
-    1. In a similar manner as in the `PhotosHandler`, build an ordered dictionary of thumbnail serving urls as keys and `ThumbnailReferences` as values. However, unlike in the `PhotosHandler`, you should only add the applicable thumbnails to the dictionary.
+    1. In a similar manner as in the `PhotosHandler`, build an ordered dictionary with thumbnail serving urls as keys and `ThumbnailReferences` as values. However, unlike in the `PhotosHandler`, although you query all `ThumbnailReferences` from Datastore, you should only add the thumbnails labeled with the `search-term` to the dictionary.
     
         ```py
+        references = ThumbnailReference.query().order(-ThumbnailReference.date).fetch();
+        # Build dictionary of img_url of thumbnails to thumbnail_references that
+        # have the given label.
         thumbnails = collections.OrderedDict()
-        if thumbnail_references is not None:
-          for thumbnail_reference in thumbnail_references:
-            img_url = get_thumbnail(thumbnail_reference.thumbnail_key)
-            thumbnails[img_url] = ThumbnailReference.query(ThumbnailReference.thumbnail_key==thumbnail_key).get()
+        for reference in references:
+          labels = reference.labels
+          if search_term in labels:
+            img_url = get_thumbnail(reference.thumbnail_key)
+            thumbnails[img_url] = reference;
         ```
         
     1. Include the thumbnails dictionary in `template_values`, to be written to the search page HTML file.
