@@ -807,26 +807,26 @@ Before you start incorporating CSS, you have to tell your app to expect a CSS fi
 1. Create a directory inside your host directory to hold your external style sheet.
 1. Open your `app.yaml` file and include the following, replacing [DIRECTORY NAME] with whatever you named your directory in step 1.
 
-        ```yaml
+    ```yaml
         - url: /[DIRECTORY NAME]
           static_dir: [DIRECTORY NAME]
           
         - url: /static
           static_dir: static
-        ```
+    ```
    Note that this code should go in the `handlers` section of your `app.yaml` file and must be above
    
-        ```yaml
+    ```yaml
         - url: .*
           script: main.app
-        ```
+    ```
         
 1. Inside the directory you created, create a CSS file. Leave it blank for now; we'll add code to it in the next section. Note that your file must have the extension `.css`.
 1. In each HTML file (you should have three) add the following code inside the `<head>` section, replacing [DIRECTORY NAME] and [FILE NAME] with the appropriate directory and file.
 
         ```html
         <link rel="stylesheet" type="text/css" href="/[DIRECTORY NAME]/[FILE NAME]">
-        ```
+    ```
 
 ### Add style common to every page
 
@@ -834,17 +834,17 @@ First, we'll style the HTML components present on every page of the website. Thi
 
 1. Add the following code to your `CSS` file to set the background color. Replace [COLOR] with a color of your choice. 
 
-        ```css
+    ```css
         body{
             background-color: [COLOR];
         }
-        ```
+    ```
 
    You can specify the color by typing in the name of it, such as `blue`, by specifying the rgb configuration, or by giving    a hexadecimal representation. You can find more information on how colors work in CSS [here]
    (https://www.w3schools.com/css/css_colors.asp). 
 1. Next you'll create a box to hold the links to other pages. Add the following code your `CSS` file.
 
-        ```css
+   ```css
         ul {
             list-style-type: none;
             margin: 0;
@@ -853,11 +853,11 @@ First, we'll style the HTML components present on every page of the website. Thi
             background-color: [COLOR];
             position: fixed;
         }
-        ```
+   ```
     Note that you should make the background-color here different from the color in step 1; otherwise it won't look any         different than before. Setting the width to 10% makes the links box take up 10% of the page. If you change the width of     your browser around, you should see the links box change with it. Setting the position to fixed keeps the link box in       the top left corner of your webpage even if you scroll down.
 1. You can center the links within their box and change their color by adding the following code.
 
-        ```css
+    ```css
         li a {
             display: block;
             color: [COLOR];
@@ -865,26 +865,26 @@ First, we'll style the HTML components present on every page of the website. Thi
             text-align: center;
             border-bottom: 1px solid [COLOR];
         }
-        ```
+    ```
     The border-bottom property adds a dividing line between each link. To avoid having an extra line at the bottom of the       links box, add 
 
-        ```css
+    ```css
         li:last-child {
             border-bottom: none;
         }
-        ```
+    ```
 1. To change the color of each link and its background when it is hovered over with the cursor, add
 
-        ```css
+    ```css
         li a:hover {
             background-color: [COLOR];
             color: [COLOR];
         }
-        ```
+    ```
         
 1. The title of the page is contained in the `<h1>` HTML blocks. You can center it, set the color and font size, and add an underline with the following block of code.
 
-        ```css
+    ```css
         h1 {
             color: [COLOR];
             text-align: center;
@@ -895,7 +895,7 @@ First, we'll style the HTML components present on every page of the website. Thi
             margin: auto;
             margin-bottom: 30px;
         }
-        ```
+    ```
         
    `text-align: center` centers the title in the middle of the page. `border-bottom` adds the underline. `padding` sets the     space between the title and the underline. `width` sets how much of the screen the underline occupies. `margin: auto`       centers the underline. `margin-bottom` sets the spacing between the underline and anything that might go below it. This     will be applicable in later sections.
    
