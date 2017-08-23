@@ -37,34 +37,34 @@ We assume that you already installed JDK 8 and Grails 3.3.0 on your computer and
 
 1. Open terminal or command line then go to your projects folder.
 2. Type this command.
-   ```
+       
    grails create-app grails-fcm
-   ```
+       
 3. Go to the newly created Grails 3 application folder.
-   ```
+    
    cd grails-fcm
-   ```
+    
 4. Enter Grails 3 interactive console by type this command.
-   ```
+    
    grails
-   ```
+    
 5. Now the you are in Grails interactive console.
-   ```
+    
    | Resolving Dependencies. Please wait...
    
    CONFIGURE SUCCESSFUL
 
    | Enter a command name to run. Use TAB for completion:
    grails>
-   ```
+    
 6. Run the Grails web application to make sure everything working properly by type this command in the Grails interactive console.
-   ```
+    
    run-app
-   ```
+    
 ## Add Grails Datastore Rest Client Dependency
 
 We will accessing Firebase using REST API, for that we need to add Grails Datastore Client Rest Dependency in our Grails 3 application. To do that, open and edit build.gradle then add this dependency inside dependencies section. There are two dependencies, one inside buildscript and the other out side buildscripts.
-```
+    
 dependencies {
     ...
     compile "org.hibernate:hibernate-core:5.1.2.Final"
@@ -75,25 +75,25 @@ dependencies {
     runtime "com.bertramlabs.plugins:asset-pipeline-grails:2.11.6"
     ...
 }
-```
+    
 Compile the Grails 3 application by type this command in the Grails interactive console.
-```
+    
 compile
-```
+    
 ## Create Grails Controller and View for Sending Push Notification
 
 Do this following tasks:
 
 1. Create controller by type this command.
-   ```
+    
    create-controller Fcm
-   ```
+    
 2. Add import to the file "grails-app/controllers/grails/fcm/FcmController.groovy".
-   ```
+    
    import grails.plugins.rest.client.RestBuilder
-   ```
+    
 3. Create a method to FcmController, so it will looks like this.
-   ```
+    
     package grails.fcm
 
     import grails.plugins.rest.client.RestBuilder
@@ -127,14 +127,14 @@ Do this following tasks:
      redirect action: "index"
     }
    }
-   ```
+    
     Your previous written FCM legacy server key write on this line include with 'key='.
-   ```
+    
    header 'Authorization', 'key=AIza*****'
-   ```
+    
 
 4. Create a view file "grails-app/views/fcm/index.gsp" and make this file like this.
-   ```
+    
     <!doctype html>
     <html>
     <head>
@@ -177,7 +177,7 @@ Do this following tasks:
      </div>
     </body>
    </html>
-   ```
+    
 5. Run and test push notification from the browser.
 
 ## Cleaning Up
