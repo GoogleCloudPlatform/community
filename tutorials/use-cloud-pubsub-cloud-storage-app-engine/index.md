@@ -922,6 +922,37 @@ Now that you have the basic styling done for the website as a whole, you can foc
 
 ### Style the search bar on the search page
 
+Because the search bar is only a feature of the search page, you could style it directly within the HTML file that controls the search page. However, you'll add more style instructions for the search bar than you did for displaying the notifications, so you'll put the style for it in your CSS file to keep the HTML file from getting too cluttered.
+
+1. In the CSS file, add style for the `<h2>` tag that gets displayed when there are no search results.
+
+    ```css
+    h2 {
+      color: [COLOR];
+      text-align: center;
+      font-size: [SIZE]px;
+    }
+    ```
+1. In the HTML file responsible for the search page, add a class name to the `<form>` tag, so it can be referenced from an external CSS file. For example, 
+
+    ```html
+    <form class="search" action="/search" method="get">
+    ```
+    Note that the class name does not matter as long as you are consistent in referencing it.
+1. In the CSS file, add code to center the search bar and place it 50px below the underlined title.
+
+    ```css
+    form.search {
+      text-align: center;
+      margin-top: 50px;
+    }
+    ```
+### Checkpoint
+
+1. Run your application locally to check for basic errors, then deploy your application.
+1. Visit the home page to see the notification messages indented and notice that the date and time part is smaller than the actual message.
+1. Visit the search page to see the search bar centered along with the `"No Search Results"` text.
+
 ### Style the thumbnails for both the photos and search pages
 
 1. Add HTML
