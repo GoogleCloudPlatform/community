@@ -6,28 +6,6 @@ tags: App Engine, Cloud Pub/Sub, Cloud Storage, GCS, Datastore, photo album
 date published:
 ---
 
-## Objectives
-
-* Store photos in Google Cloud Storage buckets.
-* Store entities in Datastore.
-* Configure Cloud Pub/Sub notifications.
-* Use Google Cloud Vision to implement a photos search.
-* Create and deploy a shared photo album as an App Engine project to display actions performed through the Cloud Platform Console.
-
-## Costs
-
-This tutorial uses billable components of Cloud Platform, including:
-
-* Google App Engine
-* Google Cloud Storage
-* Google Cloud Datastore
-* Google Cloud Pub/Sub
-* Google Cloud Vision
-
-Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=411d8ca1-210f-4f2c-babd-34c6af2b5538) to generate a cost estimate based on your projected usage. New Cloud Platform users might be eligible for a [free trial](https://cloud.google.com/free-trial).
-
-## Overview
-
 This tutorial teaches you how to integrate several Google products to simulate a shared photo album, hosted on App Engine and managed through the Cloud Platform Console.
 
 Users interact with the web application only through the Cloud Platform Console; photos cannot be uploaded or deleted through the application itself. Two buckets exist in [Cloud Storage](https://cloud.google.com/storage/) (GCS): one to store the uploaded photos themselves, and the other to store the thumbnails of the uploaded photos. [Cloud Datastore](https://cloud.google.com/datastore/) stores all non-image entities needed for the web application, which is hosted on [App Engine](https://cloud.google.com/appengine/). Notifications of changes to the GCS photo bucket are sent to the application via [Cloud Pub/Sub](https://cloud.google.com/pubsub/). The [Google Cloud Vision API Client Library](https://developers.google.com/api-client-library/python/apis/vision/v1) is used to label photos for search.
@@ -63,14 +41,34 @@ Loading the Search Page (pink arrows)\*:
 
 \* Step 0: The user navigates to the url that causes the page to load.
 
-Note: Basic coding (Python, HTML, CSS, Javascript) and command line knowledge is necessary to complete this tutorial.
+Note: Basic coding (Python, HTML, CSS, JavaScript) and command line knowledge is necessary to complete this tutorial.
+
+## Objectives
+
+* Store photos in Google Cloud Storage buckets.
+* Store entities in Datastore.
+* Configure Cloud Pub/Sub notifications.
+* Use Google Cloud Vision to implement a photos search.
+* Create and deploy a shared photo album as an App Engine project to display actions performed through the Cloud Platform Console.
+
+## Costs
+
+This tutorial uses billable components of Cloud Platform, including:
+
+* Google App Engine
+* Google Cloud Storage
+* Google Cloud Datastore
+* Google Cloud Pub/Sub
+* Google Cloud Vision
+
+Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=411d8ca1-210f-4f2c-babd-34c6af2b5538) to generate a cost estimate based on your projected usage. New Cloud Platform users might be eligible for a [free trial](https://cloud.google.com/free-trial).
 
 ## Set up
 
 The following instructions assume no prior set up has been done. Skip steps appropriately if you have already completed them.
 1. [Install the Google Cloud SDK](https://cloud.google.com/sdk/downloads) for necessary commands such as `gcloud` and `gsutil`.
 1. [Create a Pantheon account](https://console.cloud.google.com/) for use of the Cloud Platform Console.
-1. In Pantheon, navigate to the upper header bar and create a new project for use as your App Engine project. Your project has a unique ID that is part of your web application url. If necessary, [create a billing project](https://support.google.com/cloud/answer/6288653?hl=en).
+1. In Pantheon, navigate to the upper header bar and [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) for use as your App Engine project. Your project has a unique ID that is part of your web application url. If necessary, [create a billing project](https://support.google.com/cloud/answer/6288653?hl=en). Learn more about billing [here](https://cloud.google.com/appengine/docs/standard/python/console/).
 1. In the command line, [set the default project](https://cloud.google.com/sdk/docs/managing-configurations) to your newly created project by running the following command:
 
     ```sh
@@ -796,6 +794,8 @@ If you encounter errors, use the `Logging` messages to debug your application.
 
 #### Congratulations! You now have a functioning shared photo album.
 
+Note: Other users you listed as `Storage Admins` for your GCS photo bucket should also be able to [upload images to the bucket](https://cloud.google.com/storage/docs/gsutil/commands/cp) and see their changes take effect on the website.
+
 ## Style
 
 Now that you a functioning website, it's time to add formatting to it. You'll do this by adding CSS and JavaScript to your already existing HTML files. 
@@ -1308,3 +1308,7 @@ The last feature to add to your website is scrolling. After clicking on a thumbn
 
 #### Congratulations! You've completed this tutorial and now have a functioning, user-friendly website!
 
+## Clean up
+
+1. If necessary, [close your billing account](https://support.google.com/cloud/answer/6288653?hl=en).
+1. [Delete your project](https://cloud.google.com/resource-manager/docs/creating-managing-projects). Note: you won't be able to use this project ID again.
