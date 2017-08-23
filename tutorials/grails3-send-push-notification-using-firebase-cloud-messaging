@@ -1,6 +1,6 @@
 ---
 title: Grails 3 Sending Push Notification using Google Firebase Cloud Messaging
-description: Step by step tutorial on how to sending push notification using Grails 3 and Google Firebase Cloud Messaging
+description: Step by step tutorial on how to send push notification using Grails 3 and Google Firebase Cloud Messaging
 author: didinj
 tags: Firebase, Firebase Cloud Messaging, FCM, Grails, Grails 3, Push Notification
 date_published: 2017-08-23
@@ -33,7 +33,7 @@ This tutorial uses Firebase Cloud Messaging service which is free for limited fe
 1. Open your browser then go to [Firebase](https://firebase.google.com/).
 2. Login using your Gmail account then click Go to Console button.
 3. Click add project button then give it a name. For this tutorial name it "GrailsFCM" then click Create Project button.
-4. It will redirected to Project dashboard. Click the gear icon in the left menu and select Project Settings.
+4. It will redirect to the Project dashboard. Click the gear icon in the left menu and select Project Settings.
 5. Messaging tab and copy the Legacy Server Key to your notepad. You will use it later in the Grails web application.
 6. Next, configuration your app for the [Android](https://firebase.google.com/docs/cloud-messaging/android/client) or [iOS](https://firebase.google.com/docs/cloud-messaging/ios/client).
 
@@ -192,10 +192,10 @@ Run the following steps:
 
 ## Cleaning Up
 
-After you have finished this tutorial, clean up your Firebase project because you can only have 3 project in the free tier. Just do the following:
+After you have finished this tutorial, clean up your Firebase project because you can only have 3 projects in the free tier. Just do the following:
 
 1. Go to Firebase Console again.
-2. Choose the project that want to remove.
+2. Choose the project that you want to remove.
 3. Click gear icon on the left menu then click Project Settings menu.
 4. Scroll down the you will find delete project button.
 
