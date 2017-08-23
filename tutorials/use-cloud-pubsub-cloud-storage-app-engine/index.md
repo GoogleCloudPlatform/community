@@ -449,7 +449,7 @@ To create the thumbnail, the original image from the GCS photo bucket should be 
 1. Write the `create_thumbnail` helper function.
 
     ```py
-    def create_thumbnail(self, photo_name):
+    def create_thumbnail(photo_name):
       filename = '/gs/' + PHOTO_BUCKET + '/' + photo_name
       image = images.Image(filename=filename)
       image.resize(width=180, height=200)
@@ -461,7 +461,7 @@ To create the thumbnail, the original image from the GCS photo bucket should be 
 1. Call the `create_thumbnail` helper function in the `post` method of the `ReceiveMessage` class.
 
     ```py
-    thumbnail = create_thumbnail(self, photo_name)
+    thumbnail = create_thumbnail(photo_name)
     ```
     
 ### Storing the thumbnail in GCS
@@ -471,7 +471,7 @@ The thumbnail should be stored in the GCS thumbnail bucket under the name `thumb
 1. Write the `store_thumbnail_in_gcs` helper function.
 
     ```py
-    def store_thumbnail_in_gcs(self, thumbnail_key, thumbnail):
+    def store_thumbnail_in_gcs(thumbnail_key, thumbnail):
       write_retry_params = gcs.RetryParams(backoff_factor=1.1)
       filename = '/' + THUMBNAIL_BUCKET + '/' + thumbnail_key
       with gcs.open(filename, 'w') as filehandle:
@@ -481,7 +481,7 @@ The thumbnail should be stored in the GCS thumbnail bucket under the name `thumb
 1. Call the `store_thumbnail_in_gcs` helper function in the `post` method of the `ReceiveMessage` class.
 
     ```py
-    store_thumbnail_in_gcs(self, thumbnail_key, thumbnail)
+    store_thumbnail_in_gcs(thumbnail_key, thumbnail)
     ```
     
 ### Labeling the photo using Google Cloud Vision
