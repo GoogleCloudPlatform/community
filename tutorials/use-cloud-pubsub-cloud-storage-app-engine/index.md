@@ -773,7 +773,7 @@ The search page of the web application has a search bar users can enter a `searc
         ```
         
     1. Like in the photos page HTML file, loop through the thumbnails dictionary you rendered to the template in `main.py` and display the thumbnail image and its name. Include an `else` statement as part of your loop to specify behavior in the case the thumbnails dictionary is empty (no search results returned).
-
+        
         ```html
         {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
           <div>
@@ -798,7 +798,35 @@ If you encounter errors, use the `Logging` messages to debug your application.
 
 ## Style
 
+Now that you a functioning website, it's time to add formatting to it. We'll do this by adding CSS and JavaScript to your already existing HTML files. 
+
 ### Set-Up
+
+Before you start incorporating CSS, you have to tell your app to expect a CSS file and where to find it.
+
+1. Create a directory inside your host directory to hold your external style sheet.
+1. Open your `app.yaml` file and include the following, replacing [DIRECTORY NAME] with whatever you named your directory in step 1.
+
+        ```yaml
+        - url: /[DIRECTORY NAME]
+          static_dir: [DIRECTORY NAME]
+          
+        - url: /static
+          static_dir: static
+        ```
+   Note that this code should go in the `handlers` section of your `app.yaml` file and must be above
+   
+        ```yaml
+        - url: .*
+          script: main.app
+        ```
+        
+1. Inside the directory you created, create a CSS file. Leave it blank for now; we'll add code to it in the next section. Note that your file must have the extension `.css`.
+1. In each HTML file (you should have three) add the following code inside the `<head>` section, replacing [DIRECTORY NAME] and [FILE NAME] with the appropriate directory and file.
+
+        ```html
+        <link rel="stylesheet" type="text/css" href="/[DIRECTORY NAME]/[FILE NAME]">
+        ```
 
 ### Add style common to every page
 
