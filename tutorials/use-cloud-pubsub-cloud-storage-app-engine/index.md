@@ -908,6 +908,18 @@ First, we'll style the HTML components present on every page of the website. Thi
 
 ### Style the home (notifications) page
 
+Now that you have the basic styling done for the website as a whole, you can focus on styling the elements unique to each page. Let's start with the home page. This time we'll embed the style directly into the HTML instead of placing it in a separate file.
+1. Indent and set the font size for the notification messages. In your html file that controls the home page, modify the `<div>` to include a style instruction:
+
+    ```html
+    <div style="margin-left:20%;font-size:20px;">
+    ```
+1. Make the font size for the date and time part smaller. To do this modify the `<small>` tag:
+
+    ```html
+    <small style="font-size:12px;">
+    ```
+
 ### Style the search bar on the search page
 
 ### Style the thumbnails for both the photos and search pages
