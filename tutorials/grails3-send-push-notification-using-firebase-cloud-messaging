@@ -1,11 +1,17 @@
-# Grails 3 Sending Push Notification using Google Firebase Cloud Messaging
+---
+title: Grails 3 Sending Push Notification using Google Firebase Cloud Messaging
+description: Step by step tutorial on how to sending push notification using Grails 3 and Google Firebase Cloud Messaging
+author: didinj
+tags: Firebase, Firebase Cloud Messaging, FCM, Grails, Grails 3, Push Notification
+date_published: 2017-08-23
+---
 
-This tutorials shows how to send push notification using [Firebase Cloud Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging) and [Grails 3 Framework](https://grails.org/) Web Application.
+This tutorial shows how to send push notification using [Firebase Cloud Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging) and [Grails 3 Framework](https://grails.org/) Web Application.
 
 ## Objectives
 
-- Configure Firebase for ability to send push notification via Web Application
-- Create New Grails 3.3.0 Web Application
+- Configure Firebase to send push notification via Web Application
+- Create a new Grails 3.3.0 Web Application
 - Create function for sending push notification on Grails 3.3.0
 
 ## Before You Begin
@@ -20,20 +26,20 @@ The following is required for this tutorial:
 
 ## Costs
 
-This tutorial uses Firebase Cloud Messaging service which is a free for limited features and capacities.
+This tutorial uses Firebase Cloud Messaging service which is free for limited features and capacities.
 
 ## Configure Firebase Cloud Messaging
 
 1. Open your browser then go to [Firebase](https://firebase.google.com/).
 2. Login using your Gmail account then click Go to Console button.
-3. Click add project button then give it a name. For this tutorial we give it name "GrailsFCM" then click Create Project button.
-4. It will redirected to Project dashboard. Click gear icon on the left menu then click Project Settings.
-5. Click Cloud Messaging tab then write down Legacy Server Key to your notepad. We will use it later in the Grails web application.
-6. Next configuration is for Android and iOS app. You can find Android configuration [here](https://firebase.google.com/docs/cloud-messaging/android/client) and iOS [here](https://firebase.google.com/docs/cloud-messaging/ios/client).
+3. Click add project button then give it a name. For this tutorial name it "GrailsFCM" then click Create Project button.
+4. It will redirected to Project dashboard. Click the gear icon in the left menu and select Project Settings.
+5. Messaging tab and copy the Legacy Server Key to your notepad. You will use it later in the Grails web application.
+6. Next, configuration your app for the [Android](https://firebase.google.com/docs/cloud-messaging/android/client) or [iOS](https://firebase.google.com/docs/cloud-messaging/ios/client).
 
 ## Create New Grails 3.3.0 Web Application
 
-We assume that you already installed JDK 8 and Grails 3.3.0 on your computer and added to your environment path. Now, we ready to create the new Grails 3.3.0 application.
+After installing JDK 8 and Grails 3.3.0 and updating your environment path, you can create the new Grails 3.3.0 application.
 
 1. Open terminal or command line then go to your projects folder.
 2. Type this command.
@@ -48,7 +54,7 @@ We assume that you already installed JDK 8 and Grails 3.3.0 on your computer and
     
    grails
     
-5. Now the you are in Grails interactive console.
+5. In the Grails interactive console, you will see the following:
     
    | Resolving Dependencies. Please wait...
    
@@ -57,13 +63,17 @@ We assume that you already installed JDK 8 and Grails 3.3.0 on your computer and
    | Enter a command name to run. Use TAB for completion:
    grails>
     
-6. Run the Grails web application to make sure everything working properly by type this command in the Grails interactive console.
+6. Test your Grails web application by typing this command in the Grails interactive console.
     
    run-app
     
 ## Add Grails Datastore Rest Client Dependency
 
-We will accessing Firebase using REST API, for that we need to add Grails Datastore Client Rest Dependency in our Grails 3 application. To do that, open and edit build.gradle then add this dependency inside dependencies section. There are two dependencies, one inside buildscript and the other out side buildscripts.
+To access Firebase using REST API, add the Grails Datastore Client Rest dependency to the Grails 3 application.
+
+1. Open and edit build.gradle.
+
+2. Add the Grails Datastore Client Rest dependency inside the dependencies section. There are two dependencies, one inside buildscript and the other outside buildscripts.
     
 dependencies {
     ...
@@ -76,15 +86,15 @@ dependencies {
     ...
 }
     
-Compile the Grails 3 application by type this command in the Grails interactive console.
+3. Compile the Grails 3 application by typing this command in the Grails interactive console.
     
 compile
     
 ## Create Grails Controller and View for Sending Push Notification
 
-Do this following tasks:
+Run the following steps:
 
-1. Create controller by type this command.
+1. Create controller by typing this command.
     
    create-controller Fcm
     
@@ -128,7 +138,7 @@ Do this following tasks:
     }
    }
     
-    Your previous written FCM legacy server key write on this line include with 'key='.
+   Enter the Legacy Server key you saved from your project dashboard in the line that begins with 'key='.
     
    header 'Authorization', 'key=AIza*****'
     
@@ -182,7 +192,7 @@ Do this following tasks:
 
 ## Cleaning Up
 
-After you have finished this tutorial, you might be want to clean up your Firebase project because the free tier limited to 3 projects. Just do the following:
+After you have finished this tutorial, clean up your Firebase project because you can only have 3 project in the free tier. Just do the following:
 
 1. Go to Firebase Console again.
 2. Choose the project that want to remove.
