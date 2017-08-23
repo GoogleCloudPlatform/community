@@ -774,16 +774,16 @@ The search page of the web application has a search bar users can enter a `searc
         
     1. Like in the photos page HTML file, loop through the thumbnails dictionary you rendered to the template in `main.py` and display the thumbnail image and its name. Include an `else` statement as part of your loop to specify behavior in the case the thumbnails dictionary is empty (no search results returned).
 
-    ```html
-    {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
-      <div>
-        <img src='{{img_url}}'>
-        <div>{{thumbnail_reference.thumbnail_name}}</div>
-      </div>
-    {% else %}
-      <h2>No Search Results</h2>
-    {% endfor %}
-    ```
+        ```html
+        {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
+          <div>
+            <img src='{{img_url}}'>
+            <div>{{thumbnail_reference.thumbnail_name}}</div>
+          </div>
+        {% else %}
+          <h2>No Search Results</h2>
+        {% endfor %}
+        ```
     
 ### Checkpoint
 
