@@ -241,14 +241,6 @@ The `main.py` file contains the backend logic of the website, including the rece
         original_photo = ndb.StringProperty()
     ```
         
-1. Create the `Label` class. Labels are stored in Cloud Datastore and describe the labels assigned to an uploaded photo by the Google Cloud Vision API. Labels have a label_name (description of the label) and labeled_thumbnails (a list of the thumbnail_keys of photos labeled by Google Cloud Vision with label_name).
-    
-    ```py
-    class Label(ndb.Model):
-        label_name = ndb.StringProperty()
-        labeled_thumbnails = ndb.StringProperty(repeated=True)
-    ```
-        
 1. Create a `MainHandler` with a `get` method for getting information from the server and writing it to the home/notification page HTML file. There are no values to pass into the template yet.
     
     ```py
@@ -431,7 +423,7 @@ If you encounter errors, open the `Products & services` menu and navigate to `Lo
 
 ## Implementing photo upload functionality
 
-When a Cloud Pub/Sub notification is received, different actions occur depending on the `eventType`. If the notification indicates an `OBJECT_FINALIZE` event, the uploaded photo must be shrunk to a thumbnail, the thumbnail of the photo must be stored in the GCS thumbnail bucket, the photo must be labeled using the Google Cloud Vision API, a `ThumbnailReference` must be stored in Datastore, and the required `Label` entities must be updated or created to be stored in Datastore.
+When a Cloud Pub/Sub notification is received, different actions occur depending on the `eventType`. If the notification indicates an `OBJECT_FINALIZE` event, the uploaded photo must be shrunk to a thumbnail, the thumbnail of the photo must be stored in the GCS thumbnail bucket, the photo must be labeled using the Google Cloud Vision API, and a `ThumbnailReference` must be stored in Datastore.
 
 Because these actions only occur in the case of a photo upload, an `if` block should be used inside the `ReceiveMessage` class of `main.py`.
 
@@ -484,98 +476,68 @@ The thumbnail should be stored in the GCS thumbnail bucket under the name `thumb
     
 ### Labeling the photo using Google Cloud Vision
 
-The [Google Cloud Vision API Client Library for Python](https://developers.google.com/api-client-library/python/apis/vision/v1) can be used to [annotate](https://developers.google.com/resources/api-libraries/documentation/vision/v1/python/latest/vision_v1.images.html) images, assigning them labels that describe the contents of the picture. You will later use these labels to search for specific photos.
+The [Google Cloud Vision API Client Library for Python](https://developers.google.com/api-client-library/python/apis/vision/v1) can be used to [annotate](https://developers.google.com/resources/api-libraries/documentation/vision/v1/python/latest/vision_v1.images.html) images, assigning them labels that describe the contents of the picture. You can later use these labels to search for specific photos.
 
-The design of this shared photo album web application uses cross referencing to allow for faster search for and deletion of thumbnails. Since every `Label` has the property `labeled_thumbnails`, a list of `thumbnail_keys` representing photos labeled with the applicable `label_name`, it is relatively simple to obtain the thumbnails that should be displayed for a given search term. Similarly, since every `ThumbnailReference` has the property `labels`, a list of `label_names` representing the labels given by Cloud Vision to the corresponding photo, `thumbnail_keys` can be deleted from the appropriate `labels` lists efficiently in the case of an `OBJECT_DELETE` or `OBJECT_ARCHIVE`.
-
-Therefore, in the case of a photo upload, `label_names` must be added to the `ThumbnailReference`, and `thumbnail_keys` must be added to the appropriate `Labels`.
-
-1. Obtain the `labels` list for a given photo.
-    1. Create the `uri` to reference the appropriate photo in the GCS photo bucket.
+1. Create the `uri` to reference the appropriate photo in the GCS photo bucket.
         
-        ```py
-        uri = 'gs://' + PHOTO_BUCKET + '/' + photo_name
-        ```
+    ```py
+    uri = 'gs://' + PHOTO_BUCKET + '/' + photo_name
+    ```
         
-    1. Write the `get_labels` helper function.
+1. Write the `get_labels` helper function.
     
-        ```py
-        def get_labels(uri, photo_name):
-          service = googleapiclient.discovery.build('vision', 'v1')
-          labels = []
+    ```py
+    def get_labels(uri, photo_name):
+      service = googleapiclient.discovery.build('vision', 'v1')
+      labels = []
 
-          # Label photo with its own name, sans extension.
-          # This allows you to search a photo by its name.
-          index = photo_name.index(".jpg")
-          photo_name_label = photo_name[:index]
-          labels.append(photo_name_label)
+      # Label photo with its own name, sans extension.
+      # This allows you to search a photo by its name.
+      index = photo_name.index(".jpg")
+      photo_name_label = photo_name[:index]
+      labels.append(photo_name_label)
 
-          service_request = service.images().annotate(body={
-              'requests': [{
-                  'image': {
-                      'source': {
-                          'imageUri': uri
-                      }
-                  },
-                  'features': [{
-                      'type': 'LABEL_DETECTION',
-                      'maxResults': MAX_LABELS
-                  }]
+      service_request = service.images().annotate(body={
+          'requests': [{
+              'image': {
+                   'source': {
+                      'imageUri': uri
+                  }
+              },
+              'features': [{
+                  'type': 'LABEL_DETECTION',
+                  'maxResults': MAX_LABELS
               }]
-          })
-          response = service_request.execute()
-          labels_full = response['responses'][0].get('labelAnnotations')
+          }]
+      })
+      response = service_request.execute()
+      labels_full = response['responses'][0].get('labelAnnotations')
 
-          ignore = ['of', 'like', 'the', 'and', 'a', 'an', 'with']
+      ignore = ['of', 'like', 'the', 'and', 'a', 'an', 'with']
 
-          # Add labels to the labels list if they are not already in the list and are
-          # not in the ignore list.
-          if labels_full is not None:
-            for label in labels_full:
-              if label['description'] not in labels:
-                labels.append(label['description'])
-                # Split the label into individual words, also to be added to labels list
-                # if not already.
-                descriptors = label['description'].split()
-                  for descript in descriptors:
-                    if descript not in labels and descript not in ignore:
-                      labels.append(descript)
+      # Add labels to the labels list if they are not already in the list and are
+      # not in the ignore list.
+      if labels_full is not None:
+        for label in labels_full:
+          if label['description'] not in labels:
+            labels.append(label['description'])
+            # Split the label into individual words, also to be added to labels list
+            # if not already.
+            descriptors = label['description'].split()
+              for descript in descriptors:
+                if descript not in labels and descript not in ignore:
+                  labels.append(descript)
 
-           return labels
-        ```
+       return labels
+    ```
         
-    1. Call the `get_labels` helper function in the `post` method of the `ReceiveMessage` class.
+1. Call the `get_labels` helper function in the `post` method of the `ReceiveMessage` class.
     
-        ```py
-        labels = get_labels(uri, photo_name)
-        ```
+    ```py
+    labels = get_labels(uri, photo_name)
+    ```
         
-1. Add the `thumbnail_key` of the photo to the `labeled_thumbnails` lists of the required `Labels`.
-    1. Write the `add_thumbnail_reference_to_labels` helper function.
-    
-        ```py
-        def add_thumbnail_reference_to_labels(labels, thumbnail_key):
-          for label in labels:
-            label_to_append_to = Label.query(Label.label_name==label).get()
-            if label_to_append_to is None:
-              # Create and store new Label if does not already exist.
-              thumbnail_list_for_new_label = []
-              thumbnail_list_for_new_label.append(thumbnail_key)
-              new_label = Label(label_name=label, labeled_thumbnails=thumbnail_list_for_new_label)
-              new_label.put()
-            else:
-              # Add thumbnail to Label list if Label already exists.
-              label_to_append_to.labeled_thumbnails.append(thumbnail_key)
-              label_to_append_to.put()
-        ```
-        
-    1. Call the `add_thumbnail_reference_to_labels` helper function in the `post` method of the `ReceiveMessage` class.
-    
-        ```py
-        add_thumbnail_reference_to_labels(labels, thumbnail_key)
-        ```
-        
-Although the `thumbnail_keys` have now been added to the appropriate `Labels`, it is still necessary to add the `label_names` to the `ThumbnailReference`. This is further elaborated in the next section.
+The `labels` list has now been obtained and can be used to build the `ThumbnailReference`.
 
 ### Creating and storing the `ThumbnailReference`
 
@@ -649,7 +611,6 @@ You have now completed all of the code necessary to store the information about 
 1. Check that the thumbnail version of your newly uploaded photo is in your GCS thumbnail bucket under the correct name.
 1. Check that in Datastore, there is a `Notification` listed with the message `[UPLOADED PHOTO NAME] was uploaded.`.
 1. Check that in Datastore, there is a `ThumbnailReference` listed with the appropriate information.
-1. Check that in Datastore, there are `Labels` corresponding with the ones listed in the new `ThumbnailReference` entity.
 1. View your deployed application in your web browser.
     1. Check that the new notification is listed on the home page. You may need to refresh the page.
     1. Check that the thumbnail and name of the uploaded photo are displayed on the photos page.
@@ -658,7 +619,7 @@ If you encounter errors, use the `Logging` messages to debug your application.
 
 ## Implementing photo delete/archive functionality
 
-Alternatively, if the received Cloud Pub/Sub notification indicates an `OBJECT_DELETE` or `OBJECT_ARCHIVE` event, the corresponding `thumbnail_key` must be removed from all necessary `Labels`, the thumbnail must be deleted from the GCS thumbnail bucket, and the `ThumbnailReference` must be deleted from Datastore.
+Alternatively, if the received Cloud Pub/Sub notification indicates an `OBJECT_DELETE` or `OBJECT_ARCHIVE` event, the thumbnail must be deleted from the GCS thumbnail bucket, and the `ThumbnailReference` must be deleted from Datastore.
 
 Because these actions only occur in the case of a photo delete or archive, an `elif` statement can be used inside the `ReceiveMessage` class of `main.py`, where the initial `if` statement of the block is the one specifying the event type as `OBJECT_FINALIZE`.
 
@@ -666,33 +627,6 @@ Because these actions only occur in the case of a photo delete or archive, an `e
 elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
     # Photo delete/archive-specific code here.
 ```
-    
-### Removing the thumbnail from `Labels`
-
-1. Write the `remove_thumbnail_from_labels` helper function to remove the given `thumbnail_key` from all applicable `Labels`.
-
-    ```py
-    def remove_thumbnail_from_labels(thumbnail_key):
-      thumbnail_reference = ThumbnailReference.query(ThumbnailReference.thumbnail_key==thumbnail_key).get()
-      labels_to_delete_from = thumbnail_reference.labels
-      for label_name in labels_to_delete_from:
-        label = Label.query(Label.label_name==label_name).get()
-        labeled_thumbnails = label.labeled_thumbnails
-        labeled_thumbnails.remove(thumbnail_key)
-        # If there are no more thumbnails with a given Label, delete the Label.
-        if not labeled_thumbnails:
-          label.key.delete()
-        else:
-          label.put()
-    ```
-
-1. Call the `remove_thumbnail_from_labels` helper function in the `post` method of the `ReceiveMessage` class.
-
-    ```py
-    remove_thumbnail_from_labels(thumbnail_key)
-    ```
-    
-### Deleting the thumbnail and `ThumbnailReference`
 
 1. Write the `delete_thumbnail` helper function to delete the specified thumbnail from the GCS thumbnail bucket and delete the `ThumbnailReference` from Datastore.
 
@@ -723,7 +657,6 @@ elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
 1. Check that the thumbnail version of your deleted photo is no longer in your GCS thumbnail bucket.
 1. Check that in Datastore, there is a `Notification` listed with the message `[DELETED PHOTO NAME] was deleted.`.
 1. Check that in Datastore, the `ThumbnailReference` for your deleted photo is no longer listed.
-1. Check that in Datastore, none of the `Labels` contain the name of your recently deleted photo, and none of the `Labels` are blank.
 1. View your deployed application in your web browser.
     1. Check that the new notification is listed on the home page. You may need to refresh the page.
     1. Check that the thumbnail and name of the uploaded photo are no longer displayed on the photos page.
@@ -732,31 +665,29 @@ If you encounter errors, use the `Logging` messages to debug your application.
 
 ## Creating the search page
 
-The search page of the web application has a search bar users can enter a `search-term` into. The `Label` with the `label_name` corresponding to the `search-term` is queried from Datastore, and the `labeled_thumbnails` list is used to obtain and display the appropriate thumbnails on the search page.
+The search page of the web application has a search bar users can enter a `search-term` into. The `ThumbnailReferences` with the `search-term` in their `labels` lists are queried from Datastore and used to obtain and display the correct thumbnails to the search page.
 
 1. In `main.py`, in the `SearchHandler` class, fill out the `get` method.
-    1. Get the `search-term` from the user and use it to query the appropriate `Label`.
+    1. Get the `search-term` from the user and use it to query the appropriate `ThumbnailReferences`. The `search-term` should be converted to lower case to avoid case sensitivity.
     
         ```py
         search_term = self.request.get('search-term').lower()
-        label = Label.query(Label.label_name==search_term).get()
+        thumbnail_references = some query statement here
         ```
         
-    1. In a similar manner as in the `PhotosHandler`, build an ordered dictionary of thumbnail serving urls as keys and `ThumbnailReferences` as values. However, unlike in the `PhotosHandler`, you should only add to the dictionary the thumbnails under the appropriate `Label`.
+    1. In a similar manner as in the `PhotosHandler`, build an ordered dictionary of thumbnail serving urls as keys and `ThumbnailReferences` as values. However, unlike in the `PhotosHandler`, you should only add the applicable thumbnails to the dictionary.
     
         ```py
         thumbnails = collections.OrderedDict()
-        if label is not None:
-          thumbnail_keys = label.labeled_thumbnails
-          for thumbnail_key in thumbnail_keys:
-            img_url = get_thumbnail(thumbnail_key)
+        if thumbnail_references is not None:
+          for thumbnail_reference in thumbnail_references:
+            img_url = get_thumbnail(thumbnail_reference.thumbnail_key)
             thumbnails[img_url] = ThumbnailReference.query(ThumbnailReference.thumbnail_key==thumbnail_key).get()
         ```
         
-    1. Reverse the order of the thumbnails dictionary and include it in `template_values`, to be written to the search page HTML file. The dictionary order needs to be reversed because `thumbnail_keys` were added to the `Label` in order from oldest to newest, but should be displayed on the search page starting with the most recent first.
+    1. Include the thumbnails dictionary in `template_values`, to be written to the search page HTML file.
     
         ```py
-        thumbnails = collections.OrderedDict(reversed(list(thumbnails.items())))
         template_values = {'thumbnails':thumbnails}
         ```
         
@@ -788,7 +719,7 @@ The search page of the web application has a search bar users can enter a `searc
 1. Run your application locally to check for basic errors, then deploy your application.
 1. View your deployed application in your web browser. Try using the search bar. When you search, the applicable photos should appear in a similar manner as the photos page, else the text `No Search Results` should be displayed.
 
-Note: Examining the `Labels` and `ThumbnailReferences` in Datastore helps you determine whether or not the search is functioning as it is meant to.
+Note: Examining the `labels` lists of the `ThumbnailReferences` in Datastore can help you determine whether or not the search is functioning as it is meant to.
 
 If you encounter errors, use the `Logging` messages to debug your application.
 
@@ -800,7 +731,7 @@ Note: Other users you listed as `Storage Admins` for your GCS photo bucket shoul
 
 Now that you a functioning website, it's time to add formatting to it. You'll do this by adding CSS and JavaScript to your already existing HTML files. 
 
-### Set-Up
+### Set up
 
 Before you start incorporating CSS, you have to tell your app to expect a CSS file and where to find it.
 
