@@ -34,8 +34,8 @@ This tutorial uses Firebase Cloud Messaging service which is free for limited fe
 2. Login using your Gmail account then click Go to Console button.
 3. Click add project button then give it a name. For this tutorial name it "GrailsFCM" then click Create Project button.
 4. It will redirect to the Project dashboard. Click the gear icon in the left menu and select Project Settings.
-5. Messaging tab and copy the Legacy Server Key to your notepad. You will use it later in the Grails web application.
-6. Next, configuration your app for the [Android](https://firebase.google.com/docs/cloud-messaging/android/client) or [iOS](https://firebase.google.com/docs/cloud-messaging/ios/client).
+5. Click the Cloud Messaging tab and copy the Legacy Server Key to your notepad. You will use it later in the Grails web application.
+6. Next, configuration your app for [Android](https://firebase.google.com/docs/cloud-messaging/android/client) or [iOS](https://firebase.google.com/docs/cloud-messaging/ios/client).
 
 ## Create New Grails 3.3.0 Web Application
 
@@ -73,7 +73,7 @@ To access Firebase using REST API, add the Grails Datastore Client Rest dependen
 
 1. Open and edit build.gradle.
 
-2. Add the Grails Datastore Client Rest dependency inside the dependencies section. There are two dependencies, one inside buildscript and the other outside buildscripts.
+2. Add the Grails Datastore Client Rest dependency inside the dependencies section. There are two dependencies, one inside buildscript and the other outside buildscript.
     
 dependencies {
     ...
@@ -203,4 +203,4 @@ After you have finished this tutorial, clean up your Firebase project because yo
 
 Visit [Grails Guides](http://guides.grails.org/) to learn more on official Grails guides or if you want different tutorial style you can find [here](https://www.djamware.com/post-sub-category/585b3fa380aca73b19a2efd4/groovy-and-grails).
 
-This tutorial come with example source code on the [GitHub](https://github.com/didinj/grails3-fcm-push-notification.git).
+This tutorial comes with example source code on the [GitHub](https://github.com/didinj/grails3-fcm-push-notification.git).
