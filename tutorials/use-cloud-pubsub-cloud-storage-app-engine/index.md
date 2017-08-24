@@ -100,7 +100,7 @@ If you do not feel like coding the entire application from scratch, feel free to
   git clone https://github.com/GChien44/tutorial-v2.git
   ```
 
-Note that if you choose this option, some parts of the code still need to be changed to suit your GCS bucket names.
+Note that if you choose this option, you still need to make a `lib` directory and run the `install` command in steps one and three of the **Libraries and `app.yaml`** section, and some constants in the `main.py` file still need to be changed to suit your GCS bucket names.
 
 From this point forward, it is assumed that you did not clone the above git repository, and are building the application from scratch.
 
@@ -109,17 +109,21 @@ From this point forward, it is assumed that you did not clone the above git repo
 The external library and `app.yaml` files are necessary for the configuring your App Engine application and importing the required libraries.
 
 1. Choose a directory to house your project. From this point forward, this will be referred to as the host directory. Inside your host directory, create a new directory called `lib` for the storage of external libraries.
-1. Copy the `cloudstorage` library into your `lib` directory from the [Google Cloud Storage client library](https://github.com/GoogleCloudPlatform/appengine-gcs-client) using the command
-    
-    ```sh
-    svn export https://github.com/GoogleCloudPlatform/appengine-gcs-client/trunk/python/src/cloudstorage
+1. In your host directory, create the file `requirements.txt` and copy in the following code:
+
+    ```txt
+    jinja2
+    webapp2
+    GoogleAppEngineCloudStorageClient
+    google-api-python-client
     ```
-      
-1. Create a blank `__init__.py` file in the lib directory to mark `cloudstorage` as importable.
-1. In your host directory, run the following command to install the Google Cloud Vision API Client library:
-        
+    
+    This specifies which libraries are necessary for your application.
+    
+1. Install the external libraries into your `lib` directory:
+
     ```sh
-    pip install --upgrade -t lib google-api-python-client
+    pip install -t lib -r requirements.txt
     ```
         
 1. In your host directory, create the file `appengine_config.py` and copy in the following code:
@@ -143,12 +147,6 @@ The external library and `app.yaml` files are necessary for the configuring your
       
     - url: .*
       script: main.app
-
-    libraries:
-    - name: webapp2
-      version: latest
-    - name: jinja2
-      version: latest
     ```
     
 ### HTML files
@@ -191,27 +189,21 @@ The `main.py` file contains the backend logic of the website, including the rece
 1. Add the required imports to the top of the file:
         
     ```py
-    import webapp2
-    import jinja2
-    import os
-    import logging
-    import json
-    import urllib
     import collections
-    import cloudstorage as gcs
-    import googleapiclient.discovery
-    from google.appengine.ext import ndb
-    from google.appengine.ext import blobstore
+    import json
+    import logging
+    import os
+    import urllib
+
+    import cloudstorage
+    import jinja2
+    import webapp2
     from google.appengine.api import images
+    from google.appengine.ext import blobstore
+    from google.appengine.ext import ndb
+    import googleapiclient.discovery
     ```
-        
-1. Set up [jinja2](http://jinja.pocoo.org/docs/2.9/templates/) for HTML templating.
     
-    ```py
-    template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-    jinja_environment = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))
-    ```
-        
 1. Add constants. `THUMBNAIL_BUCKET` is the name of the GCS bucket you created in Set Up step #8 to store the thumbnails of photos uploaded to your GCS photo bucket. `PHOTO_BUCKET` is the name of the GCS bucket you created in Set Up step #5 to store the photos uploaded to your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the maximum number of notifications displayed on the home/notifications page of your web application. `MAX_LABELS` regulates the maximum number of labels obtained for each photo using Cloud Vision.
     
     ```py
@@ -219,6 +211,14 @@ The `main.py` file contains the backend logic of the website, including the rece
     PHOTO_BUCKET = '[GCS PHOTO BUCKET NAME]'
     NUM_NOTIFICATIONS_TO_DISPLAY = [SOME NUMBER]
     MAX_LABELS = [SOME NUMBER]
+    ```
+        
+1. Set up [jinja2](http://jinja.pocoo.org/docs/2.9/templates/) for HTML templating.
+    
+    ```py
+    template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+    jinja_environment = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(template_dir))
     ```
     
 1. Create the `Notification` class. Notifications are created from Cloud Pub/Sub messages and stored in Cloud Datastore, to be displayed on the home page of your application. Notifications have a message, date of posting, and generation number, which is used to distinguish between similar notifications and prevent the display of repeated notifications. Information on NDB properties can be found [here](https://cloud.google.com/appengine/docs/standard/python/ndb/).
@@ -245,10 +245,10 @@ The `main.py` file contains the backend logic of the website, including the rece
     
     ```py
     class MainHandler(webapp2.RequestHandler):
-      def get(self):
-        template_values = {}
-        template = jinja_environment.get_template("[NAME OF YOUR HOME PAGE HTML FILE]")
-        self.response.write(template.render(template_values))
+        def get(self):
+          template_values = {}
+          template = jinja_environment.get_template("[NAME OF YOUR HOME PAGE HTML FILE]")
+          self.response.write(template.render(template_values))
     ```
         
 1. Create a `PhotosHandler` class with a `get` method for getting information from the server and writing it to the photos page HTML file. This should look similar to the `MainHandler`.
@@ -429,7 +429,7 @@ Because these actions only occur in the case of a photo upload, an `if` block sh
 
 ```py
 if event_type == 'OBJECT_FINALIZE':
-  # Photo upload-specific code here.
+    # Photo upload-specific code here.
 ```
     
 ### Creating the thumbnail
@@ -440,10 +440,10 @@ To create the thumbnail, the original image from the GCS photo bucket should be 
 
     ```py
     def create_thumbnail(photo_name):
-      filename = '/gs/' + PHOTO_BUCKET + '/' + photo_name
-      image = images.Image(filename=filename)
-      image.resize(width=180, height=200)
-      return image.execute_transforms(output_encoding=images.JPEG)
+        filename = '/gs/' + PHOTO_BUCKET + '/' + photo_name
+        image = images.Image(filename=filename)
+        image.resize(width=180, height=200)
+        return image.execute_transforms(output_encoding=images.JPEG)
     ```
     
     This returns the thumbnail in a `string` format.
@@ -462,10 +462,10 @@ The thumbnail should be stored in the GCS thumbnail bucket under the name `thumb
 
     ```py
     def store_thumbnail_in_gcs(thumbnail_key, thumbnail):
-      write_retry_params = gcs.RetryParams(backoff_factor=1.1)
-      filename = '/' + THUMBNAIL_BUCKET + '/' + thumbnail_key
-      with gcs.open(filename, 'w') as filehandle:
-        filehandle.write(thumbnail)
+        write_retry_params = gcs.RetryParams(backoff_factor=1.1)
+        filename = '/' + THUMBNAIL_BUCKET + '/' + thumbnail_key
+        with gcs.open(filename, 'w') as filehandle:
+            filehandle.write(thumbnail)
     ```
     
 1. Call the `store_thumbnail_in_gcs` helper function in the `post` method of the `ReceiveMessage` class.
@@ -488,47 +488,46 @@ The [Google Cloud Vision API Client Library for Python](https://developers.googl
     
     ```py
     def get_labels(uri, photo_name):
-      service = googleapiclient.discovery.build('vision', 'v1')
-      labels = []
+        service = googleapiclient.discovery.build('vision', 'v1')
+        labels = []
 
-      # Label photo with its own name, sans extension.
-      # This allows you to search a photo by its name.
-      index = photo_name.index(".jpg")
-      photo_name_label = photo_name[:index]
-      labels.append(photo_name_label)
+        # Label photo with its name, sans extension.
+        index = photo_name.index(".jpg")
+        photo_name_label = photo_name[:index]
+        labels.append(photo_name_label)
 
-      service_request = service.images().annotate(body={
-          'requests': [{
-              'image': {
-                   'source': {
-                      'imageUri': uri
-                  }
-              },
-              'features': [{
-                  'type': 'LABEL_DETECTION',
-                  'maxResults': MAX_LABELS
-              }]
-          }]
-      })
-      response = service_request.execute()
-      labels_full = response['responses'][0].get('labelAnnotations')
+        service_request = service.images().annotate(body={
+            'requests': [{
+                'image': {
+                    'source': {
+                        'imageUri': uri
+                    }
+                },
+                'features': [{
+                    'type': 'LABEL_DETECTION',
+                    'maxResults': MAX_LABELS
+                }]
+            }]
+        })
+        response = service_request.execute()
+        labels_full = response['responses'][0].get('labelAnnotations')
 
-      ignore = ['of', 'like', 'the', 'and', 'a', 'an', 'with']
+        ignore = ['of', 'like', 'the', 'and', 'a', 'an', 'with']
 
-      # Add labels to the labels list if they are not already in the list and are
-      # not in the ignore list.
-      if labels_full is not None:
-        for label in labels_full:
-          if label['description'] not in labels:
-            labels.append(label['description'])
-            # Split the label into individual words, also to be added to labels list
-            # if not already.
-            descriptors = label['description'].split()
-              for descript in descriptors:
-                if descript not in labels and descript not in ignore:
-                  labels.append(descript)
+        # Add labels to the labels list if they are not already in the list and are
+        # not in the ignore list.
+        if labels_full is not None:
+            for label in labels_full:
+                if label['description'] not in labels:
+                    labels.append(label['description'])
+                    # Split the label into individual words, also to be added to
+                    # labels list if not already.
+                    descriptors = label['description'].split()
+                    for descript in descriptors:
+                        if descript not in labels and descript not in ignore:
+                            labels.append(descript)
 
-       return labels
+        return labels
     ```
         
 1. Call the `get_labels` helper function in the `post` method of the `ReceiveMessage` class.
@@ -547,7 +546,7 @@ At this point, the only other thing you need to create the required `ThumbnailRe
 
     ```py
     def get_original(photo_name, generation):
-      return 'https://storage.googleapis.com/' + PHOTO_BUCKET + '/' + photo_name + '?generation=' + generation
+        return 'https://storage.googleapis.com/' + PHOTO_BUCKET + '/' + photo_name + '?generation=' + generation
     ```
     
 1. Call the `get_original` helper function in the `post` method of the `ReceiveMessage` class.
@@ -559,8 +558,11 @@ At this point, the only other thing you need to create the required `ThumbnailRe
 1. Create the `ThumbnailReference` using the information gathered from the Cloud Pub/Sub message, `get_labels` function, and `get_original` function.
 
     ```py
-    thumbnail_reference = ThumbnailReference(thumbnail_name=photo_name, thumbnail_key=thumbnail_key, labels=labels, 
-        original_photo=original_photo)
+    thumbnail_reference = ThumbnailReference(
+                thumbnail_name=photo_name,
+                thumbnail_key=thumbnail_key,
+                labels=labels,
+                original_photo=original_photo)
     ```
     
 1. Store the newly created `ThumbnailReference` in Datastore.
@@ -577,9 +579,9 @@ You have now completed all of the code necessary to store the information about 
 
     ```py
     def get_thumbnail(photo_name):
-      filename = '/gs/' + THUMBNAIL_BUCKET + '/' + photo_name
-      blob_key = blobstore.create_gs_key(filename)
-      return images.get_serving_url(blob_key)
+        filename = '/gs/' + THUMBNAIL_BUCKET + '/' + photo_name
+        blob_key = blobstore.create_gs_key(filename)
+        return images.get_serving_url(blob_key)
     ```
 
 1. In `main.py`, in the `PhotosHandler`, in the `get` method, fetch all `ThumbnailReferences` from Cloud Datastore in reverse date order. Create an ordered dictionary, calling upon the `get_thumbnail` helper function, with the thumbnail serving urls as keys and the `thumbnail_references` as values. Include the dictionary in `template_values`, to be written to the appropriate HTML file.
@@ -588,8 +590,8 @@ You have now completed all of the code necessary to store the information about 
     thumbnail_references = ThumbnailReference.query().order(-ThumbnailReference.date).fetch()
     thumbnails = collections.OrderedDict()
     for thumbnail_reference in thumbnail_references:
-      img_url = get_thumbnail(thumbnail_reference.thumbnail_key)
-      thumbnails[img_url] = thumbnail_reference
+        img_url = get_thumbnail(thumbnail_reference.thumbnail_key)
+        thumbnails[img_url] = thumbnail_reference
     template_values = {'thumbnails':thumbnails}
     ```
     
