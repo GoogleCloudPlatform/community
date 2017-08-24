@@ -4,11 +4,10 @@ Using Cloud VPN with Cisco® ASR 1000
 
 <figure style="text-align: center">
 <a href="cisco_asr_family.jpeg">
-<img src="/compute/images/subnetworks/subnetworks_1.svg" border="0" width="700"
-Alt="Diagram of a VPC network (click to enlarge)">
+<img src="cisco_asr_family.jpeg" border="0" width="700"
 </a>
 </figure> 
-![Cisco ASR](cisco_asr_family.jpeg)
+
 
 *Courtesy of Cisco Systems, Inc. Unauthorized use not permitted. Cisco® is a registered trademark or trademark of Cisco Systems, Inc. and/or its affiliates in the United States and certain other countries. *
 
@@ -373,10 +372,11 @@ An IKEv2 profile must be configured and must be attached to an IPsec profile on 
 *   IKEv2 Lifetime - set the lifetime of the security associations (after which a reconnection will occur). Set to 36,000 seconds as recommended configuration on ASR 1000 router.
 *   DPD – set the dead peer detection interval and retry interval, if there are no response from the peer, the SA created for that peer is deleted. Set to 60 seconds keepalive interval and 5 seconds retry interval as recommended configuration on ASR 1000 router.
 
-```
-crypto ikev2 profile **VPN_SCALE_TEST_IKEV2_PROFILE**
+<pre>
 
- match address local interface **TenGigabitEthernet0/0/0**
+crypto ikev2 profile <b>VPN_SCALE_TEST_IKEV2_PROFILE</b>
+
+match address local interface <b>TenGigabitEthernet0/0/0</b>
 
  match identity remote any
 
@@ -384,14 +384,14 @@ crypto ikev2 profile **VPN_SCALE_TEST_IKEV2_PROFILE**
 
  authentication remote pre-share
 
- keyring local **VPN_SCALE_TEST_KEY**
+ keyring local <b>VPN_SCALE_TEST_KEY</b>
 
  lifetime 36000
 
  dpd 60 5 periodic
 
 !
-```
+</pre>
 
 ### Configure IPsec Security Association (SA)
 
@@ -411,13 +411,13 @@ crypto ipsec security-association replay window-size 1024
 
 A transform set represents a certain combination of security protocols and algorithms. During the IPsec SA negotiation, the peers agree to use a particular transform set for protecting a particular data flow.
 
-```
+<pre>
 
-crypto ipsec transform-set **VPN_SCALE_TEST_TS** esp-aes 256 esp-sha-hmac 
+crypto ipsec transform-set <b>VPN_SCALE_TEST_TS</b> esp-aes 256 esp-sha-hmac 
 
  mode tunnel
 
-```
+</pre>
 
 ### Configure IPsec profile
 
@@ -426,18 +426,18 @@ Defines the IPsec parameters that are to be used for IPsec encryption between tw
 *   Perfect Forward Secrecy (PFS) - PFS ensures that the same key will not be generated again, so forces a new diffie-hellman key exchange. Set to group16 as recommended configuration on ASR 1000 router. 
 *   SA Lifetime - set the lifetime of the security associations (after which a reconnection will occur). Set to 3600 seconds as recommended configuration on ASR 1000 router. 
 
-```
+<pre>
 crypto ipsec profile VPN_SCALE_TEST_VTI
 
  set security-association lifetime seconds 3600
 
- set transform-set **VPN_SCALE_TEST_TS **
+set transform-set <b>VPN_SCALE_TEST_TS</b>
 
  set pfs group16
 
- set ikev2-profile **VPN_SCALE_TEST_IKEV2_PROFILE**
+set ikev2-profile <b>VPN_SCALE_TEST_IKEV2_PROFILE</b>
 
-```
+</pre>
 
 ### Configure IPsec Static Virtual Tunnel Interface (SVTI) 
 
@@ -449,39 +449,39 @@ Adjusts the maximum segment size (MSS) value of TCP packets going through a rout
 
 The recommended value is 1360 when the number of IP MTU bytes is set to 1400. With these recommended settings, TCP sessions quickly scale back to 1400-byte IP packets so the packets will "fit" in the tunnel.
 
-```
+<pre>
 !
 
-interface **Tunnel1**
+interface <b>Tunnel1</b>
 
- ip address **169.254.0.58 255.255.255.252**
+ ip address <b>169.254.0.58 255.255.255.252</b>
 
  ip mtu 1400
 
  ip tcp adjust-mss 1360
 
- tunnel source **TenGigabitEthernet0/0/0**
+ tunnel source <b>TenGigabitEthernet0/0/0</b>
 
  tunnel mode ipsec ipv4
 
- tunnel destination **104.196.200.68**
+ tunnel destination <b>104.196.200.68</b> 
 
  tunnel protection ipsec profile VPN_SCALE_TEST_VTI
 
 !
-```
+</pre>
 
 ### Configure Static or Dynamic Routing Protocol to route traffic into the IPsec tunnel 
 
 Statically route traffic toward the network in the GCP to the Tunnel interface.
 
-```
+<pre>
 !
 
-ip route **172.16.100.0 255.255.255.0** Tunnel **1**
+ip route <b>172.16.100.0 255.255.255.0</b> Tunnel <b>1</b>
 
 !
-```
+</pre>
 
 or
 
@@ -491,27 +491,27 @@ BGP timers are adjusted to provide more rapid detection of outages.
 
 To advertise additional prefixes to GCP, copy the "network" statement and identify the prefix you wish to advertise. Make sure the prefix is present in the routing table of the ASR 1000 with a valid next-hop.
 
-```
-router bgp **65001**
+<pre>
+router bgp <b>65001</b>
 
  bgp log-neighbor-changes
 
- neighbor **169.254.0.1** description BGP session over Tunnel1
+ neighbor <b>169.254.0.1</b> description BGP session over Tunnel1
 
- neighbor **169.254.0.1** remote-as **65002**
+ neighbor <b>169.254.0.1</b> remote-as <b>65002</b>
 
- neighbor **169.254.0.1** timers **20 60 60 **
+ neighbor <b>169.254.0.1</b> timers <b>20 60 60 </b>
 
  !
 
  address-family ipv4
 
-  network **10.0.0.0**
+  network <b>10.0.0.0</b>
 
-  neighbor **169.254.0.1** activate
+  neighbor <b>169.254.0.1</b> activate
 
  exit-address-family
-```
+</pre>
 
 ## Saving the Configuration
 
