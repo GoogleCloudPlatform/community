@@ -2,7 +2,13 @@ Google Cloud VPN Interop Guide
 
 Using Cloud VPN with Cisco® ASR 1000
 
-
+<figure style="text-align: center">
+<a href="cisco_asr_family.jpeg">
+<img src="/compute/images/subnetworks/subnetworks_1.svg" border="0" width="700"
+Alt="Diagram of a VPC network (click to enlarge)">
+</a>
+</figure> 
+![Cisco ASR](cisco_asr_family.jpeg)
 
 *Courtesy of Cisco Systems, Inc. Unauthorized use not permitted. Cisco® is a registered trademark or trademark of Cisco Systems, Inc. and/or its affiliates in the United States and certain other countries. *
 
@@ -10,10 +16,7 @@ Using Cloud VPN with Cisco® ASR 1000
 
 **Table of Contents**
 
-
 [TOC]
-
-
 
 # Introduction
 
@@ -37,25 +40,16 @@ Although this guide is created with ASR 1009-X, but exactly the same configurati
 
 The topology outlined by this guide is a basic site-to-site IPsec VPN tunnel configuration using the referenced device:
 
-
-
-<p id="gdcalert2" ><span style="color: red; font-weight: bold">>>>>  GDC alert: inline image link here (to images/Copy-of1.jpg). Store image on your image server and adjust path/filename if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert3">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>> </span></p>
-
-
-![alt_text](images/Copy-of1.jpg "image_tooltip")
-
+![Topology](GCP-Cisco-ASR-Topology.jpg)
 
 
 # Preparation
-
 
 ## Overview
 
 The configuration samples which follow will include numerous value substitutions provided for the purpose of example only. Any references to IP addresses, device IDs, shared secrets or keys account information or project names should be replaced with the appropriate values for your environment when following this guide. Values unique to your environment will be highlighted in **bold**.
 
 This guide is not meant to be a comprehensive setup overview for the device referenced, but rather is only intended to assist in the creation of IPsec connectivity to Google Cloud Platform VPC networks. The following is a high level overview of the configuration process which will be covered:
-
-
 
 *   Configure the base network configurations to establish L3 connectivity
 *   Setup the Base VPN configuration, including:
@@ -70,14 +64,11 @@ This guide is not meant to be a comprehensive setup overview for the device refe
 *   Testing the IPsec connection
 *   Advanced VPN configurations
 
-
 ## Getting Started
 
 The first step in configuring your Cisco ASR 1000 for use with the Google Cloud VPN service is to ensure that the following prerequisite conditions have been met:
 
 The Cisco ASR 1000 Series Router IPsec application requires:
-
-
 
 1.  Advanced Enterprise Services(SLASR1-AES) or Advanced IP Services Technology Package License (SLASR1-AIS)
 1.  IPsec RTU license (FLASR1-IPsec-RTU)
@@ -85,92 +76,27 @@ The Cisco ASR 1000 Series Router IPsec application requires:
 
 For a detailed ASR 1000 Series Router license information, refer to the [ASR 1000 Routers Ordering Guide](http://www.cisco.com/c/en/us/products/collateral/routers/asr-1000-series-aggregation-services-routers/guide-c07-731639.html).
 
-
 ## IPsec Parameters
 
 For the Cisco ASR 1000 IPsec configuration, the following details will be used:
 
-<table>
-  <tr>
-   <td>Parameter
-   </td>
-   <td>Value
-   </td>
-  </tr>
-  <tr>
-   <td>IPsec Mode
-   </td>
-   <td>Tunnel Mode
-   </td>
-  </tr>
-  <tr>
-   <td>Auth Protocol
-   </td>
-   <td>Pre-shared-key
-   </td>
-  </tr>
-  <tr>
-   <td>Key Exchange
-   </td>
-   <td>IKEv2
-   </td>
-  </tr>
-  <tr>
-   <td>Start
-   </td>
-   <td>Auto
-   </td>
-  </tr>
-  <tr>
-   <td>Perfect Forward Secrecy (PFS)
-   </td>
-   <td>Group 16
-   </td>
-  </tr>
-  <tr>
-   <td>Dead Peer Detection (DPD)
-   </td>
-   <td>60 5 periodic
-   </td>
-  </tr>
-</table>
-
+|Parameter | Value|
+--------- |  -----
+|IPsec Mode | Tunnel mode |
+|Auth protocol | Pre-shared-key |
+|Key Exchange | IKEv2 |
+|Start | Auto |
+|Perfect Forward Secrecy (PFS) | Group 16 |
+|Dead Peer Detection (DPD) | 60 5 periodic |
 
 The IPsec configuration used in this guide is specified below:
 
-
-<table>
-  <tr>
-   <td>Cipher Role
-   </td>
-   <td>Cipher
-   </td>
-  </tr>
-  <tr>
-   <td>Encryption
-   </td>
-   <td>esp-aes 256 esp-sha-hmac
-   </td>
-  </tr>
-  <tr>
-   <td>Integrity
-   </td>
-   <td>sha256
-   </td>
-  </tr>
-  <tr>
-   <td>Diffie-Hellman (DH) 
-   </td>
-   <td>group 16
-   </td>
-  </tr>
-  <tr>
-   <td>Lifetime
-   </td>
-   <td>36,000 seconds (10 hours)
-   </td>
-  </tr>
-</table>
+| Cipher Role | Cipher |
+| ------------| -------|
+| Encryption | esp-aes 256 esp-sha-hmac |
+| Integrity | sha256 |
+| Diffie-Hellman (DH) | group 16 |
+| Lifetime | 36,000 seconds (10 hours) |
 
 # Configuration – Google Cloud Platform (GCP)
 
@@ -186,7 +112,7 @@ This section provides the steps to create Cloud VPN on GCP. For a basic overview
     *   Name — The name of the VPN gateway. This name is displayed in the console and used in by the gcloud tool to reference the gateway.
     *   VPC network — The VPC network containing the instances the VPN gateway will serve. In this case it is **vpn-scale-test-cisco**, a [custom VPC network](https://cloud.google.com/compute/docs/vpc/using-vpc#create-custom-network). Ensure this network does not conflict with your on-prem networks.
     *   Region — The region where you want to locate the VPN gateway. Normally, this is the region that contains the instances you wish to reach. Example: **us-east1**
-    *   IP address — Select a pre-existing [static external IP address](https://cloud.google.com/compute/docs/ip-addresses#reservedaddress). If you don't have a static external IP address, you can create one by clicking New static IP address in the pull-down menu. Selected **vpn-scale-test0 **for this guide.
+    *   IP address — Select a pre-existing [static external IP address](https://cloud.google.com/compute/docs/ip-addresses#reservedaddress). If you don't have a static external IP address, you can create one by clicking New static IP address in the pull-down menu. Selected **vpn-scale-test0** for this guide.
 1.  Populate fields for at least one tunnel:
     *   Peer IP address — Enter your peer public IP address here, with the above mentioned topology it is **204.237.220.4** 
     *   IKE version — IKEv2 is preferred, but IKEv1 is supported if that is all the peer gateway can manage.
@@ -210,34 +136,28 @@ This section provides the steps to create Cloud VPN on GCP. For a basic overview
 
 ### Using gcloud
 
-
-
 1.  Create a custom VPC network. You can also use auto VPC network, make sure there is no conflict with your local network range.
 
-    ```
+```
 gcloud compute networks create vpn-scale-test-cisco --mode custom
-
 gcloud compute networks subnets create subnet-1 --network vpn-scale-test-cisco --region us-east1 --range 172.16.100.0/24 
 ```
 
-
 1.  Create a VPN gateway in the desired region. Normally, this is the region that contains the instances you wish to reach. This step creates an unconfigured VPN gateway named vpn-scale-test-cisco-gw-0 in your VPC network.
 
-    ```
+```
 gcloud compute target-vpn-gateways create vpn-scale-test-cisco-gw-0 --network vpn-scale-test-cisco --region us-east1
 ```
 
-
 1.  Reserve a static IP address in the VPC network and region where you created the VPN gateway. Make a note of the created address for use in future steps.
 
-    ```
+```
 gcloud compute --project vpn-guide addresses create --region us-east1 vpn-static-ip
 ```
 
-
 1.  Create a forwarding rule that forwards ESP, IKE and NAT-T traffic toward the Cloud VPN gateway. Use the static IP address vpn-static-ip you reserved earlier. This step generates a forwarding rule named fr-esp, fr-udp500, fr-udp4500 resp.
 
-    ```
+```
 gcloud compute --project vpn-guide forwarding-rules create fr-esp --region us-east1 --ip-protocol ESP --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-cisco-gw-0
 
 gcloud compute forwarding-rules create fr-udp500 --project vpn-guide --region us-east1 --address 104.196.200.68 --target-vpn-gateway vpn-scale-test-cisco-gw-0 --ip-protocol=UDP --ports 500
@@ -245,36 +165,27 @@ gcloud compute forwarding-rules create fr-udp500 --project vpn-guide --region us
 gcloud compute forwarding-rules create fr-udp4500 --project vpn-guide --region us-east1 --address 104.196.200.68 --target-vpn-gateway vpn-scale-test-cisco-gw-0 --ip-protocol=UDP --ports 4500
 ```
 
-
 1.  Create a VPN tunnel on the Cloud VPN Gateway that points toward the external IP address [CUST_GW_EXT_IP] of your peer VPN gateway. You also need to supply the shared secret. The default, and preferred, IKE version is 2. If you need to set it to 1, use --ike_version 1. The following example sets IKE version to 2. After you run this command, resources are allocated for this VPN tunnel, but it is not yet passing traffic.
 
-    ```
+```
 gcloud compute --project vpn-guide vpn-tunnels create tunnel1 \    --peer-address 204.237.220.4 --region us-east1 --ike-version 2 --shared-secret [SHARED_SECRET] --target-vpn-gateway vpn-scale-test-cisco-gw-0 --local-traffic-selector=172.16.100.0/24
 ```
 
-
 1.  Use a [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create) to forward traffic to the destination range of IP addresses ([CIDR_DEST_RANGE]) in your local on-premises network. You can repeat this command to add multiple ranges to the VPN tunnel. The region must be the same as for the tunnel.
 
-    ```
+```
 gcloud compute --project vpn-guide routes create route1 --network [NETWORK] --next-hop-vpn-tunnel tunnel1 --next-hop-vpn-tunnel-region us-east1 --destination-range 10.0.0.0/8
 ```
 
-
 1.  Create firewall rules to allow traffic between on-prem network and GCP VPC networks.
 
-    ```
+```
 gcloud compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-scale-test-cisco --allow tcp,udp,icmp --source-ranges 10.0.0.0/8
 ```
 
-
-
-
 ## IPsec VPN using Dynamic Routing
 
-
 ### Using Cloud console
-
-
 
 1.  [Go to the VPN page](https://console.cloud.google.com/networking/vpn/list?_ga=1.204702416.1585642068.1497031525) in the Google Cloud Platform Console. 
 1.  Click Create VPN connection.
@@ -282,12 +193,9 @@ gcloud compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-
     *   Name — The name of the VPN gateway. This name is displayed in the console and used in by the gcloud tool to reference the gateway.
     *   VPC network — The VPC network containing the instances the VPN gateway will serve. In this case it is **vpn-scale-test-cisco**, a [custom VPC network](https://cloud.google.com/compute/docs/vpc/using-vpc#create-custom-network).
     *   Region — The region where you want to locate the VPN gateway. Normally, this is the region that contains the instances you wish to reach. Example: **us-east1**
-    *   IP address — Select a pre-existing [static external IP address](https://cloud.google.com/compute/docs/ip-addresses#reservedaddress). If you don't have a static external IP address, you can create one by clicking New static IP address in the pull-down menu. Selected **vpn-scale-test0 **for this guide.
+    *   IP address — Select a pre-existing [static external IP address](https://cloud.google.com/compute/docs/ip-addresses#reservedaddress). If you don't have a static external IP address, you can create one by clicking New static IP address in the pull-down menu. Selected **vpn-scale-test0** for this guide.
 
-     4. Populate fields for at least one tunnel:
-
-
-
+1. Populate fields for at least one tunnel:
 *   **Peer IP address** — **204.237.220.4** Public IP address of the peer gateway.
 *   **IKE version** — IKEv2 is preferred, but IKEv1 is supported if that is all the peer gateway can manage.
 *   **Shared Secret** — Character string used in establishing encryption for that tunnel. You must enter the same shared secret into both VPN gateways. If the VPN gateway device on the peer side of the tunnel doesn't generate one automatically, you can make one up.
@@ -301,13 +209,11 @@ gcloud compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-
     *   **Google BGP IP address** — The two BGP interface IP addresses must be *link-local* IP addresses belonging to the same /30 subnet in 169.254.0.0/16. Example: 169.254.1.1
     *   **Peer BGP IP address** — See explanation for **Google BGP IP address**. Example: 169.254.1.2
 
-5. Click **Create** to create the gateway, Cloud Router, and all tunnels, though tunnels will not connect until you've configured the peer router as well.
+1. Click **Create** to create the gateway, Cloud Router, and all tunnels, though tunnels will not connect until you've configured the peer router as well.
 
 This step automatically creates the necessary forwarding rules for the gateway and tunnels.
 
-6. [Configure your firewall rules](https://cloud.google.com/compute/docs/vpn/creating-vpns#configuring_firewall_rules) to allow inbound traffic from the peer network subnets, and you must configure the peer network firewall to allow inbound traffic from your Compute Engine prefixes.
-
-
+1. [Configure your firewall rules](https://cloud.google.com/compute/docs/vpn/creating-vpns#configuring_firewall_rules) to allow inbound traffic from the peer network subnets, and you must configure the peer network firewall to allow inbound traffic from your Compute Engine prefixes.
 
     *   Go to the [Firewall rules](https://console.cloud.google.com/networking/firewalls) page.
     *   Click **Create firewall rule**.
@@ -319,39 +225,29 @@ This step automatically creates the necessary forwarding rules for the gateway a
         *   **Allowed protocols and ports:** tcp;udp;icmp
     *   Click **Create**.
 
-
 ### Using Gcloud
-
-
 
 1.  Create a custom VPC network. You can also use auto VPC network, make sure there is no conflict with your local network range.
 
-    ```
+```
 gcloud compute networks create vpn-scale-test-cisco --mode custom
 
 gcloud compute networks subnets create subnet-1 --network vpn-scale-test-cisco --region us-east1 --range 172.16.100.0/24 
 ```
 
-
-
 2. Create a VPN gateway in the desired region. Normally, this is the region that contains the instances you wish to reach. This step creates an unconfigured VPN gateway named vpn-scale-test-cisco-gw-0 in your VPC network.
-
 
 ```
 gcloud compute target-vpn-gateways create vpn-scale-test-cisco-gw-0 --network vpn-scale-test-cisco --region us-east1
 ```
 
-
 3. Reserve a static IP address in the VPC network and region where you created the VPN gateway. Make a note of the created address for use in future steps.
-
 
 ```
 gcloud compute --project vpn-guide addresses create --region us-east1 vpn-static-ip
 ```
 
-
 4. Create a forwarding rule that forwards ESP, IKE and NAT-T traffic toward the Cloud VPN gateway. Use the static IP address vpn-static-ip you reserved earlier. This step generates a forwarding rule named fr-esp, fr-udp500, fr-udp4500 resp.
-
 
 ```
 gcloud compute --project vpn-guide forwarding-rules create fr-esp  --region us-east1--ip-protocol ESP --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-cisco-gw-0
@@ -361,58 +257,43 @@ gcloud compute --project vpn-guide forwarding-rules create fr-udp500 --region us
 gcloud compute --project vpn-guide forwarding-rules create fr-udp4500 --region us-east1 --ip-protocol UDP --ports 4500 --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-cisco-gw-0
 ```
 
-
 5. Create [Cloud Router](https://cloud.google.com/compute/docs/cloudrouter) as shown below:
-
 
 ```
 gcloud compute --project vpn-guide routers create vpn-scale-test-cisco-rtr --region us-east1  --network vpn-scale-test-cisco --asn 65002
 ```
 
-
 6. Create a VPN tunnel on the Cloud VPN Gateway that points toward the external IP address [CUST_GW_EXT_IP] of your peer VPN gateway. You also need to supply the shared secret. The default, and preferred, IKE version is 2. If you need to set it to 1, use --ike_version 1. The following example sets IKE version to 2. After you run this command, resources are allocated for this VPN tunnel, but it is not yet passing traffic.
-
 
 ```
 gcloud compute --project vpn-guide vpn-tunnels create tunnel1 --peer-address 204.237.220.4 --region us-east1 --ike-version 2 --shared-secret MySharedSecret --target-vpn-gateway vpn-scale-test-cisco-gw-0 --router vpn-scale-test-cisco-rtr
 ```
 
-
 6. Update the Cloud Router config to add a virtual interface (--interface-name) for the BGP peer. The BGP interface IP address must be a *link-local* IP address belonging to the IP address range 169.254.0.0/16 and it must belong to same subnet as the interface address of the peer router. The netmask length is recommended to be 30. Make sure each tunnel has a unique pair of IPs. Alternatively, you can leave --ip-address and --mask-length blank, and leave --peer-ip-address blank in the next step, and IP addresses will be automatically generated for you.
-
 
 ```
 gcloud compute --project vpn-guide routers add-interface vpn-scale-test-cisco-rtr --interface-name if-1 --ip-address 169.254.1.1 --mask-length 30 --vpn-tunnel tunnel1 --region us-east1
 ```
 
-
 7. Update the Cloud Router config to add the BGP peer to the interface. This example uses ASN 65001 for the peer ASN. You can use your public ASN or [private ASN](https://tools.ietf.org/html/rfc6996) (64512 - 65534, 4200000000 - 4294967294) that you are not already using in the peer network. The BGP peer interface IP address must be a *link-local* IP address belonging to the IP address range 169.254.0.0/16. It must belong to same subnet as the Google Cloud Platform-side interface. Make sure each tunnel has a unique pair of IPs.
-
 
 ```
 gcloud compute --project vpn-guide routers add-bgp-peer vpn-scale-test-cisco-rtr --peer-name bgp-peer1 --interface if-1 --peer-ip-address 169.254.1.2 --peer-asn 65001 --region us-east1
 ```
 
-
 8. View details of the Cloud Router and confirm your settings.
-
 
 ```
 gcloud compute --project vpn-guide routers describe vpn-scale-test-cisco-rtr --region us-east1
 ```
 
-
 9. Create firewall rules to allow traffic between on-prem network and GCP VPC networks.
-
 
 ```
 gcloud  compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-scale-test-cisco --allow tcp,udp,icmp --source-ranges 10.0.0.0/8
 ```
 
-
-
 # Configuration – Cisco ASR 1000
-
 
 ## Base network configurations (to establish L3 connectivity)
 
@@ -443,7 +324,6 @@ interface **TenGigabitEthernet0/0/0**
 ### Configure IKEv2 Proposal and Policy
 
 Create an Internet Key Exchange (IKE) version 2 proposal object. IKEv2 proposal objects contain the parameters required for creating IKEv2 proposals when defining remote access and site-to-site VPN policies.  IKE is used to authenticate IPsec peers, negotiate and distribute IPsec encryption keys, and automatically establish IPsec security associations (SAs). The default proposal associated with the default policy is used for negotiation. An IKEv2 policy with no proposal is considered incomplete. In this block, the following parameters are set: 
-
 
 
 *   Encryption algorithm - set to AES-CBC-256, AES-CBC-192, AES-CBC-128 
@@ -490,13 +370,10 @@ crypto ikev2 keyring **VPN_SCALE_TEST_KEY**
 
 An IKEv2 profile must be configured and must be attached to an IPsec profile on both the IKEv2 initiator and responder. In this block, the following parameters are set: 
 
-
-
 *   IKEv2 Lifetime - set the lifetime of the security associations (after which a reconnection will occur). Set to 36,000 seconds as recommended configuration on ASR 1000 router.
 *   DPD – set the dead peer detection interval and retry interval, if there are no response from the peer, the SA created for that peer is deleted. Set to 60 seconds keepalive interval and 5 seconds retry interval as recommended configuration on ASR 1000 router.
 
-!
-
+```
 crypto ikev2 profile **VPN_SCALE_TEST_IKEV2_PROFILE**
 
  match address local interface **TenGigabitEthernet0/0/0**
@@ -514,7 +391,7 @@ crypto ikev2 profile **VPN_SCALE_TEST_IKEV2_PROFILE**
  dpd 60 5 periodic
 
 !
-
+```
 
 ### Configure IPsec Security Association (SA)
 
@@ -524,35 +401,32 @@ Create IPsec security-association rules. A security association is a relationshi
 
 ! IPsec SA replay window-size – 1024 is the recommended value on ASR 1000 router.
 
-!
-
+```
 crypto ipsec security-association lifetime seconds 3600
 
 crypto ipsec security-association replay window-size 1024
-
+```
 
 ### Configure IPsec transform set
 
 A transform set represents a certain combination of security protocols and algorithms. During the IPsec SA negotiation, the peers agree to use a particular transform set for protecting a particular data flow.
 
-!
+```
 
 crypto ipsec transform-set **VPN_SCALE_TEST_TS** esp-aes 256 esp-sha-hmac 
 
  mode tunnel
 
+```
 
 ### Configure IPsec profile
 
 Defines the IPsec parameters that are to be used for IPsec encryption between two IPsec routers in IPsec profile configuration. In this block, the following parameters are set 
 
-
-
 *   Perfect Forward Secrecy (PFS) - PFS ensures that the same key will not be generated again, so forces a new diffie-hellman key exchange. Set to group16 as recommended configuration on ASR 1000 router. 
 *   SA Lifetime - set the lifetime of the security associations (after which a reconnection will occur). Set to 3600 seconds as recommended configuration on ASR 1000 router. 
 
-!
-
+```
 crypto ipsec profile VPN_SCALE_TEST_VTI
 
  set security-association lifetime seconds 3600
@@ -563,8 +437,7 @@ crypto ipsec profile VPN_SCALE_TEST_VTI
 
  set ikev2-profile **VPN_SCALE_TEST_IKEV2_PROFILE**
 
-!
-
+```
 
 ### Configure IPsec Static Virtual Tunnel Interface (SVTI) 
 
@@ -576,6 +449,7 @@ Adjusts the maximum segment size (MSS) value of TCP packets going through a rout
 
 The recommended value is 1360 when the number of IP MTU bytes is set to 1400. With these recommended settings, TCP sessions quickly scale back to 1400-byte IP packets so the packets will "fit" in the tunnel.
 
+```
 !
 
 interface **Tunnel1**
@@ -595,17 +469,19 @@ interface **Tunnel1**
  tunnel protection ipsec profile VPN_SCALE_TEST_VTI
 
 !
-
+```
 
 ### Configure Static or Dynamic Routing Protocol to route traffic into the IPsec tunnel 
 
 Statically route traffic toward the network in the GCP to the Tunnel interface.
 
+```
 !
 
 ip route **172.16.100.0 255.255.255.0** Tunnel **1**
 
 !
+```
 
 or
 
@@ -615,6 +491,7 @@ BGP timers are adjusted to provide more rapid detection of outages.
 
 To advertise additional prefixes to GCP, copy the "network" statement and identify the prefix you wish to advertise. Make sure the prefix is present in the routing table of the ASR 1000 with a valid next-hop.
 
+```
 router bgp **65001**
 
  bgp log-neighbor-changes
@@ -634,17 +511,17 @@ router bgp **65001**
   neighbor **169.254.0.1** activate
 
  exit-address-family
-
+```
 
 ## Saving the Configuration
 
 To save the running configuration and set it as the default startup, run the following command on Cisco IOS terminal: 
 
-      copy run start
-
+```
+copy run start
+```
 
 ## Test Result
-
 
 ```
 cisco-asr#ping 172.16.100.2 source 10.0.200.1
@@ -655,19 +532,12 @@ Packet sent with a source address of 10.0.200.1
 Success rate is 100 percent (5/5), round-trip min/avg/max = 18/19/20 ms
 ```
 
-
-
 ## Advanced VPN configurations
 
 
 ### Configure VPN redundancy
 
-
-
-<p id="gdcalert3" ><span style="color: red; font-weight: bold">>>>>  GDC alert: inline image link here (to images/Copy-of2.jpg). Store image on your image server and adjust path/filename if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert4">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>> </span></p>
-
-
-![alt_text](images/Copy-of2.jpg "image_tooltip")
+![alt_text](GCP-Cisco-ASR-Topology-Redundant.jpg)
 
 
 Using redundant tunnels ensures continuous availability in the case of a tunnel fails.
@@ -681,7 +551,7 @@ The VPN redundancy configuration example is built based on the IPsec tunnel and 
 
 Cisco IOS BGP prefer the path with the highest LOCAL-PREF, the BGP routes are set with a value of 100 by default, by setting the LOCAL-PREF to 200 for the routes received from Tunnel1, BGP will choose Tunnel1 as the preferred VPN tunnel to the GCP, in the event of Tunnel 1 failure, BGP will reroute the traffic to Tunnel2.
 
-!
+```
 
 crypto ikev2 keyring **VPN_SCALE_TEST_KEY**
 
@@ -738,9 +608,11 @@ description VPN tunnel to the west coast DC
  tunnel protection ipsec profile **VPN_SCALE_TEST_VTI_2**
 
 !
+```
 
 Dynamic Routing
 
+```
 router bgp **65001**
 
  bgp log-neighbor-changes
@@ -777,8 +649,11 @@ route-map LP2000 permit 10
 
  set local-preference 2000
 
+```
+
 To ensure symmetry in your traffic flow, you can configure MED to influence the inbound traffic from GCP for the same tunnel you are sending outbound traffic to. Note that lower the MED, higher the preference.
 
+```
 router bgp **65001**
 
  address-family ipv4
@@ -795,6 +670,8 @@ route-map SET-MED-10 permit 10
 
  set metric 10
 
+```
+
 Static Routing
 
 If you are using static routing then instead of BGP configurations mentioned above, you can change the metric (higher the metric lower the preference) for your static route as shown below:
@@ -803,8 +680,6 @@ If you are using static routing then instead of BGP configurations mentioned abo
 ```
 cisco-asr#ip route 172.16.100.0 255.255.255.0 Tunnel2 10
 ```
-
-
 
 #### Configuring Route Priority – Google Cloud Platform (GCP)
 
@@ -829,7 +704,6 @@ gcloud compute --project vpn-guide routes create route2 --network vpn-scale-test
 
 
 Test output on Cisco ASR
-
 
 ```
 cisco-asr#sh ip bgp 172.16.100.0
@@ -856,15 +730,11 @@ Flag: 0x404200
       rx pathid: 0, tx pathid: 0
 ```
 
-
-
 ```
 cisco-asr#sh ip cef 172.16.100.0
 172.16.100.0/24
   nexthop 169.254.0.1 Tunnel1
 ```
-
-
 
 ### Getting Higher Throughput 
 
@@ -875,8 +745,7 @@ As documented in the [GCP Advanced Configurations](https://cloud.google.com/comp
 
 The ASR 1000 router run cef load balancing based on source and destination ip address hash, each VPN tunnels will be treated as an equal cost path by routing, it can support up to 16 equal cost paths load balancing.
 
-!
-
+```
 crypto ikev2 keyring **VPN_SCALE_TEST_KEY**
 
  peer **GCP1**
@@ -962,15 +831,13 @@ router bgp **65001**
  exit-address-family
 
 !
-
+```
 
 #### Google Cloud Platform (GCP) Configuration
 
 GCP does ECMP[^1] by default so there is no additional configuration required apart from creating x number of tunnels where x depends on your throughput requirements. You can either use a single VPN gateway to create multiple tunnels or create separate VPN gateway for each tunnel. 
 
 Note: Actual performances vary depending on the following factors:
-
-
 
 *   Network capacity between the two VPN peers.
 *   The capabilities of the peer device. See your device's documentation for more information.
@@ -982,7 +849,6 @@ Note: Actual performances vary depending on the following factors:
 
 The IPsec tunnel can be tested from the router by using ICMP to ping a host on GCP. Be sure to use the inside** **interface on the ASR 1000.
 
-
 ```
 cisco-asr#ping 172.16.100.2 source 10.0.200.1
 Type escape sequence to abort.
@@ -992,13 +858,9 @@ Packet sent with a source address of 10.0.200.1
 Success rate is 100 percent (5/5), round-trip min/avg/max = 18/19/20 ms
 ```
 
-
-
 # Troubleshooting IPsec on ASR 1000
 
 Please refer to the troubleshooting [ASR1k made easy](http://d2zmdbbm9feqrf.cloudfront.net/2017/usa/pdf/BRKCRS-3147.pdf) for
-
-
 
 *   The ASR 1000 system architecture
 *   IPsec Packet Flow
@@ -1012,8 +874,6 @@ Please refer to the troubleshooting [ASR1k made easy](http://d2zmdbbm9feqrf.clou
 
 Please refer to the following documentations for ASR 1000 Platform feature configuration guide and datasheet:
 
-
-
 *   [Security for VPNs with IPsec](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_vpnips/configuration/xe-3s/sec-sec-for-vpns-w-ipsec-xe-3s-book/sec-cfg-vpn-ipsec.html)
 *   [Internet Key Exchange Version 2](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ike2vpn/configuration/xe-16/sec-flex-vpn-xe-16-book.html)
 *   [IPsec Virtual Tunnel Interface](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_vpnips/configuration/xe-3s/sec-sec-for-vpns-w-ipsec-xe-3s-book/sec-ipsec-virt-tunnl.html)
@@ -1026,8 +886,6 @@ Please refer to the following documentations for ASR 1000 Platform feature confi
 
 Refer to the following documentation for common error messages and debug commands:
 
-
-
 *   [IPsec Troubleshooting: Understanding and Using debug Commands](http://www.cisco.com/c/en/us/support/docs/security-vpn/ipsec-negotiation-ike-protocols/5409-ipsec-debug-00.html)
 *   [Resolve IP Fragmentation, MTU, MSS, and PMTUD Issues with GRE and IPsec](http://www.cisco.com/c/en/us/support/docs/ip/generic-routing-encapsulation-gre/25885-pmtud-ipfrag.html)
 *   [Invalid SPI](http://www.cisco.com/c/en/us/support/docs/security-vpn/ipsec-negotiation-ike-protocols/115801-technote-iosvpn-00.html)
@@ -1036,8 +894,6 @@ Refer to the following documentation for common error messages and debug command
 *   [Embedded Packet Capture for IOS-XE ](http://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-embedded-packet-capture/116045-productconfig-epc-00.html)
 
 To learn more about GCP networking, refer to below documents:
-
-
 
 *   [GCP VPC Networks](https://cloud.google.com/compute/docs/vpc/)
 *   [GCP Cloud VPN](https://cloud.google.com/compute/docs/vpn/overview)
