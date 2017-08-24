@@ -86,7 +86,7 @@ The following instructions assume no prior set up has been done. Skip steps appr
 1. Create another bucket with `Multi-Regional` or `Regional` storage. This bucket is for storing the thumbnails of the photos in your shared photo album.
 1. Open the `Products & services` menu and click on `Pub/Sub`. Create a new topic with the same name as your photos bucket.
 1. Click on the three-dots icon for your photo album topic and click on `New subscription`. Change the `Delivery Type` to `Push into an endpoint url`. This is the url that receives your Cloud Pub/Sub messages. Your url should be something of the format `http://[PROJECT ID].appspot.com/_ah/push-handlers/receive_message`.
-1. Configure Cloud Pub/Sub notifications for your photos bucket by using the command line to run
+1. Configure Cloud Pub/Sub notifications for your photos bucket by using the command line to run:
 
     ```sh
     gsutil notification create -f json gs://[PHOTO BUCKET NAME]
@@ -94,7 +94,7 @@ The following instructions assume no prior set up has been done. Skip steps appr
 
 ## Basic application layout
 
-If you do not feel like coding the entire application from scratch, feel free to clone the git repository with a default application by running
+If you do not feel like coding the entire application from scratch, feel free to clone the git repository with a default application by running:
 
   ```sh
   git clone https://github.com/GChien44/tutorial-v2.git
@@ -282,13 +282,13 @@ The `main.py` file contains the backend logic of the website, including the rece
     
     Visit `localhost:8080` in your web browser to view your web application. You should be able to click on the links to  navigate between the pages of your website, which should all be blank except for the navigation links and page titles.
 
-1. [Deploy your application](https://cloud.google.com/appengine/docs/standard/python/getting-started/deploying-the-application) by running
+1. [Deploy your application](https://cloud.google.com/appengine/docs/standard/python/getting-started/deploying-the-application) by running:
 
     ```sh
     gcloud app deploy
     ```
     
-    Your web application should be viewable at `http://[PROJECT ID].appspot.com`. You can either navigate there directly through your web browser or launch your browser and view the app by running the command
+    Your web application should be viewable at `http://[PROJECT ID].appspot.com`. You can either navigate there directly through your web browser or launch your browser and view the app by running the command:
 
     ```sh
     gcloud app browse
@@ -803,14 +803,14 @@ First, you'll style the HTML components present on every page of the website. Th
       border-bottom: 1px solid [COLOR];
     }
     ```
-    The border-bottom property adds a dividing line between each link. To avoid having an extra line at the bottom of the       links box, add 
+    The border-bottom property adds a dividing line between each link. To avoid having an extra line at the bottom of the       links box, add:
 
     ```css
     li:last-child {
       border-bottom: none;
     }
     ```
-1. To change the color of each link and its background when it is hovered over with the cursor, add
+1. To change the color of each link and its background when it is hovered over with the cursor, add:
 
     ```css
     li a:hover {
@@ -869,7 +869,7 @@ Because the search bar is only a feature of the search page, you could style it 
       font-size: [SIZE]px;
     }
     ```
-1. In the HTML file responsible for the search page, add a class name to the `<form>` tag, so it can be referenced from an external CSS file. For example, 
+1. In the HTML file responsible for the search page, add a class name to the `<form>` tag, so it can be referenced from an external CSS file. For example:
 
     ```html
     <form class="search" action="/search" method="get">
@@ -978,7 +978,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         <img id='{{thumbnail_reference.thumbnail_name}}' src='{{img_url}}' >
         ```
         This will allow the image to be looked up by id, which is how you will implement an onclick function to display the         original photo when its thumbnail is clicked.
-    1. Within the gallery class, after the end of the for loop, insert
+    1. Within the gallery class, after the end of the for loop, insert:
     
         ```html
         <div id='myModal' class="modal">
