@@ -109,7 +109,7 @@ From this point forward, it is assumed that you did not clone the above git repo
 The external library and `app.yaml` files are necessary for the configuring your App Engine application and importing the required libraries.
 
 1. Choose a directory to house your project. From this point forward, this will be referred to as the host directory. Inside your host directory, create a new directory called `lib` for the storage of external libraries.
-1. In your host directory, create the file `requirements.txt` and copy in the following code:
+1. In your host directory, create the file `requirements.txt` and copy in the following text:
 
     ```txt
     jinja2
