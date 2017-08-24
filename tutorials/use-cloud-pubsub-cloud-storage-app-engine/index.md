@@ -338,7 +338,7 @@ You now have all of the information needed to create the necessary notification 
 
 ### Creating and storing `Notifications`
 
-1. Write a `create_notification` helper function to generate notifications. Note that if the `event_type` is `OBJECT_UPDATE`, the `message` field is blank.
+1. Write a `create_notification` helper function to generate notifications. Note that if the `event_type` is `OBJECT_METADATA_UPDATE`, the `message` field is blank.
 
     ```py
     def create_notification(photo_name, event_type, generation, overwrote_generation=None, overwritten_by_generation=None):
@@ -379,14 +379,14 @@ You now have all of the information needed to create the necessary notification 
       return
     ```
     
-1. Do not act for `OBJECT_UPDATE` events, as they signal no change to the GCS photo bucket images themselves.
+1. Do not act for `OBJECT_METADATA_UPDATE` events, as they signal no change to the GCS photo bucket images themselves.
 
     ```py
     if new_notification.message == '':
       return
     ```
     
-1. Store the new notification in Cloud Datastore. This, and all further code in the `ReceiveMessage` class, is only executed if the new notification is not a repeat and is not for an `OBJECT_UPDATE` event.
+1. Store the new notification in Cloud Datastore. This, and all further code in the `ReceiveMessage` class, is only executed if the new notification is not a repeat and is not for an `OBJECT_METADATA_UPDATE` event.
 
     ```py
     new_notification.put()
