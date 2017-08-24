@@ -1,6 +1,6 @@
-Google Cloud VPN Interop Guide
+**Google Cloud VPN Interop Guide**
 
-Using Cloud VPN with Cisco® ASR 1000
+**Using Cloud VPN with Cisco® ASR 1000**
 
 <figure style="text-align: center">
 <a href="cisco_asr_family.jpeg">
@@ -8,10 +8,9 @@ Using Cloud VPN with Cisco® ASR 1000
 </a>
 </figure> 
 
+*Courtesy of Cisco Systems, Inc. Unauthorized use not permitted. Cisco® is a registered trademark or trademark of Cisco Systems, Inc. and/or its affiliates in the United States and certain other countries.*
 
-*Courtesy of Cisco Systems, Inc. Unauthorized use not permitted. Cisco® is a registered trademark or trademark of Cisco Systems, Inc. and/or its affiliates in the United States and certain other countries. *
-
-*Disclaimer: This interoperability guide is intended to be informational in nature and are examples only. Customers should verify this information via testing. *
+*Disclaimer: This interoperability guide is intended to be informational in nature and are examples only. Customers should verify this information via testing.*
 
 **Table of Contents**
 
@@ -298,24 +297,25 @@ gcloud  compute --project vpn-guide firewall-rules create vpnrule1 --network vpn
 
 This section provides the base network configuration of Cisco ASR 1000 to establish network connectivity. At least one internal facing interface is required to connect to your own network, and one external facing interface is required to connect to GCP. A sample interface configuration is provided below for reference:
 
+<pre>
 ! Internal interface configuration
 
-interface **TenGigabitEthernet0/0/2**
+interface <b>TenGigabitEthernet0/0/2</b>
 
  description internal facing interface
 
- ip address **10.0.200.1 255.0.0.0**
+ ip address <b>10.0.200.1 255.0.0.0</b>
 
 !
 
 !External interface configuration
 
-interface **TenGigabitEthernet0/0/0**
+interface <b>TenGigabitEthernet0/0/0</b>
 
  description external facing interface
 
- ip address **204.237.220.4 255.255.255.224**
-
+ ip address <b>204.237.220.4 255.255.255.224</b>
+</pre>
 
 ## Base VPN configurations
 
@@ -329,9 +329,9 @@ Create an Internet Key Exchange (IKE) version 2 proposal object. IKEv2 proposal 
 *   Integrity algorithm - set to SHA256 
 *   Diffie-Hellman group - set to 16 
 
+<pre>
 !
-
-crypto ikev2 proposal **VPN_SCALE_TEST_IKEV2_PROPOSAL **
+crypto ikev2 proposal <b>VPN_SCALE_TEST_IKEV2_PROPOSAL</b>
 
  encryption aes-cbc-256 aes-cbc-192 aes-cbc-128
 
@@ -341,29 +341,27 @@ crypto ikev2 proposal **VPN_SCALE_TEST_IKEV2_PROPOSAL **
 
 !         
 
-crypto ikev2 policy **VPN_SCALE_TEST_IKEV2_POLICY **
+crypto ikev2 policy <b>VPN_SCALE_TEST_IKEV2_POLICY</b>
 
- proposal **VPN_SCALE_TEST_IKEV2_PROPOSAL**
+proposal <b>VPN_SCALE_TEST_IKEV2_PROPOSAL</b>
 
-!
-
+</pre>
 
 ### Configure IKEv2 Keyring
 
 The IKEv2 keyring is associated with an IKEv2 profile and hence, caters to a set of peers that match the IKEv2 profile. 
 
+<pre>
+crypto ikev2 keyring <b>VPN_SCALE_TEST_KEY</b>
+
+ peer <b>GCP1</b>
+
+  address <b>104.196.200.68</b>
+
+  pre-shared-key <b>MySharedSecret</b>
+
 !
-
-crypto ikev2 keyring **VPN_SCALE_TEST_KEY**
-
- peer **GCP1**
-
-  address **104.196.200.68**
-
-  pre-shared-key **MySharedSecret** 
-
-!
-
+</pre>
 
 ### Configure IKEv2 profile
 
@@ -466,7 +464,7 @@ interface <b>Tunnel1</b>
 
  tunnel destination <b>104.196.200.68</b> 
 
- tunnel protection ipsec profile VPN_SCALE_TEST_VTI
+tunnel protection ipsec profile <b>VPN_SCALE_TEST_VTI</b>
 
 !
 </pre>
@@ -551,95 +549,95 @@ The VPN redundancy configuration example is built based on the IPsec tunnel and 
 
 Cisco IOS BGP prefer the path with the highest LOCAL-PREF, the BGP routes are set with a value of 100 by default, by setting the LOCAL-PREF to 200 for the routes received from Tunnel1, BGP will choose Tunnel1 as the preferred VPN tunnel to the GCP, in the event of Tunnel 1 failure, BGP will reroute the traffic to Tunnel2.
 
-```
+<pre>
 
-crypto ikev2 keyring **VPN_SCALE_TEST_KEY**
+crypto ikev2 keyring <b>VPN_SCALE_TEST_KEY</b>
 
- peer **GCP1**
+ peer <b>GCP1</b>
 
-  address **104.196.200.68**
+ address <b>104.196.200.68</b>
 
-  pre-shared-key **MySharedSecret** 
+ pre-shared-key <b>MySharedSecret</b>
 
- peer **GCP2**
+ peer <b>GCP2</b>
 
-  address **35.186.108.199**
+ address <b>35.186.108.199</b>
 
-  pre-shared-key **MySharedSecret** 
+ pre-shared-key <b>MySharedSecret</b>
 
 !
 
-interface **Tunnel1**
+interface <b>Tunnel1</b>
 
  description VPN tunnel to the east coast DC
 
- ip address **169.254.0.2 255.255.255.252**
+ ip address <b>169.254.0.2 255.255.255.252</b>
 
  ip mtu 1400
 
  ip tcp adjust-mss 1360
 
- tunnel source **TenGigabitEthernet0/0/0**
+tunnel source <b>TenGigabitEthernet0/0/0</b>
 
  tunnel mode ipsec ipv4
 
- tunnel destination **104.196.200.68**
+ tunnel destination <b>104.196.200.68</b>
 
  tunnel protection ipsec profile VPN_SCALE_TEST_VTI
 
 !
 
-interface **Tunnel2**
+interface <b>Tunnel2</b>
 
 description VPN tunnel to the west coast DC
 
- ip address **169.254.0.6 255.255.255.252**
+ ip address <b>169.254.0.6 255.255.255.252</b>
 
  ip mtu 1400
 
  ip tcp adjust-mss 1360
 
- tunnel source **TenGigabitEthernet0/0/0**
+ tunnel source <b>TenGigabitEthernet0/0/0</b>
 
  tunnel mode ipsec ipv4
 
- tunnel destination **35.186.108.199**
+ tunnel destination <b>35.186.108.199</b>
 
- tunnel protection ipsec profile **VPN_SCALE_TEST_VTI_2**
+ tunnel protection ipsec profile <b>VPN_SCALE_TEST_VTI_2</b>
 
 !
-```
+</pre>
 
 Dynamic Routing
 
-```
-router bgp **65001**
+</pre>
+router bgp <b>65001</b>
 
  bgp log-neighbor-changes
 
- neighbor **169.254.0.1** description BGP session over Tunnel1
+ neighbor <b>169.254.0.1</b> description BGP session over Tunnel1
 
- neighbor **169.254.0.1** remote-as **65002**
+ neighbor <b>169.254.0.1</b> remote-as <b>65002</b>
 
- neighbor **169.254.0.1** timers **20 60 60 **
+ neighbor <b>169.254.0.1</b> timers <b>20 60 60</b>
 
- neighbor **169.254.0.5** description BGP session over Tunnel2
+ neighbor <b>169.254.0.5</b> description BGP session over Tunnel2
 
- neighbor **169.254.0.5** remote-as **65002**
+ neighbor <b>169.254.0.5</b> remote-as <b>65002</b>
 
- neighbor **169.254.0.5** timers **20 60 60 **
+ neighbor <b>169.254.0.5</b> timers <b>20 60 60</b>
 
  !
 
  address-family ipv4
 
-  network **10.0.0.0**
+  network <b>10.0.0.0</b>
 
-  neighbor **169.254.0.1** activate
+  neighbor <b>169.254.0.1</b> activate
 
-  neighbor **169.254.0.1** route-map LP200 in
+  neighbor <b>169.254.0.1</b> route-map LP200 in
 
-   neighbor **169.254.0.5** activate
+   neighbor <b>169.254.0.5</b> activate
 
  exit-address-family
 
@@ -649,18 +647,18 @@ route-map LP2000 permit 10
 
  set local-preference 2000
 
-```
+</pre>
 
 To ensure symmetry in your traffic flow, you can configure MED to influence the inbound traffic from GCP for the same tunnel you are sending outbound traffic to. Note that lower the MED, higher the preference.
 
-```
-router bgp **65001**
+<pre>
+router bgp **65001</b>
 
  address-family ipv4
 
-  neighbor **169.254.0.1** route-map SET-MED-10 out
+  neighbor <b>169.254.0.1</b> route-map SET-MED-10 out
 
-   neighbor **169.254.0.5** activate
+   neighbor <b>169.254.0.5</b> activate
 
  exit-address-family
 
@@ -670,7 +668,7 @@ route-map SET-MED-10 permit 10
 
  set metric 10
 
-```
+</pre>
 
 Static Routing
 
@@ -745,93 +743,93 @@ As documented in the [GCP Advanced Configurations](https://cloud.google.com/comp
 
 The ASR 1000 router run cef load balancing based on source and destination ip address hash, each VPN tunnels will be treated as an equal cost path by routing, it can support up to 16 equal cost paths load balancing.
 
-```
-crypto ikev2 keyring **VPN_SCALE_TEST_KEY**
+<pre>
+crypto ikev2 keyring <b>VPN_SCALE_TEST_KEY</b>
 
- peer **GCP1**
+ peer <b>GCP1</b>
 
-  address **104.196.200.68**
+  address <b>104.196.200.68</b>
 
-  pre-shared-key **MySharedSecret** 
+  pre-shared-key <b>MySharedSecret</b>
 
- peer **GCP3**
+ peer <b>GCP3</b>
 
-  address **35.185.3.177**
+  address <b>35.185.3.177</b>
 
-  pre-shared-key **MySharedSecret** 
+  pre-shared-key <b>MySharedSecret</b> 
 
 !
 
-interface **Tunnel1**
+interface <b>Tunnel1</b>
 
  description VPN tunnel1 to same region GCP for load balancing
 
- ip address **169.254.0.2 255.255.255.252**
+ ip address <b>169.254.0.2 255.255.255.252</b>
 
  ip mtu 1400
 
  ip tcp adjust-mss 1360
 
- tunnel source **TenGigabitEthernet0/0/0**
+ tunnel source <b>TenGigabitEthernet0/0/0</b>
 
  tunnel mode ipsec ipv4
 
- tunnel destination **104.196.200.68**
+ tunnel destination <b>104.196.200.68</b>
 
  tunnel protection ipsec profile VPN_SCALE_TEST_VTI
 
 !
 
-interface **Tunnel3**
+interface <b>Tunnel3</b>
 
 description VPN tunnel3 to the same region GCP for load balancing
 
- ip address **169.254.0.10 255.255.255.252**
+ ip address <b>169.254.0.10 255.255.255.252</b>
 
  ip mtu 1400
 
  ip tcp adjust-mss 1360
 
- tunnel source **TenGigabitEthernet0/0/0**
+ tunnel source <b>TenGigabitEthernet0/0/0</b>
 
  tunnel mode ipsec ipv4
 
- tunnel destination **35.185.3.177**
+ tunnel destination <b>35.185.3.177</b>
 
- tunnel protection ipsec profile **VPN_SCALE_TEST_VTI_3**
+ tunnel protection ipsec profile <b>VPN_SCALE_TEST_VTI_3</b>
 
 !
 
-router bgp **65001**
+router bgp <b>65001</b>
 
  bgp log-neighbor-changes
 
  neighbor GCP peer-group
 
- neighbor GCP remote-as **65002**
+ neighbor GCP remote-as <b>65002</b>
 
- neighbor GCP timers **20 60 60**
+ neighbor GCP timers <b>20 60 60</b>
 
- neighbor **169.254.0.1** peer-group GCP
+ neighbor <b>169.254.0.1</b> peer-group GCP
 
- neighbor **169.254.0.9** peer-group GCP
+ neighbor <b>169.254.0.9</b> peer-group GCP
 
  !
 
  address-family ipv4
 
-  network **10.0.0.0**
+  network <b>10.0.0.0</b>
 
-** ** neighbor **169.254.0.1** activate
+  neighbor <b>169.254.0.1</b> activate
 
-  neighbor **169.254.0.9 **activate
+  neighbor <b>169.254.0.9</b> activate
 
   maximum-paths 16
 
  exit-address-family
 
 !
-```
+</pre>
 
 #### Google Cloud Platform (GCP) Configuration
 
