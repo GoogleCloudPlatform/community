@@ -2,11 +2,7 @@
 
 **Using Cloud VPN with Cisco® ASR 1000**
 
-<figure style="text-align: center">
-<a href="cisco_asr_family.jpeg">
-<img src="cisco_asr_family.jpeg" border="0" width="700">
-</a>
-</figure> 
+![ASR_Family](cisco_asr_family.jpeg)
 
 *Courtesy of Cisco Systems, Inc. Unauthorized use not permitted. Cisco® is a registered trademark or trademark of Cisco Systems, Inc. and/or its affiliates in the United States and certain other countries.*
 
