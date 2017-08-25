@@ -122,7 +122,7 @@ This section provides the steps to create Cloud VPN on GCP. For a basic overview
         *   **VPC network:** `vpn-scale-test-cisco`
         *   **Source filter:** IP ranges.
         *   **Source IP ranges:** The peer ranges to accept from the peer VPN gateway.
-        *   **Allowed protocols and ports:** tcp;udp;icmp
+        *   **Allowed protocols and ports:** `tcp;udp;icmp`
     *   Click **Create**.
 
 #### Using gcloud
