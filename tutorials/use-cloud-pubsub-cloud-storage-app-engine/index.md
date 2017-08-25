@@ -305,7 +305,7 @@ During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cl
     ```py
     # Logging statement is optional.
     logging.debug('Post body: {}'.format(self.request.body))
-    message = json.loads(urllib.unquote(self.request.body).rstrip('='))
+    message = json.loads(urllib.unquote(self.request.body))
     attributes = message['message']['attributes']
     ```
     
@@ -330,59 +330,75 @@ During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cl
 1. Create the thumbnail_key using the `photo_name` and `generation_number`. Note that using the following logic, only photos with the extensions `.jpg` can be uploaded effectively.
 
     ```py
-    index = photo_name.index(".jpg")
-    thumbnail_key = photo_name[:index] + generation_number + photo_name[index:]
+    index = photo_name.index('.jpg')
+    thumbnail_key = '{}{}{}'.format(photo_name[:index],
+                                    generation_number,
+                                    photo_name[index:])
     ```
     
 You now have all of the information needed to create the necessary notification and communicate with GCS.
 
 ### Creating and storing `Notifications`
 
-1. Write a `create_notification` helper function to generate notifications. Note that if the `event_type` is `OBJECT_METADATA_UPDATE`, the `message` field is blank.
+1. Write a `create_notification` helper function to generate notifications. Note that if the `event_type` is `OBJECT_METADATA_UPDATE`, the `message` field is `None`.
 
     ```py
-    def create_notification(photo_name, event_type, generation, overwrote_generation=None, overwritten_by_generation=None):
-      if event_type == 'OBJECT_FINALIZE':
-        if overwrote_generation is not None:
-          message = photo_name + ' was uploaded and overwrote an older version of itself.'
+    def create_notification(photo_name,
+                            event_type,
+                            generation,
+                            overwrote_generation=None,
+                            overwritten_by_generation=None):
+        if event_type == 'OBJECT_FINALIZE':
+            if overwrote_generation is not None:
+                message = '{} {}'.format(
+                    photo_name,
+                    'was uploaded and overwrote an older version of itself.')
+            else:
+                message = '{} {}'.format(photo_name, 'was uploaded.')
+        elif event_type == 'OBJECT_ARCHIVE':
+            if overwritten_by_generation is not None:
+                message = '{} {}'.format(photo_name,
+                                        'was overwritten by a newer version.')
+            else:
+                message = '{} {}'.format(photo_name, 'was archived.')
+        elif event_type == 'OBJECT_DELETE':
+            if overwritten_by_generation is not None:
+                message = '{} {}'.format(photo_name,
+                                        'was overwritten by a newer version.')
+            else:
+                message = '{} {}'.format(photo_name, 'was deleted.')
         else:
-          message = photo_name + ' was uploaded.'
-      elif event_type == 'OBJECT_ARCHIVE':
-        if overwritten_by_generation is not None:
-          message = photo_name + ' was overwritten by a newer version.'
-        else:
-          message = photo_name + ' was archived.'
-      elif event_type == 'OBJECT_DELETE':
-        if overwritten_by_generation is not None:
-          message = photo_name + ' was overwritten by a newer version.'
-        else:
-          message = photo_name + ' was deleted.'
-      else:
-        message = ''
+            message = None
 
-    return Notification(message=message, generation=generation)
+        return Notification(message=message, generation=generation)
     ```
     
 1. Call the `create_notification` helper function in the `post` method of the `ReceiveMessage` class.
 
     ```py
-    new_notification = create_notification(photo_name, event_type, generation_number,   
-        overwrote_generation=overwrote_generation, overwritten_by_generation=overwritten_by_generation)
+    new_notification = create_notification(
+        photo_name,
+        event_type,
+        generation_number,
+        overwrote_generation=overwrote_generation,
+        overwritten_by_generation=overwritten_by_generation)
     ```
     
 1. Check if the new notification has already been stored. Cloud Pub/Sub messaging guarantees at-least-once delivery, meaning a Pub/Sub notification may be received more than once. If the notification already exists, there has been no new change to the GCS photo bucket, and the Pub/Sub notification can be ignored.
 
     ```py
-    exists_notification = Notification.query(Notification.message==new_notification.message,        
-        Notification.generation==new_notification.generation).get()
+    exists_notification = Notification.query(
+        Notification.message == new_notification.message,
+        Notification.generation == new_notification.generation).get()
+
     if exists_notification:
-      return
+        return
     ```
     
 1. Do not act for `OBJECT_METADATA_UPDATE` events, as they signal no change to the GCS photo bucket images themselves.
 
     ```py
-    if new_notification.message == '':
+    if new_notification.message is None:
       return
     ```
     
@@ -397,8 +413,9 @@ You now have all of the information needed to create the necessary notification 
 1. In `main.py`, in the `MainHandler`, in the `get` method, fetch all `Notifications` from Cloud Datastore in reverse date order and include them in `template_values`, to be written to the home/notifications page HTML file.
 
     ```py
-    notifications = Notification.query().order(-Notification.date).fetch(NUM_NOTIFICATIONS_TO_DISPLAY)
-    template_values = {'notifications':notifications}
+    notifications = Notification.query().order(
+        -Notification.date).fetch(NUM_NOTIFICATIONS_TO_DISPLAY)
+    template_values = {'notifications': notifications}
     ```
     
 1. In the home/notifications page HTML file, loop through the `notifications` list you rendered to the template in `main.py` and print the formatted date/time of the notification and the notification message.
@@ -440,7 +457,11 @@ To create the thumbnail, the original image from the GCS photo bucket should be 
 
     ```py
     def create_thumbnail(photo_name):
-        filename = '/gs/' + PHOTO_BUCKET + '/' + photo_name
+        filename = '{}{}{}{}'.format(
+            '/gs/',
+            PHOTO_BUCKET,
+            '/',
+            photo_name)
         image = images.Image(filename=filename)
         image.resize(width=180, height=200)
         return image.execute_transforms(output_encoding=images.JPEG)
@@ -462,9 +483,16 @@ The thumbnail should be stored in the GCS thumbnail bucket under the name `thumb
 
     ```py
     def store_thumbnail_in_gcs(thumbnail_key, thumbnail):
-        write_retry_params = gcs.RetryParams(backoff_factor=1.1)
-        filename = '/' + THUMBNAIL_BUCKET + '/' + thumbnail_key
-        with gcs.open(filename, 'w') as filehandle:
+        write_retry_params = cloudstorage.RetryParams(
+            backoff_factor=1.1,
+            max_retry_period=15)
+        filename = '{}{}{}{}'.format(
+            '/',
+            THUMBNAIL_BUCKET,
+            '/',
+            thumbnail_key)
+        with cloudstorage.open(filename, 'w',
+                               retry_params=write_retry_params) as filehandle:
             filehandle.write(thumbnail)
     ```
     
@@ -481,7 +509,10 @@ The [Google Cloud Vision API Client Library for Python](https://developers.googl
 1. Create the `uri` to reference the appropriate photo in the GCS photo bucket.
         
     ```py
-    uri = 'gs://' + PHOTO_BUCKET + '/' + photo_name
+    uri = '{}{}{}{}'.format('gs://',
+                            PHOTO_BUCKET,
+                            '/',
+                            photo_name)
     ```
         
 1. Write the `get_labels` helper function.
@@ -492,7 +523,7 @@ The [Google Cloud Vision API Client Library for Python](https://developers.googl
         labels = []
 
         # Label photo with its name, sans extension.
-        index = photo_name.index(".jpg")
+        index = photo_name.index('.jpg')
         photo_name_label = photo_name[:index]
         labels.append(photo_name_label)
 
@@ -512,7 +543,7 @@ The [Google Cloud Vision API Client Library for Python](https://developers.googl
         response = service_request.execute()
         labels_full = response['responses'][0].get('labelAnnotations')
 
-        ignore = ['of', 'like', 'the', 'and', 'a', 'an', 'with']
+        ignore = set(['of', 'like', 'the', 'and', 'a', 'an', 'with'])
 
         # Add labels to the labels list if they are not already in the list and are
         # not in the ignore list.
@@ -542,20 +573,27 @@ The `labels` list has now been obtained and can be used to build the `ThumbnailR
 
 At this point, the only other thing you need to create the required `ThumbnailReference` is the url of the original photo. Obtain this, and the `ThumbnailReference` can be created and stored.
 
-1. Write the `get_original` helper function to return the url of the original photo.
+1. Write the `get_original_url` helper function to return the url of the original photo.
 
     ```py
-    def get_original(photo_name, generation):
-        return 'https://storage.googleapis.com/' + PHOTO_BUCKET + '/' + photo_name + '?generation=' + generation
+    def get_original_url(photo_name, generation):
+        original_photo = '{}{}{}{}{}{}'.format(
+            'https://storage.googleapis.com/',
+            PHOTO_BUCKET,
+            '/',
+            photo_name,
+            '?generation=',
+            generation)
+        return original_photo
     ```
     
-1. Call the `get_original` helper function in the `post` method of the `ReceiveMessage` class.
+1. Call the `get_original_url` helper function in the `post` method of the `ReceiveMessage` class.
 
     ```py
-    original_photo = get_original(photo_name, generation_number)
+    original_photo = get_original_url(photo_name, generation_number)
     ```
     
-1. Create the `ThumbnailReference` using the information gathered from the Cloud Pub/Sub message, `get_labels` function, and `get_original` function.
+1. Create the `ThumbnailReference` using the information gathered from the Cloud Pub/Sub message, `get_labels` function, and `get_original_url` function.
 
     ```py
     thumbnail_reference = ThumbnailReference(
@@ -575,24 +613,29 @@ You have now completed all of the code necessary to store the information about 
 
 ### Writing thumbnails to the photos HTML file
 
-1. Write the `get_thumbnail` helper function. This function returns a [serving url](https://cloud.google.com/appengine/docs/standard/python/images/#get-serving-url) that accesses the thumbnail from the GCS thumbnail bucket.
+1. Write the `get_thumbnail_serving_url` helper function. This function returns a [serving url](https://cloud.google.com/appengine/docs/standard/python/images/#get-serving-url) that accesses the thumbnail from the GCS thumbnail bucket.
 
     ```py
-    def get_thumbnail(photo_name):
-        filename = '/gs/' + THUMBNAIL_BUCKET + '/' + photo_name
+    def get_thumbnail_serving_url(photo_name):
+        filename = '{}{}{}{}'.format(
+            '/gs/',
+            THUMBNAIL_BUCKET,
+            '/',
+            photo_name)
         blob_key = blobstore.create_gs_key(filename)
         return images.get_serving_url(blob_key)
     ```
 
-1. In `main.py`, in the `PhotosHandler`, in the `get` method, fetch all `ThumbnailReferences` from Cloud Datastore in reverse date order. Create an ordered dictionary, calling upon the `get_thumbnail` helper function, with the thumbnail serving urls as keys and the `thumbnail_references` as values. Include the dictionary in `template_values`, to be written to the appropriate HTML file.
+1. In `main.py`, in the `PhotosHandler`, in the `get` method, fetch all `ThumbnailReferences` from Cloud Datastore in reverse date order. Create an ordered dictionary, calling upon the `get_thumbnail_serving_url` helper function, with the thumbnail serving urls as keys and the `thumbnail_references` as values. Include the dictionary in `template_values`, to be written to the appropriate HTML file.
 
     ```py
-    thumbnail_references = ThumbnailReference.query().order(-ThumbnailReference.date).fetch()
+    thumbnail_references = ThumbnailReference.query().order(
+        -ThumbnailReference.date).fetch()
     thumbnails = collections.OrderedDict()
     for thumbnail_reference in thumbnail_references:
-        img_url = get_thumbnail(thumbnail_reference.thumbnail_key)
+        img_url = get_thumbnail_serving_url(thumbnail_reference.thumbnail_key)
         thumbnails[img_url] = thumbnail_reference
-    template_values = {'thumbnails':thumbnails}
+    template_values = {'thumbnails': thumbnails}
     ```
     
 1. In the `templates` directory, in the photos page HTML file, loop through the thumbnails dictionary you rendered to the template in `main.py` and display the thumbnail image and its name.
@@ -634,16 +677,23 @@ elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
 
     ```py
     def delete_thumbnail(thumbnail_key):
-      # Delete the serving url of the thumbnail.
-      filename = '/gs/' + THUMBNAIL_BUCKET + '/' + thumbnail_key
-      blob_key = blobstore.create_gs_key(filename)
-      images.delete_serving_url(blob_key)
-      # Delete the ThumbnailReference from Datastore.
-      thumbnail_reference = ThumbnailReference.query(ThumbnailReference.thumbnail_key==thumbnail_key).get()
-      thumbnail_reference.key.delete()
-      # Delete the thumbnail from the GCS thumbnail bucket.
-      filename = '/' + THUMBNAIL_BUCKET + '/' + thumbnail_key
-      gcs.delete(filename)
+        filename = '{}{}{}{}'.format(
+            '/gs/',
+            THUMBNAIL_BUCKET,
+            '/',
+            thumbnail_key)
+        blob_key = blobstore.create_gs_key(filename)
+        images.delete_serving_url(blob_key)
+        thumbnail_reference = ThumbnailReference.query(
+            ThumbnailReference.thumbnail_key == thumbnail_key).get()
+        thumbnail_reference.key.delete()
+
+        filename = '{}{}{}{}'.format(
+            '/',
+            THUMBNAIL_BUCKET,
+            '/',
+            thumbnail_key)
+        cloudstorage.delete(filename)
     ```
     
 1. Call the `delete_thumbnail` helper function in the `post` method of the `ReceiveMessage` class.
@@ -679,21 +729,22 @@ The search page of the web application has a search bar users can enter a `searc
     1. In a similar manner as in the `PhotosHandler`, build an ordered dictionary with thumbnail serving urls as keys and `ThumbnailReferences` as values. However, unlike in the `PhotosHandler`, although you query all `ThumbnailReferences` from Datastore, you should only add the thumbnails labeled with the `search-term` to the dictionary.
     
         ```py
-        references = ThumbnailReference.query().order(-ThumbnailReference.date).fetch();
-        # Build dictionary of img_url of thumbnails to thumbnail_references that
-        # have the given label.
+        references = ThumbnailReference.query().order(
+            -ThumbnailReference.date).fetch()
+        # Build dictionary of img_url of thumbnails to
+        # thumbnail_references that have the given label.
         thumbnails = collections.OrderedDict()
         for reference in references:
-          labels = reference.labels
-          if search_term in labels:
-            img_url = get_thumbnail(reference.thumbnail_key)
-            thumbnails[img_url] = reference;
+            labels = reference.labels
+            if search_term in labels:
+                img_url = get_thumbnail_serving_url(reference.thumbnail_key)
+                thumbnails[img_url] = reference
         ```
         
     1. Include the thumbnails dictionary in `template_values`, to be written to the search page HTML file.
     
         ```py
-        template_values = {'thumbnails':thumbnails}
+        template_values = {'thumbnails': thumbnails}
         ```
         
 1. Fill out the search page HTML file.
