@@ -101,7 +101,7 @@ This section provides the steps to create Cloud VPN on GCP. For a basic overview
 1.  [Go to the VPN page](https://console.cloud.google.com/networking/vpn/list?_ga=1.204702416.1585642068.1497031525) in the GCP Console. 
 1.  Click **Create VPN connection**.
 1.  Populate the following fields for the gateway:
-    *   **Name** — The name of the VPN gateway. This name is displayed in the console and used in by the gcloud tool to reference the gateway.
+    *   **Name** — The name of the VPN gateway. This name is displayed in the console and used by the gcloud command-line tool to reference the gateway.
     *   **VPC network** — The VPC network containing the instances the VPN gateway will serve. In this case it is `vpn-scale-test-cisco`, a [custom VPC network](https://cloud.google.com/compute/docs/vpc/using-vpc#create-custom-network). Ensure this network does not conflict with your on-premises networks.
     *   **Region** — The region where you want to locate the VPN gateway. Normally, this is the region that contains the instances you wish to reach. Example: `us-east1`
     *   **IP address** — Select a pre-existing [static external IP address](https://cloud.google.com/compute/docs/ip-addresses#reservedaddress). If you don't have a static external IP address, you can create one by clicking New static IP address in the pull-down menu. Selected `vpn-scale-test0` for this guide.
@@ -125,7 +125,7 @@ This section provides the steps to create Cloud VPN on GCP. For a basic overview
         *   **Allowed protocols and ports:** `tcp;udp;icmp`
     *   Click **Create**.
 
-#### Using gcloud
+#### Using gcloud command-line tool
 
 1.  Create a custom VPC network. You can also use auto VPC network, make sure there is no conflict with your local network range.
 
@@ -181,7 +181,7 @@ gcloud compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-
 1.  [Go to the VPN page](https://console.cloud.google.com/networking/vpn/list) in the Google Cloud Platform Console. 
 1.  Click **Create VPN connection**.
 1.  Populate the following fields for the gateway:
-    *   **Name** — The name of the VPN gateway. This name is displayed in the console and used in by the gcloud tool to reference the gateway.
+    *   **Name** — The name of the VPN gateway. This name is displayed in the console and used in by the gcloud command-line tool to reference the gateway.
     *   **VPC network** — The VPC network containing the instances the VPN gateway will serve. In this case it is `vpn-scale-test-cisco`, a [custom VPC network](https://cloud.google.com/compute/docs/vpc/using-vpc#create-custom-network).
     *   **Region** — The region where you want to locate the VPN gateway. Normally, this is the region that contains the instances you wish to reach. Example: `us-east1`
     *   **IP address** — Select a pre-existing [static external IP address](https://cloud.google.com/compute/docs/ip-addresses#reservedaddress). If you don't have a static external IP address, you can create one by clicking **New static IP address** in the pull-down menu. Selected `vpn-scale-test0` for this guide.
