@@ -39,7 +39,7 @@ The topology outlined by this guide is a basic site-to-site IPsec VPN tunnel con
 
 ### Overview
 
-The configuration samples which follow will include numerous value substitutions provided for the purpose of example only. Any references to IP addresses, device IDs, shared secrets or keys account information or project names should be replaced with the appropriate values for your environment when following this guide. Values unique to your environment will be highlighted in **bold**.
+The configuration samples which follow will include numerous value substitutions provided for the purpose of example only. Any references to IP addresses, device IDs, shared secrets or keys account information or project names should be replaced with the appropriate values for your environment when following this guide.
 
 This guide is not meant to be a comprehensive setup overview for the device referenced, but rather is only intended to assist in the creation of IPsec connectivity to Google Cloud Platform (GCP) VPC networks. The following is a high level overview of the configuration process which will be covered:
 
