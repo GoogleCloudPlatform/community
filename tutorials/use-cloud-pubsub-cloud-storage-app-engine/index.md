@@ -1218,9 +1218,9 @@ The last feature to add to your website is scrolling. After clicking on a thumbn
 1. Add HTML for both the photos and search pages. The instructions for this step should be implemented in your two HTML files responsible for the photos and search pages. 
     1. Within the 'mySlides' class add the class 'numbertext'. This will display the current number of the photo displayed,     i.e. `1/5`. 
         ```html
-        <div class="numbertext">{{loop.index}} / {{loop.length}}</div>
+        <div class="numbertext">{{loop.index}} / {{thumbnails|length}}</div>
         ```
-        `loop.index` is the current iteration of the for loop, and `loop.length` is the total number of iterations the for           loop will go through.
+        `loop.index` is the current iteration of the for loop, and `thumbnails|length` is the total number of iterations the for           loop will go through.
     1. After the for loop containing `mySlides` and classes for previous and next buttons:
     
         ```html
