@@ -4,7 +4,7 @@
 
 <figure style="text-align: center">
 <a href="cisco_asr_family.jpeg">
-<img src="cisco_asr_family.jpeg" border="0" width="700"
+<img src="cisco_asr_family.jpeg" border="0" width="700">
 </a>
 </figure> 
 
@@ -12,14 +12,9 @@
 
 *Disclaimer: This interoperability guide is intended to be informational in nature and are examples only. Customers should verify this information via testing.*
 
-**Table of Contents**
-
-[TOC]
-
 # Introduction
 
 This guide walks you through the process to configure the Cisco ASR 1000 for integration with the [Google Cloud VPN Services](https://cloud.google.com/compute/docs/vpn/overview). This information is provided as an example only. Please note that this guide is not meant to be a comprehensive overview of IPsec and assumes basic familiarity with the IPsec protocol.
-
 
 # Environment Overview
 
@@ -33,13 +28,11 @@ Software Release: IOS XE 16.6.1
 
 Although this guide is created with ASR 1009-X, but exactly the same configuration also apply to other ASR 1000 platforms: ASR 1001-X, ASR1002-X, ASR1001-HX, ASR1002-HX, ASR 1006-X.
 
-
 # Topology
 
 The topology outlined by this guide is a basic site-to-site IPsec VPN tunnel configuration using the referenced device:
 
 ![Topology](GCP-Cisco-ASR-Topology.jpg)
-
 
 # Preparation
 
@@ -429,11 +422,11 @@ crypto ipsec profile VPN_SCALE_TEST_VTI
 
  set security-association lifetime seconds 3600
 
-set transform-set <b>VPN_SCALE_TEST_TS</b>
+ set transform-set <b>VPN_SCALE_TEST_TS</b>
 
  set pfs group16
 
-set ikev2-profile <b>VPN_SCALE_TEST_IKEV2_PROFILE</b>
+ set ikev2-profile <b>VPN_SCALE_TEST_IKEV2_PROFILE</b>
 
 </pre>
 
@@ -610,7 +603,7 @@ description VPN tunnel to the west coast DC
 
 Dynamic Routing
 
-</pre>
+<pre>
 router bgp <b>65001</b>
 
  bgp log-neighbor-changes
@@ -652,7 +645,8 @@ route-map LP2000 permit 10
 To ensure symmetry in your traffic flow, you can configure MED to influence the inbound traffic from GCP for the same tunnel you are sending outbound traffic to. Note that lower the MED, higher the preference.
 
 <pre>
-router bgp **65001</b>
+
+router bgp <b>65001</b>
 
  address-family ipv4
 
