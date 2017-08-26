@@ -64,7 +64,7 @@ The Cisco ASR 1000 Series Router IPsec application requires:
 
 1.  Advanced Enterprise Services(SLASR1-AES) or Advanced IP Services Technology Package License (SLASR1-AIS)
 1.  IPsec RTU license (FLASR1-IPsec-RTU)
-1.  encryption HW module (ASR1002HX-IPsecHW(=) and ASR1001HX-IPsecW(=)) and Tiered Crypto throughput license which applies to ASR1002-HX and ASR1001-HX chassis only.
+1.  Encryption HW module (ASR1002HX-IPsecHW(=) and ASR1001HX-IPsecW(=)) and Tiered Crypto throughput license which applies to ASR1002-HX and ASR1001-HX chassis only.
 
 For a detailed ASR 1000 Series Router license information, refer to the [ASR 1000 Routers Ordering Guide](http://www.cisco.com/c/en/us/products/collateral/routers/asr-1000-series-aggregation-services-routers/guide-c07-731639.html).
 
@@ -290,17 +290,17 @@ gcloud  compute --project vpn-guide firewall-rules create vpnrule1 --network vpn
 
 This section provides the base network configuration of Cisco ASR 1000 to establish network connectivity. At least one internal facing interface is required to connect to your own network, and one external facing interface is required to connect to GCP. A sample interface configuration is provided below for reference:
 
-<pre>
+```
 ! Internal interface configuration
-interface <b>TenGigabitEthernet0/0/2</b>
- description internal facing interface
- ip address <b>10.0.200.1 255.0.0.0</b>
+interface TenGigabitEthernet0/0/2
+description internal facing interface
+ip address 10.0.200.1 255.0.0.0
 !
 !External interface configuration
-interface <b>TenGigabitEthernet0/0/0</b>
- description external facing interface
- ip address <b>204.237.220.4 255.255.255.224</b>
-</pre>
+interface TenGigabitEthernet0/0/0
+description external facing interface
+ip address 204.237.220.4 255.255.255.224
+```
 
 ### Base VPN configurations
 
@@ -312,29 +312,29 @@ Create an Internet Key Exchange (IKE) version 2 proposal object. IKEv2 proposal 
 *   Integrity algorithm - set to SHA256 
 *   Diffie-Hellman group - set to 16 
 
-<pre>
+```
 !
-crypto ikev2 proposal <b>VPN_SCALE_TEST_IKEV2_PROPOSAL</b>
+crypto ikev2 proposal VPN_SCALE_TEST_IKEV2_PROPOSAL
  encryption aes-cbc-256 aes-cbc-192 aes-cbc-128
  integrity sha256
  group 16
 !         
 
-crypto ikev2 policy <b>VPN_SCALE_TEST_IKEV2_POLICY</b>
-proposal <b>VPN_SCALE_TEST_IKEV2_PROPOSAL</b>
-</pre>
+crypto ikev2 policy VPN_SCALE_TEST_IKEV2_POLICY
+proposal VPN_SCALE_TEST_IKEV2_PROPOSAL
+```
 
 #### Configure IKEv2 keyring
 
 The IKEv2 keyring is associated with an IKEv2 profile and hence, caters to a set of peers that match the IKEv2 profile. 
 
-<pre>
-crypto ikev2 keyring <b>VPN_SCALE_TEST_KEY</b>
- peer <b>GCP1</b>
-  address <b>104.196.200.68</b>
-  pre-shared-key <b>MySharedSecret</b>
+```
+crypto ikev2 keyring VPN_SCALE_TEST_KEY
+ peer GCP1
+  address 104.196.200.68
+  pre-shared-key MySharedSecret
 !
-</pre>
+```
 
 #### Configure IKEv2 profile
 
@@ -343,18 +343,18 @@ An IKEv2 profile must be configured and must be attached to an IPsec profile on 
 *   IKEv2 Lifetime - set the lifetime of the security associations (after which a reconnection will occur). Set to 36,000 seconds as recommended configuration on ASR 1000 router.
 *   DPD – set the dead peer detection interval and retry interval, if there are no response from the peer, the SA created for that peer is deleted. Set to 60 seconds keepalive interval and 5 seconds retry interval as recommended configuration on ASR 1000 router.
 
-<pre>
+```
 
-crypto ikev2 profile <b>VPN_SCALE_TEST_IKEV2_PROFILE</b>
-match address local interface <b>TenGigabitEthernet0/0/0</b>
+crypto ikev2 profile VPN_SCALE_TEST_IKEV2_PROFILE
+match address local interface TenGigabitEthernet0/0/0
  match identity remote any
  authentication local pre-share
  authentication remote pre-share
- keyring local <b>VPN_SCALE_TEST_KEY</b>
+ keyring local VPN_SCALE_TEST_KEY
  lifetime 36000
  dpd 60 5 periodic
 !
-</pre>
+```
 
 #### Configure IPsec security association (SA)
 
@@ -374,10 +374,10 @@ crypto ipsec security-association replay window-size 1024
 
 A transform set represents a certain combination of security protocols and algorithms. During the IPsec SA negotiation, the peers agree to use a particular transform set for protecting a particular data flow.
 
-<pre>
-crypto ipsec transform-set <b>VPN_SCALE_TEST_TS</b> esp-aes 256 esp-sha-hmac 
+```
+crypto ipsec transform-set VPN_SCALE_TEST_TS esp-aes 256 esp-sha-hmac 
  mode tunnel
-</pre>
+```
 
 #### Configure IPsec profile
 
@@ -386,13 +386,13 @@ Defines the IPsec parameters that are to be used for IPsec encryption between tw
 *   Perfect Forward Secrecy (PFS) - PFS ensures that the same key will not be generated again, so forces a new diffie-hellman key exchange. Set to group16 as recommended configuration on ASR 1000 router. 
 *   SA Lifetime - set the lifetime of the security associations (after which a reconnection will occur). Set to `3600 seconds` as recommended configuration on ASR 1000 router. 
 
-<pre>
+```
 crypto ipsec profile VPN_SCALE_TEST_VTI
  set security-association lifetime seconds 3600
- set transform-set <b>VPN_SCALE_TEST_TS</b>
+ set transform-set VPN_SCALE_TEST_TS
  set pfs group16
- set ikev2-profile <b>VPN_SCALE_TEST_IKEV2_PROFILE</b>
-</pre>
+ set ikev2-profile VPN_SCALE_TEST_IKEV2_PROFILE
+```
 
 #### Configure IPsec static virtual tunnel interface (SVTI) 
 
@@ -402,18 +402,18 @@ Association with the IPsec security association is done through the "tunnel prot
 
 Adjust the maximum segment size (MSS) value of TCP packets going through a router. The recommended value is 1360 when the number of IP MTU bytes is set to 1400. With these recommended settings, TCP sessions quickly scale back to 1400-byte IP packets so the packets will "fit" in the tunnel.
 
-<pre>
+```
 !
-interface <b>Tunnel1</b>
- ip address <b>169.254.0.58 255.255.255.252</b>
+interface Tunnel1
+ ip address 169.254.0.58 255.255.255.252
  ip mtu 1400
  ip tcp adjust-mss 1360
- tunnel source <b>TenGigabitEthernet0/0/0</b>
+ tunnel source TenGigabitEthernet0/0/0
  tunnel mode ipsec ipv4
- tunnel destination <b>104.196.200.68</b> 
- tunnel protection ipsec profile <b>VPN_SCALE_TEST_VTI</b>
+ tunnel destination 104.196.200.68
+ tunnel protection ipsec profile VPN_SCALE_TEST_VTI
 !
-</pre>
+```
 
 #### Configure static or dynamic routing protocol to route traffic into the IPsec tunnel 
 
@@ -433,18 +433,18 @@ BGP timers are adjusted to provide more rapid detection of outages.
 
 To advertise additional prefixes to GCP, copy the "network" statement and identify the prefix you wish to advertise. Make sure the prefix is present in the routing table of the ASR 1000 with a valid next-hop.
 
-<pre>
-router bgp <b>65001</b>
+```
+router bgp 65001
  bgp log-neighbor-changes
- neighbor <b>169.254.0.1</b> description BGP session over Tunnel1
- neighbor <b>169.254.0.1</b> remote-as <b>65002</b>
- neighbor <b>169.254.0.1</b> timers <b>20 60 60 </b>
+ neighbor 169.254.0.1 description BGP session over Tunnel1
+ neighbor 169.254.0.1 remote-as 65002
+ neighbor 169.254.0.1 timers 20 60 60
  !
  address-family ipv4
-  network <b>10.0.0.0</b>
-  neighbor <b>169.254.0.1</b> activate
+  network 10.0.0.0
+  neighbor 169.254.0.1 activate
  exit-address-family
-</pre>
+```
 
 ### Saving the configuration
 
@@ -484,74 +484,74 @@ The VPN redundancy configuration example is built based on the IPsec tunnel and 
 
 Cisco IOS BGP prefer the path with the highest `LOCAL-PREF`, the BGP routes are set with a value of 100 by default, by setting the `LOCAL-PREF` to 200 for the routes received from Tunnel1, BGP will choose Tunnel1 as the preferred VPN tunnel to the GCP, in the event of Tunnel 1 failure, BGP will reroute the traffic to Tunnel2.
 
-<pre>
+```
 
-crypto ikev2 keyring <b>VPN_SCALE_TEST_KEY</b>
- peer <b>GCP1</b>
- address <b>104.196.200.68</b>
- pre-shared-key <b>MySharedSecret</b>
- peer <b>GCP2</b>
- address <b>35.186.108.199</b>
- pre-shared-key <b>MySharedSecret</b>
+crypto ikev2 keyring VPN_SCALE_TEST_KEY
+ peer GCP1
+ address 104.196.200.68
+ pre-shared-key MySharedSecret
+ peer GCP2
+ address 35.186.108.199
+ pre-shared-key MySharedSecret
 !
-interface <b>Tunnel1</b>
+interface Tunnel1
  description VPN tunnel to the east coast DC
- ip address <b>169.254.0.2 255.255.255.252</b>
+ ip address 169.254.0.2 255.255.255.252
  ip mtu 1400
  ip tcp adjust-mss 1360
- tunnel source <b>TenGigabitEthernet0/0/0</b>
+ tunnel source TenGigabitEthernet0/0/0
  tunnel mode ipsec ipv4
- tunnel destination <b>104.196.200.68</b>
+ tunnel destination 104.196.200.68
  tunnel protection ipsec profile VPN_SCALE_TEST_VTI
 !
-interface <b>Tunnel2</b>
+interface Tunnel2
  description VPN tunnel to the west coast DC
- ip address <b>169.254.0.6 255.255.255.252</b>
+ ip address 169.254.0.6 255.255.255.252
  ip mtu 1400
  ip tcp adjust-mss 1360
- tunnel source <b>TenGigabitEthernet0/0/0</b>
+ tunnel source TenGigabitEthernet0/0/0
  tunnel mode ipsec ipv4
- tunnel destination <b>35.186.108.199</b>
- tunnel protection ipsec profile <b>VPN_SCALE_TEST_VTI_2</b>
+ tunnel destination 35.186.108.199
+ tunnel protection ipsec profile VPN_SCALE_TEST_VTI_2
 !
-</pre>
+```
 
 ###### Dynamic Routing
 
-<pre>
-router bgp <b>65001</b>
+```
+router bgp 65001
  bgp log-neighbor-changes
- neighbor <b>169.254.0.1</b> description BGP session over Tunnel1
- neighbor <b>169.254.0.1</b> remote-as <b>65002</b>
- neighbor <b>169.254.0.1</b> timers <b>20 60 60</b>
- neighbor <b>169.254.0.5</b> description BGP session over Tunnel2
- neighbor <b>169.254.0.5</b> remote-as <b>65002</b>
- neighbor <b>169.254.0.5</b> timers <b>20 60 60</b>
+ neighbor 169.254.0.1 description BGP session over Tunnel1
+ neighbor 169.254.0.1 remote-as 65002
+ neighbor 169.254.0.1 timers 20 60 60
+ neighbor 169.254.0.5 description BGP session over Tunnel2
+ neighbor 169.254.0.5 remote-as 65002
+ neighbor 169.254.0.5 timers 20 60 60
  !
  address-family ipv4
-  network <b>10.0.0.0</b>
-  neighbor <b>169.254.0.1</b> activate
-  neighbor <b>169.254.0.1</b> route-map LP200 in
-  neighbor <b>169.254.0.5</b> activate
+  network 10.0.0.0
+  neighbor 169.254.0.1 activate
+  neighbor 169.254.0.1 route-map LP200 in
+  neighbor 169.254.0.5 activate
  exit-address-family
 !
 route-map LP2000 permit 10
  set local-preference 2000
-</pre>
+```
 
 To ensure symmetry in your traffic flow, you can configure MED to influence the inbound traffic from GCP for the same tunnel you are sending outbound traffic to. Note that lower the MED, higher the preference.
 
-<pre>
-router bgp <b>65001</b>
+```
+router bgp 65001
  address-family ipv4
-  neighbor <b>169.254.0.1</b> route-map SET-MED-10 out
-  neighbor <b>169.254.0.5</b> activate
+  neighbor 169.254.0.1 route-map SET-MED-10 out
+  neighbor 169.254.0.5 activate
  exit-address-family
 !
 
 route-map SET-MED-10 permit 10
  set metric 10
-</pre>
+```
 
 ###### Static Routing
 
@@ -626,55 +626,55 @@ As documented in the [GCP Advanced Configurations](https://cloud.google.com/comp
 
 The ASR 1000 router run cef load balancing based on source and destination ip address hash, each VPN tunnels will be treated as an equal cost path by routing, it can support up to 16 equal cost paths load balancing.
 
-<pre>
-crypto ikev2 keyring <b>VPN_SCALE_TEST_KEY</b>
- peer <b>GCP1</b>
-  address <b>104.196.200.68</b>
-  pre-shared-key <b>MySharedSecret</b>
- peer <b>GCP3</b>
-  address <b>35.185.3.177</b>
-  pre-shared-key <b>MySharedSecret</b> 
+```
+crypto ikev2 keyring VPN_SCALE_TEST_KEY
+ peer GCP1
+  address 104.196.200.68
+  pre-shared-key MySharedSecret
+ peer GCP3
+  address 35.185.3.177
+  pre-shared-key MySharedSecret
 !
 
-interface <b>Tunnel1</b>
+interface Tunnel1
  description VPN tunnel1 to same region GCP for load balancing
- ip address <b>169.254.0.2 255.255.255.252</b>
+ ip address 169.254.0.2 255.255.255.252
  ip mtu 1400
  ip tcp adjust-mss 1360
- tunnel source <b>TenGigabitEthernet0/0/0</b>
+ tunnel source TenGigabitEthernet0/0/0
  tunnel mode ipsec ipv4
- tunnel destination <b>104.196.200.68</b>
+ tunnel destination 104.196.200.68
  tunnel protection ipsec profile VPN_SCALE_TEST_VTI
 !
 
-interface <b>Tunnel3</b>
+interface Tunnel3
  description VPN tunnel3 to the same region GCP for load balancing
- ip address <b>169.254.0.10 255.255.255.252</b>
+ ip address 169.254.0.10 255.255.255.252
  ip mtu 1400
  ip tcp adjust-mss 1360
- tunnel source <b>TenGigabitEthernet0/0/0</b>
+ tunnel source TenGigabitEthernet0/0/0
  tunnel mode ipsec ipv4
- tunnel destination <b>35.185.3.177</b>
- tunnel protection ipsec profile <b>VPN_SCALE_TEST_VTI_3</b>
+ tunnel destination 35.185.3.177
+ tunnel protection ipsec profile VPN_SCALE_TEST_VTI_3
 !
 
-router bgp <b>65001</b>
+router bgp 65001
  bgp log-neighbor-changes
  neighbor GCP peer-group
- neighbor GCP remote-as <b>65002</b>
- neighbor GCP timers <b>20 60 60</b>
- neighbor <b>169.254.0.1</b> peer-group GCP
- neighbor <b>169.254.0.9</b> peer-group GCP
+ neighbor GCP remote-as 65002
+ neighbor GCP timers <b>20 60 60
+ neighbor 169.254.0.1 peer-group GCP
+ neighbor 169.254.0.9 peer-group GCP
 !
 
  address-family ipv4
-  network <b>10.0.0.0</b>
-  neighbor <b>169.254.0.1</b> activate
-  neighbor <b>169.254.0.9</b> activate
+  network 10.0.0.0
+  neighbor 169.254.0.1 activate
+  neighbor 169.254.0.9 activate
   maximum-paths 16
  exit-address-family
 !
-</pre>
+```
 
 ##### GCP Configuration
 
