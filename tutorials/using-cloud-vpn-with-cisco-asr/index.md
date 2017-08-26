@@ -56,9 +56,9 @@ The first step in configuring your Cisco ASR 1000 for use with the Google Cloud 
 
 The Cisco ASR 1000 Series Router IPsec application requires:
 
-*  Advanced Enterprise Services(SLASR1-AES) or Advanced IP Services Technology Package License (SLASR1-AIS)
-*  IPsec RTU license (FLASR1-IPsec-RTU)
-*  Encryption HW module (ASR1002HX-IPsecHW(=) and ASR1001HX-IPsecW(=)) and Tiered Crypto throughput license which applies to ASR1002-HX and ASR1001-HX chassis only.
+*     Advanced Enterprise Services(SLASR1-AES) or Advanced IP Services Technology Package License (SLASR1-AIS)
+*     IPsec RTU license (FLASR1-IPsec-RTU)
+*     Encryption HW module (ASR1002HX-IPsecHW(=) and ASR1001HX-IPsecW(=)) and Tiered Crypto throughput license which applies to ASR1002-HX and ASR1001-HX chassis only.
 
 For a detailed ASR 1000 Series Router license information, refer to the [ASR 1000 Routers Ordering Guide](http://www.cisco.com/c/en/us/products/collateral/routers/asr-1000-series-aggregation-services-routers/guide-c07-731639.html).
 
@@ -119,7 +119,7 @@ This section provides the steps to create Cloud VPN on GCP. For a basic overview
         *   **Allowed protocols and ports:** `tcp;udp;icmp`
     *   Click **Create**.
 
-#### Using gcloud command-line tool
+#### Using `gcloud` command-line tool
 
 1.  Create a custom VPC network. You can also use auto VPC network, make sure there is no conflict with your local network range.
 
@@ -183,11 +183,11 @@ This section provides the steps to create Cloud VPN on GCP. For a basic overview
     *   **IP address** — Select a pre-existing [static external IP address](https://cloud.google.com/compute/docs/ip-addresses#reservedaddress). If you don't have a static external IP address, you can create one by clicking **New static IP address** in the pull-down menu. Selected `vpn-scale-test0` for this guide.
 
 1. Populate fields for at least one tunnel:
-*   **Peer IP address** — `204.237.220.4` Public IP address of the peer gateway.
-*   **IKE version** — IKEv2 is preferred, but IKEv1 is supported if that is all the peer gateway can manage.
-*   **Shared Secret** — Character string used in establishing encryption for that tunnel. You must enter the same shared secret into both VPN gateways. If the VPN gateway device on the peer side of the tunnel doesn't generate one automatically, you can make one up.
-*   **Routing options** — Select **Dynamic (BGP)**.
-*   **Cloud router** — Select **Create cloud router**, then populate the following fields. When you are done, click **Save and continue**.
+   *   **Peer IP address** — `204.237.220.4` Public IP address of the peer gateway.
+   *   **IKE version** — IKEv2 is preferred, but IKEv1 is supported if that is all the peer gateway can manage.
+   *   **Shared Secret** — Character string used in establishing encryption for that tunnel. You must enter the same shared secret into both VPN gateways. If the VPN gateway device on the peer side of the tunnel doesn't generate one automatically, you can make one up.
+   *   **Routing options** — Select **Dynamic (BGP)**.
+   *   **Cloud router** — Select **Create cloud router**, then populate the following fields. When you are done, click **Save and continue**.
     *   **Name** — The name of the Cloud Router. This name is displayed in the console and used by the `gcloud` command-line tool to reference the router. Example: `vpn-scale-test-cisco-rtr`
     *   **Google ASN** — The [private ASN](https://tools.ietf.org/html/rfc6996) (64512 - 65534, 4200000000 - 4294967294) for the router you are configuring. It can be any private ASN you are not already using. Example: `65002`
 *   **BGP session** — Click the pencil icon, then populate the following fields. When you are done, click **Save and continue**.
@@ -295,9 +295,9 @@ This section provides the base network configuration of Cisco ASR 1000 to establ
 
 Create an Internet Key Exchange (IKE) version 2 proposal object. IKEv2 proposal objects contain the parameters required for creating IKEv2 proposals when defining remote access and site-to-site VPN policies.  IKE is used to authenticate IPsec peers, negotiate and distribute IPsec encryption keys, and automatically establish IPsec security associations (SAs). The default proposal associated with the default policy is used for negotiation. An IKEv2 policy with no proposal is considered incomplete. In this block, the following parameters are set: 
 
-*   Encryption algorithm - set to `AES-CBC-256`, `AES-CBC-192`, `AES-CBC-128` 
-*   Integrity algorithm - set to SHA256 
-*   Diffie-Hellman group - set to 16 
+   *   Encryption algorithm - set to `AES-CBC-256`, `AES-CBC-192`, `AES-CBC-128` 
+   *   Integrity algorithm - set to SHA256 
+   *   Diffie-Hellman group - set to 16 
 
 
          !
@@ -448,7 +448,7 @@ If a Cloud VPN tunnel goes down, it restarts automatically. If an entire virtual
 The VPN redundancy configuration example is built based on the IPsec tunnel and BGP configuration illustrated above.
 
 
-##### Cisco ASR 
+##### Cisco ASR
 
 Cisco IOS BGP prefer the path with the highest `LOCAL-PREF`, the BGP routes are set with a value of 100 by default, by setting the `LOCAL-PREF` to 200 for the routes received from Tunnel1, BGP will choose Tunnel1 as the preferred VPN tunnel to the GCP, in the event of Tunnel 1 failure, BGP will reroute the traffic to Tunnel2.
 
@@ -499,7 +499,7 @@ Cisco IOS BGP prefer the path with the highest `LOCAL-PREF`, the BGP routes are 
         neighbor 169.254.0.5 activate
        exit-address-family
       !
-      route-map LP2000 permit 10
+      route-map LP2000 permit 10 
        set local-preference 2000
 
 
@@ -525,7 +525,7 @@ If you are using static routing then instead of BGP configurations mentioned abo
 
 ###### Dynamic Routing (Optional)
 
-With dynamic routing you have an option to define advertised-route-priority, lower the priority preferred it is. More details can be found [here](https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer). Note that if you have local_preference configured on the peer network as mentioned [above](#bookmark=id.rkss8sm16r9x), BGP will prefer the higher `local_preference` first.
+With dynamic routing you have an option to define advertised-route-priority, lower the priority preferred it is. More details can be found [here](https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer). Note that if you have local_preference configured on the peer network as mentioned above, BGP will prefer the higher `local_preference` first.
 
 
       gcloud compute --project vpn-guide routers add-bgp-peer vpn-scale-test-cisco-rtr --peer-name bgp-peer1 --interface if-1 --peer-ip-address 169.254.1.2 --peer-asn 65001 --region us-east1 --advertised-route-priority=2000
