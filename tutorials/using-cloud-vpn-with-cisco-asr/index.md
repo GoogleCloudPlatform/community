@@ -68,21 +68,21 @@ For the Cisco ASR 1000 IPsec configuration, the following details will be used:
 
 |Parameter | Value|
 --------- |  -----
-|IPsec Mode | ```Tunnel mode``` |
-|Auth protocol | ```Pre-shared-key``` |
-|Key Exchange | ```IKEv2``` |
-|Start | ```Auto``` |
-|Perfect Forward Secrecy (PFS) | ```Group 16``` |
-|Dead Peer Detection (DPD) | ```60 5 periodic``` |
+|IPsec Mode | `Tunnel mode` |
+|Auth protocol | `Pre-shared-key` |
+|Key Exchange | `IKEv2` |
+|Start | `Auto` |
+|Perfect Forward Secrecy (PFS) | `Group 16` |
+|Dead Peer Detection (DPD) | `60 5 periodic` |
 
 The IPsec configuration used in this guide is specified below:
 
 | Cipher Role | Cipher |
 | ------------| -------|
-| Encryption | ```esp-aes 256 esp-sha-hmac``` |
-| Integrity | ```sha256``` |
-| Diffie-Hellman (DH) | ```group 16``` |
-| Lifetime | ```36,000 seconds (10 hours)``` |
+| Encryption | `esp-aes 256 esp-sha-hmac` |
+| Integrity | `sha256` |
+| Diffie-Hellman (DH) | `group 16` |
+| Lifetime | `36,000 seconds (10 hours)` |
 
 ## Configuration – GCP
 
@@ -295,9 +295,9 @@ This section provides the base network configuration of Cisco ASR 1000 to establ
 
 Create an Internet Key Exchange (IKE) version 2 proposal object. IKEv2 proposal objects contain the parameters required for creating IKEv2 proposals when defining remote access and site-to-site VPN policies.  IKE is used to authenticate IPsec peers, negotiate and distribute IPsec encryption keys, and automatically establish IPsec security associations (SAs). The default proposal associated with the default policy is used for negotiation. An IKEv2 policy with no proposal is considered incomplete. In this block, the following parameters are set: 
 
-   *   Encryption algorithm - set to `AES-CBC-256`, `AES-CBC-192`, `AES-CBC-128` 
-   *   Integrity algorithm - set to SHA256 
-   *   Diffie-Hellman group - set to 16 
+*   Encryption algorithm - set to `AES-CBC-256`, `AES-CBC-192`, `AES-CBC-128` 
+*   Integrity algorithm - set to SHA256 
+*   Diffie-Hellman group - set to 16 
 
 
          !
@@ -356,8 +356,7 @@ Create IPsec security-association rules. A security association is a relationshi
 
 A transform set represents a certain combination of security protocols and algorithms. During the IPsec SA negotiation, the peers agree to use a particular transform set for protecting a particular data flow.
 
-      crypto ipsec transform-set VPN_SCALE_TEST_TS esp-aes 256 esp-sha-hmac 
-       mode tunnel
+      crypto ipsec transform-set VPN_SCALE_TEST_TS esp-aes 256 esp-sha-hmac mode tunnel
 
 #### Configure IPsec profile
 
@@ -376,7 +375,7 @@ Defines the IPsec parameters that are to be used for IPsec encryption between tw
 
 A tunnel interface is configured to be the logical interface associated with the tunnel. All traffic routed to the tunnel interface will be encrypted and transmitted to the GCP. Similarly, traffic from the GCP will be logically received on this interface.
 
-Association with the IPsec security association is done through the "tunnel protection" command.
+Association with the IPsec security association is done through the `tunnel protection` command.
 
 Adjust the maximum segment size (MSS) value of TCP packets going through a router. The recommended value is 1360 when the number of IP MTU bytes is set to 1400. With these recommended settings, TCP sessions quickly scale back to 1400-byte IP packets so the packets will "fit" in the tunnel.
    
@@ -528,7 +527,9 @@ If you are using static routing then instead of BGP configurations mentioned abo
 With dynamic routing you have an option to define advertised-route-priority, lower the priority preferred it is. More details can be found [here](https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer). Note that if you have local_preference configured on the peer network as mentioned above, BGP will prefer the higher `local_preference` first.
 
 
-      gcloud compute --project vpn-guide routers add-bgp-peer vpn-scale-test-cisco-rtr --peer-name bgp-peer1 --interface if-1 --peer-ip-address 169.254.1.2 --peer-asn 65001 --region us-east1 --advertised-route-priority=2000
+      gcloud compute --project vpn-guide routers add-bgp-peer vpn-scale-test-cisco-rtr --peer-name \
+      bgp-peer1 --interface if-1 --peer-ip-address 169.254.1.2 --peer-asn 65001 --region us-east1 \
+      --advertised-route-priority=2000
 
 
 ###### Static Routing (Optional)
@@ -536,7 +537,9 @@ With dynamic routing you have an option to define advertised-route-priority, low
 When using static routing GCP provides you an option to customize the priority in case there are multiple routes with the same prefix length. In order to have symmetric traffic flow make sure that you set the priority of your secondary tunnel to higher value than the primary tunnel (default priority is 1000). To define the route priority run the below command.
 
 
-      gcloud compute --project vpn-guide routes create route2 --network vpn-scale-test-cisco --next-hop-vpn-tunnel tunnel1 --next-hop-vpn-tunnel-region us-east1 --destination-range 10.0.0.0/8 --priority=2000
+      gcloud compute --project vpn-guide routes create route2 --network vpn-scale-test-cisco \
+      --next-hop-vpn-tunnel tunnel1 --next-hop-vpn-tunnel-region us-east1 --destination-range \
+      10.0.0.0/8 --priority=2000
 
 ###### Test output on Cisco ASR
 
