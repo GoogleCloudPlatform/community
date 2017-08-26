@@ -56,9 +56,9 @@ The first step in configuring your Cisco ASR 1000 for use with the Google Cloud 
 
 The Cisco ASR 1000 Series Router IPsec application requires:
 
-*     Advanced Enterprise Services(SLASR1-AES) or Advanced IP Services Technology Package License (SLASR1-AIS)
-*     IPsec RTU license (FLASR1-IPsec-RTU)
-*     Encryption HW module (ASR1002HX-IPsecHW(=) and ASR1001HX-IPsecW(=)) and Tiered Crypto throughput license which applies to ASR1002-HX and ASR1001-HX chassis only.
+* Advanced Enterprise Services(SLASR1-AES) or Advanced IP Services Technology Package License (SLASR1-AIS)
+* IPsec RTU license (FLASR1-IPsec-RTU)
+* Encryption HW module (ASR1002HX-IPsecHW(=) and ASR1001HX-IPsecW(=)) and Tiered Crypto throughput license which applies to ASR1002-HX and ASR1001-HX chassis only.
 
 For a detailed ASR 1000 Series Router license information, refer to the [ASR 1000 Routers Ordering Guide](http://www.cisco.com/c/en/us/products/collateral/routers/asr-1000-series-aggregation-services-routers/guide-c07-731639.html).
 
@@ -90,7 +90,7 @@ The IPsec configuration used in this guide is specified below:
 
 This section provides the steps to create Cloud VPN on GCP. For a basic overview of what is Cloud VPN take a look at [this](https://cloud.google.com/compute/docs/vpn/overview) document. There are 2 ways to create VPN on GCP, using Google Cloud Platform Console and the `gcloud` command-line tool. The upcoming section provide details to both in detail below:
 
-#### Using Google Cloud Platform Console
+#### Using the Google Cloud Platform Console
 
 1.  [Go to the VPN page](https://console.cloud.google.com/networking/vpn/list?_ga=1.204702416.1585642068.1497031525) in the Google Cloud Platform Console. 
 1.  Click **Create VPN connection**.
@@ -119,7 +119,7 @@ This section provides the steps to create Cloud VPN on GCP. For a basic overview
         *   **Allowed protocols and ports:** `tcp;udp;icmp`
     *   Click **Create**.
 
-#### Using `gcloud` command-line tool
+#### Using the `gcloud` command-line tool
 
 1.  Create a custom VPC network. You can also use auto VPC network, make sure there is no conflict with your local network range.
 
@@ -212,7 +212,7 @@ This step automatically creates the necessary forwarding rules for the gateway a
         *   **Allowed protocols and ports:** tcp;udp;icmp
     *   Click **Create**.
 
-#### Using `gcloud` command-line tool
+#### Using the `gcloud` command-line tool
 
 1.  Create a custom VPC network. You can also use auto VPC network, make sure there is no conflict with your local network range.
 
@@ -340,9 +340,9 @@ An IKEv2 profile must be configured and must be attached to an IPsec profile on 
          !
 
 
-#### Configure IPsec security association (SA)
+#### Configure IPsec security association
 
-Create IPsec security-association rules. A security association is a relationship between two or more entities that describes how the entities will use security services to communicate securely. During tunnel establishment, the two peers negotiate security associations that govern authentication, encryption, encapsulation, and key management. These negotiations involve two phases: first, to establish the tunnel (the IKE SA) and second, to govern traffic within the tunnel (the IPsec SA). The following commands set the SA lifetime and timing parameters. 
+Create IPsec security-association (SA) rules. A security association is a relationship between two or more entities that describes how the entities will use security services to communicate securely. During tunnel establishment, the two peers negotiate security associations that govern authentication, encryption, encapsulation, and key management. These negotiations involve two phases: first, to establish the tunnel (the IKE SA) and second, to govern traffic within the tunnel (the IPsec SA). The following commands set the SA lifetime and timing parameters. 
 
 ! IPsec SA lifetime – 1 hour is the recommended value on ASR 1000 router.
 
