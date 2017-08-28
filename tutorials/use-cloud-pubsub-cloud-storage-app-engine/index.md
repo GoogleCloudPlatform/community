@@ -11,7 +11,6 @@ This tutorial teaches you how to integrate several Google products to simulate a
 Users interact with the web application only through the Cloud Platform Console; photos cannot be uploaded or deleted through the website. Two buckets exist in [Cloud Storage](https://cloud.google.com/storage/) (GCS): one to store the uploaded photos and the other to store the thumbnails of the uploaded photos. [Cloud Datastore](https://cloud.google.com/datastore/) stores all non-image entities needed for the web application, which is hosted on [App Engine](https://cloud.google.com/appengine/). Notifications of changes to the GCS photo bucket are sent to the application via [Cloud Pub/Sub](https://cloud.google.com/pubsub/). The [Google Cloud Vision API Client Library](https://developers.google.com/api-client-library/python/apis/vision/v1) is used to label photos for search.
 
 A general overview of how the application works is shown in the diagrams below.
-![Shared Photo App Workflow](https://storage.googleapis.com/gcp-community/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-app-workflow.png)
 
 The overall workflow of receiving a notification:
 ![Receiving a Notification](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/receiving-a-notification.png)
