@@ -15,7 +15,7 @@ A general overview of how the application works is shown in the diagrams below.
 
 The overall workflow of receiving a notification:
 
-![Receiving a Notification](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/receiving-notification.png)
+![Receiving a Notification](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/receiving-a-notification.png)
 
 1. A user uploads or deletes something from their GCS photo bucket.
 1. A Cloud Pub/Sub message is sent.
@@ -27,7 +27,7 @@ The overall workflow of receiving a notification:
 
 The overall workflow of loading the home page:
 
-![Loading Notifications](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-home.png)
+![Loading Notifications](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-home-page.png)
 
 0. The user navigates to https://project-test-172118.appspot.com/.
 1. A previously-specified number of `Notifications` are queried from Datastore, ordered by date and time, most recent first.
@@ -36,7 +36,7 @@ The overall workflow of loading the home page:
 
 The overall workflow of loading the photos page:
 
-![Loading Photos](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-photos.png)
+![Loading Photos](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-photos-page.png)
 
 0. The user navigates to https://project-test-172118.appspot.com/photos.
 1. All the `ThumbnailReferences` are fetched from Datastore, ordered by date and time, most recent first.
@@ -46,7 +46,7 @@ The overall workflow of loading the photos page:
 
 The overall workflow of loading the search page: 
 
-![Loading Search](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-search.png)
+![Loading Search](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-search-page.png)
 
 0. The user navigates to https://project-test-172118.appspot.com/search.
 1. All the `ThumbnailReferences` are fetched from Datastore, ordered by date and time, most recent first.
