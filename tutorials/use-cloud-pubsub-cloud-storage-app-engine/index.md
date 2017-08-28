@@ -10,13 +10,13 @@ This tutorial teaches you how to integrate several Google products to simulate a
 
 Users interact with the web application only through the Cloud Platform Console; photos cannot be uploaded or deleted through the website. Two buckets exist in [Cloud Storage](https://cloud.google.com/storage/) (GCS): one to store the uploaded photos and the other to store the thumbnails of the uploaded photos. [Cloud Datastore](https://cloud.google.com/datastore/) stores all non-image entities needed for the web application, which is hosted on [App Engine](https://cloud.google.com/appengine/). Notifications of changes to the GCS photo bucket are sent to the application via [Cloud Pub/Sub](https://cloud.google.com/pubsub/). The [Google Cloud Vision API Client Library](https://developers.google.com/api-client-library/python/apis/vision/v1) is used to label photos for search.
 
-The overall workflow of the application is shown in the diagram below:
-
+A general overview of how the application works is shown in the diagrams below.
 ![Shared Photo App Workflow](https://storage.googleapis.com/gcp-community/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-app-workflow.png)
 
-![Shared Photo App Diagram](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-app-workflow.png)
+The overall workflow of receiving a notification:
 
-Receiving a Notification (purple arrows):
+![Receiving a Notification](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/receiving-notification.png)
+
 1. A user uploads or deletes something from their GCS photo bucket.
 1. A Cloud Pub/Sub message is sent.
 1. The Cloud Pub/Sub message is received by App Engine.
@@ -25,21 +25,35 @@ Receiving a Notification (purple arrows):
 1. If the event type from the message is `OBJECT_FINALIZE`, then the Google Cloud Vision API is used to generate labels for the uploaded photo.
 1. If the event type from the message is `OBJECT_FINALIZE`, then a new `ThumbnailReference` is created and stored in Datastore. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, then the appropriate `ThumbnailReference` is deleted from Datastore.
 
-Loading the Home Page (green arrows)\*:
+The overall workflow of loading the home page:
+
+![Loading Notifications](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-home.png)
+
+0. The user navigates to https://project-test-172118.appspot.com/.
 1. A previously-specified number of `Notifications` are queried from Datastore, ordered by date and time, most recent first.
 1. The queried `Notifications` are sent to the front-end to be formatted and displayed on the home page.
+1. The HTML file links to an external CSS file for styling.
 
-Loading the Photos Page (red arrows)\*:
+The overall workflow of loading the photos page:
+
+![Loading Photos](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-photos.png)
+
+0. The user navigates to https://project-test-172118.appspot.com/photos.
 1. All the `ThumbnailReferences` are fetched from Datastore, ordered by date and time, most recent first.
 1. Each `ThumbnailReference` is used to get a serving url for the corresponding thumbnail stored in the GCS thumbnail bucket.
 1. A dictionary of `ThumbnailReferences` and their serving urls is sent to the front-end to be formatted and displayed on the photos page.
+1. The HTML file links to an external CSS file for styling.
 
-Loading the Search Page (pink arrows)\*:
+The overall workflow of loading the search page: 
+
+![Loading Search](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-search.png)
+
+0. The user navigates to https://project-test-172118.appspot.com/search.
 1. All the `ThumbnailReferences` are fetched from Datastore, ordered by date and time, most recent first.
 1. Each queried `ThumbnailReference` that contains the search term as one of its `labels` is used to get a serving url for the corresponding thumbnail stored in the GCS thumbnail bucket.
 1. A dictionary of `ThumbnailReferences` that contain the search term as one of their `labels` and their serving urls is sent to the front-end to be formatted and displayed on the search page.
+1. The HTML file links to an external CSS file for styling.
 
-\* Step 0: The user navigates to the url that causes the page to load.
 
 Note: Basic coding (Python, HTML, CSS, JavaScript) and command line knowledge is necessary to complete this tutorial.
 
