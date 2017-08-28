@@ -243,7 +243,7 @@ The `main.py` file contains the backend logic of the website, including the rece
     class MainHandler(webapp2.RequestHandler):
         def get(self):
           template_values = {}
-          template = jinja_environment.get_template("[NAME OF YOUR HOME PAGE HTML FILE]")
+          template = jinja_environment.get_template('[NAME OF YOUR HOME PAGE HTML FILE]')
           self.response.write(template.render(template_values))
     ```
  
@@ -327,9 +327,8 @@ During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cl
 
     ```py
     index = photo_name.index('.jpg')
-    thumbnail_key = '{}{}{}'.format(photo_name[:index],
-                                    generation_number,
-                                    photo_name[index:])
+    thumbnail_key = '{}{}{}'.format(
+        photo_name[:index], generation_number, photo_name[index:])
     ```
 
 You now have all of the information needed to create the necessary notification and communicate with GCS.
@@ -340,33 +339,32 @@ You now have all of the information needed to create the necessary notification 
 
     ```py
     def create_notification(photo_name,
-                            event_type,
-                            generation,
-                            overwrote_generation=None,
-                            overwritten_by_generation=None):
-        if event_type == 'OBJECT_FINALIZE':
-            if overwrote_generation is not None:
-                message = '{} {}'.format(
-                    photo_name,
-                    'was uploaded and overwrote an older version of itself.')
-            else:
-                message = '{} {}'.format(photo_name, 'was uploaded.')
-        elif event_type == 'OBJECT_ARCHIVE':
-            if overwritten_by_generation is not None:
-                message = '{} {}'.format(photo_name,
-                                        'was overwritten by a newer version.')
-            else:
-                message = '{} {}'.format(photo_name, 'was archived.')
-        elif event_type == 'OBJECT_DELETE':
-            if overwritten_by_generation is not None:
-                message = '{} {}'.format(photo_name,
-                                        'was overwritten by a newer version.')
-            else:
-                message = '{} {}'.format(photo_name, 'was deleted.')
+                        event_type,
+                        generation,
+                        overwrote_generation=None,
+                        overwritten_by_generation=None):
+    if event_type == 'OBJECT_FINALIZE':
+        if overwrote_generation is not None:
+            message = '{} was uploaded and overwrote an older' \
+                ' version of itself.'.format(photo_name)
         else:
-            message = None
+            message = '{} was uploaded.'.format(photo_name)
+    elif event_type == 'OBJECT_ARCHIVE':
+        if overwritten_by_generation is not None:
+            message = '{} was overwritten by a newer version.'.format(
+                photo_name)
+        else:
+            message = '{} was archived.'.format(photo_name)
+    elif event_type == 'OBJECT_DELETE':
+        if overwritten_by_generation is not None:
+            message = '{} was overwritten by a newer version.'.format(
+                photo_name)
+        else:
+            message = '{} was deleted.'.format(photo_name)
+    else:
+        message = None
 
-        return Notification(message=message, generation=generation)
+    return Notification(message=message, generation=generation)
     ```
 
 1. Call the `create_notification` helper function in the `post` method of the `ReceiveMessage` class.
@@ -452,11 +450,7 @@ To create the thumbnail, the original image from the GCS photo bucket should be 
 
     ```py
     def create_thumbnail(photo_name):
-        filename = '{}{}{}{}'.format(
-            '/gs/',
-            PHOTO_BUCKET,
-            '/',
-            photo_name)
+        filename = '/gs/{}/{}'.format(PHOTO_BUCKET, photo_name)
         image = images.Image(filename=filename)
         image.resize(width=180, height=200)
         return image.execute_transforms(output_encoding=images.JPEG)
@@ -481,13 +475,9 @@ The thumbnail should be stored in the GCS thumbnail bucket under the name `thumb
         write_retry_params = cloudstorage.RetryParams(
             backoff_factor=1.1,
             max_retry_period=15)
-        filename = '{}{}{}{}'.format(
-            '/',
-            THUMBNAIL_BUCKET,
-            '/',
-            thumbnail_key)
-        with cloudstorage.open(filename, 'w',
-                               retry_params=write_retry_params) as filehandle:
+        filename = '/{}/{}'.format(THUMBNAIL_BUCKET, thumbnail_key)
+        with cloudstorage.open(
+                filename, 'w', retry_params=write_retry_params) as filehandle:
             filehandle.write(thumbnail)
     ```
 
@@ -504,10 +494,7 @@ The [Google Cloud Vision API Client Library for Python](https://developers.googl
 1. Create the `uri` to reference the appropriate photo in the GCS photo bucket.
 
     ```py
-    uri = '{}{}{}{}'.format('gs://',
-                            PHOTO_BUCKET,
-                            '/',
-                            photo_name)
+    uri = 'gs://{}/{}'.format(PHOTO_BUCKET, photo_name)
     ```
  
 1. Write the `get_labels` helper function.
@@ -515,12 +502,12 @@ The [Google Cloud Vision API Client Library for Python](https://developers.googl
     ```py
     def get_labels(uri, photo_name):
         service = googleapiclient.discovery.build('vision', 'v1')
-        labels = []
+        labels = set()
 
         # Label photo with its name, sans extension.
         index = photo_name.index('.jpg')
         photo_name_label = photo_name[:index]
-        labels.append(photo_name_label)
+        labels.add(photo_name_label)
 
         service_request = service.images().annotate(body={
             'requests': [{
@@ -545,13 +532,13 @@ The [Google Cloud Vision API Client Library for Python](https://developers.googl
         if labels_full is not None:
             for label in labels_full:
                 if label['description'] not in labels:
-                    labels.append(label['description'])
+                    labels.add(label['description'])
                     # Split the label into individual words, also to be added to
                     # labels list if not already.
                     descriptors = label['description'].split()
                     for descript in descriptors:
                         if descript not in labels and descript not in ignore:
-                            labels.append(descript)
+                            labels.add(descript)
 
         return labels
     ```
@@ -572,13 +559,11 @@ At this point, the only other thing you need to create the required `ThumbnailRe
 
     ```py
     def get_original_url(photo_name, generation):
-        original_photo = '{}{}{}{}{}{}'.format(
-            'https://storage.googleapis.com/',
-            PHOTO_BUCKET,
-            '/',
-            photo_name,
-            '?generation=',
-            generation)
+        original_photo = 'https://storage.googleapis.com/' \
+            '{}/{}?generation={}'.format(
+                PHOTO_BUCKET,
+                photo_name,
+                generation)
         return original_photo
     ```
 
@@ -594,7 +579,7 @@ At this point, the only other thing you need to create the required `ThumbnailRe
     thumbnail_reference = ThumbnailReference(
                 thumbnail_name=photo_name,
                 thumbnail_key=thumbnail_key,
-                labels=labels,
+                labels=list(labels),
                 original_photo=original_photo)
     ```
 
@@ -612,11 +597,7 @@ You have now completed all of the code necessary to store the information about 
 
     ```py
     def get_thumbnail_serving_url(photo_name):
-        filename = '{}{}{}{}'.format(
-            '/gs/',
-            THUMBNAIL_BUCKET,
-            '/',
-            photo_name)
+        filename = '/gs/{}/{}'.format(THUMBNAIL_BUCKET, photo_name)
         blob_key = blobstore.create_gs_key(filename)
         return images.get_serving_url(blob_key)
     ```
@@ -672,22 +653,14 @@ elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
 
     ```py
     def delete_thumbnail(thumbnail_key):
-        filename = '{}{}{}{}'.format(
-            '/gs/',
-            THUMBNAIL_BUCKET,
-            '/',
-            thumbnail_key)
+        filename = '/gs/{}/{}'.format(THUMBNAIL_BUCKET, thumbnail_key)
         blob_key = blobstore.create_gs_key(filename)
         images.delete_serving_url(blob_key)
         thumbnail_reference = ThumbnailReference.query(
             ThumbnailReference.thumbnail_key == thumbnail_key).get()
         thumbnail_reference.key.delete()
 
-        filename = '{}{}{}{}'.format(
-            '/',
-            THUMBNAIL_BUCKET,
-            '/',
-            thumbnail_key)
+        filename = '/{}/{}'.format(THUMBNAIL_BUCKET, thumbnail_key)
         cloudstorage.delete(filename)
     ```
 
