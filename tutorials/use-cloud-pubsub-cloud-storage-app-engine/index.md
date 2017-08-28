@@ -12,7 +12,7 @@ Users interact with the web application only through the Cloud Platform Console;
 
 A general overview of how the application works is shown in the diagrams below.
 
-The overall workflow of receiving a notification:
+**The overall workflow of receiving a notification:**
 ![Receiving a Notification](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/receiving-a-notification.png)
 
 1. A user uploads or deletes something from their GCS photo bucket.
@@ -23,27 +23,27 @@ The overall workflow of receiving a notification:
 1. If the event type from the message is `OBJECT_FINALIZE`, then the Google Cloud Vision API is used to generate labels for the uploaded photo.
 1. If the event type from the message is `OBJECT_FINALIZE`, then a new `ThumbnailReference` is created and stored in Datastore. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, then the appropriate `ThumbnailReference` is deleted from Datastore.
 
-The overall workflow of loading the home page:
+**The overall workflow of loading the home page:**
 ![Loading Notifications](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-home-page.png)
 
-0. The user navigates to https://project-test-172118.appspot.com/.
+0. The user navigates to https://[PROJECT-ID].appspot.com/.
 1. A previously-specified number of `Notifications` are queried from Datastore, ordered by date and time, most recent first.
 1. The queried `Notifications` are sent to the front-end to be formatted and displayed on the home page.
 1. The HTML file links to an external CSS file for styling.
 
-The overall workflow of loading the photos page:
+**The overall workflow of loading the photos page:**
 ![Loading Photos](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-photos-page.png)
 
-0. The user navigates to https://project-test-172118.appspot.com/photos.
+0. The user navigates to https://[PROJECT-ID].appspot.com/[NAME OF PHOTOS PAGE].
 1. All the `ThumbnailReferences` are fetched from Datastore, ordered by date and time, most recent first.
 1. Each `ThumbnailReference` is used to get a serving url for the corresponding thumbnail stored in the GCS thumbnail bucket.
 1. A dictionary of `ThumbnailReferences` and their serving urls is sent to the front-end to be formatted and displayed on the photos page.
 1. The HTML file links to an external CSS file for styling.
 
-The overall workflow of loading the search page: 
+**The overall workflow of loading the search page:**
 ![Loading Search](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-search-page.png)
 
-0. The user navigates to https://project-test-172118.appspot.com/search.
+0. The user navigates to https://[PROJECT-ID].appspot.com/[NAME OF SEARCH PAGE].
 1. All the `ThumbnailReferences` are fetched from Datastore, ordered by date and time, most recent first.
 1. Each queried `ThumbnailReference` that contains the search term as one of its `labels` is used to get a serving url for the corresponding thumbnail stored in the GCS thumbnail bucket.
 1. A dictionary of `ThumbnailReferences` that contain the search term as one of their `labels` and their serving urls is sent to the front-end to be formatted and displayed on the search page.
