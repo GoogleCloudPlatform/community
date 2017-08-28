@@ -74,17 +74,13 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=41
     ```sh
     gcloud config set project [PROJECT ID]
     ```
-    
-1. In the Cloud Platform Console, [create a bucket](https://www.google.com/urlsa=D&q=https%3A%2F%2Fcloud.google.com%2Fstorage%2Fdocs%2Fcreating-buckets). This bucket is for storing the photos of your shared photo album.
-1. If you want collaborators on your photo album, click on the three-dots icon for your photo bucket on the right side of the screen. Click `Edit bucket permissions` and add the email addresses of the collaborators as `Storage Admins`.
-1. Change the photos bucket permissions to make it publicly readable so that the photos may be viewed on your website. in the command line, run:
 
-    ```sh
-    gsutil defacl ch -g allUsers:R gs://[PHOTO BUCKET NAME]
-    ```
-    
+1. In the Cloud Platform Console, [create a bucket](https://www.google.com/urlsa=D&q=https%3A%2F%2Fcloud.google.com%2Fstorage%2Fdocs%2Fcreating-buckets). This bucket is for storing the photos of your shared photo album.
+1. If you want collaborators on your photo album, [add IAM Permissions](https://www.google.com/url?sa=D&q=https%3A%2F%2Fcloud.google.com%2Fstorage%2Fdocs%2Faccess-control%2Fusing-iam-permissions%23bucket-add) to your bucket. Select`Storage Object Admin` as the role for each collaborator you want to add.
+1. Change the photos bucket permissions to make it publicly readable so that the photos may be viewed on your website. To do this, you'll need to [make your bucket data public](https://www.google.com/url?sa=D&q=https%3A%2F%2Fcloud.google.com%2Fstorage%2Fdocs%2Faccess-control%2Fmaking-data-public%23buckets).
+
 1. Create another bucket with `Multi-Regional` or `Regional` storage. This bucket is for storing the thumbnails of the photos in your shared photo album.
-1. Open the `Products & services` menu and click on `Pub/Sub`. Create a new topic with the same name as your photos bucket.
+1. [Create a new topic](https://www.google.com/url?sa=D&q=https%3A%2F%2Fcloud.google.com%2Fpubsub%2Fdocs%2Fquickstart-console%23create_a_topic) with the same name as your photos bucket.
 1. Click on the three-dots icon for your photo album topic and click on `New subscription`. Change the `Delivery Type` to `Push into an endpoint url`. This is the url that receives your Cloud Pub/Sub messages. For a url, use the following, replacing [PROJECT-ID] with the name of your project: `http://[PROJECT ID].appspot.com/_ah/push-handlers/receive_message`.
 1. Configure Cloud Pub/Sub notifications for your photos bucket by using the command line to run:
 
@@ -125,7 +121,7 @@ The external library and `app.yaml` files are necessary for configuring your App
     ```sh
     pip install -t lib -r requirements.txt
     ```
-   
+
 1. In your host directory, create the file `appengine_config.py` and copy in the following code:
 
     ```py
@@ -418,7 +414,7 @@ You now have all of the information needed to create the necessary notification 
     template_values = {'notifications': notifications}
     ```
 
-1. In the home/notifications page HTML file, loop through the `notifications` list you rendered to the template in `main.py` and print the formatted date/time of the notification and the notification message.
+1. In the `home/notifications` page HTML file, loop through the `notifications` list you rendered to the template in `main.py` and print the formatted date/time of the notification and the notification message.
 
     ```html
     {% for notification in notifications %}
@@ -431,8 +427,7 @@ You now have all of the information needed to create the necessary notification 
 ### Checkpoint
 
 1. Run your application locally to check for basic errors, then deploy your application.
-1. In the [Cloud Platform Console](https://console.cloud.google.com/), use the three-bar icon in the top left corner to open the `Products & services` menu and navigate to `Storage`.
-1. Click on the name of your GCS photo bucket. Click `UPLOAD FILES` and upload an image with the extension `.jpg`.
+1. [Upload an image](https://www.google.com/url?sa=D&q=https%3A%2F%2Fcloud-dot-devsite.googleplex.com%2Fstorage%2Fdocs%2Fobject-basics%23upload) with the extension `.jpg` to your photo bucket.
 1. Open the `Products & services` menu again and navigate to `Datastore`. There should be a `Notification` listed with the message `[UPLOADED PHOTO NAME] was uploaded.`.
 1. View your deployed application in your web browser. The new notification should be listed on the home page. You may need to refresh the page.
 
