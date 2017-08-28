@@ -8,7 +8,7 @@ date published:
 
 This tutorial teaches you how to integrate several Google products to simulate a shared photo album, hosted on App Engine and managed through the Cloud Platform Console.
 
-Users interact with the web application only through the Cloud Platform Console; photos cannot be uploaded or deleted through the application itself. Two buckets exist in [Cloud Storage](https://cloud.google.com/storage/) (GCS): one to store the uploaded photos themselves, and the other to store the thumbnails of the uploaded photos. [Cloud Datastore](https://cloud.google.com/datastore/) stores all non-image entities needed for the web application, which is hosted on [App Engine](https://cloud.google.com/appengine/). Notifications of changes to the GCS photo bucket are sent to the application via [Cloud Pub/Sub](https://cloud.google.com/pubsub/). The [Google Cloud Vision API Client Library](https://developers.google.com/api-client-library/python/apis/vision/v1) is used to label photos for search.
+Users interact with the web application only through the Cloud Platform Console; photos cannot be uploaded or deleted through the website. Two buckets exist in [Cloud Storage](https://cloud.google.com/storage/) (GCS): one to store the uploaded photos and the other to store the thumbnails of the uploaded photos. [Cloud Datastore](https://cloud.google.com/datastore/) stores all non-image entities needed for the web application, which is hosted on [App Engine](https://cloud.google.com/appengine/). Notifications of changes to the GCS photo bucket are sent to the application via [Cloud Pub/Sub](https://cloud.google.com/pubsub/). The [Google Cloud Vision API Client Library](https://developers.google.com/api-client-library/python/apis/vision/v1) is used to label photos for search.
 
 The overall workflow of the application is shown in the diagram below:
 
@@ -65,17 +65,17 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=41
 
 ## Set up
 
-The following instructions assume no prior set up has been done. Skip steps appropriately if you have already completed them.
 1. [Install the Google Cloud SDK](https://cloud.google.com/sdk/downloads) for necessary commands such as `gcloud` and `gsutil`.
-1. [Create a Pantheon account](https://console.cloud.google.com/) for use of the Cloud Platform Console.
-1. In Pantheon, navigate to the upper header bar and [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) for use as your App Engine project. Your project has a unique ID that is part of your web application url. If necessary, [create a billing project](https://support.google.com/cloud/answer/6288653?hl=en). Learn more about billing [here](https://cloud.google.com/appengine/docs/standard/python/console/).
+1. [Create a Google Cloud Platform account](https://console.cloud.google.com/) for using the Cloud Platform Console.
+1. In the Cloud Platform Console, [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects). Your project has a unique ID that is part of your web application url. 
+1. Enable billing: [create a billing project](https://support.google.com/cloud/answer/6288653?hl=en). Learn more about billing [here](https://cloud.google.com/appengine/docs/standard/python/console/).
 1. In the command line, [set the default project](https://cloud.google.com/sdk/docs/managing-configurations) to your newly created project by running the following command:
 
     ```sh
     gcloud config set project [PROJECT ID]
     ```
     
-1. In Pantheon, click on the three-bar icon in the upper left hand corner to open the `Products & services` menu. Click on `Storage`. In the browser, create a bucket with `Multi-Regional` or `Regional` storage. This bucket is for storing the photos of your shared photo album.
+1. In the Cloud Platform Console, [create a bucket](https://www.google.com/urlsa=D&q=https%3A%2F%2Fcloud.google.com%2Fstorage%2Fdocs%2Fcreating-buckets). This bucket is for storing the photos of your shared photo album.
 1. If you want collaborators on your photo album, click on the three-dots icon for your photo bucket on the right side of the screen. Click `Edit bucket permissions` and add the email addresses of the collaborators as `Storage Admins`.
 1. Change the photos bucket permissions to make it publicly readable so that the photos may be viewed on your website. in the command line, run:
 
@@ -85,7 +85,7 @@ The following instructions assume no prior set up has been done. Skip steps appr
     
 1. Create another bucket with `Multi-Regional` or `Regional` storage. This bucket is for storing the thumbnails of the photos in your shared photo album.
 1. Open the `Products & services` menu and click on `Pub/Sub`. Create a new topic with the same name as your photos bucket.
-1. Click on the three-dots icon for your photo album topic and click on `New subscription`. Change the `Delivery Type` to `Push into an endpoint url`. This is the url that receives your Cloud Pub/Sub messages. Your url should be something of the format `http://[PROJECT ID].appspot.com/_ah/push-handlers/receive_message`.
+1. Click on the three-dots icon for your photo album topic and click on `New subscription`. Change the `Delivery Type` to `Push into an endpoint url`. This is the url that receives your Cloud Pub/Sub messages. For a url, use the following, replacing [PROJECT-ID] with the name of your project: `http://[PROJECT ID].appspot.com/_ah/push-handlers/receive_message`.
 1. Configure Cloud Pub/Sub notifications for your photos bucket by using the command line to run:
 
     ```sh
@@ -100,13 +100,13 @@ If you do not feel like coding the entire application from scratch, feel free to
   git clone https://github.com/GChien44/tutorial-v2.git
   ```
 
-Note that if you choose this option, you still need to make a `lib` directory and run the `install` command in steps one and three of the **Libraries and `app.yaml`** section, and some constants in the `main.py` file still need to be changed to suit your GCS bucket names.
+Note that if you choose this option, you still need to make a `lib` directory and run the `install` command. These tasks are outlined in steps one and three of the **Libraries and `app.yaml`** section. In addition to these tasks, some constants in the `main.py` file still need to be changed to suit your GCS bucket names. Look for the constants THUMBNAIL_BUCKET, PHOTO_BUCKET, NUM_NOTIFICATIONS_TO_DISPLAY, and MAX_LABELS immediately after the imports at the top of the file.
 
-From this point forward, it is assumed that you did not clone the above git repository, and are building the application from scratch.
+The rest of this tutorial assumes that you did not clone the above git repository, and are building the application from scratch.
 
 ### Libraries and `app.yaml`
 
-The external library and `app.yaml` files are necessary for the configuring your App Engine application and importing the required libraries.
+The external library and `app.yaml` files are necessary for configuring your App Engine application and importing the required libraries.
 
 1. Choose a directory to house your project. From this point forward, this will be referred to as the host directory. Inside your host directory, create a new directory called `lib` for the storage of external libraries.
 1. In your host directory, create the file `requirements.txt` and copy in the following text:
@@ -117,22 +117,22 @@ The external library and `app.yaml` files are necessary for the configuring your
     GoogleAppEngineCloudStorageClient
     google-api-python-client
     ```
-    
+
     This specifies which libraries are necessary for your application.
-    
+
 1. Install the external libraries into your `lib` directory:
 
     ```sh
     pip install -t lib -r requirements.txt
     ```
-        
+   
 1. In your host directory, create the file `appengine_config.py` and copy in the following code:
-    
+
     ```py
     from google.appengine.ext import vendor
     vendor.add('lib')
     ```
-     
+
 1. In your host directory, create an `app.yaml` file and copy in the following code:
 
     ```yaml
@@ -144,21 +144,21 @@ The external library and `app.yaml` files are necessary for the configuring your
     - url: /_ah/push-handlers/.*
       script: main.app
       login: admin
-      
+
     - url: .*
       script: main.app
     ```
-    
+
 ### HTML files
-  
+
 The HTML files represent the different pages of your web application.
-  
+
 1. In your host directory, create a `templates` directory to hold all of your HTML files. Each HTML file should have the same basic layout, with a title and links to the other pages of your application:
-    
+
     ```html
     <!DOCTYPE html>
     <html>
-    
+
       <head>
         <title>Page Title</title>
       </head>
@@ -176,18 +176,18 @@ The HTML files represent the different pages of your web application.
       </body>
     </html>
     ```
-    
+
 1. Create an HTML file for the home/notifications page of your application (url: `http://[PROJECT ID].appspot.com`) using the template given above. The notifications page will have a news feed listing all recent actions performed on your GCS photo bucket.
 1. Create an HTML file for the photos page of your application (url: `http://[PROJECT ID].appspot.com/photos`) using the template given above. The photos page will display the thumbnails and names of all photos uploaded to your GCS photo bucket.
 1. Create an HTML file for the search page of your application (url: `http://[PROJECT ID].appspot.com/search`) using the template given above. The search page will display the thumbnails and names of the photos uploaded to your GCS photo bucket that match the entered search term.
-    
+
 ### The `main.py` file
 
 The `main.py` file contains the backend logic of the website, including the reception of Cloud Pub/Sub messages, the communication with GCS and Datastore, and the rendering of HTML templates.
 
 1. Create a `main.py` file in your host directory.
 1. Add the required imports to the top of the file:
-        
+    
     ```py
     import collections
     import json
@@ -203,35 +203,35 @@ The `main.py` file contains the backend logic of the website, including the rece
     from google.appengine.ext import ndb
     import googleapiclient.discovery
     ```
-    
-1. Add constants. `THUMBNAIL_BUCKET` is the name of the GCS bucket you created in Set Up step #8 to store the thumbnails of photos uploaded to your GCS photo bucket. `PHOTO_BUCKET` is the name of the GCS bucket you created in Set Up step #5 to store the photos uploaded to your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the maximum number of notifications displayed on the home/notifications page of your web application. `MAX_LABELS` regulates the maximum number of labels obtained for each photo using Cloud Vision.
-    
+
+1. Add constants. `THUMBNAIL_BUCKET` is the name of the GCS bucket you created in Set Up step #8 to store the thumbnails of photos uploaded to your GCS photo bucket. `PHOTO_BUCKET` is the name of the GCS bucket you created in Set Up step #5 to store the photos uploaded to your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the maximum number of notifications displayed on the home/notifications page of your web application. `MAX_LABELS` regulates the maximum number of labels associated with each photo using Cloud Vision.
+
     ```py
     THUMBNAIL_BUCKET = '[GCS THUMBNAIL BUCKET NAME]'
     PHOTO_BUCKET = '[GCS PHOTO BUCKET NAME]'
     NUM_NOTIFICATIONS_TO_DISPLAY = [SOME NUMBER]
     MAX_LABELS = [SOME NUMBER]
     ```
-        
+ 
 1. Set up [jinja2](http://jinja.pocoo.org/docs/2.9/templates/) for HTML templating.
-    
+
     ```py
     template_dir = os.path.join(os.path.dirname(__file__), 'templates')
     jinja_environment = jinja2.Environment(
         loader=jinja2.FileSystemLoader(template_dir))
     ```
-    
+
 1. Create the `Notification` class. Notifications are created from Cloud Pub/Sub messages and stored in Cloud Datastore, to be displayed on the home page of your application. Notifications have a message, date of posting, and generation number, which is used to distinguish between similar notifications and prevent the display of repeated notifications. Information on NDB properties can be found [here](https://cloud.google.com/appengine/docs/standard/python/ndb/).
-    
+
     ```py
     class Notification(ndb.Model):
         message = ndb.StringProperty()
         date = ndb.DateTimeProperty(auto_now_add=True)
         generation = ndb.StringProperty()
     ```
-        
+  
 1. Create the `ThumbnailReference` class. ThumbnailReferences are stored in Cloud Datastore and contain information about the thumbnails stored in your GCS thumbnail bucket. ThumbnailReferences have a thumbnail_name (the name of the uploaded photo), a thumbnail_key (a concatenation of the name and generation number of an uploaded photo, used to distinguish similarly named photos), date of posting, a list of label descriptions assigned to the corresponding photo using Google Cloud Vision, and the url of the original photo that is stored in GCS.
-    
+
     ```py
     class ThumbnailReference(ndb.Model):
         thumbnail_name = ndb.StringProperty()
@@ -240,9 +240,9 @@ The `main.py` file contains the backend logic of the website, including the rece
         labels = ndb.StringProperty(repeated=True)
         original_photo = ndb.StringProperty()
     ```
-        
+
 1. Create a `MainHandler` with a `get` method for getting information from the server and writing it to the home/notification page HTML file. There are no values to pass into the template yet.
-    
+
     ```py
     class MainHandler(webapp2.RequestHandler):
         def get(self):
@@ -250,19 +250,19 @@ The `main.py` file contains the backend logic of the website, including the rece
           template = jinja_environment.get_template("[NAME OF YOUR HOME PAGE HTML FILE]")
           self.response.write(template.render(template_values))
     ```
-        
+ 
 1. Create a `PhotosHandler` class with a `get` method for getting information from the server and writing it to the photos page HTML file. This should look similar to the `MainHandler`.
 1. Create a `SearchHandler` class with a `get` method for getting information from the server and writing it to the search page HTML file. This should look similar to the `MainHandler` and `PhotosHandler`.
 1. Create a `ReceiveMessage` class with a `post` method for posting information to ther server. This `post` method will receive Cloud Pub/Sub messages and perform necessary logic using the information. Further detail is in the next section.
-    
+
     ```py
     class ReceiveMessage(webapp2.RequestHandler):
         def post(self):
             # This method will be filled out in the next section.
     ```
-        
+
 1. Add the following code at the end of your `main.py` file to connect the web page urls with their corresponding classes.
-    
+
     ```py
     app = webapp2.WSGIApplication([
         ('/', MainHandler),
@@ -271,7 +271,7 @@ The `main.py` file contains the backend logic of the website, including the rece
         ('/_ah/push-handlers/receive_message', ReceiveMessage)
     ], debug=True)
     ```
-        
+
 ### Checkpoint
 
 1. [Run your application locally](https://cloud.google.com/appengine/docs/standard/python/tools/using-local-server) by running the following command from your host directory:
@@ -279,7 +279,7 @@ The `main.py` file contains the backend logic of the website, including the rece
     ```sh
     dev_appserver.py .
     ```
-    
+
     Visit `localhost:8080` in your web browser to view your web application. You should be able to click on the links to  navigate between the pages of your website, which should all be blank except for the navigation links and page titles.
 
 1. [Deploy your application](https://cloud.google.com/appengine/docs/standard/python/getting-started/deploying-the-application) by running:
@@ -287,20 +287,20 @@ The `main.py` file contains the backend logic of the website, including the rece
     ```sh
     gcloud app deploy
     ```
-    
+
     Your web application should be viewable at `http://[PROJECT ID].appspot.com`. You can either navigate there directly through your web browser or launch your browser and view the app by running the command:
 
     ```sh
     gcloud app browse
     ```
-    
+
 ## Creating the notifications page
 
 ### Receiving Cloud Pub/Sub messages
 
 During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cloud.google.com/pubsub/docs/push#receive_push) to be sent to the url you specified for the `ReceiveMessage` class in your `main.py` file. When you receive a Pub/Sub message, you must get necessary information from it and acknowledge its reception.
 
-1. In the your `main.py` file, in the `ReceiveMessage` class, in your `post` method, obtain the [notification attributes](https://cloud.google.com/storage/docs/pubsub-notifications) from the incoming Cloud Pub/Sub message. A logging statement can be used for easier debugging.
+1. In your `main.py` file, in the `ReceiveMessage` class, in your `post` method, obtain the [notification attributes](https://cloud.google.com/storage/docs/pubsub-notifications) from the incoming Cloud Pub/Sub message. A logging statement can be used for easier debugging.
 
     ```py
     # Logging statement is optional.
@@ -308,15 +308,15 @@ During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cl
     message = json.loads(urllib.unquote(self.request.body))
     attributes = message['message']['attributes']
     ```
-    
+
     `attributes` is a key:value dictionary where the keys are the Pub/Sub attribute names and the values are the attribute values.
-    
+
 1. Acknowledge the reception of the Cloud Pub/Sub message.
 
     ```py
     self.response.status = 204
     ```
-    
+
 1. Save the relevant values from the `attributes` dictionary for later use.
 
     ```py
@@ -326,7 +326,7 @@ During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cl
     overwrote_generation = attributes.get('overwroteGeneration')
     overwritten_by_generation = attributes.get('overwrittenByGeneration')
     ```
-    
+
 1. Create the thumbnail_key using the `photo_name` and `generation_number`. Note that using the following logic, only photos with the extensions `.jpg` can be uploaded effectively.
 
     ```py
@@ -335,7 +335,7 @@ During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cl
                                     generation_number,
                                     photo_name[index:])
     ```
-    
+
 You now have all of the information needed to create the necessary notification and communicate with GCS.
 
 ### Creating and storing `Notifications`
@@ -372,7 +372,7 @@ You now have all of the information needed to create the necessary notification 
 
         return Notification(message=message, generation=generation)
     ```
-    
+
 1. Call the `create_notification` helper function in the `post` method of the `ReceiveMessage` class.
 
     ```py
@@ -383,7 +383,7 @@ You now have all of the information needed to create the necessary notification 
         overwrote_generation=overwrote_generation,
         overwritten_by_generation=overwritten_by_generation)
     ```
-    
+
 1. Check if the new notification has already been stored. Cloud Pub/Sub messaging guarantees at-least-once delivery, meaning a Pub/Sub notification may be received more than once. If the notification already exists, there has been no new change to the GCS photo bucket, and the Pub/Sub notification can be ignored.
 
     ```py
@@ -394,30 +394,30 @@ You now have all of the information needed to create the necessary notification 
     if exists_notification:
         return
     ```
-    
+
 1. Do not act for `OBJECT_METADATA_UPDATE` events, as they signal no change to the GCS photo bucket images themselves.
 
     ```py
     if new_notification.message is None:
       return
     ```
-    
+
 1. Store the new notification in Cloud Datastore. This, and all further code in the `ReceiveMessage` class, is only executed if the new notification is not a repeat and is not for an `OBJECT_METADATA_UPDATE` event.
 
     ```py
     new_notification.put()
     ```
-    
+
 ### Writing `Notifications` to the HTML file
 
-1. In `main.py`, in the `MainHandler`, in the `get` method, fetch all `Notifications` from Cloud Datastore in reverse date order and include them in `template_values`, to be written to the home/notifications page HTML file.
+1. In `main.py`, in the `MainHandler`, in the `get` method, fetch all `Notifications` from Cloud Datastore in reverse date order and include them in `template_values`, to be written to the `home/notifications` page HTML file.
 
     ```py
     notifications = Notification.query().order(
         -Notification.date).fetch(NUM_NOTIFICATIONS_TO_DISPLAY)
     template_values = {'notifications': notifications}
     ```
-    
+
 1. In the home/notifications page HTML file, loop through the `notifications` list you rendered to the template in `main.py` and print the formatted date/time of the notification and the notification message.
 
     ```html
@@ -427,7 +427,7 @@ You now have all of the information needed to create the necessary notification 
       </div>
     {% endfor %}
     ```
-    
+
 ### Checkpoint
 
 1. Run your application locally to check for basic errors, then deploy your application.
@@ -448,7 +448,7 @@ Because these actions only occur in the case of a photo upload, an `if` block sh
 if event_type == 'OBJECT_FINALIZE':
     # Photo upload-specific code here.
 ```
-    
+
 ### Creating the thumbnail
 
 To create the thumbnail, the original image from the GCS photo bucket should be resized. Use the [Images Python API](https://cloud.google.com/appengine/docs/standard/python/images/) to perform the required transformations.
@@ -466,15 +466,15 @@ To create the thumbnail, the original image from the GCS photo bucket should be 
         image.resize(width=180, height=200)
         return image.execute_transforms(output_encoding=images.JPEG)
     ```
-    
+
     This returns the thumbnail in a `string` format.
-    
+
 1. Call the `create_thumbnail` helper function in the `post` method of the `ReceiveMessage` class.
 
     ```py
     thumbnail = create_thumbnail(photo_name)
     ```
-    
+
 ### Storing the thumbnail in GCS
 
 The thumbnail should be stored in the GCS thumbnail bucket under the name `thumbnail_key` in order to distinguish between different versions of the same photo. Since two Cloud Pub/Sub notifications, an `OBJECT_FINALIZE` and an `OBJECT_DELETE`/`OBJECT_ARCHIVE`, are sent in an arbitrary order in the case of an overwrite, it is possible for two thumbnails with the same `thumbnail_name` to exist in storage at once. Utilizing the `generation_number` of the photo in the `thumbnail_key` ensures that the correct thumbnail is deleted when necessary.
@@ -495,28 +495,28 @@ The thumbnail should be stored in the GCS thumbnail bucket under the name `thumb
                                retry_params=write_retry_params) as filehandle:
             filehandle.write(thumbnail)
     ```
-    
+
 1. Call the `store_thumbnail_in_gcs` helper function in the `post` method of the `ReceiveMessage` class.
 
     ```py
     store_thumbnail_in_gcs(thumbnail_key, thumbnail)
     ```
-    
+
 ### Labeling the photo using Google Cloud Vision
 
 The [Google Cloud Vision API Client Library for Python](https://developers.google.com/api-client-library/python/apis/vision/v1) can be used to [annotate](https://developers.google.com/resources/api-libraries/documentation/vision/v1/python/latest/vision_v1.images.html) images, assigning them labels that describe the contents of the picture. You can later use these labels to search for specific photos.
 
 1. Create the `uri` to reference the appropriate photo in the GCS photo bucket.
-        
+
     ```py
     uri = '{}{}{}{}'.format('gs://',
                             PHOTO_BUCKET,
                             '/',
                             photo_name)
     ```
-        
+ 
 1. Write the `get_labels` helper function.
-    
+
     ```py
     def get_labels(uri, photo_name):
         service = googleapiclient.discovery.build('vision', 'v1')
@@ -560,13 +560,13 @@ The [Google Cloud Vision API Client Library for Python](https://developers.googl
 
         return labels
     ```
-        
+   
 1. Call the `get_labels` helper function in the `post` method of the `ReceiveMessage` class.
-    
+
     ```py
     labels = get_labels(uri, photo_name)
     ```
-        
+ 
 The `labels` list has now been obtained and can be used to build the `ThumbnailReference`.
 
 ### Creating and storing the `ThumbnailReference`
@@ -586,13 +586,13 @@ At this point, the only other thing you need to create the required `ThumbnailRe
             generation)
         return original_photo
     ```
-    
+
 1. Call the `get_original_url` helper function in the `post` method of the `ReceiveMessage` class.
 
     ```py
     original_photo = get_original_url(photo_name, generation_number)
     ```
-    
+
 1. Create the `ThumbnailReference` using the information gathered from the Cloud Pub/Sub message, `get_labels` function, and `get_original_url` function.
 
     ```py
@@ -602,13 +602,13 @@ At this point, the only other thing you need to create the required `ThumbnailRe
                 labels=labels,
                 original_photo=original_photo)
     ```
-    
+
 1. Store the newly created `ThumbnailReference` in Datastore.
 
     ```py
     thumbnail_reference.put()
     ```
-    
+
 You have now completed all of the code necessary to store the information about an uploaded photo in GCS and Datastore.
 
 ### Writing thumbnails to the photos HTML file
@@ -637,7 +637,7 @@ You have now completed all of the code necessary to store the information about 
         thumbnails[img_url] = thumbnail_reference
     template_values = {'thumbnails': thumbnails}
     ```
-    
+
 1. In the `templates` directory, in the photos page HTML file, loop through the thumbnails dictionary you rendered to the template in `main.py` and display the thumbnail image and its name.
 
     ```html
@@ -648,7 +648,7 @@ You have now completed all of the code necessary to store the information about 
       </div>
     {% endfor %}
     ```
-    
+
 ### Checkpoint
 
 1. Run your application locally to check for basic errors, then deploy your application.
@@ -695,13 +695,13 @@ elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
             thumbnail_key)
         cloudstorage.delete(filename)
     ```
-    
+
 1. Call the `delete_thumbnail` helper function in the `post` method of the `ReceiveMessage` class.
 
     ```py
     delete_thumbnail(thumbnail_key)
     ```
-    
+
 ### Checkpoint
 
 1. Run your application locally to check for basic errors, then deploy your application.
@@ -721,13 +721,13 @@ The search page of the web application has a search bar users can enter a `searc
 
 1. In `main.py`, in the `SearchHandler` class, fill out the `get` method.
     1. Get the `search-term` from the user. The `search-term` should be converted to lower case to avoid case sensitivity.
-    
+
         ```py
         search_term = self.request.get('search-term').lower()
         ```
-        
+
     1. In a similar manner as in the `PhotosHandler`, build an ordered dictionary with thumbnail serving urls as keys and `ThumbnailReferences` as values. However, unlike in the `PhotosHandler`, although you query all `ThumbnailReferences` from Datastore, you should only add the thumbnails labeled with the `search-term` to the dictionary.
-    
+
         ```py
         references = ThumbnailReference.query().order(
             -ThumbnailReference.date).fetch()
@@ -740,25 +740,25 @@ The search page of the web application has a search bar users can enter a `searc
                 img_url = get_thumbnail_serving_url(reference.thumbnail_key)
                 thumbnails[img_url] = reference
         ```
-        
+
     1. Include the thumbnails dictionary in `template_values`, to be written to the search page HTML file.
-    
+
         ```py
         template_values = {'thumbnails': thumbnails}
         ```
-        
+
 1. Fill out the search page HTML file.
     1. Set up the search bar.
-    
+
         ```html
         <form action="/search" method="get">
           <input name="search-term" placeholder="Search">
           <button>Search</button>
         </form>
         ```
-        
+
     1. Like in the photos page HTML file, loop through the thumbnails dictionary you rendered to the template in `main.py` and display the thumbnail image and its name. Include an `else` statement as part of your loop to specify behavior in the case the thumbnails dictionary is empty (no search results returned).
-        
+
         ```html
         {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
           <div>
@@ -769,7 +769,7 @@ The search page of the web application has a search bar users can enter a `searc
           <h2>No Search Results</h2>
         {% endfor %}
         ```
-    
+
 ### Checkpoint
 
 1. Run your application locally to check for basic errors, then deploy your application.
@@ -797,17 +797,17 @@ Before you start incorporating CSS, you have to tell your app to expect a CSS fi
     ```yaml
     - url: /[DIRECTORY NAME]
       static_dir: [DIRECTORY NAME]
-          
+
     - url: /static
       static_dir: static
     ```
    Note that this code should go in the `handlers` section of your `app.yaml` file and must be above
-   
+
     ```yaml
     - url: .*
       script: main.app
     ```
-        
+ 
 1. Inside the directory you created, create a CSS file. Leave it blank for now; you'll add code to it in the following sections. Note that your file must have the extension `.css`.
 1. In each HTML file (you should have three) add the following code inside the `<head>` section, replacing [DIRECTORY NAME] and [FILE NAME] with the appropriate directory and file.
 
@@ -841,7 +841,7 @@ First, you'll style the HTML components present on every page of the website. Th
       position: fixed;
     }
     ```
-    
+
     Note that you should make the background-color here different from the color in step 1; otherwise it won't look any         different than before. Setting the width to 10% makes the links box take up 10% of the page. If you change the width of     your browser around, you should see the links box change with it. Setting the position to fixed keeps the link box in       the top left corner of your webpage even if you scroll down.
 1. You can center the links within their box and change their color by adding the following code.
 
@@ -869,7 +869,7 @@ First, you'll style the HTML components present on every page of the website. Th
       color: [COLOR];
     }
     ```
-        
+
 1. The title of the page is contained in the `<h1>` HTML blocks. You can center it, set the color and font size, and add an underline with the following block of code.
 
     ```css
@@ -884,13 +884,13 @@ First, you'll style the HTML components present on every page of the website. Th
       margin-bottom: 30px;
     }
     ```
-        
+
    `text-align: center` centers the title in the middle of the page. `border-bottom` adds the underline. `padding` sets the     space between the title and the underline. `width` sets how much of the screen the underline occupies. `margin: auto`       centers the underline. `margin-bottom` sets the spacing between the underline and anything that might go below it. This     will be applicable in later sections.
-   
+
 ### Checkpoint
 
 1. Run your application locally to check for basic errors, then deploy your application.
-1. Click through the links on each page and make sure the colors and placement remain consistent. 
+1. Click through the links on each page and make sure the colors and placement remain consistent.
 1. Resize your browser window and observe how the components dynamically change to account for this.
 
 ### Style the home (notifications) page
@@ -942,11 +942,11 @@ Because the search bar is only a feature of the search page, you could style it 
 
 ### Style the thumbnails for both the photos and search pages
 
-The thumbnails displayed on your website currently should appear in a single vertical column on the left of the page. In this section you'll reformat them to appear in a table format. 
+The thumbnails displayed on your website currently should appear in a single vertical column on the left of the page. In this section you'll reformat them to appear in a table format.
 
 1. Add HTML in the files that control the photos and search pages. The code instructions for this step should be implemented in both the photos page HTML file and the search page HTML file.
     1. Add a gallery class outside the for loop to hold all the thumbnails:
-    
+
         ```html
         <div class="gallery">
           {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
@@ -954,9 +954,9 @@ The thumbnails displayed on your website currently should appear in a single ver
           {% endfor %}
         </div>
         ```
-        
+
     1. Add class names to the `<div>` tags inside the for loop. For example:
-    
+
         ```html
         <div class="thumbnail">
           <img src='{{img_url}}'>
@@ -965,16 +965,16 @@ The thumbnails displayed on your website currently should appear in a single ver
         ```
 1. Add CSS to format the classes you just added. The code instructions for this step only need to be implemented once in your external CSS file. As long as you have the same class names in the two HTML files from step 1, the code in this section will be applied to both pages automatically.
     1. Set the margins on the gallery class so the thumbnails don't appear too far on the left of the page (they would           interfere with the links if the page scrolled down) and appear centered, i.e. not too far on the right of the page           either.
-    
+
         ```css
         div.gallery {
           margin-left: 12%;
           margin-right: 10%;
         }
         ```
-        
+
     1. Use the thumbnail class to create a kind of box to hold the thumbnail image and its caption:
-    
+
         ```css
         div.thumbnail {
           margin: 5px;
@@ -984,9 +984,9 @@ The thumbnails displayed on your website currently should appear in a single ver
           border: 1px solid [COLOR];
         }
         ```
-        `margin` sets the spacing between the thumbnails. The `width` and `height` properties match the width and height             that thumbnails are sized to in `main.py`. 
+        `margin` sets the spacing between the thumbnails. The `width` and `height` properties match the width and height             that thumbnails are sized to in `main.py`.
     1. Further format the thumbnail class to display thumbnails in a table:
-    
+
         ```css
         div.thumbnail:after {
           content: "";
@@ -995,7 +995,7 @@ The thumbnails displayed on your website currently should appear in a single ver
         }
         ```
     1. Center the thumbnail image within the thumbnail box:
-    
+
         ```css
         div.thumbnail img {
           display: block;
@@ -1004,14 +1004,14 @@ The thumbnails displayed on your website currently should appear in a single ver
         ```
         Note that while the width of the thumbnail box is to 180 pixels, the same width thumbnails are resized to in                `main.py`, portrait oriented photos may have a smaller width. This ensures that photos are centered within the 180          pixels even when they do not occupy 180 pixels.
     1. Center the caption 10 pixels below the thumbnail image using the descent class:
-    
+
         ```css
         div.descent {
           padding: 10px;
           text-align: center;
         }
         ```
-        
+
 ### Checkpoint
 
 1. Run your application locally to check for basic errors, then deploy your application.
@@ -1022,23 +1022,22 @@ The thumbnails displayed on your website currently should appear in a single ver
 
 Now that your thumbnails are nicely formatted, you can make your webpage display the original photo when a thumbnail is clicked on by incorporating JavaScript into your HTML files.
 
-1. Add HTML for both the photos and search pages. The instructions for this step should be implemented in your two HTML files responsible for the photos and search pages. 
+1. Add HTML for both the photos and search pages. The instructions for this step should be implemented in your two HTML files responsible for the photos and search pages.
     1. Add an id to the thumbnail image:
-    
+
         ```html
         <img id='{{thumbnail_reference.thumbnail_name}}' src='{{img_url}}' >
         ```
         This will allow the image to be looked up by id, which is how you will implement an onclick function to display the         original photo when its thumbnail is clicked.
     1. Within the gallery class, after the end of the for loop, insert:
-    
+
         ```html
         <div id='myModal' class="modal">
           <span class="close" onclick="closeModal()">&times;</span>
           <div class="modal-content">
           {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
             <div class="mySlides">
-              <img id='{{loop.index}}' src='{{thumbnail_reference.original_photo}}'                                         
-              alt='{{thumbnail_reference.thumbnail_name}}'>
+              <img id='{{loop.index}}' src='{{thumbnail_reference.original_photo}}' alt='{{thumbnail_reference.thumbnail_name}}'>
             </div>
           {% endfor %}
             <div class="caption-container">
@@ -1051,7 +1050,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
 
 1. Add styling to your external CSS file. This will format both the photos and search pages as long as they have the same class names for the HTML you just added.
     1. Add an effect to the thumbnails so that when the cursor hovers over them, they turn slightly transparent and the         cursor changes to a pointer to indicate to the user that they can click on thumbnails.
-    
+
         ```css
         div.thumbnail img:hover {
           opacity: 0.7;
@@ -1059,7 +1058,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         }
         ```
     1. Format the modal that takes over the whole page when a thumbnail is clicked:
-    
+
         ```css
         div.modal {
           display: none;
@@ -1076,7 +1075,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         ```
         `display` is initially set to none because the modal should only be displayed when a thumbnail is clicked. The logic         for this will be added in step 3. `width` and `height` are set to 100% to take up the whole page. `background-color`         is set to a somewhat transparent black so thumbnails will still be partially visible behind the modal.
     1. Place the `close` button in the top right corner of the modal:
-    
+
         ```css
         span.close {
           position: absolute;
@@ -1089,7 +1088,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         }
         ```
     1. Add hover and focus effects to the `close` button:
-    
+
         ```css
         span.close:hover,
         span.close:focus {
@@ -1099,7 +1098,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         }
         ```
     1. Format modal-content, the box that will hold the original photo and caption.
-    
+
         ```css
         div.modal-content {
           position: relative;
@@ -1111,14 +1110,14 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         ```
         This centers modal-content and sets it to take up 55% of the page, with a max width of 700 pixels. This means that           even if 700 pixels is less than 55% of the page, modal-content will never be wider than 700 pixels.
     1. Set the default display of mySlides to none:
-    
+
         ```css
         div.mySlides {
           display: none;
         }
         ```
     1. Format the image in mySlides to match the width of modal-content:
-    
+
         ```css
         div.mySlides img {
           display: block;
@@ -1130,7 +1129,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         ```
         `height` is set to auto so the image will retain its original proportions.
     1. Position `caption-container` below the image in the `modal-content` box, where [COLOR] is the color the caption text     will be.
-    
+
         ```css
         .caption-container {
           text-align: center;
@@ -1139,7 +1138,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         }
         ```
     1. Format the caption to be centered in `caption-container` and have a height of 50 pixels:
-    
+
         ```css
         #caption {
           margin: auto;
@@ -1153,7 +1152,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         ```
 1. Add JavaScript embedded within the HTML. The instructions in this section will need to be implemented in both HTML files associated with the photos and search pages.
     1. Implement the function to close the modal after the end of the `gallery` class.
-    
+
         ```javascript
         <script>
           function closeModal() {
@@ -1163,7 +1162,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         ```
         This function is called whenever the close button is clicked on and resets the `modal` class to not be displayed.
     1. Within the `gallery` class still, but after the `modal` class, add the following for loop and embedded script:
-    
+
         ```html
         {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
         <script>
@@ -1178,10 +1177,10 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         ```
         This defines a function that gets called whenever a thumbnail is clicked on. The `modal` class is displayed and             another function, `currentSlide` is called.
     1. Add a variable and implement currentSlide() in the same script that contains closeModal().
-    
+
         ```javascript
         var slideIndex;
-        
+
         function currentSlide(n) {
           slideIndex = n;
           showSlides(slideIndex);
@@ -1189,7 +1188,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         ```
         Note that currentSlide() calls another function, showSlides(). You'll implement this next.
     1. Implement showSlides:
-        
+ 
         ```javascript
         function showSlides(n) {
           var i;
@@ -1204,7 +1203,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         }
         ```
         This function sets every `mySlides` class to not be displayed except for the one that contains the original photo of         the thumbnail that was clicked. The caption is set to the name of the image displayed.
-        
+
 ### Checkpoint
 1. Run your application locally to check for basic errors, then deploy your application.
 1. Navigate to the photos page and hover over a thumbnail. It should become less opaque and your cursor should change.
@@ -1215,20 +1214,20 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
 ### Make photos scrollable
 The last feature to add to your website is scrolling. After clicking on a thumbnail, the original photo appears. In this section, you'll add the ability to scroll to either side of that photo and see the original photos of other thumbnails without having to close the modal and reopen it by clicking on another thumbnail.
 
-1. Add HTML for both the photos and search pages. The instructions for this step should be implemented in your two HTML files responsible for the photos and search pages. 
+1. Add HTML for both the photos and search pages. The instructions for this step should be implemented in your two HTML files responsible for the photos and search pages.
     1. Within the 'mySlides' class add the class 'numbertext'. This will display the current number of the photo displayed,     i.e. `1/5`. 
         ```html
         <div class="numbertext">{{loop.index}} / {{thumbnails|length}}</div>
         ```
         `loop.index` is the current iteration of the for loop, and `thumbnails|length` is the total number of iterations the for           loop will go through.
     1. After the for loop containing `mySlides` and classes for previous and next buttons:
-    
+
         ```html
          <a class="prev" onclick="plusSlides(-1)">&#10094</a>
          <a class="next" onclick="plusSlides(1)">&#10095</a>
         ```
         `&#10094` and `&#10095` are the HTML codes for previous and next arrows, respectively. The plusSlides() function             will be implemented in Step 3.
-        
+
 1. Add styling to your external CSS file. This will format both the photos and search pages as long as they have the same class names for the HTML you just added.
     1. Place the `numbertext` class in the top left of the original photo:
         ```css
@@ -1286,7 +1285,7 @@ The last feature to add to your website is scrolling. After clicking on a thumbn
         if (n > slides.length) {slideIndex = 1}
         if (n < 1) {slideIndex = slides.length}
         ```
-        
+
 ### Checkpoint
 1. Run your application locally to check for basic errors, then deploy your application.
 1. Navigate to the photos page and click on a thumbnail. The photo that appears should now have next and previous arrows as well as a number in the top left corner. Click the arrows to scroll through the photos. Check that the caption updates correctly as you scroll.
