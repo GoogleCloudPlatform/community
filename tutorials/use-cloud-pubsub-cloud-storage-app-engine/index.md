@@ -14,7 +14,6 @@ A general overview of how the application works is shown in the diagrams below.
 ![Shared Photo App Workflow](https://storage.googleapis.com/gcp-community/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-app-workflow.png)
 
 The overall workflow of receiving a notification:
-
 ![Receiving a Notification](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/receiving-a-notification.png)
 
 1. A user uploads or deletes something from their GCS photo bucket.
@@ -26,7 +25,6 @@ The overall workflow of receiving a notification:
 1. If the event type from the message is `OBJECT_FINALIZE`, then a new `ThumbnailReference` is created and stored in Datastore. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, then the appropriate `ThumbnailReference` is deleted from Datastore.
 
 The overall workflow of loading the home page:
-
 ![Loading Notifications](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-home-page.png)
 
 0. The user navigates to https://project-test-172118.appspot.com/.
@@ -35,7 +33,6 @@ The overall workflow of loading the home page:
 1. The HTML file links to an external CSS file for styling.
 
 The overall workflow of loading the photos page:
-
 ![Loading Photos](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-photos-page.png)
 
 0. The user navigates to https://project-test-172118.appspot.com/photos.
@@ -45,7 +42,6 @@ The overall workflow of loading the photos page:
 1. The HTML file links to an external CSS file for styling.
 
 The overall workflow of loading the search page: 
-
 ![Loading Search](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-search-page.png)
 
 0. The user navigates to https://project-test-172118.appspot.com/search.
