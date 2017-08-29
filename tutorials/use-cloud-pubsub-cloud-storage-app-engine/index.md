@@ -6,7 +6,6 @@ tags: App Engine, Cloud Pub/Sub, Cloud Storage, GCS, Datastore, photo album
 date published:
 ---
 
-## Tutorial Outline
 * [Overview](#overview)
 * [Objectives](#objectives)
 * [Costs](#costs)
@@ -17,9 +16,35 @@ date published:
     * [The `main.py` file](#the-mainpy-file)
     * [Checkpoint](#checkpoint)
 * [Creating the notifications page](#creating-the-notifications-page)
-    * [Receiving Cloud Pub/Sub messages](#receiving-cloud-pub/sub-messages)
+    * [Receiving Cloud Pub/Sub messages](#receiving-cloud-pubsub-messages)
     * [Creating and storing `Notifications`](#creating-and-storing-notifications)
-    
+    * [Writing `Notifications` to the HTML file](#writing-notifications-to-the-html-file)
+    * [Checkpoint](#checkpoint-1)
+* [Implementing photo upload functionality](#implementing-photo-upload-functionality)
+    * [Creating the thumbnail](#creating-the-thumbnail)
+    * [Storing the thumbnail in GCS](#storing-the-thumbnail-in-gcs)
+    * [Labeling the photo using Google Cloud Vision](#labeling-the-photo-using-google-cloud-vision)
+    * [Creating and storing the `ThumbnailReference`](#creating-and-storing-the-thumbnailreference)
+    * [Writing thumbnails to the photos HTML file](#writing-thumbnails-to-the-photos-html-file)
+    * [Checkpoint](#checkpoint-2)
+* [Implementing photo delete/archive functionality](#implementing-photo-deletearchive-functionality)
+    * [Checkpoint](#checkpoint-3)
+* [Creating the search page](#creating-the-search-page)
+    * [Checkpoint](#checkpoint-4)
+* [Style](#style)
+    * [Set up](#set-up-1)
+    * [Adding style common to every page](#adding-style-common-to-every-page)
+    * [Checkpoint](#checkpoint-5)
+    * [Styling the home (notifications) page](#styling-the-home-notifications-page)
+    * [Styling the search bar on the search page](#styling-the-search-bar-on-the-search-page)
+    * [Checkpoint](#checkpoint-6)
+    * [Styling the thumbnails for both the photos and search pages](#styling-the-thumbnails-for-both-the-photos-and-search-pages)
+    * [Checkpoint](#checkpoint-7)
+    * [Making thumbnails clickable](#making-thumbnails-clickable)
+    * [Checkpoint](#checkpoint-8)
+    * [Making photos scrollable](#making-photos-scrollable)
+    * [Checkpoint](#checkpoint-9)
+* [Clean up](#clean-up)
 
 ## Overview
 
@@ -813,7 +838,7 @@ Before you start incorporating CSS, you have to tell your app to expect a CSS fi
     <link rel="stylesheet" type="text/css" href="/[DIRECTORY NAME]/[FILE NAME]">
     ```
 
-### Add style common to every page
+### Adding style common to every page
 
 First, you'll style the HTML components present on every page of the website. This includes the body, the links to other pages, and the title of the page. You should run your app locally after each step to see the changes.
 
@@ -891,7 +916,7 @@ First, you'll style the HTML components present on every page of the website. Th
 1. Click through the links on each page and make sure the colors and placement remain consistent.
 1. Resize your browser window and observe how the components dynamically change to account for this.
 
-### Style the home (notifications) page
+### Styling the home (notifications) page
 
 Now that you have the basic styling done for the website as a whole, you can focus on styling the elements unique to each page, starting with the home page. This time you'll embed the style directly into the HTML instead of placing it in a separate file.
 1. Indent and set the font size for the notification messages. In your html file that controls the home page, modify the `<div>` to include a style instruction:
@@ -905,7 +930,7 @@ Now that you have the basic styling done for the website as a whole, you can foc
     <small style="font-size:12px;">
     ```
 
-### Style the search bar on the search page
+### Styling the search bar on the search page
 
 Because the search bar is only a feature of the search page, you could style it directly within the HTML file that controls the search page. However, you'll add more style instructions for the search bar than you did for displaying the notifications, so you'll put the style for it in your CSS file to keep the HTML file from getting too cluttered.
 
@@ -938,7 +963,7 @@ Because the search bar is only a feature of the search page, you could style it 
 1. Visit the home page to see the notification messages indented and notice that the date and time part is smaller than the actual message.
 1. Visit the search page to see the search bar centered along with the `"No Search Results"` text.
 
-### Style the thumbnails for both the photos and search pages
+### Styling the thumbnails for both the photos and search pages
 
 The thumbnails displayed on your website currently should appear in a single vertical column on the left of the page. In this section you'll reformat them to appear in a table format.
 
@@ -1016,7 +1041,7 @@ The thumbnails displayed on your website currently should appear in a single ver
 1. Navigate to the photos page and check that the thumbnails displayed there now appear in a table format with their captions centered underneath.
 1. Navigate to the search page and enter a search term that will yield results. The displayed thumbnails should appear in the same format as on the photos page.
 
-### Make thumbnails clickable
+### Making thumbnails clickable
 
 Now that your thumbnails are nicely formatted, you can make your webpage display the original photo when a thumbnail is clicked on by incorporating JavaScript into your HTML files.
 
@@ -1209,7 +1234,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
 1. Close the modal and restore the thumbnail view.
 1. Check that the search page has the same behavior.
 
-### Make photos scrollable
+### Making photos scrollable
 The last feature to add to your website is scrolling. After clicking on a thumbnail, the original photo appears. In this section, you'll add the ability to scroll to either side of that photo and see the original photos of other thumbnails without having to close the modal and reopen it by clicking on another thumbnail.
 
 1. Add HTML for both the photos and search pages. The instructions for this step should be implemented in your two HTML files responsible for the photos and search pages.
