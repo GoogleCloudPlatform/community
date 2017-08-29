@@ -26,7 +26,7 @@ A general overview of how the application works is shown in the diagrams below.
 **The overall workflow of loading the home page:**
 ![Loading Notifications](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-home-page.png)
 
-0. The user navigates to `http://[PROJECT ID].appspot.com/`. For example: [https://project-test-172118.appspot.com/](https://project-test-172118.appspot.com/).
+1. The user navigates to `http://[PROJECT ID].appspot.com/`. For example: [https://project-test-172118.appspot.com/](https://project-test-172118.appspot.com/).
 1. A previously-specified number of `Notifications` are queried from Datastore, ordered by date and time, most recent first.
 1. The queried `Notifications` are sent to the front-end to be formatted and displayed on the home page.
 1. The HTML file links to an external CSS file for styling.
@@ -34,7 +34,7 @@ A general overview of how the application works is shown in the diagrams below.
 **The overall workflow of loading the photos page:**
 ![Loading Photos](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-photos-page.png)
 
-0. The user navigates to `http://[PROJECT ID].appspot.com/photos`. For example: [https://project-test-172118.appspot.com/photos](https://project-test-172118.appspot.com/photos).
+1. The user navigates to `http://[PROJECT ID].appspot.com/photos`. For example: [https://project-test-172118.appspot.com/photos](https://project-test-172118.appspot.com/photos).
 1. All the `ThumbnailReferences` are fetched from Datastore, ordered by date and time, most recent first.
 1. Each `ThumbnailReference` is used to get a serving url for the corresponding thumbnail stored in the GCS thumbnail bucket.
 1. A dictionary of `ThumbnailReferences` and their serving urls is sent to the front-end to be formatted and displayed on the photos page.
@@ -43,7 +43,7 @@ A general overview of how the application works is shown in the diagrams below.
 **The overall workflow of loading the search page:**
 ![Loading Search](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-search-page.png)
 
-0. The user navigates to `http://[PROJECT ID].appspot.com/search`. For example: [https://project-test-172118.appspot.com/search](https://project-test-172118.appspot.com/search). The user enters a search term.
+1. The user navigates to `http://[PROJECT ID].appspot.com/search`. For example: [https://project-test-172118.appspot.com/search](https://project-test-172118.appspot.com/search). The user enters a search term.
 1. All the `ThumbnailReferences` are fetched from Datastore, ordered by date and time, most recent first.
 1. Each queried `ThumbnailReference` that contains the search term as one of its `labels` is used to get a serving url for the corresponding thumbnail stored in the GCS thumbnail bucket.
 1. A dictionary of `ThumbnailReferences` that contain the search term as one of their `labels` and their serving urls is sent to the front-end to be formatted and displayed on the search page.
@@ -76,7 +76,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=41
 
 1. [Install the Google Cloud SDK](https://cloud.google.com/sdk/downloads) for necessary commands such as `gcloud` and `gsutil`.
 1. [Create a Google Cloud Platform account](https://console.cloud.google.com/) for using the Cloud Platform Console.
-1. In the Cloud Platform Console, [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects). Your project has a unique ID that is part of your web application url. 
+1. In the Cloud Platform Console, [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects). Your project has a unique ID that is part of your web application url.
 1. Enable billing: [create a billing project](https://support.google.com/cloud/answer/6288653?hl=en). Learn more about billing [here](https://cloud.google.com/appengine/docs/standard/python/console/).
 1. In the command line, [set the default project](https://cloud.google.com/sdk/docs/managing-configurations) to your newly created project by running the following command:
 
