@@ -30,11 +30,11 @@ Take the following steps to enable the Google Container Engine API:
 
 Make sure you have the following:
 
-1.  [Docker CE Version 17.03.01](https://www.docker.com/community-edition)
-1.  [Codeship Account](https://app.codeship.com/registrations/new)
-1.  [Codeship Jet CLI](https://documentation.codeship.com/pro/builds-and-configuration/cli/)
-1.  [`hello-express` source code](https://github.com/kellyjandrews/hello-express)
-1.  [GitHub](https://github.com/), [Bitbucket](https://bitbucket.org/), or [GitLab](https://about.gitlab.com/) account
+*  [Docker CE Version 17.03.01](https://www.docker.com/community-edition)
+*  [Codeship Account](https://app.codeship.com/registrations/new)
+*  [Codeship Jet CLI](https://documentation.codeship.com/pro/builds-and-configuration/cli/)
+*  [`hello-express` source code](https://github.com/kellyjandrews/hello-express)
+*  [GitHub](https://github.com/), [Bitbucket](https://bitbucket.org/), or [GitLab](https://about.gitlab.com/) account
 
 ## Setting up the continuous deployment pipeline
 
@@ -135,7 +135,7 @@ This pipeline runs each step in series. The `build-image` step instructs Codeshi
 
 The third and fourth step will run only if the branch is tagged as `master`. The `tag-as-master` step will add the `master` tag to the image pushed to Google Container Registry. This indicates the image in Google Container Registry that is currently deployed. The following step, `gke-initial-deployment`, builds the Container Engine cluster and deploys the `gcr.io/YOUR_PROJECT_ID/hello-express` Docker image.
 
-You will run this pipeline locally using the [Codeship Jet CLI](https://documentation.codeship.com/pro/builds-and-configuration/cli/). Since there is no git commit or branch to reference, use the `ci-commit-id` and `tag` flags with the Codeship Jet CLI to pass in test strings at runtime, eg `1234ABCD` and `master`. The build on the Codeship CI server populates `ci-commit-id` with the git commit SHA, and `tag` with the branch or tag name. Finally, the `--push` flag instructs the Codeship Jet CLI to run the push steps in the `codeship-steps.yml` file.  
+You will run this pipeline locally using the [Codeship Jet CLI](https://documentation.codeship.com/pro/builds-and-configuration/cli/). Since there is no git commit or branch to reference, use the `ci-commit-id` and `tag` flags with the Codeship Jet CLI to pass in test strings at runtime, (for example, `1234ABCD` and `master`). The build on the Codeship CI server populates `ci-commit-id` with the git commit SHA, and `tag` with the branch or tag name. Finally, the `--push` flag instructs the Codeship Jet CLI to run the push steps in the `codeship-steps.yml` file.  
 
     jet steps --ci-commit-id 1234ABCD --tag master --push
 
@@ -163,7 +163,7 @@ Use the following steps to create a Codeship project:
     dashboard.
 1.  Click `New Project`.
 1.  Select the service where you created the repository.
-1.  Paste the clone url in the `Repository Clone URL` field and click `Connect`.
+1.  Paste the clone URL in the `Repository Clone URL` field and click `Connect`.
 1.  Click the `Select Pro Project` button.
 
 ![Select Pro Project](https://storage.googleapis.com/gcp-community/tutorials/continuous-deployment-pipeline-google-container-engine-with-codeship/select_pro_project.png "Select Pro Project")
@@ -186,7 +186,7 @@ can run the encrypt command:
 
     jet encrypt .env encrypted.env
 
-After you encrypt the `.env` file, you need, you need to update the
+After you encrypt the `.env` file, you need to update the
 `codeship-services.yml` file to use the encrypted file:
 
     app:
