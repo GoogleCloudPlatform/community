@@ -93,7 +93,7 @@ Codeship Jet CLI.
 1.  Make sure the scripts in the `bin` folder are executable. In a terminal
     window, navigate to the project folder and run the following command:
 
-        chmod -R -x ./bin
+        chmod -R +x ./bin
 
 1.  Update the `image` line in the `codeship-service.yml` file with your Google
     Cloud Platform project ID.
@@ -135,11 +135,11 @@ This pipeline runs each step in series. The `build-image` step instructs Codeshi
 
 The third and fourth step will run only if the branch is tagged as `master`. The `tag-as-master` step will add the `master` tag to the image pushed to Google Container Registry. This indicates the image in Google Container Registry that is currently deployed. The following step, `gke-initial-deployment`, builds the Container Engine cluster and deploys the `gcr.io/YOUR_PROJECT_ID/hello-express` Docker image.
 
-You will run this pipeline locally using the [Codeship Jet CLI](https://documentation.codeship.com/pro/builds-and-configuration/cli/). Since there is no git commit or branch to reference, use the `ci-commit-id` and `tag` flags with the Codeship Jet CLI to pass in values at runtime:  
+You will run this pipeline locally using the [Codeship Jet CLI](https://documentation.codeship.com/pro/builds-and-configuration/cli/). Since there is no git commit or branch to reference, use the `ci-commit-id` and `tag` flags with the Codeship Jet CLI to pass in test strings at runtime, eg `1234ABCD` and `master`. The build on the Codeship CI server populates `ci-commit-id` with the git commit SHA, and `tag` with the branch or tag name. Finally, the `--push` flag instructs the Codeship Jet CLI to run the push steps in the `codeship-steps.yml` file.  
 
-    jet steps --ci-commit-id 1234ABCD --tag master
+    jet steps --ci-commit-id 1234ABCD --tag master --push
 
-This command will run the steps to build your Container Engine cluster for the initial
+This command will run the steps to build your container cluster for the initial
 setup. It will take a few minutes to complete. Once completed, navigate to the
 [Discovery](https://console.cloud.google.com/kubernetes/discovery) page in the
 Google Cloud Platform Console to verify the status is `ok`. Click the endpoint
