@@ -6,6 +6,23 @@ tags: App Engine, Cloud Pub/Sub, Cloud Storage, GCS, Datastore, photo album
 date published:
 ---
 
+## Tutorial Outline
+* [Overview](#overview)
+* [Objectives](#objectives)
+* [Costs](#costs)
+* [Set up](#set-up)
+* [Basic application layout](#basic-application-layout)
+    * [Libraries and `app.yaml`](#libraries-and-appyaml)
+    * [HTML files](#html-files)
+    * [The `main.py` file](#the-mainpy-file)
+    * [Checkpoint](#checkpoint)
+* [Creating the notifications page](#creating-the-notifications-page)
+    * [Receiving Cloud Pub/Sub messages](#receiving-cloud-pub/sub-messages)
+    * [Creating and storing `Notifications`](#creating-and-storing-notifications)
+    
+
+## Overview
+
 This tutorial teaches you how to integrate several Google products to simulate a shared photo album, hosted on App Engine and managed through the Cloud Platform Console. The web application has three pages:
 1. Home/news feed, which displays notifications.
 1. Photos, which displays all uploaded photos in thumbnail form.
