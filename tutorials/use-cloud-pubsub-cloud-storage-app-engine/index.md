@@ -850,8 +850,7 @@ First, you'll style the HTML components present on every page of the website. Th
     }
     ```
 
-   You can specify the color by typing in the name of it, such as `blue`, by specifying the rgb configuration, or by giving    a hexadecimal representation. You can find more information on how colors work in CSS [here]
-   (https://www.w3schools.com/css/css_colors.asp). 
+   You can specify the color by typing in the name of it, such as `blue`, by specifying the rgb configuration, or by giving    a hexadecimal representation. You can find more information on how colors work in CSS [here](https://www.w3schools.com/css/css_colors.asp). 
 1. Next you'll create a box to hold the links to other pages. Add the following code to your `CSS` file.
 
     ```css
@@ -938,7 +937,7 @@ Now that you have the basic styling done for the website as a whole, you can foc
       font-family: '[FONT]', [STYLE];
     }
     ```
-    `list-style-type` sets what kind of list the notifications appear in. [Pick a value]              (https://www.w3schools.com/cssref/pr_list-style-type.asp#propertyvalues) for it. The `font-family` you choose will affect how the `list-style-type` appears.
+    `list-style-type` sets what kind of list the notifications appear in. [Pick a value](https://www.w3schools.com/cssref/pr_list-style-type.asp#propertyvalues) for it. The `font-family` you choose will affect how the `list-style-type` appears.
 1. You can set the color of your bullet points, roman numerals, or whatever `list-style-type` you chose above by adding:
    ```css
    ul.notification li {
