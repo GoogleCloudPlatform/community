@@ -850,7 +850,7 @@ First, you'll style the HTML components present on every page of the website. Th
     }
     ```
 
-   You can specify the color by typing in the name of it, such as `blue`, by specifying the rgb configuration, or by giving    a hexadecimal representation. You can find more information on how colors work in CSS [here](https://www.w3schools.com/css/css_colors.asp).
+   You can specify the color by typing in the name of it, such as `blue`, by specifying the rgb configuration, or by giving a hexadecimal representation. You can find more information on how colors work in CSS [here](https://www.w3schools.com/css/css_colors.asp).
 1. Next you'll create a box to hold the links to other pages. Add the following code to your `CSS` file.
 
     ```css
@@ -1017,7 +1017,7 @@ The thumbnails displayed on your website currently should appear in a single ver
         </div>
         ```
 1. Add CSS to format the classes you just added. The code instructions for this step only need to be implemented once in your external CSS file. As long as you have the same class names in the two HTML files from step 1, the code in this section will be applied to both pages automatically.
-    1. Set the margins on the gallery class so the thumbnails don't appear too far on the left of the page (they would           interfere with the links if the page scrolled down) and appear centered, i.e. not too far on the right of the page           either.
+    1. Set the margins on the gallery class so the thumbnails don't appear too far on the left of the page (they would interfere with the links if the page scrolled down) and appear centered, i.e. not too far on the right of the page either.
 
         ```css
         div.gallery {
@@ -1275,7 +1275,7 @@ The last feature to add to your website is scrolling. After clicking on a thumbn
         <div class="numbertext">{{loop.index}} / {{thumbnails|length}}</div>
         ```
         `loop.index` is the current iteration of the `for` loop, and `thumbnails|length` is the total number of iterations the `for` loop will go through.
-    1. After the `for` loop containing `mySlides` and classes for previous and next buttons:
+    1. After the `for` loop containing `mySlides`, add classes for previous and next buttons:
 
         ```html
          <a class="prev" onclick="plusSlides(-1)">&#10094</a>
