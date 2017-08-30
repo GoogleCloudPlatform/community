@@ -145,10 +145,10 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=41
 
 ## Basic application layout
 
-If you do not feel like coding the entire application from scratch, feel free to clone the git repository with a default application by running:
+If you do not feel like coding the entire application from scratch, feel free to copy the [code for the default application](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app) from GitHub by running:
 
   ```sh
-  git clone https://github.com/GChien44/tutorial-v2.git
+  svn export https://github.com/GoogleCloudPlatform/community/trunk/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app
   ```
 
 Note that if you choose this option, you still need to make a `lib` directory and run the `install` command. These tasks are outlined in steps one and three of the **Libraries and `app.yaml`** section. In addition to these tasks, some constants in the `main.py` file still need to be changed to suit your GCS bucket names. Look for the constants THUMBNAIL_BUCKET, PHOTO_BUCKET, NUM_NOTIFICATIONS_TO_DISPLAY, and MAX_LABELS immediately after the imports at the top of the file.
@@ -163,10 +163,10 @@ The external library and `app.yaml` files are necessary for configuring your App
 1. In your host directory, create the file `requirements.txt` and copy in the following text:
 
     ```txt
-    jinja2
-    webapp2
-    GoogleAppEngineCloudStorageClient
-    google-api-python-client
+    jinja2==2.9.6
+    webapp2==3.0.0b1
+    GoogleAppEngineCloudStorageClient==1.9.22.1
+    google-api-python-client==1.6.2
     ```
 
     This specifies which libraries are necessary for your application.
@@ -238,7 +238,7 @@ The `main.py` file contains the backend logic of the website, including the rece
 
 1. Create a `main.py` file in your host directory.
 1. Add the required imports to the top of the file:
-    
+
     ```py
     import collections
     import json
@@ -263,7 +263,7 @@ The `main.py` file contains the backend logic of the website, including the rece
     NUM_NOTIFICATIONS_TO_DISPLAY = [SOME NUMBER]
     MAX_LABELS = [SOME NUMBER]
     ```
- 
+
 1. Set up [jinja2](http://jinja.pocoo.org/docs/2.9/templates/) for HTML templating.
 
     ```py
@@ -280,7 +280,7 @@ The `main.py` file contains the backend logic of the website, including the rece
         date = ndb.DateTimeProperty(auto_now_add=True)
         generation = ndb.StringProperty()
     ```
-  
+
 1. Create the `ThumbnailReference` class. ThumbnailReferences are stored in Cloud Datastore and contain information about the thumbnails stored in your GCS thumbnail bucket. ThumbnailReferences have a thumbnail_name (the name of the uploaded photo), a thumbnail_key (a concatenation of the name and generation number of an uploaded photo, used to distinguish similarly named photos), date of posting, a list of label descriptions assigned to the corresponding photo using Google Cloud Vision, and the url of the original photo that is stored in GCS.
 
     ```py
@@ -301,7 +301,7 @@ The `main.py` file contains the backend logic of the website, including the rece
           template = jinja_environment.get_template('[NAME OF YOUR HOME PAGE HTML FILE]')
           self.response.write(template.render(template_values))
     ```
- 
+
 1. Create a `PhotosHandler` class with a `get` method for getting information from the server and writing it to the photos page HTML file. This should look similar to the `MainHandler`.
 1. Create a `SearchHandler` class with a `get` method for getting information from the server and writing it to the search page HTML file. This should look similar to the `MainHandler` and `PhotosHandler`.
 1. Create a `ReceiveMessage` class with a `post` method for posting information to ther server. This `post` method will receive Cloud Pub/Sub messages and perform necessary logic using the information. Further detail is in the next section.
@@ -551,7 +551,7 @@ The [Google Cloud Vision API Client Library for Python](https://developers.googl
     ```py
     uri = 'gs://{}/{}'.format(PHOTO_BUCKET, photo_name)
     ```
- 
+
 1. Write the `get_labels` helper function.
 
     ```py
@@ -597,13 +597,13 @@ The [Google Cloud Vision API Client Library for Python](https://developers.googl
 
         return labels
     ```
-   
+
 1. Call the `get_labels` helper function in the `post` method of the `ReceiveMessage` class.
 
     ```py
     labels = get_labels(uri, photo_name)
     ```
- 
+
 The `labels` list has now been obtained and can be used to build the `ThumbnailReference`.
 
 ### Creating and storing the `ThumbnailReference`
@@ -830,7 +830,7 @@ Before you start incorporating CSS, you have to tell your app to expect a CSS fi
     - url: .*
       script: main.app
     ```
- 
+
 1. Inside the directory you created, create a CSS file. Leave it blank for now; you'll add code to it in the following sections. Note that your file must have the extension `.css`.
 1. In each HTML file (you should have three) add the following code inside the `<head>` section, replacing [DIRECTORY NAME] and [FILE NAME] with the appropriate directory and file.
 
@@ -878,11 +878,11 @@ First, you'll style the HTML components present on every page of the website. Th
     }
     ```
     If `font-family` is not specified, the default font will be used. You can [choose a font](https://fonts.google.com/) by     clicking on one that appeals to you and then clicking `Select This Font`. Open the selected font on the bottom of your       screen and follow the instructions to link it to your html and CSS files. The style of the font will be either `serif`       or `sans-serif`. For example:
-    
+
     ```html
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     ```
-    
+
     The border-bottom property adds a dividing line between each link. To avoid having an extra line at the bottom of the       links box, add:
 
     ```css
@@ -1243,7 +1243,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         ```
         Note that currentSlide() calls another function, showSlides(). You'll implement this next.
     1. Implement showSlides:
- 
+
         ```javascript
         function showSlides(n) {
           var i;
