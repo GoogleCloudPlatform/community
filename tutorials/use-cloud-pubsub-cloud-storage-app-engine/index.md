@@ -272,7 +272,7 @@ The `main.py` file contains the backend logic of the website, including the rece
         loader=jinja2.FileSystemLoader(template_dir))
     ```
 
-1. Create the `Notification` class. Notifications are created from Cloud Pub/Sub messages and stored in Cloud Datastore, to be displayed on the home page of your application. Notifications have a message, date of posting, and generation number, which is used to distinguish between similar notifications and prevent the display of repeated notifications. Information on NDB properties can be found [here](https://cloud.google.com/appengine/docs/standard/python/ndb/).
+1. Create the `Notification` class. Notifications are created from Cloud Pub/Sub messages and stored in Cloud Datastore, to be displayed on the home page of your application. Notifications have a message, date of posting, and generation number, which is used to distinguish between similar notifications and prevent the display of repeated notifications. These properties are stored as NDB model properties using the [Google Datastore NDB Client Library](https://cloud.google.com/appengine/docs/standard/python/ndb/), which allows App Engine Python apps to connect to Cloud Datastore.
 
     ```py
     class Notification(ndb.Model):
@@ -351,7 +351,7 @@ The `main.py` file contains the backend logic of the website, including the rece
 
 During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cloud.google.com/pubsub/docs/push#receive_push) to be sent to the url you specified for the `ReceiveMessage` class in your `main.py` file. When you receive a Pub/Sub message, you must get necessary information from it and acknowledge its reception.
 
-1. In your `main.py` file, in the `ReceiveMessage` class, in your `post` method, obtain the [notification attributes](https://cloud.google.com/storage/docs/pubsub-notifications) from the incoming Cloud Pub/Sub message. A logging statement can be used for easier debugging.
+1. Obtain the [notification attributes](https://cloud.google.com/storage/docs/pubsub-notifications) from the incoming Cloud Pub/Sub message. Do this in your `main.py` file, in the `ReceiveMessage` class, in your `post` method. A logging statement can be used for easier debugging.
 
     ```py
     # Logging statement is optional.
@@ -459,7 +459,7 @@ You now have all of the information needed to create the necessary notification 
 
 ### Writing `Notifications` to the HTML file
 
-1. In `main.py`, in the `MainHandler`, in the `get` method, fetch all `Notifications` from Cloud Datastore in reverse date order and include them in `template_values`, to be written to the `home/notifications` page HTML file.
+1. Fetch all `Notifications` from Cloud Datastore in reverse date order and include them in `template_values`, to be written to the `home/notifications` page HTML file. Do this in `main.py`, in the `MainHandler`, in the `get` method.
 
     ```py
     notifications = Notification.query().order(
@@ -657,7 +657,7 @@ You have now completed all of the code necessary to store the information about 
         return images.get_serving_url(blob_key)
     ```
 
-1. In `main.py`, in the `PhotosHandler`, in the `get` method, fetch all `ThumbnailReferences` from Cloud Datastore in reverse date order. Create an ordered dictionary, calling upon the `get_thumbnail_serving_url` helper function, with the thumbnail serving urls as keys and the `thumbnail_references` as values. Include the dictionary in `template_values`, to be written to the appropriate HTML file.
+1. Fetch all `ThumbnailReferences` from Cloud Datastore in reverse date order. Create an ordered dictionary, calling upon the `get_thumbnail_serving_url` helper function, with the thumbnail serving urls as keys and the `thumbnail_references` as values. Include the dictionary in `template_values`, to be written to the appropriate HTML file. Do this in `main.py`, in the `PhotosHandler`, in the `get` method.
 
     ```py
     thumbnail_references = ThumbnailReference.query().order(
@@ -669,7 +669,7 @@ You have now completed all of the code necessary to store the information about 
     template_values = {'thumbnails': thumbnails}
     ```
 
-1. In the `templates` directory, in the photos page HTML file, loop through the thumbnails dictionary you rendered to the template in `main.py` and display the thumbnail image and its name.
+1. Loop through the thumbnails dictionary you rendered to the template in `main.py` and display the thumbnail image and its name. Do this in the `templates` directory, in the photos page HTML file.
 
     ```html
     {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
@@ -685,7 +685,7 @@ You have now completed all of the code necessary to store the information about 
 1. Run your application locally to check for basic errors, then deploy your application.
 1. Upload an image with the extension `.jpg` to your GCS photo bucket.
 1. Check that the thumbnail version of your newly uploaded photo is in your GCS thumbnail bucket under the correct name.
-1. Check that in Datastore, there is a `Notification` listed with the message `[UPLOADED PHOTO NAME] was uploaded.`.
+1. Check that in Datastore, there is a `Notification` listed with the message `[UPLOADED PHOTO NAME] was uploaded.`
 1. Check that in Datastore, there is a `ThumbnailReference` listed with the appropriate information.
 1. View your deployed application in your web browser.
     1. Check that the new notification is listed on the home page. You may need to refresh the page.
@@ -695,7 +695,7 @@ If you encounter errors, use the `Logging` messages to debug your application.
 
 ## Implementing photo delete/archive functionality
 
-Alternatively, if the received Cloud Pub/Sub notification indicates an `OBJECT_DELETE` or `OBJECT_ARCHIVE` event, the thumbnail must be deleted from the GCS thumbnail bucket, and the `ThumbnailReference` must be deleted from Datastore.
+If the received Cloud Pub/Sub notification indicates an `OBJECT_DELETE` or `OBJECT_ARCHIVE` event, the thumbnail must be deleted from the GCS thumbnail bucket, and the `ThumbnailReference` must be deleted from Datastore.
 
 Because these actions only occur in the case of a photo delete or archive, an `elif` statement can be used inside the `ReceiveMessage` class of `main.py`, where the initial `if` statement of the block is the one specifying the event type as `OBJECT_FINALIZE`.
 
@@ -730,7 +730,7 @@ elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
 1. Run your application locally to check for basic errors, then deploy your application.
 1. Delete an image from your GCS photo bucket.
 1. Check that the thumbnail version of your deleted photo is no longer in your GCS thumbnail bucket.
-1. Check that in Datastore, there is a `Notification` listed with the message `[DELETED PHOTO NAME] was deleted.`.
+1. Check that in Datastore, there is a `Notification` listed with the message `[DELETED PHOTO NAME] was deleted.`
 1. Check that in Datastore, the `ThumbnailReference` for your deleted photo is no longer listed.
 1. View your deployed application in your web browser.
     1. Check that the new notification is listed on the home page. You may need to refresh the page.
@@ -740,9 +740,9 @@ If you encounter errors, use the `Logging` messages to debug your application.
 
 ## Creating the search page
 
-The search page of the web application has a search bar users can enter a `search-term` into. The `ThumbnailReferences` with the `search-term` in their `labels` lists are added to the thumbnails dictionary and used to obtain and display the correct thumbnails to the search page.
+The search page of the web application has a search bar users can enter a `search-term` into. The `ThumbnailReferences` with the `search-term` in their `labels` lists are added to the thumbnails dictionary and used to obtain and display the correct thumbnails in the search page.
 
-1. In `main.py`, in the `SearchHandler` class, fill out the `get` method.
+1. Fill out the `get` method. The method is found in `main.py` in the `SearchHandler` class.
     1. Get the `search-term` from the user. The `search-term` should be converted to lower case to avoid case sensitivity.
 
         ```py
@@ -780,7 +780,7 @@ The search page of the web application has a search bar users can enter a `searc
         </form>
         ```
 
-    1. Like in the photos page HTML file, loop through the thumbnails dictionary you rendered to the template in `main.py` and display the thumbnail image and its name. Include an `else` statement as part of your loop to specify behavior in the case the thumbnails dictionary is empty (no search results returned).
+    1. Like in the photos page HTML file, loop through the thumbnails dictionary you rendered to the template in `main.py`, and display the thumbnail image and its name. Include an `else` statement as part of your loop to specify behavior in the case the thumbnails dictionary is empty (no search results returned).
 
         ```html
         {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
@@ -796,7 +796,7 @@ The search page of the web application has a search bar users can enter a `searc
 ### Checkpoint
 
 1. Run your application locally to check for basic errors, then deploy your application.
-1. View your deployed application in your web browser. Try using the search bar. When you search, the applicable photos should appear in a similar manner as the photos page, else the text `No Search Results` should be displayed.
+1. View your deployed application in your web browser. Try using the search bar. When you search, the applicable photos should appear in a similar manner as the photos page, or else the text `No Search Results` should be displayed.
 
 Note: Examining the `labels` lists of the `ThumbnailReferences` in Datastore can help you determine whether or not the search is functioning as it is meant to.
 
@@ -808,7 +808,7 @@ Note: Other users you listed as `Storage Admins` for your GCS photo bucket shoul
 
 ## Style
 
-Now that you a functioning website, it's time to add formatting to it. You'll do this by adding CSS and JavaScript to your already existing HTML files. 
+Now that you have a functioning website, it's time to add formatting to it. You'll do this by adding CSS and JavaScript to your already existing HTML files. 
 
 ### Set up
 
@@ -842,7 +842,7 @@ Before you start incorporating CSS, you have to tell your app to expect a CSS fi
 
 First, you'll style the HTML components present on every page of the website. This includes the body, the links to other pages, and the title of the page. You should run your app locally after each step to see the changes.
 
-1. Add the following code to your `CSS` file to set the background color. Replace [COLOR] with a color of your choice. 
+1. Add the following code to your `CSS` file to set the background color. Replace [COLOR] with a color of your choice.
 
     ```css
     body{
@@ -850,7 +850,7 @@ First, you'll style the HTML components present on every page of the website. Th
     }
     ```
 
-   You can specify the color by typing in the name of it, such as `blue`, by specifying the rgb configuration, or by giving    a hexadecimal representation. You can find more information on how colors work in CSS [here](https://www.w3schools.com/css/css_colors.asp). 
+   You can specify the color by typing in the name of it, such as `blue`, by specifying the rgb configuration, or by giving    a hexadecimal representation. You can find more information on how colors work in CSS [here](https://www.w3schools.com/css/css_colors.asp).
 1. Next you'll create a box to hold the links to other pages. Add the following code to your `CSS` file.
 
     ```css
@@ -864,7 +864,7 @@ First, you'll style the HTML components present on every page of the website. Th
     }
     ```
 
-    Note that you should make the background-color here different from the color in step 1; otherwise it won't look any         different than before. Setting the width to 10% makes the links box take up 10% of the page. If you change the width of     your browser around, you should see the links box change with it. Setting the position to fixed keeps the link box in       the top left corner of your webpage even if you scroll down.
+    Note that you should make the background-color here different from the color in step 1; otherwise it won't look any different than before. Setting the width to 10% makes the links box take up 10% of the page. If you change the width of your browser around, you should see the links box change with it. Setting the position to fixed keeps the link box in the top left corner of your webpage even if you scroll down.
 1. You can center the links within their box and change their color by adding the following code.
 
     ```css
@@ -877,13 +877,13 @@ First, you'll style the HTML components present on every page of the website. Th
       border-bottom: 1px solid [COLOR];
     }
     ```
-    If `font-family` is not specified, the default font will be used. You can [choose a font](https://fonts.google.com/) by     clicking on one that appeals to you and then clicking `Select This Font`. Open the selected font on the bottom of your       screen and follow the instructions to link it to your html and CSS files. The style of the font will be either `serif`       or `sans-serif`. For example:
+    If `font-family` is not specified, the default font will be used. You can [choose a font](https://fonts.google.com/) by clicking on one that appeals to you and then clicking `Select This Font`. Open the selected font on the bottom of your screen and follow the instructions to link it to your html and CSS files. The style of the font will be either `serif` or `sans-serif`. For example:
 
     ```html
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     ```
 
-    The border-bottom property adds a dividing line between each link. To avoid having an extra line at the bottom of the       links box, add:
+    The border-bottom property adds a dividing line between each link. To avoid having an extra line at the bottom of the links box, add:
 
     ```css
     ul.links li:last-child {
@@ -915,7 +915,7 @@ First, you'll style the HTML components present on every page of the website. Th
     }
     ```
 
-   `text-align: center` centers the title in the middle of the page. `border-bottom` adds the underline. `padding` sets the     space between the title and the underline. `width` sets how much of the screen the underline occupies. `margin: auto`       centers the underline. `margin-bottom` sets the spacing between the underline and anything that might go below it. This     will be applicable in later sections.
+   `text-align: center` centers the title in the middle of the page. `border-bottom` adds the underline. `padding` sets the space between the title and the underline. `width` sets how much of the screen the underline occupies. `margin: auto` centers the underline. `margin-bottom` sets the spacing between the underline and anything that might go below it. This will be applicable in later sections.
 
 ### Checkpoint
 
@@ -1026,7 +1026,7 @@ The thumbnails displayed on your website currently should appear in a single ver
         }
         ```
 
-    1. Use the thumbnail class to create a kind of box to hold the thumbnail image and its caption:
+    1. Use the thumbnail class to create a box to hold the thumbnail image and its caption:
 
         ```css
         div.thumbnail {
@@ -1037,7 +1037,7 @@ The thumbnails displayed on your website currently should appear in a single ver
           border: 1px solid [COLOR];
         }
         ```
-        `margin` sets the spacing between the thumbnails. The `width` and `height` properties match the width and height             that thumbnails are sized to in `main.py`. `border` outlines the box. You can remove this line if you don't want a           visible border around your thumbnail boxes.
+        `margin` sets the spacing between the thumbnails. The `width` and `height` properties match the width and height that thumbnails are sized to in `main.py`. `border` outlines the box. You can remove this line if you don't want a visible border around your thumbnail boxes.
     1. Further format the thumbnail class to display thumbnails in a table:
 
         ```css
@@ -1055,7 +1055,7 @@ The thumbnails displayed on your website currently should appear in a single ver
           margin: auto;
         }
         ```
-        Note that while the width of the thumbnail box is to 180 pixels, the same width thumbnails are resized to in                `main.py`, portrait oriented photos may have a smaller width. This ensures that photos are centered within the 180          pixels even when they do not occupy 180 pixels.
+        Note that while the width of the thumbnail box is 180 pixels, the same width that thumbnails are resized to in `main.py`, portrait oriented photos may have a smaller width. This ensures that photos are centered within the 180 pixels even when they do not occupy 180 pixels.
     1. Center the caption 10 pixels below the thumbnail image using the descent class:
 
         ```css
@@ -1100,7 +1100,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
           </div>
         </div>
         ```
-        `myModal` is what will be displayed when a thumbnail is clicked on. The `close` class is what restores the thumbnail         view when it is clicked on. `closeModal()` is a JavaScript function you'll define in step 3. The class `modal-               content` includes `mySlides` and the `caption-container`. Only one `mySlides` will be displayed at a time with its           image. The `caption` will be updated to match the `mySlides` being displayed.
+        `myModal` is what will be displayed when a thumbnail is clicked on. The `close` class is what restores the thumbnail view when it is clicked on. `closeModal()` is a JavaScript function you'll define in step 3. The class `modal-content` includes `mySlides` and the `caption-container`. Only one `mySlides` will be displayed at a time with its image. The `caption` will be updated to match the `mySlides` being displayed.
 
 1. Add styling to your external CSS file. This will format both the photos and search pages as long as they have the same class names for the HTML you just added.
     1. Add an effect to the thumbnails so that when the cursor hovers over them, they turn slightly transparent and the         cursor changes to a pointer to indicate to the user that they can click on thumbnails.
@@ -1111,7 +1111,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
           cursor: pointer;
         }
         ```
-    1. Format the modal that takes over the whole page when a thumbnail is clicked:
+    1. Format the `modal` that takes over the whole page when a thumbnail is clicked:
 
         ```css
         div.modal {
@@ -1127,7 +1127,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
           background-color: rgba(0,0,0,0.8);
         }
         ```
-        `display` is initially set to none because the modal should only be displayed when a thumbnail is clicked. The logic         for this will be added in step 3. `width` and `height` are set to 100% to take up the whole page. `background-color`         is set to a somewhat transparent black so thumbnails will still be partially visible behind the modal.
+        `display` is initially set to none because the modal should only be displayed when a thumbnail is clicked. The logic for this will be added in step 3. `width` and `height` are set to 100% to take up the whole page. `background-color` is set to a somewhat transparent black so thumbnails will still be partially visible behind the modal.
     1. Place the `close` button in the top right corner of the modal:
 
         ```css
@@ -1151,7 +1151,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
           cursor: pointer;
         }
         ```
-    1. Format modal-content, the box that will hold the original photo and caption.
+    1. Format `modal-content`, the box that will hold the original photo and caption.
 
         ```css
         div.modal-content {
@@ -1162,15 +1162,15 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
           max-width: 700px;
         }
         ```
-        This centers modal-content and sets it to take up 55% of the page, with a max width of 700 pixels. This means that           even if 700 pixels is less than 55% of the page, modal-content will never be wider than 700 pixels.
-    1. Set the default display of mySlides to none:
+        This centers `modal-content` and sets it to take up 55% of the page, with a max width of 700 pixels. This means that even if 700 pixels is less than 55% of the page, `modal-content` will never be wider than 700 pixels.
+    1. Set the default display of `mySlides` to none:
 
         ```css
         div.mySlides {
           display: none;
         }
         ```
-    1. Format the image in mySlides to match the width of modal-content:
+    1. Format the image in `mySlides` to match the width of `modal-content`:
 
         ```css
         div.mySlides img {
@@ -1191,7 +1191,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
           color: [COLOR];
         }
         ```
-    1. Format the caption to be centered in `caption-container` and have a height of 50 pixels:
+    1. Format the `caption` to be centered in `caption-container` and have a height of 50 pixels:
 
         ```css
         #caption {
@@ -1216,7 +1216,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         </script>
         ```
         This function is called whenever the close button is clicked on and resets the `modal` class to not be displayed.
-    1. Within the `gallery` class still, but after the `modal` class, add the following for loop and embedded script:
+    1. Within the `gallery` class after the `modal` class, add the following for loop and embedded script:
 
         ```html
         {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
@@ -1230,8 +1230,8 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
         </script>
         {% endfor %}
         ```
-        This defines a function that gets called whenever a thumbnail is clicked on. The `modal` class is displayed and             another function, `currentSlide` is called.
-    1. Add a variable and implement currentSlide() in the same script that contains closeModal().
+        This defines a function that gets called whenever a thumbnail is clicked on. The `modal` class is displayed and another function, `currentSlide` is called.
+    1. Add a variable and implement `currentSlide()` in the same script that contains `closeModal()`.
 
         ```javascript
         var slideIndex;
@@ -1241,8 +1241,8 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
           showSlides(slideIndex);
         }
         ```
-        Note that currentSlide() calls another function, showSlides(). You'll implement this next.
-    1. Implement showSlides:
+        Note that `currentSlide()` calls another function, `showSlides()`. You'll implement this next.
+    1. Implement `showSlides`:
 
         ```javascript
         function showSlides(n) {
@@ -1257,7 +1257,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
           captionText.innerHTML = image.alt;
         }
         ```
-        This function sets every `mySlides` class to not be displayed except for the one that contains the original photo of         the thumbnail that was clicked. The caption is set to the name of the image displayed.
+        This function sets every `mySlides` class to not be displayed except for the one that contains the original photo of the thumbnail that was clicked. The caption is set to the name of the image displayed.
 
 ### Checkpoint
 1. Run your application locally to check for basic errors, then deploy your application.
@@ -1274,14 +1274,14 @@ The last feature to add to your website is scrolling. After clicking on a thumbn
         ```html
         <div class="numbertext">{{loop.index}} / {{thumbnails|length}}</div>
         ```
-        `loop.index` is the current iteration of the for loop, and `thumbnails|length` is the total number of iterations the for           loop will go through.
-    1. After the for loop containing `mySlides` and classes for previous and next buttons:
+        `loop.index` is the current iteration of the `for` loop, and `thumbnails|length` is the total number of iterations the `for` loop will go through.
+    1. After the `for` loop containing `mySlides` and classes for previous and next buttons:
 
         ```html
          <a class="prev" onclick="plusSlides(-1)">&#10094</a>
          <a class="next" onclick="plusSlides(1)">&#10095</a>
         ```
-        `&#10094` and `&#10095` are the HTML codes for previous and next arrows, respectively. The plusSlides() function             will be implemented in Step 3.
+        `&#10094` and `&#10095` are the HTML codes for previous and next arrows, respectively. The `plusSlides()` function will be implemented in Step 3.
 
 1. Add styling to your external CSS file. This will format both the photos and search pages as long as they have the same class names for the HTML you just added.
     1. Place the `numbertext` class in the top left of the original photo:
@@ -1337,7 +1337,7 @@ The last feature to add to your website is scrolling. After clicking on a thumbn
           showSlides(slideIndex);
         }
         ```
-    1. Additional logic needs to be added to showSlides to allow wrapping around from the last photo to the first photo and when the next arrow is clicked and vice versa. Add the following two lines of code above where `var image` is declared.
+    1. Additional logic needs to be added to `showSlides` to allow wrapping around from the last photo to the first photo and when the next arrow is clicked and vice versa. Add the following two lines of code above where `var image` is declared.
         ```javascript
         if (n > slides.length) {slideIndex = 1}
         if (n < 1) {slideIndex = slides.length}
