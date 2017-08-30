@@ -153,7 +153,7 @@ If you do not feel like coding the entire application from scratch, feel free to
 
 Note that if you choose this option, you still need to make a `lib` directory and run the `install` command. These tasks are outlined in steps one and three of the **Libraries and `app.yaml`** section. In addition to these tasks, some constants in the `main.py` file still need to be changed to suit your GCS bucket names. Look for the constants THUMBNAIL_BUCKET, PHOTO_BUCKET, NUM_NOTIFICATIONS_TO_DISPLAY, and MAX_LABELS immediately after the imports at the top of the file.
 
-The rest of this tutorial assumes that you did not clone the above git repository, and are building the application from scratch.
+The rest of this tutorial assumes that you did not copy the default code, and are building the application from scratch.
 
 ### Libraries and `app.yaml`
 
