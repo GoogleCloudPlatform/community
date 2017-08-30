@@ -6,13 +6,60 @@ tags: App Engine, Cloud Pub/Sub, Cloud Storage, GCS, Datastore, photo album
 date published:
 ---
 
-This tutorial teaches you how to integrate several Google products to simulate a shared photo album, hosted on App Engine and managed through the Cloud Platform Console.
+* [Overview](#overview)
+* [Objectives](#objectives)
+* [Costs](#costs)
+* [Set up](#set-up)
+* [Basic application layout](#basic-application-layout)
+    * [Libraries and `app.yaml`](#libraries-and-appyaml)
+    * [HTML files](#html-files)
+    * [The `main.py` file](#the-mainpy-file)
+    * [Checkpoint](#checkpoint)
+* [Creating the notifications page](#creating-the-notifications-page)
+    * [Receiving Cloud Pub/Sub messages](#receiving-cloud-pubsub-messages)
+    * [Creating and storing `Notifications`](#creating-and-storing-notifications)
+    * [Writing `Notifications` to the HTML file](#writing-notifications-to-the-html-file)
+    * [Checkpoint](#checkpoint-1)
+* [Implementing photo upload functionality](#implementing-photo-upload-functionality)
+    * [Creating the thumbnail](#creating-the-thumbnail)
+    * [Storing the thumbnail in GCS](#storing-the-thumbnail-in-gcs)
+    * [Labeling the photo using Google Cloud Vision](#labeling-the-photo-using-google-cloud-vision)
+    * [Creating and storing the `ThumbnailReference`](#creating-and-storing-the-thumbnailreference)
+    * [Writing thumbnails to the photos HTML file](#writing-thumbnails-to-the-photos-html-file)
+    * [Checkpoint](#checkpoint-2)
+* [Implementing photo delete/archive functionality](#implementing-photo-deletearchive-functionality)
+    * [Checkpoint](#checkpoint-3)
+* [Creating the search page](#creating-the-search-page)
+    * [Checkpoint](#checkpoint-4)
+* [Style](#style)
+    * [Set up](#set-up-1)
+    * [Adding style common to every page](#adding-style-common-to-every-page)
+    * [Checkpoint](#checkpoint-5)
+    * [Styling the home (notifications) page](#styling-the-home-notifications-page)
+    * [Styling the search bar on the search page](#styling-the-search-bar-on-the-search-page)
+    * [Checkpoint](#checkpoint-6)
+    * [Styling the thumbnails for both the photos and search pages](#styling-the-thumbnails-for-both-the-photos-and-search-pages)
+    * [Checkpoint](#checkpoint-7)
+    * [Making thumbnails clickable](#making-thumbnails-clickable)
+    * [Checkpoint](#checkpoint-8)
+    * [Making photos scrollable](#making-photos-scrollable)
+    * [Checkpoint](#checkpoint-9)
+* [Clean up](#clean-up)
 
-Users interact with the web application only through the Cloud Platform Console; photos cannot be uploaded or deleted through the website. Two buckets exist in [Cloud Storage](https://cloud.google.com/storage/) (GCS): one to store the uploaded photos and the other to store the thumbnails of the uploaded photos. [Cloud Datastore](https://cloud.google.com/datastore/) stores all non-image entities needed for the web application, which is hosted on [App Engine](https://cloud.google.com/appengine/). Notifications of changes to the GCS photo bucket are sent to the application via [Cloud Pub/Sub](https://cloud.google.com/pubsub/). The [Google Cloud Vision API Client Library](https://developers.google.com/api-client-library/python/apis/vision/v1) is used to label photos for search.
+## Overview
+
+This tutorial teaches you how to integrate several Google products to simulate a shared photo album, hosted on App Engine and managed through the Cloud Platform Console. The web application has three pages:
+1. Home/news feed, which displays notifications.
+1. Photos, which displays all uploaded photos in thumbnail form.
+1. Search, which allows the user to search for a specific term and displays the thumbnails applicable to the given term.
+
+Click [here](https://project-test-172118.appspot.com/) to view an example of the web application you will build using this tutorial.
+
+Users interact with the web application only through the Cloud Platform Console; photos cannot be uploaded or deleted through the website. Behind the scenes, two buckets exist in [Cloud Storage](https://cloud.google.com/storage/) (GCS): one to store the uploaded photos and the other to store the thumbnails of the uploaded photos. [Cloud Datastore](https://cloud.google.com/datastore/) stores all non-image entities needed for the web application, which is hosted on [App Engine](https://cloud.google.com/appengine/). Notifications of changes to the GCS photo bucket are sent to the application via [Cloud Pub/Sub](https://cloud.google.com/pubsub/). The [Google Cloud Vision API Client Library](https://developers.google.com/api-client-library/python/apis/vision/v1) is used to label photos for search.
 
 A general overview of how the application works is shown in the diagrams below.
 
-**The overall workflow of receiving a notification:**
+**Receiving a notification:**
 ![Receiving a Notification](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/receiving-a-notification.png)
 
 1. A user uploads or deletes something from their GCS photo bucket.
@@ -23,7 +70,7 @@ A general overview of how the application works is shown in the diagrams below.
 1. If the event type from the message is `OBJECT_FINALIZE`, then the Google Cloud Vision API is used to generate labels for the uploaded photo.
 1. If the event type from the message is `OBJECT_FINALIZE`, then a new `ThumbnailReference` is created and stored in Datastore. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, then the appropriate `ThumbnailReference` is deleted from Datastore.
 
-**The overall workflow of loading the home page:**
+**Loading the home page:**
 ![Loading Notifications](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-home-page.png)
 
 1. The user navigates to `http://[PROJECT ID].appspot.com/`. For example: [https://project-test-172118.appspot.com/](https://project-test-172118.appspot.com/).
@@ -31,7 +78,7 @@ A general overview of how the application works is shown in the diagrams below.
 1. The queried `Notifications` are sent to the front-end to be formatted and displayed on the home page.
 1. The HTML file links to an external CSS file for styling.
 
-**The overall workflow of loading the photos page:**
+**Loading the photos page:**
 ![Loading Photos](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-photos-page.png)
 
 1. The user navigates to `http://[PROJECT ID].appspot.com/photos`. For example: [https://project-test-172118.appspot.com/photos](https://project-test-172118.appspot.com/photos).
@@ -40,7 +87,7 @@ A general overview of how the application works is shown in the diagrams below.
 1. A dictionary of `ThumbnailReferences` and their serving urls is sent to the front-end to be formatted and displayed on the photos page.
 1. The HTML file links to an external CSS file for styling.
 
-**The overall workflow of loading the search page:**
+**Loading the search page:**
 ![Loading Search](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-search-page.png)
 
 1. The user navigates to `http://[PROJECT ID].appspot.com/search`. For example: [https://project-test-172118.appspot.com/search](https://project-test-172118.appspot.com/search). The user enters a search term.
@@ -48,7 +95,6 @@ A general overview of how the application works is shown in the diagrams below.
 1. Each queried `ThumbnailReference` that contains the search term as one of its `labels` is used to get a serving url for the corresponding thumbnail stored in the GCS thumbnail bucket.
 1. A dictionary of `ThumbnailReferences` that contain the search term as one of their `labels` and their serving urls is sent to the front-end to be formatted and displayed on the search page.
 1. The HTML file links to an external CSS file for styling.
-
 
 Note: Basic coding (Python, HTML, CSS, JavaScript) and command line knowledge is necessary to complete this tutorial.
 
@@ -170,7 +216,7 @@ The HTML files represent the different pages of your web application.
 
       <body>
 
-        <ul>
+        <ul class="links">
           <li><a href="/">Home</a></li>
           <li><a href="/photos">Photos</a></li>
           <li><a href="/search">Search</a></li>
@@ -425,9 +471,9 @@ You now have all of the information needed to create the necessary notification 
 
     ```html
     {% for notification in notifications %}
-      <div>
-        <p><small>{{notification.date.strftime('%B %d %Y %I:%M')}} UTC: </small>{{notification.message}}</p>
-      </div>
+      <ul class="notification">
+        <li><p><small>{{notification.date.strftime('%B %d %Y %I:%M')}} UTC: </small>{{notification.message}}</p></li>
+      </ul>
     {% endfor %}
     ```
 
@@ -792,7 +838,7 @@ Before you start incorporating CSS, you have to tell your app to expect a CSS fi
     <link rel="stylesheet" type="text/css" href="/[DIRECTORY NAME]/[FILE NAME]">
     ```
 
-### Add style common to every page
+### Adding style common to every page
 
 First, you'll style the HTML components present on every page of the website. This includes the body, the links to other pages, and the title of the page. You should run your app locally after each step to see the changes.
 
@@ -804,12 +850,11 @@ First, you'll style the HTML components present on every page of the website. Th
     }
     ```
 
-   You can specify the color by typing in the name of it, such as `blue`, by specifying the rgb configuration, or by giving    a hexadecimal representation. You can find more information on how colors work in CSS [here]
-   (https://www.w3schools.com/css/css_colors.asp). 
+   You can specify the color by typing in the name of it, such as `blue`, by specifying the rgb configuration, or by giving    a hexadecimal representation. You can find more information on how colors work in CSS [here](https://www.w3schools.com/css/css_colors.asp). 
 1. Next you'll create a box to hold the links to other pages. Add the following code to your `CSS` file.
 
     ```css
-    ul {
+    ul.links {
       list-style-type: none;
       margin: 0;
       padding: 0;
@@ -823,36 +868,44 @@ First, you'll style the HTML components present on every page of the website. Th
 1. You can center the links within their box and change their color by adding the following code.
 
     ```css
-    li a {
+    ul.links li a {
       display: block;
       color: [COLOR];
       padding: 8px 8px;
       text-align: center;
+      font-family: '[FONT]', [STYLE];
       border-bottom: 1px solid [COLOR];
     }
     ```
+    If `font-family` is not specified, the default font will be used. You can [choose a font](https://fonts.google.com/) by     clicking on one that appeals to you and then clicking `Select This Font`. Open the selected font on the bottom of your       screen and follow the instructions to link it to your html and CSS files. The style of the font will be either `serif`       or `sans-serif`. For example:
+    
+    ```html
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    ```
+    
     The border-bottom property adds a dividing line between each link. To avoid having an extra line at the bottom of the       links box, add:
 
     ```css
-    li:last-child {
+    ul.links li:last-child {
       border-bottom: none;
     }
     ```
 1. To change the color of each link and its background when it is hovered over with the cursor, add:
 
     ```css
-    li a:hover {
+    ul.links li a:hover {
       background-color: [COLOR];
       color: [COLOR];
     }
     ```
 
-1. The title of the page is contained in the `<h1>` HTML blocks. You can center it, set the color and font size, and add an underline with the following block of code.
+1. The title of the page is contained in the `<h1>` HTML blocks. You can center it, set the color, font, and font size, and add an underline with the following block of code.
 
     ```css
     h1 {
       color: [COLOR];
       text-align: center;
+      font-family: '[FONT]', [STYLE];
       font-size: [SIZE]px;
       border-bottom: 3px solid [COLOR];
       padding: 15px;
@@ -870,21 +923,42 @@ First, you'll style the HTML components present on every page of the website. Th
 1. Click through the links on each page and make sure the colors and placement remain consistent.
 1. Resize your browser window and observe how the components dynamically change to account for this.
 
-### Style the home (notifications) page
+### Styling the home (notifications) page
 
-Now that you have the basic styling done for the website as a whole, you can focus on styling the elements unique to each page, starting with the home page. This time you'll embed the style directly into the HTML instead of placing it in a separate file.
-1. Indent and set the font size for the notification messages. In your html file that controls the home page, modify the `<div>` to include a style instruction:
+Now that you have the basic styling done for the website as a whole, you can focus on styling the elements unique to each page, starting with the home page. 
 
-    ```html
-    <div style="margin-left:20%;font-size:20px;">
+1. Indent the notification messages. In your CSS file add:
+
+    ```css
+    ul.notification {
+      margin: 10px;
+      margin-left: 20%;
+      list-style-type: [STYLE];
+      font-family: '[FONT]', [STYLE];
+    }
     ```
-1. Make the font size for the date and time part smaller. To do this modify the `<small>` tag:
+    `list-style-type` sets what kind of list the notifications appear in. [Pick a value](https://www.w3schools.com/cssref/pr_list-style-type.asp#propertyvalues) for it. The `font-family` you choose will affect how the `list-style-type` appears.
+1. You can set the color of your bullet points, roman numerals, or whatever `list-style-type` you chose above by adding:
+   ```css
+   ul.notification li {
+     color: [COLOR];
+   }
+   ```
+1. Set the font for the notification message:
+   ```css
+   ul.notification li p {
+     font-size: [SIZE]px;
+     font-family: '[FONT]', [STYLE];
+     color: [COLOR];
+   }
+   ```
+1. Make the font size for the date and time part smaller. To do this directly in your HTML file modify the `<small>` tag:
 
     ```html
     <small style="font-size:12px;">
     ```
 
-### Style the search bar on the search page
+### Styling the search bar on the search page
 
 Because the search bar is only a feature of the search page, you could style it directly within the HTML file that controls the search page. However, you'll add more style instructions for the search bar than you did for displaying the notifications, so you'll put the style for it in your CSS file to keep the HTML file from getting too cluttered.
 
@@ -895,6 +969,7 @@ Because the search bar is only a feature of the search page, you could style it 
       color: [COLOR];
       text-align: center;
       font-size: [SIZE]px;
+      font-family: '[FONT]', [STYLE];
     }
     ```
 1. In the HTML file responsible for the search page, add a class name to the `<form>` tag, so it can be referenced from an external CSS file. For example:
@@ -908,6 +983,7 @@ Because the search bar is only a feature of the search page, you could style it 
     ```css
     form.search {
       text-align: center;
+      font-family: '[FONT]', [STYLE];
       margin-top: 50px;
     }
     ```
@@ -917,7 +993,7 @@ Because the search bar is only a feature of the search page, you could style it 
 1. Visit the home page to see the notification messages indented and notice that the date and time part is smaller than the actual message.
 1. Visit the search page to see the search bar centered along with the `"No Search Results"` text.
 
-### Style the thumbnails for both the photos and search pages
+### Styling the thumbnails for both the photos and search pages
 
 The thumbnails displayed on your website currently should appear in a single vertical column on the left of the page. In this section you'll reformat them to appear in a table format.
 
@@ -961,7 +1037,7 @@ The thumbnails displayed on your website currently should appear in a single ver
           border: 1px solid [COLOR];
         }
         ```
-        `margin` sets the spacing between the thumbnails. The `width` and `height` properties match the width and height             that thumbnails are sized to in `main.py`.
+        `margin` sets the spacing between the thumbnails. The `width` and `height` properties match the width and height             that thumbnails are sized to in `main.py`. `border` outlines the box. You can remove this line if you don't want a           visible border around your thumbnail boxes.
     1. Further format the thumbnail class to display thumbnails in a table:
 
         ```css
@@ -986,6 +1062,7 @@ The thumbnails displayed on your website currently should appear in a single ver
         div.descent {
           padding: 10px;
           text-align: center;
+          font-family: '[FONT]', [STYLE];
         }
         ```
 
@@ -995,7 +1072,7 @@ The thumbnails displayed on your website currently should appear in a single ver
 1. Navigate to the photos page and check that the thumbnails displayed there now appear in a table format with their captions centered underneath.
 1. Navigate to the search page and enter a search term that will yield results. The displayed thumbnails should appear in the same format as on the photos page.
 
-### Make thumbnails clickable
+### Making thumbnails clickable
 
 Now that your thumbnails are nicely formatted, you can make your webpage display the original photo when a thumbnail is clicked on by incorporating JavaScript into your HTML files.
 
@@ -1123,6 +1200,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
           width: 80%;
           max-width: 700px;
           text-align: center;
+          font-family: '[FONT]', [STYLE];
           padding: 10px 0;
           height: 50px;
         }
@@ -1188,7 +1266,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
 1. Close the modal and restore the thumbnail view.
 1. Check that the search page has the same behavior.
 
-### Make photos scrollable
+### Making photos scrollable
 The last feature to add to your website is scrolling. After clicking on a thumbnail, the original photo appears. In this section, you'll add the ability to scroll to either side of that photo and see the original photos of other thumbnails without having to close the modal and reopen it by clicking on another thumbnail.
 
 1. Add HTML for both the photos and search pages. The instructions for this step should be implemented in your two HTML files responsible for the photos and search pages.
@@ -1209,8 +1287,9 @@ The last feature to add to your website is scrolling. After clicking on a thumbn
     1. Place the `numbertext` class in the top left of the original photo:
         ```css
         .numbertext {
-          color: #f2f2f2;
+          color: [COLOR];
           font-size: 12px;
+          font-family: '[FONT]', [STYLE];
           padding: 8px 12px;
           position: absolute;
           top: 0;
@@ -1229,6 +1308,7 @@ The last feature to add to your website is scrolling. After clicking on a thumbn
           color: white;
           font-weight: bold;
           font-size: 20px;
+          font-family: '[FONT]', [STYLE];
           transition: 0.6s ease;
           border-radius: 0 3px 3px 0;
           user-select: none;
