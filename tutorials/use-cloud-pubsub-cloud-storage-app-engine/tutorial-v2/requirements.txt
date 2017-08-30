@@ -1,0 +1,4 @@
+jinja2
+webapp2
+GoogleAppEngineCloudStorageClient
+google-api-python-client
