@@ -56,6 +56,7 @@ Follow these steps to create a service account:
     * Project &rarr; Service Account Actor
     * Container &rarr; Container Engine Developer
     * Storage &rarr; Storage Admin
+
 1.  Select `Furnish a new private key` and leave the option on `JSON`.
 1.  Click Create, and then close the dialog once it is created.
 
@@ -96,7 +97,10 @@ Create your container clusters using the Google Cloud SDK by running the followi
 
 This step takes a few minutes to complete. Once completed, you can verify the clusters are available by running the following command:
 
-    $ gcloud compute instances list --project=google-project-id
+    gcloud compute instances list --project=google-project-id
+
+which should output something like the following:
+
     NAME                                                 ZONE           MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP      STATUS
     gke-hello-express-cluste-default-pool-8f1e33a1-2t09  us-central1-a  n1-standard-1               10.128.0.2   130.211.202.173  RUNNING
     gke-hello-express-cluste-default-pool-8f1e33a1-nzwp  us-central1-a  n1-standard-1               10.128.0.4   104.197.248.45   RUNNING
@@ -260,18 +264,17 @@ After the Codeship process is completed, navigate to the application
 endpoint to verify your changes have taken effect.
 
 ## Cleaning up
-<!-- TODO -->
 
 After completing the tutorial, follow these steps to remove the resources from your Google Cloud Platform account to prevent any charges:
 
 1. Delete the Service: This step will deallocate the Cloud Load Balancer created for your Service:
 
-    kubectl delete service hello-express
+        kubectl delete service hello-express
 
 1. Wait for the Load Balancer provisioned for the hello-web Service to be deleted: The load balancer is deleted asynchronously in the background when you run kubectl delete. Wait until the load balancer is deleted by watching the output of the following command:
 
-    gcloud compute forwarding-rules list
+        gcloud compute forwarding-rules list
 
 1. Delete the container cluster: This step will delete the resources that make up the container cluster, such as the compute instances, disks and network resources.
 
-    gcloud container clusters delete hello-cluster
+        gcloud container clusters delete hello-cluster
