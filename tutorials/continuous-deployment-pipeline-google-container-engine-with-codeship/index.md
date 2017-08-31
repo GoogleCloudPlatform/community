@@ -33,7 +33,7 @@ Make sure you have the following:
 *  [Docker CE Version 17.03.01](https://www.docker.com/community-edition)
 *  [Codeship Account](https://app.codeship.com/registrations/new)
 *  [Codeship Jet CLI](https://documentation.codeship.com/pro/builds-and-configuration/cli/)
-*  [`hello-express` source code](https://github.com/kellyjandrews/hello-express)
+*  [`hello-express` source code](https://github.com/codeship-library/hello-express)
 *  [GitHub](https://github.com/), [Bitbucket](https://bitbucket.org/), or [GitLab](https://about.gitlab.com/) account
 *  [Google Cloud SDK](https://cloud.google.com/sdk/docs/quickstarts) and [kubectl](https://kubernetes.io/)
 
