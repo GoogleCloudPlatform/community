@@ -1,8 +1,8 @@
 ---
 title: How to Use Cloud Pub/Sub Notifications and Cloud Storage with App Engine
-description: Create a shared photo album using Cloud Pub/Sub, Cloud Storage, Datastore, and App Engine.
+description: Create a shared photo album using Cloud Pub/Sub, Google Cloud Storage, Google Cloud Datastore, and Google App Engine.
 author: ggchien, cmwoods
-tags: App Engine, Cloud Pub/Sub, Cloud Storage, GCS, Datastore, photo album
+tags: App Engine, Cloud Pub/Sub, Cloud Storage, GCS, Cloud Datastore, photo album
 date published:
 ---
 
@@ -13,26 +13,26 @@ This tutorial teaches you how to integrate several Google products to simulate a
 
 Click [here](https://project-test-172118.appspot.com/) to view an example of the web application you will build using this tutorial.
 
-Users interact with the web application only through the Cloud Platform Console; photos cannot be uploaded or deleted through the website. Behind the scenes, two buckets exist in [Cloud Storage](https://cloud.google.com/storage/) (GCS): one to store the uploaded photos and the other to store the thumbnails of the uploaded photos. [Cloud Datastore](https://cloud.google.com/datastore/) stores all non-image entities needed for the web application, which is hosted on [App Engine](https://cloud.google.com/appengine/). Notifications of changes to the GCS photo bucket are sent to the application via [Cloud Pub/Sub](https://cloud.google.com/pubsub/). The [Google Cloud Vision API Client Library](https://developers.google.com/api-client-library/python/apis/vision/v1) is used to label photos for search.
+Users interact with the web application only through the Cloud Platform Console; photos cannot be uploaded or deleted through the website. Behind the scenes, two buckets exist in [Cloud Storage](https://cloud.google.com/storage/): one to store the uploaded photos and the other to store the thumbnails of the uploaded photos. [Cloud Datastore](https://cloud.google.com/datastore/) stores all non-image entities needed for the web application, which is hosted on [App Engine](https://cloud.google.com/appengine/). Notifications of changes to the Cloud Storage photo bucket are sent to the application by using [Cloud Pub/Sub](https://cloud.google.com/pubsub/). The [Google Cloud Vision API Client Library](https://developers.google.com/api-client-library/python/apis/vision/v1) is used to label photos for search.
 
 A general overview of how the application works is shown in the diagrams below.
 
 **Receiving a notification:**
 ![Receiving a Notification](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/receiving-a-notification.png)
 
-1. A user uploads or deletes something from their GCS photo bucket.
+1. A user uploads or deletes something from their Cloud Storage photo bucket.
 1. A Cloud Pub/Sub message is sent.
 1. The Cloud Pub/Sub message is received by App Engine.
-1. The Cloud Pub/Sub message is formatted and stored as a `Notification` in Datastore.
-1. If the event type from the message is `OBJECT_FINALIZE`, the uploaded photo is compressed and stored as a thumbnail in a separate GCS thumbnail bucket. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, the thumbnail matching the name and generation number of the deleted or archived photo is deleted from the GCS thumbnail bucket.
+1. The Cloud Pub/Sub message is formatted and stored as a `Notification` in Cloud Datastore.
+1. If the event type from the message is `OBJECT_FINALIZE`, the uploaded photo is compressed and stored as a thumbnail in a separate Cloud Storage thumbnail bucket. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, the thumbnail matching the name and generation number of the deleted or archived photo is deleted from the Cloud Storage thumbnail bucket. When an object is removed from your Cloud Storage photo bucket, the event type will be `OBJECT_DELETE` if [versioning](https://cloud.google.com/storage/docs/object-versioning) is not turned on for your bucket and `OBJECT_ARCHIVE` if versioning is turned on for your bucket. 
 1. If the event type from the message is `OBJECT_FINALIZE`, then the Google Cloud Vision API is used to generate labels for the uploaded photo.
-1. If the event type from the message is `OBJECT_FINALIZE`, then a new `ThumbnailReference` is created and stored in Datastore. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, then the appropriate `ThumbnailReference` is deleted from Datastore.
+1. If the event type from the message is `OBJECT_FINALIZE`, then a new `ThumbnailReference` is created and stored in Cloud Datastore. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, then the appropriate `ThumbnailReference` is deleted from Cloud Datastore.
 
 **Loading the home page:**
 ![Loading Notifications](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-home-page.png)
 
 1. The user navigates to `http://[PROJECT ID].appspot.com/`. For example: [https://project-test-172118.appspot.com/](https://project-test-172118.appspot.com/).
-1. A previously-specified number of `Notifications` are queried from Datastore, ordered by date and time, most recent first.
+1. A predetermined number of `Notifications` are queried from Cloud Datastore, ordered by date and time, most recent first.
 1. The queried `Notifications` are sent to the front-end to be formatted and displayed on the home page.
 1. The HTML file links to an external CSS file for styling.
 
@@ -40,8 +40,8 @@ A general overview of how the application works is shown in the diagrams below.
 ![Loading Photos](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-photos-page.png)
 
 1. The user navigates to `http://[PROJECT ID].appspot.com/photos`. For example: [https://project-test-172118.appspot.com/photos](https://project-test-172118.appspot.com/photos).
-1. All the `ThumbnailReferences` are fetched from Datastore, ordered by date and time, most recent first.
-1. Each `ThumbnailReference` is used to get a serving url for the corresponding thumbnail stored in the GCS thumbnail bucket.
+1. All the `ThumbnailReferences` are fetched from Cloud Datastore, ordered by date and time, most recent first.
+1. Each `ThumbnailReference` is used to get a serving url for the corresponding thumbnail stored in the Cloud Storage thumbnail bucket.
 1. A dictionary of `ThumbnailReferences` and their serving urls is sent to the front-end to be formatted and displayed on the photos page.
 1. The HTML file links to an external CSS file for styling.
 
@@ -49,8 +49,8 @@ A general overview of how the application works is shown in the diagrams below.
 ![Loading Search](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-search-page.png)
 
 1. The user navigates to `http://[PROJECT ID].appspot.com/search`. For example: [https://project-test-172118.appspot.com/search](https://project-test-172118.appspot.com/search). The user enters a search term.
-1. All the `ThumbnailReferences` are fetched from Datastore, ordered by date and time, most recent first.
-1. Each queried `ThumbnailReference` that contains the search term as one of its `labels` is used to get a serving url for the corresponding thumbnail stored in the GCS thumbnail bucket.
+1. All the `ThumbnailReferences` are fetched from Cloud Datastore, ordered by date and time, most recent first.
+1. Each queried `ThumbnailReference` that contains the search term as one of its `labels` is used to get a serving url for the corresponding thumbnail stored in the Cloud Storage thumbnail bucket.
 1. A dictionary of `ThumbnailReferences` that contain the search term as one of their `labels` and their serving urls is sent to the front-end to be formatted and displayed on the search page.
 1. The HTML file links to an external CSS file for styling.
 
@@ -59,9 +59,9 @@ Note: Basic coding (Python, HTML, CSS, JavaScript) and command line knowledge is
 ## Objectives
 
 * Store photos in Google Cloud Storage buckets.
-* Store entities in Datastore.
+* Store entities in Cloud Datastore.
 * Configure Cloud Pub/Sub notifications.
-* Use Google Cloud Vision to implement a photos search.
+* Use Google Cloud Vision API to implement a photos search.
 * Create and deploy a shared photo album as an App Engine project to display actions performed through the Cloud Platform Console.
 
 ## Costs
@@ -72,7 +72,7 @@ This tutorial uses billable components of Cloud Platform, including:
 * Google Cloud Storage
 * Google Cloud Datastore
 * Google Cloud Pub/Sub
-* Google Cloud Vision
+* Google Cloud Vision API
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=411d8ca1-210f-4f2c-babd-34c6af2b5538) to generate a cost estimate based on your projected usage. New Cloud Platform users might be eligible for a [free trial](https://cloud.google.com/free-trial).
 
@@ -82,14 +82,14 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=41
 1. [Create a Google Cloud Platform account](https://console.cloud.google.com/) for using the Cloud Platform Console.
 1. In the Cloud Platform Console, [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects). Your project has a unique ID that is part of your web application url.
 1. Enable billing: [create a billing project](https://support.google.com/cloud/answer/6288653?hl=en). Learn more about billing [here](https://cloud.google.com/appengine/docs/standard/python/console/).
-1. In the command line, [set the default project](https://cloud.google.com/sdk/docs/managing-configurations) to your newly created project by running the following command:
+1. Open a terminal on your local machine. On the command line, [set the default project](https://cloud.google.com/sdk/docs/managing-configurations) to your newly created project by running the following command:
 
     ```sh
     gcloud config set project [PROJECT ID]
     ```
 
-1. In the Cloud Platform Console, [create a bucket](https://www.google.com/urlsa=D&q=https%3A%2F%2Fcloud.google.com%2Fstorage%2Fdocs%2Fcreating-buckets). This bucket is for storing the photos of your shared photo album.
-1. If you want collaborators on your photo album, add the desired collaborators as [`Project Viewers`](https://cloud.google.com/storage/docs/projects#permissions) for your App Engine project, and as [`Object Admins`](https://cloud.google.com/storage/docs/access-control/iam-roles) for your GCS photo bucket. See instructions [here](https://cloud.google.com/storage/docs/access-control/using-iam-permissions#project-add). Note: collaborators must also have Google Cloud Platform accounts.
+1. In the Cloud Platform Console, [create a bucket](https://www.google.com/urlsa=D&q=https%3A%2F%2Fcloud.google.com%2Fstorage%2Fdocs%2Fcreating-buckets) with `Regional` or `Multi-Regional` storage. The [storage class](https://cloud.google.com/storage/docs/storage-classes) does not matter as long as it is not `Nearline` or `Coldline`. This bucket is for storing the photos of your shared photo album.
+1. If you want collaborators on your photo album, add the desired collaborators as [`Project Viewers`](https://cloud.google.com/storage/docs/projects#permissions) for your App Engine project, and as [`Object Admins`](https://cloud.google.com/storage/docs/access-control/iam-roles) for your Cloud Storage photo bucket. See instructions [here](https://cloud.google.com/storage/docs/access-control/using-iam-permissions#project-add). Note: collaborators must also have Google Cloud Platform accounts.
 1. Change the photos bucket permissions to make it publicly readable so that the photos may be viewed on your website. To do this, you'll need to [make your bucket data public](https://www.google.com/url?sa=D&q=https%3A%2F%2Fcloud.google.com%2Fstorage%2Fdocs%2Faccess-control%2Fmaking-data-public%23buckets).
 1. Create another bucket with `Multi-Regional` or `Regional` storage. This bucket is for storing the thumbnails of the photos in your shared photo album.
 1. [Create a new topic](https://www.google.com/url?sa=D&q=https%3A%2F%2Fcloud.google.com%2Fpubsub%2Fdocs%2Fquickstart-console%23create_a_topic) with the same name as your photos bucket.
@@ -108,7 +108,7 @@ If you do not feel like coding the entire application from scratch, feel free to
   svn export https://github.com/GoogleCloudPlatform/community/trunk/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app
   ```
 
-Note that if you choose this option, you still need to make a `lib` directory and run the `install` command. These tasks are outlined in steps one and three of the **Libraries and `app.yaml`** section. In addition to these tasks, some constants in the `main.py` file still need to be changed to suit your GCS bucket names. Look for the constants THUMBNAIL_BUCKET, PHOTO_BUCKET, NUM_NOTIFICATIONS_TO_DISPLAY, and MAX_LABELS immediately after the imports at the top of the file.
+Note that if you choose this option, you still need to make a `lib` directory and run the `install` command. These tasks are outlined in steps one and three of the **Libraries and `app.yaml`** section. In addition to these tasks, some constants in the `main.py` file still need to be changed to suit your Cloud Storage bucket names. Look for the constants THUMBNAIL_BUCKET, PHOTO_BUCKET, NUM_NOTIFICATIONS_TO_DISPLAY, and MAX_LABELS immediately after the imports at the top of the file.
 
 The rest of this tutorial assumes that you did not copy the default code, and are building the application from scratch.
 
@@ -185,13 +185,13 @@ The HTML files represent the different pages of your web application.
     </html>
     ```
 
-1. Create an HTML file for the home/notifications page of your application (url: `http://[PROJECT ID].appspot.com`) using the template given above. The notifications page will have a news feed listing all recent actions performed on your GCS photo bucket.
-1. Create an HTML file for the photos page of your application (url: `http://[PROJECT ID].appspot.com/photos`) using the template given above. The photos page will display the thumbnails and names of all photos uploaded to your GCS photo bucket.
-1. Create an HTML file for the search page of your application (url: `http://[PROJECT ID].appspot.com/search`) using the template given above. The search page will display the thumbnails and names of the photos uploaded to your GCS photo bucket that match the entered search term.
+1. Create an HTML file for the home/notifications page of your application (url: `http://[PROJECT ID].appspot.com`) using the template given above. The notifications page will have a news feed listing all recent actions performed on your Cloud Storage photo bucket.
+1. Create an HTML file for the photos page of your application (url: `http://[PROJECT ID].appspot.com/photos`) using the template given above. The photos page will display the thumbnails and names of all photos uploaded to your Cloud Storage photo bucket.
+1. Create an HTML file for the search page of your application (url: `http://[PROJECT ID].appspot.com/search`) using the template given above. The search page will display the thumbnails and names of the photos uploaded to your Cloud Storage photo bucket that match the entered search term.
 
 ### The `main.py` file
 
-The `main.py` file contains the backend logic of the website, including the reception of Cloud Pub/Sub messages, the communication with GCS and Datastore, and the rendering of HTML templates.
+The `main.py` file contains the backend logic of the website, including receiving Cloud Pub/Sub messages, communicating with Cloud Storage and Cloud Datastore, and rendering HTML templates.
 
 1. Create a `main.py` file in your host directory.
 1. Add the required imports to the top of the file:
@@ -212,11 +212,11 @@ The `main.py` file contains the backend logic of the website, including the rece
     import googleapiclient.discovery
     ```
 
-1. Add constants. `THUMBNAIL_BUCKET` is the name of the GCS bucket you created in Set Up step #8 to store the thumbnails of photos uploaded to your GCS photo bucket. `PHOTO_BUCKET` is the name of the GCS bucket you created in Set Up step #5 to store the photos uploaded to your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the maximum number of notifications displayed on the home/notifications page of your web application. `MAX_LABELS` regulates the maximum number of labels associated with each photo using Cloud Vision.
+1. Add constants. `THUMBNAIL_BUCKET` is the name of the Cloud Storage bucket you created in Set Up step #8 to store the thumbnails of photos uploaded to your Cloud Storage photo bucket. `PHOTO_BUCKET` is the name of the Cloud Storage bucket you created in Set Up step #5 to store the photos uploaded to your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the maximum number of notifications displayed on the home/notifications page of your web application. `MAX_LABELS` regulates the maximum number of labels associated with each photo using Google Cloud Vision API.
 
     ```py
-    THUMBNAIL_BUCKET = '[GCS THUMBNAIL BUCKET NAME]'
-    PHOTO_BUCKET = '[GCS PHOTO BUCKET NAME]'
+    THUMBNAIL_BUCKET = '[THUMBNAIL BUCKET NAME]'
+    PHOTO_BUCKET = '[PHOTO BUCKET NAME]'
     NUM_NOTIFICATIONS_TO_DISPLAY = [SOME NUMBER]
     MAX_LABELS = [SOME NUMBER]
     ```
@@ -229,7 +229,7 @@ The `main.py` file contains the backend logic of the website, including the rece
         loader=jinja2.FileSystemLoader(template_dir))
     ```
 
-1. Create the `Notification` class. Notifications are created from Cloud Pub/Sub messages and stored in Cloud Datastore, to be displayed on the home page of your application. Notifications have a message, date of posting, and generation number, which is used to distinguish between similar notifications and prevent the display of repeated notifications. These properties are stored as NDB model properties using the [Google Datastore NDB Client Library](https://cloud.google.com/appengine/docs/standard/python/ndb/), which allows App Engine Python apps to connect to Cloud Datastore.
+1. Create the `Notification` class. Notifications are created from Cloud Pub/Sub messages and stored in Cloud Datastore, to be displayed on the home page of your application. Notifications have a message, date of posting, and generation number, which is used to distinguish between similar notifications and prevent the display of repeated notifications. These properties are stored as NDB model properties using the [Google Cloud Datastore NDB Client Library](https://cloud.google.com/appengine/docs/standard/python/ndb/), which allows App Engine Python apps to connect to Cloud Datastore.
 
     ```py
     class Notification(ndb.Model):
@@ -238,7 +238,7 @@ The `main.py` file contains the backend logic of the website, including the rece
         generation = ndb.StringProperty()
     ```
 
-1. Create the `ThumbnailReference` class. ThumbnailReferences are stored in Cloud Datastore and contain information about the thumbnails stored in your GCS thumbnail bucket. ThumbnailReferences have a thumbnail_name (the name of the uploaded photo), a thumbnail_key (a concatenation of the name and generation number of an uploaded photo, used to distinguish similarly named photos), date of posting, a list of label descriptions assigned to the corresponding photo using Google Cloud Vision, and the url of the original photo that is stored in GCS.
+1. Create the `ThumbnailReference` class. ThumbnailReferences are stored in Cloud Datastore and contain information about the thumbnails stored in your Cloud Storage thumbnail bucket. ThumbnailReferences have a thumbnail_name (the name of the uploaded photo), a thumbnail_key (a concatenation of the name and generation number of an uploaded photo, used to distinguish similarly named photos), date of posting, a list of label descriptions assigned to the corresponding photo using Google Cloud Vision API, and the url of the original photo that is stored in Cloud Storage.
 
     ```py
     class ThumbnailReference(ndb.Model):
@@ -303,6 +303,7 @@ The `main.py` file contains the backend logic of the website, including the rece
     ```
 
 ## Creating the notifications page
+The first step towards building your application is adding code to display notifications on the home page. You'll do this by receiving Cloud Pub/Sub messages, creating and storing notifications in Cloud Datastore, and writing the notifications to the HTML page.
 
 ### Receiving Cloud Pub/Sub messages
 
@@ -343,7 +344,7 @@ During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cl
         photo_name[:index], generation_number, photo_name[index:])
     ```
 
-You now have all of the information needed to create the necessary notification and communicate with GCS.
+You now have all of the information needed to create the necessary notification and communicate with Cloud Storage.
 
 ### Creating and storing `Notifications`
 
@@ -390,7 +391,7 @@ You now have all of the information needed to create the necessary notification 
         overwritten_by_generation=overwritten_by_generation)
     ```
 
-1. Check if the new notification has already been stored. Cloud Pub/Sub messaging guarantees at-least-once delivery, meaning a Pub/Sub notification may be received more than once. If the notification already exists, there has been no new change to the GCS photo bucket, and the Pub/Sub notification can be ignored.
+1. Check if the new notification has already been stored. Cloud Pub/Sub messaging guarantees at-least-once delivery, meaning a Pub/Sub notification may be received more than once. If the notification already exists, there has been no new change to the Cloud Storage photo bucket, and the Pub/Sub notification can be ignored.
 
     ```py
     exists_notification = Notification.query(
@@ -401,7 +402,7 @@ You now have all of the information needed to create the necessary notification 
         return
     ```
 
-1. Do not act for `OBJECT_METADATA_UPDATE` events, as they signal no change to the GCS photo bucket images themselves.
+1. Do not act for `OBJECT_METADATA_UPDATE` events, as they signal no change to the Cloud Storage photo bucket images themselves.
 
     ```py
     if new_notification.message is None:
@@ -445,7 +446,7 @@ If you encounter errors, open the `Products & services` menu and navigate to `Lo
 
 ## Implementing photo upload functionality
 
-When a Cloud Pub/Sub notification is received, different actions occur depending on the `eventType`. If the notification indicates an `OBJECT_FINALIZE` event, the uploaded photo must be shrunk to a thumbnail, the thumbnail of the photo must be stored in the GCS thumbnail bucket, the photo must be labeled using the Google Cloud Vision API, and a `ThumbnailReference` must be stored in Datastore.
+When a Cloud Pub/Sub notification is received, different actions occur depending on the `eventType`. If the notification indicates an `OBJECT_FINALIZE` event, the uploaded photo must be shrunk to a thumbnail, the thumbnail of the photo must be stored in the Cloud Storage thumbnail bucket, the photo must be labeled using the Google Cloud Vision API, and a `ThumbnailReference` must be stored in Cloud Datastore.
 
 Because these actions only occur in the case of a photo upload, an `if` block should be used inside the `ReceiveMessage` class of `main.py`.
 
@@ -456,7 +457,7 @@ if event_type == 'OBJECT_FINALIZE':
 
 ### Creating the thumbnail
 
-To create the thumbnail, the original image from the GCS photo bucket should be resized. Use the [Images Python API](https://cloud.google.com/appengine/docs/standard/python/images/) to perform the required transformations.
+To create the thumbnail, the original image from the Cloud Storage photo bucket should be resized. Use the [Images Python API](https://cloud.google.com/appengine/docs/standard/python/images/) to perform the required transformations.
 
 1. Write the `create_thumbnail` helper function.
 
@@ -476,9 +477,9 @@ To create the thumbnail, the original image from the GCS photo bucket should be 
     thumbnail = create_thumbnail(photo_name)
     ```
 
-### Storing the thumbnail in GCS
+### Storing the thumbnail in Cloud Storage
 
-The thumbnail should be stored in the GCS thumbnail bucket under the name `thumbnail_key` in order to distinguish between different versions of the same photo. Since two Cloud Pub/Sub notifications, an `OBJECT_FINALIZE` and an `OBJECT_DELETE`/`OBJECT_ARCHIVE`, are sent in an arbitrary order in the case of an overwrite, it is possible for two thumbnails with the same `thumbnail_name` to exist in storage at once. Utilizing the `generation_number` of the photo in the `thumbnail_key` ensures that the correct thumbnail is deleted when necessary.
+The thumbnail should be stored in the Cloud Storage thumbnail bucket under the name `thumbnail_key` in order to distinguish between different versions of the same photo. Since two Cloud Pub/Sub notifications, an `OBJECT_FINALIZE` and an `OBJECT_DELETE`/`OBJECT_ARCHIVE`, are sent in an arbitrary order in the case of an overwrite, it is possible for two thumbnails with the same `thumbnail_name` to exist in storage at once. Utilizing the `generation_number` of the photo in the `thumbnail_key` ensures that the correct thumbnail is deleted when necessary.
 
 1. Write the `store_thumbnail_in_gcs` helper function.
 
@@ -503,7 +504,7 @@ The thumbnail should be stored in the GCS thumbnail bucket under the name `thumb
 
 The [Google Cloud Vision API Client Library for Python](https://developers.google.com/api-client-library/python/apis/vision/v1) can be used to [annotate](https://developers.google.com/resources/api-libraries/documentation/vision/v1/python/latest/vision_v1.images.html) images, assigning them labels that describe the contents of the picture. You can later use these labels to search for specific photos.
 
-1. Create the `uri` to reference the appropriate photo in the GCS photo bucket.
+1. Create the `uri` to reference the appropriate photo in the Cloud Storage photo bucket.
 
     ```py
     uri = 'gs://{}/{}'.format(PHOTO_BUCKET, photo_name)
@@ -595,17 +596,17 @@ At this point, the only other thing you need to create the required `ThumbnailRe
                 original_photo=original_photo)
     ```
 
-1. Store the newly created `ThumbnailReference` in Datastore.
+1. Store the newly created `ThumbnailReference` in Cloud Datastore.
 
     ```py
     thumbnail_reference.put()
     ```
 
-You have now completed all of the code necessary to store the information about an uploaded photo in GCS and Datastore.
+You have now completed all of the code necessary to store the information about an uploaded photo in Cloud Storage and Cloud Datastore.
 
 ### Writing thumbnails to the photos HTML file
 
-1. Write the `get_thumbnail_serving_url` helper function. This function returns a [serving url](https://cloud.google.com/appengine/docs/standard/python/images/#get-serving-url) that accesses the thumbnail from the GCS thumbnail bucket.
+1. Write the `get_thumbnail_serving_url` helper function. This function returns a [serving url](https://cloud.google.com/appengine/docs/standard/python/images/#get-serving-url) that accesses the thumbnail from the Cloud Storage thumbnail bucket.
 
     ```py
     def get_thumbnail_serving_url(photo_name):
@@ -640,10 +641,10 @@ You have now completed all of the code necessary to store the information about 
 ### Checkpoint
 
 1. Run your application locally to check for basic errors, then deploy your application.
-1. Upload an image with the extension `.jpg` to your GCS photo bucket.
-1. Check that the thumbnail version of your newly uploaded photo is in your GCS thumbnail bucket under the correct name.
-1. Check that in Datastore, there is a `Notification` listed with the message `[UPLOADED PHOTO NAME] was uploaded.`
-1. Check that in Datastore, there is a `ThumbnailReference` listed with the appropriate information.
+1. Upload an image with the extension `.jpg` to your Cloud Storage photo bucket.
+1. Check that the thumbnail version of your newly uploaded photo is in your Cloud Storage thumbnail bucket under the correct name.
+1. Check that in Cloud Datastore, there is a `Notification` listed with the message `[UPLOADED PHOTO NAME] was uploaded.`
+1. Check that in Cloud Datastore, there is a `ThumbnailReference` listed with the appropriate information.
 1. View your deployed application in your web browser.
     1. Check that the new notification is listed on the home page. You may need to refresh the page.
     1. Check that the thumbnail and name of the uploaded photo are displayed on the photos page.
@@ -652,7 +653,7 @@ If you encounter errors, use the `Logging` messages to debug your application.
 
 ## Implementing photo delete/archive functionality
 
-If the received Cloud Pub/Sub notification indicates an `OBJECT_DELETE` or `OBJECT_ARCHIVE` event, the thumbnail must be deleted from the GCS thumbnail bucket, and the `ThumbnailReference` must be deleted from Datastore.
+If the received Cloud Pub/Sub notification indicates an `OBJECT_DELETE` or `OBJECT_ARCHIVE` event, the thumbnail must be deleted from the Cloud Storage thumbnail bucket, and the `ThumbnailReference` must be deleted from Cloud Datastore.
 
 Because these actions only occur in the case of a photo delete or archive, an `elif` statement can be used inside the `ReceiveMessage` class of `main.py`, where the initial `if` statement of the block is the one specifying the event type as `OBJECT_FINALIZE`.
 
@@ -661,7 +662,7 @@ elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
     # Photo delete/archive-specific code here.
 ```
 
-1. Write the `delete_thumbnail` helper function to delete the specified thumbnail from the GCS thumbnail bucket and delete the `ThumbnailReference` from Datastore.
+1. Write the `delete_thumbnail` helper function to delete the specified thumbnail from the Cloud Storage thumbnail bucket and delete the `ThumbnailReference` from Cloud Datastore.
 
     ```py
     def delete_thumbnail(thumbnail_key):
@@ -685,10 +686,10 @@ elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
 ### Checkpoint
 
 1. Run your application locally to check for basic errors, then deploy your application.
-1. Delete an image from your GCS photo bucket.
-1. Check that the thumbnail version of your deleted photo is no longer in your GCS thumbnail bucket.
-1. Check that in Datastore, there is a `Notification` listed with the message `[DELETED PHOTO NAME] was deleted.`
-1. Check that in Datastore, the `ThumbnailReference` for your deleted photo is no longer listed.
+1. Delete an image from your Cloud Storage photo bucket.
+1. Check that the thumbnail version of your deleted photo is no longer in your Cloud Storage thumbnail bucket.
+1. Check that in Cloud Datastore, there is a `Notification` listed with the message `[DELETED PHOTO NAME] was deleted.`
+1. Check that in Cloud Datastore, the `ThumbnailReference` for your deleted photo is no longer listed.
 1. View your deployed application in your web browser.
     1. Check that the new notification is listed on the home page. You may need to refresh the page.
     1. Check that the thumbnail and name of the uploaded photo are no longer displayed on the photos page.
@@ -706,7 +707,7 @@ The search page of the web application has a search bar users can enter a `searc
         search_term = self.request.get('search-term').lower()
         ```
 
-    1. In a similar manner as in the `PhotosHandler`, build an ordered dictionary with thumbnail serving urls as keys and `ThumbnailReferences` as values. However, unlike in the `PhotosHandler`, although you query all `ThumbnailReferences` from Datastore, you should only add the thumbnails labeled with the `search-term` to the dictionary.
+    1. In a similar manner as in the `PhotosHandler`, build an ordered dictionary with thumbnail serving urls as keys and `ThumbnailReferences` as values. However, unlike in the `PhotosHandler`, although you query all `ThumbnailReferences` from Cloud Datastore, you should only add the thumbnails labeled with the `search-term` to the dictionary.
 
         ```py
         references = ThumbnailReference.query().order(
@@ -755,13 +756,13 @@ The search page of the web application has a search bar users can enter a `searc
 1. Run your application locally to check for basic errors, then deploy your application.
 1. View your deployed application in your web browser. Try using the search bar. When you search, the applicable photos should appear in a similar manner as the photos page, or else the text `No Search Results` should be displayed.
 
-Note: Examining the `labels` lists of the `ThumbnailReferences` in Datastore can help you determine whether or not the search is functioning as it is meant to.
+Note: Examining the `labels` lists of the `ThumbnailReferences` in Cloud Datastore can help you determine whether or not the search is functioning as it is meant to.
 
 If you encounter errors, use the `Logging` messages to debug your application.
 
 #### Congratulations! You now have a functioning shared photo album.
 
-Note: Other users you listed as collaborators during the `Set up` section should also be able to [modify the images in your GCS photo bucket](https://cloud-dot-devsite.googleplex.com/storage/docs/object-basics#upload) and see their changes take effect on the website.
+Note: Other users you listed as collaborators during the `Set up` section should also be able to [modify the images in your Cloud Storage photo bucket](https://cloud-dot-devsite.googleplex.com/storage/docs/object-basics#upload) and see their changes take effect on the website.
 
 ## Style
 
