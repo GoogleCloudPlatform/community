@@ -8,10 +8,11 @@ date published:
 
 This tutorial teaches you how to integrate several Google products to simulate a shared photo album, hosted on App Engine and managed through the Cloud Platform Console. The web application has three pages:
 1. Home/news feed, which displays notifications.
+    ![Notifications Page](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/notifications-page.png)
 1. Photos, which displays all uploaded photos in thumbnail form.
+    ![Photos Page](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/photos-page.png)
 1. Search, which allows the user to search for a specific term and displays the thumbnails applicable to the given term.
-
-Click [here](https://project-test-172118.appspot.com/) to view an example of the web application you will build using this tutorial.
+    ![Search Page](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/search-page.png)
 
 Users interact with the web application only through the Cloud Platform Console; photos cannot be uploaded or deleted through the website. Behind the scenes, two buckets exist in [Cloud Storage](https://cloud.google.com/storage/): one to store the uploaded photos and the other to store the thumbnails of the uploaded photos. [Cloud Datastore](https://cloud.google.com/datastore/) stores all non-image entities needed for the web application, which is hosted on [App Engine](https://cloud.google.com/appengine/). Notifications of changes to the Cloud Storage photo bucket are sent to the application by using [Cloud Pub/Sub](https://cloud.google.com/pubsub/). The [Google Cloud Vision API Client Library](https://developers.google.com/api-client-library/python/apis/vision/v1) is used to label photos for search.
 
@@ -24,14 +25,14 @@ A general overview of how the application works is shown in the diagrams below.
 1. A Cloud Pub/Sub message is sent.
 1. The Cloud Pub/Sub message is received by App Engine.
 1. The Cloud Pub/Sub message is formatted and stored as a `Notification` in Cloud Datastore.
-1. If the event type from the message is `OBJECT_FINALIZE`, the uploaded photo is compressed and stored as a thumbnail in a separate Cloud Storage thumbnail bucket. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, the thumbnail matching the name and generation number of the deleted or archived photo is deleted from the Cloud Storage thumbnail bucket. When an object is removed from your Cloud Storage photo bucket, the event type will be `OBJECT_DELETE` if [versioning](https://cloud.google.com/storage/docs/object-versioning) is not turned on for your bucket and `OBJECT_ARCHIVE` if versioning is turned on for your bucket. 
+1. If the event type from the message is `OBJECT_FINALIZE`, the uploaded photo is compressed and stored as a thumbnail in a separate Cloud Storage thumbnail bucket. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, the thumbnail matching the name and generation number of the deleted or archived photo is deleted from the Cloud Storage thumbnail bucket. When an object is removed from your Cloud Storage photo bucket, the event type will be `OBJECT_DELETE` if [versioning](https://cloud.google.com/storage/docs/object-versioning) is not turned on for your bucket and `OBJECT_ARCHIVE` if versioning is turned on for your bucket.
 1. If the event type from the message is `OBJECT_FINALIZE`, then the Google Cloud Vision API is used to generate labels for the uploaded photo.
 1. If the event type from the message is `OBJECT_FINALIZE`, then a new `ThumbnailReference` is created and stored in Cloud Datastore. If the event type from the message is `OBJECT_DELETE` or `OBJECT_ARCHIVE`, then the appropriate `ThumbnailReference` is deleted from Cloud Datastore.
 
 **Loading the home page:**
 ![Loading Notifications](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-home-page.png)
 
-1. The user navigates to `http://[PROJECT ID].appspot.com/`. For example: [https://project-test-172118.appspot.com/](https://project-test-172118.appspot.com/).
+1. The user navigates to `http://[PROJECT ID].appspot.com/`.
 1. A predetermined number of `Notifications` are queried from Cloud Datastore, ordered by date and time, most recent first.
 1. The queried `Notifications` are sent to the front-end to be formatted and displayed on the home page.
 1. The HTML file links to an external CSS file for styling.
@@ -39,7 +40,7 @@ A general overview of how the application works is shown in the diagrams below.
 **Loading the photos page:**
 ![Loading Photos](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-photos-page.png)
 
-1. The user navigates to `http://[PROJECT ID].appspot.com/photos`. For example: [https://project-test-172118.appspot.com/photos](https://project-test-172118.appspot.com/photos).
+1. The user navigates to `http://[PROJECT ID].appspot.com/photos`.
 1. All the `ThumbnailReferences` are fetched from Cloud Datastore, ordered by date and time, most recent first.
 1. Each `ThumbnailReference` is used to get a serving url for the corresponding thumbnail stored in the Cloud Storage thumbnail bucket.
 1. A dictionary of `ThumbnailReferences` and their serving urls is sent to the front-end to be formatted and displayed on the photos page.
@@ -48,7 +49,7 @@ A general overview of how the application works is shown in the diagrams below.
 **Loading the search page:**
 ![Loading Search](https://github.com/GChien44/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-search-page.png)
 
-1. The user navigates to `http://[PROJECT ID].appspot.com/search`. For example: [https://project-test-172118.appspot.com/search](https://project-test-172118.appspot.com/search). The user enters a search term.
+1. The user navigates to `http://[PROJECT ID].appspot.com/search`. The user enters a search term.
 1. All the `ThumbnailReferences` are fetched from Cloud Datastore, ordered by date and time, most recent first.
 1. Each queried `ThumbnailReference` that contains the search term as one of its `labels` is used to get a serving url for the corresponding thumbnail stored in the Cloud Storage thumbnail bucket.
 1. A dictionary of `ThumbnailReferences` that contain the search term as one of their `labels` and their serving urls is sent to the front-end to be formatted and displayed on the search page.
