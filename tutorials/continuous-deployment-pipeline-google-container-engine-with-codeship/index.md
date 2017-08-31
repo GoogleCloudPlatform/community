@@ -35,6 +35,7 @@ Make sure you have the following:
 *  [Codeship Jet CLI](https://documentation.codeship.com/pro/builds-and-configuration/cli/)
 *  [`hello-express` source code](https://github.com/kellyjandrews/hello-express)
 *  [GitHub](https://github.com/), [Bitbucket](https://bitbucket.org/), or [GitLab](https://about.gitlab.com/) account
+*  [Google Cloud SDK](https://cloud.google.com/sdk/docs/quickstarts) and [kubectl](https://kubernetes.io/)
 
 ## Setting up the continuous deployment pipeline
 
@@ -53,7 +54,7 @@ Follow these steps to create a service account:
 1.  Click `Select a Role` and choose the following permissions:
 
     * Project &rarr; Service Account Actor
-    * Container &rarr; Container Engine Admin
+    * Container &rarr; Container Engine Developer
     * Storage &rarr; Storage Admin
 1.  Select `Furnish a new private key` and leave the option on `JSON`.
 1.  Click Create, and then close the dialog once it is created.
@@ -86,8 +87,22 @@ Save the `.env` file once these items are finished.
 
 ### Step 3: Run initial deployment
 
-You need to push an image and create your clusters in Container Engine initially before you
-can set up a fully automated pipeline in Codeship. The `hello-express` source code includes a `bin` folder with `bash` scripts that perform these tasks using the
+You need to create your clusters and push an image in Container Engine initially before you
+can set up a fully automated pipeline in Codeship.
+
+Create your container clusters using the Google Cloud SDK by running the following command:
+
+    gcloud container clusters create hello-express-cluster --zone=us-central1-b --project=google-project-id
+
+This step takes a few minutes to complete. Once completed, you can verify the clusters are available by running the following command:
+
+    $ gcloud compute instances list --project=google-project-id
+    NAME                                                 ZONE           MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP      STATUS
+    gke-hello-express-cluste-default-pool-8f1e33a1-2t09  us-central1-a  n1-standard-1               10.128.0.2   130.211.202.173  RUNNING
+    gke-hello-express-cluste-default-pool-8f1e33a1-nzwp  us-central1-a  n1-standard-1               10.128.0.4   104.197.248.45   RUNNING
+    gke-hello-express-cluste-default-pool-8f1e33a1-xcd6  us-central1-a  n1-standard-1               10.128.0.3   130.211.196.247  RUNNING
+
+The `hello-express` source code includes a `bin` folder with `bash` scripts that perform these tasks using the
 Codeship Jet CLI.
 
 1.  Make sure the scripts in the `bin` folder are executable. In a terminal
@@ -128,7 +143,7 @@ Codeship Jet CLI.
         - name: gke-initial-deployment
           service: codeship_gce_service
           tag: master
-          command: bin/deploy --create
+          command: bin/create-deploy
         ...
 
 This pipeline runs each step in series. The `build-image` step instructs Codeship to build the `hello-express` Docker image on the CI server. After Codeship builds the Docker image, the `push-image-with-sha` step will push the image to Google Container Registry using the name `gcr.io/YOUR_PROJECT_ID/hello-express`, adding a tag using the first 8 characters of the commit SHA for every commit to the repository.
@@ -139,8 +154,7 @@ You will run this pipeline locally using the [Codeship Jet CLI](https://document
 
     jet steps --ci-commit-id 1234ABCD --tag master --push
 
-This command will run the steps to build your container cluster for the initial
-setup. It will take a few minutes to complete. Once completed, navigate to the
+This command creates your initial deployment and exposes the application. Once completed, navigate to the
 [Discovery](https://console.cloud.google.com/kubernetes/discovery) page in the
 Google Cloud Platform Console to verify the status is `ok`. Click the endpoint
 to open the application in the browser. You should see `Hello Express!`.
@@ -225,14 +239,11 @@ You also need to update your `codeship-steps.yml` file to use the
     #- name: gke-initial-deployment
     #  service: codeship_gce_service
     #  tag: master
-    #  command: bin/deploy --create
+    #  command: bin/create-deploy
     - name: gke-update-services
       service: codeship_gce_service
       tag: master
       command: bin/deploy
-    # - name: gke-remove-services
-    #   service: codeship_gce_service
-    #   command: bin/deploy --remove
 
 After you save these changes, stage all of these files for a commit. Commit
 the changes to the master branch, and push to your remote repository. After the
@@ -241,7 +252,7 @@ build.
 
 ### Step 7: Deploy an update to your application (optional)
 
-You can now modify the code in the `server.js` file to say something different.
+You can now modify the code in the `server.js` file to return something different.
 Change `'Hello Express!'` to something like `'Hello World!'`. Once you have
 changed the application, commit the change and push to your remote repository.
 
@@ -249,22 +260,18 @@ After the Codeship process is completed, navigate to the application
 endpoint to verify your changes have taken effect.
 
 ## Cleaning up
+<!-- TODO -->
 
 After completing the tutorial, follow these steps to remove the resources from your Google Cloud Platform account to prevent any charges:
 
-1.  Modify the `codeship-steps.yml` file to use the `gke-remove-services` step.
-    You can comment out everything but this step.
+1. Delete the Service: This step will deallocate the Cloud Load Balancer created for your Service:
 
-        - name: gke-remove-services
-          service: codeship_gce_service
-          command: bin/deploy --remove
+    kubectl delete service hello-express
 
-1.  Use the Codeship Jet CLI to run this step. This may take a few minutes to
-    complete.
+1. Wait for the Load Balancer provisioned for the hello-web Service to be deleted: The load balancer is deleted asynchronously in the background when you run kubectl delete. Wait until the load balancer is deleted by watching the output of the following command:
 
-        jet steps
+    gcloud compute forwarding-rules list
 
-1.  Visit the [Container Engine](https://console.cloud.google.com/kubernetes)
-    page to verify the cluster was deleted.
-1.  Visit the [Discovery](https://console.cloud.google.com/kubernetes/discovery)
-    page to verify the load balancer was deleted.
+1. Delete the container cluster: This step will delete the resources that make up the container cluster, such as the compute instances, disks and network resources.
+
+    gcloud container clusters delete hello-cluster
