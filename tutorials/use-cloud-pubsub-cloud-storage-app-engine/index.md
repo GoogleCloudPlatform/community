@@ -6,48 +6,6 @@ tags: App Engine, Cloud Pub/Sub, Cloud Storage, GCS, Datastore, photo album
 date published:
 ---
 
-* [Overview](#overview)
-* [Objectives](#objectives)
-* [Costs](#costs)
-* [Set up](#set-up)
-* [Basic application layout](#basic-application-layout)
-    * [Libraries and `app.yaml`](#libraries-and-appyaml)
-    * [HTML files](#html-files)
-    * [The `main.py` file](#the-mainpy-file)
-    * [Checkpoint](#checkpoint)
-* [Creating the notifications page](#creating-the-notifications-page)
-    * [Receiving Cloud Pub/Sub messages](#receiving-cloud-pubsub-messages)
-    * [Creating and storing `Notifications`](#creating-and-storing-notifications)
-    * [Writing `Notifications` to the HTML file](#writing-notifications-to-the-html-file)
-    * [Checkpoint](#checkpoint-1)
-* [Implementing photo upload functionality](#implementing-photo-upload-functionality)
-    * [Creating the thumbnail](#creating-the-thumbnail)
-    * [Storing the thumbnail in GCS](#storing-the-thumbnail-in-gcs)
-    * [Labeling the photo using Google Cloud Vision](#labeling-the-photo-using-google-cloud-vision)
-    * [Creating and storing the `ThumbnailReference`](#creating-and-storing-the-thumbnailreference)
-    * [Writing thumbnails to the photos HTML file](#writing-thumbnails-to-the-photos-html-file)
-    * [Checkpoint](#checkpoint-2)
-* [Implementing photo delete/archive functionality](#implementing-photo-deletearchive-functionality)
-    * [Checkpoint](#checkpoint-3)
-* [Creating the search page](#creating-the-search-page)
-    * [Checkpoint](#checkpoint-4)
-* [Style](#style)
-    * [Set up](#set-up-1)
-    * [Adding style common to every page](#adding-style-common-to-every-page)
-    * [Checkpoint](#checkpoint-5)
-    * [Styling the home (notifications) page](#styling-the-home-notifications-page)
-    * [Styling the search bar on the search page](#styling-the-search-bar-on-the-search-page)
-    * [Checkpoint](#checkpoint-6)
-    * [Styling the thumbnails for both the photos and search pages](#styling-the-thumbnails-for-both-the-photos-and-search-pages)
-    * [Checkpoint](#checkpoint-7)
-    * [Making thumbnails clickable](#making-thumbnails-clickable)
-    * [Checkpoint](#checkpoint-8)
-    * [Making photos scrollable](#making-photos-scrollable)
-    * [Checkpoint](#checkpoint-9)
-* [Clean up](#clean-up)
-
-## Overview
-
 This tutorial teaches you how to integrate several Google products to simulate a shared photo album, hosted on App Engine and managed through the Cloud Platform Console. The web application has three pages:
 1. Home/news feed, which displays notifications.
 1. Photos, which displays all uploaded photos in thumbnail form.
@@ -131,9 +89,8 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=41
     ```
 
 1. In the Cloud Platform Console, [create a bucket](https://www.google.com/urlsa=D&q=https%3A%2F%2Fcloud.google.com%2Fstorage%2Fdocs%2Fcreating-buckets). This bucket is for storing the photos of your shared photo album.
-1. If you want collaborators on your photo album, [add IAM Permissions](https://www.google.com/url?sa=D&q=https%3A%2F%2Fcloud.google.com%2Fstorage%2Fdocs%2Faccess-control%2Fusing-iam-permissions%23bucket-add) to your bucket. Select`Storage Object Admin` as the role for each collaborator you want to add.
+1. If you want collaborators on your photo album, add the desired collaborators as [`Project Viewers`](https://cloud.google.com/storage/docs/projects#permissions) for your App Engine project, and as [`Object Admins`](https://cloud.google.com/storage/docs/access-control/iam-roles) for your GCS photo bucket. See instructions [here](https://cloud.google.com/storage/docs/access-control/using-iam-permissions#project-add). Note: collaborators must also have Google Cloud Platform accounts.
 1. Change the photos bucket permissions to make it publicly readable so that the photos may be viewed on your website. To do this, you'll need to [make your bucket data public](https://www.google.com/url?sa=D&q=https%3A%2F%2Fcloud.google.com%2Fstorage%2Fdocs%2Faccess-control%2Fmaking-data-public%23buckets).
-
 1. Create another bucket with `Multi-Regional` or `Regional` storage. This bucket is for storing the thumbnails of the photos in your shared photo album.
 1. [Create a new topic](https://www.google.com/url?sa=D&q=https%3A%2F%2Fcloud.google.com%2Fpubsub%2Fdocs%2Fquickstart-console%23create_a_topic) with the same name as your photos bucket.
 1. Click on the three-dots icon for your photo album topic and click on `New subscription`. Change the `Delivery Type` to `Push into an endpoint url`. This is the url that receives your Cloud Pub/Sub messages. For a url, use the following, replacing [PROJECT-ID] with the name of your project: `http://[PROJECT ID].appspot.com/_ah/push-handlers/receive_message`.
@@ -804,7 +761,7 @@ If you encounter errors, use the `Logging` messages to debug your application.
 
 #### Congratulations! You now have a functioning shared photo album.
 
-Note: Other users you listed as `Storage Admins` for your GCS photo bucket should also be able to [upload images to the bucket](https://cloud.google.com/storage/docs/gsutil/commands/cp) and see their changes take effect on the website.
+Note: Other users you listed as collaborators during the `Set up` section should also be able to [modify the images in your GCS photo bucket](https://cloud-dot-devsite.googleplex.com/storage/docs/object-basics#upload) and see their changes take effect on the website.
 
 ## Style
 
