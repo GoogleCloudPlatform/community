@@ -340,7 +340,10 @@ During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cl
 1. Create the thumbnail_key using the `photo_name` and `generation_number`. Note that using the following logic, only photos with the extensions `.jpg` can be uploaded effectively.
 
     ```py
-    index = photo_name.index('.jpg')
+    try:
+      index = photo_name.index('.jpg')
+    except:
+      return
     thumbnail_key = '{}{}{}'.format(
         photo_name[:index], generation_number, photo_name[index:])
     ```
