@@ -340,7 +340,10 @@ During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cl
 1. Create the thumbnail_key using the `photo_name` and `generation_number`. Note that using the following logic, only photos with the extensions `.jpg` can be uploaded effectively.
 
     ```py
-    index = photo_name.index('.jpg')
+    try:
+      index = photo_name.index('.jpg')
+    except:
+      return
     thumbnail_key = '{}{}{}'.format(
         photo_name[:index], generation_number, photo_name[index:])
     ```
@@ -1083,7 +1086,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
           width: 100%;
           height: 100%;
           overflow: auto;
-          background-color: rgba(0,0,0,0.8);
+          background-color: rgba(0,0,0,0.95
         }
         ```
         `display` is initially set to none because the modal should only be displayed when a thumbnail is clicked. The logic for this will be added in step 3. `width` and `height` are set to 100% to take up the whole page. `background-color` is set to a somewhat transparent black so thumbnails will still be partially visible behind the modal.
@@ -1150,7 +1153,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
           color: [COLOR];
         }
         ```
-    1. Format the `caption` to be centered in `caption-container` and have a height of 50 pixels:
+    1. Format the `caption` to be centered in `caption-container` and have a height of 20 pixels:
 
         ```css
         #caption {
@@ -1161,7 +1164,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
           text-align: center;
           font-family: '[FONT]', [STYLE];
           padding: 10px 0;
-          height: 50px;
+          height: 20px;
         }
         ```
 1. Add JavaScript embedded within the HTML. The instructions in this section will need to be implemented in both HTML files associated with the photos and search pages.
@@ -1226,7 +1229,7 @@ Now that your thumbnails are nicely formatted, you can make your webpage display
 1. Check that the search page has the same behavior.
 
 ### Making photos scrollable
-The last feature to add to your website is scrolling. After clicking on a thumbnail, the original photo appears. In this section, you'll add the ability to scroll to either side of that photo and see the original photos of other thumbnails without having to close the modal and reopen it by clicking on another thumbnail.
+The next feature to add to your website is scrolling. After clicking on a thumbnail, the original photo appears. In this section, you'll add the ability to scroll to either side of that photo and see the original photos of other thumbnails without having to close the modal and reopen it by clicking on another thumbnail.
 
 1. Add HTML for both the photos and search pages. The instructions for this step should be implemented in your two HTML files responsible for the photos and search pages.
     1. Within the 'mySlides' class add the class 'numbertext'. This will display the current number of the photo displayed,     i.e. `1/5`. 
@@ -1263,7 +1266,7 @@ The last feature to add to your website is scrolling. After clicking on a thumbn
           top: 50%;
           width: auto;
           padding: 15px;
-          margin-top: -50px;
+          margin-top: -20px;
           color: white;
           font-weight: bold;
           font-size: 20px;
@@ -1307,6 +1310,131 @@ The last feature to add to your website is scrolling. After clicking on a thumbn
 1. Navigate to the photos page and click on a thumbnail. The photo that appears should now have next and previous arrows as well as a number in the top left corner. Click the arrows to scroll through the photos. Check that the caption updates correctly as you scroll.
 1. Verify that when you click the previous arrow on the first photo, the last photo appears, and that when you click the next arrow on the last photo, the first photo appears.
 1. Navigate to the search page and search for something. Clicking on the thumbnail results should display the same behavior as on the photos page.
+
+### Adding Labels to Photos in Scrolling View
+The last feature you will add to your application is showing the labels associated with a photo when that photo is displayed in the scrolling view. This feature will only appear on the photos page and will let users know what search terms they can use to search for the displayed photo.
+
+1. Add HTML to your file responsible for the photos page.
+    1. Below the `caption-container` class, add the following code:
+        ```html
+        <div class="labels-container">
+          <p id="labels">This photo will appear in the following searches: </p>
+          {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
+             <div class="myLabels">
+               <p>
+               {% for labelled in thumbnail_reference.labels %}
+                  {% if loop.last %}
+                    {{labelled}}
+                  {% else %}
+                     {{labelled}}, 
+                  {% endif %}
+              {% endfor %}
+              </p>
+             </div>
+          {% endfor %}
+         </div>
+         ```
+        This will add all the labels associated with each thumbnail into `myLabels`. When that thumbnail's corresponding original photo is displayed, the `myLabels` class corresponding to that thumbnail will be displayed and show all the searches in which the photo will show up.
+    1. Change the name of your `prev` and `next` classes to `prevPhotos` and `nextPhotos`. Arrows will need to be positioned differently on the photos and search pages because there will be a different offset needed to center the arrows on the photo. This is due to the added information about labels below the photo on the photos page.
+
+1. Add styling to your external CSS file.
+    1. First, position the `labels-container` below the `caption-container`:
+        ```css
+        div.labels-container {
+          text-align: center;
+          color: [COLOR];
+          margin: 0;
+        }
+        ```
+    1. Next, format the `labels` id:
+        ```css
+        #labels {
+          margin: auto;
+          display: block;
+          width: 80%;
+          max-width: 700px;
+          text-align: center;
+          font-family: '[FONT]', [STYLE];
+          padding: 10px 0;
+          font-size: [SIZE]px;
+        }
+        ```
+    1. You'll also want to format the list of labels held in `myLabels`:
+        ```css
+        div.myLabels {
+          display: none;
+          margin: 0;
+          text-align: center;
+          font-family: '[FONT]', [STYLE];
+          font-size: [SIZE]px;
+        }
+        ```
+    1. Finally, you'll need to reset `margin-top` for the prev and next arrows. In your
+        ```css
+        .prev,
+        .next {
+          ...
+        }
+        ```
+        style block, add `prevPhotos` and `nextPhotos` to be formatted:
+        ```css
+        .prev,
+        .next,
+        .prevPhotos,
+        .nextPhotos {
+          ...
+        }
+        ```
+        Add a new style block, to keep `prevPhotos` and `nextPhotos` centered on the photo after the addition of the `labels-container`:
+        ```css
+        .prevPhotos,
+        .nextPhotos {
+          margin-top: -90px;
+        }
+        ```
+        Add `.nextPhotos` to the repositioning of the `next` arrow:
+        ```css
+        .next,
+        .nextPhotos {
+          right: 0;
+          border-radius: 3px 0 0 3px;
+        }
+        ```
+        Add `.prevPhotos:hover` and `.nextPhotos:hover` effects:
+        ```css
+        .prev:hover,
+        .next:hover,
+        .prevPhotos:hover,
+        .nextPhotos:hover {
+          background-color: rgba(0, 0, 0, 0.8);
+        }
+        ```
+
+1. Add JavaScript. Modify the `showSlides(n)` function:
+    ```javascript
+    function showSlides(n) {
+      var i;
+      var slides = document.getElementsByClassName('mySlides');
+      var captionText = document.getElementById("caption");
+      var labels = document.getElementsByClassName('myLabels');
+      if (n > slides.length) {slideIndex = 1}
+      if (n < 1) {slideIndex = slides.length}
+      var image = document.getElementById(slideIndex + "");
+      for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+        labels[i].style.display = "none";
+      }
+      slides[slideIndex-1].style.display = "block";
+      captionText.innerHTML = image.alt;
+      labels[slideIndex-1].style.display = "block";
+    }
+    ```
+    This will show the correct `myLabels` the same way the correct `mySlides` is shown.
+
+### Checkpoint
+1. Run your application locally to check for basic errors, then deploy your application.
+1. Navigate to the photos page and click on a thumbnail. Verify that the correct labels are shown underneath the caption.
+1. Scroll through some photos to see the labels change to match the currently displayed photo.
 
 #### Congratulations! You've completed this tutorial and now have a functioning, user-friendly website!
 
