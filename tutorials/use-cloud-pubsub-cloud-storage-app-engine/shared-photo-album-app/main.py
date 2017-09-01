@@ -146,7 +146,10 @@ class ReceiveMessage(webapp2.RequestHandler):
 
         # Create the thumbnail_key using the photo_name and generation_number.
         # Note: Only photos with extension .jpg can be uploaded effectively.
-        index = photo_name.index('.jpg')
+        try:
+          index = photo_name.index('.jpg')
+        except:
+          return
         thumbnail_key = '{}{}{}'.format(
             photo_name[:index], generation_number, photo_name[index:])
 

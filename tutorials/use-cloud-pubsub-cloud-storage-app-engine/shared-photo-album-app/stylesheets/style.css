@@ -152,7 +152,7 @@ div.mySlides img {
   text-align: center;
   font-family: 'Roboto', sans-serif;
   padding: 10px 0;
-  font-size: 16px;
+  height: 20px;
 }
 
 /* Format labels for larger image */
@@ -164,7 +164,7 @@ div.mySlides img {
   text-align: center;
   font-family: 'Roboto', sans-serif;
   padding: 10px 0 5px;
-  font-size: 16px;
+  height: 20px;
 }
 
 /* Place 'x' to close pop-up when done scrolling through photos */
@@ -193,13 +193,15 @@ div.mySlides {
 
 /* Place next and previous arrows over photo to enable scrolling */
 .prev,
-.next {
+.next,
+.prevPhotos,
+.nextPhotos {
   cursor: pointer;
   position: absolute;
   top: 50%;
   width: auto;
   padding: 15px;
-  margin-top: -75px;
+  margin-top: -20px;
   color: white;
   font-weight: bold;
   font-size: 20px;
@@ -210,15 +212,23 @@ div.mySlides {
   -webkit-user-select: none;
 }
 
+.prevPhotos,
+.nextPhotos {
+  margin-top: -90px;
+}
+
 /* Position next arrow on right side of photo */
-.next {
+.next,
+.nextPhotos {
   right: 0;
   border-radius: 3px 0 0 3px;
 }
 
 /* Add background to arrows when hovered over */
 .prev:hover,
-.next:hover {
+.next:hover,
+.prevPhotos:hover,
+.nextPhotos:hover {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
@@ -251,7 +261,7 @@ div.myLabels {
   margin: 0;
   text-align: center;
   font-family: 'Roboto', sans-serif;
-  font-size: 16px;
+  height: 50px;
 }
 
 /* Center the search bar on the Search page */
