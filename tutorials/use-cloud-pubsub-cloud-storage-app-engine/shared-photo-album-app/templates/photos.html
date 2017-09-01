@@ -44,6 +44,22 @@
           <div class="caption-container">
             <p id="caption"></p>
           </div>
+          <div class="labels-container">
+            <p id="labels">This photo will appear in the following searches: </p>
+          {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
+            <div class="myLabels">
+              <p>
+              {% for labelled in thumbnail_reference.labels %}
+                {% if loop.last %}
+                  {{labelled}}
+                {% else %}
+                   {{labelled}}, 
+                {% endif %}
+              {% endfor %}
+              </p>
+            </div>
+          {% endfor %}
+          </div>
         </div>
       </div>
       {% for img_url, thumbnail_reference in thumbnails.iteritems() %}
@@ -82,14 +98,17 @@
           var i;
           var slides = document.getElementsByClassName('mySlides');
           var captionText = document.getElementById("caption");
+          var labels = document.getElementsByClassName('myLabels');
           if (n > slides.length) {slideIndex = 1}
           if (n < 1) {slideIndex = slides.length}
           var image = document.getElementById(slideIndex + "");
           for (i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
+            labels[i].style.display = "none";
           }
           slides[slideIndex-1].style.display = "block";
           captionText.innerHTML = image.alt;
+          labels[slideIndex-1].style.display = "block";
         }
 
     </script>

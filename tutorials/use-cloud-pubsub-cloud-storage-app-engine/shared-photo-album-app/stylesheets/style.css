@@ -122,7 +122,7 @@ div.modal {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(0,0,0,0.95);
 }
 
 /* Position the box to hold photo scrolling */
@@ -152,7 +152,19 @@ div.mySlides img {
   text-align: center;
   font-family: 'Roboto', sans-serif;
   padding: 10px 0;
-  height: 50px;
+  font-size: 16px;
+}
+
+/* Format labels for larger image */
+#labels {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  padding: 10px 0 5px;
+  font-size: 16px;
 }
 
 /* Place 'x' to close pop-up when done scrolling through photos */
@@ -187,7 +199,7 @@ div.mySlides {
   top: 50%;
   width: auto;
   padding: 15px;
-  margin-top: -50px;
+  margin-top: -75px;
   color: white;
   font-weight: bold;
   font-size: 20px;
@@ -223,8 +235,23 @@ div.mySlides {
 /* Position caption below photo */
 .caption-container {
   text-align: center;
-  padding: 2px 16px;
+  padding: 5px 16px;
   color: white;
+}
+
+/* Position searchable labels below caption */
+div.labels-container {
+  text-align: center;
+  color: white;
+  margin: 0;
+}
+
+div.myLabels {
+  display: none;
+  margin: 0;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
 }
 
 /* Center the search bar on the Search page */
