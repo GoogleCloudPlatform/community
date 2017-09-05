@@ -248,7 +248,7 @@ The HTML files represent the different pages of your web application.
     `html` tag you should have `head` and `body` sections. In the `head` tag,
     you should have the `title` of your page, and in the `body` tag you should
     add the links to the other pages of your website as well as the `h1` header
-    of your current page. For an example, view the [finished `templates/notifications.html` file](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app/templates/notifications.html).
+    of your current page. For an example, view the finished [`templates/notifications.html`](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app/templates/notifications.html) file.
     Do not yet add anything to the HTML files except for this basic layout; the
     other code will be explained in later sections.
 1.  Create an HTML file for the home/notifications page of your application
