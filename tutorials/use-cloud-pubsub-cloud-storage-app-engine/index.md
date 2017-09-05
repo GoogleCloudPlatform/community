@@ -1101,7 +1101,7 @@ appear in a table format.
 1.  Add HTML in the files that control the photos and search pages. The code
     instructions for this step should be implemented in both the photos page
     HTML file and the search page HTML file. See the
-    [finish HTML files](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app/templates/)
+    [finished HTML files](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app/templates/)
     for examples.
 
     1.  Add a gallery class outside the for loop to hold all the thumbnails,
@@ -1385,7 +1385,7 @@ another thumbnail.
 
 1.  Add HTML for both the photos and search pages. The instructions for this
     step should be implemented in your two HTML files responsible for the photos
-    and search pages.
+    and search pages. See the [finished HTML files](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app/templates/) for an example.
 
     1.  Within the `mySlides` class add the class `numbertext`. This will
         display the current number of the photo displayed, i.e. `1/5`.
@@ -1491,7 +1491,7 @@ terms they can use to search for the displayed photo.
 
 1.  Add HTML to your file responsible for the photos page.
 
-    1.  Add a `div` with the class `labels-container` , as seen in [the finished photos.html file](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app/templates/photos.html)
+    1.  Add a `div` with the class `labels-container` , as seen in [the finished photos.html file](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app/templates/photos.html).
 
         This will add all the labels associated with each thumbnail into
         `myLabels`. When that thumbnail's corresponding original photo is
