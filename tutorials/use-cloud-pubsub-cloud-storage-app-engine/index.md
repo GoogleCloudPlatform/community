@@ -153,7 +153,7 @@ users might be eligible for a [free trial](https://cloud.google.com/free-trial).
 
     Note: collaborators must also have Google Cloud Platform accounts.
 
-1.  Change the photos bucket permissions to make it publicly readable so that
+1.  Change the Cloud Storage photo bucket permissions to make it publicly readable so that
     the photos may be viewed on your website. To do this, you'll need to
     [make your bucket data public](https://cloud.google.com/storage/docs/access-control/making-data-public#buckets).
 1.  Create another bucket with `Multi-Regional` or `Regional` storage. This
@@ -252,7 +252,7 @@ The HTML files represent the different pages of your web application.
     Do not yet add anything to the HTML files except for this basic layout; the
     other code will be explained in later sections.
 1.  Create an HTML file for the home/notifications page of your application
-    (url: `http://[YOUR_PROJECT_ID].appspot.com`) following the instructions
+    (url: `http://[YOUR_PROJECT_ID].appspot.com`), following the instructions
     given in the previous step. The notifications page will have a news feed
     listing all recent actions performed on your Cloud Storage photo bucket.
 1.  Create an HTML file for the photos page of your application
@@ -288,9 +288,9 @@ Datastore, and rendering HTML templates.
         import googleapiclient.discovery
 
 1.  Add constants. `THUMBNAIL_BUCKET` is the name of the Cloud Storage bucket
-    you created in Set Up step #8 to store the thumbnails of photos uploaded to
+    you created in Set up step #8 to store the thumbnails of photos uploaded to
     your Cloud Storage photo bucket. `PHOTO_BUCKET` is the name of the Cloud
-    Storage bucket you created in Set Up step #5 to store the photos uploaded to
+    Storage bucket you created in Set up step #5 to store the photos uploaded to
     your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the
     maximum number of notifications displayed on the home/notifications page of
     your web application. `MAX_LABELS` regulates the maximum number of labels
@@ -308,11 +308,11 @@ Datastore, and rendering HTML templates.
         jinja_environment = jinja2.Environment(
             loader=jinja2.FileSystemLoader(template_dir))
 
-1.  Create the `Notification` class. Notifications are created from Cloud
+1.  Create the `Notification` class. `Notifications` are created from Cloud
     Pub/Sub messages and stored in Cloud Datastore, to be displayed on the home
-    page of your application. Notifications have a message, date of posting, and
+    page of your application. `Notifications` have a message, date of posting, and
     generation number, which is used to distinguish between similar
-    notifications and prevent the display of repeated notifications. These
+    `notifications` and prevent the display of repeated `notifications`. These
     properties are stored as NDB model properties using the
     [Google Cloud Datastore NDB Client Library](https://cloud.google.com/appengine/docs/standard/python/ndb/),
     which allows App Engine Python apps to connect to Cloud Datastore.
@@ -322,10 +322,10 @@ Datastore, and rendering HTML templates.
             date = ndb.DateTimeProperty(auto_now_add=True)
             generation = ndb.StringProperty()
 
-1.  Create the `ThumbnailReference` class. ThumbnailReferences are stored in
+1.  Create the `ThumbnailReference` class. `ThumbnailReferences` are stored in
     Cloud Datastore and contain information about the thumbnails stored in your
-    Cloud Storage thumbnail bucket. ThumbnailReferences have a thumbnail_name
-    (the name of the uploaded photo), a thumbnail_key (a concatenation of the
+    Cloud Storage thumbnail bucket. `ThumbnailReferences` have a `thumbnail_name`
+    (the name of the uploaded photo), a `thumbnail_key` (a concatenation of the
     name and generation number of an uploaded photo, used to distinguish
     similarly named photos), date of posting, a list of label descriptions
     assigned to the corresponding photo using Google Cloud Vision API, and the
@@ -406,7 +406,7 @@ notifications to the HTML page.
 
 ### Receiving Cloud Pub/Sub messages
 
-During the Set Up phase, you configured [Cloud Pub/Sub push messages](https://cloud.google.com/pubsub/docs/push#receive_push)
+During the Set up phase, you configured [Cloud Pub/Sub push messages](https://cloud.google.com/pubsub/docs/push#receive_push)
 to be sent to the url you specified for the `ReceiveMessage` class in your
 `main.py` file. When you receive a Pub/Sub message, you must get necessary
 information from it and acknowledge its reception.
@@ -421,7 +421,7 @@ information from it and acknowledge its reception.
         message = json.loads(urllib.unquote(self.request.body))
         attributes = message['message']['attributes']
 
-    `attributes` is a key:value dictionary where the keys are the Pub/Sub
+    `attributes` is a key:value dictionary where the keys are the Cloud Pub/Sub
     attribute names and the values are the attribute values.
 
 1.  Acknowledge the reception of the Cloud Pub/Sub message.
@@ -436,7 +436,7 @@ information from it and acknowledge its reception.
         overwrote_generation = attributes.get('overwroteGeneration')
         overwritten_by_generation = attributes.get('overwrittenByGeneration')
 
-1.  Create the thumbnail_key using the `photo_name` and `generation_number`.
+1.  Create the `thumbnail_key` using the `photo_name` and `generation_number`.
     Note that using the following logic, only photos with the extensions `.jpg`
     can be uploaded effectively.
 
@@ -461,28 +461,28 @@ and communicate with Cloud Storage.
                             generation,
                             overwrote_generation=None,
                             overwritten_by_generation=None):
-        if event_type == 'OBJECT_FINALIZE':
-            if overwrote_generation is not None:
-                message = '{} was uploaded and overwrote an older' \
-                    ' version of itself.'.format(photo_name)
+            if event_type == 'OBJECT_FINALIZE':
+                if overwrote_generation is not None:
+                    message = '{} was uploaded and overwrote an older' \
+                        ' version of itself.'.format(photo_name)
+                else:
+                    message = '{} was uploaded.'.format(photo_name)
+            elif event_type == 'OBJECT_ARCHIVE':
+                if overwritten_by_generation is not None:
+                    message = '{} was overwritten by a newer version.'.format(
+                        photo_name)
+                else:
+                    message = '{} was archived.'.format(photo_name)
+            elif event_type == 'OBJECT_DELETE':
+                if overwritten_by_generation is not None:
+                    message = '{} was overwritten by a newer version.'.format(
+                        photo_name)
+                else:
+                    message = '{} was deleted.'.format(photo_name)
             else:
-                message = '{} was uploaded.'.format(photo_name)
-        elif event_type == 'OBJECT_ARCHIVE':
-            if overwritten_by_generation is not None:
-                message = '{} was overwritten by a newer version.'.format(
-                    photo_name)
-            else:
-                message = '{} was archived.'.format(photo_name)
-        elif event_type == 'OBJECT_DELETE':
-            if overwritten_by_generation is not None:
-                message = '{} was overwritten by a newer version.'.format(
-                    photo_name)
-            else:
-                message = '{} was deleted.'.format(photo_name)
-        else:
-            message = None
+                message = None
 
-        return Notification(message=message, generation=generation)
+            return Notification(message=message, generation=generation)
 
 1.  Call the `create_notification` helper function in the `post` method of the
     `ReceiveMessage` class.
@@ -495,9 +495,9 @@ and communicate with Cloud Storage.
             overwritten_by_generation=overwritten_by_generation)
 
 1.  Check if the new notification has already been stored. Cloud Pub/Sub
-    messaging guarantees at-least-once delivery, meaning a Pub/Sub notification
+    messaging guarantees at-least-once delivery, meaning a Cloud Pub/Sub notification
     may be received more than once. If the notification already exists, there
-    has been no new change to the Cloud Storage photo bucket, and the Pub/Sub
+    has been no new change to the Cloud Storage photo bucket, and the Cloud Pub/Sub
     notification can be ignored.
 
         exists_notification = Notification.query(
@@ -513,9 +513,10 @@ and communicate with Cloud Storage.
         if new_notification.message is None:
           return
 
-1.  Store the new notification in Cloud Datastore. This, and all further code in
-    the `ReceiveMessage` class, is only executed if the new notification is not
-    a repeat and is not for an `OBJECT_METADATA_UPDATE` event.
+1.  Store the new notification in Cloud Datastore. Because of the `if` statements
+    added in the previous two steps, this, and all further code in the `ReceiveMessage`
+    class, is only executed if the new notification is not a repeat and is not for an
+    `OBJECT_METADATA_UPDATE` event.
 
         new_notification.put()
 
@@ -533,7 +534,8 @@ and communicate with Cloud Storage.
 1.  In the [`templates/notifications.html`](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app/templates/notifications.html)
     file, you can see a loop that displays the list you rendered to the template
     in `main.py` and prints the formatted date/time of each notification and the
-    notification message. Copy that loop to your own `notifications.html` file.
+    notification message. Copy that loop into the `body` of your own
+    `notifications.html` file.
 
 ### Checkpoint
 
@@ -581,7 +583,7 @@ to perform the required transformations.
             image.resize(width=180, height=200)
             return image.execute_transforms(output_encoding=images.JPEG)
 
-    This returns the thumbnail in a `string` format.
+    This returns the thumbnail image data in a `string` format.
 
 1.  Call the `create_thumbnail` helper function in the `post` method of the
     `ReceiveMessage` class.
@@ -861,7 +863,7 @@ display the correct thumbnails in the search page.
             template_values = {'thumbnails': thumbnails}
 
 1.  In the [`search.html`](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app/templates/notifications.html) file,
-    you can see that it defines thes HTML for a search bar. And like in the
+    you can see that it defines the HTML for a search bar. And like in the
     photos page HTML file, it loops through the thumbnails dictionary you
     rendered to the template in `main.py`, and displays each thumbnail image and
     its name. It also includes an `else` statement as part of the loop to
@@ -935,9 +937,9 @@ should run your app locally after each step to see the changes.
           background-color: [COLOR];
         }
 
-   You can specify the color by typing in the name of it, such as `blue`, by
-   specifying the rgb configuration, or by giving a hexadecimal representation.
-   You can find more information on how colors work in CSS [here](https://www.w3schools.com/css/css_colors.asp).
+    You can specify the color by typing in the name of it, such as `blue`, by
+    specifying the rgb configuration, or by giving a hexadecimal representation.
+    You can find more information on how colors work in CSS [here](https://www.w3schools.com/css/css_colors.asp).
 
 1.  Next you'll create a box to hold the links to other pages. Add the following
     code to your `CSS` file.
@@ -951,7 +953,7 @@ should run your app locally after each step to see the changes.
           position: fixed;
         }
 
-    Note that you should make the background-color here different from the color
+    Note that you should make the `background-color` here different from the color
     in step 1; otherwise it won't look any different than before. Setting the
     width to 10% makes the links box take up 10% of the page. If you change the
     width of your browser around, you should see the links box change with it.
