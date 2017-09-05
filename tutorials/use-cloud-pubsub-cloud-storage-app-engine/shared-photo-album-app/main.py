@@ -14,8 +14,8 @@
 
 """
 This main python file contains the backend logic of the website, including
-the reception of Cloud Pub/Sub messages and communication with GCS
-and Datastore.
+the reception of Cloud Pub/Sub messages and communication with Google
+Cloud Storage and Cloud Datastore.
 """
 
 import collections
