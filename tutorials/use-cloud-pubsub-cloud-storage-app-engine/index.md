@@ -609,7 +609,8 @@ necessary.
                 max_retry_period=15)
             filename = '/{}/{}'.format(THUMBNAIL_BUCKET, thumbnail_key)
             with cloudstorage.open(
-                    filename, 'w', retry_params=write_retry_params) as filehandle:
+                    filename, 'w', content_type='image/jpeg',
+                    retry_params=write_retry_params) as filehandle:
                 filehandle.write(thumbnail)
 
 1.  Call the `store_thumbnail_in_gcs` helper function in the `post` method of
