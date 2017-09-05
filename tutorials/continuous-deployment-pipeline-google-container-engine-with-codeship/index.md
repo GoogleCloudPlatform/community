@@ -210,7 +210,7 @@ After you encrypt the `.env` file, you need to update the
     app:
       build:
         dockerfile: Dockerfile
-        image: gcr.io/<<YOUR PROJECT NAME>>/hello-express
+        image: gcr.io/YOUR_PROJECT_ID/hello-express
     codeship_gcr_dockercfg:
       image: codeship/gcr-dockercfg-generator
       encrypted_env_file: encrypted.env
