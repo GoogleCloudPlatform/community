@@ -34,8 +34,8 @@ import googleapiclient.discovery
 
 # Constants. Note: Change THUMBNAIL_BUCKET and PHOTO_BUCKET to
 # be applicable to your project.
-THUMBNAIL_BUCKET = 'thumbnails-bucket'
-PHOTO_BUCKET = 'shared-photo-album'
+THUMBNAIL_BUCKET = 'your-cloud-storage-thumbnail-bucket-name'
+PHOTO_BUCKET = 'your-cloud-storage-photo-bucket-name'
 NUM_NOTIFICATIONS_TO_DISPLAY = 50
 MAX_LABELS = 5
 
@@ -136,7 +136,7 @@ class ReceiveMessage(webapp2.RequestHandler):
         # Acknowledge message.
         self.response.status = 204
 
-        # Gather and save necessary values from the Pub/Sub message.
+        # Gather and save necessary values from the Cloud Pub/Sub message.
         event_type = attributes.get('eventType')
         photo_name = attributes.get('objectId')
         generation_number = str(attributes.get('objectGeneration'))
@@ -174,12 +174,12 @@ class ReceiveMessage(webapp2.RequestHandler):
         if new_notification.message is None:
             return
 
-        # Store new_notification in datastore.
+        # Store new_notification in Cloud Datastore.
         new_notification.put()
 
         # For create events: shrink the photo to thumbnail size,
-        # store the thumbnail in GCS, and create a ThumbnailReference
-        # and store it in Datastore.
+        # store the thumbnail in Cloud Storage, and create a
+        # ThumbnailReference and store it in Cloud Datastore.
         if event_type == 'OBJECT_FINALIZE':
             thumbnail = create_thumbnail(photo_name)
             store_thumbnail_in_gcs(thumbnail_key, thumbnail)
@@ -193,13 +193,13 @@ class ReceiveMessage(webapp2.RequestHandler):
                 original_photo=original_photo)
             thumbnail_reference.put()
 
-        # For delete/archive events: delete the thumbnail from GCS
-        # and delete the ThumbnailReference.
+        # For delete/archive events: delete the thumbnail from Cloud Storage
+        # and delete the ThumbnailReference from Cloud Datastore.
         elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
             delete_thumbnail(thumbnail_key)
 
 
-# Create a Notification to be stored in Datastore.
+# Create a Notification to be stored in Cloud Datastore.
 def create_notification(photo_name,
                         event_type,
                         generation,
@@ -255,19 +255,21 @@ def create_thumbnail(photo_name):
     return image.execute_transforms(output_encoding=images.JPEG)
 
 
-# Stores thumbnail in GCS bucket under name thumbnail_key.
+# Stores thumbnail in Cloud Storage thumbnail bucket under name
+# thumbnail_key.
 def store_thumbnail_in_gcs(thumbnail_key, thumbnail):
     write_retry_params = cloudstorage.RetryParams(
         backoff_factor=1.1,
         max_retry_period=15)
     filename = '/{}/{}'.format(THUMBNAIL_BUCKET, thumbnail_key)
     with cloudstorage.open(
-              filename, 'w', retry_params=write_retry_params) as filehandle:
+              filename, 'w', content_type='image/jpeg',
+              retry_params=write_retry_params) as filehandle:
         filehandle.write(thumbnail)
 
 
-# Deletes thumbnail from GCS bucket and deletes thumbnail_reference from
-# datastore.
+# Deletes thumbnail from Cloud Storage thumbnail bucket and deletes
+# the ThumbnailReference from Cloud Datastore.
 def delete_thumbnail(thumbnail_key):
     filename = '/gs/{}/{}'.format(THUMBNAIL_BUCKET, thumbnail_key)
     blob_key = blobstore.create_gs_key(filename)
@@ -280,7 +282,7 @@ def delete_thumbnail(thumbnail_key):
     cloudstorage.delete(filename)
 
 
-# Use Cloud Vision API to get labels for a photo.
+# Use the Google Cloud Vision API to get labels for a photo.
 def get_labels(uri, photo_name):
     service = googleapiclient.discovery.build('vision', 'v1')
     labels = set()
