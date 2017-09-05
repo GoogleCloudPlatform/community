@@ -243,21 +243,26 @@ Engine application and importing the required libraries.
 The HTML files represent the different pages of your web application.
 
 1.  In your host directory, create a `templates` directory to hold all of your
-    HTML files. Each HTML file should have the same basic layout, with a title
-    and links to the other pages of your application.
+    HTML files. Your basic HTML template file should have a `DOCTYPE` tag and
+    `html` tag at the beginning, closed at the end of the file. Within the
+    `html` tag you should have `head` and `body` sections. In the `head` tag,
+    you should have the `title` of your page, and in the `body` tag you should
+    add the links to the other pages of your website as well as the `h1` header
+    of your current page. For an example, view the [finished `templates/notifications.html` file](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app/templates/notifications.html).
+    Do not yet add anything to the HTML files except for this basic layout; the
+    other code will be explained in later sections.
 1.  Create an HTML file for the home/notifications page of your application
-    (url: `http://[YOUR_PROJECT_ID].appspot.com`) using the template given above.
-    The notifications page will have a news feed listing all recent actions
-    performed on your Cloud Storage photo bucket.
+    (url: `http://[YOUR_PROJECT_ID].appspot.com`) following the instructions
+    given in the previous step. The notifications page will have a news feed
+    listing all recent actions performed on your Cloud Storage photo bucket.
 1.  Create an HTML file for the photos page of your application
-    (url: `http://[YOUR_PROJECT_ID].appspot.com/photos`) using the template
-    given above. The photos page will display the thumbnails and names of all
-    photos uploaded to your Cloud Storage photo bucket.
+    (url:`http://[YOUR_PROJECT_ID].appspot.com/photos`). The photos page will
+    display the thumbnails and names of all photos uploaded to your Cloud
+    Storage photo bucket.
 1.  Create an HTML file for the search page of your application
-    (url: `http://[YOUR_PROJECT_ID].appspot.com/search`) using the template
-    given above. The search page will display the thumbnails and names of the
-    photos uploaded to your Cloud Storage photo bucket that match the entered
-    search term.
+    (url: `http://[YOUR_PROJECT_ID].appspot.com/search`). The search page will
+    display the thumbnails and names of the photos uploaded to your Cloud Storage
+    photo bucket that match the entered search term.
 
 ### The `main.py` file
 
@@ -538,7 +543,7 @@ and communicate with Cloud Storage.
     with the extension `.jpg` to your photo bucket.
 1.  Open the `Products & services` menu again and navigate to `Datastore`. There
     should be a `Notification` listed with the message
-    `[UPLOADED_PHOTO_NAME] was uploaded.`.
+    `[UPLOADED_PHOTO_NAME] was uploaded.`
 1.  View your deployed application in your web browser. The new notification
     should be listed on the home page. You may need to refresh the page.
 
@@ -1382,7 +1387,7 @@ another thumbnail.
     step should be implemented in your two HTML files responsible for the photos
     and search pages.
 
-    1.  Within the 'mySlides' class add the class 'numbertext'. This will
+    1.  Within the `mySlides` class add the class `numbertext`. This will
         display the current number of the photo displayed, i.e. `1/5`.
 
         `loop.index` is the current iteration of the `for` loop, and
