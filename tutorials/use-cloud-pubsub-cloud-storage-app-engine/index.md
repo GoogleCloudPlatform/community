@@ -64,7 +64,7 @@ A general overview of how the application works is shown in the diagrams below.
 
 ![Loading Notifications](https://storage.googleapis.com/gcp-community/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-home-page.png)
 
-1.  The user navigates to `[YOUR PROJECT ID].appspot.com`.
+1.  The user navigates to `[YOUR_PROJECT_ID].appspot.com`.
 1.  A predetermined number of `Notifications` are queried from Cloud Datastore,
     ordered by date and time, most recent first.
 1.  The queried `Notifications` are sent to the front-end to be formatted and
@@ -75,7 +75,7 @@ A general overview of how the application works is shown in the diagrams below.
 
 ![Loading Photos](https://storage.googleapis.com/gcp-community/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-photos-page.png)
 
-1.  The user navigates to `[YOUR PROJECT ID].appspot.com/photos`.
+1.  The user navigates to `[YOUR_PROJECT_ID].appspot.com/photos`.
 1.  All the `ThumbnailReferences` are fetched from Cloud Datastore, ordered by
     date and time, most recent first.
 1.  Each `ThumbnailReference` is used to get a serving url for the corresponding
@@ -88,7 +88,7 @@ A general overview of how the application works is shown in the diagrams below.
 
 ![Loading Search](https://storage.googleapis.com/gcp-community/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-search-page.png)
 
-1.  The user navigates to `[YOUR PROJECT ID].appspot.com/search`. The user
+1.  The user navigates to `[YOUR_PROJECT_ID].appspot.com/search`. The user
     enters a search term.
 1.  All the `ThumbnailReferences` are fetched from Cloud Datastore, ordered by
     date and time, most recent first.
@@ -141,11 +141,11 @@ users might be eligible for a [free trial](https://cloud.google.com/free-trial).
 1.  Open a terminal on your local machine. On the command line, [set the default project](https://cloud.google.com/sdk/docs/managing-configurations)
     to your newly created project by running the following command:
 
-        gcloud config set project [YOUR PROJECT ID]
+        gcloud config set project [YOUR_PROJECT_ID]
 
 1.  Initialize an App Engine application within your project by running:
 
-        gcloud app create --region [YOUR REGION]
+        gcloud app create --region [YOUR_REGION]
         
     To view the list of regions, run:
 
@@ -173,16 +173,16 @@ users might be eligible for a [free trial](https://cloud.google.com/free-trial).
     or by clicking on the three-dots icon for your photo album topic and clicking on
     `New subscription`. Change the `Delivery Type` to `Push into an endpoint url`.
     This is the url that receives your Cloud Pub/Sub messages. For an endpoint url, use
-    the following, replacing `[YOUR PROJECT ID]` with the ID of your project:
+    the following, replacing `[YOUR_PROJECT_ID]` with the ID of your project:
 
-        https://[YOUR PROJECT ID].appspot.com/_ah/push-handlers/receive_message
+        https://[YOUR_PROJECT_ID].appspot.com/_ah/push-handlers/receive_message
 
 1.  Configure Cloud Pub/Sub notifications for your Cloud Storage photo bucket by
     using the command line to run:
 
-        gsutil notification create -f json gs://[YOUR PHOTO BUCKET NAME]
+        gsutil notification create -f json gs://[YOUR_PHOTO_BUCKET_NAME]
 
-    Replacing `[YOUR PHOTO BUCKET NAME]` with the name of the photo bucket you
+    Replacing `[YOUR_PHOTO_BUCKET_NAME]` with the name of the photo bucket you
     created earlier.
 
 ## Basic application layout
@@ -521,7 +521,7 @@ and communicate with Cloud Storage.
     the Cloud Storage photo bucket images themselves.
 
         if new_notification.message is None:
-          return
+            return
 
 1.  Store the new notification in Cloud Datastore. Because of the `if` statements
     added in the previous two steps, this, and all further code in the `ReceiveMessage`
@@ -745,7 +745,7 @@ an uploaded photo in Cloud Storage and Cloud Datastore.
 1.  Fetch all `ThumbnailReferences` from Cloud Datastore in reverse date order.
     Create an ordered dictionary, calling upon the `get_thumbnail_serving_url`
     helper function, with the thumbnail serving urls as keys and the
-    `thumbnail_references` as values. Include the dictionary in
+    `ThumbnailReferences` as values. Include the dictionary in
     `template_values`, to be written to the appropriate HTML file. Do this in
     `main.py`, in the `PhotosHandler`, in the `get` method.
 
@@ -770,7 +770,7 @@ an uploaded photo in Cloud Storage and Cloud Datastore.
 1.  Check that the thumbnail version of your newly uploaded photo is in your
     Cloud Storage thumbnail bucket under the correct name.
 1.  Check that in Cloud Datastore, there is a `Notification` listed with the
-    message `[UPLOADED PHOTO NAME] was uploaded.`
+    message `[UPLOADED_PHOTO_NAME] was uploaded.`
 1.  Check that in Cloud Datastore, there is a `ThumbnailReference` listed with
     the appropriate information.
 1.  View your deployed application in your web browser.
@@ -826,7 +826,7 @@ elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
 1.  Check that the thumbnail version of your deleted photo is no longer in your
     Cloud Storage thumbnail bucket.
 1.  Check that in Cloud Datastore, there is a `Notification` listed with the
-    message `[DELETED PHOTO NAME] was deleted.`
+    message `[DELETED_PHOTO_NAME] was deleted.`
 1.  Check that in Cloud Datastore, the `ThumbnailReference` for your deleted
     photo is no longer listed.
 1.  View your deployed application in your web browser.
