@@ -64,7 +64,7 @@ A general overview of how the application works is shown in the diagrams below.
 
 ![Loading Notifications](https://storage.googleapis.com/gcp-community/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-home-page.png)
 
-1.  The user navigates to `http://[YOUR_PROJECT_ID].appspot.com/`.
+1.  The user navigates to `[YOUR_PROJECT_ID].appspot.com`.
 1.  A predetermined number of `Notifications` are queried from Cloud Datastore,
     ordered by date and time, most recent first.
 1.  The queried `Notifications` are sent to the front-end to be formatted and
@@ -75,7 +75,7 @@ A general overview of how the application works is shown in the diagrams below.
 
 ![Loading Photos](https://storage.googleapis.com/gcp-community/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-photos-page.png)
 
-1.  The user navigates to `http://[YOUR_PROJECT_ID].appspot.com/photos`.
+1.  The user navigates to `[YOUR_PROJECT_ID].appspot.com/photos`.
 1.  All the `ThumbnailReferences` are fetched from Cloud Datastore, ordered by
     date and time, most recent first.
 1.  Each `ThumbnailReference` is used to get a serving url for the corresponding
@@ -88,7 +88,7 @@ A general overview of how the application works is shown in the diagrams below.
 
 ![Loading Search](https://storage.googleapis.com/gcp-community/tutorials/use-cloud-pubsub-cloud-storage-app-engine/loading-search-page.png)
 
-1.  The user navigates to `http://[YOUR_PROJECT_ID].appspot.com/search`. The user
+1.  The user navigates to `[YOUR_PROJECT_ID].appspot.com/search`. The user
     enters a search term.
 1.  All the `ThumbnailReferences` are fetched from Cloud Datastore, ordered by
     date and time, most recent first.
@@ -132,24 +132,33 @@ users might be eligible for a [free trial](https://cloud.google.com/free-trial).
     necessary commands such as `gcloud` and `gsutil`.
 1.  [Create a Google Cloud Platform account](https://console.cloud.google.com/)
     for using the Cloud Platform Console.
-1.  In the Cloud Platform Console, [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
-    Your project has a unique ID that is part of your web application url.
 1.  Enable billing: [create a billing project](https://support.google.com/cloud/answer/6288653?hl=en).
     Learn more about billing [here](https://cloud.google.com/appengine/docs/standard/python/console/).
+1.  In the Cloud Platform Console, [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
+    Your project has a unique ID that is part of your web application url.
+1. [Enable](https://support.google.com/cloud/answer/6158841?hl=en) the Cloud Storage,
+   Cloud Pub/Sub, Cloud Datastore, and Cloud Vision APIs.
 1.  Open a terminal on your local machine. On the command line, [set the default project](https://cloud.google.com/sdk/docs/managing-configurations)
     to your newly created project by running the following command:
 
         gcloud config set project [YOUR_PROJECT_ID]
 
+1.  Initialize an App Engine application within your project by running:
+
+        gcloud app create --region [YOUR_REGION]
+        
+    To view the list of regions, run:
+
+        gcloud app regions list
+
+    Choose a region that supports the [App Engine standard environment](https://cloud.google.com/appengine/docs/standard/).
 1.  In the Cloud Platform Console, [create a bucket](https://cloud.google.com/storage/docs/creating-buckets)
     with `Regional` or `Multi-Regional` storage. The [storage class](https://cloud.google.com/storage/docs/storage-classes)
     does not matter as long as it is not `Nearline` or `Coldline`. This bucket
     is for storing the photos of your shared photo album.
 1.  If you want collaborators on your photo album, add the desired collaborators
-    as [`Project Viewers`](https://cloud.google.com/storage/docs/projects#permissions)
-    for your App Engine project, and as [`Object Admins`](https://cloud.google.com/storage/docs/access-control/iam-roles)
-    for your Cloud Storage photo bucket. See instructions
-    [here](https://cloud.google.com/storage/docs/access-control/using-iam-permissions#project-add).
+    as [`Storage Object Admins`](https://cloud.google.com/storage/docs/access-control/iam-roles)
+    for your Cloud Storage photo bucket.
 
     Note: collaborators must also have Google Cloud Platform accounts.
 
@@ -160,20 +169,21 @@ users might be eligible for a [free trial](https://cloud.google.com/free-trial).
     bucket is for storing the thumbnails of the photos in your shared photo album.
 1.  [Create a new topic](https://cloud.google.com/pubsub/docs/quickstart-console#create_a_topic)
     with the same name as your photos bucket.
-1.  Click on the three-dots icon for your photo album topic and click on
+1.  Create a push subscription through the [command line](https://cloud.google.com/pubsub/docs/admin#create_a_push_subscription)
+    or by clicking on the three-dots icon for your photo album topic and clicking on
     `New subscription`. Change the `Delivery Type` to `Push into an endpoint url`.
-    This is the url that receives your Cloud Pub/Sub messages. For a url, use
-    the following, replacing `[YOUR_PROJECT_ID]` with the name of your project:
+    This is the url that receives your Cloud Pub/Sub messages. For an endpoint url, use
+    the following, replacing `[YOUR_PROJECT_ID]` with the ID of your project:
 
-        http://[YOUR_PROJECT_ID].appspot.com/_ah/push-handlers/receive_message
+        https://[YOUR_PROJECT_ID].appspot.com/_ah/push-handlers/receive_message
 
-1.  Configure Cloud Pub/Sub notifications for your photos bucket by using the
-    command line to run:
+1.  Configure Cloud Pub/Sub notifications for your Cloud Storage photo bucket by
+    using the command line to run:
 
         gsutil notification create -f json gs://[YOUR_PHOTO_BUCKET_NAME]
 
-    Replacing `[YOUR_PHOTO_BUCKET_NAME]` with the name of the bucket you created
-    earlier.
+    Replacing `[YOUR_PHOTO_BUCKET_NAME]` with the name of the photo bucket you
+    created earlier.
 
 ## Basic application layout
 
@@ -511,7 +521,7 @@ and communicate with Cloud Storage.
     the Cloud Storage photo bucket images themselves.
 
         if new_notification.message is None:
-          return
+            return
 
 1.  Store the new notification in Cloud Datastore. Because of the `if` statements
     added in the previous two steps, this, and all further code in the `ReceiveMessage`
@@ -735,7 +745,7 @@ an uploaded photo in Cloud Storage and Cloud Datastore.
 1.  Fetch all `ThumbnailReferences` from Cloud Datastore in reverse date order.
     Create an ordered dictionary, calling upon the `get_thumbnail_serving_url`
     helper function, with the thumbnail serving urls as keys and the
-    `thumbnail_references` as values. Include the dictionary in
+    `ThumbnailReferences` as values. Include the dictionary in
     `template_values`, to be written to the appropriate HTML file. Do this in
     `main.py`, in the `PhotosHandler`, in the `get` method.
 
@@ -760,7 +770,7 @@ an uploaded photo in Cloud Storage and Cloud Datastore.
 1.  Check that the thumbnail version of your newly uploaded photo is in your
     Cloud Storage thumbnail bucket under the correct name.
 1.  Check that in Cloud Datastore, there is a `Notification` listed with the
-    message `[UPLOADED PHOTO NAME] was uploaded.`
+    message `[UPLOADED_PHOTO_NAME] was uploaded.`
 1.  Check that in Cloud Datastore, there is a `ThumbnailReference` listed with
     the appropriate information.
 1.  View your deployed application in your web browser.
@@ -816,7 +826,7 @@ elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
 1.  Check that the thumbnail version of your deleted photo is no longer in your
     Cloud Storage thumbnail bucket.
 1.  Check that in Cloud Datastore, there is a `Notification` listed with the
-    message `[DELETED PHOTO NAME] was deleted.`
+    message `[DELETED_PHOTO_NAME] was deleted.`
 1.  Check that in Cloud Datastore, the `ThumbnailReference` for your deleted
     photo is no longer listed.
 1.  View your deployed application in your web browser.
@@ -890,8 +900,10 @@ If you encounter errors, use the `Logging` messages to debug your application.
 #### Congratulations! You now have a functioning shared photo album.
 
 Note: Other users you listed as collaborators during the `Set up` section should
-also be able to [modify the images in your Cloud Storage photo bucket](https://cloud.google.com/storage/docs/object-basics#upload)
-and see their changes take effect on the website.
+also be able to modify the images in your Cloud Storage photo bucket and see their
+changes take effect on the website. However, this must be done through the command
+line using [gsutil](https://cloud.google.com/storage/docs/gsutil), as your project
+does not appear in their Cloud Platform Console.
 
 ## Style
 
