@@ -8,27 +8,27 @@ date_published: 2017-09-12
 
 Dan Isla | Google Cloud Solution Architect | Google
 
-Load balancing on Google Cloud is different from other cloud providers. The primary difference is that Google uses forwarding rules vs routing instances. These forwarding rules are combined with backend services, target pools, URL maps and target proxies to construct a functional load balancer across multiple regions and instance groups.
+Load balancing on Google Cloud Platform (GCP) is different from other cloud providers. The primary difference is that Google uses forwarding rules instead of routing instances. These forwarding rules are combined with backend services, target pools, URL maps and target proxies to construct a functional load balancer across multiple regions and instance groups.
 
-[Terraform](https://www.terraform.io) is an open source infrastructure management tool that can greatly simplify the provisioning of load balancers on Google Cloud by using modules. 
+[Terraform](https://www.terraform.io) is an open source infrastructure management tool that can greatly simplify the provisioning of load balancers on GCP by using modules. 
 
-This tutorial will demonstrate how to use the Google Cloud Terraform modules for load balancing in a variety of scenarios that you can take and build into your own projects.
+This tutorial will demonstrate how to use the GCP Terraform modules for load balancing in a variety of scenarios that you can  build into your own projects.
 
 ## Objectives
 
-- Learn about the load balancing modules for Terraform
-- Create a regional TCP load balancer
-- Create a regional internal TCP load balancer
-- Create a global HTTP load balancer with Container Engine
-- Create a global HTTPS content-based load balancer
+- Learn about the load balancing modules for Terraform.
+- Create a regional TCP load balancer.
+- Create a regional internal TCP load balancer.
+- Create a global HTTP load balancer with Container Engine.
+- Create a global HTTPS content-based load balancer.
 
 ## Before you begin
 
-This tutorial assumes you already have a Cloud Platform account and are familiar with the high level concepts of [Terraform](https://terraform.io) and [Load Balancing](https://cloud.google.com/compute/docs/load-balancing/) on Google Cloud Platform.
+This tutorial assumes you already have a GCP account and are familiar with the high level concepts of [Terraform](https://terraform.io) and [Load Balancing](https://cloud.google.com/compute/docs/load-balancing/) on GCP.
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform, including:
+This tutorial uses billable components of GCP, including:
 
 - [Google Compute Engine](https://cloud.google.com/compute/pricing)
 - [Cloud Storage](https://cloud.google.com/storage/pricing)
@@ -36,14 +36,14 @@ This tutorial uses billable components of Cloud Platform, including:
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to estimate your total costs.
 
-## Terraform Modules Overview
+## Terraform modules overview
 
 ### `terraform-google-lb` (regional forwarding rule)
 
 This module creates a [TCP Network Load Balancer](https://cloud.google.com/compute/docs/load-balancing/network/example) for regional load balancing across a managed instance group. You provide a reference to a managed instance group and the module adds it to a target pool. A regional forwarding rule is created to forward traffic to healthy instances in the target pool.
 
-**Figure 1.** *terraform-google-lb module Terraform resources diagram*
 ![architecture diagram](./terraform-google-lb-diagram.png)
+**Figure 1.** `terraform-google-lb` module Terraform resources diagram.
 
 Example usage snippet:
 
@@ -61,8 +61,8 @@ module "gce-lb-fr" {
 
 This module creates an [internal load balancer](https://cloud.google.com/compute/docs/load-balancing/internal/) for regional load balancing of internal resources. You provide a reference to the managed instance group and the module adds it to a regional [backend service](https://cloud.google.com/compute/docs/load-balancing/internal/#backend-service). An internal forwarding rule is created to forward traffic to healthy instances.
 
-**Figure 2.** *terraform-google-lb-internal module Terraform resources diagram*
 ![architecture diagram](./terraform-google-lb-internal-diagram.png)
+**Figure 2.** `terraform-google-lb-internal` module Terraform resources diagram.
 
 Example usage snippet:
 
@@ -86,8 +86,8 @@ module "gce-ilb" {
 
 This module creates a [global HTTP load balancer](https://cloud.google.com/compute/docs/load-balancing/http/) for multi-regional content-based load balancing. You provide a reference to the managed instance group, optional certificates for SSL termination, and the module creates the [http backend service](https://cloud.google.com/compute/docs/load-balancing/http/backend-service), [URL map](https://cloud.google.com/compute/docs/load-balancing/http/url-map), [HTTP(S) target proxy](https://cloud.google.com/compute/docs/load-balancing/http/target-proxies), and the [global http forwarding rule](https://cloud.google.com/compute/docs/load-balancing/http/global-forwarding-rules) to route traffic based on HTTP paths to healthy instances.
 
-**Figure 3.** *terraform-google-lb-http module Terraform resources diagram*
 ![architecture diagram](./terraform-google-lb-http-diagram.png)
+**Figure 3.** `terraform-google-lb-http` module Terraform resources diagram.
 
 Example usage snippet:
 
@@ -109,247 +109,227 @@ module "gce-lb-http" {
 }
 ```
 
-## Clone the Examples Repository
+## Clone the examples repository
 
 All of the examples in this tutorial have sample code available in the [terraform-google-examples](https://github.com/GoogleCloudPlatform/terraform-google-examples) GitHub repository.
 
-In this tutorial, all commands are run from the [Google Cloud Shell](https://cloud.google.com/shell/), they can also be run from your local environment.
+In this tutorial, you run all commands by using the [Google Cloud Shell](https://cloud.google.com/shell/). You can also run the commands from your local environment.
 
 1. Open [Cloud Shell](https://console.cloud.google.com/cloudshell)
 2. Clone the `terraform-google-examples` repository:
 
-```sh
-git clone https://github.com/GoogleCloudPlatform/terraform-google-examples
+        sh
+        git clone https://github.com/GoogleCloudPlatform/terraform-google-examples
 
-cd terraform-google-examples
-```
+        cd terraform-google-examples
 
-## Download and Configure Terraform
+## Download and configure Terraform
 
 1. Configure your Cloud Shell environment to use Terraform through the Docker image.
 
-```sh
-curl -L https://git.io/v51VZ -o ${HOME}/.tfdocker
-source ${HOME}/.tfdocker
-```
+        sh
+        curl -L https://git.io/v51VZ -o ${HOME}/.tfdocker
+        source ${HOME}/.tfdocker
 
-> This script creates a bash function for the `terraform` command that runs the latest version of Terraform out of a Docker container. You can also [install it locally](https://www.terraform.io/downloads.html) if don't want to use Docker:
+This script creates a bash function for the `terraform` command that runs the latest version of Terraform using a Docker container. You can also [install it locally](https://www.terraform.io/downloads.html) if don't want to use Docker:
 
-2. If you are _not_ using Cloud Shell, this tutorial uses the [default application credentials](https://developers.google.com/identity/protocols/application-default-credentials) for Terraform authentication to Google Cloud. Run the command below first to obtain the default credentials for your project.
+2. If you aren't using Cloud Shell, this tutorial uses the [default application credentials](https://developers.google.com/identity/protocols/application-default-credentials) for Terraform authentication to GCP. Run the following command first to obtain the default credentials for your project.
 
-```sh
-gcloud auth application-default login
-```
+        sh
+        gcloud auth application-default login
 
-## TCP Load Balancer with Regional Forwarding Rule
+## TCP load balancer with regional forwarding rule
 
-This example creates a managed instance group with two instances in the same region and a network TCP Load Balancer.
+This example creates a managed instance group with two instances in the same region and a network TCP load balancer.
 
-**Figure 4.** *example-lb architecture diagram*
 ![architecture diagram](./example-lb-diagram.png)
+**Figure 4.** `example-lb` architecture diagram
 
 1. Change to the example directory:
 
-```sh
-cd example-lb
-```
+        sh
+        cd example-lb
+
 
 2. Run Terraform to deploy architecture:
 
-```sh
-export GOOGLE_PROJECT=$(gcloud config get-value project)
-terraform init
-terraform plan
-terraform apply
-```
+        sh
+        export GOOGLE_PROJECT=$(gcloud config get-value project)
+        terraform init
+        terraform plan
+        terraform apply
 
-> After a few minutes the instances and load balancer will be created.
+
+      The instances and load balancer are ready after a few minutes.
 
 3. Open the URL of the load balancer in a browser:
 
-```sh
-EXTERNAL_IP=$(terraform output -module gce-lb-fr | grep external_ip | cut -d = -f2 | xargs echo -n)
+        sh
+        EXTERNAL_IP=$(terraform output -module gce-lb-fr | grep external_ip | cut -d = -f2 | xargs echo -n)
 
-echo "open http://${EXTERNAL_IP}"
-```
+        echo "open http://${EXTERNAL_IP}"
 
-4. Open the link displayed in the terminal in a new browser tab.
+4. In a new browser tab, open the link displayed in the terminal.
 5. Refresh a few times to observe traffic being balanced across the two instances in the `us-central1` region.
-6. When finished, cleanup the example by running `terraform destroy` and change back to the parent directory:
+6. When finished, clean up the example by running `terraform destroy` and change back to the parent directory:
 
-```sh
-terraform destroy
-cd ..
-```
+        sh
+        terraform destroy
+        cd ..
 
-## Internal TCP Load Balancer with Regional Forwarding Rule
+## Internal TCP load balancer with regional forwarding rule
 
 This example creates three instance groups. The first group is in `us-central1-b` and uses the internal load balancer to proxy access to services running in instance groups two and three which exist in `us-central1-c` and `us-central1-f` respectively. A regional TCP load balancer is also used to forward external traffic to the instances in group one.
 
-**Figure 5.** *example-lb-internal architecture diagram*
 ![architecture diagram](./example-lb-internal-diagram.png)
+**Figure 5.** `example-lb-internal` architecture diagram.
 
 1. Change to the example directory:
 
-```sh
-cd example-lb-internal
-```
+        sh
+        cd example-lb-internal
 
 2. Run Terraform to deploy architecture:
 
-```sh
-export GOOGLE_PROJECT=$(gcloud config get-value project)
-terraform init
-terraform plan
-terraform apply
-```
+        sh
+        export GOOGLE_PROJECT=$(gcloud config get-value project)
+        terraform init
+        terraform plan
+        terraform apply
 
-> After a few minutes the instances and load balancer will be created.
+      The instances and load balancer are ready after a few minutes.
 
 3. Open the URL of the load balancer in a browser:
 
-```sh
-EXTERNAL_IP=$(terraform output -module gce-lb-fr | grep external_ip | cut -d = -f2 | xargs echo -n)
+        sh
+        EXTERNAL_IP=$(terraform output -module gce-lb-fr | grep external_ip | cut -d = -f2 | xargs echo -n)
 
-echo "open http://${EXTERNAL_IP}"
-```
+        echo "open http://${EXTERNAL_IP}"
 
-4. Open the link displayed in the terminal in a new browser tab.
+4. In a new browser tab, open the link displayed in the terminal.
 5. Refresh a few times to observe traffic being balanced across the four instances in the `us-central1-c` and `us-central1-f` zones.
-6. When finished, cleanup the example by running `terraform destroy` and change back to the parent directory:
+6. When finished, clean up the example by running `terraform destroy` and change back to the parent directory:
 
-```sh
-terraform destroy
-cd ..
-```
+        sh
+        terraform destroy
+        cd ..
 
-## Global HTTP Load Balancer
+## Global HTTP load balancer
 
 This example creates a global HTTP forwarding rule to forward traffic to instance groups in the `us-west1` and `us-east1` regions.
 
-**Figure 6.** *example-lb-http architecture diagram*
 ![architecture diagram](./example-lb-http-diagram.png)
+**Figure 6.** `example-lb-http architecture` diagram.
 
 1. Change to the example directory:
 
-```sh
-cd example-lb-http
-```
+        sh
+        cd example-lb-http
 
 2. Run Terraform to deploy architecture:
 
-```sh
-export GOOGLE_PROJECT=$(gcloud config get-value project)
-terraform init
-terraform plan
-terraform apply
-```
+        sh
+        export GOOGLE_PROJECT=$(gcloud config get-value project)
+        terraform init
+        terraform plan
+        terraform apply
 
-> After a few minutes the instances and load balancer will be created. 
+      The instances and load balancer are ready after a few minutes. 
 
 3. Open the URL of the load balancer in a browser:
 
-```sh
-EXTERNAL_IP=$(terraform output -module gce-lb-http | grep external_ip | cut -d = -f2 | xargs echo -n)
+        sh
+        EXTERNAL_IP=$(terraform output -module gce-lb-http | grep external_ip | cut -d = -f2 | xargs echo -n)
 
-echo "open http://${EXTERNAL_IP}"
-```
+        echo "open http://${EXTERNAL_IP}"
 
-4. Open the link displayed in the terminal in a new browser tab.
+4. In a new browser tab, open the link displayed in the terminal.
 
-> It may take several minutes for the forwarding rule to be provisioned. While it's being created, you may see 404 and 500 errors in the browser.
+      It can take several minutes for the forwarding rule to be provisioned. While it's being created, you might see 404 and 500 errors in the browser.
 
 5. Refresh a few times to observe traffic being balanced across the 2 instances in the region closest to you.
 6. Verify traffic can flow to the other region by scaling the region closest to you to zero instances.
 
-```sh
-# If you are getting traffic from us-west1, scale group 1 to 0 instances:
-TF_VAR_group1_size=0 terraform apply
+        sh
+        # If you are getting traffic from us-west1, scale group 1 to 0 instances:
+        TF_VAR_group1_size=0 terraform apply
 
-# Otherwise scale group 2 (us-east1) to 0 instances:
-TF_VAR_group2_size=0 terraform apply
-```
+        # Otherwise scale group 2 (us-east1) to 0 instances:
+        TF_VAR_group2_size=0 terraform apply
+
 
 7. Open the external IP again and verify you see traffic from the other group:
 
-```sh
-echo "open http://${EXTERNAL_IP}"
-```
+        sh
+        echo "open http://${EXTERNAL_IP}"
 
-8. Open the link displayed in the terminal in a new browser tab.
-9. When finished, cleanup the example by running `terraform destroy` and change back to the parent directory:
+8. In a new browser tab, open the link displayed in the terminal.
+9. When finished, clean up the example by running `terraform destroy` and change back to the parent directory:
 
-```sh
-terraform destroy
-cd ..
-```
+        sh
+        terraform destroy
+        cd ..
 
-## Global Content-Based HTTP(S) Load Balancer
+## Global content-based HTTP(S) load balancer
 
 This example creates an HTTPS load balancer to forward traffic to a custom URL map. The URL map sends traffic to the region closest to you with static assets being served from a Cloud Storage bucket. The TLS key and certificate is generated by Terraform using the [TLS provider](https://www.terraform.io/docs/providers/tls/index.html).
 
-**Figure 7.** *example-lb-https-content architecture diagram*
 ![architecture diagram](./example-lb-https-content-diagram.png)
+**Figure 7.** `example-lb-https-content architecture` diagram.
 
 1. Change to the example directory:
 
-```sh
-cd example-lb-https-content
-```
+        sh
+        cd example-lb-https-content
 
 2. Run Terraform to deploy architecture:
 
-```sh
-export GOOGLE_PROJECT=$(gcloud config get-value project)
-terraform init
-terraform plan
-terraform apply
-```
+        sh
+        export GOOGLE_PROJECT=$(gcloud config get-value project)
+        terraform init
+        terraform plan
+        terraform apply
 
-> After a few minutes the instances and load balancer will be created. 
+      The instances and load balancer are ready after a few minutes. 
 
 3. Open the URL of the load balancer in a browser:
 
-```sh
-EXTERNAL_IP=$(terraform output -module gce-lb-http | grep external_ip | cut -d = -f2 | xargs echo -n)
+        sh
+        EXTERNAL_IP=$(terraform output -module gce-lb-http | grep external_ip | cut -d = -f2 | xargs echo -n)
 
-echo "open https://${EXTERNAL_IP}/"
-```
+        echo "open https://${EXTERNAL_IP}/"
 
-4. Open the link displayed in the terminal in a new browser tab.
+4. In a new browser tab, open the link displayed in the terminal.
 
-> It may take several minutes for the forwarding rule to be provisioned. While it's being created, you may see 404 and 500 errors in the browser.
+      It can take several minutes for the forwarding rule to be provisioned. While it's being created, you might see 404 and 500 errors in the browser.
 
 5. You should see the GCP logo and instance details from the group closest to your geographical region.
 6. You can access the per-region routes directly through the URLs below:
 
-```sh
-# us-west1
-echo "open https://${EXTERNAL_IP}/group1/"
+        sh
+        # us-west1
+        echo "open https://${EXTERNAL_IP}/group1/"
 
-# us-central1
-echo "open https://${EXTERNAL_IP}/group2/"
+        # us-central1
+        echo "open https://${EXTERNAL_IP}/group2/"
 
-# us-east1
-echo "open https://${EXTERNAL_IP}/group3/"
-```
+        # us-east1
+        echo "open https://${EXTERNAL_IP}/group3/"
 
-7. When finished, cleanup the example by running `terraform destroy` and change back to the parent directory:
+7. When finished, clean up the example by running `terraform destroy` and change back to the parent directory:
 
-```sh
-terraform destroy
-cd ..
-```
+        sh
+        terraform destroy
+        cd ..
 
 ## Cleanup
 
-Each example includes its own cleanup and can be explicitly cleaned from within each directory using the command below:
+Each example includes its own cleanup and can be explicitly cleaned from within each directory by using this command:
 
-```sh
-terraform destroy
-```
+        sh
+        terraform destroy
 
 ## Next Steps
 
-- [Additional examples in the terraform-google-examples repository.](https://github.com/GoogleCloudPlatform/terraform-google-examples)
-- [Learn more about load balancing on Google Cloud.](https://cloud.google.com/compute/docs/load-balancing/)
+- [Additional examples in the terraform-google-examples repository](https://github.com/GoogleCloudPlatform/terraform-google-examples).
+- [Learn more about load balancing on GCP](https://cloud.google.com/compute/docs/load-balancing/).
