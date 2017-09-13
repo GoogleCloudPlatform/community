@@ -47,15 +47,14 @@ This module creates a [TCP Network Load Balancer](https://cloud.google.com/compu
 
 Example usage snippet:
 
-```ruby
-module "gce-lb-fr" {
-  source       = "github.com/GoogleCloudPlatform/terraform-google-lb"
-  region       = "${var.region}"
-  name         = "group1-lb"
-  service_port = "${module.mig1.service_port}"
-  target_tags  = ["${module.mig1.target_tags}"]
-}
-```
+    ruby
+    module "gce-lb-fr" {
+      source       = "github.com/GoogleCloudPlatform/terraform-google-lb"
+      region       = "${var.region}"
+      name         = "group1-lb"
+      service_port = "${module.mig1.service_port}"
+      target_tags  = ["${module.mig1.target_tags}"]
+    }
 
 ### `terraform-google-lb-internal` (regional internal forwarding rule)
 
@@ -66,21 +65,20 @@ This module creates an [internal load balancer](https://cloud.google.com/compute
 
 Example usage snippet:
 
-```ruby
-module "gce-ilb" {
-  source         = "github.com/GoogleCloudPlatform/terraform-google-lb-internal"
-  region         = "${var.region}"
-  name           = "group2-ilb"
-  ports          = ["${module.mig2.service_port}"]
-  health_port    = "${module.mig2.service_port}"
-  source_tags    = ["${module.mig1.target_tags}"]
-  target_tags    = ["${module.mig2.target_tags}","${module.mig3.target_tags}"]
-  backends       = [
-    { group = "${module.mig2.instance_group}" },
-    { group = "${module.mig3.instance_group}" },
-  ]
-}
-```
+    ruby
+    module "gce-ilb" {
+      source         = "github.com/GoogleCloudPlatform/terraform-google-lb-internal"
+      region         = "${var.region}"
+      name           = "group2-ilb"
+      ports          = ["${module.mig2.service_port}"]
+      health_port    = "${module.mig2.service_port}"
+      source_tags    = ["${module.mig1.target_tags}"]
+      target_tags    = ["${module.mig2.target_tags}","${module.mig3.target_tags}"]
+      backends       = [
+        { group = "${module.mig2.instance_group}" },
+        { group = "${module.mig3.instance_group}" },
+      ]
+    }
 
 ### `terraform-google-lb-http` (global HTTP(S) forwarding rule)
 
@@ -91,23 +89,22 @@ This module creates a [global HTTP load balancer](https://cloud.google.com/compu
 
 Example usage snippet:
 
-```ruby
-module "gce-lb-http" {
-  source            = "github.com/GoogleCloudPlatform/terraform-google-lb-http"
-  name              = "group-http-lb"
-  target_tags       = ["${module.mig1.target_tags}", "${module.mig2.target_tags}"]
-  backends          = {
-    "0" = [
-      { group = "${module.mig1.instance_group}" },
-      { group = "${module.mig2.instance_group}" }
-    ],
-  }
-  backend_params    = [
-    # health check path, port name, port number, timeout seconds.
-    "/,http,80,10"
-  ]
-}
-```
+    ruby
+    module "gce-lb-http" {
+      source            = "github.com/GoogleCloudPlatform/terraform-google-lb-http"
+      name              = "group-http-lb"
+      target_tags       = ["${module.mig1.target_tags}", "${module.mig2.target_tags}"]
+      backends          = {
+        "0" = [
+          { group = "${module.mig1.instance_group}" },
+          { group = "${module.mig2.instance_group}" }
+        ],
+      }
+      backend_params    = [
+        # health check path, port name, port number, timeout seconds.
+        "/,http,80,10"
+      ]
+    }
 
 ## Clone the examples repository
 
