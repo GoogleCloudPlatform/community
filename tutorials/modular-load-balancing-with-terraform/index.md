@@ -123,7 +123,7 @@ In this tutorial, you run all commands by using the [Google Cloud Shell](https:/
         curl -L https://git.io/v51VZ -o ${HOME}/.tfdocker
         source ${HOME}/.tfdocker
 
-This script creates a bash function for the `terraform` command that runs the latest version of Terraform using a Docker container. You can also [install it locally](https://www.terraform.io/downloads.html) if don't want to use Docker:
+This script creates a bash function for the `terraform` command that runs the latest version of Terraform using a Docker container. You can also [install it locally](https://www.terraform.io/downloads.html) if don't want to use Docker.
 
 2. If you aren't using Cloud Shell, this tutorial uses the [default application credentials](https://developers.google.com/identity/protocols/application-default-credentials) for Terraform authentication to GCP. Run the following command first to obtain the default credentials for your project.
 
