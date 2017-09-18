@@ -106,7 +106,7 @@ create our own.
 1.  Create a `Dockerfile` with the following contents:
 
         FROM ibmcom/swift-ubuntu:latest
-        LABEL Description="Docker image for Swift + Kitura on Google App Engine flexible environment."
+        LABEL Description="Docker image for Swift + Vapor on Google App Engine flexible environment."
 
         # Expose default port for App Engine
         EXPOSE 8080
