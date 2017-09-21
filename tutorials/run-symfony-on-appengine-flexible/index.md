@@ -56,13 +56,13 @@ Welcome page.
 
 1. Add the following under "scripts" in `composer.json`:
 
-        "post-deploy-cmd": [
+        "post-install-cmd": [
             "chmod -R ug+w $APP_DIR/var"
         ]
 
     In the context of Symfony's `composer.json`, it will look like this:
 
-    ![Add post-deploy-cmd scripts to composer.json][composer-json]
+    ![Add post-install-cmd scripts to composer.json][composer-json]
 
 1. Run the following command to deploy your app:
 
