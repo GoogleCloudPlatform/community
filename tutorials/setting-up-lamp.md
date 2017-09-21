@@ -76,12 +76,12 @@ Make a note of the IP address of your VM instance. You can see this address in t
 By creating an instance, you already have the "Linux" part of
 LAMP. Next, install Apache and PHP.
 
-#### Debian 8 (Jessie)
+#### Debian 8 and Ubuntu 14
 
     sudo apt-get update
     sudo apt-get install apache2 php5 libapache2-mod-php5
 
-#### Debian 9 and Ubuntu
+#### Debian 9 and Ubuntu 16/17
 
     sudo apt-get update
     sudo apt-get install apache2 php libapache2-mod-php
