@@ -262,7 +262,7 @@ After selecting the checkbox next to the project name, click **Delete project**.
 
 To delete a Compute Engine instance:
 
-1. In the Cloud Platform Console, go to the [**VM Instances** page](https://cloud.google.com/compute/instances).
+1. In the Cloud Platform Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
 1. Click the checkbox next to your `lamp-tutorial` instance.
 1. Click the **Delete** button at the top of the page to delete the instance.
 
