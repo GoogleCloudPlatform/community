@@ -70,7 +70,7 @@ Cloud Platform (GCP).
 
 [hyper]: http://hsqldb.org/
 
-### Setup Cloud SQL
+### Set up Cloud SQL
 
 1.  Enable the [Cloud SQL API][api].
 
@@ -107,7 +107,7 @@ Spring Integration for Cloud SQL. The following sections demonstrate both option
 
 1.  Update `pom.xml` to include [Cloud SQL MySQL Socket Factory][socket].
     The socket library allows you to connect to your Cloud SQL instance for
-    local testing and deployment. See reference `pom.xml` [here](spring-petclinic/pom-spring-datasource.xml).
+    local testing and deployment. See reference `pom-spring-datasource.xml` [here](spring-petclinic/pom-spring-datasource.xml).
 
 1.  Restart the Spring Boot application using the `mysql-datasource` [profile][profile]:
 
@@ -120,8 +120,9 @@ to configure Cloud SQL in your application.
 
 Note: This is currently a SNAPSHOT release, add the dependency from [Spring SNAPSHOT repository](http://maven.springframework.org/snapshot/).
 
-You also need to add the [Spring Boot JDBC starter](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc/1.5.6.RELEASE)
+You also need to add the [Spring Boot JDBC](https://mvnrepository.com/artifact/org.springframework/spring-jdbc/4.3.10.RELEASE)
 to your `pom.xml` as shown [here](spring-petclinic/pom-spring-cloud.xml).
+This dependency enables your application to use the JDBC API to connect to the database and execute SQL queries.
 
 1.  Update `src/main/resources/application-mysql-spring-cloud.properties`, replacing
     INSTANCE_CONNECTION_NAME with the `connectionName` from the previous step:
@@ -176,7 +177,7 @@ https://YOUR_PROJECT_ID.appspot.com.
           - url: /.*
             script: this field is required, but ignored
 
-    Optionally, you can use the sample [app.yaml](spring-petclinic/src/main/appengine/app.yaml).
+    Optionally, you can use the sample [`app.yaml`](spring-petclinic/src/main/appengine/app.yaml).
 
 1.  App Engine flexible environment monitors the health of your application
     using the `/_ah/health` endpoint. (Note: A `200` or`404` status is
