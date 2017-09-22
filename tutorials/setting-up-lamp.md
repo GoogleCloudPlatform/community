@@ -76,7 +76,12 @@ Make a note of the IP address of your VM instance. You can see this address in t
 By creating an instance, you already have the "Linux" part of
 LAMP. Next, install Apache and PHP.
 
-#### Debian/Ubuntu
+#### Debian 8 and Ubuntu 14
+
+    sudo apt-get update
+    sudo apt-get install apache2 php5 libapache2-mod-php5
+
+#### Debian 9 and Ubuntu 16/17
 
     sudo apt-get update
     sudo apt-get install apache2 php libapache2-mod-php
@@ -257,7 +262,7 @@ After selecting the checkbox next to the project name, click **Delete project**.
 
 To delete a Compute Engine instance:
 
-1. In the Cloud Platform Console, go to the [**VM Instances** page](https://cloud.google.com/compute/instances).
+1. In the Cloud Platform Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
 1. Click the checkbox next to your `lamp-tutorial` instance.
 1. Click the **Delete** button at the top of the page to delete the instance.
 
