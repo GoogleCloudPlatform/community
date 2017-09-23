@@ -242,6 +242,7 @@ This tutorial uses a Python script filter traffic to a specific Cloud Storage bu
 
 ## What's next?
 
+- [Transparent Proxy and Filtering on K8S with Initializers tutorial](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s-with-initializers) - Same approach but simplified using a deployment initializer to inject the InitContainer and ConfigMap.
 - [tproxy helm chart](https://github.com/danisla/kubernetes-tproxy/blob/master/charts/tproxy/README.md) - See all configuration options and deployment methods.
 - [Istio](https://isio.io/) - A more broad approach to traffic filtering and network policy.
 - [Calico Egress NetworkPolicy](https://docs.projectcalico.org/v2.0/getting-started/kubernetes/tutorials/advanced-policy) - Another way to filter egress traffic at the pod level.
