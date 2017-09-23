@@ -242,5 +242,6 @@ This tutorial uses a Python script filter traffic to a specific Cloud Storage bu
 
 ## What's next?
 
+- [tproxy helm chart](https://github.com/danisla/kubernetes-tproxy/blob/master/charts/tproxy/README.md) - See all configuration options and deployment methods.
 - [Istio](https://isio.io/) - A more broad approach to traffic filtering and network policy.
 - [Calico Egress NetworkPolicy](https://docs.projectcalico.org/v2.0/getting-started/kubernetes/tutorials/advanced-policy) - Another way to filter egress traffic at the pod level.
