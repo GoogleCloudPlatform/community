@@ -51,7 +51,7 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f5
 
     The remainder of this tutorial will be run from the root of the cloned repository directory.
 
-## Create GKE cluster and Install Helm
+## Create Container Engine cluster and Install Helm
 
 1. Create the Container Engine cluster:
 
