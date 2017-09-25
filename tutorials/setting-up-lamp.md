@@ -116,7 +116,7 @@ look up the address in the
 
 1. Create a test file in the default web server root:
 
-        sudo sh -c 'echo "<?php phpinfo();?>" > /var/www/html/phpinfo.php'
+        sudo sh -c 'echo "&lt;?php phpinfo();?&gt;" > /var/www/html/phpinfo.php'
 
 1. Browse to the test file to verify that Apache and PHP are working together:
 
