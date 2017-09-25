@@ -114,9 +114,11 @@ look up the address in the
 
     You should see the Apache test page.
 
-1. Create a test file in the default web server root:
+1. Create a test file in the default web server root at `/var/www/html/`. You can follow the instructions in the [php documentation](http://php.net/manual/en/tutorial.firstpage.php). Example number 2 is the simplest example.
 
-        sudo sh -c 'echo "<?php phpinfo();?>" > /var/www/html/phpinfo.php'
+    You can write the code to the file from the command line by using a statement like the following. Replace `[YOUR_PHP_CODE]` with the code you want to write out:
+
+        sudo sh -c 'echo "[YOUR_PHP_CODE]" > /var/www/html/phpinfo.php'
 
 1. Browse to the test file to verify that Apache and PHP are working together:
 
