@@ -8,9 +8,9 @@ date_published: 2017-09-23
 
 Dan Isla | Google Cloud Solution Architect | Google
 
-This is a follow-on tutorial to the [Transparent Proxy and Filtering on K8S](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s) tutorial and shows how to simplify the application of transparent proxy for existing deployments using a Deployment Initializer. Initializers are one of the [Dynamic Admission Control](https://kubernetes.io/docs/admin/extensible-admission-controllers/) features of Kubernetes and available as an alpha feature as of Kubernetes 1.7.
+This is a follow-on tutorial to the [Transparent Proxy and Filtering on K8S](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s) tutorial. It shows how to simplify the application of a transparent proxy for existing deployments using a Deployment Initializer. Initializers are one of the [Dynamic Admission Control](https://kubernetes.io/docs/admin/extensible-admission-controllers/) features of Kubernetes, and are available as an alpha feature in Kubernetes 1.7.
 
-This tutorial uses the [tproxy-initializer](https://github.com/danisla/kubernetes-tproxy/tree/master/cmd/tproxy-initializer) Kubernetes Initializer to inject the sidecar InitContainer, ConfigMap and environment variables into a deployment when the annotation `"initializer.kubernetes.io/tproxy": "true"` is present. This tutorial also demonstrates how to deploy the tproxy Helm chart with the optional [Role Based Access Control](https://kubernetes.io/docs/admin/authorization/rbac/) support.
+This tutorial uses the [tproxy-initializer](https://github.com/danisla/kubernetes-tproxy/tree/master/cmd/tproxy-initializer) Kubernetes Initializer to inject the sidecar InitContainer, ConfigMap and environment variables into a deployment when the annotation `"initializer.kubernetes.io/tproxy": "true"` is present. This tutorial also demonstrates how to deploy the [tproxy Helm chart](https://github.com/danisla/kubernetes-tproxy/tree/master/charts/tproxy) with the optional [Role Based Access Control](https://kubernetes.io/docs/admin/authorization/rbac/) support.
 
 Just like in the previous tutorial, the purpose of the [tproxy-sidecar](https://github.com/danisla/kubernetes-tproxy/tree/master/sidecar) container is to create firewall rules in the pod network to block egress traffic. The [tproxy-podwatch](https://github.com/danisla/kubernetes-tproxy/tree/master/cmd/tproxy-podwatch) controller watches for pod changes containing the annotation and automatically add/removes the local firewall `REDIRECT` rules to apply the transparent proxy to the pod.
 
@@ -18,17 +18,15 @@ Just like in the previous tutorial, the purpose of the [tproxy-sidecar](https://
 
 **Figure 1.** transparent proxy with initializers architecture diagram
 
-This tutorial also demonstrates how to use 
-
 ## Objectives
 
 - Create a Kubernetes cluster with initializer and RBAC support using Google Container Engine
 - Deploy the tproxy, tproxy-initializer and the tproxy-podwatch pods using Helm
-- Deploy example apps with annotations to test external access to a Cloud Storage bucket
+- Deploy example apps with annotations to test external access to a Google Cloud Storage bucket
 
 ## Before you begin
 
-This tutorial assumes you already have a GCP account and are familiar with the high level concepts of Kubernetes Pods and Deployments.
+This tutorial assumes you already have a Google Cloud Platform (GCP) account and are familiar with the high level concepts of Kubernetes Pods and Deployments.
 
 ## Costs
 
@@ -51,7 +49,7 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f5
 
 ## Create Container Engine cluster and install Helm
 
-1. Create Container Engine cluster with alpha features enabled, RBAC support and a cluster version of at least 1.7 to support initializers:
+1. Create Container Engine cluster with alpha features enabled, RBAC support, and a cluster version of at least 1.7 to support initializers:
 
         gcloud container clusters create tproxy-example \
         --zone us-central1-f \
@@ -61,9 +59,9 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f5
         --cluster-version 1.7.6 \
         --no-enable-legacy-authorization
 
-    This command will also automatically configure the kubectl command to use the cluster.
+    This command also automatically configures the kubectl command to use the cluster.
 
-2. Create service account and cluster role binding for Helm to enable RBAC support:
+2. Create a service account and cluster role binding for Helm to enable RBAC support:
 
         kubectl create serviceaccount tiller --namespace kube-system
 
@@ -79,7 +77,7 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f5
 
         helm init --service-account=tiller
 
-    This will install the server side component of Helm, Tiller,  in the Kubernetes cluster. The Tiller pod may take a minute to start, run the command below to verify it has been deployed:
+    This installs the server side component of Helm, Tiller,  in the Kubernetes cluster. The Tiller pod may take a minute to start, run the command below to verify it has been deployed:
 
         helm version
 
@@ -90,7 +88,7 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f5
 
 ## Install the Helm chart
 
-Before installing the chart, you must first extract the certificates generated by mitmproxy. The generated CA cert will be used in the example pods to trust the proxy when making HTTPS requests.
+Before installing the chart, you must first extract the certificates generated by mitmproxy. The generated CA cert is used in the example pods to trust the proxy when making HTTPS requests.
 
 1. Extract the generated certs using Docker:
 
