@@ -9,9 +9,10 @@ date_published: 2017-10-03
 ## Pub/Sub API Logging for Preemptible VM (pVM) Shutdowns
 
 ## Create the instance
-To start we’ll use a regular instance and will configure python libraries and the script to make sure it works fine then copy
-disk to an image for use in future created pVMs.
-Create the Pub/Sub topic via cloud shell
+To start we’ll use a regular instance and will configure python libraries and the script to make sure it works fine we'll then
+copy the disk to an image for use in future created pVMs.
+
+#Create the Pub/Sub topic via cloud shell
 Next, create the topic called shutdown-log to hold all of the shutdowns timestamps for the pVMs:
 
 ```bash
