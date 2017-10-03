@@ -45,7 +45,8 @@ Collecting setuptools  
 Downloading setuptools-36.5.0-py2.py3-none-any.whl (478kB)    100% |████████████████████████████████| 481kB 2.4MB/s 
 Collecting wheel  
 Downloading wheel-0.30.0-py2.py3-none-any.whl (49kB)    100% |████████████████████████████████| 51kB 9.8MB/s 
-Installing collected packages: pip, setuptools, wheelSuccessfully installed pip-9.0.1 setuptools-36.5.0 wheel-0.30.0
+Installing collected packages: pip, setuptools, wheel
+Successfully installed pip-9.0.1 setuptools-36.5.0 wheel-0.30.0
 ```
 ```bash
 mikekahn@instance-1:/$ sudo apt-get install python-dev 
