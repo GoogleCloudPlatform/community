@@ -9,7 +9,8 @@ date_published: 2017-10-03
 ## Pub/Sub API Logging for Preemptible VM (pVM) Shutdowns
 
 ## Create the instance
-To start we’ll use a regular instance and will configure python libraries and the script to make sure it works fine then copy disk to an image for use in future created pVMs.
+To start we’ll use a regular instance and will configure python libraries and the script to make sure it works fine then copy
+disk to an image for use in future created pVMs.
 Create the Pub/Sub topic via cloud shell
 Next, create the topic called shutdown-log to hold all of the shutdowns timestamps for the pVMs:
 
@@ -24,14 +25,17 @@ To start enabling auth for the pubsub API click the IAM section of the console.
 Then in the service account section click create service account.
 
 ![Pubsub Role](iam.png)
-Give it a pubsub role. If this script is just publishing just give it publisher. If you plan to manage subscriptions from the instance then give it admin or a higher privileged role.
+Give it a pubsub role. If this script is just publishing just give it publisher. If you plan to manage subscriptions from the
+instance then give it admin or a higher privileged role.
 
 
 Be sure to choose to download a new JSON key. Now the device has a credential in the form of a file.
 Copy the json key on your instance
 Copy and paste the json from the key exported in the last step or move it over via SCP to your instance.
 Using the Credential on the Device
-We are going to use a Google library to talk to Pub/Sub. In order for this client library to find and use the credential file we copied it will look for an environment variable which we set on the device. Add the variable to bashrc so it loads on its own (debian).
+We are going to use a Google library to talk to Pub/Sub. In order for this client library to find and use the credential file
+we copied it will look for an environment variable which we set on the device. Add the variable to bashrc so it loads on its
+own (debian).
 mikekahn@instance-1:/$ echo "export GOOGLE_APPLICATION_CREDENTIALS=/shutdown-log-key.json" >> ~/.bashrc
 
 Make sure you have the most updated Google Cloud python library via pip and it works 
@@ -60,7 +64,14 @@ gapic-google-cloud-spanner-admin-database-v1-0.15.3
 gapic-google-cloud-spanner-admin-instance-v1-0.15.3 
 gapic-google-cloud-spanner-v1-0.15.3 
 google-cloud-0.27.0 google-cloud-bigquery-0.26.0 google-cloud-bigtable-0.26.0 google-cloud-core-0.26.0 
-google-cloud-datastore-1.2.0 google-cloud-dns-0.26.0 google-cloud-error-reporting-0.26.0 google-cloud-language-0.27.0 google-cloud-logging-1.2.0 google-cloud-monitoring-0.26.0 google-cloud-pubsub-0.27.0 google-cloud-resource-manager-0.26.0 google-cloud-runtimeconfig-0.26.0 google-cloud-spanner-0.26.0 google-cloud-speech-0.28.0 google-cloud-storage-1.3.2 google-cloud-translate-1.1.0 google-cloud-videointelligence-0.25.0 google-cloud-vision-0.26.0 google-gax-0.15.15 google-resumable-media-0.2.3 grpc-google-iam-v1-0.11.4 httplib2-0.10.3 monotonic-1.3 oauth2client-3.0.0 ply-3.8 proto-google-cloud-datastore-v1-0.90.4 proto-google-cloud-error-reporting-v1beta1-0.15.3 proto-google-cloud-logging-v2-0.91.3 proto-google-cloud-pubsub-v1-0.15.4 proto-google-cloud-spanner-admin-database-v1-0.15.3 proto-google-cloud-spanner-admin-instance-v1-0.15.3 proto-google-cloud-spanner-v1-0.15.3 tenacity-4.4.0
+google-cloud-datastore-1.2.0 google-cloud-dns-0.26.0 google-cloud-error-reporting-0.26.0 google-cloud-language-0.27.0 google
+cloud-logging-1.2.0 google-cloud-monitoring-0.26.0 google-cloud-pubsub-0.27.0 google-cloud-resource-manager-0.26.0 google
+cloud-runtimeconfig-0.26.0 google-cloud-spanner-0.26.0 google-cloud-speech-0.28.0 google-cloud-storage-1.3.2 google-cloud
+translate-1.1.0 google-cloud-videointelligence-0.25.0 google-cloud-vision-0.26.0 google-gax-0.15.15 google-resumable-media
+0.2.3 grpc-google-iam-v1-0.11.4 httplib2-0.10.3 monotonic-1.3 oauth2client-3.0.0 ply-3.8 proto-google-cloud-datastore-v1
+0.90.4 proto-google-cloud-error-reporting-v1beta1-0.15.3 proto-google-cloud-logging-v2-0.91.3 proto-google-cloud-pubsub-v1
+0.15.4 proto-google-cloud-spanner-admin-database-v1-0.15.3 proto-google-cloud-spanner-admin-instance-v1-0.15.3 proto-google
+cloud-spanner-v1-0.15.3 tenacity-4.4.0
 mikekahn@instance-1:/$
 mikekahn@instance-1:/$ sudo pip install --upgrade google-cloud-pubsub 
 ```
@@ -97,36 +108,49 @@ topic = 'projects/{project_id}/topics/{topic}'.format(
 publisher.publish(topic, timestamp, ips=ips)
 ```
 
-Very simply this publishes a message to the pubsub topic shutdown-log with a timestamp and ip address of the server. IPs can be interchangeable with hostname in the publisher statement. Replace the project_id and topic variables if you use the above script. Now run the script and check the topic to see if your message came through.
+Very simply this publishes a message to the pubsub topic shutdown-log with a timestamp and ip address of the server. IPs can
+be interchangeable with hostname in the publisher statement. Replace the project_id and topic variables if you use the above
+script. Now run the script and check the topic to see if your message came through.
 
 ## Check the topic for your messages
 
 ```bash
 mikekahn@mikekahn-sandbox:~$ gcloud beta pubsub subscriptions list
 ┌──────────────────┬──────────────┬──────────────┬──────┬──────────────┐
-│     PROJECT      │ SUBSCRIPTION │    TOPIC     │ TYPE │ ACK_DEADLINE │├──────────────────┼──────────────┼──────────────┼──────┼──────────────┤
-│ mikekahn-sandbox │ shutdown-log │ shutdown-log │ PULL │ 10 │└──────────────────┴──────────────┴──────────────┴──────┴──────────────┘
+│     PROJECT      │ SUBSCRIPTION │    TOPIC     │ TYPE │ ACK_DEADLINE
+│├──────────────────┼──────────────┼──────────────┼──────┼──────────────┤
+│ mikekahn-sandbox │ shutdown-log │ shutdown-log │ PULL │ 10
+│└──────────────────┴──────────────┴──────────────┴──────┴──────────────┘
 mikekahn@mikekahn-sandbox:~$
 
 
 mikekahn@mikekahn-sandbox:~$ gcloud beta pubsub subscriptions pull projects/mikekahn-sandbox/subscriptions/shutdown-log
-┌──────────────────────────┬─────────────────┬──────────────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+┌──────────────────────────┬─────────────────┬──────────────────┬────────────────────────────────────────────────────────────
+───────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │           DATA           │    MESSAGE_ID   │    ATTRIBUTES    │  ACK_ID
 │├──────────────────────────┼─────────────────┼──────────────────┼───────────────────────────────────────────────────────────
 ────────────────────────────────────────────────────────────────────────────────────────────────────────
-┤│ Mon Sep 25 23:50:57 2017 │ 155794142007574 │ ips=10.128.0.3   │ XkASTCcYRElTK0MLKlgRTgQhIT4wPkVTRFAGFixdRkhRNxkIaFEOT14jPzUgKEUVCQgUBXx9cEJTdV9UcmhRDRlyfWBwPwgbUwoXB35cURIHaE5tdSVuDBx3emhxa14RAQJCVnlbc_SJyvQ2ZiU9XxJLLD5-LC1FQQ │└──────────────────────────┴─────────────────┴──────────────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┤│ Mon Sep 25 23:50:57 2017 │ 155794142007574 │ ips=10.128.0.3   │
+XkASTCcYRElTK0MLKlgRTgQhIT4wPkVTRFAGFixdRkhRNxkIaFEOT14jPzUgKEUVCQgUBXx9cEJTdV9UcmhRDRlyfWBwPwgbUwoXB35cURIHaE5tdSVuDBx3emhxa
+14RAQJCVnlbc_SJyvQ2ZiU9XxJLLD5-LC1FQQ
+│└──────────────────────────┴─────────────────┴──────────────────┴───────────────────────────────────────────────────────────
+────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 Here our pubsub message shows the timestamp Mon Sept 25… and the instance IP 10.128.0.3. 
 Great, everything works. So now let's move this over to a pVM and set up monitoring.
 
 ## Configure shutdown script
-You can invoke a shutdown script directly or provide a shutdown script file for instances on GCE. In this case the script is on the image so I am providing contents directly.  Next step (not pictured) I saved the python pubsub api message script, configured tested python library and the json api key to a compute image called shutdown-log. So with my image created I can start building pVMs ready to notify me when they go offline.
+You can invoke a shutdown script directly or provide a shutdown script file for instances on GCE. In this case the script is
+on the image so I am providing contents directly.  Next step (not pictured) I saved the python pubsub api message script,
+configured tested python library and the json api key to a compute image called shutdown-log. So with my image created I can
+start building pVMs ready to notify me when they go offline.
 
 ## Build a pVM with the shutdown script
 
 ```bash
-mikekahn@mikekahn-sandbox:~$ gcloud compute instances create pubsubshutdown6 --preemptible --image shutdown-log --zone us-west1-a --metadata shutdown-script="#! /bin/bash
+mikekahn@mikekahn-sandbox:~$ gcloud compute instances create pubsubshutdown6 --preemptible --image shutdown-log --zone us
+west1-a --metadata shutdown-script="#! /bin/bash
 sudo su -
 python /pub-sub-publish.py"
 
@@ -141,13 +165,21 @@ Result:
  
 ## Verify logging is setup
 
-Now pVM instances built with image that contains the script in this post will publish their IP and timestamp to the Pub/Sub topic as they are shut down. This can be used for logging and notification whenever pVMs are taken offline for infrastructure managers or to trigger other events in application workflow.
+Now pVM instances built with image that contains the script in this post will publish their IP and timestamp to the Pub/Sub
+topic as they are shut down. This can be used for logging and notification whenever pVMs are taken offline for infrastructure
+managers or to trigger other events in application workflow.
 
 ```bash
 mikekahn@mikekahn-sandbox:~$ gcloud beta pubsub subscriptions pull projects/mikekahn-sandbox/subscriptions/shutdown-log
 ┌──────────────────────────┬─────────────────┬──────────────────┬─────────────────────────────────────────────────────────────
 ───────────────────────────────────────────────────────────────────────────────────────────────────────┐│   DATA │
 MESSAGE_ID   │    ATTRIBUTES    │ ACK_ID
-│├──────────────────────────┼─────────────────┼──────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤│ Fri Sep 29 00:53:54 2017 │ 156359192560439 │ ips=10.138.0.4   │ XkASTCcYRElTK0MLKlgRTgQhIT4wPkVTRFAGFixdRkhRNxkIaFEOT14jPzUgKEUaCQgUBXx9cVtedV5ZGgdRDRlyfGQgOQsVUAURUy1VWhENem1cVzhQCB9xeGh0Y1gWBwJBUHd32cmqwsBtZho9XxJLLD5-LC1FQQ │└──────────────────────────┴─────────────────┴──────────────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+│├──────────────────────────┼─────────────────┼──────────────────┼───────────────────────────────────────────────────────────
+────────────────────────────────────────────────────────────────────────────────────────────────────────┤│ Fri Sep 29 00:53:54
+2017 │ 156359192560439 │ ips=10.138.0.4   │
+XkASTCcYRElTK0MLKlgRTgQhIT4wPkVTRFAGFixdRkhRNxkIaFEOT14jPzUgKEUaCQgUBXx9cVtedV5ZGgdRDRlyfGQgOQsVUAURUy1VWhENem1cVzhQCB9xeGh0Y
+gWBwJBUHd32cmqwsBtZho9XxJLLD5-LC1FQQ
+│└──────────────────────────┴─────────────────┴──────────────────┴───────────────────────────────────────────────────────────
+────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
