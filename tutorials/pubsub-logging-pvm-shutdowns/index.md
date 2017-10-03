@@ -38,9 +38,12 @@ Using the Credential on the Device
 We are going to use a Google library to talk to Pub/Sub. In order for this client library to find and use the credential file
 we copied it will look for an environment variable which we set on the device. Add the variable to bashrc so it loads on its
 own (debian).
-mikekahn@instance-1:/$ echo "export GOOGLE_APPLICATION_CREDENTIALS=/shutdown-log-key.json" >> ~/.bashrc
 
-Make sure you have the most updated Google Cloud python library via pip and it works 
+```bash
+mikekahn@instance-1:/$ echo "export GOOGLE_APPLICATION_CREDENTIALS=/shutdown-log-key.json" >> ~/.bashrc
+```
+
+Next, make sure you have the most updated Google Cloud python library via pip and it works 
 
 ```bash
 mikekahn@instance-1:/$ sudo wget https://bootstrap.pypa.io/get-pip.py
