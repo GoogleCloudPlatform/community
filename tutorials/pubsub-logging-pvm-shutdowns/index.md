@@ -7,6 +7,7 @@ date_published: 2017-10-03
 ---
 
 ## Pub/Sub API Logging for Preemptible VM (pVM) Shutdowns
+This tutorial is for sending notifications from [Preemptible VMs](https://cloud.google.com/preemptible-vms/) to Pub/Sub for logging purposes.
 
 ## Create the instance
 To start we’ll use a regular instance and will configure python libraries and the script to make sure it works fine we'll then
