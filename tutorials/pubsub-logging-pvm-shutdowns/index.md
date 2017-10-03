@@ -13,7 +13,7 @@ This tutorial is for sending notifications from [Preemptible VMs](https://cloud.
 To start we’ll use a regular instance and will configure python libraries and the script to make sure it works fine we'll then
 copy the disk to an image for use in future created pVMs.
 
-#Create the Pub/Sub topic via cloud shell
+## Create the Pub/Sub topic via cloud shell
 Next, create the topic called shutdown-log to hold all of the shutdowns timestamps for the pVMs:
 
 ```bash
