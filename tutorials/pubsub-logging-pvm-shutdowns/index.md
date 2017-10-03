@@ -43,7 +43,8 @@ own (debian).
 mikekahn@instance-1:/$ echo "export GOOGLE_APPLICATION_CREDENTIALS=/shutdown-log-key.json" >> ~/.bashrc
 ```
 
-Next, make sure you have the most updated Google Cloud python library via pip and it works 
+We are now good to go with the Pub/Sub API. 
+Next, make sure you have the most updated Google Cloud python library via pip and it works: 
 
 ```bash
 mikekahn@instance-1:/$ sudo wget https://bootstrap.pypa.io/get-pip.py
@@ -81,8 +82,8 @@ mikekahn@instance-1:/$
 mikekahn@instance-1:/$ sudo pip install --upgrade google-cloud-pubsub 
 ```
 
-At the time of writing this article I had an issue with the python library 0.27.1
-If you are having issues try using 0.28.3 as it worked fine for me as of writing this article.
+At the time of writing this article I had an issue with the python pubsub module 0.27.1
+If you are having issues, try using 0.28.3 as it worked fine for me.
 
 ```bash
 mikekahn@instance-1:/$ sudo pip install google-cloud-pubsub==0.28.3
@@ -114,8 +115,8 @@ publisher.publish(topic, timestamp, ips=ips)
 ```
 
 Very simply this publishes a message to the pubsub topic shutdown-log with a timestamp and ip address of the server. IPs can
-be interchangeable with hostname in the publisher statement. Replace the project_id and topic variables if you use the above
-script. Now run the script and check the topic to see if your message came through.
+be interchangeable with hostname in the publisher statement.
+Replace the project_id and topic variables if you use the above script. Now run the script and check the topic to see if your message came through.
 
 ## Check the topic for your messages
 
@@ -143,7 +144,7 @@ XkASTCcYRElTK0MLKlgRTgQhIT4wPkVTRFAGFixdRkhRNxkIaFEOT14jPzUgKEUVCQgUBXx9cEJTdV9U
 ```
 
 Here our pubsub message shows the timestamp Mon Sept 25… and the instance IP 10.128.0.3. 
-Great, everything works. So now let's move this over to a pVM and set up monitoring.
+Great, everything works! So now let's move this over to a pVM and test once more.
 
 ## Configure shutdown script
 You can invoke a shutdown script directly or provide a shutdown script file for instances on GCE. In this case the script is
