@@ -128,7 +128,10 @@ You can invoke a shutdown script directly or provide a shutdown script file for 
 mikekahn@mikekahn-sandbox:~$ gcloud compute instances create pubsubshutdown6 --preemptible --image shutdown-log --zone us-west1-a --metadata shutdown-script="#! /bin/bash
 sudo su -
 python /pub-sub-publish.py"
-Created [https://www.googleapis.com/compute/v1/projects/mikekahn-sandbox/zones/us-west1-a/instances/pubsubshutdown2].NAME             ZONE        MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP     STATUSpubsubshutdown2  us-west1-a  n1-standard-1  true         10.138.0.4   35.203.140.135  RUNNING
+
+Created [https://www.googleapis.com/compute/v1/projects/mikekahn-sandbox/zones/us-west1-a/instances/pubsubshutdown2].
+NAME             ZONE        MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP     STATUS
+pubsubshutdown2  us-west1-a  n1-standard-1  true         10.138.0.4   35.203.140.135  RUNNING
 mikekahn@mikekahn-sandbox:~$
 ```
 
