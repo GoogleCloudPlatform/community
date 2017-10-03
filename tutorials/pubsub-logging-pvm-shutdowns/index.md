@@ -148,9 +148,10 @@ Great, everything works! So now let's move this over to a pVM and test once more
 
 ## Configure shutdown script
 You can invoke a shutdown script directly or provide a shutdown script file for instances on GCE. In this case the script is
-on the image so I am providing contents directly.  Next step (not pictured) I saved the python pubsub api message script,
-configured tested python library and the json api key to a compute image called shutdown-log. So with my image created I can
-start building pVMs ready to notify me when they go offline.
+on the image so I am providing contents directly. 
+Next step (not shown) I saved the python pubsub api message script above, configured tested python library and the json api
+key to a compute image called shutdown-log. So now with my image created I can start building pVMs ready to notify me when
+they go offline.
 
 ## Build a pVM with the shutdown script
 
