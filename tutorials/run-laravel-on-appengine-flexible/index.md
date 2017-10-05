@@ -59,25 +59,25 @@ from laravel.com.
 
     If you're on Linux or macOS, the following command will automatically
     update your `app.yaml`:
-  
+
         sed -i '' "s#YOUR_APP_KEY#$(php artisan key:generate --show --no-ansi)#" app.yaml
 
 1. Add the following under `scripts` in `composer.json`:
 
-        "post-deploy-cmd": [
+        "post-install-cmd": [
             "chmod -R 755 bootstrap\/cache",
             "php artisan cache:clear"
         ]
 
     In the context of Laravel's `composer.json` file, it will look like this:
 
-    ![Add post-deploy-cmd scripts to composer.json][composer-json]
+    ![Add post-install-cmd scripts to composer.json][composer-json]
 
 1. Run the following command to deploy your app:
 
         gcloud app deploy
 
-1. Visit `http://YOUR_PROJECT_ID.appspot.com` to see the Laravel welcome page. Replace `YOUR_PROJECT_ID` 
+1. Visit `http://YOUR_PROJECT_ID.appspot.com` to see the Laravel welcome page. Replace `YOUR_PROJECT_ID`
    with the ID of your GCP project.
 
     ![Laravel welcome page][laravel-welcome]
