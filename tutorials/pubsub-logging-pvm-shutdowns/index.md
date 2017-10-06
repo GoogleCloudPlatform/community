@@ -1,50 +1,55 @@
 ---
-title: Pub/Sub API Logging for Preemptible VM (pVM) Shutdowns
+title: Pub/Sub API Logging for Preemptible VM Shutdowns
 description: Send notifications of pVM shutdowns to Pub/Sub for logging
 author: mkahn5
 tags: Pub/Sub, Google Cloud
 date_published: 2017-10-03
 ---
 
-## Pub/Sub API Logging for Preemptible VM (pVM) Shutdowns
-This tutorial is for sending notifications from [Preemptible VMs](https://cloud.google.com/preemptible-vms/) to Pub/Sub for logging purposes.
+## Pub/Sub API logging for Preemptible VM (pVM) shutdowns
 
-## Create the instance
-To start we’ll use a regular instance and will configure python libraries and the script to make sure it works fine we'll then
-copy the disk to an image for use in future created pVMs.
+This tutorial demonstrates sending notifications from [Preemptible Virtual Machines (pVMS)](https://cloud.google.com/preemptible-vms/) to Goolge Cloud Pub/Sub for logging purposes.
 
-## Create the Pub/Sub topic via cloud shell
-Next, create the topic called shutdown-log to hold all of the shutdowns timestamps for the pVMs:
+## Creating the instance
+
+To get started, we'll use a regular instance and will configure the Python libraries and the script to make sure it works as expected. We'll then
+copy the disk to an image for use in pVMs that we create in the future.
+
+## Creating the Pub/Sub topic via Google Cloud Shell
+
+Next, create a topic called `shutdown-log` to hold all of the shutdown timestamps for the pVMs:
 
 ```bash
 mikekahn@mikekahn-sandbox:~$ gcloud beta pubsub topics create shutdown-log
 Created topic [shutdown-log].mikekahn@mikekahn-sandbox:~$
 ```
 
-## Creating a Device Credential
+## Creating a device credential
 
-To start enabling auth for the pubsub API click the IAM section of the console.
-Then in the service account section click create service account.
+To enable auth for the Pub/Sub API, click the **IAM & admin** section of the console.
+Then, in the **Service accounts** section, click **Create service account**.
 
 ![Pubsub Role](iam.png)
-Give it a pubsub role. If this script is just publishing just give it publisher. If you plan to manage subscriptions from the
-instance then give it admin or a higher privileged role.
 
+Give the service account a Pub/Sub role. If this script is just publishing, you can just give it the
+Publisher role. If you plan to manage subscriptions from the instance, then give it Admin or a higher privileged role.
 
-Be sure to choose to download a new JSON key. Now the device has a credential in the form of a file.
-Copy the json key on your instance
-Copy and paste the json from the key exported in the last step or move it over via SCP to your instance.
-Using the Credential on the Device
-We are going to use a Google library to talk to Pub/Sub. In order for this client library to find and use the credential file
-we copied it will look for an environment variable which we set on the device. Add the variable to bashrc so it loads on its
-own (debian).
+Be sure to download a new JSON key. Now the device has a credential in the form of a file.
+Copy the JSON key on your instance. Copy and paste the JSON from the key exported in the last
+step, or move it over via SCP to your instance.
+
+### Using the credential on the device
+
+We are going to use a Google client library to talk to Pub/Sub. In order for this client library to find and
+use the credential file we copied it will look for an environment variable which we set on the device. Add the
+variable to bashrc so it loads on its own (debian).
 
 ```bash
 mikekahn@instance-1:/$ echo "export GOOGLE_APPLICATION_CREDENTIALS=/shutdown-log-key.json" >> ~/.bashrc
 ```
 
 We are now good to go with the Pub/Sub API. 
-Next, make sure you have the most updated Google Cloud python library via pip and it works: 
+Next, make sure you have the most updated Google Cloud Python library via pip and it works: 
 
 ```bash
 mikekahn@instance-1:/$ sudo wget https://bootstrap.pypa.io/get-pip.py
@@ -82,8 +87,8 @@ mikekahn@instance-1:/$
 mikekahn@instance-1:/$ sudo pip install --upgrade google-cloud-pubsub 
 ```
 
-At the time of writing this article I had an issue with the python pubsub module 0.27.1
-If you are having issues, try using 0.28.3 as it worked fine for me.
+At the time of writing this article I had an issue with the Python pubsub module 0.27.1
+If you are having issues, try using 0.28.3, as it worked fine for me.
 
 ```bash
 mikekahn@instance-1:/$ sudo pip install google-cloud-pubsub==0.28.3
@@ -114,9 +119,9 @@ topic = 'projects/{project_id}/topics/{topic}'.format(
 publisher.publish(topic, timestamp, ips=ips)
 ```
 
-Very simply this publishes a message to the pubsub topic shutdown-log with a timestamp and ip address of the server. IPs can
+Very simply, this script publishes a message to the pubsub topic shutdown-log with a timestamp and ip address of the server. IPs can
 be interchangeable with hostname in the publisher statement.
-Replace the project_id and topic variables if you use the above script. Now run the script and check the topic to see if your message came through.
+Replace the `project_id` and topic variables if you use the above script. Now run the script and check the topic to see if your message came through.
 
 ## Check the topic for your messages
 
