@@ -40,9 +40,9 @@ Before running this tutorial, take the following steps:
 
 If you have not yet installed Elixir and Phoenix, do so:
 
-1.  Install Elixir and NodeJS. If you are on MacOS with Homebrew, you can run
+1.  Install Elixir and Node.js. If you are on MacOS with Homebrew, you can run
 
-        brew install node elixir
+        brew install elixir node
 
     Otherwise consult the [Node download](https://nodejs.org/en/download/) and
     [Elixir install](https://elixir-lang.org/install.html) guides for your
@@ -109,9 +109,11 @@ Now you will deploy your new app to App Engine.
     Deployment will also take a few minutes to requisition and configure the
     needed resources, especially the first time you deploy.
 
-3.  Once the deploy command has completed, you can visit
-    `http://YOUR_PROJECT_ID.appspot.com` to see your app running in
-    production on App Engine.
+3.  Once the deploy command has completed, you can run
+
+        gcloud app browse
+
+    to see your app running in production on App Engine.
 
 ## Update your application
 
@@ -129,7 +131,9 @@ Let's make a simple change and redeploy.
     deploying the updated version, and switching traffic from the old to the
     new.
 
-3.  Visit `http://YOUR_PROJECT_ID.appspot.com` to see your changes live.
+3.  View your changes live by running
+
+        gcloud app browse
 
 ## Clean up
 
@@ -141,15 +145,9 @@ service.
 ### Deleting the project
 
 The easiest way to eliminate billing is to delete the project you created for
-the tutorial.
+the tutorial. To do so using gcloud:
 
-To delete the project:
-
-1.  In the Cloud Platform Console, go to the
-    [project settings page](https://console.cloud.google.com/iam-admin/settings).
-2.  Click the button to select a project, and select the project you created
-    for this tutorial.
-3.  Click the trash icon "shut down".
+    gcloud projects delete <your-project-id>
 
 **Warning**: Deleting a project has the following consequences:
 
