@@ -52,12 +52,8 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f5
 1. Create Container Engine cluster with alpha features enabled, RBAC support, and a cluster version of at least 1.7 to support initializers:
 
         gcloud container clusters create tproxy-example \
-        --zone us-central1-f \
-        --machine-type n1-standard-1 \
-        --num-nodes 3 \
-        --enable-kubernetes-alpha \
-        --cluster-version 1.7.6 \
-        --no-enable-legacy-authorization
+          --zone us-central1-f \
+          --enable-kubernetes-alpha
 
     This command also automatically configures the kubectl command to use the cluster.
 
@@ -66,8 +62,8 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f5
         kubectl create serviceaccount tiller --namespace kube-system
 
         kubectl create clusterrolebinding tiller-cluster-rule \
-        --clusterrole=cluster-admin \
-        --serviceaccount=kube-system:tiller
+          --clusterrole=cluster-admin \
+          --serviceaccount=kube-system:tiller
 
 3. Install the Helm tool locally in your Cloud Shell instance:
 
@@ -107,7 +103,7 @@ Before installing the chart, you must first extract the certificates generated b
         annotations:
             "initializer.kubernetes.io/tproxy": "true"
 
-3. Run the command below to get the status of the DaemonSet pods:
+3. Get the status of the DaemonSet pods:
 
         kubectl get pods -o wide
 
@@ -208,7 +204,7 @@ Deploy the sample apps to demonstrate using and not using the annotation to trig
 
 ## What's next?
 
-- [Transparent Proxy and Filtering on K8S](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s) - Original tutorial that works without the initializer alpha feature. Also contains some of the additional chart configuration examples.
+- [Transparent Proxy and Filtering on Kubernetes](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-kubernetes) - Original tutorial that works without the initializer alpha feature. Also contains some of the additional chart configuration examples.
 - [tproxy helm chart](https://github.com/danisla/kubernetes-tproxy/blob/master/charts/tproxy/README.md) - See all configuration options and deployment methods.
 - [Istio](https://isio.io/) - A more broad approach to traffic filtering and network policy.
 - [Calico Egress NetworkPolicy](https://docs.projectcalico.org/v2.0/getting-started/kubernetes/tutorials/advanced-policy) - Another way to filter egress traffic at the pod level.
