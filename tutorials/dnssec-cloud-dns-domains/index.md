@@ -5,7 +5,7 @@ title: Activating DNSSEC for Cloud DNS domains
 author: dupuy
 ---
 
-Alexander Dupuy \| Software Engineer \| Google
+Alexander Dupuy | Software Engineer | Google
 
 [DNSSEC][1] (DNS Security Extensions) authenticates DNS response data to prevent
 DNS cache poisoning and is the basis for [DANE e-mail security][2]. While Google
@@ -59,7 +59,7 @@ This tutorial assumes that you
 
 -   have [enabled DNSSEC signing][3] for that managed zone.
 
-    [3]: https://cloud.google.com/dns/dnssec
+[3]: https://cloud.google.com/dns/dnssec
 
 You also need an online account with the domain registrar (or credentials to
 request them to add or remove DS records from the TLD registry).
@@ -762,7 +762,7 @@ rather than the Digest (hexadecimal string).
 
 If you registered your domain through a reseller rather than with AutoDNS, you
 will need to contact your reseller for support. If you are an InternetX
-customer, you can contact domain-support\@internetx.com for further assistance.
+customer, you can contact domain-support@internetx.com for further assistance.
 
 ### InterNetworX
 
@@ -947,8 +947,6 @@ Follow these steps through their web interface to get to DS record management:
 
 1.  Log in to the [OVH account manager][66].
 
-    [66]: https://www.ovh.com/managerv3/
-
 2.  Click on your domain name (in the **Domain** tab of the welcome page.
 
 3.  Select "Domains & DNS" from the menu on the left.
@@ -957,6 +955,8 @@ Follow these steps through their web interface to get to DS record management:
 
 5.  Select the "DS Records" tab.
 
+[66]: https://www.ovh.com/managerv3/
+ 
 Add a DS record to activate DNSSEC by clicking on the **+** icon on the right
 and providing the following information:
 
