@@ -8,13 +8,12 @@ author: dupuy
 Alexander Dupuy | Software Engineer | Google
 
 [DNSSEC][1] (DNS Security Extensions) authenticates DNS response data to prevent
-DNS cache poisoning and is the basis for [DANE e-mail security][2]. While Google
+DNS cache poisoning and is the basis for [DANE e‑mail security][2]. While Google
 Cloud DNS can provide DNSSEC signing for managed zones, adding a DS (Delegated
 Signer) record to the parent top-level-domain (TLD) registry is required for DNS
 resolvers to validate DNSSEC and fully protect a domain.
 
 [1]: https://www.isc.org/wp-content/uploads/2016/06/Winstead_DNSSEC-Tutorial.pdf
-
 [2]: https://www.internetsociety.org/blog/2016/01/lets-encrypt-certificates-for-mail-servers-and-dane-part-1-of-2/
 
 This tutorial is intended for DNS domain administrators using Google Cloud DNS
@@ -74,10 +73,9 @@ check the domain registrar-specific instructions in this tutorial for both the
 domain registrar and the reseller.
 
 [4]: https://gwhois.org/
-
 [5]: https://gwhois.org/dns-example.info+dns
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~console
 $ whois dns-example.info
 Domain Name: DNS-EXAMPLE.INFO
 Registry Domain ID: D503300000000040442-LRMS
@@ -92,7 +90,7 @@ Reseller:
 Name Server: NS-CLOUD-E1.GOOGLEDOMAINS.COM
 Name Server: NS-CLOUD-E2.GOOGLEDOMAINS.COM
 …
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
 
 #### TLD *registries* vs. domain *registrars*
 
@@ -197,7 +195,6 @@ DNSSEC-capable domain registrars. Domain registrars may only support DNSSEC for
 some top-level domains (TLDs).
 
 [9]: #domain-registrar-specific-instructions
-
 [10]: https://www.icann.org/resources/pages/deployment-2012-02-25-en
 
 If DNSSEC is supported by the TLD of your domain, but your domain registrar does
@@ -224,14 +221,14 @@ serving DNSSEC data:
 
 [embedmd]:# (checksigned.sh /checksigned/ $)
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~console
 $ checksigned dns-example.info
 ns-cloud-e1.googledomains.com. has DNSSEC data for dns-example.info
 ns-cloud-e2.googledomains.com. has DNSSEC data for dns-example.info
 ns-cloud-e3.googledomains.com. has DNSSEC data for dns-example.info
 ns-cloud-e4.googledomains.com. has DNSSEC data for dns-example.info
 Negative cache for dns-example.info expires after 300 seconds.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
 
 Be sure to check that the delegated name servers listed in the output of this
 command are the same ones listed in the NS records for your managed zone. If
@@ -274,12 +271,12 @@ record data:
 
 -   **Digest type** (name such as *SHA1* or its corresponding number *1*)
 
--   **Digest** (hexadecimal string such as *2FD4E1C67A2DFC...B76E7391B93EB12*)
+-   **Digest** (hexadecimal string such as *2FD4E1C67A2DFC…B76E7391B93EB12*)
 
 Sometimes domain registrars may require or ask for other information, depending
 on the top-level domain (TLD) registry:
 
--   **Public key** (base64 string such as *9gP/WrSoitGLYmyl...TuqqaWKOpBFLaQ==*)
+-   **Public key** (base64 string such as *9gP/WrSoitGLYmyl…TuqqaWKOpBFLaQ==*)
 
 -   **Flags** (always **257**) or **Key type** (key-signing key or **KSK**)
 
@@ -295,13 +292,13 @@ of the "Zone details" page.
 
 You can also use the `gcloud` command-line tool to get this information:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~console
 $ EXAMPLE_ZONE=my-zone  # use your managed zone name here
 $ gcloud beta dns dnskeys list $EXAMPLE_ZONE
 ID  KEY_TAG  TYPE          IS_ACTIVE  DESCRIPTION
 0   1234     KEY_SIGNING   True       -
 1   12345    ZONE_SIGNING  True       -
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
 
 You need the *ID* of the KEY_SIGNING Key (KSK), which is usually zero (0), to
 get a complete DS record and all details of the key you may need to create it
@@ -309,22 +306,22 @@ get a complete DS record and all details of the key you may need to create it
 `EXAMPLE_ZONE` to the zone ID and `KSK_ID` to the ID of the KEY_SIGNING key as
 noted above:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~console
 $ EXAMPLE_ZONE=my-zone
 $ KSK_ID=0
 $ gcloud beta dns dnskeys describe $EXAMPLE_ZONE --key-id=$KSK_ID
 dsRecord: 1234 7 1 2FD4E1C67A2D28FCED849EE1BB76E7391B93EB12
 
 algorithm: RSASHA1-NSEC3-SHA1
-...
+…
 digests:
 - digest: 2FD4E1C67A2D28FCED849EE1BB76E7391B93EB12
   type: SHA1
-...
+…
 keyTag: 1234
-publicKey: 9gP/WrSoitGLYmylXwE...LIVVWyJ2j/nTuqqaWKOpBFLaQ==
+publicKey: 9gP/WrSoitGLYmylXwE…LIVVWyJ2j/nTuqqaWKOpBFLaQ==
 type: KEY_SIGNING
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
 
 If your domain registrar needs numeric values for algorithm or digest types,
 they are given in the dsRecord: the first number (`1234` above) is the key tag,
@@ -343,17 +340,18 @@ Google Cloud DNS project must be whitelisted to use RSASHA1 algorithms).
 All values used by Google Cloud DNS are in the following table and in IANA's
 [DNSSEC Algorithm Numbers][11] or [DS RR Type Digest Algorithms][12]:
 
-| DNSKEY Algorithm   | Number | Descriptive text               | DS Digest | Number |
-|--------------------|--------|--------------------------------|-----------|--------|
-| RSASHA1            | **5**  | RSASHA1                        | SHA-1     | **1**  |
-| RSASHA1-NSEC3-SHA1 | **7**  | RSASHA1-NSEC3-SHA1             | SHA-1     | **1**  |
-| RSASHA256          | **8**  | RSA/SHA-256                    | SHA-256   | **2**  |
-| RSASHA512          | **10** | RSA/SHA-512                    | SHA-256   | **2**  |
-| ECDSAP256SHA256    | **13** | ECDSA Curve P-256 with SHA-256 | SHA-256   | **2**  |
-| ECDSAP384SHA384    | **14** | ECDSA Curve P-384 with SHA-384 | SHA-384   | **4**  |
+| DNSKEY Algorithm   | Number | Descriptive text   | DS Digest | Number |
+| ------------------ | ------ | ------------------ | --------- | ------ |
+| RSASHA1            | **5**  | RSASHA1            | SHA-1     | **1**  |
+| RSASHA1-NSEC3-SHA1 | **7**  | RSASHA1-NSEC3-SHA1 | SHA-1     | **1**  |
+| RSASHA256          | **8**  | RSA/SHA-256        | SHA-256   | **2**  |
+| RSASHA512          | **10** | RSA/SHA-512        | SHA-256   | **2**  |
+| ECDSAP256SHA256    | **13** | ECDSA Curve P-256  | SHA-256   | **2**  |
+:                    :        : with SHA-256       :           :        :
+| ECDSAP384SHA384    | **14** | ECDSA Curve P-384  | SHA-384   | **4**  |
+:                    :        : with SHA-384       :           :        :
 
 [11]: https://www.nameisp.com/
-
 [12]: https://www.name.com
 
 ### Add a DS record through the domain registrar
@@ -406,7 +404,7 @@ expired:
 
 [embedmd]:# (checkremoved.sh /checkremoved/ $)
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~console
 $ checkremoved example.com
 e.gtld-servers.net. has DS record(s) for example.com
 b.gtld-servers.net. has DS record(s) for example.com
@@ -414,7 +412,7 @@ j.gtld-servers.net. has DS record(s) for example.com
 …
 i.gtld-servers.net. has DS record(s) for example.com
 Cached DS records for example.com expire after 86400 seconds.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 $ ./checkremoved.sh google.com
@@ -472,11 +470,8 @@ the United Internet group ([InternetX][20] and [United Domains][21]) *do*
 support DS record management.
 
 [18]: https://icannwiki.org/1%261_Internet
-
 [19]: https://ntldstats.com/registrar/83-1%261-Internet-AG
-
 [20]: #internetx
-
 [21]: #united-domains
 
 ### 123 Reg
@@ -495,13 +490,12 @@ reseller for support. The [Hexonet Wiki][24] has information about the DNSSEC
 API for 1API resellers.
 
 [23]: https://icannwiki.org/HEXONET
-
 [24]: https://wiki.hexonet.net/wiki/DNSSEC
 
 ### Alpnames
 
 Alpnames supports DNSSEC only for a [small subset of the TLDs they offer][25],
-but they have instructions  at <https://my.alpnames.com/kb/answer/1909> to add
+but they have instructions at <https://my.alpnames.com/kb/answer/1909> to add
 and remove DS records through their web interface.
 
 [25]: https://my.alpnames.com/kb/answer/1908
@@ -563,9 +557,7 @@ adding a DS record, but have [40 signed domains][32] in new gTLs. Contact them
 for support at <http://www.csc.com/contact_us/flxwd/93606>.
 
 [30]: https://www.icann.org/resources/pages/deployment-2012-02-25-en
-
 [31]: https://icannwiki.org/CSC_Corporate_Domains,_Inc.
-
 [32]: https://ntldstats.com/registrar/299-CSC-Corporate-Domains-Inc
 
 ### DNSimple
@@ -580,7 +572,7 @@ To remove DS records, see the instructions at
 ### Domain.com
 
 As of October 2017, Domain.com did not support DS record management ([no signed
-zones][33]  in new gTLDs).
+zones][33] in new gTLDs).
 
 [33]: https://ntldstats.com/registrar/886-Domaincom-LLC
 
@@ -621,9 +613,7 @@ since you have already done that with Google Cloud DNS, and go directly to
 provide the following information:
 
 [35]: http://www.internetsociety.org/deploy360/resources/how-to-sign-your-domain-with-dnssec-using-dyn-inc/
-
 [36]: https://icannwiki.org/Dyn
-
 [37]: https://account.dyn.com/dns/domain-registration/
 
 -   Key tag
@@ -656,7 +646,6 @@ reseller such as [NameCheap][41] you may be able to manage DNSSEC through your
 reseller—check for it in this list of domain registrar-specific instructions.
 
 [40]: https://icannwiki.org/ENom
-
 [41]: #namecheap
 
 If you registered your domain directly with eNom, there is no web interface to
@@ -727,7 +716,6 @@ As of October 2017, [HiChina (Alibaba Cloud Computing)][45] did not support DS
 record management, although it had [one signed zone][46].
 
 [45]: https://icannwiki.org/HiChina
-
 [46]: https://ntldstats.com/registrar/1599-Alibaba-Cloud-Computing-Ltd-dba-HiChina-wwwnetcn
 
 ### HKDNS
@@ -754,7 +742,6 @@ removing DS records for your domain on the "DNSSEC" tab of the Domain update
 page.
 
 [48]: https://icannwiki.org/InterNetX
-
 [49]: https://login.autodns.com/
 
 The procedure requires the Public key (long string of letters and numbers)
@@ -785,9 +772,7 @@ domain owners, and [RRPproxy][53] for resellers. Click either of the previous
 two links for specific instructions.
 
 [51]: https://icannwiki.org/Key-Systems
-
 [52]: #domain-discount-24
-
 [53]: #rrpproxy
 
 ### MelbourneIT
@@ -799,7 +784,6 @@ is your domain registrar, try contacting their support at
 process for adding or removing a DS record.
 
 [54]: https://icannwiki.org/MelbourneIT
-
 [55]: https://ntldstats.com/registrar/13-Melbourne-IT-Ltd
 
 ### Moniker
@@ -846,7 +830,6 @@ your domain, you need to provide the Key tag, numeric Algorithm and Digest Type,
 as well as the Digest hexadecimal string.
 
 [57]: https://icannwiki.org/Name.com
-
 [58]: https://www.name.com
 
 You can also remove DS records and deactivate DNSSEC on this page.
@@ -908,7 +891,6 @@ DNSSEC management for customers using other DNS providers such as Google Cloud
 DNS, although it had [5 signed zones][62] in new gTLDs.
 
 [61]: https://icannwiki.org/Network_Solutions
-
 [62]: https://ntldstats.com/registrar/2-Network-Solutions-LLC
 
 ### Onamae
@@ -940,7 +922,6 @@ interface][65] or their API as documented at
 <https://api.ovh.com/console/#/domain/%7BserviceName%7D/dsRecord#POST>.
 
 [64]: https://icannwiki.org/OVH_SAS
-
 [65]: https://www.ovh.com/managerv3/
 
 Follow these steps through their web interface to get to DS record management:
@@ -956,7 +937,7 @@ Follow these steps through their web interface to get to DS record management:
 5.  Select the "DS Records" tab.
 
 [66]: https://www.ovh.com/managerv3/
- 
+
 Add a DS record to activate DNSSEC by clicking on the **+** icon on the right
 and providing the following information:
 
@@ -991,7 +972,6 @@ customers using other DNS providers such as Google Cloud DNS and had [no signed
 zones][69] in new gTLDs.
 
 [68]: https://icannwiki.org/Register.com
-
 [69]: https://ntldstats.com/registrar/9-registercom-Inc
 
 ### Registro.br
@@ -1037,8 +1017,8 @@ RRPproxy API to add or delete DS records, as documented at
 
 ### Todaynic
 
-As of October 2017, Todaynic (时代互联) did not support DS record management
-([no signed zones][72] in new gTLDs).
+As of October 2017, Todaynic (时代互联) did not support DS record management ([no
+signed zones][72] in new gTLDs).
 
 [72]: https://ntldstats.com/registrar/697-Todayniccom-Inc
 
@@ -1054,9 +1034,7 @@ adding a DS record to activate DNSSEC for your domain.
 instructions.
 
 [73]: https://icannwiki.org/Tucows
-
 [74]: #hover
-
 [75]: #opensrs
 
 ### Uniregistrar
@@ -1065,7 +1043,6 @@ As of October 2017, [Uniregistrar][76] did not support DS record management ([no
 signed zones][77] in new gTLDs).
 
 [76]: https://icannwiki.org/Uniregistry
-
 [77]: https://ntldstats.com/registrar/1659-Uniregistrar-Corp
 
 ### United Domains
