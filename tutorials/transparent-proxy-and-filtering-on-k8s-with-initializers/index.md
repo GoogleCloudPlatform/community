@@ -2,19 +2,19 @@
 title: Transparent Proxy and Filtering on Kubernetes with Initializers
 description: Learn how to run a transparent proxy on Kubernetes to filter and intercept traffic out of your deployments using custom deployment initializers.
 author: danisla
-tags: Kubernetes mitmproxy proxy
+tags: Kubernetes, mitmproxy, proxy
 date_published: 2017-09-23
 ---
 
 Dan Isla | Google Cloud Solution Architect | Google
 
-This is a follow-on tutorial to the [Transparent Proxy and Filtering on K8S](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s) tutorial. It shows how to simplify the application of a transparent proxy for existing deployments using a Deployment Initializer. Initializers are one of the [Dynamic Admission Control](https://kubernetes.io/docs/admin/extensible-admission-controllers/) features of Kubernetes, and are available as an alpha feature in Kubernetes 1.7.
+This is a follow-on tutorial to the [Transparent Proxy and Filtering on Kubernetes](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s) tutorial. It shows how to simplify the application of a transparent proxy for existing deployments using a Deployment Initializer. Initializers are one of the [Dynamic Admission Control](https://kubernetes.io/docs/admin/extensible-admission-controllers/) features of Kubernetes, and are available as an alpha feature in Kubernetes 1.7.
 
 This tutorial uses the [tproxy-initializer](https://github.com/danisla/kubernetes-tproxy/tree/master/cmd/tproxy-initializer) Kubernetes Initializer to inject the sidecar InitContainer, ConfigMap and environment variables into a deployment when the annotation `"initializer.kubernetes.io/tproxy": "true"` is present. This tutorial also demonstrates how to deploy the [tproxy Helm chart](https://github.com/danisla/kubernetes-tproxy/tree/master/charts/tproxy) with the optional [Role Based Access Control](https://kubernetes.io/docs/admin/authorization/rbac/) support.
 
 Just like in the previous tutorial, the purpose of the [tproxy-sidecar](https://github.com/danisla/kubernetes-tproxy/tree/master/sidecar) container is to create firewall rules in the pod network to block egress traffic. The [tproxy-podwatch](https://github.com/danisla/kubernetes-tproxy/tree/master/cmd/tproxy-podwatch) controller watches for pod changes containing the annotation and automatically add/removes the local firewall `REDIRECT` rules to apply the transparent proxy to the pod.
 
-![architecture diagram](./tproxy_initializers_diagram.png)
+![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/transparent-proxy-and-filtering-on-k8s-with-initializers/tproxy_initializers_diagram.png)
 
 **Figure 1.** transparent proxy with initializers architecture diagram
 
@@ -146,8 +146,8 @@ Deploy the sample apps to demonstrate using and not using the annotation to trig
         PING www.google.com (209.85.200.105): 56 data bytes
         64 bytes from 209.85.200.105: icmp_seq=0 ttl=52 time=0.758 ms
 
-    The output from the example app shows the status codes for the requests and the output of a ping command. 
-	
+    The output from the example app shows the status codes for the requests and the output of a ping command.
+
     Notice the following:
     - The request to https://www.google.com succeeds with status code 200.
     - The request to the Cloud Storage  bucket succeeds with status code 200.
@@ -169,7 +169,7 @@ Deploy the sample apps to demonstrate using and not using the annotation to trig
     - The proxy allows the request to the Cloud Storage bucket with status code 200.
     - The the ping to www.google.com is rejected.
 
-4. Inspect the logs from the mitmproxy DaemonSet pod to show the intercepted requests and responses. Note that the logs have to be retrieved from the tproxy pod that is running on the same node as the example app. 
+4. Inspect the logs from the mitmproxy DaemonSet pod to show the intercepted requests and responses. Note that the logs have to be retrieved from the tproxy pod that is running on the same node as the example app.
 
         kubectl logs $(kubectl get pods -o wide | awk '/tproxy.*'$(kubectl get pods --selector=app=debian-app,variant=locked -o=jsonpath={.items..spec.nodeName})'/ {print $1}') -c tproxy-tproxy-mode --tail=10
 
