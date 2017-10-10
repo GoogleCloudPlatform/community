@@ -32,13 +32,13 @@ This tutorial assumes you already have a Google Cloud Platform (GCP) account and
 
 This tutorial uses billable components of GCP, including:
 
-- [Google Container Engine](https://cloud.google.com/container-engine/pricing){:target="_blank"}
+- [Google Container Engine](https://cloud.google.com/container-engine/pricing)
 
-Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f52c2651-4b02-4da3-b8cd-fdbca6ad89a9){:target="_blank"} to estimate the costs for your environment. The resources used in this tutorial are approximately $2.39 per day.
+Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f52c2651-4b02-4da3-b8cd-fdbca6ad89a9) to estimate the costs for your environment. The resources used in this tutorial are approximately $2.39 per day.
 
 ## Checkout the source repository
 
-1. Open [Cloud Shell](https://console.cloud.google.com/cloudshell){:target="_blank"}
+1. Open [Cloud Shell](https://console.cloud.google.com/cloudshell)
 
 2. Clone the repository containing the code for this tutorial:
 
