@@ -34,7 +34,7 @@ This tutorial uses billable components of GCP, including:
 
 - [Google Container Engine](https://cloud.google.com/container-engine/pricing)
 
-Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f52c2651-4b02-4da3-b8cd-fdbca6ad89a9) to estimate the costs for your environment. The resources used in this tutorial are approximately $2.39 per day.
+Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f52c2651-4b02-4da3-b8cd-fdbca6ad89a9) to estimate the costs for your environment.
 
 ## Checkout the source repository
 
