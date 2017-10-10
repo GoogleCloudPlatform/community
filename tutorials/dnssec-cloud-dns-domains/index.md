@@ -1,8 +1,9 @@
 ---
+title: Activating DNSSEC for Cloud DNS domains  
 description: Improve security for your Cloud DNS domains—activate DNSSEC validation for Cloud DNS-hosted domains that are DNSSEC-enabled.
-tags: "DNS,DNSSEC,registrars"
-title: Activating DNSSEC for Cloud DNS domains
 author: dupuy
+tags: "DNS,DNSSEC,registrars"
+date_published: 
 ---
 
 Alexander Dupuy | Software Engineer | Google
