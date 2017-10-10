@@ -236,7 +236,7 @@ they are different, your Google Cloud DNS managed zone is **not** authoritative
 for the domain, and until you update the delegation, you should not add a DS
 record based on the DNSKEY information for your managed zone. After updating the
 delegation, *be sure to wait for the full TTL of the delegation records to
-expire*, so that all resolvers will use the new authoritative name servers. TLD
+expire*, so that all resolvers use the new authoritative name servers. TLD
 delegation NS records often have TTLs that are much longer (1–2 days is common)
 than the TTLs in the authoritative zone itself.
 
@@ -748,8 +748,8 @@ The procedure requires the Public key (long string of letters and numbers)
 rather than the Digest (hexadecimal string).
 
 If you registered your domain through a reseller rather than with AutoDNS, you
-will need to contact your reseller for support. If you are an InternetX
-customer, you can contact domain-support@internetx.com for further assistance.
+need to contact your reseller for support. If you are an InternetX customer,
+you can contact domain-support@internetx.com for further assistance.
 
 ### InterNetworX
 
@@ -847,7 +847,7 @@ Follow these steps through their web interface to add a DS record:
 
 2.  Click on your domain name.
 
-3.  Click on "DS data", which will display "Keys from nameservers."
+3.  Click on "DS data", which displays "Keys from nameservers."
 
 4.  Click the "Publish" button to the right of the key you want to publish.
 
@@ -1001,8 +1001,8 @@ Follow these steps through their web interface to add a DS record:
 
 6.  Click on the "Salvar Dados" (Save Data) button.
 
-The configured Master and Slave name servers will be queried for DNSKEY records
-and if one with a matching key tag and digest is found, the DS record will be
+The configured Master and Slave name servers are queried for DNSKEY records
+and if one with a matching key tag and digest is found, the DS record is
 generated and published.
 
 ### RRPproxy
