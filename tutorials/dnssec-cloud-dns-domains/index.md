@@ -101,26 +101,29 @@ separate organizations with different roles, although for .gov and .int TLDs,
 and some two-letter country code (ccTLD) top-level domains, the TLD registry may
 also provide domain registrar services.
 
-TLD registries
-
-~   provide WHOIS and DNS name service for top-level domains (TLDs), and in most
+<dl>
+<dt>TLD registries</dt>
+<dd>
+    provide WHOIS and DNS name service for top-level domains (TLDs), and in most
     cases, an API for domain registrars to manage delegation records and WHOIS
     data.
-
-Domain registrars
-
-~   provide retail services to customers purchasing or renewing domains, and
+</dd>
+<dt>Domain registrars</dt>
+<dd>
+    provide retail services to customers purchasing or renewing domains, and
     interact with TLD registries to manage delegation records in the TLD and
     update WHOIS data for those domains. Many offer web pages for customers to
     make those updates themselves, and some provide web APIs for automation
     tools. Most also provide free DNS name service for domains that are
     registered with them (although for domains delegated to Google Cloud DNS
     name servers, those domain registrar name servers would not be used).
-
-Domain resellers
-
-~   typically provide only the retail services of domain registrars, but may
+</dd>
+<dt>Domain resellers</dt>
+<dd>
+    typically provide only the retail services of domain registrars, but may
     provide web pages for updating delegation records.
+</dd>
+</dl>
 
 All three of these are shown on the right side of the overview diagram above; to
 avoid confusion, this tutorial uses the terms “*TLD* registries” and “*domain*
