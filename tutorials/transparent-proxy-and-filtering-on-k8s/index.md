@@ -95,29 +95,28 @@ Before installing the chart, you must first extract the certificates generated b
 
         initContainers:
         - name: tproxy
-        image: docker.io/danisla/tproxy-sidecar:0.1.0
-        imagePullPolicy: IfNotPresent
-        securityContext:
+          image: docker.io/danisla/tproxy-sidecar:0.1.0
+          imagePullPolicy: IfNotPresent
+          securityContext:
             privileged: true
-        env:
-        resources:
+          env:
+          resources:
             limits:
-            cpu: 500m
-            memory: 128Mi
+              cpu: 500m
+              memory: 128Mi
             requests:
-            cpu: 100m
-            memory: 64Mi
+              cpu: 100m
+              memory: 64Mi
 
         Add the volumes below to your deployments to use the trusted https tproxy:
 
         volumes:
         - name: ca-certs-debian
-        configMap:
+          configMap:
             name: tproxy-tproxy-root-certs
             items:
             - key: root-certs.crt
-            path: ca-certificates.crt
-
+              path: ca-certificates.crt
 
 3. Get the status of the DaemonSet pods:
 
