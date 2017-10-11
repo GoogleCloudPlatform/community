@@ -132,7 +132,7 @@ This dependency enables your application to use the JDBC API to connect to the d
         spring.cloud.gcp.sql.databaseName=petclinic
         spring.cloud.gcp.sql.password=my-smart-password
 
-    See updated file [here][application_spring_cloud]
+    See updated file [here][application_spring_cloud].
 
 1.  Restart the Spring Boot application using the `mysql-spring-cloud` [profile][profile]:
 
@@ -214,7 +214,7 @@ https://YOUR_PROJECT_ID.appspot.com.
 [health]: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html#production-ready-health
 [logs]: https://console.cloud.google.com/logs/viewer
 [appengine-maven]: http://mvnrepository.com/artifact/com.google.cloud.tools/appengine-maven-plugin
-[app_yaml]: [source_path]/src/main/appengine/app.yaml
+[app_yaml]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/src/main/appengine/app.yaml
 [application_properties]:[source_path]/src/main/resources/application.properties
 [build]: http://start.spring.io/
 [gke]: /appengine/docs/flexible/java/run-flex-app-on-gke
