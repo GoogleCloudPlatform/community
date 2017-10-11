@@ -216,7 +216,7 @@ points of origin can relay messages into Cloud Pub/Sub.
 1.  Read about [deploying Cloud Functions][deploying].
 1.  Run the following command to deploy the function:
 
-        gcloud beta functions deploy reply --trigger-http --stage-bucket [YOUR_STAGE_BUCKET]
+        gcloud beta functions deploy receiveNotification --trigger-http --stage-bucket [YOUR_STAGE_BUCKET]
 
     Replace `[YOUR_STAGE_BUCKET]` with your Cloud Functions staging bucket.
 
