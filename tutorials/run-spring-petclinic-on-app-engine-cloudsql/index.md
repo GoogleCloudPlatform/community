@@ -206,10 +206,10 @@ https://YOUR_PROJECT_ID.appspot.com.
 - Try out [other Java samples][samples] on GCP.
 
 [source_path]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic
-[application_mysql_datasource]: [source_path]/src/main/resources/application-mysql-datasource.properties
-[application_spring_cloud]: [source_path]/src/main/resources/application-mysql-spring-cloud.properties
-[pom_spring_cloud_xml]: [source_path]/pom-spring-cloud.xml
-[pom_spring_datasource_xml]: [source_path]/pom-spring-datasource.xml
+[application_mysql_datasource]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/src/main/resources/application-mysql-datasource.properties
+[application_spring_cloud]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/src/main/resources/application-mysql-spring-cloud.properties
+[pom_spring_cloud_xml]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/pom-spring-cloud.xml
+[pom_spring_datasource_xml]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/pom-spring-datasource.xml
 [yaml]: /appengine/docs/flexible/java/configuring-your-app-with-app-yaml
 [health]: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html#production-ready-health
 [logs]: https://console.cloud.google.com/logs/viewer
