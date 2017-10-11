@@ -65,7 +65,7 @@ Cloud Platform (GCP).
     [HyperSQL database][hyper]. You will now switch from HyperSQL to using Cloud
     SQL as your database.
 
-1. Note: [spring-petclinic][source_path] provides a copy of the source code
+1. Note: [spring-petclinic][source-path] provides a copy of the source code
  with the required changes already completed to run Spring PetClinic using Cloud SQL.
 
 [hyper]: http://hsqldb.org/
@@ -103,11 +103,11 @@ Spring Integration for Cloud SQL. The following sections demonstrate both option
         spring.datasource.username=root
         spring.datasource.password=my-smart-password
 
-    See updated file [here][application_mysql_datasource].
+    See updated file [here][application-mysql-datasource].
 
 1.  Update `pom.xml` to include [Cloud SQL MySQL Socket Factory][socket].
     The socket library allows you to connect to your Cloud SQL instance for
-    local testing and deployment. See reference `pom.xml` [here][pom_spring_datasource_xml].
+    local testing and deployment. See reference `pom.xml` [here][pom-spring-datasource-xml].
 
 1.  Restart the Spring Boot application using the `mysql-datasource` [profile][profile]:
 
@@ -121,7 +121,7 @@ to configure Cloud SQL in your application.
 Note: This is currently a SNAPSHOT release, add the dependency from [Spring SNAPSHOT repository](http://maven.springframework.org/snapshot/).
 
 You also need to add the [Spring Boot JDBC](https://mvnrepository.com/artifact/org.springframework/spring-jdbc/4.3.10.RELEASE)
-to your `pom.xml` as shown [here][pom_spring_cloud_xml].
+to your `pom.xml` as shown [here][pom-spring-cloud-xml].
 This dependency enables your application to use the JDBC API to connect to the database and execute SQL queries.
 
 1.  Update `src/main/resources/application-mysql-spring-cloud.properties`, replacing
@@ -132,7 +132,7 @@ This dependency enables your application to use the JDBC API to connect to the d
         spring.cloud.gcp.sql.databaseName=petclinic
         spring.cloud.gcp.sql.password=my-smart-password
 
-    See updated file [here][application_spring_cloud].
+    See updated file [here][application-spring-cloud].
 
 1.  Restart the Spring Boot application using the `mysql-spring-cloud` [profile][profile]:
 
@@ -162,7 +162,7 @@ https://YOUR_PROJECT_ID.appspot.com.
     and deploy process extremely easy.
     Add [`appengine-maven-plugin`][appengine-maven] to your
     `pom.xml`'s `build` plugins section.
-    The sample [`pom.xml`][pom_spring_cloud_xml] already contains this plugin configuration.
+    The sample [`pom.xml`][pom-spring-cloud-xml] already contains this plugin configuration.
 
 1.  Create an `app.yaml` under `src/main/appengine` with the following contents.
     For more on configuring `app.yaml`, refer to [this resource][yaml]:
@@ -177,7 +177,7 @@ https://YOUR_PROJECT_ID.appspot.com.
           - url: /.*
             script: this field is required, but ignored
 
-    Optionally, you can use the sample [`app.yaml`][app_yaml].
+    Optionally, you can use the sample [`app.yaml`][app-yaml].
 
 1.  App Engine flexible environment monitors the health of your application
     using the `/_ah/health` endpoint. (Note: A `200` or`404` status is
@@ -189,7 +189,7 @@ https://YOUR_PROJECT_ID.appspot.com.
          management.contextPath=/_ah
          spring.profiles.active=mysql
 
-    [Here][application_properties] is an updated `application.properties`.
+    [Here][application-properties] is an updated `application.properties`.
 
 1.  Run the following command to deploy your app:
 
@@ -205,17 +205,17 @@ https://YOUR_PROJECT_ID.appspot.com.
 - Deploy the application to [Google Container Engine][gke].
 - Try out [other Java samples][samples] on GCP.
 
-[source_path]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic
-[application_mysql_datasource]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/src/main/resources/application-mysql-datasource.properties
-[application_spring_cloud]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/src/main/resources/application-mysql-spring-cloud.properties
-[pom_spring_cloud_xml]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/pom-spring-cloud.xml
-[pom_spring_datasource_xml]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/pom-spring-datasource.xml
+[source-path]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic
+[application-mysql-datasource]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/src/main/resources/application-mysql-datasource.properties
+[application-spring-cloud]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/src/main/resources/application-mysql-spring-cloud.properties
+[pom-spring-cloud-xml]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/pom-spring-cloud.xml
+[pom-spring-datasource-xml]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/pom-spring-datasource.xml
 [yaml]: /appengine/docs/flexible/java/configuring-your-app-with-app-yaml
 [health]: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html#production-ready-health
 [logs]: https://console.cloud.google.com/logs/viewer
 [appengine-maven]: http://mvnrepository.com/artifact/com.google.cloud.tools/appengine-maven-plugin
-[app_yaml]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/src/main/appengine/app.yaml
-[application_properties]:[source_path]/src/main/resources/application.properties
+[app-yaml]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/src/main/appengine/app.yaml
+[application-properties]:https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/src/main/resources/application.properties
 [build]: http://start.spring.io/
 [gke]: /appengine/docs/flexible/java/run-flex-app-on-gke
 [samples]: /java/samples
