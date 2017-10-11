@@ -147,7 +147,9 @@ service.
 The easiest way to eliminate billing is to delete the project you created for
 the tutorial. To do so using gcloud:
 
-    gcloud projects delete <your-project-id>
+    gcloud projects delete [YOUR_PROJECT_ID]
+
+where `[YOUR_PROJECT_ID]` is your Google Cloud Platform project ID.
 
 **Warning**: Deleting a project has the following consequences:
 
