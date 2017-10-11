@@ -104,7 +104,7 @@ Now you will deploy your new app to App Engine.
 
     The Elixir Runtime will take care of building your application in the
     cloud, including installing mix dependencies, compiling to BEAM files, and
-    even using brunch to build and digest your assets.
+    even using Brunch to build and digest your assets.
 
     Deployment will also take a few minutes to requisition and configure the
     needed resources, especially the first time you deploy.
@@ -128,8 +128,8 @@ Let's make a simple change and redeploy.
         gcloud app deploy
 
     App Engine and the Elixir Runtime will take care of rebuilding your app,
-    deploying the updated version, and switching traffic from the old to the
-    new.
+    deploying the updated version, and migrating traffic to the newly deployed
+    version.
 
 3.  View your changes live by running
 
@@ -138,14 +138,13 @@ Let's make a simple change and redeploy.
 ## Clean up
 
 After you've finished this tutorial, you can clean up the resources you created
-on Google Cloud Platform so you won't be billed for them in the future. You can
-accomplish this either by deleting the project, or by stopping the App Engine
-service.
+on Google Cloud Platform so you won't be billed for them in the future. To clean
+up the resources, you can delete the project or stop the App Engine service.
 
 ### Deleting the project
 
 The easiest way to eliminate billing is to delete the project you created for
-the tutorial. To do so using gcloud:
+the tutorial. To do so using `gcloud`, run:
 
     gcloud projects delete [YOUR_PROJECT_ID]
 
@@ -178,8 +177,8 @@ To disable an App Engine service:
 
 The [Elixir Samples](https://github.com/GoogleCloudPlatform/elixir-samples)
 repository contains a growing set of sample Elixir applications ready to deploy
-to Google Cloud, and examples of communicating with Google APIs from Elixir.
+to Google Cloud and examples of communicating with Google APIs from Elixir.
 
 See the [App Engine documentation](https://cloud.google.com/appengine/docs/flexible/)
-for more information on the features of App Engine, including scaling, health
-checks, infrastructure customization, and so forth.
+for more information on App Engine features including scaling, health checks,
+and infrastructure customization.
