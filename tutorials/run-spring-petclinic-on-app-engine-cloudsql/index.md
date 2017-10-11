@@ -107,7 +107,7 @@ Spring Integration for Cloud SQL. The following sections demonstrate both option
 
 1.  Update `pom.xml` to include [Cloud SQL MySQL Socket Factory][socket].
     The socket library allows you to connect to your Cloud SQL instance for
-    local testing and deployment. See reference `pom-spring-datasource.xml` [here](spring-petclinic/pom-spring-datasource.xml).
+    local testing and deployment. See reference `pom.xml` [here][pom_spring_datasource_xml].
 
 1.  Restart the Spring Boot application using the `mysql-datasource` [profile][profile]:
 
@@ -164,7 +164,7 @@ https://YOUR_PROJECT_ID.appspot.com.
     `pom.xml`'s `build` plugins section.
     The sample [`pom.xml`][pom_spring_cloud_xml] already contains this plugin configuration.
 
-1.  Create an `app.yaml` und` er `src/main/appengine` with the following contents.
+1.  Create an `app.yaml` under `src/main/appengine` with the following contents.
     For more on configuring `app.yaml`, refer to [this resource][yaml]:
 
         runtime: java
