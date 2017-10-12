@@ -341,16 +341,14 @@ Google Cloud DNS project must be whitelisted to use RSASHA1 algorithms).
 All values used by Google Cloud DNS are in the following table and in IANA's
 [DNSSEC Algorithm Numbers][11] or [DS RR Type Digest Algorithms][12]:
 
-| DNSKEY Algorithm   | Number | Descriptive text   | DS Digest | Number |
-| ------------------ | ------ | ------------------ | --------- | ------ |
-| RSASHA1            | **5**  | RSASHA1            | SHA-1     | **1**  |
-| RSASHA1-NSEC3-SHA1 | **7**  | RSASHA1-NSEC3-SHA1 | SHA-1     | **1**  |
-| RSASHA256          | **8**  | RSA/SHA-256        | SHA-256   | **2**  |
-| RSASHA512          | **10** | RSA/SHA-512        | SHA-256   | **2**  |
-| ECDSAP256SHA256    | **13** | ECDSA Curve P-256  | SHA-256   | **2**  |
-:                    :        : with SHA-256       :           :        :
-| ECDSAP384SHA384    | **14** | ECDSA Curve P-384  | SHA-384   | **4**  |
-:                    :        : with SHA-384       :           :        :
+| DNSKEY Algorithm   | Number | Descriptive text               | DS Digest | Number |
+| ------------------ | ------ | ------------------------------ | --------- | ------ |
+| RSASHA1            | **5**  | RSASHA1                        | SHA-1     | **1**  |
+| RSASHA1-NSEC3-SHA1 | **7**  | RSASHA1-NSEC3-SHA1             | SHA-1     | **1**  |
+| RSASHA256          | **8**  | RSA/SHA-256                    | SHA-256   | **2**  |
+| RSASHA512          | **10** | RSA/SHA-512                    | SHA-256   | **2**  |
+| ECDSAP256SHA256    | **13** | ECDSA Curve P-256 with SHA-256 | SHA-256   | **2**  |
+| ECDSAP384SHA384    | **14** | ECDSA Curve P-384 with SHA-384 | SHA-384   | **4**  |
 
 [11]: https://www.nameisp.com/
 [12]: https://www.name.com
