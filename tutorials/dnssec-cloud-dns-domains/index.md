@@ -177,7 +177,7 @@ Confirm whether the TLD for your domain supports DNSSEC by looking for it in the
 If you cannot reach the ICANN TLD DNSSEC site for any reason, you can check with
 the [Verisign DNSSEC debugger][8]: just enter the TLD name and hit return; if
 you see any red ⊗ errors the TLD does not support DNSSEC (e.g.
-<http://dnssec-debugger.verisignlabs.com/aq>).
+http://dnssec-debugger.verisignlabs.com/aq).
 
 [8]: http://dnssec-debugger.verisignlabs.com/us
 
@@ -359,7 +359,7 @@ below.
 You can confirm that resolvers are able to successfully validate your domain
 once the DS records have been published by checking with the [Verisign DNSSEC
 debugger][14]: just enter your domain name and hit return; you should only see
-green checks (e.g. <http://dnssec-debugger.verisignlabs.com/publicdns.goog>).
+green checks (e.g. http://dnssec-debugger.verisignlabs.com/publicdns.goog).
 
 [14]: http://dnssec-debugger.verisignlabs.com/us
 
@@ -439,7 +439,7 @@ them to add, may be the most practical solution.
 ### Google Domains
 
 Google Domains instructions at
-<https://support.google.com/domains/answer/3290309> (in the subsection titled
+https://support.google.com/domains/answer/3290309 (in the subsection titled
 “Setting up DNSSEC security for your domain”) to add a DS record and activate
 DNSSEC for your Google-registered domain. Follow the instructions for **Using
 DNSSEC with custom name servers**, and provide the following information:
@@ -488,7 +488,7 @@ API for 1API resellers.
 ### Alpnames
 
 Alpnames supports DNSSEC only for a [small subset of the TLDs they offer][25],
-but they have instructions at <https://my.alpnames.com/kb/answer/1909> to add
+but they have instructions at https://my.alpnames.com/kb/answer/1909 to add
 and remove DS records through their web interface.
 
 [25]: https://my.alpnames.com/kb/answer/1908
@@ -498,7 +498,7 @@ and remove DS records through their web interface.
 If Amazon Registrar, Inc. is your domain registrar (or your reseller, for
 domains registered through Gandi—all domains except for: .com .net and .org) you
 can add and remove DS records using the Route53 console at
-<https://console.aws.amazon.com/route53/>.
+https://console.aws.amazon.com/route53/.
 
 Amazon has instructions to add a DS record ([Adding Public Keys for a
 Domain][26]). You need to provide the following pieces of information:
@@ -530,7 +530,7 @@ If your domain registrar is [Ascio][28] (via a reseller), there is no web
 interface to add a DS record to activate DNSSEC for your domain. If you are the
 domain owner, contact your reseller for support. Resellers can use the Ascio AWS
 Domains API to add or delete DS records, as documented at
-<http://aws.ascio.info/domains-api-v2/csharp/creatednsseckey>.
+http://aws.ascio.info/domains-api-v2/csharp/creatednsseckey.
 
 [28]: https://icannwiki.org/Ascio
 
@@ -547,7 +547,7 @@ According to the ICANN DNSSEC [support list][30], [CSC Corporate Domains][31]
 supports DNSSEC for these top-level domains: `.com .net org .uk .biz .com.au
 .net.au .us .eu .be .se .co`. They do not provide any online documentation about
 adding a DS record, but have [40 signed domains][32] in new gTLs. Contact them
-for support at <http://www.csc.com/contact_us/flxwd/93606>.
+for support at http://www.csc.com/contact_us/flxwd/93606.
 
 [30]: https://www.icann.org/resources/pages/deployment-2012-02-25-en
 [31]: https://icannwiki.org/CSC_Corporate_Domains,_Inc.
@@ -556,11 +556,11 @@ for support at <http://www.csc.com/contact_us/flxwd/93606>.
 ### DNSimple
 
 DNSimple has instructions at
-<https://blog.dnsimple.com/2015/11/ds-records-for-dnssec/> to add a DS record
+https://blog.dnsimple.com/2015/11/ds-records-for-dnssec/ to add a DS record
 and activate DNSSEC for your domain.
 
 To remove DS records, see the instructions at
-<https://support.dnsimple.com/articles/ds-records-changing-dns/>.
+https://support.dnsimple.com/articles/ds-records-changing-dns/.
 
 ### Domain.com
 
@@ -620,7 +620,7 @@ provide the following information:
 ### DynaDot
 
 [DynaDot][38] has instructions at
-<https://www.dynadot.com/community/help/question/set-DNSSEC> to add a DS record
+https://www.dynadot.com/community/help/question/set-DNSSEC to add a DS record
 and activate DNSSEC for your Dynadot-registered domain.
 
 [38]: https://icannwiki.org/DynaDot
@@ -643,7 +643,7 @@ reseller—check for it in this list of domain registrar-specific instructions.
 
 If you registered your domain directly with eNom, there is no web interface to
 add a DS record to activate DNSSEC for your domain. See the instructions at
-<http://www.enom.com/helpme/> for directions on submitting a support request or
+http://www.enom.com/helpme/ for directions on submitting a support request or
 contacting your reseller. Include the DS record you get from Google Cloud DNS in
 your support request, along with your domain name.
 
@@ -663,7 +663,7 @@ reseller) use the [Amazon instructions][42] instead.
 
 [42]: #amazon
 
-See the instructions at <http://wiki.gandi.net/en/domains/dnssec> to add a DS
+See the instructions at http://wiki.gandi.net/en/domains/dnssec to add a DS
 record and activate DNSSEC for your Gandi-registered domain. You need to provide
 the following pieces of information:
 
@@ -681,27 +681,27 @@ management page.
 
 GKG supports adding and removing DS records either through their [web
 interface][43] as described at their FAQ
-<https://www.gkg.net/domain/support/faq/dnssec.html#Anchor-3> or using their API
-as documented at <https://www.gkg.net/ws/ds.html#create-ds>.
+https://www.gkg.net/domain/support/faq/dnssec.html#Anchor-3 or using their API
+as documented at https://www.gkg.net/ws/ds.html#create-ds.
 
 [43]: https://www.gkg.net/protected/domain/modify
 
 ### GoDaddy
 
 [GoDaddy][44] has instructions at
-<https://www.godaddy.com/help/add-a-ds-record-23865> to "Add a DS Record" and
+https://www.godaddy.com/help/add-a-ds-record-23865 to "Add a DS Record" and
 activate DNSSEC for a GoDaddy-registered domain. If you have chosen a
 non-default DNSSEC algorithm for your zone, GoDaddy may not support it for some
 top-level domains.
 
 [44]: https://icannwiki.org/GoDaddy
 
-See the instructions at <https://www.godaddy.com/help/delete-a-ds-record-23867>
+See the instructions at https://www.godaddy.com/help/delete-a-ds-record-23867
 to "Delete a DS Record" and deactivate DNSSEC for a GoDaddy-registered domain.
 at the same help URL.
 
 There is general background information on "Self-Managed" DNSSEC with GoDaddy at
-<https://www.godaddy.com/help/about-self-managed-dnssec-6114>.
+https://www.godaddy.com/help/about-self-managed-dnssec-6114.
 
 ### HiChina
 
@@ -721,11 +721,11 @@ management ([no signed zones][47] in new gTLDs).
 ### Hover
 
 See the instructions at
-<https://help.hover.com/hc/en-us/articles/217281647-DNSSEC#add> to add a DS
+https://help.hover.com/hc/en-us/articles/217281647-DNSSEC#add to add a DS
 record and activate DNSSEC for your domain.
 
 To remove DS records, see the instructions at
-<https://help.hover.com/hc/en-us/articles/217281647#edi>.
+https://help.hover.com/hc/en-us/articles/217281647#edi.
 
 ### InternetX
 
@@ -747,16 +747,16 @@ you can contact domain-support@internetx.com for further assistance.
 ### InterNetworX
 
 [InterNetworX (INWX)][50] has DNSSEC instructions (in English) at
-<https://kb.inwx.com/?sid=643491&lang=en&action=artikel&cat=22&id=204&artlang=en>
-and in German at <https://kb.inwx.com/?solution_id=1021>.
+https://kb.inwx.com/?sid=643491&lang=en&action=artikel&cat=22&id=204&artlang=en
+and in German at https://kb.inwx.com/?solution_id=1021.
 
 [50]: https://icannwiki.org/InterNetworX
 
 ### Joker
 
 Joker supports adding and removing DS records either through their web interface
-described at <https://joker.com/faq/content/6/461/en/dnssec-support.html> or the
-API given at <https://joker.com/faq/content/27/24/en/domain_modify.html>.
+described at https://joker.com/faq/content/6/461/en/dnssec-support.html or the
+API given at https://joker.com/faq/content/27/24/en/domain_modify.html.
 
 ### Key-Systems
 
@@ -773,7 +773,7 @@ two links for specific instructions.
 As of October 2017, [MelbourneIT][54] did not document any support for DS record
 management, although it had [11 signed zones][55] in new gTLDs. If MelbourneIT
 is your domain registrar, try contacting their support at
-<https://www.melbourneit.com.au/contact-us/> to see if they have a manual
+https://www.melbourneit.com.au/contact-us/ to see if they have a manual
 process for adding or removing a DS record.
 
 [54]: https://icannwiki.org/MelbourneIT
@@ -783,7 +783,7 @@ process for adding or removing a DS record.
 
 Moniker supports adding and removing DS records through their [web
 interface][56]. Their wiki FAQ at
-<https://wiki.moniker.com/index.php/Faq:DNSSEC> has instructions for entering DS
+https://wiki.moniker.com/index.php/Faq:DNSSEC has instructions for entering DS
 record data.
 
 [56]: https://www.moniker.com/service/create-account-login
@@ -817,7 +817,7 @@ Follow these steps through their web interface to add a DS record:
 ### Name.com
 
 [Name.com][57] has instructions at
-<https://www.name.com/support/articles/205439058-DNSSEC> to navigate to DNSSEC
+https://www.name.com/support/articles/205439058-DNSSEC to navigate to DNSSEC
 Management on their [web site][58]. To add a DS record and activate DNSSEC for
 your domain, you need to provide the Key tag, numeric Algorithm and Digest Type,
 as well as the Digest hexadecimal string.
@@ -850,7 +850,7 @@ the right of "Published keys."
 ### Namecheap
 
 Namecheap has instructions at
-<https://www.namecheap.com/support/knowledgebase/article.aspx/9722/2232/> to add
+https://www.namecheap.com/support/knowledgebase/article.aspx/9722/2232/ to add
 a DS record once you have enabled Namecheap DNSSEC support.
 
 To remove all DS records, simply disable Namecheap DNSSEC support, as described
@@ -860,7 +860,7 @@ at the end of the above instructions.
 
 NameSilo supports adding and removing DS records through their [web
 interface][60]. The instructions at
-<https://www.namesilo.com/Support/DS-Records-%28DNSSEC%29> explain how to
+https://www.namesilo.com/Support/DS-Records-%28DNSSEC%29 explain how to
 navigate to the page for adding DS records.
 
 [60]: https://www.namesilo.com/account_domains.php
@@ -889,30 +889,30 @@ DNS, although it had [5 signed zones][62] in new gTLDs.
 ### Onamae
 
 Onamae (GMO Internet) has DNSSEC instructions (in Japanese) at
-<http://www.onamae.com/option/dns/>.
+http://www.onamae.com/option/dns/.
 
 ### OpenSRS
 
 [OpenSRS][63] has instructions (for "Registrant") at
-<https://help.opensrs.com/hc/en-us/articles/206190417#add> to add a DS record
+https://help.opensrs.com/hc/en-us/articles/206190417#add to add a DS record
 and activate DNSSEC for your domain. If you do not have a Storefront login,
 contact your reseller and refer them to the instructions (for "Reseller") at
-<https://help.opensrs.com/hc/en-us/articles/206190417#adr> (include the DS
+https://help.opensrs.com/hc/en-us/articles/206190417#adr (include the DS
 record you get from Google Cloud DNS in your request, along with your domain
 name).
 
 [63]: https://icannwiki.org/OpenSRS
 
 To remove DS records, see the instructions (for "Registrant") at
-<https://help.opensrs.com/hc/en-us/articles/206190417#mod>. If you do not have a
+https://help.opensrs.com/hc/en-us/articles/206190417#mod. If you do not have a
 Storefront login, contact your reseller and refer them to the instructions (for
-"Reseller") at <https://help.opensrs.com/hc/en-us/articles/206190417#mor>.
+"Reseller") at https://help.opensrs.com/hc/en-us/articles/206190417#mor.
 
 ### OVH
 
 [OVH SAS][64] supports adding and removing DS records either through their [web
 interface][65] or their API as documented at
-<https://api.ovh.com/console/#/domain/%7BserviceName%7D/dsRecord#POST>.
+https://api.ovh.com/console/#/domain/%7BserviceName%7D/dsRecord#POST.
 
 [64]: https://icannwiki.org/OVH_SAS
 [65]: https://www.ovh.com/managerv3/
@@ -948,7 +948,7 @@ Remove DS records by clicking on the trash can icon to the right of each record.
 ### Public Domain Registry
 
 Public Domain Registry (PDR) also acts as a registrar, and has instructions at
-<http://manage.publicdomainregistry.com/kb/answer/1909> to add a DS record and
+http://manage.publicdomainregistry.com/kb/answer/1909 to add a DS record and
 activate DNSSEC for your domain, or to remove DS records and deactivate DNSSEC.
 
 ### REG.RU
@@ -971,7 +971,7 @@ zones][69] in new gTLDs.
 
 Registro.br supports adding and removing DS records through their [web
 interface][70]. They have general information about DNSSEC configuration (in
-Portuguese) at <http://registro.br/tecnologia/dnssec.html>.
+Portuguese) at http://registro.br/tecnologia/dnssec.html.
 
 [70]: https://registro.br/cgi-bin/nicbr/login
 
@@ -1004,7 +1004,7 @@ If your domain registrar is [RRPproxy][71] (via a reseller), there is no web
 interface to add a DS record to activate DNSSEC for your domain. If you are the
 domain owner, contact your reseller for support. Resellers can use EPP or the
 RRPproxy API to add or delete DS records, as documented at
-<https://wiki.rrpproxy.net/DNSSEC>.
+https://wiki.rrpproxy.net/DNSSEC.
 
 [71]: https://icannwiki.org/RRPproxy
 
@@ -1017,7 +1017,7 @@ signed zones][72] in new gTLDs).
 
 ### TransIP
 
-TransIP has instructions at <https://www.transip.eu/question/110000694/> for
+TransIP has instructions at https://www.transip.eu/question/110000694/ for
 adding a DS record to activate DNSSEC for your domain.
 
 ### Tucows
@@ -1042,7 +1042,7 @@ signed zones][77] in new gTLDs).
 
 If your domain registrar is [United Domains AG (UDAG)][78], there is no web
 interface to add a DS record to activate DNSSEC for your domain. See the
-instructions at <https://www.uniteddomains.com/support/contact/> to request
+instructions at https://www.uniteddomains.com/support/contact/ to request
 creation of a DS record for your domain. Include the DS record you get from
 Google Cloud DNS in your request, along with your domain name.
 
