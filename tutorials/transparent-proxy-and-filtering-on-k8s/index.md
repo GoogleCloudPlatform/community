@@ -2,7 +2,7 @@
 title: Transparent Proxy and Filtering on Kubernetes
 description: Learn how to run a transparent proxy on Kubernetes to filter and intercept traffic out of your deployments.
 author: danisla
-tags: Kubernetes mitmproxy proxy
+tags: Kubernetes, mitmproxy, proxy
 date_published: 2017-09-23
 ---
 
@@ -18,7 +18,7 @@ If you wanted to transparently add request/response headers to requests between 
 
 This tutorial uses the [tproxy-sidecar](https://github.com/danisla/kubernetes-tproxy/tree/master/sidecar) init container to create firewall rules in the pod network to block egress traffic out of selected pods. The [tproxy-podwatch](https://github.com/danisla/kubernetes-tproxy/tree/master/cmd/tproxy-podwatch) controller watches for pod changes containing the `"initializer.kubernetes.io/tproxy": "true"` annotation and automatically add/removes the local firewall REDIRECT rules to apply the transparent proxy to the pod.
 
-![architecture diagram](./tproxy_diagram.png)
+![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/transparent-proxy-and-filtering-on-k8s/tproxy_diagram.png)
 
 **Figure 1.** transparent proxy architecture diagram
 
@@ -154,8 +154,8 @@ Deploy the sample apps to demonstrate using and not using the init container to 
         PING www.google.com (209.85.200.105): 56 data bytes
         64 bytes from 209.85.200.105: icmp_seq=0 ttl=52 time=0.758 ms
 
-    The output from the example app shows the status codes for the requests and the output of a ping command. 
-	
+    The output from the example app shows the status codes for the requests and the output of a ping command.
+
     Notice the following:
     - The request to https://www.google.com succeeds with status code 200.
     - The request to the Cloud Storage  bucket succeeds with status code 200.
@@ -177,7 +177,7 @@ Deploy the sample apps to demonstrate using and not using the init container to 
     - The proxy allows the request to the Cloud Storage bucket with status code 200.
     - The the ping to www.google.com is rejected.
 
-4. Inspect the logs from the mitmproxy DaemonSet pod to show the intercepted requests and responses. Note that the logs have to be retrieved from the tproxy pod that is running on the same node as the example app. 
+4. Inspect the logs from the mitmproxy DaemonSet pod to show the intercepted requests and responses. Note that the logs have to be retrieved from the tproxy pod that is running on the same node as the example app.
 
         kubectl logs $(kubectl get pods -o wide | awk '/tproxy.*'$(kubectl get pods --selector=app=debian-app,variant=locked -o=jsonpath={.items..spec.nodeName})'/ {print $1}') -c tproxy-tproxy-mode --tail=10
 
@@ -208,7 +208,7 @@ This tutorial uses a Python script to filter traffic to a specific Cloud Storage
 
         helm upgrade tproxy .
 
-    After about 30 seconds, the new script will be live-updated and in use by mitmproxy. 
+    After about 30 seconds, the new script will be live-updated and in use by mitmproxy.
 
 3. Verify the output of the locked pod:
 
@@ -241,7 +241,7 @@ This tutorial uses a Python script to filter traffic to a specific Cloud Storage
 
 ## What's next?
 
-- [Transparent Proxy and Filtering on K8S with Initializers tutorial](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s-with-initializers) - Same approach but simplified using a deployment initializer to inject the InitContainer and ConfigMap.
+- [Transparent Proxy and Filtering on Kubernetes with Initializers tutorial](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s-with-initializers) - Same approach but simplified using a deployment initializer to inject the InitContainer and ConfigMap.
 - [tproxy helm chart](https://github.com/danisla/kubernetes-tproxy/blob/master/charts/tproxy/README.md) - See all configuration options and deployment methods.
 - [Istio](https://isio.io/) - A more broad approach to traffic filtering and network policy.
 - [Calico Egress NetworkPolicy](https://docs.projectcalico.org/v2.0/getting-started/kubernetes/tutorials/advanced-policy) - Another way to filter egress traffic at the pod level.
