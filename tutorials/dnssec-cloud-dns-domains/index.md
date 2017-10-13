@@ -76,7 +76,7 @@ domain registrar and the reseller.
 [4]: https://gwhois.org/
 [5]: https://gwhois.org/dns-example.info+dns
 
-~~~console
+```console
 $ whois dns-example.info
 Domain Name: DNS-EXAMPLE.INFO
 Registry Domain ID: D503300000000040442-LRMS
@@ -91,7 +91,7 @@ Reseller:
 Name Server: NS-CLOUD-E1.GOOGLEDOMAINS.COM
 Name Server: NS-CLOUD-E2.GOOGLEDOMAINS.COM
 …
-~~~
+```
 
 #### TLD *registries* vs. domain *registrars*
 
@@ -216,14 +216,14 @@ serving DNSSEC data:
 
 [embedmd]:# (checksigned.sh /checksigned/ $)
 
-~~~console
+```console
 $ checksigned dns-example.info
 ns-cloud-e1.googledomains.com. has DNSSEC data for dns-example.info
 ns-cloud-e2.googledomains.com. has DNSSEC data for dns-example.info
 ns-cloud-e3.googledomains.com. has DNSSEC data for dns-example.info
 ns-cloud-e4.googledomains.com. has DNSSEC data for dns-example.info
 Negative cache for dns-example.info expires after 300 seconds.
-~~~
+```
 
 Be sure to check that the delegated name servers listed in the output of this
 command are the same ones listed in the NS records for your managed zone. If
@@ -287,13 +287,13 @@ of the "Zone details" page.
 
 You can also use the `gcloud` command-line tool to get this information:
 
-~~~console
+```console
 $ EXAMPLE_ZONE=my-zone  # use your managed zone name here
 $ gcloud beta dns dnskeys list $EXAMPLE_ZONE
 ID  KEY_TAG  TYPE          IS_ACTIVE  DESCRIPTION
 0   1234     KEY_SIGNING   True       -
 1   12345    ZONE_SIGNING  True       -
-~~~
+```
 
 You need the *ID* of the KEY_SIGNING Key (KSK), which is usually zero (0), to
 get a complete DS record and all details of the key you may need to create it
@@ -301,7 +301,7 @@ get a complete DS record and all details of the key you may need to create it
 `EXAMPLE_ZONE` to the zone ID and `KSK_ID` to the ID of the KEY_SIGNING key as
 noted above:
 
-~~~console
+```console
 $ EXAMPLE_ZONE=my-zone
 $ KSK_ID=0
 $ gcloud beta dns dnskeys describe $EXAMPLE_ZONE --key-id=$KSK_ID
@@ -316,7 +316,7 @@ digests:
 keyTag: 1234
 publicKey: 9gP/WrSoitGLYmylXwE…LIVVWyJ2j/nTuqqaWKOpBFLaQ==
 type: KEY_SIGNING
-~~~
+```
 
 If your domain registrar needs numeric values for algorithm or digest types,
 they are given in the dsRecord: the first number (`1234` above) is the key tag,
@@ -397,7 +397,7 @@ expired:
 
 [embedmd]:# (checkremoved.sh /checkremoved/ $)
 
-~~~console
+```console
 $ checkremoved example.com
 e.gtld-servers.net. has DS record(s) for example.com
 b.gtld-servers.net. has DS record(s) for example.com
@@ -405,17 +405,17 @@ j.gtld-servers.net. has DS record(s) for example.com
 …
 i.gtld-servers.net. has DS record(s) for example.com
 Cached DS records for example.com expire after 86400 seconds.
-~~~
+```
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-$ ./checkremoved.sh google.com
+```console
+$ checkremoved google.com
 a.gtld-servers.net. does not have DS records for google.com
 e.gtld-servers.net. does not have DS records for google.com
 k.gtld-servers.net. does not have DS records for google.com
 …
 l.gtld-servers.net. does not have DS records for google.com
 No cached DS records found in Google Public DNS.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
 
 Once the DS records are removed, and the maximum cache TTL has expired, you can
 safely [turn off DNSSEC for the managed zone][16].
