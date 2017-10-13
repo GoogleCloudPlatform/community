@@ -15,6 +15,7 @@ This document provides guidance for contributors to the Google Cloud Platform (G
 * [File organization in GitHub](#file-organization-in-github)
 * [General content guidelines](#general-content-guidelines)
 * [General style guidelines](#general-style-guidelines)
+* [Markdown usage](#markdown-usage)
 * [Voice and tone](#voice-and-tone)
 * [Including source code](#including-source-code)
 * [Writing resources](#writing-resources)
@@ -270,6 +271,48 @@ Provide inline links to relevant information, where appropriate. For example, li
 
 Provide direct links to pages in the Google Cloud Console when you give Cloud Console-based instructions. These _deep links_ save the reader time spent looking for the right page and can save you time writing descriptions of how to find the page. Deep links open the page with the project set to the user's last-used project.
 
+## Markdown usage
+
+This site uses GitHub-flavored Markdown (GFM) dialect when publishing tutorial content. GFM has a few extensions to basic Markdown, but does not support many extensions present in other Markdown dialects. GFM has a detailed [specification](https://github.github.com/gfm), but it is essentially basic Markdown with defined results for certain corner cases, plus the following extensions:
+
+### [Autolinks](https://github.github.com/gfm/#autolinks-extension-)
+
+Publishing recognizes and adds links to URLs without `http://` or `https://` prefixes when they are delimited by whitespace, parentheses, or text formatting characters (`*_~`). Do not use `<` and `>` delimiters for these, as they will be stripped out as raw HTML.
+
+### [Disallowed Raw HTML](https://github.github.com/gfm/#disallowed-raw-html-extension-)
+
+Publishing strips *all* possible HTML from tutorial content, essentially anything contained withing `<` and `>` delimiters. Note that this is stricter than standard GFM, which only strips certain "unsafe" HTML.
+
+### [Strikethrough](https://github.github.com/gfm/#strikethrough-extension-)
+
+Publishing formats text delimited in tildes (`~`) as strikethrough, making `~a bad example~`  look like ~a bad example~ in your document.
+
+### [Tables](https://github.github.com/gfm/#tables-extension-)
+
+Publishing formats text blocks as tables if they have  consistent pipe (`|`) separators and a second delimiter row with just hyphens (`-`), optionally using `:` to specify left, right, or centered alignment. Publishing converts this:
+
+```markdown
+| Table | header | row | default is centered |
+| :- | :--: | ---: | ---- |
+| Table | data | row | default is left |
+| ----------------- |  ----------------- |  ----------------- |  ---------------------------------------------- | 
+```
+into this:
+
+| Table | header | row | default is centered |
+| :- | :--: | ---: | ---- |
+| Table | data | row | default is left |
+| ----------------- |  ----------------- |  ----------------- |  ---------------------------------------------- | 
+
+You cannot create multi-line cells (although other Markdown dialects allow this), and while you can omit both the initial and final pipe separators, it can break table recognition if the first cell looks like a list item.
+
+### [Task list items](https://github.github.com/gfm/#task-list-items-extension-)
+
+Publishing converts all bulleted or numbered list items with whitespace delimited `[ ]` or `[x]` into checkbox items, like this:
+
+1. [x] task list item
+   *  [ ] incomplete task list item
+
 ## Voice and tone
 
 ### Active voice
@@ -358,7 +401,9 @@ Instead of a Markdown file in the `tutorials/` directory, create a folder for
 your files. The Markdown for the tutorial should be in an `index.md` file within
 the new folder, and the rest of the source code files must be in the new folder
 as well. You can use [EmbedMd](https://github.com/campoy/embedmd) to include
-snippets from the source code files in the Markdown file.
+snippets from the source code files in the Markdown file. You should run the
+`embedmd` program on  `index.md` to actually  include  the code block in the
+Markdown source in one of the commits for your pull request.
 
 This option is more complicated, but allows us to test the code, and allows the
 user to view real source code files.
