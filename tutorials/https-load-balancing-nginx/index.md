@@ -260,25 +260,25 @@ To create your NGINX instance:
 
 1.  Create a folder for your ssl certificates on your instance:
 
-        mkdir ~/ssl_certs
+        mkdir ~/ssl_certs
         
 1.  Run the `exit` command to exit your SSH session.
 
-After you've exited your session, use `gcloud compute` to copy your private key,
-SSL/TLS certificate, and (if applicable) certificate authority PEM file to the
-load balancer instance:
+    After you've exited your session, use `gcloud compute` to copy your private key,
+    SSL/TLS certificate, and (if applicable) certificate authority PEM file to the
+    load balancer instance:
 
-    gcloud compute scp /local/path/to/ssl-certs/* \
-      nginx-lb:~/ssl-certs --zone us-central1-f
+        gcloud compute scp /local/path/to/ssl-certs/* \
+        nginx-lb:~/ssl-certs --zone us-central1-f
 
-Since you do not have write access for */etc/nginx*, you will have to log on to the load balancer instance and move the files to the correct folder.
+    Since you do not have write access for */etc/nginx*, you will have to log on to the load balancer instance and move the files to the correct folder.
 
 1.  Reconnect to your **nginx-lb**:
 
-        gcloud compute ssh nginx-lb
+        gcloud compute ssh nginx-lb
         
-1.  Move your folder for ssl ceritifcate to nginx:
-        
+1.  Move your folder for ssl certificate to NGINX:
+
         sudo mv ~/ssl-certs /etc/nginx/
 
 ### Create your virtual host
