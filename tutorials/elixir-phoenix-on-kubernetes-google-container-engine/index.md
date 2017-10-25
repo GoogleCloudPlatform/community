@@ -37,7 +37,9 @@ an existing project.
 
 1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
     to create a new Cloud Platform project. Remember the project ID; you will
-    need it later.
+    need it later. Later commands in this tutorial will use `${PROJECT_ID}` as
+    a substitution, so you might consider setting the `PROJECT_ID` environment
+    variable in your shell.
 
 2.  Enable billing for your project.
 
@@ -46,36 +48,43 @@ an existing project.
     *   Google Cloud Container Builder API
     *   Google Container Engine API
 
-To perform the installations:
+Perform the installations:
 
-1.  Install Docker 17.05 or later. Find instructions on the
-    [Docker website](https://www.docker.com/).
+1.  Install **Docker 17.05 or later** if you do not already have it. Find
+    instructions on the [Docker website](https://www.docker.com/).
 
-2.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/). Make sure
-    you [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK
-    and set the default project to the new project you created.
+2.  Install the **[Google Cloud SDK](https://cloud.google.com/sdk/)** if you do
+    not already have it. Make sure you
+    [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK and
+    set the default project to the new project you created.
 
 3.  Install the Kubernetes component of the Google Cloud SDK:
 
         gcloud components install kubectl
 
-If you have not yet installed Elixir and Phoenix on your workstation, do so:
+4.  Install **Elixir 1.4 or later** if you do not already have it. If you are
+    on MacOS and have [Homebrew](https://brew.sh), you can run:
 
-1.  Install Elixir and Node.js. If you are on MacOS with Homebrew, you can run
+        brew install elixir
 
-        brew install elixir node
+    Otherwise consult the [Elixir install](https://elixir-lang.org/install.html)
+    guide for your operating system.
 
-    Otherwise consult the [Node download](https://nodejs.org/en/download/) and
-    [Elixir install](https://elixir-lang.org/install.html) guides for your
-    operating system.
-
-2. Install the `hex`, `rebar`, and `phx_new` archives.
+5.  Install the **hex**, **rebar**, and **phx_new** archives.
 
         mix local.hex
         mix local.rebar
         mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
 
-## Create a new app and run it locally
+6.  Install **Node.js** if you do not already have it. If you are on MacOS and
+    have Homebrew, you can run:
+
+        brew install node
+
+    Otherwise consult the [Node download](https://nodejs.org/en/download/)
+    guide for your operating system.
+
+## Creating a new app and running it locally
 
 In this section, you will create a new Phoenix app and make sure it runs. If
 you already have an app to deploy, you may use it instead.
@@ -101,17 +110,18 @@ you already have an app to deploy, you may use it instead.
 4.  Visit [http://localhost:4000](http://localhost:4000) to see the Phoenix
     welcome screen running locally on your workstation.
 
-## Enable releases with Distillery
+## Enabling releases with Distillery
 
 Releases are the preferred way to package Elixir (and Erlang) applications for
-deployment. You will configure the Distillery tool to create releases for your
-app.
+deployment. You will configure the
+[Distillery](https://github.com/bitwalker/distillery) tool to create releases
+for your app.
 
 **Note:** If you already have Distillery set up for your application, you may
 skip this section. But make sure `include_erts: true` is set in your `:prod`
 release configuration. This tutorial assumes ERTS is included in releases.
 
-### Setting up Distillery
+### Set up Distillery
 
 1.  Add distillery to your application's dependencies. In the `mix.exs` file,
     add `{:distillery, "~> 1.5"}` to the `deps`. Then install it by running:
@@ -135,7 +145,7 @@ release configuration. This tutorial assumes ERTS is included in releases.
           root: ".",
           cache_static_manifest: "priv/static/cache_manifest.json"
 
-### Testing a release
+### Test a release
 
 Now you can create a release to test out your configuration.
 
@@ -162,13 +172,13 @@ Now you can create a release to test out your configuration.
 4.  Visit [http://localhost:8080](http://localhost:8080) to see the Phoenix
     welcome screen running locally from your release.
 
-## Dockerize your application
+## Dockerizing your application
 
 The next step is to produce a Docker image that builds and runs your
 application in a Docker container. You will define this image using a
 Dockerfile.
 
-### Creating the Dockerfile
+### Create a Dockerfile
 
 Various considerations go into designing a good Docker image. The Dockerfile
 used by this tutorial will build a release and run it with Alpine Linux.
@@ -226,7 +236,7 @@ If you are experienced with Docker, you may choose to customize your image.
     apps. In general, you want Docker to ignore artifacts that come from your
     development environment, so it can perform clean builds.
 
-### Testing the Dockerfile
+### Test the Dockerfile
 
 Now build the image locally and test running your application from the image:
 
@@ -239,11 +249,11 @@ root directory of the application you are building.
 Visit [http://localhost:8080](http://localhost:8080) to see the Phoenix
 welcome screen running locally from your Docker image.
 
-## Deploy your application
+## Deploying your application
 
 Now you're ready to deploy your application to Container Engine!
 
-### Building in the cloud
+### Build the production image
 
 To deploy the app, you will use the
 [Google Cloud Container Build](https://cloud.google.com/container-builder/)
@@ -267,7 +277,7 @@ You may even push and pull the image directly from your registry. See the
 [Container Registry how-to guides](https://cloud.google.com/container-registry/docs/pushing-and-pulling)
 for more details.
 
-### Creating a cluster
+### Create a cluster
 
 Container Engine lets you create Kubernetes clusters to host your application.
 These are clusters of VMs in the cloud, managed by a Kubernetes server.
@@ -295,7 +305,7 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
 
     Replace the name if you named your cluster differently.
 
-### Deploying to the cluster
+### Deploy to the cluster
 
 A production deployment comprises two parts: your Docker container, and a
 front-end load balancer (which also provides a public IP address.)
@@ -333,12 +343,12 @@ you've created the Kubernetes cluster as described above.
 
 Congratulations! Your application is now up and running!
 
-## Scale and update your application
+## Scaling and updating your application
 
 You'll now explore a few of the basic features of Kubernetes for managing your
 running app.
 
-### Setting the replica count
+### Set the replica count
 
 Initially your deployment runs a single instance of your application. You may
 add more replicas using the `kubectl scale` command. For example, to add two
@@ -356,7 +366,7 @@ in your cluster. You may configure pods in your deployment with specific
 resource requirements such as memory and CPU. See the
 [Kubernetes documentation](https://kubernetes.io/docs/home/) for more details.
 
-### Updating your application
+### Update your application
 
 After you make a change to your app, redeploying is just a matter of
 building a new image and pointing your deployment to it.
@@ -384,8 +394,8 @@ building a new image and pointing your deployment to it.
         kubectl set image deployment/hello-web hello-web=gcr.io/${PROJECT_ID}/hello:v1
 
 **Note:** If a deployment gets "stuck" because an error in the image prevents
-it from starting successfuly, you can roll back by "undoing" the rollout. See
-the [Kubernetes deployment documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+it from starting successfuly, you can "undo" the rollout. See the
+[Kubernetes deployment documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
 for more info.
 
 ## Clean up

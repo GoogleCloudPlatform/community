@@ -16,8 +16,9 @@
 # This is a sample Dockerfile for packaging an Elixir Phoenix application
 # as a Docker image. It builds a Distillery release and installs it on
 # Alpine Linux. The final image launches the application on port 8080.
-# It includes two stages and requires Docker 17.05 or later.
-
+#
+# This Dockerfile includes two stages and requires Docker 17.05 or later.
+#
 # To adapt this Dockerfile to your app, set the APP_NAME and PHOENIX_SUBDIR
 # build arguments, as outlined below.
 
