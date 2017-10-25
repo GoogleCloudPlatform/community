@@ -49,8 +49,9 @@ Perform the installations:
 1.  Install **Docker** if you do not already have it. Find instructions on the
     [Docker website](https://www.docker.com/).
 
-2.  Install the **Google Cloud SDK** if you do not already have it. Make sure
-    you [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK
+2.  Install the **[Google Cloud SDK](https://cloud.google.com/sdk/)** if you do
+    not already have it. Make sure you
+    [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK
     and set the default project to the new project you created.
 
 3.  Install **Elixir 1.4 or later** if you do not already have it. If you are
