@@ -32,8 +32,9 @@
 # be used to build OTP releases with a Jessie-compatible ERTS.
 FROM elixir:slim
 
-# We run the `mix release` command from the /app directory. When running the
-# container, you should mount the host project directory at this point.
+# Set the build directory. The `mix release` command will be run from here.
+# When running the container, you should mount the host project directory at
+# this location.
 WORKDIR /app
 
 # Make sure rebar and hex are installed. If your build process has other
@@ -44,6 +45,6 @@ RUN mix local.rebar --force && mix local.hex --force
 # optimized.
 ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm
 
-# This is the default build command. You may change or override to suit your
+# Set the default build command. You can change or override it to suit your
 # project's requirements.
 CMD ["mix", "release", "--env=prod", "--executable", "--verbose"]

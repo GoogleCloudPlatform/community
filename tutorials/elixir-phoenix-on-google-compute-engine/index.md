@@ -6,7 +6,7 @@ tags: Compute Engine, Elixir, Phoenix
 date_published: 2017-11-01
 ---
 
-This tutorial will help you get started deploying your
+This tutorial helps you get started deploying your
 [Elixir](http://elixir-lang.org/) app using the
 [Phoenix](http://phoenixframework.org/) Framework to
 [Google Compute Engine](https://cloud.google.com/container-engine/), taking
@@ -21,7 +21,7 @@ You will create a new Phoenix application, and then you will learn how to:
 
 This tutorial requires Elixir 1.4 and Phoenix 1.3 or later. It assumes you are
 already familiar with basic Phoenix web development. For simplicity, the
-tutorial app will not use Ecto or connect to a SQL database, but you can extend
+tutorial app does not use Ecto or connect to a SQL database, but you can extend
 it to connect to Google Cloud SQL or any other database service.
 
 ## Before you begin
@@ -30,7 +30,7 @@ Before running this tutorial, you must set up a Google Cloud Platform project,
 and you need to have Docker and the Google Cloud SDK installed on your
 workstation.
 
-Create a project that will host your Phoenix application. You may also reuse
+Create a project that will host your Phoenix application. You can also reuse
 an existing project.
 
 1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
@@ -79,10 +79,10 @@ Perform the installations:
 ## Creating a new app and running it locally
 
 In this section, you will create a new Phoenix app and make sure it runs. If
-you already have an app to deploy, you may use it instead.
+you already have an app to deploy, you can use it instead.
 
 1.  Run the `phx.new` task to create a new Phoenix project called
-    "hello". This tutorial will omit Ecto for now.
+    "hello". This tutorial omits Ecto for now.
 
         mix phx.new hello --no-ecto
 
@@ -109,7 +109,7 @@ deployment. You will configure the
 [Distillery](https://github.com/bitwalker/distillery) tool to create releases
 for your app.
 
-**Note:** If you already have Distillery set up for your application, you may
+**Note:** If you already have Distillery set up for your application, you can
 skip this section. But make sure `include_erts: true` is set in your `:prod`
 release configuration. This tutorial assumes ERTS is included in releases.
 
@@ -141,7 +141,7 @@ release configuration. This tutorial assumes ERTS is included in releases.
 
 Now you can create a release to test out your configuration.
 
-1.  First make sure assets have been built for production:
+1.  Make sure assets have been built for production:
 
         pushd assets
         npm install
@@ -149,19 +149,19 @@ Now you can create a release to test out your configuration.
         popd
         mix phx.digest
 
-    Remember that if your app is an umbrella app, the assets directory may be
+    Remember that if your app is an umbrella app, the assets directory might be
     located in one of the apps subdirectories.
 
 2.  Build the release:
 
         MIX_ENV=prod mix release --env=prod --executable
 
-3.  Run the application from the release using:
+3.  Run the application from the release with:
 
         PORT=8080 _build/prod/rel/hello/bin/hello.run foreground
 
     If your application is named something other than `hello`, the release
-    executable may be in a different path.
+    executable might be in a different path.
 
 4.  Visit [http://localhost:8080](http://localhost:8080) to see the Phoenix
     welcome screen running locally from your release.
@@ -198,7 +198,7 @@ will now create a Docker image with Debian and Elixir to use for builds.
         ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm
         CMD ["mix", "release", "--env=prod", "--executable", "--verbose"]
 
-    Alternately, you may
+    Alternately, you can
     [download](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/elixir-phoenix-on-google-compute-engine/Dockerfile)
     a sample annotated Dockerfile to study and customize.
 
@@ -207,7 +207,7 @@ will now create a Docker image with Debian and Elixir to use for builds.
         docker build -t hello-builder .
 
     This tutorial assumes you have named your image `hello-builder`, though you
-    may of course give it a different name.
+    can of course give it a different name.
 
 ### Perform a production build
 
@@ -219,15 +219,15 @@ will now create a Docker image with Debian and Elixir to use for builds.
         popd
         mix phx.digest
 
-    You may need to adjust the above steps if your app is an umbrella app or if
-    you are using a different toolchain for building assets.
+    You might need to adjust the above steps if your app is an umbrella app or
+    if you are using a different toolchain for building assets.
 
 2.  Ensure artifacts from your local build environment don't leak into the
     production build.
 
         mix clean --deps
 
-3.  Now you can build a release using the Docker image.
+3.  Build a release using the Docker image.
 
         docker run --rm -it -v $(pwd):/app hello-builder
 
@@ -237,8 +237,8 @@ will now create a Docker image with Debian and Elixir to use for builds.
     application name is `hello`, will be located at
     `_build/prod/rel/hello/bin/hello.run`.
 
-    **Note:** You may not be able to run this executable release directly from
-    your workstation, because it has been cross-compiled for Debian.
+    **Note:** You might not be able to run this executable release directly
+    from your workstation, because it has been cross-compiled for Debian.
 
 4.  Push the built release to Google Cloud Storage.
 
@@ -272,13 +272,13 @@ Copy the following content into it:
     chmod 755 hello-release
     PORT=8080 ./hello-release start
 
-Alternately, you may
+Alternately, you can
 [download](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/elixir-phoenix-on-google-compute-engine/instance-startup.sh)
 a sample annotated script to study and customize.
 
 The startup script downloads the release you built from Cloud Storage, and
 executes it as a daemon. It reads the Cloud Storage URL from an *instance
-attribute*, which is key-value metadata that may be associated with a Compute
+attribute*, which is key-value metadata that can be associated with a Compute
 Engine instance. You will set that attribute when you actually create the
 instance.
 
@@ -362,7 +362,7 @@ Phoenix app.
             --zone us-central1-f
 
     The `size` parameter specifies the number of instances in the group. You
-    may set it to a different value if desired.
+    can set it to a different value if desired.
 
 3.  If you did not create the firewall rule while configuring a single instance
     above, do so now:
@@ -378,9 +378,9 @@ Phoenix app.
         gcloud compute instances list
 
     The managed instances in the group have names that start with the
-    base-instance-name, i.e. `hello-group`. You may use the names to check the
+    base-instance-name, i.e. `hello-group`. You can use the names to check the
     progress of instance creation as you did above with a single instance, and
-    then you may use the IP addresses to see your application running on port
+    then you can use the IP addresses to see your application running on port
     8080 of each instance.
 
 ### Create a load balancer
@@ -389,10 +389,10 @@ You will now create a load balancer to direct traffic automatically to
 available instances in the group. Follow these steps.
 
 1.  Create a health check. The load balancer uses a health check to determine
-    which instances are capable of serving traffic. The health check will
-    simply ensure that the root URL returns a page (e.g. the Phoenix default
-    page). If you are using a different application, you may specify a
-    different request path.
+    which instances are capable of serving traffic. The health check simply
+    ensures that the root URL returns a page (e.g. the Phoenix default page.)
+    If you are using a different application, you can specify a different
+    request path.
 
         gcloud compute http-health-checks create hello-health-check \
             --request-path / \
@@ -475,7 +475,7 @@ instances up to a maximum of 10:
         --target-load-balancing-utilization 0.6 \
         --zone us-central1-f
 
-After a few minutes, if you send traffic to the load balancer, you may see
+After a few minutes, if you send traffic to the load balancer, you might see
 that additional instances have been added to the instance group.
 
 A wide variety of autoscaling policies are available to maintain target CPU
@@ -501,7 +501,7 @@ section.
 
 After you've finished this tutorial, you can clean up the resources you created
 on Google Cloud Platform so you won't be billed for them in the future. You
-may delete the resources individually, or delete the entire project.
+can delete the resources individually, or delete the entire project.
 
 ### Deleting individual resources
 
@@ -521,7 +521,7 @@ Delete the Cloud Storage bucket hosting your OTP release from the
 ### Deleting the project
 
 Alternately, you can delete the project in its entirety. To do so using
-`gcloud`, run:
+the gcloud command line tool, run:
 
     gcloud projects delete ${PROJECT_ID}
 
