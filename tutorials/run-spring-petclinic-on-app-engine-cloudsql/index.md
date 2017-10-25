@@ -94,7 +94,7 @@ Spring Integration for Cloud SQL. The following sections demonstrate both option
 
 #### Using Spring Datasource
 
-1.  Update `src/main/resources/application-mysql-datasource.properties`, replacing
+1.  Update `src/main/resources/application-mysql.properties`, replacing
     INSTANCE_CONNECTION_NAME with the `connectionName` from the previous step:
 
         database=mysql
@@ -109,9 +109,9 @@ Spring Integration for Cloud SQL. The following sections demonstrate both option
     The socket library allows you to connect to your Cloud SQL instance for
     local testing and deployment. See reference `pom.xml` [here][pom-spring-datasource-xml].
 
-1.  Restart the Spring Boot application using the `mysql-datasource` [profile][profile]:
+1.  Restart the Spring Boot application using the `mysql` [profile][profile]:
 
-        ./mvnw -Drun.profiles=mysql-datasource spring-boot:run
+        ./mvnw -Drun.profiles=mysql spring-boot:run
 
 #### Using Spring Cloud integration for Cloud SQL
 
@@ -124,7 +124,7 @@ You also need to add the [Spring Boot JDBC](https://mvnrepository.com/artifact/o
 to your `pom.xml` as shown [here][pom-spring-cloud-xml].
 This dependency enables your application to use the JDBC API to connect to the database and execute SQL queries.
 
-1.  Update `src/main/resources/application-mysql-spring-cloud.properties`, replacing
+1.  Update `src/main/resources/application-mysql.properties`, replacing
     INSTANCE_CONNECTION_NAME with the `connectionName` from the previous step:
     
         database=mysql
@@ -134,9 +134,9 @@ This dependency enables your application to use the JDBC API to connect to the d
 
     See updated file [here][application-spring-cloud].
 
-1.  Restart the Spring Boot application using the `mysql-spring-cloud` [profile][profile]:
+1.  Restart the Spring Boot application using the `mysql` [profile][profile]:
 
-        ./mvnw -Drun.profiles=mysql-spring-cloud spring-boot:run
+        ./mvnw -Drun.profiles=mysql spring-boot:run
 
 
 ### Testing PetClinic locally
