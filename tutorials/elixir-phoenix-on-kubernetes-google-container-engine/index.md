@@ -6,7 +6,7 @@ tags: Kubernetes, Container Engine, Elixir, Phoenix
 date_published: 2017-11-01
 ---
 
-This tutorial will help you get started deploying your
+This tutorial helps you get started deploying your
 [Elixir](http://elixir-lang.org/) app using the
 [Phoenix](http://phoenixframework.org/) Framework to
 [Google Container Engine](https://cloud.google.com/container-engine/),
@@ -24,7 +24,7 @@ You will create a new Phoenix application, and then you will learn how to:
 
 This tutorial requires Elixir 1.4 and Phoenix 1.3 or later. It assumes you are
 already familiar with basic Phoenix web development. For simplicity, the
-tutorial app will not use Ecto or connect to a SQL database, but you can extend
+tutorial app does not use Ecto or connect to a SQL database, but you can extend
 it to connect to Google Cloud SQL or any other database service.
 
 ## Before you begin
@@ -32,7 +32,7 @@ it to connect to Google Cloud SQL or any other database service.
 Before running this tutorial, you must set up a Google Cloud Platform project,
 and you need to have Docker and the Google Cloud SDK installed.
 
-Create a project that will host your Phoenix application. You may also reuse
+Create a project that will host your Phoenix application. You can also reuse
 an existing project.
 
 1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
@@ -87,10 +87,10 @@ Perform the installations:
 ## Creating a new app and running it locally
 
 In this section, you will create a new Phoenix app and make sure it runs. If
-you already have an app to deploy, you may use it instead.
+you already have an app to deploy, you can use it instead.
 
 1.  Run the `phx.new` task to create a new Phoenix project called
-    "hello". This tutorial will omit Ecto for now.
+    "hello". This tutorial omits Ecto for now.
 
         mix phx.new hello --no-ecto
 
@@ -117,7 +117,7 @@ deployment. You will configure the
 [Distillery](https://github.com/bitwalker/distillery) tool to create releases
 for your app.
 
-**Note:** If you already have Distillery set up for your application, you may
+**Note:** If you already have Distillery set up for your application, you can
 skip this section. But make sure `include_erts: true` is set in your `:prod`
 release configuration. This tutorial assumes ERTS is included in releases.
 
@@ -149,16 +149,15 @@ release configuration. This tutorial assumes ERTS is included in releases.
 
 Now you can create a release to test out your configuration.
 
-1.  First build the application for production:
+1.  Build and digest the application assets for production:
 
-        MIX_ENV=prod mix deps.compile, compile
         cd assets
         npm install
         ./node_modules/brunch/bin/brunch build -p
         cd ..
         mix phx.digest
 
-    Remember that if your app is an umbrella app, the assets directory may be
+    Remember that if your app is an umbrella app, the assets directory might be
     located in one of the apps subdirectories.
 
 2.  Build the release:
@@ -181,11 +180,11 @@ Dockerfile.
 ### Create a Dockerfile
 
 Various considerations go into designing a good Docker image. The Dockerfile
-used by this tutorial will build a release and run it with Alpine Linux.
-If you are experienced with Docker, you may choose to customize your image.
+used by this tutorial builds a release and runs it with Alpine Linux.
+If you are experienced with Docker, you can customize your image.
 
 1.  Create a file called `Dockerfile` in your `hello` directory. Copy the
-    following content into it. Alternately, you may
+    following content into it. Alternately, you can
     [download](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/elixir-phoenix-on-kubernetes-google-container-engine/Dockerfile)
     a sample annotated Dockerfile to study and customize.
 
@@ -222,7 +221,7 @@ If you are experienced with Docker, you may choose to customize your image.
     the path to the Phoenix application subdirectory, e.g. `apps/hello_web`.
 
 2.  Create a file called `.dockerignore` in your `hello` directory. Copy the
-    following content into it. Alternately, you may
+    following content into it. Alternately, you can
     [download](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/elixir-phoenix-on-kubernetes-google-container-engine/.dockerignore)
     a sample annotated file to study and customize.
 
@@ -231,14 +230,14 @@ If you are experienced with Docker, you may choose to customize your image.
         test
         assets/node_modules
 
-    **Note:** if your app is an umbrella app, you may need to adjust the paths
-    to include the build, deps, and node_modules directories of the constituent
-    apps. In general, you want Docker to ignore artifacts that come from your
-    development environment, so it can perform clean builds.
+    **Note:** if your app is an umbrella app, you might need to adjust the
+    paths to include the build, deps, and node_modules directories of the
+    constituent apps. In general, you want Docker to ignore artifacts that come
+    from your development environment, so it can perform clean builds.
 
 ### Test the Dockerfile
 
-Now build the image locally and test running your application from the image:
+Build the image locally and test running your application from the image:
 
     docker build --no-cache -t hello .
     docker run -it --rm -p 8080:8080 hello
@@ -261,7 +260,7 @@ service to build your Docker image in the cloud and store the resulting Docker
 image in your project in the
 [Google Cloud Container Registry](https://cloud.google.com/container-registry/).
 
-Execute the following to run the build:
+Execute the following command to run the build:
 
     gcloud container builds submit --tag=gcr.io/${PROJECT_ID}/hello:v1 .
 
@@ -269,11 +268,11 @@ Replace `${PROJECT_ID}` with the ID of your Google Cloud Platform project.
 The period at the end is required.
 
 After the build finishes, the image `gcr.io/${PROJECT_ID}/hello:v1` will be
-available. You may list the images you have built in your project using:
+available. You can list the images you have built in your project using:
 
     gcloud container images list
 
-You may even push and pull the image directly from your registry. See the
+You can even push and pull the image directly from your registry. See the
 [Container Registry how-to guides](https://cloud.google.com/container-registry/docs/pushing-and-pulling)
 for more details.
 
@@ -289,17 +288,17 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
 
         gcloud container clusters create hello-cluster --num-nodes=2
 
-    This command creates a cluster of two machines. You may choose a different
+    This command creates a cluster of two machines. You can choose a different
     size, but two is a good starting point.
 
-    It may take several mintues for the cluster to be created. You can check
+    It might take several minutes for the cluster to be created. You can check
     the cloud console at http://cloud.google.com/console, under the Container
     Engine section, to see that your cluster is running. You will also be able
     to see the individual running VMs under the Compute Engine section. Note
     that once the cluster is running, you will be charged for the VM usage.
 
-3.  Configure gcloud to use your cluster by default, so you don't have to
-    specify it every time for the remaining gcloud commands.
+3.  Configure the gcloud command-line tool to use your cluster by default, so
+    you don't have to specify it every time for the remaining gcloud commands.
 
         gcloud config set container/cluster hello-cluster
 
@@ -313,31 +312,31 @@ front-end load balancer (which also provides a public IP address.)
 We'll assume that you built the image to `gcr.io/${PROJECT_ID}/hello:v1` and
 you've created the Kubernetes cluster as described above.
 
-1.  Create a deployment
+1.  Create a deployment.
 
         kubectl run hello-web --image=gcr.io/${PROJECT_ID}/hello:v1 --port 8080
 
-    This will run your image on a Kubernetes pod, which is the deployable unit
-    in Kubernetes. The pod opens port 8080, which is the port your Phoenix
+    This runs your image on a Kubernetes pod, which is the deployable unit in
+    Kubernetes. The pod opens port 8080, which is the port your Phoenix
     application is listening on.
 
-    You may view the running pods using:
+    You can view the running pods using:
 
         kubectl get pods
 
-2.  "Expose" the application by creating a load balancer pointing at your pod.
+2.  Expose the application by creating a load balancer pointing at your pod.
 
         kubectl expose deployment hello-web --type=LoadBalancer --port 80 --target-port 8080
 
-    This creates a "service" resource pointing at your running pod. It listens
+    This creates a service resource pointing at your running pod. It listens
     on the standard HTTP port 80, and proxies back to your pod on port 8080.
 
 3.  Obtain the IP address of the service by running:
 
         kubectl get service
 
-    Initially, the "external IP" will be pending while Container Engine works
-    to procure an IP address for you. If you rerun the `kubectl get service`
+    Initially, the external IP field will be pending while Container Engine
+    procures an IP address for you. If you rerun the `kubectl get service`
     command repeatedly, eventually the IP address will appear. You can then
     point your browser at that URL to view the running application.
 
@@ -350,7 +349,7 @@ running app.
 
 ### Set the replica count
 
-Initially your deployment runs a single instance of your application. You may
+Initially your deployment runs a single instance of your application. You can
 add more replicas using the `kubectl scale` command. For example, to add two
 additional replicas (for a total of three), run:
 
@@ -362,7 +361,7 @@ by running:
     kubectl get pods
 
 Kubernetes automatically allocates your running pods on the virtual machines
-in your cluster. You may configure pods in your deployment with specific
+in your cluster. You can configure pods in your deployment with specific
 resource requirements such as memory and CPU. See the
 [Kubernetes documentation](https://kubernetes.io/docs/home/) for more details.
 
@@ -386,15 +385,15 @@ building a new image and pointing your deployment to it.
 
         kubectl set image deployment/hello-web hello-web=gcr.io/${PROJECT_ID}/hello:v2
 
-    This will perform a "rolling" update of all the running pods.
+    This performs a rolling update of all the running pods.
 
-4.  You can "roll back" to the earlier build by calling `kubectl set image`
+4.  You can roll back to the earlier build by calling `kubectl set image`
     again, specifying the earlier build tag.
 
         kubectl set image deployment/hello-web hello-web=gcr.io/${PROJECT_ID}/hello:v1
 
-**Note:** If a deployment gets "stuck" because an error in the image prevents
-it from starting successfuly, you can "undo" the rollout. See the
+**Note:** If a deployment gets stuck because an error in the image prevents
+it from starting successfuly, you can recover by undoing the rollout. See the
 [Kubernetes deployment documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
 for more info.
 
@@ -410,7 +409,7 @@ delete the entire project.
 To delete your app from Container Engine, you must remove both the load
 balancer and the Container Engine cluster.
 
-1.  Delete the service which will deallocate the load balancer:
+1.  Delete the service, which deallocates the load balancer:
 
         kubectl delete service hello-web
 
@@ -419,15 +418,15 @@ balancer and the Container Engine cluster.
 
         gcloud compute forwarding-rules list
 
-3.  Delete the cluster, which will delete the resources used by the cluster
+3.  Delete the cluster, which deletes the resources used by the cluster,
     including virtual machines, disks, and network resources.
 
         gcloud container clusters delete hello-cluster
 
 ### Deleting the project
 
-Alternately, you can delete the project in its entirety. To do so using
-`gcloud`, run:
+Alternately, you can delete the project in its entirety. To do so using the
+gcloud tool, run:
 
     gcloud projects delete ${PROJECT_ID}
 

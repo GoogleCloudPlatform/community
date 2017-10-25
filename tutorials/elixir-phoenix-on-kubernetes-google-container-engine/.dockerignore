@@ -2,8 +2,8 @@
 # These directories will contain artifacts for local (not-in-Docker) builds,
 # and it is best to omit them to ensure a clean build in Docker.
 
-# Note: If you are using an umbrella app, you may need to add more directories
-# to this list.
+# Note: If you are using an umbrella app, you might need to add more
+# directories to this list.
 
 _build
 deps

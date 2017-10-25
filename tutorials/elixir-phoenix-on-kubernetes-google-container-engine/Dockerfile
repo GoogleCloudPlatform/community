@@ -26,7 +26,7 @@
 ################################################################################
 # BUILD STAGE
 #
-# Builds the app, does a brunch build to build the assets, and creates a
+# Builds the app, does a Brunch build to build the assets, and creates a
 # release. This stage uses the official Alpine Linux - Elixir base image, and
 # installs a few additional build tools such as Node.js.
 
@@ -55,11 +55,11 @@ ENV MIX_ENV=prod \
     REPLACE_OS_VARS=true \
     TERM=xterm
 
-# We will build the app in this directory.
+# Set the build directory.
 WORKDIR /opt/app
 
 # Install build tools needed in addition to Elixir:
-# NodeJS is used for brunch builds of Phoenix assets.
+# NodeJS is used for Brunch builds of Phoenix assets.
 # Hex and Rebar are needed to get and build dependencies.
 RUN apk update \
     && apk --no-cache --update add nodejs nodejs-npm \
@@ -72,7 +72,7 @@ COPY . .
 # Build the application.
 RUN mix do deps.get, deps.compile, compile
 
-# Build assets by running a brunch build and phoenix digest.
+# Build assets by running a Brunch build and Phoenix digest.
 # If you are using a different mechanism for asset builds, you may need to
 # alter these commands.
 RUN cd ${PHOENIX_SUBDIR}/assets \
@@ -108,7 +108,7 @@ ENV PORT=8080 \
     MIX_ENV=prod \
     REPLACE_OS_VARS=true
 
-# We will install the release and run in this directory.
+# Set the install directory. The app will run from here.
 WORKDIR /opt/app
 
 # Obtain the built application release from the build stage.
