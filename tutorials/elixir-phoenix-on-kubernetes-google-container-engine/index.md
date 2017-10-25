@@ -418,6 +418,8 @@ balancer and the Container Engine cluster.
 
         gcloud compute forwarding-rules list
 
+    The forwarding rule will disappear when the load balancer is deleted.
+
 3.  Delete the cluster, which deletes the resources used by the cluster,
     including virtual machines, disks, and network resources.
 
