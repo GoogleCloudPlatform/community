@@ -53,8 +53,8 @@ export TF_CREDS=~/.config/gcloud/terraform-admin.json
 You can find the values for `YOUR_ORG_ID` and `YOUR_BILLING_ACCOUNT_ID` using the following commands:
 
 ```sh
-gcloud beta organizations list
-gcloud alpha billing accounts list
+gcloud organizations list
+gcloud beta billing accounts list
 ```
 
 ## Create the Terraform Admin Project
@@ -68,8 +68,8 @@ gcloud projects create ${TF_ADMIN} \
   --organization ${TF_VAR_org_id} \
   --set-as-default
 
-gcloud alpha billing accounts projects link ${TF_ADMIN} \
-  --account-id ${TF_VAR_billing_account}
+gcloud beta billing projects link ${TF_ADMIN} \
+  --billing-account ${TF_VAR_billing_account}
 ```
 
 ## Create the Terraform service account
@@ -110,14 +110,16 @@ gcloud service-management enable compute.googleapis.com
 Grant the service account permission to create projects and assign billing accounts:
 
 ```sh
-gcloud beta organizations add-iam-policy-binding ${TF_VAR_org_id} \
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
   --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
   --role roles/resourcemanager.projectCreator
 
-gcloud beta organizations add-iam-policy-binding ${TF_VAR_org_id} \
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
   --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
   --role roles/billing.user
 ```
+
+If your billing account is owned by another organization, then make sure the service account email has been added as a Billing Account User to the billing account permissions. 
 
 ## Set up remote state in Cloud Storage
 
@@ -129,11 +131,19 @@ gsutil mb -p ${TF_ADMIN} gs://${TF_ADMIN}
 cat > backend.tf <<EOF
 terraform {
  backend "gcs" {
-   bucket = "${TF_ADMIN}"
-   path   = "/"
+   bucket  = "${TF_ADMIN}"
+   path    = "/terraform.tfstate"
+   project = "${TF_ADMIN}"
  }
 }
 EOF
+```
+
+Configure your environment for the Google Cloud Terraform provider:
+
+```sh
+export GOOGLE_CREDENTIALS=$(cat ${TF_CREDS})
+export GOOGLE_PROJECT=${TF_ADMIN}
 ```
 
 Next, initialize the backend:
@@ -229,13 +239,6 @@ Terraform resources used:
 - [`resource "google_compute_instance"`](https://www.terraform.io/docs/providers/google/r/compute_instance.html): The Compute Engine instance bound to the newly created project. Note that the project is referenced from the `google_project_services.project` resource. This is to tell Terraform to create it after the Compute Engine API has been enabled. Otherwise, Terraform would try to enable the Compute Engine API and create the instance at the same time, leading to an attempt to create the instance before the Compute Engine API is fully enabled.
 - [`output "instance_id"`](https://www.terraform.io/intro/getting-started/outputs.html): The `self_link` is output to make it easier to ssh into the instance after Terraform completes.
 
-Configure your environment for the Google Cloud Terraform provider:
-
-```sh
-export GOOGLE_CREDENTIALS=$(cat ${TF_CREDS})
-export GOOGLE_PROJECT=${TF_ADMIN}
-```
-
 Set the name of the project you want to create and the region you want to create the resources in:
 
 ```sh
@@ -258,7 +261,9 @@ terraform apply
 SSH into the instance created:
 
 ```sh
-gcloud compute ssh $(terraform output | grep instance_id | cut -d = -f2)
+eval $(terraform output  | awk -F' = ' '// {print "export " $1"="$2}')
+
+gcloud compute ssh ${instance_id} --project ${project_id}
 ```
 
 Note that SSH may not work unless your organization user also has access to the newly created project resources.
@@ -279,11 +284,11 @@ gcloud projects delete ${TF_ADMIN}
 Finally, remove the organization level IAM permissions for the service account:
 
 ```sh
-gcloud beta organizations delete-iam-policy-binding ${TF_VAR_org_id} \
+gcloud organizations remove-iam-policy-binding ${TF_VAR_org_id} \
   --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
   --role roles/resourcemanager.projectCreator
 
-gcloud beta organizations delete-iam-policy-binding ${TF_VAR_org_id} \
+gcloud organizations remove-iam-policy-binding ${TF_VAR_org_id} \
   --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
   --role roles/billing.user
 ```
