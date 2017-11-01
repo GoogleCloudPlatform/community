@@ -10,7 +10,7 @@ A [content delivery network](https://wikipedia.org/wiki/Content_delivery_network
 or CDN, offers an efficient, cost-effective way of reducing both network
 I/O costs and content delivery latency for regularly accessed website
 assets. A CDN can be understood as group of geographically distributed
-caches, with each cache locaœted in one of several global points of presence
+caches, with each cache located in one of several global points of presence
 (POPs). The CDN service pulls assets from an origin server at regular
 intervals and distributes them to these caches. When a client requests an
 asset, the asset is served from the nearest cache.
