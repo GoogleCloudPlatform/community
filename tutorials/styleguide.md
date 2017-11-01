@@ -273,21 +273,26 @@ Provide direct links to pages in the Google Cloud Console when you give Cloud Co
 
 ## Markdown usage
 
-This site uses GitHub-flavored Markdown (GFM) dialect when publishing tutorial content. GFM has a few extensions to basic Markdown, but does not support many extensions present in other Markdown dialects. GFM has a detailed [specification](https://github.github.com/gfm), but it is essentially basic Markdown with defined results for certain corner cases, plus the following extensions:
+This site uses Markdown when publishing tutorial content. The site recognizes
+basic Markdown with a few extensions and edge cases.
 
-### [Autolinks](https://github.github.com/gfm/#autolinks-extension-)
+### Autolinks
 
-Publishing recognizes and adds links to URLs without `http://` or `https://` prefixes when they are delimited by whitespace, parentheses, or text formatting characters (`*_~`). Do not use `<` and `>` delimiters for these, as they will be stripped out as raw HTML.
+Publishing recognizes and adds links to URLs without `http://` or `https://`
+prefixes when they are delimited by whitespace, parentheses, or text formatting
+characters (`*_~`). Do not use `<` and `>` delimiters for these, as they will be
+stripped out as raw HTML.
 
-### [Disallowed Raw HTML](https://github.github.com/gfm/#disallowed-raw-html-extension-)
+### Disallowed Raw HTML
 
 Publishing strips *all* possible HTML from tutorial content, essentially anything contained withing `<` and `>` delimiters. Note that this is stricter than standard GFM, which only strips certain "unsafe" HTML.
 
-### [Strikethrough](https://github.github.com/gfm/#strikethrough-extension-)
+### Strikethrough
 
-Publishing formats text delimited in tildes (`~`) as strikethrough, making `~a bad example~`  look like ~a bad example~ in your document.
+Publishing formats text delimited in tildes (`~`) as strikethrough, making
+`~a bad example~`  look like ~a bad example~ in your document.
 
-### [Tables](https://github.github.com/gfm/#tables-extension-)
+### Tables
 
 Publishing formats text blocks as tables if they have  consistent pipe (`|`) separators and a second delimiter row with just hyphens (`-`), optionally using `:` to specify left, right, or centered alignment. Publishing converts this:
 
@@ -295,23 +300,21 @@ Publishing formats text blocks as tables if they have  consistent pipe (`|`) sep
 | Table | header | row | default is centered |
 | :- | :--: | ---: | ---- |
 | Table | data | row | default is left |
-| ----------------- |  ----------------- |  ----------------- |  ---------------------------------------------- | 
+| ----------------- |  ----------------- |  ----------------- |  ---------------------------------------------- |
 ```
 into this:
 
 | Table | header | row | default is centered |
 | :- | :--: | ---: | ---- |
 | Table | data | row | default is left |
-| ----------------- |  ----------------- |  ----------------- |  ---------------------------------------------- | 
+| ----------------- |  ----------------- |  ----------------- |  ---------------------------------------------- |
 
 You cannot create multi-line cells (although other Markdown dialects allow this), and while you can omit both the initial and final pipe separators, it can break table recognition if the first cell looks like a list item.
 
-### [Task list items](https://github.github.com/gfm/#task-list-items-extension-)
+### Code within lists
 
-Publishing converts all bulleted or numbered list items with whitespace delimited `[ ]` or `[x]` into checkbox items, like this:
-
-1. [x] task list item
-   *  [ ] incomplete task list item
+The site's Markdown parser does not understand code fences (triple backticks)
+within lists. You should instead use indentation to signify code within lists.
 
 ## Voice and tone
 
