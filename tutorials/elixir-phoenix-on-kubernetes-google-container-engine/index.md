@@ -41,9 +41,9 @@ an existing project.
     a substitution, so you might consider setting the `PROJECT_ID` environment
     variable in your shell.
 
-2.  Enable billing for your project.
+1.  Enable billing for your project.
 
-3.  Go to the [API Library](https://console.cloud.google.com/apis/library) in
+1.  Go to the [API Library](https://console.cloud.google.com/apis/library) in
     the Cloud Console. Use it to enable the following APIs:
     *   Google Cloud Container Builder API
     *   Google Container Engine API
@@ -53,16 +53,16 @@ Perform the installations:
 1.  Install **Docker 17.05 or later** if you do not already have it. Find
     instructions on the [Docker website](https://www.docker.com/).
 
-2.  Install the **[Google Cloud SDK](https://cloud.google.com/sdk/)** if you do
+1.  Install the **[Google Cloud SDK](https://cloud.google.com/sdk/)** if you do
     not already have it. Make sure you
     [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK and
     set the default project to the new project you created.
 
-3.  Install the Kubernetes component of the Google Cloud SDK:
+1.  Install the Kubernetes component of the Google Cloud SDK:
 
         gcloud components install kubectl
 
-4.  Install **Elixir 1.4 or later** if you do not already have it. If you are
+1.  Install **Elixir 1.4 or later** if you do not already have it. If you are
     on MacOS and have [Homebrew](https://brew.sh), you can run:
 
         brew install elixir
@@ -70,13 +70,13 @@ Perform the installations:
     Otherwise consult the [Elixir install](https://elixir-lang.org/install.html)
     guide for your operating system.
 
-5.  Install the **hex**, **rebar**, and **phx_new** archives.
+1.  Install the **hex**, **rebar**, and **phx_new** archives.
 
         mix local.hex
         mix local.rebar
         mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
 
-6.  Install **Node.js** if you do not already have it. If you are on MacOS and
+1.  Install **Node.js** if you do not already have it. If you are on MacOS and
     have Homebrew, you can run:
 
         brew install node
@@ -97,17 +97,17 @@ you already have an app to deploy, you can use it instead.
     Answer "Y" when the tool asks you if you want to fetch and install
     dependencies.
 
-2.  Go into the directory with the new application.
+1.  Go into the directory with the new application.
 
         cd hello
 
-3.  Run the app with the following command:
+1.  Run the app with the following command:
 
         mix phx.server
 
-    This compiles your server and runs it on port 4000.
+    This compiles your server and runs it on port `4000`.
 
-4.  Visit [http://localhost:4000](http://localhost:4000) to see the Phoenix
+1.  Visit [http://localhost:4000](http://localhost:4000) to see the Phoenix
     welcome screen running locally on your workstation.
 
 ## Enabling releases with Distillery
@@ -128,11 +128,11 @@ release configuration. This tutorial assumes ERTS is included in releases.
 
         mix do deps.get, deps.compile
 
-2.  Create a default release configuration by running:
+1.  Create a default release configuration by running:
 
         mix release.init
 
-3.  Prepare the Phoenix configuration for deployment by editing the prod
+1.  Prepare the Phoenix configuration for deployment by editing the prod
     config file `config/prod.exs`. In particular, set `server: true` to ensure
     the web server starts when the supervision tree is initialized. We
     recommend the following settings to start off:
@@ -160,15 +160,15 @@ Now you can create a release to test out your configuration.
     Remember that if your app is an umbrella app, the assets directory might be
     located in one of the apps subdirectories.
 
-2.  Build the release:
+1.  Build the release:
 
         MIX_ENV=prod mix release --env=prod
 
-3.  Run the application from the release using:
+1.  Run the application from the release using:
 
         PORT=8080 _build/prod/rel/hello/bin/hello foreground
 
-4.  Visit [http://localhost:8080](http://localhost:8080) to see the Phoenix
+1.  Visit [http://localhost:8080](http://localhost:8080) to see the Phoenix
     welcome screen running locally from your release.
 
 ## Dockerizing your application
@@ -185,7 +185,7 @@ If you are experienced with Docker, you can customize your image.
 
 1.  Create a file called `Dockerfile` in your `hello` directory. Copy the
     following content into it. Alternately, you can
-    [download](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/elixir-phoenix-on-kubernetes-google-container-engine/Dockerfile)
+    [download](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/elixir-phoenix-on-kubernetes-google-container-engine/Dockerfile)
     a sample annotated Dockerfile to study and customize.
 
         FROM elixir:alpine
@@ -220,9 +220,9 @@ If you are experienced with Docker, you can customize your image.
     umbrella app, you will also need to modify the `PHOENIX_SUBDIR` to contain
     the path to the Phoenix application subdirectory, e.g. `apps/hello_web`.
 
-2.  Create a file called `.dockerignore` in your `hello` directory. Copy the
+1.  Create a file called `.dockerignore` in your `hello` directory. Copy the
     following content into it. Alternately, you can
-    [download](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/elixir-phoenix-on-kubernetes-google-container-engine/.dockerignore)
+    [download](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/elixir-phoenix-on-kubernetes-google-container-engine/.dockerignore)
     a sample annotated file to study and customize.
 
         _build
@@ -284,7 +284,7 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
 1.  Choose a cluster name. For the rest of these instructions, I'll assume that
     name is "hello-cluster".
 
-2.  Create the cluster.
+1.  Create the cluster.
 
         gcloud container clusters create hello-cluster --num-nodes=2
 
@@ -297,7 +297,7 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
     to see the individual running VMs under the Compute Engine section. Note
     that once the cluster is running, you will be charged for the VM usage.
 
-3.  Configure the gcloud command-line tool to use your cluster by default, so
+1.  Configure the gcloud command-line tool to use your cluster by default, so
     you don't have to specify it every time for the remaining gcloud commands.
 
         gcloud config set container/cluster hello-cluster
@@ -324,14 +324,14 @@ you've created the Kubernetes cluster as described above.
 
         kubectl get pods
 
-2.  Expose the application by creating a load balancer pointing at your pod.
+1.  Expose the application by creating a load balancer pointing at your pod.
 
         kubectl expose deployment hello-web --type=LoadBalancer --port 80 --target-port 8080
 
     This creates a service resource pointing at your running pod. It listens
     on the standard HTTP port 80, and proxies back to your pod on port 8080.
 
-3.  Obtain the IP address of the service by running:
+1.  Obtain the IP address of the service by running:
 
         kubectl get service
 
@@ -372,7 +372,7 @@ building a new image and pointing your deployment to it.
 
 1.  Make a change to the app. (For example, modify the front page template.)
 
-2.  Perform a new build with a new version tag "v2":
+1.  Perform a new build with a new version tag "v2":
 
         gcloud container builds submit --tag=gcr.io/${PROJECT_ID}/hello:v2 .
 
@@ -381,13 +381,13 @@ building a new image and pointing your deployment to it.
     unique build number. This will let you identify and deploy any build,
     making updates and rollbacks easy.
 
-3.  Set the deployment to use the new image:
+1.  Set the deployment to use the new image:
 
         kubectl set image deployment/hello-web hello-web=gcr.io/${PROJECT_ID}/hello:v2
 
     This performs a rolling update of all the running pods.
 
-4.  You can roll back to the earlier build by calling `kubectl set image`
+1.  You can roll back to the earlier build by calling `kubectl set image`
     again, specifying the earlier build tag.
 
         kubectl set image deployment/hello-web hello-web=gcr.io/${PROJECT_ID}/hello:v1
@@ -413,14 +413,14 @@ balancer and the Container Engine cluster.
 
         kubectl delete service hello-web
 
-2.  The load balancer will be deleted asynchronously. Wait for that process to
+1.  The load balancer will be deleted asynchronously. Wait for that process to
     complete by monitoring the output of:
 
         gcloud compute forwarding-rules list
 
     The forwarding rule will disappear when the load balancer is deleted.
 
-3.  Delete the cluster, which deletes the resources used by the cluster,
+1.  Delete the cluster, which deletes the resources used by the cluster,
     including virtual machines, disks, and network resources.
 
         gcloud container clusters delete hello-cluster
