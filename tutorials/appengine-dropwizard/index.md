@@ -16,16 +16,17 @@ web services which support for configuration management, application metrics,
  logging, operational tools, etc out of the box. 
 
 Deploying Dropwizard applications on Google App Engine
- Flexible Environment is not straightforward as it needs passing arguments 
- to the JAR, like `java -jar app.jar server config.yaml`.
+ Flexible Environment can be tricky because it requires you to pass arguments
+ to the JAR, like `java -jar app.jar server config.yaml` inorder to 
+ get the Dropwizard application running.
  
-This tutorial shows how to make use of Custom runtime to deploy 
-Apache Dropwizard application using Docker. This
+This tutorial shows how to make use of Google App Engine Flexible Environment's
+custom runtime to deploy an Apache Dropwizard application using Docker. This
 tutorial assumes that you are familiar with Apache Dropwizard and that you
 have installed Docker.
 
 If you don't have a Dropwizard application already, you can check out
- [Getting Started Guide][getting-started] to create a sample 
+ [getting started guide][getting-started] to create a sample 
  Dropwizard application.
 
 [dropwizard]: http://www.dropwizard.io
@@ -34,7 +35,7 @@ If you don't have a Dropwizard application already, you can check out
 
 ## Objectives
 
-1. Create a Dockerfile that bundles JAR file and config.yml
+1. Create a Dockerfile that bundles your JAR file and config.yml
 1. Run the Dropwizard app locally with Docker.
 1. Deploy the Dropwizard app to Google App Engine flexible environment.
 
@@ -58,8 +59,8 @@ projected usage.
 ## Preparing the app
 
 1.  Build your application and generate your JAR artefacts.
-1.  If you don't have a Fat JAR( a JAR file with all the dependencies bundled together ), 
-generate one using a Fat JAR plugin.
+1.  If you don't have a fat JAR( a JAR file with all the dependencies bundled together ), 
+generate one using a fat JAR plugin.
 
     1.  You can use [Apache Maven Shade Plugin][shade]:
 
@@ -101,10 +102,10 @@ generate one using a Fat JAR plugin.
        
        **Note**: Apache Shader renames your original package JAR 
        `sample-app-1.0-SNAPSHOT.jar` into 
-       `original-sample-app-1.0-SNAPSHOT.jar` and create the fat jar
+       `original-sample-app-1.0-SNAPSHOT.jar` and create the fat JAR
        with the name `sample-app-1.0-SNAPSHOT.jar`
 
-    1.  (Optionally) you can rename the fat jar using: 
+    1.  (Optionally) you can rename the fat JAR using: 
 
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -204,7 +205,7 @@ generate one using a Fat JAR plugin.
 
 ## Improvements
 
-You might want access Dropwizard's Admin context which usually runs on 8081 port. 
+You might want to access Dropwizard's Admin context which usually runs on 8081 port. 
 However, since AppEngine does not allows 8081 port, 
 you can do a slight change in config and get both application and admin contexts
 to 8080 port.
