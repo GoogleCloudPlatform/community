@@ -207,7 +207,7 @@ need to create a Docker image with Debian and Elixir to use for builds.
         CMD ["mix", "release", "--env=prod", "--executable", "--verbose"]
 
     Alternatively, you can
-    [download](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/elixir-phoenix-on-google-compute-engine/Dockerfile)
+    [download](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/elixir-phoenix-on-google-compute-engine/Dockerfile)
     a sample annotated Dockerfile to study and customize.
 
 2.  Build the image from that Dockerfile.
@@ -281,7 +281,7 @@ Copy the following content into it:
     PORT=8080 ./hello-release start
 
 Alternatively, you can
-[download](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/elixir-phoenix-on-google-compute-engine/instance-startup.sh)
+[download](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/elixir-phoenix-on-google-compute-engine/instance-startup.sh)
 a sample annotated script to study and customize.
 
 The startup script downloads the release you built from Cloud Storage, and
