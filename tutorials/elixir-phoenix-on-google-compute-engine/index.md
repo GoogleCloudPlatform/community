@@ -12,8 +12,9 @@ This tutorial helps you get started deploying your
 [Google Compute Engine](https://cloud.google.com/container-engine/), taking
 advantage of Google's deep expertise with scalable infrastructure.
 
-You will create a new Phoenix application, and then you will learn how to:
+In this tutorial, you will:
 
+*   Create a new Phoenix application
 *   Create an OTP release for your app using
     [Distillery](https://github.com/bitwalker/distillery)
 *   Deploy your app to Google Compute Engine instances
@@ -26,12 +27,16 @@ it to connect to Google Cloud SQL or any other database service.
 
 ## Before you begin
 
-Before running this tutorial, you must set up a Google Cloud Platform project,
-and you need to have Docker and the Google Cloud SDK installed on your
+Before running this tutorial, you must set up a Google Cloud Platform project.
+You also need to have Docker and the Google Cloud SDK installed on your
 workstation.
 
-Create a project that will host your Phoenix application. You can also reuse
+### Create a Google Cloud Platform project
+
+Create a project to host your Phoenix application. You can also reuse
 an existing project.
+
+To create a new project:
 
 1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
     to create a new Cloud Platform project. Remember the project ID; you will
@@ -44,7 +49,10 @@ an existing project.
 3.  Go to the [API Library](https://console.cloud.google.com/apis/library) in
     the Cloud Console. Use it to enable the **Google Compute Engine API**.
 
-Perform the installations:
+### Install required applications and services
+
+After you have set up a Google Cloud Platform project, perform the following
+tasks on your workstation:
 
 1.  Install **Docker** if you do not already have it. Find instructions on the
     [Docker website](https://www.docker.com/).
@@ -188,7 +196,7 @@ Created a Cloud Storage bucket for your releases:
 ### Create a builder image
 
 Because you will eventually deploy into a virtual machine running Debian, you
-will now create a Docker image with Debian and Elixir to use for builds.
+need to create a Docker image with Debian and Elixir to use for builds.
 
 1.  Create a file called `Dockerfile`, and copy the following content into it.
 
@@ -198,7 +206,7 @@ will now create a Docker image with Debian and Elixir to use for builds.
         ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm
         CMD ["mix", "release", "--env=prod", "--executable", "--verbose"]
 
-    Alternately, you can
+    Alternatively, you can
     [download](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/elixir-phoenix-on-google-compute-engine/Dockerfile)
     a sample annotated Dockerfile to study and customize.
 
@@ -207,7 +215,7 @@ will now create a Docker image with Debian and Elixir to use for builds.
         docker build -t hello-builder .
 
     This tutorial assumes you have named your image `hello-builder`, though you
-    can of course give it a different name.
+    can give it a different name.
 
 ### Perform a production build
 
@@ -231,9 +239,9 @@ will now create a Docker image with Debian and Elixir to use for builds.
 
         docker run --rm -it -v $(pwd):/app hello-builder
 
-    That command mounts your application directory into the Docker image, and
-    runs the image's default command (which builds a release) on your
-    application. The result will be an executable release, which, if your
+    This command mounts your application directory into the Docker image, and
+    runs the image's default command, which builds a release, on your
+    application. The result is an executable release, which, if your
     application name is `hello`, will be located at
     `_build/prod/rel/hello/bin/hello.run`.
 
@@ -245,13 +253,13 @@ will now create a Docker image with Debian and Elixir to use for builds.
         gsutil cp _build/prod/rel/hello/bin/hello.run \
           gs://${BUCKET_NAME}/hello-release
 
-Now whenever you want to do a new build, you just need to repeat the steps to
-perform a production build in this subsection. You do not need to create the
-build image again (unless you want to update it.)
+Whenever you want to do a new build, you only need to repeat the steps to
+perform a production build as described in this subsection. You do not need
+to create the build image again unless you want to update it.
 
 ## Deploying your application to a single instance
 
-Now you're ready to deploy your application to Google Compute Engine!
+You can now deploy your application to Google Compute Engine.
 
 Compute Engine instances may provide a startup script that is executed whenever
 the instance is started or restarted. You will use this to install and start
@@ -259,7 +267,7 @@ your app.
 
 ### Create a startup script
 
-Create a file called `instance-startup.sh` in your application root directory.
+Create a file called `instance-startup.sh` in your application's root directory.
 Copy the following content into it:
 
     #!/bin/sh
@@ -272,7 +280,7 @@ Copy the following content into it:
     chmod 755 hello-release
     PORT=8080 ./hello-release start
 
-Alternately, you can
+Alternatively, you can
 [download](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/elixir-phoenix-on-google-compute-engine/instance-startup.sh)
 a sample annotated script to study and customize.
 
@@ -284,7 +292,7 @@ instance.
 
 ### Create and configure a Compute Engine instance
 
-Now you will spin up a Compute Engine instance.
+Now you will start a Compute Engine instance.
 
 1.  Create an instance by running:
 
@@ -302,7 +310,7 @@ Now you will spin up a Compute Engine instance.
     access to Cloud Platform services, and provides your startup script. It
     also sets an instance attribute with the Cloud Storage URL of your release.
 
-2.  Check progress of instance creation:
+2.  Check the progress of instance creation:
 
         gcloud compute instances get-serial-port-output hello-instance \
             --zone us-central1-f
@@ -362,7 +370,7 @@ Phoenix app.
             --zone us-central1-f
 
     The `size` parameter specifies the number of instances in the group. You
-    can set it to a different value if desired.
+    can set it to a different value as needed.
 
 3.  If you did not create the firewall rule while configuring a single instance
     above, do so now:
@@ -390,7 +398,7 @@ available instances in the group. Follow these steps.
 
 1.  Create a health check. The load balancer uses a health check to determine
     which instances are capable of serving traffic. The health check simply
-    ensures that the root URL returns a page (e.g. the Phoenix default page.)
+    ensures that the root URL returns a page, such as the Phoenix default page.
     If you are using a different application, you can specify a different
     request path.
 
@@ -483,7 +491,7 @@ utilization and request-per-second rates across your instance groups. For
 more information, see the
 [documentation](https://cloud.google.com/compute/docs/autoscaler/).
 
-### Managing and monitoring your deployment
+### Manage and monitor your deployment
 
 You can use the Cloud Platform Console to monitor load balancing, autoscaling,
 and your managed instance group.
@@ -497,13 +505,13 @@ backend services, using the
 [Compute > Compute Engine > HTTP load balancing](https://console.cloud.google.com/compute/httpLoadBalancing/list)
 section.
 
-## Clean up
+## Cleaning up
 
 After you've finished this tutorial, you can clean up the resources you created
 on Google Cloud Platform so you won't be billed for them in the future. You
 can delete the resources individually, or delete the entire project.
 
-### Deleting individual resources
+### Delete individual resources
 
 Delete the load balancer on the Cloud Platform Console
 [network services page](https://console.cloud.google.com/net-services). Also
@@ -518,7 +526,7 @@ Delete the remaining single instance on the Cloud Platform Console
 Delete the Cloud Storage bucket hosting your OTP release from the
 [Cloud Storage browser](https://console.cloud.google.com/storage/browser).
 
-### Deleting the project
+### Delete the project
 
 Alternately, you can delete the project in its entirety. To do so using
 the gcloud command line tool, run:
