@@ -184,12 +184,12 @@ http://dnssec-debugger.verisignlabs.com/aq).
 #### Domain registrar DNSSEC support
 
 Some domain registrars do not support DNSSEC, or only support DNSSEC for domains
-served from their own name servers. If you can’t find [specific instructions][9]
+served from their own name servers. If you can’t find [specific instructions][specific]
 below for the domain registrar or reseller, check the [ICANN list][10] of
 DNSSEC-capable domain registrars. Domain registrars may only support DNSSEC for
 some top-level domains (TLDs).
 
-[9]: #domain-registrar-specific-instructions
+[specific]: #domain-registrar-specific-instructions
 [10]: https://www.icann.org/resources/pages/deployment-2012-02-25-en
 
 If DNSSEC is supported by the TLD of your domain, but your domain registrar does
@@ -396,10 +396,8 @@ All values used by Google Cloud DNS are in the following table and in IANA's
 
 ### Add a DS record through the domain registrar
 
-[Specific instructions][13] for domain registrars supporting DNSSEC are listed
-below.
-
-[13]: #domain-registrar-specific-instructions
+[Specific instructions][specific] for domain registrars supporting DNSSEC are
+listed below.
 
 ### Confirm DNSSEC validation
 
@@ -424,9 +422,7 @@ necessary for a domain registrar transfer.
 
 Do this by removing the DS records for your domain from the parent zone, so that
 resolvers no longer try to validate your domain data with DNSSEC. [Specific
-instructions][15] for domain registrars supporting DNSSEC are listed below.
-
-[15]: #domain-registrar-specific-instructions
+instructions][specific] for domain registrars supporting DNSSEC are listed below.
 
 ### Confirm TLD registry DS removal propagation
 
@@ -553,13 +549,11 @@ management page.
 
 As of October 2017, [1&1 Internet][18] did not support DS record management
 although it had [two signed zones][19] in new gTLDs. Other domain registrars in
-the United Internet group ([InternetX][20] and [United Domains][21]) *do*
-support DS record management.
+the United Internet group ([InternetX](#internetx) and
+[United Domains](#united-domains)) *do* support DS record management.
 
 [18]: https://icannwiki.org/1%261_Internet
 [19]: https://ntldstats.com/registrar/83-1%261-Internet-AG
-[20]: #internetx
-[21]: #united-domains
 
 ### 123 Reg
 
@@ -729,11 +723,11 @@ zones][39] in new gTLDs).
 ### eNom
 
 If your domain registrar is [eNom][40] but you registered your domain through a
-reseller such as [NameCheap][41] you may be able to manage DNSSEC through your
-reseller—check for it in this list of domain registrar-specific instructions.
+reseller such as [NameCheap](#namecheap) you may be able to manage DNSSEC
+through your reseller—check for it in this list of domain registrar-specific
+instructions.
 
 [40]: https://icannwiki.org/ENom
-[41]: #namecheap
 
 If you registered your domain directly with eNom, there is no web interface to
 add a DS record to activate DNSSEC for your domain. See the instructions at
@@ -753,9 +747,7 @@ As of October 2017, FastDomain did not support DS record management.
 ### Gandi
 
 If your domain is registered with Gandi, but you did so through Amazon (as a
-reseller) use the [Amazon instructions][42] instead.
-
-[42]: #amazon
+reseller) use the [Amazon instructions](#amazon) instead.
 
 See the instructions at http://wiki.gandi.net/en/domains/dnssec to add a DS
 record and activate DNSSEC for your Gandi-registered domain. You need to provide
@@ -854,13 +846,11 @@ API given at https://joker.com/faq/content/27/24/en/domain_modify.html.
 
 ### Key-Systems
 
-[Key-Systems][51] uses [Domain Discount 24][52] for direct registration by
-domain owners, and [RRPproxy][53] for resellers. Click either of the previous
-two links for specific instructions.
+[Key-Systems][51] uses [Domain Discount 24](#domain-discount-24) for direct
+registration by domain owners, and [RRPproxy](#rrproxy) for resellers. Click
+either of the previous two links for specific instructions.
 
 [51]: https://icannwiki.org/Key-Systems
-[52]: #domain-discount-24
-[53]: #rrpproxy
 
 ### MelbourneIT
 
@@ -1116,13 +1106,11 @@ adding a DS record to activate DNSSEC for your domain.
 
 ### Tucows
 
-[Tucows][73] uses [Hover][74] for direct registration by domain owners, and
-[OpenSRS][75] for resellers. Click either of the previous two links for specific
+[Tucows][73] uses [Hover](#hover) for direct registration by domain owners, and
+[OpenSRS](#opensrs) for resellers. Click either of the previous two links for specific
 instructions.
 
 [73]: https://icannwiki.org/Tucows
-[74]: #hover
-[75]: #opensrs
 
 ### Uniregistrar
 
@@ -1149,10 +1137,8 @@ DS $ZONE` (setting ZONE to your domain) in your support ticket.
 ### Wild West Domains
 
 For any domain reseller that uses the Wild West Domains registrar, follow the
-instructions for [GoDaddy][79] using your account with your domain reseller in
+instructions for [GoDaddy](#godaddy) using your account with your domain reseller in
 place of a GoDaddy account.
-
-[79]: #godaddy
 
 ### Xin Net
 
