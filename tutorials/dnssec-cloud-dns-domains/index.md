@@ -1,5 +1,5 @@
 ---
-title: Activating DNSSEC for Cloud DNS domains  
+title: Activating DNSSEC for Cloud DNS domains
 description: Improve security for your Cloud DNS domains - activate DNSSEC validation for Cloud DNS-hosted domains that are DNSSEC-enabled.
 author: dupuy
 tags: DNS, DNSSEC, Domain registrars, DS records
@@ -8,25 +8,25 @@ date_published: 2017-10-11
 
 Alexander Dupuy | Software Engineer | Google
 
-[DNSSEC][1] (DNS Security Extensions) authenticates DNS response data to prevent
-DNS cache poisoning and is the basis for [DANE e‑mail security][2]. While Google
-Cloud DNS can provide DNSSEC signing for managed zones, adding a DS (Delegated
-Signer) record to the parent top-level-domain (TLD) registry is required for DNS
-resolvers to validate DNSSEC and fully protect a domain.
+[DNSSEC][1] (DNS Security Extensions) authenticates DNS answers to block
+forgeries and is the basis for [DANE e‑mail security][2]. Google Cloud DNS can
+use DNSSEC to sign the managed zones for your domains. But until you add a DS
+(Delegated Signer) record for your `example.com` domain to its .COM top-level
+domain (TLD) registry, DNS resolvers can't verify DNSSEC.
 
 [1]: https://www.isc.org/wp-content/uploads/2016/06/Winstead_DNSSEC-Tutorial.pdf
 [2]: https://www.internetsociety.org/blog/2016/01/lets-encrypt-certificates-for-mail-servers-and-dane-part-1-of-2/
 
-This tutorial is intended for DNS domain administrators using Google Cloud DNS
-who have enabled DNSSEC for their managed zones; it shows how to activate DNSSEC
-for those domains by adding DS records through their domain registrars. The
-specifics vary, depending on which domain registrar is used; while this tutorial
-does not provide instructions for all domain registrars, it does so (with links
-to online resources) for the most popular ones that support DNSSEC.
+This tutorial is for DNS domain administrators using Google Cloud DNS who have
+enabled DNSSEC on the managed zones for their domains. It shows how to activate
+DNSSEC validation for those domains by adding DS records through their domain
+registrars. The specifics depend on the domain registrar, and this does not give
+detailed instructions for all domain registrars. It does have basic instructions
+and links for the most popular registrars and many others that support DNSSEC.
 
-This tutorial also provides instructions for *de*-activating DNSSEC by removing
-the DS record, an essential step that **must** be performed before disabling
-DNSSEC for Google Cloud DNS.
+This tutorial also has instructions for *de-activating* DNSSEC by removing DS
+records. This is an essential step you **must** perform before disabling DNSSEC
+for Google Cloud DNS.
 
 ## Objectives
 
@@ -54,24 +54,23 @@ This tutorial assumes that you
 
 -   already own (or are an administrator for) a domain,
 
--   have access to a delegated Google Cloud DNS managed zone that is
-    authoritative for that domain, and
+-   have access to the delegated Google Cloud DNS managed zone serving that
+    domain, and
 
 -   have [enabled DNSSEC signing][3] for that managed zone.
 
 [3]: https://cloud.google.com/dns/dnssec
 
-You also need an online account with the domain registrar (or credentials to
-request them to add or remove DS records from the TLD registry).
+You also need an online account with the domain registrar for the domain. For
+domain registrars without online accounts, you should be in the domain's WHOIS
+contact list.
 
 ### Domain registrar account
 
-If you are unsure which domain registrar is responsible for a domain, you can
-use the `whois` command line tool (see below) or do a whois lookup at
-[GWhois.org][4] ([example][5]). The domain may have been registered through a
-reseller; check the WHOIS results for reseller information and if one is listed,
-check the domain registrar-specific instructions in this tutorial for both the
-domain registrar and the reseller.
+If you aren't sure which domain registrar handles a domain, use the whois
+command line tool (see below) or use [GWhois.org][4] ([example][5]). Check the
+WHOIS results for reseller information. If there is a reseller, check both the
+reseller and the domain registrar for specific instructions in this tutorial.
 
 [4]: https://gwhois.org/
 [5]: https://gwhois.org/dns-example.info+dns
@@ -95,59 +94,61 @@ Name Server: NS-CLOUD-E2.GOOGLEDOMAINS.COM
 
 #### TLD *registries* vs. domain *registrars*
 
-Despite their similar names, TLD **registries** and domain **registrars** are
-separate organizations with different roles, although for .gov and .int TLDs,
-and some two-letter country code (ccTLD) top-level domains, the TLD registry may
-also provide domain registrar services.
+Despite similar names, TLD *registries* and domain *registrars* are separate and
+have [different roles](https://support.google.com/domains/answer/3251189). For a
+few TLDs, often two-letter country code (ccTLDs), the same organization is both
+TLD registry and the only domain registrar.
 
-*   **TLD registries**  
-    provide WHOIS and DNS name service for top-level domains (TLDs), and in most
-    cases, an API for domain registrars to manage delegation records and WHOIS
-    data.
+*   **TLD registries**\
+    provide WHOIS and DNS name service for top-level domains (TLDs). In most
+    cases, they have an API for domain registrars to manage delegation records
+    and WHOIS data.
 
-*   **Domain registrars**  
-	provide retail services to customers purchasing or renewing domains, and
-	interact with TLD registries to manage delegation records in the TLD and
-	update WHOIS data for those domains. Many offer web pages for customers to
-	make those updates themselves, and some provide web APIs for automation
-	tools. Most also provide free DNS name service for domains that are
-	registered with them (although for domains delegated to Google Cloud DNS
-	name servers, those domain registrar name servers would not be used).
+*   **Domain registrars**\
+    provide retail services to customers purchasing or renewing domains. They
+    interact with TLD registries to manage delegation records in the TLD and
+    update WHOIS data for those domains. Many offer web pages for customers to
+    make those updates themselves, and some provide web APIs for automation
+    tools. Most also provide free DNS name service for domains registered with
+    them. But those domain registrar name servers are not used for domains
+    delegated to Google Cloud DNS.
 
-*   **Domain resellers**  
-    typically provide only the retail services of domain registrars, but may
-    provide web pages for updating delegation records.
+*   **Domain resellers**\
+    provide only the retail services of domain registrars. They may offer online
+    accounts through the domain registrar that interacts with the TLD registry.
 
-All three of these are shown on the right side of the overview diagram above; to
-avoid confusion, this tutorial uses the terms “*TLD* registries” and “*domain*
-registrars” throughout.
+The overview diagram above shows all three of these on the right side. To avoid
+confusion, this tutorial always uses the terms “*TLD* registries” and “*domain*
+registrars.”
 
 ## Costs
 
-This tutorial uses Google Cloud DNS, which has a monthly cost for the existence
-of each managed zone, as well as a per-query cost. Use the [Pricing
-Calculator][6] (scroll down on that page to see an estimate for Cloud DNS with
-one zone and up to several tens of thousands of incoming queries) to generate a
-cost estimate based on your projected usage.
+This tutorial uses Google Cloud DNS, which has monthly costs for both managed
+zones and the number of queries handled. Use the [Pricing Calculator][6] to
+generate a cost estimate based on your projected usage. Scroll down on that
+linked page to see an estimate for Cloud DNS with one zone and up to several
+tens of thousands of incoming queries.
 
 [6]: https://cloud.google.com/products/calculator/#id=cb34e9f9-3838-48c2-9346-3d20379aa285
 
-Although validating resolvers generate additional queries (for DNSKEY records)
-on DNSSEC-activated domains, the DNSKEY queries are negligible compared to
-normal traffic. If you enable DNSSEC with NSEC denial of existence (rather than
-the default NSEC3) recursive resolvers may be able to answer queries for
-non-existent domains without additional queries to your name servers, which
-might reduce the total number of queries (especially for denial-of-service
-attacks that send millions of queries for random non-existent subdomains).
+DNSSEC-validating resolvers may make extra queries for DNSKEY records on
+DNSSEC-activated domains. There are very few of these queries compared to normal
+traffic for most domains.
+
+You can [use NSEC for DNSSEC][7] to allow resolvers to answer queries for
+non-existent domains without querying Cloud DNS name servers. This may reduce
+queries for some denial-of-service attacks that query for random subdomains.
+
+[7]: https://cloud.google.com/dns/dnssec-advanced#advanced-signing-options
 
 ## Activate DNSSEC
 
-Once you have enabled DNSSEC for your managed zone in Google Cloud DNS, you must
-activate DNSSEC through the domain registrar in order for resolvers to enforce
-DNSSEC by validating signatures in DNS responses. Do this by creating a DS
-record for your domain in the parent TLD, adding your domain to a DNSSEC chain
-of trust that between your domain and its TLD, and beyond that to the “trust
-anchor” for the root DNSKEY.
+After you enable DNSSEC for your managed zone in Google Cloud DNS, you
+can activate DNSSEC through its domain registrar. You do this by
+creating a DS record for your domain in the parent TLD. That creates a
+chain of trust to your domain from its TLD, and beyond that to the
+“trust anchor” for the root DNSKEY. Unless you do this, validating
+resolvers cannot check DNSSEC signatures for your domain.
 
 ### Confirm DNSSEC support
 
@@ -156,60 +157,65 @@ anchor” for the root DNSKEY.
 Although over 90% of top-level domains support DNSSEC, some do not, and it isn’t
 possible to activate DNSSEC for a domain in a TLD that does not support it.
 Confirm whether the TLD for your domain supports DNSSEC by looking for it in the
-[ICANN TLD DNSSEC Report][7].
+[ICANN TLD DNSSEC Report][8].
 
-[7]: http://stats.research.icann.org/dns/tld_report/
+[8]: http://stats.research.icann.org/dns/tld_report/
 
 -   If your TLD answers YES to the first two questions (Signed? and DS in Root?)
     it supports DNSSEC (these rows are **green**).
 
--   Most TLDs that do not support DNSSEC (as of October 2017) are two-letter
-    country-code domains (ccTLDs) such as .AI or .AL, but there are also a few
-    global TLDs like .AERO that do not support it (these rows are light gray).
+-   Some TLDs do not support DNSSEC at all (**light gray** rows). These are
+    often two-letter country-code domains (ccTLDs) like .AI or .AL, but some
+    (like .AERO) are global TLDs.
 
--   Some TLDs have enabled DNSSEC signing, but have not published a DS record in
-    the root zone (their rows are blue in the report). In theory you could add a
-    DS record to such a TLD and have DNSSEC activate automatically when they
-    eventually publish a DS record, but it is unlikely that any domain registrar
-    would support that, and it is not recommended, since you should be aware
-    (and in control) of any change to the DNSSEC status of your domains.
+-   Some TLDs have enabled DNSSEC signing, but do not have a DS record in the
+    root zone (**blue** rows). You might be able to add a DS record to these
+    TLDs—when they publish a DS record for the TLD in the root zone it activates
+    DNSSEC for your domain. Few if any domain registrars would support DNSSEC
+    for such a TLD. In any case, it is not recommended, since you should be
+    aware (and in control) of any change in the DNSSEC status of your domain.
 
-If you cannot reach the ICANN TLD DNSSEC site for any reason, you can check with
-the [Verisign DNSSEC debugger][8]: just enter the TLD name and hit return; if
-you see any red ⊗ errors the TLD does not support DNSSEC (e.g.
-http://dnssec-debugger.verisignlabs.com/aq).
+If you  cannot reach the ICANN  TLD DNSSEC site  for any reason, check  with the
+[Verisign DNSSEC debugger][9]. Enter the TLD name and hit return; if you see any
+red ⊗ errors the TLD ([like AQ][10]) does not support DNSSEC .
 
-[8]: http://dnssec-debugger.verisignlabs.com/us
+[9]: http://dnssec-debugger.verisignlabs.com/us
+[10]: http://dnssec-debugger.verisignlabs.com/aq
+
+If your top-level domain does not support DNSSEC, you **cannot activate DNSSEC**
+and won't be able to complete this tutorial. Consider using a domain name in
+another TLD if you need DNSSEC.
 
 #### Domain registrar DNSSEC support
 
 Some domain registrars do not support DNSSEC, or only support DNSSEC for domains
-served from their own name servers. If you can’t find [specific instructions][specific]
-below for the domain registrar or reseller, check the [ICANN list][10] of
-DNSSEC-capable domain registrars. Domain registrars may only support DNSSEC for
-some top-level domains (TLDs).
+served from their own name servers. If there are no [instructions][specific] for
+the domain registrar or reseller, check the [ICANN list][11] of registrars
+supporting DNSSEC. Domain registrars may only support DNSSEC for some top-level
+domains.
 
 [specific]: #domain-registrar-specific-instructions
-[10]: https://www.icann.org/resources/pages/deployment-2012-02-25-en
+[11]: https://www.icann.org/resources/pages/deployment-2012-02-25-en
 
-If DNSSEC is supported by the TLD of your domain, but your domain registrar does
-not support DNSSEC (at all, or for that TLD), you may want to consider
-transferring your domain to another domain registrar that does support DNSSEC
-for that TLD.
+If your TLD registry supports DNSSEC but your domain registrar does not, you can
+transfer the domain to another domain registrar. Make sure the new domain
+registrar supports DNSSEC for that top-level domain. Unless you transfer the
+domain to such a domain registrar, you **cannot activate DNSSEC** and won't be
+able to complete this tutorial.
 
-Domain registrars may also support only some DNSSEC algorithms; while the
-default settings for DNSSEC in Google Cloud DNS are widely supported, if you
-sign domains with newer algorithms like ECDSA, your domain registrar may not
-support adding a DS record with that algorithm.
+TLD registries and domain registrars may also support only some DNSSEC
+algorithms. The default settings for DNSSEC in Google Cloud DNS use algorithms
+supported in most cases. If you sign domains with newer algorithms like ECDSA,
+your TLD registry or domain registrar may not be able to add a DS record with
+that algorithm.
 
 ### Confirm DNSSEC record propagation
 
 Before activating DNSSEC through your domain registrar, make sure that your zone
-is being served with all DNSSEC data. It can take a few minutes for Google Cloud
-DNS to generate DNSSEC keys and signatures, and even longer for validating
-resolvers to see those updates. If you activate DNSSEC at your domain registrar
-before that is complete, validating resolvers may fail to resolve names for your
-domain until it is fully propagated.
+is being served with all DNSSEC data. It can take a while for Google Cloud DNS
+to generate DNSSEC keys and signatures, and even longer for validating resolvers
+to see those updates. If you activate DNSSEC before that completes, validating
+resolvers may fail to resolve names in your domain.
 
 This shell function checks that all authoritative servers for a domain are
 serving DNSSEC data:
@@ -374,13 +380,13 @@ separately below.
 The use of SHA in both the algorithm and the DS digest type can be confusing:
 the first hash summarizes the records in a record set for signing with a DNSKEY;
 the second hash summarizes a DNSKEY for the signed DS record in the parent zone.
-The two SHA hashes can be different variants, but should be of similar strength.
+The hashes can differ in strength, but preferably by at most a factor of two.
 The deprecated SHA-1 should only be used for compatibility with old resolvers,
 in which case SHA-1 must be used for *both* DNSSEC algorithm and DS digest (your
 Google Cloud DNS project must be whitelisted to use RSASHA1 algorithms).
 
 All values used by Google Cloud DNS are in the following table and in IANA's
-[DNSSEC Algorithm Numbers][11] or [DS RR Type Digest Algorithms][12]:
+[DNSSEC Algorithm Numbers][12] or [DS RR Type Digest Algorithms][13]:
 
 | DNSKEY Algorithm   | Number | Descriptive text               | DS Digest | Number |
 | ------------------ | ------ | ------------------------------ | --------- | ------ |
@@ -391,8 +397,8 @@ All values used by Google Cloud DNS are in the following table and in IANA's
 | ECDSAP256SHA256    | **13** | ECDSA Curve P-256 with SHA-256 | SHA-256   | **2**  |
 | ECDSAP384SHA384    | **14** | ECDSA Curve P-384 with SHA-384 | SHA-384   | **4**  |
 
-[11]: https://www.nameisp.com/
-[12]: https://www.name.com
+[12]: https://www.nameisp.com/
+[13]: https://www.name.com
 
 ### Add a DS record through the domain registrar
 
@@ -766,7 +772,7 @@ management page.
 ### GKG
 
 GKG supports adding and removing DS records either through their [web
-interface][43] as described at their FAQ
+interface][43] as described in their FAQ
 https://www.gkg.net/domain/support/faq/dnssec.html#Anchor-3 or using their API
 as documented at https://www.gkg.net/ws/ds.html#create-ds.
 
@@ -903,7 +909,7 @@ Follow these steps through their web interface to add a DS record:
 [Name.com][57] has instructions at
 https://www.name.com/support/articles/205439058-DNSSEC to navigate to DNSSEC
 Management on their [web site][58]. To add a DS record and activate DNSSEC for
-your domain, you need to provide the Key tag, numeric Algorithm and Digest Type,
+your domain, you must provide the Key tag, numeric Algorithm, and Digest Type,
 as well as the Digest hexadecimal string.
 
 [57]: https://icannwiki.org/Name.com
@@ -1031,7 +1037,7 @@ Remove DS records by clicking on the trash can icon to the right of each record.
 
 ### Public Domain Registry
 
-Public Domain Registry (PDR) also acts as a registrar, and has instructions at
+Public Domain Registry (PDR) also acts as a registrar and has instructions at
 http://manage.publicdomainregistry.com/kb/answer/1909 to add a DS record and
 activate DNSSEC for your domain, or to remove DS records and deactivate DNSSEC.
 
@@ -1125,7 +1131,7 @@ signed zones][77] in new gTLDs).
 If your domain registrar is [United Domains AG (UDAG)][78], there is no web
 interface to add a DS record to activate DNSSEC for your domain. See the
 instructions at https://www.uniteddomains.com/support/contact/ to request
-creation of a DS record for your domain. Include the DS record you get from
+the creation of a DS record for your domain. Include the DS record you get from
 Google Cloud DNS in your request, along with your domain name.
 
 [78]: https://icannwiki.org/United_Domains
