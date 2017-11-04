@@ -10,7 +10,8 @@ date_published: 2017-11-03
 
 This tutorial describes how to use the [C# Google Cloud Spanner ADO.NET library](https://cloud.google.com/spanner/docs/getting-started/csharp/) to build a simple REST API for books and use the API to store and query books.
 
-[Cloud Spanner](https://cloud.google.com/spanner/) is a hosted SQL database, and the Cloud Spanner ADO.NET provider lets you to take advantage of Cloud Spanner in your C# applications. The Cloud Spanner ADO.NET library is fully asynchronous to the network level and is the recommended way to integrate Cloud Spanner APIs into your .NET applications.
+[Cloud Spanner](https://cloud.google.com/spanner/) is a hosted SQL database, and the Cloud Spanner ADO.NET provider lets you take advantage of Cloud Spanner in your C# applications. The Cloud Spanner ADO.NET library is fully asynchronous to the network level and is the recommended way to integrate Cloud Spanner APIs into your .NET applications.
+
 What you’ll use in this tutorial:
 
 * [Visual Studio 2017](https://www.visualstudio.com/vs/community/).  You can download the community edition for free from Microsoft.
@@ -78,7 +79,36 @@ This REST API provides basic create, read, update, and delete (CRUD) operations 
     2. Delete the contents of the controller.
     3. To insert records, add the following code to **BooksController** and replace *myProject*:
     ```
-    namespace SpannerTest.Controllers    {        [Route("api/[controller]/")]        public class BooksController : Controller        {            [HttpPost]            public async Task<IActionResult> Create([FromBody] Book item)            {                // Insert a new item.                using (var connection =                    new SpannerConnection(                        $"Data Source=projects/{_myProject}/instances/myspanner/databases/books"))                {                    await connection.OpenAsync();                         item.Id = Guid.NewGuid().ToString("N");                    var cmd = connection.CreateInsertCommand(                        "bookTable", new SpannerParameterCollection                        {                            {"ID", SpannerDbType.String, item.Id},                            {"Title", SpannerDbType.String, item.Title},                            {"Author", SpannerDbType.String, item.Author},                            {"PublishDate", SpannerDbType.Date, item.PublishDate}                        });                         await cmd.ExecuteNonQueryAsync();                }                     return Ok();            }
+    namespace SpannerTest.Controllers
+    {
+        [Route("api/[controller]/")]
+        public class BooksController : Controller
+        {
+            [HttpPost]
+            public async Task<IActionResult> Create([FromBody] Book item)
+            {
+                // Insert a new item.
+                using (var connection =
+                    new SpannerConnection(
+                        $"Data Source=projects/{_myProject}/instances/myspanner/databases/books"))
+                {
+                    await connection.OpenAsync();
+     
+                    item.Id = Guid.NewGuid().ToString("N");
+                    var cmd = connection.CreateInsertCommand(
+                        "bookTable", new SpannerParameterCollection
+                        {
+                            {"ID", SpannerDbType.String, item.Id},
+                            {"Title", SpannerDbType.String, item.Title},
+                            {"Author", SpannerDbType.String, item.Author},
+                            {"PublishDate", SpannerDbType.Date, item.PublishDate}
+                        });
+     
+                    await cmd.ExecuteNonQueryAsync();
+                }
+     
+                return Ok();
+            }
         }
     }
     ```
@@ -86,7 +116,58 @@ This REST API provides basic create, read, update, and delete (CRUD) operations 
     4. To list all or a single book, add the following methods to your controller:
     ```
     . . .
-    [HttpGet]    public async Task<IActionResult> GetAll()    {        var result = new List<Book>();             using (var connection = new SpannerConnection(            $"Data Source=projects/{_myProject}/instances/myspanner/databases/books"))        {            var selectCmd = connection.CreateSelectCommand("SELECT * FROM bookTable");            using (var reader = await selectCmd.ExecuteReaderAsync())            {                while (await reader.ReadAsync())                {                    result.Add(new Book                    {                        Id = reader.GetFieldValue<string>("ID"),                        Title = reader.GetFieldValue<string>("Title"),                        Author = reader.GetFieldValue<string>("Author"),                        PublishDate = reader.GetFieldValue<DateTime>("PublishDate")                    });                }            }        }             return Ok(result);    }         [HttpGet]    [Route("{id}", Name="GetBookById")]    public async Task<IActionResult> Get(string id)    {        using (var connection = new SpannerConnection(            $"Data Source=projects/{_myProject}/instances/myspanner/databases/books"))        {            var selectCommand =connection.CreateSelectCommand($"SELECT * FROM bookTable WHERE ID='{id}'");            using (var reader = await selectCommand.ExecuteReaderAsync())            {                while (await reader.ReadAsync())                {                    return Ok(new Book                    {                        Id = reader.GetFieldValue<string>("ID"),                        Title = reader.GetFieldValue<string>("Title"),                        Author = reader.GetFieldValue<string>("Author"),                        PublishDate = reader.GetFieldValue<DateTime>("PublishDate")                    });                }            }        }             return NotFound();    }
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var result = new List<Book>();
+     
+        using (var connection = new SpannerConnection(
+            $"Data Source=projects/{_myProject}/instances/myspanner/databases/books"))
+        {
+            var selectCmd = connection.CreateSelectCommand("SELECT * FROM bookTable");
+            using (var reader = await selectCmd.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
+                {
+                    result.Add(new Book
+                    {
+                        Id = reader.GetFieldValue<string>("ID"),
+                        Title = reader.GetFieldValue<string>("Title"),
+                        Author = reader.GetFieldValue<string>("Author"),
+                        PublishDate = reader.GetFieldValue<DateTime>("PublishDate")
+                    });
+                }
+            }
+        }
+     
+        return Ok(result);
+    }
+     
+    [HttpGet]
+    [Route("{id}", Name="GetBookById")]
+    public async Task<IActionResult> Get(string id)
+    {
+        using (var connection = new SpannerConnection(
+            $"Data Source=projects/{_myProject}/instances/myspanner/databases/books"))
+        {
+            var selectCommand =connection.CreateSelectCommand($"SELECT * FROM bookTable WHERE ID='{id}'");
+            using (var reader = await selectCommand.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
+                {
+                    return Ok(new Book
+                    {
+                        Id = reader.GetFieldValue<string>("ID"),
+                        Title = reader.GetFieldValue<string>("Title"),
+                        Author = reader.GetFieldValue<string>("Author"),
+                        PublishDate = reader.GetFieldValue<DateTime>("PublishDate")
+                    });
+                }
+            }
+        }
+     
+        return NotFound();
+    }
     . . .
     ```
 
@@ -122,5 +203,8 @@ Once you are done, you should delete your database to avoid unnecessary charges.
 
 ### **What's next**
 
-This basic tutorial does not have everything in a typical ASP.NET application.For enterprise-grade software you'll need to consider transactions, transient faults, and exponential backoff. The Cloud Spanner library for ADO.NET supports handling these issues, and you can read more about this in [Getting Started with Cloud Spanner in C#](https://cloud.google.com/spanner/docs/getting-started/csharp/).The C# Google Cloud Spanner ADO.NET library is in Beta.  If you find a bug please log it on our [issue tracker](https://github.com/GoogleCloudPlatform/google-cloud-dotnet/issues).
+This basic tutorial does not have everything in a typical ASP.NET application.
+For enterprise-grade software you'll need to consider transactions, transient faults, and exponential backoff. The Cloud Spanner library for ADO.NET supports handling these issues, and you can read more about this in [Getting Started with Cloud Spanner in C#](https://cloud.google.com/spanner/docs/getting-started/csharp/).
+
+The C# Google Cloud Spanner ADO.NET library is in Beta.  If you find a bug please log it on our [issue tracker](https://github.com/GoogleCloudPlatform/google-cloud-dotnet/issues).
 
