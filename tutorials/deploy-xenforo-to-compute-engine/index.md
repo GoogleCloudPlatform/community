@@ -64,7 +64,7 @@ You need to connect to your Compute Engine instance to complete the following st
 	sudo apt-get install apache2 apache2-mod-php7.0 -y
 	```
 
-	After the installation is completed, open your browser and visit http://[SERVER_EXTERNAL_IP] (note that it is a HTTP link instead of a HTTPS link). [SERVER_EXTERNAL_IP] can be found on the [VM Instances](https://console.cloud.google.com/compute/instances) page, in the row of the instance that you connect to. You should see a page titled “Apache Debian Default Page” in your browser. 
+	After the installation is completed, open your browser and visit http://`[SERVER_EXTERNAL_IP]` (note that it is a HTTP link instead of a HTTPS link). `[SERVER_EXTERNAL_IP]` can be found on the [VM Instances](https://console.cloud.google.com/compute/instances) page, in the row of the instance that you connect to. You should see a page titled “Apache Debian Default Page” in your browser. 
 
 3. Install MariaDB server:
 
@@ -94,7 +94,7 @@ You need to connect to your Compute Engine instance to complete the following st
 	GRANT ALL PRIVILEGES ON *.* TO ‘[DATABASE_USER]’@’localhost’;
 	```
 
-	Commands above create a new database and a new database user with full privileges in the system. Replace [DATABASE_NAME], [DATABASE_USER] and [DATABASE_PASSWORD] with values of your own. You may want to write down those values as you need to use them later when installing XenForo.
+	Commands above create a new database and a new database user with full privileges in the system. Replace `[DATABASE_NAME]`, `[DATABASE_USER]` and `[DATABASE_PASSWORD]` with values of your own. You may want to write down those values as you need to use them later when installing XenForo.
 
 6. Install PHP and PHP modules required by XenForo:
 
@@ -122,37 +122,37 @@ You need to connect to your Compute Engine instance to complete the following st
 	* Click **Upload Files** and choose your XenForo installation file. It should be a .zip file downloaded from XenForo website. If you have Cloud SDK installed on your system, you can also [use the gsutil tool to upload the file](https://cloud.google.com/storage/docs/gsutil/commands/cp).
 	* Connect to your Compute Engine instance and download the file you uploaded earlier:
 
-	```bash
-	gsutil cp gs://[BUCKET_NAME]/[FILENAME] .
-	```
+    	```bash
+    	gsutil cp gs://[BUCKET_NAME]/[FILENAME] .
+	    ```
 
-	`gsutil` is pre-installed on your Compute Engine instance. The command above copies the file you uploaded earlier to your Compute Engine instance. Replace [BUCKET_NAME] and [FILENAME] with your bucket name and the name of your XenForo installation file respectively.
+    	`gsutil` is pre-installed on your Compute Engine instance. The command above copies the file you uploaded earlier to your Compute Engine instance. Replace `[BUCKET_NAME]` and `[FILENAME]` with your bucket name and the name of your XenForo installation file respectively.
 
 2. Unzip the installation file and copy the contents to Apache web root directory:
 
 	* Unzip the installation file:
 
-	```bash
-	unzip [FILENAME]
-	```
+	    ```bash
+	    unzip [FILENAME]
+	    ```
 
-	where [FILENAME] is the name of your XenForo installation file.
+	where `[FILENAME]` is the name of your XenForo installation file.
 
 	* Copy the contents to Apache web root directory:
 
-	```bash
-	sudo cp -r upload/* /var/www/html
-	```
+	    ```bash
+	    sudo cp -r upload/* /var/www/html
+	    ```
 
-	* Change directory to Apache web root directory, grant file access permission XenForo requires and remove the default homepage (index.html):
+	* Change directory to Apache web root directory, grant file access permission XenForo requires and remove the default homepage (`index.html`):
 
-	```bash
-	cd /var/www/html
-	sudo chmod -R 777 *
-	sudo rm index.html
-	```
+	    ```bash
+	    cd /var/www/html
+	    sudo chmod -R 777 *
+	    sudo rm index.html
+	    ```
 
-	* Open your browser and visit https://[SERVER_EXTERNAL_IP]. As shown in previous steps, you can find the external IP of your Compute Engine instance on the [VM Instances](https://console.cloud.google.com/compute/instances) page, in the row of the instance that you connect to. Follow the prompts on screen to configure your XenForo installation. During installation XenForo will ask you for credentials to connect to your MySQL server. Your MySQL Server and MySQL Port are localhost and 3306 respectively. Your MySQL User Name, MySQL Password and MySQL Database Name are the values you entered previously when installing MariaDB.
+	* Open your browser and visit https://`[SERVER_EXTERNAL_IP]`. As shown in previous steps, you can find the external IP of your Compute Engine instance on the [VM Instances](https://console.cloud.google.com/compute/instances) page, in the row of the instance that you connect to. Follow the prompts on screen to configure your XenForo installation. During installation XenForo will ask you for credentials to connect to your MySQL server. Your MySQL Server and MySQL Port are localhost and 3306 respectively. Your MySQL User Name, MySQL Password and MySQL Database Name are the values you entered previously when installing MariaDB.
 
 Your XenForo website is now up and running.
 
@@ -191,7 +191,7 @@ Instructions below are general procedures to set up a mailing service for this t
 	| ------------|-----------------------------------|
 	| relayhost = | relayhost = [RELAY_SERVER]:[PORT] |
 
-	where the [RELAY_SERVER] and [PORT] are provided by the mailing service. Note that you cannot use common SMTP ports such as 25, 465 or 587. If you are using SendGrid, Mailgun or Mailjet, here are their relay services and ports for Compute Engine instances, as seen in the [Compute Engine documentation](https://cloud.google.com/compute/docs/tutorials/sending-mail/):
+	where the `[RELAY_SERVER]` and `[PORT]` are provided by the mailing service. Note that you cannot use common SMTP ports such as 25, 465 or 587. If you are using SendGrid, Mailgun or Mailjet, here are their relay services and ports for Compute Engine instances, as seen in the [Compute Engine documentation](https://cloud.google.com/compute/docs/tutorials/sending-mail/):
 
 	| Mailing Service | Relay Server      | Port |
 	| --------------- |-------------------|------|
@@ -220,7 +220,7 @@ Instructions below are general procedures to set up a mailing service for this t
 	[RELAY_SERVER]:[PORT] [SMTP_USERNAME]:[SMTP_PASSWORD]
 	```
 
-	Replace [RELAY_SERVER], [PORT], [SMTP_USERNAME] and [SMTP_PASSWORD] with the values you used or recorded earlier.
+	Replace `[RELAY_SERVER]`, `[PORT]`, `[SMTP_USERNAME]` and `[SMTP_PASSWORD]` with the values you used or recorded earlier.
 
 	Press Ctrl + O (Control Key and O Key together) to write the file. Then press Ctrl + X (Control Key and X Key together) to exit.
 
