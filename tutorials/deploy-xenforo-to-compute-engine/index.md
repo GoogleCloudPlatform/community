@@ -46,7 +46,7 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to g
 
 XenForo needs to work with a web server software and a MySQL database backend to serve requests from the Internet. In this tutorial you will use [Apache HTTP server](https://httpd.apache.org/) for web server software and [MariaDB](https://mariadb.org/) for database backend. At a basic level, the architecture of the project looks as follows:
 
-![Understanding the Architecture](/architecture_overview.png)
+![Understanding the Architecture](/tutorials/deploy-xenforo-to-compute-engine/architecture_overview.png)
 
 ## Installing the Prerequisites
 
