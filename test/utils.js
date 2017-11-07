@@ -23,9 +23,9 @@ exports.TUTORIALS_PATH = path.join(__dirname, '../tutorials');
 exports.FILENAME_REGEXP = /^[a-z0-9-]+\.md$/; // e.g. setting-up-postgres.md
 exports.DIR_REGEXP = /^[a-z0-9-]+$/; // e.g. using-nodejs-to-calculate-the-size-of-a-bigquery-dataset
 exports.TITLE_REGEXP = /^[a-zA-Z0-9\s.\-()&:'"/!]+$/; // e.g. How to Set Up PostgreSQL on Compute Engine
-exports.DESCRIPTION_REGEXP = /^[a-zA-Z0-9\s.,\-()&'"/!]+\.$/; // e.g. Learn how to get PostgreSQL running on Compute Engine
+exports.DESCRIPTION_REGEXP = /^[a-zA-Z0-9\s.,\-()&#'"/!]+\.$/; // e.g. Learn how to get PostgreSQL running on Compute Engine
 exports.GITHUB_REGEXP = /^[a-zA-Z0-9-]+$/; // e.g. jimtravisgoog
-exports.TAGS_REGEXP = /^[a-zA-Z0-9.,\s-']+$/; // e.g. Compute Engine, PostgreSQL
+exports.TAGS_REGEXP = /^[a-zA-Z0-9.,#\s-']+$/; // e.g. Compute Engine, PostgreSQL
 exports.DATE_REGEXP = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/; // e.g. 2016-03-31
 exports.MEDIUM_REGEXP = /^[a-zA-Z0-9\s]+$/; // e.g. BigQuery
 exports.SIZE_REGEXP = /^[0-9.]+\s[A-Z]+$/; // e.g. 15 TB
@@ -35,7 +35,7 @@ exports.EMBEDMD_REGEXP = /\[embedmd]:#/g; // e.g. [embedmd]:#
 //
 // ---
 // title: How to Set Up PostgreSQL on Compute Engine
-// description: Learn how to get PostgreSQL running on Compute Engine
+// description: Learn how to get PostgreSQL running on Compute Engine.
 // author: jimtravisgoog
 // tags: Compute Engine, PostgreSQL
 // date_published: 6/3/2016
