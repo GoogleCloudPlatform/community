@@ -66,6 +66,10 @@ See [Cloud Spanner detailed pricing][pricing] for more information.
 This REST API provides basic create, read, update, and delete (CRUD) operations
 on books in the **bookTable** database.
 
+**Note**: You can download a completed version of the application [here][app].
+
+[app]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-spanner-aspnet/BookWebApi
+
 1.  To create the application:
 
     1.  From the menu, click **File > New Project > C# > Web > ASP.NET Core Web
@@ -102,99 +106,20 @@ on books in the **bookTable** database.
     1.  In the Controllers folder, add a new Web API Controller class item named
         **BooksController**.
     1.  Delete the contents of the controller.
-    1.  To insert records, add the following code to **BooksController** and
-        replace *myProject*:
+    1.  To list all books, add a `GetAll` method to **BooksController** and
+        replace *myProject* with your project ID.
 
-            namespace SpannerTest.Controllers
-            {
-                [Route("api/[controller]/")]
-                public class BooksController : Controller
-                {
-                    [HttpPost]
-                    public async Task<IActionResult> Create([FromBody] Book item)
-                    {
-                        // Insert a new item.
-                        using (var connection =
-                            new SpannerConnection(
-                                $"Data Source=projects/{_myProject}/instances/myspanner/databases/books"))
-                        {
-                            await connection.OpenAsync();
+        See the [example `GetAll` method](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/cloud-spanner-aspnet/BookWebApi/BookWebApi/Controllers/BookController.cs#L36).
 
-                            item.Id = Guid.NewGuid().ToString("N");
-                            var cmd = connection.CreateInsertCommand(
-                                "bookTable", new SpannerParameterCollection
-                                {
-                                    {"ID", SpannerDbType.String, item.Id},
-                                    {"Title", SpannerDbType.String, item.Title},
-                                    {"Author", SpannerDbType.String, item.Author},
-                                    {"PublishDate", SpannerDbType.Date, item.PublishDate}
-                                });
+    1.  To get a single book, add a `Get` method to **BooksController** and
+        replace *myProject* with your project ID.
 
-                            await cmd.ExecuteNonQueryAsync();
-                        }
+        See the [example `Get` method](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/cloud-spanner-aspnet/BookWebApi/BookWebApi/Controllers/BookController.cs#L62).
 
-                        return Ok();
-                    }
-                }
-            }
+    1.  To insert records, add a `Create` method to **BooksController** and
+        replace *myProject* with your project ID.
 
-    1.  To list all or a single book, add the following methods to your
-        controller:
-
-            . . .
-            [HttpGet]
-            public async Task<IActionResult> GetAll()
-            {
-                var result = new List<Book>();
-
-                using (var connection = new SpannerConnection(
-                    $"Data Source=projects/{_myProject}/instances/myspanner/databases/books"))
-                {
-                    var selectCmd = connection.CreateSelectCommand("SELECT * FROM bookTable");
-                    using (var reader = await selectCmd.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            result.Add(new Book
-                            {
-                                Id = reader.GetFieldValue<string>("ID"),
-                                Title = reader.GetFieldValue<string>("Title"),
-                                Author = reader.GetFieldValue<string>("Author"),
-                                PublishDate = reader.GetFieldValue<DateTime>("PublishDate")
-                            });
-                        }
-                    }
-                }
-
-                return Ok(result);
-            }
-
-            [HttpGet]
-            [Route("{id}", Name="GetBookById")]
-            public async Task<IActionResult> Get(string id)
-            {
-                using (var connection = new SpannerConnection(
-                    $"Data Source=projects/{_myProject}/instances/myspanner/databases/books"))
-                {
-                    var selectCommand =connection.CreateSelectCommand($"SELECT * FROM bookTable WHERE ID='{id}'");
-                    using (var reader = await selectCommand.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            return Ok(new Book
-                            {
-                                Id = reader.GetFieldValue<string>("ID"),
-                                Title = reader.GetFieldValue<string>("Title"),
-                                Author = reader.GetFieldValue<string>("Author"),
-                                PublishDate = reader.GetFieldValue<DateTime>("PublishDate")
-                            });
-                        }
-                    }
-                }
-
-                return NotFound();
-            }
-            . . .
+        See the [example `Create` method](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/cloud-spanner-aspnet/BookWebApi/BookWebApi/Controllers/BookController.cs#L85).
 
 ## Adding books and testing the application
 
