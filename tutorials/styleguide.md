@@ -285,7 +285,7 @@ stripped out as raw HTML.
 
 ### Disallowed Raw HTML
 
-Publishing strips *all* possible HTML from tutorial content, essentially anything contained withing `<` and `>` delimiters. Note that this is stricter than standard GFM, which only strips certain "unsafe" HTML.
+Publishing strips *all* possible HTML from tutorial content, essentially anything contained within `<` and `>` delimiters. Note that this is stricter than standard GFM, which only strips certain "unsafe" HTML.
 
 ### Strikethrough
 
