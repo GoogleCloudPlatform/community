@@ -5,6 +5,7 @@ author: benwulfe
 tags: Cloud Spanner, C#, SQL, ASP.NET, ADO.NET
 date_published: 2017-11-03
 ---
+
 This tutorial describes how to use the
 [C# Google Cloud Spanner ADO.NET library][ado] to build a simple REST API for
 books and use the API to store and query books.
