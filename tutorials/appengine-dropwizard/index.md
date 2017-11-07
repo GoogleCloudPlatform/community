@@ -1,33 +1,32 @@
 ---
 title: Deploying Apache Dropwizard applications on Google App Engine
-description: Learn how to deploy Apache Dropwizard applications on Google App Engine Flexible environment using custom runtime.
+description: Learn how to deploy Apache Dropwizard applications on Google App Engine Flexible environment using a custom runtime.
 author: agentmilindu
-tags: App Engine, Aapche, Dropwizard
+tags: App Engine, Apache, Dropwizard
 date_published: 2017-10-29
 ---
 This tutorial shows how to deploy an [Apache Dropwizard][dropwizard] application
 on Google App Engine flexible environment.
 
+## Overview
 
-##Overview
-
-[Apache Dropwizard][dropwizard] is a Java framework for developing RESTful 
+[Apache Dropwizard][dropwizard] is a Java framework for developing RESTful
 web services which support for configuration management, application metrics,
- logging, operational tools, etc out of the box. 
+logging, operational tools, etc out of the box.
 
-Deploying Dropwizard applications on Google App Engine
- Flexible Environment can be tricky because it requires you to pass arguments
- to the JAR, like `java -jar app.jar server config.yaml` inorder to 
- get the Dropwizard application running.
- 
+Deploying Dropwizard applications on Google App Engine Flexible Environment can
+be tricky because it requires you to pass arguments to the JAR, like
+`java -jar app.jar server config.yaml` in order to  get the Dropwizard
+application running.
+
 This tutorial shows how to make use of Google App Engine Flexible Environment's
-custom runtime to deploy an Apache Dropwizard application using Docker. This
-tutorial assumes that you are familiar with Apache Dropwizard and that you
-have installed Docker.
+[custom runtime][flexible-custom-runtimes] to deploy an Apache Dropwizard
+application using Docker. This tutorial assumes that you are familiar with
+Apache Dropwizard and that you have installed Docker.
 
 If you don't have a Dropwizard application already, you can check out
- [getting started guide][getting-started] to create a sample 
- Dropwizard application.
+[getting started guide][getting-started] to create a sample Dropwizard
+application.
 
 [dropwizard]: http://www.dropwizard.io
 [getting-started]: http://www.dropwizard.io/1.2.0/docs/getting-started.html
@@ -35,9 +34,9 @@ If you don't have a Dropwizard application already, you can check out
 
 ## Objectives
 
-1. Create a Dockerfile that bundles your JAR file and config.yml
-1. Run the Dropwizard app locally with Docker.
-1. Deploy the Dropwizard app to Google App Engine flexible environment.
+1.  Create a Dockerfile that bundles your JAR file and config.yml
+1.  Run the Dropwizard app locally with Docker.
+1.  Deploy the Dropwizard app to Google App Engine flexible environment.
 
 ## Costs
 
@@ -59,97 +58,67 @@ projected usage.
 ## Preparing the app
 
 1.  Build your application and generate your JAR artefacts.
-1.  If you don't have a fat JAR( a JAR file with all the dependencies bundled together ), 
-generate one using a fat JAR plugin.
+1.  If you don't have a fat JAR (a JAR file with all the dependencies bundled
+    together), generate one using a fat JAR plugin.
 
-    1.  You can use [Apache Maven Shade Plugin][shade]:
+    1.  You can use [Apache Maven Shade Plugin][shade].
 
-        ```
-        <project>
-          ...
-          <build>
-            <plugins>
-              <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                  <!-- put your configurations here -->
-                </configuration>
-                <executions>
-                  <execution>
-                    <phase>package</phase>
-                    <goals>
-                      <goal>shade</goal>
-                    </goals>
-                  </execution>
-                </executions>
-              </plugin>
-            </plugins>
-          </build>
-          ...
-        </project>
-        ```
+        See [example.pom.xml][pom] for example plugin configuration.
 
-    1. Then you can build your app using: 
-    
-        ```
-        mvn package
-        ```
-        
-       This will create a JAR file with all the dependencies of your 
-       application bundled together as one fat file.
-       
-       **Note**: Apache Shader renames your original package JAR 
-       `sample-app-1.0-SNAPSHOT.jar` into 
-       `original-sample-app-1.0-SNAPSHOT.jar` and create the fat JAR
-       with the name `sample-app-1.0-SNAPSHOT.jar`
+    1.  Then you can build your app using:
 
-    1.  (Optionally) you can rename the fat JAR using: 
+            mvn package
 
-            <plugin>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.1</version>
-                <configuration>
-                    <finalName>uber</finalName>
-                </configuration>
-            </plugin>
-            
-        This will create a fat JAR file named `uber.jar` 
-        instead `sample-app-1.0-SNAPSHOT.jar`.
+        This will create a JAR file with all the dependencies of your
+        application bundled together as one fat file.
 
+        **Note**: Apache Shader renames your original package JAR
+        `sample-app-1.0-SNAPSHOT.jar` into
+        `original-sample-app-1.0-SNAPSHOT.jar` and creates the fat JAR
+        with the name `sample-app-1.0-SNAPSHOT.jar`.
+
+    1.  (Optionally) you can rename the fat JAR using:
+
+        See [example.pom.xml][pom] for an example.
+
+        The config in the example will create a fat JAR file named `uber.jar`
+        instead of `sample-app-1.0-SNAPSHOT.jar`.
+
+[pom]: https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/appengine-dropwizard/example.pom.xml
+[pom2]: https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/appengine-dropwizard/example.pom.xml#L13
 
 ## Create a Dockerfile
 
-  Create a file named `Dockerfile` in your project root and add the following:
+Create a file named `Dockerfile` in your project root and add the following:
 
      FROM gcr.io/google-appengine/openjdk:8
-     
+
      COPY target/uber.jar uber.jar
      COPY config.yml config.yml
      CMD [ "java", "-jar","uber.jar", "server", "config.yml"]
-     
-  1.  `FROM gcr.io/google-appengine/openjdk:8`:
 
-       This defines what should be the base image for your Docker image.
+Let's examine the lines in the `Dockerfile`:
 
-  1.  `COPY target/uber.jar uber.jar`:
-  
-        This copies your `uber.jar` into the Docker image.
-     
-  1.  `COPY config.yml config.yml`:
-  
-        This copies your `config.yml` into the Docker image.
- 
-  1.  `CMD [ "java", "-jar","uber.jar", "server", "config.yml"]`:
-  
-        This defines the command to be executed when running the Docker container, 
-        which runs your Dropwizard application on the Docker container.
+The following defines what should be the base image for your Docker image:
 
-  **Note**: If you did not rename your fat JAR into `uber.jar`,
-     replace `uber.jar` in the Dockerfile definition with you fat JAR name,
-     which is like `sample-app-1.0-SNAPSHOT.jar`.
+    FROM gcr.io/google-appengine/openjdk:8
 
+The following copies your `uber.jar` into the Docker image:
+
+    COPY target/uber.jar uber.jar
+
+The following copies your `config.yml` into the Docker image:
+
+    COPY config.yml config.yml
+
+The following defines the command to be executed when running the Docker
+container, which runs your Dropwizard application on the Docker container:
+
+    CMD [ "java", "-jar","uber.jar", "server", "config.yml"]`:
+
+**Note**: If you did not rename your fat JAR to `uber.jar`, replace `uber.jar`
+in the `Dockerfile` with your fat JAR name, which is like
+`sample-app-1.0-SNAPSHOT.jar`.
 
 [shade]: https://maven.apache.org/plugins/maven-shade-plugin/
 
@@ -161,31 +130,31 @@ generate one using a fat JAR plugin.
 
     or
 
-        docker build -t <your-dockerhub-username>/sample-app .
-        
+        docker build -t YOUR_DOCKERHUB_USERNAME/sample-app .
+
     `-t`  options tell Docker what should be the tag for your Docker image.
-    You can give a meaningful name to the tag. 
+    You can give a meaningful name to the tag.
 
     **Notes**
-    
-    * You have to do this only once unless you update your
-     `Dockerfile`, `config.yml` or the fat JAR.
-    * If you have a Docker Hub or any other Docker registry account 
-      or organization and you wish to push your Docker images there, 
-      you can prefix the username/organization name with the tag like
-      `-t <your-dockerhub-username>/<application-name>`.
 
-1.  Then, you can run the Docker image you just build:
+    * You have to do this only once unless you update your `Dockerfile`,
+      `config.yml`, or the fat JAR.
+    * If you have a Docker Hub or any other Docker registry account or
+      organization and you wish to push your Docker images there, you can prefix
+      the username/organization name with the tag like
+      `-t YOUR_DOCKERHUB_USERNAME/YOUR_APP_NAME`.
+
+1.  Then, you can run the Docker image you just built:
 
         docker run -p 8080:8080 -t sample-app
-      
-      or 
-      
-        docker run -p 8080:8080 -t <your-dockerhub-username>/sample-app
-    
+
+    or
+
+        docker run -p 8080:8080 -t YOUR_DOCKERHUB_USERNAME/sample-app
+
 1.  Visit [http://localhost:8080](http://localhost:8080) to see the running app.
 
-1.  Press Control+C to stop the app.
+1.  Press Ctrl+C to stop the app.
 
 ## Deploying the app
 
@@ -202,16 +171,14 @@ generate one using a fat JAR plugin.
 
     Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
 
-
 ## Improvements
 
-You might want to access Dropwizard's Admin context which usually runs on 8081 port. 
-However, since AppEngine does not allows 8081 port, 
-you can do a slight change in config and get both application and admin contexts
-to 8080 port.
+You might want to access Dropwizard's Admin context which usually runs on port
+`8081`. However, since AppEngine does not allow port `8081`, you can do a slight
+change in config and get both application and admin contexts to port `8080`.
 
 For that, you can add the following into your config.yml:
-    
+
     server:
       type: simple
       applicationContextPath: /api
@@ -219,7 +186,7 @@ For that, you can add the following into your config.yml:
       connector:
         type: http
         port: 8080
-        
-Now you can access the application API endpoints as 
-`http://[YOUR_PROJECT_ID].appspot.com/api` and admin API endpoints as 
+
+Now you can access the application API endpoint as
+`http://[YOUR_PROJECT_ID].appspot.com/api` and admin API endpoint as
 `http://[YOUR_PROJECT_ID].appspot.com/admin`.
