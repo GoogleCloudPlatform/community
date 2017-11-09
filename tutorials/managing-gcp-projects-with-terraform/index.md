@@ -261,7 +261,8 @@ terraform apply
 SSH into the instance created:
 
 ```sh
-eval $(terraform output  | awk -F' = ' '// {print "export " $1"="$2}')
+export instance_id=$(terraform output instance_id)
+export project_id=$(terraform output project_id)
 
 gcloud compute ssh ${instance_id} --project ${project_id}
 ```
