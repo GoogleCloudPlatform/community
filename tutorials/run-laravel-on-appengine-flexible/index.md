@@ -138,7 +138,6 @@ Laravel, you need to manually add the `DB_SOCKET` value to
           # Put production environment variables here.
           APP_LOG: errorlog
           APP_KEY: YOUR_APP_KEY
-          APP_LOG: errorlog
           STORAGE_DIR: /tmp
           CACHE_DRIVER: database
           SESSION_DRIVER: database
