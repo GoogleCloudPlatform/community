@@ -139,6 +139,12 @@ terraform {
 EOF
 ```
 
+Enable versioning for said remote bucket:
+
+```sh
+gsutil versioning set on gs://${TF_ADMIN}
+```
+
 Configure your environment for the Google Cloud Terraform provider:
 
 ```sh
