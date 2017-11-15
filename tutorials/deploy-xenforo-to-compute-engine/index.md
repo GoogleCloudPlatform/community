@@ -191,7 +191,7 @@ Instructions below are general procedures to set up a mailing service for this t
 	| ------------|-----------------------------------|
 	| relayhost = | relayhost = [RELAY_SERVER]:[PORT] |
 
-	where the `[RELAY_SERVER]` and `[PORT]` are provided by the mailing service. Note that you cannot use common SMTP ports such as 25, 465 or 587. If you are using SendGrid, Mailgun or Mailjet, here are their relay services and ports for Compute Engine instances, as seen in the [Compute Engine documentation](https://cloud.google.com/compute/docs/tutorials/sending-mail/):
+	where the `[RELAY_SERVER]` and `[PORT]` are provided by the mailing service. Note that you cannot use common SMTP ports such as 25, 465 or 587. If you are using SendGrid, Mailgun, or Mailjet, here are their relay services and ports for Compute Engine instances, as seen in the [Compute Engine documentation](https://cloud.google.com/compute/docs/tutorials/sending-mail/):
 
 	| Mailing Service | Relay Server      | Port |
 	| --------------- |-------------------|------|
