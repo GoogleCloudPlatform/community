@@ -21,7 +21,6 @@ First, you upload an image to Firebase storage from your Android device:
 
 ![Upload selector with pug selected](firebase-image-picker.png)
 
-
 After the image is uploaded, a link to the uploaded file is presented in the
 app, exactly the same as in the sample app. Then the app retrieves the
 detected labels for the image and presents them.
@@ -30,6 +29,16 @@ detected labels for the image and presents them.
 
 Let's take a closer look at how each of the steps is performed.
 
+If you want to follow along, start by getting the Firebase quickstart samples.
+
+    git clone https://github.com/firebase/quickstart-android
+
+The storage sample is in the quickstart-android/storage folder and you can find
+the instructions for configuring it on [the Firebase Cloud Storage site](https://firebase.google.com/docs/storage/android/start).
+
+You will also need to initialize the project sources folder by installing the
+Firebase SDK and calling `firebase init` with Storage, Functions, and
+Firestore.
 
 ## Step 1: Upload a file to Firebase Storage
 
@@ -102,7 +111,7 @@ API call result to Firestore.
     });
 
 This step took a little coaxing from the Firebase console and a few calls to
-`firebase deploy` and tracing the errors using the  {...} Functions menu on
+`firebase deploy` and tracing the errors using the {...} Functions menu on
 the Firebase console but when I finally got it working, I was able to see the
 results in the Firestore section of the console:
 
@@ -160,10 +169,11 @@ The following code shows how I retrieve the metadata for the last uploaded image
 Note that I probably should be doing this in a separate service but for the
 purposes of my proof of concept, this should be sufficient. Also, I'm replacing
 the proto-style object characters with JSON-style object characters because
-I'll be manually filtering the result data in UpdateUI.
+I'll be manually filtering the result data in **UpdateUI**.
 
-When UpdateUI is called, the sample app checks the stored member variable
-mResponse and then filters the label description strings from the result data.
+When **UpdateUI** is called, the sample app checks the stored member variable
+__mResponse__ and then filters the label description strings from the result
+data.
 
     if (mResponse != null) {
        // Manually filter the proto message to the label descriptions
@@ -192,20 +202,12 @@ API. For example, if you wanted to use the translation API with the NMT model,
 you could employ a similar approach but by storing text data instead of photo
 data.
 
-If you're interested in running my code yourself, you can try starting from
-[the project sources](Firebase-vision) and can configure and run the sample as
-described in the provided README.md file. Please note that the provided code
-is not production ready but was just authored to demonstrate the basics.
-
 If you wanted to "productionize" this app, you should probably do the following:
 
 * Fix all my UI - Create label bubbles instead of just formatted text
 * Enable user auth to prevent abuse of your API quota
 * Move the operations done with Firestore to a separate service
 * Eliminate data polling for Firestore data
-
-If you're feeling enterprising -- feel free to submit fixes in a PR to the
-[Google Cloud Platform GitHub](https://github.com/googlecloudplatform/community).
 
 **See Also:**
 * [Kotlin example app using Firebase with Cloud Functions for Computer Vision](https://github.com/joaobiriba/ARCalories)
