@@ -1,25 +1,26 @@
 ---
-title: Run an Elixir Phoenix app on Kubernetes using Google Container Engine
-description: Learn how to deploy a Phoenix app to Kubernetes using Google Container Engine.
+title: Run an Elixir Phoenix app in containers using Google Kubernetes Engine
+description: Learn how to deploy a Phoenix app in containers using Google Kubernetes Engine.
 author: dazuma
-tags: Kubernetes, Container Engine, Elixir, Phoenix
+tags: Kubernetes, Container Engine, Elixir, Phoenix, Docker
 date_published: 2017-11-01
 ---
 
 This tutorial helps you get started deploying your
 [Elixir](http://elixir-lang.org/) app using the
 [Phoenix](http://phoenixframework.org/) Framework to
-[Google Container Engine](https://cloud.google.com/container-engine/),
-Google's hosting solution for containerized applications. Container Engine is
-based on the popular open-source [Kubernetes](https://kubernetes.io/) system,
-and leverages Google's deep expertise with container-based deployments.
+[Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/),
+Google's hosting solution for containerized applications. Kubernetes Engine,
+earlier known as Google Container Engine, is based on the popular open-source
+[Kubernetes](https://kubernetes.io/) system, and leverages Google's deep
+expertise with container-based deployments.
 
 You will create a new Phoenix application, and then you will learn how to:
 
 *   Create an OTP release for your app using
     [Distillery](https://github.com/bitwalker/distillery)
 *   Wrap your app release in a Docker image
-*   Deploy your app using Kubernetes on Google Container Engine
+*   Deploy your app on Google Kubernetes Engine
 *   Scale and update your app using Kubernetes
 
 This tutorial requires Elixir 1.4 and Phoenix 1.3 or later. It assumes you are
@@ -250,7 +251,7 @@ welcome screen running locally from your Docker image.
 
 ## Deploying your application
 
-Now you're ready to deploy your application to Container Engine!
+Now you're ready to deploy your application to Kubernetes Engine!
 
 ### Build the production image
 
@@ -278,7 +279,7 @@ for more details.
 
 ### Create a cluster
 
-Container Engine lets you create Kubernetes clusters to host your application.
+Kubernetes Engine lets you create Kubernetes clusters to host your application.
 These are clusters of VMs in the cloud, managed by a Kubernetes server.
 
 1.  Choose a cluster name. For the rest of these instructions, I'll assume that
@@ -292,7 +293,7 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
     size, but two is a good starting point.
 
     It might take several minutes for the cluster to be created. You can check
-    the cloud console at http://cloud.google.com/console, under the Container
+    the cloud console at http://cloud.google.com/console, under the Kubernetes
     Engine section, to see that your cluster is running. You will also be able
     to see the individual running VMs under the Compute Engine section. Note
     that once the cluster is running, you will be charged for the VM usage.
@@ -335,7 +336,7 @@ you've created the Kubernetes cluster as described above.
 
         kubectl get service
 
-    Initially, the external IP field will be pending while Container Engine
+    Initially, the external IP field will be pending while Kubernetes Engine
     procures an IP address for you. If you rerun the `kubectl get service`
     command repeatedly, eventually the IP address will appear. You can then
     point your browser at that URL to view the running application.
@@ -401,13 +402,13 @@ for more info.
 
 After you've finished this tutorial, you can clean up the resources you created
 on Google Cloud Platform so you won't be billed for them in the future. To
-clean up the resources, you can delete your Container Engine resources, or
+clean up the resources, you can delete your Kubernetes Engine resources, or
 delete the entire project.
 
-### Deleting Container Engine resources
+### Deleting Kubernetes Engine resources
 
-To delete your app from Container Engine, you must remove both the load
-balancer and the Container Engine cluster.
+To delete your app from Kubernetes Engine, you must remove both the load
+balancer and the Kubernetes Engine cluster.
 
 1.  Delete the service, which deallocates the load balancer:
 
@@ -448,8 +449,12 @@ The [Elixir Samples](https://github.com/GoogleCloudPlatform/elixir-samples)
 repository contains a growing set of sample Elixir applications ready to deploy
 to Google Cloud and examples of communicating with Google APIs from Elixir.
 
-See the [Container Engine documentation](https://cloud.google.com/container-engine/docs/)
-for more information on managing Container Engine clusters.
+If you want to procure a static IP address and connect your domain name, you
+might find [this tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/configuring-domain-name-static-ip)
+helpful.
+
+See the [Kubernetes Engine documentation](https://cloud.google.com/kubernetes-engine/docs/)
+for more information on managing Kubernetes Engine clusters.
 
 See the [Kubernetes documentation](https://kubernetes.io/docs/home/) for more
 information on managing your application deployment using Kubernetes.
