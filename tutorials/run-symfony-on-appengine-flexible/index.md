@@ -209,6 +209,11 @@ Welcome page.
 
         gcloud app deploy
 
+### What's Next
+
+1. Check out the [Databases and the Doctrine ORM][symfony-doctrine] documentation for Symfony.
+1. View a [Symfony Demo Application][symfony-sample-app] for App Engine Flex.
+
 [php-gcp]: https://cloud.google.com/php
 [laravel]: http://laravel.com
 [laravel-install]: https://laravel.com/docs/5.4/installation
@@ -226,3 +231,5 @@ Welcome page.
 [symfony-install]: http://symfony.com/doc/current/setup.html
 [symfony-welcome]: https://symfony.com/doc/current/_images/welcome.png
 [composer-json]: https://storage.googleapis.com/gcp-community/tutorials/run-symfony-on-appengine-flexible/composer-json.png
+[symfony-doctrine]: https://symfony.com/doc/current/doctrine.html
+[symfony-sample-app]: https://github.com/bshaffer/symfony-on-app-engine-flex
