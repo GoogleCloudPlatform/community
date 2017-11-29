@@ -1,7 +1,14 @@
+---
+title: Real time Data Processing With Google Cloud IoT
+description: Demonstrate how to build data processing backend for Google Cloud IoT.
+author: teppeiy
+tags: Cloud IoT Core, Cloud Dataflow, Cloud Functions, Java, Node.js
+date_published: 2017-11-29
+---
 # Real time Data Processing With Google Cloud IoT
 This repository contains sample code for Real time Data Processing With Google Cloud IoT solution. Sample MQTT client generates simulated data and submits them to Cloud IoT Core. Cloud Functions and Cloud Dataflow receive data through Cloud Pub/Sub.
 
-![Architecture](cloud-iot-rtdp/arch.png)
+![Architecture](arch.png)
 
 ## Prerequisites
 - Git
