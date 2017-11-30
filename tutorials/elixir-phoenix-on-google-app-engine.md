@@ -79,6 +79,70 @@ you already have an app to deploy, you may use it instead.
 4.  Visit [http://localhost:4000](http://localhost:4000) to see the Phoenix
     welcome screen running locally on your workstation.
 
+## Enable releases with Distillery
+
+Releases are the Elixir community's preferred way to package Elixir (and
+Erlang) applications for deployment. You will configure the
+[Distillery](https://github.com/bitwalker/distillery) tool to create releases
+for your app.
+
+**Note:** If you already have Distillery set up for your application, you can
+skip this section. But make sure `include_erts: true` is set in your `:prod`
+release configuration. The Elixir Runtime assumes ERTS is included in releases.
+
+### Set up Distillery
+
+1.  Add distillery to your application's dependencies. In the `mix.exs` file,
+    add `{:distillery, "~> 1.5"}` to the `deps`. Then install it by running:
+
+        mix do deps.get, deps.compile
+
+2.  Create a default release configuration by running:
+
+        mix release.init
+
+    This will create a file `rel/config.exs`. You can examine and edit it if
+    you wish, but the defaults should be sufficient for this tutorial.
+
+3.  Prepare the Phoenix configuration for deployment by editing the prod
+    config file `config/prod.exs`. In particular, set `server: true` to ensure
+    the web server starts when the supervision tree is initialized. We
+    recommend the following settings to start off:
+
+        config :appengine_example, AppengineExampleWeb.Endpoint,
+          load_from_system_env: true,
+          http: [port: "${PORT}"],
+          check_origin: false,
+          server: true,
+          root: ".",
+          cache_static_manifest: "priv/static/cache_manifest.json"
+
+### Test a release
+
+Now you can create a release to test out your configuration.
+
+1.  Build and digest the application assets for production:
+
+        cd assets
+        npm install
+        ./node_modules/brunch/bin/brunch build -p
+        cd ..
+        mix phx.digest
+
+    Remember that if your app is an umbrella app, the assets directory might be
+    located in one of the apps subdirectories.
+
+2.  Build the release:
+
+        MIX_ENV=prod mix release --env=prod
+
+3.  Run the application from the release using:
+
+        PORT=8080 _build/prod/rel/appengine_example/bin/appengine_example foreground
+
+4.  Visit [http://localhost:8080](http://localhost:8080) to see the Phoenix
+    welcome screen running locally from your release.
+
 ## Deploy your application
 
 Now you will deploy your new app to App Engine.
@@ -88,11 +152,15 @@ Now you will deploy your new app to App Engine.
 
         env: flex
         runtime: gs://elixir-runtime/elixir.yaml
+        runtime_config:
+          release_app: appengine_example
 
     This configuration selects the Elixir Runtime, an open source App Engine
     runtime that knows how to build Elixir and Phoenix applications. You can
     find more information about this runtime at its
     [Github page](https://github.com/GoogleCloudPlatform/elixir-runtime).
+    The configuration also tells the runtime to build and deploy a Distillery
+    release for the application `appengine_example`.
 
 2.  Run the following command to deploy your app:
 
@@ -182,3 +250,7 @@ to Google Cloud and examples of communicating with Google APIs from Elixir.
 See the [App Engine documentation](https://cloud.google.com/appengine/docs/flexible/)
 for more information on App Engine features including scaling, health checks,
 and infrastructure customization.
+
+You can also try the tutorials on deploying Phoenix applications
+[to Kubernetes Engine](https://cloud.google.com/community/tutorials/elixir-phoenix-on-kubernetes-google-container-engine)
+and [to Compute Engine](https://cloud.google.com/community/tutorials/elixir-phoenix-on-google-compute-engine).
