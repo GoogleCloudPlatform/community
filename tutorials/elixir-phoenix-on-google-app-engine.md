@@ -87,7 +87,7 @@ Erlang) applications for deployment. You will configure the
 for your app.
 
 **Note:** If you already have Distillery set up for your application, you can
-skip this section. But make sure `include_erts: true` is set in your `:prod`
+skip this section, but make sure `include_erts: true` is set in your `:prod`
 release configuration. The Elixir Runtime assumes ERTS is included in releases.
 
 ### Set up Distillery
