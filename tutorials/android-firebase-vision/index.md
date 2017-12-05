@@ -7,7 +7,7 @@ date_published: 2017-12-05
 ---
 # Adding Computer Vision to your Android App
 
-Recently, Sara Robinson authored an excellent post explaining one approach
+Sara Robinson has authored an excellent post explaining one approach
 to [Adding Computer Vision to your App](https://medium.com/@srobtweets/adding-computer-vision-to-your-ios-app-66d6f540cdd2).
 In the post, she introduces the following pattern:
 
@@ -23,15 +23,15 @@ Android and produced a quick proof of concept.
 Let's start by checking out a short demo of how my proof of concept works.
 First, you upload an image to Firebase storage from your Android device:
 
-![Firebase storage sample app Upload button](firebase-storage-updload.png)
+![Firebase storage sample app Upload button](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/firebase-storage-updload.png)
 
-![Upload selector with pug selected](firebase-image-picker.png)
+![Upload selector with pug selected](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/firebase-image-picker.png)
 
 After the image is uploaded, a link to the uploaded file is presented in the
 app, exactly the same as in the sample app. Then the app retrieves the
 detected labels for the image and presents them.
 
-![The image download link and labels are presented](firebase-image-detections.png)
+![The image download link and labels are presented](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/firebase-image-detections.png)
 
 Let's take a closer look at how each of the steps is performed.
 
@@ -63,7 +63,7 @@ When working on the app, I was able to check that the storage operation was
 working by visiting the Firebase console for storage and seeing the uploaded
 files:
 
-![Files in Firebase Storage](firebase-storage-console.png)
+![Files in Firebase Storage](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/firebase-storage-console.png)
 
 
 ## Step 2: Analyze the image and publish label data to Firestore
@@ -114,7 +114,7 @@ This step took a little coaxing from the Firebase console and a few calls to
 the Firebase console but when I finally got it working, I was able to see the
 results in the Firestore section of the console:
 
-![Firestore console showing detected labels](firebase-firestore-console.png)
+![Firestore console showing detected labels](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/firebase-firestore-console.png)
 
 Of note, you can now see the indexed label data on the right-most column of the
 console.
