@@ -76,38 +76,7 @@ The following code, specified in `index.js` in the functions folder, loads the
 required libraries for Firebase and Google Cloud Vision, and then transfers the
 API call result to Firestore.
 
-    const Vision = require("@google-cloud/vision");
-    const functions = require('firebase-functions');
-    const admin = require('firebase-admin');
-
-    const vision = new Vision();
-    admin.initializeApp(functions.config().firebase);
-    const db = admin.firestore();
-
-    exports.callVision = functions.storage.object().onChange(event => {
-        const object = event.data;
-        const fileBucket = object.bucket;
-        const filePath = object.name;
-        const gcsPath = `gs://${fileBucket}/${filePath}`;
-        const req = {
-          source: {
-            imageUri: gcsPath
-          }
-        };
-
-        // Call the Vision API's web detection and safe search detection endpoints
-        console.log(`doingrequest: ${req}`);
-        return vision.labelDetection(req).then(response => {
-            let labels = response[0].labelAnnotations;
-            return {labels: labels};
-        }).then((visionResp) => {
-            let imageRef = db.collection('images').doc(filePath.slice(7));
-            return imageRef.set(visionResp);
-        })
-        .catch(err => {
-            console.log('vision api error', err);
-        });
-    });
+![Code for step 2](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/code2.png)
 
 You can see the
 results in the Firestore section of the console:
@@ -125,43 +94,11 @@ this, the button name is changed to `button_detections` in the app resources
 and the UI strings are replaced as appropriate. A new method named
 `retrieveMetadata` is added to the click handler for the button.
 
-    @Override
-    public void onClick(View v) {
-       int i = v.getId();
-       if (i == R.id.button_camera) {
-           launchCamera();
-       } else if (i == R.id.button_sign_in) {
-           signInAnonymously();
-       } else if (i == R.id.button_detections) {
-           retrieveMetadata();
-           updateUI(mAuth.getCurrentUser());
-       }
-    }
+![Code for step 3a](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/code3a.png)
 
 The following code shows how to retrieve the metadata for the last uploaded image by using the Firestore API:
 
-    private void retrieveMetadata () {
-
-       DocumentReference docRef = mFirestore.collection("images").document(mFileUri.getLastPathSegment());
-
-       docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-           @Override
-           public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-               if (task.isSuccessful()) {
-                   DocumentSnapshot document = task.getResult();
-                   if (document.exists()) {
-                       Log.d(TAG, "DocumentSnapshot data: " + task.getResult().getData());
-                       mResponse = ("" +  task.getResult().getData()).replaceAll("=", ":");
-                   } else {
-                       Log.d(TAG, "No such document");
-                       mResponse = "No stored label data";
-                   }
-               } else {
-                   Log.d(TAG, "get failed with ", task.getException());
-               }
-           }
-       });
-    }
+![Code for step 3b](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/code3b.png)
 
 It might be best to do this in a separate service, but for the
 purposes of this proof of concept, this should be sufficient. Also, this replaces
@@ -172,23 +109,7 @@ When **UpdateUI** is called, the sample app checks the stored member variable
 __mResponse__ and then filters the label description strings from the result
 data.
 
-    if (mResponse != null) {
-       // Manually filter the proto message to the label descriptions
-       ArrayList<String> labels = new ArrayList<String>();
-       String labelstr = "";
-       for (String it : mResponse.split(",")) {
-           if (it.split(":")[0].contains("description")) {
-               labels.add(it.split(":")[1]);
-               labelstr += it.split(":")[1] + " / ";
-           }
-       }
-
-       // Remove trailing slash
-       labelstr = labelstr.substring(0, labelstr.length() - 2);
-       Log.d(TAG,"Found: " + labels.size() + " labels.");
-       ((TextView) findViewById(R.id.response_data))
-               .setText(labelstr);
-    }
+![Code for step 3c](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/code3c.png)
 
 With the help of Sara's blog post, it was incredibly easy to update the
 Firebase Storage sample app to work with the Vision API and return results to
