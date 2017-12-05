@@ -64,7 +64,7 @@ files:
 Now that the files are successfully uploading to Firebase Storage, it's time
 to process the file using a Cloud functions call. This operation is virtually
 identical to the Cloud functions API call made by Sara in her post but I'm
-retrieving just label data instead of label and web annotation data.
+retrieving just the label data instead of the label and web annotation data.
 
 The following code, specified in `index.js` in my functions folder, loads the
 required libraries for Firebase and Google Cloud Vision and then transfers the
