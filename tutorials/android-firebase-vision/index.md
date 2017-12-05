@@ -9,10 +9,10 @@ In the post, she introduces the following pattern:
 * Use Cloud Functions to access Vision API and store the result in Firestore
 * Access Cloud Firestore from device to retrieve the API Result
 
-In her application, she is using an iPhone X as her device and as I'm a Pixel 2
-owner, I felt like I was missing out. I wanted in on that sweet, sweet image
-classification and had to roll my own Android app. I started from the Firebase
-storage quickstart for Android and produced a quick proof of concept.
+Sara uses iPhone X in her application, and as a Pixel 2 owner, I felt like I
+was missing out. I wanted in on that sweet, sweet image classification and had
+to roll my own Android app. I started from the Firebase storage quickstart for
+Android and produced a quick proof of concept.
 
 Let's start by checking out a short demo of how my proof of concept works.
 First, you upload an image to Firebase storage from your Android device:
@@ -42,19 +42,12 @@ Firestore.
 
 ## Step 1: Upload a file to Firebase Storage
 
-For this step, I just used the functionality of the sample app to accomplish
-what I was trying to do. In the sample app, a service, MyUploadService, is
-implemented to upload a file outside of the main application thread. 
+For this step, I just used the functionality of the sample app. In the sample
+app, a service, MyUploadService, is implemented to upload a file outside of the
+main application thread. 
 
 The [**uploadFromUri** function in the sample app](https://github.com/firebase/quickstart-android/blob/master/storage/app/src/main/java/com/google/firebase/quickstart/firebasestorage/MainActivity.java#L174)
 illustrates the bulk of the operations performed by the provided service.
-
-After the file is uploaded, the fileUri is passed in an Intent so that the
-MainActivity class can retrieve the file data. This is done in the sample app
-in the MyUploadService activity’s broadcastUploadFinished method.
-When prototyping the app, I was able to check that the storage operation was
-working by visiting the Firebase console for storage and seeing the uploaded
-files:
 
 After the file is uploaded, the __fileUri__ is passed in an **Intent** so that
 the **MainActivity** class can retrieve the file data. This is done in the sample
