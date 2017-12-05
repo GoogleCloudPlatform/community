@@ -1,4 +1,10 @@
-
+---
+title: Adding Computer Vision to your Android App
+description: Learn how to use Firebase storage with Cloud functions to access the Vision API from Android apps.
+author: gguuss
+tags: Android, Vision, Firebase, Storage, Firebase Datastore
+date_published: 2017-12-05
+---
 # Adding Computer Vision to your Android App
 
 Recently, Sara Robinson authored an excellent post explaining one approach
