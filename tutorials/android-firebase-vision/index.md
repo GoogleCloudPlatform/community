@@ -128,6 +128,7 @@ If you want to prepare this app for production, think about the following items:
 * Eliminate data polling for Firestore data.
 
 See the following sites for more information:
+
 * [Kotlin example app using Firebase with Cloud Functions for Computer Vision](https://github.com/joaobiriba/ARCalories)
 * [Adding Computer Vision to your iOS App](https://medium.com/@srobtweets/adding-computer-vision-to-your-ios-app-66d6f540cdd2)
 
