@@ -76,7 +76,7 @@ The following code, specified in `index.js` in the functions folder, loads the
 required libraries for Firebase and Google Cloud Vision, and then transfers the
 API call result to Firestore.
 
-![Code for step 2](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/code2.png)
+[![Code for step 2](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/code2.png)](code-step-2.txt)
 
 You can see the
 results in the Firestore section of the console:
@@ -94,11 +94,11 @@ this, the button name is changed to `button_detections` in the app resources
 and the UI strings are replaced as appropriate. A new method named
 `retrieveMetadata` is added to the click handler for the button.
 
-![Code for step 3a](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/code3a.png)
+[![Code for step 3a](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/code3a.png)](code-step-3a.txt)
 
 The following code shows how to retrieve the metadata for the last uploaded image by using the Firestore API:
 
-![Code for step 3b](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/code3b.png)
+[![Code for step 3b](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/code3b.png)](code-step-3b.txt)
 
 It might be best to do this in a separate service, but for the
 purposes of this proof of concept, this should be sufficient. Also, this replaces
@@ -109,7 +109,7 @@ When **UpdateUI** is called, the sample app checks the stored member variable
 __mResponse__ and then filters the label description strings from the result
 data.
 
-![Code for step 3c](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/code3c.png)
+[![Code for step 3c](https://storage.googleapis.com/gcp-community/tutorials/android-firebase-vision/code3c.png)](code-step-3c.txt)
 
 With the help of Sara's blog post, it was incredibly easy to update the
 Firebase Storage sample app to work with the Vision API and return results to
