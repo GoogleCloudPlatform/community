@@ -179,7 +179,10 @@ Now you can create a release to test out your configuration.
 Building a release for deploying to the cloud is a bit more complicated
 because your build needs to take place in the same operating system and
 architecture as your deployment environment. In this section, you will use
-Docker to build a deployable release, and upload it to Google Cloud Storage.
+Docker to cross-compile a release that can run on Compute Engine VMs. (Docker
+will be used only for cross-compilation. Your release will run directly on the
+VM, not in a Docker container.) You'll then upload your built release to a
+Cloud Storage bucket.
 
 ### Prepare a Cloud Storage bucket
 
