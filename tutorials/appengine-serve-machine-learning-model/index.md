@@ -1,5 +1,5 @@
 ---
-title: Falcon API on App Engine Standard Environment
+title: Serve Machine Learning Model on App Engine Flex
 description: Learn how to serve a trained machine learning model with Google App Engine flex environment.
 author: dizcology
 tags: App Engine, Cloud Endpoints, Machine Learning
