@@ -23,9 +23,9 @@ So you trained a machine learning model.  Now what?
 
 If the model’s performance is good enough, consider deploying it as a service to a production system where one or more clients can use it.  Some possible scenarios include:
 
-- The model might need to process requests in real time when the users are interacting with your web application while at the same time batch process interaction logs you have stored previously in a database.
+- The model needs to process requests in real time when the users are interacting with your web application while at the same time batch process interaction logs you have stored previously in a database.
 
-- The model's output might be used by multiple other machine learning models in your application.
+- The model's output is used by multiple other machine learning models in your application.
 
 App Engine offers rolling update, networking, and auto scaling.
 
@@ -33,21 +33,39 @@ Cloud Endpoints helps you manage permission and quota of the service's consumers
 
 You can follow the [steps of the sample app][steps] to deploy a service.  Below we will look at some key pieces of the code to understand how it works.
 
-## Deployment process
-
-All the codes and configuration files are available [here][modelserve].
-
-1. Copy a trained machine learning model to Cloud Storage.
-
-1. Update [`modelserve.yaml`][modelserve.yaml] and deploy the service.
-
-1. Update [`app.yaml`][app.yaml] and deploy the app.
-
-1. Test the service.
-
 ## A closer look
 
 ### [`modelserve.yaml`][modelserve.yaml]
+
+The `modelserve.yaml` configuration file defines the service according to the [OpenAPI specification][openapi].
+
+- Specify the path, method, and input/output types under the `paths` field:
+
+    ```yaml
+    paths:
+      "/predict":
+        post:
+          description: "Get prediction given X."
+          operationId: "predict"
+          consumes:
+          - "application/json"
+          produces:
+          - "application/json"
+    ```
+
+- Enforce authentication with API key by adding the `security` and `securityDefinitions` fields:
+
+    ```yaml
+    security:
+      - api_key: []
+    securityDefinitions:
+      api_key:
+        type: "apiKey"
+        name: "key"
+        in: "query"
+    ```
+
+    With this
 
 ### [`app.yaml`][app.yaml]
 
@@ -56,10 +74,14 @@ All the codes and configuration files are available [here][modelserve].
 
 [modelserve]: https://github.com/GoogleCloudPlatform/ml-on-gcp/tree/master/sklearn/gae_serve
 [requirements]: https://github.com/GoogleCloudPlatform/ml-on-gcp/tree/master/sklearn/gae_serve#requirements
-[appengine]: https://cloud.google.com/appengine/
-[endpoints]: https://cloud.google.com/endpoints/
 [steps]: https://github.com/GoogleCloudPlatform/ml-on-gcp/tree/master/sklearn/gae_serve#steps
 [modelserve.yaml]: https://github.com/GoogleCloudPlatform/ml-on-gcp/blob/master/sklearn/gae_serve/modelserve.yaml
 [app.yaml]: https://github.com/GoogleCloudPlatform/ml-on-gcp/blob/master/sklearn/gae_serve/app.yaml
 [main.py]: https://github.com/GoogleCloudPlatform/ml-on-gcp/blob/master/sklearn/gae_serve/main.py
+[lr.pkl]: https://github.com/GoogleCloudPlatform/ml-on-gcp/blob/master/sklearn/gae_serve/lr.pkl
+
+[appengine]: https://cloud.google.com/appengine/
+[endpoints]: https://cloud.google.com/endpoints/
+
+[openapi]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
 
