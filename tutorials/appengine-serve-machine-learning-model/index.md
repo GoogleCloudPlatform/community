@@ -27,31 +27,83 @@ If the model’s performance is good enough, consider deploying it as a service 
 
 - The model's output is used by multiple other machine learning models in your application.
 
-App Engine offers rolling update, networking, and auto scaling.
+[App Engine][appengine] offers rolling update, networking, and auto scaling.
 
-Cloud Endpoints helps you manage permission and quota of the service's consumers.
+[Cloud Endpoints][endpoints] helps you monitor and manage permission and quota of the service's consumers.
 
 You can follow the [steps of the sample app][steps] to deploy a service.  Below we will look at some key pieces of the code to understand how it works.
 
 ## A closer look
 
+### [`main.py`][main.py]
+
+Our app expects `POST` requests to the path `/precict`.  It will look for the value of `'X'` in the JSON data, send it to the trained model, and return the result as the value of `'y'`:
+
+```python
+@app.route('/predict', methods=['POST'])
+def predict():
+    X = request.get_json()['X']
+    y = MODEL.predict(X).tolist()
+    return json.dumps({'y': y}), 200
+```
+
+Here `MODEL` is a global variable for the trained machine learning model we are serving.  To make sure it is loaded, we use the `before_first_request` decorator, which will be triggered by App Engine's health check requests:
+
+```python
+MODEL_BUCKET = os.environ['MODEL_BUCKET']
+MODEL_FILENAME = os.environ['MODEL_FILENAME']
+MODEL = None
+
+@app.before_first_request
+def _load_model():
+    global MODEL
+    client = storage.Client()
+    bucket = client.get_bucket(MODEL_BUCKET)
+    blob = bucket.get_blob(MODEL_FILENAME)
+    s = blob.download_as_string()
+
+    MODEL = pickle.loads(s)
+```
+
+We store the model as a pickled file on [Cloud Storage][storage].  To make sure the App Engine service we are deploying knows where to find the model, we pass in its bucket and file name as environment variables.  This is done in the `app.yaml` configuration file.
+
+
+### [`app.yaml`][app.yaml]
+
+The `app.yaml` configuration file defines the App Engine service.  We define environment variables pointing to the trained model:
+
+```yaml
+env_variables:
+    # The app will look for the model file at: gs://MODEL_BUCKET/MODEL_FILENAME
+    MODEL_BUCKET: BUCKET_NAME
+    MODEL_FILENAME: lr.pkl
+```
+
+You should replace `BUCKET_NAME` with a bucket owned by your project.  `lr.pkl` is a simple linear regression model included in the sample app.
+
+To use Cloud Endpoints to manage the service, we need to specify a `config_id` under the `endpoints_api_service` field:
+
+```yaml
+endpoints_api_service:
+  name: modelserve-dot-PROJECT_ID.appspot.com
+  config_id: CONFIG_ID
+```
+
+The `CONFIG_ID` points to a Cloud Endpoints service deployment.  You can find all the deployments on the [Cloud Endpoints console][endpoints] under each service page's Deployment history tab.
+
+To deploy a service to Cloud Endpoints, we configure it with the `modelserve.yaml` file.
+
 ### [`modelserve.yaml`][modelserve.yaml]
 
-The `modelserve.yaml` configuration file defines the service according to the [OpenAPI specification][openapi].
+The `modelserve.yaml` configuration file defines the service according to the [OpenAPI specification][openapi].  We highlight only some of the key configurations below.
 
-- Specify the path, method, and input/output types under the `paths` field:
+- Specify the host:
 
-    ```yaml
-    paths:
-      "/predict":
-        post:
-          description: "Get prediction given X."
-          operationId: "predict"
-          consumes:
-          - "application/json"
-          produces:
-          - "application/json"
-    ```
+  ```yaml
+  host: "modelserve-dot-PROJECT_ID.appspot.com"
+  ```
+
+  This host means we will handle the requests with an App Engine service called `modelserve`.
 
 - Enforce authentication with API key by adding the `security` and `securityDefinitions` fields:
 
@@ -65,11 +117,43 @@ The `modelserve.yaml` configuration file defines the service according to the [O
         in: "query"
     ```
 
-    With this
+    This is optional, but allows you to grant service consumer permissions on the [Cloud Endpoints console][endpoints].  The API key must be associated to a Google Cloud Platform project.  You can create API keys on the [credentials][credentials] page.
 
-### [`app.yaml`][app.yaml]
+-- Additionally, you can configure quota for each consumer at the project level.  First we specify a service level metric in order to track the number of requests:
 
-### [`main.py`][main.py]
+  ```yaml
+  x-google-management:
+    metrics:
+      - name: "modelserve-predict"
+        displayName: "modelserve predict"
+        valueType: INT64
+        metricKind: DELTA
+    quota:
+      limits:
+        - name: "modelserve-predict-limit"
+          metric: "modelserve-predict"
+          unit: "1/min/{project}"
+          values:
+            STANDARD: 1000
+  ```
+
+  This configurations declares a metric `modelserve-predict` and sets its limit to 1000 units per minutes per project.
+
+  To specify requests to which paths will be counted towards this metric, we add the following in the `paths` field:
+
+  ```yaml
+  paths:
+    "/predict":
+      post:
+        ...
+        x-google-quota:
+          metricCosts:
+            modelserve-predict: 1
+  ```
+
+  Each time a `POST` request is sent to `modelserve-dot-PROJECT_ID.appspot.com/predict`, the metric `modelserve-predict` increments by 1, and each project is limited to 1000 calls per minute with the configuration above.
+
+  You can manage quotes for individual projects on the [Cloud Endpoints console][endpoints].  For more information on configuring the quota, see the [documentation][quota_docs].  
 
 
 [modelserve]: https://github.com/GoogleCloudPlatform/ml-on-gcp/tree/master/sklearn/gae_serve
@@ -82,6 +166,9 @@ The `modelserve.yaml` configuration file defines the service according to the [O
 
 [appengine]: https://cloud.google.com/appengine/
 [endpoints]: https://cloud.google.com/endpoints/
+[storage]: https://cloud.google.com/storage/
+[credentials]: https://cloud.google.com/apis/credentials
+[quota_docs]: https://cloud.google.com/endpoints/docs/openapi/quotas-configure
 
 [openapi]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
 
