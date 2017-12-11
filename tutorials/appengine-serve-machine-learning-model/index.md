@@ -139,7 +139,7 @@ The `modelserve.yaml` configuration file defines the service according to the [O
 
   This configurations declares a metric `modelserve-predict` and sets its limit to 1000 units per minutes per project.
 
-  To specify requests to which paths will be counted towards this metric, we add the following in the `paths` field:
+  To specify the paths to which requests will be counted towards this metric, we add the following in the `paths` field:
 
   ```yaml
   paths:
