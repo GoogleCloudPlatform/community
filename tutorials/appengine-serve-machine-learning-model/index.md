@@ -37,7 +37,7 @@ You can follow the [steps of the sample app][steps] to deploy a service.  Below 
 
 ### [`main.py`][main.py]
 
-Our app expects `POST` requests to the path `/precict`.  It will look for the value of `'X'` in the JSON data, send it to the trained model, and return the result as the value of `'y'`:
+Our app expects `POST` requests to the path `/predict`.  It will look for the value of `'X'` in the JSON data, send it to the trained model, and return the result as the value of `'y'`:
 
 ```python
 @app.route('/predict', methods=['POST'])
@@ -47,7 +47,7 @@ def predict():
     return json.dumps({'y': y}), 200
 ```
 
-Here `MODEL` is a global variable for the trained machine learning model we are serving.  To make sure it is loaded, we use the `before_first_request` decorator, which will be triggered by App Engine's health check requests:
+Here `MODEL` is a global variable for the trained machine learning model we are serving.  To make sure the model is loaded, we use the `before_first_request` decorator, which will be triggered by App Engine's health check requests:
 
 ```python
 MODEL_BUCKET = os.environ['MODEL_BUCKET']
@@ -65,7 +65,7 @@ def _load_model():
     MODEL = pickle.loads(s)
 ```
 
-We store the model as a pickled file on [Cloud Storage][storage].  To make sure the App Engine service we are deploying knows where to find the model, we pass in its bucket and file name as environment variables.  This is done in the `app.yaml` configuration file.
+We store the model as a pickled file on [Cloud Storage][storage].  To make sure the App Engine service knows where to find the model, we pass in the model's bucket and file name as environment variables.  This is done in the `app.yaml` configuration file.
 
 
 ### [`app.yaml`][app.yaml]
@@ -119,7 +119,7 @@ The `modelserve.yaml` configuration file defines the service according to the [O
 
     This is optional, but allows you to grant service consumer permissions on the [Cloud Endpoints console][endpoints].  The API key must be associated to a Google Cloud Platform project.  You can create API keys on the [credentials][credentials] page.
 
--- Additionally, you can configure quota for each consumer at the project level.  First we specify a service level metric in order to track the number of requests:
+- Additionally, you can configure quota for each consumer at the project level.  First we specify a service level metric in order to track the number of requests:
 
   ```yaml
   x-google-management:
@@ -154,6 +154,8 @@ The `modelserve.yaml` configuration file defines the service according to the [O
   Each time a `POST` request is sent to `modelserve-dot-PROJECT_ID.appspot.com/predict`, the metric `modelserve-predict` increments by 1, and each project is limited to 1000 calls per minute with the configuration above.
 
   You can manage quotes for individual projects on the [Cloud Endpoints console][endpoints].  For more information on configuring the quota, see the [documentation][quota_docs].  
+
+
 
 
 [modelserve]: https://github.com/GoogleCloudPlatform/ml-on-gcp/tree/master/sklearn/gae_serve
