@@ -1,0 +1,22 @@
+private void retrieveMetadata () {
+
+   DocumentReference docRef = mFirestore.collection("images").document(mFileUri.getLastPathSegment());
+
+   docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+       @Override
+       public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+           if (task.isSuccessful()) {
+               DocumentSnapshot document = task.getResult();
+               if (document.exists()) {
+                   Log.d(TAG, "DocumentSnapshot data: " + task.getResult().getData());
+                   mResponse = ("" +  task.getResult().getData()).replaceAll("=", ":");
+               } else {
+                   Log.d(TAG, "No such document");
+                   mResponse = "No stored label data";
+               }
+           } else {
+               Log.d(TAG, "get failed with ", task.getException());
+           }
+       }
+   });
+}
