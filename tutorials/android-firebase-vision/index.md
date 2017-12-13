@@ -5,7 +5,6 @@ author: gguuss
 tags: Android, Vision, Firebase, Storage, Firebase Datastore
 date_published: 2017-12-05
 ---
-# Adding Computer Vision to your Android App
 
 Sara Robinson has authored an excellent post explaining one approach
 to [Adding Computer Vision to your App](https://medium.com/@srobtweets/adding-computer-vision-to-your-ios-app-66d6f540cdd2).
