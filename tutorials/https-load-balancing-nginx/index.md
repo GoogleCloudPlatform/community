@@ -140,12 +140,14 @@ created, you configure their respective Apache servers to use SSL.
 To create your load balancer backends and allow them to be accessed by external
 HTTPS traffic:
 
-1.  Create your virtual machine instances, tag them identically, install Apache
-    Web Server on them, and enable Apache's SSL module:
+1.  Create your virtual machine instances, tag them to automatically allow
+    external HTTPS traffic through the firewall, install Apache Web Server on
+    them, and enable Apache's SSL module:
 
         for i in {1..3}; \
           do \
-            gcloud compute instances create www-$i --tags be-tag \
+            gcloud compute instances create www-$i \
+              --tags "https-server" \
               --zone us-central1-f \
               --metadata startup-script="#! /bin/bash
               apt-get update
@@ -155,12 +157,6 @@ HTTPS traffic:
               /usr/sbin/a2enmod ssl
                   "; \
           done
-
-1.  Create a firewall rule to allow external HTTPS traffic to reach your target
-    instances:
-
-        gcloud compute firewall-rules create https-firewall \
-          --target-tags be-tag --allow tcp:443
 
 1.  Obtain the external IP addresses of your instances:
 
