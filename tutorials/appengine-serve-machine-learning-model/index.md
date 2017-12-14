@@ -1,6 +1,6 @@
 ---
-title: Serve Machine Learning Model on App Engine Flex
-description: Learn how to serve a trained machine learning model with Google App Engine flex environment.
+title: Serve Machine Learning Model on App Engine Flexible Environment
+description: Learn how to serve a trained machine learning model with App Engine flexible environment.
 author: dizcology
 tags: App Engine, Cloud Endpoints, Machine Learning
 date_published: 
@@ -15,7 +15,7 @@ This tutorial takes a deeper look at the sample app [Model serve][modelserve].  
 
 ## Before you begin
 
-Follow the links in the [Requirements section][requirements] to install Google Cloud Platform SDK and enable the APIs for App Engine, Cloud Endpoints, and Google Cloud Storage.
+Follow the links in the [Requirements section][requirements] to install Google Cloud Platform SDK and enable the APIs for App Engine, Cloud Endpoints, and Cloud Storage.
 
 ## Overview
 
@@ -23,13 +23,13 @@ So you trained a machine learning model.  Now what?
 
 If the model’s performance is good enough, consider deploying it as a service to a production system where one or more clients can use it.  Some possible scenarios include:
 
-- The model needs to process requests in real time when the users are interacting with your web application while at the same time batch process interaction logs you have stored previously in a database.
+- The model needs to simultaneously process user requests from your web application in real time, and batch process interaction logs you have previously stored in a database.
 
 - The model's output is used by multiple other machine learning models in your application.
 
-[App Engine][appengine] offers rolling update, networking, and auto scaling.
+[App Engine][appengine] offers rolling updates, networking, and auto scaling.
 
-[Cloud Endpoints][endpoints] helps you monitor and manage permission and quota of the service's consumers.
+[Cloud Endpoints][endpoints] helps you monitor the service's consumers, as well as manage their permissions and quotas.
 
 You can follow the [steps of the sample app][steps] to deploy a service.  Below we will look at some key pieces of the code to understand how it works.
 
@@ -89,13 +89,13 @@ endpoints_api_service:
   config_id: CONFIG_ID
 ```
 
-The `CONFIG_ID` points to a Cloud Endpoints service deployment.  You can find all the deployments on the [Cloud Endpoints console][endpoints] under each service page's Deployment history tab.
+The `CONFIG_ID` is the configuration ID of a Cloud Endpoints service deployment.  To find existing deployments and their configuration IDs, go to the [Cloud Endpoints console][endpoints], click on the service's title, then click on the "Deployment history" tab.
 
 To deploy a service to Cloud Endpoints, we configure it with the `modelserve.yaml` file.
 
 ### [`modelserve.yaml`][modelserve.yaml]
 
-The `modelserve.yaml` configuration file defines the service according to the [OpenAPI specification][openapi].  We highlight only some of the key configurations below.
+The `modelserve.yaml` configuration file defines the service according to the [OpenAPI specification][openapi].  We highlight only some of the key settings below.
 
 - Specify the host:
 
@@ -105,7 +105,7 @@ The `modelserve.yaml` configuration file defines the service according to the [O
 
   This host means we will handle the requests with an App Engine service called `modelserve`.
 
-- Enforce authentication with API key by adding the `security` and `securityDefinitions` fields:
+- Enforce authentication with an API key by adding the `security` and `securityDefinitions` fields:
 
     ```yaml
     security:
@@ -117,7 +117,7 @@ The `modelserve.yaml` configuration file defines the service according to the [O
         in: "query"
     ```
 
-    This is optional, but allows you to grant service consumer permissions on the [Cloud Endpoints console][endpoints].  The API key must be associated to a Google Cloud Platform project.  You can create API keys on the [credentials][credentials] page.
+    This is optional, but allows you to grant service consumer permissions on the [Cloud Endpoints console][endpoints].  The API key must be associated with a Google Cloud Platform project.  You can create API keys on the [credentials][credentials] page.
 
 - Additionally, you can configure quota for each consumer at the project level.  First we specify a service level metric in order to track the number of requests:
 
@@ -137,9 +137,9 @@ The `modelserve.yaml` configuration file defines the service according to the [O
             STANDARD: 1000
   ```
 
-  This configurations declares a metric `modelserve-predict` and sets its limit to 1000 units per minutes per project.
+  This configurations declares a metric `modelserve-predict` and sets its limit to 1000 units per minute per project.
 
-  To specify the paths to which requests will be counted towards this metric, we add the following in the `paths` field:
+  Only requests to specified paths are counted towards this metric. Specify these paths by adding the following in the `paths` field:
 
   ```yaml
   paths:
