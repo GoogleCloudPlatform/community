@@ -151,8 +151,8 @@ HTTPS traffic:
               apt-get update
               apt-get install -y apache2
               /usr/sbin/a2ensite default-ssl
-              service apache2 reload
               /usr/sbin/a2enmod ssl
+              service apache2 reload
                   "; \
           done
 
