@@ -10,7 +10,7 @@ const storage = require('@google-cloud/storage')();
 const zipFolder = require('zip-folder');
 
 // config.json contain all the required information for code running
-const config = require('./config2.json');
+const config = require('./config.json');
 
 const bucket = storage.bucket(config.stageBucket);
 const PROJECT_ID = process.env.GCLOUD_PROJECT;

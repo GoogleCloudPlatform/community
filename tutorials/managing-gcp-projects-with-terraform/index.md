@@ -148,7 +148,7 @@ gsutil versioning set on gs://${TF_ADMIN}
 Configure your environment for the Google Cloud Terraform provider:
 
 ```sh
-export GOOGLE_CREDENTIALS=$(cat ${TF_CREDS})
+export GOOGLE_APPLICATION_CREDENTIALS=${TF_CREDS}
 export GOOGLE_PROJECT=${TF_ADMIN}
 ```
 
