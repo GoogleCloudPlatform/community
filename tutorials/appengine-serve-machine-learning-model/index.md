@@ -3,7 +3,7 @@ title: Serve Machine Learning Model on App Engine Flexible Environment
 description: Learn how to serve a trained machine learning model with App Engine flexible environment.
 author: dizcology
 tags: App Engine, Cloud Endpoints, Machine Learning
-date_published: 
+date_published: 2017-12-18
 ---
 This tutorial takes a deeper look at the sample app [Model serve][modelserve].  It helps you build your own service serving a trained machine learning model for online prediction.
 
