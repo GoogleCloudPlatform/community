@@ -113,6 +113,8 @@ proxies back to the database instance via a secure API.
 
 To set up Cloud SQL Proxy, perform the following steps:
 
+
+
 1.  [Install Cloud SQL Proxy](https://cloud.google.com/sql/docs/postgres/sql-proxy#install).
     Ensure that `cloud_sql_proxy` is in your environment's `PATH` variable.
 
@@ -172,7 +174,7 @@ to App Engine.
 
 ### Create the app config file
 
-App Engine deployments are controlled by a `app.yaml` file. Create this file
+App Engine deployments are controlled by an `app.yaml` file. Create this file
 in your Rails application directory, and include these contents:
 
     env: flex
@@ -219,13 +221,13 @@ To configure your database connection, perform the following steps:
           username: postgres
           password: <%= ENV['DATABASE_PASSWORD'] %>
 
-    Note that `password` refer to an environment variable. This is configured later
+    Note that `password` refers to an environment variable. This is configured later
     in the tutorial.
     
 ### Configure the entrypoint
 
-The _entrypoint_ is the command run to start your application, such as
-`bundle exec rails s`. Heroku sometimes can infer an entrypoint for a Ruby
+The entrypoint, a command such as `bundle exec rails s`, is used to start your
+application. Heroku sometimes can infer an entrypoint for a Ruby
 applications, but they recommend that you provide explicit boot instructions
 via a [Procfile](https://devcenter.heroku.com/articles/procfile).
 
@@ -268,6 +270,8 @@ In your app, you likely need to manage at least two secret values: the
 `DATABASE_PASSWORD`, and the `SECRET_KEY_BASE`. Let's store them in Runtime
 Configuration:
 
+1. [Enable the Runtime Config API in the Cloud Console](https://console.cloud.google.com/apis/library/runtimeconfig.googleapis.com).
+
 1.  Create a configuration named `my-env` by running the following command:
 
         gcloud beta runtime-config configs create my-env
@@ -278,7 +282,7 @@ Configuration:
 
     Copy the `SECRET_KEY_BASE` value so you can paste it in the next command.
 
-1.  Set the `SECRET_KEY_BASE` in your Google Runtime Config.
+1.  Set the `SECRET_KEY_BASE` in your Google Runtime Config:
 
         gcloud beta runtime-config configs variables set \
           --config-name=my-env --is-text \
@@ -289,7 +293,7 @@ Configuration:
 
         gcloud beta runtime-config configs variables set \
           --config-name=my-env --is-text \
-          DATABASE_PASSWORD ${MY_DATABASE_PASSWORD}
+          DATABASE_PASSWORD [MY_DATABASE_PASSWORD]
 
     Replace `${MY_DATABASE_PASSWORD}` with the password that you used to secure
     your database.
@@ -388,7 +392,7 @@ To create an App Engine service and prepare for deployment, perform the followin
 
         gcloud app create
 
-3.  Dploy your app:
+3.  Deploy your app:
 
         gcloud app deploy
 
