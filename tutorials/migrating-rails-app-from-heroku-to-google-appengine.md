@@ -3,7 +3,7 @@ title: Migrating a Rails App from Heroku to Google App Engine
 description: Learn how to move a Rails application from Heroku to Google App Engine by following an example migration of a Spree e-commerce app.
 author: dazuma
 tags: App Engine, Ruby, Rails, Heroku, Migration
-date_published: 2017-12-18
+date_published: 2017-12-20
 ---
 
 This tutorial teaches you how to migrate a
@@ -35,7 +35,7 @@ Cloud Platform (GCP) project and tools:
 1.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/). The Cloud SDK
     contains the `gcloud` command-line tool, which is the primary tool for
     interacting with GCP.
-    
+
 1.  [Initialize the `gcloud` command-line tool](https://cloud.google.com/sdk/docs/initializing) by
     running `gcloud init` from your shell or terminal. Set the default project to the project you
     created. Configure Google Compute Engine to set the default _compute zone_ to a zone in your
@@ -47,7 +47,7 @@ Cloud Platform (GCP) project and tools:
 
 1.  Deploy an app to Heroku, using a Heroku-hosted Posgres database. If you do not have
     your own app, you can use a default e-commerce app based on Spree. Spree provides a
-    [basic guide](https://guides.spreecommerce.org/developer/heroku.html) you can 
+    [basic guide](https://guides.spreecommerce.org/developer/heroku.html) you can
     use to set this up.
 
 ## Moving your database to Cloud SQL
@@ -89,7 +89,7 @@ the Cloud SQL database and restore your Postgres data.
 
         gcloud sql users set-password postgres no-host \
           --instance=mydbinstance --prompt-for-password
-          
+
       When prompted, enter a password for the database.
 
 1.  Create a database:
@@ -113,7 +113,7 @@ proxies back to the database instance via a secure API.
 
 To set up Cloud SQL Proxy, perform the following steps:
 
-
+1.  [Enable the Google Cloud SQL API in the Cloud Console](https://console.cloud.google.com/apis/library/sqladmin.googleapis.com/).
 
 1.  [Install Cloud SQL Proxy](https://cloud.google.com/sql/docs/postgres/sql-proxy#install).
     Ensure that `cloud_sql_proxy` is in your environment's `PATH` variable.
@@ -159,7 +159,8 @@ copy the data over from your Heroku database.
           -h /path/to/my/rails/app/tmp/cloudsql/[CONNECTION-NAME] \
           latest.dump
 
-    Note: You might encounter permissible warnings during the migration.
+    Note: You might encounter several warnings during the migration. Unless
+    they result in errors, you can safely ignore these warnings.
 
 1. Terminate the `cloud_sql_proxy` process.
 
@@ -202,7 +203,7 @@ To configure your database connection, perform the following steps:
         beta_settings:
           cloud_sql_instances: [CONNECTION-NAME]
 
-    where `[CONNECTION-NAME]` is your database's connection name. You can also 
+    where `[CONNECTION-NAME]` is your database's connection name. You can also
     connect to multiple database instances by providing multiple, comma-delimited
     connection names.
 
@@ -223,7 +224,7 @@ To configure your database connection, perform the following steps:
 
     Note that `password` refers to an environment variable. This is configured later
     in the tutorial.
-    
+
 ### Configure the entrypoint
 
 The entrypoint, a command such as `bundle exec rails s`, is used to start your
@@ -301,7 +302,7 @@ Configuration:
 If you have any other sensitive configuration fields, copy them over in the
 same way.
 
-Next we instruct your application to load this configuration into
+Next, instruct your application to load this configuration into
 environment variables.
 
 1.  First, add the following to your `app.yaml`:
