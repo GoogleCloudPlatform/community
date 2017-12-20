@@ -173,8 +173,7 @@ faults, and exponential backoff. The Cloud Spanner library for ADO.NET supports
 handling these issues, and you can read more about this in
 [Getting Started with Cloud Spanner in C#][getting_started].
 
-The C# Google Cloud Spanner ADO.NET library is in Beta. If you find a bug please
-log it on the [issue tracker][issues].
+If you find a bug please log it on the [issue tracker][issues].
 
 [studio]: https://www.visualstudio.com/vs/community/
 [getting_started]: https://cloud.google.com/spanner/docs/getting-started/csharp/
