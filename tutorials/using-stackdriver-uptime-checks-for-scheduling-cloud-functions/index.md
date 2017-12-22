@@ -1,7 +1,7 @@
 ---
 title: Using Stackdriver Uptime Checks for Triggering Cloud Functions on a Schedule
 description: Learn how to use Stackdriver uptime checks to trigger HTTP Cloud Functions at regular intervals.
-author: sujoy
+author: sujoyg
 tags: Stackdriver, Monitoring, Cloud Functions, cron
 date_published: 2017-12-22
 ---
