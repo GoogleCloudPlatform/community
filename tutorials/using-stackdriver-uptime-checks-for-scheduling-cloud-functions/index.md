@@ -3,6 +3,7 @@ title: Using Stackdriver Uptime Checks for Triggering Cloud Functions on a Sched
 description: Learn how to use Stackdriver uptime checks to trigger HTTP Cloud Functions at regular intervals.
 author: sujoy
 tags: Stackdriver, Monitoring, Cloud Functions, cron
+date_published: 2017-12-22
 ---
 
 This tutorial describes a method of triggering [Cloud Functions](https://cloud.google.com/functions/docs/) at regular intervals using [Stackdriver uptime checks](https://cloud.google.com/monitoring/alerts/uptime-checks).
