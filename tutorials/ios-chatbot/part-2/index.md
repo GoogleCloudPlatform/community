@@ -148,13 +148,7 @@ AVSpeechSynthesizer *synthesizer = [[AVSpeechSynthesizer alloc] init];
 
 ## Supporting multiple languages
 
-
-
-<p id="gdcalert8" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/How-to7.jpg). Store image on your image server and adjust path/filename if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert9">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/How-to7.jpg "image_tooltip")
-
+[![Chinese Demo](http://img.youtube.com/vi/Oy4oNNd1aGw/0.jpg)](https://youtu.be/Oy4oNNd1aGw)
 
 Supporting additional languages in Cloud Speech API is a one-line change on the iOS client side. (Currently, there is no support for mixed languages.) For [Chinese](https://youtu.be/Oy4oNNd1aGw), replace [this](https://github.com/google/ios-chatbot/blob/master/ChatBot/ChatBot/SpeechRecognitionService.m#L73) line in [SpeechRecognitionService.m](https://github.com/google/ios-chatbot/blob/master/ChatBot/ChatBot/SpeechRecognitionService.m):
 
