@@ -140,3 +140,5 @@ In [Part 2](https://cloudplatform.googleblog.com/2017/08/how-to-build-a-conversa
 In Part 3, we'll cover how to support the Google Assistant via Actions on Google integration.
 
 You can download the [source code](https://github.com/google/ios-chatbot) from github.
+
+[Chang Luo]: https://www.linkedin.com/in/changluo
