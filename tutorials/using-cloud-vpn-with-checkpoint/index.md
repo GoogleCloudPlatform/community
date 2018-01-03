@@ -72,7 +72,7 @@ to replace the IP addresses in the sample environment with your own IP addresses
 
 To configure the Google Cloud Platform VPN:
 1. Log on to the GCP Developers Console > **Networking** > **Create VPN connection**.
-1. Select the VPN node and click Create VPN.
+1. Select the VPN node and click **Create VPN**.
 
 ![alt_text](Image_1.PNG)
 
@@ -99,7 +99,7 @@ To configure the Google Cloud Platform VPN:
 To create a route:
 
 1. From the GCP Console, go to **Routes** > **Create a route**.
-1. Enter the parameters. Click Create.
+1. Enter the parameters. Click **Create**.
 
 ![alt_text](Image_3.PNG)
 
@@ -118,7 +118,7 @@ Note – Add ingress firewall rules to allow inbound network traffic as per your
 policy.
 
 
-#Check Point
+# Check Point
 
 To create an Interoperable Device for Google Cloud on the Check Point
 SmartConsole:
@@ -167,19 +167,19 @@ The environment below walks you through an IPSec VPN tunnel setup. Make sure to 
 
 |Name | Value|                             
 -----|------                                  
-|GCP(external IP)|35.195.227.26|
-|VPC CIDR|10.132.0.0/20|
-|TUN-INSIDE|GCP 169.254.0.1|
-|GCP-ASN|65000|
+|GCP(external IP)|`35.195.227.26`|
+|VPC CIDR|`10.132.0.0/20`|
+|TUN-INSIDE GCP|`169.254.0.1`|
+|GCP-ASN|`65000`|
                         
 **Checkpoint**
 
 |Name | Value|
 -----|------
-|Checkpoint Security Gateway(external IP)|199.203.248.181|
-|Addresses behind Check Point Security Gateway|10.0.0.10/24|
-|TUN-INSIDE- CP|169.54.0.2|
-|CP Security Gateway|ASN 65002|
+|Checkpoint Security Gateway(external IP)|`199.203.248.181`|
+|Addresses behind Check Point Security Gateway|`10.0.0.10/24`|
+|TUN-INSIDE- CP|`169.54.0.2`|
+|CP Security Gateway ASN|`65002`|
 
 # Google Cloud Platform
 
@@ -323,8 +323,7 @@ Step 9. Setup for BGP Deployment
 
 **Virtual Tunnel Interface and Initial BGP Setup**
 
-Connect with SSH to your Security Gateway. If you are using the none default shell,
-change to clish. Run: `clish`
+Connect with SSH to your Security Gateway. If you are using the none default shell, change to clish. Run: `clish`
 Run the commands below replacing variables surrounded by { } with your values:
 
     set AS {CP Security Gateway - ASN}
@@ -359,13 +358,11 @@ Adding Directional Rules for a Route-Based Scenario
 ![alt_text](Image_20.PNG)
 
 Note - This is not relevant for a Policy Based scenario.
-Add these directional match rules in the VPN column for every firewall rule related to
-VPN traffic:
+Add these directional match rules in the VPN column for every firewall rule related to VPN traffic:
 
-Internal_clear > Google Cloud VPN community name (VPN_Community)
-Google Cloud VPN community name > Google Cloud VPN community name
-(VPN_Community)
-Google Cloud VPN community name (VPN_Community) > Internal_clear
+    Internal_clear > Google Cloud VPN community name (VPN_Community)
+    Google Cloud VPN community name > Google Cloud VPN community name
+    (VPN_Community) Google Cloud VPN community name (VPN_Community) > Internal_clear
 
 Step 11. Install policy.
 
