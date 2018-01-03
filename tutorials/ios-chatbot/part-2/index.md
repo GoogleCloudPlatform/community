@@ -1,13 +1,10 @@
----
-title: How to build a conversational app using Cloud Machine Learning APIs (Part 2 of 3)
-description: How to build a conversational app using Cloud Machine Learning APIs (Part 2 of 3).
-author: PokerChang
-tags: Cloud Functions, Dialogflow, API.AI, Webhooks, Localization, Chatbot, Machine Learning API, Transation, Vision, Speech
-date_published: 2017-01-02
----
+
+title|description|author|tags|date_published
+---|---|---|---|---
+How to build a conversational app using Cloud Machine Learning APIs (Part 2 of 3)|How to build a conversational app using Cloud Machine Learning APIs (Part 2 of 3).|[Chang Luo]|Cloud Functions, Dialogflow, API.AI, Webhooks, Localization, Chatbot, Machine Learning API, Transation, Vision, Speech|2017-01-02
+
 
 In [part 1](../index.md) of this blog post, we gave you an overview of what a conversational tour guide iOS app might look like built on Cloud Machine Learning APIs and API.AI. We also demonstrated how to create API.AI intents and contexts. In part 2, we'll discuss an advanced API.AI topic — webhook with Cloud Functions. We'll also show you how to use Cloud Machine Learning APIs (Vision, Speech and Translation) and how to support a second language.
-
 
 ### Webhooks via Cloud Functions
 
@@ -210,3 +207,5 @@ We hope this example has demonstrated how simple it is to build an app powered b
 You can download the [source code](https://github.com/google/ios-chatbot) from Github.
 
 In part 3, we'll cover how to build this app on the Google Assistant with Actions on Google integration.
+
+[Chang Luo]: https://www.linkedin.com/in/changluo
