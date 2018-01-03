@@ -157,3 +157,211 @@ For more information, see the R80.10 Site To Site VPN Administration Guide.
 ##Configuration Using the Google Cloud Router and BGP
 
 The environment below walks you through an IPSec VPN tunnel setup. Make sure to replace the IP addresses in the sample environment with your own IP addresses.
+
+**Google Cloud Platform**
+
+|Name | Value|                             
+-----|------                                  
+|GCP(external IP)|35.195.227.26|
+|VPC CIDR|10.132.0.0/20|
+|TUN-INSIDE|GCP 169.254.0.1|
+|GCP-ASN|65000|
+                        
+**Checkpoint**
+
+|Name | Value|
+-----|------
+|Checkpoint Security Gateway(external IP)|199.203.248.181|
+|Addresses behind Check Point Security Gateway|10.0.0.10/24|
+|TUN-INSIDE- CP|169.54.0.2|
+|CP Security Gateway|ASN 65002|
+
+#Google Cloud Platform
+
+##Google Cloud Router UI Configuration
+
+The Google Cloud Router dynamically exchange routes between your Virtual Private Cloud and on-premise networks with Border Gateway Protocol (BGP). For the initial release, Cloud Router supports BGP for Cloud VPN only. Cloud Router works with both legacy networks and sub-networks.
+
+Create a new Cloud router to configure GCP for Site to Site VPN connectivity.
+From the GCP Developer console > **Networking** > **Cloud Routers** > **Create Router**.
+
+add image 8
+
+**Creating a Cloud Router**
+
+|Parameter|Description|
+|---------|-----------|
+|Name|Name of the cloud router.|
+|Description|Description of the cloud router.|
+|Network|The GCP network the cloud router attaches to. Note: This is the network which manages route information.|
+|Region|The home region of the cloud router.Note: Make sure the cloud router is in the same region as the sub-networks
+it is connecting to.|
+|Google ASN|The Autonomous System Number assigned to the cloud router. Use any unused private ASN (64512 - 65534, 4200000000 – 4294967294).|
+
+##VPN Tunnel
+
+From the GCP Developer Console, select **Networking** > **Interconnect** > **VPN** to create a VPN connection.
+
+add image 9
+
+**Creating a VPN connection**
+
+|Parameter|Description|
+|---------|-----------|
+|Name|Name of the VPN gateway|
+|Description|Description of the VPN connection|
+|Network| The GCP network the VPN gateway attaches to|
+|       |Note: This network will get VPN connectivity|
+|Region|The home region of the VPN gateway Note: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
+|IP address| The static public IP address used by the VPN gateway. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
+
+add image 10
+
+|Parameter|Description|
+|---------|-----------|
+|Remote peer IP address|Public IP address of the on-premise VPN appliance used to connect to Cloud VPN.
+|IKE version|The IKE protocol version. You can select IKEv1 or IKEv2.|
+|Shared secret|A shared secret for authentication by the VPN gateways. Configure the on-premise VPN gateway tunnel entry with the same shared secret.|
+|Routing options| Cloud VPN supports multiple routing options for the exchange of route information between the VPN gateways. In this example, Cloud Router and BGP are configured.|
+|BGP session|BGP sessions enable your cloud network and on-premise networks to dynamically exchange routes|
+
+add image 11
+
+BGP Sessions (Image 11)
+
+|Parameter|Description|
+|---------|-----------|
+|Name|Name of the BGP session.|
+|Peer ASN|Unique BGP ASN of the on-premise router.|
+|Google BGP IP address|
+|Peer BGP IP address|
+
+Click **Save and Continue** to complete.
+**Note** – Add ingress firewall rules to allow inbound network traffic as per your security policy.
+
+#Check Point
+
+**Create an interoperable device for GCP on the Check Point SmartConsole**
+
+Step 1 Open SmartConsole > **New** > **More** > **Network Object** > **More** > **Interoperable Device**.
+
+Step 2 Configure the IP address associated with GVC peer (external IP).
+
+add image 12
+
+Step 3 To force Route-based VPN to take priority, create a dummy (empty) group and assign it to the VPN domain.
+1. Go to **Topology**, in the VPN Domain section. Select Manually defined.
+2. Click the right to select the desired object.
+3. Click **New** > **Group** > **Simple Group**.
+4. Enter an **Object Name**, click **OK**. Do NOT assign any objects to this group.
+
+add image 13
+
+Step 4 In clish, create a VPN Tunnel Interface (VTI).
+
+add image 14
+
+Write the Remote peer name, **exactly** as it is written in the gateway object in SmartConsole.
+
+    add vpn tunnel [1-99] type numbered local { TUN-INSIDE- CP } remote { TUN-INSIDE- GCP } peer { Interoperable GVC object name in SmartConsole }
+
+Example:
+
+    add vpn tunnel 10 type numbered local 169.254.0.2 remote 169.254.0.1 peer Google_Cloud
+
+
+Step 5 Edit the Topology.
+
+1. Open **SmartConsole** > **Gateways & Servers**.
+2. Select the Check Point Security Gateway and double-click.
+3. From **General Properties** > **Network Management** > **Get Interfaces**.
+4. The VTIs show in the topology.
+**Note**: The **Edit Topology** window lists the members of a VTI on the same line if these criteria match:
+
+* Remote peer name
+* Remote IP address
+* Interface name
+
+5. Configure the VTI VIP in the Topology tab. Click **OK**.
+6. From **VPN Domain**, select **Manually Defined** > **Empty_Group**.
+
+add image 15
+
+add image 16
+
+Step 6 Create a star community.
+
+1. Open **SmartConsole** > **Security Policies** > **Access Tools** > **VPN Communities**.
+2. Click **Star Community**.
+3. Enter an **Object Name** for the VPN Community.
+4. In the **Center Gateways** area, click the plus sign to add a Check Point Security Gateway object for the center of the community.
+5. In the **Satellite Gateways** area, click the plus sign to add the GCP gateway object.
+
+add image 17
+
+Step 7 Configure these ciphers for IKEv2.
+
+Go to **Encryption** and change the Phase 1 and Phase 2 properties according what is specified within the Cipher configuration settings on page 3)
+**Note**: You must select Perfect Forward Secrecy (Phase 2).
+
+This example refers to IKEv2 specifically. You can also use IKEv1 in this scenario.
+
+add image 18
+
+Step 8 Go to the **Advanced tab**. You can modify the more advanced settings for Phase 1 Phase 2 there.
+
+add image 19
+
+Step 9 Setup for BGP Deployment
+
+**Virtual Tunnel Interface and Initial BGP Setup**
+
+Connect with SSH to your Security Gateway. If you are using the none default shell,
+change to clish. Run: `clish`
+Run the commands below replacing variables surrounded by { } with your values:
+
+    set AS {CP Security Gateway - ASN}
+    set bgp external remote-as { GCP-ASN } on
+    set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } on
+    set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } as-override on
+    set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } holdtime 30
+    set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } keepalive 10
+    set inbound-route- filter bgp-policy 512 based-on- as as { GCP-ASN }  on
+    set inbound-route- filter bgp-policy 512 accept-all- ipv4
+    set route-redistribution to bgp-as { GCP-ASN }  from interface {Redistributed from specific interface } on
+
+Example:
+
+    set as 65002
+    set bgp external remote-as 65000 on
+    set bgp external remote-as 65000 peer 169.254.0.1 on
+    set bgp external remote-as 65000 peer 169.254.0.1 as-override on
+    set bgp external remote-as 65000 peer 169.254.0.1 holdtime 30
+    set bgp external remote-as 65000 peer 169.254.0.1 keepalive 10
+    set inbound-route- filter bgp-policy 512 based-on- as as 65000 on
+    set inbound-route- filter bgp-policy 512 accept-all- ipv4
+    set route-redistribution to bgp-as 65000 from interface eth1 on
+
+Step 10
+
+Configure Directional Rules.
+
+Adding Directional Rules for a Route-Based Scenario
+
+1. Open SmartConsole > **Global Properties** > **VPN** > **Advanced**.
+2. Select **Enable VPN Directional Match in VPN Column**.
+
+add image 20
+
+Note - This is not relevant for a Policy Based scenario.
+Add these directional match rules in the VPN column for every firewall rule related to
+VPN traffic:
+
+Internal_clear > Google Cloud VPN community name (VPN_Community)
+Google Cloud VPN community name > Google Cloud VPN community name
+(VPN_Community)
+Google Cloud VPN community name (VPN_Community) > Internal_clear
+
+Step 11 Install policy.
+
+For more information, see the R80.10 Site To Site VPN Administration Guide.
