@@ -23,9 +23,7 @@ Part 1
 *   API.AI intents
 *   API.AI contexts
 
-[Part 2](https://cloudplatform.googleblog.com/2017/08/how-to-build-a-conversational-app-using-Cloud-Machine-Learning-APIs-Part-2.html)
-
-
+[Part 2]
 
 *   API.AI webhook with [Cloud Functions](https://cloud.google.com/functions/)
 *   [Cloud Vision API](https://cloud.google.com/vision/)
@@ -33,9 +31,7 @@ Part 1
 *   [Cloud Translation API](https://cloud.google.com/translate/)
 *   Support multiple languages
 
-Part 3
-
-
+[Part 3]
 
 *   Support the Google Assistant via Actions on Google Integration
 
@@ -137,10 +133,13 @@ Finally, create `hours` and `map` intents similar to `ticket` intent.
 
 **Next time**
 
-In [Part 2](https://cloudplatform.googleblog.com/2017/08/how-to-build-a-conversational-app-using-Cloud-Machine-Learning-APIs-Part-2.html), we'll cover how to use [Webhook](https://docs.api.ai/docs/webhook) integrations in API.AI to pass information from a matched intent into a [Cloud Functions](https://cloud.google.com/functions/) web service and then get a result. Finally, we'll cover how to integrate Cloud Vision/Speech/Translation API, including support for Chinese language.
+In [Part 2], we'll cover how to use [Webhook](https://docs.api.ai/docs/webhook) integrations in API.AI to pass information from a matched intent into a [Cloud Functions](https://cloud.google.com/functions/) web service and then get a result. Finally, we'll cover how to integrate Cloud Vision/Speech/Translation API, including support for Chinese language.
 
 In Part 3, we'll cover how to support the Google Assistant via Actions on Google integration.
 
 You can download the [source code](https://github.com/google/ios-chatbot) from github.
 
 ###### Author [Chang Luo](https://www.linkedin.com/in/changluo)
+
+[Part 2]: part-2/index.md
+[Part 3]: part-3/index.md
