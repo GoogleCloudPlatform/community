@@ -123,13 +123,13 @@ policy.
 To create an Interoperable Device for Google Cloud on the Check Point
 SmartConsole:
 
-1. Open SmartConsole > **New** > **More** > **Network Object** > **More** > **Interoperable Device**.
-1. Configure the IP address associated with GVC VPN peer (external IP).
-1. Go to **General Properties** > **Topology** and manually add Google cloud IP addresses.
+Step 1. Open SmartConsole > **New** > **More** > **Network Object** > **More** > **Interoperable Device**.
+Step 2. Configure the IP address associated with GVC VPN peer (external IP).
+Step 3. Go to **General Properties** > **Topology** and manually add Google cloud IP addresses.
 
 ![alt_text](Image_4.PNG)
 
-1. Create a star community.
+Step 4. Create a star community.
 
 1. Open SmartConsole > **Security Policies** > **Access Tools** > **VPN Communities**.
 2. Click **Star Community**. The New Star Community window opens.
@@ -139,7 +139,7 @@ SmartConsole:
 
 ![alt_text](Image_5.PNG)
 
-1. Configure these ciphers for IKEv1.
+Step 5. Configure these ciphers for IKEv1.
 
 Go to **Encryption** and change the Phase 1 and Phase 2 properties according what is specified in the Cipher configuration settings on page 3.
 
@@ -147,14 +147,15 @@ Go to **Encryption** and change the Phase 1 and Phase 2 properties according wha
 
 ![alt_text](Image_6.PNG)
 
-1. Go to the **Advanced** tab and modify the Renegotiation Time.
+Step 6. Go to the **Advanced** tab and modify the Renegotiation Time.
 
 **IKE for Phase 1**: 610 minutes
 **IKE for Phase 2**: 10,800 seconds
 
 ![alt_text](Image_7.PNG)
 
-1. Configure the Access Control Rule Base and Install policy.
+Step 7. Configure the Access Control Rule Base and Install policy.
+
 For more information, see the R80.10 Site To Site VPN Administration Guide.
 
 # Route Based IPsec VPN Tunnel
