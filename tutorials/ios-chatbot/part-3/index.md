@@ -1,10 +1,7 @@
----
-title: How to build a conversational app using Cloud Machine Learning APIs (Part 3 of 3)
-description: How to build a conversational app using Cloud Machine Learning APIs (Part 3 of 3).
-author: [Chang Luo]
-tags: Cloud Functions, Dialogflow, API.AI, Webhooks, Localization, Chatbot, Machine Learning API, Transation, Vision, Speech
-date_published: 2017-01-02
----
+title|description|author|tags|date_published
+---|---|---|---|---
+How to build a conversational app using Cloud Machine Learning APIs (Part 3 of 3)|How to build a conversational app using Cloud Machine Learning APIs (Part 3 of 3).|[Chang Luo]|Cloud Functions, Dialogflow, API.AI, Webhooks, Localization, Chatbot, Machine Learning API, Transation, Vision, Speech|2017-01-02
+
 In [part 1] and [part 2] of this series, we showed you how to build a conversational tour guide app with API.AI and Google Cloud Machine Learning APIs. In this final part, you'll learn how to extend this app to the Google Assistant-supported devices (Google Home, eligible Android phones and iPhones, and Android Wear). And we'll build this on top of the existing API.AI agent created in parts 1 and 2.
 
 [![The Google Assistant / Google Home Demo](http://img.youtube.com/vi/_x5rlkpZiyc/0.jpg)](https://youtu.be/_x5rlkpZiyc)
