@@ -22,6 +22,7 @@ Platform.
 1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1. Install [Node.js](https://nodejs.org/en/download/) on your local machine. 
 
 ## Prepare
 
