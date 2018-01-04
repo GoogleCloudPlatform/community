@@ -114,9 +114,8 @@ To create a route:
 |Next| hop Specify the VPN tunnel.|
 |Next hop VPN tunnel| The Tunnel created.|
 
-Note – Add ingress firewall rules to allow inbound network traffic as per your security
+**Note:** Add ingress firewall rules to allow inbound network traffic as per your security
 policy.
-
 
 # Check Point
 
@@ -241,7 +240,7 @@ From the GCP Developer Console, select **Networking** > **Interconnect** > **VPN
 |Peer BGP IP address|
 
 Click **Save and Continue** to complete.
-**Note** – Add ingress firewall rules to allow inbound network traffic as per your security policy.
+**Note:** – Add ingress firewall rules to allow inbound network traffic as per your security policy.
 
 # Check Point
 
@@ -308,7 +307,7 @@ Example:
 **Step 7**. Configure these ciphers for IKEv2.
 
 Go to **Encryption** and change the Phase 1 and Phase 2 properties according what is specified within the Cipher configuration settings on page 3)
-**Note**: You must select Perfect Forward Secrecy (Phase 2).
+**Note:** You must select Perfect Forward Secrecy (Phase 2).
 
 This example refers to IKEv2 specifically. You can also use IKEv1 in this scenario.
 
@@ -356,7 +355,7 @@ Adding Directional Rules for a Route-Based Scenario
 
 ![alt_text](Image_20.PNG)
 
-Note - This is not relevant for a Policy Based scenario.
+**Note:** This is not relevant for a Policy Based scenario.
 Add these directional match rules in the VPN column for every firewall rule related to VPN traffic:
 
     Internal_clear > Google Cloud VPN community name (VPN_Community)
