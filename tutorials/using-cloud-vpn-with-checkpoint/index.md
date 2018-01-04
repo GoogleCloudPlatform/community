@@ -31,7 +31,7 @@ Use these parameters and values in the Gateway’s IPSec configuration.
 --------- |  -----
 |IPsec Mode | `Tunnel mode` |
 |Auth protocol | `Pre-shared-key` |
-|Key Exchange | `IKEv2 or IKEv1` |
+|Key Exchange | `IKEv2 (preferred) or IKEv1` |
 |Start | `Auto` |
 |Perfect Forward Secrecy (PFS) | `on` |
 
