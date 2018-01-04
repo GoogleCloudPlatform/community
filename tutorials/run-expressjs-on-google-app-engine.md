@@ -32,7 +32,7 @@ Platform.
 1. Add a start script to your `package.json` file:
 
         "scripts": {
-          "start": "node server.js"
+          "start": "node index.js"
         }
 
 1. Install Express.js:
@@ -41,7 +41,7 @@ Platform.
 
 ## Create
 
-Create a `server.js` file with the following contents:
+Create an `index.js` file with the following contents:
 
     const express = require('express');
     const app = express();
