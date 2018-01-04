@@ -2,8 +2,8 @@
 title: How to Set Up VPN between Checkpoint and Cloud VPN
 description: Learn how to build site-to-site IPSEC VPN between Checkpoint and Cloud VPN.
 author: ashishverm
-tags: Compute Engine, Cloud VPN, Cisco ASR
-date_published: 2018-01-02
+tags: Compute Engine, Cloud VPN, Checkpoint firewall
+date_published: 2018-01-03
 ---
 
 # Introduction
@@ -123,13 +123,13 @@ policy.
 To create an Interoperable Device for Google Cloud on the Check Point
 SmartConsole:
 
-Step 1. Open SmartConsole > **New** > **More** > **Network Object** > **More** > **Interoperable Device**.
-Step 2. Configure the IP address associated with GVC VPN peer (external IP).
-Step 3. Go to **General Properties** > **Topology** and manually add Google cloud IP addresses.
+**Step 1**. Open SmartConsole > **New** > **More** > **Network Object** > **More** > **Interoperable Device**.
+**Step 2**. Configure the IP address associated with GVC VPN peer (external IP).
+**Step 3**. Go to **General Properties** > **Topology** and manually add Google cloud IP addresses.
 
 ![alt_text](Image_4.PNG)
 
-Step 4. Create a star community.
+**Step 4**. Create a star community.
 
 1. Open SmartConsole > **Security Policies** > **Access Tools** > **VPN Communities**.
 2. Click **Star Community**. The New Star Community window opens.
@@ -139,7 +139,7 @@ Step 4. Create a star community.
 
 ![alt_text](Image_5.PNG)
 
-Step 5. Configure these ciphers for IKEv1.
+**Step 5**. Configure these ciphers for IKEv1.
 
 Go to **Encryption** and change the Phase 1 and Phase 2 properties according what is specified in the Cipher configuration settings on page 3.
 
@@ -147,14 +147,14 @@ Go to **Encryption** and change the Phase 1 and Phase 2 properties according wha
 
 ![alt_text](Image_6.PNG)
 
-Step 6. Go to the **Advanced** tab and modify the Renegotiation Time.
+**Step 6**. Go to the **Advanced** tab and modify the Renegotiation Time.
 
 **IKE for Phase 1**: 610 minutes
 **IKE for Phase 2**: 10,800 seconds
 
 ![alt_text](Image_7.PNG)
 
-Step 7. Configure the Access Control Rule Base and Install policy.
+**Step 7**. Configure the Access Control Rule Base and Install policy.
 
 For more information, see the R80.10 Site To Site VPN Administration Guide.
 
@@ -200,8 +200,7 @@ From the GCP Developer console > **Networking** > **Cloud Routers** > **Create R
 |Name|Name of the cloud router.|
 |Description|Description of the cloud router.|
 |Network|The GCP network the cloud router attaches to. Note: This is the network which manages route information.|
-|Region|The home region of the cloud router.Note: Make sure the cloud router is in the same region as the sub-networks
-it is connecting to.|
+|Region|The home region of the cloud router.Note: Make sure the cloud router is in the same region as the sub-networks it is connecting to.|
 |Google ASN|The Autonomous System Number assigned to the cloud router. Use any unused private ASN (64512 - 65534, 4200000000 – 4294967294).|
 
 ## VPN Tunnel
@@ -216,9 +215,8 @@ From the GCP Developer Console, select **Networking** > **Interconnect** > **VPN
 |---------|-----------|
 |Name|Name of the VPN gateway|
 |Description|Description of the VPN connection|
-|Network| The GCP network the VPN gateway attaches to|
-|       |Note: This network will get VPN connectivity|
-|Region|The home region of the VPN gateway Note: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
+|Network| The GCP network the VPN gateway attaches to **Note**: This network will get VPN connectivity|
+|Region|The home region of the VPN gateway **Note**: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
 |IP address| The static public IP address used by the VPN gateway. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
 
 ![alt_text](Image_10.PNG)
@@ -249,13 +247,13 @@ Click **Save and Continue** to complete.
 
 **Create an interoperable device for GCP on the Check Point SmartConsole**
 
-Step 1. Open SmartConsole > **New** > **More** > **Network Object** > **More** > **Interoperable Device**.
+**Step 1**. Open SmartConsole > **New** > **More** > **Network Object** > **More** > **Interoperable Device**.
 
-Step 2. Configure the IP address associated with GVC peer (external IP).
+**Step 2**. Configure the IP address associated with GVC peer (external IP).
 
 ![alt_text](Image_12.PNG)
 
-Step 3. To force Route-based VPN to take priority, create a dummy (empty) group and assign it to the VPN domain.
+**Step 3**. To force Route-based VPN to take priority, create a dummy (empty) group and assign it to the VPN domain.
 
 1. Go to **Topology**, in the VPN Domain section. Select Manually defined.
 1. Click the right to select the desired object.
@@ -264,7 +262,7 @@ Step 3. To force Route-based VPN to take priority, create a dummy (empty) group 
 
 ![alt_text](Image_13.PNG)
 
-Step 4. In `clish`, create a VPN Tunnel Interface (VTI).
+**Step 4**. In `clish`, create a VPN Tunnel Interface (VTI).
 
 ![alt_text](Image_14.PNG)
 
@@ -277,7 +275,7 @@ Example:
     add vpn tunnel 10 type numbered local 169.254.0.2 remote 169.254.0.1 peer Google_Cloud
 
 
-Step 5. Edit the Topology.
+**Step 5**. Edit the Topology.
 
 1. Open **SmartConsole** > **Gateways & Servers**.
 2. Select the Check Point Security Gateway and double-click.
@@ -297,7 +295,7 @@ Step 5. Edit the Topology.
 
 ![alt_text](Image_16.PNG)
 
-Step 6. Create a star community.
+**Step 6**. Create a star community.
 
 1. Open **SmartConsole** > **Security Policies** > **Access Tools** > **VPN Communities**.
 2. Click **Star Community**.
@@ -307,7 +305,7 @@ Step 6. Create a star community.
 
 ![alt_text](Image_17.PNG)
 
-Step 7. Configure these ciphers for IKEv2.
+**Step 7**. Configure these ciphers for IKEv2.
 
 Go to **Encryption** and change the Phase 1 and Phase 2 properties according what is specified within the Cipher configuration settings on page 3)
 **Note**: You must select Perfect Forward Secrecy (Phase 2).
@@ -316,11 +314,11 @@ This example refers to IKEv2 specifically. You can also use IKEv1 in this scenar
 
 ![alt_text](Image_18.PNG)
 
-Step 8. Go to the **Advanced tab**. You can modify the more advanced settings for Phase 1 Phase 2 there.
+**Step 8**. Go to the **Advanced tab**. You can modify the more advanced settings for Phase 1 Phase 2 there.
 
 ![alt_text](Image_19.PNG)
 
-Step 9. Setup for BGP Deployment
+**Step 9**. Setup for BGP Deployment
 
 **Virtual Tunnel Interface and Initial BGP Setup**
 
@@ -349,7 +347,7 @@ Example:
     set inbound-route- filter bgp-policy 512 accept-all- ipv4
     set route-redistribution to bgp-as 65000 from interface eth1 on
 
-Step 10. Configure Directional Rules.
+**Step 10**. Configure Directional Rules.
 
 Adding Directional Rules for a Route-Based Scenario
 
@@ -365,6 +363,6 @@ Add these directional match rules in the VPN column for every firewall rule rela
     Google Cloud VPN community name > Google Cloud VPN community name
     (VPN_Community) Google Cloud VPN community name (VPN_Community) > Internal_clear
 
-Step 11. Install policy.
+**Step 11**. Install policy.
 
 For more information, see the R80.10 Site To Site VPN Administration Guide.
