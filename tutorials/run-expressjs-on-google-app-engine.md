@@ -28,6 +28,12 @@ Platform.
 1. Initialize a `package.json` file with the following command:
 
         npm init
+        
+1. Add a start script to your `package.json` file:
+
+        "scripts": {
+          "start": "node server.js"
+        }
 
 1. Install Express.js:
 
