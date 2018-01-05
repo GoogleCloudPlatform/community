@@ -46,7 +46,7 @@ Alternately, once you have already activated DNSSEC for a domain:
 
 **Figure 1.** *Overview of tutorial components*
 
-![Diagram of DNS delegation and registration](overview.png)
+![Diagram of DNS delegation and registration](https://storage.googleapis.com/gcp-community/tutorials/dnssec-cloud-dns-domains/overview.png)
 
 ## Before you begin
 
@@ -336,7 +336,7 @@ All of these can be found in the Google Cloud DNS console by navigating to your
 managed zone and clicking the "Registrar Setup" link in the upper right corner
 of the "Zone details" page.
 
-![Registrar Setup pop-up](registrar-setup.png)
+![Registrar Setup pop-up](https://storage.googleapis.com/gcp-community/tutorials/dnssec-cloud-dns-domains/registrar-setup.png)
 
 You can also use the `gcloud` command-line tool to get this information:
 
