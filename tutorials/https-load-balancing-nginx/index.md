@@ -151,8 +151,8 @@ HTTPS traffic:
               apt-get update
               apt-get install -y apache2
               /usr/sbin/a2ensite default-ssl
-              service apache2 reload
               /usr/sbin/a2enmod ssl
+              service apache2 reload
                   "; \
           done
 
@@ -193,9 +193,9 @@ Next, for each instance, perform the following tasks:
 
         gcloud compute ssh [INSTANCE_NAME]
 
-1.  Edit default-ssl:
+1.  Edit default-ssl.conf:
 
-        sudo nano /etc/apache2/sites-enabled/default-ssl
+        sudo nano /etc/apache2/sites-enabled/default-ssl.conf
 
 1.  Find the following lines:
 

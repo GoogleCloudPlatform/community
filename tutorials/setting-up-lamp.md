@@ -46,7 +46,7 @@ the Google Cloud Platform Console:
 1. Set **Name** to **lamp-tutorial**.
 1. Set **Machine type** to **f1-micro**.
 1. In the **Boot disk** section, click **Change** to begin configuring your boot disk.
-1. In the **OS images** tab, choose a **Debian 7.x**, **Ubuntu 14.04**, or **CentOS 6.x** version.
+1. In the **OS images** tab, choose a **Debian 7.x**, **Ubuntu 14.04**, **CentOS 6.x**, or **CentOS 7.x** version.
 1. Click **Select**.
 1. In the **Firewall** section, select **Allow HTTP traffic** and **Allow HTTPS traffic**.
 1. Click the **Create** button to create the instance.
@@ -86,7 +86,7 @@ LAMP. Next, install Apache and PHP.
     sudo apt-get update
     sudo apt-get install apache2 php libapache2-mod-php
 
-#### CentOS 6
+#### CentOS 6 and 7
 
 1. Install Apache and PHP:
 
@@ -154,6 +154,20 @@ Install MySQL and related PHP components:
 1. Optional: Set the MySQL service to start automatically:
 
         sudo chkconfig mysqld on
+
+#### CentOS 7
+
+1. Install MariaDB and related components:
+
+        sudo yum -y install httpd mariadb-server php php-mysql
+
+1. Start the MariaDB service:
+
+        sudo systemctl start mariadb
+
+1. Optional: Set the MariaDB service to start automatically:
+
+        sudo systemctl enable mariadb
 
 
 ### Configure MySQL
