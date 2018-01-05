@@ -47,7 +47,7 @@ an existing project.
 1.  Go to the [API Library](https://console.cloud.google.com/apis/library) in
     the Cloud Console. Use it to enable the following APIs:
     *   Google Cloud Container Builder API
-    *   Google Container Engine API
+    *   Google Kubernetes Engine API
 
 Perform the installations:
 
