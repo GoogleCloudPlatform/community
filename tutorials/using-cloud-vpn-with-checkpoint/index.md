@@ -25,7 +25,9 @@ service, make sure the following prerequisites have been met:
 
 ## IPsec Parameters
 
-Use these parameters and values in the Gateway’s IPSec configuration.
+Below parameters and values are used in the Gateway’s IPSec configuration for the
+purpose of this guide. Cloud VPN supports extensive [list](https://cloud.google.com/vpn/docs/concepts/advanced#supported_ike_ciphers) of 
+ciphers that can be used per your security policies.
 
 |Parameter | Value|
 --------- |  -----
@@ -47,11 +49,11 @@ in this guide.
 |       |Phase1 lifetime| `36,600 seconds` (10 hours and 10 Minutes ) – IKEv1|
 |       |                | `36,000 seconds` (10 hours) – IKEv2 |
 |Phase-2|Encryption|`aes-128`(IKEv1)or `aes-256`(IKEv2)|
-|       |Integrity|`sha-256`|
+|       |Integrity|`sha-1`|
 
 # Policy Based IPsec VPN Setup
 
-Below is a sample environment to walk you through set up of the GCP VPN. Make sure
+Below is a sample environment to walk you through set up of the Cloud VPN. Make sure
 to replace the IP addresses in the sample environment with your own IP addresses.
 
 **Google Cloud Platform**
@@ -80,21 +82,20 @@ To configure the Google Cloud Platform VPN:
 ![alt_text](Image_2.PNG)
 
 
-|Parameter|Description|
-|---------|-----------|
-|Name|Name of the VPN gateway|
-|Description|Description of the VPN connection|
-|Network| The GCP network the VPN gateway attaches to|
-|       |Note: This network will get VPN connectivity|
-|Region|The home region of the VPN gateway Note: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
-|IP address| The VPN gateway uses the static public IP address. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
-|Remote peer IP address| Public IP address of the on-premise VPN appliance used to connect to the Cloud VPN.|
-|IKE version| The IKE protocol version. You can select IKEv1 or IKEv2.|
-|Shared secret| A shared secret used for authentication by the VPN gateways. Configure the on-premise VPN gateway tunnel entry with the same shared secret.|
+|Parameter|Description|Value|
+|---------|-----------|-----|
+|Name|Name of the VPN gateway|`gcp-to-cp-vpn`|
+|Description|Description of the VPN connection|`VPN tunnel connection between GCP and Checkpoint Security Gateway`|
+|Network| The GCP network the VPN gateway attaches to. Note: This network will get VPN connectivity|`to-cp`|
+|Region|The home region of the VPN gateway Note: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|`europe-west1`|
+|IP address| The VPN gateway uses the static public IP address. An existing, unused, static public IP address within the project can be assigned, or a new one created.|`cloud-ip(35.195.227.26)`|
+|Remote peer IP address| Public IP address of the on-premise VPN appliance used to connect to the Cloud VPN.|`199.203.248.181`|
+|IKE version| The IKE protocol version. You can select IKEv1 or IKEv2.|`IKEv1`|
+|Shared secret| A shared secret used for authentication by the VPN gateways. Configure the on-premise VPN gateway tunnel entry with the same shared secret.|`secret`|
 |Routing options| Multiple routing options for the exchange of route information between the VPN gateways. This example uses static routing.|
-|Remote network IP ranges| The on-premise CIDR blocks connecting to GCP from the VPN gateway.|
+|Remote network IP ranges| The on-premise CIDR blocks connecting to GCP from the VPN gateway.|`10.0.0.0/24`|
 |Local subnetworks|The GCP CIDR blocks connecting on-premise with the VPN gateway.|
-|Local IP ranges| The GCP IP ranges matching the selected subnet.|
+|Local IP ranges| The GCP IP ranges matching the selected subnet.|`10.132.0.0/20`|
 
 To create a route:
 
@@ -105,14 +106,14 @@ To create a route:
 
 **New Routes**
 
-|Parameter|Description|
-|---------|-----------|
-|Name| Name of the route|
-|Network| The GCP network the route attaches to.|
-|Destination| IP range Destination IP address.|
-|Priority| Route priority.|
-|Next| hop Specify the VPN tunnel.|
-|Next hop VPN tunnel| The Tunnel created.|
+|Parameter|Description|Value|
+|---------|-----------|-----|
+|Name| Name of the route|`route-to-vpn`|
+|Network| The GCP network the route attaches to.|`to-cp`|
+|Destination| IP range Destination IP address.|`10.0.0.0/24`|
+|Priority| Route priority.|`1000`|
+|Next hop| Specify the VPN tunnel.|
+|Next hop VPN tunnel| The Tunnel created.|`gcp-to-cp-vpn-tunnel-1`|
 
 **Note:** Add ingress firewall rules to allow inbound network traffic as per your security
 policy.
@@ -123,7 +124,9 @@ To create an Interoperable Device for Google Cloud on the Check Point
 SmartConsole:
 
 **Step 1**. Open SmartConsole > **New** > **More** > **Network Object** > **More** > **Interoperable Device**.
+
 **Step 2**. Configure the IP address associated with GVC VPN peer (external IP).
+
 **Step 3**. Go to **General Properties** > **Topology** and manually add Google cloud IP addresses.
 
 ![alt_text](Image_4.PNG)
@@ -148,14 +151,14 @@ Go to **Encryption** and change the Phase 1 and Phase 2 properties according wha
 
 **Step 6**. Go to the **Advanced** tab and modify the Renegotiation Time.
 
-**IKE for Phase 1**: 610 minutes
-**IKE for Phase 2**: 10,800 seconds
+* **IKE for Phase 1**: 610 minutes
+* **IKE for Phase 2**: 10,800 seconds
 
 ![alt_text](Image_7.PNG)
 
 **Step 7**. Configure the Access Control Rule Base and Install policy.
 
-For more information, see the R80.10 Site To Site VPN Administration Guide.
+For more information, see the R80.10 Site To Site VPN Administration [Guide] (http://dl3.checkpoint.com/paid/ea/ea41387591dcba2a8d551ba39084e9e6/CP_R80.10_SitetoSiteVPN_AdminGuide.pdf?HashKey=1515459944_c0affaeb9262c888e85d660e781d604d&xtn=.pdf).
 
 # Route Based IPsec VPN Tunnel
 
@@ -364,4 +367,4 @@ Add these directional match rules in the VPN column for every firewall rule rela
 
 **Step 11**. Install policy.
 
-For more information, see the R80.10 Site To Site VPN Administration Guide.
+For more information, see the R80.10 Site To Site VPN Administration [Guide](http://dl3.checkpoint.com/paid/ea/ea41387591dcba2a8d551ba39084e9e6/CP_R80.10_SitetoSiteVPN_AdminGuide.pdf?HashKey=1515459944_c0affaeb9262c888e85d660e781d604d&xtn=.pdf).
