@@ -91,7 +91,7 @@ to replace the IP addresses in the sample environment with your own IP addresses
 # Configuring Cloud VPN
 
 To configure Cloud VPN:
-1. Log on to the GCP Developers Console > **Networking** > **Create VPN connection**.
+1. In Google Cloud Platform Console, select **Networking** > **Create VPN connection**.
 1. Select the VPN node and click **Create VPN**.
 
 ![alt_text](Image_1.PNG)
@@ -117,7 +117,7 @@ To configure Cloud VPN:
 
 To create a route:
 
-1. From the Google Cloud Platform Console, go to **Routes** > **Create a route**.
+1. In Google Cloud Platform Console, go to **Routes** > **Create a route**.
 1. Enter the parameters. Click **Create**.
 
 ![alt_text](Image_3.PNG)
