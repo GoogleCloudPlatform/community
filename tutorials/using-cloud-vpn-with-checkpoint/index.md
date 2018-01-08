@@ -51,7 +51,7 @@ ciphers that can be used per your security policies.
 --------- |  -----
 |IPsec Mode | `Tunnel mode` |
 |Auth protocol | `Pre-shared-key` |
-|Key Exchange | `IKEv2 (preferred) or IKEv1` |
+|Key Exchange | `IKEv2 or IKEv1` |
 |Start | `Auto` |
 |Perfect Forward Secrecy (PFS) | `on` |
 
@@ -62,11 +62,11 @@ in this guide.
 -------|-------------|-------
 |Phase-1|Encryption|`aes-128` (IKEv1)|
 |       |            |`aes-256`(IKEv2)|
-|       |Integrity|`sha-256`|
-|       |Diffie-Helman|`Group14`
+|       |Integrity|`sha-1` (IKEv1) or `sha-256` (IKEv2)|
+|       |Diffie-Helman|`Group2` (IKEv1) or `Group14` (IKEv2)|
 |       |Phase1 lifetime| `36,600 seconds` (10 hours and 10 Minutes ) – IKEv1|
 |       |                | `36,000 seconds` (10 hours) – IKEv2 |
-|Phase-2|Encryption|`aes-128`(IKEv1)or `aes-256`(IKEv2)|
+|Phase-2|Encryption|`aes-128`(IKEv1) or `aes-256`(IKEv2)|
 |       |Integrity|`sha-1`|
 
 # Configuring Policy Based IPsec VPN Setup
