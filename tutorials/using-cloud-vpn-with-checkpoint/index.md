@@ -28,7 +28,7 @@ The equipment used in the creation of this guide is as follows:
 The topology outlined by this guide is a basic site-to-site IPsec VPN tunnel
 configuration using the referenced device:
 
-![Topology](Image_0.PNG)
+![Topology](Image_0.png)
 
 # Before you begin
 
