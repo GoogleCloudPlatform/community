@@ -6,17 +6,21 @@ tags: Compute Engine, Cloud VPN, Checkpoint firewall
 date_published: 2018-01-03
 ---
 
-# Introduction
 
-Use this guide to configure a Check Point Security Gateway for integration with the
-Google Cloud VPN service. This guide describes a sample environment only. This
-overview assumes familiarity with the IPsec protocol. Any IP addresses, device IDs,
-shared secrets or keys, and account information or project names, should be replaced
-with values for your environment.
+This guide walks you through the process to configure the Checkpoint firewall for
+integration with the [Google Cloud VPN Services][cloud_vpn]. This information is
+provided as an example only. Please note that this guide is not meant to be a
+comprehensive overview of IPsec and assumes basic familiarity with the IPsec
+protocol.
 
-## Getting Started
+[cloud_vpn]: https://cloud.google.com/compute/docs/vpn/overview
 
-To use a Check Point Security Gateway with the Google Cloud Platform (GCP) VPN
+
+# Before you begin
+
+## Prerequisities
+
+To use a Check Point Security Gateway with the Cloud VPN
 service, make sure the following prerequisites have been met:
 * The Check Point Security Gateway is online and functioning with no faults detected
 * There is root access to the Check Point Security Gateway
@@ -51,12 +55,12 @@ in this guide.
 |Phase-2|Encryption|`aes-128`(IKEv1)or `aes-256`(IKEv2)|
 |       |Integrity|`sha-1`|
 
-# Policy Based IPsec VPN Setup
+# Configuring Policy Based IPsec VPN Setup
 
 Below is a sample environment to walk you through set up of the Cloud VPN. Make sure
 to replace the IP addresses in the sample environment with your own IP addresses.
 
-**Google Cloud Platform**
+**Cloud VPN**
 
 |Name | Value|                             
 -----|------                                  
@@ -70,7 +74,7 @@ to replace the IP addresses in the sample environment with your own IP addresses
 |Checkpoint Security Gateway(external IP)|`199.203.248.181`|
 |Addresses behind Check Point Security Gateway|`10.0.0.10/24`|
 
-# Google Cloud Platform
+# Configuring Cloud VPN
 
 To configure the Google Cloud Platform VPN:
 1. Log on to the GCP Developers Console > **Networking** > **Create VPN connection**.
@@ -118,14 +122,13 @@ To create a route:
 **Note:** Add ingress firewall rules to allow inbound network traffic as per your security
 policy.
 
-# Check Point
+# Configuring CheckPoint firewall
 
-To create an Interoperable Device for Google Cloud on the Check Point
-SmartConsole:
+To create an Interoperable Device for Cloud VPN on the Check Point SmartConsole:
 
 **Step 1**. Open SmartConsole > **New** > **More** > **Network Object** > **More** > **Interoperable Device**.
 
-**Step 2**. Configure the IP address associated with GVC VPN peer (external IP).
+**Step 2**. Configure the IP address associated with Cloud VPN peer (external IP).
 
 **Step 3**. Go to **General Properties** > **Topology** and manually add Google cloud IP addresses.
 
@@ -184,7 +187,7 @@ The environment below walks you through an IPSec VPN tunnel setup. Make sure to 
 |TUN-INSIDE- CP|`169.54.0.2`|
 |CP Security Gateway ASN|`65002`|
 
-# Google Cloud Platform
+# Configuring Cloud VPN
 
 ## Google Cloud Router UI Configuration
 
@@ -245,13 +248,13 @@ From the GCP Developer Console, select **Networking** > **Interconnect** > **VPN
 Click **Save and Continue** to complete.
 **Note:** – Add ingress firewall rules to allow inbound network traffic as per your security policy.
 
-# Check Point
+# Configuring Checkpoint Firewall
 
-**Create an interoperable device for GCP on the Check Point SmartConsole**
+**Create an interoperable device for Cloud VPN on the Check Point SmartConsole**
 
 **Step 1**. Open SmartConsole > **New** > **More** > **Network Object** > **More** > **Interoperable Device**.
 
-**Step 2**. Configure the IP address associated with GVC peer (external IP).
+**Step 2**. Configure the IP address associated with Cloud VPN peer (external IP).
 
 ![alt_text](Image_12.PNG)
 
