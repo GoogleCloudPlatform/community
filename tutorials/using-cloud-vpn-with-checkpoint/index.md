@@ -78,7 +78,7 @@ to replace the IP addresses in the sample environment with your own IP addresses
 
 |Name | Value|                             
 -----|------                                  
-|GCP(external IP)|`35.195.227.26`|
+|Cloud VPN(external IP)|`35.195.227.26`|
 |VPC CIDR|`10.132.0.0/20`|
                         
 **Checkpoint**
@@ -90,7 +90,7 @@ to replace the IP addresses in the sample environment with your own IP addresses
 
 # Configuring Cloud VPN
 
-To configure the Google Cloud Platform VPN:
+To configure Cloud VPN:
 1. Log on to the GCP Developers Console > **Networking** > **Create VPN connection**.
 1. Select the VPN node and click **Create VPN**.
 
@@ -117,7 +117,7 @@ To configure the Google Cloud Platform VPN:
 
 To create a route:
 
-1. From the GCP Console, go to **Routes** > **Create a route**.
+1. From the Google Cloud Platform Console, go to **Routes** > **Create a route**.
 1. Enter the parameters. Click **Create**.
 
 ![alt_text](Image_3.PNG)
@@ -206,7 +206,7 @@ The environment below walks you through an IPSec VPN tunnel setup. Make sure to 
 The Google Cloud Router dynamically exchange routes between your Virtual Private Cloud and on-premise networks with Border Gateway Protocol (BGP). For the initial release, Cloud Router supports BGP for Cloud VPN only. Cloud Router works with both legacy networks and sub-networks.
 
 Create a new Cloud router to configure GCP for Site to Site VPN connectivity.
-From the GCP Developer console > **Networking** > **Cloud Routers** > **Create Router**.
+In Google Cloud Platform Console, select **Networking** > **Cloud Routers** > **Create Router**.
 
 ![alt_text](Image_8.PNG)
 
@@ -222,7 +222,7 @@ From the GCP Developer console > **Networking** > **Cloud Routers** > **Create R
 
 ### VPN Tunnel
 
-From the GCP Developer Console, select **Networking** > **Interconnect** > **VPN** to create a VPN connection.
+In Google Cloud Platform Console, select **Networking** > **Interconnect** > **VPN** to create a VPN connection.
 
 ![alt_text](Image_9.PNG)
 
