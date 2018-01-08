@@ -15,6 +15,20 @@ protocol.
 
 [cloud_vpn]: https://cloud.google.com/compute/docs/vpn/overview
 
+# Envrionment overview
+
+The equipment used in the creation of this guide is as follows:
+
+* Vendor: Checkpoint
+* Model: Checkpoint [TODO]
+* Software Release: R80.10
+
+## Topology
+
+The topology outlined by this guide is a basic site-to-site IPsec VPN tunnel
+configuration using the referenced device:
+
+![Topology](Image_0.PNG)
 
 # Before you begin
 
@@ -22,10 +36,10 @@ protocol.
 
 To use a Check Point Security Gateway with the Cloud VPN
 service, make sure the following prerequisites have been met:
-* The Check Point Security Gateway is online and functioning with no faults detected
-* There is root access to the Check Point Security Gateway
-* There is at least one configured and verified functional internal interface
-* There is one configured and verified functional external interface
+* The Check Point Security Gateway is online and functioning with no faults detected.
+* There is root access to the Check Point Security Gateway.
+* There is at least one configured and verified functional internal interface.
+* There is one configured and verified functional external interface.
 
 ## IPsec Parameters
 
@@ -161,11 +175,9 @@ Go to **Encryption** and change the Phase 1 and Phase 2 properties according wha
 
 **Step 7**. Configure the Access Control Rule Base and Install policy.
 
-For more information, see the R80.10 Site To Site VPN Administration [Guide] (http://dl3.checkpoint.com/paid/ea/ea41387591dcba2a8d551ba39084e9e6/CP_R80.10_SitetoSiteVPN_AdminGuide.pdf?HashKey=1515459944_c0affaeb9262c888e85d660e781d604d&xtn=.pdf).
+For more information, see the R80.10 Site To Site VPN Administration [Guide](http://dl3.checkpoint.com/paid/ea/ea41387591dcba2a8d551ba39084e9e6/CP_R80.10_SitetoSiteVPN_AdminGuide.pdf?HashKey=1515459944_c0affaeb9262c888e85d660e781d604d&xtn=.pdf).
 
-# Route Based IPsec VPN Tunnel
-
-## Configuration Using the Google Cloud Router and BGP
+# Configuring Route Based IPsec VPN Tunnel
 
 The environment below walks you through an IPSec VPN tunnel setup. Make sure to replace the IP addresses in the sample environment with your own IP addresses.
 
@@ -187,9 +199,9 @@ The environment below walks you through an IPSec VPN tunnel setup. Make sure to 
 |TUN-INSIDE- CP|`169.54.0.2`|
 |CP Security Gateway ASN|`65002`|
 
-# Configuring Cloud VPN
+## Configuring Cloud VPN
 
-## Google Cloud Router UI Configuration
+### Google Cloud Router UI Configuration
 
 The Google Cloud Router dynamically exchange routes between your Virtual Private Cloud and on-premise networks with Border Gateway Protocol (BGP). For the initial release, Cloud Router supports BGP for Cloud VPN only. Cloud Router works with both legacy networks and sub-networks.
 
@@ -208,7 +220,7 @@ From the GCP Developer console > **Networking** > **Cloud Routers** > **Create R
 |Region|The home region of the cloud router.Note: Make sure the cloud router is in the same region as the sub-networks it is connecting to.|
 |Google ASN|The Autonomous System Number assigned to the cloud router. Use any unused private ASN (64512 - 65534, 4200000000 – 4294967294).|
 
-## VPN Tunnel
+### VPN Tunnel
 
 From the GCP Developer Console, select **Networking** > **Interconnect** > **VPN** to create a VPN connection.
 
@@ -236,7 +248,7 @@ From the GCP Developer Console, select **Networking** > **Interconnect** > **VPN
 
 ![alt_text](Image_11.PNG)
 
-## BGP Sessions
+### BGP Sessions
 
 |Parameter|Description|
 |---------|-----------|
@@ -248,7 +260,7 @@ From the GCP Developer Console, select **Networking** > **Interconnect** > **VPN
 Click **Save and Continue** to complete.
 **Note:** – Add ingress firewall rules to allow inbound network traffic as per your security policy.
 
-# Configuring Checkpoint Firewall
+## Configuring Checkpoint Firewall
 
 **Create an interoperable device for Cloud VPN on the Check Point SmartConsole**
 
