@@ -60,12 +60,10 @@ in this guide.
 
 |Phase | Cipher Role | Cipher|
 -------|-------------|-------
-|Phase-1|Encryption|`aes-128` (IKEv1)|
-|       |            |`aes-256`(IKEv2)|
+|Phase-1|Encryption|`aes-128` (IKEv1 or `aes-256`(IKEv2)|
 |       |Integrity|`sha-1` (IKEv1) or `sha-256` (IKEv2)|
 |       |Diffie-Helman|`Group2` (IKEv1) or `Group14` (IKEv2)|
-|       |Phase1 lifetime| `36,600 seconds` (10 hours and 10 Minutes ) – IKEv1|
-|       |                | `36,000 seconds` (10 hours) – IKEv2 |
+|       |Phase1 lifetime| `36,600 seconds` (IKEv1) `36,000 seconds` (IKEv2) |
 |Phase-2|Encryption|`aes-128`(IKEv1) or `aes-256`(IKEv2)|
 |       |Integrity|`sha-1`|
 
@@ -100,20 +98,20 @@ To configure Cloud VPN:
 ![alt_text](Image_2.PNG)
 
 
-|Parameter|Description|Value|
+|Parameter|Value|Description|
 |---------|-----------|-----|
-|Name|Name of the VPN gateway|`gcp-to-cp-vpn`|
-|Description|Description of the VPN connection|`VPN tunnel connection between GCP and Checkpoint Security Gateway`|
-|Network| The GCP network the VPN gateway attaches to. Note: This network will get VPN connectivity|`to-cp`|
-|Region|The home region of the VPN gateway Note: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|`europe-west1`|
-|IP address| The VPN gateway uses the static public IP address. An existing, unused, static public IP address within the project can be assigned, or a new one created.|`cloud-ip(35.195.227.26)`|
-|Remote peer IP address| Public IP address of the on-premise VPN appliance used to connect to the Cloud VPN.|`199.203.248.181`|
-|IKE version| The IKE protocol version. You can select IKEv1 or IKEv2.|`IKEv1`|
-|Shared secret| A shared secret used for authentication by the VPN gateways. Configure the on-premise VPN gateway tunnel entry with the same shared secret.|`secret`|
-|Routing options| Multiple routing options for the exchange of route information between the VPN gateways. This example uses static routing.|
-|Remote network IP ranges| The on-premise CIDR blocks connecting to GCP from the VPN gateway.|`10.0.0.0/24`|
+|Name|`gcp-to-cp-vpn`|Name of the VPN gateway|`gcp-to-cp-vpn`|
+|Description|`VPN tunnel connection between GCP and Checkpoint Security Gateway`|Description of the VPN connection|
+|Network|`to-cp`| The GCP network the VPN gateway attaches to. Note: This network will get VPN connectivity|
+|Region|`europe-west1`|The home region of the VPN gateway Note: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
+|IP address|`cloud-ip(35.195.227.26)`|The VPN gateway uses the static public IP address. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
+|Remote peer IP address| `199.203.248.181`|Public IP address of the on-premise VPN appliance used to connect to the Cloud VPN.|
+|IKE version|`IKEv1`|The IKE protocol version. You can select IKEv1 or IKEv2.|
+|Shared secret|`secret`|A shared secret used for authentication by the VPN gateways. Configure the on-premise VPN gateway tunnel entry with the same shared secret.|
+|Routing options|`Static`|Multiple routing options for the exchange of route information between the VPN gateways. This example uses static routing.|
+|Remote network IP ranges| `10.0.0.0/24`|The on-premise CIDR blocks connecting to GCP from the VPN gateway.|
 |Local subnetworks|The GCP CIDR blocks connecting on-premise with the VPN gateway.|
-|Local IP ranges| The GCP IP ranges matching the selected subnet.|`10.132.0.0/20`|
+|Local IP ranges| `10.132.0.0/20`|The GCP IP ranges matching the selected subnet.|
 
 To create a route:
 
