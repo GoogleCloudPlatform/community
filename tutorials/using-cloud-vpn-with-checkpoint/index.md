@@ -124,14 +124,14 @@ To create a route:
 
 **New Routes**
 
-|Parameter|Description|Value|
+|Parameter|Value|Description|
 |---------|-----------|-----|
-|Name| Name of the route|`route-to-vpn`|
-|Network| The GCP network the route attaches to.|`to-cp`|
-|Destination| IP range Destination IP address.|`10.0.0.0/24`|
-|Priority| Route priority.|`1000`|
-|Next hop| Specify the VPN tunnel.|
-|Next hop VPN tunnel| The Tunnel created.|`gcp-to-cp-vpn-tunnel-1`|
+|Name|`route-to-vpn`|Name of the route|
+|Network|`to-cp`| The GCP network the route attaches to.|
+|Destination|`10.0.0.0/24`| IP range Destination IP address.|
+|Priority|`1000`|Route priority.|
+|Next hop|      |Specify the VPN tunnel.|
+|Next hop VPN tunnel|`gcp-to-cp-vpn-tunnel-1`| The Tunnel created.|
 
 **Note:** Add ingress firewall rules to allow inbound network traffic as per your security
 policy.
@@ -212,13 +212,13 @@ In Google Cloud Platform Console, select **Networking** > **Cloud Routers** > **
 
 **Creating a Cloud Router**
 
-|Parameter|Description|
-|---------|-----------|
-|Name|Name of the cloud router.|
-|Description|Description of the cloud router.|
-|Network|The GCP network the cloud router attaches to. Note: This is the network which manages route information.|
-|Region|The home region of the cloud router.Note: Make sure the cloud router is in the same region as the sub-networks it is connecting to.|
-|Google ASN|The Autonomous System Number assigned to the cloud router. Use any unused private ASN (64512 - 65534, 4200000000 – 4294967294).|
+|Parameter|Value|Description|
+|---------|-----------|-----|
+|Name|`gcp-to-cp-router`|Name of the cloud router.|
+|Description|           |Description of the cloud router.|
+|Network|`to-cp`|The GCP network the cloud router attaches to. Note: This is the network which manages route information.|
+|Region|`europe-west1`|The home region of the cloud router.Note: Make sure the cloud router is in the same region as the sub-networks it is connecting to.|
+|Google ASN|`65000`|The Autonomous System Number assigned to the cloud router. Use any unused private ASN (64512 - 65534, 4200000000 – 4294967294).|
 
 ### VPN Tunnel
 
@@ -228,34 +228,34 @@ In Google Cloud Platform Console, select **Networking** > **Interconnect** > **V
 
 **Creating a VPN connection**
 
-|Parameter|Description|
-|---------|-----------|
-|Name|Name of the VPN gateway|
-|Description|Description of the VPN connection|
-|Network| The GCP network the VPN gateway attaches to **Note**: This network will get VPN connectivity|
-|Region|The home region of the VPN gateway **Note**: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
-|IP address| The static public IP address used by the VPN gateway. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
+|Parameter|Value|Description|
+|---------|-----|-----------|
+|Name|`gcp-to-cp-vpn`|Name of the VPN gateway|
+|Description|`VPN tunnel connection between GCP and Check Point Security Gateway`|Description of the VPN connection|
+|Network|`to-cp`|The GCP network the VPN gateway attaches to **Note**: This network will get VPN connectivity|
+|Region|`europe-west1`|The home region of the VPN gateway **Note**: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
+|IP address|`cloud-ip(35.195.227.26`|The static public IP address used by the VPN gateway. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
 
 ![alt_text](Image_10.PNG)
 
-|Parameter|Description|
-|---------|-----------|
-|Remote peer IP address|Public IP address of the on-premise VPN appliance used to connect to Cloud VPN.
-|IKE version|The IKE protocol version. You can select IKEv1 or IKEv2.|
-|Shared secret|A shared secret for authentication by the VPN gateways. Configure the on-premise VPN gateway tunnel entry with the same shared secret.|
-|Routing options| Cloud VPN supports multiple routing options for the exchange of route information between the VPN gateways. In this example, Cloud Router and BGP are configured.|
-|BGP session|BGP sessions enable your cloud network and on-premise networks to dynamically exchange routes|
+|Parameter|Value|Description|
+|---------|------|-----------|
+|Remote peer IP address|`199.203.248.181`|Public IP address of the on-premise VPN appliance used to connect to Cloud VPN.
+|IKE version|`IKEv2`|The IKE protocol version. You can select IKEv1 or IKEv2.|
+|Shared secret|`secret`|A shared secret for authentication by the VPN gateways. Configure the on-premise VPN gateway tunnel entry with the same shared secret.|
+|Routing options|`Dynamic routing`|Cloud VPN supports multiple routing options for the exchange of route information between the VPN gateways. In this example, Cloud Router and BGP are configured.|
+|BGP session| |BGP sessions enable your cloud network and on-premise networks to dynamically exchange routes|
 
 ![alt_text](Image_11.PNG)
 
 ### BGP Sessions
 
-|Parameter|Description|
-|---------|-----------|
-|Name|Name of the BGP session.|
-|Peer ASN|Unique BGP ASN of the on-premise router.|
-|Google BGP IP address|
-|Peer BGP IP address|
+|Parameter|Value|Description|
+|---------|-----|-----------|
+|Name|`gcp-to-cp-bgp`|Name of the BGP session.|
+|Peer ASN|`65002`|Unique BGP ASN of the on-premise router.|
+|Google BGP IP address|`169.254.0.1`|
+|Peer BGP IP address|`169.254.0.2`|
 
 Click **Save and Continue** to complete.
 **Note:** – Add ingress firewall rules to allow inbound network traffic as per your security policy.
