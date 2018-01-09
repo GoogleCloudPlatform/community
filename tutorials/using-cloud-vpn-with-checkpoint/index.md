@@ -111,7 +111,7 @@ To configure Cloud VPN:
 
 To create a route:
 
-1. In Google Cloud Platform Console, go to **Routes** > **[Create a route](https://console.cloud.google.com/networking/routes)**.
+1. In Google Cloud Platform Console, go to **[Routes](https://console.cloud.google.com/networking/routes)** > **Create Route**.
 1. Enter the parameters as shown in the following table and click **Create**.
 
 |Parameter|Value|Description|
@@ -200,7 +200,7 @@ The Google Cloud Router dynamically exchange routes between your Virtual Private
 
 Create a new Cloud router to configure GCP for Site to Site VPN connectivity.
 
-In Google Cloud Platform Console, select **Networking** > **Cloud Routers** > **[Create Router](https://console.cloud.google.com/interconnect/routers)**.
+In Google Cloud Platform Console, select **Networking** > **[Cloud Routers](https://console.cloud.google.com/interconnect/routers)** > **[Create Router]**.
 
 Enter the parameters as shown in the following table and click **Create**.
 
