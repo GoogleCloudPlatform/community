@@ -86,7 +86,7 @@ to replace the IP addresses in the sample environment with your own IP addresses
 |Name | Value|
 -----|------
 |Checkpoint Security Gateway(external IP)|`199.203.248.181`|
-|Addresses behind Check Point Security Gateway|`10.0.0.10/24`|
+|Addresses behind Check Point Security Gateway|`10.0.0.0/24`|
 
 # Configuring Cloud VPN
 
