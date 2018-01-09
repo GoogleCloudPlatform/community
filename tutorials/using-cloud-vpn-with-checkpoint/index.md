@@ -89,9 +89,10 @@ to replace the IP addresses in the sample environment with your own IP addresses
 
 To configure Cloud VPN:
 1. In Google Cloud Platform Console, select **Networking** > **[Create VPN connection](https://console.cloud.google.com/interconnect/vpn)**.
-1. Click **Create VPN connection**.
 
-1. Populate the fields for the gateway and tunnel as shown in the following table and click Create:
+1. Click **CREATE VPN CONNECTION**.
+
+1. Populate the fields for the gateway and tunnel as shown in the following table and click **Create**:
 
 |Parameter|Value|Description|
 |---------|-----------|-----|
@@ -214,7 +215,7 @@ Enter the parameters as shown in the following table and click **Create**.
 
 ![alt_text](Image_8.PNG)
 
-In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[VPN](https://console.cloud.google.com/interconnect/vpn)** to create a VPN connection.
+In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[VPN](https://console.cloud.google.com/interconnect/vpn)** >> **CREATE VPN CONNECTION**.
 
 **Google Compute Engine VPN gateway**
 
