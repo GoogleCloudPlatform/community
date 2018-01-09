@@ -7,7 +7,7 @@ date_published: 2018-01-03
 ---
 
 
-This guide walks you through the process to configure the Check Point secrurity gateway
+This guide walks you through the process to configure the [Check Point secrurity gateway](https://www.checkpoint.com/products/next-generation-secure-web-gateway/)
 for integration with the [Google Cloud VPN][cloud_vpn]. This information is
 provided as an example only. Please note that this guide is not meant to be a
 comprehensive overview of IPsec and assumes basic familiarity with the IPsec
@@ -34,8 +34,7 @@ configuration using the referenced device:
 
 ## Prerequisities
 
-To use a Check Point Security Gateway with the Cloud VPN
-service, make sure the following prerequisites have been met:
+To use a Check Point Security Gateway with Cloud VPN make sure the following prerequisites have been met:
 * The Check Point Security Gateway is online and functioning with no faults detected.
 * There is root access to the Check Point Security Gateway.
 * There is at least one configured and verified functional internal interface.
@@ -69,7 +68,7 @@ in this guide.
 
 # Configuring Policy Based IPsec VPN
 
-Below is a sample environment to walk you through set up of the Cloud VPN. Make sure
+Below is a sample environment to walk you through set up of policy based VPN. Make sure
 to replace the IP addresses in the sample environment with your own IP addresses.
 
 **Cloud VPN**
@@ -90,7 +89,7 @@ to replace the IP addresses in the sample environment with your own IP addresses
 
 To configure Cloud VPN:
 1. In Google Cloud Platform Console, select **Networking** > **[Create VPN connection](https://console.cloud.google.com/interconnect/vpn)**.
-1. Select the VPN node and click **Create VPN**.
+1. Click **Create VPN connection**.
 
 1. Populate the fields for the gateway and tunnel as shown in the following table and click Create:
 
@@ -172,7 +171,8 @@ For more information, see the R80.10 Site To Site VPN Administration [Guide](htt
 
 # Configuring Route Based IPsec VPN Tunnel
 
-The environment below walks you through an IPSec VPN tunnel setup. Make sure to replace the IP addresses in the sample environment with your own IP addresses.
+Below is a sample environment to walk you through set up of route based VPN. Make sure
+to replace the IP addresses in the sample environment with your own IP addresses.
 
 **Google Cloud Platform**
 
