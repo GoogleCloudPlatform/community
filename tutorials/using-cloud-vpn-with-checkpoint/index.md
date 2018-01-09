@@ -20,7 +20,7 @@ protocol.
 The equipment used in the creation of this guide is as follows:
 
 * Vendor: Check Point
-* Model: Check Point [TODO]
+* Model: Check Point vSec
 * Software Release: R80.10
 
 ## Topology
