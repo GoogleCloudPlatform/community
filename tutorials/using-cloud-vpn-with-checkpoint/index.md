@@ -199,11 +199,11 @@ The environment below walks you through an IPSec VPN tunnel setup. Make sure to 
 The Google Cloud Router dynamically exchange routes between your Virtual Private Cloud and on-premise networks with Border Gateway Protocol (BGP). For the initial release, Cloud Router supports BGP for Cloud VPN only. Cloud Router works with both legacy networks and sub-networks.
 
 Create a new Cloud router to configure GCP for Site to Site VPN connectivity.
+
 In Google Cloud Platform Console, select **Networking** > **Cloud Routers** > **[Create Router](https://console.cloud.google.com/interconnect/routers)**.
 
-**Creating a Cloud Router**
+Enter the parameters as shown in the following table and click **Create**.
 
-Enter the parameters as shown in the following table and click Create.
 |Parameter|Value|Description|
 |---------|-----------|-----|
 |Name|`gcp-to-cp-router`|Name of the cloud router.|
@@ -214,28 +214,31 @@ Enter the parameters as shown in the following table and click Create.
 
 ![alt_text](Image_8.PNG)
 
-### VPN Tunnel
+In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[VPN](https://console.cloud.google.com/interconnect/vpn)** to create a VPN connection.
 
-In Google Cloud Platform Console, select **Networking** > **Interconnect** > **VPN** to create a VPN connection.
-
-**Creating a VPN connection**
+**Google Compute Engine VPN gateway**
 
 |Parameter|Value|Description|
 |---------|-----|-----------|
 |Name|`gcp-to-cp-vpn`|Name of the VPN gateway|
-|Description|`VPN tunnel connection between GCP and Check Point Security Gateway`|Description of the VPN connection|
+|Description|`VPN tunnel connection between GCP and Check Point Security Gateway`|Description of the VPN gateway|
 |Network|`to-cp`|The GCP network the VPN gateway attaches to **Note**: This network will get VPN connectivity|
 |Region|`europe-west1`|The home region of the VPN gateway **Note**: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
 |IP address|`cloud-ip(35.195.227.26`|The static public IP address used by the VPN gateway. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
 
 ![alt_text](Image_9.PNG)
 
+**Tunnels**
+
 |Parameter|Value|Description|
 |---------|------|-----------|
+|Name|`gcp-to-cp-vpn`|Name of the VPN tunnel|
+|Description|`VPN tunnel connection between GCP and Check Point Security Gateway`|Description of the VPN tunnel|
 |Remote peer IP address|`199.203.248.181`|Public IP address of the on-premise VPN appliance used to connect to Cloud VPN.
 |IKE version|`IKEv2`|The IKE protocol version. You can select IKEv1 or IKEv2.|
 |Shared secret|`secret`|A shared secret for authentication by the VPN gateways. Configure the on-premise VPN gateway tunnel entry with the same shared secret.|
-|Routing options|`Dynamic routing`|Cloud VPN supports multiple routing options for the exchange of route information between the VPN gateways. In this example, Cloud Router and BGP are configured.|
+|Routing options|`Dynamic(BGP)`|Cloud VPN supports multiple routing options for the exchange of route information between the VPN gateways. In this example, Cloud Router and BGP are configured.|
+|Cloud Router|`gcp-to-cp-router`|Select the Cloud router created previously.|
 |BGP session| |BGP sessions enable your cloud network and on-premise networks to dynamically exchange routes|
 
 ![alt_text](Image_10.PNG)
@@ -257,7 +260,7 @@ Click **Save and Continue** to complete.
 
 ## Configuring Check Point Secrurity Gateway
 
-**Create an interoperable device for Cloud VPN on the Check Point SmartConsole**
+Create an interoperable device for Cloud VPN on the Check Point SmartConsole.
 
 **Step 1**. Open SmartConsole > **New** > **More** > **Network Object** > **More** > **Interoperable Device**.
 
@@ -359,9 +362,7 @@ Example:
     set inbound-route- filter bgp-policy 512 accept-all- ipv4
     set route-redistribution to bgp-as 65000 from interface eth1 on
 
-**Step 10**. Configure Directional Rules.
-
-Adding Directional Rules for a Route-Based Scenario
+**Step 10**. Configure Directional Rules for Route-Based Scenario
 
 1. Open SmartConsole > **Global Properties** > **VPN** > **Advanced**.
 2. Select **Enable VPN Directional Match in VPN Column**.
@@ -369,7 +370,8 @@ Adding Directional Rules for a Route-Based Scenario
 ![alt_text](Image_20.PNG)
 
 **Note:** This is not relevant for a Policy Based scenario.
-Add these directional match rules in the VPN column for every firewall rule related to VPN traffic:
+
+3. Add these directional match rules in the VPN column for every firewall rule related to VPN traffic:
 
     Internal_clear > Google Cloud VPN community name (VPN_Community)
     Google Cloud VPN community name > Google Cloud VPN community name
