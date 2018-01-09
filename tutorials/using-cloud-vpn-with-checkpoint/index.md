@@ -104,7 +104,7 @@ To configure Cloud VPN:
 |Remote peer IP address| `199.203.248.181`|Public IP address of the on-premise VPN appliance used to connect to the Cloud VPN.|
 |IKE version|`IKEv1`|The IKE protocol version. You can select IKEv1 or IKEv2.|
 |Shared secret|`secret`|A shared secret used for authentication by the VPN gateways. Configure the on-premise VPN gateway tunnel entry with the same shared secret.|
-|Routing options|`Policy Based`|Multiple routing options for the exchange of route information between the VPN gateways. This example uses static routing.|
+|Routing options|`Static`|Multiple routing options for the exchange of route information between the VPN gateways. This example uses static routing.|
 |Remote network IP ranges| `10.0.0.0/24`|The on-premise CIDR blocks connecting to GCP from the VPN gateway.|
 |Local IP ranges| `10.132.0.0/20`|The GCP IP ranges matching the selected subnet.|
 
@@ -121,7 +121,7 @@ To create a route:
 |Network|`to-cp`| The GCP network the route attaches to.|
 |Destination|`10.0.0.0/24`| IP range Destination IP address.|
 |Priority|`1000`|Route priority.|
-|Next hop|      |Specify the VPN tunnel.|
+|Next hop|`Specify the VPN tunnel.`| |
 |Next hop VPN tunnel|`gcp-to-cp-vpn-tunnel-1`| The Tunnel created.|
 
 ![alt_text](Image_3.PNG)
@@ -147,7 +147,7 @@ To create an Interoperable Device for Cloud VPN on the Check Point SmartConsole:
 2. Click **Star Community**. The New Star Community window opens.
 3. Enter an **Object Name** for the VPN Community.
 4. In the **Center Gateways** area, click the plus sign to add a Check Point Security Gateway object for the center of the community.
-5. In the **Satellite Gateways** area, click the plus sign to add the GCP gateway object.
+5. In the **Satellite Gateways** area, click the **plus** sign to add the GCP gateway object.
 
 ![alt_text](Image_5.PNG)
 
@@ -224,7 +224,7 @@ In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[
 |Description|`VPN tunnel connection between GCP and Check Point Security Gateway`|Description of the VPN gateway|
 |Network|`to-cp`|The GCP network the VPN gateway attaches to **Note**: This network will get VPN connectivity|
 |Region|`europe-west1`|The home region of the VPN gateway **Note**: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
-|IP address|`cloud-ip(35.195.227.26`|The static public IP address used by the VPN gateway. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
+|IP address|`cloud-ip(35.195.227.26)`|The static public IP address used by the VPN gateway. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
 
 ![alt_text](Image_9.PNG)
 
