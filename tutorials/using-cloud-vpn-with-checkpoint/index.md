@@ -200,7 +200,7 @@ The Google Cloud Router dynamically exchange routes between your Virtual Private
 
 Create a new Cloud router to configure GCP for Site to Site VPN connectivity.
 
-In Google Cloud Platform Console, select **Networking** > **[Cloud Routers](https://console.cloud.google.com/interconnect/routers)** > **[Create Router]**.
+In Google Cloud Platform Console, select **Networking** > **[Cloud Routers](https://console.cloud.google.com/interconnect/routers)** > **Create Router**.
 
 Enter the parameters as shown in the following table and click **Create**.
 
