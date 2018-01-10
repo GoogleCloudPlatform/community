@@ -203,9 +203,9 @@ BGP sessions between the 2 peers.
 
 ### Configuring Cloud Router
 
-Step 1: In Google Cloud Platform Console, select **Networking** > **[Cloud Routers](https://console.cloud.google.com/interconnect/routers)** > **Create Router**.
+**Step 1**: In Google Cloud Platform Console, select **Networking** > **[Cloud Routers](https://console.cloud.google.com/interconnect/routers)** > **Create Router**.
 
-Enter the parameters as shown in the following table and click **Create**.
+**Step 2**: Enter the parameters as shown in the following table and click **Create**.
 
 |Parameter|Value|Description|
 |---------|-----------|-----|
@@ -219,9 +219,9 @@ Enter the parameters as shown in the following table and click **Create**.
 
 ### Configuring Cloud VPN
 
-Step 2: In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[VPN](https://console.cloud.google.com/interconnect/vpn)** >> **CREATE VPN CONNECTION**.
+**Step 1**: In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[VPN](https://console.cloud.google.com/interconnect/vpn)** > **CREATE VPN CONNECTION**.
 
-Enter the parameters as shown in the following table for the Google Compute Engine VPN gateway:
+**Step 2**: Enter the parameters as shown in the following table for the Google Compute Engine VPN gateway:
 
 |Parameter|Value|Description|
 |---------|-----|-----------|
@@ -233,7 +233,7 @@ Enter the parameters as shown in the following table for the Google Compute Engi
 
 ![alt_text](Image_9.PNG)
 
-Step 3: Enter the parameters as shown in the following table for the tunnel:
+**Step 3**: Enter the parameters as shown in the following table for the tunnel:
 
 |Parameter|Value|Description|
 |---------|------|-----------|
@@ -248,7 +248,7 @@ Step 3: Enter the parameters as shown in the following table for the tunnel:
 
 ![alt_text](Image_10.PNG)
 
-Step 4: Enter the parameters as shown in the following table for the BGP peering:
+**Step 4**: Enter the parameters as shown in the following table for the BGP peering:
 
 |Parameter|Value|Description|
 |---------|-----|-----------|
@@ -338,7 +338,7 @@ This example refers to IKEv2 specifically. You can also use IKEv1 in this scenar
 
 ![alt_text](Image_19.PNG)
 
-**Step 9**. Setup for BGP Deployment
+**Step 9**. Setup for BGP Deployment.
 
 **Virtual Tunnel Interface and Initial BGP Setup**
 
@@ -367,7 +367,7 @@ Example:
     set inbound-route- filter bgp-policy 512 accept-all- ipv4
     set route-redistribution to bgp-as 65000 from interface eth1 on
 
-**Step 10**. Configure Directional Rules for Route-Based Scenario
+**Step 10**. Configure Directional Rules for Route-Based Scenario.
 
 1. Open SmartConsole > **Global Properties** > **VPN** > **Advanced**.
 2. Select **Enable VPN Directional Match in VPN Column**.
@@ -378,9 +378,9 @@ Example:
 
 3. Add these directional match rules in the VPN column for every firewall rule related to VPN traffic:
 
-    Internal_clear > Google Cloud VPN community name (VPN_Community)
-    Google Cloud VPN community name > Google Cloud VPN community name
-    (VPN_Community) Google Cloud VPN community name (VPN_Community) > Internal_clear
+        Internal_clear > Google Cloud VPN community name (VPN_Community)
+        Google Cloud VPN community name > Google Cloud VPN community name
+        (VPN_Community) Google Cloud VPN community name (VPN_Community) > Internal_clear
 
 **Step 11**. Install policy.
 
