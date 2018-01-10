@@ -85,7 +85,9 @@ to replace the IP addresses in the sample environment with your own IP addresses
 |Check Point Security Gateway(external IP)|`199.203.248.181`|
 |Addresses behind Check Point Security Gateway|`10.0.0.0/24`|
 
-## Configuring Cloud VPN
+## Configuration - GCP
+
+### Configuring Cloud VPN
 
 To configure Cloud VPN:
 1. In Google Cloud Platform Console, select **Networking** > **[Create VPN connection](https://console.cloud.google.com/interconnect/vpn)**.
@@ -110,7 +112,7 @@ To configure Cloud VPN:
 
 ![alt_text](Image_2.PNG)
 
-To create a route:
+### Configuring Static Route
 
 1. In Google Cloud Platform Console, go to **[Routes](https://console.cloud.google.com/networking/routes)** > **Create Route**.
 1. Enter the parameters as shown in the following table and click **Create**.
@@ -129,7 +131,7 @@ To create a route:
 **Note:** Add ingress firewall rules to allow inbound network traffic as per your security
 policy.
 
-## Configuring Check Point Secrurity Gateway
+## Configuration - Check Point Secrurity Gateway
 
 To create an Interoperable Device for Cloud VPN on the Check Point SmartConsole:
 
@@ -193,15 +195,15 @@ to replace the IP addresses in the sample environment with your own IP addresses
 |TUN-INSIDE- CP|`169.54.0.2`|
 |CP Security Gateway ASN|`65002`|
 
-## Configuring Cloud VPN
+## Configuration - GCP
+
+With route based VPN both static and dynamic routing can be used. This example will use
+dynamic routing. [Cloud Router](https://cloud.google.com/router/docs/) is used to establish
+BGP sessions between the 2 peers.
 
 ### Configuring Cloud Router
 
-The Google Cloud Router dynamically exchange routes between your Virtual Private Cloud and on-premise networks with Border Gateway Protocol (BGP). For the initial release, Cloud Router supports BGP for Cloud VPN only. Cloud Router works with both legacy networks and sub-networks.
-
-Create a new Cloud router to configure GCP for Site to Site VPN connectivity.
-
-In Google Cloud Platform Console, select **Networking** > **[Cloud Routers](https://console.cloud.google.com/interconnect/routers)** > **Create Router**.
+Step 1: In Google Cloud Platform Console, select **Networking** > **[Cloud Routers](https://console.cloud.google.com/interconnect/routers)** > **Create Router**.
 
 Enter the parameters as shown in the following table and click **Create**.
 
@@ -215,9 +217,11 @@ Enter the parameters as shown in the following table and click **Create**.
 
 ![alt_text](Image_8.PNG)
 
-In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[VPN](https://console.cloud.google.com/interconnect/vpn)** >> **CREATE VPN CONNECTION**.
+### Configuring Cloud VPN
 
-**Google Compute Engine VPN gateway**
+Step 2: In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[VPN](https://console.cloud.google.com/interconnect/vpn)** >> **CREATE VPN CONNECTION**.
+
+Enter the parameters as shown in the following table for the Google Compute Engine VPN gateway:
 
 |Parameter|Value|Description|
 |---------|-----|-----------|
@@ -229,7 +233,7 @@ In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[
 
 ![alt_text](Image_9.PNG)
 
-**Tunnels**
+Step 3: Enter the parameters as shown in the following table for the tunnel:
 
 |Parameter|Value|Description|
 |---------|------|-----------|
@@ -244,7 +248,7 @@ In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[
 
 ![alt_text](Image_10.PNG)
 
-### BGP Sessions
+Step 4: Enter the parameters as shown in the following table for the BGP peering:
 
 |Parameter|Value|Description|
 |---------|-----|-----------|
@@ -259,7 +263,7 @@ Click **Save and Continue** to complete.
 
 **Note:** – Add ingress firewall rules to allow inbound network traffic as per your security policy.
 
-## Configuring Check Point Secrurity Gateway
+## Configuration - Check Point Secrurity Gateway
 
 Create an interoperable device for Cloud VPN on the Check Point SmartConsole.
 
