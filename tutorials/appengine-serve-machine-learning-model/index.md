@@ -184,7 +184,7 @@ below.
   `modelserve-predict` increments by 1, and each project is limited to 1000
   calls per minute with the configuration above.
 
-  You can manage quotes for individual projects on the
+  You can manage quotas for individual projects on the
   [Cloud Endpoints console][endpoints]. For more information on configuring the
   quota, see the [documentation][quota_docs].
 
