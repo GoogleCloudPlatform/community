@@ -81,7 +81,7 @@ exports.oauth2init = (req, res) => {
 ```
 
 ### Handling the authorization token
-The second step of 3LO is to receive the authorization code (via a _callback URL_) and store it for safekeeping. In this example, we store it in [Google Cloud Datastore][docs_datastore] and use the user's IP address to uniquely identify them.
+The second step of 3LO is to receive the authorization code (via a _callback URL_) and store it for safekeeping. In this example, we store it in a cookie on the user's machine.
 
 ```javascript
 exports.oauth2Callback = (req, res) => {
@@ -286,7 +286,6 @@ exports.listlabels = (req, res) => {
 [github_repo]: https://github.com/GoogleCloudPlatform/community
 [docs_setup]: https://cloud.google.com/nodejs/docs/setup
 [docs_regions]: https://cloud.google.com/compute/docs/regions-zones/#available
-[docs_datastore]: https://cloud.google.com/datastore/docs
 [docs_gcp_auth]: https://cloud.google.com/docs/authentication/
 [console_gmail]: https://console.cloud.google.com/start/api?id=gmail
 [console_credentials]: https://console.cloud.google.com/apis/credentials/oauthclient
