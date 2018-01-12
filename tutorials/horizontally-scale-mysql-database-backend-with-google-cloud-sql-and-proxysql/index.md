@@ -270,7 +270,7 @@ Note: The steps below set a simple list of rules that distribute all write traff
 	SAVE MYSQL SERVERS TO DISK;
 	```
 
-	Replace `[IP_ADDRESS_1]`, `[IP_ADDRESS_2]`, `[IP_ADDRESS]` with the ip addresses of read replica #1, read replica #2, and the master instance respectively. The weights are calculated as follows:
+	Replace `[IP_ADDRESS_1]`, `[IP_ADDRESS_2]`, `[IP_ADDRESS]` with the IP addresses of read replica #1, read replica #2, and the master instance respectively. The weights are calculated as follows:
 
 	```
 	P(Server # Receives the Query) = (Weight of Server #) / (Total Weight of the Host Group)
