@@ -6,7 +6,6 @@ tags: Compute Engine, Cloud VPN, Check Point secrurity gateway, firewall
 date_published: 2018-01-03
 ---
 
-
 This guide walks you through the process to configure the [Check Point secrurity gateway](https://www.checkpoint.com/products/next-generation-secure-web-gateway/)
 for integration with the [Google Cloud VPN][cloud_vpn]. This information is
 provided as an example only. Please note that this guide is not meant to be a
@@ -28,7 +27,7 @@ The equipment used in the creation of this guide is as follows:
 The topology outlined by this guide is a basic site-to-site IPsec VPN tunnel
 configuration using the referenced device:
 
-![Topology](Image_0.png)
+![Topology](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_0.png)
 
 # Before you begin
 
@@ -43,7 +42,7 @@ To use a Check Point Security Gateway with Cloud VPN make sure the following pre
 ## IPsec Parameters
 
 Below parameters and values are used in the Gateway’s IPSec configuration for the
-purpose of this guide. Cloud VPN supports extensive [list](https://cloud.google.com/vpn/docs/concepts/advanced#supported_ike_ciphers) of 
+purpose of this guide. Cloud VPN supports extensive [list](https://cloud.google.com/vpn/docs/concepts/advanced#supported_ike_ciphers) of
 ciphers that can be used per your security policies.
 
 |Parameter | Value|
@@ -73,11 +72,11 @@ to replace the IP addresses in the sample environment with your own IP addresses
 
 **Cloud VPN**
 
-|Name | Value|                             
------|------                                  
+|Name | Value|
+-----|------
 |Cloud VPN(external IP)|`35.195.227.26`|
 |VPC CIDR|`10.132.0.0/20`|
-                        
+
 **Check Point**
 
 |Name | Value|
@@ -110,7 +109,7 @@ To configure Cloud VPN:
 |Remote network IP ranges| `10.0.0.0/24`|The on-premise CIDR blocks connecting to GCP from the VPN gateway.|
 |Local IP ranges| `10.132.0.0/20`|The GCP IP ranges matching the selected subnet.|
 
-![alt_text](Image_2.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_2.PNG)
 
 ### Configuring Static Route
 
@@ -126,7 +125,7 @@ To configure Cloud VPN:
 |Next hop|`Specify the VPN tunnel.`| |
 |Next hop VPN tunnel|`gcp-to-cp-vpn-tunnel-1`| The Tunnel created.|
 
-![alt_text](Image_3.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_3.PNG)
 
 **Note:** Add ingress firewall rules to allow inbound network traffic as per your security
 policy.
@@ -141,7 +140,7 @@ To create an Interoperable Device for Cloud VPN on the Check Point SmartConsole:
 
 **Step 3**. Go to **General Properties** > **Topology** and manually add Google cloud IP addresses.
 
-![alt_text](Image_4.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_4.PNG)
 
 **Step 4**. Create a star community.
 
@@ -151,7 +150,7 @@ To create an Interoperable Device for Cloud VPN on the Check Point SmartConsole:
 4. In the **Center Gateways** area, click the plus sign to add a Check Point Security Gateway object for the center of the community.
 5. In the **Satellite Gateways** area, click the **plus** sign to add the GCP gateway object.
 
-![alt_text](Image_5.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_5.PNG)
 
 **Step 5**. Configure these ciphers for IKEv1.
 
@@ -159,14 +158,14 @@ Go to **Encryption** and change the Phase 1 and Phase 2 properties according wha
 
 **Note:** Make sure you select Perfect Forward Secrecy (Phase 2). This example refers to IKEv1. You can also use IKEv2 in this scenario.
 
-![alt_text](Image_6.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_6.PNG)
 
 **Step 6**. Go to the **Advanced** tab and modify the Renegotiation Time.
 
 * **IKE for Phase 1**: 610 minutes
 * **IKE for Phase 2**: 10,800 seconds
 
-![alt_text](Image_7.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_7.PNG)
 
 **Step 7**. Configure the Access Control Rule Base and Install policy.
 
@@ -179,13 +178,13 @@ to replace the IP addresses in the sample environment with your own IP addresses
 
 **Google Cloud Platform**
 
-|Name | Value|                             
------|------                                  
+|Name | Value|
+-----|------
 |GCP(external IP)|`35.195.227.26`|
 |VPC CIDR|`10.132.0.0/20`|
 |TUN-INSIDE GCP|`169.254.0.1`|
 |GCP-ASN|`65000`|
-                        
+
 **Check Point**
 
 |Name | Value|
@@ -215,7 +214,7 @@ BGP sessions between the 2 peers.
 |Region|`europe-west1`|The home region of the cloud router.Note: Make sure the cloud router is in the same region as the sub-networks it is connecting to.|
 |Google ASN|`65000`|The Autonomous System Number assigned to the cloud router. Use any unused private ASN (64512 - 65534, 4200000000 – 4294967294).|
 
-![alt_text](Image_8.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_8.PNG)
 
 ### Configuring Cloud VPN
 
@@ -231,7 +230,7 @@ BGP sessions between the 2 peers.
 |Region|`europe-west1`|The home region of the VPN gateway **Note**: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
 |IP address|`cloud-ip(35.195.227.26)`|The static public IP address used by the VPN gateway. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
 
-![alt_text](Image_9.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_9.PNG)
 
 **Step 3**: Enter the parameters as shown in the following table for the tunnel:
 
@@ -246,7 +245,7 @@ BGP sessions between the 2 peers.
 |Cloud Router|`gcp-to-cp-router`|Select the Cloud router created previously.|
 |BGP session| |BGP sessions enable your cloud network and on-premise networks to dynamically exchange routes|
 
-![alt_text](Image_10.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_10.PNG)
 
 **Step 4**: Enter the parameters as shown in the following table for the BGP peering:
 
@@ -259,7 +258,7 @@ BGP sessions between the 2 peers.
 
 Click **Save and Continue** to complete.
 
-![alt_text](Image_11.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_11.PNG)
 
 **Note:** – Add ingress firewall rules to allow inbound network traffic as per your security policy.
 
@@ -271,7 +270,7 @@ Create an interoperable device for Cloud VPN on the Check Point SmartConsole.
 
 **Step 2**. Configure the IP address associated with Cloud VPN peer (external IP).
 
-![alt_text](Image_12.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_12.PNG)
 
 **Step 3**. To force Route-based VPN to take priority, create a dummy (empty) group and assign it to the VPN domain.
 
@@ -280,11 +279,11 @@ Create an interoperable device for Cloud VPN on the Check Point SmartConsole.
 1. Click **New** > **Group** > **Simple Group**.
 1. Enter an **Object Name**, click **OK**. Do NOT assign any objects to this group.
 
-![alt_text](Image_13.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_13.PNG)
 
 **Step 4**. In `clish`, create a VPN Tunnel Interface (VTI).
 
-![alt_text](Image_14.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_14.PNG)
 
 Write the Remote peer name, **exactly** as it is written in the gateway object in SmartConsole.
 
@@ -311,9 +310,9 @@ Example:
 6. From **VPN Domain**, select **Manually Defined** > **Empty_Group**.
 
 
-![alt_text](Image_15.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_15.PNG)
 
-![alt_text](Image_16.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_16.PNG)
 
 **Step 6**. Create a star community.
 
@@ -323,7 +322,7 @@ Example:
 4. In the **Center Gateways** area, click the plus sign to add a Check Point Security Gateway object for the center of the community.
 5. In the **Satellite Gateways** area, click the plus sign to add the GCP gateway object.
 
-![alt_text](Image_17.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_17.PNG)
 
 **Step 7**. Configure these ciphers for IKEv2.
 
@@ -332,11 +331,11 @@ Go to **Encryption** and change the Phase 1 and Phase 2 properties according wha
 
 This example refers to IKEv2 specifically. You can also use IKEv1 in this scenario.
 
-![alt_text](Image_18.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_18.PNG)
 
 **Step 8**. Go to the **Advanced tab**. You can modify the more advanced settings for Phase 1 Phase 2 there.
 
-![alt_text](Image_19.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_19.PNG)
 
 **Step 9**. Setup for BGP Deployment.
 
@@ -372,7 +371,7 @@ Example:
 1. Open SmartConsole > **Global Properties** > **VPN** > **Advanced**.
 2. Select **Enable VPN Directional Match in VPN Column**.
 
-![alt_text](Image_20.PNG)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_20.PNG)
 
 **Note:** This is not relevant for a Policy Based scenario.
 
