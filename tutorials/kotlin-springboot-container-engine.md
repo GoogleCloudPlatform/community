@@ -1,6 +1,6 @@
 ---
 title: Run a Kotlin Spring Boot application on Google Kubernetes Engine
-description: Learn how to deploy a Kotlin Spring Boot application in containers using Google Kubernetes Engine.
+description: Learn how to deploy a Kotlin Spring Boot application in containers using Kubernetes Engine.
 author: hhariri
 tags: Kubernetes, Container Engine, Kotlin, Spring Boot, Docker
 date_published: 2018-01-05
@@ -18,7 +18,7 @@ expertise with container-based deployments.
 You will create a new Spring Boot application, and then you will learn how to:
 
 *   Create a Docker image file that will be used to build and run your app
-*   Deploy your app on Google Kubernetes Engine
+*   Deploy your app on Kubernetes Engine
 *   Scale and update your app using Kubernetes
 
 While the tutorial uses Kotlin 1.2 and Spring Boot 2 M7, other releases of Kotlin and Spring Boot should work
@@ -61,19 +61,19 @@ Perform the installations:
 
         gcloud components install kubectl
 
-4.  Install **JDK 8** if you do not already have it. 
+4.  Install [JDK 8 or higher](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) if you do not already have it. 
 
 ## Creating a new app and running it locally
 
 In this section, you will create a new Spring Boot app and make sure it runs. If
 you already have an app to deploy, you can use it instead.
 
-1. Use [start.spring.io](https://start.spring.io) to generate a Spring Boot application using Kotlin as the language, Gradle as the build system. Alternatively
-you can [download](https://github.com/jetbrains/gcp-samples) the sample application 
+1. Use [start.spring.io](https://start.spring.io) to generate a Spring Boot application using Kotlin as the language, Gradle as the build system. Alternatively,
+you can [download](https://github.com/jetbrains/gcp-samples) the sample application. 
 
-2. Download the generated project and save it to a local folder
+2. Download the generated project and save it to a local folder.
 
-3. Open the resulting project in your favourite IDE or editor and create a new source file named `MessageController.kt` with the following contents
+3. Open the resulting project in your favourite IDE or editor and create a new source file named `MessageController.kt` with the following contents:
 
 ```kotlin
 package com.jetbrains.demo
@@ -93,13 +93,13 @@ class MessageController {
 
 The package should match that of your group and artifact name. 
 
-4. Make sure you have the right dependencies in your Gradle file to import `RestController`
+4. Make sure you have the right dependencies in your Gradle file to import `RestController`:
 
 ```groovy
 	compile("org.springframework.boot:spring-boot-starter-web")
 ```
 
-5. Run the application from the command line using Gradle
+5. Run the application from the command line using Gradle:
 
     gradle bootRun
 
@@ -107,11 +107,7 @@ The package should match that of your group and artifact name.
 **Note:** The `gradle bootRun` is a quick way to build and run the application. Later on when creating the Docker image, you'll 
 need to first build the app using the Gradle `build` task and then run it.
 
-6. Open the browser and make sure your get a valid JSON response when accessing
-
-    http://localhost:8080/message
-    
-The result should be
+6. Open the browser and make sure your get a valid JSON response when accessing http://localhost:8080/message. The result should be:
 
 ```json
 {
@@ -126,13 +122,13 @@ The next step is to produce a Docker image that builds and runs your
 application in a Docker container. You will define this image using a
 Dockerfile.
 
-### Create a Dockerfile
+### Creating a Dockerfile
 
 Various considerations go into designing a good Docker image. The Dockerfile
 used by this tutorial builds a release and runs it with Alpine Linux.
 If you are experienced with Docker, you can customize your image.
 
-1.  Create a file called `Dockerfile` in your project directory. Copy the
+1.  Create a file called `Dockerfile` in your project directory and copy the
     following content into it. Alternately, you can
     [download](https://github.com/JetBrains/gcp-samples/blob/master/Dockerfile)
     the Dockerfile to study and customize.
@@ -147,7 +143,7 @@ If you are experienced with Docker, you can customize your image.
         ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/work/app.jar"]
 
 
-2.  Create a file called `.dockerignore` in your project directory. Copy the
+2.  Create a file called `.dockerignore` in your project directory and copy the
     following content into it. Alternately, you can
     [download](https://github.com/JetBrains/gcp-samples/blob/master/.dockerignore)
     the Dockerfile file to study and customize.
@@ -157,10 +153,13 @@ If you are experienced with Docker, you can customize your image.
         out
     
 
-The Dockerfile performs a series of steps. It creates a `work` folder where sources will be copied to and built from.
-It then copies the sources from the local file system (which should be your project folder) to the container. It sets the
-working directory to the `work` folder created and then runs the Gradle wrapper command (`gradlew`) to build the project. This wrapper
-automatically downloads Gradle and then builds the project. Once built, it then copies the output of the `jar` to the `work` folder
+The Dockerfile performs a series of steps. 
+
+1. It creates a `work` folder where sources will be copied to and built from.
+2. It then copies the sources from the local file system (which should be your project folder) to the container. 
+3. It sets the working directory to the `work` folder created and then runs the Gradle wrapper command (`gradlew`) to build the project. This wrapper
+automatically downloads Gradle and then builds the project. 
+4. Once built, it then copies the output of the `jar` to the `work` folder
 ready for execution when invoking `docker run`.
 
 ### Test the Dockerfile
@@ -182,10 +181,10 @@ Now you're ready to deploy your application to Kubernetes Engine!
 
 ### Build the production image
 
-To deploy the app, you will use the
+To deploy the app, you will use 
 [Google Cloud Container Build](https://cloud.google.com/container-builder/)
 service to build your Docker image in the cloud and store the resulting Docker
-image in your project in the
+image in your project in 
 [Google Cloud Container Registry](https://cloud.google.com/container-registry/).
 
 Execute the following command to run the build:
@@ -195,7 +194,7 @@ Execute the following command to run the build:
 Replace `${PROJECT_ID}` with the ID of your Google Cloud Platform project.
 The period at the end is required.
 
-After the build finishes, the image `gcr.io/${PROJECT_ID}/demo:v1` will be
+After the build finishes, the image `gcr.io/${PROJECT_ID}/demo:v1` is
 available. You can list the images you have built in your project using:
 
     gcloud container images list
@@ -225,8 +224,8 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
     to see the individual running VMs under the Compute Engine section. Note
     that once the cluster is running, you will be charged for the VM usage.
 
-1.  Configure the gcloud command-line tool to use your cluster by default, so
-    you don't have to specify it every time for the remaining gcloud commands.
+1.  Configure the `gcloud` command-line tool to use your cluster by default, so
+    you don't have to specify it every time for the remaining `gcloud` commands.
 
         gcloud config set container/cluster demo-cluster
 
@@ -240,7 +239,7 @@ front-end load balancer (which also provides a public IP address.)
 We'll assume that you built the image to `gcr.io/${PROJECT_ID}/demo:v1` and
 you've created the Kubernetes cluster as described above.
 
-1.  Create a deployment.
+1.  Create a deployment:
 
         kubectl run demo --image=gcr.io/${PROJECT_ID}/demo:v1 --port 8080
 
@@ -252,7 +251,7 @@ you've created the Kubernetes cluster as described above.
 
         kubectl get pods
 
-1.  Expose the application by creating a load balancer pointing at your pod.
+1.  Expose the application by creating a load balancer pointing at your pod:
 
         kubectl expose deployment demo --type=LoadBalancer --port 80 --target-port 8080
 
@@ -327,9 +326,9 @@ for more info.
 
 ## Clean up
 
-After you've finished this tutorial, you can clean up the resources you created
-on Google Cloud Platform so you won't be billed for them in the future. To
-clean up the resources, you can delete your Kubernetes Engine resources, or
+After you've finished this tutorial, clean up the resources you created
+on Google Cloud Platform so you won't be billed for them going forward. To
+clean, either delete your Kubernetes Engine resources, or
 delete the entire project.
 
 ### Deleting Kubernetes Engine resources
@@ -349,14 +348,14 @@ balancer and the Kubernetes Engine cluster.
     The forwarding rule will disappear when the load balancer is deleted.
 
 1.  Delete the cluster, which deletes the resources used by the cluster,
-    including virtual machines, disks, and network resources.
+    including virtual machines, disks, and network resources:
 
         gcloud container clusters delete demo-cluster
 
 ### Deleting the project
 
 Alternately, you can delete the project in its entirety. To do so using the
-gcloud tool, run:
+`gcloud` tool, run:
 
     gcloud projects delete ${PROJECT_ID}
 
