@@ -114,31 +114,31 @@ Repository, courtesy of
 
 From the Cloud Shell:  
   
-	kubectl apply -f kuard-app.yaml
+		kubectl apply -f kuard-app.yaml
 
-	```
-	service "kuard" created
-	deployment "kuard" created
+		```
+		service "kuard" created
+		deployment "kuard" created
 
 Verify that your deployment is running 3 replica pods and the service is exposed.
 
-	kubectl get deployments kuard
+		kubectl get deployments kuard
 
-	NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-	kuard     3         3         3            3           1m
+		NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+		kuard     3         3         3            3           1m
 
-	kubectl get pods
+		kubectl get pods
 
-	NAME                     READY     STATUS    RESTARTS   AGE
-	kuard-2740446302-03p3b   1/1       Running   0          1m
-	kuard-2740446302-6k65c   1/1       Running   0          1m
-	kuard-2740446302-wbj3g   1/1       Running   0          1m
+		NAME                     READY     STATUS    RESTARTS   AGE
+		kuard-2740446302-03p3b   1/1       Running   0          1m
+		kuard-2740446302-6k65c   1/1       Running   0          1m
+		kuard-2740446302-wbj3g   1/1       Running   0          1m
 
-	kubectl get service kuard
+		kubectl get service kuard
 
-	NAME      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
-	kuard     ClusterIP   10.7.253.136   <none>        80/TCP    8s
-	```
+		NAME      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+		kuard     ClusterIP   10.7.253.136   <none>        80/TCP    8s
+		```
 
 # Deploy a default backend for Ingress
 
