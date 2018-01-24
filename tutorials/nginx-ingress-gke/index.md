@@ -8,11 +8,11 @@ In Kubernetes,
 [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
 allows external users and client applications access to HTTP services.  Ingress
 consists of two components. 
-_[Ingress Resource_](https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource)
+[Ingress Resource](https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource)
 is a collection of rules for the inbound traffic to reach services.  These are
 Layer 7 (L7) rules that allow hostnames (and optionally paths) to be directed to
 specific services in Kubernetes.  The second component is the
-_[Ingress Controller_](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-controllers)
+[Ingress Controller](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-controllers)
 which acts upon the rules set by the Ingress Resource, typically via an HTTP or
 L7 load balancer.  It is vital that both pieces are properly configured to route
 traffic from an  outside client to a Kubernetes service.  
@@ -102,9 +102,8 @@ application with the following commands:
 1. From the Cloud Shell, clone the following repo which contains all the
 files for this demo.  
   
-   `git clone
-[https://github.com/ameer00/nginx-ingress-gke](https://github.com/ameer00/nginx-ingress-gke)  
-   cd nginx-ingress-gke`
+	git clone [https://github.com/ameer00/nginx-ingress-gke](https://github.com/ameer00/nginx-ingress-gke)  
+   	cd nginx-ingress-gke`
 
 # Deploy an application in GKE
 
@@ -115,31 +114,31 @@ Repository, courtesy of
 
 From the Cloud Shell:  
   
-	`kubectl apply -f kuard-app.yaml`
+	kubectl apply -f kuard-app.yaml
 
-```
-service "kuard" created
-deployment "kuard" created
+	```
+	service "kuard" created
+	deployment "kuard" created
 
 Verify that your deployment is running 3 replica pods and the service is exposed.
 
-kubectl get deployments kuard
+	kubectl get deployments kuard
 
-NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-kuard     3         3         3            3           1m
+	NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+	kuard     3         3         3            3           1m
 
-kubectl get pods
+	kubectl get pods
 
-NAME                     READY     STATUS    RESTARTS   AGE
-kuard-2740446302-03p3b   1/1       Running   0          1m
-kuard-2740446302-6k65c   1/1       Running   0          1m
-kuard-2740446302-wbj3g   1/1       Running   0          1m
+	NAME                     READY     STATUS    RESTARTS   AGE
+	kuard-2740446302-03p3b   1/1       Running   0          1m
+	kuard-2740446302-6k65c   1/1       Running   0          1m
+	kuard-2740446302-wbj3g   1/1       Running   0          1m
 
-kubectl get service kuard
+	kubectl get service kuard
 
-NAME      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
-kuard     ClusterIP   10.7.253.136   <none>        80/TCP    8s
-```
+	NAME      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+	kuard     ClusterIP   10.7.253.136   <none>        80/TCP    8s
+	```
 
 # Deploy a default backend for Ingress
 
@@ -153,11 +152,11 @@ Resource). The default backend exposes two URLs:
 
 In Cloud Shell, deploy the default backend deployment and service.
 ```
-kubectl apply -f nginx-default-backend.yaml
+	kubectl apply -f nginx-default-backend.yaml
 
 You can now see that your default backend services and deployments are configured in the cluster:
 
-kubectl get deployment nginx-default-backend
+	kubectl get deployment nginx-default-backend
 
 NAME                    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 nginx-default-backend   1         1         1            1           29s
