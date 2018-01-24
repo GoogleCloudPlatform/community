@@ -100,7 +100,7 @@ application with the following commands:
 files for this demo:  
   
 	git clone https://github.com/ameer00/nginx-ingress-gke 
-   	cd nginx-ingress-gke
+	cd nginx-ingress-gke
 
 # Deploy an application in GKE
 
