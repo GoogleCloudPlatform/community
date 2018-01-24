@@ -103,7 +103,7 @@ application with the following commands:
 files for this demo.  
   
 	git clone [https://github.com/ameer00/nginx-ingress-gke](https://github.com/ameer00/nginx-ingress-gke)  
-   	cd nginx-ingress-gke`
+   	cd nginx-ingress-gke
 
 # Deploy an application in GKE
 
@@ -114,31 +114,29 @@ Repository, courtesy of
 
 From the Cloud Shell:  
   
-		kubectl apply -f kuard-app.yaml
+	kubectl apply -f kuard-app.yaml
 
-		```
-		service "kuard" created
-		deployment "kuard" created
+	service "kuard" created
+	deployment "kuard" created
 
 Verify that your deployment is running 3 replica pods and the service is exposed.
 
-		kubectl get deployments kuard
+	kubectl get deployments kuard
 
-		NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-		kuard     3         3         3            3           1m
+	NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+	kuard     3         3         3            3           1m
 
-		kubectl get pods
+	kubectl get pods
 
-		NAME                     READY     STATUS    RESTARTS   AGE
-		kuard-2740446302-03p3b   1/1       Running   0          1m
-		kuard-2740446302-6k65c   1/1       Running   0          1m
-		kuard-2740446302-wbj3g   1/1       Running   0          1m
+	NAME                     READY     STATUS    RESTARTS   AGE
+	kuard-2740446302-03p3b   1/1       Running   0          1m
+	kuard-2740446302-6k65c   1/1       Running   0          1m
+	kuard-2740446302-wbj3g   1/1       Running   0          1m
 
-		kubectl get service kuard
+	kubectl get service kuard
 
-		NAME      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
-		kuard     ClusterIP   10.7.253.136   <none>        80/TCP    8s
-		```
+	NAME      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+	kuard     ClusterIP   10.7.253.136   <none>        80/TCP    8s
 
 # Deploy a default backend for Ingress
 
@@ -151,100 +149,94 @@ Resource). The default backend exposes two URLs:
 -  `/` that returns 404
 
 In Cloud Shell, deploy the default backend deployment and service.
-```
+
 	kubectl apply -f nginx-default-backend.yaml
 
 You can now see that your default backend services and deployments are configured in the cluster:
 
 	kubectl get deployment nginx-default-backend
 
-NAME                    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-nginx-default-backend   1         1         1            1           29s
+	NAME                    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+	nginx-default-backend   1         1         1            1           29s
 
-kubectl get service nginx-default-backend
+	kubectl get service nginx-default-backend
 
-NAME                    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
-nginx-default-backend   ClusterIP   10.7.250.191   <none>        80/TCP    40s
-```
+	NAME                    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+	nginx-default-backend   ClusterIP   10.7.250.191   <none>        80/TCP    40s
 
 Looking at the YAML file spec, you can see it is a single replica deployment of
 an nginx default backend container from the Google Cloud Repository.
-```
-cat nginx-default-backend
-```
+
+	cat nginx-default-backend
 
 You will see the following:
-```
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: nginx-default-backend
-    spec:
-      terminationGracePeriodSeconds: 60
-      containers:
-      - name: default-http-backend
-        image: gcr.io/google_containers/defaultbackend:1.0
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
+
+	spec:
+	  replicas: 1
+	  template:
+	    metadata:
+	      labels:
+		app: nginx-default-backend
+	    spec:
+	      terminationGracePeriodSeconds: 60
+	      containers:
+	      - name: default-http-backend
+		image: gcr.io/google_containers/defaultbackend:1.0
+		livenessProbe:
+		  httpGet:
+		    path: /healthz
+		    port: 8080
+		    scheme: HTTP
+		  initialDelaySeconds: 30
+		  timeoutSeconds: 5
 
 # Configure an Ingress Resource
 
 An Ingress Resource object is a collection of L7 rules for routing inbound traffic to Kubernetes services.  Multiple rules can be defined in one Ingress Resource or they can be split up into multiple Ingress Resource manifests. The Ingress Resource also determines which controller to utilize to serve traffic.  This can be set with an annotation, kubernetes.io/ingress.class, in the metadata section of the Ingress Resource.  For the nginx controller, use the value nginx as shown below:
 
-	 annotations:
-          kubernetes.io/ingress.class: nginx
-```
+	 annotations: kubernetes.io/ingress.class: nginx
+
 
 On Kubernetes Engine, if no annotation is defined under the metadata, the
 Ingress Resource uses the GCP GCLB L7 load balancer to serve traffic.  This
 method can also be forced by setting  the annotation's value to `gce`.
-```
-annotations:
-    	    kubernetes.io/ingress.class: gce
+
+	annotations: kubernetes.io/ingress.class: gce
 
 You can verify the annotation by viewing the ingress-resource.yaml file and check the annotations under the metadata section as shown below.
 
-cat ingress-resource.yaml
-```
+	cat ingress-resource.yaml
 
 You will see:
-```
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: ingress-resource
-  annotations:
-    kubernetes.io/ingress.class: nginx
-spec:
-  rules:
-  - http:
-      paths:
-      - path: /
-        backend:
-          serviceName: kuard
-          servicePort: 80
+
+	apiVersion: extensions/v1beta1
+	kind: Ingress
+	metadata:
+	  name: ingress-resource
+	  annotations:
+	    kubernetes.io/ingress.class: nginx
+	spec:
+	  rules:
+	  - http:
+	      paths:
+	      - path: /
+		backend:
+		  serviceName: kuard
+		  servicePort: 80
 
 The kind: Ingress dictates it is an Ingress Resource object.  This Ingress Resource defines an inbound L7 rule for path / to service kuard on port 80.
-```
 
 From the Cloud Shell.  
   
-	`kubectl apply -f ingress-resource.yaml`
+	kubectl apply -f ingress-resource.yaml
 
 Verify the Ingress Resource has been created.  Please note that the IP address
 for the Ingress Resource has not yet been defined.  
   
-`kubectl get ingress ingress-resource  
+	kubectl get ingress ingress-resource  
   
-NAME               HOSTS     ADDRESS   PORTS     AGE  
-ingress-resource   *                   80        `
+	NAME               HOSTS     ADDRESS   PORTS     AGE  
+	ingress-resource   *                   80        `
 
 Now that we have an Ingress Resource defined, we need an Ingress Controller to
 act upon the rules as shown below.
@@ -270,27 +262,25 @@ solution on GKE.
 
 From the Cloud Shell, let us deploy an Nginx controller and service.  
   
-`kubectl apply -f ingress-nginx.yaml`
+	kubectl apply -f ingress-nginx.yaml
 
-```
-
-service "ingress-nginx" created
-deployment "ingress-nginx" created
+	service "ingress-nginx" created
+	deployment "ingress-nginx" created
 
 Wait a few moments while the GCP L4 Load Balancer gets deployed.  Confirm that the ingress-nginx service has been deployed and that you have an external IP address associated with the service (recall we configured the ingress-nginx with ServiceType: LoadBalancer)
 
-kubectl get service ingress-nginx
+	kubectl get service ingress-nginx
 
-NAME            TYPE           CLUSTER-IP    EXTERNAL-IP    PORT(S)                      AGE
-ingress-nginx   LoadBalancer   10.7.252.85   35.224.38.39   80:30723/TCP,443:32122/TCP   2m
-```
+	NAME            TYPE           CLUSTER-IP    EXTERNAL-IP    PORT(S)                      AGE
+	ingress-nginx   LoadBalancer   10.7.252.85   35.224.38.39   80:30723/TCP,443:32122/TCP   2m
 
 Also check to see that the Ingress Resource now has an IP address, which is
 different from the Ingress Controller EXTERNAL IP address shown above.  
   
-`kubectl get ingress  
-NAME               HOSTS     ADDRESS          PORTS     AGE  
-ingress-resource   *         35.224.254.160   80        12m`
+	kubectl get ingress  
+
+	NAME               HOSTS     ADDRESS          PORTS     AGE  
+	ingress-resource   *         35.224.254.160   80        12m`
 
 # Test ingress and default backend
 
@@ -299,10 +289,11 @@ address of the nginx ingress controller (from the output above).  To check if
 the _default-backend_ service is working properly, access any path (other than
 the default path / defined in the ingress resource) and ensure you receive a 404
 message, for example,
-_[http://[external-ip-of-ingress-controller]/test_](http://[external-ip-of-ingress-controller]/test).
- You should get the following message  
+	[http://[external-ip-of-ingress-controller]/test_](http://[external-ip-of-ingress-controller]/test)
+
+You should get the following message  
   
-`404 page not found`  
+	404 page not found 
 
 ![image](insert_image_url_here)
 
@@ -310,63 +301,54 @@ _[http://[external-ip-of-ingress-controller]/test_](http://[external-ip-of-ingre
 
 From the Cloud Shell.  
   
-`kubectl delete -f ingress-resource.yaml `
+	kubectl delete -f ingress-resource.yaml
 
-```
+	ingress "demo-ingress" deleted
 
-ingress "demo-ingress" deleted
+	kubectl delete -f ingress-nginx.yaml
 
-kubectl delete -f ingress-nginx.yaml
+	service "ingress-nginx" deleted
+	deployment "ingress-nginx" deleted
 
-service "ingress-nginx" deleted
-deployment "ingress-nginx" deleted
+	kubectl delete -f kuard-app.yaml
 
-kubectl delete -f kuard-app.yaml
+	service "kuard" deleted
+	deployment "kuard" deleted
 
-service "kuard" deleted
-deployment "kuard" deleted
+	kubectl delete -f nginx-default-backend.yaml
 
-kubectl delete -f nginx-default-backend.yaml
-
-service "nginx-default-backend" deleted
-deployment "nginx-default-backend" deleted
-```
+	service "nginx-default-backend" deleted
+	deployment "nginx-default-backend" deleted
 
 Check no deployments, pods, or ingresses exist on the cluster.  
   
-`kubectl get deployments  
-`
+	kubectl get deployments  
 
-```
-No resources found.
+	No resources found.
 
-kubectl get pods
+	kubectl get pods
 
-No resources found.
+	No resources found.
 
-kubectl get ingress
+	kubectl get ingress
 
-No resources found.
-```
+	No resources found.
 
 Delete the GKE Cluster.  
   
-`gcloud container clusters delete nginx-tutorial  
-`
+	gcloud container clusters delete nginx-tutorial  
 
-```
-The following clusters will be deleted.
- - [nginx-tutorial] in [us-central1-f]
+	The following clusters will be deleted.
+	 - [nginx-tutorial] in [us-central1-f]
 
-Do you want to continue (Y/n)?  y
+	Do you want to continue (Y/n)?  y
 
-Deleting cluster nginx-tutorial...done.
-Deleted [https://container.googleapis.com/v1/projects/ameer-1/zones/us-central1-f/clusters/nginx-tutorial].
+	Deleting cluster nginx-tutorial...done.
+	Deleted [https://container.googleapis.com/v1/projects/ameer-1/zones/us-central1-f/clusters/nginx-tutorial].
 
 To delete the git repo, simply remove the directory.  
-```
 
 From the Cloud Shell  
   
-`cd ..  
-rm -rf nginx-ingress-gke/`
+	cd ..  
+	rm -rf nginx-ingress-gke/`
