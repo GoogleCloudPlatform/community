@@ -76,10 +76,10 @@ project.
    [GO TO THE PROJECTS PAGE  
 ](https://console.cloud.google.com/project)
 1. Enable billing for your project.  
-   [ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
+	[ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
 
 1. Enable the Google Kubernetes Engine (GKE) API
-   [ENABLE APIs](https://console.cloud.google.com/flows/enableapi?apiid=container,cloudresourcemanager.googleapis.com)
+	[ENABLE APIs](https://console.cloud.google.com/flows/enableapi?apiid=container,cloudresourcemanager.googleapis.com)
 
 # Set up your environment
 
@@ -89,7 +89,7 @@ complete the tutorial.
 ## Start a Cloud Shell instance and create a Kubernetes Engine cluster
 
 1. You'll run all the terminal commands in this tutorial from Cloud Shell.
-   [OPEN CLOUD SHELL](https://console.cloud.google.com/?cloudshell=true)
+	[OPEN CLOUD SHELL](https://console.cloud.google.com/?cloudshell=true)
 
 1. Create a Kubernetes Engine cluster to deploy Nginx and the sample
 application with the following commands:  
