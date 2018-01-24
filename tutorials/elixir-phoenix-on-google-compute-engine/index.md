@@ -9,7 +9,7 @@ date_published: 2017-11-01
 This tutorial helps you get started deploying your
 [Elixir](http://elixir-lang.org/) app using the
 [Phoenix](http://phoenixframework.org/) Framework to
-[Google Compute Engine](https://cloud.google.com/container-engine/), taking
+[Google Compute Engine](https://cloud.google.com/kubernetes-engine/), taking
 advantage of Google's deep expertise with scalable infrastructure.
 
 In this tutorial, you will:
