@@ -71,11 +71,10 @@ generate a cost estimate based on your projected usage.
 
 # Before You Begin
 
-1. You'll need a Google Cloud Platform (GCP) project. Select or create a GCP
-project.  
-   [GO TO THE PROJECTS PAGE  
-](https://console.cloud.google.com/project)
-1. Enable billing for your project.  
+1. You'll need a Google Cloud Platform (GCP) project. Select or create a GCP project.  
+   [GO TO THE PROJECTS PAGE](https://console.cloud.google.com/project)
+   
+1. Enable billing for your project.
 	[ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
 
 1. Enable the Google Kubernetes Engine (GKE) API
