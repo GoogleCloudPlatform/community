@@ -268,8 +268,8 @@ Wait a few moments while the GCP L4 Load Balancer gets deployed.  Confirm that t
 
 	kubectl get service ingress-nginx
 
-	NAME            TYPE           CLUSTER-IP    EXTERNAL-IP    PORT(S)                      AGE
-	ingress-nginx   LoadBalancer   10.7.252.85   35.224.38.39   80:30723/TCP,443:32122/TCP   2m
+	NAME            TYPE           CLUSTER-IP    EXTERNAL-IP      PORT(S)                      AGE
+	ingress-nginx   LoadBalancer   10.7.252.85   35.188.177.209   80:30723/TCP,443:32122/TCP   2m
 
 Also check to see that the Ingress Resource now has an IP address, which is
 different from the Ingress Controller EXTERNAL IP address shown above.  
