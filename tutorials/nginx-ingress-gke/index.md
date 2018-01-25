@@ -97,8 +97,8 @@ application with the following commands:
         gcloud container clusters create nginx-tutorial --machine-type=n1-standard-1 --num-nodes=2
         
 1. From the Cloud Shell, clone the following repo which contains all the
-files for this demo:  
-  
+files for this demo:
+
 	git clone https ://github.com/ameer00/nginx-ingress-gke
 	cd nginx-ingress-gke
 
