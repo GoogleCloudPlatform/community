@@ -35,7 +35,7 @@ Nginx is a popular choice for an ingress controller for a variety of features:
 
 The following diagram shows the architecture described above:
 
-![image](insert_image_url_here)
+![image](https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Nginx%20Ingress%20on%20GCP%20-%20Fig%202.png)
 
 This tutorial illustrates how to set up a
 [deployment in Kubernetes](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
