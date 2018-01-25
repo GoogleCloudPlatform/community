@@ -238,7 +238,7 @@ for the Ingress Resource has not yet been defined.
 Now that we have an Ingress Resource defined, we need an Ingress Controller to
 act upon the rules as shown below.
 
-![image](insert_image_url_here)
+![image](https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Nginx%20Ingress%20on%20GCP%20-%20Fig%201.png)
 
 # Deploying the nginx Ingress Controller
 
@@ -255,7 +255,7 @@ solution on GKE.
 
 ## Nginx Ingress Controller on GKE
 
-![image](insert_image_url_here)
+![image](https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Nginx%20Ingress%20on%20GCP%20-%20Fig%202.png)
 
 From the Cloud Shell, let us deploy an Nginx controller and service.  
   
@@ -292,7 +292,7 @@ You should get the following message
   
 	404 page not found 
 
-![image](insert_image_url_here)
+![image](https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Kuard-ingress.png)
 
 # Clean Up
 
