@@ -282,17 +282,17 @@ different from the Ingress Controller EXTERNAL IP address shown above.
 # Test ingress and default backend
 
 We should now be able to access the web application by going to the EXTERNAL-IP
-address of the nginx ingress controller (from the output above).  To check if
-the _default-backend_ service is working properly, access any path (other than
+address of the nginx ingress controller (from the output above).  
+
+![image](https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Kuard-ingress.png)
+
+To check if the _default-backend_ service is working properly, access any path (other than
 the default path / defined in the ingress resource) and ensure you receive a 404
-message, for example,
-	[http://[external-ip-of-ingress-controller]/test_](http://[external-ip-of-ingress-controller]/test)
+message, for example, http://external-ip-of-ingress-controller]/test
 
 You should get the following message  
   
 	404 page not found 
-
-![image](https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Kuard-ingress.png)
 
 # Clean Up
 
