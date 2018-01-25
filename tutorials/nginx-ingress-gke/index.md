@@ -348,4 +348,4 @@ To delete the git repo, simply remove the directory.
 From the Cloud Shell  
   
 	cd ..  
-	rm -rf nginx-ingress-gke/`
+	rm -rf nginx-ingress-gke/
