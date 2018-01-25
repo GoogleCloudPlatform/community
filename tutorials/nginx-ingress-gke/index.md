@@ -99,7 +99,7 @@ application with the following commands:
 1. From the Cloud Shell, clone the following repo which contains all the
 files for this demo:
     
-    	git clone https://github.com/ameer00/nginx-ingress-gke 
+    	git clone https://github.com/ameer00/community/tree/master/tutorials/nginx-ingress-gke 
     	cd nginx-ingress-gke
 
 # Deploy an application in GKE
