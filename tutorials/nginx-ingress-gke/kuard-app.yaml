@@ -1,0 +1,64 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    run: kuard
+  name: kuard
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    run: kuard
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: 2017-11-14T15:57:24Z
+  generation: 1
+  labels:
+    run: kuard
+  name: kuard
+  namespace: default
+  resourceVersion: "1366481"
+  selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/app1
+  uid: 81bec24a-c954-11e7-abab-42010a8a00b4
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: kuard
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: kuard
+    spec:
+      containers:
+      - image: gcr.io/kuar-demo/kuard-amd64:1
+        imagePullPolicy: IfNotPresent
+        name: kuard
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - effect: NoExecute
+        key: node.alpha.kubernetes.io/notReady
+        operator: Exists
+        tolerationSeconds: 60
+      - effect: NoExecute
+        key: node.alpha.kubernetes.io/unreachable
+        operator: Exists
+        tolerationSeconds: 60
