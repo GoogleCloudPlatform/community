@@ -164,7 +164,7 @@ You can now see that your default backend services and deployments are configure
 Looking at the YAML file spec, you can see it is a single replica deployment of
 an nginx default backend container from the Google Cloud Repository.
 
-	cat nginx-default-backend
+	cat nginx-default-backend.yaml
 
 You will see the following:
 
