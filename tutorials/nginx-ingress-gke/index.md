@@ -288,7 +288,9 @@ address of the nginx ingress controller (from the output above).
 
 To check if the _default-backend_ service is working properly, access any path (other than
 the default path / defined in the ingress resource) and ensure you receive a 404
-message, for example, http://external-ip-of-ingress-controller]/test
+message, for example, 
+
+	http://external-ip-of-ingress-controller]/test
 
 You should get the following message  
   
