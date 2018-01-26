@@ -22,7 +22,7 @@ You will create a new Spring Boot application, and then you will learn how to:
 *   Scale and update your app using Kubernetes
 
 While the tutorial uses Kotlin 1.2 and Spring Boot 2 M7, other releases of Kotlin and Spring Boot should work
-without any modifications (other than version numbers in Gradle files). This tutorial does assume you're familiar 
+without any modifications (other than version numbers in Gradle files). This tutorial does assume you're familiar
 with Spring Boot and creating web applications. For simplicity the tutorial responds with JSON to a specific HTTP request, but can
 be built-on to connect to other Google services and/or databases.
 
@@ -61,61 +61,59 @@ Perform the installations:
 
         gcloud components install kubectl
 
-4.  Install [JDK 8 or higher](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) if you do not already have it. 
+4.  Install [JDK 8 or higher](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) if you do not already have it.
 
 ## Creating a new app and running it locally
 
 In this section, you will create a new Spring Boot app and make sure it runs. If
 you already have an app to deploy, you can use it instead.
 
-1. Use [start.spring.io](https://start.spring.io) to generate a Spring Boot application using Kotlin as the language, Gradle as the build system. Alternatively,
-you can [download](https://github.com/jetbrains/gcp-samples) the sample application. 
+1.  Use [start.spring.io](https://start.spring.io) to generate a Spring Boot
+    application using Kotlin as the language, Gradle as the build system.
+    Alternatively, you can [download](https://github.com/jetbrains/gcp-samples)
+    the sample application.
 
-2. Download the generated project and save it to a local folder.
+2.  Download the generated project and save it to a local folder.
 
-3. Open the resulting project in your favourite IDE or editor and create a new source file named `MessageController.kt` with the following contents:
+3.  Open the resulting project in your favourite IDE or editor and create a new
+    source file named `MessageController.kt` with the following contents:
 
-```kotlin
-package com.jetbrains.demo
+        package com.jetbrains.demo
 
-import org.springframework.web.bind.annotation.*
+        import org.springframework.web.bind.annotation.*
 
-data class Message(val text: String, val priority: String)
+        data class Message(val text: String, val priority: String)
 
-@RestController
-class MessageController {
-    @RequestMapping("/message")
-    fun message(): Message {
-        return Message("Hello from Google Cloud", "High")
-    }
-}
-```
+        @RestController
+        class MessageController {
+            @RequestMapping("/message")
+            fun message(): Message {
+                return Message("Hello from Google Cloud", "High")
+            }
+        }
 
-The package should match that of your group and artifact name. 
+The package should match that of your group and artifact name.
 
-4. Make sure you have the right dependencies in your Gradle file to import `RestController`:
+4.  Make sure you have the right dependencies in your Gradle file to import `RestController`:
 
-```groovy
-	compile("org.springframework.boot:spring-boot-starter-web")
-```
+        compile("org.springframework.boot:spring-boot-starter-web")
 
-5. Run the application from the command line using Gradle:
+5.  Run the application from the command line using Gradle:
 
-    gradle bootRun
+        gradle bootRun
 
+    **Note:** The `gradle bootRun` is a quick way to build and run the
+    application. Later on when creating the Docker image, you'll need to first
+    build the app using the Gradle `build` task and then run it.
 
-**Note:** The `gradle bootRun` is a quick way to build and run the application. Later on when creating the Docker image, you'll 
-need to first build the app using the Gradle `build` task and then run it.
+6.  Open the browser and make sure your get a valid JSON response when accessing
+    http://localhost:8080/message. The result should be:
 
-6. Open the browser and make sure your get a valid JSON response when accessing http://localhost:8080/message. The result should be:
+        {
+            "text": "Hello from Google Cloud",
+            "priority": "High"
+        }
 
-```json
-{
-"text": "Hello from Google Cloud",
-"priority": "High"
-}
-```    
-    
 ## Dockerizing your application
 
 The next step is to produce a Docker image that builds and runs your
@@ -136,7 +134,7 @@ If you are experienced with Docker, you can customize your image.
         FROM openjdk:8-jdk-alpine
         VOLUME /tmp
         RUN mkdir /work
-        COPY . /work 
+        COPY . /work
         WORKDIR /work
         RUN /work/gradlew build
         RUN mv /work/build/libs/*.jar /work/app.jar
@@ -151,14 +149,14 @@ If you are experienced with Docker, you can customize your image.
         .gradle
         build
         out
-    
 
-The Dockerfile performs a series of steps. 
+
+The Dockerfile performs a series of steps.
 
 1. It creates a `work` folder where sources will be copied to and built from.
-2. It then copies the sources from the local file system (which should be your project folder) to the container. 
+2. It then copies the sources from the local file system (which should be your project folder) to the container.
 3. It sets the working directory to the `work` folder created and then runs the Gradle wrapper command (`gradlew`) to build the project. This wrapper
-automatically downloads Gradle and then builds the project. 
+automatically downloads Gradle and then builds the project.
 4. Once built, it then copies the output of the `jar` to the `work` folder
 ready for execution when invoking `docker run`.
 
@@ -181,10 +179,10 @@ Now you're ready to deploy your application to Kubernetes Engine!
 
 ### Build the production image
 
-To deploy the app, you will use 
+To deploy the app, you will use
 [Google Cloud Container Build](https://cloud.google.com/container-builder/)
 service to build your Docker image in the cloud and store the resulting Docker
-image in your project in 
+image in your project in
 [Google Cloud Container Registry](https://cloud.google.com/container-registry/).
 
 Execute the following command to run the build:
