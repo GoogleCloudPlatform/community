@@ -8,7 +8,7 @@ date_published: 2017-06-19
 
 Dan Isla | Google Cloud Solution Architect | Google
 
-This tutorial demonstrates how to create and manage projects on Google Cloud Platform with Terraform. With Terraform, many of your resources such as projects, IAM policies, networks, Compute Engine instances, and Container Engine clusters can be managed, versioned, and easily recreated for your organization or teams. The state that Terraform generates is saved to Google Cloud Storage for persistence.
+This tutorial demonstrates how to create and manage projects on Google Cloud Platform with Terraform. With Terraform, many of your resources such as projects, IAM policies, networks, Compute Engine instances, and Kubernetes Engine clusters can be managed, versioned, and easily recreated for your organization or teams. The state that Terraform generates is saved to Google Cloud Storage for persistence.
 
 ## Objectives
 
