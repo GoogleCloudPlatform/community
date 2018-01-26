@@ -17,17 +17,19 @@ In this tutorial, you create a new Spring Boot application, and then learn how t
 *   Deploy your app to Google Compute Engine instances
 *   Set up load balancing and autoscaling for your app
 
-While the tutorial uses Kotlin 1.2 and Spring Boot 2 M7, other releases of Kotlin and Spring Boot should work
-without any modifications (other than version numbers in Gradle files).
+While the tutorial uses Kotlin 1.2 and Spring Boot 2 M7, other releases of
+Kotlin and Spring Boot should work without any modifications (other than version
+numbers in Gradle files).
 
-This tutorial assumes that you are familiar with Spring Boot and with creating web applications. For simplicity,
-the tutorial responds with JSON to a specific HTTP request, but can be expanded to connect to other Google
-services and/or databases.
+This tutorial assumes that you are familiar with Spring Boot and with creating
+web applications. For simplicity, the tutorial responds with JSON to a specific
+HTTP request, but can be expanded to connect to other Google services and/or
+databases.
 
 ## Before you begin
 
-Before running this tutorial, you must set up a Google Cloud Platform (GCP) project,
-install Docker, and install the Google Cloud SDK.
+Before running this tutorial, you must set up a Google Cloud Platform (GCP)
+project, install Docker, and install the Google Cloud SDK.
 
 You can create a GCP project for your Spring Boot application. You can also use
 an existing project.
@@ -53,57 +55,58 @@ Next, complete the following installations:
     [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK. Use
     your project's ID to set the default project for the `gcloud` command-line tool.
 
-3.  Install [JDK 8 or higher](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) if you do not already have it. 
+3.  Install [JDK 8 or higher](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) if you do not already have it.
 
 ## Creating a new Spring Boot app and running it locally
 
 In this section, you create a new Spring Boot app and make sure it runs. If
 you already have an app to deploy, you can use it instead.
 
-1. Use [start.spring.io](https://start.spring.io) to generate a Spring Boot application using the Kotlin language and the Gradle build system. Alternatively, you can [download the sample application](https://github.com/jetbrains/gcp-samples). 
+1.  Use [start.spring.io](https://start.spring.io) to generate a Spring Boot
+        application using the Kotlin language and the Gradle build system.
+        Alternatively, you can [download the sample application](https://github.com/jetbrains/gcp-samples).
 
-2. Download the generated project and save it to a local folder.
+2.  Download the generated project and save it to a local folder.
 
-3. Open the project in your an IDE or editor. Create a new source file named `MessageController.kt` with the following content:
+3.  Open the project in your an IDE or editor. Create a new source file named
+    `MessageController.kt` with the following content:
 
-```kotlin
-package com.jetbrains.demo
+        package com.jetbrains.demo
 
-import org.springframework.web.bind.annotation.*
+        import org.springframework.web.bind.annotation.*
 
-data class Message(val text: String, val priority: String)
+        data class Message(val text: String, val priority: String)
 
-@RestController
-class MessageController {
-    @RequestMapping("/message")
-    fun message(): Message {
-        return Message("Hello from Google Cloud", "High")
-    }
-}
-```
+        @RestController
+        class MessageController {
+            @RequestMapping("/message")
+            fun message(): Message {
+                return Message("Hello from Google Cloud", "High")
+            }
+        }
 
-The package should match that of your group and artifact name. 
+    The package should match that of your group and artifact name.
 
-4. Make sure you have the correct dependencies in your Gradle file to import `RestController`:
+4.  Make sure you have the correct dependencies in your Gradle file to import
+    `RestController`:
 
-```groovy
-compile("org.springframework.boot:spring-boot-starter-web")
-```
+        compile("org.springframework.boot:spring-boot-starter-web")
 
 5. Run the application from the command line using Gradle:
 
 		gradle bootRun
 
-**Note:** The `gradle bootRun` command is a quick way to build and run the application. Later, when you create the Docker image, you need to first build the app using the Gradle `build` task and then run it.
+    **Note:** The `gradle bootRun` command is a quick way to build and run the
+    application. Later, when you create the Docker image, you need to first
+    build the app using the Gradle `build` task and then run it.
 
-6. Visit http://localhost:8080/message in your web browser. Ensure that the page returns a valid JSON response. The response should be as follows:
+6.  Visit http://localhost:8080/message in your web browser. Ensure that the
+    page returns a valid JSON response. The response should be as follows:
 
-```json
-{
-"text": "Hello from Google Cloud",
-"priority": "High"
-}
-```    
+        {
+            "text": "Hello from Google Cloud",
+            "priority": "High"
+        }
 
 ## Building a release for deployment
 
@@ -121,15 +124,19 @@ the following command:
 
 ### Creating a build to upload to Cloud Storage
 
-You can create a build for deployment using [Container Builder](https://cloud.google.com/container-builder/) or any [other number of continuous delivery tools](https://cloud.google.com/container-registry/docs/continuous-delivery). The release build can then be uploaded to Cloud Storage bucket, where a Compute Engine instance can access it.
+You can create a build for deployment using [Container Builder](https://cloud.google.com/container-builder/)
+or any [other number of continuous delivery tools](https://cloud.google.com/container-registry/docs/continuous-delivery). The release build can then be uploaded to Cloud Storage bucket, where a Compute
+Engine instance can access it.
 
-For the purposes of this tutorial, you can build the release locally and upload it to Cloud Storage:
+For the purposes of this tutorial, you can build the release locally and upload
+it to Cloud Storage:
 
-1. Build the Spring Boot application by running the following command from the root of your application folder:
+1.  Build the Spring Boot application by running the following command from the
+    root of your application folder:
 
 		gradle build
- 
-2. Upload the app to Cloud Storage:
+
+2.  Upload the app to Cloud Storage:
 
 		gsutil cp build/libs/* gs://demo-01/demo.jar
 
@@ -142,7 +149,8 @@ the instance is started or restarted. You use this to install and start your app
 
 ### Create a startup script
 
-Create a file called `instance-startup.sh` in your application's root directory and copy the following content to it:
+Create a file called `instance-startup.sh` in your application's root directory
+and copy the following content to it:
 
 ```bash
 #!/bin/sh
@@ -172,11 +180,12 @@ a sample annotated script to study and customize.
 
 The startup script does the following:
 
-1. Downloads the JAR which is the Spring Boot application, previously built and uploaded to Cloud Storage
-2. Downloads and installs Java 8
-3. Runs the Spring Boot Application 
+1.  Downloads the JAR which is the Spring Boot application, previously built and
+    uploaded to Cloud Storage
+2.  Downloads and installs Java 8
+3.  Runs the Spring Boot Application
 
-The `BUCKET` attribute is set when you create the instance. 
+The `BUCKET` attribute is set when you create the instance.
 
 ### Create and configure a Compute Engine instance
 
@@ -196,7 +205,7 @@ To create a Compute Engine instance, perform the following steps:
 
     This command creates a new instance named `demo-instance`, grants it
     access to Cloud Platform services, and provides your startup script. It
-    also sets an instance attribute with the Bucket name. 
+    also sets an instance attribute with the Bucket name.
 
 2.  Check the progress of instance creation:
 
