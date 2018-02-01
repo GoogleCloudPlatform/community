@@ -17,7 +17,7 @@ which acts upon the rules set by the Ingress Resource, typically via an HTTP or
 L7 load balancer.  It is vital that both pieces are properly configured to route
 traffic from an  outside client to a Kubernetes service.  
 
-Nginx is a popular choice for an ingress controller for a variety of features:
+Nginx is a popular choice for an Ingress Controller for a variety of features:
 
 -  [Websocket](https://github.com/nginxinc/kubernetes-ingress/blob/master/examples/websocket),
    which allows you to load balance Websocket applications.
@@ -37,9 +37,9 @@ The following diagram shows the architecture described above:
 
 <img src="https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Nginx%20Ingress%20on%20GCP%20-%20Fig%2002.png" width="65%">
 
-In this tutorial, you learn how to set up a This tutorial illustrates how to set up a
+This tutorial illustrates how to set up a
 [Deployment in Kubernetes](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
-with an Ingress Resource using Nginx as the ingress controller to route/load
+with an Ingress Resource using Nginx as the Ingress Controller to route/load
 balance traffic from external clients to the Deployment.  This tutorial explains how to accomplish the following:
 
 -  Create a Kubernetes Deployment
@@ -49,13 +49,13 @@ balance traffic from external clients to the Deployment.  This tutorial explains
 
 # Objectives
 
--  Create a simple Kubernetes web _application_ deployment 
+-  Create a simple Kubernetes web _application_ Deployment 
 -  Create a _default backend_ deployment to serve 404 for all non-matching
    hosts and paths
 -  Create an _Ingress Resource_ for the _application_
--  Configure an _Nginx ingress_ deployment as an Ingress Controller for the
+-  Configure an _Nginx Ingress_ Deployment as an Ingress Controller for the
    _application_
--  Test Nginx ingress functionality by accessing the Google Cloud L4 LB
+-  Test Nginx Ingress functionality by accessing the Google Cloud L4 LB
    frontend IP and ensure it can access the web application
 
 # Costs
@@ -105,7 +105,7 @@ files for this tutorial:
 You can deploy a simple web based application from the Google Cloud
 Repository, courtesy of
 [Kubernetes Up and Running repo](https://github.com/kubernetes-up-and-running/kuard).
- You will use this application as the backend for our Ingress.
+ You use this application as the backend for the Ingress.
 
 From the Cloud Shell, run the following command:  
   
@@ -135,7 +135,7 @@ Verify that your Deployment is running three replicated Pods and the Service is 
 
 # Deploy a default backend for Ingress
 
-Next, you can deploy a default backend for the Nginx ingress.  The default
+Next, you can deploy a default backend for the Nginx Ingress.  The default
 backend is a Service which handles all URL paths and hosts the Nginx controller
 doesn't understand (i.e., all the requests that are not mapped with an Ingress
 Resource). The default backend exposes two URLs:  
@@ -147,7 +147,7 @@ From Cloud Shell, deploy the default backend Deployment and Service by running t
 
 	kubectl apply -f nginx-default-backend.yaml
 
-You can now see that your default backend Service and Deployment are configured in the cluster:
+You can now see that your default backend Service and Deployment are configured in the cluster by running the following commands:
 
 	kubectl get deployment nginx-default-backend
 
@@ -159,8 +159,8 @@ You can now see that your default backend Service and Deployment are configured 
 	NAME                    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
 	nginx-default-backend   ClusterIP   10.7.250.191   <none>        80/TCP    40s
 
-Looking at the YAML file spec, you can see it is a single replica deployment of
-an nginx default backend container from the Google Cloud Repository.
+Looking at the YAML file spec, you can see it is a single replica Deployment of
+an Nginx default backend container from the Google Cloud Repository:
 
 	cat nginx-default-backend.yaml
 
@@ -187,18 +187,18 @@ The manifest file contains the following configuration:
 
 # Configure an Ingress Resource
 
-An Ingress Resource object is a collection of L7 rules for routing inbound traffic to Kubernetes services.  Multiple rules can be defined in one Ingress Resource or they can be split up into multiple Ingress Resource manifests. The Ingress Resource also determines which controller to utilize to serve traffic.  This can be set with an annotation, kubernetes.io/ingress.class, in the metadata section of the Ingress Resource.  For the nginx controller, use the value nginx as shown below:
+An Ingress Resource object is a collection of L7 rules for routing inbound traffic to Kubernetes Services.  Multiple rules can be defined in one Ingress Resource or they can be split up into multiple Ingress Resource manifests. The Ingress Resource also determines which controller to utilize to serve traffic.  This can be set with an annotation, `kubernetes.io/ingress.class`, in the metadata section of the Ingress Resource.  For the Nginx controller, use the value `nginx` as shown below:
 
 	 annotations: kubernetes.io/ingress.class: nginx
 
 
-On Kubernetes Engine, if no annotation is defined under the metadata, the
+On Kubernetes Engine, if no annotation is defined under the metadata section, the
 Ingress Resource uses the GCP GCLB L7 load balancer to serve traffic.  This
-method can also be forced by setting the annotation's value to `gce`:
+method can also be forced by setting the annotation's value to `gce`as shown below:
 
 	annotations: kubernetes.io/ingress.class: gce
 
-You can verify the annotation by viewing the ingress-resource.yaml file and check the annotations under the metadata section as shown below:
+You can verify the annotation by viewing the _ingress-resource.yaml_ file and check the annotations under the metadata section as shown below:
 
 	cat ingress-resource.yaml
 
@@ -238,31 +238,31 @@ act upon the rules as shown below:
 
 <img src="https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Nginx%20Ingress%20on%20GCP%20-%20Fig%2001.png" width="65%">
 
-# Deploying the nginx Ingress Controller
+# Deploying the Nginx Ingress Controller
 
 Kubernetes platform allows for administrators to bring their own Ingress
 Controllers instead of using the cloud provider's built-in offering. 
 
-The Nginx controller, deployed as a service, must be exposed for external
-access.  This is done using service `Type: LoadBalancer` on the nginx controller
-service.  On GKE, this creates a Google Cloud L4 (TCP) load balancer with nginx
-controller service as a backend.  Google Cloud also creates the appropriate
-firewall rules within the service's VPC to allow web HTTP(S) traffic to the load
-balancer frontend IP address.  Here is a basic flow of the nginx ingress
-solution on GKE.
+The Nginx controller, deployed as a Service, must be exposed for external
+access.  This is done using Service `Type: LoadBalancer` on the Nginx controller
+service.  On Kubernetes Engine, this creates a Google Cloud L4 (TCP) load balancer with Nginx
+controller Service as a backend.  Google Cloud also creates the appropriate
+firewall rules within the Service's VPC to allow web HTTP(S) traffic to the load
+balancer frontend IP address.  Here is a basic flow of the Nginx ingress
+solution on Kubernetes Engine.
 
-## Nginx Ingress Controller on GKE
+## Nginx Ingress Controller on Kubernetes Engine
 
 <img src="https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Nginx%20Ingress%20on%20GCP%20-%20Fig%2002.png" width="65%">
 
-From the Cloud Shell, let us deploy an Nginx controller and service.  
+From the Cloud Shell, deploy an Nginx controller Deployment and Service by running the following command:  
   
 	kubectl apply -f ingress-nginx.yaml
 
 	service "ingress-nginx" created
 	deployment "ingress-nginx" created
 
-Wait a few moments while the GCP L4 Load Balancer gets deployed.  Confirm that the `ingress-nginx` Service has been deployed and that you have an external IP address associated with the service (recall we configured the ingress-nginx with `ServiceType: LoadBalancer`)
+Wait a few moments while the GCP L4 Load Balancer gets deployed.  Confirm that the `ingress-nginx` Service has been deployed and that you have an external IP address associated with the service (recall we configured the `ingress-nginx` with `ServiceType: LoadBalancer`).  Run the following command:
 
 	kubectl get service ingress-nginx
 
@@ -270,27 +270,27 @@ Wait a few moments while the GCP L4 Load Balancer gets deployed.  Confirm that t
 	ingress-nginx   LoadBalancer   10.7.252.85   35.188.177.209   80:30723/TCP,443:32122/TCP   2m
 
 Also check to see that the Ingress Resource now has an IP address, which is
-different from the Ingress Controller EXTERNAL IP address shown above.  
+different from the Ingress Controller EXTERNAL IP address shown above.  Run the following command: 
   
 	kubectl get ingress  
 
 	NAME               HOSTS     ADDRESS          PORTS     AGE  
 	ingress-resource   *         35.224.254.160   80        12m`
 
-# Test ingress and default backend
+# Test Ingress and default backend
 
-We should now be able to access the web application by going to the EXTERNAL-IP
-address of the nginx ingress controller (from the output above).  
+You should now be able to access the web application by going to the EXTERNAL-IP
+address of the Nginx ingress controller (from the output above).  
 
 ![image](https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Kuard-ingress.png)
 
 To check if the _default-backend_ service is working properly, access any path (other than
-the default path / defined in the ingress resource) and ensure you receive a 404
+the default path `/` defined in the Ingress Resource) and ensure you receive a 404
 message.  For example: 
 
 	http://external-ip-of-ingress-controller]/test
 
-You should get the following message  
+You should get the following message:
   
 	404 page not found 
 
