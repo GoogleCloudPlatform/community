@@ -16,6 +16,10 @@ traffic, but rather to set a VPN-like proxy on your laptop or workstation to
 bypass certain network limits, such as censorship, and browse the internet
 privately.
 
+This tutorial explores one specific use case of SSH tunnels. For more general 
+information about setting up local port forwarding and other SSH tunnels on Google Cloud,
+see [Connecting Securely to VM instances](https://cloud.google.com/solutions/connecting-securely).
+
 ## Overview
 
 Without any VPN or SSH tunneling, all your internet traffic goes through your

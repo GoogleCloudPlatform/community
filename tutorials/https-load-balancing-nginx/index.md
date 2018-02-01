@@ -140,27 +140,23 @@ created, you configure their respective Apache servers to use SSL.
 To create your load balancer backends and allow them to be accessed by external
 HTTPS traffic:
 
-1.  Create your virtual machine instances, tag them identically, install Apache
-    Web Server on them, and enable Apache's SSL module:
+1.  Create your virtual machine instances, tag them to automatically allow
+    external HTTPS traffic through the firewall, install Apache Web Server on
+    them, and enable Apache's SSL module:
 
         for i in {1..3}; \
           do \
-            gcloud compute instances create www-$i --tags be-tag \
+            gcloud compute instances create www-$i \
+              --tags "https-server" \
               --zone us-central1-f \
               --metadata startup-script="#! /bin/bash
               apt-get update
               apt-get install -y apache2
               /usr/sbin/a2ensite default-ssl
-              service apache2 reload
               /usr/sbin/a2enmod ssl
+              service apache2 reload
                   "; \
           done
-
-1.  Create a firewall rule to allow external HTTPS traffic to reach your target
-    instances:
-
-        gcloud compute firewall-rules create https-firewall \
-          --target-tags be-tag --allow tcp:443
 
 1.  Obtain the external IP addresses of your instances:
 
@@ -193,9 +189,9 @@ Next, for each instance, perform the following tasks:
 
         gcloud compute ssh [INSTANCE_NAME]
 
-1.  Edit default-ssl:
+1.  Edit default-ssl.conf:
 
-        sudo nano /etc/apache2/sites-enabled/default-ssl
+        sudo nano /etc/apache2/sites-enabled/default-ssl.conf
 
 1.  Find the following lines:
 
@@ -258,15 +254,28 @@ To create your NGINX instance:
 
         sudo apt-get install -y nginx
 
+1.  Create a folder for your ssl certificates on your instance:
 
+        mkdir ~/ssl_certs
+        
 1.  Run the `exit` command to exit your SSH session.
 
-After you've exited your session, use `gcloud compute` to copy your private key,
-SSL/TLS certificate, and (if applicable) certificate authority PEM file to the
-load balancer instance:
+    After you've exited your session, use `gcloud compute` to copy your private key,
+    SSL/TLS certificate, and (if applicable) certificate authority PEM file to the
+    load balancer instance:
 
-    gcloud compute copy-files /local/path/to/ssl-certs \
-      root@nginx-lb:/etc/nginx --zone us-central1-f
+        gcloud compute scp /local/path/to/ssl-certs/* \
+        nginx-lb:~/ssl-certs --zone us-central1-f
+
+    Since you do not have write access for */etc/nginx*, you will have to log on to the load balancer instance and move the files to the correct folder.
+
+1.  Reconnect to your **nginx-lb**:
+
+        gcloud compute ssh nginx-lb
+        
+1.  Move your folder for ssl certificate to NGINX:
+
+        sudo mv ~/ssl-certs /etc/nginx/
 
 ### Create your virtual host
 

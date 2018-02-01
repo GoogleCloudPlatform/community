@@ -1,0 +1,9 @@
+runtime: java
+env: flex
+
+resources:
+  memory_gb: 2.3
+
+handlers:
+  - url: /.*
+    script: this field is required, but ignored
