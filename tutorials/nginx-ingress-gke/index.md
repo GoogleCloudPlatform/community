@@ -9,13 +9,13 @@ In Kubernetes,
 allows external users and client applications access to HTTP services.  Ingress
 consists of two components. 
 [Ingress Resource](https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource)
-is a collection of rules for the inbound traffic to reach services.  These are
+is a collection of rules for the inbound traffic to reach Services.  These are
 Layer 7 (L7) rules that allow hostnames (and optionally paths) to be directed to
-specific services in Kubernetes.  The second component is the
+specific Services in Kubernetes.  The second component is the
 [Ingress Controller](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-controllers)
 which acts upon the rules set by the Ingress Resource, typically via an HTTP or
 L7 load balancer.  It is vital that both pieces are properly configured to route
-traffic from an  outside client to a Kubernetes service.  
+traffic from an  outside client to a Kubernetes Service.  
 
 Nginx is a popular choice for an Ingress Controller for a variety of features:
 
@@ -47,10 +47,10 @@ balance traffic from external clients to the Deployment.  This tutorial explains
 -  Set up an Ingress Controller using Nginx as the controller (instead of the
    Kubernetes Engine default Cloud Load Balancer)
 
-# Objectives
+## Objectives
 
 -  Create a simple Kubernetes web _application_ Deployment 
--  Create a _default backend_ deployment to serve 404 for all non-matching
+-  Create a _default backend_ Deployment to serve 404 for all non-matching
    hosts and paths
 -  Create an _Ingress Resource_ for the _application_
 -  Configure an _Nginx Ingress_ Deployment as an Ingress Controller for the
@@ -58,7 +58,7 @@ balance traffic from external clients to the Deployment.  This tutorial explains
 -  Test Nginx Ingress functionality by accessing the Google Cloud L4 LB
    frontend IP and ensure it can access the web application
 
-# Costs
+## Costs
 
 This tutorial uses billable components of Cloud Platform, including:
 
@@ -68,7 +68,7 @@ This tutorial uses billable components of Cloud Platform, including:
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to
 generate a cost estimate based on your projected usage.
 
-# Before You Begin
+## Before You Begin
 
 1. Create or select a GCP project.  
    [GO TO THE PROJECTS PAGE](https://console.cloud.google.com/project)
@@ -79,12 +79,12 @@ generate a cost estimate based on your projected usage.
 1. Enable the Kubernetes Engine API.  
 	[ENABLE APIs](https://console.cloud.google.com/flows/enableapi?apiid=container,cloudresourcemanager.googleapis.com)
 
-# Set up your environment
+## Set up your environment
 
 In this section you configure the infrastructure and identities required to
 complete the tutorial.
 
-## Create a Kubernetes Engine cluster using Cloud Shell
+### Create a Kubernetes Engine cluster using Cloud Shell
 
 1. You can use Cloud Shell to complete this tutorial. To use Cloud Shell, perform the following steps:  
 	[OPEN A NEW CLOUD SHELL SESSION](https://console.cloud.google.com/?cloudshell=true)
@@ -100,7 +100,7 @@ files for this tutorial:
     	git clone https://github.com/ameer00/nginx-ingress-gke 
     	cd nginx-ingress-gke
 
-# Deploy an application in Kubernetes Engine
+## Deploy an application in Kubernetes Engine
 
 You can deploy a simple web based application from the Google Cloud
 Repository, courtesy of
@@ -133,7 +133,7 @@ Verify that your Deployment is running three replicated Pods and the Service is 
 	NAME      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
 	kuard     ClusterIP   10.7.253.136   <none>        80/TCP    8s
 
-# Deploy a default backend for Ingress
+## Deploy a default backend for Ingress
 
 Next, you can deploy a default backend for the Nginx Ingress.  The default
 backend is a Service which handles all URL paths and hosts the Nginx controller
@@ -185,7 +185,7 @@ The manifest file contains the following configuration:
 		  initialDelaySeconds: 30
 		  timeoutSeconds: 5
 
-# Configure an Ingress Resource
+## Configure an Ingress Resource
 
 An Ingress Resource object is a collection of L7 rules for routing inbound traffic to Kubernetes Services.  Multiple rules can be defined in one Ingress Resource or they can be split up into multiple Ingress Resource manifests. The Ingress Resource also determines which controller to utilize to serve traffic.  This can be set with an annotation, `kubernetes.io/ingress.class`, in the metadata section of the Ingress Resource.  For the Nginx controller, use the value `nginx` as shown below:
 
@@ -238,7 +238,7 @@ act upon the rules as shown below:
 
 <img src="https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Nginx%20Ingress%20on%20GCP%20-%20Fig%2001.png" width="65%">
 
-# Deploying the Nginx Ingress Controller
+## Deploying the Nginx Ingress Controller
 
 Kubernetes platform allows for administrators to bring their own Ingress
 Controllers instead of using the cloud provider's built-in offering. 
@@ -251,7 +251,7 @@ firewall rules within the Service's VPC to allow web HTTP(S) traffic to the load
 balancer frontend IP address.  Here is a basic flow of the Nginx ingress
 solution on Kubernetes Engine.
 
-## Nginx Ingress Controller on Kubernetes Engine
+### Nginx Ingress Controller on Kubernetes Engine
 
 <img src="https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Nginx%20Ingress%20on%20GCP%20-%20Fig%2002.png" width="65%">
 
@@ -277,7 +277,7 @@ different from the Ingress Controller EXTERNAL IP address shown above.  Run the 
 	NAME               HOSTS     ADDRESS          PORTS     AGE  
 	ingress-resource   *         35.224.254.160   80        12m`
 
-# Test Ingress and default backend
+### Test Ingress and default backend
 
 You should now be able to access the web application by going to the EXTERNAL-IP
 address of the Nginx ingress controller (from the output above).  
@@ -294,7 +294,7 @@ You should get the following message:
   
 	404 page not found 
 
-# Clean Up
+## Clean Up
 
 From the Cloud Shell, run the following commands:  
   
