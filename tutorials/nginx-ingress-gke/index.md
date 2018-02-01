@@ -147,7 +147,7 @@ From Cloud Shell, deploy the default backend Deployment and Service by running t
 
 	kubectl apply -f nginx-default-backend.yaml
 
-You can now see that your default backend Service and Deployment are configured in the cluster by running the following commands:
+Verify that your default backend Service and Deployment are configured in the cluster by running the following commands:
 
 	kubectl get deployment nginx-default-backend
 
