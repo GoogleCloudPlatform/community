@@ -150,7 +150,7 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
         gcloud app browse
 
     to see your app running in production on App Engine in the browser. Not however that this application does not
-    respond to the root endpoint. Once the browser is open with the correct URL, you need to suffix `/message` to it.
+    respond to the root endpoint. Once the browser is open with the correct URL, you need to append `/message` to it.
 
 ## Update your application
 
