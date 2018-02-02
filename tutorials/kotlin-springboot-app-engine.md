@@ -32,7 +32,7 @@ an existing project.
 
 1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
     to create a new Cloud Platform project. Remember the project ID; you will
-    need it later. Later commands in this tutorial will use `${PROJECT_ID}` as
+    need it later. Later commands in this tutorial will use `[PROJECT_ID]` as
     a substitution, so you might consider setting the `PROJECT_ID` environment
     variable in your shell.
 
@@ -61,47 +61,48 @@ you can [download](https://github.com/jetbrains/gcp-samples) the sample applicat
 
 3. Open the resulting project in your favourite IDE or editor and create a new source file named `MessageController.kt` with the following contents:
 
-```kotlin
-package com.jetbrains.demo
+    ```kotlin
+    package com.jetbrains.demo
 
-import org.springframework.web.bind.annotation.*
+    import org.springframework.web.bind.annotation.*
 
-data class Message(val text: String, val priority: String)
+    data class Message(val text: String, val priority: String)
 
-@RestController
-class MessageController {
-    @RequestMapping("/message")
-    fun message(): Message {
-        return Message("Hello from Google Cloud", "High")
+    @RestController
+    class MessageController {
+        @RequestMapping("/message")
+        fun message(): Message {
+            return Message("Hello from Google Cloud", "High")
+        }
     }
-}
-```
+    ```
 
 The package should match that of your group and artifact name. 
 
 4. Make sure you have the right dependencies in your Maven file to import `RestController`:
 
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
-    <version>RELEASE</version>
-</dependency>
-```
+    ```xml
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+        <version>RELEASE</version>
+    </dependency>
+    ```
 
 5. Run the application from the command line using Maven:
 
-    mvn spring-boot:run
+    ```shell
+        mvn spring-boot:run
+    ```
 
+6. Open the browser and make sure you get a valid JSON response when accessing http://localhost:8080/message. The result should be:
 
-6. Open the browser and make sure your get a valid JSON response when accessing http://localhost:8080/message. The result should be:
-
-```json
-{
-"text": "Hello from Google Cloud",
-"priority": "High"
-}
-```    
+    ```json
+    {
+    "text": "Hello from Google Cloud",
+    "priority": "High"
+    }
+    ```    
 
 ## Deploy your application
 
@@ -122,13 +123,13 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
 
 2.  Add the following contents to the `pom.xml` file to configure the Maven plugin:
 
-```xml
-<plugin>
-    <groupId>com.google.cloud.tools</groupId>
-    <artifactId>appengine-maven-plugin</artifactId>
-    <version>1.2.1</version>
-</plugin>
-```
+    ```xml
+    <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>appengine-maven-plugin</artifactId>
+        <version>1.2.1</version>
+    </plugin>
+    ```
 
 3.  Run the following command to deploy your app:
 
@@ -180,9 +181,9 @@ up the resources, you can delete the project or stop the App Engine service.
 The easiest way to eliminate billing is to delete the project you created for
 the tutorial. To do so using `gcloud`, run:
 
-    gcloud projects delete [YOUR_PROJECT_ID]
+    gcloud projects delete [PROJECT_ID]
 
-where `[YOUR_PROJECT_ID]` is your Google Cloud Platform project ID.
+where `[PROJECT_ID]` is your Google Cloud Platform project ID.
 
 **Warning**: Deleting a project has the following consequences:
 
