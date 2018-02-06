@@ -1,5 +1,10 @@
-Simple MIG Dashboard
-====================
+---
+title: Simple MIG Dashboard
+description: Learn how to monitor state of a Managed Instance Group and visualize it in a JavaScript application.
+author: lopekpl, 4gn3s
+tags: Compute Engine, Cloud Endpoints, OAuth
+date_published: 2018-02-06
+---
 
 Introduction
 ------------
@@ -24,16 +29,13 @@ Before you begin
 ----------------
 
 In this tutorial, we assume that you have a Google Cloud Platform
-project with an existing Managed Instance Group, which you want to
-monitor.
+project with an existing Managed Instance Group that you want to monitor.
 
 Running the dashboard
 ---------------------
 
 To run the dashboard locally, you need to set up a new GCP application.
-Follow the steps
-[here](https://support.google.com/cloud/answer/6158849?hl=en&ref_topic=6262490)
-to obtain Client ID, that will be used to identify your application when
+[Set up OAuth](https://support.google.com/cloud/answer/6158849?hl=en&ref_topic=6262490) to obtain the Client ID that will be used to identify your application when
 making API calls. Choose *Web application* as application type, and add
 [http://localhost:8080](http://localhost:8000) to the list
 of Authorized JavaScript origins for your app.
@@ -52,7 +54,7 @@ the dashboard locally:
 Now go to [http://localhost:8080](http://localhost:8080)
 in your browser, and you'll be greeted with a window which allows you to
 log in to your Google account. Choose the account which has the access
-to your GCP project. In the next window, Google will ask for your
+to your GCP project. The next window asks for your
 permission to allow the Dashboard to view and manage your data across
 GCP services.
 
@@ -68,11 +70,11 @@ Overview of the dashboard
 It's time to learn how to use the dashboard to monitor the state of your
 MIG:
 
-**Step 1.** Choose the name of the project and hit load.
+**Step 1.** Choose the name of the project and click **Load Instance Groups**.
 
 ![Picking project](media/step1.png)
 
-**Step 2.** From the list of Managed Instance Groups in this project select
+**Step 2.** From the list of Managed Instance Groups in this project, select
 the one you want to monitor.
 
 ![Picking instance group](media/step2.png)
@@ -95,7 +97,7 @@ the one you want to monitor.
 
 4.  **Summary** displays cumulative information about the status of the machines in the MIG. It allows you to check how many instances there are in each state. Together with *Group by zone*, the Summary tab allows you to see what is happening with your machines in each of the zones.
 
-5.  **Instance health** tab is visible only if your MIG is connected to a Backend Service and has a Health Check configured. If this is the case, each of your machines is reporting its health periodically. The chart displays the changes of health in time for each of the machines.
+5.  **Instance health** tab is visible only if your MIG is connected to a Backend Service and has a Health Check configured. In this case, each machine reports its health periodically. The chart displays the changes of health in time for each of the machines.
 
 6.  **Legend** provides information about the colors in the chart.
 
@@ -120,7 +122,7 @@ the document runs our `initialize()` function from *main-controller.js*:
 
 1.  Initializes the JavaScript Google Compute API client with OAuth client ID, scope, and API discovery documents.
 
-2.  Calls Google Authenticator's `signIn()`, which checks if user is logged in with their Google account. If not, it will show a pop up allowing to sign in.
+2.  Calls Google Authenticator's `signIn()`, which checks if user is logged in with their Google account. If not, it will show a pop up to sign in.
 
 3.  Fetches the list of Google Cloud projects that the user has access to and stores all project IDs.
 
