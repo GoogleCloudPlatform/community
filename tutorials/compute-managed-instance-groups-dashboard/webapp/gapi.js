@@ -57,7 +57,7 @@ function getSignInRequest () {
  * Convenience methods for parsing data from GCE.
  */
 function urlToResourceName (url) {
-  if (!url || url.lastIndexOf('/') == -1) {
+  if (!url || url.lastIndexOf('/') === -1) {
     return undefined;
   }
   return url.substr(url.lastIndexOf('/') + 1);

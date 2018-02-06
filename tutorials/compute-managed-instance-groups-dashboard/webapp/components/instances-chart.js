@@ -26,8 +26,8 @@ angular.module('migDashboardApp').component('instancesChart', {
       var pathsToModify = [];
       for (var i = 0; i < children.length; i++) {
         var tableChild = children[i];
-        if (tableChild.tagName == 'rect') {
-          if (i + 2 < children.length && children[i + 2].tagName == 'path') {
+        if (tableChild.tagName === 'rect') {
+          if (i + 2 < children.length && children[i + 2].tagName === 'path') {
             pathsToModify.push(children[i + 2]);
           }
         }
@@ -51,12 +51,12 @@ angular.module('migDashboardApp').component('instancesChart', {
     this.drawRedNow = function (svg) {
       var textTags = Array.from(svg.getElementsByTagName('text'));
       for (var $i = 0; $i < textTags.length; $i++) {
-        if (textTags[$i].textContent == '0:00') {
+        if (textTags[$i].textContent === '0:00') {
           textTags[$i].textContent = 'Now';
           textTags[$i].setAttribute('class', 'redBoldText');
         } else if (
           textTags[$i].textContent.startsWith('59:') ||
-            textTags[$i].textContent == '0:01') {
+            textTags[$i].textContent === '0:01') {
           textTags[$i].textContent = '';
         }
       }
@@ -73,7 +73,7 @@ angular.module('migDashboardApp').component('instancesChart', {
       var zoneSizes = [{zone: '', size: 0}];
       for (var i = 0; i < that.instancesOrder.length; i++) {
         var zone = that.historyMap[that.instancesOrder[i]].zone;
-        if (zoneSizes.slice(-1)[0].zone != zone) {
+        if (zoneSizes.slice(-1)[0].zone !== zone) {
           zoneSizes.push({zone: zone, size: 0});
         }
         zoneSizes.slice(-1)[0].size++;
@@ -124,7 +124,7 @@ angular.module('migDashboardApp').component('instancesChart', {
           if (start >= end) {
             continue;
           }
-          if (vmStates[j].state != 'gone') {
+          if (vmStates[j].state !== 'gone') {
             var label = '';
             if (that.historyMap[vmId].error) {
               label += ' \u26A0'; // show a warning sign when there is an error
@@ -159,7 +159,7 @@ angular.module('migDashboardApp').component('instancesChart', {
           }
         }
         var color = that.colorsMap[state];
-        if (colors.indexOf(color) == -1) {
+        if (colors.indexOf(color) === -1) {
           colors.push(color);
         }
       }

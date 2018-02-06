@@ -63,7 +63,7 @@ angular.module('migDashboardApp').component('instancesSummaryChart', {
             that.summaryInfo.push({
               'zone': zone,
               'state': state,
-              'count': instancesSummary[zone][state] == undefined ? 0 : instancesSummary[zone][state],
+              'count': instancesSummary[zone][state] === undefined ? 0 : instancesSummary[zone][state],
               'possibleStates': Object.keys(possibleStates).length
             });
           }

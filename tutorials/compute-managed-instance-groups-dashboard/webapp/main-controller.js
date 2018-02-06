@@ -52,7 +52,7 @@ angular.module('migDashboardApp').controller('mainController', [
             new MigHistory(igm.instanceGroup, igm.name, igm.backendService, projectId, gceScope);
       }
       $scope.vmMap = $scope.migHistoryMap[migId];
-      $scope.showHealthChart = igm.backendService != undefined;
+      $scope.showHealthChart = igm.backendService !== undefined;
     };
 
     $scope.fetchInstancesInfo = function () {

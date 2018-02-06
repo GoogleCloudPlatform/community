@@ -16,10 +16,10 @@ class InstanceHistory {
 
   consumeInstanceInfo (instance) {
     var historyElement = new InstanceHistoryElement(instance, this.healthState);
-    if (this.history.length == 0 ||
-        this.history[0].template != historyElement.template ||
-        this.history[0].currentAction != historyElement.currentAction ||
-        this.history[0].healthState != historyElement.healthState) {
+    if (this.history.length === 0 ||
+        this.history[0].template !== historyElement.template ||
+        this.history[0].currentAction !== historyElement.currentAction ||
+        this.history[0].healthState !== historyElement.healthState) {
       this.history.unshift(historyElement);
     }
     this.error = getInstanceError(instance);
@@ -48,7 +48,7 @@ class MigHistory {
   }
 
   isEmpty () {
-    return Object.keys(this.instancesMap).length == 0;
+    return Object.keys(this.instancesMap).length === 0;
   }
 
   fetchInstancesInfo () {
@@ -108,7 +108,7 @@ class MigHistory {
     }
 
     for (var inst in this.instancesMap) {
-      if (instancesUp.indexOf(inst) == -1) {
+      if (instancesUp.indexOf(inst) === -1) {
         this.instancesMap[inst].markInstanceAsGone();
       }
     }

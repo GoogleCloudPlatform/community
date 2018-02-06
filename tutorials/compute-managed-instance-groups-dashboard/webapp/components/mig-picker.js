@@ -69,7 +69,7 @@ angular.module('migDashboardApp').component('migPicker', {
       var migBackendMap = {};
       var backendServices = response.items || [];
       for (var i = 0; i < backendServices.length; i++) {
-        if (backendServices[i].backends != undefined) {
+        if (backendServices[i].backends !== undefined) {
           for (var j = 0; j < backendServices[i].backends.length; j++) {
             var migName =
                 urlToResourceName(backendServices[i].backends[j].group);

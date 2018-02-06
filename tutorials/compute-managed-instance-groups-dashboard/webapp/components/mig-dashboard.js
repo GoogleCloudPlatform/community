@@ -61,7 +61,7 @@ angular.module('migDashboardApp').component('migDashboard', {
 
           var value = history[i][propertyName];
           var j = i + 1;
-          while (j < history.length && history[j][propertyName] == value) {
+          while (j < history.length && history[j][propertyName] === value) {
             j++;
           }
           return {
@@ -91,26 +91,26 @@ angular.module('migDashboardApp').component('migDashboard', {
         return templateAppearOrder;
       }
 
-      var instancesNames = vmMap == null ? [] : Object.keys(vmMap.instancesMap);
+      var instancesNames = vmMap === null ? [] : Object.keys(vmMap.instancesMap);
       instancesNames.sort(function (vm1Id, vm2Id) {
         var vm1 = vmMap.instancesMap[vm1Id];
         var vm2 = vmMap.instancesMap[vm2Id];
 
-        if (groupByZone && vm1.zone != vm2.zone) {
+        if (groupByZone && vm1.zone !== vm2.zone) {
           return vm1.zone < vm2.zone ? -1 : 1;
         }
 
         var t1 = getPropertyValueWithTimestamp(vm1, 'template').value;
         var t2 = getPropertyValueWithTimestamp(vm2, 'template').value;
 
-        if (t1 != t2) {
+        if (t1 !== t2) {
           var templatePrecedence = findTemplatePrecedence(vmMap.instancesMap);
           return templatePrecedence.indexOf(t1) - templatePrecedence.indexOf(t2);
         }
 
         var action1 = getPropertyValueWithTimestamp(vm1, 'currentAction');
         var action2 = getPropertyValueWithTimestamp(vm2, 'currentAction');
-        if (action1.value != action2.value) {
+        if (action1.value !== action2.value) {
           var actionPrecedence = ['CREATING', 'NONE', 'RESTARTING', 'DELETING', 'gone'];
           return actionPrecedence.indexOf(action1.value) - actionPrecedence.indexOf(action2.value);
         }
@@ -127,7 +127,7 @@ angular.module('migDashboardApp').component('migDashboard', {
     };
 
     this.recomputeVmStateAndHealthHistory = function () {
-      if (that.vmMap == null || !that.vmMap.successfulFetch) {
+      if (that.vmMap === null || !that.vmMap.successfulFetch) {
         this.messageForUser = 'Wating for instance group data...';
         this.messageType = 'loading';
         return;
