@@ -50,8 +50,8 @@ angular.module('migDashboardApp').component('instancesSummaryChart', {
         });
 
         var summaryData = [['Zone' ]];
-        for (var i = 0; i < Object.keys(possibleStates).length; i++) {
-          summaryData[0].push(Object.keys(possibleStates)[i]);
+        for (var k = 0; k < Object.keys(possibleStates).length; k++) {
+          summaryData[0].push(Object.keys(possibleStates)[k]);
         }
 
         for (var i = 0; i < Object.keys(instancesSummary).length; i++) {
@@ -71,8 +71,8 @@ angular.module('migDashboardApp').component('instancesSummaryChart', {
         }
 
         for (var j = 0; j < Object.keys(possibleStates).length; j++) {
-          var state = Object.keys(possibleStates)[j];
-          colors.push(that.colorsMap[state]);
+          var possibleState = Object.keys(possibleStates)[j];
+          colors.push(that.colorsMap[possibleState]);
         }
         chartOptions['colors'] = colors;
       } else {
