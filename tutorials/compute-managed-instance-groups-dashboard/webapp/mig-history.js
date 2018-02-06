@@ -1,5 +1,5 @@
 class InstanceHistoryElement {
-  constructor(instanceData, healthState) {
+  constructor (instanceData, healthState) {
     this.template = getInstanceTemplate(instanceData);
     this.currentAction = instanceData.currentAction;
     this.healthState = healthState;
@@ -8,16 +8,16 @@ class InstanceHistoryElement {
 }
 
 class InstanceHistory {
-  constructor(zone) {
+  constructor (zone) {
     this.zone = zone;
     this.history = [];
     this.healthState = 'UNKNOWN';
   }
 
-  consumeInstanceInfo(instance) {
+  consumeInstanceInfo (instance) {
     var historyElement = new InstanceHistoryElement(instance, this.healthState);
     if (this.history.length == 0 ||
-        this.history[0].template !=  historyElement.template ||
+        this.history[0].template != historyElement.template ||
         this.history[0].currentAction != historyElement.currentAction ||
         this.history[0].healthState != historyElement.healthState) {
       this.history.unshift(historyElement);
@@ -25,18 +25,18 @@ class InstanceHistory {
     this.error = getInstanceError(instance);
   }
 
-  setHealthState(healthState) {
+  setHealthState (healthState) {
     this.healthState = healthState;
   }
 
-  markInstanceAsGone() {
+  markInstanceAsGone () {
     this.consumeInstanceInfo(
-        {template: undefined, currentAction: 'gone'}, undefined);
+      {template: undefined, currentAction: 'gone'}, undefined);
   }
 }
 
 class MigHistory {
-  constructor(migResourceURL, managerResourceURL, backendServiceResourceURL, projectId, gceScope) {
+  constructor (migResourceURL, managerResourceURL, backendServiceResourceURL, projectId, gceScope) {
     this.migResourceURL = migResourceURL; // the url of the (managed) instance group
     this.managerResourceURL = managerResourceURL; // the url of manager of the instance group
     this.backendServiceResourceURL = backendServiceResourceURL; // the url of the backend service of the group (can be undefined)
@@ -47,40 +47,40 @@ class MigHistory {
     this.migName = urlToResourceName(migResourceURL);
   }
 
-  isEmpty() {
+  isEmpty () {
     return Object.keys(this.instancesMap).length == 0;
   }
 
-  fetchInstancesInfo() {
+  fetchInstancesInfo () {
     var that = this;
 
     getInstancesListRequest(this.projectId, this.gceScope, this.managerResourceURL).then(
-      function(response) {
+      function (response) {
         that.updateInstancesMap_(response.result.managedInstances || []);
         that.successfulFetch = true;
         if (that.backendServiceResourceURL) {
           that.updateHealthStatuses_();
         }
       },
-      function(error) {
+      function (error) {
         console.error('Failed to fetch instances data: ' + error);
       }
     );
   }
 
-  updateHealthStatuses_() {
+  updateHealthStatuses_ () {
     var that = this;
 
-    function handleGetHealthResponse(response) {
+    function handleGetHealthResponse (response) {
       if (!response.result.healthStatus) {
         return;
       }
       var instances = response.result.healthStatus.map(
-          data => ({name: urlToResourceName(data.instance), healthState: data.healthState }));
+        data => ({name: urlToResourceName(data.instance), healthState: data.healthState }));
 
       for (var i = 0; i < instances.length; i++) {
         if (!(instances[i].name in that.instancesMap)) {
-          console.warn("We have a missing instance " + instances[i].name);
+          console.warn('We have a missing instance ' + instances[i].name);
           continue;
         }
 
@@ -88,15 +88,15 @@ class MigHistory {
       }
     }
 
-    function handleError(error) {
+    function handleError (error) {
       console.warn(error);
     }
 
     getInstancesHealthRequest(this.projectId, this.backendServiceResourceURL, this.migResourceURL)
-        .then(handleGetHealthResponse, handleError);
+      .then(handleGetHealthResponse, handleError);
   }
 
-  updateInstancesMap_(instances) {
+  updateInstancesMap_ (instances) {
     var instancesUp = [];
     for (var i = 0; i < instances.length; i++) {
       var inst = getInstanceName(instances[i]);

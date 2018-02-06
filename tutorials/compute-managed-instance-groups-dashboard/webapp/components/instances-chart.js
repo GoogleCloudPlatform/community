@@ -9,19 +9,19 @@ angular.module('migDashboardApp').component('instancesChart', {
     instancesOrder: '<',
     groupByZone: '<',
     timespan: '<',
-    containerId: '@', /* Id of the DOM element that Google Charts Timeline will render in. */
+    containerId: '@' /* Id of the DOM element that Google Charts Timeline will render in. */
   },
-  controller: function($interval) {
+  controller: function ($interval) {
     /* A list of colors to be used to mark different machine states. */
     this.availableColors =
         ['#3366CC', '#1D3C5B', '#6633CC', '#5574A6', '#22AA99', '#0099C6',
-         '#FF9900', '#3B3EAC', '#d35e0a', '#0b6811', '#8B0707', '#600060',
-         '#ad5701'];
+          '#FF9900', '#3B3EAC', '#d35e0a', '#0b6811', '#8B0707', '#600060',
+          '#ad5701'];
 
     var that = this;
 
     /* Draw vertical red line, that marks the beginning of time. */
-    this.drawVerticalRedLine = function(svg, gTags) {
+    this.drawVerticalRedLine = function (svg, gTags) {
       var children = gTags[0].children;
       var pathsToModify = [];
       for (var i = 0; i < children.length; i++) {
@@ -33,14 +33,14 @@ angular.module('migDashboardApp').component('instancesChart', {
         }
       }
       for (var i = 0; i < pathsToModify.length; i++) {
-        if(!pathsToModify[i]) continue;
+        if (!pathsToModify[i]) continue;
         pathsToModify[i].setAttribute('class', 'redLine');
         pathsToModify[i].setAttribute('id', 'nowPath' + i + that.containerId);
 
         // move to front
         var useSVG = document.createElementNS('http://www.w3.org/2000/svg', 'use');
         useSVG.setAttributeNS(
-            'http://www.w3.org/1999/xlink', 'href', '#nowPath' + i + that.containerId);
+          'http://www.w3.org/1999/xlink', 'href', '#nowPath' + i + that.containerId);
         svg.appendChild(useSVG);
       }
     };
@@ -48,14 +48,14 @@ angular.module('migDashboardApp').component('instancesChart', {
     /* Replace the default label for time axis beginning (0:00) wit styled word
      * 'now'.
      */
-    this.drawRedNow = function(svg) {
+    this.drawRedNow = function (svg) {
       var textTags = Array.from(svg.getElementsByTagName('text'));
       for (var $i = 0; $i < textTags.length; $i++) {
         if (textTags[$i].textContent == '0:00') {
           textTags[$i].textContent = 'Now';
           textTags[$i].setAttribute('class', 'redBoldText');
         } else if (
-            textTags[$i].textContent.startsWith('59:') ||
+          textTags[$i].textContent.startsWith('59:') ||
             textTags[$i].textContent == '0:01') {
           textTags[$i].textContent = '';
         }
@@ -65,7 +65,7 @@ angular.module('migDashboardApp').component('instancesChart', {
     /* Change backgrounds of groups of rows to distinguish VMs that live in
      * common zone with the same color.
      */
-    this.drawGroupByHighlights = function(gTags) {
+    this.drawGroupByHighlights = function (gTags) {
       const highlightColorsCount = 3;
       if (!that.groupByZone) {
         return;
@@ -84,15 +84,15 @@ angular.module('migDashboardApp').component('instancesChart', {
       var currentRect = 0;
       for (var i = 0; i < zoneSizes.length; i++) {
         for (var j = 0; j < zoneSizes[i].size; j++) {
-          if(!rects[currentRect]) continue;
+          if (!rects[currentRect]) continue;
           rects[currentRect++].setAttribute(
-              'class',
-              'overlayHighlightColor' + (i % highlightColorsCount + 1));
+            'class',
+            'overlayHighlightColor' + (i % highlightColorsCount + 1));
         }
       }
     };
 
-    this.addOverlays = function() {
+    this.addOverlays = function () {
       var container = document.getElementById(that.containerId);
       var svg = container.getElementsByTagName('svg')[0];
       var gTags = Array.from(svg.getElementsByTagName('g'));
@@ -102,10 +102,10 @@ angular.module('migDashboardApp').component('instancesChart', {
       that.drawGroupByHighlights(gTags);
     };
 
-    this.prepareDataTable = function() {
+    this.prepareDataTable = function () {
       var dataTable = new google.visualization.DataTable();
-      dataTable.addColumn({type: 'string', id: 'Name'});   // row label
-      dataTable.addColumn({type: 'string', id: 'State'});  // bar label
+      dataTable.addColumn({type: 'string', id: 'Name'}); // row label
+      dataTable.addColumn({type: 'string', id: 'State'}); // bar label
       dataTable.addColumn({type: 'date', id: 'Start'});
       dataTable.addColumn({type: 'date', id: 'End'});
 
@@ -127,13 +127,13 @@ angular.module('migDashboardApp').component('instancesChart', {
           if (vmStates[j].state != 'gone') {
             var label = '';
             if (that.historyMap[vmId].error) {
-              label += ' \u26A0';  // show a warning sign when there is an error
+              label += ' \u26A0'; // show a warning sign when there is an error
             }
             dataTable.addRow([
               vmId + label,
               state,
               new Date(0, 0, 0, 0, 0, start),
-              new Date(0, 0, 0, 0, 0, end),
+              new Date(0, 0, 0, 0, 0, end)
             ]);
           }
           prevTimestamp = timestamp;
@@ -145,7 +145,7 @@ angular.module('migDashboardApp').component('instancesChart', {
 
     /* How to choose color for each segment of each timeline
        bar. */
-    this.getColorList = function(dataTable) {
+    this.getColorList = function (dataTable) {
       var colors = [];
       for (var i = 0; i < dataTable.getNumberOfRows(); i++) {
         var state = dataTable.getValue(i, 1);
@@ -173,7 +173,7 @@ angular.module('migDashboardApp').component('instancesChart', {
      * start moment of a machine does not fit in our range anymore, the row is
      * not visible.
      */
-    this.calculateChartHeight = function(dataTable) {
+    this.calculateChartHeight = function (dataTable) {
       var visibleRows = 0;
       var machinesCount = 0;
       var distinctMachines = {};
@@ -194,14 +194,14 @@ angular.module('migDashboardApp').component('instancesChart', {
         if (start <= that.timespan) visibleRows += 1;
       }
 
-      var paddingHeight = 50;  // set a padding value to cover the height of
-                               // title and axis values
+      var paddingHeight = 50; // set a padding value to cover the height of
+      // title and axis values
       var rowHeight =
-          visibleRows * 32;  // set the height to be covered by the rows
+          visibleRows * 32; // set the height to be covered by the rows
       return rowHeight + paddingHeight;
     };
 
-    this.drawChart = function() {
+    this.drawChart = function () {
       if (!that.instancesOrder) {
         return;
       }
@@ -212,40 +212,40 @@ angular.module('migDashboardApp').component('instancesChart', {
         hAxis: {
           format: 'm:ss',
           minValue: new Date(0, 0, 0, 0, 0, -4),
-          maxValue: new Date(0, 0, 0, 0, 0, that.timespan),
+          maxValue: new Date(0, 0, 0, 0, 0, that.timespan)
         },
         timeline: {
           showBarLabels: false,
           barLabelStyle: {
-            fontSize: 9,
-          },
+            fontSize: 9
+          }
         },
         tooltip: {
-          trigger: 'none',
+          trigger: 'none'
         },
         colors: that.getColorList(dataTable),
         avoidOverlappingGridLines: false,
         height: that.calculateChartHeight(dataTable),
-        backgroundColor: '#f2f9fc',
+        backgroundColor: '#f2f9fc'
       };
 
       var instanceHistoryContainer = document.getElementById(that.containerId);
       var instanceHistoryChart =
           new google.visualization.Timeline(instanceHistoryContainer);
       google.visualization.events.addListener(
-          instanceHistoryChart, 'ready', that.addOverlays.bind(that));
+        instanceHistoryChart, 'ready', that.addOverlays.bind(that));
       instanceHistoryChart.draw(dataTable, options);
     };
 
-    this.$postLink = function() {
+    this.$postLink = function () {
       var that = this;
-      google.charts.setOnLoadCallback(function() {
+      google.charts.setOnLoadCallback(function () {
         that.drawChartIntervalPromise = $interval(that.drawChart, 300);
       });
     };
 
-    this.$onDestroy = function() {
+    this.$onDestroy = function () {
       $interval.cancel(this.drawChartIntervalPromise);
     };
-  },
+  }
 });

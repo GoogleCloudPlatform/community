@@ -2,19 +2,19 @@
 angular.module('migDashboardApp').component('colorMapLegend', {
   templateUrl: 'components/templates/color-map-legend.html',
   bindings: {
-    colorsMap: '<',
+    colorsMap: '<'
   },
-  controller: function($interval) {
+  controller: function ($interval) {
     var that = this;
 
-    this.updateColorMapArray = function() {
+    this.updateColorMapArray = function () {
       that.colorsMapArray = [];
-      angular.forEach(that.colorsMap, function(value, key) {
+      angular.forEach(that.colorsMap, function (value, key) {
         that.colorsMapArray.push({'state': key, 'color': value});
       });
     };
 
-    this.$postLink = function() {
+    this.$postLink = function () {
       $interval(this.updateColorMapArray, 300);
     };
   }

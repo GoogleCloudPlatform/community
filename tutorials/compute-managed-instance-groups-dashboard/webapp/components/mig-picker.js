@@ -5,9 +5,9 @@ angular.module('migDashboardApp').component('migPicker', {
   bindings: {
     onMigSelected: '&',
     projectList: '<',
-    messageFunction: '<',
+    messageFunction: '<'
   },
-  controller: function() {
+  controller: function () {
     /*
      * Describes how many projects should be shown in the drop down when the
      * user is typing a project name.
@@ -26,7 +26,7 @@ angular.module('migDashboardApp').component('migPicker', {
 
     var that = this;
 
-    this.filter = function(namePrefix, numberOfResults) {
+    this.filter = function (namePrefix, numberOfResults) {
       var results = [];
       for (var i = 0; i < that.projectList.length; i++) {
         if (that.projectList[i].indexOf(namePrefix) > -1) {
@@ -41,8 +41,8 @@ angular.module('migDashboardApp').component('migPicker', {
 
     /* Run when the user clicks on a specific instance group;
      * sets this group as the default. */
-    this.onInstanceGroupManagerSelected = function(gceScope, igm) {
-      var migId = that.projectId + "/" + igm.name + "/" + gceScope;
+    this.onInstanceGroupManagerSelected = function (gceScope, igm) {
+      var migId = that.projectId + '/' + igm.name + '/' + gceScope;
       that.expandPicker = false;
       that.onMigSelected({
         projectId: that.projectId,
@@ -52,7 +52,7 @@ angular.module('migDashboardApp').component('migPicker', {
       });
     };
 
-    this.getInstanceGroupManagersFromResponse = function(response) {
+    this.getInstanceGroupManagersFromResponse = function (response) {
       var igms = {};
       for (var gceScopeName in response.items) {
         var gceScope = response.items[gceScopeName];
@@ -65,7 +65,7 @@ angular.module('migDashboardApp').component('migPicker', {
       return igms;
     };
 
-    this.getMigToBackendServiceMapFromResponse = function(response) {
+    this.getMigToBackendServiceMapFromResponse = function (response) {
       var migBackendMap = {};
       var backendServices = response.items || [];
       for (var i = 0; i < backendServices.length; i++) {
@@ -80,10 +80,10 @@ angular.module('migDashboardApp').component('migPicker', {
       return migBackendMap;
     };
 
-    this.addBackendServiceInfo = function(igms, migBackendMap) {
-      Object.keys(igms).forEach(function(gceScopeName) {
+    this.addBackendServiceInfo = function (igms, migBackendMap) {
+      Object.keys(igms).forEach(function (gceScopeName) {
         var igmList = igms[gceScopeName];
-        for (var i=0; i < igmList.length; i++) {
+        for (var i = 0; i < igmList.length; i++) {
           igmList[i].backendService =
               (igmList[i].name in migBackendMap) ? migBackendMap[igmList[i].name] : undefined;
         }
@@ -91,27 +91,27 @@ angular.module('migDashboardApp').component('migPicker', {
       return igms;
     };
 
-    this.loadInstanceGroups = function(projectId) {
+    this.loadInstanceGroups = function (projectId) {
       that.messageFunction('Loading your instance groups...', 'loading');
       getInstanceGroupManagersListRequest(projectId)
-        .then(function(response) {
+        .then(function (response) {
           that.instanceGroupManagers =
               that.getInstanceGroupManagersFromResponse(response.result);
           that.projectId = projectId;
         })
-        .then(function() { return getBackendServicesListRequest(projectId); })
-        .then(function(response) {
+        .then(function () { return getBackendServicesListRequest(projectId); })
+        .then(function (response) {
           var migBackendMap = that.getMigToBackendServiceMapFromResponse(response.result);
           that.instanceGroupManagers =
               that.addBackendServiceInfo(that.instanceGroupManagers, migBackendMap);
           that.messageFunction();
         },
-        function(response) {
+        function (response) {
           that.messageFunction(
-              'Failed to load instance groups: '
-                + response.result.error.message
-                + '. Maybe you don\'t have any instance groups in your project?',
-              'error');
+            'Failed to load instance groups: ' +
+                response.result.error.message +
+                '. Maybe you don\'t have any instance groups in your project?',
+            'error');
         });
     };
   }

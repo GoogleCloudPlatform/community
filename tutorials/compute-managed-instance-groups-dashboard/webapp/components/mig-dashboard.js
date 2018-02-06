@@ -5,9 +5,9 @@ angular.module('migDashboardApp').component('migDashboard', {
   bindings: {
     messageFunction: '<',
     vmMap: '<',
-    showHealthChart: '<',
+    showHealthChart: '<'
   },
-  controller: function($scope) {
+  controller: function ($scope) {
     var that = this;
 
     this.timespan = 180; // a default "length" of the timeline chart
@@ -19,14 +19,14 @@ angular.module('migDashboardApp').component('migDashboard', {
       'CREATING': '#66AA00',
       'DELETING': '#DC3912',
       'RESTARTING': '#994499',
-      'RECREATING': '#E67300',
+      'RECREATING': '#E67300'
     };
 
     /* The default colors to be used for machine health information charting. */
     this.colorsHealthMap = {
       'HEALTHY': '#109618',
       'UNHEALTHY': '#DC3912',
-      'UNKNOWN': '#BBBBBB',
+      'UNKNOWN': '#BBBBBB'
     };
 
     /* A helper map which is created based on vmMap;
@@ -51,9 +51,8 @@ angular.module('migDashboardApp').component('migDashboard', {
      *   3. currentAction, as defined by actionPrecedence list
      *   4. how long they've been staying in their most recent currentAction
      */
-    this.sortInstanceNames = function(vmMap, groupByZone) {
-
-      function getPropertyValueWithTimestamp(instanceHistory, propertyName) {
+    this.sortInstanceNames = function (vmMap, groupByZone) {
+      function getPropertyValueWithTimestamp (instanceHistory, propertyName) {
         var history = instanceHistory.history;
         for (var i = 0; i < history.length; i++) {
           if (!history[i][propertyName]) {
@@ -76,24 +75,24 @@ angular.module('migDashboardApp').component('migDashboard', {
         };
       }
 
-      function findTemplatePrecedence(instancesMap) {
+      function findTemplatePrecedence (instancesMap) {
         var templateAppearTimes = {};
         for (instanceName in instancesMap) {
           var template = getPropertyValueWithTimestamp(instancesMap[instanceName], 'template');
-          if (!(template.value in templateAppearTimes)
-              || templateAppearTimes[template.value] > template.timestamp) {
+          if (!(template.value in templateAppearTimes) ||
+              templateAppearTimes[template.value] > template.timestamp) {
             templateAppearTimes[template.value] = template.timestamp;
           }
         }
         var templateAppearOrder = Object.keys(templateAppearTimes);
-        templateAppearOrder.sort(function(template1, template2) {
+        templateAppearOrder.sort(function (template1, template2) {
           return templateAppearTimes[template1] - templateAppearTimes[template2];
         });
         return templateAppearOrder;
       }
 
       var instancesNames = vmMap == null ? [] : Object.keys(vmMap.instancesMap);
-      instancesNames.sort(function(vm1Id, vm2Id) {
+      instancesNames.sort(function (vm1Id, vm2Id) {
         var vm1 = vmMap.instancesMap[vm1Id];
         var vm2 = vmMap.instancesMap[vm2Id];
 
@@ -120,14 +119,14 @@ angular.module('migDashboardApp').component('migDashboard', {
       that.instancesOrder = instancesNames;
     };
 
-    this.getInstanceState_ = function(instanceHistoryElement) {
+    this.getInstanceState_ = function (instanceHistoryElement) {
       if (instanceHistoryElement.currentAction === 'NONE') {
         return instanceHistoryElement.template;
       }
       return instanceHistoryElement.currentAction;
     };
 
-    this.recomputeVmStateAndHealthHistory = function() {
+    this.recomputeVmStateAndHealthHistory = function () {
       if (that.vmMap == null || !that.vmMap.successfulFetch) {
         this.messageForUser = 'Wating for instance group data...';
         this.messageType = 'loading';
@@ -149,34 +148,34 @@ angular.module('migDashboardApp').component('migDashboard', {
           error: that.vmMap.instancesMap[vmId].error,
           zone: that.vmMap.instancesMap[vmId].zone,
           timeline: that.vmMap.instancesMap[vmId].history.map(
-                      element => ({ state: that.getInstanceState_(element), timestamp: element.timestamp}))
+            element => ({ state: that.getInstanceState_(element), timestamp: element.timestamp}))
         };
         that.vmHealthHistory[vmId] = {
           error: that.vmMap.instancesMap[vmId].error,
           zone: that.vmMap.instancesMap[vmId].zone,
           timeline: that.vmMap.instancesMap[vmId].history.map(
-                      element => ({ state: element.healthState, timestamp: element.timestamp}))
+            element => ({ state: element.healthState, timestamp: element.timestamp}))
         };
       }
       that.sortInstanceNames(that.vmMap, that.groupByZone);
     };
 
     $scope.$watch(
-        function() {
-          return that.vmMap;
-        },
-        function() {
-          that.recomputeVmStateAndHealthHistory();
-        },
-        true);
+      function () {
+        return that.vmMap;
+      },
+      function () {
+        that.recomputeVmStateAndHealthHistory();
+      },
+      true);
 
     $scope.$watch(
-        function() {
-          return that.groupByZone;
-        },
-        function() {
-          that.sortInstanceNames(that.vmMap, that.groupByZone);
-        },
-        true);
+      function () {
+        return that.groupByZone;
+      },
+      function () {
+        that.sortInstanceNames(that.vmMap, that.groupByZone);
+      },
+      true);
   }
 });

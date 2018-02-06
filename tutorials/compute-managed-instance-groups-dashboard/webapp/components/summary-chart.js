@@ -7,19 +7,19 @@ angular.module('migDashboardApp').component('instancesSummaryChart', {
   bindings: {
     colorsMap: '<',
     historyMap: '<',
-    groupByZone: '<',
+    groupByZone: '<'
   },
-  controller: function($interval) {
-    this.$onInit = function() {
-      if(this.containerId === undefined){
+  controller: function ($interval) {
+    this.$onInit = function () {
+      if (this.containerId === undefined) {
         /* Id of the DOM element that Google Charts Timeline will render in. */
-        this.containerId = "instances-chart-" + Date.now();
+        this.containerId = 'instances-chart-' + Date.now();
       }
     };
 
     var that = this;
 
-    that.drawChart = function() {
+    that.drawChart = function () {
       if (!that.historyMap) {
         return;
       }
@@ -29,37 +29,35 @@ angular.module('migDashboardApp').component('instancesSummaryChart', {
       var chartOptions = {};
       that.summaryInfo = [];
 
-      if(that.groupByZone){
+      if (that.groupByZone) {
         var possibleStates = {};
         var colors = [];
 
-        instancesNames.forEach(function(vmId) {
+        instancesNames.forEach(function (vmId) {
           var state = that.historyMap[vmId].timeline[0].state;
           var zone = that.historyMap[vmId].zone;
-          if(!(zone in instancesSummary)){
+          if (!(zone in instancesSummary)) {
             instancesSummary[zone] = {};
           }
-          if (state === 'gone')
-            return;
+          if (state === 'gone') { return; }
 
-          if(state in instancesSummary[zone]) {
+          if (state in instancesSummary[zone]) {
             instancesSummary[zone][state] += 1;
-          }
-          else{
+          } else {
             instancesSummary[zone][state] = 1;
           }
           possibleStates[state] = true;
         });
 
-        var summaryData = [['Zone', ]];
-        for(var i=0; i < Object.keys(possibleStates).length; i++){
+        var summaryData = [['Zone' ]];
+        for (var i = 0; i < Object.keys(possibleStates).length; i++) {
           summaryData[0].push(Object.keys(possibleStates)[i]);
         }
 
-        for(var i=0; i < Object.keys(instancesSummary).length; i++){
+        for (var i = 0; i < Object.keys(instancesSummary).length; i++) {
           var zone = Object.keys(instancesSummary)[i];
-          var row = [zone, ];
-          for(var j=0; j < Object.keys(possibleStates).length; j++){
+          var row = [zone ];
+          for (var j = 0; j < Object.keys(possibleStates).length; j++) {
             var state = Object.keys(possibleStates)[j];
             row.push(instancesSummary[zone][state]);
             that.summaryInfo.push({
@@ -72,31 +70,28 @@ angular.module('migDashboardApp').component('instancesSummaryChart', {
           summaryData.push(row);
         }
 
-        for(var j=0; j < Object.keys(possibleStates).length; j++){
+        for (var j = 0; j < Object.keys(possibleStates).length; j++) {
           var state = Object.keys(possibleStates)[j];
           colors.push(that.colorsMap[state]);
         }
         chartOptions['colors'] = colors;
-      }
-      else{
-        instancesNames.forEach(function(vmId) {
+      } else {
+        instancesNames.forEach(function (vmId) {
           var state = that.historyMap[vmId].timeline[0].state;
-          if (state === 'gone')
-            return;
-          if(state in instancesSummary) {
+          if (state === 'gone') { return; }
+          if (state in instancesSummary) {
             instancesSummary[state] += 1;
-          }
-          else{
+          } else {
             instancesSummary[state] = 1;
           }
         });
 
         var summaryData = [['State', 'Count', { role: 'style' }]];
-        for(var i=0; i < Object.keys(instancesSummary).length; i++){
+        for (var i = 0; i < Object.keys(instancesSummary).length; i++) {
           var state = Object.keys(instancesSummary)[i];
           summaryData.push([state, instancesSummary[state], that.colorsMap[state]]);
           that.summaryInfo.push(
-              {'state': state, 'count': instancesSummary[state]});
+            {'state': state, 'count': instancesSummary[state]});
         }
       }
 
@@ -104,12 +99,12 @@ angular.module('migDashboardApp').component('instancesSummaryChart', {
       var summaryView = new google.visualization.DataView(summaryDataTable);
 
       var defaults = {
-        title: "Summary",
-        legend: { position: "none" },
+        title: 'Summary',
+        legend: { position: 'none' },
         tooltip: {
-          trigger: "none",
+          trigger: 'none'
         },
-        backgroundColor: "#f2f9fc",
+        backgroundColor: '#f2f9fc'
       };
       var summaryOptions = $.extend({}, defaults, chartOptions);
 
@@ -117,14 +112,14 @@ angular.module('migDashboardApp').component('instancesSummaryChart', {
       summaryChart.draw(summaryView, summaryOptions);
     };
 
-    this.$postLink = function() {
+    this.$postLink = function () {
       var that = this;
-      google.charts.setOnLoadCallback(function() {
+      google.charts.setOnLoadCallback(function () {
         that.drawChartIntervalPromise = $interval(that.drawChart, 300);
       });
     };
 
-    this.$onDestroy = function() {
+    this.$onDestroy = function () {
       $interval.cancel(this.drawChartIntervalPromise);
     };
   }
