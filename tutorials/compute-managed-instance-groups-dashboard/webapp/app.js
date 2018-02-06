@@ -1,2 +1,2 @@
-angular.module('migDashboardApp', ['ui.bootstrap']);
-google.charts.load('current', { packages: ['timeline', 'corechart'] });
+window.window.angular.module('migDashboardApp', ['ui.bootstrap']);
+window.window.google.charts.load('current', { packages: ['timeline', 'corechart'] });

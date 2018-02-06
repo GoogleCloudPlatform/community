@@ -2,7 +2,7 @@
  * instances by their current state and shows how many instances there are in
  * each of the groups.
  */
-angular.module('migDashboardApp').component('instancesSummaryChart', {
+window.angular.module('migDashboardApp').component('instancesSummaryChart', {
   templateUrl: 'components/templates/summary-chart.html',
   bindings: {
     colorsMap: '<',
@@ -95,8 +95,8 @@ angular.module('migDashboardApp').component('instancesSummaryChart', {
         }
       }
 
-      var summaryDataTable = google.visualization.arrayToDataTable(summaryData);
-      var summaryView = new google.visualization.DataView(summaryDataTable);
+      var summaryDataTable = window.google.visualization.arrayToDataTable(summaryData);
+      var summaryView = new window.google.visualization.DataView(summaryDataTable);
 
       var defaults = {
         title: 'Summary',
@@ -108,13 +108,13 @@ angular.module('migDashboardApp').component('instancesSummaryChart', {
       };
       var summaryOptions = $.extend({}, defaults, chartOptions);
 
-      var summaryChart = new google.visualization.ColumnChart(summaryContainer);
+      var summaryChart = new window.google.visualization.ColumnChart(summaryContainer);
       summaryChart.draw(summaryView, summaryOptions);
     };
 
     this.$postLink = function () {
       var that = this;
-      google.charts.setOnLoadCallback(function () {
+      window.google.charts.setOnLoadCallback(function () {
         that.drawChartIntervalPromise = $interval(that.drawChart, 300);
       });
     };

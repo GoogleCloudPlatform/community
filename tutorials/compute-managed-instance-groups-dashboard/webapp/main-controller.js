@@ -1,4 +1,4 @@
-angular.module('migDashboardApp').controller('mainController', [
+window.angular.module('migDashboardApp').controller('mainController', [
   '$scope', '$timeout',
   function ($scope, $timeout) {
     $scope.showHealthChart = false;

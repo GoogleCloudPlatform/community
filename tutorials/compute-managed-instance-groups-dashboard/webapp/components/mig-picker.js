@@ -1,6 +1,6 @@
 /* A controller which allows the user to choose the project and the MIG to be
  * monitored. */
-angular.module('migDashboardApp').component('migPicker', {
+window.angular.module('migDashboardApp').component('migPicker', {
   templateUrl: 'components/templates/mig-picker.html',
   bindings: {
     onMigSelected: '&',

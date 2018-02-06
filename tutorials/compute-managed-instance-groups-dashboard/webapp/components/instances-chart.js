@@ -1,7 +1,7 @@
 /* Controller which draws the Timeline chart from Google Charts and
  * post-processes the chart to add additional elements which aren't available by default in the library.
  */
-angular.module('migDashboardApp').component('instancesChart', {
+window.angular.module('migDashboardApp').component('instancesChart', {
   templateUrl: 'components/templates/instance-chart.html',
   bindings: {
     colorsMap: '<',
@@ -103,7 +103,7 @@ angular.module('migDashboardApp').component('instancesChart', {
     };
 
     this.prepareDataTable = function () {
-      var dataTable = new google.visualization.DataTable();
+      var dataTable = new window.google.visualization.DataTable();
       dataTable.addColumn({type: 'string', id: 'Name'}); // row label
       dataTable.addColumn({type: 'string', id: 'State'}); // bar label
       dataTable.addColumn({type: 'date', id: 'Start'});
@@ -229,15 +229,15 @@ angular.module('migDashboardApp').component('instancesChart', {
 
       var instanceHistoryContainer = document.getElementById(that.containerId);
       var instanceHistoryChart =
-          new google.visualization.Timeline(instanceHistoryContainer);
-      google.visualization.events.addListener(
+          new window.google.visualization.Timeline(instanceHistoryContainer);
+      window.google.visualization.events.addListener(
         instanceHistoryChart, 'ready', that.addOverlays.bind(that));
       instanceHistoryChart.draw(dataTable, options);
     };
 
     this.$postLink = function () {
       var that = this;
-      google.charts.setOnLoadCallback(function () {
+      window.google.charts.setOnLoadCallback(function () {
         that.drawChartIntervalPromise = $interval(that.drawChart, 300);
       });
     };

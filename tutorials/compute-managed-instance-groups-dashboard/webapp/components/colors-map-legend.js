@@ -1,5 +1,5 @@
 /* Draws a chart legend (each machine state has its own color). */
-angular.module('migDashboardApp').component('colorMapLegend', {
+window.angular.module('migDashboardApp').component('colorMapLegend', {
   templateUrl: 'components/templates/color-map-legend.html',
   bindings: {
     colorsMap: '<'
@@ -9,7 +9,7 @@ angular.module('migDashboardApp').component('colorMapLegend', {
 
     this.updateColorMapArray = function () {
       that.colorsMapArray = [];
-      angular.forEach(that.colorsMap, function (value, key) {
+      window.angular.forEach(that.colorsMap, function (value, key) {
         that.colorsMapArray.push({'state': key, 'color': value});
       });
     };

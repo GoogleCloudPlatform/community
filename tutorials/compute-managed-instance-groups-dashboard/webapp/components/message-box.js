@@ -1,5 +1,5 @@
 /* Allows to show a message alert for certain message type */
-angular.module('migDashboardApp').component('messageBox', {
+window.angular.module('migDashboardApp').component('messageBox', {
   templateUrl: 'components/templates/message-box.html',
   bindings: {
     message: '<',

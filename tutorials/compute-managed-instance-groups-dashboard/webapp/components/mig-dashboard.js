@@ -1,6 +1,6 @@
 /* A controller which is responsible for showing the charts with legends for a given MIG and
   updating it every time the data changes. */
-angular.module('migDashboardApp').component('migDashboard', {
+window.angular.module('migDashboardApp').component('migDashboard', {
   templateUrl: 'components/templates/mig-dashboard.html',
   bindings: {
     messageFunction: '<',
