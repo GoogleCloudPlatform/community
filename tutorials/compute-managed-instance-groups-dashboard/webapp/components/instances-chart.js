@@ -32,15 +32,15 @@ angular.module('migDashboardApp').component('instancesChart', {
           }
         }
       }
-      for (var i = 0; i < pathsToModify.length; i++) {
-        if (!pathsToModify[i]) continue;
-        pathsToModify[i].setAttribute('class', 'redLine');
-        pathsToModify[i].setAttribute('id', 'nowPath' + i + that.containerId);
+      for (var j = 0; j < pathsToModify.length; j++) {
+        if (!pathsToModify[j]) continue;
+        pathsToModify[j].setAttribute('class', 'redLine');
+        pathsToModify[j].setAttribute('id', 'nowPath' + j + that.containerId);
 
         // move to front
         var useSVG = document.createElementNS('http://www.w3.org/2000/svg', 'use');
         useSVG.setAttributeNS(
-          'http://www.w3.org/1999/xlink', 'href', '#nowPath' + i + that.containerId);
+          'http://www.w3.org/1999/xlink', 'href', '#nowPath' + j + that.containerId);
         svg.appendChild(useSVG);
       }
     };
@@ -71,8 +71,8 @@ angular.module('migDashboardApp').component('instancesChart', {
         return;
       }
       var zoneSizes = [{zone: '', size: 0}];
-      for (var i = 0; i < that.instancesOrder.length; i++) {
-        var zone = that.historyMap[that.instancesOrder[i]].zone;
+      for (var k = 0; k < that.instancesOrder.length; k++) {
+        var zone = that.historyMap[that.instancesOrder[k]].zone;
         if (zoneSizes.slice(-1)[0].zone !== zone) {
           zoneSizes.push({zone: zone, size: 0});
         }
@@ -175,7 +175,6 @@ angular.module('migDashboardApp').component('instancesChart', {
      */
     this.calculateChartHeight = function (dataTable) {
       var visibleRows = 0;
-      var machinesCount = 0;
       var distinctMachines = {};
       for (var i = 0; i < dataTable.getNumberOfRows(); i++) {
         var machine = dataTable.getValue(i, 0);
@@ -185,13 +184,12 @@ angular.module('migDashboardApp').component('instancesChart', {
               Math.min(distinctMachines[machine], start);
         } else {
           distinctMachines[machine] = start;
-          machinesCount += 1;
         }
       }
 
-      for (var machine in distinctMachines) {
-        var start = distinctMachines[machine];
-        if (start <= that.timespan) visibleRows += 1;
+      for (var distinctMachine in distinctMachines) {
+        var machineStart = distinctMachines[distinctMachine];
+        if (machineStart <= that.timespan) visibleRows += 1;
       }
 
       var paddingHeight = 50; // set a padding value to cover the height of
