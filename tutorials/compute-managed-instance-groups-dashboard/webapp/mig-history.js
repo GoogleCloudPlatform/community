@@ -76,7 +76,7 @@ class MigHistory {
         return;
       }
       var instances = response.result.healthStatus.map(
-        data => ({name: urlToResourceName(data.instance), healthState: data.healthState }));
+        data => ({ name: urlToResourceName(data.instance), healthState: data.healthState }));
 
       for (var i = 0; i < instances.length; i++) {
         if (!(instances[i].name in that.instancesMap)) {
@@ -107,9 +107,9 @@ class MigHistory {
       this.instancesMap[inst].consumeInstanceInfo(instances[i]);
     }
 
-    for (var inst in this.instancesMap) {
-      if (instancesUp.indexOf(inst) === -1) {
-        this.instancesMap[inst].markInstanceAsGone();
+    for (var oldInst in this.instancesMap) {
+      if (instancesUp.indexOf(oldInst) === -1) {
+        this.instancesMap[oldInst].markInstanceAsGone();
       }
     }
   }

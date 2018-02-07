@@ -77,7 +77,7 @@ window.angular.module('migDashboardApp').component('migDashboard', {
 
       function findTemplatePrecedence (instancesMap) {
         var templateAppearTimes = {};
-        for (instanceName in instancesMap) {
+        for (var instanceName in instancesMap) {
           var template = getPropertyValueWithTimestamp(instancesMap[instanceName], 'template');
           if (!(template.value in templateAppearTimes) ||
               templateAppearTimes[template.value] > template.timestamp) {
@@ -148,13 +148,13 @@ window.angular.module('migDashboardApp').component('migDashboard', {
           error: that.vmMap.instancesMap[vmId].error,
           zone: that.vmMap.instancesMap[vmId].zone,
           timeline: that.vmMap.instancesMap[vmId].history.map(
-            element => ({ state: that.getInstanceState_(element), timestamp: element.timestamp}))
+            element => ({ state: that.getInstanceState_(element), timestamp: element.timestamp }))
         };
         that.vmHealthHistory[vmId] = {
           error: that.vmMap.instancesMap[vmId].error,
           zone: that.vmMap.instancesMap[vmId].zone,
           timeline: that.vmMap.instancesMap[vmId].history.map(
-            element => ({ state: element.healthState, timestamp: element.timestamp}))
+            element => ({ state: element.healthState, timestamp: element.timestamp }))
         };
       }
       that.sortInstanceNames(that.vmMap, that.groupByZone);

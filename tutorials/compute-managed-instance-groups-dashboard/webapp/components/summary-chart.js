@@ -49,14 +49,14 @@ window.angular.module('migDashboardApp').component('instancesSummaryChart', {
           possibleStates[state] = true;
         });
 
-        var summaryData = [['Zone' ]];
+        var summaryData = [['Zone']];
         for (var k = 0; k < Object.keys(possibleStates).length; k++) {
           summaryData[0].push(Object.keys(possibleStates)[k]);
         }
 
         for (var i = 0; i < Object.keys(instancesSummary).length; i++) {
           var zone = Object.keys(instancesSummary)[i];
-          var row = [zone ];
+          var row = [zone];
           for (var j = 0; j < Object.keys(possibleStates).length; j++) {
             var state = Object.keys(possibleStates)[j];
             row.push(instancesSummary[zone][state]);
@@ -106,7 +106,7 @@ window.angular.module('migDashboardApp').component('instancesSummaryChart', {
         },
         backgroundColor: '#f2f9fc'
       };
-      var summaryOptions = $.extend({}, defaults, chartOptions);
+      var summaryOptions = window.$.extend({}, defaults, chartOptions);
 
       var summaryChart = new window.google.visualization.ColumnChart(summaryContainer);
       summaryChart.draw(summaryView, summaryOptions);

@@ -27,7 +27,7 @@ window.angular.module('migDashboardApp').controller('mainController', [
                 error.details || error.error || error, 'error');
             });
       }
-      gapi.load('client:auth2', onGapiLoaded);
+      window.gapi.load('client:auth2', onGapiLoaded);
     };
 
     /* Retrieves a list of project names for typeahead widget. */
@@ -42,7 +42,7 @@ window.angular.module('migDashboardApp').controller('mainController', [
           }
         },
         function (result) {
-          throw 'Failed to load projects: ' + result.result.error.message;
+          throw new Error('Failed to load projects: ' + result.result.error.message);
         });
     };
 
@@ -56,7 +56,7 @@ window.angular.module('migDashboardApp').controller('mainController', [
     };
 
     $scope.fetchInstancesInfo = function () {
-      for (migId in $scope.migHistoryMap) {
+      for (var migId in $scope.migHistoryMap) {
         $scope.migHistoryMap[migId].fetchInstancesInfo();
       }
       $timeout($scope.fetchInstancesInfo, 1000);
