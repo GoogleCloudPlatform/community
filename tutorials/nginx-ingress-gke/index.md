@@ -120,22 +120,34 @@ deployment "kuard" created
 
 Verify that your Deployment is running three replicated Pods and the Service is exposed by running the following commands:
 
-	kubectl get deployments kuard
+```
+kubectl get deployments kuard
+```
 
-	NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-	kuard     3         3         3            3           1m
+```
+NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+kuard     3         3         3            3           1m
+```
 
-	kubectl get pods
+```
+kubectl get pods
+```
 
-	NAME                     READY     STATUS    RESTARTS   AGE
-	kuard-2740446302-03p3b   1/1       Running   0          1m
-	kuard-2740446302-6k65c   1/1       Running   0          1m
-	kuard-2740446302-wbj3g   1/1       Running   0          1m
+```
+NAME                     READY     STATUS    RESTARTS   AGE
+kuard-2740446302-03p3b   1/1       Running   0          1m
+kuard-2740446302-6k65c   1/1       Running   0          1m
+kuard-2740446302-wbj3g   1/1       Running   0          1m
+```
 
-	kubectl get service kuard
+```
+kubectl get service kuard
+```
 
-	NAME      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
-	kuard     ClusterIP   10.7.253.136   <none>        80/TCP    8s
+```
+NAME      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+kuard     ClusterIP   10.7.253.136   <none>        80/TCP    8s
+```
 
 ## Deploy a default backend for Ingress
 
@@ -153,15 +165,23 @@ From Cloud Shell, deploy the default backend Deployment and Service by running t
 
 Verify that your default backend Service and Deployment are configured in the cluster by running the following commands:
 
-	kubectl get deployment nginx-default-backend
+```
+kubectl get deployment nginx-default-backend
+```
 
-	NAME                    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-	nginx-default-backend   1         1         1            1           29s
+```
+NAME                    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+nginx-default-backend   1         1         1            1           29s
+```
 
-	kubectl get service nginx-default-backend
+```
+kubectl get service nginx-default-backend
+```
 
-	NAME                    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
-	nginx-default-backend   ClusterIP   10.7.250.191   <none>        80/TCP    40s
+```
+NAME                    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+nginx-default-backend   ClusterIP   10.7.250.191   <none>        80/TCP    40s
+```
 
 Looking at the YAML file spec, you can see it is a single replica Deployment of
 an Nginx default backend container from the Google Cloud Repository:
@@ -232,10 +252,14 @@ From the Cloud Shell, run the following command:
 Verify that Ingress Resource has been created.  Please note that the IP address
 for the Ingress Resource has not yet been defined:  
   
-	kubectl get ingress ingress-resource  
-  
-	NAME               HOSTS     ADDRESS   PORTS     AGE  
-	ingress-resource   *                   80        `
+```
+kubectl get ingress ingress-resource  
+```
+
+```
+NAME               HOSTS     ADDRESS   PORTS     AGE  
+ingress-resource   *                   80        `
+```
 
 Now that we have an Ingress Resource defined, we need an Ingress Controller to
 act upon the rules as shown below:
@@ -260,26 +284,38 @@ solution on Kubernetes Engine.
 <img src="https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Nginx%20Ingress%20on%20GCP%20-%20Fig%2002.png" width="65%">
 
 From the Cloud Shell, deploy an NGINX controller Deployment and Service by running the following command:  
-  
-	kubectl apply -f ingress-nginx.yaml
 
-	service "ingress-nginx" created
-	deployment "ingress-nginx" created
+```
+kubectl apply -f ingress-nginx.yaml
+```
+
+```
+service "ingress-nginx" created
+deployment "ingress-nginx" created
+```
 
 Wait a few moments while the GCP L4 Load Balancer gets deployed.  Confirm that the `ingress-nginx` Service has been deployed and that you have an external IP address associated with the service (recall we configured the `ingress-nginx` with `ServiceType: LoadBalancer`).  Run the following command:
 
-	kubectl get service ingress-nginx
-
-	NAME            TYPE           CLUSTER-IP    EXTERNAL-IP      PORT(S)                      AGE
-	ingress-nginx   LoadBalancer   10.7.252.85   35.188.177.209   80:30723/TCP,443:32122/TCP   2m
+```
+kubectl get service ingress-nginx
+```
+	
+```	
+NAME            TYPE           CLUSTER-IP    EXTERNAL-IP      PORT(S)                      AGE
+ingress-nginx   LoadBalancer   10.7.252.85   35.188.177.209   80:30723/TCP,443:32122/TCP   2m
+```
 
 Also check to see that the Ingress Resource now has an IP address, which is
 different from the Ingress Controller EXTERNAL IP address shown above.  Run the following command: 
   
-	kubectl get ingress  
+```  
+kubectl get ingress  
+```
 
-	NAME               HOSTS     ADDRESS          PORTS     AGE  
-	ingress-resource   *         35.224.254.160   80        12m`
+```
+NAME               HOSTS     ADDRESS          PORTS     AGE  
+ingress-resource   *         35.224.254.160   80        12m`
+```
 
 ### Test Ingress and default backend
 
@@ -302,50 +338,82 @@ You should get the following message:
 
 From the Cloud Shell, run the following commands:  
   
-	kubectl delete -f ingress-resource.yaml
+```  
+kubectl delete -f ingress-resource.yaml
+```
 
-	ingress "demo-ingress" deleted
+```
+ingress "demo-ingress" deleted
+```
 
-	kubectl delete -f ingress-nginx.yaml
+```
+kubectl delete -f ingress-nginx.yaml
+```
 
-	service "ingress-nginx" deleted
-	deployment "ingress-nginx" deleted
+```
+service "ingress-nginx" deleted
+deployment "ingress-nginx" deleted
+```
 
-	kubectl delete -f kuard-app.yaml
+```
+kubectl delete -f kuard-app.yaml
+```
 
-	service "kuard" deleted
-	deployment "kuard" deleted
+```
+service "kuard" deleted
+deployment "kuard" deleted
+```
 
-	kubectl delete -f nginx-default-backend.yaml
+```
+kubectl delete -f nginx-default-backend.yaml
+```
 
-	service "nginx-default-backend" deleted
-	deployment "nginx-default-backend" deleted
+```
+service "nginx-default-backend" deleted
+deployment "nginx-default-backend" deleted
+```
 
 Check no Deployments, Pods, or Ingresses exist on the cluster by running the following commands:  
-  
-	kubectl get deployments  
 
-	No resources found.
+```
+kubectl get deployments  
+```
 
-	kubectl get pods
+```
+No resources found.
+```
 
-	No resources found.
+```
+kubectl get pods
+```
 
-	kubectl get ingress
+```
+No resources found.
+```
 
-	No resources found.
+```
+kubectl get ingress
+```
+
+```
+No resources found.
+```
 
 Delete the Kubernetes Engine cluster by running the following command:  
-  
-	gcloud container clusters delete nginx-tutorial  
 
-	The following clusters will be deleted.
-	 - [nginx-tutorial] in [us-central1-f]
+```
+gcloud container clusters delete nginx-tutorial  
+```
+
+```
+The following clusters will be deleted.
+ - [nginx-tutorial] in [us-central1-f]
 
 	Do you want to continue (Y/n)?  y
 
 	Deleting cluster nginx-tutorial...done.
 	Deleted [https://container.googleapis.com/v1/projects/ameer-1/zones/us-central1-f/clusters/nginx-tutorial].
+```
 
 To delete the git repo, simply remove the directory by running the following command:    
   
