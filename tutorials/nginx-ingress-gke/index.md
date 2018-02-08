@@ -109,10 +109,10 @@ Repository, courtesy of
 
 From the Cloud Shell, run the following command:  
   
-	`kubectl apply -f kuard-app.yaml`
+	```kubectl apply -f kuard-app.yaml```
 
-	`service "kuard" created
-	deployment "kuard" created`
+	```service "kuard" created
+	deployment "kuard" created```
 
 Verify that your Deployment is running three replicated Pods and the Service is exposed by running the following commands:
 
