@@ -45,14 +45,14 @@ balance traffic from external clients to the Deployment.  This tutorial explains
 -  Create a Kubernetes Deployment
 -  Set up an Ingress Resource object for the Deployment
 -  Set up an Ingress Controller using NGINX as the controller (instead of the
-   Kubernetes Engine default Cloud Load Balancer)
+   default GKE Ingress which creates Cloud HTTP(S) Load Balancers)
 
 ## Objectives
 
--  Create a simple Kubernetes web _application_ Deployment 
--  Create a _default backend_ Deployment to serve 404 for all non-matching
+-  Deploy a simple Kubernetes web _application_ Deployment 
+-  Deploy a _default backend_ Deployment to serve 404 for all non-matching
    hosts and paths
--  Create an _Ingress Resource_ for the _application_
+-  Deploy an _Ingress Resource_ for the _application_
 -  Configure an _NGINX Ingress_ Deployment as an Ingress Controller for the
    _application_
 -  Test NGINX Ingress functionality by accessing the Google Cloud L4 LB
@@ -92,7 +92,7 @@ complete the tutorial.
 1. Set your project's default compute zone and create a cluster by running the following commands:  
   
         gcloud config set compute/zone us-central1-f  
-        gcloud container clusters create nginx-tutorial --machine-type=n1-standard-1 --num-nodes=2
+        gcloud container clusters create nginx-tutorial --num-nodes=2
         
 1. From the Cloud Shell, clone the following repo, which contains all the
 files for this tutorial:
@@ -244,8 +244,8 @@ Kubernetes platform allows for administrators to bring their own Ingress
 Controllers instead of using the cloud provider's built-in offering. 
 
 The NGINX controller, deployed as a Service, must be exposed for external
-access.  This is done using Service `Type: LoadBalancer` on the NGINX controller
-service.  On Kubernetes Engine, this creates a Google Cloud L4 (TCP) load balancer with NGINX
+access.  This is done using Service `type: LoadBalancer` on the NGINX controller
+service.  On Kubernetes Engine, this creates a Google Cloud Network (TCP/IP) Load Balancer with NGINX
 controller Service as a backend.  Google Cloud also creates the appropriate
 firewall rules within the Service's VPC to allow web HTTP(S) traffic to the load
 balancer frontend IP address.  Here is a basic flow of the NGINX ingress
