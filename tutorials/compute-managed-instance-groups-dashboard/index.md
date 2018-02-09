@@ -1,5 +1,5 @@
 ---
-title: Simple MIG Dashboard
+title: Monitor Compute Engine Managed Instance Groups Using Simple MIG Dashboard
 description: Learn how to monitor state of a Managed Instance Group and visualize it in a JavaScript application.
 author: lopekpl, 4gn3s
 tags: Compute Engine, Cloud Endpoints, OAuth
