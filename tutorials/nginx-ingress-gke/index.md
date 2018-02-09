@@ -100,7 +100,7 @@ files for this tutorial:
 
 If you already have Helm client and Tiller installed on your cluster, you can skip to the next section.
 
-__Helm__ is a tool that streamlines installing and managing Kubernetes applications and resrouces. Think of it like apt/yum/homebrew for Kubernetes.  Use of helm charts is recommended since they are maintained and typically kept up-to-date by the Kubernetes community. 
+__Helm__ is a tool that streamlines installing and managing Kubernetes applications and resources. Think of it like apt/yum/homebrew for Kubernetes.  Use of helm charts is recommended since they are maintained and typically kept up-to-date by the Kubernetes community. 
 
 -  Helm has two parts: a client (`helm`) and a server (`tiller`)
 -  `Tiller` runs inside of your Kubernetes cluster, and manages releases (installations) of your charts.
