@@ -364,7 +364,7 @@ ingress "demo-ingress" deleted
 Delete the _NGINX Ingress_ helm chart.
 
 ```
-helm delete nginx-ingress
+helm del --purge nginx-ingress
 ```
 
 ```
