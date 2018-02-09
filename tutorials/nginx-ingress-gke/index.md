@@ -308,7 +308,7 @@ ingress-resource   *                   80        `
 You should now be able to access the web application by going to the EXTERNAL-IP
 address of the NGINX ingress controller (from the output of the `kubectl get service nginx-ingress-controller` above).  
 
-![image](https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/Kuard_ingress.png)
+![image](https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/hello-app.png)
 
 To check if the _default-backend_ service is working properly, access any path (other than
 the default path `/` defined in the Ingress Resource) and ensure you receive a 404
