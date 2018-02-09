@@ -179,50 +179,26 @@ tiller-deploy           1         1         1            1           4m
 ## Deploy an application in Kubernetes Engine
 
 You can deploy a simple web based application from the Google Cloud
-Repository, courtesy of
-[Kubernetes Up and Running repo](https://github.com/kubernetes-up-and-running/kuard).
- You use this application as the backend for the Ingress.
+Repository.  You use this application as the backend for the Ingress.
 
 From the Cloud Shell, run the following command:  
   
 ```
-kubectl apply -f kuard-app.yaml
+kubectl run hello-app --image=gcr.io/google-samples/hello-app:1.0 --port=8080
 ```
 
 ```
-service "kuard" created
-deployment "kuard" created
+deployment "hello-app" created
 ```
 
-Verify that your Deployment is running three replicated Pods and the Service is exposed by running the following commands:
+Expose the `hello-app` Deployment as a Service by running the following command:
 
 ```
-kubectl get deployments kuard
-```
-
-```
-NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-kuard     3         3         3            3           1m
+kubectl expose deployment hello-app
 ```
 
 ```
-kubectl get pods
-```
-
-```
-NAME                     READY     STATUS    RESTARTS   AGE
-kuard-2740446302-03p3b   1/1       Running   0          1m
-kuard-2740446302-6k65c   1/1       Running   0          1m
-kuard-2740446302-wbj3g   1/1       Running   0          1m
-```
-
-```
-kubectl get service kuard
-```
-
-```
-NAME      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
-kuard     ClusterIP   10.7.253.136   <none>        80/TCP    8s
+service "hello-app" exposed
 ```
 
 ## Deploying the NGINX Ingress Controller via Helm
@@ -299,18 +275,14 @@ The manifest file contains the following configuration:
 	apiVersion: extensions/v1beta1
 	kind: Ingress
 	metadata:
-	  name: ingress-resource
 	  annotations:
 	    kubernetes.io/ingress.class: nginx
-	    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+	  name: ingress-resource
 	spec:
-	  rules:
-	  - http:
-	      paths:
-	      - path: /
-		backend:
-		  serviceName: kuard
-		  servicePort: 80
+	  backend:
+	    serviceName: hello-app
+	    servicePort: 8080
+
 
 The `kind: Ingress` dictates it is an Ingress Resource object.  This Ingress Resource defines an inbound L7 rule for path / to service kuard on port 80.
 
