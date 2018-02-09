@@ -89,14 +89,92 @@ complete the tutorial.
   
         gcloud config set compute/zone us-central1-f  
         gcloud container clusters create nginx-tutorial --num-nodes=2
-	
-1.  Ensure you have [Helm](https://github.com/kubernetes/helm/blob/master/docs/install.md) installed in Cloud Shell as well as Tiller (the server side component for helm installed on the Kubernetes cluster in the `kube-system` namespace).  
         
 1. From the Cloud Shell, clone the following repo, which contains the
 files for this tutorial:
     
     	git clone https://github.com/ameer00/nginx-ingress-gke 
     	cd nginx-ingress-gke
+	
+## Install Helm in Cloud Shell
+
+If you already have Helm client and Tiller installed on your cluster, you can skip to the next section.
+
+__Helm__ is a tool that streamlines installing and managing Kubernetes applications and resrouces. Think of it like apt/yum/homebrew for Kubernetes.  Use of helm charts is recommended since they are maintained and typically kept up-to-date by the Kubernetes community. 
+
+-  Helm has two parts: a client (`helm`) and a server (`tiller`)
+-  `Tiller` runs inside of your Kubernetes cluster, and manages releases (installations) of your charts.
+-  `Helm` runs on your laptop, CI/CD, or in our case, the Cloud Shell.
+ 
+You can install the `helm` client in Cloud Shell using the following commands:
+
+```
+curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
+```
+
+```
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  6640  100  6640    0     0  25824      0 --:--:-- --:--:-- --:--:-- 25836
+```
+
+```
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
+The script above fetches the latest version of `helm` client and installs it locally in Cloud Shell.
+
+```
+Downloading https://kubernetes-helm.storage.googleapis.com/helm-v2.8.1-linux-amd64.tar.gz
+Preparing to install into /usr/local/bin
+helm installed into /usr/local/bin/helm
+Run 'helm init' to configure helm.
+```
+
+Run the following command to install the server side tiller to the Kubernetes cluster.
+
+```
+helm init
+```
+
+The output below confirms tiller is running.
+
+```
+Creating /home/ameer00/.helm
+Creating /home/ameer00/.helm/repository
+Creating /home/ameer00/.helm/repository/cache
+Creating /home/ameer00/.helm/repository/local
+Creating /home/ameer00/.helm/plugins
+Creating /home/ameer00/.helm/starters
+Creating /home/ameer00/.helm/cache/archive
+Creating /home/ameer00/.helm/repository/repositories.yaml
+Adding stable repo with URL: https://kubernetes-charts.storage.googleapis.com
+Adding local repo with URL: http://127.0.0.1:8879/charts
+$HELM_HOME has been configured at /home/ameer00/.helm.
+
+Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.
+Happy Helming!
+```
+
+You can also confirm that `tiller` is running by checking for the `tiller_deploy` Deployment in the `kube-system` namespace.  Run the following command:
+
+```
+kubectl get deployments -n kube-system
+```
+
+The output should have a `tiller_deploy` Deployment as shown below:
+
+```
+NAME                    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+event-exporter-v0.1.7   1         1         1            1           13m
+heapster-v1.4.3         1         1         1            1           13m
+kube-dns                2         2         2            2           13m
+kube-dns-autoscaler     1         1         1            1           13m
+kubernetes-dashboard    1         1         1            1           13m
+l7-default-backend      1         1         1            1           13m
+tiller-deploy           1         1         1            1           4m
+```
 
 ## Deploy an application in Kubernetes Engine
 
