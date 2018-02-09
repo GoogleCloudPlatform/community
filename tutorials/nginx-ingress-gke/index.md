@@ -302,6 +302,7 @@ The manifest file contains the following configuration:
 	  name: ingress-resource
 	  annotations:
 	    kubernetes.io/ingress.class: nginx
+	    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 	spec:
 	  rules:
 	  - http:
