@@ -324,6 +324,8 @@ message.  For example:
 	http://external-ip-of-ingress-controller]/test
 
 You should get the following message:
+
+![image](https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/default-backend.png)
   
 	404 page not found 
 
