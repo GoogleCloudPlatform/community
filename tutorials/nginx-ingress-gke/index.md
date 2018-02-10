@@ -264,7 +264,7 @@ method can also be forced by setting the annotation's value to `gce`as shown bel
 Lets create a simple Ingress Resource YAML file which uses the NGINX Ingress Controller and has one path rule defined by typing the following commands:
 
 ```
-cat > ingress_resource.yaml << EOF
+cat > ingress-resource.yaml << EOF
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
