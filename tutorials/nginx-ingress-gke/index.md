@@ -357,32 +357,6 @@ service "hello-app" deleted
 deployment "hello-app" deleted
 ```
 
-Check no Deployments, Pods, or Ingresses exist on the cluster by running the following commands:  
-
-```
-kubectl get deployments  
-```
-
-```
-No resources found.
-```
-
-```
-kubectl get pods
-```
-
-```
-No resources found.
-```
-
-```
-kubectl get ingress
-```
-
-```
-No resources found.
-```
-
 Delete the Kubernetes Engine cluster by running the following command:  
 
 ```
