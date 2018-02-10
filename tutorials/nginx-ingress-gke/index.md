@@ -401,4 +401,4 @@ The following clusters will be deleted.
 
 Delete the `ingress_resource.yaml` file by running the following command:    
  
-	rm ingress_resource.yaml
+	rm ingress-resource.yaml
