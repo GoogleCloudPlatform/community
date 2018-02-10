@@ -275,16 +275,21 @@ The manifest file contains the following configuration:
 	apiVersion: extensions/v1beta1
 	kind: Ingress
 	metadata:
+	  name: ingress-resource
 	  annotations:
 	    kubernetes.io/ingress.class: nginx
-	  name: ingress-resource
+	    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 	spec:
-	  backend:
-	    serviceName: hello-app
-	    servicePort: 8080
+	  rules:
+	  - http:
+	      paths:
+	      - path: /hello
+		backend:
+		  serviceName: hello-app
+		  servicePort: 8080
 
 
-The `kind: Ingress` dictates it is an Ingress Resource object.  This Ingress Resource defines an inbound L7 rule for path / to service kuard on port 80.
+The `kind: Ingress` dictates it is an Ingress Resource object.  This Ingress Resource defines an inbound L7 rule for path `/hello` to service `hello-app` on port 8080.
 
 From the Cloud Shell, run the following command:  
   
@@ -305,13 +310,15 @@ ingress-resource   *                   80        `
 
 ### Test Ingress and default backend
 
-You should now be able to access the web application by going to the EXTERNAL-IP
-address of the NGINX ingress controller (from the output of the `kubectl get service nginx-ingress-controller` above).  
+You should now be able to access the web application by going to the __EXTERNAL-IP/hello__
+address of the NGINX ingress controller (from the output of the `kubectl get service nginx-ingress-controller` above). 
+
+	http://external-ip-of-ingress-controller]/hello
 
 ![image](https://github.com/ameer00/community/blob/master/tutorials/nginx-ingress-gke/hello-app.png)
 
 To check if the _default-backend_ service is working properly, access any path (other than
-the default path `/` defined in the Ingress Resource) and ensure you receive a 404
+the path `/hello` defined in the Ingress Resource) and ensure you receive a 404
 message.  For example: 
 
 	http://external-ip-of-ingress-controller]/test
@@ -346,12 +353,13 @@ release "nginx-ingress" deleted
 
 Delete the app.
 ```
-kubectl delete -f kuard-app.yaml
+kubectl delete service hello-app
+kubectl delete deployment hello-app
 ```
 
 ```
-service "kuard" deleted
-deployment "kuard" deleted
+service "hello-app" deleted
+deployment "hello-app" deleted
 ```
 
 Check no Deployments, Pods, or Ingresses exist on the cluster by running the following commands:  
