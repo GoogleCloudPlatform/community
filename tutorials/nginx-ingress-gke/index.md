@@ -90,10 +90,9 @@ complete the tutorial.
         gcloud config set compute/zone us-central1-f  
         gcloud container clusters create nginx-tutorial --num-nodes=2
         
-1. From the Cloud Shell, clone the following repo, which contains the
-files for this tutorial:
+1. From the Cloud Shell, create a folder:
     
-    	git clone https://github.com/ameer00/nginx-ingress-gke 
+    	mkdir nginx-ingress-gke 
     	cd nginx-ingress-gke
 	
 ## Install Helm in Cloud Shell
@@ -266,28 +265,27 @@ method can also be forced by setting the annotation's value to `gce`as shown bel
 
 	annotations: kubernetes.io/ingress.class: gce
 
-You can verify the annotation by viewing the _ingress-resource.yaml_ file and check the annotations under the metadata section as shown below:
+Lets create a simple Ingress Resource YAML file which uses the NGINX Ingress Controller and has one path rule defined by typing the following commands:
 
-	cat ingress-resource.yaml
-
-The manifest file contains the following configuration:
-
-	apiVersion: extensions/v1beta1
-	kind: Ingress
-	metadata:
-	  name: ingress-resource
-	  annotations:
-	    kubernetes.io/ingress.class: nginx
-	    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-	spec:
-	  rules:
-	  - http:
-	      paths:
-	      - path: /hello
-		backend:
-		  serviceName: hello-app
-		  servicePort: 8080
-
+```
+cat > ingress_resource.yaml << EOF
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-resource
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /hello
+        backend:
+          serviceName: hello-app
+          servicePort: 8080
+EOF
+```
 
 The `kind: Ingress` dictates it is an Ingress Resource object.  This Ingress Resource defines an inbound L7 rule for path `/hello` to service `hello-app` on port 8080.
 
