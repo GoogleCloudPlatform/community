@@ -89,11 +89,7 @@ complete the tutorial.
   
         gcloud config set compute/zone us-central1-f  
         gcloud container clusters create nginx-tutorial --num-nodes=2
-        
-1. From the Cloud Shell, create a folder:
-    
-    	mkdir nginx-ingress-gke 
-    	cd nginx-ingress-gke
+	
 	
 ## Install Helm in Cloud Shell
 
@@ -403,7 +399,6 @@ The following clusters will be deleted.
 	Deleted [https://container.googleapis.com/v1/projects/ameer-1/zones/us-central1-f/clusters/nginx-tutorial].
 ```
 
-To delete the git repo, simply remove the directory by running the following command:    
-  
-	cd ..  
-	rm -rf nginx-ingress-gke/
+Delete the `ingress_resource.yaml` file by running the following command:    
+ 
+	rm ingress_resource.yaml
