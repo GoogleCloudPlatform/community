@@ -14,9 +14,9 @@ window.angular.module('migDashboardApp').component('instancesChart', {
   controller: function ($interval) {
     /* A list of colors to be used to mark different machine states. */
     this.availableColors =
-        ['#3366CC', '#1D3C5B', '#6633CC', '#5574A6', '#22AA99', '#0099C6',
-          '#FF9900', '#3B3EAC', '#d35e0a', '#0b6811', '#8B0707', '#600060',
-          '#ad5701'];
+    ['#3366CC', '#1D3C5B', '#6633CC', '#5574A6', '#22AA99', '#0099C6',
+      '#FF9900', '#3B3EAC', '#d35e0a', '#0b6811', '#8B0707', '#600060',
+      '#ad5701'];
 
     var that = this;
 

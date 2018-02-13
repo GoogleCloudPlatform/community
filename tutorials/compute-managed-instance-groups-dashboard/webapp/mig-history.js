@@ -1,6 +1,6 @@
 class InstanceHistoryElement {
   constructor (instanceData, healthState) {
-    this.template = getInstanceTemplate(instanceData);
+    this.template = window.getInstanceTemplate(instanceData);
     this.currentAction = instanceData.currentAction;
     this.healthState = healthState;
     this.timestamp = Date.now();
@@ -22,7 +22,7 @@ class InstanceHistory {
         this.history[0].healthState !== historyElement.healthState) {
       this.history.unshift(historyElement);
     }
-    this.error = getInstanceError(instance);
+    this.error = window.getInstanceError(instance);
   }
 
   setHealthState (healthState) {
@@ -35,7 +35,7 @@ class InstanceHistory {
   }
 }
 
-class MigHistory {
+window.MigHistory = class {
   constructor (migResourceURL, managerResourceURL, backendServiceResourceURL, projectId, gceScope) {
     this.migResourceURL = migResourceURL; // the url of the (managed) instance group
     this.managerResourceURL = managerResourceURL; // the url of manager of the instance group
@@ -44,7 +44,7 @@ class MigHistory {
     this.gceScope = gceScope; // regional or zonal
     this.instancesMap = {}; // maps an instance name to its InstanceHistory
     this.successfulFetch = false;
-    this.migName = urlToResourceName(migResourceURL);
+    this.migName = window.urlToResourceName(migResourceURL);
   }
 
   isEmpty () {
@@ -54,7 +54,7 @@ class MigHistory {
   fetchInstancesInfo () {
     var that = this;
 
-    getInstancesListRequest(this.projectId, this.gceScope, this.managerResourceURL).then(
+    window.getInstancesListRequest(this.projectId, this.gceScope, this.managerResourceURL).then(
       function (response) {
         that.updateInstancesMap_(response.result.managedInstances || []);
         that.successfulFetch = true;
@@ -76,7 +76,7 @@ class MigHistory {
         return;
       }
       var instances = response.result.healthStatus.map(
-        data => ({ name: urlToResourceName(data.instance), healthState: data.healthState }));
+        data => ({ name: window.urlToResourceName(data.instance), healthState: data.healthState }));
 
       for (var i = 0; i < instances.length; i++) {
         if (!(instances[i].name in that.instancesMap)) {
@@ -92,17 +92,17 @@ class MigHistory {
       console.warn(error);
     }
 
-    getInstancesHealthRequest(this.projectId, this.backendServiceResourceURL, this.migResourceURL)
+    window.getInstancesHealthRequest(this.projectId, this.backendServiceResourceURL, this.migResourceURL)
       .then(handleGetHealthResponse, handleError);
   }
 
   updateInstancesMap_ (instances) {
     var instancesUp = [];
     for (var i = 0; i < instances.length; i++) {
-      var inst = getInstanceName(instances[i]);
+      var inst = window.getInstanceName(instances[i]);
       instancesUp.push(inst);
       if (!(inst in this.instancesMap)) {
-        this.instancesMap[inst] = new InstanceHistory(getInstanceZone(instances[i]));
+        this.instancesMap[inst] = new InstanceHistory(window.getInstanceZone(instances[i]));
       }
       this.instancesMap[inst].consumeInstanceInfo(instances[i]);
     }
@@ -113,4 +113,4 @@ class MigHistory {
       }
     }
   }
-}
+};

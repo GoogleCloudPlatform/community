@@ -72,7 +72,7 @@ window.angular.module('migDashboardApp').component('migPicker', {
         if (backendServices[i].backends !== undefined) {
           for (var j = 0; j < backendServices[i].backends.length; j++) {
             var migName =
-                urlToResourceName(backendServices[i].backends[j].group);
+                window.urlToResourceName(backendServices[i].backends[j].group);
             migBackendMap[migName] = backendServices[i].name;
           }
         }
@@ -93,13 +93,13 @@ window.angular.module('migDashboardApp').component('migPicker', {
 
     this.loadInstanceGroups = function (projectId) {
       that.messageFunction('Loading your instance groups...', 'loading');
-      getInstanceGroupManagersListRequest(projectId)
+      window.getInstanceGroupManagersListRequest(projectId)
         .then(function (response) {
           that.instanceGroupManagers =
               that.getInstanceGroupManagersFromResponse(response.result);
           that.projectId = projectId;
         })
-        .then(function () { return getBackendServicesListRequest(projectId); })
+        .then(function () { return window.getBackendServicesListRequest(projectId); })
         .then(function (response) {
           var migBackendMap = that.getMigToBackendServiceMapFromResponse(response.result);
           that.instanceGroupManagers =

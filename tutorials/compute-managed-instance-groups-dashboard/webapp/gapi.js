@@ -1,18 +1,18 @@
-function getBackendServicesListRequest (project) {
+window.getBackendServicesListRequest = function (project) {
   return window.gapi.client.compute.backendServices.list({
     'project': project
   });
-}
+};
 
-function getInstancesHealthRequest (project, backendService, groupUrl) {
+window.getInstancesHealthRequest = function (project, backendService, groupUrl) {
   return window.gapi.client.compute.backendServices.getHealth({
     'project': project,
     'backendService': backendService,
     'group': groupUrl
   });
-}
+};
 
-function getInstancesListRequest (project, gceScope, instanceGroupManager) {
+window.getInstancesListRequest = function (project, gceScope, instanceGroupManager) {
   if (gceScope.startsWith('regions/')) {
     return window.gapi.client.compute.regionInstanceGroupManagers.listManagedInstances({
       'project': project,
@@ -27,19 +27,19 @@ function getInstancesListRequest (project, gceScope, instanceGroupManager) {
     });
   }
   return Promise.reject(new Error('Failed to parse provided gceScope: ' + gceScope));
-}
+};
 
-function getProjectsListRequest () {
+window.getProjectsListRequest = function () {
   return window.gapi.client.cloudresourcemanager.projects.list({});
-}
+};
 
-function getInstanceGroupManagersListRequest (projectId) {
+window.getInstanceGroupManagersListRequest = function (projectId) {
   return window.gapi.client.compute.instanceGroupManagers.aggregatedList({
     'project': projectId
   });
-}
+};
 
-function getInitializeGapiClientRequest () {
+window.getInitializeGapiClientRequest = function () {
   return window.gapi.client.init({
     'clientId': 'PASTE YOUR CLIENT ID HERE',
     'scope': 'https://www.googleapis.com/auth/cloud-platform',
@@ -47,40 +47,40 @@ function getInitializeGapiClientRequest () {
       'https://www.googleapis.com/discovery/v1/apis/compute/beta/rest',
       'https://www.googleapis.com/discovery/v1/apis/cloudresourcemanager/v1/rest']
   });
-}
+};
 
-function getSignInRequest () {
+window.getSignInRequest = function () {
   return window.gapi.auth2.getAuthInstance().signIn();
-}
+};
 
 /*
  * Convenience methods for parsing data from GCE.
  */
-function urlToResourceName (url) {
+window.urlToResourceName = function (url) {
   if (!url || url.lastIndexOf('/') === -1) {
     return undefined;
   }
   return url.substr(url.lastIndexOf('/') + 1);
-}
+};
 
-function getInstanceTemplate (instanceData) {
+window.getInstanceTemplate = function (instanceData) {
   return instanceData.version
-    ? urlToResourceName(instanceData.version.instanceTemplate) : undefined;
-}
+    ? window.urlToResourceName(instanceData.version.instanceTemplate) : undefined;
+};
 
-function getInstanceName (instanceData) {
-  return urlToResourceName(instanceData.instance);
-}
+window.getInstanceName = function (instanceData) {
+  return window.urlToResourceName(instanceData.instance);
+};
 
-function getInstanceZone (instanceData) {
+window.getInstanceZone = function (instanceData) {
   var regex = /https:.*\/(.*)\/instances\/.*/g;
   var matches = regex.exec(instanceData.instance);
   return matches[1];
-}
+};
 
-function getInstanceError (instanceData) {
+window.getInstanceError = function (instanceData) {
   if (instanceData.lastAttempt && instanceData.lastAttempt.errors) {
     return instanceData.lastAttempt.errors.errors[0].code;
   }
   return undefined;
-}
+};

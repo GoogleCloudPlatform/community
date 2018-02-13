@@ -15,8 +15,8 @@ window.angular.module('migDashboardApp').controller('mainController', [
       $scope.setMessage('Authorizing...', 'loading');
 
       function onGapiLoaded () {
-        getInitializeGapiClientRequest()
-          .then(getSignInRequest)
+        window.getInitializeGapiClientRequest()
+          .then(window.getSignInRequest)
           .then($scope.getProjectIds)
           .then(
             function () {
@@ -32,7 +32,7 @@ window.angular.module('migDashboardApp').controller('mainController', [
 
     /* Retrieves a list of project names for typeahead widget. */
     $scope.getProjectIds = function () {
-      return getProjectsListRequest().then(
+      return window.getProjectsListRequest().then(
         function (response) {
           $scope.setMessage();
           if (response.result.projects) {
@@ -49,7 +49,7 @@ window.angular.module('migDashboardApp').controller('mainController', [
     $scope.onInstanceGroupManagerSelected = function (projectId, gceScope, igm, migId) {
       if (!(migId in $scope.migHistoryMap)) {
         $scope.migHistoryMap[migId] =
-            new MigHistory(igm.instanceGroup, igm.name, igm.backendService, projectId, gceScope);
+            new window.MigHistory(igm.instanceGroup, igm.name, igm.backendService, projectId, gceScope);
       }
       $scope.vmMap = $scope.migHistoryMap[migId];
       $scope.showHealthChart = igm.backendService !== undefined;
