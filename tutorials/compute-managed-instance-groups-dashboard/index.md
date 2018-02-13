@@ -6,8 +6,7 @@ tags: Compute Engine, Cloud Endpoints, OAuth
 date_published: 2018-02-06
 ---
 
-Introduction
-------------
+## Introduction
 
 Simple MIG dashboard is a tool for monitoring the state of instances of
 a Managed Instance Group. For each instance it visualizes its current
@@ -25,14 +24,12 @@ framework. It uses Google Charts library for visualization purposes and
 Google API Client Library for JavaScript to communicate with Google
 Cloud Platform.
 
-Before you begin
-----------------
+## Before you begin
 
 In this tutorial, we assume that you have a Google Cloud Platform
 project with an existing Managed Instance Group that you want to monitor.
 
-Running the dashboard
----------------------
+## Running the dashboard
 
 To run the dashboard locally, you need to set up a new GCP application.
 [Set up OAuth](https://support.google.com/cloud/answer/6158849?hl=en&ref_topic=6262490) to obtain the Client ID that will be used to identify your application when
@@ -64,24 +61,23 @@ before. Follow the link from the error message to enable it. Give it a
 few minutes to propagate, go back to your Simple MIG Dashboard and
 refresh the page. Your Dashboard is ready to use.
 
-Overview of the dashboard
--------------------------
+## Overview of the dashboard
 
 It's time to learn how to use the dashboard to monitor the state of your
 MIG:
 
 **Step 1.** Choose the name of the project and click **Load Instance Groups**.
 
-![Picking project](media/step1.png)
+![Picking project](https://storage.googleapis.com/gcp-community/tutorials/compute-managed-instance-groups-dashboard/step1.png)
 
 **Step 2.** From the list of Managed Instance Groups in this project, select
 the one you want to monitor.
 
-![Picking instance group](media/step2.png)
+![Picking instance group](https://storage.googleapis.com/gcp-community/tutorials/compute-managed-instance-groups-dashboard/step2.png)
 
 **Step 3.** You are now monitoring your MIG.
 
-![MIG Dashboard main view](media/step3.png)
+![MIG Dashboard main view](https://storage.googleapis.com/gcp-community/tutorials/compute-managed-instance-groups-dashboard/step3.png)
 
 1.  **Timespan** adjusts horizontal axis of *Instance status* chart.
 
@@ -101,22 +97,13 @@ the one you want to monitor.
 
 6.  **Legend** provides information about the colors in the chart.
 
-Code walkthrough
-----------------
+## Code walkthrough
 
 ### Initialization and authentication using gapi
 
-Once the user opens the page, Angular's `ng-init` embeded in the body of
-the document runs our `initialize()` function from *main-controller.js*:
-
-
-```js
-<body
-  ng-app="migDashboardApp"
-  ng-controller="mainController"
-  style="margin: 0 5%"
-  ng-init="initialize()">
-```
+Once the user opens the page, Angular's `ng-init` embeded in the
+[`body` element of *index.html*][index] runs our `initialize()` function from
+*main-controller.js*.
 
 `initialize()` is a chain of promises that:
 
@@ -156,15 +143,7 @@ The component responsible for project choice is defined in
 `loadInstanceGroups()` is called. It makes several calls to Google Cloud
 Compute API to fetch data about Managed Instance Groups belonging to the
 project. Progress is reported to the user with calls to `messageFunction`,
-which is injected into the `mig-picker` component in *index.html*:
-
-
-```js
-<mig-picker
-  on-mig-selected="onInstanceGroupManagerSelected(projectId, gceScope, igm, migId)"
-  message-function="setMessage"
-  project-list="projectList"></mig-picker>
-```
+which is injected into the [`mig-picker` component in *index.html*][index].
 
 Next, the user chooses the Managed Instance Group to monitor. New object
 of `MigHistory` class, defined in *mig-history.js*, is created. `MigHistory`
@@ -173,12 +152,8 @@ the Managed Instance Group. Every second `MigHistory` is updated by
 `fetchInstancesInfo()` method that fetches current state of all the
 machines calling the Google Compute API.
 
-`MigHistory` object is injected into `mig-dashboard` component as `vmMap`, and
-is used to periodically redraw the status charts:
+`MigHistory` object is injected into
+[`mig-dashboard` component in *index.html*][index] as `vmMap`, and is used to
+periodically redraw the status charts.
 
-```js
-<mig-dashboard
-  message-function="setMessage"
-  vm-map="vmMap"
-  show-health-chart="showHealthChart"></mig-dashboard>
-```
+[index]: https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/compute-managed-instance-groups-dashboard/webapp/index.html
