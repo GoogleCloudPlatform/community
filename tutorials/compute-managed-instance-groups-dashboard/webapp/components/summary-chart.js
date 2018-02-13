@@ -29,6 +29,7 @@ window.angular.module('migDashboardApp').component('instancesSummaryChart', {
       var chartOptions = {};
       that.summaryInfo = [];
 
+      var summaryData = [];
       if (that.groupByZone) {
         var possibleStates = {};
         var colors = [];
@@ -49,10 +50,9 @@ window.angular.module('migDashboardApp').component('instancesSummaryChart', {
           possibleStates[state] = true;
         });
 
-        var summaryData = [['Zone']];
-        for (var k = 0; k < Object.keys(possibleStates).length; k++) {
-          summaryData[0].push(Object.keys(possibleStates)[k]);
-        }
+        summaryData = [['Zone']];
+        Object.keys(possibleStates).forEach(
+          function (possibleState) { summaryData[0].push(possibleState); });
 
         for (var i = 0; i < Object.keys(instancesSummary).length; i++) {
           var zone = Object.keys(instancesSummary)[i];
@@ -70,8 +70,8 @@ window.angular.module('migDashboardApp').component('instancesSummaryChart', {
           summaryData.push(row);
         }
 
-        for (var j = 0; j < Object.keys(possibleStates).length; j++) {
-          var possibleState = Object.keys(possibleStates)[j];
+        for (var k = 0; k < Object.keys(possibleStates).length; k++) {
+          var possibleState = Object.keys(possibleStates)[k];
           colors.push(that.colorsMap[possibleState]);
         }
         chartOptions['colors'] = colors;
@@ -86,13 +86,13 @@ window.angular.module('migDashboardApp').component('instancesSummaryChart', {
           }
         });
 
-        var summaryData = [['State', 'Count', { role: 'style' }]];
-        for (var i = 0; i < Object.keys(instancesSummary).length; i++) {
-          var state = Object.keys(instancesSummary)[i];
-          summaryData.push([state, instancesSummary[state], that.colorsMap[state]]);
-          that.summaryInfo.push(
-            {'state': state, 'count': instancesSummary[state]});
-        }
+        summaryData = [['State', 'Count', { role: 'style' }]];
+        Object.keys(instancesSummary).forEach(
+          function (state) {
+            summaryData.push([state, instancesSummary[state], that.colorsMap[state]]);
+            that.summaryInfo.push(
+              { 'state': state, 'count': instancesSummary[state] });
+          });
       }
 
       var summaryDataTable = window.google.visualization.arrayToDataTable(summaryData);
