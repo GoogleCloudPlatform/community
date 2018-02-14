@@ -14,7 +14,7 @@ protocol.
 
 [cloud_vpn]: https://cloud.google.com/compute/docs/vpn/overview
 
-# Envrionment overview
+# Environment overview
 
 The equipment used in the creation of this guide is as follows:
 
