@@ -1,7 +1,7 @@
 ---
 title: Ingress with NGINX controller on Google Kubernetes Engine
 description: Learn how to deploy the NGINX Ingress Controller on Google Kubernetes Engine using Helm.
-author: ameerabbas
+author: ameer00
 tags: Google Kubernetes Engine, Kubernetes, Ingress, NGINX, NGINX Ingress Controller, Helm
 date_published: 2018-02-12
 ---
