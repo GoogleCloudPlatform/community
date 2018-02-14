@@ -1,12 +1,12 @@
 ---
-title: How to Set Up VPN between Check Point secrurity gateway and Cloud VPN
-description: Learn how to build site-to-site IPSEC VPN between Check Point secrurity gateway and Cloud VPN.
+title: How to Set Up VPN Between Check Point Security Gateway and Cloud VPN
+description: Learn how to build site-to-site IPSEC VPN between Check Point security gateway and Cloud VPN.
 author: ashishverm
 tags: Compute Engine, Cloud VPN, Check Point secrurity gateway, firewall
 date_published: 2018-01-03
 ---
 
-This guide walks you through the process to configure the [Check Point secrurity gateway](https://www.checkpoint.com/products/next-generation-secure-web-gateway/)
+This guide walks you through the process to configure the [Check Point security gateway](https://www.checkpoint.com/products/next-generation-secure-web-gateway/)
 for integration with the [Google Cloud VPN][cloud_vpn]. This information is
 provided as an example only. Please note that this guide is not meant to be a
 comprehensive overview of IPsec and assumes basic familiarity with the IPsec
@@ -40,9 +40,9 @@ To use a Check Point Security Gateway with Cloud VPN make sure the following pre
 * There is at least one configured and verified functional internal interface.
 * There is one configured and verified functional external interface.
 
-## IPsec Parameters
+## IPsec parameters
 
-Below parameters and values are used in the Gateway’s IPSec configuration for the
+The following parameters and values are used in the Gateway’s IPSec configuration for the
 purpose of this guide. Cloud VPN supports extensive [list](https://cloud.google.com/vpn/docs/concepts/advanced#supported_ike_ciphers) of
 ciphers that can be used per your security policies.
 
@@ -66,7 +66,7 @@ in this guide.
 |Phase-2|Encryption|`aes-128`(IKEv1) or `aes-256`(IKEv2)|
 |       |Integrity|`sha-1`|
 
-# Configuring Policy Based IPsec VPN
+# Configuring policy-based IPsec VPN
 
 Below is a sample environment to walk you through set up of policy based VPN. Make sure
 to replace the IP addresses in the sample environment with your own IP addresses.
@@ -90,7 +90,7 @@ to replace the IP addresses in the sample environment with your own IP addresses
 ### Configuring Cloud VPN
 
 To configure Cloud VPN:
-1. In Google Cloud Platform Console, select **Networking** > **[Create VPN connection](https://console.cloud.google.com/interconnect/vpn)**.
+1. In the Google Cloud Platform Console, select **Networking** > **[Create VPN connection](https://console.cloud.google.com/interconnect/vpn)**.
 
 1. Click **CREATE VPN CONNECTION**.
 
@@ -110,9 +110,9 @@ To configure Cloud VPN:
 |Remote network IP ranges| `10.0.0.0/24`|The on-premise CIDR blocks connecting to GCP from the VPN gateway.|
 |Local IP ranges| `10.132.0.0/20`|The GCP IP ranges matching the selected subnet.|
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_2.PNG)
+![](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_2.PNG)
 
-### Configuring Static Route
+### Configuring a static route
 
 1. In Google Cloud Platform Console, go to **[Routes](https://console.cloud.google.com/networking/routes)** > **Create Route**.
 1. Enter the parameters as shown in the following table and click **Create**.
@@ -141,7 +141,7 @@ To create an Interoperable Device for Cloud VPN on the Check Point SmartConsole:
 
 **Step 3**. Go to **General Properties** > **Topology** and manually add Google cloud IP addresses.
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_4.PNG)
+![Console user interface shows topology.](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_4.PNG)
 
 **Step 4**. Create a star community.
 
@@ -172,7 +172,7 @@ Go to **Encryption** and change the Phase 1 and Phase 2 properties according wha
 
 For more information, see the R80.10 Site To Site VPN Administration [Guide](http://dl3.checkpoint.com/paid/ea/ea41387591dcba2a8d551ba39084e9e6/CP_R80.10_SitetoSiteVPN_AdminGuide.pdf?HashKey=1515459944_c0affaeb9262c888e85d660e781d604d&xtn=.pdf).
 
-# Configuring Route Based IPsec VPN Tunnel
+# Configuring a route-based IPsec VPN Tunnel
 
 Below is a sample environment to walk you through set up of route based VPN. Make sure
 to replace the IP addresses in the sample environment with your own IP addresses.
@@ -201,7 +201,7 @@ With route based VPN both static and dynamic routing can be used. This example w
 dynamic routing. [Cloud Router](https://cloud.google.com/router/docs/) is used to establish
 BGP sessions between the 2 peers.
 
-### Configuring Cloud Router
+### Configuring cloud router
 
 **Step 1**: In Google Cloud Platform Console, select **Networking** > **[Cloud Routers](https://console.cloud.google.com/interconnect/routers)** > **Create Router**.
 
@@ -215,7 +215,7 @@ BGP sessions between the 2 peers.
 |Region|`europe-west1`|The home region of the cloud router.Note: Make sure the cloud router is in the same region as the sub-networks it is connecting to.|
 |Google ASN|`65000`|The Autonomous System Number assigned to the cloud router. Use any unused private ASN (64512 - 65534, 4200000000 – 4294967294).|
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_8.PNG)
+![](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-checkpoint/Image_8.PNG)
 
 ### Configuring Cloud VPN
 
@@ -340,7 +340,7 @@ This example refers to IKEv2 specifically. You can also use IKEv1 in this scenar
 
 **Step 9**. Setup for BGP Deployment.
 
-**Virtual Tunnel Interface and Initial BGP Setup**
+**Virtual tunnel interface and initial BGP Setup**
 
 Connect with SSH to your Security Gateway. If you are using the none default shell, change to clish. Run: `clish`
 Run the commands below replacing variables surrounded by { } with your values:
