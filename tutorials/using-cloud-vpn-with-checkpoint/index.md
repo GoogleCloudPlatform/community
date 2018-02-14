@@ -33,7 +33,7 @@ configuration using the referenced device:
 
 ## Prerequisities
 
-To use a Check Point Security Gateway with Cloud VPN make sure the following prerequisites have been met:
+To use a Check Point security gateway with Cloud VPN make sure the following prerequisites have been met:
 
 * The Check Point Security Gateway is online and functioning with no faults detected.
 * There is root access to the Check Point Security Gateway.
