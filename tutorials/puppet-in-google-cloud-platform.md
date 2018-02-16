@@ -22,48 +22,48 @@ date_published: 2018-02-11
 
 ## Install and run Puppet Master server
 
-1. SSH into the puppet-master and run the following commands to install puppet into the puppet-master
+1. SSH into the puppet-master instance, then run the following commands to install the Puppet server:
 
         wget https://apt.puppetlabs.com/puppetlabs-release-pc1-xenial.deb
         sudo dpkg -i puppetlabs-release-pc1-xenial.deb
         sudo apt-get update
         sudo apt-get install puppetserver
 
-2. Start the server by
+2. Start the Puppet server by running the following command:
 
         sudo systemctl start puppetserver
 
-3. Make sure puppet server is running by
+3. Make sure the Puppet server has started by running the following command:
 
         sudo systemctl status puppetserver
 
-We should see a line that says "active (running)"
+You should see a see a line that says "active (running)" in the result.
 
-4. Now that we've ensured the server is running, we can configure it to start at boot by
+4. Configure the Puppet server to start at boot by running the following command:
 
         sudo systemctl enable puppetserver
 
-## Install Puppet Agent and request a certificate from Master
+## Install and run the Puppet agent, and request a certificate from the Puppet master
 
-1. Now SSH in to the puppet agent and run the following commands to install puppet into puppet-Agent
+1. SSH into the puppet-agent instance, then run the following commands to install the Puppet agent:
 
         wget https://apt.puppetlabs.com/puppetlabs-release-pc1-xenial.deb
         sudo dpkg -i puppetlabs-release-pc1-xenial.deb
         sudo apt-get update
         sudo apt-get install puppet-agent
 
-2. Before starting Puppet Agent we want to make sure that it knows the Puppet Master address to request the certificate. To do that we will edit the        /etc/hosts file. At the end of the file, specify the Puppet master server as follows:
+2. Before starting Puppet agent, edit the /etc/hosts file to identify the Puppet master to use to request the certificate. At the end of the file, specify the internal IP address of the puppet-master Compute Engine instance, as shown following:
 
-        Puppet_Master_Compute_Engine_Instance_Internal_IP_Adress      Puppet
-
-3. Now run the following Commands to run the Puppet agent
+        [PUPPET_MASTER_COMPUTE_ENGINE_INSTANCE_INTERNAL_IP_ADDRESS]      Puppet
+You can get the internal IP address of the puppet-master Compute Engine instance from the VM instances page in the GCP console.
+3. Run the following commands to run the Puppet agent:
 
         sudo systemctl start puppet
         sudo systemctl enable puppet
 
-## Sign the certificate to establish a communication
+## Sign the certificate to establish communication between the Puppet master and Puppet agent
 
-1. The first time Puppet runs on an agent node, it sends a certificate signing request to the Puppet master. To list all unsigned certificate requests, run the following command on the Puppet master.
+1. The first time the Puppet agent runs, it sends a certificate signing request to the Puppet master. To list all unsigned certificate requests, run the following command on the puppet-master instance:
 
         sudo /opt/puppetlabs/bin/puppet cert list
 
