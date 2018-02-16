@@ -11,10 +11,10 @@ date_published: 2018-02-11
 * Set up the virtual machines
 * Install and run Puppet Master server
 * Install Puppet Agent and request a certificate from Master
-* Sign the certificate to establish a communication
-* Write a simple webserver module and Manifest that will install Apache2 and write hello world page
+* Sign the certificate to establish communication between the Puppet master and Puppet agent
+* Write a manifest for a simple web app and deploy it to the Puppet agent
 
-## Setting up the virtual machine
+## Set up the virtual machines
 
 1. Create a small(1 shared vCPU + 1.7 GB memory) Compute Engine instance with the OS Ubuntu 16.04 xenial and with 'Allow HTTP traffic' option checked under Firewall section and name is puppet-agent.
 
