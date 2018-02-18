@@ -9,7 +9,7 @@ date_published: 2018-02-11
 ## Objectives
 
 * Set up the virtual machines
-* Install and run Puppet Master server
+* Install and run Puppet Master
 * Install Puppet Agent and request a certificate from Master
 * Sign the certificate to establish communication between the Puppet master and Puppet agent
 * Write a manifest for a simple web app and deploy it to the Puppet agent
@@ -20,7 +20,7 @@ date_published: 2018-02-11
 
 2. Create another Compute Engine instance but this time a with 1 vCPU + 3.75 GB memory with the same OS (Ubuntu 16.04 xenial). Keep the default firewall option. No need to check http or https. Name the instance as puppet-master.
 
-## Install and run Puppet Master server
+## Install and run Puppet Master
 
 1. SSH into the puppet-master instance, then run the following commands to install the Puppet server:
 
@@ -68,9 +68,11 @@ You can get the internal IP address of the puppet-master Compute Engine instance
         sudo /opt/puppetlabs/bin/puppet cert list
 
 2. We'll use the --all option to sign certificate:
+
         sudo /opt/puppetlabs/bin/puppet cert sign --all
 
 You can also do a single sign by
+
         sudo /opt/puppetlabs/bin/puppet cert sign puppet-agent.c.YOUR_PROJECT_ID.internal
 
 ## Write a simple webserver module and Manifest that will install Apache2 and write hello world page
@@ -81,13 +83,11 @@ You can also do a single sign by
           include webserver
         }
 
-2. Now go to modules directory by
-        cd /etc/puppetlabs/code/environments/production/modulesand
+2. Navigate to the /etc/puppetlabs/code/environments/production/modules directory and make a new directory by running the following command:
 
-then make a directory by
         sudo mkdir -p webserver/manifests
 
-3. In the above manifests directory create a file init.pp as
+3. In the new manifests directory, create a file named init.pp, and copy the following code into it:
         class webserver {
           package { 'apache2':
           ensure => present
@@ -97,6 +97,8 @@ then make a directory by
           content => "<h1>This page is installed from Puppet Master</h1>", # content of the file
         }
       }
-4. Run the following command in the Puppet Agent to get the Catalog from the Puppet Master to apply the manifest.
+4. Run the following command on the puppet-agent instance to get the catalog from the Puppet master and apply the manifest:
 
-5. Copy and Paste the external IP of the Puppet Agent in your browser. We should see simple web page with a message: This page is installed from Puppet Master 
+        sudo /opt/puppetlabs/bin/puppet agent --test
+
+5. Copy the external IP address of the puppet-agent instance (you can get this from the VM instances page in the GCP console) and paste it into your browser. You should see a web page with the message "This page is installed from Puppet Master". 
