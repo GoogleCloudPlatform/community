@@ -199,28 +199,28 @@ You can use phpMyAdmin to administer your database through a UI.
 ##### Debian/Ubuntu
   + Select **apache2**.
   + Select **yes** to use `dbconfig-common` for database setup.
-  + Enter the database administrator's password that you chose during  MySQL configuration.
+  + Enter the database administrator's password that you chose during MySQL configuration.
   + Enter a password for the phpMyAdmin application.
 
 ##### CentOS 6 and 7
 By default, phpMyAdmin allows connections from only localhost. To access the
-database from a workstation, modify the Allow directive in the Apache configuration file for phpMyAdmin.
+database from a workstation, modify the Allow directive in the Apache
+configuration file for phpMyAdmin.
 
 1. In your text editor, open `phpMyAdmin.conf`.
 
        sudo nano /etc/httpd/conf.d/phpMyAdmin.conf
 
 1. To allow hosts on your network to access phpMyAdmin, [modify the Allow directive](https://httpd.apache.org/docs/current/mod/mod_access_compat.html#allow) for Apache 2.2. 
-For example, add your workstation's IP address to access phpMyAdmin from that IP.
-
-        <IfModule !mod_authz_core.c>
+For example, to access phpMyAdmin from your workstation's IP, add the IP
+address to `<IfModule !mod_authz_core.c>`:
+        
         # Apache 2.2
         Order Deny,Allow
         Deny from All
         Allow from [YOUR_WORKSTATION_IP_ADDRESS]
         Allow from 127.0.0.1
         Allow from ::1
-        </IfModule>
 
 1. Restart the Apache service:
 
@@ -245,7 +245,9 @@ that you chose during MySQL configuration.
 
 #### Secure phpMyAdmin
 
-To prevent unauthorized access to your instance, you should take steps to [secure your phpMyAdmin installation](https://docs.phpmyadmin.net/en/latest/setup.html#securing-your-phpmyadmin-installation), such as by serving phpMyAdmin only over HTTPS or using an authentication proxy.
+To prevent unauthorized access to your instance, you should take steps
+to [secure your phpMyAdmin installation](https://docs.phpmyadmin.net/en/latest/setup.html#securing-your-phpmyadmin-installation), such as by serving phpMyAdmin only over HTTPS
+or using an authentication proxy.
 
 ## Transferring files
 
