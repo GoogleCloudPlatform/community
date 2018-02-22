@@ -2,7 +2,7 @@
 title: Run an Elixir Phoenix app in containers using Google Kubernetes Engine
 description: Learn how to deploy a Phoenix app in containers using Google Kubernetes Engine.
 author: dazuma
-tags: Kubernetes, Container Engine, Elixir, Phoenix, Docker
+tags: Kubernetes, Kubernetes Engine, Elixir, Phoenix, Docker
 date_published: 2017-11-01
 ---
 
@@ -11,7 +11,7 @@ This tutorial helps you get started deploying your
 [Phoenix](http://phoenixframework.org/) Framework to
 [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/),
 Google's hosting solution for containerized applications. Kubernetes Engine,
-earlier known as Google Container Engine, is based on the popular open-source
+earlier known as Google Kubernetes Engine, is based on the popular open-source
 [Kubernetes](https://kubernetes.io/) system, and leverages Google's deep
 expertise with container-based deployments.
 
