@@ -1,18 +1,19 @@
 /**
  * Copyright 2017 Google LLC
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     https://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.google.cloud.solutions.rtdp;
 
 import io.jsonwebtoken.JwtBuilder;
@@ -72,15 +73,16 @@ public class Simulator implements MqttCallback {
   private MqttClient client;
   private String deviceId;
   private String topic;
-  private Random r;
+  private Random rand;
   private String sz = "20";
   private String lat;
   private String lng;
 
+  /** Class for simulator. */
   public Simulator(int id, MqttOptions options) {
-    r = new Random();
-    lat = options.lat + String.format("%04d", r.nextInt(10000));
-    lng = options.lng + String.format("%04d", r.nextInt(10000));
+    rand = new Random();
+    lat = options.lat + String.format("%04d", rand.nextInt(10000));
+    lng = options.lng + String.format("%04d", rand.nextInt(10000));
     deviceId = options.deviceId + Integer.toString(id);
     String mqttServerAddress =
         String.format("ssl://%s:%s", options.mqttBridgeHostname, options.mqttBridgePort);
@@ -103,21 +105,23 @@ public class Simulator implements MqttCallback {
     }
   }
 
+  /** Publish temperature data using default (generate random).*/
   public void publish() throws MqttPersistenceException, MqttException {
     publish(-1);
   }
 
+  /** Publish temperature data.*/
   public void publish(int t) throws MqttPersistenceException, MqttException {
     int temp = t;
     if (t == -1) {
       do {
-        temp = r.nextInt(35);
+        temp = rand.nextInt(35);
       } while (temp < 20);
     }
     long dt = System.currentTimeMillis();
     String payload =
-      String.format(
-        "%s,%s,%s,%s,%s,%s", deviceId, Long.toString(dt), Integer.toString(temp), lat, lng, sz);
+        String.format(
+            "%s,%s,%s,%s,%s,%s", deviceId, Long.toString(dt), Integer.toString(temp), lat, lng, sz);
 
     MqttMessage message = new MqttMessage(payload.getBytes());
     message.setQos(1);
@@ -135,6 +139,7 @@ public class Simulator implements MqttCallback {
 
   public void messageArrived(String arg0, MqttMessage arg1) throws Exception {}
 
+  /** Main entry point to application.*/
   public static void main(String[] args) throws Exception {
     MqttOptions options = MqttOptions.fromFlags(args);
     if (options == null) {
