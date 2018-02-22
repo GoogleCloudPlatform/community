@@ -18,6 +18,10 @@ One approach to triggering the configuration change is to:
 1. Configure Google Cloud Function to receive message and send configuration change
 1. Receive configuration change on Device 2
 
+as demonstrated in the following diagram:
+
+![Overview of device to device communication](img/overview.png)
+
 This tutorial demonstrates how you can do each of these steps.
 
 ## Create a Google Cloud IoT Core topic
