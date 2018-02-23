@@ -5,7 +5,7 @@ device to another device.
 
 # Setup
 
-1. Create a Cloud IoT Core device registry
+## Create a Cloud IoT Core device registry
 
 ![Example of creating device registry](img/create_registry.png)
 
@@ -15,6 +15,8 @@ create a new topic:
 ![Example of adding topic](img/add_topic.png)
 
 This topic will be used for your Google Cloud Function trigger.
+
+# Deploying the Google Cloud Function
 
 After you have a Google Cloud Device registry with associated PubSub topic,
 you're ready to deploy the Cloud Function. The following syntax summarizes how

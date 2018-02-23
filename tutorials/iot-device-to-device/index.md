@@ -8,9 +8,9 @@ date_published: 2017-12-05
 
 Sometimes you want to have one device control another device. For example, lets
 say that you have a device (Device 1) that is a switch that reconfigures a
-second device (Device 2) to be on.  In this scenario, you would want for a
-change on the first device (switch 1 on) to trigger a change on the second device
-(device 2 on).
+second device (Device 2) to be "awake".  In this scenario, you would want for a
+change on the first device (switch 1 set to "awake") to trigger a change on the
+second device (Device 2 set to "awake").
 
 One approach to triggering the configuration change is to:
 
@@ -185,12 +185,13 @@ virtualdevice folder:
         --registryId=<your-registry-id>
 ```
 
-When you connect your device, it will transmit a telemetry message that will
-reach the Google Cloud Function. The Google Cloud function will generate a
-callback messages based on the telemetry data which contains the registry and
-device IDs, which default to the connecting device ID.
+When the virtual device connects, it transmits a telemetry message that is
+turned into a Google Cloud PubSub message that reaches the Google Cloud
+Function. The Google Cloud Function then generates a callback message based on
+the telemetry data, which contains the registry and device IDs, set to the
+connecting device ID.
 
-Because the connecting device ID is used, the device will be transmitted a
+Because the connecting device ID is used, the device is be returned a
 configuration change message from the Cloud IoT Core service.  When the device
 receives the message, it will then send another telemetry message to the
 server. This will then generate another configuration change message which
