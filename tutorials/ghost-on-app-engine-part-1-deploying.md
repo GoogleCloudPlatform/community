@@ -125,7 +125,6 @@ from the [Cloud Console][console] or via the [Cloud SDK][sdk].
 Follow the instructions on the Ghost website to [install Ghost as an NPM Module][ghost_npm]
 
 [ghost_npm]: https://docs.ghost.org/docs/using-ghost-as-an-npm-module
-[knex_prod]: https://docs.ghost.org/docs/using-ghost-as-an-npm-module#section-run-database-migration
 
 ## Configure
 
