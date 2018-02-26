@@ -122,7 +122,7 @@ from the [Cloud Console][console] or via the [Cloud SDK][sdk].
 
 ## Install Ghost as an NPM Module
 
-Follow the instructions on the Ghost website to [install Ghost as an NPM Module][ghost_npm]
+Follow the instructions on the Ghost website to [install Ghost as an NPM Module][ghost_npm].
 
 [ghost_npm]: https://docs.ghost.org/docs/using-ghost-as-an-npm-module
 
@@ -310,6 +310,8 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
                 "contentPath": "content/"
             }
         }
+
+It's very important that you only do this step after migrating the database, because the socketPath property is required to deploy on GCP, but it causes knex-migrator to throw an error.
 
 1. Run the following command to deploy the app:
 
