@@ -311,7 +311,7 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
             }
         }
 
-It's very important that you only do this step after migrating the database, because the socketPath property is required to deploy on GCP, but it causes knex-migrator to throw an error.
+It's very important that you only do this step after migrating the database, because the socketPath property is required to deploy on Google App Engine, but it causes knex-migrator to throw an error.
 
 1. Run the following command to deploy the app:
 
