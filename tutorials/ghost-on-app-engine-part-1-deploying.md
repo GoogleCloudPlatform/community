@@ -184,7 +184,7 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
 1. Edit `config.production.json` and set it to the following:
 
         {
-            "url": "http://YOUR_PROJECT_ID.appspot.com",
+            "url": "https://YOUR_PROJECT_ID.appspot.com",
             "fileStorage": false,
             "mail": {},
             "database": {
