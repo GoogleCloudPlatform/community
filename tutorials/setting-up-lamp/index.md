@@ -212,15 +212,10 @@ configuration file for phpMyAdmin.
        sudo nano /etc/httpd/conf.d/phpMyAdmin.conf
 
 1. To allow hosts on your network to access phpMyAdmin, [modify the Allow directive](https://httpd.apache.org/docs/current/mod/mod_access_compat.html#allow) for Apache 2.2. 
-For example, to access phpMyAdmin from your workstation's IP, add the IP
-address to `<IfModule !mod_authz_core.c>`:
-        
-        # Apache 2.2
-        Order Deny,Allow
-        Deny from All
-        Allow from [YOUR_WORKSTATION_IP_ADDRESS]
-        Allow from 127.0.0.1
-        Allow from ::1
+To access phpMyAdmin from your workstation, for example, add your workstation's IP
+address to the directive.
+
+[![Code for the phpMyAdmin Allow directive](code-phpmyadmin.txt)]
 
 1. Restart the Apache service:
 
