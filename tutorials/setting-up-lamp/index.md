@@ -180,6 +180,68 @@ the local machine, and removing the test database.
 
     sudo mysql_secure_installation
 
+### Optional: Use phpMyAdmin for database administration
+
+You can use phpMyAdmin to administer your database through a UI.
+
+#### Install phpMyAdmin
+
+##### Debian/Ubuntu
+
+    sudo apt-get install phpMyAdmin
+
+##### CentOS 6 and 7
+
+    sudo yum install phpMyAdmin
+
+#### Configure phpMyAdmin
+
+##### Debian/Ubuntu
+  + Select **apache2**.
+  + Select **yes** to use `dbconfig-common` for database setup.
+  + Enter the database administrator's password that you chose during MySQL configuration.
+  + Enter a password for the phpMyAdmin application.
+
+##### CentOS 6 and 7
+By default, phpMyAdmin allows connections from only localhost. To access the
+database from a workstation, modify the Allow directive in the Apache
+configuration file for phpMyAdmin.
+
+1. In your text editor, open `phpMyAdmin.conf`.
+
+       sudo nano /etc/httpd/conf.d/phpMyAdmin.conf
+
+1.  To allow hosts on your network to access phpMyAdmin,
+    [modify the Allow directive](https://httpd.apache.org/docs/current/mod/mod_access_compat.html#allow)
+    for Apache 2.2, adding your workstation's IP address. [See an example](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/setting-up-lamp/code-phpmyadmin.txt).
+
+1. Restart the Apache service:
+
+##### CentOS 6
+
+     sudo service httpd restart
+
+##### CentOS 7
+
+     sudo systemctl restart httpd
+
+#### Test phpMyAdmin
+
+1. Browse to phpMyAdmin.
+
+       http://[YOUR_EXTERNAL_IP_ADDRESS]/phpmyadmin
+
+      You should see the phpMyAdmin login page.
+
+1. Log in by using the `root` username and the administrative password
+that you chose during MySQL configuration.
+
+#### Secure phpMyAdmin
+
+To prevent unauthorized access to your instance, you should take steps
+to [secure your phpMyAdmin installation](https://docs.phpmyadmin.net/en/latest/setup.html#securing-your-phpmyadmin-installation), such as by serving phpMyAdmin only over HTTPS
+or using an authentication proxy.
+
 ## Transferring files
 
 There are several ways to transfer files to your VM instance that runs your web server,
