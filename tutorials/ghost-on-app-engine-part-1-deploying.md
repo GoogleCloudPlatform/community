@@ -1,7 +1,7 @@
 ---
 title: Ghost on App Engine Flexible Environment Part 1 - Deploying
 description: Learn how to deploy a Ghost blog to Google App Engine flexible environment.
-author: excelulous
+author: jmdobry, hnipps
 tags: App Engine, Ghost, Node.js
 date_published: 2016-05-26
 ---
