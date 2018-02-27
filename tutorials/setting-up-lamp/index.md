@@ -215,7 +215,7 @@ configuration file for phpMyAdmin.
 To access phpMyAdmin from your workstation, for example, add your workstation's IP
 address to the directive.
 
-[![Code for the phpMyAdmin Allow directive](code-phpmyadmin.txt)]
+[![Code for the phpMyAdmin Allow directive](community/tutorials/setting-up-lamp/code-phpmyadmin.txt)]
 
 1. Restart the Apache service:
 
