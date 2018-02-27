@@ -134,7 +134,7 @@ Run 'helm init' to configure helm.
 ```
 
 ### Installing Tiller with RBAC enabled
-Starting with Kubernetes v1.8+, RBAC is enabled by default.  Prior to installing `tiller` we need to ensure we have the correct _ServiceAccount_ and _ClusterRolerBinding_ configured for the `tiller` service.  This allows `tiller` to be able to install services in the `default` namespace.
+Starting with Kubernetes v1.8+, RBAC is enabled by default.  Prior to installing `tiller` we need to ensure we have the correct _ServiceAccount_ and _ClusterRoleBinding_ configured for the `tiller` service.  This allows `tiller` to be able to install services in the `default` namespace.
 Run the following command to install the server side `tiller` to the Kubernetes cluster with RBAC enabled.
 
 ```
@@ -145,7 +145,7 @@ helm init --service-account tiller --upgrade
 ```
 
 ### Installing Tiller with RBAC disabled
-If you do not have RBAC enabled on your Kubernetes installation.  You can simply run the following command to install `tiller` on your cluster.
+If you do not have RBAC enabled on your Kubernetes installation, you can simply run the following command to install `tiller` on your cluster.
 
 ```
 helm init
@@ -232,14 +232,14 @@ solution on Kubernetes Engine.
 ![image](https://storage.googleapis.com/gcp-community/tutorials/nginx-ingress-gke/Nginx%20Ingress%20on%20GCP%20-%20Fig%2002.png)
 
 #### Deploy NGINX Ingress Controller with RBAC enabled
-If your Kubernetes cluster has RBAC enabled, From the Cloud Shell, deploy an NGINX controller Deployment and Service by running the following command:
+If your Kubernetes cluster has RBAC enabled, from the Cloud Shell, deploy an NGINX controller Deployment and Service by running the following command:
 
 ```
 helm install --name nginx-ingress stable/nginx-ingress --set rbac.create=true
 ```
 
 #### Deploy NGINX Ingress Controller with RBAC disabled
-If your Kubernetes cluster has RBAC disabled, From the Cloud Shell, deploy an NGINX controller Deployment and Service by running the following command:
+If your Kubernetes cluster has RBAC disabled, from the Cloud Shell, deploy an NGINX controller Deployment and Service by running the following command:
 
 ```
 helm install --name nginx-ingress stable/nginx-ingress
