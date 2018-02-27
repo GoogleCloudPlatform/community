@@ -148,9 +148,9 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
                 "client": "mysql",
                 "connection": {
                     "host": "127.0.0.1",
-                    "user": "YOUR_MYSQL_USERNAME",
-                    "password": "YOUR_MYSQL_PASSWORD",
-                    "database": "YOUR_MYSQL_DATABASE_NAME",
+                    "user": YOUR_MYSQL_USERNAME,
+                    "password": YOUR_MYSQL_PASSWORD,
+                    "database": YOUR_MYSQL_DATABASE_NAME,
                     "charset": "utf8"
                 },
                 "debug": false
@@ -184,15 +184,15 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
 1. Edit `config.production.json` and set it to the following:
 
         {
-            "url": "YOUR_PROJECT_URL",
+            "url": "http://YOUR_PROJECT_ID.appspot.com",
             "fileStorage": false,
             "mail": {},
             "database": {
                 "client": "mysql",
                 "connection": {
-                    "user": "YOUR_MYSQL_USERNAME",
-                    "password": "YOUR_MYSQL_PASSWORD",
-                    "database": "YOUR_MYSQL_DATABASE_NAME",
+                    "user": YOUR_MYSQL_USERNAME,
+                    "password": YOUR_MYSQL_PASSWORD,
+                    "database": YOUR_MYSQL_DATABASE_NAME,
                     "charset": "utf8"
                 },
                 "debug": false
@@ -288,16 +288,16 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
 1. Add `"socketPath": "/cloudsql/YOUR_INSTANCE_NAME"` in the connection properties section of your `config.production.json`, so you end up with:
 
         {
-            "url": "YOUR_PROJECT_URL",
+            "url": "http://YOUR_PROJECT_ID.appspot.com",
             "fileStorage": false,
             "mail": {},
             "database": {
                 "client": "mysql",
                 "connection": {
                     "socketPath": "/cloudsql/YOUR_INSTANCE_NAME",
-                    "user": "YOUR_MYSQL_USERNAME",
-                    "password": "YOUR_MYSQL_PASSWORD",
-                    "database": "YOUR_MYSQL_DATABASE_NAME",
+                    "user": YOUR_MYSQL_USERNAME,
+                    "password": YOUR_MYSQL_PASSWORD,
+                    "database": YOUR_MYSQL_DATABASE_NAME,
                     "charset": "utf8"
                 },
                 "debug": false
