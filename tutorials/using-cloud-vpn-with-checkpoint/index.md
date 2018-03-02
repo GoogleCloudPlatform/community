@@ -2,7 +2,7 @@
 title: How to Set Up VPN Between Check Point Security Gateway and Cloud VPN
 description: Learn how to build site-to-site IPSEC VPN between Check Point security gateway and Cloud VPN.
 author: ashishverm
-tags: Compute Engine, Cloud VPN, Check Point secrurity gateway, firewall
+tags: Compute Engine, Cloud VPN, Check Point security gateway, firewall
 date_published: 2018-01-03
 ---
 
@@ -14,7 +14,7 @@ protocol.
 
 [cloud_vpn]: https://cloud.google.com/compute/docs/vpn/overview
 
-# Envrionment overview
+# Environment overview
 
 The equipment used in the creation of this guide is as follows:
 
@@ -131,7 +131,7 @@ To configure Cloud VPN:
 **Note:** Add ingress firewall rules to allow inbound network traffic as per your security
 policy.
 
-## Configuration - Check Point Secrurity Gateway
+## Configuration - Check Point Security Gateway
 
 To create an Interoperable Device for Cloud VPN on the Check Point SmartConsole:
 
@@ -263,7 +263,7 @@ Click **Save and Continue** to complete.
 
 **Note:** – Add ingress firewall rules to allow inbound network traffic as per your security policy.
 
-## Configuration - Check Point Secrurity Gateway
+## Configuration - Check Point Security Gateway
 
 Create an interoperable device for Cloud VPN on the Check Point SmartConsole.
 
