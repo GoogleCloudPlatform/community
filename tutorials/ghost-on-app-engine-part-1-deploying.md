@@ -1,5 +1,5 @@
 ---
-title: Ghost on App Engine Flexible Environment Part 1 - Deploying
+title: Deploying Ghost on App Engine Flexible Environment - Part 1
 description: Learn how to deploy a Ghost blog to Google App Engine flexible environment.
 author: hnipps
 tags: App Engine, Ghost, Node.js
@@ -311,7 +311,7 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
             }
         }
 
-It's very important that you only do this step after migrating the database, because the socketPath property is required to deploy on Google App Engine, but it causes knex-migrator to throw an error.
+It's very important that you only do this step after migrating the database. The ```socketPath``` property is required to deploy on Google App Engine, but it causes ```knex-migrator``` to throw an error.
 
 1. Run the following command to deploy the app:
 
@@ -329,7 +329,7 @@ It's very important that you only do this step after migrating the database, bec
 
 ## What's next
 
-[Ghost on App Engine Part 2 - Monitoring][monitoring]
+[Monitoring Ghost on App Engine Flexible Environment - Part 2][monitoring]
 
 [monitoring]: https://cloud.google.com/community/tutorials/ghost-on-app-engine-part-2-monitoring
 [ghost]: https://ghost.org/
