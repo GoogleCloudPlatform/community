@@ -20,7 +20,7 @@ const pubsub = PubSub();
 const topicName = 'sns-events';
 const topic = pubsub.topic(topicName);
 
-const expectedTopicArn = 'arn:aws:sns:us-west-2:681196457733:new-demo';
+const expectedTopicArn = 'arn:aws:sns:us-west-2:759791620908:my-sns-topic';
 
 /**
  * Cloud Function.
@@ -46,7 +46,6 @@ exports.receiveNotification = function receiveNotification (req, res) {
     if (err) {
       // the message did not validate
       res.status(403).end('invalid SNS message');
-      return;
     }
     if (message.TopicArn !== expectedTopicArn) {
       // we got a request from a topic we were not expecting to
@@ -55,12 +54,10 @@ exports.receiveNotification = function receiveNotification (req, res) {
       // the origin of the message, anyone could end up publishing to your
       // cloud function
       res.status(403).end('invalid SNS Topic');
-      return;
     }
 
     // here we handle either a request to confirm subscription, or a new
     // message
-    var options;
     switch (message.Type.toLowerCase()) {
       case 'subscriptionconfirmation':
         console.log('confirming subscription ' + message.SubscribeURL);
@@ -82,25 +79,19 @@ exports.receiveNotification = function receiveNotification (req, res) {
       case 'notification':
         // this is a regular SNS notice, we relay to Pubsub
         console.log(message.MessageId + ': ' + message.Message);
-        message = {
-          data: message.Message,
-          attributes: {
+
+        const attributes = {
             snsMessageId: message.MessageId,
             snsSubject: message.Subject
-          }
-        };
+        }
 
-        options = {
-          raw: true
-        };
+        var msgData = Buffer.from(message.Message);
 
-        topic.publish(message, options).then(function (data) {
-          console.log('message published ' + data[0]);
-          // var messageIds = data[0];
-          // var apiResponse = data[1];
+        topic.publisher().publish(msgData, attributes).then(function (results) {
+          console.log('message published ' + results[0]);
+          res.status(200).end('ok');
         });
-        res.status(200).end('ok');
-        return;
+        break;
       default:
         console.error('should not have gotten to default block');
         res.status(400).end('invalid SNS message');
