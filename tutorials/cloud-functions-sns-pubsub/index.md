@@ -163,9 +163,9 @@ exports.receiveNotification = function receiveNotification (req, res) {
         console.log(message.MessageId + ': ' + message.Message);
 
         const attributes = {
-            snsMessageId: message.MessageId,
-            snsSubject: message.Subject
-        }
+          snsMessageId: message.MessageId,
+          snsSubject: message.Subject
+        };
 
         var msgData = Buffer.from(message.Message);
 
@@ -180,6 +180,7 @@ exports.receiveNotification = function receiveNotification (req, res) {
     }
   });
 };
+
 
 ```
 
