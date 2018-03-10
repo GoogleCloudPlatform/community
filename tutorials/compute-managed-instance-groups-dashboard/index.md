@@ -103,7 +103,7 @@ the one you want to monitor.
 
 Once the user opens the page, Angular's `ng-init` embeded in the
 [`body` element of *index.html*][index] runs our `initialize()` function from
-*main-controller.js*.
+[*main-controller.js*][main-controller].
 
 `initialize()` is a chain of promises that:
 
@@ -139,14 +139,14 @@ $scope.initialize = function() {
 ```
 
 The component responsible for project choice is defined in
-*components/mig-picker.js*. Once the user chooses the project ID, function
+[*components/mig-picker.js*][mig-picker]. Once the user chooses the project ID, function
 `loadInstanceGroups()` is called. It makes several calls to Google Cloud
 Compute API to fetch data about Managed Instance Groups belonging to the
 project. Progress is reported to the user with calls to `messageFunction`,
 which is injected into the [`mig-picker` component in *index.html*][index].
 
 Next, the user chooses the Managed Instance Group to monitor. New object
-of `MigHistory` class, defined in *mig-history.js*, is created. `MigHistory`
+of `MigHistory` class, defined in [*mig-history.js*][mig-history], is created. `MigHistory`
 stores state and health status changes for all instances that belong to
 the Managed Instance Group. Every second `MigHistory` is updated by
 `fetchInstancesInfo()` method that fetches current state of all the
@@ -156,4 +156,29 @@ machines calling the Google Compute API.
 [`mig-dashboard` component in *index.html*][index] as `vmMap`, and is used to
 periodically redraw the status charts.
 
+### Calls to Google Compute API
+
+[*gapi.js*][gapi] contains all the API requests used by Simple MIG Dashboard. Once the user chooses the project, the Dashboard fetches the list of Managed Instance Groups that belong to this project using [*compute.instanceGroupManagers.aggregatedList*][igms-list]. The call returns both zonal and regional Managed Instance Groups. Next, the user chooses the Managed Instance Group they want to monitor. The dashboard fetches the list of instances in the selected Managed Instance Group. Depending on the type of the Managed Instance Group, it either makes a call to [*compute.regionInstanceGroupManagers.listManagedInstances*][rmig-list] for Regional Managed Instance Group or [*compute.instanceGroupManagers.listManagedInstances*][mig-list] for Zonal Managed Instance Group. Both methods return a single *managedInstances* object that lists all the instances from the Managed Instance Group together with their  *currentAction* (e.g. CREATING, RUNNING) and *version*. *version* defines which Instance Template was used to create the instance.
+
+To display health of instances, the Dashboard first fetches all Backend Services defined in the project using [*compute.backendServices.list*][bs-list]. Then it finds the particular Backend Service connected to the selected Managed Instance Group by looking at *group* field of Backend Service resources. It gets health statuses of Managed Instance Group instances by calling [*comupute.backendServices.getHealth*][get-health]. The request returns a list of *healthStatus* objects that map instances from the Managed Instance Group to their *healthState*.
+
+
 [index]: https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/compute-managed-instance-groups-dashboard/webapp/index.html
+
+[main-controller]: https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/compute-managed-instance-groups-dashboard/webapp/main-controller.js
+
+[mig-picker]: https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/compute-managed-instance-groups-dashboard/webapp/components/mig-picker.js
+
+[mig-history]: https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/compute-managed-instance-groups-dashboard/webapp/mig-history.js
+
+[gapi]: https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/compute-managed-instance-groups-dashboard/webapp/gapi.js
+
+[igms-list]: https://cloud.google.com/compute/docs/reference/rest/beta/instanceGroupManagers/aggregatedList
+
+[mig-list]: https://cloud.google.com/compute/docs/reference/rest/beta/instanceGroupManagers/listManagedInstances
+
+[rmig-list]: https://cloud.google.com/compute/docs/reference/rest/beta/regionInstanceGroupManagers/listManagedInstances
+
+[bs-list]: https://cloud.google.com/compute/docs/reference/rest/beta/backendServices/list
+
+[get-health]: https://cloud.google.com/compute/docs/reference/rest/beta/backendServices/getHealth
