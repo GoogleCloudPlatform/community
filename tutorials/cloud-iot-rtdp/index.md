@@ -107,7 +107,12 @@ In this section, you create a topic in Cloud Pub/Sub and configure Cloud IoT Cor
 ![registry](create_registry.png)
 7. When you're done, click **Create**.
 8. In the **Grant permission to service account** dialog box, click **Continue**.
-9. In Cloud Shell, register devices in the device registry:
+9. In Cloud Shell, generate a new public/private key pair, which will override the checked in pair.
+```bash
+% cd bin
+% ./create_cert.sh
+```
+10. In Cloud Shell, register devices in the device registry:
 ```bash
 % bin/register.sh
 ```
