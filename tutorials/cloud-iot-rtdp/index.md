@@ -88,6 +88,8 @@ To make it easier to run commands, you can set environment variables so that you
 2. Set the following  environment variables:
 ```bash
 % export PROJECT=[PROJECT_ID]
+% export REGION=[REGION_NAME]
+% export ZONE=[ZONE_NAME]
 % export BUCKET=[BUCKET_NAME]
 % export REGISTRY=[CLOUD_IOT_CORE_REGISTRY_ID]
 % export TOPIC=[CLOUD_PUBSUB_TOPIC_NAME]
