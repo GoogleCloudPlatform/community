@@ -1,7 +1,7 @@
 ---
 title: Deploying Ghost on App Engine Flexible Environment - Part 1
 description: Learn how to deploy a Ghost blog to Google App Engine flexible environment.
-author: hnipps
+author: jmdobry,hnipps
 tags: App Engine, Ghost, Node.js
 date_published: 2016-05-26
 ---
@@ -148,9 +148,9 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
                 "client": "mysql",
                 "connection": {
                     "host": "127.0.0.1",
-                    "user": YOUR_MYSQL_USERNAME,
-                    "password": YOUR_MYSQL_PASSWORD,
-                    "database": YOUR_MYSQL_DATABASE_NAME,
+                    "user": "YOUR_MYSQL_USERNAME",
+                    "password": "YOUR_MYSQL_PASSWORD",
+                    "database": "YOUR_MYSQL_DATABASE_NAME",
                     "charset": "utf8"
                 },
                 "debug": false
@@ -190,9 +190,9 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
             "database": {
                 "client": "mysql",
                 "connection": {
-                    "user": YOUR_MYSQL_USERNAME,
-                    "password": YOUR_MYSQL_PASSWORD,
-                    "database": YOUR_MYSQL_DATABASE_NAME,
+                    "user": "YOUR_MYSQL_USERNAME",
+                    "password": "YOUR_MYSQL_PASSWORD",
+                    "database": "YOUR_MYSQL_DATABASE_NAME",
                     "charset": "utf8"
                 },
                 "debug": false
