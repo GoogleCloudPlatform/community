@@ -2,7 +2,7 @@
 title: Node.js and Google Cloud Platform
 description: Get an overview of Node.js and learn ways to run Node.js apps on Google Cloud Platform.
 author: jmdobry
-tags: Node.js, Compute Engine, Container Engine, App Engine, Cloud Functions
+tags: Node.js, Compute Engine, Kubernetes Engine, App Engine, Cloud Functions
 date_published: 2016-12-14
 ---
 This tutorial shows how to prepare your computer for [Node.js][nodejs]
@@ -85,7 +85,7 @@ There are four options for running Node.js applications on Google Cloud
 Platform:
 
 * [Google Compute Engine][gce]
-* [Google Container Engine][gke]
+* [Google Kubernetes Engine][gke]
 * [Google App Engine flexible environment][gae]
 * [Google Cloud Functions][gcf]
 
@@ -98,10 +98,10 @@ machines running in Google's innovative data centers and worldwide fiber
 network. Compute Engine's tooling and workflow support enable scaling from
 single instances to global, load-balanced cloud computing.
 
-### Node.js on Container Engine
+### Node.js on Kubernetes Engine
 
-[Container Engine][gke] is a powerful cluster manager and orchestration system
-for running your Docker containers. Container Engine schedules your containers
+[Kubernetes Engine][gke] is a powerful cluster manager and orchestration system
+for running your Docker containers. Kubernetes Engine schedules your containers
 into the cluster and manages them automatically based on requirements you define
 (such as CPU and memory). It's built on the open source [Kubernetes][k8s]
 system, giving you the flexibility to take advantage of on-premises, hybrid, or
@@ -132,7 +132,7 @@ more about [Node.js on Google Cloud Platform][nodejs-gcp].
 [nodejs-dev]: how-to-prepare-a-nodejs-dev-environment
 [inspect]: https://nodejs.org/api/debugger.html#debugger_v8_inspector_integration_for_node_js
 [gce]: https://cloud.google.com/compute/
-[gke]: https://cloud.google.com/container-engine/
+[gke]: https://cloud.google.com/kubernetes-engine/
 [k8s]: http://kubernetes.io/
 [gae]: https://cloud.google.com/appengine/docs/flexible/nodejs/
 [gcf]: https://cloud.google.com/functions/
