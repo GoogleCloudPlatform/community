@@ -9,7 +9,7 @@ date_published: 2018-01-17
 The [Google App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/)
 is an easy way to deploy your apps to the same infrastructure that powers
 Google's products. Using [Kotlin](https://kotlinlang.org/) and [Spring Boot](https://projects.spring.io/spring-boot/), in this tutorial you'll
-see how to deploy your application to App Engine. 
+see how to deploy your application to App Engine.
 
 
 You will create a new Spring Boot application, and then you will learn how to:
@@ -18,7 +18,7 @@ You will create a new Spring Boot application, and then you will learn how to:
 *   Update your application
 
 While the tutorial uses Kotlin 1.2 and Spring Boot 2 M7, other releases of Kotlin and Spring Boot should work
-without any modifications (other than version numbers in Maven files). This tutorial does assume you're familiar 
+without any modifications (other than version numbers in Maven files). This tutorial does assume you're familiar
 with Spring Boot and creating web applications. For simplicity the tutorial responds with JSON to a specific HTTP request, but can
 be built-on to connect to other Google services and/or databases.
 
@@ -45,7 +45,7 @@ an existing project.
 
     Version 175.0.0 or later of the SDK is required.
 
-3.  Install [JDK 8 or higher](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) if you do not already have it. 
+3.  Install [JDK 8 or higher](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) if you do not already have it.
 
 4.  Install [Maven](https://maven.apache.org/install.html).
 
@@ -55,54 +55,41 @@ In this section, you will create a new Spring Boot app and make sure it runs. If
 you already have an app to deploy, you can use it instead.
 
 1. Use [start.spring.io](https://start.spring.io) to generate a Spring Boot application using Kotlin as the language, Maven as the build system. Alternatively,
-you can [download](https://github.com/jetbrains/gcp-samples) the sample application. 
+you can [download](https://github.com/jetbrains/gcp-samples) the sample application.
 
 2. Download the generated project and save it to a local folder.
 
 3. Open the resulting project in your favourite IDE or editor and create a new source file named `MessageController.kt` with the following contents:
 
-    ```kotlin
-    package com.jetbrains.demo
+        package com.jetbrains.demo
 
-    import org.springframework.web.bind.annotation.*
+        import org.springframework.web.bind.annotation.*
 
-    data class Message(val text: String, val priority: String)
+        data class Message(val text: String, val priority: String)
 
-    @RestController
-    class MessageController {
-        @RequestMapping("/message")
-        fun message(): Message {
-            return Message("Hello from Google Cloud", "High")
+        @RestController
+        class MessageController {
+            @RequestMapping("/message")
+            fun message(): Message {
+                return Message("Hello from Google Cloud", "High")
+            }
         }
-    }
-    ```
 
-The package should match that of your group and artifact name. 
+The package should match that of your group and artifact name.
 
-4. Make sure you have the right dependencies in your Maven file to import `RestController`:
-
-    ```xml
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-        <version>RELEASE</version>
-    </dependency>
-    ```
+4.  Make sure you have the right dependencies in your Maven file to import
+    `RestController` as seen [here](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine/pom-dependency-example.xml).
 
 5. Run the application from the command line using Maven:
 
-    ```shell
         mvn spring-boot:run
-    ```
 
 6. Open the browser and make sure you get a valid JSON response when accessing http://localhost:8080/message. The result should be:
 
-    ```json
-    {
-    "text": "Hello from Google Cloud",
-    "priority": "High"
-    }
-    ```    
+        {
+          "text": "Hello from Google Cloud",
+          "priority": "High"
+        }
 
 ## Deploy your application
 
@@ -117,19 +104,12 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
         runtime_config:
           jdk: openjdk8
 
-    
-    By specifying `runtime: java`, the runtime image `gcr.io/google-appenine/openjdk:8` is automatically selected 
-    when you deploy a JAR (*.jar) file. The JDK version is also selected using the `jdk` field. 
 
-2.  Add the following contents to the `pom.xml` file to configure the Maven plugin:
+    By specifying `runtime: java`, the runtime image `gcr.io/google-appenine/openjdk:8` is automatically selected
+    when you deploy a JAR (*.jar) file. The JDK version is also selected using the `jdk` field.
 
-    ```xml
-    <plugin>
-        <groupId>com.google.cloud.tools</groupId>
-        <artifactId>appengine-maven-plugin</artifactId>
-        <version>1.2.1</version>
-    </plugin>
-    ```
+2.  Add [the following](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine/pom-dependency-example.xml) plugin entry to the `pom.xml` file to configure the Maven
+    plugin.
 
 3.  Run the following command to deploy your app:
 
@@ -143,8 +123,8 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
     needed resources, especially the first time you deploy.
 
     **Note**: If the command fails with `Google Cloud SDK could not be found`, make sure the environment
-    variable `GOOGLE_CLOUD_SDK_HOME` is set to the root directory of where you installed the Google Cloud SDK. 
-    
+    variable `GOOGLE_CLOUD_SDK_HOME` is set to the root directory of where you installed the Google Cloud SDK.
+
 4.  Once the deploy command has completed, you can run
 
         gcloud app browse
@@ -169,7 +149,7 @@ Make a simple change and redeploy.
         gcloud app browse
 
     Remember to add `/message` to the URL.
-    
+
 ## Clean up
 
 After you've finished this tutorial, you can clean up the resources you created
