@@ -114,12 +114,14 @@ exports.receiveNotification = function receiveNotification (req, res) {
   // we only respond to POST method HTTP requests
   if (req.method !== 'POST') {
     res.status(405).end('only post method accepted');
+    return;
   }
 
   // all valid SNS requests should have this header
   var snsHeader = req.get('x-amz-sns-message-type');
   if (snsHeader === undefined) {
     res.status(403).end('invalid SNS message');
+    return;
   }
 
   // use the sns-validator library to verify signature
@@ -128,6 +130,7 @@ exports.receiveNotification = function receiveNotification (req, res) {
     if (err) {
       // the message did not validate
       res.status(403).end('invalid SNS message');
+      return;
     }
     if (message.TopicArn !== expectedTopicArn) {
       // we got a request from a topic we were not expecting to
@@ -136,6 +139,7 @@ exports.receiveNotification = function receiveNotification (req, res) {
       // the origin of the message, anyone could end up publishing to your
       // cloud function
       res.status(403).end('invalid SNS Topic');
+      return;
     }
 
     // here we handle either a request to confirm subscription, or a new
