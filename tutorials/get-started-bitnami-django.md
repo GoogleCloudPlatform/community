@@ -1,6 +1,6 @@
 ---
 title: Get Started with Bitnami Django on Google Cloud Platform
-description: Create and deploy a basic "hello world" Django Web application on Google Cloud Platform with Bitnami Django
+description: Create and deploy a basic Django Web application on Google Cloud Platform with Bitnami Django
 author: vikram-bitnami
 tags: django, python, Google Cloud Platform, bitnami
 date_published: 2017-03-15
