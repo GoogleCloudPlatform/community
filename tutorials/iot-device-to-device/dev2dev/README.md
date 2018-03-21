@@ -32,7 +32,7 @@ The following example deploys this function for the `prep-gcp-home` GCS bucket
 and `ping-peng` PubSub topic:
 
 ```
-    gcloud beta functions deploy helloPubSub \
+    gcloud beta functions deploy relayCloudIot \
         --stage-bucket=gs://prep-gcp-home --trigger-topic=ping-peng
 ```
 
