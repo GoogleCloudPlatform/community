@@ -1,10 +1,10 @@
---------------------------------------------------------------------------------
+---
 title: Zero-to-Deploy with Chef on GCP
 description: Learn how to manage Google Compute Engine with Chef
 author: djmailhot
 tags: Compute Engine, Chef
 date_published: 2018-03-28
---------------------------------------------------------------------------------
+---
 
 This tutorial shows how to quickly setup infrastructure on Google Cloud Platform
 with the Chef configuration management tool. Follow this tutorial to configure
