@@ -39,9 +39,8 @@ This tutorial is written using the **Ubuntu Xenial** machine image. You may use
 any machine image that that supports Chef. See the list of all
 [supported distributions for Chef Client](https://downloads.chef.io/chef).
 
-Using the Cloud Platform Console web UI, go to the Compute Engine 
-**[VM Instances](https://console.cloud.google.com/compute/instances)** page.
-
+1.  In the Cloud Platform Console, go to the Compute Engine
+    **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
 1.  Click the **Create Instance** button.
 1.  Set **Name** to `chef-workstation`.
 1.  For **Zone**, choose **us-east1-b**.
@@ -133,11 +132,11 @@ You should see many new directories in the `cookbooks` directory, such as
 
 ### Write a Chef recipe
 
-1.  Create a new recipe directory under `google-cloud`.
+1.  Create a new recipe directory under the `google-cloud` cookbook.
 
         mkdir -p cookbooks/google-cloud/recipes
 
-1.  Edit a new file `cookbooks/google-cloud/recipes/default.rb`:
+1.  Edit a new recipe file `cookbooks/google-cloud/recipes/default.rb`:
 
         gauth_credential 'mycred' do
           action :serviceaccount
@@ -162,7 +161,7 @@ You should see many new directories in the `cookbooks` directory, such as
         end
 
 1.  Change each `project 'google.com:graphite-playground'` line to use your
-    project
+    project name.
 
 1.  Set the appropriate environment variables
 
@@ -177,7 +176,7 @@ You should see many new directories in the `cookbooks` directory, such as
 
 Run `chef-client` in 'local mode' with your recipe:
 
-        chef-client --local-mode --override-runlist 'recipe[google-cloud::default]'
+    chef-client --local-mode --override-runlist 'recipe[google-cloud::default]'
 
 You should see output streaming by as the command operates. It should terminate
 with something like `Chef Client finished, 3/3 resources updated in 9 seconds`.
@@ -218,3 +217,7 @@ To delete a Compute Engine instance:
     Instances](https://console.cloud.google.com/compute/instances)** page.
 1.  Click the checkbox next to your `chef-workstation` instance.
 1.  Click the Delete button at the top of the page to delete the instance.
+
+NOTE: You can use the `gcloud` CLI instead:
+
+    gcloud compute instances delete chef-workstation --zone us-east1-b
