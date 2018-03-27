@@ -32,55 +32,64 @@ New Cloud Platform users might be eligible for a [free trial](https://cloud.goog
 
 ### Provision a Compute Engine instance
 
-For the purposes of this tutorial, the default machine type works fine, so you
-don't need to change the default setting.
+This tutorial is written using the **us-east1-b** Compute Engine zone. You may
+choose any zone.
 
-Chef is supported on most operating systems. See the supported distributions on
-the [downloads page for Chef Client](https://downloads.chef.io/chef). For this
-tutorial, you'll use Ubuntu Xenial.
+This tutorial is written using the **Ubuntu Xenial** machine image. You may use
+any machine image that that supports Chef. See the list of all
+[supported distributions for Chef Client](https://downloads.chef.io/chef).
 
-1.  In the Cloud Platform Console, go to the **[VM
-    Instances](https://console.cloud.google.com/compute/instances)** page.
+Using the Cloud Platform Console web UI, go to the Compute Engine 
+**[VM Instances](https://console.cloud.google.com/compute/instances)** page.
+
 1.  Click the **Create Instance** button.
 1.  Set **Name** to `chef-workstation`.
-1.  In the **Machine type** section, choose **f1-micro**.
+1.  For **Zone**, choose **us-east1-b**.
+1.  For **Machine type**, choose **f1-micro**.
 1.  In the **Boot disk** section, click **Change** to begin configuring your
     boot disk.
 1.  In the **Preconfigured image** tab, choose **Ubuntu 16.04 LTS**.
-1.  Click **Select** at the bottom.
+1.  Click **Select** at the bottom of the dialog.
 1.  Click the **Create** button at the bottom to create the instance.
+
+    **Alternatively**, using the `gcloud` CLI:
+
+    gcloud compute instances create chef-workstation --machine-type f1-micro
+    --image-family ubuntu-1604-lts --image-project ubuntu-os-cloud
+    --zone us-east1-b
 
 It will take a few moments to create your new instance.
 
 ### Download your service account key
 
-You'll use a service account key to authorize Chef to manage your GCP project.
+You'll need a service account key to authorize Chef to manage your GCP project.
 
 1.  In the Cloud Platform Console, go to the **[Service
     Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)**
     page.
 1.  Click the **Create Service Account** button.
 1.  Set **Name** to `chef-service-account`.
-1.  In the **Role** drop down, select **Project** >> **Owner**.
+1.  For **Role**, choose **Project** >> **Editor**.
 1.  Check the box **Furnish a new private key**.
-1.  Make sure the **Key type** is selected as **JSON**.
+1.  For **Key type**, select **JSON**.
+1.  Click **Create** at the bottom of the dialog.
 
 The service account key should be automatically downloaded to your computer as a
 '.json' file.
 
-Finally, you need to upload your credentials file to your new GCE instance:
+Upload your credentials file to your new `chef-workstation` GCE instance:
 
-```
-gcloud compute scp /PATH/TO/CREDENTIALS.json
-chef-workstation:credentials.json --project YOUR_PROJECT_NAME --zone
-YOUR_ZONE
-```
+    gcloud compute scp /PATH/TO/CREDENTIALS.json
+    chef-workstation:credentials.json --project YOUR_PROJECT_NAME --zone
+    us-east1-b
 
 ### Install Chef client
 
-Ssh into the chef-workstation instance.
+1.  Ssh into your `chef-workstation` instance.
 
-1.  Download the chef client package for Ubuntu 16.04.
+        gcloud compute ssh chef-workstation --zone us-east1-b
+
+1.  Download the chef client package for **Ubuntu 16.04**.
 
         wget https://packages.chef.io/files/stable/chef/13.8.5/ubuntu/16.04/chef_13.8.5-1_amd64.deb
 
@@ -88,38 +97,47 @@ Ssh into the chef-workstation instance.
 
         sudo dpkg -i chef_*
 
-NOTE: If you selected a different OS for your GCE instance, you'll have to
-[download the correct package](https://downloads.chef.io/chef) and install
-it with the appropriate package manager.
+NOTE: If you selected a different machine image for your GCE instance, you'll
+have to [download the correct package](https://downloads.chef.io/chef) and
+install it with the appropriate package manager.
+
+Remain ssh'd into your `chef-workstation` instance.
 
 ## Create configuration
 
 ### Download Chef GCP cookbooks
 
-1.  Setup a cookbooks directory.
+While ssh'd into your `chef-workstation` instance:
 
-        mkdir -p chef-repo/cookbooks;  cd chef-repo
+1.  Setup a `cookbooks` directory.
+
+        mkdir -p .chef/cookbooks;  cd .chef
 
 1.  Initialize a git repo.
 
         git init;  git commit -m genesis --allow-empty
 
-1.  Download the google-cloud cookbook.
+    **NOTE**: if `git` is not installed, install it:
 
-        knife supermarket install google-cloud
+        sudo apt-get install git
 
-    You should see many new directories in the `cookbooks/` directory, such as
-    `google-cloud/`, `google-gauth/`, and `google-gcompute/`.
+1.  Download the
+    [google-cloud cookbook](https://supermarket.chef.io/cookbooks/google-cloud)
+    from the [Chef Supermarket](https://supermarket.chef.io/) via the `knife`
+    CLI.
+
+        knife cookbooks site install google-cloud
+
+You should see many new directories in the `cookbooks` directory, such as
+`google-cloud`, `google-gauth`, and `google-gcompute`.
 
 ### Write a Chef recipe
 
-1.  Create a new recipe directory under `google-cloud/`.
+1.  Create a new recipe directory under `google-cloud`.
 
         mkdir -p cookbooks/google-cloud/recipes
 
-1.  Edit a new file `cookbooks/google-cloud/recipes/default.rb`.
-    Copy the example code from the [Google Cloud SQL Chef
-    cookbook](https://github.com/GoogleCloudPlatform/chef-google-sql#example)
+1.  Edit a new file `cookbooks/google-cloud/recipes/default.rb`:
 
         gauth_credential 'mycred' do
           action :serviceaccount
@@ -151,13 +169,21 @@ it with the appropriate package manager.
         export CRED_PATH=/path/to/your/service_account_key.json
         export sql_instance_suffix=example-database
 
-    NOTE: Feel free to use example code from any other GCP cookbook.
+    NOTE: Feel free to experiment with more example code from any GCP cookbooks.
+    (e.g. the [Google Cloud SQL Chef
+    cookbook](https://github.com/GoogleCloudPlatform/chef-google-sql#example)).
 
 ## Deploy configuration
 
 Run `chef-client` in 'local mode' with your recipe:
 
         chef-client --local-mode --override-runlist 'recipe[google-cloud::default]'
+
+You should see output streaming by as the command operates. It should terminate
+with something like `Chef Client finished, 3/3 resources updated in 9 seconds`.
+
+You can check the status of your SQL instance on the [Cloud SQL
+Dashboard](https://console.cloud.google.com/sql/instances).
 
 ## Cleaning up
 
@@ -190,5 +216,5 @@ To delete a Compute Engine instance:
 
 1.  In the Cloud Platform Console, go to the **[VM
     Instances](https://console.cloud.google.com/compute/instances)** page.
-1.  Click the checkbox next to your postgres-tutorial instance.
+1.  Click the checkbox next to your `chef-workstation` instance.
 1.  Click the Delete button at the top of the page to delete the instance.
