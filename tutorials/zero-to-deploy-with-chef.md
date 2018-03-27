@@ -52,7 +52,7 @@ Using the Cloud Platform Console web UI, go to the Compute Engine
 1.  Click **Select** at the bottom of the dialog.
 1.  Click the **Create** button at the bottom to create the instance.
 
-    **Alternatively**, using the `gcloud` CLI:
+NOTE: You can use the `gcloud` CLI instead:
 
     gcloud compute instances create chef-workstation --machine-type f1-micro
     --image-family ubuntu-1604-lts --image-project ubuntu-os-cloud
@@ -117,7 +117,7 @@ While ssh'd into your `chef-workstation` instance:
 
         git init;  git commit -m genesis --allow-empty
 
-    **NOTE**: if `git` is not installed, install it:
+    NOTE: if `git` is not installed, install it:
 
         sudo apt-get install git
 
