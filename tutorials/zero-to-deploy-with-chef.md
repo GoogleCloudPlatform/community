@@ -247,10 +247,10 @@ Run `chef-client` in 'local mode' with your recipe:
     chef-client --local-mode --override-runlist 'recipe[google-cloud::default]'
 
 You should see output streaming by as the command operates. It should terminate
-with something like `Chef Client finished, 3/3 resources updated in 9 seconds`.
+with something like `Chef Client finished, 8/8 resources updated in 09 seconds`.
 
-You can check the status of your SQL instance on the **[Cloud SQL
-Dashboard](https://console.cloud.google.com/sql/instances)**.
+You can check the status of your Compute Engine instance on the **[VM
+Instances](https://console.cloud.google.com/compute/instances)** page.
 
 ## Cleaning up
 
