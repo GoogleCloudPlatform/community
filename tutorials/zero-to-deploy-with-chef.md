@@ -67,7 +67,7 @@ NOTE: You can use the `gcloud` CLI instead:
 
 It will take a few moments to create your new instance.
 
-### Download your service account key
+### Download a service account key
 
 You'll need a service account key to authorize Chef to manage your GCP project.
 
@@ -118,11 +118,13 @@ While ssh'd into your `chef-workstation` instance:
 
 1.  Setup a `cookbooks` directory.
 
-        mkdir -p .chef/cookbooks;  cd .chef
+        mkdir -p .chef/cookbooks
+        cd .chef
 
 1.  Initialize a git repo.
 
-        git init;  git commit -m genesis --allow-empty
+        git init
+        git commit -m genesis --allow-empty
 
     NOTE: if `git` is not installed, install it:
 
@@ -133,6 +135,10 @@ While ssh'd into your `chef-workstation` instance:
     **[Chef Supermarket](https://supermarket.chef.io/)** via the `knife` CLI.
 
         knife cookbooks site install google-cloud
+
+    NOTE: `~/.chef/cookbooks` is a default path for the `knife cookbooks`
+    command. If you want a different path, you'll need to specify it in a custom
+    [knife configuration file](https://docs.chef.io/config_rb_knife.html).
 
 You should see many new directories in the `cookbooks` directory, such as
 `google-cloud`, `google-gauth`, and `google-gcompute`.
