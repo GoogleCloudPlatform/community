@@ -82,7 +82,7 @@ You'll need a service account key to authorize Chef to manage your GCP project.
 1.  Click **Create** at the bottom of the dialog.
 
 The service account key should be automatically downloaded to your computer as a
-JSON file with a name like `YOUR_PROJECT_NAME-12345678abcdef.json`).
+JSON file with a name like `YOUR_PROJECT_NAME-12345678abcdef.json`.
 
 Upload your credentials file to your new `chef-workstation` GCE instance:
 
