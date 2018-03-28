@@ -21,7 +21,7 @@ resources on GCP using open source GCP-specific Chef cookbooks.
 
 ## Before you begin
 
-1.  Create a new project or select an existing one in the **[Google Cloud
+1.  Create a new GCP project or select an existing one in the **[Google Cloud
     Platform Console](https://console.cloud.google.com/project)**.
 1.  Enable a [billing
     account](https://cloud.google.com/billing/docs/how-to/manage-billing-account).
@@ -74,6 +74,7 @@ You'll need a service account key to authorize Chef to manage your GCP project.
 1.  In the Cloud Platform Console, go to the **[Service
     Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)**
     page.
+1.  Select the appropriate GCP project if requested via dialog box.
 1.  Click the **Create Service Account** button.
 1.  Set **Name** to `chef-service-account`.
 1.  For **Role**, choose **Project** >> **Editor**.
@@ -110,25 +111,34 @@ install it with the appropriate package manager.
 
 Remain ssh'd into your `chef-workstation` instance.
 
-## Configure
+### Initialize a Chef repository
 
-### Download Chef GCP cookbooks
-
-While ssh'd into your `chef-workstation` instance:
+On your `chef-workstation` instance:
 
 1.  Setup a `cookbooks` directory.
 
         mkdir -p .chef/cookbooks
         cd .chef
 
+1.  Configure git.
+
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
+
+    NOTE: if `git` is not installed, install it:
+
+        sudo apt-get install git
+
 1.  Initialize a git repo.
 
         git init
         git commit -m genesis --allow-empty
 
-    NOTE: if `git` is not installed, install it:
+## Configure
 
-        sudo apt-get install git
+### Download the Chef GCP cookbooks
+
+On `chef-workstation`:
 
 1.  Download the [google-cloud
     cookbook](https://supermarket.chef.io/cookbooks/google-cloud) from the
@@ -145,6 +155,8 @@ When installation finishes, you should see many new directories in the
 `cookbooks` directory, such as `google-cloud`, `google-gauth`, etc.
 
 ### Write a Chef recipe
+
+On `chef-workstation`:
 
 1.  Create a new recipe directory under the `google-cloud` cookbook.
 
@@ -242,6 +254,8 @@ When installation finishes, you should see many new directories in the
 
 ### Run Chef Client
 
+On `chef-workstation`:
+
 Run `chef-client` in 'local mode' with your recipe:
 
     chef-client --local-mode --override-runlist 'recipe[google-cloud::default]'
@@ -249,7 +263,9 @@ Run `chef-client` in 'local mode' with your recipe:
 You should see output streaming by as the command operates. It should terminate
 with something like `Chef Client finished, 8/8 resources updated in 09 seconds`.
 
-You can check the status of your Compute Engine instance on the **[VM
+Awesomesauce! You just provisioned a Compute Engine instance on GCP using a
+single machine running Chef Client. You can check the status of your Compute
+Engine instance on the **[VM
 Instances](https://console.cloud.google.com/compute/instances)** page.
 
 ## Cleaning up
