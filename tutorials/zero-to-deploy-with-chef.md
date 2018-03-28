@@ -7,7 +7,7 @@ date_published: 2018-03-28
 ---
 
 This tutorial shows how to quickly setup infrastructure on Google Cloud Platform
-with the **[Chef configuration management tool](https://www.chef.io/chef/)**.
+with the [Chef configuration management tool](https://www.chef.io/chef/).
 You will start from nothing and end with provisioning and configuring multiple
 resources on GCP using open source GCP-specific Chef cookbooks.
 
@@ -15,8 +15,8 @@ resources on GCP using open source GCP-specific Chef cookbooks.
 
 * Demonstrate an example configuration management workflow using a single
   machine running **[Chef Client](https://docs.chef.io/ctl_chef_client.html)**.
-* Show how to install and use the **[Chef GCP
-  cookbooks](https://supermarket.chef.io/cookbooks/google-cloud)**.
+* Show how to install and use the [Chef GCP
+  cookbooks](https://supermarket.chef.io/cookbooks/google-cloud).
 
 ## Before you begin
 
@@ -78,7 +78,7 @@ You'll need a service account key to authorize Chef to manage your GCP project.
 1.  Click **Create** at the bottom of the dialog.
 
 The service account key should be automatically downloaded to your computer as a
-JSON file with a name like `YOUR_PROJECT_NAME-12345678abcdef.json`.
+JSON file with a name like `YOUR_PROJECT_NAME-12345678abcdef.json`).
 
 Upload your credentials file to your new `chef-workstation` GCE instance:
 
@@ -126,8 +126,8 @@ While ssh'd into your `chef-workstation` instance:
 
 1.  Download the
     [google-cloud cookbook](https://supermarket.chef.io/cookbooks/google-cloud)
-    from the [Chef Supermarket](https://supermarket.chef.io/) via the `knife`
-    CLI.
+    from the **[Chef Supermarket](https://supermarket.chef.io/)** via the
+    `knife` CLI.
 
         knife cookbooks site install google-cloud
 
@@ -185,8 +185,8 @@ Run `chef-client` in 'local mode' with your recipe:
 You should see output streaming by as the command operates. It should terminate
 with something like `Chef Client finished, 3/3 resources updated in 9 seconds`.
 
-You can check the status of your SQL instance on the [Cloud SQL
-Dashboard](https://console.cloud.google.com/sql/instances).
+You can check the status of your SQL instance on the **[Cloud SQL
+Dashboard](https://console.cloud.google.com/sql/instances)**.
 
 ## Cleaning up
 
