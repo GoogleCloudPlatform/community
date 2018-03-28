@@ -21,8 +21,8 @@ resources on GCP using open source GCP-specific Chef cookbooks.
 
 ## Before you begin
 
-1.  Create a project in the **[Google Cloud Platform
-    Console](https://console.cloud.google.com/project)**.
+1.  Create a new project or select an existing one in the **[Google Cloud
+    Platform Console](https://console.cloud.google.com/project)**.
 1.  Enable a [billing
     account](https://cloud.google.com/billing/docs/how-to/manage-billing-account).
 1.  Install the **[Google Cloud SDK](https://cloud.google.com/sdk/)**.
@@ -43,8 +43,8 @@ trial](https://cloud.google.com/free-trial).
 This tutorial is written using the **us-east1-b** Compute Engine zone. You may
 choose any zone.
 
-This tutorial is written using the **Ubuntu Xenial** machine image. You may use
-any machine image that that supports Chef. See the list of all [supported
+This tutorial is written using the **Ubuntu 16.04 LTS** machine image. You may
+use any machine image that that supports Chef. See the list of all [supported
 distributions for Chef Client](https://downloads.chef.io/chef).
 
 1.  In the Cloud Platform Console, go to the Compute Engine **[VM
@@ -61,8 +61,8 @@ distributions for Chef Client](https://downloads.chef.io/chef).
 
 NOTE: You can use the `gcloud` command instead:
 
-    gcloud compute instances create chef-workstation --machine-type f1-micro
-    --image-family ubuntu-1604-lts --image-project ubuntu-os-cloud
+    gcloud compute instances create chef-workstation --machine-type f1-micro \
+    --image-family ubuntu-1604-lts --image-project ubuntu-os-cloud \
     --zone us-east1-b
 
 It will take a few moments to create your new instance.
@@ -86,8 +86,8 @@ JSON file with a name like `YOUR_PROJECT_NAME-12345678abcdef.json`.
 
 Upload your credentials file to your new `chef-workstation` GCE instance:
 
-    gcloud compute scp /PATH/TO/CREDENTIALS_FILE.json
-    chef-workstation:credentials.json --project YOUR_PROJECT_NAME --zone
+    gcloud compute scp /PATH/TO/CREDENTIALS_FILE.json \
+    chef-workstation:credentials.json --project YOUR_PROJECT_NAME --zone \
     us-east1-b
 
 ### Install Chef client
