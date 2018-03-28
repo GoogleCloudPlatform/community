@@ -134,6 +134,11 @@ On your `chef-workstation` instance:
         git init
         git commit -m genesis --allow-empty
 
+You should see a message like `[master (root-commit) 7d75bc7] genesis`.
+
+NOTE: Having at least one commit allows you to start downloading Chef
+cookbooks, as you'll do in the next step.
+
 ## Configure
 
 ### Download the Chef GCP cookbooks
@@ -145,9 +150,9 @@ On `chef-workstation`:
     **[Chef Supermarket](https://supermarket.chef.io/)** via the `knife`
     command.
 
-        knife cookbooks site install google-cloud
+        knife cookbook site install google-cloud
 
-    NOTE: `~/.chef/cookbooks` is a default path for the `knife cookbooks`
+    NOTE: `~/.chef/cookbooks` is a default path for the `knife cookbook`
     command. If you want a different path, you'll need to specify it in a custom
     [knife configuration file](https://docs.chef.io/config_rb_knife.html).
 
