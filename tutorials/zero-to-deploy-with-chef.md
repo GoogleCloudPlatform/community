@@ -7,21 +7,24 @@ date_published: 2018-03-28
 ---
 
 This tutorial shows how to quickly setup infrastructure on Google Cloud Platform
-with the [Chef configuration management tool](https://www.chef.io/chef/).
-You will start from nothing and end with provisioning and configuring multiple
+with the [Chef configuration management tool](https://www.chef.io/chef/). You
+will start from nothing and end with provisioning and configuring multiple
 resources on GCP using open source GCP-specific Chef cookbooks.
 
 ## Objectives
 
-* Demonstrate an example configuration management workflow using a single
-  machine running **[Chef Client](https://docs.chef.io/ctl_chef_client.html)**.
-* Show how to install and use the [Chef GCP
-  cookbooks](https://supermarket.chef.io/cookbooks/google-cloud).
+*   Demonstrate an example configuration management workflow using a single
+    machine running **[Chef
+    Client](https://docs.chef.io/ctl_chef_client.html)**.
+*   Show how to install and use the [Chef GCP
+    cookbooks](https://supermarket.chef.io/cookbooks/google-cloud).
 
 ## Before you begin
 
-1.  Create a project in the **[Google Cloud Platform Console](https://console.cloud.google.com/project)**.
-1.  Enable a [billing account](https://cloud.google.com/billing/docs/how-to/manage-billing-account).
+1.  Create a project in the **[Google Cloud Platform
+    Console](https://console.cloud.google.com/project)**.
+1.  Enable a [billing
+    account](https://cloud.google.com/billing/docs/how-to/manage-billing-account).
 1.  Install the **[Google Cloud SDK](https://cloud.google.com/sdk/)**.
 
 ## Costs
@@ -30,7 +33,8 @@ This tutorial uses billable components of Cloud Platform, including:
 
 +   Google Compute Engine
 
-New Cloud Platform users might be eligible for a [free trial](https://cloud.google.com/free-trial).
+New Cloud Platform users might be eligible for a [free
+trial](https://cloud.google.com/free-trial).
 
 ## Setup environment
 
@@ -40,11 +44,11 @@ This tutorial is written using the **us-east1-b** Compute Engine zone. You may
 choose any zone.
 
 This tutorial is written using the **Ubuntu Xenial** machine image. You may use
-any machine image that that supports Chef. See the list of all
-[supported distributions for Chef Client](https://downloads.chef.io/chef).
+any machine image that that supports Chef. See the list of all [supported
+distributions for Chef Client](https://downloads.chef.io/chef).
 
-1.  In the Cloud Platform Console, go to the Compute Engine
-    **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
+1.  In the Cloud Platform Console, go to the Compute Engine **[VM
+    Instances](https://console.cloud.google.com/compute/instances)** page.
 1.  Click the **Create Instance** button.
 1.  Set **Name** to `chef-workstation`.
 1.  For **Zone**, choose **us-east1-b**.
@@ -124,10 +128,9 @@ While ssh'd into your `chef-workstation` instance:
 
         sudo apt-get install git
 
-1.  Download the
-    [google-cloud cookbook](https://supermarket.chef.io/cookbooks/google-cloud)
-    from the **[Chef Supermarket](https://supermarket.chef.io/)** via the
-    `knife` CLI.
+1.  Download the [google-cloud
+    cookbook](https://supermarket.chef.io/cookbooks/google-cloud) from the
+    **[Chef Supermarket](https://supermarket.chef.io/)** via the `knife` CLI.
 
         knife cookbooks site install google-cloud
 
