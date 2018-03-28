@@ -155,34 +155,86 @@ You should see many new directories in the `cookbooks` directory, such as
           action :serviceaccount
           path ENV['CRED_PATH'] # e.g. '/path/to/my_account.json'
           scopes [
-            'https://www.googleapis.com/auth/sqlservice.admin'
+            'https://www.googleapis.com/auth/compute'
           ]
         end
 
-        gsql_instance  "sql-test-#{ENV['sql_instance_suffix']}" do
+        gcompute_zone 'us-west1-a' do
           action :create
-          project 'google.com:graphite-playground'
+          project ENV['GCP_PROJECT'] # e.g. 'chef-gcp-tutorial'
           credential 'mycred'
         end
 
-        gsql_database 'webstore' do
+        gcompute_disk 'instance-test-os-1' do
           action :create
-          charset 'utf8'
-          instance "sql-test-#{ENV['sql_instance_suffix']}"
-          project 'google.com:graphite-playground'
+          source_image 'projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts'
+          zone 'us-west1-a'
+          project ENV['GCP_PROJECT']
           credential 'mycred'
         end
 
-1.  Change each `project 'google.com:graphite-playground'` line to use your
-    project name.
+        gcompute_network 'mynetwork-test' do
+          action :create
+          project ENV['GCP_PROJECT']
+          credential 'mycred'
+        end
 
-1.  Set the appropriate environment variables
+        gcompute_region 'us-west1' do
+          action :create
+          project ENV['GCP_PROJECT']
+          credential 'mycred'
+        end
 
-        export CRED_PATH=/path/to/your/service_account_key.json
-        export sql_instance_suffix=example-database
+        gcompute_address 'instance-test-ip' do
+          action :create
+          region 'us-west1'
+          project ENV['GCP_PROJECT']
+          credential 'mycred'
+        end
 
-    NOTE: Feel free to experiment with more example code from any GCP cookbooks.
-    (e.g. the [Google Cloud SQL Chef
+        gcompute_machine_type 'n1-standard-1' do
+          action :create
+          zone 'us-west1-a'
+          project ENV['GCP_PROJECT']
+          credential 'mycred'
+        end
+
+        gcompute_instance 'instance-test' do
+          action :create
+          machine_type 'n1-standard-1'
+          disks [
+            {
+              boot: true,
+              auto_delete: true,
+              source: 'instance-test-os-1'
+            }
+          ]
+          network_interfaces [
+            {
+              network: 'mynetwork-test',
+              access_configs: [
+                {
+                  name: 'External NAT',
+                  nat_ip: 'instance-test-ip',
+                  type: 'ONE_TO_ONE_NAT'
+                }
+              ]
+            }
+          ]
+          zone 'us-west1-a'
+          project ENV['GCP_PROJECT']
+          credential 'mycred'
+        end
+
+1.  Set the appropriate environment variables. You can directly inline these
+    values in the code; they are parameterized like this for your convenience.
+
+        # The service account credentials JSON file you uploaded earlier
+        export CRED_PATH=/PATH/TO/credentials.json
+        export GCP_PROJECT=YOUR_PROJECT_NAME
+
+    NOTE: Feel free to experiment with more example code from any of the other
+    GCP cookbooks. (e.g. the [Google Cloud SQL Chef
     cookbook](https://github.com/GoogleCloudPlatform/chef-google-sql#example)).
 
 ## Deploy configuration
