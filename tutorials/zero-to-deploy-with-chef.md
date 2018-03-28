@@ -36,7 +36,7 @@ This tutorial uses billable components of Cloud Platform, including:
 New Cloud Platform users might be eligible for a [free
 trial](https://cloud.google.com/free-trial).
 
-## Setup environment
+## Setup
 
 ### Provision a Compute Engine instance
 
@@ -110,7 +110,7 @@ install it with the appropriate package manager.
 
 Remain ssh'd into your `chef-workstation` instance.
 
-## Create configuration
+## Configure
 
 ### Download Chef GCP cookbooks
 
@@ -237,7 +237,9 @@ You should see many new directories in the `cookbooks` directory, such as
     GCP cookbooks. (e.g. the [Google Cloud SQL Chef
     cookbook](https://github.com/GoogleCloudPlatform/chef-google-sql#example)).
 
-## Deploy configuration
+## Deploy
+
+### Run Chef Client
 
 Run `chef-client` in 'local mode' with your recipe:
 
