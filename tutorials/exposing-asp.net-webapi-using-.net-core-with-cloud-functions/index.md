@@ -30,7 +30,7 @@ We are going to write code using Visual Studio Code. Therefore, you should insta
 
 2. Open `ExposeAPIWithEndpointsCore` folder you created in VS Code. It will look like this:
 
-    ![VS Code First Screen](./VSCodeEndpointsFirstScreen.png)
+    ![VS Code First Screen](https://storage.googleapis.com/gcp-community/tutorials/exposing-asp.net-webapi-using-.net-core-with-cloud-functions/VSCodeEndpointsFirstScreen.png)
 3. Click on *"YES"* for **"Required assets to build and debug are missing from ExposeAPIWithEndpointsCore. Add them?"**
 
 4. Press `F5` to build the template project.
@@ -99,7 +99,7 @@ We are going to write code using Visual Studio Code. Therefore, you should insta
 
 2. Copy the JSON content from the browser and paste it into [https://editor.swagger.io](https://editor.swagger.io). 
     You will be asked whether to translate JSON to YAML. Say `YES`. You will see this:
-    ![Swagger Editor](./SwaggerYamlFromEditor.io.png)
+    ![Swagger Editor](https://storage.googleapis.com/gcp-community/tutorials/exposing-asp.net-webapi-using-.net-core-with-cloud-functions/SwaggerYamlFromEditor.io.png)
 
 3. Create a new file in VS Code under the main folder `ExposeApiWithEndpointsCore`. Name it `openapi.yaml` and paste the content of the generated YAML from https://editor.swagger.io.
 
@@ -204,7 +204,7 @@ We are going to write code using Visual Studio Code. Therefore, you should insta
 ## Congratulations!
 
 You now have the API deployed and exposed via Cloud Endpoints! In order to prove that, go to [Endpoints](https://console.cloud.google.com/endpoints) page of Google Cloud Console. There you can inspect the requests graph. It should reflect the requests you made to test the API. Also you can see all the deployments of endpoints configuration.
-![Monitoring API](./MonitorAPI.png)
+![Monitoring API](https://storage.googleapis.com/gcp-community/tutorials/exposing-asp.net-webapi-using-.net-core-with-cloud-functions/MonitorAPI.png)
 
 ## Summary
 
