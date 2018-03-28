@@ -59,7 +59,7 @@ distributions for Chef Client](https://downloads.chef.io/chef).
 1.  Click **Select** at the bottom of the dialog.
 1.  Click the **Create** button at the bottom to create the instance.
 
-NOTE: You can use the `gcloud` CLI instead:
+NOTE: You can use the `gcloud` command instead:
 
     gcloud compute instances create chef-workstation --machine-type f1-micro
     --image-family ubuntu-1604-lts --image-project ubuntu-os-cloud
@@ -132,7 +132,8 @@ While ssh'd into your `chef-workstation` instance:
 
 1.  Download the [google-cloud
     cookbook](https://supermarket.chef.io/cookbooks/google-cloud) from the
-    **[Chef Supermarket](https://supermarket.chef.io/)** via the `knife` CLI.
+    **[Chef Supermarket](https://supermarket.chef.io/)** via the `knife`
+    command.
 
         knife cookbooks site install google-cloud
 
@@ -140,8 +141,8 @@ While ssh'd into your `chef-workstation` instance:
     command. If you want a different path, you'll need to specify it in a custom
     [knife configuration file](https://docs.chef.io/config_rb_knife.html).
 
-You should see many new directories in the `cookbooks` directory, such as
-`google-cloud`, `google-gauth`, and `google-gcompute`.
+When installation finishes, you should see many new directories in the
+`cookbooks` directory, such as `google-cloud`, `google-gauth`, etc.
 
 ### Write a Chef recipe
 
@@ -285,6 +286,6 @@ To delete a Compute Engine instance:
 1.  Click the checkbox next to your `chef-workstation` instance.
 1.  Click the Delete button at the top of the page to delete the instance.
 
-NOTE: You can use the `gcloud` CLI instead:
+NOTE: You can use the `gcloud` command instead:
 
     gcloud compute instances delete chef-workstation --zone us-east1-b
