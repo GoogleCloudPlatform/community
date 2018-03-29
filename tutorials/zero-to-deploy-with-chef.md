@@ -244,6 +244,9 @@ On `chef-workstation`:
           credential 'mycred'
         end
 
+    NOTE: This example code is pulled from the [Google Compute Engine Chef
+    Cookbook](https://github.com/GoogleCloudPlatform/chef-google-compute).
+
 1.  Set the appropriate environment variables. You can directly inline these
     values in the code; they are parameterized like this for your convenience.
 
@@ -253,7 +256,7 @@ On `chef-workstation`:
 
     NOTE: Feel free to experiment with more example code from any of the other
     GCP cookbooks. (e.g. the [Google Cloud SQL Chef
-    cookbook](https://github.com/GoogleCloudPlatform/chef-google-sql#example)).
+    Cookbook](https://github.com/GoogleCloudPlatform/chef-google-sql#example)).
 
 ## Deploy
 
