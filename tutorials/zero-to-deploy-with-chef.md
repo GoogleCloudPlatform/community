@@ -47,8 +47,8 @@ This tutorial is written using the **Ubuntu 16.04 LTS** machine image. You may
 use any machine image that that supports Chef. See the list of all [supported
 distributions for Chef Client](https://downloads.chef.io/chef).
 
-1.  In the Cloud Platform Console, go to the Compute Engine **[VM
-    Instances](https://console.cloud.google.com/compute/instances)** page.
+1.  In the Cloud Platform Console, go to the **Compute Engine >> [VM
+    Instances](https://console.cloud.google.com/compute/instances)**.
 1.  Click the **Create Instance** button.
 1.  Set **Name** to `chef-workstation`.
 1.  For **Zone**, choose **us-east1-b**.
@@ -71,10 +71,9 @@ It will take a few moments to create your new instance.
 
 You'll need a service account key to authorize Chef to manage your GCP project.
 
-1.  In the Cloud Platform Console, go to the **[Service
-    Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)**
-    page.
-1.  Select the appropriate GCP project if requested via dialog box.
+1.  In the Cloud Platform Console, go to **IAM & admin >> [Service
+    Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)**.
+1.  If prompted, select your GCP project.
 1.  Click the **Create Service Account** button.
 1.  Set **Name** to `chef-service-account`.
 1.  For **Role**, choose **Project** >> **Editor**.
@@ -250,8 +249,9 @@ On `chef-workstation`:
 1.  Set the appropriate environment variables. You can directly inline these
     values in the code; they are parameterized like this for your convenience.
 
-        # The service account credentials JSON file you uploaded earlier
-        export CRED_PATH='/PATH/TO/credentials.json'
+        # The service account key JSON file you uploaded earlier to
+        # '~/credentials.json'. However, CRED_PATH requires an absolute path.
+        export CRED_PATH='/home/USERNAME/credentials.json'
         export GCP_PROJECT='YOUR_PROJECT_NAME'
 
     NOTE: Feel free to experiment with more example code from any of the other
@@ -269,7 +269,7 @@ Run `chef-client` in 'local mode' with your recipe:
     chef-client --local-mode --runlist 'recipe[google-cloud::default]'
 
 You should see output streaming by as the command operates. It should terminate
-with something like `Chef Client finished, 8/8 resources updated in 35 seconds`.
+with something like `Chef Client finished, 2/8 resources updated in 35 seconds`.
 
 Awesomesauce! You just provisioned a Compute Engine instance on GCP using a
 single machine running Chef Client. You can check the status of your Compute
@@ -303,13 +303,17 @@ the project ID, such as an appspot.com URL, remain available.
 
 ### Deleting instances
 
-To delete a Compute Engine instance:
+To delete your Compute Engine instances:
 
 1.  In the Cloud Platform Console, go to the **[VM
     Instances](https://console.cloud.google.com/compute/instances)** page.
-1.  Click the checkbox next to your `chef-workstation` instance.
-1.  Click the Delete button at the top of the page to delete the instance.
+1.  Click the checkbox next to the instances named `chef-workstation`,
+    `instance-test`, and any other instances you may have provisioned via Chef.
+1.  Click the Delete button at the top of the page to delete the instances.
 
 NOTE: You can use the `gcloud` command instead:
 
+    # Run on your local machine, _not_ the chef-workstation instance.
     gcloud compute instances delete chef-workstation --zone us-east1-b
+    gcloud compute instances delete instance-test --zone us-east1-b
+    # Repeat with any other instances you may have made.
