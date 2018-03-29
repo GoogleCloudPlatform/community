@@ -179,7 +179,7 @@ On `chef-workstation`:
 
         gcompute_zone 'us-west1-a' do
           action :create
-          project ENV['GCP_PROJECT'] # e.g. 'chef-gcp-tutorial'
+          project ENV['GCP_PROJECT'] # e.g. 'company-org:chef-gcp-project'
           credential 'mycred'
         end
 
@@ -248,8 +248,8 @@ On `chef-workstation`:
     values in the code; they are parameterized like this for your convenience.
 
         # The service account credentials JSON file you uploaded earlier
-        export CRED_PATH=/PATH/TO/credentials.json
-        export GCP_PROJECT=YOUR_PROJECT_NAME
+        export CRED_PATH='/PATH/TO/credentials.json'
+        export GCP_PROJECT='YOUR_PROJECT_NAME'
 
     NOTE: Feel free to experiment with more example code from any of the other
     GCP cookbooks. (e.g. the [Google Cloud SQL Chef
@@ -266,7 +266,7 @@ Run `chef-client` in 'local mode' with your recipe:
     chef-client --local-mode --override-runlist 'recipe[google-cloud::default]'
 
 You should see output streaming by as the command operates. It should terminate
-with something like `Chef Client finished, 8/8 resources updated in 09 seconds`.
+with something like `Chef Client finished, 8/8 resources updated in 35 seconds`.
 
 Awesomesauce! You just provisioned a Compute Engine instance on GCP using a
 single machine running Chef Client. You can check the status of your Compute
