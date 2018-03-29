@@ -263,7 +263,7 @@ On `chef-workstation`:
 
 Run `chef-client` in 'local mode' with your recipe:
 
-    chef-client --local-mode --override-runlist 'recipe[google-cloud::default]'
+    chef-client --local-mode --runlist 'recipe[google-cloud::default]'
 
 You should see output streaming by as the command operates. It should terminate
 with something like `Chef Client finished, 8/8 resources updated in 35 seconds`.
