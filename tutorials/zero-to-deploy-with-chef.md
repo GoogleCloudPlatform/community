@@ -262,9 +262,7 @@ On `chef-workstation`:
 
 ### Run Chef Client
 
-On `chef-workstation`:
-
-Run `chef-client` in 'local mode' with your recipe:
+On `chef-workstation`, run `chef-client` in 'local mode' with your recipe:
 
     chef-client --local-mode --runlist 'recipe[google-cloud::default]'
 
