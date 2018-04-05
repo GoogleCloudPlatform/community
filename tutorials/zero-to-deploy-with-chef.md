@@ -59,7 +59,7 @@ distributions for Chef Client](https://downloads.chef.io/chef).
 1.  Click **Select** at the bottom of the dialog.
 1.  Click the **Create** button at the bottom to create the instance.
 
-NOTE: You can use the `gcloud` command instead:
+NOTE: You can also use the `gcloud` command instead:
 
     gcloud compute instances create chef-workstation --machine-type f1-micro \
     --image-family ubuntu-1604-lts --image-project ubuntu-os-cloud \
@@ -84,9 +84,20 @@ You'll need a service account key to authorize Chef to manage your GCP project.
 The service account key should be automatically downloaded to your computer as a
 JSON file with a name like `YOUR_PROJECT_NAME-12345678abcdef.json`.
 
-Upload your credentials file to your new `chef-workstation` GCE instance:
+NOTE: You can also use the `gcloud` command instead:
 
-    gcloud compute scp /PATH/TO/CREDENTIALS_FILE.json \
+    gcloud iam service-accounts create chef-service-account --display-name \
+    "chef service account"
+    gcloud iam service-accounts keys create ~/chef-account-key.json \
+    --iam-account chef-service-account@YOUR_PROJECT_NAME.iam.gserviceaccount.com
+
+In this case, the service account key will be downloaded as
+`~/chef-account-key.json`.
+
+Once your service account key is downloaded, you'll need to upload it to your
+new `chef-workstation` GCE instance:
+
+    gcloud compute scp /PATH/TO/SERVICE_ACCOUNT_KEY.json \
     chef-workstation:credentials.json --project YOUR_PROJECT_NAME --zone \
     us-east1-b
 
