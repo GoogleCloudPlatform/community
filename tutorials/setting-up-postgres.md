@@ -215,6 +215,8 @@ page.
 
         postgres-tutorial
 
+1. In the **Direction of traffic** field, create a rule as **Ingress** and another rule as **Egress**.
+
 1. In **Source IP Ranges**, enter the same IP address you used in `hba.conf`.
    This is the IP address of your local computer. Remember to include the `/32`
    suffix, for example: `1.2.3.4/32`.
