@@ -7,12 +7,12 @@ date_published: 2017-04-01
 ---
 # Create ASP.NET Web API using .NET Core with Cloud Endpoints
 
-This tutorial shows how to create simple API using ASP.NET Core Web API,
-deploy that API to App Engine Flexible Environment, then using Cloud Endpoints to expose and monitor the API.
+This tutorial shows how to create a simple API using ASP.NET Core Web API,
+deploy that API to the App Engine flexible environment, then use Cloud Endpoints to expose and monitor the API.
 
 ## Step 1 - Setup your development environment
 
-We are going to write code using Visual Studio Code. Therefore, you should install the following:
+You will write code using Visual Studio Code. Therefore, you should install the following:
 
 * [.NET Core 2.0.0 SDK](https://www.microsoft.com/net/core)
 * [Visual Studio Code](https://code.visualstudio.com/)
@@ -20,7 +20,7 @@ We are going to write code using Visual Studio Code. Therefore, you should insta
 
 ## Step 2 - Create ASP.NET Core Web API using VS Code
 
-1. Open a command line prompt and run the following commands:
+1. Open a command-line prompt and run the following commands:
 
         mkdir ExposeAPIWithEndpointsCore
         cd ExposeAPIWithEndpointsCore
@@ -28,9 +28,9 @@ We are going to write code using Visual Studio Code. Therefore, you should insta
 
     This will create a template Web API project using .NET Core 2.0.
 
-2. Open `ExposeAPIWithEndpointsCore` folder you created in VS Code. It will look like this:
+2. Open the `ExposeAPIWithEndpointsCore` folder you created in Visual Studio Code. It will look like this:
 
-    ![VS Code First Screen](./VSCodeEndpointsFirstScreen.png)
+    ![VS Code First Screen](https://storage.googleapis.com/gcp-community/tutorials/exposing-asp.net-webapi-using-.net-core-with-cloud-endpoints/VSCodeEndpointsFirstScreen.png)
 3. Click on *"YES"* for **"Required assets to build and debug are missing from ExposeAPIWithEndpointsCore. Add them?"**
 
 4. Press `F5` to build the template project.
@@ -99,7 +99,7 @@ We are going to write code using Visual Studio Code. Therefore, you should insta
 
 2. Copy the JSON content from the browser and paste it into [https://editor.swagger.io](https://editor.swagger.io). 
     You will be asked whether to translate JSON to YAML. Say `YES`. You will see this:
-    ![Swagger Editor](./SwaggerYamlFromEditor.io.png)
+    ![Swagger Editor](https://storage.googleapis.com/gcp-community/tutorials/exposing-asp.net-webapi-using-.net-core-with-cloud-endpoints/SwaggerYamlFromEditor.io.png)
 
 3. Create a new file in VS Code under the main folder `ExposeApiWithEndpointsCore`. Name it `openapi.yaml` and paste the content of the generated YAML from https://editor.swagger.io.
 
@@ -138,21 +138,19 @@ We are going to write code using Visual Studio Code. Therefore, you should insta
 1. Open `openapi.yaml` that was created in step 3 in VS Code.
 
 2. Add `host` declaration right before the `paths` section. The value should be `YOUR-PROJECT-ID.appspot.com` (replace `YOUR-PROJECT-ID` with your cloud project Id):
-    <pre>
         swagger: '2.0'
         info:
         version: v1
         title: My API
-        <b><i>host: YOUR-PROJECT-ID.appspot.com</i></b>
+        host: YOUR-PROJECT-ID.appspot.com
         paths:
           /api/Values:
         get:
             tags:
             - Values
             operationId: ApiValuesGet
-    </pre>
 
-    When you will deploy API specification to Google Endpoints, it will create a new Cloud Endpoints service configuration with the name equals to `host` value from our `OpenAPI yaml`. Each endpoints deployment assigns a unique `configuration_id` for versioning purposes. When we will deploy the service implementation to AppEngine Flexible environment in the next step, it will create a DNS entry in the format of `YOUR-PROJECT_ID.appspot.com`. We should use that FQDN to make incoming requests to our API.
+    When you will deploy API specification to Google Endpoints, it will create a new Cloud Endpoints service configuration with the name equals to `host` value from our `OpenAPI yaml`. Each endpoints deployment assigns a unique `configuration_id` for versioning purposes. When we will deploy the service implementation to App Engine flexible environment in the next step, it will create a DNS entry in the format of `YOUR-PROJECT_ID.appspot.com`. We should use that FQDN to make incoming requests to our API.
 
 3. In Google SDK command prompt, make sure you are in the folder that contains `openapi.yaml` that was created in step 3. Execute:
 
@@ -160,12 +158,12 @@ We are going to write code using Visual Studio Code. Therefore, you should insta
 
     You should notice that the deployment shows a few warnings, such as `Operation does not require an API Key`. You can ignore these for now.
 
-    So what has happened now? You just deployed API specification. This created a new Cloud Endpoints service configuration entry with the name that we specified in `“host”` field of `openapi.yaml`. This service entry is pre-configured to serve the API based on the specifications in yaml file. Now we want to ensure that all incoming API calls will be intercepted by Cloud Endpoints and then routed for execution to the service we deploy to AppEngine Flexible.
+    So what has happened now? You just deployed API specification. This created a new Cloud Endpoints service configuration entry with the name that we specified in `“host”` field of `openapi.yaml`. This service entry is pre-configured to serve the API based on the specifications in yaml file. Now we want to ensure that all incoming API calls will be intercepted by Cloud Endpoints and then routed for execution to the service we deploy to App Engine flexible environment.
 
-## Step 6 - Deploy API implementation to AppEngine Flexible
+## Step 6 - Deploy API implementation to App Engine flexible environment
 
     Now you need to deploy API implementation. You also need to bind API specification we deployed earlier to API implementation instance, so that every incoming request passes through Cloud Endpoints service first, before it hits the deployment of API implementation.
-    When deploying AppEngine Flexible service, you should specify Endpoints service name in the `app.yaml`. You should also set deployment rollout strategy to managed. By doing that, you instruct AppEngine Flexible to place an instance of Cloud Endpoints service in front of your API implementation. That instance is identified by service name and configuration id. By setting `rollout_strategy=managed` in `app.yaml`, we instruct the service to always use latest version of Cloud Endpoints service (the one that was deployed last).
+    When deploying App Engine flexible service, you should specify Endpoints service name in the `app.yaml`. You should also set deployment rollout strategy to managed. By doing that, you instruct App Engine flexible environment to place an instance of Cloud Endpoints service in front of your API implementation. That instance is identified by service name and configuration id. By setting `rollout_strategy=managed` in `app.yaml`, we instruct the service to always use latest version of Cloud Endpoints service (the one that was deployed last).
 
 1. In Google Cloud SDK shell type:
 
@@ -186,7 +184,7 @@ We are going to write code using Visual Studio Code. Therefore, you should insta
     By creating `app.yaml` with `endpoints_api_service` section, we effectively created the binding that will ensure that every incoming request to our API (specification is detailed in configuration with config_id) that will hit `YOUR-PROJECT-ID.appspot.com` (“name”), will be routed to our service.
     Now you are almost ready to deploy API implementation into AppEngine Flex. In order to separate a project from its publish package in dotnet core, you should deploy the outcome of `dotnet publish` command. That output by default doesn’t contain `app.yaml` file we created earlier.
 
-3. Edit `“ExposeAPIWithEndpointsCore.csproj”` in VSCore so it always copies `app.yaml` into the publish directory. Add this section before `</Project>` in `ExposeAPIWithEndpointsCore.csproj`:
+3. Edit `“ExposeAPIWithEndpointsCore.csproj”` in Visual Studio Code so that it always copies `app.yaml` into the publish directory by adding the following section before `</Project>` in `ExposeAPIWithEndpointsCore.csproj`:
 
         <!-- Copy the app.yaml on publish -->
         <ItemGroup>
@@ -194,18 +192,23 @@ We are going to write code using Visual Studio Code. Therefore, you should insta
         </ItemGroup>
         </Project>
 
-4. Deploy API implementation to AppEngine Flex.
+4. Deploy API implementation to the App Engine flexible environment.
 
         dotnet publish
         gcloud app deploy bin\debug\netcoreapp2.0\publish\app.yaml
 
 5. Test that your APIs are exposed properly. Open `https://[YOUR-PROJECT-ID].appspot.com/api/Values` in any browser. If you get **["value1","value2"]** back, you are done!
 
-## Congratulations!
+## Verifying the deployment
 
-You now have the API deployed and exposed via Cloud Endpoints! In order to prove that, go to [Endpoints](https://console.cloud.google.com/endpoints) page of Google Cloud Console. There you can inspect the requests graph. It should reflect the requests you made to test the API. Also you can see all the deployments of endpoints configuration.
-![Monitoring API](./MonitorAPI.png)
+You now have the API deployed and exposed via Cloud Endpoints! To verify that, go to [Endpoints](https://console.cloud.google.com/endpoints) page of Google Cloud Console. There you can inspect the requests graph, which should reflect the requests you make to test the API. You can also view all of the configurations of your endpoints deployments.
+![Monitoring API](https://storage.googleapis.com/gcp-community/tutorials/exposing-asp.net-webapi-using-.net-core-with-cloud-endpoints/MonitorAPI.png)
 
 ## Summary
 
-We created a basic ASP.NET Core Web API, deployed it to AppEngine Flex on Google Cloud Platform and configured Cloud Endpoints in front of our API, so all the incoming requests will be sent to Cloud Endpoints which in turn will route them to our API implementation. We haven’t implemented all the non functional requirements of exposing the API like security, throttling and monitoring yet. In this tutorial our API is exposed to everyone without any authentication.
+You created a basic ASP.NET Core Web API, deployed it to App Engine flex environment on Google Cloud Platform and configured Cloud Endpoints in front of the API, so all the incoming requests will be sent to Cloud Endpoints which in turn will route them to API implementation. You haven’t implemented all the non functional requirements of exposing the API like security, throttling and monitoring yet. In this tutorial the API is exposed to everyone without any authentication.
+
+## What's next
+
+* Learn how to [setup authentication for API access](https://cloud.google.com/endpoints/docs/openapi/authenticating-users)
+* Learn about API [security](https://cloud.google.com/endpoints/docs/openapi/when-why-api-key), [throttling](https://cloud.google.com/endpoints/docs/openapi/quotas-configure), or [monitoring](https://cloud.google.com/endpoints/docs/openapi/monitoring-your-api)
