@@ -99,10 +99,10 @@ gcloud projects add-iam-policy-binding ${TF_ADMIN} \
 Any actions that Terraform performs require that the API be enabled to do so. In this guide, Terraform requires the following:
 
 ```sh
-gcloud services enable cloudresourcemanager.googleapis.com
-gcloud services enable cloudbilling.googleapis.com
-gcloud services enable iam.googleapis.com
-gcloud services enable compute.googleapis.com
+gcloud service-management enable cloudresourcemanager.googleapis.com
+gcloud service-management enable cloudbilling.googleapis.com
+gcloud service-management enable iam.googleapis.com
+gcloud service-management enable compute.googleapis.com
 ```
 
 ### Add organization/folder-level permissions
