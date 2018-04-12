@@ -1,7 +1,7 @@
 ---
 title: Exposing ASP.NET Web API using .NET Core with Cloud Endpoints
 description: Learn how to create a sample ASP.NET Web API service, deploy it to Google Cloud Platform (GCP) App Engine flexible environment, and use Cloud Endpoints for API management.
-author: zeltser
+author: simonz130
 tags: App Engine, Cloud Endpoints, .NET Core, ASP.NET, API Gateway, Web API, WebAPI, Deploy, API Management
 date_published: 2018-04-10
 ---
