@@ -6,10 +6,11 @@ tags: Compute Engine, Chef
 date_published: 2018-03-28
 ---
 
-This tutorial shows how to quickly setup infrastructure on Google Cloud Platform
-with the [Chef configuration management tool](https://www.chef.io/chef/). You
-will start from nothing and end with provisioning and configuring multiple
-resources on GCP using open source GCP-specific Chef cookbooks.
+This tutorial shows how to quickly set up infrastructure on Google Cloud
+Platform with the [Chef configuration management
+tool](https://www.chef.io/chef/). You will start from nothing and end with
+provisioning and configuring multiple resources on GCP using open source
+GCP-specific Chef cookbooks.
 
 ## Objectives
 
@@ -44,11 +45,11 @@ This tutorial is written using the **us-east1-b** Compute Engine zone. You may
 choose any zone.
 
 This tutorial is written using the **Ubuntu 16.04 LTS** machine image. You may
-use any machine image that that supports Chef. See the list of all [supported
+use any machine image that supports Chef. See the list of all [supported
 distributions for Chef Client](https://downloads.chef.io/chef).
 
 1.  In the Cloud Platform Console, go to the **Compute Engine >> [VM
-    Instances](https://console.cloud.google.com/compute/instances)**.
+    Instances](https://console.cloud.google.com/compute/instances)** page.
 1.  Click the **Create Instance** button.
 1.  Set **Name** to `chef-workstation`.
 1.  For **Zone**, choose **us-east1-b**.
@@ -95,7 +96,7 @@ In this case, the service account key will be downloaded as
 `~/chef-account-key.json`.
 
 Once your service account key is downloaded, you'll need to upload it to your
-new `chef-workstation` GCE instance:
+new `chef-workstation` Compute Engine instance:
 
     gcloud compute scp /PATH/TO/SERVICE_ACCOUNT_KEY.json \
     chef-workstation:credentials.json --project YOUR_PROJECT_NAME --zone \
@@ -115,9 +116,10 @@ new `chef-workstation` GCE instance:
 
         sudo dpkg -i chef_*
 
-NOTE: If you selected a different machine image for your GCE instance, you'll
-have to [download the correct package](https://downloads.chef.io/chef) and
-install it with the appropriate package manager.
+NOTE: If you selected a different machine image for your Compute Engine
+instance, you'll have to [download the correct
+package](https://downloads.chef.io/chef) and install it with the appropriate
+package manager.
 
 Remain ssh'd into your `chef-workstation` instance.
 
@@ -130,7 +132,7 @@ On your `chef-workstation` instance:
         mkdir -p .chef/cookbooks
         cd .chef
 
-1.  Configure git.
+1.  Configure Git.
 
         git config --global user.email "you@example.com"
         git config --global user.name "Your Name"
@@ -139,7 +141,7 @@ On your `chef-workstation` instance:
 
         sudo apt-get install git
 
-1.  Initialize a git repo.
+1.  Initialize a Git repo.
 
         git init
         git commit -m genesis --allow-empty
@@ -280,7 +282,7 @@ On `chef-workstation`, run `chef-client` in 'local mode' with your recipe:
 You should see output streaming by as the command operates. It should terminate
 with something like `Chef Client finished, 2/8 resources updated in 35 seconds`.
 
-Awesomesauce! You just provisioned a Compute Engine instance on GCP using a
+Awesome! You just provisioned a Compute Engine instance on GCP using a
 single machine running Chef Client. You can check the status of your Compute
 Engine instance on the **[VM
 Instances](https://console.cloud.google.com/compute/instances)** page.
