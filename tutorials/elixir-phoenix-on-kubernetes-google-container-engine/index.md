@@ -268,6 +268,9 @@ Execute the following command to run the build:
 Replace `${PROJECT_ID}` with the ID of your Google Cloud Platform project.
 The period at the end is required.
 
+If your `.gitignore` file is excluding `/config/*.secret.exs`,
+you'll have to comment that out for this step - we need that file.
+
 After the build finishes, the image `gcr.io/${PROJECT_ID}/hello:v1` will be
 available. You can list the images you have built in your project using:
 
