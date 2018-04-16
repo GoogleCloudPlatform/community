@@ -1,7 +1,7 @@
 ---
 title: Using Cloud Spanner commit timestamp feature to create a change log with Go
 description: Learn how to use Cloud Spanner commit timestamp feature to create a change log.
-author: jbsimon
+author: jsimonweb
 tags: Cloud Spanner, Go
 date_published: 2018-04-12
 ---
