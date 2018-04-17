@@ -295,8 +295,12 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
     It might take several minutes for the cluster to be created. You can check
     the cloud console at http://cloud.google.com/console, under the Kubernetes
     Engine section, to see that your cluster is running. You will also be able
-    to see the individual running VMs under the Compute Engine section. Note
-    that once the cluster is running, you will be charged for the VM usage.
+    to see the individual running VMs under the Compute Engine section.
+    
+    Note that once the cluster is running, *you will be charged for the VM usage*.
+    
+    If you get an error "v1 API cannot be used to access GKE regional clusters" or are told to specify a zone or region, 
+    [read how to set a default region](https://cloud.google.com/compute/docs/regions-zones/changing-default-zone-region).
 
 1.  Configure the gcloud command-line tool to use your cluster by default, so
     you don't have to specify it every time for the remaining gcloud commands.
