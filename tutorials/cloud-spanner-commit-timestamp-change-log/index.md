@@ -14,7 +14,7 @@ which records changed most recently. Using Cloud Spanner's commit timestamp feat
 ## Overview
 
 This tutorial describes how to use the Cloud Spanner commit timestamp feature to timestamp changes to your database records.
-The approaches to using commit timestamps are included:
+The following approaches to using commit timestamps are included:
 
 * Include a commit timestamp column when you create your tables.
 * Create a companion History table when you create your tables.
@@ -116,7 +116,7 @@ CREATE TABLE DocumentHistory(
   UserId INT64 NOT NULL,
   DocumentId INT64 NOT NULL,
   Timestamp TIMESTAMP NOT NULL OPTIONS(allow_commit_timestamp=true),
-  Delta STRING(MAX),
+  PreviousContents STRING(MAX),
 ) PRIMARY KEY(UserId, DocumentId, Timestamp) INTERLEAVE IN PARENT Documents ON DELETE NO ACTION
 ```
 
