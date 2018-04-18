@@ -109,15 +109,15 @@ Here are example SQL statements to create two tables, a Documents table and a Do
 CREATE TABLE Documents(
   UserId INT64 NOT NULL,
   DocumentId INT64 NOT NULL,
-  Contents STRING(MAX) NOT NULL,
+  Contents STRING(MAX) NOT NULL
 ) PRIMARY KEY(UserId, DocumentId)
 
 CREATE TABLE DocumentHistory(
   UserId INT64 NOT NULL,
   DocumentId INT64 NOT NULL,
   Timestamp TIMESTAMP NOT NULL OPTIONS(allow_commit_timestamp=true),
-  PreviousContents STRING(MAX),
-) PRIMARY KEY(UserId, DocumentId, Timestamp) INTERLEAVE IN PARENT Documents ON DELETE NO ACTION
+  PreviousContents STRING(MAX)
+) PRIMARY KEY(UserId, DocumentId, Timestamp), INTERLEAVE IN PARENT Documents ON DELETE NO ACTION
 ```
 
 Here's a snippet of Go code that inserts 5 records into each of the tables as a transaction with commit timestamps:
@@ -242,5 +242,5 @@ tables from the [**Cloud Spanner**](https://console.cloud.google.com/spanner) Cl
 * See [the runnable code sample][1] which contains the code snippets included in this article.
 * See [the Cloud Spanner commit timestamp documentation][2]. 
 
-[1]: https://github.com/jsimonweb/golang-samples/blob/addChangeLogSample/spanner/spanner_snippets/snippet.go
+[1]: https://github.com/GoogleCloudPlatform/golang-samples/blob/master/spanner/spanner_snippets/snippet.go
 [2]: https://cloud.google.com/spanner/docs/commit-timestamp
