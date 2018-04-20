@@ -5,17 +5,24 @@ author: teppeiy
 tags: Cloud IoT Core, Cloud Dataflow, Cloud Functions, Java, Node.js
 date_published: 2018-04-10
 ---
-## Overview
+## Application Background
+The setup described in this tutorial addresses following scenarios: At industrial facilities sensors are installed to monitor the equipments on site. Sensors data are continuously streamed into cloud handled by different component for various purposes, such as real time monitoring and alerts and long term data storage for analysis, performance improvement and model training.
+
+Feasible scenarios are
+- Geographically dispersed facilities with centralized monitoring system
+- Monitoring of remote unmanned sites: power transformer stations, mobile base stations etc
+
+In this tutorial the sensors are simulated by a java application script that continuously generates random measurements points and sends them over to cloud.
+
+This tutorial focuses on two aspect of the monitoring application setup:
+1. Using the cloud managed service for IoT, Cloud IoT Core, to enforce structured handling of sensor devices security keys and metadata. And the secured delivery of measurement data between sensors and cloud enforced by Cloud IoT Core
+2. In-stream data handling in cloud, where two parallel processing pipeline for separate the need of real time monitoring and alerting from the less realtime critical need of of data storage and analysis.
+
+## Technical Overview
 
 This tutorial demonstrates how to push updates from Message Queueing Telemetry
 Transport (MQTT) devices to Google Cloud Platform (GCP) and process them in real
 time.
-
-It is important to detect warning signs quickly from manufacturing lines to
-prevent failures, which eventually can result in opportunity loss. To this end,
-the manufacturing industry has been investing in monitoring machinery and
-equipment in factories. These monitoring devices and alerting help improve
-production efficiency and business continuity.
 
 This tutorial includes sample code to show two kinds of data processing
 approaches that use GCP products:
@@ -180,10 +187,21 @@ Core to receive data from MQTT clients.
     Warning: This tutorial includes a public/private key pair for testing
     purposes. Do not use this pair in a production environment.
 
+## Create threshold values in DataStore
+In this section, you insert threshold values for each of the devices, registered in the IoT Core Device Manager, in the DataStore.
+1. In Cloud Shell, run python script to insert the device objects into Datastore:
+        sudo pip install google-cloud-datastore
+        cd bin
+        python store_thredshold.py
+1. Open the [Datastore console](https://console.developers.google.com/datastore).
+1. Confirm the the device entities have been created with the corresponding threshold temperature value.
+![data_store_confirm](view_ds.png)
+
+
 ## Deploy a Cloud Function
 
 In this section, you set up a function that logs data that is sent to Cloud IoT
-Core and retrieved through Cloud Pub/Sub.
+Core and retrieved through Cloud Pub/Sub. It also compares the temperature received with the threshold value in Datastore, if the threshold is exceeded an error is logged.
 
 1.  In Cloud Shell, deploy a function to Cloud Functions:
 
@@ -279,6 +297,10 @@ coordinates and then submits it to Cloud IoT Core.
 
     If everything is working, you a single row in the results that displays a
     count of all the records that have been processed.
+## Alert handling
+All the temperature measurements that are above the configured threshold for each device are logged as errors by Cloud Functions and can be viewed and analysed on in the [Error console](https://console.developers.google.com/errors).
+To active the error notifications please follow the documentation on [Error reporting notifications](https://cloud.google.com/error-reporting/docs/notifications).
+![error_console](view_error_report.png)
 
 ## Next steps
 
