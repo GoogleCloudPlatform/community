@@ -192,11 +192,11 @@ In this section, you insert threshold values for each of the devices, registered
 1. In Cloud Shell, run python script to insert the device objects into Datastore:
 
         export GCLOUD_PROJECT=$PROJECT
-	virtualenv env && source env/bin/activate
-	pip install google-cloud-datastore
+        virtualenv env && source env/bin/activate
+        pip install google-cloud-datastore
         cd bin
         python create_temp_alert_store.py
-	deactivate
+        deactivate
 
 1. Open the [Datastore console](https://console.developers.google.com/datastore).
 1. Confirm the the device entities have been created with the corresponding threshold temperature value.
