@@ -191,9 +191,12 @@ Core to receive data from MQTT clients.
 In this section, you insert threshold values for each of the devices, registered in the IoT Core Device Manager, in the DataStore.
 1. In Cloud Shell, run python script to insert the device objects into Datastore:
 
-        sudo pip install google-cloud-datastore
+        export GCLOUD_PROJECT=$PROJECT
+	virtualenv env && source env/bin/activate
+	pip install google-cloud-datastore
         cd bin
-        python store_thredshold.py
+        python create_temp_alert_store.py
+	deactivate
 
 1. Open the [Datastore console](https://console.developers.google.com/datastore).
 1. Confirm the the device entities have been created with the corresponding threshold temperature value.
