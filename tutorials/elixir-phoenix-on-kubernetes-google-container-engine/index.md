@@ -2,7 +2,7 @@
 title: Run an Elixir Phoenix app in containers using Google Kubernetes Engine
 description: Learn how to deploy a Phoenix app in containers using Google Kubernetes Engine.
 author: dazuma
-tags: Kubernetes, Container Engine, Elixir, Phoenix, Docker
+tags: Kubernetes, Kubernetes Engine, Elixir, Phoenix, Docker
 date_published: 2017-11-01
 ---
 
@@ -11,7 +11,7 @@ This tutorial helps you get started deploying your
 [Phoenix](http://phoenixframework.org/) Framework to
 [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/),
 Google's hosting solution for containerized applications. Kubernetes Engine,
-earlier known as Google Container Engine, is based on the popular open-source
+earlier known as Google Kubernetes Engine, is based on the popular open-source
 [Kubernetes](https://kubernetes.io/) system, and leverages Google's deep
 expertise with container-based deployments.
 
@@ -47,7 +47,7 @@ an existing project.
 1.  Go to the [API Library](https://console.cloud.google.com/apis/library) in
     the Cloud Console. Use it to enable the following APIs:
     *   Google Cloud Container Builder API
-    *   Google Container Engine API
+    *   Google Kubernetes Engine API
 
 Perform the installations:
 
@@ -266,7 +266,6 @@ Execute the following command to run the build:
     gcloud container builds submit --tag=gcr.io/${PROJECT_ID}/hello:v1 .
 
 Replace `${PROJECT_ID}` with the ID of your Google Cloud Platform project.
-The period at the end is required.
 
 After the build finishes, the image `gcr.io/${PROJECT_ID}/hello:v1` will be
 available. You can list the images you have built in your project using:

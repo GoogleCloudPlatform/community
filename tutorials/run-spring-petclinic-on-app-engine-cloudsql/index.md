@@ -202,7 +202,7 @@ https://YOUR_PROJECT_ID.appspot.com.
 ### Next steps
 
 - [Build][build] your own Spring application.
-- Deploy the application to [Google Container Engine][gke].
+- Deploy the application to [Google Kubernetes Engine][gke].
 - Try out [other Java samples][samples] on GCP.
 
 [source-path]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic

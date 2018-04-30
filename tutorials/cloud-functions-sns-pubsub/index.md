@@ -51,12 +51,12 @@ subscription.
 1.  Read about [Cloud Pub/Sub concepts][pubsubconcepts].
 1.  Run the following command to create the topic that will receive SNS messages:
 
-        gcloud beta pubsub topics create sns-events
+        gcloud pubsub topics create sns-events
 
 1.  Run the following commands to create a subscription to test the
 	integration:
 
-        gcloud beta pubsub subscriptions create sns-watcher --topic sns-events
+        gcloud pubsub subscriptions create sns-watcher --topic sns-events
 
 
 ## Preparing the Cloud Function
@@ -73,7 +73,7 @@ subscription.
 1.  Run the following command to install the dependencies that the function
 	uses to communicate with Cloud Pub/Sub service:
 
-        npm install --save @google-cloud/pubsub
+        npm install --save --save-exact @google-cloud/pubsub@0.16.4
 
 [AWS SNS]: https://aws.amazon.com/sns/
 
@@ -102,7 +102,7 @@ const pubsub = PubSub();
 const topicName = 'sns-events';
 const topic = pubsub.topic(topicName);
 
-const expectedTopicArn = 'arn:aws:sns:us-west-2:681196457733:new-demo';
+const expectedTopicArn = 'arn:aws:sns:us-west-2:759791620908:my-sns-topic';
 
 /**
  * Cloud Function.
@@ -114,12 +114,14 @@ exports.receiveNotification = function receiveNotification (req, res) {
   // we only respond to POST method HTTP requests
   if (req.method !== 'POST') {
     res.status(405).end('only post method accepted');
+    return;
   }
 
   // all valid SNS requests should have this header
   var snsHeader = req.get('x-amz-sns-message-type');
   if (snsHeader === undefined) {
     res.status(403).end('invalid SNS message');
+    return;
   }
 
   // use the sns-validator library to verify signature
@@ -142,7 +144,6 @@ exports.receiveNotification = function receiveNotification (req, res) {
 
     // here we handle either a request to confirm subscription, or a new
     // message
-    var options;
     switch (message.Type.toLowerCase()) {
       case 'subscriptionconfirmation':
         console.log('confirming subscription ' + message.SubscribeURL);
@@ -155,42 +156,35 @@ exports.receiveNotification = function receiveNotification (req, res) {
           subRes.on('data', (d) => {
             console.log(d);
             res.status(200).end('ok');
-            return;
           });
         }).on('error', (e) => {
           console.error(e);
           res.status(500).end('confirmation failed');
-          return;
         });
         break;
       case 'notification':
         // this is a regular SNS notice, we relay to Pubsub
         console.log(message.MessageId + ': ' + message.Message);
-        message = {
-          data: message.Message,
-          attributes: {
-            snsMessageId: message.MessageId,
-            snsSubject: message.Subject
-          }
+
+        const attributes = {
+          snsMessageId: message.MessageId,
+          snsSubject: message.Subject
         };
 
-        options = {
-          raw: true
-        };
+        var msgData = Buffer.from(message.Message);
 
-        topic.publish(message, options).then(function (data) {
-          console.log('message published ' + data[0]);
-          // var messageIds = data[0];
-          // var apiResponse = data[1];
+        topic.publisher().publish(msgData, attributes).then(function (results) {
+          console.log('message published ' + results[0]);
+          res.status(200).end('ok');
         });
-        res.status(200).end('ok');
-        return;
+        break;
       default:
         console.error('should not have gotten to default block');
         res.status(400).end('invalid SNS message');
     }
   });
 };
+
 
 ```
 
@@ -242,7 +236,7 @@ Use the Publish feature in the SNS section of the AWS console to generate a test
 message in raw format. Wait a few seconds and then run the following command to
 confirm that Cloud Function relayed the message to Cloud Pub/Sub:
 
-	gcloud beta pubsub subscriptions pull sns-watcher --auto-ack
+	gcloud pubsub subscriptions pull sns-watcher --auto-ack
 
 Note that the SNS subject was converted to a Cloud Pub/Sub attribute.
 
