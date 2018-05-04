@@ -1,20 +1,21 @@
 ---
 title: How to build a conversational app using Cloud Machine Learning APIs (Part 2 of 3)
-description: How to build a conversational app using Cloud Machine Learning APIs (Part 2 of 3).
+description: we'll discuss an advanced API.AI topic — webhook with Cloud Functions. We'll also show you how to use Cloud Machine Learning APIs (Vision, Speech and Translation) and how to support a second language.
 author: Chang Luo
 tags: Cloud Functions, Dialogflow, API.AI, Webhooks, Localization, Chatbot, Machine Learning API, Transation, Vision, Speech
-date_published: 2017-01-02
+date_published: 2017-05-04
 ---
 
-In [part 1](../index.md) of this blog post, we gave you an overview of what a conversational tour guide iOS app might look like built on Cloud Machine Learning APIs and API.AI. We also demonstrated how to create API.AI intents and contexts. In part 2, we'll discuss an advanced API.AI topic — webhook with Cloud Functions. We'll also show you how to use Cloud Machine Learning APIs (Vision, Speech and Translation) and how to support a second language.
-
-### Webhooks via Cloud Functions
-
-In API.AI, [Webhook](https://docs.api.ai/docs/webhook) integrations allow you to pass information from a matched intent into a web service and get a result from it. Read on to learn how to request parade info from Cloud Functions.
+In [part 1](https://cloudplatform.googleblog.com/2017/07/how-to-build-a-conversational-app-that-sees-listens-talks-and-translates-using-Cloud-Machine-Learning-APIs-part-1.html) of this blog post, we gave you an overview of what a conversational tour guide iOS app might look like built on Cloud Machine Learning APIs and API.AI. We also demonstrated how to create API.AI intents and contexts. In part 2, we'll discuss an advanced API.AI topic — webhook with Cloud Functions. We'll also show you how to use Cloud Machine Learning APIs (Vision, Speech and Translation) and how to support a second language.
 
 
+# Webhooks via Cloud Functions
 
-1.  Go to console.cloud.google.com. Log in with your own account and create a new project.
+In API.AI, [webhook](https://docs.api.ai/docs/webhook) integrations allow you to pass information from a matched intent into a web service and get a result from it. Read on to learn how to request parade info from Cloud Functions.
+
+
+
+1.  Go to [Google Cloud Platform Console](console.cloud.google.com). Log in with your own account and create a new project. \
 
 2. Once you've created a new project, navigate to that project.
 
@@ -22,34 +23,36 @@ In API.AI, [Webhook](https://docs.api.ai/docs/webhook) integrations allow you to
 
 ![alt_text](conversational-app-8.png "Enable Billing Screenshot")
 
+4. Create a function. For the purposes of this guide, we'll call the function "parades". 
 
-4. Create a function. For the purposes of this guide, we'll call the function "parades". Select the "HTTP" trigger option, then select "inline" editor.
+5. Select the "HTTP" trigger option, then select "inline" editor.
 
 ![alt_text](conversational-app-10.png "Cloud Function Screenshot")
 
-
 Don't forget to specify the function to execute to "parades".
 
-You'll also need to create a "stage bucket". Click on "browse" —  you'll see the browser, but no buckets will exist yet.
+5. You'll also need to create a "stage bucket". Click on "browse" —  you'll see the browser, but no buckets will exist yet.
 
 ![alt_text](conversational-app-4.png "Bucket Screenshot")
+ \
+6. Click on the "+" button to create the bucket. \
 
-5. Click on the "+" button to create the bucket.
+
 
 
 1.  Specify a unique name for the bucket (you can use your project name, for instance), select "regional" storage, and keep the default region (us-central1).
 1.  Click back on the "select" button in the previous window.
-1.  Click the "create" button to create the function.
+1.  Click the "create" button to create the function. \
 
-The function will be created and deployed:
+The function will be created and deployed: \
 
 ![alt_text](conversational-app-5.png "Cloud Function Deploy Screenshot")
 
-6. Click the "parades" function line. In the "source" tab, you'll see the sources.
+7. Click the "parades" function line. In the **Source** tab, you'll see the sources.
 
-Now it's time to code our function! We'll need two files: the "index.js" file will contain the JavaScript / Node.JS logic, and the "package.json" file contains the Node package definition, including the dependencies we'll need in our function.
+Now it's time to code our function! We'll need two files: the `index.js` file will contain the JavaScript / Node.JS logic, and the `package.json` file contains the Node package definition, including the dependencies we'll need in our function.
 
-Here's our package.json file. This is dependent on the actions-on-google NPM module to ease the integration with API.AI and the Actions on Google platform that allows you to extend the Google Assistant with your own extensions (usable from Google Home):
+Here's our `package.json` file. This is dependent on the `actions-on-google` NPM module to ease the integration with API.AI and the Actions on Google platform that allows you to extend the Google Assistant with your own extensions (usable from Google Home):
 
 
 ```
@@ -64,7 +67,7 @@ Here's our package.json file. This is dependent on the actions-on-google NPM mod
 ```
 
 
-In the index.js file, here's our code:
+In the `index.js` file, here's our code:
 
 
 ```
@@ -92,13 +95,16 @@ In the code snippets above:
 1.  Then, we call the `handleRequest()` to handle the request.
 1.  Once done, don't forget to click the "create" function button. It will deploy the function in the cloud.
 
-There is subtle difference between <code>[tell()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#tell)</code>and <code>[ask()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#ask) </code>APIs. <code>tell()</code>will end the conversation and close the mic, while <code>ask()</code> will not. This difference doesn't matter for API.AI projects like the one we demonstrate here in [part 1](https://cloudplatform.googleblog.com/2017/07/how-to-build-a-conversational-app-that-sees-listens-talks-and-translates-using-Cloud-Machine-Learning-APIs-part-1.html) and part 2 of this blog post. When we integrate Actions on Google in part 3, we'll explain this difference in more detail.
+There is subtle difference between <code>[tell()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#tell)</code>and <code>[ask()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#ask) </code>APIs. <code>tell()</code>will end the conversation and close the mic, while <code>ask()</code> will not. This difference doesn't matter for API.AI projects like the one we demonstrate here in [Part 1](https://cloudplatform.googleblog.com/2017/07/how-to-build-a-conversational-app-that-sees-listens-talks-and-translates-using-Cloud-Machine-Learning-APIs-part-1.html) and Part 2 of this blog post. When we integrate Actions on Google in Part 3, we'll explain this difference in more detail.
 
-As shown below, the "testing" tab invokes your function, the "general" tab shows statistics, and the "trigger" tab reveals the HTTP URL created for your function:
+As shown below, the **Testing** tab invokes your function, the **General** tab shows statistics, and the **Trigger** tab reveals the HTTP URL created for your function:
+
 
 ![alt_text](conversational-app-7.png "Cloud Function Trigger Screenshot")
 
-Your final step is to go to the API.AI console, then click the Fulfillment tab. Enable webhook and paste the URL above into the URL field.
+
+Your final step is to go to the API.AI console, then click the **Fulfillment** tab. Enable webhook and paste the URL above into the URL field.
+
 
 ![alt_text](conversational-app-3.png "Fullfill Screenshot")
 
@@ -107,15 +113,16 @@ With API.AI, we've built a chatbot that can converse with a human by text. Next,
 
 ## Using Cloud Speech API
 
-
+ \
 Cloud Speech API includes an iOS [sample](https://github.com/GoogleCloudPlatform/ios-docs-samples/tree/master/speech/Objective-C) app. It's quite straightforward to integrate the [gRPC non-streaming sample app](https://github.com/GoogleCloudPlatform/ios-docs-samples/tree/master/speech/Objective-C/Speech-gRPC-Nonstreaming) into our chatbot app. You'll need to acquire an [API key](https://cloud.google.com/storage/docs/json_api/v1/how-tos/authorizing#APIKey) from Google Cloud Console and replace this [line](https://github.com/GoogleCloudPlatform/ios-docs-samples/blob/master/speech/Objective-C/Speech-gRPC-Nonstreaming/Speech/SpeechRecognitionService.m#L23) in `SpeechRecognitionService.m` with your API key.
 
 #define API_KEY @"YOUR_API_KEY"
 
 
-## Landmark detection
+## Landmark Detection
 
-Follow this [example](https://github.com/GoogleCloudPlatform/cloud-vision/tree/master/ios) to use Cloud Vision API on iOS. You'll need to replace the label and face detection with landmark detection as shown below.
+Follow this [example](https://github.com/GoogleCloudPlatform/cloud-vision/tree/master/ios) to use Cloud Vision API on iOS. You'll need to replace the label and face detection with landmark detection as shown below. \
+
 
 
 ```
@@ -131,7 +138,7 @@ Follow this [example](https://github.com/GoogleCloudPlatform/cloud-vision/tree/m
 You can use the same API key you used for Cloud Speech API.
 
 
-## Text to speech
+## Text to Speech
 
 iOS 7+ has a built-in text-to-speech SDK, <code>[AVSpeechSynthesizer](https://developer.apple.com/reference/avfoundation/avspeechsynthesizer?language=objc)</code>. The code below is all you need to convert text to speech.
 
@@ -145,7 +152,9 @@ AVSpeechSynthesizer *synthesizer = [[AVSpeechSynthesizer alloc] init];
 
 
 
-## Supporting multiple languages
+## Supporting Multiple Languages
+
+
 
 [![Chinese Demo](http://img.youtube.com/vi/Oy4oNNd1aGw/0.jpg)](https://youtu.be/Oy4oNNd1aGw)
 
@@ -181,14 +190,19 @@ Both Cloud Speech API and Apple's [AVSpeechSynthesisVoice](https://developer.app
 
 Cloud Vision API landmark detection currently only supports English, so you'll need to use the [Cloud Translation API](https://cloud.google.com/translate/) to translate to your desired language after receiving the English-language landmark description. (You would use Cloud Translation API similarly to Cloud Vision and Speech APIs.)
 
-On the API.AI side, you'll need to create a new agent and [set its language to Chinese](https://api.ai/docs/agents#agent-settings). One agent can support only one language. If you try to use the same agent for a second language, machine learning won't work for that language.
+On the API.AI side, you'll need to create a new agent and [set its language to Chinese](https://api.ai/docs/agents#agent-settings). One agent can support only one language. If you try to use the same agent for a second language, machine learning won't work for that language. \
+
+
 
 ![alt_text](conversational-app-6.png "Chinese Screenshot")
+
 
 You'll also need to create all intents and entities in Chinese.
 
 
 ![alt_text](conversational-app-12.png "Chinese Screenshot")
+
+
 
 ---
 
@@ -208,6 +222,6 @@ We hope this example has demonstrated how simple it is to build an app powered b
 
 You can download the [source code](https://github.com/google/ios-chatbot) from Github.
 
-In part 3, we'll cover how to build this app on the Google Assistant with Actions on Google integration.
+In [Part 3](https://cloudplatform.googleblog.com/2017/08/how-to-build-a-conversational-app-using-Cloud-Machine-Learning-APIs-Part-3-of-3-Google-Assistant.html), we'll cover how to build this app on the Google Assistant with Actions on Google integration.
 
 ###### Author [Chang Luo](https://www.linkedin.com/in/changluo)
