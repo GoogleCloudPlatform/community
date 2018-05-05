@@ -49,7 +49,6 @@ Set the name of the Cloud IoT Core you are using to an environment variable:
 ```sh
 export REGISTRY_ID=<your registry here>
 export CLOUD_REGION=<your region; eg us-central1>
-# the following not needed in cloud shell
 export GCLOUD_PROJECT=$(gcloud config list project --format "value(core.project)")
 ```
 
@@ -68,15 +67,15 @@ Assuming you have a registry already created, add this topic as a notification c
 gcloud iot registries update $REGISTRY_ID --region us-central1 --event-notification-config subfolder=log,topic=device-logs
 ```
 
-This directs IoT Core to send any messages written to the MQTT topic of:
+This configures IoT Core to send any messages written to the MQTT topic of:
 
   /devices/{device-id}/events/log
 
-to be directed to a specific PubSub topic.
+to be published to a specific PubSub topic created above.
 
 ## Deploy the relay function
 
-You can use either Google Cloud functions or Firebase functions to run the relay. Here we are using Firebase Functions as the tools are a little more straightforward and there are nice [Typescript starting samples](https://firebase.google.com/docs/functions/typescript).
+You can use either Google Cloud Functions or Firebase functions to run the relay (they use the same underlying systems). Here we are using Firebase Functions as the tools are a little more straightforward and there are nice [Typescript starting samples](https://firebase.google.com/docs/functions/typescript).
 
 The main part of the function handles a PubSub message from IoT Core, extracts the log payload and device information, and then writes a structured log entry to Stackdriver Logging:
 
@@ -132,26 +131,25 @@ To deploy the cloud function, we use the Firebase CLI tool:
 
 ```sh
 cd functions
-firebase use <your project id>
+npm install
+firebase use $GCLOUD_PROJECT
 firebase deploy --only functions
 ```
 
 ## Write logs from a device
 
-create a dummy device:
+create a dummy sample device:
 
 ```sh
 cd ../sample-device
-gcloud iot devices create 
+npm install
 
 gcloud iot devices create log-tester --region $CLOUD_REGION --registry $REGISTRY_ID --public-key path=./ec_public.pem,type=ES256
 
-npm install
 node dist/index.js &
-
 ```
-Note: do not use this device for any real workloads, as the keypair is included in this sample and should not be considered secret.
 
+Note: do not use this device for any real workloads, as the keypair is included in this sample and should not be considered secret.
 
 ## Explore the logs that are written
 
@@ -175,9 +173,11 @@ Now we will exercise a part of our sample device code that responds to config ch
 gcloud iot devices configs update --device log-tester --registry $REGISTRY_ID --region $CLOUD_REGION --config-data '{"bounce": 2}'
 ```
 
-Now in just a few moments, you will see two new entries in the logging console. One is from IoT Core system noting that a devices config was updated (the ModifyCloudToDeviceConfig call)
+Now in just a few moments, you will see two new entries in the logging console. One is from IoT Core system noting that a devices config was updated (the ModifyCloudToDeviceConfig call).
 
 This is then followed by a device application log reporting the imaginary "spring back" value. This shows how we can view both system logs from IoT Core and device application logs in one place.
+
+You can use the refresh button in the Cloud Console, or use the play button to stream logs.
 
 ![console image](./images/c4.png)
 
@@ -220,6 +220,11 @@ Kill the sample device:
 ```sh
 killall node
 ```
+Because the test device uses a non-secret key, you should delete it:
 
-All of the resource in this tutorial cost nothing at rest, or scale to zero.  You can delete Cloud Functions, Devices, and PubSub topics from the console.
+```sh
+gcloud iot devices delete log-tester --registry $REGISTRY_ID --region $CLOUD_REGION
+```
+
+All of the resource in this tutorial cost nothing at rest, or scale to zero.  You can delete Cloud Functions, Device Registry, and PubSub topics from the console.
 
