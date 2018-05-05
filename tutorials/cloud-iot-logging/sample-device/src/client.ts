@@ -15,22 +15,25 @@
  */
 
 import mqtt = require('mqtt');
-import { TokenGenerator, SignAlgorithm } from "./token"
+import { TokenGenerator, SignAlgorithm } from "./token";
 import { setInterval } from 'timers';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import 'rxjs/add/observable/fromEvent';
 // import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {ReplaySubject} from 'rxjs/ReplaySubject';
+import {ReplaySubject} from 'rxjs';
 
 export class IoTClient {
     private jwt: string;
     private tokenSource: TokenGenerator;
     private client: mqtt.MqttClient;
 
-    public connections$: ReplaySubject<mqtt.IConnackPacket>;
-    public disconnections$: ReplaySubject<any>;
-    public messages$: ReplaySubject<any>;
-    public publishConfirmations$: ReplaySubject<any>;
+    connections$: ReplaySubject<mqtt.IConnackPacket>;
+    // tslint:disable-next-line: no-any
+    disconnections$: ReplaySubject<any>;
+    // tslint:disable-next-line: no-any
+    messages$: ReplaySubject<any>;
+    // tslint:disable-next-line: no-any
+    publishConfirmations$: ReplaySubject<any>;
 
     // private _connected = new BehaviorSubject(new mqtt.IConnackPacket());
     // public readonly connected$: Observable<mqtt.IConnackPacket> = this._connected.asObservable();
@@ -42,8 +45,8 @@ export class IoTClient {
         private deviceId: string,
         private privateKeyFile: string,
         private algorithm: SignAlgorithm = SignAlgorithm.ES256,
-        private port: number = 8883,
-        private tokenRefreshMinutes: number = 60,
+        private port = 8883,
+        private tokenRefreshMinutes = 60,
         ) { 
             this.tokenSource = new TokenGenerator(this.projectId, this.privateKeyFile, this.algorithm);
             // this.connections$ = Observable.create();
@@ -60,11 +63,11 @@ export class IoTClient {
             this.client.end();
         }
         this.connect();
-        setTimeout(this.refresh.bind(this), (this.tokenRefreshMinutes * 60 * 1000) - 60000)
+        setTimeout(this.refresh.bind(this), (this.tokenRefreshMinutes * 60 * 1000) - 60000);
     }
     connect() {
 
-        let connectionArgs = {
+        const connectionArgs = {
             host: 'mqtt.googleapis.com',
             port: this.port,
             clientId: `projects/${this.projectId}/locations/${this.region}/registries/${this.registryId}/devices/${this.deviceId}`,
@@ -75,23 +78,24 @@ export class IoTClient {
           };
         this.client = mqtt.connect(connectionArgs);
 
+        // tslint:disable-next-line: no-any
         this.client.on('message', (topic:string, message:any, packet:mqtt.IPacket) =>{
             this.messages$.next(message);
         });
 
         this.client.on('connect', (connack:mqtt.IConnackPacket) => {
-            this.client.subscribe(`/devices/${this.deviceId}/config`, function(err, granted) {
+            this.client.subscribe(`/devices/${this.deviceId}/config`, (err, granted) => {
                 if (err) {
                     console.error("subscription failed");
                 }
-            })
-            this.connections$.next(connack)
+            });
+            this.connections$.next(connack);
 
 
         });
             
         this.client.on('error', (error) =>
-            console.error(error))
+            console.error(error));
         
     }
     

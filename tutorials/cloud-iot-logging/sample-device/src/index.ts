@@ -18,16 +18,9 @@ import { IoTClient } from './client';
 import { SignAlgorithm } from './token';
 // import "rxjs/add/operator/first";
 import { first } from 'rxjs/operators';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import 'rxjs/add/observable/timer';
 import 'rxjs/add/observable/merge';
-
-import { watch } from 'fs';
-
-
-// tsc && rsync -av ./dist pi@192.168.86.81:agent/ && ssh -t pi@192.168.86.81 'sudo node /home/pi/agent/dist/index.js'
-
-const zone:string = "zone-a";
 
 if (!process.env.GCLOUD_PROJECT) {
     console.error("Error: GCLOUD_PROJECT env variable unset");
@@ -76,15 +69,16 @@ client.messages$.subscribe(msg => {
         }
     }
 });
-let clientConnected: boolean = false;
+let clientConnected = false;
 
 
 const initialConnect = client.connections$.pipe(first());
 
-initialConnect.subscribe(connected => {
+// tslint:disable-next-line: no-any
+initialConnect.subscribe((connected: any) => {
     if (!clientConnected) {
         console.log("Device Started");
         clientConnected = true;
-        client.publish('/devices/log-tester/events/log', JSON.stringify({severity: 'DEBUG', msg:"Device Started"})); 
+        client.publish('/deices/log-tester/events/log', JSON.stringify({ severity: 'DEBUG', msg: "Device Started" }));
     }
-})
+});

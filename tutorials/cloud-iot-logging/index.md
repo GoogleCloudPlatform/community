@@ -82,49 +82,57 @@ The main part of the function handles a PubSub message from IoT Core, extracts t
 [embedmd]:# (functions/src/index.ts /import/ $)
 ```ts
 import * as functions from 'firebase-functions';
-const Logging = require('@google-cloud/logging');
+const loggingClient = require('@google-cloud/logging');
 
 import { runInDebugContext } from 'vm';
 
 // create the Stackdriver Logging client
-const logging = new Logging({
+const logging = new loggingClient({
   projectId: process.env.GCLOUD_PROJECT,
 });
 
 // start cloud function
 
-export const deviceLog = functions.pubsub.topic('device-logs').onPublish((message) => {
-  const log = logging.log('device-logs');
-  const metadata = {
-    // Set the Cloud IoT Device we are writing a log for
-    // we extract the required device info from the PubSub attributes
-    resource: {
-      type: 'cloudiot_device',
+exports.deviceLog =
+  functions.pubsub.topic('device-logs').onPublish((message) => {
+    const log = logging.log('device-logs');
+    const metadata = {
+      // Set the Cloud IoT Device we are writing a log for
+      // we extract the required device info from the PubSub attributes
+      resource: {
+        type: 'cloudiot_device',
+        labels: {
+          project_id: message.attributes.projectId,
+          device_num_id: message.attributes.deviceNumId,
+          device_registry_id: message.attributes.deviceRegistryId,
+          location: message.attributes.location,
+        }
+      },
       labels: {
-        project_id: message.attributes.projectId,
-        device_num_id: message.attributes.deviceNumId,
-        device_registry_id: message.attributes.deviceRegistryId,
-        location: message.attributes.location,
+        // note device_id is not part of the monitored resource, but we can
+        // include it as another log label
+        device_id: message.attributes.deviceId,
       }
-    },
-    labels: {
-      // note device_id is not part of the monitored resource, but we can include it as another log label
-      device_id: message.attributes.deviceId,
+    };
+    const logData = message.json;
+
+    // Here we optionally extract a severity value from the log payload if it
+    // is present
+    const validSeverity = [
+      'DEBUG', 'INFO', 'NOTICE', 'WARNING', 'ERROR', 'ALERT', 'CRITICAL',
+      'EMERGENCY'
+    ];
+    if (logData.severity &&
+      validSeverity.indexOf(logData.severity.toUpperCase()) > -1) {
+      (metadata as any)['severity'] = logData.severity.toUpperCase();
+      delete (logData.severity);
+
+
+      // write the log entryto Stackdriver Logging
+      const entry = log.entry(metadata, logData);
+      return log.write(entry);
     }
-  };
-  const logData = message.json;
-
-  // Here we optionally extract a severity value from the log payload if it is present
-  const validSeverity = ['DEBUG','INFO', 'NOTICE', 'WARNING', 'ERROR', 'ALERT', 'CRITICAL', 'EMERGENCY']
-  if (logData.severity && validSeverity.indexOf(logData.severity.toUpperCase()) > -1 ) {
-    metadata['severity'] = logData.severity.toUpperCase();
-    delete(logData.severity);
-  }
-
-  // write the log entry to Stackdriver Logging
-  const entry = log.entry(metadata, logData);
-  return log.write(entry);
-});
+  });
 ```
 
 To deploy the cloud function, we use the Firebase CLI tool:
@@ -146,7 +154,10 @@ npm install
 
 gcloud iot devices create log-tester --region $CLOUD_REGION --registry $REGISTRY_ID --public-key path=./ec_public.pem,type=ES256
 
-node dist/index.js &
+# Transpile the sample
+tsc
+
+node build/index.js &
 ```
 
 Note: do not use this device for any real workloads, as the keypair is included in this sample and should not be considered secret.

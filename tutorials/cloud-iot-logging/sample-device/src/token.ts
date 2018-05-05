@@ -34,7 +34,7 @@ export class TokenGenerator {
     }
  
   create () {
-    let token = {
+    const token = {
       'iat': Number(new Date()) / 1000,
       'exp': Number(new Date()) / 1000 + (20 * 60),  // 20 minutes
       'aud': this.projectId
