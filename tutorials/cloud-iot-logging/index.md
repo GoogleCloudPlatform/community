@@ -154,9 +154,6 @@ npm install
 
 gcloud iot devices create log-tester --region $CLOUD_REGION --registry $REGISTRY_ID --public-key path=./ec_public.pem,type=ES256
 
-# Transpile the sample
-tsc
-
 node build/index.js &
 ```
 
@@ -164,7 +161,7 @@ Note: do not use this device for any real workloads, as the keypair is included 
 
 ## Explore the logs that are written
 
-If you open up the [Stackdriver Logging console](https://console.cloud.google.com/logs/viewer), you will be able to choose "Cloud IoT Device" as the resource log to view:
+If you open up the <a href="https://console.cloud.google.com/logs/viewer" target="_blank">Stackdriver Logging console</a>.
 
 ![console image](./images/c1.png)
 

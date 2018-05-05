@@ -55,7 +55,7 @@ client.messages$.subscribe(msg => {
         config = JSON.parse(msgContent);
     }
     catch (e) {
-        console.error("invalid json config");
+        console.error("latest config not valid json");
         return;
     }
     if (config.bounce) {
