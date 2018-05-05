@@ -19,13 +19,18 @@ const Logging = require('@google-cloud/logging');
 
 import { runInDebugContext } from 'vm';
 
+// create the Stackdriver Logging client
 const logging = new Logging({
   projectId: process.env.GCLOUD_PROJECT,
 });
 
+// start cloud function
+
 export const deviceLog = functions.pubsub.topic('device-logs').onPublish((message) => {
   const log = logging.log('device-logs');
   const metadata = {
+    // Set the Cloud IoT Device we are writing a log for
+    // we extract the required device info from the PubSub attributes
     resource: {
       type: 'cloudiot_device',
       labels: {
@@ -41,11 +46,15 @@ export const deviceLog = functions.pubsub.topic('device-logs').onPublish((messag
     }
   };
   const logData = message.json;
+
+  // Here we optionally extract a severity value from the log payload if it is present
   const validSeverity = ['DEBUG','INFO', 'NOTICE', 'WARNING', 'ERROR', 'ALERT', 'CRITICAL', 'EMERGENCY']
   if (logData.severity && validSeverity.indexOf(logData.severity.toUpperCase()) > -1 ) {
     metadata['severity'] = logData.severity.toUpperCase();
     delete(logData.severity);
   }
+
+  // write the log entry to Stackdriver Logging
   const entry = log.entry(metadata, logData);
   return log.write(entry);
 });

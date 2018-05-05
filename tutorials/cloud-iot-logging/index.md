@@ -40,7 +40,7 @@ This tutorial uses billable components of GCP, including:
 
 This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), but you can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected production usage.
 
-## set up the environment
+## Set up the environment
 
 If you do not already have an development environment set up with [gcloud](https://cloud.google.com/sdk/downloads) and [Firebase](https://firebase.google.com/docs/cli/) tools, it is recommended that you use [Cloud Shell](https://cloud.google.com/shell/docs/) for any command line instructions.
 
@@ -77,6 +77,58 @@ to be directed to a specific PubSub topic.
 ## Deploy the relay function
 
 You can use either Google Cloud functions or Firebase functions to run the relay. Here we are using Firebase Functions as the tools are a little more straightforward and there are nice [Typescript starting samples](https://firebase.google.com/docs/functions/typescript).
+
+The main part of the function handles a PubSub message from IoT Core, extracts the log payload and device information, and then writes a structured log entry to Stackdriver Logging:
+
+[embedmd]:# (functions/src/index.ts /import/ $)
+```ts
+import * as functions from 'firebase-functions';
+const Logging = require('@google-cloud/logging');
+
+import { runInDebugContext } from 'vm';
+
+// create the Stackdriver Logging client
+const logging = new Logging({
+  projectId: process.env.GCLOUD_PROJECT,
+});
+
+// start cloud function
+
+export const deviceLog = functions.pubsub.topic('device-logs').onPublish((message) => {
+  const log = logging.log('device-logs');
+  const metadata = {
+    // Set the Cloud IoT Device we are writing a log for
+    // we extract the required device info from the PubSub attributes
+    resource: {
+      type: 'cloudiot_device',
+      labels: {
+        project_id: message.attributes.projectId,
+        device_num_id: message.attributes.deviceNumId,
+        device_registry_id: message.attributes.deviceRegistryId,
+        location: message.attributes.location,
+      }
+    },
+    labels: {
+      // note device_id is not part of the monitored resource, but we can include it as another log label
+      device_id: message.attributes.deviceId,
+    }
+  };
+  const logData = message.json;
+
+  // Here we optionally extract a severity value from the log payload if it is present
+  const validSeverity = ['DEBUG','INFO', 'NOTICE', 'WARNING', 'ERROR', 'ALERT', 'CRITICAL', 'EMERGENCY']
+  if (logData.severity && validSeverity.indexOf(logData.severity.toUpperCase()) > -1 ) {
+    metadata['severity'] = logData.severity.toUpperCase();
+    delete(logData.severity);
+  }
+
+  // write the log entry to Stackdriver Logging
+  const entry = log.entry(metadata, logData);
+  return log.write(entry);
+});
+```
+
+To deploy the cloud function, we use the Firebase CLI tool:
 
 ```sh
 cd functions
