@@ -1,11 +1,11 @@
 ---
 title: How to build a conversational app using Cloud Machine Learning APIs (Part 3 of 3)
-description: ow to extend this app to the Google Assistant-supported devices (Google Home, eligible Android phones and iPhones, and Android Wear). And we'll build this on top of the existing API.AI agent created in parts 1 and 2.
+description: How to extend this app to the Google Assistant-supported devices (Google Home, eligible Android phones and iPhones, and Android Wear). And we'll build this on top of the existing API.AI agent created in parts 1 and 2.
 author: PokerChang
 tags: Cloud Functions, Dialogflow, API.AI, Webhooks, Localization, Chatbot, Machine Learning API, Transation, Vision, Speech
 date_published: 2017-01-02
 ---
-In [Part 1](https://cloudplatform.googleblog.com/2017/07/how-to-build-a-conversational-app-that-sees-listens-talks-and-translates-using-Cloud-Machine-Learning-APIs-part-1.html) and [Part 2](https://cloudplatform.googleblog.com/2017/08/how-to-build-a-conversational-app-using-Cloud-Machine-Learning-APIs-Part-2.html) of this series, we showed you how to build a conversational tour guide app with API.AI and Google Cloud Machine Learning APIs. In this final part, you'll learn how to extend this app to the Google Assistant-supported devices (Google Home, eligible Android phones and iPhones, and Android Wear). And we'll build this on top of the existing API.AI agent created in parts 1 and 2.
+In [Part 1] and [Part 2] of this series, we showed you how to build a conversational tour guide app with API.AI and Google Cloud Machine Learning APIs. In this final part, you'll learn how to extend this app to the Google Assistant-supported devices (Google Home, eligible Android phones and iPhones, and Android Wear). And we'll build this on top of the existing API.AI agent created in parts 1 and 2.
 
 
 [![The Google Assistant / Google Home Demo](http://img.youtube.com/vi/_x5rlkpZiyc/0.jpg)](https://youtu.be/_x5rlkpZiyc)
@@ -13,12 +13,9 @@ In [Part 1](https://cloudplatform.googleblog.com/2017/07/how-to-build-a-conversa
 
 ## New Intents for Actions on Google
 
-In[ Part 1](https://cloudplatform.googleblog.com/2017/07/how-to-build-a-conversational-app-that-sees-listens-talks-and-translates-using-Cloud-Machine-Learning-APIs-part-1.html), we discussed the app's input and output context relationships. 
-
-
+In [Part 1], we discussed the app's input and output context relationships. 
 
 ![alt_text](conversational-app-p3-3.png "Contexts without the Assistant")
-
 
 The `where` context requires the user to upload an image, which is not supported by the Google Assistant. We can modify the context relationship as below. 
 
@@ -43,9 +40,7 @@ Now we'll enable Actions on Google to support the Google Assistant.
 ![alt_text](conversational-app-p3-1.png "Enable Actions on Google Integration")
 
 
-2. In the popup dialog under _Additional triggering intents_, add all intents  you want to support on the Google Assistant. The system will automatically set the _Welcome Intent_ to _Default Welcome Intent_. You can also click _SETTINGS_ under Actions on Google to bring up this settings dialog in the future. Note that the _inquiry.where_ intent requires uploading an image and won't work on the Google Assistant, so you should not  add that intent to the triggering intents list. We discussed how to add a new intent to support that in 
-
-[New Intent for Actions on Google](#heading=actions) section.
+2. In the popup dialog under _Additional triggering intents_, add all intents  you want to support on the Google Assistant. The system will automatically set the _Welcome Intent_ to _Default Welcome Intent_. You can also click _SETTINGS_ under Actions on Google to bring up this settings dialog in the future. Note that the _inquiry.where_ intent requires uploading an image and won't work on the Google Assistant, so you should not  add that intent to the triggering intents list. We discussed how to add a new intent to support that in [New Intent for Actions on Google](#heading=actions) section.
 
 3. After you're done adding all the intents that we want to support on Google on Actions (e.g `hours-no-context` intent) to the _additional triggering intents_ list, hit _UPDATE DRAFT_ button on the bottom. It will generate a green box. Tap the _VIEW_ button to go to the Actions on Google Web Simulator.
 
@@ -91,7 +86,7 @@ We hope this example demonstrates how to build a simple app powered by machine l
 
 You can download the [source code](https://github.com/google/ios-chatbot) from github.
 
-[part 1]: ../index.md
-[part 2]: ../part-2/index.md
+[Part 1]: ../index.md
+[Part 2]: ../part-2/index.md
 
 ###### Author [Chang Luo](https://www.linkedin.com/in/changluo)

@@ -1,12 +1,12 @@
 ---
 title: How to build a conversational app using Cloud Machine Learning APIs (Part 2 of 3)
-description: we'll discuss an advanced API.AI topic — webhook with Cloud Functions. We'll also show you how to use Cloud Machine Learning APIs (Vision, Speech and Translation) and how to support a second language.
+description: We'll discuss an advanced API.AI topic — webhook with Cloud Functions. We'll also show you how to use Cloud Machine Learning APIs (Vision, Speech and Translation) and how to support a second language.
 author: PokerChang
 tags: Cloud Functions, Dialogflow, API.AI, Webhooks, Localization, Chatbot, Machine Learning API, Transation, Vision, Speech
 date_published: 2017-05-04
 ---
 
-In [part 1](https://cloudplatform.googleblog.com/2017/07/how-to-build-a-conversational-app-that-sees-listens-talks-and-translates-using-Cloud-Machine-Learning-APIs-part-1.html) of this blog post, we gave you an overview of what a conversational tour guide iOS app might look like built on Cloud Machine Learning APIs and API.AI. We also demonstrated how to create API.AI intents and contexts. In part 2, we'll discuss an advanced API.AI topic — webhook with Cloud Functions. We'll also show you how to use Cloud Machine Learning APIs (Vision, Speech and Translation) and how to support a second language.
+In [Part 1](../index.md) of this blog post, we gave you an overview of what a conversational tour guide iOS app might look like built on Cloud Machine Learning APIs and API.AI. We also demonstrated how to create API.AI intents and contexts. In part 2, we'll discuss an advanced API.AI topic — webhook with Cloud Functions. We'll also show you how to use Cloud Machine Learning APIs (Vision, Speech and Translation) and how to support a second language.
 
 
 # Webhooks via Cloud Functions
@@ -222,6 +222,6 @@ We hope this example has demonstrated how simple it is to build an app powered b
 
 You can download the [source code](https://github.com/google/ios-chatbot) from Github.
 
-In [Part 3](https://cloudplatform.googleblog.com/2017/08/how-to-build-a-conversational-app-using-Cloud-Machine-Learning-APIs-Part-3-of-3-Google-Assistant.html), we'll cover how to build this app on the Google Assistant with Actions on Google integration.
+In [Part 3](../part-3/index.md), we'll cover how to build this app on the Google Assistant with Actions on Google integration.
 
 ###### Author [Chang Luo](https://www.linkedin.com/in/changluo)

@@ -24,7 +24,7 @@ Part 1
 *   API.AI intents
 *   API.AI contexts
 
-[Part 2](https://cloudplatform.googleblog.com/2017/08/how-to-build-a-conversational-app-using-Cloud-Machine-Learning-APIs-Part-2.html)
+[Part 2]
 
 
 
@@ -34,14 +34,11 @@ Part 1
 *   [Cloud Translation API](https://cloud.google.com/translate/)
 *   Support for multiple languages
 
-[Part 3](https://cloudplatform.googleblog.com/2017/08/how-to-build-a-conversational-app-using-Cloud-Machine-Learning-APIs-Part-3-of-3-Google-Assistant.html)
+[Part 3]
 
 
 
 *   Support the Google Assistant via Actions on Google Integration
-
-This post is Part 1, and Part 2 and Part [3](https://cloudplatform.googleblog.com/2017/08/how-to-build-a-conversational-app-using-Cloud-Machine-Learning-APIs-Part-3-of-3-Google-Assistant.html) will be published in the following weeks.
-
 
 ## Architecture
 
@@ -149,9 +146,9 @@ Finally, create `hours` and `map` intents similar to `ticket` intent.
 
 **Next time**
 
-In [Part 2](https://cloudplatform.googleblog.com/2017/08/how-to-build-a-conversational-app-using-Cloud-Machine-Learning-APIs-Part-2.html), we'll cover how to use [Webhook](https://docs.api.ai/docs/webhook) integrations in API.AI to pass information from a matched intent into a [Cloud Functions](https://cloud.google.com/functions/) web service and then get a result. Finally, we'll cover how to integrate Cloud Vision/Speech/Translation API, including support for Chinese language.
+In [Part 2], we'll cover how to use [Webhook](https://docs.api.ai/docs/webhook) integrations in API.AI to pass information from a matched intent into a [Cloud Functions](https://cloud.google.com/functions/) web service and then get a result. Finally, we'll cover how to integrate Cloud Vision/Speech/Translation API, including support for Chinese language.
 
-In [Part 3](https://cloudplatform.googleblog.com/2017/08/how-to-build-a-conversational-app-using-Cloud-Machine-Learning-APIs-Part-3-of-3-Google-Assistant.html), we'll cover how to support the Google Assistant via Actions on Google integration.
+In [Part 3], we'll cover how to support the Google Assistant via Actions on Google integration.
 
 You can download the [source code](https://github.com/google/ios-chatbot) from github.
 
