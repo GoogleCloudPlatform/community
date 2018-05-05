@@ -13,9 +13,9 @@ This tutorial demonstrates how to configure Firebase functions to relay device a
 ## Objectives
 
 - Send application logs from device software over MQTT and IoT Core
-- View device logs in Stackdriver logging
-- Use sorting and searching features of Stackdriver logging to find logs of interest
-- Use the monitored resource type for IoT devices to see multiple log entries for a given device
+- View device logs in Stackdriver Logging
+- Use sorting and searching features of Stackdriver Logging to find logs of interest
+- Use the monitored resource type for IoT devices to see multiple log entries from different sources for a given device
 
 [//]: # (Google private graphics originals: https://docs.google.com/presentation/d/1orlUICxhKOViJlexpx0hRsxNY7Rsbja-JnOohhVJyYo/edit?hl=en#slide=id.g39ac6d36e5_0_0)
 
@@ -167,6 +167,8 @@ Which then looks like this:
 
 ![console image](./images/c3.png)
 
+### Combine system and Applications logs
+
 Now we will exercise a part of our sample device code that responds to config changes. Use the following gcloud command to update the devices config telling it to "bounce to a level of 2":
 
 ```sh
@@ -178,6 +180,8 @@ Now in just a few moments, you will see two new entries in the logging console. 
 This is then followed by a device application log reporting the imaginary "spring back" value. This shows how we can view both system logs from IoT Core and device application logs in one place.
 
 ![console image](./images/c4.png)
+
+### Use severity to convey log level
 
 Lets send a couple more config updates (you should send one, wait a second or two, then send the next):
 
@@ -193,6 +197,8 @@ gcloud iot devices configs update --device log-tester --registry $REGISTRY_ID --
 As these are received and responded to by the sample device, you can see the use of a severity level to indicate the importance of the log.
 
 ![console image](./images/c5.png)
+
+### Filter logs to a specific device
 
 We currently have been looking at a log that contains entries for all devices.  But given these are structured log entries, we can use the numeric id of the resource to limit our view to only one device in the more realistic scenario when multiple devices are writing log events.
 
