@@ -1,7 +1,7 @@
 ---
 title: How to build a conversational app using Cloud Machine Learning APIs (Part 3 of 3)
 description: ow to extend this app to the Google Assistant-supported devices (Google Home, eligible Android phones and iPhones, and Android Wear). And we'll build this on top of the existing API.AI agent created in parts 1 and 2.
-author: Chang Luo
+author: PokerChang
 tags: Cloud Functions, Dialogflow, API.AI, Webhooks, Localization, Chatbot, Machine Learning API, Transation, Vision, Speech
 date_published: 2017-01-02
 ---
