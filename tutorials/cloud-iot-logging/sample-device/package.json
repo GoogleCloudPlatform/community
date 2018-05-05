@@ -1,0 +1,21 @@
+{
+  "name": "iot-core-agent",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "jsonwebtoken": "^8.1.0",
+    "mqtt": "^2.15.1",
+    "rxjs": "^5.5.6"
+  },
+  "optionalDependencies": {
+    "eddystone-beacon-scanner": "^3.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^2.6.2",
+    "@types/jsonwebtoken": "^7.2.5",
+    "@types/node": "^9.3.0",
+    "ts-node": "^4.1.0",
+    "nodemon": "^1.14.11"
+  }
+}
