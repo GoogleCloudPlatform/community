@@ -1,9 +1,9 @@
 ---
 title: Using Stackdriver Logging with IoT Core devices
-description: Learn how to use Stackdriver Logging for application logs from devices
+description: Learn how to use Stackdriver Logging for application logs from devices.
 author: ptone
 tags: iot, logging
-date_published: xxxxx
+date_published: 2018-05-05
 ---
 
 Preston Holmes | Solution Architect | Google
