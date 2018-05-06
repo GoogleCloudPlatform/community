@@ -23,11 +23,20 @@ Here is how to set it up:
 
 1. Enable cloud functions, cloud storage and bigquery APIs in the GCP console
 2. Open cloud shell in the GCP console
-3. wget https://storage.googleapis.com/avro-import-source/gcf_gcs.zip 
-4. unzip gcf_gcs.zip
+3. 
+```
+wget https://github.com/mkahn5/community/raw/patch-1/tutorials/cloud-functions-avro-import-bq/gcf_gcs.zip
+```
+4. 
+```
+unzip gcf_gcs.zip
+```
 5. update index.js with the projectid and datasetid (destination)
 6. update install.sh trigger-resource with the source gcs bucket (replace avro-import-source)
-7. Run the function: ./install.sh
+7. Run the function: 
+```
+./install.sh
+```
 8. Verify the function is running in the [GCP console][console]
 9. Upload an avro to the source gcs bucket you specified in install.sh
 
