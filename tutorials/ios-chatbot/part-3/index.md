@@ -51,7 +51,7 @@ Now we'll enable Actions on Google to support the Google Assistant.
 If this is your first time on Actions on Google console, it will prompt you to turn on <code>Device Information<em> </em></code>and <em>V<code>oice & Audio Activity</code></em> on your <code>Activity controls</code> center. 
 
 
-![alt_text](conversational-app-p3-%253D2.png "Actions on Google Simulator")
+![alt_text](conversational-app-p3-2.png "Actions on Google Simulator")
 
 
 By default these settings are off. If you already turn them on, you won't see the prompt.

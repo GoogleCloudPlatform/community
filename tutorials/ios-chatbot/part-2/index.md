@@ -15,7 +15,7 @@ In API.AI, [webhook](https://docs.api.ai/docs/webhook) integrations allow you to
 
 
 
-1.  Go to [Google Cloud Platform Console](console.cloud.google.com). Log in with your own account and create a new project. \
+1.  Go to [Google Cloud Platform Console](console.cloud.google.com). Log in with your own account and create a new project. 
 
 2. Once you've created a new project, navigate to that project.
 
@@ -34,17 +34,17 @@ Don't forget to specify the function to execute to "parades".
 5. You'll also need to create a "stage bucket". Click on "browse" —  you'll see the browser, but no buckets will exist yet.
 
 ![alt_text](conversational-app-4.png "Bucket Screenshot")
- \
-6. Click on the "+" button to create the bucket. \
+ 
+6. Click on the "+" button to create the bucket. 
 
 
 
 
 1.  Specify a unique name for the bucket (you can use your project name, for instance), select "regional" storage, and keep the default region (us-central1).
 1.  Click back on the "select" button in the previous window.
-1.  Click the "create" button to create the function. \
+1.  Click the "create" button to create the function.
 
-The function will be created and deployed: \
+The function will be created and deployed:
 
 ![alt_text](conversational-app-5.png "Cloud Function Deploy Screenshot")
 
@@ -113,7 +113,7 @@ With API.AI, we've built a chatbot that can converse with a human by text. Next,
 
 ## Using Cloud Speech API
 
- \
+
 Cloud Speech API includes an iOS [sample](https://github.com/GoogleCloudPlatform/ios-docs-samples/tree/master/speech/Objective-C) app. It's quite straightforward to integrate the [gRPC non-streaming sample app](https://github.com/GoogleCloudPlatform/ios-docs-samples/tree/master/speech/Objective-C/Speech-gRPC-Nonstreaming) into our chatbot app. You'll need to acquire an [API key](https://cloud.google.com/storage/docs/json_api/v1/how-tos/authorizing#APIKey) from Google Cloud Console and replace this [line](https://github.com/GoogleCloudPlatform/ios-docs-samples/blob/master/speech/Objective-C/Speech-gRPC-Nonstreaming/Speech/SpeechRecognitionService.m#L23) in `SpeechRecognitionService.m` with your API key.
 
 #define API_KEY @"YOUR_API_KEY"
@@ -121,7 +121,7 @@ Cloud Speech API includes an iOS [sample](https://github.com/GoogleCloudPlatform
 
 ## Landmark Detection
 
-Follow this [example](https://github.com/GoogleCloudPlatform/cloud-vision/tree/master/ios) to use Cloud Vision API on iOS. You'll need to replace the label and face detection with landmark detection as shown below. \
+Follow this [example](https://github.com/GoogleCloudPlatform/cloud-vision/tree/master/ios) to use Cloud Vision API on iOS. You'll need to replace the label and face detection with landmark detection as shown below. 
 
 
 
@@ -190,7 +190,7 @@ Both Cloud Speech API and Apple's [AVSpeechSynthesisVoice](https://developer.app
 
 Cloud Vision API landmark detection currently only supports English, so you'll need to use the [Cloud Translation API](https://cloud.google.com/translate/) to translate to your desired language after receiving the English-language landmark description. (You would use Cloud Translation API similarly to Cloud Vision and Speech APIs.)
 
-On the API.AI side, you'll need to create a new agent and [set its language to Chinese](https://api.ai/docs/agents#agent-settings). One agent can support only one language. If you try to use the same agent for a second language, machine learning won't work for that language. \
+On the API.AI side, you'll need to create a new agent and [set its language to Chinese](https://api.ai/docs/agents#agent-settings). One agent can support only one language. If you try to use the same agent for a second language, machine learning won't work for that language. 
 
 
 
