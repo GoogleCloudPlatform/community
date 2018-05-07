@@ -205,7 +205,7 @@ In this section, you insert threshold values for each of the devices, registered
 1. Open the [Cloud Datastore console](https://console.developers.google.com/datastore).
 1. Confirm that the device entities have been created with the corresponding threshold temperature value:
 
-    ![data_store_confirm](view_ds.png)
+    ![data_store_confirm](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/view_ds.png)
 
 ## Deploy a Cloud Function
 
@@ -306,17 +306,18 @@ coordinates and then submits it to Cloud IoT Core.
 
     ![bq_editor](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/bq_console.png)
 
-    If everything is working, you a single row in the results that displays a
-    count of all the records that have been processed.
+    If everything is working, you should see a single row in the results that
+    displays a count of all the records that have been processed.
 
 ## Handling alerts
+
 Temperature measurements that are above the configured threshold for each device
 are logged as errors by Cloud Functions. You can view and analyse these in the
 [Error console](https://console.developers.google.com/errors).
 
 To active the error notifications, follow the documentation on [Error reporting notifications](https://cloud.google.com/error-reporting/docs/notifications).
 
-![error_console](view_error_report.png)
+![error_console](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/view_error_report.png)
 
 ## Next steps
 
