@@ -1,4 +1,11 @@
-# Understanding OAuth2 and Deploy a Basic OAuth2 Authorization Service to Cloud Functions
+---
+title: Understanding OAuth2 and Deploying a Basic Authorization Service to Cloud Functions
+description: Learn how to deploy a basic OAuth2 authorization serivce to
+Cloud Functions
+author: michaelawyu
+tags: OAuth 2.0, Node.js, Cloud Functions, Cloud Datastore
+date_published:
+---
 
 This tutorial explains the basics of OAuth 2.0 and how to deploy an OAuth2 authorization service in [Node.js](https://nodejs.org/en/) to [Google Cloud Functions](https://cloud.google.com/functions/).
 
@@ -21,19 +28,31 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to g
 ## Before You Begin
 
 1. Select a project from [Google Cloud Console](https://console.cloud.google.com/). If you have never used Google Cloud Platform before, sign up or log in with your existing Google account, then follow the on-screen instructions to start using Google Cloud Platform.
+
 1. [Enable billing](https://cloud.google.com/billing/docs/how-to/modify-project#enable_billing_for_a_project) for your account.
+
 1. [Enable the Cloud Functions API](https://console.cloud.google.com/flows/enableapi?apiid=cloudfunctions&redirect=https://cloud.google.com/functions/quickstart).
+
 1. [Install the Google Cloud SDK](https://cloud.google.com/sdk/).
+
 1. Windows Developers Only: Install [cURL](https://curl.haxx.se/download.html).
+
 1. Create the following entities in Cloud Datastore:
 
     a. Go to [Cloud Datastore Entities Page](https://console.cloud.google.com/datastore) in Google Cloud Console.
+
     b. Click **Create Entity**. Cloud Datastore may ask you to pick a location to store your data; select one of the locations and click **Next**.
+
     c. Type `user` for **Kind**.
+
     d. Click **Add Property**.
-    e. Add a `String` type property `username` with the value `sample-user`. Click **Done**.
-    f. Add a `String` type property `password` with the value `sample-password`. Click **Done**.
+
+    e. Add a property `username` of the `String` type with the value `sample-user`. Click **Done**.
+
+    f. Add a property `password` of the `String` type with the value `sample-password`. Click **Done**.
+
     g. Click **Create**.
+
     h. Repeat the steps above and create **5** `client` kind entities, with the following properties:
 
     | Property Name      | Property Type | Property Value           |
@@ -113,7 +132,7 @@ The Authorization Code flow includes the following steps:
 
 Note that due to security concerns, even though both mobile app clients and web app clients can use the authorization code flow, their approaches to identify themselves in the flow are different. Web app clients use client IDs and client secrets, while **mobile app clients need to adopt the [Proof Key for Code Exchange (PKCE)](https://tools.ietf.org/html/rfc7636) technique and utilize code challenges and code verifiers**.
 
-PKCE specification requires client generate a code verifier first, then prepare a code challenge based on the code verifier. Usually, code verifier is a cryptographically strong random long string (43-128 characters) and code challenge should be its SHA-256 hash. Both should be Base64URL encoded. Client first sends code challenge to the authorization server; after the authorization code is issued, client uses code verifier together with authorization code to request access token from authorization server. The authorization server then verifies the code challenge using the code verifier and decides if access token can be granted.
+PKCE specification requires client generate a code verifier first, then prepare a code challenge based on the code verifier. Usually, code verifier is a cryptographically strong random long string (43-128 characters) and code challenge should be its SHA-256 hash. Both should be Base64URL encoded. Client first sends code challenge to the authorization server; after the authorization code is issued, client uses code verifier together with authorization code to request access token from authorization server. The authorization server then verifies the code challenge using the code verifier and decides if an access token can be granted.
 
 Authorization Code flow requires that clients be able to interact with a user agent (browser) in the environment.
 
@@ -145,7 +164,7 @@ Client Credentials flow, on the other hand, is closer to the Resource Owner Pass
 
 Tokens play an important part in OAuth 2.0. There are two types of tokens: access tokens and refresh tokens. Anyone with a valid access token can access protected resources; usually it is short-lived so that even if there is a security breach and the access token is leaked, the damage can be quickly controlled. When an access token expires, developers can use an optional refresh token to request a new access token without having to ask the user to enter their credentials again.
 
-It is up to developers themselves to choose the format of tokens for their OAuth 2.0 authorization service. This tutorial uses [JWT](https://tools.ietf.org/html/rfc7519) (JSON Web Token), a self-contained format allowing servers to validate tokens without having to inquire a data source.
+It is up to developers themselves to choose the format of token for their OAuth 2.0 authorization service. This tutorial uses [JWT](https://tools.ietf.org/html/rfc7519) (JSON Web Token), a self-contained format allowing servers to validate tokens without having to inquire a data source.
 
 A JWT includes three parts:
 
@@ -159,7 +178,7 @@ Every time a JWT arrives at a server, the system first parses the JWT, and verif
 
 ### Client Registration
 
-OAuth 2.0 requires that clients register with the authorization server beforehand. The registration process is not considered as a part of the authorization flow and developers can implement it as they see fit. Additionally, your OAuth 2.0 authorization service must be able to verify the identity of clients. This tutorial uses client IDs and client secrets for authentication.
+OAuth 2.0 requires that clients register with the authorization server beforehand. The registration process is not considered as a part of the authorization flow and developers can implement it as they see fit. Additionally, your OAuth 2.0 authorization service must be able to verify the identity of clients. This tutorial uses client IDs and client secrets for client authentication.
 
 ## Understanding the Architecture
 
@@ -204,9 +223,9 @@ https://[GCP_REGION]-[PROJECT_ID].cloudfunctions.net/auth
 https://[GCP_REGION]-[PROJECT_ID].cloudfunctions.net/signin
 ```
 
-Replace `[GCP_REGION]` and `[PROJECT_ID]` with values of your own. The addresses are also available in the output of the `gcloud beta functions deploy` command.
+Replace `[GCP_REGION]` and `[PROJECT_ID]` with values of your own. Your function addresses are also available in the output of the `gcloud beta functions deploy` command.
 
-You can view the details of deployed functions via [Cloud Console](https://console.cloud.google.com/functions).
+You can always view the details of deployed functions via [Cloud Console](https://console.cloud.google.com/functions).
 
 ## Testing the Code
 
