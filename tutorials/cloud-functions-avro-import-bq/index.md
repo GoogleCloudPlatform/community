@@ -29,7 +29,7 @@ Here is how to set it up:
 1.  Open cloud shell in the GCP console
 1.  Download the zip with all files
 
-        wget https://github.com/mkahn5/community/raw/patch-1/tutorials/cloud-functions-avro-import-bq/gcf_gcs.zip
+        wget https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/cloud-functions-avro-import-bq/gcf_gcs.zip
 
 1.  Unzip
 
