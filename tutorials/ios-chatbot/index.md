@@ -129,8 +129,8 @@ Here are the steps to generate these intents and contexts:
 
 
 1.  create `location` intent. 
-	i. Add `where` input context. 
-	ii. Reset `where` output context and add `location` output context. 
+	1. Add `where` input context. 
+	1. Reset `where` output context and add `location` output context. 
 Note: In our tour guide app, the input context of `location` is `where`. When the `location` intent is detected, the `where` context needs to be reset so that any subsequent conversation won't trigger this context again. This is done by setting the lifespan of the output context `where` to 0 request. By default, a context has a lifespan of 5 requests or 10 minutes.
 
 
@@ -138,8 +138,8 @@ Note: In our tour guide app, the input context of `location` is `where`. When th
 
 
 1. Create `ticket` intent. 
-	i. Add `location` input context. 
-	ii. Add `location` output `context` so that `hours` and `map` intents can continue to use the `location` context as input context.
+	1. Add `location` input context. 
+	1. Add `location` output `context` so that `hours` and `map` intents can continue to use the `location` context as input context.
 
 You can pass the parameter from the input context with the format of `#context.parameter`; e.g., pass the location string from intent `inquiry-where-location` to `inquiry.where.location.ticket` in the format `#inquiry-where-location.location.`
 
