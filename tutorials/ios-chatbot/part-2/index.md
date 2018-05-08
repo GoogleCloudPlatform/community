@@ -17,38 +17,24 @@ In API.AI, [webhook](https://docs.api.ai/docs/webhook) integrations allow you to
 
 1.  Go to [Google Cloud Platform Console](console.cloud.google.com). Log in with your own account and create a new project. 
 
-2. Once you've created a new project, navigate to that project.
+1. Once you've created a new project, navigate to that project.
 
-3. Enable the Cloud Functions API.
-
+1. Enable the Cloud Functions API.
 ![alt_text](conversational-app-8.png "Enable Billing Screenshot")
+1. Create a function. For the purposes of this guide, we'll call the function "parades". 
 
-4. Create a function. For the purposes of this guide, we'll call the function "parades". 
-
-5. Select the "HTTP" trigger option, then select "inline" editor.
-
+1. Select the "HTTP" trigger option, then select "inline" editor.
 ![alt_text](conversational-app-10.png "Cloud Function Screenshot")
-
 Don't forget to specify the function to execute to "parades".
-
-5. You'll also need to create a "stage bucket". Click on "browse" —  you'll see the browser, but no buckets will exist yet.
-
+1. You'll also need to create a "stage bucket". Click on "browse" —  you'll see the browser, but no buckets will exist yet.
 ![alt_text](conversational-app-4.png "Bucket Screenshot")
- 
-6. Click on the "+" button to create the bucket. 
-
-
-
-
-1.  Specify a unique name for the bucket (you can use your project name, for instance), select "regional" storage, and keep the default region (us-central1).
-1.  Click back on the "select" button in the previous window.
-1.  Click the "create" button to create the function.
-
+    1. Click on the "+" button to create the bucket. 
+    1. Specify a unique name for the bucket (you can use your project name, for instance), select "regional" storage, and keep the default region (us-central1).
+    1.  Click back on the "select" button in the previous window.
+    1.  Click the "create" button to create the function.
 The function will be created and deployed:
-
 ![alt_text](conversational-app-5.png "Cloud Function Deploy Screenshot")
-
-7. Click the "parades" function line. In the **Source** tab, you'll see the sources.
+1. Click the "parades" function line. In the **Source** tab, you'll see the sources.
 
 Now it's time to code our function! We'll need two files: the `index.js` file will contain the JavaScript / Node.JS logic, and the `package.json` file contains the Node package definition, including the dependencies we'll need in our function.
 
@@ -84,9 +70,7 @@ exports.parades = function(request, response) {
 ```
 
 
-In the code snippets above:
-
-
+In the code snippet above:
 
 1.  We require the actions-on-google NPM module. 
 1.  We use the `ask()` method to let the assistant send a result back to the user.
@@ -95,7 +79,7 @@ In the code snippets above:
 1.  Then, we call the `handleRequest()` to handle the request.
 1.  Once done, don't forget to click the "create" function button. It will deploy the function in the cloud.
 
-There is subtle difference between <code>[tell()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#tell)</code>and <code>[ask()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#ask) </code>APIs. <code>tell()</code>will end the conversation and close the mic, while <code>ask()</code> will not. This difference doesn't matter for API.AI projects like the one we demonstrate here in [Part 1](https://cloudplatform.googleblog.com/2017/07/how-to-build-a-conversational-app-that-sees-listens-talks-and-translates-using-Cloud-Machine-Learning-APIs-part-1.html) and Part 2 of this blog post. When we integrate Actions on Google in Part 3, we'll explain this difference in more detail.
+There is a subtle difference between <code>[tell()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#tell)</code>and <code>[ask()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#ask) </code>APIs. <code>tell()</code>will end the conversation and close the mic, while <code>ask()</code> will not. This difference doesn't matter for API.AI projects like the one we demonstrate here in [Part 1](https://cloudplatform.googleblog.com/2017/07/how-to-build-a-conversational-app-that-sees-listens-talks-and-translates-using-Cloud-Machine-Learning-APIs-part-1.html) and Part 2 of this blog post. When we integrate Actions on Google in Part 3, we'll explain this difference in more detail.
 
 As shown below, the **Testing** tab invokes your function, the **General** tab shows statistics, and the **Trigger** tab reveals the HTTP URL created for your function:
 
@@ -116,8 +100,9 @@ With API.AI, we've built a chatbot that can converse with a human by text. Next,
 
 Cloud Speech API includes an iOS [sample](https://github.com/GoogleCloudPlatform/ios-docs-samples/tree/master/speech/Objective-C) app. It's quite straightforward to integrate the [gRPC non-streaming sample app](https://github.com/GoogleCloudPlatform/ios-docs-samples/tree/master/speech/Objective-C/Speech-gRPC-Nonstreaming) into our chatbot app. You'll need to acquire an [API key](https://cloud.google.com/storage/docs/json_api/v1/how-tos/authorizing#APIKey) from Google Cloud Console and replace this [line](https://github.com/GoogleCloudPlatform/ios-docs-samples/blob/master/speech/Objective-C/Speech-gRPC-Nonstreaming/Speech/SpeechRecognitionService.m#L23) in `SpeechRecognitionService.m` with your API key.
 
+```
 #define API_KEY @"YOUR_API_KEY"
-
+```
 
 ## Landmark Detection
 
