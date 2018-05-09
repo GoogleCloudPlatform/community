@@ -161,7 +161,7 @@ function handleImplicitAuthRequest (req, res) {
       if (error.message === 'Invalid client/redirect URL.') {
         res.status(400).send(JSON.stringify({
           'error': 'access_denied',
-          'error_description': msg
+          'error_description': error.message
         }));
       } else {
         throw error;
@@ -170,7 +170,7 @@ function handleImplicitAuthRequest (req, res) {
 }
 
 exports.auth = (req, res) => {
-  console.log(req.query)
+  console.log(req.query);
   switch (req.query.response_type) {
     case ('code'):
       if (req.query.code_challenge && req.query.code_challenge_method) {
@@ -300,7 +300,7 @@ function handleACSigninRequest (req, res) {
       }
     })
     .then(() => {
-      return datastore.runQuery(clientQuery)
+      return datastore.runQuery(clientQuery);
     })
     .then(result => {
       if (result[0].length === 0) {
@@ -320,12 +320,12 @@ function handleACSigninRequest (req, res) {
 
       const exp = Date.now() + CODE_LIFE_SPAN;
 
-      const key = datastore.key(['authorization_code', authorizationCode])
+      const key = datastore.key(['authorization_code', authorizationCode]);
       const data = {
         'client_id': req.body.client_id,
         'redirect_url': req.body.redirect_url,
         'exp': exp
-      }
+      };
 
       return Promise.all([
         datastore.upsert({ key: key, data: data }),
@@ -355,7 +355,7 @@ function handleImplictSigninRequest (req, res) {
     .filter('username', '=', req.body.username)
     .filter('password', '=', req.body.password);
 
-   const clientQuery = datastore
+  const clientQuery = datastore
     .createQuery('client')
     .filter('client-id', '=', req.body.client_id)
     .filter('redirect-url', '=', req.body.redirect_url)
@@ -369,7 +369,7 @@ function handleImplictSigninRequest (req, res) {
       }
     })
     .then(() => {
-      return datastore.runQuery(clientQuery)
+      return datastore.runQuery(clientQuery);
     })
     .then(result => {
       if (result[0].length === 0) {
@@ -473,8 +473,8 @@ function handleROPCTokenRequest (req, res) {
     });
 }
 
-function verifyAuthorizationCode(authorizationCode, clientId, redirectUrl,
-                                 codeVerifier = undefined) {
+function verifyAuthorizationCode (authorizationCode, clientId, redirectUrl,
+                                  codeVerifier = undefined) {
   const transaction = datastore.transaction();
   const key = datastore.key(['authorization_code', authorizationCode]);
 
@@ -482,8 +482,8 @@ function verifyAuthorizationCode(authorizationCode, clientId, redirectUrl,
     .run()
     .then(() => transaction.get(key))
     .then(result => {
-      const entry = result[0]
-      if (entry === undefined ) {
+      const entry = result[0];
+      if (entry === undefined) {
         return Promise.reject(new Error('Invalid authorization code.'));
       }
 
@@ -518,7 +518,7 @@ function verifyAuthorizationCode(authorizationCode, clientId, redirectUrl,
         // Pass
       } else {
         return Promise.reject(
-          'Code challenge or code verifier does not exist.');
+          new Error('Code challenge or code verifier does not exist.'));
       }
 
       return transaction.delete(key);
@@ -546,7 +546,7 @@ function handleACTokenRequest (req, res) {
       .filter('client-id', '=', req.body.client_id)
       .filter('client-secret', '=', req.body.client_secret)
       .filter('ac-enabled', '=', true);
-  
+
   datastore
     .runQuery(clientQuery)
     .then(clientQueryResult => {
@@ -555,7 +555,7 @@ function handleACTokenRequest (req, res) {
       }
     })
     .then(() => {
-      return verifyAuthorizationCode(req.body.authorization_code, 
+      return verifyAuthorizationCode(req.body.authorization_code,
         req.body.client_id, req.body.redirect_url);
     })
     .then(() => {
@@ -571,9 +571,9 @@ function handleACTokenRequest (req, res) {
       }));
     })
     .catch(error => {
-      if (error.message === 'Invalid client credentials.'             ||
-          error.message === 'Invalid authorization code.'             ||
-          error.message === 'Client ID does not match the record.'    ||
+      if (error.message === 'Invalid client credentials.' ||
+          error.message === 'Invalid authorization code.' ||
+          error.message === 'Client ID does not match the record.' ||
           error.message === 'Redirect URL does not match the record.' ||
           error.message === 'Authorization code expired.') {
         res.status(400).send(JSON.stringify({
@@ -583,7 +583,7 @@ function handleACTokenRequest (req, res) {
       } else {
         throw error;
       }
-    })
+    });
 }
 
 function handleACPKCETokenRequest (req, res) {
@@ -612,16 +612,16 @@ function handleACPKCETokenRequest (req, res) {
       }));
     })
     .catch(error => {
-      if (error.message === 'Invalid authorization code.'             ||
-          error.message === 'Client ID does not match the record.'    ||
+      if (error.message === 'Invalid authorization code.' ||
+          error.message === 'Client ID does not match the record.' ||
           error.message === 'Redirect URL does not match the record.' ||
-          error.message === 'Authorization code expired.'             ||
+          error.message === 'Authorization code expired.' ||
           error.message === 'Code verifier does not match code challenge.') {
         res.status(400).send(JSON.stringify({
           'error': 'access_denied',
           'error_description': error.message
         }));
-      } else if (msg === 'Code challenge does not exist.') {
+      } else if (error.msg === 'Code challenge does not exist.') {
         res.status(400).send(JSON.stringify({
           'error': 'invalid_request',
           'error_description': error.message
@@ -629,7 +629,7 @@ function handleACPKCETokenRequest (req, res) {
       } else {
         throw error;
       }
-    })
+    });
 }
 
 function handleCCTokenRequest (req, res) {
