@@ -527,7 +527,7 @@ function verifyAuthorizationCode (authorizationCode, clientId, redirectUrl,
     .catch(error => {
       transaction.rollback();
       throw error;
-    })
+    });
 }
 
 function handleACTokenRequest (req, res) {
