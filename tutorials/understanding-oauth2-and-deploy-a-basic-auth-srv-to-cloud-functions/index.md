@@ -260,7 +260,7 @@ You can always view the details of deployed functions via [Cloud Console](https:
 1. Generate a code verifier and its code challenge. Open the node interactive shell (`node`) and run the following code:
 
     ```
-    // You might need to install package crypto with npm -i -g crypto first
+    // You might need to install package crypto with npm i -g crypto first
     const crypto = require('crypto');
     var code_verifier = crypto.randomBytes(64)
                          .toString('base64')
@@ -268,7 +268,7 @@ You can always view the details of deployed functions via [Cloud Console](https:
                          .replace(/\//g, '_')
                          .replace(/=/g, '');
     var code_challenge = crypto.createHash('sha256')
-                         .update(verifier)
+                         .update(code_verifier)
                          .digest()
                          .toString('base64')
                          .replace(/\+/g, '-')
