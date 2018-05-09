@@ -48,7 +48,6 @@ Part 1
 
 ## Using API.AI
 
- \
 API.AI is a platform for building natural and rich conversational experiences. For our example, it will handle all core conversation flows in the tour guide app. (Note that API.AI provides great [documentation and a sample app](https://github.com/api-ai/apiai-ios-client) for its iOS SDK. SDKs for [other platforms](https://docs.api.ai/docs/sdks) are also available, so you could easily extend this tour guide app to support Android.)
 
 
@@ -62,8 +61,6 @@ The first step is to create a **Tour Guide Agent**.
 
 ![alt_text](chatbots-3.png "Create Intents Screenshot")
 
- \
- \
 To engage users in a conversation, we first need to understand what users are saying to the agent, and we do that with intents and entities. Intents map what your users say to what your conversational experience should do. Entities extract parameter values from user queries.
 
 Each intent contains a set of examples of user input and the desired automated response. To do that, you need to predict what users will say to open the conversation, and then enter those phrases in the "Add user expression" box. This list doesn't need to be comprehensive. API.AI uses Machine Learning to train the agent to understand more variations of these examples. Later on, you can train the API.AI agent to understand more variations. For example, go to the Default Welcome Intent and add some user expressions "how are you", "hello", "hi" to open the conversation.
@@ -124,19 +121,12 @@ Here are the steps to generate these intents and contexts:
 
 
 1.  create `where` intent and add `where` output context. This is the root in the context tree and has no input context.
-
 ![alt_text](chatbots-2.png "Contexts Screenshot")
-
-
 1.  create `location` intent. 
 	1. Add `where` input context. 
 	1. Reset `where` output context and add `location` output context. 
 Note: In our tour guide app, the input context of `location` is `where`. When the `location` intent is detected, the `where` context needs to be reset so that any subsequent conversation won't trigger this context again. This is done by setting the lifespan of the output context `where` to 0 request. By default, a context has a lifespan of 5 requests or 10 minutes.
-
-
 ![alt_text](chatbots-5.png "Location Screenshot")
-
-
 1. Create `ticket` intent. 
 	1. Add `location` input context. 
 	1. Add `location` output `context` so that `hours` and `map` intents can continue to use the `location` context as input context.
