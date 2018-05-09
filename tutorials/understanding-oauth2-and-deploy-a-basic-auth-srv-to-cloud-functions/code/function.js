@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const appendQuery = require('append-query');
 const crypto = require('crypto');
@@ -28,39 +28,38 @@ const SECRET = new fernet.Secret(
 const datastore = Datastore();
 const fernetToken = new fernet.Token({
   secret: SECRET
-})
-
+});
 
 let privateKey;
-fs.readFile('private.pem', 'utf8', function(error, data) {
+fs.readFile('private.pem', 'utf8', function (error, data) {
   if (error) {
-    console.log(`An error has occurred when reading the key file: ${error}`)
+    console.log(`An error has occurred when reading the key file: ${error}`);
   } else {
     privateKey = data;
   }
 });
 
 function handleACPKCEAuthRequest (req, res) {
-  if (req.query.client_id      === undefined ||
-      req.query.redirect_url   === undefined ||
+  if (req.query.client_id === undefined ||
+      req.query.redirect_url === undefined ||
       req.query.code_challenge === undefined) {
     return res.status(400).send(JSON.stringify({
       'error': 'invalid_request',
       'error_description': 'Required parameters are missing in the request.'
-    }))
+    }));
   }
 
   const clientQuery = datastore
     .createQuery('client')
     .filter('client-id', '=', req.body.client_id)
     .filter('redirect-url', '=', req.body.redirect_url)
-    .filter('acpkce-enabled', '=', true)
+    .filter('acpkce-enabled', '=', true);
 
   datastore
     .runQuery(clientQuery)
     .then(result => {
       if (result[0].length === 0) {
-        return Promise.reject('Invalid client/redirect URL.')
+        return Promise.reject(new Error('Invalid client/redirect URL.'));
       }
     })
     .then(() => {
@@ -72,38 +71,38 @@ function handleACPKCEAuthRequest (req, res) {
       });
       res.status(200).send(html);
     })
-    .catch(msg => {
-      if (msg === 'Invalid client/redirect URL.') {
+    .catch(error => {
+      if (error.message === 'Invalid client/redirect URL.') {
         res.status(400).send(JSON.stringify({
           'error': 'access_denied',
-          'error_description': msg
-        }))
+          'error_description': error.message
+        }));
       } else {
-        throw msg
+        throw error;
       }
-    })
+    });
 }
 
 function handleACAuthRequest (req, res) {
-  if (req.query.client_id      === undefined ||
-      req.query.redirect_url   === undefined) {
+  if (req.query.client_id === undefined ||
+      req.query.redirect_url === undefined) {
     return res.status(400).send(JSON.stringify({
       'error': 'invalid_request',
       'error_description': 'Required parameters are missing in the request.'
-    }))
+    }));
   }
 
   const clientQuery = datastore
     .createQuery('client')
     .filter('client-id', '=', req.body.client_id)
     .filter('redirect-url', '=', req.body.redirect_url)
-    .filter('ac-enabled', '=', true)
+    .filter('ac-enabled', '=', true);
 
   datastore
     .runQuery(clientQuery)
     .then(result => {
       if (result[0].length === 0) {
-        return Promise.reject('Invalid client/redirect URL.')
+        return Promise.reject(new Error('Invalid client/redirect URL.'));
       }
     })
     .then(() => {
@@ -115,38 +114,38 @@ function handleACAuthRequest (req, res) {
       });
       res.status(200).send(html);
     })
-    .catch(msg => {
-      if (msg === 'Invalid client/redirect URL.') {
+    .catch(error => {
+      if (error.message === 'Invalid client/redirect URL.') {
         res.status(400).send(JSON.stringify({
           'error': 'access_denied',
-          'error_description': msg
-        }))
+          'error_description': error.message
+        }));
       } else {
-        throw msg
+        throw error;
       }
-    })
+    });
 }
 
 function handleImplicitAuthRequest (req, res) {
-  if (req.query.client_id      === undefined ||
-      req.query.redirect_url   === undefined) {
+  if (req.query.client_id === undefined ||
+      req.query.redirect_url === undefined) {
     return res.status(400).send(JSON.stringify({
       'error': 'invalid_request',
       'error_description': 'Required parameters are missing in the request.'
-    }))
+    }));
   }
 
   const clientQuery = datastore
     .createQuery('client')
     .filter('client-id', '=', req.body.client_id)
     .filter('redirect-url', '=', req.body.redirect_url)
-    .filter('implicit-enabled', '=', true)
+    .filter('implicit-enabled', '=', true);
 
   datastore
     .runQuery(clientQuery)
     .then(result => {
       if (result[0].length === 0) {
-        return Promise.reject('Invalid client/redirect URL.')
+        return Promise.reject(new Error('Invalid client/redirect URL.'));
       }
     })
     .then(() => {
@@ -158,16 +157,16 @@ function handleImplicitAuthRequest (req, res) {
       });
       res.status(200).send(html);
     })
-    .catch(msg => {
-      if (msg === 'Invalid client/redirect URL.') {
+    .catch(error => {
+      if (error.message === 'Invalid client/redirect URL.') {
         res.status(400).send(JSON.stringify({
           'error': 'access_denied',
           'error_description': msg
-        }))
+        }));
       } else {
-        throw msg
+        throw error;
       }
-    })
+    });
 }
 
 exports.auth = (req, res) => {
@@ -183,7 +182,7 @@ exports.auth = (req, res) => {
         res.status(400).send(JSON.stringify({
           'error': 'invalid_request',
           'error_description': 'Required parameters are missing in the request.'
-        }))
+        }));
       }
       break;
 
@@ -198,44 +197,44 @@ exports.auth = (req, res) => {
       }));
       break;
   }
-}
+};
 
 function handleACPKCESigninRequest (req, res) {
-  if (req.body.username       === undefined ||
-      req.body.password       === undefined ||
-      req.body.client_id      === undefined ||
-      req.body.redirect_url   === undefined ||
+  if (req.body.username === undefined ||
+      req.body.password === undefined ||
+      req.body.client_id === undefined ||
+      req.body.redirect_url === undefined ||
       req.body.code_challenge === undefined) {
     return res.status(400).send(JSON.stringify({
       'error': 'invalid_request',
       'error_description': 'Required parameters are missing in the request.'
-    }))
+    }));
   }
 
   const userQuery = datastore
     .createQuery('user')
     .filter('username', '=', req.body.username)
-    .filter('password', '=', req.body.password)
+    .filter('password', '=', req.body.password);
 
   const clientQuery = datastore
     .createQuery('client')
     .filter('client-id', '=', req.body.client_id)
     .filter('redirect-url', '=', req.body.redirect_url)
-    .filter('acpkce-enabled', '=', true)
+    .filter('acpkce-enabled', '=', true);
 
   datastore
     .runQuery(userQuery)
     .then(result => {
       if (result[0].length === 0) {
-        return Promise.reject('Invalid user credentials.')
+        return Promise.reject(new Error('Invalid user credentials.'));
       }
     })
     .then(() => {
-      return datastore.runQuery(clientQuery)
+      return datastore.runQuery(clientQuery);
     })
     .then(result => {
       if (result[0].length === 0) {
-        return Promise.reject('Invalid client and/or redirect URL.')
+        return Promise.reject(new Error('Invalid client and/or redirect URL.'));
       }
     })
     .then(() => {
@@ -251,53 +250,53 @@ function handleACPKCESigninRequest (req, res) {
 
       const exp = Date.now() + CODE_LIFE_SPAN;
 
-      const codeKey = datastore.key(['authorization_code', authorizationCode])
+      const codeKey = datastore.key(['authorization_code', authorizationCode]);
       const data = {
         'client_id': req.body.client_id,
         'redirect_url': req.body.redirect_url,
         'exp': exp,
         'code_challenge': req.body.code_challenge
-      }
+      };
 
       return Promise.all([
         datastore.upsert({ key: codeKey, data: data }),
         Promise.resolve(authorizationCode)
-      ])
+      ]);
     })
     .then(results => {
       res.redirect(appendQuery(req.body.redirect_url, {
         authorization_code: results[1]
-      }))
-    })
+      }));
+    });
 }
 
 function handleACSigninRequest (req, res) {
-  if (req.body.username       === undefined ||
-      req.body.password       === undefined ||
-      req.body.client_id      === undefined ||
-      req.body.redirect_url   === undefined) {
+  if (req.body.username === undefined ||
+      req.body.password === undefined ||
+      req.body.client_id === undefined ||
+      req.body.redirect_url === undefined) {
     return res.status(400).send(JSON.stringify({
       'error': 'invalid_request',
       'error_description': 'Required parameters are missing in the request.'
-    }))
+    }));
   }
 
   const userQuery = datastore
     .createQuery('user')
     .filter('username', '=', req.body.username)
-    .filter('password', '=', req.body.password)
+    .filter('password', '=', req.body.password);
 
   const clientQuery = datastore
     .createQuery('client')
     .filter('client-id', '=', req.body.client_id)
     .filter('redirect-url', '=', req.body.redirect_url)
-    .filter('ac-enabled', '=', true)
+    .filter('ac-enabled', '=', true);
 
   datastore
     .runQuery(userQuery)
     .then(result => {
       if (result[0].length === 0) {
-        return Promise.reject('Invalid user credentials.')
+        return Promise.reject(new Error('Invalid user credentials.'));
       }
     })
     .then(() => {
@@ -305,7 +304,7 @@ function handleACSigninRequest (req, res) {
     })
     .then(result => {
       if (result[0].length === 0) {
-        return Promise.reject('Invalid client and/or redirect URL.')
+        return Promise.reject(new Error('Invalid client and/or redirect URL.'));
       }
     })
     .then(() => {
@@ -331,42 +330,42 @@ function handleACSigninRequest (req, res) {
       return Promise.all([
         datastore.upsert({ key: key, data: data }),
         Promise.resolve(authorizationCode)
-      ])
+      ]);
     })
     .then(results => {
       res.redirect(appendQuery(req.body.redirect_url, {
         authorization_code: results[1]
-      }))
-    })
+      }));
+    });
 }
 
 function handleImplictSigninRequest (req, res) {
-  if (req.body.username       === undefined ||
-      req.body.password       === undefined ||
-      req.body.client_id      === undefined ||
-      req.body.redirect_url   === undefined) {
+  if (req.body.username === undefined ||
+      req.body.password === undefined ||
+      req.body.client_id === undefined ||
+      req.body.redirect_url === undefined) {
     return res.status(400).send(JSON.stringify({
       'error': 'invalid_request',
       'error_description': 'Required parameters are missing in the request.'
-    }))
+    }));
   }
 
   const userQuery = datastore
     .createQuery('user')
     .filter('username', '=', req.body.username)
-    .filter('password', '=', req.body.password)
+    .filter('password', '=', req.body.password);
 
    const clientQuery = datastore
     .createQuery('client')
     .filter('client-id', '=', req.body.client_id)
     .filter('redirect-url', '=', req.body.redirect_url)
-    .filter('implicit-enabled', '=', true)
+    .filter('implicit-enabled', '=', true);
 
   datastore
     .runQuery(userQuery)
     .then(result => {
       if (result[0].length === 0) {
-        return Promise.reject('Invalid user credentials.')
+        return Promise.reject(new Error('Invalid user credentials.'));
       }
     })
     .then(() => {
@@ -374,21 +373,21 @@ function handleImplictSigninRequest (req, res) {
     })
     .then(result => {
       if (result[0].length === 0) {
-        return Promise.reject('Invalid client and/or redirect URL.')
+        return Promise.reject(new Error('Invalid client and/or redirect URL.'));
       }
     })
     .then(() => {
       const token = jwt.sign({}, privateKey, {
-          algorithm: 'RS256',
-          expiresIn: JWT_LIFE_SPAN,
-          issuer: ISSUER
-        })
+        algorithm: 'RS256',
+        expiresIn: JWT_LIFE_SPAN,
+        issuer: ISSUER
+      });
       res.redirect(appendQuery(req.body.redirect_url, {
         access_token: token,
         token_type: 'JWT',
         expires_in: JWT_LIFE_SPAN
-      }))
-    })
+      }));
+    });
 }
 
 exports.signin = (req, res) => {
@@ -412,72 +411,72 @@ exports.signin = (req, res) => {
       }));
       break;
   }
-}
+};
 
 function handleROPCTokenRequest (req, res) {
-  if (req.body.username      === undefined ||
-      req.body.password      === undefined ||
-      req.body.client_id     === undefined ||
+  if (req.body.username === undefined ||
+      req.body.password === undefined ||
+      req.body.client_id === undefined ||
       req.body.client_secret === undefined) {
     return res.status(400).send(JSON.stringify({
       'error': 'invalid_request',
       'error_description': 'Required parameters are missing in the request.'
-    }))
+    }));
   }
 
   const clientQuery = datastore
     .createQuery('client')
     .filter('client-id', '=', req.body.client_id)
     .filter('client-secret', '=', req.body.client_secret)
-    .filter('ropc-enabled', '=', true)
+    .filter('ropc-enabled', '=', true);
 
   const userQuery = datastore
     .createQuery('user')
     .filter('username', '=', req.body.username)
-    .filter('password', '=', req.body.password)
+    .filter('password', '=', req.body.password);
 
   datastore
     .runQuery(clientQuery)
     .then(result => {
       if (result[0].length === 0) {
-        return Promise.reject('Invalid client credentials.');
+        return Promise.reject(new Error('Invalid client credentials.'));
       }
     })
     .then(() => datastore.runQuery(userQuery))
     .then(result => {
       if (result[0].length === 0) {
-        return Promise.reject('Invalid user credentials.')
+        return Promise.reject(new Error('Invalid user credentials.'));
       }
     })
     .then(() => {
       const token = jwt.sign({}, privateKey, {
-          algorithm: 'RS256',
-          expiresIn: JWT_LIFE_SPAN,
-          issuer: ISSUER
-        })
+        algorithm: 'RS256',
+        expiresIn: JWT_LIFE_SPAN,
+        issuer: ISSUER
+      });
       res.status(200).send(JSON.stringify({
-          access_token: token,
-          token_type: 'JWT',
-          expires_in: JWT_LIFE_SPAN
-        }))
+        access_token: token,
+        token_type: 'JWT',
+        expires_in: JWT_LIFE_SPAN
+      }));
     })
-    .catch(msg => {
-      if (msg === 'Invalid client credentials.' ||
-          msg === 'Invalid user credentials.') {
+    .catch(error => {
+      if (error.message === 'Invalid client credentials.' ||
+          error.message === 'Invalid user credentials.') {
         res.status(400).send(JSON.stringify({
           'error': 'access_denied',
-          'error_description': msg
-        }))
+          'error_description': error.message
+        }));
       } else {
-        throw msg
+        throw error;
       }
-    })
+    });
 }
 
 function verifyAuthorizationCode(authorizationCode, clientId, redirectUrl,
                                  codeVerifier = undefined) {
   const transaction = datastore.transaction();
-  const key = datastore.key(['authorization_code', authorizationCode])
+  const key = datastore.key(['authorization_code', authorizationCode]);
 
   return transaction
     .run()
@@ -485,25 +484,24 @@ function verifyAuthorizationCode(authorizationCode, clientId, redirectUrl,
     .then(result => {
       const entry = result[0]
       if (entry === undefined ) {
-        return Promise.reject('Invalid authorization code.')
+        return Promise.reject(new Error('Invalid authorization code.'));
       }
 
       if (entry.client_id !== clientId) {
-        return Promise.reject('Client ID does not match the record.')
+        return Promise.reject(new Error('Client ID does not match the record.'));
       }
 
       if (entry.redirect_url !== redirectUrl) {
-        return Promise.reject('Redirect URL does not match the record.')
+        return Promise.reject(new Error('Redirect URL does not match the record.'));
       }
 
       if (entry.exp <= Date.now()) {
-        return Promise.reject('Authorization code expired.')
+        return Promise.reject(new Error('Authorization code expired.'));
       }
 
-      if (codeVerifier         !== undefined &&
+      if (codeVerifier !== undefined &&
           entry.code_challenge !== undefined) {
-
-        let codeVerifierBuffer = new Buffer(codeVerifier);
+        let codeVerifierBuffer = Buffer.from(codeVerifier);
         let codeChallenge = crypto
                               .createHash('sha256')
                               .update(codeVerifierBuffer)
@@ -513,9 +511,9 @@ function verifyAuthorizationCode(authorizationCode, clientId, redirectUrl,
                               .replace(/\//g, '_')
                               .replace(/=/g, '');
         if (codeChallenge !== entry.code_challenge) {
-          return Promise.reject('Code verifier does not match code challenge.');
+          return Promise.reject(new Error('Code verifier does not match code challenge.'));
         }
-      } else if (codeVerifier         === undefined ||
+      } else if (codeVerifier === undefined ||
                  entry.code_challenge === undefined) {
         // Pass
       } else {
@@ -523,134 +521,131 @@ function verifyAuthorizationCode(authorizationCode, clientId, redirectUrl,
           'Code challenge or code verifier does not exist.');
       }
 
-      return transaction.delete(key)
+      return transaction.delete(key);
     })
     .then(() => transaction.commit())
-    .catch(msg => {
-      transaction.rollback()
-      throw msg
+    .catch(error => {
+      transaction.rollback();
+      throw error;
     })
 }
 
 function handleACTokenRequest (req, res) {
-  if (req.body.client_id          === undefined ||
-      req.body.client_secret      === undefined ||
+  if (req.body.client_id === undefined ||
+      req.body.client_secret === undefined ||
       req.body.authorization_code === undefined ||
-      req.body.redirect_url       === undefined) {
+      req.body.redirect_url === undefined) {
     return res.status(400).send(JSON.stringify({
       'error': 'invalid_request',
       'error_description': 'Required parameters are missing in the request.'
-    }))
+    }));
   }
 
   const clientQuery = datastore
       .createQuery('client')
       .filter('client-id', '=', req.body.client_id)
       .filter('client-secret', '=', req.body.client_secret)
-      .filter('ac-enabled', '=', true)
+      .filter('ac-enabled', '=', true);
   
   datastore
     .runQuery(clientQuery)
     .then(clientQueryResult => {
       if (clientQueryResult[0].length === 0) {
-        return Promise.reject('Invalid client credentials.')
+        return Promise.reject(new Error('Invalid client credentials.'));
       }
     })
     .then(() => {
       return verifyAuthorizationCode(req.body.authorization_code, 
-                                     req.body.client_id,
-                                     req.body.redirect_url)
+        req.body.client_id, req.body.redirect_url);
     })
     .then(() => {
       const token = jwt.sign({}, privateKey, {
-          algorithm: 'RS256',
-          expiresIn: JWT_LIFE_SPAN,
-          issuer: ISSUER
-        })
+        algorithm: 'RS256',
+        expiresIn: JWT_LIFE_SPAN,
+        issuer: ISSUER
+      });
       res.status(200).send(JSON.stringify({
-          access_token: token,
-          token_type: 'JWT',
-          expires_in: JWT_LIFE_SPAN
-        }))
+        access_token: token,
+        token_type: 'JWT',
+        expires_in: JWT_LIFE_SPAN
+      }));
     })
-    .catch(msg => {
-      if (msg === 'Invalid client credentials.'             ||
-          msg === 'Invalid authorization code.'             ||
-          msg === 'Client ID does not match the record.'    ||
-          msg === 'Redirect URL does not match the record.' ||
-          msg === 'Authorization code expired.') {
+    .catch(error => {
+      if (error.message === 'Invalid client credentials.'             ||
+          error.message === 'Invalid authorization code.'             ||
+          error.message === 'Client ID does not match the record.'    ||
+          error.message === 'Redirect URL does not match the record.' ||
+          error.message === 'Authorization code expired.') {
         res.status(400).send(JSON.stringify({
           'error': 'access_denied',
-          'error_description': msg
-        }))
+          'error_description': error.message
+        }));
       } else {
-        throw msg
+        throw error;
       }
     })
 }
 
 function handleACPKCETokenRequest (req, res) {
-  if (req.body.client_id          === undefined ||
+  if (req.body.client_id === undefined ||
       req.body.authorization_code === undefined ||
-      req.body.redirect_url       === undefined ||
-      req.body.code_verifier      === undefined) {
+      req.body.redirect_url === undefined ||
+      req.body.code_verifier === undefined) {
     return res.status(400).send(JSON.stringify({
       'error': 'invalid_request',
       'error_description': 'Required parameters are missing in the request.'
-    }))
+    }));
   }
 
-  verifyAuthorizationCode(req.body.authorization_code,
-                          req.body.client_id,
-                          req.body.redirect_url, 
-                          req.body.code_verifier)
+  verifyAuthorizationCode(req.body.authorization_code, req.body.client_id,
+    req.body.redirect_url, req.body.code_verifier)
     .then(() => {
       const token = jwt.sign({}, privateKey, {
-          algorithm: 'RS256',
-          expiresIn: JWT_LIFE_SPAN,
-          issuer: ISSUER
-        })
+        algorithm: 'RS256',
+        expiresIn: JWT_LIFE_SPAN,
+        issuer: ISSUER
+      });
       res.status(200).send(JSON.stringify({
-          access_token: token,
-          token_type: 'JWT',
-          expires_in: JWT_LIFE_SPAN
-        }))
+        access_token: token,
+        token_type: 'JWT',
+        expires_in: JWT_LIFE_SPAN
+      }));
     })
-    .catch(msg => {
-      if (msg === 'Invalid authorization code.'             ||
-          msg === 'Client ID does not match the record.'    ||
-          msg === 'Redirect URL does not match the record.' ||
-          msg === 'Authorization code expired.'             ||
-          msg === 'Code verifier does not match code challenge.') {
+    .catch(error => {
+      if (error.message === 'Invalid authorization code.'             ||
+          error.message === 'Client ID does not match the record.'    ||
+          error.message === 'Redirect URL does not match the record.' ||
+          error.message === 'Authorization code expired.'             ||
+          error.message === 'Code verifier does not match code challenge.') {
         res.status(400).send(JSON.stringify({
           'error': 'access_denied',
-          'error_description': msg
-        }))
+          'error_description': error.message
+        }));
       } else if (msg === 'Code challenge does not exist.') {
         res.status(400).send(JSON.stringify({
           'error': 'invalid_request',
-          'error_description': msg
-        }))
+          'error_description': error.message
+        }));
       } else {
-        throw msg
+        throw error;
       }
     })
 }
 
 function handleCCTokenRequest (req, res) {
-  if (req.body.client_id     === undefined ||
+  if (req.body.client_id === undefined ||
       req.body.client_secret === undefined) {
     return res.status(400).send(JSON.stringify({
       error: 'invalid_request',
       error_description: 'Required parameters are missing in the request.'
-    }))
+    }));
   }
 
   const clientQuery = datastore
     .createQuery('client')
     .filter('client-id', '=', req.body.client_id)
     .filter('client-secret', '=', req.body.client_secret)
-    .filter('cc-enabled', '=', true)
+    .filter('cc-enabled', '=', true);
 
   datastore
     .runQuery(clientQuery)
@@ -665,12 +660,12 @@ function handleCCTokenRequest (req, res) {
           algorithm: 'RS256',
           expiresIn: JWT_LIFE_SPAN,
           issuer: ISSUER
-        })
+        });
         res.status(200).send(JSON.stringify({
           access_token: token,
           token_type: 'JWT',
           expires_in: JWT_LIFE_SPAN
-        }))
+        }));
       }
     });
 }
