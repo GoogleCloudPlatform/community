@@ -64,7 +64,7 @@ Assuming you have a registry already created, add this topic as a notification c
 
 
 ```sh
-gcloud iot registries update $REGISTRY_ID --region us-central1 --event-notification-config subfolder=log,topic=device-logs
+gcloud iot registries update $REGISTRY_ID --region $CLOUD_REGION --event-notification-config subfolder=log,topic=device-logs
 ```
 
 This configures IoT Core to send any messages written to the MQTT topic of:
