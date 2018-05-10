@@ -284,10 +284,14 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
 
 1.  Choose a cluster name. For the rest of these instructions, I'll assume that
     name is "hello-cluster".
-
+    
+1.  Choose a zone. You should 
+[choose a zone](https://cloud.google.com/compute/docs/regions-zones/) 
+which makes sense for you, I have chosen "us-central1-a".
+    
 1.  Create the cluster.
 
-        gcloud container clusters create hello-cluster --num-nodes=2
+        gcloud container clusters create hello-cluster --num-nodes=2 --zone=us-central1-a
 
     This command creates a cluster of two machines. You can choose a different
     size, but two is a good starting point.
@@ -299,9 +303,6 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
     
     Note that once the cluster is running, *you will be charged for the VM usage*.
     
-    If you get an error "v1 API cannot be used to access GKE regional clusters" or are told to specify a zone or region, 
-    [read how to set a default region](https://cloud.google.com/compute/docs/regions-zones/changing-default-zone-region).
-
 1.  Configure the gcloud command-line tool to use your cluster by default, so
     you don't have to specify it every time for the remaining gcloud commands.
 
