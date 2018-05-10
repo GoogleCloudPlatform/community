@@ -120,9 +120,9 @@ Here are the steps to generate these intents and contexts:
 
 
 
-1.  create `where` intent and add `where` output context. This is the root in the context tree and has no input context.
+1.  Create `where` intent and add `where` output context. This is the root in the context tree and has no input context.
 ![alt_text](chatbots-2.png "Contexts Screenshot")
-1.  create `location` intent. 
+1.  Create `location` intent. 
 	1. Add `where` input context. 
 	1. Reset `where` output context and add `location` output context. 
 Note: In our tour guide app, the input context of `location` is `where`. When the `location` intent is detected, the `where` context needs to be reset so that any subsequent conversation won't trigger this context again. This is done by setting the lifespan of the output context `where` to 0 request. By default, a context has a lifespan of 5 requests or 10 minutes.
