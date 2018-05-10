@@ -266,7 +266,6 @@ Execute the following command to run the build:
     gcloud container builds submit --tag=gcr.io/${PROJECT_ID}/hello:v1 .
 
 Replace `${PROJECT_ID}` with the ID of your Google Cloud Platform project.
-The period at the end is required.
 
 After the build finishes, the image `gcr.io/${PROJECT_ID}/hello:v1` will be
 available. You can list the images you have built in your project using:
