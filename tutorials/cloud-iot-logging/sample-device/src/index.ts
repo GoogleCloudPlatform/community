@@ -79,6 +79,6 @@ initialConnect.subscribe((connected: any) => {
     if (!clientConnected) {
         console.log("Device Started");
         clientConnected = true;
-        client.publish('/deices/log-tester/events/log', JSON.stringify({ severity: 'DEBUG', msg: "Device Started" }));
+        client.publish('/devices/log-tester/events/log', JSON.stringify({ severity: 'DEBUG', msg: "Device Started" }));
     }
 });
