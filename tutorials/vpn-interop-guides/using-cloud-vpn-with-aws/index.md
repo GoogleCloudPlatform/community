@@ -10,16 +10,12 @@ Using Cloud VPN With Amazon Web ServicesTM Virtual Private Gateway
 
 # 
 
-_Disclaimer: This interoperability guide is intended to be informational in nature and are examples only. Customers should verify this information via testing. _
+__Disclaimer: This interoperability guide is intended to be informational in nature and are examples only. Customers should verify this information via testing.__
 
 Amazon Web Services, AWS, and the "Powered by Amazon Web Services" logo are trademarks of Amazon.com, Inc. or its affiliates in the United States and/or other countries.
 
 # Contents
 
-- [Google Cloud VPN Interop Guide](#google-cloud-vpn-interop-guide)
-- [](#)
-- [ ](#-)
-- [](#)
 - [Contents](#contents)
 - [Introduction](#introduction)
 - [Topology](#topology)
