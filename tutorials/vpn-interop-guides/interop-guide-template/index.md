@@ -83,20 +83,20 @@ This guide describes two Cloud VPN topologies in the preferred order:
 
 The topology of each VPN topology can be configured with no redundancy, or, as an advanced solution, with redundancy on the GCP side, the on-premises side, or both. "On-premises" refers to the <vendor name><product name> side of the topology diagram.
 
-![image](https://drive.google.com/a/google.com/file/d/1iqOLLruY67kSv4H8_1YW-YPewmG0PUNC/view?usp=drivesdk)
+![image]('googlecloudvpn--9gird3c1ka5.jpg')
 
 Cloud VPN to <Example: `<vendor name><product name>` VPN solution without redundancy 
 
-![image](https://drive.google.com/a/google.com/file/d/1MEn-A3YQFy23tgQGvTCkt_0-6kX34NVZ/view?usp=drivesdk)
+![image]('googlecloudvpn--am22bc08xg.jpg')
 
 Cloud VPN to <Example: `<vendor name><product name>` VPN solution with redundant Cloud VPN gateways 
 
-![image](https://drive.google.com/a/google.com/file/d/1Km29Nh3SIhLS0H7Lf0HFEvT_VZUOV633/view?usp=drivesdk)
+![image]('googlecloudvpn-lq8w2zqzrgd.jpg')
 
 Cloud VPN to <Example: `<vendor name><product name>` VPN solution with redundant   
 on premises gateways 
 
-![image](https://drive.google.com/a/google.com/file/d/1hdaBtGxx9b6fiyL79VDJhTNARDJ_6fbY/view?usp=drivesdk)
+![image]('googlecloudvpn-n88re2fjlu.jpg')
 
 Cloud VPN to <Example: `<vendor name><product name>` VPN solution with redundant   
 GCP and redundant on-premises gateways 
