@@ -68,7 +68,7 @@ This guide describes the following VPN topologies:
 -  A site-to-site Route based IPsec VPN tunnel configuration. 
 -  A site-to-site IPsec VPN tunnel configuration using the Google Cloud Router and dynamic routing with the BGP protocol.
 
-![image]('simple-topology.png')
+![image](simple-topology.png)
 
 # Preparation
 
