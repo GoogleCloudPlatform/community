@@ -10,7 +10,11 @@ Using Cloud VPN With Amazon Web ServicesTM Virtual Private Gateway
 
 # 
 
+<<<<<<< HEAD
 __Disclaimer: This interoperability guide is intended to be informational in nature and are examples only. Customers should verify this information via testing.__
+=======
+_Disclaimer: This interoperability guide is intended to be informational in nature and are examples only. Customers should verify this information via testing._
+>>>>>>> 49c0d8127a3b4ff7d23988c6daa3d7eded333339
 
 Amazon Web Services, AWS, and the "Powered by Amazon Web Services" logo are trademarks of Amazon.com, Inc. or its affiliates in the United States and/or other countries.
 
@@ -22,12 +26,11 @@ Amazon Web Services, AWS, and the "Powered by Amazon Web Services" logo are trad
 - [Preparation](#preparation)
    - [Overview](#overview)
    - [Getting Started](#getting-started)
-   - [IPsec Parameters ](#ipsec-parameters-)
+   - [IPsec Parameters ](#ipsec-parameters)
 - [IPsec VPN Using Static Routes](#ipsec-vpn-using-static-routes)
    - [Reserve an external static IP address for GCP](#reserve-an-external-static-ip-address-for-gcp)
    - [Configuration - AWS](#configuration---aws)
       - [Creating the AWS VPC Network](#creating-the-aws-vpc-network)
-      - [](#)
       - [Configuring the AWS VPN](#configuring-the-aws-vpn)
    - [Configuration - GCP UI](#configuration---gcp-ui)
    - [Configuration - GCP gcloud CLI](#configuration---gcp-gcloud-cli)
@@ -38,7 +41,6 @@ Amazon Web Services, AWS, and the "Powered by Amazon Web Services" logo are trad
 - [IPsec VPN Using Cloud Router](#ipsec-vpn-using-cloud-router)
    - [Configuration - AWS](#configuration---aws)
       - [Creating the VPC Network](#creating-the-vpc-network)
-      - [](#)
       - [Configuring the VPN](#configuring-the-vpn)
    - [Configuration - GCP](#configuration---gcp)
       - [Configuring the VPN Tunnel](#configuring-the-vpn-tunnel)
@@ -47,12 +49,11 @@ Amazon Web Services, AWS, and the "Powered by Amazon Web Services" logo are trad
       - [Reserving a static external IP address](#reserving-a-static-external-ip-address)
       - [Creating the VPN gateway](#creating-the-vpn-gateway)
       - [Creating the Cloud Router](#creating-the-cloud-router)
-      - [Creating the VPN Tunnels ](#creating-the-vpn-tunnels-)
-      - [Adding the BGP Link Local Interface ](#adding-the-bgp-link-local-interface-)
+      - [Creating the VPN Tunnels ](#creating-the-vpn-tunnels)
+      - [Adding the BGP Link Local Interface ](#adding-the-bgp-link-local-interface)
       - [Adding the BGP Peering Session](#adding-the-bgp-peering-session)
 - [Testing the Site-to-Site VPN](#testing-the-site-to-site-vpn)
    - [Verifying Connectivity](#verifying-connectivity)
-   - [](#)
    - [Testing the VPN Tunnel](#testing-the-vpn-tunnel)
    - [Troubleshooting](#troubleshooting)
 
@@ -67,7 +68,7 @@ This guide describes the following VPN topologies:
 -  A site-to-site Route based IPsec VPN tunnel configuration. 
 -  A site-to-site IPsec VPN tunnel configuration using the Google Cloud Router and dynamic routing with the BGP protocol.
 
-![image](https://drive.google.com/a/google.com/file/d/1aF-wdujhi53PP_oRAq8Bt7LqTYVK9-l1/view?usp=drivesdk)
+![image]('simple-topology.png')
 
 # Preparation
 
