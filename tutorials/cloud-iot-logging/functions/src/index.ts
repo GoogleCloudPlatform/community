@@ -33,8 +33,8 @@ exports.deviceLog =
   functions.pubsub.topic('device-logs').onPublish((message) => {
     const log = logging.log('device-logs');
     const metadata = {
-      // Set the Cloud IoT Device we are writing a log for
-      // we extract the required device info from the PubSub attributes
+      // Set the Cloud IoT Device you are writing a log for
+      // you extract the required device info from the PubSub attributes
       resource: {
         type: 'cloudiot_device',
         labels: {
@@ -45,14 +45,14 @@ exports.deviceLog =
         }
       },
       labels: {
-        // note device_id is not part of the monitored resource, but we can
+        // note device_id is not part of the monitored resource, but you can
         // include it as another log label
         device_id: message.attributes.deviceId,
       }
     };
     const logData = message.json;
 
-    // Here we optionally extract a severity value from the log payload if it
+    // Here you optionally extract a severity value from the log payload if it
     // is present
     const validSeverity = [
       'DEBUG', 'INFO', 'NOTICE', 'WARNING', 'ERROR', 'ALERT', 'CRITICAL',
