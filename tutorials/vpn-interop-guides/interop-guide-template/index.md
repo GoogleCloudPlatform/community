@@ -1,3 +1,11 @@
+---
+title: Interoperability Guide Template for Cloud VPN
+description: Enable third-party vendors to create an Interop guide for Cloud VPN.
+author: ashishverm
+tags: Cloud Networking, Cloud VPN
+date_published: 2018-05-18
+---
+
 # Google Cloud VPN Interop Guide
 
 Using Cloud VPN with <vendor name><product name>Learn how to build site-to-site IPSEC VPN between Cloud VPN and `<vendor name><product name>`.
