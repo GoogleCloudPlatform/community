@@ -1,26 +1,34 @@
 ---
-title: Using Stackdriver Logging with IoT Core devices
-description: Learn how to use Stackdriver Logging for application logs from devices.
+title: Using Cloud Firestore with Cloud IoT Core for device configuration
+description: Learn how to use Cloud Firestore to manage fine-grained configuration updates for devices managed by Cloud IoT Core.
 author: ptone
-tags: iot, logging
-date_published: 2018-05-05
+tags: iot, firestore, functions
+date_published: 2018-05-14
 ---
 
 Preston Holmes | Solution Architect | Google
 
-This tutorial demonstrates how to configure Firebase functions to relay device application logs from [Cloud IoT Core](https://cloud.google.com/iot) to [Stackdriver Logging](https://cloud.google.com/logging/).
+This tutorial demonstrates how to configure Cloud Functions for Firebase to relay document changes in [Cloud Firestore](https://firebase.google.com/docs/firestore/) as configuration updates for [Cloud IoT Core](https://cloud.google.com/iot) Devices.
+
+Cloud IoT Core provides a way to send configuration to devices over MQTT or HTTP. The structure of this payload is unspecified and delivered as raw bytes. This means that if you have different parts of your IoT system wanting to write parts of the configuration, each has to parse, patch, then re-write the configuration value in IoT Core.
+
+If you want to payload delivered to a device as a binary format, such as [CBOR](http://cbor.io/), that means each of these participating components of your system also need to deserialize and re-serialize the structured data.
+
+By using Cloud Firestore to serve as a layer in between the systems that want to update a device's configuration, and IoT Core, you can take advantage of Firestore's structured [data types](https://firebase.google.com/docs/firestore/manage-data/data-types) and partial document updates.
 
 ## Objectives
 
-- Send application logs from device software over MQTT and IoT Core
-- View device logs in Stackdriver Logging
-- Use sorting and searching features of Stackdriver Logging to find logs of interest
-- Use the monitored resource type for IoT devices to see multiple log entries from different sources for a given device
+- Manage structured device configuration in a managed cloud database
+- Automate partial updates to fields within device configuration
+- Convert human friendly configuration to binary form before sending to device automatically
+- Use queries to find all devices in a specific configuration state
 
-[//]: # (Google private graphics originals: https://docs.google.com/presentation/d/1orlUICxhKOViJlexpx0hRsxNY7Rsbja-JnOohhVJyYo/edit?hl=en#slide=id.g39ac6d36e5_0_0)
+[//]: # (Google private graphics originals: https://docs.google.com/presentation/d/1xpjaxbgwhUlKLEs-793otoA7xa950OkAJQZzOlRW100/edit#slide=id.p)
 
 **Figure 1.** *Architecture diagram for tutorial components*
 ![architecture diagram](./images/architecture.png)
+
+
 
 
 ## Before you begin
@@ -34,108 +42,75 @@ You need to associate Firebase to your cloud project. Visit the [Firebase Consol
 This tutorial uses billable components of GCP, including:
 
 - Cloud IoT Core
-- Cloud PubSub
-- Firebase Functions
-- Stackdriver Logging
+- Cloud Firestore
+- Cloud Functions for Firebase
 
 This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), but you can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected production usage.
 
 ## Set up the environment
 
-If you do not already have an development environment set up with [gcloud](https://cloud.google.com/sdk/downloads) and [Firebase](https://firebase.google.com/docs/cli/) tools, it is recommended that you use [Cloud Shell](https://cloud.google.com/shell/docs/) for any command line instructions.
+If you do not already have a development environment set up with [gcloud](https://cloud.google.com/sdk/downloads) and [Firebase](https://firebase.google.com/docs/cli/) tools, it is recommended that you use [Cloud Shell](https://cloud.google.com/shell/docs/) for any command line instructions.
 
-Set the name of the Cloud IoT Core you are using to an environment variable:
+Set the name of the Cloud IoT Core settings you are using as environment variables:
 
 ```sh
-export REGISTRY_ID=<your registry here>
-export CLOUD_REGION=<your region; eg us-central1>
+export REGISTRY_ID=config-demo
+export CLOUD_REGION=us-central1 # or change to an alternate region;
 export GCLOUD_PROJECT=$(gcloud config list project --format "value(core.project)")
 ```
 
-## Create a logs topic, and associate it with a device registry
+## Create a Cloud IoT Core registry for this tutorial
 
 Create a PubSub topic we will use for device logs:
 
 ```sh
-gcloud pubsub topics create device-logs
+gcloud pubsub topics create device-events
 ```
 
-Assuming you have a registry already created, add this topic as a notification config for a specific MQTT topic match:
-
+Create the IoT Core registry:
 
 ```sh
-gcloud iot registries update $REGISTRY_ID --region $CLOUD_REGION --event-notification-config subfolder=log,topic=device-logs
+gcloud iot registries create $REGISTRY_ID --region=$CLOUD_REGION --event-notification-config=subfolder="",topic=device-events
 ```
-
-This configures IoT Core to send any messages written to the MQTT topic of:
-
-  /devices/{device-id}/events/log
-
-to be published to a specific PubSub topic created above.
 
 ## Deploy the relay function
 
-You can use either Google Cloud Functions or Firebase functions to run the relay (they use the same underlying systems). Here we are using Firebase Functions as the tools are a little more straightforward and there are nice [Typescript starting samples](https://firebase.google.com/docs/functions/typescript).
+You will use a Firestore document trigger to run a function every time a qualifying document is updated.
+
+The function will only run when documents in the `device-configs` collection are updated.
+
+The document key will be used as the corresponding device key.
 
 The main part of the function handles a PubSub message from IoT Core, extracts the log payload and device information, and then writes a structured log entry to Stackdriver Logging:
 
 [embedmd]:# (functions/src/index.ts /import/ $)
 ```ts
+import * as admin from "firebase-admin";
 import * as functions from 'firebase-functions';
-const loggingClient = require('@google-cloud/logging');
-
 import { runInDebugContext } from 'vm';
+import { DeviceManager } from './devices';
 
-// create the Stackdriver Logging client
-const logging = new loggingClient({
-  projectId: process.env.GCLOUD_PROJECT,
-});
+// create a device manager instance with a registry id, optionally pass a region
+const dm = new DeviceManager('config-demo');
 
 // start cloud function
-
-exports.deviceLog =
-  functions.pubsub.topic('device-logs').onPublish((message) => {
-    const log = logging.log('device-logs');
-    const metadata = {
-      // Set the Cloud IoT Device we are writing a log for
-      // we extract the required device info from the PubSub attributes
-      resource: {
-        type: 'cloudiot_device',
-        labels: {
-          project_id: message.attributes.projectId,
-          device_num_id: message.attributes.deviceNumId,
-          device_registry_id: message.attributes.deviceRegistryId,
-          location: message.attributes.location,
-        }
-      },
-      labels: {
-        // note device_id is not part of the monitored resource, but we can
-        // include it as another log label
-        device_id: message.attributes.deviceId,
-      }
-    };
-    const logData = message.json;
-
-    // Here we optionally extract a severity value from the log payload if it
-    // is present
-    const validSeverity = [
-      'DEBUG', 'INFO', 'NOTICE', 'WARNING', 'ERROR', 'ALERT', 'CRITICAL',
-      'EMERGENCY'
-    ];
-    if (logData.severity &&
-      validSeverity.indexOf(logData.severity.toUpperCase()) > -1) {
-      (metadata as any)['severity'] = logData.severity.toUpperCase();
-      delete (logData.severity);
-
-
-      // write the log entryto Stackdriver Logging
-      const entry = log.entry(metadata, logData);
-      return log.write(entry);
+exports.configUpdate = functions.firestore
+  // assumes a document whose ID is the same as the deviceid
+  .document('device-configs/{deviceId}')
+  .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+    if (context) {
+      console.log(context.params.deviceId);
+      // get the new config data
+      const configData = change.after.data();
+      return dm.updateConfig(context.params.deviceId, configData);
+    } else {
+      throw(Error("no context from trigger"));
     }
-  });
+
+  })
 ```
 
-To deploy the cloud function, we use the Firebase CLI tool:
+To deploy the cloud function, you use the Firebase CLI tool:
 
 ```sh
 cd functions
@@ -144,82 +119,96 @@ firebase use $GCLOUD_PROJECT
 firebase deploy --only functions
 ```
 
-## Write logs from a device
+## Create our device
 
 create a dummy sample device:
 
 ```sh
 cd ../sample-device
-npm install
 
-gcloud iot devices create log-tester --region $CLOUD_REGION --registry $REGISTRY_ID --public-key path=./ec_public.pem,type=ES256
-
-node build/index.js &
+gcloud iot devices create sample-device --region $CLOUD_REGION --registry $REGISTRY_ID --public-key path=./ec_public.pem,type=ES256
 ```
 
 Note: do not use this device for any real workloads, as the keypair is included in this sample and should not be considered secret.
 
-## Explore the logs that are written
 
-If you open up the <a href="https://console.cloud.google.com/logs/viewer" target="_blank">Stackdriver Logging console</a>.
+### Establish a device configuration in Firestore
 
-![console image](./images/c1.png)
+Open the [Firebase Console](https://console.firebase.google.com/).
 
-Because we send the device id as part of the log record, you can choose to pull that up into the summary line:
+1. Choose the project you previously associated Firebase with. On the left hand side list of services, choose `Database` and choose to use Firestore.
+1. Choose `+ ADD COLLECTION` and name the collection `device-configs`.
+1. You will be prompted to add your first document, use `sample-device` for the Document Id.
+1. For the field, type, and value use the following:
 
-![console image](./images/c2.png)
+![config-doc](./images/config-doc.png)
 
-Which then looks like this:
+Note that the different fields in the config can have different data types.  Save this document.
 
-![console image](./images/c3.png)
+Now open the [Cloud IoT Core console](https://console.cloud.google.com/iot/locations/us-central1/registries/config-demo/devices/sample-device), choose the device and look at the `Configuration & state history` pane:
 
-### Combine system and Applications logs
+![config-choose](./images/choose-config.png)
 
-Now we will exercise a part of our sample device code that responds to config changes. Use the following gcloud command to update the devices config telling it to "bounce to a level of 2":
+If the Function ran succesfully - you should be able to select, and see the initial configuration saved with the device.
 
-```sh
-gcloud iot devices configs update --device log-tester --registry $REGISTRY_ID --region $CLOUD_REGION --config-data '{"bounce": 2}'
-```
+![initial config](./images/initial-config.png)
 
-Now in just a few moments, you will see two new entries in the logging console. One is from IoT Core system noting that a devices config was updated (the ModifyCloudToDeviceConfig call).
+## Modify the config
 
-This is then followed by a device application log reporting the imaginary "spring back" value. This shows how we can view both system logs from IoT Core and device application logs in one place.
-
-You can use the refresh button in the Cloud Console, or use the play button to stream logs.
-
-![console image](./images/c4.png)
-
-### Use severity to convey log level
-
-Lets send a couple more config updates (you should send one, wait a second or two, then send the next):
+Lets start up the sample device now in your shell
 
 ```sh
-gcloud iot devices configs update --device log-tester --registry $REGISTRY_ID --region $CLOUD_REGION --config-data '{"bounce": 7}'
+# still in the sample-device subfolder
 
-# pause
+npm install
 
-gcloud iot devices configs update --device log-tester --registry $REGISTRY_ID --region $CLOUD_REGION --config-data '{"bounce": 17}'
-
+node build/index.js
 ```
 
-As these are received and responded to by the sample device, you can see the use of a severity level to indicate the importance of the log.
+You should see output that looks like:
 
-![console image](./images/c5.png)
+```sh
+Device Started
+Current Config: 
+{ energySave: false, mode: 'heating', tempSetting: 35 }
+```
 
-### Filter logs to a specific device
+Now lets update the config document in the Firestore console to change the tempSetting value to `18`
 
-We currently have been looking at a log that contains entries for all devices.  But given these are structured log entries, we can use the numeric id of the resource to limit our view to only one device in the more realistic scenario when multiple devices are writing log events.
+When this document edit is saved, it triggers a function, which will push the new config down to the device:
 
-We open up the log entry, find the resource, labels, and choose `device_num_id`, click on it and choose `Show matching entries`:
+![field update](./images/update.png)
 
-![console image](./images/c6.png)
+You should see this new config arrive at the sample device in a second or two.
 
-This creates a quick filter of the log:
+```sh
+Current Config: 
+{ energySave: false, mode: 'heating', tempSetting: 18 }
+```
 
-![console image](./images/c7.png)
+To do this programatically with IoT Core APIs alone, you have to read the current config from the IoT Core device manager, update the value, then write the new config to IoT Core.  IoT Core does provide a incrementing version number you can send with these writes to check that another process has also not attempted to concurrently update the config.
 
-You can get a sense the filter syntax. You can even do things like a substring match on a field in the json payload of the log message, try adding `jsonPayload.msg:"Spring"`. See the [docs](https://cloud.google.com/logging/docs/view/advanced-filters) for more on using advanced filters.
+This solution assumes that the path using Firestore and functions are not sharing the config update job with other processes, but are acting as a flexible intermediate.
 
+
+## Perform Queries with Firestore
+
+You can use the [query capabilities](https://firebase.google.com/docs/firestore/query-data/queries) of Firestore to find devices with specific configurations:
+
+```js
+var configs = db.collection('device-configs');
+var hotDevices = configs.where('tempSetting', '>', 40);
+```
+
+The above snippet is for nodejs, but see the [Firestore quickstart](https://firebase.google.com/docs/firestore/quickstart) for how to set up and query from a number of different runtimes.
+
+
+## Binary data with CBOR
+
+const bb == base64 enoded binary
+var db = new Buffer(bb, 'base64');
+db syould be what comes over wire
+v = cbor.decodeFirstSync(db)
 
 ## Cleaning up
 
