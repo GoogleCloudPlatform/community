@@ -82,7 +82,7 @@ export class DeviceManager {
 
   updateDevice(deviceId:string, device:any, updateMask?:any) {
     return new Promise((resolve, reject) => {
-      let request = {
+      const request = {
         name:`${this.registryName}/devices/${deviceId}`,
         resource: device,
       }
@@ -157,9 +157,26 @@ export class DeviceManager {
 
   updateConfig(deviceId:string, config:any) {
     return new Promise((resolve, reject) => {
-      let request = {
+      const request = {
         name:`${this.registryName}/devices/${deviceId}`,
         binaryData: Buffer.from(JSON.stringify(config)).toString("base64"),
+      }
+      this.client.projects.locations.registries.devices.modifyCloudToDeviceConfig(request, (err:any, resp:any) => {
+        if (err) {
+          console.error(err);
+          return reject(err);
+        } else {
+          resolve(resp.data);
+        };
+      });
+    });
+  }
+
+  updateConfigBinary(deviceId:string, config:Buffer) {
+    return new Promise((resolve, reject) => {
+      const request = {
+        name:`${this.registryName}/devices/${deviceId}`,
+        binaryData: config.toString("base64"),
       }
       this.client.projects.locations.registries.devices.modifyCloudToDeviceConfig(request, (err:any, resp:any) => {
         if (err) {

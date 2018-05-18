@@ -17,6 +17,8 @@
 
 'use strict';
 
+import cbor = require('cbor');
+
 import * as admin from "firebase-admin";
 import * as functions from 'firebase-functions';
 import { runInDebugContext } from 'vm';
@@ -28,13 +30,31 @@ const dm = new DeviceManager('config-demo');
 // start cloud function
 exports.configUpdate = functions.firestore
   // assumes a document whose ID is the same as the deviceid
-  .document('device-config/{deviceId}')
+  .document('device-configs/{deviceId}')
   .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
     if (context) {
       console.log(context.params.deviceId);
       // get the new config data
       const configData = change.after.data();
       return dm.updateConfig(context.params.deviceId, configData);
+    } else {
+      throw(Error("no context from trigger"));
+    }
+
+  })
+
+
+  exports.configUpdateBinary = functions.firestore
+  // assumes a document whose ID is the same as the deviceid
+  .document('device-configs-binary/{deviceId}')
+  .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+    if (context) {
+      console.log(context.params.deviceId);
+      // get the new config data
+      const configData = change.after.data();
+      const encoded = cbor.encode(configData);
+
+      return dm.updateConfigBinary(context.params.deviceId, encoded);
     } else {
       throw(Error("no context from trigger"));
     }
