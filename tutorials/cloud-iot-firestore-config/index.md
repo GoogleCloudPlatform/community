@@ -19,17 +19,15 @@ By using Cloud Firestore to serve as a layer in between the systems that want to
 ## Objectives
 
 - Manage structured device configuration in a managed cloud database
-- Automate partial updates to fields within device configuration
-- Convert human friendly configuration to binary form before sending to device automatically
+- Easily perform partial updates of config by chaning only some fields within device configuration
 - Use queries to find all devices in a specific configuration state
+- Convert human friendly configuration to binary form before sending to device automatically
+
 
 [//]: # (Google private graphics originals: https://docs.google.com/presentation/d/1xpjaxbgwhUlKLEs-793otoA7xa950OkAJQZzOlRW100/edit#slide=id.p)
 
 **Figure 1.** *Architecture diagram for tutorial components*
 ![architecture diagram](./images/architecture.png)
-
-
-
 
 ## Before you begin
 
@@ -85,6 +83,8 @@ The main part of the function handles a PubSub message from IoT Core, extracts t
 
 [embedmd]:# (functions/src/index.ts /import/ $)
 ```ts
+import cbor = require('cbor');
+
 import * as admin from "firebase-admin";
 import * as functions from 'firebase-functions';
 import { runInDebugContext } from 'vm';
@@ -186,9 +186,9 @@ Current Config:
 { energySave: false, mode: 'heating', tempSetting: 18 }
 ```
 
-To do this programatically with IoT Core APIs alone, you have to read the current config from the IoT Core device manager, update the value, then write the new config to IoT Core.  IoT Core does provide a incrementing version number you can send with these writes to check that another process has also not attempted to concurrently update the config.
+To do this programatically with IoT Core APIs alone, you would have to read the current config from the IoT Core Device Manager, update the value, then write back the new config to IoT Core.  IoT Core does provide a incrementing version number you can send with these writes to check that another process has not concurrently attempted to update the config.
 
-This solution assumes that the path using Firestore and functions are not sharing the config update job with other processes, but are acting as a flexible intermediate.
+This solution assumes that the path using Firestore and functions are not sharing the config update job with other processes, but are acting as a flexible intermediate.  Both single Firestore Documents and IoT Core device configurations are limited to one update per second.
 
 
 ## Perform Queries with Firestore
@@ -205,23 +205,97 @@ The above snippet is for nodejs, but see the [Firestore quickstart](https://fire
 
 ## Binary data with CBOR
 
-const bb == base64 enoded binary
-var db = new Buffer(bb, 'base64');
-db syould be what comes over wire
-v = cbor.decodeFirstSync(db)
+Sometimes on with constrained devices and constrained networks, you want to work with data in a compact binary format.  Concise Binary Object Representation [CBOR](http://cbor.io/) is a binary format that strikes a balance between the compactness of binary, with the self describing format of JSON. IoT Core device configuration API and MQTT both fully support binary messages.
+
+In cloud software and databases binary may not be as convenient to work with, or other binary formats such as protocol buffers may be used.
+
+By using a function as an intermediate between Firestore and IoT Core you can not only watch documents for change to trigger an update, but you can use the same function to encode the payload into the CBOR binary representation.
+
+For clarity - this tutorial will implement this with a different function, and use a different Firestore collection.
+
+Add the following function definition code to your index.ts source file so that it should look like:
+
+[embedmd]:# (functions/src/index.ts /import/ $)
+```ts
+import cbor = require('cbor');
+
+import * as admin from "firebase-admin";
+import * as functions from 'firebase-functions';
+import { runInDebugContext } from 'vm';
+import { DeviceManager } from './devices';
+
+// create a device manager instance with a registry id, optionally pass a region
+const dm = new DeviceManager('config-demo');
+
+// start cloud function
+exports.configUpdate = functions.firestore
+  // assumes a document whose ID is the same as the deviceid
+  .document('device-configs/{deviceId}')
+  .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+    if (context) {
+      console.log(context.params.deviceId);
+      // get the new config data
+      const configData = change.after.data();
+      return dm.updateConfig(context.params.deviceId, configData);
+    } else {
+      throw(Error("no context from trigger"));
+    }
+
+  })
+
+
+  exports.configUpdateBinary = functions.firestore
+  // assumes a document whose ID is the same as the deviceid
+  .document('device-configs-binary/{deviceId}')
+  .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+    if (context) {
+      console.log(context.params.deviceId);
+      // get the new config data
+      const configData = change.after.data();
+      const encoded = cbor.encode(configData);
+
+      return dm.updateConfigBinary(context.params.deviceId, encoded);
+    } else {
+      throw(Error("no context from trigger"));
+    }
+
+  })
+```
+
+You can deploy this new function with:
+
+```sh
+firebase deploy --only functions
+```
+
+CTRL-C to stop the sample device script if it is still running, then create another sample device variation, this one will be named `sample-binary`:
+
+```sh
+gcloud iot devices create sample-binary --region $CLOUD_REGION --registry $REGISTRY_ID --public-key path=./ec_public.pem,type=ES256
+```
+
+Create another Firestore collection as you did above, but call it `device-configs-binary` and add a document for the `sample-binary` device.
+
+Now start the device with the `-b` flag to indicate we want to use the binary version of the sample device:
+
+```sh
+node build/index.js -b
+```
+
+You can update the device config settings in Firestore, and you will see the decoded config printed on the screen. However the payload of the config is transmitted encoded as CBOR.
+
+Note, when data is encoded as CBOR - you will not be able to see or edit this in the IoT-Core console, as it is in an compact encoded format that the console does not parse for display.
+
+![field update](./images/cbor.png)
 
 ## Cleaning up
 
-Kill the sample device:
+Stop the sample device by typing `CTRL-C`.
+
+Because the test devices uses a non-secret key, you should delete it:
 
 ```sh
-killall node
+gcloud iot devices delete sample-device --registry $REGISTRY_ID --region $CLOUD_REGION
+gcloud iot devices delete sample-binary --registry $REGISTRY_ID --region $CLOUD_REGION
 ```
-Because the test device uses a non-secret key, you should delete it:
-
-```sh
-gcloud iot devices delete log-tester --registry $REGISTRY_ID --region $CLOUD_REGION
-```
-
-All of the resource in this tutorial cost nothing at rest, or scale to zero.  You can delete Cloud Functions, Device Registry, and PubSub topics from the console.
 
