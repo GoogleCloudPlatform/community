@@ -135,8 +135,8 @@ Below are definitions of common terms used throughout this guide.
 <Below is some sample terminology. Add additional terminology that needs explanation in this section.>
 
 -  **GCP VPC network** – A single virtual network within a single GCP project.
--  **On-premises gateway, tunnel endpoint, or IP addresses** –The VPN device on the non-GCP side of the connection, which is usually a device in a physical data center or other cloud provider's network. GCP instructions are written from the point of view of the GCP VPC network, so the "on-premises gateway" is the gateway connecting to GCP.
--  **GCP peer address**–  A single static IP address within a GCP project that exists at the edge of the GCP network. Also known as a Cloud IP address.
+-  **On-premises gateway, tunnel endpoint, or IP addresses** – The VPN device on the non-GCP side of the connection, which is usually a device in a physical data center or other cloud provider's network. GCP instructions are written from the point of view of the GCP VPC network, so the "on-premises gateway" is the gateway connecting to GCP.
+-  **GCP peer address** –  A single static IP address within a GCP project that exists at the edge of the GCP network. Also known as a Cloud IP address.
 -  **Static routing** – Manually specifying the route to subnets on the GCP-side and the on-premises side of the VPN gateway.
 -  **Dynamic routing** – GCP Dynamic routing for VPN using the BGP protocol
 -  `<vendor name><product name>` term
@@ -466,12 +466,12 @@ Before performing the tasks in this section, select the GCP project name in the 
 1. **Populate the following fields for the gateway:**
    -  **Name** — The name of the VPN gateway. This name is displayed in the console and used in by the gcloud tool to reference the gateway. Use `vpn-scale-test-<vendor-name>-gw-1`.
    -  **Network** — The VPC network containing the instances the VPN gateway will serve. Use `vpn-vendor-test-network`.
-   -  **Region** — The region where you want to locate the VPN gateway. Normally, this is the region that contains the instances you wish to reach. Use `us-east1`..
+   -  **Region** — The region where you want to locate the VPN gateway. Normally, this is the region that contains the instances you wish to reach. Use `us-east1`.
    -  **IP address** — Select the pre-existing [static external IP address](https://cloud.google.com/compute/docs/ip-addresses#reservedaddress), `vpn-scale-test-static-ip`, that you created for this gateway in the previous section.
 
 1. **Populate the fields for at least one tunnel:**
    -  **Name** — The name of the VPN tunnel. Use `vpn-scale-test-tunnel1`.
-   -  **Remote peer IP address **— The public, external IP address of the on-premises VPN gateway. 
+   -  **Remote peer IP address**— The public, external IP address of the on-premises VPN gateway. 
    -  **IKE version** — IKEv2 or IKEv1. IKEv2 is preferred, but IKEv1 is supported if it is the only supported IKE version that the on-premises gateway can use.
    -  **Shared secret** — Character string used in establishing encryption for that tunnel. You must enter the same shared secret into both VPN gateways. If the VPN gateway device on the on-premises side of the tunnel doesn't generate one automatically, you can make one up.
    -  **Routing options** —  Select **Dynamic (BGP)**.
@@ -482,7 +482,7 @@ Before performing the tasks in this section, select the GCP project name in the 
       -  **Name** — `bgp-peer1`.
       -  **Peer ASN** — The [private ASN](https://tools.ietf.org/html/rfc6996) (64512 - 65534, 4200000000 - 4294967294) for the on-premises VPN device you are configuring. It can be any private ASN you are not already using. Example: `65001`.
       -  **Google BGP IP address** — The two BGP interface IP addresses must be  
-**[link-local**](https://wikipedia.org/wiki/Link-local_address) IP addresses belonging to the same /30 subnet in `169.254.0.0/16`. Example: `169.254.1.1`.
+(https://wikipedia.org/wiki/Link-local_address)** IP addresses belonging to the same /30 subnet in `169.254.0.0/16`. Example: `169.254.1.1`.
       -  **Peer BGP IP address** — See [the explanation](https://cloud.google.com/router/docs/concepts/overview#dynamic_routing_for_vpn_tunnels_in_vpc_networks) for the **Google BGP IP address**. (link local address) IP address for the On-premises peer. Example: `169.254.1.2`. 
 
    -  **Remote network IP range** — The range of the "on-premises" subnet on the other side of the tunnel from this gateway. Configure as `10.0.0.0/8`.
@@ -503,12 +503,11 @@ Before performing the tasks in this section, select the GCP project name in the 
 
 ### Using the gcloud command line tool
 
-1. Create a custom VPC network (recommended). Make sure there is no conflict with your local network IP address range or any other configured subnets.  
-  
+1. Create a custom VPC network (recommended). Make sure there is no conflict with your local network IP address range or any other configured subnets.   
 `gcloud compute --project vpn-guide networks create vpn-vendor-test-network \`
 
-`        --mode custom`  
 
+`        --mode custom`  
 1. Create a subnet on that network.
 ```
 gcloud compute --project vpn-guide networks subnets create vpn-scale-subnet-1 \ 
@@ -575,7 +574,7 @@ gcloud compute --project vpn-guide routers create vpn-scale-test-<vendor-name>-r
 `      --router vpn-scale-test-<vendor-name>-rtr`  
 
 1. Update the Cloud Router config to add a virtual interface (`--interface-name`) for the BGP peer. 
--  The BGP interface IP address must be a **[link-local**](https://wikipedia.org/wiki/Link-local_address) IP address belonging to the IP address range `169.254.0.0/16` and it must belong to same subnet as the interface address of the peer router. The recommended netmask length is `30`. 
+-  The BGP interface IP address must be a (https://wikipedia.org/wiki/Link-local_address)** IP address belonging to the IP address range `169.254.0.0/16` and it must belong to same subnet as the interface address of the peer router. The recommended netmask length is `30`. 
 -  Make sure each tunnel has a unique pair of IP addresses. Alternatively, you can leave `--ip-address` and `--mask-length blank, and leave `--peer-ip-address` blank in the next step, and the addresses will be automatically generated for you.  
 
 ```
@@ -587,7 +586,7 @@ gcloud compute --project vpn-guide routers add-interface vpn-scale-test-<vendor-
 1. Update the Cloud Router config to add the BGP peer to the interface. 
 -  This example uses ASN 65001 for the peer ASN. You can use your public ASN or  
  [private ASN](https://tools.ietf.org/html/rfc6996) (64512 - 65534, 4200000000 - 4294967294) that you are not already using in the peer network. 
--  The BGP peer interface IP address must be a **[link-local**](https://wikipedia.org/wiki/Link-local_address) IP address belonging to the IP address range `169.254.0.0/16`. It must belong to same subnet as the GCP-side interface. Make sure each tunnel has a unique pair of IPs.
+-  The BGP peer interface IP address must be a **[link-local](https://wikipedia.org/wiki/Link-local_address)** IP address belonging to the IP address range `169.254.0.0/16`. It must belong to same subnet as the GCP-side interface. Make sure each tunnel has a unique pair of IPs.
 ```
 gcloud compute --project vpn-guide routers add-bgp-peer vpn-scale-test-<vendor-name>-rtr \ 
         --peer-name bgp-peer1 --interface if-1 \ 
@@ -613,7 +612,7 @@ This section covers the steps for creating a GCP IPsec VPN using static routing.
 
 ### Using the Google Cloud Platform Console
 
-1. Repeat the same steps as listed for setting up a GCP gateway for dynamic routing, except,  in the configuration for a tunnel under **Routing options, **choose** "route based" **and configure the following settings:
+1. Repeat the same steps as listed for setting up a GCP gateway for dynamic routing, except,  in the configuration for a tunnel under **Routing options**, choose **"route based"**  and configure the following settings:
    1. **Remote network IP ranges** — The range, or ranges, of the on-premises network, which is the network on the other side of the tunnel from the Cloud VPN gateway you are currently configuring. Use `10.0.0.0/8`.   
 
 1. Click **Create** to create the gateway and initiate all tunnels. This step automatically creates a network-wide route and necessary forwarding rules for the tunnel. The tunnels will not pass traffic until you've configured the firewall rules.   
