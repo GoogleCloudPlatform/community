@@ -8,9 +8,9 @@ date_published: 2018-05-18
 
 # Google Cloud VPN Interop Guide
 
-Using Cloud VPN with <vendor name><product name>Learn how to build site-to-site IPSEC VPN between Cloud VPN and `<vendor name><product name>`.
+Using Cloud VPN with <vendor name><product name>Learn how to build site-to-site IPSEC VPN between Cloud VPN and `<vendor name/>/<product name>`.
 
-<NOTE: Options or instructions are shown in angle brackets throughout this template. Change or remove these items as needed.>
+\<NOTE: Options or instructions are shown in angle brackets throughout this template. Change or remove these items as needed.\>
 
 <Place vendor logo or equipment photo here>
 
