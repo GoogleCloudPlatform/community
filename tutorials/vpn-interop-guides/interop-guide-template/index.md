@@ -30,8 +30,7 @@ Author: <author name and email address>
    - [Terminology](#terminology)
    - [Configuration overview](#configuration-overview)
       - [GCP-side configuration](#gcp-side-configuration)
-      - [<vendor name><vendor product>-side configuration](#vendor-namevendor-product-side-configuration)
-      - [](#)
+      - [/<vendor name/>/<vendor product/>-side configuration](#vendor-namevendor-product-side-configuration)]
       - [Final steps](#final-steps)
    - [Licenses and modules <if required>](#licenses-and-modules-if-required)
    - [Configuration parameters and values](#configuration-parameters-and-values)
@@ -96,7 +95,7 @@ The topology of each VPN topology can be configured with no redundancy, or, as a
 
 Cloud VPN to <Example: `<vendor name><product name>` VPN solution without redundancy 
 
-![image](googlecloudvpn--am22bc08xg.jpg)
+![image](googlecloudvpn--am22bv08xgj.jpg)
 
 Cloud VPN to <Example: `<vendor name><product name>` VPN solution with redundant Cloud VPN gateways 
 
@@ -137,7 +136,7 @@ Below are definitions of common terms used throughout this guide.
 
 -  **GCP VPC network** – A single virtual network within a single GCP project.
 -  **On-premises gateway, tunnel endpoint, or IP addresses** –The VPN device on the non-GCP side of the connection, which is usually a device in a physical data center or other cloud provider's network. GCP instructions are written from the point of view of the GCP VPC network, so the "on-premises gateway" is the gateway connecting to GCP.
--  **GCP peer address **–  A single static IP address within a GCP project that exists at the edge of the GCP network. Also known as a Cloud IP address.
+-  **GCP peer address**–  A single static IP address within a GCP project that exists at the edge of the GCP network. Also known as a Cloud IP address.
 -  **Static routing** – Manually specifying the route to subnets on the GCP-side and the on-premises side of the VPN gateway.
 -  **Dynamic routing** – GCP Dynamic routing for VPN using the BGP protocol
 -  `<vendor name><product name>` term
@@ -150,12 +149,12 @@ The following is a high level overview of the configuration process covered in t
 
 ### GCP-side configuration
 
-1. Configure either a GCP IPsec VPN that uses dynamic routing or that uses static routing.
+1. Configure a GCP IPsec VPN that uses either dynamic routing or static routing.
 1. For dynamic routing (preferred):
    1. Configure a custom GCP network and subnet.
    1. Create an external IP address for the VPN gateway.
    1. Configure the VPN gateway, at least one tunnel, and Cloud Router.
-   1. If using the `gcloud` command line, configure forwarding rules to the on-premises gateway
+   1. If using the `gcloud` command line, configure forwarding rules to the on-premises gateway.
    1. Configure firewall rules.
 
 1. For static routing repeat the steps above except, in the tunnel configuration panel under Routing options, choose **route based** and configure the Remote network IP ranges for the on-premises network.
@@ -165,16 +164,14 @@ The following is a high level overview of the configuration process covered in t
 1. Configure the base <vendor name><vendor product> network configuration to establish L3 connectivity.
 1. Configure the <vendor name><vendor product> VPN Gateway.
 1. Set up the Base <vendor name><vendor product> VPN configuration <which may include the following steps>:
-   1. Configure IKEv2 Proposal and Policy
-   1. Configure IKEv2 keyring
-   1. Configure IKEv2 profile
-   1. Configure IPsec Security Association (SA)
-   1. Configure IPsec transform set
-   1. Configure IPsec profile
-   1. Configure IPsec Static Virtual Tunnel Interface (SVTI)
-   1. Configure the dynamic routing protocol (preferred) or static routing protocol to route traffic into the IPsec tunnel
-
-### 
+   1. Configure IKEv2 Proposal and Policy.
+   1. Configure IKEv2 keyring.
+   1. Configure IKEv2 profile.
+   1. Configure IPsec Security Association (SA).
+   1. Configure IPsec transform set.
+   1. Configure IPsec profile.
+   1. Configure IPsec Static Virtual Tunnel Interface (SVTI).
+   1. Configure the dynamic routing protocol (preferred) or static routing protocol to route traffic into the IPsec tunnel.
 
 ### Final steps
 
@@ -193,8 +190,7 @@ The first step in configuring your `<vendor name><product name>` for use with th
 -  IPsec RTU license (FLASR1-IPsec-RTU)
 -  Encryption HW module (ASR1002HX-IPsecHW(=) and ASR1001HX-IPsecW(=)) and Tiered Crypto throughput license which applies to ASR1002-HX and ASR1001-HX chassis only.  
   
-For a detailed <vendor name><product name> license information, refer to the  
-<Vendor Guide link>.
+For a detailed <vendor name><product name> license information, refer to the  <Vendor Guide link>.
 
 ## Configuration parameters and values
 
