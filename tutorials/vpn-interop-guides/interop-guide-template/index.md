@@ -82,7 +82,8 @@ If you are using this guide to configure your <product name> implementation, be 
 
 For more information about Cloud VPN see [the Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).  
   
-Topology  
+## Topology
+
 This guide describes two Cloud VPN topologies in the preferred order:   
 <If needed, describe how the topology operates here.>
 
