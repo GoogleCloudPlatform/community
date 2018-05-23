@@ -24,8 +24,6 @@ By using Cloud Firestore to serve as a layer in between the systems that update 
 - Convert human friendly configuration to binary form before sending to device automatically.
 
 
-[//]: # (Google private graphics originals: https://docs.google.com/presentation/d/1xpjaxbgwhUlKLEs-793otoA7xa950OkAJQZzOlRW100/edit#slide=id.p)
-
 **Figure 1.** *Architecture diagram for tutorial components*
 ![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/architecture.png)
 
