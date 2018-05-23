@@ -3,7 +3,7 @@ title: Using Stackdriver Logging with IoT Core devices
 description: Learn how to use Stackdriver Logging for application logs from devices.
 author: ptone
 tags: iot, logging
-date_published: 2018-05-05
+date_published: 2018-05-23
 ---
 
 Preston Holmes | Solution Architect | Google
@@ -17,10 +17,8 @@ This tutorial demonstrates how to configure Cloud Functions for Firebase to rela
 - Use sorting and searching features of Stackdriver Logging to find logs of interest
 - Use the monitored resource type for IoT devices to see multiple log entries from different sources for a given device
 
-[//]: # (Google private graphics originals: https://docs.google.com/presentation/d/1orlUICxhKOViJlexpx0hRsxNY7Rsbja-JnOohhVJyYo/edit?hl=en#slide=id.g39ac6d36e5_0_0)
-
 **Figure 1.** *Architecture diagram for tutorial components*
-![architecture diagram](./images/architecture.png)
+![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/architecture.png)
 
 
 ## Before you begin
@@ -69,9 +67,9 @@ gcloud iot registries update $REGISTRY_ID --region $CLOUD_REGION --event-notific
 
 This configures IoT Core to send any messages written to the MQTT topic of:
 
-  /devices/{device-id}/events/log
+    /devices/{device-id}/events/log
 
-to be published to a specific PubSub topic created above.
+to be published to a specific Cloud PubSub topic created above.
 
 ## Deploy the relay function
 
@@ -163,15 +161,15 @@ Note: do not use this device for any real workloads, as the keypair is included 
 
 If you open up the <a href="https://console.cloud.google.com/logs/viewer" target="_blank">Stackdriver Logging console</a>.
 
-![console image](./images/c1.png)
+![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c1.png)
 
 Because you send the device id as part of the log record, you can choose to pull that up into the summary line:
 
-![console image](./images/c2.png)
+![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c2.png)
 
 Which then looks like this:
 
-![console image](./images/c3.png)
+![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c3.png)
 
 ### Combine system and Applications logs
 
@@ -187,7 +185,7 @@ This is then followed by a device application log reporting the imaginary "sprin
 
 You can use the refresh button in the Cloud Console, or use the play button to stream logs.
 
-![console image](./images/c4.png)
+![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c4.png)
 
 ### Use severity to convey log level
 
@@ -204,7 +202,7 @@ gcloud iot devices configs update --device log-tester --registry $REGISTRY_ID --
 
 As these are received and responded to by the sample device, you can see the use of a severity level to indicate the importance of the log.
 
-![console image](./images/c5.png)
+![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c5.png)
 
 ### Filter logs to a specific device
 
@@ -212,11 +210,11 @@ So far you have been looking at a log that contains entries for all devices.  Bu
 
 You open up the log entry, find the resource, labels, and choose `device_num_id`, click on it and choose `Show matching entries`:
 
-![console image](./images/c6.png)
+![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c6.png)
 
 This creates a quick filter of the log:
 
-![console image](./images/c7.png)
+![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c7.png)
 
 You can get a sense the filter syntax. You can even do things like a substring match on a field in the json payload of the log message, try adding `jsonPayload.msg:"Spring"`. See the [docs](https://cloud.google.com/logging/docs/view/advanced-filters) for more on using advanced filters.
 
@@ -234,5 +232,5 @@ Because the test device uses a non-secret key, you should delete it:
 gcloud iot devices delete log-tester --registry $REGISTRY_ID --region $CLOUD_REGION
 ```
 
-All of the resource in this tutorial cost nothing at rest, or scale to zero.  You can delete [Cloud Functions](https://console.cloud.google.com/functions/list), [Device Registry] (https://console.cloud.google.com/iot/registries/), and [PubSub topics](https://console.cloud.google.com/cloudpubsub/topicList) from the console.
+All of the resource in this tutorial cost nothing at rest, or scale to zero. You can delete [Cloud Functions](https://console.cloud.google.com/functions/list), [Device Registry](https://console.cloud.google.com/iot/registries/), and [PubSub topics](https://console.cloud.google.com/cloudpubsub/topicList) from the console.
 
