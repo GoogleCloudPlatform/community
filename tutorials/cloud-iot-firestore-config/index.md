@@ -51,25 +51,21 @@ If you do not already have a development environment set up with the [gcloud](ht
 
 Set the name of the Cloud IoT Core settings you are using as environment variables:
 
-```sh
-export REGISTRY_ID=config-demo
-export CLOUD_REGION=us-central1 # or change to an alternate region;
-export GCLOUD_PROJECT=$(gcloud config list project --format "value(core.project)")
-```
+
+	export REGISTRY_ID=config-demo
+	export CLOUD_REGION=us-central1 # or change to an alternate region;
+	export GCLOUD_PROJECT=$(gcloud config list project --format "value(core.project)")
+
 
 ## Create a Cloud IoT Core registry for this tutorial
 
 Create a PubSub topic to use for device logs:
 
-```sh
-gcloud pubsub topics create device-events
-```
+    gcloud pubsub topics create device-events
 
 Create the IoT Core registry:
 
-```sh
-gcloud iot registries create $REGISTRY_ID --region=$CLOUD_REGION --event-notification-config=subfolder="",topic=device-events
-```
+    gcloud iot registries create $REGISTRY_ID --region=$CLOUD_REGION --event-notification-config=subfolder="",topic=device-events
 
 ## Deploy the relay function
 
@@ -82,52 +78,46 @@ The document key is used as the corresponding device key.
 The main part of the function handles a Cloud PubSub message from IoT Core, extracts the log payload and device information, and then writes a structured log entry to Stackdriver Logging:
 
 [embedmd]:# (functions/src/index.ts /import/ $)
-```ts
-import cbor = require('cbor');
 
-import * as admin from "firebase-admin";
-import * as functions from 'firebase-functions';
-import { runInDebugContext } from 'vm';
-import { DeviceManager } from './devices';
+    import cbor = require('cbor');
 
-// create a device manager instance with a registry id, optionally pass a region
-const dm = new DeviceManager('config-demo');
+    import * as admin from "firebase-admin";
+    import * as functions from 'firebase-functions';
+    import { runInDebugContext } from 'vm';
+    import { DeviceManager } from './devices';
 
-// start cloud function
-exports.configUpdate = functions.firestore
-  // assumes a document whose ID is the same as the deviceid
-  .document('device-configs/{deviceId}')
-  .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
-    if (context) {
-      console.log(context.params.deviceId);
-      // get the new config data
-      const configData = change.after.data();
-      return dm.updateConfig(context.params.deviceId, configData);
-    } else {
-      throw(Error("no context from trigger"));
-    }
+    // create a device manager instance with a registry id, optionally pass a region
+    const dm = new DeviceManager('config-demo');
 
-  })
-```
+    // start cloud function
+    exports.configUpdate = functions.firestore
+      // assumes a document whose ID is the same as the deviceid
+      .document('device-configs/{deviceId}')
+      .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+        if (context) {
+          console.log(context.params.deviceId);
+          // get the new config data
+          const configData = change.after.data();
+          return dm.updateConfig(context.params.deviceId, configData);
+        } else {
+          throw(Error("no context from trigger"));
+        }
+
+      })
 
 To deploy the cloud function, you use the Firebase CLI tool:
 
-```sh
-cd functions
-npm install
-firebase use $GCLOUD_PROJECT
-firebase deploy --only functions
-```
+    cd functions
+    npm install
+    firebase use $GCLOUD_PROJECT
+    firebase deploy --only functions
 
 ## Create our device
 
 Create a dummy sample device:
 
-```sh
-cd ../sample-device
-
-gcloud iot devices create sample-device --region $CLOUD_REGION --registry $REGISTRY_ID --public-key path=./ec_public.pem,type=ES256
-```
+    cd ../sample-device
+    gcloud iot devices create sample-device --region $CLOUD_REGION --registry $REGISTRY_ID --public-key path=./ec_public.pem,type=ES256
 
 Note: Do not use this device for any real workloads, as the key-pair is included in this sample and therefore is not secret.
 
@@ -157,21 +147,16 @@ If the Function ran succesfully, you should be able to select and see the initia
 
 Start up the sample device now in your shell:
 
-```sh
 # still in the sample-device subfolder
 
-npm install
-
-node build/index.js
-```
+    npm install
+    node build/index.js
 
 You should see output that looks like:
 
-```sh
-Device Started
-Current Config: 
-{ energySave: false, mode: 'heating', tempSetting: 35 }
-```
+    Device Started
+    Current Config: 
+    { energySave: false, mode: 'heating', tempSetting: 35 }
 
 Now update the config document in the Firestore console to change the `tempSetting` value to 18.
 
@@ -181,10 +166,8 @@ When this document edit is saved, it triggers a function, which will push the ne
 
 You should see this new config arrive at the sample device in a moment.
 
-```sh
-Current Config: 
-{ energySave: false, mode: 'heating', tempSetting: 18 }
-```
+    Current Config: 
+    { energySave: false, mode: 'heating', tempSetting: 18 }
 
 To do this programatically with only the IoT Core APIs, you would have to read the current config from the IoT Core Device Manager, update the value, then write back the new config to IoT Core. IoT Core provides an incrementing version number you can send with these writes to check that another process has not concurrently attempted to update the config.
 
@@ -195,10 +178,8 @@ This solution assumes that the path using Firestore and functions are not sharin
 
 You can use the [query capabilities](https://firebase.google.com/docs/firestore/query-data/queries) of Firestore to find devices with specific configurations:
 
-```js
-var configs = db.collection('device-configs');
-var hotDevices = configs.where('tempSetting', '>', 40);
-```
+    var configs = db.collection('device-configs');
+    var hotDevices = configs.where('tempSetting', '>', 40);
 
 The above snippet is for Node.js, but see the [Firestore quickstart](https://firebase.google.com/docs/firestore/quickstart) for how to set up and query from a number of different runtimes.
 
@@ -216,71 +197,64 @@ For clarity, this tutorial implements this with a different function, and uses a
 Add the following function definition code to your `index.ts` source file so that it should look like the following:
 
 [embedmd]:# (functions/src/index.ts /import/ $)
-```ts
-import cbor = require('cbor');
 
-import * as admin from "firebase-admin";
-import * as functions from 'firebase-functions';
-import { runInDebugContext } from 'vm';
-import { DeviceManager } from './devices';
+    import cbor = require('cbor');
 
-// create a device manager instance with a registry id, optionally pass a region
-const dm = new DeviceManager('config-demo');
+    import * as admin from "firebase-admin";
+    import * as functions from 'firebase-functions';
+    import { runInDebugContext } from 'vm';
+    import { DeviceManager } from './devices';
 
-// start cloud function
-exports.configUpdate = functions.firestore
-  // assumes a document whose ID is the same as the deviceid
-  .document('device-configs/{deviceId}')
-  .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
-    if (context) {
-      console.log(context.params.deviceId);
-      // get the new config data
-      const configData = change.after.data();
-      return dm.updateConfig(context.params.deviceId, configData);
-    } else {
-      throw(Error("no context from trigger"));
-    }
+    // create a device manager instance with a registry id, optionally pass a region
+    const dm = new DeviceManager('config-demo');
 
-  })
+    // start cloud function
+    exports.configUpdate = functions.firestore
+      // assumes a document whose ID is the same as the deviceid
+      .document('device-configs/{deviceId}')
+      .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+        if (context) {
+          console.log(context.params.deviceId);
+          // get the new config data
+          const configData = change.after.data();
+          return dm.updateConfig(context.params.deviceId, configData);
+        } else {
+          throw(Error("no context from trigger"));
+        }
+
+      })
 
 
-  exports.configUpdateBinary = functions.firestore
-  // assumes a document whose ID is the same as the deviceid
-  .document('device-configs-binary/{deviceId}')
-  .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
-    if (context) {
-      console.log(context.params.deviceId);
-      // get the new config data
-      const configData = change.after.data();
-      const encoded = cbor.encode(configData);
+      exports.configUpdateBinary = functions.firestore
+      // assumes a document whose ID is the same as the deviceid
+      .document('device-configs-binary/{deviceId}')
+      .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+        if (context) {
+          console.log(context.params.deviceId);
+          // get the new config data
+          const configData = change.after.data();
+          const encoded = cbor.encode(configData);
 
-      return dm.updateConfigBinary(context.params.deviceId, encoded);
-    } else {
-      throw(Error("no context from trigger"));
-    }
+          return dm.updateConfigBinary(context.params.deviceId, encoded);
+        } else {
+          throw(Error("no context from trigger"));
+        }
 
-  })
-```
+      })
 
 You can deploy this new function with:
 
-```sh
-firebase deploy --only functions
-```
+  firebase deploy --only functions
 
 Press CTRL-C to stop the sample device script if it is still running, then create another sample device variation. This one will be named `sample-binary`:
 
-```sh
-gcloud iot devices create sample-binary --region $CLOUD_REGION --registry $REGISTRY_ID --public-key path=./ec_public.pem,type=ES256
-```
+  gcloud iot devices create sample-binary --region $CLOUD_REGION --registry $REGISTRY_ID --public-key path=./ec_public.pem,type=ES256
 
 Create another Firestore collection as you did above, but call it `device-configs-binary` and add a document for the `sample-binary` device.
 
 Now start the device with the `-b` flag to indicate we want to use the binary version of the sample device:
 
-```sh
-node build/index.js -b
-```
+  node build/index.js -b
 
 You can update the device config settings in Firestore, and you will see the decoded config printed on the screen. However the payload of the config is transmitted encoded as CBOR.
 
@@ -294,8 +268,5 @@ Stop the sample device by pressing CTRL-C.
 
 Because the test devices uses a visible key, you should delete it:
 
-```sh
-gcloud iot devices delete sample-device --registry $REGISTRY_ID --region $CLOUD_REGION
-gcloud iot devices delete sample-binary --registry $REGISTRY_ID --region $CLOUD_REGION
-```
-
+    gcloud iot devices delete sample-device --registry $REGISTRY_ID --region $CLOUD_REGION
+    gcloud iot devices delete sample-binary --registry $REGISTRY_ID --region $CLOUD_REGION
