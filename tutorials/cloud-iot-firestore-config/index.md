@@ -25,7 +25,7 @@ By using Cloud Firestore to serve as a layer in between the systems that update 
 
 
 **Figure 1.** *Architecture diagram for tutorial components*
-![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/architecture.png)
+![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-firestore-config/architecture.png)
 
 ## Before you begin
 
@@ -129,23 +129,21 @@ Open the [Firebase Console](https://console.firebase.google.com/).
 1. You will be prompted to add your first document, use "sample-device" for the Document Id.
 1. For the field, type, and value use the following:
 
-![config-doc](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/config-doc.png)
+![config-doc](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-firestore-config/config-doc.png)
 
 Note that the different fields in the config can have different data types.  Save this document.
 
 Now open the [Cloud IoT Core console](https://console.cloud.google.com/iot/locations/us-central1/registries/config-demo/devices/sample-device), choose the device and look at the `Configuration & state history` pane:
 
-![config-choose](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/choose-config.png)
+![config-choose](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-firestore-config/choose-config.png)
 
 If the Function ran succesfully, you should be able to select and see the initial configuration saved with the device.
 
-![initial config](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/initial-config.png)
+![initial config](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-firestore-config/initial-config.png)
 
 ## Modify the config
 
-Start up the sample device now in your shell:
-
-# still in the sample-device subfolder
+Start up the sample device now in your shell, still in the sample-device subfolder:
 
     npm install
     node build/index.js
@@ -160,7 +158,7 @@ Now update the config document in the Firestore console to change the `tempSetti
 
 When this document edit is saved, it triggers a function, which will push the new config down to the device:
 
-![field update](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/update.png)
+![field update](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-firestore-config/update.png)
 
 You should see this new config arrive at the sample device in a moment.
 
@@ -242,23 +240,23 @@ Add the following function definition code to your `index.ts` source file so tha
 
 You can deploy this new function with:
 
-  firebase deploy --only functions
+    firebase deploy --only functions
 
 Press CTRL-C to stop the sample device script if it is still running, then create another sample device variation. This one will be named `sample-binary`:
 
-  gcloud iot devices create sample-binary --region $CLOUD_REGION --registry $REGISTRY_ID --public-key path=./ec_public.pem,type=ES256
+    gcloud iot devices create sample-binary --region $CLOUD_REGION --registry $REGISTRY_ID --public-key path=./ec_public.pem,type=ES256
 
 Create another Firestore collection as you did above, but call it `device-configs-binary` and add a document for the `sample-binary` device.
 
 Now start the device with the `-b` flag to indicate we want to use the binary version of the sample device:
 
-  node build/index.js -b
+    node build/index.js -b
 
 You can update the device config settings in Firestore, and you will see the decoded config printed on the screen. However the payload of the config is transmitted encoded as CBOR.
 
 Note: When data is encoded as CBOR - you will not be able to see or edit this in the IoT-Core console, as it is in a compact encoded format that the console does not parse for display.
 
-![field update](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/cbor.png)
+![field update](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-firestore-config/cbor.png)
 
 ## Cleaning up
 
