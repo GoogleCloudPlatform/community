@@ -8,17 +8,17 @@ date_published: 2018-05-18
 
 # Google Cloud VPN Interop Guide
 
-Using Cloud VPN with <vendor name><product name>Learn how to build site-to-site IPSEC VPN between Cloud VPN and `<vendor name/>/<product name>`.
+Using Cloud VPN with &lt;vendor name&gt;&lt;product name&gt;Learn how to build site-to-site IPSEC VPN between Cloud VPN and &lt;vendor name&gt; &lt;product name&gt;.
 
-\<NOTE: Options or instructions are shown in angle brackets throughout this template. Change or remove these items as needed.\>
+&lt;NOTE: Options or instructions are shown in angle brackets throughout this template. Change or remove these items as needed.&gt;
 
-<Place vendor logo or equipment photo here>
+&lt;Place vendor logo or equipment photo here&gt;
 
-<Put trademark statements here>: <vendor terminology> and the <vendor> logo are trademarks of <vendor company name> or its affiliates in the United States and/or other countries.
+&lt;Put trademark statements here&gt;: &lt;vendor terminology&gt; and the &lt;vendor&gt; logo are trademarks of &lt;vendor company name&gt; or its affiliates in the United States and/or other countries.
 
 _Disclaimer: This interoperability guide is intended to be informational in nature and shows examples only. Customers should verify this information by testing it. _ 
 
-Author: <author name and email address>  
+Author: &lt;author name and email address&gt;  
 
 # Contents
 
@@ -30,9 +30,9 @@ Author: <author name and email address>
    - [Terminology](#terminology)
    - [Configuration overview](#configuration-overview)
       - [GCP-side configuration](#gcp-side-configuration)
-      - [/<vendor name/>/<vendor product/>-side configuration](#vendor-namevendor-product-side-configuration)]
+      - [&lt;vendor name &gt;&lt;vendor product&gt;-side configuration](#vendor-namevendor-product-side-configuration)
       - [Final steps](#final-steps)
-   - [Licenses and modules <if required>](#licenses-and-modules-if-required)
+   - [Licenses and modules &lt;if required&gt;](#licenses-and-modules-if-required)
    - [Configuration parameters and values](#configuration-parameters-and-values)
       - [GCP parameter reference](#gcp-parameter-reference)
       - [IPsec parameters](#ipsec-parameters)
@@ -43,7 +43,7 @@ Author: <author name and email address>
    - [IPsec VPN using "route based" static routing](#ipsec-vpn-using-"route-based"-static-routing)
       - [Using the Google Cloud Platform Console](#using-the-google-cloud-platform-console)
       - [Using the gcloud command-line tool](#using-the-gcloud-command-line-tool)
-- [<Vendor name><vendor product> configuration](#vendor-namevendor-product-configuration)
+- [&lt;Vendor name&gt;&lt;vendor product&gt; configuration](#vendor-namevendor-product-configuration)
    - [Creating the base network configuration](#creating-the-base-network-configuration)
    - [Creating the base VPN gateway configuration](#creating-the-base-vpn-gateway-configuration)
       - [Configure the IKEv2 proposal and policy](#configure-the-ikev2-proposal-and-policy)
@@ -59,32 +59,32 @@ Author: <author name and email address>
    - [Testing the configuration](#testing-the-configuration)
 - [Advanced VPN configurations](#advanced-vpn-configurations)
    - [Configuring VPN redundancy](#configuring-vpn-redundancy)
-      - [Configuring <product name> Dynamic route priority settings](#configuring-product-name-dynamic-route-priority-settings)
-      - [Configuring <product name> Static route metrics](#configuring-product-name-static-route-metrics)
+      - [Configuring &lt;product name&gt; Dynamic route priority settings](#configuring-product-name-dynamic-route-priority-settings)
+      - [Configuring &lt;product name&gt; Static route metrics](#configuring-product-name-static-route-metrics)
       - [Configuring GCP BGP route priority (optional)](#configuring-gcp-bgp-route-priority-optional)
       - [Configuring GCP Static route metrics (optional)](#configuring-gcp-static-route-metrics-optional)
-      - [Testing VPN Redundancy on <vendor name><device name>](#testing-vpn-redundancy-on-vendor-namedevice-name)
+      - [Testing VPN Redundancy on &lt;vendor name&gt;&lt;product name&gt;](#testing-vpn-redundancy-on-vendor-namedevice-name)
    - [Getting higher throughput](#getting-higher-throughput)
-      - [Configuring <vendor name><product name>](#configuring-vendor-nameproduct-name)
+      - [Configuring &lt;vendor name&gt;&lt;product name&gt;](#configuring-vendor-nameproduct-name)
       - [Configuring GCP](#configuring-gcp)
       - [Testing the higher-throughput configuration](#testing-the-higher-throughput-configuration)
-- [Troubleshooting IPsec on <vendor name><product name>](#troubleshooting-ipsec-on-vendor-nameproduct-name)
+- [Troubleshooting IPsec on &lt;vendor name&gt;&lt;product name&gt;](#troubleshooting-ipsec-on-vendor-nameproduct-name)
 - [Reference documentation](#reference-documentation)
-   - [<vendor name><product name> documentation](#vendor-nameproduct-name-documentation)
+   - [&lt;vendor name&gt;&lt;product name&gt; documentation](#vendor-nameproduct-name-documentation)
    - [GCP documentation](#gcp-documentation)
 
 # Introduction
 
-This guide walks you through the process of configuring the `<vendor name><product name>` for integration with the [Google Cloud VPN service](https://cloud.google.com/vpn/docs).  This information is provided as an example only. Please note that this guide is not meant to be a comprehensive overview of IPsec and assumes basic familiarity with the IPsec protocol.  
+This guide walks you through the process of configuring the &lt;vendor name&gt;&lt;product name&gt; for integration with the [Google Cloud VPN service](https://cloud.google.com/vpn/docs).  This information is provided as an example only. Please note that this guide is not meant to be a comprehensive overview of IPsec and assumes basic familiarity with the IPsec protocol.  
   
-If you are using this guide to configure your <product name> implementation, be sure to substitute the correct IP information for your environment.
+If you are using this guide to configure your &lt;product name&gt; implementation, be sure to substitute the correct IP information for your environment.
 
 For more information about Cloud VPN see [the Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).  
   
 ## Topology
 
 This guide describes two Cloud VPN topologies in the preferred order:   
-<If needed, describe how the topology operates here.>
+&lt;If needed, describe how the topology operates here.&gt;
 
 -  A site-to-site IPsec VPN tunnel configuration using Google Cloud Router and providing dynamic routing with the BGP protocol.
 -  A site-to-site Route based IPsec VPN tunnel configuration using static routes.
@@ -93,36 +93,36 @@ The topology of each VPN topology can be configured with no redundancy, or, as a
 
 ![image](googlecloudvpn--9gird3c1ka5.jpg)
 
-Cloud VPN to <Example: `<vendor name><product name>` VPN solution without redundancy 
+Cloud VPN to <Example: &lt;vendor name&gt;&lt;product name&gt; VPN solution without redundancy 
 
 ![image](googlecloudvpn--am22bv08xgj.jpg)
 
-Cloud VPN to <Example: `<vendor name><product name>` VPN solution with redundant Cloud VPN gateways 
+Cloud VPN to <Example: &lt;vendor name&gt;&lt;product name&gt; VPN solution with redundant Cloud VPN gateways 
 
 ![image](googlecloudvpn--lq8w2zqzrgd.jpg)
 
-Cloud VPN to <Example: `<vendor name><product name>` VPN solution with redundant   
+Cloud VPN to <Example: &lt;vendor name&gt;&lt;product name&gt; VPN solution with redundant   
 on premises gateways 
 
 ![image](googlecloudvpn--n88re2fjlu.jpg)
 
-Cloud VPN to <Example: `<vendor name><product name>` VPN solution with redundant   
+Cloud VPN to <Example: &lt;vendor name&gt;&lt;product name&gt; VPN solution with redundant   
 GCP and redundant on-premises gateways 
 
 # Product environment
 
-The `<vendor name><product name>` equipment used in this guide is as follows:  
+The &lt;vendor name&gt;&lt;product name&gt; equipment used in this guide is as follows:  
 
--  Vendor: <vendor name>
--  Model: <model name>
--  Software Release: <full software release name>
+-  Vendor: &lt;vendor name&gt;
+-  Model: &lt;model name&gt;
+-  Software Release: &lt;full software release name&gt;
 
-<This section is optional, as some vendors might only have one platform>  
+&lt;This section is optional, as some vendors might only have one platform&gt;  
 Although the steps in this guide use  <model name>, this guide also applies to the following <product name> platforms:
 
--  <vendor model 1>
--  <vendor model 2>
--  <vendor model 3>
+-  &lt;vendor model 1&gt;
+-  &lt;vendor model 2&gt;
+-  &lt;vendor model 3&gt;
 
 # Before you begin
 
@@ -132,20 +132,20 @@ Follow the steps in this section to prepare for VPN configuration.
 
 Below are definitions of common terms used throughout this guide.
 
-<Below is some sample terminology. Add additional terminology that needs explanation in this section.>
+&lt;Below is some sample terminology. Add additional terminology that needs explanation in this section.&gt;
 
 -  **GCP VPC network** – A single virtual network within a single GCP project.
 -  **On-premises gateway, tunnel endpoint, or IP addresses** – The VPN device on the non-GCP side of the connection, which is usually a device in a physical data center or other cloud provider's network. GCP instructions are written from the point of view of the GCP VPC network, so the "on-premises gateway" is the gateway connecting to GCP.
 -  **GCP peer address** –  A single static IP address within a GCP project that exists at the edge of the GCP network. Also known as a Cloud IP address.
 -  **Static routing** – Manually specifying the route to subnets on the GCP-side and the on-premises side of the VPN gateway.
 -  **Dynamic routing** – GCP Dynamic routing for VPN using the BGP protocol
--  `<vendor name><product name>` term
--  `<vendor name><product name>` term
+-  &lt;vendor name&gt;&lt;product name&gt; term
+-  &lt;vendor name&gt;&lt;product name&gt; term
 
 ## Configuration overview
 
 The following is a high level overview of the configuration process covered in this guide:  
-<Modify this sample overview and remove the steps that don't apply to the configuration for this VPN device or service.>
+&lt;Modify this sample overview and remove the steps that don't apply to the configuration for this VPN device or service.&gt;
 
 ### GCP-side configuration
 
@@ -159,11 +159,11 @@ The following is a high level overview of the configuration process covered in t
 
 1. For static routing repeat the steps above except, in the tunnel configuration panel under Routing options, choose **route based** and configure the Remote network IP ranges for the on-premises network.
 
-### <vendor name><vendor product>-side configuration
+### &lt;vendor name&gt;&lt;product name&gt;-side configuration
 
-1. Configure the base <vendor name><vendor product> network configuration to establish L3 connectivity.
-1. Configure the <vendor name><vendor product> VPN Gateway.
-1. Set up the Base <vendor name><vendor product> VPN configuration <which may include the following steps>:
+1. Configure the base &lt;vendor name&gt;&lt;product name&gt; network configuration to establish L3 connectivity.
+1. Configure the &lt;vendor name&gt;&lt;product name&gt; VPN Gateway.
+1. Set up the Base &lt;vendor name&gt;&lt;product name&gt; VPN configuration &lt;which may include the following steps&gt:
    1. Configure IKEv2 Proposal and Policy.
    1. Configure IKEv2 keyring.
    1. Configure IKEv2 profile.
@@ -178,19 +178,19 @@ The following is a high level overview of the configuration process covered in t
 1. Test the IPsec connection through the VPN tunnel(s).
 1. Set up Advanced VPN configurations.
 
-## Licenses and modules <if required>
+## Licenses and modules &lt;if required&gt;
 
-<This section is optional, as some VPN vendors can be open source or cloud providers that don't require licensing>
+&lt;This section is optional, as some VPN vendors can be open source or cloud providers that don't require licensing&gt;
 
-The first step in configuring your `<vendor name><product name>` for use with the Google Cloud VPN service is to make sure that the following licenses are available:  
+The first step in configuring your &lt;vendor name&gt;&lt;product name&gt; for use with the Google Cloud VPN service is to make sure that the following licenses are available:  
   
-<Below are some examples. Replace with information that applies to the product.>
+&lt;Below are some examples. Replace with information that applies to the product.&gt;
 
 -  Advanced Enterprise Services(SLASR1-AES) or Advanced IP Services Technology Package License (SLASR1-AIS  
 -  IPsec RTU license (FLASR1-IPsec-RTU)
 -  Encryption HW module (ASR1002HX-IPsecHW(=) and ASR1001HX-IPsecW(=)) and Tiered Crypto throughput license which applies to ASR1002-HX and ASR1001-HX chassis only.  
   
-For a detailed <vendor name><product name> license information, refer to the  <Vendor Guide link>.
+For a detailed &lt;vendor name&gt;&lt;product name&gt; license information, refer to the &lt;Vendor Guide link&gt;.
 
 ## Configuration parameters and values
 
@@ -316,7 +316,7 @@ vpn-scale-test-tunnel1
 </pre></p>
 
 </td>
-<td>The name for the first VPN tunnel for <code>vpn-scale-test-<vendor-name>-gw-1</code></td>
+<td>The name for the first VPN tunnel for <code>vpn-scale-test-&lt;vendor-name&gt;-gw-1</code></td>
 </tr>
 <tr>
 <td>Forwarding rule</td>
@@ -350,9 +350,9 @@ fr-udp4500
 
 ### IPsec parameters
 
-<vendor name><product name> supports the following IPsec parameters and ciphers for configuring the VPN gateways and tunnels as described in this document._  _For Cloud VPN, see the detailed list of [GCP-supported IKEv2 and IKEv1 ciphers](https://cloud.google.com/vpn/docs/concepts/advanced#supported_ike_ciphers).
+&lt;vendor name&gt;&lt;product name&gt; supports the following IPsec parameters and ciphers for configuring the VPN gateways and tunnels as described in this document._  _For Cloud VPN, see the detailed list of [GCP-supported IKEv2 and IKEv1 ciphers](https://cloud.google.com/vpn/docs/concepts/advanced#supported_ike_ciphers).
 
-<This is a sample table. Use supported parameters and values>
+&lt;This is a sample table. Use supported parameters and values&gt;
 
 <table>
 <thead>
@@ -426,7 +426,7 @@ There are two ways to create VPN gateways on GCP, using the Google Cloud Platfor
 
 ## IPsec VPN using dynamic routing with the BGP protocol
 
-For dynamic routing you use [Cloud Router](https://cloud.google.com/router/docs/concepts/overview)) to establish BGP sessions between GCP and the on-premises <vendor name><vendor product> equipment.
+For dynamic routing you use [Cloud Router](https://cloud.google.com/router/docs/concepts/overview)) to establish BGP sessions between GCP and the on-premises &lt;vendor name&gt;&lt;product name&gt; equipment.
 
 ### Using the Cloud Platform Console
 
@@ -640,7 +640,7 @@ This section covers the steps for creating a GCP IPsec VPN using static routing.
         --region us-east1 --range 172.16.100.0/24
 ```
 
-1. Create a VPN gateway in the desired region. Normally, this is the region that contains the instances you wish to reach. This step creates an unconfigured VPN gateway named `vpn-scale-test-<vendor-name>-gw-1` in your GCP VPC network.  
+1. Create a VPN gateway in the desired region. Normally, this is the region that contains the instances you wish to reach. This step creates an unconfigured VPN gateway named `vpn-scale-test-&lt;vendor-name&gt;-gw-1` in your GCP VPC network.  
   
 ` gcloud compute --project vpn-guide target-vpn-gateways create vpn-scale-test-<vendor-name>-gw-1 \  
    --network vpn-vendor-test-network --region us-east1`
@@ -709,15 +709,15 @@ This section covers the steps for creating a GCP IPsec VPN using static routing.
 `  --network vpn-vendor-test-network \  
   --allow tcp,udp,icmp --source-ranges 10.0.0.0/8`  
 
-# <Vendor name><vendor product> configuration
+# &lt;vendor name&gt;&lt;product name&gt; configuration
 
-<Below are some sample tasks to configure the on-premises side of the VPN gateway configuration using <vendor name> equipment.>
+&lt;Below are some sample tasks to configure the on-premises side of the VPN gateway configuration using &lt;vendor name&gt; equipment.&gt;
 
-<For an example of how to fill in the instructions and parameters, see the [Cisco ASR1000 section ](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#configuration--cisco-asr-1000)of  [the VPN Interop guide for Cisco ASR](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#top_of_page). For each set of instructions, explain what purpose the configuration setting serves.> 
+&lt;For an example of how to fill in the instructions and parameters, see the [Cisco ASR1000 section ](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#configuration--cisco-asr-1000)of  [the VPN Interop guide for Cisco ASR](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#top_of_page). For each set of instructions, explain what purpose the configuration setting serves.&gt; 
 
 ## Creating the base network configuration
 
-Follow this procedure to create the base Layer 3 network configuration of <vendor name>. 
+Follow this procedure to create the base Layer 3 network configuration of &lt;vendor name&gt;. 
 
 -  At least one internal-facing network interface is required to connect to your on-premises network, and one external-facing interface is required to connect to GCP. 
 -  A sample interface configuration is provided below  
@@ -730,30 +730,30 @@ for reference:
 Follow this multi-step procedure to create the base VPN configuration. 
 ```
 
-<Eliminate any steps that are not required by the `<vendor name><product name>` device.>    
+&lt;Eliminate any steps that are not required by the &lt;vendor name&gt;&lt;product name&gt; device.&gt;    
 
 ### Configure the IKEv2 proposal and policy
 
-<Insert the instructions for creating the IKEv2 proposal and policy here. Below are some examples of IKE algorithms to specify as part of the instructions.>
+&lt;Insert the instructions for creating the IKEv2 proposal and policy here. Below are some examples of IKE algorithms to specify as part of the instructions.&gt;
 
--  **Encryption algorithm** – <list required algorithms here>
--  **Integrity algorithm** – <list required algorithms here>
--  **Diffie-Hellman group **– <list required group here>
+-  **Encryption algorithm** – &lt;list required algorithms here&gt;
+-  **Integrity algorithm** – &lt;list required algorithms here&gt;
+-  **Diffie-Hellman group **– &lt;list required group here&gt;
 ```
 <insert configuration code snippet here>
 ### Configure the IKEv2 keyring
 
-<Insert the instructions for creating the IKEv2 keyring here.>
+<Insert the instructions for creating the IKEv2 keyring here>
 
 <insert configuration code snippet here>
 ```
 
 ### Configure the IKEv2 profile
 
-<Insert the instructions for creating the IKEv2 profile here. Below are some examples of parameters to set.>  
+&lt;Insert the instructions for creating the IKEv2 profile here. Below are some examples of parameters to set.&gt;  
 
--  `IKEv2 Lifetime` - Set the lifetime of the security associations, after which a reconnection occurs. Set to 36,000 seconds as recommended configuration on a <product name> router.
--  `DPD`** **– Set the dead peer detection interval and retry interval, if there are no response from the peer, the SA created for that peer is deleted. Set to 60 seconds keepalive interval and 5 seconds retry interval as recommended configuration on a <product name>router.  
+-  `IKEv2 Lifetime` - Set the lifetime of the security associations, after which a reconnection occurs. Set to 36,000 seconds as recommended configuration on a &lt;product name&gt; router.
+-  `DPD`** **– Set the dead peer detection interval and retry interval, if there are no response from the peer, the SA created for that peer is deleted. Set to 60 seconds keepalive interval and 5 seconds retry interval as recommended configuration on a &lt;product name&gt; router.  
 
 ```
 <insert configuration code snippet here>
@@ -771,18 +771,18 @@ Follow this multi-step procedure to create the base VPN configuration.
 <Insert the instructions for creating the IPsec transform set here.>
 ```
 
-`<insert configuration code snippet here>`  
+&lt;insert configuration code snippet here&gt;  
 
 ### Configure the IPsec profile
 
-<Insert the instructions for creating the IPsec profile here. Below are some examples of parameters to set.>  
+&lt;Insert the instructions for creating the IPsec profile here. Below are some examples of parameters to set.&gt;  
 
 -  Perfect Forward Secrecy (PFS) - PFS ensures that the same key will not be generated again, so forces a new diffie-hellman key exchange. Set to group16 as recommended configuration on ASR 1000 router.
 -  SA Lifetime - set the lifetime of the security associations (after which a  
   reconnection will occur). Set to `3600 seconds` as recommended configuration  
   on ASR 1000 router.
 ```
-<insert configuration code snippet here>
+<Insert configuration code snippet here>
 ### Configure the IPsec static virtual tunnel interface (SVTI)
 
 <Insert the instructions for creating the IPsec SVTI here. Below are some examples of parameters to set.>
@@ -796,11 +796,11 @@ router. The recommended value is 1360 when the number of IP MTU bytes is set to
 <insert configuration code snippet here>
 ## Configuring the dynamic routing protocol (preferred)
 
-To configure dynamic routing of traffic through the VPN tunnel(s) using the BGP routing protocol.  <Insert the instructions for configuring dynamic routing here. Below are some examples of parameters to set.>
+To configure dynamic routing of traffic through the VPN tunnel(s) using the BGP routing protocol.  &lt;Insert the instructions for configuring dynamic routing here. Below are some examples of parameters to set.&gt;
 
 BGP timers are adjusted to provide more rapid detection of outages.
 
-To advertise additional prefixes to GCP, <insert instructions here>.
+To advertise additional prefixes to GCP, &lt;insert instructions here&gt;.
 
 <insert configuration code snippet here>
 ```
@@ -809,12 +809,12 @@ To advertise additional prefixes to GCP, <insert instructions here>.
 
 To configure static routing of traffic toward the GCP network through the VPN tunnel interface, enter the following command. Check [GCP Best Practices](https://cloud.google.com/router/docs/resources/best-practices) for further recommendations regarding on-premises routing configurations.
 ```
-<insert configuration code snippet here>
+<Insert configuration code snippet here>
 ## Saving the configuration
 
 <Insert the instructions for saving the configuration here>.
 
-<insert configuration code snippet here>
+<Insert configuration code snippet here>
 ```
 
 ## Testing the configuration
@@ -823,10 +823,10 @@ It's important to test the VPN connection from both sides of a VPN tunnel. For e
 
 First, create virtual machines (VM) on both sides of the tunnel.  Make sure to configure the VMs on a subnet that will pass traffic through the VPN tunnel.
 
--  Instructions for creating virtual machine for `<vendor name><product name>` platforms are located <here>.
+-  Instructions for creating virtual machine for &lt;vendor name&gt;&lt;product name&gt; platforms are located &lt;here&gt;.
 -  Instructions for creating virtual machines in Google Compute Engine are located in the [Getting Started Guide](https://cloud.google.com/compute/docs/quickstart).
 
-Once virtual machines have been deployed on both GCP and `<vendor name><product name>` platforms, an ICMP echo ("ping") test can ensure network connectivity through a VPN tunnel.
+Once virtual machines have been deployed on both GCP and &lt;vendor name&gt;&lt;product name&gt; platforms, an ICMP echo ("ping") test can ensure network connectivity through a VPN tunnel.
 
 On the GCP side, you can SSH into a virtual machine (VM) instance and test the connection to another machine behind the on-premises gateway. 
 
@@ -835,7 +835,7 @@ On the GCP side, you can SSH into a virtual machine (VM) instance and test the c
 1. A browser window opens at the VM's command line.
 1. Ping a machine behind the on-premises gateway to test connectivity through the VPN tunnel from the GCP side.
 
-<Insert any additional instructions for testing the VPN tunnels from the <vendor name><product name> here. For example, below is an example of a successful ping from a Cisco ASR router to GCP.>  
+&lt;Insert any additional instructions for testing the VPN tunnels from the &lt;vendor name&gt;&lt;product name&gt; here. For example, below is an example of a successful ping from a Cisco ASR router to GCP.&gt;  
   
    ` cisco-asr#ping 172.16.100.2 source 10.0.200.1  
    Type escape sequence to abort.  
@@ -850,31 +850,31 @@ This section covers configuring redundant on-premises VPN gatetways and how to g
 
 ## Configuring VPN redundancy
 
-<insert a link to the <vendor name><product name> reference guide for configuring redundancy on the vendor product.>  
+&lt;insert a link to the <vendor name><product name> reference guide for configuring redundancy on the vendor product.&gt;  
   
 Using redundant on-premises VPN gateways ensures continuous availability when a tunnel fails.  
   
 If a Cloud VPN tunnel fails, it restarts automatically. If an entire virtual VPN gateway device fails, Cloud VPN automatically creates a new one with the same configuration. The new gateway and tunnel connect automatically.  However, for the most robust redundancy, configuring 2 Cloud VPN gateways in different regions is recommended.
 
-For hardware appliances such as `<vendor name><product name>`, for redundancy purposes, you should deploy 2 <product name> devices and create VPN tunnels to GCP from each device.  
+For hardware appliances such as &lt;vendor name&gt;&lt;product name&gt;, for redundancy purposes, you should deploy 2 &lt;product name&gt; devices and create VPN tunnels to GCP from each device.  
   
 The VPN redundancy configuration example is built based on the Dynamic Routing with  
 BGP configuration described previously.
 
-### Configuring <product name> Dynamic route priority settings
+### Configuring &lt;product name&gt; Dynamic route priority settings
 
-<Insert the instructions for configuring BGP route priority settings on the `<vendor name><product name>` device here. Indicated whether the preferred route is a higher or lower priority number>.
+&lt;Insert the instructions for configuring BGP route priority settings on the &lt;vendor name&gt;&lt;product name&gt; device here. Indicated whether the preferred route is a higher or lower priority number&gt;.
 ```
-<insert configuration code snippet showing the existing BGP route configuration here>
+<Insert configuration code snippet showing the existing BGP route configuration here>
 
 <Insert the instructions for configuring BGP Multi-exit Discriminator (MED) values on the <vendor name><product name> device or service here>.
 
-<insert configuration code snippet showing BGP MED values here>
+<insert configuration code snippet showing BGP MED values here>.
 ### Configuring <product name> Static route metrics
 
 <Insert the instructions for configuring static route on the <vendor name><product name> device or service here. State whether the metric for the preferred route is a higher or lower number>.
 
-<insert configuration code snippet here>
+<Insert configuration code snippet here>
 ```
 
 ### Configuring GCP BGP route priority (optional)
@@ -905,9 +905,9 @@ When using static routing, GCP gives you an option to customize route priority i
   --priority=2000
 ```
 
-### Testing VPN Redundancy on <vendor name><device name>
+### Testing VPN Redundancy on &lt;vendor name&gt;&lt;product name&gt;
 
-<Insert the instructions for testing VPN redundancy on the `<vendor name><product name>`  device here. Below is example testing output. Replace it with the output for the `<vendor name><product name>` device.>
+&lt;Insert the instructions for testing VPN redundancy on the &lt;vendor name&gt;&lt;product name&gt; device here. Below is example testing output. Replace it with the output for the &lt;vendor name&gt;&lt;product name&gt; device.&gt;
 ```
 cisco-asr#sh ip bgp 172.16.100.0
     BGP routing table entry for 172.16.100.0/24, version 690
@@ -935,6 +935,7 @@ cisco-asr#sh ip bgp 172.16.100.0
     cisco-asr#sh ip cef 172.16.100.0
     172.16.100.0/24
       nexthop 169.254.0.1 Tunnel1
+
 ## Getting higher throughput
 
 As documented in GCP VPN Advanced Configurations, each Cloud VPN tunnel can support up to 3 Gbps when the tunnel traffic traverses a direct peering link, or 1.5 Gbps when the tunnel traffic the public Internet. 
@@ -943,11 +944,11 @@ As documented in GCP VPN Advanced Configurations, each Cloud VPN tunnel can supp
 To increase the VPN throughput, the recommendation is to add multiple Cloud VPN gateways in the same region to load balance the traffic across the tunnels. The 2 VPN tunnels configuration example here is based on the IPsec tunnel and BGP configuration described above,  
 and can be expanded to more tunnels if required.
 
-### Configuring <vendor name><product name>
+### Configuring &lt;vendor name&gt;&lt;product name&gt;
 
-<Describe how `<vendor name><product name>`  handles tunnel prioritization. For example, using ECMP. Also describe how many equal cost paths the device can handle.>  
+&lt;Describe how &lt;vendor name&gt;&lt;product name&gt; handles tunnel prioritization. For example, using ECMP. Also describe how many equal cost paths the device can handle.&gt;  
   
-`<insert configuration code snippet for existing code here>`
+&lt;insert configuration code snippet for existing code here&gt;`
 
 ### Configuring GCP
 
@@ -965,9 +966,10 @@ Actual tunnel throughput can vary depending on the following factors:
 
 The IPsec tunnel can be tested from the on-premises VPN device by using ICMP to ping a Virtual Machine (VM) host on GCP. 
 
-<Add details here about how to initiate a ping from `<vendor name><product name>` similar to those mentioned previously >.
+<Add details here about how to initiate a ping from <vendor name><product name> similar to those mentioned previously>.
 ```
-<insert ping output from on-premises device here>
+<Insert ping output from on-premises device here>
+
 # Troubleshooting IPsec on <vendor name><product name>
 
 For troubleshooting information, refer to the <vendor name><product name> troubleshooting guide <add link>.
@@ -977,21 +979,21 @@ For troubleshooting information, refer to the <vendor name><product name> troubl
 
 # Reference documentation
 
-You can refer to the following `<vendor name><product name> `documentation and Cloud VPN documentation for additional information about both products.
+You can refer to the following &lt;vendor name&gt;&lt;product name&gt; documentation and Cloud VPN documentation for additional information about both products.
 
-## <vendor name><product name> documentation
+## &lt;vendor name&gt;&lt;product name&gt; documentation
 
-For more product information on `<vendor name><product name>` , refer to the following <product name> feature configuration guides and datasheets:  
+For more product information on &lt;vendor name&gt;&lt;product name&gt; , refer to the following &lt;product name&gt; feature configuration guides and datasheets:  
 
--  <guide name>
--  <guide name>
--  <guide name>
+-  &lt;guide name&gt;
+-  &lt;guide name&gt;
+-  &lt;guide name&gt;
 
-For common `<vendor name><product name>`  error messages and debug commands, refer to the following guides:  
+For common &lt;vendor name&gt;&lt;product name&gt; error messages and debug commands, refer to the following guides:  
 
--  <guide name>
--  <guide name>
--  <guide name>
+-  &lt;guide name&gt;
+-  &lt;guide name&gt;
+-  &lt;guide name&gt;
 
 ## GCP documentation
 
