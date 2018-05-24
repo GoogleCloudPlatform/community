@@ -11,7 +11,7 @@ your application using [Google Cloud SQL](https://cloud.google.com/sql) and
 [ProxySQL](http://proxysql.com).
 
 Google Cloud SQL is a fully-managed database service that makes it easy to set
-up, maintain, manage, and administer your relational PostgreSQL (BETA) and MySQL
+up, maintain, manage, and administer your relational PostgreSQL and MySQL
 databases in the cloud. Cloud SQL offers high performance, scalability, and
 convenience. Hosted on Google Cloud Platform, Cloud SQL provides a database
 infrastructure for applications running anywhere.
