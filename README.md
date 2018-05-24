@@ -15,7 +15,7 @@ Found out how you can contribute at
 
 * [Browse tutorials][tutorials]
 * [Request a tutorial][request]
-* [Submit a tutorial][write] (beta)
+* [Submit a tutorial][write]
 
 ## License
 
