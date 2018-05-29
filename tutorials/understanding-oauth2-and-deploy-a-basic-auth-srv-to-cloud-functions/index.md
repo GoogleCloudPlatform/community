@@ -7,7 +7,7 @@ tags: OAuth 2.0, Node.js, Cloud Functions, Cloud Datastore
 date_published:
 ---
 
-This tutorial explains the basics of OAuth 2.0 and how to deploy an OAuth2 authorization service in [Node.js](https://nodejs.org/en/) to [Google Cloud Functions](https://cloud.google.com/functions/).
+This tutorial explains the basics of OAuth 2.0 and how to deploy an OAuth2 authorization service in [Node.js](https://nodejs.org/en/) to [Google Cloud Functions](https://cloud.google.com/functions/). For a general overview of OAuth 2.0, see [Understanding OAuth2 and Building a Basic Authorization Server of Your Own: A Beginner’s Guide](https://medium.com/@ratrosy/understanding-oauth2-and-building-a-basic-authorization-server-of-your-own-a-beginners-guide-cf7451a16f66).
 
 Google Cloud Functions is an event-driven serverless compute platform. It offers one of the simplest ways to run code in the cloud and provides developers with automatic scaling, high availability and fault tolerance. As a part of the computing solutions on Google Cloud Platform, your Cloud Functions can easily integrate with other Google Cloud services.
 
