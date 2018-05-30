@@ -1,6 +1,6 @@
 ---
 title: Using IoT Core as scalable ingest for hybrid projects
-description: Use the scale and security of Google Cloud for ingest with on prem IoT applications
+description: Use the scale and security of Google Cloud for ingest with on prem IoT applications.
 author: ptone
 tags: Cloud IoT Core, Hybrid, Networking
 date_published: 2018-05-30
