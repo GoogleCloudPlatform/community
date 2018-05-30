@@ -464,7 +464,7 @@ Before performing the tasks in this section, select the GCP project name in the 
 1. Make sure to use the same Google Cloud Platform project that you used when creating the VPC network and subnets.
 1. Click **Create VPN connection**.
 1. **Populate the following fields for the gateway:**
-   -  **Name** — The name of the VPN gateway. This name is displayed in the console and used in by the gcloud tool to reference the gateway. Use `vpn-scale-test-<vendor-name>-gw-1`.
+   -  **Name** — The name of the VPN gateway. This name is displayed in the console and used in by the gcloud tool to reference the gateway. Use `vpn-scale-test-&lt;vendor-name&gt;-gw-1`.
    -  **Network** — The VPC network containing the instances the VPN gateway will serve. Use `vpn-vendor-test-network`.
    -  **Region** — The region where you want to locate the VPN gateway. Normally, this is the region that contains the instances you wish to reach. Use `us-east1`.
    -  **IP address** — Select the pre-existing [static external IP address](https://cloud.google.com/compute/docs/ip-addresses#reservedaddress), `vpn-scale-test-static-ip`, that you created for this gateway in the previous section.
@@ -476,7 +476,7 @@ Before performing the tasks in this section, select the GCP project name in the 
    -  **Shared secret** — Character string used in establishing encryption for that tunnel. You must enter the same shared secret into both VPN gateways. If the VPN gateway device on the on-premises side of the tunnel doesn't generate one automatically, you can make one up.
    -  **Routing options** —  Select **Dynamic (BGP)**.
       -  **Cloud router** — Select **Create cloud router**, then populate the following fields. When you are done, click **Save and continue**.
-      -  **Name** — The name of the Cloud Router. This name is displayed in the console and used by the `gcloud` command-line tool to reference the router. Example: `vpn-scale-test-<vendor-name>-rtr.
+      -  **Name** — The name of the Cloud Router. This name is displayed in the console and used by the `gcloud` command-line tool to reference the router. Example: `vpn-scale-test-&lt;vendor-name&gt;-rtr.
 `      -  **Google ASN** — The [private ASN](https://tools.ietf.org/html/rfc6996) (64512- 65534, 4200000000 - 4294967294) for the router you are configuring. It can be any private ASN you are not already using. Example: `65002.`
       -  **BGP session** — Click the pencil icon, then populate the following fields. When you are done, click **Save and continue**.
       -  **Name** — `bgp-peer1`.
