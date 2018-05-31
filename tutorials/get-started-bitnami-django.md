@@ -19,30 +19,30 @@ This tutorial demonstrates how to create and deploy a basic "hello world" Django
 
 Before starting this tutorial, ensure that you have set up a Google Cloud Platform project. You can use an existing project or [create a new project](https://console.cloud.google.com/project).
 
-## Costs
+## Cost
 
-The default configuration allows you to run a low-traffic Web application powered by Django using an `f1-micro` instance with a standard 10 GB persistent disk. You can customize the configuration when deploying this solution or later, although the default configuration is fine for the purposes of this tutorial.
+The default configuration allows you to run a low-traffic Web application powered by Django using an `f1-micro` instance with a standard 10 GB persistent disk. You can customize the configuration when deploying this solution or change it later, although the default configuration is fine for the purposes of this tutorial.
 
 Estimated cost for the above default configuration is $4.28 per month, based on 30-day, 24 hours per day usage in the Central US region. Sustained use discount is included.
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected usage. New Google Cloud customers may be eligible for a [free trial](https://cloud.google.com/free-trial).
 
-## Install Bitnami Django on a Google Compute Engine instance
+## Deploy Bitnami Django on a Google Compute Engine instance
 
-In this section, you will deploy Bitnami Django on a Google Compute Engine instance.
+Deploy Bitnami Django on a Google Compute Engine instance:
 
 1. From the Google Cloud Platform menu, select the [Cloud Launcher](https://console.cloud.google.com/launcher).
 1. Search for "django certified by bitnami" and select the resulting `Django Certified by Bitnami` template.
-1. Review the information and costs. Click `Launch on Compute Engine` to proceed.
+1. Review the information and cost. Click `Launch on Compute Engine` to proceed.
 1. Review the default zone, machine type, boot disk size and other parameters and modify as needed. Ensure that the `Allow HTTP traffic` and `Allow HTTPS traffic` boxes are checked in the firewall configuration. Click `Deploy` to proceed with the deployment.
 
-The Cloud Launcher deploys Bitnami Django on a new Google Compute Engine instance. You will be able to monitor the progress of the deployment from the [Deployment Manager](https://console.cloud.google.com/dm/deployments). Once deployed, note the public IP address of the instance and the password for the MySQL and PostgreSQL databases.
+The Cloud Launcher deploys Bitnami Django on a new Google Compute Engine instance. You can monitor the progress of the deployment from the [Deployment Manager](https://console.cloud.google.com/dm/deployments). Once deployed, note the public IP address of the instance and the password for the MySQL and PostgreSQL databases.
 
 ## Create a "hello world" Django application
 
-In this section, you will log in to the deployed instance and create a simple Django application.
+Login to the deployed instance and create a simple Django application:
 
-1. From the [Deployment Manager](https://console.cloud.google.com/dm/deployments), click the `SSH` button to log in to the instance over SSH.
+1. From the [Deployment Manager](https://console.cloud.google.com/dm/deployments), click the `SSH` button to login to the instance over SSH.
 1. Once logged in, switch to the `bitnami` user account:
 
         sudo su - bitnami
@@ -87,7 +87,7 @@ In this section, you will log in to the deployed instance and create a simple Dj
 
 ## Serve the application with Apache
 
-Bitnami Django includes a pre-configured instance of the Apache Web server. In this section, you will configure Apache to serve the application on the standard Web server port 80.
+Bitnami Django includes a pre-configured instance of the Apache Web server. Configure Apache to serve the application on the standard Web server port 80:
 
 1. Edit the WSGI application script file at `/opt/bitnami/apps/django/django_projects/myproject/myproject/wsgi.py` and modify it to look like this:
 
@@ -187,7 +187,7 @@ After you have finished this tutorial, you can remove the resources you created 
 
 ### Deleting the project
 
-Visit the [Resource Manager](https://console.cloud.google.com/cloud-resource-manager). Select the project you used for this tutorial and click `Delete`. Once deleted, you will not be able to reuse the project ID.
+Visit the [Resource Manager](https://console.cloud.google.com/cloud-resource-manager). Select the project you used for this tutorial and click `Delete`. Once deleted, you cannot reuse the project ID.
 
 ### Deleting individual resources
 
