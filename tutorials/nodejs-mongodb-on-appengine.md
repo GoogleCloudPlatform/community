@@ -28,6 +28,7 @@ Platform.
 There are multiple options for creating a new MongoDB database. For example:
 
 - Create a Google Compute Engine virtual machine with [MongoDB pre-installed](/launcher/?q=mongodb).
+- Create a MongoDB instance with [MongoDB Atlas on GCP](https://www.mongodb.com/cloud/atlas/mongodb-google-cloud).
 - Use [mLab](https://mlab.com/google/) to create a free MongoDB deployment on Google Cloud Platform.
 
 ## Prepare the app
