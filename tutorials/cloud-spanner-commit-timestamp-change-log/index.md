@@ -49,7 +49,7 @@ using the Spanner page in the GCP console:
 1.  Enter the Database name as **sample-db** and click  the **Continue** button.
 1.  Click the **Edit as text** option to activate it and enter the SQL statement above as the DDL statement:
 
-![Spanner: Create Database](spanner-create-documents-table.png)
+![Spanner: Create Database](https://storage.googleapis.com/gcp-community/tutorials/cloud-spanner-commit-timestamp-change-log/spanner-create-documents-table.png)
 
 When inserting records, use a method like the following Go sample code to
 insert a timestamp in the commit timestamp column. This code snippet inserts the
@@ -105,7 +105,7 @@ You can run this SQL Statement to query the **DocumentsWithTimestamp**
 table from the [**Cloud Spanner**](https://console.cloud.google.com/spanner) page in the GCP Console:
 
 
-![Spanner Query Documents Table](spanner-query-documents-table.png)
+![Spanner Query Documents Table](https://storage.googleapis.com/gcp-community/tutorials/cloud-spanner-commit-timestamp-change-log/spanner-query-documents-table.png)
 
 ## Create a companion History table when you create your table
 
@@ -243,7 +243,7 @@ You can run this SQL Statement to query the **Documents** and **DocumentHistory*
 tables from the [**Cloud Spanner**](https://console.cloud.google.com/spanner) page in the GCP Console:
 
 
-![Spanner Query Documents Table](spanner-query-document-history-table.png)
+![Spanner Query Documents Table](https://storage.googleapis.com/gcp-community/tutorials/cloud-spanner-commit-timestamp-change-log/spanner-query-document-history-table.png)
 
 
 ## Next Steps
