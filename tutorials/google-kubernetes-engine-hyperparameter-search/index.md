@@ -1,22 +1,22 @@
 ---
-title: Hyperparameter Search with Google Kubernetes Engine
-description: Learn how to run Scikit-Learn's SearchCV hyperparameter search on Google Kubernetes Enfine.
+title: Hyperparameter Search with Kubernetes Engine
+description: Learn how to run Scikit-Learn's SearchCV hyperparameter search on Kubernetes Engine.
 author: dizcology
-tags: Google Kubernetes Engine, Machine Learning, Scikit-Learn
+tags: Kubernetes Engine, Machine Learning, Scikit-Learn
 date_published: 
 ---
 This tutorial takes a deeper look at the [sample notebook][gke_randomized_search].
-It illustrates how to run parallelized hyperparameter search for Scikit-Learn models on [Google Kubernetes Engine][gke].
+It illustrates how to run parallelized hyperparameter search for Scikit-Learn models on [Kubernetes Engine][gke].
 
 ## Objectives
 
-1.  Build a docker image with [Google Container Registry][gcr].
-1.  Create a cluster on [Google Kubernetes Engine][gke].
+1.  Build a docker image with [Container Registry][gcr].
+1.  Create a cluster on [Kubernetes Engine][gke].
 1.  Fit a [RandomizedSearchCV][randomizedsearchcv] object on the cluster.
 
 ## Before you begin
 
-Follow the links in the [Requirements section][requirements] to enable the APIs for Google Container Registry, Google Kubernetes Engine, and Google Cloud Storage.
+Follow the links in the [Requirements section][requirements] to enable the APIs for Container Registry, Kubernetes Engine, and Cloud Storage.
 
 Follow the steps in the [Before you start section][beforeyoustart] to install dependencies.
 
@@ -28,7 +28,7 @@ Hyperparameter search is one of the time consuming part of fitting a machine lea
 
 - The wrappers such as [RandomizedSearchCV][randomizedsearchcv] that handle hyperparameter search also have their `n_jobs` argument running separate model fitting jobs on multiple subprocesses in parallel.
 
-Running fitting jobs in parallel speeds up the search, but could require a lot of computational resources.  The [sample notebook][gke_randomized_search] provides a workflow that allows you to set up hyperparameter search experiments on your computer but sends the actual workload to a cluster on Google Kubernetes Engine.  The advantage of doing this include:
+Running fitting jobs in parallel speeds up the search, but could require a lot of computational resources.  The [sample notebook][gke_randomized_search] provides a workflow that allows you to set up hyperparameter search experiments on your computer but sends the actual workload to a cluster on Kubernetes Engine.  The advantage of doing this include:
 
 - You can continue to use your laptop/workstation for other work while waiting for the results.
 
@@ -40,7 +40,7 @@ To accomplish this, we will create a `SearchCV` object in the notebook, upload a
 
 ### Overview of the workflow
 
-The sample is designed to keep most of the workflow in a Jupyter notebook and to feel very similar to a typical experimentation workflow.  To run a scikit-learn hyperparameter search job locally on your laptop you might run something like this (snippets from [sample notebook][gke_randomized_search]):
+The sample is designed to keep most of the workflow in a Jupyter notebook and to feel very similar to a typical experimentation workflow.  To run a scikit-learn hyperparameter search job locally on your laptop, you might run something like this (snippets from [sample notebook][gke_randomized_search]):
 
 ```python
 rfc = RandomForestClassifier(n_jobs=-1)
@@ -53,7 +53,7 @@ search = RandomizedSearchCV(estimator=rfc, param_distributions=param_distributio
 
 And follow it with a `search.fit(X, y)` call.  
 
-With the helper modules included in this sample, you can send the computation workload to Kubernetes engine by wrapping the `SearchCV` object and call its `fit` method:
+With the helper modules included in this sample, you can send the computation workload to Kubernetes Engine by wrapping the `SearchCV` object and call its `fit` method:
 
 ```python
 from gke_parallel import GKEParallel
@@ -62,7 +62,7 @@ gke_search = GKEParallel(search, project_id, zone, cluster_id, bucket_name, imag
 gke_search.fit(X, y)
 ```
 
-(There are additional steps of creating a docker image and a cluster that we need to run before calling `gke_search.fit`.)
+(For the purposes of this overview, we skipped a few additional steps for creating a docker image and a cluster that we need to run before calling `gke_search.fit`.)
 
 While the job is running on the cluster, you can monitor its progress with
 
@@ -82,13 +82,13 @@ And use it as you normally would a `SearchCV` object:
 prediction = gke_search.predict(X_test)
 ```
 
-You can follow the steps in the [sample notebook][gke_randomized_search] to run a hyperparameter search fitting job on Google Kubernetes Engine.
+You can follow the steps in the [sample notebook][gke_randomized_search] to run a hyperparameter search fitting job on Kubernetes Engine.
 
 The sample code comes with some [helper modules][helper] to keep the workflow in the notebook by handling various upload/download tasks.  Below we look at some key pieces of the helper modules to better understand how they work.
 
 ### [`cloudbuild_helper.py`][cloudbuild_helper.py]
 
-To run the hyperparameter search job on a Kubernetes Engine cluster, we need to package the code in a docker image.  For the purpose of this sample you can think of a docker image as a piece of executable code that is already bundled with its dependencies, and can be run anywhere.
+To run the hyperparameter search job on a Kubernetes Engine cluster, we need to package the code in a docker image.  For the purpose of this sample, you can think of a docker image as a piece of executable code that is already bundled with its dependencies, and can be run anywhere.
 
 We use a service provided by Cloud Registry to build and register the docker image we need.
 
@@ -186,7 +186,7 @@ Some `oauth_scopes` are required in order for the cluster to interact with Cloud
 
 ### [`kubernetes_helper.py`][kubernetes_helper.py]
 
-The execution of the code we packaged as a docker image on a cluster, we need to submit a `job` to the cluster.  We use Kubernetes's client library for that.
+To execute the code we packaged as a docker image on a cluster, we need to submit a `job` to the cluster. We use Kubernetes's client library for that.
 
 ```python
 # kubernetes_helper.py
@@ -228,7 +228,7 @@ body = {
 
 In addition to the parallelization offered by scikit-learn objects through the `n_jobs` arguments, a `GKEParallel` object deploys one `job` to every available node in the cluster.  
 
-In the case of a `RandomizedSearchCV` job, these different jobs simply try different hyperparameters according to the same distribution.  In the cases of `GridSearchCV` or `BayesSearchCV` the sample code implements simple logic to split up the parameter grids or parameter spaces so that different jobs will explore different parts of the hyperparameter space.
+In the case of a `RandomizedSearchCV` job, these different jobs simply try different hyperparameters according to the same distribution.  In the cases of `GridSearchCV` or `BayesSearchCV`, the sample code implements simple logic to split up the parameter grids or parameter spaces so that different jobs will explore different parts of the hyperparameter space.
 
 
 ### What's next
