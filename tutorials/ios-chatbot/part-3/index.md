@@ -15,19 +15,19 @@ In [Part 1] and [Part 2] of this series, we showed you how to build a conversati
 
 In [Part 1], we discussed the app's input and output context relationships. 
 
-![alt_text](conversational-app-p3-3.png "Contexts without the Assistant")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-3/conversational-app-p3-3.png "Contexts without the Assistant")
 
 The `where` context requires the user to upload an image, which is not supported by the Google Assistant. We can modify the context relationship as below. 
 
 
 
-![alt_text](conversational-app-p3-8.png "Contexts with the Assistant")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-3/conversational-app-p3-8.png "Contexts with the Assistant")
 
 
 We will add three new intents, `hours-no-context, ticket-no-context` and `map-no-context`. Each intent will set `location` as the output context so that other intents can use the _location_ as an input parameter.
 
 
-![alt_text](conversational-app-p3-5.png "Contexts Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-3/conversational-app-p3-5.png "Contexts Screenshot")
 
 
 ### Enable Actions on Google Integration
@@ -37,7 +37,7 @@ Now we'll enable Actions on Google to support the Google Assistant.
 1. Open your API.AI console. Under the **Integrations** Tab, turn on the _Actions on Google_ integration.
 
 
-![alt_text](conversational-app-p3-1.png "Enable Actions on Google Integration")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-3/conversational-app-p3-1.png "Enable Actions on Google Integration")
 
 
 2. In the popup dialog under _Additional triggering intents_, add all intents  you want to support on the Google Assistant. The system will automatically set the _Welcome Intent_ to _Default Welcome Intent_. You can also click _SETTINGS_ under Actions on Google to bring up this settings dialog in the future. Note that the _inquiry.where_ intent requires uploading an image and won't work on the Google Assistant, so you should not  add that intent to the triggering intents list. We discussed how to add a new intent to support that in [New Intent for Actions on Google](#heading=actions) section.
@@ -45,26 +45,26 @@ Now we'll enable Actions on Google to support the Google Assistant.
 3. After you're done adding all the intents that we want to support on Google on Actions (e.g `hours-no-context` intent) to the _additional triggering intents_ list, hit _UPDATE DRAFT_ button on the bottom. It will generate a green box. Tap the _VIEW_ button to go to the Actions on Google Web Simulator.
 
 
-![alt_text](conversational-app-p3-4.png "Actions on Google Intents")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-3/conversational-app-p3-4.png "Actions on Google Intents")
 
 
 If this is your first time on Actions on Google console, it will prompt you to turn on <code>Device Information<em> </em></code>and <em>V<code>oice & Audio Activity</code></em> on your <code>Activity controls</code> center. 
 
 
-![alt_text](conversational-app-p3-2.png "Actions on Google Simulator")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-3/conversational-app-p3-2.png "Actions on Google Simulator")
 
 
 By default these settings are off. If you already turn them on, you won't see the prompt.
 
 
 
-![alt_text](conversational-app-p3-7.png "Device Information and Voice & Audio Activity Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-3/conversational-app-p3-7.png "Device Information and Voice & Audio Activity Screenshot")
 
 
 4. Go back to the simulator after turning on these two settings. Now we are ready to test the integration on the simulator! Start by typing or saying "Talk to my test app". The simulator will respond with the texts from the _Default Welcome Intent_. Afterward, you can test the app as if you were in the API.AI test console.
 
 
-![alt_text](conversational-app-p3-9.png "Actions on Google Test Console")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-3/conversational-app-p3-9.png "Actions on Google Test Console")
 
 
 **Difference between tell() and ask() APIs**
