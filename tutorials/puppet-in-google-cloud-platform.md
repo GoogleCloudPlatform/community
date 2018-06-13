@@ -77,7 +77,7 @@ You can also do a single sign by
 
 ## Write a simple webserver module and Manifest that will install Apache2 and write hello world page
 
-1. In the puppet-master, go to folder /etc/puppetlabs/code/environments/production/manifests/ and make a manifest file site.pp as
+1. On the puppet-master instance, navigate to the folder /etc/puppetlabs/code/environments/production/manifests/, make a manifest file named site.pp, and copy the following code into it:
 
         node /agent/{
           include webserver
