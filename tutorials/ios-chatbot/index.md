@@ -17,8 +17,6 @@ The three parts will focus on the following topics:
 
 Part 1
 
-
-
 *   Overview
 *   Architecture
 *   API.AI intents
@@ -43,7 +41,7 @@ Part 1
 ## Architecture
 
 
-![alt_text](chatbots-8.png "Architecture")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/chatbots-8.png "Architecture")
 
 
 ## Using API.AI
@@ -59,7 +57,7 @@ The first step is to create a **Tour Guide Agent**.
 ### Create Intents
 
 
-![alt_text](chatbots-3.png "Create Intents Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/chatbots-3.png "Create Intents Screenshot")
 
 To engage users in a conversation, we first need to understand what users are saying to the agent, and we do that with intents and entities. Intents map what your users say to what your conversational experience should do. Entities extract parameter values from user queries.
 
@@ -67,7 +65,7 @@ Each intent contains a set of examples of user input and the desired automated r
 
 The next step after that is to add some more text responses. 
 
-![Default Welcome Intent Screenshot](chatbots-6.png "Default Welcome Intent Screenshot")
+![Default Welcome Intent Screenshot](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/chatbots-6.png "Default Welcome Intent Screenshot")
 
 
 Next, it's time to work on contexts.
@@ -103,7 +101,7 @@ The next thing to do is to weave intents and contexts together. For our example,
 
 
 
-![alt_text](chatbots-7.png "Contexts Relationship")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/chatbots-7.png "Contexts Relationship")
 
 
 
@@ -121,12 +119,12 @@ Here are the steps to generate these intents and contexts:
 
 
 1.  Create `where` intent and add `where` output context. This is the root in the context tree and has no input context.
-![alt_text](chatbots-2.png "Contexts Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/chatbots-2.png "Contexts Screenshot")
 1.  Create `location` intent. 
 	1. Add `where` input context. 
 	1. Reset `where` output context and add `location` output context. 
 Note: In our tour guide app, the input context of `location` is `where`. When the `location` intent is detected, the `where` context needs to be reset so that any subsequent conversation won't trigger this context again. This is done by setting the lifespan of the output context `where` to 0 request. By default, a context has a lifespan of 5 requests or 10 minutes.
-![alt_text](chatbots-5.png "Location Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/chatbots-5.png "Location Screenshot")
 1. Create `ticket` intent. 
 	1. Add `location` input context. 
 	1. Add `location` output `context` so that `hours` and `map` intents can continue to use the `location` context as input context.
@@ -134,7 +132,7 @@ Note: In our tour guide app, the input context of `location` is `where`. When th
 You can pass the parameter from the input context with the format of `#context.parameter`; e.g., pass the location string from intent `inquiry-where-location` to `inquiry.where.location.ticket` in the format `#inquiry-where-location.location.`
 
 
-![alt_text](chatbots-1.png "Ticket Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/chatbots-1.png "Ticket Screenshot")
 
 
 Finally, create `hours` and `map` intents similar to `ticket` intent.
