@@ -3,7 +3,7 @@ title: Set up a Puppet Master Agent Configuration in Compute Engine
 description: Learn how to configure Compute Engine instances as a Puppet master and agent, and use a manifest deploy an application from the master to the agent.
 author: ksakib
 tags: Puppet, Google Cloud, Compute Engine, Puppet Master, Puppet Agent
-date_published: 2018-02-11
+date_published: 2018-06-11
 ---
 
 ## Objectives
