@@ -3,7 +3,7 @@ title: Hyperparameter Search with Kubernetes Engine
 description: Learn how to run Scikit-Learn's SearchCV hyperparameter search on Kubernetes Engine.
 author: dizcology
 tags: Kubernetes Engine, Machine Learning, Scikit-Learn
-date_published: 
+date_published: 2018-06-13
 ---
 This tutorial takes a deeper look at the [sample notebook][gke_randomized_search].
 It illustrates how to run parallelized hyperparameter search for Scikit-Learn models on [Kubernetes Engine][gke].
