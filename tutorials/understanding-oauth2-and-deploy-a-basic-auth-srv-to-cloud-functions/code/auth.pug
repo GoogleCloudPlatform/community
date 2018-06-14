@@ -1,0 +1,22 @@
+doctype html
+html(lang="en")
+  head
+  title Granting Access
+  body
+  h3 #{client_id} is requesting access to your account.
+  p.
+    Sign in to grant #{client_id} access.
+  form(action='https://us-central1-testbed-195403.cloudfunctions.net/signin', method='POST')
+    p.
+      Username 
+    input(type='text' name='username')
+    p.
+      Password 
+    input(type='password' name='password')
+    input(type='hidden' name='client_id' value=client_id)
+    input(type='hidden' name='redirect_url' value=redirect_url)
+    input(type='hidden' name='response_type' value=response_type)
+    input(type='submit' name='submit')
+    if code_challenge
+      input(type='hidden' name='code_challenge' value=code_challenge)
+      input(type='hidden' name='code_challenge_method' value=code_challenge_method)
