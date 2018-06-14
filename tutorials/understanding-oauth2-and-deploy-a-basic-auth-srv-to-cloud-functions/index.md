@@ -119,7 +119,7 @@ This tutorial deploys a basic authorization server supporting all of the four fl
 
 #### Authorization Code
 
-![AC](ac.png)
+![AC](https://storage.googleapis.com/gcp-community/tutorials/understanding-oauth2-and-deploy-a-basic-auth-srv-to-cloud-functions/ac.png)
 
 The Authorization Code flow includes the following steps:
 
@@ -138,7 +138,7 @@ Authorization Code flow requires that clients be able to interact with a user ag
 
 #### Resource Owner Password Credentials
 
-![ROPC](ropc.png)
+![ROPC](https://storage.googleapis.com/gcp-community/tutorials/understanding-oauth2-and-deploy-a-basic-auth-srv-to-cloud-functions/ropc.png)
 
 The Resource Owner Password Credentials flow includes the following steps:
 
@@ -152,13 +152,13 @@ Resource Owner Password Credentials flow requires that clients be highly trustwo
 
 Implicit flow, as said earlier, is designed for single-page Javascript apps. This flow is vastly similar to the Authorization Code flow, except for the part involving authorization code. Due to security concerns, in this flow the client no longer receives an authorization code from the authorization server; instead, after the user agent successfully transfers credentials, the authorization server returns access tokens directly to the client. Refresh tokens are not allowed in the Implicit flow.
 
-![Implicit](im.png)
+![Implicit](https://storage.googleapis.com/gcp-community/tutorials/understanding-oauth2-and-deploy-a-basic-auth-srv-to-cloud-functions/im.png)
 
 #### Client Credentials
 
 Client Credentials flow, on the other hand, is closer to the Resource Owner Password Credentials flow. Clients in this flow use client IDs and secrets to identify themselves, and exchange them for access tokens with the authorization server. You should not use refresh tokens in this flow either.
 
-![CC](cc.png)
+![CC](https://storage.googleapis.com/gcp-community/tutorials/understanding-oauth2-and-deploy-a-basic-auth-srv-to-cloud-functions/cc.png)
 
 ### JWT
 
@@ -182,7 +182,7 @@ OAuth 2.0 requires that clients register with the authorization server beforehan
 
 ## Understanding the Architecture
 
-![Architecture](oauth_cf.png)
+![Architecture](https://storage.googleapis.com/gcp-community/tutorials/understanding-oauth2-and-deploy-a-basic-auth-srv-to-cloud-functions/oauth_cf.png)
 
 This tutorial deploys 3 Cloud Functions. The `token` function is responsible for issuing access tokens while the `auth` function and the `signin` function work together to grant authorization codes. More specifically,
 
@@ -525,7 +525,7 @@ function handleImplicitAuthRequest (req, res) {
 
 ### `signin` Function
 
-The signin function receives user credentials and redirects user back to the client with an authorization code (or an access token, in the case of Implicit flow):
+The `signin` function receives user credentials and redirects user back to the client with an authorization code (or an access token, in the case of Implicit flow):
 
 ```
 exports.signin = (req, res) => {
