@@ -1,5 +1,5 @@
 ---
-title: Using IoT Core as scalable ingest for hybrid projects
+title: Using IoT Core as Scalable Ingest for Hybrid Projects
 description: Use the scale and security of Google Cloud for ingest with on prem IoT applications.
 author: ptone
 tags: Cloud IoT Core, Hybrid, Networking
@@ -8,12 +8,12 @@ date_published: 2018-05-30
 
 Preston Holmes | Solution Architect | Google
 
-This tutorial demonstrates how to use [Cloud IoT Core](https://cloud.google.com/iot) and [Cloud PubSub](https://cloud.google.com/pubsub/) to provide a secure and scalable ingest layer, combined with a small relay service over private networking to an on-prem IoT solution.
+This tutorial demonstrates how to use [Cloud IoT Core](https://cloud.google.com/iot) and [Cloud Pub/Sub](https://cloud.google.com/pubsub/) to provide a secure and scalable ingest layer, combined with a small relay service over private networking to an on-prem IoT solution.
 
 ## Objectives
 
 - Configure IoT Core and Pubsub as a fully managed ingest system
-- Configure a stand-in for on-prem MQTT service on compute engine
+- Configure a stand-in for on-prem MQTT service on Compute Engine
 - Create a small, scalable relay service that pulls messages from Cloud Pubsub
 
 **Figure 1.** *Architecture diagram for tutorial components*
@@ -22,7 +22,7 @@ This tutorial demonstrates how to use [Cloud IoT Core](https://cloud.google.com/
 
 ## Before you begin
 
-This tutorial assumes you already have a Cloud Platform account set up and have completed the IoT Core [quickstart](https://cloud.google.com/iot/docs/quickstart).
+This tutorial assumes you already have a Google Cloud Platform account set up and have completed the IoT Core [quickstart](https://cloud.google.com/iot/docs/quickstart).
 
 
 ## Costs
@@ -30,33 +30,33 @@ This tutorial assumes you already have a Cloud Platform account set up and have 
 This tutorial uses billable components of GCP, including:
 
 - Cloud IoT Core
-- Cloud PubSub
-- Cloud Compute Engine
+- Cloud Pub/Sub
+- Compute Engine
 
 This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), but you can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected production usage.
 
 ## Introduction
 
-The idea of using fully managed scaling services is common for developers looking to distribute content. A Content delivery network ([CDN](https://en.wikipedia.org/wiki/Content_delivery_network)) is often used to provide scale between the content origin, and many globally distributed consumers.
+The idea of using fully managed scaling services is common for developers looking to distribute content. A content delivery network ([CDN](https://en.wikipedia.org/wiki/Content_delivery_network)) is often used to provide scale between the content origin, and many globally distributed consumers.
 
 **Figure 2.** *CDN pattern*
 ![architecture diagram](images/CDN.png)
 
-Many IoT related projects begin with a simple MQTT broker created inside on-prem corporate infrastructure. This may be a relatively simple installation running internally.  Applications may use data arriving on this broker, along with access to other on-prem systems to build business facing IoT applications. There are many reasons why a company may prefer to pursue hybrid development. These may relate to costs, data access controls, etc.
+Many IoT related projects begin with a simple MQTT broker created inside premises (on-prem) corporate infrastructure to simplify installation while still allowing internal access. Internal apps use data arriving on this broker, along with access to other on-prem systems to build business facing IoT applications. There are many reasons why a company may prefer to pursue hybrid development. For example, hybrid development may make it easier to assess or control costs, can control data access, and so on.
 
 Taking this initial MQTT broker and exposing it externally to production scales of device traffic may pose many challenges to a strictly on-prem development, including:
 
- - increasing reliability of the network available to devices
- - allowing many devices to connect concurrently (MQTT is a stateful connection)
- - keeping the MQTT broker up and running reliably 
- - keeping the connection between devices and the cloud secure, while not exposing other on-prem network services
+ - Increasing reliability of the network available to devices.
+ - Allowing many devices to connect concurrently (MQTT is a stateful connection).
+ - Keeping the MQTT broker up and running reliably.
+ - Keeping the connection between devices and the cloud secure, while not exposing other on-prem network services.
 
  These requirements resemble that of a CDN, but in reverse.
 
 **Figure 3.** *Global Ingest*
 ![architecture diagram](images/ingest-relay.png) 
 
-Lets quickly set up a sketch implementation of a solution that uses Google's fully managed services and scale to address some of these concerns, while allowing the primary application to still be developed on-prem.
+Let's quickly setup up an implementation of a solution that uses Google's fully managed services and scale it to address some of these concerns while allowing the primary application to still be developed on-prem.
 
 ## Set up the environment
 
@@ -65,11 +65,22 @@ If you do not already have a development environment set up with [gcloud](https:
 Set the name of the Cloud IoT Core settings you are using to environment variables:
 
 ```sh
-export REGISTRY_ID=<your registry here>
 export CLOUD_REGION=us-central1
 export CLOUD_ZONE=us-central1-c
 export GCLOUD_PROJECT=$(gcloud config list project --format "value(core.project)")
-export IOT_TOPIC=<the pubsub topic you have set up with your IoT Core registry>
+export IOT_TOPIC=<the Cloud Pub/Sub topic id you have set up with your IoT Core registry this is just short id, not full path)>
+```
+
+While Cloud Shell has the golang runtime pre-installed, we will need a couple other libraries, install them with:
+
+```sh
+go get cloud.google.com/go/pubsub cloud.google.com/go/compute/metadata github.com/eclipse/paho.mqtt.golang
+```
+
+Finally clone the repo associated with the community tutorials:
+
+```sh
+git clone https://github.com/GoogleCloudPlatform/community.git
 ```
 
 ## Create the "on-prem" broker
@@ -81,7 +92,7 @@ Start by creating a VM to represent the on prem broker instance. This will be ru
 
 ```sh
 gcloud beta compute instances create-with-container on-prem-rabbit \
---zone=us-central1-c \
+--zone=$CLOUD_ZONE \
 --machine-type=g1-small \
 --boot-disk-size=10GB \
 --boot-disk-type=pd-standard \
@@ -92,7 +103,7 @@ gcloud beta compute instances create-with-container on-prem-rabbit \
 --container-env=RABBITMQ_DEFAULT_USER=user,RABBITMQ_DEFAULT_PASS=abc123
 ```
 
-For the purpose of this tutorial, you want to be able to quickly demonstrate some of the hybrid nature of this pattern and so are going to expose this VM to the internet, but you will only relay data to it over the instance private IP address, which simulates the private network link in the above architecture diagram.
+For the purpose of this tutorial, you want to be able to quickly demonstrate some of the hybrid nature of this pattern. As such, you are going to expose this VM to the internet but will only relay data to it over the instance private IP address, simulating the private network link in the above architecture diagram.
 
 To allow you to connect to this broker to verify traffic flow, allow connections to it with a firewall rule:
 
@@ -103,7 +114,7 @@ gcloud compute firewall-rules create mqtt --direction=INGRESS --priority=1000 --
 
 ## Set up the relay
 
-In order for the relay to receive message from IoT Core and Pubsub, it will need a dedicated subscription:
+In order for the relay to receive message from IoT Core and Pub/Sub, it will need a dedicated subscription:
 
 ```sh
 gcloud pubsub subscriptions create relay --topic $IOT_TOPIC
@@ -183,26 +194,28 @@ func main() {
 }
 ```
 
-The goal of the relay is to efficiently pull messages from pubsub, and then re-publish to the on-prem MQTT broker. It takes advantage of [asynchronous pull](https://cloud.google.com/pubsub/docs/pull#asynchronous-pull) of Cloud Pubsub (sometimes called streaming pull) which uses [streaming gRPC](https://grpc.io/docs/guides/concepts.html#server-streaming-rpc) messages to reduce latency and increase throughput.
+The goal of the relay is to efficiently pull messages from Cloud Pub/Sub, and then re-publish to the on-prem MQTT broker. It takes advantage of [asynchronous pull](https://cloud.google.com/pubsub/docs/pull#asynchronous-pull) of Cloud Pubsub (sometimes called streaming pull) which uses [streaming gRPC](https://grpc.io/docs/guides/concepts.html#server-streaming-rpc) messages to reduce latency and increase throughput.
 
 Create a VM to run as the relay:
 
 ```sh
 gcloud compute instances create telemetry-relay \
---zone=us-central1-c \
+--zone=$CLOUD_ZONE \
 --machine-type=g1-small
 ```
 
 To build the relay:
 
 ```sh
-cd go-relay
+cd community/tutorials/cloud-iot-hybrid/go-relay
 bash install.sh
 ```
 
-This script will build the binary, install it on the relay vm, and start it as a relay service.
+_Note: if you have not used ssh from Cloud Shell, you may be prompted to create a local SSH key._
 
-## Verifying Traffic Flow
+This script will build the binary, install it on the relay VM, and start it as a relay service.
+
+## Verifying traffic flow
 
 You can now use an MQTT client to connect to the stand-in for the on-prem broker. This would represent some part of the on-prem IoT application. One simple browser based tool you can use in Chrome is [MQTTLens](https://chrome.google.com/webstore/detail/mqttlens/hemojaaeigabkbcookmlgmdigohjobjm?hl=en).
 
@@ -210,26 +223,26 @@ Use the public IP address of the `on-prem-rabbit` instance, along with a usernam
 
 Create a subscription to an MQTT topic of `sample`.
 
-Now you can use one of the [IoT Core quickstart samples](https://cloud.google.com/iot/docs/quickstart) to send test messages to the topic of 
+Now you can use one of the [IoT Core quickstart samples](https://cloud.google.com/iot/docs/quickstart) to send test messages to the topic of: 
 
 `/devices/${deviceId}/events/sample`
 
-You can also quickly emulate this by publishing directly to the pubsub topic directly with a `subFolder` attribute.
+You can also quickly emulate this by publishing directly to the Cloud Pub/Sub topic directly with a `subFolder` attribute.
 
 ```sh
 gcloud pubsub topics publish $IOT_TOPIC --attribute=subFolder=sample --message "hello"
 ```
 
-The relay republishes this to the corresponding MQTT topic on the on-prem broker over the private network, in this case using the project-level private network DNS to lookup `on-prem-rabbit` host.
+The relay republishes this to the corresponding MQTT topic on the on-prem broker over the private network, in this case using the project-level private network DNS to lookup `on-prem-rabbit` host. (refer to the architecture figure above for a refresher of the data flow)
 
-## Next Steps
+## Next steps
 
 This relay service could be adapted in a number of ways:
 
-- scaled out to consume more messages in parallel from pubsub - perhaps deployed to [Kubernetes Engine](https://cloud.google.com/kubernetes-engine/)
-- use rate limiting to protect the on-prem broker from overload, using the pubsub subscription as a "surge tank"
+- Scaled out to consume more messages in parallel from PubSub - perhaps deployed to [Kubernetes Engine](https://cloud.google.com/kubernetes-engine/).
+- Use rate limiting to protect the on-prem broker from overload, using the PubSub subscription as a "surge tank".
 
-You might also consider having the relay pulling from Pubsub and writing more directly to alternate services on-prem, instead of through an on-prem MQTT broker. However by relaying MQTT - it lets the on-prem development proceed if MQTT was already built into the solution, or if a looser coupling is wanted.
+You might also consider having the relay pulling from Pubsub and writing more directly to alternate services on-prem, instead of through an on-prem MQTT broker. However by relaying MQTT, it lets the on-prem development proceed if MQTT was already built into the solution, or if a looser coupling is wanted.
 
 
 ## Cleaning up
