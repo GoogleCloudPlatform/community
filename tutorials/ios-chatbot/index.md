@@ -148,5 +148,5 @@ You can download the [source code](https://github.com/google/ios-chatbot) from g
 
 ###### Author [Chang Luo](https://www.linkedin.com/in/changluo)
 
-[Part 2]: part-2/index.md
-[Part 3]: part-3/index.md
+[Part 2]: https://cloud.google.com/community/tutorials/ios-chatbot-part-2/
+[Part 3]: https://cloud.google.com/community/tutorials/ios-chatbot-part-3/
