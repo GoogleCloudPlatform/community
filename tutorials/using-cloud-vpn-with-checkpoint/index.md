@@ -43,8 +43,9 @@ To use a Check Point security gateway with Cloud VPN make sure the following pre
 ## IPsec parameters
 
 The following parameters and values are used in the Gateway’s IPSec configuration for the
-purpose of this guide. Cloud VPN supports extensive [list](https://cloud.google.com/vpn/docs/concepts/advanced#supported_ike_ciphers) of
-ciphers that can be used per your security policies.
+purpose of this guide. Cloud VPN supports extensive
+[list](https://cloud.google.com/vpn/docs/concepts/supported-ike-ciphers)
+of ciphers that can be used per your security policies.
 
 |Parameter | Value|
 --------- |  -----
