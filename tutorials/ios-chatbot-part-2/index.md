@@ -20,20 +20,20 @@ In API.AI, [webhook](https://docs.api.ai/docs/webhook) integrations allow you to
 1. Once you've created a new project, navigate to that project.
 
 1. Enable the Cloud Functions API.
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-2/conversational-app-8.png "Enable Billing Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-2/conversational-app-8.png "Enable Billing Screenshot")
 1. Create a function. For the purposes of this guide, we'll call the function "parades". 
 
 1. Select the "HTTP" trigger option, then select "inline" editor.
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-2/conversational-app-10.png "Cloud Function Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-2/conversational-app-10.png "Cloud Function Screenshot")
 Don't forget to specify the function to execute to "parades".
 1. You'll also need to create a "stage bucket". Click on "browse" —  you'll see the browser, but no buckets will exist yet.
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-2/conversational-app-4.png "Bucket Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-2/conversational-app-4.png "Bucket Screenshot")
     1. Click on the "+" button to create the bucket. 
     1. Specify a unique name for the bucket (you can use your project name, for instance), select "regional" storage, and keep the default region (us-central1).
     1.  Click back on the "select" button in the previous window.
     1.  Click the "create" button to create the function.
 The function will be created and deployed:
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-2/conversational-app-5.png "Cloud Function Deploy Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-2/conversational-app-5.png "Cloud Function Deploy Screenshot")
 1. Click the "parades" function line. In the **Source** tab, you'll see the sources.
 
 Now it's time to code our function! We'll need two files: the `index.js` file will contain the JavaScript / Node.JS logic, and the `package.json` file contains the Node package definition, including the dependencies we'll need in our function.
@@ -84,13 +84,13 @@ There is a subtle difference between <code>[tell()](https://developers.google.co
 As shown below, the **Testing** tab invokes your function, the **General** tab shows statistics, and the **Trigger** tab reveals the HTTP URL created for your function:
 
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-2/conversational-app-7.png "Cloud Function Trigger Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-2/conversational-app-7.png "Cloud Function Trigger Screenshot")
 
 
 Your final step is to go to the API.AI console, then click the **Fulfillment** tab. Enable webhook and paste the URL above into the URL field.
 
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-2/conversational-app-3.png "Fullfill Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-2/conversational-app-3.png "Fullfill Screenshot")
 
 With API.AI, we've built a chatbot that can converse with a human by text. Next, let's give the bot "ears" to listen with Cloud Speech API, "eyes" to see with Cloud Vision API, a "mouth" to talk with the iOS text-to-speech SDK, and "brains" for translating languages with Cloud Translation API.
 
@@ -179,13 +179,13 @@ On the API.AI side, you'll need to create a new agent and [set its language to C
 
 
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-2/conversational-app-6.png "Chinese Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-2/conversational-app-6.png "Chinese Screenshot")
 
 
 You'll also need to create all intents and entities in Chinese.
 
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot/part-2/conversational-app-12.png "Chinese Screenshot")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-2/conversational-app-12.png "Chinese Screenshot")
 
 
 
@@ -207,6 +207,6 @@ We hope this example has demonstrated how simple it is to build an app powered b
 
 You can download the [source code](https://github.com/google/ios-chatbot) from Github.
 
-In [Part 3](../part-3/index.md), we'll cover how to build this app on the Google Assistant with Actions on Google integration.
+In [Part 3](https://cloud.google.com/community/tutorials/ios-chatbot-part-3/index.md), we'll cover how to build this app on the Google Assistant with Actions on Google integration.
 
 ###### Author [Chang Luo](https://www.linkedin.com/in/changluo)
