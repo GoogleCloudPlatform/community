@@ -207,6 +207,6 @@ We hope this example has demonstrated how simple it is to build an app powered b
 
 You can download the [source code](https://github.com/google/ios-chatbot) from Github.
 
-In [Part 3](https://cloud.google.com/community/tutorials/ios-chatbot-part-3/index.md), we'll cover how to build this app on the Google Assistant with Actions on Google integration.
+In [Part 3](https://cloud.google.com/community/tutorials/ios-chatbot-part-3/), we'll cover how to build this app on the Google Assistant with Actions on Google integration.
 
 ###### Author [Chang Luo](https://www.linkedin.com/in/changluo)
