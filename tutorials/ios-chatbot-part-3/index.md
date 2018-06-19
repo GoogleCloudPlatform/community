@@ -87,6 +87,6 @@ We hope this example demonstrates how to build a simple app powered by machine l
 You can download the [source code](https://github.com/google/ios-chatbot) from github.
 
 [Part 1]: https://cloud.google.com/community/tutorials/ios-chatbot/index.html
-[Part 2]: https://cloud.google.com/community/tutorials/ios-chatbot-part-2/index.html
+[Part 2]: https://cloud.google.com/community/tutorials/ios-chatbot-part-2/
 
 ###### Author [Chang Luo](https://www.linkedin.com/in/changluo)
