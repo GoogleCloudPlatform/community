@@ -84,7 +84,7 @@ page](https://api.slack.com/apps) and click **Create new app**.
     with your Google Cloud project ID.
 1.  Enter a short description, such as "Sends a greeting."
 
-### Install the command to your team
+### Install the command to your workspace
 
 1.  On the left navigation panel, click **Basic information**.
 1.  Expand **Install your app to your workspace**, then click **Install app to workspace**.
