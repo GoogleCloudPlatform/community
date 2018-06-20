@@ -6,11 +6,9 @@ tags: Cloud Functions, Github, Node.js
 date_published: 2018-05-14
 ---
 
-Clemens Buchacher | Xavo Software AG
-
-This tutorial demonstrates how to use [Google Cloud Container Builder][gcb] as
+This tutorial demonstrates how to use [Cloud Container Builder][gcb] as
 a continuous integration service for Github Repositories. You will implement a
-[Google Cloud Function][gcf] which listens to build events and updates the
+[Cloud Function][gcf] which listens to build events and updates the
 build status in Github using the [Statuses API][statuses]. The function is
 implemented in [Node.js][node].
 
@@ -23,7 +21,7 @@ implemented in [Node.js][node].
 
 1.  Create a project in the [Google Cloud Platform Console][console].
 1.  [Enable billing][billing] for your project.
-1.  Install the [Google Cloud SDK][sdk].
+1.  Install the [Cloud SDK][sdk].
 
 [console]: https://console.cloud.google.com/
 [billing]: https://support.google.com/cloud/answer/6293499#enable-billing
@@ -31,7 +29,7 @@ implemented in [Node.js][node].
 
 ## Set up automated builds
 
-You will use [Google Cloud Container Builder][gcb] and the [Build Triggers][bt]
+You will use [Cloud Container Builder][gcb] and the [Build Triggers][bt]
 feature to upload your website automatically every time you push a new git
 commit to the source repository.
 
@@ -45,7 +43,7 @@ section on Google Cloud Platform Console and click “Add trigger”:
 
 Then select GitHub as the source of your repository. In the next screen you may
 be asked to authorize access to your GitHub account and repositories. This is
-needed for Google Cloud Source Repositories to mirror and create commit hooks on
+needed for Cloud Source Repositories to mirror and create commit hooks on
 your GitHub repositories.
 
 ![Select GitHub as the source](select-source.png)
