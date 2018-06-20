@@ -37,14 +37,13 @@ commit to the source repository.
 > repository][sample-repo] for the purposes of this tutorial.
 
 Head over to the Container Registry &rarr; [Build Triggers][triggers]
-section on Google Cloud Platform Console and click “Add trigger”:
+section on Google Cloud Platform Console and click **Add trigger**:
 
 ![Add build trigger on Container Registry section](add-trigger-button.png)
 
-Then select GitHub as the source of your repository. In the next screen you may
-be asked to authorize access to your GitHub account and repositories. This is
-needed for Cloud Source Repositories to mirror and create commit hooks on
-your GitHub repositories.
+Then select **GitHub** as the source of your repository. You may need to authorize
+access to your GitHub account so that Cloud Source Repositories can mirror and
+create commit hooks on your GitHub repositories.
 
 ![Select GitHub as the source](select-source.png)
 
@@ -53,10 +52,10 @@ above, pick it here:
 
 ![Select the Git repository](select-repo.png)
 
-In the next screen
+For the **Trigger settings**:
 
-- choose Build Configuration "cloudbuild.yaml"
-- choose Trigger Type ”Branch”
+- choose Trigger Type **Branch**
+- choose Build Configuration **cloudbuild.yaml**
 - Set the file location to `cloudbuild.yaml`
 
 ![Create build trigger](create-trigger.png)
@@ -71,7 +70,7 @@ steps:
     args: ["show", "README.md"]
 ```
 
-This YAML file declares a build step with the `git show` command. It will print
+This YAML file declares a build step with the `git show` command. It prints
 the contents of README.md to the build logs.
 
 After saving the file, commit and push the changes:
@@ -88,12 +87,12 @@ After saving the file, commit and push the changes:
 
 Once you push the `cloudbuild.yaml` file to your repository and create the Build
 Trigger, you can kick off the first build manually. Head over to the Google
-Cloud Platform Console [Build Triggers][triggers] section, click “Run
-trigger” and choose the the branch (i.e. master) to build.
+Cloud Platform Console [Build Triggers][triggers] section, click **Run
+trigger** and choose the the branch (i.e. master) to build.
 
 ![Trigger the first build manually](trigger-build.png)
 
-Now click the “Build history” on the left and watch the build job execute and
+Now click **Build history** on the left and watch the build job execute and
 succeed:
 
 ![Build history shows the executing or completed builds](build-history.png)
