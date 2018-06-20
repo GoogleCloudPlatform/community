@@ -87,7 +87,7 @@ page](https://api.slack.com/apps) and click **Create new app**.
 ### Install the command to your team
 
 1.  On the left navigation panel, click **Basic information**.
-1.  Expand **Install your app to your team**, then click **Install app to team**.
+1.  Expand **Install your app to your workspace**, then click **Install app to workspace**.
 
 ## Deploying your app
 
