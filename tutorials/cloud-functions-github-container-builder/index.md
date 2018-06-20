@@ -1,15 +1,15 @@
 ---
-title: Connect Container Builder to Github Through Cloud Functions
-description: Learn how to create Github Statuses from Container Builder events using Cloud Functions.
+title: Connect Container Builder to GitHub Through Cloud Functions
+description: Learn how to create GitHub Statuses from Container Builder events using Cloud Functions.
 author: cbuchacher
-tags: Cloud Functions, Github, Node.js
+tags: Cloud Functions, GitHub, Node.js
 date_published: 2018-05-14
 ---
 
 This tutorial demonstrates how to use [Cloud Container Builder][gcb] as
-a continuous integration service for Github Repositories. You will implement a
+a continuous integration service for GitHub repositories. You will implement a
 [Cloud Function][gcf] which listens to build events and updates the
-build status in Github using the [Statuses API][statuses]. The function is
+build status in GitHub using the [Statuses API][statuses]. The function is
 implemented in [Node.js][node].
 
 [gcb]: https://cloud.google.com/container-builder/docs/
@@ -89,7 +89,7 @@ After saving the file, commit and push the changes:
 Once you push the `cloudbuild.yaml` file to your repository and create the Build
 Trigger, you can kick off the first build manually. Head over to the Google
 Cloud Platform Console [Build Triggers][triggers] section, click “Run
-Trigger” and choose the the branch (i.e. master) to build.
+trigger” and choose the the branch (i.e. master) to build.
 
 ![Trigger the first build manually](trigger-build.png)
 
@@ -110,7 +110,7 @@ or tags you use for publishing, you can update the Build Trigger configuration.
         $ npm init
 
 1.  Run the following command to install the dependencies that the function
-    uses to make REST calls to the Github API:
+    uses to make REST calls to the GitHub API:
 
         $ npm install --save --save-exact @octokit/rest@15.2.6
 
@@ -218,14 +218,14 @@ fields:
 };
 ```
 
-The function then determines the Github repository owner and name, maps the
+The function then determines the GitHub repository owner and name, maps the
 build status (`WORKING`, `FAILURE`, `SUCCESS`) to a commit state (`pending`,
 `error`, `success`), and POST's to the Statuses API.
 
 [pubsub]: https://cloud.google.com/pubsub/docs/
 [build]: https://cloud.google.com/container-builder/docs/api/reference/rest/v1/projects.builds
 
-### Generating a Github Personal Access Token
+### Generating a GitHub Personal Access Token
 
 1. Read about [Creating a personal access token for the command line][token].
 1. Select `repo:status` from the scopes.
@@ -251,9 +251,9 @@ build status (`WORKING`, `FAILURE`, `SUCCESS`) to a commit state (`pending`,
 ## Testing the integration
 
 Trigger another build manually. The commit status is shown as a check mark or X mark in
-the commit log in Github. More details of the build status are shown in Pull Requests.
+the commit log in GitHub. More details of the build status are shown in Pull Requests.
 
-![Github status check](github-status-check.png)
+![GitHub status check](github-status-check.png)
 
 You can check the [logs][logs] for errors.
 
