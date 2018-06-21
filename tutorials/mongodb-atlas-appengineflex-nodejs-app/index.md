@@ -1,8 +1,6 @@
 ## "Hello World” App - MongoDB Atlas and App Engine Flex - NodeJS
 author: arajwade, ksmith
-
 tags: App Engine, Node.js, MongoDB Atlas
-
 date_published: 2018-05-06
 
 ## Overview: 
