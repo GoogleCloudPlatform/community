@@ -4,7 +4,7 @@ tags: App Engine, Node.js, MongoDB Atlas
 date_published: 2018-05-06
 
 ## Overview: 
-In this tutorial, we will be building a “Hello World” application using Node JS with Google App Engine Flex for our frontend and a MongoDB Atlas multi-regional cluster on GCP as our primary database.
+In this tutorial, you will be building a “Hello World” application using Node JS with Google App Engine Flex for our frontend and a MongoDB Atlas multi-regional cluster on GCP as our primary database.
 
 ### Technical Complecity: 
 Beginner
@@ -12,12 +12,12 @@ Beginner
 ### Duration: 
 45 Minutes
 
-### Objective:
-1. Create and configure MongoDB Atlas multi-regional cluster on GCP
-2. Configuring our Google Cloud Platform Account
-3. Configure a Node JS application on a GCE Debian VM on GCP
-4. Push our application to App Engine Flex on GCP
-5. Visit our new application from any web-enabled client terminal; including mobile devices.
+### Objectives:
+1. Create and configure MongoDB Atlas multi-regional cluster on GCP.
+2. Configuring our Google Cloud Platform Account.
+3. Configure a Node JS application on a GCE Debian VM on GCP.
+4. Push your application to App Engine Flex on GCP.
+5. Visit our new application from any web-enabled client terminal, including mobile devices.
 
 ### Part 1: Configuring the MongoDB Atlas
 
@@ -38,7 +38,7 @@ Insert screenshot here
 4. Once on the MongoDB Atlas Homepage, select “Build a New Cluster”
 ![image](https://github.com/ideafest/tutorials/blob/master/image15.png)
 
-5. Create New Cluster by selecting Google Cloud Platform as a “Cloud Provider”. Next select the region where you want to place your Atlas cluster.  Ideally, your cluster will be located close to your end user for lower latency. Note that we can select a free tier region in your area of choice, as noted by the “Free Tier Available” icon  This is a no-cost option to get started. However, since we are assuming our end users will span across the globe, we want our Atlas cluster to be multi-regional.   To enable a multi-regional cluster, we will need to select a M10 or larger cluster size. So for now, for our use case, let’s assume our primary end users for our application will be based in the US and a smaller percentage based in the UK and Australia.  As such, we will select our primary region to be in North America, based in Iowa (us-central1).
+5. Create New Cluster by selecting Google Cloud Platform as a “Cloud Provider”. Next select the region where you want to place your Atlas cluster.  Ideally, your cluster will be located close to your end user for lower latency. Note that we can select a free tier region in your area of choice, as noted by the “Free Tier Available” icon.  This is a no-cost option to get started. However, since we are assuming our end users will span across the globe, we want our Atlas cluster to be multi-regional.   To enable a multi-regional cluster, we will need to select a M10 or larger cluster size. So for now, for our use case, let’s assume our primary end users for our application will be based in the US and a smaller percentage based in the UK and Australia.  As such, we will select our primary region to be in North America, based in Iowa (us-central1).
 
 ![image](https://github.com/ideafest/tutorials/blob/master/image45.png)
 
@@ -52,7 +52,7 @@ Insert screenshot here
 
 ![image](https://github.com/ideafest/tutorials/blob/master/image35.png)
 
-9. Under “Cluster Name”- Provide a Cluster Name. For this demo, we will keep the default of “Cluster0”. Click on “Create Cluster” button at the bottom of the page.
+9. Under “'Cluster Name', provide a cluster Name." For this demo, we will keep the default of “Cluster0”. Click on “Create Cluster” button at the bottom of the page.
 
 ![image](https://github.com/ideafest/tutorials/blob/master/image38.png)
 
@@ -60,7 +60,7 @@ Insert screenshot here
 
 ![image](https://github.com/ideafest/tutorials/blob/master/image36.png)
 
-11. While this spins up, lets click on “Security” tab and then click on “Add New User”.  
+11. While this spins up, let's click on “Security” tab and then click on “Add New User”.  
 
 ![image](https://github.com/ideafest/tutorials/blob/master/image22.png)
 
@@ -95,7 +95,7 @@ Insert screenshot here
 
 ### Part 2: Configuring our Google Cloud Platform Account
 
-1. Go to cloud.google.com and login with your google account. If you don't have a google account, please create a free trial account by following instructions at this [link](https://console.cloud.google.com/freetrial).
+1. Go to cloud.google.com and login with your Google account. If you don't have a Google account, please create a free trial account by following instructions at this [link](https://console.cloud.google.com/freetrial).
 
 2. If not already there, go to https://console.cloud.google.com/ 
 
