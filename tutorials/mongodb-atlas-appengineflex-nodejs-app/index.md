@@ -1,7 +1,7 @@
 ---
 title: Hello World App - MongoDB Atlas and App Engine Flex - NodeJS
 description: Learn how to build Node.js application with Google App Engine flexible environment and MongoDB Atlas.
-author: arajwade, ksmith
+author: arajwade,ksmith
 tags: App Engine, Node.js, MongoDB Atlas
 date_published: 2018-06-25
 ---
