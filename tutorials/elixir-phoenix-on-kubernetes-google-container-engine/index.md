@@ -286,11 +286,11 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
     
 1.  Choose a zone. You should 
 [choose a zone](https://cloud.google.com/compute/docs/regions-zones/) 
-which makes sense for you, I have chosen "us-central1-a".
+which makes sense for you, such as `us-central1-a`.
     
 1.  Create the cluster.
 
-        gcloud container clusters create hello-cluster --num-nodes=2 --zone=us-central1-a
+        gcloud container clusters create hello-cluster --num-nodes=2 --zon=us-central1-a
 
     This command creates a cluster of two machines. You can choose a different
     size, but two is a good starting point.
