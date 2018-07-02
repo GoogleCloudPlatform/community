@@ -7,9 +7,10 @@ date_published: 2018-06-26
 ---
 ## Cloud Bigtable
 
-## Before you begin
+## Prerequisites
 
 ### Install software and download sample code
+
 
 Make sure you have the following software installed:
 
@@ -19,8 +20,7 @@ Make sure you have the following software installed:
        
     > If you haven't used Maven before check out this [5 minute quickstart](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
 
-
-## Prerequisites
+### Set up your Cloud Project
 
 1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
@@ -82,11 +82,11 @@ code:
 
 ### Monitor your job
 
-In the [Dataflow console](https://pantheon.corp.google.com/dataflow), you can monitor the newly created job's status and 
-see if there are any errors running it. 
+Monitor the newly created job's status and see if there are any errors running it in the 
+[Dataflow console](https://pantheon.corp.google.com/dataflow). 
 
 ## Verify your data was inserted
 
-Run cbt read (10 rows)
+Run this command to see 5 rows in your table
 
     cbt read my-table count=5
