@@ -5,7 +5,8 @@ author: thebilly
 tags: Cloud Bigtable, Dataflow, Java
 date_published: 2018-06-26
 ---
-## Cloud Bigtable
+
+
 
 ## Prerequisites
 
@@ -31,7 +32,7 @@ Make sure you have the following software installed:
 
 ## Upload your CSV
 
-### Create a Google Cloud Storage bucket
+### Create a Cloud Storage bucket
 
 You use Cloud Storage to store your application's dependencies. Feel free to use an existing bucket if you have one.
 
@@ -48,9 +49,9 @@ save the comma-separated list of headers and remove that row from the CSV if you
 1. Navigate into your bucket
 2. Click upload file and select your CSV. (You can also drag and drop the file to upload.)
 
-## Create your table with the Cloud Bigtable Tool (CBT)
+## Create your table with cbt
 
-Follow the steps in [CBT quickstart](https://cloud.google.com/bigtable/docs/quickstart-cbt) to create a Cloud Bigtable 
+Follow the steps in [cbt quickstart](https://cloud.google.com/bigtable/docs/quickstart-cbt) to create a Cloud Bigtable 
 instance and install the tool.
 
 Once cbt is set up, run these commands to create a table and column family
@@ -64,7 +65,6 @@ You can verify this worked by running
     cbt ls my-table
 
 ## Run the Cloud Dataflow job 
-https://github.com/GoogleCloudPlatform/cloud-bigtable-examples.git
 
 ### Clone the repo
 
@@ -78,15 +78,21 @@ code:
 ### Start the Dataflow job 
 
     mvn package exec:exec -DCsvImport -Dbigtable.projectID=<projectID> -Dbigtable.instanceID=<instanceID> 
-    -Dgs=<Your bucket>  -DinputFile="<Your file>" -Dheaders="<Your headers>"
+    -DinputFile="<Your file>" -Dheaders="<Your headers>"
+
+Here is an example command:
+    
+    mvn package exec:exec -DCsvImport -Dbigtable.projectID=my-project -Dbigtable.instanceID=my-instance 
+    -DinputFile="gs://mybucket/my-csv-file.csv" -Dheaders="id,header1,header2,header3"
+
 
 ### Monitor your job
 
 Monitor the newly created job's status and see if there are any errors running it in the 
-[Dataflow console](https://pantheon.corp.google.com/dataflow). 
+[Dataflow console](https://console.cloud.google.com/dataflow). 
 
 ## Verify your data was inserted
 
-Run this command to see 5 rows in your table
+Run this command to see the first 5 rows in your table 
 
     cbt read my-table count=5
