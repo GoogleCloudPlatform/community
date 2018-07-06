@@ -263,7 +263,7 @@ latest version of Cloud Endpoints service (the one that was deployed last).
 1.  Deploy API implementation to the App Engine flexible environment.
 
         dotnet publish
-        gcloud beta app deploy bin\debug\netcoreapp2.0\publish\app.yaml
+        gcloud app deploy bin\debug\netcoreapp2.0\publish\app.yaml
 
 1. Test that your APIs are exposed properly. Open
     `https://[YOUR-PROJECT-ID].appspot.com/api/Values` in any browser. If you

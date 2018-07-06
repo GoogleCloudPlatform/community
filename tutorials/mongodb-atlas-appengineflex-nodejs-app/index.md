@@ -1,7 +1,7 @@
 ---
 title: Hello World App - MongoDB Atlas and App Engine Flex - NodeJS
 description: Learn how to build Node.js application with Google App Engine flexible environment and MongoDB Atlas.
-author: arajwade,ksmith
+author: arajwade,smithkh
 tags: App Engine, Node.js, MongoDB Atlas
 date_published: 2018-06-25
 ---
@@ -221,7 +221,7 @@ Beginner
 
 ## Part 3: Configuring and deploying our Node.js application
 
-1. Create a Debian Linux GCE VM instance using the instructions given here.
+1. Create a Debian Linux GCE VM instance using the instructions given [here](https://cloud.google.com/compute/docs/quickstart-linux).
 
     NOTE: When creating your instance, please be sure to enable "Allow full
     access to all Cloud APIs" under "Identity and API access":
@@ -284,12 +284,13 @@ Beginner
     ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-appengineflex-nodejs-app/image17.png)
 
 7.  Create a `server.js` file with the following contents by using command.
-    NOTE: See the highlighted section where you need to insert your own Atlas
-    Connection string.
+    
 
         nano server.js
 
-    Copy the given code into the Nano editor and save the file using Ctrl + X
+    Copy the given code into the Nano editor and save the file using Ctrl + X. 
+    NOTE: See the highlighted section where you need to insert your own Atlas
+    Connection string.
 
         'use strict';
 
@@ -379,8 +380,8 @@ Deploying the app to App Engine Flex
 
 2.  Add following content to to app.yaml file by running the following command:
 
-    runtime: nodejs
-    env: flex
+        runtime: nodejs
+        env: flex
 
 3.  Run the following command to deploy your app by running the following command:
 
