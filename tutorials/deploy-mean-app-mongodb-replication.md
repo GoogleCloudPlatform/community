@@ -39,7 +39,7 @@ Deploy Bitnami MEAN on a Google Compute Engine instance:
 
 The Cloud Launcher deploys Bitnami MEAN on a new Google Compute Engine instance. You can monitor the progress of the deployment from the [Deployment Manager](https://console.cloud.google.com/dm/deployments). Once deployed, note the public IP address of the instance and the password for the MongoDB database.
 
-## Install and configure a sample MEAN application.
+## Install and configure a sample MEAN application
 
 This section uses a [sample MEAN application from GitHub](https://github.com/cornflourblue/mean-stack-registration-login-example). If you already have a MEAN application to deploy, you can use it instead; simply adapt the installation and configuration steps below as needed.
 
@@ -124,7 +124,7 @@ Browse to the public IP address of your Bitnami MEAN instance and confirm that y
 
 If you are able to perform the above tasks, your MEAN application is now operational, albeit using the locally-installed MongoDB database instance. The remaining sections of this tutorial will show you how to deploy a separate Bitnami MongoDB with Replication cluster and reconfigure the MEAN application to use that cluster instead.
 
-## Deploy Bitnami MongoDB with Replication on a set of Google Compute Engine instances.
+## Deploy Bitnami MongoDB with Replication on a set of Google Compute Engine instances
 
 Deploy Bitnami MEAN on a Google Compute Engine instance:
 
@@ -134,7 +134,7 @@ Deploy Bitnami MEAN on a Google Compute Engine instance:
 
 The Cloud Launcher deploys Bitnami MEAN on multiple Google Compute Engine instances. You can monitor the progress of the deployment from the [Deployment Manager](https://console.cloud.google.com/dm/deployments). Once deployed, note the password for the MongoDB database. Then, click the `Manage` link for each instance in the Deployment Manager and note its internal IP address from the corresponding instance detail page.
 
-## Connect the MEAN application to the Bitnami MongoDB with Replication cluster.
+## Connect the MEAN application to the Bitnami MongoDB with Replication cluster
 
 Reconfigure the MEAN application to use the Bitnami MongoDB with Replication cluster:
 
