@@ -120,7 +120,7 @@ Configure Apache to work as a reverse proxy for Express and accept requests for 
         cd /opt/bitnami/apps/myapp/htdocs
         forever start server.js
 
-Browse to the public IP address of your Bitnami MEAN instance and confirm that you see the MEAN application's welcome page. Register a new user account using the `Register` link and then log in to the example application by entering the new user account credentials into the login form and clicking the `Login` button.
+Browse to the public IP address of your Bitnami MEAN instance and confirm that you see the MEAN example application's welcome page. Register a new user account in the example application using the `Register` link and then log in to the example application by entering the new user account credentials into the login form and clicking the `Login` button.
 
 If you are able to perform the above tasks, your MEAN application is now operational, albeit using the locally-installed MongoDB database instance. The remaining sections of this tutorial will show you how to deploy a separate Bitnami MongoDB with Replication cluster and reconfigure the MEAN application to use that cluster instead.
 
