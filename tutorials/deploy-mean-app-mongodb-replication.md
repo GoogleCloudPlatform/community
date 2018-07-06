@@ -3,7 +3,7 @@ title: Deploy a Production-Ready MEAN Application using Bitnami MongoDB with Rep
 description: Deploy a MEAN application with a multi-node MongoDB replica set on Google Cloud Platform using Bitnami MEAN and Bitnami MongoDB with Replication.
 author: vikram-bitnami
 tags: mean, mongodb, replication, scalability, Google Cloud Platform, bitnami
-date_published: 2017-06-27
+date_published: 2017-07-06
 ---
 
 This tutorial demonstrates how to deploy a MEAN (MongoDB, Express, Angular and Node) Web application with a multi-node MongoDB replica set on Google Cloud Platform using Bitnami MEAN and Bitnami MongoDB with Replication. This approach produces a more scalable and resilient deployment that could be used for production or mission-critical scenarios. This tutorial assumes that you're familiar with MongoDB and MEAN applications.
