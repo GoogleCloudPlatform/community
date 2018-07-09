@@ -104,3 +104,5 @@ Cloud Bigtable table and verify that the output matches the data in the CSV file
     cbt read my-table count=5
     
 ## Next steps
+
+* Explore the [Cloud Bigtable documentation](https://cloud.google.com/bigtable/docs/).
