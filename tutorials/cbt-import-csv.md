@@ -6,7 +6,9 @@ tags: Cloud Bigtable, Dataflow, Java
 date_published: 2018-06-26
 ---
 
-
+This tutorial will walk you through importing data into a Cloud Bigtable table. Using Cloud Dataflow, we will take a 
+CSV file and map each row to a table row and use the headers as column qualifiers all placed under the same column 
+family for simplicity.   
 
 ## Prerequisites
 
@@ -17,6 +19,7 @@ Make sure you have the following software installed:
 
 - [Git](https://help.github.com/articles/set-up-git/)
 - [Java SE 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+    > Note that Java 9 will not work for this.
 - [Apache Maven 3.3.x or later](https://maven.apache.org/install.html)
        
     > If you haven't used Maven before check out this [5 minute quickstart](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
@@ -27,17 +30,11 @@ Make sure you have the following software installed:
 1. Enable billing for your project.
 1.  Install the **[Google Cloud SDK](https://cloud.google.com/sdk/)** if you do
     not already have it. Make sure you
-    [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK. Use
-    your project's ID to set the default project for the `gcloud` command-line tool. 
+    [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK.
 
-## Upload your CSV
+## Upload your CSV3
 
-### Create a Cloud Storage bucket
-
-You use Cloud Storage to store your application's dependencies. Feel free to use an existing bucket if you have one.
-
-1. Navigate to the [Cloud Storage browser](https://console.cloud.google.com/storage/browser). 
-1. Click 'create bucket' and complete the provided form.
+You can use your own CSV file or the [example provided](https://github.com/GoogleCloudPlatform/cloud-bigtable-examples/blob/master/java/dataflow-connector-examples/sample.csv). 
 
 ### Remove and store the headers
 
@@ -46,18 +43,20 @@ save the comma-separated list of headers and remove that row from the CSV if you
 
 ### Upload the CSV file
 
-1. Navigate into your bucket
-2. Click upload file and select your CSV. (You can also drag and drop the file to upload.)
+[Upload the headerless CSV file to Cloud Storage](https://cloud.google.com/storage/docs/uploading-objects).
 
-## Create your table with cbt
+## Prepare your Cloud Bigtable table for data import
 
 Follow the steps in [cbt quickstart](https://cloud.google.com/bigtable/docs/quickstart-cbt) to create a Cloud Bigtable 
-instance and install the tool.
+instance and install the command line tool for Cloud Bigtable. You can use an existing instance if you want.
 
-Once cbt is set up, run these commands to create a table and column family
+Use an existing table or create a table
 
     cbt createtable my-table
-    cbt createfamily my-table cf1
+
+The Cloud Dataflow job inserts data into column family 'csv.' Create that column family in your table:  
+
+    cbt createfamily my-table csv
 
 You can verify this worked by running 
 
@@ -65,6 +64,11 @@ You can verify this worked by running
     cbt ls my-table
 
 ## Run the Cloud Dataflow job 
+
+Cloud Dataflow is a fully-managed serverless service for transforming and enriching data in stream (real time) and 
+batch (historical) modes. We are using it as an easy and quick way to process the CSV concurrently and easily perform
+writes at a large scale to our table. You also only pay for what you use, so it keeps costs down.
+
 
 ### Clone the repo
 
@@ -82,9 +86,10 @@ code:
 
 Here is an example command:
     
-    mvn package exec:exec -DCsvImport -Dbigtable.projectID=my-project -Dbigtable.instanceID=my-instance 
-    -DinputFile="gs://mybucket/my-csv-file.csv" -Dheaders="id,header1,header2,header3"
+    mvn package exec:exec -DCsvImport -Dbigtable.projectID=<YOUR-PROJECT> -Dbigtable.instanceID=<YOUR-INSTANCE> 
+    -DinputFile="gs://<YOUR-BUCKET>/sample.csv" -Dheaders="rowkey,a,b"
 
+>The first column will always be used as the rowkey. 
 
 ### Monitor your job
 
@@ -93,6 +98,9 @@ Monitor the newly created job's status and see if there are any errors running i
 
 ## Verify your data was inserted
 
-Run this command to see the first 5 rows in your table 
+Run the following command to see the data for the first five rows (sorted lexicographically by rowkey) of your 
+Cloud Bigtable table and verify that the output matches the data in the CSV file:
 
     cbt read my-table count=5
+    
+## Next steps
