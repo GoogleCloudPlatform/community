@@ -2,8 +2,7 @@
 title: Real time Data Processing With Cloud IoT Core
 description: Demonstrate how to build data processing backend for Google Cloud IoT.
 author: teppeiy
-tags: Cloud IoT Core, Cloud Dataflow, Cloud Functions, Java, Node.js, internet
-of things
+tags: Cloud IoT Core, Cloud Dataflow, Cloud Functions, Java, Node.js, internet of things
 date_published: 2018-04-10
 ---
 ## Application Background
