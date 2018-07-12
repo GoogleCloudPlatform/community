@@ -32,7 +32,7 @@ Make sure you have the following software installed:
     not already have it. Make sure you
     [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK.
 
-## Upload your CSV3
+## Upload your CSV
 
 You can use your own CSV file or the [example provided](https://github.com/GoogleCloudPlatform/cloud-bigtable-examples/blob/master/java/dataflow-connector-examples/sample.csv). 
 
@@ -43,7 +43,7 @@ save the comma-separated list of headers and remove that row from the CSV if you
 
 ### Upload the CSV file
 
-[Upload the headerless CSV file to Cloud Storage](https://cloud.google.com/storage/docs/uploading-objects).
+[Upload the headerless CSV file to a new or existing Cloud Storage bucket](https://cloud.google.com/storage/docs/uploading-objects).
 
 ## Prepare your Cloud Bigtable table for data import
 
@@ -60,8 +60,13 @@ The Cloud Dataflow job inserts data into column family 'csv.' Create that column
 
 You can verify this worked by running 
 
-    cbt ls
     cbt ls my-table
+    
+Expect to see the following:
+
+    Family Name	GC Policy
+    -----------	---------
+    csv		<default>
 
 ## Run the Cloud Dataflow job 
 
@@ -102,6 +107,38 @@ Run the following command to see the data for the first five rows (sorted lexico
 Cloud Bigtable table and verify that the output matches the data in the CSV file:
 
     cbt read my-table count=5
+    
+Expect an output similar to the following:
+    
+    1
+      csv:a                                    @ 2018/07/09-13:42:39.364000
+        "A5"
+      csv:b                                    @ 2018/07/09-13:42:39.364000
+        "B2"
+    ----------------------------------------
+    10
+      csv:a                                    @ 2018/07/09-13:42:38.022000
+        "A3"
+      csv:b                                    @ 2018/07/09-13:42:38.022000
+        "B4"
+    ----------------------------------------
+    2
+      csv:a                                    @ 2018/07/09-13:42:39.365000
+        "A4"
+      csv:b                                    @ 2018/07/09-13:42:39.365000
+        "B8"
+    ----------------------------------------
+    3
+      csv:a                                    @ 2018/07/09-13:42:39.366000
+        "A8"
+      csv:b                                    @ 2018/07/09-13:42:39.366000
+        "B0"
+    ----------------------------------------
+    4
+      csv:a                                    @ 2018/07/09-13:42:39.367000
+        "A4"
+      csv:b                                    @ 2018/07/09-13:42:39.367000
+        "B4"
     
 ## Next steps
 
