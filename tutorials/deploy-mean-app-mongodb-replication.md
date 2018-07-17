@@ -136,6 +136,8 @@ The Cloud Launcher deploys Bitnami MEAN on multiple Google Compute Engine instan
 
 ## Connect the MEAN application to the Bitnami MongoDB with Replication cluster
 
+Before proceeding, confirm that the Bitnami MEAN instance and the Bitnami MongoDB with Replication cluster instances are on the same VPC network. You can check this by visiting each instance's detail page from the [Deployment Manager](https://console.cloud.google.com/dm/deployments) and viewing the network name in the `Network interfaces` section. If the Bitnami MEAN instance and the Bitnami MongoDB with Replication cluster instances are not on the same network, [configure VPC peering between the two networks](https://cloud.google.com/vpc/docs/vpc-peering) before proceeding.
+
 Reconfigure the MEAN application to use the Bitnami MongoDB with Replication cluster:
 
 1. From the Bitnami MEAN instance, login to the Bitnami MongoDB with Replication cluster using the `mongo` command-line client. Use the internal IP address of the primary MongoDB node as the host IP address and enter the password obtained from the [Deployment Manager](https://console.cloud.google.com/dm/deployments) when prompted.
