@@ -24,9 +24,9 @@ Make sure you have the following software installed:
        
     > If you haven't used Maven before check out this [5 minute quickstart](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
 
-### Set up your Cloud Project
+### Set up your Google Cloud Platform project
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1. Create a project in the [GCP Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
 1.  Install the **[Google Cloud SDK](https://cloud.google.com/sdk/)** if you do
     not already have it. Make sure you
@@ -38,8 +38,9 @@ You can use your own CSV file or the [example provided](https://github.com/Googl
 
 ### Remove and store the headers
 
-The method we are using to import data isn't able to automatically handle the headers. Before uploading your file
-save the comma-separated list of headers and remove that row from the CSV if you don't want it imported into your table. 
+The method we are using to import data isn't able to automatically handle the headers. Before 
+uploading your file make a copy of the comma-separated list of headers and remove that row from the 
+CSV if you don't want it imported into your table. 
 
 ### Upload the CSV file
 
@@ -47,8 +48,9 @@ save the comma-separated list of headers and remove that row from the CSV if you
 
 ## Prepare your Cloud Bigtable table for data import
 
-Follow the steps in [cbt quickstart](https://cloud.google.com/bigtable/docs/quickstart-cbt) to create a Cloud Bigtable 
-instance and install the command line tool for Cloud Bigtable. You can use an existing instance if you want.
+Follow the steps in [cbt quickstart](https://cloud.google.com/bigtable/docs/quickstart-cbt) to 
+create a Cloud Bigtable instance and install the command line tool for Cloud Bigtable. You can use 
+an existing instance if you want.
 
 Use an existing table or create a table
 
@@ -94,7 +96,7 @@ Here is an example command:
     mvn package exec:exec -DCsvImport -Dbigtable.projectID=<YOUR-PROJECT> -Dbigtable.instanceID=<YOUR-INSTANCE> 
     -DinputFile="gs://<YOUR-BUCKET>/sample.csv" -Dheaders="rowkey,a,b"
 
->The first column will always be used as the rowkey. 
+>The first column will always be used as the row key. 
 
 ### Monitor your job
 
@@ -103,7 +105,7 @@ Monitor the newly created job's status and see if there are any errors running i
 
 ## Verify your data was inserted
 
-Run the following command to see the data for the first five rows (sorted lexicographically by rowkey) of your 
+Run the following command to see the data for the first five rows (sorted lexicographically by row key) of your 
 Cloud Bigtable table and verify that the output matches the data in the CSV file:
 
     cbt read my-table count=5
