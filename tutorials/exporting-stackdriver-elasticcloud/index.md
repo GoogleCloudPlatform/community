@@ -1,6 +1,6 @@
 ---
 title: Exporting Stackdriver Logs to Elastic Cloud
-description: Learn how to send Google Stackdriver events to Elastic Cloud for analysis.
+description: Learn how to send Stackdriver events to Elastic Cloud for analysis.
 author: twenny
 tags: stackdriver, elasticsearch, elk, logs, logging, security, compliance
 date_published: 2018-07-17
@@ -10,9 +10,9 @@ date_published: 2018-07-17
 
 Those responsible for keeping data safe in the cloud need to know about activities taking place in their workloads. Problems with VPN tunnels can cause unexpected outages, and a seemingly benign oversight like an overly-wide firewall rule can have significant impact to an organization's security posture. Getting the events flowing to a log analytics system is a first step toward minimizing the time it takes to discover and remediate a risky scenario.
 
-Google Cloud Platform customers can use Google Stackdriver for near real-time logging of activity in the cloud, as well as logs from resources in AWS resources and data centers. While [Stackdriver Log Viewer](https://cloud.google.com/logging/docs/view/overview) provides the native ability to perform log searching and exporting, we can also send the logs to an existing logging solution to leverage existing investments.
+Cloud Platform customers can use Stackdriver for near real-time logging of activity in the cloud, as well as logs from resources in AWS resources and data centers. While [Stackdriver Log Viewer](https://cloud.google.com/logging/docs/view/overview) provides the native ability to perform log searching and exporting, we can also send the logs to an existing logging solution to leverage existing investments.
 
-This tutorial creates the configurations required to send Google Stackdriver logs to the Elastic Cloud Elasticsearch SaaS platform. Elastic Cloud is a SaaS offering, which saves time by not needing to build and manage the Elasticsearch infrastructure.
+This tutorial creates the configurations required to send Stackdriver logs to the Elastic Cloud Elasticsearch SaaS platform. Elastic Cloud is a SaaS offering, which saves time by not needing to build and manage the Elasticsearch infrastructure.
 
 ![alt text](stackdriver_es_architecture.png "Stackdriver to Elastic Cloud architecture")
 
@@ -27,23 +27,23 @@ This tutorial uses billable components of Cloud Platform, including:
 New Cloud Platform users might be eligible for a [free trial](https://cloud.google.com/free-trial).
 
 
-## Configure Google Cloud Platform resources
+## Configure Cloud Platform resources
 The high level steps in this section are:
 
 1. Create a user-managed Service Account
 1. Create a VM for Logstash
 1. Create a Cloud Pub/Sub topic
-1. Create a Google Stackdriver log sink and subscribe it to the Cloud Pub/Sub topic
+1. Create a Stackdriver log sink and subscribe it to the Cloud Pub/Sub topic
 
 
 ## Using the _gcloud_ CLI
 The example in this tutorial leverage the _gcloud_ command line interface. While the console is a popular way to get started in the cloud, customers are encouraged to get comfortable using the CLI over the web interface use because the steps performing can be tracked and versioned as code. Preparing CLI scripts makes setup activities more predictable, less error prone, and can becomes be reused and improved over time. Using code to configure infrastructure also simplifies testing and disaster recovery activities.
 
 ## Access Cloud Console
-Log in or sign up for [Google Cloud Platform](https://cloud.google.com), then open [Cloud Console](https://console.cloud.google.com).
+Log in or sign up for [Cloud Platform](https://cloud.google.com), then open [Cloud Console](https://console.cloud.google.com).
 
 ## Enable Cloud APIs
-Cloud APIs must be enabled via the "Services and APIs" page in the console before they can be used with _gcloud_. To perform the steps in this tutorial, enable: 
+Cloud APIs must be enabled via the [Services and APIs page](https://console.cloud.google.com/apis/dashboard) in the console before they can be used with _gcloud_. To perform the steps in this tutorial, enable: 
 
 * Compute Engine API
 * Cloud Pub/Sub API
@@ -58,7 +58,7 @@ Cloud Console provides an interactive shell that includes the _gcloud_ CLI. At t
 ![alt text](cloud_shell_icon.png "Activate Google Cloud Shell")
 
 ## Create a service account
-Google Cloud Platform [best practices](https://cloud.google.com/vpc/docs/firewalls#service-accounts-vs-tags) suggest using a service account to configure security controls to a VM. A service account is useful for a VM to determine which other Google resources can be access by the VM and its applications, and which firewall rules should be applied to the VM.
+Cloud Platform [best practices](https://cloud.google.com/vpc/docs/firewalls#service-accounts-vs-tags) suggest using a service account to configure security controls to a VM. A service account is useful for a VM to determine which other Cloud Platform resources can be access by the VM and its applications, and which firewall rules should be applied to the VM.
 
 While credentials can be created to be used by a service account, this step is not necessary when the service account is attached to a VM running on Google Compute Engine. Google manages the keys, and applications can [retrieve the credentials securely](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances#authenticating_applications_using_service_account_credentials) via the metadata service.
 
@@ -68,7 +68,7 @@ Create a service account to attach to the VM:
       --display-name="Logstash to Stackdriver"
 
 
-** Expected Response **
+**Expected Response**
 
     Created service account [logstash].
 
@@ -82,7 +82,7 @@ Cloud Pub/Sub is where Stackdriver will send events to be picked up by Logstash.
 
     gcloud pubsub topics create stackdriver-topic
 
-** Expected Response **
+**Expected Response**
 
     Created topic [projects/scalesec-dev/topics/stackdriver-topic].
 
@@ -94,7 +94,7 @@ A log sink is used to export Stackdriver logs to another facility such as a Clou
     gcloud logging sinks create logstash-sink pubsub.googleapis.com/projects/scalesec-dev/topics/stackdriver-topic \
       --log-filter='resource.type="project"'
 
-** Expected Response **  
+**Expected Response**  
 
     Created [https://logging.googleapis.com/v2/projects/scalesec-dev/sinks/logstash-sink].
     Please remember to grant `serviceAccount:p352005273005-058743@gcp-sa-logging.iam.gserviceaccount.com` Pub/Sub Publisher role to the topic.
@@ -102,7 +102,7 @@ A log sink is used to export Stackdriver logs to another facility such as a Clou
 
 The filter specified above will produce events associated with changes to IAM, which is a typical area to be monitored closely. Stackdriver supports monitoring activities for vpn_gateway and other resource types. See the [documentation](https://cloud.google.com/logging/docs/view/overview) for more filter ideas.
 
-The service account used by Stackdriver needs permissions to publish events to the Cloud Pub/Sub topic. The _gcloud_ CLI doesn't currently support permissions management for Cloud Pub/Sub, but they can be managed in the webUI. Use the console to confirm that the service account has access to the topic as shown below.
+The service account used by Stackdriver needs permissions to publish events to the Cloud Pub/Sub topic. The _gcloud_ CLI doesn't currently support permissions management for Cloud Pub/Sub, but they can be managed via the [Cloud Pub/Sub page](https://console.cloud.google.com/cloudpubsub/topicList) in Cloud Console. Confirm that the service account has access to the topic as shown below.
 
 ![alt text](pubsub_topic_permissions.png "Verify Cloud Pub/Sub Topic Permissions")
 
@@ -124,7 +124,7 @@ The CLI command below creates a VM. In addition to the pubsub scope shown below,
       --boot-disk-device-name=logstash
 
 
-** Expected Response **  
+**Expected Response**  
 
     Created [https://www.googleapis.com/compute/beta/projects/scalesec-dev/zones/us-west1-a/instances/logstash].
     NAME      ZONE        MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP     STATUS
@@ -134,7 +134,7 @@ The CLI command below creates a VM. In addition to the pubsub scope shown below,
 1. Go to https://cloud.elastic.co/login. A trial account provides suitable service to complete this tutorial.
 ![alt text](es_trial.png "Sign up for Elastic Cloud")
 
-1. Create an Elasticsearch deployment. This example is deployed on Google Cloud Platform in us-west1. 
+1. Create an Elasticsearch deployment. This example is deployed on Cloud Platform in us-west1. 
 ![alt text](create_es_deployment.png "Create an Elastic Cloud deployment")
 
 1. While the deployment is finishing up, make sure to capture the credentials and store them in a safe place. While the Cloud ID can be viewed from the deployment page, this is the only time the password for the elastic user is available. Visit the "Security" to reset the password if needed. When considering production environments, create new Elasticsearch credentials with tighter permissions and avoid using the elastic user. As [documented](https://www.elastic.co/guide/en/cloud/master/ec-cloud-id.html): "On a production system, you should adapt these examples by creating a user that can write to and access only the minimally required indices."
@@ -169,7 +169,7 @@ After a few moments the VM will complete its reboot and can be accessed again vi
     sudo apt-get update && sudo apt-get install logstash
 
 ## Logstash Plugin for Cloud Pub/Sub
-1. Install the Logstash Plugin for Cloud Pub/Sub. Version 1.2.0 of the Logstash Google Pub/Sub plugin is [currently broken](https://github.com/logstash-plugins/logstash-input-google_pubsub/pull/36). Below are the steps to use the previous version until version 1.2.1 is available.
+1. Install the Logstash Plugin for Cloud Pub/Sub. Version 1.2.0 of the Logstash Pub/Sub plugin is [currently broken](https://github.com/logstash-plugins/logstash-input-google_pubsub/pull/36). Below are the steps to use the previous version until version 1.2.1 is available.
 
 
     cd && \
@@ -182,7 +182,7 @@ After a few moments the VM will complete its reboot and can be accessed again vi
     sudo bin/logstash-plugin install  ~/logstash-input-google_pubsub/logstash-input-google_pubsub-1.1.0.gem
 
 
-** Expected Response **  
+**Expected Response**  
 
 [after many lines...]
 
@@ -235,13 +235,15 @@ Logstash comes with no default configuration.
 ## Start Logstash
 1. Start Logstash.
 
+
     sudo service logstash start
 
-1. Monitor the startup logs closely for issues.
+2. Monitor the startup logs closely for issues.
+
 
     tail -f /var/log/syslog
 
-1. Review log messages. 
+3. Review log messages. 
 
 Log messages like these indicate that Logstash is working internally:
 
@@ -298,7 +300,7 @@ Kibana is a powerful graphical user interface that uses the underlying Elasticse
 ![alt text](index_pattern_timestamp.png "Specify index timestamp")
 
 ## Verify log flow
-Return to the main Kibana dashboard (shown as "Discover" in the navigation menu). The Kibana dashboard should display Google Cloud events similar to those shown below:
+Return to the main Kibana dashboard (shown as "Discover" in the navigation menu). The Kibana dashboard should display Stackdriver events similar to those shown below:
 ![alt text](kibana_log_flow.png "Specify index timestamp")
 
 ## Conclusion
