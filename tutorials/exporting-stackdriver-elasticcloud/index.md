@@ -1,5 +1,5 @@
 ---
-title: Exporting Google Stackdriver Logs to Elastic Cloud
+title: Exporting Stackdriver Logs to Elastic Cloud
 description: Learn how to send Google Stackdriver events to Elastic Cloud for analysis.
 date_published: 2018-07-17
 tags: stackdriver, elasticsearch, elk, logs, logging, security, compliance
@@ -11,7 +11,7 @@ author: twenny
 
 Those responsible for keeping data safe in the cloud need to know about activities taking place in their workloads. Problems with VPN tunnels can cause unexpected outages, and a seemingly benign oversight like an overly-wide firewall rule can have significant impact to an organization's security posture. Getting the events flowing to a log analytics system is a first step toward minimizing the time it takes to discover and remediate a risky scenario.
 
-Google Cloud customers can use Google Stackdriver for near real-time logging of activity in the cloud, as well as logs from resources in AWS resources and data centers. While [Google Stackdriver Log Viewer](https://cloud.google.com/logging/docs/view/overview) provides the native ability to perform log searching and exporting, we can also send the logs to an existing logging solution to leverage existing investments.
+Google Cloud Platform customers can use Google Stackdriver for near real-time logging of activity in the cloud, as well as logs from resources in AWS resources and data centers. While [Stackdriver Log Viewer](https://cloud.google.com/logging/docs/view/overview) provides the native ability to perform log searching and exporting, we can also send the logs to an existing logging solution to leverage existing investments.
 
 This tutorial creates the configurations required to send Google Stackdriver logs to the Elastic Cloud Elasticsearch SaaS platform. Elastic Cloud is a SaaS offering, which saves time by not needing to build and manage the Elasticsearch infrastructure.
 
@@ -28,7 +28,7 @@ This tutorial uses billable components of Cloud Platform, including:
 New Cloud Platform users might be eligible for a [free trial](https://cloud.google.com/free-trial).
 
 
-## Configure Google Cloud resources
+## Configure Google Cloud Platform resources
 The high level steps in this section are:
 
 1. Create a user-managed Service Account
@@ -40,11 +40,11 @@ The high level steps in this section are:
 ## Using the _gcloud_ CLI
 The example in this tutorial leverage the _gcloud_ command line interface. While the console is a popular way to get started in the cloud, customers are encouraged to get comfortable using the CLI over the web interface use because the steps performing can be tracked and versioned as code. Preparing CLI scripts makes setup activities more predictable, less error prone, and can becomes be reused and improved over time. Using code to configure infrastructure also simplifies testing and disaster recovery activities.
 
-## Access the Google Cloud console
-Log in or sign up for [Google Cloud](https://cloud.google.com), then open the [console](https://console.cloud.google.com).
+## Access Cloud Console
+Log in or sign up for [Google Cloud Platform](https://cloud.google.com), then open [Cloud Console](https://console.cloud.google.com).
 
 ## Enable Cloud APIs
-Google Cloud APIs must be enabled via the "Services and APIs" page in the console before they can be used with _gcloud_. To perform the steps in this tutorial, enable: 
+Cloud APIs must be enabled via the "Services and APIs" page in the console before they can be used with _gcloud_. To perform the steps in this tutorial, enable: 
 
 * Compute Engine API
 * Cloud Pub/Sub API
@@ -54,12 +54,12 @@ Google Cloud APIs must be enabled via the "Services and APIs" page in the consol
 ![alt text](enable_apis.png "Enable Cloud APIs")
 
 ## Activate Google Cloud Shell
-The Google Cloud web console provides an interactive shell that includes the _gcloud_ CLI. At the top right corner of the page, click the icon to "Activate Google Cloud Shell".
+Cloud Console provides an interactive shell that includes the _gcloud_ CLI. At the top right corner of the page, click the icon to "Activate Google Cloud Shell".
 
 ![alt text](cloud_shell_icon.png "Activate Google Cloud Shell")
 
 ## Create a service account
-Google Cloud [best practices](https://cloud.google.com/vpc/docs/firewalls#service-accounts-vs-tags) suggest using a service account to configure security controls to a VM in Google Cloud. A service account is useful for a VM to determine which other Google resources can be access by the VM and its applications, and which firewall rules should be applied to the VM.
+Google Cloud Platform [best practices](https://cloud.google.com/vpc/docs/firewalls#service-accounts-vs-tags) suggest using a service account to configure security controls to a VM. A service account is useful for a VM to determine which other Google resources can be access by the VM and its applications, and which firewall rules should be applied to the VM.
 
 While credentials can be created to be used by a service account, this step is not necessary when the service account is attached to a VM running on Google Compute Engine. Google manages the keys, and applications can [retrieve the credentials securely](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances#authenticating_applications_using_service_account_credentials) via the metadata service.
 
@@ -89,7 +89,7 @@ Cloud Pub/Sub is where Stackdriver will send events to be picked up by Logstash.
 
 Version 1.1.0 of the logstash plugin will automatically create a subscription.
 
-## Create a Google Stackdriver log sink
+## Create a Stackdriver log sink
 A log sink is used to export Stackdriver logs to another facility such as a Cloud Storage bucket or, as needed in this case, the new Cloud Pub/Sub topic.
 
     gcloud logging sinks create logstash-sink pubsub.googleapis.com/projects/scalesec-dev/topics/stackdriver-topic \
@@ -101,16 +101,16 @@ A log sink is used to export Stackdriver logs to another facility such as a Clou
     Please remember to grant `serviceAccount:p352005273005-058743@gcp-sa-logging.iam.gserviceaccount.com` Pub/Sub Publisher role to the topic.
     More information about sinks can be found at https://cloud.google.com/logging/docs/export/ 
 
-The filter specified above will produce events associated with changes to IAM, which is a typical area to be monitored closely. Google Stackdriver supports monitoring activities for vpn_gateway and other resource types. See the [documentation](https://cloud.google.com/logging/docs/view/overview) for more filter ideas.
+The filter specified above will produce events associated with changes to IAM, which is a typical area to be monitored closely. Stackdriver supports monitoring activities for vpn_gateway and other resource types. See the [documentation](https://cloud.google.com/logging/docs/view/overview) for more filter ideas.
 
 The service account used by Stackdriver needs permissions to publish events to the Cloud Pub/Sub topic. The _gcloud_ CLI doesn't currently support permissions management for Cloud Pub/Sub, but they can be managed in the webUI. Use the console to confirm that the service account has access to the topic as shown below.
 
-![alt text](pubsub_topic_permissions.png "Verify Pub/Sub Topic Permissions")
+![alt text](pubsub_topic_permissions.png "Verify Cloud Pub/Sub Topic Permissions")
 
 ## Create the Logstash VM
 (_Some system responses will be omitted in this section for brevity._)
 
-The CLI command below creates a Google Compute Engine VM. In addition to the pubsub scope shown below, note the inclusion of the default recommended scopes to other Google APIs for essential system operation.
+The CLI command below creates a VM. In addition to the pubsub scope shown below, note the inclusion of the default recommended scopes to other Google APIs for essential system operation.
 
     gcloud compute --project=scalesec-dev instances create logstash \
       --zone=us-west1-a \
@@ -135,7 +135,7 @@ The CLI command below creates a Google Compute Engine VM. In addition to the pub
 1. Go to https://cloud.elastic.co/login. A trial account provides suitable service to complete this tutorial.
 ![alt text](es_trial.png "Sign up for Elastic Cloud")
 
-1. Create an Elasticsearch deployment. This example is deployed on Google Cloud in us-west1. 
+1. Create an Elasticsearch deployment. This example is deployed on Google Cloud Platform in us-west1. 
 ![alt text](create_es_deployment.png "Create an Elastic Cloud deployment")
 
 1. While the deployment is finishing up, make sure to capture the credentials and store them in a safe place. While the Cloud ID can be viewed from the deployment page, this is the only time the password for the elastic user is available. Visit the "Security" to reset the password if needed. When considering production environments, create new Elasticsearch credentials with tighter permissions and avoid using the elastic user. As [documented](https://www.elastic.co/guide/en/cloud/master/ec-cloud-id.html): "On a production system, you should adapt these examples by creating a user that can write to and access only the minimally required indices."
@@ -144,10 +144,10 @@ The CLI command below creates a Google Compute Engine VM. In addition to the pub
 1. Obtain the URI of the Elasticsearch endpoint that has been provisioned. A link to this endpoint can be copied from the Deployments page. This value will be needed to configure Logstash output plugin configuration.
 ![alt text](copy_es_uri.png "Copy the Elasticsearch URI")
 
-The next section provides steps to complete the setup of the Google environment to send events to the new Elasticsearch deployment.
+The next section provides steps to complete the setup to send events to the new Elasticsearch deployment.
 
 ## Configure the Logstash VM
-1. Navigate in the console to the Compute Engine => VM Instances page. The Google Cloud Console provides convenient access to the VM with an embedded SSH console. The example shell commands in this tutorial are concatenated, but if issues are encountered when pasting multiple commands into this console, consider switching to [OS login](https://cloud.google.com/compute/docs/instances/managing-instance-access#enable_oslogin).
+1. Navigate in the console to the Compute Engine => VM Instances page. Cloud Console provides convenient access to the VM with an embedded SSH console. The example shell commands in this tutorial are concatenated, but if issues are encountered when pasting multiple commands into this console, consider switching to [OS login](https://cloud.google.com/compute/docs/instances/managing-instance-access#enable_oslogin).
 ![alt text](ssh_button.png "SSH to VM")
 
 1. Perform typical system updates and install OpenJDK.
@@ -303,4 +303,4 @@ Return to the main Kibana dashboard (shown as "Discover" in the navigation menu)
 ![alt text](kibana_log_flow.png "Specify index timestamp")
 
 ## Conclusion
-Regularly analyzing the logs is a crucial component of mature security operations. The next recommended step is to content in Kibana to identify which events are important, and which ones need a quick response. While Elastic Cloud was used as an example in this tutorial, Google Stackdriver can be used to monitor resources using other logging architectures, other logging systems, other operating systems, and even other cloud providers.
+Regularly analyzing the logs is a crucial component of mature security operations. The next recommended step is to content in Kibana to identify which events are important, and which ones need a quick response. While Elastic Cloud was used as an example in this tutorial, Stackdriver can be used to monitor resources using other logging architectures, other logging systems, other operating systems, and even other cloud providers.
