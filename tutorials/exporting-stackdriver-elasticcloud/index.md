@@ -64,8 +64,8 @@ While credentials can be created to be used by a service account, this step is n
 
 1. Create a service account to attach to the VM:
 
-    gcloud iam service-accounts create logstash \
-      --display-name="Logstash to Stackdriver"
+        gcloud iam service-accounts create logstash \
+        --display-name="Logstash to Stackdriver"
 
 
     **Expected Response**
