@@ -63,9 +63,10 @@ in this guide.
 |Phase-1|Encryption|`aes-128` (IKEv1 or `aes-256`(IKEv2)|
 |       |Integrity|`sha-1` (IKEv1) or `sha-256` (IKEv2)|
 |       |Diffie-Helman|`Group2` (IKEv1) or `Group14` (IKEv2)|
-|       |Phase1 lifetime| `36,600 seconds` (IKEv1) `36,000 seconds` (IKEv2) |
+|       |Phase1 lifetime| `36,600 seconds` (IKEv1) `36,000 seconds` (IKEv2)|
 |Phase-2|Encryption|`aes-128`(IKEv1) or `aes-256`(IKEv2)|
-|       |Integrity|`sha-1`|
+|       |Integrity|`sha-1` (IKEv1) or `sha-256` (IKEv2)|
+|       |Phase2 lifetime| `10,800 seconds` (IKEv1) `10,800 seconds` (IKEv2)|
 
 # Configuring policy-based IPsec VPN
 
