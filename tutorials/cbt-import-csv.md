@@ -22,7 +22,7 @@ Make sure you have the following software installed:
     > Note that Java 9 will not work for this.
 - [Apache Maven 3.3.x or later](https://maven.apache.org/install.html)
        
-    > If you haven't used Maven before check out this [5 minute quickstart](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
+If you haven't used Maven before check out this [5 minute quickstart](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html).
 
 ### Set up your Google Cloud Platform project
 
@@ -39,7 +39,7 @@ You can use your own CSV file or the [example provided](https://github.com/Googl
 ### Remove and store the headers
 
 The method we are using to import data isn't able to automatically handle the headers. Before 
-uploading your file make a copy of the comma-separated list of headers and remove that row from the 
+uploading your file, make a copy of the comma-separated list of headers and remove that row from the 
 CSV if you don't want it imported into your table. 
 
 ### Upload the CSV file
@@ -52,15 +52,15 @@ Follow the steps in [cbt quickstart](https://cloud.google.com/bigtable/docs/quic
 create a Cloud Bigtable instance and install the command line tool for Cloud Bigtable. You can use 
 an existing instance if you want.
 
-Use an existing table or create a table
+Use an existing table or create a table:
 
     cbt createtable my-table
 
-The Cloud Dataflow job inserts data into column family 'csv.' Create that column family in your table:  
+The Cloud Dataflow job inserts data into column family 'csv'. Create that column family in your table:  
 
     cbt createfamily my-table csv
 
-You can verify this worked by running 
+You can verify this worked by running:
 
     cbt ls my-table
     
@@ -79,8 +79,7 @@ writes at a large scale to our table. You also only pay for what you use, so it 
 
 ### Clone the repo
 
-Clone the following repository and change to into the directory for this tutorial's
-code:
+Clone the following repository and change to the directory for this tutorial's code:
 
     git clone https://github.com/GoogleCloudPlatform/cloud-bigtable-examples.git
     cd java/dataflow-connector-examples/
