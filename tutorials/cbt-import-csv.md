@@ -22,7 +22,7 @@ Make sure you have the following software installed:
     > Note that Java 9 will not work for this.
 - [Apache Maven 3.3.x or later](https://maven.apache.org/install.html)
        
-    > If you haven't used Maven before check out this [5 minute quickstart](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html).
+If you haven't used Maven before check out this [5 minute quickstart](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html).
 
 ### Set up your Google Cloud Platform project
 
