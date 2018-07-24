@@ -2,7 +2,7 @@
 title: How to Set Up VPN Between Check Point Security Gateway and Cloud VPN
 description: Learn how to build site-to-site IPSEC VPN between Check Point security gateway and Cloud VPN.
 author: ashishverm
-tags: Compute Engine, Cloud VPN, Check Point secrurity gateway, firewall
+tags: Compute Engine, Cloud VPN, Check Point security gateway, firewall
 date_published: 2018-01-03
 ---
 
@@ -43,8 +43,9 @@ To use a Check Point security gateway with Cloud VPN make sure the following pre
 ## IPsec parameters
 
 The following parameters and values are used in the Gateway’s IPSec configuration for the
-purpose of this guide. Cloud VPN supports extensive [list](https://cloud.google.com/vpn/docs/concepts/advanced#supported_ike_ciphers) of
-ciphers that can be used per your security policies.
+purpose of this guide. Cloud VPN supports extensive
+[list](https://cloud.google.com/vpn/docs/concepts/supported-ike-ciphers)
+of ciphers that can be used per your security policies.
 
 |Parameter | Value|
 --------- |  -----
@@ -62,9 +63,10 @@ in this guide.
 |Phase-1|Encryption|`aes-128` (IKEv1 or `aes-256`(IKEv2)|
 |       |Integrity|`sha-1` (IKEv1) or `sha-256` (IKEv2)|
 |       |Diffie-Helman|`Group2` (IKEv1) or `Group14` (IKEv2)|
-|       |Phase1 lifetime| `36,600 seconds` (IKEv1) `36,000 seconds` (IKEv2) |
+|       |Phase1 lifetime| `36,600 seconds` (IKEv1) `36,000 seconds` (IKEv2)|
 |Phase-2|Encryption|`aes-128`(IKEv1) or `aes-256`(IKEv2)|
-|       |Integrity|`sha-1`|
+|       |Integrity|`sha-1` (IKEv1) or `sha-256` (IKEv2)|
+|       |Phase2 lifetime| `10,800 seconds` (IKEv1) `10,800 seconds` (IKEv2)|
 
 # Configuring policy-based IPsec VPN
 
@@ -131,7 +133,7 @@ To configure Cloud VPN:
 **Note:** Add ingress firewall rules to allow inbound network traffic as per your security
 policy.
 
-## Configuration - Check Point Secrurity Gateway
+## Configuration - Check Point Security Gateway
 
 To create an Interoperable Device for Cloud VPN on the Check Point SmartConsole:
 
@@ -263,7 +265,7 @@ Click **Save and Continue** to complete.
 
 **Note:** – Add ingress firewall rules to allow inbound network traffic as per your security policy.
 
-## Configuration - Check Point Secrurity Gateway
+## Configuration - Check Point Security Gateway
 
 Create an interoperable device for Cloud VPN on the Check Point SmartConsole.
 

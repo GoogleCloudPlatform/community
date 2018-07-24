@@ -6,8 +6,6 @@ tags: Tutorial, Write
 date_published: 2017-03-03
 ---
 
-**Beta: This is a Beta release of the Google Cloud Platform Community tutorials. This site might be changed and is not subject to any SLA or deprecation policy.**
-
 ## Introduction
 
 Beyond the official documentation there are endless possibilities for combining

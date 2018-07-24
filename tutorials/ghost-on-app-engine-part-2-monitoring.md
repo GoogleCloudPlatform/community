@@ -1,5 +1,5 @@
 ---
-title: Ghost on App Engine Flexible Environment Part 2 - Monitoring
+title: Monitoring Ghost on App Engine Flexible Environment - Part 2
 description: Learn how to monitor a Ghost blog running on Google App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Ghost, Node.js, Stackdriver
