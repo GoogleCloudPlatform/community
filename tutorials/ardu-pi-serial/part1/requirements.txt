@@ -1,0 +1,8 @@
+cryptography
+PyJWT
+pyOpenSSL
+rfc3339
+paho-mqtt
+sense-hat
+rtimulib
+pyserial
