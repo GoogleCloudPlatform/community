@@ -2,7 +2,7 @@
 title: How to build a conversational app using Cloud Machine Learning APIs Part 1 of 3
 description: Overview, architecture, API.AI intents and API.AI contexts.
 author: PokerChang
-tags: Cloud Functions, Dialogflow, API.AI, Webhooks, Localization, Chatbot, Machine Learning API, Transation, Vision, Speech
+tags: Cloud Functions, Dialogflow, API.AI, Webhooks, Localization, Chatbot, Machine Learning API, Translation, Vision, Speech
 date_published: 2018-06-19
 ---
 
