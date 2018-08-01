@@ -17,7 +17,7 @@ This tutorial demonstrates how to use [Cloud IoT Core](https://cloud.google.com/
 - Create a small, scalable relay service that pulls messages from Cloud Pubsub
 
 **Figure 1.** *Architecture diagram for tutorial components*
-![architecture diagram](images/architecture.png)
+![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-hybrid/architecture.png)
 
 
 ## Before you begin
@@ -40,7 +40,7 @@ This tutorial should not generate any usage that would not be covered by the [fr
 The idea of using fully managed scaling services is common for developers looking to distribute content. A content delivery network ([CDN](https://en.wikipedia.org/wiki/Content_delivery_network)) is often used to provide scale between the content origin, and many globally distributed consumers.
 
 **Figure 2.** *CDN pattern*
-![architecture diagram](images/CDN.png)
+![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-hybrid/CDN.png)
 
 Many IoT related projects begin with a simple MQTT broker created inside premises (on-prem) corporate infrastructure to simplify installation while still allowing internal access. Internal apps use data arriving on this broker, along with access to other on-prem systems to build business facing IoT applications. There are many reasons why a company may prefer to pursue hybrid development. For example, hybrid development may make it easier to assess or control costs, can control data access, and so on.
 
@@ -54,7 +54,7 @@ Taking this initial MQTT broker and exposing it externally to production scales 
  These requirements resemble that of a CDN, but in reverse.
 
 **Figure 3.** *Global Ingest*
-![architecture diagram](images/ingest-relay.png) 
+![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-hybrid/ingest-relay.png) 
 
 Let's quickly setup up an implementation of a solution that uses Google's fully managed services and scale it to address some of these concerns while allowing the primary application to still be developed on-prem.
 
