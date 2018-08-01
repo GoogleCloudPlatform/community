@@ -72,7 +72,7 @@ time it is loaded, so the contents of each module are only initialized once.
 
 The Node.js core library provides the developer with a number of tools for
 performing I/O, working with HTTP, files, the OS, streams, and much more. In
-addition, npmjs.org is a large repository of community and open source packages
+addition, [npm][npm] is a large repository of community and open source packages
 for Node.js. Node.js is at home in small, rapidly developing products, probably
 because Node.js and its ecosystem are still (relatively) small and under rapid
 development. Node.js is emerging in the enterprise as the ecosystem grows, as
@@ -131,6 +131,7 @@ more about [Node.js on Google Cloud Platform][nodejs-gcp].
 [buffer]: https://nodejs.org/api/buffer.html
 [nodejs-dev]: how-to-prepare-a-nodejs-dev-environment
 [inspect]: https://nodejs.org/api/debugger.html#debugger_v8_inspector_integration_for_node_js
+[npm]: https://www.npmjs.com/
 [gce]: https://cloud.google.com/compute/
 [gke]: https://cloud.google.com/kubernetes-engine/
 [k8s]: http://kubernetes.io/
