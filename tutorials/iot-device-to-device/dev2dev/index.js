@@ -2,12 +2,17 @@
 'use strict';
 const {google} = require('googleapis');
 
+const projectId = 'replace-with-your-project-id';
+const cloudRegion = 'replace-with-your-region';
+
 exports.relayCloudIot = function (event, callback) {
   const pubsubMessage = event.data;
+  console.log(event.data);
   const record = JSON.parse(
-    pubsubMessage.data
-      ? Buffer.from(pubsubMessage.data, 'base64').toString()
+    event.data
+      ? Buffer.from(event.data, 'base64').toString()
       : '{}');
+  console.log(record);
 
   let messagesSent = record.hops;
   messagesSent = messagesSent + 1;
@@ -26,10 +31,10 @@ exports.relayCloudIot = function (event, callback) {
     });
     console.log('START setDeviceConfig');
     const parentName = `projects/${projectId}/locations/${cloudRegion}`;
-    const registryName = `${parentName}/registries/${registryId}`;
+    const registryName = `${parentName}/registries/${config.registryId}`;
     const binaryData = Buffer.from(JSON.stringify(config)).toString('base64');
     const request = {
-      name: `${registryName}/devices/${deviceId}`,
+      name: `${registryName}/devices/${config.deviceId}`,
       versionToUpdate: 0,
       binaryData: binaryData
     };
