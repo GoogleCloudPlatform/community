@@ -6,7 +6,7 @@ const projectId = 'replace-with-your-project-id';
 const cloudRegion = 'replace-with-your-region';
 
 exports.relayCloudIot = function (event, callback) {
-  //const pubsubMessage = event.data;
+  // const pubsubMessage = event.data;
   console.log(event.data);
   const record = JSON.parse(
     event.data
