@@ -182,7 +182,7 @@ exports.handleCall = (req, res) => {
   const response = new VoiceResponse();
 
   // Prompt the user to leave a message
-  response.say('Hello from Cloud Functions. Please leave a message after the beep.');
+  response.say('Hello from Cloud Functions. Please leave a message after the beep');
 
   console.log('Recording message.');
 
@@ -302,46 +302,39 @@ Add the following to your `index.js` file:
 
 [embedmd]:# (index.js /exports\.analyzeRecording/ /;\s};/)
 ```js
-exports.analyzeRecording = (event) => {
-  const object = event.data;
-
-  if (object.resourceState === 'not_exists') {
-    // Ignore file deletions
-    return true;
-  } else if (!/^recordings\/\S+\/audio\.wav$/.test(object.name)) {
-    // Ignore changes to non-audio files
-    return true;
+exports.getRecording = (req, res) => {
+  if (!isValidRequest(req, res, 'getRecording')) {
+    return;
   }
 
-  console.log(`Analyzing gs://${object.bucket}/${object.name}`);
-
-  // Import the Google Cloud client libraries
-  const nl = require('@google-cloud/language')();
-  const speech = require('@google-cloud/speech')();
+  const got = require('got');
+  const path = require('path');
   const storage = require('@google-cloud/storage')();
 
-  const bucket = storage.bucket(object.bucket);
-  const dir = require('path').parse(object.name).dir;
+  const filename = `recordings/${path.parse(req.body.RecordingUrl).name}/audio.wav`;
+  const file = storage
+    .bucket(config.RESULTS_BUCKET)
+    .file(filename);
 
-  // Configure audio settings for Twilio voice recordings
-  const audioConfig = {
-    sampleRateHertz: 8000,
-    encoding: 'LINEAR16',
-    languageCode: 'en-US'
-  };
+  console.log(`Saving recording to: ${filename}`);
 
-  // Transcribe the audio file
-  return speech.recognize(bucket.file(object.name), audioConfig)
-    // Perform Sentiment, Entity, and Syntax analysis on the transcription
-    .then(([transcription]) => nl.annotate(transcription))
-    // Finally, save the analysis
-    .then(([shortResponse, fullResponse]) => {
-      const filename = `${dir}/analysis.json`;
-      console.log(`Saving gs://${object.bucket}/${filename}`);
-
-      return bucket
-        .file(filename)
-        .save(JSON.stringify(fullResponse, null, 2));
+  got.stream(req.body.RecordingUrl)
+    .pipe(file.createWriteStream({
+      metadata: {
+        contentType: 'audio/x-wav'
+      }
+    }))
+    .on('error', (err) => {
+      console.error(err);
+      res
+        .status(500)
+        .send(err)
+        .end();
+    })
+    .on('finish', () => {
+      res
+        .status(200)
+        .end();
     });
 };
 ```
@@ -406,7 +399,7 @@ You can follow these steps to clean up resources and save on costs.
         gsutil rm -r gs://[RESULTS_BUCKET]/
 
     * Replace `[RESULTS_BUCKET]` with the name of the bucket you created in step
-      7 of the **Prerequisites** section.
+      6 of the **Prerequisites** section.
 
 Of course, you can also delete the entire project, but you would have to disable billing and lose any
 setup you have done. Additionally,
