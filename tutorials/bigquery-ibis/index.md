@@ -176,7 +176,7 @@ exception if you try to use a string method on an integer column.
 ```py
 try:
     table.answer_count.upper()
-except Exception as exp:
+except AttributeError as exp:
     print(str(exp))
     # 'IntegerColumn' object has no attribute 'upper'
 ```
@@ -190,8 +190,7 @@ methods](http://docs.ibis-project.org/api.html#column-methods) `count()` and
 [embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_aggregate.*/ /END bigquery_ibis_aggregate]/)
 ```py
 total_questions = projection.count()
-total_answered = has_answer_int.sum()
-percentage_answered = (total_answered / total_questions) * 100
+percentage_answered = has_answer_int.mean() * 100
 ```
 
 ### Group by year
@@ -203,12 +202,10 @@ expression.
 
 [embedmd]:# (ibis_bigquery.py /^.*START bigquery_ibis_group_by.*/ /END bigquery_ibis_group_by]/)
 ```py
-expression = projection.aggregate(
-    [
-        total_questions.name('total_questions'),
-        percentage_answered.name('percentage_answered'),
-    ],
-    by=[projection.year]).sort_by([ibis.desc(projection.year)])
+expression = projection.groupby('year').aggregate(
+    total_questions=total_questions,
+    percentage_answered=percentage_answered,
+).sort_by(ibis.desc(projection.year))
 ```
 
 ## Executing the query expression

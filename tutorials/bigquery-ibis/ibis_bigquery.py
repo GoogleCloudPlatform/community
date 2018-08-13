@@ -66,7 +66,7 @@ reddit_posts_table = conn.table('2018_05', database='fh-bigquery.reddit_posts')
 # [START bigquery_ibis_type_error]
 try:
     table.answer_count.upper()
-except Exception as exp:
+except AttributeError as exp:
     print(str(exp))
     # 'IntegerColumn' object has no attribute 'upper'
 # [END bigquery_ibis_type_error]
@@ -88,17 +88,14 @@ has_answer_int = has_answer_boolean.ifelse(1, 0)
 
 # [START bigquery_ibis_aggregate]
 total_questions = projection.count()
-total_answered = has_answer_int.sum()
-percentage_answered = (total_answered / total_questions) * 100
+percentage_answered = has_answer_int.mean() * 100
 # [END bigquery_ibis_aggregate]
 
 # [START bigquery_ibis_group_by]
-expression = projection.aggregate(
-    [
-        total_questions.name('total_questions'),
-        percentage_answered.name('percentage_answered'),
-    ],
-    by=[projection.year]).sort_by([ibis.desc(projection.year)])
+expression = projection.groupby('year').aggregate(
+    total_questions=total_questions,
+    percentage_answered=percentage_answered,
+).sort_by(ibis.desc(projection.year))
 # [END bigquery_ibis_group_by]
 
 print('\nExecuting query:')
