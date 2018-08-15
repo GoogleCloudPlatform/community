@@ -1,3 +1,12 @@
+---
+title: Tutorial templates
+description: Templates for creating tutorials
+author: pmike
+tags: template, tutorial, GCP
+date_published: 2018-08-15
+---
+
+
 ## Templates
 
 This folder contains files that are used as templates for creating community content. Each type of template is in its own folder.
