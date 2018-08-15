@@ -249,7 +249,7 @@ client.on('message', (topic, message, packet) => {
     console.log(`${payload.hops} to ${++payload.hops}`);
     publishAsync(payload.hops, payload.hops + 1);
   } catch (e) {
-    console.log("No payload in message");
+    console.log('No payload in message');
   }
 });
 
