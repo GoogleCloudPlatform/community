@@ -64,7 +64,7 @@ requesting your website point to Cloud Storage APIs.
 
 ## Set up automated builds
 
-You will use [Cloud Builder][gcb] and the [Build Triggers][bt]
+You will use [Cloud Build][gcb] and the [Build Triggers][bt]
 feature to upload your website automatically every time you push a new git
 commit to the source repository.
 
