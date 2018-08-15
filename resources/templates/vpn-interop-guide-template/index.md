@@ -1,12 +1,12 @@
 ---
-title: Google Cloud VPN Interop Guide for <product>
-description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on Google Cloud Platform (GCP) and  <vendor-name><product-name>
-author: <author>
-tags: VPN, interop, <vendor>, <product>
+title: Google Cloud VPN Interop Guide for [PRODUCT]
+description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on Google Cloud Platform (GCP) and  [VENDOR] [PRODUCT]
+author: [AUTHOR]
+tags: VPN, interop, [VENDOR], [PRODUCT]
 date_published: YYYY-mm-dd
 ---
 
-<**BEGIN: HOW TO USE THIS TEMPLATE**>
+**BEGIN: HOW TO USE THIS TEMPLATE**
 
 1. Make a copy of this template.
 1. On your local computer, update and add information as indicated. Note:
