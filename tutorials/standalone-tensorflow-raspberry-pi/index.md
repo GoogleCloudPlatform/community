@@ -156,4 +156,4 @@ To delete the project:
 - The flowers model is based on the [Image Classification using Flowers dataset tutorial](https://cloud.google.com/ml-engine/docs/tensorflow/flowers-tutorial).
 - Reference guide: Install Tensorflow for Raspberry Pi (guide from [this article](http://www.instructables.com/id/Google-Tensorflow-on-Rapsberry-Pi/))
 - Reference guide: Install fswebcam and fbi executables (as explained [here](https://www.raspberrypi.org/documentation/usage/webcams/) and [here](https://www.raspberrypi-spy.co.uk/2017/02/how-to-display-images-on-raspbian-command-line-with-fbi/))
-- Try out other Google Cloud Platform features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
+- Try out other Google Cloud Platform features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials). 
