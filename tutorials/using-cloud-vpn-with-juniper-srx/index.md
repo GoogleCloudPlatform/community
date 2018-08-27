@@ -2,11 +2,11 @@
 title: How to Set Up VPN between Cisco ASR and Cloud VPN
 description: Learn how to build site-to-site IPSEC VPN between Cisco ASR and Cloud VPN.
 author: ashishverm
-tags: Compute Engine, Cloud VPN, Cisco ASR
-date_published: 2017-08-25
+tags: Compute Engine, Cloud VPN, Juniper SRX
+date_published: 2017-08-28
 ---
 
-This guide walks you through the process to configure the Cisco ASR 1000 for
+This guide walks you through the process to configure the Juniper SRX 300 for
 integration with the [Google Cloud VPN Services][cloud_vpn]. This information is
 provided as an example only. Please note that this guide is not meant to be a
 comprehensive overview of IPsec and assumes basic familiarity with the IPsec
@@ -18,18 +18,18 @@ protocol.
 
 The equipment used in the creation of this guide is as follows:
 
-* Vendor: Cisco
-* Model: ASR 1009-X
+* Vendor: Juniper 
+* Model: SRX300
 * Software Release: IOS XE 16.6.1
 
 Although this guide is created with ASR 1009-X exactly the same configuration
 also apply to other ASR 1000 platforms:
 
-* ASR 1001-X
-* ASR1002-X
-* ASR1001-HX
-* ASR1002-HX
-* ASR 1006-X
+* SRX220
+* SRX550
+* SRX1400
+* SRX3400
+* vSRX
 
 ## Topology
 
@@ -62,39 +62,34 @@ high level overview of the configuration process which will be covered:
   * Configure IPsec transform set
   * Configure IPsec profile
   * Configure IPsec Static Virtual Tunnel Interface (SVTI)
+  * Juniper
   * Configure Static or Dynamic Routing Protocol to route traffic into the IPsec tunnel
 * Testing the IPsec connection
 * Advanced VPN configurations
 
 ### Getting started
 
-The first step in configuring your Cisco ASR 1000 for use with the Google Cloud
+The first step in configuring your Juniper SRX300 for use with the Google Cloud
 VPN service is to ensure that the following prerequisite conditions have been
 met:
 
-The Cisco ASR 1000 Series Router IPsec application requires:
+* Junos Software Base (JSB/JB) license for SRX300 or Junos Software Enhanced (JSE/JE) license
 
-* Advanced Enterprise Services(SLASR1-AES) or Advanced IP Services Technology
-  Package License (SLASR1-AIS)
-* IPsec RTU license (FLASR1-IPsec-RTU)
-* Encryption HW module (ASR1002HX-IPsecHW(=) and ASR1001HX-IPsecW(=)) and Tiered
-  Crypto throughput license which applies to ASR1002-HX and ASR1001-HX chassis
-  only.
-
-For a detailed ASR 1000 Series Router license information, refer to the
-[ASR 1000 Routers Ordering Guide](http://www.cisco.com/c/en/us/products/collateral/routers/asr-1000-series-aggregation-services-routers/guide-c07-731639.html).
+For a detailed Juniper SRX series license information, refer to the
+[SRX Series Services Gateways](https://www.juniper.net/us/en/products-services/security/srx-series/).
 
 ### IPsec parameters
 
-For the Cisco ASR 1000 IPsec configuration, the following details will be used:
+For the Juniper SRX IPsec configuration, the following details will be used:
 
 |Parameter | Value|
 --------- |  -----
+|VPN Type| `Route-Based VPN` |
 |IPsec Mode | `Tunnel mode` |
 |Auth protocol | `Pre-shared-key` |
 |Key Exchange | `IKEv2` |
 |Start | `Auto` |
-|Perfect Forward Secrecy (PFS) | `Group 16` |
+|Perfect Forward Secrecy (PFS) | `Group 2` |
 |Dead Peer Detection (DPD) | `60 5 periodic` |
 
 The IPsec configuration used in this guide is specified below:
@@ -103,8 +98,10 @@ The IPsec configuration used in this guide is specified below:
 | ------------| -------|
 | Encryption | `esp-aes 256 esp-sha-hmac` |
 | Integrity | `sha256` |
-| Diffie-Hellman (DH) | `group 16` |
+| Diffie-Hellman (DH) | `group 2` |
 | Lifetime | `36,000 seconds (10 hours)` |
+
+*Note: Juniper SRX(es) mostly support only tunnel mode VPN*
 
 ## Configuration – GCP
 
@@ -117,13 +114,13 @@ to establish BGP sessions between the 2 peers.
 
 1.  [Go to the VPN page](https://console.cloud.google.com/networking/vpn/list)
     in the Google Cloud Platform Console.
-1.  Click **Create VPN connection**.
-1.  Populate the following fields for the gateway:
+2.  Click **Create VPN connection**.
+3.  Populate the following fields for the gateway:
 
     * **Name** — The name of the VPN gateway. This name is displayed in the
       console and used in by the `gcloud` command-line tool to reference the gateway.
     * **VPC network** — The VPC network containing the instances the VPN gateway
-      will serve. In this case it is `vpn-scale-test-cisco`, a
+      will serve. In this case it is `vpn-scale-test-juniper`, a
       [custom VPC network](https://cloud.google.com/compute/docs/vpc/using-vpc#create-custom-network).
     * **Region** — The region where you want to locate the VPN gateway.
       Normally, this is the region that contains the instances you wish to
@@ -133,7 +130,7 @@ to establish BGP sessions between the 2 peers.
       clicking **New static IP address** in the pull-down menu. Selected
       `vpn-scale-test0` for this guide.
 
-1.  Populate fields for at least one tunnel:
+4.  Populate fields for at least one tunnel:
 
     * **Peer IP address** — `204.237.220.4` Public IP address of the peer
       gateway.
@@ -166,14 +163,14 @@ to establish BGP sessions between the 2 peers.
     * **Peer BGP IP address** — See explanation for **Google BGP IP address**.
       Example: `169.254.1.2`
 
-1.  Click **Create** to create the gateway, Cloud Router, and all tunnels,
+5.  Click **Create** to create the gateway, Cloud Router, and all tunnels,
     though tunnels will not connect until you've configured the peer router as
     well.
 
     This step automatically creates the necessary forwarding rules for the
     gateway and tunnels.
 
-1.  [Configure your firewall rules](https://cloud.google.com/compute/docs/vpn/creating-vpns#configuring_firewall_rules)
+6.  [Configure your firewall rules](https://cloud.google.com/compute/docs/vpn/creating-vpns#configuring_firewall_rules)
     to allow inbound traffic from the peer network subnets, and you must
     configure the peer network firewall to allow inbound traffic from your
     Compute Engine prefixes.
@@ -406,25 +403,26 @@ command-line tool. The upcoming section provide details to both in detail below:
         gcloud compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-scale-test-cisco \
             --allow tcp,udp,icmp --source-ranges 10.0.0.0/8
 
-## Configuration – Cisco ASR 1000
+## Configuration – Juniper SRX300
 
 ### Base network configurations (to establish L3 connectivity)
 
-This section provides the base network configuration of Cisco ASR 1000 to
+This section provides the base network configuration of Juniper to
 establish network connectivity. At least one internal facing interface is
 required to connect to your own network, and one external facing interface is
 required to connect to GCP. A sample interface configuration is provided below
 for reference:
 
-    ! Internal interface configuration
-    interface TenGigabitEthernet0/0/2
-    description internal facing interface
-    ip address 10.0.200.1 255.0.0.0
-    !
-    !External interface configuration
-    interface TenGigabitEthernet0/0/0
-    description external facing interface
-    ip address 204.237.220.4 255.255.255.224
+    # Internal interface configuration
+    set interfaces ge-0/0/1 unit 0 family inet address 192.168.1.1/24
+    set interfaces ge-0/0/1 unit 0 description "internal facing interface"
+    # External interface configuration
+    set interfaces ge-0/0/0 unit 0 family inet address 192.168.1.1/24
+    set interfaces ge-0/0/0 unit 0 description "external facing interface"
+    # Tunnel interface configuration
+    set interfaces st0 unit 0 family inet mtu 1460
+    set interfaces st0 unit 0 family inet address 169.254.0.2/30
+
 
 ### Base VPN configurations
 
@@ -439,28 +437,19 @@ associated with the default policy is used for negotiation. An IKEv2 policy with
 no proposal is considered incomplete. In this block, the following parameters
 are set:
 
-* Encryption algorithm - set to `AES-CBC-256`, `AES-CBC-192`, `AES-CBC-128`
+* Encryption algorithm - set to `AES-CBC-256`
 * Integrity algorithm - set to SHA256
-* Diffie-Hellman group - set to 16
+* Diffie-Hellman group - set to 14
 
-    crypto ikev2 proposal VPN_SCALE_TEST_IKEV2_PROPOSAL
-     encryption aes-cbc-256 aes-cbc-192 aes-cbc-128
-     integrity sha256
-     group 16
-    !         
-    crypto ikev2 policy VPN_SCALE_TEST_IKEV2_POLICY
-     proposal VPN_SCALE_TEST_IKEV2_PROPOSAL
- 
-#### Configure IKEv2 keyring
+    set security ike proposal ike-phase1-proposal authentication-method pre-shared-keys
+    set security ike proposal ike-phase1-proposal dh-group group14
+    set security ike proposal ike-phase1-proposal authentication-algorithm sha-256
+    set security ike proposal ike-phase1-proposal encryption-algorithm aes-256-cbc
+    set security ike policy ike_pol_home-2-gcp-vpn mode main
+    set security ike policy ike_pol_home-2-gcp-vpn proposals ike-phase1-proposal
+    set security ike policy ike_pol_home-2-gcp-vpn pre-shared-key ascii-text <*****>
 
-The IKEv2 keyring is associated with an IKEv2 profile and hence, caters to a set
-of peers that match the IKEv2 profile.
 
-    crypto ikev2 keyring VPN_SCALE_TEST_KEY
-     peer GCP1
-      address 104.196.200.68
-      pre-shared-key MySharedSecret
-    !
 
 #### Configure IKEv2 profile
 
@@ -503,34 +492,27 @@ lifetime and timing parameters.
       crypto ipsec security-association lifetime seconds 3600
       crypto ipsec security-association replay window-size 1024
    
-#### Configure IPsec transform set
 
-A transform set represents a certain combination of security protocols and
-algorithms. During the IPsec SA negotiation, the peers agree to use a particular
-transform set for protecting a particular data flow.
-
-    crypto ipsec transform-set VPN_SCALE_TEST_TS esp-aes 256 esp-sha-hmac mode tunnel
-
-#### Configure IPsec profile
+#### Configure IPsec Proposal and Policy
 
 Defines the IPsec parameters that are to be used for IPsec encryption between
 two IPsec routers in IPsec profile configuration. In this block, the following
 parameters are set
 
 * Perfect Forward Secrecy (PFS) - PFS ensures that the same key will not be
-  generated again, so forces a new diffie-hellman key exchange. Set to group16
-  as recommended configuration on ASR 1000 router.
+  generated again, so forces a new diffie-hellman key exchange. This config is 
+  set to group14
 * SA Lifetime - set the lifetime of the security associations (after which a
   reconnection will occur). Set to `3600 seconds` as recommended configuration
   on ASR 1000 router.
+    set security ipsec proposal ipsec-phase2-proposal protocol esp
+    set security ipsec proposal ipsec-phase2-proposal authentication-algorithm hmac-sha-256-128
+    set security ipsec proposal ipsec-phase2-proposal encryption-algorithm aes-256-cbc
+    set security ipsec policy ipsec_pol_home-2-gcp-vpn perfect-forward-secrecy keys group14
+    set security ipsec policy ipsec_pol_home-2-gcp-vpn proposals ipsec-phase2-proposal
 
-      crypto ipsec profile VPN_SCALE_TEST_VTI
-      set security-association lifetime seconds 3600
-      set transform-set VPN_SCALE_TEST_TS
-      set pfs group16
-      set ikev2-profile VPN_SCALE_TEST_IKEV2_PROFILE
 
-#### Configure IPsec static virtual tunnel interface (SVTI)
+#### Configure IPsec Profile and Tunnel Binding Interface
 
 A tunnel interface is configured to be the logical interface associated with the
 tunnel. All traffic routed to the tunnel interface will be encrypted and
@@ -542,19 +524,28 @@ Association with the IPsec security association is done through the
 
 Adjust the maximum segment size (MSS) value of TCP packets going through a
 router. The recommended value is 1360 when the number of IP MTU bytes is set to
-1400. With these recommended settings, TCP sessions quickly scale back to
+1. With these recommended settings, TCP sessions quickly scale back to
 1400-byte IP packets so the packets will "fit" in the tunnel.
 
-    !
-    interface Tunnel1
-     ip address 169.254.0.58 255.255.255.252
-     ip mtu 1400
-     ip tcp adjust-mss 1360
-     tunnel source TenGigabitEthernet0/0/0
-     tunnel mode ipsec ipv4
-     tunnel destination 104.196.200.68
-     tunnel protection ipsec profile VPN_SCALE_TEST_VTI
-    !
+    set security ipsec vpn home-2-gcp-vpn bind-interface st0.0
+    set security ipsec vpn home-2-gcp-vpn ike gateway gw_home-2-gcp-vpn
+    set security ipsec vpn home-2-gcp-vpn ike ipsec-policy ipsec_pol_home-2-gcp-vpn
+    set security ipsec vpn home-2-gcp-vpn establish-tunnels immediately
+    set security flow tcp-mss ipsec-vpn mss 1360
+    set security flow tcp-session rst-invalidate-session
+
+
+
+#### Configure Security Policies
+
+    set security zones security-zone untrust interfaces ge-0/0/1.0 host-inbound-traffic system-services ike
+    set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
+    set security zones security-zone vpn-gcp interfaces st0.0
+    # Allow BGP Session
+    set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
+
+
+    
 
 #### Configure static or dynamic routing protocol to route traffic into the IPsec tunnel
 
