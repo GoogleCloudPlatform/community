@@ -854,12 +854,12 @@ Please refer to the troubleshooting [ASR1k made easy](http://d2zmdbbm9feqrf.clou
 
 ## References
 
-Please refer to the following documentation for ASR 1000 Platform feature
+Please refer to the following documentation for Juniper SRX300 Platform feature
 configuration guide and datasheet:
 
-* [Security for VPNs with IPsec](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_vpnips/configuration/xe-3s/sec-sec-for-vpns-w-ipsec-xe-3s-book/sec-cfg-vpn-ipsec.html)
-* [Internet Key Exchange Version 2](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ike2vpn/configuration/xe-16/sec-flex-vpn-xe-16-book.html)
-* [IPsec Virtual Tunnel Interface](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_vpnips/configuration/xe-3s/sec-sec-for-vpns-w-ipsec-xe-3s-book/sec-ipsec-virt-tunnl.html)
+* [proposal-set (Security IKE)](https://www.juniper.net/documentation/en_US/junos/topics/reference/configuration-statement/security-edit-proposal-set-ike.html)
+* [Example: Configuring a Route-Based VPN](https://www.juniper.net/documentation/en_US/junos/topics/example/ipsec-route-based-vpn-configuring.html)
+* [IPsec VPN Overview](https://www.juniper.net/documentation/en_US/junos/topics/concept/vpn-security-overview.html)
 * [BGP Configuration Guide](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/configuration/xe-3s/irg-xe-3s-book.html)
 * [Load Balancing Configuration Guide](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipswitch_cef/configuration/xe-3s/isw-cef-xe-3s-book/isw-cef-load-balancing.html)
 * [ASR 1000 Routers Datasheet](http://www.cisco.com/c/en/us/products/collateral/routers/asr-1000-series-aggregation-services-routers/datasheet-c78-731632.html)
