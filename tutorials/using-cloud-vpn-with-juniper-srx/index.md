@@ -467,7 +467,7 @@ are set:
   response from the peer, the SA created for that peer is deleted. Set DPD type to `probe-idle-tunnel`,  
   set DPD interval to `20` and the DPD retry threshold to `4`.
 
-* Set the IKE remote address, IKE external external interface and the IKE version (v2)
+* Set the IKE remote address, IKE external interface and the IKE version (v2)
 * The IKE local identity should be the IP address of the external interface. If SRX device is sitting 
 behind a NAT, the local identity should be configured as the public IP address of the NAT. Where NAT maps 
 to a pool of public IP addresses, a dedicated 1-to-1 NAT should be configured to the SRX device.
@@ -489,15 +489,12 @@ Defines the IPsec parameters that are to be used for IPsec encryption between
 two IPsec routers in IPsec profile configuration. In this block, the following
 parameters are set
 
-* `IPsec SA lifetime` – 1 hour (3600 seconds) is the recommended value for most VPN sessions.
+* `IPsec SA lifetime` – 1 hour `3600 seconds` is the recommended value for most VPN sessions.
 The default on a Juniper SRX is 3600 seconds
+
 * Perfect Forward Secrecy (PFS) - PFS ensures that the same key will not be
   generated again, so forces a new diffie-hellman key exchange. This config is 
-  set to group14
-  
-* SA Lifetime - set the lifetime of the security associations (after which a
-  reconnection will occur). Set to `3600 seconds` as recommended configuration
-  on ASR 1000 router.  
+  set to group14 
   
         [edit]
         root@vsrx#
