@@ -290,7 +290,7 @@ which makes sense for you, such as `us-central1-a`.
     
 1.  Create the cluster.
 
-        gcloud container clusters create hello-cluster --num-nodes=2 --zon=us-central1-a
+        gcloud container clusters create hello-cluster --num-nodes=2 --zone=us-central1-a
 
     This command creates a cluster of two machines. You can choose a different
     size, but two is a good starting point.
