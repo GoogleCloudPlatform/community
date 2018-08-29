@@ -20,7 +20,7 @@ The equipment used in the creation of this guide is as follows:
 
 * Vendor: Juniper 
 * Model: SRX300
-* Software Release: IOS XE 16.6.1
+* JUNOS Software Release [15.1X49-D100.6]
 
 Although this guide is created with ASR 1009-X exactly the same configuration
 also apply to other ASR 1000 platforms:
@@ -191,18 +191,18 @@ to establish BGP sessions between the 2 peers.
 1.  Create a custom VPC network. You can also use auto VPC network, make sure
     there is no conflict with your local network range.
 
-        gcloud compute networks create vpn-scale-test-cisco --mode custom
+        gcloud compute networks create vpn-scale-test-juniper --subnet-mode custom
 
-        gcloud compute networks subnets create subnet-1 --network vpn-scale-test-cisco \
+        gcloud compute networks subnets create subnet-1 --network vpn-scale-test-juniper \
             --region us-east1 --range 172.16.100.0/24
 
 1.  Create a VPN gateway in the desired region. Normally, this is the region
     that contains the instances you want to reach. This step creates an
-    unconfigured VPN gateway named `vpn-scale-test-cisco-gw-0` in your VPC
+    unconfigured VPN gateway named `vpn-scale-test-juniper-gw-0` in your VPC
     network.
 
-        gcloud compute target-vpn-gateways create vpn-scale-test-cisco-gw-0 --network \
-            vpn-scale-test-cisco --region us-east1
+        gcloud compute target-vpn-gateways create vpn-scale-test-juniper-gw-0 --network \
+            vpn-scale-test-juniper --region us-east1
 
 1.  Reserve a static IP address in the VPC network and region where you created
     the VPN gateway. Make a note of the created address for use in future steps.
@@ -215,19 +215,19 @@ to establish BGP sessions between the 2 peers.
     `fr-udp4500` resp.
 
         gcloud compute --project vpn-guide forwarding-rules create fr-esp  --region us-east1 \
-            --ip-protocol ESP --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-cisco-gw-0
+            --ip-protocol ESP --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-juniper-gw-0
 
         gcloud compute --project vpn-guide forwarding-rules create fr-udp500 --region us-east1 \
-            --ip-protocol UDP --ports 500 --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-cisco-gw-0
+            --ip-protocol UDP --ports 500 --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-juniper-gw-0
 
         gcloud compute --project vpn-guide forwarding-rules create fr-udp4500 --region us-east1 \
-            --ip-protocol UDP --ports 4500 --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-cisco-gw-0
+            --ip-protocol UDP --ports 4500 --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-juniper-gw-0
 
 1.  Create [Cloud Router](https://cloud.google.com/compute/docs/cloudrouter) as
     shown below:
 
-        gcloud compute --project vpn-guide routers create vpn-scale-test-cisco-rtr --region us-east1 \
-            --network vpn-scale-test-cisco --asn 65002
+        gcloud compute --project vpn-guide routers create vpn-scale-test-juniper-rtr --region us-east1 \
+            --network vpn-scale-test-juniper --asn 65002
 
 1.  Create a VPN tunnel on the Cloud VPN Gateway that points toward the external
     IP address `[CUST_GW_EXT_IP]` of your peer VPN gateway. You also need to
@@ -238,7 +238,7 @@ to establish BGP sessions between the 2 peers.
 
         gcloud compute --project vpn-guide vpn-tunnels create tunnel1 --peer-address 204.237.220.4 \
             --region us-east1 --ike-version 2 --shared-secret MySharedSecret --target-vpn-gateway \
-            vpn-scale-test-cisco-gw-0 --router vpn-scale-test-cisco-rtr
+            vpn-scale-test-cisco-gw-0 --router vpn-scale-test-juniper-rtr
 
 1.  Update the Cloud Router config to add a virtual interface (--interface-name)
     for the BGP peer. The BGP interface IP address must be a *link-local* IP
@@ -249,7 +249,7 @@ to establish BGP sessions between the 2 peers.
     blank, and leave `--peer-ip-address` blank in the next step, and IP
     addresses will be automatically generated for you.
 
-        gcloud compute --project vpn-guide routers add-interface vpn-scale-test-cisco-rtr \
+        gcloud compute --project vpn-guide routers add-interface vpn-scale-test-juniper-rtr \
             --interface-name if-1 --ip-address 169.254.1.1 --mask-length 30 --vpn-tunnel tunnel1 --region us-east1
 
 1.  Update the Cloud Router config to add the BGP peer to the interface. This
@@ -266,11 +266,11 @@ to establish BGP sessions between the 2 peers.
 
 1.  View details of the Cloud Router and confirm your settings.
 
-        gcloud compute --project vpn-guide routers describe vpn-scale-test-cisco-rtr --region us-east1
+        gcloud compute --project vpn-guide routers describe vpn-scale-test-juniper-rtr --region us-east1
 
 1.  Create firewall rules to allow traffic between on-prem network and GCP VPC networks.
 
-        gcloud  compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-scale-test-cisco \
+        gcloud  compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-scale-test-juniper \
             --allow tcp,udp,icmp --source-ranges 10.0.0.0/8
             
 ### IPsec VPN using static routing
@@ -283,10 +283,9 @@ command-line tool. The upcoming section provide details to both in detail below:
 
 #### Using the Google Cloud Platform Console
 
-1.  [Go to the VPN page](https://console.cloud.google.com/networking/vpn/list)
-    in the Google Cloud Platform Console.
-1.  Click **Create VPN connection**.
-1.  Populate the following fields for the gateway:
+1.  [Go to the VPN page](https://console.cloud.google.com/networking/vpn/list) in the Google Cloud Platform Console.
+2.  Click **Create VPN connection**.
+3.  Populate the following fields for the gateway:
 
     * **Name** — The name of the VPN gateway. This name is displayed in the
       console and used by the `gcloud` command-line tool to reference the gateway.
@@ -301,7 +300,7 @@ command-line tool. The upcoming section provide details to both in detail below:
       If you don't have a static external IP address, you can create one by
       clicking **New static IP address** in the pull-down menu. Selected
       `vpn-scale-test0` for this guide.
-1.  Populate fields for at least one tunnel:
+4.  Populate fields for at least one tunnel:
 
     * **Peer IP address** — Enter your on-premises public IP address here, with the
       above mentioned topology it is `204.237.220.4`
@@ -320,11 +319,11 @@ command-line tool. The upcoming section provide details to both in detail below:
     * Select the gateway's entire subnet in the pull-down menu. Or, you can
       leave it blank since the local subnet is the default.
     * Leave **Local IP ranges** blank except for the gateway's subnet.
-1.  Click **Create** to create the gateway and initiate all tunnels, though
+5.  Click **Create** to create the gateway and initiate all tunnels, though
     tunnels will not connect until you've completed the additional steps below.
     This step automatically creates a network-wide route and necessary
     forwarding rules for the tunnel.
-1.  [Configure your firewall rules](https://cloud.google.com/compute/docs/vpn/creating-vpns#configuring_firewall_rules)
+6.  [Configure your firewall rules](https://cloud.google.com/compute/docs/vpn/creating-vpns#configuring_firewall_rules)
     to allow inbound traffic from the peer network subnets, and you must
     configure the peer network firewall to allow inbound traffic from your
     Compute Engine prefixes.
@@ -346,24 +345,24 @@ command-line tool. The upcoming section provide details to both in detail below:
 1.  Create a custom VPC network. You can also use auto VPC network, make sure
     there is no conflict with your local network range.
 
-        gcloud compute networks create vpn-scale-test-cisco --mode custom
-        gcloud compute networks subnets create subnet-1 --network vpn-scale-test-cisco \
+        gcloud compute networks create vpn-scale-test-juniper --mode custom
+        gcloud compute networks subnets create subnet-1 --network vpn-scale-test-juniper \
             --region us-east1 --range 172.16.100.0/24
 
-1.  Create a VPN gateway in the desired region. Normally, this is the region
+2.  Create a VPN gateway in the desired region. Normally, this is the region
     that contains the instances you wish to reach. This step creates an
-    unconfigured VPN gateway named `vpn-scale-test-cisco-gw-0` in your VPC
+    unconfigured VPN gateway named `vpn-scale-test-juniper-gw-0` in your VPC
     network.
 
-        gcloud compute target-vpn-gateways create vpn-scale-test-cisco-gw-0 \
+        gcloud compute target-vpn-gateways create vpn-scale-test-juniper-gw-0 \
             --network vpn-scale-test-cisco --region us-east1
 
-1.  Reserve a static IP address in the VPC network and region where you created
+3.  Reserve a static IP address in the VPC network and region where you created
     the VPN gateway. Make a note of the created address for use in future steps.
 
         gcloud compute --project vpn-guide addresses create --region us-east1 vpn-static-ip
 
-1.  Create a forwarding rule that forwards ESP, IKE and NAT-T traffic toward the
+4.  Create a forwarding rule that forwards ESP, IKE and NAT-T traffic toward the
     Cloud VPN gateway. Use the static IP address `vpn-static-ip` you reserved
     earlier. This step generates a forwarding rule named `fr-esp`, `fr-udp500`,
     `fr-udp4500` resp.
@@ -377,7 +376,7 @@ command-line tool. The upcoming section provide details to both in detail below:
         gcloud compute forwarding-rules create fr-udp4500 --project vpn-guide --region us-east1 \
             --address 104.196.200.68 --target-vpn-gateway vpn-scale-test-cisco-gw-0 --ip-protocol=UDP --ports 4500
 
-1.  Create a VPN tunnel on the Cloud VPN Gateway that points toward the external
+5.  Create a VPN tunnel on the Cloud VPN Gateway that points toward the external
     IP address `[CUST_GW_EXT_IP]` of your peer VPN gateway. You also need to
     supply the shared secret. The default, and preferred, IKE version is 2. If
     you need to set it to 1, use --ike_version 1. The following example sets IKE
@@ -388,7 +387,7 @@ command-line tool. The upcoming section provide details to both in detail below:
             --region us-east1 --ike-version 2 --shared-secret MySharedSecret --target-vpn-gateway \
             vpn-scale-test-cisco-gw-0 --local-traffic-selector=172.16.100.0/24
 
-1.  Use a [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create)
+6.  Use a [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create)
     to forward traffic to the destination range of IP addresses
     ([CIDR_DEST_RANGE]) in your local on-premises network. You can repeat this
     command to add multiple ranges to the VPN tunnel. The region must be the
@@ -397,7 +396,7 @@ command-line tool. The upcoming section provide details to both in detail below:
         gcloud compute --project vpn-guide routes create route1 --network [NETWORK] --next-hop-vpn-tunnel \
             tunnel1 --next-hop-vpn-tunnel-region us-east1 --destination-range 10.0.0.0/8
 
-1.  Create firewall rules to allow traffic between on-premises network and GCP
+7.  Create firewall rules to allow traffic between on-premises network and GCP
     VPC networks.
 
         gcloud compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-scale-test-cisco \
@@ -413,6 +412,8 @@ required to connect to your own network, and one external facing interface is
 required to connect to GCP. A sample interface configuration is provided below
 for reference:
 
+	[edit]
+    root@vsrx#
     # Internal interface configuration
     set interfaces ge-0/0/1 unit 0 family inet address 192.168.1.1/24
     set interfaces ge-0/0/1 unit 0 description "internal facing interface"
@@ -440,58 +441,47 @@ are set:
 * Encryption algorithm - set to `AES-CBC-256`
 * Integrity algorithm - set to SHA256
 * Diffie-Hellman group - set to 14
+* IKEv2 Lifetime - set the lifetime of the security associations (after which a 
+reconnection will occur). The default on most SRX platforms is 28800 seconds
 
-    set security ike proposal ike-phase1-proposal authentication-method pre-shared-keys
-    set security ike proposal ike-phase1-proposal dh-group group14
-    set security ike proposal ike-phase1-proposal authentication-algorithm sha-256
-    set security ike proposal ike-phase1-proposal encryption-algorithm aes-256-cbc
-    set security ike policy ike_pol_home-2-gcp-vpn mode main
-    set security ike policy ike_pol_home-2-gcp-vpn proposals ike-phase1-proposal
-    set security ike policy ike_pol_home-2-gcp-vpn pre-shared-key ascii-text <*****>
+		[edit]
+        root@vsrx#
+        set security ike proposal ike-phase1-proposal authentication-method pre-shared-keys
+        set security ike proposal ike-phase1-proposal dh-group group14
+        set security ike proposal ike-phase1-proposal authentication-algorithm sha-256
+        set security ike proposal ike-phase1-proposal encryption-algorithm aes-256-cbc
+        set security ike proposal ike-phase1-proposal lifetime-seconds 28800
+        set security ike policy ike_pol_home-2-gcp-vpn mode main
+        set security ike policy ike_pol_home-2-gcp-vpn proposals ike-phase1-proposal
+        set security ike policy ike_pol_home-2-gcp-vpn pre-shared-key ascii-text <*****>
 
 
 
-#### Configure IKEv2 profile
+#### Configure IKEv2 Gateway
 
 An IKEv2 profile must be configured and must be attached to an IPsec profile on
 both the IKEv2 initiator and responder. In this block, the following parameters
 are set:
 
-* IKEv2 Lifetime - set the lifetime of the security associations (after which a
-  reconnection will occur). Set to 36,000 seconds as recommended configuration
-  on ASR 1000 router.
-* DPD – set the dead peer detection interval and retry interval, if there are no
-  response from the peer, the SA created for that peer is deleted. Set to 60
-  seconds keepalive interval and 5 seconds retry interval as recommended
-  configuration on ASR 1000 router.
+* DPD – set the dead peer detection interval and retry threshold, if there are no
+  response from the peer, the SA created for that peer is deleted. Set DPD type to `probe-idle-tunnel`,  
+  set DPD interval to `20` and the DPD retry threshold to `4`.
 
-      crypto ikev2 profile VPN_SCALE_TEST_IKEV2_PROFILE
-       match address local interface TenGigabitEthernet0/0/0
-       match identity remote any
-       authentication local pre-share
-       authentication remote pre-share
-       keyring local VPN_SCALE_TEST_KEY
-       lifetime 36000
-       dpd 60 5 periodic
-   
-#### Configure IPsec security association
+* Set the IKE remote address, IKE external external interface and the IKE version (v2)
+* The IKE local identity should be the IP address of the external interface. If SRX device is sitting 
+behind a NAT, the local identity should be configured as the public IP address of the NAT. Where NAT maps 
+to a pool of public IP addresses, a dedicated 1-to-1 NAT should be configured to the SRX device.
 
-Create IPsec security-association (SA) rules. A security association is a
-relationship between two or more entities that describes how the entities will
-use security services to communicate securely. During tunnel establishment, the
-two peers negotiate security associations that govern authentication,
-encryption, encapsulation, and key management. These negotiations involve two
-phases: first, to establish the tunnel (the IKE SA) and second, to govern
-traffic within the tunnel (the IPsec SA). The following commands set the SA
-lifetime and timing parameters.
-
-* `IPsec SA lifetime` – 1 hour is the recommended value on ASR 1000 router.
-
-* `IPsec SA replay window-size` – 1024 is the recommended value on ASR 1000 router.
-
-      crypto ipsec security-association lifetime seconds 3600
-      crypto ipsec security-association replay window-size 1024
-   
+		[edit]
+        root@vsrx#
+        set security ike gateway gw_home-2-gcp-vpn ike-policy ike_pol_home-2-gcp-vpn
+        set security ike gateway gw_home-2-gcp-vpn address 35.187.170.191
+        set security ike gateway gw_home-2-gcp-vpn dead-peer-detection probe-idle-tunnel
+        set security ike gateway gw_home-2-gcp-vpn dead-peer-detection interval 20
+		set security ike gateway gw_home-2-gcp-vpn dead-peer-detection threshold 4
+        set security ike gateway gw_home-2-gcp-vpn local-identity inet 104.196.65.171
+        set security ike gateway gw_home-2-gcp-vpn external-interface ge-0/0/1.0
+        set security ike gateway gw_home-2-gcp-vpn version v2-only
 
 #### Configure IPsec Proposal and Policy
 
@@ -499,17 +489,24 @@ Defines the IPsec parameters that are to be used for IPsec encryption between
 two IPsec routers in IPsec profile configuration. In this block, the following
 parameters are set
 
+* `IPsec SA lifetime` – 1 hour (3600 seconds) is the recommended value for most VPN sessions.
+The default on a Juniper SRX is 3600 seconds
 * Perfect Forward Secrecy (PFS) - PFS ensures that the same key will not be
   generated again, so forces a new diffie-hellman key exchange. This config is 
   set to group14
+  
 * SA Lifetime - set the lifetime of the security associations (after which a
   reconnection will occur). Set to `3600 seconds` as recommended configuration
-  on ASR 1000 router.
-    set security ipsec proposal ipsec-phase2-proposal protocol esp
-    set security ipsec proposal ipsec-phase2-proposal authentication-algorithm hmac-sha-256-128
-    set security ipsec proposal ipsec-phase2-proposal encryption-algorithm aes-256-cbc
-    set security ipsec policy ipsec_pol_home-2-gcp-vpn perfect-forward-secrecy keys group14
-    set security ipsec policy ipsec_pol_home-2-gcp-vpn proposals ipsec-phase2-proposal
+  on ASR 1000 router.  
+  
+        [edit]
+        root@vsrx#
+        set security ipsec proposal ipsec-phase2-proposal protocol esp
+        set security ipsec proposal ipsec-phase2-proposal lifetime-seconds 3600
+        set security ipsec proposal ipsec-phase2-proposal authentication-algorithm hmac-sha-256-128
+        set security ipsec proposal ipsec-phase2-proposal encryption-algorithm aes-256-cbc
+        set security ipsec policy ipsec_pol_home-2-gcp-vpn perfect-forward-secrecy keys group14
+        set security ipsec policy ipsec_pol_home-2-gcp-vpn proposals ipsec-phase2-proposal
 
 
 #### Configure IPsec Profile and Tunnel Binding Interface
@@ -523,21 +520,27 @@ Association with the IPsec security association is done through the
 `tunnel protection` command.
 
 Adjust the maximum segment size (MSS) value of TCP packets going through a
-router. The recommended value is 1360 when the number of IP MTU bytes is set to
+router. The recommended value is 1360 when the number of IP MTU bytes is set to 1460
+
 1. With these recommended settings, TCP sessions quickly scale back to
 1400-byte IP packets so the packets will "fit" in the tunnel.
 
-    set security ipsec vpn home-2-gcp-vpn bind-interface st0.0
-    set security ipsec vpn home-2-gcp-vpn ike gateway gw_home-2-gcp-vpn
-    set security ipsec vpn home-2-gcp-vpn ike ipsec-policy ipsec_pol_home-2-gcp-vpn
-    set security ipsec vpn home-2-gcp-vpn establish-tunnels immediately
-    set security flow tcp-mss ipsec-vpn mss 1360
-    set security flow tcp-session rst-invalidate-session
+        [edit]
+        root@vsrx#
+        set security ipsec vpn home-2-gcp-vpn bind-interface st0.0
+        set security ipsec vpn home-2-gcp-vpn ike gateway gw_home-2-gcp-vpn
+        set security ipsec vpn home-2-gcp-vpn ike ipsec-policy ipsec_pol_home-2-gcp-vpn
+        set security ipsec vpn home-2-gcp-vpn establish-tunnels immediately
+        set security flow tcp-mss ipsec-vpn mss 1360
+        set security flow tcp-session rst-invalidate-session
 
 
 
 #### Configure Security Policies
-
+Juniper SRX requires security policies....
+	
+    [edit]
+    root@vsrx#
     set security zones security-zone untrust interfaces ge-0/0/1.0 host-inbound-traffic system-services ike
     set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
     set security zones security-zone vpn-gcp interfaces st0.0
@@ -554,26 +557,29 @@ BGP is used within the tunnel to exchange prefixes between the GCP and the ASR
 
 BGP timers are adjusted to provide more rapid detection of outages.
 
-To advertise additional prefixes to GCP, copy the "network" statement and
-identify the prefix you wish to advertise. Make sure the prefix is present in
-the routing table of the ASR 1000 with a valid next-hop.
+* Configure BGP peering between SRX and cloud router
 
-    router bgp 65001
-     bgp log-neighbor-changes
-     neighbor 169.254.0.1 description BGP session over Tunnel1
-     neighbor 169.254.0.1 remote-as 65002
-     neighbor 169.254.0.1 timers 20 60 60
-    !
-    address-family ipv4
-     network 10.0.0.0
-     neighbor 169.254.0.1 activate
-    exit-address-family
+		[edit]
+        root@vsrx#
+        set protocols bgp group ebgp-peers type external
+        set protocols bgp group ebgp-peers multihop
+        set protocols bgp group ebgp-peers local-as 65501
+        set protocols bgp group ebgp-peers neighbor 169.254.1.1 peer-as 65500
 
-or
+* Configure routing policies to inject routes into BGP and advertise it to the cloud router
 
-Statically route traffic toward the network in the GCP to the Tunnel interface.
+		[edit]
+        root@vsrx#
+		set policy-options policy-statement gcp-bgp-policy term 1 from protocol direct
+        set policy-options policy-statement gcp-bgp-policy term 1 from route-filter 192.168.1.0/24 exact
+        set policy-options policy-statement gcp-bgp-policy term 1 then accept
+        set protocols bgp group ebgp-peers export gcp-bgp-policy
 
-    ip route 172.16.100.0 255.255.255.0 Tunnel 1
+Alternatively, static routes to GCP networks can be configured to point to the Tunnel interface `st0.0`.
+
+    [edit]
+    root@vsrx#
+    set routing-options static route 172.16.0.0/16 next-hop st0.0
 
 Check [Best practices](https://cloud.google.com/router/docs/resources/best-practices) 
 for further recommendations on peer configurations.
@@ -583,7 +589,9 @@ for further recommendations on peer configurations.
 To save the running configuration and set it as the default startup, run the
 following command on Cisco IOS terminal:
 
-    copy run start
+    [edit]
+    root@vsrx#
+    commit
 
 ### Test result
 
@@ -718,34 +726,33 @@ define the route priority run the below command.
         --next-hop-vpn-tunnel tunnel1 --next-hop-vpn-tunnel-region us-east1 --destination-range \
         10.0.0.0/8 --priority=2000
 
-###### Test output on Cisco ASR
+###### Test output on Juniper SRX
+1. Show IKE Security Associations
+        root@vsrx# run show security ike security-associations
+        Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
+        7877087 UP     412c5a43aad7682b  b6d24ef8bf25e9ea  IKEv2          35.187.170.191
+2. Show IPSec Security Associations
+        root@vsrx# run show security ipsec security-associations
+        Total active tunnels: 1
+        ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
+        <131073 ESP:aes-cbc-256/sha256 9beb1bf0 729/ unlim - root 4500 35.187.170.191
+        >131073 ESP:aes-cbc-256/sha256 97791a28 729/ unlim - root 4500 35.187.170.191  		
+3. List BGP learned routes:
 
-    cisco-asr#sh ip bgp 172.16.100.0
-    BGP routing table entry for 172.16.100.0/24, version 690
-    Paths: (3 available, best #1, table default)
-    Multipath: eBGP
-    Flag: 0x404200
-      Advertised to update-groups:
-         18
-      Refresh Epoch 1
-      65002
-        169.254.0.1 from 169.254.0.1 (169.254.0.1)
-          Origin incomplete, metric 100, localpref 2000, valid, external, best
-          rx pathid: 0, tx pathid: 0x0
-      Refresh Epoch 1
-      65002, (received-only)
-        169.254.0.1 from 169.254.0.1 (169.254.0.1)
-          Origin incomplete, metric 100, localpref 100, valid, external
-          rx pathid: 0, tx pathid: 0
-      Refresh Epoch 1
-      65002
-        169.254.0.57 from 169.254.0.57 (169.254.0.1)
-          Origin incomplete, metric 100, localpref 100, valid, external
-          rx pathid: 0, tx pathid: 0
+        root@vsrx# run show route protocol bgp
 
-    cisco-asr#sh ip cef 172.16.100.0
-    172.16.100.0/24
-      nexthop 169.254.0.1 Tunnel1
+        inet.0: 11 destinations, 11 routes (11 active, 0 holddown, 0 hidden)
+        + = Active Route, - = Last Active, * = Both
+
+        172.16.0.0/24      *[BGP/170] 23:02:00, MED 100, localpref 100
+                              AS path: 65500 ?, validation-state: unverified
+                            > to 169.254.0.1 via st0.0
+        172.16.11.0/24     *[BGP/170] 23:02:00, MED 100, localpref 100
+                              AS path: 65500 ?, validation-state: unverified
+                            > to 169.254.0.1 via st0.0
+        172.16.21.0/24     *[BGP/170] 23:02:00, MED 100, localpref 100
+                              AS path: 65500 ?, validation-state: unverified
+                            > to 169.254.0.1 via st0.0
 
 #### Getting higher throughput
 
