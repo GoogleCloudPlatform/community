@@ -2,7 +2,7 @@
 title: Google Cloud IoT Core Device to Device Communication
 description: Learn how to relay messages from one device to another using Google Cloud Functions.
 author: gguuss
-tags: Google Cloud IoT Core, Cloud IoT, Google Cloud Functions
+tags: Google Cloud IoT Core, Cloud IoT, Google Cloud Functions, internet of things
 date_published: 2017-12-05
 ---
 
