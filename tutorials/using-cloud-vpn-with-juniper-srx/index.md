@@ -591,16 +591,218 @@ following command on Cisco IOS terminal:
 
 ### Test result
 
-    cisco-asr#ping 172.16.100.2 source 10.0.200.1
-    Type escape sequence to abort.
-    Sending 5, 100-byte ICMP Echos to 172.16.100.2, timeout is 2 seconds:
-    Packet sent with a source address of 10.0.200.1
-    !!!!!
-    Success rate is 100 percent (5/5), round-trip min/avg/max = 18/19/20 ms
+    root@vsrx> ping 172.16.0.2 count 5 source 192.168.1.1
+    PING 172.16.0.2 (172.16.0.2): 56 data bytes
+    64 bytes from 172.16.0.2: icmp_seq=0 ttl=64 time=20.758 ms
+    64 bytes from 172.16.0.2: icmp_seq=1 ttl=64 time=20.024 ms
+    64 bytes from 172.16.0.2: icmp_seq=2 ttl=64 time=23.783 ms
+    64 bytes from 172.16.0.2: icmp_seq=3 ttl=64 time=19.472 ms
+    64 bytes from 172.16.0.2: icmp_seq=4 ttl=64 time=21.183 ms
+
+    --- 172.16.0.2 ping statistics ---
+    5 packets transmitted, 5 packets received, 0% packet loss
+    round-trip min/avg/max/stddev = 19.472/21.044/23.783/1.491 ms
+
+    root@vsrx>
 
 ### Advanced VPN configurations
 
-#### Configure VPN redundancy
+#### Bundling Multiple tunnels for Higher Throughput.
+As documented in the [GCP Advanced Configurations](https://cloud.google.com/compute/docs/vpn/advanced),
+each Cloud VPN tunnel can support up to 3 Gbps when the traffic is traversing a
+[direct peering](https://cloud.google.com/interconnect/direct-peering) link, or
+1.5 Gbps when traversing the public Internet. To increase the VPN throughput the
+recommendation is to add multiple Cloud VPN gateway on the same region to load
+balance the traffic across the tunnels. The 2 VPN tunnels configuration example
+here is built based on the IPsec tunnel and BGP configuration illustrated above,
+can be expanded to more tunnels if required.
+
+
+##### Juniper SRX Configuration
+
+    root@akinkanju# run show configuration | display set
+    set security ike policy ike_pol_onprem-2-gcp-vpn mode main
+    set security ike policy ike_pol_onprem-2-gcp-vpn proposal-set standard
+    set security ike policy ike_pol_onprem-2-gcp-vpn pre-shared-key ascii-text "********"
+    
+    set security ike gateway gw_onprem-2-gcp-vpn ike-policy ike_pol_onprem-2-gcp-vpn
+    set security ike gateway gw_onprem-2-gcp-vpn address 35.230.59.183
+    set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection probe-idle-tunnel
+    set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection interval 20
+    set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection threshold 3
+    set security ike gateway gw_onprem-2-gcp-vpn local-identity inet 76.104.213.79
+    set security ike gateway gw_onprem-2-gcp-vpn external-interface ge-0/0/0.0
+    set security ike gateway gw_onprem-2-gcp-vpn version v2-only
+    set security ike gateway gw_onprem-2-gcp-vpn-2 ike-policy ike_pol_onprem-2-gcp-vpn
+    set security ike gateway gw_onprem-2-gcp-vpn-2 address 35.233.197.145
+    set security ike gateway gw_onprem-2-gcp-vpn-2 dead-peer-detection probe-idle-tunnel
+    set security ike gateway gw_onprem-2-gcp-vpn-2 dead-peer-detection interval 20
+    set security ike gateway gw_onprem-2-gcp-vpn-2 dead-peer-detection threshold 3
+    set security ike gateway gw_onprem-2-gcp-vpn-2 local-identity inet 76.104.213.79
+    set security ike gateway gw_onprem-2-gcp-vpn-2 external-interface ge-0/0/0.0
+    set security ike gateway gw_onprem-2-gcp-vpn-2 version v2-only
+    
+    
+    set security ipsec policy ipsec_pol_onprem-2-gcp-vpn perfect-forward-secrecy keys group2
+    set security ipsec policy ipsec_pol_onprem-2-gcp-vpn proposal-set standard
+    set security ipsec policy ipsec_pol_onprem-2-gcp-vpn-2 perfect-forward-secrecy keys group2
+    set security ipsec policy ipsec_pol_onprem-2-gcp-vpn-2 proposal-set standard
+    
+    
+    set security ipsec vpn onprem-2-gcp-vpn bind-interface st0.0
+    set security ipsec vpn onprem-2-gcp-vpn ike gateway gw_onprem-2-gcp-vpn
+    set security ipsec vpn onprem-2-gcp-vpn ike ipsec-policy ipsec_pol_onprem-2-gcp-vpn
+    set security ipsec vpn onprem-2-gcp-vpn establish-tunnels immediately
+    set security ipsec vpn onprem-2-gcp-vpn-2 bind-interface st0.1
+    set security ipsec vpn onprem-2-gcp-vpn-2 ike gateway gw_onprem-2-gcp-vpn-2
+    set security ipsec vpn onprem-2-gcp-vpn-2 ike ipsec-policy ipsec_pol_onprem-2-gcp-vpn-2
+    set security ipsec vpn onprem-2-gcp-vpn-2 establish-tunnels immediately
+    set security flow tcp-mss ipsec-vpn mss 1300
+    
+    
+    set security policies from-zone trust to-zone trust policy trust-to-trust match source-address any
+    set security policies from-zone trust to-zone trust policy trust-to-trust match destination-address any
+    set security policies from-zone trust to-zone trust policy trust-to-trust match application any
+    set security policies from-zone trust to-zone trust policy trust-to-trust then permit
+    set security policies from-zone trust to-zone untrust policy trust-to-untrust match source-address any
+    set security policies from-zone trust to-zone untrust policy trust-to-untrust match destination-address any
+    set security policies from-zone trust to-zone untrust policy trust-to-untrust match application any
+    set security policies from-zone trust to-zone untrust policy trust-to-untrust then permit
+    set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match source-address addr_192_168_1_0_24
+    set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match destination-address gcp-addr-prefixes
+    set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match application any
+    set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn then permit
+    set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match source-address gcp-addr-prefixes
+    set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match destination-address addr_192_168_1_0_24
+    set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match application any
+    set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn then permit
+    set security zones security-zone trust address-book address addr_192_168_1_0_24 192.168.1.0/24
+    set security zones security-zone trust host-inbound-traffic system-services all
+    set security zones security-zone trust host-inbound-traffic protocols all
+    
+    set security zones security-zone trust interfaces irb.0
+    set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ike
+    set security zones security-zone vpn-gcp address-book address 10.0.0.0/8 10.0.0.0/8
+    set security zones security-zone vpn-gcp address-book address 172.16.0.0/16 172.16.0.0/16
+    set security zones security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 172.16.0.0/16
+    set security zones security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 10.0.0.0/8
+    set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
+    set security zones security-zone vpn-gcp interfaces st0.0
+    set security zones security-zone vpn-gcp interfaces st0.1
+    
+    set interfaces ge-0/0/1 unit 0 family ethernet-switching vlan members vlan-trust
+    set interfaces ge-0/0/2 unit 0 family ethernet-switching vlan members vlan-trust
+    set interfaces ge-0/0/3 unit 0 family ethernet-switching vlan members vlan-trust
+    set interfaces ge-0/0/4 unit 0 family ethernet-switching vlan members vlan-trust
+    set interfaces ge-0/0/5 unit 0 family ethernet-switching vlan members vlan-trust
+    set interfaces ge-0/0/6 unit 0 family ethernet-switching vlan members vlan-trust
+    set interfaces ge-0/0/7 unit 0 family ethernet-switching vlan members vlan-trust
+    set interfaces irb unit 0 family inet address 192.168.1.1/24
+    set interfaces st0 unit 0 family inet mtu 1460
+    set interfaces st0 unit 0 family inet address 169.254.1.2/30
+    set interfaces st0 unit 1 family inet mtu 1460
+    set interfaces st0 unit 1 family inet address 169.254.2.2/30
+    set routing-options aggregate route 192.168.1.0/24
+    set protocols bgp group ebgp-peers type external
+    set protocols bgp group ebgp-peers multihop
+    set protocols bgp group ebgp-peers export gcp-bgp-policy
+    set protocols bgp group ebgp-peers local-as 65501
+    set protocols bgp group ebgp-peers neighbor 169.254.1.1 peer-as 65500
+    set protocols bgp group ebgp-peers neighbor 169.254.2.1 peer-as 65500
+    set protocols l2-learning global-mode switching
+    set policy-options policy-statement gcp-bgp-policy term 1 from protocol direct
+    set policy-options policy-statement gcp-bgp-policy term 1 from route-filter 192.168.1.0/24 exact
+    set policy-options policy-statement gcp-bgp-policy term 1 then accept
+    
+    set vlans vlan-trust vlan-id 3
+    set vlans vlan-trust l3-interface irb.0
+
+    [edit]
+    root@akinkanju#
+
+##### GCP Configuration
+
+GCP does ECMP by default so there is no additional configuration required apart
+from creating x number of tunnels where x depends on your throughput
+requirements. You can either use a single VPN gateway to create multiple tunnels
+or create separate VPN gateway for each tunnel.
+
+Note: Actual performance vary depending on the following factors:
+
+* Network capacity between the two VPN peers.
+* The capabilities of the peer device. See your device's documentation for more
+  information.
+* Packet size. Because processing happens on a per-packet basis, having a
+  significant percentage of smaller packets can reduce overall throughput.
+* High [RTT](https://wikipedia.org/wiki/RTT) and packet loss rates can greatly
+  reduce throughput for TCP.
+
+
+###### Evidence 1
+Ike security associations
+
+	root@akinkanju# run show security ike security-associations
+    Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
+    1590399 UP     e1f16b380e661b93  34379d5726ea8545  IKEv2          35.233.197.145
+    1590402 UP     9d0688eeb4ced592  3e2a86428dbd9d01  IKEv2          35.230.59.183
+    
+IPSec security associations
+
+    root@akinkanju# run show security ipsec security-associations
+      Total active tunnels: 2
+      ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
+      <131073 ESP:aes-cbc-128/sha1 a2fde6d8 2618/ unlim - root 500 35.230.59.183
+      >131073 ESP:aes-cbc-128/sha1 a1854938 2618/ unlim - root 500 35.230.59.183
+      <131074 ESP:aes-cbc-128/sha1 9b593cad 2310/ unlim - root 500 35.233.197.145
+      >131074 ESP:aes-cbc-128/sha1 6ecac98d 2310/ unlim - root 500 35.233.197.145
+
+###### Evidence 2
+Multiple paths shown per GCP route.
+
+    root@akinkanju# run show route
+
+    inet.0: 59 destinations, 88 routes (59 active, 0 holddown, 0 hidden)
+    + = Active Route, - = Last Active, * = Both
+
+    10.44.0.0/14       *[BGP/170] 00:00:17, MED 371, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.1.1 via st0.0
+                        [BGP/170] 00:00:36, MED 371, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.2.1 via st0.1
+    10.110.0.0/20      *[BGP/170] 00:00:17, MED 371, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.1.1 via st0.0
+                        [BGP/170] 00:00:36, MED 371, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.2.1 via st0.1
+    10.128.0.0/20      *[BGP/170] 00:00:17, MED 337, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.1.1 via st0.0
+                        [BGP/170] 00:00:36, MED 337, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.2.1 via st0.1
+    10.132.0.0/20      *[BGP/170] 00:00:17, MED 448, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.1.1 via st0.0
+                        [BGP/170] 00:00:36, MED 448, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.2.1 via st0.1
+
+
+BGP peers listed from BGP summary
+
+    root@akinkanju# run show bgp summary
+    Groups: 1 Peers: 2 Down peers: 0
+    Table          Tot Paths  Act Paths Suppressed    History Damp State    Pending
+    inet.0
+                          56         28          0          0          0          0
+    Peer                     AS      InPkt     OutPkt    OutQ   Flaps Last Up/Dwn State|#Active/Received/Accepted/Damped...
+    169.254.1.1           65500         36         21       0       5        5:48 28/28/28/0           0/0/0/0
+    169.254.2.1           65500         37         23       0       0        6:07 0/28/28/0            0/0/0/0
+
+
+#### Configure VPN Redundancy
 
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-cisco-asr/GCP-Cisco-ASR-Topology-Redundant.jpg)
 
@@ -616,7 +818,7 @@ GCP from each for redundancy purposes.
 The VPN redundancy configuration example is built based on the IPsec tunnel and
 BGP configuration illustrated above.
 
-##### Cisco ASR
+##### Juniper SRX
 
 Cisco IOS BGP prefer the path with the highest `LOCAL-PREF`, the BGP routes are
 set with a value of 100 by default, by setting the `LOCAL-PREF` to 200 for the
@@ -688,6 +890,7 @@ to. Note that lower the MED, higher the preference.
     route-map SET-MED-10 permit 10
      set metric 10
 
+
 ###### Static Routing
 
 If you are using static routing then instead of BGP configurations mentioned
@@ -750,87 +953,6 @@ define the route priority run the below command.
                               AS path: 65500 ?, validation-state: unverified
                             > to 169.254.0.1 via st0.0
 
-#### Getting higher throughput
-
-As documented in the [GCP Advanced Configurations](https://cloud.google.com/compute/docs/vpn/advanced),
-each Cloud VPN tunnel can support up to 3 Gbps when the traffic is traversing a
-[direct peering](https://cloud.google.com/interconnect/direct-peering) link, or
-1.5 Gbps when traversing the public Internet. To increase the VPN throughput the
-recommendation is to add multiple Cloud VPN gateway on the same region to load
-balance the traffic across the tunnels. The 2 VPN tunnels configuration example
-here is built based on the IPsec tunnel and BGP configuration illustrated above,
-can be expanded to more tunnels if required.
-
-##### Cisco ASR configuration
-
-The ASR 1000 router run cef load balancing based on source and destination ip
-address hash, each VPN tunnels will be treated as an equal cost path by routing,
-it can support up to 16 equal cost paths load balancing.
-
-    crypto ikev2 keyring VPN_SCALE_TEST_KEY
-     peer GCP1
-      address 104.196.200.68
-      pre-shared-key MySharedSecret
-     peer GCP3
-      address 35.185.3.177
-      pre-shared-key MySharedSecret
-    !
-
-    interface Tunnel1
-     description VPN tunnel1 to same region GCP for load balancing
-     ip address 169.254.0.2 255.255.255.252
-     ip mtu 1400
-     ip tcp adjust-mss 1360
-     tunnel source TenGigabitEthernet0/0/0
-     tunnel mode ipsec ipv4
-     tunnel destination 104.196.200.68
-     tunnel protection ipsec profile VPN_SCALE_TEST_VTI
-    !
-
-    interface Tunnel3
-     description VPN tunnel3 to the same region GCP for load balancing
-     ip address 169.254.0.10 255.255.255.252
-     ip mtu 1400
-     ip tcp adjust-mss 1360
-     tunnel source TenGigabitEthernet0/0/0
-     tunnel mode ipsec ipv4
-     tunnel destination 35.185.3.177
-     tunnel protection ipsec profile VPN_SCALE_TEST_VTI_3
-    !
-
-    router bgp 65001
-     bgp log-neighbor-changes
-     neighbor GCP peer-group
-     neighbor GCP remote-as 65002
-     neighbor GCP timers <b>20 60 60
-     neighbor 169.254.0.1 peer-group GCP
-     neighbor 169.254.0.9 peer-group GCP
-    !
-
-     address-family ipv4
-      network 10.0.0.0
-      neighbor 169.254.0.1 activate
-      neighbor 169.254.0.9 activate
-      maximum-paths 16
-     exit-address-family
-    !
-
-##### GCP Configuration
-
-GCP does ECMP by default so there is no additional configuration required apart
-from creating x number of tunnels where x depends on your throughput
-requirements. You can either use a single VPN gateway to create multiple tunnels
-or create separate VPN gateway for each tunnel.
-
-Note: Actual performance vary depending on the following factors:
-
-* Network capacity between the two VPN peers.
-* The capabilities of the peer device. See your device's documentation for more
-  information.
-* Packet size. Because processing happens on a per-packet basis, having a
-  significant percentage of smaller packets can reduce overall throughput.
-* High [RTT](https://wikipedia.org/wiki/RTT) and packet loss rates can greatly
-  reduce throughput for TCP.
 
 ## Testing the IPsec connection
 
