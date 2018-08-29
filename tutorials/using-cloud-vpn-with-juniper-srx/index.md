@@ -659,36 +659,47 @@ can be expanded to more tunnels if required.
     set security ipsec vpn onprem-2-gcp-vpn-2 establish-tunnels immediately
     set security flow tcp-mss ipsec-vpn mss 1300
     
+    [edit]
+    root@akinkanju# edit security policies
+
+    [edit security policies]
+    root@akinkanju#
+    set from-zone trust to-zone trust policy trust-to-trust match source-address any
+    set from-zone trust to-zone trust policy trust-to-trust match destination-address any
+    set from-zone trust to-zone trust policy trust-to-trust match application any
+    set from-zone trust to-zone trust policy trust-to-trust then permit
+    set from-zone trust to-zone untrust policy trust-to-untrust match source-address any
+    set from-zone trust to-zone untrust policy trust-to-untrust match destination-address any
+    set from-zone trust to-zone untrust policy trust-to-untrust match application any
+    set from-zone trust to-zone untrust policy trust-to-untrust then permit
+    set from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match source-address addr_192_168_1_0_24
+    set from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match destination-address gcp-addr-prefixes
+    set from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match application any
+    set from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn then permit
+    set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match source-address gcp-addr-prefixes
+    set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match destination-address addr_192_168_1_0_24
+    set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match application any
+    set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn then permit
+    exit
     
-    set security policies from-zone trust to-zone trust policy trust-to-trust match source-address any
-    set security policies from-zone trust to-zone trust policy trust-to-trust match destination-address any
-    set security policies from-zone trust to-zone trust policy trust-to-trust match application any
-    set security policies from-zone trust to-zone trust policy trust-to-trust then permit
-    set security policies from-zone trust to-zone untrust policy trust-to-untrust match source-address any
-    set security policies from-zone trust to-zone untrust policy trust-to-untrust match destination-address any
-    set security policies from-zone trust to-zone untrust policy trust-to-untrust match application any
-    set security policies from-zone trust to-zone untrust policy trust-to-untrust then permit
-    set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match source-address addr_192_168_1_0_24
-    set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match destination-address gcp-addr-prefixes
-    set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match application any
-    set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn then permit
-    set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match source-address gcp-addr-prefixes
-    set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match destination-address addr_192_168_1_0_24
-    set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match application any
-    set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn then permit
-    set security zones security-zone trust address-book address addr_192_168_1_0_24 192.168.1.0/24
-    set security zones security-zone trust host-inbound-traffic system-services all
-    set security zones security-zone trust host-inbound-traffic protocols all
-    
-    set security zones security-zone trust interfaces irb.0
-    set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ike
-    set security zones security-zone vpn-gcp address-book address 10.0.0.0/8 10.0.0.0/8
-    set security zones security-zone vpn-gcp address-book address 172.16.0.0/16 172.16.0.0/16
-    set security zones security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 172.16.0.0/16
-    set security zones security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 10.0.0.0/8
-    set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
-    set security zones security-zone vpn-gcp interfaces st0.0
-    set security zones security-zone vpn-gcp interfaces st0.1
+    [edit]
+    root@akinkanju# edit security zones
+
+    [edit security zones]
+    root@akinkanju#
+    set security-zone trust address-book address addr_192_168_1_0_24 192.168.1.0/24
+    set security-zone trust host-inbound-traffic system-services all
+    set security-zone trust host-inbound-traffic protocols all
+    set security-zone trust interfaces irb.0
+    set security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ike
+    set security-zone vpn-gcp address-book address 10.0.0.0/8 10.0.0.0/8
+    set security-zone vpn-gcp address-book address 172.16.0.0/16 172.16.0.0/16
+    set security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 172.16.0.0/16
+    set security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 10.0.0.0/8
+    set security-zone vpn-gcp host-inbound-traffic protocols bgp
+    set security-zone vpn-gcp interfaces st0.0
+    set security-zone vpn-gcp interfaces st0.1
+    exit
     
     set interfaces ge-0/0/1 unit 0 family ethernet-switching vlan members vlan-trust
     set interfaces ge-0/0/2 unit 0 family ethernet-switching vlan members vlan-trust
