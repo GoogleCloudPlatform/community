@@ -1,7 +1,7 @@
 ---
-title: How to Set Up VPN between Cisco ASR and Cloud VPN
-description: Learn how to build site-to-site IPSEC VPN between Cisco ASR and Cloud VPN.
-author: ashishverm
+title: How to Set Up VPN between Juniper SRX and Cloud VPN
+description: Learn how to build site-to-site IPSEC VPN between Juniper SRX and Cloud VPN.
+author: antiabong, ashishverm
 tags: Compute Engine, Cloud VPN, Juniper SRX
 date_published: 2017-08-28
 ---
@@ -22,8 +22,8 @@ The equipment used in the creation of this guide is as follows:
 * Model: SRX300
 * JUNOS Software Release [15.1X49-D100.6]
 
-Although this guide is created with ASR 1009-X exactly the same configuration
-also apply to other ASR 1000 platforms:
+Although this guide is created with Juniper SRX300 exactly the same configuration
+also apply to other SRX platforms:
 
 * SRX220
 * SRX550
@@ -145,7 +145,7 @@ to establish BGP sessions between the 2 peers.
       following fields. When you are done, click **Save and continue**.
     * **Name** — The name of the Cloud Router. This name is displayed in the
       console and used by the `gcloud` command-line tool to reference the
-      router. Example: `vpn-scale-test-cisco-rtr`
+      router. Example: `vpn-scale-test-juniper-rtr`
     * **Google ASN** — The [private ASN](https://tools.ietf.org/html/rfc6996)
       (64512 - 65534, 4200000000 - 4294967294) for the router you are
       configuring. It can be any private ASN you are not already using.
@@ -238,7 +238,7 @@ to establish BGP sessions between the 2 peers.
 
         gcloud compute --project vpn-guide vpn-tunnels create tunnel1 --peer-address 204.237.220.4 \
             --region us-east1 --ike-version 2 --shared-secret MySharedSecret --target-vpn-gateway \
-            vpn-scale-test-cisco-gw-0 --router vpn-scale-test-juniper-rtr
+            vpn-scale-test-juniper-gw-0 --router vpn-scale-test-juniper-rtr
 
 1.  Update the Cloud Router config to add a virtual interface (--interface-name)
     for the BGP peer. The BGP interface IP address must be a *link-local* IP
@@ -261,7 +261,7 @@ to establish BGP sessions between the 2 peers.
     belong to same subnet as the GCP-side interface. Make sure each tunnel has a
     unique pair of IPs.
 
-        gcloud compute --project vpn-guide routers add-bgp-peer vpn-scale-test-cisco-rtr --peer-name \
+        gcloud compute --project vpn-guide routers add-bgp-peer vpn-scale-test-juniper-rtr --peer-name \
             bgp-peer1 --interface if-1 --peer-ip-address 169.254.1.2 --peer-asn 65001 --region us-east1
 
 1.  View details of the Cloud Router and confirm your settings.
@@ -290,7 +290,7 @@ command-line tool. The upcoming section provide details to both in detail below:
     * **Name** — The name of the VPN gateway. This name is displayed in the
       console and used by the `gcloud` command-line tool to reference the gateway.
     * **VPC network** — The VPC network containing the instances the VPN gateway
-      will serve. In this case it is `vpn-scale-test-cisco`, a
+      will serve. In this case it is `vpn-scale-test-juniper`, a
       [custom VPC network](https://cloud.google.com/compute/docs/vpc/using-vpc#create-custom-network).
       Ensure this network does not conflict with your on-premises networks.
     * **Region** — The region where you want to locate the VPN gateway.
@@ -333,7 +333,7 @@ command-line tool. The upcoming section provide details to both in detail below:
     * Click **Create firewall rule**.
     * Populate the following fields:
       * **Name:** `vpnrule1`
-      * **VPC network:** `vpn-scale-test-cisco`
+      * **VPC network:** `vpn-scale-test-juniper`
       * **Source filter:** IP ranges.
       * **Source IP ranges:** The peer ranges to accept from the peer VPN
         gateway.
@@ -355,7 +355,7 @@ command-line tool. The upcoming section provide details to both in detail below:
     network.
 
         gcloud compute target-vpn-gateways create vpn-scale-test-juniper-gw-0 \
-            --network vpn-scale-test-cisco --region us-east1
+            --network vpn-scale-test-juniper --region us-east1
 
 3.  Reserve a static IP address in the VPC network and region where you created
     the VPN gateway. Make a note of the created address for use in future steps.
@@ -368,13 +368,13 @@ command-line tool. The upcoming section provide details to both in detail below:
     `fr-udp4500` resp.
 
         gcloud compute --project vpn-guide forwarding-rules create fr-esp --region us-east1 \
-            --ip-protocol ESP --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-cisco-gw-0
+            --ip-protocol ESP --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-juniper-gw-0
 
         gcloud compute forwarding-rules create fr-udp500 --project vpn-guide --region us-east1 \
-            --address 104.196.200.68 --target-vpn-gateway vpn-scale-test-cisco-gw-0 --ip-protocol=UDP --ports 500
+            --address 104.196.200.68 --target-vpn-gateway vpn-scale-test-juniper-gw-0 --ip-protocol=UDP --ports 500
 
         gcloud compute forwarding-rules create fr-udp4500 --project vpn-guide --region us-east1 \
-            --address 104.196.200.68 --target-vpn-gateway vpn-scale-test-cisco-gw-0 --ip-protocol=UDP --ports 4500
+            --address 104.196.200.68 --target-vpn-gateway vpn-scale-test-juniper-gw-0 --ip-protocol=UDP --ports 4500
 
 5.  Create a VPN tunnel on the Cloud VPN Gateway that points toward the external
     IP address `[CUST_GW_EXT_IP]` of your peer VPN gateway. You also need to
@@ -385,7 +385,7 @@ command-line tool. The upcoming section provide details to both in detail below:
 
         gcloud compute --project vpn-guide vpn-tunnels create tunnel1 --peer-address 204.237.220.4 \
             --region us-east1 --ike-version 2 --shared-secret MySharedSecret --target-vpn-gateway \
-            vpn-scale-test-cisco-gw-0 --local-traffic-selector=172.16.100.0/24
+            vpn-scale-test-juniper-gw-0 --local-traffic-selector=172.16.100.0/24
 
 6.  Use a [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create)
     to forward traffic to the destination range of IP addresses
@@ -399,7 +399,7 @@ command-line tool. The upcoming section provide details to both in detail below:
 7.  Create firewall rules to allow traffic between on-premises network and GCP
     VPC networks.
 
-        gcloud compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-scale-test-cisco \
+        gcloud compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-scale-test-juniper \
             --allow tcp,udp,icmp --source-ranges 10.0.0.0/8
 
 ## Configuration – Juniper SRX300
@@ -549,8 +549,7 @@ Juniper SRX requires security policies....
 
 #### Configure static or dynamic routing protocol to route traffic into the IPsec tunnel
 
-BGP is used within the tunnel to exchange prefixes between the GCP and the ASR
-1000 router. The GCP will announce the prefix corresponding to your Cloud.
+BGP is used within the tunnel to exchange prefixes between the GCP cloud router and the Juniper SRX appliance. The GCP cloud router will announce the prefix corresponding to your GCP VPC.
 
 BGP timers are adjusted to provide more rapid detection of outages.
 
