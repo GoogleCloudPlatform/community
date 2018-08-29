@@ -39,18 +39,18 @@ commit to the source repository.
 Head over to the Container Registry &rarr; [Build Triggers][triggers]
 section on Google Cloud Platform Console and click **Add trigger**:
 
-![Add build trigger on Container Registry section](add-trigger-button.png)
+![Add build trigger on Container Registry section](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/add-trigger-button.png)
 
 Then select **GitHub** as the source of your repository. You may need to authorize
 access to your GitHub account so that Cloud Source Repositories can mirror and
 create commit hooks on your GitHub repositories.
 
-![Select GitHub as the source](select-source.png)
+![Select GitHub as the source](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/select-source.png)
 
 Then, pick your repository from the list. If you forked the sample repository
 above, pick it here:
 
-![Select the Git repository](select-repo.png)
+![Select the Git repository](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/select-repo.png)
 
 For the **Trigger settings**:
 
@@ -58,7 +58,7 @@ For the **Trigger settings**:
 - choose Build Configuration **cloudbuild.yaml**
 - Set the file location to `cloudbuild.yaml`
 
-![Create build trigger](create-trigger.png)
+![Create build trigger](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/create-trigger.png)
 
 Now, create a `cloudbuild.yaml` file with the following contents in your
 repository. Note that you can add files to your repository on GitHub’s website, or
@@ -90,12 +90,12 @@ Trigger, you can kick off the first build manually. Head over to the Google
 Cloud Platform Console [Build Triggers][triggers] section, click **Run
 trigger** and choose the the branch (i.e. master) to build.
 
-![Trigger the first build manually](trigger-build.png)
+![Trigger the first build manually](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/trigger-build.png)
 
 Now click **Build history** on the left and watch the build job execute and
 succeed:
 
-![Build history shows the executing or completed builds](build-history.png)
+![Build history shows the executing or completed builds](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/build-history.png)
 
 Remember that after now, every commit pushed to any branch of your GitHub
 repository will trigger a new build. If you need to change which git branches
@@ -252,7 +252,7 @@ build status (`WORKING`, `FAILURE`, `SUCCESS`) to a commit state (`pending`,
 Trigger another build manually. The commit status is shown as a check mark or X mark in
 the commit log in GitHub. More details of the build status are shown in Pull Requests.
 
-![GitHub status check](github-status-check.png)
+![GitHub status check](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/github-status-check.png)
 
 You can check the [logs][logs] for errors.
 
