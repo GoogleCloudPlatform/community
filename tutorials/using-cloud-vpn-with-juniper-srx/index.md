@@ -620,7 +620,7 @@ can be expanded to more tunnels if required.
 
 ##### Juniper SRX Configuration
 
-    root@akinkanju# run show configuration | display set
+    root@vsrx# run show configuration | display set
     set security ike policy ike_pol_onprem-2-gcp-vpn mode main
     set security ike policy ike_pol_onprem-2-gcp-vpn proposal-set standard
     set security ike policy ike_pol_onprem-2-gcp-vpn pre-shared-key ascii-text "********"
@@ -660,10 +660,10 @@ can be expanded to more tunnels if required.
     set security flow tcp-mss ipsec-vpn mss 1300
     
     [edit]
-    root@akinkanju# edit security policies
+    root@vsrx# edit security policies
 
     [edit security policies]
-    root@akinkanju#
+    root@vsrx#
     set from-zone trust to-zone trust policy trust-to-trust match source-address any
     set from-zone trust to-zone trust policy trust-to-trust match destination-address any
     set from-zone trust to-zone trust policy trust-to-trust match application any
@@ -683,10 +683,10 @@ can be expanded to more tunnels if required.
     exit
     
     [edit]
-    root@akinkanju# edit security zones
+    root@vsrx# edit security zones
 
     [edit security zones]
-    root@akinkanju#
+    root@vsrx#
     set security-zone trust address-book address addr_192_168_1_0_24 192.168.1.0/24
     set security-zone trust host-inbound-traffic system-services all
     set security-zone trust host-inbound-traffic protocols all
@@ -729,7 +729,7 @@ can be expanded to more tunnels if required.
     set vlans vlan-trust l3-interface irb.0
 
     [edit]
-    root@akinkanju#
+    root@vsrx#
 
 ##### GCP Configuration
 
@@ -752,14 +752,14 @@ Note: Actual performance vary depending on the following factors:
 ###### Evidence 1
 Ike security associations
 
-	root@akinkanju# run show security ike security-associations
+	root@vsrx# run show security ike security-associations
     Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
     1590399 UP     e1f16b380e661b93  34379d5726ea8545  IKEv2          35.233.197.145
     1590402 UP     9d0688eeb4ced592  3e2a86428dbd9d01  IKEv2          35.230.59.183
     
 IPSec security associations
 
-    root@akinkanju# run show security ipsec security-associations
+    root@vsrx# run show security ipsec security-associations
       Total active tunnels: 2
       ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
       <131073 ESP:aes-cbc-128/sha1 a2fde6d8 2618/ unlim - root 500 35.230.59.183
@@ -770,7 +770,7 @@ IPSec security associations
 ###### Evidence 2
 Multiple paths shown per GCP route.
 
-    root@akinkanju# run show route
+    root@vsrx# run show route
 
     inet.0: 59 destinations, 88 routes (59 active, 0 holddown, 0 hidden)
     + = Active Route, - = Last Active, * = Both
@@ -803,7 +803,7 @@ Multiple paths shown per GCP route.
 
 BGP peers listed from BGP summary
 
-    root@akinkanju# run show bgp summary
+    root@vsrx# run show bgp summary
     Groups: 1 Peers: 2 Down peers: 0
     Table          Tot Paths  Act Paths Suppressed    History Damp State    Pending
     inet.0
