@@ -45,7 +45,7 @@ Export the following variables to your environment for use throughout the tutori
 export TF_VAR_org_id=YOUR_ORG_ID
 export TF_VAR_billing_account=YOUR_BILLING_ACCOUNT_ID
 export TF_ADMIN=${USER}-terraform-admin
-export TF_CREDS=~/.config/gcloud/terraform-admin.json
+export TF_CREDS=~/.config/gcloud/${USER}-terraform-admin.json
 ```
 
 > Note: The `TF_ADMIN` variable will be used for the name of the Terraform Admin Project and must be unique.
@@ -99,10 +99,10 @@ gcloud projects add-iam-policy-binding ${TF_ADMIN} \
 Any actions that Terraform performs require that the API be enabled to do so. In this guide, Terraform requires the following:
 
 ```sh
-gcloud service-management enable cloudresourcemanager.googleapis.com
-gcloud service-management enable cloudbilling.googleapis.com
-gcloud service-management enable iam.googleapis.com
-gcloud service-management enable compute.googleapis.com
+gcloud services enable cloudresourcemanager.googleapis.com
+gcloud services enable cloudbilling.googleapis.com
+gcloud services enable iam.googleapis.com
+gcloud services enable compute.googleapis.com
 ```
 
 ### Add organization/folder-level permissions
@@ -132,7 +132,7 @@ cat > backend.tf <<EOF
 terraform {
  backend "gcs" {
    bucket  = "${TF_ADMIN}"
-   path    = "/terraform.tfstate"
+   prefix  = "terraform/state"
    project = "${TF_ADMIN}"
  }
 }
