@@ -89,7 +89,7 @@ For the Juniper SRX IPsec configuration, the following details will be used:
 |Auth protocol | `Pre-shared-key` |
 |Key Exchange | `IKEv2` |
 |Start | `Auto` |
-|Perfect Forward Secrecy (PFS) | `Group 2` |
+|Perfect Forward Secrecy (PFS) | `Group 14` |
 |Dead Peer Detection (DPD) | `60 5 periodic` |
 
 The IPsec configuration used in this guide is specified below:
@@ -98,7 +98,7 @@ The IPsec configuration used in this guide is specified below:
 | ------------| -------|
 | Encryption | `esp-aes 256 esp-sha-hmac` |
 | Integrity | `sha256` |
-| Diffie-Hellman (DH) | `group 2` |
+| Diffie-Hellman (DH) | `group 14` |
 | Lifetime | `36,000 seconds (10 hours)` |
 
 *Note: Juniper SRX(es) mostly support only tunnel mode VPN*
