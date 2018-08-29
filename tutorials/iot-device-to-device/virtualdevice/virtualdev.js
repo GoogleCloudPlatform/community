@@ -244,9 +244,13 @@ client.on('error', (err) => {
 
 client.on('message', (topic, message, packet) => {
   console.log('message received: ', Buffer.from(message, 'base64').toString('ascii'));
-  let payload = JSON.parse(Buffer.from(message, 'base64').toString('ascii'));
-  console.log(`${payload.hops} to ${++payload.hops}`);
-  publishAsync(payload.hops, payload.hops + 1);
+  try {
+    let payload = JSON.parse(Buffer.from(message, 'base64').toString('ascii'));
+    console.log(`${payload.hops} to ${++payload.hops}`);
+    publishAsync(payload.hops, payload.hops + 1);
+  } catch (e) {
+    console.log('No payload in message');
+  }
 });
 
 client.on('packetsend', () => {
