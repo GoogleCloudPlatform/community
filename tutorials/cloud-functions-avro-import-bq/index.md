@@ -1,6 +1,6 @@
 ---
 title: AVRO/CSV Import to BigQuery from Cloud Storage with a Cloud Function
-description: Use this Cloud Function to import AVRO or CSV files into BigQuery from Google Cloud Storage
+description: Use this Cloud Function to import AVRO or CSV files into BigQuery from Google Cloud Storage.
 author: mikekahn
 tags: Cloud Functions, BigQuery, Cloud Storage
 date_published: 2018-05-06
@@ -38,7 +38,7 @@ Here is how to set it up:
 1.  Update `index.js` with your `projectId` and `datasetId` (destination).
 1.  Update `install.sh` `--trigger-resource` flag with your source Cloud Storage
     bucket (replace avro-import-source)
-1.  Run the function: 
+1.  Run the function:
 
         ./install.sh
 
