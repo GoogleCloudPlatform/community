@@ -592,16 +592,21 @@ following command on Cisco IOS terminal:
 ### Test Results
 
 ##### Testing output on Juniper SRX
+
 1. Show IKE Security Associations
+
         root@vsrx# run show security ike security-associations
         Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
         7877087 UP     412c5a43aad7682b  b6d24ef8bf25e9ea  IKEv2          35.187.170.191
+
 2. Show IPSec Security Associations
+        
         root@vsrx# run show security ipsec security-associations
         Total active tunnels: 1
         ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
         <131073 ESP:aes-cbc-256/sha256 9beb1bf0 729/ unlim - root 4500 35.187.170.191
         >131073 ESP:aes-cbc-256/sha256 97791a28 729/ unlim - root 4500 35.187.170.191  		
+
 3. List BGP learned routes:
 
         root@vsrx# run show route protocol bgp
