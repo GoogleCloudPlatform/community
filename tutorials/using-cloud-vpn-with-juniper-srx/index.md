@@ -589,21 +589,51 @@ following command on Cisco IOS terminal:
     root@vsrx#
     commit
 
-### Test result
+### Test Results
 
-    root@vsrx> ping 172.16.0.2 count 5 source 192.168.1.1
-    PING 172.16.0.2 (172.16.0.2): 56 data bytes
-    64 bytes from 172.16.0.2: icmp_seq=0 ttl=64 time=20.758 ms
-    64 bytes from 172.16.0.2: icmp_seq=1 ttl=64 time=20.024 ms
-    64 bytes from 172.16.0.2: icmp_seq=2 ttl=64 time=23.783 ms
-    64 bytes from 172.16.0.2: icmp_seq=3 ttl=64 time=19.472 ms
-    64 bytes from 172.16.0.2: icmp_seq=4 ttl=64 time=21.183 ms
+##### Testing output on Juniper SRX
+1. Show IKE Security Associations
+        root@vsrx# run show security ike security-associations
+        Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
+        7877087 UP     412c5a43aad7682b  b6d24ef8bf25e9ea  IKEv2          35.187.170.191
+2. Show IPSec Security Associations
+        root@vsrx# run show security ipsec security-associations
+        Total active tunnels: 1
+        ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
+        <131073 ESP:aes-cbc-256/sha256 9beb1bf0 729/ unlim - root 4500 35.187.170.191
+        >131073 ESP:aes-cbc-256/sha256 97791a28 729/ unlim - root 4500 35.187.170.191  		
+3. List BGP learned routes:
 
-    --- 172.16.0.2 ping statistics ---
-    5 packets transmitted, 5 packets received, 0% packet loss
-    round-trip min/avg/max/stddev = 19.472/21.044/23.783/1.491 ms
+        root@vsrx# run show route protocol bgp
 
-    root@vsrx>
+        inet.0: 11 destinations, 11 routes (11 active, 0 holddown, 0 hidden)
+        + = Active Route, - = Last Active, * = Both
+
+        172.16.0.0/24      *[BGP/170] 23:02:00, MED 100, localpref 100
+                              AS path: 65500 ?, validation-state: unverified
+                            > to 169.254.0.1 via st0.0
+        172.16.11.0/24     *[BGP/170] 23:02:00, MED 100, localpref 100
+                              AS path: 65500 ?, validation-state: unverified
+                            > to 169.254.0.1 via st0.0
+        172.16.21.0/24     *[BGP/170] 23:02:00, MED 100, localpref 100
+                              AS path: 65500 ?, validation-state: unverified
+                            > to 169.254.0.1 via st0.0
+
+4. Pinging an IP address in GCP via the Tunnel
+
+        root@vsrx> ping 172.16.0.2 count 5 source 192.168.1.1
+        PING 172.16.0.2 (172.16.0.2): 56 data bytes
+        64 bytes from 172.16.0.2: icmp_seq=0 ttl=64 time=20.758 ms
+        64 bytes from 172.16.0.2: icmp_seq=1 ttl=64 time=20.024 ms
+        64 bytes from 172.16.0.2: icmp_seq=2 ttl=64 time=23.783 ms
+        64 bytes from 172.16.0.2: icmp_seq=3 ttl=64 time=19.472 ms
+        64 bytes from 172.16.0.2: icmp_seq=4 ttl=64 time=21.183 ms
+
+        --- 172.16.0.2 ping statistics ---
+        5 packets transmitted, 5 packets received, 0% packet loss
+        round-trip min/avg/max/stddev = 19.472/21.044/23.783/1.491 ms
+
+        root@vsrx>
 
 ### Advanced VPN configurations
 
@@ -748,8 +778,9 @@ Note: Actual performance vary depending on the following factors:
 * High [RTT](https://wikipedia.org/wiki/RTT) and packet loss rates can greatly
   reduce throughput for TCP.
 
+##### Testing the Output for Bundled VPN Tunnels
 
-###### Evidence 1
+###### Listing Security Associations for Bundled Tunnel
 Ike security associations
 
 	root@vsrx# run show security ike security-associations
@@ -767,8 +798,10 @@ IPSec security associations
       <131074 ESP:aes-cbc-128/sha1 9b593cad 2310/ unlim - root 500 35.233.197.145
       >131074 ESP:aes-cbc-128/sha1 6ecac98d 2310/ unlim - root 500 35.233.197.145
 
-###### Evidence 2
-Multiple paths shown per GCP route.
+###### Listing routing table
+As shown below, it can be seen that there are multiple paths listed/selected for the
+BGP routes. This indicates that packets destined for routes in GCP will be routed via 
+ECMP.
 
     root@vsrx# run show route
 
@@ -829,86 +862,6 @@ GCP from each for redundancy purposes.
 The VPN redundancy configuration example is built based on the IPsec tunnel and
 BGP configuration illustrated above.
 
-##### Juniper SRX
-
-Cisco IOS BGP prefer the path with the highest `LOCAL-PREF`, the BGP routes are
-set with a value of 100 by default, by setting the `LOCAL-PREF` to 200 for the
-routes received from Tunnel1, BGP will choose Tunnel1 as the preferred VPN
-tunnel to the GCP, in the event of Tunnel 1 failure, BGP will reroute the
-traffic to Tunnel2.
-
-    crypto ikev2 keyring VPN_SCALE_TEST_KEY
-     peer GCP1
-     address 104.196.200.68
-     pre-shared-key MySharedSecret
-     peer GCP2
-     address 35.186.108.199
-     pre-shared-key MySharedSecret
-    !
-    interface Tunnel1
-     description VPN tunnel to the east coast DC
-     ip address 169.254.0.2 255.255.255.252
-     ip mtu 1400
-     ip tcp adjust-mss 1360
-     tunnel source TenGigabitEthernet0/0/0
-     tunnel mode ipsec ipv4
-     tunnel destination 104.196.200.68
-     tunnel protection ipsec profile VPN_SCALE_TEST_VTI
-    !
-    interface Tunnel2
-     description VPN tunnel to the west coast DC
-     ip address 169.254.0.6 255.255.255.252
-     ip mtu 1400
-     ip tcp adjust-mss 1360
-     tunnel source TenGigabitEthernet0/0/0
-     tunnel mode ipsec ipv4
-     tunnel destination 35.186.108.199
-     tunnel protection ipsec profile VPN_SCALE_TEST_VTI_2
-    !
-
-###### Dynamic Routing
-
-    router bgp 65001
-     bgp log-neighbor-changes
-     neighbor 169.254.0.1 description BGP session over Tunnel1
-     neighbor 169.254.0.1 remote-as 65002
-     neighbor 169.254.0.1 timers 20 60 60
-     neighbor 169.254.0.5 description BGP session over Tunnel2
-     neighbor 169.254.0.5 remote-as 65002
-     neighbor 169.254.0.5 timers 20 60 60
-     !
-     address-family ipv4
-      network 10.0.0.0
-      neighbor 169.254.0.1 activate
-      neighbor 169.254.0.1 route-map LP200 in
-      neighbor 169.254.0.5 activate
-     exit-address-family
-    !
-    route-map LP200 permit 10
-     set local-preference 200
-
-To ensure symmetry in your traffic flow, you can configure MED to influence the
-inbound traffic from GCP for the same tunnel you are sending outbound traffic
-to. Note that lower the MED, higher the preference.
-
-    router bgp 65001
-     address-family ipv4
-      neighbor 169.254.0.1 route-map SET-MED-10 out
-      neighbor 169.254.0.5 activate
-     exit-address-family
-    !
-
-    route-map SET-MED-10 permit 10
-     set metric 10
-
-
-###### Static Routing
-
-If you are using static routing then instead of BGP configurations mentioned
-above, you can change the metric (higher the metric lower the preference) for
-your static route as shown below:
-
-      cisco-asr#ip route 172.16.100.0 255.255.255.0 Tunnel2 10
 
 ##### Configuring route priority – GCP
 
@@ -936,46 +889,6 @@ define the route priority run the below command.
         --next-hop-vpn-tunnel tunnel1 --next-hop-vpn-tunnel-region us-east1 --destination-range \
         10.0.0.0/8 --priority=2000
 
-###### Test output on Juniper SRX
-1. Show IKE Security Associations
-        root@vsrx# run show security ike security-associations
-        Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
-        7877087 UP     412c5a43aad7682b  b6d24ef8bf25e9ea  IKEv2          35.187.170.191
-2. Show IPSec Security Associations
-        root@vsrx# run show security ipsec security-associations
-        Total active tunnels: 1
-        ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
-        <131073 ESP:aes-cbc-256/sha256 9beb1bf0 729/ unlim - root 4500 35.187.170.191
-        >131073 ESP:aes-cbc-256/sha256 97791a28 729/ unlim - root 4500 35.187.170.191  		
-3. List BGP learned routes:
-
-        root@vsrx# run show route protocol bgp
-
-        inet.0: 11 destinations, 11 routes (11 active, 0 holddown, 0 hidden)
-        + = Active Route, - = Last Active, * = Both
-
-        172.16.0.0/24      *[BGP/170] 23:02:00, MED 100, localpref 100
-                              AS path: 65500 ?, validation-state: unverified
-                            > to 169.254.0.1 via st0.0
-        172.16.11.0/24     *[BGP/170] 23:02:00, MED 100, localpref 100
-                              AS path: 65500 ?, validation-state: unverified
-                            > to 169.254.0.1 via st0.0
-        172.16.21.0/24     *[BGP/170] 23:02:00, MED 100, localpref 100
-                              AS path: 65500 ?, validation-state: unverified
-                            > to 169.254.0.1 via st0.0
-
-
-## Testing the IPsec connection
-
-The IPsec tunnel can be tested from the router by using ICMP to ping a host on
-GCP. Be sure to use the `inside interface` on the ASR 1000.
-
-    cisco-asr#ping 172.16.100.2 source 10.0.200.1
-    Type escape sequence to abort.
-    Sending 5, 100-byte ICMP Echos to 172.16.100.2, timeout is 2 seconds:
-    Packet sent with a source address of 10.0.200.1
-    !!!!!
-    Success rate is 100 percent (5/5), round-trip min/avg/max = 18/19/20 ms
 
 ## Troubleshooting IPsec on ASR 1000
 
