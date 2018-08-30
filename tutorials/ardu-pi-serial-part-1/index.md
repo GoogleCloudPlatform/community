@@ -53,7 +53,7 @@ This tutorial uses billable components of GCP, including:
 This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), but you can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected production usage.
 
 ## Required hardware
-- Raspberry Pi 3 Model [B][3b] or [B+][3b+]. **Note:** the instructions should work on other Pi models as well, but this has not been verified
+- Raspberry Pi 3 Model [B][3b] or [B+][3b+]. **Note:** the instructions should work on other Pi models as well, but this has not been verified.
 - Raspberry Pi case (optional but recommended)
 - Raspberry Pi power supply, rated at 2.5A or more
 - MicroSD card for Raspbian OS. Minimum 8GB card recommended
@@ -80,7 +80,7 @@ First, execute all the steps in the IoT Core [Quickstart][quickstart] *on your l
 ## Raspberry Pi installation and configuration
 ###  Raspbian OS installation and configuration
 1. Follow the instructions [here][raspbian] to download the latest [Raspbian Lite OS image][raspbianimg], and write it on your MicroSD card. All the steps in this tutorial run in console mode on the Pi, or over SSH to the Pi.
-1. Insert your Pi in the Pi case.
+1. Insert your Pi into the Pi case.
 1. Plug your Sense HAT into the Pi’s 40-pin connector.
 1. Insert the MicroSD card into the Pi card slot.
 1. Connect the USB keyboard into the Pi.
@@ -177,7 +177,7 @@ You can check your Pi's IP address by executing: `$ ifconfig` on the Pi.
 1. Connect the second sensor (small solar panel) to the Arduino. Connect the black ground wire of the panel to a `GND` port, and the red (voltage output) wire to port `A1` on the Arduino.
 
 ### Compile the Arduino Sketch
-1. Connect your Arduino to your local development machine with a USB cable. Note that the Arduino Uno board used as the example in this tutorial, has a USB type B connector on the board. The USB cable will provide both power, and serial data connectivity to the Arduino from your machine.
+1. Connect your Arduino to your local development machine with a USB cable. Note that the Arduino Uno board used as the example in this tutorial has a USB type B connector on the board. The USB cable will provide both power and serial data connectivity to the Arduino from your machine.
 1. Launch the Arduino IDE software on your local machine.
 1. Go to the `Arduino menu bar > Tools > Board` and select `Arduino/Genuino Uno`.
 1. Check the `Tools > Port` options and select the port on your computer that has `Arduino/Genuino Uno` visible and connected.
@@ -256,7 +256,7 @@ Here, `S` indicates sensor output, `s:136` is the current value of the solar pan
 
 Different inputs (e.g `1`) could be used to command the Arduino to perform a different action, such as turning a servo motor. In this tutorial, the Arduino Sketch implements a single command `0`, which reads the voltage values of analog pins `A0` and `A1`.
 
-- Unplug the USB cable from your local machine, to disconnect and power down the Arduino. The Arduino will now run the sketch automatically, when ever it is connected to a power source.
+- Unplug the USB cable from your local machine to disconnect and power down the Arduino. The Arduino will now run the sketch automatically, whenever it is connected to a power source.
 
 ## Connect the Arduino to the Pi and run the IoT Core client app
 The Pi Python client has the following functionality:
@@ -324,7 +324,7 @@ You should see message payloads similar to:
 ```
 {"temperature": 36.62, "timestamp": "2018-07-25T08:42:10+08:00", "clientid": "raspberrypi", "humidity": 38.44, "pressure": 1017.05, "windgen": 0.1, "solargen": 1.2}   │ 151338809303544 │ deviceId=my-device
 ```
-Now your Arduino and Pi are streaming telemetry data through Cloud IoT Core to Pub/Sub. You should see the sensor readings change if you expose the solar panel to more, or less light. And the wind generator (DC motor) will start generating power, as you turn the rotor.
+Now your Arduino and Pi are streaming telemetry data through Cloud IoT Core to Pub/Sub. You should see the sensor readings change if you expose the solar panel to more, or less light. The wind generator (DC motor) will start generating power, as you turn the rotor.
 
 ## Next
-In part 2 (coming soon) of this tutorial, you will use Cloud Dataflow with a Python streaming pipeline, to process this data stream, store it in Cloud BigQuery, explore the data with a Cloud Datalab Jupyter Notebook, and visualize it using Cloud Data Studio.
+In part 2 (coming soon) of this tutorial, you will use Cloud Dataflow with a Python streaming pipeline to process this data stream, store it in Cloud BigQuery, explore the data with a Cloud Datalab Jupyter Notebook, and visualize it using Cloud Data Studio.
