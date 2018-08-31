@@ -1,6 +1,6 @@
 ---
 title: Locally Connected Microcontrollers and Real-Time Analytics (Part 1 of 2)
-description: Learn how to integrate an Arduino with a Raspberry Pi, and connect them as one device to Google Cloud IoT Core
+description: Learn how to integrate an Arduino with a Raspberry Pi, and connect them as one device to Google Cloud IoT Core.
 author: markku@
 tags: IoT, Internet of Things, Arduino, Raspberry Pi, MCU
 date_published:
@@ -32,8 +32,8 @@ In part 2 of the tutorial, you will learn how to process, store and analyze the 
 [python]: https://www.python.org/
 [sketch]: https://www.arduino.cc/en/tutorial/sketch
 [mqtt]: http://mqtt.org/
-[devicesdiag]: devices.jpg
-[archdiag]: architecture.png
+[devicesdiag]: https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-1/devices.jpg
+[archdiag]: https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-1/architecture.png
 
 ## Before you begin
 
@@ -133,7 +133,7 @@ $ sudo apt-get update && sudo apt-get install -y git virtualenv python-dev sense
 ```
 
 ### Clone the Pi client app and install its dependencies
-1. Using the SSH connection to the Pi, clone the repo associated with the community tutorials:
+1. Using the SSH connection to the Pi, clone the repository associated with the community tutorials:
 ```
 $ git clone https://github.com/GoogleCloudPlatform/community.git
 ```
@@ -170,9 +170,9 @@ You can check your Pi's IP address by executing: `$ ifconfig` on the Pi.
 
 **Figure 3.** *IoT boards and components*
 ![boards diagram][boardsdiag]
-[boardsdiag]: ardu-pi.png
+[boardsdiag]: https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-1/ardu-pi.png
 
-1. Connect 2 analog sensors to the Arduino. See [Figure 2][boardsdiag] to see how to wire the 2 sensors to the Arduino. In this example, we will read the analog voltage values of a DC motor, and a solar panel. *Note: you can replace the DC motor and solart panel with other analog sensors - but you **have to ensure that the sensor output does not exceed 5V** or it can damage the Arduino pin.*
+1. Connect 2 analog sensors to the Arduino. See [Figure 2][boardsdiag] to see how to wire the 2 sensors to the Arduino. In this example, we will read the analog voltage values of a DC motor, and a solar panel. *Note: you can replace the DC motor and solar panel with other analog sensors - but you **have to ensure that the sensor output does not exceed 5V** or it can damage the Arduino pin.*
 1. Connect the first sensor (small DC motor) to the Arduino. Connect the black ground wire of the motor to a `GND` port, and the red (voltage input/output) wire to port `A0` on the Arduino.
 1. Connect the second sensor (small solar panel) to the Arduino. Connect the black ground wire of the panel to a `GND` port, and the red (voltage output) wire to port `A1` on the Arduino.
 
@@ -230,7 +230,7 @@ void sendTelemetry() {
 **Figure 4.** *Arduino IDE and Sketch*
 ![Sketch diagram][sketchdiag]
 
-[sketchdiag]: sketch.png
+[sketchdiag]: https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-1/sketch.png
 
 ### Test reading Arduino sensors over serial connection from your machine
 The Arduino Sketch client has the following functionality:
