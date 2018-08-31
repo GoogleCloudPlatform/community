@@ -1,9 +1,9 @@
 ---
 title: Locally Connected Microcontrollers and Real-Time Analytics (Part 1 of 2)
 description: Learn how to integrate an Arduino with a Raspberry Pi, and connect them as one device to Google Cloud IoT Core.
-author: markku@
+author: lepistom
 tags: IoT, Internet of Things, Arduino, Raspberry Pi, MCU
-date_published:
+date_published: 2018-08-31
 ---
 
 Markku Lepisto | Solutions Architect | Google Cloud
