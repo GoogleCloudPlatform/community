@@ -139,12 +139,12 @@ You will need to add a public ssh key to the GCE instance to access and manage i
 resource "google_compute_instance" "default" {
  ...
 metadata {
-   sshKeys = "<INSERT_USERNAME>:${file("~/.ssh/id_rsa.pub")}"
+   sshKeys = "INSERT_USERNAME:${file("~/.ssh/id_rsa.pub")}"
  }
 }
 ```
 
-Be sure to replace `<INSERT_USERNAME>` with your username and then run `terraform plan` and verify the output looks correct. If it does run `terraform apply` to apply the changes.
+Be sure to replace `INSERT_USERNAME` with your username and then run `terraform plan` and verify the output looks correct. If it does run `terraform apply` to apply the changes.
 
 The output shows that it will modify the existing compute instance:
 
