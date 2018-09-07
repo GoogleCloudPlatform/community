@@ -1,36 +1,36 @@
 ---
 title: Getting started with Terraform on Google Cloud Platform
-description: A tutorial that will show how to get a simple web server running on Google Compute Engine using Terraform to do the provisioning of resources.
+description: Shows how to get a simple web server running on Google Compute Engine using Terraform to do the provisioning of resources.
 author: chrisst
 tags: terraform
 date_published: 2018-08-17
 ---
 
 # Terraform on Google Cloud Platform
-One of the things I find most time consuming when starting on a new stack or technology is moving from reading documentation to a working prototype serving http requests. This can be especially frustrating when trying to tweak configurations and keys as it can be hard to make incremental progress. However once I have a shell of a web service stood up I can add features, connect to other apis or add a datastore. I’m able to iterate very quickly with feedback at each step of the process. To help get through those first set up steps I’ve written this tutorial to cover:
+One of the things I find most time consuming when starting on a new stack or technology is moving from reading documentation to a working prototype serving http requests. This can be especially frustrating when trying to tweak configurations and keys as it can be hard to make incremental progress. However once I have a shell of a web service stood up I can add features, connect to other apis, or add a datastore. I’m able to iterate very quickly with feedback at each step of the process. To help get through those first set up steps I’ve written this tutorial to cover:
 * Using Terraform to create a VM in Google Cloud Platform
-* Starting a basic python Flask server
+* Starting a basic Python Flask server
 
 ### Before you begin
-You will be spinning up a single Google Compute Engine VM instance which can incur real, although usually minimal, costs so pay attention to the pricing on the account. If you don’t already have a GCP account you can [sign up for a free trial](https://cloud.google.com/free) and get $300 of free credit which is way more than you’ll need in this tutorial.
+You will be spinning up a single Google Compute Engine VM instance which can incur real, although usually minimal, costs. Pay attention to the pricing on the account. If you don’t already have a Google Cloud Platform account you can [sign up for a free trial](https://cloud.google.com/free) and get $300 of free credit which is way more than you’ll need in this tutorial.
 
 Have the following tools locally:
 * [An existing ssh key](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/)
 * [Terraform](https://www.terraform.io/intro/getting-started/install.html)
 
-## Create a GCP project
-A default project is often set up by default for brand new accounts but you will start by creating a brand new project to keep this separate and easy to tear down later. After creating it be sure to copy down the `project id` as it is usually different then the `project name`.
+## Create a Google Cloud Platform project
+A default project is often set up by default for brand new accounts, but you will start by creating a brand new project to keep this separate and easy to tear down later. After creating it be sure to copy down the `project id` as it is usually different then the `project name`.
 
 [image1]: ./gcp_project_id.png "Project Id"
 ![How to find your project id.][image1]
 
 
 ### Getting project credentials
-Next, set up a service account key which terraform will use to create and manage resources in your GCP project. Go to the [create service account key page](https://console.cloud.google.com/apis/credentials/serviceaccountkey). Select the default service account or create a new one, select JSON as the key type and hit ‘Create’.
+Next, set up a service account key which terraform will use to create and manage resources in your Google Cloud Platform project. Go to the [create service account key page](https://console.cloud.google.com/apis/credentials/serviceaccountkey). Select the default service account or create a new one, select JSON as the key type and hit ‘Create’.
 This downloads a JSON file with all the credentials that will be needed for terraform to manage the resources. This file should be located in a secure place for production projects, but for this example move the downloaded JSON file to the project directory.
 
 ### Setting up Terraform
-Create a new directory for the project to live and create a `main.tf` file for the Terraform config. The contents of this file describe all of the GCP resources which will be used in the project.
+Create a new directory for the project to live and create a `main.tf` file for the Terraform config. The contents of this file describe all of the Google Cloud Platform resources which will be used in the project.
 
 ```HCL
 // Configure the Google Cloud provider
@@ -41,7 +41,7 @@ provider "google" {
 }
 ```
 
-Set the project id from the first step to the `project` property and point the credentials section to the file that was downloaded in the last step. The `provider “google”` line indicates that you are using the [google cloud terraform provider](https://www.terraform.io/docs/providers/google/index.html) and at this point you can run `terraform init` to download the latest version of the provider and build the `.terraform` directory.
+Set the project id from the first step to the `project` property and point the credentials section to the file that was downloaded in the last step. The `provider “google”` line indicates that you are using the [Google Cloud Terraform provider](https://www.terraform.io/docs/providers/google/index.html) and at this point you can run `terraform init` to download the latest version of the provider and build the `.terraform` directory.
 
 ```
 terraform init
@@ -63,15 +63,15 @@ suggested below.
 Terraform has been successfully initialized!
 ```
 
-### Configure the GCE resource
-Next you will create a single GCE instance running debian. For this demo you can use the smallest instance possible (check out [all machine types here](https://cloud.google.com/compute/docs/machine-types)) but Terraform/GCP makes it possible to upgrade to a larger instance later. Add the `google_compute_instance` resource to the `main.tf`:
+### Configure the Google Cloud Engine resource
+Next you will create a single Google Cloud Engine instance running debian. For this demo you can use the smallest instance possible (check out [all machine types here](https://cloud.google.com/compute/docs/machine-types)) but Terraform/Google Cloud Platform makes it possible to upgrade to a larger instance later. Add the `google_compute_instance` resource to the `main.tf`:
 ```HCL
 // Terraform plugin for creating random ids
 resource "random_id" "instance_id" {
  byte_length = 8
 }
 
-// A single GCE instance
+// A single Google Cloud Engine instance
 resource "google_compute_instance" "default" {
  name         = "flask-vm-${random_id.instance_id.hex}"
  machine_type = "f1-micro"
@@ -96,10 +96,10 @@ resource "google_compute_instance" "default" {
 }
 ```
 
-The [`random_id` Terraform plugin](https://www.terraform.io/docs/providers/random/r/id.html) allows you to create a somewhat random instance name that still complies GCP’s instance naming requirements but requires an additional plugin. To download and install the extra plugin run `terraform init` again.
+The [`random_id` Terraform plugin](https://www.terraform.io/docs/providers/random/r/id.html) allows you to create a somewhat random instance name that still complies Google Cloud Platform’s instance naming requirements but requires an additional plugin. To download and install the extra plugin run `terraform init` again.
 
 
-### Validate the new GCE instance
+### Validate the new Google Cloud Engine instance
 You can now validate the work that has been done so far! Run `terraform plan` which will:
 * Verify the syntax of `main.tf`is correct
 * Ensure the credentials file exists (contents will not be verified until `terraform apply`)
@@ -128,13 +128,13 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 ```
 
 
-Now it’s time to run `terraform apply` and Terraform will call GCP apis to set up the new instance! Check the [VM Instances page in the GCP UI](https://console.cloud.google.com/compute/instances) and the new instance will be there.
+Now it’s time to run `terraform apply` and Terraform will call Google Cloud Platform apis to set up the new instance! Check the [VM Instances page in the Google Cloud Platform UI](https://console.cloud.google.com/compute/instances) and the new instance will be there.
 
-## Running a server on GCP
-There is now a new instance running in GCP so your next steps are getting a web application created, deployed to the instance and exposing an endpoint for consumption.
+## Running a server on Google Cloud Platform
+There is now a new instance running in Google Cloud Platform so your next steps are getting a web application created, deployed to the instance and exposing an endpoint for consumption.
 
-### Add ssh access to the GCE instance
-You will need to add a public ssh key to the GCE instance to access and manage it. Add the local location of your public key to the `google_compute_instace` metadata in `main.tf` to add your ssh key to the instance. [More information on managing ssh keys is available here](https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys).
+### Add ssh access to the Google Cloud Engine instance
+You will need to add a public ssh key to the Google Cloud Engine instance to access and manage it. Add the local location of your public key to the `google_compute_instace` metadata in `main.tf` to add your ssh key to the instance. [More information on managing ssh keys is available here](https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys).
 ```HCL
 resource "google_compute_instance" "default" {
  ...
@@ -176,7 +176,7 @@ Run `terraform apply` followed by `terraform output ip` to return the instance�
 ssh `terraform output ip`
 ```
 ## Building the flask app
-You will be building [a python Flask app](http://flask.pocoo.org/) for this tutorial so that you can have a single file describing your web server and test endpoints. Inside the VM instance, add the following to a new file called `app.py`
+You will be building [a Python Flask app](http://flask.pocoo.org/) for this tutorial so that you can have a single file describing your web server and test endpoints. Inside the VM instance, add the following to a new file called `app.py`
 
 ```python
 from flask import Flask
@@ -193,10 +193,10 @@ Then run
 ```Shell
 python app.py
 ```
-Flask serves traffic on `localhost:5000` by default. Run curl in a separate ssh instance to confirm that your greeting is being returned, however to hit this from your local computer you must expose port 500.
+Flask serves traffic on `localhost:5000` by default. Run curl in a separate ssh instance to confirm that your greeting is being returned, however to hit this from your local computer you must expose port 5000.
 
 ### Open port 5000 on the instance
-GCP allows for opening ports to traffic via firewall policies, which can also be managed in your Terraform config. Add the following to the config and proceed to run plan/apply to create the firewall rule.
+Google Cloud Platform allows for opening ports to traffic via firewall policies, which can also be managed in your Terraform config. Add the following to the config and proceed to run plan/apply to create the firewall rule.
 ```HCL
 resource "google_compute_firewall" "default" {
  name    = "flask-app-firewall"
@@ -211,7 +211,7 @@ resource "google_compute_firewall" "default" {
 Congratulations, you can now point your browser to the instance’s ip address / port 5000 and see your server running!
 
 ## Cleaning up
-Now that you are finished with the tutorial you will likely want to tear down everything that was created so that you don’t incur any further costs. Thankfully Terraform will let you remove all the resources defined in the configuration file with `terraform destroy`:
+Now that you are finished with the tutorial you will likely want to tear down everything that was created so that you don’t incur any further costs. Thankfully, Terraform will let you remove all the resources defined in the configuration file with `terraform destroy`:
 
 ```
 terraform destroy
