@@ -1,6 +1,6 @@
 ---
-title: Connect Google Cloud Pub/Sub to AWS SNS Topics Through Cloud Functions
-description: Learn how to integrate Google Cloud Pub/Sub with AWS SNS using Google Cloud Functions.
+title: Connect Google Cloud Pub/Sub to Amazon SNS Topics Through Cloud Functions
+description: Learn how to integrate Google Cloud Pub/Sub with Amazon SNS using Google Cloud Functions.
 author: ptone
 tags: Cloud Functions, AWS, SNS, Node.js
 date_published: 2017-06-23
@@ -39,7 +39,7 @@ with attributes of SNS subject, and message ID.
 
 ## Setting up the SNS topic
 
-For this section you should already be familiar with AWS SNS.
+For this section you should already be familiar with Amazon SNS.
 [Create an SNS topic for this tutorial][sns-create], if you do not already have
 one you want to use. You will come back to the AWS console to create the
 subscription.

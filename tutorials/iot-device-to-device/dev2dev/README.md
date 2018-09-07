@@ -23,7 +23,8 @@ you're ready to deploy the Cloud Function. The following syntax summarizes how
 you can deploy the exported function, relayCloudIot, to Google Cloud Functions:
 
 ```
-    gcloud beta functions deploy relayCloudIot \
+    gcloud functions deploy relayCloudIot \
+        --runtime nodejs8 \
         --stage-bucket=gs://your-gcs-bucket \
         --trigger-topic=your-topic-id
 ```
@@ -32,7 +33,8 @@ The following example deploys this function for the `prep-gcp-home` GCS bucket
 and `ping-peng` PubSub topic:
 
 ```
-    gcloud beta functions deploy relayCloudIot \
+    gcloud functions deploy relayCloudIot \
+        --runtime nodejs8 \
         --stage-bucket=gs://prep-gcp-home --trigger-topic=ping-peng
 ```
 

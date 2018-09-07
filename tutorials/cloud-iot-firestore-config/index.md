@@ -2,7 +2,7 @@
 title: Using Cloud Firestore with Cloud IoT Core for Device Configuration
 description: Learn how to use Cloud Firestore to manage fine-grained configuration updates for devices managed by Cloud IoT Core.
 author: ptone
-tags: iot, firestore, functions
+tags: iot, firestore, functions, internet of things
 date_published: 2018-05-14
 ---
 
