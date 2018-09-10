@@ -188,7 +188,7 @@ You can use phpMyAdmin to administer your database through a UI.
 
 ##### Debian/Ubuntu
 
-    sudo apt-get install phpMyAdmin
+    sudo apt-get install phpmyadmin
 
 ##### CentOS 6 and 7
 
