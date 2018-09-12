@@ -1,9 +1,9 @@
 ---
-title: Deploying Ghost on App Engine Flexible Environment - Part 1
+title: Deploying Ghost on App Engine Flexible Environment
 description: Learn how to deploy a Ghost blog to Google App Engine flexible environment.
-author: jmdobry,hnipps
+author: jmdobry,hnipps,amensah
 tags: App Engine, Ghost, Node.js
-date_published: 2016-05-26
+date_published: 2018-07-15
 ---
 This tutorial explains how to deploy and scale a [Ghost blog][ghost] on
 [Google App Engine Flexible Environment][flex].
@@ -59,13 +59,14 @@ from the [Cloud Console][console] or via the [Cloud SDK][sdk].
 
             gcloud sql instances create YOUR_INSTANCE_NAME \
                 --activation-policy=ALWAYS \
-                --tier=db-n1-standard-1
+                --tier=db-f1-micro
 
         where `YOUR_INSTANCE_NAME` is a name of your choice.
-
+        *You may want to set your region --region=YOUR_REGION_NAME
+        
     1. Set the root password on your Cloud SQL instance:
 
-            gcloud sql instances set-root-password YOUR_INSTANCE_NAME --password YOUR_INSTANCE_ROOT_PASSWORD
+            gcloud sql instances set-root-password root% YOUR_INSTANCE_NAME --password YOUR_INSTANCE_ROOT_PASSWORD
 
         where `YOUR_INSTANCE_NAME` is the name you chose in step 1 and
         `YOUR_INSTANCE_ROOT_PASSWORD` is a password of your choice.
@@ -81,7 +82,7 @@ from the [Cloud Console][console] or via the [Cloud SDK][sdk].
 
             ./cloud_sql_proxy \
                 -instances=YOUR_INSTANCE_CONNECTION_NAME=tcp:3306 \
-                -credential_file=PATH_TO_YOUR_SERVICE_ACCOUNT_JSON_FILE
+                -credential_file=PATH_TO_YOUR_SERVICE_ACCOUNT_JSON_FILE &
 
         where `YOUR_INSTANCE_CONNECTION_NAME` is the connection name of your
         instance on its Overview page in the Google Cloud Platform Console, or
@@ -90,7 +91,7 @@ from the [Cloud Console][console] or via the [Cloud SDK][sdk].
     1. Use the MySQL command line tools (or a management tool of your choice) to
     create a [new user][user] and [database][database] for your application:
 
-            mysql -h 127.0.0.1 -P 3306 -u root -p
+            mysql -u root -p -h 127.0.0.1
               mysql> create database `YOUR_DATABASE`;
               mysql> create user 'YOUR_USER'@'%' identified by 'PASSWORD';
               mysql> grant all on YOUR_DATABASE.* to 'YOUR_USER'@'%';
@@ -104,9 +105,9 @@ from the [Cloud Console][console] or via the [Cloud SDK][sdk].
     1. In adding Cloud SQL, dependencies need to be added in `package.json` for Google Cloud Node.
 
             "dependencies": {
-              "express": "4.14.1",
-              "mysql": "2.13.0",
-              "prompt": "1.0.0"
+              "express": "^4.16.3",
+              "mysql": "^2.15.0",
+              "prompt": "^1.0.0"
             }
 
 [console]: https://console.cloud.google.com/
@@ -155,12 +156,21 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
                 },
                 "debug": false
             },
-            "server": {
-                "host": "127.0.0.1",
-                "port": "2368"
-            },
             "paths": {
                 "contentPath": "content/"
+            },
+            "privacy": {
+                "useRpcPing": false,
+                "useUpdateCheck": true
+            },
+            "useMinFiles": false,
+            "caching": {
+                "theme": {
+                    "maxAge": 0
+                },
+                "admin": {
+                    "maxAge": 0
+                }
             }
         }
 
@@ -203,6 +213,13 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
             },
             "paths": {
                 "contentPath": "content/"
+            },
+            "logging": {
+                "level": "info",
+                "rotation": {
+                    "enabled": true
+                },
+                "transports": ["file", "stdout"]
             }
         }
 
@@ -213,48 +230,6 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
     * `mail` - Configure this setting according to the instructions at http://support.ghost.org/mail/.
     * `database` - Tells Ghost how to connect to the Cloud SQL instance.
     * `server` - Tells Ghost how to listen for web traffic.
-
-1. Optimize the Ghost web application for deployment on App Engine. Create an
-`appengine.js` file with the following contents:
-
-        var express = require('express');
-        var router = module.exports = express.Router();
-
-        /**
-         * App Engine lifecycle event. See the following for more information:
-         *
-         * https://cloud.google.com/appengine/docs/flexible/custom-runtimes/build#lifecycle_events
-         */
-        router.get('/_ah/start', function (req, res) {
-          res.status(200).send('ok').end();
-        });
-
-        /**
-         * App Engine health check. See the following for configuring health check
-         * behavior:
-         *
-         * https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml#health_checks
-         */
-        router.get('/_ah/health', function (req, res) {
-          res.status(200).send('ok').end();
-        });
-
-        /**
-         * App Engine lifecycle event. See the following for more information:
-         *
-         * https://cloud.google.com/appengine/docs/flexible/custom-runtimes/build#lifecycle_events
-         */
-        router.get('/_ah/stop', function (req, res) {
-          res.status(200).send('ok').end();
-        });
-
-1. Edit `index.js` and insert the following lines after `parentApp = express();`:
-
-        parentApp = express();
-
-        // Add these two lines for Google App Engine
-        parentApp.set('trust proxy', true);
-        parentApp.use(require('./appengine'));
 
 1. Prepare for deployment. Create an `app.yaml` file with the following contents:
 
@@ -272,6 +247,14 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
           # The connection name of your instance on its Overview page in the Google
           # Cloud Platform Console, or use `YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME`
           cloud_sql_instances: YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME
+        skip_files:
+          - ^(.*/)?#.*#$
+          - ^(.*/)?.*~$
+          - ^(.*/)?.*\.py[co]$
+          - ^(.*/)?.*/RCS/.*$
+          - ^(.*/)?\..*$
+          - ^(.*/)?.*\.ts$
+          - ^(.*/)?config\.development\.json$
 
     Here's some information about each setting:
 
@@ -308,6 +291,13 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
             },
             "paths": {
                 "contentPath": "content/"
+            },
+            "logging": {
+                "level": "info",
+                "rotation": {
+                    "enabled": true
+                },
+                "transports": ["file", "stdout"]
             }
         }
 

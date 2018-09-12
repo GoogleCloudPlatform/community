@@ -45,7 +45,7 @@ Export the following variables to your environment for use throughout the tutori
 export TF_VAR_org_id=YOUR_ORG_ID
 export TF_VAR_billing_account=YOUR_BILLING_ACCOUNT_ID
 export TF_ADMIN=${USER}-terraform-admin
-export TF_CREDS=~/.config/gcloud/terraform-admin.json
+export TF_CREDS=~/.config/gcloud/${USER}-terraform-admin.json
 ```
 
 > Note: The `TF_ADMIN` variable will be used for the name of the Terraform Admin Project and must be unique.
@@ -132,7 +132,7 @@ cat > backend.tf <<EOF
 terraform {
  backend "gcs" {
    bucket  = "${TF_ADMIN}"
-   path    = "/terraform.tfstate"
+   prefix  = "terraform/state"
    project = "${TF_ADMIN}"
  }
 }

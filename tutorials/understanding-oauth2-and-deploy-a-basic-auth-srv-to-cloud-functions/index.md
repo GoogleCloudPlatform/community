@@ -192,7 +192,7 @@ This tutorial deploys 3 Cloud Functions. The `token` function is responsible for
 
 ## Downloading the Code
 
-Download the code [here](/code).
+Download the code [here](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/understanding-oauth2-and-deploy-a-basic-auth-srv-to-cloud-functions/code).
 
 The sample includes the following files:
 
