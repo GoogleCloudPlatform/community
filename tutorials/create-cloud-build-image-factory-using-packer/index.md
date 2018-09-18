@@ -21,7 +21,7 @@ This tutorial will show you how to create an image factory using Cloud Build and
 [![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/create-cloud-build-image-factory-using-packer/index.md)
 
 
-## Task 0 (OPTIONAL) Create a project with a billing account attached 
+## Task 0 (OPTIONAL): Create a project with a billing account attached 
 This task will help you setup a new GCP project in which to run your packer build factory. 
 **(you can also use an existing project and skip to the next step)**
 ```sh
@@ -40,7 +40,7 @@ gcloud config set compute/zone $ZONE
 gcloud config set account $ACCOUNT
 ```
 
-## Task 1  Set the project variable (Skip this step if you created a new project above)
+## Task 1: Set the project variable (Skip this step if you created a new project above)
 Ensure you are working with the project you want to use in gcloud.  
 For more information on configuraitons see [configurations](https://cloud.google.com/sdk/gcloud/reference/config/configurations/). 
 Fill in ```[CONFIGURATION NAME]``` with the name of hte configuration you want to use. 
@@ -49,7 +49,25 @@ gcloud config configurations activate [CONFIGURATION NAME] #The configuration fo
 PROJECT=$(gcloud config get-value project)
 ```
 
-## Task 2  Enable the required services
+## Task 2: Copy the files from this tutorial to a new working directory and git repository
+1. Create a new directory
+```sh 
+mkdir ../helloworld-image-factory
+```
+2. Copy the files from this tutorial to that directory
+```sh
+cp tutorials/community/create-cloud-build-image-factory-using-packer/* ../helloworld-image-factory 
+```
+3. Change working directories to the new directory
+```sh 
+cd ../helloworld-image-factory
+```
+4. Initialize a git repository in the new working directory
+```sh
+git init
+```
+
+## Task 3: Enable the required services
 ```sh
 gcloud services enable sourcerepo.googleapis.com
 gcloud services enable cloudapis.googleapis.com 
@@ -59,7 +77,7 @@ gcloud services enable storage-api.googleapis.com
 gcloud services enable cloudbuild.googleapis.com
 ```
 
-## Task 3 Give the Cloud Build user Project Editor permissions 
+## Task 4: Give the Cloud Build user Project Editor permissions 
 First find the cloudbuild service account. Next add the editor role to it. 
 ```sh
 CLOUD_BUILD_ACCOUNT=$(gcloud projects get-iam-policy $PROJECT --filter="(bindings.role:roles/cloudbuild)"  --flatten="bindings[].members" --format="value(bindings.members[])")
@@ -69,15 +87,16 @@ gcloud projects add-iam-policy-binding $PROJECT \
   --role roles/editor   
 ```
 
-## Task 4 Create the Cloud Source Repository for your image creator 
+## Task 5: Create the Cloud Source Repository for your image creator 
+Create the google cloud source repository from the command line. 
 ```sh
 gcloud source repos create helloworld-image-factory
 ```
+ 
+## Task 6: Create the build trigger for the image creator source repository 
+You can create a trigger on the [build triggers page](https://console.cloud.google.com/cloud-build/triggers) of the GCP Console by following these steps:
 
-## Task 5 Create the build triggers for the image creator source repository 
-Go to to the [build triggers page](https://console.cloud.google.com/cloud-build/triggers) and create a trigger.  
-
-1. Click "Create Trigger" 
+1. Click **"Create Trigger"**
 1. Select "Cloud Source Repository" Click "Continue".
 1. Select "helloworld-image-factory" anc click "Continue" 
 1. Enter "Hello world image factory" for Name." 
@@ -92,8 +111,8 @@ Go to to the [build triggers page](https://console.cloud.google.com/cloud-build/
 gcloud compute images list | awk '{print $3}'  | awk '!a[$0]++'
 ```
 
-## Task 6 Add the packer Cloud Build image to your project
-
+## Task 7: Add the packer Cloud Build image to your project
+Grab the builder from the community repo and submit it to your project. 
 ```sh
 project_dir=$(pwd)
 cd /tmp
@@ -104,7 +123,7 @@ rm -rf /tmp/cloud-builders-community
 cd $project_dir
 ```
 
-## Task 7 Add your helloworld-image-factory google repository as a remote repository with the name 'google'
+## Task 8: Add your helloworld-image-factory google repository as a remote repository with the name 'google' and push 
 1. (Only if not running in Cloud Shell) setup your google credentials for git. 
 ```sh 
 gcloud init && git config --global credential.https://source.developers.google.com.helper gcloud.sh
@@ -115,7 +134,7 @@ git remote add google \
   https://source.developers.google.com/p/$PROJECT/r/helloworld-image-factory
 ```
 
-## Task 8 Push the repository and tags to google
+## Task 9: Push the repository and tags to google
 1. Tag the repository with a version number.
 ```sh 
 git tag v0.1
@@ -125,11 +144,11 @@ git tag v0.1
 git push google master --tags
 ```
 
-## Task 9 View build progress 
+## Task 10: View build progress 
 1. Open up the [Cloud Build](https://console.cloud.google.com/cloud-build) console to show the build progress.
 2. Find the build that is in progress and click the link to view its progress. 
 
-## Task 10 Create a compute instance for the image in your gcp project 
+## Task 11: Create a compute instance for the image in your gcp project 
 Once the build completes, create the instance and requisite firewall rule to test that the image works.
 ```sh
 gcloud compute firewall-rules create http --allow=tcp:80 --target-tags=http-server --source-ranges=0.0.0.0/0 
@@ -137,7 +156,7 @@ gcloud compute instances create helloworld-from-factory --image https://www.goog
 ```
 
 
-## Task 11 Check the website to make sure it's up! 
+## Task 12: Check the website to make sure it's up! 
 Wait a minute or two minutes and open the browser to the ip address of the instance to see the special message.
 1. Retrieve the instace ip: 
 ```sh
