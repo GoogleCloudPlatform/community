@@ -6,17 +6,17 @@ tags: Cloud Build, Packer, Compute Engine, Image
 date_published: 2018-09-14
 ---
 
+
 # Create A Cloud Build Image Factory Using Packer
 
 This tutorial will show you how to create an image factory using Cloud Build and [Packer by Hashicorp](https://packer.io). The image factory will automatically create new images from a Cloud Source Repository every time a new tag is pushed to that repository as depicted in the diagram below.
+
+![ push to repository triggers cloud build with packer which builds machine image](packer-tutorial.png)
 
 ## Prerequisits
 1. A Google Cloud account 
 1. At least project editor access to an existing project 
 1. Or organization permissions to create a new project in an existing organization [get a trial account here](https://console.cloud.google.com/freetrial?authuser=2&_ga=2.213928212.-2042919442.1528299768&_gac=1.89261801.1536929612.CjwKCAjwuO3cBRAyEiwAzOxKslw2lWJAN82nAhsu1azihQgX_7aQjek2MPEjanoAwKL5g70Rp0b9zRoCgFwQAvD_BwE)
-
-
-![ push to repository triggers cloud build with packer which builds machine image](packer-tutorial.png)
 
 [![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/create-cloud-build-image-factory-using-packer/index.md)
 
