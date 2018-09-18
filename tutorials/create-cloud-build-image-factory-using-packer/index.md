@@ -60,6 +60,7 @@ gcloud services enable cloudbuild.googleapis.com
 ```
 
 ## Task 3 Give the Cloud Build user Project Editor permissions 
+First find the cloudbuild service account. Next add the editor role to it. 
 ```sh
 CLOUD_BUILD_ACCOUNT=$(gcloud projects get-iam-policy $PROJECT --filter="(bindings.role:roles/cloudbuild)"  --flatten="bindings[].members" --format="value(bindings.members[])")
 
