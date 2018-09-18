@@ -130,8 +130,7 @@ git push google master --tags
 2. Find the build that is in progress and click the link to view its progress. 
 
 ## Task 10 Create a compute instance for the image in your gcp project 
-1. Once the build completes, create the instance and requisite firewall rule to test that the image works.
-
+Once the build completes, create the instance and requisite firewall rule to test that the image works.
 ```sh
 gcloud compute firewall-rules create http --allow=tcp:80 --target-tags=http-server --source-ranges=0.0.0.0/0 
 gcloud compute instances create helloworld-from-factory --image https://www.googleapis.com/compute/v1/projects/$PROJECT/global/images/helloworld-v01 --tags=http-server --zone=$ZONE
@@ -140,11 +139,11 @@ gcloud compute instances create helloworld-from-factory --image https://www.goog
 
 ## Task 11 Check the website to make sure it's up! 
 Wait a minute or two minutes and open the browser to the ip address of the instance to see the special message.
-1. To retrieve the instace ip: 
+1. Retrieve the instace ip: 
 ```sh
 gcloud compute instances list --filter="name:helloworld*" --format="value(networkInterfaces[0].accessConfigs[0].natIP)"
 ``` 
-1. Open the IP in the browser and make sure you see the "Hello from the image factory!" message. 
+2. Open the IP in the browser and make sure you see the "Hello from the image factory!" message. 
 
 ## Cleaning up
 
