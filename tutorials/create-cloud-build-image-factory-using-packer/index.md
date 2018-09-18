@@ -42,7 +42,7 @@ gcloud config set account $ACCOUNT
 
 ## Task 1  Set the project variable (Skip this step if you created a new project above)
 Ensure you are working with the project you want to use in gcloud.  
-For more information on configuraitons see [configurations](https://cloud.google.com/sdk/gcloud/reference/config/configurations/) 
+For more information on configuraitons see [configurations](https://cloud.google.com/sdk/gcloud/reference/config/configurations/). 
 ```sh
 gcloud config configurations activate $MY_CONFIGURATION #The configuration for the project you want to use
 PROJECT=$(gcloud config get-value project)
