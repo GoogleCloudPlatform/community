@@ -3,7 +3,7 @@ title: Run a Kotlin Spring Boot app on Google App Engine Standard
 description: Learn how to deploy a Kotlin Spring Boot app to Google App Engine Standard.
 author: bshaffer
 tags: App Engine, Kotlin, Spring Boot, Java, App Engine Standard
-date_published: 2018-01-17
+date_published: 2018-09-21
 ---
 
 [Google App Engine Standard](https://cloud.google.com/appengine/docs/standard/)
