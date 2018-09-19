@@ -15,7 +15,7 @@ The Cloud Function is
 implemented in [Node.js][node] version 6 *(or 8)*.
 
 [functions]: https://cloud.google.com/functions
-[twilio]: https://cloud.google.com/firestore/
+[firestore]: https://cloud.google.com/firestore/
 [node]: https://nodejs.org/en/
 
 The sample Cloud Function is triggered by a web request,
