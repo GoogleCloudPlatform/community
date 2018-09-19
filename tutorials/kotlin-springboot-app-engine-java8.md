@@ -7,11 +7,10 @@ date_published: 2018-09-21
 ---
 
 [Google App Engine Standard](https://cloud.google.com/appengine/docs/standard/)
-is an easy way to deploy your apps to the same infrastructure that powers
-Google's products. In this tutorial you'll see how to deploy your
-[Kotlin](https://kotlinlang.org/) and
-[Spring Boot](https://projects.spring.io/spring-boot/) application to App Engine
-Standard.
+deploys your apps to the same infrastructure that powers Google's products. In
+this tutorial you'll see how to deploy your [Kotlin](https://kotlinlang.org/)
+and [Spring Boot](https://projects.spring.io/spring-boot/) application to App
+Engine Standard.
 
 You will create a new Spring Boot application, and then you will learn how to:
 
@@ -67,11 +66,13 @@ application.
     * Click "Switch to the full version" at the bottom to expand the advanced
       options. Under **Packaging** select **War** in the dropdown.
 
-1. Download the generated project and save it to a local folder.
+1. Click the **Generate Project** button to download the generated Spring Boot
+application and save it to a local folder.
 
-1. Open the resulting project in your favourite IDE or editor and create a new
-source file `MessageController.kt` in the directory
+1. Open the downloaded application folder in your favourite IDE or editor an
+create a new source file `MessageController.kt` in the directory
 `src/main/kotlin/com/example/demo` with the following contents:
+
     ```kt
     package com.example.demo
 
@@ -89,11 +90,13 @@ source file `MessageController.kt` in the directory
     }
     ```
 
-    The package should match that of your group and artifact name.
+    > The package should match that of the `groupId` and `artifactId` specified
+    in `pom.xml`.
 
 1.  Edit the file named `DemoApplication.kt` in
     `src/main/kotlin/com/example/demo` and replace its contents with the
     following:
+
     ```kt
     package com.example.demo
 
@@ -114,6 +117,7 @@ source file `MessageController.kt` in the directory
         mvn spring-boot:run
 
 1. Open the browser and make sure you get a valid JSON response when accessing http://localhost:8080/message. The result should be:
+
     ```json
     {
       "text": "Hello from Google Cloud",
@@ -127,6 +131,7 @@ To deploy your application, you will use an App Engine plugin for Maven which si
 is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/java/tools/gradle).
 
 1.  Create a file called `appengine-web.xml` in a new folder `src/main/webapp/WEB-INF` with the following contents:
+
     ```xml
     <?xml version="1.0" encoding="utf-8"?>
     <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
@@ -137,6 +142,7 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
 
 1.  Add the following entry to the `plugins` section of your `pom.xml` file to
     configure the [Google Cloud plugin](https://cloud.google.com/appengine/docs/standard/java/tools/maven):
+
     ```xml
     <plugin>
         <groupId>com.google.cloud.tools</groupId>
