@@ -71,7 +71,7 @@ application and save it to a local folder.
 
 1. Open the downloaded application folder in your favourite IDE or editor an
 create a new source file `MessageController.kt` in the directory
-`src/main/kotlin/com/example/demo` with the following contents:
+`src/main/kotlin` with the following contents:
 
     ```kt
     package com.example.demo
@@ -93,9 +93,8 @@ create a new source file `MessageController.kt` in the directory
     > The package should match that of the `groupId` and `artifactId` specified
     in `pom.xml`.
 
-1.  Edit the file named `DemoApplication.kt` in
-    `src/main/kotlin/com/example/demo` and replace its contents with the
-    following:
+1. Edit the file named `DemoApplication.kt` in `src/main/kotlin` and replace
+its contents with the following:
 
     ```kt
     package com.example.demo
@@ -130,7 +129,8 @@ create a new source file `MessageController.kt` in the directory
 To deploy your application, you will use an App Engine plugin for Maven which simplifies some of the process. The plugin
 is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/java/tools/gradle).
 
-1.  Create a file called `appengine-web.xml` in a new folder `src/main/webapp/WEB-INF` with the following contents:
+1. Create a file called `appengine-web.xml` in a new folder
+`src/main/webapp/WEB-INF` with the following contents:
 
     ```xml
     <?xml version="1.0" encoding="utf-8"?>
@@ -140,8 +140,8 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
     </appengine-web-app>
     ```
 
-1.  Add the following entry to the `plugins` section of your `pom.xml` file to
-    configure the [Google Cloud plugin](https://cloud.google.com/appengine/docs/standard/java/tools/maven):
+1. Add the following entry to the `plugins` section of your `pom.xml` file to
+configure the [Google Cloud Maven plugin][google-cloud-maven-plugin]:
 
     ```xml
     <plugin>
@@ -151,7 +151,9 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
     </plugin>
     ```
 
-1.  Run the following command to deploy your app:
+[google-cloud-maven-plugin]: https://cloud.google.com/appengine/docs/standard/java/tools/maven
+
+1. Run the following command to deploy your app:
 
         mvn appengine:deploy
 
@@ -165,7 +167,7 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
     **Note**: If the command fails with `Google Cloud SDK could not be found`, make sure the environment
     variable `GOOGLE_CLOUD_SDK_HOME` is set to the root directory of where you installed the Google Cloud SDK.
 
-1.  Once the deploy command has completed, you can run the following to see your
+1. Once the deploy command has completed, you can run the following to see your
 app running in production on App Engine in the browser:
 
         gcloud app browse
@@ -176,15 +178,15 @@ app running in production on App Engine in the browser:
 
 Make a simple change and redeploy.
 
-1.  Change the text returned from the `message()` function to
+1. Change the text returned from the `message()` function to
 
     "Hello from Google App Engine"
 
-1.  Run the deployment command again:
+1. Run the deployment command again:
 
         mvn appengine:deploy
 
-1.  View your changes live by running:
+1. View your changes live by running:
 
         gcloud app browse
 
