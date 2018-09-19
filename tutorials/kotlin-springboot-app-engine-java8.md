@@ -54,6 +54,10 @@ an existing project.
 In this section, you will create a new Spring Boot app and make sure it runs. If
 you already have an app to deploy, you can use it instead.
 
+> Alternatively, you can [download][springboot-sample-code] the sample application.
+
+[springboot-sample-code]: https://github.com/GoogleCloudPlatform/kotlin-samples/tree/master/appengine/springboot/
+
 1. Use [start.spring.io](https://start.spring.io) to generate a Spring Boot
 application.
 
@@ -62,8 +66,6 @@ application.
     * In the same Dependency selector, type **Web** and select first result.
     * Click "Switch to the full version" at the bottom to expand the advanced
       options. Under **Packaging** select **War** in the dropdown.
-
-    > Alternatively, you can [download](https://github.com/GoogleCloudPlatform/kotlin-samples/tree/master/appengine/springboot/) the sample application.
 
 1. Download the generated project and save it to a local folder.
 
@@ -157,12 +159,12 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
     **Note**: If the command fails with `Google Cloud SDK could not be found`, make sure the environment
     variable `GOOGLE_CLOUD_SDK_HOME` is set to the root directory of where you installed the Google Cloud SDK.
 
-1.  Once the deploy command has completed, you can run
+1.  Once the deploy command has completed, you can run the following to see your
+app running in production on App Engine in the browser:
 
         gcloud app browse
 
-    to see your app running in production on App Engine in the browser. Not however that this application does not
-    respond to the root endpoint. Once the browser is open with the correct URL, you need to append `/message` to it.
+    **Note** This application does not respond to the root endpoint. Once the browser is open with the correct URL, you need to append `/message` to it.
 
 ## Update your application
 
