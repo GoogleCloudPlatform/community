@@ -66,6 +66,7 @@ you already have an app to deploy, you can use it instead.
     * `src/main/webapp/WEB-INF/web.xml` - Web configuration file
 
 1. In `build.gradle`, copy the following contents:
+
     ```gradle
     buildscript {
         // Consider moving these values to `gradle.properties`
@@ -110,6 +111,7 @@ you already have an app to deploy, you can use it instead.
     ```
 
 1. In `src/main/kotlin/HelloApplication.kt`, copy the following contents:
+
     ```kt
     package com.example.demo
 
@@ -148,6 +150,7 @@ you already have an app to deploy, you can use it instead.
     ```
 
 1. In `src/main/resources/application.conf`, copy the following contents:
+
     ```conf
     ktor {
         application {
@@ -156,6 +159,7 @@ you already have an app to deploy, you can use it instead.
     }
     ```
 1. In `src/main/webapp/WEB-INF/web.xml`, copy the following contents:
+
     ```xml
     <?xml version="1.0" encoding="ISO-8859-1" ?>
     <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
@@ -189,6 +193,7 @@ the [App Engine plugin for Gradle](https://cloud.google.com/appengine/docs/stand
     * `src/main/webapp/WEB-INF/appengine-web.xml` - App Engine configuration file
 
 1. In `src/main/webapp/WEB-INF/appengine-web.xml`, copy the following contents:
+
     ```xml
     <?xml version="1.0" encoding="utf-8"?>
     <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
@@ -198,6 +203,7 @@ the [App Engine plugin for Gradle](https://cloud.google.com/appengine/docs/stand
     ```
 
 1. Now you can run the application from the command line using the following command:
+
     ```sh
     ./gradlew appengineRun
     ```
@@ -208,6 +214,7 @@ http://localhost:8080/.
 ## Deploy your application
 
 1.  Run the following command to deploy your app:
+
     ```sh
     ./gradlew appengineDeploy
     ```
@@ -224,6 +231,7 @@ http://localhost:8080/.
 
 1.  Once the deploy command has completed, you can run the following to see your
 app running in production on App Engine in the browser:
+
     ```sh
     gcloud app browse
     ```
@@ -233,6 +241,7 @@ app running in production on App Engine in the browser:
 Make a simple change and redeploy.
 
 1.  Add the following after the `get("/") { ... }` function call in `HelloApplication.kt`:
+
     ```kt
     get("/demo") {
         call.respondHtml {
@@ -249,11 +258,13 @@ Make a simple change and redeploy.
     ```
 
 1.  Run the deployment command again:
+
     ```sh
     ./gradlew appengineDeploy
     ```
 
 1.  View your changes live by running:
+
     ```sh
     gcloud app browse
     ```
@@ -272,6 +283,7 @@ to your application.
 
 
 1. In `src/main/resources/logback.xml`, copy the following contents:
+
     ```xml
     <configuration>
         <!-- Stack Driver Appender -->
@@ -299,22 +311,26 @@ to your application.
     ```
 
 1. In `src/main/webapp/WEB-INF/logging.properties`, copy the following contents:
+
     ```properties
     .level = INFO
     ```
 
 1. Modify `build.gradle` and add the following line under `buildscript`:
+
     ```gradle
     ext.gce_logback_version = '0.60.0-alpha'
     ```
 
 1. Again modify `build.gradle` and add the following line under `dependencies`:
+
     ```gradle
     compile "com.google.cloud:google-cloud-logging-logback:$gce_logback_version"
     ```
 
 1. Modify `src/main/webapp/WEB-INF/appengine-web.xml` and add the following
 under `appengine-web-app`:
+
     ```xml
     <system-properties>
         <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
@@ -322,11 +338,13 @@ under `appengine-web-app`:
     ```
 
 1.  Run the deployment command again:
+
     ```sh
     ./gradlew appengineDeploy
     ```
 
 1.  View your changes live by running:
+
     ```sh
     gcloud app browse
     ```
