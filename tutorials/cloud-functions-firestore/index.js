@@ -1,6 +1,5 @@
 'use strict';
 
-
 const Firestore = require('@google-cloud/firestore');
 
 const PROJECTID = 'cloud-functions-firestore';
@@ -8,7 +7,7 @@ const COLLECTION_NAME = 'cloud-functions-firestore';
 
 const firestore = new Firestore({
   projectId: PROJECTID,
-  timestampsInSnapshots: true,
+  timestampsInSnapshots: true
   // NOTE don't hardcode your project credentials here
   // if you have to, export the following to your shell
   // GOOGLE_APPLICATION_CREDENTIALS=<path>
@@ -30,9 +29,6 @@ const firestore = new Firestore({
  * @param {!express:Response} res HTTP response context.
  */
 exports.main = (req, res) => {
-  if (req.method === 'DELETE') {
-    throw 'not yet built';
-  }
   if (req.method === 'POST') {
     // store/insert a new document
     const data = (req.body) || {};
@@ -47,7 +43,7 @@ exports.main = (req, res) => {
     return firestore.collection(COLLECTION_NAME).add({
       created,
       ttl,
-      ciphertext,
+      ciphertext
     }).then(doc => {
       console.info('stored new doc id#', doc.id);
       return res.status(200).send(doc);
@@ -59,10 +55,11 @@ exports.main = (req, res) => {
       });
     });
   }
-  // read/retrieve an existing document by id
+
+  // everything below this requires an id
   if (!(req.query && req.query.id)) {
     return res.status(404).send({
-      error: 'No Id',
+      error: 'No Id'
     });
   }
   const id = req.query.id.replace(/[^a-zA-Z0-9]/g, '').trim();
@@ -72,19 +69,36 @@ exports.main = (req, res) => {
     });
   }
 
+  if (req.method === 'DELETE') {
+    // delete an existing document by id
+    return firestore.collection(COLLECTION_NAME)
+      .doc(id)
+      .delete()
+      .then(() => {
+        return res.status(200).send({ status: 'ok' });
+      }).catch(err => {
+        console.error(err);
+        return res.status(404).send({
+          error: 'unable to delete',
+          err
+        });
+      });
+  }
+
+  // read/retrieve an existing document by id
   return firestore.collection(COLLECTION_NAME)
     .doc(id)
     .get()
     .then(doc => {
       if (!(doc && doc.exists)) {
         return res.status(404).send({
-          error: 'Unable to find the document',
+          error: 'Unable to find the document'
         });
       }
       const data = doc.data();
       if (!data) {
         return res.status(404).send({
-          error: 'Found document is empty',
+          error: 'Found document is empty'
         });
       }
       return res.status(200).send(data);
@@ -92,7 +106,7 @@ exports.main = (req, res) => {
       console.error(err);
       return res.status(404).send({
         error: 'Unable to retrieve the document',
-        err,
+        err
       });
     });
 };
