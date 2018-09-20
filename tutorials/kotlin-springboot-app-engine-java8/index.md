@@ -17,10 +17,12 @@ You will create a new Spring Boot application, and then you will learn how to:
 *   Deploy your application
 *   Update your application
 
-While the tutorial uses Kotlin 1.2 and Spring Boot 2 M7, other releases of Kotlin and Spring Boot should work
-without any modifications (other than version numbers in Maven files). This tutorial does assume you're familiar
-with Spring Boot and creating web applications. For simplicity the tutorial responds with JSON to a specific HTTP request, but can
-be built-on to connect to other Google services and/or databases.
+While the tutorial uses Kotlin 1.2 and Spring Boot 2 M7, other releases of
+Kotlin and Spring Boot should work without any modifications (other than version
+numbers in Maven files). This tutorial does assume you're familiar with Spring
+Boot and creating web applications. For simplicity the tutorial responds with
+JSON to a specific HTTP request, but can be built-on to connect to other Google
+services and/or databases.
 
 ## Before you begin
 
@@ -44,21 +46,22 @@ an existing project.
 
     Version 175.0.0 or later of the SDK is required.
 
-3.  Install [JDK 8 or higher](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) if you do not already have it.
+4.  Install [JDK 8 or higher](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) if you do not already have it.
 
-4.  Install [Maven](https://maven.apache.org/install.html).
+5.  Install [Maven](https://maven.apache.org/install.html).
 
 ## Creating a new app and running it locally
 
 In this section, you will create a new Spring Boot app and make sure it runs. If
 you already have an app to deploy, you can use it instead.
 
-> Alternatively, you can [download][springboot-sample-code] the sample application.
+Note: Alternatively, you can [download][springboot-sample-code] the sample
+application.
 
 [springboot-sample-code]: https://github.com/GoogleCloudPlatform/kotlin-samples/tree/master/appengine/springboot/
 
-1. Use [start.spring.io](https://start.spring.io) to generate a Spring Boot
-application.
+1.  Use [start.spring.io](https://start.spring.io) to generate a Spring Boot
+    application.
 
     * Select **Kotlin** as the language and **Maven** as the build system.
     * Using the Dependency selector, type **GCP Support** and select it.
@@ -66,90 +69,60 @@ application.
     * Click "Switch to the full version" at the bottom to expand the advanced
       options. Under **Packaging** select **War** in the dropdown.
 
-1. Click the **Generate Project** button to download the generated Spring Boot
-application and save it to a local folder.
+1.  Click the **Generate Project** button to download the generated Spring Boot
+    application and save it to a local folder.
 
-1. Open the downloaded application folder in your favourite IDE or editor an
-create a new source file `MessageController.kt` in the directory
-`src/main/kotlin` with the following contents:
+1.  Open the downloaded application folder in your favourite IDE or editor an
+    create a new source file `MessageController.kt` in the directory
+    `src/main/kotlin` with the following contents:
 
-    ```kt
-    package com.example.demo
 
-    import org.springframework.web.bind.annotation.RequestMapping
-    import org.springframework.web.bind.annotation.RestController
+        package com.example.demo
 
-    data class Message(val text: String, val priority: String)
+        import org.springframework.web.bind.annotation.RequestMapping
+        import org.springframework.web.bind.annotation.RestController
 
-    @RestController
-    class MessageController {
-        @RequestMapping("/message")
-        fun message(): Message {
-            return Message("Hello from Google Cloud", "High")
+        data class Message(val text: String, val priority: String)
+
+        @RestController
+        class MessageController {
+            @RequestMapping("/message")
+            fun message(): Message {
+                return Message("Hello from Google Cloud", "High")
+            }
         }
-    }
-    ```
 
-    > The package should match that of the `groupId` and `artifactId` specified
-    in `pom.xml`.
+    Note: The package should match that of the `groupId` and `artifactId`
+    specified in `pom.xml`.
 
-1. Edit the file named `DemoApplication.kt` in `src/main/kotlin` and replace
-its contents with the following:
+1.  Edit the file named `DemoApplication.kt` in `src/main/kotlin` and replace
+    its contents of the following [example `DemoApplication.kt` file](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine-java8/DemoApplication.kt).
 
-    ```kt
-    package com.example.demo
-
-    import org.springframework.boot.autoconfigure.SpringBootApplication
-    import org.springframework.boot.runApplication
-    import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
-
-    @SpringBootApplication
-    class DemoApplication : SpringBootServletInitializer()
-
-    fun main(args: Array<String>) {
-        runApplication<DemoApplication>(*args)
-    }
-    ```
-
-1. Run the application from the command line using Maven:
+1.  Run the application from the command line using Maven:
 
         mvn spring-boot:run
 
-1. Open the browser and make sure you get a valid JSON response when accessing http://localhost:8080/message. The result should be:
+1.  Open the browser and make sure you get a valid JSON response when accessing
+    http://localhost:8080/message. The result should be:
 
-    ```json
-    {
-      "text": "Hello from Google Cloud",
-      "priority": "High"
-    }
-    ```
+        {
+          "text": "Hello from Google Cloud",
+          "priority": "High"
+        }
 
 ## Deploy your application
 
 To deploy your application, you will use an App Engine plugin for Maven which simplifies some of the process. The plugin
 is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/java/tools/gradle).
 
-1. Create a file called `appengine-web.xml` in a new folder
-`src/main/webapp/WEB-INF` with the following contents:
+1.  Create a file called `appengine-web.xml` in a new folder
+    `src/main/webapp/WEB-INF` with the contents of the following
+    [example `appengine-web.xml` file](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine-java8/appengine-web.xml).
 
-    ```xml
-    <?xml version="1.0" encoding="utf-8"?>
-    <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
-        <threadsafe>true</threadsafe>
-        <runtime>java8</runtime>
-    </appengine-web-app>
-    ```
 
-1. Add the following entry to the `plugins` section of your `pom.xml` file to
-configure the [Google Cloud Maven plugin][google-cloud-maven-plugin]:
+1.  Add [this plugin entry](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine-java8/pom.xml) to the `plugins` section of your `pom.xml` file to
+    configure the [Google Cloud Maven plugin][google-cloud-maven-plugin].
 
-    ```xml
-    <plugin>
-        <groupId>com.google.cloud.tools</groupId>
-        <artifactId>appengine-maven-plugin</artifactId>
-        <version>1.3.1</version>
-    </plugin>
-    ```
 
 [google-cloud-maven-plugin]: https://cloud.google.com/appengine/docs/standard/java/tools/maven
 
@@ -164,15 +137,17 @@ configure the [Google Cloud Maven plugin][google-cloud-maven-plugin]:
     Deployment will also take a few minutes to requisition and configure the
     needed resources, especially the first time you deploy.
 
-    **Note**: If the command fails with `Google Cloud SDK could not be found`, make sure the environment
-    variable `GOOGLE_CLOUD_SDK_HOME` is set to the root directory of where you installed the Google Cloud SDK.
+    **Note**: If the command fails with `Google Cloud SDK could not be found`,
+    make sure the environment variable `GOOGLE_CLOUD_SDK_HOME` is set to the
+    root directory of where you installed the Google Cloud SDK.
 
 1. Once the deploy command has completed, you can run the following to see your
 app running in production on App Engine in the browser:
 
         gcloud app browse
 
-    **Note** This application does not respond to the root endpoint. Once the browser is open with the correct URL, you need to append `/message` to it.
+    **Note** This application does not respond to the root endpoint. Once the
+    browser is open with the correct URL, you need to append `/message` to it.
 
 ## Update your application
 
