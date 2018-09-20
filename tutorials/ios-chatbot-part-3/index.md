@@ -8,16 +8,16 @@ date_published: 2018-06-19
 In [Part 1] and [Part 2] of this series, we showed you how to build a conversational tour guide app with API.AI and Google Cloud Machine Learning APIs. In this final part, you'll learn how to extend this app to the Google Assistant-supported devices (Google Home, eligible Android phones and iPhones, and Android Wear). And we'll build this on top of the existing API.AI agent created in parts 1 and 2.
 
 
-[![The Google Assistant / Google Home Demo](http://img.youtube.com/vi/_x5rlkpZiyc/0.jpg)](https://youtu.be/_x5rlkpZiyc)
+[![The Google Assistant / Google Home Demo](https://img.youtube.com/vi/_x5rlkpZiyc/0.jpg)](https://youtu.be/_x5rlkpZiyc)
 
 
 ## New Intents for Actions on Google
 
-In [Part 1], we discussed the app's input and output context relationships. 
+In [Part 1], we discussed the app's input and output context relationships.
 
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-3/conversational-app-p3-3.png "Contexts without the Assistant")
 
-The `where` context requires the user to upload an image, which is not supported by the Google Assistant. We can modify the context relationship as below. 
+The `where` context requires the user to upload an image, which is not supported by the Google Assistant. We can modify the context relationship as below.
 
 
 
@@ -48,7 +48,7 @@ Now we'll enable Actions on Google to support the Google Assistant.
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-3/conversational-app-p3-4.png "Actions on Google Intents")
 
 
-If this is your first time on Actions on Google console, it will prompt you to turn on <code>Device Information<em> </em></code>and <em>V<code>oice & Audio Activity</code></em> on your <code>Activity controls</code> center. 
+If this is your first time on Actions on Google console, it will prompt you to turn on <code>Device Information<em> </em></code>and <em>V<code>oice & Audio Activity</code></em> on your <code>Activity controls</code> center.
 
 
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-3/conversational-app-p3-2.png "Actions on Google Simulator")
