@@ -96,7 +96,7 @@ application.
     specified in `pom.xml`.
 
 1.  Edit the file named `DemoApplication.kt` in `src/main/kotlin` and replace
-    its contents of the following [example `DemoApplication.kt` file](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine-java8/DemoApplication.kt).
+    its contents with the contents of the following [example `DemoApplication.kt` file](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine-java8/DemoApplication.kt).
 
 1.  Run the application from the command line using Maven:
 
