@@ -46,8 +46,6 @@ an existing project.
 
 3.  Install [JDK 8 or higher](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) if you do not already have it.
 
-4.  Install [Maven](https://maven.apache.org/install.html).
-
 ## Create your Ktor Application
 
 In this section, you will create a new Ktor app and make sure it runs. If
