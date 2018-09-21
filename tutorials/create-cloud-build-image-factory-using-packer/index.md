@@ -7,7 +7,7 @@ date_published: 2018-09-14
 ---
 
 This tutorial will show you how to create an image factory using Cloud Build and
-[Packer by Hashicorp](https://packer.io). The image factory will automatically
+[Packer by HashiCorp](https://packer.io). The image factory will automatically
 create new images from a Cloud Source Repository every time a new tag is pushed
 to that repository as depicted in the diagram below.
 
@@ -19,9 +19,6 @@ to that repository as depicted in the diagram below.
 1.  At least project editor access to an existing project
 1.  Or organization permissions to create a new project in an existing
     organization [get a trial account here](https://console.cloud.google.com/freetrial?authuser=2&_ga=2.213928212.-2042919442.1528299768&_gac=1.89261801.1536929612.CjwKCAjwuO3cBRAyEiwAzOxKslw2lWJAN82nAhsu1azihQgX_7aQjek2MPEjanoAwKL5g70Rp0b9zRoCgFwQAvD_BwE)
-
-[![button](https://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/create-cloud-build-image-factory-using-packer/index.md)
-
 
 ## Task 0 (OPTIONAL): Create a project with a billing account attached
 
@@ -51,21 +48,19 @@ Fill in `[CONFIGURATION NAME]` with the name of hte configuration you want to us
     gcloud config configurations activate [CONFIGURATION NAME] #The configuration for the project you want to use
     PROJECT=$(gcloud config get-value project)
 
-## Task 2: Copy the files from this tutorial to a new working directory and git repository
+## Task 2: Copy the files for this tutorial to a new working directory and git repository
 
-1.  Create a new directory
+1.  Create a new working directory
 
-        mkdir ../helloworld-image-factory
+        mkdir helloworld-image-factory
+        cd helloworld-image-factory
 
-2.  Copy the files from this tutorial to that directory
+2.  Download the tutorial scripts 
 
-        cp tutorials/community/create-cloud-build-image-factory-using-packer/* ../helloworld-image-factory
+         curl -L https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/cloudbuild.yaml >cloudbuild.yaml
+         curl -L https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/install-website.sh >install-website.sh 
 
-3.  Change working directories to the new directory
-
-        cd ../helloworld-image-factory
-
-4.  Initialize a git repository in the new working directory
+3.  Initialize a git repository in the working directory
 
         git init
 
@@ -134,6 +129,11 @@ Grab the builder from the community repo and submit it to your project.
           https://source.developers.google.com/p/$PROJECT/r/helloworld-image-factory
 
 ## Task 9: Push the repository and tags to google
+
+1.  Add your files to the repository
+
+        git add .
+        git commit -m " first image" 
 
 1.  Tag the repository with a version number.
 
