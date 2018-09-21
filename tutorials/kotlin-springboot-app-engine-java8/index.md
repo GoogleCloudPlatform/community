@@ -199,11 +199,15 @@ To disable an App Engine service:
 2.  Make sure your project is selected. If necessary, pull down the project
     selection dropdown at the top, and choose the project you created for this
     tutorial.
-3.  If you deployed to a service other than "default", make sure it is selected
-    in the Service dropdown.
-4.  Select all the versions you wish to disable and click **Stop** at the top
-    of the page. This will free all of the Google Compute Engine resources used
-    for this App Engine service.
+3.  If you deployed to a service other than "default", you can navigate to the
+    **Services** page, select the service you want to remove, and click
+    **Delete**.
+4.  If you have multiple versions running, you can navigate to the **Versions**
+    page, select your version and click **Split Traffic** to migrate all traffic
+    away from the version you want to stop. Once your version is serving zero
+    traffic, select it and click **Stop** or **Delete**.
+5.  If you want to stop App Engine entirely, you can navigate to the
+    **Settings** page and click **Disable Application**.
 
 ## Next steps
 
