@@ -121,8 +121,9 @@ need to specify **`google-storage`** as the binary provider in the configuration
 file. You will also need to provde the name of the bucket to use, and the
 interoperability storage keys.
 
-Add [this example XML]() into the `binarystore.xml` file to setup a default
-chain that uses **`google-storage`** as the binary provider:
+Add [this example XML](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/artifactory-gcs-setup/binarystore-example.xml)
+into the `binarystore.xml` file to setup a default chain that uses
+**`google-storage`** as the binary provider:
 
 You should use the interoperability values from your Cloud Storage account
 (as described in Step 1) for __identity__ and __credential__.  The name of the
