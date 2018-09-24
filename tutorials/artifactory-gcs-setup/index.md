@@ -139,18 +139,18 @@ more details, please refer to the [JetS3t Configuration Guide](http://www.jets3t
 
 | Parameter | Description |
 | --- | --- |
-| __testConnection__ | Default: true<br/>When true, the Artifactory uploads and downloads a file when starting up to verify that the connection to the cloud storage provider is fully functional. |
-| __multiPartLimit__ | Default: 100,000,000 bytes <br/>File size threshold over which file uploads are chunked and multi-threaded. |
+| __testConnection__ | Default: true. When true, the Artifactory uploads and downloads a file when starting up to verify that the connection to the cloud storage provider is fully functional. |
+| __multiPartLimit__ | Default: 100,000,000 bytes. File size threshold over which file uploads are chunked and multi-threaded. |
 | __identity__ | Your cloud storage provider identity. |
 | __credential__ | Your cloud storage provider authentication credential. |
-| __bucketName__ | <span>Your globally unique bucket name on Cloud Storage.</span> |
+| __bucketName__ | Your globally unique bucket name on Cloud Storage. |
 | __path__ | The relative path to your files within the bucket |
 | __proxyIdentity__ __proxyCredential__ __proxyPort__ __proxyHost__ | Corresponding parameters if you are accessing the cloud storage provider through a proxy server. |
-| __port__ | Default: 80 <br/>The port number through which you want to access Cloud Storage. You should only use the default value unless you need to contact a different endpoint for testing purposes. |
-| __endpoint__ | Default: commondatastorage.googleapis.com. <br/>The Cloud Storage hostname. You should only use the default value unless you need to contact a different endpoint for testing purposes. |
-| __httpsOnly__ | Default: false. <br/>Set to true if you only want to access Cloud Storage through a secure https connection. |
-| __httpsPort__ | Default: 443 <br/>The port number through which you want to access Cloud Storage securely through https. You should only use the default value unless you need to contact a different endpoint for testing purposes. |
-| __bucketExists__ | Default: false. Only available on _google-storage_. <br/>When true, it indicates to the binary provider that a bucket already exists in Google Cloud Storage and therefore does not need to be created. |
+| __port__ | Default: 80. The port number through which you want to access Cloud Storage. You should only use the default value unless you need to contact a different endpoint for testing purposes. |
+| __endpoint__ | Default: commondatastorage.googleapis.com. The Cloud Storage hostname. You should only use the default value unless you need to contact a different endpoint for testing purposes. |
+| __httpsOnly__ | Default: false. Set to true if you only want to access Cloud Storage through a secure https connection. |
+| __httpsPort__ | Default: 443. The port number through which you want to access Cloud Storage securely through https. You should only use the default value unless you need to contact a different endpoint for testing purposes. |
+| __bucketExists__ | Default: false. Only available on _google-storage_. When true, it indicates to the binary provider that a bucket already exists in Google Cloud Storage and therefore does not need to be created. |
 
 For more information, see the Artifactory User's Guide topic [Configuring the Filestore](/confluence/display/RTF5X/Configuring+the+Filestore#ConfiguringtheFilestore-GoogleStorage,S3andS3OldBinaryProviders).
 
