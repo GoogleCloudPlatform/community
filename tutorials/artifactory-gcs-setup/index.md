@@ -148,7 +148,7 @@ more details, please refer to the [JetS3t Configuration Guide](http://www.jets3t
 | __path__ | The relative path to your files within the bucket |
 | __proxyIdentity__ __proxyCredential__ __proxyPort__ __proxyHost__ | Corresponding parameters if you are accessing the cloud storage provider through a proxy server. |
 | __port__ | Default: 80. The port number through which you want to access Cloud Storage. You should only use the default value unless you need to contact a different endpoint for testing purposes. |
-| __endpoint__ | Default: commondatastorage.googleapis.com. The Cloud Storage hostname. You should only use the default value unless you need to contact a different endpoint for testing purposes. |
+| __endpoint__ | Default: _commondatastorage.googleapis.com_. The Cloud Storage hostname. You should only use the default value unless you need to contact a different endpoint for testing purposes. |
 | __httpsOnly__ | Default: false. Set to true if you only want to access Cloud Storage through a secure https connection. |
 | __httpsPort__ | Default: 443. The port number through which you want to access Cloud Storage securely through https. You should only use the default value unless you need to contact a different endpoint for testing purposes. |
 | __bucketExists__ | Default: false. Only available on _google-storage_. When true, it indicates to the binary provider that a bucket already exists in Google Cloud Storage and therefore does not need to be created. |
