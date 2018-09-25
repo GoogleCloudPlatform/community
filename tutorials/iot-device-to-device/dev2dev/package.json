@@ -8,6 +8,6 @@
     "node": ">=4.3.2"
   },
   "dependencies": {
-    "googleapis": "20.1.0"
+    "googleapis": ">=32.0.0"
   }
 }

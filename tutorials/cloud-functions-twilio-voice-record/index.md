@@ -316,10 +316,12 @@ exports.analyzeRecording = (event) => {
   console.log(`Analyzing gs://${object.bucket}/${object.name}`);
 
   // Import the Google Cloud client libraries
-  const nl = require('@google-cloud/language')();
-  const speech = require('@google-cloud/speech')();
+  const language = require('@google-cloud/language').v1beta2;
+  const speech = require('@google-cloud/speech');
   const storage = require('@google-cloud/storage')();
 
+  const nlclient = new language.LanguageServiceClient();
+  const spclient = new speech.SpeechClient();
   const bucket = storage.bucket(object.bucket);
   const dir = require('path').parse(object.name).dir;
 
@@ -330,19 +332,33 @@ exports.analyzeRecording = (event) => {
     languageCode: 'en-US'
   };
 
-  // Transcribe the audio file
-  return speech.recognize(bucket.file(object.name), audioConfig)
-    // Perform Sentiment, Entity, and Syntax analysis on the transcription
-    .then(([transcription]) => nl.annotate(transcription))
-    // Finally, save the analysis
-    .then(([shortResponse, fullResponse]) => {
-      const filename = `${dir}/analysis.json`;
-      console.log(`Saving gs://${object.bucket}/${filename}`);
+  const audioPath = {
+    uri: `gs://${object.bucket}/${object.name}`
+  };
 
+  const audioRequest = {
+    audio: audioPath,
+    config: audioConfig,
+  };
+
+  // Transcribe the audio file
+  return spclient.recognize(audioRequest)
+    // Perform Sentiment, Entity, and Syntax analysis on the transcription
+    .then(data => { 
+      const sresponse = data[0];
+      const transcription = sresponse.results
+        .map(result => result.alternatives[0].transcript)
+        .join('\n');
+      return nlclient.analyzeSentiment({document: {content: `${transcription}`, type: 'PLAIN_TEXT'}});
+    })
+    // Finally, save the analysis
+    .then(responses => {
+      const filename = `${dir}/analysis.json`;
+      console.log(`Saving gs://${object.bucket}/${dir}/${filename}`);
       return bucket
         .file(filename)
-        .save(JSON.stringify(fullResponse, null, 2));
-    });
+        .save(JSON.stringify(responses[0].documentSentiment, null, 1));
+      });
 };
 ```
 
@@ -406,7 +422,7 @@ You can follow these steps to clean up resources and save on costs.
         gsutil rm -r gs://[RESULTS_BUCKET]/
 
     * Replace `[RESULTS_BUCKET]` with the name of the bucket you created in step
-      7 of the **Prerequisites** section.
+      6 of the **Prerequisites** section.
 
 Of course, you can also delete the entire project, but you would have to disable billing and lose any
 setup you have done. Additionally,
