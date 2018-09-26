@@ -5,7 +5,7 @@ from [Cloud Filestore](https://cloud.google.com/filestore/) using the
 provisioning allows storage volumes to be created on demand in the NFS volume managed by a Cloud Filestore instance. Typical
 use cases include running databases, *e.g.*, [PostgreSQL](https://www.postgresql.org/), or a content management system like [WordPress](https://wordpress.com/) in a Kubernetes cluster.
 
-[![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/wkharold/gke-filestore-dynamic-provisioning&page=editor&tutorial=index.md)
+[![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/wkharold/community/tutorials/gke-filestore-dynamic-provisioning&page=editor&tutorial=index.md)
 
 ## (OPTIONAL) Create a project with a billing account attached 
 **(you can also use an existing project and skip to the next step)**
