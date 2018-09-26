@@ -3,6 +3,7 @@ title: Dynamically provision GKE storage from Cloud Filestore using the NFS-Clie
 description: Learn how to deploy the NFS-Client provision in a GKE cluster to dynamically provision storage from Cloud Filestore.
 author: wkh
 tags: GKE, Filestore, Storage, NFS
+date_published: 2018-09-26
 ---
 This tutorial shows you how to [dynamically provision](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning) 
 Kubernetes storage volumes in Google Kubernetes Engine 
