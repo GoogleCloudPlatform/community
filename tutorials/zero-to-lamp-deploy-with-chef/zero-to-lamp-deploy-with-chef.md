@@ -329,10 +329,6 @@ google-cloud  google-gauth  google-gcompute  google-gcontainer  google-gdns
 google-glogging  google-gsql  google-gstorage  infrastructure  lamp
 ```
 
-```
-logout
-```
-
 ## Configure the web server cookbook for your environment
 1. Find your Cloud SQL ip address using `gcloud sql instances list` from your original machine
 
@@ -347,7 +343,7 @@ Configure your web server machine for ssh access from the Chef Workstation.
 gcloud auth activate-service-account compute@$PROJECT_NAME.iam.gserviceaccount.com --key-file=compute.json
 ```
 
-1. ssh to the web server machine to ensure it has your ssh keys installed. You will need to follow the prompts to create a ssh key and passphrase.
+1. Connect to the `web-server`. This will force the creation of a new SSH key and upload it to the GCE instance.
 
 ```
 # gce: chef-workstation
