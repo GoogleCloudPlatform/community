@@ -150,7 +150,6 @@ Use the Chef GCP cookbooks to define your Compute Engine infrastructure. More in
     chef generate recipe infrastructure compute
     ```
 1. Create the credentials that will be used to communicate with the Compute Engine APIs within the new compute recipe within the infrastructure cookbook.
-    TODO(slevenick) How to handle paths?
     ```ruby
     gauth_credential 'compute-credentials' do
       action :serviceaccount
@@ -325,7 +324,7 @@ For the purposes of this tutorial you can download a LAMP cookbook that can be r
 
 ```
 # gce: chef-workstation
-slevenick@chef-workstation:~/chef-repo/cookbooks$ ls
+$USER@chef-workstation:~/chef-repo/cookbooks$ ls
 google-cloud  google-gauth  google-gcompute  google-gcontainer  google-gdns
 google-glogging  google-gsql  google-gstorage  infrastructure  lamp
 ```
@@ -362,7 +361,7 @@ gcloud compute ssh web-server --command='exit'
     ```
     # gce: chef-workstation
     cd ~/chef-repo/cookbooks
-    chef-run -i ~/.ssh/google_compute_engine slevenick@$WEB_SERVER_IP lamp
+    chef-run -i ~/.ssh/google_compute_engine $USER@$WEB_SERVER_IP lamp
     ```
 1. Verify that the cookbook completed by retrieving the content hosted by the web server
 
@@ -374,7 +373,7 @@ gcloud compute ssh web-server --command='exit'
 
 Or visit $WEB_SERVER_IP in your browser. If everything is working it will display a simple html table view of your Cloud SQL database.
 
-[cookbook]: https://github.com/slevenick/community/blob/zero-to-lamp-deploy/tutorials/zero-to-lamp-deploy-with-chef/lamp.tgz
+[cookbook]: https://github.com/slevenick/community/raw/zero-to-lamp-deploy/tutorials/zero-to-lamp-deploy-with-chef/lamp.tgz
 [chefrun]: https://www.chef.sh/docs/chef-workstation/getting-started/
 
 ## Cleaning up
