@@ -374,7 +374,7 @@ gcloud compute ssh web-server --command='exit'
 
 Or visit $WEB_SERVER_IP in your browser. If everything is working it will display a simple html table view of your Cloud SQL database.
 
-[cookbook]: TODO
+[cookbook]: https://github.com/slevenick/community/blob/zero-to-lamp-deploy/tutorials/zero-to-lamp-deploy-with-chef/lamp.tgz
 [chefrun]: https://www.chef.sh/docs/chef-workstation/getting-started/
 
 ## Cleaning up
