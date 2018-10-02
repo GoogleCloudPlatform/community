@@ -11,31 +11,31 @@ Preston Holmes | Solution Architect | Google Cloud<br>
 Drew Moseley | Solution Architect | Mender<br>
 Eystein Stenberg | Product Manager | Mender<br>
 
-This tutorial demonstrates how to successfully deploy over-the-air (OTA) software update solution for embedded Linux devices using Mender on Google Cloud Platform.
+This tutorial demonstrates how to successfully deploy an over-the-air (OTA) software update solution for embedded Linux devices using Mender on Google Cloud Platform.
 
 ## Objectives
 
  - Deploy a Mender management server on GCE
  - Integrate device identity and lifecycle between IoT Core and Mender
- - Configure a live sample device with base image
- - Push over-the-air update to device with IoT Core application
+ - Configure a live sample device with a base image
+ - Push an over-the-air update to the device with an IoT Core application
 
 ## Before you begin
 
-This tutorial assumes you already have a Cloud Platform account set up and have completed the [getting started guide](https://cloud.google.com/iot/docs/how-tos/getting-started) including enabling the Cloud IoT Core API. You need to associate Firebase to your cloud project. To add Firebase to your cloud project please visit the [Firebase Console](https://console.firebase.google.com) choose "Add project" and select your cloud project and click on “Add Firebase”.
+This tutorial assumes you already have a Cloud Platform account set up and have completed the [getting started guide](https://cloud.google.com/iot/docs/how-tos/getting-started) including enabling the Cloud IoT Core API. You need to associate Firebase with your cloud project. To add Firebase to your cloud project, please visit the [Firebase Console](https://console.firebase.google.com) and choose **Add project**. Select your cloud project and click **Add Firebase**.
 
  - For most commands, it is recommended you use [Google Cloud Shell](https://cloud.google.com/shell/docs/quickstart). If you want to use only your local command line, you will need the [Google Cloud SDK ](https://cloud.google.com/sdk/downloads) and [Firebase tools](https://firebase.google.com/docs/cli/).
- - You will need to ensure the required environment variables are set in each shell environment (Please use the below variables for every new session)
- - To work with the part of the tutorial that images a real device, you will need to have a Raspberry Pi 3 device, SD Card, and the ability to plug it into ethernet on your LAN (wifi configurations are not supported in this tutorial).
+ - You will need to ensure the required environment variables are set in each shell environment (Please use the variables shown below for every new session.)
+ - To work with the part of the tutorial that images a real device, you will need to have a Raspberry Pi 3 device, SD Card, and the ability to plug the Raspberry Pi in to Ethernet on your LAN (Wi-Ficlou configurations are not supported in this tutorial).
     
 ## Costs
 
 This tutorial uses billable components of GCP, including:
 
 * Cloud IoT Core
-* Cloud PubSub
-* Google Compute Engine
-* Google Cloud Storage
+* Cloud Pub/Sub
+* Compute Engine
+* Cloud Storage
 * Cloud Functions for Firebase
 * Stackdriver Logging
 
@@ -46,71 +46,71 @@ a cost estimate based on your projected production usage.
 
 [Mender](https://mender.io/) is an open source remote update manager for embedded Linux devices. The aim of the project is to help secure connected devices by providing a robust and easy software update process.
 
-Some of the key features of Mender include
+Some of the key features of Mender include:
 
 * OTA update server and client
 * Full system image update
 * Symmetric A/B image update client
 * Bootloader support: U-Boot and GRUB
 * Volume formats: MBR and UEFI partitions
-* Update commit and roll-back
+* Update commit and rollback
 * Build system: Yocto Project (meta-mender)
 * Remote features: deployment server, build artifact management, device management console
 
 More information on Mender can be found [here](https://mender.io/what-is-mender).
 
-### Mender Components
+### Mender components
 
-* **Mender management server** - Mender Management Server, which is the central point for deploying updates to a population of devices. Among other things, it monitors the current software version that is installed on each device and schedules the rollout of new releases.
+* **Mender management server** - Mender Management Server is the central point for deploying updates to a population of devices. Among other things, it monitors the current software version that is installed on each device and schedules the rollout of new releases.
 
-* **Mender build system** - Software build system generates a new version of software for a device. The software build system is a standard component, such as the Yocto Project. It creates build artifacts in the format required by the target device. There will be different build artifacts for each type of device being managed.
+* **Mender build system** - The software build system generates a new version of software for a device. The software build system is a standard component, such as the Yocto Project. It creates build artifacts in the format required by the target device. There will be different build artifacts for each type of device being managed.
 
-* **Mender Client -** Each device runs a copy of the Mender update client, which polls the Management Server from time to time to report its status and to discover if there is a software update waiting. If there is, the update client downloads and installs it.
+* **Mender client -** Each device runs a copy of the Mender update client, which polls the Management Server from time to time to report its status and to discover if there is a software update waiting. If there is, the update client downloads and installs it.
 
-### Mender on GCP - High Level Architecture Diagram:
+### Mender on GCP - high level architecture diagram
 
-The following architecture diagram provides a high level overview of the various components on GCP to enable OTA updates with Mender and Google Cloud IOT Core
+The following architecture diagram provides a high level overview of the various components on GCP to enable OTA updates with Mender and Google Cloud IOT Core:
 
 ![image alt text](images/Mender-on0.png)
 
 ## Setting up Mender Server on GCE
 
-### Mender Management Server Deployment Options
+### Mender Management Server deployment options
 
-There are several options for successfully setting up Mender services with Google Cloud Platform (GCP), this tutorial will use a minimally configured Mender Management Production Server to test the end to end workflow:
+There are several options for successfully setting up Mender services with Google Cloud Platform (GCP), this tutorial will use a minimally configured Mender Management Production Server to test the end-to-end workflow:
 
-* [Mender Management Demo Server](https://docs.mender.io/getting-started/create-a-test-environment) - For quickly testing the Mender server, Mender provides a  pre-built demo version that does not take into account production-grade issues like security and scalability
+* [Mender Management Demo Server](https://docs.mender.io/getting-started/create-a-test-environment) - For quickly testing the Mender server, Mender provides a  pre-built demo version that does not take into account production-grade issues like security and scalability.
 
-* [Mender Management Production Server](https://docs.mender.io/administration/production-installation) - Mender Server for production environments, and includes security and reliability aspects of Mender production installations.
+* [Mender Management Production Server](https://docs.mender.io/administration/production-installation) - Mender Server for production environments includes security and reliability aspects of Mender production installations.
 
-* [Hosted Mender Service](https://mender.io/signup)  - Hosted Mender is a secure management service so you don't have to spend time maintaining security, certificates, uptime, upgrades and compatibility of the Mender server. Simply point your Mender clients to the Hosted Mender service.
+* [Hosted Mender Service](https://mender.io/signup)  - Hosted Mender is a secure management service, so you don't have to spend time maintaining security, certificates, uptime, upgrades and compatibility of the Mender server. Simply point your Mender clients to the Hosted Mender service.
 
 ### Preparing the project and shell environment
 
-Mender Management server requirements from Mender are outlined [here](https://docs.mender.io/getting-started/requirements) and we will be using the base instructions as documented for setting up a production environment and deploy on Google Cloud Platform, however this is minimally configured and not suited for actual production use. 
+Mender Management server requirements from Mender are outlined [here](https://docs.mender.io/getting-started/requirements). We will be using the base instructions as documented for setting up a production environment and deploying on Google Cloud Platform. However, this is minimally configured and not suited for actual production use. 
 
-Setup the [Google Cloud Shell](https://cloud.google.com/shell/docs/quickstart) environment (you will use several different shell environments)
+Set up the [Google Cloud Shell](https://cloud.google.com/shell/docs/quickstart) environment (you will use several different shell environments).
 
 Note: If you are *not* using Cloud Shell you will need to run these first in your local environment:
 
 ```
 gcloud auth login
 
-gcloud config set project MY-PROJECT # replace with the name of your project
+gcloud config set project [MY-PROJECT] # replace with the name of your project
 ```
 
-Enable some of the APIs we will be using, the compute API takes a minute or two to enable:
+Enable some of the APIs we will be using; the Compute API takes a minute or two to enable:
 ```
 gcloud services enable compute.googleapis.com cloudiot.googleapis.com pubsub.googleapis.com
 ```
 
-Open Firewall ports so that we can reach the Mender server once installed
+Open firewall ports so that we can reach the Mender server once installed:
 ```
 gcloud compute firewall-rules create mender-ota-443 --allow tcp:443
 gcloud compute firewall-rules create mender-ota-9000 --allow tcp:9000
 ```
 
-Set Environment Variables we will use in later commands:
+Set environment variables we will use in later commands:
 ```
 export FULL_PROJECT=$(gcloud config list project --format "value(core.project)")
 export PROJECT="$(echo $FULL_PROJECT | cut -f2 -d ':')"
@@ -126,7 +126,7 @@ gsutil mb -l $CLOUD_REGION gs://$PROJECT-mender-builds
 
 ### Installing Mender Management Server
 
-* Step 1: Create a Google Cloud Compute Engine and run a [startup script](https://cloud.google.com/compute/docs/startupscript) to install various dependencies including Docker, as well as installing and starting the [Mender Server](https://docs.mender.io/administration/production-installation).
+* Step 1: Create a Compute Engine instance, and run a [startup script](https://cloud.google.com/compute/docs/startupscript) to install various dependencies including Docker, as well as installing and starting the [Mender Server](https://docs.mender.io/administration/production-installation).
 
 ```
 gcloud beta compute --project $PROJECT instances create "mender-ota-demo" --zone "us-central1-c" --machine-type "n1-standard-2" --subnet "default" --maintenance-policy "MIGRATE" --scopes "https://www.googleapis.com/auth/cloud-platform" --metadata=startup-script-url=https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-iot-mender-ota/server/mender_server_install.sh --min-cpu-platform "Automatic" --tags "https-server" --image "ubuntu-1604-xenial-v20180814" --image-project "ubuntu-os-cloud" --boot-disk-size "10" --boot-disk-type "pd-standard" --boot-disk-device-name "mender-ota-demo"
@@ -135,11 +135,11 @@ gcloud beta compute --project $PROJECT instances create "mender-ota-demo" --zone
 
 Note: The startup script will take roughly 3-5 minutes to completely install all the prerequisites including Docker CE, Docker compose and Mender Server.
 
-* Step 2 : Navigate to the Mender UI by clicking on the external IP address of "mender-ota-demo" which can be found from the [GCP console → Compute Engine](https://console.cloud.google.com/compute). In most browsers you will get a certificate warning and you will need to click “advanced” and “proceed” or similar. In an actual production environment, you would provision this server with a trusted certificate.
+* Step 2 : Navigate to the Mender UI by clicking on the external IP address of **mender-ota-demo**, which can be found on the [GCP console → Compute Engine](https://console.cloud.google.com/compute) page. In most browsers you will get a certificate warning and you will need to click **advanced** and **proceed** or similar. In an actual production environment, you would provision this server with a trusted certificate.
 
 ![image alt text](images/Mender-on1.png)
 
-* Once you are the Mender UI login using credentials created by the startup script which will take you to the Mender Dashboard. 
+* Once you are the Mender UI login page, using credentials created by the startup script will take you to the Mender Dashboard. 
 
     * Username - [mender@example.com](mailto:mender@example.com)
 
@@ -147,11 +147,11 @@ Note: The startup script will take roughly 3-5 minutes to completely install all
 
 ![image alt text](images/Mender-on2.png)
 
-Congrats you just finished creating the Mender Server on Google Cloud Platform. 
+Congrats, you just finished creating the Mender Server on Google Cloud Platform. 
 
-_Hosted Mender Service_
+### Hosted Mender Service
 
-The above steps are for self-managed Open Source Mender Management Server on GCP, Mender also provides fully managed [Hosted Mender service](https://mender.io/signup) .   
+The above steps are for self-managed Open Source Mender Management Server on GCP. Mender also provides fully managed [Hosted Mender service](https://mender.io/signup) .   
 
 The next section describes how to use a Yocto Project image for a raspberry Pi3 device.
 
