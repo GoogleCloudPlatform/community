@@ -332,7 +332,7 @@ Note: If you do not have `gcloud` installed locally, you can create this device 
 
 Once the device is created in Cloud IoT Core, the Firebase function deployed earlier will make REST API call to the Mender Server to preauthorize the device with the same public key credentials used to create the device in Cloud IoT Core. Once the preauthorization and device activation steps are complete, the function will push a config update to Cloud IoT Core, which will configure the Mender client on the device with the specific IP address of the Mender server.
 
-This may take a couple minutes, as the client on the device has backed off from constantly trying to reconnect to Cloud IoT Core. You can monitor the Cloud IoT Core console **Configuration & state history** pane to see when the config has been pushed and acknoledged by the device.
+This may take a couple minutes, as the client on the device has backed off from constantly trying to reconnect to Cloud IoT Core. You can monitor the Cloud IoT Core console **Configuration & state history** pane to see when the config has been pushed and acknowledged by the device.
 
 ### Verify the device "Heartbeat" in Mender Server and Cloud IoT Core
 
