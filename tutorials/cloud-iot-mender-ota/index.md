@@ -6,10 +6,10 @@ tags: IoT, Internet of Things, Raspberry Pi
 date_published: 2018-09-25
 ---
 
-KC Rakam | Customer Engineer Specialist | Google Cloud<br>
-Preston Holmes | Solution Architect | Google Cloud<br>
-Drew Moseley | Solution Architect | Mender<br>
-Eystein Stenberg | Product Manager | Mender<br>
+* KC Rakam | Customer Engineer Specialist | Google Cloud
+* Preston Holmes | Solution Architect | Google Cloud
+* Drew Moseley | Solution Architect | Mender
+* Eystein Stenberg | Product Manager | Mender
 
 This tutorial demonstrates how to successfully deploy an over-the-air (OTA) software update solution for embedded Linux devices using Mender on Google Cloud Platform.
 
@@ -27,7 +27,7 @@ This tutorial assumes you already have a Cloud Platform account set up and have 
  - For most commands, it is recommended you use [Google Cloud Shell](https://cloud.google.com/shell/docs/quickstart). If you want to use only your local command line, you will need the [Google Cloud SDK ](https://cloud.google.com/sdk/downloads) and [Firebase tools](https://firebase.google.com/docs/cli/).
  - You will need to ensure the required environment variables are set in each shell environment (Please use the variables shown below for every new session.)
  - To work with the part of the tutorial that images a real device, you will need to have a Raspberry Pi 3 device, SD Card, and the ability to plug the Raspberry Pi in to Ethernet on your LAN (Wi-Ficlou configurations are not supported in this tutorial).
-    
+
 ## Costs
 
 This tutorial uses billable components of GCP, including:
@@ -71,7 +71,7 @@ More information on Mender can be found [here](https://mender.io/what-is-mender)
 
 The following architecture diagram provides a high level overview of the various components on GCP to enable OTA updates with Mender and Google Cloud IOT Core:
 
-![image alt text](images/Mender-on0.png)
+![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on0.png)
 
 ## Setting up Mender Server on GCE
 
@@ -87,7 +87,7 @@ There are several options for successfully setting up Mender services with Googl
 
 ### Preparing the project and shell environment
 
-Mender Management server requirements from Mender are outlined [here](https://docs.mender.io/getting-started/requirements). We will be using the base instructions as documented for setting up a production environment and deploying on Google Cloud Platform. However, this is minimally configured and not suited for actual production use. 
+Mender Management server requirements from Mender are outlined [here](https://docs.mender.io/getting-started/requirements). We will be using the base instructions as documented for setting up a production environment and deploying on Google Cloud Platform. However, this is minimally configured and not suited for actual production use.
 
 Set up the [Google Cloud Shell](https://cloud.google.com/shell/docs/quickstart) environment (you will use several different shell environments).
 
@@ -126,32 +126,32 @@ gsutil mb -l $CLOUD_REGION gs://$PROJECT-mender-builds
 
 ### Installing Mender Management Server
 
-* Step 1: Create a Compute Engine instance, and run a [startup script](https://cloud.google.com/compute/docs/startupscript) to install various dependencies including Docker, as well as installing and starting the [Mender Server](https://docs.mender.io/administration/production-installation).
+* Step 1: Create a Compute Engine instance, and run a [startup script](https://cloud.google.com/compute/docs/startupscript)
+  to install various dependencies including Docker, as well as installing and
+  starting the [Mender Server](https://docs.mender.io/administration/production-installation).
 
-```
-gcloud beta compute --project $PROJECT instances create "mender-ota-demo" --zone "us-central1-c" --machine-type "n1-standard-2" --subnet "default" --maintenance-policy "MIGRATE" --scopes "https://www.googleapis.com/auth/cloud-platform" --metadata=startup-script-url=https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-iot-mender-ota/server/mender_server_install.sh --min-cpu-platform "Automatic" --tags "https-server" --image "ubuntu-1604-xenial-v20180814" --image-project "ubuntu-os-cloud" --boot-disk-size "10" --boot-disk-type "pd-standard" --boot-disk-device-name "mender-ota-demo"
-```
+      gcloud beta compute --project $PROJECT instances create "mender-ota-demo" --zone "us-central1-c" --machine-type "n1-standard-2" --subnet "default" --maintenance-policy "MIGRATE" --scopes "https://www.googleapis.com/auth/cloud-platform" --metadata=startup-script-url=https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-iot-mender-ota/server/mender_server_install.sh --min-cpu-platform "Automatic" --tags "https-server" --image "ubuntu-1604-xenial-v20180814" --image-project "ubuntu-os-cloud" --boot-disk-size "10" --boot-disk-type "pd-standard" --boot-disk-device-name "mender-ota-demo"
 
 
-Note: The startup script will take roughly 3-5 minutes to completely install all the prerequisites including Docker CE, Docker compose and Mender Server.
+  Note: The startup script will take roughly 3-5 minutes to completely install all the prerequisites including Docker CE, Docker compose and Mender Server.
 
 * Step 2 : Navigate to the Mender UI by clicking on the external IP address of **mender-ota-demo**, which can be found on the [GCP console → Compute Engine](https://console.cloud.google.com/compute) page. In most browsers you will get a certificate warning and you will need to click **advanced** and **proceed** or similar. In an actual production environment, you would provision this server with a trusted certificate.
 
-![image alt text](images/Mender-on1.png)
+  ![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on1.png)
 
-* Once you are the Mender UI login page, using credentials created by the startup script will take you to the Mender Dashboard. 
+* Once you are the Mender UI login page, using credentials created by the startup script will take you to the Mender Dashboard.
 
-    * Username - [mender@example.com](mailto:mender@example.com)
+  * Username - [mender@example.com](mailto:mender@example.com)
 
-    * Password - mender_gcp_ota
+  * Password - mender_gcp_ota
 
-![image alt text](images/Mender-on2.png)
+  ![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on2.png)
 
-Congrats, you just finished creating the Mender Server on Google Cloud Platform. 
+Congrats, you just finished creating the Mender Server on Google Cloud Platform.
 
 ### Hosted Mender Service
 
-The above steps are for self-managed Open Source Mender Management Server on GCP. Mender also provides fully managed [Hosted Mender service](https://mender.io/signup) .   
+The above steps are for self-managed Open Source Mender Management Server on GCP. Mender also provides fully managed [Hosted Mender service](https://mender.io/signup) .
 
 The next section describes how to use a Yocto Project image for a raspberry Pi3 device.
 
@@ -189,34 +189,33 @@ Next you will:
 
 * Unmount the drive (instructions below for Mac)
 
+      df  -h  (Use this command to determine where the drive is mounted)
+
+  on OS X:
+
+      diskutil unmountDisk /dev/disk3 (assuming /dev/disk 3 is SD card)
+
+  on Linux:
+
+  umount MOUNT_PATH
+
+Enter this command to write the image to SD card, and please adjust the local path to your `.img` file location. Depending on the image size it may take roughly 20 minutes, so please be patient until the image is completely written to the SD card.
+
 ```
-df  -h  (Use this command to determine where the drive is mounted)
+sudo dd if=/Users/LOCAL_PATH/updated-demo-image-raspberrypi3.img of=/dev/disk2 bs=1m && sudo sync
 ```
-```
-# on OS X: 
-diskutil unmountDisk /dev/disk3 (assuming /dev/disk 3 is SD card)
-```
-```
-# on Linux:
-umount <mount-path>
-```
-  	 
-Enter this command to write the image to SD card, and please adjust the local path to your `.img` file location. Depending on the image size it may take roughly 20 minutes, so please be patient until the image is completely written to the SD card. 
-```
-sudo dd if=/Users/<local PC path where you have your image downloaded>/updated-demo-image-raspberrypi3.img of=/dev/disk2 bs=1m && sudo sync 
-``` 
 
 Next you will configure the device to connect to Mender Management Server and Cloud IOT Core with the same private/public key pair.
 
 ## Mender Client integration - Cloud IoT Core and Mender Management Server
 
-This section outlines the steps to connect the Mender Client (running on a Raspberry Pi3 device) to Cloud IoT Core as well as Mender Server using the same public/private key. Additionally the steps will deploy an OTA update to the device remotely as depicted in the diagram below. 
+This section outlines the steps to connect the Mender Client (running on a Raspberry Pi3 device) to Cloud IoT Core as well as Mender Server using the same public/private key. Additionally the steps will deploy an OTA update to the device remotely as depicted in the diagram below.
 
-![image alt text](images/Mender-on11.png). 
+![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on11.png).
 
 Key components you will use in this section are:
 
-* Cloud IoT Core 
+* Cloud IoT Core
 * Cloud Functions/Firebase Functions
 * Stackdriver Logging
 * Mender Server on Google Cloud
@@ -231,7 +230,6 @@ gcloud pubsub topics create registration-events
 gcloud iot registries create $REGISTRY_ID --region=$CLOUD_REGION --event-notification-config=subfolder="",topic=iot-telemetry
 ```
 
-
 ### Integrate IoT Core device lifecycle events and Mender Preauthorization
 
 Using the Cloud Shell environment, you will configure Cloud IoT Core audit logs to route to a Cloud Pub/Sub topic.
@@ -240,7 +238,7 @@ Create a log export for IoT Core device creation events to Pub/Sub:
 ```
 gcloud beta logging sinks create device-lifecyle \
 pubsub.googleapis.com/projects/$PROJECT/topics/registration-events \
---log-filter='resource.type="cloudiot_device" protoPayload.methodName="google.cloud.iot.v1.DeviceManager.CreateDevice"' 
+--log-filter='resource.type="cloudiot_device" protoPayload.methodName="google.cloud.iot.v1.DeviceManager.CreateDevice"'
 ```
 
 Give the log exporter system-account permission to publish to your topic:
@@ -250,7 +248,7 @@ gcloud beta pubsub topics add-iam-policy-binding registration-events \
 --role roles/pubsub.publisher
 ```
 
-**Deploy Firebase Functions to call Mender Preauthorization API** 
+**Deploy Firebase Functions to call Mender Preauthorization API**
 
 This will link device creation in Cloud IoT Core to Device preauthorization in Mender.
 
@@ -287,7 +285,7 @@ firebase deploy --only functions
 
 ## Create the device in Cloud IoT Core
 
-Let's bring up the Raspberry Pi device and extract the public key, so you can create a device in the Cloud IoT Core registry. The same private/public key pair will be used to authorize the device in Mender Server as well. 
+Let's bring up the Raspberry Pi device and extract the public key, so you can create a device in the Cloud IoT Core registry. The same private/public key pair will be used to authorize the device in Mender Server as well.
 
 On your local PC, open terminal or console to perform the following commands. This needs to be a shell that has access to the Raspberry Pi on your local network, so it cannot be Cloud Shell. Find and add the IP address of your Raspberry Pi device below. To locate the IP address of your Raspberry Pi device, you can invoke the `nmap` command for host discovery, as shown below, by replacing the subnet range with one that matches your own local network.
 
@@ -296,7 +294,7 @@ sudo nmap -sn 192.168.1.0/24
 ```
 
 ```
-export DEVICE_IP=<your raspberry pi ip address>
+export DEVICE_IP=YOUR_RASPBERRY_PI_IP_ADDRESS
 ```
 
 We use a random ID generated by the OS on first boot as our device ID in Cloud IoT Core. This can be adapted to any potential HW based identifier such as a board serial number, MAC address, or crypto key id:
@@ -318,7 +316,7 @@ scp root@$DEVICE_IP:/var/lib/mender/rsa_public.pem ./rsa_public.pem
 Now create a Cloud IoT Core Device with the public key (`rsa_public.pem`), which you extracted in the last step (please make sure you are in the same directory where you have extracted the `rsa_public.pem` file). Run the following command from the same local console or terminal where you have ssh access to the device. You may need to set your project in `gcloud` first.
 
 ```
-gcloud config set project <your project>
+gcloud config set project YOUR_PROJECT_ID
 export REGISTRY_ID=mender-demo
 export CLOUD_REGION=us-central1 # or change to an alternate region;
 export PROJECT=$(gcloud config list project --format "value(core.project)")
@@ -338,13 +336,13 @@ This may take a couple minutes, as the client on the device has backed off from 
 
 You can confirm the same from the GCP Console as shown below under device details.
 
-![image alt text](images/Mender-on6.png)
+![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on6.png)
 
-Now open the Mender Management Server, and make sure you are able to see that the device is authorized and able to communicate. 
+Now open the Mender Management Server, and make sure you are able to see that the device is authorized and able to communicate.
 
 Sign in to the Mender Server that you created part of the earlier steps: **Mender Management Server on Google Cloud**. Click **Devices** to make sure you can see the Raspberry Pi3 device as shown below.
 
-![image alt text](images/Mender-on7.png)
+![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on7.png)
 
 This confirms the device has successfully connected to Cloud IoT Core and Mender Server with the same private/public key.
 
@@ -358,13 +356,13 @@ Create a subscription that we can use to verify this sample gets deployed:
 gcloud beta pubsub subscriptions create test-reader --topic iot-telemetry
 ```
 
-First let's download the Mender artifact `gcp-mender-demo-image-raspberrypi3.mender`, part of the Build step from the GCS bucket (or download the sample from [here](https://storage.googleapis.com/mender-gcp-ota-images/gcp-mender-demo-image-raspberrypi3.mender), and let's upload to the Mender Server under artifacts as shown below. 
+First let's download the Mender artifact `gcp-mender-demo-image-raspberrypi3.mender`, part of the Build step from the GCS bucket (or download the sample from [here](https://storage.googleapis.com/mender-gcp-ota-images/gcp-mender-demo-image-raspberrypi3.mender), and let's upload to the Mender Server under artifacts as shown below.
 
-![image alt text](images/Mender-on8.png)
+![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on8.png)
 
 Next you need to create a deployment and select the device to which you want to deploy the artifact. From Mender Server, click **Create Deployment**, and select the target artifact as **release-2** and group **all devices**. Click **Create deployment**. You only have one device currently, which is `Raspberry Pi3`. For various classes and types of devices that Mender supports, you can create groups and apply the target artifacts accordingly (Raspberry Pi3, Beaglebone, etc.)
 
-![image alt text](images/Mender-on9.png)
+![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on9.png)
 
 While the deployment completes, you can verify that the current image is not sending data:
 
@@ -374,7 +372,7 @@ gcloud beta pubsub subscriptions pull test-reader --limit 100 --auto-ack
 
 Deployment completion may take some time as the update agent checks in periodically and writes the updated partition. Progress can be monitored from the Mender Server Dashboard by clicking **In progress deployments**.
 
-![image alt text](images/Mender-on10.png)
+![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on10.png)
 
 Once the deployment is finished, you should be able to see that the deployment is successful from the Mender Dashboard, and the new release of the software update should be deployed on the device, which can be confirmed by logging into the device and running `mender -show-artifact`. This should output `release-2`. Additionally you can confirm the telemetry events are being sent by the software update by repeating the pull command:
 
@@ -382,10 +380,10 @@ Once the deployment is finished, you should be able to see that the deployment i
 gcloud beta pubsub subscriptions pull test-reader --limit 100 --auto-ack
 ```
 
-![image alt text](images/Mender-on12.png)
+![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on12.png)
 
 
-This completes the tutorial where you have successfully deployed a Mender OTA solution on Google Cloud Platform, including building a Mender Yocto custom embedded OS image for a Raspberry Pi device, and integrated with a Cloud IoT Core solution. 
+This completes the tutorial where you have successfully deployed a Mender OTA solution on Google Cloud Platform, including building a Mender Yocto custom embedded OS image for a Raspberry Pi device, and integrated with a Cloud IoT Core solution.
 
 ## Cleanup:
 
