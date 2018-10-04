@@ -6,45 +6,11 @@ tags: VPN, interop, Juniper, SRX
 date_published: 2018-09-12
 ---
 
-**BEGIN: HOW TO USE THIS TEMPLATE**
-
-1. Make a copy of this template.
-1. On your local computer, update and add information as indicated. Note:
-    + Fill in the meta information (title, description, author, date_published at the top
-      of this file.
-    + There are notes in the template for you, the author, that explain where you need to
-      make changes. These notes are enclosed in brackets (&lt; &gt;).
-    + The template contains placeholders for things like the vendor and 
-      product name. These are also enclosed in brackets—for example, 
-      every place you see `<vendor-name>` and `<product-name>`, 
-      substitute approriate names.
-    + After you've made appropriate updates, _remove_ bracketed content.
-    + Remove these instructions.
-    + Because this is a template for a variety of setups, it might contain
-      content that isn't releavent to your scenario. Remove (or update)
-      any sections that don't apply to you.
-1. Fork the [GoogleCloudPlatform/community/](https://github.com/GoogleCloudPlatform/community/) repo.
-4. In your fork, add a new folder named `/tutorials/[YOUR_TUTORIAL]`. For the
-   folder name, use hyphens to separate words. We recommend that you 
-   include a product name in the folder name, such as `https-load-balancing-ingix`.
-5. Copy the updated file to the `index.md` file of the new folder.
-6. Create a branch.
-7. Issue a PR to get your new content into the community site.
-
-<**END: HOW TO USE THIS TEMPLATE**>
-
 # Using Cloud VPN with Juniper SRX300
 
-Learn how to build site-to-site IPsec VPNs between
-[Cloud VPN](https://cloud.google.com/vpn/docs/) on Google Cloud Platform (GCP) and
-Juniper SRX300
+Learn how to build site-to-site IPsec VPNs between [Cloud VPN](https://cloud.google.com/vpn/docs/) on Google Cloud Platform (GCP) and Juniper SRX300
 
-<To see a finished version of this guide, see the [Using Cloud VPN with Cisco ASR](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#top_of_page)>
-
-<NOTE: Options or instructions are shown in angle brackets throughout this
-template. Change or remove these items as needed.>
-
-- [Google Cloud VPN Interop Guide](#google-cloud-vpn-interop-guide)
+- [Using Cloud VPN with Juniper SRX300](#Using Cloud VPN with Juniper SRX300)
 - [Introduction](#introduction)
 - [Topology](#topology)
 - [Product environment](#product-environment)
@@ -86,7 +52,7 @@ template. Change or remove these items as needed.>
         - [Configuring GCP for higher throughput](#configuring-gcp-for-higher-throughput)
         - [Configuring <vendor-name><product-name> for higher throughput](#configuring-vendor-nameproduct-name-for-higher-throughput)
         - [Testing the higher-throughput configuration](#testing-the-higher-throughput-configuration)
-- [Troubleshooting IPsec on <vendor-name><product-name>](#troubleshooting-ipsec-on-vendor-nameproduct-name)
+- [Troubleshooting IPsec on Juniper SRX300](#Troubleshooting IPsec on Juniper SRX300)
 - [Reference documentation](#reference-documentation)
     - [GCP documentation](#gcp-documentation)
     - [<vendor-name><product-name> documentation](#vendor-nameproduct-name-documentation)
@@ -97,63 +63,40 @@ template. Change or remove these items as needed.>
     - [Configuring an IPsec VPN using dynamic routing](#configuring-an-ipsec-vpn-using-dynamic-routing)
     - [Configuring route-based IPsec VPN using static routing](#configuring-route-based-ipsec-vpn-using-static-routing)
 
-<Put trademark statements here>: <vendor terminology> and the <vendor> logo are
-trademarks of <vendor company name> or its affiliates in the United States
-and/or other countries.
+Juniper, SRX and Junos are trademarks of Juniper Networks Inc or its affiliates in the United States and/or other countries.
 
-_Disclaimer: This interoperability guide is intended to be informational in
-nature and shows examples only. Customers should verify this information by
-testing it._
+_Disclaimer: This interoperability guide is intended to be informational in nature and shows examples only. Customers should verify this information by testing it._
 
-Author: <author name and email address>
+Author: Richard Antiabong; richardantiabong@gmail.com |Ashish Verma
 
 ## Introduction
 
-This guide walks you through the process of configuring
-Juniper SRX300 for integration with the
-[Cloud VPN service](https://cloud.google.com/vpn/docs) on GCP.
+This guide walks you through the process of configuring Juniper SRX300 for integration with the [Cloud VPN service](https://cloud.google.com/vpn/docs) on GCP.
 
-For more information about Cloud VPN, see the
-[Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).
+For more information about Cloud VPN, see the [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).
 
 ## Terminology
 
 Below are definitions of terms used throughout this guide.
 
-<This is some sample terminology. Add any terminology to this section that needs
-explanation.>
-
 -  **GCP VPC network**—A single virtual network within a single GCP project.
--  **On-premises gateway**—The VPN device on the non-GCP side of the
-connection, which is usually a device in a physical data center or in
-another cloud provider's network. GCP instructions are written from the
-point of view of the GCP VPC network, so "on-premises gateway" refers to the
-gateway that's connecting _to_ GCP.
--  **External IP address** or **GCP peer address**—a single static IP address
-within a GCP project that exists at the edge of the GCP network.
--  **Static routing**—Manually specifying the route to subnets on the GCP
-side and to the on-premises side of the VPN gateway.
--  **Dynamic routing**—GCP dynamic routing for VPN using the
-[Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
--  < <vendor-name> <product-name> term>
--  < <vendor-name> <product-name> term>
+-  **On-premises gateway**—The VPN device on the non-GCP side of the connection, which is usually a device in a physical data center or in another cloud provider's network. GCP instructions are written from the point of view of the GCP VPC network, so "on-premises gateway" refers to the gateway that's connecting _to_ GCP.
+-  **External IP address** or **GCP peer address**—a single static IP address within a GCP project that exists at the edge of the GCP network.
+-  **Static routing**—Manually specifying the route to subnets on the GCP side and to the on-premises side of the VPN gateway.
+-  **Dynamic routing**—GCP dynamic routing for VPN using the [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
 
 ## Topology
 
 Cloud VPN supports the following topologies:
 
--  A site-to-site IPsec VPN tunnel configuration using 
-[Cloud Router](https://cloud.google.com/router/docs/)
-and providing dynamic routing with the
-[Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
+-  A site-to-site IPsec VPN tunnel configuration using [Cloud Router](https://cloud.google.com/router/docs/) and providing dynamic routing with the
+  [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
 -  A site-to-site IPsec VPN tunnel configuration using static routing.
 
 For detailed topology information, see the following resources:
 
--  For basic VPN topologies, see 
-[Cloud VPN Overview](https://cloud.google.com/vpn/docs/concepts/overview).
--  For redundant topologies,  the
-[Cloud VPN documentation on redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns).
+-  For basic VPN topologies, see [Cloud VPN Overview](https://cloud.google.com/vpn/docs/concepts/overview).
+-  For redundant topologies,  the [Cloud VPN documentation on redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns). 
 
 ## Product environment
 
@@ -163,12 +106,7 @@ The equipment used in this guide is as follows:
 -  Model: SRX300
 -  Software release: JUNOS Software Release [15.1X49-D100.6]
 
-<Fill in the following if the vendor supports more than one platform. However,
-the following section is optional, because some vendors might only have one
-platform.>
-
-Although the steps in this guide use Juniper SRX300, this guide also applies to
-the following SRX platforms:
+Although the steps in this guide use Juniper SRX300, this guide also applies to the following SRX platforms:
 
 -  SRX220 and SRX240
 -  SRX550
@@ -180,35 +118,19 @@ the following SRX platforms:
 
 Follow the steps in this section to prepare for VPN configuration.
 
-**Note**: This guide assumes that you have basic knowledge of the
-[IPsec](https://wikipedia.org/wiki/IPsec) protocol.
+**Note**: This guide assumes that you have basic knowledge of the [IPsec](https://wikipedia.org/wiki/IPsec) protocol.
 
 ### GCP account and project
 
-Make sure you have a GCP account. When you begin, you must select or create a
-GCP project where you will build the VPN. For details, see
-[Creating and Managing Projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
+Make sure you have a GCP account. When you begin, you must select or create a GCP project where you will build the VPN. For details, see [Creating and Managing Projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects). 
 
 ### Permissions
 
-To create a GCP network, a subnetwork, and other entities described in this
-guide, you must be able to sign in to GCP as a user who has
-[Network Admin](https://cloud.google.com/compute/docs/access/iam#network_admin_role)
-permissions. For details, see
-[Required Permissions](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes#required_permissions)
-in the article
-[Creating a VPN Tunnel using Dynamic Routing](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes).
+To create a GCP network, a subnetwork, and other entities described in this guide, you must be able to sign in to GCP as a user who has [Network Admin](https://cloud.google.com/compute/docs/access/iam#network_admin_role) permissions. For details, see [Required Permissions](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes#required_permissions) in the article [Creating a VPN Tunnel using Dynamic Routing](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes).
 
 ### Licenses and modules
 
-<This section is optional, because some VPN vendors can be open source or cloud
-providers that don't require licensing>
-
-Before you configure your Juniper SRX300 for use with Cloud VPN,
-make sure that the following licenses are available:
-
-<Below are some examples. Replace with information that applies to the
-product>
+Before you configure your Juniper SRX300 for use with Cloud VPN, make sure that the following licenses are available:
 
 - Junos Software Base (JSB/JB) license for SRX300 or Junos Software Enhanced (JSE/JE) license
 
@@ -217,21 +139,13 @@ For a detailed Juniper SRX series license information, refer to the [SRX Series 
 
 ## Configure the GCP side
 
-This section covers how to configure Cloud VPN. The preferred approach is to use
-dynamic routing with the BGP protocol, but this section also includes
-instructions for configuring static routing.
+This section covers how to configure Cloud VPN. The preferred approach is to use dynamic routing with the BGP protocol, but this section also includes instructions for configuring static routing.
 
-There are two ways to create VPN gateways on GCP: using the Google Cloud
-Platform Console and using the
-[gcloud command-line tool](https://cloud.google.com/sdk/).
-This section describes how to perform the tasks using the GCP Console. To see
-the `gcloud` commands for performing these tasks, see the
-[appendix](#appendix-using-gcloud-commands).
+There are two ways to create VPN gateways on GCP: using the Google Cloud Platform Console and using the [gcloud command-line tool](https://cloud.google.com/sdk/). This section describes how to perform the tasks using the GCP Console. To see the `gcloud` commands for performing these tasks, see the [appendix](#appendix-using-gcloud-commands).
 
 ### Initial tasks
 
-Complete the following procedures before configuring either a dynamic or static
-GCP VPN gateway and tunnel.
+Complete the following procedures before configuring either a dynamic or static GCP VPN gateway and tunnel.
 
 #### Select a GCP project name
 
@@ -246,19 +160,15 @@ GCP VPN gateway and tunnel.
 1. In the GCP Console,
 [go to the VPC Networks page](https://console.cloud.google.com/networking/networks/list).
 1. Click **Create VPC network**.
-1. For **Name**, enter a name such as `vpn-juniper-test-network`. Remember
-this name for later.
-1. Under **Subnets, Subnet creation mode**, select the **Custom** tab and
-then populate the following fields:
+1. For **Name**, enter a name such as `vpn-juniper-test-network`. Remember this name for later.
+1. Under **Subnets, Subnet creation mode**, select the **Custom** tab and then populate the following fields:
 
 + **Name**—The name for the subnet, such as `vpn-subnet-1`.
-+ **Region**—The region that is geographically closest to the
-    on-premises gateway, such as  `us-east1`.
++ **Region**—The region that is geographically closest to the on-premises gateway, such as  `us-east1`.
 + **IP address range**—A range such as `172.16.100.0/24`.
 
 1. In the **New subnet** window, click **Done**.
-1. Click **Create**. You're returned to the **VPC networks** page, where it
-takes about a minute for this network and its subnet to appear.
+1. Click **Create**. You're returned to the **VPC networks** page, where it takes about a minute for this network and its subnet to appear.
 
 #### Create the GCP external IP address
 
@@ -268,31 +178,19 @@ takes about a minute for this network and its subnet to appear.
 1. Click **Reserve Static Address**.
 1. Populate the following fields for the Cloud VPN address:
 
--  **Name**—The name of the address, such as `vpn-test-static-ip`.
-    Remember the name for later.
--  **Region**—The region where you want to locate the VPN gateway.
-    Normally, this is the region that contains the instances you want to
-    reach.
+-  **Name**—The name of the address, such as `vpn-test-static-ip`. Remember the name for later.
+-  **Region**—The region where you want to locate the VPN gateway. Normally, this is the region that contains the instances you want to reach.
 
-1. Click **Reserve**. You are returned to the **External IP addresses** page.
-After a moment, the page displays the static external IP address that you
-have created.
+1. Click **Reserve**. You are returned to the **External IP addresses** page. After a moment, the page displays the static external IP address that you have created.
 
-1. Make a note of the IP address that is created so that you can use it to
-configure the VPN gateway later.
+1. Make a note of the IP address that is created so that you can use it to configure the VPN gateway later.
 
 ### Configuring an IPsec VPN using dynamic routing
 
-For dynamic routing, you use [Cloud Router](https://cloud.google.com/router/docs/concepts/overview)
-to establish BGP sessions between GCP and the on-premises
-Juniper SRX300 equipment. We recommend dynamic routing over
-static routing where possible, as discussed in the
-[Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview) and [Cloud VPN Network and Tunnel Routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing).
+For dynamic routing, you use [Cloud Router](https://cloud.google.com/router/docs/concepts/overview) to establish BGP sessions between GCP and the on-premises
+Juniper SRX300 equipment. We recommend dynamic routing over static routing where possible, as discussed in the [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview) and [Cloud VPN Network and Tunnel Routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing).
 
-**Important:** Throughout these procedures, you assign names to entities like
-the VPC network and subnet, IP address, and so on. Each time you assign a name,
-make a note of it, because you often need to use those names in later
-procedures.
+**Important:** Throughout these procedures, you assign names to entities like the VPC network and subnet, IP address, and so on. Each time you assign a name, make a note of it, because you often need to use those names in later procedures.
 
 #### Configure the VPN gateway
 
@@ -301,87 +199,50 @@ procedures.
 1. Click **Create VPN connection**.
 1. Populate the following fields for the gateway:
 
--  **Name**—The name of the VPN gateway. This name is displayed in the
-    console and used in by the gcloud tool to reference the gateway. Use a
-    name like `vpn-test-juniper-gw-1`, where `[VENDOR_NAME]` is a
+-  **Name**—The name of the VPN gateway. This name is displayed in the console and used in by the gcloud tool to reference the gateway. Use a name like `vpn-test-juniper-gw-1`, where `[VENDOR_NAME]` is a
     string that identifies the vendor.
--  **Network**—The VPC network that you created previously (for
-    example,  `vpn-juniper-test-network`) that contains the instances that the
-    VPN gateway will serve.
--  **Region**—The region where you want to locate the VPN gateway.
-    Normally, this is the region that contains the instances you want to reach.
+-  **Network**—The VPC network that you created previously (for example,  `vpn-juniper-test-network`) that contains the instances that the VPN gateway will serve.
+-  **Region**—The region where you want to locate the VPN gateway. Normally, this is the region that contains the instances you want to reach.
 -  **IP address**—Select the 
     [static external IP address](#create-the-gcp-external-ip-address)
-    (for example, `vpn-test-static-ip`) that you created for this gateway
-    in the previous section.
+    (for example, `vpn-test-static-ip`) that you created for this gateway in the previous section.
 
 1. Populate the fields for at least one tunnel:
 
 -  **Name**—The name of the VPN tunnel, such as `vpn-test-tunnel1`.
 -  **Remote peer IP address**—The public external IP address of the
     on-premises VPN gateway.
--  **IKE version**—`IKEv2` or `IKEv1`. IKEv2 is preferred, but IKEv1 is
-    supported if it is the only supported IKE version that the on-premises
-    gateway can use.
--  **Shared secret**—A character string used in establishing encryption
-    for the tunnel. You must enter the same shared secret into both VPN
-    gateways. For more information, see
-    [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
+-  **IKE version**—`IKEv2` or `IKEv1`. IKEv2 is preferred, but IKEv1 is supported if it is the only supported IKE version that the on-premises gateway can use.
+-  **Shared secret**—A character string used in establishing encryption for the tunnel. You must enter the same shared secret into both VPN gateways. For more information, see [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
 
 1. Under **Routing options**, select the **Dynamic (BGP)** tab.
-1. Under **Cloud router, **select **Create cloud router** and then populate
-the following fields:
+1. Under **Cloud router, **select **Create cloud router** and then populate the following fields:
 
--  **Name**—The name of the Cloud Router. This name is displayed in
-    the console. If you use `gcloud` command-line tool to perform VPN tasks,
-    you use this name to reference the router. Example: `vpn-test-vendor-rtr.`
--  **Google ASN**—The 
-    [private ASN](https://tools.ietf.org/html/rfc6996) (`64512–65534`, `4200000000–4294967294`) for the router you are configuring. It can be
-    any private ASN that you are not already using. Example: `65002`.
+-  **Name**—The name of the Cloud Router. This name is displayed in the console. If you use `gcloud`  command-line tool to perform VPN tasks, you use this name to reference the router. Example: `vpn-test-vendor-rtr.`
+-  **Google ASN**—The  [private ASN](https://tools.ietf.org/html/rfc6996) (`64512–65534`, `4200000000–4294967294`) for the router you are configuring. It can be any private ASN that you are not already using. Example: `65002`.
 
 1. Click **Save and continue**.
-1. Next to **BGP session**, click the pencil icon and then populate the
-following fields:
+1. Next to **BGP session**, click the pencil icon and then populate the following fields:
 
 - **Name**—A name for the session, such as `bgp-peer1`.
--  **Peer ASN**—The [private ASN](https://tools.ietf.org/html/rfc6996)
-    (`64512–65534`, `4200000000–4294967294`) for the on-premises VPN device
-    you are configuring. It can be any private ASN that you are not already using.
-    Example: `65001`.
-- **Google BGP IP address**—A
-    [link-local](https://wikipedia.org/wiki/Link-local_address) IP address
-    that belongs to the same `/30` subnet in `169.254.0.0/16`. Example:
-    `169.254.1.1`.
--  **Peer BGP IP address**—A link-local IP address for the on-premises
-    peer. Example: `169.254.1.2`. For details, see
-    [this explanation of dynamic routing for VPN tunnels in VPC networks](https://cloud.google.com/router/docs/concepts/overview#dynamic_routing_for_vpn_tunnels_in_vpc_networks).
--  **Remote network IP range**—The IP address range of the on-premises
-    subnet on the other side of the tunnel from this gateway.
--  **Advertised route priority**–Configure this option if you want to
-    configure redundant or high-throughput VPNs as described in 
-    [advanced VPN configurations](#advanced-vpn-configurations). Note that if you
-    don't need advanced VPN now, you will need to configure a new VPN tunnel
-    later to support it. The advertised route priority is the base priority
-    that Cloud Router uses when advertising the "to GCP" routes. For more
-    information, see
-    [Route metrics](https://cloud.google.com/router/docs/concepts/overview#route_metrics).
+- **Peer ASN**—The [private ASN](https://tools.ietf.org/html/rfc6996)
+    (`64512–65534`, `4200000000–4294967294`) for the on-premises VPN device you are configuring. It can be any private ASN that you are not already using. Example: `65001`.
+- **Google BGP IP address**—A [link-local](https://wikipedia.org/wiki/Link-local_address) IP address that belongs to the same `/30` subnet in `169.254.0.0/16`. Example: `169.254.1.1`.
+- **Peer BGP IP address**—A link-local IP address for the on-premises peer. Example: `169.254.1.2`. For details, see [this explanation of dynamic routing for VPN tunnels in VPC networks](https://cloud.google.com/router/docs/concepts/overview#dynamic_routing_for_vpn_tunnels_in_vpc_networks).
+- **Remote network IP range**—The IP address range of the on-premises subnet on the other side of the tunnel from this gateway.
+- **Advertised route priority**–Configure this option if you want to configure redundant or high-throughput VPNs as described in [advanced VPN configurations](#advanced-vpn-configurations). Note that if you don't need advanced VPN now, you will need to configure a new VPN tunnel later to support it. The advertised route priority is the base priority that Cloud Router uses when advertising the "to GCP" routes. For more information, see [Route metrics](https://cloud.google.com/router/docs/concepts/overview#route_metrics).
     Your on-premises VPN gateway imports these as MED values.
 
 1. Click **Save and continue**.
 1. Click **Create**. The GCP VPN gateway and the Cloud Router are initiated,
 and the tunnel is initiated.
 
-This procedure automatically creates a static route to the on-premises subnet as
-well as forwarding rules for UDP ports 500 and 4500 and for ESP traffic. The VPN
-gateways will not connect until you've configured the on-premises gateway and
-created firewall rules in GCP to allow traffic through the tunnel between the
+This procedure automatically creates a static route to the on-premises subnet as well as forwarding rules for UDP ports 500 and 4500 and for ESP traffic. The VPN gateways will not connect until you've configured the on-premises gateway and created firewall rules in GCP to allow traffic through the tunnel between the
 Cloud VPN  gateway and the on-premises gateway.
 
 #### Configure firewall rules
 
-Next, you configure GCP firewall rules to allow inbound traffic from the
-on-premises network subnets. You must also configure the on-premises network
-firewall to allow inbound traffic from your VPC subnet prefixes.
+Next, you configure GCP firewall rules to allow inbound traffic from the on-premises network subnets. You must also configure the on-premises network firewall to allow inbound traffic from your VPC subnet prefixes.
 
 1. In the GCP Console,
 [go to the GCP Firewall rules page](https://console.cloud.google.com/networking/firewalls).
@@ -389,71 +250,42 @@ firewall to allow inbound traffic from your VPC subnet prefixes.
 1. Populate the following fields:
 
 1. **Name**—A name such as `vpnrule1`.
-1. **VPC network**—The name of the VPC network that you created
-    previously (for example,  `vpn-vendor-test-network`).
-1. **Source filter**—A filter to apply your rule to specific sources of
-    traffic. In this case, choose source IP ranges.
-1. **Source IP ranges**—The on-premises IP ranges to accept from the
-    on-premises VPN gateway.
+1. **VPC network**—The name of the VPC network that you created previously (for example,  `vpn-vendor-test-network`).
+1. **Source filter**—A filter to apply your rule to specific sources of traffic. In this case, choose source IP ranges.
+1. **Source IP ranges**—The on-premises IP ranges to accept from the on-premises VPN gateway.
 1. **Allowed protocols and ports**—The string `tcp;udp;icmp`.
 
 1. Click **Create**.
 
 ### Configuring route-based IPsec VPN using static routing
 
-This section covers the steps for creating a GCP IPsec VPN using static routing.
-Both route-based Cloud VPN and policy-based Cloud VPN use static routing.  For
-information on how this works, see the 
-[Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).
+This section covers the steps for creating a GCP IPsec VPN using static routing. Both route-based Cloud VPN and policy-based Cloud VPN use static routing.  For information on how this works, see the [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).
 
-**Note**: Some steps in the procedure for using static routing are the same as
-steps for using dynamic routing. Rather than repeat those steps in the following
-procedure, the procedure links to earlier sections of this guide.
+**Note**: Some steps in the procedure for using static routing are the same as steps for using dynamic routing. Rather than repeat those steps in the following procedure, the procedure links to earlier sections of this guide.
 
-1. Complete the
-[initial tasks](#initial-tasks)
-for creating a VPN as described earlier in this guide.
-1. Follow the steps for 
-[setting up a GCP gateway for dynamic routing](#configuring-an-ipsec-vpn-using-dynamic-routing)
-with these changes:
+1. Complete the [initial tasks](#initial-tasks) for creating a VPN as described earlier in this guide.
+1. Follow the steps for [setting up a GCP gateway for dynamic routing](#configuring-an-ipsec-vpn-using-dynamic-routing) with these changes:
 
-1. In the configuration for a tunnel, under **Routing options**,
+1. In the configuration for a tunnel, under **Routing options**, 
     choose **route based**.
-1. For **Remote network IP ranges**, set the IP address range or ranges
-    of the on-premises network, which is the network on the other side of the
-    tunnel from the Cloud VPN gateway you are currently configuring.
+1. For **Remote network IP ranges**, set the IP address range or ranges of the on-premises network, which is the network on the other side of the tunnel from the Cloud VPN gateway you are currently configuring.
 
-1. Click **Create** to create the gateway and initiate all tunnels. This step
-automatically creates a network-wide route and the necessary forwarding
-rules for the tunnel. The tunnels will not pass traffic until you've
-configured the firewall rules.
+1. Click **Create** to create the gateway and initiate all tunnels. This step automatically creates a network-wide route and the necessary forwarding rules for the tunnel. The tunnels will not pass traffic until you've configured the firewall rules.
 
-1. Configure firewall rules to allow inbound traffic from the on-premises
-network subnets. You must also configure the on-premises network firewall to
-allow inbound traffic from your VPC subnet prefixes.
+1. Configure firewall rules to allow inbound traffic from the on-premises network subnets. You must also configure the on-premises network firewall to allow inbound traffic from your VPC subnet prefixes.
 
 1. [Go to the Firewall rules page](https://console.cloud.google.com/networking/firewalls).
 1. Click **Create firewall rule**.
 1. Populate the following fields:
     -  **Name**—A name such as `vpnrule1`.
-    -  **VPC network**—The name you used earlier for the VPC network,
-        such as `vpn-juniper-test-network`.
-    -  **Source filter**—A filter to apply your rule to specific
-        sources of traffic. In this case, choose source IP ranges.
-    -  **Source IP ranges**—The peer ranges to accept from the peer
-        VPN gateway.
+    -  **VPC network**—The name you used earlier for the VPC network, such as `vpn-juniper-test-network`.
+    -  **Source filter**—A filter to apply your rule to specific sources of traffic. In this case, choose source IP ranges.
+    -  **Source IP ranges**—The peer ranges to accept from the peer VPN gateway.
     -  **Allowed protocols and ports**—The string `tcp;udp;icmp`.
 
 1. Click **Create**.
 
 ## Configure the Juniper SRX300 side
-
-<This section includes sample tasks that describe how to configure the
-on-premises side of the VPN gateway configuration using <vendor-name>
-equipment.>
-
-<For an example of how to fill in the instructions and parameters see the [Cisco ASR1000 section](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#configuration--cisco-asr-1000) of [the VPN Interop guide for Cisco ASR](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#top_of_page)  For each set of instructions explain what purpose the configuration setting
-serves>
 
 ### Creating the base network configuration
 
@@ -479,7 +311,7 @@ set interfaces st0 unit 0 family inet address 169.254.0.2/30
 
 ### Creating the base VPN gateway configuration
 
-Follow the procedures in this section to create the base VPN configuration. <This section contains outlines of subsections for different aspects of configuring IPsec and IKE on the vendor side. Fill in the sections that are relevant to the current configuration, and remove any sections that do not apply.>
+Follow the procedures in this section to create the base VPN configuration. <This section contains outlines of subsections for different aspects of configuring IPsec and IKE on the vendor side. Fill in the sections that are relevant to the current configuration, and remove any sections that do not apply >
 
 #### GCP-compatible settings for IPSec and IKE
 
@@ -487,7 +319,7 @@ Configuring the vendor side of the VPN network requires you to use IPsec and IKE
 
 <Not all of the settings in the following table are applicable to all vendor setups; use the settings that apply to your configuration. Remove the settings in the table that do not apply to current configuration.>
 
-**Note**: The <vendor-name><product-name> solution might have its own specifications for replay window size.
+**Note**: The Juniper SRX300 solution might have its own specifications for replay window size.
 
 <table>
 <thead>
@@ -905,7 +737,7 @@ set protocols bgp group ebgp-peers neighbor 169.254.0.1 metric-out 100
 
 **Note:** `set protocols bgp metric-out <metric-value>` will set the BGP metric for all neighbors which may be undesirable.
 
-To list the BGP metrics of routes received by a BGP peer enter the command below. The MED is shown in the third column.
+To list the BGP metrics of routes received by a BGP peer (GCP Cloud Router) enter the command below. The MED is shown in the third column.
 
 ```
 root@vsrx# run show route receive-protocol bgp 169.254.0.1    
