@@ -9,7 +9,7 @@ date_published: 2018-01-17
 [Google App Engine Standard](https://cloud.google.com/appengine/docs/standard/)
 is an easy way to deploy your apps to the same infrastructure that powers
 Google's products. In this tutorial you'll see how to deploy your
-[Kotlin](https://kotlinlang.org/) and [Ktor](https://ktori.io) application to
+[Kotlin](https://kotlinlang.org/) and [Ktor](https://ktor.io) application to
 App Engine Standard.
 
 You will create a new Ktor application, and then you will learn how to:
