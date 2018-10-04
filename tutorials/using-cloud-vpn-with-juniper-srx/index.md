@@ -1083,7 +1083,7 @@ set security-zone vpn-gcp interfaces st0.1
 exit
 ```
 
-######Configure Security Policies 
+###### Configure Security Policies
 
 ```
 [edit]
