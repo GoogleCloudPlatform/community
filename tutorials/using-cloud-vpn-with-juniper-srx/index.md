@@ -43,19 +43,18 @@ Learn how to build site-to-site IPsec VPNs between [Cloud VPN](https://cloud.goo
     - [Testing the configuration](#testing-the-configuration)
 - [Advanced VPN configurations](#advanced-vpn-configurations)
     - [Configuring VPN redundancy](#configuring-vpn-redundancy)
-        - [Configuring <product-name> dynamic route priority settings](#configuring-product-name-dynamic-route-priority-settings)
-        - [Configuring <product-name> static route metrics](#configuring-product-name-static-route-metrics)
+        - [Configuring SRX300 dynamic route priority settings](#Configuring-Juniper-SRX300-dynamic-route-priority-settings-(Using-BGP-MED))
+        - [Configuring Juniper SRX300 static route metrics](#Configuring-Juniper-SRX300-static-route-metrics)
         - [Configuring GCP BGP route priority](#configuring-gcp-bgp-route-priority)
         - [Configuring GCP static route priority](#configuring-gcp-static-route-priority)
-        - [Testing VPN redundancy on <vendor-name><device name>](#testing-vpn-redundancy-on-vendor-namedevice-name)
     - [Getting higher throughput](#getting-higher-throughput)
         - [Configuring GCP for higher throughput](#configuring-gcp-for-higher-throughput)
-        - [Configuring <vendor-name><product-name> for higher throughput](#configuring-vendor-nameproduct-name-for-higher-throughput)
+        - [Configuring Juniper SRX300 for higher throughput](#Configuring-Juniper-SRX300-for-higher-throughput)
         - [Testing the higher-throughput configuration](#testing-the-higher-throughput-configuration)
 - [Troubleshooting IPsec on Juniper SRX300](#troubleshooting-IPsec-on-Juniper-SRX300)
 - [Reference documentation](#reference-documentation)
     - [GCP documentation](#gcp-documentation)
-    - [<vendor-name><product-name> documentation](#vendor-nameproduct-name-documentation)
+    - [Juniper SRX300 documentation](#Juniper-SRX300-documentation)
 - [Appendix: Using gcloud commands](#appendix-using-gcloud-commands)
     - [Running gcloud commands](#running-gcloud-commands)
     - [Configuration parameters and values](#configuration-parameters-and-values)
@@ -1366,7 +1365,6 @@ This section describes how to use the `gcloud` command-line tool to configure IP
     - For `[SHARED_SECRET]`, supply the shared secret. For details, see [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
 
 
-    ```
     gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
         --project $PROJECT_NAME \
         --region $REGION \
@@ -1375,7 +1373,6 @@ This section describes how to use the `gcloud` command-line tool to configure IP
         --router $CLOUD_ROUTER_NAME \
         --peer-address $CUST_GW_EXT_IP \
         --shared-secret [SHARED_SECRET]
-    ```
     
     After you run this command, resources are allocated for this VPN tunnel, but the
     tunnel is not yet passing traffic.
@@ -1426,18 +1423,18 @@ This section describes how to use the `gcloud` command-line tool to configure IP
   The output for a configured Cloud Router will look like the following example. (This output shows sample values—your output will include an ID unique to you, your project name, the region you've selected, and so on.)
 
     ```
-    Output:
-    bgp:
-    advertiseMode: DEFAULT
-    asn: 65001
-    creationTimestamp: '2018-04-23T09:54:46.633-07:00'
-    description: ''
-    id: '2327390853769965881'
-    kind: compute#router
-    name: vpn-test-[VENDOR_NAME]
-    network: https://www.googleapis.com/compute/v1/projects/vpn-guide/global/networks/default
-    region: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1
-    selfLink: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1/routers/vpn-test-[VENDOR_NAME]
+  Output:
+  bgp:
+  advertiseMode: DEFAULT
+  asn: 65001
+  creationTimestamp: '2018-04-23T09:54:46.633-07:00'
+  description: ''
+  id: '2327390853769965881'
+  kind: compute#router
+  name: vpn-test-juniper
+  network: https://www.googleapis.com/compute/v1/projects/vpn-guide/global/networks/default
+  region: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1
+  selfLink: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1/routers/vpn-test-juniper
     ```
 
 1. Create GCP firewall rules to allow inbound traffic from the on-premises network subnets and from your VPC subnet prefixes.
