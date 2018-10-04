@@ -192,7 +192,7 @@ to establish BGP sessions between the 2 peers.
     there is no conflict with your local network range.
 
         gcloud compute networks create vpn-scale-test-juniper --subnet-mode custom
-
+    
         gcloud compute networks subnets create subnet-1 --network vpn-scale-test-juniper \
             --region us-east1 --range 172.16.100.0/24
 
@@ -216,10 +216,10 @@ to establish BGP sessions between the 2 peers.
 
         gcloud compute --project vpn-guide forwarding-rules create fr-esp  --region us-east1 \
             --ip-protocol ESP --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-juniper-gw-0
-
+    
         gcloud compute --project vpn-guide forwarding-rules create fr-udp500 --region us-east1 \
             --ip-protocol UDP --ports 500 --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-juniper-gw-0
-
+    
         gcloud compute --project vpn-guide forwarding-rules create fr-udp4500 --region us-east1 \
             --ip-protocol UDP --ports 4500 --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-juniper-gw-0
 
@@ -272,7 +272,7 @@ to establish BGP sessions between the 2 peers.
 
         gcloud  compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-scale-test-juniper \
             --allow tcp,udp,icmp --source-ranges 10.0.0.0/8
-            
+  
 ### IPsec VPN using static routing
 
 This section provides the steps to create [Cloud VPN on GCP][compute_vpn]. There are two
@@ -369,10 +369,10 @@ command-line tool. The upcoming section provide details to both in detail below:
 
         gcloud compute --project vpn-guide forwarding-rules create fr-esp --region us-east1 \
             --ip-protocol ESP --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-juniper-gw-0
-
+    
         gcloud compute forwarding-rules create fr-udp500 --project vpn-guide --region us-east1 \
             --address 104.196.200.68 --target-vpn-gateway vpn-scale-test-juniper-gw-0 --ip-protocol=UDP --ports 500
-
+    
         gcloud compute forwarding-rules create fr-udp4500 --project vpn-guide --region us-east1 \
             --address 104.196.200.68 --target-vpn-gateway vpn-scale-test-juniper-gw-0 --ip-protocol=UDP --ports 4500
 
@@ -413,16 +413,16 @@ required to connect to GCP. A sample interface configuration is provided below
 for reference:
 
 	[edit]
-    root@vsrx#
-    # Internal interface configuration
-    set interfaces ge-0/0/1 unit 0 family inet address 192.168.1.1/24
-    set interfaces ge-0/0/1 unit 0 description "internal facing interface"
-    # External interface configuration
-    set interfaces ge-0/0/0 unit 0 family inet address 192.168.1.1/24
-    set interfaces ge-0/0/0 unit 0 description "external facing interface"
-    # Tunnel interface configuration
-    set interfaces st0 unit 0 family inet mtu 1460
-    set interfaces st0 unit 0 family inet address 169.254.0.2/30
+	root@vsrx#
+	# Internal interface configuration
+	set interfaces ge-0/0/1 unit 0 family inet address 192.168.1.1/24
+	set interfaces ge-0/0/1 unit 0 description "internal facing interface"
+	# External interface configuration
+	set interfaces ge-0/0/0 unit 0 family inet address 192.168.1.1/24
+	set interfaces ge-0/0/0 unit 0 description "external facing interface"
+	# Tunnel interface configuration
+	set interfaces st0 unit 0 family inet mtu 1460
+	set interfaces st0 unit 0 family inet address 169.254.0.2/30
 
 
 ### Base VPN configurations
@@ -445,15 +445,15 @@ are set:
 reconnection will occur). The default on most SRX platforms is 28800 seconds
 
 		[edit]
-        root@vsrx#
-        set security ike proposal ike-phase1-proposal authentication-method pre-shared-keys
-        set security ike proposal ike-phase1-proposal dh-group group14
-        set security ike proposal ike-phase1-proposal authentication-algorithm sha-256
-        set security ike proposal ike-phase1-proposal encryption-algorithm aes-256-cbc
-        set security ike proposal ike-phase1-proposal lifetime-seconds 28800
-        set security ike policy ike_pol_home-2-gcp-vpn mode main
-        set security ike policy ike_pol_home-2-gcp-vpn proposals ike-phase1-proposal
-        set security ike policy ike_pol_home-2-gcp-vpn pre-shared-key ascii-text <*****>
+  	  root@vsrx#
+  	  set security ike proposal ike-phase1-proposal authentication-method pre-shared-keys
+  	  set security ike proposal ike-phase1-proposal dh-group group14
+  	  set security ike proposal ike-phase1-proposal authentication-algorithm sha-256
+  	  set security ike proposal ike-phase1-proposal encryption-algorithm aes-256-cbc
+  	  set security ike proposal ike-phase1-proposal lifetime-seconds 28800
+  	  set security ike policy ike_pol_home-2-gcp-vpn mode main
+  	  set security ike policy ike_pol_home-2-gcp-vpn proposals ike-phase1-proposal
+  	  set security ike policy ike_pol_home-2-gcp-vpn pre-shared-key ascii-text <*****>
 
 
 
@@ -473,15 +473,15 @@ behind a NAT, the local identity should be configured as the public IP address o
 to a pool of public IP addresses, a dedicated 1-to-1 NAT should be configured to the SRX device.
 
 		[edit]
-        root@vsrx#
-        set security ike gateway gw_home-2-gcp-vpn ike-policy ike_pol_home-2-gcp-vpn
-        set security ike gateway gw_home-2-gcp-vpn address 35.187.170.191
-        set security ike gateway gw_home-2-gcp-vpn dead-peer-detection probe-idle-tunnel
-        set security ike gateway gw_home-2-gcp-vpn dead-peer-detection interval 20
+  	  root@vsrx#
+  	  set security ike gateway gw_home-2-gcp-vpn ike-policy ike_pol_home-2-gcp-vpn
+  	  set security ike gateway gw_home-2-gcp-vpn address 35.187.170.191
+  	  set security ike gateway gw_home-2-gcp-vpn dead-peer-detection probe-idle-tunnel
+  	  set security ike gateway gw_home-2-gcp-vpn dead-peer-detection interval 20
 		set security ike gateway gw_home-2-gcp-vpn dead-peer-detection threshold 4
-        set security ike gateway gw_home-2-gcp-vpn local-identity inet 104.196.65.171
-        set security ike gateway gw_home-2-gcp-vpn external-interface ge-0/0/1.0
-        set security ike gateway gw_home-2-gcp-vpn version v2-only
+  	  set security ike gateway gw_home-2-gcp-vpn local-identity inet 104.196.65.171
+  	  set security ike gateway gw_home-2-gcp-vpn external-interface ge-0/0/1.0
+  	  set security ike gateway gw_home-2-gcp-vpn version v2-only
 
 #### Configure IPsec Proposal and Policy
 
@@ -535,7 +535,7 @@ router. The recommended value is 1360 when the number of IP MTU bytes is set to 
 
 #### Configure Security Policies
 Juniper SRX requires security policies....
-	
+​	
     [edit]
     root@vsrx#
     set security zones security-zone untrust interfaces ge-0/0/1.0 host-inbound-traffic system-services ike
@@ -545,7 +545,7 @@ Juniper SRX requires security policies....
     set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
 
 
-    
+​    
 
 #### Configure static or dynamic routing protocol to route traffic into the IPsec tunnel
 
@@ -556,20 +556,20 @@ BGP timers are adjusted to provide more rapid detection of outages.
 * Configure BGP peering between SRX and cloud router
 
 		[edit]
-        root@vsrx#
-        set protocols bgp group ebgp-peers type external
-        set protocols bgp group ebgp-peers multihop
-        set protocols bgp group ebgp-peers local-as 65501
-        set protocols bgp group ebgp-peers neighbor 169.254.1.1 peer-as 65500
+   ​     root@vsrx#
+   ​     set protocols bgp group ebgp-peers type external
+   ​     set protocols bgp group ebgp-peers multihop
+   ​     set protocols bgp group ebgp-peers local-as 65501
+   ​     set protocols bgp group ebgp-peers neighbor 169.254.1.1 peer-as 65500
 
 * Configure routing policies to inject routes into BGP and advertise it to the cloud router
 
 		[edit]
-        root@vsrx#
-		set policy-options policy-statement gcp-bgp-policy term 1 from protocol direct
-        set policy-options policy-statement gcp-bgp-policy term 1 from route-filter 192.168.1.0/24 exact
-        set policy-options policy-statement gcp-bgp-policy term 1 then accept
-        set protocols bgp group ebgp-peers export gcp-bgp-policy
+   ​     root@vsrx#
+	​	set policy-options policy-statement gcp-bgp-policy term 1 from protocol direct
+   ​     set policy-options policy-statement gcp-bgp-policy term 1 from route-filter 192.168.1.0/24 exact
+   ​     set policy-options policy-statement gcp-bgp-policy term 1 then accept
+   ​     set protocols bgp group ebgp-peers export gcp-bgp-policy
 
 Alternatively, static routes to GCP networks can be configured to point to the Tunnel interface `st0.0`.
 
@@ -600,7 +600,7 @@ following command on Cisco IOS terminal:
         7877087 UP     412c5a43aad7682b  b6d24ef8bf25e9ea  IKEv2          35.187.170.191
 
 2. Show IPSec Security Associations
-        
+  ​      
         root@vsrx# run show security ipsec security-associations
         Total active tunnels: 1
         ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
@@ -610,10 +610,10 @@ following command on Cisco IOS terminal:
 3. List BGP learned routes:
 
         root@vsrx# run show route protocol bgp
-
+    
         inet.0: 11 destinations, 11 routes (11 active, 0 holddown, 0 hidden)
         + = Active Route, - = Last Active, * = Both
-
+    
         172.16.0.0/24      *[BGP/170] 23:02:00, MED 100, localpref 100
                               AS path: 65500 ?, validation-state: unverified
                             > to 169.254.0.1 via st0.0
@@ -633,24 +633,17 @@ following command on Cisco IOS terminal:
         64 bytes from 172.16.0.2: icmp_seq=2 ttl=64 time=23.783 ms
         64 bytes from 172.16.0.2: icmp_seq=3 ttl=64 time=19.472 ms
         64 bytes from 172.16.0.2: icmp_seq=4 ttl=64 time=21.183 ms
-
+    
         --- 172.16.0.2 ping statistics ---
         5 packets transmitted, 5 packets received, 0% packet loss
         round-trip min/avg/max/stddev = 19.472/21.044/23.783/1.491 ms
-
+    
         root@vsrx>
 
 ### Advanced VPN configurations
 
 #### Bundling Multiple tunnels for Higher Throughput.
-As documented in the [GCP Advanced Configurations](https://cloud.google.com/compute/docs/vpn/advanced),
-each Cloud VPN tunnel can support up to 3 Gbps when the traffic is traversing a
-[direct peering](https://cloud.google.com/interconnect/direct-peering) link, or
-1.5 Gbps when traversing the public Internet. To increase the VPN throughput the
-recommendation is to add multiple Cloud VPN gateway on the same region to load
-balance the traffic across the tunnels. The 2 VPN tunnels configuration example
-here is built based on the IPsec tunnel and BGP configuration illustrated above,
-can be expanded to more tunnels if required.
+As documented in the [GCP Advanced Configurations](https://cloud.google.com/compute/docs/vpn/advanced), each Cloud VPN tunnel can support up to 3 Gbps when the traffic is traversing a [direct peering](https://cloud.google.com/interconnect/direct-peering) link, or 1.5 Gbps when traversing the public Internet. To increase the VPN throughput the recommendation is to add multiple Cloud VPN gateway on the same region to load balance the traffic across the tunnels. The 2 VPN tunnels configuration example here is built based on the IPsec tunnel and BGP configuration illustrated above, can be expanded to more tunnels if required.
 
 
 ##### Juniper SRX Configuration
@@ -676,14 +669,16 @@ can be expanded to more tunnels if required.
     set security ike gateway gw_onprem-2-gcp-vpn-2 local-identity inet 76.104.213.79
     set security ike gateway gw_onprem-2-gcp-vpn-2 external-interface ge-0/0/0.0
     set security ike gateway gw_onprem-2-gcp-vpn-2 version v2-only
-    
-    
+
+
+​    
     set security ipsec policy ipsec_pol_onprem-2-gcp-vpn perfect-forward-secrecy keys group2
     set security ipsec policy ipsec_pol_onprem-2-gcp-vpn proposal-set standard
     set security ipsec policy ipsec_pol_onprem-2-gcp-vpn-2 perfect-forward-secrecy keys group2
     set security ipsec policy ipsec_pol_onprem-2-gcp-vpn-2 proposal-set standard
-    
-    
+
+
+​    
     set security ipsec vpn onprem-2-gcp-vpn bind-interface st0.0
     set security ipsec vpn onprem-2-gcp-vpn ike gateway gw_onprem-2-gcp-vpn
     set security ipsec vpn onprem-2-gcp-vpn ike ipsec-policy ipsec_pol_onprem-2-gcp-vpn
@@ -696,7 +691,7 @@ can be expanded to more tunnels if required.
     
     [edit]
     root@vsrx# edit security policies
-
+    
     [edit security policies]
     root@vsrx#
     set from-zone trust to-zone trust policy trust-to-trust match source-address any
@@ -719,7 +714,7 @@ can be expanded to more tunnels if required.
     
     [edit]
     root@vsrx# edit security zones
-
+    
     [edit security zones]
     root@vsrx#
     set security-zone trust address-book address addr_192_168_1_0_24 192.168.1.0/24
@@ -762,7 +757,7 @@ can be expanded to more tunnels if required.
     
     set vlans vlan-trust vlan-id 3
     set vlans vlan-trust l3-interface irb.0
-
+    
     [edit]
     root@vsrx#
 
@@ -789,10 +784,10 @@ Note: Actual performance vary depending on the following factors:
 Ike security associations
 
 	root@vsrx# run show security ike security-associations
-    Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
-    1590399 UP     e1f16b380e661b93  34379d5726ea8545  IKEv2          35.233.197.145
-    1590402 UP     9d0688eeb4ced592  3e2a86428dbd9d01  IKEv2          35.230.59.183
-    
+	Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
+	1590399 UP     e1f16b380e661b93  34379d5726ea8545  IKEv2          35.233.197.145
+	1590402 UP     9d0688eeb4ced592  3e2a86428dbd9d01  IKEv2          35.230.59.183
+
 IPSec security associations
 
     root@vsrx# run show security ipsec security-associations
@@ -809,10 +804,10 @@ BGP routes. This indicates that packets destined for routes in GCP will be route
 ECMP.
 
     root@vsrx# run show route
-
+    
     inet.0: 59 destinations, 88 routes (59 active, 0 holddown, 0 hidden)
     + = Active Route, - = Last Active, * = Both
-
+    
     10.44.0.0/14       *[BGP/170] 00:00:17, MED 371, localpref 100
                           AS path: 65500 ?, validation-state: unverified
                         > to 169.254.1.1 via st0.0
