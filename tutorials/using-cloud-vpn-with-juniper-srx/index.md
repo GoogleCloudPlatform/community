@@ -27,7 +27,7 @@ Learn how to build site-to-site IPsec VPNs between [Cloud VPN](https://cloud.goo
         - [Configure the VPN gateway](#configure-the-vpn-gateway)
         - [Configure firewall rules](#configure-firewall-rules)
     - [Configuring route-based IPsec VPN using static routing](#configuring-route-based-ipsec-vpn-using-static-routing)
-- [Configure the Juniper SRX300 side](#configure-the-vendor-namevendor-product-side)
+- [Configure the Juniper SRX300 side](#Configure the Juniper SRX300 side)
     - [Creating the base network configuration](#creating-the-base-network-configuration)
     - [Creating the base VPN gateway configuration](#creating-the-base-vpn-gateway-configuration)
     - [GCP-compatible settings for IPSec and IKE](#gcp-compatible-settings-for-ipsec-and-ike)
