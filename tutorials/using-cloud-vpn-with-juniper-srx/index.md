@@ -303,7 +303,7 @@ set interfaces ge-0/0/1 unit 0 description "internal facing interface 1"
 set interfaces ge-0/0/2 unit 0 family inet address 192.168.1.1/24
 set interfaces ge-0/0/2 unit 0 description "internal facing interface 2"
 # External interface configuration
-set interfaces ge-0/0/0 unit 0 family inet address 192.168.1.1/24
+set interfaces ge-0/0/0 unit 0 family inet address 104.196.65.171/31
 set interfaces ge-0/0/0 unit 0 description "external facing interface"
 # Tunnel interface configuration
 set interfaces st0 unit 0 family inet mtu 1460
@@ -420,9 +420,9 @@ automatically establish IPsec security associations (SAs). The default proposal 
   set security ike proposal ike-phase1-proposal authentication-algorithm sha-256
   set security ike proposal ike-phase1-proposal encryption-algorithm aes-256-cbc
   set security ike proposal ike-phase1-proposal lifetime-seconds 28800
-  set security ike policy ike_pol_home-2-gcp-vpn mode main
-  set security ike policy ike_pol_home-2-gcp-vpn proposals ike-phase1-proposal
-  set security ike policy ike_pol_home-2-gcp-vpn pre-shared-key ascii-text <*****>
+  set security ike policy ike_pol_onprem-2-gcp-vpn mode main
+  set security ike policy ike_pol_onprem-2-gcp-vpn proposals ike-phase1-proposal
+  set security ike policy ike_pol_onprem-2-gcp-vpn pre-shared-key ascii-text <*****>
 ```
 
 #### Configure IKEv2 Gateway
@@ -439,14 +439,16 @@ An IKEv2 profile must be configured and must be attached to an IPsec profile on 
   ```
   [edit]
     root@vsrx#
-    set security ike gateway gw_home-2-gcp-vpn ike-policy ike_pol_home-2-gcp-vpn
-    set security ike gateway gw_home-2-gcp-vpn address 35.187.170.191
-    set security ike gateway gw_home-2-gcp-vpn dead-peer-detection probe-idle-tunnel
-    set security ike gateway gw_home-2-gcp-vpn dead-peer-detection interval 20
-    set security ike gateway gw_home-2-gcp-vpn dead-peer-detection threshold 4
-    set security ike gateway gw_home-2-gcp-vpn local-identity inet 104.196.65.171
-    set security ike gateway gw_home-2-gcp-vpn external-interface ge-0/0/1.0
-    set security ike gateway gw_home-2-gcp-vpn version v2-only
+    set security ike gateway gw_onprem-2-gcp-vpn ike-policy ike_pol_onprem-2-gcp-vpn
+    set security ike gateway gw_onprem-2-gcp-vpn address 35.187.170.191
+    set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection probe-idle-tunnel
+    set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection interval 20
+    set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection threshold 4
+    set security ike gateway gw_onprem-2-gcp-vpn external-interface ge-0/0/1.0
+    set security ike gateway gw_onprem-2-gcp-vpn version v2-only
+    
+  #Configure local-identity as public IP address of the VPN device, if behind NA
+    set security ike gateway gw_onprem-2-gcp-vpn local-identity inet 104.196.65.171
   ```
 
 ### Configure the IPsec security association (SA)
@@ -492,9 +494,9 @@ Adjust the maximum segment size (MSS) value of TCP packets going through a route
 
 ##### Security Zone Configuration
 
-Juniper SRX uses security zones to isolate network segments and regulates traffic inbound and outbound from these zones using security policies. Security zones logically bind interfaces (which may represent network segments). For this configuration, we have three security zones: The `untrust` zone which the internet facing interface `ge-0/0/1.0` is bound, the `trust` zone with the internal facing interface `ge-0/0/0.0` is bound and finally the `vpn-gcp` zone which the vpn tunnel interface `st0.0` is bound. In addition to binding interfaces traffic destined for the Juniper device is allowed/denied in the security zone configuration; address-book configuration which can be used in security policies to specify what IP addresses are allowed to pass traffic from a zone is also configured here. See [Juniper security zone configuration](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-zone-configuration.html) for more information on how to configure security zones.
+Juniper SRX uses security zones to isolate network segments and regulates traffic inbound and outbound from these zones using security policies. Security zones logically bind interfaces (which may represent network segments). For this configuration, we have three security zones: the `untrust` zone which the internet facing interface `ge-0/0/0.0` is bound, the `trust` zone with the internal facing interfaces `ge-0/0/1.0`and  `ge-0/0/2.0` are bound and the `vpn-gcp` zone which the vpn tunnel interface `st0.0` is bound. In addition to binding interfaces to the defined zones, traffic destined for the Juniper device is allowed/denied in the security zone configuration; also, address-book configuration which can be used in security policies to specify what IP addresses are allowed to pass traffic from a zone is configured here. See [Juniper security zone configuration](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-zone-configuration.html) for more information on how to configure security zones.
 
-Below are the configuration used to setup the security zones in the Juniper SRX300 device
+Below are the security zone configuration entered in the on-prem Juniper SRX300 device.
 
 ```
 [edit]
