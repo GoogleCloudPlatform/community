@@ -298,8 +298,10 @@ A sample interface configuration is provided below for reference:
 [edit]
 root@vsrx#
 # Internal interface configuration
-set interfaces ge-0/0/1 unit 0 family inet address 192.168.1.1/24
-set interfaces ge-0/0/1 unit 0 description "internal facing interface"
+set interfaces ge-0/0/1 unit 0 family inet address 192.168.0.1/24
+set interfaces ge-0/0/1 unit 0 description "internal facing interface 1"
+set interfaces ge-0/0/2 unit 0 family inet address 192.168.1.1/24
+set interfaces ge-0/0/2 unit 0 description "internal facing interface 2"
 # External interface configuration
 set interfaces ge-0/0/0 unit 0 family inet address 192.168.1.1/24
 set interfaces ge-0/0/0 unit 0 description "external facing interface"
@@ -497,7 +499,7 @@ Below are the configuration used to setup the security zones in the Juniper SRX3
 ```
 [edit]
 root@vsrx#
-set security zones security-zone untrust interfaces ge-0/0/1.0 host-inbound-traffic system-services ike
+set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ike
 set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
 set security zones security-zone vpn-gcp interfaces st0.0
 
@@ -505,24 +507,32 @@ set security zones security-zone vpn-gcp interfaces st0.0
 set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
 
 #Address book configuration on-prem prefix
-set security zones security-zone trust address-book address home_192_168_1_0_24 192.168.1.0/24
+set security zones security-zone trust address-book address 192.168.0.0/24 192.168.0.0/24
+set security zones security-zone trust address-book address 192.168.1.0/24 192.168.1.0/24
+set security zones security-zone trust address-book address 172.16.0.0/24 172.16.0.0/24
+set security zones security-zone trust address-book address 172.16.1.0/24 172.16.1.0/24
+set security zones security-zone trust address-book address-set onprem-addr-prefixes address 192.168.0.0/24
+set security zones security-zone trust address-book address-set onprem-addr-prefixes address 192.168.1.0/24
+set security zones security-zone trust address-book address-set onprem-addr-prefixes address 172.16.0.0/24
+set security zones security-zone trust address-book address-set onprem-addr-prefixes address 172.16.1.0/24
 set security zones security-zone trust tcp-rst
 set security zones security-zone trust host-inbound-traffic system-services all
 set security zones security-zone trust host-inbound-traffic protocols all
-set security zones security-zone trust interfaces ge-0/0/0.0
+set security zones security-zone trust interfaces ge-0/0/1.0
+set security zones security-zone trust interfaces ge-0/0/2.0
 set security zones security-zone untrust screen untrust-screen
-set security zones security-zone untrust interfaces ge-0/0/1.0 host-inbound-traffic system-services dhcp
-set security zones security-zone untrust interfaces ge-0/0/1.0 host-inbound-traffic system-services tftp
-set security zones security-zone untrust interfaces ge-0/0/1.0 host-inbound-traffic system-services ssh
-set security zones security-zone untrust interfaces ge-0/0/1.0 host-inbound-traffic system-services ike
+set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services dhcp
+set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services tftp
+set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ssh
+set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ike
 set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
 set security zones security-zone vpn-gcp interfaces st0.0
 
 #Address book configuration for GCP prefixes
-set security zones security-zone vpn-gcp address-book address 10.0.0.0/8 10.0.0.0/8
-set security zones security-zone vpn-gcp address-book address 172.16.0.0/16 172.16.0.0/16
-set security zones security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 172.16.0.0/16
-set security zones security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 10.0.0.0/8
+set security zones security-zone vpn-gcp address-book address 10.120.0.0/16 10.120.0.0/16
+set security zones security-zone vpn-gcp address-book address 10.121.0.0/16 10.121.0.0/16
+set security zones security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 10.120.0.0/16
+set security zones security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 10.121.0.0/16
 ```
 
 
@@ -550,14 +560,14 @@ set security policies from-zone trust to-zone untrust policy trust-to-untrust ma
 set security policies from-zone trust to-zone untrust policy trust-to-untrust match destination-address any
 set security policies from-zone trust to-zone untrust policy trust-to-untrust match application any
 set security policies from-zone trust to-zone untrust policy trust-to-untrust then permit
-set security policies from-zone trust to-zone vpn-gcp policy policy_out_home-2-gcp-vpn match source-address home_192_168_1_0_24
-set security policies from-zone trust to-zone vpn-gcp policy policy_out_home-2-gcp-vpn match destination-address gcp-addr-prefixes
-set security policies from-zone trust to-zone vpn-gcp policy policy_out_home-2-gcp-vpn match application any
-set security policies from-zone trust to-zone vpn-gcp policy policy_out_home-2-gcp-vpn then permit
-set security policies from-zone vpn-gcp to-zone trust policy policy_in_home-2-gcp-vpn match source-address gcp-addr-prefixes
-set security policies from-zone vpn-gcp to-zone trust policy policy_in_home-2-gcp-vpn match destination-address home_192_168_1_0_24
-set security policies from-zone vpn-gcp to-zone trust policy policy_in_home-2-gcp-vpn match application any
-set security policies from-zone vpn-gcp to-zone trust policy policy_in_home-2-gcp-vpn then permit
+set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match source-address onprem-addr-prefixes
+set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match destination-address gcp-addr-prefixes
+set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match application any
+set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn then permit
+set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match source-address gcp-addr-prefixes
+set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match destination-address onprem-addr-prefixes
+set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match application any
+set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn then permit
 ```
 
 
@@ -579,7 +589,7 @@ set protocols bgp group ebgp-peers local-as 65501
 set protocols bgp group ebgp-peers neighbor 169.254.1.1 peer-as 65500
 ```
 
-- Configure routing policies to inject routes into BGP and advertise it to the cloud router
+- Configure routing policies to inject routes into BGP and advertise it to the cloud router. In this case we are only advertising `192.168.0.0/24` and `192.168.1.0/24`
 
 
 ```
@@ -588,6 +598,9 @@ root@vsrx#
 set policy-options policy-statement gcp-bgp-policy term 1 from protocol direct
 set policy-options policy-statement gcp-bgp-policy term 1 from route-filter 192.168.1.0/24 exact
 set policy-options policy-statement gcp-bgp-policy term 1 then accept
+set policy-options policy-statement gcp-bgp-policy term 2 from protocol direct
+set policy-options policy-statement gcp-bgp-policy term 2 from route-filter 192.168.0.0/24 exact
+set policy-options policy-statement gcp-bgp-policy term 2 then accept
 set protocols bgp group ebgp-peers export gcp-bgp-policy
 ```
 
@@ -598,7 +611,8 @@ Follow the procedure in this section to configure static routing of traffic to t
 ```
 [edit]
 root@vsrx#
-set routing-options static route 172.16.0.0/16 next-hop st0.0
+set routing-options static route 10.120.0.0/16 next-hop st0.0
+set routing-options static route 10.121.0.0/16 next-hop st0.0
 ```
 
 For more recommendations about on-premises routing configurations, see [GCP Best Practices](https://cloud.google.com/router/docs/resources/best-practices).
@@ -680,13 +694,13 @@ On the GCP side, use the following instructions to test the connection to a mach
    inet.0: 11 destinations, 11 routes (11 active, 0 holddown, 0 hidden)
    + = Active Route, - = Last Active, * = Both
    
-   172.16.0.0/24      *[BGP/170] 23:02:00, MED 100, localpref 100
+   10.120.0.0/16      *[BGP/170] 23:02:00, MED 100, localpref 100
                          AS path: 65500 ?, validation-state: unverified
                        > to 169.254.0.1 via st0.0
-   172.16.11.0/24     *[BGP/170] 23:02:00, MED 100, localpref 100
+   10.121.0.0/16      *[BGP/170] 23:02:00, MED 100, localpref 100
                          AS path: 65500 ?, validation-state: unverified
                        > to 169.254.0.1 via st0.0
-   172.16.21.0/24     *[BGP/170] 23:02:00, MED 100, localpref 100
+   10.122.0.0/16      *[BGP/170] 23:02:00, MED 100, localpref 100
                          AS path: 65500 ?, validation-state: unverified
                        > to 169.254.0.1 via st0.0
    ```
@@ -694,13 +708,13 @@ On the GCP side, use the following instructions to test the connection to a mach
 - Pinging an IP address in GCP via the Tunnel
 
    ```
-   root@vsrx> ping 172.16.0.2 count 5 source 192.168.1.1
-   PING 172.16.0.2 (172.16.0.2): 56 data bytes
-   64 bytes from 172.16.0.2: icmp_seq=0 ttl=64 time=20.758 ms
-   64 bytes from 172.16.0.2: icmp_seq=1 ttl=64 time=20.024 ms
-   64 bytes from 172.16.0.2: icmp_seq=2 ttl=64 time=23.783 ms
-   64 bytes from 172.16.0.2: icmp_seq=3 ttl=64 time=19.472 ms
-   64 bytes from 172.16.0.2: icmp_seq=4 ttl=64 time=21.183 ms
+   root@vsrx> ping 10.120.0.2 count 5 source 192.168.1.1
+   PING 10.120.0.2 (10.120.0.2): 56 data bytes
+   64 bytes from 10.120.0.2: icmp_seq=0 ttl=64 time=20.758 ms
+   64 bytes from 10.120.0.2: icmp_seq=1 ttl=64 time=20.024 ms
+   64 bytes from 10.120.0.2: icmp_seq=2 ttl=64 time=23.783 ms
+   64 bytes from 10.120.0.2: icmp_seq=3 ttl=64 time=19.472 ms
+   64 bytes from 10.120.0.2: icmp_seq=4 ttl=64 time=21.183 ms
    
    --- 172.16.0.2 ping statistics ---
    5 packets transmitted, 5 packets received, 0% packet loss
@@ -742,10 +756,10 @@ To list the BGP metrics of routes received by a BGP peer (GCP Cloud Router) ente
 root@vsrx# run show route receive-protocol bgp 169.254.0.1    
 
 inet.0: 11 destinations, 11 routes (11 active, 0 holddown, 0 hidden)
-  Prefix                  Nexthop              MED     Lclpref    AS path
-* 172.16.0.0/24           169.254.0.1          100                65500 ?
-* 172.16.11.0/24          169.254.0.1          100                65500 ?
-* 172.16.21.0/24          169.254.0.1          100                65500 ?
+  Prefix                 Nexthop              MED     Lclpref    AS path
+* 10.120.0.0/16          169.254.0.1          100                65500 ?
+* 10.121.0.0/16          169.254.0.1          100                65500 ?
+* 10.122.0.0/16          169.254.0.1          100                65500 ?
 ```
 
 #### Configuring Juniper SRX300 static route metrics
@@ -1328,7 +1342,7 @@ This section describes how to use the `gcloud` command-line tool to configure IP
         --ip-protocol ESP \
         --target-vpn-gateway $VPN_GATEWAY_1 \
         --address [STATIC_IP_ADDRESS]
-  
+    
     gcloud compute forwarding-rules create $FWD_RULE_UDP_500 \
         --project $PROJECT_NAME \
         --region $REGION \
@@ -1336,7 +1350,7 @@ This section describes how to use the `gcloud` command-line tool to configure IP
         --ports 500 \
         --target-vpn-gateway $VPN_GATEWAY_1 \
         --address [STATIC_IP_ADDRESS]
-  
+    
     gcloud compute forwarding-rules create $FWD_RULE_UDP_4500 \
         --project $PROJECT_NAME \
         --region $REGION \
@@ -1435,7 +1449,7 @@ This section describes how to use the `gcloud` command-line tool to configure IP
   network: https://www.googleapis.com/compute/v1/projects/vpn-guide/global/networks/default
   region: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1
   selfLink: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1/routers/vpn-test-juniper
-    ```
+​    ```
 
 1. Create GCP firewall rules to allow inbound traffic from the on-premises network subnets and from your VPC subnet prefixes.
 
@@ -1464,7 +1478,7 @@ The procedure suggests creating a custom VPC network. This is preferred over usi
     gcloud compute networks create $VPC_NETWORK_NAME \
         --project $PROJECT_NAME \
         --subnet-mode custom
-  
+    
     gcloud compute networks subnets create $VPC_SUBNET_NAME \
         --project $PROJECT_NAME \
         --network $VPC_NETWORK_NAME \
@@ -1502,7 +1516,7 @@ This step creates an unconfigured VPN gateway in your GCP VPC network.
         --ip-protocol ESP \
         --target-vpn-gateway $VPN_GATEWAY_1 \
         --address [STATIC_IP_ADDRESS]
-  
+    
     gcloud compute forwarding-rules create $FWD_RULE_UDP_500 \
         --project $PROJECT_NAME \
         --region $REGION \
@@ -1510,7 +1524,7 @@ This step creates an unconfigured VPN gateway in your GCP VPC network.
         --target-vpn-gateway $VPN_GATEWAY_1 \
         --ports 500 \
         --address [STATIC_IP_ADDRESS]
-  
+    
     gcloud compute forwarding-rules create $FWD_RULE_UDP_4500 \
         --project $PROJECT_NAME \
         --region $REGION \
