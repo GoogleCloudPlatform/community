@@ -97,6 +97,12 @@ For detailed topology information, see the following resources:
 -  For basic VPN topologies, see [Cloud VPN Overview](https://cloud.google.com/vpn/docs/concepts/overview).
 -  For redundant topologies,  the [Cloud VPN documentation on redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns). 
 
+
+
+For this tutorial, we will be using topology shown below as guide to create the configurations.
+
+![Topology](https://raw.githubusercontent.com/antiabong/community/master/tutorials/using-cloud-vpn-with-juniper-srx/Juniper-SRX-VPN.png)
+
 ## Product environment
 
 The equipment used in this guide is as follows:
