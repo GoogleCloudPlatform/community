@@ -889,7 +889,7 @@ set security ike gateway gw_onprem-2-gcp-vpn-2 version v2-only
 
 ###### Configure IPSec Policy and IPSec VPN
 
-Notice the use of Juniper's inbuilt proposal set the `ike policy` configuration above and `ipsec policy` configuration below.
+Notice the use of Juniper's inbuilt proposal set (standard) the `ike policy` configuration above and `ipsec policy` configuration below.
 
 ```
 [edit]
@@ -929,6 +929,9 @@ set security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 10.
 set security-zone vpn-gcp host-inbound-traffic protocols bgp
 set security-zone vpn-gcp interfaces st0.0
 set security-zone vpn-gcp interfaces st0.1
+
+[edit security zones]
+root@vsrx#
 exit
 ```
 
@@ -956,6 +959,9 @@ set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match sour
 set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match destination-address addr_192_168_1_0_24
 set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match application any
 set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn then permit
+
+[edit security policies]
+root@vsrx#
 exit
 
 
@@ -1440,20 +1446,19 @@ This section describes how to use the `gcloud` command-line tool to configure IP
 
   The output for a configured Cloud Router will look like the following example. (This output shows sample values—your output will include an ID unique to you, your project name, the region you've selected, and so on.)
 
-    ```
-  Output:
-  bgp:
-  advertiseMode: DEFAULT
-  asn: 65001
-  creationTimestamp: '2018-04-23T09:54:46.633-07:00'
-  description: ''
-  id: '2327390853769965881'
-  kind: compute#router
-  name: vpn-test-juniper
-  network: https://www.googleapis.com/compute/v1/projects/vpn-guide/global/networks/default
-  region: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1
-  selfLink: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1/routers/vpn-test-juniper
-​    ```
+     Output:
+      bgp:
+      advertiseMode: DEFAULT
+      asn: 65001
+      creationTimestamp: '2018-04-23T09:54:46.633-07:00'
+      description: ''
+      id: '2327390853769965881'
+      kind: compute#router
+      name: vpn-test-juniper
+      network: https://www.googleapis.com/compute/v1/projects/vpn-guide/global/networks/default
+      region: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1
+      selfLink: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1/routers/vpn-test-juniper
+
 
 1. Create GCP firewall rules to allow inbound traffic from the on-premises network subnets and from your VPC subnet prefixes.
 
@@ -1520,7 +1525,7 @@ This step creates an unconfigured VPN gateway in your GCP VPC network.
         --ip-protocol ESP \
         --target-vpn-gateway $VPN_GATEWAY_1 \
         --address [STATIC_IP_ADDRESS]
-    
+      
     gcloud compute forwarding-rules create $FWD_RULE_UDP_500 \
         --project $PROJECT_NAME \
         --region $REGION \
@@ -1528,7 +1533,7 @@ This step creates an unconfigured VPN gateway in your GCP VPC network.
         --target-vpn-gateway $VPN_GATEWAY_1 \
         --ports 500 \
         --address [STATIC_IP_ADDRESS]
-    
+      
     gcloud compute forwarding-rules create $FWD_RULE_UDP_4500 \
         --project $PROJECT_NAME \
         --region $REGION \
@@ -1544,18 +1549,19 @@ This step creates an unconfigured VPN gateway in your GCP VPC network.
 - For `[SHARED_SECRET]`, supply the shared secret.  For details, see [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
 - For `[LOCAL_TRAFFIC_SELECTOR_IP]`, supply an IP address range, like `172.16.100.0/24`,  that will be accessed on the GCP side of the  tunnel, as described in [Traffic selectors](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#static-routing-networks) in the GCP VPN networking documentation.
 
-    ```
-    gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
-        --project $PROJECT_NAME \
-        --peer-address $CUST_GW_EXT_IP \
-        --region $REGION \
-        --ike-version 2 \
-        --shared-secret [SHARED_SECRET] \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --local-traffic-selector [LOCAL_TRAFFIC_SELECTOR_IP]
-    ```
 
-    After you run this command, resources are allocated for this VPN tunnel, but it is not yet passing traffic.
+```
+gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
+    --project $PROJECT_NAME \
+    --peer-address $CUST_GW_EXT_IP \
+    --region $REGION \
+    --ike-version 2 \
+    --shared-secret [SHARED_SECRET] \
+    --target-vpn-gateway $VPN_GATEWAY_1 \
+    --local-traffic-selector [LOCAL_TRAFFIC_SELECTOR_IP]
+```
+
+After you run this command, resources are allocated for this VPN tunnel, but it is not yet passing traffic.
 
 1. Use a [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create) to forward traffic to the destination range of IP addresses in your on-premises network. The region must be the   same region as for the VPN tunnel.
 
