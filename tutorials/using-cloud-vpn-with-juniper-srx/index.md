@@ -847,10 +847,12 @@ Below is the complete configuration for setting up multiple tunnels on the same 
 [edit]
 root@vsrx#
 # Internal interface configuration
-set interfaces ge-0/0/1 unit 0 family inet address 192.168.1.1/24
+set interfaces ge-0/0/1 unit 0 family inet address 192.168.0.1/24
 set interfaces ge-0/0/1 unit 0 description "internal facing interface"
+set interfaces ge-0/0/2 unit 0 family inet address 192.168.1.1/24
+set interfaces ge-0/0/2 unit 0 description "internal facing interface"
 # External interface configuration
-set interfaces ge-0/0/0 unit 0 family inet address 192.168.1.1/24
+set interfaces ge-0/0/0 unit 0 family inet address 76.104.213.79/31
 set interfaces ge-0/0/0 unit 0 description "external facing interface"
 # Tunnel interfaces configuration
 set interfaces st0 unit 0 family inet mtu 1460
