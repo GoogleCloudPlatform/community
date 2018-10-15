@@ -1,3 +1,11 @@
+---
+title: Zero-to LAMP deploy on GCP with Chef
+description: Learn how to deploy a LAMP stack on GCP with Chef cookbooks.
+author: slevenick
+tags: Compute Engine, Cloud SQL, Chef
+date_published: 2018-10-16
+---
+
 ## Objectives
 * Create a Chef Workstation in Google Cloud.
 * Use the Workstation to create a Google Compute Engine VM, Cloud SQL instance, firewall rules, and a database via Chef.
