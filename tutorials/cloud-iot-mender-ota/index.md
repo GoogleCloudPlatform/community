@@ -22,11 +22,11 @@ This tutorial demonstrates how to successfully deploy an over-the-air (OTA) soft
 
 ## Before you begin
 
-This tutorial assumes you already have a Cloud Platform account set up and have completed the [getting started guide](https://cloud.google.com/iot/docs/how-tos/getting-started) including enabling the Cloud IoT Core API. You need to associate Firebase with your cloud project. To add Firebase to your cloud project, please visit the [Firebase Console](https://console.firebase.google.com) and choose **Add project**. Select your cloud project and click **Add Firebase**.
+This tutorial assumes you have a Cloud Platform account and have completed the [getting started guide](https://cloud.google.com/iot/docs/how-tos/getting-started), including enabling the Cloud IoT Core API. You need to associate Firebase with your GCP project. To add Firebase to your project, use the [Firebase Console](https://console.firebase.google.com) and choose **Add project**. Select your GCP project and click **Add Firebase**.
 
- - For most commands, it is recommended you use [Google Cloud Shell](https://cloud.google.com/shell/docs/quickstart). If you want to use only your local command line, you will need the [Google Cloud SDK ](https://cloud.google.com/sdk/downloads) and [Firebase tools](https://firebase.google.com/docs/cli/).
- - You will need to ensure the required environment variables are set in each shell environment (Please use the variables shown below for every new session.)
- - To work with the part of the tutorial that images a real device, you will need to have a Raspberry Pi 3 device, SD Card, and the ability to plug the Raspberry Pi in to Ethernet on your LAN (Wi-Ficlou configurations are not supported in this tutorial).
+ - For most commands, we recommend you use [Google Cloud Shell](https://cloud.google.com/shell/docs/quickstart). If you want to use your local command line, you need the [Google Cloud SDK ](https://cloud.google.com/sdk/downloads) and [Firebase tools](https://firebase.google.com/docs/cli/).
+ - You need to ensure the required environment variables are set in each shell environment. Please use the variables shown below for every new session.
+ - To work with the part of the tutorial that images a real device, you need to have a Raspberry Pi 3 device, SD Card, and the ability to plug the Raspberry Pi in to Ethernet on your LAN (Wi-Ficlou configurations are not supported in this tutorial).
 
 ## Costs
 
@@ -91,7 +91,7 @@ Mender Management server requirements from Mender are outlined [here](https://do
 
 Set up the [Google Cloud Shell](https://cloud.google.com/shell/docs/quickstart) environment (you will use several different shell environments).
 
-Note: If you are *not* using Cloud Shell you will need to run these first in your local environment:
+Note: If you aren't using Cloud Shell you will need to run these first in your local environment:
 
 ```
 gcloud auth login
@@ -126,20 +126,19 @@ gsutil mb -l $CLOUD_REGION gs://$PROJECT-mender-builds
 
 ### Installing Mender Management Server
 
-* Step 1: Create a Compute Engine instance, and run a [startup script](https://cloud.google.com/compute/docs/startupscript)
+1. Create a Compute Engine instance, and run a [startup script](https://cloud.google.com/compute/docs/startupscript)
   to install various dependencies including Docker, as well as installing and
   starting the [Mender Server](https://docs.mender.io/administration/production-installation).
 
-      gcloud beta compute --project $PROJECT instances create "mender-ota-demo" --zone "us-central1-c" --machine-type "n1-standard-2" --subnet "default" --maintenance-policy "MIGRATE" --scopes "https://www.googleapis.com/auth/cloud-platform" --metadata=startup-script-url=https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-iot-mender-ota/server/mender_server_install.sh --min-cpu-platform "Automatic" --tags "https-server" --image "ubuntu-1604-xenial-v20180814" --image-project "ubuntu-os-cloud" --boot-disk-size "10" --boot-disk-type "pd-standard" --boot-disk-device-name "mender-ota-demo"
+        gcloud beta compute --project $PROJECT instances create "mender-ota-demo" --zone "us-central1-c" --machine-type "n1-standard-2" --subnet "default" --maintenance-policy "MIGRATE" --scopes "https://www.googleapis.com/auth/cloud-platform" --metadata=startup-script-url=https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-iot-mender-ota/server/mender_server_install.sh --min-cpu-platform "Automatic" --tags "https-server" --image "ubuntu-1604-xenial-v20180814" --image-project "ubuntu-os-cloud" --boot-disk-size "10" --boot-disk-type "pd-standard" --boot-disk-device-name "mender-ota-demo"
 
+1. Wait roughly 3-5 minutes for the startup script to completely install all the prerequisites including Docker CE, Docker compose and Mender Server.
 
-  Note: The startup script will take roughly 3-5 minutes to completely install all the prerequisites including Docker CE, Docker compose and Mender Server.
-
-* Step 2 : Navigate to the Mender UI by clicking on the external IP address of **mender-ota-demo**, which can be found on the [GCP console → Compute Engine](https://console.cloud.google.com/compute) page. In most browsers you will get a certificate warning and you will need to click **advanced** and **proceed** or similar. In an actual production environment, you would provision this server with a trusted certificate.
+1. Navigate to the Mender UI by clicking on the external IP address of **mender-ota-demo**, which can be found on the [GCP console → Compute Engine](https://console.cloud.google.com/compute) page. In most browsers you will get a certificate warning and you will need to click **advanced** and **proceed** or similar. In an actual production environment, you would provision this server with a trusted certificate.
 
   ![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on1.png)
 
-* Once you are the Mender UI login page, using credentials created by the startup script will take you to the Mender Dashboard.
+When you are on the Mender UI login page, using credentials created by the startup script will take you to the Mender Dashboard.
 
   * Username - [mender@example.com](mailto:mender@example.com)
 
@@ -197,7 +196,7 @@ Next you will:
 
   on Linux:
 
-  umount MOUNT_PATH
+      umount MOUNT_PATH
 
 Enter this command to write the image to SD card, and please adjust the local path to your `.img` file location. Depending on the image size it may take roughly 20 minutes, so please be patient until the image is completely written to the SD card.
 
