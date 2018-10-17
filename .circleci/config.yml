@@ -10,7 +10,6 @@ workflows:
       - lint:
           requires:
             - node8
-            - node10
           filters: *all_commits
       - tests:
           requires:
