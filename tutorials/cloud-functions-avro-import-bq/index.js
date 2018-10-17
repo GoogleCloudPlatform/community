@@ -7,7 +7,7 @@ exports.ToBigQuery_Stage = (event, callback) => {
   const BigQuery = require('@google-cloud/bigquery');
   const Storage = require('@google-cloud/storage');
 
-// specify projectID and bigquery datasetID below
+  // specify projectID and bigquery datasetID below
   const projectId = 'mikekahn-sandbox';
   const datasetId = 'avroimport';
   const bucketName = file.bucket;
@@ -23,7 +23,7 @@ exports.ToBigQuery_Stage = (event, callback) => {
 
   console.log(`Load ${filename} into ${tableId}.`);
 
- // Instantiates clients
+  // Instantiates clients
   const bigquery = new BigQuery({
     projectId: projectId
   });
