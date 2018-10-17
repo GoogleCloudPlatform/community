@@ -33,8 +33,8 @@ exports.iot = function (event, callback) {
 
 function getDeviceBy (deviceName) {
   const query = datastore
-  .createQuery('device')
-  .filter('name', '=', deviceName);
+    .createQuery('device')
+    .filter('name', '=', deviceName);
   return datastore.runQuery(query);
 }
 
