@@ -1,16 +1,16 @@
 ---
-title: Deploying Apache Dropwizard applications on Google App Engine
-description: Learn how to deploy Apache Dropwizard applications on Google App Engine Flexible environment using a custom runtime.
+title: Deploying Dropwizard applications on Google App Engine
+description: Learn how to deploy Dropwizard applications on Google App Engine Flexible environment using a custom runtime.
 author: agentmilindu
-tags: App Engine, Apache, Dropwizard
+tags: App Engine, Dropwizard
 date_published: 2017-10-29
 ---
-This tutorial shows how to deploy an [Apache Dropwizard][dropwizard] application
+This tutorial shows how to deploy an [Dropwizard][dropwizard] application
 on Google App Engine flexible environment.
 
 ## Overview
 
-[Apache Dropwizard][dropwizard] is a Java framework for developing RESTful
+[Dropwizard][dropwizard] is a Java framework for developing RESTful
 web services which support for configuration management, application metrics,
 logging, operational tools, etc out of the box.
 
@@ -20,9 +20,8 @@ be tricky because it requires you to pass arguments to the JAR, like
 application running.
 
 This tutorial shows how to make use of Google App Engine Flexible Environment's
-[custom runtime][flexible-custom-runtimes] to deploy an Apache Dropwizard
-application using Docker. This tutorial assumes that you are familiar with
-Apache Dropwizard and that you have installed Docker.
+[custom runtime][flexible-custom-runtimes] to deploy a Dropwizard
+application using Docker. This tutorial assumes that you are familiar with Dropwizard and that you have installed Docker.
 
 If you don't have a Dropwizard application already, you can check out
 [getting started guide][getting-started] to create a sample Dropwizard
