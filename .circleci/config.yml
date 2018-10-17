@@ -3,22 +3,14 @@ workflows:
   version: 2
   tests:
     jobs: &workflow_jobs
-      - node8:
+      - tests:
           filters: &all_commits
             tags:
               only: /.*/
       - lint:
           requires:
-            - node8
+            - tests
           filters: *all_commits
-      - tests:
-          requires:
-            - lint
-          filters: &master_and_releases
-            branches:
-              only: master
-            tags: &releases
-              only: '/^v[\d.]+$/'
   nightly:
     triggers:
       - schedule:
@@ -28,7 +20,7 @@ workflows:
               only: master
     jobs: *workflow_jobs
 jobs:
-  node8:
+  tests:
     docker:
       - image: 'node:8'
         user: node
