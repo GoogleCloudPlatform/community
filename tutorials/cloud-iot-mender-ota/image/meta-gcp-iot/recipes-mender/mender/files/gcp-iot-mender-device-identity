@@ -1,9 +1,12 @@
-# Copyright 2017, Google, Inc.
+#!/bin/sh
+
+# Copyright 2018 Google Inc.
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -11,13 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-general:
-  branches:
-    ignore:
-      - gh-pages
-machine:
-  node:
-    version: 6.9.1
-dependencies:
-  cache_directories:
-    - node_modules/
+# Script called by Mender agent to collect device identity data.
+#
+# /usr/share/mender/identity/mender-device-identity 
+# The script should output identity data in <key>=<value> format, one
+# entry per line. Example
+#
+# $ ./mender-device-identity
+# mac=de:ad:ca:fe:00:01
+#
+
+set -ue
+
+echo "google_iot_id=g-$(cat /data/gcp/mender-google-machine-id)"
