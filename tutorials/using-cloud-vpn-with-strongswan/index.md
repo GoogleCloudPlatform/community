@@ -189,6 +189,7 @@ This section covers the steps for creating a GCP IPsec VPN using static routing.
     [go to the VPN page](https://console.cloud.google.com/networking/vpn/list).
 1. Click **Create VPN connection**.
 1. Populate the following fields for the gateway:
+
     +  **Name**—The name of the VPN gateway. This name is displayed in the
         console and used in by the gcloud tool to reference the gateway. Use a
         name like `gcp-to-strongswan`.
@@ -863,16 +864,16 @@ you've set the variables as described earlier under
 1. Create a VPN tunnel on the Cloud VPN Gateway that points to the external
     IP address of your on-premises VPN gateway. Note the following:
 
-+  Set the IKE version. The following command sets the IKE version to
-    2, which is the default, preferred IKE version. If you need to set it to
-    1, use `--ike-version 1`.
-+  For `[SHARED_SECRET]`, supply the shared secret.  For details, see
-    [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
-+  For `[LOCAL_TRAFFIC_SELECTOR_IP]`, supply an IP address range, like
-    `172.16.100.0/24`,  that will be accessed on the GCP side of the  tunnel,
-    as described in
-    [Traffic selectors](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#static-routing-networks)
-    in the GCP VPN networking documentation.
+    +  Set the IKE version. The following command sets the IKE version to
+        2, which is the default, preferred IKE version. If you need to set it to
+        1, use `--ike-version 1`.
+    +  For `[SHARED_SECRET]`, supply the shared secret.  For details, see
+        [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
+    +  For `[LOCAL_TRAFFIC_SELECTOR_IP]`, supply an IP address range, like
+        `172.16.100.0/24`,  that will be accessed on the GCP side of the  tunnel,
+        as described in
+        [Traffic selectors](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#static-routing-networks)
+        in the GCP VPN networking documentation.
 
     ```
     gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
