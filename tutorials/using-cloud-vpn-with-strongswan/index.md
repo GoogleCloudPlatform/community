@@ -31,12 +31,12 @@ Strongswan.
         - [Configuring route-based IPsec VPN using static routing](#configuring-route-based-ipsec-vpn-using-static-routing)
             - [Configure the VPN gateway](#configure-the-vpn-gateway)
             - [Configure the VPN tunnel](#configure-the-vpn-tunnel)
-            - [Configure firewall](#configure-firewall)
+            - [Configure firewall rules](#configure-firewall-rules)
     - [Configure the Strongswan side](#configure-the-strongswan-side)
         - [GCP-compatible settings for IPSec and IKE](#gcp-compatible-settings-for-ipsec-and-ike)
         - [Creating the VPN configuration](#creating-the-vpn-configuration)
         - [Testing the configuration](#testing-the-configuration)
-    - [Troubleshooting IPsec on Strongswan side](#troubleshooting-ipsec-on-strongswan-side)
+    - [Troubleshooting IPsec on the Strongswan side](#troubleshooting-ipsec-on-the-strongswan-side)
     - [Reference documentation](#reference-documentation)
         - [GCP documentation](#gcp-documentation)
         - [Strongswan documentation](#strongswan-documentation)
@@ -46,10 +46,7 @@ Strongswan.
         - [Setting environment variables for gcloud command parameters](#setting-environment-variables-for-gcloud-command-parameters)
         - [Configuring IPsec VPN using static routing](#configuring-ipsec-vpn-using-static-routing)
 
-
 ![screen shot 2018-08-20 at 3 58 44 pm](https://user-images.githubusercontent.com/42278789/44371087-fc9a8b80-a491-11e8-86c7-22499e7b5913.png)
-
-
 
 ## Introduction
 
@@ -67,38 +64,36 @@ Below are definitions of terms used throughout this guide.
 <This is some sample terminology. Add any terminology to this section that needs
 explanation.>
 
--  **GCP VPC network**—A single virtual network within a single GCP project.
--  **On-premises gateway**—The VPN device on the non-GCP side of the
-connection, which is usually a device in a physical data center or in
-another cloud provider's network. GCP instructions are written from the
-point of view of the GCP VPC network, so "on-premises gateway" refers to the
-gateway that's connecting _to_ GCP.
--  **External IP address** or **GCP peer address**—a single static IP address
-within a GCP project that exists at the edge of the GCP network.
--  **Static routing**—Manually specifying the route to subnets on the GCP
-side and to the on-premises side of the VPN gateway.
-
++  **GCP VPC network**—A single virtual network within a single GCP project.
++  **On-premises gateway**—The VPN device on the non-GCP side of the
+    connection, which is usually a device in a physical data center or in
+    another cloud provider's network. GCP instructions are written from the
+    point of view of the GCP VPC network, so "on-premises gateway" refers to the
+    gateway that's connecting _to_ GCP.
++  **External IP address** or **GCP peer address**—A single static IP address
+    in a GCP project that exists at the edge of the GCP network.
++  **Static routing**—Manually specifying the route to subnets on the GCP
+    side and to the on-premises side of the VPN gateway.
 
 ## Topology
 
 Cloud VPN supports the following topologies:
 ![screen shot 2018-08-20 at 3 26 12 pm](https://user-images.githubusercontent.com/42278789/44370966-73835480-a491-11e8-9703-bc90e185d65e.png)
 
--  A site-to-site IPsec VPN tunnel configuration using static routing.
++  A site-to-site IPsec VPN tunnel configuration using static routing.
 
 For detailed topology information, see the following resources:
 
--  For basic VPN topologies, see 
-[Cloud VPN Overview](https://cloud.google.com/vpn/docs/concepts/overview).
++  For basic VPN topologies, see
+    [Cloud VPN Overview](https://cloud.google.com/vpn/docs/concepts/overview).
 
 ## Product environment
 
 The <vendor-name><product-name> equipment used in this guide is as follows:
 
--  Vendor—Strongswan
--  Model—5.6.1
--  Software release—CentOS 7.5
-
++  Vendor—Strongswan
++  Model—5.6.1
++  Software release—CentOS 7.5
 
 ## Before you begin
 
@@ -143,7 +138,7 @@ GCP VPN gateway and tunnel.
 #### Select a GCP project name
 
 1. [Open the GCP Console](https://console.google.com).
-2. At the top of the page, select the GCP project you want to use.
+1. At the top of the page, select the GCP project you want to use.
 
     **Note**: Make sure that you use the same GCP project for all of the GCP
     procedures in this guide.
@@ -151,112 +146,103 @@ GCP VPN gateway and tunnel.
 #### Create a custom VPC network and subnet
 
 1. In the GCP Console,
-[go to the VPC Networks page](https://pantheon.corp.google.com/networking/networks/list).
+    [go to the VPC Networks page](https://pantheon.corp.google.com/networking/networks/list).
 1. Click **Create VPC network**.
 1. For **Name**, enter a name such as `vpn-vendor-test-network`. Remember
-this name for later.
+    this name for later.
 1. Under **Subnets, Subnet creation mode**, select the **Custom** tab and
-then populate the following fields:
+    then populate the following fields:
+    + **Name**—The name for the subnet, such as `vpn-subnet-1`.
+    + **Region**—The region that is geographically closest to the
+        on-premises gateway, such as  `us-central1`.
+    + **IP address range**—A range such as `10.240.0.0/16`.
 
-+ **Name**—The name for the subnet, such as `vpn-subnet-1`.
-+ **Region**—The region that is geographically closest to the
-    on-premises gateway, such as  `us-central1`.
-+ **IP address range**—A range such as `10.240.0.0/16`.
-
-5. In the **New subnet** window, click **Done**.
+1. In the **New subnet** window, click **Done**.
 1. Click **Create**. You're returned to the **VPC networks** page, where it
-takes about a minute for this network and its subnet to appear.
+    takes about a minute for this network and its subnet to appear.
 
 #### Create the GCP external IP address
 
 1.  In the GCP Console,
 [go to the External IP addresses page](https://pantheon.corp.google.com/networking/addresses/list).
-
 1. Click **Reserve Static Address**.
 1. Populate the following fields for the Cloud VPN address:
-
--  **Name**—The name of the address, such as `vpn-test-static-ip`.
-    Remember the name for later.
--  **Region**—The region where you want to locate the VPN gateway.
-    Normally, this is the region that contains the instances you want to
-    reach.
+    +  **Name**—The name of the address, such as `vpn-test-static-ip`.
+        Remember the name for later.
+    +  **Region**—The region where you want to locate the VPN gateway.
+        Normally, this is the region that contains the instances you want to
+        reach.
     
-4. Click **Reserve**. You are returned to the **External IP addresses** page.
-After a moment, the page displays the static external IP address that you
-have created.
-
+1. Click **Reserve**. You are returned to the **External IP addresses** page.
+    After a moment, the page displays the static external IP address that you
+    have created.
 1. Make a note of the IP address that is created so that you can use it to
-configure the VPN gateway later.
-
+    configure the VPN gateway later.
 
 ### Configuring route-based IPsec VPN using static routing
-   This section covers the steps for creating a GCP IPsec VPN using static routing.
+
+This section covers the steps for creating a GCP IPsec VPN using static routing.
+
 #### Configure the VPN gateway
 
 1. In the GCP Console, 
-[go to the VPN page](https://console.cloud.google.com/networking/vpn/list).
+    [go to the VPN page](https://console.cloud.google.com/networking/vpn/list).
 1. Click **Create VPN connection**.
 1. Populate the following fields for the gateway:
-
--  **Name**—The name of the VPN gateway. This name is displayed in the
-    console and used in by the gcloud tool to reference the gateway. Use a
-    name like `gcp-to-strongswan`.
--  **Network**—The VPC network that you created previously (for
-    example,  `vpn-vendor-test-network`) that contains the instances that the
-    VPN gateway will serve.
--  **Region**—The region where you want to locate the VPN gateway.
-    Normally, this is the region that contains the instances you want to reach.
--  **IP address**—Select the 
-    [static external IP address](#create-the-gcp-external-ip-address)
-    (for example, `vpn-test-static-ip`(146.148.83.11)) that you created for this gateway
-    in the previous section.
-
-
+    +  **Name**—The name of the VPN gateway. This name is displayed in the
+        console and used in by the gcloud tool to reference the gateway. Use a
+        name like `gcp-to-strongswan`.
+    +  **Network**—The VPC network that you created previously (for
+        example, `vpn-vendor-test-network`) that contains the instances that the
+        VPN gateway will serve.
+    +  **Region**—The region where you want to locate the VPN gateway.
+        Normally, this is the region that contains the instances you want to reach.
+    +  **IP address**—Select the 
+        [static external IP address](#create-the-gcp-external-ip-address)
+        (for example, `vpn-test-static-ip` (`146.148.83.11`)) that you created for
+        this gateway in the previous section.
 
 #### Configure the VPN tunnel
+
 Populate the fields for at least one tunnel:
 
--  **Name**—The name of the VPN tunnel, such as `vpn-test-tunnel1`.
--  **Remote peer IP address**—The public external IP address (209.119.81.229) of the
++  **Name**—The name of the VPN tunnel, such as `vpn-test-tunnel1`.
++  **Remote peer IP address**—The public external IP address (209.119.81.229) of the
     on-premises VPN gateway.
--  **IKE version**—`IKEv2` or `IKEv1`. IKEv2 is preferred, but IKEv1 is
++  **IKE version**—`IKEv2` or `IKEv1`. IKEv2 is preferred, but IKEv1 is
     supported if it is the only supported IKE version that the on-premises
     gateway can use.
--  **Shared secret**—A character string used in establishing encryption
++  **Shared secret**—A character string used in establishing encryption
     for the tunnel. You must enter the same shared secret into both VPN
     gateways. For more information, see
     [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
 
-
 1. In the configuration for a tunnel, under **Routing options**,
     choose **route based**.
 1. For **Remote network IP ranges**, set the IP address range or ranges
-    of the on-premises network (192.168.2.0/24), which is the network on the other side of the
+    of the on-premises network (`192.168.2.0/24`), which is the network on the other side of the
     tunnel from the Cloud VPN gateway you are currently configuring. 
-
 1. Click **Create** to create the gateway and initiate all tunnels. This step
-automatically creates a network-wide route and the necessary forwarding
-rules for the tunnel. The tunnels will not pass traffic until you've
-configured the firewall rules.
+    automatically creates a network-wide route and the necessary forwarding
+    rules for the tunnel. The tunnels will not pass traffic until you've
+    configured the firewall rules.
 
+#### Configure firewall rules
 
-
-#### Configure firewall
 1. Configure firewall rules to allow inbound traffic from the on-premises
-network subnets. You must also configure the on-premises network firewall to
-allow inbound traffic from your VPC subnet prefixes.
-
+    network subnets. You must also configure the on-premises network firewall to
+    allow inbound traffic from your VPC subnet prefixes.
 1. [Go to the Firewall rules page](https://console.cloud.google.com/networking/firewalls).
 1. Click **Create firewall rule**.
 1. Populate the following fields:
-    -  **Name**—A name such as `vpnrule1`.
-    -  **VPC network**—The name you used earlier for the VPC network,
+    +  **Name**—A name such as `vpnrule1`.
+    +  **VPC network**—The name you used earlier for the VPC network,
         such as `vpn-vendor-test-network`.
-    -  **Source filter**—A filter to apply your rule to specific
+    +  **Source filter**—A filter to apply your rule to specific
         sources of traffic. In this case, choose source IP ranges.
-    -  **Source IP ranges**—The peer ranges to accept from the peer
+    +  **Source IP ranges**—The peer ranges to accept from the peer
         VPN gateway.
-    -  **Allowed protocols and ports**—The string `tcp;udp;icmp`.
+    +  **Allowed protocols and ports**—The string `tcp;udp;icmp`.
 
 1. Click **Create**.
 
@@ -268,7 +254,6 @@ Configuring the vendor side of the VPN network requires you to use IPsec and IKE
 settings that are compatible with the GCP side of the network. The following
 table lists settings and information about values compatible with GCP VPN.
 Use these settings for the procedures in the subsections that follow.
-
 
 <table>
 <thead>
@@ -352,15 +337,16 @@ IKE Ciphers</a>.</td>
 
 ### Creating the VPN configuration
 
-
 Follow the procedure listed in the configuration code snippet below to create
-the base Layer 3 network configuration of Strongswan . Note the following:
+the base Layer 3 network configuration of Strongswan. Note the following:
 
--  At least one internal-facing network interface is required in order to
-connect to your on-premises network, and one external-facing interface is
-required in order to connect to GCP.
++  At least one internal-facing network interface is required in order to
+    connect to your on-premises network, and one external-facing interface is
+    required in order to connect to GCP.
 
-From the home directory, create a file named ipsec.conf under/etc/strongswan directory. Populate it with the following contents, replacing the placeholders with your environment's values:
+From the home directory, create a file named `ipsec.conf` under `/etc/strongswan`
+directory. Populate it with the following contents, replacing the placeholders
+with your environment's values:
 
 ```
 conn myconn
@@ -380,7 +366,9 @@ conn myconn
   rightsubnet=10.240.0.0/16
   rightauth=psk
 ```
-Then, run the following commands, replacing [secret-key] with a secret key (a string value):
+
+Then, run the following commands, replacing [secret-key] with a secret key
+(a string value):
 
 ```
 $ sudo apt-get update
@@ -389,145 +377,138 @@ $ echo "%any : PSK \"[secret-key]\"" | sudo tee /etc/strongswan/ipsec.secrets > 
 $ sudo sysctl -w net.ipv4.ip_forward=1
 $ sudo sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
 $ sudo systemctl restart strongswan
-
 ```
 
 ### Testing the configuration
 
-It's important to test the VPN connection from both sides of a VPN tunnel. For either side, make sure that the subnet that a machine or virtual machine is located in is being forwarded through the VPN tunnel.
+It's important to test the VPN connection from both sides of a VPN tunnel. For
+either side, make sure that the subnet that a machine or virtual machine is
+located in is being forwarded through the VPN tunnel.
 
 First, create VMs on both sides of the tunnel. Make sure that you configure the
 VMs on a subnet that will pass traffic through the VPN tunnel.
 
--  Instructions for creating virtual machines in Compute Engine are located
-in the 
-[Getting Started Guide](https://cloud.google.com/compute/docs/quickstart).
++  Instructions for creating virtual machines in Compute Engine are located
+    in the 
+    [Getting Started Guide](https://cloud.google.com/compute/docs/quickstart).
 -  Instructions for creating virtual machine for <vendor-name><product-name>
-platforms are located at <link here>.
+    platforms are located at <link here>.
 
 After VMs have been deployed on both the GCP and <vendor-name><product-name>
 platforms, you can use an ICMP echo (ping) test to test network connectivity
 through the VPN tunnel.
 
-On the Strongswan side, use the following instructions to test the connection to a
-machine that's on GCP
+On the Strongswan side, use the following instructions to test the connection
+to a machine that's on GCP
 
 1. Ping a VM machine on GCP.
 
-```
-[root@strongswancentos strongswan]# ping -c3 10.240.0.2
-PING 10.240.0.2 (10.240.0.2) 56(84) bytes of data.
-64 bytes from 10.240.0.2: icmp_seq=1 ttl=64 time=52.9 ms
-64 bytes from 10.240.0.2: icmp_seq=2 ttl=64 time=51.7 ms
-64 bytes from 10.240.0.2: icmp_seq=3 ttl=64 time=51.7 ms
+    ```
+    [root@strongswancentos strongswan]# ping -c3 10.240.0.2
+    PING 10.240.0.2 (10.240.0.2) 56(84) bytes of data.
+    64 bytes from 10.240.0.2: icmp_seq=1 ttl=64 time=52.9 ms
+    64 bytes from 10.240.0.2: icmp_seq=2 ttl=64 time=51.7 ms
+    64 bytes from 10.240.0.2: icmp_seq=3 ttl=64 time=51.7 ms
 
---- 10.240.0.2 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2003ms
-```
+    --- 10.240.0.2 ping statistics ---
+    3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+    ```
 
-2. To check on the status of the IKEv2 security associations use the strongswan command:
-swanctl --list-sas
+1. To check on the status of the IKEv2 security associations use the strongswan
+    command: `swanctl --list-sas`
 
-```
-[root@strongswancentos strongswan]# swanctl --list-sas
-myconn: #1, ESTABLISHED, IKEv2, 3a450cb00426d3d7_i 0b4c06b387f34bf5_r*
-  local  '209.119.81.229' @ 209.119.81.229[500]
-  remote '146.148.83.11' @ 146.148.83.11[500]
-  AES_CBC-128/HMAC_SHA2_256_128/PRF_HMAC_SHA2_256/MODP_2048
-  established 563s ago, reauth in 34613s
-  myconn: #1, reqid1, INSTALLED, TUNNEL, ESP:AES_CBC-256/HMAC_SHA2_512_256
-    istalled 563s ago, rekeying in 9166s, expires in 10237s
-    in  cf9fb639,   1128 bytes,    17 packets,     4s ago
-    out 662d4fc2,   1176 bytes,    14 packets,     4s ago
-    local    192.168.2.0/24
-    remote   10.240.0.0/16
-[root@strongswancentos strongswan]#    
-```
+    ```
+    [root@strongswancentos strongswan]# swanctl --list-sas
+    myconn: #1, ESTABLISHED, IKEv2, 3a450cb00426d3d7_i 0b4c06b387f34bf5_r*
+      local  '209.119.81.229' @ 209.119.81.229[500]
+      remote '146.148.83.11' @ 146.148.83.11[500]
+      AES_CBC-128/HMAC_SHA2_256_128/PRF_HMAC_SHA2_256/MODP_2048
+      established 563s ago, reauth in 34613s
+      myconn: #1, reqid1, INSTALLED, TUNNEL, ESP:AES_CBC-256/HMAC_SHA2_512_256
+        istalled 563s ago, rekeying in 9166s, expires in 10237s
+        in  cf9fb639,   1128 bytes,    17 packets,     4s ago
+        out 662d4fc2,   1176 bytes,    14 packets,     4s ago
+        local    192.168.2.0/24
+        remote   10.240.0.0/16
+    [root@strongswancentos strongswan]#    
+    ```
 
+## Troubleshooting IPsec on the Strongswan side
 
+If you are experiencing issues with your VPN setup based on the instructions above,
+try these tips to troubleshoot your setup:
 
-
-
-## Troubleshooting IPsec on Strongswan side
-
-If you are experiencing issues with your VPN setup based on the instructions above, try these tips to troubleshoot your setup:
 1. Check the status of your connection:
 
-```
-sudo strongswan status
+    ```
+    sudo strongswan status
 
-[root@strongswancentos strongswan]#strongswan status
-Security Associations (1 up , 0 connectioning):
-      myconn[1]: ESTABLISHED 36 minutes ago, 209.119.81.229[209.119.81.229]...146.148.83.11[146.148.
-83.11]
-      myconn[1]:  INSTALLED, TUNNEL, reqid 1, ESP SPIs: cf9fb639_i 662d4fc2_o
-      myconn[1]:   192.168.2.0/24 === 10.240.0.0/16
-[root@strongswancentos strongswan]#      
-```
+    [root@strongswancentos strongswan]#strongswan status
+    Security Associations (1 up , 0 connectioning):
+          myconn[1]: ESTABLISHED 36 minutes ago, 209.119.81.229[209.119.81.229]...146.148.83.11[146.148.83.11]
+          myconn[1]:  INSTALLED, TUNNEL, reqid 1, ESP SPIs: cf9fb639_i 662d4fc2_o
+          myconn[1]:   192.168.2.0/24 === 10.240.0.0/16
+    [root@strongswancentos strongswan]#      
+    ```
 
+1. If myconn isn't listed, start up the connection: `sudo strongswan up myconn`
 
-If myconn isn't listed, start up the connection:
-$ sudo strongswan up myconn
+    ```
+    [root@strongswancentos strongswan]#strongswan up myconn
+    establishing CHILD_SA myconn{2}
+    generating CREATE_CHILD_SA request 74 [ SA NO KE TSi TSr ]
+    sending packet: from 209.119.81.229[500] to 146.148.83.11[500] (480 bytes)
+    received packet: from 146.148.83.11[500] to 209.119.81.229[500] (480 bytes)
+    parsed CREATE_CHILD_SA response 74 [  SA NO KE TSi TSr  ]
+    CHILD_SA myconn{2} established with SPIs c4cfa6d7_i 137dce69_o and TS 192.168.2.0/24 === 10.240.0.0/16
+    connection 'myconn' established successfully
+    [root@strongswancentos strongswan]#
+    ```
 
-```
-[root@strongswancentos strongswan]#strongswan up myconn
-establishing CHILD_SA myconn{2}
-generating CREATE_CHILD_SA request 74 [ SA NO KE TSi TSr ]
-sending packet: from 209.119.81.229[500] to 146.148.83.11[500] (480 bytes)
-received packet: from 146.148.83.11[500] to 209.119.81.229[500] (480 bytes)
-parsed CREATE_CHILD_SA response 74 [  SA NO KE TSi TSr  ]
-CHILD_SA myconn{2} established with SPIs c4cfa6d7_i 137dce69_o and TS 192.168.2.0/24 === 10.240.0.0/
-16
-connection 'myconn' established successfully
-[root@strongswancentos strongswan]#
-```
+1. Determine whether the two VPN endpoints are able to communicate at all.
+    Run `tcpdump` on the receiving end to determine that your VM instance can
+     receive the packets:
+     
+     `tcpdump -nn -n host [public-ip-of-GCP-VPN-gateway] -i any -v`
 
+    ```
+    [root@strongswancentos strongswan]#tcpdump -nn -n host 146.148.83.11 -i any -v
+    tcpdump: listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes
+    16:36:28.009658 IP (tos 0X0, ttl 38, id 0, offset 0, flags [DF], proto ESP (50), length 172)
+        146.148.83.11 > 208.119.81.229: ESP(spi=0xc4cfa6d7,seq=0x46), length 152
+    16:36:28.009786 IP (tos 0x0, ttl 64, id 56767, offset 0, flags [none], proto ESP (50), length 172)
+        209.119.81.229 > 146.148.83.11: ESP(spi=0x137dce69,seq=0x46), length 152
+    16:36:29.010421 IP (tos 0x0, ttl 38, id 0, offset 0, flags [DF], proto ESP(50), length 172)
+        146.148.83.11 > 209.119.81.229: ESP(spi=0xc4cfa6d7,seq=0x47), length 152
+    16:36:29.010497 IP (tos 0x0, ttl 64, id 57440, offset 0, flags [none], proto ESP (50), length 172)
+        209.119.81.229 > 146.148.83.11: ESP(spi=0x137dce69,seq=0x47), length 152
+    16:36:30.011186 IP (tos 0x0, ttl 38, id 0, offset 0, flags [DF], proto ESP (50), length 172)
+        146.148.83.11 > 209.119.81.229: ESP(spi=0xc4cfa6d7, seq=0x48), length 152
+    16:36:30.011260 IP (tos 0x0, ttl 64, id 55719, 0ffset 0, flags [none], proto ESP (50), length 172)
+        209.119.81.229 > 146.148.83.11: ESP(spi=0x137dce69, seq=0x48), length 152
+    ^C
+    6 packets captured
+    7 packets received by filter
+    0 packets dropped by kernel
+    [root@strongswancentos strongswan]#
+    ```
 
+1. Turn on more verbose logging by adding the following lines to your
+    `/etc/strongswan/ipsec.conf` file:
 
-2.Determine whether the two VPN endpoints are able to communicate at all.
+    ```
+    config setup
+      charondebug="ike 3, mgr 3, chd 3, net 3"
 
+    conn myconn
+      authby=psk
+      auto=start
+      ...
+    ```
 
-Run tcpdump on the receiving end to determine that your VM instance can receive the packets:
-tcpdump -nn -n host [public-ip-of-GCP-VPN-gateway] -i any -v
-
-```
-[root@strongswancentos strongswan]#tcpdump -nn -n host 146.148.83.11 -i any -v
-tcpdump: listening on any, link-type LINUX_SLL (Linux cooked), capture size 262144 bytes
-16:36:28.009658 IP (tos 0X0, ttl 38, id 0, offset 0, flags [DF], proto ESP (50), length 172)
-    146.148.83.11 > 208.119.81.229: ESP(spi=0xc4cfa6d7,seq=0x46), length 152
-16:36:28.009786 IP (tos 0x0, ttl 64, id 56767, offset 0, flags [none], proto ESP (50), length 172)
-    209.119.81.229 > 146.148.83.11: ESP(spi=0x137dce69,seq=0x46), length 152
-16:36:29.010421 IP (tos 0x0, ttl 38, id 0, offset 0, flags [DF], proto ESP(50), length 172)
-    146.148.83.11 > 209.119.81.229: ESP(spi=0xc4cfa6d7,seq=0x47), length 152
-16:36:29.010497 IP (tos 0x0, ttl 64, id 57440, offset 0, flags [none], proto ESP (50), length 172)
-    209.119.81.229 > 146.148.83.11: ESP(spi=0x137dce69,seq=0x47), length 152
-16:36:30.011186 IP (tos 0x0, ttl 38, id 0, offset 0, flags [DF], proto ESP (50), length 172)
-    146.148.83.11 > 209.119.81.229: ESP(spi=0xc4cfa6d7, seq=0x48), length 152
-16:36:30.011260 IP (tos 0x0, ttl 64, id 55719, 0ffset 0, flags [none], proto ESP (50), length 172)
-    209.119.81.229 > 146.148.83.11: ESP(spi=0x137dce69, seq=0x48), length 152
-^C
-6 packets captured
-7 packets received by filter
-0 packets dropped by kernel
-[root@strongswancentos strongswan]#
-```
-
-
-
-3. Turn on more verbose logging by adding the following lines to your /etc/strongswan/ipsec.conf file:
-
-```
-config setup
-  charondebug="ike 3, mgr 3, chd 3, net 3"
-
-
-conn myconn
-  authby=psk
-  auto=start
-  ...
-```
-
-Next, retry your connection. Although the connection should still fail, you can check the log for errors. The log file should be located at /var/log/messages on your linux.
+Next, retry your connection. Although the connection should still fail,
+you can check the log for errors. The log file should be located at 
+`/var/log/messages` in your Linux environment.
 
 ```
 [root@strongswancentos strongswan]#tail -20f /var/log/messages
@@ -563,9 +544,6 @@ Jun 14 16:44:45 strongswancentos strongswan: 12[MGR] checkout IKEv2 SA with SPIs
 Jun 14 16:44:45 strongswancentos charon: 12[MGR] checkin of IKE_SA successful
 ```
 
-
-
-
 ## Reference documentation
 
 You can refer to the following <vendor-name><product-name> documentation and
@@ -575,20 +553,19 @@ Cloud VPN documentation for additional information about both products.
 
 To learn more about GCP networking, see the following documents:
 
--  [VPC Networks](https://cloud.google.com/vpc/docs)
--  [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview)
--  [Creating Route-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-route-based-vpns)
--  [Creating Policy-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-policy-based-vpns)
--  [Advanced Cloud VPN Configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
--  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
++  [VPC Networks](https://cloud.google.com/vpc/docs)
++  [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview)
++  [Creating Route-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-route-based-vpns)
++  [Creating Policy-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-policy-based-vpns)
++  [Advanced Cloud VPN Configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
++  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
 
 ### Strongswan documentation
 
 For more product information on Strongswan, see the following
 VPN feature configuration guides and datasheets:
 
--  [StrongSwan - Documentation](https://www.strongswan.org/documentation.html)
-
++  [StrongSwan - Documentation](https://www.strongswan.org/documentation.html)
 
 ## Appendix: Using gcloud commands
 
@@ -795,7 +772,6 @@ export CUST_GW_EXT_IP=[CUST_GW_EXT_IP]
 export ROUTE_NAME=[ROUTE_NAME]
 ```
 
-
 ### Configuring IPsec VPN using static routing
 
 This section describes how to use the `gcloud` command-line tool to configure
@@ -814,25 +790,25 @@ you've set the variables as described earlier under
 [Setting environment variables for gcloud command parameters](#setting-environment-variables-for-gcloud-command-parameters).
 
 1. Create a custom VPC network. Make sure there is no conflict with your
-local network IP address range. Note the following:
+    local network IP address range. Note the following:
 
-    -  For `[RANGE]`, substitute an appropriate CIDR range, such as
-    `172.16.100.0/24`.
+    +  For `[RANGE]`, substitute an appropriate CIDR range, such as
+        `172.16.100.0/24`.
 
-    ```
-    gcloud compute networks create $VPC_NETWORK_NAME \
-        --project $PROJECT_NAME \
-        --subnet-mode custom
+        ```
+        gcloud compute networks create $VPC_NETWORK_NAME \
+            --project $PROJECT_NAME \
+            --subnet-mode custom
 
-    gcloud compute networks subnets create $VPC_SUBNET_NAME \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --region $REGION \
-        --range [RANGE]
-    ```
+        gcloud compute networks subnets create $VPC_SUBNET_NAME \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --region $REGION \
+            --range [RANGE]
+        ```
 
 1. Create a VPN gateway in the region you are using. Normally, this is the
-region that contains the instances you want to reach.
+    region that contains the instances you want to reach.
 
     ```
     gcloud compute target-vpn-gateways create $VPN_GATEWAY_1 \
@@ -841,11 +817,11 @@ region that contains the instances you want to reach.
         --region $REGION
     ```
 
-This step creates an unconfigured VPN gateway in your GCP VPC network.
+    This step creates an unconfigured VPN gateway in your GCP VPC network.
 
 1. Reserve a static IP address in the VPC network and region where you
-created the VPN gateway. Make a note of the address that is created for use
-in future steps.
+    created the VPN gateway. Make a note of the address that is created for use
+    in future steps.
 
     ```
     gcloud compute addresses create $STATIC_EXTERNAL_IP \
@@ -854,45 +830,45 @@ in future steps.
     ```
 
 1. Create three forwarding rules, one each to forward ESP, IKE, and NAT-T
-traffic to the Cloud VPN gateway. Note the following:
+    traffic to the Cloud VPN gateway. Note the following:
 
-    -  For `[STATIC_IP_ADDRESS]`, use the static IP address that you reserved in
-    the previous step.
+    +  For `[STATIC_IP_ADDRESS]`, use the static IP address that you reserved in
+        the previous step.
 
-    ```
-    gcloud compute forwarding-rules create $FWD_RULE_ESP \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol ESP \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --address [STATIC_IP_ADDRESS]
+        ```
+        gcloud compute forwarding-rules create $FWD_RULE_ESP \
+            --project $PROJECT_NAME \
+            --region $REGION \
+            --ip-protocol ESP \
+            --target-vpn-gateway $VPN_GATEWAY_1 \
+            --address [STATIC_IP_ADDRESS]
 
-    gcloud compute forwarding-rules create $FWD_RULE_UDP_500 \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol UDP \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --ports 500 \
-        --address [STATIC_IP_ADDRESS]
+        gcloud compute forwarding-rules create $FWD_RULE_UDP_500 \
+            --project $PROJECT_NAME \
+            --region $REGION \
+            --ip-protocol UDP \
+            --target-vpn-gateway $VPN_GATEWAY_1 \
+            --ports 500 \
+            --address [STATIC_IP_ADDRESS]
 
-    gcloud compute forwarding-rules create $FWD_RULE_UDP_4500 \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol UDP \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --ports 4500 \
-        --address [STATIC_IP_ADDRESS]
-    ``` 
+        gcloud compute forwarding-rules create $FWD_RULE_UDP_4500 \
+            --project $PROJECT_NAME \
+            --region $REGION \
+            --ip-protocol UDP \
+            --target-vpn-gateway $VPN_GATEWAY_1 \
+            --ports 4500 \
+            --address [STATIC_IP_ADDRESS]
+        ``` 
 
 1. Create a VPN tunnel on the Cloud VPN Gateway that points to the external
-IP address of your on-premises VPN gateway. Note the following:
+    IP address of your on-premises VPN gateway. Note the following:
 
--  Set the IKE version. The following command sets the IKE version to
++  Set the IKE version. The following command sets the IKE version to
     2, which is the default, preferred IKE version. If you need to set it to
     1, use `--ike-version 1`.
--  For `[SHARED_SECRET]`, supply the shared secret.  For details, see
++  For `[SHARED_SECRET]`, supply the shared secret.  For details, see
     [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
--  For `[LOCAL_TRAFFIC_SELECTOR_IP]`, supply an IP address range, like
++  For `[LOCAL_TRAFFIC_SELECTOR_IP]`, supply an IP address range, like
     `172.16.100.0/24`,  that will be accessed on the GCP side of the  tunnel,
     as described in
     [Traffic selectors](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#static-routing-networks)
@@ -913,10 +889,9 @@ IP address of your on-premises VPN gateway. Note the following:
     is not yet passing traffic.
 
 1. Use a
-[static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create)
-to forward traffic to the destination range of IP addresses in your
-    on-premises network. The region must be the
-    same region as for the VPN tunnel.
+    [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create)
+    to forward traffic to the destination range of IP addresses in your
+    on-premises network. The region must be the same region as for the VPN tunnel.
 
     ```
     gcloud compute routes create $ROUTE_NAME \
@@ -928,10 +903,10 @@ to forward traffic to the destination range of IP addresses in your
     ```
 
 1. If you want to pass traffic from multiple subnets through the VPN tunnel,
-repeat the previous step to forward the IP address of each of the subnets.
+    repeat the previous step to forward the IP address of each of the subnets.
 
 1. Create firewall rules to allow traffic between the on-premises network and
-GCP VPC networks.
+    GCP VPC networks.
 
     ```
     gcloud compute firewall-rules create $VPN_RULE \
@@ -940,5 +915,4 @@ GCP VPC networks.
         --allow tcp,udp,icmp \
         --source-ranges $IP_ON_PREM_SUBNET
     ```
-
 
