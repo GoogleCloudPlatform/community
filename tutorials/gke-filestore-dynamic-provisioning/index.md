@@ -1,6 +1,6 @@
 ---
 title: Dynamically provision GKE storage from Cloud Filestore using the NFS-Client provisioner
-description: Learn how to deploy the NFS-Client provision in a GKE cluster to dynamically provision storage from Cloud Filestore.
+description: Learn how to deploy the NFS-Client provisioner in a GKE cluster to dynamically provision storage from Cloud Filestore.
 author: wkh
 tags: GKE, Filestore, Storage, NFS
 date_published: 2018-09-26
@@ -32,7 +32,7 @@ gcloud services enable file.googleapis.com
 ```
 
 ## Create a Cloud Filestore volume
-1. Create a Cloud Filestore instance with 1TB of stroage capacity
+1. Create a Cloud Filestore instance with 1TB of storage capacity
 ```sh
 FS=[NAME FOR THE FILESTORE YOU WILL CREATE]
 gcloud beta filestore instances create ${FS} \
@@ -71,7 +71,7 @@ Download the [desired version](https://github.com/helm/helm/releases) and unpack
 wget https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz
 tar xf helm-v2.11.0-linux-amd64.tar.gz
 ```
-Add the ```helm``` binary to ```/usr/local/bin```
+Add the ```helm``` binary to ```/usr/local/bin```.
 ```sh
 sudo ln -s $PWD/linux-amd64/helm /usr/local/bin/helm
 ```
@@ -96,11 +96,11 @@ subjects:
     name: tiller
     namespace: kube-system
 ```
-Create the ```tiller``` service account and ```cluster-admin``` role binding
+Create the ```tiller``` service account and ```cluster-admin``` role binding.
 ```sh
 kubectl apply -f rbac-config.yaml
 ```
-Initialize helm
+Initialize Helm.
 ```sh
 helm init --service-account tiller
 ```
@@ -109,16 +109,16 @@ helm init --service-account tiller
 Create an instance of NFS-Client Provisioner connected to the Cloud Filestore instance you created earlier 
 via its IP address (```${FSADDR}```). The NFS-Client Provisioner creates a new storage class: ```nfs-client```. Persistent
 volume claims against that storage class will be fulfilled by creating persistent volumes backed by directories
-under the ```/volumes``` directory on the Cloud Filestore instances managed storage.
+under the ```/volumes``` directory on the Cloud Filestore instance's managed storage.
 ```sh
 helm install stable/nfs-client-provisioner --name nfs-cp --set nfs.server=${FSADDR} --set nfs.path=/volumes
 watch kubectl get po -l app=nfs-client-provisioner
 ```
-Press Ctrl-C when the provisioner pod's status changes to Running
+Press Ctrl-C when the provisioner pod's status changes to Running.
 
 ## Make a Persistent Volume Claim
 While you can use any application that uses storage classes to do [dynamic provisioning](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/)
-to test the nfs-client provisioner, in this tutorial you will deploy a [PostgreSQL](https://www.postgresql.org/) instance verify
+to test the NFS-Client Provisioner, in this tutorial you will deploy a [PostgreSQL](https://www.postgresql.org/) instance to verify
 the configuration.
 ```sh
 helm install --name postgresql --set persistence.storageClass=nfs-client stable/postgresql
@@ -126,7 +126,7 @@ watch kubectl get po -l app=postgresql
 ```
 Press Ctrl-C when the database pod's status changes to Running.
 
-The PostgreSQL Helm chart creates an 8Gb persistent volume claim on Cloud Filestore and mounts it at ```/var/lib/postgresql/data/pgdata```
+The PostgreSQL Helm chart creates an 8GB persistent volume claim on Cloud Filestore and mounts it at ```/var/lib/postgresql/data/pgdata```
 in the database pod.
 
 ## Verify Cloud Filestore volume directory creation
