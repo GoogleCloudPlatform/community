@@ -84,28 +84,28 @@ connection, which is usually a device in a physical data center or in
 another cloud provider's network. GCP instructions are written from the
 point of view of the GCP VPC network, so "on-premises gateway" refers to the
 gateway that's connecting _to_ GCP.
--  **External IP address** or **GCP peer address**—a single static IP address
+-  **External IP address** or **GCP peer address**—A single static IP address
 within a GCP project that exists at the edge of the GCP network.
 -  **Static routing**—Manually specifying the route to subnets on the GCP
 side and to the on-premises side of the VPN gateway.
 
 ### Alibaba terminology
 
--  **Alibaba Cloud VPC**-A private network established in Alibaba Cloud. VPCs 
-are logically isolated from other virtual networks in Alibaba Cloud. VPCs allow 
+-  **Alibaba Cloud VPC**-A private network established in Alibaba Cloud that is
+logically isolated from other virtual networks in Alibaba Cloud. VPCs allow 
 you to launch and use Alibaba Cloud resources in your VPC.
 -  **Alibaba Cloud VSwitch**-A VSwitch is a basic network device of a VPC and 
-used to connect different cloud product instances. When creating a cloud product 
-instance in a VPC, you must specify the VSwitch that the instance is located.
+is used to connect different cloud product instances. When creating a cloud product 
+instance in a VPC, you must specify the VSwitch where the instance is located.
 -  **Alibaba Cloud Zone**-Zones are physical areas with independent power grids 
 and networks in one region. Alibaba recommends creating different VSwitches in 
-different zones to help ensure disaster recovery.
+different zones disaster recovery purposes.
 -  **Alibaba Cloud VPN Gateway**-The VPN gateway is the IPsec VPN gateway created 
 on the Alibaba Cloud side. One VPN gateway can have multiple VPN connections.
 -  **Alibaba Cloud Customer Gateway**-The customer gateway is the VPN service 
 deployed in the on-premises data center or, in this case, the GCP Cloud VPN gateway. 
 By creating a customer gateway, you can register the VPN information to the cloud, 
-and then create a VPN connection to connect the VPN gateway and the customer gateway.
+and then create a VPN connection between the VPN gateway and the customer gateway.
 -  **Alibaba Cloud VRouter**-A VRouter is a hub in the VPC that connects all 
 VSwitches in the VPC and serves as a gateway device that connects the VPC to 
 other networks. VRouter routes the network traffic according to the configurations 
@@ -130,7 +130,7 @@ For detailed topology information, see the following resources:
 -  For redundant topologies,  the
 [Cloud VPN documentation on redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns).
 
-Disclaimer: At time of this writing, site-to-site IPsec VPN tunnel configuration using dynamic routing
+Disclaimer: At this time, site-to-site IPsec VPN tunnel configuration using dynamic routing
 between Cloud VPN and Alibaba Cloud VPN Gateway is not supported. 
 
 ## Product environment
@@ -159,9 +159,7 @@ To create a GCP network, a subnetwork, and other entities described in this
 guide, you must be able to sign in to GCP as a user who has
 [Network Admin](https://cloud.google.com/compute/docs/access/iam#network_admin_role)
 permissions. For details, see
-[Required Permissions](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes#required_permissions)
-in the article
-[Creating a VPN Tunnel using Dynamic Routing](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes).
+[Required Permissions](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes#required_permissions).
 
 ### IP ranges
 
@@ -201,8 +199,8 @@ into your network.</td>
 </tr>
 <tr>
 <td>Start</td>
-<td><code>Auto</code> (on-premises device should automatically restart the
-connection if it drops)</td>
+<td><code>Auto</code> (an on-premises device should automatically restart the
+connection if it drops.)</td>
 </tr>
 <tr>
 <td>PFS (Perfect Forward Secrecy)</td>
@@ -240,8 +238,7 @@ Both route-based Cloud VPN and policy-based Cloud VPN use static routing.  For
 information on how this works, see the 
 [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).
 
-There are two ways to create VPN gateways on GCP: using the Google Cloud
-Platform Console and using the
+You can create VPN gateways on GCP by using either the GCP Console or the
 [gcloud command-line tool](https://cloud.google.com/sdk/).
 This section describes how to perform the tasks using the GCP Console. To see
 the `gcloud` commands for performing these tasks, see the
@@ -259,8 +256,8 @@ procedures.
 
 #### Select a GCP project name
 
-1. [Open the GCP Console](https://console.google.com).
-1. At the top of the page, select the GCP project you want to use.
++   [Open the GCP Console](https://console.google.com) and at the top of the page, 
+    select the GCP project you want to use.
 
     **Note**: Make sure that you use the same GCP project for all of the GCP
     procedures in this guide.
@@ -313,7 +310,7 @@ configure the VPN gateway later.
 1. Populate the following fields for the gateway:
 
     +  **Name**—The name of the VPN gateway. This name is displayed in the
-        console and used in by the gcloud tool to reference the gateway. Use a
+        console and used in by `gcloud` to reference the gateway. Use a
         name like `vpn-test-alibaba-gw-1`, where `alibaba` is a
         string that identifies the vendor.
     +  **Network**—The VPC network that you created previously (for
@@ -385,10 +382,10 @@ on-premises side of the VPN gateway configuration using Alibaba Cloud VPN Gatewa
 
 This section covers the steps of creating an Alibaba Cloud VPC.
 
-1. Login to the Alibaba Management Console:
+1. Log in to the Alibaba Management Console:
     + Go to **Products** > **Virtual Private Cloud**.
 1. Create a new VPC:
-    + Select a **Region** (for example, US (Silicon Valley)).
+    + Select a **Region** (for example, `US (Silicon Valley)`).
     + Click the **Create VPC** button.
 1. Configure the following VPC settings:
     + **VPC Name**—Enter the name of the VPC (for example, `alibaba-vpc`).
@@ -431,7 +428,7 @@ Note: The VPN Gateway will take several minutes to come up and obtain a public I
 1. Select **Region** (for example, `US (Silicon Valley)`), and then click **Create Customer Gateway**.
 1. Complete the following settings:
     + **Name**—Provide a name to the customer gateway (for example, `gcp-customer-gateway`).
-    + **IP Address**—Provide the Public IP address of GCP (for example, `35.197.191.225`).
+    + **IP Address**—Provide the public IP address of GCP (for example, `35.197.191.225`).
     + Click **OK**.
 
 ### Configure an Alibaba Cloud IPSec Connection
@@ -442,8 +439,9 @@ This section covers the steps of creating an Alibaba IPSec connection with the G
 1. Click **Create IPsec Connection**.
 1. Complete the following settings:
     + **Name**—Provide a name to the VPN connection (for example, `tunnel-vpn-1`).
-    + **VPN Gateway**—Choose the VPN gateway in the dropdown which was created earlier (for example, `alibaba-vpn-gateway`).
-    + **Customer Gateway**—Choose the customer gateway in the dropdown which was created earlier
+    + **VPN Gateway**—In the dropdown, choose the VPN gateway that you created earlier
+        (for example, `alibaba-vpn-gateway`).
+    + **Customer Gateway**—In the dropdown, choose the customer gateway that you created earlier
         (for example, `gcp-customer-gateway`).
     + **Local network**—Provide the local subnet for Alibaba (for example, `192.168.1.0/24`).
     + **Remote Network**—Provide the remote subnet for GCP (for example, `172.16.1.0/24`).
@@ -455,11 +453,11 @@ This section covers the steps of creating an Alibaba IPSec connection with the G
     + **Version**—`ikev2`.
     + Leave all other options default.
 1. Click **OK**.
-1. Verify that the IPsec Tunnel is established. It may take a few minutes.
+1. Verify that the IPsec Tunnel is established. It might take a few minutes.
 
     **Note**: The tunnel status should eventually indicate Phase 2 of IKE Tunnel 
     Negotiation Succeeded. And from the GCP-side, the VPN tunnel status should transition
-    from Negotiation failure to Established. You may need to refresh the GCP 
+    from Negotiation failure to Established. You might need to refresh the GCP 
     Console page until the Established state appears. If the tunnel status in the
     Alibaba Cloud management console does not reach Succeeded or the tunnel status
     on the GCP Console does not reach Established, refer to the Troubleshooting
