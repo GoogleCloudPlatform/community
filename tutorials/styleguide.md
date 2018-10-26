@@ -392,7 +392,7 @@ options:
 Just embed the source code directly in the tutorial. Wrap the code in three
 backticks or indent by four spaces to achieve proper formatting.
 
-This option is the simplest, but offer no way to test the code, and does not
+This option is the simplest, but offers no way to test the code, and does not
 allow the user to view actual source code files as they might exist in a real
 project.
 
