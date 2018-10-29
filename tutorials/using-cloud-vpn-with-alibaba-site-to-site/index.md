@@ -1,14 +1,16 @@
 ---
 title: Google Cloud VPN Interop Guide for Alibaba Cloud VPN Gateway
-description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on Google Cloud Platform (GCP) and  Alibaba Cloud VPN Gateway
+description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on Google Cloud Platform (GCP) and Alibaba Cloud VPN Gateway
 author: David Lin
 tags: VPN, interop, alibaba, alibaba cloud vpn gateway
-date_published: 2018-10-26
+date_published: 2018-10-29
 ---
 
 Learn how to build site-to-site IPsec VPNs between
 [Cloud VPN](https://cloud.google.com/vpn/docs/) on Google Cloud Platform (GCP) and
 Alibaba Cloud VPN Gateway.
+
+# Contents
 
 - [Google Cloud VPN Interop Guide](#google-cloud-vpn-interop-guide)
 - [Introduction](#introduction)
@@ -57,7 +59,7 @@ testing it._
 
 Author: cloudservices-gcp-support@eplus.com
 
-## Introduction
+# Introduction
 
 This guide walks you through the process of configuring
 Alibaba Cloud VPN Gateway for integration with the
@@ -70,11 +72,11 @@ information for your environment.
 For more information about Cloud VPN, see the
 [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).
 
-## Terminology
+# Terminology
 
 Below are definitions of terms used throughout this guide.
 
-### GCP terminology
+## GCP terminology
 
 -  **GCP VPC network**—A single virtual network within a single GCP project.
 -  **On-premises gateway**—The VPN device on the non-GCP side of the
@@ -87,7 +89,7 @@ within a GCP project that exists at the edge of the GCP network.
 -  **Static routing**—Manually specifying the route to subnets on the GCP
 side and to the on-premises side of the VPN gateway.
 
-### Alibaba terminology
+## Alibaba terminology
 
 -  **Alibaba Cloud VPC**-A private network established in Alibaba Cloud that is
 logically isolated from other virtual networks in Alibaba Cloud. VPCs allow 
@@ -113,7 +115,7 @@ network traffic destined to a CIDR block. It has two types of entries: system ro
 entry and custom route entry.
 -  **Alibaba Cloud Route Table**-A route table is a list of route entries in a VRouter.
 
-## Topology
+# Topology
 
 Cloud VPN supports the following topology with Alibaba Cloud VPN Gateway:
 
@@ -131,27 +133,27 @@ For detailed topology information, see the following resources:
 Disclaimer: At this time, site-to-site IPsec VPN tunnel configuration using dynamic routing
 between Cloud VPN and Alibaba Cloud VPN Gateway is not supported. 
 
-## Product environment
+# Product environment
 
 The on-premise VPN gateway used in this guide is as follows:
 
 -  Vendor—Alibaba Cloud
 -  Service—VPN Gateway
 
-## Before you begin
+# Before you begin
 
 Follow the steps in this section to prepare for VPN configuration.
 
 **Note**: This guide assumes that you have basic knowledge of the
 [IPsec](https://wikipedia.org/wiki/IPsec) protocol.
 
-### GCP account and project
+## GCP account and project
 
 Make sure you have a GCP account. When you begin, you must select or create a
 GCP project where you will build the VPN. For details, see
 [Creating and Managing Projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
 
-### Permissions
+## Permissions
 
 To create a GCP network, a subnetwork, and other entities described in this
 guide, you must be able to sign in to GCP as a user who has
@@ -159,11 +161,11 @@ guide, you must be able to sign in to GCP as a user who has
 permissions. For details, see
 [Required Permissions](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes#required_permissions).
 
-### IP ranges
+## IP ranges
 
 The IP address ranges of the GCP VPC and the Alibaba VPC must not overlap.
 
-### GCP-compatible settings for IPsec and IKE
+## GCP-compatible settings for IPsec and IKE
 Configuring the vendor side of the VPN network requires you to use IPsec and IKE
 settings that are compatible with the GCP side of the network. The following
 table lists settings and information about values compatible with GCP VPN.
@@ -222,14 +224,14 @@ The defaults indicated below will work with the defaults used on the GCP side.
 +  **Diffie-Hellman group**—<code>group2</code>
 +  **Lifetime/SA life cycles**—<code>86400</code> seconds
 
-## Configuration overview
+# Configuration overview
 
 The Google Cloud VPN with Alibaba Cloud VPN Gateway configuration consists of the following steps.
 
 1. Configure the GCP side.
 1. Configure the Alibaba Cloud side.
 
-## Configuring the GCP side
+# Configuring the GCP side
 
 This section covers the steps for creating a GCP IPsec VPN using static routing.
 Both route-based Cloud VPN and policy-based Cloud VPN use static routing.  For
@@ -242,7 +244,7 @@ This section describes how to perform the tasks using the GCP Console. To see
 the `gcloud` commands for performing these tasks, see the
 [appendix](#appendix-using-gcloud-commands).
 
-### Initial tasks
+## Initial tasks
 
 Complete the following procedures before configuring a static GCP VPN gateway 
 and tunnel.
@@ -252,7 +254,7 @@ the VPC network and subnet, IP address, and so on. Each time you assign a name,
 make a note of it, because you often need to use those names in later
 procedures.
 
-#### Select a GCP project name
+### Select a GCP project name
 
 +   [Open the GCP Console](https://console.google.com) and at the top of the page, 
     select the GCP project you want to use.
@@ -260,7 +262,7 @@ procedures.
     **Note**: Make sure that you use the same GCP project for all of the GCP
     procedures in this guide.
 
-#### Create a custom VPC network and subnet
+### Create a custom VPC network and subnet
 
 1. In the GCP Console,
 [go to the VPC Networks page](https://pantheon.corp.google.com/networking/networks/list).
@@ -279,7 +281,7 @@ then populate the following fields:
 1. Click **Create**. You're returned to the **VPC networks** page, where it
 takes about a minute for this network and its subnet to appear.
 
-#### Create the GCP external IP address
+### Create the GCP external IP address
 
 1.  In the GCP Console,
 [go to the External IP addresses page](https://pantheon.corp.google.com/networking/addresses/list).
@@ -298,9 +300,9 @@ have created.
 1. Make a note of the IP address that is created so that you can use it to
 configure the VPN gateway later.
 
-### Configure a route-based IPsec VPN using static routing
+## Configure a route-based IPsec VPN using static routing
 
-#### Configure the VPN gateway
+### Configure the VPN gateway
 
 1. In the GCP Console, 
 [go to the VPN page](https://console.cloud.google.com/networking/vpn/list).
@@ -348,7 +350,7 @@ configure the VPN gateway later.
     created firewall rules in GCP to allow traffic through the tunnel between the
     Cloud VPN  gateway and the on-premises gateway.
 
-#### Configure firewall rules
+### Configure firewall rules
 
 Next, you configure GCP firewall rules to allow inbound traffic from the
 on-premises network subnets. You must also configure the on-premises network
@@ -371,12 +373,12 @@ firewall to allow inbound traffic from your VPC subnet prefixes.
 
 1. Click **Create**.
 
-## Configuring the Alibaba Cloud side
+# Configuring the Alibaba Cloud side
 
 This section includes sample tasks that describe how to configure the
 on-premises side of the VPN gateway configuration using Alibaba Cloud VPN Gateway.
 
-### Create an Alibaba Cloud VPC
+## Create an Alibaba Cloud VPC
 
 This section covers the steps of creating an Alibaba Cloud VPC.
 
@@ -390,7 +392,7 @@ This section covers the steps of creating an Alibaba Cloud VPC.
     + **Destination CIDR Block**—Specify the IP address range for the VPC in the form of 
         a Classless Inter-Domain Routing (CIDR) block (for example, `192.168.0.0/16`).
 
-### Create an Alibaba Cloud VSwitch
+## Create an Alibaba Cloud VSwitch
 
 This section covers the steps of configuring the Alibaba Cloud VSwitch.
 
@@ -401,7 +403,7 @@ This section covers the steps of configuring the Alibaba Cloud VSwitch.
 1. Click **OK** followed by the **Complete** button.
 1. Verify the VPC and VSwitch status indicate "Available".
 
-### Create an Alibaba Cloud VPN Gateway
+## Create an Alibaba Cloud VPN Gateway
 
 This section covers the steps of configuring the Alibaba Cloud VPN Gateway.
 
@@ -419,7 +421,7 @@ This section covers the steps of configuring the Alibaba Cloud VPN Gateway.
 
 Note: The VPN Gateway will take several minutes to come up and obtain a public IP address. 
 
-### Configure an Alibaba Cloud Customer Gateway
+## Configure an Alibaba Cloud Customer Gateway
 
 1. Log in to the Alibaba Cloud console.
 1. Go to **Products** > **Virtual Private Cloud** > **Customer Gateways**.
@@ -429,7 +431,7 @@ Note: The VPN Gateway will take several minutes to come up and obtain a public I
     + **IP Address**—Provide the public IP address of GCP (for example, `35.197.191.225`).
     + Click **OK**.
 
-### Configure an Alibaba Cloud IPSec Connection
+## Configure an Alibaba Cloud IPSec Connection
 
 This section covers the steps of creating an Alibaba IPSec connection with the GCP Cloud gateway.  
 
@@ -461,7 +463,7 @@ This section covers the steps of creating an Alibaba IPSec connection with the G
     on the GCP Console does not reach Established, refer to the Troubleshooting
     section of this document.
 
-### Configure an Alibaba Cloud static route entry
+## Configure an Alibaba Cloud static route entry
 
 Finally, in order to route traffic from the Alibaba Cloud VPC to Google Cloud VPC
 through the IPsec tunnel, you need to add a custom route entry for the VSwitch subnet. 
@@ -475,7 +477,7 @@ through the IPsec tunnel, you need to add a custom route entry for the VSwitch s
     + **VPN Gateway** – The VPN Gateway created earlier (e.g. `alibaba-vpn-gateway`).
 1. Click **OK**
 
-### Testing the configuration
+## Testing the configuration
 
 It's important to test the VPN connection from both sides of a VPN tunnel. 
 For either side, make sure that the subnet that a machine or virtual machine 
@@ -507,17 +509,17 @@ machine that's behind the on-premises gateway:
     command line.
 1. Ping a machine that's behind the on-premises gateway.
 
-## Troubleshooting IPsec on Alibaba Cloud VPN Gateway
+# Troubleshooting IPsec on Alibaba Cloud VPN Gateway
 
 For troubleshooting information, see the
 [Alibaba IPSec Connections Troubleshooting Guide](https://partners-intl.aliyun.com/help/doc-detail/65802.htm?spm=a2c63.o282931.b99.27.4973a641RT0hOX) and [View IPSec Connections Logs](https://www.alibabacloud.com/help/doc-detail/65288.htm?spm=5176.11182206.0.0.3c5b4c8f4JJqGH#h2-view-ipsec-connection-logs5).
 
-## Reference documentation
+# Reference documentation
 
 You can refer to the following Alibaba Cloud VPN Gateway documentation and
 Cloud VPN documentation for additional information about both products.
 
-### GCP documentation
+## GCP documentation
 
 To learn more about GCP networking, see the following documents:
 
@@ -528,7 +530,7 @@ To learn more about GCP networking, see the following documents:
 -  [Advanced Cloud VPN Configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
 -  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
 
-### Alibaba Cloud VPN Gateway documentation
+## Alibaba Cloud VPN Gateway documentation
 
 For more product information on Alibaba Cloud VPN Gateway, see the following
 Alibaba Cloud VPN Gateway feature configuration guides and datasheets:
@@ -538,7 +540,7 @@ Alibaba Cloud VPN Gateway feature configuration guides and datasheets:
 -  [Configure a Site-to-Site VPN](https://partners-intl.aliyun.com/help/doc-detail/65072.htm?spm=a2c63.l28256.a3.7.13b5e889MWMzAE)
 -  [Alibaba Cloud Region and Endpoint Names](https://www.alibabacloud.com/help/doc-detail/31837.htm)
 
-## Appendix: Using gcloud commands
+# Appendix: Using gcloud commands
 
 The instructions in this guide focus on using the GCP Console. However, you can
 perform many of the tasks for the GPC side of the VPN configuration by using the
@@ -546,7 +548,7 @@ perform many of the tasks for the GPC side of the VPN configuration by using the
 commands can be faster and more convenient if you're comfortable with using a
 command-line interface.
 
-### Running gcloud commands
+## Running gcloud commands
 
 You can run `gcloud` commands on your local computer by installing the [Cloud
 SDK](https://cloud.google.com/sdk/). Alternatively, you can run `gcloud`
@@ -557,7 +559,7 @@ own computer, and you don't need to set up authentication.
 **Note**: The `gcloud` commands presented in this guide assume you are working
 in a Linux environment. (Cloud Shell is a Linux environment.)
 
-### Configuration parameters and values
+## Configuration parameters and values
 
 The `gcloud` commands in this guide include parameters whose value you must
 provide. For example, a command might include a GCP project name or a region or
@@ -702,7 +704,7 @@ protocol</a>, port 500</td>
 </tbody>
 </table>
 
-### Setting environment variables for gcloud command parameters
+## Setting environment variables for gcloud command parameters
 
 To make it easier to run `gcloud` commands that contain parameters, you can
 create environment variables to hold the values you need, such as your project
@@ -737,7 +739,7 @@ export CUST_GW_EXT_IP=[CUST_GW_EXT_IP]
 export ROUTE_NAME=[ROUTE_NAME]
 ```
 
-### Configuring route-based IPsec VPN using static routing
+## Configuring route-based IPsec VPN using static routing
 
 This section describes how to use the `gcloud` command-line tool to configure
 IPsec VPN with static routing. To perform the same task using the GPC Console,
