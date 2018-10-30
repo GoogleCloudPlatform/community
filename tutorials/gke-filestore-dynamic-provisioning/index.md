@@ -68,45 +68,46 @@ use cases include running databases, *e.g.*, [PostgreSQL](https://www.postgresql
 
 3. Install [Helm](https://github.com/helm/helm)
 
-Download the [desired version](https://github.com/helm/helm/releases) and unpack it.
+    Download the [desired version](https://github.com/helm/helm/releases) and unpack it.
 
-    wget https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz
-    tar xf helm-v2.11.0-linux-amd64.tar.gz
+        wget https://storage.googleapis.com/kubernetes-helm/helm-v2.11.0-linux-amd64.tar.gz
+        tar xf helm-v2.11.0-linux-amd64.tar.gz
 
-Add the `helm` binary to `/usr/local/bin`.
+    Add the `helm` binary to `/usr/local/bin`.
 
-    sudo ln -s $PWD/linux-amd64/helm /usr/local/bin/helm
+        sudo ln -s $PWD/linux-amd64/helm /usr/local/bin/helm
 
-Create a file named `rbac-config.yaml` containing the following:
+    Create a file named `rbac-config.yaml` containing the following:
 
-    apiVersion: v1
-    kind: ServiceAccount
-    metadata:
-      name: tiller
-      namespace: kube-system
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1beta1
-    kind: ClusterRoleBinding
-    metadata:
-      name: tiller
-    roleRef:
-      apiGroup: rbac.authorization.k8s.io
-      kind: ClusterRole
-      name: cluster-admin
-    subjects:
-      - kind: ServiceAccount
-        name: tiller
-        namespace: kube-system
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          name: tiller
+          namespace: kube-system
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1beta1
+        kind: ClusterRoleBinding
+        metadata:
+          name: tiller
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: cluster-admin
+        subjects:
+          - kind: ServiceAccount
+            name: tiller
+            namespace: kube-system
 
-Create the `tiller` service account and `cluster-admin` role binding.
+    Create the `tiller` service account and `cluster-admin` role binding.
 
-    kubectl apply -f rbac-config.yaml
+        kubectl apply -f rbac-config.yaml
 
-Initialize Helm.
+    Initialize Helm.
 
-    helm init --service-account tiller
+        helm init --service-account tiller
 
 ## Deploy the NFS-Client Provisioner
+
 Create an instance of NFS-Client Provisioner connected to the Cloud Filestore instance you created earlier 
 via its IP address (`${FSADDR}`). The NFS-Client Provisioner creates a new storage class: `nfs-client`. Persistent
 volume claims against that storage class will be fulfilled by creating persistent volumes backed by directories
@@ -118,6 +119,7 @@ under the `/volumes` directory on the Cloud Filestore instance's managed storage
 Press Ctrl-C when the provisioner pod's status changes to Running.
 
 ## Make a Persistent Volume Claim
+
 While you can use any application that uses storage classes to do [dynamic provisioning](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/)
 to test the NFS-Client Provisioner, in this tutorial you will deploy a [PostgreSQL](https://www.postgresql.org/) instance to verify
 the configuration.
@@ -131,6 +133,7 @@ The PostgreSQL Helm chart creates an 8GB persistent volume claim on Cloud Filest
 `/var/lib/postgresql/data/pgdata` in the database pod.
 
 ## Verify Cloud Filestore volume directory creation
+
 To verify that the PostgreSQL database files were actually created on the Cloud Filestore managed storage you will
 create a small Compute Engine instance, mount the Cloud Filestore volume on that instance, and inspect the directory
 structure to see that the database files are present.
@@ -159,39 +162,40 @@ structure to see that the database files are present.
 
        gcloud compute ssh check-nfs-provisioner --command  "sudo find /mnt/gke-volumes -type d"
 
-You will see output like the following modulo the name of the PostgreSQL pod
+    You will see output like the following modulo the name of the PostgreSQL pod
 
-    /mnt/gke-volumes
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_twophase
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_notify
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_clog
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_stat_tmp
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_stat
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_serial
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/global
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_commit_ts
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_dynshmem
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_snapshots
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_replslot
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_logical
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_logical/snapshots
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_logical/mappings
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_tblspc
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_subtrans
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/base
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/base/1
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/base/12406
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/base/12407
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_xlog
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_xlog/archive_status
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_multixact
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_multixact/offsets
-    /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_multixact/members
+        /mnt/gke-volumes
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_twophase
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_notify
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_clog
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_stat_tmp
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_stat
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_serial
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/global
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_commit_ts
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_dynshmem
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_snapshots
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_replslot
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_logical
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_logical/snapshots
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_logical/mappings
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_tblspc
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_subtrans
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/base
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/base/1
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/base/12406
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/base/12407
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_xlog
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_xlog/archive_status
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_multixact
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_multixact/offsets
+        /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013/postgresql-db/pg_multixact/members
 
 
 ## Clean up
+
 1. Delete the check-nfs-provisioner instance
 
        gcloud compute instances delete check-nfs-provisioner
