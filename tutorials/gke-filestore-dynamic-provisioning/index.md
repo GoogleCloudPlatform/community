@@ -35,36 +35,36 @@ use cases include running databases, *e.g.*, [PostgreSQL](https://www.postgresql
 
 1. Create a Cloud Filestore instance with 1TB of storage capacity
 
-       FS=[NAME FOR THE FILESTORE YOU WILL CREATE]
-       gcloud beta filestore instances create ${FS} \
-           --project=${PROJECT} \
-           --location=${ZONE} \
-           --tier=STANDARD \
-           --file-share=name="volumes",capacity=1TB \
-           --network=name="default",reserved-ip-range="10.0.0.0/29"
+        FS=[NAME FOR THE FILESTORE YOU WILL CREATE]
+        gcloud beta filestore instances create ${FS} \
+            --project=${PROJECT} \
+            --location=${ZONE} \
+            --tier=STANDARD \
+            --file-share=name="volumes",capacity=1TB \
+            --network=name="default",reserved-ip-range="10.0.0.0/29"
 
 2. Retrieve the IP address of the Cloud Filestore instance
 
-       FSADDR=$(gcloud beta filestore instances describe ${FS} \
-            --project=${PROJECT} \
-            --location=${ZONE} \
-            --format="value(networks.ipAddresses[0])")
+        FSADDR=$(gcloud beta filestore instances describe ${FS} \
+             --project=${PROJECT} \
+             --location=${ZONE} \
+             --format="value(networks.ipAddresses[0])")
 
 
 ## Create a Kubernetes Engine cluster
 
 1. Create the cluster and get its credentials
 
-       CLUSTER=[NAME OF THE KUBERNETES CLUSTER YOU WILL CREATE]
-       gcloud container clusters create ${CLUSTER}
-       gcloud container clusters get-credentials ${CLUSTER}
+        CLUSTER=[NAME OF THE KUBERNETES CLUSTER YOU WILL CREATE]
+        gcloud container clusters create ${CLUSTER}
+        gcloud container clusters get-credentials ${CLUSTER}
 
 2. Grant yourself cluster-admin privileges
 
-       ACCOUNT=$(gcloud config get-value core/account)
-       kubectl create clusterrolebinding core-cluster-admin-binding \
-           --user ${ACCOUNT} \
-           --clusterrole cluster-admin
+        ACCOUNT=$(gcloud config get-value core/account)
+        kubectl create clusterrolebinding core-cluster-admin-binding \
+            --user ${ACCOUNT} \
+            --clusterrole cluster-admin
 
 3. Install [Helm](https://github.com/helm/helm)
 
@@ -140,29 +140,29 @@ structure to see that the database files are present.
 
 1. Create an `f1-micro` Compute Engine instance
 
-       gcloud compute --project=${PROJECT} instances create check-nfs-provisioner \
-           --zone=${ZONE} \
-           --machine-type=f1-micro \
-           --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append \
-           --image=debian-9-stretch-v20180911 \
-           --image-project=debian-cloud \
-           --boot-disk-size=10GB \
-           --boot-disk-type=pd-standard \
-           --boot-disk-device-name=check-nfs-provisioner
+        gcloud compute --project=${PROJECT} instances create check-nfs-provisioner \
+            --zone=${ZONE} \
+            --machine-type=f1-micro \
+            --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append \
+            --image=debian-9-stretch-v20180911 \
+            --image-project=debian-cloud \
+            --boot-disk-size=10GB \
+            --boot-disk-type=pd-standard \
+            --boot-disk-device-name=check-nfs-provisioner
 
 2. Install the nfs-common package on check-nfs-provisioner
 
-       gcloud compute ssh check-nfs-provisioner --command "sudo apt update -y && sudo apt install nfs-common -y"
+        gcloud compute ssh check-nfs-provisioner --command "sudo apt update -y && sudo apt install nfs-common -y"
 
 3. Mount the Cloud Filestore volume on check-nfs-provisioner
 
-       gcloud compute ssh check-nfs-provisioner --command "sudo mkdir /mnt/gke-volumes && sudo mount ${FSADDR}:/volumes /mnt/gke-volumes"
+        gcloud compute ssh check-nfs-provisioner --command "sudo mkdir /mnt/gke-volumes && sudo mount ${FSADDR}:/volumes /mnt/gke-volumes"
 
 4. Display the PostgreSQL database directory structure
 
-       gcloud compute ssh check-nfs-provisioner --command  "sudo find /mnt/gke-volumes -type d"
+        gcloud compute ssh check-nfs-provisioner --command  "sudo find /mnt/gke-volumes -type d"
 
-    You will see output like the following modulo the name of the PostgreSQL pod
+   You will see output like the following modulo the name of the PostgreSQL pod
 
         /mnt/gke-volumes
         /mnt/gke-volumes/default-nfs-postgres-postgresql-pvc-f739e9a1-c032-11e8-9994-42010af00013
@@ -198,15 +198,15 @@ structure to see that the database files are present.
 
 1. Delete the check-nfs-provisioner instance
 
-       gcloud compute instances delete check-nfs-provisioner
+        gcloud compute instances delete check-nfs-provisioner
 
 2. Delete the Kubernetes Engine cluster
 
-       helm destroy postgresql
-       helm destroy nfs-cp
-       gcloud container clusters delete ${CLUSTER}
+        helm destroy postgresql
+        helm destroy nfs-cp
+        gcloud container clusters delete ${CLUSTER}
 
 3. Delete the Cloud Filestore instance
 
-       gcloud beta filestore instances delete ${FS} --location ${ZONE}
+        gcloud beta filestore instances delete ${FS} --location ${ZONE}
 
