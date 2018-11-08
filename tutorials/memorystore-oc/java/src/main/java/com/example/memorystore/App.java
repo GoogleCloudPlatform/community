@@ -17,10 +17,10 @@ import java.io.IOException;
 
 public class App {
 
-    private static final String PROJECT_ID = "";
-    private static final String GCS_BUCKET_NAME = "";
-    private static final String GCS_OBJECT_NAME = "";
-    private static final String REDIS_HOST = "";
+    private static final String PROJECT_ID = "[YOUR PROJECT ID]";
+    private static final String GCS_BUCKET_NAME = "[YOUR BUCKET NAME]";
+    private static final String GCS_OBJECT_NAME = "person.json";
+    private static final String REDIS_HOST = "[YOUR REDIS HOST]";
 
     private static final String CACHE_KEY = "REDIS_CACHE_KEY";
 
