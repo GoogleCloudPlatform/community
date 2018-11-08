@@ -98,14 +98,14 @@ In this section, you will first create a GCS bucket and then upload the JSON fil
 Run the following commands in Cloud Shell to create a bucket. Keep in mind that GCS bucket names have to be globally unique, so be sure to substitute ‘your-unique-bucket-name’ below with a unique name of your own.
 
 ```bash
-$ export MYBUCKET=\[your-unique-bucket-name\]
+$ export MYBUCKET=[your-unique-bucket-name]
 $ gsutil mb gs://$MYBUCKET
 ```
 
 Now upload a JSON file to the bucket you just created by running the following commands:
 
 ```bash
-$ echo "{\\"FirstName\\": \\"John\\",\\"LastName\\": \\"Doe\\"}" >> person.json
+$ echo "{\"FirstName\": \"John\",\"LastName\": \"Doe\"}" >> person.json
 
 $ gsutil cp person.json gs://$MYBUCKET/
 ```
@@ -135,7 +135,7 @@ $ sudo apt-get install redis-tools git openjdk-8-jdk maven -y
 Run the following command within the trace-client VM to ensure that you can reach the Cloud Memorystore for Redis instance you created earlier:
 
 ```bash
-$ redis-cli -h \[ip-address-of-redis-instance\] PING
+$ redis-cli -h [ip-address-of-redis-instance] PING
 ```
 
 You should get a response from the redis server:
@@ -207,11 +207,11 @@ Now save the file and exit (using Ctrl+O and then Ctrl+X, if you’re using nano
 Here’s the relevant part of the main function:
 
 ```java
-public static void main(String\[\] args) throws IOException, InterruptedException {
+public static void main(String[] args) throws IOException, InterruptedException {
    configureOpenCensusExporters();
 
    // initialize jedis pool
-   jedisPool = new JedisPool(REDIS\_HOST);
+   jedisPool = new JedisPool(REDIS_HOST);
 
    try (Scope ss = tracer.spanBuilder("In main").startScopedSpan()) {
 
@@ -249,7 +249,7 @@ private static void configureOpenCensusExporters() throws IOException {
    // Create the Stackdriver trace exporter
    StackdriverTraceExporter.createAndRegister(
        StackdriverTraceConfiguration.builder()
-           .setProjectId(PROJECT\_ID)
+           .setProjectId(PROJECT_ID)
            .build());
 }
 ```
