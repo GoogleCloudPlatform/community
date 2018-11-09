@@ -44,6 +44,8 @@ is usually different then the `project name`.
 
 [image1]: https://storage.googleapis.com/gcp-community/tutorials/getting-started-on-gcp-with-terraform/gcp_project_id.png "Project Id"
 
+Enable the [Compute Engine API](https://console.cloud.google.com/apis/library/compute.googleapis.com?q=Compute), which is needed for Terraform to provision Compute Engine resources.
+
 ### Getting project credentials
 
 Next, set up a service account key which Terraform will use to create and manage
