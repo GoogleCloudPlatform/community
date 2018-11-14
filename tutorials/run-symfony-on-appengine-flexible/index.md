@@ -39,8 +39,9 @@ Welcome page.
 
 ## Deploy
 
-1.  Create an `app.yaml` file with the following contents:
+1.  Create an `app.yaml` file with the following contents depending on the version of Symfony that you are using:
 
+##### Symfony 2 & 3
         runtime: php
         env: flex
 
@@ -48,6 +49,18 @@ Welcome page.
           document_root: web
           front_controller_file: app.php
 
+ 
+##### Symfony 4 and above
+        runtime: php
+        env: flex
+
+        runtime_config:
+          document_root: public
+          front_controller_file: index.php
+
+        env_variables:
+            APP_ENV: "prod"
+     
 1.  Replace `post-install-cmd` in `composer.json` with the following script:
 
         "post-install-cmd": [

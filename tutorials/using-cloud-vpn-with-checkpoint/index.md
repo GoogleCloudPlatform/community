@@ -43,8 +43,9 @@ To use a Check Point security gateway with Cloud VPN make sure the following pre
 ## IPsec parameters
 
 The following parameters and values are used in the Gateway’s IPSec configuration for the
-purpose of this guide. Cloud VPN supports extensive [list](https://cloud.google.com/vpn/docs/concepts/advanced#supported_ike_ciphers) of
-ciphers that can be used per your security policies.
+purpose of this guide. Cloud VPN supports extensive
+[list](https://cloud.google.com/vpn/docs/concepts/supported-ike-ciphers)
+of ciphers that can be used per your security policies.
 
 |Parameter | Value|
 --------- |  -----
@@ -62,9 +63,10 @@ in this guide.
 |Phase-1|Encryption|`aes-128` (IKEv1 or `aes-256`(IKEv2)|
 |       |Integrity|`sha-1` (IKEv1) or `sha-256` (IKEv2)|
 |       |Diffie-Helman|`Group2` (IKEv1) or `Group14` (IKEv2)|
-|       |Phase1 lifetime| `36,600 seconds` (IKEv1) `36,000 seconds` (IKEv2) |
+|       |Phase1 lifetime| `36,600 seconds` (IKEv1) `36,000 seconds` (IKEv2)|
 |Phase-2|Encryption|`aes-128`(IKEv1) or `aes-256`(IKEv2)|
-|       |Integrity|`sha-1`|
+|       |Integrity|`sha-1` (IKEv1) or `sha-256` (IKEv2)|
+|       |Phase2 lifetime| `10,800 seconds` (IKEv1) `10,800 seconds` (IKEv2)|
 
 # Configuring policy-based IPsec VPN
 

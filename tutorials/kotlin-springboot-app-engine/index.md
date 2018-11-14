@@ -1,7 +1,7 @@
 ---
 title: Run a Kotlin Spring Boot app on the Google App Engine Flexible Environment
 description: Learn how to deploy a Kotlin Spring Boot app to the Google App Engine flexible environment.
-author: hharir
+author: hhariri
 tags: App Engine, Kotlin, Spring Boot
 date_published: 2018-01-17
 ---
@@ -108,7 +108,7 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
     By specifying `runtime: java`, the runtime image `gcr.io/google-appenine/openjdk:8` is automatically selected
     when you deploy a JAR (*.jar) file. The JDK version is also selected using the `jdk` field.
 
-2.  Add [the following](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine/pom-dependency-example.xml) plugin entry to the `pom.xml` file to configure the Maven
+2.  Add [the following](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine/pom-plugin-example.xml) plugin entry to the `pom.xml` file to configure the Maven
     plugin.
 
 3.  Run the following command to deploy your app:

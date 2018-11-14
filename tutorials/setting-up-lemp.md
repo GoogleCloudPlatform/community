@@ -197,7 +197,7 @@ tutorial uses the `gcloud` command, which is part of the Cloud SDK. Copy files
 to your instance using the `copy-files` command. The following example copies a
 file from your workstation to the home directory on the instance.
 
-    gcloud compute copy-files [LOCAL_FILE_PATH] lemp-tutorial:/var/www/html
+    gcloud compute scp [LOCAL_FILE_PATH] lemp-tutorial:/var/www/html
 
 Replace [LOCAL_FILE_PATH] with the path to the file on your workstation.
 
@@ -205,7 +205,7 @@ You can also copy files from an instance to your local workstation by reversing
 the source and destination variables. The following example copies a file from
 your instance to your workstation.
 
-    gcloud compute copy-files lemp-tutorial:/var/www/html [LOCAL_FILE_PATH]
+    gcloud compute scp lemp-tutorial:/var/www/html [LOCAL_FILE_PATH]
 
 Replace [LOCAL_FILE_PATH] with the path where you want to put the file on your
 workstation.
