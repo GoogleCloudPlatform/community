@@ -1,7 +1,7 @@
 ---
 title: Google Cloud VPN Interop Guide for Alibaba Cloud VPN Gateway
 description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on Google Cloud Platform (GCP) and Alibaba Cloud VPN Gateway
-author: epluscloudservices@eplus.com
+author: david.lin@eplus.com
 tags: VPN, interop, alibaba, alibaba cloud vpn gateway
 date_published: 2018-10-29
 ---
