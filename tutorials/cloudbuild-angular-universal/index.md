@@ -44,7 +44,7 @@ step)**
 
 ### Set the project variable (Skip this step if you created a new project above)
 
-To specify the project that you will use, replace `[CONFIGURATION NAME]` with the name of the prject configuration:
+To specify the project that you will use, replace `[CONFIGURATION NAME]` with the name of the project configuration:
 
     gcloud config configurations activate [CONFIGURATION NAME]
     PROJECT=$(gcloud config get-value project)
