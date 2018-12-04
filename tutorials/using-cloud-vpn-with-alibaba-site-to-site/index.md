@@ -52,8 +52,6 @@ _Disclaimer: This interoperability guide is intended to be informational in
 nature and shows examples only. Customers should verify this information by
 testing it._
 
-Author: cloudservices-gcp-support@eplus.com
-
 ## Introduction
 
 This guide walks you through the process of configuring
