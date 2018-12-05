@@ -4,7 +4,6 @@ description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on
 author: epluscloudservices
 tags: VPN, interop, alibaba, alibaba cloud vpn gateway
 date_published: 2018-12-05
-
 ---
 
 Learn how to build site-to-site IPsec VPNs between
