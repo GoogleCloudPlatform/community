@@ -3,7 +3,8 @@ title: Google Cloud VPN Interop Guide for Alibaba Cloud VPN Gateway
 description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on Google Cloud Platform and Alibaba Cloud VPN Gateway.
 author: epluscloudservices
 tags: VPN, interop, alibaba, alibaba cloud vpn gateway
-date_published: 2018-12-04
+date_published: 2018-12-05
+
 ---
 
 Learn how to build site-to-site IPsec VPNs between
@@ -529,7 +530,7 @@ you need for these parameters.
 
 | Parameter description | Placeholder | Example value |
 |-----------------------|-------------|---------------|
-| Vendor name | `[VENDOR_NAME]` | (Your product's vendor name. This value should have no spaces or punctuation in it other than underscores or hyphens, because it will be used as part of the names for GCP entities.) |
+| Vendor name | `[VENDOR_NAME]` | Your product's vendor name. This value should have no spaces or punctuation in it other than underscores or hyphens, because it will be used as part of the names for GCP entities. |
 | GCP project name | `[PROJECT_NAME]` | `vpn-guide` |
 | Shared secret | `[SHARED_SECRET]` | See [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key). |
 | VPC network name | `[VPC_NETWORK_NAME]` | `vpn-vendor-test-network` |
@@ -562,26 +563,25 @@ placeholders in square brackets, such as `[PROJECT_NAME]`, `[VPC_NETWORK_NAME]`,
 and `[SUBNET_IP]`. If you don't know what values to use for the placeholders,
 use the example values from the parameters table in the preceding section.
 
-```
-export PROJECT_NAME=[PROJECT_NAME]
-export REGION=[REGION]
-export VPC_SUBNET_NAME=[VPC_SUBNET_NAME]
-export VPC_NETWORK_NAME=[VPC_NETWORK_NAME]
-export FWD_RULE_ESP=[FWD_RULE_ESP]
-export FWD_RULE_UDP_500=[FWD_RULE_UDP_500]
-export FWD_RULE_UDP_4500=[FWD_RULE_UDP_4500]
-export SUBNET_IP=[SUBNET_IP]
-export VPN_GATEWAY_1=[VPN_GATEWAY_1]
-export STATIC_EXTERNAL_IP=[STATIC_EXTERNAL_IP]
-export VPN_RULE=[VPN_RULE]
-export IP_ON_PREM_SUBNET=[IP_ON_PREM_SUBNET]
-export CLOUD_ROUTER_NAME=[CLOUD_ROUTER_NAME]
-export BGP_IF=[BGP_IF]
-export BGP_SESSION_NAME=[BGP_SESSION_NAME]
-export VPN_TUNNEL_1=[VPN_TUNNEL_1]
-export CUST_GW_EXT_IP=[CUST_GW_EXT_IP]
-export ROUTE_NAME=[ROUTE_NAME]
-```
+    export PROJECT_NAME=[PROJECT_NAME]
+    export REGION=[REGION]
+    export VPC_SUBNET_NAME=[VPC_SUBNET_NAME]
+    export VPC_NETWORK_NAME=[VPC_NETWORK_NAME]
+    export FWD_RULE_ESP=[FWD_RULE_ESP]
+    export FWD_RULE_UDP_500=[FWD_RULE_UDP_500]
+    export FWD_RULE_UDP_4500=[FWD_RULE_UDP_4500]
+    export SUBNET_IP=[SUBNET_IP]
+    export VPN_GATEWAY_1=[VPN_GATEWAY_1]
+    export STATIC_EXTERNAL_IP=[STATIC_EXTERNAL_IP]
+    export VPN_RULE=[VPN_RULE]
+    export IP_ON_PREM_SUBNET=[IP_ON_PREM_SUBNET]
+    export CLOUD_ROUTER_NAME=[CLOUD_ROUTER_NAME]
+    export BGP_IF=[BGP_IF]
+    export BGP_SESSION_NAME=[BGP_SESSION_NAME]
+    export VPN_TUNNEL_1=[VPN_TUNNEL_1]
+    export CUST_GW_EXT_IP=[CUST_GW_EXT_IP]
+    export ROUTE_NAME=[ROUTE_NAME]
+
 
 ### Configuring route-based IPsec VPN using static routing
 
@@ -606,27 +606,23 @@ local network IP address range. Note the following:
     +  For `[RANGE]`, substitute an appropriate CIDR range, such as
     `172.16.100.0/24`.
 
-    ```
-    gcloud compute networks create $VPC_NETWORK_NAME \
-        --project $PROJECT_NAME \
-        --subnet-mode custom
+            gcloud compute networks create $VPC_NETWORK_NAME \
+                --project $PROJECT_NAME \
+                --subnet-mode custom
 
-    gcloud compute networks subnets create $VPC_SUBNET_NAME \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --region $REGION \
-        --range [RANGE]
-    ```
+            gcloud compute networks subnets create $VPC_SUBNET_NAME \
+                --project $PROJECT_NAME \
+                --network $VPC_NETWORK_NAME \
+                --region $REGION \
+                --range [RANGE]
 
 1. Create a VPN gateway in the region you are using. Normally, this is the
 region that contains the instances you want to reach.
 
-    ```
-    gcloud compute target-vpn-gateways create $VPN_GATEWAY_1 \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --region $REGION
-    ```
+        gcloud compute target-vpn-gateways create $VPN_GATEWAY_1 \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --region $REGION
 
     This step creates an unconfigured VPN gateway in your GCP VPC network.
 
@@ -634,11 +630,9 @@ region that contains the instances you want to reach.
 created the VPN gateway. Make a note of the address that is created for use
 in future steps.
 
-    ```
-    gcloud compute addresses create $STATIC_EXTERNAL_IP \
-        --project $PROJECT_NAME \
-        --region $REGION
-    ```
+        gcloud compute addresses create $STATIC_EXTERNAL_IP \
+            --project $PROJECT_NAME \
+            --region $REGION
 
 1. Create three forwarding rules, one each to forward ESP, IKE, and NAT-T
 traffic to the Cloud VPN gateway. Note the following:
@@ -646,30 +640,28 @@ traffic to the Cloud VPN gateway. Note the following:
     +  For `[STATIC_IP_ADDRESS]`, use the static IP address that you reserved in
     the previous step.
 
-    ```
-    gcloud compute forwarding-rules create $FWD_RULE_ESP \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol ESP \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --address [STATIC_IP_ADDRESS]
+            gcloud compute forwarding-rules create $FWD_RULE_ESP \
+                --project $PROJECT_NAME \
+                --region $REGION \
+                --ip-protocol ESP \
+                --target-vpn-gateway $VPN_GATEWAY_1 \
+                --address [STATIC_IP_ADDRESS]
 
-    gcloud compute forwarding-rules create $FWD_RULE_UDP_500 \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol UDP \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --ports 500 \
-        --address [STATIC_IP_ADDRESS]
+            gcloud compute forwarding-rules create $FWD_RULE_UDP_500 \
+                --project $PROJECT_NAME \
+                --region $REGION \
+                --ip-protocol UDP \
+                --target-vpn-gateway $VPN_GATEWAY_1 \
+                --ports 500 \
+                --address [STATIC_IP_ADDRESS]
 
-    gcloud compute forwarding-rules create $FWD_RULE_UDP_4500 \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol UDP \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --ports 4500 \
-        --address [STATIC_IP_ADDRESS]
-    ``` 
+            gcloud compute forwarding-rules create $FWD_RULE_UDP_4500 \
+                --project $PROJECT_NAME \
+                --region $REGION \
+                --ip-protocol UDP \
+                --target-vpn-gateway $VPN_GATEWAY_1 \
+                --ports 4500 \
+                --address [STATIC_IP_ADDRESS]
 
 1. Create a VPN tunnel on the Cloud VPN Gateway that points to the external
 IP address of your on-premises VPN gateway. Note the following:
@@ -685,34 +677,28 @@ IP address of your on-premises VPN gateway. Note the following:
         [Traffic selectors](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#static-routing-networks)
         in the GCP VPN networking documentation.
 
-    ```
-    gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
-        --project $PROJECT_NAME \
-        --peer-address $CUST_GW_EXT_IP \
-        --region $REGION \
-        --ike-version 2 \
-        --shared-secret [SHARED_SECRET] \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --local-traffic-selector [LOCAL_TRAFFIC_SELECTOR_IP]
-    ``` 
+            gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
+                --project $PROJECT_NAME \
+                --peer-address $CUST_GW_EXT_IP \
+                --region $REGION \
+                --ike-version 2 \
+                --shared-secret [SHARED_SECRET] \
+                --target-vpn-gateway $VPN_GATEWAY_1 \
+                --local-traffic-selector [LOCAL_TRAFFIC_SELECTOR_IP]
 
     After you run this command, resources are allocated for this VPN tunnel, but it
     is not yet passing traffic.
 
-1. Use a
-    [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create)
-    to forward traffic to the destination range of IP addresses in your
-    on-premises network. The region must be the
-    same region as for the VPN tunnel.
+1. Use a [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create)
+to forward traffic to the destination range of IP addresses in your on-premises network. The
+region must be the same region as for the VPN tunnel.
 
-    ```
-    gcloud compute routes create $ROUTE_NAME \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --next-hop-vpn-tunnel $VPN_TUNNEL_1 \
-        --next-hop-vpn-tunnel-region $REGION \
-        --destination-range $IP_ON_PREM_SUBNET
-    ```
+        gcloud compute routes create $ROUTE_NAME \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --next-hop-vpn-tunnel $VPN_TUNNEL_1 \
+            --next-hop-vpn-tunnel-region $REGION \
+            --destination-range $IP_ON_PREM_SUBNET
 
 1. If you want to pass traffic from multiple subnets through the VPN tunnel,
 repeat the previous step to forward the IP address of each of the subnets.
@@ -720,10 +706,8 @@ repeat the previous step to forward the IP address of each of the subnets.
 1. Create firewall rules to allow traffic between the on-premises network and
 GCP VPC networks.
 
-    ```
-    gcloud compute firewall-rules create $VPN_RULE \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --allow tcp,udp,icmp \
-        --source-ranges $IP_ON_PREM_SUBNET
-    ```
+        gcloud compute firewall-rules create $VPN_RULE \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --allow tcp,udp,icmp \
+            --source-ranges $IP_ON_PREM_SUBNET
