@@ -78,7 +78,8 @@ To create a Cloud Storage bucket:
     +  _Location_: United States
 
         **Note**: To take advantage of Fastly's direct connection to Google's
-        network edge, you must create your bucket in the United States.
+        network edge, you should create your bucket in a region that has [multiple
+        interconnects](https://docs.fastly.com/guides/integrations/google-cloud-storage#interconnect-locations), such as the United States.
 
 1. Click **Create** to create your bucket. You will be taken to your bucket's
     browser page.
@@ -233,4 +234,6 @@ To delete your Fastly service:
 ### Visit the Fastly docs
 
 New to Fastly? Explore Fastly's feature set and configuration options by
-reviewing the [Fastly documentation](https://docs.fastly.com/guides/).
+reviewing the [Fastly documentation](https://docs.fastly.com/guides/). Fastly also
+provides their [own tutorial on using Google Cloud Storage](https://docs.fastly.com/guides/integrations/google-cloud-storage),
+as well information on [serving private buckets](https://docs.fastly.com/guides/integrations/google-cloud-storage#using-gcs-with-private-objects).
