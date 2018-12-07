@@ -1,6 +1,6 @@
 ---
 title: Google Cloud VPN Interop Guide for Alibaba Cloud VPN Gateway with Redundancy
-description: Describes how to build IPsec VPNs between Cloud VPN on Google Cloud Platform (GCP) and  Alibaba Cloud VPN Gateway with redudancy
+description: Describes how to build IPsec VPNs between Cloud VPN on Google Cloud Platform (GCP) and  Alibaba Cloud VPN Gateway with redudancy.
 author: David Lin
 tags: VPN, interop, alibaba, alibaba cloud vpn gateway, redundancy
 date_published: 2018-08-31
