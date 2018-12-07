@@ -74,12 +74,13 @@ To create a Cloud Storage bucket:
 1. In the **Create Bucket** dialog, fill out the form as follows:
 
     +  _Name_: _<your_bucket_name>_ (must be unique)
-    +  _Storage_: Standard
+    +  _Storage_: Multi-Regional
     +  _Location_: United States
 
-        **Note**: To take advantage of Fastly's direct connection to Google's
-        network edge, you should create your bucket in a region that has [multiple
-        interconnects](https://docs.fastly.com/guides/integrations/google-cloud-storage#interconnect-locations), such as the United States.
+        **Note**: Multi-Regional buckets allow the data to be broadly replicated
+        across the location (for example across the continental United States),
+        and always be close to [Fastly's interconnects](https://docs.fastly.com/guides/integrations/google-cloud-storage#interconnect-locations)
+        with Google's network
 
 1. Click **Create** to create your bucket. You will be taken to your bucket's
     browser page.
@@ -175,14 +176,23 @@ calls back to your Cloud Storage bucket. And by using an Origin
 Shield that is connected to Google's network edge, you can increase
 the speed of the shield's origin pulls.
 
+It is normally recommended to use a multi-regional Cloud Storage
+[bucket location](https://cloud.google.com/storage/docs/locations), but when
+using an Origin, it is instead recomended to use a regional or dual-regional
+location. This ensures the data is always close to the Orign, improving
+performance, and reducing latency on cache fills.
+
+For example, the "[us-east4](https://cloud.google.com/storage/docs/locations)"
+region in Ashburn, Northern Virginia, is near to one of [Fastly's interconnects](https://docs.fastly.com/guides/integrations/google-cloud-storage#interconnect-locations), and can be selected as a
+**shielding** location.
+
 To configure an Origin Shield and connect it to Cloud Platform:
 
 1. In the [Fastly application](https://app.fastly.com/),
     click **Hosts** in the sidebar.
 1. Under **Backends**, click the gear next to your
     **storage.googleapis.com** backend and click **Edit**.
-1. In the **Edit Backend** dialog, set **Shielding** to either
-    **Ashburn, VA** or **San Jose, CA**.
+1. In the **Edit Backend** dialog, set **Shielding** to a location close to the Cloud Storage bucket.
 1. Click **Update** to commit your settings.
 1. Click **Activate** to deploy the modified service.
 
