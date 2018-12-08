@@ -29,7 +29,7 @@ resulting in significant increases in pull speed.
 This tutorial walks you through the process of setting up Fastly to pull
 assets from [Google Cloud Storage](https://cloud.google.com/storage/).
 In addition, it describes how to configure Fastly's
-[Origin Shield](https://docs.fastly.com/guides/about-fastly-services/about-fastlys-origin-shielding-features)
+[origin shield](https://docs.fastly.com/guides/about-fastly-services/about-fastlys-origin-shielding-features)
 feature to take advantage of Fastly's direct connection to Google's
 network edge.
 
@@ -48,7 +48,7 @@ for further pricing details.
 ## Objectives
 
 +  Configure Fastly to source assets from Cloud Storage
-+  Configure Fastly to handle cache misses using Origin Shield
++  Configure Fastly to handle cache misses using origin shield
 
 ## Before you begin
 
@@ -159,10 +159,10 @@ For example, if your domain is `www.example.com` and the file is named
 
     https://www.example.com.global.prod.fastly.net/test.png
 
-## Configure an Origin Shield and connect it to Cloud Platform
+## Configure an origin shield and connect it to Cloud Platform
 
 Fastly includes a feature called
-[Origin Shield](https://docs.fastly.com/guides/about-fastly-services/about-fastlys-origin-shielding-features)
+[origin shield](https://docs.fastly.com/guides/about-fastly-services/about-fastlys-origin-shielding-features)
 that places a "shield" cache between its edge caches and your origin
 server. This shield cache handles all cache misses across Fastly's network;
 that is, if one of Fastly's caches does not have the asset that has been
@@ -171,9 +171,9 @@ instead of the origin server. The cache will only pull the requested
 asset from the origin server if the shield cache does not contain the
 asset.
 
-By using an Origin Shield, you can drastically reduce the number of
-calls back to your Cloud Storage bucket. And by using an Origin
-Shield that is connected to Google's network edge, you can increase
+By using an origin shield, you can drastically reduce the number of
+calls back to your Cloud Storage bucket. And by using an origin
+shield that is connected to Google's network edge, you can increase
 the speed of the shield's origin pulls.
 
 It is normally recommended to use a multi-regional Cloud Storage
@@ -186,7 +186,7 @@ For example, the "[us-east4](https://cloud.google.com/storage/docs/locations)"
 region in Ashburn, Northern Virginia, is near to one of [Fastly's interconnects](https://docs.fastly.com/guides/integrations/google-cloud-storage#interconnect-locations), and can be selected as a
 **shielding** location.
 
-To configure an Origin Shield and connect it to Cloud Platform:
+To configure an origin shield and connect it to Cloud Platform:
 
 1. In the [Fastly application](https://app.fastly.com/),
     click **Hosts** in the sidebar.
