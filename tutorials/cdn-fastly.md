@@ -80,7 +80,7 @@ To create a Cloud Storage bucket:
         **Note**: Multi-Regional buckets allow the data to be broadly replicated
         across the location (for example across the continental United States),
         and always be close to [Fastly's interconnects](https://docs.fastly.com/guides/integrations/google-cloud-storage#interconnect-locations)
-        with Google's network
+        with Google's network.
 
 1. Click **Create** to create your bucket. You will be taken to your bucket's
     browser page.
@@ -178,7 +178,7 @@ the speed of the shield's origin pulls.
 
 It is normally recommended to use a multi-regional Cloud Storage
 [bucket location](https://cloud.google.com/storage/docs/locations), but when
-using an Origin, it is instead recomended to use a regional or dual-regional
+using an origin, it is instead recommended to use a regional or dual-regional
 location. This ensures the data is always close to the Orign, improving
 performance, and reducing latency on cache fills.
 
