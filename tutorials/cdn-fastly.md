@@ -179,7 +179,7 @@ the speed of the shield's origin pulls.
 It is normally recommended to use a multi-regional Cloud Storage
 [bucket location](https://cloud.google.com/storage/docs/locations), but when
 using an origin, it is instead recommended to use a regional or dual-regional
-location. This ensures the data is always close to the Orign, improving
+location. This ensures the data is always close to the origin, improving
 performance, and reducing latency on cache fills.
 
 For example, the "[us-east4](https://cloud.google.com/storage/docs/locations)"
