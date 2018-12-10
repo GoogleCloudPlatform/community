@@ -1,6 +1,6 @@
 ---
 title: Using Gateways on Cloud IoT Core with a Raspberry Pi
-description: Learn how to setup gateways on Cloud IoT Core using a Raspberry Pi. 
+description: Learn how to setup gateways on Cloud IoT Core using a Raspberry Pi.
 author: hongalex
 tags: Cloud IoT Core, Gateways, Raspberry Pi, Python, MQTT, internet of things
 date_published: 2018-12-10
