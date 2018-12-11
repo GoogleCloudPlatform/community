@@ -31,10 +31,10 @@ The following diagram gives a high-level overview of how the device/gateway arch
 
 This tutorial assumes you have a Google Cloud Platform (GCP) account and have completed the setup steps outlined in the [Cloud IoT Core getting started guide][iot-start]. For quick cleanup, create a new GCP project to use just for this tutorial.
 
-For more information about the different authentication methods Cloud IoT Core offers, [see Manage gateways][iot-gateways].
+For more information about the different authentication methods Cloud IoT Core offers, [see Authenticating over the MQTT bridge][iot-auth].
 
 [iot-start]: https://cloud.google.com/iot/docs/how-tos/getting-started
-[iot-gateways]: https://cloud.google.com/iot/docs/how-tos/gateways/manage-gateways
+[iot-auth]: https://cloud.google.com/iot/docs/how-tos/gateways/authentication#authenticating_over_the_mqtt_bridge
 
 ## Costs
 
@@ -58,7 +58,7 @@ This tutorial should not generate any usage that would not be covered by the fre
 - [Adafruit DHT22 Temperature/Humidity Sensor](https://www.adafruit.com/product/385)
 - 10k Ohm resistor
 - Breadboard and jumper wires
-- Wires
+- Jumper wires
 
 ## Enable Cloud IoT Core and Cloud Pub/Sub APIs
 
@@ -244,15 +244,14 @@ To avoid incurring any future billing costs, it is recommended that you delete y
 
 ## Extra notes
 
-- The reason why **Association Only** was chosen when creating the gateway is so that the device does not have to store its own JWT when authenticating to Cloud IoT Core. You can read more about [authentication methods here][authentication].
+- The reason why **Association Only** was chosen when creating the gateway is so that the device does not have to store its own JWT when authenticating to Cloud IoT Core. You can read more about [authentication methods here][iot-auth].
 - You can set up a second Raspberry Pi or another internet enabled device to act as the gateway for a more realistic example.
-- A slightly less expensive alternative to the DHT22 is the [DHT11][dht11].
+- A slightly less expensive alternative to the DHT22 is the [DHT11][dht-alt].
 - If you have difficulty installing the packages from `requirements.txt`, make sure you are on the latest version of Raspbian. If that's the case, [updating some packages could solve the issue][installation-issue].
 
         sudo apt-get install build-essential libssl-dev libffi-dev python-dev
 
-[authentication]: https://cloud.google.com/iot/docs/how-tos/gateways/manage-gateways#authentication_methods
-[dht11]: https://www.adafruit.com/product/386
+[dht-alt]: https://www.adafruit.com/product/386
 [installation-issue]: https://stackoverflow.com/questions/22073516/failed-to-install-python-cryptography-package-with-pip-and-setup-py
 
 ## Next steps
