@@ -293,7 +293,7 @@ def main():
     if action == 'event':
       # attach_device(client, device_id)
 
-      print('Sending telementry event for device {}'.format(device_id))
+      print('Sending telemetry event for device {}'.format(device_id))
       payload = command["data"]
       mqtt_topic = '/devices/{}/{}'.format(device_id,  'events')
       print('Publishing message to topic {} with payload \'{}\''.format(

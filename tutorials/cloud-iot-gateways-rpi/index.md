@@ -1,5 +1,5 @@
 ---
-title: Using Gateways on Cloud IoT Core with a Raspberry Pi
+title: Using Cloud IoT Core gateways with a Raspberry Pi
 description: Learn how to setup gateways on Cloud IoT Core using a Raspberry Pi.
 author: hongalex
 tags: Cloud IoT Core, Gateways, Raspberry Pi, Python, MQTT, internet of things
@@ -40,16 +40,16 @@ For more information about the different authentication methods Cloud IoT Core o
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform, including:
+This tutorial uses billable components of GCP, including:
 
 - Cloud IoT Core
 - Cloud Pub/Sub
 
 This tutorial should not generate any usage that would not be covered by the free tier, but you can use the [pricing calculator](https://cloud.google.com/products/calculator/#id=411d8ca1-210f-4f2c-babd-34c6af2b5538) to generate a cost estimate based on your projected usage.
 
-## Required Hardware
+## Required hardware
 
-- [Raspberry Pi 3][rpi] Model B (Other models should work, but has not been verified)
+- [Raspberry Pi 3][rpi] Model B (Other models should work, but they have not been verified)
 - MicroSD card for [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) (8GB+ recommended)
 - MicroSD card reader
 - USB keyboard
@@ -71,7 +71,7 @@ Click **Enable API** for each of the following:
 
 [cloud-iot]: https://console.developers.google.com/iot
 
-## Create a Registry
+## Create a registry
 
 First, create a device registry that will contain your gateway and devices.
 
@@ -82,9 +82,9 @@ First, create a device registry that will contain your gateway and devices.
 5. Select the region closest to you, but for the purposes of this demo we'll use `us-central1`.
 6. Ensure the MQTT protocol is enabled for this registry.
 7. Under **Cloud Pub/Sub topics**, create a new Cloud Pub/Sub topic for **Default telemetry topic**.
-    - Click on the **Select a Cloud Pub/Sub topic** Dropdown.
+    - Click on the **Select a Cloud Pub/Sub topic** dropdown.
     - Click on the **Create a topic** option.
-    - Enter a PubSub topic name, such as `gateway-telemetry`.
+    - Enter a Cloud Pub/Sub topic name, such as `gateway-telemetry`.
 8. Do the same for **Device state topic**, under a different PubSub topic named `gateway-state`.
 
     ![create registry][create-registry]
@@ -93,7 +93,7 @@ First, create a device registry that will contain your gateway and devices.
 
 [create-registry]: ./images/create-registry.png 
 
-## Set Up your Gateway
+## Set up your gateway
 
 For the purposes of this tutorial, you will use your laptop or desktop as the gateway device. You will first generate an RSA public/private key pair, which will be used to sign the JWTs for authenticating to Cloud IoT Core.
 
@@ -112,7 +112,7 @@ To set up your gateway:
 4. Under the **Gateways** tab, click **Create Gateway**.
 5. For **Gateway ID**, enter `my-gateway`.
 6. Copy the contents of `rsa_public.pem` into the public key text area.
-7. For **Device authentication method**, select **Association only**. For more details about why this option is used, see [Extra Notes][extra-notes] below.
+7. For **Device authentication method**, select **Association only**. For more details about why this option is used, see [Extra Notes](#extra-notes) below.
 
     ![create gateway][create-gateway]
 
@@ -134,16 +134,15 @@ To set up your gateway:
 
 14. Find the local IP address of the gateway using `ifconfig` on  Mac/Linux or `ipconfig /all` on Windows. Copy this somewhere as you will need to add this IP address to `led-light.py` and `thermostat.py` later.
 
-[extra-notes]: #extra-notes
 [create-gateway]: ./images/create-gateway.png
 
-## Raspberry Pi Setup
+## Raspberry Pi setup
 
 In this tutorial, you'll use a [Raspberry Pi][rpi] to manage the LED/temperature sensor. Devices will connect to the gateway device through [UDP sockets][udp-socket], which will connect to Cloud IoT Core via the [MQTT bridge][mqtt-bridge]. A Raspberry Pi could theoretically connect directly to the cloud (since the Pi can connect to the internet), so using a Raspberry Pi for this part is purely for demonstration purposes.
 
-1. [Download Raspian][raspbian-download] (the full image with Desktop and recommended software) and follow [the installation guide][raspbian-installation] to flash Raspbian onto your microSD card.
+1. [Download Raspbian][raspbian-download] (the full image with Desktop and recommended software) and follow [the installation guide][raspbian-installation] to flash Raspbian onto your microSD card.
 2. Insert the microSD card with Raspbian into your Raspberry Pi.
-3. Attach a power source to the Raspberry Pi using the microUSB cable (i.e. to a laptop USB port).
+3. Attach a power source to the Raspberry Pi using the microUSB cable (e.g. to a laptop USB port).
 4. Connect your keyboard and mouse to the Raspberry Pi's USB ports.
 5. Connect the Raspberry Pi to a monitor through the HDMI port.
 6. Go through the default setup steps for Raspbian upon boot.
@@ -162,7 +161,7 @@ In this tutorial, you'll use a [Raspberry Pi][rpi] to manage the LED/temperature
 
         pip install -r requirements.txt
 
-    Feel free to do this part in the virtual environment manager of your choosing, though make sure to switch into those environments when opening new tabs
+    Feel free to do this part in the virtual environment manager of your choosing, though make sure to switch into those environments when opening new tabs.
 
 [udp-socket]: https://docs.python.org/2/library/socket.html
 [mqtt-bridge]: https://cloud.google.com/iot/docs/how-tos/mqtt-bridge
@@ -170,7 +169,7 @@ In this tutorial, you'll use a [Raspberry Pi][rpi] to manage the LED/temperature
 [raspbian-installation]: https://www.raspberrypi.org/documentation/installation/installing-images/README.md
 [rpi]: https://www.raspberrypi.org/
 
-## Managing Devices through Config Updates
+## Managing devices through config updates
 
 Next, you will manage an LED light connected to the gateway through Cloud IoT Core config updates.
 
@@ -210,7 +209,7 @@ Next, you will manage an LED light connected to the gateway through Cloud IoT Co
 [rpi-gpio]: https://www.raspberrypi.org/documentation/usage/gpio/
 [update-config]: ./images/update-config.png
 
-## Publishing Telemetry Events through the Gateway
+## Publishing telemetry events through the gateway
 
 In this section, you will set up a DHT22 sensor to send telemetry from the sensor through the gateway to Cloud IoT Core.
 
@@ -253,7 +252,7 @@ The topic should have received a lot of messages from both the LED and DHT22. In
 
 To avoid incurring any future billing costs, it is recommended that you delete your project once you have completed the tutorial.
 
-## Extra Notes
+## Extra notes
 
 - The reason why **Association Only** was chosen when creating the gateway is so that the device does not have to store its own JWT when authenticating to Cloud IoT Core. You can read more about [authentication methods here][authentication].
 - You can set up a second Raspberry Pi or another internet enabled device to act as the gateway for a more realistic example.
