@@ -3,7 +3,7 @@ title: Run an Elixir Phoenix app on the Google App Engine Flexible Environment
 description: Learn how to deploy a Phoenix app to the Google App Engine flexible environment.
 author: dazuma
 tags: App Engine, Elixir, Phoenix
-date_published: 2018-12-11
+date_published: 2018-12-19
 ---
 
 The [Google App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/)
@@ -155,7 +155,7 @@ cloud. If you already have a database hosted elsewhere, you may skip this
 section, but you may need to ensure your production configuration is set up to
 connect to your database.
 
-### Create a Cloud SQL database
+### Create a Cloud SQL instance
 
 First you will create a new database in the cloud.
 
@@ -186,48 +186,21 @@ First you will create a new database in the cloud.
 
     When prompted, enter a password for the database.
 
-Initially, your database is owned by the default user, `postgres`. You may
-change the ownership to an unprivileged user if you wish.
+### Connect to your Cloud SQL instance
 
-### Configure Ecto to talk to the production database
+In this section you will learn how to connect to your Cloud SQL instance from
+your local workstation. Generally, you will not need to do this often, but it
+is useful for the initial creation and migration of your database, as well as
+for _ad hoc_ database connection for maintenance.
 
-Next you will adjust your Phoenix app configuration to point to your new
-database in the prod environment.
-
-The App Engine runtime provides unix sockets that you can use to connect to
-your Cloud SQL databases. Edit your production database configuration in the
-`config/prod.secret.exs` file to reference your database. The resulting
-configuration may look something like this:
-
-    # Configure your database
-    config :hello, Hello.Repo,
-      username: "postgres",
-      password: "XXXXXXXX",
-      database: "hello_prod",
-      socket_dir: "/cloudsql/[CONNECTION-NAME]",
-      pool_size: 15
-
-Remember to replace `[CONNECTION-NAME]` with your database's connection name,
-and include the password you set for the "postgres" user.
-
-Further information on connecting to your database from App Engine is available
-[in the documentation](https://cloud.google.com/sql/docs/postgres/connect-app-engine).
-
-### Migrate your production database
-
-Next you will migrate your production database. This section also describes how
-you can connect directly to the database for maintenance and other purposes.
-
-By default, Google Cloud SQL instances are secured: to connect using standard
-PostgreSQL protocols, you are required to whitelist your IP address. This
-security measure, while necessary, can make it challenging to establish
-_ad hoc_ database connections, such as for running the initial migration or
-performing maintenance of the database.
-
-Thus, Google Cloud SQL provides a command line tool called the
+By default, Google Cloud SQL instances are secured: to connect using the
+standard `psql` tool, you are required to whitelist your IP address. This
+security measure can make it challenging to establish _ad hoc_ database
+connections. So, Google Cloud SQL provides a command line tool called the
 [Cloud SQL Proxy](https://cloud.google.com/sql/docs/postgres/sql-proxy). This
-tool communicates with your database instance over a secure API, and opens a
-local endpoint (such as a unix socket) that database clients can use.
+tool communicates with your database instance over a secure API, using your
+Cloud SDK credentials, and opens a local endpoint (such as a unix socket) that
+`psql` can connect to.
 
 To set up Cloud SQL Proxy, perform the following steps:
 
@@ -235,52 +208,83 @@ To set up Cloud SQL Proxy, perform the following steps:
     Make sure that `cloud_sql_proxy` is executable and is available in your
     environment's `PATH`.
 
-2.  Create a directory `/cloudsql` in the root of your file system. This is
+2.  Create a directory `tmp/cloudsql` in your application directory. This is
     where the Cloud SQL Proxy will create database connection sockets.
 
-        mkdir -p /cloudsql
-
-    (Note that this matches where the same database connection sockets are
-    available in the App Engine runtime environment, and thus how you
-    configured your database connection configs above.)
-
-    If you need to use sudo to create this directory, then alter its permission
-    bits so your user can write to it.
-
-    **Note**: If you are unable to create the `/cloudsql` directory on your
-    workstation, e.g. due to permissions, then you can use any other directory
-    where you have write permissions. However, if you do so, you will need to
-    make a corresponding temporary modification to the `socket_dir` setting in
-    your prod configs, so that Ecto knows where to look for the database
-    connection sockets. For example, if you want to host these sockets in
-    `/tmp/cloudsql` instead of `/cloudsql`, then change the `socket_dir` config
-    to `/tmp/cloudsql/[CONNECTION-NAME]`. Be sure to revert it to the original
-    setting before deploying your app, because App Engine expects database
-    sockets to be under `/cloudsql`.
+        mkdir -p tmp/cloudsql
 
 3.  Start the proxy:
 
-        cloud_sql_proxy -dir=/cloudsql
-
-    (Adjust the command appropriately if you used a different directory.)
+        cloud_sql_proxy -dir=tmp/cloudsql
 
     Note: This runs the proxy in the foreground, so subsequent commands
     need to be run in a separate shell. If you prefer, feel free to
     background the process instead.
 
 4.  The proxy will open a socket in the directory
-    `/cloudsql/[CONNECTION-NAME]/`. You can then connect to the database by
-    pointing at that socket. Test this by connecting to your production
-    database using the `psql` command line tool:
+    `tmp/cloudsql/[CONNECTION-NAME]/`. You can point `psql` to that socket to
+    connect to the database instance. Test this now:
 
-        psql -h /cloudsql/[CONNECTION-NAME] -U postgres
+        psql -h tmp/cloudsql/[CONNECTION-NAME] -U postgres
 
-5.  Now you can use Phoenix to create and migrate your production database:
+You can learn more about using the Cloud SQL Proxy to connect to your instance
+from [the documentation](https://cloud.google.com/sql/docs/postgres/connect-admin-proxy).
+
+### Create and migrate the production database
+
+Next you will configure your Phoenix app to point to your production database
+instance, and tell Ecto to create and migrate the database.
+
+1.  Start the Cloud SQL Proxy, if it is not already running from the previous
+    section.
+
+        cloud_sql_proxy -dir=tmp/cloudsql
+
+2.  Configure your production database configuration to communicate with the
+    sockets opened by the running Cloud SQL Proxy. Edit the
+    `config/prod.secret.exs` file to include something like this:
+
+        # Configure your database
+        config :hello, Hello.Repo,
+          username: "postgres",
+          password: "XXXXXXXX",
+          database: "hello_prod",
+          socket_dir: "tmp/cloudsql/[CONNECTION-NAME]",
+          pool_size: 15
+
+    Remember to replace `[CONNECTION-NAME]` with your database's connection
+    name, and include the password you set for the "postgres" user.
+
+3.  Now you can use Phoenix to create and migrate your production database:
 
         MIX_ENV=prod mix ecto.create
         MIX_ENV=prod mix ecto.migrate
 
-6.  Stop your Cloud SQL Proxy when you are done administering the database.
+4.  Stop the Cloud SQL Proxy when you are finished.
+
+### Access the production database from App Engine
+
+The App Engine runtime also runs a Cloud SQL Proxy for you, and makes your
+databases available via unix sockets. In the App Engine environment, these are
+located in the directory `/cloudsql` at the root of the file system. So, to
+prepare your app for deployment into App Engine, edit your
+`config/prod.secret.exs` file again, and modify the `socket_dir` database
+setting to point to the correct location for App Engine:
+
+      socket_dir: "/cloudsql/[CONNECTION-NAME]",
+
+Remember to replace `[CONNECTION-NAME]` with your database's connection name.
+
+Further information on connecting to your database from App Engine is available
+[in the documentation](https://cloud.google.com/sql/docs/postgres/connect-app-engine).
+
+Note that if you need to run another Ecto migration or open another `psql`
+session from your local workstation, you can temporarily revert `socket_dir` to
+`tmp/cloudsql` so that Phoenix can talk to your local Cloud SQL Proxy. If you
+do, make sure you change it back to `/cloudsql` before you deploy to App Engine.
+Alternatively, if you have the ability to create the directory `/cloudsql` on
+your local workstation, you can configure Cloud SQL Proxy to open its sockets
+there instead, and avoid the need to revert `socket_dir`.
 
 ## Enable releases with Distillery
 
