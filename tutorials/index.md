@@ -1,56 +1,16 @@
 ---
-title: Google Cloud VPN Interop Guide for Alibaba Cloud VPN Gateway with Redundancy
-description: Describes how to build IPsec VPNs between Cloud VPN on Google Cloud Platform (GCP) and  Alibaba Cloud VPN Gateway with redudancy.
+title: Using Cloud VPN with Alibaba Cloud VPN Gateway with redundancy
+description: Describes how to build IPsec VPNs between Cloud VPN on Google Cloud Platform (GCP) and Alibaba Cloud VPN Gateway with redudancy.
 author: epluscloudservices
 tags: VPN, interop, alibaba, alibaba cloud vpn gateway, redundancy
 date_published: 2018-08-31
 ---
 
-# Using Cloud VPN with Alibaba Cloud VPN Gateway with Redundancy
+# Using Cloud VPN with Alibaba Cloud VPN Gateway with redundancy
 
 Learn how to build IPsec VPNs between
 [Cloud VPN](https://cloud.google.com/vpn/docs/) on Google Cloud Platform (GCP) and
 Alibaba Cloud VPN Gateway with redundancy
-
-- [Google Cloud VPN Interop Guide](#google-cloud-vpn-interop-guide)
-- [Introduction](#introduction)
-- [Topology](#topology)
-- [Product environment](#product-environment)
-- [Before you begin](#before-you-begin)
-    - [GCP account and project](#gcp-account-and-project)
-    - [Permissions](#permissions)
-    - [IP Ranges](#ip-ranges)
-    - [GCP-compatible settings for IPSec and IKE](#gcp-compatible-settings-for-ipsec-and-ike)
- - [Configuration Overview](#configuration-overview)
-    - [Configure the GCP side](#configure-the-gcp-side)
-    - [Configure the Alibaba Cloud side](#configure-the-alibaba-cloud-side)
- - [Configure the GCP side](#configure-the-gcp-side)
-    - [Initial tasks](#initial-tasks)
-        - [Select a GCP project name](#select-a-gcp-project-name)
-        - [Create a custom VPC network and subnet](#create-a-custom-vpc-network-and-subnet)
-        - [Create the GCP external IP addresses for Cloud VPN gateways](#create-the-gcp-external-ip-addresses-for-cloud-vpn-gateways)
-    - [Configure route-based IPsec VPN using static routing](#configure-route-based-ipsec-vpn-using-static-routing)
-        - [Configure the VPN gateways](#configure-the-vpn-gateways)
-        - [Configure Custom Static Routes with Route Prioritization (Optional)](#configure-custom-static-routes-with-route-prioritization-(Optional))
-    - [Configure firewall rules](#configure-firewall-rules)
-- [Configure the Alibaba Cloud side](#configure-the-alibaba-cloud-side)
-    - [Create an Alibaba Cloud VPC](#create-an-alibaba-cloud-vpc)
-    - [Create an Alibaba Cloud VSwitch](#create-an-alibaba-cloud-vswitch)
-    - [Create Alibaba Cloud VPN Gateways](#create-alibaba-cloud-vpn-gateways)
-    - [Configure Alibaba Cloud Customer Gateways](#configure-alibaba-cloud-customer-gateways)
-    - [Configure Alibaba Cloud IPSec Connections](#configure-alibaba-cloud-ipsec-connections)
-    - [Configure an Alibaba Cloud Static Route Entry](#configure-an-alibaba-cloud-static-route-entry)
-    - [Testing the configuration](#testing-the-configuration)
-- [Troubleshooting IPsec on Alibaba Cloud VPN Gateway](#troubleshooting-ipsec-on-alibaba-cloud-vpn-gateway)
-- [Reference documentation](#reference-documentation)
-    - [GCP documentation](#gcp-documentation)
-    - [Alibaba Cloud VPN Gateway documentation](#alibaba-cloud-vpn-gateway-documentation)
-- [Appendix: Using gcloud commands](#appendix-using-gcloud-commands)
-    - [Running gcloud commands](#running-gcloud-commands)
-    - [Configuration parameters and values](#configuration-parameters-and-values)
-    - [Setting environment variables for gcloud command parameters](#setting-environment-variables-for-gcloud-command-parameters)
-    - [Configuring route-based IPsec VPN using static routing](#configuring-route-based-ipsec-vpn-using-static-routing)
-
 
 _Disclaimer: This interoperability guide is intended to be informational in
 nature and shows examples only. Customers should verify this information by
@@ -75,7 +35,7 @@ For more information about Cloud VPN, see the
 
 Below are definitions of terms used throughout this guide.
 
-**GCP Terminology**
+**GCP terminology**
 -  **GCP VPC network**—A single virtual network within a single GCP project.
 -  **On-premises gateway**—The VPN device on the non-GCP side of the
 connection, which is usually a device in a physical data center or in
@@ -87,7 +47,7 @@ within a GCP project that exists at the edge of the GCP network.
 -  **Static routing**—Manually specifying the route to subnets on the GCP
 side and to the on-premises side of the VPN gateway.
 
-**Alibaba Terminology**
+**Alibaba terminology**
 -  **Alibaba Cloud VPC**-A private network established in Alibaba Cloud. VPCs 
 are logically isolated from other virtual networks in Alibaba Cloud. VPCs allow 
 you to launch and use Alibaba Cloud resources in your VPC.
@@ -96,11 +56,11 @@ used to connect different cloud product instances. When creating a cloud product
 instance in a VPC, you must specify the VSwitch that the instance is located.
 -  **Alibaba Cloud Zone**-Zones are physical areas with independent power grids 
 and networks in one region. Alibaba recommends creating different VSwitches in 
-different zones to achieve disaster Recovery.
+different zones to achieve disaster recovery.
 -  **Alibaba Cloud VPN Gateway**-The VPN gateway is the IPsec VPN gateway created 
 on the Alibaba Cloud side. One VPN gateway can have multiple VPN connections.
 -  **Alibaba Cloud Customer Gateway**-The customer gateway is the VPN service 
-deployed in the on-premises data Center or, in this case, the GCP Cloud VPN gateway. 
+deployed in the on-premises data center or, in this case, the GCP Cloud VPN gateway. 
 By creating a customer gateway, you can register the VPN information to the cloud, 
 and then create a VPN connection to connect the VPN gateway and the customer gateway.
 -  **Alibaba Cloud VRouter**-A VRouter is a hub in the VPC that connects all 
@@ -116,22 +76,22 @@ entry and custom route entry.
 
 Cloud VPN supports the following topology with Alibaba Cloud VPN Gateway:
 
--  Redundant IPsec VPN tunnel configuration using static routing.
+- Redundant IPsec VPN tunnel configuration using static routing.
 
-<p><img align="center" src="topology-redundancy.PNG" height="200" /></p>
+  ![topology-redundancy](topology-redundancy.png)
 
 For detailed topology information, see the following resources:
 
 -  For basic VPN topologies, see 
-[Cloud VPN Overview](https://cloud.google.com/vpn/docs/concepts/overview).
--  For redundant topologies,  the
+[Cloud VPN overview](https://cloud.google.com/vpn/docs/concepts/overview).
+-  For redundant topologies, see the
 [Cloud VPN documentation on redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns).
 
 Disclaimer: At time of this writing, IPsec VPN tunnel configuration using dynamic routing between Cloud VPN and Alibaba Cloud VPN Gateway is not supported. 
 
 ## Product environment
 
-The on-premise VPN gateway used in this guide is as follows:
+The on-premises VPN gateway used in this guide is as follows:
 
 -  Vendor—Alibaba Cloud
 -  Service—VPN Gateway
@@ -155,11 +115,11 @@ To create a GCP network, a subnetwork, and other entities described in this
 guide, you must be able to sign in to GCP as a user who has
 [Network Admin](https://cloud.google.com/compute/docs/access/iam#network_admin_role)
 permissions. For details, see
-[Required Permissions](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes#required_permissions)
+[Required permissions](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes#required_permissions)
 in the article
-[Creating a VPN Tunnel using Dynamic Routing](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes).
+[Creating a VPN tunnel using dynamic routing](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes).
 
-### IP Ranges
+### IP ranges
 
 The IP address ranges of the GCP VPC and the Alibaba VPC must not overlap.
 
@@ -170,62 +130,28 @@ settings that are compatible with the GCP side of the network. The following
 table lists settings and information about values compatible with GCP VPN.
 Use these settings for the procedures in the subsections that follow.
 
-<table>
-<thead>
-<tr>
-<th><strong>Setting</strong></th>
-<th><strong>Description or value</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>IPsec Mode</td>
-<td>ESP+Auth Tunnel mode (Site-to-Site)</td>
-</tr>
-<tr>
-<td>Auth Protocol</td>
-<td>Pre-shared Key (psk)</td>
-</tr>
-<tr>
-<td>Shared Secret</td>
-<td>Also known as an IKE pre-shared key. Choose a strong password by following
-<a
-href="https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key">these
-guidelines</a>. The shared secret is very sensitive as it allows access
-into your network.</td>
-</tr>
-<tr>
-<td>Start</td>
-<td><code>Auto</code> (on-premises device should automatically restart the
-connection if it drops)</td>
-</tr>
-<tr>
-<td>PFS (Perfect Forward Secrecy)</td>
-<td>group1, group2, group5, group14, group24</td>
-</tr>
-<tr>
-<td>IKE ciphers</td>
-<td>aes, aes192, aes256, des, 3des <br>(For details about IKE ciphers for IKEv1 or IKEv2 supported by GCP,
-including the additional ciphers for PFS, see <a
-href="https://cloud.google.com/vpn/docs/concepts/supported-ike-ciphers">Supported
-IKE Ciphers</a>).</td>
-</tr>
-</tbody>
-</table>
+| Setting       | Description or value                |
+|---------------|-------------------------------------|
+|    IPsec Mode | ESP+Auth Tunnel mode (Site-to-Site) |
+| Auth Protocol | Pre-shared Key (psk)                |
+| Shared Secret | Also known as an IKE pre-shared key. Choose a strong password by following [these guidelines](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key). The shared secret is very sensitive, because it allows access into your network. |
+| Start         | `Auto` (on-premises device should automatically restart the connection if it drops) |
+| PFS (Perfect Forward Secrecy) | group1, group2, group5, group14, group24 |
+| IKE ciphers | aes, aes192, aes256, des, 3des (For details about IKE ciphers for IKEv1 or IKEv2 supported by GCP, including the additional ciphers for PFS, see [Supported IKE ciphers](https://cloud.google.com/vpn/docs/concepts/supported-ike-ciphers).) |
 
 #### Recommended Alibaba Cloud VPN Gateway IKE proposal and policy
 Below are fields you may be asked to complete for the Alibaba Cloud side configurations. 
 The defaults indicated below will work with the defaults used on the GCP side.
 
--  **Encryption algorithm**—<code>aes</code> 
--  **Integrity algorithm**—<code>sha1</code>
--  **Diffie-Hellman group**—<code>group2</code>
--  **Lifetime/SA Life Cycels**—<code>86400</code> seconds 
+-  **Encryption algorithm**—`aes` 
+-  **Integrity algorithm**—`sha1`
+-  **Diffie-Hellman group**—`group2`
+-  **Lifetime/SA Life Cycles**—`86400` seconds 
 
 
-## Configuration Overview
+## Configuration overview
 
-The Google Cloud VPN with Alibaba Cloud VPN Gateway configuration is comprised of the following steps.
+The Google Cloud VPN with Alibaba Cloud VPN Gateway configuration consists of the following steps.
 
 1. Configure the GCP side
 1. Configure the Alibaba Cloud side
@@ -233,7 +159,7 @@ The Google Cloud VPN with Alibaba Cloud VPN Gateway configuration is comprised o
 ## Configure the GCP side
 
 This section covers the steps for creating a redundant GCP IPsec VPN using static routing.
-Both route-based Cloud VPN and policy-based Cloud VPN use static routing.  For
+Both route-based Cloud VPN and policy-based Cloud VPN use static routing. For
 information on how this works, see the 
 [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).
 
@@ -250,7 +176,7 @@ Complete the following procedures before configuring a static GCP VPN gateway
 and tunnel.
 
 **Important:** Throughout these procedures, you assign names to entities like
-the VPC network and subnet, IP address, and so on. Each time you assign a name,
+the VPC network and subnet, and IP address. Each time you assign a name,
 make a note of it, because you often need to use those names in later
 procedures.
 
@@ -279,11 +205,12 @@ this name for later.
 takes about a minute for this network and its subnet to appear.
 
 #### Create the GCP external IP addresses for Cloud VPN gateways
+
 Two Cloud VPN gateways on the GCP side are needed for redudancy.
 
 The following procedure configures one external IP address for the first Cloud VPN gateway. 
 
-Repeat procedure to create a second external IP address for the second Cloud VPN gateway.
+Repeat the procedure to create a second external IP address for the second Cloud VPN gateway.
 
 1.  In the GCP Console,
 [go to the External IP addresses page](https://pantheon.corp.google.com/networking/addresses/list).
@@ -302,14 +229,17 @@ have created.
 1. Make a note of the IP address that is created so that you can use it to
 configure the VPN gateways later.
 
-1. Repeat steps using a different name, such as `vpn-test-static-ip-2`.
+1. Repeat the steps using a different name, such as `vpn-test-static-ip-2`.
 
-### Configure Route Based IPSec VPN Using Static Routing
+### Configure route-based IPSec VPN using static routing
 
 #### Configure the VPN gateways
+
 Two VPN gateways are needed for redundancy.
+
 The following procedure configures the first VPN gateway with two tunnels.
-Repeat procedure to configure the second VPN gateway with two tunnels.
+
+Repeat the procedure to configure the second VPN gateway with two tunnels.
 
 1. In the GCP Console, 
 [go to the VPN page](https://console.cloud.google.com/networking/vpn/list).
@@ -320,7 +250,7 @@ Repeat procedure to configure the second VPN gateway with two tunnels.
     name like `vpn-test-alibaba-gw-1`, where `alibaba` is a
     string that identifies the vendor.
     -  **Network**—The VPC network that you created previously (for
-    example,  `vpn-vendor-test-network`) that contains the instances that the
+    example, `vpn-vendor-test-network`) that contains the instances that the
     VPN gateway will serve.
     -  **Region**—The region where you want to locate the VPN gateway.
     Normally, this is the region that contains the instances you want to reach.
@@ -336,8 +266,8 @@ Repeat procedure to configure the second VPN gateway with two tunnels.
     -  **Shared secret**—A character string used in establishing encryption
     for the tunnel. You must enter the same shared secret into both VPN
     gateways. For more information, see
-    [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
-1. Repeat previous step for the second tunnel and use a different name, such as 'vpn-gw-1-tunnel2'
+    [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
+1. Repeat previous the step for the second tunnel and use a different name, such as `vpn-gw-1-tunnel2`.
 1. Under **Routing options**, select the **Route based** or **Policy based** tab.
 1. Populate the following fields:
     -  **Remote network IP range**—The range or ranges of the on-premises network,
@@ -353,6 +283,7 @@ Cloud VPN  gateway and the on-premises gateway.
 1. Repeat all steps above to create the second VPN gateway with two tunnels.
 
 #### Configure Custom Static Routes with Route Prioritization (Optional)
+
 While configuring routing options for the VPN gateways in the prior section, GCP automatically creates static routes for the remote network IP range with unique tunnels as the next hop. By default, each dynamically created static route will have the same route priority resulting in equal cost pathing across each pair of tunnels on each VPN gateway.
 
 To forward traffic across a specific tunnel on each VPN gateway, manually create static routes with different priorities.
@@ -361,8 +292,8 @@ Set one tunnel to be primary and other tunnel to be secondary by using a lower n
 
 For example, a route with a priority value of 100 will have higher priority than one with a priority value of 200.
 
-1. In the GCP Console, [go to the GCP Routes page](https://console.cloud.google.com/networking/routes)
-2. Click **Create route**
+1. In the GCP Console, [go to the GCP Routes page](https://console.cloud.google.com/networking/routes).
+2. Click **Create route**.
 3. Specify a **Name** and a **Description** for the route.
 4. Select an existing **Network** where the route will apply.
 5. Specify a **Destination IP range** to define the destination of the route.
@@ -370,7 +301,7 @@ For example, a route with a priority value of 100 will have higher priority than
 7. Leave the field blank to make the route applicable to all instances in the network. To make the route applicable only to select instances with matching network tags, specify those in the Instance tags field.
 8. Select a **Next hop** for the route. **VPN tunnel** allows you to select an existing Cloud VPN tunnel as a next hop. 
 9. Click **Create**
-10. Repeat steps for remaining VPN tunnels.
+10. Repeat the steps for remaining VPN tunnels.
 
 **Important**: You cannot edit or update a route after you create it. To modify a custom static route, you must delete it and create a replacement.
 
@@ -385,15 +316,12 @@ firewall to allow inbound traffic from your VPC subnet prefixes.
 1. Click **Create firewall rule**.
 1. Populate the following fields:
 
-1. **Name**—A name such as `vpnrule1`.
-1. **Network**—The name of the VPC network that you created
-    previously (for example,  `vpn-vendor-test-network`).
-1. **Target tags:**—All instances in the network  
-1. **Source filter**—A filter to apply your rule to specific sources of
-    traffic. In this case, choose source IP ranges.
-1. **Source IP ranges**—The on-premises IP ranges to accept from the
-    on-premises VPN gateway.
-1. **Allowed protocols and ports**—The string `tcp;udp;icmp`.
+    - **Name**—A name such as `vpnrule1`.
+    - **Network**—The name of the VPC network that you created previously (for example, `vpn-vendor-test-network`).
+    - **Target tags:**—All instances in the network  
+    - **Source filter**—A filter to apply your rule to specific sources of traffic. In this case, choose source IP ranges.
+    - **Source IP ranges**—The on-premises IP ranges to accept from the on-premises VPN gateway.
+    - **Allowed protocols and ports**—The string `tcp;udp;icmp`.
 
 1. Click **Create**.
 
@@ -403,76 +331,81 @@ This section includes sample tasks that describe how to configure the
 on-premises side of the VPN gateway configuration using Alibaba Cloud VPN Gateway.
 
 ### Create an Alibaba Cloud VPC
+
 This section covers the steps of creating an Alibaba Cloud VPC.
 
-1. Login to the Alibaba Management Console
-    - Go to **Products > Virtual Private Cloud** 
-1. Create a new VPC
-    - Select a **Region**  (for example, US (Silicon Valley))
-    - Click the **Create VPC** button
+1. Log in to the Alibaba Management Console.
+    - Go to **Products > Virtual Private Cloud**.
+1. Create a new VPC.
+    - Select a **Region**  (for example, US (Silicon Valley)).
+    - Click the **Create VPC** button.
 1. Configure the following VPC settings:
-    - **VPC Name**—Enter the name of the VPC (for example, `alibaba-vpc`)
-    - **Destination CIDR Block**—Specify the IP address range for the VPC in the form of a Classless Inter-Domain Routing (CIDR) block (for example, `192.168.0.0/16`)
+    - **VPC Name**—Enter the name of the VPC (for example, `alibaba-vpc`).
+    - **Destination CIDR Block**—Specify the IP address range for the VPC in the form of a Classless Inter-Domain Routing (CIDR) block (for example, `192.168.0.0/16`).
 
 
 ### Create an Alibaba Cloud VSwitch
+
 This section covers the steps of configuring the Alibaba Cloud VSwitch.
 
 1. Within the same VPC configuration window pane, configure the following VSwitch settings:
-    - **VSwitch Name**—Enter the name of the VSwitch (for example, `alibaba-vswitch`)
-    - **Zone**—Select a zone for the VSwitch (for example, `USA West 1 Zone A`)
-    - **Destination CIDR Block**—Specify a subnet from the VPC’s CIDR IP address range (for example, `192.168.1.0/24`)
-1. Click on **OK** followed by the **Complete** button
-1. Verify the VPC and VSwitch status indicate “Available”
+    - **VSwitch Name**—Enter the name of the VSwitch (for example, `alibaba-vswitch`).
+    - **Zone**—Select a zone for the VSwitch (for example, `USA West 1 Zone A`).
+    - **Destination CIDR Block**—Specify a subnet from the VPC’s CIDR IP address range (for example, `192.168.1.0/24`).
+1. Click **OK** followed by the **Complete** button.
+1. Verify the VPC and VSwitch status indicate “Available”.
 
-### Create Alibaba Cloud VPN Gateways
+### Create Alibaba Cloud VPN gateways
+
 This section covers the steps of configuring the Alibaba Cloud VPN Gateway.
+
 The steps below will configure a single Alibaba Cloud VPN Gateway.
-You will need to repeat these steps twice to get two Alibaba Cloud VPN Gateways.
+
+Repeat these steps to get a second Alibaba Cloud VPN Gateway.
 
 1. Go to **Products > Virtual Private Cloud > VPN Gateways**
 1. Click **Create VPN Gateway**
 1. Configure the following settings:
-    - **Region**—Select a region (for example, `US (Silicon Valley)`)
-    - **Name**—Give the VPN Gateway a name (for example, `alibaba-vpn-gateway-1`)
-    - **VPC**—Select the VPC (for example, `alibaba-vpc`)
-    - Keep all other values as default
+    - **Region**—Select a region (for example, `US (Silicon Valley)`).
+    - **Name**—Give the VPN Gateway a name (for example, `alibaba-vpn-gateway-1`).
+    - **VPC**—Select the VPC (for example, `alibaba-vpc`).
+    - Keep all other values as default.
 1. Click **Buy Now**  
-    - Check on the **VPN Gateway Agreement of Service** checkbox and click the **Activate** button.
-    - Click **Console** and navigate back to **Products > Virtual Private Cloud > VPN Gateways** to verify the status and take note of the IP address as this will be used for GCP-side configuration.
+    - Check the **VPN Gateway Agreement of Service** checkbox and click the **Activate** button.
+    - Click **Console** and navigate back to **Products > Virtual Private Cloud > VPN Gateways** to verify the status and take note of the IP address, since this will be used for GCP-side configuration.
 Note: The VPN Gateway will take several minutes to come up and obtain a public IP address. 
-1. Repeat to create the second Alibaba Cloud VPN Gateway and use a different name, such as `alibaba-vpn-gateway-2`.
+1. Repeat these steps to create the second Alibaba Cloud VPN Gateway, using a different name, such as `alibaba-vpn-gateway-2`.
 
-### Configure Alibaba Cloud Customer Gateways
+### Configure Alibaba Cloud customer gateways
 
-1. Login to the Alibaba Cloud console 
-1. Go to **Products > Virtual Private Cloud > Customer Gateways**
-1. Select **Region** (for example, `US (Silicon Valley)`)then click **Create Customer Gateway**
+1. Log in to the Alibaba Cloud console.
+1. Go to **Products > Virtual Private Cloud > Customer Gateways**.
+1. Select **Region** (for example, `US (Silicon Valley)`) and then click **Create Customer Gateway**.
 1. Complete the following settings:
-    - **Name**—Provide a name to the customer gateway (for example, `gcp-customer-gateway-1`)
-    - **IP Address**—Provide the Public IP address of GCP customer gateway (for example, `35.197.191.225`)
+    - **Name**—Provide a name to the customer gateway (for example, `gcp-customer-gateway-1`).
+    - **IP Address**—Provide the Public IP address of GCP customer gateway (for example, `35.197.191.225`).
     - Click **OK**
-1. Repeat to create a second customer gateway using a different name, such as `gcp-customer-gateway-2`
+1. Repeat this procedure to create a second customer gateway, using a different name, such as `gcp-customer-gateway-2`
 and provide the IP address of the second GCP customer gateway.
 
-### Configure Alibaba Cloud IPSec Connections
+### Configure Alibaba Cloud IPSec connections
 
 This section covers the steps of creating an Alibaba IPSec connection with the GCP Cloud gateway.  
 
-1. Go to **Products > Virtual Private Cloud > IPSec Connections**
-1. Click **Create IPsec Connection**
+1. Go to **Products > Virtual Private Cloud > IPSec Connections**.
+1. Click **Create IPsec Connection**.
 1. Complete the following settings:
-    - **Name**—Provide a name to the VPN connection (for example, `ali-gw-1-tunnel-1`)
-    - **VPN Gateway**—Choose the VPN gateway in the dropdown which was created earlier (for example, `alibaba-vpn-gateway-1`)
-    - **Customer Gateway**—Choose the customer gateway in the dropdown which was created earlier (for example, `gcp-customer-gateway-1`)
-    - **Local network**—Provide the local subnet for Alibaba (for example, `192.168.1.0/24`)
-    - **Remote Network**—Provide the remote subnet for GCP (for example, `172.16.1.0/24`)
+    - **Name**—Provide a name to the VPN connection (for example, `ali-gw-1-tunnel-1`).
+    - **VPN Gateway**—Choose the VPN gateway in the dropdown which was created earlier (for example, `alibaba-vpn-gateway-1`).
+    - **Customer Gateway**—Choose the customer gateway in the dropdown which was created earlier (for example, `gcp-customer-gateway-1`).
+    - **Local network**—Provide the local subnet for Alibaba (for example, `192.168.1.0/24`).
+    - **Remote Network**—Provide the remote subnet for GCP (for example, `172.16.1.0/24`).
     - **Effective Immediately**—Yes
-1. Click on **Advanced Configuration**
+1. Click **Advanced Configuration**.
 1. Complete the following settings:
     - **Pre-shared Key**—Enter the pre-shared key used on GCP-side. IPsec tunneling requires that both agents use the same key. 
     - **Version**—ikev2
-    - Leave all other options default
+    - Leave all other options default.
 1. Click **OK**
 1. Verify the IPSec Tunnel is established. It may take a few minutes.
 
@@ -480,61 +413,34 @@ This section covers the steps of creating an Alibaba IPSec connection with the G
 Negotiation Succeeded. And from the GCP-side, the VPN tunnel status should transition from Negotiation failure to Established. You may need to refresh the GCP Platform Console page until the Established state appears. If the tunnel status in the Alibaba Cloud management console does not reach Succeeded or the tunnel status on the GCP Platform Console does not reach Established, refer to the Troubleshooting section of this document.
 1. Repeat to create the remaining three tunnels. When you are done, you should have something similar to the following:
 
-**Alibaba Tunnel Name and Gateway Mappings**
-<table>
-	
-<tr>
-<td><b>VPN Gateway Name</b></td>
-<td><b>Instance ID/Name</b></td>
-<td><b>Peer IP Address</b></td>
-<tr>
+**Alibaba tunnel name and gateway mappings**
 
-<tr>
-<td>alibaba-vpn-gateway-1</td>
-<td>ali-gw-1-tunnel-1</td>
-<td>Public IP address of 1st GCP VPN Gateway</td>
-<tr>
-
-<tr>
-<td>alibaba-vpn-gateway-1</td>
-<td>ali-gw-1-tunnel-2</td>
-<td>Public IP address of 2nd GCP VPN Gateway</td>
-<tr>
-
-<tr>
-<td>alibaba-vpn-gateway-2</td>
-<td>ali-gw-2-tunnel-1</td>
-<td>Public IP address of 1st GCP VPN Gateway</td>
-<tr>
-
-<tr>
-<td>alibaba-vpn-gateway-2</td>
-<td>ali-gw-2-tunnel-2</td>
-<td>Public IP address of 2nd GCP VPN Gateway</td>
-<tr>
-	
-</table>
+| VPN Gateway name      | Instance ID/Name  | Peer IP address                          |
+|-----------------------|-------------------|------------------------------------------|
+| alibaba-vpn-gateway-1 | ali-gw-1-tunnel-1 | public IP address of 1st GCP VPN Gateway |
+| alibaba-vpn-gateway-1 | ali-gw-1-tunnel-2 | public IP address of 2nd GCP VPN Gateway |
+| alibaba-vpn-gateway-2 | ali-gw-2-tunnel-1 | public IP address of 1st GCP VPN Gateway |
+| alibaba-vpn-gateway-2 | ali-gw-2-tunnel-2 | public IP address of 2nd GCP VPN Gateway |
 
 
-### Configure an Alibaba Cloud Static Route Entry
-Finally, in order to route traffic from the Alibaba Cloud VPC to Google Cloud VPC via the IPsec tunnel, you need to add a custom route entry for the VSwitch subnet. 
+### Configure an Alibaba Cloud static route entry
 
-1. Add static route entry
-    - Go to **Products > Virtual Private Cloud > VPCs > Route Tables > Instance ID/Name of route table**
-1. Click **Add Route Entry**
+Finally, in order to route traffic from the Alibaba Cloud VPC to Google Cloud VPC via the IPsec tunnel, you need to add a custom route entry for the VSwitch subnet.
+
+1. Add a static route entry.
+    - Go to **Products > Virtual Private Cloud > VPCs > Route Tables > Instance ID/Name of route table**.
+1. Click **Add Route Entry**.
 1. Configure the following route settings:
-    - **Destination CIDR Block** – The destination Subnet (e.g. 172.16.1.0/24) 
+    - **Destination CIDR Block** – The destination Subnet (e.g., 172.16.1.0/24) 
     - **Next Hop Type** – VPN Gateway
-    - **VPN Gateway** – The VPN Gateway created earlier (e.g. alibaba-vpn-gateway)
-1. Click **OK**
+    - **VPN Gateway** – The VPN Gateway created earlier (e.g., alibaba-vpn-gateway)
+1. Click **OK**.
 
 Note:
 
-1) When adding a static route entry, only one VPN Gateway can be selected. 
-Multiple static route entries to the same prefix with different VPN Gateways is not supported.
+1) When adding a static route entry, only one VPN Gateway can be selected. Multiple static route entries to the same prefix with different VPN Gateways are not supported.
 
-2) When forwarding egress traffic, the selected VPN Gateway performs equal cost load balancing across both its tunnels.
-Tunnel prioritization is not supported. In other words, both tunnels are always utilized for forwarding egress traffic on the selected VPN Gateway.
+2) When forwarding egress traffic, the selected VPN Gateway performs equal cost load balancing across both its tunnels. Tunnel prioritization is not supported. In other words, both tunnels are always utilized for forwarding egress traffic on the selected VPN Gateway.
 
 ### Testing the configuration
 
@@ -547,7 +453,7 @@ that you configure the VMs on a subnet that will pass traffic through the VPN
 tunnel.
 
 -  Instructions for creating virtual machines in Compute Engine are located
-in the [Getting Started Guide](https://cloud.google.com/compute/docs/quickstart).
+in the [Getting started guide](https://cloud.google.com/compute/docs/quickstart).
 -  Instructions for creating virtual machines in Alibaba Cloud Elastic Compute Service (ECS)
 are located at [ECS operation instructions](https://www.alibabacloud.com/help/doc-detail/25430.htm).
 (Note: When creating an ECS instance, select **Pay-as-You-Go** for the billing method unless you
@@ -582,13 +488,13 @@ Cloud VPN documentation for additional information about both products.
 
 To learn more about GCP networking, see the following documents:
 
--  [VPC Networks](https://cloud.google.com/vpc/docs)
--  [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview)
--  [Creating Route-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-route-based-vpns)
--  [Creating Policy-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-policy-based-vpns)
--  [Advanced Cloud VPN Configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
--  [Redundant and High-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns)
--  [Static Routes Overview](https://cloud.google.com/vpc/docs/routes#routeselection)
+-  [VPC networks](https://cloud.google.com/vpc/docs)
+-  [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview)
+-  [Creating route-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-route-based-vpns)
+-  [Creating policy-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-policy-based-vpns)
+-  [Advanced Cloud VPN configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
+-  [Redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns)
+-  [Static routes overview](https://cloud.google.com/vpc/docs/routes#routeselection)
 -  [Networks and tunnel routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing)
 -  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
 
@@ -631,143 +537,26 @@ lists the parameters and gives examples of the values. The section that follows
 the table describes how to set Linux environment variables to hold the values
 you need for these parameters.
 
-<table>
-<thead>
-<tr>
-<th><strong>Parameter description</strong></th>
-<th><strong>Placeholder</strong></th>
-<th><strong>Example value</strong></th>
-</tr>
-</thead>
-<tbody>
-
-<tr>
-<td>Vendor name</td>
-<td><code>[VENDOR_NAME]<code></td>
-<td>(Your product's vendor name. This value should have no spaces or
-punctuation in it other than underscores or hyphens, because it will be
-used as part of the names for GCP entities.)</td>
-</tr>
-
-<tr>
-<td>GCP project name </td>
-<td><code>[PROJECT_NAME]<code></td>
-<td><code>vpn-guide<code></td>
-</tr>
-
-<tr>
-<td>Shared secret</td>
-<td><code>[SHARED_SECRET]<code></td>
-<td>See <a
-href="https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key">Generating
-a Strong Pre-shared Key</a>.</td>
-</tr>
-
-<tr>
-<td>VPC network name</td>
-<td><code>[VPC_NETWORK_NAME]<code></td>
-<td><code>vpn-vendor-test-network<code></td>
-</tr>
-
-<tr>
-<td>Subnet on the GCP VPC network (for example, <code>vpn-vendor-test-network</code>)</td>
-<td><code>[VPC_SUBNET_NAME]<code></td>
-<td><code>vpn-subnet-1<code></td>
-</tr>
-
-<tr>
-<td>GCP region. Can be any region, but it should be geographically close to the
-on-premises gateway.</td>
-<td><code>[REGION]<code></td>
-<td><code>us-east1<code></td>
-</tr>
-
-<tr>
-<td>Pre-existing external static IP address that you configure for the internet
-side of the Cloud VPN gateway.</td>
-<td><code>[STATIC_EXTERNAL_IP]<code></td>
-<td><code>vpn-test-static-ip<code></td>
-</tr>
-
-<tr>
-<td>IP address range for the GCP VPC subnet (<code>vpn-subnet-1</code>)</td>
-<td><code>[SUBNET_IP]<code></td>
-<td><code>172.16.100.0/24<code></td>
-</tr>
-
-<tr>
-<td>IP address range for the on-premises subnet. You will use this range when
-creating rules for inbound traffic to GCP.</td>
-<td><code>[IP_ON_PREM_SUBNET]<code></td>
-<td><code>10.0.0.0/8<code></td>
-</tr>
-
-<tr>
-<td>External static IP address for the internet interface of <vendor
-name><product-name></td>
-<td><code>[CUST_GW_EXT_IP]</code> </td>
-<td>For example, <code>199.203.248.181</code></td>
-</tr>
-
-<tr>
-<td>The name for the first GCP VPN gateway.</td>
-<td><code>[VPN_GATEWAY_1]<code></td>
-<td><code>vpn-test-alibaba-gw-1</code>, where <code>alibaba</code>
-is the <code>alibaba</code> string</td>
-</tr>
-
-<tr>
-<td>The name for the first VPN tunnel for
-<code>vpn-test-[VENDOR_NAME]-gw-1</code></td>
-<td><code>[VPN_TUNNEL_1]<code></td>
-<td><code>vpn-test-tunnel1<code></td>
-</tr>
-
-<tr>
-<td>The name of a firewall rule that allows traffic between the on-premises
-network and GCP VPC networks</td>
-<td><code>[VPN_RULE]<code></td>
-<td><code>vpnrule1<code></td>
-</tr>
-
-<tr>
-<td>The name for the <a
-href="https://cloud.google.com/sdk/gcloud/reference/compute/routes/create">static
-route</a> used to forward traffic to the on-premises network.<br>
-<br>
-<strong>Note</strong>: You need this value only if you are creating a VPN
-using a static route.</td>
-<td><code>[ROUTE_NAME]<code>
-
-</td>
-<td><code>vpn-static-route<code>
-
-</td>
-</tr>
-<tr>
-<td>The name for the forwarding rule for the <a
-href="https://wikipedia.org/wiki/IPsec#Encapsulating_Security_Payload">ESP
-protocol</a></td>
-<td><code>[FWD_RULE_ESP]<code></td>
-<td><code>fr-esp<code></td>
-</tr>
-
-<tr>
-<td>The name for the forwarding rule for the <a
-href="https://wikipedia.org/wiki/User_Datagram_Protocol">UDP
-protocol</a>, port 500</td>
-<td><code>[FWD_RULE_UDP_500]<code></td>
-<td><code>fr-udp500<code></td>
-</tr>
-
-<tr>
-<td>The name for the forwarding rule for the UDP protocol, port 4500</td>
-<td><code>[FWD_RULE_UDP_4500]<code></td>
-<td><code>fr-udp4500<code></td>
-</tr>
-
-</tbody>
-</table>
+| Parameter description | Placeholder                    | Example value         |
+|-----------------------|--------------------------------|-----------------------|
+| Vendor name           | `[VENDOR_NAME]`      | (Your product's vendor name. This value should have no spaces or punctuation in it other than underscores or hyphens, because it will be used as part of the names for GCP entities.) |
+| GCP project name      | `[PROJECT_NAME]`     | `vpn-guide` |
+| Shared secret         | `[SHARED_SECRET]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key). |
+| VPC network name      | `[VPC_NETWORK_NAME]` | `vpn-vendor-test-network` |
+| Subnet on the GCP VPC network (for example, `vpn-vendor-test-network`) | `[VPC_SUBNET_NAME]` | `vpn-subnet-1` |
+| GCP region. Can be any region, but it should be geographically close to the on-premises gateway. | `[REGION]` | `us-east1` |
+| Pre-existing external static IP address that you configure for the internet side of the Cloud VPN gateway. | `[STATIC_EXTERNAL_IP]`| `vpn-test-static-ip` |
+| IP address range for the GCP VPC subnet (`vpn-subnet-1`) | `[SUBNET_IP]` | `172.16.100.0/24` |
+| IP address range for the on-premises subnet. You will use this range when creating rules for inbound traffic to GCP. | `[IP_ON_PREM_SUBNET]` | `10.0.0.0/8` |
+| External static IP address for the internet interface of [vendor name][product-name] | `[CUST_GW_EXT_IP]` |`199.203.248.181` |
+| The name for the first GCP VPN gateway. | `[VPN_GATEWAY_1]` | `vpn-test-alibaba-gw-1`, where `alibaba` is the `alibaba` string |
+| The name for the first VPN tunnel for `vpn-test-[VENDOR_NAME]-gw-1` | `[VPN_TUNNEL_1]` | `vpn-test-tunnel1` |
+| The name of a firewall rule that allows traffic between the on-premises network and GCP VPC networks | `[VPN_RULE]` | `vpnrule1` |
+| The name for the [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create) used to forward traffic to the on-premises network. Note: You need this value only if you are creating a VPN using a static route. | `[ROUTE_NAME]` | `vpn-static-route` |
+| The name for the forwarding rule for the [ESP protocol](https://wikipedia.org/wiki/IPsec#Encapsulating_Security_Payload) | 
+`[FWD_RULE_ESP]` | `fr-esp` |
+| The name for the forwarding rule for the [UDP protocol](https://wikipedia.org/wiki/User_Datagram_Protocol), port 500 | `[FWD_RULE_UDP_500]` | `fr-udp500` |
+| The name for the forwarding rule for the UDP protocol, port 4500 | `[FWD_RULE_UDP_4500]` | `fr-udp4500` |
 
 ### Setting environment variables for gcloud command parameters
 
@@ -783,26 +572,25 @@ placeholders in square brackets, such as `[PROJECT_NAME]`, `[VPC_NETWORK_NAME]`,
 and `[SUBNET_IP]`. If you don't know what values to use for the placeholders,
 use the example values from the parameters table in the preceding section.
 
-```
-export PROJECT_NAME=[PROJECT_NAME]
-export REGION=[REGION]
-export VPC_SUBNET_NAME=[VPC_SUBNET_NAME]
-export VPC_NETWORK_NAME=[VPC_NETWORK_NAME]
-export FWD_RULE_ESP=[FWD_RULE_ESP]
-export FWD_RULE_UDP_500=[FWD_RULE_UDP_500]
-export FWD_RULE_UDP_4500=[FWD_RULE_UDP_4500]
-export SUBNET_IP=[SUBNET_IP]
-export VPN_GATEWAY_1=[VPN_GATEWAY_1]
-export STATIC_EXTERNAL_IP=[STATIC_EXTERNAL_IP]
-export VPN_RULE=[VPN_RULE]
-export IP_ON_PREM_SUBNET=[IP_ON_PREM_SUBNET]
-export CLOUD_ROUTER_NAME=[CLOUD_ROUTER_NAME]
-export BGP_IF=[BGP_IF]
-export BGP_SESSION_NAME=[BGP_SESSION_NAME]
-export VPN_TUNNEL_1=[VPN_TUNNEL_1]
-export CUST_GW_EXT_IP=[CUST_GW_EXT_IP]
-export ROUTE_NAME=[ROUTE_NAME]
-```
+    export PROJECT_NAME=[PROJECT_NAME]
+    export REGION=[REGION]
+    export VPC_SUBNET_NAME=[VPC_SUBNET_NAME]
+    export VPC_NETWORK_NAME=[VPC_NETWORK_NAME]
+    export FWD_RULE_ESP=[FWD_RULE_ESP]
+    export FWD_RULE_UDP_500=[FWD_RULE_UDP_500]
+    export FWD_RULE_UDP_4500=[FWD_RULE_UDP_4500]
+    export SUBNET_IP=[SUBNET_IP]
+    export VPN_GATEWAY_1=[VPN_GATEWAY_1]
+    export STATIC_EXTERNAL_IP=[STATIC_EXTERNAL_IP]
+    export VPN_RULE=[VPN_RULE]
+    export IP_ON_PREM_SUBNET=[IP_ON_PREM_SUBNET]
+    export CLOUD_ROUTER_NAME=[CLOUD_ROUTER_NAME]
+    export BGP_IF=[BGP_IF]
+    export BGP_SESSION_NAME=[BGP_SESSION_NAME]
+    export VPN_TUNNEL_1=[VPN_TUNNEL_1]
+    export CUST_GW_EXT_IP=[CUST_GW_EXT_IP]
+    export ROUTE_NAME=[ROUTE_NAME]
+
 
 ### Configuring route-based IPsec VPN using static routing
 
@@ -824,30 +612,25 @@ you've set the variables as described earlier under
 1. Create a custom VPC network. Make sure there is no conflict with your
 local network IP address range. Note the following:
 
-    -  For `[RANGE]`, substitute an appropriate CIDR range, such as
-    `172.16.100.0/24`.
+   -  For `[RANGE]`, substitute an appropriate CIDR range, such as `172.16.100.0/24`.
 
-    ```
-    gcloud compute networks create $VPC_NETWORK_NAME \
-        --project $PROJECT_NAME \
-        --subnet-mode custom
+            gcloud compute networks create $VPC_NETWORK_NAME \
+            --project $PROJECT_NAME \
+            --subnet-mode custom
 
-    gcloud compute networks subnets create $VPC_SUBNET_NAME \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --region $REGION \
-        --range [RANGE]
-    ```
+            gcloud compute networks subnets create $VPC_SUBNET_NAME \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --region $REGION \
+            --range [RANGE]
 
 1. Create a VPN gateway in the region you are using. Normally, this is the
 region that contains the instances you want to reach.
 
-    ```
-    gcloud compute target-vpn-gateways create $VPN_GATEWAY_1 \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --region $REGION
-    ```
+        gcloud compute target-vpn-gateways create $VPN_GATEWAY_1 \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --region $REGION
 
 This step creates an unconfigured VPN gateway in your GCP VPC network.
 
@@ -855,42 +638,37 @@ This step creates an unconfigured VPN gateway in your GCP VPC network.
 created the VPN gateway. Make a note of the address that is created for use
 in future steps.
 
-    ```
-    gcloud compute addresses create $STATIC_EXTERNAL_IP \
-        --project $PROJECT_NAME \
-        --region $REGION
-    ```
-
+        gcloud compute addresses create $STATIC_EXTERNAL_IP \
+            --project $PROJECT_NAME \
+            --region $REGION
+    
 1. Create three forwarding rules, one each to forward ESP, IKE, and NAT-T
 traffic to the Cloud VPN gateway. Note the following:
 
-    -  For `[STATIC_IP_ADDRESS]`, use the static IP address that you reserved in
-    the previous step.
+   -  For `[STATIC_IP_ADDRESS]`, use the static IP address that you reserved in the previous step.
 
-    ```
-    gcloud compute forwarding-rules create $FWD_RULE_ESP \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol ESP \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --address [STATIC_IP_ADDRESS]
+            gcloud compute forwarding-rules create $FWD_RULE_ESP \
+                --project $PROJECT_NAME \
+                --region $REGION \
+                --ip-protocol ESP \
+                --target-vpn-gateway $VPN_GATEWAY_1 \
+                --address [STATIC_IP_ADDRESS]
 
-    gcloud compute forwarding-rules create $FWD_RULE_UDP_500 \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol UDP \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --ports 500 \
-        --address [STATIC_IP_ADDRESS]
+            gcloud compute forwarding-rules create $FWD_RULE_UDP_500 \
+                --project $PROJECT_NAME \
+                --region $REGION \
+                --ip-protocol UDP \
+                --target-vpn-gateway $VPN_GATEWAY_1 \
+                --ports 500 \
+                --address [STATIC_IP_ADDRESS]
 
-    gcloud compute forwarding-rules create $FWD_RULE_UDP_4500 \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol UDP \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --ports 4500 \
-        --address [STATIC_IP_ADDRESS]
-    ``` 
+            gcloud compute forwarding-rules create $FWD_RULE_UDP_4500 \
+                --project $PROJECT_NAME \
+                --region $REGION \
+                --ip-protocol UDP \
+                --target-vpn-gateway $VPN_GATEWAY_1 \
+                --ports 4500 \
+                --address [STATIC_IP_ADDRESS] 
 
 1. Create a VPN tunnel on the Cloud VPN Gateway that points to the external
 IP address of your on-premises VPN gateway. Note the following:
@@ -906,34 +684,28 @@ IP address of your on-premises VPN gateway. Note the following:
     [Traffic selectors](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#static-routing-networks)
     in the GCP VPN networking documentation.
 
-    ```
-    gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
-        --project $PROJECT_NAME \
-        --peer-address $CUST_GW_EXT_IP \
-        --region $REGION \
-        --ike-version 2 \
-        --shared-secret [SHARED_SECRET] \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --local-traffic-selector [LOCAL_TRAFFIC_SELECTOR_IP]
-    ``` 
+        gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
+            --project $PROJECT_NAME \
+            --peer-address $CUST_GW_EXT_IP \
+            --region $REGION \
+            --ike-version 2 \
+            --shared-secret [SHARED_SECRET] \
+            --target-vpn-gateway $VPN_GATEWAY_1 \
+            --local-traffic-selector [LOCAL_TRAFFIC_SELECTOR_IP]
+   
 
     After you run this command, resources are allocated for this VPN tunnel, but it
     is not yet passing traffic.
 
-1. Use a
-[static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create)
-to forward traffic to the destination range of IP addresses in your
-    on-premises network. The region must be the
-    same region as for the VPN tunnel.
+1. Use a [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create) to forward traffic to the destination range of IP addresses in your on-premises network. The region must be the same region as for the VPN tunnel.
 
-    ```
-    gcloud compute routes create $ROUTE_NAME \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --next-hop-vpn-tunnel $VPN_TUNNEL_1 \
-        --next-hop-vpn-tunnel-region $REGION \
-        --destination-range $IP_ON_PREM_SUBNET
-    ```
+        gcloud compute routes create $ROUTE_NAME \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --next-hop-vpn-tunnel $VPN_TUNNEL_1 \
+            --next-hop-vpn-tunnel-region $REGION \
+            --destination-range $IP_ON_PREM_SUBNET
+    
 
 1. If you want to pass traffic from multiple subnets through the VPN tunnel,
 repeat the previous step to forward the IP address of each of the subnets.
@@ -941,10 +713,9 @@ repeat the previous step to forward the IP address of each of the subnets.
 1. Create firewall rules to allow traffic between the on-premises network and
 GCP VPC networks.
 
-    ```
-    gcloud compute firewall-rules create $VPN_RULE \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --allow tcp,udp,icmp \
-        --source-ranges $IP_ON_PREM_SUBNET
-    ```
+        gcloud compute firewall-rules create $VPN_RULE \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --allow tcp,udp,icmp \
+            --source-ranges $IP_ON_PREM_SUBNET
+   
