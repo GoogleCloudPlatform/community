@@ -553,8 +553,7 @@ you need for these parameters.
 | The name for the first VPN tunnel for `vpn-test-[VENDOR_NAME]-gw-1` | `[VPN_TUNNEL_1]` | `vpn-test-tunnel1` |
 | The name of a firewall rule that allows traffic between the on-premises network and GCP VPC networks | `[VPN_RULE]` | `vpnrule1` |
 | The name for the [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create) used to forward traffic to the on-premises network. Note: You need this value only if you are creating a VPN using a static route. | `[ROUTE_NAME]` | `vpn-static-route` |
-| The name for the forwarding rule for the [ESP protocol](https://wikipedia.org/wiki/IPsec#Encapsulating_Security_Payload) | 
-`[FWD_RULE_ESP]` | `fr-esp` |
+| The name for the forwarding rule for the [ESP protocol](https://wikipedia.org/wiki/IPsec#Encapsulating_Security_Payload) |  `[FWD_RULE_ESP]` | `fr-esp` |
 | The name for the forwarding rule for the [UDP protocol](https://wikipedia.org/wiki/User_Datagram_Protocol), port 500 | `[FWD_RULE_UDP_500]` | `fr-udp500` |
 | The name for the forwarding rule for the UDP protocol, port 4500 | `[FWD_RULE_UDP_4500]` | `fr-udp4500` |
 
