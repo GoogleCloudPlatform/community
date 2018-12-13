@@ -1,0 +1,35 @@
+steps:
+- name: ubuntu 
+  id: 'create_image_spec'
+  entrypoint: "bash"
+  args:
+    - '-c'
+    - |
+      cat <<END>packer.json
+      {
+      "builders": [
+        {
+          "image_name": "$(echo helloworld-$TAG_NAME | sed 's/\.//')",
+          "type": "googlecompute",
+          "project_id": "$PROJECT_ID",
+          "source_image_family": "${_IMAGE_FAMILY}",
+          "image_family": "helloworld",
+          "ssh_username": "packer",
+          "zone": "${_IMAGE_ZONE}",
+          "startup_script_file": "install-website.sh",
+          "scopes": [
+            "https://www.googleapis.com/auth/userinfo.email",
+            "https://www.googleapis.com/auth/compute",
+            "https://www.googleapis.com/auth/devstorage.full_control"
+          ]
+        }
+        ]
+      }
+      END
+
+- name: 'gcr.io/$PROJECT_ID/packer'
+  args:
+  - build
+  - -var
+  - project_id=$PROJECT_ID
+  - packer.json

@@ -1,14 +1,14 @@
 ---
-title: Deploying Envoy with a Python Flask webapp and Google Container Engine
-description: Learn how to use Envoy in Google Container Engine as a foundation for adding resilience and observability to a microservices-based application.
+title: Deploying Envoy with a Python Flask webapp and Google Kubernetes Engine
+description: Learn how to use Envoy in Google Kubernetes Engine as a foundation for adding resilience and observability to a microservices-based application.
 author: flynn
-tags: microservices, Container Engine, Envoy, Flask, Python
+tags: microservices, Kubernetes Engine, Envoy, Flask, Python
 date_published: 2017-06-28
 ---
 
 One of the recurring problems with using microservices is managing communications. Your clients must be able to speak to your services, and in most cases services need to speak among themselves. When things go wrong, the system as a whole needs to be resilient, so it degrades gracefully instead of catastrophically. It also must be observable so you can figure out what's wrong.
 
-A useful pattern is to enlist a proxy, like [Envoy](https://lyft.github.io/envoy/), to help [make your application more resilient and observable](https://www.datawire.io/guide/traffic/getting-started-lyft-envoy-microservices-resilience/). Envoy can be a bit daunting to set up, so this tutorial walks you through deploying a Python Flask webapp with Envoy on Google Container Engine.
+A useful pattern is to enlist a proxy, like [Envoy](https://lyft.github.io/envoy/), to help [make your application more resilient and observable](https://www.datawire.io/guide/traffic/getting-started-lyft-envoy-microservices-resilience/). Envoy can be a bit daunting to set up, so this tutorial walks you through deploying a Python Flask webapp with Envoy on Google Kubernetes Engine.
 
 ## The Application
 
@@ -19,21 +19,21 @@ The application is a simple REST-based user service. It can create, fetch, and d
 * It lets you explore Envoy at the edge, where the user’s client talks to your application.
 * It lets you explore Envoy internally, brokering communications between the various parts of the application.
 
-Envoy runs as a sidecar, so it's language-agnostic. For this tutorial, the REST service uses Python and Flask, with PostgreSQL for persistence, all of which play nicely together. And of course, running on Container Engine means managing everything with Kubernetes.
+Envoy runs as a sidecar, so it's language-agnostic. For this tutorial, the REST service uses Python and Flask, with PostgreSQL for persistence, all of which play nicely together. And of course, running on Kubernetes Engine means managing everything with Kubernetes.
 
 ## Before you begin
 
-### Container Engine
+### Kubernetes Engine
 
-You need a Google Cloud Platform account to set up a Container Engine cluster. Visit the [Google Cloud Platform Console](https://console.cloud.google.com/kubernetes) and use the UI to create a new cluster. Picking the defaults should be fine for this tutorial.
+You need a Google Cloud Platform account to set up a Kubernetes Engine cluster. Visit the [Google Cloud Platform Console](https://console.cloud.google.com/kubernetes) and use the UI to create a new cluster. Picking the defaults should be fine for this tutorial.
 
 ### Kubernetes
 
-You need `kubectl`, the Kubernetes CLI, to work with Container Engine. On a Mac you can use `brew install kubernetes-cli`. Otherwise, follow the [Kubernetes installation intructions](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+You need `kubectl`, the Kubernetes CLI, to work with Kubernetes Engine. On a Mac you can use `brew install kubernetes-cli`. Otherwise, follow the [Kubernetes installation intructions](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
 
 ### Docker
 
-Container Engine runs code from Docker images, so you need the Docker CLI, `docker`, to build your own images. [Docker Community Edition](https://www.docker.com/community-edition) is fine if you're just getting started (again, on a Mac, the easy way is to run `brew install docker`).
+Kubernetes Engine runs code from Docker images, so you need the Docker CLI, `docker`, to build your own images. [Docker Community Edition](https://www.docker.com/community-edition) is fine if you're just getting started (again, on a Mac, the easy way is to run `brew install docker`).
 
 ### The application
 
@@ -56,7 +56,7 @@ Between Python code, Kubernetes configs, docs, and so on, there’s too much to 
 
 ## The Docker registry
 
-Because Kubernetes needs to pull Docker images to run in its containers, you must push the Docker images used in this article to a Docker registry that Container Engine can access. For example, `gcr.io` or `dockerhub` will work fine, but for production use you might want to minimize traffic across boundaries as a cost-reduction effort.
+Because Kubernetes needs to pull Docker images to run in its containers, you must push the Docker images used in this article to a Docker registry that Kubernetes Engine can access. For example, `gcr.io` or `dockerhub` will work fine, but for production use you might want to minimize traffic across boundaries as a cost-reduction effort.
 
 Whatever you set up, you need to push to the correct registry, and you need to use the correct registry when telling Kubernetes where to go for images. Unfortunately, `kubectl` doesn't have a provision for parameterizing the YAML files it uses to figure out what to do, so `envoy-steps` contains scripts to set things up correctly.
 
@@ -178,7 +178,7 @@ Starting with `LoadBalancer` may seem odd. After all, the goal is to use Envoy t
 
 First things first: make sure it works without Envoy before moving on. You need the IP address and mapped port number for the `usersvc` service. 
 
-1. Using Container Engine, the following will build a neatly-formed URL to the load balancer created for the `usersvc`:
+1. Using Kubernetes Engine, the following will build a neatly-formed URL to the load balancer created for the `usersvc`:
 
         USERSVC_IP=$(kubectl get svc usersvc -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
         USERSVC_PORT=$(kubectl get svc usersvc -o jsonpath='{.spec.ports[0].port}')

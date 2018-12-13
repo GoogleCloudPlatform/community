@@ -100,7 +100,7 @@ user doesn't yet have a password, so you'll need to set one.
         sudo -s
 
 1. Run [PSQL](https://www.postgresql.org/docs/9.3/static/app-psql.html)
- as user `postgres`, instead of `root`, accesssing the database
+ as user `postgres`, instead of `root`, accessing the database
  named `postgres`:
 
         sudo -u postgres psql postgres
@@ -214,6 +214,8 @@ page.
 1. In the **Name** field, enter:
 
         postgres-tutorial
+
+1. In the **Direction of traffic** field, create a rule as **Ingress** and another rule as **Egress**.
 
 1. In **Source IP Ranges**, enter the same IP address you used in `hba.conf`.
    This is the IP address of your local computer. Remember to include the `/32`

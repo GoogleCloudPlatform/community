@@ -8,7 +8,7 @@ date_published: 2017-06-19
 
 Dan Isla | Google Cloud Solution Architect | Google
 
-This tutorial demonstrates how to create and manage projects on Google Cloud Platform with Terraform. With Terraform, many of your resources such as projects, IAM policies, networks, Compute Engine instances, and Container Engine clusters can be managed, versioned, and easily recreated for your organization or teams. The state that Terraform generates is saved to Google Cloud Storage for persistence.
+This tutorial demonstrates how to create and manage projects on Google Cloud Platform with Terraform. With Terraform, many of your resources such as projects, IAM policies, networks, Compute Engine instances, and Kubernetes Engine clusters can be managed, versioned, and easily recreated for your organization or teams. The state that Terraform generates is saved to Google Cloud Storage for persistence.
 
 ## Objectives
 
@@ -45,7 +45,7 @@ Export the following variables to your environment for use throughout the tutori
 export TF_VAR_org_id=YOUR_ORG_ID
 export TF_VAR_billing_account=YOUR_BILLING_ACCOUNT_ID
 export TF_ADMIN=${USER}-terraform-admin
-export TF_CREDS=~/.config/gcloud/terraform-admin.json
+export TF_CREDS=~/.config/gcloud/${USER}-terraform-admin.json
 ```
 
 > Note: The `TF_ADMIN` variable will be used for the name of the Terraform Admin Project and must be unique.
@@ -132,7 +132,7 @@ cat > backend.tf <<EOF
 terraform {
  backend "gcs" {
    bucket  = "${TF_ADMIN}"
-   path    = "/terraform.tfstate"
+   prefix  = "terraform/state"
    project = "${TF_ADMIN}"
  }
 }
