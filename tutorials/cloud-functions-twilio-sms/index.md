@@ -145,18 +145,15 @@ The `reply` function does the following:
 
 ## Deploying and Testing the Cloud Function
 
-1.  Read about [deploying Cloud Functions][deploying].
 1.  Run the following to deploy the function:
 
-        gcloud beta functions deploy reply --trigger-http --stage-bucket [YOUR_STAGE_BUCKET]
-
-    Replacing `[YOUR_STAGE_BUCKET]` with your Cloud Functions staging bucket.
+        gcloud functions deploy reply --trigger-http
 
 1.  Send an SMS message to your Twilio phone number and observe the response you
     receive from the Cloud Function.
 
 To view the logs for the Cloud Function, run the following:
 
-    gcloud beta functions logs view reply
+    gcloud functions logs view reply
 
 [deploying]: https://cloud.google.com/functions/docs/deploying/filesystem
