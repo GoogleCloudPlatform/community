@@ -10,7 +10,7 @@ date_published: 2018-08-31
 
 Learn how to build IPsec VPNs between
 [Cloud VPN](https://cloud.google.com/vpn/docs/) on Google Cloud Platform (GCP) and
-Alibaba Cloud VPN Gateway with redundancy
+Alibaba Cloud VPN Gateway with redundancy.
 
 _Disclaimer: This interoperability guide is intended to be informational in
 nature and shows examples only. Customers should verify this information by
@@ -78,7 +78,7 @@ Cloud VPN supports the following topology with Alibaba Cloud VPN Gateway:
 
 - Redundant IPsec VPN tunnel configuration using static routing.
 
-  ![topology-redundancy](topology-redundancy.png)
+  ![topology-redundancy](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-alibaba-redundancy/topology-redundancy.PNG)
 
 For detailed topology information, see the following resources:
 
@@ -182,7 +182,7 @@ procedures.
 
 #### Select a GCP project name
 
-1. [Open the GCP Console](https://console.google.com).
+1. [Open the GCP Console](https://console.cloud.google.com).
 1. At the top of the page, select the GCP project you want to use.
 
     **Note**: Make sure that you use the same GCP project for all of the GCP
