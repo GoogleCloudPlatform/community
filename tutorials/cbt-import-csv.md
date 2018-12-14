@@ -96,7 +96,7 @@ code:
 ### Start the Dataflow job 
 
     mvn package exec:exec -DCsvImport -Dbigtable.projectID=YOUR_PROJECT_ID -Dbigtable.instanceID=YOUR_INSTANCE_ID
-    -DinputFile="YOUR_FILE" -Dbigtable.table=YOUR_TABLE_ID -Dheaders="YOUR_HEADERS"
+    -DinputFile="YOUR_FILE" -Dbigtable.table="YOUR_TABLE_ID" -Dheaders="YOUR_HEADERS"
 
 replacing `YOUR_PROJECT_ID`, `YOUR_INSTANCE_ID`, `YOUR_FILE`, `YOUR_TABLE_ID`, and `YOUR_HEADERS`
 with appropriate values.
