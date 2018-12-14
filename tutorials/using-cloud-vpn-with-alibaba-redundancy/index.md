@@ -36,6 +36,7 @@ For more information about Cloud VPN, see the
 Below are definitions of terms used throughout this guide.
 
 **GCP terminology**
+
 -  **GCP VPC network**—A single virtual network within a single GCP project.
 -  **On-premises gateway**—The VPN device on the non-GCP side of the
 connection, which is usually a device in a physical data center or in
@@ -48,6 +49,7 @@ within a GCP project that exists at the edge of the GCP network.
 side and to the on-premises side of the VPN gateway.
 
 **Alibaba terminology**
+
 -  **Alibaba Cloud VPC**-A private network established in Alibaba Cloud. VPCs 
 are logically isolated from other virtual networks in Alibaba Cloud. VPCs allow 
 you to launch and use Alibaba Cloud resources in your VPC.
