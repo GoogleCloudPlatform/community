@@ -1,12 +1,12 @@
 ---
-title: Continuous Deployment Pipeline to Google Container Engine using Codeship
-description: Learn how to create a continuous deployment pipeline to Container Engine from Codeship.
+title: Continuous Deployment Pipeline to Google Kubernetes Engine using Codeship
+description: Learn how to create a continuous deployment pipeline to Kubernetes Engine from Codeship.
 author: kellyjandrews
-tags: CD, Container Engine, Codeship, Pipeline
+tags: CD, Kubernetes Engine, Codeship, Pipeline
 date_published: 2017-08-28
 ---
 This tutorial explains how to create a Continuous Deployment
-pipeline to Google Container Engine using Codeship. You will
+pipeline to Google Kubernetes Engine using Codeship. You will
 learn how to deploy a containerized application when new code is merged into the
 master branch and all integration tests have passed.
 
@@ -17,9 +17,9 @@ regulatory constraints.
 
 ## Before you begin
 
-Take the following steps to enable the Google Container Engine API:
+Take the following steps to enable the Google Kubernetes Engine API:
 
-1.  Visit the [Container Engine](https://console.cloud.google.com/projectselector/kubernetes)
+1.  Visit the [Kubernetes Engine](https://console.cloud.google.com/projectselector/kubernetes)
     page in the Google Cloud Platform Console.
 1.  Create or select a project.
 1.  Wait for the API and related services to be enabled, which can take several
@@ -42,7 +42,7 @@ Make sure you have the following:
 ### Step 1: Create service account
 
 The interactions with the Google Cloud Platform API from Codeship require a service
-account with permissions to the Cloud Storage and Container Engine services.
+account with permissions to the Cloud Storage and Kubernetes Engine services.
 
 Follow these steps to create a service account:
 
@@ -54,7 +54,7 @@ Follow these steps to create a service account:
 1.  Click `Select a Role` and choose the following permissions:
 
     * Project &rarr; Service Account Actor
-    * Container &rarr; Container Engine Developer
+    * Container &rarr; Kubernetes Engine Developer
     * Storage &rarr; Storage Admin
 
 1.  Select `Furnish a new private key` and leave the option on `JSON`.
@@ -88,7 +88,7 @@ Save the `.env` file once these items are finished.
 
 ### Step 3: Run initial deployment
 
-You need to create your clusters and push an image in Container Engine initially before you
+You need to create your clusters and push an image in Kubernetes Engine initially before you
 can set up a fully automated pipeline in Codeship.
 
 Create your container clusters using the Google Cloud SDK by running the following command:
@@ -152,7 +152,7 @@ Codeship Jet CLI.
 
 This pipeline runs each step in series. The `build-image` step instructs Codeship to build the `hello-express` Docker image on the CI server. After Codeship builds the Docker image, the `push-image-with-sha` step will push the image to Google Container Registry using the name `gcr.io/YOUR_PROJECT_ID/hello-express`, adding a tag using the first 8 characters of the commit SHA for every commit to the repository.
 
-The third and fourth step will run only if the branch is tagged as `master`. The `tag-as-master` step will add the `master` tag to the image pushed to Google Container Registry. This indicates the image in Google Container Registry that is currently deployed. The following step, `gke-initial-deployment`, builds the Container Engine cluster and deploys the `gcr.io/YOUR_PROJECT_ID/hello-express` Docker image.
+The third and fourth step will run only if the branch is tagged as `master`. The `tag-as-master` step will add the `master` tag to the image pushed to Google Container Registry. This indicates the image in Google Container Registry that is currently deployed. The following step, `gke-initial-deployment`, builds the Kubernetes Engine cluster and deploys the `gcr.io/YOUR_PROJECT_ID/hello-express` Docker image.
 
 You will run this pipeline locally using the [Codeship Jet CLI](https://documentation.codeship.com/pro/builds-and-configuration/cli/). Since there is no git commit or branch to reference, use the `ci-commit-id` and `tag` flags with the Codeship Jet CLI to pass in test strings at runtime, (for example, `1234ABCD` and `master`). The build on the Codeship CI server populates `ci-commit-id` with the git commit SHA, and `tag` with the branch or tag name. Finally, the `--push` flag instructs the Codeship Jet CLI to run the push steps in the `codeship-steps.yml` file.  
 

@@ -51,18 +51,18 @@ guide.
 This guide is not meant to be a comprehensive setup overview for the device
 referenced, but rather is only intended to assist in the creation of IPsec
 connectivity to Google Cloud Platform (GCP) VPC networks. The following is a
-high level overview of the configuration process which will be covered:
+high-level overview of the configuration process which will be covered:
 
 * Configure the base network configurations to establish L3 connectivity
 * Set up the Base VPN configuration, including:
-  * Configure IKEv2 Proposal and Policy
-  * Configure IKEv2 Keyring
-  * Configure IKEv2 profile
-  * Configure IPsec Security Association (SA)
-  * Configure IPsec transform set
-  * Configure IPsec profile
-  * Configure IPsec Static Virtual Tunnel Interface (SVTI)
-  * Configure Static or Dynamic Routing Protocol to route traffic into the IPsec tunnel
+    * Configure IKEv2 Proposal and Policy
+    * Configure IKEv2 Keyring
+    * Configure IKEv2 profile
+    * Configure IPsec Security Association (SA)
+    * Configure IPsec transform set
+    * Configure IPsec profile
+    * Configure IPsec Static Virtual Tunnel Interface (SVTI)
+    * Configure Static or Dynamic Routing Protocol to route traffic into the IPsec tunnel
 * Testing the IPsec connection
 * Advanced VPN configurations
 
@@ -187,7 +187,7 @@ to establish BGP sessions between the 2 peers.
       * **Source filter:** IP ranges.
       * **Source IP ranges:** The peer ranges to accept from the peer VPN gateway.
       * **Allowed protocols and ports:** tcp;udp;icmp
-    * Click **Create**.
+    *  Click **Create**.
 
 #### Using the `gcloud` command-line tool
 
@@ -443,14 +443,14 @@ are set:
 * Integrity algorithm - set to SHA256
 * Diffie-Hellman group - set to 16
 
-      crypto ikev2 proposal VPN_SCALE_TEST_IKEV2_PROPOSAL
-      encryption aes-cbc-256 aes-cbc-192 aes-cbc-128
-      integrity sha256
-      group 16
-      !         
-      crypto ikev2 policy VPN_SCALE_TEST_IKEV2_POLICY
-      proposal VPN_SCALE_TEST_IKEV2_PROPOSAL
-
+    crypto ikev2 proposal VPN_SCALE_TEST_IKEV2_PROPOSAL
+     encryption aes-cbc-256 aes-cbc-192 aes-cbc-128
+     integrity sha256
+     group 16
+    !         
+    crypto ikev2 policy VPN_SCALE_TEST_IKEV2_POLICY
+     proposal VPN_SCALE_TEST_IKEV2_PROPOSAL
+ 
 #### Configure IKEv2 keyring
 
 The IKEv2 keyring is associated with an IKEv2 profile and hence, caters to a set
@@ -484,8 +484,7 @@ are set:
        keyring local VPN_SCALE_TEST_KEY
        lifetime 36000
        dpd 60 5 periodic
-      !
-
+   
 #### Configure IPsec security association
 
 Create IPsec security-association (SA) rules. A security association is a
@@ -503,7 +502,7 @@ lifetime and timing parameters.
 
       crypto ipsec security-association lifetime seconds 3600
       crypto ipsec security-association replay window-size 1024
-
+   
 #### Configure IPsec transform set
 
 A transform set represents a certain combination of security protocols and
@@ -526,10 +525,10 @@ parameters are set
   on ASR 1000 router.
 
       crypto ipsec profile VPN_SCALE_TEST_VTI
-       set security-association lifetime seconds 3600
-       set transform-set VPN_SCALE_TEST_TS
-       set pfs group16
-       set ikev2-profile VPN_SCALE_TEST_IKEV2_PROFILE
+      set security-association lifetime seconds 3600
+      set transform-set VPN_SCALE_TEST_TS
+      set pfs group16
+      set ikev2-profile VPN_SCALE_TEST_IKEV2_PROFILE
 
 #### Configure IPsec static virtual tunnel interface (SVTI)
 

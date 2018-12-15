@@ -14,7 +14,7 @@ opened. The Cloud Function is implemented in [Node.js][node].
 The sample Cloud Function is triggered by webhook request from GitHub when a
 pull request is opened, and then attempts to assign to the pull request the
 reviewer with the smallest review workload from a supplied list of eligible
-reviewers. The review workload of the eligble reviewres is inferred from the
+reviewers. The review workload of the eligble reviewers is inferred from the
 reviews that have already been assigned to them on other open pull requests in
 the repository.
 
