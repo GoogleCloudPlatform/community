@@ -1,9 +1,24 @@
+---
+title: App Engine Quickstart using Go
+description: Learn how to deploy a Go sample app to Google App Engine.
+author: jscud
+tags: App Engine
+date_published: 2018-12-13
+---
+
 # App Engine Quickstart
 
 <walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/go/quickstart"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/golang-samples" %} -->
 <!-- {% setvar repo_dir "golang-samples/appengine/go11x/helloworld" %} -->
 <!-- {% setvar project_gae_url "<your-project>" %} -->
+
+<walkthrough-alt>
+Take the interactive version of this tutorial, which runs in the Cloud Console:
+
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=go_gae_quickstart)
+
+</walkthrough-alt>
 
 ## Introduction
 
