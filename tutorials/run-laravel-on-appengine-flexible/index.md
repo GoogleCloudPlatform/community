@@ -42,10 +42,6 @@ from laravel.com.
         runtime_config:
           document_root: public
 
-        # Ensure we skip ".env", which is only for local development
-        skip_files:
-          - .env
-
         env_variables:
           # Put production environment variables here.
           APP_LOG: errorlog
