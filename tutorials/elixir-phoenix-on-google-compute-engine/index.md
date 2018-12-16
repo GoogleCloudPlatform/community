@@ -3,7 +3,7 @@ title: Run an Elixir Phoenix app on Google Compute Engine
 description: Learn how to deploy a Phoenix app to Google Compute Engine.
 author: dazuma
 tags: Compute Engine, Elixir, Phoenix
-date_published: 2017-11-01
+date_published: 2018-12-19
 ---
 
 This tutorial helps you get started deploying your
@@ -15,21 +15,24 @@ advantage of Google's deep expertise with scalable infrastructure.
 In this tutorial, you will:
 
 *   Create a new Phoenix application
+*   Connect your app to a database running in Google Cloud SQL
 *   Create an OTP release for your app using
     [Distillery](https://github.com/bitwalker/distillery)
 *   Deploy your app to Google Compute Engine instances
 *   Set up load balancing and autoscaling for your app
 
-This tutorial requires Elixir 1.4 and Phoenix 1.3 or later. It assumes you are
-already familiar with basic Phoenix web development. For simplicity, the
-tutorial app does not use Ecto or connect to a SQL database, but you can extend
-it to connect to Google Cloud SQL or any other database service.
+This tutorial requires Elixir 1.5 and Phoenix 1.4 or later. It assumes you are
+already familiar with basic Phoenix web development. It also requires the
+PostgreSQL database to be installed on your local development workstation.
+
+This tutorial was updated in Dec 2018 to cover Phoenix 1.4, Distillery 2.0, and
+connecting Ecto to a Google Cloud SQL database.
 
 ## Before you begin
 
 Before running this tutorial, you must set up a Google Cloud Platform project.
-You also need to have Docker and the Google Cloud SDK installed on your
-workstation.
+You also need to have Docker, PostgreSQL, and the Google Cloud SDK installed on
+your workstation.
 
 ### Create a Google Cloud Platform project
 
@@ -46,8 +49,9 @@ To create a new project:
 
 2.  Enable billing for your project.
 
-3.  Go to the [API Library](https://console.cloud.google.com/apis/library) in
-    the Cloud Console. Use it to enable the **Google Compute Engine API**.
+3.  In the Cloud Console, enable the following APIs:
+    *   [Google Compute Engine API](http://console.cloud.google.com/apis/library/compute.googleapis.com)
+    *   [Google Cloud SQL Admin API](http://console.cloud.google.com/apis/library/sqladmin.googleapis.com)
 
 ### Install required applications and services
 
@@ -62,7 +66,12 @@ tasks on your workstation:
     [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK
     and set the default project to the new project you created.
 
-3.  Install **Elixir 1.4 or later** if you do not already have it. If you are
+    Version 227.0.0 or later of the SDK is required. If you have an earlier
+    version installed, you may upgrade it by running
+
+        gcloud components update
+
+3.  Install **Elixir 1.5 or later** if you do not already have it. If you are
     on MacOS and have [Homebrew](https://brew.sh), you can run
 
         brew install elixir
@@ -74,7 +83,7 @@ tasks on your workstation:
 
         mix local.hex
         mix local.rebar
-        mix archive.install https://github.com/phoenixframework/archives/raw/master/phx_new.ez
+        mix archive.install hex phx_new 1.4.0
 
 5.  Install **Node.js** if you do not already have it. If you are on MacOS and
     have Homebrew, you can run
@@ -84,15 +93,22 @@ tasks on your workstation:
     Otherwise consult the [Node download](https://nodejs.org/en/download/)
     guide for your operating system.
 
+6.  Install PostgreSQL if you do not already have it. Consult the
+    [PostgreSQL downloads page](https://www.postgresql.org/download/) for
+    information on downloading and installing PostgreSQL for your operating
+    system.
+
 ## Creating a new app and running it locally
 
-In this section, you will create a new Phoenix app and make sure it runs. If
-you already have an app to deploy, you can use it instead.
+In this section, you will create a new Phoenix app with a database, and make
+sure it runs locally in development. If you already have an app to deploy, you
+may use it instead.
 
-1.  Run the `phx.new` task to create a new Phoenix project called
-    "hello". This tutorial omits Ecto for now.
+### Create a new Phoenix app
 
-        mix phx.new hello --no-ecto
+1.  Run the `phx.new` task to create a new Phoenix project called "hello".
+
+        mix phx.new hello
 
     Answer "Y" when the tool asks you if you want to fetch and install
     dependencies.
@@ -101,14 +117,194 @@ you already have an app to deploy, you can use it instead.
 
         cd hello
 
-3.  Run the app with the following command:
+3.  Update the development database settings in `config/dev.exs` to specify a
+    valid database user and credentials. You may also update the database name.
+    The resulting configuration may look something like this:
+
+        # Configure your database
+        config :hello, Hello.Repo,
+          username: "my_name",
+          password: "XXXXXXXX",
+          database: "hello_dev",
+          hostname: "localhost",
+          pool_size: 10
+
+4.  Create the development database with the following command:
+
+        mix ecto.create
+
+5.  Run the app with the following command:
 
         mix phx.server
 
     This compiles your server and runs it on port 4000.
 
-4.  Visit [http://localhost:4000](http://localhost:4000) to see the Phoenix
+6.  Visit [http://localhost:4000](http://localhost:4000) to see the Phoenix
     welcome screen running locally on your workstation.
+
+### Create and test a development database
+
+Next you will populate a simple development database and verify that your
+Phoenix app can access it.
+
+1.  Create a simple schema.
+
+        mix phx.gen.schema User users name:string email:string
+
+2.  Migrate your development database.
+
+        mix ecto.migrate
+
+3.  We'll add some very simple code to show that the application can access
+    the database, by querying for and displaying the number of user records.
+    Open `lib/hello_web/controllers/page_controller.ex` and rewrite
+    the `index` function as follows:
+
+        def index(conn, _params) do
+          value = Hello.Repo.aggregate(Hello.User, :count, :id)
+          conn
+          |> assign(:value, value)
+          |> render("index.html")
+        end
+
+4.  Display the value by inserting the following into the
+    `lib/hello_web/templates/page/index.html.eex` template:
+
+        <p>Number of users: <%= @value %></p>
+
+5.  Recompile and run the app
+
+        mix phx.server
+
+6.  Visit [http://localhost:4000](http://localhost:4000) to verify that your
+    new code is running. You can log into your database and add new rows, and
+    reload the page to verify that the count has changed.
+
+For more information on using Ecto to access a SQL database, see the
+[Phoenix Ecto guide](https://hexdocs.pm/phoenix/ecto.html).
+
+## Create a production database in Cloud SQL
+
+In this section, you will create your "production" database using Google Cloud
+SQL, a fully-managed database service providing PostgreSQL and MySQL in the
+cloud. If you already have a database hosted elsewhere, you may skip this
+section, but you may need to ensure your production configuration is set up to
+connect to your database.
+
+Before you begin this section, make sure you have enabled billing and the
+needed APIs in your cloud project. You should also set the default project for
+your gcloud SDK if you have not already done so:
+
+    gcloud config set project ${PROJECT_ID}
+
+### Create a Cloud SQL instance
+
+First you will create a new database in the cloud.
+
+1.  Create a Cloud SQL instance named `hellodb` with a Postgres database
+    by running the following command:
+
+        gcloud sql instances create hellodb --region=us-central \
+          --database-version=POSTGRES_9_6 --tier=db-g1-small
+
+    You may choose a region other than `us-central` if there is one closer to
+    your location.
+
+2.  Get the _connection name_ for your Cloud SQL instance by running the
+    following command:
+
+        gcloud sql instances describe hellodb
+
+    In the output, look for the connection name in the `connectionName` field.
+    The connection name has this format: `[PROJECT-ID]:[COMPUTE-ZONE]:hellodb`
+    We will refer to the connection name as `[CONNECTION-NAME]` throughout this
+    tutorial.
+
+3.  Secure your new database instance by setting a password on the default
+    postgres user:
+
+        gcloud sql users set-password postgres \
+          --instance=hellodb --prompt-for-password
+
+    When prompted, enter a password for the database.
+
+### Connect to your Cloud SQL instance
+
+In this section you will learn how to connect to your Cloud SQL instance from
+your local workstation. Generally, you will not need to do this often, but it
+is useful for the initial creation and migration of your database, as well as
+for _ad hoc_ database connection for maintenance.
+
+By default, Google Cloud SQL instances are secured: to connect using the
+standard `psql` tool, you are required to whitelist your IP address. This
+security measure can make it challenging to establish _ad hoc_ database
+connections. So, Google Cloud SQL provides a command line tool called the
+[Cloud SQL Proxy](https://cloud.google.com/sql/docs/postgres/sql-proxy). This
+tool communicates with your database instance over a secure API, using your
+Cloud SDK credentials, and opens a local endpoint (such as a unix socket) that
+`psql` can connect to.
+
+To set up Cloud SQL Proxy, perform the following steps:
+
+1.  [Install Cloud SQL Proxy](https://cloud.google.com/sql/docs/postgres/sql-proxy#install).
+    Make sure that `cloud_sql_proxy` is executable and is available in your
+    environment's `PATH`.
+
+2.  Create a directory `/tmp/cloudsql`. This is where the Cloud SQL Proxy will
+    create database connection sockets. You may put this in a different
+    location, but if you do, you will need to update some of the commands below
+    accordingly.
+
+        mkdir -p /tmp/cloudsql
+
+3.  Start the proxy, telling it to open sockets in the directory you created.
+
+        cloud_sql_proxy -dir=/tmp/cloudsql
+
+    Note: This runs the proxy in the foreground, so subsequent commands
+    need to be run in a separate shell. If you prefer, feel free to
+    background the process instead.
+
+4.  The proxy will open a socket in the directory
+    `/tmp/cloudsql/[CONNECTION-NAME]/`. You can point `psql` to that socket to
+    connect to the database instance. Test this now:
+
+        psql -h /tmp/cloudsql/[CONNECTION-NAME] -U postgres
+
+You can learn more about using the Cloud SQL Proxy to connect to your instance
+from [the documentation](https://cloud.google.com/sql/docs/postgres/connect-admin-proxy).
+
+### Create and migrate the production database
+
+Next you will configure your Phoenix app to point to your production database
+instance, and tell Ecto to create and migrate the database.
+
+1.  Start the Cloud SQL Proxy, if it is not already running from the previous
+    section. Remember that this runs in the foreground by default.
+
+        cloud_sql_proxy -dir=/tmp/cloudsql
+
+2.  Configure your production database configuration to communicate with the
+    sockets opened by the running Cloud SQL Proxy. Edit the
+    `config/prod.secret.exs` file to include something like this:
+
+        # Configure your database
+        config :hello, Hello.Repo,
+          username: "postgres",
+          password: "XXXXXXXX",
+          database: "hello_prod",
+          socket_dir: "/tmp/cloudsql/[CONNECTION-NAME]",
+          pool_size: 15
+
+    Remember to replace `[CONNECTION-NAME]` with your database's connection
+    name, and include the password you set for the "postgres" user.
+
+3.  Now you can use Phoenix to create and migrate your production database:
+
+        MIX_ENV=prod mix ecto.create
+        MIX_ENV=prod mix ecto.migrate
+
+4.  Stop the Cloud SQL Proxy when you are finished.
 
 ## Enabling releases with Distillery
 
@@ -124,22 +320,26 @@ release configuration. This tutorial assumes ERTS is included in releases.
 ### Set up Distillery
 
 1.  Add distillery to your application's dependencies. In the `mix.exs` file,
-    add `{:distillery, "~> 1.5"}` to the `deps`. Then install it by running:
+    add `{:distillery, "~> 2.0"}` to the `deps`. Then install it by running:
 
-        mix do deps.get, deps.compile
+        mix deps.get
 
 2.  Create a default release configuration by running:
 
         mix release.init
 
+    This will create a file `rel/config.exs`. You can examine and edit it if
+    you wish, but the defaults should be sufficient for this tutorial.
+
 3.  Prepare the Phoenix configuration for deployment by editing the prod
     config file `config/prod.exs`. In particular, set `server: true` to ensure
-    the web server starts when the supervision tree is initialized. We
-    recommend the following settings to start off:
+    the web server starts when the supervision tree is initialized, and set the
+    port to honor the `PORT` environment variable. We recommend the following
+    settings to start off:
 
         config :hello, HelloWeb.Endpoint,
           load_from_system_env: true,
-          http: [port: "${PORT}"],
+          http: [port: {:system, "PORT"}],
           check_origin: false,
           server: true,
           root: ".",
@@ -153,7 +353,7 @@ Now you can create a release to test out your configuration.
 
         pushd assets
         npm install
-        ./node_modules/brunch/bin/brunch build -p
+        ./node_modules/webpack/bin/webpack.js --mode production
         popd
         mix phx.digest
 
@@ -164,14 +364,19 @@ Now you can create a release to test out your configuration.
 
         MIX_ENV=prod mix release --env=prod --executable
 
-3.  Run the application from the release with:
+3.  Start the Cloud SQL Proxy so that Phoenix can connect to your database.
+    Remember that this runs in the foreground by default.
+
+        cloud_sql_proxy -dir=/tmp/cloudsql
+
+4.  Run the application from the release with:
 
         PORT=8080 _build/prod/rel/hello/bin/hello.run foreground
 
     If your application is named something other than `hello`, the release
     executable might be in a different path.
 
-4.  Visit [http://localhost:8080](http://localhost:8080) to see the Phoenix
+5.  Visit [http://localhost:8080](http://localhost:8080) to see the Phoenix
     welcome screen running locally from your release.
 
 ## Building a release for deployment
@@ -179,9 +384,9 @@ Now you can create a release to test out your configuration.
 Building a release for deploying to the cloud is a bit more complicated
 because your build needs to take place in the same operating system and
 architecture as your deployment environment. In this section, you will use
-Docker to cross-compile a release (which will eventually run directly on a
-Compute Engine VM, not in a Docker container). Then, you will upload your
-release to a Cloud Storage bucket.
+Docker to cross-compile a release. (However, your app will eventually run
+directly on a Compute Engine VM, not in a Docker container). Then, you will
+upload your release to a Cloud Storage bucket.
 
 ### Prepare a Cloud Storage bucket
 
@@ -189,7 +394,7 @@ Created a Cloud Storage bucket for your releases:
 
 1.  Choose a bucket name. A good name might be related to your project ID, e.g.
 
-        BUCKET_NAME="${PROJECT_ID}-releases"
+        export BUCKET_NAME="${PROJECT_ID}-releases"
 
 2.  Create the bucket by running:
 
@@ -200,9 +405,17 @@ Created a Cloud Storage bucket for your releases:
 Because you will eventually deploy into a virtual machine running Debian, you
 need to create a Docker image with Debian and Elixir to use for builds.
 
-1.  Create a file called `Dockerfile`, and copy the following content into it.
+1.  Create a directory called `builder` inside your `hello` directory. We will
+    build the "builder" image here because it does not require access to the
+    rest of your app.
 
-        FROM elixir:slim
+        mkdir builder
+        pushd builder
+
+2.  Create a file called `Dockerfile` inside the `builder` directory, and copy
+    the following content into it.
+
+        FROM elixir:latest
         WORKDIR /app
         RUN mix local.rebar --force && mix local.hex --force
         ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm
@@ -212,12 +425,18 @@ need to create a Docker image with Debian and Elixir to use for builds.
     [download](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/elixir-phoenix-on-google-compute-engine/Dockerfile)
     a sample annotated Dockerfile to study and customize.
 
-2.  Build the image from that Dockerfile.
+3.  Build the image. This is not an image of your app itself, but an image that
+    contains the necessary tools to build a release of your app. Remember to
+    run this while inside the `builder` directory.
 
         docker build -t hello-builder .
 
     This tutorial assumes you have named your image `hello-builder`, though you
     can give it a different name.
+
+4.  Move back out into your `hello` directory for the rest of the tutorial.
+
+        popd
 
 ### Perform a production build
 
@@ -225,7 +444,7 @@ need to create a Docker image with Debian and Elixir to use for builds.
 
         pushd assets
         npm install
-        ./node_modules/brunch/bin/brunch build -p
+        ./node_modules/webpack/bin/webpack.js --mode production
         popd
         mix phx.digest
 
@@ -242,8 +461,8 @@ need to create a Docker image with Debian and Elixir to use for builds.
         docker run --rm -it -v $(pwd):/app hello-builder
 
     This command mounts your application directory into the Docker image, and
-    runs the image's default command, which builds a release, on your
-    application. The result is an executable release, which, if your
+    runs the image's default command, which builds a release of your
+    application. The result is a standalone executable, which, if your
     application name is `hello`, will be located at
     `_build/prod/rel/hello/bin/hello.run`.
 
@@ -277,20 +496,31 @@ Copy the following content into it:
     export HOME=/app
     mkdir -p ${HOME}
     cd ${HOME}
-    RELEASE_URL=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/release-url" -H "Metadata-Flavor: Google")
+    RELEASE_URL=$(curl \
+      -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/release-url" \
+      -H "Metadata-Flavor: Google")
     gsutil cp ${RELEASE_URL} hello-release
     chmod 755 hello-release
+    wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 \
+      -O cloud_sql_proxy
+    chmod +x cloud_sql_proxy
+    mkdir /tmp/cloudsql
+    PROJECT_ID=$(curl \
+      -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" \
+      -H "Metadata-Flavor: Google")
+    ./cloud_sql_proxy -projects=${PROJECT_ID} -dir=/tmp/cloudsql &
     PORT=8080 ./hello-release start
 
 Alternatively, you can
 [download](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/elixir-phoenix-on-google-compute-engine/instance-startup.sh)
 a sample annotated script to study and customize.
 
-The startup script downloads the release you built from Cloud Storage, and
-executes it as a daemon. It reads the Cloud Storage URL from an *instance
-attribute*, which is key-value metadata that can be associated with a Compute
-Engine instance. You will set that attribute when you actually create the
-instance.
+The startup script downloads the Cloud SQL Proxy from Google Cloud, and the
+release you built from Cloud Storage, and executes both. It reads the Cloud
+Storage URL from an *instance attribute*, which is key-value metadata that can
+be associated with a Compute Engine instance. You will set that attribute when
+you actually create the instance. It also obtains the project ID from a project
+attribute that is set automatically by Compute Engine.
 
 ### Create and configure a Compute Engine instance
 
@@ -299,7 +529,7 @@ Now you will start a Compute Engine instance.
 1.  Create an instance by running:
 
         gcloud compute instances create hello-instance \
-            --image-family debian-8 \
+            --image-family debian-9 \
             --image-project debian-cloud \
             --machine-type g1-small \
             --scopes "userinfo-email,cloud-platform" \
@@ -352,7 +582,7 @@ Phoenix app.
 1.  Create an instance template:
 
         gcloud compute instance-templates create hello-template \
-            --image-family debian-8 \
+            --image-family debian-9 \
             --image-project debian-cloud \
             --machine-type g1-small \
             --scopes "userinfo-email,cloud-platform" \
@@ -469,7 +699,7 @@ available instances in the group. Follow these steps.
     Your forwarding-rules IP address is in the `IP_ADDRESS` column.
 
     You can now enter the IP address into your browser and view your
-    load-balanced and autoscaled app running on port 80!
+    load-balanced app running on port 80!
 
 ### Configure an autoscaler
 
@@ -504,7 +734,7 @@ You can manage your instance group and autoscaling configuration using the
 [Compute > Compute Engine > Instance groups](https://console.cloud.google.com/compute/instanceGroups)
 section. You can manage load balancing configuration, including URL maps and
 backend services, using the
-[Compute > Compute Engine > HTTP load balancing](https://console.cloud.google.com/compute/httpLoadBalancing/list)
+[Compute > Compute Engine > HTTP load balancing](https://console.cloud.google.com/net-services/loadbalancing)
 section.
 
 ## Cleaning up
@@ -527,6 +757,11 @@ Delete the remaining single instance on the Cloud Platform Console
 
 Delete the Cloud Storage bucket hosting your OTP release from the
 [Cloud Storage browser](https://console.cloud.google.com/storage/browser).
+
+Delete the Cloud SQL instance, which will delete all the databases it hosts, by
+running:
+
+    gcloud sql instances delete hellodb
 
 ### Delete the project
 
