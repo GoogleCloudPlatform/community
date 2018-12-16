@@ -674,10 +674,12 @@ balancer and the Kubernetes Engine cluster.
 1.  Delete the cluster, which deletes the resources used by the cluster,
     including virtual machines, disks, and network resources.
 
-        gcloud container clusters delete hello-cluster
+        gcloud container clusters delete --zone=us-central1-a hello-cluster
 
-Finally, you can delete the Cloud SQL instance, which will delete all databases
-it hosts.
+    Be sure to specify the same zone you used to create the cluster.
+
+Finally, delete the Cloud SQL instance, which will delete all databases it
+hosts.
 
     gcloud sql instances delete hellodb
 
