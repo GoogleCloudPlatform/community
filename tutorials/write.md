@@ -6,11 +6,9 @@ tags: Tutorial, Write
 date_published: 2017-03-03
 ---
 
-**Beta: This is a Beta release of the Google Cloud Platform Community tutorials. This site might be changed and is not subject to any SLA or deprecation policy.**
-
 ## Introduction
 
-Beyond the official documentation there are endless possiblities for combining
+Beyond the official documentation there are endless possibilities for combining
 tools, platforms, languages and products. Ultimately, everything you build is
 unique, but very often projects share a lot in common. By submitting a tutorial
 you can share your experience and help others who are solving similar problems.

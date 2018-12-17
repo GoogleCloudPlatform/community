@@ -1,0 +1,17 @@
+if (mResponse != null) {
+   // Manually filter the proto message to the label descriptions
+   ArrayList<String> labels = new ArrayList<String>();
+   String labelstr = "";
+   for (String it : mResponse.split(",")) {
+       if (it.split(":")[0].contains("description")) {
+           labels.add(it.split(":")[1]);
+           labelstr += it.split(":")[1] + " / ";
+       }
+   }
+
+   // Remove trailing slash
+   labelstr = labelstr.substring(0, labelstr.length() - 2);
+   Log.d(TAG,"Found: " + labels.size() + " labels.");
+   ((TextView) findViewById(R.id.response_data))
+           .setText(labelstr);
+}

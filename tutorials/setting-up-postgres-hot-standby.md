@@ -6,9 +6,11 @@ tags: Compute Engine, PostgreSQL, HA
 date_published: 2017-02-18
 ---
 
-Learn how to configure PostgreSQL to run in Hot Standby mode on Google Cloud
-Platform. You'll use two Compute Engine instances. One instance will run the
+Learn how to configure PostgreSQL to run in Hot Standby mode on Google Compute
+Engine. You'll use two Compute Engine instances. One instance will run the
 primary PostgreSQL server and the other instance will run the standby server.
+
+Alternatively, you can use Postgres as a service through [Google Cloud SQL](https://cloud.google.com/sql/docs/postgres/).
 
 For most applications, data is a critical commodity. Storing data in one place
 is a risky proposition, so [you need to have a strategy and a plan in
@@ -59,7 +61,7 @@ primary server fails. This is a manual operation unless you use a third-party
 solution to manage failover.
 
 * Load balancing is not automatic with Hot Standby. If load balancing is a
-requirement for your appliction, you must provide a load-balancing solution
+requirement for your application, you must provide a load-balancing solution
 that uses the primary server for read-write operations and the standby server
 for read-only operations.
 

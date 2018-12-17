@@ -95,13 +95,20 @@ Create a file named `index.js` with the following contents:
 const twilio = require('twilio');
 const config = require('./config.json');
 
+const MessagingResponse = twilio.twiml.MessagingResponse;
+
+const projectId = process.env.GCLOUD_PROJECT;
+const region = 'us-central1';
+
 exports.reply = (req, res) => {
   let isValid = true;
 
   // Only validate that requests came from Twilio when the function has been
   // deployed to production.
   if (process.env.NODE_ENV === 'production') {
-    isValid = twilio.validateExpressRequest(req, config.TWILIO_AUTH_TOKEN);
+    isValid = twilio.validateExpressRequest(req, config.TWILIO_AUTH_TOKEN, {
+      url: `https://${region}-${projectId}.cloudfunctions.net/reply`
+    });
   }
 
   // Halt early if the request was not sent from Twilio
@@ -115,7 +122,7 @@ exports.reply = (req, res) => {
   }
 
   // Prepare a response to the SMS message
-  const response = new twilio.TwimlResponse();
+  const response = new MessagingResponse();
 
   // Add text to the response
   response.message('Hello from Google Cloud Functions!');
@@ -138,18 +145,15 @@ The `reply` function does the following:
 
 ## Deploying and Testing the Cloud Function
 
-1.  Read about [deploying Cloud Functions][deploying].
 1.  Run the following to deploy the function:
 
-        gcloud beta functions deploy reply --trigger-http --stage-bucket [YOUR_STAGE_BUCKET]
-
-    Replacing `[YOUR_STAGE_BUCKET]` with your Cloud Functions staging bucket.
+        gcloud functions deploy reply --trigger-http
 
 1.  Send an SMS message to your Twilio phone number and observe the response you
     receive from the Cloud Function.
 
 To view the logs for the Cloud Function, run the following:
 
-    gcloud beta functions logs view reply
+    gcloud functions logs view reply
 
 [deploying]: https://cloud.google.com/functions/docs/deploying/filesystem

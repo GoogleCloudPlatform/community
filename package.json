@@ -1,9 +1,9 @@
 {
   "private": true,
   "scripts": {
-    "lint": "semistandard \"**/*.js\"",
+    "lint": "semistandard",
     "build": "node ./bin/build",
-    "test": "npm run lint && mocha -t 120000 ./test/*"
+    "test": "mocha -t 120000 ./test/*"
   },
   "semistandard": {
     "globals": [
@@ -15,11 +15,12 @@
       "it"
     ],
     "ignore": [
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "tutorials/appengine-nodejs-webpack/**"
     ]
   },
   "devDependencies": {
-    "mocha": "3.2.0",
-    "semistandard": "9.2.1"
+    "mocha": "5.2.0",
+    "semistandard": "12.0.1"
   }
 }

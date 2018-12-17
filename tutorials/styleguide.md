@@ -15,6 +15,7 @@ This document provides guidance for contributors to the Google Cloud Platform (G
 * [File organization in GitHub](#file-organization-in-github)
 * [General content guidelines](#general-content-guidelines)
 * [General style guidelines](#general-style-guidelines)
+* [Markdown usage](#markdown-usage)
 * [Voice and tone](#voice-and-tone)
 * [Including source code](#including-source-code)
 * [Writing resources](#writing-resources)
@@ -270,6 +271,51 @@ Provide inline links to relevant information, where appropriate. For example, li
 
 Provide direct links to pages in the Google Cloud Console when you give Cloud Console-based instructions. These _deep links_ save the reader time spent looking for the right page and can save you time writing descriptions of how to find the page. Deep links open the page with the project set to the user's last-used project.
 
+## Markdown usage
+
+This site uses Markdown when publishing tutorial content. The site recognizes
+basic Markdown with a few extensions and edge cases.
+
+### Autolinks
+
+Publishing recognizes and adds links to URLs without `http://` or `https://`
+prefixes when they are delimited by whitespace, parentheses, or text formatting
+characters (`*_~`). Do not use `<` and `>` delimiters for these, as they will be
+stripped out as raw HTML.
+
+### Disallowed Raw HTML
+
+Publishing strips *all* possible HTML from tutorial content, essentially anything contained within `<` and `>` delimiters. Note that this is stricter than standard GFM, which only strips certain "unsafe" HTML.
+
+### Strikethrough
+
+Publishing formats text delimited in tildes (`~`) as strikethrough, making
+`~a bad example~`  look like ~a bad example~ in your document.
+
+### Tables
+
+Publishing formats text blocks as tables if they have  consistent pipe (`|`) separators and a second delimiter row with just hyphens (`-`), optionally using `:` to specify left, right, or centered alignment. Publishing converts this:
+
+```markdown
+| Table | header | row | default is centered |
+| :- | :--: | ---: | ---- |
+| Table | data | row | default is left |
+| ----------------- |  ----------------- |  ----------------- |  ---------------------------------------------- |
+```
+into this:
+
+| Table | header | row | default is centered |
+| :- | :--: | ---: | ---- |
+| Table | data | row | default is left |
+| ----------------- |  ----------------- |  ----------------- |  ---------------------------------------------- |
+
+You cannot create multi-line cells (although other Markdown dialects allow this), and while you can omit both the initial and final pipe separators, it can break table recognition if the first cell looks like a list item.
+
+### Code within lists
+
+The site's Markdown parser does not understand code fences (triple backticks)
+within lists. You should instead use indentation to signify code within lists.
+
 ## Voice and tone
 
 ### Active voice
@@ -346,7 +392,7 @@ options:
 Just embed the source code directly in the tutorial. Wrap the code in three
 backticks or indent by four spaces to achieve proper formatting.
 
-This option is the simplest, but offer no way to test the code, and does not
+This option is the simplest, but offers no way to test the code, and does not
 allow the user to view actual source code files as they might exist in a real
 project.
 
@@ -358,7 +404,9 @@ Instead of a Markdown file in the `tutorials/` directory, create a folder for
 your files. The Markdown for the tutorial should be in an `index.md` file within
 the new folder, and the rest of the source code files must be in the new folder
 as well. You can use [EmbedMd](https://github.com/campoy/embedmd) to include
-snippets from the source code files in the Markdown file.
+snippets from the source code files in the Markdown file. You should run the
+`embedmd` program on  `index.md` to actually  include  the code block in the
+Markdown source in one of the commits for your pull request.
 
 This option is more complicated, but allows us to test the code, and allows the
 user to view real source code files.
