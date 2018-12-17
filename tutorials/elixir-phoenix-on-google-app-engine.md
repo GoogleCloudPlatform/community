@@ -208,24 +208,26 @@ To set up Cloud SQL Proxy, perform the following steps:
     Make sure that `cloud_sql_proxy` is executable and is available in your
     environment's `PATH`.
 
-2.  Create a directory `tmp/cloudsql` in your application directory. This is
-    where the Cloud SQL Proxy will create database connection sockets.
+2.  Create a directory `/tmp/cloudsql`. This is where the Cloud SQL Proxy will
+    create database connection sockets. You may put this in a different
+    location, but if you do, you will need to update some of the commands below
+    accordingly.
 
-        mkdir -p tmp/cloudsql
+        mkdir -p /tmp/cloudsql
 
-3.  Start the proxy:
+3.  Start the proxy, telling it to open sockets in the directory you created.
 
-        cloud_sql_proxy -dir=tmp/cloudsql
+        cloud_sql_proxy -dir=/tmp/cloudsql
 
     Note: This runs the proxy in the foreground, so subsequent commands
     need to be run in a separate shell. If you prefer, feel free to
     background the process instead.
 
 4.  The proxy will open a socket in the directory
-    `tmp/cloudsql/[CONNECTION-NAME]/`. You can point `psql` to that socket to
+    `/tmp/cloudsql/[CONNECTION-NAME]/`. You can point `psql` to that socket to
     connect to the database instance. Test this now:
 
-        psql -h tmp/cloudsql/[CONNECTION-NAME] -U postgres
+        psql -h /tmp/cloudsql/[CONNECTION-NAME] -U postgres
 
 You can learn more about using the Cloud SQL Proxy to connect to your instance
 from [the documentation](https://cloud.google.com/sql/docs/postgres/connect-admin-proxy).
@@ -238,7 +240,7 @@ instance, and tell Ecto to create and migrate the database.
 1.  Start the Cloud SQL Proxy, if it is not already running from the previous
     section.
 
-        cloud_sql_proxy -dir=tmp/cloudsql
+        cloud_sql_proxy -dir=/tmp/cloudsql
 
 2.  Configure your production database configuration to communicate with the
     sockets opened by the running Cloud SQL Proxy. Edit the
@@ -249,7 +251,7 @@ instance, and tell Ecto to create and migrate the database.
           username: "postgres",
           password: "XXXXXXXX",
           database: "hello_prod",
-          socket_dir: "tmp/cloudsql/[CONNECTION-NAME]",
+          socket_dir: "/tmp/cloudsql/[CONNECTION-NAME]",
           pool_size: 15
 
     Remember to replace `[CONNECTION-NAME]` with your database's connection
@@ -280,7 +282,7 @@ Further information on connecting to your database from App Engine is available
 
 Note that if you need to run another Ecto migration or open another `psql`
 session from your local workstation, you can temporarily revert `socket_dir` to
-`tmp/cloudsql` so that Phoenix can talk to your local Cloud SQL Proxy. If you
+`/tmp/cloudsql` so that Phoenix can talk to your local Cloud SQL Proxy. If you
 do, make sure you change it back to `/cloudsql` before you deploy to App Engine.
 Alternatively, if you have the ability to create the directory `/cloudsql` on
 your local workstation, you can configure Cloud SQL Proxy to open its sockets
