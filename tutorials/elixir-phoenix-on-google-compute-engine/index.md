@@ -15,7 +15,8 @@ advantage of Google's deep expertise with scalable infrastructure.
 In this tutorial, you will:
 
 *   Create a new Phoenix application
-*   Connect your app to a database running in Cloud SQL
+*   Connect your app to a database running in
+    [Cloud SQL](https://cloud.google.com/sql)
 *   Create an OTP release for your app using
     [Distillery](https://github.com/bitwalker/distillery)
 *   Deploy your app to Google Compute Engine instances
@@ -67,26 +68,26 @@ tasks on your workstation:
     and set the default project to the new project you created.
 
     Version 227.0.0 or later of the SDK is required. If you have an earlier
-    version installed, you may upgrade it by running
+    version installed, you may upgrade it by running:
 
         gcloud components update
 
 3.  Install **Elixir 1.5 or later** if you do not already have it. If you are
-    on MacOS and have [Homebrew](https://brew.sh), you can run
+    on MacOS and have [Homebrew](https://brew.sh), you can run:
 
         brew install elixir
 
     Otherwise consult the [Elixir install](https://elixir-lang.org/install.html)
     guide for your operating system.
 
-4.  Install the **hex**, **rebar**, and **phx_new** archives.
+4.  Install the **hex**, **rebar**, and **phx_new** archives:
 
         mix local.hex
         mix local.rebar
         mix archive.install hex phx_new 1.4.0
 
 5.  Install **Node.js** if you do not already have it. If you are on MacOS and
-    have Homebrew, you can run
+    have Homebrew, you can run:
 
         brew install node
 
@@ -106,14 +107,14 @@ may use it instead.
 
 ### Create a new Phoenix app
 
-1.  Run the `phx.new` task to create a new Phoenix project called "hello".
+1.  Run the `phx.new` task to create a new Phoenix project called `hello`:
 
         mix phx.new hello
 
-    Answer "Y" when the tool asks you if you want to fetch and install
+    Answer `Y` when the tool asks you if you want to fetch and install
     dependencies.
 
-2.  Go into the directory with the new application.
+2.  Go into the directory with the new application:
 
         cd hello
 
@@ -147,11 +148,11 @@ may use it instead.
 Next you will populate a simple development database and verify that your
 Phoenix app can access it.
 
-1.  Create a simple schema.
+1.  Create a simple schema:
 
         mix phx.gen.schema User users name:string email:string
 
-2.  Migrate your development database.
+2.  Migrate your development database:
 
         mix ecto.migrate
 
@@ -172,7 +173,7 @@ Phoenix app can access it.
 
         <p>Number of users: <%= @value %></p>
 
-5.  Recompile and run the app
+5.  Recompile and run the app:
 
         mix phx.server
 
@@ -204,10 +205,10 @@ First you will create a new database in the cloud.
 1.  Create a Cloud SQL instance named `hellodb` with a Postgres database
     by running the following command:
 
-        gcloud sql instances create hellodb --region=us-central \
+        gcloud sql instances create hellodb --region=us-central1 \
           --database-version=POSTGRES_9_6 --tier=db-g1-small
 
-    You may choose a region other than `us-central` if there is one closer to
+    You may choose a region other than `us-central1` if there is one closer to
     your location.
 
 2.  Get the _connection name_ for your Cloud SQL instance by running the
@@ -241,7 +242,7 @@ it challenging to establish _ad hoc_ database connections. So, Cloud SQL
 provides a command line tool called the
 [Cloud SQL Proxy](https://cloud.google.com/sql/docs/postgres/sql-proxy). This
 tool communicates with your database instance over a secure API, using your
-Cloud SDK credentials, and opens a local endpoint (such as a unix socket) that
+Cloud SDK credentials, and opens a local endpoint (such as a Unix socket) that
 `psql` can connect to.
 
 To set up Cloud SQL Proxy, perform the following steps:
@@ -257,7 +258,7 @@ To set up Cloud SQL Proxy, perform the following steps:
 
         mkdir -p /tmp/cloudsql
 
-3.  Start the proxy, telling it to open sockets in the directory you created.
+3.  Start the proxy, telling it to open sockets in the directory you created:
 
         cloud_sql_proxy -dir=/tmp/cloudsql
 
@@ -413,7 +414,7 @@ need to create a Docker image with Debian and Elixir to use for builds.
         pushd builder
 
 2.  Create a file called `Dockerfile` inside the `builder` directory, and copy
-    the following content into it.
+    the following content into it:
 
         FROM elixir:latest
         WORKDIR /app
@@ -427,14 +428,14 @@ need to create a Docker image with Debian and Elixir to use for builds.
 
 3.  Build the image. This is not an image of your app itself, but an image that
     contains the necessary tools to build a release of your app. Remember to
-    run this while inside the `builder` directory.
+    run this while inside the `builder` directory:
 
         docker build -t hello-builder .
 
     This tutorial assumes you have named your image `hello-builder`, though you
     can give it a different name.
 
-4.  Move back out into your `hello` directory for the rest of the tutorial.
+4.  Move back out into your `hello` directory for the rest of the tutorial:
 
         popd
 
@@ -452,11 +453,11 @@ need to create a Docker image with Debian and Elixir to use for builds.
     if you are using a different toolchain for building assets.
 
 2.  Ensure artifacts from your local build environment don't leak into the
-    production build.
+    production build:
 
         mix clean --deps
 
-3.  Build a release using the Docker image.
+3.  Build a release using the Docker image:
 
         docker run --rm -it -v $(pwd):/app hello-builder
 
@@ -469,7 +470,7 @@ need to create a Docker image with Debian and Elixir to use for builds.
     **Note:** You might not be able to run this executable release directly
     from your workstation, because it has been cross-compiled for Debian.
 
-4.  Push the built release to Google Cloud Storage.
+4.  Push the built release to Google Cloud Storage:
 
         gsutil cp _build/prod/rel/hello/bin/hello.run \
           gs://${BUCKET_NAME}/hello-release
@@ -613,7 +614,7 @@ Phoenix app.
             --target-tags http-server \
             --description "Allow port 8080 access to http-server"
 
-4.  Get the names and external IP addresses of the instances that were created.
+4.  Get the names and external IP addresses of the instances that were created:
 
         gcloud compute instances list
 
@@ -670,7 +671,7 @@ available instances in the group. Follow these steps.
             --default-service hello-service
 
 6.  Create a proxy that receives traffic and forwards it to backend services
-    using the URL map.
+    using the URL map:
 
         gcloud compute target-http-proxies create hello-service-proxy \
             --url-map hello-service-map
