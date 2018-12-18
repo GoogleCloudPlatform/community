@@ -16,7 +16,8 @@ and leverages Google's deep expertise with container-based deployments.
 
 You will create a new Phoenix application, and then you will learn how to:
 
-*   Connect your app to a database running in Cloud SQL
+*   Connect your app to a database running in
+    [Cloud SQL](https://cloud.google.com/sql)
 *   Create an OTP release for your app using
     [Distillery](https://github.com/bitwalker/distillery)
 *   Wrap your app release in a Docker image
@@ -62,7 +63,7 @@ Perform the installations:
     set the default project to the new project you created.
 
     Version 227.0.0 or later of the SDK is required. If you have an earlier
-    version installed, you may upgrade it by running
+    version installed, you may upgrade it by running:
 
         gcloud components update
 
@@ -78,7 +79,7 @@ Perform the installations:
     Otherwise consult the [Elixir install](https://elixir-lang.org/install.html)
     guide for your operating system.
 
-1.  Install the **hex**, **rebar**, and **phx_new** archives.
+1.  Install the **hex**, **rebar**, and **phx_new** archives:
 
         mix local.hex
         mix local.rebar
@@ -105,14 +106,14 @@ may use it instead.
 
 ### Create a new Phoenix app
 
-1.  Run the `phx.new` task to create a new Phoenix project called "hello".
+1.  Run the `phx.new` task to create a new Phoenix project called `hello`:
 
         mix phx.new hello
 
-    Answer "Y" when the tool asks you if you want to fetch and install
+    Answer `Y` when the tool asks you if you want to fetch and install
     dependencies.
 
-1.  Go into the directory with the new application.
+1.  Go into the directory with the new application:
 
         cd hello
 
@@ -146,11 +147,11 @@ may use it instead.
 Next you will populate a simple development database and verify that your
 Phoenix app can access it.
 
-1.  Create a simple schema.
+1.  Create a simple schema:
 
         mix phx.gen.schema User users name:string email:string
 
-1.  Migrate your development database.
+1.  Migrate your development database:
 
         mix ecto.migrate
 
@@ -171,7 +172,7 @@ Phoenix app can access it.
 
         <p>Number of users: <%= @value %></p>
 
-1.  Recompile and run the app
+1.  Recompile and run the app:
 
         mix phx.server
 
@@ -184,7 +185,7 @@ For more information on using Ecto to access a SQL database, see the
 
 ## Create a production database in Cloud SQL
 
-In this section, you will create your "production" database using Cloud SQL, a
+In this section, you will create your production database using Cloud SQL, a
 fully-managed database service providing PostgreSQL and MySQL in the cloud. If
 you already have a database hosted elsewhere, you may skip this section, but
 you may need to ensure your production configuration is set up to connect to
@@ -203,10 +204,10 @@ First you will create a new database in the cloud.
 1.  Create a Cloud SQL instance named `hellodb` with a Postgres database
     by running the following command:
 
-        gcloud sql instances create hellodb --region=us-central \
+        gcloud sql instances create hellodb --region=us-central1 \
           --database-version=POSTGRES_9_6 --tier=db-g1-small
 
-    You may choose a region other than `us-central` if there is one closer to
+    You may choose a region other than `us-central1` if there is one closer to
     your location.
 
 1.  Get the _connection name_ for your Cloud SQL instance by running the
@@ -240,7 +241,7 @@ it challenging to establish _ad hoc_ database connections. So, Cloud SQL
 provides a command line tool called the
 [Cloud SQL Proxy](https://cloud.google.com/sql/docs/postgres/sql-proxy). This
 tool communicates with your database instance over a secure API, using your
-Cloud SDK credentials, and opens a local endpoint (such as a unix socket) that
+Cloud SDK credentials, and opens a local endpoint (such as a Unix socket) that
 `psql` can connect to.
 
 To set up Cloud SQL Proxy, perform the following steps:
@@ -256,7 +257,7 @@ To set up Cloud SQL Proxy, perform the following steps:
 
         mkdir -p /tmp/cloudsql
 
-1.  Start the proxy, telling it to open sockets in the directory you created.
+1.  Start the proxy, telling it to open sockets in the directory you created:
 
         cloud_sql_proxy -dir=/tmp/cloudsql
 
@@ -455,15 +456,15 @@ If you are experienced with Docker, you can customize your image.
     from your development environment, so it can perform clean builds.
 
 1.  Create a file called `.gcloudignore` in your `hello` directory. Copy the
-    following single line into it.
+    following single line into it:
 
         #!include:.dockerignore
 
     This file controls which files are ignored by Google Cloud Build. If you do
-    not provide it, gcloud will ignore everything in your `.gitignore` by
+    not provide it, `gcloud` will ignore everything in your `.gitignore` by
     default. That would cause your `config/prod.secret.exs` to be omitted,
     which would cause the build to fail. By specifying this line, you instruct
-    gcloud to use the contents of your `.dockerignore` file instead.
+    `gcloud` to use the contents of your `.dockerignore` file instead.
 
 ## Deploying your application
 
@@ -530,7 +531,7 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
     that makes sense for you, such as `us-central1-a`. It is a good idea to
     select a zone in the same region where your database is located.
     
-1.  Create the cluster.
+1.  Create the cluster:
 
         gcloud container clusters create hello-cluster --num-nodes=2 \
           --zone=us-central1-a --scopes=gke-default,sql-admin
@@ -546,8 +547,8 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
 
     Note that once the cluster is running, *you will be charged for VM usage*.
 
-1.  Configure the gcloud command-line tool to use your cluster by default, so
-    you don't have to specify it every time for the remaining gcloud commands.
+1.  Configure the `gcloud` command-line tool to use your cluster by default, so
+    you don't have to specify it every time for the remaining `gcloud` commands:
 
         gcloud container clusters get-credentials --zone=us-central1-a hello-cluster
         gcloud config set container/cluster hello-cluster
@@ -562,7 +563,7 @@ front-end load balancer (which also provides a public IP address.)
 We'll assume that you built the image to `gcr.io/${PROJECT_ID}/hello:v1` and
 you've created the Kubernetes cluster as described above.
 
-1.  Create a deployment.
+1.  Create a deployment:
 
         kubectl run hello-web --image=gcr.io/${PROJECT_ID}/hello:v1 --port 8080
 
@@ -574,7 +575,7 @@ you've created the Kubernetes cluster as described above.
 
         kubectl get pods
 
-1.  Expose the application by creating a load balancer pointing at your pod.
+1.  Expose the application by creating a load balancer pointing at your pod:
 
         kubectl expose deployment hello-web \
           --type=LoadBalancer --port 80 --target-port 8080
@@ -639,7 +640,7 @@ building a new image and pointing your deployment to it.
     This performs a rolling update of all the running pods.
 
 1.  You can roll back to the earlier build by calling `kubectl set image`
-    again, specifying the earlier build tag.
+    again, specifying the earlier build tag:
 
         kubectl set image deployment/hello-web hello-web=gcr.io/${PROJECT_ID}/hello:v1
 
@@ -672,7 +673,7 @@ balancer and the Kubernetes Engine cluster.
     The forwarding rule will disappear when the load balancer is deleted.
 
 1.  Delete the cluster, which deletes the resources used by the cluster,
-    including virtual machines, disks, and network resources.
+    including virtual machines, disks, and network resources:
 
         gcloud container clusters delete --zone=us-central1-a hello-cluster
 
@@ -686,7 +687,7 @@ hosts.
 ### Deleting the project
 
 Alternately, you can delete the project in its entirety. To do so using the
-gcloud tool, run:
+`gcloud` tool, run:
 
     gcloud projects delete ${PROJECT_ID}
 
