@@ -48,7 +48,7 @@ Before running this tutorial, take the following steps:
 
 If you have not yet installed Elixir and Phoenix, do so.
 
-1.  Install Elixir and Node.js. If you are on MacOS with Homebrew, you can run:
+1.  Install Elixir and Node.js. If you are on macOS with Homebrew, you can run:
 
         brew install elixir node
 
@@ -391,7 +391,7 @@ Let's make a simple change and redeploy.
 
         gcloud app browse
 
-## Clean up
+## Cleaning up
 
 After you've finished this tutorial, you can clean up the resources you created
 on Google Cloud Platform so you won't be billed for them in the future. To clean
