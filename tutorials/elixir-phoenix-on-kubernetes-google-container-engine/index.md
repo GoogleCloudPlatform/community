@@ -16,7 +16,7 @@ and leverages Google's deep expertise with container-based deployments.
 
 You will create a new Phoenix application, and then you will learn how to:
 
-*   Connect your app to a database running in Google Cloud SQL
+*   Connect your app to a database running in Cloud SQL
 *   Create an OTP release for your app using
     [Distillery](https://github.com/bitwalker/distillery)
 *   Wrap your app release in a Docker image
@@ -28,7 +28,7 @@ already familiar with basic Phoenix web development. It also requires the
 PostgreSQL database to be installed on your local development workstation.
 
 This tutorial was updated in Dec 2018 to cover Phoenix 1.4, Distillery 2.0, and
-connecting Ecto to a Google Cloud SQL database.
+connecting Ecto to a Cloud SQL database.
 
 ## Before you begin
 
@@ -184,11 +184,11 @@ For more information on using Ecto to access a SQL database, see the
 
 ## Create a production database in Cloud SQL
 
-In this section, you will create your "production" database using Google Cloud
-SQL, a fully-managed database service providing PostgreSQL and MySQL in the
-cloud. If you already have a database hosted elsewhere, you may skip this
-section, but you may need to ensure your production configuration is set up to
-connect to your database.
+In this section, you will create your "production" database using Cloud SQL, a
+fully-managed database service providing PostgreSQL and MySQL in the cloud. If
+you already have a database hosted elsewhere, you may skip this section, but
+you may need to ensure your production configuration is set up to connect to
+your database.
 
 Before you begin this section, make sure you have enabled billing and the
 needed APIs in your cloud project. You should also set the default project for
@@ -232,12 +232,12 @@ First you will create a new database in the cloud.
 In this section you will learn how to connect to your Cloud SQL instance from
 your local workstation. Generally, you will not need to do this often, but it
 is useful for the initial creation and migration of your database, as well as
-for _ad hoc_ database connection for maintenance.
+for creating _ad hoc_ database connections for maintenance.
 
-By default, Google Cloud SQL instances are secured: to connect using the
-standard `psql` tool, you are required to whitelist your IP address. This
-security measure can make it challenging to establish _ad hoc_ database
-connections. So, Google Cloud SQL provides a command line tool called the
+By default, Cloud SQL instances are secured: to connect using the standard
+`psql` tool, you must whitelist your IP address. This security measure can make
+it challenging to establish _ad hoc_ database connections. So, Cloud SQL
+provides a command line tool called the
 [Cloud SQL Proxy](https://cloud.google.com/sql/docs/postgres/sql-proxy). This
 tool communicates with your database instance over a secure API, using your
 Cloud SDK credentials, and opens a local endpoint (such as a unix socket) that
