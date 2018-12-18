@@ -17,7 +17,7 @@ Engine in minutes.
 This tutorial will help you get started deploying a Phoenix app to App Engine.
 You will create a new Phoenix application, and learn how to configure, deploy,
 and update it. The application will also demonstrate how to connect to a
-PostgreSQL database running on Cloud SQL.
+PostgreSQL database running on [Cloud SQL](https://cloud.google.com/sql).
 
 This tutorial requires Elixir 1.5 and Phoenix 1.4 or later. It assumes you are
 already familiar with basic Phoenix web development. It also requires the
@@ -42,13 +42,13 @@ Before running this tutorial, take the following steps:
     and set the default project to the new project you created.
 
     Version 227.0.0 or later of the SDK is required. If you have an earlier
-    version installed, you may upgrade it by running
+    version installed, you may upgrade it by running:
 
         gcloud components update
 
-If you have not yet installed Elixir and Phoenix, do so:
+If you have not yet installed Elixir and Phoenix, do so.
 
-1.  Install Elixir and Node.js. If you are on MacOS with Homebrew, you can run
+1.  Install Elixir and Node.js. If you are on MacOS with Homebrew, you can run:
 
         brew install elixir node
 
@@ -56,7 +56,7 @@ If you have not yet installed Elixir and Phoenix, do so:
     [Elixir install](https://elixir-lang.org/install.html) guides for your
     operating system.
 
-2. Install the hex, rebar3, and phx_new archives.
+2. Install the hex, rebar3, and phx_new archives:
 
         mix local.hex
         mix local.rebar
@@ -70,14 +70,14 @@ may use it instead.
 
 ### Create a new Phoenix app
 
-1.  Run the `phx.new` task to create a new Phoenix project called "hello".
+1.  Run the `phx.new` task to create a new Phoenix project called `hello`:
 
         mix phx.new hello
 
-    Answer "Yes" when the tool asks you if you want to fetch and install
+    Answer `Y` when the tool asks you if you want to fetch and install
     dependencies.
 
-2.  Go into the directory with the new application.
+2.  Go into the directory with the new application:
 
         cd hello
 
@@ -111,11 +111,11 @@ may use it instead.
 Next you will populate a simple development database and verify that your
 Phoenix app can access it.
 
-1.  Create a simple schema.
+1.  Create a simple schema:
 
         mix phx.gen.schema User users name:string email:string
 
-2.  Migrate your development database.
+2.  Migrate your development database:
 
         mix ecto.migrate
 
@@ -136,7 +136,7 @@ Phoenix app can access it.
 
         <p>Number of users: <%= @value %></p>
 
-5.  Recompile and run the app
+5.  Recompile and run the app:
 
         mix phx.server
 
@@ -149,7 +149,7 @@ For more information on using Ecto to access a SQL database, see the
 
 ## Create a production database in Cloud SQL
 
-In this section, you will create your "production" database using Cloud SQL, a
+In this section, you will create your production database using Cloud SQL, a
 fully-managed database service providing PostgreSQL and MySQL in the cloud. If
 you already have a database hosted elsewhere, you may skip this section, but
 you may need to ensure your production configuration is set up to connect to
@@ -162,10 +162,10 @@ First you will create a new database in the cloud.
 1.  Create a Cloud SQL instance named `hellodb` with a Postgres database
     by running the following command:
 
-        gcloud sql instances create hellodb --region=us-central \
+        gcloud sql instances create hellodb --region=us-central1 \
           --database-version=POSTGRES_9_6 --tier=db-g1-small
 
-    You may choose a region other than `us-central` if there is one closer to
+    You may choose a region other than `us-central1` if there is one closer to
     your location.
 
 2.  Get the _connection name_ for your Cloud SQL instance by running the
@@ -199,7 +199,7 @@ it challenging to establish _ad hoc_ database connections. So, Cloud SQL
 provides a command line tool called the
 [Cloud SQL Proxy](https://cloud.google.com/sql/docs/postgres/sql-proxy). This
 tool communicates with your database instance over a secure API, using your
-Cloud SDK credentials, and opens a local endpoint (such as a unix socket) that
+Cloud SDK credentials, and opens a local endpoint (such as a Unix socket) that
 `psql` can connect to.
 
 To set up Cloud SQL Proxy, perform the following steps:
@@ -215,7 +215,7 @@ To set up Cloud SQL Proxy, perform the following steps:
 
         mkdir -p /tmp/cloudsql
 
-3.  Start the proxy, telling it to open sockets in the directory you created.
+3.  Start the proxy, telling it to open sockets in the directory you created:
 
         cloud_sql_proxy -dir=/tmp/cloudsql
 
@@ -238,7 +238,7 @@ Next you will configure your Phoenix app to point to your production database
 instance, and tell Ecto to create and migrate the database.
 
 1.  Start the Cloud SQL Proxy, if it is not already running from the previous
-    section.
+    section:
 
         cloud_sql_proxy -dir=/tmp/cloudsql
 
@@ -267,7 +267,7 @@ instance, and tell Ecto to create and migrate the database.
 ### Access the production database from App Engine
 
 The App Engine runtime also runs a Cloud SQL Proxy for you, and makes your
-databases available via unix sockets. In the App Engine environment, these are
+databases available via Unix sockets. In the App Engine environment, these are
 located in the directory `/cloudsql` at the root of the file system. So, to
 prepare your app for deployment into App Engine, edit your
 `config/prod.secret.exs` file again, and modify the `socket_dir` database
@@ -347,7 +347,7 @@ Now you will deploy your new app to App Engine.
     release for the application `hello`.
     Finally, the configuration also informs App Engine that you want to connect
     to a Cloud SQL instance. (Remember to substitute your connection name for
-    `[CONNECTION-NAME]`.) App Engine will respond by creating the unix socket
+    `[CONNECTION-NAME]`.) App Engine will respond by creating the Unix socket
     needed to connect to the database.
 
 2.  Run the following command to deploy your app:
@@ -355,7 +355,7 @@ Now you will deploy your new app to App Engine.
         gcloud app deploy
 
     If this is the first time you have deployed to App Engine in this project,
-    gcloud will prompt you for a region. It is generally a good idea to choose
+    `gcloud` will prompt you for a region. It is generally a good idea to choose
     the same region as you did for your database above, to minimize latency.
 
     The Elixir Runtime will take care of building your application in the
@@ -365,7 +365,7 @@ Now you will deploy your new app to App Engine.
     Deployment will also take a few minutes to requisition and configure the
     needed resources, especially the first time you deploy.
 
-3.  Once the deploy command has completed, you can run
+3.  Once the deploy command has completed, you can run:
 
         gcloud app browse
 
@@ -387,7 +387,7 @@ Let's make a simple change and redeploy.
     deploying the updated version, and migrating traffic to the newly deployed
     version.
 
-3.  View your changes live by running
+3.  View your changes live by running:
 
         gcloud app browse
 
@@ -419,7 +419,7 @@ use the project ID, such as an appspot.com URL, remain available.
 In this tutorial, you created a Cloud SQL instance and deployed an App Engine
 service. Here is how to stop these two services.
 
-To delete the Cloud SQL instance, including all databases it hosts, run
+To delete the Cloud SQL instance, including all databases it hosts, run:
 
     gcloud sql instances delete hellodb
 
