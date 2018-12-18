@@ -248,7 +248,7 @@ GCP VPN gateway and tunnel.
 #### Create a custom VPC network and subnet
 
 1. In the GCP Console,
-[go to the VPC Networks page](https://pantheon.corp.google.com/networking/networks/list).
+[go to the VPC Networks page](https://console.cloud.google.com/networking/networks/list).
 1. Click **Create VPC network**.
 1. For **Name**, enter a name such as `vpn-vendor-test-network`. Remember
 this name for later.
@@ -267,7 +267,7 @@ takes about a minute for this network and its subnet to appear.
 #### Create the GCP external IP address
 
 1.  In the GCP Console,
-[go to the External IP addresses page](https://pantheon.corp.google.com/networking/addresses/list).
+[go to the External IP addresses page](https://console.cloud.google.com/networking/addresses/list).
 
 1. Click **Reserve Static Address**.
 1. Populate the following fields for the Cloud VPN address:
