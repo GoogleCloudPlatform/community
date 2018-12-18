@@ -88,7 +88,7 @@ From the original machine:
               --member='serviceAccount:chef-workstation@$PROJECT_NAME.iam.gserviceaccount.com' \
               --role='roles/iam.serviceAccountKeyAdmin'
 
-1.  Use gcloud cli to create new Compute Engine instance with the service account you just created and ssh to it.
+1.  Use gcloud to create a new Compute Engine instance with the service account you just created and ssh to it.
 
         # local-machine
         gcloud compute instances create chef-workstation \
@@ -298,7 +298,7 @@ Use the `google-gsql` GCP cookbook to define a Cloud SQL instance.
           credential 'sql-credentials'
         end
     
-1.  Include the Cloud SQL recipe to your infrastructure cookbook's default recipe.
+1.  Include the Cloud SQL recipe into your infrastructure cookbook's default recipe.
     
         # gce: chef-workstation
         echo "include_recipe 'infrastructure::sql'" >> infrastructure/recipes/default.rb
@@ -330,7 +330,7 @@ For the purposes of this tutorial you can download a LAMP cookbook that can be r
 
 ## Configure the web server cookbook for your environment
 
-1.  Find your Cloud SQL ip address using `gcloud sql instances list` from your original machine
+1.  Find your Cloud SQL ip address using `gcloud sql instances list` from your original machine.
 
 1.  Modify the `lamp/attributes/default.rb` file to match your environment. Be sure to update `default['lamp']['database']['dbhost'] = '$CLOUD_SQL_IP'` to reference the IP of your Cloud SQL instance.
 
@@ -338,7 +338,7 @@ For the purposes of this tutorial you can download a LAMP cookbook that can be r
 
 Configure your web server machine for ssh access from the Chef Workstation.
 
-1.  Authenticate the Chef Workstation machine to use Compute Engine commands
+1.  Authenticate the Chef Workstation machine to use Compute Engine commands.
 
         # gce: chef-workstation
         gcloud auth activate-service-account compute@$PROJECT_NAME.iam.gserviceaccount.com --key-file=compute.json
@@ -358,7 +358,7 @@ Configure your web server machine for ssh access from the Chef Workstation.
         cd ~/chef-repo/cookbooks
         chef-run -i ~/.ssh/google_compute_engine $USER@$WEB_SERVER_IP lamp
     
-1.  Verify that the cookbook completed by retrieving the content hosted by the web server
+1.  Verify that the cookbook completed by retrieving the content hosted by the web server.
 
         # gce: chef-workstation
         curl $WEB_SERVER_IP
