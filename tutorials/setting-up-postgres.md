@@ -100,7 +100,7 @@ user doesn't yet have a password, so you'll need to set one.
         sudo -s
 
 1. Run [PSQL](https://www.postgresql.org/docs/9.3/static/app-psql.html)
- as user `postgres`, instead of `root`, accesssing the database
+ as user `postgres`, instead of `root`, accessing the database
  named `postgres`:
 
         sudo -u postgres psql postgres

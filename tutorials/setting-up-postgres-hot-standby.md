@@ -61,7 +61,7 @@ primary server fails. This is a manual operation unless you use a third-party
 solution to manage failover.
 
 * Load balancing is not automatic with Hot Standby. If load balancing is a
-requirement for your appliction, you must provide a load-balancing solution
+requirement for your application, you must provide a load-balancing solution
 that uses the primary server for read-write operations and the standby server
 for read-only operations.
 
