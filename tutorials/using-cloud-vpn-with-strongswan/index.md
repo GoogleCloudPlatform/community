@@ -14,38 +14,6 @@ Learn how to build site-to-site IPsec VPNs between
 [Cloud VPN](https://cloud.google.com/vpn/docs/) on Google Cloud Platform (GCP) and
 Strongswan.
 
-
-- [Using Cloud VPN with Strongswan](#using-cloud-vpn-with-strongswan)
-    - [Introduction](#introduction)
-    - [Terminology](#terminology)
-    - [Topology](#topology)
-    - [Product environment](#product-environment)
-    - [Before you begin](#before-you-begin)
-        - [GCP account and project](#gcp-account-and-project)
-        - [Permissions](#permissions)
-    - [Configure the GCP side](#configure-the-gcp-side)
-        - [Initial tasks](#initial-tasks)
-            - [Select a GCP project name](#select-a-gcp-project-name)
-            - [Create a custom VPC network and subnet](#create-a-custom-vpc-network-and-subnet)
-            - [Create the GCP external IP address](#create-the-gcp-external-ip-address)
-        - [Configuring route-based IPsec VPN using static routing](#configuring-route-based-ipsec-vpn-using-static-routing)
-            - [Configure the VPN gateway](#configure-the-vpn-gateway)
-            - [Configure the VPN tunnel](#configure-the-vpn-tunnel)
-            - [Configure firewall rules](#configure-firewall-rules)
-    - [Configure the Strongswan side](#configure-the-strongswan-side)
-        - [GCP-compatible settings for IPSec and IKE](#gcp-compatible-settings-for-ipsec-and-ike)
-        - [Creating the VPN configuration](#creating-the-vpn-configuration)
-        - [Testing the configuration](#testing-the-configuration)
-    - [Troubleshooting IPsec on the Strongswan side](#troubleshooting-ipsec-on-the-strongswan-side)
-    - [Reference documentation](#reference-documentation)
-        - [GCP documentation](#gcp-documentation)
-        - [Strongswan documentation](#strongswan-documentation)
-    - [Appendix: Using gcloud commands](#appendix-using-gcloud-commands)
-        - [Running gcloud commands](#running-gcloud-commands)
-        - [Configuration parameters and values](#configuration-parameters-and-values)
-        - [Setting environment variables for gcloud command parameters](#setting-environment-variables-for-gcloud-command-parameters)
-        - [Configuring IPsec VPN using static routing](#configuring-ipsec-vpn-using-static-routing)
-
 ![screen shot 2018-08-20 at 3 58 44 pm](https://user-images.githubusercontent.com/42278789/44371087-fc9a8b80-a491-11e8-86c7-22499e7b5913.png)
 
 ## Introduction
