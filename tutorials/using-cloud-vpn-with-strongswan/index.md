@@ -1,7 +1,7 @@
 ---
 title: Google Cloud VPN Interop Guide for Strongswan
-description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on Google Cloud Platform (GCP) and  Strongswan
-author: carmel99
+description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on Google Cloud Platform (GCP) and  Strongswan.
+author: epluscloudservices
 tags: VPN, interop, Strongswan
 date_published: 2018-10-15
 ---
