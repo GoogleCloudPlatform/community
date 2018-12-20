@@ -3,7 +3,7 @@ title: Setting up LoRa Server on Google Cloud Platform
 description: This tutorial describes how to setup LoRa Server, an open-source LoRaWAN network-server, on Google Cloud Platform.
 author: brocaar
 tags: LoRa Server, LoRaWAN, IoT, Cloud IoT Core
-date_published: 2018-10-12
+date_published: 2018-12-20
 ---
 
 This tutorial describes the steps needed to set up the [LoRa Server project](https://www.loraserver.io/)
@@ -79,10 +79,8 @@ In order to authenticate the LoRa gateway with the Cloud IoT Core MQTT bridge,
 you need to generate a certificate. You can do this using the following
 commands:
 
-```bash
-ssh-keygen -t rsa -b 4096 -f private-key.pem
-openssl rsa -in private-key.pem -pubout -outform PEM -out public-key.pem
-```
+    ssh-keygen -t rsa -b 4096 -f private-key.pem
+    openssl rsa -in private-key.pem -pubout -outform PEM -out public-key.pem
 
 Do **not** set a passphrase!
 
@@ -113,21 +111,19 @@ To configure a LoRa Gateway Bridge to forward its data to Cloud IoT, you need up
 
 A minimal configuration example:
 
-```toml
-[backend.mqtt]
-marshaler="protobuf"
+    [backend.mqtt]
+    marshaler="protobuf"
 
-  [backend.mqtt.auth]
-  type="gcp_cloud_iot_core"
+      [backend.mqtt.auth]
+      type="gcp_cloud_iot_core"
 
-    [backend.mqtt.auth.gcp_cloud_iot_core]
-    server="ssl://mqtt.googleapis.com:8883"
-    device_id="gw-0102030405060708"
-    project_id="lora-server-tutorial"
-    cloud_region="europe-west1"
-    registry_id="eu868-gateways"
-    jwt_key_file="/path/to/private-key.pem"
-```
+        [backend.mqtt.auth.gcp_cloud_iot_core]
+        server="ssl://mqtt.googleapis.com:8883"
+        device_id="gw-0102030405060708"
+        project_id="lora-server-tutorial"
+        cloud_region="europe-west1"
+        registry_id="eu868-gateways"
+        jwt_key_file="/path/to/private-key.pem"
 
 In short:
 
@@ -143,13 +139,11 @@ After applying the above configuration changes on the gateway (using your own `d
 is able to connect with the Cloud IoT Core MQTT bridge. The log output should
 look like this when your gateway receives an uplink message from your LoRaWAN device:
 
-```text
-INFO[0000] starting LoRa Gateway Bridge                  docs="https://www.loraserver.io/lora-gateway-bridge/" version=2.6.0
-INFO[0000] gateway: starting gateway udp listener        addr="0.0.0.0:1700"
-INFO[0000] mqtt: connected to mqtt broker
-INFO[0007] mqtt: subscribing to topic                    qos=0 topic="/devices/gw-0102030405060708/commands/#"
-INFO[0045] mqtt: publishing message                      qos=0 topic=/devices/gw-0102030405060708/events/up
-```
+    INFO[0000] starting LoRa Gateway Bridge                  docs="https://www.loraserver.io/lora-gateway-bridge/" version=2.6.0
+    INFO[0000] gateway: starting gateway udp listener        addr="0.0.0.0:1700"
+    INFO[0000] mqtt: connected to mqtt broker
+    INFO[0007] mqtt: subscribing to topic                    qos=0 topic="/devices/gw-0102030405060708/commands/#"
+    INFO[0045] mqtt: publishing message                      qos=0 topic=/devices/gw-0102030405060708/events/up
 
 Your gateway is now communicating succesfully with the Cloud IoT Core MQTT bridge!
 
@@ -173,7 +167,7 @@ Cloud IoT Core device-registry, you must create a [Cloud Function](https://cloud
 which will subscribe to the downlink Pub/Sub topic and will forward these
 commands to your LoRa gateway.
 
-In the GCP Console, navigate to **Cloud Functions**. Then click on **Create function**.
+In the GCP Console, navigate to **Cloud Functions**. Then click **Create function**.
 As **Name** we will use `eu868-gateway-commands`. Because the only thing this function
 does is calling a Cloud API, `128 MB` for **Memory allocated** should be fine.
 
@@ -184,93 +178,92 @@ Select **Inline editor** for entering the source-code and select the **Node.js 8
 runtime. The **Function to execute** is called `sendMessage`. Copy and paste
 the scripts below for the `index.js` and `package.json` files. Adjust the
 `index.js` configuration to match your `REGION`, `PROJECT_ID` and `REGISTRY_ID`.
-**Note:** it is recommended to also click on **More** and select your region
-from the dropdown list. Then click on **Create**.
+**Note:** it is recommended to also click **More** and select your region
+from the dropdown list. Then click **Create**.
 
 #### `index.js`
 
-```js
-'use strict';
+    'use strict';
 
-const {google} = require('googleapis');
+    const {google} = require('googleapis');
 
-// configuration options
-const REGION = 'europe-west1';
-const PROJECT_ID = 'lora-server-tutorial';
-const REGISTRY_ID = 'eu868-gateways';
-
-
-let client = null;
-const API_VERSION = 'v1';
-const DISCOVERY_API = 'https://cloudiot.googleapis.com/$discovery/rest';
+    // configuration options
+    const REGION = 'europe-west1';
+    const PROJECT_ID = 'lora-server-tutorial';
+    const REGISTRY_ID = 'eu868-gateways';
 
 
-// getClient returns the GCP API client.
-// Note: after the first initialization, the client will be cached.
-function getClient (cb) {
-  if (client !== null) {
-    cb(client);
-    return;
-  }
+    let client = null;
+    const API_VERSION = 'v1';
+    const DISCOVERY_API = 'https://cloudiot.googleapis.com/$discovery/rest';
 
-  google.auth.getClient({scopes: ['https://www.googleapis.com/auth/cloud-platform']}).then((authClient => {
-    google.options({
-      auth: authClient
-    });
 
-    const discoveryUrl = `${DISCOVERY_API}?version=${API_VERSION}`;
-    google.discoverAPI(discoveryUrl).then((c, err) => {
-      if (err) {
-        console.log('Error during API discovery', err);
-        return undefined;
+    // getClient returns the GCP API client.
+    // Note: after the first initialization, the client will be cached.
+    function getClient (cb) {
+      if (client !== null) {
+        cb(client);
+        return;
       }
-      client = c;
-      cb(client);
-    });
-  }));
-}
+
+      google.auth.getClient({scopes: ['https://www.googleapis.com/auth/cloud-platform']}).then((authClient => {
+        google.options({
+          auth: authClient
+        });
+
+        const discoveryUrl = `${DISCOVERY_API}?version=${API_VERSION}`;
+        google.discoverAPI(discoveryUrl).then((c, err) => {
+          if (err) {
+            console.log('Error during API discovery', err);
+            return undefined;
+          }
+          client = c;
+          cb(client);
+        });
+      }));
+    }
 
 
-// sendMessage forwards the Pub/Sub message to the given device.
-exports.sendMessage = (event, context, callback) => {
-  const deviceId = event.attributes.deviceId;
-  const subFolder = event.attributes.subFolder;
-  const data = event.data;
+    // sendMessage forwards the Pub/Sub message to the given device.
+    exports.sendMessage = (event, context, callback) => {
+      const deviceId = event.attributes.deviceId;
+      const subFolder = event.attributes.subFolder;
+      const data = event.data;
   
-  getClient((client) => {
-    const parentName = `projects/${PROJECT_ID}/locations/${REGION}`;
-    const registryName = `${parentName}/registries/${REGISTRY_ID}`;
-    const request = {
-      name: `${registryName}/devices/${deviceId}`,
-      binaryData: data,
-      subfolder: subFolder
-    };
+      getClient((client) => {
+        const parentName = `projects/${PROJECT_ID}/locations/${REGION}`;
+        const registryName = `${parentName}/registries/${REGISTRY_ID}`;
+        const request = {
+          name: `${registryName}/devices/${deviceId}`,
+          binaryData: data,
+          subfolder: subFolder
+        };
     
-    console.log("start call sendCommandToDevice");
-    client.projects.locations.registries.devices.sendCommandToDevice(request, (err, data) => {
-      if (err) {
-        console.log("Could not send command:", request, "Message:", err);
-        callback(new Error(err));
-      } else {
-        callback();
-      }
-    });
-  });
-};
-```
+        console.log("start call sendCommandToDevice");
+        client.projects.locations.registries.devices.sendCommandToDevice(request, (err, data) => {
+          if (err) {
+            console.log("Could not send command:", request, "Message:", err);
+            callback(new Error(err));
+          } else {
+            callback();
+          }
+        });
+      });
+    };
+
 
 #### `package.json`
 
-```json
-{
-  "name": "gateway-commands",
-  "version": "2.0.0",
-  "dependencies": {
-    "@google-cloud/pubsub": "0.20.1",
-    "googleapis": "34.0.0"
-  }
-}
-```
+
+    {
+      "name": "gateway-commands",
+      "version": "2.0.0",
+      "dependencies": {
+        "@google-cloud/pubsub": "0.20.1",
+        "googleapis": "34.0.0"
+      }
+    }
+
 
 ## Set up databases
 
@@ -313,24 +306,23 @@ Click the **Databases** tab. Create the following databases:
 
 #### Enable trgm extension
 
-In the PostgreSQL instance **Overview** tab, click on **Connect using Cloud Shell**
+In the PostgreSQL instance **Overview** tab, click **Connect using Cloud Shell**
 and when the `gcloud sql connect ...` command is shown in the console,
 press Enter. It will prompt you for the `postgres` user password (which you
 configured on creating the PostgreSQL instance).
 
 Then execute the following SQL commands:
 
-```sql
--- change to the LoRa App Server database
-\c loraserver_as
+    -- change to the LoRa App Server database
+    \c loraserver_as
 
--- enable the pq_trgm extension
--- (this is needed to facilitate the search feature)
-create extension pg_trgm;
+    -- enable the pq_trgm extension
+    -- (this is needed to facilitate the search feature)
+    create extension pg_trgm;
 
--- exit psql
-\q
-```
+    -- exit psql
+    \q
+
 
 You can close the Cloud Shell.
 
@@ -361,7 +353,7 @@ In order to expose the LoRa App Server web interface, we need to open port
 `8080` (the default LoRa App Server port) to the public.
 
 Click on the created instance to go to the instance details. Under
-**Network interfaces** click on **View details**. In the left navigation
+**Network interfaces** click **View details**. In the left navigation
 menu click **Firewall rules** and then on **Create firewall rule**.
 Enter the following details:
 
@@ -370,7 +362,7 @@ Enter the following details:
 * **Source IP ranges:** `0.0.0.0/0`
 * **Protocols and ports > TCP:** `8080`
 
-Then click on **Create**.
+Then click **Create**.
 
 ### Compute Engine service account roles
 
@@ -384,7 +376,7 @@ default service account**. Click **Add another role** and add the following role
 * `Pub/Sub Publisher`
 * `Pub/Sub Subscriber`
 
-### Login into VM instance
+### Log in to VM instance
 
 You will find the public IP address of the created VM instance under
 **Compute Engine > VM instances**. Use the SSH web-client provided by the GCP Console, or the gcloud ssh command to connect to the VM.
@@ -393,27 +385,25 @@ You will find the public IP address of the created VM instance under
 
 Execute the following commands in the VM's shell to add the LoRa Server repository to your VM instance:
 
-```bash
-# add required packages
-sudo apt install apt-transport-https dirmngr
+    # add required packages
+    sudo apt install apt-transport-https dirmngr
 
-# import LoRa Server key
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1CE2AFD36DBCCA00
+    # import LoRa Server key
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1CE2AFD36DBCCA00
 
-# add the repository to apt configuration
-sudo echo "deb https://artifacts.loraserver.io/packages/2.x/deb stable main" | sudo tee /etc/apt/sources.list.d/loraserver.list
+    # add the repository to apt configuration
+    sudo echo "deb https://artifacts.loraserver.io/packages/2.x/deb stable main" | sudo tee /etc/apt/sources.list.d/loraserver.list
 
-# update the package cache
-sudo apt update
-```
+    # update the package cache
+    sudo apt update
+
 
 ### Install LoRa Server
 
 Execute the following command in the VM's shell to install the LoRa Server service:
 
-```bash
-sudo apt install loraserver
-```
+    sudo apt install loraserver
+
 
 #### Configure LoRa Server
 
@@ -435,93 +425,88 @@ You need to replace the following values:
 
 ##### EU868 configuration example
 
-```toml
-[postgresql]
-dsn="postgres://loraserver_ns:[PASSWORD]@[POSTGRESQL_IP]/loraserver_ns?sslmode=disable"
+    [postgresql]
+    dsn="postgres://loraserver_ns:[PASSWORD]@[POSTGRESQL_IP]/loraserver_ns?sslmode=disable"
 
-[redis]
-url="redis://[REDIS_IP]:6379"
+    [redis]
+    url="redis://[REDIS_IP]:6379"
 
-[network_server]
-net_id="000000"
+    [network_server]
+    net_id="000000"
 
-  [network_server.band]
-  name="EU_863_870"
+      [network_server.band]
+      name="EU_863_870"
 
-  [network_server.network_settings]
-  rx1_delay=3
+      [network_server.network_settings]
+      rx1_delay=3
 
-  [network_server.gateway.stats]
-  create_gateway_on_stats=true
-  timezone="UTC"
+      [network_server.gateway.stats]
+      create_gateway_on_stats=true
+      timezone="UTC"
 
-  [network_server.gateway.backend]
-  type="gcp_pub_sub"
+      [network_server.gateway.backend]
+      type="gcp_pub_sub"
 
-    [network_server.gateway.backend.gcp_pub_sub]
-    project_id="lora-server-tutorial"
-    uplink_topic_name="eu868-gateway-events"
-    downlink_topic_name="eu868-gateway-commands"
-```
+        [network_server.gateway.backend.gcp_pub_sub]
+        project_id="lora-server-tutorial"
+        uplink_topic_name="eu868-gateway-events"
+        downlink_topic_name="eu868-gateway-commands"
+
 
 ##### US915 configuration example
 
-```toml
-[postgresql]
-dsn="postgres://loraserver_ns:[PASSWORD]@[POSTGRESQL_IP]/loraserver_ns?sslmode=disable"
+    [postgresql]
+    dsn="postgres://loraserver_ns:[PASSWORD]@[POSTGRESQL_IP]/loraserver_ns?sslmode=disable"
 
-[redis]
-url="redis://[REDIS_IP]:6379"
+    [redis]
+    url="redis://[REDIS_IP]:6379"
 
-[network_server]
-net_id="000000"
+    [network_server]
+    net_id="000000"
 
-  [network_server.band]
-  name="US_902_928"
+      [network_server.band]
+      name="US_902_928"
 
-  [network_server.network_settings]
-  rx1_delay=3
-  enabled_uplink_channels=[0, 1, 2, 3, 4, 5, 6, 7]
+      [network_server.network_settings]
+      rx1_delay=3
+      enabled_uplink_channels=[0, 1, 2, 3, 4, 5, 6, 7]
 
-  [network_server.gateway.stats]
-  create_gateway_on_stats=true
-  timezone="UTC"
+      [network_server.gateway.stats]
+      create_gateway_on_stats=true
+      timezone="UTC"
 
-  [network_server.gateway.backend]
-  type="gcp_pub_sub"
+      [network_server.gateway.backend]
+      type="gcp_pub_sub"
 
-    [network_server.gateway.backend.gcp_pub_sub]
-    project_id="lora-server-tutorial"
-    uplink_topic_name="eu868-gateway-events"
-    downlink_topic_name="eu868-gateway-commands"
-```
+        [network_server.gateway.backend.gcp_pub_sub]
+        project_id="lora-server-tutorial"
+        uplink_topic_name="eu868-gateway-events"
+        downlink_topic_name="eu868-gateway-commands"
+
 
 To test the configuration for errors, you can execute the following command:
 
-```bash
-sudo loraserver
-```
+    sudo loraserver
 
-This should output something like:
 
-```text
-INFO[0000] setup redis connection pool                   url="redis://10.0.0.3:6379"
-INFO[0000] connecting to postgresql
-INFO[0000] gateway/gcp_pub_sub: setting up client
-INFO[0000] gateway/gcp_pub_sub: setup downlink topic     topic=eu868-gateway-commands
-INFO[0001] gateway/gcp_pub_sub: setup uplink topic       topic=eu868-gateway-events
-INFO[0002] gateway/gcp_pub_sub: check if uplink subscription exists  subscription=eu868-gateway-events-loraserver
-INFO[0002] gateway/gcp_pub_sub: create uplink subscription  subscription=eu868-gateway-events-loraserver
-INFO[0005] applying database migrations
-INFO[0006] migrations applied                            count=19
-INFO[0006] starting api server                           bind="0.0.0.0:8000" ca-cert= tls-cert= tls-key=
-```
+This should output something like the following:
+
+    INFO[0000] setup redis connection pool                   url="redis://10.0.0.3:6379"
+    INFO[0000] connecting to postgresql
+    INFO[0000] gateway/gcp_pub_sub: setting up client
+    INFO[0000] gateway/gcp_pub_sub: setup downlink topic     topic=eu868-gateway-commands
+    INFO[0001] gateway/gcp_pub_sub: setup uplink topic       topic=eu868-gateway-events
+    INFO[0002] gateway/gcp_pub_sub: check if uplink subscription exists  subscription=eu868-gateway-events-loraserver
+    INFO[0002] gateway/gcp_pub_sub: create uplink subscription  subscription=eu868-gateway-events-loraserver
+    INFO[0005] applying database migrations
+    INFO[0006] migrations applied                            count=19
+    INFO[0006] starting api server                           bind="0.0.0.0:8000" ca-cert= tls-cert= tls-key=
+
 If all is well, then you can start the service in the background using:
 
-```bash
-sudo systemctl start loraserver
-sudo systemctl enable loraserver
-```
+    sudo systemctl start loraserver
+    sudo systemctl enable loraserver
+
 
 ### Install LoRa App Server
 
@@ -532,16 +517,15 @@ will publish application data to a Pub/Sub topic.
 
 #### Create Pub/Sub topic
 
-In the GCP Console, navigate to **Pub/Sub > Topics**. Then click on the
-**Create topic** button to create a topic named `lora-app-server`.
+In the GCP Console, navigate to **Pub/Sub > Topics**. Then click
+**Create topic** to create a topic named `lora-app-server`.
 
 #### Install LoRa App Server
 
 SSH to the VM and execute the following command to install LoRa App Server:
 
-```bash
-sudo apt install lora-app-server
-```
+    sudo apt install lora-app-server
+
 
 #### Configure LoRa App Server
 
@@ -560,64 +544,59 @@ You need to replace the following values:
 
 ##### Configuration example
 
-```toml
-[postgresql]
-dsn="postgres://loraserver_as:[PASSWORD]@[POSTGRESQL_IP]/loraserver_as?sslmode=disable"
+    [postgresql]
+    dsn="postgres://loraserver_as:[PASSWORD]@[POSTGRESQL_IP]/loraserver_as?sslmode=disable"
 
-[redis]
-url="redis://[REDIS_IP]:6379"
+    [redis]
+    url="redis://[REDIS_IP]:6379"
 
-[application_server]
+    [application_server]
 
-  [application_server.integration]
-  backend="gcp_pub_sub"
+      [application_server.integration]
+      backend="gcp_pub_sub"
 
-  [application_server.integration.gcp_pub_sub]
-  project_id="lora-server-tutorial"
-  topic_name="lora-app-server"
+      [application_server.integration.gcp_pub_sub]
+      project_id="lora-server-tutorial"
+      topic_name="lora-app-server"
 
-  [application_server.external_api]
-  bind="0.0.0.0:8080"
-  tls_cert="/etc/lora-app-server/certs/http.pem"
-  tls_key="/etc/lora-app-server/certs/http-key.pem"
-  jwt_secret="[JWT_SECRET]"
-```
+      [application_server.external_api]
+      bind="0.0.0.0:8080"
+      tls_cert="/etc/lora-app-server/certs/http.pem"
+      tls_key="/etc/lora-app-server/certs/http-key.pem"
+      jwt_secret="[JWT_SECRET]"
+
 
 To test if there are no errors, you can execute the following command:
 
-```bash
-sudo lora-app-server
-```
+    sudo lora-app-server
 
-This should output something like:
 
-```text
-INFO[0000] setup redis connection pool                   url="redis://10.0.0.3:6379"
-INFO[0000] connecting to postgresql
-INFO[0000] gateway/gcp_pub_sub: setting up client
-INFO[0000] gateway/gcp_pub_sub: setup downlink topic     topic=eu868-gateway-commands
-INFO[0001] gateway/gcp_pub_sub: setup uplink topic       topic=eu868-gateway-events
-INFO[0002] gateway/gcp_pub_sub: check if uplink subscription exists  subscription=eu868-gateway-events-loraserver
-INFO[0002] gateway/gcp_pub_sub: create uplink subscription  subscription=eu868-gateway-events-loraserver
-INFO[0005] applying database migrations
-INFO[0006] migrations applied                            count=19
-INFO[0006] starting api server                           bind="0.0.0.0:8000" ca-cert= tls-cert= tls-key=
-```
+This should output something like the following:
 
-If all is well, then you can start the service in the background using:
+    INFO[0000] setup redis connection pool                   url="redis://10.0.0.3:6379"
+    INFO[0000] connecting to postgresql
+    INFO[0000] gateway/gcp_pub_sub: setting up client
+    INFO[0000] gateway/gcp_pub_sub: setup downlink topic     topic=eu868-gateway-commands
+    INFO[0001] gateway/gcp_pub_sub: setup uplink topic       topic=eu868-gateway-events
+    INFO[0002] gateway/gcp_pub_sub: check if uplink subscription exists  subscription=eu868-gateway-events-loraserver
+    INFO[0002] gateway/gcp_pub_sub: create uplink subscription  subscription=eu868-gateway-events-loraserver
+    INFO[0005] applying database migrations
+    INFO[0006] migrations applied                            count=19
+    INFO[0006] starting api server                           bind="0.0.0.0:8000" ca-cert= tls-cert= tls-key=
 
-```bash
-sudo systemctl start lora-app-server
-sudo systemctl enable lora-app-server
-```
+If all is well, then you can start the service in the background using these commands:
+
+    sudo systemctl start lora-app-server
+    sudo systemctl enable lora-app-server
+
 
 ## Using the LoRa (App) Server
 
-### Setup your first gateway and device
+### Set up your first gateway and device
 
 To get started with LoRa (App) Server, please follow the
 [First gateway and device](https://www.loraserver.io/guides/first-gateway-device/)
-guide. It will explain how to log in to the web-interface and add your first
+guide. It explains how to log in to the web-interface and add your first
 gateway and device.
 
 ### Integrate your applications
