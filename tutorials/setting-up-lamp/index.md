@@ -141,6 +141,10 @@ Install MySQL and related PHP components:
 
     sudo apt-get install mysql-server php5-mysql php-pear
 
+#### Ubuntu 16
+
+    sudo apt-get install mysql-server php7.0-mysql php-pear
+
 #### CentOS 6
 
 1. Install MySQL and related components:
