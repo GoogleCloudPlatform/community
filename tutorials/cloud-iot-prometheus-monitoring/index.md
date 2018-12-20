@@ -47,8 +47,12 @@ It is suggested you perform these setup steps inside the Cloud Shell Environment
 
 ```
 TODO replace with community tutorial link
-gcloud source repos clone prompub --project=lyon-iot
+git clone https://github.com/ptone/community.git
+cd community
+git checkout iot-prometheus
+cd tutorials/cloud-iot-prometheus-monitoring
 ```
+
 
 ### Enable APIs, this will take a few minutes:
 
