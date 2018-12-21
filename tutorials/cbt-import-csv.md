@@ -91,7 +91,7 @@ Clone the following repository and change to the directory for this tutorial's
 code:
 
     git clone https://github.com/GoogleCloudPlatform/cloud-bigtable-examples.git
-    cd java/dataflow-connector-examples/
+    cd cloud-bigtable-examples/java/dataflow-connector-examples/
 
 ### Start the Dataflow job 
 
