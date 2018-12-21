@@ -86,7 +86,7 @@ tasks on your workstation:
         mix local.rebar
         mix archive.install hex phx_new 1.4.0
 
-5.  Install **Node.js** if you do not already have it. If you are on MacOS and
+5.  Install **Node.js** if you do not already have it. If you are on macOS and
     have Homebrew, you can run:
 
         brew install node
