@@ -73,7 +73,7 @@ tasks on your workstation:
         gcloud components update
 
 3.  Install **Elixir 1.5 or later** if you do not already have it. If you are
-    on MacOS and have [Homebrew](https://brew.sh), you can run:
+    on macOS and have [Homebrew](https://brew.sh), you can run:
 
         brew install elixir
 
@@ -386,7 +386,7 @@ Building a release for deploying to the cloud is a bit more complicated
 because your build needs to take place in the same operating system and
 architecture as your deployment environment. In this section, you will use
 Docker to cross-compile a release. (However, your app will eventually run
-directly on a Compute Engine VM, not in a Docker container). Then, you will
+directly on a Compute Engine VM, not in a Docker container.) Then, you will
 upload your release to a Cloud Storage bucket.
 
 ### Prepare a Cloud Storage bucket
