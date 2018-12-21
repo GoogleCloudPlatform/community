@@ -171,7 +171,7 @@ Phoenix app can access it.
 4.  Display the value by inserting the following into the
     `lib/hello_web/templates/page/index.html.eex` template:
 
-        <p>Number of users: <%= @value %></p>
+        &lt;p&gt;Number of users: &lt;%= @value %&gt;&lt;/p&gt;
 
 5.  Recompile and run the app:
 
