@@ -54,7 +54,7 @@ Set it to trigger on the topic configured with your device registry.
     cd virtualdevice
     npm install
     node virtualdev.js --cloudRegion=<region-from-console> \
-        --projectId<your-project-id> \
+        --projectId=<your-project-id> \
         --deviceId=<your-device-id>\
         --privateKeyFile=../rsa_private.pem \
         --algorithm=RS256 \
