@@ -68,7 +68,7 @@ Set the name of the Cloud IoT Core settings you are using to environment variabl
 export CLOUD_REGION=us-central1
 export CLOUD_ZONE=us-central1-c
 export GCLOUD_PROJECT=$(gcloud config list project --format "value(core.project)")
-export IOT_TOPIC=&lt;the Cloud Pub/Sub topic id you have set up with your IoT Core registry this is just short id, not full path)&gt;
+export IOT_TOPIC=<the Cloud Pub/Sub topic id you have set up with your IoT Core registry this is just short id, not full path)>
 ```
 
 While Cloud Shell has the golang runtime pre-installed, we will need a couple other libraries, install them with:

@@ -89,7 +89,7 @@ const dm = new DeviceManager('config-demo');
 exports.configUpdate = functions.firestore
   // assumes a document whose ID is the same as the deviceid
   .document('device-configs/{deviceId}')
-  .onWrite(async (change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
+  .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
     if (context) {
       await dm.setAuth();
       console.log(context.params.deviceId);
@@ -211,7 +211,7 @@ const dm = new DeviceManager('config-demo');
 exports.configUpdate = functions.firestore
   // assumes a document whose ID is the same as the deviceid
   .document('device-configs/{deviceId}')
-  .onWrite(async (change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
+  .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
     if (context) {
       await dm.setAuth();
       console.log(context.params.deviceId);
@@ -228,7 +228,7 @@ exports.configUpdate = functions.firestore
   exports.configUpdateBinary = functions.firestore
   // assumes a document whose ID is the same as the deviceid
   .document('device-configs-binary/{deviceId}')
-  .onWrite(async (change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
+  .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
     if (context) {
       await dm.setAuth();
       console.log(context.params.deviceId);
@@ -258,7 +258,7 @@ exports.configUpdate = functions.firestore
     exports.configUpdate = functions.firestore
       // assumes a document whose ID is the same as the deviceid
       .document('device-configs/{deviceId}')
-      .onWrite((change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
+      .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
         if (context) {
           console.log(context.params.deviceId);
           // get the new config data
@@ -274,7 +274,7 @@ exports.configUpdate = functions.firestore
       exports.configUpdateBinary = functions.firestore
       // assumes a document whose ID is the same as the deviceid
       .document('device-configs-binary/{deviceId}')
-      .onWrite((change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
+      .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
         if (context) {
           console.log(context.params.deviceId);
           // get the new config data

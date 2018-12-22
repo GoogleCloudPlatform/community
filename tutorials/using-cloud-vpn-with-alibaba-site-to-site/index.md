@@ -178,10 +178,10 @@ Use these settings for the procedures in the subsections that follow.
 Below are fields you might be asked to complete for the Alibaba Cloud side configurations. 
 The defaults indicated below will work with the defaults used on the GCP side.
 
-+  **Encryption algorithm** — `aes`
-+  **Integrity algorithm** — `sha1`
-+  **Diffie-Hellman group** — `group2`
-+  **Lifetime/SA life cycles** — `86400` seconds
++  **Encryption algorithm**—<code>aes</code> 
++  **Integrity algorithm**—<code>sha1</code> 
++  **Diffie-Hellman group**—<code>group2</code>
++  **Lifetime/SA life cycles**—<code>86400</code> seconds
 
 ## Configuration overview
 

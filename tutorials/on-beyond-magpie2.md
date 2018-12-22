@@ -89,7 +89,7 @@ This example is concerned with entities though, so it needs to define a class th
 		private String type;
 		  //  Currently type is one of UNKNOWN, PERSON, LOCATION, ORGANIZATION, EVENT, WORK_OF_ART, CONSUMER_GOOD, OTHER
 
-		private Map&lt;String, String&gt; metadata;
+		private Map<String, String> metadata;
 
 		public String getName() {
 			return name;
@@ -99,7 +99,7 @@ This example is concerned with entities though, so it needs to define a class th
 			return type;
 		}
 
-		public Map&lt;String, String&gt; getMetadata() {
+		public Map<String, String> getMetadata() {
 			return metadata;
 		}
 	}
@@ -108,8 +108,8 @@ This example is concerned with entities though, so it needs to define a class th
 Additional information returned about an entity (such as mentions and salience) are not included since this example does not need them. Once the classes that represent the results you want are defined, you can create a `Gson` object and use it to parse the string you have created as shown below. In this example, it will just return a list of the entities in the user input.
 
 
-	private List&lt;String&gt; getEntities (String jsonString) {
-		List&lt;String&gt; result = new ArrayList&lt;String&gt;();
+	private List<String> getEntities (String jsonString) {
+		List<String> result = new ArrayList<String>();
 		Gson gson = new GsonBuilder().create();
 
 		AnalyzeEntitiesResponse json = (AnalyzeEntitiesResponse)gson.fromJson(jsonString, AnalyzeEntitiesResponse.class);
@@ -126,7 +126,7 @@ Additional information returned about an entity (such as mentions and salience) 
 At this point, you can call this method and use the results to have your chatbot respond to the entities in user statements. A simple response would be to react to the first entity it finds.
 
 
-	List&lt;String&gt; entities = getEntities(results);
+	List<String> entities = getEntities(results);
 
 	if (entities.size() > 0) {
 		// Pick the first entity and ask about it

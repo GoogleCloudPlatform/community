@@ -135,11 +135,11 @@ look up the address in the
 
     * Debian 7
 
-            sudo sh -c 'echo "&lt;?php phpinfo();?&gt;" > /usr/share/nginx/www/phpinfo.php'
+            sudo sh -c 'echo "<?php phpinfo();?>" > /usr/share/nginx/www/phpinfo.php'
 
     * Ubuntu 14.04 or CentOS 6
 
-            sudo sh -c 'echo "&lt;?php phpinfo();?&gt;" > /usr/share/nginx/html/phpinfo.php'
+            sudo sh -c 'echo "<?php phpinfo();?>" > /usr/share/nginx/html/phpinfo.php'
 
 1. Browse to the test file to verify that `nginx` and PHP are working together:
 
