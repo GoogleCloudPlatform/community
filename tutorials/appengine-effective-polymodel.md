@@ -56,7 +56,7 @@ indicating its type in order to determine which fields are needed.
         # Computer Properties
         ghz = db.FloatProperty()
         # NOTE: The ram property is shared between camera and laptop.
-        hard_drive = db.IntegerProperty()
+        hard_drive = db.IntegerProperty()</pre>
 
 With AJAX, it's not that hard for Andreas to write forms that are customized
 based on what the customer is looking for. GQL also makes it easy to do the

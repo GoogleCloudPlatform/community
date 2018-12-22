@@ -79,7 +79,7 @@ In the code snippet above:
 1.  Then, we call the `handleRequest()` to handle the request.
 1.  Once done, don't forget to click the "create" function button. It will deploy the function in the cloud.
 
-There is a subtle difference between [`tell()`](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#tell) and [`ask()`](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#ask) APIs. `tell()` will end the conversation and close the mic, while `ask()` will not. This difference doesn't matter for API.AI projects like the one we demonstrate here in [Part 1](https://cloudplatform.googleblog.com/2017/07/how-to-build-a-conversational-app-that-sees-listens-talks-and-translates-using-Cloud-Machine-Learning-APIs-part-1.html) and Part 2 of this blog post. When we integrate Actions on Google in Part 3, we'll explain this difference in more detail.
+There is a subtle difference between <code>[tell()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#tell)</code>and <code>[ask()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#ask) </code>APIs. <code>tell()</code>will end the conversation and close the mic, while <code>ask()</code> will not. This difference doesn't matter for API.AI projects like the one we demonstrate here in [Part 1](https://cloudplatform.googleblog.com/2017/07/how-to-build-a-conversational-app-that-sees-listens-talks-and-translates-using-Cloud-Machine-Learning-APIs-part-1.html) and Part 2 of this blog post. When we integrate Actions on Google in Part 3, we'll explain this difference in more detail.
 
 As shown below, the **Testing** tab invokes your function, the **General** tab shows statistics, and the **Trigger** tab reveals the HTTP URL created for your function:
 
@@ -125,11 +125,11 @@ You can use the same API key you used for Cloud Speech API.
 
 ## Text to Speech
 
-iOS 7+ has a built-in text-to-speech SDK, [`AVSpeechSynthesizer`](https://developer.apple.com/reference/avfoundation/avspeechsynthesizer?language=objc). The code below is all you need to convert text to speech.
+iOS 7+ has a built-in text-to-speech SDK, <code>[AVSpeechSynthesizer](https://developer.apple.com/reference/avfoundation/avspeechsynthesizer?language=objc)</code>. The code below is all you need to convert text to speech.
 
 
 ```
-#import &lt;AVFoundation/AVFoundation.h&gt;
+#import <AVFoundation/AVFoundation.h>
 AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:message];
 AVSpeechSynthesizer *synthesizer = [[AVSpeechSynthesizer alloc] init];
 [synthesizer speakUtterance:utterance];
@@ -163,7 +163,7 @@ To support additional text-to-speech languages, add this line to the code:
 
 
 ```
-#import &lt;AVFoundation/AVFoundation.h&gt;
+#import <AVFoundation/AVFoundation.h>
 AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:message];
 utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"zh-Hans"];
 AVSpeechSynthesizer *synthesizer = [[AVSpeechSynthesizer alloc] init];

@@ -170,8 +170,9 @@ create the new user.
 configuration files.
 
 * `-P` prompts you for the new user's password.
-    **Important**: For any system with an Internet connection, use a
-    strong password to help keep the system secure.
+  <aside class="caution"><strong>Important</strong>:
+     For any system with an Internet connection, use a
+     strong password to help keep the system secure.</aside>
 
 * `-c` sets a limit for the number of connections for the new user. The value
 `5` is sufficient for replication purposes.
@@ -203,10 +204,10 @@ must add an entry for the user `repuser` to enable replication.
         $ nano ../../etc/postgresql/9.3/main/pg_hba.conf
 
 1. After the example replication entries, add the following lines. Replace
-`&lt;standby-IP&gt;` with the external IP address of the standby server:
+`<standby-IP>` with the external IP address of the standby server:
 
         # Allow replication connections
-        host     replication     repuser         &lt;standby-IP&gt;/32        md5
+        host     replication     repuser         <standby-IP>/32        md5
 
 1. Save and close the file.
 
@@ -286,10 +287,10 @@ data directory on the standby server. Run the following command:
 
         $ mv ../../var/lib/postgresql/9.3/main ../../var/lib/postgresql/9.3/main_old
 
-1. Run the backup utility. Replace `&lt;primary-IP&gt;` with the external IP address
+1. Run the backup utility. Replace `<primary-IP>` with the external IP address
 of the primary server.
 
-        $ sudo -u postgres pg_basebackup -h &lt;primary IP&gt; -D /var/lib/postgresql/9.3/main -U repuser -v -P --xlog-method=stream
+        $ sudo -u postgres pg_basebackup -h <primary IP> -D /var/lib/postgresql/9.3/main -U repuser -v -P --xlog-method=stream
 
     The backup utility will prompt you for the password for the user named
     `repuser`.
@@ -342,10 +343,10 @@ standby server, enter the following command:
         standby_mode = on
 
 1. Set the connection string to the primary server. Replace
-    `&lt;primary-external-IP&gt;` with the external IP address of the primary server.
-    Replace `&lt;password&gt;` with  the password for the user named `repuser`.
+`<primary-external-IP>` with the external IP address of the primary server.
+Replace `<password>` with  the password for the user named `repuser`.
 
-        primary_conninfo = 'host=&lt;primary-external-IP&gt; port=5432 user=repuser password=&lt;password&gt;'
+        primary_conninfo = 'host=<primary-external-IP> port=5432 user=repuser password=<password>'
 
 1. (Optional) Set the trigger file location:
 
@@ -437,9 +438,9 @@ restart the server.
         $ mv ../../var/lib/postgresql/9.3/main ../../var/lib/postgresql/9.3/main_old_2
 
 1. On the standby server, run `pgbasebackup` again to synchronize the data.
-Substitute `&lt;primary-IP&gt;` with your primary server's external IP address:
+Substitute `<primary-IP>` with your primary server's external IP address:
 
-        $ sudo -u postgres pg_basebackup -h &lt;primary-IP&gt; -D /var/lib/postgresql/9.3/main -U repuser -v -P --xlog-method=stream
+        $ sudo -u postgres pg_basebackup -h <primary-IP> -D /var/lib/postgresql/9.3/main -U repuser -v -P --xlog-method=stream
 
 1. The `main` folder now needs a copy of `recovery.conf`. You can simply copy it
 from the folder that you renamed to `main_old_2`:
