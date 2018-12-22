@@ -88,15 +88,17 @@ You can also do a single sign by
         sudo mkdir -p webserver/manifests
 
 3. In the new manifests directory, create a file named init.pp, and copy the following code into it:
+
         class webserver {
           package { 'apache2':
           ensure => present
         }
         file {'/var/www/html/index.html': # resource type file and filename
           ensure => present, # make sure it exists
-          content => "<h1>This page is installed from Puppet Master</h1>", # content of the file
+          content => "&lt;h1&gt;This page is installed from Puppet Master&lt;/h1&gt;", # content of the file
         }
       }
+
 4. Run the following command on the puppet-agent instance to get the catalog from the Puppet master and apply the manifest:
 
         sudo /opt/puppetlabs/bin/puppet agent --test

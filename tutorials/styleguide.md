@@ -285,7 +285,9 @@ stripped out as raw HTML.
 
 ### Disallowed Raw HTML
 
-Publishing strips *all* possible HTML from tutorial content, essentially anything contained within `<` and `>` delimiters. Note that this is stricter than standard GFM, which only strips certain "unsafe" HTML.
+Publishing strips *all* possible HTML from tutorial content, essentially anything contained within `<` and `>` delimiters. Note that this is stricter than standard GFM, which only strips certain "unsafe" HTML. This _includes_ such content in preformatted or code blocks, so be extra careful with HTML, templated type specifications, and similar constructs in code snippets.
+
+If you do need to include literal `<` or `>` characters, use the corresponding HTML entities `&amp;lt;` and `&amp;gt;`. Similarly, if your content includes a literal HTML entity, you must escape the ampersand, as in `&amp;amp;lt;`.
 
 ### Strikethrough
 

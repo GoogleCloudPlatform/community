@@ -110,7 +110,7 @@ You will create a repository called `tour-of-heroes-universal`
 
 **Note** that jq is a tool for editing JSON and is installed in Cloud Shell by default. If you are going through this tutorial on your workstation see [jq installation](https://stedolan.github.io/jq/download/) for instructions on installing jq on your workstation.
 
-        read -r -d '' SCRIPT_ADDITIONS <<EOF
+        read -r -d '' SCRIPT_ADDITIONS &lt;&lt;EOF
         {
         "build:prerender": "npm run build:client-and-server-bundles && npm run compile:prerender && npm run generate:prerender",
         "generate:prerender": "npm run webpack:prerender && node dist/prerender.js",
@@ -118,7 +118,7 @@ You will create a repository called `tour-of-heroes-universal`
         "webpack:prerender": "webpack --config webpack.prerender.config.js"
         }
         EOF
-        cat package.json | jq --argjson additions "$SCRIPT_ADDITIONS" '.scripts = .scripts+$additions' >tmpfile
+        cat package.json | jq --argjson additions "$SCRIPT_ADDITIONS" '.scripts = .scripts+$additions' &gt;tmpfile
         cp tmpfile package.json
         rm tmpfile
 
@@ -173,7 +173,7 @@ You will create a repository called `tour-of-heroes-universal`
 
 2.  Create the `cloudbuild.yaml` file.
 
-        cat <<CLOUDBUILD_FILE>cloudbuild.yaml
+        cat &lt;&lt;CLOUDBUILD_FILE&gt;cloudbuild.yaml
         steps:
         - id: install_packages
           name: 'gcr.io/cloud-builders/npm'

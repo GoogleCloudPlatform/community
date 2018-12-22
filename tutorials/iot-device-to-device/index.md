@@ -112,9 +112,9 @@ After you have generated the keypair, use the public key to register your
 device:
 
     gcloud beta iot devices create \
-        --registry=<your-registry-id> \
+        --registry=&lt;your-registry-id&gt; \
         --region "europe-west1" \
-        --public-key path=rsa_cert.pem,type=rs256 <deviceId>
+        --public-key path=rsa_cert.pem,type=rs256 &lt;deviceId&gt;
 
 Now that you have registered a device, you can connect it using the virtual
 device provided in the sample.
@@ -157,13 +157,13 @@ virtualdevice folder:
 
     cd virtualdevice
     npm install
-    node virtualdev.js --cloudRegion=<region-from-console> \
-        --projectId<your-project-id> \
-        --deviceId=<your-device-id>\
+    node virtualdev.js --cloudRegion=&lt;region-from-console&gt; \
+        --projectId=&lt;your-project-id&gt; \
+        --deviceId=&lt;your-device-id&gt;\
         --privateKeyFile=../rsa_private.pem \
         --algorithm=RS256 \
         --numMessages=1 \
-        --registryId=<your-registry-id>
+        --registryId=&lt;your-registry-id&gt;
 
 When the virtual device connects, it transmits a telemetry message that is
 turned into a Google Cloud PubSub message that reaches the Google Cloud
