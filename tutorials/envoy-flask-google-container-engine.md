@@ -113,7 +113,7 @@ Note that this service is type `ClusterIP`, so that it can be seen only within t
 1. Run `kubectl get services`, which should show its service:
 
         NAME      CLUSTER-IP     EXTERNAL-IP  PORT(S)   AGE
-        postgres  10.107.246.55  <none>       5432/TCP  5s
+        postgres  10.107.246.55  &lt;none&gt;       5432/TCP  5s
 
 At this point the Postgres server is running, reachable from anywhere in the cluster at `postgres:5432`.
 

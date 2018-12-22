@@ -339,7 +339,7 @@ You can follow these steps to clean up resources and save on costs.
 
         Command output
 
-            gs://artifacts.<PROJECT_ID>.appspot.com/
+            gs://artifacts.&lt;PROJECT_ID&gt;.appspot.com/
 
     2.  Delete the bucket and all the images it contains.
 

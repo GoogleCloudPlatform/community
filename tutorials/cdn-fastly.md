@@ -73,7 +73,7 @@ To create a Cloud Storage bucket:
    click **Create Bucket**.
 1. In the **Create Bucket** dialog, fill out the form as follows:
 
-    +  _Name_: _<your_bucket_name>_ (must be unique)
+    +  _Name_: _&lt;your_bucket_name&gt;_ (must be unique)
     +  _Storage_: Multi-Regional
     +  _Location_: United States
 

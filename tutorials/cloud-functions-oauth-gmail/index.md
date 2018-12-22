@@ -184,7 +184,7 @@ exports.listlabels = (req, res) => {
       // Respond to request
       res.set('Content-Type', 'text/html');
       res.write(`${labels.length} label(s) found:`);
-      labels.forEach(label => res.write(`<br>${label.name}`));
+      labels.forEach(label => res.write(`&lt;br&gt;${label.name}`));
       res.status(200).end();
     })
     .catch((err) => {

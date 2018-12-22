@@ -48,7 +48,7 @@ Now we'll enable Actions on Google to support the Google Assistant.
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-3/conversational-app-p3-4.png "Actions on Google Intents")
 
 
-If this is your first time on Actions on Google console, it will prompt you to turn on <code>Device Information<em> </em></code>and <em>V<code>oice & Audio Activity</code></em> on your <code>Activity controls</code> center.
+If this is your first time on Actions on Google console, it will prompt you to turn on _Device Information_ and _Voice & Audio Activity_ on your _Activity controls_ center.
 
 
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-3/conversational-app-p3-2.png "Actions on Google Simulator")

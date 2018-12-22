@@ -45,8 +45,8 @@ If you do not already have a development environment set up with [gcloud](https:
 Set the name of the Cloud IoT Core settings you are using to environment variables:
 
 ```sh
-export REGISTRY_ID=<your registry here>
-export CLOUD_REGION=<your region; eg us-central1>
+export REGISTRY_ID=&lt;your registry here&gt;
+export CLOUD_REGION=&lt;your region; eg us-central1&gt;
 export GCLOUD_PROJECT=$(gcloud config list project --format "value(core.project)")
 ```
 
@@ -159,7 +159,7 @@ Note: do not use this device for any real workloads, as the keypair is included 
 
 ## Explore the logs that are written
 
-If you open up the <a href="https://console.cloud.google.com/logs/viewer" target="_blank">Stackdriver Logging console</a>.
+If you open up the [Stackdriver Logging console](https://console.cloud.google.com/logs/viewer).
 
 ![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c1.png)
 
