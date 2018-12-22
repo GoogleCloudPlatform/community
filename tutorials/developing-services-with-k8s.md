@@ -131,8 +131,8 @@ It's time to check out our app in the browser. Let's look up the IP address of o
 % kubectl get services
 NAME           CLUSTER-IP     EXTERNAL-IP      PORT(S)        AGE
 frontend       10.7.252.209   104.196.217.24   80:30563/TCP   2m
-redis-master   10.7.248.117   &lt;none&gt;           6379/TCP       2m
-redis-slave    10.7.245.58    &lt;none&gt;           6379/TCP       2m
+redis-master   10.7.248.117   <none>           6379/TCP       2m
+redis-slave    10.7.245.58    <none>           6379/TCP       2m
 ```
 
 Go to the external IP address of your load balancer (in the above example, 104.196.217.24). You should see the Guestbook application running. Typing into the submit box will show how your message is persisting to the Redis cluster.

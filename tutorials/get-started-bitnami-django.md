@@ -106,22 +106,22 @@ Bitnami Django includes a pre-configured instance of the Apache Web server. Conf
 
 1. Add the following Apache directives in the `/opt/bitnami/apps/django/django_projects/myproject/conf/httpd-app.conf` file:
 
-        &lt;IfDefine !IS_DJANGOSTACK_LOADED&gt;
+        <IfDefine !IS_DJANGOSTACK_LOADED>
           Define IS_DJANGOSTACK_LOADED
           WSGIDaemonProcess wsgi-djangostack   processes=2 threads=15    display-name=%{GROUP}
-        &lt;/IfDefine&gt;
+        </IfDefine>
 
-        &lt;Directory "/opt/bitnami/apps/django/django_projects/myproject/myproject"&gt;
+        <Directory "/opt/bitnami/apps/django/django_projects/myproject/myproject">
             Options +MultiViews
             AllowOverride All
-            &lt;IfVersion >= 2.3&gt;
+            <IfVersion >= 2.3>
                 Require all granted
-            &lt;/IfVersion&gt;
+            </IfVersion>
 
             WSGIProcessGroup wsgi-djangostack
 
             WSGIApplicationGroup %{GLOBAL}
-        &lt;/Directory&gt;
+        </Directory>
 
         Alias /myproject/static "/opt/bitnami/apps/django/lib/python3.6/site-packages/Django-2.0.2-py3.6.egg/django/contrib/admin/static"
         WSGIScriptAlias /myproject '/opt/bitnami/apps/django/django_projects/myproject/myproject/wsgi.py'

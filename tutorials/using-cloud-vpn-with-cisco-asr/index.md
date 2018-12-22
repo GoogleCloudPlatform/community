@@ -808,7 +808,7 @@ it can support up to 16 equal cost paths load balancing.
      bgp log-neighbor-changes
      neighbor GCP peer-group
      neighbor GCP remote-as 65002
-     neighbor GCP timers 20 60 60
+     neighbor GCP timers <b>20 60 60
      neighbor 169.254.0.1 peer-group GCP
      neighbor 169.254.0.9 peer-group GCP
     !

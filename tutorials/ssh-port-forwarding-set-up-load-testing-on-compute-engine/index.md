@@ -103,11 +103,11 @@ Note that “A” and “B” in Figure 6 refer to port numbers.
 
 To set up server side SSH port forwarding as shown in the examples above, you would execute the following command on your client machine (-L indicates local and -R indicates remote).
 
-`ssh -L A:127.0.0.1:B &lt;username&gt;@&lt;server&gt;`
+`ssh -L A:127.0.0.1:B <username>@<server>`
 
 Similarly, the following command sets up the client side port forwarding.
 
-`ssh -R  B:127.0.0.1:A &lt;username&gt;@&lt;server&gt;`
+`ssh -R  B:127.0.0.1:A <username>@<server>`
 
 On Windows, you can configure SSH port forwarding by using [PuTTY](http://www.putty.org/) from “Connection” - “SSH” - “Tunnels” of PuTTY configuration in a similar manner.
 
@@ -127,7 +127,7 @@ The example command below sets up forwarding for 3 ports. You might want to add 
 ```
 ssh -L 24000:127.0.0.1:24000   \
 -R 25000:127.0.0.1:25000   \
--L 26000:127.0.0.1:26000 -N -f &lt;username&gt;@&lt;server&gt;
+-L 26000:127.0.0.1:26000 -N -f <username>@<server>
 ```
 
 To use the proper port numbers, all that is left to do is to configure the JMeter client and server.
@@ -187,7 +187,7 @@ With the `gcloud compute ssh` command you need to specify the `--` option to pas
 To set up the SSH port forwarding for Compute Engine, use the following command:
 
 ```
-gcloud compute ssh &lt;instance name&gt; --zone &lt;zone&gt; -- -L 24000:127.0.0.1:24000  \
+gcloud compute ssh <instance name> --zone <zone> -- -L 24000:127.0.0.1:24000  \
 -R 25000:127.0.0.1:25000 \
 -L 26000:127.0.0.1:26000  -N -f
 ```
@@ -205,7 +205,7 @@ All servers can still use the same number for the RMI port to connect to the cli
 Suppose the second JMeter server uses 24001 and 26001 for the JMeter connection and the RMI from client to server respectively. In this case, the SSH port forward setup command for the second server should be:
 
 ```
-gcloud compute ssh &lt;instance name&gt; --zone &lt;zone&gt; -- -L 24001:127.0.0.1:24001  \
+gcloud compute ssh <instance name> --zone <zone> -- -L 24001:127.0.0.1:24001  \
 -R 25000:127.0.0.1:25000  \
 -L 26001:127.0.0.1:26001 -N -f
 ```
@@ -268,7 +268,7 @@ Here’s of an overview of what the script does:
 
 **Start a cluster and set SSH port forwarding**
 
-`./jmeter_cluster.py start [cluster size] [--project &lt;project name&gt;] [--prefix &lt;prefix&gt;] [--image &lt;image&gt;] [--zone &lt;zone&gt;] [--machinetype &lt;machine type&gt;]`
+`./jmeter_cluster.py start [cluster size] [--project <project name>] [--prefix <prefix>] [--image <image>] [--zone <zone>] [--machinetype <machine type>]`
 
 - Starts up a cluster that consists of \[cluster size\] number of Compute Engine instances.
 - Also sets SSH port forwarding.
@@ -277,7 +277,7 @@ After running the start command to start the JMeter server, run the client comma
 
 **Set SSH port forwarding if the terminal is interrupted** 
 
-`./jmeter_cluster.py portforward [cluster size] [--project &lt;project name&gt;] [--prefix &lt;prefix&gt;]`
+`./jmeter_cluster.py portforward [cluster size] [--project <project name>] [--prefix <prefix>]`
 
 - Sets SSH port forwarding for \[cluster size\] number of instances.
 - This is required only when the terminal that started the cluster loses connection to the instances which, in turn, cancels SSH port forwarding.
@@ -292,7 +292,7 @@ After running the portforward command to re-establish port forwarding, run the c
 
 **Shutdown the JMeter System** 
 
-`./jmeter_cluster.py shutdown [--project &lt;project name&gt;] [--prefix &lt;prefix&gt;]`
+`./jmeter_cluster.py shutdown [--project <project name>] [--prefix <prefix>]`
 
 - Tears down the JMeter server cluster.
 
