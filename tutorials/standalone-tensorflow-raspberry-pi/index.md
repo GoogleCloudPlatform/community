@@ -112,12 +112,8 @@ The following diagram shows the architecture of the solution
 	import subprocess
 	import datetime
 
-	“”” 
-	change in the line below the directory where you hosted your model
-	this is the directory where the .pb file and ‘variables’ directory
-	are hosted. Therefore make sure to add the ‘/1’ for the version of 
-	the model if necessary
-	“””
+	# In the line below, specify the directory where you hosted your model.
+	# This is the directory where the .pb file and variables directory are hosted.
 	model_dir = '/tf_server/flowers_model/1'
     ```
 
