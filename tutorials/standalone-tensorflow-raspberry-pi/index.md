@@ -1,6 +1,6 @@
 ---
 title: Setting Up a Standalone TensorFlow Prediction Device with Raspberry Pi and Google Cloud
-description: Learn how to set up a standalone Tensorflow server in Raspberry Pi with a model trained in Cloud ML Engine.
+description: Learn how to set up a standalone TensorFlow server in Raspberry Pi with a model trained in Cloud ML Engine.
 author: arieljassan
 tags: TensorFlow, Raspberry Pi, MLEngine
 date_published: 2018-08-19
