@@ -31,7 +31,7 @@ This solution can be useful for applications in agricultural industries where th
 
 ## Costs
 
-If you decide to train your own model, you will incur costs of running Cloud ML Engine, Dataflow, Cloud Storage. Otherwise, there are no billable costs involved in this tutorial.
+If you decide to train your own model, you will incur costs of running Cloud ML Engine, Dataflow, Google Cloud Storage. Otherwise, there are no billable costs involved in this tutorial.
 Use the Pricing Calculator to generate a cost estimate based on your projected usage.
 
 ## Reference architecture
@@ -50,20 +50,17 @@ The following diagram shows the architecture of the solution
 
 1. Log into the Raspberry Pi
 
-1. Install required system packages.
-Several packages are required to successfully install gsutil from PyPI. You can install them with the following command:
+1. Install required system packages. Several packages are required to successfully install gsutil from PyPI. You can install them with the following command:
     ```
     sudo apt-get install gcc python-dev python-setuptools libffi-dev
     ```
 
-1. Install pip
-We recommend using the pip installer. You can install it with the following command:
+1. Install pip. We recommend using the pip installer. You can install it with the following command:
     ```
 	sudo apt-get install python-pip
 	```
 
-1. Install gsutil from PyPI
-To install gsutil from PyPI, use the following command:
+1. Install gsutil from PyPI. To install gsutil from PyPI, use the following command:
 	```
     sudo pip install gsutil
     ```
@@ -86,7 +83,7 @@ To install gsutil from PyPI, use the following command:
 
 ## Downloading a trained saved model and the script for serving
 
-1. Create a directory where to deploy the model, e.g. “/flowers_model”
+1. Create a directory where to deploy the model, e.g. `/flowers_model`
 	```
     mkdir /tf_server/flowers_model/1
     ```
