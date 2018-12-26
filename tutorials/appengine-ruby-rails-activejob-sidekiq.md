@@ -24,7 +24,7 @@ You'll need the following:
 * A Rails 4.2+ application. Follow the
   [official "Getting Started with Rails" guide](http://guides.rubyonrails.org/getting_started.html) to get started.
 * [Google Cloud SDK installed](https://cloud.google.com/sdk/downloads)
-* A Redis instance running in your project. Follow [this guide](setting-up-redis.md)
+* A Redis instance running in your project. Follow [this guide](https://cloud.google.com/community/tutorials/setting-up-redis)
   to set up Redis on Google Compute Engine. This tutorial assumes the Redis instance is running in the *default*
   network so that the App Engine services can access it without restriction.
 
