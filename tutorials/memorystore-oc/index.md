@@ -1,7 +1,12 @@
-Client-side Tracing of Cloud Memorystore for Redis Workloads with OpenCensus
-----------------------------------------------------------------------------
+---
+title: Client-side tracing of Cloud Memorystore for Redis workloads with OpenCensus
+description: This tutorial shows how to implement client-side tracing in your Cloud Memorystore for Redis workloads using OpenCensus and Stackdriver.
+author: karthitect
+tags: Cloud Memorystore, OpenCensus, tracing
+date_published: 2018-12-28
+---
 
-This tutorial shows how to implement client-side tracing in your Cloud Memorystore for Redis workloads using OpenCensus and Stackdriver. While Cloud Memorystore for Redis surfaces a number of helpful server-sidemetrics via Stackdriver, applications can realize added benefit from implementing client-side tracing. For instance, server-side metrics do not give you a window into the round-trip latency of calls made to your Redis endpoint and can only be surfaced using client-side tracing.
+This tutorial shows how to implement client-side tracing in your Cloud Memorystore for Redis workloads using OpenCensus and Stackdriver. While Cloud Memorystore for Redis surfaces a number of helpful server-side metrics via Stackdriver, applications can realize added benefit from implementing client-side tracing. For instance, server-side metrics do not give you a window into the round-trip latency of calls made to your Redis endpoint and can only be surfaced using client-side tracing.
 
 [Cloud Memorystore](https://cloud.google.com/memorystore/) for Redis provides a fully managed and Google-hosted Redis deployment for your caching needs.
 
@@ -10,8 +15,8 @@ This tutorial shows how to implement client-side tracing in your Cloud Memorysto
 ### Objectives
 
 *   Deploy a Cloud Memorystore for Redis instance.
-*   Deploy a Google Compute Engine (GCE) VM for running an OpenCensus instrumented Java client.
-*   Download, deploy and run instrumented Java client.
+*   Deploy a Compute Engine VM for running an OpenCensus instrumented Java client.
+*   Download, deploy and run an instrumented Java client.
 *   View OpenCensus traces in the Stackdriver Trace tool.
 
 ### Costs
@@ -25,16 +30,18 @@ This tutorial uses the following billable components of the Google Cloud Platfor
 
 You can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected usage.
 
-New GCP users might be eligible for a [free trial](https://cloud.google.com/free/). We recommend that you deploy this tutorial into an ephemeral project, which can then be deleted once you’re done.
+New GCP users might be eligible for a [free trial](https://cloud.google.com/free/).
+
+We recommend that you deploy this tutorial into an ephemeral project, which can then be deleted once you’re done.
 
 ### Before you begin
 
 Create a new project
 
 1.  In the GCP Console, go to the [Manage resources page](https://console.cloud.google.com/cloud-resource-manager).
-2.  Select a project, or click Create Project to create a new GCP project.
+2.  Select a project, or click **Create Project** to create a new GCP project.
 3.  In the dialog, name your project. Make a note of your generated project ID.
-4.  Click Create to create a new project.
+4.  Click **Create** to create a new project.
 
 ### Enable billing
 
@@ -66,7 +73,7 @@ For simplicity, in this tutorial we’ll implement all of our client-side logic 
 
 ### Application flow
 
-The Java application running on the GCE VM will retrieve the simple JSON file (person.json) shown below
+The Java application running on the Compute Engine VM will retrieve the simple JSON file (person.json) shown below
 
 ```json
 {
@@ -75,9 +82,9 @@ The Java application running on the GCE VM will retrieve the simple JSON file (p
 }
 ```
 
-from GCS and cache it in Cloud Memorystore for Redis (created in the section below). Then application will then turn around and fetch it again from Cloud Memorystore for Redis.
+from Cloud Storage and cache it in Cloud Memorystore for Redis (created in the section below). Then application will then turn around and fetch it again from Cloud Memorystore for Redis.
 
-Both the initial retrieval from GCS and the second retrieval from Cloud Memorystore for Redis will be instrumented with OpenCensus so we can inspect the latencies involved in those calls within Stackdriver Trace.
+Both the initial retrieval from Cloud Storage and the second retrieval from Cloud Memorystore for Redis will be instrumented with OpenCensus so we can inspect the latencies involved in those calls within Stackdriver Trace.
 
 ### Creating a Cloud Memorystore for Redis instance
 
@@ -91,11 +98,11 @@ $ gcloud redis instances create cm-redis --size=1 --region=$REGION --zone=$ZONE
 
 This command might take a few minutes to complete.
 
-### Upload JSON object to GCS bucket
+### Upload JSON object to Cloud Storage bucket
 
-In this section, you will first create a GCS bucket and then upload the JSON file (person.json) for subsequent retrieval in the Java application below.
+In this section, you will first create a Cloud Storage bucket and then upload the JSON file (person.json) for subsequent retrieval in the Java application below.
 
-Run the following commands in Cloud Shell to create a bucket. Keep in mind that GCS bucket names have to be globally unique, so be sure to substitute ‘your-unique-bucket-name’ below with a unique name of your own.
+Run the following commands in Cloud Shell to create a bucket. Keep in mind that Cloud Storage bucket names have to be globally unique, so be sure to substitute ‘your-unique-bucket-name’ below with a unique name of your own.
 
 ```bash
 $ export MYBUCKET=[your-unique-bucket-name]
@@ -112,15 +119,13 @@ $ gsutil cp person.json gs://$MYBUCKET/
 
 The Java application you’ll deploy below will need this file.
 
-### Creating and configuring a GCE VM
+### Creating and configuring a Compute Engine VM
 
 Create a Compute Engine VM by running the following command from Cloud Shell
 
 gcloud compute instances create trace-client
 
-And connect to the VM by navigating to the list of running VMs:
-
-GCP Hamburger Menu > Compute Engine > VM Instances
+In the Navigation menu on the left side of the GCP Console, choose **Compute Engine > VM Instances**.
 
 And then, ssh into the VM by clicking on the SSH button (highlighted in yellow in the screenshot below):
 
@@ -138,7 +143,7 @@ Run the following command within the trace-client VM to ensure that you can reac
 $ redis-cli -h [ip-address-of-redis-instance] PING
 ```
 
-You should get a response from the redis server:
+You should get a response from the Redis server:
 
 ```bash
 $ PONG
@@ -146,7 +151,7 @@ $ PONG
 
 ---
 
-*Note:* To get the IP Address of your Cloud Memorystore for Redis instance, run the following commands from Cloud Shell and use the value listed next to the label titled ‘host’ (see screenshot below).
+*Note:* To get the IP address of your Cloud Memorystore for Redis instance, run the following commands from Cloud Shell and use the value listed next to the label titled ‘host’ (see screenshot below).
 
 ```bash
 $ export $REGION=us-central1
@@ -199,7 +204,7 @@ public class App {
 ```
 
 *   PROJECT\_ID- Your GCP Project ID. See [here](https://cloud.google.com/resource-manager/docs/creating-managing-projects%23identifying_projects) for information on locating your Project ID.
-*   GCS\_BUCKET\_NAME- This is the GCS bucket you created in the section above titled: Upload JSON object to GCS bucket.
+*   GCS\_BUCKET\_NAME- This is the Cloud Storage bucket you created in the section above titled: Upload JSON object to Cloud Storage bucket.
 *   REDIS\_HOST - The IP Address of the Cloud MemoryStore for Redis instance you created above. See the section above for details on how to get the IP address of the Cloud Memorystore for Redis instance.
 
 Now save the file and exit (using Ctrl+O and then Ctrl+X, if you’re using nano). Before we run the program, let’s explore the key parts of the code to see how it’s instrumented.
@@ -215,7 +220,7 @@ public static void main(String[] args) throws IOException, InterruptedException 
 
    try (Scope ss = tracer.spanBuilder("In main").startScopedSpan()) {
 
-       // do initial read from GCS
+       // do initial read from Cloud Storage
        String jsonPayloadFromGCS = readFromGCS();
 
        // now write to Redis
@@ -225,16 +230,16 @@ public static void main(String[] args) throws IOException, InterruptedException 
        String jsonPayloadFromCache = readFromCache();
 
        if (jsonPayloadFromCache.equals(jsonPayloadFromGCS)) {
-           System.out.println("SUCCESS: Value from cache = value from GCS");
+           System.out.println("SUCCESS: Value from cache = value from Cloud Storage");
        } else {
-           System.out.println("ERROR: Value from cache != value from GCS");
+           System.out.println("ERROR: Value from cache != value from Cloud Storage");
        }
    }
 
 ...
 ```
 
-Notice the try block with the call to spanBuilder. This illustrates how the program uses OpenCensus to perform tracing. The entire call chain starting with main function is instrumented in this way.
+Notice the try block with the call to `spanBuilder`. This illustrates how the program uses OpenCensus to perform tracing. The entire call chain starting with main function is instrumented in this way.
 
 The program also configures Stackdriver Trace as the tracing backend:
 
@@ -267,7 +272,7 @@ $ mvn exec:java -Dexec.mainClass=com.example.memorystore.App
 You should see output similar to the following:
 
 ```bash
-SUCCESS: Value from cache = value from GCS
+SUCCESS: Value from cache = value from Cloud Storage
 Existing in 15s...
 14s...
 13s...
@@ -283,7 +288,7 @@ After running the program, navigate to the Cloud Trace console under Stackdriver
 
 ![](images/image5.png)
 
-Click on Trace List and you should see a table similar to the following
+Click on **Trace List** and you should see a table similar to the following
 
 ![](images/image6.png)
 
