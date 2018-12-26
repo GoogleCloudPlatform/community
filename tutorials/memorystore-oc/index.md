@@ -1,10 +1,17 @@
 ---
-title: Client-side tracing of Cloud Memorystore for Redis workloads with OpenCensus
-description: How to implement client-side tracing in Cloud Memorystore for Redis workloads with OpenCensus and Stackdriver.
+title: test title
+description: test description
 author: karthitect
-tags: Cloud Memorystore, OpenCensus, tracing
+tags: test, tags
 date_published: 2018-12-27
 ---
+
+
+Client-side tracing of Cloud Memorystore for Redis workloads with OpenCensus
+How to implement client-side tracing in Cloud Memorystore for Redis workloads with OpenCensus and Stackdriver.
+karthitect
+Cloud Memorystore, OpenCensus, tracing
+2018-12-27
 
 This tutorial shows how to implement client-side tracing in your Cloud Memorystore for Redis workloads using OpenCensus and Stackdriver. While Cloud Memorystore for Redis surfaces a number of helpful server-side metrics via Stackdriver, applications can realize added benefits from implementing client-side tracing. For example, server-side metrics do not give you a window into the round-trip latency of calls made to your Redis endpoint and can only be surfaced using client-side tracing.
 
