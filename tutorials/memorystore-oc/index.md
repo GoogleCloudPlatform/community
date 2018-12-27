@@ -133,8 +133,6 @@ You should get a response from the Redis server:
 
     $ PONG
 
----
-
 *Note:* To get the IP address of your Cloud Memorystore for Redis instance, run the following commands from Cloud Shell and use the value listed next to the label titled ‘host’ (see screenshot below).
 
     $ export $REGION=us-central1
@@ -143,8 +141,6 @@ You should get a response from the Redis server:
 ![](https://storage.googleapis.com/gcp-community/tutorials/memorystore-oc/image8.png)
 
 Make a note of the IP address as you’ll need it below when updating the Java code.
-
----
 
 ### Deploying the Java application
 
