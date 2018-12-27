@@ -181,14 +181,15 @@ Now save the file and exit (using Ctrl+O and then Ctrl+X, if you’re using nano
 
 Here’s the relevant part of the main function:
 
+```
     public static void main(String[] args) throws IOException, InterruptedException {
         configureOpenCensusExporters();
-            
+        
         // initialize jedis pool
         jedisPool = new JedisPool(REDIS_HOST);
         
         try (Scope ss = tracer.spanBuilder("In main").startScopedSpan()) {
-            
+        
             // do initial read from Cloud Storage
             String jsonPayloadFromGCS = readFromGCS();
             
@@ -204,14 +205,13 @@ Here’s the relevant part of the main function:
                 System.out.println("ERROR: Value from cache != value from Cloud Storage");
             }
         }
-        
-    ...
-
+```
 
 Notice the `try` block with the call to `spanBuilder`. This illustrates how the program uses OpenCensus to perform tracing. The entire call chain starting with the `main` function is instrumented in this way.
 
 The program also configures Stackdriver Trace as the tracing backend:
 
+```
     private static void configureOpenCensusExporters() throws IOException {
         TraceConfig traceConfig = Tracing.getTraceConfig();
         
@@ -225,6 +225,7 @@ The program also configures Stackdriver Trace as the tracing backend:
                 .setProjectId(PROJECT_ID)
                 .build());
     }
+```
 
 Note: For more information on OpenCensus, visit [https://opencensus.io/](https://opencensus.io/).
 
