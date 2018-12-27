@@ -183,28 +183,28 @@ Here’s the relevant part of the main function:
 
     public static void main(String[] args) throws IOException, InterruptedException {
         configureOpenCensusExporters();
-    
+            
         // initialize jedis pool
         jedisPool = new JedisPool(REDIS_HOST);
-
+        
         try (Scope ss = tracer.spanBuilder("In main").startScopedSpan()) {
-
+            
             // do initial read from Cloud Storage
             String jsonPayloadFromGCS = readFromGCS();
-
+            
             // now write to Redis
             writeToCache(jsonPayloadFromGCS);
-
+            
             // read from Redis
             String jsonPayloadFromCache = readFromCache();
-
+            
             if (jsonPayloadFromCache.equals(jsonPayloadFromGCS)) {
                 System.out.println("SUCCESS: Value from cache = value from Cloud Storage");
             } else {
                 System.out.println("ERROR: Value from cache != value from Cloud Storage");
             }
         }
-
+        
     ...
 
 
@@ -214,11 +214,11 @@ The program also configures Stackdriver Trace as the tracing backend:
 
     private static void configureOpenCensusExporters() throws IOException {
         TraceConfig traceConfig = Tracing.getTraceConfig();
-
+        
         // For demo purposes, let's always sample.
         traceConfig.updateActiveTraceParams(
             traceConfig.getActiveTraceParams().toBuilder().setSampler(Samplers.alwaysSample()).build());
-
+        
         // Create the Stackdriver trace exporter
         StackdriverTraceExporter.createAndRegister(
             StackdriverTraceConfiguration.builder()
@@ -231,7 +231,7 @@ Note: For more information on OpenCensus, visit [https://opencensus.io/](https:/
 Now run the following maven commands to build and run the program
 
     $ mvn package -DskipTests
-
+    
     $ mvn exec:java -Dexec.mainClass=com.example.memorystore.App
 
 You should see output similar to the following:
