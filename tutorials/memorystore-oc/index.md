@@ -182,28 +182,28 @@ Now save the file and exit (using Ctrl+O and then Ctrl+X, if you’re using nano
 Here’s the relevant part of the main function:
 
     public static void main(String[] args) throws IOException, InterruptedException {
-       configureOpenCensusExporters();
+        configureOpenCensusExporters();
     
-       // initialize jedis pool
-       jedisPool = new JedisPool(REDIS_HOST);
+        // initialize jedis pool
+        jedisPool = new JedisPool(REDIS_HOST);
 
-       try (Scope ss = tracer.spanBuilder("In main").startScopedSpan()) {
+        try (Scope ss = tracer.spanBuilder("In main").startScopedSpan()) {
 
-           // do initial read from Cloud Storage
-           String jsonPayloadFromGCS = readFromGCS();
+            // do initial read from Cloud Storage
+            String jsonPayloadFromGCS = readFromGCS();
 
-           // now write to Redis
-           writeToCache(jsonPayloadFromGCS);
+            // now write to Redis
+            writeToCache(jsonPayloadFromGCS);
 
-           // read from Redis
-           String jsonPayloadFromCache = readFromCache();
+            // read from Redis
+            String jsonPayloadFromCache = readFromCache();
 
-           if (jsonPayloadFromCache.equals(jsonPayloadFromGCS)) {
-               System.out.println("SUCCESS: Value from cache = value from Cloud Storage");
-           } else {
-               System.out.println("ERROR: Value from cache != value from Cloud Storage");
-           }
-       }
+            if (jsonPayloadFromCache.equals(jsonPayloadFromGCS)) {
+                System.out.println("SUCCESS: Value from cache = value from Cloud Storage");
+            } else {
+                System.out.println("ERROR: Value from cache != value from Cloud Storage");
+            }
+        }
 
     ...
 
@@ -213,17 +213,17 @@ Notice the `try` block with the call to `spanBuilder`. This illustrates how the 
 The program also configures Stackdriver Trace as the tracing backend:
 
     private static void configureOpenCensusExporters() throws IOException {
-       TraceConfig traceConfig = Tracing.getTraceConfig();
+        TraceConfig traceConfig = Tracing.getTraceConfig();
 
-       // For demo purposes, let's always sample.
-       traceConfig.updateActiveTraceParams(
-           traceConfig.getActiveTraceParams().toBuilder().setSampler(Samplers.alwaysSample()).build());
+        // For demo purposes, let's always sample.
+        traceConfig.updateActiveTraceParams(
+            traceConfig.getActiveTraceParams().toBuilder().setSampler(Samplers.alwaysSample()).build());
 
-       // Create the Stackdriver trace exporter
-       StackdriverTraceExporter.createAndRegister(
-           StackdriverTraceConfiguration.builder()
-               .setProjectId(PROJECT_ID)
-               .build());
+        // Create the Stackdriver trace exporter
+        StackdriverTraceExporter.createAndRegister(
+            StackdriverTraceConfiguration.builder()
+                .setProjectId(PROJECT_ID)
+                .build());
     }
 
 Note: For more information on OpenCensus, visit [https://opencensus.io/](https://opencensus.io/).
