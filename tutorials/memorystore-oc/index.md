@@ -14,14 +14,14 @@ This tutorial shows how to implement client-side tracing in your Cloud Memorysto
 
 [OpenCensus](https://opencensus.io) is an open source library that can be used to provide observability in your applications. It is vendor-agnostic and integrates with a number of backends such as Prometheus and Zipkin. In this tutorial, we use Stackdriver as the tracing backend.
 
-### Objectives
+## Objectives
 
 *   Deploy a Cloud Memorystore for Redis instance.
 *   Deploy a Compute Engine VM for running an OpenCensus instrumented Java client.
 *   Download, deploy, and run an instrumented Java client.
 *   View OpenCensus traces in the Stackdriver Trace tool.
 
-### Costs
+## Costs
 
 This tutorial uses the following billable components of Google Cloud Platform (GCP):
 
@@ -36,9 +36,9 @@ New GCP users might be eligible for a [free trial](https://cloud.google.com/free
 
 We recommend that you deploy this tutorial into an ephemeral project, which can then be deleted once you’re done.
 
-### Before you begin
+## Before you begin
 
-Create a new project
+### Create a new project
 
 1.  In the GCP Console, go to the [Manage resources page](https://console.cloud.google.com/cloud-resource-manager).
 2.  Select a project, or click **Create Project** to create a new GCP project.
@@ -63,13 +63,13 @@ Create a new project
 
         $ gcloud services enable compute.googleapis.com redis.googleapis.com
 
-### Reference architecture
+## Reference architecture
 
 For simplicity, in this tutorial we’ll implement all of our client-side logic in a Java console application. For the caching tier, we’ll use Cloud Memorystore for Redis; for the database tier, we’ll use Google Cloud Storage. This will allow us to focus on the key aspects of client-side tracing without getting hung up on things like database deployments and related configuration.
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/memorystore-oc/image4.png)
 
-### Application flow
+## Application flow
 
 The Java application running on the Compute Engine VM will retrieve the simple JSON file (person.json) shown below from Cloud Storage and cache it in Cloud Memorystore for Redis:
 
@@ -82,7 +82,7 @@ The application will then turn around and fetch it again from Cloud Memorystore 
 
 Both the initial retrieval from Cloud Storage and the second retrieval from Cloud Memorystore for Redis will be instrumented with OpenCensus so we can inspect the latencies involved in those calls within Stackdriver Trace.
 
-### Creating a Cloud Memorystore for Redis instance
+## Creating a Cloud Memorystore for Redis instance
 
 In this section, you will create a new Cloud Memorystore for Redis instance that will be used later by our Java application.
 
@@ -92,7 +92,7 @@ In Cloud Shell, create a 1 GB Cloud Memorystore for Redis instance:
 
 This command might take a few minutes to complete.
 
-### Upload JSON object to Cloud Storage bucket
+## Upload JSON object to Cloud Storage bucket
 
 In this section, you will first create a Cloud Storage bucket and then upload the JSON file (person.json) for subsequent retrieval in the Java application below.
 
@@ -109,7 +109,7 @@ Now upload a JSON file to the bucket you just created by running the following c
 
 The Java application you’ll deploy below will need this file.
 
-### Creating and configuring a Compute Engine VM
+## Creating and configuring a Compute Engine VM
 
 Create a Compute Engine VM by running the following command from Cloud Shell:
 
@@ -142,7 +142,7 @@ You should get a response from the Redis server:
 
 Make a note of the IP address as you’ll need it below when updating the Java code.
 
-### Deploying the Java application
+## Deploying the Java application
 
 In this section, you’ll download the Java application containing the instrumented code, make the necessary modifications to reflect your environment and then run it.
 
@@ -245,7 +245,7 @@ You should see output similar to the following:
     10s...
     ...
 
-### Viewing traces in Stackdriver Trace UI
+## Viewing traces in Stackdriver Trace UI
 
 After running the program, navigate to the Cloud Trace console under Stackdriver as shown below
 
@@ -261,10 +261,10 @@ Recognize the “In main” string? This is from the code you just edited. If yo
 
 As you would expect, the latency for calls to Cloud Memorystore for Redis is much lower than that for calls to Google Cloud Storage.
 
-### Cleaning up
+## Cleaning up
 
 Since this tutorial uses multiple GCP components, please be sure to delete the associated resources once you are done.
 
-### Next steps
+## Next steps
 
 What you saw in this tutorial is just the tip of the iceberg when it comes to the instrumentation possibilities with OpenCensus. For more details on how to implement observability in your applications, visit [https://opencensus.io](https://opencensus.io).
