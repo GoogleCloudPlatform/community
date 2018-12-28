@@ -7,8 +7,6 @@ date_published: 2018-12-27
 ---
 
 
-# Setting up a standalone TensorFlow prediction device with Raspberry Pi and Google Cloud Platform
-
 This tutorial describes how to set up a TensorFlow server in a Raspberry Pi 3B and deploy on it a TensorFlow saved model. 
 
 The architecture of a machine learning model trained in the cloud and served locally is particularly useful when the IoT device has poor connectivity or when the serving availability is critical. 
