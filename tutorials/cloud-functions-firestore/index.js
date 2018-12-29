@@ -8,8 +8,8 @@ const COLLECTION_NAME = 'cloud-functions-firestore';
 const firestore = new Firestore({
   projectId: PROJECTID,
   timestampsInSnapshots: true
-  // NOTE don't hardcode your project credentials here
-  // if you have to, export the following to your shell
+  // NOTE don't hardcode your project credentials here.
+  // If you have to, export the following to your shell
   // GOOGLE_APPLICATION_CREDENTIALS=<path>
   // keyFilename: '/cred/cloud-functions-firestore-000000000000.json',
 });
@@ -32,7 +32,6 @@ exports.main = (req, res) => {
   if (req.method === 'POST') {
     // store/insert a new document
     const data = (req.body) || {};
-    // TODO better user input cleanup would be nice
     const ttl = Number.parseInt(data.ttl);
     const ciphertext = (data.ciphertext || '')
       .replace(/[^a-zA-Z0-9\-_!.,; ']*/g, '')
