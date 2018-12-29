@@ -9,8 +9,8 @@ const firestore = new Firestore({
   projectId: PROJECTID,
   timestampsInSnapshots: true
   // NOTE don't hardcode your project credentials here.
-  // If you have to, export the following to your shell
-  // GOOGLE_APPLICATION_CREDENTIALS=<path>
+  // If you have to, export the following to your shell:
+  //   GOOGLE_APPLICATION_CREDENTIALS=<path>
   // keyFilename: '/cred/cloud-functions-firestore-000000000000.json',
 });
 

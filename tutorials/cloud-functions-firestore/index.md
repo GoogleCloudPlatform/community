@@ -3,7 +3,7 @@ title: Use Google Cloud Firestore with Functions
 description: Learn how to use Google Cloud Functions to store and retrieve data with Google Cloud Firestore.
 author: zeroasterisk
 tags: Cloud Functions, Cloud Datastore, Cloud Firestore
-date_published: 2018-09-30
+date_published: 2018-12-29
 ---
 ## Introduction
 
@@ -25,23 +25,26 @@ which you can simulate with `curl`.
 
 1.  Create a project in the [Google Cloud Platform Console][console].
 1.  Enable billing for your project.
-1.  Enable Functions and Firebase *(under **APIs > Enable APIs and Services**)*
-1.  Install the [Google Cloud SDK][sdk].
+1.  [Enable the Google Cloud Functions API][enable_functions].
+1.  [Enable the Google Cloud Firestore API][enable_firestore] *(Datastore mode)*.
+1.  Install and initialize the [Google Cloud SDK][sdk].
+
+    1.  After initializing the SDK, configure the gcloud CLI for your project_id.
+
+        gcloud config set project <projectid>
 
 [console]: https://console.cloud.google.com/
+[enable_functions]: https://console.cloud.google.com/apis/api/cloudfunctions.googleapis.com/overview
+[enable_firestore]: https://console.cloud.google.com/firestore/welcome?project=otpexperiment
 [sdk]: https://cloud.google.com/sdk/
 
-Configure the gcloud CLI for your project_id.
-
-    gcloud config set project <projectid>
-
-For the rest of this guide, I'll be using `cloud-functions-firestore` as the project_id, as well as the firestore collection.
+This guide uses `cloud-functions-firestore` as the project_id, as well as the firestore collection.
 
 ## Preparing the Cloud Function
 
-For this Function, we are going to either
+This Cloud Function will either
 store a basic POST payload as a document in Firestore
-or retrieve a document from Firestore by id.
+or retrieve a document from Firestore by ID.
 
 <!--
 You can find the
@@ -56,7 +59,7 @@ Alternatively, you can download
 
 ### Start a new npm app
 
-If you do not already have a npm project,
+If you do not already have an npm project,
 go ahead and create one. *(in a new directory)*
 
     npm init
@@ -67,7 +70,7 @@ Let's add the firestore client to our node app, saving the dependency.
 
     npm install --save --save-exact @google-cloud/firestore
 
-### Writing the Function Code
+### Writing the Cloud Function Code
 
 You can copy and paste the simplified version of the code,
 into `index.js` (or
@@ -121,26 +124,24 @@ into `index.js` (or
         });
     };
 
-In that code, we are going to listen for a POST
-with the data fields of `ciphertext` and `ttl`
-and store the values into a new document in firestore
-using the `add()` function (which auto-assigns an id).
+In that code, the function is going to listen for a POST
+with the data fields of `ciphertext` and `ttl`.
+It will store the values into a new document in firestore
+using the `add()` function (which auto-assigns an ID).
 
-And we are also listening for a GET
-and if we have an `id` in the querystring,
-we will lookup that document in firestore and
-return the document if found.
+And the function is also listening for a GET request with an `id` in the querystring.
+It will lookup that document in firestore and, if found, return the document.
 
 NOTE: you probably want more input sanitation for a production application.
 
-## Deploying the Function
+## Deploying the Cloud Function
+
+Once the code is deployed, Google Cloud Functions will automatically run that code for us, when triggered.
 
 You now have a `package.json` file listing your dependencies
-and you have an `index.js` file which will listen for a HTTP trigger.
+and you have an `index.js` file which will respond to an HTTP trigger.
 
-We want to make google automatically run that code for us, when needed.
-
-I will use the `gcloud` CLI tool to deploy our function, and configure it to listen to HTTP requests.
+You will use the `gcloud` CLI tool to deploy our function, and configure it to listen to HTTP requests.
 (there are other ways to deploy including
 [git-push CI/CD tooling](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/cloud-functions-github-auto-deployer/index.md)).
 
@@ -157,7 +158,7 @@ You can install a
     functions start
     functions deploy main --trigger-http
 
-In this case, `main` is the name of the function you want to trigger in your code, triggered by a HTTP request.
+In this case, `main` is the name of the function you want to trigger in your code, triggered by an HTTP request.
 
 > NOTE: if you're on `zsh`, you may not be able to execute `functions`.
 > Either start `bash`, or execute `sh -c 'which functions'`
@@ -181,13 +182,13 @@ And retrieve that document:
 
 NOTE that our function code added `created`.
 
-### Deploy the Function to GCP Functions
+### Deploy the code to Google Cloud Functions
 
 This is very easy thanks to the gcloud CLI.
 
     gcloud functions deploy main --trigger-http
 
-In this case, `main` is the name of the function you want to trigger in your code, triggered by a HTTP request.
+In this case, `main` is the name of the function you want to trigger in your code, triggered by an HTTP request.
 
 > NOTE: If you used the emulator above, you can simply prefix the command with `gcloud`
 
@@ -207,7 +208,7 @@ In this case, `main` is the name of the function you want to trigger in your cod
     updateTime: '2018-09-15T01:25:59Z'
     versionId: '1'
 
-## Testing the Deployed Function in Production
+## Testing the deployed Cloud Function in production
 
 You should now be able to send HTTP requests to the endpoint and test out the function in production.
 
@@ -237,7 +238,7 @@ When you deploy, you overwrite the current version, at the function's URL *(blue
 
 If you need to access a previously deployed version, you can append `/revisions/${REVISION}` with the value of the `versionId` that deploy gives you back.
 
- There are lot of other settings available, review docs and help
+There are lot of other settings available. Review [docs][function-docs] and help:
 
      gcloud functions deploy --help
 
