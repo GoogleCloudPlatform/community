@@ -35,7 +35,7 @@ which you can simulate with `curl`.
 
 [console]: https://console.cloud.google.com/
 [enable_functions]: https://console.cloud.google.com/apis/api/cloudfunctions.googleapis.com/overview
-[enable_firestore]: https://console.cloud.google.com/firestore/welcome?project=otpexperiment
+[enable_firestore]: https://console.cloud.google.com/firestore/welcome
 [sdk]: https://cloud.google.com/sdk/
 
 This guide uses `cloud-functions-firestore` as the project_id, as well as the firestore collection.
