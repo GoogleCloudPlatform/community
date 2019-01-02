@@ -6,14 +6,11 @@ tags: Cloud Memorystore, OpenCensus, tracing
 date_published: 2018-12-19
 ---
 
+This tutorial shows how to implement client-side tracing in your Cloud Memorystore for Redis workloads using OpenCensus and Stackdriver. While Cloud Memorystore for Redis surfaces a number of helpful server-side metrics via Stackdriver, applications can realize added benefits from implementing client-side tracing. For example, server-side metrics do not give you a window into the round-trip latency of calls made to your Redis endpoint and can only be surfaced using client-side tracing.
 
-# Client-side tracing of Cloud Memorystore for Redis workloads with OpenCensus
+[Cloud Memorystore](https://cloud.google.com/memorystore/) for Redis provides a fully managed and Google-hosted Redis deployment for your caching needs.
 
-This tutorial shows how to implement client-side tracing in your Cloud Memorystore for Redis workloads using OpenCensus and Stackdriver. While Cloud Memorystore for Redis surfaces a number of helpful server-side metrics via Stackdriver, applications can realize added benefits from implementing client-side tracing. For example, server-side metrics do not give you a window into the round-trip latency of calls made to your Redis endpoint and can only be surfaced using client-side tracing.
-
-[Cloud Memorystore](https://cloud.google.com/memorystore/) for Redis provides a fully managed and Google-hosted Redis deployment for your caching needs.
-
-[OpenCensus](https://opencensus.io) is an open source library that can be used to provide observability in your applications. It is vendor-agnostic and integrates with a number of backends such as Prometheus and Zipkin. In this tutorial, we use Stackdriver as the tracing backend.
+[OpenCensus](https://opencensus.io) is an open source library that can be used to provide observability in your applications. It is vendor-agnostic and integrates with a number of backends such as Prometheus and Zipkin. In this tutorial, we use Stackdriver as the tracing backend.
 
 ## Objectives
 
@@ -31,7 +28,7 @@ This tutorial uses the following billable components of Google Cloud Platform (G
 *   Stackdriver
 *   Google Cloud Storage
 
-You can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected usage.
+You can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected usage.
 
 New GCP users might be eligible for a [free trial](https://cloud.google.com/free/).
 
@@ -75,8 +72,8 @@ For simplicity, in this tutorial we’ll implement all of our client-side logic 
 The Java application running on the Compute Engine VM will retrieve the simple JSON file (person.json) shown below from Cloud Storage and cache it in Cloud Memorystore for Redis:
 
     {
-     "FirstName": "John",
-     "LastName": "Doe"
+     "FirstName": "John",
+     "LastName": "Doe"
     }
 
 The application will then turn around and fetch it again from Cloud Memorystore for Redis.
@@ -124,7 +121,7 @@ Use SSH to connect to the VM by clicking the SSH button (highlighted in yellow i
 
 Once logged into the VM, run the following command to install the redis-cli, git, the Java 8 JDK, and maven:
 
-    $ sudo apt-get install redis-tools git openjdk-8-jdk maven -y
+    $ sudo apt-get install redis-tools git openjdk-8-jdk maven -y
 
 Run the following command within the trace-client VM to ensure that you can reach the Cloud Memorystore for Redis instance you created earlier:
 
@@ -134,7 +131,7 @@ You should get a response from the Redis server:
 
     $ PONG
 
-*Note:* To get the IP address of your Cloud Memorystore for Redis instance, run the following commands from Cloud Shell and use the value listed next to the label titled ‘host’ (see screenshot below).
+*Note:* To get the IP address of your Cloud Memorystore for Redis instance, run the following commands from Cloud Shell and use the value listed next to the label titled ‘host’ (see screenshot below).
 
     $ export $REGION=us-central1
     $ gcloud redis instances describe cm-redis --region=$REGION
@@ -161,7 +158,7 @@ Then open the Java source using your favorite terminal editor, such as nano or v
 
     $ nano src/main/java/com/example/memorystore/App.java
 
-Near the top of the file, you’ll need to edit 3 of the following 4 Java String constants to reflect your environment
+Near the top of the file, you’ll need to edit 3 of the following 4 Java String constants to reflect your environment
 
     ...
 
@@ -174,66 +171,62 @@ Near the top of the file, you’ll need to edit 3 of the following 4 Java String
 
     ...
 
-*   PROJECT\_ID- Your GCP project ID. See [here](https://cloud.google.com/resource-manager/docs/creating-managing-projects%23identifying_projects) for information on locating your Project ID.
-*   GCS\_BUCKET\_NAME- This is the Cloud Storage bucket you created in the section above titled: Upload JSON object to Cloud Storage bucket.
-*   REDIS\_HOST - The IP address of the Cloud MemoryStore for Redis instance you created above. See the section above for details on how to get the IP address of the Cloud Memorystore for Redis instance.
+*   PROJECT_ID- Your GCP project ID. See [here](https://cloud.google.com/resource-manager/docs/creating-managing-projects%23identifying_projects) for information on locating your Project ID.
+*   GCS_BUCKET_NAME- This is the Cloud Storage bucket you created in the section above titled: Upload JSON object to Cloud Storage bucket.
+*   REDIS_HOST - The IP address of the Cloud MemoryStore for Redis instance you created above. See the section above for details on how to get the IP address of the Cloud Memorystore for Redis instance.
 
 Now save the file and exit (using Ctrl+O and then Ctrl+X, if you’re using nano). Before we run the program, let’s explore the key parts of the code to see how it’s instrumented.
 
-Here’s the relevant part of the main function:
+Here’s the relevant part of the main function:
 
-```
     public static void main(String[] args) throws IOException, InterruptedException {
-        configureOpenCensusExporters();
-        
-        // initialize jedis pool
-        jedisPool = new JedisPool(REDIS_HOST);
-        
-        try (Scope ss = tracer.spanBuilder("In main").startScopedSpan()) {
-        
-            // do initial read from Cloud Storage
-            String jsonPayloadFromGCS = readFromGCS();
-            
-            // now write to Redis
-            writeToCache(jsonPayloadFromGCS);
-            
-            // read from Redis
-            String jsonPayloadFromCache = readFromCache();
-            
-            if (jsonPayloadFromCache.equals(jsonPayloadFromGCS)) {
-                System.out.println("SUCCESS: Value from cache = value from Cloud Storage");
-            } else {
-                System.out.println("ERROR: Value from cache != value from Cloud Storage");
-            }
-        }
-```
+        configureOpenCensusExporters();
+
+        // initialize jedis pool
+        jedisPool = new JedisPool(REDIS_HOST);
+
+        try (Scope ss = tracer.spanBuilder("In main").startScopedSpan()) {
+
+            // do initial read from Cloud Storage
+            String jsonPayloadFromGCS = readFromGCS();
+
+            // now write to Redis
+            writeToCache(jsonPayloadFromGCS);
+
+            // read from Redis
+            String jsonPayloadFromCache = readFromCache();
+
+            if (jsonPayloadFromCache.equals(jsonPayloadFromGCS)) {
+                System.out.println("SUCCESS: Value from cache = value from Cloud Storage");
+            } else {
+                System.out.println("ERROR: Value from cache != value from Cloud Storage");
+            }
+        }
 
 Notice the `try` block with the call to `spanBuilder`. This illustrates how the program uses OpenCensus to perform tracing. The entire call chain starting with the `main` function is instrumented in this way.
 
 The program also configures Stackdriver Trace as the tracing backend:
 
-```
     private static void configureOpenCensusExporters() throws IOException {
-        TraceConfig traceConfig = Tracing.getTraceConfig();
-        
-        // For demo purposes, let's always sample.
-        traceConfig.updateActiveTraceParams(
-            traceConfig.getActiveTraceParams().toBuilder().setSampler(Samplers.alwaysSample()).build());
-        
-        // Create the Stackdriver trace exporter
-        StackdriverTraceExporter.createAndRegister(
-            StackdriverTraceConfiguration.builder()
-                .setProjectId(PROJECT_ID)
-                .build());
+        TraceConfig traceConfig = Tracing.getTraceConfig();
+
+        // For demo purposes, let's always sample.
+        traceConfig.updateActiveTraceParams(
+            traceConfig.getActiveTraceParams().toBuilder().setSampler(Samplers.alwaysSample()).build());
+
+        // Create the Stackdriver trace exporter
+        StackdriverTraceExporter.createAndRegister(
+            StackdriverTraceConfiguration.builder()
+                .setProjectId(PROJECT_ID)
+                .build());
     }
-```
 
 Note: For more information on OpenCensus, visit [https://opencensus.io/](https://opencensus.io/).
 
 Now run the following maven commands to build and run the program
 
     $ mvn package -DskipTests
-    
+
     $ mvn exec:java -Dexec.mainClass=com.example.memorystore.App
 
 You should see output similar to the following:
