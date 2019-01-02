@@ -46,11 +46,11 @@ This Cloud Function will either
 store a basic POST payload as a document in Firestore
 or retrieve a document from Firestore by ID.
 
-<!--
-You can find the
-[zerobin codebase on github](...)
-which is the source of this example.
--->
+    <!--
+    You can find the
+    [zerobin codebase on github](...)
+    which is the source of this example.
+    -->
 
 Alternatively, you can download
 [package.json](https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-functions-firestore/package.json)
@@ -149,9 +149,7 @@ You will use the `gcloud` CLI tool to deploy our function, and configure it to l
 
 Testing things is nice.
 You can install a
-[local emulator for Google Cloud Functions][emulator].
-
-[sdk]: https://github.com/GoogleCloudPlatform/cloud-functions-emulator
+[local emulator for Google Cloud Functions](https://github.com/GoogleCloudPlatform/cloud-functions-emulator).
 
     npm install -g @google-cloud/functions-emulator
     export GOOGLE_APPLICATION_CREDENTIALS=/Users/myname/.cred/myserviceaccount.json
