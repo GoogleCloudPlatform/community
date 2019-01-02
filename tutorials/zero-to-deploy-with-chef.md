@@ -181,80 +181,82 @@ On `chef-workstation`:
 
 1.  Edit a new recipe file `cookbooks/google-cloud/recipes/default.rb`:
 
-        gauth_credential 'mycred' do
-          action :serviceaccount
-          path ENV['CRED_PATH'] # e.g. '/path/to/my_account.json'
-          scopes [
-            'https://www.googleapis.com/auth/compute'
-          ]
-        end
+    ```rb
+    gauth_credential 'mycred' do
+      action :serviceaccount
+      path ENV['CRED_PATH'] # e.g. '/path/to/my_account.json'
+      scopes [
+        'https://www.googleapis.com/auth/compute'
+      ]
+    end
 
-        gcompute_zone 'us-west1-a' do
-          action :create
-          project ENV['GCP_PROJECT'] # e.g. 'company-org:chef-gcp-project'
-          credential 'mycred'
-        end
+    gcompute_zone 'us-west1-a' do
+      action :create
+      project ENV['GCP_PROJECT'] # e.g. 'company-org:chef-gcp-project'
+      credential 'mycred'
+    end
 
-        gcompute_disk 'instance-test-os-1' do
-          action :create
-          source_image 'projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts'
-          zone 'us-west1-a'
-          project ENV['GCP_PROJECT']
-          credential 'mycred'
-        end
+    gcompute_disk 'instance-test-os-1' do
+      action :create
+      source_image 'projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts'
+      zone 'us-west1-a'
+      project ENV['GCP_PROJECT']
+      credential 'mycred'
+    end
 
-        gcompute_network 'mynetwork-test' do
-          action :create
-          project ENV['GCP_PROJECT']
-          credential 'mycred'
-        end
+    gcompute_network 'mynetwork-test' do
+      action :create
+      project ENV['GCP_PROJECT']
+      credential 'mycred'
+    end
 
-        gcompute_region 'us-west1' do
-          action :create
-          project ENV['GCP_PROJECT']
-          credential 'mycred'
-        end
+    gcompute_region 'us-west1' do
+      action :create
+      project ENV['GCP_PROJECT']
+      credential 'mycred'
+    end
 
-        gcompute_address 'instance-test-ip' do
-          action :create
-          region 'us-west1'
-          project ENV['GCP_PROJECT']
-          credential 'mycred'
-        end
+    gcompute_address 'instance-test-ip' do
+      action :create
+      region 'us-west1'
+      project ENV['GCP_PROJECT']
+      credential 'mycred'
+    end
 
-        gcompute_machine_type 'n1-standard-1' do
-          action :create
-          zone 'us-west1-a'
-          project ENV['GCP_PROJECT']
-          credential 'mycred'
-        end
+    gcompute_machine_type 'n1-standard-1' do
+      action :create
+      zone 'us-west1-a'
+      project ENV['GCP_PROJECT']
+      credential 'mycred'
+    end
 
-        gcompute_instance 'instance-test' do
-          action :create
-          machine_type 'n1-standard-1'
-          disks [
+    gcompute_instance 'instance-test' do
+      action :create
+      machine_type 'n1-standard-1'
+      disks [
+        {
+          boot: true,
+          auto_delete: true,
+          source: 'instance-test-os-1'
+        }
+      ]
+      network_interfaces [
+        {
+          network: 'mynetwork-test',
+          access_configs: [
             {
-              boot: true,
-              auto_delete: true,
-              source: 'instance-test-os-1'
+              name: 'External NAT',
+              nat_ip: 'instance-test-ip',
+              type: 'ONE_TO_ONE_NAT'
             }
           ]
-          network_interfaces [
-            {
-              network: 'mynetwork-test',
-              access_configs: [
-                {
-                  name: 'External NAT',
-                  nat_ip: 'instance-test-ip',
-                  type: 'ONE_TO_ONE_NAT'
-                }
-              ]
-            }
-          ]
-          zone 'us-west1-a'
-          project ENV['GCP_PROJECT']
-          credential 'mycred'
-        end
+        }
+      ]
+      zone 'us-west1-a'
+      project ENV['GCP_PROJECT']
+      credential 'mycred'
+    end
+    ```
 
     NOTE: This example code is pulled from the [Google Compute Engine Chef
     Cookbook](https://github.com/GoogleCloudPlatform/chef-google-compute).
@@ -262,10 +264,12 @@ On `chef-workstation`:
 1.  Set the appropriate environment variables. You can directly inline these
     values in the code; they are parameterized like this for your convenience.
 
-        # The service account key JSON file you uploaded earlier to
-        # '~/credentials.json'. However, CRED_PATH requires an absolute path.
-        export CRED_PATH='/home/USERNAME/credentials.json'
-        export GCP_PROJECT='YOUR_PROJECT_NAME'
+    ```sh
+    # The service account key JSON file you uploaded earlier to
+    # '~/credentials.json'. However, CRED_PATH requires an absolute path.
+    export CRED_PATH='/home/USERNAME/credentials.json'
+    export GCP_PROJECT='YOUR_PROJECT_NAME'
+    ```
 
     NOTE: Feel free to experiment with more example code from any of the other
     GCP cookbooks. (e.g. the [Google Cloud SQL Chef

@@ -292,66 +292,68 @@ Beginner
     NOTE: See the highlighted section where you need to insert your own Atlas
     Connection string.
 
-        'use strict';
+    ```js
+    'use strict';
 
-        const mongodb = require('mongodb');
-        const http = require('http');
-        const nconf = require('nconf');
-        let uri = ` PASTE YOUR MONGODB ATLAS CONNECTION STRING HERE `;
-        if (nconf.get('mongoDatabase')) {
-          uri = `${uri}/${nconf.get('mongoDatabase')}`;
+    const mongodb = require('mongodb');
+    const http = require('http');
+    const nconf = require('nconf');
+    let uri = ` PASTE YOUR MONGODB ATLAS CONNECTION STRING HERE `;
+    if (nconf.get('mongoDatabase')) {
+      uri = `${uri}/${nconf.get('mongoDatabase')}`;
+    }
+    console.log(uri);
+
+    mongodb.MongoClient.connect(uri, (err, db) => {
+      if (err) {
+        throw err;
+      }
+
+      // Create a simple little server.
+      http.createServer((req, res) => {
+        if (req.url === '/_ah/health') {
+          res.writeHead(200, {
+            'Content-Type': 'text/plain'
+          });
+          res.write('OK');
+          res.end();
+          return;
         }
-        console.log(uri);
 
-        mongodb.MongoClient.connect(uri, (err, db) => {
+
+        const collection = db.collection('Messages');
+        var datetime = new Date();
+        const msg = {
+          msgDescription: '\nHello World received on ' + datetime
+        };
+
+        collection.insert(msg, (err) => {
           if (err) {
             throw err;
           }
 
-          // Create a simple little server.
-          http.createServer((req, res) => {
-            if (req.url === '/_ah/health') {
-              res.writeHead(200, {
-                'Content-Type': 'text/plain'
-              });
-              res.write('OK');
-              res.end();
-              return;
+          // push out a range
+          let msglist = '';
+          collection.find().toArray((err, data) => {
+            if (err) {
+              throw err;
             }
-
-
-            const collection = db.collection('Messages');
-            var datetime = new Date();
-            const msg = {
-              msgDescription: '\nHello World received on ' + datetime
-            };
-
-            collection.insert(msg, (err) => {
-              if (err) {
-                throw err;
-              }
-
-              // push out a range
-              let msglist = '';
-              collection.find().toArray((err, data) => {
-                if (err) {
-                  throw err;
-                }
-                data.forEach((msg) => {
-                  msglist += `${msg.msgDescription}; `;
-                });
-
-                res.writeHead(200, {
-                  'Content-Type': 'text/plain'
-                });
-        res.write('Messages received so far:\n');
-                res.end(msglist);
-              });
+            data.forEach((msg) => {
+              msglist += `${msg.msgDescription}; `;
             });
-          }).listen(process.env.PORT || 8080, () => {
-            console.log('started web process');
+
+            res.writeHead(200, {
+              'Content-Type': 'text/plain'
+            });
+    res.write('Messages received so far:\n');
+            res.end(msglist);
           });
         });
+      }).listen(process.env.PORT || 8080, () => {
+        console.log('started web process');
+      });
+    });
+    ```
 
     1.  Enter "Exit" to leave
     1.  On prompt to save, enter "Y"
