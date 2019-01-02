@@ -70,7 +70,7 @@ This tutorial uses billable components of Cloud Platform, including:
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to
 generate a cost estimate based on your projected usage.
 
-## Before You Begin
+## Before you begin
 
 1.  Create or select a GCP project.
     [GO TO THE PROJECTS PAGE](https://console.cloud.google.com/project)
@@ -101,7 +101,7 @@ complete the tutorial.
 
 If you already have Helm client and Tiller installed on your cluster, you can skip to the next section.
 
-__Helm__ is a tool that streamlines installing and managing Kubernetes applications and resources. Think of it like apt/yum/homebrew for Kubernetes.  Use of helm charts is recommended since they are maintained and typically kept up-to-date by the Kubernetes community.
+__Helm__ is a tool that streamlines installing and managing Kubernetes applications and resources. Think of it like apt/yum/homebrew for Kubernetes. Use of helm charts is recommended since they are maintained and typically kept up-to-date by the Kubernetes community.
 
 -  Helm has two parts: a client (`helm`) and a server (`tiller`)
 -  `Tiller` runs inside of your Kubernetes cluster, and manages releases (installations) of your [helm charts](https://github.com/kubernetes/helm/blob/master/docs/charts.md).
@@ -109,113 +109,99 @@ __Helm__ is a tool that streamlines installing and managing Kubernetes applicati
 
 You can install the `helm` client in Cloud Shell using the following commands:
 
-```
-curl -o get_helm.sh https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
-chmod +x get_helm.sh
-./get_helm.sh
-```
+
+    curl -o get_helm.sh https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
+    chmod +x get_helm.sh
+    ./get_helm.sh
 
 The script above fetches the latest version of `helm` client and installs it locally in Cloud Shell.
 
-```
-Downloading https://kubernetes-helm.storage.googleapis.com/helm-v2.8.1-linux-amd64.tar.gz
-Preparing to install into /usr/local/bin
-helm installed into /usr/local/bin/helm
-Run 'helm init' to configure helm.
-```
+    Downloading https://kubernetes-helm.storage.googleapis.com/helm-v2.8.1-linux-amd64.tar.gz
+    Preparing to install into /usr/local/bin
+    helm installed into /usr/local/bin/helm
+    Run 'helm init' to configure helm.
 
 ### Installing Tiller with RBAC enabled
-Starting with Kubernetes v1.8+, RBAC is enabled by default.  Prior to installing `tiller` we need to ensure we have the correct _ServiceAccount_ and _ClusterRoleBinding_ configured for the `tiller` service.  This allows `tiller` to be able to install services in the `default` namespace.
-Run the following command to install the server side `tiller` to the Kubernetes cluster with RBAC enabled.
 
-```
-kubectl create serviceaccount --namespace kube-system tiller
-kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'      
-helm init --service-account tiller --upgrade
-```
+Starting with Kubernetes v1.8+, RBAC is enabled by default. Prior to installing `tiller` we need to ensure we have the correct _ServiceAccount_ and _ClusterRoleBinding_ configured for the `tiller` service. This allows `tiller` to be able to install services in the `default` namespace.
+
+Run the following commands to install the server side `tiller` to the Kubernetes cluster with RBAC enabled:
+
+    kubectl create serviceaccount --namespace kube-system tiller
+    kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+    helm init --service-account tiller
+
 
 ### Installing Tiller with RBAC disabled
+
 If you do not have RBAC enabled on your Kubernetes installation, you can simply run the following command to install `tiller` on your cluster.
 
-```
-helm init
-```
+    helm init
 
-The output below confirms tiller is running.
+The output below confirms that Tiller is running.
 
-```
-Creating /home/ameer00/.helm
-Creating /home/ameer00/.helm/repository
-Creating /home/ameer00/.helm/repository/cache
-Creating /home/ameer00/.helm/repository/local
-Creating /home/ameer00/.helm/plugins
-Creating /home/ameer00/.helm/starters
-Creating /home/ameer00/.helm/cache/archive
-Creating /home/ameer00/.helm/repository/repositories.yaml
-Adding stable repo with URL: https://kubernetes-charts.storage.googleapis.com
-Adding local repo with URL: http://127.0.0.1:8879/charts
-$HELM_HOME has been configured at /home/ameer00/.helm.
+    Creating /home/ameer00/.helm
+    Creating /home/ameer00/.helm/repository
+    Creating /home/ameer00/.helm/repository/cache
+    Creating /home/ameer00/.helm/repository/local
+    Creating /home/ameer00/.helm/plugins
+    Creating /home/ameer00/.helm/starters
+    Creating /home/ameer00/.helm/cache/archive
+    Creating /home/ameer00/.helm/repository/repositories.yaml
+    Adding stable repo with URL: https://kubernetes-charts.storage.googleapis.com
+    Adding local repo with URL: http://127.0.0.1:8879/charts
+    $HELM_HOME has been configured at /home/ameer00/.helm.
 
-Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.
-Happy Helming!
-```
+    Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.
+    Happy Helming!
 
 You can also confirm that `tiller` is running by checking for the `tiller_deploy` Deployment in the `kube-system` namespace.  Run the following command:
 
-```
-kubectl get deployments -n kube-system
-```
+    kubectl get deployments -n kube-system
 
 The output should have a `tiller_deploy` Deployment as shown below:
 
-```
-NAME                    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-event-exporter-v0.1.7   1         1         1            1           13m
-heapster-v1.4.3         1         1         1            1           13m
-kube-dns                2         2         2            2           13m
-kube-dns-autoscaler     1         1         1            1           13m
-kubernetes-dashboard    1         1         1            1           13m
-l7-default-backend      1         1         1            1           13m
-tiller-deploy           1         1         1            1           4m
-```
+    NAME                    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+    event-exporter-v0.1.7   1         1         1            1           13m
+    heapster-v1.4.3         1         1         1            1           13m
+    kube-dns                2         2         2            2           13m
+    kube-dns-autoscaler     1         1         1            1           13m
+    kubernetes-dashboard    1         1         1            1           13m
+    l7-default-backend      1         1         1            1           13m
+    tiller-deploy           1         1         1            1           4m
 
 ## Deploy an application in Kubernetes Engine
 
 You can deploy a simple web based application from the Google Cloud
-Repository.  You use this application as the backend for the Ingress.
+Repository. You use this application as the backend for the Ingress.
 
 From the Cloud Shell, run the following command:
 
-```
-kubectl run hello-app --image=gcr.io/google-samples/hello-app:1.0 --port=8080
-```
+    kubectl run hello-app --image=gcr.io/google-samples/hello-app:1.0 --port=8080
 
-```
-deployment "hello-app" created
-```
+This gives the following output:
+
+    deployment "hello-app" created
 
 Expose the `hello-app` Deployment as a Service by running the following command:
 
-```
-kubectl expose deployment hello-app
-```
+    kubectl expose deployment hello-app
 
-```
-service "hello-app" exposed
-```
+This gives the following output:
 
-## Deploying the NGINX Ingress Controller via Helm
+    service "hello-app" exposed
+
+## Deploying the NGINX Ingress Controller with Helm
 
 Kubernetes platform allows for administrators to bring their own Ingress
 Controllers instead of using the cloud provider's built-in offering.
 
 The NGINX controller, deployed as a Service, must be exposed for external
-access.  This is done using Service `type: LoadBalancer` on the NGINX controller
-service.  On Kubernetes Engine, this creates a Google Cloud Network (TCP/IP) Load Balancer with NGINX
+access. This is done using Service `type: LoadBalancer` on the NGINX controller
+service. On Kubernetes Engine, this creates a Google Cloud Network (TCP/IP) Load Balancer with NGINX
 controller Service as a backend.  Google Cloud also creates the appropriate
 firewall rules within the Service's VPC to allow web HTTP(S) traffic to the load
-balancer frontend IP address.  Here is a basic flow of the NGINX ingress
+balancer frontend IP address. Here is a basic flow of the NGINX ingress
 solution on Kubernetes Engine.
 
 ### NGINX Ingress Controller on Kubernetes Engine
@@ -223,42 +209,36 @@ solution on Kubernetes Engine.
 ![image](https://storage.googleapis.com/gcp-community/tutorials/nginx-ingress-gke/Nginx%20Ingress%20on%20GCP%20-%20Fig%2002.png)
 
 #### Deploy NGINX Ingress Controller with RBAC enabled
+
 If your Kubernetes cluster has RBAC enabled, from the Cloud Shell, deploy an NGINX controller Deployment and Service by running the following command:
 
-```
-helm install --name nginx-ingress stable/nginx-ingress --set rbac.create=true
-```
+    helm install --name nginx-ingress stable/nginx-ingress --set rbac.create=true
 
 #### Deploy NGINX Ingress Controller with RBAC disabled
+
 If your Kubernetes cluster has RBAC disabled, from the Cloud Shell, deploy an NGINX controller Deployment and Service by running the following command:
 
-```
-helm install --name nginx-ingress stable/nginx-ingress
-```
+    helm install --name nginx-ingress stable/nginx-ingress
 
 In the ouput under `RESOURCES`, you should see the following:
 
-```
-==> v1/Service
-NAME                           TYPE          CLUSTER-IP    EXTERNAL-IP  PORT(S)                     AGE
-nginx-ingress-controller       LoadBalancer  10.7.248.226  pending      80:30890/TCP,443:30258/TCP  1s
-nginx-ingress-default-backend  ClusterIP     10.7.245.75   none         80/TCP                      1s
-```
+    ==> v1/Service
+    NAME                           TYPE          CLUSTER-IP    EXTERNAL-IP  PORT(S)                     AGE
+    nginx-ingress-controller       LoadBalancer  10.7.248.226  pending      80:30890/TCP,443:30258/TCP  1s
+    nginx-ingress-default-backend  ClusterIP     10.7.245.75   none         80/TCP                      1s
 
 Wait a few moments while the GCP L4 Load Balancer gets deployed.  Confirm that the `nginx-ingress-controller` Service has been deployed and that you have an external IP address associated with the service.  Run the following command:
 
-```
-kubectl get service nginx-ingress-controller
-```
+    kubectl get service nginx-ingress-controller
 
-```
-NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                      AGE
-nginx-ingress-controller   LoadBalancer   10.7.248.226   35.226.162.176   80:30890/TCP,443:30258/TCP   3m
-```
+You should see the following:
 
-Notice the second service, _nginx-ingress-default-backend_.  The default
+    NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                      AGE
+    nginx-ingress-controller   LoadBalancer   10.7.248.226   35.226.162.176   80:30890/TCP,443:30258/TCP   3m
+
+Notice the second service, _nginx-ingress-default-backend_. The default
 backend is a Service which handles all URL paths and hosts the NGINX controller
-doesn't understand (i.e., all the requests that are not mapped with an Ingress
+doesn't understand (that is, all the requests that are not mapped with an Ingress
 Resource). The default backend exposes two URLs:
 
 -  `/healthz` that returns 200
@@ -269,24 +249,18 @@ Resource). The default backend exposes two URLs:
 
 An Ingress Resource object is a collection of L7 rules for routing inbound traffic to Kubernetes Services.  Multiple rules can be defined in one Ingress Resource or they can be split up into multiple Ingress Resource manifests. The Ingress Resource also determines which controller to utilize to serve traffic.  This can be set with an annotation, `kubernetes.io/ingress.class`, in the metadata section of the Ingress Resource.  For the NGINX controller, use the value `nginx` as shown below:
 
-```
-annotations: kubernetes.io/ingress.class: nginx
-```
+    annotations: kubernetes.io/ingress.class: nginx
 
 On Kubernetes Engine, if no annotation is defined under the metadata section, the
-Ingress Resource uses the GCP GCLB L7 load balancer to serve traffic.  This
+Ingress Resource uses the GCP GCLB L7 load balancer to serve traffic. This
 method can also be forced by setting the annotation's value to `gce`as shown below:
 
-```
-annotations: kubernetes.io/ingress.class: gce
-```
+    annotations: kubernetes.io/ingress.class: gce
 
-Lets create a simple Ingress Resource YAML file which uses the NGINX Ingress Controller and has one path rule defined by typing the following commands:
+Let's create a simple Ingress Resource YAML file which uses the NGINX Ingress Controller and has one path rule defined by typing the following commands:
 
-```
-touch ingress-resource.yaml
-nano ingress-resource.yaml
-```
+    touch ingress-resource.yaml
+    nano ingress-resource.yaml
 
 Copy the contents of [ingress-resource.yaml](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/nginx-ingress-gke/ingress-resource.yaml)
 into the editor, then press `Ctrl-X`, then press `y`, then press `Enter` to save
@@ -296,22 +270,18 @@ The `kind: Ingress` dictates it is an Ingress Resource object.  This Ingress Res
 
 From the Cloud Shell, run the following command:
 
-```
-kubectl apply -f ingress-resource.yaml
-```
+    kubectl apply -f ingress-resource.yaml
 
-Verify that Ingress Resource has been created.  Please note that the IP address
+Verify that Ingress Resource has been created. Note that the IP address
 for the Ingress Resource will not be defined right away (wait a few moments for the `ADDRESS` field to get populated):
 
-```
-kubectl get ingress ingress-resource
-```
+    kubectl get ingress ingress-resource
 
-```
-NAME               HOSTS     ADDRESS   PORTS     AGE
-ingress-resource   *                   80        `
-```
+You should see the following:
 
+    NAME               HOSTS     ADDRESS   PORTS     AGE
+    ingress-resource   *                   80        `
+    
 
 ### Test Ingress and default backend
 
@@ -332,59 +302,50 @@ You should get the following message:
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/nginx-ingress-gke/default-backend.png)
 
-## Clean Up
+## Clean up
 
 From the Cloud Shell, run the following commands:
 
-Delete the _Ingress Resource_ object.
+1.  Delete the _Ingress Resource_ object:
 
-```
-kubectl delete -f ingress-resource.yaml
-```
+        kubectl delete -f ingress-resource.yaml
 
-```
-ingress "demo-ingress" deleted
-```
+    You should see the following:
 
-Delete the _NGINX Ingress_ helm chart.
+        ingress "demo-ingress" deleted
 
-```
-helm del --purge nginx-ingress
-```
+2.  Delete the _NGINX Ingress_ helm chart:
 
-```
-release "nginx-ingress" deleted
-```
+        helm del --purge nginx-ingress
 
-Delete the app.
-```
-kubectl delete service hello-app
-kubectl delete deployment hello-app
-```
+    You should see the following:
 
-```
-service "hello-app" deleted
-deployment "hello-app" deleted
-```
+        release "nginx-ingress" deleted
 
-Delete the Kubernetes Engine cluster by running the following command:
+3.  Delete the app:
 
-```
-gcloud container clusters delete nginx-tutorial
-```
+        kubectl delete service hello-app
+        kubectl delete deployment hello-app
 
-```
-The following clusters will be deleted.
- - [nginx-tutorial] in [us-central1-f]
+    You should see the following:
 
-	Do you want to continue (Y/n)?  y
+        service "hello-app" deleted
+        deployment "hello-app" deleted
 
-	Deleting cluster nginx-tutorial...done.
-	Deleted [https://container.googleapis.com/v1/projects/ameer-1/zones/us-central1-f/clusters/nginx-tutorial].
-```
+4.  Delete the Kubernetes Engine cluster by running the following command:
 
-Delete the `ingress_resource.yaml` file by running the following command:
+        gcloud container clusters delete nginx-tutorial
 
-```
-rm ingress-resource.yaml
-```
+    You should see the following:
+
+        The following clusters will be deleted.
+        - [nginx-tutorial] in [us-central1-f]
+        
+            Do you want to continue (Y/n)?  y
+
+            Deleting cluster nginx-tutorial...done.
+            Deleted [https://container.googleapis.com/v1/projects/ameer-1/zones/us-central1-f/clusters/nginx-tutorial].
+
+5.  Delete the `ingress_resource.yaml` file by running the following command:
+
+        rm ingress-resource.yaml
