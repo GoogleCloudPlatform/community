@@ -266,7 +266,6 @@ Execute the following command to run the build:
     gcloud container builds submit --tag=gcr.io/${PROJECT_ID}/hello:v1 .
 
 Replace `${PROJECT_ID}` with the ID of your Google Cloud Platform project.
-The period at the end is required.
 
 After the build finishes, the image `gcr.io/${PROJECT_ID}/hello:v1` will be
 available. You can list the images you have built in your project using:
@@ -284,10 +283,14 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
 
 1.  Choose a cluster name. For the rest of these instructions, I'll assume that
     name is "hello-cluster".
-
+    
+1.  Choose a zone. You should 
+[choose a zone](https://cloud.google.com/compute/docs/regions-zones/) 
+which makes sense for you, such as `us-central1-a`.
+    
 1.  Create the cluster.
 
-        gcloud container clusters create hello-cluster --num-nodes=2
+        gcloud container clusters create hello-cluster --num-nodes=2 --zone=us-central1-a
 
     This command creates a cluster of two machines. You can choose a different
     size, but two is a good starting point.
@@ -295,9 +298,10 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
     It might take several minutes for the cluster to be created. You can check
     the cloud console at http://cloud.google.com/console, under the Kubernetes
     Engine section, to see that your cluster is running. You will also be able
-    to see the individual running VMs under the Compute Engine section. Note
-    that once the cluster is running, you will be charged for the VM usage.
-
+    to see the individual running VMs under the Compute Engine section.
+    
+    Note that once the cluster is running, *you will be charged for the VM usage*.
+    
 1.  Configure the gcloud command-line tool to use your cluster by default, so
     you don't have to specify it every time for the remaining gcloud commands.
 

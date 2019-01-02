@@ -110,17 +110,8 @@ __Helm__ is a tool that streamlines installing and managing Kubernetes applicati
 You can install the `helm` client in Cloud Shell using the following commands:
 
 ```
-curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
-```
-
-```
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100  6640  100  6640    0     0  25824      0 --:--:-- --:--:-- --:--:-- 25836
-```
-
-```
-chmod 700 get_helm.sh
+curl -o get_helm.sh https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
+chmod +x get_helm.sh
 ./get_helm.sh
 ```
 
