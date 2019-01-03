@@ -35,14 +35,16 @@ Platform.
 
 Create a `server.js` file with the following contents:
 
-    const Koa = require('koa');
-    const app = new Koa();
+```js
+const Koa = require('koa');
+const app = new Koa();
 
-    app.use((ctx) => {
-      ctx.body = 'Hello World!';
-    });
+app.use((ctx) => {
+  ctx.body = 'Hello World!';
+});
 
-    app.listen(process.env.PORT || 8080);
+app.listen(process.env.PORT || 8080);
+```
 
 ## Run
 
@@ -57,8 +59,10 @@ message.
 
 1. Create an `app.yaml` file with the following contents:
 
-        runtime: nodejs
-        env: flex
+    ```yaml
+    runtime: nodejs
+    env: flex
+    ```
 
 1. Run the following command to deploy your app:
 
