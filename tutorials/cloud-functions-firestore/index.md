@@ -1,6 +1,6 @@
 ---
-title: Use Google Cloud Firestore with Functions
-description: Learn how to use Google Cloud Functions to store and retrieve data with Google Cloud Firestore.
+title: Use Cloud Firestore with Cloud Functions
+description: Learn how to use Cloud Functions to store and retrieve data with Cloud Firestore.
 author: zeroasterisk
 tags: Cloud Functions, Cloud Datastore, Cloud Firestore
 date_published: 2018-12-29
