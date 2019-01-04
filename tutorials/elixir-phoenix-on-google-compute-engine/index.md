@@ -3,7 +3,7 @@ title: Run an Elixir Phoenix app on Google Compute Engine
 description: Learn how to deploy a Phoenix app to Google Compute Engine.
 author: dazuma
 tags: Compute Engine, Elixir, Phoenix
-date_published: 2018-12-19
+date_published: 2019-01-04
 ---
 
 This tutorial helps you get started deploying your
@@ -26,7 +26,7 @@ This tutorial requires Elixir 1.5 and Phoenix 1.4 or later. It assumes you are
 already familiar with basic Phoenix web development. It also requires the
 PostgreSQL database to be installed on your local development workstation.
 
-This tutorial was updated in Dec 2018 to cover Phoenix 1.4, Distillery 2.0, and
+This tutorial was updated in January 2019 to cover Phoenix 1.4, Distillery 2.0, and
 connecting Ecto to a Cloud SQL database.
 
 ## Before you begin
@@ -43,7 +43,7 @@ an existing project.
 To create a new project:
 
 1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
-    to create a new Cloud Platform project. Remember the project ID; you will
+    to create a new GCP project. Remember the project ID; you will
     need it later. Later commands in this tutorial will use `${PROJECT_ID}` as
     a substitution, so you might consider setting the `PROJECT_ID` environment
     variable in your shell.
@@ -124,11 +124,11 @@ may use it instead.
 
         # Configure your database
         config :hello, Hello.Repo,
-          username: "my_name",
-          password: "XXXXXXXX",
-          database: "hello_dev",
-          hostname: "localhost",
-          pool_size: 10
+            username: "my_name",
+            password: "XXXXXXXX",
+            database: "hello_dev",
+            hostname: "localhost",
+            pool_size: 10
 
 4.  Create the development database with the following command:
 
@@ -162,10 +162,10 @@ Phoenix app can access it.
     the `index` function as follows:
 
         def index(conn, _params) do
-          count = Hello.Repo.aggregate(Hello.User, :count, :id)
-          conn
-          |> assign(:count, count)
-          |> render("index.html")
+            count = Hello.Repo.aggregate(Hello.User, :count, :id)
+            conn
+            |> assign(:count, count)
+            |> render("index.html")
         end
 
     You can also display the value of `@count` by adding it to the template
@@ -204,7 +204,7 @@ First you will create a new database in the cloud.
     by running the following command:
 
         gcloud sql instances create hellodb --region=us-central1 \
-          --database-version=POSTGRES_9_6 --tier=db-g1-small
+            --database-version=POSTGRES_9_6 --tier=db-g1-small
 
     You may choose a region other than `us-central1` if there is one closer to
     your location.
@@ -223,7 +223,7 @@ First you will create a new database in the cloud.
     postgres user:
 
         gcloud sql users set-password postgres \
-          --instance=hellodb --prompt-for-password
+            --instance=hellodb --prompt-for-password
 
     When prompted, enter a password for the database.
 
@@ -289,11 +289,11 @@ instance, and tell Ecto to create and migrate the database.
 
         # Configure your database
         config :hello, Hello.Repo,
-          username: "postgres",
-          password: "XXXXXXXX",
-          database: "hello_prod",
-          socket_dir: "/tmp/cloudsql/[CONNECTION-NAME]",
-          pool_size: 15
+            username: "postgres",
+            password: "XXXXXXXX",
+            database: "hello_prod",
+            socket_dir: "/tmp/cloudsql/[CONNECTION-NAME]",
+            pool_size: 15
 
     Remember to replace `[CONNECTION-NAME]` with your database's connection
     name, and include the password you set for the "postgres" user.
@@ -337,12 +337,12 @@ release configuration. This tutorial assumes ERTS is included in releases.
     settings to start off:
 
         config :hello, HelloWeb.Endpoint,
-          load_from_system_env: true,
-          http: [port: {:system, "PORT"}],
-          check_origin: false,
-          server: true,
-          root: ".",
-          cache_static_manifest: "priv/static/cache_manifest.json"
+            load_from_system_env: true,
+            http: [port: {:system, "PORT"}],
+            check_origin: false,
+            server: true,
+            root: ".",
+            cache_static_manifest: "priv/static/cache_manifest.json"
 
 ### Test a release
 
@@ -471,7 +471,7 @@ need to create a Docker image with Debian and Elixir to use for builds.
 4.  Push the built release to Google Cloud Storage:
 
         gsutil cp _build/prod/rel/hello/bin/hello.run \
-          gs://${BUCKET_NAME}/hello-release
+            gs://${BUCKET_NAME}/hello-release
 
 Whenever you want to do a new build, you only need to repeat the steps to
 perform a production build as described in this subsection. You do not need
@@ -496,17 +496,17 @@ Copy the following content into it:
     mkdir -p ${HOME}
     cd ${HOME}
     RELEASE_URL=$(curl \
-      -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/release-url" \
-      -H "Metadata-Flavor: Google")
+        -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/release-url" \
+        -H "Metadata-Flavor: Google")
     gsutil cp ${RELEASE_URL} hello-release
     chmod 755 hello-release
     wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 \
-      -O cloud_sql_proxy
+        -O cloud_sql_proxy
     chmod +x cloud_sql_proxy
     mkdir /tmp/cloudsql
     PROJECT_ID=$(curl \
-      -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" \
-      -H "Metadata-Flavor: Google")
+        -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" \
+        -H "Metadata-Flavor: Google")
     ./cloud_sql_proxy -projects=${PROJECT_ID} -dir=/tmp/cloudsql &
     PORT=8080 ./hello-release start
 
