@@ -67,10 +67,12 @@ There are multiple options for creating a new MongoDB database. For example:
         }
         console.log(uri);
 
-        mongodb.MongoClient.connect(uri, (err, db) => {
+        mongodb.MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
           if (err) {
             throw err;
           }
+        
+         const db = client.db(nconf.get("mongoDatabase"))
 
           // Create a simple little server.
           http.createServer((req, res) => {
@@ -89,7 +91,7 @@ There are multiple options for creating a new MongoDB database. For example:
               address: req.connection.remoteAddress
             };
 
-            collection.insert(ip, (err) => {
+            collection.insertOne(ip, (err) => {
               if (err) {
                 throw err;
               }
