@@ -155,22 +155,20 @@ Phoenix app can access it.
 
         mix ecto.migrate
 
-1.  We'll add some very simple code to show that the application can access
-    the database, by querying for and displaying the number of user records.
+1.  Add some very simple code to show that the application can access the
+    database, by querying for the number of user records.
     Open `lib/hello_web/controllers/page_controller.ex` and rewrite
     the `index` function as follows:
 
         def index(conn, _params) do
-          value = Hello.Repo.aggregate(Hello.User, :count, :id)
+          count = Hello.Repo.aggregate(Hello.User, :count, :id)
           conn
-          |> assign(:value, value)
+          |> assign(:count, count)
           |> render("index.html")
         end
 
-1.  Display the value by inserting the following into the
-    `lib/hello_web/templates/page/index.html.eex` template:
-
-        &lt;p&gt;Number of users: &lt;%= @value %&gt;&lt;/p&gt;
+    You can also display the value of `@count` by adding it to the template
+    `lib/hello_web/templates/page/index.html.eex`.
 
 1.  Recompile and run the app:
 
