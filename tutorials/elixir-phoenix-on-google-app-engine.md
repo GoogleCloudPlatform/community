@@ -3,7 +3,7 @@ title: Run an Elixir Phoenix app on the Google App Engine Flexible Environment
 description: Learn how to deploy a Phoenix app to the Google App Engine flexible environment.
 author: dazuma
 tags: App Engine, Elixir, Phoenix
-date_published: 2018-12-19
+date_published: 2019-01-04
 ---
 
 The [Google App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/)
@@ -23,7 +23,7 @@ This tutorial requires Elixir 1.5 and Phoenix 1.4 or later. It assumes you are
 already familiar with basic Phoenix web development. It also requires the
 PostgreSQL database to be installed on your local development workstation.
 
-This tutorial was updated in Dec 2018 to cover Phoenix 1.4, Distillery 2.0, and
+This tutorial was updated in January 2019 to cover Phoenix 1.4, Distillery 2.0, and
 connecting Ecto to a Cloud SQL database.
 
 ## Before you begin
@@ -31,7 +31,7 @@ connecting Ecto to a Cloud SQL database.
 Before running this tutorial, take the following steps:
 
 1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
-    to create a new Cloud Platform project.
+    to create a new GCP project.
 
 2.  Enable billing for your project.
 
@@ -87,11 +87,11 @@ may use it instead.
 
         # Configure your database
         config :hello, Hello.Repo,
-          username: "my_name",
-          password: "XXXXXXXX",
-          database: "hello_dev",
-          hostname: "localhost",
-          pool_size: 10
+            username: "my_name",
+            password: "XXXXXXXX",
+            database: "hello_dev",
+            hostname: "localhost",
+            pool_size: 10
 
 4.  Create the development database with the following command:
 
@@ -125,10 +125,10 @@ Phoenix app can access it.
     the `index` function as follows:
 
         def index(conn, _params) do
-          count = Hello.Repo.aggregate(Hello.User, :count, :id)
-          conn
-          |> assign(:count, count)
-          |> render("index.html")
+            count = Hello.Repo.aggregate(Hello.User, :count, :id)
+            conn
+            |> assign(:count, count)
+            |> render("index.html")
         end
 
     You can also display the value of `@count` by adding it to the template
@@ -161,7 +161,7 @@ First you will create a new database in the cloud.
     by running the following command:
 
         gcloud sql instances create hellodb --region=us-central1 \
-          --database-version=POSTGRES_9_6 --tier=db-g1-small
+            --database-version=POSTGRES_9_6 --tier=db-g1-small
 
     You may choose a region other than `us-central1` if there is one closer to
     your location.
@@ -180,7 +180,7 @@ First you will create a new database in the cloud.
     postgres user:
 
         gcloud sql users set-password postgres \
-          --instance=hellodb --prompt-for-password
+            --instance=hellodb --prompt-for-password
 
     When prompted, enter a password for the database.
 
@@ -316,12 +316,12 @@ release configuration. The Elixir Runtime assumes ERTS is included in releases.
     settings to start off:
 
         config :hello, Hello.Endpoint,
-          load_from_system_env: true,
-          http: [port: {:system, "PORT"}],
-          check_origin: false,
-          server: true,
-          root: ".",
-          cache_static_manifest: "priv/static/cache_manifest.json"
+            load_from_system_env: true,
+            http: [port: {:system, "PORT"}],
+            check_origin: false,
+            server: true,
+            root: ".",
+            cache_static_manifest: "priv/static/cache_manifest.json"
 
 ## Deploy your application
 
@@ -333,9 +333,9 @@ Now you will deploy your new app to App Engine.
         env: flex
         runtime: gs://elixir-runtime/elixir.yaml
         runtime_config:
-          release_app: hello
+            release_app: hello
         beta_settings:
-          cloud_sql_instances: [CONNECTION-NAME]
+            cloud_sql_instances: [CONNECTION-NAME]
 
     This configuration selects the Elixir Runtime, an open source App Engine
     runtime that knows how to build Elixir and Phoenix applications. You can
