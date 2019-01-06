@@ -76,7 +76,7 @@ export CLOUD_ZONE=us-central1-a
 ```
 gcloud beta container --project $GCLOUD_PROJECT clusters create "monitoring-demo" \
 --zone $CLOUD_ZONE --username "admin" \
---cluster-version "1.10.7-gke.1" --machine-type "n1-highmem-2" \
+--cluster-version "1.10" --machine-type "n1-highmem-2" \
 --image-type "COS" --disk-type "pd-standard" --disk-size "100" \
 --scopes "cloud-platform","https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" \
 --num-nodes "2" --enable-cloud-logging \
@@ -96,25 +96,26 @@ gcloud pubsub subscriptions create metric-pull --topic metricdata
 
 You can enable Google login to the deployed Grafana dashboard. To do this takes a couple set up steps. Google login requires the site to be hosted at a valid domain name, with HTTPS enabled. The fastest way to do this for a tutorial is to use a web proxy hosted on App Engine. In production you would instead set up a [load balancer](https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer) with custom domain and TLS.
 
-In the console, choose **APIs & Services**
+In the console, choose **APIs & Services -> Credentials -> OAuth consent screen**
+
 **set values on consent screen**
 
 *  Name: "iot-monitor"
-*  Authorized domain:  <project-id>.appspot.com
+*  Authorized domain:  [project-id].appspot.com
 
 **Create OAuth client ID **
 
 *  Create a credential of type 'web'
 *  Name it grafana-login
 *  Add Authorized redirect URI
-    *   https://<project-id>.appspot.com/login/google
+    *   https://[project-id].appspot.com/login/google
 
 Edit the Oauth values in `iotmonitor-chart/values.yaml` with the client id settings.
 
 In `iotmonitor-chart/values.yaml`, update the server root_url for Grafana to:
 
 ```
-https://<project-id>.appspot.com/
+https://[project-id].appspot.com/
 ```
 
 ### Set up Stackdriver datasource (optional)
@@ -125,13 +126,26 @@ To automate the setup of Stackdriver, you need to create a service account. Foll
 
 Add the values from the downloaded JSON keyfile to the `clientEmail` and `privateKey` parts of `iotmonitor-chart/values.yaml`
 
+You will also need to change some additional values in the chart's `values.yaml` for your project:
 
-Install [helm](https://github.com/kubernetes/helm) in your Cloud Shell
+```
+datasources:
+    datasource.yaml:
+        name: Stackdriver
+            jsonData:
+                defaultProject: [project-id]
+
+grafana.ini:
+    server:
+        root_url: https://[project-id].appspot.com
+```
+
+
+Install [helm](https://github.com/kubernetes/helm) in your Cloud Shell. The instructions below assume you are starting from this tutorials root level: `$HOME/community/tutorials/cloud-iot-prometheus-monitoring`
 
 ```
 wget https://storage.googleapis.com/kubernetes-helm/helm-v2.12.0-linux-amd64.tar.gz
 tar -xzvf helm-v2.12.0-linux-amd64.tar.gz
-TODO mv to bin
 mv linux-amd64/helm $HOME/bin/
 
 
@@ -181,15 +195,6 @@ gcloud app deploy
 
 Choose the same region as your cluster
 
-Deploy the device metric simulator
-
-This is a data simulator that generates metrics which Prometheus will ingest and allows us to explore the monitoring tools we have installed.
-
-```
-cd ../simulator/kubernetes
-kubectl create -f simulator.yaml
-```
-
 ## Introduction to the simulated data
 
 This tutorial focuses more on the use of the monitoring tools of Prometheus and Grafana. To facilitate this exploration, the above steps have also deployed a device simulator. This simulator does not exercise the full architecture, but instead exposes simulated directly to be scraped by Prometheus.  The simulated data is from a set of imagined devices installed in different cities across North America.  These devices have a temperature sensor, a light sensor, and a panel access door that has a sensor. These basic metrics are then used in queries and dashboards to illustrate the use of Prometheus and Grafana.
@@ -202,12 +207,14 @@ A Grafana instance was deployed as part of this stack. By default it has been co
 Earlier you should have retrieved the admin password from the Kubernetes secret, you can reach the Grafana login screen by going to:
 
 ```
-https://<projectid>.appspot.com/
+https://[projectid].appspot.com/
 ```
 
 Log in as admin.
 
-Grafana has already been configured with datasource, but you need to import the sample dashboards.
+Grafana has already been configured with datasource, but you need to import the sample dashboards. 
+
+_Note_: If you are working in cloud shell environment, you may find it easier to make an additional clone (or download the zip file) of the repo to your local machine for upload.
 
 ![alt_text](images/iot-monitoring-tutorial0.png )
 
@@ -243,7 +250,7 @@ A complete introduction to Prometheus Query Language or PromQL is beyond the sco
 
 Proceed to the dashboard list view at:
 
-https://<projectid>.appspot.com/dashboards 
+https://[projectid].appspot.com/dashboards 
 
 choose the "Device Detail View"
 
@@ -480,7 +487,7 @@ It will look like:
 ```
 
 ```
-https://us-central1-<project-id>.cloudfunctions.net/handle_alert
+https://us-central1-[project-id].cloudfunctions.net/handle_alert
 ```
 
 You need to go into the [config maps section](https://console.cloud.google.com/kubernetes/configmap) of the GKE console and edit the _yaml_ for `iotmonitor-prometheus-alertmanager` config, finding the URL:
