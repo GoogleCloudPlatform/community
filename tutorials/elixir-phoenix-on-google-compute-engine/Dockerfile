@@ -1,4 +1,4 @@
-# Copyright 2017 Google Inc.
+# Copyright 2017 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@
 # packaging the release must be done in the Docker container.
 
 
-# The elixir:slim base image is currently based on Debian 8 "Jessie" and can
-# be used to build OTP releases with a Jessie-compatible ERTS.
-FROM elixir:slim
+# The elixir base image is currently based on Debian 9 "Stretch" and can
+# be used to build OTP releases with a Stretch-compatible ERTS.
+FROM elixir:latest
 
 # Set the build directory. The `mix release` command will be run from here.
 # When running the container, you should mount the host project directory at
