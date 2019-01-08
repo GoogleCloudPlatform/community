@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# github ianmaddox/gcs-cf-tokenizer
 # Utility script to demonstrate deployment to a local docker server
 # This script mounts ../config and makes it the default config location for the app.
 # With this functionality, you can add a config/local.json file and override any settings.

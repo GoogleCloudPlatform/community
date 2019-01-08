@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# github ianmaddox/gcs-cf-tokenizer
 # Utility script to streamline CF deployment
 # See ../README.md for license and more info
 

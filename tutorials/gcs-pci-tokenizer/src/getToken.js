@@ -1,5 +1,4 @@
 /**
- * github ianmaddox/gcs-cf-tokenizer
  * Utility script to generate OAuth 2.0 authentication tokens
  * See ../README.md for license and more info
  *

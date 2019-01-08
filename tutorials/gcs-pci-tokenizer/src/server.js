@@ -1,5 +1,4 @@
 /**
-* github ianmaddox/gcs-cf-tokenizer
 * Express server wrapper script used for Docker style running.
 * This file is not used with Cloud Functions.
 *

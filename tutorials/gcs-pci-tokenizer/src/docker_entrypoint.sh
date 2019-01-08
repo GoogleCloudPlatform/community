@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# github ianmaddox/gcs-cf-tokenizer
 # Docker container bootstrapping script. This script is called automatically when
 # the docker container launches.
 # This file is not used with Cloud Functions.

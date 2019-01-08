@@ -1,3 +1,10 @@
+---
+title: Credit Card Tokenization Service for Google Cloud
+description: Learn how to build a PCI DSS compliant credit card tokenization service
+author: ianmaddox
+tags: serverless, cloud functions, javascript, iam, PCI, DSS, credit, card
+date_published: 2019-01-08
+---
 # Credit Card Tokenization Service for Google Cloud
 A PCI DSS compliant credit card tokenization service built for Google Cloud. Capable of running in both Docker and Cloud Functions.
 
@@ -12,7 +19,7 @@ Before the code can bed deployed, some customizations must be made. See the conf
 Run the following command to check out the project code and move into your working directory:
 
 ```
-git clone https://github.com/ianmaddox/gcs-cf-tokenizer
+git clone https://github.com/GoogleCloudPlatform/community/tutorials/gcs-cf-tokenizer
 cd gcs-cf-tokenizer
 ```
 
@@ -25,7 +32,7 @@ The exported function names are "tokenize" and "detokenize". To deploy through t
 Run the following command to check out the project code and move into the working directory:
 
 ```
-git clone https://github.com/ianmaddox/gcs-cf-tokenizer
+git clone https://github.com/GoogleCloudPlatform/community/tutorials/gcs-cf-tokenizer
 cd gcs-cf-tokenizer
 ```
 

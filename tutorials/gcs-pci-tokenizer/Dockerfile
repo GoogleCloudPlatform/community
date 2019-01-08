@@ -58,7 +58,7 @@ EXPOSE 80
 RUN mkdir /tokenizer
 
 # Create a stub to pull the code down later
-RUN git clone --no-checkout https://github.com/ianmaddox/gcs-cf-tokenizer /tokenizer
+RUN git clone --no-checkout https://github.com/GoogleCloudPlatform/community/tutorials/gcs-cf-tokenizer /tokenizer
 
 # Create a bootstrapped docker_entrypoint.sh file from the local copy next to this Dockerfile
 # This file will be overwritten by the latest from git on first run
