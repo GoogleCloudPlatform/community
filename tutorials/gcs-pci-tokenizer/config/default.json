@@ -1,0 +1,21 @@
+// This config file is parsed with Node-config
+// https://www.npmjs.com/package/config
+// See above for more information on comments, environment-specific configs, and more.
+{
+  "general": {
+    "project_id":        ""
+  },
+  "kms": {
+    "key_ring_location": "global",
+    "key_ring_id":       "tokenization-service",
+    "crypto_key_id":     "tokenization-v1"
+  },
+  "datastore": {
+    "namespace":         "tokenizer",
+    "kind":              "cc"
+  },
+  "logging": {
+    "debug":             false,
+    "version":           true
+  }
+}
