@@ -1,6 +1,6 @@
 ---
 title: Google COS Simple File Integrity Monitoring container
-description: Learn how to monitor file integrity on a Kubernetes node and all its pods
+description: Learn how to monitor file integrity on a Kubernetes node and all its pods.
 author: ianmaddox
 tags: security, fim, pci, dss, file integrity, kubernetes, pod, node
 date_published: 2019-01-08
