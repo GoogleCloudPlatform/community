@@ -1,3 +1,10 @@
+---
+title: Google COS ClamAV container
+description: Learn how to scan Kubernetes pods and nodes for viruses from a dedicated AV pod
+author: ianmaddox
+tags: kubernetes, cos, security, antivirus, av, clam, pci, dss, virus
+date_published: 2019-01-08
+---
 Google COS ClamAV container
 ======================
 
