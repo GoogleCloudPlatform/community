@@ -1,3 +1,10 @@
+---
+title: Google Cloud Functions Access Control
+description: Learn how to add authentication and authorization to Google Cloud Functions using Oauth tokens.
+author: ianmaddox
+tags: serverless, cloud functions, javascript, iam, authn, authz, authorization, authentication
+date_published: 2019-01-08
+---
 # Google Cloud Functions Access Control
 This code demonstrates using Oauth 2.0 authorization tokens in order to control access to a Google Cloud Function. It takes an auth token as a POST parameter and validates that against an IAM controlled GCS bucket before allowing access to the rest of the function. This approach allows service accounts and other authenticated users access to a public HTTPS GCF endpoint without relying on the permissions granted to the default service account attached to all of the Cloud Functions within the GCP project.
 
@@ -11,8 +18,8 @@ The exported function name is "example_auth". To deploy through the web UI, open
 Run the following command to check out the project code and move into the working directory:
 
 ```
-git clone https://github.com/ianmaddox/gcs-cf-auth.git
-cd gcs-cf-auth
+git clone https://github.com/GoogleCloudPlatform.git
+cd community/tutorials/gcs-cf-auth
 ```
 
 This folder contains the file index.js which is the source for the cloud function we will be creating. It also contains `cf_auth.js` which contains the auth logic and package.json which tells Cloud Functions which packages this app needs to run.
@@ -63,7 +70,8 @@ Executing the above commands should generate an auth token then use it to call t
 # Integration
 You can integrate CF auth into your application by cloning cf_auth.js and modifying `authenticateAndBuildServices()` to create auth objects for each service to which you wish to enable access. In this manner, you can use the supplied token to connect to any compatible service you've authorized for the service account.
 
-See https://github.com/ianmaddox/gcs-pci-tokenizer for an example of CF auth in action.
+See https://github.com/GoogleCloudPlatform/community/tutorials/gcs-pci-tokenizer
+for an example of CF auth in action.
 
 # Apache 2.0 License
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)

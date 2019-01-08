@@ -1,5 +1,5 @@
 /**
- * github ianmaddox/gcs-cf-tokenizer
+ * github GoogleCloudPlatform/community/tutorials/gcs-cf-auth
  * Utility script to generate OAuth 2.0 authentication tokens
  * See ../README.md for license and more info
  *
