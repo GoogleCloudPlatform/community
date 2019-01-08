@@ -1,0 +1,11 @@
+{
+  "name": "gcs-cf-tokenizer",
+  "version": "0.0.1",
+  "dependencies": {
+    "@google-cloud/storage": "^2.0.3",
+    "config": "^2.0.1",
+    "google-auth-library": "^1.6.1",
+    "googleapis": "^33.0.0",
+    "validator": "^10.8.0"
+  }
+}

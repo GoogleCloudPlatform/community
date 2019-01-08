@@ -1,0 +1,16 @@
+// This config file is parsed with Node-config
+// https://www.npmjs.com/package/config
+// See above for more information on comments, environment-specific configs, and more.
+{
+  "general": {
+    "project_id":        "" // optional
+  },
+  "auth": {
+    "test_bucket": "YOUR_BUCKET_NAME",
+    "test_permissions": ["storage.objects.list", "storage.objects.get"]
+  },
+  "logging": {
+    "debug":             true,
+    "version":           true
+  }
+}
