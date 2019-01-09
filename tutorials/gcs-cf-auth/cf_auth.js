@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-'use strict';
+"use strict";
 /* Required libraries and supporting vars */
-process.env.NODE_CONFIG_DIR = process.env.NODE_CONFIG_DIR || __dirname + '/config/';
-const config = require('config');
-const {google} = require('googleapis');
-const {Storage} = require('@google-cloud/storage');
-const validator = require('validator');
+process.env.NODE_CONFIG_DIR = process.env.NODE_CONFIG_DIR || __dirname + "/config/";
+const config = require("config");
+const {google} = require("googleapis");
+const {Storage} = require("@google-cloud/storage");
+const validator = require("validator");
 const authServices = [];
 
 /* Project variables */
@@ -41,11 +41,11 @@ async function authenticateAndBuildServices(authToken) {
   try {
 
     if(!authToken || !validator.isAscii(authToken)) {
-      debug('Invalid token provided to' + __filename);
+      debug("Invalid token provided to" + __filename);
       return false;
     }
 
-    debug(`authServices with token '${authToken}'`);
+    debug(`authServices with token "${authToken}"`);
     if(authServices[authToken] !== undefined) {
       debug("Using cached auth objects");
       return authServices[authToken];
@@ -57,9 +57,9 @@ async function authenticateAndBuildServices(authToken) {
     debug("token info:");
     debug(tokenInfo);
     let now = Date.now();
-    debug('exp:', tokenInfo.expiry_date, 'now:', Date.now(), 'remainder:', (tokenInfo.expiry_date - Date.now()));
+    debug("exp:", tokenInfo.expiry_date, "now:", Date.now(), "remainder:", (tokenInfo.expiry_date - Date.now()));
     if(!tokenInfo.expiry_date || tokenInfo.expiry_date < now) {
-      throw new Error('Token did not validate: ' + authToken);
+      throw new Error("Token did not validate: " + authToken);
     }
 
     // Create a cache of auth objects per token.
@@ -100,7 +100,7 @@ async function authenticateAndBuildServices(authToken) {
   catch(err) {
     debug("GCS auth failure: " + err.message);
     return false;
-  };
+  }
 
   // // Example authentication against Datastore
   // oauth2client.setCredentials({token:authToken, res: null});
@@ -124,7 +124,9 @@ async function authenticateAndBuildServices(authToken) {
  * Helpful debug function that checks for the var DEBUG_LOGGING == true before writing to console.log()
  */
 function debug(...args) {
-  if(DEBUG_LOGGING) console.log(...args);
+  if(DEBUG_LOGGING) {
+    console.log(...args);
+  }
 }
 
 exports.authenticateAndBuildServices = authenticateAndBuildServices;

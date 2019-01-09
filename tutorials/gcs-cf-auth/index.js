@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-'use strict';
+"use strict";
 /* Required libraries and supporting vars */
-process.env.NODE_CONFIG_DIR = process.env.NODE_CONFIG_DIR || __dirname + '/config/';
-const config = require('config');
-const cfAuth = require('./cf_auth.js');
-const validator = require('validator');
+process.env.NODE_CONFIG_DIR = process.env.NODE_CONFIG_DIR || __dirname + "/config/";
+const config = require("config");
+const cfAuth = require("./cf_auth.js");
+const validator = require("validator");
 
 /* Project variables */
 // See config/default.json for more information
@@ -27,7 +27,7 @@ const DEBUG_LOGGING = config.get("logging.debug");
 const VERSION_LOGGING = config.get("logging.version");
 
 /* Helpful init stuff */
-const appVersion = require('fs').statSync(__filename).mtimeMs + " env:" + process.env.NODE_ENV;
+const appVersion = require("fs").statSync(__filename).mtimeMs + " env:" + process.env.NODE_ENV;
 // This log line is helpful to keep track of which version of the CF is running.
 // The timestamp of index.js is logged at initial script launch as well as each
 // individual execution of tokenize() and detokenize()
@@ -38,7 +38,8 @@ logVersion(`CF LAUNCHED v.${appVersion}`);
  * @param {object} req - CF request object
  * @param {object} res - CF response object
  */
-exports.example_auth = async(req, res) => {
+/* jshint ignore:start */
+exports.example_auth = async (req, res) => {
   logVersion(`CF triggered at v.${appVersion}`);
   var authToken = validator.escape(req.body.auth_token);
   var projectId = req.body.project_id || projectId || process.env.GCP_PROJECT;
@@ -52,7 +53,7 @@ exports.example_auth = async(req, res) => {
 
     debug("Authenticating provided token.");
 
-    var auths = await cfAuth.authenticateAndBuildServices(authToken);
+    var auths = await cfAuth.authenticateAndBuildServices(authToken); // jshint ignore:line
     if(auths === false) {
       return res.status(401).send("[-] Authentication failure");
     }
@@ -66,7 +67,7 @@ exports.example_auth = async(req, res) => {
     return res.status(500).send(`Error: ${err.message}`);
   }
 };
-
+/* jshint ignore:end */
 
 /**
  * Helpful debug function that checks for the var DEBUG_LOGGING == true before writing to console.log()
@@ -74,7 +75,6 @@ exports.example_auth = async(req, res) => {
 function debug(...args) {
   if(DEBUG_LOGGING) console.log(...args);
 }
-
 
 /**
  * A handy utility function that can write the timestamp of index.js when the CF
