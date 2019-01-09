@@ -14,21 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-"use strict";
+'use strict';
 /* Required libraries and supporting vars */
-process.env.NODE_CONFIG_DIR = process.env.NODE_CONFIG_DIR || __dirname + "/config/";
-const config = require("config");
-const {google} = require("googleapis");
-const {Storage} = require("@google-cloud/storage");
-const validator = require("validator");
+process.env.NODE_CONFIG_DIR = process.env.NODE_CONFIG_DIR || __dirname + '/config/';
+const config = require('config');
+const {google} = require('googleapis');
+const {Storage} = require('@google-cloud/storage');
+const validator = require('validator');
 const authServices = [];
 
 /* Project variables */
 // See config/default.json for more information
-var PROJECT_ID = config.get("general.project_id");
-const AUTH_BUCKET = config.get("auth.test_bucket");
-const DEBUG_LOGGING = config.get("logging.debug");
-const TEST_PERMISSIONS = config.get("auth.test_permissions");
+var PROJECT_ID = config.get('general.project_id');
+const AUTH_BUCKET = config.get('auth.test_bucket');
+const DEBUG_LOGGING = config.get('logging.debug');
+const TEST_PERMISSIONS = config.get('auth.test_permissions');
 
 /**
  * Authenticate against the GCS API. If we already have clients  instantiated for
@@ -41,25 +41,25 @@ async function authenticateAndBuildServices(authToken) {
   try {
 
     if(!authToken || !validator.isAscii(authToken)) {
-      debug("Invalid token provided to" + __filename);
+      debug('Invalid token provided to' + __filename);
       return false;
     }
 
     debug(`authServices with token "${authToken}"`);
     if(authServices[authToken] !== undefined) {
-      debug("Using cached auth objects");
+      debug('Using cached auth objects');
       return authServices[authToken];
     }
-    debug("Generating new auth object(s)");
+    debug('Generating new auth object(s)');
     const oauth2client = new google.auth.OAuth2();
     const tokenInfo = await oauth2client.getTokenInfo(authToken);
 
-    debug("token info:");
+    debug('token info:');
     debug(tokenInfo);
     let now = Date.now();
-    debug("exp:", tokenInfo.expiry_date, "now:", Date.now(), "remainder:", (tokenInfo.expiry_date - Date.now()));
+    debug('exp:', tokenInfo.expiry_date, 'now:', Date.now(), 'remainder:', (tokenInfo.expiry_date - Date.now()));
     if(!tokenInfo.expiry_date || tokenInfo.expiry_date < now) {
-      throw new Error("Token did not validate: " + authToken);
+      throw new Error('Token did not validate: ' + authToken);
     }
 
     // Create a cache of auth objects per token.
@@ -88,17 +88,17 @@ async function authenticateAndBuildServices(authToken) {
       }
     });
     if(testfail === true) {
-      debug("Authentication failure");
+      debug('Authentication failure');
       return false;
     }
 
-    debug("GCS auth success");
+    debug('GCS auth success');
 
     // Authenticate against other services or perform other post-auth actions here
     return authServices[authToken];
   }
   catch(err) {
-    debug("GCS auth failure: " + err.message);
+    debug('GCS auth failure: ' + err.message);
     return false;
   }
 

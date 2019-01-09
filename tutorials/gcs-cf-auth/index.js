@@ -14,20 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-"use strict";
+'use strict';
 /* Required libraries and supporting vars */
-process.env.NODE_CONFIG_DIR = process.env.NODE_CONFIG_DIR || __dirname + "/config/";
-const config = require("config");
-const cfAuth = require("./cf_auth.js");
-const validator = require("validator");
+process.env.NODE_CONFIG_DIR = process.env.NODE_CONFIG_DIR || __dirname + '/config/';
+const config = require('config');
+const cfAuth = require('./cf_auth.js');
+const validator = require('validator');
 
 /* Project variables */
 // See config/default.json for more information
-const DEBUG_LOGGING = config.get("logging.debug");
-const VERSION_LOGGING = config.get("logging.version");
+const DEBUG_LOGGING = config.get('logging.debug');
+const VERSION_LOGGING = config.get('logging.version');
 
 /* Helpful init stuff */
-const appVersion = require("fs").statSync(__filename).mtimeMs + " env:" + process.env.NODE_ENV;
+const appVersion = require('fs').statSync(__filename).mtimeMs + ' env:' + process.env.NODE_ENV;
 // This log line is helpful to keep track of which version of the CF is running.
 // The timestamp of index.js is logged at initial script launch as well as each
 // individual execution of tokenize() and detokenize()
@@ -45,23 +45,23 @@ exports.example_auth = async (req, res) => {
   var projectId = req.body.project_id || projectId || process.env.GCP_PROJECT;
 
   if(!authToken || !validator.isAscii(authToken)) {
-    return res.status(401).send("Error: A valid ASCII OAuth acess token must be provided in the param 'auth_token'");
+    return res.status(401).send('Error: A valid ASCII OAuth acess token must be provided in the param \'auth_token\'');
   }
 
   try {
     // Perform any pre-auth checks such as input validation here
 
-    debug("Authenticating provided token.");
+    debug('Authenticating provided token.');
 
     var auths = await cfAuth.authenticateAndBuildServices(authToken); // jshint ignore:line
     if(auths === false) {
-      return res.status(401).send("[-] Authentication failure");
+      return res.status(401).send('[-] Authentication failure');
     }
 
     // Perform actions with the auth object we just created here
 
-    debug("Auth complete.");
-    return res.status(200).send("[+] Authentication success");
+    debug('Auth complete.');
+    return res.status(200).send('[+] Authentication success');
   }
   catch(err) {
     return res.status(500).send(`Error: ${err.message}`);
