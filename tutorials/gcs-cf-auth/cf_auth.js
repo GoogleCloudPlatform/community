@@ -37,6 +37,7 @@ const TEST_PERMISSIONS = config.get('auth.test_permissions');
  * @param {string} authToken - The OAuth2.0 authentication token given to the CF
  * @return Array [ds:{Datastore}, kms:{KMS}] - A cached or newly created DS and KMS object pair
  */
+/* jshint ignore:start */
 async function authenticateAndBuildServices(authToken) {
   try {
 
@@ -118,7 +119,7 @@ async function authenticateAndBuildServices(authToken) {
   // };
   // authServices[authToken].kms = google.cloudkms(kmsOptions);
 }
-
+/* jshint ignore:end */
 
 /**
  * Helpful debug function that checks for the var DEBUG_LOGGING == true before writing to console.log()
