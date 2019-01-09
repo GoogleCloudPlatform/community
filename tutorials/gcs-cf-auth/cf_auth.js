@@ -42,7 +42,8 @@ const TEST_PERMISSIONS = config.get('auth.test_permissions');
 async function authenticateAndBuildServices (authToken) {
   try {
     if (!authToken || !validator.isAscii(authToken)) {
-      debug('Invalid token provided to' + __filename);
+      let file = __filename;
+      debug('Invalid token provided to' + file);
       return false;
     }
 

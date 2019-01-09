@@ -42,7 +42,8 @@ logVersion(`CF LAUNCHED v.${appVersion}`);
 exports.example_auth = async (req, res) => {
   logVersion(`CF triggered at v.${appVersion}`);
   var authToken = validator.escape(req.body.auth_token);
-  var projectId = req.body.project_id || process.env.GCP_PROJECT;
+  // Uncomment if useful for your application
+  //  var projectId = req.body.project_id || process.env.GCP_PROJECT;
 
   if (!authToken || !validator.isAscii(authToken)) {
     return res.status(401).send('Error: A valid ASCII OAuth acess token must be provided in the param \'auth_token\'');
