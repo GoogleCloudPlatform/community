@@ -16,31 +16,31 @@ limitations under the License.
 
 'use strict';
 /* Required libraries and supporting vars */
-process.env.NODE_CONFIG_DIR = process.env.NODE_CONFIG_DIR || __dirname + '/config/';
+const path = require('path');
+process.env.NODE_CONFIG_DIR = process.env.NODE_CONFIG_DIR || path.join(__dirname, 'config');
 const config = require('config');
-const {google} = require('googleapis');
+const { google } = require('googleapis');
 const crypto = require('crypto');
 const Datastore = require('@google-cloud/datastore');
 const authServices = [];
 
 /* Project variables */
 // See config/default.json for more information
-var projectId = config.get("general.project_id");
-const DEBUG_LOGGING = config.get("logging.debug");
-const VERSION_LOGGING = config.get("logging.version");
-const keyRingLocation = config.get("kms.key_ring_location");
-const keyRingId = config.get("kms.key_ring_id");
-const cryptoKeyId = config.get("kms.crypto_key_id");
-const dsNamespace = config.get("datastore.namespace");
-const kind = config.get("datastore.kind");
+var projectId = config.get('general.project_id');
+const DEBUG_LOGGING = config.get('logging.debug');
+const VERSION_LOGGING = config.get('logging.version');
+const keyRingLocation = config.get('kms.key_ring_location');
+const keyRingId = config.get('kms.key_ring_id');
+const cryptoKeyId = config.get('kms.crypto_key_id');
+const dsNamespace = config.get('datastore.namespace');
+const kind = config.get('datastore.kind');
 
 /* Helpful init stuff */
-const appVersion = require('fs').statSync(__filename).mtimeMs + " env:" + process.env.NODE_ENV;
+const appVersion = require('fs').statSync(__filename).mtimeMs + ' env:' + process.env.NODE_ENV;
 // This log line is helpful to keep track of which version of the CF is running.
 // The timestamp of index.js is logged at initial script launch as well as each
 // individual execution of tokenize() and detokenize()
 logVersion(`CF LAUNCHED v.${appVersion}`);
-
 
 /**
  * Accepts the following params as an HTTP POST:
@@ -65,9 +65,9 @@ exports.tokenize = async (req, res) => {
   var yyyy = req.body.yyyy;
   var userid = req.body.user_id;
   var authToken = req.body.auth_token;
-  var projectId = req.body.project_id || projectId || process.env.GCP_PROJECT;
+  projectId = req.body.project_id || projectId || process.env.GCP_PROJECT;
 
-  if(!authToken) {
+  if (!authToken) {
     return res.status(401).send("An OAuth acess token must be provided in the param 'auth_token'");
   }
 
@@ -75,11 +75,11 @@ exports.tokenize = async (req, res) => {
     return res.status(500).send('Invalid input for CC');
   }
 
-  if(!mm || mm < 0 || mm > 12) {
+  if (!mm || mm < 0 || mm > 12) {
     return res.status(500).send('Invalid input for mm');
   }
 
-  if(!yyyy || yyyy < 2010 || yyyy > 3000) {
+  if (!yyyy || yyyy < 2010 || yyyy > 3000) {
     return res.status(500).send('Invalid input for yyyy');
   }
   try {
@@ -102,12 +102,12 @@ exports.tokenize = async (req, res) => {
         return;
       }
 
-      const buf = new Buffer.from(response.data.ciphertext);
+      const buf = Buffer.from(response.data.ciphertext);
       var cipher = buf.toString();
       // Create the CC token by hashing the encrypted CC along with some other seed data
-      var authToken = crypto.createHash('sha256').update(userid + "::" + yyyy + "::" + mm + "::" + cipher).digest("hex");
+      var authToken = crypto.createHash('sha256').update(userid + '::' + yyyy + '::' + mm + '::' + cipher).digest('hex');
       const entity = {
-        key: {kind: kind, namespace: dsNamespace},
+        key: { kind: kind, namespace: dsNamespace },
         data: {
           userid: userid,
           token: authToken,
@@ -128,13 +128,11 @@ exports.tokenize = async (req, res) => {
           return false;
         });
     });
-  }
-  catch(err) {
+  } catch (err) {
     res.status(500).send(`Error during tokenization: ${err.message}. Check for invalid auth_token`);
     return false;
   }
-}
-
+};
 
 /**
  * Accepts the following params as an HTTP POST:
@@ -152,9 +150,9 @@ exports.detokenize = async (req, res) => {
   logVersion(`detokenizing ver ${appVersion}`);
   var ccToken = req.body.cc_token;
   var authToken = req.body.auth_token;
-  var projectId = req.body.project_id || projectId || process.env.GCP_PROJECT;
+  projectId = req.body.project_id || projectId || process.env.GCP_PROJECT;
 
-  if(!authToken) {
+  if (!authToken) {
     res.status(401).send("An OAuth acess token must be provided in the param 'auth_token'");
     return false;
   }
@@ -172,17 +170,15 @@ exports.detokenize = async (req, res) => {
       .createQuery(dsNamespace, kind)
       .filter('token', '=', ccToken);
 
-      datastore.runQuery(query)
+    datastore.runQuery(query)
       .then((rs) => {
         var row = rs[0][0];
 
-        if(!row || row === undefined) {
-          res.status(404).send("Record not found");
+        if (!row || row === undefined) {
+          res.status(404).send('Record not found');
           return false;
         }
         var cipher = row.cipher;
-        var buff = new Buffer.from(cipher);
-        let cipherB64 = buff.toString('base64');
         var payload = {
           cc: '',
           mm: row.mm,
@@ -190,35 +186,33 @@ exports.detokenize = async (req, res) => {
           userid: row.userid
         };
 
-      const request = {
-        name: `projects/${projectId}/locations/${keyRingLocation}/keyRings/${keyRingId}/cryptoKeys/${cryptoKeyId}`,
-        resource: {
-          ciphertext: cipher
-        }
-      };
-      cloudkms.projects.locations.keyRings.cryptoKeys.decrypt(request, (err, response) => {
-        if (err) {
-          console.log(err);
-          res.status(401).send(err.message);
-        }
+        const request = {
+          name: `projects/${projectId}/locations/${keyRingLocation}/keyRings/${keyRingId}/cryptoKeys/${cryptoKeyId}`,
+          resource: {
+            ciphertext: cipher
+          }
+        };
+        cloudkms.projects.locations.keyRings.cryptoKeys.decrypt(request, (err, response) => {
+          if (err) {
+            console.log(err);
+            res.status(401).send(err.message);
+          }
 
-        payload.cc = response.data.plaintext;
-        res.status(200).send(payload);
-        return true;
+          payload.cc = response.data.plaintext;
+          res.status(200).send(payload);
+          return true;
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).send(`Datastore query error: ${err.message}`);
+        return false;
       });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send(`Datastore query error: ${err.message}`);
-      return false;
-    })
-  }
-  catch(e) {
+  } catch (err) {
     res.status(500).send(`Detokenization error: ${err.message}`);
     return false;
   }
 };
-
 
 /**
  * Authenticate against the Datastore and KMS APIs. If we already have clients
@@ -227,34 +221,34 @@ exports.detokenize = async (req, res) => {
  * @param {string} authToken - The OAuth2.0 authentication token given to the CF
  * @return Array [ds:{Datastore}, kms:{KMS}] - A cached or newly created DS and KMS object pair
  */
-async function authenticateAndBuildServices(authToken) {
+async function authenticateAndBuildServices (authToken) {
   debug(`authServices with token '${authToken}'`);
-  if(authServices[authToken] !== undefined) {
-    debug("Using cached KMS/DS");
+  if (authServices[authToken] !== undefined) {
+    debug('Using cached KMS/DS');
     return authServices[authToken];
   }
-  debug("Generating new KMS/DS");
+  debug('Generating new KMS/DS');
   const oauth2client = new google.auth.OAuth2();
   const tokenInfo = await oauth2client.getTokenInfo(authToken);
 
-  debug("token info:");
+  debug('token info:');
   debug(tokenInfo);
   let now = Date.now();
   debug('exp:', tokenInfo.expiry_date, 'now:', Date.now(), 'remainder:', (tokenInfo.expiry_date - Date.now()));
-  if(!tokenInfo.expiry_date || tokenInfo.expiry_date < now) {
+  if (!tokenInfo.expiry_date || tokenInfo.expiry_date < now) {
     throw new Error('Token did not validate: ' + authToken);
   }
 
   authServices[authToken] = {};
 
-  oauth2client.setCredentials({token:authToken, res: null});
+  oauth2client.setCredentials({ token: authToken, res: null });
   let dsOptions = {
     access_token: oauth2client,
     projectId: projectId
   };
   authServices[authToken].ds = Datastore(dsOptions);
 
-  oauth2client.setCredentials({access_token:authToken, res: null});
+  oauth2client.setCredentials({ access_token: authToken, res: null });
   let kmsOptions = {
     auth: oauth2client,
     version: 'v1'
@@ -263,14 +257,12 @@ async function authenticateAndBuildServices(authToken) {
   return authServices[authToken];
 }
 
-
 /**
  * Helpful debug function that checks for the var DEBUG_LOGGING == true before writing to console.log()
  */
-function debug(...args) {
-  if(DEBUG_LOGGING) console.log(...args);
+function debug (...args) {
+  if (DEBUG_LOGGING) console.log(...args);
 }
-
 
 /**
  * A handy utility function that can write the timestamp of index.js when the CF
@@ -279,6 +271,6 @@ function debug(...args) {
  * It can take up to 45 seconds for the new CF to start getting traffic even after
  * a new CF deploy is marked OK.
  */
-function logVersion(...args) {
-  if(VERSION_LOGGING) console.log(...args);
+function logVersion (...args) {
+  if (VERSION_LOGGING) console.log(...args);
 }
