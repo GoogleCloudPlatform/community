@@ -16,7 +16,8 @@ limitations under the License.
 
 'use strict';
 /* Required libraries and supporting vars */
-process.env.NODE_CONFIG_DIR = process.env.NODE_CONFIG_DIR || __dirname + '/config/';
+const path = require('path');
+process.env.NODE_CONFIG_DIR = process.env.NODE_CONFIG_DIR || path.join(__dirname, 'config');
 const config = require('config');
 const cfAuth = require('./cf_auth.js');
 const validator = require('validator');
@@ -33,7 +34,6 @@ const appVersion = require('fs').statSync(__filename).mtimeMs + ' env:' + proces
 // individual execution of tokenize() and detokenize()
 logVersion(`CF LAUNCHED v.${appVersion}`);
 
-
 /**
  * @param {object} req - CF request object
  * @param {object} res - CF response object
@@ -42,9 +42,9 @@ logVersion(`CF LAUNCHED v.${appVersion}`);
 exports.example_auth = async (req, res) => {
   logVersion(`CF triggered at v.${appVersion}`);
   var authToken = validator.escape(req.body.auth_token);
-  var projectId = req.body.project_id || projectId || process.env.GCP_PROJECT;
+  var projectId = req.body.project_id || process.env.GCP_PROJECT;
 
-  if(!authToken || !validator.isAscii(authToken)) {
+  if (!authToken || !validator.isAscii(authToken)) {
     return res.status(401).send('Error: A valid ASCII OAuth acess token must be provided in the param \'auth_token\'');
   }
 
@@ -54,7 +54,7 @@ exports.example_auth = async (req, res) => {
     debug('Authenticating provided token.');
 
     var auths = await cfAuth.authenticateAndBuildServices(authToken); // jshint ignore:line
-    if(auths === false) {
+    if (auths === false) {
       return res.status(401).send('[-] Authentication failure');
     }
 
@@ -62,8 +62,7 @@ exports.example_auth = async (req, res) => {
 
     debug('Auth complete.');
     return res.status(200).send('[+] Authentication success');
-  }
-  catch(err) {
+  } catch (err) {
     return res.status(500).send(`Error: ${err.message}`);
   }
 };
@@ -72,8 +71,8 @@ exports.example_auth = async (req, res) => {
 /**
  * Helpful debug function that checks for the var DEBUG_LOGGING == true before writing to console.log()
  */
-function debug(...args) {
-  if(DEBUG_LOGGING) console.log(...args);
+function debug (...args) {
+  if (DEBUG_LOGGING) console.log(...args);
 }
 
 /**
@@ -83,6 +82,6 @@ function debug(...args) {
  * It can take several seconds for the new CF to start getting traffic even after
  * a new CF deploy is marked OK.
  */
-function logVersion(...args) {
-  if(VERSION_LOGGING) console.log(...args);
+function logVersion (...args) {
+  if (VERSION_LOGGING) console.log(...args);
 }

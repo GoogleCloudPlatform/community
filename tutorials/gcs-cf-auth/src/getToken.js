@@ -17,8 +17,8 @@
  *    "node getToken.js"
  *    The auth_token will be printed to stdout
  */
-"use strict";
-const {google} = require('googleapis');
+'use strict';
+const { google } = require('googleapis');
 
 async function main () {
   // This method looks for the GOOGLE_CLOUD_PROJECT and GOOGLE_APPLICATION_CREDENTIALS
