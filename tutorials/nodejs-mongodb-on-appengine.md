@@ -90,10 +90,12 @@ There are multiple options for creating a new MongoDB database. For example:
           address: req.connection.remoteAddress
         };
 
-        collection.insert(ip, (err) => {
+        mongodb.MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
           if (err) {
             throw err;
           }
+        
+         const db = client.db(nconf.get("mongoDatabase"))
 
           // push out a range
           let iplist = '';
@@ -101,8 +103,34 @@ There are multiple options for creating a new MongoDB database. For example:
             if (err) {
               throw err;
             }
-            data.forEach((ip) => {
-              iplist += `${ip.address}; `;
+            // Track every IP that has visited this site
+            const collection = db.collection('IPs');
+
+            const ip = {
+              address: req.connection.remoteAddress
+            };
+
+            collection.insertOne(ip, (err) => {
+              if (err) {
+                throw err;
+              }
+
+              // push out a range
+              let iplist = '';
+              collection.find().toArray((err, data) => {
+                if (err) {
+                  throw err;
+                }
+                data.forEach((ip) => {
+                  iplist += `${ip.address}; `;
+                });
+
+                res.writeHead(200, {
+                  'Content-Type': 'text/plain'
+                });
+                res.write('IPs:\n');
+                res.end(iplist);
+              });
             });
 
             res.writeHead(200, {
