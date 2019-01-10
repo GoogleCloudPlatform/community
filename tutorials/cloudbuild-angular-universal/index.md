@@ -3,7 +3,7 @@ title: Perform Angular server-side (pre-)rendering with Cloud Build
 description: Learn how to use Cloud Build to pre-generate your HTML for Angular.
 author: johnlabarge
 tags: Cloud Build, Angular Universal
-date_published: 2018-12-11
+date_published: 2018-11-08
 ---
 
 # Perform Angular server-side (pre-)rendering with Cloud Build
@@ -110,14 +110,12 @@ You will create a repository called `tour-of-heroes-universal`
 
 **Note** that jq is a tool for editing JSON and is installed in Cloud Shell by default. If you are going through this tutorial on your workstation see [jq installation](https://stedolan.github.io/jq/download/) for instructions on installing jq on your workstation.
 
-        read -r -d '' SCRIPT_ADDITIONS <<EOF
-        {
+        SCRIPT_ADDITIONS=$(echo '  {
         "build:prerender": "npm run build:client-and-server-bundles && npm run compile:prerender && npm run generate:prerender",
         "generate:prerender": "npm run webpack:prerender && node dist/prerender.js",
         "compile:prerender": "tsc -p prerender.tsconfig.json",
         "webpack:prerender": "webpack --config webpack.prerender.config.js"
-        }
-        EOF
+        }')
         cat package.json | jq --argjson additions "$SCRIPT_ADDITIONS" '.scripts = .scripts+$additions' >tmpfile
         cp tmpfile package.json
         rm tmpfile
