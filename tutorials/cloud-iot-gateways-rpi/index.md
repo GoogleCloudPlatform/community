@@ -131,9 +131,9 @@ To set up your gateway:
 
         source run-gateway
 
-13. Keep this process running while you proceed through the next steps. We recommend that you use a new tab or window for each gateway and device.
+14. Keep this process running while you proceed through the next steps. We recommend that you use a new tab or window for each gateway and device.
 
-14. Find the local IP address of the gateway using `ifconfig` on  Mac/Linux or `ipconfig /all` on Windows. Copy this somewhere as you will need to add this IP address to `led-light.py` and `thermostat.py` later, for connecting devices to the gateway. Your gateway and devices need to be on the same network and visible to each other.
+15. Find the local IP address of the gateway using `ifconfig` on  Mac/Linux or `ipconfig /all` on Windows. Copy this somewhere as you will need to add this IP address to `led-light.py` and `thermostat.py` later, for connecting devices to the gateway. Your gateway and devices need to be on the same network and visible to each other.
 
 ## Raspberry Pi setup
 
