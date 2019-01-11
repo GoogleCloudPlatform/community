@@ -1,0 +1,17 @@
+#%Module1.0#####################################################################
+##
+## modules anaconda3/5.3.1.
+##
+## modulefiles/anaconda3/5.3.1.
+##
+proc ModulesHelp { } {
+        global version modroot
+        puts stderr "anaconda3/5.3.1 - sets the Environment for Anaconda 5.3.1"
+}
+module-whatis   "Sets the environment for using Anaconda 5.3.1"
+# for Tcl script use only
+set     topdir          /apps/anaconda3/5.3.1
+set     version         5.3.1
+set     sys             linux86
+prepend-path    PATH            $topdir/bin
+prepend-path    MANPATH         $topdir/man
