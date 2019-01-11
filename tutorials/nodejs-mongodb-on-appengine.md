@@ -43,29 +43,52 @@ There are multiple options for creating a new MongoDB database. For example:
 
 1. Create a `server.js` file with the following contents:
 
-        'use strict';
+    ```js
+    'use strict';
 
-        const mongodb = require('mongodb');
-        const http = require('http');
-        const nconf = require('nconf');
+    const mongodb = require('mongodb');
+    const http = require('http');
+    const nconf = require('nconf');
 
-        // Read in keys and secrets. Using nconf use can set secrets via
-        // environment variables, command-line arguments, or a keys.json file.
-        nconf.argv().env().file('keys.json');
+    // Read in keys and secrets. Using nconf use can set secrets via
+    // environment variables, command-line arguments, or a keys.json file.
+    nconf.argv().env().file('keys.json');
 
-        // Connect to a MongoDB server provisioned over at
-        // MongoLab.  See the README for more info.
+    // Connect to a MongoDB server provisioned over at
+    // MongoLab.  See the README for more info.
 
-        const user = nconf.get('mongoUser');
-        const pass = nconf.get('mongoPass');
-        const host = nconf.get('mongoHost');
-        const port = nconf.get('mongoPort');
+    const user = nconf.get('mongoUser');
+    const pass = nconf.get('mongoPass');
+    const host = nconf.get('mongoHost');
+    const port = nconf.get('mongoPort');
 
-        let uri = `mongodb://${user}:${pass}@${host}:${port}`;
-        if (nconf.get('mongoDatabase')) {
-          uri = `${uri}/${nconf.get('mongoDatabase')}`;
+    let uri = `mongodb://${user}:${pass}@${host}:${port}`;
+    if (nconf.get('mongoDatabase')) {
+      uri = `${uri}/${nconf.get('mongoDatabase')}`;
+    }
+    console.log(uri);
+
+    mongodb.MongoClient.connect(uri, (err, db) => {
+      if (err) {
+        throw err;
+      }
+
+      // Create a simple little server.
+      http.createServer((req, res) => {
+        if (req.url === '/_ah/health') {
+          res.writeHead(200, {
+            'Content-Type': 'text/plain'
+          });
+          res.write('OK');
+          res.end();
+          return;
         }
-        console.log(uri);
+        // Track every IP that has visited this site
+        const collection = db.collection('IPs');
+
+        const ip = {
+          address: req.connection.remoteAddress
+        };
 
         mongodb.MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
           if (err) {
@@ -74,15 +97,11 @@ There are multiple options for creating a new MongoDB database. For example:
         
          const db = client.db(nconf.get("mongoDatabase"))
 
-          // Create a simple little server.
-          http.createServer((req, res) => {
-            if (req.url === '/_ah/health') {
-              res.writeHead(200, {
-                'Content-Type': 'text/plain'
-              });
-              res.write('OK');
-              res.end();
-              return;
+          // push out a range
+          let iplist = '';
+          collection.find().toArray((err, data) => {
+            if (err) {
+              throw err;
             }
             // Track every IP that has visited this site
             const collection = db.collection('IPs');
@@ -113,21 +132,32 @@ There are multiple options for creating a new MongoDB database. For example:
                 res.end(iplist);
               });
             });
-          }).listen(process.env.PORT || 8080, () => {
-            console.log('started web process');
+
+            res.writeHead(200, {
+              'Content-Type': 'text/plain'
+            });
+            res.write('IPs:\n');
+            res.end(iplist);
           });
         });
+      }).listen(process.env.PORT || 8080, () => {
+        console.log('started web process');
+      });
+    });
+    ```
 
 1.  Create a `keys.json` file with the following content, replacing the
     variables with your own values:
 
-        {
-          "mongoHost": "YOUR_MONGO_HOST",
-          "mongoPort": "YOUR_MONGO_PORT",
-          "mongoDatabase": "YOUR_MONGO_DB",
-          "mongoUser": "YOUR_MONGO_USERNAME",
-          "mongoPass": "YOUR_MONGO_PASSWORD"
-        }
+    ```json
+    {
+      "mongoHost": "YOUR_MONGO_HOST",
+      "mongoPort": "YOUR_MONGO_PORT",
+      "mongoDatabase": "YOUR_MONGO_DB",
+      "mongoUser": "YOUR_MONGO_USERNAME",
+      "mongoPass": "YOUR_MONGO_PASSWORD"
+    }
+    ```
 
     Do not check your credentials into source control. Create a `.gitignore`
     file if you don't have one, and add `keys.json` to it.
@@ -144,8 +174,10 @@ There are multiple options for creating a new MongoDB database. For example:
 
 1.  Create an `app.yaml` file with the following content:
 
-        runtime: nodejs
-        env: flex
+    ```yaml
+    runtime: nodejs
+    env: flex
+    ```
 
 1.  Run the following command to deploy your app:
 

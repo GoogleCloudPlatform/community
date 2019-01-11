@@ -55,11 +55,13 @@ To use a hosted Redis instance on Compute Engine:
     [connect to your hosted Redis instance](#connecting_to_a_redis_server). For
     example:
 
-        {
-          "redisHost": "1.2.3.4",
-          "redisPort": 6379,
-          "redisKey": "bitnami_base_password"
-        }
+    ```json
+    {
+      "redisHost": "1.2.3.4",
+      "redisPort": 6379,
+      "redisKey": "bitnami_base_password"
+    }
+    ```
 
 ### Using Redis Labs
 
@@ -80,11 +82,13 @@ To create a new Redis instance using Redis Labs:
     the `key` value. For example, if your Redis table had a password of
     `password`, the URL above would be configured as follows:
 
-        {
-          "redisHost": "pub-redis-12345.us-central1-2-3.gce.garantiadata.com",
-          "redisPort": 12345,
-          "redisKey": "password"
-        }
+    ```json
+    {
+      "redisHost": "pub-redis-12345.us-central1-2-3.gce.garantiadata.com",
+      "redisPort": 12345,
+      "redisKey": "password"
+    }
+    ```
 
 1.  Using this information, create a configuration file and
     [connect to your Redis Labs instance](#connecting_to_a_redis_server).
@@ -97,11 +101,13 @@ Create a JSON file named `keys.json` that contains your Redis host name, port,
 and password. Do not check your credentials into source control. Create a
 `.gitignore` file if you don't have one, and add `keys.json` to it.
 
+    ```json
     {
       "redisHost": [YOUR_REDIS_HOSTNAME],
       "redisPort": [YOUR_REDIS_PORT_NUMBER],
       "redisKey": [YOUR_REDIS_PASSWORD]
     }
+    ```
 
 Replace `[YOUR_REDIS_HOSTNAME]`, `[YOUR_REDIS_PORT_NUMBER]`, and
 `[YOUR_REDIS_PASSWORD]` with your Redis hostname, port number, and password
@@ -119,55 +125,57 @@ respectively.
 
 1. Create a `server.js` file with the following contents:
 
-        'use strict';
+    ```js
+    'use strict';
 
-        const redis = require('redis');
-        const http = require('http');
-        const nconf = require('nconf');
+    const redis = require('redis');
+    const http = require('http');
+    const nconf = require('nconf');
 
-        // Read in keys and secrets. Using nconf use can set secrets via
-        // environment variables, command-line arguments, or a keys.json file.
-        nconf.argv().env().file('keys.json');
+    // Read in keys and secrets. Using nconf use can set secrets via
+    // environment variables, command-line arguments, or a keys.json file.
+    nconf.argv().env().file('keys.json');
 
-        // Connect to a redis server provisioned over at
-        // Redis Labs. See the README for more info.
-        const client = redis.createClient(
-          nconf.get('redisPort') || '6379',
-          nconf.get('redisHost') || '127.0.0.1',
-          {
-            'auth_pass': nconf.get('redisKey'),
-            'return_buffers': true
-          }
-        ).on('error', (err) => console.error('ERR:REDIS:', err));
+    // Connect to a redis server provisioned over at
+    // Redis Labs. See the README for more info.
+    const client = redis.createClient(
+      nconf.get('redisPort') || '6379',
+      nconf.get('redisHost') || '127.0.0.1',
+      {
+        'auth_pass': nconf.get('redisKey'),
+        'return_buffers': true
+      }
+    ).on('error', (err) => console.error('ERR:REDIS:', err));
 
-        // Create a simple little server.
-        http.createServer((req, res) => {
-          client.on('error', (err) => console.log('Error', err));
+    // Create a simple little server.
+    http.createServer((req, res) => {
+      client.on('error', (err) => console.log('Error', err));
 
-          // Track every IP that has visited this site
-          const listName = 'IPs';
-          client.lpush(listName, req.connection.remoteAddress);
-          client.ltrim(listName, 0, 25);
+      // Track every IP that has visited this site
+      const listName = 'IPs';
+      client.lpush(listName, req.connection.remoteAddress);
+      client.ltrim(listName, 0, 25);
 
-          // push out a range
-          let iplist = '';
-          client.lrange(listName, 0, -1, (err, data) => {
-            if (err) {
-              console.log(err);
-              res.status(500).send(err.message);
-              return;
-            }
+      // push out a range
+      let iplist = '';
+      client.lrange(listName, 0, -1, (err, data) => {
+        if (err) {
+          console.log(err);
+          res.status(500).send(err.message);
+          return;
+        }
 
-            data.forEach((ip) => {
-              iplist += `${ip}; `;
-            });
+        data.forEach((ip) => {
+          iplist += `${ip}; `;
+        });
 
-            res.writeHead(200, { 'Content-Type': 'text/plain' });
-            res.end(iplist);
-          });
-        }).listen(process.env.PORT || 8080);
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end(iplist);
+      });
+    }).listen(process.env.PORT || 8080);
 
-        console.log('started web process');
+    console.log('started web process');
+    ```
 
 ### Run the app on your local computer
 
@@ -183,8 +191,10 @@ When you're ready to move forward, press Ctrl+C to stop the local web server.
 
 1. Create an `app.yaml` file with the following content:
 
-        runtime: nodejs
-        env: flex
+    ```yaml
+    runtime: nodejs
+    env: flex
+    ```
 
 1. Run the following command to deploy your app:
 

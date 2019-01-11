@@ -76,21 +76,22 @@ application.
     create a new source file `MessageController.kt` in the directory
     `src/main/kotlin` with the following contents:
 
+    ```kt
+    package com.example.demo
 
-        package com.example.demo
+    import org.springframework.web.bind.annotation.RequestMapping
+    import org.springframework.web.bind.annotation.RestController
 
-        import org.springframework.web.bind.annotation.RequestMapping
-        import org.springframework.web.bind.annotation.RestController
+    data class Message(val text: String, val priority: String)
 
-        data class Message(val text: String, val priority: String)
-
-        @RestController
-        class MessageController {
-            @RequestMapping("/message")
-            fun message(): Message {
-                return Message("Hello from Google Cloud", "High")
-            }
+    @RestController
+    class MessageController {
+        @RequestMapping("/message")
+        fun message(): Message {
+            return Message("Hello from Google Cloud", "High")
         }
+    }
+    ```
 
     Note: The package should match that of the `groupId` and `artifactId`
     specified in `pom.xml`.
@@ -105,10 +106,12 @@ application.
 1.  Open the browser and make sure you get a valid JSON response when accessing
     http://localhost:8080/message. The result should be:
 
-        {
-          "text": "Hello from Google Cloud",
-          "priority": "High"
-        }
+    ```json
+    {
+      "text": "Hello from Google Cloud",
+      "priority": "High"
+    }
+    ```
 
 ## Deploy your application
 

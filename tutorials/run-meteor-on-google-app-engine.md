@@ -44,67 +44,71 @@ Platform.
 1. To add database functionality, edit `[YOUR_APP_NAME]/client/main.js` to look
 like:
 
-        import { Template } from 'meteor/templating';
-        import { ReactiveVar } from 'meteor/reactive-var';
-        import { Meteor } from 'meteor/meteor'
+    ```js
+    import { Template } from 'meteor/templating';
+    import { ReactiveVar } from 'meteor/reactive-var';
+    import { Meteor } from 'meteor/meteor'
 
-        import './main.html';
+    import './main.html';
 
-        Template.hello.onCreated(function helloOnCreated() {
-          // counter starts at 0
-          this.counter = new ReactiveDict({value: '0' });
-          var instance = this;
+    Template.hello.onCreated(function helloOnCreated() {
+      // counter starts at 0
+      this.counter = new ReactiveDict({value: '0' });
+      var instance = this;
 
-          Meteor.subscribe('counters', function () {
-            var counterConn = new Mongo.Collection('counters');
-            instance.counterConn = counterConn;
+      Meteor.subscribe('counters', function () {
+        var counterConn = new Mongo.Collection('counters');
+        instance.counterConn = counterConn;
 
-            var counterList = counterConn.find({}).fetch();
-            var dbCounter = counterList[0];
-            instance.dbCounter = dbCounter;
+        var counterList = counterConn.find({}).fetch();
+        var dbCounter = counterList[0];
+        instance.dbCounter = dbCounter;
 
-            instance.counter.set('_id', dbCounter._id);
-            instance.counter.set('value', dbCounter.value);
-          });
+        instance.counter.set('_id', dbCounter._id);
+        instance.counter.set('value', dbCounter.value);
+      });
+    });
+
+    Template.hello.helpers({
+      counter() {
+        return Template.instance().counter.get('value');
+      },
+    });
+
+    Template.hello.events({
+      'click button'(event, instance) {
+
+        // Increment counter
+        instance.counter.set('value', instance.counter.get('value') + 1);
+
+        // Update counter on DB
+        instance.counterConn.update(instance.dbCounter._id, {
+          '$set': {'value': instance.counter.get('value') }
         });
-
-        Template.hello.helpers({
-          counter() {
-            return Template.instance().counter.get('value');
-          },
-        });
-
-        Template.hello.events({
-          'click button'(event, instance) {
-
-            // Increment counter
-            instance.counter.set('value', instance.counter.get('value') + 1);
-
-            // Update counter on DB
-            instance.counterConn.update(instance.dbCounter._id, {
-              '$set': {'value': instance.counter.get('value') }
-            });
-          },
-        });
+      },
+    });
+    ```
 
 1. Edit `[APP_NAME]/server/main.js` so that it looks like:
 
-        import { Meteor } from 'meteor/meteor';
-        import { Mongo } from 'meteor/mongo';
+    ```js
+    import { Meteor } from 'meteor/meteor';
+    import { Mongo } from 'meteor/mongo';
 
-        Meteor.startup(() => {
-          // code to run on server at startup
-          const Counters = new Mongo.Collection('counters');
+    Meteor.startup(() => {
+      // code to run on server at startup
+      const Counters = new Mongo.Collection('counters');
 
-          // Make sure a Counter entry exists
-          if (Counters.find({}).fetch().length == 0)
-            Counters.insert({value: 0})
+      // Make sure a Counter entry exists
+      if (Counters.find({}).fetch().length == 0)
+        Counters.insert({value: 0})
 
-          // Publish counters
-          Meteor.publish('counters', function () {
-            return Counters.find({});
-          })
-        });
+      // Publish counters
+      Meteor.publish('counters', function () {
+        return Counters.find({});
+      })
+    });
+    ```
 
 ## Run
 
@@ -123,12 +127,14 @@ like:
 
 1. Add the following to the `package.json` file:
 
-        "scripts": {
-          "cleanup": "rm -rf ../bundle/",
-          "dist": "npm run cleanup && meteor build ../ --directory --architecture os.linux.x86_64 --server-only",
-          "predeploy": "npm run dist && cp app.yaml ../bundle/ && cp Dockerfile ../bundle/",
-          "deploy": "npm run predeploy && (cd ../bundle && gcloud app deploy -q)"
-        },
+    ```json
+    "scripts": {
+      "cleanup": "rm -rf ../bundle/",
+      "dist": "npm run cleanup && meteor build ../ --directory --architecture os.linux.x86_64 --server-only",
+      "predeploy": "npm run dist && cp app.yaml ../bundle/ && cp Dockerfile ../bundle/",
+      "deploy": "npm run predeploy && (cd ../bundle && gcloud app deploy -q)"
+    },
+    ```
 
     These scripts provide you with some tasks that prepare the app for
     deployment to Google App Engine flexible environment. See
@@ -152,10 +158,12 @@ running the following command:
 
 1. Add the following to the generated `app.yaml` file:
 
-        env_variables:
-          ROOT_URL: https://[YOUR_PROJECT_ID].appspot-preview.com
-          MONGO_URL: [MONGO_URL]
-          DISABLE_WEBSOCKETS: "1"
+    ```yaml
+    env_variables:
+      ROOT_URL: https://[YOUR_PROJECT_ID].appspot-preview.com
+      MONGO_URL: [MONGO_URL]
+      DISABLE_WEBSOCKETS: "1"
+    ```
 
     replacing `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID and
     `[MONGO_URL]` with your MongoDB URI.

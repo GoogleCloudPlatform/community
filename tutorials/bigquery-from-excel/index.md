@@ -94,19 +94,21 @@ Once the ODBC driver is configured, open Excel.
     As an example, query the [USA names public dataset](https://cloud.google.com/bigquery/public-data/usa-names)
     for the most popular names during the [baby boomer generation](https://wikipedia.org/wiki/Baby_boomers).
 
-        #standardSQL
-        SELECT
-          name, SUM(number) as total_number
-        FROM
-          `bigquery-public-data.usa_names.usa_1910_2013`
-        WHERE
-          year >= 1946
-          AND year <= 1964
-        GROUP BY
-          name
-        ORDER BY
-          total_number
-        DESC
+    ```sql
+    #standardSQL
+    SELECT
+      name, SUM(number) as total_number
+    FROM
+      `bigquery-public-data.usa_names.usa_1910_2013`
+    WHERE
+      year >= 1946
+      AND year <= 1964
+    GROUP BY
+      name
+    ORDER BY
+      total_number
+    DESC
+    ```
 
 1. Click **OK**. When the query completes, you will have a new sheet with about 7,400 rows.
 

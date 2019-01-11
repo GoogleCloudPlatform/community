@@ -46,19 +46,21 @@ There are multiple options for creating a new MongoDB database. For example:
 1.  Make sure your `app.yaml` file looks something like this (update the
     variables with your own values):
 
-        runtime: nodejs
-        env: flex
+    ```yaml
+    runtime: nodejs
+    env: flex
 
-        env_variables:
-          # --REQUIRED--
-          DATABASE_URI: mongodb://localhost:27017/dev
-          APP_ID: YOUR_APP_ID
-          MASTER_KEY: YOUR_MASTER_KEY
-          SERVER_URL: https://YOUR_PROJECT_ID.appspot.com/parse
-          # --OPTIONAL--
-          # FILE_KEY: YOUR_FILE_KEY
-          # PARSE_MOUNT: /parse
-          # CLOUD_CODE_MAIN:
+    env_variables:
+      # --REQUIRED--
+      DATABASE_URI: mongodb://localhost:27017/dev
+      APP_ID: YOUR_APP_ID
+      MASTER_KEY: YOUR_MASTER_KEY
+      SERVER_URL: https://YOUR_PROJECT_ID.appspot.com/parse
+      # --OPTIONAL--
+      # FILE_KEY: YOUR_FILE_KEY
+      # PARSE_MOUNT: /parse
+      # CLOUD_CODE_MAIN:
+    ```
 
 1.  Run the following command to deploy your app:
 
