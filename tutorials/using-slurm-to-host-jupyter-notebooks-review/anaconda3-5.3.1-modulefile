@@ -6,7 +6,7 @@
 ##
 proc ModulesHelp { } {
         global version modroot
-        puts stderr "anaconda3/5.3.1 - sets the Environment for Anaconda 5.3.1"
+        puts stderr "anaconda3/5.3.1 - sets the environment for Anaconda 5.3.1"
 }
 module-whatis   "Sets the environment for using Anaconda 5.3.1"
 # for Tcl script use only
