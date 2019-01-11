@@ -24,55 +24,65 @@ This tutorial will show you how to pre-generate [server-side rendered Angular pa
 This task helps you setup a new GCP project in which to run an Angular application. **(You can also use an existing project and skip to the next
 step)**
 
-    PROJECT=[NEW PROJECT NAME]
-    ORG=[YOUR ORGANIZATION NAME]
-    FOLDER=[YOUR FOLDER NAME]
-    BILLING_ACCOUNT=[YOUR_BILLING_ACCOUNT_NAME]
-    ZONE=[COMPUTE ZONE YOU WANT TO USE]
-    ACCOUNT=[GOOGLE ACCOUNT YOU WANT TO USE] or $(gcloud config get-value account)
-    ORG_NUMBER=$(gcloud organizations list --format="value(name)" --filter="(displayName='$ORG')")
-    FOLDER_NUMBER=$(gcloud alpha resource-manager folders list --format="value(name)" --organization=$ORG_NUMBER --filter="displayName=$FOLDER")
-    PROJECT_CREATE_OPTIONS="--organization=${ORG_NUMBER}"
-    if [ ! -z "$FOLDER" ]; then
-        PROJECT_CREATE_OPTIONS="--folder=${FOLDER_NUMBER}"
-    fi
-    gcloud projects create ${PROJECT} ${PROJECT_CREATE_OPTIONS}
-    gcloud beta billing projects link $PROJECT --billing-account=$(gcloud alpha billing accounts list --format='value(name)' --filter="(displayName='$BILLING_ACCOUNT')")
-    gcloud config configurations create --activate $PROJECT
-    gcloud config set project $PROJECT
-    gcloud config set compute/zone $ZONE
-    gcloud config set account $ACCOUNT
+```sh
+PROJECT=[NEW PROJECT NAME]
+ORG=[YOUR ORGANIZATION NAME]
+FOLDER=[YOUR FOLDER NAME]
+BILLING_ACCOUNT=[YOUR_BILLING_ACCOUNT_NAME]
+ZONE=[COMPUTE ZONE YOU WANT TO USE]
+ACCOUNT=[GOOGLE ACCOUNT YOU WANT TO USE] or $(gcloud config get-value account)
+ORG_NUMBER=$(gcloud organizations list --format="value(name)" --filter="(displayName='$ORG')")
+FOLDER_NUMBER=$(gcloud alpha resource-manager folders list --format="value(name)" --organization=$ORG_NUMBER --filter="displayName=$FOLDER")
+PROJECT_CREATE_OPTIONS="--organization=${ORG_NUMBER}"
+if [ ! -z "$FOLDER" ]; then
+PROJECT_CREATE_OPTIONS="--folder=${FOLDER_NUMBER}"
+fi
+gcloud projects create ${PROJECT} ${PROJECT_CREATE_OPTIONS}
+gcloud beta billing projects link $PROJECT --billing-account=$(gcloud alpha billing accounts list --format='value(name)' --filter="(displayName='$BILLING_ACCOUNT')")
+gcloud config configurations create --activate $PROJECT
+gcloud config set project $PROJECT
+gcloud config set compute/zone $ZONE
+gcloud config set account $ACCOUNT
+```
 
 ### Set the project variable (Skip this step if you created a new project above)
 
 To specify the project that you will use, replace `[CONFIGURATION NAME]` with the name of the project configuration:
 
-    gcloud config configurations activate [CONFIGURATION NAME]
-    PROJECT=$(gcloud config get-value project)
+```sh
+gcloud config configurations activate [CONFIGURATION NAME]
+PROJECT=$(gcloud config get-value project)
+```
 
 For more information on configurations see [configurations](https://cloud.google.com/sdk/gcloud/reference/config/configurations/).
 
 ### Enable the services required for the tutorial
 
-    gcloud services enable compute.googleapis.com
-    gcloud services enable sourcerepo.googleapis.com
-    gcloud services enable containerregistry.googleapis.com
-    gcloud services enable cloudbuild.googleapis.com
+```sh
+gcloud services enable compute.googleapis.com
+gcloud services enable sourcerepo.googleapis.com
+gcloud services enable containerregistry.googleapis.com
+gcloud services enable cloudbuild.googleapis.com
+```
 
 ## Download the test Angular application, Tour of Heroes
 
 1.  Download and unzip the test application
 
-        curl -L https://angular.io/generated/zips/universal/universal.zip > universal.zip
-        unzip universal.zip -d angular-app
-        cd angular-app
+    ```sh
+    curl -L https://angular.io/generated/zips/universal/universal.zip > universal.zip
+    unzip universal.zip -d angular-app
+    cd angular-app
+    ```
 
 1.  Create a local Git repository for the sample code
 
-        curl -L https://github.com/angular/angular/blob/master/.gitignore > .gitignore
-        git init
-        git add .
-        git commit -m "first"
+    ```sh
+    curl -L https://github.com/angular/angular/blob/master/.gitignore > .gitignore
+    git init
+    git add .
+    git commit -m "first"
+    ```
 
 ### Create a Cloud Source repository for your copy of the test Angular application
 You will create a repository called `tour-of-heroes-universal`
@@ -171,35 +181,37 @@ You will create a repository called `tour-of-heroes-universal`
 
 2.  Create the `cloudbuild.yaml` file.
 
-        cat <<CLOUDBUILD_FILE>cloudbuild.yaml
-        steps:
-        - id: install_packages
-          name: 'gcr.io/cloud-builders/npm'
-          args:
-          - 'install'
-        - id: prerender_browser_files
-          name: 'gcr.io/cloud-builders/npm'
-          args:
-          - 'run'
-          - 'build:prerender'
-          waitFor:
-          - install_packages
-        - id: copy_prerendered_files
-          name: 'gcr.io/cloud-builders/gsutil'
-          args: ['cp','-r','dist/browser/*', '\${_ANGULAR_APP_BUCKET_PATH}']
-          waitFor:
-          - prerender_browser_files
-        - id: set_website_configuration
-          name: 'gcr.io/cloud-builders/gsutil'
-          args: ['web', 'set', '-m', 'index.html','\${_ANGULAR_APP_BUCKET_PATH}']
-          waitFor:
-          - copy_prerendered_files
-        - id: set_permissions_for_website_files
-          name: 'gcr.io/cloud-builders/gsutil'
-          args: ['acl','ch','-u','AllUsers:R','-r', '\${_ANGULAR_APP_BUCKET_PATH}']
-          waitFor:
-          - copy_prerendered_files
-        CLOUDBUILD_FILE
+     ```yaml
+     cat <<CLOUDBUILD_FILE>cloudbuild.yaml
+     steps:
+     - id: install_packages
+       name: 'gcr.io/cloud-builders/npm'
+       args:
+       - 'install'
+     - id: prerender_browser_files
+       name: 'gcr.io/cloud-builders/npm'
+       args:
+       - 'run'
+       - 'build:prerender'
+       waitFor:
+       - install_packages
+     - id: copy_prerendered_files
+       name: 'gcr.io/cloud-builders/gsutil'
+       args: ['cp','-r','dist/browser/*', '\${_ANGULAR_APP_BUCKET_PATH}']
+       waitFor:
+       - prerender_browser_files
+     - id: set_website_configuration
+       name: 'gcr.io/cloud-builders/gsutil'
+       args: ['web', 'set', '-m', 'index.html','\${_ANGULAR_APP_BUCKET_PATH}']
+       waitFor:
+       - copy_prerendered_files
+     - id: set_permissions_for_website_files
+       name: 'gcr.io/cloud-builders/gsutil'
+       args: ['acl','ch','-u','AllUsers:R','-r', '\${_ANGULAR_APP_BUCKET_PATH}']
+       waitFor:
+       - copy_prerendered_files
+     CLOUDBUILD_FILE
+     ```
 
 3.  Add and commit `cloudbuild.yaml` to the Git repository.
 

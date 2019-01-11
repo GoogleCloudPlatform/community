@@ -40,56 +40,58 @@ your new domain's settings.
 
 1. Create a `server.js` file with the following contents:
 
-        'use strict';
+    ```js
+    'use strict';
 
-        const express = require('express');
-        const path = require('path');
-        const bodyParser = require('body-parser');
+    const express = require('express');
+    const path = require('path');
+    const bodyParser = require('body-parser');
 
-        const Mailgun = require('mailgun').Mailgun;
-        const mg = new Mailgun(process.env.MAILGUN_API_KEY);
+    const Mailgun = require('mailgun').Mailgun;
+    const mg = new Mailgun(process.env.MAILGUN_API_KEY);
 
-        const app = express();
+    const app = express();
 
-        // Setup view engine
-        app.set('views', path.join(__dirname, 'views'));
-        app.set('view engine', 'pug');
+    // Setup view engine
+    app.set('views', path.join(__dirname, 'views'));
+    app.set('view engine', 'pug');
 
-        // Parse form data
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: false }));
+    // Parse form data
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false }));
 
-        app.get('/', (req, res) => res.render('index'));
+    app.get('/', (req, res) => res.render('index'));
 
-        app.post('/hello', (req, res, next) => {
-          const servername = '';
-          const options = {};
+    app.post('/hello', (req, res, next) => {
+      const servername = '';
+      const options = {};
 
-          mg.sendText(
-            // From
-            'no-reply@appengine-mailgun-demo.com',
-            // To
-            req.body.email,
-            // Subject
-            'Hello World!',
-            // Body
-            'Mailgun on Google App Engine with Node.js',
-            servername,
-            options,
-            (err) => {
-              if (err) {
-                next(err);
-                return;
-              }
-              // Render the index route on success
-              res.render('index', {
-                sent: true
-              });
-            }
-          );
-        });
+      mg.sendText(
+        // From
+        'no-reply@appengine-mailgun-demo.com',
+        // To
+        req.body.email,
+        // Subject
+        'Hello World!',
+        // Body
+        'Mailgun on Google App Engine with Node.js',
+        servername,
+        options,
+        (err) => {
+          if (err) {
+            next(err);
+            return;
+          }
+          // Render the index route on success
+          res.render('index', {
+            sent: true
+          });
+        }
+      );
+    });
 
-        app.listen(process.env.PORT || 8080);
+    app.listen(process.env.PORT || 8080);
+    ```
 
 1. Create a directory named `views`:
 
@@ -98,20 +100,22 @@ your new domain's settings.
 1. Create a file named `index.pug` inside the `views` directory with the
 following contents:
 
-        doctype html
-        html
-          head
-            title= title
-          body
-            h1 Hello World!
-            p Express.js + Mailgun on Google App Engine.
-            hr
-            if sent
-              p Email sent!
-            else
-              form(name="hello", action="/hello", method="post")
-                input(type="email", placeholder="Enter your email to send yourself a Hello World message", name="email", style="width: 50%; margin-right: 15px;")
-                input(type="submit", value="Send")
+    ```pug
+    doctype html
+    html
+      head
+        title= title
+      body
+        h1 Hello World!
+        p Express.js + Mailgun on Google App Engine.
+        hr
+        if sent
+          p Email sent!
+        else
+          form(name="hello", action="/hello", method="post")
+            input(type="email", placeholder="Enter your email to send yourself a Hello World message", name="email", style="width: 50%; margin-right: 15px;")
+            input(type="submit", value="Send")
+      ```
 
 ## Run
 
@@ -125,10 +129,12 @@ following contents:
 
 1. Create an `app.yaml` file with the following contents:
 
-        runtime: nodejs
-        env: flex
-        env_variables:
-          MAILGUN_API_KEY: your-mailgun-api-key
+    ```yaml
+    runtime: nodejs
+    env: flex
+    env_variables:
+      MAILGUN_API_KEY: your-mailgun-api-key
+    ```
 
     The `app.yaml` makes the app deployable to Google App Engine Managed VMs.
 
