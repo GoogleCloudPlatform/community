@@ -36,7 +36,7 @@ gcloud projects create $PROJECT --organization=$ORG
 gcloud beta billing projects link $PROJECT --billing-account=$(gcloud beta billing accounts list | grep $BILLING_ACCOUNT | awk '{print $1}')
 ```
 ```bash
-gcloud config configurations create -- activate $PROJECT
+gcloud config configurations create --activate $PROJECT
 ```
 ```bash
 gcloud config set compute/zone $ZONE
