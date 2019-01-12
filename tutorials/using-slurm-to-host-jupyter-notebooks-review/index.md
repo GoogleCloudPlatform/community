@@ -3,7 +3,7 @@ title: Using the Slurm Resource Manager to host Jupyter notebooks
 description: Learn how to run your Jupyter notebooks on a Compute Engine instance managed by the Slurm Resource Manager.
 author: wardharold
 tags: GCE, Slurm, Jupyter
-date_published: 2018-12-21
+date_published: 2019-01-11
 ---
 
 This tutorial shows you how to run a [Jupyter Notebook](https://jupyter.org) as a job managed by the [Slurm Resource Manager](https://slurm.schedmd.com).
@@ -22,7 +22,7 @@ This diagram illustrates the configuration you will create by following the tuto
 ## (OPTIONAL) Create a project with a billing account attached 
 **(You can also use an existing project and skip to the next step.)**
 
-Edit [env.sh](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/using-slurm-to-host-jupyter-notebooks/env.sh) and replace the following:
+Edit [env.sh](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/using-slurm-to-host-jupyter-notebooks-review/env.sh) and replace the following:
 
 - **`[YOUR_ORG]`**: the name of the [organization](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#cloud_platform_resource_hierarchy_and_iam_policy_hierarchy) that will own your project
 - **`[YOUR_BILLING_ACCOUNT_NAME]`**: the name of the account responsible for any costs incurred by your project
