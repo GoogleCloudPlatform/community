@@ -9,7 +9,7 @@ date_published: 2018-12-21
 This tutorial shows you how to run a [Jupyter Notebook](https://jupyter.org) as a job managed by the [Slurm Resource Manager](https://slurm.schedmd.com).
 
 Slurm is a popular resource manager used in many high-performance computing centers. Jupyter notebooks are a
-favorite tool of Machine learning and data science specialists. While they are often run on an individual user's
+favorite tool of machine learning and data science specialists. While they are often run on an individual user's
 laptop, there are situations that call for specialized hardware, such as GPUs or more memory or CPU cores than are
 available locally. In those situations, Slurm can allocate a compute instance has the requisite hardware
 or memory/CPU resources to run the user's notebook for a bounded time period.
@@ -24,10 +24,10 @@ This diagram illustrates the configuration you will create by following the tuto
 
 Edit [env.sh](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/using-slurm-to-host-jupyter-notebooks/env.sh) and replace the following:
 
-- [YOUR_ORG]: the name of the [organization](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#cloud_platform_resource_hierarchy_and_iam_policy_hierarchy) that will own your project
-- [YOUR_BILLING_ACCOUNT_NAME]: the name of the account responsible for any costs incurred by your project
-- [NAME FOR THE PROJECT YOU WILL CREATE]: the name of your project
-- [COMPUTE ZONE YOU WANT TO USE]: the name of the Google Cloud Platform (GCP) compute zone that will contain your project
+- **`[YOUR_ORG]`**: the name of the [organization](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#cloud_platform_resource_hierarchy_and_iam_policy_hierarchy) that will own your project
+- **`[YOUR_BILLING_ACCOUNT_NAME]`**: the name of the account responsible for any costs incurred by your project
+- **`[NAME FOR THE PROJECT YOU WILL CREATE]`**: the name of your project
+- **`[COMPUTE ZONE YOU WANT TO USE]`**: the name of the Google Cloud Platform (GCP) compute zone that will contain your project
 
 ```bash
 source ./env.sh
