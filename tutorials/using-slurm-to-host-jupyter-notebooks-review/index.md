@@ -17,7 +17,7 @@ or memory/CPU resources to run the user's notebook for a bounded time period.
 This diagram illustrates the configuration you will create by following the tutorial steps:
 ![diagram](https://storage.googleapis.com/gcp-community/tutorials/using-slurm-to-host-jupyter-notebooks-review/slurm_notebook_illustration.png)
 
-[![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/using-slurm-to-host-jupyter-notebooks/index.md)
+[![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/using-slurm-to-host-jupyter-notebooks-review/index.md)
 
 ## (OPTIONAL) Create a project with a billing account attached 
 **(You can also use an existing project and skip to the next step.)**
@@ -146,6 +146,10 @@ SSSSSSSSSSSS    SSS    SSSSSSSSSSSSS    SSSS        SSSS     SSSS     SSSS
 ```
 
 When the cluster is ready, schedule a simple job to verify that it is working correctly:
+
+```bash
+gcloud compute ssh google1-login1 --command 'sbatch -N2 --wrap="srun hostname"'
+```
 
 ```bash
 gcloud compute ssh google1-login1 --command 'cat slurm-*.out'
