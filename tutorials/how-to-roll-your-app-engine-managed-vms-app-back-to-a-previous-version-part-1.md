@@ -37,6 +37,7 @@ For this tutorial we'll make a tiny Hello World Node.js app and deploy it.
 
 Create a file named `server.js` with the following contents:
 
+    ```js
     const http = require('http');
 
     const hostname = '127.0.0.1';
@@ -48,6 +49,7 @@ Create a file named `server.js` with the following contents:
     }).listen(port, hostname, () => {
       console.log(`Server running at http://${hostname}:${port}/`);
     });
+    ```
 
 Let's test it to make sure it works:
 
@@ -67,9 +69,11 @@ This configuration file tells App Engine how to run our app.
 
 Now create a file named `package.json with the following contents:
 
-    {
-      "name": "sample-app"
-    }
+```json
+{
+    "name": "sample-app"
+}
+```
 
 Assuming you've created a project in the Google Cloud Platform Developers
 Console and installed the gcloud sdk locally, you should be ready to deploy.

@@ -75,41 +75,45 @@ following:
 
     2.  In `ConfigureServices` method, add this:
 
-            public void ConfigureServices(IServiceCollection services)
-            {
-                services.AddMvc();
+        ```cs
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddMvc();
 
-                // Register the Swagger generator
-                services.AddSwaggerGen(c =>
-                {
-                    c.SwaggerDoc(
-                        "v1",
-                        new Info { Title = "My API", Version = "v1" });
-                });
-            }
+            // Register the Swagger generator
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc(
+                    "v1",
+                    new Info { Title = "My API", Version = "v1" });
+            });
+        }
+        ```
 
     1.  In `"Configure"` method, add this:
 
-            public void Configure(
-                IApplicationBuilder app,
-                IHostingEnvironment env)
+        ```cs
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
             {
-              if (env.IsDevelopment())
-              {
-                  app.UseDeveloperExceptionPage();
-              }
-
-              // Enable middleware to serve generated Swagger as a JSON endpoint.
-              app.UseSwagger();
-
-              // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
-              app.UseSwaggerUI(c =>
-              {
-                  c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-              });
-
-              app.UseMvc();
+                app.UseDeveloperExceptionPage();
             }
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+
+            app.UseMvc();
+        }
+        ```
 
 ## Step 3 - Create OpenAPI specification for our API
 
@@ -176,17 +180,19 @@ Now it's time to deploy the API specification and API implementation.
     `YOUR-PROJECT-ID.appspot.com` (replace `YOUR-PROJECT-ID` with your Cloud
     project ID):
 
-        swagger: '2.0'
-        info:
-        version: v1
-        title: My API
-        host: YOUR-PROJECT-ID.appspot.com
-        paths:
-          /api/Values:
-        get:
-            tags:
-            - Values
-            operationId: ApiValuesGet
+    ```yaml
+    swagger: '2.0'
+    info:
+    version: v1
+    title: My API
+    host: YOUR-PROJECT-ID.appspot.com
+    paths:
+        /api/Values:
+    get:
+        tags:
+        - Values
+        operationId: ApiValuesGet
+    ```
 
     When you will deploy API specification to Google Endpoints, it will create a
     new Cloud Endpoints service configuration with the name equals to `host`
@@ -236,11 +242,13 @@ latest version of Cloud Endpoints service (the one that was deployed last).
 1.  Create `app.yaml` file in VS Code at `ExploreApiWithEndpointsCore` directory.
     The content of the file should be:
 
-        Runtime: aspnetcore
-        env: flex
-        endpoints_api_service:
-          name: [SERVICE_NAME]
-          rollout_strategy: managed
+    ```yaml
+    Runtime: aspnetcore
+    env: flex
+    endpoints_api_service:
+        name: [SERVICE_NAME]
+        rollout_strategy: managed
+    ```
 
     Replace `[SERVICE_NAME]` with corresponding value of previous command output.
 

@@ -27,23 +27,25 @@ address, telephone number, and company they work for.
 When the user wants to add an address, they enter the information into a form
 and the form saves the information in a model that looks something like this:
 
-    class Contact(db.Model):
+```py
+class Contact(db.Model):
 
-        # Basic info.
-        name = db.StringProperty()
-        birth_day = db.DateProperty()
+    # Basic info.
+    name = db.StringProperty()
+    birth_day = db.DateProperty()
 
-        # Address info.
-        address = db.PostalAddressProperty()
+    # Address info.
+    address = db.PostalAddressProperty()
 
-        # Phone info.
-        phone_number = db.PhoneNumberProperty()
+    # Phone info.
+    phone_number = db.PhoneNumberProperty()
 
-        # Company info.
-        company_title = db.StringProperty()
-        company_name = db.StringProperty()
-        company_description = db.StringProperty()
-        company_address = db.PostalAddressProperty()
+    # Company info.
+    company_title = db.StringProperty()
+    company_name = db.StringProperty()
+    company_description = db.StringProperty()
+    company_address = db.PostalAddressProperty()
+```
 
 That's great, your users immediately begin to use their address book and soon
 the datastore starts to fill up. Not long after the deployment of your new
@@ -76,30 +78,32 @@ own class and have a way of associating many phone numbers to a single Contact.
 You can easily model the one to many relationship using ReferenceProperty. Here
 is a candidate for this new class:
 
-    class Contact(db.Model):
+```py
+class Contact(db.Model):
 
-        # Basic info.
-        name = db.StringProperty()
-        birth_day = db.DateProperty()
+    # Basic info.
+    name = db.StringProperty()
+    birth_day = db.DateProperty()
 
-        # Address info.
-        address = db.PostalAddressProperty()
+    # Address info.
+    address = db.PostalAddressProperty()
 
-        # The original phone_number property has been replaced by
-        # an implicitly created property called 'phone_numbers'.
+    # The original phone_number property has been replaced by
+    # an implicitly created property called 'phone_numbers'.
 
-        # Company info.
-        company_title = db.StringProperty()
-        company_name = db.StringProperty()
-        company_description = db.StringProperty()
-        company_address = db.PostalAddressProperty()
+    # Company info.
+    company_title = db.StringProperty()
+    company_name = db.StringProperty()
+    company_description = db.StringProperty()
+    company_address = db.PostalAddressProperty()
 
-    class PhoneNumber(db.Model):
-        contact = db.ReferenceProperty(Contact,
-                                       collection_name='phone_numbers')
-        phone_type = db.StringProperty(
-            choices=('home', 'work', 'fax', 'mobile', 'other'))
-        number = db.PhoneNumberProperty()
+class PhoneNumber(db.Model):
+    contact = db.ReferenceProperty(Contact,
+                                    collection_name='phone_numbers')
+    phone_type = db.StringProperty(
+        choices=('home', 'work', 'fax', 'mobile', 'other'))
+    number = db.PhoneNumberProperty()
+```
 
 The key to making all this work is the `contact` property. By defining it as a
 `ReferenceProperty`, you have created a property that can only be assigned
@@ -114,23 +118,27 @@ Creating the relationship between a contact and one of its phone numbers is easy
 to do. Let's say you have a contact named "Scott" who has a home phone and a
 mobile phone. You populate his contact info like this:
 
-    scott = Contact(name='Scott')
-    scott.put()
-    PhoneNumber(contact=scott,
-                phone_type='home',
-                number='(650) 555 - 2200').put()
-    PhoneNumber(contact=scott,
-                phone_type='mobile',
-                number='(650) 555 - 2201').put()
+```py
+scott = Contact(name='Scott')
+scott.put()
+PhoneNumber(contact=scott,
+            phone_type='home',
+            number='(650) 555 - 2200').put()
+PhoneNumber(contact=scott,
+            phone_type='mobile',
+            number='(650) 555 - 2201').put()
+```
 
 Because `ReferenceProperty` creates this special property on `Contact`, it makes
 it very easy to retrieve all the phone numbers for a given person. If you wanted
 to print all the phone numbers for a given person, you can do it like this:
 
-    print 'Content-Type: text/html'
-    print
-    for phone in scott.phone_numbers:
-        print '%s: %s' % (phone.phone_type, phone.number)
+```py
+print 'Content-Type: text/html'
+print
+for phone in scott.phone_numbers:
+    print '%s: %s' % (phone.phone_type, phone.number)
+```
 
 This will produce results that look like:
 
@@ -145,12 +153,16 @@ can use it to further narrow down and sort the collection associated with the
 `Contact`. For example, if you only want to get the home phone numbers, you can
 do this:
 
-    scott.phone_numbers.filter('phone_type =', 'home')
+```py
+scott.phone_numbers.filter('phone_type =', 'home')
+```
 
 When Scott loses his phone, it's easy enough to delete that record. Just delete
 the PhoneNumber instance and it can no longer be queried for:
 
-    scott.phone_numbers.filter('phone_type =', 'home').get().delete()
+```py
+scott.phone_numbers.filter('phone_type =', 'home').get().delete()
+```
 
 ## Many to Many
 
@@ -160,10 +172,12 @@ and "Family". This would allow users to use these groups to perform actions en
 masse, such as maybe sending an invitation to all their friends for a
 hack-a-thon. Let's define a simple `Group` model like this:
 
-    class Group(db.Model):
+```py
+class Group(db.Model):
 
-      name = db.StringProperty()
-      description = db.TextProperty()
+    name = db.StringProperty()
+    description = db.TextProperty()
+```
 
 You could make a new `ReferenceProperty` on `Contact` called group. However,
 this would allow contacts to be part of only one group at a time. For example,
@@ -174,45 +188,51 @@ represent many-to-many relationships.
 
 One very simple way is to create a list of keys on one side of the relationship:
 
-    class Contact(db.Model):
-      # ID of user that owns this entry.
-      owner = db.StringProperty()
+```py
+class Contact(db.Model):
+    # ID of user that owns this entry.
+    owner = db.StringProperty()
 
-      # Basic info.
-      name = db.StringProperty()
-      birth_day = db.DateProperty()
+    # Basic info.
+    name = db.StringProperty()
+    birth_day = db.DateProperty()
 
-      # Address info.
-      address = db.PostalAddressProperty()
+    # Address info.
+    address = db.PostalAddressProperty()
 
-      # Company info.
-      company_title = db.StringProperty()
-      company_name = db.StringProperty()
-      company_description = db.StringProperty()
-      company_address = db.PostalAddressProperty()
+    # Company info.
+    company_title = db.StringProperty()
+    company_name = db.StringProperty()
+    company_description = db.StringProperty()
+    company_address = db.PostalAddressProperty()
 
-      # Group affiliation
-      groups = db.ListProperty(db.Key)
+    # Group affiliation
+    groups = db.ListProperty(db.Key)
+```
 
 Adding and removing a user to and from a group means working with a list of
 keys:
 
-    friends = Group.gql("WHERE name = 'friends'").get()
-    mary = Contact.gql("WHERE name = 'Mary'").get()
-    if friends.key() not in mary.groups:
-        mary.groups.append(friends.key())
-        mary.put()
+```py
+friends = Group.gql("WHERE name = 'friends'").get()
+mary = Contact.gql("WHERE name = 'Mary'").get()
+if friends.key() not in mary.groups:
+    mary.groups.append(friends.key())
+    mary.put()
+```
 
 To get all the members of a group, you can execute a simple query. It might help
 to add a helper function to the `Group` entity:
 
-    class Group(db.Model):
-        name = db.StringProperty()
-        description = db.TextProperty()
+```py
+class Group(db.Model):
+    name = db.StringProperty()
+    description = db.TextProperty()
 
-      @property
-        def members(self):
-            return Contact.gql("WHERE groups = :1", self.key())
+    @property
+    def members(self):
+        return Contact.gql("WHERE groups = :1", self.key())
+```
 
 There are a few limitations to implementing many-to-many relationships this way.
 First, you must explicitly retrieve the values on the side of the collection
@@ -239,44 +259,48 @@ You need a many-to-many relationship that can describe some additional
 information about that relationship. To accomplish this, you can use another
 `Model` to describe the relationship:
 
-    class Contact(db.Model):
-        # ID of user that owns this entry.
-        owner = db.StringProperty()
+```py
+class Contact(db.Model):
+    # ID of user that owns this entry.
+    owner = db.StringProperty()
 
-        # Basic info.
-        name = db.StringProperty()
-        birth_day = db.DateProperty()
+    # Basic info.
+    name = db.StringProperty()
+    birth_day = db.DateProperty()
 
-        # Address info.
-        address = db.PostalAddressProperty()
+    # Address info.
+    address = db.PostalAddressProperty()
 
-        # The original organization properties have been replaced by
-        # an implicitly created property called 'companies'.
+    # The original organization properties have been replaced by
+    # an implicitly created property called 'companies'.
 
-        # Group affiliation
-        groups = db.ListProperty(db.Key)
+    # Group affiliation
+    groups = db.ListProperty(db.Key)
 
-    class Company(db.Model):
-        name = db.StringProperty()
-        description = db.StringProperty()
-        company_address = db.PostalAddressProperty()
+class Company(db.Model):
+    name = db.StringProperty()
+    description = db.StringProperty()
+    company_address = db.PostalAddressProperty()
 
-    class ContactCompany(db.Model):
-        contact = db.ReferenceProperty(Contact,
-                                       required=True,
-                                       collection_name='companies')
-        company = db.ReferenceProperty(Company,
-                                       required=True,
-                                       collection_name='contacts')
-        title = db.StringProperty()
+class ContactCompany(db.Model):
+    contact = db.ReferenceProperty(Contact,
+                                    required=True,
+                                    collection_name='companies')
+    company = db.ReferenceProperty(Company,
+                                    required=True,
+                                    collection_name='contacts')
+    title = db.StringProperty()
+```
 
 Adding someone to a company is done by creating a `ContactCompany` instance:
 
-    mary = Contact.gql("name = 'Mary'").get()
-    google = Company.gql("name = 'Google'").get()
-    ContactCompany(contact=mary,
-                   company=google,
-                   title='Engineer').put()
+```py
+mary = Contact.gql("name = 'Mary'").get()
+google = Company.gql("name = 'Google'").get()
+ContactCompany(contact=mary,
+                company=google,
+                title='Engineer').put()
+```
 
 In addition to being able to store information about a relationship, using this
 method has the advantage over the list-of-keys method in that you can have large

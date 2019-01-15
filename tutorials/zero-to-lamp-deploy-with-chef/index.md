@@ -152,156 +152,177 @@ From the original machine:
 Use the Chef GCP cookbooks to define your Compute Engine infrastructure. More information on these cookbooks can be found at the [Chef Supermarket.][supermarket]
 
 1.  Create a new recipe within the infrastructure cookbook.
-    
-        # gce: chef-workstation
-        chef generate recipe infrastructure compute
+
+    ```sh
+    # gce: chef-workstation
+    chef generate recipe infrastructure compute
+    ```
     
 1.  Create the credentials that will be used to communicate with the Compute Engine APIs within the new compute recipe within the infrastructure cookbook.
 
-        gauth_credential 'compute-credentials' do
-          action :serviceaccount
-          path '/home/$USER/key.json'
-          scopes [
-            'https://www.googleapis.com/auth/cloud-platform'
-          ]
-        end
+    ```sh
+    gauth_credential 'compute-credentials' do
+      action :serviceaccount
+      path '/home/$USER/key.json'
+      scopes [
+        'https://www.googleapis.com/auth/cloud-platform'
+      ]
+    end
+    ```
 
 1.  Create a network to build our infrastructure in. This network will contain your Compute Engine instances and allow you to create firewall rules that apply to everything within the network.
 
-        gcompute_network 'web-server-network' do
-          action :create
-          auto_create_subnetworks true
-          project '$PROJECT_NAME'
-          credential 'compute-credentials'
-        end
+    ```sh
+    gcompute_network 'web-server-network' do
+      action :create
+      auto_create_subnetworks true
+      project '$PROJECT_NAME'
+      credential 'compute-credentials'
+    end
+    ```
     
 1.  Add a firewall rule that allows ssh and http traffic for your web server.
-    
-        gcompute_firewall 'fw-allow-ssh-http' do
-          action :create
-          allowed [
-            {
-              ip_protocol: 'tcp',
-              ports: ['22', '80']
-            }
-          ]
-          network 'web-server-network'
-          project '$PROJECT_NAME'
-          credential 'compute-credentials'
-        end
+
+    ```sh
+    gcompute_firewall 'fw-allow-ssh-http' do
+      action :create
+      allowed [
+        {
+          ip_protocol: 'tcp',
+          ports: ['22', '80']
+        }
+      ]
+      network 'web-server-network'
+      project '$PROJECT_NAME'
+      credential 'compute-credentials'
+    end
+    ```
     
 1.  Create the Compute Engine instance and static ip address.
 
-        gcompute_address 'web-server-ip' do
-          action :create
-          region 'us-west1'
-          project '$PROJECT_NAME'
-          credential 'compute-credentials'
-        end
+    ```sh
+    gcompute_address 'web-server-ip' do
+      action :create
+      region 'us-west1'
+      project '$PROJECT_NAME'
+      credential 'compute-credentials'
+    end
 
-        gcompute_disk 'web-server-os-1' do
-          action :create
-          source_image 'projects/debian-cloud/global/images/family/debian-9'
-          zone 'us-west1-a'
-          project '$PROJECT_NAME'
-          credential 'compute-credentials'
-        end
+    gcompute_disk 'web-server-os-1' do
+      action :create
+      source_image 'projects/debian-cloud/global/images/family/debian-9'
+      zone 'us-west1-a'
+      project '$PROJECT_NAME'
+      credential 'compute-credentials'
+    end
 
-        gcompute_instance 'web-server' do
-          action :create
-          machine_type 'n1-standard-1'
-          disks [
+    gcompute_instance 'web-server' do
+      action :create
+      machine_type 'n1-standard-1'
+      disks [
+        {
+          boot: true,
+          auto_delete: true,
+          source: 'web-server-os-1'
+        }
+      ]
+      network_interfaces [
+      {
+        network: 'web-server-network',
+          access_configs: [
             {
-              boot: true,
-              auto_delete: true,
-              source: 'web-server-os-1'
+              name: 'External NAT',
+              nat_ip: 'web-server-ip',
+              type: 'ONE_TO_ONE_NAT'
             }
           ]
-          network_interfaces [
-          {
-           network: 'web-server-network',
-              access_configs: [
-                {
-                  name: 'External NAT',
-                  nat_ip: 'web-server-ip',
-                  type: 'ONE_TO_ONE_NAT'
-                }
-              ]
-            }
-          ]
-          zone 'us-west1-a'
-          project '$PROJECT_NAME'
-          credential 'compute-credentials'
-        end
-    
+        }
+      ]
+      zone 'us-west1-a'
+      project '$PROJECT_NAME'
+      credential 'compute-credentials'
+    end
+    ```    
 
 1.  Include the Compute Engine recipe to your infrastructure cookbook's default recipe.
    
-        # gce: chef-workstation
-        echo "include_recipe 'infrastructure::compute'" >> infrastructure/recipes/default.rb
+    ```sh
+    # gce: chef-workstation
+    echo "include_recipe 'infrastructure::compute'" >> infrastructure/recipes/default.rb
+    ```
     
 ## Create Cloud SQL cookbook
 
 Use the `google-gsql` GCP cookbook to define a Cloud SQL instance.
 
 1.  Create a new recipe within the infrastructure cookbook.
-    
-        # gce: chef-workstation
-        chef generate recipe infrastructure sql
+
+    ```sh
+    # gce: chef-workstation
+    chef generate recipe infrastructure sql
+    ```
     
 1.  Create credentials that will be used for building the Cloud SQL infrastructure.
-   
-        gauth_credential 'sql-credentials' do
-          action :serviceaccount
-          path '/home/$USER/key.json'
-          scopes [
-            'https://www.googleapis.com/auth/sqlservice.admin'
-          ]
-        end
+
+    ```sh
+    gauth_credential 'sql-credentials' do
+      action :serviceaccount
+      path '/home/$USER/key.json'
+      scopes [
+        'https://www.googleapis.com/auth/sqlservice.admin'
+      ]
+    end
+    ```
     
 1.  Define the Cloud SQL instance. To allow access from your webserver you must add the ip of the web server to the `authorized_networks` field of the instance. The `gcompute_address_ip` function allows you to dynamically find the address of a named static ip address.
 
-        ::Chef::Resource.send(:include, Google::Functions)
-        gsql_instance 'sql-instance' do
-          action :create
-          database_version 'MYSQL_5_7'
-          settings({
-            tier: 'db-n1-standard-1',
-            ip_configuration: {
-              authorized_networks: [
-                name: 'webapp',
-                value: gcompute_address_ip('web-server-ip', 'us-west1', '$PROJECT_NAME', gauth_credential_serviceaccount_for_function('/home/$USER/key.json', ['https://www.googleapis.com/auth/compute']))
-              ]
-            }
-          })
-          region 'us-west1'
-          project '$PROJECT_NAME'
-          credential 'sql-credentials'
-        end
+    ```sh
+    ::Chef::Resource.send(:include, Google::Functions)
+    gsql_instance 'sql-instance' do
+      action :create
+      database_version 'MYSQL_5_7'
+      settings({
+        tier: 'db-n1-standard-1',
+        ip_configuration: {
+          authorized_networks: [
+            name: 'webapp',
+            value: gcompute_address_ip('web-server-ip', 'us-west1', '$PROJECT_NAME', gauth_credential_serviceaccount_for_function('/home/$USER/key.json', ['https://www.googleapis.com/auth/compute']))
+          ]
+        }
+      })
+      region 'us-west1'
+      project '$PROJECT_NAME'
+      credential 'sql-credentials'
+    end
+    ```
     
 1.  Define the database and MySQL user to create.
 
-        gsql_database 'my_db' do
-          action :create
-          charset 'utf8'
-          instance "sql-instance"
-          project '$PROJECT_NAME'
-          credential 'sql-credentials'
-        end
+    ```sh
+    gsql_database 'my_db' do
+      action :create
+      charset 'utf8'
+      instance "sql-instance"
+      project '$PROJECT_NAME'
+      credential 'sql-credentials'
+    end
 
-        gsql_user 'db_user' do
-          action :create
-          password 'S3cUr!tY'
-          host '%'
-          instance 'sql-instance'
-          project '$PROJECT_NAME'
-          credential 'sql-credentials'
-        end
+    gsql_user 'db_user' do
+      action :create
+      password 'S3cUr!tY'
+      host '%'
+      instance 'sql-instance'
+      project '$PROJECT_NAME'
+      credential 'sql-credentials'
+    end
+    ```
     
 1.  Include the Cloud SQL recipe into your infrastructure cookbook's default recipe.
     
-        # gce: chef-workstation
-        echo "include_recipe 'infrastructure::sql'" >> infrastructure/recipes/default.rb
+    ```sh
+    # gce: chef-workstation
+    echo "include_recipe 'infrastructure::sql'" >> infrastructure/recipes/default.rb
+    ```
     
 It is important to be sure that the sql cookbook is included after the compute cookbook because the sql cookbook depends on the web server ip address existing.
 
@@ -313,8 +334,10 @@ Now that you have created your infrastructure cookbook, run it on your Chef Work
 
 1.  Run `chef-client` in local mode with the infrastructure cookbook as the run-list.
 
-        # gce: chef-workstation
-        chef-client -z -o infrastructure
+    ```sh
+    # gce: chef-workstation
+    chef-client -z -o infrastructure
+    ```
   
 This may take a couple of minutes as it creates the virtual machine and Cloud SQL instance.
 
@@ -322,11 +345,12 @@ This may take a couple of minutes as it creates the virtual machine and Cloud SQ
 
 For the purposes of this tutorial you can download a LAMP cookbook that can be run on Debian 9 [here][cookbook]. This cookbook is adapted from https://learn.chef.io/modules/create-a-web-app-cookbook to work within the context of chef-run and connect to an external MySQL server. Download this cookbook to your Chef Workstation and unzip it within the `cookbooks` directory that you created.
 
-
+    ```sh
     # gce: chef-workstation
     $USER@chef-workstation:~/chef-repo/cookbooks$ ls
     google-cloud  google-gauth  google-gcompute  google-gcontainer  google-gdns
     google-glogging  google-gsql  google-gstorage  infrastructure  lamp
+    ```
 
 ## Configure the web server cookbook for your environment
 
@@ -340,28 +364,38 @@ Configure your web server machine for ssh access from the Chef Workstation.
 
 1.  Authenticate the Chef Workstation machine to use Compute Engine commands.
 
-        # gce: chef-workstation
-        gcloud auth activate-service-account compute@$PROJECT_NAME.iam.gserviceaccount.com --key-file=compute.json
+    ```sh
+    # gce: chef-workstation
+    gcloud auth activate-service-account compute@$PROJECT_NAME.iam.gserviceaccount.com --key-file=compute.json
+    ```
 
 1.  Connect to the `web-server`. This will force the creation of a new SSH key and upload it to the GCE instance.
 
-        # gce: chef-workstation
-        gcloud compute ssh web-server --command='exit'
+    ```sh
+    # gce: chef-workstation
+    gcloud compute ssh web-server --command='exit'
+    ```
 
 1.  Find the ip of the web server.
 
-        gcloud compute addresses list
+    ```sh
+    gcloud compute addresses list
+    ```
         
 1.  Use the [chef-run][chefrun] command to run the `lamp` cookbook on your web server.
 
-        # gce: chef-workstation
-        cd ~/chef-repo/cookbooks
-        chef-run -i ~/.ssh/google_compute_engine $USER@$WEB_SERVER_IP lamp
+    ```sh
+    # gce: chef-workstation
+    cd ~/chef-repo/cookbooks
+    chef-run -i ~/.ssh/google_compute_engine $USER@$WEB_SERVER_IP lamp
+    ```
     
 1.  Verify that the cookbook completed by retrieving the content hosted by the web server.
 
-        # gce: chef-workstation
-        curl $WEB_SERVER_IP
+    ```sh
+    # gce: chef-workstation
+    curl $WEB_SERVER_IP
+    ```
     
 Or visit $WEB_SERVER_IP in your browser. If everything is working it will display a simple html table view of your Cloud SQL database.
 
