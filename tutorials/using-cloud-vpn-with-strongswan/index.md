@@ -3,7 +3,7 @@ title: How to Set Up VPN Between Strongswan and Cloud VPN
 description: Learn how to build site-to-site IPSEC VPN between Strongswan and Cloud VPN.
 author: civiloid,brona
 tags: Compute Engine, Cloud VPN, Strongswan, Libreswan, firewall
-date_published: TBD
+date_published: 2019-01-16
 ---
 
 This guide walks you through the process to configure the [Strongswan](https://www.strongswan.org/)
