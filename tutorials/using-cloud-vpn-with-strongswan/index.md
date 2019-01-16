@@ -1,16 +1,15 @@
 ---
-title: How to Set Up VPN Between Strongswan and Cloud VPN
-description: Learn how to build site-to-site IPSEC VPN between Strongswan and Cloud VPN.
-author: civiloid,brona
+title: How to set up VPN between strongSwan and Cloud VPN
+description: Learn how to build site-to-site IPsec VPN between strongSwan and Cloud VPN.
+author: civiloid, brona
 tags: Compute Engine, Cloud VPN, Strongswan, Libreswan, firewall
-date_published: 2019-01-16
+date_published: TBD
 ---
 
-This guide walks you through the process to configure the [Strongswan](https://www.strongswan.org/)
+This guide walks you through how to configure the [strongSwan](https://www.strongswan.org/)
 for integration with the [Google Cloud VPN][cloud_vpn]. This information is
-provided as an example only. Please note that this guide is not meant to be a
-comprehensive overview of IPsec and assumes basic familiarity with the IPsec
-protocol.
+provided as an example only. This guide is not meant to be a comprehensive
+overview of IPsec and assumes basic familiarity with the IPsec protocol.
 
 [cloud_vpn]: https://cloud.google.com/compute/docs/vpn/overview
 
@@ -18,8 +17,8 @@ protocol.
 
 The equipment used in the creation of this guide is as follows:
 
-* Vendor: Strongswan
-* Software Release: 5.5.1 on Debian 9.6
+* Vendor: strongSwan
+* Software release: 5.5.1 on Debian 9.6
 
 ## Topology
 
@@ -30,22 +29,23 @@ configuration using the referenced device:
 
 # Before you begin
 
-## Prerequisities
+## Prerequisites
 
-To use a Strongswan with Cloud VPN make sure the following prerequisites have been met:
+To use a strongSwan with Cloud VPN make sure the following prerequisites have been met:
 
-* VM or Server that runs Strongswan is healthy and have no known issues. 
-* There is root access to the Strongswan instance.
-* Your on-prem firewall allows udp port 500, udp port 4500 and esp packets.
-* You should be able to configure your on-prem router to route traffic through Strongswan VPN gateway. Some environments might not give you that option.
+*   VM or Server that runs strongSwan is healthy and has no known issues. 
+*   There is root access to the strongSwan instance.
+*   Your on-premises firewall allows UDP port 500, UDP port 4500, and ESP packets.
+*   You should be able to configure your on-premises router to route traffic through
+    Strongswan VPN gateway. Some environments might not give you that option.
 
 
 ## IPsec parameters
 
-Cloud VPN supports extensive
+Cloud VPN supports an extensive
 [list](https://cloud.google.com/vpn/docs/concepts/supported-ike-ciphers)
-of ciphers that can be used per your security policies. The following parameters and values are used in the Gateway’s IPSec configuration for the
-purpose of this guide.
+of ciphers that can be used per your security policies. The following parameters and
+values are used in the Gateway’s IPsec configuration for the purpose of this guide.
 
 |Parameter | Value|
 --------- |  -----
@@ -58,7 +58,7 @@ purpose of this guide.
 These are the Cipher configuration settings for IKE phase 1 and phase 2 that are used
 in this guide.
 
-|Phase | Cipher Role | Cipher|
+|Phase | Cipher role | Cipher|
 -------|-------------|-------
 |Phase-1|Encryption|`aes256gcm16`|
 | (ike) |Integrity|`sha512`|
@@ -71,7 +71,7 @@ in this guide.
 
 # Configuring policy-based IPsec VPN
 
-Below is a sample environment to walk you through set up of policy based VPN. Make sure
+Below is a sample environment to walk you through set up of policy-based VPN. Make sure
 to replace the IP addresses in the sample environment with your own IP addresses.
 
 **Cloud VPN**
@@ -81,80 +81,87 @@ to replace the IP addresses in the sample environment with your own IP addresses
 |Cloud VPN(external IP)|`35.204.151.163`|
 |VPC CIDR|`192.168.0.0/24`|
 
-**Strongswan**
+**strongSwan**
 
 |Name | Value|
 -----|------
 |External IP|`35.204.200.153`|
-|CIDR Behind Strongswan|`10.164.0.0/20`|
+|CIDR Behind strongSwan|`10.164.0.0/20`|
 
 ## Configuration - GCP
 
 To configure Cloud VPN:
-1. In the Google Cloud Platform Console, select **Networking** > **[Create VPN connection](https://console.cloud.google.com/interconnect/vpn)**.
+
+1.  In the Google Cloud Platform (GCP) Console, select **Networking** > [**Create VPN connection**](https://console.cloud.google.com/interconnect/vpn).
 
 1. Click **CREATE VPN CONNECTION**.
 
-1. Populate the fields for the gateway and tunnel as shown in the following table and click **Create**:
+1. Populate the fields for the gateway and tunnel as shown in the following table, and click **Create**:
 
 |Parameter|Value|Description|
 |---------|-----------|-----|
 |Name|`gcp-to-strongswan-1`|Name of the VPN gateway.|
 |Description|`VPN tunnel connection between GCP and Strongswan`|Description of the VPN connection.|
 |Network|`to-sw`| The GCP network the VPN gateway attaches to. Note: This network will get VPN connectivity.|
-|Region|`europe-west4`|The home region of the VPN gateway Note: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
+|Region|`europe-west4`|The home region of the VPN gateway. Note: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
 |IP address|`gcp-to-strangswan(35.204.151.163)`|The VPN gateway uses the static public IP address. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
-|Remote peer IP address| `35.204.200.153`|Public IP address of the on-premise VPN appliance used to connect to the Cloud VPN.|
+|Remote peer IP address| `35.204.200.153`|Public IP address of the on-premises VPN appliance used to connect to the Cloud VPN.|
 |IKE version|`IKEv2`|The IKE protocol version. You can select IKEv1 or IKEv2.|
-|Shared secret|`secret`|A shared secret used for authentication by the VPN gateways. Configure the on-premise VPN gateway tunnel entry with the same shared secret.|
+|Shared secret|`secret`|A shared secret used for authentication by the VPN gateways. Configure the on-premises VPN gateway tunnel entry with the same shared secret.|
 |Routing options|`Policy-based`|Multiple routing options for the exchange of route information between the VPN gateways. This example uses static routing.|
-|Remote network IP ranges| `10.164.0.0/20`|The on-premise CIDR blocks connecting to GCP from the VPN gateway.|
+|Remote network IP ranges| `10.164.0.0/20`|The on-premises CIDR blocks connecting to GCP from the VPN gateway.|
 |Local IP ranges| `192.168.0.0/24`|The GCP IP ranges matching the selected subnet.|
 
-## Configuration - Strongswan
+## Configuration - strongSwan
 
-This guide will assume that you have strongswan already installed. It will also rely on default
+This guide assumes that you have strongSwan already installed. It also assumes a default
 filesystem layout of Debian 9.6.
 
-**Step 1**: Ensure ip forwarding is enabled
+**Step 1**: Ensure IP forwarding is enabled
 
-Server that host strongswan will act as a gateway, so it's required to `net.ipv4.ip_forwarding`
+The Server that hosts strongSwan acts as a gateway, so it's required to `net.ipv4.ip_forwarding`
 sysctl.
 
-To check it's current status you can use following command:
+To check its current status, you can use following command:
+
 ```
 sysctl net.ipv4.ip_forward
 ```
 
 To temporary enable it (until reboot), you can use following command:
+
 ```
 sysctl -w net.ipv4.ip_forward=1
 ```
 
-To make changes permanent you should add a line to sysctl.conf:
+To make changes permanent, you should add a line to sysctl.conf:
 
 **/etc/sysctl.d/99-forwarding.conf**:
+
 ```
 net.ipv4.ip_forward = 1
 ```
 
-**Step 2**: Configure IPSec credentials
+**Step 2**: Configure IPsec credentials
 
 Ensure that the following line present in file:
 
 **/var/lib/strongswan/ipsec.secrets.inc**
+
 ```
 35.204.151.163 : PSK "secret"
 ```
 
-**Step 3**: Configure IPSec connection
+**Step 3**: Configure the IPSec connection
 
 **/var/lib/strongswan/ipsec.conf.inc**
+
 ```
 include /etc/ipsec.d/gcp.conf
 ```
 
 **/etc/ipsec.d/gcp.conf**
+
 ```
 conn %default
     ikelifetime=600m # 36,000 s
@@ -177,36 +184,39 @@ conn net-net
     rightsubnet=192.168.0.0/24
     rightauth=psk
     type=tunnel
-    # auto=add - means strongswan won't try to initiate it
-    # auto=start - means strongswan will try to establish connection as well
-    # Please note that GCP will also try to initiate the connection
+    # auto=add - means strongSwan won't try to initiate it
+    # auto=start - means strongSwan will try to establish connection as well
+    # Note that GCP will also try to initiate the connection
     auto=start
-    # dpdaction=restart - means strongswan will try to reconnect if Dead Peer Detection spots
+    # dpdaction=restart - means strongSwan will try to reconnect if Dead Peer Detection spots
     #                  a problem. Change to 'clear' if needed
     dpdaction=restart
     closeaction=restart
 ```
 
-**Step 4**: Start the Strongswan
+**Step 4**: Start strongSwan
 
-Now you can start strongswan:
+Now you can start strongSwan:
+
 ```
 systemctl start strongswan
 ```
 
-After you make sure it's working as expected, you can add strongswan to autostart:
+After you make sure it's working as expected, you can add strongSwan to autostart:
+
 ```
 systemctl enable strongswan
 ```
 
-# Configuring a Dynamic (BGP) IPsec VPN Tunnel with Strongswan and BIRD
+# Configuring a dynamic (BGP) IPsec VPN tunnel with strongSwan and Bird
 
-In this example Dynamic (BGP) based VPN will use VTI interface. Guide is based on official [strongswan wiki](https://wiki.strongswan.org/projects/strongswan/wiki/RouteBasedVPN#VTI-Devices-on-Linux).
+In this example, a dynamic (BGP)-based VPN uses a VTI interface. This guide is based
+on the official [strongSwan wiki](https://wiki.strongswan.org/projects/strongswan/wiki/RouteBasedVPN#VTI-Devices-on-Linux).
 
-Below is a sample environment to walk you through set up of route based VPN. Make sure
+The following sample environment walks you through set up of a route-based VPN. Make sure
 to replace the IP addresses in the sample environment with your own IP addresses.
 
-This guide will assume that you have bird 1.6.3 installed on your strongswan server.
+This guide assumes that you have Bird 1.6.3 installed on your strongSwan server.
 
 **Cloud VPN**
 
@@ -217,68 +227,68 @@ This guide will assume that you have bird 1.6.3 installed on your strongswan ser
 |TUN-INSIDE GCP|`169.254.2.1`|
 |GCP-ASN|`65000`|
 
-**Strongswan**
+**strongSwan**
 
 |Name | Value|
 -----|------
 |External IP|`35.204.200.153`|
-|CIDR Behind Strongswan|`10.164.0.0/20`|
+|CIDR Behind strongSwan|`10.164.0.0/20`|
 |TUN-INSIDE- SW|`169.254.2.2`|
-|Strongswan ASN|`65002`|
+|strongSwan ASN|`65002`|
 
 ## Configuration - GCP
 
-With route based VPN both static and dynamic routing can be used. This example will use
+With a route-based VPN, you can use both static and dynamic routing. This example uses
 dynamic (BGP) routing. [Cloud Router](https://cloud.google.com/router/docs/) is used to establish
-BGP sessions between the 2 peers.
+BGP sessions between the two peers.
 
-### Configuring cloud router
+### Configuring a cloud router
 
-**Step 1**: In Google Cloud Platform Console, select **Networking** > **[Cloud Routers](https://console.cloud.google.com/interconnect/routers)** > **Create Router**.
+**Step 1**: In the GCP Console, select **Networking** > [**Cloud Routers**](https://console.cloud.google.com/interconnect/routers) > **Create Router**.
 
-**Step 2**: Enter the parameters as shown in the following table and click **Create**.
+**Step 2**: Enter the following parameters, and click **Create**.
 
 |Parameter|Value|Description|
 |---------|-----------|-----|
 |Name|`gcp-to-strongswan-router-1`|Name of the cloud router.|
 |Description|           |Description of the cloud router.|
-|Network|`to-sw`|The GCP network the cloud router attaches to. Note: This is the network which manages route information.|
-|Region|`europe-west4`|The home region of the cloud router.Note: Make sure the cloud router is in the same region as the sub-networks it is connecting to.|
+|Network|`to-sw`|The GCP network the cloud router attaches to. Note: This is the network that manages route information.|
+|Region|`europe-west4`|The home region of the cloud router. Note: Make sure the cloud router is in the same region as the subnetworks it is connecting to.|
 |Google ASN|`65000`|The Autonomous System Number assigned to the cloud router. Use any unused private ASN (64512 - 65534, 4200000000 – 4294967294).|
 
 ### Configuring Cloud VPN
 
-**Step 1**: In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[VPN](https://console.cloud.google.com/interconnect/vpn)** > **CREATE VPN CONNECTION**.
+**Step 1**: In the GCP Console, select **Networking** > **Interconnect** > [**VPN**](https://console.cloud.google.com/interconnect/vpn) > **CREATE VPN CONNECTION**.
 
-**Step 2**: Enter the parameters as shown in the following table for the Google Compute Engine VPN gateway:
+**Step 2**: Enter the following parameters for the Compute Engine VPN gateway:
 
 |Parameter|Value|Description|
 |---------|-----------|-----|
 |Name|`gcp-to-strongswan-1`|Name of the VPN gateway.|
-|Description|`VPN tunnel connection between GCP and Strongswan`|Description of the VPN connection.|
+|Description|`VPN tunnel connection between GCP and strongSwan`|Description of the VPN connection.|
 |Network|`to-sw`| The GCP network the VPN gateway attaches to. Note: This network will get VPN connectivity.|
-|Region|`europe-west4`|The home region of the VPN gateway Note: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
+|Region|`europe-west4`|The home region of the VPN gateway. Note: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
 |IP address|`gcp-to-strangswan(35.204.151.163)`|The VPN gateway uses the static public IP address. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
 
-**Step 3**: Enter the parameters as shown in the following table for the tunnel:
+**Step 3**: Enter the following parameters for the tunnel:
 
 |Parameter|Value|Description|
 |---------|-----|-----------|
 |Name|`gcp-to-strongswan-1-tunnel-1`|Name of the VPN gateway|
-|Description|`VPN tunnel connection between GCP and Strongswan`|Description of the VPN gateway|
-|Remote peer IP address| `35.204.200.153`|Public IP address of the on-premise VPN appliance used to connect to the Cloud VPN.|
+|Description|`VPN tunnel connection between GCP and strongSwan`|Description of the VPN gateway|
+|Remote peer IP address| `35.204.200.153`|Public IP address of the on-premises VPN appliance used to connect to the Cloud VPN.|
 |IKE version|`IKEv2`|The IKE protocol version. You can select IKEv1 or IKEv2.|
-|Shared secret|`secret`|A shared secret used for authentication by the VPN gateways. Configure the on-premise VPN gateway tunnel entry with the same shared secret.|
+|Shared secret|`secret`|A shared secret used for authentication by the VPN gateways. Configure the on-premises VPN gateway tunnel entry with the same shared secret.|
 |Routing options|`Dynamic(BGP)`|Multiple routing options for the exchange of route information between the VPN gateways. This example uses static routing.|
-|Cloud Router|`gcp-to-strongswan-router-1`|Select the Cloud router created previously.|
-|BGP session| |BGP sessions enable your cloud network and on-premise networks to dynamically exchange routes|
+|Cloud Router|`gcp-to-strongswan-router-1`|Select the cloud router you created previously.|
+|BGP session| |BGP sessions enable your cloud network and on-premises networks to dynamically exchange routes|
 
 **Step 4**: Enter the parameters as shown in the following table for the BGP peering:
 
 |Parameter|Value|Description|
 |---------|-----|-----------|
 |Name|`gcp-to-strongswan-bgp`|Name of the BGP session.|
-|Peer ASN|`65002`|Unique BGP ASN of the on-premise router.|
+|Peer ASN|`65002`|Unique BGP ASN of the on-premises router.|
 |Google BGP IP address|`169.254.2.1`|
 |Peer BGP IP address|`169.254.2.2`|
 
@@ -286,13 +296,14 @@ Click **Save and Continue** to complete.
 
 **Note:** – Add ingress firewall rules to allow inbound network traffic as per your security policy.
 
-## Configuration - Strongswan
+## Configuration - strongSwan
 
-This guide will assume that you have strongswan already installed. It will also rely on default layout of Debian 9.6.
+This guide assumes that you have strongSwan already installed. It also assumes a default layout of Debian 9.6.
 
 **Step 1**: Configure BIRD
 
 **/etc/bird/bird.conf**
+
 ```
 # Config example for bird 1.6 
 #debug protocols all;
@@ -365,11 +376,12 @@ protocol bgp gcp_vpc_a_tun1 from gcp_vpc_a
 }
 ```
 
-**Step 2**: Disable automatic routes in Strongswan
+**Step 2**: Disable automatic routes in strongSwan
 
-Routes will be handled by BIRD, so it's required to disable automatic route creation in strongswan.
+Routes are handled by BIRD, so you must disable automatic route creation in strongSwan.
 
 **/etc/strongswan.d/vti.conf**
+
 ```
 charon {
     # We will handle routes by ourselves
@@ -377,12 +389,13 @@ charon {
 }
 ```
 
-**Step 3**: Create a script that will configure VTI interface
+**Step 3**: Create a script that will configure the VTI interface
 
-This script will be called everytime new tunnel is established and it will take care of proper
+This script is called every time a new tunnel is established, and it takes care of proper
 interface configuration, including MTU, etc.
 
 **/var/lib/strongswan/ipsec-vti.sh**
+
 ```
 #!/bin/bash
 set -o nounset
@@ -438,28 +451,32 @@ sysctl -w net.ipv4.conf.${LOCAL_IF}.disable_xfrm=1
 sysctl -w net.ipv4.conf.${LOCAL_IF}.disable_policy=1
 ```
 
-You should also make `/var/lib/strongswan/ipsec-vti.sh` executable, by using following command:
+You should also make `/var/lib/strongswan/ipsec-vti.sh` executable by using following command:
+
 ```
 chmod +x /var/lib/strongswan/ipsec-vti.sh
 ```
 
-**Step 4**: Configure IPSec credentials
+**Step 4**: Configure IPsec credentials
             
-Ensure that the following line present in file:
+Ensure that the following line is in the file:
 
 **/var/lib/strongswan/ipsec.secrets.inc**
+
 ```
 35.204.151.163 : PSK "secret"
 ```
 
-**Step 5**: Configure IPSec connection
+**Step 5**: Configure IPsec connection
 
 **/var/lib/strongswan/ipsec.conf.inc**
+
 ```
 include /etc/ipsec.d/gcp.conf
 ```
 
 **/etc/ipsec.d/gcp.conf**
+
 ```
 conn %default
     ikelifetime=600m # 36,000 s
@@ -483,11 +500,11 @@ conn net-net
     rightsubnet=0.0.0.0/0
     rightauth=psk
     type=tunnel
-    # auto=add - means strongswan won't try to initiate it
-    # auto=start - means strongswan will try to establish connection as well
-    # Please note that GCP will also try to initiate the connection
+    # auto=add - means strongSwan won't try to initiate it
+    # auto=start - means strongSwan will try to establish connection as well
+    # Note that GCP will also try to initiate the connection
     auto=start
-    # dpdaction=restart - means strongswan will try to reconnect if Dead Peer Detection spots
+    # dpdaction=restart - means strongSwan will try to reconnect if Dead Peer Detection spots
     #                  a problem. Change to 'clear' if needed
     dpdaction=restart
     closeaction=restart
@@ -496,20 +513,21 @@ conn net-net
     mark=%unique
 ```
 
-`leftupdown` contains a path to a script and it's command line parameters:
- * First parameter is tunnel ID as you cannot rely on Strongswan's `PLUTO_UNIQUEID` variable if you
- need the tunnel id to be persistent
- * Second parameter specified's GCP's Cloud Router IP and configured subnet.
- * Third parameter specifies IP address that would be on vti0 interface and where Bird is configured.
+`leftupdown` contains a path to a script and its command-line parameters:
+ * The first parameter is the tunnel ID because you cannot rely on strongSwan's `PLUTO_UNIQUEID` variable if you
+ need the tunnel ID to be persistent.
+ * The second parameter specifies the Cloud Router IP and configured subnet.
+ * The third parameter specifies the IP address of the vti0 interface and where Bird is configured.
 
-**Step 3**: Start the Strongswan and BIRD
+**Step 3**: Start strongSwan and Bird
 
 ```
 systemctl start bird
 systemctl start strongswan
 ```
 
-After you make sure it's working as expected, you can add bird and strongswan to autostart:
+After you make sure it's working as expected, you can add Bird and strongSwan to autostart:
+
 ```
 systemctl enable bird
 systemctl enable strongswan
