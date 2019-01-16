@@ -39,56 +39,66 @@ of the tutorial contains an example Google Cloud Function that contains the
 
 Note that Application default credentials are used to authorize the client:
 
-    google.auth.getApplicationDefault(function (err, authClient, projectId) {
-      if (err) {
-        console.log('Authentication failed because of ', err);
-        return;
-      }
-      if (authClient.createScopedRequired && authClient.createScopedRequired()) {
-        var scopes = ['https://www.googleapis.com/auth/cloud-platform'];
-        client = authClient.createScoped(scopes);
-      }
+```js
+google.auth.getApplicationDefault(function (err, authClient, projectId) {
+  if (err) {
+    console.log('Authentication failed because of ', err);
+    return;
+  }
+  if (authClient.createScopedRequired && authClient.createScopedRequired()) {
+    var scopes = ['https://www.googleapis.com/auth/cloud-platform'];
+    client = authClient.createScoped(scopes);
+  }
 
-      google.options({auth: authClient});
-      //...
-    }
+  google.options({auth: authClient});
+  //...
+}
+```
 
 The Google Cloud Function exported by the script is titled `relayCloudIot` and
 is specifed as:
 
-    exports.relayCloudIot = function (event, callback) {
+```js
+exports.relayCloudIot = function (event, callback) {
+```
 
 Within the fuction, the first thing that happens is the message sent to the
 PubSub queue is parsed:
 
-    const record = JSON.parse(
-        pubsubMessage.data ?
-            Buffer.from(pubsubMessage.data, 'base64').toString() :
-            '{}');
+```js
+const record = JSON.parse(
+    pubsubMessage.data ?
+        Buffer.from(pubsubMessage.data, 'base64').toString() :
+        '{}');
+```
 
 Next, we increment the hops counter from the parsed record and log the parsed
 value, which can be checked with `gcloud beta functions logs read`:
 
-    let messagesSent = record.hops;
-    messagesSent++;
+```js
+let messagesSent = record.hops;
+messagesSent++;
 
-    console.log(`${record.deviceId} ${record.registryId} ${messagesSent}`);
+console.log(`${record.deviceId} ${record.registryId} ${messagesSent}`);
+```
 
 Finally, we send a new configuration to the device specified in the record:
 
-    const config = {
-      cloudRegion: record.cloudRegion,
-      deviceId: record.deviceId,
-      registryId: record.registryId,
-      hops: messagesSent
-    };
+```js
+const config = {
+    cloudRegion: record.cloudRegion,
+    deviceId: record.deviceId,
+    registryId: record.registryId,
+    hops: messagesSent
+};
 
-    const cb = function (client) {
-      setDeviceConfig(client, record.deviceId, record.registryId,
-          process.env.GCLOUD_PROJECT || process.env.GOOGLE_CLOUD_PROJECT,
-          record.cloudRegion, JSON.stringify(config), 0);
-    };
-    getClient(process.env.GOOGLE_APPLICATION_CREDENTIALS, cb);
+const cb = function (client) {
+    setDeviceConfig(client, record.deviceId, record.registryId,
+        process.env.GCLOUD_PROJECT || process.env.GOOGLE_CLOUD_PROJECT,
+        record.cloudRegion, JSON.stringify(config), 0);
+};
+getClient(process.env.GOOGLE_APPLICATION_CREDENTIALS, cb);
+```
 
 To setup the Google Cloud Function, deploy it to trigger on the topic
 configured with your device registry.
@@ -127,29 +137,33 @@ the handler for receieving messages is different.
 
 The following code shows how the telemetry message is generated and sent:
 
-    const payload = {
-      cloudRegion: argv.cloudRegion,
-      deviceId: argv.deviceId,
-      registryId: argv.registryId,
-      hops: messagesSent
-    };
-    console.log('Publishing message:', payload);
-    client.publish(mqttTopic, JSON.stringify(payload), { qos: 1 }, function (err) {
-      if (!err) {
-        shouldBackoff = false;
-        backoffTime = MINIMUM_BACKOFF_TIME;
-      }
-    });
+```js
+const payload = {
+    cloudRegion: argv.cloudRegion,
+    deviceId: argv.deviceId,
+    registryId: argv.registryId,
+    hops: messagesSent
+};
+console.log('Publishing message:', payload);
+client.publish(mqttTopic, JSON.stringify(payload), { qos: 1 }, function (err) {
+    if (!err) {
+    shouldBackoff = false;
+    backoffTime = MINIMUM_BACKOFF_TIME;
+    }
+});
+```
 
 The following code shows how the demo app handles configuration change
 messages:
 
-    client.on('message', (topic, message, packet) => {
-      console.log('message received: ', Buffer.from(message, 'base64').toString('ascii'));
-      let payload = JSON.parse(Buffer.from(message, 'base64').toString('ascii'));
-      console.log(`${payload.hops} to ${++payload.hops}`);
-      publishAsync(payload.hops, payload.hops+1);
-    });
+```js
+client.on('message', (topic, message, packet) => {
+    console.log('message received: ', Buffer.from(message, 'base64').toString('ascii'));
+    let payload = JSON.parse(Buffer.from(message, 'base64').toString('ascii'));
+    console.log(`${payload.hops} to ${++payload.hops}`);
+    publishAsync(payload.hops, payload.hops+1);
+});
+```
 
 To run the demo after you have successfully setup your Device Registry and
 deployed your Google Cloud Function, run the following command from the

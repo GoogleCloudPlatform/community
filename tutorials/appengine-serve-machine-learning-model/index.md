@@ -134,13 +134,15 @@ below.
 - Enforce authentication with an API key by adding the `security` and
   `securityDefinitions` fields:
 
-      security:
-        - api_key: []
-      securityDefinitions:
-        api_key:
-          type: "apiKey"
-          name: "key"
-          in: "query"
+  ```yml
+  security:
+    - api_key: []
+  securityDefinitions:
+    api_key:
+      type: "apiKey"
+      name: "key"
+      in: "query"
+  ```
 
   This is optional, but allows you to grant service consumer permissions on the
   [Cloud Endpoints console][endpoints]. The API key must be associated with a
@@ -151,19 +153,21 @@ below.
   First we specify a service level metric in order to track the number of
   requests:
 
-      x-google-management:
-        metrics:
-          - name: "modelserve-predict"
-            displayName: "modelserve predict"
-            valueType: INT64
-            metricKind: DELTA
-        quota:
-          limits:
-            - name: "modelserve-predict-limit"
-              metric: "modelserve-predict"
-              unit: "1/min/{project}"
-              values:
-                STANDARD: 1000
+  ```yml
+  x-google-management:
+    metrics:
+      - name: "modelserve-predict"
+        displayName: "modelserve predict"
+        valueType: INT64
+        metricKind: DELTA
+    quota:
+      limits:
+        - name: "modelserve-predict-limit"
+          metric: "modelserve-predict"
+          unit: "1/min/{project}"
+          values:
+            STANDARD: 1000
+  ```
 
   This configurations declares a metric `modelserve-predict` and sets its limit
   to 1000 units per minute per project.
@@ -171,13 +175,15 @@ below.
   Only requests to specified paths are counted towards this metric. Specify
   these paths by adding the following in the `paths` field:
 
-      paths:
-        "/predict":
-          post:
-            ...
-            x-google-quota:
-              metricCosts:
-                modelserve-predict: 1
+  ```yml
+  paths:
+    "/predict":
+      post:
+        ...
+        x-google-quota:
+          metricCosts:
+            modelserve-predict: 1
+  ```
 
   Each time a `POST` request is sent to
   `modelserve-dot-PROJECT_ID.appspot.com/predict`, the metric

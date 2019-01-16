@@ -1,0 +1,32 @@
+#!/bin/bash
+#SBATCH --partition debug
+#SBATCH --nodes 1
+#SBATCH --ntasks-per-node 1
+#SBATCH --mem-per-cpu 2G
+#SBATCH --time 1-0:00:00
+#SBATCH --job-name jupyter-notebook
+#SBATCH --output jupyter-notebook-%J.log
+
+# get tunneling info
+XDG_RUNTIME_DIR=""
+# port=$(shuf -i8080-8084 -n1)
+port=8080
+node=$(hostname -s)
+ip=$(hostname -i)
+user=$(whoami)
+cluster=$(hostname -f)
+
+# print tunneling instructions jupyter-log
+echo -e "
+CloudShell port forward command for WebPreview
+gcloud compute ssh ${node} -- -A -t -l ${user} -f -N -L ${port}:${ip}:${port}
+"
+
+# load modules or conda environments here
+# e.g. farnam:
+# module load Python/2.7.13-foss-2016b 
+module load anaconda3/5.3.1
+
+# DON'T USE ADDRESS BELOW. 
+# DO USE TOKEN BELOW
+jupyter-notebook --no-browser --port=${port} --ip=${ip} --NotebookApp.allow_origin='*'

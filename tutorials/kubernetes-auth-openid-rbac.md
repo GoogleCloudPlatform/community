@@ -59,19 +59,21 @@ Output appears as follows:
 
     This command should open the browser and ask permissions. After that, it provides you a token in the browser. Copy it and   paste to the terminal for `k8s-oidc-helper`. The output of the command should look as follows:
 
-        # Add the following to your ~/.kube/config
+    ```yaml
+    # Add the following to your ~/.kube/config
 
-        users:
-        - name: name@example.com
-          user:
-            auth-provider:
-              config:
-                client-id: 32934980234312-9ske1sskq89423480922scag3hutrv7.apps.googleusercontent.com
-                client-secret: ZdyKxYW-tCzuRWwB3l665cLY
-                id-token: eyJhbGciOiJSUzI19fvTKfPraZ7yzn.....HeLnf26MjA
-                idp-issuer-url: https://accounts.google.com
-                refresh-token: 18mxeZ5_AE.jkYklrMAf5.IMXnB_DsBY5up4WbYNF2PrY
-              name: oidc
+    users:
+    - name: name@example.com
+        user:
+        auth-provider:
+            config:
+            client-id: 32934980234312-9ske1sskq89423480922scag3hutrv7.apps.googleusercontent.com
+            client-secret: ZdyKxYW-tCzuRWwB3l665cLY
+            id-token: eyJhbGciOiJSUzI19fvTKfPraZ7yzn.....HeLnf26MjA
+            idp-issuer-url: https://accounts.google.com
+            refresh-token: 18mxeZ5_AE.jkYklrMAf5.IMXnB_DsBY5up4WbYNF2PrY
+            name: oidc
+    ```
 
 1. Copy everything after `users:` and append it to your existing user list in the `~/.kube/config`. Now you have 2 users: one from the new cluster configuration and one that you added.
 
@@ -91,27 +93,27 @@ This error message proves that `id-token` and api server arguments work and emai
 
 For now, grant admin rights to the user `name@example.com` with an authorization specification:
 
-
+```yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1alpha1
+metadata:
+    name: admin-role
+rules:
+    - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1alpha1
+metadata:
+    name: admin-binding
+subjects:
+    - kind: User
+    name: name@example.com
+roleRef:
     kind: ClusterRole
-    apiVersion: rbac.authorization.k8s.io/v1alpha1
-    metadata:
-      name: admin-role
-    rules:
-      - apiGroups: ["*"]
-        resources: ["*"]
-        verbs: ["*"]
-    ---
-    kind: ClusterRoleBinding
-    apiVersion: rbac.authorization.k8s.io/v1alpha1
-    metadata:
-      name: admin-binding
-    subjects:
-      - kind: User
-        name: name@example.com
-    roleRef:
-      kind: ClusterRole
-      name: admin-role
-
+    name: admin-role
+```
 
 After applying changes by using `kubectl create -f admin.yaml`,
 Do the test again:
