@@ -1,10 +1,13 @@
 ---
 title: How to set up VPN between strongSwan and Cloud VPN
 description: Learn how to build site-to-site IPsec VPN between strongSwan and Cloud VPN.
-author: civiloid, brona
-tags: Compute Engine, Cloud VPN, Strongswan, Libreswan, firewall
+author: civiloid
+tags: Compute Engine, Cloud VPN, strongSwan, firewall
 date_published: TBD
 ---
+
+Vladimir Smirnov | echnical Solutions Engineer | Google Cloud Platform
+Bronislav Robenek | echnical Solutions Engineer | Google Cloud Platform
 
 This guide walks you through how to configure the [strongSwan](https://www.strongswan.org/)
 for integration with the [Google Cloud VPN][cloud_vpn]. This information is
@@ -37,7 +40,7 @@ To use a strongSwan with Cloud VPN make sure the following prerequisites have be
 *   There is root access to the strongSwan instance.
 *   Your on-premises firewall allows UDP port 500, UDP port 4500, and ESP packets.
 *   You should be able to configure your on-premises router to route traffic through
-    Strongswan VPN gateway. Some environments might not give you that option.
+    strongSwan VPN gateway. Some environments might not give you that option.
 
 
 ## IPsec parameters
@@ -101,7 +104,7 @@ To configure Cloud VPN:
 |Parameter|Value|Description|
 |---------|-----------|-----|
 |Name|`gcp-to-strongswan-1`|Name of the VPN gateway.|
-|Description|`VPN tunnel connection between GCP and Strongswan`|Description of the VPN connection.|
+|Description|`VPN tunnel connection between GCP and strongSwan`|Description of the VPN connection.|
 |Network|`to-sw`| The GCP network the VPN gateway attaches to. Note: This network will get VPN connectivity.|
 |Region|`europe-west4`|The home region of the VPN gateway. Note: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
 |IP address|`gcp-to-strangswan(35.204.151.163)`|The VPN gateway uses the static public IP address. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
@@ -208,7 +211,7 @@ After you make sure it's working as expected, you can add strongSwan to autostar
 systemctl enable strongswan
 ```
 
-# Configuring a dynamic (BGP) IPsec VPN tunnel with strongSwan and Bird
+# Configuring a dynamic (BGP) IPsec VPN tunnel with strongSwan and BIRD
 
 In this example, a dynamic (BGP)-based VPN uses a VTI interface. This guide is based
 on the official [strongSwan wiki](https://wiki.strongswan.org/projects/strongswan/wiki/RouteBasedVPN#VTI-Devices-on-Linux).
@@ -216,7 +219,7 @@ on the official [strongSwan wiki](https://wiki.strongswan.org/projects/strongswa
 The following sample environment walks you through set up of a route-based VPN. Make sure
 to replace the IP addresses in the sample environment with your own IP addresses.
 
-This guide assumes that you have Bird 1.6.3 installed on your strongSwan server.
+This guide assumes that you have [BIRD](https://bird.network.cz/) 1.6.3 installed on your strongSwan server.
 
 **Cloud VPN**
 
@@ -517,16 +520,16 @@ conn net-net
  * The first parameter is the tunnel ID because you cannot rely on strongSwan's `PLUTO_UNIQUEID` variable if you
  need the tunnel ID to be persistent.
  * The second parameter specifies the Cloud Router IP and configured subnet.
- * The third parameter specifies the IP address of the vti0 interface and where Bird is configured.
+ * The third parameter specifies the IP address of the vti0 interface and where BIRD is configured.
 
-**Step 3**: Start strongSwan and Bird
+**Step 3**: Start strongSwan and BIRD
 
 ```
 systemctl start bird
 systemctl start strongswan
 ```
 
-After you make sure it's working as expected, you can add Bird and strongSwan to autostart:
+After you make sure it's working as expected, you can add BIRD and strongSwan to autostart:
 
 ```
 systemctl enable bird
