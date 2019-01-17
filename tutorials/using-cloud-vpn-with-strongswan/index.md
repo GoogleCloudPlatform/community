@@ -6,8 +6,8 @@ tags: Compute Engine, Cloud VPN, strongSwan, firewall
 date_published: TBD
 ---
 
-Vladimir Smirnov | echnical Solutions Engineer | Google Cloud Platform
-Bronislav Robenek | echnical Solutions Engineer | Google Cloud Platform
+Vladimir Smirnov | Technical Solutions Engineer | Google Cloud Platform
+Bronislav Robenek | Technical Solutions Engineer | Google Cloud Platform
 
 This guide walks you through how to configure the [strongSwan](https://www.strongswan.org/)
 for integration with the [Google Cloud VPN][cloud_vpn]. This information is
