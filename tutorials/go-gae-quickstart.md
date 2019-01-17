@@ -3,7 +3,7 @@ title: App Engine Quickstart using Go
 description: Learn how to deploy a Go sample app to Google App Engine.
 author: jscud
 tags: App Engine
-date_published: 2018-12-13
+date_published: 2019-01-19
 ---
 
 # App Engine Quickstart
@@ -182,23 +182,23 @@ Then, select the **App Engine** section.
 
 You have successfully deployed an App Engine application!
 
-Here are some next steps:
+Here are some next steps for building your next application and learning to use App Engine with other GCP products:
 
-**Download the Google Cloud SDK and develop locally**
-
-Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
-
-**Build your next application**
-
-Learn how to use App Engine with other Google Cloud Platform products:
+**Download the Google Cloud SDK and develop locally.** Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
 
 <walkthrough-tutorial-card url=appengine/docs/go/datastore/ icon="DATASTORE_SECTION" label="datastore">
-**Learn to use Cloud Datastore** Cloud Datastore is a highly-scalable NoSQL
-database for your applications. </walkthrough-tutorial-card>
+
+**Learn to use Cloud Datastore.** [Cloud Datastore](https://cloud.google.com/appengine/docs/standard/java/datastore/)
+is a highly-scalable NoSQL database for your applications.
+
+</walkthrough-tutorial-card>
 
 <walkthrough-tutorial-card url=appengine/docs/go/googlecloudstorageclient/setting-up-cloud-storage icon="STORAGE_SECTION" label="cloudStorage">
-**Learn to use Cloud Storage** Cloud Storage is a powerful and simple object
-storage service. </walkthrough-tutorial-card>
+
+**Learn to use Cloud Storage.** [Cloud Storage](https://cloud.google.com/appengine/docs/standard/java/googlecloudstorageclient/setting-up-cloud-storage)
+is a powerful and simple object storage service.
+
+</walkthrough-tutorial-card>
 
 [app-yaml-ref]: https://cloud.google.com/appengine/docs/standard/go/config/appref
 [cloud-sdk-installer]: https://cloud.google.com/sdk/downloads#interactive
