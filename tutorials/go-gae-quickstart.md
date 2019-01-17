@@ -61,8 +61,7 @@ Cloud Shell to deploy our app.
 
 ### Open Google Cloud Shell
 
-Open Cloud Shell by clicking the  <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right
 corner of the console.
 
 ### Clone the sample code
