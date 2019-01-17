@@ -167,15 +167,17 @@ https://YOUR_PROJECT_ID.appspot.com.
 1.  Create an `app.yaml` under `src/main/appengine` with the following contents.
     For more on configuring `app.yaml`, refer to [this resource][yaml]:
 
-        runtime: java
-        env: flex
+    ```yaml
+    runtime: java
+    env: flex
 
-        resources:
-          memory_gb: 2.3
+    resources:
+      memory_gb: 2.3
 
-        handlers:
-          - url: /.*
-            script: this field is required, but ignored
+    handlers:
+      - url: /.*
+        script: this field is required, but ignored
+    ```
 
     Optionally, you can use the sample [`app.yaml`][app-yaml].
 

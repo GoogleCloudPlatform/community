@@ -38,18 +38,22 @@ you do not need to enable the billing for your project to complete this tutorial
 
 2. Create an [`appengine_config.py`][appengine_config] file with the following contents:
 
-        from google.appengine.ext import vendor
-        vendor.add('lib')
+    ```py
+    from google.appengine.ext import vendor
+    vendor.add('lib')
+    ```
 
 3. Create an [`app.yaml`][app] file with the following contents:
 
-        runtime: python27
-        api_version: 1
-        threadsafe: true
+    ```yaml
+     runtime: python27
+     api_version: 1
+     threadsafe: true
 
-        handlers:
-          - url: /.*
-            script: api.app
+     handlers:
+       - url: /.*
+         script: api.app
+    ```
 
 4. Copy the [`api`][api] module in your workspace
 
@@ -58,40 +62,47 @@ you do not need to enable the billing for your project to complete this tutorial
     1. [`__init__.py`][init]. This is where the api module is initialized and its routes are created.
     You can see how the app variable is defined using the Falcon library.
 
-                app = falcon.API(middleware=[
-                    AuthMiddleware()
-                ])
+    ```py
+    app = falcon.API(middleware=[
+        AuthMiddleware()
+    ])
+    ```
 
-        You can add a route with the following method:
+    You can add a route with the following method:
 
-                app.add_route('/', Resource())
+    ```py
+    app.add_route('/', Resource())
+    ```
 
     2. The resources can be defined in the [`resources.py`][resources] file. The `Resource` class
     implements four different methods `on_get`, `on_post`, `on_patch` and `on_delete`
     that define the endpoints for each HTTP method.
 
-                def on_get(self, req, resp):
-                    ...
-
-                def on_post(self, req, resp):
-                    ...
-
-                def on_patch(self, req, resp):
-                    ...
-
-                def on_delete(self, req, resp):
-                    ...
+    ```py
+    def on_get(self, req, resp):
+        ...
+    
+    def on_post(self, req, resp):
+        ...
+    
+    def on_patch(self, req, resp):
+        ...
+    
+    def on_delete(self, req, resp):
+        ...
+    ```
 
     3. In the [`middleware.py`][middleware] file you can find the `AuthMiddleware` class
     which is used to ensure that all requests are authenticated.
     Because this is just an example, it is not implemented with any kind
     of validation.
 
-                class AuthMiddleware(object):
+    ```py
+    class AuthMiddleware(object):
 
-                    def process_request(self, req, resp):
-                        token = req.get_header('Authorization')
-                        ...
+        def process_request(self, req, resp):
+            token = req.get_header('Authorization')
+            ...
 
     4. The [`hooks.py`][hooks] file contains definitions of custom functions that can be called
     before or after an endpoint function is executed. They can be used, for instance, to validate
