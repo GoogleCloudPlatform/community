@@ -61,9 +61,9 @@ Cloud Shell to deploy our app.
 
 ### Open Google Cloud Shell
 
-Open Cloud Shell by clicking
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[icon][spotlight-open-devshell] in the navigation bar at the top of the console.
+Open Cloud Shell by clicking the  <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
+[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right
+corner of the console.
 
 ### Clone the sample code
 
@@ -125,10 +125,10 @@ go run .
 
 ### Preview your app with "Web preview"
 
-Your app is now running on Cloud Shell. You can access the app by using
-[Web preview][spotlight-web-preview]
-<walkthrough-web-preview-icon></walkthrough-web-preview-icon> to connect to port
-8080.
+Your app is now running on Cloud Shell. You can access the app by clicking the
+[**Web preview**][spotlight-web-preview]
+<walkthrough-web-preview-icon></walkthrough-web-preview-icon> button at the top
+of the Cloud Shell pane and choosing **Preview on port 8080**.
 
 ### Terminating the preview instance
 
@@ -165,7 +165,7 @@ Congratulations! Your app has been deployed. The default URL of your app is
 You can check in on your app by monitoring its status on the App Engine
 dashboard.
 
-Open the [menu][spotlight-console-menu] on the left side of the console.
+Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console.
 
 Then, select the **App Engine** section.
 
@@ -173,8 +173,8 @@ Then, select the **App Engine** section.
 
 ### Disable your project
 
-*   Go to the [Settings][spotlight-gae-settings] page.
-*   Click [Disable Application][spotlight-disable-app].
+*   Go to the [**Settings**][spotlight-gae-settings] page.
+*   Click [**Disable Application**][spotlight-disable-app].
 
 ## Conclusion
 
