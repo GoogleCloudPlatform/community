@@ -11,7 +11,7 @@ date_published: 2019-01-19
 <walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/go/quickstart"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/golang-samples" %} -->
 <!-- {% setvar repo_dir "golang-samples/appengine/go11x/helloworld" %} -->
-<!-- {% setvar project_gae_url "<your-project>" %} -->
+<!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
 
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Cloud Console:
@@ -156,8 +156,11 @@ gcloud app deploy
 
 ### Visit your app
 
-Congratulations! Your app has been deployed. The default URL of your app is
-[{{project_gae_url}}](http://{{project_gae_url}}). Click the URL to visit it.
+Congratulations! Your app has been deployed.
+The default URL of your app is a subdomain on appspot.com that starts with your project's ID:
+[{{project_gae_url}}](http://{{project_gae_url}}).
+
+Try visiting your deployed application.
 
 ## View your app's status
 
@@ -183,21 +186,18 @@ You have successfully deployed an App Engine application!
 
 Here are some next steps for building your next application and learning to use App Engine with other GCP products:
 
-**Download the Google Cloud SDK and develop locally.** Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
+**Download the Google Cloud SDK and develop locally.**
 
-<walkthrough-tutorial-card url=appengine/docs/go/datastore/ icon="DATASTORE_SECTION" label="datastore">
+Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
 
-**Learn to use Cloud Datastore.** [Cloud Datastore](https://cloud.google.com/appengine/docs/standard/java/datastore/)
-is a highly-scalable NoSQL database for your applications.
+<walkthrough-tutorial-card url="appengine/docs/go/datastore/" icon="DATASTORE_SECTION" label="datastore">
+**Learn to use Cloud Datastore.** Cloud Datastore is a highly-scalable NoSQL database for your applications.</walkthrough-tutorial-card>
+<walkthrough-alt>Learn more in the [Cloud Datastore documentation](https://cloud.google.com/appengine/docs/standard/java/datastore/)</walkthrough-alt>
 
-</walkthrough-tutorial-card>
+<walkthrough-tutorial-card url="appengine/docs/go/googlecloudstorageclient/setting-up-cloud-storage" icon="STORAGE_SECTION" label="cloudStorage">
+**Learn to use Cloud Storage.** Cloud Storage is a powerful and simple object storage service.
+</walkthrough-tutorial-card><walkthrough-alt>Check out the [Cloud Storage documentation](https://cloud.google.com/appengine/docs/standard/java/googlecloudstorageclient/setting-up-cloud-storage) for more details</walkthrough-alt>
 
-<walkthrough-tutorial-card url=appengine/docs/go/googlecloudstorageclient/setting-up-cloud-storage icon="STORAGE_SECTION" label="cloudStorage">
-
-**Learn to use Cloud Storage.** [Cloud Storage](https://cloud.google.com/appengine/docs/standard/java/googlecloudstorageclient/setting-up-cloud-storage)
-is a powerful and simple object storage service.
-
-</walkthrough-tutorial-card>
 
 [app-yaml-ref]: https://cloud.google.com/appengine/docs/standard/go/config/appref
 [cloud-sdk-installer]: https://cloud.google.com/sdk/downloads#interactive
