@@ -198,6 +198,7 @@ Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
 **Learn to use Cloud Storage.** Cloud Storage is a powerful and simple object storage service.
 </walkthrough-tutorial-card><walkthrough-alt>Check out the [Cloud Storage documentation](https://cloud.google.com/appengine/docs/standard/java/googlecloudstorageclient/setting-up-cloud-storage) for more details</walkthrough-alt>
 
+
 [app-yaml-ref]: https://cloud.google.com/appengine/docs/standard/go/config/appref
 [cloud-sdk-installer]: https://cloud.google.com/sdk/downloads#interactive
 [spotlight-console-menu]: walkthrough://spotlight-pointer?spotlightId=console-nav-menu
