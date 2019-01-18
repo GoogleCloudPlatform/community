@@ -11,7 +11,7 @@ date_published: 2019-01-19
 <walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/go/quickstart"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/golang-samples" %} -->
 <!-- {% setvar repo_dir "golang-samples/appengine/go11x/helloworld" %} -->
-<!-- {% setvar project_gae_url "<your-project>" %} -->
+<!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
 
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Cloud Console:
@@ -61,9 +61,8 @@ Cloud Shell to deploy our app.
 
 ### Open Google Cloud Shell
 
-Open Cloud Shell by clicking
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[icon][spotlight-open-devshell] in the navigation bar at the top of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right
+corner of the console.
 
 ### Clone the sample code
 
@@ -125,10 +124,10 @@ go run .
 
 ### Preview your app with "Web preview"
 
-Your app is now running on Cloud Shell. You can access the app by using
-[Web preview][spotlight-web-preview]
-<walkthrough-web-preview-icon></walkthrough-web-preview-icon> to connect to port
-8080.
+Your app is now running on Cloud Shell. You can access the app by clicking the
+[**Web preview**][spotlight-web-preview]
+<walkthrough-web-preview-icon></walkthrough-web-preview-icon> button at the top
+of the Cloud Shell pane and choosing **Preview on port 8080**.
 
 ### Terminating the preview instance
 
@@ -157,15 +156,18 @@ gcloud app deploy
 
 ### Visit your app
 
-Congratulations! Your app has been deployed. The default URL of your app is
-[{{project_gae_url}}](http://{{project_gae_url}}). Click the URL to visit it.
+Congratulations! Your app has been deployed.
+The default URL of your app is a subdomain on appspot.com that starts with your project's ID:
+[{{project_gae_url}}](http://{{project_gae_url}}).
+
+Try visiting your deployed application.
 
 ## View your app's status
 
 You can check in on your app by monitoring its status on the App Engine
 dashboard.
 
-Open the [menu][spotlight-console-menu] on the left side of the console.
+Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console.
 
 Then, select the **App Engine** section.
 
@@ -173,8 +175,8 @@ Then, select the **App Engine** section.
 
 ### Disable your project
 
-*   Go to the [Settings][spotlight-gae-settings] page.
-*   Click [Disable Application][spotlight-disable-app].
+*   Go to the [**Settings**][spotlight-gae-settings] page.
+*   Click [**Disable Application**][spotlight-disable-app].
 
 ## Conclusion
 
@@ -184,21 +186,17 @@ You have successfully deployed an App Engine application!
 
 Here are some next steps for building your next application and learning to use App Engine with other GCP products:
 
-**Download the Google Cloud SDK and develop locally.** Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
+**Download the Google Cloud SDK and develop locally.**
 
-<walkthrough-tutorial-card url=appengine/docs/go/datastore/ icon="DATASTORE_SECTION" label="datastore">
+Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
 
-**Learn to use Cloud Datastore.** [Cloud Datastore](https://cloud.google.com/appengine/docs/standard/java/datastore/)
-is a highly-scalable NoSQL database for your applications.
+<walkthrough-tutorial-card url="appengine/docs/go/datastore/" icon="DATASTORE_SECTION" label="datastore">
+**Learn to use Cloud Datastore.** Cloud Datastore is a highly-scalable NoSQL database for your applications.</walkthrough-tutorial-card>
+<walkthrough-alt>Learn more in the [Cloud Datastore documentation](https://cloud.google.com/appengine/docs/standard/java/datastore/)</walkthrough-alt>
 
-</walkthrough-tutorial-card>
-
-<walkthrough-tutorial-card url=appengine/docs/go/googlecloudstorageclient/setting-up-cloud-storage icon="STORAGE_SECTION" label="cloudStorage">
-
-**Learn to use Cloud Storage.** [Cloud Storage](https://cloud.google.com/appengine/docs/standard/java/googlecloudstorageclient/setting-up-cloud-storage)
-is a powerful and simple object storage service.
-
-</walkthrough-tutorial-card>
+<walkthrough-tutorial-card url="appengine/docs/go/googlecloudstorageclient/setting-up-cloud-storage" icon="STORAGE_SECTION" label="cloudStorage">
+**Learn to use Cloud Storage.** Cloud Storage is a powerful and simple object storage service.
+</walkthrough-tutorial-card><walkthrough-alt>Check out the [Cloud Storage documentation](https://cloud.google.com/appengine/docs/standard/java/googlecloudstorageclient/setting-up-cloud-storage) for more details</walkthrough-alt>
 
 [app-yaml-ref]: https://cloud.google.com/appengine/docs/standard/go/config/appref
 [cloud-sdk-installer]: https://cloud.google.com/sdk/downloads#interactive
