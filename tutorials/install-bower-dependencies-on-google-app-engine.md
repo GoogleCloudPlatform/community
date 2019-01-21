@@ -73,24 +73,28 @@ have one:
 1. To prevent locally installed Bower dependencies from being copied into the
 Docker image, add the following to `app.yaml`:
 
-        # Prevents locally installed Bower dependencies
-        # from being copied into the Docker image
-        skip_files:
-          - ^(.*/)?.*/bower_components/.*$
+    ```yaml
+    # Prevents locally installed Bower dependencies
+    # from being copied into the Docker image
+    skip_files:
+      - ^(.*/)?.*/bower_components/.*$
+    ```
 
 1. If you're deploying a Node.js app then you almost certainly have a
 `package.json` file. Add the following to `package.json`:
-
-        "scripts": {
-          ...
-          "postinstall": "bower install --config.interactive=false",
-          ...
-        },
-        "dependencies": {
-          ...
-          "bower": "^1.7.9",
-          ...
-        }
+        
+    ```json
+    "scripts": {
+      ...
+      "postinstall": "bower install --config.interactive=false",
+      ...
+    },
+    "dependencies": {
+      ...
+      "bower": "^1.7.9",
+      ...
+    }
+    ```
 
     The ellipses hide other configurations that may exist in `package.json`.
 
@@ -119,15 +123,19 @@ customization in the `Dockerfile` you can make this work for other languages.
 1. To prevent locally installed Bower dependencies from being copied into the
 Docker image. Add the following to `app.yaml`:
 
-        # Prevents locally installed Bower dependencies
-        # from being copied into the Docker image
-        skip_files:
-          - ^(.*/)?.*/bower_components/.*$
+    ```yaml
+    # Prevents locally installed Bower dependencies
+    # from being copied into the Docker image
+    skip_files:
+      - ^(.*/)?.*/bower_components/.*$
+    ```
 
 1. Now edit `Dockerfile` and insert the following beneath `COPY ./app/`:
 
-        npm i -g bower
-        bower install --config.interactive=false
+    ```sh
+    npm i -g bower
+    bower install --config.interactive=false
+    ```
 
     So that is has:
 

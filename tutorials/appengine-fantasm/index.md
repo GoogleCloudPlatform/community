@@ -103,30 +103,32 @@ file. You must take your overall workflow and decompose it into discrete chunks;
 naming your states and choose appropriate "chunk sizes" will allow for
 operational clarity and easy machine rewiring.
 
-    # fsm.yaml
-    state_machines:
-    - name: MyMachine
+```yaml
+# fsm.yaml
+state_machines:
+- name: MyMachine
 
-    states:
-    - name: InitialState
-      action: InitialStateClass
-      initial: True
-      transitions:
-      - to: ReviewAndRecoverState
-        event: review
-      - to: FinalState
-        event: ok
+states:
+- name: InitialState
+  action: InitialStateClass
+  initial: True
+  transitions:
+  - to: ReviewAndRecoverState
+    event: review
+  - to: FinalState
+    event: ok
 
-    - name: ReviewAndRecoverState
-      action: ReviewAndRecoverStateClass
-      final: True
-      transitions:
-      - to: FinalState
-        event: ok
+- name: ReviewAndRecoverState
+  action: ReviewAndRecoverStateClass
+  final: True
+  transitions:
+  - to: FinalState
+    event: ok
 
-    - name: FinalState
-      action: FinalStateClass
-      final: True
+- name: FinalState
+  action: FinalStateClass
+  final: True
+```
 
 ![State Machine Diagram][state_machine_diagram]
 
@@ -195,14 +197,16 @@ args will be present in your machine context. For example, you could invoke the
 above machine using `/fantasm/fsm/MyMachine?arg1=value`. Your state action code
 has access to this value via the machine context:
 
-    class InitialStateClass(object):
-        def execute(self, context, obj): # called by Fantasm
-            arg1 = context['arg1'] # query args become part of the machine context
-            if arg1 == 'something':
-                # execute method returns the event to dispatch, driving the transition
-                return 'ok'
-            else:
-                return 'review'
+```py
+class InitialStateClass(object):
+    def execute(self, context, obj): # called by Fantasm
+        arg1 = context['arg1'] # query args become part of the machine context
+        if arg1 == 'something':
+            # execute method returns the event to dispatch, driving the transition
+            return 'ok'
+        else:
+            return 'review'
+```
 
 The Task Queue API allows tasks to use either `POST` or `GET`. Fantasm will
 preserve whatever mechanism was used to start the machine, meaning if you start
@@ -255,15 +259,17 @@ half way through? Who received the message, and who did not? How do we recover?
 It is these issues that Fantasm helps to overcome. Imagine we have a simple
 machine like the following:
 
-    state_machines:
-    - name: SendSubscriberEmail
+```yaml
+state_machines:
+- name: SendSubscriberEmail
 
-    states:
-    - name: SendEmail
-      action: SendEmail
-      continuation: True
-      initial: True
-      final: True
+states:
+- name: SendEmail
+  action: SendEmail
+  continuation: True
+  initial: True
+  final: True
+```
 
 The `SendEmail` state is going to be responsible to send a single email. The
 `continuation` flag indicates that this state will implement a continuation
@@ -282,25 +288,27 @@ email. Normally, it is responsible to emit an event to drive the machine
 instance forward, but in this case the state is denoted as a final state, so no
 event is emitted.
 
-    class SendEmail(object):
-        def continuation(self, context, obj, token=None):
-            """Execute a query using an optional cursor, and
-                store a single result in obj['subscriber']"""
-            query = Subscriber.all()
-            if token:
-                query.with_cursor(token)
-            subscriber = query.fetch(1)
-            obj['subscriber'] = subscriber  # obj dict passes info to execute() method
-            return query.cursor  # return token for next continuation() method
+```py
+class SendEmail(object):
+    def continuation(self, context, obj, token=None):
+        """Execute a query using an optional cursor, and
+            store a single result in obj['subscriber']"""
+        query = Subscriber.all()
+        if token:
+            query.with_cursor(token)
+        subscriber = query.fetch(1)
+        obj['subscriber'] = subscriber  # obj dict passes info to execute() method
+        return query.cursor  # return token for next continuation() method
 
-        def execute(self, context, obj):
-            """Send an email to a single subscriber"""
-            subscriber = obj['subscriber']
-            if subscriber:  # possible none were returned
-                # create email contents, perhaps with content from datastore, etc.
-                # . . .
-                mail.send_mail(to=subscriber.email, ...)
-                # note: this 'side-effect' performed as last step for idempotency
+     def execute(self, context, obj):
+        """Send an email to a single subscriber"""
+        subscriber = obj['subscriber']
+        if subscriber:  # possible none were returned
+            # create email contents, perhaps with content from datastore, etc.
+            # . . .
+            mail.send_mail(to=subscriber.email, ...)
+            # note: this 'side-effect' performed as last step for idempotency
+```
 
 For a large list of subscribers, you will see a Task Queue for each, and very
 likely a large number of App Engine instances involved in processing these
@@ -325,22 +333,23 @@ invocation to increment a counter in Datastore. Since we know that many machines
 are processing this dataset, we're going to require a transaction to increment
 the counter safely. So we might write something like this:
 
-    class EmailBatch(db.Model):
-        counter = db.IntegerProperty(default=0)
+```py
+class EmailBatch(db.Model):
+    counter = db.IntegerProperty(default=0)
 
-    def execute(self, context, obj):
-        # ...
-        send_mail(to=subscriber.email, ...)
+def execute(self, context, obj):
+    # ...
+    send_mail(to=subscriber.email, ...)
 
+    def tx():
+        batch = EmailBatch.get_by_key_name('1') # key is simplified for example
+        if not batch:
+            batch = EmailBatch(key_name='1')
+        batch.counter += 1
+        batch.put()
 
-        def tx():
-            batch = EmailBatch.get_by_key_name('1') # key is simplified for example
-            if not batch:
-                batch = EmailBatch(key_name='1')
-            batch.counter += 1
-            batch.put()
-
-        db.run_in_transaction(tx)
+    db.run_in_transaction(tx)
+```
 
 While this code works fine in the happy path, we need to consider what possible
 failures may occur. Transactional updates to the Cloud Datastore are expensive and
@@ -351,48 +360,52 @@ is run again, sending another identical email to the same recipient! Not good.
 
 Our first step is to address this is to introduce another state to our machine:
 
-    state_machines:
-    - name: SendSubscriberEmail
+```yaml
+state_machines:
+- name: SendSubscriberEmail
 
-    states:
-    - name: SendEmail
-      action: SendEmail
-      continuation: True
-      initial: True
-      transitions:
-        - to: CountEmail
-        - event: ok
+states:
+- name: SendEmail
+  action: SendEmail
+  continuation: True
+  initial: True
+  transitions:
+    - to: CountEmail
+    - event: ok
 
-    - name: CountEmail
-      action: CountEmail
-      final: True
+- name: CountEmail
+  action: CountEmail
+  final: True
+```
 
 In this machine, we've added a second state `CountEmail`. After sending the
 email, we will emit the event `ok` and drive the machine to the second, and
 final, state `CountEmail`. Our code becomes:
 
-    class SendEmail(object):
-        def continuation(self, context, obj, token=None):
-            # no change to this method
+```py
+class SendEmail(object):
+    def continuation(self, context, obj, token=None):
+        # no change to this method
 
-        def execute(self, context, obj):
-            subscriber = obj['subscriber']
-            mail.send_mail(to=subscriber.email, ...)
+    def execute(self, context, obj):
+        subscriber = obj['subscriber']
+        mail.send_mail(to=subscriber.email, ...)
 
-            # only change is to emit event ok
-            return 'ok'
+        # only change is to emit event ok
+        return 'ok'
 
-    class CountEmail(object):
-        def execute(self, context, obj):
-            """Transactionally update our batch counter"""
-            def tx():
-                batch = EmailBatch.get_by_key_name('1') # key simplified for example
-                if not batch:
-                    batch = EmailBatch(key_name='1')
-                batch.counter += 1
-                batch.put()
+class CountEmail(object):
+    def execute(self, context, obj):
+        """Transactionally update our batch counter"""
+        def tx():
+            batch = EmailBatch.get_by_key_name('1') # key simplified for example
+            if not batch:
+                batch = EmailBatch(key_name='1')
+            batch.counter += 1
+            batch.put()
 
-            db.run_in_transaction(tx)
+        db.run_in_transaction(tx)
+```
 
 We have now separated our two side-effects: sending an email and updating our
 batch counter. We have idempotent states that are safe to retry without any
@@ -416,22 +429,24 @@ same state.
 
 Our machine YAML (`fsm.yaml`) becomes the following:
 
-    state_machines:
-    - name: SendSubscriberEmail
+```yaml
+state_machines:
+- name: SendSubscriberEmail
 
-    states:
-    - name: SendEmail
-      action: SendEmail
-      continuation: True
-      initial: True
-      transitions:
-        - to: CountEmail
-        - event: ok
+states:
+- name: SendEmail
+  action: SendEmail
+  continuation: True
+  initial: True
+  transitions:
+    - to: CountEmail
+    - event: ok
 
-    - name: CountEmail
-      action: CountEmail
-      final: True
-      fan_in: 3
+- name: CountEmail
+  action: CountEmail
+  final: True
+  fan_in: 3
+```
 
 The only change is the presence of the `fan_in` attribute. It means that every 3
 seconds, all machines in the state `CountEmail` will be processed as a group.
@@ -444,19 +459,21 @@ number of emails successfully sent — a bit of a subtle point. Because of this,
 we can use the length of the context list to increment our counter. Our state
 action method becomes the following:
 
-    class CountEmail(object):
-        def execute(self, list_of_contexts, obj):
-            """Transactionally update our batch counter"""
+```py
+class CountEmail(object):
+    def execute(self, list_of_contexts, obj):
+        """Transactionally update our batch counter"""
 
-            def tx(count):
-                batch = EmailBatch.get_by_key_name('1') # key simplified for example
-                if not batch:
-                  batch = EmailBatch(key_name='1')
-                batch.counter += count
-                batch.put()
+        def tx(count):
+            batch = EmailBatch.get_by_key_name('1') # key simplified for example
+            if not batch:
+              batch = EmailBatch(key_name='1')
+            batch.counter += count
+            batch.put()
 
-            emails_sent = len(list_of_contexts)
-            db.run_in_transaction(tx, emails_sent)
+        emails_sent = len(list_of_contexts)
+        db.run_in_transaction(tx, emails_sent)
+```
 
 We now only have to execute a Datastore transaction once every 3 seconds. Fan-in
 is a powerful technique to execute items in batch and is an important tool in
