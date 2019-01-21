@@ -1,24 +1,15 @@
----
-title: Building Singularity Containers using Cloud Build
-description: Learn how to use Cloud Build to build Singularity Containers for HPC workloads
-author: wardharold
-tags: Cloud Build, Singularity, HPC
-date_published: 2019-01-18
----
 This tutorial shows you how to use [Cloud Build](https://cloud.google.com/cloud-build/) to build [Singularity](https://www.sylabs.io/singularity/) containers. 
 In constrast to [Docker](https://www.docker.com/), the Singularity container mechanism is designed specifically for HPC workloads. 
-
-[![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/singularity-containers-with-cloud-build/tutorial.md)
 
 ## (OPTIONAL) Create a project with a billing account attached 
 **(you can also use an existing project and skip to the next step)**
 
 ### Setup project related environment variables
-Edit the file env.sh and replace
-* [YOUR_ORG] with the name of the organization that will own your project
-* [YOUR_BILLING_ACCOUNT_NAME] with the name of the account responsible for any costs associated with your project
-* [NAME FOR THE PROJECT YOU WILL CREATE] with the name of your project
-* [COMPUTE ZONE YOU WANT TO USE] with the name of the Cloud Platform compute zone that will contain your project
+Edit the file <walkthrough-editor-open-file filePath="community/tutorials/singularity-containers-with-cloud-build/env.sh">env.sh</walkthrough-editor-open-file> and replace
+* <walkthrough-editor-select-regex filePath="community/tutorials/singularity-containers-with-cloud-build/env.sh" regex="\[YOUR_ORG\]">[YOUR_ORG]</walkthrough-editor-select-regex> with the name of the organization that will own your project
+* <walkthrough-editor-select-regex filePath="community/tutorials/singularity-containers-with-cloud-build/env.sh" regex="\[YOUR_BILLING_ACCOUNT_NAME\]">[YOUR_BILLING_ACCOUNT_NAME]</walkthrough-editor-select-regex> with the name of the account responsible for any costs associated with your project
+* <walkthrough-editor-select-regex filePath="community/tutorials/singularity-containers-with-cloud-build/env.sh" regex="\[NAME FOR THE PROJECT YOU WILL CREATE\]">[NAME FOR THE PROJECT YOU WILL CREATE]</walkthrough-editor-select-regex> with the name of your project
+* <walkthrough-editor-select-regex filePath="community/tutorials/singularity-containers-with-cloud-build/env.sh" regex="\[COMPUTE ZONE YOU WANT TO USE\]">[COMPUTE ZONE YOU WANT TO USE]</walkthrough-editor-select-regex> with the name of the Cloud Platform compute zone that will contain your project
 
 ```bash
 source ./env.sh
@@ -82,15 +73,15 @@ command constructs a container.
 cd ..
 ```
 
-The julia.def file is a simple example of a Singularity definition file. It creates a [CentOS](https://www.centos.org) 7 container
+The <walkthrough-editor-open-file filePath="community/tutorials/singularity-containers-with-cloud-build/julia.def">julia.def</walkthrough-editor-open-file> file is a simple example of a Singularity definition file. It creates a [CentOS](https://www.centos.org) 7 container
 with the [Julia](https://julialang.org) programming language installed, when the container is executed it uses Julia to execute a script
 or print a greeting message if no script is provided on the command line. The file has three sections.
 
-* %post these commands are executed after the base operating system has been installed at build time
-* %environment this section defines environment variables that will be set at runtime
-* %runscript the contents of this section are written to a file within the container and executed when the container is run
+* <walkthrough-editor-select-regex filePath="community/tutorials/singularity-containers-with-cloud-build/julia.def" regex="\%post">%post</walkthrough-editor-select-regex> these commands are executed after the base operating system has been installed at build time
+* <walkthrough-editor-select-regex filePath="community/tutorials/singularity-containers-with-cloud-build/julia.def" regex="\%environment">%environment</walkthrough-editor-select-regex> this section defines environment variables that will be set at runtime
+* <walkthrough-editor-select-regex filePath="community/tutorials/singularity-containers-with-cloud-build/julia.def" regex="\%runscript">%runscript</walkthrough-editor-select-regex> the contents of this section are written to a file within the container and executed when the container is run
 
-The cloudbuild.yaml file uses the Singularity custom build step to create a container from the ```julia.def```
+The <walkthrough-editor-open-file filePath="community/tutorials/singularity-containers-with-cloud-build/cloudbuild.yaml">cloudbuild.yaml</walkthrough-editor-open-file> file uses the Singularity custom build step to create a container from the ```julia.def```
 defintion file. The ```singularity build``` command takes the ```julia.def``` definition file and produces a Singularity
 Image Format container named ```julia-centos.sif```. The resulting container is written to a Cloud Storage bucket rather
 than the Container Registry since it isn't a Docker container image.
