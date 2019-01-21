@@ -107,7 +107,7 @@ gcloud builds submit --config=cloudbuild.yaml --substitutions=_SINGULARITY_VERSI
 
 Once the build completes verify that the container with created using the command.
 ```bash
-gsutil ls gs://${PROJECT_ID-singularity/julia-centos.sif
+gsutil ls gs://${PROJECT_ID}-singularity/julia-centos.sif
 ```
 
 If the build was successful you should see this.
