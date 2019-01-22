@@ -3,7 +3,7 @@ title: How to set up VPN between strongSwan and Cloud VPN
 description: Learn how to build site-to-site IPsec VPN between strongSwan and Cloud VPN.
 author: civiloid
 tags: Compute Engine, Cloud VPN, strongSwan, firewall
-date_published: TBD
+date_published: 2019-01-24
 ---
 
 Vladimir Smirnov | Technical Solutions Engineer | Google Cloud Platform
