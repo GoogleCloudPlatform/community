@@ -1,6 +1,6 @@
 ---
-title: Integrating Sigfox IoT Network with Google Cloud
-description: Install and configure the integration between the Sigfox LPWAN IoT network service, and Google Cloud Platform.
+title: Integrating Sigfox IoT network with Google Cloud Platform
+description: Install and configure the integration between the Sigfox LPWAN IoT network service and Google Cloud Platform.
 author: lepistom
 tags: IoT, Internet of Things, Sigfox, LPWAN
 date_published: 2019-01-31
@@ -10,7 +10,7 @@ Markku Lepisto | Solutions Architect | Google Cloud
 
 ## Objectives
 
-This document describes how to install and configure the integration between the [Sigfox](https://www.sigfox.com/) [LPWAN](https://en.wikipedia.org/wiki/LPWAN) IoT network service, and [Google Cloud Platform](https://cloud.google.com).
+This document describes how to install and configure the integration between the [Sigfox](https://www.sigfox.com/) [LPWAN](https://en.wikipedia.org/wiki/LPWAN) IoT network service, and [Google Cloud Platform (GCP)](https://cloud.google.com).
 
 The main functionalities demonstrated are:
 
@@ -30,7 +30,7 @@ The implementation is designed to be:
 ## Architecture Diagram
 **Figure 1.** *Integration architecture*
 
-[archdiag]: img/architecture.png
+[archdiag]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/architecture.png
 ![architecture diagram][archdiag]
 
 ## Costs
@@ -53,7 +53,7 @@ Ensure that you can see Messages sent by your device in your [Sigfox backend](ht
 
 **Figure 2.** _Sigfox messages example_
 
-[messages]: img/messages.png
+[messages]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/messages.png
 ![messages example][messages]
 
 If you can see messages sent by your device, you can proceed to the next step.
@@ -152,7 +152,7 @@ The Cloud Functions have a hidden configuration file: .env.yaml in the same dire
 
 **Figure 3.** _Verifying Cloud Functions_
 
-[verify-cf]: img/verify-cf.png
+[verify-cf]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/verify-cf.png
 ![verifying cloud functions][verify-cf]
 
 ## Enabling Sigfox backend API Access
@@ -277,7 +277,7 @@ The integration has a python script for managing the Sigfox backend Callbacks' c
 
 **Figure 4.** _Verifying Sigfox Callbacks_
 
-[verify-callbacks]: img/verify-callbacks.png
+[verify-callbacks]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/verify-callbacks.png
 ![verifying callbacks][verify-callbacks]
 
 ## Configuring Datastore for Device Configuration Management
@@ -291,7 +291,7 @@ To configure Datastore for your Integration, execute the following steps:
 
 **Figure 5.** _Datastore Options_
 
-[ds-options]: img/ds-options.png
+[ds-options]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/ds-options.png
 ![datastore options][ds-options]
 
 1. Choose the Cloud Datastore option.
@@ -299,7 +299,7 @@ To configure Datastore for your Integration, execute the following steps:
 
 **Figure 6.** _Select Datastore region_
 
-[ds-region]: img/ds-region.png
+[ds-region]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/ds-region.png
 ![datastore region][ds-region]
 
 1. In the Datastore console, click 'Create Entity'
@@ -316,7 +316,7 @@ _Note - the configuration HEX string must be 8 bytes long, i.e exactly 16 charac
 
 **Figure 7.** _Datastore example_
 
-[ds-example]: img/ds-example.png
+[ds-example]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/ds-example.png
 ![datastore example][ds-example]
 
 # Testing the Integration
@@ -345,7 +345,7 @@ $ gcloud pubsub subscriptions list
 
 **Figure 8.** _Sigfox messages example_
 
-[messages 2]: img/messages2.png
+[messages 2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/messages2.png
 ![messages example][messages 2]
 
 Note - if your Sigfox backend can receive the message, the 'up arrow' will first be greyed out. If the GCP Cloud Function _callback_data_ was triggered successfully, and the function replied as expected, the arrow will turn green.
@@ -370,7 +370,7 @@ The value of 'data' should match the Data / Decoding output in your Sigfox backe
 
 **Figure 9.** _Stackdriver Logging_
 
-[logging]: img/logging.png
+[logging]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/logging.png
 ![stackdriver logging][logging]
 
 Note - the first time the Cloud Function executes, the platform creates its runtime environment and the execution time is longer. This is called a 'cold start' for Cloud Functions. Subsequent executions will be faster. Here, you can verify that the Cloud Function was triggered, received the device payload, and as seen in the next log entry, forwarded the payload to the Cloud Pub/Sub topic. The Pub/Sub topic is the integration point for consuming the Sigfox data in real-time for your specific business solutions.
@@ -396,7 +396,7 @@ In Sigfox, devices have to request Downlink messages from the network. They do t
 
 **Figure 10.** _Downlink sequence diagram_
 
-[downlink-sequence]: img/downlink-sequence.svg
+[downlink-sequence]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/downlink-sequence.svg
 ![downlink sequence][downlink-sequence]
 
 Execute the following steps to verify the Downlink functionality:
@@ -408,7 +408,7 @@ _Note: this step and the next one are device specific._
 
 **Figure 11.** _Downlink request with a successful response_
 
-[downlink]: img/downlink.png
+[downlink]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/downlink.png
 ![downlink request][downlink]
 
 1.  Verify that you can see a similar log entry in the Stackdriver Logging, for the Cloud Function _callback_data:_
@@ -445,7 +445,7 @@ Verify that you can receive Service messages from Sigfox backend, by executing t
 
 **Figure 12.** _Service message invocation_
 
-[cf-service]: img/cf-service.png
+[cf-service]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/cf-service.png
 ![service message invocation][cf-service]
 
 1.  Click the 'View Logs' button and find an entry similar to this:
@@ -501,7 +501,7 @@ To avoid incurring charges to your Google Cloud Platform account for the resourc
 
 **Figure 13.** _Deleting the project_
 
-[delete-project]: img/delete-project.png
+[delete-project]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/delete-project.png
 ![deleting the project][delete-project]
 
 In the dialog, type the project ID, and then click **Shut down** to delete the project.
