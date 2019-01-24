@@ -71,26 +71,30 @@ you already have an app to deploy, you can use it instead.
 3.  Open the project in your an IDE or editor. Create a new source file named
     `MessageController.kt` with the following content:
 
-        package com.jetbrains.demo
+    ```kt
+    package com.jetbrains.demo
 
-        import org.springframework.web.bind.annotation.*
+    import org.springframework.web.bind.annotation.*
 
-        data class Message(val text: String, val priority: String)
+    data class Message(val text: String, val priority: String)
 
-        @RestController
-        class MessageController {
-            @RequestMapping("/message")
-            fun message(): Message {
-                return Message("Hello from Google Cloud", "High")
-            }
+    @RestController
+    class MessageController {
+        @RequestMapping("/message")
+        fun message(): Message {
+            return Message("Hello from Google Cloud", "High")
         }
+    }
+    ```
 
     The package should match that of your group and artifact name.
 
 4.  Make sure you have the correct dependencies in your Gradle file to import
     `RestController`:
 
-        compile("org.springframework.boot:spring-boot-starter-web")
+    ```kt
+    compile("org.springframework.boot:spring-boot-starter-web")
+    ```
 
 5. Run the application from the command line using Gradle:
 
@@ -103,10 +107,12 @@ you already have an app to deploy, you can use it instead.
 6.  Visit http://localhost:8080/message in your web browser. Ensure that the
     page returns a valid JSON response. The response should be as follows:
 
-        {
-            "text": "Hello from Google Cloud",
-            "priority": "High"
-        }
+    ```json
+    {
+        "text": "Hello from Google Cloud",
+        "priority": "High"
+    }
+    ```
 
 ## Building a release for deployment
 

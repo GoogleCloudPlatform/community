@@ -26,18 +26,20 @@ This task will help you setup a new GCP project in which to run your packer
 build factory. **(you can also use an existing project and skip to the next
 step)**
 
-    PROJECT=[NEW PROJECT NAME]
-    ORG=[YOUR ORGANIZATION NAME]
-    BILLING_ACCOUNT=[YOUR_BILLING_ACCOUNT_NAME]
-    ZONE=[COMPUTE ZONE YOU WANT TO USE]
-    ACCOUNT=[GOOGLE ACCOUNT YOU WANT TO USE] or $(gcloud config get-value account)
+```sh
+PROJECT=[NEW PROJECT NAME]
+ORG=[YOUR ORGANIZATION NAME]
+BILLING_ACCOUNT=[YOUR_BILLING_ACCOUNT_NAME]
+ZONE=[COMPUTE ZONE YOU WANT TO USE]
+ACCOUNT=[GOOGLE ACCOUNT YOU WANT TO USE] or $(gcloud config get-value account)
 
-    gcloud projects create "$PROJECT" --organization=$(gcloud organizations list --format="value(name)" --filter="(displayName='$ORG')")
-    gcloud beta billing projects link $PROJECT --billing-account=$(gcloud alpha billing accounts list --format='value(name)' --filter="(displayName='$BILLING_ACCOUNT')")
-    gcloud config configurations create --activate $PROJECT
-    gcloud config set project $PROJECT
-    gcloud config set compute/zone $ZONE
-    gcloud config set account $ACCOUNT
+gcloud projects create "$PROJECT" --organization=$(gcloud organizations list --format="value(name)" --filter="(displayName='$ORG')")
+gcloud beta billing projects link $PROJECT --billing-account=$(gcloud alpha billing accounts list --format='value(name)' --filter="(displayName='$BILLING_ACCOUNT')")
+gcloud config configurations create --activate $PROJECT
+gcloud config set project $PROJECT
+gcloud config set compute/zone $ZONE
+gcloud config set account $ACCOUNT
+```
 
 ## Task 1: Set the project variable (Skip this step if you created a new project above)
 
@@ -45,8 +47,10 @@ Ensure you are working with the project you want to use in gcloud.
 For more information on configuraitons see [configurations](https://cloud.google.com/sdk/gcloud/reference/config/configurations/).
 Fill in `[CONFIGURATION NAME]` with the name of hte configuration you want to use.
 
-    gcloud config configurations activate [CONFIGURATION NAME] #The configuration for the project you want to use
-    PROJECT=$(gcloud config get-value project)
+```sh
+gcloud config configurations activate [CONFIGURATION NAME] #The configuration for the project you want to use
+PROJECT=$(gcloud config get-value project)
+```
 
 ## Task 2: Copy the files for this tutorial to a new working directory and git repository
 

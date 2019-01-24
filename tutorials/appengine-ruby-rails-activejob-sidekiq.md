@@ -24,7 +24,7 @@ You'll need the following:
 * A Rails 4.2+ application. Follow the
   [official "Getting Started with Rails" guide](http://guides.rubyonrails.org/getting_started.html) to get started.
 * [Google Cloud SDK installed](https://cloud.google.com/sdk/downloads)
-* A Redis instance running in your project. Follow [this guide](setting-up-redis.md)
+* A Redis instance running in your project. Follow [this guide](https://cloud.google.com/community/tutorials/setting-up-redis)
   to set up Redis on Google Compute Engine. This tutorial assumes the Redis instance is running in the *default*
   network so that the App Engine services can access it without restriction.
 
@@ -62,14 +62,16 @@ You will create a job named `HelloJob` that will accept a `name` argument and pr
 
 1. Edit your `app/jobs/hello_job.rb` with the following:
 
-        class HelloJob < ApplicationJob
-          queue_as :default
+    ```rb
+    class HelloJob < ApplicationJob
+      queue_as :default
 
-          def perform(name)
-            # Do something later
-            puts "Hello, #{name}"
-          end
-        end
+      def perform(name)
+        # Do something later
+        puts "Hello, #{name}"
+      end
+    end
+    ```
 
 ## Create a test URL to queue the job
 
@@ -98,12 +100,14 @@ our `HelloJob` to execute in the background.
 
 1. Add a `say` action to `HelloController`. Edit your `app/controllers/hello_controller.rb` with the following:
 
-        class HelloController < ApplicationController
-          def say
-            HelloJob.perform_later(params[:name])
-            render plain: 'OK'
-          end
-        end
+    ```rb
+    class HelloController < ApplicationController
+      def say
+        HelloJob.perform_later(params[:name])
+        render plain: 'OK'
+      end
+    end
+    ```
 
    This action will queue our `HelloJob` with the provided request parameter `name`.
 
@@ -125,10 +129,12 @@ requires a Redis instance to manage the job queue.
 
 1. Configure ActiveJob to use Sidekiq as its queue adapter. In `config/application.rb`:
 
-        class Application < Rails::Application
-          # ...
-          config.active_job.queue_adapter = :sidekiq
-        end
+    ```rb
+    class Application < Rails::Application
+      # ...
+      config.active_job.queue_adapter = :sidekiq
+    end
+    ```
 
 ## Deploying to App Engine flexible environment
 
@@ -155,18 +161,20 @@ instances together.
 
 1. Create an `app.yaml` for deploying the application to Google App Engine:
 
-        runtime: ruby
-        env: flex
+    ```yaml
+    runtime: ruby
+    env: flex
 
-        entrypoint: bundle exec foreman start
+    entrypoint: bundle exec foreman start
 
-        env_variables:
-          REDIS_PROVIDER: REDIS_URL
-          REDIS_URL: redis://[REDIS_IP_ADDRESS]:6379
-          SECRET_KEY_BASE: [SECRET_KEY]
+    env_variables:
+      REDIS_PROVIDER: REDIS_URL
+      REDIS_URL: redis://[REDIS_IP_ADDRESS]:6379
+      SECRET_KEY_BASE: [SECRET_KEY]
+    ```
 
-   Be sure to replace the `[REDIS_IP_ADDRESS]` with the internal IP address of your Redis instance. Also be sure to
-   replace the `[SECRET_KEY]` with a secret key for Rails sessions.
+    Be sure to replace the `[REDIS_IP_ADDRESS]` with the internal IP address of your Redis   instance. Also be sure to
+    replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
 1. Deploy to App Engine
 
@@ -180,38 +188,42 @@ of your web instances at the cost of potentially using more resources.
 
 1. Create an `app.yaml` for deploying the web service to Google App Engine:
 
-        runtime: ruby
-        env: flex
+    ```yaml
+    runtime: ruby
+    env: flex
 
-        entrypoint: bundle exec rails server -p 8080
+    entrypoint: bundle exec rails server -p 8080
 
-        env_variables:
-          REDIS_PROVIDER: REDIS_URL
-          REDIS_URL: redis://[REDIS_IP_ADDRESS]:6379
-          SECRET_KEY_BASE: [SECRET_KEY]
+    env_variables:
+      REDIS_PROVIDER: REDIS_URL
+      REDIS_URL: redis://[REDIS_IP_ADDRESS]:6379
+      SECRET_KEY_BASE: [SECRET_KEY]
+    ```
 
-   Be sure to replace the `[REDIS_IP_ADDRESS]` with the internal IP address of your Redis instance. Also be sure to
-   replace the `[SECRET_KEY]` with a secret key for Rails sessions.
+    Be sure to replace the `[REDIS_IP_ADDRESS]` with the internal IP address of your Redis  instance. Also be sure to
+    replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
 1. Create a `worker.yaml` for deploying the worker service to Google App Engine:
 
-        runtime: ruby
-        env: flex
-        service: worker
+    ```yaml
+    runtime: ruby
+    env: flex
+    service: worker
 
-        entrypoint: bundle exec sidekiq
+    entrypoint: bundle exec sidekiq
 
-        env_variables:
-          REDIS_PROVIDER: REDIS_URL
-          REDIS_URL: redis://[REDIS_IP_ADDRESS]:6379
-          SECRET_KEY_BASE: [SECRET_KEY]
+    env_variables:
+      REDIS_PROVIDER: REDIS_URL
+      REDIS_URL: redis://[REDIS_IP_ADDRESS]:6379
+      SECRET_KEY_BASE: [SECRET_KEY]
 
-        health_check:
-          enable_health_check: False
+    health_check:
+      enable_health_check: False
 
-        # Optional scaling configuration
-        manual_scaling:
-          instances: 1
+    # Optional scaling configuration
+    manual_scaling:
+      instances: 1
+    ```
 
    Be sure to replace the `[REDIS_IP_ADDRESS]` with the internal IP address of your Redis instance. Also be sure to
    replace the `[SECRET_KEY]` with a secret key for Rails sessions.
