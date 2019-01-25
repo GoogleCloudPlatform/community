@@ -99,7 +99,7 @@ To set up your gateway:
 1. Clone the following repository and change into the directory for this tutorial's code:
 
         git clone https://github.com/GoogleCloudPlatform/community.git
-        cd community/tutorials/cloud-iot-gateways-pi
+        cd community/tutorials/cloud-iot-gateways-rpi
 
 2. Generate an RS256 public/private key pair by running the following:
 
