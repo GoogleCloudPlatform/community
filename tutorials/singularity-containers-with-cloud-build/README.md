@@ -154,7 +154,19 @@ to completely remove and use the [installer](https://cloud.google.com/sdk/docs/d
 to install the most uptodate version.
 
 
-### Step 2: Build a Singularity container
+### Step 2: Create a Bucket
+
+Before you build a container, you need a place to put it! Let's create a bucket
+just for storing our cloud builds. We can use the gcloud util to do this as
+follows (make sure your $PROJECT environment variable is still sourced from
+env.sh):
+
+```bash
+$ gsutil mb gs://${PROJECT}-singularity
+```
+
+
+### Step 3: Build a Singularity container
 
 Singularity uses a [Singularity Definition File](https://github.com/sylabs/singularity-userdocs/blob/master/definition_files.rst) as a blueprint for building a container. The definition file 
 contains a number of sections which control how the ```singularity build```
@@ -180,31 +192,40 @@ defintion file. The ```singularity build``` command takes the ```julia.def``` de
 Image Format container named ```julia-centos.sif```. The resulting container is written to a Cloud Storage bucket rather
 than the Container Registry since it isn't a Docker container image.
 
-Before you build the container create the Cloud Storage bucket where the build will store it.
-```bash
-gsutil mb gs://${PROJECT_ID}-singularity
-```
-
 Use this command to build the container.
 ```bash
-gcloud builds submit --config=cloudbuild.yaml --substitutions=_SINGULARITY_VERSION="3.0.2" .
+$ gcloud builds submit --config=cloudbuild.yaml --substitutions=_SINGULARITY_VERSION="3.0.2" .
 ```
 
-Once the build completes verify that the container with created using the command.
+Once the build completes verify that the container with created using the list (ls) command.
+
 ```bash
-gsutil ls gs://${PROJECT_ID}-singularity/julia-centos.sif
+$ gsutil ls gs://${PROJECT}-singularity/julia-centos.sif
 ```
 
-If the build was successful you should see this.
+If the build was successful you should see this (with the project name replaced by
+your project name).
+
 ```
 gs://wkh-goog-le-com-slurm-singularity/julia-centos.sif
 ```
 
-## Test the container
+### Step 4: Test the container
 
-Verify your container is working properly by downloading and executing it. You will need a
-compute instance with singularity installed. This command will create the compute required
-instance.
+Now we want to verify that our container is working properly by downloading and executing it. You will need a
+compute instance with singularity installed. This means that you have two options.
+
+ 1. If you are familiar with Singularity and have it installed on your local machine, you will likely want to pull the container.
+ 2. If you don't have Singularity and want to bring up a cloud instance with Singularity ready to go, you can launch a Google Compute Instance.
+
+
+#### Option 1: Local Pull
+
+**write me**
+
+#### Option 2: Cloud Instance
+
+This command will create the compute required instance.
 
 ```bash
 gcloud compute instances create singularity-test \
