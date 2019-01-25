@@ -15,17 +15,18 @@ fi
 
 
 %environment
-export PATH=/julia-1.0.1/bin:$PATH
-export LD_LIBRARY_PATH=/julia-1.0.1/lib:/julia-1.0.1/lib/julia:$LD_LIBRARY_PATH
-export LC_ALL=C
+    PATH=/julia-1.0.1/bin:$PATH
+    LD_LIBRARY_PATH=/julia-1.0.1/lib:/julia-1.0.1/lib/julia:$LD_LIBRARY_PATH
+    LC_ALL=C
+    export PATH LD_LIBRARY_PATH LC_ALL
 
 %post
-yum -y update
+    yum -y update
 
-# install some basic tools
-yum -y install curl tar gzip
+    # install some basic tools
+    yum -y install curl tar gzip
 
-# now, download and install julia
-curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/1.0/julia-1.0.1-linux-x86_64.tar.gz" > julia.tgz
-tar -C / -zxf julia.tgz
-rm -f julia.tgz
+    # now, download and install julia
+    curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/1.0/julia-1.0.1-linux-x86_64.tar.gz" > julia.tgz
+    tar -C / -zxf julia.tgz
+    rm -f julia.tgz

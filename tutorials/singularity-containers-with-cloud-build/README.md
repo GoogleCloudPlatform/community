@@ -221,7 +221,18 @@ compute instance with singularity installed. This means that you have two option
 
 #### Option 1: Local Pull
 
-**write me**
+We can do the equivalent of a "pull" by using gsutil to copy the container from storage
+back down to our local machine:
+
+```bash
+$ gsutil cp gs://${PROJECT}-singularity/julia-centos.sif .
+```
+
+And then run the container:
+
+```bash
+$ singularity run julia-centos.sif
+```
 
 #### Option 2: Cloud Instance
 
