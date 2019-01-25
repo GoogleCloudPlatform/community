@@ -139,25 +139,41 @@ substitution accordingly. What does this verison coincide with?
 It should match a [release tag](https://github.com/sylabs/singularity/releases) on the [sylabs/singularity](https://github.com/sylabs/singularity) repository.
 
 
-**stopped here, dinnertime**
+**Help! It says that gcloud builds isn't a valid command**
+
+You likely need to update your gcloud SDK installation, as follows:
+
+```bash
+$ gcloud components update
+```
+
+If you installed from a package manager (e.g., apt-get or yum) you might get an
+error message that you should update via your package manager. If this update fails,
+you can [follow instructions here](https://cloud.google.com/sdk/docs/uninstall-cloud-sdk) 
+to completely remove and use the [installer](https://cloud.google.com/sdk/docs/downloads-interactive)
+to install the most uptodate version.
+
 
 ### Step 2: Build a Singularity container
 
-Singularity uses a [Singularity Definition File](https://github.com/sylabs/singularity-userdocs/blob/master/definition_files.rst) as a
-blueprint for building a container. The definition file contains a number of sections which control how the ```singularity build```
-command constructs a container.
+Singularity uses a [Singularity Definition File](https://github.com/sylabs/singularity-userdocs/blob/master/definition_files.rst) as a blueprint for building a container. The definition file 
+contains a number of sections which control how the ```singularity build```
+command constructs a container. Let's go back up one directory to look at [julia.def](../julia.def)
 
 ```bash
-cd ..
+$ cd ..
 ```
 
-The julia.def file is a simple example of a Singularity definition file. It creates a [CentOS](https://www.centos.org) 7 container
-with the [Julia](https://julialang.org) programming language installed, when the container is executed it uses Julia to execute a script
-or print a greeting message if no script is provided on the command line. The file has three sections.
+The julia.def file is a simple example of a Singularity definition file. 
+It creates a [CentOS](https://www.centos.org) 7 container with the 
+[Julia](https://julialang.org) programming language installed. When you run 
+the container, the entrypoint is the Julia executable. This means that if the user 
+provides a script, Julia will execute it. If not, an interactive shell will
+greet the user. The file has three sections.
 
-* %post these commands are executed after the base operating system has been installed at build time
-* %environment this section defines environment variables that will be set at runtime
-* %runscript the contents of this section are written to a file within the container and executed when the container is run
+ * %post: is a section of commands that are executed after the base operating system has been installed at build time
+ * %environment: this section defines environment variables that will be set at runtime (shell, run, exec)
+ * %runscript: the contents of this section are written to a file within the container and executed when the container is run
 
 The cloudbuild.yaml file uses the Singularity custom build step to create a container from the ```julia.def```
 defintion file. The ```singularity build``` command takes the ```julia.def``` definition file and produces a Singularity
@@ -171,7 +187,7 @@ gsutil mb gs://${PROJECT_ID}-singularity
 
 Use this command to build the container.
 ```bash
-gcloud builds submit --config=cloudbuild.yaml --substitutions=_SINGULARITY_VERSION="3.0.0" .
+gcloud builds submit --config=cloudbuild.yaml --substitutions=_SINGULARITY_VERSION="3.0.2" .
 ```
 
 Once the build completes verify that the container with created using the command.
