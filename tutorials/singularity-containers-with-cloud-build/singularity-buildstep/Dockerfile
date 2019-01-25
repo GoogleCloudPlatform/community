@@ -1,6 +1,6 @@
 FROM gcr.io/cloud-builders/go:debian
 
-ARG singularity_version=3.0.0
+ARG singularity_version=3.0.2
 
 RUN GOPATH=/go && \
     apt-get update && \

@@ -5,74 +5,143 @@ author: wardharold
 tags: Cloud Build, Singularity, HPC
 date_published: 2019-01-18
 ---
+
 This tutorial shows you how to use [Cloud Build](https://cloud.google.com/cloud-build/) to build [Singularity](https://www.sylabs.io/singularity/) containers. 
-In constrast to [Docker](https://www.docker.com/), the Singularity container mechanism is designed specifically for HPC workloads. 
+In constrast to [Docker](https://www.docker.com/), the Singularity container binary is designed specifically for HPC workloads. 
 
 [![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/singularity-containers-with-cloud-build/tutorial.md)
 
-## (OPTIONAL) Create a project with a billing account attached 
-**(you can also use an existing project and skip to the next step)**
+### How do I launch jobs on the cloud?
 
-### Setup project related environment variables
+If you are traditionally an HPC user, you are most likely familiar with working
+on a command line, and specifically launching jobs on a [SLURM](https://slurm.schedmd.com/) or 
+[Sun Grid Engine](http://gridscheduler.sourceforge.net/) cluster with `qsub` or `sbatch`.
+The cloud equivalent of that is [gcloud](https://cloud.google.com/sdk/install). With gcloud you
+can manage and interact with resources on Google Cloud, and you don't need to leave your terminal.
+
+If you haven't yet, be sure that you have [installed gcloud](https://cloud.google.com/sdk/install)
+on your machine to interact with Google Cloud. You can next proceed by either creating a new project, or using an already existing one.
+
+## Project Setup
+
+The first sections here will help you to set up your project and working space.
+This really only needs to be done once. If you already have done these steps,
+you can source your env.sh and move on to creating [Singularity Builds](#singulrity-build)
+
+### Step 1: Project environment variables
+
+For this first step, you need to define some important variables.
 Edit the file env.sh and replace
+
 * [YOUR_ORG] with the name of the organization that will own your project
 * [YOUR_BILLING_ACCOUNT_NAME] with the name of the account responsible for any costs associated with your project
 * [NAME FOR THE PROJECT YOU WILL CREATE] with the name of your project
 * [COMPUTE ZONE YOU WANT TO USE] with the name of the Cloud Platform compute zone that will contain your project
 
+The Organization and billing account should already exist (if you need to create an organization,
+see the [documentation here](https://cloud.google.com/resource-manager/docs/creating-managing-organization)), and if you are creating a new project, you can derive the the project name and zone right now! Otherwise,
+you can fill in an existing project name.
+
+**How do I find these variables on the command line?**
+
+If you already have gcloud installed and an organization and/or project in mind, it can be a hassle to
+go to a web browser and click around. Here is how you can look up your organization,
+billing account name, project, and zone:
+
 ```bash
-source ./env.sh
+
+# List organizations - you can use the name or the id
+$ gcloud organizations list
+
+# List billing accounts
+$ gcloud alpha billing accounts list
+
+# List projects
+$ gcloud projects list
+
+# List zones
+$ gcloud compute zones list
+
 ```
 
-### Create your project
+When you have your env.sh template filled in, source it! This will 
+define the environment variables to your current shell session.
+
 ```bash
-gcloud projects create $PROJECT --organization=$ORG
-```
-```bash
-gcloud beta billing projects link $PROJECT --billing-account=$(gcloud beta billing accounts list | grep $BILLING_ACCOUNT | awk '{print $1}')
-```
-```bash
-gcloud config configurations create -- activate $PROJECT
-```
-```bash
-gcloud config set compute/zone $ZONE
+$ source ./env.sh
 ```
 
-## Enable the required Google APIs
+
+### Step 2: (Optional) Project Creation
+
+If you defined a new project in the step above, you need to use the gcloud
+command to create it. Otherwise, skip over this step. Nothing to see here, folks.
+
 ```bash
-gcloud services enable compute.googleapis.com
+$ gcloud projects create $PROJECT --organization=$ORG
 ```
 ```bash
-gcloud services enable cloudbuild.googleapis.com
+$ gcloud beta billing projects link $PROJECT --billing-account=$(gcloud beta billing accounts list | grep $BILLING_ACCOUNT | awk '{print $1}')
 ```
 ```bash
-gcloud services enable containerregistry.googleapis.com
+$ gcloud config configurations create -- activate $PROJECT
 ```
 
-## Create a custom Singularity build step
+### Step 3: Enable APIs and Set Project
 
-Cloud Build supports the definition and use of *custom build steps* to extend the range of tasks it can handle.
-You will create a Singularity custom build step to use when building your Singularity containers. 
+Once you've created the project, it's good to ensure it's the active one.
+
+```bash
+$ gcloud config set compute/zone $ZONE
+Updated property [compute/zone].
+```
+
+The following commands will enable Google Compute Engine, Google Cloud Builder,
+and Google Container Registry:
+
+```bash
+$ gcloud services enable compute.googleapis.com
+$ gcloud services enable cloudbuild.googleapis.com
+$ gcloud services enable containerregistry.googleapis.com
+```
+
+## Singularity Build
+
+The next section will walk you through issuing a gcloud command to build
+a container. Specifically, the first step is *not* actually building the container 
+- it's basically defining the builder we will use in future steps (with build recipes).
+Once we have this custom build step defined, then we can use it against a Singularity recipe
+to build a container and send it to Google Storage. Let's go!
+
+### Step 1. Create a Singularity build step
+
+Cloud Build supports the definition and use of *custom build steps* to extend the range of tasks it can handle. You will create a Singularity custom build step to use when building your Singularity containers. 
 
 ```bash
 cd singularity-buildstep
 ```
 
-The ```singularity-buildstep```
-directory contains two files you will use to create the Singularity build step for your project
+This would ideally be a *version controlled* Github repository folder. For now, we can
+use this local folder - this ```singularity-buildstep``` directory contains two files you will use to create the Singularity build step for your project.
 
 * ```cloudbuild.yaml``` is a Cloud Build configuration file you will submit to build the custom build step
 * ```Dockerfile``` contains the steps required to download and build Singularity in a ```go``` container
 
 Use this command to build the custom build step.
+
 ```bash
-gcloud builds submit --config=cloudbuild.yaml --substitutions=_SINGULARITY_VERSION="3.0.0" .
+$ gcloud builds submit --config=cloudbuild.yaml --substitutions=_SINGULARITY_VERSION="3.0.2" .
 ```
 
-At the time of this writing the latest stable version of Singularity is 3.0.0. To use a different, possibly newer, version modify the
-value of the _SINGULARITY_VERSION substitution accordingly.
+At the time of this writing the latest stable version of Singularity is 3.0.2. 
+To use a different, possibly newer, version modify the value of the _SINGULARITY_VERSION 
+substitution accordingly. What does this verison coincide with?
+It should match a [release tag](https://github.com/sylabs/singularity/releases) on the [sylabs/singularity](https://github.com/sylabs/singularity) repository.
 
-## Build a Singularity container
+
+**stopped here, dinnertime**
+
+### Step 2: Build a Singularity container
 
 Singularity uses a [Singularity Definition File](https://github.com/sylabs/singularity-userdocs/blob/master/definition_files.rst) as a
 blueprint for building a container. The definition file contains a number of sections which control how the ```singularity build```
