@@ -239,35 +239,62 @@ $ singularity run julia-centos.sif
 This command will create the compute required instance.
 
 ```bash
-gcloud compute instances create singularity-test \
+$ gcloud compute instances create singularity-test \
   --machine-type=n1-standard-1 \
   --scopes=https://www.googleapis.com/auth/cloud-platform \
   --metadata-from-file startup-script=startup.sh
 ```
 
-Download the container with this command.
+After you issue the above command, you should see a message that the instance
+was created successfully.  You can then use ssh to issue a command to the instance
+to download the container:
+
 ```bash
-gcloud compute ssh singularity-test --command "gsutil cp gs://${PROJECT_ID}-singularity/julia-centos.sif ."
+$ gcloud compute ssh singularity-test --command "gsutil cp gs://${PROJECT}-singularity/julia-centos.sif ."
 ```
 
-Use ```singularity run``` to execute the container.
+Although not required, you can now ssh into the instance:
+
 ```bash
-gcloud compute ssh singularity-test --command "singularity run julia-centos.sif"
+$ gcloud compute ssh singularity-test
 ```
 
-You should see the response
+And see your container!
+
+```bash
+$ ls
+julia-centos.sif
 ```
+
+And then run the container using ```singularity run```.
+
+```bash
 hello world from julia container!!!
 ```
 
-## Clean up
+You can now exit the instance. 
+
+```bash
+$ exit
+```
+
+Alternativelty, here is how to run the container on your instance *from* your local machine:
+
+```bash
+$ gcloud compute ssh singularity-test --command "singularity run julia-centos.sif"
+```
+
+And you will see the same response.
+
+### Step 5: Clean up
 
 Delete the test compute instance.
+
 ```bash
-gcloud compute instances delete singularity-test
+$ gcloud compute instances delete singularity-test
 ```
 
 Delete the container bucket.
 ```bash
-gsutil rm -r gs://${PROJECT_ID}-singularity
+$ gsutil rm -r gs://${PROJECT}-singularity
 ```
