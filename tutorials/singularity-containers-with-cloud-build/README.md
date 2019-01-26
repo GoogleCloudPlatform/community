@@ -110,33 +110,38 @@ $ gcloud services enable containerregistry.googleapis.com
 The next section will walk you through issuing a gcloud command to build
 a container. Specifically, the first step is *not* actually building the container 
 - it's basically defining the builder we will use in future steps (with build recipes).
-Once we have this custom build step defined, then we can use it against a Singularity recipe
-to build a container and send it to Google Storage. Let's go!
+Once we have this custom build step defined, then we can use it against a Singularity recipe to build a container and send it to Google Storage. In summary:
 
-### Step 1. Create a Singularity build step
+ - builder.yaml will create our builder
+ - cloudbuild.yaml will run a cloud build
 
-Cloud Build supports the definition and use of *custom build steps* to extend the range of tasks it can handle. You will create a Singularity custom build step to use when building your Singularity containers. 
+Let's go!
+
+### Step 1. Create a Singularity builder
+
+Cloud Build supports the definition and use of *custom build steps* to extend the range of tasks it can handle. We create our builder via a custom build step, and can
+do this with two files in the ```singularity-buildstep``` directory.
+
+* ```builder.yaml``` is the recipe to create our Cloud Builder. Specifically, it's a configuration file you will submit to build the custom build step
+* ```Dockerfile``` contains the steps required to download and build Singularity in a ```go``` container
+
+First, change directory to see these files:
 
 ```bash
 cd singularity-buildstep
 ```
 
-This would ideally be a *version controlled* Github repository folder. For now, we can
-use this local folder - this ```singularity-buildstep``` directory contains two files you will use to create the Singularity build step for your project.
-
-* ```cloudbuild.yaml``` is a Cloud Build configuration file you will submit to build the custom build step
-* ```Dockerfile``` contains the steps required to download and build Singularity in a ```go``` container
-
-Use this command to build the custom build step.
+And then use this command to build the custom build step.
 
 ```bash
-$ gcloud builds submit --config=cloudbuild.yaml --substitutions=_SINGULARITY_VERSION="3.0.2" .
+$ gcloud builds submit --config=builder.yaml --substitutions=_SINGULARITY_VERSION="3.0.2" .
 ```
 
 At the time of this writing the latest stable version of Singularity is 3.0.2. 
 To use a different, possibly newer, version modify the value of the _SINGULARITY_VERSION 
 substitution accordingly. What does this verison coincide with?
-It should match a [release tag](https://github.com/sylabs/singularity/releases) on the [sylabs/singularity](https://github.com/sylabs/singularity) repository.
+It should match a [release tag](https://github.com/sylabs/singularity/releases) on 
+the [sylabs/singularity](https://github.com/sylabs/singularity) repository.
 
 
 **Help! It says that gcloud builds isn't a valid command**
@@ -187,12 +192,20 @@ greet the user. The file has three sections.
  * %environment: this section defines environment variables that will be set at runtime (shell, run, exec)
  * %runscript: the contents of this section are written to a file within the container and executed when the container is run
 
-The cloudbuild.yaml file uses the Singularity custom build step to create a container from the ```julia.def```
-defintion file. The ```singularity build``` command takes the ```julia.def``` definition file and produces a Singularity
-Image Format container named ```julia-centos.sif```. The resulting container is written to a Cloud Storage bucket rather
-than the Container Registry since it isn't a Docker container image.
+We are still going to be interacting with the Google Cloud Builder (the gcloud builds command),
+but this time we are going to provide a different configuration file (cloudbuild.yaml) that
+has instructions for *using* our previously generated builder to build the Julia container.
+Specifically:
 
-Use this command to build the container.
+ 1. The cloudbuild.yaml file uses the Singularity custom build step to create a container from the ```julia.def```
+defintion file. 
+ 2. The ```singularity build``` command takes the ```julia.def``` definition file and produces a Singularity
+Image Format container named ```julia-centos.sif```. 
+ 3. The resulting container is written to a Cloud Storage bucket rather than the Container Registry since it isn't a Docker container image.
+
+To get this underway, you can use this command to build the container (note that it's
+the same command as before, but we provide a different configuration file).
+
 ```bash
 $ gcloud builds submit --config=cloudbuild.yaml --substitutions=_SINGULARITY_VERSION="3.0.2" .
 ```
