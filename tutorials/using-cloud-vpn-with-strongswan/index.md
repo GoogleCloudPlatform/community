@@ -7,10 +7,11 @@ date_published: 2019-01-29
 ---
 
 Vladimir Smirnov | Technical Solutions Engineer | Google Cloud Platform
+
 Bronislav Robenek | Technical Solutions Engineer | Google Cloud Platform
 
-This guide walks you through how to configure the [strongSwan](https://www.strongswan.org/)
-for integration with the [Google Cloud VPN][cloud_vpn]. This information is
+This guide walks you through how to configure [strongSwan](https://www.strongswan.org/)
+for integration with [Google Cloud VPN][cloud_vpn]. This information is
 provided as an example only. This guide is not meant to be a comprehensive
 overview of IPsec and assumes basic familiarity with the IPsec protocol.
 
@@ -91,7 +92,7 @@ to replace the IP addresses in the sample environment with your own IP addresses
 |External IP|`35.204.200.153`|
 |CIDR Behind strongSwan|`10.164.0.0/20`|
 
-## Configuration - GCP
+## Configuration of GCP
 
 To configure Cloud VPN:
 
@@ -197,7 +198,7 @@ After you make sure it's working as expected, you can add strongSwan to autostar
 
 # Configuring a dynamic (BGP) IPsec VPN tunnel with strongSwan and BIRD
 
-In this example, a dynamic (BGP)-based VPN uses a VTI interface. This guide is based
+In this example, a dynamic BGP-based VPN uses a VTI interface. This guide is based
 on the official [strongSwan wiki](https://wiki.strongswan.org/projects/strongswan/wiki/RouteBasedVPN#VTI-Devices-on-Linux).
 
 The following sample environment walks you through set up of a route-based VPN. Make sure
@@ -223,7 +224,7 @@ This guide assumes that you have [BIRD](https://bird.network.cz/) 1.6.3 installe
 |TUN-INSIDE- SW|`169.254.2.2`|
 |strongSwan ASN|`65002`|
 
-## Configuration - GCP
+## Configuration of GCP
 
 With a route-based VPN, you can use both static and dynamic routing. This example uses
 dynamic (BGP) routing. [Cloud Router](https://cloud.google.com/router/docs/) is used to establish
@@ -283,7 +284,7 @@ Click **Save and Continue** to complete.
 
 **Note:** – Add ingress firewall rules to allow inbound network traffic as per your security policy.
 
-## Configuration - strongSwan
+## Configuration of strongSwan
 
 This guide assumes that you have strongSwan already installed. It also assumes a default layout of Debian 9.6.
 
