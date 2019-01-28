@@ -48,17 +48,19 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
 
 1.  Create a `package.swift` file with the following contents:
 
-        import PackageDescription
-
-        let package = Package(
-            name: "VaporGAE",
-            targets: [
-                Target(name: "VaporGAE", dependencies: [])
-            ],
-            dependencies: [
-                .Package(url: "https://github.com/vapor/vapor.git", majorVersion: 1, minor: 1)
-            ]
-        )
+    ```swift
+    import PackageDescription
+    
+    let package = Package(
+        name: "VaporGAE",
+        targets: [
+            Target(name: "VaporGAE", dependencies: [])
+        ],
+        dependencies: [
+            .Package(url: "https://github.com/vapor/vapor.git", majorVersion: 1, minor: 1)
+        ]
+    )
+    ```
 
 [spm]: https://github.com/apple/swift-package-manager
 
@@ -66,35 +68,41 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
 
 1.  Create a `main.swift` with the following contents:
 
-        import Foundation
-        import Vapor
+    ```swift
+    import Foundation
+    import Vapor
 
-        let drop = Droplet()
+    let drop = Droplet()
 
-        // Respond to App Engine health check requests
-        // TODO: see #2
+    // Respond to App Engine health check requests
+    // TODO: see #2
 
-        // Basic GET request
-        // TODO: see #3
+    // Basic GET request
+    // TODO: see #3
 
-        // Start server on 8080 (default)
-        drop.run()
+    // Start server on 8080 (default)
+    drop.run()
+    ```
 
 1.  Create a route to handle App Engine health-check requests" (per the [custom runtime docs][custom-runtime]):
 
-        // Respond to App Engine health check requests
-        drop.get("/_ah/health") { request in
-            print("ALL - /_ah/health route handler...")
-            return "OK"
-        }
+    ```swift
+    // Respond to App Engine health check requests
+    drop.get("/_ah/health") { request in
+        print("ALL - /_ah/health route handler...")
+        return "OK"
+    }
+    ```
 
 1.  Create a route to handle `GET` requests to `/hello`:
 
-        // Basic GET request
-        drop.get("/hello") { request in
-            print("GET - /hello route handler...")
-            return "Hello from Vapor on Google App Engine flexible environment!"
-        }
+    ```swift
+    // Basic GET request
+    drop.get("/hello") { request in
+        print("GET - /hello route handler...")
+        return "Hello from Vapor on Google App Engine flexible environment!"
+    }
+    ```
 
 [custom-runtime]: https://cloud.google.com/appengine/docs/flexible/custom-runtimes/build#lifecycle_events
 
@@ -105,21 +113,23 @@ create our own.
 
 1.  Create a `Dockerfile` with the following contents:
 
-        FROM ibmcom/swift-ubuntu:latest
-        LABEL Description="Docker image for Swift + Vapor on Google App Engine flexible environment."
+    ```Dockerfile
+    FROM ibmcom/swift-ubuntu:latest
+    LABEL Description="Docker image for Swift + Vapor on Google App Engine flexible environment."
 
-        # Expose default port for App Engine
-        EXPOSE 8080
+    # Expose default port for App Engine
+    EXPOSE 8080
 
-        # Add app source
-        ADD . /app
-        WORKDIR /app
+    # Add app source
+    ADD . /app
+    WORKDIR /app
 
-        # Build release
-        RUN swift build --configuration release
+    # Build release
+    RUN swift build --configuration release
 
-        # Run the app
-        ENTRYPOINT [".build/release/VaporGAE"]
+    # Run the app
+    ENTRYPOINT [".build/release/VaporGAE"]
+    ```
 
 ## Deploying the app
 

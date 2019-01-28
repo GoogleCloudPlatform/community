@@ -38,6 +38,13 @@ udpSerSock.bind(ADDR)
 
 
 class GatewayState:
+  # This is the topic that the device will receive configuration updates on.
+  mqtt_config_topic = ''
+
+  # Host the gateway will connect to
+  mqtt_bridge_hostname = ''
+  mqtt_bridge_port = 8883
+
   # for all PUBLISH messages which are waiting for PUBACK. The key is 'mid'
   # returned by publish().
   pending_responses = {}
@@ -96,18 +103,23 @@ def error_str(rc):
     return '{}: {}'.format(rc, mqtt.error_string(rc))
 
 
-def on_connect(unused_client, unused_userdata, unused_flags, rc):
+def on_connect(client, unused_userdata, unused_flags, rc):
     """Callback for when a device connects."""
     print('on_connect', mqtt.connack_string(rc))
 
     gateway_state.connected = True
 
+    # Subscribe to the config topic.
+    client.subscribe(gateway_state.mqtt_config_topic, qos=1)
 
-def on_disconnect(unused_client, unused_userdata, rc):
+def on_disconnect(client, unused_userdata, rc):
     """Paho callback for when a device disconnects."""
     print('on_disconnect', error_str(rc))
     gateway_state.connected = False
 
+    # re-connect
+    # NOTE: should implement back-off here, but it's a tutorial
+    client.connect(gateway_state.mqtt_bridge_hostname, gateway_state.mqtt_bridge_port)
 
 def on_publish(unused_client, userdata, mid):
   """Paho callback when a message is sent to the broker."""
@@ -178,12 +190,6 @@ def get_client(
     # Connect to the Google MQTT bridge.
     client.connect(mqtt_bridge_hostname, mqtt_bridge_port)
 
-    # This is the topic that the device will receive configuration updates on.
-    mqtt_config_topic = '/devices/{}/config'.format(device_id)
-
-    # Subscribe to the config topic.
-    client.subscribe(mqtt_config_topic, qos=1)
-
     return client
 # [END iot_mqtt_config]
 
@@ -246,7 +252,7 @@ def parse_command_line_args():
 
 def attach_device(client, device):
   attach_topic = '/devices/{}/attach'.format(device)
-  print attach_topic
+  print(attach_topic)
   client.publish(attach_topic,  "", qos=1)
 
 
@@ -255,6 +261,10 @@ def main():
   global gateway_state
 
   args = parse_command_line_args()
+
+  gateway_state.mqtt_config_topic = '/devices/{}/config'.format(parse_command_line_args().device_id)
+  gateway_state.mqtt_bridge_hostname = args.mqtt_bridge_hostname
+  gateway_state.mqtt_bridge_port = args.mqtt_bridge_hostname
 
   # Publish to the events or state topic based on the flag.
   sub_topic = 'events' if args.message_type == 'event' else 'state'
