@@ -1,6 +1,6 @@
 ---
 title: IoT Core CoAP Proxy demonstration
-description: ---
+description: Deploy a CoAP proxy to GCP that bridges IoT Core devices to the HTTP data broker of IoT Core.
 author: ptone
 tags: IoT, Internet of Things, CoAP, prometheus
 date_published: 2018-02-01
