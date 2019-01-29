@@ -144,9 +144,27 @@ Laravel, you need to manually add the `DB_SOCKET` value to
     ```
 
 1. Modify your `app.yaml` file with [the following contents][app-dbsessions-yaml]:
-C
-1. Replace each instance of `YOUR_DB_PASSWORD` and `YOUR_CONNECTION_NAME`
-   with the values you created for your Cloud SQL instance above.
+
+    ```yaml
+    runtime: php72
+
+    env_variables:
+      # Put production environment variables here.
+      APP_LOG: errorlog
+      APP_KEY: YOUR_APP_KEY
+      APP_STORAGE: /tmp
+      CACHE_DRIVER: database
+      SESSION_DRIVER: database
+      ## Set these environment variables according to your CloudSQL configuration.
+      DB_DATABASE: YOUR_DB_DATABASE
+      DB_USERNAME: YOUR_DB_USERNAME
+      DB_PASSWORD: YOUR_DB_PASSWORD
+      DB_SOCKET: "/cloudsql/YOUR_CONNECTION_NAME"
+    ```
+
+1. Replace `YOUR_DB_DATABASE`, `YOUR_DB_USERNAME`, `YOUR_DB_PASSWORD`
+   and `YOUR_CONNECTION_NAME` with the values you created for your Cloud SQL
+   instance above.
 
 ## Set up Stackdriver Logging and Error Reporting
 
@@ -202,7 +220,7 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
         ],
     ```
 
-1. Now you can log to Stackdriver logging anywhere in your application!
+1. Now you can log to Stackdriver Logging anywhere in your application!
 
     ```php
     Log::info("Hello Stackdriver! This will show up as log level INFO!");
