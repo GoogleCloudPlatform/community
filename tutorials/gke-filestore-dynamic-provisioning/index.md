@@ -74,7 +74,7 @@ gcloud services enable file.googleapis.com
     kubectl create clusterrolebinding core-cluster-admin-binding \
         --user ${ACCOUNT} \
         --clusterrole cluster-admin
-    
+    ```
 
 3. Install [Helm](https://github.com/helm/helm)
 

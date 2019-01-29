@@ -51,7 +51,6 @@ from laravel.com.
     # Put production environment variables here.
     APP_LOG: errorlog
     APP_KEY: YOUR_APP_KEY
-    STORAGE_DIR: /tmp
   ```
 
 1. Replace `YOUR_APP_KEY` in `app.yaml` with an application key you generate
@@ -143,7 +142,6 @@ Laravel, you need to manually add the `DB_SOCKET` value to
       # Put production environment variables here.
       APP_LOG: errorlog
       APP_KEY: YOUR_APP_KEY
-      STORAGE_DIR: /tmp
       CACHE_DRIVER: database
       SESSION_DRIVER: database
       ## Set these environment variables according to your CloudSQL configuration.
