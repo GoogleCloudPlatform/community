@@ -32,9 +32,11 @@ Platform.
         
 1. Add a start script to your `package.json` file:
 
-        "scripts": {
-          "start": "node index.js"
-        }
+    ```json
+    "scripts": {
+        "start": "node index.js"
+    }
+    ```
 
 1. Install Express.js:
 
@@ -44,19 +46,21 @@ Platform.
 
 Create an `index.js` file with the following contents:
 
-    const express = require('express');
-    const app = express();
+```js
+const express = require('express');
+const app = express();
 
-    app.get('/', (req, res) => {
-      res.send('Hello World!');
-    });
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
 
-    const server = app.listen(8080, () => {
-      const host = server.address().address;
-      const port = server.address().port;
+const server = app.listen(8080, () => {
+  const host = server.address().address;
+  const port = server.address().port;
 
-      console.log(`Example app listening at http://${host}:${port}`);
-    });
+  console.log(`Example app listening at http://${host}:${port}`);
+});
+```
 
 ## Run
 
@@ -71,8 +75,10 @@ message.
 
 1. Create an `app.yaml` file with the following contents:
 
-        runtime: nodejs
-        env: flex
+    ```yaml
+    runtime: nodejs
+    env: flex
+    ```
 
 1. Run the following command to deploy your app:
 

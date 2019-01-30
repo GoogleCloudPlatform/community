@@ -61,14 +61,15 @@ You will create a job named `HelloJob` that will accept a `name` argument and pr
 
 1. Edit your `app/jobs/hello_job.rb` with the following:
 
-        class HelloJob < ApplicationJob
-          queue_as :default
+    ```rb
+    class HelloJob < ApplicationJob
+      queue_as :default
 
-          def perform(name)
-            # Do something later
-            puts "Hello, #{name}"
-          end
-        end
+      def perform(name)
+        # Do something later
+        puts "Hello, #{name}"
+      end
+    end
 
 ## Create a test URL to queue the job
 
@@ -97,21 +98,25 @@ our `HelloJob` to execute in the background.
 
 1. Add a `say` action to `HelloController`. Edit your `app/controllers/hello_controller.rb` with the following:
 
-        class HelloController < ApplicationController
-          def say
-            HelloJob.perform_later(params[:name])
-            render plain: 'OK'
-          end
-        end
+    ```rb
+    class HelloController < ApplicationController
+      def say
+        HelloJob.perform_later(params[:name])
+        render plain: 'OK'
+      end
+    end
+    ```
 
    This action will queue our `HelloJob` with the provided request parameter `name`.
 
 1. Create a route to this action. In `config/routes.rb`, add:
 
-        get '/hello/:name', to: 'hello#say'
+    ```rb
+    get '/hello/:name', to: 'hello#say'
+    ```
 
-   When you make an HTTP GET request to `/hello/Jeff`, the `HelloController` will handle the request using the `say`
-   action with parameter `:name` as "Jeff"
+    When you make an HTTP GET request to `/hello/Jeff`, the `HelloController` will handle the  request using the `say`
+    action with parameter `:name` as "Jeff"
 
 ## Configuring your background worker to use Cloud Pub/Sub
 
@@ -125,10 +130,12 @@ to manage the job queue.
 
 1. Configure ActiveJob to use GoogleCloudPubsub as its queue adapter. In `config/application.rb`:
 
-        class Application < Rails::Application
-          # ...
-          config.active_job.queue_adapter = :google_cloud_pubsub
-        end
+    ```rb
+    class Application < Rails::Application
+      # ...
+      config.active_job.queue_adapter = :google_cloud_pubsub
+    end
+    ```
 
 ## Deploying to App Engine flexible environment
 
@@ -149,13 +156,15 @@ instances together.
 
 1. Create an `app.yaml` for deploying the application to Google App Engine:
 
-        runtime: ruby
-        env: flex
+    ```yaml
+    runtime: ruby
+    env: flex
 
-        entrypoint: bundle exec foreman start
+    entrypoint: bundle exec foreman start
 
-        env_variables:
-          SECRET_KEY_BASE: [SECRET_KEY]
+    env_variables:
+      SECRET_KEY_BASE: [SECRET_KEY]
+    ```
 
    Be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
@@ -171,33 +180,37 @@ of your web instances at the cost of potentially using more resources.
 
 1. Create an `app.yaml` for deploying the web service to Google App Engine:
 
-        runtime: ruby
-        env: flex
+    ```yaml
+    runtime: ruby
+    env: flex
 
-        entrypoint: bundle exec rails server -p 8080
+    entrypoint: bundle exec rails server -p 8080
 
-        env_variables:
-          SECRET_KEY_BASE: [SECRET_KEY]
+    env_variables:
+      SECRET_KEY_BASE: [SECRET_KEY]
+    ```
 
    Be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
 1. Create a `worker.yaml` for deploying the worker service to Google App Engine:
 
-        runtime: ruby
-        env: flex
-        service: worker
+    ```yaml
+    runtime: ruby
+    env: flex
+    service: worker
 
-        entrypoint: bundle exec activejob-google_cloud_pubsub-worker
+    entrypoint: bundle exec activejob-google_cloud_pubsub-worker
 
-        env_variables:
-          SECRET_KEY_BASE: [SECRET_KEY]
+    env_variables:
+      SECRET_KEY_BASE: [SECRET_KEY]
 
-        health_check:
-          enable_health_check: False
+    health_check:
+      enable_health_check: False
 
-        # Optional scaling configuration
-        manual_scaling:
-          instances: 1
+    # Optional scaling configuration
+    manual_scaling:
+      instances: 1
+    ```
 
    Be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 

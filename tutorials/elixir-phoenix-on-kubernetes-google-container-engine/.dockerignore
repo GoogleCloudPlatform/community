@@ -5,7 +5,9 @@
 # Note: If you are using an umbrella app, you might need to add more
 # directories to this list.
 
-_build
-deps
-test
-assets/node_modules
+/_build/
+/assets/node_modules/
+/deps/
+/doc/
+/priv/static/
+/test/
