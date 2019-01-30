@@ -159,13 +159,15 @@ from the original branch. In the `handlers` section of the file, you can see the
 URL routing handlers for the app. For example, you'll find the handler for your
 static assets and front controller there. The handlers look like this:
 
-    handlers:
-    # tell appengine where our static assets live
-    - url: /bundles
-      static_dir: web/bundles
-    # the symfony front controller
-    - url: /.*
-      script: web/app.php
+```yaml
+handlers:
+# tell appengine where our static assets live
+- url: /bundles
+  static_dir: web/bundles
+# the symfony front controller
+- url: /.*
+  script: web/app.php
+```
 
 The **url** setting defines the URL that is being handled. The value for
 **script** points to the file that contains the scripting code to run when the

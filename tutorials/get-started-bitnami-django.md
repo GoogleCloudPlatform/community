@@ -91,18 +91,22 @@ Bitnami Django includes a pre-configured instance of the Apache Web server. Conf
 
 1. Edit the WSGI application script file at `/opt/bitnami/apps/django/django_projects/myproject/myproject/wsgi.py` and modify it to look like this:
 
-        import os
-        import sys
-        sys.path.append('/opt/bitnami/apps/django/django_projects/myproject')
-        os.environ.setdefault("PYTHON_EGG_CACHE", "/opt/bitnami/apps/django/django_projects/myproject/egg_cache")
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myproject.settings")
-        from django.core.wsgi import get_wsgi_application
-        application = get_wsgi_application()
+    ```py
+    import os
+    import sys
+    sys.path.append('/opt/bitnami/apps/django/django_projects/myproject')
+    os.environ.setdefault("PYTHON_EGG_CACHE", "/opt/bitnami/apps/django/django_projects/myproject/egg_cache")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myproject.settings")
+    from django.core.wsgi import get_wsgi_application
+    application = get_wsgi_application()
+    ```
 
 1. Create a `conf/` subdirectory in the project directory and create an Apache configuration file:
 
-        mkdir /opt/bitnami/apps/django/django_projects/myproject/conf
-        touch /opt/bitnami/apps/django/django_projects/myproject/conf/httpd-app.conf
+    ```sh
+    mkdir /opt/bitnami/apps/django/django_projects/myproject/conf
+    touch /opt/bitnami/apps/django/django_projects/myproject/conf/httpd-app.conf
+    ```
 
 1. Add the following Apache directives in the `/opt/bitnami/apps/django/django_projects/myproject/conf/httpd-app.conf` file:
 

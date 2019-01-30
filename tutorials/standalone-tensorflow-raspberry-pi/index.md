@@ -7,8 +7,6 @@ date_published: 2018-12-27
 ---
 
 
-# Setting up a standalone TensorFlow prediction device with Raspberry Pi and Google Cloud Platform
-
 This tutorial describes how to set up a TensorFlow server in a Raspberry Pi 3B and deploy on it a TensorFlow saved model. 
 
 The architecture of a machine learning model trained in the cloud and served locally is particularly useful when the IoT device has poor connectivity or when the serving availability is critical. 
@@ -101,18 +99,20 @@ The following diagram shows the architecture of the solution
 
     The variable *`model_dir`* in line 16 of the python file `tf_server.py` identifies the directory where the model is saved. You can edit this if you download a model in a different location.
     
-        print '--- importing packages'
-
-            from tensorflow.contrib import predictor
-            import base64
-            import sys
-            import json
-            import subprocess
-            import datetime
-
-            # In the line below, specify the directory where you hosted your model.
-            # This is the directory where the .pb file and variables directory are hosted.
-            model_dir = '/tf_server/flowers_model/1'
+    ```py
+    print '--- importing packages'
+    
+    from tensorflow.contrib import predictor
+    import base64
+    import sys
+    import json
+    import subprocess
+    import datetime
+    
+    # In the line below, specify the directory where you hosted your model.
+    # This is the directory where the .pb file and variables directory are hosted.
+    model_dir = '/tf_server/flowers_model/1'
+    ```
 
 
 ## Running the TensorFlow server
