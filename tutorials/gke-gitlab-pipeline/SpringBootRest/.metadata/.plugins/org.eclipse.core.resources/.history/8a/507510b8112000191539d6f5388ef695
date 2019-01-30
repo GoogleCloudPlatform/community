@@ -1,0 +1,45 @@
+package planning;
+
+import lombok.Data;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+
+@Data
+@Entity
+public class Outing {
+	
+	private @Id @GeneratedValue Long id;
+	private String name;
+	private String event;
+	
+	Outing() {}
+	
+	Outing(String name, String role) {
+		this.name = name;
+		this.event = role;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getRole() {
+		return event;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setRole(String role) {
+		this.event = role;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+}

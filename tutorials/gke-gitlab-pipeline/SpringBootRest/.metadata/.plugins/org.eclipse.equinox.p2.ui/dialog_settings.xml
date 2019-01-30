@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.equinox.internal.p2.ui.dialogs.InstallWizard.WizardSettings">
+		<item value="910" key="DIALOG_WIDTH"/>
+		<item value="1|.AppleSystemUIFont|11.0|0|COCOA|1|.AppleSystemUIFont" key="DIALOG_FONT_NAME"/>
+		<item value="661" key="DIALOG_HEIGHT"/>
+		<item value="284" key="DIALOG_X_ORIGIN"/>
+		<item value="33" key="DIALOG_Y_ORIGIN"/>
+	</section>
+</section>

@@ -1,0 +1,85 @@
+package planning;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+@RestController
+class OutingController {
+
+	private final OutingRepository repository;
+	@Autowired
+	private Environment env;
+
+	OutingController(OutingRepository repository) {
+		this.repository = repository;
+	}
+	
+	@GetMapping("/ping")
+	String ping() {
+		return "frontend";
+	}
+
+	@GetMapping("/health")
+	String getHealth() {
+		String portValue = env.getProperty("port");
+		String staffDns = env.getProperty("staffDns");
+		String resourceUrl = staffDns + ":" + portValue + "/health";
+		
+		RestTemplate restTemplate = new RestTemplate();
+		String resourceUrl = "http://demo-k8s-staff:8080/health";
+		ResponseEntity<String> response = restTemplate.getForEntity(resourceUrl, String.class);
+		return response.getBody();
+
+	}
+	
+	// Aggregate root
+	@GetMapping("/outings")
+	List<Outing> all() {
+		return repository.findAll();
+	}
+
+	@PostMapping("/outings")
+	Outing newEmployee(@RequestBody Outing newOuting) {
+		return repository.save(newOuting);
+	}
+
+	// Single item
+
+	@GetMapping("/employees/{id}")
+	Outing one(@PathVariable Long id) {
+
+		return repository.findById(id)
+			.orElseThrow(() -> new OutingNotFoundException(id));
+	}
+
+	@PutMapping("/employees/{id}")
+	Outing replaceEmployee(@RequestBody Outing newEmployee, @PathVariable Long id) {
+
+		return repository.findById(id)
+			.map(employee -> {
+				employee.setName(newEmployee.getName());
+				employee.setRole(newEmployee.getRole());
+				return repository.save(employee);
+			})
+			.orElseGet(() -> {
+				newEmployee.setId(id);
+				return repository.save(newEmployee);
+			});
+	}
+
+	@DeleteMapping("/employees/{id}")
+	void deleteEmployee(@PathVariable Long id) {
+		repository.deleteById(id);
+	}
+}

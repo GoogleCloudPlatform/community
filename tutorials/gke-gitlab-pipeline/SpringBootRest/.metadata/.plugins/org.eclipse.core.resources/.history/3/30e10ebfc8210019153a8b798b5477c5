@@ -1,0 +1,77 @@
+package planning;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+@RestController
+class OutingController {
+
+	private final OutingRepository repository;
+
+	OutingController(OutingRepository repository) {
+		this.repository = repository;
+	}
+
+	@GetMapping("/health")
+	String getHealth() {
+		RestTemplate restTemplate = new RestTemplate();
+		String resourceUrl = "http://staff:8080";
+		ResponseEntity<String> response = restTemplate.getForEntity(resourceUrl, String.class);
+		String firstBody = response.getBody();
+		resourceUrl = resourceUrl + "/first";
+		response = restTemplate.getForEntity(resourceUrl, String.class);
+		String wholeMsg = firstBody + " " + response.getBody();
+		return "Message from backend is: " + wholeMsg;
+
+		return "alive\n";
+	}
+	
+	// Aggregate root
+
+	@GetMapping("/outings")
+	List<Outing> all() {
+		return repository.findAll();
+	}
+
+	@PostMapping("/outings")
+	Outing newEmployee(@RequestBody Outing newOuting) {
+		return repository.save(newOuting);
+	}
+
+	// Single item
+
+	@GetMapping("/employees/{id}")
+	Outing one(@PathVariable Long id) {
+
+		return repository.findById(id)
+			.orElseThrow(() -> new OutingNotFoundException(id));
+	}
+
+	@PutMapping("/employees/{id}")
+	Outing replaceEmployee(@RequestBody Outing newEmployee, @PathVariable Long id) {
+
+		return repository.findById(id)
+			.map(employee -> {
+				employee.setName(newEmployee.getName());
+				employee.setRole(newEmployee.getRole());
+				return repository.save(employee);
+			})
+			.orElseGet(() -> {
+				newEmployee.setId(id);
+				return repository.save(newEmployee);
+			});
+	}
+
+	@DeleteMapping("/employees/{id}")
+	void deleteEmployee(@PathVariable Long id) {
+		repository.deleteById(id);
+	}
+}
