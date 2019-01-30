@@ -18,7 +18,7 @@ overview of PHP and learn ways to run PHP apps on GCP.
 1. Enable billing for your project.
 1. Install the [Google Cloud SDK][cloud_sdk].
 
-> All of the code for this tutorial is available in the [samples repository][laravel-framework-sample].
+> All code for this tutorial is available in the [PHP samples repository][laravel-framework-sample].
 
 ## Prepare
 
