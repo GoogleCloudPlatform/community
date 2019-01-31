@@ -25,7 +25,7 @@ overview of PHP and learn ways to run PHP apps on GCP.
 ### Create and configure a Cloud SQL for MySQL instance
 
 > **Note**: This guide uses `wordpress` for the instance name and the database
-name. The guides also uses `root` for the database user name.
+name. The guide also uses `root` for the database user name.
 
 1.  Create a new Cloud SQL for MySQL Second Generation instance with the following
     command:
