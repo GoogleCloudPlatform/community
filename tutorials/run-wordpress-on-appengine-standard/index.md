@@ -63,14 +63,14 @@ a new WordPress project or add the required configuration to an existing one.
     
         $ composer require google/cloud-tools
     
-    > **Note** If you receive an error about extensions, install `phar` and `zip` PHP
+    > **Note**: If you receive an error about extensions, install `phar` and `zip` PHP
     extensions and retry.
     
 1.  Now you can run the `wp-gae` command which is included in that package
     
         $ php vendor/bin/wp-gae
     
-    > **Note** You can also install `google/cloud-tools` [globally][composer-global],
+    > **Note**: You can also install `google/cloud-tools` [globally][composer-global],
     which will allow you to execute the command `wp-gae` anywhere.
 
 ### Create a new WordPress project
