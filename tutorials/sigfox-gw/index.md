@@ -1,6 +1,6 @@
 ---
 title: Integrating Sigfox IoT network with Google Cloud Platform
-description: Install and configure the integration between the Sigfox LPWAN IoT network service and Google Cloud Platform.
+description: Install and configure the integration between the Sigfox LPWAN IoT network service and GCP.
 author: lepistom
 tags: IoT, Internet of Things, Sigfox, LPWAN
 date_published: 2019-01-31
