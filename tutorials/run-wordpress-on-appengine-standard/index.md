@@ -30,7 +30,7 @@ name. We use `root` for the database user name.
 1.  Create a new Cloud SQL for MySQL Second Generation instance with the following
     command:
 
-        gcloud sql instances create wordpress \
+        $ gcloud sql instances create wordpress \
             --activation-policy=ALWAYS \
             --tier=db-n1-standard-1
     
@@ -43,11 +43,11 @@ name. We use `root` for the database user name.
 
 1.  Create the database you want your WordPress site to use:
 
-        gcloud sql databases create wordpress --instance wordpress
+        $ gcloud sql databases create wordpress --instance wordpress
     
 1.  Change the root password for your instance:
 
-        gcloud sql users set-password root \
+        $ gcloud sql users set-password root \
             --host=% \
             --instance wordpress \
             --password=YOUR_INSTANCE_ROOT_PASSWORD # Don't use this password!
@@ -63,14 +63,14 @@ a new WordPress project or add the required configuration to an existing one.
     
         $ composer require google/cloud-tools
     
-    > **Note** If you receive an error about extensions, install `phar` and `zip` PHP
+    > **Note**: If you receive an error about extensions, install `phar` and `zip` PHP
     extensions and retry.
     
 1.  Now you can run the `wp-gae` command which is included in that package:
     
         $ php vendor/bin/wp-gae
     
-    > **Note** You can also install `google/cloud-tools` [globally][composer-global],
+    > **Note**: You can also install `google/cloud-tools` [globally][composer-global],
     which will allow you to execute the command `wp-gae` anywhere.
 
 ### Create a new WordPress project
@@ -99,7 +99,7 @@ Then your WordPress project will be ready to deploy to Google Cloud!
 
 ## Deploy to Google Cloud
 
-`cd` into the root of your WordPress project.
+`cd` into the root of your WordPress project:
 
     $ cd my-wordpress-project
 
