@@ -62,7 +62,7 @@ If you can see messages sent by your device, you can proceed to the next step.
 
 ## Creating a Google Cloud Platform project
 
-1. Go to the [Google Cloud Console](https://console.cloud.google.com).
+1. Go to the [GCP Console](https://console.cloud.google.com).
 1. Click the project selector in the upper-left corner and select **New Project**.
 1. Give the project a name and click **Create**.
 1. Click the project selector again and select your new project.
@@ -129,13 +129,13 @@ If you can see messages sent by your device, you can proceed to the next step.
     you have to re-deploy the Cloud Functions to activate the new configuration.
     See the next steps on how to deploy (or re-deploy) the Cloud Functions.
 
-1. Edit the file .env.yaml with your favorite text editor, for example:
+1. Edit the file `.env.yaml` with your favorite text editor, for example:
 
         (venv) $ vi .env.yaml
 
-1. **Mandatory**: Change the value of HTTP_USER and HTTP_PASSWORD to your unique values. You will later use these values in the Sigfox backend Callback configurations. The Cloud Functions use Basic Authentication over HTTPS, to authenticate the Sigfox backend.
+1. **Mandatory**: Change the value of `HTTP_USER` and `HTTP_PASSWORD` to your unique values. You will later use these values in the Sigfox backend Callback configurations. The Cloud Functions use Basic Authentication over HTTPS, to authenticate the Sigfox backend.
 
-1. Deploy the two integration Cloud Functions with the following commands. Note: set the value of `--region` to the Cloud Functions region where you wish to store and process your data.
+1. Deploy the two integration Cloud Functions with the following commands. Set the value of `--region` to the Cloud Functions region where you wish to store and process your data.
 
         (venv) $ gcloud beta functions deploy --region asia-northeast1 --runtime python37 --env-vars-file .env.yaml --trigger-http callback_data
 
@@ -165,7 +165,7 @@ If you can see messages sent by your device, you can proceed to the next step.
 
     https://region-projectname.cloudfunctions.net/callback_service
 
-1. Navigate to the Cloud Functions web console at: [https://console.cloud.google.com/functions](https://console.cloud.google.com/functions) and verify that the two Cloud Functions have been deployed:
+1. Navigate to the Cloud Functions web console at [https://console.cloud.google.com/functions](https://console.cloud.google.com/functions) and verify that the two Cloud Functions have been deployed:
 
 **Figure 3.** Verifying Cloud Functions
 
@@ -178,10 +178,10 @@ The integration uses Sigfox backend API V2 to automate managing the callbacks' c
 
 1. Log in to the [Sigfox backend](https://backend.sigfox.com/).
 1. Follow the steps in the [Sigfox API credential creation](https://support.sigfox.com/docs/api-credential-creation) document to create a new API user with the following profile: **DEVICE MANAGER [W]**.
-1. Write down your Sigfox API user's "Login" and "Password" strings.
+1. Write down your Sigfox API user's **Login** and **Password** strings.
 1. Click the **Device Type** menu.
 1. Click the name of the device type you wish to use for this integration.
-1. Write down your device type's "Id" string. It should be listed as the first value in your **Device Type > Information** page.
+1. Write down your device type's **Id** string. It should be listed as the first value in your **Device Type > Information** page.
 
 ## Configuring Sigfox backend callbacks
 
@@ -199,18 +199,18 @@ The integration uses the Sigfox API V2 to automate configuring the callbacks. In
 
 1. The command will output a URL to download the generated client library. Copy the URL and download the file with a command similar to this:
 
-        (venv) $ curl -o python_client.zip https://generator.swagger.io/api/gen/download/<your-unique-string>
+        (venv) $ curl -o python_client.zip https://generator.swagger.io/api/gen/download/[YOUR_UNIQUE_STRING]
 
 1. Unzip the downloaded client library:
 
         (venv) $ unzip python_client.zip
 
-1. Copy the swagger_client to the working directory with:
+1. Copy the swagger_client to the working directory:
 
         (venv) $ cp -r python-client/swagger_client .
 
 
-### Configuring the callbacks management script
+### Configuring the callback management script
 
 The integration has a Python script for managing the Sigfox backend callbacks' configuration. The script uses the Sigfox API credentials for authentication with the Sigfox backend, using HTTPS Basic Authentication. Execute the following steps to configure the callbacks:
 
@@ -218,13 +218,13 @@ The integration has a Python script for managing the Sigfox backend callbacks' c
 
         (venv) $ vi sigfox-api.ini
 
-1. Set the value of `api_username` to your Sigfox API user "Login" string.
-1. Set the value of `api_password` to your Sigfox API user "Password" string.
-1. Set the value of `id` to your Sigfox device type "Id" string.
-1. Set the value of `cf_data` to your `callback_data` Cloud Function Trigger URL. Example: https://region-project.cloudfunctions.net/callback_data
-1. Set the value of `cf_data` to your `callback_service` Cloud Function Trigger URL. Example: https://region-project.cloudfunctions.net/callback_service
-1. Set the value of `cf_username` to the value of the `HTTP_USER` in `sigfox-gw/cf/.env.yaml` parameter .
-1. Set the value of 'cf_password' to the value of the `HTTP_PASSWORD` parameter in `sigfox-gw/cf/.env.yaml`.
+1. Set the value of `api_username` to your Sigfox API user **Login** string.
+1. Set the value of `api_password` to your Sigfox API user **Password** string.
+1. Set the value of `id` to your Sigfox device type **Id** string.
+1. Set the value of `cf_data` to your `callback_data` Cloud Function Trigger URL. Example: `https://region-project.cloudfunctions.net/callback_data`
+1. Set the value of `cf_data` to your `callback_service` Cloud Function Trigger URL. Example: `https://region-project.cloudfunctions.net/callback_service`
+1. Set the value of `cf_username` to the value of the `HTTP_USER` parameter in `sigfox-gw/cf/.env.yaml`.
+1. Set the value of `cf_password` to the value of the `HTTP_PASSWORD` parameter in `sigfox-gw/cf/.env.yaml`.
 
 ### Listing Sigfox backend callbacks
 
@@ -232,7 +232,7 @@ The integration has a Python script for managing the Sigfox backend callbacks' c
 
         (venv) $ python sigfox-api.py -h
 
-1. Execute the following command to list any Callbacks currently configured for your Device Type:
+1. Execute the following command to list any callbacks currently configured for your Device Type:
 
         (venv) $ python sigfox-api.py --callbacks list
 
@@ -243,7 +243,7 @@ The integration has a Python script for managing the Sigfox backend callbacks' c
         ...
         {total number of} Callbacks configured for Device Type: {your device type name}
 
-    Or if you do not have any Callbacks configured yet, the script will output:
+    Or if you do not have any callbacks configured yet, the script will output:
 
         0 Callbacks configured for Device Type: {your Device Type name}
 
@@ -265,8 +265,8 @@ The integration has a Python script for managing the Sigfox backend callbacks' c
 
         (venv) $ python sigfox-api.py --callbacks list
 
-    The command should output the details of all your Callbacks for this Device Type,
-    including the 5 Callbacks that point to your integration Cloud Functions. 
+    The command should output the details of all of your callbacks for this Device Type,
+    including the 5 callbacks that point to your integration Cloud Functions. 
 
 1. If any of the callbacks or their values are incorrect, you can do either of the following to re-configure them:
 
@@ -278,14 +278,14 @@ The integration has a Python script for managing the Sigfox backend callbacks' c
 
             (venv) $ vi sigfox-api.ini
         
-      Then delete *all* callbacks configured for this Device Type:
+      Then delete *all* callbacks configured for this device type:
 
             (venv) $ python sigfox-api.py --callbacks delete-all
         
-      **Note**: this command deletes *all* the callbacks registered for the Device Type,
-      including any Callbacks that you may have configured manually earlier. The Device
-      Type ID for the action is configured in sigfox-api.ini, as the value for the parameter
-      'id'.
+      **Note**: this command deletes *all* of the callbacks registered for the device type,
+      including any callbacks that you may have configured manually earlier. The device
+      type ID for the action is configured in `sigfox-api.ini`, as the value for the parameter
+      `id`.
       
       Then re-execute the script to create the callbacks with the corrected values:
         
@@ -294,8 +294,8 @@ The integration has a Python script for managing the Sigfox backend callbacks' c
 
 ## Verifying the callbacks in the Sigfox backend console
 
-1. Navigate to the [Sigfox backend](https://backend.sigfox.com) console > Device Type <your device type> > Callbacks
-1. Verify that your Callbacks screen looks similar to this. Note that the Downlink button should be activated (filled in black circle) for the BIDIR Callback:
+1. Navigate in the [Sigfox backend](https://backend.sigfox.com) console to **Device Type [YOUR-DEVICE-TYPE] > Callbacks**.
+1. Verify that your **Callbacks** screen looks similar to this. Note that the **Downlink** button should be activated (filled in black circle) for the `BIDIR` callback:
 
 **Figure 4.** Verifying Sigfox callbacks
 
@@ -304,11 +304,11 @@ The integration has a Python script for managing the Sigfox backend callbacks' c
 
 ## Configuring Datastore for device configuration management
 
-The integration uses the Cloud Datastore database service for storing Sigfox device configurations. In Sigfox, individual devices are grouped under Device Types. All devices in the same Device Type are expected to have the same behaviour, and the same configuration. For this reason, the default behaviour of the Integration is to have one, shared device configuration per Device Type.
+The integration uses the Cloud Datastore database service for storing Sigfox device configurations. In Sigfox, individual devices are grouped under device types. All devices in the same device type are expected to have the same behavior, and the same configuration. For this reason, the default behavior of the integration is to have one, shared device configuration per device type.
 
-To configure Datastore for your Integration, execute the following steps:
+To configure Datastore for your integration, execute the following steps:
 
-1. Navigate to the Google Cloud Datastore console at: [https://console.cloud.google.com/datastore](https://console.cloud.google.com/datastore).
+1. Navigate to the Google Cloud Datastore console at [https://console.cloud.google.com/datastore](https://console.cloud.google.com/datastore).
 1. If this is the first time using Datastore in this project, you will see the following options:
 
 **Figure 5.** Datastore options
@@ -317,7 +317,7 @@ To configure Datastore for your Integration, execute the following steps:
 ![datastore options][ds-options]
 
 1. Choose the Cloud Datastore option.
-1. Select the geographic location where you wish to host Datastore and store your Device configuration data. Choose the location nearest to the GCP region where you deployed your Cloud Functions, and click 'Create Database'.
+1. Select the geographic location where you wish to host Datastore and store your device configuration data. Choose the location nearest to the GCP region where you deployed your Cloud Functions, and click **Create Database**.
 
 **Figure 6.** Select Datastore region
 
@@ -325,15 +325,15 @@ To configure Datastore for your Integration, execute the following steps:
 ![datastore region][ds-region]
 
 1. In the Datastore console, click **Create Entity**.
-1. Set the value of 'Kind' to: deviceType
-1. Set the value of 'Key identifier' to: Custom name
-1. Set the value of 'Custom name' to your Sigfox Device Type name.
+1. Set the value of **Kind** to `deviceType`.
+1. Set the value of **Key identifier** to **Custom name**.
+1. Set the value of **Custom name** to your Sigfox device type name.
 1. Click **Properties > Add Property**.
-1. Set the New property 'Name' as: config
-1. Set the 'Value' as your device configuration's 16-character hexadecimal string. The configuration hexadecimal string must be 8 bytes (exactly 16 characters). The configuration value is specific to each device and use case. To learn more, refer to the Sigfox [Downlink information](https://support.sigfox.com/docs/downlink-information) document.
+1. Set the new property name as `config`.
+1. Set the **Value** as your device configuration's 16-character hexadecimal string. The configuration hexadecimal string must be 8 bytes (exactly 16 characters). The configuration value is specific to each device and use case. To learn more, refer to the Sigfox [Downlink information](https://support.sigfox.com/docs/downlink-information) document.
 1. Deselect the **Index this property** checkbox.
 1. Click **Done**.
-1. Click **Create** to save the entity. Verify that you now have a configuration entity in Datastore, with your Sigfox Device Type as the name. Refer to the below example:
+1. Click **Create** to save the entity. Verify that you now have a configuration entity in Datastore, with your Sigfox device type as the name. Refer to the below example:
 
 **Figure 7.** Datastore example
 
@@ -342,7 +342,7 @@ To configure Datastore for your Integration, execute the following steps:
 
 # Testing the integration
 
-## Sending Data from a Sigfox device
+## Sending data from a Sigfox device
 
 The integration should now be configured in both Google Cloud Functions and the Sigfox backend.
 
@@ -362,7 +362,7 @@ Verify the `callback_data` Cloud Function with the following steps:
      Note the name of the subscription: `sigfox-data-sub`.
 
 1. Open both the Sigfox backend and Google Cloud Functions web console pages.
-1. _NOTE - this step is Sigfox device dependent:_ Send a data payload from your Sigfox device.
+1. (This step is dependent on the Sigfox device.) Send a data payload from your Sigfox device.
 1. Verify that you can see the new message in the Sigfox backend **Device > Messages** page, as below:
 
 **Figure 8.** Sigfox messages example
@@ -370,14 +370,13 @@ Verify the `callback_data` Cloud Function with the following steps:
 [messages 2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/messages2.png
 ![messages example][messages 2]
 
-Note: If your Sigfox backend can receive the message, the up arrow will first be greyed out. If the GCP Cloud Function `callback_data` was triggered successfully, and the function replied as expected, the arrow will turn green.
+Note: If your Sigfox backend can receive the message, the up arrow will first be grayed out. If the GCP Cloud Function `callback_data` was triggered successfully, and the function replied as expected, the arrow will turn green.
 
 1. Verify that the message payload was forwarded to your Cloud Pub/Sub topic. On your development machine, execute the following command:
 
         (venv) $ gcloud pubsub subscriptions pull sigfox-data-sub --limit 100 --auto-ack
 
-
-    Note: You may have to execute the command a few times to fetch the new messages.
+    You may need to execute the command a few times to fetch the new messages.
 
     The command should return an output similar to this:
  
@@ -388,7 +387,7 @@ The value of `data` should match the **Data / Decoding** output in your Sigfox b
 
 1. Verify that you can see the integration logs in Stackdriver Logging. On the Cloud Function's details page, click the **View Logs** button to open Stackdriver Logging for the `callback_data` function.
 
-1. Find the entries for "Received Sigfox message" and any entries below that. Click the entries to expand their view. You should see something similar to the following:
+1. Find the entries for `Received Sigfox message` and any entries below that. Click the entries to expand their view. You should see something similar to the following:
 
 **Figure 9.** Stackdriver Logging
 
@@ -397,7 +396,7 @@ The value of `data` should match the **Data / Decoding** output in your Sigfox b
 
 Note: The first time the Cloud Function executes, the platform creates its runtime environment and the execution time is longer. This is called a _cold start_ for Cloud Functions. Subsequent executions will be faster. Here, you can verify that the Cloud Function was triggered, received the device payload, and as seen in the next log entry, forwarded the payload to the Cloud Pub/Sub topic. The Pub/Sub topic is the integration point for consuming the Sigfox data in real time for your specific business solutions.
 
-1. Verify that your `DATA_ADVANCED` callback is also working, by finding a second function execution after the first one. The `DATA_ADVANCED` callback is a functionality in the Sigfox backend to send additional metadata. The `DATA_ADVANCED` callback is triggered up to 30 seconds after the initial payload is sent, after the Sigfox network has verified that all base stations have received the payload from your device. Sigfox will calculate additional information such as signal strength, and optionally the device location with the Sigfox Atlas positioning service. These are available as additional metadata in the second, `DATA_ADVANCED` payload. If your `DATA_ADVANCED` callback was triggered, you can see a second invocation for the `callback_data` Cloud Function, and Stackdriver Logging entries similar to this:
+1. Verify that your `DATA_ADVANCED` callback is also working, by finding a second function execution after the first one. The `DATA_ADVANCED` callback is a feature in the Sigfox backend to send additional metadata. The `DATA_ADVANCED` callback is triggered up to 30 seconds after the initial payload is sent, after the Sigfox network has verified that all base stations have received the payload from your device. Sigfox will calculate additional information such as signal strength, and optionally the device location with the Sigfox Atlas positioning service. These are available as additional metadata in the second, `DATA_ADVANCED` payload. If your `DATA_ADVANCED` callback was triggered, you can see a second invocation for the `callback_data` Cloud Function, and Stackdriver Logging entries similar to this:
 
 
         2019-01-08 06:34:41.248 GMT callback_data
@@ -411,11 +410,11 @@ Note: The first time the Cloud Function executes, the platform creates its runti
         }
 
 
-Here we can see that with the `DATA_ADVANCED` callback, the device payload is the same as in the first invocation, but we have more metadata such as the `lqi` radio link quality indicator and the computed device location with Sigfox Atlas. If you do not need this additional metadata from your devices, you can disable the optional `DATA_ADVANCED` callback in your Sigfox backend. However, in many cases it's good to process and store the first payload immediately upon reception, and update your data store later on with the additional information from the `DATA_ADVANCED` callback.
+Here we can see that with the `DATA_ADVANCED` callback, the device payload is the same as in the first invocation, but we have more metadata such as the `lqi` radio link quality indicator and the computed device location with Sigfox Atlas. If you do not need this additional metadata from your devices, you can disable the optional `DATA_ADVANCED` callback in your Sigfox backend. However, in many cases it's good to process and store the first payload immediately upon receipt, and update your data store later on with the additional information from the `DATA_ADVANCED` callback.
 
 ## Requesting downlink configurations from a device
 
-In Sigfox, devices have to request downlink messages from the network. They do this by setting a specific flag when transmitting a payload. In this integration, the callback responsible for handling the downlink requests is the `callback_data` Cloud Function. The function checks if the incoming request has the downlink request flag `ack` set to `True`. If it is, the function will query the Datastore database, using the Device Type value as the query key, and fetches the value of the `config` attribute in Datastore. The function then checks that the value is a maximum of 8 bytes long, as in the Sigfox specifications; if it is, the function will return the `config` value to Sigfox backend in its response. The Sigfox backend will then send the configuration downlink to the device.
+In Sigfox, devices must request downlink messages from the network. They do this by setting a specific flag when transmitting a payload. In this integration, the callback responsible for handling the downlink requests is the `callback_data` Cloud Function. The function checks if the incoming request has the downlink request flag `ack` set to `True`. If it is, the function will query the Datastore database, using the Device Type value as the query key, and fetches the value of the `config` attribute in Datastore. The function then checks that the value is a maximum of 8 bytes long, as in the Sigfox specifications; if it is, the function will return the `config` value to Sigfox backend in its response. The Sigfox backend will then send the configuration downlink to the device.
 
 **Figure 10.** Downlink sequence diagram
 
@@ -425,8 +424,8 @@ In Sigfox, devices have to request downlink messages from the network. They do t
 Execute the following steps to verify the downlink functionality:
 
 1. Transmit a downlink request message from your Sigfox device.
-1. (Note: this step and the next one are device specific.) If possible, verify or output any received downlink configuration payloads with your device-side code.
-1. In the Sigfox backend, in **Device > Messages**, verify that you have received a message that requests a downlink. It should have two arrows, one pointing up, and one pointing down. The down arrow signifies the downlink request and shows its success. A green down arrow signifies that the callback function successfully returned a Device Type configuration payload. See below for an example:
+1. (This step is device-specific.) If possible, verify or output any received downlink configuration payloads with your device-side code.
+1. (This step is device-specific.) In the Sigfox backend, in **Device > Messages**, verify that you have received a message that requests a downlink. It should have two arrows, one pointing up, and one pointing down. The down arrow signifies the downlink request and shows its success. A green down arrow signifies that the callback function successfully returned a device type configuration payload. See below for an example:
 
 **Figure 11.** Downlink request with a successful response
 
@@ -450,9 +449,9 @@ Execute the following steps to verify the downlink functionality:
         }
 
 
-In the log entry you can verify that your device ID is listed in the beginning of the JSON entry and that the value of `downlinkData` is the same HEX string as you have in Datastore for this Device Type.
+In the log entry you can verify that your device ID is listed in the beginning of the JSON entry and that the value of `downlinkData` is the same HEX string as you have in Datastore for this device type.
 
-From now on, you can update the Device Type configuration value in Datastore, either manually using the Datastore console, or programmatically using the Google Cloud Datastore client libraries.
+From now on, you can update the device type configuration value in Datastore, either manually using the Datastore console, or programmatically using the Google Cloud Datastore client libraries.
 
 
 ## Verifying service messages
@@ -488,8 +487,8 @@ Note: You should execute these steps only after executing the downlink tests in 
 
 Here you can see the following:
 
-- The function `callback_service` was invoked
-- The log entry shows "Received Sigfox service message" for your device ID.
+- The function `callback_service` was invoked.
+- The log entry shows `Received Sigfox service message` for your device ID.
 - The value of `downlinkAck` is `true`, indicating that the device has received the configuration payload.
 
 Congratulations! You have now installed and verified the Sigfox-GCP integration.
@@ -498,24 +497,27 @@ Congratulations! You have now installed and verified the Sigfox-GCP integration.
 
 ### Deleting Sigfox backend callback configurations
 
-If the GCP integration callbacks are the only ones configured in your Sigfox backend for this Device Type, you can use a script to delete them all:
+If the GCP integration callbacks are the only ones configured in your Sigfox backend for this device type, you can use a script to delete them all:
 
 1. On your local development machine, execute the following:
 
         (venv) $ python sigfox-api.py --callbacks delete-all
 
-**Note**: this command deletes *all* callbacks registered for the Device Type, including any callbacks that you may have configured manually earlier.
+**Note**: This command deletes *all* callbacks registered for the device type, including any callbacks that you may have configured manually earlier.
 
-If you have other callbacks for other use cases configured for this Device Type, use the [Sigfox backend](https://backend.sigfox.com/) **Device Type > Callbacks** console to delete the five callbacks configured for this integration. You can identify the integration callbacks from the URLs that point to your Cloud Functions.
+If you have other callbacks for other use cases configured for this device type, use the [Sigfox backend](https://backend.sigfox.com/) **Device Type > Callbacks** console to delete the five callbacks configured for this integration. You can identify the integration callbacks from the URLs that point to your Cloud Functions.
 
 ### Deleting the Google Cloud Platform project
 
-To avoid incurring charges to your GCP account for the resources used in this tutorial, you can delete the project:
+To avoid incurring charges to your GCP account for the resources used in this tutorial, you can delete the project.
 
 **Caution**: Deleting a project has the following consequences:
-    - If you used an existing project, you'll also delete any other work you've done in the project.
-    - You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as an `appspot.com` URL, remain available.
-    
+
+- If you used an existing project, you'll also delete any other work you've done in the project.
+- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as an `appspot.com` URL, remain available.
+
+To delete a project, do the following:
+
 1. In the GCP Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1. In the project list, select the project you want to delete and click **Delete project**.
 1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
