@@ -66,7 +66,7 @@ a new WordPress project or add the required configuration to an existing one.
     > **Note** If you receive an error about extensions, install `phar` and `zip` PHP
     extensions and retry.
     
-1.  Now you can run the `wp-gae` command which is included in that package
+1.  Now you can run the `wp-gae` command which is included in that package:
     
         $ php vendor/bin/wp-gae
     
