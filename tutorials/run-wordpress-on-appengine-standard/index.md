@@ -99,7 +99,7 @@ Then your WordPress project will be ready to deploy to Google Cloud!
 
 ## Deploy to Google Cloud
 
-`cd` into the root of your WordPress project.
+`cd` into the root of your WordPress project:
 
     $ cd my-wordpress-project
 
