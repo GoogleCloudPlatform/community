@@ -1,6 +1,6 @@
 ---
-title: How to Run Symfony Hello World on App Engine Standard Environment
-description: Run Symfony Standard on Google App Engine standard environment. Symfony is a popular set of reusable PHP components and a PHP framework for websites and web applications.
+title: How to Run Symfony Hello World on App Engine Standard for PHP 5.5
+description: Run Symfony Standard on Google App Engine standard environment for PHP 5.5. Symfony is a popular set of reusable PHP components and a PHP framework for websites and web applications.
 author: jimtravis
 tags: App Engine, Symfony, PHP
 date_published: 2017-02-08
