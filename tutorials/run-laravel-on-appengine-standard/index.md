@@ -27,9 +27,17 @@ from laravel.com.
 
 ## Run
 
+1. Create a new Laravel project using the laravel installer.
+
+       laravel new blog
+
+1. Go to the blog directory
+
+       cd blog
+
 1. Run the app with the following command:
 
-        php artisan serve
+       php artisan serve
 
 1. Visit [http://localhost:8000](http://localhost:8000) to see the Laravel
    Welcome page.
@@ -57,7 +65,7 @@ from laravel.com.
         sed -i '' "s#YOUR_APP_KEY#$(php artisan key:generate --show --no-ansi)#" app.yaml
 
 1.  Modify [`bootstrap/app.php`][bootstrap-app-php] by adding the block
-    of code below before the return statement. This will allow us to set
+    of code below before the return statement. This will allow you to set
     the storage path to `/tmp` for caching in production.
 
         /*
@@ -65,7 +73,7 @@ from laravel.com.
         | Set Storage Path
         |--------------------------------------------------------------------------
         |
-        | This script allows us to override the default storage location used by
+        | This script allows you to override the default storage location used by
         | the  application.  You may set the APP_STORAGE environment variable
         | in your .env file,  if not set the default location will be used
         |
@@ -122,7 +130,7 @@ Laravel, you need to manually add the `DB_SOCKET` value to
     *   Start the Cloud SQL proxy and replace `YOUR_CONNECTION_NAME` with the
         connection name you retrieved in the previous step.
 
-            cloud_sql_proxy -instances=YOUR_CONNECTION_NAME=tcp:3306
+            ./cloud_sql_proxy -instances=YOUR_CONNECTION_NAME=tcp:3306
 
     *   Use `gcloud` to create a database for the application.
 
