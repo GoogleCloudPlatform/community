@@ -6,6 +6,10 @@ tags: App Engine, Symfony, PHP
 date_published: 2017-02-08
 ---
 
+**Note**: This tutorial uses PHP 5.5, which is EOL. Please use the tutorial
+for [Running Symfony on App Engine for PHP 7.2][symfony-appengine-php72]
+instead.
+
 You can use Symfony with PHP on Google App Engine to develop your web apps.
 Getting to Hello World with Symfony on App Engine takes just a few
 minutes. We've provided modified source code for Symfony on GitHub. You can
@@ -177,6 +181,7 @@ URL is requested.
 
 * Take a look at the [App Engine PHP tutorials][app_engine_php_tutorials]
 
+[symfony-appengine-php72]: https://cloud.google.com/community/tutorials/run-symfony-on-appengine-standard
 [app_config]: https://cloud.google.com/appengine/docs/standard/php/config/appref
 [app_engine_php_tutorials]: https://cloud.google.com/appengine/docs/standard/php/tutorials
 [cloud_storage]: https://cloud.google.com/storage/docs/overview
