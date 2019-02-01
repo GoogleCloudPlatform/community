@@ -348,6 +348,6 @@ the [Stackdriver Error Reporting UI][stackdriver-errorreporting-ui]! If you copi
 [symfony-secret]: http://symfony.com/doc/current/reference/configuration/framework.html#secret
 [symfony-env]: https://symfony.com/doc/current/configuration/environments.html#executing-an-application-in-different-environments
 [symfony-override-cache]: https://symfony.com/doc/current/configuration/override_dir_structure.html#override-the-cache-directory
-[symfony-welcome]: https://storage.googleapis.com/gcp-community/tutorials/run-laravel-on-appengine-standard/welcome-page.png
+[symfony-welcome]: https://storage.googleapis.com/gcp-community/tutorials/run-symfony-on-appengine-standard/welcome-page.png
 [stackdriver-logging-ui]: https://console.cloud.google.com/logs
 [stackdriver-errorreporting-ui]: https://console.cloud.google.com/errors
