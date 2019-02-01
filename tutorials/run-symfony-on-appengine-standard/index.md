@@ -101,8 +101,6 @@ Welcome page.
 1.  Visit `http://YOUR_PROJECT_ID.appspot.com` to see the Symfony demo landing
     page.
 
-    ![Symfony welcome page][symfony-welcome]
-
 The homepage will load when you view your application, but browsing to any of
 the other demo pages will result in a **500** error. This is because you haven't
 set up a database yet. Let's do that now!
