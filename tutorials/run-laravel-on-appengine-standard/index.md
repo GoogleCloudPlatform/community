@@ -53,6 +53,7 @@ from laravel.com.
           LOG_CHANNEL: stackdriver
           APP_KEY: YOUR_APP_KEY
           APP_STORAGE: /tmp
+          VIEW_COMPILED_PATH: /tmp
 
 1.  Replace `YOUR_APP_KEY` in `app.yaml` with an application key you generate
     with the following command:
@@ -79,22 +80,6 @@ from laravel.com.
         |
         */
         $app->useStoragePath(env('APP_STORAGE', base_path() . '/storage'));
-
-1.  Modify [`config/view.php`][config-view-php] by adding the following block
-    of code inside the returned PHP array. This ensures our `/tmp` storage
-    path is used for caching our templates.
-
-        /*
-        |--------------------------------------------------------------------------
-        | Compiled View Path
-        |--------------------------------------------------------------------------
-        |
-        | This option determines where all the compiled Blade templates will be
-        | stored for your application. Typically, this is within the storage
-        | directory. However, as usual, you are free to change this value.
-        |
-        */
-        'compiled' => storage_path(),
 
 1.  Run the following command to deploy your app:
 
