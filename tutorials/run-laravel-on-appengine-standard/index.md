@@ -64,8 +64,8 @@ from laravel.com.
 
         sed -i '' "s#YOUR_APP_KEY#$(php artisan key:generate --show --no-ansi)#" app.yaml
 
-1.  Modify [`bootstrap/app.php`][bootstrap-app-php] by adding the block
-    of code below before the return statement. This will allow you to set
+1.  Modify [`bootstrap/app.php`][bootstrap-app-php] by adding the following block
+    of code before the return statement. This will allow you to set
     the storage path to `/tmp` for caching in production.
 
         /*
@@ -80,8 +80,8 @@ from laravel.com.
         */
         $app->useStoragePath(env('APP_STORAGE', base_path() . '/storage'));
 
-1.  Modify [`config/view.php`][config-view-php] by adding the block
-    of code below to the returned array. This ensures our `/tmp` storage
+1.  Modify [`config/view.php`][config-view-php] by adding the following block
+    of code inside the returned PHP array. This ensures our `/tmp` storage
     path is used for caching our templates.
 
         /*
