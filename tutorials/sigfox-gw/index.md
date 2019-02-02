@@ -68,21 +68,21 @@ If you can see messages sent by your device, you can proceed to the next step.
 1. Click the project selector again and select your new project.
 1. Open the menu **APIs & Services > Library**.
 1. Search for and activate the following APIs, or ensure that they are already active:
-    1. Cloud Functions API
-    1. Cloud Pub/Sub API
-    1. Cloud Datastore API
+    * Cloud Functions API
+    * Cloud Pub/Sub API
+    * Cloud Datastore API
 
 ## Deploying the callback Cloud Functions
 
 ### Prerequisites
 
 1. On your local development machine, install the following tools:
-    1. [Google Cloud SDK](https://cloud.google.com/sdk/install) (gcloud command line tool)
-    1. git
-    1. python
-    1. pip
-    1. virtualenv
-    1. curl
+    * [Google Cloud SDK](https://cloud.google.com/sdk/install) (gcloud command line tool)
+    * git
+    * python
+    * pip
+    * virtualenv
+    * curl
     
 1. Configure `gcloud` to use your new GCP project:
 
@@ -309,36 +309,36 @@ The integration uses the Cloud Datastore database service for storing Sigfox dev
 To configure Datastore for your integration, execute the following steps:
 
 1.  Navigate to the Google Cloud Datastore console at [https://console.cloud.google.com/datastore](https://console.cloud.google.com/datastore).
-1.  If this is the first time using Datastore in this project, you will see the following options:
+2.  If this is the first time using Datastore in this project, you will see the following options:
 
-    **Figure 5.** Datastore options
+**Figure 5.** Datastore options
 
-    [ds-options]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/ds-options.png
-    ![datastore options][ds-options]
+[ds-options]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/ds-options.png
+![datastore options][ds-options]
 
-1.  Choose the Cloud Datastore option.
-1.  Select the geographic location where you wish to host Datastore and store your device configuration data. Choose the location nearest to the GCP region where you deployed your Cloud Functions, and click **Create Database**.
+3.  Choose the Cloud Datastore option.
+4.  Select the geographic location where you wish to host Datastore and store your device configuration data. Choose the location nearest to the GCP region where you deployed your Cloud Functions, and click **Create Database**.
 
-    **Figure 6.** Select Datastore region
+**Figure 6.** Select Datastore region
 
-    [ds-region]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/ds-region.png
-    ![datastore region][ds-region]
+[ds-region]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/ds-region.png
+![datastore region][ds-region]
 
-1.  In the Datastore console, click **Create Entity**.
-1.  Set the value of **Kind** to `deviceType`.
-1.  Set the value of **Key identifier** to **Custom name**.
-1.  Set the value of **Custom name** to your Sigfox device type name.
-1.  Click **Properties > Add Property**.
-1.  Set the new property name as `config`.
-1.  Set the **Value** as your device configuration's 16-character hexadecimal string. The configuration hexadecimal string must be 8 bytes (exactly 16 characters). The configuration value is specific to each device and use case. To learn more, refer to the Sigfox [Downlink information](https://support.sigfox.com/docs/downlink-information) document.
-1.  Deselect the **Index this property** checkbox.
-1.  Click **Done**.
-1.  Click **Create** to save the entity. Verify that you now have a configuration entity in Datastore, with your Sigfox device type as the name. Refer to the below example:
+5.  In the Datastore console, click **Create Entity**.
+6.  Set the value of **Kind** to `deviceType`.
+7.  Set the value of **Key identifier** to **Custom name**.
+8.  Set the value of **Custom name** to your Sigfox device type name.
+9.  Click **Properties > Add Property**.
+10. Set the new property name as `config`.
+11. Set the **Value** as your device configuration's 16-character hexadecimal string. The configuration hexadecimal string must be 8 bytes (exactly 16 characters). The configuration value is specific to each device and use case. To learn more, refer to the Sigfox [Downlink information](https://support.sigfox.com/docs/downlink-information) document.
+12. Deselect the **Index this property** checkbox.
+13. Click **Done**.
+14. Click **Create** to save the entity. Verify that you now have a configuration entity in Datastore, with your Sigfox device type as the name. Refer to the below example:
 
-    **Figure 7.** Datastore example
+**Figure 7.** Datastore example
 
-    [ds-example]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/ds-example.png
-    ![datastore example][ds-example]
+[ds-example]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/ds-example.png
+![datastore example][ds-example]
 
 # Testing the integration
 
@@ -361,20 +361,20 @@ Verify the `callback_data` Cloud Function with the following steps:
     
      Note the name of the subscription: `sigfox-data-sub`.
 
-1.  Open both the Sigfox backend and Google Cloud Functions web console pages.
-1.  (This step is dependent on the Sigfox device.) Send a data payload from your Sigfox device.
-1.  Verify that you can see the new message in the Sigfox backend **Device > Messages** page, as below:
+2.  Open both the Sigfox backend and Google Cloud Functions web console pages.
+3.  (This step is dependent on the Sigfox device.) Send a data payload from your Sigfox device.
+4.  Verify that you can see the new message in the Sigfox backend **Device > Messages** page, as below:
 
-    **Figure 8.** Sigfox messages example
+**Figure 8.** Sigfox messages example
 
-    [messages 2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/messages2.png
-    ![messages example][messages 2]
+[messages 2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/messages2.png
+![messages example][messages 2]
 
     Note: If your Sigfox backend can receive the message, the up arrow will first be grayed out.
     If the GCP Cloud Function `callback_data` was triggered successfully, and the function replied
     as expected, the arrow will turn green.
 
-1.  Verify that the message payload was forwarded to your Cloud Pub/Sub topic. On your development machine, execute the following command:
+5.  Verify that the message payload was forwarded to your Cloud Pub/Sub topic. On your development machine, execute the following command:
 
         (venv) $ gcloud pubsub subscriptions pull sigfox-data-sub --limit 100 --auto-ack
 
@@ -385,16 +385,17 @@ Verify the `callback_data` Cloud Function with the following steps:
         {"deviceType": "<your Device Type>", "device": "<your device ID>", "time": "1544325853",
         "data": "000102030405060708090a0b", "seqNumber": "27", "ack": "false"}
 
-The value of `data` should match the **Data / Decoding** output in your Sigfox backend **Device > Messages** history for this message.
+    The value of `data` should match the **Data / Decoding** output in your Sigfox
+    backend **Device > Messages** history for this message.
 
-1.  Verify that you can see the integration logs in Stackdriver Logging. On the Cloud Function's details page, click the **View Logs** button to open Stackdriver Logging for the `callback_data` function.
+6.  Verify that you can see the integration logs in Stackdriver Logging. On the Cloud Function's details page, click the **View Logs** button to open Stackdriver Logging for the `callback_data` function.
 
-1.  Find the entries for `Received Sigfox message` and any entries below that. Click the entries to expand their view. You should see something similar to the following:
+7.  Find the entries for `Received Sigfox message` and any entries below that. Click the entries to expand their view. You should see something similar to the following:
 
-    **Figure 9.** Stackdriver Logging
+**Figure 9.** Stackdriver Logging
 
-    [logging]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/logging.png
-    ![stackdriver logging][logging]
+[logging]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/logging.png
+![stackdriver logging][logging]
 
     Note: The first time the Cloud Function executes, the platform creates its runtime environment and the
     execution time is longer. This is called a _cold start_ for Cloud Functions. Subsequent executions will
@@ -402,8 +403,15 @@ The value of `data` should match the **Data / Decoding** output in your Sigfox b
     as seen in the next log entry, forwarded the payload to the Cloud Pub/Sub topic. The Pub/Sub topic is
     the integration point for consuming the Sigfox data in real time for your specific business solutions.
 
-1.  Verify that your `DATA_ADVANCED` callback is also working, by finding a second function execution after the first one. The `DATA_ADVANCED` callback is a feature in the Sigfox backend to send additional metadata. The `DATA_ADVANCED` callback is triggered up to 30 seconds after the initial payload is sent, after the Sigfox network has verified that all base stations have received the payload from your device. Sigfox will calculate additional information such as signal strength, and optionally the device location with the Sigfox Atlas positioning service. These are available as additional metadata in the second, `DATA_ADVANCED` payload. If your `DATA_ADVANCED` callback was triggered, you can see a second invocation for the `callback_data` Cloud Function, and Stackdriver Logging entries similar to this:
-
+8.  Verify that your `DATA_ADVANCED` callback is also working, by finding a second function execution
+    after the first one. The `DATA_ADVANCED` callback is a feature in the Sigfox backend to send
+    additional metadata. The `DATA_ADVANCED` callback is triggered up to 30 seconds after the initial
+    payload is sent, after the Sigfox network has verified that all base stations have received the
+    payload from your device. Sigfox will calculate additional information such as signal strength,
+    and optionally the device location with the Sigfox Atlas positioning service. These are available
+    as additional metadata in the second, `DATA_ADVANCED` payload. If your `DATA_ADVANCED` callback
+    was triggered, you can see a second invocation for the `callback_data` Cloud Function, and
+    Stackdriver Logging entries similar to this:
 
         2019-01-08 06:34:41.248 GMT callback_data
         Received Sigfox message:
@@ -414,7 +422,6 @@ The value of `data` should match the **Data / Decoding** output in your Sigfox b
             'countryCode': '702', 'computedLocation': {'lat': 1.2763981, 'lng': 103.7973329,
             'radius': 2447, 'source': 2, 'status': 1}
         }
-
 
     Here we can see that with the `DATA_ADVANCED` callback, the device payload is the same as in the first
     invocation, but we have more metadata such as the `lqi` radio link quality indicator and the computed
@@ -435,15 +442,20 @@ In Sigfox, devices must request downlink messages from the network. They do this
 Execute the following steps to verify the downlink functionality:
 
 1.  Transmit a downlink request message from your Sigfox device.
-1.  (This step is device-specific.) If possible, verify or output any received downlink configuration payloads with your device-side code.
-1.  (This step is device-specific.) In the Sigfox backend, in **Device > Messages**, verify that you have received a message that requests a downlink. It should have two arrows, one pointing up, and one pointing down. The down arrow signifies the downlink request and shows its success. A green down arrow signifies that the callback function successfully returned a device type configuration payload. See below for an example:
+2.  (This step is device-specific.) If possible, verify or output any received downlink configuration payloads
+    with your device-side code.
+3.  (This step is device-specific.) In the Sigfox backend, in **Device > Messages**, verify that you have
+    received a message that requests a downlink. It should have two arrows, one pointing up, and one pointing
+    down. The down arrow signifies the downlink request and shows its success. A green down arrow signifies
+    that the callback function successfully returned a device type configuration payload. See below for an
+    example:
 
-    **Figure 11.** Downlink request with a successful response
+**Figure 11.** Downlink request with a successful response
 
-    [downlink]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/downlink.png
-    ![downlink request][downlink]
+[downlink]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/downlink.png
+![downlink request][downlink]
 
-1.  Verify that you can see a similar log entry in the Stackdriver Logging for the Cloud Function `callback_data`:
+4.  Verify that you can see a similar log entry in the Stackdriver Logging for the Cloud Function `callback_data`:
 
         2019-01-08 06:34:16.422 GMT callback_data
         Sending downlink message: {"<device ID>": {"downlinkData": "3030303030303030"}}
@@ -459,7 +471,6 @@ Execute the following steps to verify the downlink functionality:
          trace:  "projects/project/traces/203297f46e451e991ddb11111c6"
         }
 
-
     In the log entry you can verify that your device ID is listed in the beginning of the JSON entry and that
     the value of `downlinkData` is the same HEX string as you have in Datastore for this device type.
 
@@ -474,14 +485,14 @@ Verify that you can receive service messages from the Sigfox backend by executin
 Note: You should execute these steps only after executing the downlink tests in the previous section. You may not have any service messages from Sigfox backend until you send a downlink response to your device. The downlink response will generate a subsequent `downlinkAck` service message.
 
 1.  In the Cloud Functions console, click the `callback_service` function.
-1.  Verify that you can see successful invocations, indicated by a blue line:
+2.  Verify that you can see successful invocations, indicated by a blue line:
 
-    **Figure 12.** Service message invocation
+**Figure 12.** Service message invocation
 
-    [cf-service]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/cf-service.png
-    ![service message invocation][cf-service]
+[cf-service]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/cf-service.png
+![service message invocation][cf-service]
 
-1.  Click the **View Logs** button and find an entry similar to this:
+3.  Click the **View Logs** button and find an entry similar to this:
 
         2019-01-08 06:34:49.307 GMT callback_service
         Received Sigfox service message: {'device': '<device ID>', 'infoCode': '0', 'infoMessage': 'Acked',
