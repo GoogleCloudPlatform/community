@@ -1,5 +1,5 @@
 ---
-title: Run Laravel on Google App Engine Standard
+title: Run Laravel on Google App Engine standard environment
 description: Learn how to deploy a Laravel app to Google App Engine standard environment.
 author: bshaffer
 tags: App Engine, Laravel, PHP
