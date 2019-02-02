@@ -49,8 +49,7 @@ from laravel.com.
         runtime: php72
 
         env_variables:
-          # Put production environment variables here.
-          LOG_CHANNEL: stackdriver
+          ## Put production environment variables here.
           APP_KEY: YOUR_APP_KEY
           APP_STORAGE: /tmp
           VIEW_COMPILED_PATH: /tmp
@@ -81,6 +80,12 @@ from laravel.com.
         */
         $app->useStoragePath(env('APP_STORAGE', base_path() . '/storage'));
 
+1.  Finally, remove the `beyondcode/laravel-dump-server` composer dependency. This is a
+    fix for an error which happens as a result of Laravel's caching in
+    `bootstrap/cache/services.php`.
+    
+        composer remove --dev beyondcode/laravel-dump-server
+        
 1.  Run the following command to deploy your app:
 
         gcloud app deploy
@@ -136,8 +141,7 @@ Laravel, you need to manually add the `DB_SOCKET` value to
         runtime: php72
 
         env_variables:
-          # Put production environment variables here.
-          APP_LOG: errorlog
+          ## Put production environment variables here.
           APP_KEY: YOUR_APP_KEY
           APP_STORAGE: /tmp
           CACHE_DRIVER: database
@@ -201,6 +205,16 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
                 'via' => App\Logging\CreateCustomLogger::class,
                 'level' => 'debug',
             ],
+
+1.  Modify your `app.yaml` file to set the `LOG_CHANNEL` environment variable to
+    the value `stackdriver`:
+
+        runtime: php72
+
+        env_variables:
+          LOG_CHANNEL: stackdriver
+          # The rest of your environment variables remain unchanged below
+          # ...
 
 1.  Now you can log to Stackdriver Logging anywhere in your application!
 
