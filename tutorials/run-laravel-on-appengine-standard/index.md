@@ -29,15 +29,15 @@ from laravel.com.
 
 1. Create a new Laravel project using the laravel installer.
 
-       laravel new blog
+        laravel new blog
 
 1. Go to the blog directory
 
-       cd blog
+        cd blog
 
 1. Run the app with the following command:
 
-       php artisan serve
+        php artisan serve
 
 1. Visit [http://localhost:8000](http://localhost:8000) to see the Laravel
    Welcome page.
