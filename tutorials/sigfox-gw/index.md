@@ -370,9 +370,9 @@ Verify the `callback_data` Cloud Function with the following steps:
 [messages 2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/messages2.png
 ![messages example][messages 2]
 
-    Note: If your Sigfox backend can receive the message, the up arrow will first be grayed out.
-    If the GCP Cloud Function `callback_data` was triggered successfully, and the function replied
-    as expected, the arrow will turn green.
+Note: If your Sigfox backend can receive the message, the up arrow will first be grayed out.
+If the GCP Cloud Function `callback_data` was triggered successfully, and the function replied
+as expected, the arrow will turn green.
 
 5.  Verify that the message payload was forwarded to your Cloud Pub/Sub topic. On your development machine, execute the following command:
 
@@ -397,11 +397,11 @@ Verify the `callback_data` Cloud Function with the following steps:
 [logging]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/logging.png
 ![stackdriver logging][logging]
 
-    Note: The first time the Cloud Function executes, the platform creates its runtime environment and the
-    execution time is longer. This is called a _cold start_ for Cloud Functions. Subsequent executions will
-    be faster. Here, you can verify that the Cloud Function was triggered, received the device payload, and
-    as seen in the next log entry, forwarded the payload to the Cloud Pub/Sub topic. The Pub/Sub topic is
-    the integration point for consuming the Sigfox data in real time for your specific business solutions.
+Note: The first time the Cloud Function executes, the platform creates its runtime environment and the
+execution time is longer. This is called a _cold start_ for Cloud Functions. Subsequent executions will
+be faster. Here, you can verify that the Cloud Function was triggered, received the device payload, and
+as seen in the next log entry, forwarded the payload to the Cloud Pub/Sub topic. The Pub/Sub topic is
+the integration point for consuming the Sigfox data in real time for your specific business solutions.
 
 8.  Verify that your `DATA_ADVANCED` callback is also working, by finding a second function execution
     after the first one. The `DATA_ADVANCED` callback is a feature in the Sigfox backend to send
