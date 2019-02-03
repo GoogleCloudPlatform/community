@@ -35,7 +35,7 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to ge
 
 The following diagram shows the architecture of the solution:
 
-![N|Solid](images/partial-dlp1.png)
+![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/partial-redaction-with-dlp-and-gcf/partial-dlp1.png)
 
 1. An image of credit card is uploaded into a Cloud Storage bucket.
 1. The upload event triggers a Cloud Function for partial redaction.
@@ -118,7 +118,7 @@ To delete the project, follow the steps below:
 
 1.  In the project list, select the project you want to delete and click **Delete project**.
 
-    ![N|Solid](images/img_delete_project.png)
+    ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/partial-redaction-with-dlp-and-gcf/img_delete_project.png)
     
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
