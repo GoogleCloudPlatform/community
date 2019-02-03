@@ -1,6 +1,7 @@
 
-"""Partialy redact an image file containing credit card numbers and upload it to a gcs bucket
-   The script redacts the second and third set of digits of the credit card number
+"""Partially redact an image file containing credit card numbers and upload it to a
+   Google Cloud Storage bucket. The script redacts the second and third set of digits
+   of the credit card number
 
 """
 
@@ -32,7 +33,7 @@ def inspect_file(project, filename, info_types, min_likelihood=None,
 
     """Call Data Loss Prevention API to analyze a file for protected data.
     Args:
-        project: The Google Cloud project id to use as a parent resource.
+        project: The GCP project id to use as a parent resource.
         filename: The path to the file to inspect.
         info_types: A list of strings representing info types to look for.
             A full list of info type categories can be fetched from the API.
@@ -146,8 +147,8 @@ def upload_and_delete(project, bucket, orig_file_name, temp_file_name):
 
     """Upload the file to a bucket and delete it from disk	
     Args:
-        project: google cloud project id
-        bucket: google cloud bucket id
+        project: GCP project id
+        bucket: GCP bucket id
         orig_file_name: name that the file will take when uploaded
         temp_file_name: name of the file in disk to be uploaded
     """
@@ -163,7 +164,7 @@ def upload_and_delete(project, bucket, orig_file_name, temp_file_name):
 
 def download_file(project, bucket, orig_file_name, temp_file_name):
 
-    """Download a file stored in a GCS bucket to the disk"""
+    """Download a file stored in a Google Cloud Storage bucket to the disk"""
 
     client = storage.Client(project=project)
     bucket = client.get_bucket(bucket)
@@ -174,7 +175,7 @@ def download_file(project, bucket, orig_file_name, temp_file_name):
 def partial_dlp(data, context):
     
     """Execute the methods to detect boxes candidate for redaction, add rectangles to the image, 
-       and upload them to the gcs bucket. Delete temp image after upload:
+       and upload them to the Google Cloud Storage bucket. Delete temp image after upload:
     """
 
     origin_bucket = data['bucket'] 
