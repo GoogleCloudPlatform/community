@@ -7,7 +7,7 @@ date_published: 2018-02-04
 ---
 
 
-* Preston Holmes | Solution Architect | Google Cloud
+Preston Holmes | Solution Architect | Google Cloud
 
 [CoAP](http://coap.technology/) is a specialized transfer protocol over UDP for use with constrained devices. This tutorial demonstrates how to deploy a server that will proxy requests from the CoAP protocol to [Google IoT Core](https://cloud.google.com/iot-core/).
 
@@ -147,4 +147,4 @@ Remove IoT resources:
     gcloud iot registries delete --region us-central1 coap-demo
     gcloud pubsub topics delete coap-events
 
-Learn more about [Cloud IoT](https://cloud.google.com/solutions/iot/)
+Learn more about [Cloud IoT](https://cloud.google.com/solutions/iot/).
