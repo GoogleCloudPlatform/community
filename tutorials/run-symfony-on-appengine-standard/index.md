@@ -105,138 +105,83 @@ The homepage will load when you view your application, but browsing to any of
 the other demo pages will result in a **500** error. This is because you haven't
 set up a database yet. Let's do that now!
 
-## Connect to CloudSQL with Doctrine
+## Connect to Cloud SQL with Doctrine
+
+Next, connect your Symfony demo application with a [Cloud SQL][cloud-sql]
+database. This tutorial uses the database name `symfonydb` and the username
+`root`, but you can use whatever you like.
 
 ### Setup
 
-1.  Follow the instructions to set up a
-    [Google Cloud SQL Second Generation instance for MySQL][cloud-sql-create].
+1. Follow the instructions to set up a
+   [Google Cloud SQL Second Generation instance for MySQL][cloud-sql-create].
 
-1.  Follow the instructions to
-    [install the Cloud SQL proxy client on your local machine][cloud-sql-install].
-    The Cloud SQL proxy is used to connect to your Cloud SQL instance when
-    running locally.
+1. Create a database for your Symfony application. Replace `INSTANCE_NAME`
+   with the name of your instance:
 
-1.  Enable the [CloudSQL APIs][cloud-sql-apis] in your project.
+       gcloud sql databases create symfonydb --instance=INSTANCE_NAME
 
-1.  Use the [Cloud SDK][cloud-sdk] from the command line to run the following
-    command. Copy the `connectionName` value for the next step. Replace
-    `YOUR_INSTANCE_NAME` with the name of your instance:
+1. Enable the [Cloud SQL APIs][cloud-sql-apis] in your project.
 
-        gcloud sql instances describe YOUR_INSTANCE_NAME
+1. Follow the instructions to
+   [install and run the Cloud SQL proxy client on your local machine][cloud-sql-install].
+   The Cloud SQL proxy is used to connect to your Cloud SQL instance when
+   running locally. This is so you can run database migrations locally to set up
+   your production database.
 
-1.  Start the Cloud SQL proxy and replace `YOUR_INSTANCE_CONNECTION_NAME` with
-    the connection name you retrieved in the previous step:
+    * Use the [Cloud SDK][cloud-sdk] from the command line to run the following
+      command. Copy the `connectionName` value for the next step. Replace
+      `INSTANCE_NAME` with the name of your instance:
 
-        cloud_sql_proxy -instances=YOUR_INSTANCE_CONNECTION_NAME=tcp:3306 &
+          gcloud sql instances describe INSTANCE_NAME
+
+    * Start the Cloud SQL proxy and replace `INSTANCE_CONNECTION_NAME` with
+      the connection name you retrieved in the previous step:
+
+          cloud_sql_proxy -instances=INSTANCE_CONNECTION_NAME=tcp:3306 &
 
     **Note:** Include the `-credential_file` option when using the proxy, or
     authenticate with `gcloud`, to ensure proper authentication.
 
 ### Configure
 
-1.  Modify `app/config/parameters.yml` so the database fields pull from
-    environment variables. We've also added some default values for environment
-    variables which are not needed for all environments. Notice we've added the
-    parameter `database_socket`, as Cloud SQL uses sockets to connect:
-
-        parameters:
-            database_host: '%env(DB_HOST)%'
-            database_name: '%env(DB_DATABASE)%'
-            database_port: '%env(DB_PORT)%'
-            database_user: '%env(DB_USERNAME)%'
-            database_password: '%env(DB_PASSWORD)%'
-            database_socket: '%env(DB_SOCKET)%'
-
-            # Set sane environment variable defaults.
-            env(DB_HOST): ""
-            env(DB_PORT): 3306
-            env(DB_SOCKET): ""
-
-            # Mailer configuration
-            # ...
-   
-1.  Modify your Doctrine configuration in `app/config/config.yml` and add a line
-    for `unix_socket` using the parameter we added:
+1.  Modify your Doctrine configuration in `config/packages/doctrine.yml` and
+    change the parameters under `doctrine.dbal` to be the following:
 
         # Doctrine Configuration
         doctrine:
             dbal:
                 driver: pdo_mysql
-                host: '%database_host%'
-                port: '%database_port%'
-                dbname: '%database_name%'
-                user: '%database_user%'
-                password: '%database_password%'
-                charset: UTF8
-                # add this parameter
-                unix_socket: '%database_socket%'
+                url: '%env(resolve:DATABASE_URL)%'
 
             # ORM configuration
             # ...
 
-1.  Use the symfony CLI to connect to your instance and create a database for
-    the application. Be sure to replace `YOUR_DB_PASSWORD` below with the root
-    password you configured:
+1.  Use the Symfony CLI to connect to your instance and create a database for
+    the application. Be sure to replace `DB_PASSWORD` with the root password you
+    configured:
 
         # create the database using doctrine
-        DB_HOST="127.0.0.1" DB_DATABASE=symfony DB_USERNAME=root DB_PASSWORD=YOUR_DB_PASSWORD \
-            php bin/console doctrine:database:create
+        DATABASE_URL="mysql://root:DB_PASSWORD@127.0.0.1:3306/symfonydb" \
+            bin/console doctrine:schema:create
 
-1.  Modify your `app.yaml` file with the following contents:
+1.  Modify your `app.yaml` file with the following contents. Be sure to replace
+    `DB_PASSWORD` and `INSTANCE_CONNECTION_NAME` with the values you created for
+    your Cloud SQL instance:
 
-        runtime: php
-        env: flex
-
-        runtime_config:
-            document_root: web
-            front_controller_file: app.php
+        runtime: php72
 
         env_variables:
-            ## Set these environment variables according to your CloudSQL configuration.
-            DB_DATABASE: symfony
-            DB_USERNAME: root
-            DB_PASSWORD: YOUR_DB_PASSWORD
-            DB_SOCKET: "/cloudsql/YOUR_CLOUDSQL_CONNECTION_NAME"
+          APP_ENV: prod
+          APP_SECRET: YOUR_APP_SECRET
 
-        beta_settings:
-            # for Cloud SQL, set this value to the Cloud SQL connection name,
-            # e.g. "project:region:cloudsql-instance"
-            cloud_sql_instances: "YOUR_CLOUDSQL_CONNECTION_NAME"
+          # Add the DATABASE_URL environment variable
+          DATABASE_URL: mysql://root:DB_PASSWORD@localhost?unix_socket=/cloudsql/INSTANCE_CONNECTION_NAME;dbname=symfonydb
 
-1.  Replace each instance of `YOUR_DB_PASSWORD` and
-    `YOUR_CLOUDSQL_CONNECTION_NAME` with the values you created for your Cloud
-    SQL instance above.
+        # URL handlers
+        # ...
 
 ### Run
-
-1.  In order to test that our connection is working, modify the Default
-    Controller in `src/AppBundle/Controller/DefaultController.php` so that it
-    validates our Doctrine connection:
-
-        namespace AppBundle\Controller;
-
-        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-        use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-        use Symfony\Component\HttpFoundation\Request;
-
-        class DefaultController extends Controller
-        {
-            /**
-            * @Route("/", name="homepage")
-            */
-            public function indexAction(Request $request)
-            {
-                $entityManager = $this->get('doctrine.orm.entity_manager');
-                if ($entityManager->getConnection()->connect()) {
-                    echo 'DOCTRINE WORKS';
-                }
-                // replace this example code with whatever you need
-                return $this->render('default/index.html.twig', [
-                    'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-                ]);
-            }
-        }
 
 1.  Now you can run locally and verify the connection works as expected.
 
