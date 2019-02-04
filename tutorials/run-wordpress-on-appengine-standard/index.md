@@ -12,7 +12,7 @@ This tutorial illustrates how to use a simple command-line tool for downloading
 and configuring WordPress on App Engine standard environment for PHP 7.2.
 
 You can check out [PHP on Google Cloud Platform (GCP)][php-gcp] to get an
-overview of PHP and learn ways to run PHP apps on GCP.
+overview of PHP and to learn ways to run PHP apps on GCP.
 
 ## Prerequisites
 
@@ -73,7 +73,7 @@ a new WordPress project or add the required configuration to an existing one.
     > **Note**: You can also install `google/cloud-tools` [globally][composer-global],
     which will allow you to execute the command `wp-gae` anywhere.
 
-The `wp-gae` command will ask you several question in order to set up your Cloud SQL
+The `wp-gae` command will ask you several questions in order to set up your Cloud SQL
 database connection, and then write the required configuration to your `wp-config.php`
 configuration file. It also copies the following files into your project directory
 to allow WordPress to run on Google App Engine:
