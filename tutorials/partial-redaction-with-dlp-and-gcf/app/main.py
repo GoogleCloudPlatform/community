@@ -11,7 +11,7 @@ matplotlib.use('Agg')
 import os
 import json
 from google.cloud import storage
-from google.cloud import dlp
+import google.cloud.dlp
 
 # Import libraries for image manipulation 
 import numpy as np
