@@ -9,24 +9,23 @@ const discoveryUrl = `${DISCOVERY_API}?version=${API_VERSION}`;
 
 // Sends a command to a device.
 function sendCommand(client, deviceId, registryId, projectId, region, command) {
-  const parentName = `projects/${projectId}/locations/${region}`;
-  const registryName = `${parentName}/registries/${registryId}`;
-  const binaryData = Buffer.from(command).toString('base64');
-  const request = {
-    name: `${registryName}/devices/${deviceId}`,
-    binaryData: binaryData
-  };
+    const parentName = `projects/${projectId}/locations/${region}`;
+    const registryName = `${parentName}/registries/${registryId}`;
+    const binaryData = Buffer.from(command).toString('base64');
+    const request = {
+        name: `${registryName}/devices/${deviceId}`,
+        binaryData: binaryData
+    };
 
-  return new Promise((resolve, reject) => {
-    client.projects.locations.registries.devices.sendCommandToDevice(request,
-        (err, data) => {
-            if (err) {
-                console.log('*** error sending command', err);
-                reject(err);
-            } else {
-                //console.log('*** command sent', data);
-                resolve('ok');
-            }
+    return new Promise((resolve, reject) => {
+        client.projects.locations.registries.devices.sendCommandToDevice(request,
+            (err, data) => {
+                if (err) {
+                    console.log('*** error sending command', err);
+                    reject(err);
+                } else {
+                    resolve('ok');
+                }
         });
     });
 }
