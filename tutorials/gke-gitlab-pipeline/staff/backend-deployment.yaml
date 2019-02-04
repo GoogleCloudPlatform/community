@@ -1,0 +1,36 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: demo-k8s-staff
+spec:
+  selector:
+    app: demo-k8s-staff
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-k8s-staff
+spec:
+  selector:
+      matchLabels:
+        app: demo-k8s-staff
+        tier: backend
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: demo-k8s-staff
+        tier: backend
+    spec:
+      containers:
+        - name: demo-k8s-staff
+          image: registry.gitlab.com/nlonginow/demo-k8s-staff:1.0
+          ports:
+            - containerPort: 8080
+
