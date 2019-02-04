@@ -1,0 +1,53 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+ name: kubedns-config
+ namespace: default
+data:
+ staff.dns: demo-k8s-staff 
+ staff.port: "8080"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: demo-k8s-frontend
+spec:
+  selector:
+    app: demo-k8s-frontend
+  ports:
+  - protocol: TCP
+    port: 8081
+    name: theport
+  type: LoadBalancer 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-k8s-frontend
+spec:
+  selector:
+      matchLabels:
+        app: demo-k8s-frontend
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: demo-k8s-frontend
+    spec:
+      containers:
+        - name: demo-k8s-frontend
+          image: registry.gitlab.com/nlonginow/demo-k8s-frontend
+          ports:
+            - containerPort: 8081
+          env:
+          - name: STAFF_DNS 
+            valueFrom:
+              configMapKeyRef:
+                name: kubedns-config
+                key: staff.dns
+          - name: STAFF_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: kubedns-config
+                key: staff.port
+

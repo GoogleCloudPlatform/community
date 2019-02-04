@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ name: kubedns-config
+ namespace: default
+data:
+ staff.dns: demo-k8s-staff 
