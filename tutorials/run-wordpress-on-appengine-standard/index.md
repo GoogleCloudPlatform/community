@@ -74,7 +74,7 @@ a new WordPress project or add the required configuration to an existing one.
     which will allow you to execute the command `wp-gae` anywhere.
 
 The `wp-gae` command will ask you several question in order to set up your Cloud SQL
-database connection, and then write the required configuration to your `wp-config.php`
+database connection, and write the required configuration to your `wp-config.php`
 configuration file. It also copies the following files into your project directory
 to allow WordPress to run on Google App Engine:
 
