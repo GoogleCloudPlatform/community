@@ -113,6 +113,12 @@ Run the following command to deploy your project to App Engine:
 Now you can access your site, and continue the installation step! The URL is
 `https://YOUR_PROJECT_ID.appspot.com/`.
 
+**NOTE**: If you receive any error in your application, such as "Error estabilishing
+a database connection", set the `WP_DEBUG` constant to `true` in `wp-config.php` and
+redeploy:
+
+    define('WP_DEBUG', true);
+
 ### Enable the Google Cloud Storage plugin
 
 To use the [Google Cloud Storage plugin][gcs-plugin] for media uploads, follow
