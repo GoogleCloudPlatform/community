@@ -93,11 +93,11 @@ The command asks you several questions. After you answer them, you'll have a
 new WordPress project. By default, it will create `my-wordpress-project` in the
 current directory.
 
-> **Note**: To determine the region your database is in, use the
+**Note**: To determine the region your database is in, use the
 `gcloud sql instances describe wordpress` command.
->
->    $ gcloud sql instances describe wordpress | grep region
->
+
+    $ gcloud sql instances describe wordpress | grep region
+
 
 ### Update an existing WordPress Project
 
