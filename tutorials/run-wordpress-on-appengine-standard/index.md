@@ -24,7 +24,7 @@ overview of PHP and learn ways to run PHP apps on GCP.
 
 ### Create and configure a Cloud SQL for MySQL instance
 
-> **Note**: In this guide, we use `wordpress` for the instance name and the database
+**Note**: In this guide, we use `wordpress` for the instance name and the database
 name. We use `root` for the database user name.
 
 1.  Create a new Cloud SQL for MySQL Second Generation instance with the following
@@ -33,8 +33,8 @@ name. We use `root` for the database user name.
         $ gcloud sql instances create wordpress \
             --activation-policy=ALWAYS \
             --tier=db-n1-standard-1
-    
-    > **Note**: you can choose `db-f1-micro` or `db-g1-small` instead of
+
+    **Note**: you can choose `db-f1-micro` or `db-g1-small` instead of
     `db-n1-standard-1` for the Cloud SQL machine type, especially for
     development or testing purposes. However, those machine types are not
     recommended for production use and are not eligible for Cloud SQL SLA
@@ -44,14 +44,14 @@ name. We use `root` for the database user name.
 1.  Create the database you want your WordPress site to use:
 
         $ gcloud sql databases create wordpress --instance wordpress
-    
+
 1.  Change the root password for your instance:
 
         $ gcloud sql users set-password root \
             --host=% \
             --instance wordpress \
             --password=YOUR_INSTANCE_ROOT_PASSWORD # Don't use this password!
-    
+
 ## Create or update a WordPress project for App Engine
 
 The `wp-gae` command provides a convenient way for you to either create
@@ -60,18 +60,28 @@ a new WordPress project or add the required configuration to an existing one.
 ### Setup
 
 1.  Download the `google/cloud-tools` package:
-    
+
         $ composer require google/cloud-tools
-    
-    > **Note**: If you receive an error about extensions, install `phar` and `zip` PHP
+
+    **Note**: If you receive an error about extensions, install `phar` and `zip` PHP
     extensions and retry.
-    
+
 1.  Now you can run the `wp-gae` command which is included in that package:
-    
+
         $ php vendor/bin/wp-gae
-    
-    > **Note**: You can also install `google/cloud-tools` [globally][composer-global],
+
+    **Note**: You can also install `google/cloud-tools` [globally][composer-global],
     which will allow you to execute the command `wp-gae` anywhere.
+
+The `wp-gae` command will ask you several question in order to set up your Cloud SQL
+database connection, and then write the required configuration to your `wp-config.php`
+configuration file. It also copies the following files into your project directory
+to allow WordPress to run on Google App Engine:
+
+ - [`app.yaml`][app_yaml]: The App Engine configuration file that specifies the runtime and static asset handlers.
+ - [`cron.yaml`][cron_yaml]: The App Engine configuration file that ensures `wp-cron.php` is run every 15 minutes.
+ - [`php.ini`][php_ini]: For setting PHP configuration in App Engine specific to WordPress.
+ - [`gae-app.php`][gae_app_php]: The Front Controller, which is required for all App Engine applications.
 
 ### Create a new WordPress project
 
@@ -83,8 +93,11 @@ The command asks you several questions. After you answer them, you'll have a
 new WordPress project. By default, it will create `my-wordpress-project` in the
 current directory.
 
-> **Note**: To determine the region your database is in, use the
+**Note**: To determine the region your database is in, use the
 `gcloud sql instances describe wordpress` command.
+
+    $ gcloud sql instances describe wordpress | grep region
+
 
 ### Update an existing WordPress Project
 
@@ -93,9 +106,10 @@ If you are migrating an existing project to Google Cloud, you can use the
 
     $ php vendor/bin/php update path/to/your-wordpress-site
 
-The command asks you several questions; answer them. This will copy the
-files in the [`files`](files/) directory and write the proper configuration.
-Then your WordPress project will be ready to deploy to Google Cloud!
+The command asks you several questions. After you answer them, your existing
+project will contain the required files for deploying to App Engine, as well
+as an updated `wp-config.php` file. As this command overwrites `wp-config.php`,
+be sure to verify the changes are correct before deploying.
 
 ## Deploy to Google Cloud
 
@@ -110,6 +124,12 @@ Run the following command to deploy your project to App Engine:
 Now you can access your site, and continue the installation step! The URL is
 `https://YOUR_PROJECT_ID.appspot.com/`.
 
+**NOTE**: If you receive any error in your application, such as "Error estabilishing
+a database connection", set the `WP_DEBUG` constant to `true` in `wp-config.php` and
+redeploy:
+
+    define('WP_DEBUG', true);
+
 ### Enable the Google Cloud Storage plugin
 
 To use the [Google Cloud Storage plugin][gcs-plugin] for media uploads, follow
@@ -118,9 +138,9 @@ these steps:
 1.  Configure the App Engine default GCS bucket for later use. The default App
     Engine bucket is named YOUR_PROJECT_ID.appspot.com. Change the default Access
     Control List (ACL) of that bucket as follows:
-    
+
         $ gsutil defacl ch -u AllUsers:R gs://YOUR_PROJECT_ID.appspot.com
-   
+
 1.  Go to the Dashboard at `https://YOUR_PROJECT_ID.appspot.com/wp-admin`. On the
     Plugins page, activate the `Google Cloud Storage plugin`.
 1.  In the plugins Settings page, set your Bucket name to the bucket you
@@ -143,17 +163,17 @@ local machine. Save it to a safe place.
 
 Run the proxy by the following command:
 
-    $ cloud_sql_proxy \
-        -dir /cloudsql \
-        -instances=YOUR_PROJECT_ID:us-central1:wordpress \
+    $ ./cloud_sql_proxy \
+        -instances=YOUR_PROJECT_ID:us-central1:wordpress=tcp:3306 \
         -credential_file=/path/to/YOUR_SERVICE_ACCOUNT_JSON_FILE.json
 
-> **Note**: Make sure to run the command under a user with write access in the `/cloudsql` directory. This proxy will use this folder to create a unix socket.
+**Note**: See [Connecting to Cloud SQL from External Applications][cloud-sql-external-apps]
+for more options when running the Cloud SQL proxy.
 
 Now you can access the Cloud SQL instance with the MySQL client in a separate
 command-line tab.
 
-    $ mysql --socket /cloudsql/YOUR_PROJECT_ID:us-central1:wordpress -u root -p
+    $ mysql --host=127.0.0.1 -u root -p
     mysql> use database wordpress;
     mysql> show tables;
     mysql> exit
@@ -193,6 +213,11 @@ To remove plugins and themes, first deactivate them in the production Dashboard,
 remove them completely locally. The next deployment will remove those files from
 the production environment.
 
+[app_yaml]: https://github.com/GoogleCloudPlatform/php-tools/blob/master/src/Utils/WordPress/files/app.yaml
+[cron_yaml]: https://github.com/GoogleCloudPlatform/php-tools/blob/master/src/Utils/WordPress/files/cron.yaml
+[php_ini]: https://github.com/GoogleCloudPlatform/php-tools/blob/master/src/Utils/WordPress/files/php.ini
+[gae_app_php]: https://github.com/GoogleCloudPlatform/php-tools/blob/master/src/Utils/WordPress/files/gae-app.php
+
 [php-gcp]: https://cloud.google.com/php
 [wordpress]: https://wordpress.org/
 [cloud_sdk]: https://cloud.google.com/sdk/
@@ -208,5 +233,6 @@ the production environment.
 [cloud-storage-console]: https://console.cloud.google.com/storage
 [cloud-sql-api-enable]: https://console.cloud.google.com/flows/enableapi?apiid=sqladmin
 [cloud-sql-proxy-download]: https://cloud.google.com/sql/docs/mysql/connect-external-app#install
+[cloud-sql-external-apps]: https://cloud.google.com/sql/docs/mysql/connect-external-app#6_start_the_proxy
 [credentials-section]: https://console.cloud.google.com/apis/credentials/
 [gcs-plugin]: https://wordpress.org/plugins/gcs/
