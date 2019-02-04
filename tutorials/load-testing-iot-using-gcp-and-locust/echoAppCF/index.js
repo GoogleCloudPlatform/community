@@ -8,7 +8,7 @@ const DISCOVERY_API = 'https://cloudiot.googleapis.com/$discovery/rest';
 const discoveryUrl = `${DISCOVERY_API}?version=${API_VERSION}`;
 
 // Sends a command to a device.
-function sendCommand(client, deviceId, registryId, projectId, region, command) {
+function sendCommand (client, deviceId, registryId, projectId, region, command) {
   const parentName = `projects/${projectId}/locations/${region}`;
   const registryName = `${parentName}/registries/${registryId}`;
   const binaryData = Buffer.from(command).toString('base64');
@@ -26,12 +26,11 @@ function sendCommand(client, deviceId, registryId, projectId, region, command) {
         } else {
           resolve('ok');
         }
-    });
+      });
   });
 }
 
 exports.echoAppCF = async (data, context) => {
-
   console.log('*** data=', data);
 
   // extract attributes needed for sendCommand call
@@ -71,9 +70,7 @@ exports.echoAppCF = async (data, context) => {
       console.log('*** caught error on sendCommand', error);
       throw new Error('sendCommand');
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.log('*** caught error', error);
   }
-
 };
