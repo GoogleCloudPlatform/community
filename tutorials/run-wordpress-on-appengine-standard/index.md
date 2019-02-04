@@ -73,6 +73,16 @@ a new WordPress project or add the required configuration to an existing one.
     > **Note**: You can also install `google/cloud-tools` [globally][composer-global],
     which will allow you to execute the command `wp-gae` anywhere.
 
+The `wp-gae` command will ask you several question in order to set up your Cloud SQL
+database connection, and then write the required configuration to your `wp-config.php`
+configuration file. It also copies the following files into your project directory
+to allow WordPress to run on Google App Engine:
+
+ - [`app.yaml`][app_yaml] - The App Engine configuration file which specifies the runtime and static asset handlers.
+ - [`cron.yaml`][cron_yaml] - The App Engine configuration file that ensures `wp-cron.php` is run every 15 minutes.
+ - [`php.ini`][php_ini] - For setting PHP configuration in App Engine specific to WordPress.
+ - [`gae-app.php`][gae_app_php] - The Front Controller which is required for all App Engine applications.
+
 ### Create a new WordPress project
 
 To download WordPress and set it up for GCP, run the `create` command:
@@ -96,9 +106,10 @@ If you are migrating an existing project to Google Cloud, you can use the
 
     $ php vendor/bin/php update path/to/your-wordpress-site
 
-The command asks you several questions; answer them. This will copy the
-files in the [`files`](files/) directory and write the proper configuration.
-Then your WordPress project will be ready to deploy to Google Cloud!
+The command asks you several questions. After you answer them, your existing
+project will contain the required files for deploying to App Engine, as well
+as an updated `wp-config.php` file. As this command overwrites `wp-config.php`,
+be sure to verify the changes are correct before deploying.
 
 ## Deploy to Google Cloud
 
@@ -201,6 +212,11 @@ Then try the update commands again.
 To remove plugins and themes, first deactivate them in the production Dashboard, and then
 remove them completely locally. The next deployment will remove those files from
 the production environment.
+
+[app_yaml]: https://github.com/GoogleCloudPlatform/php-tools/blob/master/src/Utils/WordPress/files/app.yaml
+[cron_yaml]: https://github.com/GoogleCloudPlatform/php-tools/blob/master/src/Utils/WordPress/files/cron.yaml
+[php_ini]: https://github.com/GoogleCloudPlatform/php-tools/blob/master/src/Utils/WordPress/files/php.ini
+[gae_app_php]: https://github.com/GoogleCloudPlatform/php-tools/blob/master/src/Utils/WordPress/files/gae-app.php
 
 [php-gcp]: https://cloud.google.com/php
 [wordpress]: https://wordpress.org/
