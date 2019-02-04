@@ -33,7 +33,7 @@ name. We use `root` for the database user name.
         $ gcloud sql instances create wordpress \
             --activation-policy=ALWAYS \
             --tier=db-n1-standard-1
-    
+
     > **Note**: you can choose `db-f1-micro` or `db-g1-small` instead of
     `db-n1-standard-1` for the Cloud SQL machine type, especially for
     development or testing purposes. However, those machine types are not
@@ -44,14 +44,14 @@ name. We use `root` for the database user name.
 1.  Create the database you want your WordPress site to use:
 
         $ gcloud sql databases create wordpress --instance wordpress
-    
+
 1.  Change the root password for your instance:
 
         $ gcloud sql users set-password root \
             --host=% \
             --instance wordpress \
             --password=YOUR_INSTANCE_ROOT_PASSWORD # Don't use this password!
-    
+
 ## Create or update a WordPress project for App Engine
 
 The `wp-gae` command provides a convenient way for you to either create
@@ -60,16 +60,16 @@ a new WordPress project or add the required configuration to an existing one.
 ### Setup
 
 1.  Download the `google/cloud-tools` package:
-    
+
         $ composer require google/cloud-tools
-    
+
     > **Note**: If you receive an error about extensions, install `phar` and `zip` PHP
     extensions and retry.
-    
+
 1.  Now you can run the `wp-gae` command which is included in that package:
-    
+
         $ php vendor/bin/wp-gae
-    
+
     > **Note**: You can also install `google/cloud-tools` [globally][composer-global],
     which will allow you to execute the command `wp-gae` anywhere.
 
@@ -85,6 +85,9 @@ current directory.
 
 > **Note**: To determine the region your database is in, use the
 `gcloud sql instances describe wordpress` command.
+>
+>    $ gcloud sql instances describe wordpress | grep region
+>
 
 ### Update an existing WordPress Project
 
@@ -118,9 +121,9 @@ these steps:
 1.  Configure the App Engine default GCS bucket for later use. The default App
     Engine bucket is named YOUR_PROJECT_ID.appspot.com. Change the default Access
     Control List (ACL) of that bucket as follows:
-    
+
         $ gsutil defacl ch -u AllUsers:R gs://YOUR_PROJECT_ID.appspot.com
-   
+
 1.  Go to the Dashboard at `https://YOUR_PROJECT_ID.appspot.com/wp-admin`. On the
     Plugins page, activate the `Google Cloud Storage plugin`.
 1.  In the plugins Settings page, set your Bucket name to the bucket you
