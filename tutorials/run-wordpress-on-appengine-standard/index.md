@@ -163,17 +163,17 @@ local machine. Save it to a safe place.
 
 Run the proxy by the following command:
 
-    $ cloud_sql_proxy \
-        -dir /cloudsql \
-        -instances=YOUR_PROJECT_ID:us-central1:wordpress \
+    $ ./cloud_sql_proxy \
+        -instances=YOUR_PROJECT_ID:us-central1:wordpress=tcp:3306 \
         -credential_file=/path/to/YOUR_SERVICE_ACCOUNT_JSON_FILE.json
 
-> **Note**: Make sure to run the command under a user with write access in the `/cloudsql` directory. This proxy will use this folder to create a unix socket.
+> **Note**: See [Connecting to Cloud SQL from External Applications][cloud-sql-external-apps]
+for more options when running the Cloud SQL proxy.
 
 Now you can access the Cloud SQL instance with the MySQL client in a separate
 command-line tab.
 
-    $ mysql --socket /cloudsql/YOUR_PROJECT_ID:us-central1:wordpress -u root -p
+    $ mysql --host=127.0.0.1 -u root -p
     mysql> use database wordpress;
     mysql> show tables;
     mysql> exit
@@ -233,5 +233,6 @@ the production environment.
 [cloud-storage-console]: https://console.cloud.google.com/storage
 [cloud-sql-api-enable]: https://console.cloud.google.com/flows/enableapi?apiid=sqladmin
 [cloud-sql-proxy-download]: https://cloud.google.com/sql/docs/mysql/connect-external-app#install
+[cloud-sql-external-apps]: https://cloud.google.com/sql/docs/mysql/connect-external-app#6_start_the_proxy
 [credentials-section]: https://console.cloud.google.com/apis/credentials/
 [gcs-plugin]: https://wordpress.org/plugins/gcs/
