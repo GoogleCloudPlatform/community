@@ -4,7 +4,7 @@ In this article we’ll build a **continuous integration and deployment pipeline
 
 ## Core setup
 
-1. Download the code from github at this link.
+1. Download the code from github at [this](https://github.com/nlonginow/demo-kubernetes-pipeline) link.
 2. Create a new project on gitlab.com and connect your local code to it.
 
 ```bash
