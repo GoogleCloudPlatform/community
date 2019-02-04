@@ -38,8 +38,6 @@ d. Docker Desktop (https://www.docker.com/get-started)
 e. The ability to run bash shell scripts  
 
 
-
-
 ## Costs
 
 The driver (Locust) will incur GCP charges for:
@@ -51,15 +49,16 @@ The target (sample IOT application) will incur GCP charges for:
 * IOT Core
 * Cloud functions
 
-# Understanding the Architetcure
+
+## Understanding the Architetcure
 
 This diagram shows the relationship between the load test "driver" and the "target".
 
-![ltk_architecture.png](https://github.com/csgcp/blob/master/ltk_architecture.png)
+![LTK architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/load-testing-iot-using-gcp-and-locust/ltk_architecture.png)
 
 This diagram shows how the driver maps into GCP, using GKE, Kubernetes, and Docker.
 
-![ltk_gcp_mapping.png](https://github.com/csgcp/blob/master/ltk_gcp_mapping.png)
+![LTK GCP mapping diagram](https://storage.googleapis.com/gcp-community/tutorials/load-testing-iot-using-gcp-and-locust/ltk_gcp_mapping.png)
 
 
 ## Create the GCP Projects
