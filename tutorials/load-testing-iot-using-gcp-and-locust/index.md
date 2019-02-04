@@ -1,25 +1,27 @@
+---
+title: Load testing an IOT Application Using GCP and Locust
+description: Simulate the load from a population of devices to understand performance/scalability/costs of cloud services.
+author: scchristopher
+tags: iot, functions, internet of things
+date_published: 2019-02-04
+---
 
+This tutorial describes load testing an Internet-of-Things (IOT) application using Google Cloud Platform (GCP) and Locust.
 
-Load testing an IOT Application Using GCP and Locust
-====================================================
+A simple IOT application is included for the tutorial. The IOT application consists of a GCP cloud function and 100 simulated devices exchanging messages over MQTT using GCP IOT Core.
 
-This tutorial shows a way to load test an Internet-of-Things (IOT) application using Google Cloud Platform (GCP) and Locust.
-
-A simple IOT application is included for the tutorial. The IOT application consists of a single backend service (a GCP cloud function) and 100 devices (using GCP IOT Core).
-
-The tutorial walks through all the steps to run a load test. The estimated time to perform the tutorial is 1-2 hours.
+The tutorial walks through all the steps to create a running load test. The estimated time to perform the tutorial is 1-2 hours.
 
 You can customize the code to target your own IOT application.
 
 
-
-# Objectives
+## Objectives
 
 * Simulate a load from a large number of IOT devices
 * Monitor the IOT application in real-time
 * Understand the performance and costs of an IOT application
 
-# Before You Begin
+## Before You Begin
 
 To complete the steps in this tutorial, you need:
 
@@ -38,7 +40,7 @@ e. The ability to run bash shell scripts
 
 
 
-# Costs
+## Costs
 
 The driver (Locust) will incur GCP charges for:
 
@@ -60,7 +62,7 @@ This diagram shows how the driver maps into GCP, using GKE, Kubernetes, and Dock
 ![ltk_gcp_mapping.png](https://github.com/csgcp/blob/master/ltk_gcp_mapping.png)
 
 
-# Create the GCP Projects
+## Create the GCP Projects
 
 Two GCP projects are created for this tutorial - `my-ltk-driver` and `my-ltk-target`.
 
@@ -78,7 +80,7 @@ Repeat this procedure twice - once for the `my-ltk-driver` project, and once for
 Two projects are recommended, so you can see cost/billing information separately for the driver and target. 
 
 
-# Create the Device Registry
+## Create the Device Registry
 
 For the purposes of this tutorial, create a device registry in the `my-ltk-target` project.
 
@@ -97,7 +99,7 @@ From the GCP console:
 11. Click "Create" to create the registry
 
 
-# Deploy the Sample IOT Application
+## Deploy the Sample IOT Application
 
 The sample IOT application is a cloud function named `echoAppCF`.
 
@@ -113,7 +115,7 @@ gcloud functions deploy echoAppCF --source=. --trigger-topic defaultTelemetry --
 If you are prompted to enable the `cloudfunctions.googleapis.com` API, confirm yes.
 
 
-# Enable the Kubernetes Engine API
+## Enable the Kubernetes Engine API
 
 The Kubernetes Engine API needs to be enabled, so a GKE cluster can be created for the driver. 
 
@@ -127,7 +129,7 @@ To enable the Kubernetes Engine API:
 This needs to be done once in the lifetime of the project.
 
 
-# Enable Docker authentication to GCP
+## Enable Docker authentication to GCP
 
 Docker needs to be able to authenticate to GCP, so it can push the master and worker images to the Google Container Registry (GCR).
 
@@ -140,7 +142,7 @@ gcloud auth configure-docker
 This needs to be done once from your local workstation.
 
 
-# Prepare the .env File
+## Prepare the .env File
 
 The github repository includes a .sample.env file in the respository root directory. Copy this file to .env, and popluate the environment variables.
 
@@ -156,7 +158,7 @@ The github repository includes a .sample.env file in the respository root direct
 |LTK_TARGET_REGISTRY_ID|The GCP IOT registry ID.|my-ltk-registry|
 
 
-# Set the Shell Environment
+## Set the Shell Environment
 
 Before the scripts in this tutorial can be executed, you need to set the shell's environment variables.
 
@@ -182,7 +184,7 @@ You should see the variables defined in the .env file.
 **WARNING:** If you change the .env file, you need to repeat the `. .env` command to reload the updated enviroment variables into the shell.
 
 
-# Create the Test Devices
+## Create the Test Devices
 
 Change directory to the repo root, then:
 
@@ -197,7 +199,7 @@ The devices are reused across multiple tests. They are deletd when you run the `
 
 
 
-# Set Up the Test
+## Set Up the Test
 
 When you want to run a test, use the `setupTest` script to set up everything needed to start a test in Locust.
 
@@ -218,7 +220,7 @@ xx.xx.xx.xx is the IP address of the Locust UI (from the Kubernetes load balance
 At this point, no test is running, but everything is in place to start a test in the Locust UI (next step).
 
 
-# Start the Test
+## Start the Test
 
 To start a test, open a browser tab and navigate to the URL provided by `setupTest`. You should see the Locust UI.
 
@@ -227,53 +229,53 @@ Specify the number of users (devices) and the hatch rate, then click the "Start 
 Make a note of the time you started the test.
 
 
-# Monitor the Test
+## Monitor the Test
 
 While a test is running, there are several places you can look to monitor activity.
 
-## Locust
+### Locust
 
-### Statistics
+#### Statistics
 
 * "MQTT connect" and "MQTT subscribe" #requests ramp up to number of devices, with no failures
 * "echo receive" #requests begin to increase
 * May occasionally see "echo timeout" failures (cloud function does not receive payload)
 
-### Charts
+#### Charts
 
 * RPS ramps up as users (devices) are hatched
 * Relatively high response times in beginning as CF containers cold start
 * Number of users (devices) increase steadily up to total number of users (devices)
 
-### Failures
+#### Failures
 
 * Shows additional detail for failures such as echo timeouts (stackdriver logs can be searched for these payloads)
 
-## GCP console - Target project
+### GCP console - Target project
 
-### Cloud Functions
+#### Cloud Functions
 
 * Metrics - invocations/second, execution times, memory usage
 
-### APIs and Services
+#### APIs and Services
 
 * Dashboard > Cloud Functions API > Quotas 
 * Dashboard > Cloud IOT API > Quotas 
 
-### Stackdriver
+#### Stackdriver
 
 * Cloud Function logs - can see evidence of payloads being received by the CF, for example:
 ```
      *** received LTK00079 0x7fe0eed6bfd0 payload 848 at 154844836552332
 ```
 
-## GCP console - Driver project
+### GCP console - Driver project
   
-### Kubernetes Engine 
+#### Kubernetes Engine 
 
 * Clusters > ltk-driver > Nodes (when you select the node, you can see CPU usage and other metrics for the node)
 
-### Stackdriver
+#### Stackdriver
 
 * GKE container logs - can see evidence of payloads being sent by the devices, for example:
 ```
@@ -281,7 +283,7 @@ While a test is running, there are several places you can look to monitor activi
 ```
 
 
-# Stop the Test
+## Stop the Test
 
 When you are satisfied enough data has been observed and collected, you can stop the test.
 
@@ -290,7 +292,7 @@ To stop a test, in the Locust UI, click the "Stop" button.
 Make a note of the time you stopped the test.
 
 
-# Clean Up
+## Clean Up
 
 To avoid GCP charges for the driver cluster, you can delete the cluster (and perform other related post-test cleanup activities) with the `teardwonTest` script.
 ```
@@ -301,7 +303,7 @@ The target project requires no cleanup - the project will not incur charges beca
 
 
 
-# Analyze the Results
+## Analyze the Results
 
 The github repo includes a `harvetData` script to perform a basic data collection and analysis for the sample IOT application. The script provides two outputs:
 
@@ -333,7 +335,7 @@ The frequency distributions are useful for getting a sense of where performance 
 Another possible use for the distributions is for evaluating architectural or implementation changes. For example, adding a database call to the cloud function, or changing the cloud function implementation language. Configuation changes also can be evaluated - for example, the cloud funciton memory allocation.
 
 
-# Investigating Errors
+## Investigating Errors
 
 If you make a change to the code in the tutorial, in some cases you might see setupTest get stuck at the point where it is "waiting for pod to enter running status". If this happens, one way to diagnose the error is to:
 
@@ -352,7 +354,7 @@ In other cases, it may be helpful to look in the Stackdriver logs for the driver
 In the GKE container logs for the `my-ltk-driver` project, you can see the device range used by each worker pod by using the filter "sharded device".
 
 
-# Understanding Costs
+## Understanding Costs
 
 The load test kit can be used to estimate deployment costs for an IOT solution.
 
@@ -388,7 +390,7 @@ https://cloud.google.com/billing/docs/how-to/export-data-bigquery
 
 
 
-# Scaling up the Number of Devices
+## Scaling up the Number of Devices
 
 To scale up the number of devices:
 
@@ -441,12 +443,12 @@ This will rebuild the master and worker docker images with the added-to `devicel
 Starting a test in the Locust UI causes the workers to shard the `devicelist.csv`. The sharding calculate the portion of the csv (the "block" of devices) a worker is using. The block offset into the csv is determined by the worker pod's host name, which includes an ordinal (integer 1 to n) uniquely identifying the pod in the replica set. The ordinal is available because the podspec uses the StatefulSet pod type.
 
 
-# Re-cloning the repo
+## Re-cloning the repo
 
 If you need to re-clone the repository to get a clean copy of the code, you can transfer the `.env` file and `devicelist.csv` to bring over the same environment settings and existing devices.
 
 
-# Targeting Your IOT Application
+## Targeting Your IOT Application
 
 Targeting your IOT application requires software development in Python. 
 
