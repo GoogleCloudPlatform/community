@@ -24,7 +24,7 @@ overview of PHP and learn ways to run PHP apps on GCP.
 
 ### Create and configure a Cloud SQL for MySQL instance
 
-> **Note**: In this guide, we use `wordpress` for the instance name and the database
+**Note**: In this guide, we use `wordpress` for the instance name and the database
 name. We use `root` for the database user name.
 
 1.  Create a new Cloud SQL for MySQL Second Generation instance with the following
@@ -34,7 +34,7 @@ name. We use `root` for the database user name.
             --activation-policy=ALWAYS \
             --tier=db-n1-standard-1
 
-    > **Note**: you can choose `db-f1-micro` or `db-g1-small` instead of
+    **Note**: you can choose `db-f1-micro` or `db-g1-small` instead of
     `db-n1-standard-1` for the Cloud SQL machine type, especially for
     development or testing purposes. However, those machine types are not
     recommended for production use and are not eligible for Cloud SQL SLA
@@ -63,25 +63,25 @@ a new WordPress project or add the required configuration to an existing one.
 
         $ composer require google/cloud-tools
 
-    > **Note**: If you receive an error about extensions, install `phar` and `zip` PHP
+    **Note**: If you receive an error about extensions, install `phar` and `zip` PHP
     extensions and retry.
 
 1.  Now you can run the `wp-gae` command which is included in that package:
 
         $ php vendor/bin/wp-gae
 
-    > **Note**: You can also install `google/cloud-tools` [globally][composer-global],
+    **Note**: You can also install `google/cloud-tools` [globally][composer-global],
     which will allow you to execute the command `wp-gae` anywhere.
 
 The `wp-gae` command will ask you several question in order to set up your Cloud SQL
-database connection, and write the required configuration to your `wp-config.php`
+database connection, and then write the required configuration to your `wp-config.php`
 configuration file. It also copies the following files into your project directory
 to allow WordPress to run on Google App Engine:
 
- - [`app.yaml`][app_yaml] - The App Engine configuration file which specifies the runtime and static asset handlers.
- - [`cron.yaml`][cron_yaml] - The App Engine configuration file that ensures `wp-cron.php` is run every 15 minutes.
- - [`php.ini`][php_ini] - For setting PHP configuration in App Engine specific to WordPress.
- - [`gae-app.php`][gae_app_php] - The Front Controller which is required for all App Engine applications.
+ - [`app.yaml`][app_yaml]: The App Engine configuration file that specifies the runtime and static asset handlers.
+ - [`cron.yaml`][cron_yaml]: The App Engine configuration file that ensures `wp-cron.php` is run every 15 minutes.
+ - [`php.ini`][php_ini]: For setting PHP configuration in App Engine specific to WordPress.
+ - [`gae-app.php`][gae_app_php]: The Front Controller, which is required for all App Engine applications.
 
 ### Create a new WordPress project
 
@@ -167,7 +167,7 @@ Run the proxy by the following command:
         -instances=YOUR_PROJECT_ID:us-central1:wordpress=tcp:3306 \
         -credential_file=/path/to/YOUR_SERVICE_ACCOUNT_JSON_FILE.json
 
-> **Note**: See [Connecting to Cloud SQL from External Applications][cloud-sql-external-apps]
+**Note**: See [Connecting to Cloud SQL from External Applications][cloud-sql-external-apps]
 for more options when running the Cloud SQL proxy.
 
 Now you can access the Cloud SQL instance with the MySQL client in a separate
