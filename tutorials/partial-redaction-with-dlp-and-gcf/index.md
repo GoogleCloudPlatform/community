@@ -97,7 +97,7 @@ To deploy the Cloud Function to your project, execute the command below. It crea
 
 1.  You can use the command below to upload a sample image that contains a valid credit card number for testing into the *`YOUR_ORIGIN_BUCKET`* that you have created previously: 
 
-        gsutil cp images/credit-card1.jpg gs://YOUR_ORIGIN_BUCKET
+        gsutil cp images/credit-card2.png gs://YOUR_ORIGIN_BUCKET
 
     After a few seconds, you should see the redacted image in the bucket *`YOUR_REDACTED_BUCKET`*
 
