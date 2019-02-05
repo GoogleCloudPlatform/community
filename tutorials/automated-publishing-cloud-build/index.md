@@ -71,7 +71,7 @@ commit to the source repository.
 > Note: If you do not have a repository on GitHub, you can fork [this sample
 > repository][sample-repo] for the purposes of this tutorial.
 
-Head over to the Container Registry &rarr; [Build Triggers][p6n-triggers]
+Head over to the Cloud Build &rarr; [Build Triggers][p6n-triggers]
 section on the GCP Console and click “Add trigger”:
 
 ![Add build trigger on Container Registry

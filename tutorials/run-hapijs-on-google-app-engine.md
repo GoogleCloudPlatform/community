@@ -37,26 +37,28 @@ Platform.
 
 Create a `server.js` file with the following contents:
 
-    const Hapi = require('hapi');
+```js
+ const Hapi = require('hapi');
 
-    // Create a server with a host and port
-    const server = new Hapi.Server();
-    server.connection({
-      host: '0.0.0.0',
-      port: process.env.PORT || 8080
-    });
+ // Create a server with a host and port
+ const server = new Hapi.Server();
+ server.connection({
+   host: '0.0.0.0',
+   port: process.env.PORT || 8080
+ });
 
-    server.route({
-      method: 'GET',
-      path:'/',
-      handler: (request, reply) => {
-        reply('Hello World!');
-      }
-    });
+ server.route({
+   method: 'GET',
+   path:'/',
+   handler: (request, reply) => {
+     reply('Hello World!');
+   }
+ });
 
-    server.start(() => {
-      console.log('Server running at:', server.info.uri);
-    });
+ server.start(() => {
+   console.log('Server running at:', server.info.uri);
+ });
+ ```
 
 ## Run
 
@@ -71,8 +73,10 @@ message.
 
 1. Create an `app.yaml` file with the following contents:
 
-        runtime: nodejs
-        env: flex
+    ```yaml
+    runtime: nodejs
+    env: flex
+    ```
 
 1. Run the following command to deploy your app:
 

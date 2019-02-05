@@ -9,7 +9,7 @@ date_published: 2018-01-17
 [Google App Engine Standard](https://cloud.google.com/appengine/docs/standard/)
 is an easy way to deploy your apps to the same infrastructure that powers
 Google's products. In this tutorial you'll see how to deploy your
-[Kotlin](https://kotlinlang.org/) and [Ktor](https://ktori.io) application to
+[Kotlin](https://kotlinlang.org/) and [Ktor](https://ktor.io) application to
 App Engine Standard.
 
 You will create a new Ktor application, and then you will learn how to:
@@ -67,83 +67,87 @@ you already have an app to deploy, you can use it instead.
 
 1.  In `build.gradle`, copy the following contents:
 
-        buildscript {
-            // Consider moving these values to `gradle.properties`
-            ext.kotlin_version = '1.2.61'
-            ext.ktor_version = '0.9.4'
-            ext.appengine_version = '1.9.60'
-            ext.appengine_plugin_version = '1.3.4'
-
-            repositories {
-                jcenter()
-            }
-            dependencies {
-                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-                classpath "com.google.cloud.tools:appengine-gradle-plugin:$appengine_plugin_version"
-            }
-        }
-
-        apply plugin: 'kotlin'
-        apply plugin: 'war'
-        apply plugin: 'com.google.cloud.tools.appengine'
-
-        sourceSets {
-            main.kotlin.srcDirs = [ 'src/main/kotlin' ]
-        }
+    ```gradle
+    buildscript {
+        // Consider moving these values to `gradle.properties`
+        ext.kotlin_version = '1.2.61'
+        ext.ktor_version = '0.9.4'
+        ext.appengine_version = '1.9.60'
+        ext.appengine_plugin_version = '1.3.4'
 
         repositories {
             jcenter()
-            maven { url "https://kotlin.bintray.com/ktor" }
         }
-
         dependencies {
-            compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-            compile "io.ktor:ktor-server-servlet:$ktor_version"
-            compile "io.ktor:ktor-html-builder:$ktor_version"
-
-            providedCompile "com.google.appengine:appengine:$appengine_version"
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+            classpath "com.google.cloud.tools:appengine-gradle-plugin:$appengine_plugin_version"
         }
+    }
 
-        kotlin.experimental.coroutines = 'enable'
+    apply plugin: 'kotlin'
+    apply plugin: 'war'
+    apply plugin: 'com.google.cloud.tools.appengine'
 
-        task run(dependsOn: appengineRun)
+    sourceSets {
+        main.kotlin.srcDirs = [ 'src/main/kotlin' ]
+    }
+
+    repositories {
+        jcenter()
+        maven { url "https://kotlin.bintray.com/ktor" }
+    }
+
+    dependencies {
+        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+        compile "io.ktor:ktor-server-servlet:$ktor_version"
+        compile "io.ktor:ktor-html-builder:$ktor_version"
+
+        providedCompile "com.google.appengine:appengine:$appengine_version"
+    }
+
+    kotlin.experimental.coroutines = 'enable'
+
+    task run(dependsOn: appengineRun)
+    ```
 
 1.  In `src/main/kotlin/HelloApplication.kt`, copy the following contents:
 
-        package com.example.demo
+    ```kt
+    package com.example.demo
 
-        import io.ktor.application.*
-        import io.ktor.features.*
-        import io.ktor.html.*
-        import io.ktor.routing.*
-        import kotlinx.html.*
+    import io.ktor.application.*
+    import io.ktor.features.*
+    import io.ktor.html.*
+    import io.ktor.routing.*
+    import kotlinx.html.*
 
-        // Entry Point of the application as defined in resources/application.conf.
-        // @see https://ktor.io/servers/configuration.html#hocon-file
-        fun Application.main() {
-            // This adds Date and Server headers to each response, and allows custom additional headers
-            install(DefaultHeaders)
-            // This uses use the logger to log every call (request/response)
-            install(CallLogging)
+    // Entry Point of the application as defined in resources/application.conf.
+    // @see https://ktor.io/servers/configuration.html#hocon-file
+    fun Application.main() {
+        // This adds Date and Server headers to each response, and allows custom additional headers
+        install(DefaultHeaders)
+        // This uses use the logger to log every call (request/response)
+        install(CallLogging)
 
-            // Registers routes
-            routing {
-                // Here we use a DSL for building HTML on the route "/"
-                // @see https://github.com/Kotlin/kotlinx.html
-                get("/") {
-                    call.respondHtml {
-                        head {
-                            title { +"Ktor on Google App Engine Standard" }
-                        }
-                        body {
-                            p {
-                                +"Hello there! This is Ktor running on Google Appengine Standard"
-                            }
+        // Registers routes
+        routing {
+            // Here we use a DSL for building HTML on the route "/"
+            // @see https://github.com/Kotlin/kotlinx.html
+            get("/") {
+                call.respondHtml {
+                    head {
+                        title { +"Ktor on Google App Engine Standard" }
+                    }
+                    body {
+                        p {
+                            +"Hello there! This is Ktor running on Google Appengine Standard"
                         }
                     }
                 }
             }
         }
+    }
+    ```
 
 1.  In `src/main/resources/application.conf`, copy the following contents:
 
@@ -206,18 +210,20 @@ Make a simple change and redeploy.
 1.  Add the following after the `get("/") { ... }` function call in
     `HelloApplication.kt`:
 
-        get("/demo") {
-            call.respondHtml {
-                head {
-                    title { +"Ktor on Google App Engine Standard" }
-                }
-                body {
-                    p {
-                        +"It's another route!"
-                    }
+    ```kt
+    get("/demo") {
+        call.respondHtml {
+            head {
+                title { +"Ktor on Google App Engine Standard" }
+            }
+            body {
+                p {
+                    +"It's another route!"
                 }
             }
         }
+    }
+    ```
 
 1.  Run the deployment command again:
 

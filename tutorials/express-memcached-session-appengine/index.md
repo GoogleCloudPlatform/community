@@ -61,19 +61,21 @@ Platform.
 
 1. Create an `app.yaml` file with the following contents:
 
-        runtime: nodejs
-        env: flex
+    ```yaml
+    runtime: nodejs
+    env: flex
 
-        env_variables:
-          # If you are using the App Engine Memcache service (currently in alpha),
-          # uncomment this section and comment out the other Memcache variables.
-          # USE_GAE_MEMCACHE: 1
+    env_variables:
+      # If you are using the App Engine Memcache service (currently in alpha),
+      # uncomment this section and comment out the other Memcache variables.
+      # USE_GAE_MEMCACHE: 1
 
-          MEMCACHE_URL: your-memcache-url
-          # If you are using a Memcached server with SASL authentication enabled,
-          # fill in these values with your username and password.
-          MEMCACHE_USERNAME: your-memcache-username
-          MEMCACHE_PASSWORD: your-memcache-password
+      MEMCACHE_URL: your-memcache-url
+      # If you are using a Memcached server with SASL authentication enabled,
+      # fill in these values with your username and password.
+      MEMCACHE_USERNAME: your-memcache-username
+      MEMCACHE_PASSWORD: your-memcache-password
+    ```
 
 1. Run the following command to deploy your app:
 

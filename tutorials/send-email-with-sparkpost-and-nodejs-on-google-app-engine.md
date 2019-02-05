@@ -40,51 +40,53 @@ Platform.
 
 1. Create a `server.js` file with the following contents:
 
-        'use strict';
+    ```js
+    'use strict';
 
-        const http = require('http');
-        const express = require('express');
-        const path = require('path');
-        const bodyParser = require('body-parser');
+    const http = require('http');
+    const express = require('express');
+    const path = require('path');
+    const bodyParser = require('body-parser');
 
-        const SparkPost = require('sparkpost');
-        const spClient = new SparkPost(process.env.SPARKPOST_API_KEY);
+    const SparkPost = require('sparkpost');
+    const spClient = new SparkPost(process.env.SPARKPOST_API_KEY);
 
-        const app = express();
-        const srv = http.Server(app);
+    const app = express();
+    const srv = http.Server(app);
 
-        // Setup view engine
-        app.set('views', path.join(__dirname, 'views'));
-        app.set('view engine', 'pug');
+    // Setup view engine
+    app.set('views', path.join(__dirname, 'views'));
+    app.set('view engine', 'pug');
 
-        // Parse form data
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: false }));
+    // Parse form data
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false }));
 
-        app.get('/', (req, res) => res.render('index'));
+    app.get('/', (req, res) => res.render('index'));
 
-        app.post('/hello', (req, res, next) => {
-          spClient.transmissions.send({
-            options: { sandbox: true },
-            content: {
-              from: 'appengine-node-demo@sparkpostbox.com',
-              subject: 'Hello from Google AppEngine!',
-              text: 'Google AppEngine + Node.js + SparkPost = awesome!'
-            },
-            recipients: [
-              {address: req.body.email} 
-            ]
-          }).then(result => {
-            res.render('index', {sent: true});
-          }).catch(err => {
-            res.render('index', {err: err});
-            console.error(err);
-          });
-        });
+    app.post('/hello', (req, res, next) => {
+      spClient.transmissions.send({
+        options: { sandbox: true },
+        content: {
+          from: 'appengine-node-demo@sparkpostbox.com',
+          subject: 'Hello from Google AppEngine!',
+          text: 'Google AppEngine + Node.js + SparkPost = awesome!'
+        },
+        recipients: [
+          {address: req.body.email} 
+        ]
+      }).then(result => {
+        res.render('index', {sent: true});
+      }).catch(err => {
+        res.render('index', {err: err});
+        console.error(err);
+      });
+    });
 
-        srv.listen(process.env.PORT || 8080, () => {
-          console.log(`Listening on ${srv.address().port}`);
-        });
+    srv.listen(process.env.PORT || 8080, () => {
+      console.log(`Listening on ${srv.address().port}`);
+    });
+    ```
 
 1. Create a directory named `views`:
 
@@ -93,27 +95,29 @@ Platform.
 1. Create a file named `index.pug` inside the `views` directory with the
 following contents:
 
-        doctype html
-        html    
-          head
-            title= title
-          body
-            h1 hello world!
-            p express.js + sparkpost on google app engine.
-            hr
-            if sent
-              p email sent!
-            if err
-              p Oh my. Something's not right:
-                ul
-                  each e in err.errors
-                    li
-                      strong=e.message+': '
-                      |#{e.description}
-            else
-              form(name="hello", action="/hello", method="post")
-                input(type="email", placeholder="enter your email to send yourself a hello world message", name="email", style="width: 50%; margin-right: 15px;")
-                input(type="submit", value="send")
+    ```pug
+    doctype html
+    html    
+      head
+        title= title
+      body
+        h1 hello world!
+        p express.js + sparkpost on google app engine.
+        hr
+        if sent
+          p email sent!
+        if err
+          p Oh my. Something's not right:
+            ul
+              each e in err.errors
+                li
+                  strong=e.message+': '
+                  |#{e.description}
+        else
+          form(name="hello", action="/hello", method="post")
+            input(type="email", placeholder="enter your email to send yourself a hello world message", name="email", style="width: 50%; margin-right: 15px;")
+            input(type="submit", value="send")
+      ```
 
 ## Run
 
@@ -127,10 +131,12 @@ following contents:
 
 1. Create a file named `app.yaml` with the following contents:
 
-        runtime: nodejs
-        env: flex
-        env_variables:
-          SPARKPOST_API_KEY: your-sparkpost-api-key
+    ```yaml
+    runtime: nodejs
+    env: flex
+    env_variables:
+      SPARKPOST_API_KEY: your-sparkpost-api-key
+    ```
 
 `app.yaml` describes how to deploy your app to Google App Engine. Read more about that [here](https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml).
 
