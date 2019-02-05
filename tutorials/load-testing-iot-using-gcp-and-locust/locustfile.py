@@ -175,8 +175,8 @@ class LtkDevice(TaskSet):
 
     # Called by Locust when the client is stopped.
     def on_stop(self):
-        # Wait for any straggling messagE. This might read data being written to by 
-        # on_message in another thread (loop thread), this is ok.
+        # Wait for any straggling message. This might read data being written to by 
+        # on_message in another thread (loop thread), which is OK.
         numWaits = 0
         while self.lastSent > self.lastRcvd and numWaits < 10:
             sys.stdout.write('*** {} waiting for last message'.format(self.get_loggedId()))
