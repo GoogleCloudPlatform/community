@@ -5,6 +5,7 @@ author: bshaffer
 tags: App Engine, Symfony, PHP
 date_published: 2019-02-01
 ---
+
 ## Symfony
 
 "[Symfony][symfony] is a set of PHP Components, a Web Application framework, a Philosophy, 
@@ -35,7 +36,7 @@ following command to install it:
 
         php bin/console server:run
 
-1. Visit [http://localhost:8000](http://localhost:8000) to see the Symfony
+1.  Visit [http://localhost:8000](http://localhost:8000) to see the Symfony
 Welcome page.
 
 ## Deploy
@@ -62,7 +63,7 @@ Welcome page.
         # URL handlers
         # ...
 
-    **NOTE** Read more about the [env][symfony-env] and [secret][symfony-secret]
+    **Note**: Read more about the [env][symfony-env] and [secret][symfony-secret]
     parameters in Symfony's documentation.
 
 1.  [Override the cache and log directories][symfony-override-cache] so that
@@ -92,7 +93,7 @@ Welcome page.
             // ...
         }
    
-    **NOTE**: This is required because App Engine's file system is **read-only**.
+    **Note**: This is required because App Engine's file system is **read-only**.
 
 1.  Deploy your application to App Engine:
 
@@ -113,35 +114,35 @@ database. This tutorial uses the database name `symfonydb` and the username
 
 ### Setup
 
-1. Follow the instructions to set up a
-   [Google Cloud SQL Second Generation instance for MySQL][cloud-sql-create].
+1.  Follow the instructions to set up a
+    [Google Cloud SQL Second Generation instance for MySQL][cloud-sql-create].
 
-1. Create a database for your Symfony application. Replace `INSTANCE_NAME`
-   with the name of your instance:
+1.  Create a database for your Symfony application. Replace `INSTANCE_NAME`
+    with the name of your instance:
 
-       gcloud sql databases create symfonydb --instance=INSTANCE_NAME
+        gcloud sql databases create symfonydb --instance=INSTANCE_NAME
 
-1. Enable the [Cloud SQL APIs][cloud-sql-apis] in your project.
+1.  Enable the [Cloud SQL APIs][cloud-sql-apis] in your project.
 
-1. Follow the instructions to
-   [install and run the Cloud SQL proxy client on your local machine][cloud-sql-install].
-   The Cloud SQL proxy is used to connect to your Cloud SQL instance when
-   running locally. This is so you can run database migrations locally to set up
-   your production database.
+1.  Follow the instructions to
+    [install and run the Cloud SQL proxy client on your local machine][cloud-sql-install].
+    The Cloud SQL proxy is used to connect to your Cloud SQL instance when
+    running locally. This is so you can run database migrations locally to set up
+    your production database.
 
-    * Use the [Cloud SDK][cloud-sdk] from the command line to run the following
-      command. Copy the `connectionName` value for the next step. Replace
-      `INSTANCE_NAME` with the name of your instance:
+      * Use the [Cloud SDK][cloud-sdk] from the command line to run the following
+        command. Copy the `connectionName` value for the next step. Replace
+        `INSTANCE_NAME` with the name of your instance:
 
-          gcloud sql instances describe INSTANCE_NAME
+            gcloud sql instances describe INSTANCE_NAME
 
-    * Start the Cloud SQL proxy and replace `INSTANCE_CONNECTION_NAME` with
-      the connection name you retrieved in the previous step:
+      * Start the Cloud SQL proxy and replace `INSTANCE_CONNECTION_NAME` with
+        the connection name you retrieved in the previous step:
 
-          cloud_sql_proxy -instances=INSTANCE_CONNECTION_NAME=tcp:3306 &
+            cloud_sql_proxy -instances=INSTANCE_CONNECTION_NAME=tcp:3306 &
 
-    **Note:** Include the `-credential_file` option when using the proxy, or
-    authenticate with `gcloud`, to ensure proper authentication.
+        **Note**: Include the `-credential_file` option when using the proxy, or
+        authenticate with `gcloud`, to ensure proper authentication.
 
 ### Configure
 
