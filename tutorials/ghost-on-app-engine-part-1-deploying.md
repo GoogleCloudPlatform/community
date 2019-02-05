@@ -141,38 +141,40 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
 
 1. Edit `config.development.json` and set it to the following:
 
-        {
-            "url": "http://localhost:2368",
-            "fileStorage": false,
-            "mail": {},
-            "database": {
-                "client": "mysql",
-                "connection": {
-                    "host": "127.0.0.1",
-                    "user": "YOUR_MYSQL_USERNAME",
-                    "password": "YOUR_MYSQL_PASSWORD",
-                    "database": "YOUR_MYSQL_DATABASE_NAME",
-                    "charset": "utf8"
-                },
-                "debug": false
+    ```json
+    {
+        "url": "http://localhost:2368",
+        "fileStorage": false,
+        "mail": {},
+        "database": {
+            "client": "mysql",
+            "connection": {
+                "host": "127.0.0.1",
+                "user": "YOUR_MYSQL_USERNAME",
+                "password": "YOUR_MYSQL_PASSWORD",
+                "database": "YOUR_MYSQL_DATABASE_NAME",
+                "charset": "utf8"
             },
-            "paths": {
-                "contentPath": "content/"
+            "debug": false
+        },
+        "paths": {
+            "contentPath": "content/"
+        },
+        "privacy": {
+            "useRpcPing": false,
+            "useUpdateCheck": true
+        },
+        "useMinFiles": false,
+        "caching": {
+            "theme": {
+                "maxAge": 0
             },
-            "privacy": {
-                "useRpcPing": false,
-                "useUpdateCheck": true
-            },
-            "useMinFiles": false,
-            "caching": {
-                "theme": {
-                    "maxAge": 0
-                },
-                "admin": {
-                    "maxAge": 0
-                }
+            "admin": {
+                "maxAge": 0
             }
         }
+    }
+    ```
 
 1. Install Dependencies:
 
@@ -193,35 +195,37 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
 
 1. Edit `config.production.json` and set it to the following:
 
-        {
-            "url": "https://YOUR_PROJECT_ID.appspot.com",
-            "fileStorage": false,
-            "mail": {},
-            "database": {
-                "client": "mysql",
-                "connection": {
-                    "user": "YOUR_MYSQL_USERNAME",
-                    "password": "YOUR_MYSQL_PASSWORD",
-                    "database": "YOUR_MYSQL_DATABASE_NAME",
-                    "charset": "utf8"
-                },
-                "debug": false
+    ```json
+    {
+        "url": "https://YOUR_PROJECT_ID.appspot.com",
+        "fileStorage": false,
+        "mail": {},
+        "database": {
+            "client": "mysql",
+            "connection": {
+                "user": "YOUR_MYSQL_USERNAME",
+                "password": "YOUR_MYSQL_PASSWORD",
+                "database": "YOUR_MYSQL_DATABASE_NAME",
+                "charset": "utf8"
             },
-            "server": {
-                "host": "0.0.0.0",
-                "port": "8080"
+            "debug": false
+        },
+        "server": {
+            "host": "0.0.0.0",
+            "port": "8080"
+        },
+        "paths": {
+            "contentPath": "content/"
+        },
+        "logging": {
+            "level": "info",
+            "rotation": {
+                "enabled": true
             },
-            "paths": {
-                "contentPath": "content/"
-            },
-            "logging": {
-                "level": "info",
-                "rotation": {
-                    "enabled": true
-                },
-                "transports": ["file", "stdout"]
-            }
+            "transports": ["file", "stdout"]
         }
+    }
+    ```
 
     Here's some information about each setting:
 
@@ -233,28 +237,30 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
 
 1. Prepare for deployment. Create an `app.yaml` file with the following contents:
 
-        runtime: nodejs
-        env: flex
-        manual_scaling:
-          instances: 1
-        env_variables:
-          MYSQL_USER: YOUR_MYSQL_USER
-          MYSQL_PASSWORD: YOUR_MYSQL_PASSWORD
-          MYSQL_DATABASE: YOUR_MYSQL_DATABASE
-          # e.g. my-awesome-project:us-central1:my-cloud-sql-instance-name
-          INSTANCE_CONNECTION_NAME: YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME
-        beta_settings:
-          # The connection name of your instance on its Overview page in the Google
-          # Cloud Platform Console, or use `YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME`
-          cloud_sql_instances: YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME
-        skip_files:
-          - ^(.*/)?#.*#$
-          - ^(.*/)?.*~$
-          - ^(.*/)?.*\.py[co]$
-          - ^(.*/)?.*/RCS/.*$
-          - ^(.*/)?\..*$
-          - ^(.*/)?.*\.ts$
-          - ^(.*/)?config\.development\.json$
+    ```yaml
+    runtime: nodejs
+    env: flex
+    manual_scaling:
+      instances: 1
+    env_variables:
+      MYSQL_USER: YOUR_MYSQL_USER
+      MYSQL_PASSWORD: YOUR_MYSQL_PASSWORD
+      MYSQL_DATABASE: YOUR_MYSQL_DATABASE
+      # e.g. my-awesome-project:us-central1:my-cloud-sql-instance-name
+      INSTANCE_CONNECTION_NAME: YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME
+    beta_settings:
+      # The connection name of your instance on its Overview page in the Google
+      # Cloud Platform Console, or use `YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME`
+      cloud_sql_instances: YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME
+    skip_files:
+      - ^(.*/)?#.*#$
+      - ^(.*/)?.*~$
+      - ^(.*/)?.*\.py[co]$
+      - ^(.*/)?.*/RCS/.*$
+      - ^(.*/)?\..*$
+      - ^(.*/)?.*\.ts$
+      - ^(.*/)?config\.development\.json$
+    ```
 
     Here's some information about each setting:
 
@@ -270,36 +276,38 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
 
 1. Add `"socketPath": "/cloudsql/YOUR_INSTANCE_NAME"` in the connection properties section of your `config.production.json`, so you end up with:
 
-        {
-            "url": "http://YOUR_PROJECT_ID.appspot.com",
-            "fileStorage": false,
-            "mail": {},
-            "database": {
-                "client": "mysql",
-                "connection": {
-                    "socketPath": "/cloudsql/YOUR_INSTANCE_NAME",
-                    "user": YOUR_MYSQL_USERNAME,
-                    "password": YOUR_MYSQL_PASSWORD,
-                    "database": YOUR_MYSQL_DATABASE_NAME,
-                    "charset": "utf8"
-                },
-                "debug": false
+    ```json
+    {
+        "url": "http://YOUR_PROJECT_ID.appspot.com",
+        "fileStorage": false,
+        "mail": {},
+        "database": {
+            "client": "mysql",
+            "connection": {
+                "socketPath": "/cloudsql/YOUR_INSTANCE_NAME",
+                "user": YOUR_MYSQL_USERNAME,
+                "password": YOUR_MYSQL_PASSWORD,
+                "database": YOUR_MYSQL_DATABASE_NAME,
+                "charset": "utf8"
             },
-            "server": {
-                "host": "0.0.0.0",
-                "port": "8080"
+            "debug": false
+        },
+        "server": {
+            "host": "0.0.0.0",
+            "port": "8080"
+        },
+        "paths": {
+            "contentPath": "content/"
+        },
+        "logging": {
+            "level": "info",
+            "rotation": {
+                "enabled": true
             },
-            "paths": {
-                "contentPath": "content/"
-            },
-            "logging": {
-                "level": "info",
-                "rotation": {
-                    "enabled": true
-                },
-                "transports": ["file", "stdout"]
-            }
+            "transports": ["file", "stdout"]
         }
+    }
+    ```
 
 It's very important that you only do this step after migrating the database. The ```socketPath``` property is required to deploy on Google App Engine, but it causes ```knex-migrator``` to throw an error.
 

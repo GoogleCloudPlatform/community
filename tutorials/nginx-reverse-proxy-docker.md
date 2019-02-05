@@ -282,33 +282,35 @@ The proxy will also stop working. To resolve this,
     
     The final `docker-compose.yml` file will look something like this:
     
-        version: '2'
-        services:
+    ```yml
+    version: '2'
+    services:
 
-          db:
-            restart: always
-            image: my_database
-            networks:
-              - back
-
-          web:
-            restart: always
-            image: my_webserver
-            networks:
-              - reverse-proxy
-              - back
-            environment:
-              - VIRTUAL_PORT=1234
-              - VIRTUAL_HOST=c.example.com
-              - LETSENCRYPT_HOST=c.example.com
-              - LETSENCRYPT_EMAIL=webmaster@example.com
-      
+      db:
+        restart: always
+        image: my_database
         networks:
-          reverse-proxy:
-            external:
-              name: reverse-proxy
-          back:
-            driver: bridge
+          - back
+
+      web:
+        restart: always
+        image: my_webserver
+        networks:
+          - reverse-proxy
+          - back
+        environment:
+          - VIRTUAL_PORT=1234
+          - VIRTUAL_HOST=c.example.com
+          - LETSENCRYPT_HOST=c.example.com
+          - LETSENCRYPT_EMAIL=webmaster@example.com
+    
+    networks:
+      reverse-proxy:
+        external:
+          name: reverse-proxy
+      back:
+        driver: bridge
+    ```
 
 1.  Run the `docker-compose up -d` command to run your composed containers
     with the new configuration.
