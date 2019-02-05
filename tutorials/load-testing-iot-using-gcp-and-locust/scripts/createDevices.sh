@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Creates devices in a GCP IOT registry.
+# Creates devices in a GCP IoT registry.
 #
 # Usage:
 #   ./createDevices.sh MIN_SEQ MAX_SEQ
