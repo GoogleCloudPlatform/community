@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Deletes devices from a GCP IOT registry.
+# Deletes devices from a GCP IoT registry.
 #
 # Usage:
 #   ./createDevices.sh
