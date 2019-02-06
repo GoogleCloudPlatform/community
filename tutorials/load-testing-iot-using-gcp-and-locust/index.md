@@ -1,7 +1,7 @@
 ---
 title: Load testing an IoT application Using GCP and Locust
 description: Simulate the load from a population of devices to understand performance, scalability, and costs of GCP services.
-author: scchristopher
+author: csgcp
 tags: iot, functions, internet of things
 date_published: 2019-02-06
 ---
