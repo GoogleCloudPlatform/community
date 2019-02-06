@@ -27,9 +27,9 @@ To complete the steps in this tutorial, you need a GCP account. If you don't hav
 You also need the following on your local workstation:
 
 * clone of the [LTK repository](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/load-testing-iot-using-gcp-and-locust) 
-* gcloud (https://cloud.google.com/sdk/install)  
+* [gcloud](https://cloud.google.com/sdk/install)  
 * kubectl (`gcloud components install kubectl`)  
-* Docker Desktop (https://www.docker.com/get-started)  
+* [Docker Desktop](https://www.docker.com/get-started)  
 * the ability to run bash shell scripts  
 
 ## Costs
@@ -396,7 +396,7 @@ The suggested approach for cost evaluation is to do the following:
     determined by the worker pod's host name, which includes an ordinal (integer 1 to n) uniquely identifying
     the pod in the replica set. The ordinal is available because the podspec uses the StatefulSet pod type.
 
-## Re-cloning the repopository
+## Re-cloning the repository
 
 If you need to re-clone the repository to get a clean copy of the code, you can transfer the `.env` file and `devicelist.csv` to bring over the same environment settings and existing devices.
 
