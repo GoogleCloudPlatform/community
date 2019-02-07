@@ -274,6 +274,10 @@ Our application is a simple set of 2 microservices which communicate with each o
 What we want to especially observe here is that we retrieved our value for the URL related to our backend service via the ConfigMap, and also the port for that service.  Thus, no hardcoding in the java files, or copying values in multiple places.  The ConfigMap in our deployment file provided these values as global environment variables to any container running in that pod’s deployment.
 All your files are listed in the file explorer. You can switch from one to another by clicking a file in the list.
 
+### Cleanup
+
+To avoid incurring charges from GCP, the safest route is to simply delete the project containing the resources you've built.  I use this approach when I test out new concepts, and it's a solid way to not forget anything.  
+
 > You can see the logs in GCP Stackdriver Logging by setting the filter to "GKE Container, mycluster, default", and the applying a text filter of "text:"ConfigMap""
 ## Conclusion
 In this article we saw how to build a Gitlab.com pipeline for continuous delivery of a Java Spring microservices application into a Google Cloud Kubernetes engine.
