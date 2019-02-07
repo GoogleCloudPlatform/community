@@ -36,21 +36,22 @@ from laravel.com.
 
 1. Create an `app.yaml` file with the following contents:
 
-        runtime: php
-        env: flex
-
-        runtime_config:
-          document_root: public
-
-        # Ensure we skip ".env", which is only for local development
-        skip_files:
-          - .env
-
-        env_variables:
-          # Put production environment variables here.
-          APP_LOG: errorlog
-          APP_KEY: YOUR_APP_KEY
-          STORAGE_DIR: /tmp
+  ```yaml
+  runtime: php
+  env: flex
+  
+  runtime_config:
+    document_root: public
+  
+  # Ensure we skip ".env", which is only for local development
+  skip_files:
+    - .env
+  
+  env_variables:
+    # Put production environment variables here.
+    APP_LOG: errorlog
+    APP_KEY: YOUR_APP_KEY
+  ```
 
 1. Replace `YOUR_APP_KEY` in `app.yaml` with an application key you generate
   with the following command:
@@ -64,10 +65,12 @@ from laravel.com.
 
 1. Add the following under `scripts` in `composer.json`:
 
-        "post-install-cmd": [
-            "chmod -R 755 bootstrap\/cache",
-            "php artisan cache:clear"
-        ]
+    ```json
+    "post-install-cmd": [
+        "chmod -R 755 bootstrap\/cache",
+        "php artisan cache:clear"
+    ]
+    ```
 
     In the context of Laravel's `composer.json` file, it will look like this:
 
@@ -124,34 +127,35 @@ Laravel, you need to manually add the `DB_SOCKET` value to
 
 1. Modify your `app.yaml` file with the following contents:
 
-        runtime: php
-        env: flex
+    ```yaml
+    runtime: php
+    env: flex
 
-        runtime_config:
-          document_root: public
+    runtime_config:
+      document_root: public
 
-        # Ensure we skip ".env", which is only for local development
-        skip_files:
-          - .env
+    # Ensure we skip ".env", which is only for local development
+    skip_files:
+      - .env
 
-        env_variables:
-          # Put production environment variables here.
-          APP_LOG: errorlog
-          APP_KEY: YOUR_APP_KEY
-          STORAGE_DIR: /tmp
-          CACHE_DRIVER: database
-          SESSION_DRIVER: database
-          ## Set these environment variables according to your CloudSQL configuration.
-          DB_HOST: localhost
-          DB_DATABASE: laravel
-          DB_USERNAME: root
-          DB_PASSWORD: YOUR_DB_PASSWORD
-          DB_SOCKET: "/cloudsql/YOUR_CLOUDSQL_CONNECTION_NAME"
+    env_variables:
+      # Put production environment variables here.
+      APP_LOG: errorlog
+      APP_KEY: YOUR_APP_KEY
+      CACHE_DRIVER: database
+      SESSION_DRIVER: database
+      ## Set these environment variables according to your CloudSQL configuration.
+      DB_HOST: localhost
+      DB_DATABASE: laravel
+      DB_USERNAME: root
+      DB_PASSWORD: YOUR_DB_PASSWORD
+      DB_SOCKET: "/cloudsql/YOUR_CLOUDSQL_CONNECTION_NAME"
 
-        beta_settings:
-            # for Cloud SQL, set this value to the Cloud SQL connection name,
-            # e.g. "project:region:cloudsql-instance"
-            cloud_sql_instances: "YOUR_CLOUDSQL_CONNECTION_NAME"
+    beta_settings:
+        # for Cloud SQL, set this value to the Cloud SQL connection name,
+        # e.g. "project:region:cloudsql-instance"
+        cloud_sql_instances: "YOUR_CLOUDSQL_CONNECTION_NAME"
+    ```
 
 1. Replace each instance of `YOUR_DB_PASSWORD` and `YOUR_CLOUDSQL_CONNECTION_NAME`
    with the values you created for your Cloud SQL instance above.

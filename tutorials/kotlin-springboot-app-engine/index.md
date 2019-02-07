@@ -61,19 +61,21 @@ you can [download](https://github.com/jetbrains/gcp-samples) the sample applicat
 
 3. Open the resulting project in your favourite IDE or editor and create a new source file named `MessageController.kt` with the following contents:
 
-        package com.jetbrains.demo
+    ```kt
+    package com.jetbrains.demo
 
-        import org.springframework.web.bind.annotation.*
+    import org.springframework.web.bind.annotation.*
 
-        data class Message(val text: String, val priority: String)
+    data class Message(val text: String, val priority: String)
 
-        @RestController
-        class MessageController {
-            @RequestMapping("/message")
-            fun message(): Message {
-                return Message("Hello from Google Cloud", "High")
-            }
+    @RestController
+    class MessageController {
+        @RequestMapping("/message")
+        fun message(): Message {
+            return Message("Hello from Google Cloud", "High")
         }
+    }
+    ```
 
 The package should match that of your group and artifact name.
 
@@ -86,10 +88,12 @@ The package should match that of your group and artifact name.
 
 6. Open the browser and make sure you get a valid JSON response when accessing http://localhost:8080/message. The result should be:
 
-        {
-          "text": "Hello from Google Cloud",
-          "priority": "High"
-        }
+    ```json
+    {
+        "text": "Hello from Google Cloud",
+        "priority": "High"
+    }
+    ```
 
 ## Deploy your application
 
@@ -99,11 +103,12 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
 
 1.  Create a file called `app.yaml` in a new folder `src/main/appengine` with the following contents:
 
-        runtime: java
-        env: flex
-        runtime_config:
-          jdk: openjdk8
-
+    ```yaml
+    runtime: java
+    env: flex
+    runtime_config:
+      jdk: openjdk8
+    ```
 
     By specifying `runtime: java`, the runtime image `gcr.io/google-appenine/openjdk:8` is automatically selected
     when you deploy a JAR (*.jar) file. The JDK version is also selected using the `jdk` field.

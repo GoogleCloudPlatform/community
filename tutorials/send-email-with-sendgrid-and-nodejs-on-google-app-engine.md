@@ -40,59 +40,61 @@ Platform.
 
 1. Create a `server.js` file with the following contents:
 
-        'use strict';
+    ```js
+    'use strict';
 
-        const express = require('express');
-        const path = require('path');
-        const bodyParser = require('body-parser');
+    const express = require('express');
+    const path = require('path');
+    const bodyParser = require('body-parser');
 
-        const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-        const SENDGRID_SENDER = process.env.SENDGRID_SENDER;
-        const Sendgrid = require('sendgrid')(SENDGRID_API_KEY);
+    const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+    const SENDGRID_SENDER = process.env.SENDGRID_SENDER;
+    const Sendgrid = require('sendgrid')(SENDGRID_API_KEY);
 
-        const app = express();
+    const app = express();
 
-        // Setup view engine
-        app.set('views', path.join(__dirname, 'views'));
-        app.set('view engine', 'pug');
+    // Setup view engine
+    app.set('views', path.join(__dirname, 'views'));
+    app.set('view engine', 'pug');
 
-        // Parse form data
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: false }));
+    // Parse form data
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false }));
 
-        app.get('/', (req, res) => res.render('index'));
+    app.get('/', (req, res) => res.render('index'));
 
-        app.post('/hello', (req, res, next) => {
-          const sgReq = Sendgrid.emptyRequest({
-            method: 'POST',
-            path: '/v3/mail/send',
-            body: {
-              personalizations: [{
-                to: [{ email: req.body.email }],
-                subject: 'Hello World!'
-              }],
-              from: { email: SENDGRID_SENDER },
-              content: [{
-                type: 'text/plain',
-                value: 'Sendgrid on Google App Engine with Node.js.'
-              }]
-            }
-          });
+    app.post('/hello', (req, res, next) => {
+      const sgReq = Sendgrid.emptyRequest({
+        method: 'POST',
+        path: '/v3/mail/send',
+        body: {
+          personalizations: [{
+            to: [{ email: req.body.email }],
+            subject: 'Hello World!'
+          }],
+          from: { email: SENDGRID_SENDER },
+          content: [{
+            type: 'text/plain',
+            value: 'Sendgrid on Google App Engine with Node.js.'
+          }]
+        }
+      });
 
-          Sendgrid.API(sgReq, (err) => {
-            if (err) {
-              next(err);
-              return;
-            }
-            // Render the index route on success
-            res.render('index', {
-              sent: true
-            });
-            return;
-          });
+      Sendgrid.API(sgReq, (err) => {
+        if (err) {
+          next(err);
+          return;
+        }
+        // Render the index route on success
+        res.render('index', {
+          sent: true
         });
+        return;
+      });
+    });
 
-        app.listen(process.env.PORT || 8080);
+    app.listen(process.env.PORT || 8080);
+    ```
 
 1. Create a directory named `views`:
 
@@ -101,20 +103,22 @@ Platform.
 1. Create a file named `index.pug` inside the `views` directory with the
 following contents:
 
-        doctype html
-        html
-          head
-            title= title
-          body
-            h1 Hello World!
-            p Express.js + Sendgrid on Google App Engine.
-            hr
-            if sent
-              p Email sent!
-            else
-              form(name="hello", action="/hello", method="post")
-                input(type="email", placeholder="Enter your email to send yourself a Hello World message", name="email", style="width: 50%; margin-right: 15px;")
-                input(type="submit", value="Send")
+    ```pug
+    doctype html
+    html
+      head
+        title= title
+      body
+        h1 Hello World!
+        p Express.js + Sendgrid on Google App Engine.
+        hr
+        if sent
+          p Email sent!
+        else
+          form(name="hello", action="/hello", method="post")
+            input(type="email", placeholder="Enter your email to send yourself a Hello World message", name="email", style="width: 50%; margin-right: 15px;")
+            input(type="submit", value="Send")
+      ```
 
 ## Run
 
@@ -128,11 +132,13 @@ following contents:
 
 1. Create an `app.yaml` file with the following contents:
 
-        runtime: nodejs
-        env: flex
-        env_variables:
-          SENDGRID_SENDER: your-sendgrid-sender-email
-          SENDGRID_API_KEY: your-sendgrid-api-key
+    ```yaml
+    runtime: nodejs
+    env: flex
+    env_variables:
+      SENDGRID_SENDER: your-sendgrid-sender-email
+      SENDGRID_API_KEY: your-sendgrid-api-key
+    ```
 
     The `app.yaml` makes the app deployable to Google App Engine Managed VMs.
 
