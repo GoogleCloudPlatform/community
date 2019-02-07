@@ -22,13 +22,13 @@ can manage and interact with resources on Google Cloud, and you don't need to le
 If you haven't yet, be sure that you have [installed gcloud](https://cloud.google.com/sdk/install)
 on your machine to interact with Google Cloud. You can next proceed by either creating a new project, or using an already existing one.
 
-## Project Setup
+## Environment Setup
 
 The first sections here will help you to set up your project and working space.
 This really only needs to be done once. If you already have done these steps,
 you can source your env.sh and move on to creating [Singularity Builds](#singulrity-build)
 
-### Step 1: Project environment variables
+### 1. Set required environment variables
 
 For this first step, you need to define some important variables.
 Edit the file env.sh and replace
@@ -72,10 +72,10 @@ $ source ./env.sh
 ```
 
 
-### Step 2: (Optional) Project Creation
+### 2. (Optional) Project Creation
 
 If you defined a new project in the step above, you need to use the gcloud
-command to create it. Otherwise, skip over this step. Nothing to see here, folks.
+command to create it.
 
 ```bash
 $ gcloud projects create $PROJECT --organization=$ORG
@@ -87,7 +87,7 @@ $ gcloud beta billing projects link $PROJECT --billing-account=$(gcloud beta bil
 $ gcloud config configurations create -- activate $PROJECT
 ```
 
-### Step 3: Enable APIs and Set Project
+### 3. Enable APIs and Set Project
 
 Once you've created the project, it's good to ensure it's the active one.
 
@@ -112,17 +112,18 @@ a container. Specifically, the first step is *not* actually building the contain
 - it's basically defining the builder we will use in future steps (with build recipes).
 Once we have this custom build step defined, then we can use it against a Singularity recipe to build a container and send it to Google Storage. In summary:
 
- - builder.yaml will create our builder
+ - builder.yaml will create the Singularity builder
  - cloudbuild.yaml will run a cloud build
 
 Let's go!
 
 ### Step 1. Create a Singularity builder
 
-Cloud Build supports the definition and use of *custom build steps* to extend the range of tasks it can handle. We create our builder via a custom build step, and can
+Cloud Build supports the definition and use of _custom build steps_ to extend the range of tasks it can handle. You create the builder via a custom build step, and can
+
 do this with two files in the ```singularity-buildstep``` directory.
 
-* ```builder.yaml``` is the recipe to create our Cloud Builder. Specifically, it's a configuration file you will submit to build the custom build step
+* ```builder.yaml``` is the recipe to create the Singularity builder. Specifically, it's a configuration file you will submit to build the custom build step
 * ```Dockerfile``` contains the steps required to download and build Singularity in a ```go``` container
 
 First, change directory to see these files:
@@ -162,7 +163,7 @@ to install the most uptodate version.
 ### Step 2: Create a Bucket
 
 Before you build a container, you need a place to put it! Let's create a bucket
-just for storing our cloud builds. We can use the gcloud util to do this as
+just for storing our cloud builds. You can use the gcloud util to do this as
 follows (make sure your $PROJECT environment variable is still sourced from
 env.sh):
 
@@ -175,7 +176,7 @@ $ gsutil mb gs://${PROJECT}-singularity
 
 Singularity uses a [Singularity Definition File](https://github.com/sylabs/singularity-userdocs/blob/master/definition_files.rst) as a blueprint for building a container. The definition file 
 contains a number of sections which control how the ```singularity build```
-command constructs a container. Let's go back up one directory to look at [julia.def](../julia.def)
+command constructs a container. Go back up one directory to look at [julia.def](../julia.def)
 
 ```bash
 $ cd ..
