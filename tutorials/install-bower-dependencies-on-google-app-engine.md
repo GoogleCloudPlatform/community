@@ -10,7 +10,7 @@ date_published: 2016-05-20
 "[Bower][bower]: A package manager for the web." – bower.io
 
 If you're using Bower to install web dependencies for your app and you're
-deploying your app to App Engine Flexible environment, then there are
+deploying your app to App Engine flexible environment, then there are
 several ways to make sure the dependencies are available to your deployed app.
 This tutorial discusses three different methods.
 
@@ -36,7 +36,7 @@ This tutorial discusses three different methods.
 
 ## Easiest: Do nothing
 
-When you deploy to App Engine Flexible enviroment a Docker image is created for
+When you deploy to App Engine flexible enviroment a Docker image is created for
 you and your code is copied into the image. This first method relies on the
 Docker image build step to make Bower dependencies available to your app. This
 method is the easiest.
