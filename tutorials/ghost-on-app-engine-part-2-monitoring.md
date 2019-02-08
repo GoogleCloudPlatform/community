@@ -1,12 +1,13 @@
 ---
-title: Monitoring Ghost on App Engine Flexible Environment - Part 2
-description: Learn how to monitor a Ghost blog running on Google App Engine flexible environment.
+title: Monitoring Ghost on App Engine flexible environment - part 2
+description: Learn how to monitor a Ghost blog running on App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Ghost, Node.js, Stackdriver
 date_published: 2016-05-26
 ---
+
 This tutorial explains how to monitor a [Ghost blog][ghost] deployed on
-[Google App Engine Flexible Environment][flex].
+[App Engine flexible environment][flex].
 
 ## Objectives
 
@@ -22,8 +23,8 @@ Complete the tutorial [Ghost on App Engine Part 1 - Deploying][deploying].
 
 Monitoring is powered by [Stackdriver Monitoring][monitoring].
 
-You don't have to install the monitoring agent on Google App Engine Flexible
-Environment because Stackdriver monitoring support is built-in.
+You don't have to install the monitoring agent on App Engine flexible
+environment because Stackdriver monitoring support is built-in.
 
 You can [view the monitoring dashboard][mon_dash] for your Ghost blog in the
 Google Stackdriver Console.
@@ -59,46 +60,41 @@ To begin tracing what goes on in your Ghost blog you must import the
 
 ### Enable Trace
 
-1. To install the `@google-cloud/trace-agent` module during deployment, edit the
-`package.json` file and add a `postinstall` script:
+1.  To install the `@google-cloud/trace-agent` module during deployment, edit the `package.json` file and add a `postinstall` script:
 
-    ```json
-    "scripts": {
-      "preinstall": "...",
-      "postinstall": "npm install @google-cloud/trace-agent",
-      "start": "...",
-      "test": "..."
-    }
-    ```
-
+        "scripts": {
+          "preinstall": "...",
+          "postinstall": "npm install @google-cloud/trace-agent",
+          "start": "...",
+          "test": "..."
+        }
+  
     We use a `postinstall` script because it allows us to avoid messing with
     Ghost's `npm-shrinkwrap.json` file.
 
-1. Create a `trace.js` file with the following contents:
+1.  Create a `trace.js` file with the following contents:
 
-    ```js
-    if (process.env.NODE_ENV === 'production') {
-      require('@google-cloud/trace-agent').start({
-        enhancedDatabaseReporting: true
-      });
-    }
-    ```
-
-1. To start Stackdriver Trace when the deployed application starts, the
-`@google-cloud/trace-agent` module must be imported as the very first thing the
-application does. Add the following to the _very first line_ of `index.js`:
+        if (process.env.NODE_ENV === 'production') {
+          require('@google-cloud/trace-agent').start({
+            enhancedDatabaseReporting: true
+          });
+        }
+ 
+1.  To start Stackdriver Trace when the deployed application starts, the `@google-cloud/trace-agent` module
+    must be imported as the very first thing the application does. Add the following to
+    the _very first line_ of `index.js`:
 
         require('./trace');
 
     The application will now use Stackdriver Trace when it is deployed to App
     Engine.
 
-1. Re-deploy the application:
+1.  Re-deploy the application:
 
         gcloud app deploy
 
-1. After a few minutes, activity in your application causes traces to appear in
-the [Trace Dashboard][trace_dashboard].
+1.  After a few minutes, activity in your application causes traces to appear in
+    the [Trace Dashboard][trace_dashboard].
 
 [trace_dashboard]: https://console.cloud.google.com/traces/traces
 
@@ -113,77 +109,71 @@ use the [winston][winston] library to write the logs to the right location.
 
 ### Enable Error Reporting
 
-1. To install the `winston` module during deployment, edit the `package.json`
-file and add `winston` to the `postinstall` script you added earlier:
+1.  To install the `winston` module during deployment, edit the `package.json` file
+    and add `winston` to the `postinstall` script you added earlier:
 
-    ```json
-    "scripts": {
-      "preinstall": "...",
-      "postinstall": "npm install @google-cloud/trace-agent winston",
-      "start": "...",
-      "test": "..."
-    }
-    ```
-
-1. Create an `errorreporting.js` file with the following contents:
-
-    ```js
-    var logFile = '/var/log/app_engine/custom_logs/ghost.errors.log.json';
-    var winston = require('winston');
-
-    winston.add(winston.transports.File, {
-      filename: logFile
-    });
-
-    function report (err, req) {
-      var payload = {
-        serviceContext: {
-          service: 'ghost'
-        },
-        message: err ? err.stack : '',
-        context: {
-          httpRequest: {
-            url: req.originalUrl,
-            method: req.method,
-            referrer: req.header('Referer'),
-            userAgent: req.header('User-Agent'),
-            remoteIp: req.ip,
-            responseStatusCode: 500
-          }
+        "scripts": {
+          "preinstall": "...",
+          "postinstall": "npm install @google-cloud/trace-agent winston",
+          "start": "...",
+          "test": "..."
         }
-      };
-      winston.error(payload);
-    }
 
-    function skip (req, res) {
-      if (res.statusCode >= 400) {
-        report(null, req);
-      }
-      return false
-    }
+1.  Create an `errorreporting.js` file with the following contents:
 
-    exports.logging = {
-      skip: skip
-    };
-    ```
+        var logFile = '/var/log/app_engine/custom_logs/ghost.errors.log.json';
+        var winston = require('winston');
 
-1. To start collecting errors when the deployed application starts, the error
-reporting code needs to be added to the Express application. Add the following
-`logging` setting to `config.json`:
+        winston.add(winston.transports.File, {
+          filename: logFile
+        });
 
-    ```js
-    production: {
-      // Other settings hidden
+        function report (err, req) {
+          var payload = {
+            serviceContext: {
+              service: 'ghost'
+            },
+            message: err ? err.stack : '',
+            context: {
+              httpRequest: {
+                url: req.originalUrl,
+                method: req.method,
+                referrer: req.header('Referer'),
+                userAgent: req.header('User-Agent'),
+                remoteIp: req.ip,
+                responseStatusCode: 500
+              }
+            }
+          };
+          winston.error(payload);
+        }
 
-      logging: require('./errorreporting').logging
-    }
-    ```
+        function skip (req, res) {
+          if (res.statusCode >= 400) {
+            report(null, req);
+          }
+          return false
+        }
 
-1. Re-deploy the application:
+        exports.logging = {
+          skip: skip
+        };
+
+1.  To start collecting errors when the deployed application starts, the error
+    reporting code needs to be added to the Express application. Add the following
+    `logging` setting to `config.json`:
+
+        production: {
+          // Other settings hidden
+
+          logging: require('./errorreporting').logging
+        }
+  
+1.  Re-deploy the application:
 
         gcloud app deploy
 
-1. Any request errors will now be reported in the [Error Reporting Dashboard][error_dashboard].
+1.  Any request errors will now be reported in the [Error Reporting Dashboard][error_dashboard].
 
 [errorreporting]: https://cloud.google.com/error-reporting/
 [error_dashboard]: https://console.cloud.google.com/errors
@@ -195,46 +185,40 @@ Debugging your Ghost blog is powered by [Stackdriver Debugger][debugger].
 To make Stackdriver Debugger available to your Ghost blog you must import the
 [Node.js debugger agent][debugger_agent] into the application.
 
-### Enable Debugger
+### Enable Stackdriver Debugger
 
-1. To install the `@google-cloud/debug-agent` module during deployment, edit the
-`package.json` file and add `@google-cloud/debug-agent` to the `postinstall` script
-you added earlier:
+1.  To install the `@google-cloud/debug-agent` module during deployment, edit the
+    `package.json` file and add `@google-cloud/debug-agent` to the `postinstall` script
+    you added earlier:
 
-    ```json
-    "scripts": {
-      "preinstall": "...",
-      "postinstall": "npm install @google/cloud-trace winston @google-cloud/debug-agent",
-      "start": "...",
-      "test": "..."
-    }
-    ```
+        "scripts": {
+          "preinstall": "...",
+          "postinstall": "npm install @google/cloud-trace winston @google-cloud/debug-agent",
+          "start": "...",
+          "test": "..."
+        }
+ 
+1.  Create a `debug.js` file with the following contents:
 
-1. Create a `debug.js` file with the following contents:
+        if (process.env.NODE_ENV === 'production') {
+          require('@google-cloud/debug-agent').start();
+        }
 
-    ```js
-    if (process.env.NODE_ENV === 'production') {
-      require('@google-cloud/debug-agent').start();
-    }
-    ```
+1.  To make Stackdriver Debugger available to the deployed application, the
+    `@google-cloud/debug-agent` module must be imported as the second thing the
+    application does (right after where Trace is imported). Add the following to the
+    top of `index.js` after `require('./trace');`:
 
-1. To make Stackdriver Debugger available to the deployed application, the
-`@google-cloud/debug-agent` module must be imported as the second thing the
-application does (right after where Trace is imported). Add the following to the
-top of `index.js` after `require('./trace');`:
-
-    ```js
-    require('./debug');
-    ```
-
+        require('./debug');
+ 
     The application will now be able to use Stackdriver Debugger when it is
     deployed to App Engine.
 
-1. Re-deploy the application:
+1.  Re-deploy the application:
 
         gcloud app deploy
 
-1. You can debug the application using the [Stackdriver Debugger Dashboard][debugger_dashboard].
+1.  You can debug the application using the [Stackdriver Debugger Dashboard][debugger_dashboard].
 
 [debugger]: https://cloud.google.com/debugger/
 [debugger_agent]: https://github.com/GoogleCloudPlatform/cloud-debug-nodejs
