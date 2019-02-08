@@ -1,5 +1,5 @@
 ---
-title: Run Laravel on Google App Engine Flexible Environment
+title: Run Laravel on Google App Engine flexible environment
 description: Learn how to deploy a Laravel app to Google App Engine flexible environment.
 author: bshaffer
 tags: App Engine, Laravel, PHP
