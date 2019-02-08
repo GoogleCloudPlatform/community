@@ -71,7 +71,7 @@ Create a `server.js` file with the following contents:
         runtime: nodejs
         env: flex
 
-1.  Run the following command to deploy your app:
+1.  Deploy your app:
 
         gcloud app deploy
 
