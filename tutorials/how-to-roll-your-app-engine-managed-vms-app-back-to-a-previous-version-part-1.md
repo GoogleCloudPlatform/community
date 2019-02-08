@@ -86,7 +86,7 @@ Now view the deployed app at `http://[YOUR_PROJECT_ID].appspot.com/`.
 
 We didn't specify a version with the `--version` flag, so one was generated
 automatically. The generated version might look something like `20151005t21174`.
-To see the generated version go this address:
+To see the generated version go to this address:
 
 `https://console.developers.google.com/appengine/versions?project=[YOUR_PROJECT_ID]`
 
