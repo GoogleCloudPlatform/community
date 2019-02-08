@@ -8,7 +8,7 @@ date_published: 2015-12-18
 
 ## Disaster scenario
 
-You've deployed an app using Google App Engine flexible environment, and things
+You've deployed an app using App Engine flexible environment, and things
 are going great. You make some change to your app and re-deploy, only to
 discover that something broke! You forgot a semicolon and now your users are
 upset. What do you do?
