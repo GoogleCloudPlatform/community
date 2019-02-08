@@ -1,13 +1,13 @@
 ---
 title: Monitoring Ghost on App Engine flexible environment - part 2
-description: Learn how to monitor a Ghost blog running on Google App Engine flexible environment.
+description: Learn how to monitor a Ghost blog running on App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Ghost, Node.js, Stackdriver
 date_published: 2016-05-26
 ---
 
 This tutorial explains how to monitor a [Ghost blog][ghost] deployed on
-[Google App Engine flexible environment][flex].
+[App Engine flexible environment][flex].
 
 ## Objectives
 
@@ -23,8 +23,8 @@ Complete the tutorial [Ghost on App Engine Part 1 - Deploying][deploying].
 
 Monitoring is powered by [Stackdriver Monitoring][monitoring].
 
-You don't have to install the monitoring agent on Google App Engine Flexible
-Environment because Stackdriver monitoring support is built-in.
+You don't have to install the monitoring agent on App Engine flexible
+environment because Stackdriver monitoring support is built-in.
 
 You can [view the monitoring dashboard][mon_dash] for your Ghost blog in the
 Google Stackdriver Console.
@@ -185,7 +185,7 @@ Debugging your Ghost blog is powered by [Stackdriver Debugger][debugger].
 To make Stackdriver Debugger available to your Ghost blog you must import the
 [Node.js debugger agent][debugger_agent] into the application.
 
-### Enable Debugger
+### Enable Stackdriver Debugger
 
 1.  To install the `@google-cloud/debug-agent` module during deployment, edit the
     `package.json` file and add `@google-cloud/debug-agent` to the `postinstall` script
