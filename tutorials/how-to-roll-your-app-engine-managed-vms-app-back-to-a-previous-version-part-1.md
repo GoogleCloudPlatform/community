@@ -73,7 +73,7 @@ Now create a file named `package.json` with the following contents:
     }
 
 Assuming you've created a project in the Google Cloud Platform Developers
-Console and installed the gcloud sdk locally, you should be ready to deploy.
+Console and installed the Cloud SDK locally, you should be ready to deploy.
 
 Run the following command to deploy:
 
