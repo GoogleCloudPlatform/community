@@ -1,5 +1,5 @@
 ---
-title: Run Meteor on Google App Engine Flexible Environment
+title: Run Meteor on App Engine flexible environment
 description: Learn how to deploy a Meteor app to App Engine flexible environment.
 author: anassri
 tags: App Engine, Meteor, Node.js
@@ -20,7 +20,7 @@ Platform.
 
 1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1. Install the [Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Prepare
 
@@ -116,7 +116,7 @@ Platform.
 1. Visit [http://localhost:3000](http://localhost:3000) to see the
 `Welcome to Meteor!` message.
 
-    When you're done, use CTRL-C to exit Meteor.
+    When you're done, use `CTRL+C` to exit Meteor.
 
 ## Deploy
 
@@ -131,7 +131,7 @@ Platform.
   
 
     These scripts provide you with some tasks that prepare the app for
-    deployment to Google App Engine flexible environment. See
+    deployment to the App Engine flexible environment. See
     [Custom deployment][custom] for more information about custom Meteor
     deployments.
 
@@ -171,3 +171,4 @@ seconds.
 
 [deploy-mongodb]: https://cloud.google.com/nodejs/getting-started/deploy-mongodb
 [custom]: https://guide.meteor.com/deployment.html#custom-deployment
+[nodejs-gcp]: https://cloud.google.com/nodejs/
