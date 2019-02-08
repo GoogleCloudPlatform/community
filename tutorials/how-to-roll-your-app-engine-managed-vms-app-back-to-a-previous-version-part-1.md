@@ -1,13 +1,14 @@
 ---
-title: How to Roll Your App Engine Flexible Environment App Back to a Previous Version
+title: How to roll your App Engine flexible environment app back to a previous version
 description: Learn how to utilize versions and rollbacks in App Engine flexible environment.
 author: jmdobry
 tags: App Engine
 date_published: 2015-12-18
 ---
+
 ## Disaster scenario
 
-You've deployed an app using Google App Engine flexible environment, and things
+You've deployed an app using App Engine flexible environment, and things
 are going great. You make some change to your app and re-deploy, only to
 discover that something broke! You forgot a semicolon and now your users are
 upset. What do you do?
@@ -37,7 +38,6 @@ For this tutorial we'll make a tiny Hello World Node.js app and deploy it.
 
 Create a file named `server.js` with the following contents:
 
-    ```js
     const http = require('http');
 
     const hostname = '127.0.0.1';
@@ -49,7 +49,6 @@ Create a file named `server.js` with the following contents:
     }).listen(port, hostname, () => {
       console.log(`Server running at http://${hostname}:${port}/`);
     });
-    ```
 
 Let's test it to make sure it works:
 
@@ -67,16 +66,14 @@ Create a file named `app.yaml` with the following contents:
 
 This configuration file tells App Engine how to run our app.
 
-Now create a file named `package.json with the following contents:
+Now create a file named `package.json` with the following contents:
 
-```json
-{
-    "name": "sample-app"
-}
-```
+    {
+        "name": "sample-app"
+    }
 
 Assuming you've created a project in the Google Cloud Platform Developers
-Console and installed the gcloud sdk locally, you should be ready to deploy.
+Console and installed the Cloud SDK locally, you should be ready to deploy.
 
 Run the following command to deploy:
 
@@ -89,17 +86,17 @@ Now view the deployed app at `http://[YOUR_PROJECT_ID].appspot.com/`.
 
 We didn't specify a version with the `--version` flag, so one was generated
 automatically. The generated version might look something like `20151005t21174`.
-To see the generated version go to:
+To see the generated version go to this address:
 
-    https://console.developers.google.com/appengine/versions?project=[YOUR_PROJECT_ID]
+`https://console.developers.google.com/appengine/versions?project=[YOUR_PROJECT_ID]`
 
 There you'll see a list of all deployed versions of your app. The version with
 the `(default)` tag next to it is the version that is currently receiving
 traffic. You can view any other deployed version at the following url:
 
-    http://VERSION-dot-[YOUR_PROJECT_ID].appspot.com/
+`http://VERSION-dot-[YOUR_PROJECT_ID].appspot.com/`
 
-## Broken deploy
+## Broken deployment
 
 Since we've only deployed once you probably only see one version. Let's deploy
 again to see another version, but before we deploy let's introduce a bug into
