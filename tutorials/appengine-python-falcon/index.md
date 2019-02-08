@@ -1,10 +1,11 @@
 ---
-title: Falcon API on App Engine Standard Environment
-description: Learn how to build a Falcon API in the Google App Engine standard environment.
+title: Falcon API on App Engine standard environment
+description: Learn how to build a Falcon API in the App Engine standard environment.
 author: archelogos
 tags: App Engine, Python, Falcon, API
 date_published: 2017-04-27
 ---
+
 This tutorial shows how to build a Python API with [Falcon][falcon].
 
 Falcon is a high-performance Python framework for building cloud APIs. It follows the REST architectural style, and tries to do as little as possible while remaining highly effective.
