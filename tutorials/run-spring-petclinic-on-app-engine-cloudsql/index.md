@@ -1,6 +1,6 @@
 ---
-title: Run Spring Pet Clinic with Cloud SQL on Google App Engine Flexible Environment
-description: Learn how to deploy Spring Boot Pet Clinic application to Google App Engine flexible environment and use Cloud SQL.
+title: Run Spring Pet Clinic with Cloud SQL on App Engine flexible environment
+description: Learn how to deploy Spring Boot Pet Clinic application to App Engine flexible environment and use Cloud SQL.
 author: jabubake
 tags: App Engine, Cloud SQL, Spring Boot, Java
 date_published: 2017-05-12
@@ -167,17 +167,15 @@ https://YOUR_PROJECT_ID.appspot.com.
 1.  Create an `app.yaml` under `src/main/appengine` with the following contents.
     For more on configuring `app.yaml`, refer to [this resource][yaml]:
 
-    ```yaml
-    runtime: java
-    env: flex
+        runtime: java
+        env: flex
 
-    resources:
-      memory_gb: 2.3
+        resources:
+          memory_gb: 2.3
 
-    handlers:
-      - url: /.*
-        script: this field is required, but ignored
-    ```
+        handlers:
+          - url: /.*
+            script: this field is required, but ignored
 
     Optionally, you can use the sample [`app.yaml`][app-yaml].
 
