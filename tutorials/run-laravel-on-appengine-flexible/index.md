@@ -36,20 +36,20 @@ from laravel.com.
 
 1.  Create an `app.yaml` file with the following contents:
 
-      runtime: php
-      env: flex
+        runtime: php
+        env: flex
   
-      runtime_config:
-        document_root: public
+        runtime_config:
+          document_root: public
   
-      # Ensure we skip ".env", which is only for local development
-      skip_files:
-        - .env
+        # Ensure we skip ".env", which is only for local development
+        skip_files:
+          - .env
   
-      env_variables:
-        # Put production environment variables here.
-        APP_LOG: errorlog
-        APP_KEY: YOUR_APP_KEY
+        env_variables:
+          # Put production environment variables here.
+          APP_LOG: errorlog
+          APP_KEY: YOUR_APP_KEY
 
 1.  Replace `YOUR_APP_KEY` in `app.yaml` with an application key you generate
     with the following command:
