@@ -81,7 +81,7 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         // Start server on 8080 (default)
         drop.run()
 
-1.  Create a route to handle App Engine health-check requests" (per the [custom runtime docs][custom-runtime]):
+1.  Create a route to handle App Engine health-check requests (per the [custom runtime docs][custom-runtime]):
 
         // Respond to App Engine health check requests
         drop.get("/_ah/health") { request in
