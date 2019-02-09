@@ -1,5 +1,5 @@
 ---
-title: Running an NGINX Reverse Proxy with Docker and Let's Encrypt on Google Compute Engine
+title: Running an NGINX Reverse Proxy with Docker and Let's Encrypt on Compute Engine
 description: Learn to serve multiple websites simultaneously in a single Compute Engine instance with Docker and NGINX. Also, learn how to secure the sites with Let's Encrypt.
 author: tswast
 tags: Compute Engine, NGINX, Docker, Let's Encrypt
