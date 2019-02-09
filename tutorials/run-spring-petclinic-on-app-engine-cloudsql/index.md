@@ -1,6 +1,6 @@
 ---
 title: Run Spring Pet Clinic with Cloud SQL on App Engine flexible environment
-description: Learn how to deploy Spring Boot Pet Clinic application to App Engine flexible environment and use Cloud SQL.
+description: Learn how to deploy Spring Boot Pet Clinic application to the App Engine flexible environment and use Cloud SQL.
 author: jabubake
 tags: App Engine, Cloud SQL, Spring Boot, Java
 date_published: 2017-05-12
