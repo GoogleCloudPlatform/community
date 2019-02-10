@@ -5,6 +5,7 @@ author: tswast
 tags: BigQuery, Excel, ODBC
 date_published: 2017-01-26
 ---
+
 [Google BigQuery](https://cloud.google.com/bigquery/) enables [standard SQL
 queries](https://cloud.google.com/bigquery/docs/reference/standard-sql/) to
 [petabytes of data](https://youtu.be/6Nv18xmJirs). But what if software you
@@ -94,21 +95,19 @@ Once the ODBC driver is configured, open Excel.
     As an example, query the [USA names public dataset](https://cloud.google.com/bigquery/public-data/usa-names)
     for the most popular names during the [baby boomer generation](https://wikipedia.org/wiki/Baby_boomers).
 
-    ```sql
-    #standardSQL
-    SELECT
-      name, SUM(number) as total_number
-    FROM
-      `bigquery-public-data.usa_names.usa_1910_2013`
-    WHERE
-      year >= 1946
-      AND year <= 1964
-    GROUP BY
-      name
-    ORDER BY
-      total_number
-    DESC
-    ```
+        #standardSQL
+        SELECT
+          name, SUM(number) as total_number
+        FROM
+          `bigquery-public-data.usa_names.usa_1910_2013`
+        WHERE
+          year >= 1946
+          AND year <= 1964
+        GROUP BY
+          name
+        ORDER BY
+          total_number
+        DESC
 
 1. Click **OK**. When the query completes, you will have a new sheet with about 7,400 rows.
 
