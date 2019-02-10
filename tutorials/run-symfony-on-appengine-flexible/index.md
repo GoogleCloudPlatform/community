@@ -76,7 +76,6 @@ Welcome page.
 
 1.  Visit `http://YOUR_PROJECT_ID.appspot.com` to see the Symfony welcome page!
 
-    ![Symfony welcome page][symfony-welcome]
 
 ## Connect to CloudSQL with Doctrine
 
