@@ -1,5 +1,5 @@
 ---
-title: How to Use Cloud Pub/Sub notifications and Cloud Storage with App Engine
+title: Use Cloud Pub/Sub notifications and Cloud Storage with App Engine
 description: Create a shared photo album using Google Cloud Pub/Sub, Google Cloud Storage, Google Cloud Datastore, and Google App Engine.
 author: ggchien
 tags: App Engine, Cloud PubSub, Cloud Storage, Cloud Datastore
