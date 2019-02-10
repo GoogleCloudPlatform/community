@@ -78,21 +78,19 @@ you already have an app to deploy, you can use it instead.
 3.  Open the resulting project in your favourite IDE or editor and create a new
     source file named `MessageController.kt` with the following contents:
 
-    ```kt
-    package com.jetbrains.demo
+        package com.jetbrains.demo
 
-    import org.springframework.web.bind.annotation.*
+        import org.springframework.web.bind.annotation.*
 
-    data class Message(val text: String, val priority: String)
+        data class Message(val text: String, val priority: String)
 
-    @RestController
-    class MessageController {
-        @RequestMapping("/message")
-        fun message(): Message {
-            return Message("Hello from Google Cloud", "High")
+        @RestController
+        class MessageController {
+            @RequestMapping("/message")
+            fun message(): Message {
+                return Message("Hello from Google Cloud", "High")
+            }
         }
-    }
-    ```
 
 The package should match that of your group and artifact name.
 
@@ -111,12 +109,10 @@ The package should match that of your group and artifact name.
 6.  Open the browser and make sure your get a valid JSON response when accessing
     http://localhost:8080/message. The result should be:
 
-    ```json
-    {
-        "text": "Hello from Google Cloud",
-        "priority": "High"
-    }
-    ```
+        {
+            "text": "Hello from Google Cloud",
+            "priority": "High"
+        }
 
 ## Dockerizing your application
 
@@ -135,16 +131,14 @@ If you are experienced with Docker, you can customize your image.
     [download](https://github.com/JetBrains/gcp-samples/blob/master/Dockerfile)
     the Dockerfile to study and customize.
 
-    ```Dockerfile
-    FROM openjdk:8-jdk-alpine
-    VOLUME /tmp
-    RUN mkdir /work
-    COPY . /work
-    WORKDIR /work
-    RUN /work/gradlew build
-    RUN mv /work/build/libs/*.jar /work/app.jar
-    ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/work/app.jar"]
-    ```
+        FROM openjdk:8-jdk-alpine
+        VOLUME /tmp
+        RUN mkdir /work
+        COPY . /work
+        WORKDIR /work
+        RUN /work/gradlew build
+        RUN mv /work/build/libs/*.jar /work/app.jar
+        ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/work/app.jar"]
 
 2.  Create a file called `.dockerignore` in your project directory and copy the
     following content into it. Alternately, you can
