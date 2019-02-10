@@ -46,7 +46,6 @@ in case you need some information about how to do it, see: [https://firebase.goo
 
 3.  Modify the [`app.yaml`][app] file adding the following contents:
 
-        ```yaml
         env_variables:
           GCLOUD_PROJECT: '[YOUR_PROJECT_ID]'
 
