@@ -253,12 +253,12 @@ manual_scaling:
 Here, `app.yaml` specifies the runtime used by the app, and sets `env: flex`,
 specifying that the app uses the [flexible environment][flex].
 
-> The minimal _app.yaml_ application configuration file shown above is
-> sufficient for a simple Grails application. Depending on the size, complexity,
-> and features that your application uses, you may need to change and extend
-> this basic configuration file. For more information on what can be configured
-> via _app.yaml_, please see the [Configuring Your App with app.yaml][configure]
-> guide.
+The minimal _app.yaml_ application configuration file shown above is
+sufficient for a simple Grails application. Depending on the size, complexity,
+and features that your application uses, you may need to change and extend
+this basic configuration file. For more information on what can be configured
+via _app.yaml_, please see the [Configuring Your App with app.yaml][configure]
+guide.
 
 For more information on how the Java runtime works, see
 [Java 8 / Jetty 9.3 Runtime][jetty].
@@ -380,7 +380,7 @@ The production datasource URL uses a custom URL which is built with several comp
 
     jdbc:mysql://google/[DATABASE_NAME]?socketFactory=com.google.cloud.sql.mysql.SocketFactory&cloudSqlInstance=[INSTANCE_NAME]&useSSL=true
 
-- For `[DATABASE_NAME], use the database name you used when you created the
+- For `[DATABASE_NAME]`, use the database name you used when you created the
   database.
 - For `[INSTANCE_NAME]`, use your instance name, which is visible in your Cloud
   SQL instance details:
@@ -401,8 +401,8 @@ URL and verify that connectivity can be established.
 The app allows users to upload a book cover image. To store the images in the
 Cloud, use [Google Cloud Storage][storage].
 
-> Google Cloud Storage is unified object storage for developers and enterprises,
-> from live data serving to data analytics/ML to data archiving.
+Google Cloud Storage is unified object storage for developers and enterprises,
+from live data serving to data analytics/ML to data archiving.
 
 [Enable the Cloud Storage API](https://console.cloud.google.com/flows/enableapi?apiid=storage_api,logging,sqladmin.googleapis.com&redirect=https://console.cloud.google.com&_ga=1.20629880.1963584502.1488379440) for the project, if you have not enabled it already.
 
