@@ -5,10 +5,11 @@ author: chingor13
 tags: App Engine, Ruby, Ruby on Rails, ActiveJob, PubSub
 date_published: 2017-06-08
 ---
+
 This tutorial shows how to create and configure a [Ruby on Rails](http://rubyonrails.org/) application to run
 background processing jobs on App Engine flexible environment using
 [ActiveJob](http://guides.rubyonrails.org/active_job_basics.html) and
-[Google Cloud Pub/Sub](https://cloud.google.com/pubsub/).
+[Cloud Pub/Sub](https://cloud.google.com/pubsub/).
 
 ## Objectives
 
@@ -30,8 +31,8 @@ You'll need the following:
 
 This tutorial uses billable components of Cloud Platform including:
 
-* Google App Engine flexible environment
-* Google Cloud Pub/Sub
+* App Engine flexible environment
+* Cloud Pub/Sub
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator/)
 to generate a cost estimate based on your projected usage. New GCP users might be eligible for a
@@ -116,7 +117,7 @@ our `HelloJob` to execute in the background.
 ## Configuring your background worker to use Cloud Pub/Sub
 
 ActiveJob can be configured with various different background job runners. This tutorial will cover
-[ActiveJob::GoogleCloudPubsub](https://github.com/ursm/activejob-google_cloud_pubsub) which uses Google Cloud Pub/Sub
+[ActiveJob::GoogleCloudPubsub](https://github.com/ursm/activejob-google_cloud_pubsub) which uses Cloud Pub/Sub
 to manage the job queue.
 
 1.  Add `activejob-google_cloud_pubsub` gem to your `Gemfile`:
@@ -147,7 +148,7 @@ instances together.
         web: bundle exec rails server -p 8080
         worker: bundle exec activejob-google_cloud_pubsub-worker
 
-1.  Create an `app.yaml` for deploying the application to Google App Engine:
+1.  Create an `app.yaml` for deploying the application to App Engine:
 
         runtime: ruby
         env: flex
@@ -169,7 +170,7 @@ For this option, you are creating 2 App Engine services - one runs the web serve
 services use the same application code. This configuration allows you to scale background worker instances independently
 of your web instances at the cost of potentially using more resources.
 
-1.  Create an `app.yaml` for deploying the web service to Google App Engine:
+1.  Create an `app.yaml` for deploying the web service to App Engine:
 
         runtime: ruby
         env: flex
@@ -181,7 +182,7 @@ of your web instances at the cost of potentially using more resources.
 
     Be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
-1.  Create a `worker.yaml` for deploying the worker service to Google App Engine:
+1.  Create a `worker.yaml` for deploying the worker service to App Engine:
 
         runtime: ruby
         env: flex
@@ -236,7 +237,7 @@ of your web instances at the cost of potentially using more resources.
 
         13:13:52.000 Hello, Jeff
 
-Congratulations, you have successfully set up background job processing on Google App Engine with Google Cloud Pub/Sub.
+Congratulations, you have successfully set up background job processing on App Engine with Cloud Pub/Sub.
 
 ## Cleaning up
 
