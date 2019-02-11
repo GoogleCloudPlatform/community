@@ -53,7 +53,7 @@ following:
     You can [read more](https://swagger.io/blog/getting-started-with-swagger-i-what-is-swagger/)
     to understand the idea behind OpenAPI.
 
-    We need it to deploy API specification to Google Endpoints later on. We have
+    We need it to deploy API specification to Cloud Endpoints later on. We have
     two options - either create OpenAPI specification manually, or
     [use Swashbuckle tool](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
     that will auto-generate the specifications for us based on API definition.
@@ -168,7 +168,7 @@ following:
 
 Now it's time to deploy the API specification and API implementation.
 
-## Step 5 - Deploy API Specification to Google Endpoints
+## Step 5 - Deploy API Specification to Cloud Endpoints
 
 1.  Open `openapi.yaml` that was created in step 3.
 
@@ -188,7 +188,7 @@ Now it's time to deploy the API specification and API implementation.
             - Values
             operationId: ApiValuesGet
 
-    When you will deploy API specification to Google Endpoints, it will create a
+    When you will deploy API specification to Endpoints, it will create a
     new Cloud Endpoints service configuration with the name equals to `host`
     value from our `OpenAPI yaml`. Each endpoints deployment assigns a unique
     `configuration_id` for versioning purposes. When we will deploy the service
