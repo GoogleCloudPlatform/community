@@ -6,17 +6,17 @@ From: centos:7
 
 # check if there any arguments,
 if [ -z "$@" ]; then
-    # if theres non, test julia:
+    # if there are none, test julia:
     echo 'println("hello world from julia container!!!")' | julia
 else
-    # if theres an argument, then run it! and hope its a julia script :)
+    # if there is an argument, then run it! and hope its a julia script :)
     julia "$@"
 fi
 
 
 %environment
-    PATH=/julia-1.0.1/bin:$PATH
-    LD_LIBRARY_PATH=/julia-1.0.1/lib:/julia-1.0.1/lib/julia:$LD_LIBRARY_PATH
+    PATH=/julia-1.0.3/bin:$PATH
+    LD_LIBRARY_PATH=/julia-1.0.3/lib:/julia-1.0.3/lib/julia:$LD_LIBRARY_PATH
     LC_ALL=C
     export PATH LD_LIBRARY_PATH LC_ALL
 
@@ -27,6 +27,6 @@ fi
     yum -y install curl tar gzip
 
     # now, download and install julia
-    curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/1.0/julia-1.0.1-linux-x86_64.tar.gz" > julia.tgz
+    curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/1.0/julia-1.0.3-linux-x86_64.tar.gz" > julia.tgz
     tar -C / -zxf julia.tgz
     rm -f julia.tgz
