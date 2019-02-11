@@ -1,5 +1,5 @@
 ---
-title: Ruby on Rails background processing on App Engine with ActiveJob and Google Cloud Pub/Sub
+title: Ruby on Rails background processing on App Engine with ActiveJob and Cloud Pub/Sub
 description: Learn how to run background jobs using Ruby on Rails ActiveJob.
 author: chingor13
 tags: App Engine, Ruby, Ruby on Rails, ActiveJob, PubSub
