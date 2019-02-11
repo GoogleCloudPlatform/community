@@ -341,7 +341,7 @@ Configure your web server machine for ssh access from the Chef Workstation.
         # gce: chef-workstation
         gcloud auth activate-service-account compute@$PROJECT_NAME.iam.gserviceaccount.com --key-file=compute.json
 
-1.  Connect to the `web-server`. This will force the creation of a new SSH key and upload it to the GCE instance.
+1.  Connect to the `web-server`. This will force the creation of a new SSH key and upload it to the Compute Engine instance.
 
         # gce: chef-workstation
         gcloud compute ssh web-server --command='exit'
