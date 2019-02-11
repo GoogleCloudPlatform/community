@@ -172,7 +172,7 @@ This guide deploys a Grails application to
 [App Engine flexible environment][flex].
 
 App Engine allows developers to focus on doing what they do best: writing
-code. Based on Google Compute Engine, the App Engine flexible environment
+code. Based on Compute Engine, the App Engine flexible environment
 automatically scales your app up and down while balancing the load.
 Microservices, authorization, SQL and NoSQL databases, traffic splitting,
 logging, versioning, security scanning, and content delivery networks are all
