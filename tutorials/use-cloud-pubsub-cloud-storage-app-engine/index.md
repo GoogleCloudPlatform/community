@@ -1,6 +1,6 @@
 ---
 title: Use Cloud Pub/Sub notifications and Cloud Storage with App Engine
-description: Create a shared photo album using Google Cloud Pub/Sub, Google Cloud Storage, Google Cloud Datastore, and Google App Engine.
+description: Create a shared photo album using Cloud Pub/Sub, Cloud Storage, Cloud Datastore, and App Engine.
 author: ggchien
 tags: App Engine, Cloud PubSub, Cloud Storage, Cloud Datastore
 date_published: 2017-09-05
@@ -302,7 +302,7 @@ Datastore, and rendering HTML templates.
     your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the
     maximum number of notifications displayed on the home/notifications page of
     your web application. `MAX_LABELS` regulates the maximum number of labels
-    associated with each photo using Google Cloud Vision API.
+    associated with each photo using Cloud Vision API.
 
         THUMBNAIL_BUCKET = '[YOUR_THUMBNAIL_BUCKET_NAME]'
         PHOTO_BUCKET = '[YOUR_PHOTO_BUCKET_NAME]'
@@ -322,7 +322,7 @@ Datastore, and rendering HTML templates.
     generation number, which is used to distinguish between similar
     `notifications` and prevent the display of repeated `notifications`. These
     properties are stored as NDB model properties using the
-    [Google Cloud Datastore NDB Client Library](https://cloud.google.com/appengine/docs/standard/python/ndb/),
+    [Cloud Datastore NDB Client Library](https://cloud.google.com/appengine/docs/standard/python/ndb/),
     which allows App Engine Python apps to connect to Cloud Datastore.
 
         class Notification(ndb.Model):
@@ -336,7 +336,7 @@ Datastore, and rendering HTML templates.
     (the name of the uploaded photo), a `thumbnail_key` (a concatenation of the
     name and generation number of an uploaded photo, used to distinguish
     similarly named photos), date of posting, a list of label descriptions
-    assigned to the corresponding photo using Google Cloud Vision API, and the
+    assigned to the corresponding photo using Cloud Vision API, and the
     url of the original photo that is stored in Cloud Storage.
 
         class ThumbnailReference(ndb.Model):
@@ -985,7 +985,7 @@ should run your app locally after each step to see the changes.
     bottom of your screen and follow the instructions to link it to your html
     and CSS files. The style of the font will be either `serif` or `sans-serif`.
 
-    The border-bottom property adds a dividing line between each link. To avoid
+    The `border-bottom` property adds a dividing line between each link. To avoid
     having an extra line at the bottom of the links box, add:
 
         ul.links li:last-child {
