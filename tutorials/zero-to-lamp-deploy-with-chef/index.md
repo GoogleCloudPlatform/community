@@ -190,7 +190,7 @@ Use the Chef GCP cookbooks to define your Compute Engine infrastructure. More in
           credential 'compute-credentials'
         end
        
-1.  Create the Compute Engine instance and static ip address.
+1.  Create the Compute Engine instance and static IP address.
 
         gcompute_address 'web-server-ip' do
           action :create
@@ -258,7 +258,7 @@ Use the `google-gsql` GCP cookbook to define a Cloud SQL instance.
           ]
         end
     
-1.  Define the Cloud SQL instance. To allow access from your webserver you must add the ip of the web server to the `authorized_networks` field of the instance. The `gcompute_address_ip` function allows you to dynamically find the address of a named static ip address.
+1.  Define the Cloud SQL instance. To allow access from your webserver you must add the IP address of the web server to the `authorized_networks` field of the instance. The `gcompute_address_ip` function allows you to dynamically find the address of a named static IP address.
 
         ::Chef::Resource.send(:include, Google::Functions)
         gsql_instance 'sql-instance' do
@@ -302,7 +302,7 @@ Use the `google-gsql` GCP cookbook to define a Cloud SQL instance.
         # gce: chef-workstation
         echo "include_recipe 'infrastructure::sql'" >> infrastructure/recipes/default.rb
     
-It is important to be sure that the sql cookbook is included after the compute cookbook because the sql cookbook depends on the web server ip address existing.
+It is important to be sure that the sql cookbook is included after the compute cookbook because the sql cookbook depends on the web server IP address existing.
 
 [supermarket]: https://supermarket.chef.io/cookbooks/google-cloud
 
@@ -328,9 +328,9 @@ For the purposes of this tutorial you can download a LAMP cookbook that can be r
 
 ## Configure the web server cookbook for your environment
 
-1.  Find your Cloud SQL ip address using `gcloud sql instances list` from your original machine.
+1.  Find your Cloud SQL IP address using `gcloud sql instances list` from your original machine.
 
-1.  Modify the `lamp/attributes/default.rb` file to match your environment. Be sure to update `default['lamp']['database']['dbhost'] = '$CLOUD_SQL_IP'` to reference the IP of your Cloud SQL instance.
+1.  Modify the `lamp/attributes/default.rb` file to match your environment. Be sure to update `default['lamp']['database']['dbhost'] = '$CLOUD_SQL_IP'` to reference the IP address of your Cloud SQL instance.
 
 ## Run the cookbook to configure your web server
 
@@ -346,7 +346,7 @@ Configure your web server machine for ssh access from the Chef Workstation.
         # gce: chef-workstation
         gcloud compute ssh web-server --command='exit'
 
-1.  Find the ip of the web server.
+1.  Find the IP address of the web server.
 
         gcloud compute addresses list
         
