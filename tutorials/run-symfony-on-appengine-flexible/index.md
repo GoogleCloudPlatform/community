@@ -129,7 +129,7 @@ Welcome page.
             # ...
 
 1.  Modify your Doctrine configuration in `app/config/config.yml` and add a line
-    for "unix_socket" using the parameter we added:
+    for `unix_socket` using the parameter we added:
 
         # Doctrine Configuration
         doctrine:
@@ -223,7 +223,7 @@ Welcome page.
 ### What's next
 
 1. Check out the [Databases and the Doctrine ORM][symfony-doctrine] documentation for Symfony.
-1. View a [Symfony Demo Application][symfony-sample-app] for App Engine Flex.
+1. View a [Symfony Demo Application][symfony-sample-app] for App Engine flexible environment.
 
 [php-gcp]: https://cloud.google.com/php
 [laravel]: http://laravel.com
