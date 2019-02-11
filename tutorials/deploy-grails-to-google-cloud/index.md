@@ -5,6 +5,7 @@ author: sdelamo
 tags: Cloud SQL, App Engine, Java, Grails, Cloud Storage
 date_published: 2017-08-08
 ---
+
 *Sergio del Amo (Object Computing, Inc.)*
 
 *August 2017*
@@ -253,11 +254,11 @@ manual_scaling:
 Here, `app.yaml` specifies the runtime used by the app, and sets `env: flex`,
 specifying that the app uses the [flexible environment][flex].
 
-The minimal _app.yaml_ application configuration file shown above is
+The minimal `app.yaml` application configuration file shown above is
 sufficient for a simple Grails application. Depending on the size, complexity,
 and features that your application uses, you may need to change and extend
 this basic configuration file. For more information on what can be configured
-via _app.yaml_, please see the [Configuring Your App with app.yaml][configure]
+via `app.yaml`, please see the [Configuring Your App with app.yaml][configure]
 guide.
 
 For more information on how the Java runtime works, see
