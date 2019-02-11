@@ -133,7 +133,7 @@ you already have an app to deploy, you can use it instead.
                 get("/") {
                     call.respondHtml {
                         head {
-                            title { +"Ktor on Google App Engine Standard" }
+                            title { +"Ktor on Google App Engine standard environment" }
                         }
                         body {
                             p {
