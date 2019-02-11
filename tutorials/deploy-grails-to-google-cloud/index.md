@@ -399,10 +399,9 @@ URL and verify that connectivity can be established.
 
 ## Cloud Storage
 
-The app allows users to upload a book cover image. To store the images in the
-Cloud, use [Google Cloud Storage][storage].
+The app allows users to upload a book cover image. To store the images in GCP, use [Cloud Storage][storage].
 
-Google Cloud Storage is unified object storage for developers and enterprises,
+Cloud Storage is unified object storage for developers and enterprises,
 from live data serving to data analytics/ML to data archiving.
 
 [Enable the Cloud Storage API](https://console.cloud.google.com/flows/enableapi?apiid=storage_api,logging,sqladmin.googleapis.com&redirect=https://console.cloud.google.com&_ga=1.20629880.1963584502.1488379440) for the project, if you have not enabled it already.
