@@ -296,7 +296,7 @@ building a new image and pointing your deployment to it.
 
 1.  Make a change to the app. (For example, modify the front page template.)
 
-1.  Perform a new build with a new version tag "v2":
+1.  Perform a new build with a new version tag `v2`:
 
         gcloud container builds submit --tag=gcr.io/${PROJECT_ID}/demo:v2 .
 
