@@ -104,7 +104,7 @@ current directory.
 If you are migrating an existing project to Google Cloud, you can use the
 `update` command:
 
-    $ php vendor/bin/php update path/to/your-wordpress-site
+    $ php vendor/bin/wp-gae update path/to/your-wordpress-site
 
 The command asks you several questions. After you answer them, your existing
 project will contain the required files for deploying to App Engine, as well
