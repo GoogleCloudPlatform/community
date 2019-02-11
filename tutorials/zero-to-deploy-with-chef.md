@@ -1,6 +1,6 @@
 ---
 title: Zero-to-Deploy with Chef on GCP
-description: Learn how to manage Google Compute Engine with Chef.
+description: Learn how to manage Compute Engine with Chef.
 author: djmailhot
 tags: Compute Engine, Chef
 date_published: 2018-06-14
@@ -32,7 +32,7 @@ GCP-specific Chef cookbooks.
 
 This tutorial uses billable components of Cloud Platform, including:
 
-+   Google Compute Engine
++   Compute Engine
 
 New Cloud Platform users might be eligible for a [free
 trial](https://cloud.google.com/free-trial).
