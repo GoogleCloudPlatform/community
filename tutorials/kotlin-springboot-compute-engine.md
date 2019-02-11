@@ -71,34 +71,30 @@ you already have an app to deploy, you can use it instead.
 3.  Open the project in your an IDE or editor. Create a new source file named
     `MessageController.kt` with the following content:
 
-    ```kt
-    package com.jetbrains.demo
+        package com.jetbrains.demo
 
-    import org.springframework.web.bind.annotation.*
+        import org.springframework.web.bind.annotation.*
 
-    data class Message(val text: String, val priority: String)
+        data class Message(val text: String, val priority: String)
 
-    @RestController
-    class MessageController {
-        @RequestMapping("/message")
-        fun message(): Message {
-            return Message("Hello from Google Cloud", "High")
+        @RestController
+        class MessageController {
+            @RequestMapping("/message")
+            fun message(): Message {
+                return Message("Hello from Google Cloud", "High")
+            }
         }
-    }
-    ```
 
     The package should match that of your group and artifact name.
 
 4.  Make sure you have the correct dependencies in your Gradle file to import
     `RestController`:
 
-    ```kt
-    compile("org.springframework.boot:spring-boot-starter-web")
-    ```
+        compile("org.springframework.boot:spring-boot-starter-web")
 
-5. Run the application from the command line using Gradle:
+5.  Run the application from the command line using Gradle:
 
-		gradle bootRun
+        gradle bootRun
 
     **Note:** The `gradle bootRun` command is a quick way to build and run the
     application. Later, when you create the Docker image, you need to first
@@ -107,12 +103,10 @@ you already have an app to deploy, you can use it instead.
 6.  Visit http://localhost:8080/message in your web browser. Ensure that the
     page returns a valid JSON response. The response should be as follows:
 
-    ```json
-    {
-        "text": "Hello from Google Cloud",
-        "priority": "High"
-    }
-    ```
+        {
+            "text": "Hello from Google Cloud",
+            "priority": "High"
+        }
 
 ## Building a release for deployment
 
@@ -126,7 +120,7 @@ You use Cloud Storage to store your application's dependencies.
 Choose a bucket name (such as `demo-01`), then create the bucket by running
 the following command:
 
-	gsutil mb gs://demo-01
+    gsutil mb gs://demo-01
 
 ### Creating a build to upload to Cloud Storage
 
@@ -140,11 +134,11 @@ it to Cloud Storage:
 1.  Build the Spring Boot application by running the following command from the
     root of your application folder:
 
-		gradle build
+        gradle build
 
 2.  Upload the app to Cloud Storage:
 
-		gsutil cp build/libs/* gs://demo-01/demo.jar
+        gsutil cp build/libs/* gs://demo-01/demo.jar
 
 ## Deploying your application to a single instance
 
@@ -158,28 +152,26 @@ the instance is started or restarted. You use this to install and start your app
 Create a file called `instance-startup.sh` in your application's root directory
 and copy the following content to it:
 
-```bash
-#!/bin/sh
+    #!/bin/sh
 
-# Set the metadata server to the get projct id
-PROJECTID=$(curl -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" -H "Metadata-Flavor: Google")
-BUCKET=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/BUCKET" -H "Metadata-Flavor: Google")
+    # Set the metadata server to the get projct id
+    PROJECTID=$(curl -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" -H "Metadata-Flavor: Google")
+    BUCKET=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/BUCKET" -H "Metadata-Flavor: Google")
 
-echo "Project ID: ${PROJECTID} Bucket: ${BUCKET}"
+    echo "Project ID: ${PROJECTID} Bucket: ${BUCKET}"
 
-# Get the files we need
-gsutil cp gs://${BUCKET}/demo.jar .
+    # Get the files we need
+    gsutil cp gs://${BUCKET}/demo.jar .
 
-# Install dependencies
-apt-get update
-apt-get -y --force-yes install openjdk-8-jdk
+    # Install dependencies
+    apt-get update
+    apt-get -y --force-yes install openjdk-8-jdk
 
-# Make Java 8 default
-update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+    # Make Java 8 default
+    update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 
-# Start server
-java -jar demo.jar
-```
+    # Start server
+    java -jar demo.jar
 
 Alternatively, you can [download](https://github.com/JetBrains/gcp-samples/blob/master/google-compute-sample/instance-startup.sh)
 a sample annotated script to study and customize.
@@ -199,15 +191,15 @@ To create a Compute Engine instance, perform the following steps:
 
 1.  Create an instance by running the following command:
 
-		gcloud compute instances create demo-instance \
-		--image-family debian-9 \
-		--image-project debian-cloud \
-		--machine-type g1-small \
-		--scopes "userinfo-email,cloud-platform" \
-		--metadata-from-file startup-script=instance-startup.sh \
-		--metadata BUCKET=demo-01 \
-		--zone us-east1-b \
-		--tags http-server
+        gcloud compute instances create demo-instance \
+        --image-family debian-9 \
+        --image-project debian-cloud \
+        --machine-type g1-small \
+        --scopes "userinfo-email,cloud-platform" \
+        --metadata-from-file startup-script=instance-startup.sh \
+        --metadata BUCKET=demo-01 \
+        --zone us-east1-b \
+        --tags http-server
 
     This command creates a new instance named `demo-instance`, grants it
     access to Cloud Platform services, and provides your startup script. It
