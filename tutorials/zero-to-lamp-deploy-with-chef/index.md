@@ -361,7 +361,7 @@ Configure your web server machine for ssh access from the Chef Workstation.
         # gce: chef-workstation
         curl $WEB_SERVER_IP
     
-Or visit $WEB_SERVER_IP in your browser. If everything is working it will display a simple html table view of your Cloud SQL database.
+Or visit `$WEB_SERVER_IP` in your browser. If everything is working it will display a simple HTML table view of your Cloud SQL database.
 
 [cookbook]: https://github.com/slevenick/community/raw/zero-to-lamp-deploy/tutorials/zero-to-lamp-deploy-with-chef/lamp.tgz
 [chefrun]: https://www.chef.sh/docs/chef-workstation/getting-started/
