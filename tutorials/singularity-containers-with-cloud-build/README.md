@@ -9,7 +9,9 @@ date_published: 2019-01-18
 This tutorial shows you how to use [Cloud Build](https://cloud.google.com/cloud-build/) to build [Singularity](https://www.sylabs.io/singularity/) containers. 
 In constrast to [Docker](https://www.docker.com/), the Singularity container binary is designed specifically for HPC workloads.
 
-This diagram illustrates the process ![diagram](overview.png)
+This diagram illustrates the process the tutorial takes you through.
+
+![diagram](overview.png)
 
 [![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/singularity-containers-with-cloud-build/tutorial.md)
 
