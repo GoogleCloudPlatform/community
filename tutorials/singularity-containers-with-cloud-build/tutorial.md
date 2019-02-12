@@ -1,7 +1,7 @@
+# Using Cloud Build to create Singularity Containers
+
 This tutorial shows you how to use [Cloud Build](https://cloud.google.com/cloud-build/) to build [Singularity](https://www.sylabs.io/singularity/) containers. 
 In constrast to [Docker](https://www.docker.com/), the Singularity container binary is designed specifically for HPC workloads. 
-
-[![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/singularity-containers-with-cloud-build/tutorial.md)
 
 ## Before you begin
 
@@ -34,13 +34,13 @@ gcloud compute zones list
 
 If you are creating a new project use the name you intend to give it.
 
-Source ```env.sh``` to define the environment variables in your current shell session.
+### Source ```env.sh``` to define the environment variables in your current shell session.
 
 ```bash
 source ./env.sh
 ```
 
-### (Optional) Create a new project
+## (Optional) Create a new project
 
 To use a brand new project rather than an existing one, create the new project with the commands:
 
@@ -54,7 +54,7 @@ gcloud beta billing projects link $PROJECT --billing-account=$(gcloud beta billi
 gcloud config configurations create -- activate $PROJECT
 ```
 
-### Use the desired project and zone
+## Use the desired project and zone
 
 ```bash
 gcloud config set core/project $PROJECT
@@ -63,7 +63,7 @@ gcloud config set core/project $PROJECT
 gcloud config set compute/zone $ZONE
 ```
 
-### Enable the necessary Cloud Platform APIs
+## Enable the necessary Cloud Platform APIs
 
 The following commands will enable Google Compute Engine, Google Cloud Builder,
 and Google Container Registry:
@@ -85,7 +85,7 @@ you create a Singularity custom build step. In the third step you use the Singul
 it in Cloud Storage. Once the Singuarlity custom build step has been created in your project you can use it to create as many Singularity containers
 as you like.
 
-### 1. Create a Singularity builder
+### Create a Singularity builder
 
 The ```singularity-buildstep``` directory contains the files you use to create the Singularity custom build step.
 
@@ -108,7 +108,7 @@ At the time of this writing the latest stable version of Singularity is 3.0.2. T
 _SINGULARITY_VERSION substitution accordingly. What does this verison coincide with? It should match a [release tag](https://github.com/sylabs/singularity/releases)
 on the [sylabs/singularity](https://github.com/sylabs/singularity) repository.
 
-### 2. Create a Bucket
+### Create a Bucket
 
 You need a place to store the containers the Singularity build step creates. In this tutorial you will use a Cloud Storage bucket to hold your Singularity
 containers. You can use an existing bucket you have access to or use this command to create a new one:
@@ -117,7 +117,7 @@ containers. You can use an existing bucket you have access to or use this comman
 gsutil mb gs://${PROJECT}-singularity
 ```
 
-### 3: Build a Singularity container
+### Build a Singularity container
 
 Singularity uses a [Singularity Definition File](https://github.com/sylabs/singularity-userdocs/blob/master/definition_files.rst) as a blueprint for building
 a container. The definition file contains a number of sections which control how the ```singularity build``` command constructs a container. 
@@ -135,14 +135,9 @@ Bootstrap: library
 From: centos:7
 
 %runscript
-# run your script here.
-
-# check if there any arguments,
 if [ -z "$@" ]; then
-    # if there are none, test julia:
     echo 'println("hello world from julia container!!!")' | julia
 else
-    # if there is an argument, then run it! and hope its a julia script :)
     julia "$@"
 fi
 
@@ -156,10 +151,8 @@ fi
 %post
     yum -y update
 
-    # install some basic tools
     yum -y install curl tar gzip
 
-    # now, download and install julia
     curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/1.0/julia-1.0.1-linux-x86_64.tar.gz" > julia.tgz
     tar -C / -zxf julia.tgz
     rm -f julia.tgz
@@ -179,7 +172,7 @@ file specifies the steps required to build the container and store the result in
 ```bash
 cat cloudbuild.yaml
 ```
-```
+```yaml
 # In this directory, run the following command to build this builder.
 # $ gcloud builds submit . --config=cloudbuild.yaml --substitutions=_SINGULARITY_VERSION=3.0.0."
 
@@ -212,7 +205,7 @@ If the build was successful you should see a response similar to:
 gs://my-project-singularity/julia-centos.sif
 ```
 
-### Test the container
+## Test the container
 
 Verify that your container is working properly by downloading and executing it. To do that you need a Compute Instance
 with the ```singularity``` binary installed. This command will create the compute required instance.
@@ -263,7 +256,7 @@ singularity run julia-centos.sif
 exit
 ```
 
-### Clean up
+## Clean up
 
 Delete the test compute instance.
 
