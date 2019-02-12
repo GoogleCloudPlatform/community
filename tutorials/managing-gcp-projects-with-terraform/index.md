@@ -152,12 +152,6 @@ export GOOGLE_APPLICATION_CREDENTIALS=${TF_CREDS}
 export GOOGLE_PROJECT=${TF_ADMIN}
 ```
 
-Next, initialize the backend:
-
-```sh
-terraform init
-```
-
 ## Use Terraform to create a new project and Compute Engine instance
 
 The `project.tf` file:
@@ -250,6 +244,11 @@ Set the name of the project you want to create and the region you want to create
 ```sh
 export TF_VAR_project_name=${USER}-test-compute
 export TF_VAR_region=us-central1
+```
+Next, initialize the backend:
+
+```sh
+terraform init
 ```
 
 Preview the Terraform changes:
