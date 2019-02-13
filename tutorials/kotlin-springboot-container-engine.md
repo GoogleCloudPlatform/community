@@ -140,7 +140,6 @@ If you are experienced with Docker, you can customize your image.
         RUN mv /work/build/libs/*.jar /work/app.jar
         ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/work/app.jar"]
 
-
 2.  Create a file called `.dockerignore` in your project directory and copy the
     following content into it. Alternately, you can
     [download](https://github.com/JetBrains/gcp-samples/blob/master/.dockerignore)
@@ -297,7 +296,7 @@ building a new image and pointing your deployment to it.
 
 1.  Make a change to the app. (For example, modify the front page template.)
 
-1.  Perform a new build with a new version tag "v2":
+1.  Perform a new build with a new version tag `v2`:
 
         gcloud container builds submit --tag=gcr.io/${PROJECT_ID}/demo:v2 .
 

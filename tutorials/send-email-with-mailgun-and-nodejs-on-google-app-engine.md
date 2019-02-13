@@ -1,15 +1,13 @@
 ---
-title: Send Email with Mailgun and Node.js on Google App Engine Flexible Environment
-description: Learn how to send email via Mailgun from a Node.js app to Google App Engine flexible environment.
+title: Send email with Mailgun and Node.js on App Engine flexible environment
+description: Learn how to send email via Mailgun from a Node.js app to App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Mailgun, Express.js, Node.js
 date_published: 2017-01-10
 ---
 ## Mailgun
 
-> [Mailgun][mailgun]—The Email Service For Developers
->
-> – mailgun.com
+"[Mailgun][mailgun]—The Email Service For Developers" – mailgun.com
 
 You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
 overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
@@ -38,7 +36,7 @@ your new domain's settings.
 
 ## Create
 
-1. Create a `server.js` file with the following contents:
+1.  Create a `server.js` file with the following contents:
 
         'use strict';
 
@@ -73,7 +71,7 @@ your new domain's settings.
             // Subject
             'Hello World!',
             // Body
-            'Mailgun on Google App Engine with Node.js',
+            'Mailgun on App Engine with Node.js',
             servername,
             options,
             (err) => {
@@ -91,12 +89,12 @@ your new domain's settings.
 
         app.listen(process.env.PORT || 8080);
 
-1. Create a directory named `views`:
+1.  Create a directory named `views`:
 
         mkdir views
 
-1. Create a file named `index.pug` inside the `views` directory with the
-following contents:
+1.  Create a file named `index.pug` inside the `views` directory with
+    the following contents:
 
         doctype html
         html
@@ -104,7 +102,7 @@ following contents:
             title= title
           body
             h1 Hello World!
-            p Express.js + Mailgun on Google App Engine.
+            p Express.js + Mailgun on App Engine.
             hr
             if sent
               p Email sent!
@@ -115,15 +113,15 @@ following contents:
 
 ## Run
 
-1. Run the app with the following command:
+1.  Run the app with the following command:
 
         MAILGUN_API_KEY=your-mailgun-api-key npm start
 
-1. Visit [http://localhost:8080](http://localhost:8080) to try sending an email.
+1.  Visit [http://localhost:8080](http://localhost:8080) to try sending an email.
 
 ## Deploy
 
-1. Create an `app.yaml` file with the following contents:
+1.  Create an `app.yaml` file with the following contents:
 
         runtime: nodejs
         env: flex
@@ -132,11 +130,11 @@ following contents:
 
     The `app.yaml` makes the app deployable to Google App Engine Managed VMs.
 
-1. Run the following command to deploy your app:
+1.  Run the following command to deploy your app:
 
        gcloud app deploy
 
-1. Visit `http://YOUR_PROJECT_ID.appspot.com` to try sending an email.
+1.  Visit `http://YOUR_PROJECT_ID.appspot.com` to try sending an email.
 
 [mailgun]: https://www.mailgun.com/
 [nodejs-gcp]: running-nodejs-on-google-cloud
