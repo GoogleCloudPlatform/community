@@ -227,7 +227,7 @@ The ```startup.sh``` startup script downloads and builds the Singularity binary 
 to determine if the build is complte:
 
 ```bash
-gcloud compute ssh singularity-test --command "which singularity```
+gcloud compute ssh singularity-test --command "which singularity"
 ```
 
 When the response is ```/usr/local/bin/singularity``` you are ready to proceed. Now you run the container with the command:
