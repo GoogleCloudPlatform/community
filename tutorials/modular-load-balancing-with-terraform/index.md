@@ -119,6 +119,8 @@ In this tutorial, you run all commands by using the [Google Cloud Shell](https:/
 
         cd terraform-google-examples
 
+        git submodule init && git submodule update
+
 ## Download and configure Terraform
 
 1. Configure your Cloud Shell environment to use Terraform through the Docker image.
