@@ -1,7 +1,7 @@
 # Using Cloud Build to create Singularity Containers
 
 This tutorial shows you how to use [Cloud Build](https://cloud.google.com/cloud-build/) to build [Singularity](https://www.sylabs.io/singularity/) containers. 
-In constrast to [Docker](https://www.docker.com/), the Singularity container binary is designed specifically for HPC workloads. 
+In constrast to [Docker](https://www.docker.com/), the Singularity container binary is designed specifically for High Performance Computing (HPC) workloads. 
 
 ## Before you begin
 
@@ -11,8 +11,8 @@ Edit the file env.sh and replace
 
 * [YOUR_ORG] with the name of the organization that will own your project
 * [YOUR_BILLING_ACCOUNT_NAME] with the name of the account responsible for any costs associated with your project
-* [NAME FOR THE PROJECT YOU WILL CREATE] with the name of your project
-* [COMPUTE ZONE YOU WANT TO USE] with the name of the Cloud Platform compute zone that will contain your project
+* [NAME_FOR_THE_PROJECT_YOU_WILL_CREATE] with the name of your project
+* [COMPUTE_ZONE_YOU_WANT_TO_USE] with the name of the Cloud Platform compute zone that will contain your project
 
 The Organization and billing account should already exist (if you need to create an organization,
 see the [documentation here](https://cloud.google.com/resource-manager/docs/creating-managing-organization)).
@@ -105,7 +105,7 @@ gcloud builds submit --config=builder.yaml --substitutions=_SINGULARITY_VERSION=
 ```
 
 At the time of this writing the latest stable version of Singularity is 3.0.2. To use a different, possibly newer, version modify the value of the
-_SINGULARITY_VERSION substitution accordingly. What does this verison coincide with? It should match a [release tag](https://github.com/sylabs/singularity/releases)
+\_SINGULARITY_VERSION substitute accordingly. What does this verison coincide with? It should match a [release tag](https://github.com/sylabs/singularity/releases)
 on the [sylabs/singularity](https://github.com/sylabs/singularity) repository.
 
 ### Create a Bucket
