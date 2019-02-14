@@ -3,7 +3,7 @@ title: Using Sigfox Sensit with GCP
 description: Setup the Sigfox Sens'it Discovery V3 device as a devkit, and use it with Google Cloud Platform.
 author: lepistom
 tags: IoT, Internet of Things, Sigfox, LPWAN
-date_published: 2019-02-xx
+date_published: 2019-02-21
 ---
 
 Markku Lepisto | Solutions Architect | Google Cloud
