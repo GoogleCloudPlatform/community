@@ -1,7 +1,7 @@
 ---
 title: Building Singularity Containers using Cloud Build
 description: Learn how to use Cloud Build to build Singularity Containers for HPC workloads.
-author: wkharold, vsoch
+author: wkharold,vsoch
 tags: Cloud Build, Singularity, HPC
 date_published: 2019-01-18
 ---
