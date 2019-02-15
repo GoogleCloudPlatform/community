@@ -10,26 +10,24 @@ Markku Lepisto | Solutions Architect | Google Cloud
 
 ## Objectives
 
-This document describes how to start using your [Sigfox](https://www.sigfox.com/) [Sens'it Discovery V3](https://sensit.io) device and connect it to [Google Cloud Platform](https://cloud.google.com). With step by step instructions on how to use Google Cloud services for real-time sensor data ingestion, processing and analytics, as well as device configuration management.
+This document describes how to start using your [Sigfox](https://www.sigfox.com/) [Sens'it Discovery V3](https://sensit.io) device and connect it to [Google Cloud Platform](https://cloud.google.com). With step by step instructions on how to use Google Cloud Platform (GCP) services for real-time sensor data ingestion, processing and analytics, as well as device configuration management.
 
 The main functionalities demonstrated are the following:
 
 - Sens'it device activation and registration as a devkit
-- Sigfox - Google Cloud integration configuration
+- Sigfox - Google Cloud Platform integration configuration
 - Binary sensor data ingestion, parsing and storage in a data warehouse
 - Binary device configuration encoding, decoding and management
 
 **Figure 1.** Sigfox Sens'it Discovery V3
 
-[sensit]: img/sensit-gcp.jpg
-![sensit and gcp][sensit]
+![sensit and gcp](https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/sensit-gcp.jpg)
 
 ## Architecture Diagram
 
 **Figure 2.** End to end architecture
 
-[archdiag]: img/architecture.svg
-![architecture diagram][archdiag]
+![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/architecture.svg)
 
 ## Costs
 
@@ -71,21 +69,21 @@ To activate the Sens'it device using the web portal, execute the following steps
 
 **Figure 3.** Sensit.io web portal
 
-[acti1]: img/acti1.png
+[acti1]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/acti1.png
 ![activation part 1][acti1]
 
 1. Click 'Activate my Sens'it'.
 
 **Figure 4.** Activating the Sens'it device
 
-[acti2]: img/acti2.png
+[acti2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/acti2.png
 ![activation part 2][acti2]
 
 1. Find the device ID printed on the back of the device, and enter it in the input field.
 
 **Figure 5.** Entering the Sens'it ID
 
-[acti3]: img/acti3.png
+[acti3]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/acti3.png
 ![activation part 3][acti3]
 
 1. Follow the rest of the steps of the web wizard, to activate your device and register it in your sensit.io account.
@@ -101,21 +99,21 @@ To activate the Sens'it device using the mobile app, execute the following steps
 
 **Figure 6.** Adding a Sens'it with the mobile app
 
-[app1]: img/app1.png
+[app1]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/app1.png
 ![app part 1][app1]
 
 1. Scan the QR code printed on the back of the device. If the scanning does not work, enter the ID manually using the link on the bottom of the screen.
 
 **Figure 7.** Scanning the device QR code
 
-[app2]: img/app2.png
+[app2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/app2.png
 ![app part 2][app2]
 
 1. Confirm the scanned device ID and follow the rest of the steps to activate your device and register it in your sensit.io account.
 
 **Figure 8.** Confirming the scanned device ID
 
-[app3]: img/app3.png
+[app3]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/app3.png
 ![app part 3][app3]
 
 ## Registering Your Sens'it as a Devkit
@@ -352,7 +350,7 @@ To verify that your device has sent the payload, you can use the following user 
 
 **Figure 9.** Device messages
 
-[messages]: img/messages.png
+[messages]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/messages.png
 ![device messages][messages]
 
 1. In the [Cloud Functions console](http://console.cloud.google.com/functions), select the 'callback_data' function and select its Logs. This function was created when you followed the [Sigfox-GCP Integration guide](https://cloud.google.com/community/tutorials/sigfox-gw) earlier. Verify that you can see the new messages in Stackdriver Logging for the function. This function receives the messages from Sigfox Backend and forwards them to Cloud Pub/Sub.
@@ -429,12 +427,12 @@ Open the [Google BigQuery console](https://console.cloud.google.com/bigquery), e
 
 **Figure 10.** BigQuery dataset and table
 
-[bq1]: img/bq1.png
+[bq1]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/bq1.png
 ![dataset and table][bq1]
 
 **Figure 11.** Sensit table schema
 
-[bq2]: img/bq2.png
+[bq2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/bq2.png
 ![sensit table schema][bq2]
 
 The table schema matches the parsed structure of the Sens'it V3 payload. The sensor values will be transmitted by the device, depending on the currently active mode. The additional values such as `computedLocation` are delivered by the Sigfox network with the optional DATA_ADVANCED Callback messages.
@@ -455,7 +453,7 @@ SELECT * FROM `your-project.sigfox.sensit` ORDER BY time DESC LIMIT 20
 
 **Figure 12.** SQL query results
 
-[bq3]: img/bq3.png
+[bq3]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/bq3.png
 ![sql query results][bq3]
 
 To learn more about using BigQuery for analytics, refer to the [Google BigQuery documentation](https://cloud.google.com/bigquery/docs/).
@@ -538,12 +536,12 @@ The device sets a flag `ack: True`, to mark the message as a 'Downlink requested
 
 **Figure 13.** Downlink message requested
 
-[dl1]: img/dl1.png
+[dl1]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/dl1.png
 ![downlink requested][dl1]
 
 **Figure 14.** Downlink response received successfully
 
-[dl2]: img/dl2.png
+[dl2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/dl2.png
 ![downlink response received][dl2]
 
 1. Copy the message string and use the parser to decode it. Replace the hex-string value with your value:
@@ -615,7 +613,7 @@ Config HEX: 46003f0f8004223c
 
 **Figure 15.** Updating device configuration in Datastore
 
-[ds]: img/ds-update.png
+[ds]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/ds-update.png
 ![updating config in datastore][ds]
 
 1. Press Done, and then Save, to save the new value.
@@ -623,7 +621,7 @@ Config HEX: 46003f0f8004223c
 
 **Figure 16.** Filtering Stackdriver logs
 
-[log]: img/log-filter.png
+[log]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/log-filter.png
 ![filtering logs][log]
 
 If successful, you should see a log entry similar to this:
