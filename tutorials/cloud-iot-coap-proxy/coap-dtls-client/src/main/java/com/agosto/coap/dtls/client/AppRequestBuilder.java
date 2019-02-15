@@ -5,7 +5,7 @@ import org.eclipse.californium.core.coap.Request;
 import java.text.MessageFormat;
 
 class AppRequestBuilder {
-
+    // resource path in the form of ${GOOGLE_CLOUD_PROJECT}/${IOT_CORE_REGION}/${IOT_CORE_REGISTRY}"
     private static final String IOT_CORE_PATH = "IOT_CORE_PATH";
 
     static Request build(String method, String deviceId, String jwt) {
