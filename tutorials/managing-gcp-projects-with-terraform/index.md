@@ -1,5 +1,5 @@
 ---
-title: Managing GCP Projects with Terraform
+title: Managing GCP projects with Terraform
 description: Learn how to manage projects within an organization and project resources with Terraform.
 author: danisla
 tags: Terraform
@@ -37,7 +37,7 @@ This tutorial uses billable components of GCP, including:
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=cdaa96a1-84a6-468d-b5cc-493af9895149) to generate a cost estimate based on your projected usage.
 
-## set up the environment
+## Set up the environment
 
 Export the following variables to your environment for use throughout the tutorial.
 
@@ -48,7 +48,7 @@ export TF_ADMIN=${USER}-terraform-admin
 export TF_CREDS=~/.config/gcloud/${USER}-terraform-admin.json
 ```
 
-> Note: The `TF_ADMIN` variable will be used for the name of the Terraform Admin Project and must be unique.
+**Note**: The `TF_ADMIN` variable will be used for the name of the Terraform Admin Project and must be unique.
 
 You can find the values for `YOUR_ORG_ID` and `YOUR_BILLING_ACCOUNT_ID` using the following commands:
 
