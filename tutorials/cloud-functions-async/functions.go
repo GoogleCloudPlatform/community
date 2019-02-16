@@ -45,12 +45,9 @@ func init() {
 	// setup firestore
 	projectID, exists := os.LookupEnv("GOOGLE_CLOUD_PROJECT")
 	if !exists {
-		projectID = "ptone-serverless"
+		log.Fatalf("Set project ID via GOOGLE_CLOUD_PROJECT env variable.")
 	}
 
-	if projectID == "" {
-		log.Fatalf("Set project ID via GCLOUD_PROJECT env variable.")
-	}
 	ctx := context.Background()
 	var err error
 
@@ -66,8 +63,6 @@ func init() {
 }
 
 func AddJob(j *Job) (id string, err error) {
-	// create ID
-	// write to pubsub: attribute jobID
 	ctx := context.Background()
 
 	_, err = fClient.Collection("jobs").Doc(j.ID).Set(ctx, j)
@@ -114,6 +109,7 @@ func GetJob(id string) (j *Job, err error) {
 }
 
 // func getStats() {}
+// a status function could return basic stats about duration work is taking: min/max/mean
 
 func Jobs(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
@@ -127,7 +123,7 @@ func Jobs(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		// TODO strip task
+		// optionally strip the task out of the returned result
 		// j.Task = nil
 		js, err := json.Marshal(j)
 		if err != nil {
@@ -141,11 +137,10 @@ func Jobs(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		fmt.Println("Post")
 		var m map[string]interface{}
-		// simple validation
+		// optional TODO: simple validation
 		// check worktime between 5 and 60
 		err := json.NewDecoder(r.Body).Decode(&m)
 		if err != nil {
-			// TODO check error return 500
 			log.Printf("error parsing application/json: %v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
