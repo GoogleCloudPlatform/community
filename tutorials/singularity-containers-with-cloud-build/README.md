@@ -15,6 +15,8 @@ This diagram illustrates the process the tutorial takes you through.
 
 [![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/singularity-containers-with-cloud-build-review/index.md)
 
+You may also view this tutorial on the [Google Cloud Platform Community site](https://cloud.google.com/community/tutorials/singularity-containers-with-cloud-build-review)
+
 ## Before you begin
 
 ### Install the [Google Cloud SDK](https://cloud.google.com/sdk/install)
