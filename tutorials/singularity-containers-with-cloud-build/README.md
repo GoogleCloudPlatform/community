@@ -1,31 +1,32 @@
 ---
-title: Building Singularity Containers using Cloud Build
-description: Learn how to use Cloud Build to build Singularity Containers for HPC workloads.
-author: wkharold,vsoch
+title: Building Singularity containers using Cloud Build
+description: Learn how to use Cloud Build to build Singularity containers for HPC workloads.
+author: wkharold, vsoch
 tags: Cloud Build, Singularity, HPC
-date_published: 2019-01-18
+date_published: 2019-02-21
 ---
 
 This tutorial shows you how to use [Cloud Build](https://cloud.google.com/cloud-build/) to build [Singularity](https://www.sylabs.io/singularity/) containers. 
-In constrast to [Docker](https://www.docker.com/), the Singularity container binary is designed specifically for High Performance Computing (HPC) workloads.
+In constrast to [Docker](https://www.docker.com/), the Singularity container binary is designed specifically for high performance computing (HPC) workloads.
 
 This diagram illustrates the process the tutorial takes you through.
 
 ![diagram](overview.png)
 
-[![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/singularity-containers-with-cloud-build-review/index.md)
+[![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/singularity-containers-with-cloud-build/index.md)
 
-You may also view this tutorial on the [Google Cloud Platform Community site](https://cloud.google.com/community/tutorials/singularity-containers-with-cloud-build-review)
+You may also view this tutorial on the
+[Google Cloud Platform Community site](https://cloud.google.com/community/tutorials/singularity-containers-with-cloud-build).
 
 ## Before you begin
 
-### Install the [Google Cloud SDK](https://cloud.google.com/sdk/install)
+### Install the [Cloud SDK](https://cloud.google.com/sdk/install)
 
-The Cloud SDK installs commands and libs for interacting with Google Cloud Platform from the command line. This
-tutorial makes extensive use of the ```gcloud``` and ```gsutil``` commands to create and manage Google Cloud Platform
-resources.
+The Cloud SDK installs commands and libraries for interacting with Google Cloud Platform (GCP) from the command line. This
+tutorial makes extensive use of the `gcloud` and `gsutil` commands to create and manage GCP resources.
 
-Even if you alread have the Cloud SDK installed it is a good idea to update to the lastest version using this command:
+Even if you alread have the Cloud SDK installed, it is a good idea to update to the lastest version using this command:
+
 ```bash
 gcloud components update
 ```
@@ -39,8 +40,8 @@ Edit the file env.sh and replace
 * [NAME_FOR_THE_PROJECT_YOU_WILL_CREATE] with the name of your project
 * [COMPUTE_ZONE_YOU_WANT_TO_USE] with the name of the Cloud Platform compute zone that will contain your project
 
-The Organization and billing account should already exist (if you need to create an organization,
-see the [documentation here](https://cloud.google.com/resource-manager/docs/creating-managing-organization)).
+The organization and billing account should already exist. If you need to create an organization,
+see [Creating and managing organizations](https://cloud.google.com/resource-manager/docs/creating-managing-organization).
 
 Use these ```gcloud``` commands to retrieve the values required by ```env.sh```.
 
@@ -121,9 +122,10 @@ Then use this command to build the custom build step.
 gcloud builds submit --config=builder.yaml --substitutions=_SINGULARITY_VERSION="3.0.2" .
 ```
 
-At the time of this writing the latest stable version of Singularity is 3.0.2. To use a different, possibly newer, version modify the value of the
-\_SINGULARITY_VERSION substitute accordingly. What does this verison coincide with? It should match a [release tag](https://github.com/sylabs/singularity/releases)
-on the [sylabs/singularity](https://github.com/sylabs/singularity) repository.
+At the time of this writing the latest stable version of Singularity is 3.0.2. To use a different, possibly newer,
+version modify the value of the \_SINGULARITY_VERSION substitution accordingly. What does this verison coincide with?
+It should match a [release tag](https://github.com/sylabs/singularity/releases) on the
+[sylabs/singularity](https://github.com/sylabs/singularity) repository.
 
 ### 2. Create a Bucket
 
