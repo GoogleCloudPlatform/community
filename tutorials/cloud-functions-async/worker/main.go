@@ -19,20 +19,20 @@ func main() {
 	}
 
 	var err error
+	ctx := context.Background()
 
-	pClient, err := pubsub.NewClient(context.Background(), projectID)
+	pClient, err := pubsub.NewClient(ctx, projectID)
 	if err != nil {
 		log.Fatalf("Cannot create PubSub Client %v", err)
 	}
 
-	fClient, err := firestore.NewClient(context.Background(), projectID)
+	fClient, err := firestore.NewClient(ctx, projectID)
 	if err != nil {
 		log.Fatalf("Cannot create Firestore client: %v", err)
 	}
 
 	sub := pClient.Subscription("worker-tasks")
-	// cctx, cFunc := context.WithCancel(context.Background())
-	err = sub.Receive(context.Background(), func(cctx context.Context, msg *pubsub.Message) {
+	err = sub.Receive(ctx, func(cctx context.Context, msg *pubsub.Message) {
 		defer msg.Ack()
 		jobID := msg.Attributes["job-id"]
 		log.Printf("Starting on task %v", jobID)
