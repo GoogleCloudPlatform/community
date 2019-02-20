@@ -1,3 +1,5 @@
+.idea/
+.vscode/
 node_modules
 .ipynb_checkpoints
 yarn.lock
@@ -20,3 +22,6 @@ system-test/secrets.js
 system-test/*key.json
 *.lock
 package-lock.json
+
+tutorials/cloud-iot-coap-proxy/coap-dtls-client/target/
+tutorials/cloud-iot-coap-proxy/proxy/target/
