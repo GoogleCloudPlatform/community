@@ -110,7 +110,7 @@ gcloud builds submit --config=builder.yaml --substitutions=_SINGULARITY_VERSION=
 ```
 
 At the time of this writing, the latest stable version of Singularity is 3.0.2. To use a different (possibly newer) version,
-modify the value of the `\_SINGULARITY_VERSION substitution` accordingly; it should match a
+modify the value of the `_SINGULARITY_VERSION` substitution accordingly; it should match a
 [release tag](https://github.com/sylabs/singularity/releases) on the
 [sylabs/singularity](https://github.com/sylabs/singularity) repository.
 
