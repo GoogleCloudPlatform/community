@@ -1,0 +1,32 @@
+Bootstrap: library
+From: centos:7
+
+%runscript
+# run your script here.
+
+# check if there any arguments,
+if [ -z "$@" ]; then
+    # if there are none, test julia:
+    echo 'println("hello world from julia container!!!")' | julia
+else
+    # if there is an argument, then run it! and hope its a julia script :)
+    julia "$@"
+fi
+
+
+%environment
+    PATH=/julia-1.0.3/bin:$PATH
+    LD_LIBRARY_PATH=/julia-1.0.3/lib:/julia-1.0.3/lib/julia:$LD_LIBRARY_PATH
+    LC_ALL=C
+    export PATH LD_LIBRARY_PATH LC_ALL
+
+%post
+    yum -y update
+
+    # install some basic tools
+    yum -y install curl tar gzip
+
+    # now, download and install julia
+    curl -sSL "https://julialang-s3.julialang.org/bin/linux/x64/1.0/julia-1.0.3-linux-x86_64.tar.gz" > julia.tgz
+    tar -C / -zxf julia.tgz
+    rm -f julia.tgz
