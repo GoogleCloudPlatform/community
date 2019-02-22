@@ -57,11 +57,21 @@ Welcome page.
         runtime: php72
 
         env_variables:
-            APP_ENV: prod
-            APP_SECRET: YOUR_APP_SECRET
+          APP_ENV: prod
+          APP_SECRET: YOUR_APP_SECRET
 
-        # URL handlers
-        # ...
+        handlers:
+          # Declare the build and bundles directory as static assets to be served by the
+          # App Engine CDN.
+          - url: /build
+            static_dir: public/build
+          - url: /bundles
+            static_dir: public/bundles
+
+          # Declare any media files in the public directory as static assets as well.
+          - url: /(.*\.(ico|txt|gif|png|jpg))$
+            static_files: public/\1
+            upload: public/.*\.(ico|txt|gif|png|jpg)$
 
     **Note**: Read more about the [env][symfony-env] and [secret][symfony-secret]
     parameters in Symfony's documentation.
