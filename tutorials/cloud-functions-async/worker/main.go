@@ -13,9 +13,13 @@ import (
 )
 
 func main() {
-	projectID, exists := os.LookupEnv("GOOGLE_CLOUD_PROJECT")
+	var exists bool
+	projectID, exists := os.LookupEnv("GCP_PROJECT")
 	if !exists {
-		log.Fatalf("Set project ID via GCLOUD_PROJECT env variable.")
+		projectID, exists = os.LookupEnv("GOOGLE_CLOUD_PROJECT")
+	}
+	if !exists {
+		log.Fatalf("Set project ID via GCP_PROJECT or GOOGLE_CLOUD_PROJECT env variable.")
 	}
 
 	var err error
