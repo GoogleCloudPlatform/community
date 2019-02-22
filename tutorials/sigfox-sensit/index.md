@@ -118,7 +118,7 @@ Scan the QR code printed on the back of the device. If the scanning does not wor
 [app2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/app2.png
 ![app part 2][app2]
 
-#### Step 4
+#### Step 4:
 
 Confirm the scanned device ID and follow the rest of the steps to activate your device and register it in your sensit.io account.
 
@@ -494,67 +494,84 @@ In addition to the Cloud Function, this tutorial also includes a command line ut
 
 To decode the hexadecimal data payloads sent by the device, execute the following steps on your local development machine:
 
-1.  If you are still in the `cf` directory, change back to the `sigfox-sensit` directory with the following command. Also ensure that you still have the Python virtual environment active:
+1.  If you are still in the `cf` directory, ensure that you still have the Python virtual environment active and go to
+    the `sigfox-sensit` directory:
 
-```
-(venv) $ cd ..
-```
+        (venv) $ cd ..
 
-1. Double click the Sens'it button to trigger transmitting sensor readings.
-1. Use the [Sigfox Backend](https://backend.sigfox.com), [Cloud Functions](https://cloud.google.com/functions) Logs, or [BigQuery](https://cloud.google.com/bigquery) SQL queries, to find the payload string sent by your Sens'it device. Example payload string: `ae098c7d`
-1. Execute the parser utility with the -h flag to see its options:
+1.  Double-press the Sens'it button to trigger transmitting sensor readings.
+1.  Use the [Sigfox backend](https://backend.sigfox.com), [Cloud Functions](https://cloud.google.com/functions) Logs,
+    or [BigQuery](https://cloud.google.com/bigquery) SQL queries, to find the payload string sent by your Sens'it device.
+    Example payload string: `ae098c7d`.
+1.  Run the parser utility with the `-h` flag to see its options:
 
-```
-(venv) $ python sensit-parser.py -h
-```
+        (venv) $ python sensit-parser.py -h
 
-1. Execute the following command to parse your Sens'it payload string. Replace the payload string in the command with <your payload string>:
+1.  Use the following command to parse your Sens'it payload string; replace the payload string in the command with your
+    payload string:
 
-```
-(venv) $ python sensit-parser.py --parser-mode decode-data --hex-string ae098c7d
-```
+        (venv) $ python sensit-parser.py --parser-mode decode-data --hex-string ae098c7d
 
-The command should return an output similar to this. Note that you can see how the parser decodes the 8 bits for each of the 4 bytes, and displays the values:
+    The command should return an output similar to this. Note that you can see how the parser decodes the 8 bits for each of
+    the 4 bytes, and displays the values:
 
-```
-Data HEX:   ae098c7d
+        Data HEX:   ae098c7d
 
-Bit:        76543210
-            --------
-Byte0:  ae  10101110
-Byte1:  09  00001001
-Byte2:  8c  10001100
-Byte3:  7d  01111101
+        Bit:        76543210
+                    --------
+        Byte0:  ae  10101110
+        Byte1:  09  00001001
+        Byte2:  8c  10001100
+        Byte3:  7d  01111101
 
-Container:
-    battery_level = 21
-    reserved = 6
-    mode = 1
-    button_alert_flag = False
-    temperature_msb = 1
-    temperature_lsb = 140
-    humidity = 125
+        Container:
+            battery_level = 21
+            reserved = 6
+            mode = 1
+            button_alert_flag = False
+            temperature_msb = 1
+            temperature_lsb = 140
+            humidity = 125
 
-{'battery_level': 3.75, 'humidity': 62.5, 'mode': 1, 'temperature': 24.5, 'button_alert_flag': False}
-```
+        {'battery_level': 3.75, 'humidity': 62.5, 'mode': 1, 'temperature': 24.5, 'button_alert_flag': False}
 
-You can use this utility to easily debug the data sent by your Sens'it device. You can also use the [Sens'it V3 payload structure](https://ask.sigfox.com/storage/attachments/585-sensit-3-discovery-payload.pdf) and the `sensit-parser.py` code as examples for designing your device-specific binary payloads with Sigfox. The parser leverages the Python ['construct' module](https://pypi.org/project/construct/) for implementing the payload structure in a declarative manner.
+You can use this utility to easily debug the data sent by your Sens'it device. You can also use the
+[Sens'it V3 payload structure](https://ask.sigfox.com/storage/attachments/585-sensit-3-discovery-payload.pdf) and
+the `sensit-parser.py` code as examples for designing your device-specific binary payloads with Sigfox. The parser
+uses the Python [`construct` module](https://pypi.org/project/construct/) for implementing the payload structure in a declarative manner.
 
-## Updating Sens'it Device Configurations
+## Updating Sens'it device configurations
 
-### Decoding Device Configurations
+### Decoding device configurations
 
-By default, the Sens'it V3 device transmits its current configuration once per day. You can identify those payload strings with their longer length. The sensor telemetry data uplink payloads are 4 bytes, or 8 hexadecimal characters. The data + configuration payloads are 4 + 8 = 12 bytes, or 24 hexadecimal characters. Example payload: `9e09a58306003f0f8004223c`. To decode the configuration payloads sent by the device, execute the following steps:
+By default, the Sens'it V3 device transmits its current configuration once per day. You can identify those payload strings 
+with their longer length. The sensor telemetry data uplink payloads are 4 bytes, or 8 hexadecimal characters. The
+data + configuration payloads are 4 + 8 = 12 bytes, or 24 hexadecimal characters. Example payload: `9e09a58306003f0f8004223c`.
 
-1.  Trigger the device to send its data + configuration payload, by pressing the button in the following sequence: short-short-long press. Fun fact: short-short-long corresponds with the letter 'u', in [Morse code](https://en.wikipedia.org/wiki/Morse_code) for: 'Update device configuration'.
+To decode the configuration payloads sent by the device, execute the following steps:
 
-After pressing the sequence, the device light should display three bursts, signifying the three radio transmissions (TX) for the message. Followed by the ring remaining blinking for up to 20 seconds or more. This blinking signifies that the device is waiting for the Sigfox downlink message reception window.
+#### Step 1:
 
-After transmitting the downlink request message, the device waits for 20 seconds, and then opens the radio in receiving (RX) mode for a 25 seconds window. The backend system (Google Cloud) has to return the device configuration to Sigfox Backend during the 20 second sleep time, and Sigfox has to transmit the configuration to the device during the 25 second window.
+Trigger the device to send its data + configuration payload, by pressing the button in the following sequence:
+short-short-long press. Fun fact: short-short-long corresponds with the letter 'u', in
+[Morse code](https://en.wikipedia.org/wiki/Morse_code) for: 'Update device configuration'.
 
-The device sets a flag `ack: True`, to mark the message as a 'Downlink requested' message. The payload in this case is the 4 bytes sensor readings structure, followed by the 8 bytes device current configuration structure. For more information, please refer to the [Downlink sequence diagram](https://cloud.google.com/community/tutorials/sigfox-gw#requesting-downlink-configurations-from-a-device) in the integration guide.
+After pressing the sequence, the device light should display three bursts, signifying the three radio transmissions
+(TX) for the message. Followed by the ring remaining blinking for up to 20 seconds or more. This blinking signifies
+that the device is waiting for the Sigfox downlink message reception window.
 
-1. Verify that the device has requested a downlink message, using the Sigfox Backend > Device > Messages console.
+After transmitting the downlink request message, the device waits for 20 seconds, and then opens the radio in
+receiving (RX) mode for a 25 seconds window. The backend system (Google Cloud) has to return the device configuration
+to Sigfox Backend during the 20 second sleep time, and Sigfox has to transmit the configuration to the device during
+the 25 second window.
+
+The device sets a flag `ack: True`, to mark the message as a 'Downlink requested' message. The payload in this case
+is the 4 bytes sensor readings structure, followed by the 8 bytes device current configuration structure. For more 
+information, please refer to the [downlink sequence diagram](https://cloud.google.com/community/tutorials/sigfox-gw#requesting-downlink-configurations-from-a-device) in the integration guide.
+
+#### Step 2:
+
+Verify that the device has requested a downlink message, using the Sigfox Backend > Device > Messages console.
 
 **Downlink message requested**
 
@@ -566,70 +583,64 @@ The device sets a flag `ack: True`, to mark the message as a 'Downlink requested
 [dl2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/dl2.png
 ![downlink response received][dl2]
 
-1. Copy the message string and use the parser to decode it. Replace the hex-string value with your value:
+#### Step 3:
 
-```
-(venv) $ python sensit-parser.py --parser-mode decode-data --hex-string b609867d06003f0f8004223c
-```
+Copy the message string and use the parser to decode it. Replace the hexadecimal string value with your value:
 
-The command should return an output similar to this:
-
-```
-Data HEX:   b609867d
-... sensor data details ...
-
-Config HEX: 06003f0f8004223c
-
-Bit:        76543210
-            --------
-Byte0:  06  00000110
-... byte values ...
-Byte7:  3c  00111100
-
-MESSAGE_PERIOD = 0
-... configuration parameter values ...
-DOOR_CLOSE_THRESHOLD = 4
-```
-
-This way, you can debug both the sensor values, as well as the current device configurations.
-
-### Encoding Device Configurations
-
-To update the device configurations, you can use the same parser utility. The utility supports generating an editable configuration file from the configuration payload. To edit the device configuration, execute the following commands:
-
-1. Execute the parser with the same HEX value as above, and add the switch --out-file, as follows:
-
-```
-(venv) $ python sensit-parser.py --parser-mode decode-data --hex-string b609867d06003f0f8004223c --out-file config.ini
-```
+    (venv) $ python sensit-parser.py --parser-mode decode-data --hex-string b609867d06003f0f8004223c
 
 The command should return an output similar to this:
 
-```
-Config file written to: config.ini
-```
+    Data HEX:   b609867d
+    ... sensor data details ...
 
-1. Edit the generated current configurations file with your favorite editor. Refer to the [Sens'it V3 payload specification](https://ask.sigfox.com/storage/attachments/585-sensit-3-discovery-payload.pdf) for details on the parameters and their values. For example, you could change `MESSAGE_PERIOD = 1` (transmit data every hour) to: `MESSAGE_PERIOD = 0` (transmit data every 10 minutes).
+    Config HEX: 06003f0f8004223c
 
-```
-(venv) $ vi config.ini
-```
+    Bit:        76543210
+                --------
+    Byte0:  06  00000110
+    ... byte values ...
+    Byte7:  3c  00111100
 
-1. Execute the parser in encoding mode, to get a hexadecimal string from your updated configuration file:
+    MESSAGE_PERIOD = 0
+    ... configuration parameter values ...
+    DOOR_CLOSE_THRESHOLD = 4
 
-```
-(venv) $ python sensit-parser.py --parser-mode encode-config --in-file config.ini
-```
+This way, you can debug both the sensor values and the current device configurations.
 
-The command should return your new Sens'it configuration string similar to this:
+### Encoding device configurations
 
-```
-Reading config from input file: config.ini
+To update the device configurations, you can use the same parser utility. The utility can generate an editable
+configuration file from the configuration payload.
 
-Config HEX: 46003f0f8004223c
-```
+To edit the device configuration, execute the following commands:
 
-### Updating the Configuration in Datastore and Sending it Downlink
+1.  Execute the parser with the same HEX value as above, and add the switch --out-file, as follows:
+
+        (venv) $ python sensit-parser.py --parser-mode decode-data --hex-string b609867d06003f0f8004223c --out-file config.ini
+
+    The command should return an output similar to this:
+
+        Config file written to: config.ini
+
+1.  Edit the generated current configurations file with your favorite editor. Refer to the
+    [Sens'it V3 payload specification](https://ask.sigfox.com/storage/attachments/585-sensit-3-discovery-payload.pdf)
+    for details on the parameters and their values. For example, you could change `MESSAGE_PERIOD = 1` (transmit data
+    every hour) to: `MESSAGE_PERIOD = 0` (transmit data every 10 minutes).
+
+        (venv) $ vi config.ini
+
+1.  Run the parser in encoding mode, to get a hexadecimal string from your updated configuration file:
+
+        (venv) $ python sensit-parser.py --parser-mode encode-config --in-file config.ini
+
+    The command should return your new Sens'it configuration string similar to this:
+
+        Reading config from input file: config.ini
+
+        Config HEX: 46003f0f8004223c
+
+### Updating the configuration in Datastore and sending it with downlink
 
 #### Step 1:
 
@@ -655,28 +666,24 @@ button sequence on your Sens'it device. Monitor the messages in Sigfox Backend a
 
 If successful, you should see a log entry similar to this:
 
-```
-Sending downlink message: {"<device ID>": {"downlinkData": "<your new configuration string>"}}
-```
+    Sending downlink message: {"<device ID>": {"downlinkData": "<your new configuration string>"}}
 
-Congratulations! You are now able to use all the functionality of your Sens'it it device with Google Cloud, and start analyzing its sensor data with Google BigQuery.
-
+Congratulations! You are now able to use all of the functionality of your Sens'it it device with GCP, and start
+analyzing its sensor data with BigQuery.
 
 ## Cleaning up
 
-### Deleting Sigfox Backend Callback Configurations
+### Deleting Sigfox backend callback configurations
 
-If the Google Cloud integration Callbacks are the only ones configured in your Sigfox Backend for this Device Type, you can use a script to delete them all
+If the GCP integration callbacks are the only ones configured in your Sigfox backend for this device type, you can use a script to delete them all:
 
-1. On your local development machine, execute the following:
+1.  On your local development machine, execute the following:
 
-```
-(venv) $ python sigfox-api.py --callbacks delete-all
-```
+        (venv) $ python sigfox-api.py --callbacks delete-all
 
-**Note**: this command deletes *all* callbacks registered for the Device Type, including any Callbacks that you may have configured manually earlier.
+**Note**: this command deletes *all* callbacks registered for the device type, including any callbacks that you may have configured manually earlier.
 
-If you have other Callbacks for other use cases configured for this Device Type, use the [Sigfox Backend](https://backend.sigfox.com/) > Device Type > Callbacks console to delete the 5 Callbacks configured for this integration. You can identify the integration Callbacks from the URLs that point to your Cloud Functions.
+If you have other callbacks for other use cases configured for this device type, use the [Sigfox backend](https://backend.sigfox.com/) > Device Type > Callbacks console to delete the 5 callbacks configured for this integration. You can identify the integration callbacks from the URLs that point to your Cloud Functions.
 
 ### Delete the GCP project
 
