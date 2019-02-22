@@ -18,7 +18,7 @@ overview of PHP and learn ways to run PHP apps on GCP.
 1. Enable billing for your project.
 1. Install and initialize the [Google Cloud SDK][cloud_sdk].
 
-> All code for this tutorial is available in the [PHP samples repository][laravel-framework-sample].
+All code for this tutorial is available in the [PHP samples repository][laravel-framework-sample].
 
 ## Prepare
 
@@ -238,7 +238,7 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
         });
 
 
-    **NOTE**: The very first time you deploy, you may get the log message `This
+    **Note**: The first time you deploy, you may get the log message `This
     request caused a new process to be started for your application, and thus
     caused your application code to be loaded for the first time. This request
     may thus take longer and use more CPU than a typical request for your
