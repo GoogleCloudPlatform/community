@@ -202,7 +202,7 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
             // Add the following lines to integrate with Stackdriver:
             'stackdriver' => [
                 'driver' => 'custom',
-                'via' => App\Logging\CreateCustomLogger::class,
+                'via' => App\Logging\CreateStackdriverLogger::class,
                 'level' => 'debug',
             ],
 
