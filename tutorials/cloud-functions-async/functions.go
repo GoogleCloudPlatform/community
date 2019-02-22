@@ -43,9 +43,9 @@ type Job struct {
 func init() {
 	// setup pubsub
 	// setup firestore
-	projectID, exists := os.LookupEnv("GOOGLE_CLOUD_PROJECT")
+	projectID, exists := os.LookupEnv("GCP_PROJECT")
 	if !exists {
-		log.Fatalf("Set project ID via GOOGLE_CLOUD_PROJECT env variable.")
+		log.Fatalf("Set project ID via GCP_PROJECT env variable.")
 	}
 
 	ctx := context.Background()
