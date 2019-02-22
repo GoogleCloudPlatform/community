@@ -1,6 +1,6 @@
 ---
 title: Using Sigfox Sens'it with GCP
-description: Set up the Sigfox Sens'it Discovery V3 device as a devkit, and use it with Google Cloud Platform.
+description: Set up the Sigfox Sens'it Discovery V3 device as a dev kit, and use it with Google Cloud Platform.
 author: lepistom
 tags: IoT, Internet of Things, Sigfox, LPWAN
 date_published: 2019-02-21
@@ -16,18 +16,14 @@ use GCP services for real-time sensor data ingestion, processing, and analytics,
 
 The main functionalities demonstrated are the following:
 
-- Sens'it device activation and registration as a devkit
+- Sens'it device activation and registration as a dev kit
 - Sigfox-GCP integration configuration
 - Binary sensor data ingestion, parsing, and storage in a data warehouse
 - Binary device configuration encoding, decoding, and management
 
-**Figure 1.** Sigfox Sens'it Discovery V3
-
 ![sensit and gcp](https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/sensit-gcp.jpg)
 
 ## Architecture diagram
-
-**Figure 2.** End-to-end architecture
 
 ![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/architecture.svg)
 
@@ -46,7 +42,7 @@ on your projected production usage.
 
 ## Before you begin
 
-This tutorial assumes that you already have a [GCP](https://console.cloud.google.com/freetrial) account set up.
+This tutorial assumes that you already have a [GCP account](https://console.cloud.google.com/freetrial) set up.
 
 ## Create a GCP project
 
@@ -73,28 +69,30 @@ started with both options.
 
 To activate the Sens'it device using the web portal, execute the following steps:
 
-1. Navigate to the [sensit.io web portal](https://sensit.io) and click **Launch App**.
+#### Step 1:
 
-**Figure 3.** Sensit.io web portal
+Navigate to the [sensit.io web portal](https://sensit.io) and click **Launch App**.
 
 [acti1]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/acti1.png
 ![activation part 1][acti1]
 
-1. Click **Activate my Sens'it**.
+#### Step 2:
 
-**Figure 4.** Activating the Sens'it device
+Click **Activate my Sens'it**.
 
 [acti2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/acti2.png
 ![activation part 2][acti2]
 
-1. Find the device ID printed on the back of the device, and enter it in the input field.
+#### Step 3:
 
-**Figure 5.** Entering the Sens'it ID
+Find the device ID printed on the back of the device, and enter it in the input field.
 
 [acti3]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/acti3.png
 ![activation part 3][acti3]
 
-1. Follow the rest of the steps of the web wizard to activate your device and register it in your sensit.io account.
+#### Step 4:
+
+Follow the rest of the steps of the web wizard to activate your device and register it in your sensit.io account.
 
 ### Option 2: Activate Sens'it using the mobile app
 
@@ -102,24 +100,27 @@ Alternatively, you can install the Sigfox Sens'it Discovery mobile app and use i
 
 To activate the Sens'it device using the mobile app, execute the following steps:
 
-1. Install and open the Sens'it Discovery mobile app.
-1. Click **Add a Sens'it**.
+#### Step 1:
 
-**Figure 6.** Adding a Sens'it with the mobile app
+Install and open the Sens'it Discovery mobile app.
+
+#### Step 2:
+
+Click **Add a Sens'it**.
 
 [app1]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/app1.png
 ![app part 1][app1]
 
-1. Scan the QR code printed on the back of the device. If the scanning does not work, enter the ID manually using the link on the bottom of the screen.
+#### Step 3:
 
-**Figure 7.** Scanning the device QR code
+Scan the QR code printed on the back of the device. If the scanning does not work, enter the ID manually using the link on the bottom of the screen.
 
 [app2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/app2.png
 ![app part 2][app2]
 
-1. Confirm the scanned device ID and follow the rest of the steps to activate your device and register it in your sensit.io account.
+#### Step 4
 
-**Figure 8.** Confirming the scanned device ID
+Confirm the scanned device ID and follow the rest of the steps to activate your device and register it in your sensit.io account.
 
 [app3]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/app3.png
 ![app part 3][app3]
@@ -357,14 +358,20 @@ Note that in Sigfox, the maximum number of data uplink transmissions is 140 mess
 
 To verify that your device has sent the payload, you can use the following user interfaces:
 
-1. In your [Sigfox Backend](https://backend.sigfox.com), select your Device > Messages, and verify that you can see the new messages.
+#### Step 1:
 
-**Figure 9.** Device messages
+In your [Sigfox Backend](https://backend.sigfox.com), select your Device > Messages, and verify that you can see the new messages.
 
 [messages]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/messages.png
 ![device messages][messages]
 
-1. In the [Cloud Functions console](http://console.cloud.google.com/functions), select the 'callback_data' function and select its Logs. This function was created when you followed the [Sigfox-GCP Integration guide](https://cloud.google.com/community/tutorials/sigfox-gw) earlier. Verify that you can see the new messages in Stackdriver Logging for the function. This function receives the messages from Sigfox Backend and forwards them to Cloud Pub/Sub.
+#### Step 2:
+
+In the [Cloud Functions console](http://console.cloud.google.com/functions), select the `callback_data` function and select 
+its Logs. This function was created when you followed the
+[Sigfox-GCP integration guide](https://cloud.google.com/community/tutorials/sigfox-gw) earlier. Verify that you can see the 
+new messages in Stackdriver Logging for the function. This function receives the messages from Sigfox Backend and forwards
+them to Cloud Pub/Sub.
 
 **Example Stackdriver Logging for function: callback_data:**
 
@@ -391,7 +398,9 @@ Received Sigfox message:
 }
 ```
 
-1. In the Cloud Functions portal, select the 'pubsub_bigquery' function and select its Logs. Verify that the function was triggered by the new messages in Pub/Sub and that the function wrote the data to BigQuery.
+#### Step 3:
+
+In the Cloud Functions portal, select the `pubsub_bigquery` function and select its Logs. Verify that the function was triggered by the new messages in Pub/Sub and that the function wrote the data to BigQuery.
 
 **Example Stackdriver Logging for function: pubsub_bigquery:**
 
@@ -436,12 +445,12 @@ BQ Row:
 
 Open the [Google BigQuery console](https://console.cloud.google.com/bigquery), expand the entries under <your project name> and click on the table name. The default names for the dataset and table are `sigfox`, and `sensit`, respectively.
 
-**Figure 10.** BigQuery dataset and table
+**BigQuery dataset and table**
 
 [bq1]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/bq1.png
 ![dataset and table][bq1]
 
-**Figure 11.** Sensit table schema
+**Sensit table schema**
 
 [bq2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/bq2.png
 ![sensit table schema][bq2]
@@ -452,7 +461,9 @@ You can view additional table information with the Details tab, and see a previe
 
 ### Querying the Sens'it Data with SQL
 
-1. Click the Query editor text entry area, copy & paste the following example SQL query.
+#### Step 1:
+
+Click the Query editor text entry area, copy & paste the following example SQL query.
 
 Example SQL query - select the latest 20 messages sent by your Sens'it. Replace `your-project` with the name of your GCP project, `sigfox` with your dataset name, and `sensit` with your table name:
 
@@ -460,9 +471,9 @@ Example SQL query - select the latest 20 messages sent by your Sens'it. Replace 
 SELECT * FROM `your-project.sigfox.sensit` ORDER BY time DESC LIMIT 20
 ```
 
-1. Click Run to execute the query. The query should return an output similar to this. You can scroll the output horizontally to view the results for all the columns:
+#### Step 2:
 
-**Figure 12.** SQL query results
+Click Run to execute the query. The query should return an output similar to this. You can scroll the output horizontally to view the results for all the columns:
 
 [bq3]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/bq3.png
 ![sql query results][bq3]
@@ -545,12 +556,12 @@ The device sets a flag `ack: True`, to mark the message as a 'Downlink requested
 
 1. Verify that the device has requested a downlink message, using the Sigfox Backend > Device > Messages console.
 
-**Figure 13.** Downlink message requested
+**Downlink message requested**
 
 [dl1]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/dl1.png
 ![downlink requested][dl1]
 
-**Figure 14.** Downlink response received successfully
+**Downlink response received successfully**
 
 [dl2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/dl2.png
 ![downlink response received][dl2]
@@ -620,17 +631,24 @@ Config HEX: 46003f0f8004223c
 
 ### Updating the Configuration in Datastore and Sending it Downlink
 
-1. Copy the new Config HEX value and store it in [Cloud Datastore](https://console.cloud.google.com/datastore). The string should be the new value for the property named: `config`, for the kind: `deviceType`. Device Type should match the one for Sens'it in your Sigfox Backend.
+#### Step 1:
 
-**Figure 15.** Updating device configuration in Datastore
+Copy the new Config hexadecimal value and store it in [Cloud Datastore](https://console.cloud.google.com/datastore). The 
+string should be the new value for the property named: `config`, for the kind: `deviceType`. Device Type should match the 
+one for Sens'it in your Sigfox backend.
 
 [ds]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/ds-update.png
 ![updating config in datastore][ds]
 
-1. Press Done, and then Save, to save the new value.
-1. To send the updated configurations to the device, trigger a new downlink request message by pressing the short-short-long button sequence on your Sens'it device. Monitor the messages in Sigfox Backend and Cloud Functions Logs for the function: `callback_data`. You can use the filter box in Stackdriver Logging, to filter for the string: `downlink`:
+#### Step 2:
 
-**Figure 16.** Filtering Stackdriver logs
+Press Done, and then Save, to save the new value.
+
+#### Step 3:
+
+To send the updated configurations to the device, trigger a new downlink request message by pressing the short-short-long 
+button sequence on your Sens'it device. Monitor the messages in Sigfox Backend and Cloud Functions Logs for the function
+`callback_data`. You can use the filter box in Stackdriver Logging, to filter for the string `downlink`.
 
 [log]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/log-filter.png
 ![filtering logs][log]
@@ -674,8 +692,6 @@ To delete a project, do the following:
 1. In the GCP Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1. In the project list, select the project you want to delete and click **Delete project**.
 1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
-
-**Figure 17.** Deleting the project
 
 [delete-project]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/delete-project.png
 ![deleting the project][delete-project]
