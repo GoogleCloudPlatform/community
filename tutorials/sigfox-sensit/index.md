@@ -1,6 +1,6 @@
 ---
-title: Using Sigfox Sensit with GCP
-description: Setup the Sigfox Sens'it Discovery V3 device as a devkit, and use it with Google Cloud Platform.
+title: Using Sigfox Sens'it with GCP
+description: Set up the Sigfox Sens'it Discovery V3 device as a devkit, and use it with Google Cloud Platform.
 author: lepistom
 tags: IoT, Internet of Things, Sigfox, LPWAN
 date_published: 2019-02-21
@@ -10,69 +10,77 @@ Markku Lepisto | Solutions Architect | Google Cloud
 
 ## Objectives
 
-This document describes how to start using your [Sigfox](https://www.sigfox.com/) [Sens'it Discovery V3](https://sensit.io) device and connect it to [Google Cloud Platform](https://cloud.google.com). With step by step instructions on how to use Google Cloud Platform (GCP) services for real-time sensor data ingestion, processing and analytics, as well as device configuration management.
+This document describes how to start using your [Sigfox](https://www.sigfox.com/) [Sens'it Discovery V3](https://sensit.io) 
+device and connect it to [Google Cloud Platform (GCP)](https://cloud.google.com), with step-by-step instructions on how to
+use GCP services for real-time sensor data ingestion, processing, and analytics, as well as device configuration management.
 
 The main functionalities demonstrated are the following:
 
 - Sens'it device activation and registration as a devkit
-- Sigfox - Google Cloud Platform integration configuration
-- Binary sensor data ingestion, parsing and storage in a data warehouse
-- Binary device configuration encoding, decoding and management
+- Sigfox-GCP integration configuration
+- Binary sensor data ingestion, parsing, and storage in a data warehouse
+- Binary device configuration encoding, decoding, and management
 
 **Figure 1.** Sigfox Sens'it Discovery V3
 
 ![sensit and gcp](https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/sensit-gcp.jpg)
 
-## Architecture Diagram
+## Architecture diagram
 
-**Figure 2.** End to end architecture
+**Figure 2.** End-to-end architecture
 
 ![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/architecture.svg)
 
 ## Costs
 
-This tutorial uses billable components of GCP, including:
+This tutorial uses billable components of GCP, including the following:
 
 - Cloud Functions
 - Cloud Pub/Sub
 - Cloud Datastore
-- Cloud BigQuery
+- BigQuery
 
-This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), but you can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected production usage.
+This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/),
+but you can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based
+on your projected production usage.
 
 ## Before you begin
 
-This tutorial assumes you already have a [Cloud Platform](https://console.cloud.google.com/freetrial) account set up.
+This tutorial assumes that you already have a [GCP](https://console.cloud.google.com/freetrial) account set up.
 
-## Creating a Google Cloud Platform Project
+## Create a GCP project
 
-1. Go to the [Google Cloud Console](https://console.cloud.google.com).
-1. Open the Projects pulldown menu in the menu bar on the top and select 'New Project'.
-1. Give the project a name and create it.
-1. Switch to your newly created project with the Projects pull-down menu.
-1. Open the menu > APIs & Services > Library.
+1. Go to the [GCP Console](https://console.cloud.google.com).
+1. Click the project selector in the upper-left corner and select **New Project**.
+1. Give the project a name and click **Create**.
+1. Click the project selector again and select your new project.
+1. Open the menu **APIs & Services > Library**.
 1. Search for and activate the following APIs, or ensure that they are already active:
-    1.  Cloud Functions API
-    1.  Cloud Pub/Sub API
-    1.  Cloud Datastore API
-    1.  Cloud BigQuery API
+    * Cloud Functions API
+    * Cloud Pub/Sub API
+    * Cloud Datastore API
+    * Cloud BigQuery API
 
-## Activating Your Sens'it Device
+## Activate your Sens'it device
 
-Sens'it devices come with a Sigfox subscription. You have to first activate the device, create a Sigfox account, and associate the device in your account. You can activate the device using either a web portal, or a mobile app. The next chapters get you started with both options. _Note: you must be located in a Sigfox [network coverage area](https://www.sigfox.com/en/coverage), when you activate the device._
+Sens'it devices come with a Sigfox subscription. You must first activate the device, create a Sigfox account, and associate
+the device in your account. You can activate the device using either a web portal or a mobile app. The next sections get you
+started with both options. 
 
-### Option 1: Activating Sens'it Using the Web Interface
+**Note**: You must be located in a [Sigfox network coverage area](https://www.sigfox.com/en/coverage) when you activate the device.
+
+### Option 1: Activate Sens'it using the web interface
 
 To activate the Sens'it device using the web portal, execute the following steps:
 
-1. Navigate to the [sensit.io web portal](https://sensit.io) and click 'Launch App'.
+1. Navigate to the [sensit.io web portal](https://sensit.io) and click **Launch App**.
 
 **Figure 3.** Sensit.io web portal
 
 [acti1]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/acti1.png
 ![activation part 1][acti1]
 
-1. Click 'Activate my Sens'it'.
+1. Click **Activate my Sens'it**.
 
 **Figure 4.** Activating the Sens'it device
 
@@ -86,16 +94,16 @@ To activate the Sens'it device using the web portal, execute the following steps
 [acti3]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/acti3.png
 ![activation part 3][acti3]
 
-1. Follow the rest of the steps of the web wizard, to activate your device and register it in your sensit.io account.
+1. Follow the rest of the steps of the web wizard to activate your device and register it in your sensit.io account.
 
-### Option 2: Activating Sens'it Using the Mobile App
+### Option 2: Activate Sens'it using the mobile app
 
-Alternatively, you can install the Sigfox Sens'it Discovery mobile app and use it to activate your device. The app is available in the [Google Play store](https://play.google.com/store/apps/details?id=com.sensitio&hl=en_US) for Android and [App Store](https://play.google.com/store/apps/details?id=com.sensitio&hl=en_US) for iOS devices.
+Alternatively, you can install the Sigfox Sens'it Discovery mobile app and use it to activate your device. The app is available in the [Google Play store](https://play.google.com/store/apps/details?id=com.sensitio&hl=en_US) for Android and [App Store](https://play.google.com/store/apps/details?id=com.sensitio&hl=en_US) for iOS.
 
 To activate the Sens'it device using the mobile app, execute the following steps:
 
-1. Install and open the Sens'it Discovery app on your Android or iOS device.
-1. Click 'Add a Sens'it'.
+1. Install and open the Sens'it Discovery mobile app.
+1. Click **Add a Sens'it**.
 
 **Figure 6.** Adding a Sens'it with the mobile app
 
@@ -116,167 +124,170 @@ To activate the Sens'it device using the mobile app, execute the following steps
 [app3]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/app3.png
 ![app part 3][app3]
 
-## Registering Your Sens'it as a Devkit
+## Register your Sens'it as a dev kit
 
-After you have activated your device, it should be visible in your [sensit.io](https://sensit.io) web portal. In order to use the device with the [Sigfox Backend](https://backend.sigfox.com) system, and integrate with upstream platforms like Google Cloud, you need to register the device as a devkit.
+After you have activated your device, it should be visible in your [sensit.io](https://sensit.io) web portal. To use the
+device with the [Sigfox backend](https://backend.sigfox.com) system and integrate with upstream platforms like GCP, you
+need to register the device as a dev kit (development kit).
 
-Execute the following steps to register your Sens'it as a devkit:
+Execute the following steps to register your Sens'it as a dev kit:
 
-1. Follow all the steps in [this document](https://storage.sbg1.cloud.ovh.net/v1/AUTH_669d7dfced0b44518cb186841d7cbd75/dev_medias/build/4059ae1jm2231vw/sensit-3-devkit-activation.pdf). _Note: ensure that you enter a valid email address so that you can finalize the registration process._
-1. Wait for a few hours while Sigfox registers your new account in the Sigfox Backend, and communicates with the device to transfer it to your Backend account. The time delay is due to the Sigfox radio network periodically communicating with newly registered devices. You will receive an email once the process has finished.
+1.  Follow all the steps in [this document](https://storage.sbg1.cloud.ovh.net/v1/AUTH_669d7dfced0b44518cb186841d7cbd75/dev_medias/build/4059ae1jm2231vw/sensit-3-devkit-activation.pdf).
 
-## Configuring the Sigfox-GCP Integration
+    **Note**: Ensure that you enter a valid email address so that you can finalize the registration process.
+    
+1.  Wait for a few hours while Sigfox registers your new account in the Sigfox backend and communicates with the device
+    to transfer it to your backend account. The delay is due to the Sigfox radio network periodically communicating
+    with newly registered devices. You will receive an email after the process has finished.
 
-Now that you have your Sens'it device associated with your Sigfox Backend, you can integrate it with Google Cloud Platform for processing sensor data, and managing the device configuration.
+## Configure the Sigfox-GCP integration
 
-To integrate your Sigfox Backend with Google Cloud, execute all the steps in the [Sigfox-GCP Integration guide](https://cloud.google.com/community/tutorials/sigfox-gw). **NOTE** - before you start following the linked document, read the tips below. The Integration guide will help you set up Cloud Functions for receiving data and service messages from Sigfox, Cloud Pub/Sub for ingesting the data as a real-time stream, and Cloud Datastore for managing device group configurations.
+Now that you have your Sens'it device associated with your Sigfox backend, you can integrate it with GCP for processing
+sensor data and managing the device configuration.
 
-Tips:
+To integrate your Sigfox backend with GCP, execute all the steps in the
+[Sigfox-GCP integration guide](https://cloud.google.com/community/tutorials/sigfox-gw). The integration guide helps you set
+up Cloud Functions for receiving data and service messages from Sigfox, Cloud Pub/Sub for ingesting the data as a real-time
+stream, and Cloud Datastore for managing device group configurations.
 
-- To transmit a message from your Sens'it device, double-click the button.
-- To request a downlink message, press the button in a 'short-short-long' sequence.
-- In the chapter _'*Configuring Datastore for Device Configuration Management*'_, you can use the following hexadecimal string for the initial configuration value: `46003f0f8004223c`
+Before you start following the integration guide, read these tips, which will help with steps in the integration guide:
 
-The above HEX string is a valid Sens'it configuration payload, which corresponds with the following values:
+-   To transmit a message from your Sens'it device, double-click the button.
+-   To request a downlink message, press the button in a short-short-long sequence.
+-   In the "Configuring Datastore for device configuration management" section, you can use the following hexadecimal string
+    for the initial configuration value: `46003f0f8004223c`. This hexadecimal string is a valid Sens'it configuration
+    payload, which corresponds with the following values:
 
-```
-MESSAGE_PERIOD = 1
-MAGNET_MODE_FLAG = False
-VIBRATION_MODE_FLAG = False
-DOOR_MODE_FLAG = False
-LIGHT_MODE_FLAG = True
-TEMP_MODE_FLAG = True
-STANDBY_MODE_FLAG = False
-B1_SPARE = 0
-TEMPERATURE_LOW_THRESHOLD = 0
-B2_SPARE = 0
-TEMPERATURE_HIGH_THRESHOLD = 63
-HUMIDITY_LOW_THRESHOLD = 0
-HUMIDITY_HIGH_THRESHOLD = 15
-LIMITATION_FLAG = True
-BRIGHTNESS_THRESHOLD = 0
-VIBRATION_ACCELERATION_THRESHOLD = 4
-B6_SPARE = 0
-VIBRATION_BLANK_TIME = 2
-VIBRATION_DEBOUNCE_COUNT = 2
-RESET_BIT = 0
-DOOR_OPEN_THRESHOLD = 7
-DOOR_CLOSE_THRESHOLD = 4
-```
+        MESSAGE_PERIOD = 1
+        MAGNET_MODE_FLAG = False
+        VIBRATION_MODE_FLAG = False
+        DOOR_MODE_FLAG = False
+        LIGHT_MODE_FLAG = True
+        TEMP_MODE_FLAG = True
+        STANDBY_MODE_FLAG = False
+        B1_SPARE = 0
+        TEMPERATURE_LOW_THRESHOLD = 0
+        B2_SPARE = 0
+        TEMPERATURE_HIGH_THRESHOLD = 63
+        HUMIDITY_LOW_THRESHOLD = 0
+        HUMIDITY_HIGH_THRESHOLD = 15
+        LIMITATION_FLAG = True
+        BRIGHTNESS_THRESHOLD = 0
+        VIBRATION_ACCELERATION_THRESHOLD = 4
+        B6_SPARE = 0
+        VIBRATION_BLANK_TIME = 2
+        VIBRATION_DEBOUNCE_COUNT = 2
+        RESET_BIT = 0
+        DOOR_OPEN_THRESHOLD = 7
+        DOOR_CLOSE_THRESHOLD = 4
 
-To learn more about the device configuration parameters, you can refer to the [Sens'it Discovery Payload Structure](https://ask.sigfox.com/storage/attachments/585-sensit-3-discovery-payload.pdf) document.
+To learn more about the device configuration parameters, see
+[Sens'it Discovery Payload Structure](https://ask.sigfox.com/storage/attachments/585-sensit-3-discovery-payload.pdf).
 
-After you have completed the [Sigfox-GCP Integration guide](https://cloud.google.com/community/tutorials/sigfox-gw), continue with the following chapters in this tutorial.
+After you have completed the [Sigfox-GCP integration guide](https://cloud.google.com/community/tutorials/sigfox-gw),
+continue with the following sections in this tutorial.
 
-## Streaming Data into Google BigQuery
+## Streaming data into BigQuery
 
-The Sigfox-GCP integration publishes the device data to a Cloud Pub/Sub topic. To enable long-term storage and analytics for actionable insights, a best practice is to write the data to a data warehouse. This chapter shows how you can stream the data in real-time to [Google BigQuery](https://cloud.google.com/bigquery/), using a Cloud Function that is triggered by the Sens'it payloads in Pub/Sub. Sigfox Backend forwards the data payloads as-is. The payloads are binary encoded. The Cloud Function will parse the data payloads using the Sens'it V3 payload specification before writing them to BigQuery. This way, the data will be easily usable in the data warehouse as standard columns and rows, using SQL queries.
+The Sigfox-GCP integration publishes the device data to a Cloud Pub/Sub topic. To enable long-term storage and analytics for
+actionable insights, a best practice is to write the data to a data warehouse. This section shows how you can stream the
+data in real-time to [BigQuery](https://cloud.google.com/bigquery/), using a Cloud Function that is triggered by the Sens'it
+payloads in Cloud Pub/Sub. The Sigfox backend forwards the data payloads as-is. The payloads are binary-encoded. The Cloud
+Function parses the data payloads using the Sens'it V3 payload specification before writing them to BigQuery. This way, the
+data is usable in the data warehouse as standard columns and rows, using SQL queries.
 
-### Creating the Dataset and Table in BigQuery
+### Create the dataset and table in BigQuery
 
-To host the data in BigQuery, you will create a dataset, and a table. The table is implemented as a wide, sparse table. Wide, meaning that each data payload value available in the [Sens'it Discovery Payload Structure](https://ask.sigfox.com/storage/attachments/585-sensit-3-discovery-payload.pdf) has its own column. And sparse, meaning that if a payload packet does not have a value for a certain column, the value is simply not stored for that row.
+To host the data in BigQuery, you create a dataset and a table. The table is implemented as a wide, sparse table:
+wide, meaning that each data payload value available in the
+[Sens'it Discovery Payload Structure](https://ask.sigfox.com/storage/attachments/585-sensit-3-discovery-payload.pdf)
+has its own column; and sparse, meaning that if a payload packet does not have a value for a certain column, the value is
+simply not stored for that row.
 
 Execute the following steps on your local development machine to create the BigQuery dataset and table:
 
-1. Change the directory back to the Google Cloud Platform community repository, and the directory for this tutorial:
+1.  Go to the directory for this tutorial in the GCP Community repository:
 
-```
-$ cd <your local path>/community/tutorials/sigfox-sensit
-```
+        $ cd <your local path>/community/tutorials/sigfox-sensit
 
-Note: if you do not have a copy of the repository, you can clone it on your machine with:
+    **Note**: If you do not have a copy of the repository, you can clone it on your machine with this command:
 
-```
-$ git clone https://github.com/GoogleCloudPlatform/community.git
-```
+        $ git clone https://github.com/GoogleCloudPlatform/community.git
 
-1. Change to the directory for this tutorial with:
+1.  Deactivate any Python virtual environment that you may still have active from previous steps:
 
-```
-$ cd community/tutorials/sigfox-sensit
-```
+        $ deactivate
 
-1. Deactivate any python virtual environment that you may still have active from the previous steps, with:
+1.  Create a new Python virtual environment in the `sigfox-sensit` directory:
 
-```
-$ deactivate
-```
+        $ virtualenv venv
+        
+    Python scripts that you execute locally require Python 2.7.
 
-1. Create a new python virtual environment in the sigfox-sensit directory. Note that the python scripts that you execute locally require python 2.7:
+1.  Activate the virtual environment:
 
-```
-$ virtualenv venv
-```
+        $ source venv/bin/activate
 
-1. Activate the virtual environment with:
+1.  Install the required Python modules:
 
-```
-$ source venv/bin/activate
-```
+        (venv) $ pip install -r requirements.txt
 
-1. Install the required python modules with:
+1.  Create the BigQuery dataset:
 
-```
-(venv) $ pip install -r requirements.txt
-```
+        (venv) $ bq --location=asia-northeast1 mk sigfox
 
-1. Create the BigQuery dataset by executing the following command, using the `bq` command line tool. Note: the default value of the dataset to host Sigfox Sens'it data in BigQuery is: `sigfox`, but you can change it if necessary. Also change the value of `--location` to the [BigQuery region](https://cloud.google.com/bigquery/docs/locations) where you wish to store your Sens'it data.
+    **Note**: The default value of the dataset to host Sigfox Sens'it data in BigQuery is `sigfox`, but you can change
+    it if necessary. Also, change the value of `--location` to the
+    [BigQuery region](https://cloud.google.com/bigquery/docs/locations) where you want to store your Sens'it data.
 
-```
-(venv) $ bq --location=asia-northeast1 mk sigfox
-```
+    The command should return an output similar to this:
 
-The command should return an output similar to this:
+        Dataset 'your-project:sigfox' successfully created.
 
-```
-Dataset 'your-project:sigfox' successfully created.
-```
+1.  Create the BigQuery table:
 
-1.  Create the BigQuery table by executing the following command. The command uses the table schema JSON file in the same working directory.
+        (venv) $ bq --location=asia-northeast1 mk --table your-project:sigfox.sensit ./bq_sensit_table_schema.json
 
-Note: in the below command, change `your-region` to your GCP region, and change `your-project` to the GCP project where you are hosting the Sigfox-GCP integration. If necessary, you can also change the values of the BigQuery dataset name (default value: `sigfox`) and table name (default value: `sensit`).
+    The command uses the table schema JSON file in the same working directory.
 
-```
-(venv) $ bq --location=asia-northeast1 mk --table your-project:sigfox.sensit ./bq_sensit_table_schema.json
-```
+    **Note**: Change `your-region` to your GCP region, and change `your-project` to the GCP project where you are hosting
+    the Sigfox-GCP integration. If necessary, you can also change the values of the BigQuery dataset name (default value:
+    `sigfox`) and table name (default value: `sensit`).
 
-The command should return an output similar to this:
+    The command should return an output similar to this:
 
-```
-Table 'your-project:sigfox.sensit' successfully created.
-```
+        Table 'your-project:sigfox.sensit' successfully created.
 
-### Deploying the pubsub_bigquery Cloud Function
+### Deploy the `pubsub_bigquery` Cloud Function
 
-The Sens'it payloads published in Pub/Sub are binary encoded. Additionally, the payload HEX string can either contain an 4 bytes long sensor data structure, or the 4 bytes sensor data structure plus an 8 bytes long device configuration structure.
+The Sens'it payloads published in Cloud Pub/Sub are binary-encoded. Additionally, the payload hexadecimal string can either
+contain a 4-byte sensor data structure or a 4-byte sensor data structure plus an 8-byte device configuration structure.
 
-To make the data easily usable later on, the function that consumes the payloads from Pub/Sub will first parse the binary data into normal key/value pairs, and then write them in BigQuery in rows and columns. The function uses streaming writes to BigQuery, in effect having your data warehouse updated in real-time.
+To make the data easily usable later, the function that consumes the payloads from Cloud Pub/Sub first parses the binary
+data into normal key/value pairs and writes them in BigQuery in rows and columns. The function uses streaming writes to
+BigQuery, in effect having your data warehouse updated in real-time.
 
-Additionally, the function checks that the payload in Pub/Sub is from a Sens'it device. It does it by checking if a `deviceType` attribute is present, and then that the value matches the one assigned to your Sens'it devices. The default value is: `SIGFOX_DevKit_1`. In most cases the default value is the one assigned to Sens'it devices. But if the Sigfox Backend assigns a different device type name for your devices, the value can be configured in `sigfox-sensit/cf/.env.yaml`.
+Additionally, the function checks that the payload in Cloud Pub/Sub is from a Sens'it device by checking whether a `deviceType` attribute is present and whether that value matches the one assigned to your Sens'it devices. The default value is `SIGFOX_DevKit_1`. In most cases, the default value is the one assigned to Sens'it devices. If the Sigfox backend assigns a different device type name for your devices, you can configure the value in `sigfox-sensit/cf/.env.yaml`.
 
 Execute the following steps on your local development machine:
 
-1. Change to the 'cf' directory with:
+1.  Go to the `cf` directory:
 
-```
-(venv) $ cd cf
-```
+        (venv) $ cd cf
 
-1. Edit the Cloud Function's environment variables configuration file, by executing for example:
+1.  Edit the Cloud Function environment variable configuration file:
 
-```
-(venv) $ vi .env.yaml
-```
+        (venv) $ vi .env.yaml
 
-The file has the following default configuration parameters:
+    The file has the following default configuration parameters:
 
-```
-BIGQUERY_DATASET: sigfox
-BIGQUERY_TABLE: sensit
-DEVICE_TYPE: SIGFOX_DevKit_1
-```
+        BIGQUERY_DATASET: sigfox
+        BIGQUERY_TABLE: sensit
+        DEVICE_TYPE: SIGFOX_DevKit_1
 
-If you created the BigQuery dataset or table with a different name, update the corresponding configuration values in this file. Additionally, ensure that the value for DEVICE_TYPE matches the Device Type for your Sens'it device in your Sigfox Backend account.
+If you created the BigQuery dataset or table with a different name, update the corresponding configuration values in this
+file. Additionally, ensure that the value for `DEVICE_TYPE` matches the device type for your Sens'it device in your Sigfox
+backend account.
 
 1. Deploy the Cloud Function by executing the following command. Note: change the value of `region` to your preferred region, and the value of `trigger-resource` to the name of your Pub/Sub topic that the Sigfox integration uses. Note: the function is implemented in python 3 but its runtime environment is in the Google Cloud Functions service. You do not need python 3 on your local development environment for this tutorial.
 
@@ -649,7 +660,7 @@ If the Google Cloud integration Callbacks are the only ones configured in your S
 
 If you have other Callbacks for other use cases configured for this Device Type, use the [Sigfox Backend](https://backend.sigfox.com/) > Device Type > Callbacks console to delete the 5 Callbacks configured for this integration. You can identify the integration Callbacks from the URLs that point to your Cloud Functions.
 
-### Deleting the Google Cloud Platform project
+### Delete the GCP project
 
 To avoid incurring charges to your GCP account for the resources used in this tutorial, you can delete the project.
 
@@ -671,7 +682,7 @@ To delete a project, do the following:
 
 ## What's next
 
-- Learn more about [IoT on Google Cloud Platform](https://cloud.google.com/solutions/iot/)
-- Learn more about [Big Data analytics on Google Cloud Platform](https://cloud.google.com/solutions/big-data/), to turn your IoT data into actionable insights
-- Learn more about the [Google BigQuery](https://cloud.google.com/bigquery/) data warehouse for analytics
-- Try out other Google Cloud Platform features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
+- Learn more about [IoT on GCP](https://cloud.google.com/solutions/iot/)
+- Learn more about [Big Data analytics on GCP](https://cloud.google.com/solutions/big-data/), to turn your IoT data into actionable insights
+- Learn more about the [BigQuery](https://cloud.google.com/bigquery/) data warehouse for analytics
+- Try out other GCP features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
