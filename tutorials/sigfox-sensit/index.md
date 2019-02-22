@@ -352,7 +352,7 @@ its Logs. This function was created when you followed the
 new messages in Stackdriver Logging for the function. This function receives the messages from Sigfox backend and forwards
 them to Cloud Pub/Sub.
 
-**Example Stackdriver Logging for function: callback_data:**
+**Example Stackdriver Logging for the `callback_data` function:**
 
     Received Sigfox message:
     {
@@ -379,7 +379,7 @@ them to Cloud Pub/Sub.
 
 In the Cloud Functions portal, select the `pubsub_bigquery` function and select its Logs. Verify that the function was triggered by the new messages in Cloud Pub/Sub and that the function wrote the data to BigQuery.
 
-**Example Stackdriver Logging for function: pubsub_bigquery:**
+**Example Stackdriver Logging for the `pubsub_bigquery` function:**
 
 Receiving the binary payload message from Cloud Pub/Sub:
 
@@ -451,7 +451,9 @@ GCP project, `[sigfox]` with your dataset name, and `[sensit]` with your table n
 
 #### Step 2:
 
-Click **Run** to execute the query. The query should return an output similar to this:
+Click **Run** to execute the query. 
+
+The query should return an output similar to this:
 
 [bq3]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/bq3.png
 ![sql query results][bq3]
@@ -535,7 +537,7 @@ uses the Python [`construct` module](https://pypi.org/project/construct/) for im
 ### Decoding device configurations
 
 By default, the Sens'it V3 device transmits its current configuration once per day. You can identify those payload strings 
-with their longer length. The sensor telemetry data uplink payloads are 4 bytes, or 8 hexadecimal characters. The
+by their greater length. The sensor telemetry data uplink payloads are 4 bytes, or 8 hexadecimal characters. The
 data + configuration payloads are 4 + 8 = 12 bytes, or 24 hexadecimal characters. Example payload: `9e09a58306003f0f8004223c`.
 
 To decode the configuration payloads sent by the device, execute the following steps:
@@ -544,20 +546,20 @@ To decode the configuration payloads sent by the device, execute the following s
 
 Trigger the device to send its data + configuration payload, by pressing the button in the following sequence:
 short-short-long press. Fun fact: short-short-long corresponds with the letter 'u', in
-[Morse code](https://en.wikipedia.org/wiki/Morse_code) for: 'Update device configuration'.
+[Morse code](https://en.wikipedia.org/wiki/Morse_code) for "Update device configuration".
 
 After pressing the sequence, the device light should display three bursts, signifying the three radio transmissions
 (TX) for the message. Followed by the ring remaining blinking for up to 20 seconds or more. This blinking signifies
 that the device is waiting for the Sigfox downlink message reception window.
 
 After transmitting the downlink request message, the device waits for 20 seconds, and then opens the radio in
-receiving (RX) mode for a 25 seconds window. The backend system (Google Cloud) has to return the device configuration
-to Sigfox Backend during the 20 second sleep time, and Sigfox has to transmit the configuration to the device during
+receiving (RX) mode for a 25 seconds window. The backend system (GCP) must return the device configuration
+to the Sigfox backend during the 20 second sleep time, and Sigfox must transmit the configuration to the device during
 the 25 second window.
 
-The device sets a flag `ack: True`, to mark the message as a 'Downlink requested' message. The payload in this case
-is the 4 bytes sensor readings structure, followed by the 8 bytes device current configuration structure. For more 
-information, please refer to the [downlink sequence diagram](https://cloud.google.com/community/tutorials/sigfox-gw#requesting-downlink-configurations-from-a-device) in the integration guide.
+The device sets a flag `ack: True`, to mark the message as a "Downlink requested" message. The payload in this case
+is the 4-byte sensor readings structure, followed by the 8-byte device current configuration structure. For more 
+information, see the [downlink sequence diagram](https://cloud.google.com/community/tutorials/sigfox-gw#requesting-downlink-configurations-from-a-device) in the integration guide.
 
 #### Step 2:
 
