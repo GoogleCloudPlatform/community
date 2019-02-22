@@ -50,18 +50,28 @@ Welcome page.
     **Note**: The composer scripts run on the [Cloud Build][cloud-build] server.
     This is a temporary fix to prevent errors prior to deployment.
 
-1.  Copy the [`app.yaml`](app.yaml) file from this repository into the root of
+1.  Copy the [`app.yaml`][app_yaml] file from this repository into the root of
     your project and replace `YOUR_APP_SECRET` with a new secret or the generated
     secret in `.env`:
 
         runtime: php72
 
         env_variables:
-            APP_ENV: prod
-            APP_SECRET: YOUR_APP_SECRET
+          APP_ENV: prod
+          APP_SECRET: YOUR_APP_SECRET
 
-        # URL handlers
-        # ...
+        handlers:
+          # Declare the build and bundles directory as static assets to be served by the
+          # App Engine CDN.
+          - url: /build
+            static_dir: public/build
+          - url: /bundles
+            static_dir: public/bundles
+
+          # Declare any media files in the public directory as static assets as well.
+          - url: /(.*\.(ico|txt|gif|png|jpg))$
+            static_files: public/\1
+            upload: public/.*\.(ico|txt|gif|png|jpg)$
 
     **Note**: Read more about the [env][symfony-env] and [secret][symfony-secret]
     parameters in Symfony's documentation.
@@ -252,6 +262,7 @@ the [Stackdriver Error Reporting UI][stackdriver-errorreporting-ui]! If you copi
 
 [php-gcp]: https://cloud.google.com/php
 [cloud-sdk]: https://cloud.google.com/sdk/
+[app_yaml]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php72/symfony-framework/app.yaml
 [cloud-build]: https://cloud.google.com/cloud-build/
 [cloud-sql]: https://cloud.google.com/sql/docs/
 [cloud-sql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
