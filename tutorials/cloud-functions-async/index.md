@@ -142,6 +142,35 @@ Start a worker in another tab in either your local terminal or in Cloud Shell, a
 	cd worker
 	go run main.go
 
+You will see output that looks like:
+
+	2019/02/22 08:19:20 Starting on task 4d43b618-9696-4398-aad4-f0e4f7bfc0d7
+
+If you switch back to the shell that is watching the state of the job, in about 40 seconds you will see it transition from:
+
+	{
+	    "Done": false,
+	    "Result": "",
+	    "State": 1,
+	    "created-time": "2019-02-22T16:21:43.055Z",
+	    "done-time": "0001-01-01T00:00:00Z",
+	    "id": "ec82ea86-66d6-46c0-8e9f-ed0b073356ab"
+	}
+
+to
+
+	{
+	    "Done": true,
+	    "Result": "OK completed",
+	    "State": 2,
+	    "created-time": "2019-02-22T16:21:43.055Z",
+	    "done-time": "2019-02-22T16:22:23.794021Z",
+	    "id": "ec82ea86-66d6-46c0-8e9f-ed0b073356ab"
+	}
+
+
+At that point you can CTRL-C to exit the watch command.
+Switch to the shell with the worker process and CTRL-C to exit the worker.
 
 ## Cleanup and Next steps
 
