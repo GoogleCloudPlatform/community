@@ -670,9 +670,9 @@ analyzing its sensor data with BigQuery.
 If the GCP integration callbacks are the only ones configured in your Sigfox backend for this device type, you can use
 a script to delete them all:
 
-1.  On your local development machine, execute the following:
+On your local development machine, execute the following:
 
-        (venv) $ python sigfox-api.py --callbacks delete-all
+    (venv) $ python sigfox-api.py --callbacks delete-all
 
 **Note**: this command deletes *all* callbacks registered for the device type, including any callbacks that you may
 have configured manually earlier.
