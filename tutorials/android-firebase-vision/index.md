@@ -10,6 +10,8 @@ Sara Robinson has authored an excellent post explaining one approach
 to [Adding Computer Vision to your App](https://medium.com/@srobtweets/adding-computer-vision-to-your-ios-app-66d6f540cdd2).
 In the post, she introduces the following pattern:
 
+Test—unicode✈✈✈✈
+
 * Use Firebase Auth native client to upload to Firebase Storage.
 * Use Cloud Functions to access Vision API and store the result in Firestore.
 * Access Cloud Firestore from device to retrieve the API Result.
