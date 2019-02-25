@@ -63,8 +63,7 @@ public class App {
     /**
      * Connects to Cloud Bigtable, runs some basic operations and prints the results.
      */
-    private static void doHelloWorld(String projectId, String instanceId)
-      throws InterruptedException {
+    private static void doHelloWorld(String projectId, String instanceId) {
 
         // [START connecting_to_bigtable]
         // Create the Bigtable connection, use try-with-resources to make sure it gets closed
@@ -108,17 +107,6 @@ public class App {
             e.printStackTrace();
             System.exit(1);
         }
-
-        // IMPORTANT: do NOT exit right away. OpenCensus needs time to
-        // send traces to backend (Stackdriver in this case)
-        int secondsToWait = 15;
-        System.out.println("Exiting in " + String.valueOf(secondsToWait) + "s...");
-        for(int i = secondsToWait-1; i >= 0; i--) {
-            Thread.sleep(1000);
-            System.out.println(String.valueOf(i) + "s...");
-        }
-
-        System.exit(0);
     }
 
     private static void writeRows(Table table) throws IOException {
@@ -176,20 +164,6 @@ public class App {
         }
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        configureOpenCensusExporters();
-
-        doHelloWorld(PROJECT_ID, INSTANCE_ID);
-    }
-
-    private static String requiredProperty(String prop) {
-        String value = System.getProperty(prop);
-        if (value == null) {
-            throw new IllegalArgumentException("Missing required system property: " + prop);
-        }
-        return value;
-    }
-
     private static void configureOpenCensusExporters() throws IOException {
         TraceConfig traceConfig = Tracing.getTraceConfig();
 
@@ -212,6 +186,24 @@ public class App {
         // like latency, req/res bytes, count of req/res messages, started rpc etc.
         // -------------------------------------------------------------------------------------------
         RpcViews.registerAllGrpcViews();
+    }
+
+    private static void sleep(int ms) {
+      try {
+        Thread.sleep(ms);
+      } catch (Exception e) {
+        System.out.println("Exception while sleeping " + e.getMessage());
+      }
+    }
+
+    public static void main(String[] args) throws IOException {
+        configureOpenCensusExporters();
+
+        doHelloWorld(PROJECT_ID, INSTANCE_ID);
+
+        // IMPORTANT: do NOT exit right away. Wait for a duration longer than reporting
+        // duration (5s) to ensure spans are exported. Spans are exported every 5 seconds.
+        sleep(5100);
     }
 }
 
