@@ -262,4 +262,4 @@ You can check the [logs][logs] for errors.
 
 Section [Set up automated builds](#set-up-automated-builds) is derived from
 @ahmetb's [Automated Static Website Publishing with Cloud Container
-Builder](../automated-publishing-container-builder/index.md) tutorial.
+Builder](https://cloud.google.com/community/tutorials/automated-publishing-cloud-build) tutorial.
