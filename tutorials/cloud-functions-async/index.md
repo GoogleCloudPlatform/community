@@ -34,11 +34,11 @@ The caller does not want to wait for the work to be done, but would like to be a
 
 This pattern is common enough that Google has defined a standard of a [long-running-operation API contract](https://github.com/googleapis/googleapis/tree/master/google/longrunning) used in multiple APIs.
 
-This is a high level pattern. What about a job state is tracked and how work is performed will vary by use-case. This tutorial dives deeper into this pattern
+This is a high level pattern. What about a job state is tracked and how work is performed will vary by use-case. This tutorial dives deeper into this pattern.
 
 ## Serverless Stateful Jobs
 
-This tutorial uses several managed services to implement the asyn c stateful jobs pattern including [Cloud Pub/Sub](https://cloud.google.com/pubsub/) and [Cloud Firestore](https://cloud.google.com/firestore/).
+This tutorial uses several managed services to implement the async stateful jobs pattern including [Cloud Pub/Sub](https://cloud.google.com/pubsub/) and [Cloud Firestore](https://cloud.google.com/firestore/).
 
 ![](image/arch.png)
 
