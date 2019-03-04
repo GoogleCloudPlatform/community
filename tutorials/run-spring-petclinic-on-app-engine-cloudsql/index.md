@@ -99,7 +99,7 @@ Spring Integration for Cloud SQL. The following sections demonstrate both option
 
         database=mysql
         spring.datasource.driverClassName=com.mysql.jdbc.Driver
-        spring.datasource.url=jdbc:mysql://google/petclinic?cloudSqlInstance=INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.mysql.SocketFactory
+        spring.datasource.url=jdbc:mysql://google/petclinic?cloudSqlInstance=INSTANCE_CONNECTION_NAME&amp;socketFactory=com.google.cloud.sql.mysql.SocketFactory
         spring.datasource.username=root
         spring.datasource.password=my-smart-password
 
