@@ -45,6 +45,11 @@ There are several components to the architecture.
 
 ## Setting up the automation
 
+Commands in this tutorial assume you are running from the tutorial folder:
+
+	git clone https://github.com/GoogleCloudPlatform/community.git
+	cd community/tutorials/cloud-pubsub-drainer/
+
 ### Install gcloud alpha components
 
 You will use the new support for CLI access to Stackdriver resources which currently is supported in the gcloud alpha component.
