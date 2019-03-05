@@ -157,7 +157,7 @@ The loader script creates some synthetic test data
 
 To test the age based condition in the policy, let the loader run just for a moment, cancel with CTRL-C, then wait a few minutes till the condition is triggered.
 
-	
+	![](image/stackdriver_alerting_policy.png)
 
 For backlog-size based condition trigger, let the loader tool run for several minutes before cancelling.  Note, do not let this script run indefinitely - as it will continue to generate billable volumes of data.
 
@@ -169,13 +169,17 @@ While you wait for a alert to fire, you may wish to check out the [Stackdriver a
 
 The Archiver function logs should show the archiving activity, including how many messages were archived.
 
+![](image/stackdriver_relay_function_logs.png)
 
+![](image/stackdriver_archiver_function_logs.png)
 
 ### Check the archive bucket
 
 If you look in the data archive bucket in the Cloud Console [storage browser](https://console.cloud.google.com/storage) you will see a set of nested folders by year/month/day and then named for the time the archive event occurred.
 
 The size archive size is set to 1MB in this tutorial, though that is adjustable in the function code.
+
+![](image/cloud_storage_export.png)
 
 ## Limits of the pattern
 
