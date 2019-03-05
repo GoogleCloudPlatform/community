@@ -21,6 +21,8 @@ var sClient *storage.Client
 var b *storage.BucketHandle
 var sub *pubsub.Subscription
 var timeout = 5 * time.Second
+
+// set the maximum bytes to write to a GCS file object
 var maxBytes = 1 * 1024 * 1024
 var ob *storage.Writer
 var msgsToAck = []*pubsub.Message{}
@@ -79,8 +81,9 @@ func init() {
 	sub.ReceiveSettings.MaxOutstandingMessages = 10000
 }
 
+// The cleanup function, closes the currently written object
+// and acknowledges written pubsub messages
 func cleanup() {
-	// log.Println("Cleaning up")
 	if ob == nil {
 		// writer was never set, no msgs received
 		return
@@ -111,7 +114,7 @@ type PubSubMessage struct {
 	Data []byte `json:"data"`
 }
 
-// ArchiveTopic docs todo
+// ArchiveTopic drains messages from Cloud Pub/Sub into a bucket
 func ArchiveTopic() (ct int, err error) {
 	log.Println("Starting Archive")
 	var cctx context.Context
@@ -159,7 +162,7 @@ func ArchiveTopic() (ct int, err error) {
 	return received, nil
 }
 
-// Archiver simple func
+// Archiver Cloud Function that initiates the archive task work
 func Archiver(ctx context.Context, m PubSubMessage) error {
 	start := time.Now()
 	received, err := ArchiveTopic()
