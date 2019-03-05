@@ -157,7 +157,7 @@ The loader script creates some synthetic test data
 
 To test the age based condition in the policy, let the loader run just for a moment, cancel with CTRL-C, then wait a few minutes till the condition is triggered.
 
-	![](image/stackdriver_alerting_policy.png)
+![](image/stackdriver_alerting_policy.png)
 
 For backlog-size based condition trigger, let the loader tool run for several minutes before cancelling.  Note, do not let this script run indefinitely - as it will continue to generate billable volumes of data.
 
