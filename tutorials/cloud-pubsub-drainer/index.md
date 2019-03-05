@@ -141,8 +141,23 @@ The loader script creates some synthetic test data
 
 	cd ../loader
 	go run main.go
+	
+	bulking out
+	done bulking out
+	2019/03/05 16:55:33 Published Batch
+	2019/03/05 16:55:34 Published Batch
+	2019/03/05 16:55:35 Published Batch
+	2019/03/05 16:55:36 Published Batch
+	2019/03/05 16:55:37 Published Batch
+	2019/03/05 16:55:38 Published Batch
+	2019/03/05 16:55:39 Published Batch
+	2019/03/05 16:55:40 Published Batch
+	2019/03/05 16:55:41 Published Batch
+	2019/03/05 16:55:42 Published Batch
 
 To test the age based condition in the policy, let the loader run just for a moment, cancel with CTRL-C, then wait a few minutes till the condition is triggered.
+
+	
 
 For backlog-size based condition trigger, let the loader tool run for several minutes before cancelling.  Note, do not let this script run indefinitely - as it will continue to generate billable volumes of data.
 
@@ -153,6 +168,8 @@ While you wait for a alert to fire, you may wish to check out the [Stackdriver a
 ### Check the function logs
 
 The Archiver function logs should show the archiving activity, including how many messages were archived.
+
+
 
 ### Check the archive bucket
 
