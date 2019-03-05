@@ -40,8 +40,10 @@ There are several components to the architecture.
 ## Before you begin
 
 1. Create a Google Cloud Project for this tutorial to allow for easier cleanup
-2. Create a [Stackdriver workspace](https://cloud.google.com/monitoring/workspaces/guide) 
-3. enable cloud functions
+2. Create a new [Stackdriver workspace](https://cloud.google.com/monitoring/workspaces/guide) in the same Google Cloud project as you created above.
+3. Enable cloud functions
+
+	gcloud services enable cloudfunctions.googleapis.com
 
 ## Setting up the automation
 
