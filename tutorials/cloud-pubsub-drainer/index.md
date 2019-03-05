@@ -167,9 +167,11 @@ While you wait for a alert to fire, you may wish to check out the [Stackdriver a
 
 ### Check the function logs
 
-The Archiver function logs should show the archiving activity, including how many messages were archived.
+The Relay function logs should show that the function was called.
 
 ![](image/stackdriver_relay_function_logs.png)
+
+The Archiver function logs should show the archiving activity, including how many messages were archived.
 
 ![](image/stackdriver_archiver_function_logs.png)
 
