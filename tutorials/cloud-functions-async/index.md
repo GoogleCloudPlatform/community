@@ -17,19 +17,19 @@ This tutorial demonstrates how to use [Google Cloud Functions](https://cloud.goo
 When a caller makes a request of a service, it is asking it perform some work. There are three integration patterns that can be applied, depending on the use-case:
 
 ### Synchronous Request/Response
-![sync](image/sync-request.png)
+![sync](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-async/sync-request.png)
 
 The caller will wait until the work is done, expecting a result. This pattern can be directly and simply handled by [Cloud Functions](https://cloud.google.com/functions/) with an [HTTP trigger](https://cloud.google.com/functions/docs/calling/http).
 
 ### Asynchronous Work Queue
-![work-queue](image/work-queue.png)
+![work-queue](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-async/work-queue.png)
 
 The caller does not need to wait for the work to be done, and does not need to followup on the completion status.
 
 There are a couple ways this can be solved on Google Cloud Platform in a serverless way. You can use Cloud Pub/Sub patterns for [long running tasks](https://cloud.google.com/solutions/using-cloud-pub-sub-long-running-tasks) or you can use a dedicated service with [Cloud Tasks](https://cloud.google.com/tasks/).
 
 ### Asynchronous Stateful Jobs
-![](image/stateful-job.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-async/stateful-job.png)
 The caller does not want to wait for the work to be done, but would like to be able to inquire as to the completion of the request.
 
 This pattern is common enough that Google has defined a standard of a [long-running-operation API contract](https://github.com/googleapis/googleapis/tree/master/google/longrunning) used in multiple APIs.
@@ -40,7 +40,7 @@ This is a high level pattern. What about a job state is tracked and how work is 
 
 This tutorial uses several managed services to implement the async stateful jobs pattern including [Cloud Pub/Sub](https://cloud.google.com/pubsub/) and [Cloud Firestore](https://cloud.google.com/firestore/).
 
-![](image/arch.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-async/arch.png)
 
 You can implement this pattern with alternative components. You can use Cloud SQL for job state storage or or Cloud Tasks for the work queue. This tutorial uses the support of [Go](https://golang.org/) in Cloud Functions, but any supported language can be used to fulfill the pattern.
 
