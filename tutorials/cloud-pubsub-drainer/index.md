@@ -103,7 +103,7 @@ Stackdriver does not currently have a native Cloud Pub/Sub alert notification ch
 
 ### Allow Stackdriver to call the webhook
 
-*Cloud Function Alpha Users Only* 
+*[Cloud Function IAM Alpha](http://bit.ly/gcf-iam-alpha) Users Only* 
 
 Stackdriver can only reach publicly accesible webhooks, and if you are using a project with function authorization enabled, you will need to make it reachable.
 
