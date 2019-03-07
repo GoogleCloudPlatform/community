@@ -1,18 +1,14 @@
 ---
-title: Using Prometheus and Grafana for IoT Monitoring
-description: This tutorial walks you through setting up a running stack for IoT monitoring using Prometheus and Grafana with integrations to Google Cloud IoT Core.
+title: Using Prometheus and Grafana for IoT monitoring
+description: This tutorial walks you through setting up a running stack for IoT monitoring using Prometheus and Grafana with integrations to Cloud IoT Core.
 author: ptone
 tags: IoT, Internet of Things, monitoring, prometheus
-date_published: 2018-09-25
+date_published: 2019-03-09
 ---
 
-<!----- Diagram Sources
-https://docs.google.com/presentation/d/17iy4eWvU-w-X4fKmtYo8bgqbFH5qa5kKEDphQm8hf-Y/edit#slide=id.g46ef3169a5_0_1
------>
+Preston Holmes | Solution Architect | Google Cloud
 
-* Preston Holmes | Solution Architect | Google Cloud
-
-# Using Prometheus and Grafana for IoT Monitoring
+# Using Prometheus and Grafana for IoT monitoring
 
 This tutorial walks you through setting up a running stack for IoT monitoring using Prometheus and Grafana with integrations to Google Cloud IoT Core.  For a more thorough discussion of the background, see the accompanying [concept document](http://TBD).
 
@@ -30,7 +26,7 @@ The open source toolkit [Prometheus](https://prometheus.io/) is built to ingest 
 
 [Grafana](https://grafana.com/) is a popular open source dashboard and visualization tool with support for Prometheus as a data-source. In this tutorial we will work through some sample dashboards as well as use it as the place to look at metrics queries.
 
-![alt_text](images/architecture.png )
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/architecture.png )
 _Architecture Figure_
 
 While some simple threshold alerts can be performed by a serverless function reacting to individual telemetry messages, other scenarios require more complex time-series expressions, alerting policies, and graphs to aid those involved in managing a large fleet of devices.
@@ -54,11 +50,13 @@ cd tutorials/cloud-iot-prometheus-monitoring
 ```
 
 
-### Enable APIs, this will take a few minutes:
+### Enable APIs
 
 ```
 gcloud services enable compute.googleapis.com cloudiot.googleapis.com pubsub.googleapis.com cloudfunctions.googleapis.com container.googleapis.com
 ```
+
+This will take a few minutes.
 
 ### Set Environment variables
 
@@ -71,7 +69,7 @@ export CLOUD_ZONE=us-central1-a
 
 ```
 
-### Create Cluster
+### Create cluster
 
 ```
 gcloud beta container --project $GCLOUD_PROJECT clusters create "monitoring-demo" \
@@ -85,14 +83,14 @@ gcloud beta container --project $GCLOUD_PROJECT clusters create "monitoring-demo
 --no-enable-autoupgrade --enable-autorepair
 ```
 
-### Create Pubsub Topic and Subscriptions for IoT Core
+### Create Cloud Pub/Sub topic and subscriptions for IoT Core
 
 ```
 gcloud pubsub topics create metricdata
 gcloud pubsub subscriptions create metric-pull --topic metricdata
 ```
 
-### Set up an OAuth credential to allow Google login to Grafana (optional)
+###  (Optional) Set up an OAuth credential to allow Google login to Grafana
 
 You can enable Google login to the deployed Grafana dashboard. To do this takes a couple set up steps. Google login requires the site to be hosted at a valid domain name, with HTTPS enabled. The fastest way to do this for a tutorial is to use a web proxy hosted on App Engine. In production you would instead set up a [load balancer](https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer) with custom domain and TLS.
 
@@ -118,7 +116,7 @@ In `iotmonitor-chart/values.yaml`, update the server root_url for Grafana to:
 https://[project-id].appspot.com/
 ```
 
-### Set up Stackdriver datasource (optional)
+### (Optional) Set up Stackdriver datasource
 
 Grafana [supports](http://docs.grafana.org/features/datasources/stackdriver/) [Stackdriver](https://cloud.google.com/stackdriver/) as a built-in datasource. This can be provisioned automatically as part of the setup, or manually added later.
 
@@ -160,7 +158,7 @@ helm init --service-account helm
 ```
 
 
-### Deploy the Prometheus & Grafana chart combo
+### Deploy the Prometheus and Grafana chart combination
 
 ```
 cd iotmonitor-chart
@@ -216,7 +214,7 @@ Grafana has already been configured with datasource, but you need to import the 
 
 _Note_: If you are working in cloud shell environment, you may find it easier to make an additional clone (or download the zip file) of the repo to your local machine for upload.
 
-![alt_text](images/iot-monitoring-tutorial0.png )
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/grafana.png)
 
 Click the "**Upload .json File**" and locate Inside the tutorial folder the dashboards folder.
 
@@ -241,18 +239,17 @@ A team at Autodesk Research has shown how this risk [also extends to visualizati
 
 ## IoT use case examples walk through of PromQL syntax
 
-
-### Introduction to Queries
+### Introduction to queries
 
 A complete introduction to Prometheus Query Language or PromQL is beyond the scope of this tutorial. Instead we focus on how PromQL can be applied to a set of IoT monitoring use-cases. For introductions to PromQL see [this post](https://timber.io//blog/promql-for-humans/), and the [official documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/).
 
-### Device Detail Dashboard
+### Device Detail dashboard
 
 Proceed to the dashboard list view at:
 
 https://[projectid].appspot.com/dashboards 
 
-choose the "Device Detail View"
+Choose the **Device Detail View**.
 
 Both sample dashboards take advantage of a Grafana feature called [template](http://docs.grafana.org/reference/templating/) variables. This allows a drop down to apply the dashboard to a specific device or region.
 
@@ -261,7 +258,7 @@ By default, you will see the "albuquerque-0" simulated device selected.
 Let's start with the temperature Graph. To see the queries that generates this dashboard element, click on the small Triangle next to the panel's title and choose Edit.
 
 
-![alt_text](images/iot-monitoring-tutorial1.png)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/temperature.png)
 
 
 First notice that there are two queries. Each query draws a line in the graph. Let us start with the simpler, second one:
@@ -326,7 +323,7 @@ With this offset, you will see the green line extending into the future. The fla
 
 There is some trial and error to find predictions that are useful with this technique. Obviously it will not work to try to predict an hour in the future based on the last one minute of data.
 
-### Region Dashboard
+### Region dashboard
 
 For some diagnostics, it may be useful to review a single device. But more often you are likely wanting to look at data in some form of aggregate.
 
@@ -395,7 +392,7 @@ topk(10, changes(device_boot_time[1h])
 
 The `changes` function looks for sudden jumps to the value of a gauge. This can be used to track the number of times a device reboots in an hour. For this demo our simulated devices reboot an alarming 8 times per hour on average. But if you use the dashboard selectors to choose "Massachusetts" as the region, you will see that one device is crashing a lot more frequently, and the dashboard uses conditional formatting to show this as red. 
 
-## Sending metrics from an IoT Device
+## Sending metrics from an IoT device
 
 The workbench we have been using to look at different ways to query and visualize time series data has used purely synthetic data. This has been done in a container running adjacent to Prometheus. Prometheus is designed around [pull instead of push](https://prometheus.io/docs/introduction/faq/#why-do-you-pull-rather-than-push?) based metric collection. Given IoT devices are going to be remote from the prometheus server, and not possible to scrape directly, how do we get data from a device into prometheus? While Prometheus supports a [push gateway](https://prometheus.io/docs/instrumenting/pushing/) - it is more intended for ephemeral jobs, and not long running operational information like might be coming from devices. Instead we want to tunnel metrics over IoT Core's MQTT telemetry channels. We will cover a couple ways to do this, both of them using a client library approach to building metrics.
 
@@ -403,7 +400,7 @@ The workbench we have been using to look at different ways to query and visualiz
 
 The first approach is to simply send measurements in any format you want over MQTT and convert these to metrics by a specialized converter. The converter needs to know how each sensor value is best represented into a Prometheus metric.  The firmware author does not need to know about the use of these values in the monitoring context. These values can be easily consumed for other uses.
 
-![alt_text](images/extractor.png "Extract From Payloads")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/extractor.png "Extract From Payloads")
 
 ### Using Promiot to instrument an IoT device
 
@@ -413,7 +410,7 @@ Scraping many remote IoT devices is not possible or practical for a monitoring s
 
 [Promiot](https://github.com/ptone/promiot) is an open source library that allows a device to use the Prometheus client libraries directly on the device. It does this by locally scraping the metrics, then sending a serialized version of the metrics over MQTT, where a receiver unserializes and exposes them to the prometheus server, without needing to know anything about the contents, or how to convert them. This has the benefit that integrating the prometheus client libraries with sensor reading is intuitive, and the firmware author can focus on instrumentation as promiot handles all communication with IoT Core.
 
-![alt_text](images/promiot.png "Using promiot library")
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/promiot.png "Using promiot library")
 
 ### Caveats of this approach
 
@@ -497,7 +494,7 @@ You need to go into the [config maps section](https://console.cloud.google.com/k
 
 You can verify that the alerts that are firing are being sent to this cloud function by looking at the cloud function logs in the console.
 
-## Using Stackdriver Datasource
+## Using Stackdriver datasource
 
 If you followed the optional setup instructions, you should have a functioning Stackdriver datasource. You can import the stackdriver-example sample dashboard provided in this repo to see a few ways to use this integration.
 
