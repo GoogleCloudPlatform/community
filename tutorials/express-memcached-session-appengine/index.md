@@ -1,13 +1,14 @@
 ---
-title: Use Memcache for Sessions with Express.js on Google App Engine Flexible Environment
-description: Learn how to deploy an Express.js app to Google App Engine flexible environment that uses Memcache for user sessions.
+title: Use Memcache for sessions with Express.js on App Engine flexible environment
+description: Learn how to deploy an Express.js app to App Engine flexible environment that uses Memcache for user sessions.
 author: jmdobry
 tags: App Engine, Express.js, Node.js, Memcache
 date_published: 2017-02-08
 ---
+
 This tutorial shows a sample Node.js app built with Express.js that uses
 Memcache for user sessions. The end of the tutorial shows deploying the app to
-Google App Engine flexible environment.
+App Engine flexible environment.
 
 You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
 overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
@@ -59,7 +60,7 @@ Platform.
 
 ## Deploying the app
 
-1. Create an `app.yaml` file with the following contents:
+1.  Create an `app.yaml` file with the following contents:
 
         runtime: nodejs
         env: flex

@@ -183,87 +183,88 @@ from the dropdown list. Then click **Create**.
 
 #### `index.js`
 
-    'use strict';
+```js
+'use strict';
 
-    const {google} = require('googleapis');
+const {google} = require('googleapis');
 
-    // configuration options
-    const REGION = 'europe-west1';
-    const PROJECT_ID = 'lora-server-tutorial';
-    const REGISTRY_ID = 'eu868-gateways';
-
-
-    let client = null;
-    const API_VERSION = 'v1';
-    const DISCOVERY_API = 'https://cloudiot.googleapis.com/$discovery/rest';
+// configuration options
+const REGION = 'europe-west1';
+const PROJECT_ID = 'lora-server-tutorial';
+const REGISTRY_ID = 'eu868-gateways';
 
 
-    // getClient returns the GCP API client.
-    // Note: after the first initialization, the client will be cached.
-    function getClient (cb) {
-      if (client !== null) {
-        cb(client);
-        return;
+let client = null;
+const API_VERSION = 'v1';
+const DISCOVERY_API = 'https://cloudiot.googleapis.com/$discovery/rest';
+
+
+// getClient returns the GCP API client.
+// Note: after the first initialization, the client will be cached.
+function getClient (cb) {
+  if (client !== null) {
+    cb(client);
+    return;
+  }
+
+  google.auth.getClient({scopes: ['https://www.googleapis.com/auth/cloud-platform']}).then((authClient => {
+    google.options({
+      auth: authClient
+    });
+
+    const discoveryUrl = `${DISCOVERY_API}?version=${API_VERSION}`;
+    google.discoverAPI(discoveryUrl).then((c, err) => {
+      if (err) {
+        console.log('Error during API discovery', err);
+        return undefined;
       }
-
-      google.auth.getClient({scopes: ['https://www.googleapis.com/auth/cloud-platform']}).then((authClient => {
-        google.options({
-          auth: authClient
-        });
-
-        const discoveryUrl = `${DISCOVERY_API}?version=${API_VERSION}`;
-        google.discoverAPI(discoveryUrl).then((c, err) => {
-          if (err) {
-            console.log('Error during API discovery', err);
-            return undefined;
-          }
-          client = c;
-          cb(client);
-        });
-      }));
-    }
+      client = c;
+      cb(client);
+    });
+  }));
+}
 
 
-    // sendMessage forwards the Pub/Sub message to the given device.
-    exports.sendMessage = (event, context, callback) => {
-      const deviceId = event.attributes.deviceId;
-      const subFolder = event.attributes.subFolder;
-      const data = event.data;
-  
-      getClient((client) => {
-        const parentName = `projects/${PROJECT_ID}/locations/${REGION}`;
-        const registryName = `${parentName}/registries/${REGISTRY_ID}`;
-        const request = {
-          name: `${registryName}/devices/${deviceId}`,
-          binaryData: data,
-          subfolder: subFolder
-        };
-    
-        console.log("start call sendCommandToDevice");
-        client.projects.locations.registries.devices.sendCommandToDevice(request, (err, data) => {
-          if (err) {
-            console.log("Could not send command:", request, "Message:", err);
-            callback(new Error(err));
-          } else {
-            callback();
-          }
-        });
-      });
+// sendMessage forwards the Pub/Sub message to the given device.
+exports.sendMessage = (event, context, callback) => {
+  const deviceId = event.attributes.deviceId;
+  const subFolder = event.attributes.subFolder;
+  const data = event.data;
+
+  getClient((client) => {
+    const parentName = `projects/${PROJECT_ID}/locations/${REGION}`;
+    const registryName = `${parentName}/registries/${REGISTRY_ID}`;
+    const request = {
+      name: `${registryName}/devices/${deviceId}`,
+      binaryData: data,
+      subfolder: subFolder
     };
 
+    console.log("start call sendCommandToDevice");
+    client.projects.locations.registries.devices.sendCommandToDevice(request, (err, data) => {
+      if (err) {
+        console.log("Could not send command:", request, "Message:", err);
+        callback(new Error(err));
+      } else {
+        callback();
+      }
+    });
+  });
+};
+```
 
 #### `package.json`
 
-
-    {
-      "name": "gateway-commands",
-      "version": "2.0.0",
-      "dependencies": {
-        "@google-cloud/pubsub": "0.20.1",
-        "googleapis": "34.0.0"
-      }
-    }
-
+```json
+{
+  "name": "gateway-commands",
+  "version": "2.0.0",
+  "dependencies": {
+    "@google-cloud/pubsub": "0.20.1",
+    "googleapis": "34.0.0"
+  }
+}
+```
 
 ## Set up databases
 

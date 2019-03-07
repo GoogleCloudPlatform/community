@@ -1,16 +1,16 @@
 ---
-title: Run a Kotlin Spring Boot app on Google App Engine Standard
-description: Learn how to deploy a Kotlin Spring Boot app to Google App Engine Standard.
+title: Run a Kotlin Spring Boot app on App Engine standard environment
+description: Learn how to deploy a Kotlin Spring Boot app to App Engine standard environment.
 author: bshaffer
 tags: App Engine, Kotlin, Spring Boot, Java, App Engine Standard
 date_published: 2018-09-21
 ---
 
-[Google App Engine Standard](https://cloud.google.com/appengine/docs/standard/)
+[App Engine standard environment](https://cloud.google.com/appengine/docs/standard/)
 deploys your apps to the same infrastructure that powers Google's products. In
 this tutorial you'll see how to deploy your [Kotlin](https://kotlinlang.org/)
 and [Spring Boot](https://projects.spring.io/spring-boot/) application to App
-Engine Standard.
+Engine standard environment.
 
 You will create a new Spring Boot application, and then you will learn how to:
 
@@ -75,7 +75,6 @@ application.
 1.  Open the downloaded application folder in your favourite IDE or editor an
     create a new source file `MessageController.kt` in the directory
     `src/main/kotlin` with the following contents:
-
 
         package com.example.demo
 
@@ -155,7 +154,7 @@ Make a simple change and redeploy.
 
 1. Change the text returned from the `message()` function to
 
-    "Hello from Google App Engine"
+    "Hello from App Engine"
 
 1. Run the deployment command again:
 
