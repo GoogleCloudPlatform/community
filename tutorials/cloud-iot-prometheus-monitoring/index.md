@@ -71,7 +71,7 @@ cd tutorials/cloud-iot-prometheus-monitoring
 gcloud services enable compute.googleapis.com cloudiot.googleapis.com pubsub.googleapis.com cloudfunctions.googleapis.com container.googleapis.com
 ```
 
-This will take a few minutes.
+Enabling the APIs may take a few minutes.
 
 ### Set environment variables
 
@@ -109,26 +109,27 @@ gcloud pubsub subscriptions create metric-pull --topic metricdata
 
 You can enable Google login to the deployed Grafana dashboard. To do this takes a couple of setup steps. Google login 
 requires the site to be hosted at a valid domain name, with HTTPS enabled. The fastest way to do this for a tutorial is to
-use a web proxy hosted on App Engine. In production you would instead set up a
-[load balancer](https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer) with a custom domain and TLS.
+use a web proxy hosted on App Engine. In production, you would instead set up a
+[load balancer](https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer) with a custom domain and Transport Layer Security (TLS).
 
 In the console, choose **APIs & Services > Credentials > OAuth consent screen**.
 
-**set values on consent screen**
+#### Set values on the consent screen
 
-*  Name: "iot-monitor"
-*  Authorized domain:  [project-id].appspot.com
+*   Name: `iot-monitor`
+*   Authorized domain: `[project-id].appspot.com`
 
-**Create OAuth client ID**
+#### Create OAuth client ID
 
-*  Create a credential of type 'web'
-*  Name it grafana-login
-*  Add Authorized redirect URI
-    *   https://[project-id].appspot.com/login/google
+*   Create a credential of type `web`.
+*   Name it `grafana-login`.
+*   Add an authorized redirect URI:
 
-Edit the Oauth values in `iotmonitor-chart/values.yaml` with the client ID settings.
+        https://[project-id].appspot.com/login/google
 
-In `iotmonitor-chart/values.yaml`, update the server root_url for Grafana to this:
+Edit the OAuth values in `iotmonitor-chart/values.yaml` with the client ID settings.
+
+In `iotmonitor-chart/values.yaml`, update the server `root_url` for Grafana to this:
 
 ```
 https://[project-id].appspot.com/
@@ -160,15 +161,13 @@ grafana.ini:
         root_url: https://[project-id].appspot.com
 ```
 
-
-Install [Helm](https://github.com/kubernetes/helm) in your Cloud Shell. The instructions below assume you are starting
+Install [Helm](https://github.com/kubernetes/helm) in your Cloud Shell. The instructions below assume that you are starting
 from this tutorial's root level: `$HOME/community/tutorials/cloud-iot-prometheus-monitoring`
 
 ```
 wget https://storage.googleapis.com/kubernetes-helm/helm-v2.12.0-linux-amd64.tar.gz
 tar -xzvf helm-v2.12.0-linux-amd64.tar.gz
 mv linux-amd64/helm $HOME/bin/
-
 
 # Be sure you have the current cluster credentials
 gcloud container clusters get-credentials monitoring-demo --zone $CLOUD_ZONE --project $GCLOUD_PROJECT
@@ -194,9 +193,9 @@ Wait for the ingress service to have an IP address
 kubectl get service iotmonitor-grafana -o jsonpath={.status.loadBalancer.ingress[0].ip}
 ```
 
-Make a note of this IP address, you will be injecting it into the source code for a simple proxy.
+Make a note of this IP address. You will be injecting it into the source code for a simple proxy.
 
-Note: you may also want to grab the Grafana admin password now:
+Get the Grafana admin password:
 
 ```
 kubectl get secret --namespace default iotmonitor-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
@@ -204,11 +203,13 @@ kubectl get secret --namespace default iotmonitor-grafana -o jsonpath="{.data.ad
 
 ### Deploy the Grafana web proxy
 
-In order for Google Auth to work with Grafana, we need a valid domain and TLS. For this tutorial we are going to set up a 
+For Google Auth to work with Grafana, we need a valid domain and TLS. For this tutorial, we will set up a 
 simple proxy in App Engine that allows us to have that quickly, but in production you would set up Grafana with a proper GKE
-ingress managed load balancer and a proper cert on your own domain.
+ingress-managed load balancer and a proper cert on your own domain.
 
 Edit the source at `web-proxy/proxy.go` to include the private IP of the internal load balancer of the Grafana service.
+
+Deploy the proxy:
 
 ```
 cd ../web-proxy
@@ -219,37 +220,38 @@ Choose the same region as your cluster.
 
 ## Introduction to the simulated data
 
-This tutorial focuses more on the use of the monitoring tools of Prometheus and Grafana. To facilitate this exploration, the
+This tutorial focuses on the use of the monitoring tools of Prometheus and Grafana. To facilitate this exploration, the
 above steps have also deployed a device simulator. This simulator does not exercise the full architecture, but instead 
-exposes simulated directly to be scraped by Prometheus. The simulated data is from a set of imagined devices installed in 
-different cities across North America. These devices have a temperature sensor, a light sensor, and a panel access door that
-has a sensor. These basic metrics are then used in queries and dashboards to illustrate the use of Prometheus and Grafana.
+exposes simulated data directly to be scraped by Prometheus. The simulated data is from a set of imagined devices
+installed in different cities across North America. These devices have a temperature sensor, a light sensor, and a
+panel access door that has a sensor. These basic metrics are then used in queries and dashboards to illustrate the use
+of Prometheus and Grafana.
 
 ## Using Grafana
 
 A Grafana instance was deployed as part of this stack. By default it has been configured to support login with any Google 
-account, you can limit this to a specific [G Suite](https://gsuite.google.com) domain by changing the values in the Helm 
-chart used earlier. In this tutorial, Grafana is exposed via a simple App Engine base reverse proxy. This gives us HTTPS at a
-domain name, which is a requirement of the Google login Grafana plugin. In production you would replace this with a proper 
-ingress object associated with a Cloud Load balancer.
+account. You can limit this to a specific [G Suite](https://gsuite.google.com) domain by changing the values in the Helm 
+chart used earlier. In this tutorial, Grafana is exposed with a simple App Engine base reverse proxy. This gives us HTTPS at
+a domain name, which is a requirement of the Google login Grafana plugin. In production, you would replace this with a
+proper ingress object associated with a load balancer.
 
-Earlier you should have retrieved the admin password from the Kubernetes secret, you can reach the Grafana login screen by
+Earlier, you retrieved the admin password from the Kubernetes secret. You can reach the Grafana login screen by
 going here:
 
 ```
-https://[projectid].appspot.com/
+https://[project-id].appspot.com/
 ```
 
 Log in as admin.
 
 Grafana has already been configured with a data source, but you need to import the sample dashboards. 
 
-_Note_: If you are working in Cloud Shell environment, you may find it easier to make an additional clone (or download the
-zip file) of the repository to your local machine for upload.
+**Note**: If you are working in a Cloud Shell environment, you may find it easier to make an additional clone (or download
+the zip file) of the repository to your local machine for upload.
 
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/grafana.png)
 
-Click the **Upload .json File** and locate the tutorial folder in the dashboards folder.
+Click **Upload .json File** and locate the tutorial folder in the dashboards folder.
 
 Pick the **Device Detail View...** file and import it. In the next dialog, you may need to choose **Prometheus** as the
 data source.
@@ -266,9 +268,6 @@ However one must be careful to capture information in ways that do not obscure i
 Anscombe famously [showed](https://en.wikipedia.org/wiki/Anscombe%27s_quartet) how very different data distributions could 
 result in identical statistical summaries.
 
-<p><a href="https://commons.wikimedia.org/wiki/File:Anscombe%27s_quartet_3.svg#/media/File:Anscombe%27s_quartet_3.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Anscombe%27s_quartet_3.svg" alt="Anscombe's quartet 3.svg" height="465" width="640"></a><br>By <a href="//commons.wikimedia.org/wiki/File:Anscombe.svg" title="File:Anscombe.svg">Anscombe.svg</a>: <a href="//commons.wikimedia.org/wiki/User:Schutz" title="User:Schutz">Schutz</a>
-Derivative works of this file:(label using subscripts): <a href="//commons.wikimedia.org/wiki/User:Avenue" title="User:Avenue">Avenue</a> - <a href="//commons.wikimedia.org/wiki/File:Anscombe.svg" title="File:Anscombe.svg">Anscombe.svg</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=9838454">Link</a></p>
-
 A team at Autodesk Research has shown how this risk also
 [extends to visualizations such as box plots](https://www.autodeskresearch.com/publications/samestats).
 
@@ -283,9 +282,8 @@ how PromQL can be applied to a set of IoT monitoring use-cases. For introduction
 
 ### Device Detail dashboard
 
-Proceed to the dashboard list view at:
-
-https://[projectid].appspot.com/dashboards 
+Go to the dashboard list view:
+`https://[projectid].appspot.com/dashboards`
 
 Choose **Device Detail View**.
 
@@ -298,7 +296,6 @@ Let's start with the temperature Graph. To see the queries that generate this da
 next to the panel's title and choose **Edit**.
 
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/temperature.png)
-
 
 First notice that there are two queries. Each query draws a line in the graph. Let us start with the simpler, second one:
 
@@ -315,7 +312,7 @@ on [naming metrics](https://prometheus.io/docs/practices/naming/) for more discu
 The part of the query inside the curly braces `{}` are selectors to filter the metric. In this case, we want measurements
 that match the label for `instance` that equals the currently selected template drop-down.
 
-The `$device_id` variable is expanded by Grafana before it is passed to Prometheus as
+The `$device_id` variable is expanded by Grafana before it is passed to Prometheus as follows:
 
 ```
 room_external_temp{instance="albuquerque-0"}
@@ -323,9 +320,9 @@ room_external_temp{instance="albuquerque-0"}
 
 This example uses a Prometheus configuration setting `honor_labels: true` in `prometheus.yml` so that `instance`, which is
 commonly used in queries as the source of the metric data, is preserved as originally provided by the device, and not
-replaced by the instance of the Kubernetes pod/node that provided it via scraping.
+replaced by the instance of the Kubernetes pod/node that provided it by scraping.
 
-This type of query is referred to as an Instant Vector, since it retrieves one value per selector match that shares a
+This type of query is referred to as an _instant vector_, since it retrieves one value per selector match that shares a
 time-stamp. There are other settings in the adjacent Grafana gauge panel to limit this to the instant or latest value, but
 the query actually returns the series of instant values, which are displayed as a yellow line in the graph.
 
@@ -335,8 +332,8 @@ The other query in this panel is this:
 avg_over_time( room_external_temp{instance="$device_id"}[15m])
 ```
 
-This adds two elements to the query. The first is the `[15m]` following the selector, which turns this into a Range Vector.
-For each point in time, the Range Vector holds an array of 15m of values. The other is the `avg_over_time`, which is a 
+This adds two elements to the query. The first is the `[15m]` following the selector, which turns this into a range vector.
+For each point in time, the range vector holds an array of 15m of values. The other is the `avg_over_time`, which is a 
 function in PromQL applied to this group of measurements.
 
 Click the **Return to Dashboard** button in the top right and look next at the query behind the **Message Data Rate** panel:
@@ -354,13 +351,13 @@ Because rates are inherently calculated as per-second values, the result is mult
 
 Finally, let's look at the last panel, **Luminance Predictions**.
 
-The yellow dots are a plot of the simple metric:
+The yellow dots are a plot of this simple metric:
 
 ```
 room_luminance{instance="$device_id"}
 ```
 
-The green line is a prediction of the value using linear regression
+The green line is a prediction of the value using linear regression:
 
 ```
 predict_linear(room_luminance{instance="$device_id"}[15m], 300   )
@@ -384,19 +381,21 @@ For some diagnostics, it may be useful to review a single device, but it is more
 aggregate form.
 
 If you look at the provided "Region Dashboard" sample. You can see that we use two template variables to select a group of
-devices, region and firmware version.
+devices, regions, and firmware versions.
 
-To select these devices, we use a technique called either _info blocks_
+To select these devices, we use a technique called _info blocks_
 or [_machine roles_](https://www.robustperception.io/how-to-have-labels-for-machine-roles). The idea is to use a dummy
 gauge to hold a set of metadata related to a device, instead of needing to repeat these on each metric.
 
-PromQL then supports a join function to look up matching devices based on this metadata. Looking at the device count panel:
+PromQL then supports a join function to look up matching devices based on this metadata. 
+
+Look at the device count panel:
 
 ```
 count(device_boot_time* on (instance) group_left(region, firmware)  device_info{region="$region", firmware=~"$firmware"}) 
 ```
 
-`device_info` is the dummy gauge, always just set to one, you can see that we are selecting this gauge based on the
+Here, `device_info` is the dummy gauge, always just set to one. You can see that we are selecting this gauge based on the
 Grafana template values.
 
 These two labels are used to `group_left` join on other metrics, for which we want (`on`) the instance. The metric
@@ -411,7 +410,7 @@ In order to get the **All** option to work for firmware, a few things are needed
  - Set a custom value for the option of `.*`
  - Use the pattern match operator in the info-block selector of `=~`
 
-As all of the panels use this approach, only the use of other PromQL features will be described.
+As all of the panels use this approach, only the uses of other PromQL features are described.
 
 **Hottest Devices**
 
@@ -419,8 +418,8 @@ As all of the panels use this approach, only the use of other PromQL features wi
 topk(3, room_external_temp ...
 ```
 
-The topk function sorts and limits a result, this shows the three hottest places. Note that as the ranking evolves over
-time, the graph is colored and the legend supports displaying past ranked places as well as the current hottest places.
+The `topk` function sorts and limits a result. This example shows the three hottest places. Note that as the ranking evolves
+over time, the graph is colored and the legend supports displaying past ranked places as well as the current hottest places.
 
 **Longest Running Devices**
 
@@ -428,7 +427,8 @@ time, the graph is colored and the legend supports displaying past ranked places
 topk(5, time() - device_boot_time ...
 ```
 
-Uses the `time()` function for `now` to select the top five longest-running devices. `device_boot_time` is a gauge that is set to UNIX timestamp at startup.
+Uses the `time()` function for `now` to select the top five longest-running devices. `device_boot_time` is a gauge that
+is set to UNIX timestamp at startup.
 
 **Devices with Lid Open**
 
@@ -436,7 +436,7 @@ Uses the `time()` function for `now` to select the top five longest-running devi
 sum without (instance, firmware) (lid_open_status ...
 ```
 
-The sum function groups by each unique set of labels in the result across the series. Here you only want to sum for the
+The `sum` function groups by each unique set of labels in the result across the series. Here you only want to sum for the
 region by excluding the instance and firmware labels by using `without`.
 
 
@@ -458,7 +458,7 @@ topk(10, changes(device_boot_time[1h])
 
 The `changes` function looks for sudden jumps to the value of a gauge. This can be used to track the number of times a 
 device reboots in an hour. For this demo, our simulated devices reboot 8 times per hour on average. If you use the dashboard
-selectors to choose **Massachusetts** as the region, you will see that one device is crashing a lot more frequently, and the
+selectors to choose **Massachusetts** as the region, you will see that one device is crashing much more frequently, and the
 dashboard uses conditional formatting to show this as red. 
 
 ## Sending metrics from an IoT device
@@ -470,7 +470,7 @@ collection. Given that IoT devices will be remote from the Prometheus server, an
 we get data from a device into Prometheus? Prometheus supports
 a [push gateway](https://prometheus.io/docs/instrumenting/pushing/), but it is more intended for ephemeral jobs, not
 long-running operational information like that which might be coming from devices. Instead, we want to tunnel metrics over 
-the Cloud IoT Core MQTT telemetry channels. We will cover a couple ways to do this, both of them using a client library 
+the Cloud IoT Core MQTT telemetry channels. We will cover a couple of ways to do this, both of them using a client library 
 approach to building metrics.
 
 ### Extracting metrics from payloads
@@ -480,7 +480,7 @@ specialized converter. The converter needs to know how each sensor value is best
 The firmware author does not need to know about the use of these values in the monitoring context. These values can be
 easily consumed for other uses.
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/extractor.png "Extract From Payloads")
+![Extract from payloads](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/extractor.png)
 
 ### Using Promiot to instrument an IoT device
 
@@ -496,29 +496,29 @@ pattern is needed.
 
 [Promiot](https://github.com/ptone/promiot) is an open source library that allows a device to use the Prometheus client
 libraries directly on the device. It does this by locally scraping the metrics, then sending a serialized version of the
-metrics over MQTT, where a receiver unserializes and exposes them to the prometheus server, without needing to know anything
+metrics over MQTT, where a receiver unserializes and exposes them to the Prometheus server, without needing to know anything
 about the contents or how to convert them. This has the benefit that integrating the Prometheus client libraries with
 sensor reading is intuitive, and the firmware author can focus on instrumentation, as Promiot handles all communication with
 Cloud IoT Core.
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/promiot.png "Using promiot library")
+![Using Promiot library](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/promiot.png)
 
 ### Caveats of this approach
 
-Using these techniques are not without some caveats:
+Using these techniques is not without some caveats:
 
 *   Prometheus assigns timestamps to metrics at the time they are scraped. There will be latency between the device and
-    the prometheus server. Promiot does measure and report this latency as its own metric
-*   Depending on the way a converter or promiot is configured, it can can continue to expose stale metrics to be scraped
+    the Prometheus server. Promiot measures and reports this latency as its own metric.
+*   Depending on the way a converter or Promiot is configured, it can can continue to expose stale metrics to be scraped
     by the Prometheus Server.
-*   As many devices will route telemetry onto a single Cloud Pub/Sub topic. The converter or receiver can only be a
-    singleton process, as there is no way to route messages from a specific set of devices in a sticky way to a node
+*   Many devices will route telemetry onto a single Cloud Pub/Sub topic. The converter or receiver can only be a
+    singleton process, because there is no way to route messages from a specific set of devices in a sticky way to a node
     of a cluster of receivers. While the point at which scaling becomes an issue given this design depends on the number
-    of metrics and series collected, it should support up to 10K devices typically. At some point the system will need
+    of metrics and series collected, it should support up to 10,000 devices typically. At some point, the system will need
     to be functionally sharded. Prometheus itself needs to be sharded at some point, as well.
 
 These caveats are accepted, noting that the objective is to get the data into Prometheus, which affords the best-in-breed 
-capabilities for queries via PromQL as illustrated above. This is also not meant to be a system for events or logs or
+capabilities for queries with PromQL as illustrated above. This is also not meant to be a system for events or logs or
 long-term analytics storage.
 
 ## Alerting
@@ -528,7 +528,7 @@ As noted in
 alerting often helps in drawing your attention in a timely manner to metrics that indicate some incident.
 
 The Prometheus [Alertmanager](https://prometheus.io/docs/alerting/overview/) is available as a separate component and
-running process, separate from Prometheus the metrics engine. Prometheus is configured with alert reporting rules, which 
+running process, separate from the Prometheus metrics engine. Prometheus is configured with alert reporting rules, which 
 send matching metrics to the Alertmanager.
 
 Alerts move through the following states in order: inactive, pending, firing.
@@ -537,10 +537,10 @@ Pending alerts have a matching condition, but have not sustained that condition 
 rule's prescribed threshold. This is key to reducing noise from conditions that can vary transiently but are not worth
 alerting about on a single recorded value.
 
-The Prometheus Alertmanager design connects three main parts: Alerts, Routes, and Receivers.
+The Prometheus Alertmanager design connects three main parts: alerts, routes, and receivers.
 
-Alerts are defined by [Alert rules](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/), which can
-be grouped.
+Alerts are defined by [alerting rules](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/),
+which can be grouped.
 
 The chart that you deployed contains two preconfigured alerting rules:
 
@@ -585,16 +585,17 @@ You will now deploy a very simple alert receiver as a Cloud Function:
 ```
 cd alert-function
 gcloud beta functions deploy handle_alert --runtime python37 --trigger-http
-We need to update the prometheus configuration with the URL of the deployed function. You can get this from the command line where you deployed the function, or look it up in the cloud console.
-It will look like: 
 ```
+
+We need to update the Prometheus configuration with the URL of the deployed function. You can get this from the command line 
+where you deployed the function, or look it up in the GCP Console. It willlook something like this:
 
 ```
 https://us-central1-[project-id].cloudfunctions.net/handle_alert
 ```
 
 Go into the [config maps section](https://console.cloud.google.com/kubernetes/configmap) of the GKE console and
-edit the _yaml_ for `iotmonitor-prometheus-alertmanager` config, finding the URL:
+edit the `yaml` for the `iotmonitor-prometheus-alertmanager` configuration, finding the URL
 `http://example.com/willbe404/` and replacing it with the one for your function.
 
 **Note**: Because this is a publicly accessible Cloud Function, you should add a level of security in production by setting 
@@ -607,37 +608,37 @@ in the console.
 ## Using a Stackdriver data source
 
 If you followed the optional setup instructions, you should have a functioning Stackdriver data source. You can import the 
-stackdriver-example sample dashboard provided in this repository to see a few ways to use this integration.
+`stackdriver-example` sample dashboard provided in this repository to see a few ways to use this integration.
 
 You can also follow the setup instructions from Grafana to add Stackdriver via the Grafana UI now. You will need to choose
 a different data source name, and choose this data source when you import the sample dashboard.
 
-For IoT Monitoring, the primary value of this integration is to be able to
+For IoT monitoring, the primary value of this integration is to be able to
 include [IoT Core metrics](https://cloud.google.com/monitoring/api/metrics_gcp#gcp-cloudiot) directly into your dashboards.
 
 ## Inserting Google Sheets
 
 It may be useful to include some information collaboratively edited in Google Sheets directly inside a dashboard.
 
-The Text graph type supports HTML and we can use that to embed an iFrame of a Google sheet.
+The Text graph type supports HTML, and we can use that to embed an iFrame of a Google sheet.
 
-While you can iFrame the complete edit view URL if you want the full editor chrome, you have a few other choices.
+While you can embed an iFrame for the complete edit view URL if you want the full editor chrome, you have a few other
+choices.
 
-Assuming a standard edit URL like
+Assuming a standard edit URL like the following, you can choose
+[**Publish to Web**](https://support.google.com/docs/answer/183965?co=GENIE.Platform%3DDesktop&hl=en),
+which will make the document public and will automatically create the `iframe src` code for you if you choose to embed it:
 
 ```
 https://docs.google.com/spreadsheets/d/1FvwKEqVbnY1k3ZfQ3SJNLr-CAb3U_3bIOIFe_XE2wGY/edit#gid=0
 ```
-
-You can choose [**Publish to Web**](https://support.google.com/docs/answer/183965?co=GENIE.Platform%3DDesktop&hl=en),
-which will make the document public and will automatically create the `iframe src` code for you if you choose to embed it.
 
 If you want to keep the document private to your shared recipients or a
 [group](https://support.google.com/a/answer/167101?hl=en), you can use a special URL to get the content.
 Replace `edit#gid=0` in the URL with `htmlembed?single=true&gid=0&widget=false&chrome=false`. You can also
 add `range=f2:g6` if you want to further restrict to a specific range.
 
-The easiest way to refresh this is to right-click in Chrome choose and **Reload Frame**, but this could probably also be 
+The easiest way to refresh this is to right-click in Chrome and choose and **Reload Frame**, but this could also be 
 achieved with a clever bit of Javascript and a button.
 
 You can also add `&kiosk` to the Grafana dashboard itself to get your dashboard to display without all of the Grafana editor 
