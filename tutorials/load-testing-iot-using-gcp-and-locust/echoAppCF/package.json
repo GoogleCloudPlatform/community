@@ -1,0 +1,12 @@
+{
+  "name": "echoAppCF",
+  "version": "1.0.0",
+  "description": "Receive message from device and send message back on commands topic",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "gcloud functions deploy echoAppCF --source=. --trigger-topic defaultTelemetry --runtime nodejs8"
+  },
+  "dependencies": {
+    "googleapis": "^35.0.0"
+  }
+}

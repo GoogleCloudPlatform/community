@@ -8,8 +8,9 @@ date_published: 2018-11-08
 
 # Perform Angular server-side (pre-)rendering with Cloud Build
 
-This tutorial will show you how to pre-generate [server-side rendered Angular pages](https://angular.io/guide/universal) using Cloud Build. Server-side rendering helps facilitate web crawlers (SEO), improve performance on mobile and low-powered devices
- and show the first page quickly.
+This tutorial will show you how to pre-generate [server-side rendered Angular pages](https://angular.io/guide/universal)
+using Cloud Build. Server-side rendering helps facilitate web crawlers (SEO), improve performance on mobile and low-powered
+devices and show the first page quickly.
 
 ![ push new angular code to cloud source repository ](https://storage.googleapis.com/gcp-community/tutorials/cloudbuild-angular-universal/angular-cloudbuild.png)
 
@@ -69,20 +70,16 @@ gcloud services enable cloudbuild.googleapis.com
 
 1.  Download and unzip the test application
 
-    ```sh
-    curl -L https://angular.io/generated/zips/universal/universal.zip > universal.zip
-    unzip universal.zip -d angular-app
-    cd angular-app
-    ```
+        curl -L https://angular.io/generated/zips/universal/universal.zip > universal.zip
+        unzip universal.zip -d angular-app
+        cd angular-app
 
 1.  Create a local Git repository for the sample code
 
-    ```sh
-    curl -L https://github.com/angular/angular/blob/master/.gitignore > .gitignore
-    git init
-    git add .
-    git commit -m "first"
-    ```
+        curl -L https://github.com/angular/angular/blob/master/.gitignore > .gitignore
+        git init
+        git add .
+        git commit -m "first"
 
 ### Create a Cloud Source repository for your copy of the test Angular application
 You will create a repository called `tour-of-heroes-universal`
@@ -181,37 +178,35 @@ You will create a repository called `tour-of-heroes-universal`
 
 2.  Create the `cloudbuild.yaml` file.
 
-     ```yaml
-     cat <<CLOUDBUILD_FILE>cloudbuild.yaml
-     steps:
-     - id: install_packages
-       name: 'gcr.io/cloud-builders/npm'
-       args:
-       - 'install'
-     - id: prerender_browser_files
-       name: 'gcr.io/cloud-builders/npm'
-       args:
-       - 'run'
-       - 'build:prerender'
-       waitFor:
-       - install_packages
-     - id: copy_prerendered_files
-       name: 'gcr.io/cloud-builders/gsutil'
-       args: ['cp','-r','dist/browser/*', '\${_ANGULAR_APP_BUCKET_PATH}']
-       waitFor:
-       - prerender_browser_files
-     - id: set_website_configuration
-       name: 'gcr.io/cloud-builders/gsutil'
-       args: ['web', 'set', '-m', 'index.html','\${_ANGULAR_APP_BUCKET_PATH}']
-       waitFor:
-       - copy_prerendered_files
-     - id: set_permissions_for_website_files
-       name: 'gcr.io/cloud-builders/gsutil'
-       args: ['acl','ch','-u','AllUsers:R','-r', '\${_ANGULAR_APP_BUCKET_PATH}']
-       waitFor:
-       - copy_prerendered_files
-     CLOUDBUILD_FILE
-     ```
+         cat <<CLOUDBUILD_FILE>cloudbuild.yaml
+         steps:
+         - id: install_packages
+           name: 'gcr.io/cloud-builders/npm'
+           args:
+           - 'install'
+         - id: prerender_browser_files
+           name: 'gcr.io/cloud-builders/npm'
+           args:
+           - 'run'
+           - 'build:prerender'
+           waitFor:
+           - install_packages
+         - id: copy_prerendered_files
+           name: 'gcr.io/cloud-builders/gsutil'
+           args: ['cp','-r','dist/browser/*', '\${_ANGULAR_APP_BUCKET_PATH}']
+           waitFor:
+           - prerender_browser_files
+         - id: set_website_configuration
+           name: 'gcr.io/cloud-builders/gsutil'
+           args: ['web', 'set', '-m', 'index.html','\${_ANGULAR_APP_BUCKET_PATH}']
+           waitFor:
+           - copy_prerendered_files
+         - id: set_permissions_for_website_files
+           name: 'gcr.io/cloud-builders/gsutil'
+           args: ['acl','ch','-u','AllUsers:R','-r', '\${_ANGULAR_APP_BUCKET_PATH}']
+           waitFor:
+           - copy_prerendered_files
+         CLOUDBUILD_FILE
 
 3.  Add and commit `cloudbuild.yaml` to the Git repository.
 
