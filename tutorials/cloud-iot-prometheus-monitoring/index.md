@@ -11,13 +11,14 @@ Preston Holmes | Solution Architect | Google Cloud
 # Using Prometheus and Grafana for IoT monitoring
 
 This tutorial walks you through setting up a running stack for IoT monitoring using Prometheus and Grafana with integrations
-with Cloud IoT Core.  For a more thorough discussion of the background and concepts, see [Remote monitoring and alerting for IoT](https://cloud.google.com/solutions/remote-monitoring-and-alerting-for-iot).
+with Cloud IoT Core. For a more thorough discussion of the background and concepts, see
+[Remote monitoring and alerting for IoT](https://cloud.google.com/solutions/remote-monitoring-and-alerting-for-iot).
 
 ## Objectives
 
-*   Deploy Prometheus and Grafana in Google Kubernetes Engine (GKE)
-*   Examine sample dashboards and prometheus queries to understand how these tools related to IoT monitoring use-cases
-*   Deploy a cloud function that responds to alerts
+*   Deploy Prometheus and Grafana in Google Kubernetes Engine (GKE).
+*   Examine sample dashboards and Prometheus queries to understand how these tools relate to IoT monitoring use-cases.
+*   Deploy a Cloud Function that responds to alerts.
 
 ## Introduction
 
@@ -30,15 +31,13 @@ Originally developed at SoundCloud and now [part](https://www.cncf.io/announceme
 of the [Cloud Native Computing Foundation](https://www.cncf.io/), Prometheus is typically used to monitor software
 and services deployed in infrastructure fabric like Kubernetes. The underlying time-series database is
 [optimized](https://fabxc.org/tsdb/) for storing millions of series and is designed for very fast writes and queries. This
-design is well suited for the types of monitoring tasks you may want to perform with data coming from IoT devices like those 
-listed above.
+design is well suited for the types of monitoring tasks you may want to perform with data coming from IoT devices.
 
 [Grafana](https://grafana.com/) is a popular open source dashboard and visualization tool with support for Prometheus as a
 data source. In this tutorial, we will work through some sample dashboards as well as use it as the place to look at metrics 
 queries.
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/architecture.png )
-_Architecture Figure_
+![architecture figure](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/architecture.png )
 
 While some simple threshold alerts can be performed by a serverless function reacting to individual telemetry messages,
 other scenarios require more complex time-series expressions, alerting policies, and graphs to aid those involved in 
@@ -46,7 +45,7 @@ managing a large fleet of devices.
 
 Because this tooling is optimized around monitoring, the data in it should be considered more ephemeral, not as the durable
 archive of your important analytical data which you may use for things such as usage trends over a year or training machine
-learning models based on many occurrences of certain behaviors or patterns.  [OpenTSDB, BQ]
+learning models based on many occurrences of certain behaviors or patterns.
 
 In version 2 of Prometheus, improvements were made to support the more ephemeral nature of container-based services, which 
 cause higher churn of different series. As a result, Prometheus is now more capable of this kind of approach to device 
@@ -120,14 +119,14 @@ In the console, choose **APIs & Services > Credentials > OAuth consent screen**.
 *  Name: "iot-monitor"
 *  Authorized domain:  [project-id].appspot.com
 
-**Create OAuth client ID **
+**Create OAuth client ID**
 
 *  Create a credential of type 'web'
 *  Name it grafana-login
 *  Add Authorized redirect URI
     *   https://[project-id].appspot.com/login/google
 
-Edit the Oauth values in `iotmonitor-chart/values.yaml` with the client id settings.
+Edit the Oauth values in `iotmonitor-chart/values.yaml` with the client ID settings.
 
 In `iotmonitor-chart/values.yaml`, update the server root_url for Grafana to this:
 
@@ -181,7 +180,6 @@ kubectl apply -f helm-rbac.yaml
 helm init --service-account helm
 ```
 
-
 ### Deploy the Prometheus and Grafana chart combination
 
 ```
@@ -210,28 +208,28 @@ In order for Google Auth to work with Grafana, we need a valid domain and TLS. F
 simple proxy in App Engine that allows us to have that quickly, but in production you would set up Grafana with a proper GKE
 ingress managed load balancer and a proper cert on your own domain.
 
-Edit the source at web-proxy/proxy.go to include the private IP of the internal load balancer of the Grafana service.
+Edit the source at `web-proxy/proxy.go` to include the private IP of the internal load balancer of the Grafana service.
 
 ```
 cd ../web-proxy
 gcloud app deploy
 ```
 
-Choose the same region as your cluster
+Choose the same region as your cluster.
 
 ## Introduction to the simulated data
 
 This tutorial focuses more on the use of the monitoring tools of Prometheus and Grafana. To facilitate this exploration, the
 above steps have also deployed a device simulator. This simulator does not exercise the full architecture, but instead 
-exposes simulated directly to be scraped by Prometheus.  The simulated data is from a set of imagined devices installed in 
+exposes simulated directly to be scraped by Prometheus. The simulated data is from a set of imagined devices installed in 
 different cities across North America. These devices have a temperature sensor, a light sensor, and a panel access door that
 has a sensor. These basic metrics are then used in queries and dashboards to illustrate the use of Prometheus and Grafana.
 
 ## Using Grafana
 
 A Grafana instance was deployed as part of this stack. By default it has been configured to support login with any Google 
-account, you can limit this to a specific [G-Suite](https://gsuite.google.com) domain by changing the values in the Helm 
-chart used earlier. In this tutorial Grafana is exposed via a simple App Engine base reverse proxy. This gives us HTTPS at a
+account, you can limit this to a specific [G Suite](https://gsuite.google.com) domain by changing the values in the Helm 
+chart used earlier. In this tutorial, Grafana is exposed via a simple App Engine base reverse proxy. This gives us HTTPS at a
 domain name, which is a requirement of the Google login Grafana plugin. In production you would replace this with a proper 
 ingress object associated with a Cloud Load balancer.
 
