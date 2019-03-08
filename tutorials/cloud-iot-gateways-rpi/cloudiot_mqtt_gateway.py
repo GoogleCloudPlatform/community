@@ -26,7 +26,6 @@ import paho.mqtt.client as mqtt
 from colors import bcolors
 import threading
 
-
 HOST = ''
 PORT = 10000
 BUFSIZE = 2048
@@ -35,7 +34,6 @@ ADDR = (HOST, PORT)
 udpSerSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 udpSerSock.setblocking(0)
 udpSerSock.bind(ADDR)
-
 
 class GatewayState:
   # This is the topic that the device will receive configuration updates on.
@@ -62,13 +60,14 @@ class GatewayState:
 gateway_state = GatewayState()
 
 
-def create_jwt(project_id, private_key_file, algorithm):
+def create_jwt(project_id, private_key_file, algorithm, jwt_expires_minutes):
   """Creates a JWT (https://jwt.io) to establish an MQTT connection.
       Args:
        project_id: The cloud project ID this device belongs to
        private_key_file: A path to a file containing either an RSA256 or
                ES256 private key.
        algorithm: The encryption algorithm to use. Either 'RS256' or 'ES256'
+       jwt_expires_minutes: The time in minutes before the JWT expires.
       Returns:
           An MQTT generated from the given project_id and private key, which
           expires in 20 minutes. After 20 minutes, your client will be
@@ -81,7 +80,7 @@ def create_jwt(project_id, private_key_file, algorithm):
       # The time that the token was issued at
       'iat': datetime.datetime.utcnow(),
       # The time the token expires.
-      'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+      'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=jwt_expires_minutes),
       # The audience field should always be set to the GCP project id.
       'aud': project_id
   }
@@ -156,8 +155,8 @@ def on_message(unused_client, unused_userdata, message):
 
 
 def get_client(
-        project_id, cloud_region, registry_id, device_id, private_key_file,
-        algorithm, ca_certs, mqtt_bridge_hostname, mqtt_bridge_port):
+        project_id, cloud_region, registry_id, gateway_id, private_key_file,
+        algorithm, ca_certs, mqtt_bridge_hostname, mqtt_bridge_port, jwt_expires_minutes):
     """Create our MQTT client. The client_id is a unique string that identifies
     this device. For Google Cloud IoT Core, it must be in the format below."""
     client = mqtt.Client(
@@ -166,14 +165,14 @@ def get_client(
                        project_id,
                        cloud_region,
                        registry_id,
-                       device_id)))
+                       gateway_id)))
 
     # With Google Cloud IoT Core, the username field is ignored, and the
     # password field is used to transmit a JWT to authorize the device.
     client.username_pw_set(
         username='unused',
         password=create_jwt(
-            project_id, private_key_file, algorithm))
+            project_id, private_key_file, algorithm, jwt_expires_minutes))
 
     # Enable SSL/TLS support.
     client.tls_set(ca_certs=ca_certs, tls_version=ssl.PROTOCOL_TLSv1_2)
@@ -205,7 +204,7 @@ def parse_command_line_args():
     parser.add_argument(
         '--registry_id', required=True, help='Cloud IoT Core registry id')
     parser.add_argument(
-        '--device_id', required=True, help='Cloud IoT Core device id')
+        '--gateway_id', required=True, help='Cloud IoT Core gateway id')
     parser.add_argument(
         '--private_key_file',
         required=True, help='Path to private key file.')
@@ -221,23 +220,12 @@ def parse_command_line_args():
         default='roots.pem',
         help=('CA root from https://pki.google.com/roots.pem'))
     parser.add_argument(
-        '--num_messages',
-        type=int,
-        default=100,
-        help='Number of messages to publish.')
-    parser.add_argument(
-        '--message_type',
-        choices=('event', 'state'),
-        default='event',
-        help=('Indicates whether the message to be published is a '
-              'telemetry event or a device state message.'))
-    parser.add_argument(
         '--mqtt_bridge_hostname',
         default='mqtt.googleapis.com',
         help='MQTT bridge hostname.')
     parser.add_argument(
         '--mqtt_bridge_port',
-        choices=(8883, 8884, 443),
+        choices=(8883, 443),
         default=8883,
         type=int,
         help='MQTT bridge port.')
@@ -250,11 +238,15 @@ def parse_command_line_args():
     return parser.parse_args()
 
 
-def attach_device(client, device):
-  attach_topic = '/devices/{}/attach'.format(device)
+def attach_device(client, device_id):
+  attach_topic = '/devices/{}/attach'.format(device_id)
   print(attach_topic)
-  client.publish(attach_topic,  "", qos=1)
+  return client.publish(attach_topic,  "", qos=1)
 
+def detatch_device(client, device_id):
+  detach_topic = '/devices/{}/detach'.format(device_id)
+  print(detach_topic)
+  return client.publish(detach_topic, "", qos=1)
 
 # [START iot_mqtt_run]
 def main():
@@ -262,21 +254,15 @@ def main():
 
   args = parse_command_line_args()
 
-  gateway_state.mqtt_config_topic = '/devices/{}/config'.format(parse_command_line_args().device_id)
+  gateway_state.mqtt_config_topic = '/devices/{}/config'.format(parse_command_line_args().gateway_id)
   gateway_state.mqtt_bridge_hostname = args.mqtt_bridge_hostname
   gateway_state.mqtt_bridge_port = args.mqtt_bridge_hostname
 
-  # Publish to the events or state topic based on the flag.
-  sub_topic = 'events' if args.message_type == 'event' else 'state'
-
-  jwt_iat = datetime.datetime.utcnow()
-  jwt_exp_mins = args.jwt_expires_minutes
   client = get_client(
-      args.project_id, args.cloud_region, args.registry_id, args.device_id,
+      args.project_id, args.cloud_region, args.registry_id, args.gateway_id,
       args.private_key_file, args.algorithm, args.ca_certs,
-      args.mqtt_bridge_hostname, args.mqtt_bridge_port)
+      args.mqtt_bridge_hostname, args.mqtt_bridge_port, args.jwt_expires_minutes)
 
-  # Publish num_messages mesages to the MQTT bridge once per second.
   while True:
     client.loop()
     if gateway_state.connected == False:
@@ -284,7 +270,6 @@ def main():
       time.sleep(1)
       continue
 
-    # print "...waiting for message..."
     try:
       data, client_addr = udpSerSock.recvfrom(BUFSIZE)
     except socket.error:
@@ -301,7 +286,6 @@ def main():
     device_id = command["device"]
 
     if action == 'event':
-      # attach_device(client, device_id)
 
       print('Sending telemetry event for device {}'.format(device_id))
       payload = command["data"]
@@ -314,17 +298,13 @@ def main():
       print('Save mid {} for response {}'.format(event_mid, response))
       gateway_state.pending_responses[event_mid] = (client_addr, response)
     elif action == 'attach':
-      print('attach device {}'.format(device_id))
-      attach_topic = '/devices/{}/attach'.format(device_id)
-      rc, attach_mid = client.publish(attach_topic, "", qos=1)
+      rc, attach_mid = attach_device(client, device_id)
       response = (
           '{{ "device": {}, "command": "attach", "status" : "ok" }}'.format(device_id))
       print('Save mid {} for response {}'.format(attach_mid, response))
       gateway_state.pending_responses[attach_mid] = (client_addr, response)
     elif action == 'detach':
-      print('detach device {}'.format(device_id))
-      detach_topic = '/devices/{}/detach'.format(device_id)
-      rc, detach_mid = client.publish(detach_topic, "", qos=1)
+      rc, detach_mid = detatch_device(client, device_id)
       response = (
           '{{ "device": {}, "command": "detach", "status" : "ok" }}'.format(device_id))
       print('Save mid {} for response {}'.format(detach_mid, response))
