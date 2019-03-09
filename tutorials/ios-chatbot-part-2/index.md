@@ -15,20 +15,20 @@ In API.AI, [webhook](https://docs.api.ai/docs/webhook) integrations allow you to
 
 
 
-1.  Go to [Google Cloud Platform Console](console.cloud.google.com). Log in with your own account and create a new project. 
+1.  Go to [Google Cloud Platform Console](console.cloud.google.com). Log in with your own account and create a new project.
 
 1. Once you've created a new project, navigate to that project.
 
 1. Enable the Cloud Functions API.
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-2/conversational-app-8.png "Enable Billing Screenshot")
-1. Create a function. For the purposes of this guide, we'll call the function "parades". 
+1. Create a function. For the purposes of this guide, we'll call the function "parades".
 
 1. Select the "HTTP" trigger option, then select "inline" editor.
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-2/conversational-app-10.png "Cloud Function Screenshot")
 Don't forget to specify the function to execute to "parades".
 1. You'll also need to create a "stage bucket". Click on "browse" —  you'll see the browser, but no buckets will exist yet.
 ![alt_text](https://storage.googleapis.com/gcp-community/tutorials/ios-chatbot-part-2/conversational-app-4.png "Bucket Screenshot")
-    1. Click on the "+" button to create the bucket. 
+    1. Click on the "+" button to create the bucket.
     1. Specify a unique name for the bucket (you can use your project name, for instance), select "regional" storage, and keep the default region (us-central1).
     1.  Click back on the "select" button in the previous window.
     1.  Click the "create" button to create the function.
@@ -41,7 +41,7 @@ Now it's time to code our function! We'll need two files: the `index.js` file wi
 Here's our `package.json` file. This is dependent on the `actions-on-google` NPM module to ease the integration with API.AI and the Actions on Google platform that allows you to extend the Google Assistant with your own extensions (usable from Google Home):
 
 
-```
+```json
 {
   "name": "parades",
   "version": "0.0.1",
@@ -56,7 +56,7 @@ Here's our `package.json` file. This is dependent on the `actions-on-google` NPM
 In the `index.js` file, here's our code:
 
 
-```
+```js
 const ApiAiApp = require('actions-on-google').ApiAiApp;
 function parade(app) {
   app.ask(`Chinese New Year Parade in Chinatown from 6pm to 9pm.`);
@@ -72,7 +72,7 @@ exports.parades = function(request, response) {
 
 In the code snippet above:
 
-1.  We require the actions-on-google NPM module. 
+1.  We require the actions-on-google NPM module.
 1.  We use the `ask()` method to let the assistant send a result back to the user.
 1.  We export a function where we're using the actions-on-google module's `ApiAiApp` class to handle the incoming request.
 1.  We create a map that maps "intents" from API.AI to a JavaScript function.
@@ -106,17 +106,17 @@ Cloud Speech API includes an iOS [sample](https://github.com/GoogleCloudPlatform
 
 ## Landmark Detection
 
-Follow this [example](https://github.com/GoogleCloudPlatform/cloud-vision/tree/master/ios) to use Cloud Vision API on iOS. You'll need to replace the label and face detection with landmark detection as shown below. 
+Follow this [example](https://github.com/GoogleCloudPlatform/cloud-vision/tree/master/ios) to use Cloud Vision API on iOS. You'll need to replace the label and face detection with landmark detection as shown below.
 
 
 
-```
-  NSDictionary *paramsDictionary =
-  @{@"requests":@[
-        @{@"image":
-            @{@"content":binaryImageData},
-          @"features":@[
-              @{@"type":@"LANDMARK_DETECTION", @"maxResults":@1}]}]};
+```m
+NSDictionary *paramsDictionary =
+@{@"requests":@[
+      @{@"image":
+          @{@"content":binaryImageData},
+        @"features":@[
+            @{@"type":@"LANDMARK_DETECTION", @"maxResults":@1}]}]};
 ```
 
 
@@ -128,7 +128,7 @@ You can use the same API key you used for Cloud Speech API.
 iOS 7+ has a built-in text-to-speech SDK, <code>[AVSpeechSynthesizer](https://developer.apple.com/reference/avfoundation/avspeechsynthesizer?language=objc)</code>. The code below is all you need to convert text to speech.
 
 
-```
+```m
 #import <AVFoundation/AVFoundation.h>
 AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:message];
 AVSpeechSynthesizer *synthesizer = [[AVSpeechSynthesizer alloc] init];
@@ -141,12 +141,12 @@ AVSpeechSynthesizer *synthesizer = [[AVSpeechSynthesizer alloc] init];
 
 
 
-[![Chinese Demo](http://img.youtube.com/vi/Oy4oNNd1aGw/0.jpg)](https://youtu.be/Oy4oNNd1aGw)
+[![Chinese Demo](https://img.youtube.com/vi/Oy4oNNd1aGw/0.jpg)](https://youtu.be/Oy4oNNd1aGw)
 
 Supporting additional languages in Cloud Speech API is a one-line change on the iOS client side. (Currently, there is no support for mixed languages.) For [Chinese](https://youtu.be/Oy4oNNd1aGw), replace [this](https://github.com/google/ios-chatbot/blob/master/ChatBot/ChatBot/SpeechRecognitionService.m#L73) line in [SpeechRecognitionService.m](https://github.com/google/ios-chatbot/blob/master/ChatBot/ChatBot/SpeechRecognitionService.m):
 
 
-```
+```m
 recognitionConfig.languageCode = @"en-US";
 ```
 
@@ -154,7 +154,7 @@ recognitionConfig.languageCode = @"en-US";
 with
 
 
-```
+```m
 recognitionConfig.languageCode = @"zh-Hans";
 ```
 
@@ -162,7 +162,7 @@ recognitionConfig.languageCode = @"zh-Hans";
 To support additional text-to-speech languages, add this line to the code:
 
 
-```
+```m
 #import <AVFoundation/AVFoundation.h>
 AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:message];
 utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"zh-Hans"];
@@ -175,7 +175,7 @@ Both Cloud Speech API and Apple's [AVSpeechSynthesisVoice](https://developer.app
 
 Cloud Vision API landmark detection currently only supports English, so you'll need to use the [Cloud Translation API](https://cloud.google.com/translate/) to translate to your desired language after receiving the English-language landmark description. (You would use Cloud Translation API similarly to Cloud Vision and Speech APIs.)
 
-On the API.AI side, you'll need to create a new agent and [set its language to Chinese](https://api.ai/docs/agents#agent-settings). One agent can support only one language. If you try to use the same agent for a second language, machine learning won't work for that language. 
+On the API.AI side, you'll need to create a new agent and [set its language to Chinese](https://api.ai/docs/agents#agent-settings). One agent can support only one language. If you try to use the same agent for a second language, machine learning won't work for that language.
 
 
 
@@ -192,7 +192,7 @@ You'll also need to create all intents and entities in Chinese.
 ---
 
 
-And you're done! You've just built a simple "tour guide" chatbot that supports English and Chinese. 
+And you're done! You've just built a simple "tour guide" chatbot that supports English and Chinese.
 
 **Next time**
 

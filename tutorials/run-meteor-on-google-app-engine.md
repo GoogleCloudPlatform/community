@@ -1,5 +1,5 @@
 ---
-title: Run Meteor on Google App Engine Flexible Environment
+title: Run Meteor on the App Engine flexible environment
 description: Learn how to deploy a Meteor app to App Engine flexible environment.
 author: anassri
 tags: App Engine, Meteor, Node.js
@@ -20,7 +20,7 @@ Platform.
 
 1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1. Install the [Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Prepare
 
@@ -32,7 +32,7 @@ Platform.
 
 ## Create
 
-1. Initialize a Meteor project by running the following commands:
+1.  Initialize a Meteor project by running the following commands:
 
         meteor create [YOUR_APP_NAME]
         cd [YOUR_APP_NAME]
@@ -41,8 +41,7 @@ Platform.
 
     replacing `[YOUR_APP_NAME]` with your app name.
 
-1. To add database functionality, edit `[YOUR_APP_NAME]/client/main.js` to look
-like:
+1.  To add database functionality, edit `[YOUR_APP_NAME]/client/main.js` to look like:
 
         import { Template } from 'meteor/templating';
         import { ReactiveVar } from 'meteor/reactive-var';
@@ -87,7 +86,7 @@ like:
           },
         });
 
-1. Edit `[APP_NAME]/server/main.js` so that it looks like:
+1.  Edit `[APP_NAME]/server/main.js` so that it looks like:
 
         import { Meteor } from 'meteor/meteor';
         import { Mongo } from 'meteor/mongo';
@@ -105,7 +104,7 @@ like:
             return Counters.find({});
           })
         });
-
+    
 ## Run
 
 1. Run the app with the following command:
@@ -117,11 +116,11 @@ like:
 1. Visit [http://localhost:3000](http://localhost:3000) to see the
 `Welcome to Meteor!` message.
 
-    When you're done, use CTRL-C to exit Meteor.
+    When you're done, use `CTRL+C` to exit Meteor.
 
 ## Deploy
 
-1. Add the following to the `package.json` file:
+1.  Add the following to the `package.json` file:
 
         "scripts": {
           "cleanup": "rm -rf ../bundle/",
@@ -129,18 +128,18 @@ like:
           "predeploy": "npm run dist && cp app.yaml ../bundle/ && cp Dockerfile ../bundle/",
           "deploy": "npm run predeploy && (cd ../bundle && gcloud app deploy -q)"
         },
+  
 
     These scripts provide you with some tasks that prepare the app for
-    deployment to Google App Engine flexible environment. See
+    deployment to the App Engine flexible environment. See
     [Custom deployment][custom] for more information about custom Meteor
     deployments.
 
-1. Configure a [custom runtime](/appengine/docs/flexible/custom-runtimes/) by
-running the following command:
+1.  Configure a [custom runtime](/appengine/docs/flexible/custom-runtimes/) by running the following command:
 
         gcloud beta app gen-config --custom
 
-1. Replace the contents of the `Dockerfile` file with the following:
+1.  Replace the contents of the `Dockerfile` file with the following:
 
         FROM gcr.io/google_appengine/nodejs
         COPY . /app/
@@ -150,21 +149,21 @@ running the following command:
     The custom `Dockerfile` is required in order to properly build the Meteor
     app in production.
 
-1. Add the following to the generated `app.yaml` file:
+1.  Add the following to the generated `app.yaml` file:
 
         env_variables:
           ROOT_URL: https://[YOUR_PROJECT_ID].appspot-preview.com
           MONGO_URL: [MONGO_URL]
           DISABLE_WEBSOCKETS: "1"
-
+   
     replacing `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID and
     `[MONGO_URL]` with your MongoDB URI.
 
-1. Run the following command to deploy your app:
+1.  Run the following command to deploy your app:
 
         npm run deploy
 
-1. Visit `https://[YOUR_PROJECT_ID].appspot.com` to see the `Welcome to Meteor!`
+1.  Visit `https://[YOUR_PROJECT_ID].appspot.com` to see the `Welcome to Meteor!`
 message, replacing `[YOUR_PROJECT_ID]` with your Google Cloud Platform project
 ID. To test database functionality, click on the button a few times and refresh
 the page. You should see your previous button-click count appear after a few
@@ -172,3 +171,4 @@ seconds.
 
 [deploy-mongodb]: https://cloud.google.com/nodejs/getting-started/deploy-mongodb
 [custom]: https://guide.meteor.com/deployment.html#custom-deployment
+[nodejs-gcp]: https://cloud.google.com/nodejs/

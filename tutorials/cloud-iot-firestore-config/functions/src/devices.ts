@@ -32,36 +32,50 @@ interface Device {
   // },
 }
 
+async function getADC() {
+  const res = await google.auth.getApplicationDefault();
+  let auth = res.credential;
+
+  if (auth.createScopedRequired && auth.createScopedRequired()) {
+    const scopes = ['https://www.googleapis.com/auth/cloud-platform'];
+    auth = auth.createScoped(scopes);
+  }
+
+  const projectId = res.projectId as string;
+  console.log(projectId);
+  return {
+    auth,
+    projectId
+  };
+}
+
 export class DeviceManager {
   client: any;
   ready:Boolean = false;
   private parentName: string = '';
   private registryName: string = '';
-
-  setClient(err: Error, hClient: any, project: string) {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    let aClient = hClient;
-    const scopes = ['https://www.googleapis.com/auth/cloud-platform'];
-    if (hClient.createScopedRequired && hClient.createScopedRequired()) {
-      // Scopes can be specified either as an array or as a single, space-delimited string.
-      aClient = hClient.createScoped(scopes);
-    }
-    this.client = google.cloudiot({
-      version: 'v1',
-      auth: aClient
-    });
-    this.parentName = `projects/${project}/locations/${this.region}`;
-    this.registryName = `${this.parentName}/registries/${this.registryId}`
-    this.ready = true;
-  }
-
-  constructor(private registryId:string, private region:string='us-central1') {
-    google.auth.getApplicationDefault(this.setClient.bind(this))
-  }
+  private project: string = '';
   
+  async setAuth() {
+    console.log('set auth');
+    if ( !this.ready ) {
+      console.log('client not set');
+      const adc = await getADC();
+      console.log('setting client');
+      this.client = google.cloudiot({
+        version: 'v1',
+        auth: adc.auth
+      }); 
+      this.project = adc.projectId;
+      this.parentName = `projects/${this.project}/locations/${this.region}`;
+      this.registryName = `${this.parentName}/registries/${this.registryId}`
+      this.ready = true;
+    } else {
+      console.log('client already set');
+    }
+  }
+
+  constructor(private registryId:string, private region:string='us-central1') { } 
   createDevice(device:any) {
     return new Promise((resolve, reject) => {
       const request = {

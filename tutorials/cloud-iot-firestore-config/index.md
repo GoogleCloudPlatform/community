@@ -2,7 +2,7 @@
 title: Using Cloud Firestore with Cloud IoT Core for Device Configuration
 description: Learn how to use Cloud Firestore to manage fine-grained configuration updates for devices managed by Cloud IoT Core.
 author: ptone
-tags: iot, firestore, functions
+tags: iot, firestore, functions, internet of things
 date_published: 2018-05-14
 ---
 
@@ -73,35 +73,35 @@ The function runs only when documents in the `device-configs` collection are upd
 
 The document key is used as the corresponding device key.
 
-The main part of the function handles a Cloud PubSub message from IoT Core, extracts the log payload and device information, and then writes a structured log entry to Stackdriver Logging:
-
 [embedmd]:# (functions/src/index.ts /import/ $)
+```ts
+import cbor = require('cbor');
 
-    import cbor = require('cbor');
+import * as admin from "firebase-admin";
+import * as functions from 'firebase-functions';
+import { runInDebugContext } from 'vm';
+import { DeviceManager } from './devices';
 
-    import * as admin from "firebase-admin";
-    import * as functions from 'firebase-functions';
-    import { runInDebugContext } from 'vm';
-    import { DeviceManager } from './devices';
+// create a device manager instance with a registry id, optionally pass a region
+const dm = new DeviceManager('config-demo');
 
-    // create a device manager instance with a registry id, optionally pass a region
-    const dm = new DeviceManager('config-demo');
+// start cloud function
+exports.configUpdate = functions.firestore
+  // assumes a document whose ID is the same as the deviceid
+  .document('device-configs/{deviceId}')
+  .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+    if (context) {
+      await dm.setAuth();
+      console.log(context.params.deviceId);
+      // get the new config data
+      const configData = change.after.data();
+      return dm.updateConfig(context.params.deviceId, configData);
+    } else {
+      throw(Error("no context from trigger"));
+    }
 
-    // start cloud function
-    exports.configUpdate = functions.firestore
-      // assumes a document whose ID is the same as the deviceid
-      .document('device-configs/{deviceId}')
-      .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
-        if (context) {
-          console.log(context.params.deviceId);
-          // get the new config data
-          const configData = change.after.data();
-          return dm.updateConfig(context.params.deviceId, configData);
-        } else {
-          throw(Error("no context from trigger"));
-        }
-
-      })
+  })
+```
 
 To deploy the cloud function, you use the Firebase CLI tool:
 
@@ -193,50 +193,99 @@ For clarity, this tutorial implements this with a different function, and uses a
 Add the following function definition code to your `index.ts` source file so that it should look like the following:
 
 [embedmd]:# (functions/src/index.ts /import/ $)
+```ts
+import cbor = require('cbor');
 
-    import cbor = require('cbor');
+import * as admin from "firebase-admin";
+import * as functions from 'firebase-functions';
+import { runInDebugContext } from 'vm';
+import { DeviceManager } from './devices';
 
-    import * as admin from "firebase-admin";
-    import * as functions from 'firebase-functions';
-    import { runInDebugContext } from 'vm';
-    import { DeviceManager } from './devices';
+// create a device manager instance with a registry id, optionally pass a region
+const dm = new DeviceManager('config-demo');
 
-    // create a device manager instance with a registry id, optionally pass a region
-    const dm = new DeviceManager('config-demo');
+// start cloud function
+exports.configUpdate = functions.firestore
+  // assumes a document whose ID is the same as the deviceid
+  .document('device-configs/{deviceId}')
+  .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+    if (context) {
+      await dm.setAuth();
+      console.log(context.params.deviceId);
+      // get the new config data
+      const configData = change.after.data();
+      return dm.updateConfig(context.params.deviceId, configData);
+    } else {
+      throw(Error("no context from trigger"));
+    }
 
-    // start cloud function
-    exports.configUpdate = functions.firestore
-      // assumes a document whose ID is the same as the deviceid
-      .document('device-configs/{deviceId}')
-      .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
-        if (context) {
-          console.log(context.params.deviceId);
-          // get the new config data
-          const configData = change.after.data();
-          return dm.updateConfig(context.params.deviceId, configData);
-        } else {
-          throw(Error("no context from trigger"));
-        }
-
-      })
+  })
 
 
-      exports.configUpdateBinary = functions.firestore
-      // assumes a document whose ID is the same as the deviceid
-      .document('device-configs-binary/{deviceId}')
-      .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
-        if (context) {
-          console.log(context.params.deviceId);
-          // get the new config data
-          const configData = change.after.data();
-          const encoded = cbor.encode(configData);
+exports.configUpdateBinary = functions.firestore
+  // assumes a document whose ID is the same as the deviceid
+  .document('device-configs-binary/{deviceId}')
+  .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+    if (context) {
+      await dm.setAuth();
+      console.log(context.params.deviceId);
+      // get the new config data
+      const configData = change.after.data();
+      const encoded = cbor.encode(configData);
 
-          return dm.updateConfigBinary(context.params.deviceId, encoded);
-        } else {
-          throw(Error("no context from trigger"));
-        }
+      return dm.updateConfigBinary(context.params.deviceId, encoded);
+    } else {
+      throw(Error("no context from trigger"));
+    }
 
-      })
+  })
+```
+
+```ts
+import cbor = require('cbor');
+
+import * as admin from "firebase-admin";
+import * as functions from 'firebase-functions';
+import { runInDebugContext } from 'vm';
+import { DeviceManager } from './devices';
+
+// create a device manager instance with a registry id, optionally pass a region
+const dm = new DeviceManager('config-demo');
+
+// start cloud function
+exports.configUpdate = functions.firestore
+  // assumes a document whose ID is the same as the deviceid
+  .document('device-configs/{deviceId}')
+  .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+    if (context) {
+      console.log(context.params.deviceId);
+      // get the new config data
+      const configData = change.after.data();
+      return dm.updateConfig(context.params.deviceId, configData);
+    } else {
+      throw(Error("no context from trigger"));
+    }
+
+  })
+
+
+  exports.configUpdateBinary = functions.firestore
+  // assumes a document whose ID is the same as the deviceid
+  .document('device-configs-binary/{deviceId}')
+  .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+    if (context) {
+      console.log(context.params.deviceId);
+      // get the new config data
+      const configData = change.after.data();
+      const encoded = cbor.encode(configData);
+
+      return dm.updateConfigBinary(context.params.deviceId, encoded);
+    } else {
+      throw(Error("no context from trigger"));
+    }
+
+  })
+```
 
 You can deploy this new function with:
 

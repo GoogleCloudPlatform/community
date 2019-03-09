@@ -1,15 +1,14 @@
 ---
-title: Send Email with SparkPost and Node.js on Google App Engine Flexible Environment
-description: Learn how to send email via SparkPost from a Node.js app to Google App Engine flexible environment.
+title: Send email with SparkPost and Node.js on App Engine flexible environment
+description: Learn how to send email via SparkPost from a Node.js app to App Engine flexible environment.
 author: ewandennis
 tags: App Engine, SparkPost, Express.js, Node.js
 date_published: 2017-03-22
 ---
+
 ## SparkPost
 
-> [SparkPost][sparkpost]—Email delivery services built for developers, by developers.
->
-> – sparkpost.com
+"[SparkPost][sparkpost]—Email delivery services built for developers, by developers." – sparkpost.com
 
 You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
 overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
@@ -38,7 +37,7 @@ Platform.
 
 ## Create
 
-1. Create a `server.js` file with the following contents:
+1.  Create a `server.js` file with the following contents:
 
         'use strict';
 
@@ -125,20 +124,20 @@ following contents:
 
 ## Deploy
 
-1. Create a file named `app.yaml` with the following contents:
+1.  Create a file named `app.yaml` with the following contents:
 
         runtime: nodejs
         env: flex
         env_variables:
           SPARKPOST_API_KEY: your-sparkpost-api-key
 
-`app.yaml` describes how to deploy your app to Google App Engine. Read more about that [here](https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml).
+`app.yaml` describes how to deploy your app to App Engine. Read more about that [here](https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml).
 
-1. Run the following command to deploy your app:
+1.  Run the following command to deploy your app:
 
         gcloud app deploy
 
-1. Visit `http://YOUR_PROJECT_ID.appspot.com` to try sending email. `YOUR_PROJECT_ID` is the project ID you created earlier in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1.  Visit `http://YOUR_PROJECT_ID.appspot.com` to try sending email. `YOUR_PROJECT_ID` is the project ID you created earlier in the [Google Cloud Platform Console](https://console.cloud.google.com/).
 
 [sparkpost]: https://www.sparkpost.com/
 [nodejs-gcp]: https://cloud.google.com/nodejs/

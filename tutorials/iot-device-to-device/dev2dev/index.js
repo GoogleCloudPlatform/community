@@ -6,7 +6,6 @@ const projectId = 'replace-with-your-project-id';
 const cloudRegion = 'replace-with-your-region';
 
 exports.relayCloudIot = function (event, callback) {
-  // const pubsubMessage = event.data;
   console.log(event.data);
   const record = JSON.parse(
     event.data
@@ -43,7 +42,6 @@ exports.relayCloudIot = function (event, callback) {
   }).then(result => {
     console.log(result);
     console.log(result.data);
-    result.status(200).send(JSON.stringify(config));
   });
 };
 // [END iot_relay_message_js]
