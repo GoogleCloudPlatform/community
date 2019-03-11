@@ -118,19 +118,16 @@ In the console, choose **APIs & Services > Credentials > OAuth consent screen**.
 
 #### Create OAuth client ID
 
-*   Create a credential of type `web`.
-*   Name it `grafana-login`.
-*   Add an authorized redirect URI:
+1.  Create a credential of type `web`.
+1.  Name it `grafana-login`.
+1.  Add an authorized redirect URI:
 
         https://[project-id].appspot.com/login/google
 
-Edit the OAuth values in `iotmonitor-chart/values.yaml` with the client ID settings.
+1.  Edit the OAuth values in `iotmonitor-chart/values.yaml` with the client ID settings.
+1.  In `iotmonitor-chart/values.yaml`, update the server `root_url` for Grafana to this:
 
-In `iotmonitor-chart/values.yaml`, update the server `root_url` for Grafana to this:
-
-```
-https://[project-id].appspot.com/
-```
+        https://[project-id].appspot.com/
 
 ### (Optional) Set up Stackdriver data source
 
@@ -280,7 +277,7 @@ how PromQL can be applied to a set of IoT monitoring use-cases. For introduction
 ### Device Detail dashboard
 
 Go to the dashboard list view:
-`https://[projectid].appspot.com/dashboards`
+`https://[project-id].appspot.com/dashboards`
 
 Choose **Device Detail View**.
 
