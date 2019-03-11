@@ -58,11 +58,8 @@ We recommend that you perform these setup steps in the Cloud Shell environment.
 ### Clone the tutorial repository
 
 ```
-TODO replace with community tutorial link
-git clone https://github.com/ptone/community.git
-cd community
-git checkout iot-prometheus
-cd tutorials/cloud-iot-prometheus-monitoring
+git clone https://github.com/GoogleCloudPlatform/community.git
+cd community/tutorials/cloud-iot-prometheus-monitoring
 ```
 
 ### Enable APIs
