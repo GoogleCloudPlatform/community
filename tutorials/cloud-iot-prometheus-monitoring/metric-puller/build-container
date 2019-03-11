@@ -1,4 +1,0 @@
-bash build
-docker build -t gcr.io/cloud-solutions-images/metric-puller:0.0.1 .
-gcloud docker -- push gcr.io/cloud-solutions-images/metric-puller:0.0.1
-rm metric-puller
