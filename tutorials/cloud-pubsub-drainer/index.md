@@ -130,6 +130,7 @@ In Stackdriver, a notification channel is a resource that can be used with one o
 created in the GCP Console or through an API. Using the URL from our deployed function, you create a new channel and then
 get the Stackdriver-assigned channel identifier as an environment variable:
 
+    cd ..
     export URL=$(gcloud functions describe StackDriverRelay --format='value(httpsTrigger.url)')
 
     gcloud alpha monitoring channels create --channel-content-from-file channel.json --channel-labels url=$URL?token=abcd
@@ -162,8 +163,12 @@ Console. You can see notification channels in the workspace settings area of the
 The loader script creates some synthetic test data
 
     cd ../loader
+    go get
+    # note you may see a warning about gopath if you are in Cloud Shell
     go run main.go
     
+You should see output that looks like:
+
     bulking out
     done bulking out
     2019/03/05 16:55:33 Published Batch
