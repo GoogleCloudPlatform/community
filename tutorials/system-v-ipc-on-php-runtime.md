@@ -40,31 +40,33 @@ We'll walk through a small demo app to learn how to use them.
 
 1. Create an `index.php` file:
 
-        <?php
+```php
+<?php
 
-        # Obtain an exclusive lock
-        $key = ftok(__FILE__, 'p');
-        $semid = sem_get($key);
-        sem_acquire($semid);
+# Obtain an exclusive lock
+$key = ftok(__FILE__, 'p');
+$semid = sem_get($key);
+sem_acquire($semid);
 
-        # Attach shared memory
-        $id = shm_attach($key);
+# Attach shared memory
+$id = shm_attach($key);
 
-        # Count up
-        if (shm_has_var($id, 0)) {
-            $count = shm_get_var($id, 0) + 1;
-        } else {
-            $count = 1;
-        }
+# Count up
+if (shm_has_var($id, 0)) {
+    $count = shm_get_var($id, 0) + 1;
+} else {
+    $count = 1;
+}
 
-        # Save the value
-        shm_put_var($id, 0, $count);
+# Save the value
+shm_put_var($id, 0, $count);
 
-        shm_detach($id);
+shm_detach($id);
 
-        # Release the lock
-        sem_release($semid);
-        echo sprintf("%d visits so far", $count);
+# Release the lock
+sem_release($semid);
+echo sprintf("%d visits so far", $count);
+```
 
 1. Deploy the app
 
