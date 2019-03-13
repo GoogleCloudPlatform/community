@@ -1,11 +1,10 @@
 ---
-title: Alert based Event Archiver
+title: Alert-based event archiver with Stackdriver and Cloud Pub/Sub
 description: Use Strackdriver Alerting to trigger a serverless event archive task in Cloud Pub/Sub.
 author: ptone
 tags: IoT, Cloud Pubsub, Stackdriver, Cloud Functions, Serverless
-date_published: 2018-03-05
+date_published: 2018-03-14
 ---
-<!-- private diagram sources: https://docs.google.com/presentation/d/1U0QYoR-CW9NWPV7-ZRqK8lLaOoEoSxkQdBc_L-Tj27A/edit#slide=id.g506f2f687f_0_0 -->
 
 Preston Holmes | Solution Architect | Google Cloud
 
@@ -26,7 +25,7 @@ This solution uses the built-in metrics for subscription resources in Cloud Pub/
 
 ## Architecture
 
-![](image/architecture.png)
+![architecture](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/architecture.png)
 
 There are several components to the architecture.
 
@@ -157,7 +156,7 @@ The loader script creates some synthetic test data
 
 To test the age based condition in the policy, let the loader run just for a moment, cancel with CTRL-C, then wait a few minutes till the condition is triggered.
 
-![](image/stackdriver_alerting_policy.png)
+![Stackdriver alerting policy](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/stackdriver_alerting_policy.png)
 
 For backlog-size based condition trigger, let the loader tool run for several minutes before cancelling.  Note, do not let this script run indefinitely - as it will continue to generate billable volumes of data.
 
@@ -169,11 +168,11 @@ While you wait for a alert to fire, you may wish to check out the [Stackdriver a
 
 The Relay function logs should show that the function was called.
 
-![](image/stackdriver_relay_function_logs.png)
+![Stackdriver relay function logs](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/stackdriver_relay_function_logs.png)
 
 The Archiver function logs should show the archiving activity, including how many messages were archived.
 
-![](image/stackdriver_archiver_function_logs.png)
+![Stackdriver archiver function logs](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/stackdriver_archiver_function_logs.png)
 
 ### Check the archive bucket
 
@@ -181,7 +180,7 @@ If you look in the data archive bucket in the Cloud Console [storage browser](ht
 
 The size archive size is set to 1MB in this tutorial, though that is adjustable in the function code.
 
-![](image/cloud_storage_export.png)
+![storage export](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/cloud_storage_export.png)
 
 ## Limits of the pattern
 
