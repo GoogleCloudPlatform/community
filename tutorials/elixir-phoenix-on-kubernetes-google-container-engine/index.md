@@ -71,7 +71,7 @@ Perform the installations:
 
         gcloud components install kubectl
 
-1.  Install **Elixir 1.5 or later** if you do not already have it. If you are
+1.  Install Elixir 1.5 or later if you do not already have it. If you are
     on macOS and have [Homebrew](https://brew.sh), you can run:
 
         brew install elixir
@@ -79,13 +79,13 @@ Perform the installations:
     Otherwise consult the [Elixir install](https://elixir-lang.org/install.html)
     guide for your operating system.
 
-1.  Install the **hex**, **rebar**, and **phx_new** archives:
+1.  Install the `hex`, `rebar`, and `phx_new` archives:
 
         mix local.hex
         mix local.rebar
         mix archive.install hex phx_new 1.4.0
 
-1.  Install **Node.js** if you do not already have it. If you are on macOS and
+1.  Install Node.js if you do not already have it. If you are on macOS and
     have Homebrew, you can run:
 
         brew install node

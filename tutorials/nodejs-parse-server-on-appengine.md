@@ -1,12 +1,13 @@
 ---
-title: Run Node.js Parse server on Google App Engine Flexible Environment
-description: Learn how to run a Node.js Parse server on Google App Engine flexible environment.
+title: Run Node.js Parse server on App Engine flexible environment
+description: Learn how to run a Node.js Parse server on the App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Node.js, Parse-server
 date_published: 2017-11-02
 ---
+
 Tutorial for deploying a [Parse Server](https://github.com/ParsePlatform/parse-server/wiki/Parse-Server-Guide)
-to Google App Engine.
+to the App Engine flexible environment.
 
 You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
 overview of Node.js itself and learn ways to run Node.js apps on Google Cloud

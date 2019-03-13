@@ -47,6 +47,7 @@ This tutorial should not generate any usage that would not be covered by the fre
 
 ## Required hardware
 
+- Laptop or desktop with `git` and `python2`
 - [Raspberry Pi 3][rpi] Model B (Other models should work, but they have not been verified)
 - MicroSD card for [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) (8GB+ recommended)
 - MicroSD card reader
@@ -98,7 +99,7 @@ To set up your gateway:
 1. Clone the following repository and change into the directory for this tutorial's code:
 
         git clone https://github.com/GoogleCloudPlatform/community.git
-        cd community/tutorials/cloud-iot-gateways-pi
+        cd community/tutorials/cloud-iot-gateways-rpi
 
 2. Generate an RS256 public/private key pair by running the following:
 
@@ -117,22 +118,26 @@ To set up your gateway:
 
         export GOOGLE_CLOUD_PROJECT=your-project-id-123
 
-10. Modify the `run-gateway` script by providing arguments for `registry_id` and `device_id` if you chose different names.
+10. Modify the `run-gateway` script by providing arguments for `registry_id` and `device_id` if you chose different names for those.
 11. Download [Google's CA root certificate](https://pki.goog/roots.pem) into the same directory if it doesn't exist already.
 
         wget https://pki.goog/roots.pem
 
-12. Run the following command to start the gateway:
+12. Install the following packages by running the following command. Feel free to do this in a virtual environment of your choice.
+
+        pip install -r requirements-gateway.txt
+
+13. Run the following command to start the gateway:
 
         source run-gateway
 
-13. Keep this process running while you proceed through the next steps. We recommend that you use a new tab or window for each gateway and device.
+14. Keep this process running while you proceed through the next steps. We recommend that you use a new tab or window for each gateway and device.
 
-14. Find the local IP address of the gateway using `ifconfig` on  Mac/Linux or `ipconfig /all` on Windows. Copy this somewhere as you will need to add this IP address to `led-light.py` and `thermostat.py` later.
+15. Find the local IP address of the gateway using `ifconfig` on  Mac/Linux or `ipconfig /all` on Windows. Copy this somewhere as you will need to add this IP address to `led-light.py` and `thermostat.py` later for connecting devices to the gateway. Your gateway and devices need to be on the same network and be visible to each other.
 
 ## Raspberry Pi setup
 
-In this tutorial, you'll use a [Raspberry Pi][rpi] to manage the LED/temperature sensor. Devices will connect to the gateway device through [UDP sockets][udp-socket], which will connect to Cloud IoT Core via the [MQTT bridge][mqtt-bridge]. A Raspberry Pi could theoretically connect directly to the cloud (since the Pi can connect to the internet), so using a Raspberry Pi for this part is purely for demonstration purposes.
+In this tutorial, you'll use a [Raspberry Pi][rpi] to manage the LED/temperature sensor. Devices will connect to the gateway device through [UDP sockets][udp-socket] over a local network, which will connect to Cloud IoT Core via the [MQTT bridge][mqtt-bridge]. A Raspberry Pi could theoretically connect directly to the cloud (since the Pi can connect to the internet), so using a Raspberry Pi for this part is mostly for demonstration purposes.
 
 1. [Download Raspbian][raspbian-download] (the full image with Desktop and recommended software) and follow [the installation guide][raspbian-installation] to flash Raspbian onto your microSD card.
 2. Insert the microSD card with Raspbian into your Raspberry Pi.
@@ -140,8 +145,9 @@ In this tutorial, you'll use a [Raspberry Pi][rpi] to manage the LED/temperature
 4. Connect your keyboard and mouse to the Raspberry Pi's USB ports.
 5. Connect the Raspberry Pi to a monitor through the HDMI port.
 6. Go through the default setup steps for Raspbian upon boot.
-7. Open a terminal and make sure `git`, `python`, and other required dependencies are installed. If not, install them by running:
+7. Open a terminal and make sure `git`, `python` (python2), and other required dependencies are installed. If not, install them by running:
 
+        sudo apt update && sudo apt upgrade
         sudo apt install git
         sudo apt install python
         sudo apt install build-essential libssl-dev libffi-dev python-dev
@@ -149,11 +155,11 @@ In this tutorial, you'll use a [Raspberry Pi][rpi] to manage the LED/temperature
 8. Clone the following repository and change into the directory for this tutorial's code:
 
         git clone https://github.com/GoogleCloudPlatform/community.git
-        cd community/tutorials/cloud-iot-gateways-pi
+        cd community/tutorials/cloud-iot-gateways-rpi
 
 9. Install Python dependencies by running the following:
 
-        pip install -r requirements.txt
+        pip install -r requirements-pi.txt
 
     Feel free to do this part in the virtual environment manager of your choosing, though make sure to switch into those environments when opening new tabs.
 
@@ -167,7 +173,7 @@ In this tutorial, you'll use a [Raspberry Pi][rpi] to manage the LED/temperature
 
 Next, you will manage an LED light connected to the gateway through Cloud IoT Core config updates.
 
-1. Switch to your browser and open the Cloud IoT Core dashboard.
+1. Switch to your browser and open the [Cloud IoT Core console][cloud-iot].
 2. Click on the registry you created.
         The gateway you created should be listed in this registry.
 3. Click **Create Device**.
@@ -181,16 +187,15 @@ Next, you will manage an LED light connected to the gateway through Cloud IoT Co
     - Confirm by clicking **Bind** in the lower right.
 
     ![bind device to gateway](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-gateways-rpi/bind-device.png)
-7. Edit `led-light.py` and add the IP address of your gateway to line 18 `ADDR = ''`.
-8. Connect the LED to the Raspberry Pi's [GPIO Pin 4][rpi-gpio] and ground while using an appropriate resistor.
+7. Edit `led-light.py` by adding the IP address of your gateway on line 28 `ADDR = ''`.
+8. Connect the LED to the Raspberry Pi's [GPIO Pin 4][rpi-gpio] and ground using an appropriate resistor.
 9. Ensure the gateway Python sample is still running on your desktop or laptop.
 10. Run the following from your terminal on the Raspberry Pi:
 
         source run-led-light
 
 11. Make sure you see the `>>LED IS OFF<<` message
-
-12. Switch back to a browser and go to the [Cloud IoT Core dashboard][cloud-iot].
+12. Switch back to a browser and go to the [Cloud IoT Core console][cloud-iot].
 13. Select your registry, and then select `led-light`.
 14. Click **Update Config** at the top of the page.
 15. In the configuration text area, enter `ON` or `OFF` to toggle the LED state.
@@ -205,18 +210,18 @@ Next, you will manage an LED light connected to the gateway through Cloud IoT Co
 
 In this section, you will set up a DHT22 sensor to send telemetry from the sensor through the gateway to Cloud IoT Core.
 
-1. Repeat steps 1-7 from [Managing devices through config updates][managing-devices], but use `thermostat` as the **Device ID**.
-2. Wire the DHT22 sensor to the Raspberry Pi as described [in the setup section of this tutorial][dht22-tutorial].
+1. Repeat steps 1-6 from the previous section, Managing devices through config updates, but use `thermostat` as the **Device ID**.
+2. Edit `thermostat.py` by adding the IP address of your gateway on line 27 `ADDR = ''`
+3. Wire the DHT22 sensor to the Raspberry Pi as described [in the setup section of this tutorial][dht22-tutorial].
 
-3. Run the following from a terminal on the Raspberry Pi:
+4. Run the following from a terminal on the Raspberry Pi:
 
         source run-thermostat
 
-4. If everything is done correctly, you should see the temperature on that terminal updating once per second.
+5. If everything is done correctly, you should see the temperature on that terminal updating once per second.
 
     ![temperatures](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-gateways-rpi/temperature.png)
 
-[managing-devices]: #managing-devices-through-config-updates
 [dht22-tutorial]: https://tutorials-raspberrypi.com/raspberry-pi-measure-humidity-temperature-dht11-dht22
 
 ## Create a subscription to your telemetry topic to view data
@@ -247,7 +252,7 @@ To avoid incurring any future billing costs, it is recommended that you delete y
 - The reason why **Association Only** was chosen when creating the gateway is so that the device does not have to store its own JWT when authenticating to Cloud IoT Core. You can read more about [authentication methods here][iot-auth].
 - You can set up a second Raspberry Pi or another internet enabled device to act as the gateway for a more realistic example.
 - A slightly less expensive alternative to the DHT22 is the [DHT11][dht-alt].
-- If you have difficulty installing the packages from `requirements.txt`, make sure you are on the latest version of Raspbian. If that's the case, [updating some packages could solve the issue][installation-issue].
+- If you have difficulty installing the packages from `requirements-pi.txt`, make sure you are on the latest version of Raspbian. In addition, [updating some packages could solve the issue][installation-issue].
 
         sudo apt-get install build-essential libssl-dev libffi-dev python-dev
 
