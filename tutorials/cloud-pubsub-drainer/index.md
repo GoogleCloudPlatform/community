@@ -38,11 +38,11 @@ task based on a combination of backlog size and age.
 There are several components to the architecture:
 
 * Data ingest Cloud Pub/Sub topic: This is where events of interest are received.
-* Stackdriver alert, which consists of:
+* Stackdriver alert, which consists of the following:
     * Alerting policy watching metrics related to a subscription associated with the data ingest topic
     * Webhook notification channel that points to a Cloud Function
-* Cloud Pub/Sub topic, which durably records the alert incident relaying it to the `Archiver` function
-* `Archiver` function, which uses streaming pull with Cloud Pub/Sub and streaming write to Cloud Storage to
+* Cloud Pub/Sub topic, which durably records the alert incident relaying it to the Archiver function
+* Archiver function, which uses streaming pull with Cloud Pub/Sub and streaming write to Cloud Storage to
   efficiently batch and move event data from Cloud Pub/Sub to Cloud Storage.
 
 ## Before you begin
@@ -63,7 +63,7 @@ Commands in this tutorial assume that you are running from the tutorial folder:
 
 ### Install components
 
-You will use the new command-line interface for Stackdriver resources which is provided by the `gcloud` `alpha` component:
+You will use the new command-line interface for Stackdriver resources, which is provided by the `gcloud` `alpha` component:
 
     gcloud components install alpha
 
@@ -139,8 +139,8 @@ get the Stackdriver-assigned channel identifier as an environment variable:
 ### Create a Stackdriver alerting policy
 
 Alerting policies describe conditions that result in the alert firing as true. This is where we want to create an alert 
-condition if messages in our "bulk-drainer" Cloud Pub/Sub subscription get either too numerous, or too old. See the 
-contents of `policy.json` in the tutorial repo for details. The duration and size thresholds are set low so that the 
+condition if messages in our `bulk-drainer` Cloud Pub/Sub subscription get either too numerous or too old. See the 
+contents of `policy.json` in the tutorial repository for details. The duration and size thresholds are set low so that the 
 solution can be tested and demonstrated quickly.
 
 After the policy is created, the ID is retrieved and then it is updated with to use the Notification Channel created 
