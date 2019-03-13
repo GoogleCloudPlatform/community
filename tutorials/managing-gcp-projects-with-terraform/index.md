@@ -128,7 +128,7 @@ Create the remote backend bucket in Cloud Storage and the `backend.tf` file for 
 ```sh
 gsutil mb -p ${TF_ADMIN} gs://${TF_ADMIN}
 
-cat > backend.tf <<EOF
+cat > backend.tf << EOF
 terraform {
  backend "gcs" {
    bucket  = "${TF_ADMIN}"
