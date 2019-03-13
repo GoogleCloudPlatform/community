@@ -90,6 +90,40 @@ First, create a device registry that will contain your gateway and devices.
 
 9. Leave everything else as-is, and click **Create**.
 
+## Raspberry Pi setup
+
+In this tutorial, you'll use a [Raspberry Pi][rpi] to manage the LED/temperature sensor. Devices will connect to the gateway device through [UDP sockets][udp-socket] over a local network, which will connect to Cloud IoT Core via the [MQTT bridge][mqtt-bridge]. A Raspberry Pi could theoretically connect directly to the cloud (since the Pi can connect to the internet), so using a Raspberry Pi for this part is mostly for demonstration purposes.
+
+1. [Download Raspbian][raspbian-download] (the full image with Desktop and recommended software) and follow [the installation guide][raspbian-installation] to flash Raspbian onto your microSD card.
+2. Insert the microSD card with Raspbian into your Raspberry Pi.
+3. Attach a power source to the Raspberry Pi using the microUSB cable (e.g., to a laptop USB port).
+4. Connect your keyboard and mouse to the Raspberry Pi's USB ports.
+5. Connect the Raspberry Pi to a monitor through the HDMI port.
+6. Go through the default setup steps for Raspbian upon boot.
+7. Open a terminal and make sure `git`, `python` (python2), and other required dependencies are installed. If not, install them by running:
+
+        sudo apt update && sudo apt upgrade
+        sudo apt install git
+        sudo apt install python
+        sudo apt install build-essential libssl-dev libffi-dev python-dev
+
+8. Clone the following repository and change into the directory for this tutorial's code:
+
+        git clone https://github.com/GoogleCloudPlatform/community.git
+        cd community/tutorials/cloud-iot-gateways-rpi
+
+9. Install Python dependencies by running the following:
+
+        pip install -r requirements-pi.txt
+
+    Feel free to do this part in the virtual environment manager of your choosing, though make sure to switch into those environments when opening new tabs.
+
+[udp-socket]: https://docs.python.org/2/library/socket.html
+[mqtt-bridge]: https://cloud.google.com/iot/docs/how-tos/mqtt-bridge
+[raspbian-download]: https://www.raspberrypi.org/downloads/raspbian
+[raspbian-installation]: https://www.raspberrypi.org/documentation/installation/installing-images/README.md
+[rpi]: https://www.raspberrypi.org/
+
 ## Set up your gateway
 
 For the purposes of this tutorial, you will use your laptop or desktop as the gateway device. You will first generate an RSA public/private key pair, which will be used to sign the JWTs for authenticating to Cloud IoT Core.
@@ -134,40 +168,6 @@ To set up your gateway:
 14. Keep this process running while you proceed through the next steps. We recommend that you use a new tab or window for each gateway and device.
 
 15. Find the local IP address of the gateway using `ifconfig` on  Mac/Linux or `ipconfig /all` on Windows. Copy this somewhere as you will need to add this IP address to `led-light.py` and `thermostat.py` later for connecting devices to the gateway. Your gateway and devices need to be on the same network and be visible to each other.
-
-## Raspberry Pi setup
-
-In this tutorial, you'll use a [Raspberry Pi][rpi] to manage the LED/temperature sensor. Devices will connect to the gateway device through [UDP sockets][udp-socket] over a local network, which will connect to Cloud IoT Core via the [MQTT bridge][mqtt-bridge]. A Raspberry Pi could theoretically connect directly to the cloud (since the Pi can connect to the internet), so using a Raspberry Pi for this part is mostly for demonstration purposes.
-
-1. [Download Raspbian][raspbian-download] (the full image with Desktop and recommended software) and follow [the installation guide][raspbian-installation] to flash Raspbian onto your microSD card.
-2. Insert the microSD card with Raspbian into your Raspberry Pi.
-3. Attach a power source to the Raspberry Pi using the microUSB cable (e.g., to a laptop USB port).
-4. Connect your keyboard and mouse to the Raspberry Pi's USB ports.
-5. Connect the Raspberry Pi to a monitor through the HDMI port.
-6. Go through the default setup steps for Raspbian upon boot.
-7. Open a terminal and make sure `git`, `python` (python2), and other required dependencies are installed. If not, install them by running:
-
-        sudo apt update && sudo apt upgrade
-        sudo apt install git
-        sudo apt install python
-        sudo apt install build-essential libssl-dev libffi-dev python-dev
-
-8. Clone the following repository and change into the directory for this tutorial's code:
-
-        git clone https://github.com/GoogleCloudPlatform/community.git
-        cd community/tutorials/cloud-iot-gateways-rpi
-
-9. Install Python dependencies by running the following:
-
-        pip install -r requirements-pi.txt
-
-    Feel free to do this part in the virtual environment manager of your choosing, though make sure to switch into those environments when opening new tabs.
-
-[udp-socket]: https://docs.python.org/2/library/socket.html
-[mqtt-bridge]: https://cloud.google.com/iot/docs/how-tos/mqtt-bridge
-[raspbian-download]: https://www.raspberrypi.org/downloads/raspbian
-[raspbian-installation]: https://www.raspberrypi.org/documentation/installation/installing-images/README.md
-[rpi]: https://www.raspberrypi.org/
 
 ## Managing devices through config updates
 
