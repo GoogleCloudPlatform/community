@@ -3,14 +3,11 @@ title: Kubernetes ClamAV container
 description: Scan Kubernetes pods and nodes from a dedicated AV pod.
 author: ianmaddox
 tags: kubernetes, cos, security, antivirus, av, clam, pci, dss, virus
-date_published: 2019-01-08
+date_published: 2019-03-18
 ---
-Google COS ClamAV container
-======================
 
-Clam antivirus docker image with regularly scheduled scans.
-Designed to be run inside Google's Container Optimized OS,
-but should work with most other Docker servers.
+This example provides a Clam antivirus Docker image that performs regularly scheduled scans.
 
-ClamAV is an open source antivirus engine for detecting trojans, viruses,
-malware & other malicious threats.
+This example is designed to be run on Google Container-Optimized OS, but it should work with most other Docker servers.
+
+ClamAV is an open source antivirus engine for detecting trojans, viruses, malware, and other malicious threats.
