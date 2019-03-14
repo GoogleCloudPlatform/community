@@ -117,6 +117,3 @@ Response:
   * On success: HTTP 200 and JSON payload containing cc, mm, yyyy, and user_id
   * On failure: HTTP 4xx,5xx and error message
 ```
-
-# Apache 2.0 License
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
