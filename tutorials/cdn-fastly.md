@@ -1,5 +1,5 @@
 ---
-title: Content Delivery with Fastly and Google Cloud Storage
+title: Content delivery with Fastly and Google Cloud Storage
 description: This tutorial walks you through the process of setting up Fastly to pull assets from Google Cloud Storage.
 author: tzero
 tags: Fastly, Cloud Storage, CDN
@@ -73,9 +73,9 @@ To create a Cloud Storage bucket:
    click **Create Bucket**.
 1. In the **Create Bucket** dialog, fill out the form as follows:
 
-    +  _Name_: _<your_bucket_name>_ (must be unique)
-    +  _Storage_: Multi-Regional
-    +  _Location_: United States
+    +  **Name**: `[YOUR_BUCKET_NAME]` (must be unique)
+    +  **Storage**: Multi-Regional
+    +  **Location**: United States
 
         **Note**: Multi-Regional buckets allow the data to be broadly replicated
         across the location (for example across the continental United States),
@@ -105,9 +105,9 @@ configure it to use the bucket as a point of origin:
     [Fastly configuration page](https://app.fastly.com/#configure).
 1. Click **New Service** and fill out the form as follows:
 
-    +  _Name_: Cloud Storage Origin Test
-    +  _Server address_: storage.googleapis.com:80
-    +  _Domain name_: `[YOUR_DOMAIN_NAME]`
+    +  **Name**: Cloud Storage Origin Test
+    +  **Server address**: storage.googleapis.com:80
+    +  **Domain name**: `[YOUR_DOMAIN_NAME]`
 
         Note: Fastly recommends against using an
         [apex domain](https://docs.fastly.com/guides/basic-configuration/using-fastly-with-apex-domains).
