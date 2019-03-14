@@ -3,7 +3,7 @@ title: Credit card tokenization service for Google Cloud Platform
 description: Learn how to build a PCI DSS compliant credit card tokenization service.
 author: ianmaddox
 tags: serverless, cloud functions, javascript, iam, PCI, DSS, credit, card
-date_published: 2019-04-02
+date_published: 2019-03-15
 ---
 
 # Overview
