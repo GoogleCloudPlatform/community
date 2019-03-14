@@ -1,9 +1,9 @@
 ---
-title: Locally Connected Microcontrollers and Real-Time Analytics (Part 2 of 2)
-description: Learn how to process, store and analyze the streaming sensor data in real time.
-author: markku, varundhussa
+title: Locally connected microcontrollers and real-time analytics (part 2 of 2)
+description: Learn how to process, store, and analyze streaming sensor data in real time.
+author: markku,varundhussa
 tags: IoT, Internet of Things, Dataflow, BigQuery, Data Studio, PubSub, Cloud Datalab
-date_published: 2019-03-31
+date_published: 2019-03-20
 ---
 
 Varun Dhussa | Solutions Architect | Google Cloud
