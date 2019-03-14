@@ -9,13 +9,14 @@ date_published: 2019-04-02
 # Overview
 
 This example provides a PCI DSS compliant credit card tokenization service built for Google Cloud Platform (GCP), which
-can run in both Docker and Cloud Functions.
+can run in both Docker and Cloud Functions. This code is based on Google's 
+[Tokenizing sensitive cardholder data for PCI DSS](/solutions/tokenizing-sensitive-cardholder-data-for-pci-dss) whitepaper.
 
-This project uses KMS and Datastore to securely encrypt and tokenize sensitive credit card data in a manner consistent with
-the PCI Data Security Standard. This code is applicable to SAQ A-EP and SAQ D type merchants of any compliance level.
+This project uses [KMS](https://cloud.google.com/kms/) and [Datastore](https://cloud.google.com/datastore/) to securely
+encrypt and tokenize sensitive credit card data in a manner consistent with the PCI Data Security Standard. This code is
+applicable to SAQ A-EP and SAQ D type merchants of any compliance level.
 
-For more information, see
-[PCI Data Security Standard compliance](https://cloud.google.com/solutions/pci-dss-compliance-in-gcp).
+For more information on PCI DSS compliance on GCP, see [PCI Data Security Standard compliance](https://cloud.google.com/solutions/pci-dss-compliance-in-gcp).
 
 # Configuration
 
