@@ -1,5 +1,5 @@
 {
-  "name": "gcs-cf-tokenizer",
+  "name": "gcp-pci-tokenizer",
   "version": "0.0.1",
   "dependencies": {
     "@google-cloud/datastore": "^1.4.1",

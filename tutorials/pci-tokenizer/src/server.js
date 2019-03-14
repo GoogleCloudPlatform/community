@@ -1,5 +1,5 @@
 /**
-* Express server wrapper script used for Docker style running.
+* Express server wrapper script used for running in Docker.
 * This file is not used with Cloud Functions.
 *
 * See ../README.md for license and more info

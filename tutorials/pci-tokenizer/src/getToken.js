@@ -3,10 +3,10 @@
  * See ../README.md for license and more info
  *
  * USAGE:
- * This tool is designed to be executed within the the GCS Cloud Shell or a PChell that is configured to use NodeJS
+ * This tool is designed to be executed within the the Cloud Shell or in a
  * terminal that is configured to use NodeJS.
  * 1) To initialize the environment run "npm install"
- * 2) Download your service account credential .json file and assign the pathand filename to the environment variable GOOGLE_APPLICATION_CREDENTIALS
+ * 2) Download your service account credential .json file and assign the path
  *    and filename to the environment variable GOOGLE_APPLICATION_CREDENTIALS.
  *    Linux/Mac: "export GOOGLE_APPLICATION_CREDENTIALS='/path/to/credentials.json'"
  * 3) If not running in Cloud Shell, define the GCP project in the environment variable GOOGLE_CLOUD_PROJECT

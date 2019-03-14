@@ -3,9 +3,13 @@
 # This script mounts ../config and makes it the default config location for the app.
 # With this functionality, you can add a config/local.json file and override any settings.
 # See ../README.md for license and more info
+# Requires the environment variable TOKENIZER_DOCKER_IMAGE
 
-APP=gcs-cf-tokenizer
-IMG=ianmaddox/$APP
+if [ -z "$TOKENIZER_DOCKER_IMAGE" ]; then
+	echo "Please define the env variable \$TOKENIZER_DOCKER_IMAGE to your Docker image server"
+	echo "Example: myorg/gcp-pci-tokenizer"
+	exit
+fi
 
 docker stop $APP
 docker rm $APP
@@ -18,4 +22,4 @@ docker run \
   -p 8080:80/tcp \
   -v `pwd`/config:/config \
   -e NODE_CONFIG_DIR="/config" \
-  $IMG
+  $TOKENIZER_DOCKER_IMAGE
