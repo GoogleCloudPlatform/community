@@ -104,10 +104,45 @@ window for Linux and Mac machines. The Bourne shell is an earlier, similar
 program for running commands.
 
     sleep 3600s
+
+This line runs the `sleep` program, which does nothing at all except wait
+the specified time before it exits. That prevents the following commands from
+running for an hour (3600 seconds).
+
     export NAME=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/name -H 'Metadata-Flavor: Google')
     export ZONE=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google')
+
+These two lines may seem a bit cryptic. Each one of them sets the value of a
+shell variable (called NAME and ZONE). Those variables will be used in a later
+command. The `$(_command_)` portion runs the _command_ in the parentheses and
+returns the output of that command as its value. The command here are each
+[curl](https://curl.haxx.se/) commands that make web requests and output the
+response to the requests.
+
+This is the trickiest part of the `startup.sh` program. Compute Engine instances
+have access to a *metadata service* that looks like a web site. Any web request
+made against that apparent site (http://metadata.google.com.internal) will fetch
+some information about the instance itself. There is no actual network traffic
+involved, though; the Google Cloud infrastructure handles the requests and
+responses internally. That's one of the reasons that it is safe for the URL
+to start with `http` instead of `https` - no actual network activity means that
+there is no need for a secure network connection.
+
+These two metadata requests discover the running instance's _name_ and _zone_,
+which are required for the last line of the program.
+
     gcloud --quiet compute instances delete $NAME --zone=$ZONE
 
+Finally, the Cloud SDK [`gcloud`](https://cloud.google.com/sdk/gcloud/) command
+is run. The `--quiet` option indicates that the command should never ask for
+user confirmation of an action, since it is running in batch mode with no
+user available. The `compute instances` command group performs operations on
+Compute Engine instances. The `delete` command completely removes an
+instance. Which instance is to be deleted is specified by the instance
+_NAME_ and _ZONE_ in the command.
+
+Every standard Linux option in Compute Engine has the `gcloud` command already
+installed for your use.
 
 ## Using the console
 
