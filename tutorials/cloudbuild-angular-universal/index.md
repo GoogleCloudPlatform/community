@@ -12,7 +12,7 @@ This tutorial will show you how to pre-generate [server-side rendered Angular pa
 using Cloud Build. Server-side rendering helps facilitate web crawlers (SEO), improve performance on mobile and low-powered
 devices, and show the first page quickly.
 
-![push new angular code to cloud source repository](https://storage.googleapis.com/gcp-community/tutorials/cloudbuild-angular-universal/angular-cloudbuild.png)
+![push new angular code to source repository](https://storage.googleapis.com/gcp-community/tutorials/cloudbuild-angular-universal/angular-cloudbuild.png)
 
 ## Prerequisites
 
@@ -138,7 +138,7 @@ You will create a repository called `tour-of-heroes-universal`
 
         git commit -m "pregenerate changes"
 
-### Configure a Cloud Storage bucket and Cloud load balancer to host your Angular application on Cloud CDN
+### Configure a Cloud Storage bucket and load balancer to host your Angular application on Cloud CDN
 
 1.  Create the content Cloud Storage bucket:
 
