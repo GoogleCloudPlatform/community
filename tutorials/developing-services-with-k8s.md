@@ -21,7 +21,7 @@ The [guestbook](https://cloud.google.com/kubernetes-engine/docs/tutorials/guestb
 
 In order to use this demo, you're going to need the following:
 
-* A local system running either Linux or Mac OS X
+* A local system running either Linux or macOS
 * Access to a Kubernetes cluster (This tutorial will walk through setting up a cluster using Google Kubernetes Engine.)
 
 ## Microservices
@@ -169,7 +169,7 @@ Terminate the PHP process, and type `exit` to terminate the Telepresence proxy a
 
 ### Behind the scenes
 
-What's going on behind the scenes? Your incoming request goes to the load balancer. The load balancer, as mentioned above, looks for the Telepresence proxy based on the `app:guestbook` and `tier:frontend` labels. The proxy, which is running in the cloud Kubernetes environment, then sends those requests to the local Telepresence client, which passes the request to the PHP application.
+What's going on behind the scenes? Your incoming request goes to the load balancer. The load balancer, as mentioned above, looks for the Telepresence proxy based on the `app:guestbook` and `tier:frontend` labels. The proxy, which is running in the Google Kubernetes Engine environment, then sends those requests to the local Telepresence client, which passes the request to the PHP application.
 
 ## Additional resources
 
