@@ -30,7 +30,7 @@ This tutorial discusses three different methods.
 
         bower init
 
-1. Then save new dependencies to your bower.json with:
+1. Then save new dependencies to your `bower.json` file with:
 
         bower install --save [YOUR_PACKAGE_NAME]
 
