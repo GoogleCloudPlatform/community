@@ -28,8 +28,7 @@ a set period of time. You will see two ways to do this.
 
 ## Before you begin
 
-Create a Google Cloud Platform project in a web browser and note the
-_Project ID_. You will use that in the steps below.
+Create a Google Cloud Platform project in a web browser.
 
 ## Costs
 
@@ -59,6 +58,55 @@ this script, it will do nothing for one hour (the `3600s` value on the second
 line), then look up information about the running instance and put it in shell
 variables (the third and fourth lines), and finally run a `gcloud` command to
 delete itself.
+
+You can use this file as is to make your instances delete themselves after
+one hour (3600 seconds), or you can customize it to your exact needs:
+
+* Change the duration before self-deletion by replacing `3600s` with a different
+value. A plain numbers, or a number followed by an `s`, stands for that number
+of seconds. You can specify a duration in minutes, hours, or days, by using
+the suffix `m`, `h`, or `d` in place of `s`.
+
+* Instead of the instance deleting itself after a given duration, you can have
+the instance install and configure a program to run, and then delete itself
+when that program deletes. Replace the `sleep 3600s` line with one or more
+commands to install, configure, and run the program you want.
+You can use 
+
+## Explanation
+
+This section explains how the file shown above works. You can safely skip
+this if you just want to create self-deleting instances.
+
+Every Linux OS image available by default in Google Compute Engine is
+configured to run a program when it first boots, if you specify such a program.
+The `startup.sh` file in the previous section is such a program. When you
+create an image with that option, it will run the `startup.sh` program when
+it launches. In this case, that program does nothing but wait for an hour
+and then issue a command to delete the instance that runs it.
+
+_Default Windows instances have a similar capability, but there are some
+important differences in exactly how it works. The ideas in this tutorial
+can be adapted to work with Windows instances by an experienced Windows
+programmer._
+
+Here is an explanation of what each line in `startup.sh` does:
+
+    #!/bin/sh
+    
+If the first two characters in the file are `#!`, as they are here, the
+Linux environment will run the program named, providing the file as its
+input. So Linux will invoke `/bin/sh`, the 
+[Bourne shell](https://en.wikipedia.org/wiki/Bourne_shell),
+to run this file. You may be familiar with 
+[Bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) in the terminal
+window for Linux and Mac machines. The Bourne shell is an earlier, similar
+program for running commands.
+
+    sleep 3600s
+    export NAME=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/name -H 'Metadata-Flavor: Google')
+    export ZONE=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google')
+    gcloud --quiet compute instances delete $NAME --zone=$ZONE
 
 
 ## Using the console
