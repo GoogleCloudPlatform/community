@@ -1,5 +1,5 @@
 ---
-title: Using Cloud Firestore with Cloud IoT Core for Device Configuration
+title: Using Cloud Firestore with Cloud IoT Core for device configuration
 description: Learn how to use Cloud Firestore to manage fine-grained configuration updates for devices managed by Cloud IoT Core.
 author: ptone
 tags: iot, firestore, functions, internet of things
@@ -21,7 +21,7 @@ By using Cloud Firestore to serve as a layer in between the systems that update 
 - Manage structured device configuration in a managed cloud database.
 - Easily perform partial updates of configuration by changing only some fields in device configuration.
 - Use queries to find all devices in a specific configuration state.
-- Convert human friendly configuration to binary form before sending to device automatically.
+- Convert human-friendly configuration to binary form before sending to device automatically.
 
 
 **Figure 1.** *Architecture diagram for tutorial components*
@@ -57,7 +57,7 @@ Set the name of the Cloud IoT Core settings you are using as environment variabl
 
 ## Create a Cloud IoT Core registry for this tutorial
 
-Create a PubSub topic to use for device logs:
+Create a Cloud Pub/Sub topic to use for device logs:
 
     gcloud pubsub topics create device-events
 
@@ -89,7 +89,7 @@ const dm = new DeviceManager('config-demo');
 exports.configUpdate = functions.firestore
   // assumes a document whose ID is the same as the deviceid
   .document('device-configs/{deviceId}')
-  .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+  .onWrite(async (change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
     if (context) {
       await dm.setAuth();
       console.log(context.params.deviceId);
@@ -103,7 +103,7 @@ exports.configUpdate = functions.firestore
   })
 ```
 
-To deploy the cloud function, you use the Firebase CLI tool:
+To deploy the Cloud Function, you use the Firebase CLI tool:
 
     cd functions
     npm install
@@ -208,7 +208,7 @@ const dm = new DeviceManager('config-demo');
 exports.configUpdate = functions.firestore
   // assumes a document whose ID is the same as the deviceid
   .document('device-configs/{deviceId}')
-  .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+  .onWrite(async (change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
     if (context) {
       await dm.setAuth();
       console.log(context.params.deviceId);
@@ -225,7 +225,7 @@ exports.configUpdate = functions.firestore
 exports.configUpdateBinary = functions.firestore
   // assumes a document whose ID is the same as the deviceid
   .document('device-configs-binary/{deviceId}')
-  .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+  .onWrite(async (change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
     if (context) {
       await dm.setAuth();
       console.log(context.params.deviceId);
@@ -256,7 +256,7 @@ const dm = new DeviceManager('config-demo');
 exports.configUpdate = functions.firestore
   // assumes a document whose ID is the same as the deviceid
   .document('device-configs/{deviceId}')
-  .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+  .onWrite((change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
     if (context) {
       console.log(context.params.deviceId);
       // get the new config data
@@ -272,7 +272,7 @@ exports.configUpdate = functions.firestore
   exports.configUpdateBinary = functions.firestore
   // assumes a document whose ID is the same as the deviceid
   .document('device-configs-binary/{deviceId}')
-  .onWrite((change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
+  .onWrite((change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
     if (context) {
       console.log(context.params.deviceId);
       // get the new config data
