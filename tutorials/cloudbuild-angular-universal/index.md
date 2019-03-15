@@ -10,9 +10,9 @@ date_published: 2018-11-08
 
 This tutorial will show you how to pre-generate [server-side rendered Angular pages](https://angular.io/guide/universal)
 using Cloud Build. Server-side rendering helps facilitate web crawlers (SEO), improve performance on mobile and low-powered
-devices and show the first page quickly.
+devices, and show the first page quickly.
 
-![ push new angular code to cloud source repository ](https://storage.googleapis.com/gcp-community/tutorials/cloudbuild-angular-universal/angular-cloudbuild.png)
+![push new angular code to cloud source repository](https://storage.googleapis.com/gcp-community/tutorials/cloudbuild-angular-universal/angular-cloudbuild.png)
 
 ## Prerequisites
 
@@ -20,10 +20,11 @@ devices and show the first page quickly.
 1.  The necessary permissions; either:
     1.  **Project editor** access to an existing project
     1.  **Create a new project** permissions in an existing organization
+    
 ## (OPTIONAL) Create a project with a billing account attached
 
-This task helps you setup a new GCP project in which to run an Angular application. **(You can also use an existing project and skip to the next
-step)**
+This task helps you setup a new GCP project in which to run an Angular application.
+**(You can also use an existing project and skip to the next step.)**
 
 ```sh
 PROJECT=[NEW PROJECT NAME]
@@ -46,7 +47,7 @@ gcloud config set compute/zone $ZONE
 gcloud config set account $ACCOUNT
 ```
 
-### Set the project variable (Skip this step if you created a new project above)
+### Set the project variable (Skip this step if you created a new project above.)
 
 To specify the project that you will use, replace `[CONFIGURATION NAME]` with the name of the project configuration:
 
@@ -68,13 +69,13 @@ gcloud services enable cloudbuild.googleapis.com
 
 ## Download the test Angular application, Tour of Heroes
 
-1.  Download and unzip the test application
+1.  Download and unzip the test application:
 
         curl -L https://angular.io/generated/zips/universal/universal.zip > universal.zip
         unzip universal.zip -d angular-app
         cd angular-app
 
-1.  Create a local Git repository for the sample code
+1.  Create a local Git repository for the sample code:
 
         curl -L https://github.com/angular/angular/blob/master/.gitignore > .gitignore
         git init
@@ -82,40 +83,42 @@ gcloud services enable cloudbuild.googleapis.com
         git commit -m "first"
 
 ### Create a Cloud Source repository for your copy of the test Angular application
+
 You will create a repository called `tour-of-heroes-universal`
 
     gcloud source repos create tour-of-heroes-universal
 
 ### Make prerender changes to the Angular application
 
-1.  Download the webpack prerender config file.
+1.  Download the webpack prerender config file:
 
         curl -LO https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloudbuild-angular-universal/webpack.prerender.config.js
 
-
-2.  Add the prerender webpack configuration file to Git.
+2.  Add the prerender webpack configuration file to Git:
 
         git add webpack.prerender.config.js
 
-3.  Download the Typescript config file for prerendering.
+3.  Download the Typescript config file for prerendering:
 
         curl -LO https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloudbuild-angular-universal/prerender.tsconfig.json
 
-4.  Add the  Typescript config file for prerendering.
+4.  Add the  Typescript config file for prerendering:
 
         git add prerender.tsconfig.json
 
-5.  Download the prerender Typescript file.
+5.  Download the prerender Typescript file:
 
         curl -LO https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloudbuild-angular-universal/prerender.ts
 
-6.  Add the prerender Typescript file to Git
+6.  Add the prerender Typescript file to Git:
 
         git add prerender.ts
 
-7.  Modify the package.json file to add the prerender steps.
+7.  Modify the `package.json` file to add the prerender steps.
 
-**Note** that jq is a tool for editing JSON and is installed in Cloud Shell by default. If you are going through this tutorial on your workstation see [jq installation](https://stedolan.github.io/jq/download/) for instructions on installing jq on your workstation.
+    **Note** that jq is a tool for editing JSON and is installed in Cloud Shell by default. If you are going through this
+    tutorial on your workstation, see [jq installation](https://stedolan.github.io/jq/download/) for instructions on 
+    installing jq on your workstation.
 
         SCRIPT_ADDITIONS=$(echo '  {
         "build:prerender": "npm run build:client-and-server-bundles && npm run compile:prerender && npm run generate:prerender",
@@ -127,41 +130,41 @@ You will create a repository called `tour-of-heroes-universal`
         cp tmpfile package.json
         rm tmpfile
 
-8.  Add the package.json changes to Git.
+8.  Add the `package.json` changes to Git:
 
         git add package.json
 
-9.  Commit your changes to the Git repo
+9.  Commit your changes to the Git repository:
 
         git commit -m "pregenerate changes"
 
 ### Configure a Cloud Storage bucket and Cloud load balancer to host your Angular application on Cloud CDN
 
-1.  Create the content Cloud Storage bucket.
+1.  Create the content Cloud Storage bucket:
 
         gsutil mb gs://$PROJECT-angular-app
 
-1.  Create the backend bucket.
+1.  Create the backend bucket:
 
         gcloud compute backend-buckets create $PROJECT-angular-app-backend \
         --gcs-bucket-name=$PROJECT-angular-app \
         --enable-cdn
 
-1.  Create a multi-regional IP address.
+1.  Create a multi-regional IP address:
 
         gcloud compute addresses create angular-app-ip --global
         ANGULAR_APP_IP=$(gcloud compute addresses list  --filter="name=angular-app-ip" --format="value(address)")
 
-1.  Create the URL map.
+1.  Create the URL map:
 
         gcloud compute url-maps create web-map --default-backend-bucket $PROJECT-angular-app-backend
 
-1.  Create the HTTP proxy.
+1.  Create the HTTP proxy:
 
         gcloud compute target-http-proxies create http-lb-proxy \
         --url-map web-map
 
-1.  Create the forwarding rule.
+1.  Create the forwarding rule:
 
         gcloud compute forwarding-rules create http-content-rule \
         --address angular-app-ip \
@@ -171,14 +174,14 @@ You will create a repository called `tour-of-heroes-universal`
 
 ## Create the Cloud Build file and add it to the Git repsoitory
 
-1.  Give the Cloud Build account Cloud Storage admin access.
+1.  Give the Cloud Build account Cloud Storage admin access:
 
         CLOUD_BUILD_ACCOUNT=$(gcloud projects get-iam-policy $PROJECT --filter="(bindings.role:roles/cloudbuild)"  --flatten="bindings[].members" --format="value(bindings.members[])")
         gcloud projects add-iam-policy-binding $PROJECT   --member $CLOUD_BUILD_ACCOUNT  --role roles/storage.admin
 
-2.  Create the `cloudbuild.yaml` file.
+2.  Create the `cloudbuild.yaml` file:
 
-         cat <<CLOUDBUILD_FILE>cloudbuild.yaml
+         cat <&lt;CLOUDBUILD_FILE&gt;cloudbuild.yaml
          steps:
          - id: install_packages
            name: 'gcr.io/cloud-builders/npm'
@@ -208,7 +211,7 @@ You will create a repository called `tour-of-heroes-universal`
            - copy_prerendered_files
          CLOUDBUILD_FILE
 
-3.  Add and commit `cloudbuild.yaml` to the Git repository.
+3.  Add and commit `cloudbuild.yaml` to the Git repository:
 
         git add cloudbuild.yaml && git commit -m "add cloudbuild.yaml"
 
@@ -228,22 +231,22 @@ You can create a trigger on the [build triggers page](https://console.cloud.goog
 
 ### Add your tour-of-heroes Cloud Source repository as a remote repository with the name 'google'
 
-1.  (**OPTIONAL**: Only if not running in Cloud Shell) Set up your Google credentials for Git.
+1.  (**OPTIONAL**: Only if not running in Cloud Shell) Set up your Google credentials for Git:
 
         gcloud init && git config --global credential.https://source.developers.google.com.helper gcloud.sh
 
-2.  Add the google cloud repo as a remote.
+2.  Add the google cloud repository as a remote:
 
         git remote add google \
         https://source.developers.google.com/p/$PROJECT/r/tour-of-heroes-universal
 
 ## Run the build trigger and deploy the application
 
-1.  Tag the repository.
+1.  Tag the repository:
 
         git tag v0.0
 
-2.  Push the repository to google.
+2.  Push the repository to `google`:
 
         git push google master && git push google --tags
 
@@ -259,7 +262,7 @@ You can create a trigger on the [build triggers page](https://console.cloud.goog
 
 ## Cleanup
 
-1.  Delete the load balancer.
+1.  Delete the load balancer:
 
         gcloud compute forwarding-rules delete http-content-rule --global --quiet
 
@@ -269,24 +272,24 @@ You can create a trigger on the [build triggers page](https://console.cloud.goog
 
         gcloud compute addresses delete angular-app-ip --global --quiet
 
-2.  Delete the Cloud Storage bucket.
+2.  Delete the Cloud Storage bucket:
 
         gcloud compute backend-buckets delete $PROJECT-angular-app-backend --quiet
 
         gsutil rm gs://$PROJECT-angular-app/**
         gsutil rb gs://$PROJECT-angular-app
 
-3.  Delete the build trigger
+3.  Delete the build trigger:
 
     1. Navigate to the [build triggers page](https://console.cloud.google.com/cloud-build/triggers) of the GCP Console 
     1. On the line of the build trigger "tour-of-heroes-universal" select the menu ![trigger button](https://storage.googleapis.com/gcp-community/tutorials/cloudbuild-angular-universal/trigger-button.png)
     1. Select **Delete**
 
-4.  Delete the Cloud Source repository.
+4.  Delete the Cloud Source repository:
 
         gcloud source repos delete tour-of-heroes-universal --quiet
 
-5.  (OPTIONAL) Disable APIs
+5.  (OPTIONAL) Disable APIs:
 
         gcloud services disable sourcerepo.googleapis.com
         gcloud services disable containerregistry.googleapis.com
