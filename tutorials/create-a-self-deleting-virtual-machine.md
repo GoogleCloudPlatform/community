@@ -3,7 +3,7 @@ title: Create a Self-Deleting Virtual Machine
 description: Learn how to launch a Compute Engine VM that will delete itself after a set duration, insuring that costly resources are not left running.
 author: engelke
 tags: Compute Engine, self-deleting, education, cost control
-date_published: 2019-03-15
+date_published: 2019-03-18
 ---
 # Create a Self-Deleting Virtual Machine on Google Compute Engine
 
@@ -40,7 +40,8 @@ micro instance (the kind created in this tutorial) as part of the
 ## Preparation
 
 The way the self-deleting instance works is by automatically executing a
-startup script that waits a set amount of time and then issues a `gcloud`
+startup script that waits a set amount of time and then issues a
+[gcloud](https://cloud.google.com/sdk/gcloud/)
 command to delete itself. This script needs to be provided in a file or
 at an available URL when launching the instance.
 
@@ -63,7 +64,7 @@ You can use this file as is to make your instances delete themselves after
 one hour (3600 seconds), or you can customize it to your exact needs:
 
 * Change the duration before self-deletion by replacing `3600s` with a different
-value. A plain numbers, or a number followed by an `s`, stands for that number
+value. A number, or a number followed by an `s`, stands for that number
 of seconds. You can specify a duration in minutes, hours, or days, by using
 the suffix `m`, `h`, or `d` in place of `s`.
 
@@ -71,7 +72,6 @@ the suffix `m`, `h`, or `d` in place of `s`.
 the instance install and configure a program to run, and then delete itself
 when that program deletes. Replace the `sleep 3600s` line with one or more
 commands to install, configure, and run the program you want.
-You can use 
 
 ## Explanation
 
@@ -79,9 +79,9 @@ This section explains how the file shown above works. You can safely skip
 this if you just want to create self-deleting instances.
 
 Every Linux OS image available by default in Google Compute Engine is
-configured to run a program when it first boots, if you specify such a program.
+configured to run a program when it first boots if you specify such a program.
 The `startup.sh` file in the previous section is such a program. When you
-create an image with that option, it will run the `startup.sh` program when
+create an image with that option it will run the `startup.sh` program when
 it launches. In this case, that program does nothing but wait for an hour
 and then issue a command to delete the instance that runs it.
 
@@ -113,9 +113,9 @@ running for an hour (3600 seconds).
     export ZONE=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google')
 
 These two lines may seem a bit cryptic. Each one of them sets the value of a
-shell variable (called NAME and ZONE). Those variables will be used in a later
-command. The `$(_command_)` portion runs the _command_ in the parentheses and
-returns the output of that command as its value. The command here are each
+shell variable (called _NAME_ and _ZONE_). Those variables will be used in a later
+command. The `$(command)` portion runs the _command_ in the parentheses and
+returns the output of that command as its value. The commands here are each
 [curl](https://curl.haxx.se/) commands that make web requests and output the
 response to the requests.
 
@@ -133,7 +133,7 @@ which are required for the last line of the program.
 
     gcloud --quiet compute instances delete $NAME --zone=$ZONE
 
-Finally, the Cloud SDK [`gcloud`](https://cloud.google.com/sdk/gcloud/) command
+Finally, the `gcloud` command
 is run. The `--quiet` option indicates that the command should never ask for
 user confirmation of an action, since it is running in batch mode with no
 user available. The `compute instances` command group performs operations on
