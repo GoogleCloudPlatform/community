@@ -40,6 +40,27 @@ micro instance (the kind created in this tutorial) as part of the
 
 ## Preparation
 
+The way the self-deleting instance works is by automatically executing a
+startup script that waits a set amount of time and then issues a `gcloud`
+command to delete itself. This script needs to be provided in a file or
+at an available URL when launching the instance.
+
+Begin this tutorial by opening a text editor and creating a file named
+`startup.sh` with the following contents:
+
+    #!/bin/sh
+    sleep 3600s
+    export NAME=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/name -H 'Metadata-Flavor: Google')
+    export ZONE=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google')
+    gcloud --quiet compute instances delete $NAME --zone=$ZONE
+
+When you start a new instance and specify that it should automatically run
+this script, it will do nothing for one hour (the `3600s` value on the second
+line), then look up information about the running instance and put it in shell
+variables (the third and fourth lines), and finally run a `gcloud` command to
+delete itself.
+
+
 ## Using the console
 
 ## Using the command line
