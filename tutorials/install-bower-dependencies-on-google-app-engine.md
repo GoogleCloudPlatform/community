@@ -32,7 +32,7 @@ This tutorial discusses three different methods.
 
 1. Then save new dependencies to your bower.json with:
 
-        bower install --save <package-name>
+        bower install --save [YOUR_PACKAGE_NAME]
 
 ## Easiest: Do nothing
 
