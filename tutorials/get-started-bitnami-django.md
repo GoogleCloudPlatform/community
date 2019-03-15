@@ -1,5 +1,5 @@
 ---
-title: Get Started with Bitnami Django on Google Cloud Platform
+title: Get started with Bitnami Django on Google Cloud Platform
 description: Create and deploy a basic Django Web application on Google Cloud Platform with Bitnami Django.
 author: vikram-bitnami
 tags: django, python, Google Cloud Platform, bitnami
@@ -110,22 +110,22 @@ Bitnami Django includes a pre-configured instance of the Apache Web server. Conf
 
 1. Add the following Apache directives in the `/opt/bitnami/apps/django/django_projects/myproject/conf/httpd-app.conf` file:
 
-        <IfDefine !IS_DJANGOSTACK_LOADED>
+        &lt;IfDefine !IS_DJANGOSTACK_LOADED&gt;
           Define IS_DJANGOSTACK_LOADED
           WSGIDaemonProcess wsgi-djangostack   processes=2 threads=15    display-name=%{GROUP}
-        </IfDefine>
+        &lt;/IfDefine&gt;
 
-        <Directory "/opt/bitnami/apps/django/django_projects/myproject/myproject">
+        &lt;Directory "/opt/bitnami/apps/django/django_projects/myproject/myproject"&gt;
             Options +MultiViews
             AllowOverride All
-            <IfVersion >= 2.3>
+            &lt;IfVersion >= 2.3&gt;
                 Require all granted
-            </IfVersion>
+            &lt;/IfVersion&gt;
 
             WSGIProcessGroup wsgi-djangostack
 
             WSGIApplicationGroup %{GLOBAL}
-        </Directory>
+        &lt;/Directory&gt;
 
         Alias /myproject/static "/opt/bitnami/apps/django/lib/python3.6/site-packages/Django-2.0.2-py3.6.egg/django/contrib/admin/static"
         WSGIScriptAlias /myproject '/opt/bitnami/apps/django/django_projects/myproject/myproject/wsgi.py'
