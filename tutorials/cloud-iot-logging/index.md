@@ -174,7 +174,7 @@ Now you will exercise a part of our sample device code that responds to config c
 gcloud iot devices configs update --device log-tester --registry $REGISTRY_ID --region $CLOUD_REGION --config-data '{"bounce": 2}'
 ```
 
-Now in just a few moments, you will see two new entries in the logging console. One is from IoT Core system noting that a devices config was updated (the `ModifyCloudToDeviceConfig` call).
+Now in just a few moments, you will see two new entries in Stackdriver Logging. One is from IoT Core system noting that a devices config was updated (the `ModifyCloudToDeviceConfig` call).
 
 This is then followed by a device application log reporting the imaginary "spring back" value. This shows how we can view both system logs from IoT Core and device application logs in one place.
 
@@ -228,5 +228,5 @@ Because the test device uses a non-secret key, you should delete it:
 gcloud iot devices delete log-tester --registry $REGISTRY_ID --region $CLOUD_REGION
 ```
 
-All of the resource in this tutorial cost nothing at rest, or scale to zero. You can delete [Cloud Functions](https://console.cloud.google.com/functions/list), [Device Registry](https://console.cloud.google.com/iot/registries/), and [Cloud Pub/Sub topics](https://console.cloud.google.com/cloudpubsub/topicList) from the console.
+All of the resource in this tutorial cost nothing at rest, or scale to zero. You can delete [Cloud Functions](https://console.cloud.google.com/functions/list), [Device Registry](https://console.cloud.google.com/iot/registries/), and [Cloud Pub/Sub topics](https://console.cloud.google.com/cloudpubsub/topicList) from GCP.
 
