@@ -72,9 +72,9 @@ By default these settings are off. If you already turn them on, you won't see th
 
 **Difference between tell() and ask() APIs**
 
-As we mentioned in Part 2, there is a subtle difference between [tell()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#tell) and [ask()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#ask) APIs when we implement the Cloud Function with the Actions on Google SDK. This doesn't make much of a difference in Part 1 and Part 2, but it does in Part 3 when we integrate Actions on Google. tell() will end the conversation and close the mic, while ask() will keep the conversation open and wait for the next user input.
+As we mentioned in Part 2, there is a subtle difference between [`tell()`](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#tell) and [`ask()`](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#ask) APIs when we implement the Cloud Function with the Actions on Google SDK. This doesn't make much of a difference in Part 1 and Part 2, but it does in Part 3 when we integrate Actions on Google. `tell()` will end the conversation and close the mic, while `ask()` will keep the conversation open and wait for the next user input.
 
-You can test out the difference in the simulator. If you use tell() in the Cloud Functions, you'll need to  say "talk to my test app" again once you've triggered the intents with the Cloud Functions webhook such as the inquiry.parades intent "Are there any parades today?". If you use ask(), you will still be in the test app conversation and won't need to say "talk to my test app" again.
+You can test out the difference in the simulator. If you use `tell()` in the Cloud Functions, you'll need to  say "talk to my test app" again once you've triggered the intents with the Cloud Functions webhook such as the inquiry.parades intent "Are there any parades today?". If you use `ask()`, you will still be in the test app conversation and won't need to say "talk to my test app" again.
 
 **Next steps**
 
