@@ -26,7 +26,7 @@ This tutorial uses billable components of Google Cloud Platform, including the f
 
 - Google Kubernetes Engine
 - Compute Engine (with Google Kubernetes Engine)
-- Google Cloud Storage (with Google Container Registry)
+- Cloud Storage (with Google Container Registry)
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
 projected usage.
@@ -329,12 +329,12 @@ You can follow these steps to clean up resources and save on costs.
 
         gcloud container clusters delete my-cluster
 
-    This deletes all the Google Compute Engine instances that are running the
+    This deletes all of the Compute Engine instances that are running the
     cluster.
 
 3.  Delete the Docker registry storage bucket hosting your image(s).
 
-    1.  List the Google Cloud Storage buckets to get the bucket path.
+    1.  List the Cloud Storage buckets to get the bucket path.
 
             gsutil ls
 
