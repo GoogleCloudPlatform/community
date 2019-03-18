@@ -1,3 +1,11 @@
+---
+title: App Engine Flex Quickstart using Ruby
+description: Learn how to deploy a Ruby sample app to Google App Engine.
+author: jscud
+tags: App Engine
+date_published: 2019-03-08
+---
+
 # App Engine Quickstart
 
 <walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/flexible/ruby/quickstart"></walkthrough-tutorial-url>
@@ -5,6 +13,13 @@
 <!-- {% setvar repo_dir "ruby-docs-samples/appengine/hello_world" %} -->
 
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
+
+<walkthrough-alt>
+Take the interactive version of this tutorial, which runs in the Cloud Console:
+
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=ruby_mvms_quickstart)
+
+</walkthrough-alt>
 
 ## Introduction
 

@@ -3,7 +3,7 @@ title: App Engine Quickstart using Node.js
 description: Learn how to deploy a Node.js sample app to Google App Engine.
 author: jscud
 tags: App Engine
-date_published: 2019-02-01
+date_published: 2019-03-08
 ---
 
 # App Engine Quickstart
@@ -13,6 +13,13 @@ date_published: 2019-02-01
 <!-- {% setvar repo_dir "nodejs-getting-started/1-hello-world" %} -->
 
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
+
+<walkthrough-alt>
+Take the interactive version of this tutorial, which runs in the Cloud Console:
+
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=nodejs_gae_quickstart)
+
+</walkthrough-alt>
 
 ## Introduction
 
