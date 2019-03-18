@@ -59,7 +59,7 @@ gcloud beta billing accounts list
 
 ## Create the Terraform Admin Project
 
-Using an Admin Project for your Terraform service account keeps the resources needed for managing your projects separate from the actual projects you create. While these resources could be created with Terraform using a service account from an existing project, or using your cloud shell, in this tutorial you will create a separate project and service account exclusively for Terraform.
+Using an Admin Project for your Terraform service account keeps the resources needed for managing your projects separate from the actual projects you create. While these resources could be created with Terraform using a service account from an existing project, or using Cloud Shell, in this tutorial you will create a separate project and service account exclusively for Terraform.
 
 Create a new project and link it to your billing account:
 
