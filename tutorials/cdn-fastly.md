@@ -1,6 +1,6 @@
 ---
-title: Content delivery with Fastly and Google Cloud Storage
-description: This tutorial walks you through the process of setting up Fastly to pull assets from Google Cloud Storage.
+title: Content delivery with Fastly and Cloud Storage
+description: This tutorial walks you through the process of setting up Fastly to pull assets from Cloud Storage.
 author: tzero
 tags: Fastly, Cloud Storage, CDN
 date_published: 2015-09-09
@@ -27,7 +27,7 @@ on Cloud Platform to bypass the public Internet during origin pulls,
 resulting in significant increases in pull speed.
 
 This tutorial walks you through the process of setting up Fastly to pull
-assets from [Google Cloud Storage](https://cloud.google.com/storage/).
+assets from [Cloud Storage](https://cloud.google.com/storage/).
 In addition, it describes how to configure Fastly's
 [origin shield](https://docs.fastly.com/guides/about-fastly-services/about-fastlys-origin-shielding-features)
 feature to take advantage of Fastly's direct connection to Google's
@@ -245,5 +245,5 @@ To delete your Fastly service:
 
 New to Fastly? Explore Fastly's feature set and configuration options by
 reviewing the [Fastly documentation](https://docs.fastly.com/guides/). Fastly also
-provides their [own tutorial on using Google Cloud Storage](https://docs.fastly.com/guides/integrations/google-cloud-storage),
+provides their [own tutorial on using Cloud Storage](https://docs.fastly.com/guides/integrations/google-cloud-storage),
 as well information on [serving private buckets](https://docs.fastly.com/guides/integrations/google-cloud-storage#using-gcs-with-private-objects).
