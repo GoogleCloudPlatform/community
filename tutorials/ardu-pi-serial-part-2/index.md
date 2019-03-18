@@ -21,7 +21,7 @@ This two-part tutorial demonstrates how to control an [Arduino Microcontroller](
 
 **Figure 1.** *End to end architecture*
 
-![architecture diagram](architecture.png)
+![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/architecture.png)
 
 ## Before you begin
 
@@ -95,7 +95,7 @@ Go to the [Cloud Dataflow](https://console.cloud.google.com/dataflow) interface 
 
 **Figure 2.** *Example Cloud Dataflow pipeline*
 
-![DF job](df-job.png)
+![DF job](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/df-job.png)
 
 The first part of the Cloud Dataflow job sets up the pipeline options with the required parameters passed via the command line parameters (shown above). The `streaming mode` option is also enabled. To allow access to the modules available in the main session, the `save_main_session` flag is set. After this, the beam pipeline object is created.
 
@@ -184,11 +184,11 @@ The one on the left aggregates the events and writes them to the BigQuery averag
 
 **Figure 3.** *BigQuery table schema*
 
-![bq-schema](bq-schema.jpg)
+![bq-schema](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/bq-schema.jpg)
 
 **Figure 4.** *BigQuery table preview*
 
-![bq data](bq-data.jpg)
+![bq data](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/bq-data.jpg)
 
 ## Create a Google Data Studio report
 
@@ -200,7 +200,7 @@ Google Data Studio is a managed and easy to use tool that allows creation and sh
 
     **Figure 5** *Create a data source*
 
-    ![datasource](select_fields.png)
+    ![datasource](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/select_fields.png)
 
     1. Click on the `+ Create New Data Source` button
     2. Select the `BigQuery by Google` connector
@@ -211,7 +211,7 @@ Google Data Studio is a managed and easy to use tool that allows creation and sh
 
     **Figure 6.** *Create a new chart*
 
-    ![addchart](gcreate.png)
+    ![addchart](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/gcreate.png)
 
     1. Click on Add a Chart from the menu bar
     2. Select a line chart
@@ -223,7 +223,7 @@ Google Data Studio is a managed and easy to use tool that allows creation and sh
 
 **Figure 7.** *Data Studio Report*
 
-![dsreport](ds-report.jpg)
+![dsreport](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/ds-report.jpg)
 
 ## Create a Cloud Datalab notebook
 
