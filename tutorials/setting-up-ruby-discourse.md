@@ -114,7 +114,7 @@ We'll configure the Discourse app to run on the App Engine flexible environment 
         env: flex
         entrypoint: bundle exec rails s -p 8080
         beta_settings:
-          cloud_sql_instances: &lt;Cloud SQL Instance connection name&gt;
+          cloud_sql_instances: &lt;Cloud SQL instance connection name&gt;
 
 1. In the same application root directory, run this gcloud SDK command to deploy:
 
