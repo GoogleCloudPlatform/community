@@ -1,6 +1,6 @@
 ---
-title: Content Delivery with Fastly and Google Cloud Storage
-description: This tutorial walks you through the process of setting up Fastly to pull assets from Google Cloud Storage.
+title: Content delivery with Fastly and Cloud Storage
+description: This tutorial walks you through the process of setting up Fastly to pull assets from Cloud Storage.
 author: tzero
 tags: Fastly, Cloud Storage, CDN
 date_published: 2015-09-09
@@ -27,7 +27,7 @@ on Cloud Platform to bypass the public Internet during origin pulls,
 resulting in significant increases in pull speed.
 
 This tutorial walks you through the process of setting up Fastly to pull
-assets from [Google Cloud Storage](https://cloud.google.com/storage/).
+assets from [Cloud Storage](https://cloud.google.com/storage/).
 In addition, it describes how to configure Fastly's
 [origin shield](https://docs.fastly.com/guides/about-fastly-services/about-fastlys-origin-shielding-features)
 feature to take advantage of Fastly's direct connection to Google's
@@ -73,9 +73,9 @@ To create a Cloud Storage bucket:
    click **Create Bucket**.
 1. In the **Create Bucket** dialog, fill out the form as follows:
 
-    +  _Name_: _<your_bucket_name>_ (must be unique)
-    +  _Storage_: Multi-Regional
-    +  _Location_: United States
+    +  **Name**: `[YOUR_BUCKET_NAME]` (must be unique)
+    +  **Storage**: Multi-Regional
+    +  **Location**: United States
 
         **Note**: Multi-Regional buckets allow the data to be broadly replicated
         across the location (for example across the continental United States),
@@ -105,9 +105,9 @@ configure it to use the bucket as a point of origin:
     [Fastly configuration page](https://app.fastly.com/#configure).
 1. Click **New Service** and fill out the form as follows:
 
-    +  _Name_: Cloud Storage Origin Test
-    +  _Server address_: storage.googleapis.com:80
-    +  _Domain name_: `[YOUR_DOMAIN_NAME]`
+    +  **Name**: Cloud Storage Origin Test
+    +  **Server address**: storage.googleapis.com:80
+    +  **Domain name**: `[YOUR_DOMAIN_NAME]`
 
         Note: Fastly recommends against using an
         [apex domain](https://docs.fastly.com/guides/basic-configuration/using-fastly-with-apex-domains).
@@ -245,5 +245,5 @@ To delete your Fastly service:
 
 New to Fastly? Explore Fastly's feature set and configuration options by
 reviewing the [Fastly documentation](https://docs.fastly.com/guides/). Fastly also
-provides their [own tutorial on using Google Cloud Storage](https://docs.fastly.com/guides/integrations/google-cloud-storage),
+provides their [own tutorial on using Cloud Storage](https://docs.fastly.com/guides/integrations/google-cloud-storage),
 as well information on [serving private buckets](https://docs.fastly.com/guides/integrations/google-cloud-storage#using-gcs-with-private-objects).
