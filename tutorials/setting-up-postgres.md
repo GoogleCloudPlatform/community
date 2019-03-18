@@ -1,12 +1,13 @@
 ---
-title: How to Set Up PostgreSQL on Google Compute Engine
-description: Learn how to get PostgreSQL running on Google Compute Engine.
+title: How to set up PostgreSQL on Compute Engine
+description: Learn how to get PostgreSQL running on Compute Engine.
 author: jimtravis
 tags: Compute Engine, PostgreSQL
 date_published: 2016-06-03
 ---
+
 This tutorial shows how to set up [PostgreSQL](https://www.postgresql.org) on
-Google Cloud Platform in just a few minutes. Follow this tutorial to configure
+Google Cloud Platform (GCP) in just a few minutes. Follow this tutorial to configure
 PostgreSQL on an Ubuntu virtual machine instance on Compute Engine.
 
 If you don't want to install and manage your own PostgreSQL database,
@@ -25,21 +26,17 @@ to set up PostgreSQL on Compute Engine with just a few clicks.
 
 ## Before you begin
 
-You'll need a Google Cloud Console project. You can use an existing project or
-click the button to create a new project.
+You'll need a GCP project. You can use an existing project or
+click the button to create a new project:
 
 **[Create a project](https://console.cloud.google.com/project)**
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform,
-including:
-
-+ Google Compute Engine
+This tutorial uses billable components of GCP, including Compute Engine.
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=411d8ca1-210f-4f2c-babd-34c6af2b5538)
-to generate a cost
-estimate based on your projected usage. New Cloud Platform users might be
+to generate a cost estimate based on your projected usage. New Cloud Platform users might be
 eligible for a [free trial](https://cloud.google.com/free-trial).
 
 
@@ -56,7 +53,7 @@ their package managers. For this tutorial, you use Ubuntu Trusty because
 it includes PostgreSQL 9.3, which has some helpful tools that aren't
 available in earlier versions.
 
-1. In the Cloud Platform Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
+1. In the GCP Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
 1. Click the **Create instance** button.
 1. Set Name to `postgres-tutorial`.
 1. In the **Boot disk** section, click **Change** to begin configuring your boot disk.

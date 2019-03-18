@@ -119,7 +119,7 @@ $ curl --proxy socks5://localhost:5000 https://api.ip2geo.pl/json/
 ### Clean up
 
 Once you are done using the SSH proxy, you can terminate `gcloud compute ssh`
-command with <kbd>Ctrl</kbd>+<kbd>C</kbd>.
+command with Ctrl+C.
 
 If you are no longer planning to use the instance serving the proxy, you can
 delete the instance using the following command to prevent unwanted charges to
