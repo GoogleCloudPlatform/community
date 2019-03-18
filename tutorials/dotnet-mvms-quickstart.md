@@ -1,22 +1,22 @@
 ---
-title: App Engine Quickstart using Go
-description: Learn how to deploy a Go sample app to Google App Engine.
+title: Ann Engine Quickstart using .NET
+description: Learn how to deploy a .NET sample app to Google App Engine.
 author: jscud
 tags: App Engine
-date_published: 2019-01-19
+date_published: 2018-12-18
 ---
 
 # App Engine Quickstart
 
-<walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/go/quickstart"></walkthrough-tutorial-url>
-<!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/golang-samples" %} -->
-<!-- {% setvar repo_dir "golang-samples/appengine/go11x/helloworld" %} -->
+<walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/flexible/dotnet/quickstart"></walkthrough-tutorial-url>
+<!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/dotnet-docs-samples" %} -->
+<!-- {% setvar repo_dir "dotnet-docs-samples/appengine/flexible/HelloWorld" %} -->
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
 
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=go_gae_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=dotnet_mvms_quickstart)
 
 </walkthrough-alt>
 
@@ -52,7 +52,7 @@ collect all the related resources for a single application in one place.
 
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
-<walkthrough-project-billing-setup></walkthrough-project-billing-setup>
+<walkthrough-project-setup></walkthrough-project-setup>
 
 ## Using Google Cloud Shell
 
@@ -92,7 +92,7 @@ that configure your application.
 Enter the following command to view your application code:
 
 ```bash
-cat helloworld.go
+cat Startup.cs
 ```
 
 ### Exploring your configuration
@@ -120,15 +120,18 @@ intended, just like debugging on your local machine.
 To test your app enter:
 
 ```bash
-go run .
+dotnet restore
+```
+
+```bash
+ASPNETCORE_URLS="http://*:8080" dotnet run
 ```
 
 ### Preview your app with "Web preview"
 
 Your app is now running on Cloud Shell. You can access the app by clicking the
 [**Web preview**][spotlight-web-preview]
-<walkthrough-web-preview-icon></walkthrough-web-preview-icon> button at the top
-of the Cloud Shell pane and choosing **Preview on port 8080**.
+<walkthrough-web-preview-icon></walkthrough-web-preview-icon> button at the top of the Cloud Shell pane and choosing **Preview on port 8080**.
 
 ### Terminating the preview instance
 
@@ -152,23 +155,24 @@ Note: If you already created an app, you can skip this step.
 You can use Cloud Shell to deploy your app. To deploy your app enter:
 
 ```bash
-gcloud app deploy
+dotnet publish -c Release
+```
+
+```bash
+gcloud app deploy ./bin/Release/netcoreapp2.1/publish/app.yaml
 ```
 
 ### Visit your app
 
-Congratulations! Your app has been deployed.
-The default URL of your app is a subdomain on appspot.com that starts with your project's ID:
-[{{project_gae_url}}](http://{{project_gae_url}}).
-
-Try visiting your deployed application.
+Congratulations! Your app has been deployed. The default URL of your app is
+[{{project_gae_url}}](http://{{project_gae_url}}). Click the URL to visit it.
 
 ## View your app's status
 
 You can check in on your app by monitoring its status on the App Engine
 dashboard.
 
-Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console.
+Open the [menu][spotlight-console-menu] on the left side of the console.
 
 Then, select the **App Engine** section.
 
@@ -176,8 +180,8 @@ Then, select the **App Engine** section.
 
 ### Disable your project
 
-*   Go to the [**Settings**][spotlight-gae-settings] page.
-*   Click [**Disable Application**][spotlight-disable-app].
+*   Go to the [Settings][spotlight-gae-settings] page.
+*   Click [Disable Application][spotlight-disable-app].
 
 ## Conclusion
 
@@ -185,21 +189,25 @@ Then, select the **App Engine** section.
 
 You have successfully deployed an App Engine application!
 
-Here are some next steps for building your next application and learning to use App Engine with other GCP products:
+Here are some next steps:
 
-**Download the Google Cloud SDK and develop locally.**
+**Download the Google Cloud SDK and develop locally**
 
 Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
 
-<walkthrough-tutorial-card url="appengine/docs/go/datastore/" icon="DATASTORE_SECTION" label="datastore">
-**Learn to use Cloud Datastore.** Cloud Datastore is a highly-scalable NoSQL database for your applications.</walkthrough-tutorial-card>
-<walkthrough-alt>Learn more in the [Cloud Datastore documentation](https://cloud.google.com/appengine/docs/standard/java/datastore/)</walkthrough-alt>
+**Build your next application**
 
-<walkthrough-tutorial-card url="appengine/docs/go/googlecloudstorageclient/setting-up-cloud-storage" icon="STORAGE_SECTION" label="cloudStorage">
-**Learn to use Cloud Storage.** Cloud Storage is a powerful and simple object storage service.
-</walkthrough-tutorial-card><walkthrough-alt>Check out the [Cloud Storage documentation](https://cloud.google.com/appengine/docs/standard/java/googlecloudstorageclient/setting-up-cloud-storage) for more details</walkthrough-alt>
+Learn how to use App Engine with other Google Cloud Platform products:
 
-[app-yaml-ref]: https://cloud.google.com/appengine/docs/standard/go/config/appref
+<walkthrough-tutorial-card url=https://cloud.google.com/appengine/docs/flexible/dotnet/using-cloud-sql icon="SQL_SECTION" label="cloudSql">
+**Learn to use Cloud SQL** Cloud SQL is a fully-managed, relational MySQL
+database for your applications. </walkthrough-tutorial-card>
+
+<walkthrough-tutorial-card url=https://cloud.google.com/appengine/docs/flexible/dotnet/using-cloud-storage icon="STORAGE_SECTION" label="cloudStorage">
+**Learn to use Cloud Storage** Cloud Storage is a powerful and simple object
+storage service. </walkthrough-tutorial-card>
+
+[app-yaml-ref]: https://cloud.google.com/appengine/docs/flexible/dotnet/configuring-your-app-with-app-yaml
 [cloud-sdk-installer]: https://cloud.google.com/sdk/downloads#interactive
 [spotlight-console-menu]: walkthrough://spotlight-pointer?spotlightId=console-nav-menu
 [spotlight-open-devshell]: walkthrough://spotlight-pointer?spotlightId=devshell-activate-button

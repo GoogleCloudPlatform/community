@@ -1,29 +1,15 @@
----
-title: App Engine Quickstart using Go
-description: Learn how to deploy a Go sample app to Google App Engine.
-author: jscud
-tags: App Engine
-date_published: 2019-01-19
----
-
 # App Engine Quickstart
 
-<walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/go/quickstart"></walkthrough-tutorial-url>
-<!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/golang-samples" %} -->
-<!-- {% setvar repo_dir "golang-samples/appengine/go11x/helloworld" %} -->
+<walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/python/quickstart"></walkthrough-tutorial-url>
+<!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/python-docs-samples" %} -->
+<!-- {% setvar repo_dir "python-docs-samples/appengine/standard_python37/hello_world" %} -->
+
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
-
-<walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Cloud Console:
-
-[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=go_gae_quickstart)
-
-</walkthrough-alt>
 
 ## Introduction
 
-This tutorial shows you how to deploy a sample application to Google App Engine
-using the `gcloud` command.
+This tutorial shows you how to deploy a sample [Python](https://python.org/)
+application to Google App Engine using the `gcloud` command.
 
 Here are the steps you will be taking.
 
@@ -32,7 +18,7 @@ Here are the steps you will be taking.
     Projects bundle code, VMs, and other resources together for easier
     development and monitoring.
 
-*   **Build and run your "Hello, world!" app**
+*   **Build and run your "Hello World!" app**
 
     You will learn how to run your app using Google Cloud Shell, right in your
     browser. At the end you'll deploy your app to the web using the `gcloud`
@@ -43,6 +29,9 @@ Here are the steps you will be taking.
     Your app will be real and you'll be able to experiment with it after you
     deploy, or you can remove it and start fresh.
 
+["Python" and the Python logos are trademarks or registered trademarks of the
+Python Software Foundation.](walkthrough://footnote)
+
 ## Project setup
 
 To deploy an application you need to first create a project.
@@ -52,7 +41,7 @@ collect all the related resources for a single application in one place.
 
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
-<walkthrough-project-billing-setup></walkthrough-project-billing-setup>
+<walkthrough-project-setup></walkthrough-project-setup>
 
 ## Using Google Cloud Shell
 
@@ -71,6 +60,8 @@ Use Cloud Shell to clone and navigate to the "Hello World" code. The sample code
 is cloned from your project repository to the Cloud Shell.
 
 Note: If the directory already exists, remove the previous files before cloning.
+
+In Cloud Shell enter:
 
 ```bash
 git clone {{repo_url}}
@@ -92,20 +83,27 @@ that configure your application.
 Enter the following command to view your application code:
 
 ```bash
-cat helloworld.go
+cat main.py
 ```
+
+The application is a simple Python application that uses the
+[Flask](http://flask.pocoo.org/) web framework. This Python app responds to a
+request with an HTTP header and the message `Hello World!`.
 
 ### Exploring your configuration
 
 Google App Engine uses YAML files to specify a deployment's configuration.
 `app.yaml` files contain information about your application, like the runtime
-environment, URL handlers, and more.
+environment, environment variables, and more.
 
 Enter the following command to view your configuration file:
 
 ```bash
 cat app.yaml
 ```
+
+This file contains the minimal amount of configuration required for a Python 3
+application: the `runtime` field specifies the `python37` runtime environment.
 
 The syntax of this file is [YAML](http://www.yaml.org). For a complete list of
 configuration options, see the [`app.yaml`][app-yaml-ref] reference.
@@ -117,18 +115,38 @@ configuration options, see the [`app.yaml`][app-yaml-ref] reference.
 Cloud Shell lets you test your app before deploying to make sure it's running as
 intended, just like debugging on your local machine.
 
-To test your app enter:
+To test your app, first create an isolated virtual environment. This ensures
+that your app does not interfere with other Python applications that may be
+available on your system.
 
 ```bash
-go run .
+virtualenv --python python3 ~/envs/hello_world
+```
+
+Activate your newly-created virtual environment:
+
+```bash
+source ~/envs/hello_world/bin/activate
+```
+
+Use `pip` to install project dependencies. This "Hello World" app depends on the
+Flask microframework:
+
+```bash
+pip install -r requirements.txt
+```
+
+Finally, run your app in Cloud Shell using the Flask development server:
+
+```bash
+python main.py
 ```
 
 ### Preview your app with "Web preview"
 
-Your app is now running on Cloud Shell. You can access the app by clicking the
+Your app is now running on Cloud Shell. You can access the app by clicking the 
 [**Web preview**][spotlight-web-preview]
-<walkthrough-web-preview-icon></walkthrough-web-preview-icon> button at the top
-of the Cloud Shell pane and choosing **Preview on port 8080**.
+<walkthrough-web-preview-icon></walkthrough-web-preview-icon> button at the top of the Cloud Shell pane and choosing **Preview on port 8080**.
 
 ### Terminating the preview instance
 
@@ -152,23 +170,20 @@ Note: If you already created an app, you can skip this step.
 You can use Cloud Shell to deploy your app. To deploy your app enter:
 
 ```bash
-gcloud app deploy
+gcloud app deploy app.yaml --project {{project-id}}
 ```
 
 ### Visit your app
 
-Congratulations! Your app has been deployed.
-The default URL of your app is a subdomain on appspot.com that starts with your project's ID:
-[{{project_gae_url}}](http://{{project_gae_url}}).
-
-Try visiting your deployed application.
+Congratulations! Your app has been deployed. The default URL of your app is
+[{{project_gae_url}}](http://{{project_gae_url}}). Click the URL to visit it.
 
 ## View your app's status
 
 You can check in on your app by monitoring its status on the App Engine
 dashboard.
 
-Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console.
+Open the [menu][spotlight-console-menu] on the left side of the console.
 
 Then, select the **App Engine** section.
 
@@ -176,8 +191,8 @@ Then, select the **App Engine** section.
 
 ### Disable your project
 
-*   Go to the [**Settings**][spotlight-gae-settings] page.
-*   Click [**Disable Application**][spotlight-disable-app].
+*   Go to the [Settings][spotlight-gae-settings] page.
+*   Click [Disable Application][spotlight-disable-app].
 
 ## Conclusion
 
@@ -185,21 +200,29 @@ Then, select the **App Engine** section.
 
 You have successfully deployed an App Engine application!
 
-Here are some next steps for building your next application and learning to use App Engine with other GCP products:
+Here are some next steps:
 
-**Download the Google Cloud SDK and develop locally.**
+**Download the Google Cloud SDK and develop locally**
 
 Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
 
-<walkthrough-tutorial-card url="appengine/docs/go/datastore/" icon="DATASTORE_SECTION" label="datastore">
-**Learn to use Cloud Datastore.** Cloud Datastore is a highly-scalable NoSQL database for your applications.</walkthrough-tutorial-card>
-<walkthrough-alt>Learn more in the [Cloud Datastore documentation](https://cloud.google.com/appengine/docs/standard/java/datastore/)</walkthrough-alt>
+**Build your next application**
 
-<walkthrough-tutorial-card url="appengine/docs/go/googlecloudstorageclient/setting-up-cloud-storage" icon="STORAGE_SECTION" label="cloudStorage">
-**Learn to use Cloud Storage.** Cloud Storage is a powerful and simple object storage service.
-</walkthrough-tutorial-card><walkthrough-alt>Check out the [Cloud Storage documentation](https://cloud.google.com/appengine/docs/standard/java/googlecloudstorageclient/setting-up-cloud-storage) for more details</walkthrough-alt>
+Learn how to use App Engine with other Google Cloud Platform products:
 
-[app-yaml-ref]: https://cloud.google.com/appengine/docs/standard/go/config/appref
+<walkthrough-tutorial-card url="python/django/appengine"
+  icon="APPENGINE_SECTION" label="django">
+  **Run Django**
+  Develop Django apps running on App Engine.
+</walkthrough-tutorial-card>
+
+<walkthrough-tutorial-card url="appengine/docs/standard/python3/building-app/"
+  icon="APPENGINE_SECTION" label="building-app">
+  **Build a Web App**
+  Learn the basics of creating Python web services on App Engine.
+</walkthrough-tutorial-card>
+
+[app-yaml-ref]: https://cloud.google.com/appengine/docs/standard/python3/config/appref
 [cloud-sdk-installer]: https://cloud.google.com/sdk/downloads#interactive
 [spotlight-console-menu]: walkthrough://spotlight-pointer?spotlightId=console-nav-menu
 [spotlight-open-devshell]: walkthrough://spotlight-pointer?spotlightId=devshell-activate-button
