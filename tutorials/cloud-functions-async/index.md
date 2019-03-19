@@ -89,15 +89,15 @@ the task, it moves the job from `Created` to `Running`. When the task is complet
 
 ## Setup
 
-1. Create a project in the [GCP Console][console].
-1. [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
-1. Use [Cloud Shell][shell] or install the [Google Cloud SDK][sdk].
-1. Enable Cloud Functions, Firestore, and Pub/Sub APIs:
+1.  Create a project in the [GCP Console][console].
+1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
+1.  Use [Cloud Shell][shell] or install the [Google Cloud SDK][sdk].
+1.  Enable Cloud Functions, Firestore, and Pub/Sub APIs:
 
         gcloud services enable cloudfunctions.googleapis.com firestore.googleapis.com pubsub.googleapis.com
 	    
-1. Install [`jq`][jq], [`curl`][curl], and [`watch`][watch]. These tools are already in Cloud Shell,
-but install them if you are running this tutoral from your local machine.
+1.  Install [`jq`][jq], [`curl`][curl], and [`watch`][watch]. These tools are already in Cloud Shell,
+    but install them if you are running this tutoral from your local machine.
 
 [console]: https://console.cloud.google.com/
 [shell]: https://cloud.google.com/shell/
