@@ -11,34 +11,35 @@ Varun Dhussa | Solutions Architect | Google Cloud Platform
 Markku Lepisto | Solutions Architect | Google Cloud Platform
 
 This two-part tutorial demonstrates how to control an [Arduino Microcontroller](https://www.arduino.cc/) with a
-[Raspberry Pi](https://www.raspberrypi.org/), connect the devices to
-[Google Cloud IoT Core](https://cloud.google.com/iot-core/), post sensor data from the devices, and analyze the data in real
-time. [Part 1](https://cloud.google.com/community/tutorials/ardu-pi-serial-part-1) of the tutorial created a *hybrid*
+[Raspberry Pi](https://www.raspberrypi.org/), connect the devices to [Cloud IoT Core](https://cloud.google.com/iot-core/),
+post sensor data from the devices, and analyze the data in real time.
+[Part 1](https://cloud.google.com/community/tutorials/ardu-pi-serial-part-1) of the tutorial created a *hybrid*
 device, combining the strengths of a Linux-based microprocessor with internet connectivity and TLS stack, together with a 
 constrained microcontroller for analog I/O.
 
 ## Part 2 objectives
 
-- Process sensor data from Cloud Pub/Sub using Cloud Dataflow
-- Store processed sensor data in BigQuery
-- Create a report dashboard Using Google Data Studio
-- Create a notebook on Cloud Datalab
+- Process sensor data from Cloud Pub/Sub using Cloud Dataflow.
+- Store processed sensor data in BigQuery.
+- Create a report dashboard using Google Data Studio.
+- Create a notebook on Cloud Datalab.
 
 ![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/architecture.png)
 
 ## Before you begin
 
-This tutorial assumes you already have a [Google Cloud Platform](https://console.cloud.google.com/freetrial) account set up 
-and have [Part 1](https://cloud.google.com/community/tutorials/ardu-pi-serial-part-1) of the tutorial working.
+This tutorial assumes that you already have a [Google Cloud Platform (GCP)](https://console.cloud.google.com/freetrial) 
+account set up and have [Part 1](https://cloud.google.com/community/tutorials/ardu-pi-serial-part-1) of the tutorial 
+working.
 
 ## Costs
 
-This tutorial uses billable components of GCP, including the follwoing:
+This tutorial uses billable components of GCP, including the following:
 
 - Cloud IoT Core
 - Cloud Pub/Sub
 - Cloud Dataflow
-- Google BigQuery
+- BigQuery
 - Cloud Datalab
 
 This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), 
@@ -56,7 +57,7 @@ Storage bucket—on your local development environment (e.g., laptop).
 Perform all of steps in the "Before you begin" section of the
 [BigQuery Quickstart](https://cloud.google.com/bigquery/docs/quickstarts/quickstart-web-ui).
 
-## Install environment dependencies and Google Cloud SDK
+## Install environment dependencies and the Google Cloud SDK
 
 1.  Clone the source repository:
 
@@ -74,7 +75,7 @@ Perform all of steps in the "Before you begin" section of the
 
 4.  Follow the steps in [this guide](https://cloud.google.com/sdk/install) to install the Cloud SDK.
 
-## Create a BigQuery Dataset
+## Create a BigQuery dataset
 
 [BigQuery](https://cloud.google.com/bigquery/) is Google's fully managed serverless and highly scalable enterprise data
 warehouse solution.
@@ -85,7 +86,7 @@ region or a geography containing multiple regions. Follow the
 can only be specified while creating it. More details are available
 [here](https://cloud.google.com/bigquery/docs/locations).
 
-## Start Cloud Dataflow job
+## Start the Cloud Dataflow job
 
 [Cloud Dataflow](https://cloud.google.com/dataflow/) is a fully managed service for transforming and enriching data in
 stream (real-time) and batch (historical) modes with equal reliability and expressiveness using the
@@ -104,7 +105,7 @@ Run the command below to start the Apache Beam pipeline on the Cloud Dataflow ru
     --output "[bigquery_table_dataset].[table_name]" \
     --output_avg "[bigquery_average_table_dataset].[table_avg]" 
 
-Go to the [Cloud Dataflow](https://console.cloud.google.com/dataflow) interface in the Google Cloud Console and select your 
+Go to the [Cloud Dataflow](https://console.cloud.google.com/dataflow) interface in the GCP Console and select your 
 newly created Cloud Dataflow job to see your pipeline.
 
 The following diagram shows an example Cloud Dataflow pipeline:
@@ -112,8 +113,8 @@ The following diagram shows an example Cloud Dataflow pipeline:
 ![DF job](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/df-job.png)
 
 The first part of the Cloud Dataflow job sets up the pipeline options with the required parameters passed through the 
-command-line parameters. The `streaming mode` option is also enabled. To allow access to the modules available in the
-main session, the `save_main_session` flag is set. After this, the beam pipeline object is created.
+command-line parameters, as shown above. The `streaming mode` option is also enabled. To allow access to the modules 
+available in the main session, the `save_main_session` flag is set. After this, the beam pipeline object is created.
 
     args, pipeline_args = parser.parse_known_args(argv)
     options = PipelineOptions(pipeline_args)
@@ -127,7 +128,7 @@ The first two steps of the Cloud Dataflow pipeline read incoming events from Clo
         topic=args.topic) | 'Parse JSON to Dict' >> beam.Map(
             json.loads))
 
-There are two branches at the next step. The one on the right in the figure above, writes the incoming stream of events to 
+There are two branches at the next step. The one on the right in the figure above writes the incoming stream of events to 
 the raw BigQuery table. The table is created if it does not exist.
 
     # Write to the raw table
@@ -140,7 +141,7 @@ the raw BigQuery table. The table is created if it does not exist.
 The one on the left aggregates the events and writes them to the BigQuery average table.
 
 1.  Use the timestamp in the event object and emit it with the object. This is then used to create a sliding window of 300
-    seconds which starts every 30 seconds.
+    seconds that starts every 30 seconds.
 
         records | 'Add timestamp' >> beam.ParDo(AddTimestampToDict()) |
              'Window' >> beam.WindowInto(beam.window.SlidingWindows(
@@ -151,7 +152,7 @@ The one on the left aggregates the events and writes them to the BigQuery averag
 
         'Dict to KeyValue' >> beam.ParDo(AddKeyToDict())
     
-3.  The elements are grouped by the clientid key, and the average of all the metrics (temperature, pressure etc) is 
+3.  The elements are grouped by the clientid key, and the averages of all the metrics (temperature, pressure, etc.) are 
     calculated.
 
         'Group by Key' >> beam.GroupByKey() |
@@ -168,13 +169,13 @@ The one on the left aggregates the events and writes them to the BigQuery averag
 ## View results in BigQuery
 
 1.  Ensure that the client from [Part 1](https://cloud.google.com/community/tutorials/ardu-pi-serial-part-1) is running and 
-    posting data to Cloud PubSub through Cloud IoT Core
-2.  Go to the [BigQuery UI](https://console.cloud.google.com/bigquery) in Google Cloud Console
-3.  In the BigQuery menu, select your project `my_project_id`
-4.  Select the dataset `my_dataset`
+    posting data to Cloud Pub/Sub through Cloud IoT Core.
+2.  Go to the [BigQuery UI](https://console.cloud.google.com/bigquery) in the GCP Console.
+3.  In the BigQuery menu, select your project `my_project_id`.
+4.  Select the dataset `my_dataset`.
 5.  Select the table `my_table`:
-    1.  View the table schema
-    2.  See table details
+    1.  View the table schema.
+    2.  See table details.
 6.  Run the following queries to see the latest data:
     1.  Select the latest 20 records from the raw table:
 
@@ -188,81 +189,77 @@ The one on the left aggregates the events and writes them to the BigQuery averag
             order by timestamp DESC
             limit 20;
 
-BigQuery table schema:
-
+**BigQuery table schema:**
 ![bq-schema](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/bq-schema.jpg)
 
-BigQuery table preview:
-
+**BigQuery table preview:**
 ![bq data](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/bq-data.jpg)
 
-## Create a Google Data Studio report
+## Create a Data Studio report
 
-Google Data Studio is a managed and easy to use tool that allows creation and sharing of dashboards and reports.
+Data Studio is a managed and easy to use tool that allows creation and sharing of dashboards and reports.
 
-1.  Go to the [Google Data Studio UI](https://datastudio.google.com).
-2.  Click the `+` button to create a new blank report.
+1.  Go to the [Data Studio interface](https://datastudio.google.com).
+2.  Click the **+** button to create a new blank report.
 3.  Add a new Data Source:
 
     ![datasource](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/select_fields.png)
 
-    1.  Click the `+ Create New Data Source` button
-    2.  Select the `BigQuery by Google` connector
-    3.  Select the BigQuery project `my_project_id`, dataset `my_dataset` and table `my_table` and click `Connect`
-    4.  All the schema fields (such as clientid, temperature, pressure etc) would be auto-selected. 
-    5.  Click on `Add to report` and confirm by clicking the button in the popup
+    1.  Click the **+ Create New Data Source** button
+    2.  Select the **BigQuery by Google** connector
+    3.  Select the BigQuery project `my_project_id`, dataset `my_dataset`, and table `my_table`, and then click **Connect**.
+    4.  All the schema fields (clientid, temperature, pressure, etc.) would be auto-selected. 
+    5.  Click **Add to report** and confirm by clicking the button in the popup.
 4.  Create a new chart:
 
     ![addchart](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/gcreate.png)
 
-    1.  Click on Add a Chart from the menu bar
-    2.  Select a line chart
-    3.  Select Date and Time range dimensions as the timestamp column
-    4.  Select the clientid field as the breakdown dimension
-    5.  Select a metric (eg. temperature) and aggregation (eg. AVG)
-    6.  Add a Text Box and label the chart
-    7.  Repeat the steps above for additional metrics (eg: pressure)
+    1.  Click **Add a Chart** in the menu bar.
+    2.  Select a line chart.
+    3.  Select Date and Time range dimensions as the timestamp column.
+    4.  Select the `clientid` field as the breakdown dimension.
+    5.  Select a metric (e.g., temperature) and aggregation (e.g., AVG).
+    6.  Add a Text Box and label the chart.
+    7.  Repeat the steps above for additional metrics.
 
-Data Studio report:
-
+**Data Studio report:**
 ![dsreport](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/ds-report.jpg)
 
 ## Create a Cloud Datalab notebook
 
-Cloud Datalab is an easy to use interactive tool for data exploration which is built on [Jupyter](https://jupyter.org/).
+Cloud Datalab is an interactive tool for data exploration that is built on [Jupyter](https://jupyter.org/).
 The Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code,
 equations, visualizations, and narrative text.
 
-1.  Go to the [Cloud Datalab quickstart](https://cloud.google.com/datalab/docs/quickstart) and follow the first four steps
-2.  Go to the [notebooks page](http://localhost:8081/notebooks/datalab/notebooks/)
-3.  Click the Upload button to add `community/tutorials/ardu-pi-serial-part2/solarwindreport.ipynb` to Cloud Datalab
-4.  Click the notebook to open and edit it
-    1.  Set the project_id eg. `my_project_id`
-    2.  Set the dataset name eg. `my_dataset`
-    3.  Set the raw table name eg. `my_table`
-    4.  Set the average table name eg. `my_avg_table`
-    5.  Set the location eg. `my_location`.
-    
-        **Important**: The [location](https://cloud.google.com/bigquery/docs/locations) must match that of the dataset(s)
+1.  Go to the [Cloud Datalab quickstart](https://cloud.google.com/datalab/docs/quickstart) and perform all of steps in
+    the "Before you begin" section.
+2.  Go to the [notebooks page](http://localhost:8081/notebooks/datalab/notebooks/).
+3.  Click the **Upload** button to add `community/tutorials/ardu-pi-serial-part2/solarwindreport.ipynb` to Cloud Datalab.
+4.  Click the notebook to open and edit it.
+    1.  Set the project ID (e.g., `my_project_id`).
+    2.  Set the dataset name (e.g., `my_dataset`).
+    3.  Set the raw table name (e.g., `my_table`).
+    4.  Set the average table name (e.g., `my_avg_table`).
+    5.  Set the location (e.g., `my_location`).
+        **Important**: The [location](https://cloud.google.com/bigquery/docs/locations) must match that of the datasets
         referenced in the query.
-       
-    6.  Set the client id eg. `my_client_name`
-5.  From the `Kernel` menu in the menu bar, select `python3`
-6.  Click `Run` in the menu bar to execute the notebook
+    6.  Set the client id (e.g., `my_client_name`).
+5.  From the **Kernel** menu in the menu bar, select **python3**.
+6.  Click **Run** in the menu bar to execute the notebook.
 
 ## Clean up
 
-1.  [Clean up](https://cloud.google.com/datalab/docs/quickstart#clean-up) the Cloud Datalab environment
-2.  Delete the Google Data Studio report
-    1.  Go to the [Google Data Studio UI](https://datastudio.google.com)
-    2.  In the menu section, click on the 3 dot menu next to the report name
-    3.  Select `Remove`
-3.  Stop the [Cloud Dataflow](https://cloud.google.com/dataflow/docs/guides/stopping-a-pipeline) job
-4.  Delete the GCS bucket
+1.  [Clean up](https://cloud.google.com/datalab/docs/quickstart#clean-up) the Cloud Datalab environment.
+2.  Delete the Data Studio report:
+    1.  Go to the [Data Studio interface](https://datastudio.google.com).
+    2.  In the menu section, click the three-dot menu next to the report name.
+    3.  Select **Remove**.
+3.  Stop the [Cloud Dataflow](https://cloud.google.com/dataflow/docs/guides/stopping-a-pipeline) job.
+4.  Delete the Cloud Storage bucket:
 
         $ gsutil rm -r gs://[cloud_storage_bucket]
   
-5.  Delete the [Google BigQuery dataset](https://cloud.google.com/bigquery/docs/managing-datasets#deleting_a_dataset)
+5.  Delete the [BigQuery dataset](https://cloud.google.com/bigquery/docs/managing-datasets#deleting_a_dataset):
 
         $ bq rm -r [my_dataset]
         rm: remove dataset '[my_project_id]:[my_dataset]'? (y/N) y
@@ -278,9 +275,8 @@ equations, visualizations, and narrative text.
 
 * Check out the new [tutorial](https://cloud.google.com/community/tutorials/sigfox-gw) on using the
   Sigfox [Sens'it Discovery V3](https://www.sensit.io/) device with this integration and learning how to encode and decode 
-  its binary data and configuration payloads, as well as store the data in real-time in Cloud BigQuery.
-* Learn more about [IoT on Google Cloud Platform](https://cloud.google.com/solutions/iot/).
-* Learn more about [Big data analytics on Google Cloud Platform](https://cloud.google.com/solutions/big-data/), to turn your
+  its binary data and configuration payloads, as well as store the data in real time in BigQuery.
+* Learn more about [IoT on GCP](https://cloud.google.com/solutions/iot/).
+* Learn more about [Big data analytics on GCP](https://cloud.google.com/solutions/big-data/), to turn your
   IoT data into actionable insights.
-* Try out other Google Cloud Platform features for yourself. Have a look at our
-  [tutorials](https://cloud.google.com/docs/tutorials).
+* Try out other GCP features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
