@@ -62,23 +62,24 @@ A simple custom job definition is defined as follows:
 
     type JobState int
 
-        const (
-            Created JobState = iota
-            Running
-            Completed
-            Failed
-        )
-	
-        type Job struct {
-            ID         string    `json:"id"`
-            CreateTime time.Time `json:"created-time"`
-            DoneTime   time.Time `json:"done-time" firestore:"DoneTime,omitempty"`
-            Done       bool
-            Result     string
-            State      JobState
-            Task       map[string]interface{} `json:"-"`
-                // can add a requester, source IP etc if needed
-        }
+    const (
+        Created JobState = iota
+        Running
+        Completed
+        Failed
+    )
+
+    type Job struct {
+        ID         string    `json:"id"`
+        CreateTime time.Time `json:"created-time"`
+        DoneTime   time.Time `json:"done-time" firestore:"DoneTime,omitempty"`
+        Done       bool
+        Result     string
+        State      JobState
+        Task       map[string]interface{} `json:"-"`
+        // can add a requester, source IP etc if needed
+    }
+
 
 When a job request is received, it is given an ID, and the details of the work are included in a task field.
 This task is sent into the work queue as a Cloud Pub/Sub payload, with the job ID as a
@@ -88,12 +89,15 @@ the task, it moves the job from `Created` to `Running`. When the task is complet
 
 ## Setup
 
-1.  Create a project in the [GCP Console][console].
-1.  [Enable billing for your project.](https://cloud.google.com/billing/docs/how-to/modify-project)
-1.  Use [Cloud Shell][shell] or install the [Google Cloud SDK][sdk].
-1.  Enable Cloud Functions:
+1. Create a project in the [GCP Console][console].
+1. [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
+1. Use [Cloud Shell][shell] or install the [Google Cloud SDK][sdk].
+1. Enable Cloud Functions, Firestore, and Pub/Sub APIs:
 
-        gcloud services enable cloudfunctions.googleapis.com
+        gcloud services enable cloudfunctions.googleapis.com firestore.googleapis.com pubsub.googleapis.com
+	    
+1. Install [`jq`][jq], [`curl`][curl], and [`watch`][watch]. These tools are already in Cloud Shell,
+but install them if you are running this tutoral from your local machine.
 
 [console]: https://console.cloud.google.com/
 [shell]: https://cloud.google.com/shell/
@@ -141,7 +145,7 @@ reference later.
 
 ### Check on job status
 
-This command polls the state of the job every 2 seconds with the [watch command](https://linux.die.net/man/1/watch).
+This command polls the state of the job every 2 seconds with the `watch` command.
 
 	watch -t "curl -s $URL/$JOBID | python -m json.tool"
 
@@ -161,27 +165,27 @@ If you switch back to the shell that is watching the state of the job, in about 
 from this:
 
     {
-        "Done": false,
-        "Result": "",
-        "State": 1,
-        "created-time": "2019-02-22T16:21:43.055Z",
-        "done-time": "0001-01-01T00:00:00Z",
-        "id": "ec82ea86-66d6-46c0-8e9f-ed0b073356ab"
+      "Done": false,
+      "Result": "",
+      "State": 1,
+      "created-time": "2019-02-22T16:21:43.055Z",
+      "done-time": "0001-01-01T00:00:00Z",
+      "id": "ec82ea86-66d6-46c0-8e9f-ed0b073356ab"
     }
 
 to this:
 
     {
-        "Done": true,
-        "Result": "OK completed",
-        "State": 2,
-        "created-time": "2019-02-22T16:21:43.055Z",
-        "done-time": "2019-02-22T16:22:23.794021Z",
-        "id": "ec82ea86-66d6-46c0-8e9f-ed0b073356ab"
+      "Done": true,
+      "Result": "OK completed",
+      "State": 2,
+      "created-time": "2019-02-22T16:21:43.055Z",
+      "done-time": "2019-02-22T16:22:23.794021Z",
+      "id": "ec82ea86-66d6-46c0-8e9f-ed0b073356ab"
     }
 
 
-At that point you can press CTRL-C to exit the watch command. Switch to the shell with the worker process
+At that point you can press CTRL-C to exit the `watch` command. Switch to the shell with the worker process
 and press CTRL-C to exit the worker.
 
 ## Cleanup and next steps
@@ -194,3 +198,7 @@ Optionally, delete the deployed function and Cloud Pub/Sub resources:
 
 In production, you would want to add authorization to the API function, for example
 with [Firebase Auth tokens](https://github.com/firebase/functions-samples/tree/master/authorized-https-endpoint).
+
+[curl]: https://linux.die.net/man/1/curl
+[jq]: https://stedolan.github.io/jq/
+[watch]: https://linux.die.net/man/1/watch
