@@ -147,7 +147,7 @@ reference later.
 
 This command polls the state of the job every 2 seconds with the `watch` command.
 
-	watch -t "curl -s $URL/$JOBID | python -m json.tool"
+	watch -t "curl -s $URL/$JOBID | jq"
 
 ### Perform the work
 
