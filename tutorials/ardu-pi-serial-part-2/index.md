@@ -48,13 +48,13 @@ your projected production usage.
 
 ## Enable Cloud Dataflow for your project
 
-Perform all of steps in the "Before you begin" section of the
+Perform all of the steps in the "Before you begin" section of the
 [Cloud Dataflow Quickstart](https://cloud.google.com/dataflow/docs/quickstarts/quickstart-python)—through creating a Cloud 
 Storage bucket—on your local development environment (e.g., laptop).
 
 ## Enable BigQuery for your project
 
-Perform all of steps in the "Before you begin" section of the
+Perform all of the steps in the "Before you begin" section of the
 [BigQuery Quickstart](https://cloud.google.com/bigquery/docs/quickstarts/quickstart-web-ui).
 
 ## Install environment dependencies and the Google Cloud SDK
@@ -190,6 +190,7 @@ The one on the left aggregates the events and writes them to the BigQuery averag
             limit 20;
 
 **BigQuery table schema:**
+
 ![bq-schema](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/bq-schema.jpg)
 
 **BigQuery table preview:**
@@ -197,7 +198,7 @@ The one on the left aggregates the events and writes them to the BigQuery averag
 
 ## Create a Data Studio report
 
-Data Studio is a managed and easy to use tool that allows creation and sharing of dashboards and reports.
+Data Studio is a managed tool that allows creation and sharing of dashboards and reports.
 
 1.  Go to the [Data Studio interface](https://datastudio.google.com).
 2.  Click the **+** button to create a new blank report.
@@ -231,7 +232,7 @@ Cloud Datalab is an interactive tool for data exploration that is built on [Jupy
 The Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code,
 equations, visualizations, and narrative text.
 
-1.  Go to the [Cloud Datalab quickstart](https://cloud.google.com/datalab/docs/quickstart) and perform all of steps in
+1.  Go to the [Cloud Datalab quickstart](https://cloud.google.com/datalab/docs/quickstart) and perform all of the steps in
     the "Before you begin" section.
 2.  Go to the [notebooks page](http://localhost:8081/notebooks/datalab/notebooks/).
 3.  Click the **Upload** button to add `community/tutorials/ardu-pi-serial-part2/solarwindreport.ipynb` to Cloud Datalab.
