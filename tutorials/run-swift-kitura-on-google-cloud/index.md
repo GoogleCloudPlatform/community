@@ -1,12 +1,13 @@
 ---
-title: Kitura on Google App Engine Tutorial
-description: Learn how to build an app with Swift and Kitura in the Google App Engine flexible environment.
+title: Kitura on Google App Engine
+description: Learn how to build an app with Swift and Kitura in the App Engine flexible environment.
 author: mpmcdonald
 tags: App Engine, Swift, Kitura
 date_published: 2017-03-21
 ---
+
 This tutorial shows a sample [Swift][swift] app built with [Kitura][kitura]
-deployed to the Google App Engine flexible environment.
+deployed to the App Engine flexible environment.
 
 Kitura is "a high performance and simple to use web framework for
 building modern Swift applications." It is [open source on GitHub][kitura-github].
@@ -46,21 +47,19 @@ projected usage.
 
 We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
 
-1.  Create a `package.swift` file with the following contents:
+1.  Create a `Package.swift` file with the following contents:
 
-    ```swift
-    import PackageDescription
+        import PackageDescription
     
-    let package = Package(
-        name: "KituraGAE",
-        targets: [
-            Target(name: "KituraGAE", dependencies: [])
-        ],
-        dependencies: [
-            .Package(url: "https://github.com/IBM-Swift/Kitura.git", majorVersion: 1, minor: 3),
-        ]
-    )
-    ```
+        let package = Package(
+            name: "KituraGAE",
+            targets: [
+                Target(name: "KituraGAE", dependencies: [])
+            ],
+            dependencies: [
+                .Package(url: "https://github.com/IBM-Swift/Kitura.git", majorVersion: 2, minor: 3),
+            ]
+        )
 
 [spm]: https://github.com/apple/swift-package-manager
 
@@ -68,43 +67,37 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
 
 1.  Create a `main.swift` file with the following contents:
 
-    ```swift
-    import Foundation
-    import Kitura
+        import Foundation
+        import Kitura
     
-    // All apps need a Router instance
-    let router = Router()
+        // All apps need a Router instance
+        let router = Router()
     
-    // Respond to App Engine health check requests
-    // TODO: see #2
+        // Respond to App Engine health check requests
+        // TODO: see #2
     
-    // Basic GET request
-    // TODO: see #3
+        // Basic GET request
+        // TODO: see #3
     
-    // Start server on 8080
-    Kitura.addHTTPServer(onPort: 8080, with: router)
-    Kitura.run()
-    ```
+        // Start server on 8080
+        Kitura.addHTTPServer(onPort: 8080, with: router)
+        Kitura.run()
 
 1.  Create a route to handle App Engine health-check requests (per the [custom runtime docs][custom-runtime]):
 
-    ```swift
-    // Respond to App Engine health check requests
-    router.all("/_ah/health") { request, response, _ in
-         print("ALL - /_ah/health route handler...")
-         try response.send("OK").end()
-    }
-    ```
+        // Respond to App Engine health check requests
+        router.all("/_ah/health") { request, response, _ in
+             print("ALL - /_ah/health route handler...")
+             try response.send("OK").end()
+        }
 
 1.  Create a route to handle `GET` requests to `/hello`:
 
-     ```swift
-     // Basic GET request
-     router.get("/hello") { request, response, _ in
-        print("GET - /hello route handler...")
-        try response.status(.OK).send("Hello from Swift on Google App Engine flexible environment!").end()
-     }
-     ```
+         // Basic GET request
+         router.get("/hello") { request, response, _ in
+            print("GET - /hello route handler...")
+            try response.status(.OK).send("Hello from Swift on Google App Engine flexible environment!").end()
+         }
 
 [custom-runtime]: https://cloud.google.com/appengine/docs/flexible/custom-runtimes/build#lifecycle_events
 
@@ -115,25 +108,23 @@ own.
 
 1.  Create a `Dockerfile` with the following contents:
 
-     ```dockerfile
-     FROM ibmcom/swift-ubuntu:latest
-     LABEL Description="Docker image for Swift + Kitura on Google App Engine flexible environment."
+         FROM ibmcom/swift-ubuntu:latest
+         LABEL Description="Docker image for Swift + Kitura on Google App Engine flexible environment."
      
-     # Expose default port for App Engine
-     EXPOSE 8080
+         # Expose default port for App Engine
+         EXPOSE 8080
      
-     # Copy sources
-     RUN mkdir /root/KituraGAE
-     ADD main.swift /root/KituraGAE
-     ADD Package.swift /root/KituraGAE
+         # Copy sources
+         RUN mkdir /root/KituraGAE
+         ADD main.swift /root/KituraGAE
+         ADD Package.swift /root/KituraGAE
      
-     # Build the app
-     RUN cd /root/KituraGAE && swift build
+         # Build the app
+         RUN cd /root/KituraGAE && swift build
      
-     # Run the app
-     USER root
-     CMD ["/root/KituraGAE/.build/debug/KituraGAE"]
-     ```
+         # Run the app
+         USER root
+         CMD ["/root/KituraGAE/.build/debug/KituraGAE"]
 
 ## Deploying the app
 

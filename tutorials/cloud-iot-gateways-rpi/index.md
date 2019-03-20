@@ -99,7 +99,7 @@ To set up your gateway:
 1. Clone the following repository and change into the directory for this tutorial's code:
 
         git clone https://github.com/GoogleCloudPlatform/community.git
-        cd community/tutorials/cloud-iot-gateways-pi
+        cd community/tutorials/cloud-iot-gateways-rpi
 
 2. Generate an RS256 public/private key pair by running the following:
 
@@ -155,7 +155,7 @@ In this tutorial, you'll use a [Raspberry Pi][rpi] to manage the LED/temperature
 8. Clone the following repository and change into the directory for this tutorial's code:
 
         git clone https://github.com/GoogleCloudPlatform/community.git
-        cd community/tutorials/cloud-iot-gateways-pi
+        cd community/tutorials/cloud-iot-gateways-rpi
 
 9. Install Python dependencies by running the following:
 
@@ -173,7 +173,7 @@ In this tutorial, you'll use a [Raspberry Pi][rpi] to manage the LED/temperature
 
 Next, you will manage an LED light connected to the gateway through Cloud IoT Core config updates.
 
-1. Switch to your browser and open the Cloud IoT Core dashboard.
+1. Switch to your browser and open the [Cloud IoT Core console][cloud-iot].
 2. Click on the registry you created.
         The gateway you created should be listed in this registry.
 3. Click **Create Device**.
@@ -187,16 +187,15 @@ Next, you will manage an LED light connected to the gateway through Cloud IoT Co
     - Confirm by clicking **Bind** in the lower right.
 
     ![bind device to gateway](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-gateways-rpi/bind-device.png)
-7. Edit `led-light.py` and add the IP address of your gateway to line 18 `ADDR = ''`.
-8. Connect the LED to the Raspberry Pi's [GPIO Pin 4][rpi-gpio] and ground while using an appropriate resistor.
+7. Edit `led-light.py` by adding the IP address of your gateway on line 28 `ADDR = ''`.
+8. Connect the LED to the Raspberry Pi's [GPIO Pin 4][rpi-gpio] and ground using an appropriate resistor.
 9. Ensure the gateway Python sample is still running on your desktop or laptop.
 10. Run the following from your terminal on the Raspberry Pi:
 
         source run-led-light
 
 11. Make sure you see the `>>LED IS OFF<<` message
-
-12. Switch back to a browser and go to the [Cloud IoT Core dashboard][cloud-iot].
+12. Switch back to a browser and go to the [Cloud IoT Core console][cloud-iot].
 13. Select your registry, and then select `led-light`.
 14. Click **Update Config** at the top of the page.
 15. In the configuration text area, enter `ON` or `OFF` to toggle the LED state.
@@ -211,18 +210,18 @@ Next, you will manage an LED light connected to the gateway through Cloud IoT Co
 
 In this section, you will set up a DHT22 sensor to send telemetry from the sensor through the gateway to Cloud IoT Core.
 
-1. Repeat steps 1-7 from [Managing devices through config updates][managing-devices], but use `thermostat` as the **Device ID**.
-2. Wire the DHT22 sensor to the Raspberry Pi as described [in the setup section of this tutorial][dht22-tutorial].
+1. Repeat steps 1-6 from the previous section, Managing devices through config updates, but use `thermostat` as the **Device ID**.
+2. Edit `thermostat.py` by adding the IP address of your gateway on line 27 `ADDR = ''`
+3. Wire the DHT22 sensor to the Raspberry Pi as described [in the setup section of this tutorial][dht22-tutorial].
 
-3. Run the following from a terminal on the Raspberry Pi:
+4. Run the following from a terminal on the Raspberry Pi:
 
         source run-thermostat
 
-4. If everything is done correctly, you should see the temperature on that terminal updating once per second.
+5. If everything is done correctly, you should see the temperature on that terminal updating once per second.
 
     ![temperatures](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-gateways-rpi/temperature.png)
 
-[managing-devices]: #managing-devices-through-config-updates
 [dht22-tutorial]: https://tutorials-raspberrypi.com/raspberry-pi-measure-humidity-temperature-dht11-dht22
 
 ## Create a subscription to your telemetry topic to view data
