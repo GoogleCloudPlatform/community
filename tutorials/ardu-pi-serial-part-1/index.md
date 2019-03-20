@@ -28,8 +28,7 @@ analog I/O. The devices act as a cloud-connected solar and wind power generator.
 - Post the combined analog and digital sensor data to Google Cloud IoT Core over
   a secure [MQTT][mqtt] connection
 
-In part 2 of the tutorial, you will learn how to process, store and analyze the
-streaming data in real time.
+In [part 2][part2] of the tutorial, you will learn how to process, store and analyze the streaming data in real time.
 
 **Figure 2.** *End to end architecture*
 ![architecture diagram][archdiag]
@@ -42,6 +41,7 @@ streaming data in real time.
 [mqtt]: http://mqtt.org/
 [devicesdiag]: https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-1/devices.jpg
 [archdiag]: https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-1/architecture.png
+[part2]: https://cloud.google.com/community/tutorials/ardu-pi-serial-part-2
 
 ## Before you begin
 
@@ -471,7 +471,7 @@ power, as you turn the rotor.
 
 ## Next
 
-In part 2 (coming soon) of this tutorial, you will use Cloud Dataflow with a
+In [part 2][part2] of this tutorial, you will use Cloud Dataflow with a
 Python streaming pipeline to process this data stream, store it in Google
 BigQuery, explore the data with a Cloud Datalab Jupyter Notebook, and visualize
 it using Cloud Data Studio.
