@@ -10,7 +10,7 @@ One of the recurring problems with using microservices is managing communication
 
 A useful pattern is to enlist a proxy, like [Envoy](https://lyft.github.io/envoy/), to help [make your application more resilient and observable](https://www.datawire.io/guide/traffic/getting-started-lyft-envoy-microservices-resilience/). Envoy can be a bit daunting to set up, so this tutorial walks you through deploying a Python Flask webapp with Envoy on Google Kubernetes Engine.
 
-## The Application
+## The application
 
 The application is a simple REST-based user service. It can create, fetch, and delete users. Even such a trivial application involves several real-world concerns:
 
@@ -117,7 +117,7 @@ Note that this service is type `ClusterIP`, so that it can be seen only within t
 1. Run `kubectl get services`, which should show its service:
 
         NAME      CLUSTER-IP     EXTERNAL-IP  PORT(S)   AGE
-        postgres  10.107.246.55  <none>       5432/TCP  5s
+        postgres  10.107.246.55  &lt;none&gt;       5432/TCP  5s
 
 At this point the Postgres server is running, reachable from anywhere in the cluster at `postgres:5432`.
 

@@ -1,15 +1,16 @@
 ---
-title: Running a Botkit Slack Bot on Google Kubernetes Engine
+title: Running a Botkit Slack bot on Google Kubernetes Engine
 description: Learn how to run a Botkit Slack bot on Google Kubernetes Engine.
 author: tswast
 tags: Kubernetes Engine, Node.js, Botkit, Slack
 date_published: 2017-02-03
 ---
+
 This tutorial shows how to build a [Slack bot](https://api.slack.com/bot-users)
 using the [Botkit toolkit](https://howdy.ai/botkit/) and run it on [Google
 Kubernetes Engine](https://cloud.google.com/kubernetes-engine/).
 
-You will build a "Hello World" Slack bot which responds with a greeting in
+You will build a "Hello World" Slack bot that responds with a greeting in
 response to messages.
 
 ## Objectives
@@ -21,11 +22,11 @@ response to messages.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including:
+This tutorial uses billable components of Google Cloud Platform, including the following:
 
 - Google Kubernetes Engine
-- Google Compute Engine (via Google Kubernetes Engine)
-- Google Cloud Storage (via the Google Container Registry)
+- Compute Engine (with Google Kubernetes Engine)
+- Cloud Storage (with Google Container Registry)
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
 projected usage.
@@ -35,7 +36,7 @@ projected usage.
 ## Before you begin
 
 1.  Set up your development environment.
-    1.  Select or create a [Google Cloud Platform Console][console] project.
+    1.  Select or create a [Google Cloud Platform][console] project.
         [Go to the projects page][projects].
     1.  Enable billing for your project. [Enable billing][billing].
     1.  Install the [Google Cloud SDK][sdk].
@@ -328,18 +329,18 @@ You can follow these steps to clean up resources and save on costs.
 
         gcloud container clusters delete my-cluster
 
-    This deletes all the Google Compute Engine instances that are running the
+    This deletes all of the Compute Engine instances that are running the
     cluster.
 
 3.  Delete the Docker registry storage bucket hosting your image(s).
 
-    1.  List the Google Cloud Storage buckets to get the bucket path.
+    1.  List the Cloud Storage buckets to get the bucket path.
 
             gsutil ls
 
         Command output
 
-            gs://artifacts.<PROJECT_ID>.appspot.com/
+            gs://artifacts.[PROJECT_ID].appspot.com/
 
     2.  Delete the bucket and all the images it contains.
 

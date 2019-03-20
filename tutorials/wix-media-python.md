@@ -49,7 +49,7 @@ server, and running the sample:
 
 1. Start the local App Engine development server:
 
-        <path_to_appengine_sdk>/dev_appserver.py examples/gae
+        [path_to_appengine_sdk]/dev_appserver.py examples/gae
 
 1. Launch [http://localhost:8080](http://localhost:8080)
    to view the sample app. The sample demonstrates creating thumbnails using the Wix Media Python SDK.
