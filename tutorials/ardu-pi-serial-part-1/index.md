@@ -1,37 +1,34 @@
 ---
-title: Locally Connected Microcontrollers and Real-Time Analytics (Part 1 of 2)
-description: Learn how to integrate an Arduino with a Raspberry Pi, and connect them as one device to Google Cloud IoT Core.
+title: Locally connected microcontrollers and real-time analytics (part 1 of 2)
+description: Learn how to integrate an Arduino with a Raspberry Pi, and connect them as one device to Cloud IoT Core.
 author: lepistom
 tags: IoT, Internet of Things, Arduino, Raspberry Pi, MCU
 date_published: 2018-08-31
 ---
 
-Markku Lepisto | Solutions Architect | Google Cloud
+Markku Lepisto | Solutions Architect | Google Cloud Platform
 
 This two-part tutorial demonstrates how to use an [Arduino Microcontroller][arduino]
 to provide analog sensor readings to a [Raspberry Pi][pi], connect the devices
-to [Google Cloud IoT Core][iotcore], post telemetry data from the devices, and
+to [Cloud IoT Core][iotcore], post telemetry data from the devices, and
 analyze the data in real time. Part 1 of the tutorial creates a 'hybrid' device,
 combining the strengths of a Linux-based microprocessor with internet
 connectivity and TLS stack, together with a constrained microcontroller for
 analog I/O. The devices act as a cloud-connected solar and wind power generator.
 
-**Figure 1.** *Devices*
 ![devices diagram][devicesdiag]
 
 ## Part 1 objectives
 
-- Program the Arduino with the [Sketch][sketch] language
-- Read analog sensor values
-- Transmit the data over a serial connection to the Raspberry Pi
-- Program the Pi in [Python][python], to read digital sensor values
-- Post the combined analog and digital sensor data to Google Cloud IoT Core over
-  a secure [MQTT][mqtt] connection
+- Program the Arduino with the [Sketch][sketch] language.
+- Read analog sensor values.
+- Transmit the data over a serial connection to the Raspberry Pi.
+- Program the Pi in [Python][python] to read digital sensor values.
+- Post the combined analog and digital sensor data to Cloud IoT Core over
+  a secure [MQTT][mqtt] connection.
 
-In part 2 of the tutorial, you will learn how to process, store and analyze the
-streaming data in real time.
+In [part 2][part2] of the tutorial, you will learn how to process, store, and analyze the streaming data in real time.
 
-**Figure 2.** *End to end architecture*
 ![architecture diagram][archdiag]
 
 [arduino]: https://www.arduino.cc/
@@ -42,10 +39,11 @@ streaming data in real time.
 [mqtt]: http://mqtt.org/
 [devicesdiag]: https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-1/devices.jpg
 [archdiag]: https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-1/architecture.png
+[part2]: https://cloud.google.com/community/tutorials/ardu-pi-serial-part-2
 
 ## Before you begin
 
-This tutorial assumes you already have a [Cloud Platform][gcp] account set up.
+This tutorial assumes you already have a [Google Cloud Platform (GCP)][gcp] account set up.
 You will also need to download and install the [Arduino IDE][ide] on your local
 development environment.
 
@@ -54,7 +52,7 @@ development environment.
 
 ## Costs
 
-This tutorial uses billable components of GCP, including:
+This tutorial uses billable components of GCP, including the following:
 
 - Cloud IoT Core
 - Cloud Pub/Sub
@@ -92,7 +90,7 @@ a cost estimate based on your projected production usage.
 
 First, execute all the steps in the IoT Core [Quickstart][quickstart] *on your
 local development environment e.g laptop*. But *do not clean up* the environment.
-The rest of this tutorial will use the registry, device and device keys created
+The rest of this tutorial will use the registry, device, and device keys created
 with the quickstart.
 
 [quickstart]: https://cloud.google.com/iot/docs/quickstart
@@ -278,10 +276,10 @@ on the Pi.
 
 ### Connect the sensors to the Arduino
 
-**Figure 3.** *IoT boards and components*
+**IoT boards and components**
 ![boards diagram](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-1/ardu-pi.png)
 
-1.  Connect 2 analog sensors to the Arduino. See [Figure 2][boardsdiag] to see
+1.  Connect 2 analog sensors to the Arduino. See the board diagram above to see
     how to wire the 2 sensors to the Arduino. In this example, we will read the
     analog voltage values of a DC motor, and a solar panel. *Note: you can
     replace the DC motor and solar panel with other analog sensors—but you
@@ -349,7 +347,7 @@ on the Pi.
 1.  Select **File** then **Save As...** and save your sketch with a suitable
     name such as `ardu-pi-serial`.
 
-**Figure 4.** *Arduino IDE and Sketch*
+**Arduino IDE and Sketch**
 ![Sketch diagram](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-1/sketch.png)
 
 ### Test reading Arduino sensors over serial connection from your machine
@@ -471,7 +469,7 @@ power, as you turn the rotor.
 
 ## Next
 
-In part 2 (coming soon) of this tutorial, you will use Cloud Dataflow with a
+In [part 2][part2] of this tutorial, you will use Cloud Dataflow with a
 Python streaming pipeline to process this data stream, store it in Google
 BigQuery, explore the data with a Cloud Datalab Jupyter Notebook, and visualize
-it using Cloud Data Studio.
+it using Google Data Studio.
