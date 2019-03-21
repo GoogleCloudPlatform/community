@@ -11,3 +11,12 @@ This example provides a Clam antivirus Docker image that performs regularly sche
 This example is designed to be run on Google Container-Optimized OS, but it should work with most other Docker servers.
 
 ClamAV is an open source antivirus engine for detecting trojans, viruses, malware, and other malicious threats.
+
+# Basic Usage
+1. Build your Docker image
+1. Deploy that image to your Kubernetes cluster
+1. Use Daemonsets to configure the new workload to run one scanner pod per node
+1. Ensure scan-required paths within other pods are mounted as named volumes so they will be included in the scan of the node
+
+Full documentation is available here:
+https://cloud.google.com/solutions/installing-antivirus-and-file-integrity-monitoring-on-container-optimized-os
