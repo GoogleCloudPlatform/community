@@ -91,7 +91,7 @@ public class Entity {
 	private String type;
 		//  Currently type is one of UNKNOWN, PERSON, LOCATION, ORGANIZATION, EVENT, WORK_OF_ART, CONSUMER_GOOD, OTHER
 
-	private Map<String, String> metadata;
+	private Map&lt;String, String&gt; metadata;
 
 	public String getName() {
 		return name;
@@ -101,7 +101,7 @@ public class Entity {
 		return type;
 	}
 
-	public Map<String, String> getMetadata() {
+	public Map&lt;String, String&gt; getMetadata() {
 		return metadata;
 	}
 }
@@ -110,8 +110,8 @@ public class Entity {
 Additional information returned about an entity (such as mentions and salience) are not included since this example does not need them. Once the classes that represent the results you want are defined, you can create a `Gson` object and use it to parse the string you have created as shown below. In this example, it will just return a list of the entities in the user input.
 
 ```java
-private List<String> getEntities (String jsonString) {
-	List<String> result = new ArrayList<String>();
+private List&lt;String&gt; getEntities (String jsonString) {
+	List&lt;String&gt; result = new ArrayList&lt;String&gt;();
 	Gson gson = new GsonBuilder().create();
 
 	AnalyzeEntitiesResponse json = (AnalyzeEntitiesResponse)gson.fromJson(jsonString, AnalyzeEntitiesResponse.class);
@@ -138,7 +138,7 @@ if (entities.size() > 0) {
 else if (statement.indexOf("cats") >= 0) { ...
 ```
 
-## Going Beyond the Basics
+## Going beyond the basics
 
 While this tutorial just finds the first entity, there is so much more your chatbot can do. Some things to try out:
 * Instead of selecting the first entity, select a random one.
