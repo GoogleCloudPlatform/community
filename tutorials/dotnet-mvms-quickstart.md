@@ -46,7 +46,7 @@ Here are the steps you will be taking.
 
 To deploy an application, you need to first create a project.
 
-GCP organizes resources into projects. This allows you to collect all the related resources for a single application in
+GCP organizes resources into projects. This allows you to collect all of the related resources for a single application in
 one place.
 
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
