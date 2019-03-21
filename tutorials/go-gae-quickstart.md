@@ -1,6 +1,6 @@
 ---
 title: App Engine Quickstart using Go
-description: Learn how to deploy a Go sample app to Google App Engine.
+description: Learn how to deploy a Go sample app to App Engine.
 author: jscud
 tags: App Engine
 date_published: 2019-01-19
