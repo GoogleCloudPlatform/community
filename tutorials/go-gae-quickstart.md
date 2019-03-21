@@ -169,10 +169,10 @@ Then, select the **App Engine** section.
 
 <walkthrough-menu-navigation sectionId="APPENGINE_SECTION"></walkthrough-menu-navigation>
 
-### Disable your project
+## Disable your project
 
-*   Go to the [**Settings**][spotlight-gae-settings] page.
-*   Click [**Disable Application**][spotlight-disable-app].
+1.  Go to the [**Settings**][spotlight-gae-settings] page.
+1.  Click [**Disable Application**][spotlight-disable-app].
 
 ## Conclusion
 
