@@ -3,7 +3,7 @@ title: Exporting Stackdriver logs to Elastic Cloud
 description: Learn how to send Stackdriver events to Elastic Cloud for analysis.
 author: twenny
 tags: stackdriver, elasticsearch, elk, logs, logging, security, compliance
-date_published: 2019-03-14
+date_published: 2019-03-23
 ---
 
 ## Overview
@@ -16,13 +16,13 @@ infrastructure.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform (GCP), including Google Compute Engine.
+This tutorial uses billable components of Google Cloud Platform (GCP), including Compute Engine.
 
 New GCP users might be eligible for a [free trial](https://cloud.google.com/free-trial).
 
 ## Configure GCP resources
 
-The high-level steps in this section are:
+The high-level steps in this section:
 
 1. Create a user-managed service account
 1. Create a VM for Logstash
@@ -31,16 +31,17 @@ The high-level steps in this section are:
 
 ## Enable APIs
 
-Log in or sign up for [Google Cloud Platform](https://cloud.google.com), then open the [Cloud Console](https://console.cloud.google.com).
+Log in or sign up for [Google Cloud Platform](https://cloud.google.com), then open
+the [Cloud Console](https://console.cloud.google.com).
 
-The examples in this document use the `gcloud` command-line inteface. Cloud APIs must be enabled via the
+The examples in this document use the `gcloud` command-line inteface. GCP APIs must be enabled via the
 [Services and APIs page](https://console.cloud.google.com/apis/dashboard) in the console before they can be used
 with `gcloud`. To perform the steps in this tutorial, enable the following APIs: 
 
 * Compute Engine
 * Cloud Pub/Sub
 * Identity and Access Management (IAM)
-* Google Stackdriver
+* Stackdriver
 
 ![Enable Cloud APIs](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/enable_apis.png)
 
@@ -107,7 +108,6 @@ with the metadata service.
 
         Created subscription [projects/scalesec-dev/subscriptions/logstash-sub].
 
-
 ## Create a Stackdriver log sink
 
 1.  Create a log sink to be used to export Stackdriver logs to the new Cloud Pub/Sub topic.
@@ -148,7 +148,7 @@ with the metadata service.
 
 **Note:** Some system responses are omitted in this section for brevity.
 
-1.  Create a VM to run `logstash` to pull logs from the Cloud PubSub logging 
+1.  Create a VM to run `logstash` to pull logs from the Cloud Pub/Sub logging 
     sink and send them to ElasticSearch:
 
         gcloud compute --project=scalesec-dev instances create logstash \
@@ -175,7 +175,7 @@ with the metadata service.
 
     ![Sign up for Elastic Cloud](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/es_trial.png)
 
-2.  Create an Elasticsearch deployment. This example is deployed on Cloud Platform in us-west1. 
+2.  Create an Elasticsearch deployment. This example is deployed on GCP in us-west1. 
 
     ![Create an Elastic Cloud deployment](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/create_es_deployment.png)
 
@@ -197,7 +197,9 @@ with the metadata service.
 
 ## Configure the Logstash VM
 
-1.  Compute Engine supports several [ways](https://cloud.google.com/compute/docs/instances/connecting-to-instance) to access your VM. You can use the `gcloud` command in Cloud Shell to leverage `oslogin` to connect to the `logstash` VM via SSH, noting the zone from the VM creation step above.
+1.  Compute Engine supports several [ways](https://cloud.google.com/compute/docs/instances/connecting-to-instance) to
+    access your VM. You can use the `gcloud` command in Cloud Shell to leverage `oslogin` to connect to the `logstash` VM 
+    via SSH, noting the zone from the VM creation step above.
 
         gcloud compute ssh logstash --zone us-west1-a
 
@@ -212,7 +214,6 @@ with the metadata service.
     After a few moments, the VM will complete its reboot and can be accessed again via `gcloud`.
 
         gcloud compute ssh logstash --zone us-west1-a
-
 
 ## Install Logstash
 
@@ -233,7 +234,6 @@ with the metadata service.
         Validating logstash-input-google_pubsub  
         Installing logstash-input-google_pubsub  
         Installation successful  
-
 
 ## Configure Logstash
 
