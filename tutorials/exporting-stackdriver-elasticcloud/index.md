@@ -71,13 +71,23 @@ with the metadata service.
 
         Created service account [logstash].
     
-1.  Provide permissions to access Cloud Pub/Sub using the `pubsub.editor`
-    [predefined IAM role](https://cloud.google.com/pubsub/docs/access-control#tbl_roles). _Editor_ permissions are required
-    for version 1.1.0 of Logstash Pub/Sub plugin. This appears to have been
-    [addressed](https://github.com/logstash-plugins/logstash-input-google_pubsub/blob/master/lib/logstash/inputs/google_pubsub.rb#L211-L214) in version 1.2.0, which means _subscriber_
-    permissions could be used.
+2.  Provide IAM permissions allowing the new service account to access Cloud Pub/Sub using the `pubsub.subscriber` role.
 
-        gcloud projects add-iam-policy-binding scalesec-dev --member serviceAccount:logstash@scalesec-dev.iam.gserviceaccount.com --role roles/pubsub.editor
+        gcloud projects add-iam-policy-binding scalesec-dev \
+        --member serviceAccount:logstash@scalesec-dev.iam.gserviceaccount.com \
+        --role roles/pubsub.subscriber
+
+    **Excerpt of expected response:**
+
+        Updated IAM policy for project [scalesec-dev].
+        [...]
+        - members:
+          - serviceAccount:logstash@scalesec-dev.iam.gserviceaccount.com
+          role: roles/pubsub.subscriber
+        [...]
+        etag: BwWEjM0909E=
+        version: 1
+
 
 ## Create a Cloud Pub/Sub topic and subscription
 
@@ -89,7 +99,14 @@ with the metadata service.
 
         Created topic [projects/scalesec-dev/topics/stackdriver-topic].
 
-    Version 1.1.0 of the Logstash plugin will automatically create a subscription.
+    Next, create a subscription:
+
+        gcloud pubsub subscriptions create logstash-sub --topic=stackdriver-topic --topic-project=scalesec-dev
+
+    **Expected response:**
+
+        Created subscription [projects/scalesec-dev/subscriptions/logstash-sub].
+
 
 ## Create a Stackdriver log sink
 
@@ -109,29 +126,38 @@ with the metadata service.
     closely. Stackdriver supports monitoring activities for vpn_gateway and other resource types. See the
     [documentation](https://cloud.google.com/logging/docs/view/overview) for more filter ideas.
 
-    The second part of the output is a reminder to verify that the service account used by Stackdriver has permissions to 
-    publish events to the Cloud Pub/Sub topic. The `gcloud` CLI doesn't currently support permissions management for Cloud
-    Pub/Sub, but they can be managed via the [Cloud Pub/Sub page](https://console.cloud.google.com/cloudpubsub/topicList)
-    in Cloud Console. 
+    The second part of the output is a reminder to verify that the service account used by Stackdriver has permissions 
+    to publish events to the Cloud Pub/Sub topic. The beta version of `gcloud` CLI supports permissions management for 
+    Cloud Pub/Sub. 
 
-1.  Confirm that the service account has access to the topic as shown below.
+        gcloud beta pubsub topics add-iam-policy-binding stackdriver-topic \
+        --member serviceAccount:p352005273005-776084@gcp-sa-logging.iam.gserviceaccount.com \
+        --role roles/pubsub.publisher
 
-    ![Verify Cloud Pub/Sub Topic Permissions](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/pubsub_topic_permissions.png)
+    **Expected response:**
+
+        Updated IAM policy for topic [stackdriver-topic].
+        bindings:
+        - members:
+          - serviceAccount:p352005273005-776084@gcp-sa-logging.iam.gserviceaccount.com
+          role: roles/pubsub.publisher
+        etag: BwWEi9uEM1A=
+
 
 ## Create the Logstash VM
 
 **Note:** Some system responses are omitted in this section for brevity.
 
-1.  Create a VM. In addition to the pubsub scope shown below, note the inclusion of the default recommended scopes to
-    other Google APIs for essential system operation.
+1.  Create a VM to run `logstash` to pull logs from the Cloud PubSub logging 
+    sink and send them to ElasticSearch:
 
         gcloud compute --project=scalesec-dev instances create logstash \
         --zone=us-west1-a \
         --machine-type=n1-standard-1 \
         --subnet=default \
         --service-account=logstash@scalesec-dev.iam.gserviceaccount.com \
-        --scopes="https://www.googleapis.com/auth/pubsub,https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append" \
-        --image=ubuntu-1804-bionic-v20180617 \
+        --scopes="https://www.googleapis.com/auth/cloud-platform" \
+        --image-family=ubuntu-1804-lts \
         --image-project=ubuntu-os-cloud \
         --boot-disk-size=10GB \
         --boot-disk-type=pd-ssd \
@@ -149,11 +175,11 @@ with the metadata service.
 
     ![Sign up for Elastic Cloud](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/es_trial.png)
 
-1.  Create an Elasticsearch deployment. This example is deployed on Cloud Platform in us-west1. 
+2.  Create an Elasticsearch deployment. This example is deployed on Cloud Platform in us-west1. 
 
     ![Create an Elastic Cloud deployment](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/create_es_deployment.png)
 
-1.  While the deployment is finishing up, make sure to capture the credentials and store them in a safe place. While
+3.  While the deployment is finishing up, make sure to capture the credentials and store them in a safe place. While
     the Cloud ID can be viewed from the deployment page, this is the only time the password for the elastic user is 
     available. Visit the **Security** page to reset the password if needed. When considering production environments, create
     new Elasticsearch credentials with tighter permissions and avoid using the `elastic` user. As
@@ -162,7 +188,7 @@ with the metadata service.
 
     ![Launching an Elastic Cloud deployment](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/es_deployment_launch.png)
 
-1.  Obtain the URI of the Elasticsearch endpoint that has been provisioned. A link to this endpoint can be copied from the 
+4.  Obtain the URI of the Elasticsearch endpoint that has been provisioned. A link to this endpoint can be copied from the 
     **Deployments** page. This value will be needed to configure Logstash output plugin configuration.
 
     ![Copy the Elasticsearch URI](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/copy_es_uri.png)
@@ -171,54 +197,43 @@ with the metadata service.
 
 ## Configure the Logstash VM
 
-1.  Navigate in the GCP console to the **Compute Engine > VM Instances** page. The GCP Console provides convenient access to
-    the VM with an embedded SSH console. The example shell commands in this tutorial are concatenated, but if issues are 
-    encountered when pasting multiple commands into this console, consider switching to
-    [OS login](https://cloud.google.com/compute/docs/instances/managing-instance-access#enable_oslogin).
+1.  Compute Engine supports several [ways](https://cloud.google.com/compute/docs/instances/connecting-to-instance) to access your VM. You can use the `gcloud` command in Cloud Shell to leverage `oslogin` to connect to the `logstash` VM via SSH, noting the zone from the VM creation step above.
 
-    ![SSH to VM](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/ssh_button.png)
+        gcloud compute ssh logstash --zone us-west1-a
 
-1.  Perform typical system updates and install OpenJDK:
+2.  Perform typical system updates and install OpenJDK:
 
-        sudo apt-get update && \
-        sudo apt-get -y upgrade && \
-        sudo apt -y install openjdk-8-jre-headless && \
-        echo "export JAVA_HOME=\"/usr/lib/jvm/java-8-openjdk-amd64\"" >> ~/.profile && \
+        sudo apt-get update
+        sudo apt-get -y upgrade
+        sudo apt -y install openjdk-8-jre-headless
+        echo "export JAVA_HOME=\"/usr/lib/jvm/java-8-openjdk-amd64\"" >> ~/.profile
         sudo reboot
 
-    After a few moments, the VM will complete its reboot and can be accessed again via SSH.
+    After a few moments, the VM will complete its reboot and can be accessed again via `gcloud`.
+
+        gcloud compute ssh logstash --zone us-west1-a
+
 
 ## Install Logstash
 
 1.  Install logstash from Elastic.
 
-        wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && \
-        echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-6.x.list && \
-        sudo apt-get update && sudo apt-get install logstash
+        wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+        echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-6.x.list
+        sudo apt-get update
+        sudo apt-get install logstash
 
-1.  Install the Logstash Plugin for Cloud Pub/Sub. Version 1.2.0 of the Logstash Pub/Sub plugin is
-    [currently broken](https://github.com/logstash-plugins/logstash-input-google_pubsub/pull/36). Below are the steps to
-    use the previous version until version 1.2.1 is available.
+1.  Install the Logstash Plugin for Cloud Pub/Sub. 
 
-        cd && \
-        git clone https://github.com/logstash-plugins/logstash-input-google_pubsub.git && \
-        cd logstash-input-google_pubsub && \
-        git checkout v1.1.0 && \
-        sudo apt-get install -y rubygems && \
-        sudo gem build logstash-input-google_pubsub.gemspec && \
-        cd /usr/share/logstash && \
-        sudo bin/logstash-plugin install  ~/logstash-input-google_pubsub/logstash-input-google_pubsub-1.1.0.gem
+        cd /usr/share/logstash
+        sudo -u root sudo -u logstash bin/logstash-plugin install logstash-input-google_pubsub
 
     **Expected response:**  
 
-    (after many lines...)
+        Validating logstash-input-google_pubsub  
+        Installing logstash-input-google_pubsub  
+        Installation successful  
 
-        Validating /home/aaron/logstash-input-google_pubsub/logstash-input-google_pubsub-1.1.0.gem
-        Installing logstash-input-google_pubsub
-        Installation successful
-
-    When this issue is resolved, it should be possible to replace the git clone/checkout process above with
-    just `sudo -u logstash bin/logstash-plugin install logstash-input-google_pubsub`.
 
 ## Configure Logstash
 
@@ -242,9 +257,12 @@ Logstash comes with no default configuration.
             }
         }
         filter {
-        mutate {
-            add_field => { "messageId" => "%{[@metadata][pubsub_message][messageId]}" }
-        }
+            # don't modify logstash heartbeat events
+            if [type] != "heartbeat" {
+                mutate {
+                    add_field => { "messageId" => "%{[@metadata][pubsub_message][messageId]}" }
+                }
+            }
         }
         output
         {
@@ -266,9 +284,9 @@ Logstash comes with no default configuration.
 
 1.  Monitor the startup logs closely for issues:
 
-        tail -f /var/log/syslog
+        sudo tail -f /var/log/syslog
 
-1.  Review log messages. 
+1.  Review log messages. It may take a few moments for events to begin flowing.
 
     Log messages like these indicate that Logstash is working internally:
 
