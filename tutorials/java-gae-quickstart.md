@@ -237,3 +237,7 @@ Learn how to use App Engine with other Google Cloud Platform products:
 [java]: https://java.com/
 [cloud-sdk-installer]: https://cloud.google.com/sdk/downloads#interactive
 [spotlight-open-devshell]: walkthrough://spotlight-pointer?spotlightId=devshell-activate-button
+[spotlight-console-menu]: walkthrough://spotlight-pointer?spotlightId=console-nav-menu
+[spotlight-web-preview]: walkthrough://spotlight-pointer?spotlightId=devshell-web-preview-button
+[spotlight-gae-settings]: walkthrough://spotlight-pointer?cssSelector=#cfctest-section-nav-item-settings
+[spotlight-disable-app]: walkthrough://spotlight-pointer?cssSelector=#p6ntest-show-disable-app-modal-button
