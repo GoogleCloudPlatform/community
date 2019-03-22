@@ -226,11 +226,11 @@ Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
 
 Learn how to use App Engine with other Google Cloud Platform products:
 
-<walkthrough-tutorial-card url="appengine/docs/go/datastore/" icon="DATASTORE_SECTION" label="datastore">
+<walkthrough-tutorial-card url="https://cloud.google.com/appengine/docs/standard/java/datastore/" icon="DATASTORE_SECTION" label="datastore">
 **Learn to use Cloud Datastore.** Cloud Datastore is a highly-scalable NoSQL database for your applications.</walkthrough-tutorial-card>
 <walkthrough-alt>Learn more in the [Cloud Datastore documentation](https://cloud.google.com/appengine/docs/standard/java/datastore/).</walkthrough-alt>
 
-<walkthrough-tutorial-card url="appengine/docs/go/googlecloudstorageclient/setting-up-cloud-storage" icon="STORAGE_SECTION" label="cloudStorage">
+<walkthrough-tutorial-card url="https://cloud.google.com/appengine/docs/standard/java/googlecloudstorageclient/setting-up-cloud-storage" icon="STORAGE_SECTION" label="cloudStorage">
 **Learn to use Cloud Storage.** Cloud Storage is a powerful and simple object storage service.
 </walkthrough-tutorial-card><walkthrough-alt>Check out the [Cloud Storage documentation](https://cloud.google.com/appengine/docs/standard/java/googlecloudstorageclient/setting-up-cloud-storage) for more details.</walkthrough-alt>
 
