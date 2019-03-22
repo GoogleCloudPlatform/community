@@ -176,10 +176,10 @@ Then, select the **App Engine** section.
 
 <walkthrough-menu-navigation sectionId="APPENGINE_SECTION"></walkthrough-menu-navigation>
 
-### Disable your project
+## Disable your project
 
-*   Go to the [Settings][spotlight-gae-settings] page.
-*   Click [Disable Application][spotlight-disable-app].
+1.  Go to the [**Settings**][spotlight-gae-settings] page.
+1.  Click [**Disable Application**][spotlight-disable-app].
 
 ## Conclusion
 
@@ -198,8 +198,7 @@ Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
 Learn how to use App Engine with other Google Cloud Platform products:
 
 <walkthrough-tutorial-card url=https://cloud.google.com/appengine/docs/flexible/dotnet/using-cloud-sql icon="SQL_SECTION" label="cloudSql">
-**Learn to use Cloud SQL.** Cloud SQL is a fully-managed, relational MySQL database for your applications.</walkthrough-tutorial-card>
-<walkthrough-alt>Learn more in the [Cloud SQL documentation](https://cloud.google.com/appengine/docs/flexible/dotnet/using-cloud-sql).</walkthrough-alt>
+**Learn to use Cloud SQL.** Cloud SQL is a fully-managed, relational MySQL database for your applications. </walkthrough-tutorial-card><walkthrough-alt>Learn more in the [Cloud SQL documentation](https://cloud.google.com/appengine/docs/flexible/dotnet/using-cloud-sql).</walkthrough-alt>
 
 <walkthrough-tutorial-card url=https://cloud.google.com/appengine/docs/flexible/dotnet/using-cloud-storage icon="STORAGE_SECTION" label="cloudStorage">
 **Learn to use Cloud Storage** Cloud Storage is a powerful and simple object
