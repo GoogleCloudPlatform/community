@@ -1,9 +1,9 @@
 ---
-title: App Engine Flex Quickstart using Python
-description: Learn how to deploy a Python sample app to Google App Engine.
+title: App Engine flexible environment Quickstart using Python
+description: Learn how to deploy a Python sample app to App Engine.
 author: jscud
 tags: App Engine
-date_published: 2019-03-08
+date_published: 2019-03-22
 ---
 
 # App Engine Quickstart
@@ -15,15 +15,15 @@ date_published: 2019-03-08
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Cloud Console:
+Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
 
-[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=python_mvms_quickstart)
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=python_mvms_quickstart)
 
 </walkthrough-alt>
 
 ## Introduction
 
-This tutorial shows you how to deploy a sample application to Google App Engine
+This tutorial shows you how to deploy a sample application to App Engine
 using the `gcloud` command.
 
 Here are the steps you will be taking.
@@ -35,8 +35,8 @@ Here are the steps you will be taking.
 
 *   **Build and run your "Hello, world!" app**
 
-    You will learn how to run your app using Google Cloud Shell, right in your
-    browser. At the end you'll deploy your app to the web using the `gcloud`
+    You will learn how to run your app using Cloud Shell, right in your
+    browser. At the end, you'll deploy your app to the web using the `gcloud`
     command.
 
 *   **After the tutorial...**
@@ -46,21 +46,21 @@ Here are the steps you will be taking.
 
 ## Project setup
 
-To deploy an application you need to first create a project.
+To deploy an application, you need to first create a project.
 
-Google Cloud Platform organizes resources into projects. This allows you to
-collect all the related resources for a single application in one place.
+GCP organizes resources into projects. This allows you to
+collect all of the related resources for a single application in one place.
 
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
 <walkthrough-project-setup></walkthrough-project-setup>
 
-## Using Google Cloud Shell
+## Using Cloud Shell
 
-Cloud Shell is a built-in command line tool for the console. We're going to use
+Cloud Shell is a built-in command-line tool for the console. We're going to use
 Cloud Shell to deploy our app.
 
-### Open Google Cloud Shell
+### Open Cloud Shell
 
 Open Cloud Shell by clicking the
 <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
@@ -98,7 +98,7 @@ cat main.py
 
 ### Exploring your configuration
 
-Google App Engine uses YAML files to specify a deployment's configuration.
+App Engine uses YAML files to specify a deployment's configuration.
 `app.yaml` files contain information about your application, like the runtime
 environment, URL handlers, and more.
 
@@ -118,7 +118,7 @@ configuration options, see the [`app.yaml`][app-yaml-ref] reference.
 Cloud Shell lets you test your app before deploying to make sure it's running as
 intended, just like debugging on your local machine.
 
-To test your app enter:
+To test your app enter the following:
 
 ```bash
 virtualenv env &&
@@ -144,11 +144,11 @@ Your app is now running on Cloud Shell. You can access the app by clicking the
 Terminate the instance of the application by pressing `Ctrl+C` in the Cloud
 Shell.
 
-## Deploying to Google App Engine
+## Deploying to App Engine
 
 ### Create an application
 
-In order to deploy your app, you need to create an app in a region:
+To deploy your app, you need to create an app in a region:
 
 ```bash
 gcloud app create
@@ -158,7 +158,7 @@ Note: If you already created an app, you can skip this step.
 
 ### Deploying with Cloud Shell
 
-You can use Cloud Shell to deploy your app. To deploy your app enter:
+You can use Cloud Shell to deploy your app. To deploy your app enter the following:
 
 ```bash
 gcloud app deploy
@@ -166,24 +166,27 @@ gcloud app deploy
 
 ### Visit your app
 
-Congratulations! Your app has been deployed. The default URL of your app is
-[{{project_gae_url}}](http://{{project_gae_url}}). Click the URL to visit it.
+Congratulations! Your app has been deployed.
+The default URL of your app is a subdomain on appspot.com that starts with your project's ID:
+[{{project_gae_url}}](http://{{project_gae_url}}).
+
+Try visiting your deployed application.
 
 ## View your app's status
 
 You can check in on your app by monitoring its status on the App Engine
 dashboard.
 
-Open the [menu][spotlight-console-menu] on the left side of the console.
+Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console.
 
 Then, select the **App Engine** section.
 
 <walkthrough-menu-navigation sectionId="APPENGINE_SECTION"></walkthrough-menu-navigation>
 
-### Disable your project
+## Disable your project
 
-*   Go to the [Settings][spotlight-gae-settings] page.
-*   Click [Disable Application][spotlight-disable-app].
+1.  Go to the [**Settings**][spotlight-gae-settings] page.
+1.  Click [**Disable Application**][spotlight-disable-app].
 
 ## Conclusion
 
@@ -199,15 +202,15 @@ Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
 
 **Build your next application**
 
-Learn how to use App Engine with other Google Cloud Platform products:
+Learn how to use App Engine with other products:
 
 <walkthrough-tutorial-card url=https://cloud.google.com/python/django/flexible-environment icon="APPENGINE_SECTION" label="django">
-**Run Django** Develop Django apps running on App Engine.
-</walkthrough-tutorial-card>
+**Run Django.** Develop Django apps running on App Engine.
+</walkthrough-tutorial-card><walkthrough-alt>Learn more in the [Django on App Engine documentation](https://cloud.google.com/python/django/flexible-environment).</walkthrough-alt>
 
 <walkthrough-tutorial-card url=https://cloud.google.com/appengine/docs/flexible/python/using-cloud-datastore icon="DATASTORE_SECTION" label="datastore">
-**Learn to use Cloud Datastore** Cloud Datastore is a highly-scalable NoSQL
-database for your applications. </walkthrough-tutorial-card>
+**Learn to use Cloud Datastore.** Cloud Datastore is a highly-scalable NoSQL database for your applications.
+</walkthrough-tutorial-card><walkthrough-alt>Learn more in the [Cloud Datastore documentation](https://cloud.google.com/appengine/docs/flexible/python/using-cloud-datastore).</walkthrough-alt>
 
 [app-yaml-ref]: https://cloud.google.com/appengine/docs/flexible/python/configuring-your-app-with-app-yaml
 [cloud-sdk-installer]: https://cloud.google.com/sdk/downloads#interactive
