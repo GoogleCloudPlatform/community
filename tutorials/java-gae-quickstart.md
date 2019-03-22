@@ -63,12 +63,12 @@ collect all of the related resources for a single application in one place.
 
 <walkthrough-project-setup></walkthrough-project-setup>
 
-## Using Google Cloud Shell
+## Using Cloud Shell
 
 Cloud Shell is a built-in command-line tool for the console. You're going to
 use Cloud Shell to deploy your app.
 
-### Open Google Cloud Shell
+### Open Cloud Shell
 
 Open Cloud Shell by clicking the
 <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
