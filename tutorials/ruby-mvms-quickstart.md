@@ -203,17 +203,15 @@ Learn how to use App Engine with other GCP products:
   url=https://cloud.google.com/appengine/docs/flexible/ruby/using-cloud-datastore
   icon="DATASTORE_SECTION"
   label="datastore">
-**Learn to use Cloud Datastore**
-Cloud Datastore is a highly-scalable NoSQL database for your applications.
-</walkthrough-tutorial-card><walkthrough-alt>Learn more in the [Cloud Datastore documentation](https://cloud.google.com/appengine/docs/flexible/ruby/using-cloud-datastore).</walkthrough-alt>
+**Learn to use Cloud Datastore.**
+Cloud Datastore is a highly-scalable NoSQL database for your applications. </walkthrough-tutorial-card><walkthrough-alt>Learn more in the [Cloud Datastore documentation](https://cloud.google.com/appengine/docs/flexible/ruby/using-cloud-datastore).</walkthrough-alt>
 
 <walkthrough-tutorial-card
   url=https://cloud.google.com/appengine/docs/flexible/ruby/using-cloud-storage
   icon="STORAGE_SECTION"
   label="cloudStorage">
-**Learn to use Cloud Storage**
-Cloud Storage is a powerful and simple object storage service.
-</walkthrough-tutorial-card><walkthrough-alt>Check out the [Cloud Storage documentation](https://cloud.google.com/appengine/docs/flexible/ruby/using-cloud-storage) for more details.</walkthrough-alt>
+**Learn to use Cloud Storage.**
+Cloud Storage is a powerful and simple object storage service. </walkthrough-tutorial-card><walkthrough-alt>Check out the [Cloud Storage documentation](https://cloud.google.com/appengine/docs/flexible/ruby/using-cloud-storage) for more details.</walkthrough-alt>
 
 [app-yaml-ref]: https://cloud.google.com/appengine/docs/flexible/ruby/configuring-your-app-with-app-yaml
 [cloud-sdk-installer]: https://cloud.google.com/sdk/downloads#interactive
