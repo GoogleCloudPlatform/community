@@ -8,8 +8,9 @@ date_published: 2019-03-21
 
 ## Example simple file integrity monitoring (FIM) container
 
-A basic FIM Docker image with regularly scheduled scans.
-Designed to be run on Google Container-Optimized OS, but should work with most other Docker servers.
+[This example](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/gcp-cos-basic-fim) provides a basic FIM Docker image with regularly scheduled scans.
+
+This example is designed to be run on Google Container-Optimized OS, but should work with most other Docker servers.
 
 basic-fim is an open source file integrity monitoring application that monitors for files that are new, altered, or deleted.
 
