@@ -115,7 +115,7 @@ In this tutorial, you run all commands by using the [Google Cloud Shell](https:/
 1. Open [Cloud Shell](https://console.cloud.google.com/cloudshell)
 2. Clone the `terraform-google-examples` repository:
 
-        git clone https://github.com/GoogleCloudPlatform/terraform-google-examples
+        git clone https://github.com/GoogleCloudPlatform/terraform-google-examples --recursive
 
         cd terraform-google-examples
 

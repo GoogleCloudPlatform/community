@@ -17,22 +17,21 @@ This tutorial demonstrates how to configure Cloud Functions for Firebase to rela
 - Use sorting and searching features of Stackdriver Logging to find logs of interest
 - Use the monitored resource type for IoT devices to see multiple log entries from different sources for a given device
 
-**Figure 1.** *Architecture diagram for tutorial components*
-![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/architecture.png)
+![Architecture diagram for tutorial components](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/architecture.png)
 
 
 ## Before you begin
 
-This tutorial assumes you already have a Cloud Platform account set up and have completed the IoT Core [quickstart](https://cloud.google.com/iot/docs/quickstart).
+This tutorial assumes you already have a Google Cloud Platform (GCP) account set up and have completed the IoT Core [quickstart](https://cloud.google.com/iot/docs/quickstart).
 
-You need to associate Firebase to your cloud project. Visit the [Firebase Console](https://console.firebase.google.com/?authuser=0) and choose to add a project. You can then choose to add Firebase to an existing Cloud Project.
+You need to associate Firebase to your GCP project. Visit the [Firebase Console](https://console.firebase.google.com/?authuser=0) and choose to add a project. You can then choose to add Firebase to an existing GCP project.
 
 ## Costs
 
-This tutorial uses billable components of GCP, including:
+This tutorial uses billable components of GCP, including the following:
 
 - Cloud IoT Core
-- Cloud PubSub
+- Cloud Pub/Sub
 - Cloud Functions for Firebase
 - Stackdriver Logging
 
@@ -45,14 +44,14 @@ If you do not already have a development environment set up with [gcloud](https:
 Set the name of the Cloud IoT Core settings you are using to environment variables:
 
 ```sh
-export REGISTRY_ID=<your registry here>
-export CLOUD_REGION=<your region; eg us-central1>
+export REGISTRY_ID=[your registry here]
+export CLOUD_REGION=[your region, such as us-central1]
 export GCLOUD_PROJECT=$(gcloud config list project --format "value(core.project)")
 ```
 
 ## Create a logs topic, and associate it with a device registry
 
-Create a PubSub topic you will use for device logs:
+Create a Cloud Pub/Sub topic that you will use for device logs:
 
 ```sh
 gcloud pubsub topics create device-logs
@@ -65,17 +64,13 @@ Assuming you have a registry already created from the required quickstart pre-re
 gcloud iot registries update $REGISTRY_ID --region $CLOUD_REGION --event-notification-config subfolder=log,topic=device-logs
 ```
 
-This configures IoT Core to send any messages written to the MQTT topic of:
-
-    /devices/{device-id}/events/log
-
-to be published to a specific Cloud PubSub topic created above.
+This configures IoT Core to send any messages written to the MQTT topic of `/devices/{device-id}/events/log` to be published to a specific Cloud Pub/Sub topic created above.
 
 ## Deploy the relay function
 
 You can use either Google Cloud Functions or Cloud Functions for Firebase to run the relay (they use the same underlying systems). Here you are using Cloud Functions for Firebase as the tools are a little more straightforward and there are nice [Typescript starting samples](https://firebase.google.com/docs/functions/typescript).
 
-The main part of the function handles a PubSub message from IoT Core, extracts the log payload and device information, and then writes a structured log entry to Stackdriver Logging:
+The main part of the function handles a Cloud Pub/Sub message from IoT Core, extracts the log payload and device information, and then writes a structured log entry to Stackdriver Logging:
 
 [embedmd]:# (functions/src/index.ts /import/ $)
 ```ts
@@ -133,7 +128,7 @@ exports.deviceLog =
   });
 ```
 
-To deploy the cloud function, you use the Firebase CLI tool:
+To deploy the Cloud Function, you use the Firebase CLI tool:
 
 ```sh
 cd functions
@@ -159,11 +154,11 @@ Note: do not use this device for any real workloads, as the keypair is included 
 
 ## Explore the logs that are written
 
-If you open up the <a href="https://console.cloud.google.com/logs/viewer" target="_blank">Stackdriver Logging console</a>.
+If you open up the [Stackdriver Logging console](https://console.cloud.google.com/logs/viewer).
 
 ![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c1.png)
 
-Because you send the device id as part of the log record, you can choose to pull that up into the summary line:
+Because you send the device ID as part of the log record, you can choose to pull that up into the summary line:
 
 ![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c2.png)
 
@@ -173,23 +168,23 @@ Which then looks like this:
 
 ### Combine system and Applications logs
 
-Now you will exercise a part of our sample device code that responds to config changes. Use the following gcloud command to update the devices config telling it to "bounce to a level of 2":
+Now you will exercise a part of our sample device code that responds to config changes. Use the following `gcloud` command to update the devices config telling it to "bounce to a level of 2":
 
 ```sh
 gcloud iot devices configs update --device log-tester --registry $REGISTRY_ID --region $CLOUD_REGION --config-data '{"bounce": 2}'
 ```
 
-Now in just a few moments, you will see two new entries in the logging console. One is from IoT Core system noting that a devices config was updated (the ModifyCloudToDeviceConfig call).
+Now in just a few moments, you will see two new entries in Stackdriver Logging. One is from IoT Core system noting that a devices config was updated (the `ModifyCloudToDeviceConfig` call).
 
 This is then followed by a device application log reporting the imaginary "spring back" value. This shows how we can view both system logs from IoT Core and device application logs in one place.
 
-You can use the refresh button in the Cloud Console, or use the play button to stream logs.
+You can use the refresh button in the GCP Console, or use the play button to stream logs.
 
 ![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c4.png)
 
 ### Use severity to convey log level
 
-Lets send a couple more config updates (you should send one, wait a second or two, then send the next):
+Let's send a couple more config updates (you should send one, wait a second or two, then send the next):
 
 ```sh
 gcloud iot devices configs update --device log-tester --registry $REGISTRY_ID --region $CLOUD_REGION --config-data '{"bounce": 7}'
@@ -206,9 +201,10 @@ As these are received and responded to by the sample device, you can see the use
 
 ### Filter logs to a specific device
 
-So far you have been looking at a log that contains entries for all devices.  But given these are structured log entries, you can use the numeric id of the resource to limit our view to only one device in the more realistic scenario when multiple devices are writing log events.
+So far you have been looking at a log that contains entries for all devices. But given these are structured log entries, you can use the numeric ID of the resource to limit our view to only one device in the more realistic scenario when multiple devices are writing log events.
 
-You open up the log entry, find the resource, labels, and choose `device_num_id`, click on it and choose `Show matching entries`:
+You open up the log entry, find the resource, labels, and choose `device_num_id`, click it and
+choose **Show matching entries**:
 
 ![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c6.png)
 
@@ -216,7 +212,7 @@ This creates a quick filter of the log:
 
 ![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c7.png)
 
-You can get a sense the filter syntax. You can even do things like a substring match on a field in the json payload of the log message, try adding `jsonPayload.msg:"Spring"`. See the [docs](https://cloud.google.com/logging/docs/view/advanced-filters) for more on using advanced filters.
+You can get a sense the filter syntax. You can even do things like a substring match on a field in the JSON payload of the log message, try adding `jsonPayload.msg:"Spring"`. See the [docs](https://cloud.google.com/logging/docs/view/advanced-filters) for more on using advanced filters.
 
 
 ## Cleaning up
@@ -232,5 +228,5 @@ Because the test device uses a non-secret key, you should delete it:
 gcloud iot devices delete log-tester --registry $REGISTRY_ID --region $CLOUD_REGION
 ```
 
-All of the resource in this tutorial cost nothing at rest, or scale to zero. You can delete [Cloud Functions](https://console.cloud.google.com/functions/list), [Device Registry](https://console.cloud.google.com/iot/registries/), and [PubSub topics](https://console.cloud.google.com/cloudpubsub/topicList) from the console.
+All of the resource in this tutorial cost nothing at rest, or scale to zero. You can delete [Cloud Functions](https://console.cloud.google.com/functions/list), [Device Registry](https://console.cloud.google.com/iot/registries/), and [Cloud Pub/Sub topics](https://console.cloud.google.com/cloudpubsub/topicList) from GCP.
 

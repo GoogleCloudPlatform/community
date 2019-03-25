@@ -5,6 +5,7 @@ author: hxiong388
 tags: App Engine, Ruby, Ruby on Rails, Discourse, Redis, Postgres
 date_published: 2017-06-30
 ---
+
 This tutorial shows how to create and configure a [Ruby Discourse](http://www.discourse.org/) application
 to run on Google Cloud Platform (GCP) using the App Engine flexible environment.
 
@@ -52,7 +53,7 @@ database your Discourse app will use.
 
 1. In the Cloud Shell terminal that appears, run:
 
-        gcloud beta sql connect <The Cloud SQL instance name> --user=discourse
+        gcloud beta sql connect &lt;The Cloud SQL instance name&gt; --user=discourse
 
 1. When prompted, type in the password `discourse`.
 
@@ -77,10 +78,10 @@ We'll configure the Discourse app to run on the App Engine flexible environment 
         db_password = discourse
 
         # socket name for database connection
-        db_host = /cloudsql/<Cloud SQL instance connection name>
+        db_host = /cloudsql/&lt;Cloud SQL instance connection name&gt;
 
         # Redis host address
-        redis_host = <Redis instance internal IPv4 address>
+        redis_host = &lt;Redis instance internal IPv4 address&gt;
 
         # enable serve_static_assets for dockerized app
         serve_static_assets = true
@@ -113,7 +114,7 @@ We'll configure the Discourse app to run on the App Engine flexible environment 
         env: flex
         entrypoint: bundle exec rails s -p 8080
         beta_settings:
-          cloud_sql_instances: <Cloud SQL Instance connection name>
+          cloud_sql_instances: &lt;Cloud SQL instance connection name&gt;
 
 1. In the same application root directory, run this gcloud SDK command to deploy:
 

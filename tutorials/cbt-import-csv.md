@@ -108,6 +108,11 @@ Here is an example command:
 
 Note: The first column will always be used as the row key. 
 
+**Note**: If you see an error saying "Unable to get application default credentials.", this means that you likely need to
+set up application credentials as outlined [here](https://cloud.google.com/docs/authentication/production). If you are
+setting up a custom service account, be sure to assign the necessary roles for this job. For testing purposes, you can use
+Bigtable Administrator, Dataflow Admin, and Storage Admin. 
+
 ### Monitor your job
 
 Monitor the newly created job's status and see if there are any errors running
