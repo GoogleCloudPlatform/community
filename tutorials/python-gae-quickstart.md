@@ -65,9 +65,7 @@ Cloud Shell to deploy our app.
 
 ### Open Cloud Shell
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ### Clone the sample code
 
@@ -230,13 +228,13 @@ Learn how to use App Engine with other GCP products:
 
 <walkthrough-tutorial-card url="https://cloud.google.com/python/django/appengine"
   icon="APPENGINE_SECTION" label="django">
-  **Run Django**
+  **Run Django.**
   Develop Django apps running on App Engine.
 </walkthrough-tutorial-card><walkthrough-alt>Learn more in [Django on App Engine](https://cloud.google.com/python/django/appengine).</walkthrough-alt>
 
 <walkthrough-tutorial-card url="https://cloud.google.com/appengine/docs/standard/python3/building-app/"
   icon="APPENGINE_SECTION" label="building-app">
-  **Build a web app**
+  **Build a web app.**
   Learn the basics of creating Python web services on App Engine.
 </walkthrough-tutorial-card><walkthrough-alt>Learn more in [Building a Python 3.7 app on App Engine](https://cloud.google.com/appengine/docs/standard/python3/building-app/).</walkthrough-alt>
 
