@@ -59,9 +59,7 @@ Cloud Shell is a built-in command-line tool for the console. We're going to use 
 
 ### Open Cloud Shell
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ### Clone the sample code
 
@@ -201,7 +199,7 @@ Learn how to use App Engine with other Google Cloud Platform products:
 **Learn to use Cloud SQL.** Cloud SQL is a fully-managed, relational MySQL database for your applications. </walkthrough-tutorial-card><walkthrough-alt>Learn more in the [Cloud SQL documentation](https://cloud.google.com/appengine/docs/flexible/dotnet/using-cloud-sql).</walkthrough-alt>
 
 <walkthrough-tutorial-card url=https://cloud.google.com/appengine/docs/flexible/dotnet/using-cloud-storage icon="STORAGE_SECTION" label="cloudStorage">
-**Learn to use Cloud Storage** Cloud Storage is a powerful and simple object
+**Learn to use Cloud Storage.** Cloud Storage is a powerful and simple object
 storage service. </walkthrough-tutorial-card><walkthrough-alt>Learn more in the [Cloud Storage documentation](https://cloud.google.com/appengine/docs/flexible/dotnet/using-cloud-storage).</walkthrough-alt>
 
 [app-yaml-ref]: https://cloud.google.com/appengine/docs/flexible/dotnet/configuring-your-app-with-app-yaml
