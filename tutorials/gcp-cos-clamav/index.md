@@ -12,7 +12,7 @@ This example is designed to be run on Google Container-Optimized OS, but it shou
 
 ClamAV is an open source antivirus engine for detecting trojans, viruses, malware, and other malicious threats.
 
-# Basic usage
+## Basic usage
 
 1. Build your Docker image.
 1. Deploy that image to your Kubernetes cluster.
