@@ -52,9 +52,9 @@ This diagram shows how the driver maps into GCP, using GKE, Kubernetes, and Dock
 
 ![LTK GCP mapping diagram](https://storage.googleapis.com/gcp-community/tutorials/load-testing-iot-using-gcp-and-locust/ltk_gcp_mapping.png)
 
-## Clone the repository
+## Clone the `community` repository
 
-For the purposes of this tutorial, clone the Google Cloud Platform `community` repository directly to your local machine:
+For the purposes of this tutorial, clone the Google Cloud Platform `community` repository directly to your local machine.
 
     git clone https://github.com/GoogleCloudPlatform/community.git
 
@@ -431,6 +431,38 @@ The Python code will simulate the "over-the-network" behavior of your device pop
 * Decide how you will evaluate success and failure of the device behaviors. These translate into Locust events you need to place in the Python code in `locustfile.py`. The easiest cases are when there is a request/response, where the response (or timeout) would indicate when a failure occurs.
 
 * Understand the data you need to evalaute the results. Long tests with many devices can create very large amounts of data to collect and analyze. In cases where harvesting data is impractical, monitoring capabilities built into the GCP console can be used.
+
+### Environment 
+
+For software development, you can duplicate LTK into your own git repository. This way you can push changes, create branches, and manage access.
+
+To duplicate LTK into your own Github repository:
+
+1. Repeat the steps under "Clone the `community` repository" above
+
+2. Move the LTK directory to a new location outside of `community/tutorials`
+
+    cd community/tutorials
+    mv load-testing-iot-using-gcp-and-locust ~/my-ltk
+
+3. Initialize the LTK directory as a repository
+
+    cd ~/my-ltk
+    git init
+
+4. Go to Github and create a repository in your Github account
+
+5. Make your new repository the origin
+
+    git remote add origin https://github.com/<your Github userId>/<your Github repo name>.git (HTTPS)
+    or
+    git remote add origin git@github.com:<your Github userId>/<your Github repo name>.git (SSH)
+
+6. Push the code to the new repo
+
+    git add .
+    git commit -m "first commit"
+    git push -u origin master
 
 ### Code
 
