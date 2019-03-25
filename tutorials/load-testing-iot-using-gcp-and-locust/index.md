@@ -384,6 +384,8 @@ The suggested approach for cost evaluation is to do the following:
     with this command:
 
         gcloud compute zones list
+    
+    More information about compute engine quotas is available [here](https://cloud.google.com/compute/quotas).
 
 3.  Run `setupTest`.
 
