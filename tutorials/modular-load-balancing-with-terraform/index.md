@@ -19,7 +19,7 @@ This tutorial will demonstrate how to use the GCP Terraform modules for load bal
 - Learn about the load balancing modules for Terraform.
 - Create a regional TCP load balancer.
 - Create a regional internal TCP load balancer.
-- Create a global HTTP load balancer with Container Engine.
+- Create a global HTTP load balancer with Kubernetes Engine.
 - Create a global HTTPS content-based load balancer.
 
 ## Before you begin
@@ -115,7 +115,7 @@ In this tutorial, you run all commands by using the [Google Cloud Shell](https:/
 1. Open [Cloud Shell](https://console.cloud.google.com/cloudshell)
 2. Clone the `terraform-google-examples` repository:
 
-        git clone https://github.com/GoogleCloudPlatform/terraform-google-examples
+        git clone https://github.com/GoogleCloudPlatform/terraform-google-examples --recursive
 
         cd terraform-google-examples
 

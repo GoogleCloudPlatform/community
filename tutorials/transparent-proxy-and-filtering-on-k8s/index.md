@@ -24,7 +24,7 @@ This tutorial uses the [tproxy-sidecar](https://github.com/danisla/kubernetes-tp
 
 ## Objectives
 
-- Create a Kubernetes cluster with Google Container Engine.
+- Create a Kubernetes cluster with Google Kubernetes Engine.
 - Deploy the tproxy and the tproxy-podwatch pods using Helm.
 - Deploy example apps to test external access to a Cloud Storage bucket.
 
@@ -36,7 +36,7 @@ This tutorial assumes you already have a Google Cloud Platform (GCP) account and
 
 This tutorial uses billable components of GCP, including:
 
-- [Google Container Engine](https://cloud.google.com/container-engine/pricing)
+- [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/pricing)
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f52c2651-4b02-4da3-b8cd-fdbca6ad89a9) to estimate the costs for your environment.
 
@@ -51,9 +51,9 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=f5
 
     The remainder of this tutorial will be run from the root of the cloned repository directory.
 
-## Create Container Engine cluster and install Helm
+## Create Kubernetes Engine cluster and install Helm
 
-1. Create the Container Engine cluster:
+1. Create the Kubernetes Engine cluster:
 
         gcloud container clusters create tproxy-example --zone us-central1-f
 
@@ -93,30 +93,32 @@ Before installing the chart, you must first extract the certificates generated b
 
         Add the init container spec below to your deployments:
 
-        initContainers:
-        - name: tproxy
-          image: docker.io/danisla/tproxy-sidecar:0.1.0
-          imagePullPolicy: IfNotPresent
-          securityContext:
-            privileged: true
-          env:
-          resources:
-            limits:
-              cpu: 500m
-              memory: 128Mi
-            requests:
-              cpu: 100m
-              memory: 64Mi
+    ```yaml
+    initContainers:
+    - name: tproxy
+        image: docker.io/danisla/tproxy-sidecar:0.1.0
+        imagePullPolicy: IfNotPresent
+        securityContext:
+        privileged: true
+        env:
+        resources:
+        limits:
+            cpu: 500m
+            memory: 128Mi
+        requests:
+            cpu: 100m
+            memory: 64Mi
 
-        Add the volumes below to your deployments to use the trusted https tproxy:
+    Add the volumes below to your deployments to use the trusted https tproxy:
 
-        volumes:
-        - name: ca-certs-debian
-          configMap:
-            name: tproxy-tproxy-root-certs
-            items:
-            - key: root-certs.crt
-              path: ca-certificates.crt
+    volumes:
+    - name: ca-certs-debian
+        configMap:
+        name: tproxy-tproxy-root-certs
+        items:
+        - key: root-certs.crt
+            path: ca-certificates.crt
+    ```
 
 3. Get the status of the DaemonSet pods:
 
@@ -137,9 +139,11 @@ Deploy the sample apps to demonstrate using and not using the init container to 
 
 1. Change directories back to the repository root  and deploy the example apps:
 
-        cd ../../
-        kubectl create -f examples/debian-app.yaml
-        kubectl create -f examples/debian-app-locked-manual.yaml
+    ```sh
+    cd ../../
+    kubectl create -f examples/debian-app.yaml
+    kubectl create -f examples/debian-app-locked-manual.yaml
+    ```
 
     Note that the second deployment is the one that contains the init container and trusted certificate volume mount described in the chart post-install notes.
 
@@ -235,7 +239,7 @@ This tutorial uses a Python script to filter traffic to a specific Cloud Storage
 
         helm delete --purge tproxy
 
-3. Delete the Container Engine cluster:
+3. Delete the Kubernetes Engine cluster:
 
         gcloud container clusters delete tproxy-example --zone=us-central1-f
 

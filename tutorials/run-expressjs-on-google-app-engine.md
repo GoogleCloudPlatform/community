@@ -22,12 +22,21 @@ Platform.
 1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1. Install [Node.js](https://nodejs.org/en/download/) on your local machine. 
 
 ## Prepare
 
 1. Initialize a `package.json` file with the following command:
 
         npm init
+        
+1. Add a start script to your `package.json` file:
+
+    ```json
+    "scripts": {
+        "start": "node index.js"
+    }
+    ```
 
 1. Install Express.js:
 
@@ -35,21 +44,23 @@ Platform.
 
 ## Create
 
-Create a `server.js` file with the following contents:
+Create an `index.js` file with the following contents:
 
-    const express = require('express');
-    const app = express();
+```js
+const express = require('express');
+const app = express();
 
-    app.get('/', (req, res) => {
-      res.send('Hello World!');
-    });
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
 
-    const server = app.listen(8080, () => {
-      const host = server.address().address;
-      const port = server.address().port;
+const server = app.listen(8080, () => {
+  const host = server.address().address;
+  const port = server.address().port;
 
-      console.log(`Example app listening at http://${host}:${port}`);
-    });
+  console.log(`Example app listening at http://${host}:${port}`);
+});
+```
 
 ## Run
 
@@ -64,8 +75,10 @@ message.
 
 1. Create an `app.yaml` file with the following contents:
 
-        runtime: nodejs
-        env: flex
+    ```yaml
+    runtime: nodejs
+    env: flex
+    ```
 
 1. Run the following command to deploy your app:
 

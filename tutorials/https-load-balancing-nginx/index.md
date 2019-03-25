@@ -140,27 +140,25 @@ created, you configure their respective Apache servers to use SSL.
 To create your load balancer backends and allow them to be accessed by external
 HTTPS traffic:
 
-1.  Create your virtual machine instances, tag them identically, install Apache
-    Web Server on them, and enable Apache's SSL module:
+1.  Create your virtual machine instances, tag them to automatically allow
+    external HTTPS traffic through the firewall, install Apache Web Server on
+    them, and enable Apache's SSL module:
 
-        for i in {1..3}; \
-          do \
-            gcloud compute instances create www-$i --tags be-tag \
-              --zone us-central1-f \
-              --metadata startup-script="#! /bin/bash
-              apt-get update
-              apt-get install -y apache2
-              /usr/sbin/a2ensite default-ssl
-              /usr/sbin/a2enmod ssl
-              service apache2 reload
-                  "; \
-          done
-
-1.  Create a firewall rule to allow external HTTPS traffic to reach your target
-    instances:
-
-        gcloud compute firewall-rules create https-firewall \
-          --target-tags be-tag --allow tcp:443
+    ```sh
+    for i in {1..3}; \
+      do \
+        gcloud compute instances create www-$i \
+          --tags "https-server" \
+          --zone us-central1-f \
+          --metadata startup-script="#! /bin/bash
+          apt-get update
+          apt-get install -y apache2
+          /usr/sbin/a2ensite default-ssl
+          /usr/sbin/a2enmod ssl
+          service apache2 reload
+              "; \
+      done
+    ```
 
 1.  Obtain the external IP addresses of your instances:
 
@@ -181,11 +179,13 @@ Now that your backend server instances are healthy and running properly, you can
 install your key, certificate, and PEM file (if applicable) on each. Begin by
 copying the files to the instances as follows:
 
-    for i in {1..3};
-      do \
-        gcloud compute copy-files /local/path/to/ssl-certs \
-          root@www-$i:/etc/apache2; \
-      done
+```sh
+for i in {1..3};
+  do \
+    gcloud compute scp /local/path/to/ssl-certs \
+      root@www-$i:/etc/apache2; \
+  done
+```
 
 Next, for each instance, perform the following tasks:
 
@@ -193,9 +193,9 @@ Next, for each instance, perform the following tasks:
 
         gcloud compute ssh [INSTANCE_NAME]
 
-1.  Edit default-ssl:
+1.  Edit default-ssl.conf:
 
-        sudo nano /etc/apache2/sites-enabled/default-ssl
+        sudo nano /etc/apache2/sites-enabled/default-ssl.conf
 
 1.  Find the following lines:
 

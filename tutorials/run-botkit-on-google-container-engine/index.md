@@ -1,15 +1,16 @@
 ---
-title: Running a Botkit Slack Bot on Google Container Engine
-description: Learn how to run a Botkit Slack bot on Google Container Engine.
+title: Running a Botkit Slack bot on Google Kubernetes Engine
+description: Learn how to run a Botkit Slack bot on Google Kubernetes Engine.
 author: tswast
-tags: Container Engine, Node.js, Botkit, Slack
+tags: Kubernetes Engine, Node.js, Botkit, Slack
 date_published: 2017-02-03
 ---
+
 This tutorial shows how to build a [Slack bot](https://api.slack.com/bot-users)
 using the [Botkit toolkit](https://howdy.ai/botkit/) and run it on [Google
-Container Engine](https://cloud.google.com/container-engine/).
+Kubernetes Engine](https://cloud.google.com/kubernetes-engine/).
 
-You will build a "Hello World" Slack bot which responds with a greeting in
+You will build a "Hello World" Slack bot that responds with a greeting in
 response to messages.
 
 ## Objectives
@@ -17,15 +18,15 @@ response to messages.
 1. Create a bot internal integration in Slack.
 1. Build a Node.js image in Docker.
 1. Upload a Docker image to a private Google Container Registry.
-1. Run a Slack bot on Google Container Engine.
+1. Run a Slack bot on Google Kubernetes Engine.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including:
+This tutorial uses billable components of Google Cloud Platform, including the following:
 
-- Google Container Engine
-- Google Compute Engine (via Google Container Engine)
-- Google Cloud Storage (via the Google Container Registry)
+- Google Kubernetes Engine
+- Compute Engine (with Google Kubernetes Engine)
+- Cloud Storage (with Google Container Registry)
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
 projected usage.
@@ -35,7 +36,7 @@ projected usage.
 ## Before you begin
 
 1.  Set up your development environment.
-    1.  Select or create a [Google Cloud Platform Console][console] project.
+    1.  Select or create a [Google Cloud Platform][console] project.
         [Go to the projects page][projects].
     1.  Enable billing for your project. [Enable billing][billing].
     1.  Install the [Google Cloud SDK][sdk].
@@ -237,7 +238,7 @@ If all goes well, you should be able to see the container image listed in the
 Your Docker image is now published to your private repository, which
 Kubernetes can access and orchestrate.
 
-## Deploying a bot to Container Engine
+## Deploying a bot to Kubernetes Engine
 
 Now that the Docker image is in Google Container Registry, you can run the
 [`gcloud docker -- pull`
@@ -254,9 +255,9 @@ of your bot running, and the Kubernetes master will keep that target state. It
 starts the bot up when there aren't enough running, and shuts bot replicas down
 when there are too many.
 
-### Creating a Kubernetes cluster with Container Engine
+### Creating a Kubernetes cluster with Kubernetes Engine
 
-A Container Engine cluster is a managed Kubernetes cluster. It consists of a
+A Kubernetes Engine cluster is a managed Kubernetes cluster. It consists of a
 Kubernetes master API server hosted by Google and a set of worker nodes. The
 worker nodes are Compute Engine virtual machines.
 
@@ -272,7 +273,7 @@ will take a few minutes to complete):
 Alternatively, you could create this cluster [via the Cloud
 Console](https://console.cloud.google.com/kubernetes/add).
 
-### Deploying to Container Engine
+### Deploying to Kubernetes Engine
 
 Kubernetes has a [Secrets](https://kubernetes.io/docs/user-guide/secrets/#creating-a-secret-using-kubectl-create-secret)
 API for storing secret information such as passwords that containers need at
@@ -316,7 +317,7 @@ pending](https://kubernetes.io/docs/user-guide/debugging-pods-and-replication-co
 
 ## Cleaning up
 
-Congratulations, you now have a Slack bot running on Google Container Engine.
+Congratulations, you now have a Slack bot running on Google Kubernetes Engine.
 
 You can follow these steps to clean up resources and save on costs.
 
@@ -328,18 +329,18 @@ You can follow these steps to clean up resources and save on costs.
 
         gcloud container clusters delete my-cluster
 
-    This deletes all the Google Compute Engine instances that are running the
+    This deletes all of the Compute Engine instances that are running the
     cluster.
 
 3.  Delete the Docker registry storage bucket hosting your image(s).
 
-    1.  List the Google Cloud Storage buckets to get the bucket path.
+    1.  List the Cloud Storage buckets to get the bucket path.
 
             gsutil ls
 
         Command output
 
-            gs://artifacts.<PROJECT_ID>.appspot.com/
+            gs://artifacts.[PROJECT_ID].appspot.com/
 
     2.  Delete the bucket and all the images it contains.
 
