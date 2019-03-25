@@ -26,7 +26,6 @@ To complete the steps in this tutorial, you need a GCP account. If you don't hav
 
 You also need the following on your local workstation:
 
-* clone of the [LTK repository](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/load-testing-iot-using-gcp-and-locust) 
 * [gcloud](https://cloud.google.com/sdk/install)  
 * kubectl (`gcloud components install kubectl`)  
 * [Docker Desktop](https://www.docker.com/get-started)  
@@ -43,7 +42,7 @@ The target (sample IoT application) will incur GCP charges for the following:
 * Cloud IoT Core
 * Cloud Functions
 
-## Understanding the architetcure
+## Understanding the architecture
 
 This diagram shows the relationship between the load test driver and the target:
 
@@ -53,6 +52,21 @@ This diagram shows how the driver maps into GCP, using GKE, Kubernetes, and Dock
 
 ![LTK GCP mapping diagram](https://storage.googleapis.com/gcp-community/tutorials/load-testing-iot-using-gcp-and-locust/ltk_gcp_mapping.png)
 
+## Clone the repository
+
+For the purposes of this tutorial, clone the Google Cloud Platform `community` repository directly to your local machine:
+
+    git clone https://github.com/GoogleCloudPlatform/community.git
+
+If you use SSH keys to access Github, use the SSH equivalent:
+
+    git clone git@github.com:GoogleCloudPlatform/community.git
+
+This will create a directory named `community` in your current directory.
+
+Within the `community` directory, the load testing toolkit (LTK) code is in the `tutorials/load-testing-iot-using-gcp-and-locust` directory.
+
+You will make customizations to the files in this directory.
 
 ## Create the GCP projects
 
@@ -134,7 +148,7 @@ The GitHub repository includes a `.sample.env` file in the respository root dire
 
 |Environment variable|Purpose|Example setting|
 |---|---|---|
-|`LTK_ROOT`|The full path name of the LTK root directory on your workstation.|`/Users/user1/repos/ltk`|
+|`LTK_ROOT`|The full path name of the LTK root directory on your workstation.|`/Users/user1/repos/community/tutorials/load-testing-iot-using-gcp-and-locust`|
 |`LTK_NUM_LOCUST_WORKERS`|The number of Kubernetes pods to use for the Locust workers. The device population (defined in `devicelist.csv`) will be sharded automatically between the worker pods. Generally, you want to make sure each worker does not simulate too many devices. This can cause memory pressure and thread-switching issues in the underlying operating system process. As a starting point, set this to 2. It can be increased/decreased later.|`2`|
 |`LTK_NUM_GKE_NODES`|The number of GKE nodes (Google Compute Engine VMs) used to run the worker pods. Generally, you want to make sure that the pods do not consume an excesssive amount of CPU and memory in the VMs. Normally this would be set to the number of worker pods. As a starting point, set this to 2. It can be increased/decreased later.|`2`|
 |`LTK_DRIVER_PROJECT_ID`|The GCP project ID for the driver. The GKE cluster will be created under this project.|`my-ltk-driver-123456`|

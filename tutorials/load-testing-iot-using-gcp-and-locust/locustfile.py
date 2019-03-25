@@ -202,17 +202,17 @@ class LtkDevice(TaskSet):
                 # we're up to date on messages received, so send the next seqNum
                 topic = '/devices/{}/events'.format(self.deviceId)
                 seqNum = self.lastSent + 1
-                # optional - force larger payload (note: payload format and contents affects code in on_message)
+                # optional - add pad to force larger payload
                 # pad = ''.join(random.choice(string.letters + string.digits) for _ in range(0))
                 sendTime = time.time()
                 # sys.stdout.write('*** sendTime {:.5f} '.format(sendTime))
                 payload = '{} {} payload {} at {}'.format(self.deviceId, self.get_clientId(), seqNum, int(sendTime * 100000))
-                # optional - if using padding, add to end of payload as follows
+                # optional - if using padding, add to end of payload as follows (note: payload format and contents affects code in on_message)
                 # payload = '{} {} payload {} at {} {}'.format(self.deviceId, self.get_clientId(), seqNum, int(sendTime * 100000), pad)
                 self.mqtt_client.publish(topic, payload)
                 self.lastSent = seqNum
                 # verbose message but needed for tracing cases of "echo timeout" events
-                sys.stdout.write('*** TASK published {} '.format(payload))
+                sys.stdout.write('*** TASK published {}'.format(payload))
             elif self.numSkips == skipLimit:
                 # waited too long for response to last message sent, so fire error and move on
                 msg = '{} {} payload {}'.format(self.deviceId, self.get_clientId(), self.lastSent)
