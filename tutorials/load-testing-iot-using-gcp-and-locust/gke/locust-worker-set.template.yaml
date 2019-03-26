@@ -16,6 +16,17 @@ spec:
       labels:
         app: locust-worker
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - locust-worker
+                - locust
+            topologyKey: "kubernetes.io/hostname"
       containers:
         - name: locust
           image: gcr.io/project-id/ltk-worker:latest

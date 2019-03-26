@@ -412,10 +412,6 @@ The suggested approach for cost evaluation is to do the following:
     determined by the worker pod's host name, which includes an ordinal (integer 1 to n) uniquely identifying
     the pod in the replica set. The ordinal is available because the podspec uses the StatefulSet pod type.
 
-## Re-cloning the repository
-
-If you need to re-clone the repository to get a clean copy of the code, you can transfer the `.env` file and `devicelist.csv` to bring over the same environment settings and existing devices.
-
 ## Targeting Your IoT application
 
 Targeting your IoT application requires software development in Python. 
@@ -432,7 +428,7 @@ The Python code will simulate the "over-the-network" behavior of your device pop
 
 * Understand the data you need to evalaute the results. Long tests with many devices can create very large amounts of data to collect and analyze. In cases where harvesting data is impractical, monitoring capabilities built into the GCP console can be used.
 
-### Environment 
+### Code repository 
 
 For software development, you can duplicate LTK into your own git repository. This way you can push changes, create branches, and manage access.
 
@@ -463,6 +459,8 @@ To duplicate LTK into your own Github repository:
     git add .
     git commit -m "first commit"
     git push -u origin master
+
+**Note**: Be sure to save your `.env` and `devicelist.csv` files if you re-create a repo or need to use them with a different branch.
 
 ### Code
 
