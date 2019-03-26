@@ -3,8 +3,10 @@ title: Exporting Stackdriver logs to Elastic Cloud
 description: Learn how to send Stackdriver events to Elastic Cloud for analysis.
 author: twenny
 tags: Stackdriver, logging, security, compliance
-date_published: 2019-03-23
+date_published: 2019-03-20
 ---
+
+## Overview
 
 This tutorial explains how to export Stackdriver logs to the Elastic Cloud Elasticsearch SaaS platform to perform log 
 analytics. Elastic Cloud is a SaaS offering, which saves time by not needing to build and manage the Elasticsearch 
