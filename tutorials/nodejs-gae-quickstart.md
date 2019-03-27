@@ -1,22 +1,23 @@
 ---
-title: App Engine Quickstart using Go
-description: Learn how to deploy a Go sample app to App Engine.
+title: App Engine Quickstart using Node.js
+description: Learn how to deploy a Node.js sample app to App Engine.
 author: jscud
 tags: App Engine
-date_published: 2019-01-19
+date_published: 2019-03-22
 ---
 
 # App Engine Quickstart
 
-<walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/go/quickstart"></walkthrough-tutorial-url>
-<!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/golang-samples" %} -->
-<!-- {% setvar repo_dir "golang-samples/appengine/go11x/helloworld" %} -->
+<walkthrough-tutorial-url url="https://cloud.google.com/nodejs/getting-started/hello-world"></walkthrough-tutorial-url>
+<!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/nodejs-getting-started" %} -->
+<!-- {% setvar repo_dir "nodejs-getting-started/1-hello-world" %} -->
+
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
 
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=go_gae_quickstart)
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=nodejs_gae_quickstart)
 
 </walkthrough-alt>
 
@@ -46,27 +47,26 @@ Here are the steps you will be taking.
 
 To deploy an application, you need to first create a project.
 
-GCP organizes resources into projects. This allows you to collect all of the related resources for a single application in 
-one place.
+GCP organizes resources into projects. This allows you to
+collect all of the related resources for a single application in one place.
 
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
-<walkthrough-project-billing-setup></walkthrough-project-billing-setup>
+<walkthrough-project-setup></walkthrough-project-setup>
 
 ## Using Cloud Shell
 
-Cloud Shell is a built-in command-line tool for the console. We're going to use Cloud Shell to deploy our app.
+Cloud Shell is a built-in command-line tool for the console. We're going to use
+Cloud Shell to deploy our app.
 
 ### Open Cloud Shell
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ### Clone the sample code
 
-Use Cloud Shell to clone and navigate to the "Hello World" code. The sample code is cloned from your project repository to
-the Cloud Shell.
+Use Cloud Shell to clone and navigate to the "Hello World" code. The sample code
+is cloned from your project repository to the Cloud Shell.
 
 Note: If the directory already exists, remove the previous files before cloning.
 
@@ -82,20 +82,22 @@ cd {{repo_dir}}
 
 ## Configuring your deployment
 
-You are now in the main directory for the sample code. We'll look at the files that configure your application.
+You are now in the main directory for the sample code. We'll look at the files
+that configure your application.
 
 ### Exploring the application
 
 Enter the following command to view your application code:
 
 ```bash
-cat helloworld.go
+cat app.js
 ```
 
 ### Exploring your configuration
 
-App Engine uses YAML files to specify a deployment's configuration. `app.yaml` files contain information about your 
-application, like the runtime environment, URL handlers, and more.
+App Engine uses YAML files to specify a deployment's configuration.
+`app.yaml` files contain information about your application, like the runtime
+environment, URL handlers, and more.
 
 Enter the following command to view your configuration file:
 
@@ -116,19 +118,23 @@ intended, just like debugging on your local machine.
 To test your app enter the following:
 
 ```bash
-go run .
+export PORT=8080 && npm install
+```
+
+```bash
+npm start
 ```
 
 ### Preview your app with "Web preview"
 
 Your app is now running on Cloud Shell. You can access the app by clicking the
 [**Web preview**][spotlight-web-preview]
-<walkthrough-web-preview-icon></walkthrough-web-preview-icon> button at the top
-of the Cloud Shell pane and choosing **Preview on port 8080**.
+<walkthrough-web-preview-icon></walkthrough-web-preview-icon> button at the top of the Cloud Shell pane and choosing **Preview on port 8080**.
 
 ### Terminating the preview instance
 
-Terminate the instance of the application by pressing `Ctrl+C` in the Cloud Shell.
+Terminate the instance of the application by pressing `Ctrl+C` in the Cloud
+Shell.
 
 ## Deploying to App Engine
 
@@ -180,21 +186,25 @@ Then, select the **App Engine** section.
 
 You have successfully deployed an App Engine application!
 
-Here are some next steps for building your next application and learning to use App Engine with other GCP products:
+Here are some next steps:
 
-**Download the Google Cloud SDK and develop locally.**
+**Download the Google Cloud SDK and develop locally**
 
 Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
 
-<walkthrough-tutorial-card url="appengine/docs/go/datastore/" icon="DATASTORE_SECTION" label="datastore">
+**Build your next application**
+
+Learn how to use App Engine with other Google Cloud Platform products:
+
+<walkthrough-tutorial-card url="https://cloud.google.com/appengine/docs/standard/nodejs/using-cloud-datastore" icon="DATASTORE_SECTION" label="datastore">
 **Learn to use Cloud Datastore.** Cloud Datastore is a highly-scalable NoSQL database for your applications.</walkthrough-tutorial-card>
-<walkthrough-alt>Learn more in the [Cloud Datastore documentation](https://cloud.google.com/appengine/docs/standard/java/datastore/).</walkthrough-alt>
+<walkthrough-alt>Learn more in the [Cloud Datastore documentation](https://cloud.google.com/appengine/docs/standard/nodejs/using-cloud-datastore ).</walkthrough-alt>
 
-<walkthrough-tutorial-card url="appengine/docs/go/googlecloudstorageclient/setting-up-cloud-storage" icon="STORAGE_SECTION" label="cloudStorage">
+<walkthrough-tutorial-card url="https://cloud.google.com/appengine/docs/standard/nodejs/using-cloud-storage" icon="STORAGE_SECTION" label="cloudStorage">
 **Learn to use Cloud Storage.** Cloud Storage is a powerful and simple object storage service.
-</walkthrough-tutorial-card><walkthrough-alt>Check out the [Cloud Storage documentation](https://cloud.google.com/appengine/docs/standard/java/googlecloudstorageclient/setting-up-cloud-storage) for more details.</walkthrough-alt>
+</walkthrough-tutorial-card><walkthrough-alt>Check out the [Cloud Storage documentation](https://cloud.google.com/appengine/docs/standard/nodejs/using-cloud-storage) for more details.</walkthrough-alt>
 
-[app-yaml-ref]: https://cloud.google.com/appengine/docs/standard/go/config/appref
+[app-yaml-ref]: https://cloud.google.com/appengine/docs/standard/nodejs/configuring-your-app-with-app-yaml
 [cloud-sdk-installer]: https://cloud.google.com/sdk/downloads#interactive
 [spotlight-console-menu]: walkthrough://spotlight-pointer?spotlightId=console-nav-menu
 [spotlight-open-devshell]: walkthrough://spotlight-pointer?spotlightId=devshell-activate-button
