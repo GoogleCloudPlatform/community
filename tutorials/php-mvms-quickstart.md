@@ -1,5 +1,5 @@
 ---
-title: App Engine Flex Quickstart using PHP
+title: App Engine flexible environment Quickstart using PHP
 description: Learn how to deploy a PHP sample app to App Engine.
 author: jscud
 tags: App Engine
