@@ -108,7 +108,7 @@ Update the Java application with some configuration specific to your project.
 
 1.  Select **Trace List** on the left side to show a table similar to the following:
 
-    ![](images/trace-list.png)
+    ![](https://storage.googleapis.com/gcp-community/tutorials/bigtable-oc/trace-list.png)
 
 The tracing label **opencensus.Bigtable.Tutorial** in the **Timeline** is the name of 
 the outermost tracing scope that is defined in the code snippet above.
@@ -122,7 +122,7 @@ by the lower level, user-defined  **WriteRows** and **ReadRows** tracing spans r
 
 Below **ReadRows**, you can first see the get operation, followed by the table scan operations.
 
-![](images/trace-timeline.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/bigtable-oc/trace-timeline.png)
 
 The other items included in the trace list, such as **Operation.google.bigtable.admin.v2.BigtableTableAdmin.CreateTable**,  
 occurred outside of the manually defined tracing scope, so these are included as separate operations in the list.
