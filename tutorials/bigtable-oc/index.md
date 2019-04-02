@@ -1,5 +1,5 @@
 ---
-title: Using OpenCensus with Bigtable and Stackdriver Tracing
+title: Using OpenCensus with Cloud Bigtable and Stackdriver Trace
 description: Implement client-side tracing in Cloud Bigtable with OpenCensus and Stackdriver.
 author: googledrew
 tags: Cloud Bigtable, OpenCensus, tracing
@@ -8,9 +8,9 @@ date_published: 2019-04-03
 
 This tutorial shows how to implement client-side tracing in your Cloud Bigtable workloads 
 using OpenCensus and Stackdriver. While Cloud Bigtable surfaces a number of helpful server-side 
-metrics via Stackdriver, applications can realize added benefits from implementing client-side tracing.
+metrics with Stackdriver, applications can realize added benefits from implementing client-side tracing.
 For example, server-side metrics do not give you a window into the round-trip latency of calls made to your 
-Bigtable endpoint and can only be surfaced using client-side tracing.
+Cloud Bigtable endpoint, which can only be surfaced using client-side tracing.
 
 ## Costs
 
@@ -20,7 +20,8 @@ This tutorial uses the following billable components of Google Cloud Platform (G
 *   Cloud Bigtable
 *   Stackdriver
 
-You can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected usage.
+You can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost
+estimate based on your projected usage.
 
 New GCP users might be eligible for a [free trial](https://cloud.google.com/free/).
 
@@ -69,67 +70,62 @@ Create a Compute Engine VM with the necessary security scopes by running the fol
 
 ## Deploying the Java application
 
+1.  Log in to the VM
 
-1. Login to the VM
-
-       gcloud compute ssh trace-client --zone=us-central1-c
+        gcloud compute ssh trace-client --zone=us-central1-c
         
-        
-1. Once logged into the VM, run the following command to install git, the Java 8 JDK, and maven.
+1.  Run the following command to install Git, the Java 8 JDK, and Maven:
 
-       sudo apt-get install git openjdk-8-jdk maven -y
+        sudo apt-get install git openjdk-8-jdk maven -y
 
-1. Clone the source repository for this tutorial
+1.  Clone the source repository for this tutorial:
 
-       git clone https://github.com/GoogleCloudPlatform/community.git
-        
+        git clone https://github.com/GoogleCloudPlatform/community.git
         
 Update the Java application with some configuration specific to your project.
 
-1. Navigate to the folder containing the Java source.
+1.  Navigate to the folder containing the Java source:
 
-       cd community/tutorials/bigtable-oc/java/
+        cd community/tutorials/bigtable-oc/java/
         
-        
-1. Configure the application code to use the current project id.
+1.  Configure the application code to use the current project ID:
  
-       PROJECT_ID=`curl http://metadata.google.internal/computeMetadata/v1/project/project-id -H "Metadata-Flavor: Google"`
-       sed -i "s/my-project-id/$PROJECT_ID/g" src/main/java/com/example/bigtable/App.java
+        PROJECT_ID=`curl http://metadata.google.internal/computeMetadata/v1/project/project-id -H "Metadata-Flavor: Google"`
+        sed -i "s/my-project-id/$PROJECT_ID/g" src/main/java/com/example/bigtable/App.java
 
-1. Configure the application code to use the cbt-oc Bigtable instance.
+1.  Configure the application code to use the `cbt-oc` Bigtable instance:
 
-       sed -i "s/my-bigtable-instance-id/cbt-oc/g" src/main/java/com/example/bigtable/App.java
+        sed -i "s/my-bigtable-instance-id/cbt-oc/g" src/main/java/com/example/bigtable/App.java
         
-1. Run the following maven commands to build and run the program.
+1.  Run the following maven commands to build and run the program:
 
-       mvn package -DskipTests --quiet
-       mvn exec:java -Dexec.mainClass=com.example.bigtable.App --quiet
+        mvn package -DskipTests --quiet
+        mvn exec:java -Dexec.mainClass=com.example.bigtable.App --quiet
 
-## Viewing Traces in Stackdriver Trace UI
+## Viewing traces with Stackdriver Trace
 
-1. Navigate to the [Cloud Trace console](https://cloud.google.com/console/traces)
+1.  Go to the [Stackdriver Trace console](https://cloud.google.com/console/traces)
 
-1. Select **Trace List** in the left nav, and you should see a table similar to the following on the right:
+1.  Select **Trace List** on the left side to show a table similar to the following:
 
-
-![](images/trace-list.png)
+    ![](images/trace-list.png)
 
 The tracing label **opencensus.Bigtable.Tutorial** in the **Timeline** is the name of 
 the outermost tracing scope that is defined in the code snippet above.
 
-If you select **opencensus.Bigtable.Tutorial**, you'll be taken to a drill-down view 
+If you select **opencensus.Bigtable.Tutorial**, you'll be taken to a view 
 that shows more information about the call chain, along with other useful 
-information such as lower level tracing scoped and operation level call latencies.
+information such as lower-level tracing and operation-level call latencies.
 
 For instance, each of the series of write and read rows are encapsulated 
-by the lower level, user-defined,  **WriteRows** and **ReadRows** tracing spans respectively. 
+by the lower level, user-defined  **WriteRows** and **ReadRows** tracing spans respectively. 
 
 Below **ReadRows**, you can first see the get operation, followed by the table scan operations.
 
 ![](images/trace-timeline.png)
 
-The other items included in the Trace list, such as **Operation.google.bigtable.admin.v2.BigtableTableAdmin.CreateTable**,  
-occurred outside of the manually-defined tracing scope. As a result, these are included as separate operations in the list.
+The other items included in the trace list, such as **Operation.google.bigtable.admin.v2.BigtableTableAdmin.CreateTable**,  
+occurred outside of the manually defined tracing scope, so these are included as separate operations in the list.
 
 ## Cleaning up
 
