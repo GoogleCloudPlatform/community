@@ -149,8 +149,7 @@ The GitHub repository includes a `.sample.env` file in the respository root dire
 |Environment variable|Purpose|Example setting|
 |---|---|---|
 |`LTK_ROOT`|The full path name of the LTK root directory on your workstation.|`/Users/user1/repos/community/tutorials/load-testing-iot-using-gcp-and-locust`|
-|`LTK_NUM_LOCUST_WORKERS`|The number of Kubernetes pods to use for the Locust workers. The device population (defined in `devicelist.csv`) will be sharded automatically between the worker pods. Generally, you want to make sure each worker does not simulate too many devices. This can cause CPU/memory pressure and thread-switching issues in the underlying operating system process. For the tutorial, set this to 2. It can be increased/decreased later.|`2`|
-|`LTK_NUM_GKE_NODES`|The number of GKE nodes (Google Compute Engine VMs) used to run the master and worker pods. Generally, you want to make sure that the pods do not consume an excesssive amount of CPU and memory in the VMs. Normally this would be set to the number of worker pods + 1 (the +1 is for the master). For the tutorial, set this to 3. It can be increased/decreased later.|`3`|
+|`LTK_NUM_LOCUST_WORKERS`|The number of Kubernetes pods to use for the Locust workers. The device population (defined in `devicelist.csv`) will be sharded automatically between the worker pods. Generally, you want to make sure each worker does not simulate too many devices. This can cause CPU/memory pressure and thread-switching issues. For the tutorial, set this to 2. It can be increased/decreased later.|`2`|
 |`LTK_DRIVER_PROJECT_ID`|The GCP project ID for the driver. The GKE cluster will be created under this project.|`my-ltk-driver-123456`|
 |`LTK_DRIVER_ZONE`|The GCP zone for the driver. The GKE cluster's nodes will be created in this zone. You can get a list of available zones with the command `gcloud compute zones list`.|`us-west1-a`|
 |`LTK_TARGET_PROJECT_ID`|The GCP project ID for the target (the IoT application and devices).|`my-ltk-target-123456`|
@@ -379,14 +378,15 @@ The suggested approach for cost evaluation is to do the following:
 
 2.  (optional) Update the `.env` file.
 
-    When more devices are added, it may be necessary to increase the number of Locust workers and GKE nodes.
+    When more devices are added, it may be necessary to increase the number of Locust workers.
 
     *   Increase LTK_NUM_LOCUST_WORKERS if the additional devices could cause excessive devices on a single worker
         (based on CPU/memory/thread usage).
-    *   Increase LTK_NUM_GKE_NODES to match LTK_NUM_LOCUST_WORKERS.
 
-    When specifying LTK_NUM_GKE_NODES, you need to make sure your GCP Compute Engine quotas allow the specified
-    number of nodes. The main quota limits are on number of CPUs and number of IN_USE_ADDRESSES (one address is
+    When specifying LTK_NUM_LOCUST_WORKERS, you need to make sure your GCP Compute Engine quotas allow the specified
+    number of nodes. The `setupTest` script will create a GKE cluster with LTK_NUM_LOCUST_WORKERS+1 nodes. The podspec
+    for the workers uses antiaffinity, so each worker is placed in a different node and the master is in its own node.
+    The main quota limits are on number of CPUs and number of IN_USE_ADDRESSES (one address is
     required per cluster node). There are quotas at the project and region levels.
 
         gcloud compute project-info describe --project my-ltk-driver | grep -C 1 IN_USE_ADDRESSES

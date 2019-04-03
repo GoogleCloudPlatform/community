@@ -41,11 +41,11 @@ if [ -d $RESULTS_DIR ]; then
   rm driver_times.csv >/dev/null 2>&1 || true
   rm driver_times_binned.csv >/dev/null 2>&1 || true
   rm driver_times_sorted.csv >/dev/null 2>&1 || true
-  rm driver_time_frequencies.out >/dev/null 2>&1 || true
+  rm driver_time_frequencies.txt >/dev/null 2>&1 || true
   rm function_times.csv >/dev/null 2>&1 || true
   rm function_times_binned.csv >/dev/null 2>&1 || true
   rm function_times_sorted.csv >/dev/null 2>&1 || true
-  rm function_time_frequencies.out >/dev/null 2>&1 || true
+  rm function_time_frequencies.txt >/dev/null 2>&1 || true
 else
   # Create results directory.
   info "Creating $RESULTS_DIR"
@@ -96,7 +96,7 @@ done < driver_times.csv
 
 # Get frequency distributions of driver times.
 
-awk -F',' '{print $4}' driver_times_binned.csv | sort -n | uniq -c | sort -n -k2 | awk '{print $2, $1}' > driver_time_frequencies.out
+awk -F',' '{print $4}' driver_times_binned.csv | sort -n | uniq -c | sort -n -k2 | awk '{print $2, $1}' > driver_time_frequencies.txt
 
 # Create sorted lists of driver times for analysis.
 
@@ -107,7 +107,7 @@ cat driver_times.csv | sort -n -t ',' -k3 > driver_times_sorted.csv
 echo "**********************************"
 echo "Driver Time Frequency Distribution"
 echo ""
-cat driver_time_frequencies.out
+cat driver_time_frequencies.txt
 
 #
 # Harvest function data
@@ -149,7 +149,7 @@ if [ "$HARVEST_FUNCTION_DATA" = true ]; then
 
   # Get frequency distributions of function times.
 
-  awk -F',' '{print $3}' function_times_binned.csv | sort -n | uniq -c | sort -n -k2 | awk '{print $2, $1}' > function_time_frequencies.out
+  awk -F',' '{print $3}' function_times_binned.csv | sort -n | uniq -c | sort -n -k2 | awk '{print $2, $1}' > function_time_frequencies.txt
 
   # Create sorted lists of driver and function times for analysis.
 
@@ -160,6 +160,6 @@ if [ "$HARVEST_FUNCTION_DATA" = true ]; then
   echo "**********************************"
   echo "Function Time Frequency Distribution"
   echo ""
-  cat function_time_frequencies.out
+  cat function_time_frequencies.txt
 fi
 
