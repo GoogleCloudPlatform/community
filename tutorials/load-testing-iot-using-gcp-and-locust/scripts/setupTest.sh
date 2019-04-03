@@ -31,7 +31,7 @@ kubectl delete deployment locust-master >/dev/null 2>&1 || true
 ### Create the GKE cluster.
 
 # This creates a zonal cluster.
-# The worker podpspec uses antiaffinity, so we need one node for each worker and one node for the master.
+# The worker podspec uses antiaffinity, so we want one node for each worker and one node for the master.
 LTK_NUM_GKE_NODES=$(( $LTK_NUM_LOCUST_WORKERS + 1 ))
 info "Checking GKE for existing ltk-driver cluster"
 if [[ `gcloud container clusters list | grep ltk-driver | wc -l` -eq 0 ]]; then
@@ -41,6 +41,9 @@ if [[ `gcloud container clusters list | grep ltk-driver | wc -l` -eq 0 ]]; then
     errorExit "Unable to create cluster"
 else
   info "Skipping creating GKE cluster, already exists."
+  # Make sure kubectl is pointing to the driver cluster before we start deploying pods.
+  info "Setting kubectl context to existing cluster."
+  gcloud container clusters get-credentials ltk-driver --zone $LTK_DRIVER_ZONE
 fi
 
 ### From here on we need to be in the LTK root directory (github repo root)
