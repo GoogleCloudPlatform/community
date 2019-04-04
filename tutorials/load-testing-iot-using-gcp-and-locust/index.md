@@ -439,8 +439,10 @@ To duplicate LTK into your own Github repository:
 
 2. Move the LTK directory to a new location outside of `community/tutorials`
 
+    ```
     cd community/tutorials
     mv load-testing-iot-using-gcp-and-locust ~/my-ltk
+    ```
 
 3. Initialize the LTK directory as a repository
 
