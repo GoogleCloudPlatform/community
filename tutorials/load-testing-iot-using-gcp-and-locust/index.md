@@ -315,17 +315,19 @@ Another possible use for the distributions is for evaluating architectural or im
 
 If you make a change to the code in the tutorial, in some cases you might see setupTest get stuck at the point where it is "waiting for pod to enter running status". If this happens, one way to diagnose the error is to do the following:
 
-1.  Open another terminal window
-2.  Enter the command
+1.  Open another terminal window.
+2.  Enter the command:
 
         kubectl get all
 
-3.  Look at the status of the pod. For example, if the status is ImagePullBackOff, you can get additional details as follows:
+3.  Look at the status of the pod. For example, if the status is ImagePullBackOff, you can get additional details as 
+    follows:
 
         kubectl describe pod/locust-master-5d9cd9d647-bhgkl
         kubecrl describe pod/locust-worker-0
 
-In other cases, it may be helpful to look in the Stackdriver logs for the driver (GKE container logs) and target (Cloud Function logs, Cloud IoT Device logs).
+In other cases, it may be helpful to look in the Stackdriver logs for the driver (GKE container logs) and target (Cloud 
+Function logs, Cloud IoT Device logs).
 
 In the GKE container logs for the `my-ltk-driver` project, you can see the device range used by each worker pod by using the filter "sharded device".
 
@@ -342,7 +344,7 @@ The suggested approach for cost evaluation is to do the following:
 
 2.  Run the test.
 
-3.  Check billing in GCP console
+3.  Check billing in GCP console.
 
     Currently it takes 72 hours for charges to appear in the GCP Billing console.
 
@@ -413,47 +415,54 @@ The suggested approach for cost evaluation is to do the following:
     determined by the worker pod's host name, which includes an ordinal (integer 1 to n) uniquely identifying
     the pod in the replica set. The ordinal is available because the podspec uses the StatefulSet pod type.
 
-## Load testing your IoT application
+## Load-testing your IoT application
 
-Load testing your IoT application requires software development in Python. 
+Load-testing your IoT application requires software development in Python. 
 
-The Python code will simulate the "over-the-network" behavior of your device population. This allows you to evaluate the performance, scalability, and cost of your IoT application's backend services accessed over an IPv4/IPv6 network.
+The Python code will simulate the "over-the-network" behavior of your device population. This allows you to evaluate the 
+performance, scalability, and cost of your IoT application's backend services accessed over an IPv4/IPv6 network.
 
 ### Planning
 
 * Understand the questions you want to answer with a load test.
 
-* Decide the device behaviors you want to simulate. It's easiest to start with a relatively simple behavior, where it's easy to build/process the payloads sent over the network.
+* Decide the device behaviors you want to simulate. It's easiest to start with a relatively simple behavior, where it's
+easy to build/process the payloads sent over the network.
 
-* Decide how you will evaluate success and failure of the device behaviors. These translate into Locust events you need to place in the Python code in `locustfile.py`. The easiest cases are when there is a request/response, where the response (or timeout) would indicate when a failure occurs.
+* Decide how you will evaluate success and failure of the device behaviors. These translate into Locust events you need to
+place in the Python code in `locustfile.py`. The easiest cases are when there is a request/response, where the response (or
+timeout) would indicate when a failure occurs.
 
-* Understand the data you need to evalaute the results. Long tests with many devices can create very large amounts of data to collect and analyze. In cases where harvesting data is impractical, monitoring capabilities built into the GCP console can be used.
+* Understand the data you need to evalaute the results. Long tests with many devices can create very large amounts of data
+to collect and analyze. In cases where harvesting data is impractical, monitoring capabilities built into the GCP console 
+can be used.
 
 ### Code repository 
 
-You can duplicate LTK into your own git repository. This way you can push changes, create branches, and control access. Forking Google's community tutorials is not recommended for custom development work.
+You can duplicate LTK into your own git repository. This way, you can push changes, create branches, and control access.
+Forking Google's community tutorials is not recommended for custom development work.
 
-To duplicate LTK into your own Github repository:
+To duplicate LTK into your own Github repository, do the following:
 
-1. Perform the steps under "Clone the `community` repository" above
+1.  Perform the steps under "Clone the `community` repository" earlier in this document.
 
-2. Move or copy the LTK directory to a new location outside of `community/tutorials`
+2.  Move or copy the LTK directory to a new location outside of `community/tutorials`:
 
     ```
     cd community/tutorials
     mv load-testing-iot-using-gcp-and-locust ~/my-ltk
     ```
 
-3. Initialize the LTK directory as a repository
+3.  Initialize the LTK directory as a repository:
 
     ```
     cd ~/my-ltk
     git init
     ```
 
-4. Go to Github and create a repository in your Github account
+4.  Go to GitHub and create a repository in your GitHub account.
 
-5. Make your new repository the origin
+5.  Make your new repository the origin:
 
     ```
     git remote add origin https://github.com/<your Github userId>/<your Github repo name>.git (HTTPS)
@@ -461,7 +470,7 @@ To duplicate LTK into your own Github repository:
     git remote add origin git@github.com:<your Github userId>/<your Github repo name>.git (SSH)
     ```
 
-6. Push the code to the new repo
+6.  Push the code to the new repository:
 
     ```
     git add .
@@ -469,7 +478,8 @@ To duplicate LTK into your own Github repository:
     git push -u origin master
     ```
 
-**Note**: Be sure to save your `.env` and `devicelist.csv` files if you re-create a repo or need to use them with a different branch.
+**Note**: Be sure to save your `.env` and `devicelist.csv` files if you re-create a repo or need to use them with a 
+different branch.
 
 ### Code
 
@@ -483,7 +493,8 @@ Implement the device behaviors in `locustfile.py`. Generally, this involves the 
 
 While developing device behaviors, it is easiest to test the behaviors locally. 
 
-This can be done by [installing Locust](https://docs.locust.io/en/stable/installation.html) locally and running Locust headless in command-line mode as follows (from the repository root):
+This can be done by [installing Locust](https://docs.locust.io/en/stable/installation.html) locally and running Locust
+headless in command-line mode as follows (from the repository root):
 
     set -a
     . .env
