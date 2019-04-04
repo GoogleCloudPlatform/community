@@ -26,7 +26,6 @@ To complete the steps in this tutorial, you need a GCP account. If you don't hav
 
 You also need the following on your local workstation:
 
-* clone of the [LTK repository](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/load-testing-iot-using-gcp-and-locust) 
 * [gcloud](https://cloud.google.com/sdk/install)  
 * kubectl (`gcloud components install kubectl`)  
 * [Docker Desktop](https://www.docker.com/get-started)  
@@ -43,7 +42,7 @@ The target (sample IoT application) will incur GCP charges for the following:
 * Cloud IoT Core
 * Cloud Functions
 
-## Understanding the architetcure
+## Understanding the architecture
 
 This diagram shows the relationship between the load test driver and the target:
 
@@ -53,6 +52,21 @@ This diagram shows how the driver maps into GCP, using GKE, Kubernetes, and Dock
 
 ![LTK GCP mapping diagram](https://storage.googleapis.com/gcp-community/tutorials/load-testing-iot-using-gcp-and-locust/ltk_gcp_mapping.png)
 
+## Clone the repository
+
+For the purposes of this tutorial, clone the `community` repository to your local machine.
+
+    git clone https://github.com/GoogleCloudPlatform/community.git
+
+If you use SSH keys to access GitHub, use the SSH equivalent:
+
+    git clone git@github.com:GoogleCloudPlatform/community.git
+
+This will create a directory named `community` in your current directory.
+
+Within the `community` directory, the load testing toolkit (LTK) code is in the `tutorials/load-testing-iot-using-gcp-and-locust` directory.
+
+You will make customizations to the files in this directory.
 
 ## Create the GCP projects
 
@@ -87,7 +101,7 @@ From the GCP console, do the following:
 8. For the default telemetry topic, click **Select a Cloud Pub/Sub topic**, click **Create a topic**,
    and then specify `defaultTelemetry`. Ignore any spaces between the trailing slash in the prepopulated topic
    name and your text input. 
-9. Click **Create** to create the Pub/Sub topic.
+9. Click **Create** to create the Cloud Pub/Sub topic.
 10. Accept the defaults for the other registry settings.
 11. Click **Create** to create the registry.
 
@@ -134,9 +148,8 @@ The GitHub repository includes a `.sample.env` file in the respository root dire
 
 |Environment variable|Purpose|Example setting|
 |---|---|---|
-|`LTK_ROOT`|The full path name of the LTK root directory on your workstation.|`/Users/user1/repos/ltk`|
-|`LTK_NUM_LOCUST_WORKERS`|The number of Kubernetes pods to use for the Locust workers. The device population (defined in `devicelist.csv`) will be sharded automatically between the worker pods. Generally, you want to make sure each worker does not simulate too many devices. This can cause memory pressure and thread-switching issues in the underlying operating system process. As a starting point, set this to 2. It can be increased/decreased later.|`2`|
-|`LTK_NUM_GKE_NODES`|The number of GKE nodes (Google Compute Engine VMs) used to run the worker pods. Generally, you want to make sure that the pods do not consume an excesssive amount of CPU and memory in the VMs. Normally this would be set to the number of worker pods. As a starting point, set this to 2. It can be increased/decreased later.|`2`|
+|`LTK_ROOT`|The full path name of the LTK root directory on your workstation.|`/Users/user1/repos/community/tutorials/load-testing-iot-using-gcp-and-locust`|
+|`LTK_NUM_LOCUST_WORKERS`|The number of Kubernetes pods to use for the Locust workers. The device population (defined in `devicelist.csv`) will be sharded automatically between the worker pods. Generally, you want to make sure each worker does not simulate too many devices. This can cause CPU/memory pressure and thread-switching issues. For the tutorial, set this to 2. It can be increased/decreased later.|`2`|
 |`LTK_DRIVER_PROJECT_ID`|The GCP project ID for the driver. The GKE cluster will be created under this project.|`my-ltk-driver-123456`|
 |`LTK_DRIVER_ZONE`|The GCP zone for the driver. The GKE cluster's nodes will be created in this zone. You can get a list of available zones with the command `gcloud compute zones list`.|`us-west1-a`|
 |`LTK_TARGET_PROJECT_ID`|The GCP project ID for the target (the IoT application and devices).|`my-ltk-target-123456`|
@@ -267,7 +280,7 @@ Make a note of the time when you stopped the test.
 
 ## Clean up
 
-To avoid GCP charges for the driver cluster, you can delete the cluster (and perform other related post-test cleanup activities) with the `teardwonTest` script:
+To avoid GCP charges for the driver cluster, you can delete the cluster (and perform other related post-test cleanup activities) with the `teardownTest` script:
 
     scripts/teadownTest.sh
 
@@ -275,7 +288,7 @@ The target project requires no cleanup; the project will not incur charges becau
 
 ## Analyze the results
 
-The GitHub repository includes a `harvetData` script to perform a basic data collection and analysis for the sample IoT application. The script provides two outputs:
+The GitHub repository includes a `harvestData` script to perform a basic data collection and analysis for the sample IoT application. The script provides two outputs:
 
 * Frequency distribution of driver-mearured response times
 * Frequency distribution of cloud function execution times
@@ -302,16 +315,19 @@ Another possible use for the distributions is for evaluating architectural or im
 
 If you make a change to the code in the tutorial, in some cases you might see setupTest get stuck at the point where it is "waiting for pod to enter running status". If this happens, one way to diagnose the error is to do the following:
 
-1.  Open another terminal window
-2.  Enter the command
+1.  Open another terminal window.
+2.  Enter the command:
 
         kubectl get all
 
-3.  Look at the status of the pod. For example, if the status is ImagePullBackOff, you can get additional details as follows:
+3.  Look at the status of the pod. For example, if the status is ImagePullBackOff, you can get additional details as 
+    follows:
 
-        kubectl describe
+        kubectl describe pod/locust-master-5d9cd9d647-bhgkl
+        kubecrl describe pod/locust-worker-0
 
-In other cases, it may be helpful to look in the Stackdriver logs for the driver (GKE container logs) and target (Cloud Function logs, Cloud IoT Device logs).
+In other cases, it may be helpful to look in the Stackdriver logs for the driver (GKE container logs) and target (Cloud 
+Function logs, Cloud IoT Device logs).
 
 In the GKE container logs for the `my-ltk-driver` project, you can see the device range used by each worker pod by using the filter "sharded device".
 
@@ -328,7 +344,7 @@ The suggested approach for cost evaluation is to do the following:
 
 2.  Run the test.
 
-3.  Check billing in GCP console
+3.  Check billing in GCP console.
 
     Currently it takes 72 hours for charges to appear in the GCP Billing console.
 
@@ -340,13 +356,13 @@ The suggested approach for cost evaluation is to do the following:
     5.  Under Group By, select Product (if more detail is needed, select SKU).
     6.  You should see a breakdown of costs.  
 
-4.  Calculate costs for 24x7 operation with N devices.
+4.  Estimate costs for 24x7 operation with N devices.
 
-    The cost data for one hour, with 100 devices for example, could be used to calculate the cost
+    The cost data for one hour, with 100 devices for example, could be used to estimate the cost
     for 10,000 devices operating 24x7.
 
     For example, if the one-hour test with 100 devices costs $1 on the target side, the monthly cost
-    can be estimated as 1 * 100 * 720 = $72,000.
+    could be estimated as 1 * 100 * 720 = $72,000 (1 dollar * 100 times the size of the test population * 720 hours in a 30-day month).
 
 **Note**: Raw billing data is available in [BigQuery](https://cloud.google.com/billing/docs/how-to/export-data-bigquery).
 
@@ -365,14 +381,15 @@ The suggested approach for cost evaluation is to do the following:
 
 2.  (optional) Update the `.env` file.
 
-    When more devices are added, it may be necessary to increase the number of Locust workers and GKE nodes.
+    When more devices are added, it may be necessary to increase the number of Locust workers.
 
     *   Increase LTK_NUM_LOCUST_WORKERS if the additional devices could cause excessive devices on a single worker
         (based on CPU/memory/thread usage).
-    *   Increase LTK_NUM_GKE_NODES to match LTK_NUM_LOCUST_WORKERS.
 
-    When specifying LTK_NUM_GKE_NODES, you need to make sure your GCP Compute Engine quotas allow the specified
-    number of nodes. The main quota limits are on number of CPUs and number of IN_USE_ADDRESSES (one address is
+    When specifying LTK_NUM_LOCUST_WORKERS, you need to make sure your GCP Compute Engine quotas allow the specified
+    number of nodes. The `setupTest` script will create a GKE cluster with LTK_NUM_LOCUST_WORKERS+1 nodes. The podspec
+    for the workers uses antiaffinity, so each worker is placed in a different node and the master is in its own node.
+    The main quota limits are on number of CPUs and number of IN_USE_ADDRESSES (one address is
     required per cluster node). There are quotas at the project and region levels.
 
         gcloud compute project-info describe --project my-ltk-driver | grep -C 1 IN_USE_ADDRESSES
@@ -384,37 +401,85 @@ The suggested approach for cost evaluation is to do the following:
     with this command:
 
         gcloud compute zones list
+    
+    More information about Compute Engine quotas is available [here](https://cloud.google.com/compute/quotas).
 
 3.  Run `setupTest`.
 
-    This will rebuild the master and worker docker images with the added-to `devicelist.csv`.
+    This will rebuild the master and worker Docker images with the added-to `devicelist.csv`.
 
-4.  Start a test in Locust
+4.  Start a test in Locust.
 
     Starting a test in the Locust UI causes the workers to shard the `devicelist.csv`. The sharding calculate
     the portion of the csv (the "block" of devices) a worker is using. The block offset into the csv is
     determined by the worker pod's host name, which includes an ordinal (integer 1 to n) uniquely identifying
     the pod in the replica set. The ordinal is available because the podspec uses the StatefulSet pod type.
 
-## Re-cloning the repository
+## Load-testing your IoT application
 
-If you need to re-clone the repository to get a clean copy of the code, you can transfer the `.env` file and `devicelist.csv` to bring over the same environment settings and existing devices.
+Load-testing your IoT application requires software development in Python. 
 
-## Targeting Your IoT application
-
-Targeting your IoT application requires software development in Python. 
-
-The Python code will simulate the "over-the-network" behavior of your device population. This allows you to evaluate the performance, scalability, and cost of your IoT application's backend services accessed over an IPv4/IPv6 network.
+The Python code will simulate the "over-the-network" behavior of your device population. This allows you to evaluate the 
+performance, scalability, and cost of your IoT application's backend services accessed over an IPv4/IPv6 network.
 
 ### Planning
 
-* Understand the questions you want to answer with a load test.
+* Understand the questions that you want to answer with a load test.
 
-* Decide the device behaviors you want to simulate. It's easiest to start with a relatively simple behavior, where it's easy to build/process the payloads sent over the network.
+* Decide the device behaviors you want to simulate. It's easiest to start with a relatively simple behavior, where it's
+easy to build/process the payloads sent over the network.
 
-* Decide how you will evaluate success and failure of the device behaviors. These translate into Locust events you need to place in the Python code in `locustfile.py`. The easiest cases are when there is a request/response, where the response (or timeout) would indicate when a failure occurs.
+* Decide how you will evaluate success and failure of the device behaviors. These translate into Locust events you need to
+place in the Python code in `locustfile.py`. The easiest cases are when there is a request/response, where the response (or
+timeout) would indicate when a failure occurs.
 
-* Understand the data you need to evalaute the results. Long tests with many devices can create very large amounts of data to collect and analyze. In cases where harvesting data is impractical, monitoring capabilities built into the GCP console can be used.
+* Understand what data you need to evalaute the results. Long tests with many devices can create very large amounts of data
+to collect and analyze. In cases where harvesting data is impractical, monitoring capabilities built into the GCP console 
+can be used.
+
+### Code repository 
+
+You can duplicate LTK into your own git repository. This way, you can push changes, create branches, and control access.
+Forking Google's community tutorials is not recommended for custom development work.
+
+To duplicate LTK into your own Github repository, do the following:
+
+1.  Perform the steps under "Clone the `community` repository" earlier in this document.
+
+2.  Move or copy the LTK directory to a new location outside of `community/tutorials`:
+
+    ```
+    cd community/tutorials
+    mv load-testing-iot-using-gcp-and-locust ~/my-ltk
+    ```
+
+3.  Initialize the LTK directory as a repository:
+
+    ```
+    cd ~/my-ltk
+    git init
+    ```
+
+4.  Go to GitHub and create a repository in your GitHub account.
+
+5.  Make your new repository the origin:
+
+    ```
+    git remote add origin https://github.com/<your Github userId>/<your Github repo name>.git (HTTPS)
+    or
+    git remote add origin git@github.com:<your Github userId>/<your Github repo name>.git (SSH)
+    ```
+
+6.  Push the code to the new repository:
+
+    ```
+    git add .
+    git commit -m "first commit"
+    git push -u origin master
+    ```
+
+**Note**: Be sure to save your `.env` and `devicelist.csv` files if you re-create a repository or need to use them with a 
+different branch.
 
 ### Code
 
@@ -428,7 +493,8 @@ Implement the device behaviors in `locustfile.py`. Generally, this involves the 
 
 While developing device behaviors, it is easiest to test the behaviors locally. 
 
-This can be done by [installing Locust](https://docs.locust.io/en/stable/installation.html) locally and running Locust headless in command-line mode as follows (from the repository root):
+This can be done by [installing Locust](https://docs.locust.io/en/stable/installation.html) locally and running Locust
+headless in command-line mode as follows (from the repository root):
 
     set -a
     . .env
