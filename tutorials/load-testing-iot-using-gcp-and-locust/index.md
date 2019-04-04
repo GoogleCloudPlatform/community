@@ -424,7 +424,7 @@ performance, scalability, and cost of your IoT application's backend services ac
 
 ### Planning
 
-* Understand the questions you want to answer with a load test.
+* Understand the questions that you want to answer with a load test.
 
 * Decide the device behaviors you want to simulate. It's easiest to start with a relatively simple behavior, where it's
 easy to build/process the payloads sent over the network.
@@ -433,7 +433,7 @@ easy to build/process the payloads sent over the network.
 place in the Python code in `locustfile.py`. The easiest cases are when there is a request/response, where the response (or
 timeout) would indicate when a failure occurs.
 
-* Understand the data you need to evalaute the results. Long tests with many devices can create very large amounts of data
+* Understand what data you need to evalaute the results. Long tests with many devices can create very large amounts of data
 to collect and analyze. In cases where harvesting data is impractical, monitoring capabilities built into the GCP console 
 can be used.
 
@@ -478,7 +478,7 @@ To duplicate LTK into your own Github repository, do the following:
     git push -u origin master
     ```
 
-**Note**: Be sure to save your `.env` and `devicelist.csv` files if you re-create a repo or need to use them with a 
+**Note**: Be sure to save your `.env` and `devicelist.csv` files if you re-create a repository or need to use them with a 
 different branch.
 
 ### Code
