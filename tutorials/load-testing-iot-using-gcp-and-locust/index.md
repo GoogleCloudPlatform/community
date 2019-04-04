@@ -413,9 +413,9 @@ The suggested approach for cost evaluation is to do the following:
     determined by the worker pod's host name, which includes an ordinal (integer 1 to n) uniquely identifying
     the pod in the replica set. The ordinal is available because the podspec uses the StatefulSet pod type.
 
-## Targeting Your IoT application
+## Load testing your IoT application
 
-Targeting your IoT application requires software development in Python. 
+Load testing your IoT application requires software development in Python. 
 
 The Python code will simulate the "over-the-network" behavior of your device population. This allows you to evaluate the performance, scalability, and cost of your IoT application's backend services accessed over an IPv4/IPv6 network.
 
@@ -435,9 +435,9 @@ For software development, you can duplicate LTK into your own git repository. Th
 
 To duplicate LTK into your own Github repository:
 
-1. Repeat the steps under "Clone the `community` repository" above
+1. Perform the steps under "Clone the `community` repository" above
 
-2. Move the LTK directory to a new location outside of `community/tutorials`
+2. Move or copy the LTK directory to a new location outside of `community/tutorials`
 
     ```
     cd community/tutorials
