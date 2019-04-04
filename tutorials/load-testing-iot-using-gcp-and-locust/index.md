@@ -101,7 +101,7 @@ From the GCP console, do the following:
 8. For the default telemetry topic, click **Select a Cloud Pub/Sub topic**, click **Create a topic**,
    and then specify `defaultTelemetry`. Ignore any spaces between the trailing slash in the prepopulated topic
    name and your text input. 
-9. Click **Create** to create the Pub/Sub topic.
+9. Click **Create** to create the Cloud Pub/Sub topic.
 10. Accept the defaults for the other registry settings.
 11. Click **Create** to create the registry.
 
