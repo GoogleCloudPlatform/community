@@ -400,13 +400,13 @@ The suggested approach for cost evaluation is to do the following:
 
         gcloud compute zones list
     
-    More information about compute engine quotas is available [here](https://cloud.google.com/compute/quotas).
+    More information about Compute Engine quotas is available [here](https://cloud.google.com/compute/quotas).
 
 3.  Run `setupTest`.
 
-    This will rebuild the master and worker docker images with the added-to `devicelist.csv`.
+    This will rebuild the master and worker Docker images with the added-to `devicelist.csv`.
 
-4.  Start a test in Locust
+4.  Start a test in Locust.
 
     Starting a test in the Locust UI causes the workers to shard the `devicelist.csv`. The sharding calculate
     the portion of the csv (the "block" of devices) a worker is using. The block offset into the csv is
