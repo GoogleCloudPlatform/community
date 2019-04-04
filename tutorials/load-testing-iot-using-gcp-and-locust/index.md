@@ -431,7 +431,7 @@ The Python code will simulate the "over-the-network" behavior of your device pop
 
 ### Code repository 
 
-For software development, you can duplicate LTK into your own git repository. This way you can push changes, create branches, and manage access.
+You can duplicate LTK into your own git repository. This way you can push changes, create branches, and control access. Forking Google's community tutorials is not recommended for custom development work.
 
 To duplicate LTK into your own Github repository:
 
