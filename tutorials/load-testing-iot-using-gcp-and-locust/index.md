@@ -52,9 +52,9 @@ This diagram shows how the driver maps into GCP, using GKE, Kubernetes, and Dock
 
 ![LTK GCP mapping diagram](https://storage.googleapis.com/gcp-community/tutorials/load-testing-iot-using-gcp-and-locust/ltk_gcp_mapping.png)
 
-## Clone the `community` repository
+## Clone the repository
 
-For the purposes of this tutorial, clone the Google Cloud Platform `community` repository directly to your local machine.
+For the purposes of this tutorial, clone the `community` repository to your local machine.
 
     git clone https://github.com/GoogleCloudPlatform/community.git
 
@@ -280,7 +280,7 @@ Make a note of the time when you stopped the test.
 
 ## Clean up
 
-To avoid GCP charges for the driver cluster, you can delete the cluster (and perform other related post-test cleanup activities) with the `teardwonTest` script:
+To avoid GCP charges for the driver cluster, you can delete the cluster (and perform other related post-test cleanup activities) with the `teardownTest` script:
 
     scripts/teadownTest.sh
 
@@ -288,7 +288,7 @@ The target project requires no cleanup; the project will not incur charges becau
 
 ## Analyze the results
 
-The GitHub repository includes a `harvetData` script to perform a basic data collection and analysis for the sample IoT application. The script provides two outputs:
+The GitHub repository includes a `harvestData` script to perform a basic data collection and analysis for the sample IoT application. The script provides two outputs:
 
 * Frequency distribution of driver-mearured response times
 * Frequency distribution of cloud function execution times
@@ -322,7 +322,8 @@ If you make a change to the code in the tutorial, in some cases you might see se
 
 3.  Look at the status of the pod. For example, if the status is ImagePullBackOff, you can get additional details as follows:
 
-        kubectl describe
+        kubectl describe pod/locust-master-5d9cd9d647-bhgkl
+        kubecrl describe pod/locust-worker-0
 
 In other cases, it may be helpful to look in the Stackdriver logs for the driver (GKE container logs) and target (Cloud Function logs, Cloud IoT Device logs).
 
@@ -353,13 +354,13 @@ The suggested approach for cost evaluation is to do the following:
     5.  Under Group By, select Product (if more detail is needed, select SKU).
     6.  You should see a breakdown of costs.  
 
-4.  Calculate costs for 24x7 operation with N devices.
+4.  Estimate costs for 24x7 operation with N devices.
 
-    The cost data for one hour, with 100 devices for example, could be used to calculate the cost
+    The cost data for one hour, with 100 devices for example, could be used to estimate the cost
     for 10,000 devices operating 24x7.
 
     For example, if the one-hour test with 100 devices costs $1 on the target side, the monthly cost
-    can be estimated as 1 * 100 * 720 = $72,000.
+    could be estimated as 1 * 100 * 720 = $72,000 (1 dollar * 100 times the size of the test population * 720 hours in a 30-day month).
 
 **Note**: Raw billing data is available in [BigQuery](https://cloud.google.com/billing/docs/how-to/export-data-bigquery).
 
