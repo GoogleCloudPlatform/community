@@ -32,6 +32,7 @@ function info {
 
 if [ ! -d $LTK_ROOT/runs ]; then
   info "Creating $LTK_ROOT/runs"
+  mkdir $LTK_ROOT/runs
 fi
 
 RESULTS_DIR=$LTK_ROOT/runs/$RUN_DIR
