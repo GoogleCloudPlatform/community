@@ -1,5 +1,5 @@
 ---
-title: App Engine Flex Quickstart using PHP
+title: App Engine flexible environment Quickstart using PHP
 description: Learn how to deploy a PHP sample app to App Engine.
 author: jscud
 tags: App Engine
@@ -61,9 +61,7 @@ Cloud Shell to deploy our app.
 
 ### Open Cloud Shell
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ### Clone the sample code
 
