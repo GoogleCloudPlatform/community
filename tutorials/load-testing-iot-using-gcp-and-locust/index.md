@@ -58,7 +58,7 @@ For the purposes of this tutorial, clone the `community` repository to your loca
 
     git clone https://github.com/GoogleCloudPlatform/community.git
 
-If you use SSH keys to access Github, use the SSH equivalent:
+If you use SSH keys to access GitHub, use the SSH equivalent:
 
     git clone git@github.com:GoogleCloudPlatform/community.git
 
