@@ -446,22 +446,28 @@ To duplicate LTK into your own Github repository:
 
 3. Initialize the LTK directory as a repository
 
+    ```
     cd ~/my-ltk
     git init
+    ```
 
 4. Go to Github and create a repository in your Github account
 
 5. Make your new repository the origin
 
+    ```
     git remote add origin https://github.com/<your Github userId>/<your Github repo name>.git (HTTPS)
     or
     git remote add origin git@github.com:<your Github userId>/<your Github repo name>.git (SSH)
+    ```
 
 6. Push the code to the new repo
 
+    ```
     git add .
     git commit -m "first commit"
     git push -u origin master
+    ```
 
 **Note**: Be sure to save your `.env` and `devicelist.csv` files if you re-create a repo or need to use them with a different branch.
 
