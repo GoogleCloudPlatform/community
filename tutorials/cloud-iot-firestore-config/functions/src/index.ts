@@ -21,7 +21,6 @@ import cbor = require('cbor');
 
 import * as admin from "firebase-admin";
 import * as functions from 'firebase-functions';
-import { runInDebugContext } from 'vm';
 import { DeviceManager } from './devices';
 
 // create a device manager instance with a registry id, optionally pass a region
