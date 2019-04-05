@@ -1,28 +1,36 @@
 ---
-title: App Engine Quickstart using Go
-description: Learn how to deploy a Go sample app to App Engine.
+title: App Engine Quickstart using Java
+description: Learn how to deploy a Java sample app to App Engine.
 author: jscud
 tags: App Engine
-date_published: 2019-01-19
+date_published: 2019-03-22
 ---
 
 # App Engine Quickstart
 
-<walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/go/quickstart"></walkthrough-tutorial-url>
-<!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/golang-samples" %} -->
-<!-- {% setvar repo_dir "golang-samples/appengine/go11x/helloworld" %} -->
+<walkthrough-test-start-page url="/getting-started?tutorial=java_gae_quickstart_2"/>
+
+<walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/java/quickstart"/>
+
+<!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/appengine-try-java" %} -->
+
+<!-- {% setvar repo_name "appengine-try-java" %} -->
+
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
+
+<!-- {% setvar project_id "<your-project>" %} -->
 
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=go_gae_quickstart)
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=java_gae_quickstart)
 
 </walkthrough-alt>
 
 ## Introduction
 
-This tutorial shows you how to deploy a sample application to App Engine using the `gcloud` command.
+This tutorial shows you how to deploy a sample [Java][java] application to
+App Engine using the App Engine Maven plugin.
 
 Here are the steps you will be taking.
 
@@ -31,44 +39,51 @@ Here are the steps you will be taking.
     Projects bundle code, VMs, and other resources together for easier
     development and monitoring.
 
-*   **Build and run your "Hello, world!" app**
+*  **Build and run your "Hello, world!" app**
 
-    You will learn how to run your app using Cloud Shell, right in your
-    browser. At the end, you'll deploy your app to the web using the `gcloud`
-    command.
+   You will learn how to run your app using Cloud Shell, right in your
+   browser. At the end, you'll deploy your app to the web using the App Engine
+   Maven plugin.
 
-*   **After the tutorial...**
+*  **After the tutorial...**
 
-    Your app will be real and you'll be able to experiment with it after you
-    deploy, or you can remove it and start fresh.
+   Your app will be real and you'll be able to experiment with it after you
+   deploy, or you can remove it and start fresh.
+
+[Java is a registered trademark of Oracle and/or its affiliates.](walkthrough://footnote)
 
 ## Project setup
 
-To deploy an application, you need to first create a project.
+To deploy an application you need to first create a project.
 
-GCP organizes resources into projects. This allows you to collect all of the related resources for a single application in 
-one place.
+GCP organizes resources into projects. This allows you to
+collect all of the related resources for a single application in one place.
 
-<walkthrough-devshell-precreate></walkthrough-devshell-precreate>
+<walkthrough-devshell-precreate/>
 
-<walkthrough-project-billing-setup></walkthrough-project-billing-setup>
+<walkthrough-project-setup></walkthrough-project-setup>
 
 ## Using Cloud Shell
 
-Cloud Shell is a built-in command-line tool for the console. We're going to use Cloud Shell to deploy our app.
+Cloud Shell is a built-in command-line tool for the console. You're going to
+use Cloud Shell to deploy your app.
 
 ### Open Cloud Shell
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ### Clone the sample code
 
-Use Cloud Shell to clone and navigate to the "Hello World" code. The sample code is cloned from your project repository to
-the Cloud Shell.
+Use Cloud Shell to clone and navigate to the "Hello World" code. The sample
+code is cloned from your project repository to the Cloud Shell.
 
-Note: If the directory already exists, remove the previous files before cloning.
+Note: If the directory already exists, remove the previous files before cloning:
+
+```bash
+rm -rf {{repo_name}}
+```
+
+In Cloud Shell enter the following:
 
 ```bash
 git clone {{repo_url}}
@@ -77,47 +92,55 @@ git clone {{repo_url}}
 Then, switch to the tutorial directory:
 
 ```bash
-cd {{repo_dir}}
+cd {{repo_name}}
 ```
 
 ## Configuring your deployment
 
-You are now in the main directory for the sample code. We'll look at the files that configure your application.
+You are now in the main directory for the sample code. You'll look at the
+files that configure your application.
 
 ### Exploring the application
 
 Enter the following command to view your application code:
 
 ```bash
-cat helloworld.go
+cat src/main/java/myapp/DemoServlet.java
 ```
+
+This servlet responds to any request by sending a response containing the
+message `Hello, world!`.
 
 ### Exploring your configuration
 
-App Engine uses YAML files to specify a deployment's configuration. `app.yaml` files contain information about your 
-application, like the runtime environment, URL handlers, and more.
+For Java, App Engine uses XML files to specify a deployment's
+configuration.
 
 Enter the following command to view your configuration file:
 
 ```bash
-cat app.yaml
+cat pom.xml
 ```
 
-The syntax of this file is [YAML](http://www.yaml.org). For a complete list of
-configuration options, see the [`app.yaml`][app-yaml-ref] reference.
+The `helloworld` app uses Maven, which means you must specify a Project Object
+Model, or POM, which contains information about the project and configuration
+details used by Maven to build the project.
 
 ## Testing your app
 
 ### Test your app on Cloud Shell
 
-Cloud Shell lets you test your app before deploying to make sure it's running as
-intended, just like debugging on your local machine.
+Cloud Shell lets you test your app before deploying to make sure it's running
+as intended, just like debugging on your local machine.
 
 To test your app enter the following:
 
 ```bash
-go run .
+mvn appengine:run
 ```
+
+<walkthrough-test-code-output
+  text="module .* running at|Dev App Server is now running" />
 
 ### Preview your app with "Web preview"
 
@@ -144,21 +167,32 @@ Note: If you already created an app, you can skip this step.
 
 ### Deploying with Cloud Shell
 
-You can use Cloud Shell to deploy your app. To deploy your app enter the following:
+Now you can use Cloud Shell to deploy your app.
+
+First, set which project to use:
 
 ```bash
-gcloud app deploy
+gcloud config set project {{project_id}}
 ```
+
+Then deploy your app:
+
+```bash
+mvn appengine:deploy
+```
+
+<walkthrough-test-code-output text="Deployed (module|service)" />
 
 ### Visit your app
 
 Congratulations! Your app has been deployed.
+
 The default URL of your app is a subdomain on appspot.com that starts with your project's ID:
 [{{project_gae_url}}](http://{{project_gae_url}}).
 
 Try visiting your deployed application.
 
-## View your app's status
+### View your app's status
 
 You can check in on your app by monitoring its status on the App Engine
 dashboard.
@@ -186,18 +220,22 @@ Here are some next steps for building your next application and learning to use 
 
 Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
 
-<walkthrough-tutorial-card url="appengine/docs/go/datastore/" icon="DATASTORE_SECTION" label="datastore">
+**Build your next application**
+
+Learn how to use App Engine with other Google Cloud Platform products:
+
+<walkthrough-tutorial-card url="https://cloud.google.com/appengine/docs/standard/java/datastore/" icon="DATASTORE_SECTION" label="datastore">
 **Learn to use Cloud Datastore.** Cloud Datastore is a highly-scalable NoSQL database for your applications.</walkthrough-tutorial-card>
 <walkthrough-alt>Learn more in the [Cloud Datastore documentation](https://cloud.google.com/appengine/docs/standard/java/datastore/).</walkthrough-alt>
 
-<walkthrough-tutorial-card url="appengine/docs/go/googlecloudstorageclient/setting-up-cloud-storage" icon="STORAGE_SECTION" label="cloudStorage">
+<walkthrough-tutorial-card url="https://cloud.google.com/appengine/docs/standard/java/googlecloudstorageclient/setting-up-cloud-storage" icon="STORAGE_SECTION" label="cloudStorage">
 **Learn to use Cloud Storage.** Cloud Storage is a powerful and simple object storage service.
 </walkthrough-tutorial-card><walkthrough-alt>Check out the [Cloud Storage documentation](https://cloud.google.com/appengine/docs/standard/java/googlecloudstorageclient/setting-up-cloud-storage) for more details.</walkthrough-alt>
 
-[app-yaml-ref]: https://cloud.google.com/appengine/docs/standard/go/config/appref
+[java]: https://java.com/
 [cloud-sdk-installer]: https://cloud.google.com/sdk/downloads#interactive
-[spotlight-console-menu]: walkthrough://spotlight-pointer?spotlightId=console-nav-menu
 [spotlight-open-devshell]: walkthrough://spotlight-pointer?spotlightId=devshell-activate-button
+[spotlight-console-menu]: walkthrough://spotlight-pointer?spotlightId=console-nav-menu
 [spotlight-web-preview]: walkthrough://spotlight-pointer?spotlightId=devshell-web-preview-button
 [spotlight-gae-settings]: walkthrough://spotlight-pointer?cssSelector=#cfctest-section-nav-item-settings
 [spotlight-disable-app]: walkthrough://spotlight-pointer?cssSelector=#p6ntest-show-disable-app-modal-button

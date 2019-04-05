@@ -86,7 +86,7 @@ gcloud services enable containerregistry.googleapis.com
 ## Build a Singularity container
 
 Cloud Build supports the definition and use of _custom build steps_ to extend the range of tasks it can handle.
-In the first step of this section you create a Singularity custom build step. In the third step you use the Singularity
+In the first step of this section, you create a Singularity custom build step. In the second step, you use the Singularity
 custom build step to build a Singularity container and save it in Cloud Storage. Once the Singuarlity custom build
 step has been created in your project you can use it to create as many Singularity containers as you like.
 
