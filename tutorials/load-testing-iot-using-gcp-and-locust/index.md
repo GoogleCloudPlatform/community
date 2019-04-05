@@ -70,9 +70,9 @@ Later, you will create a `.env` file in this directory along with a `devicelist.
 
 ## Create the GCP projects
 
-Two GCP projects are created for this tutorial: `my-ltk-driver` and `my-ltk-target`.
+Two GCP projects should be created for this tutorial: `my-ltk-driver` and `my-ltk-target`.
 
-To create the `my-ltk-driver` project, do the following:
+To create the projects, do the following:
 
 1. Log into the GCP Console.
 2. Click the project selector in the upper-left corner of the GCP Console.
@@ -83,7 +83,7 @@ To create the `my-ltk-driver` project, do the following:
 
 Repeat this procedure twice: once for the `my-ltk-driver` project and once for the`my-ltk-target` project.
 
-Two projects are recommended so that you can see cost information separately for the driver and target. 
+Two projects are recommended so you can see cost information separately for the driver and target. 
 
 ## Create the device registry
 
