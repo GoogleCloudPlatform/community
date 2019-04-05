@@ -10,9 +10,9 @@ This tutorial describes load-testing an Internet of Things (IoT) application usi
 
 A simple IoT application is included for the tutorial. The IoT application consists of a GCP Cloud Function and 100 simulated devices exchanging messages over MQTT using Cloud IoT Core.
 
-The tutorial walks through all of the steps to create a running load test. The estimated time to perform the tutorial is 1-2 hours.
+The tutorial walks through all of the steps to create a running load test. The estimated time to perform the tutorial is 1-2 hours. 
 
-You can customize the code to target your own IoT application.
+No coding is required to complete the tutorial. You can build on the code to target your own IoT application or evaluate architecture/design choices.
 
 ## Objectives
 
@@ -66,7 +66,7 @@ This will create a directory named `community` in your current directory.
 
 Within the `community` directory, the load testing toolkit (LTK) code is in the `tutorials/load-testing-iot-using-gcp-and-locust` directory.
 
-You will make customizations to the files in this directory.
+Later, you will create a `.env` file in this directory along with a `devicelist.csv` file.
 
 ## Create the GCP projects
 
@@ -87,7 +87,7 @@ Two projects are recommended so that you can see cost information separately for
 
 ## Create the device registry
 
-For the purposes of this tutorial, create a device registry in the `my-ltk-target` project.
+Create a device registry in the `my-ltk-target` project.
 
 From the GCP console, do the following:
 
@@ -144,7 +144,7 @@ This needs to be done once from your local workstation.
 
 ## Prepare the .env file
 
-The GitHub repository includes a `.sample.env` file in the respository root directory. Copy this file to `.env`, and popluate the environment variables.
+The GitHub repository includes a `.sample.env` file in the repository root directory. Copy this file to `.env`, and popluate the environment variables.
 
 |Environment variable|Purpose|Example setting|
 |---|---|---|
@@ -324,7 +324,7 @@ If you make a change to the code in the tutorial, in some cases you might see se
     follows:
 
         kubectl describe pod/locust-master-5d9cd9d647-bhgkl
-        kubecrl describe pod/locust-worker-0
+        kubectl describe pod/locust-worker-0
 
 In other cases, it may be helpful to look in the Stackdriver logs for the driver (GKE container logs) and target (Cloud 
 Function logs, Cloud IoT Device logs).
