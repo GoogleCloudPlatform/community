@@ -117,38 +117,42 @@ Codeship Jet CLI.
 1.  Update the `image` line in the `codeship-service.yml` file with your Google
     Cloud Platform project ID.
 
-        app:
-          build:
-            dockerfile: Dockerfile
-            image: gcr.io/YOUR_PROJECT_IDE/hello-express #update this line using your Google Cloud Platform project ID
-        ...
+    ```yaml
+    app:
+      build:
+        dockerfile: Dockerfile
+        image: gcr.io/YOUR_PROJECT_IDE/hello-express # update this line using your Google Cloud Platform project ID
+    ...
+    ```
 
 1.  Update the `image_name` line in the `codeship_steps.yml` file with your
     Google Cloud Platform project ID.
 
-        - name: build-image
-          service: app
-          command: echo "Build completed"
-        - name: push-image-with-sha
-          service: app
-          type: push
-          image_name: "gcr.io/YOUR_PROJECT_ID/hello-express" #update this line using your Google Cloud Platform project ID
-          image_tag: "{{printf \"%.8s\" .CommitID}}"
-          registry: https://gcr.io
-          dockercfg_service: codeship_gcr_dockercfg
-        - name: tag-as-master
-          service: app
-          type: push
-          tag: master
-          image_name: "gcr.io/YOUR_PROJECT_ID/hello-express" #update this line using your Google Cloud Platform project ID
-          image_tag: "master"
-          registry: https://gcr.io
-          dockercfg_service: codeship_gcr_dockercfg
-        - name: gke-initial-deployment
-          service: codeship_gce_service
-          tag: master
-          command: bin/create-deploy
-        ...
+    ```yaml
+    - name: build-image
+      service: app
+      command: echo "Build completed"
+    - name: push-image-with-sha
+      service: app
+      type: push
+      image_name: "gcr.io/YOUR_PROJECT_ID/hello-express" #update this line using your Google Cloud Platform project ID
+      image_tag: "{{printf \"%.8s\" .CommitID}}"
+      registry: https://gcr.io
+      dockercfg_service: codeship_gcr_dockercfg
+    - name: tag-as-master
+      service: app
+      type: push
+      tag: master
+      image_name: "gcr.io/YOUR_PROJECT_ID/hello-express" #update this line using your Google Cloud Platform project ID
+      image_tag: "master"
+      registry: https://gcr.io
+      dockercfg_service: codeship_gcr_dockercfg
+    - name: gke-initial-deployment
+      service: codeship_gce_service
+      tag: master
+      command: bin/create-deploy
+    ...
+    ```
 
 This pipeline runs each step in series. The `build-image` step instructs Codeship to build the `hello-express` Docker image on the CI server. After Codeship builds the Docker image, the `push-image-with-sha` step will push the image to Google Container Registry using the name `gcr.io/YOUR_PROJECT_ID/hello-express`, adding a tag using the first 8 characters of the commit SHA for every commit to the repository.
 
@@ -207,21 +211,23 @@ can run the encrypt command:
 After you encrypt the `.env` file, you need to update the
 `codeship-services.yml` file to use the encrypted file:
 
-    app:
-      build:
-        dockerfile: Dockerfile
-        image: gcr.io/YOUR_PROJECT_ID/hello-express
-    codeship_gcr_dockercfg:
-      image: codeship/gcr-dockercfg-generator
-      encrypted_env_file: encrypted.env
-      add_docker: true
-    codeship_gce_service:
-      image: codeship/google-cloud-deployment
-      encrypted_env_file: encrypted.env
-      add_docker: true
-      working_dir: /deploy
-      volumes:
-        - ./:/deploy
+```yaml
+app:
+  build:
+    dockerfile: Dockerfile
+    image: gcr.io/YOUR_PROJECT_ID/hello-express
+codeship_gcr_dockercfg:
+  image: codeship/gcr-dockercfg-generator
+  encrypted_env_file: encrypted.env
+  add_docker: true
+codeship_gce_service:
+  image: codeship/google-cloud-deployment
+  encrypted_env_file: encrypted.env
+  add_docker: true
+  working_dir: /deploy
+  volumes:
+    - ./:/deploy
+```
 
 ### Step 6: Commit code to run Codeship build
 
@@ -239,15 +245,17 @@ contain sensitive data. Be sure to exclude them from any commits.
 You also need to update your `codeship-steps.yml` file to use the
 `gke-update-services` step.
 
-    ...
-    #- name: gke-initial-deployment
-    #  service: codeship_gce_service
-    #  tag: master
-    #  command: bin/create-deploy
-    - name: gke-update-services
-      service: codeship_gce_service
-      tag: master
-      command: bin/deploy
+```yaml
+...
+#- name: gke-initial-deployment
+#  service: codeship_gce_service
+#  tag: master
+#  command: bin/create-deploy
+- name: gke-update-services
+  service: codeship_gce_service
+  tag: master
+  command: bin/deploy
+```
 
 After you save these changes, stage all of these files for a commit. Commit
 the changes to the master branch, and push to your remote repository. After the

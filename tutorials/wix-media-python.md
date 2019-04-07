@@ -49,7 +49,7 @@ server, and running the sample:
 
 1. Start the local App Engine development server:
 
-        <path_to_appengine_sdk>/dev_appserver.py examples/gae
+        [path_to_appengine_sdk]/dev_appserver.py examples/gae
 
 1. Launch [http://localhost:8080](http://localhost:8080)
    to view the sample app. The sample demonstrates creating thumbnails using the Wix Media Python SDK.
@@ -81,29 +81,30 @@ This example returns the following image ID:
 The following example is an App Engine application handler. Using Django
 templates, the handler renders an HTML page with two thumbnails:
 
-    class RenderImagesHandler(webapp2.RequestHandler):
-        def get(self):
-            # Image id's can be fetched from datastore ...
-            image_ids = [
-                'ggl-685734655894940532967/images/ae1d86b24054482f8477bfbf2d426936/cat.jpg',
-                'ggl-685734655894940532967/images/c074a4a8ea854ee7b5b893ce2a0c7361/dog.jpg'
+```py
+class RenderImagesHandler(webapp2.RequestHandler):
+    def get(self):
+        # Image id's can be fetched from datastore ...
+        image_ids = [
+            'ggl-685734655894940532967/images/ae1d86b24054482f8477bfbf2d426936/cat.jpg',
+            'ggl-685734655894940532967/images/c074a4a8ea854ee7b5b893ce2a0c7361/dog.jpg'
+        ]
+
+        context = {
+            'thumbnail_urls': [
+                RenderImagesHandler.create_image_thumbnail_url(image_id) for image_id in image_ids
             ]
 
-            context = {
-                'thumbnail_urls': [
-                    RenderImagesHandler.create_image_thumbnail_url(image_id) for image_id in image_ids
-                ]
+        self.response.headers['Content-Type'] = 'text/html'
+        self.response.out.write(render_to_string('example.html', context))
 
-            self.response.headers['Content-Type'] = 'text/html'
-            self.response.out.write(render_to_string('example.html', context))
+    @staticmethod
+    def create_image_thumbnail_url(image_id):
+        client = media.Client()
+        image  = client.get_image_from_id(image_id)
 
-        @staticmethod
-        def create_image_thumbnail_url(image_id):
-            client = media.Client()
-            image  = client.get_image_from_id(image_id)
-
-            return image.srz(width=120, height=120).get_url()
-
+        return image.srz(width=120, height=120).get_url()
+```
 
 ## Additional resources
 

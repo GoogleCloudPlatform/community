@@ -1,5 +1,5 @@
 ---
-title: How to Set Up VPN between Cisco ASR and Cloud VPN
+title: How to set up VPN between Cisco ASR and Cloud VPN
 description: Learn how to build site-to-site IPSEC VPN between Cisco ASR and Cloud VPN.
 author: ashishverm
 tags: Compute Engine, Cloud VPN, Cisco ASR
@@ -51,18 +51,18 @@ guide.
 This guide is not meant to be a comprehensive setup overview for the device
 referenced, but rather is only intended to assist in the creation of IPsec
 connectivity to Google Cloud Platform (GCP) VPC networks. The following is a
-high level overview of the configuration process which will be covered:
+high-level overview of the configuration process which will be covered:
 
 * Configure the base network configurations to establish L3 connectivity
 * Set up the Base VPN configuration, including:
-  * Configure IKEv2 Proposal and Policy
-  * Configure IKEv2 Keyring
-  * Configure IKEv2 profile
-  * Configure IPsec Security Association (SA)
-  * Configure IPsec transform set
-  * Configure IPsec profile
-  * Configure IPsec Static Virtual Tunnel Interface (SVTI)
-  * Configure Static or Dynamic Routing Protocol to route traffic into the IPsec tunnel
+    * Configure IKEv2 Proposal and Policy
+    * Configure IKEv2 Keyring
+    * Configure IKEv2 profile
+    * Configure IPsec Security Association (SA)
+    * Configure IPsec transform set
+    * Configure IPsec profile
+    * Configure IPsec Static Virtual Tunnel Interface (SVTI)
+    * Configure Static or Dynamic Routing Protocol to route traffic into the IPsec tunnel
 * Testing the IPsec connection
 * Advanced VPN configurations
 
@@ -187,7 +187,7 @@ to establish BGP sessions between the 2 peers.
       * **Source filter:** IP ranges.
       * **Source IP ranges:** The peer ranges to accept from the peer VPN gateway.
       * **Allowed protocols and ports:** tcp;udp;icmp
-    * Click **Create**.
+    *  Click **Create**.
 
 #### Using the `gcloud` command-line tool
 
@@ -808,7 +808,7 @@ it can support up to 16 equal cost paths load balancing.
      bgp log-neighbor-changes
      neighbor GCP peer-group
      neighbor GCP remote-as 65002
-     neighbor GCP timers <b>20 60 60
+     neighbor GCP timers 20 60 60
      neighbor 169.254.0.1 peer-group GCP
      neighbor 169.254.0.9 peer-group GCP
     !

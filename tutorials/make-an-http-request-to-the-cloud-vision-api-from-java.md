@@ -67,9 +67,11 @@ Files. Check the box to share the image publicly.
 Once you've done the preliminaries, you can check your work by running the
 following `curl` command:
 
-    curl -X POST -H "Content-Type: application/json" \
-      -d '{"requests":  [{ "features":  [ {"type": "LABEL_DETECTION"}], "image": {"source": { "gcsImageUri": "gs://YOUR_BUCKET_NAME/YOUR_FILE_NAME"}}}]}' \
-      https://vision.googleapis.com/v1/images:annotate?key=YOUR_API_KEY
+```sh
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"requests":  [{ "features":  [ {"type": "LABEL_DETECTION"}], "image": {"source": { "gcsImageUri": "gs://YOUR_BUCKET_NAME/YOUR_FILE_NAME"}}}]}' \
+  https://vision.googleapis.com/v1/images:annotate?key=YOUR_API_KEY
+```
 
 where:
 
@@ -92,46 +94,50 @@ Read more about [annotation features][features].
 The following command performs label detection on a picture of kittens (you
 still need to enter your own API key):
 
-    curl -X POST -H "Content-Type: application/json" \
-      -d '{"requests":  [{ "features":  [ {"type": "LABEL_DETECTION"}], "image": {"source": { "gcsImageUri": "gs://vision-sample-images/4_Kittens.jpg"}}}]}' \
-      https://vision.googleapis.com/v1/images:annotate?key=YOUR_API_KEY
+```sh
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"requests":  [{ "features":  [ {"type": "LABEL_DETECTION"}], "image": {"source": { "gcsImageUri": "gs://vision-sample-images/4_Kittens.jpg"}}}]}' \
+  https://vision.googleapis.com/v1/images:annotate?key=YOUR_API_KEY
+```
 
 This should give you a response similar to the following:
 
+```json
+{
+  "responses": [
     {
-      "responses": [
+      "labelAnnotations": [
         {
-          "labelAnnotations": [
-            {
-              "mid": "/m/01yrx",
-              "description": "cat",
-              "score": 0.994864
-            },
-            {
-              "mid": "/m/04rky",
-              "description": "mammal",
+          "mid": "/m/01yrx",
+          "description": "cat",
+          "score": 0.994864
+        },
+        {
+          "mid": "/m/04rky",
+          "description": "mammal",
 
-              "score": 0.94777352
-            },
-            {
-              "mid": "/m/09686",
-              "description": "vertebrate",
-              "score": 0.93461305
-            },
-            {
-              "mid": "/m/0307l",
-              "description": "cat like mammal",
-              "score": 0.85113752
-            },
-            {
-              "mid": "/m/0k8hs",
-              "description": "domestic long haired cat",
-              "score": 0.84654677
-            }
-          ]
+          "score": 0.94777352
+        },
+        {
+          "mid": "/m/09686",
+          "description": "vertebrate",
+          "score": 0.93461305
+        },
+        {
+          "mid": "/m/0307l",
+          "description": "cat like mammal",
+          "score": 0.85113752
+        },
+        {
+          "mid": "/m/0k8hs",
+          "description": "domestic long haired cat",
+          "score": 0.84654677
         }
       ]
     }
+  ]
+}
+```
 
 (Image from [Wikimedia](https://commons.wikimedia.org/wiki/File:4_Kittens.jpg).)
 
@@ -146,58 +152,72 @@ core Java libraries.
 
 First, create constants for the API key and URL:
 
-    private static final String TARGET_URL =
-                   "https://vision.googleapis.com/v1/images:annotate?";
-    private static final String API_KEY =
-                   "key=YOUR_API_KEY";
+```java
+private static final String TARGET_URL =
+                "https://vision.googleapis.com/v1/images:annotate?";
+private static final String API_KEY =
+                "key=YOUR_API_KEY";
+```
 
 Next, create a URL object with the target URL and create a connection to that
 URL:
 
-    URL serverUrl = new URL(TARGET_URL + API_KEY);
-    URLConnection urlConnection = serverUrl.openConnection();
-    HttpURLConnection httpConnection = (HttpURLConnection)urlConnection;
+```java
+URL serverUrl = new URL(TARGET_URL + API_KEY);
+URLConnection urlConnection = serverUrl.openConnection();
+HttpURLConnection httpConnection = (HttpURLConnection)urlConnection;
+```
 
 Set the method and Content-Type of the connection:
 
-    httpConnection.setRequestMethod("POST");
-    httpConnection.setRequestProperty("Content-Type", "application/json");
+```java
+httpConnection.setRequestMethod("POST");
+httpConnection.setRequestProperty("Content-Type", "application/json");
+```
 
 And then prepare the connection to be written to to enable creation of the data
 portion of the request:
 
-    httpConnection.setDoOutput(true);
+```java
+httpConnection.setDoOutput(true);
+```
 
 Create a writer and use it to write the data portion of the request:
 
-    BufferedWriter httpRequestBodyWriter = new BufferedWriter(new
-                       OutputStreamWriter(httpConnection.getOutputStream()));
-    httpRequestBodyWriter.write
-        ("{\"requests\":  [{ \"features\":  [ {\"type\": \"LABEL_DETECTION\""
-        +"}], \"image\": {\"source\": { \"gcsImageUri\":"
-        +" \"gs://vision-sample-images/4_Kittens.jpg\"}}}]}");
-    httpRequestBodyWriter.close();
+```java
+BufferedWriter httpRequestBodyWriter = new BufferedWriter(new
+                    OutputStreamWriter(httpConnection.getOutputStream()));
+httpRequestBodyWriter.write
+    ("{\"requests\":  [{ \"features\":  [ {\"type\": \"LABEL_DETECTION\""
+    +"}], \"image\": {\"source\": { \"gcsImageUri\":"
+    +" \"gs://vision-sample-images/4_Kittens.jpg\"}}}]}");
+httpRequestBodyWriter.close();
+```
 
 Finally, make the request and get the response:
 
-    String response = httpConnection.getResponseMessage();
+```java
+String response = httpConnection.getResponseMessage();
+```
 
 The returned data is sent in an input stream. Print the result and build a
 string containing it.
 
-    if (httpConnection.getInputStream() == null) {
-       System.out.println("No stream");
-       return;
-    }
+```java
+if (httpConnection.getInputStream() == null) {
+    System.out.println("No stream");
+    return;
+}
 
-    Scanner httpResponseScanner = new Scanner (httpConnection.getInputStream());
-    String resp = "";
-    while (httpResponseScanner.hasNext()) {
-       String line = httpResponseScanner.nextLine();
-       resp += line;
-       System.out.println(line);  //  alternatively, print the line of response
-    }
-    httpResponseScanner.close();
+Scanner httpResponseScanner = new Scanner (httpConnection.getInputStream());
+String resp = "";
+while (httpResponseScanner.hasNext()) {
+    String line = httpResponseScanner.nextLine();
+    resp += line;
+    System.out.println(line);  //  alternatively, print the line of response
+}
+httpResponseScanner.close();
+```
 
 ## Summary
 

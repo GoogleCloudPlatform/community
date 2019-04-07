@@ -10,12 +10,12 @@ Files added to the [`tutorials/`][folder] will appear at
 
 ## Contributing
 
-Found out how you can contribute at
+Find out how you can contribute at
 [cloud.google.com/community/tutorials/write][contribute].
 
 * [Browse tutorials][tutorials]
 * [Request a tutorial][request]
-* [Submit a tutorial][write] (beta)
+* [Submit a tutorial][write]
 
 ## License
 

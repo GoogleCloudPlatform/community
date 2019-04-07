@@ -37,8 +37,10 @@ Platform.
 
 1.  Create an `app.yaml` file with the following content:
 
-        runtime: nodejs
-        env: flex
+    ```yaml
+    runtime: nodejs
+    env: flex
+    ```
 
 1.  Run the following command to deploy your app:
 

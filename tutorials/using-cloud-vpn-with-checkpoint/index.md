@@ -43,8 +43,9 @@ To use a Check Point security gateway with Cloud VPN make sure the following pre
 ## IPsec parameters
 
 The following parameters and values are used in the Gateway’s IPSec configuration for the
-purpose of this guide. Cloud VPN supports extensive [list](https://cloud.google.com/vpn/docs/concepts/advanced#supported_ike_ciphers) of
-ciphers that can be used per your security policies.
+purpose of this guide. Cloud VPN supports extensive
+[list](https://cloud.google.com/vpn/docs/concepts/supported-ike-ciphers)
+of ciphers that can be used per your security policies.
 
 |Parameter | Value|
 --------- |  -----
@@ -62,9 +63,10 @@ in this guide.
 |Phase-1|Encryption|`aes-128` (IKEv1 or `aes-256`(IKEv2)|
 |       |Integrity|`sha-1` (IKEv1) or `sha-256` (IKEv2)|
 |       |Diffie-Helman|`Group2` (IKEv1) or `Group14` (IKEv2)|
-|       |Phase1 lifetime| `36,600 seconds` (IKEv1) `36,000 seconds` (IKEv2) |
+|       |Phase1 lifetime| `36,600 seconds` (IKEv1) `36,000 seconds` (IKEv2)|
 |Phase-2|Encryption|`aes-128`(IKEv1) or `aes-256`(IKEv2)|
-|       |Integrity|`sha-1`|
+|       |Integrity|`sha-1` (IKEv1) or `sha-256` (IKEv2)|
+|       |Phase2 lifetime| `10,800 seconds` (IKEv1) `10,800 seconds` (IKEv2)|
 
 # Configuring policy-based IPsec VPN
 
@@ -349,8 +351,8 @@ Run the commands below replacing variables surrounded by { } with your values:
     set bgp external remote-as { GCP-ASN } on
     set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } on
     set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } as-override on
-    set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } holdtime 30
-    set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } keepalive 10
+    set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } holdtime 60
+    set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } keepalive 20
     set inbound-route- filter bgp-policy 512 based-on- as as { GCP-ASN }  on
     set inbound-route- filter bgp-policy 512 accept-all- ipv4
     set route-redistribution to bgp-as { GCP-ASN }  from interface {Redistributed from specific interface } on
@@ -361,8 +363,8 @@ Example:
     set bgp external remote-as 65000 on
     set bgp external remote-as 65000 peer 169.254.0.1 on
     set bgp external remote-as 65000 peer 169.254.0.1 as-override on
-    set bgp external remote-as 65000 peer 169.254.0.1 holdtime 30
-    set bgp external remote-as 65000 peer 169.254.0.1 keepalive 10
+    set bgp external remote-as 65000 peer 169.254.0.1 holdtime 60
+    set bgp external remote-as 65000 peer 169.254.0.1 keepalive 20
     set inbound-route- filter bgp-policy 512 based-on- as as 65000 on
     set inbound-route- filter bgp-policy 512 accept-all- ipv4
     set route-redistribution to bgp-as 65000 from interface eth1 on
