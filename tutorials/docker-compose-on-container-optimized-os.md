@@ -72,7 +72,16 @@ image](https://hub.docker.com/r/docker/compose/).
     Compose](https://hub.docker.com/r/docker/compose/tags/) to use the latest
     version.
 
-        docker run docker/compose:1.13.0 version
+        docker run docker/compose:1.24.0 version
+
+1.  Ensure your location is a writable directory.
+
+    Many directories are [mounted as read-only in the Container-Optimized
+    OS](/container-optimized-os/docs/concepts/disks-and-filesystem). Change
+    to a writable directory such as your home directory.
+
+        $ pwd
+        /home/username/dockercloud-hello-world
 
 1.  Run the Docker Compose command to run the sample code.
 
@@ -81,13 +90,13 @@ image](https://hub.docker.com/r/docker/compose/).
     option.
 
     To make the current directory available to the container, use the `-v
-    "$PWD:/rootfs/$PWD"` option to mount it as a volume and the `-w="/rootfs/$PWD"` to
+    "$PWD:$PWD"` option to mount it as a volume and the `-w="$PWD"` to
     change the working directory.
 
         docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -v "$PWD:/rootfs/$PWD" \
-            -w="/rootfs/$PWD" \
+            -v "$PWD:$PWD" \
+            -w="$PWD" \
             docker/compose:1.13.0 up
 
 1.  With the `docker run` command still running, open the [Google Cloud
@@ -112,8 +121,8 @@ create an alias for it.
 
         echo alias docker-compose="'"'docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -v "$PWD:/rootfs/$PWD" \
-            -w="/rootfs/$PWD" \
+            -v "$PWD:$PWD" \
+            -w="$PWD" \
             docker/compose:1.13.0'"'" >> ~/.bashrc
 
 1.  Reload the Bash configuration.
