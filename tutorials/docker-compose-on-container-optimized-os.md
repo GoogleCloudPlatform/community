@@ -97,7 +97,7 @@ image](https://hub.docker.com/r/docker/compose/).
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v "$PWD:$PWD" \
             -w="$PWD" \
-            docker/compose:1.13.0 up
+            docker/compose:1.24.0 up
 
 1.  With the `docker run` command still running, open the [Google Cloud
     Platform Console instances
@@ -111,7 +111,7 @@ image](https://hub.docker.com/r/docker/compose/).
 
 ## Making an alias to Docker Compose
 
-The `docker run ... docker/compose:1.13.0 up` command is equivalent to running
+The `docker run ... docker/compose:1.24.0 up` command is equivalent to running
 the `docker-compose up` command on systems where Docker Compose is installed by
 the usual method. So that you don't have to remember or type this long command,
 create an alias for it.
@@ -123,7 +123,7 @@ create an alias for it.
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v "$PWD:$PWD" \
             -w="$PWD" \
-            docker/compose:1.13.0'"'" >> ~/.bashrc
+            docker/compose:1.24.0'"'" >> ~/.bashrc
 
 1.  Reload the Bash configuration.
 
