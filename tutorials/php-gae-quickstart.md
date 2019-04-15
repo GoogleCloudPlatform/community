@@ -167,7 +167,7 @@ Try visiting your deployed application.
 You can check in on your app by monitoring its status on the App Engine
 dashboard.
 
-Open the [**Navigation menu**][spotlight-console-menu] on the left side of the console.
+Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console.
 
 Then, select the **App Engine** section.
 

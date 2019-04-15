@@ -6,13 +6,13 @@ tags: kubernetes, cos, security, antivirus, av, clam, pci, dss, virus
 date_published: 2019-03-21
 ---
 
-This example provides a Clam antivirus Docker image that performs regularly scheduled scans.
+[This example](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/gcp-cos-clamav) provides a Clam antivirus Docker image that performs regularly scheduled scans.
 
 This example is designed to be run on Google Container-Optimized OS, but it should work with most other Docker servers.
 
 ClamAV is an open source antivirus engine for detecting trojans, viruses, malware, and other malicious threats.
 
-# Basic usage
+## Basic usage
 
 1. Build your Docker image.
 1. Deploy that image to your Kubernetes cluster.
