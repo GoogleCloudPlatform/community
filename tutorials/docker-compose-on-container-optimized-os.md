@@ -74,7 +74,7 @@ image](https://hub.docker.com/r/docker/compose/).
 
         docker run docker/compose:1.24.0 version
 
-1.  Ensure your location is a writable directory.
+1.  Ensure that your location is a writable directory.
 
     Many directories are [mounted as read-only in the Container-Optimized
     OS](/container-optimized-os/docs/concepts/disks-and-filesystem). Change
