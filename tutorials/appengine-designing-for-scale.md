@@ -375,11 +375,11 @@ this situation.
 
 * Five-part series on effectively [scaling your App Engine-based applications][scaling_overview]
 
-* [App Engine Load Testing and Performance Tips][appengine_load] (video)
+* [App Engine Load Testing and Performance Tips][appengine_load] (YouTube video)
 
 * [Building scalable applications with Google App Engine][building_apps]
   presentation from Google I/O 2008.
 
 [scaling_overview]: https://cloud.google.com/appengine/articles/scaling/overview
-[appengine_load]: https://cloud.google.com/live/shows/6969158
+[appengine_load]: https://www.youtube.com/watch?v=T_BQevqRp44
 [building_apps]: https://sites.google.com/site/io/building-scalable-web-applications-with-google-app-engine
