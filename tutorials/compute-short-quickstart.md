@@ -1,6 +1,21 @@
+---
+title: Compute Engine Quickstart - Linux VM
+description: Create a Linux virtual machine in Compute Engine.
+author: jscud
+tags: Compute Engine
+date_published: 2019-04-12
+---
+
 # Compute Engine Quickstart
 
 <walkthrough-tutorial-url url="https://cloud.google.com/compute/docs/quickstart-linux"></walkthrough-tutorial-url>
+
+<walkthrough-alt>
+Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=compute_short_quickstart)
+
+</walkthrough-alt>
 
 ## Introduction
 
@@ -65,7 +80,8 @@ command line tool for the console.
 
 Open Cloud Shell by clicking the
 <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar
+in the upper-right corner of the console.
 
 ### Wait for the instance creation to finish
 
@@ -83,6 +99,8 @@ name of the instance you created.
 ```bash
 gcloud compute --project "{{project-id}}" ssh --zone <vm-zone> <vm-name>
 ```
+
+It may take several minutes for the SSH key to propagate.
 
 ### Run a simple web server
 

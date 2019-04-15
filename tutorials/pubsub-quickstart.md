@@ -1,8 +1,23 @@
+---
+title: Introduction to Cloud Pub/Sub
+description: Learn to use Cloud Pub/Sub to send and receive real-time messages.
+author: jscud
+tags: Pub/Sub
+date_published: 2019-04-15
+---
+
 # Introduction to Cloud Pub/Sub
 
 <walkthrough-tutorial-url url="https://cloud.google.com/pubsub/quickstart-console"></walkthrough-tutorial-url>
 
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
+
+<walkthrough-alt>
+Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=pubsub_quickstart)
+
+</walkthrough-alt>
 
 ## Introduction
 

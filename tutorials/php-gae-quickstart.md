@@ -62,9 +62,7 @@ Cloud Shell to deploy our app.
 
 ### Open Cloud Shell
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ### Clone the sample code
 
@@ -169,7 +167,7 @@ Try visiting your deployed application.
 You can check in on your app by monitoring its status on the App Engine
 dashboard.
 
-Open the [menu][spotlight-console-menu] on the left side of the console.
+Open the [**Navigation menu**][spotlight-console-menu] on the left side of the console.
 
 Then, select the **App Engine** section.
 

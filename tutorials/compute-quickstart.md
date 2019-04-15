@@ -1,8 +1,23 @@
+---
+title: Compute Engine Quickstart - To-Do App
+description: Use Compute Engine to create a two-tier application.
+author: jscud
+tags: Compute Engine
+date_published: 2019-04-12
+---
+
 # Compute Engine Quickstart
 
 ## Build a to-do app with MongoDB
 
 <walkthrough-tutorial-duration duration="15"></walkthrough-tutorial-duration>
+
+<walkthrough-alt>
+Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=compute_quickstart)
+
+</walkthrough-alt>
 
 In this quickstart, you'll use Compute Engine to create a two-tier application.
 The frontend VM runs a Node.js to-do web app, and the backend VM runs MongoDB.
@@ -78,7 +93,8 @@ command line tool for the console.
 
 Open Cloud Shell by clicking the
 <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar
+in the upper-right corner of the console.
 
 ### Wait for the instance creation to finish
 
@@ -98,6 +114,8 @@ name of the instance you created.
 ```bash
 gcloud compute --project "{{project-id}}" ssh --zone <backend-zone> <backend-name>
 ```
+
+It may take several minutes for the SSH key to propagate.
 
 ### Install the backend database
 

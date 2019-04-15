@@ -1,4 +1,19 @@
+---
+title: Cloud Storage Quickstart
+description: Quickly learn how to store objects in Cloud Storage.
+author: jscud
+tags: Cloud Storage
+date_published: 2019-04-15
+---
+
 # Cloud Storage Quickstart
+
+<walkthrough-alt>
+Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=storage_quickstart)
+
+</walkthrough-alt>
 
 ## Welcome to Google Cloud Storage!
 

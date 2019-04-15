@@ -1,8 +1,23 @@
+---
+title: Kubernetes - Create a Guestbook with Redis and PHP
+description: Use Google Kubernetes Engine to deploy a Guestbook application.
+author: jscud
+tags: Kubernetes
+date_published: 2019-04-15
+---
+
 # Create a Guestbook with Redis and PHP
 
 <walkthrough-tutorial-url url="https://cloud.google.com/kubernetes-engine/docs/tutorials/guestbook"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "https://github.com/kubernetes/examples" %} -->
 <!-- {% setvar repo_dir "examples/guestbook" %} -->
+
+<walkthrough-alt>
+Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=gke_guestbook)
+
+</walkthrough-alt>
 
 ## Introduction
 

@@ -1,4 +1,19 @@
+---
+title: Cloud SQL Hello World
+description: Set up a MySQL database in GCP.
+author: jscud
+tags: Cloud SQL
+date_published: 2019-04-15
+---
+
 # Cloud SQL 'Hello World' Tutorial
+
+<walkthrough-alt>
+Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=sql_mysql_quickstart)
+
+</walkthrough-alt>
 
 ## Overview
 

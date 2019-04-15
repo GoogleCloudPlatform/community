@@ -1,3 +1,11 @@
+---
+title: Dataflow Word Count Tutorial using Java
+description: Learn the Cloud Dataflow service by running an example in Java.
+author: jscud
+tags: Dataflow
+date_published: 2019-04-12
+---
+
 # Dataflow Word Count Tutorial
 
 <walkthrough-tutorial-url url="https://cloud.google.com/dataflow/docs/quickstarts/quickstart-java-maven"></walkthrough-tutorial-url>
@@ -5,6 +13,13 @@
 <!-- {% setvar job_name "dataflow-intro" %} -->
 <!-- {% setvar project_id_no_domain "<your-project>" %} -->
 <!-- {% setvar project_id "<your-project>" %} -->
+
+<walkthrough-alt>
+Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=java_dataflow_quickstart)
+
+</walkthrough-alt>
 
 ## Introduction
 
@@ -31,6 +46,9 @@ collect all the related resources for a single application in one place.
 To use Dataflow, turn on the Cloud Dataflow APIs and open the Cloud Shell.
 
 ### Turn on Google Cloud APIs
+Dataflow processes data in many GCP data stores and messaging services,
+including BigQuery, Google Cloud Storage, and Cloud Pub/Sub. Enable the APIs for
+these services to take advantage of Dataflow's data processing capabilities.
 
 <walkthrough-enable-apis apis=
   "compute.googleapis.com,dataflow,cloudresourcemanager.googleapis.com,logging,storage_component,storage_api,bigquery,pubsub">
@@ -47,15 +65,19 @@ Open Cloud Shell by clicking the
 
 ## Install Cloud Dataflow samples on Cloud Shell
 
-To use the Apache Beam SDK for Java, your development environment will
-require Java, the Google Cloud SDK, the Apache Beam SDK for Java, and Apache
-Maven for managing SDK dependencies. This tutorial uses a Cloud Shell that has
-Java, the Google Cloud SDK, and Maven already installed.
+Dataflow runs jobs written using the Apache Beam SDK. To submit jobs to the
+Dataflow Service using Java, your development environment will require Java, the
+Google Cloud SDK, the Apache Beam SDK for Java, and Apache Maven for managing
+SDK dependencies. This tutorial uses a Cloud Shell that has Java, the Google
+Cloud SDK, and Maven already installed.
 
 Alternatively, you can do this tutorial [on your local
 machine.][dataflow-java-tutorial]
 
 ### Download the samples and the Apache Beam SDK for Java using the Maven command
+
+In order to write a Java Dataflow job, you will first need to download the SDK
+from the Maven repository.
 
 When you run this command, Maven will create a project structure and config file
 for downloading the appropriate version of the Apache Beam SDK.
@@ -146,8 +168,6 @@ created earlier, and Compute Engine instances are being created. Cloud Dataflow
 will split up your input file such that your data can be processed by multiple
 machines in parallel.
 
-Note: When you see the "Job finished" message, you can close Cloud Shell.
-
 If you wish to clean up the Maven project you generated, run `cd .. && rm -R
 {{directory}}` in the Cloud Shell to delete the directory.
 
@@ -157,6 +177,8 @@ Check the progress of your pipeline on the Cloud Dataflow Monitoring UI page.
 
 ### Go to the Cloud Dataflow page
 
+If you haven't already, navigate to the Cloud Dataflow Monitoring UI page.
+
 Open the [menu][spotlight-console-menu] on the left side of the console.
 
 Then, select the **Dataflow** section.
@@ -165,7 +187,7 @@ Then, select the **Dataflow** section.
 
 ### Select your job
 
-Click your job to view its details.
+Click on the job name "{{job_name}}" to view its details.
 
 ### Explore pipeline details and metrics
 
@@ -176,6 +198,8 @@ the pipeline to view its metrics.
 As your job finishes, you'll see the job status change, and the Compute Engine
 instances used by the job will stop automatically.
 
+Note: When you see the "Job finished" message, you can close Cloud Shell.
+
 ## View your output
 
 Now that your job has run, you can explore the output files in Cloud Storage.
@@ -184,17 +208,23 @@ Now that your job has run, you can explore the output files in Cloud Storage.
 
 Open the [menu][spotlight-console-menu] on the left side of the console.
 
-Then, select the **Storage** section.
+Then, select the **Storage** section, and click on **Browser**. You can verify
+that you are on the correct screen if you can see your previously created GCS
+bucket "{{project_id_no_domain}}".
 
 <walkthrough-menu-navigation sectionId=STORAGE_SECTION></walkthrough-menu-navigation>
 
 ### Go to the storage bucket
 
 In the list of buckets, select the bucket you created earlier. If you used the
-suggested name, it will be named `{{project_id}}`.
+suggested name, it will be named `{{project_id_no_domain}}`.
 
-The bucket contains a staging folder and output folders. Dataflow saves the
-output in shards, so your bucket will contain several output files.
+The bucket contains a "results" folder and "temp" folders. Dataflow saves the
+output in shards, so your bucket will contain several output files in the
+"results" folder.
+
+The "temp" folder is for staging binaries needed by the workers, and for
+temporary files needed by the job execution.
 
 ## Clean up
 

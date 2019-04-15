@@ -1,3 +1,11 @@
+---
+title: Cloud Vision API
+description: Try out image labeling in a basic Vision API application.
+author: jscud
+tags: Cloud Vision
+date_published: 2019-04-15
+---
+
 # Cloud Vision API
 
 <walkthrough-tutorial-url url="https://cloud.google.com/vision/docs/label-tutorial"></walkthrough-tutorial-url>
@@ -5,6 +13,13 @@
 <!-- {% setvar repo_name "python-docs-samples" %} -->
 <!-- {% setvar project_id "<your-project>" %} -->
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
+
+<walkthrough-alt>
+Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=python_vision_quickstart)
+
+</walkthrough-alt>
 
 ## Introduction
 

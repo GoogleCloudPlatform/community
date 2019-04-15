@@ -1,3 +1,11 @@
+---
+title: Introduction to Cloud IoT Core
+description: Create a Cloud IoT Core device registry, add a device, and connect.
+author: jscud
+tags: Cloud IoT
+date_published: 2019-04-15
+---
+
 # Introduction to Cloud IoT Core
 
 <walkthrough-test-start-page url="/start?tutorial=iot_core_quickstart"/>
@@ -7,6 +15,13 @@
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/nodejs-docs-samples.git" %} -->
 
 <!-- {% setvar repo_name "nodejs-docs-samples" %} -->
+
+<walkthrough-alt>
+Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=iot_core_quickstart)
+
+</walkthrough-alt>
 
 ## Introduction
 

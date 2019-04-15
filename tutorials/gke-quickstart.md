@@ -1,9 +1,24 @@
+---
+title: Kubernetes Engine Quickstart
+description: Deploy a prebuilt Docker container image using GKE.
+author: jscud
+tags: Kubernetes
+date_published: 2019-04-12
+---
+
 # Google Kubernetes Engine Quickstart
 
 <walkthrough-tutorial-url url="https://cloud.google.com/kubernetes-engine/docs/quickstart"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/kubernetes-engine-samples" %} -->
 <!-- {% setvar repo_dir "kubernetes-engine-samples/hello-app" %} -->
 <!-- {% setvar project_id "<your-project>" %} -->
+
+<walkthrough-alt>
+Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=gke_quickstart)
+
+</walkthrough-alt>
 
 ## Introduction
 
