@@ -8,7 +8,7 @@ date_published: 2019-04-15
 
 ## Introduction
 
-[Pinging](https://en.wikipedia.org/wiki/Ping_(networking_utility) is a common method of testing the reachability of a host (like a virtual machine) from an external network.
+[Pinging](https://en.wikipedia.org/wiki/Ping_(networking_utility)) is a common method of testing the reachability of a host (like a virtual machine) from an external network.
 
 Sending a 'ping' to a host entails sending an ICMP packet to the target and waiting for a response.  A ping will also provide a measure of the round-trip time between a client and host.
 
