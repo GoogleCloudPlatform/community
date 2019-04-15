@@ -22,11 +22,11 @@ To locate a domain name (i.e. or hostname) that you've configured, open [Google 
 
 1.  Navigate to Google Cloud DNS by clicking main navigation button in the top left.
 
-![Main Navigation](https://storage.googleapis.com/gcp-community/tutorials/ping-a-google-compute-engine-virtual-machine/console_nav.png)
+![Main Navigation](console_nav.png)
 
 2.  Under Network Services, select **Cloud DNS**.
 
-![Cloud DNS](https://storage.googleapis.com/gcp-community/tutorials/ping-a-google-compute-engine-virtual-machine/cloud_dns.png)
+![Cloud DNS](cloud_dns.png)
 
 3.  Select a zone that you have previously configured.  The zone's DNS name can be used for pinging/DNS resolution.
 
@@ -36,7 +36,7 @@ To locate the external IP address of a virtual machine, open [Google Compute Eng
 
 1.  Navigate to Google Compute Engine by clicking main navigation button in the top left.
 
-![Main Navigation](https://storage.googleapis.com/gcp-community/tutorials/ping-a-google-compute-engine-virtual-machine/console_nav.png)
+![Main Navigation](console_nav.png)
 
 2.  Looking at the table of virtual machine names, identify the virtual machine you want to ping.  Copy the IP address listed under the 'External IP' column.
 
@@ -46,15 +46,15 @@ All Microsoft Windows clients (e.g. a desktop running Windows 10) allow pinging 
 
 1.  Click the **Start** menu at the bottom-left of your screen.
 
-![Start Menu](https://storage.googleapis.com/gcp-community/tutorials/ping-a-google-compute-engine-virtual-machine/windows_start.png)
+![Start Menu](windows_start.png)
 
 2.  Type **cmd** into the field and press **Enter**
 
-![Command Prompt](https://storage.googleapis.com/gcp-community/tutorials/ping-a-google-compute-engine-virtual-machine/windows_prompt.png)
+![Command Prompt](windows_prompt.png)
 
 3.  Once the **Command Prompt** (pictured below) opens, type `ping example.com`, replacing *example.com* with the domain name you configured.  Then, press **Enter**
 
-![Command](https://storage.googleapis.com/gcp-community/tutorials/ping-a-google-compute-engine-virtual-machine/windows_cmd.png)
+![Command](windows_cmd.png)
 
 The IP address associated with the domain name you enter will be written in brackets.
 
@@ -66,15 +66,15 @@ MacOS clients (e.g. iMacs, Macbooks) allow pinging via the **Terminal**.  To pin
 
 1.  Open **Finder** and navigate to your **Applications** folder.
 
-![Finder](https://storage.googleapis.com/gcp-community/tutorials/ping-a-google-compute-engine-virtual-machine/mac_finder.png)
+![Finder](mac_finder.png)
 
 2.  Open the **Utilities** folder, and double click the **Terminal** application
 
-![Blank Terminal](https://storage.googleapis.com/gcp-community/tutorials/ping-a-google-compute-engine-virtual-machine/mac_terminal_blank.png)
+![Blank Terminal](mac_terminal_blank.png)
 
 4.  Once the **Terminal** (pictured below) opens, type `ping -c 10 example.com`, replacing *example.com* with the domain name you configured.  Then, press **Enter**
 
-![Terminal](https://storage.googleapis.com/gcp-community/tutorials/ping-a-google-compute-engine-virtual-machine/mac_terminal_example.png)
+![Terminal](mac_terminal_example.png)
 
 The IP address associated with the domain name you enter will be written in parentheses.
 
