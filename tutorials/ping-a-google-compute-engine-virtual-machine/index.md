@@ -60,9 +60,9 @@ The IP address associated with the domain name you enter will be written in brac
 
 To ping an IP address instead, replace the domain name in the command with the IP address of interest, e.g. `ping 192.168.0.1`.
 
-## Pinging a domain name (from a MacOS client)
+## Pinging a domain name (from a macOS client)
 
-MacOS clients (e.g. iMacs, Macbooks) allow pinging via the **Terminal**.  To ping a **hostname** (e.g. *example.com*), perform the following steps:
+macOS clients (e.g. iMac, MacBook) allow pinging via the **Terminal**.  To ping a **hostname** (e.g. *example.com*), perform the following steps:
 
 1.  Open **Finder** and navigate to your **Applications** folder.
 
