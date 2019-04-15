@@ -1,9 +1,9 @@
 ---
 title: App Engine Quickstart using PHP
-description: Learn how to deploy a PHP sample app to Google App Engine.
+description: Learn how to deploy a PHP sample app to App Engine.
 author: jscud
 tags: App Engine
-date_published: 2019-03-08
+date_published: 2019-03-22
 ---
 
 # App Engine Quickstart
@@ -15,15 +15,15 @@ date_published: 2019-03-08
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Cloud Console:
+Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
 
-[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=php_gae_quickstart)
+[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=php_gae_quickstart)
 
 </walkthrough-alt>
 
 ## Introduction
 
-This tutorial shows you how to deploy a sample application to Google App Engine
+This tutorial shows you how to deploy a sample application to App Engine
 using the `gcloud` command.
 
 Here are the steps you will be taking.
@@ -35,8 +35,8 @@ Here are the steps you will be taking.
 
 *   **Build and run your "Hello, world!" app**
 
-    You will learn how to run your app using Google Cloud Shell, right in your
-    browser. At the end you'll deploy your app to the web using the `gcloud`
+    You will learn how to run your app using Cloud Shell, right in your
+    browser. At the end, you'll deploy your app to the web using the `gcloud`
     command.
 
 *   **After the tutorial...**
@@ -46,21 +46,21 @@ Here are the steps you will be taking.
 
 ## Project setup
 
-To deploy an application you need to first create a project.
+To deploy an application, you need to first create a project.
 
-Google Cloud Platform organizes resources into projects. This allows you to
-collect all the related resources for a single application in one place.
+GCP organizes resources into projects. This allows you to
+collect all of the related resources for a single application in one place.
 
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
 <walkthrough-project-setup></walkthrough-project-setup>
 
-## Using Google Cloud Shell
+## Using Cloud Shell
 
-Cloud Shell is a built-in command line tool for the console. We're going to use
+Cloud Shell is a built-in command-line tool for the console. We're going to use
 Cloud Shell to deploy our app.
 
-### Open Google Cloud Shell
+### Open Cloud Shell
 
 Open Cloud Shell by clicking the
 <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
@@ -98,7 +98,7 @@ cat helloworld.php
 
 ### Exploring your configuration
 
-Google App Engine uses YAML files to specify a deployment's configuration.
+App Engine uses YAML files to specify a deployment's configuration.
 `app.yaml` files contain information about your application, like the runtime
 environment, URL handlers, and more.
 
@@ -118,7 +118,7 @@ configuration options, see the [`app.yaml`][app-yaml-ref] reference.
 Cloud Shell lets you test your app before deploying to make sure it's running as
 intended, just like debugging on your local machine.
 
-To test your app enter:
+To test your app enter the following:
 
 ```bash
 dev_appserver.py --php_executable_path=/usr/bin/php-cgi $PWD
@@ -128,18 +128,19 @@ dev_appserver.py --php_executable_path=/usr/bin/php-cgi $PWD
 
 Your app is now running on Cloud Shell. You can access the app by clicking the
 [**Web preview**][spotlight-web-preview]
-<walkthrough-web-preview-icon></walkthrough-web-preview-icon> button at the top of the Cloud Shell pane and choosing **Preview on port 8080**.
+<walkthrough-web-preview-icon></walkthrough-web-preview-icon> button at the top
+of the Cloud Shell pane and choosing **Preview on port 8080**.
 
 ### Terminating the preview instance
 
 Terminate the instance of the application by pressing `Ctrl+C` in the Cloud
 Shell.
 
-## Deploying to Google App Engine
+## Deploying to App Engine
 
 ### Create an application
 
-In order to deploy your app, you need to create an app in a region:
+To deploy your app, you need to create an app in a region:
 
 ```bash
 gcloud app create
@@ -149,7 +150,7 @@ Note: If you already created an app, you can skip this step.
 
 ### Deploying with Cloud Shell
 
-You can use Cloud Shell to deploy your app. To deploy your app enter:
+You can use Cloud Shell to deploy your app. To deploy your app enter the following:
 
 ```bash
 gcloud app deploy
@@ -157,8 +158,11 @@ gcloud app deploy
 
 ### Visit your app
 
-Congratulations! Your app has been deployed. The default URL of your app is
-[{{project_gae_url}}](http://{{project_gae_url}}). Click the URL to visit it.
+Congratulations! Your app has been deployed.
+The default URL of your app is a subdomain on appspot.com that starts with your project's ID:
+[{{project_gae_url}}](http://{{project_gae_url}}).
+
+Try visiting your deployed application.
 
 ## View your app's status
 
@@ -171,10 +175,10 @@ Then, select the **App Engine** section.
 
 <walkthrough-menu-navigation sectionId="APPENGINE_SECTION"></walkthrough-menu-navigation>
 
-### Disable your project
+## Disable your project
 
-*   Go to the [Settings][spotlight-gae-settings] page.
-*   Click [Disable Application][spotlight-disable-app].
+1.  Go to the [**Settings**][spotlight-gae-settings] page.
+1.  Click [**Disable Application**][spotlight-disable-app].
 
 ## Conclusion
 
@@ -190,15 +194,15 @@ Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
 
 **Build your next application**
 
-Learn how to use App Engine with other Google Cloud Platform products:
+Learn how to use App Engine with other GCP products:
 
 <walkthrough-tutorial-card url=https://cloud.google.com/appengine/docs/php/cloud-sql/ icon="SQL_SECTION" label="cloudSql">
-**Learn to use Cloud SQL** Cloud SQL is a fully-managed, relational MySQL
-database for your applications. </walkthrough-tutorial-card>
+**Learn to use Cloud SQL.** Cloud SQL is a fully-managed, relational MySQL
+database for your applications. </walkthrough-tutorial-card><walkthrough-alt>Check out the [Cloud SQL documentation](https://cloud.google.com/appengine/docs/php/cloud-sql) for more details.</walkthrough-alt>
 
 <walkthrough-tutorial-card url=https://cloud.google.com/appengine/docs/php/googlestorage/ icon="STORAGE_SECTION" label="cloudStorage">
-**Learn to use Cloud Storage** Cloud Storage is a powerful and simple object
-storage service. </walkthrough-tutorial-card>
+**Learn to use Cloud Storage.** Cloud Storage is a powerful and simple object storage service.
+</walkthrough-tutorial-card><walkthrough-alt>Check out the [Cloud Storage documentation](https://cloud.google.com/appengine/docs/php/googlestorage) for more details.</walkthrough-alt>
 
 [app-yaml-ref]: https://cloud.google.com/appengine/docs/standard/php/config/appref
 [cloud-sdk-installer]: https://cloud.google.com/sdk/downloads#interactive
