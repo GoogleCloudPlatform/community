@@ -2,7 +2,7 @@
 title: Introduction to Cloud Pub/Sub
 description: Learn to use Cloud Pub/Sub to send and receive real-time messages.
 author: jscud
-tags: Pub/Sub
+tags: PubSub
 date_published: 2019-04-15
 ---
 
