@@ -1,8 +1,8 @@
 ---
 title: Using Cloud Build as a test runner
-description: Learn how to use Google Cloud Build as a test runner.
+description: Learn how to use Cloud Build as a test runner.
 author: tmatsuo
-tags: Google Cloud Build, Testing, PHP
+tags: Cloud Build, Testing, PHP
 date_published: 2017-02-01
 ---
 
@@ -40,8 +40,8 @@ arguments. For more details, see the [configuration file documentation][config].
 
 ## Running tests in a build step
 
-If we can use any arbitrary Docker image as the build step, and the source code
-is available, then we can run unit tests as a build step. By doing so, you always
+If you can use any arbitrary Docker image as the build step, and the source code
+is available, then you can run unit tests as a build step. By doing so, you always
 run the test with the same Docker image. You don't have to worry about environment
 differences on CI systems anymore.
 
@@ -108,7 +108,7 @@ as the `ENTRYPOINT`.
 
 `run_tests.sh` basically runs `composer install` and `phpunit`.
 
-We have already built and pushed this image to
+You have already built and pushed this image to
 `gcr.io/cloud-dpes/phpunit-test-runner` with the following command:
 
 ```
@@ -117,7 +117,7 @@ gcloud builds submit -t gcr.io/cloud-dpes/phpunit-test-runner .
 
 ## Configuration file for Cloud Build
 
-To run the tests, we need to have a configuration file to use our test
+To run the tests, you need to have a configuration file to use your test
 runner. Here is an example `cloudbuild.yaml` file.
 
 ```yaml
@@ -140,7 +140,7 @@ script:
 - popd
 ```
 
-To use the `gcloud builds` command, we need to install the Cloud
+To use the `gcloud builds` command, you need to install the Cloud
 SDK and configure it to use a service account. For more details about
 prerequisites, see [the TRAVIS.md file in the repo][travis].
 
