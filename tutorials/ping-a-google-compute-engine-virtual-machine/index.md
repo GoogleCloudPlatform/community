@@ -1,6 +1,6 @@
 ---
 title: How to ping a Google Compute Engine Virtual Machine
-description: Learn how to ping a virtual machine via a domain name or IP address
+description: Learn how to ping a virtual machine via a domain name or IP address.
 author: gpriester
 tags: Compute Engine, Cloud DNS
 date_published: 2019-04-15
