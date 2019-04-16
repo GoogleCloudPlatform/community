@@ -148,7 +148,7 @@ Start up the sample device now in your shell, still in the sample-device subfold
 You should see output that looks like:
 
     Device Started
-    Current Config: 
+    Current Config:
     { energySave: false, mode: 'heating', tempSetting: 35 }
 
 Now update the config document in the Firestore console to change the `tempSetting` value to 18.
@@ -159,7 +159,7 @@ When this document edit is saved, it triggers a function, which will push the ne
 
 You should see this new config arrive at the sample device in a moment.
 
-    Current Config: 
+    Current Config:
     { energySave: false, mode: 'heating', tempSetting: 18 }
 
 To do this programatically with only the IoT Core APIs, you would have to read the current config from the IoT Core Device Manager, update the value, then write back the new config to IoT Core. IoT Core provides an incrementing version number you can send with these writes to check that another process has not concurrently attempted to update the config.
@@ -205,12 +205,12 @@ exports.configUpdate = functions.firestore
   .onWrite(async (change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
     if (context) {
       console.log(context.params.deviceId);
-			const request = generateRequest(context.params.deviceId, change.after.data(), false);
-			return client.modifyCloudToDeviceConfig(request);
+      const request = generateRequest(context.params.deviceId, change.after.data(), false);
+      return client.modifyCloudToDeviceConfig(request);
     } else {
       throw(Error("no context from trigger"));
     }
-	});
+  });
 
 exports.configUpdateBinary = functions.firestore
   // assumes a document whose ID is the same as the deviceid
@@ -218,25 +218,25 @@ exports.configUpdateBinary = functions.firestore
   .onWrite(async (change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
     if (context) {
       console.log(context.params.deviceId);
-			const request = generateRequest(context.params.deviceId, change.after.data(), true);
-			return client.modifyCloudToDeviceConfig(request);
+      const request = generateRequest(context.params.deviceId, change.after.data(), true);
+      return client.modifyCloudToDeviceConfig(request);
     } else {
       throw(Error("no context from trigger"));
     }
   });
 
 function generateRequest(deviceId:string, configData:any, isBinary:Boolean) {
-	const formattedName = client.devicePath(process.env.GCLOUD_PROJECT, functions.config().iot.core.region, functions.config().iot.core.registry, deviceId);
+  const formattedName = client.devicePath(process.env.GCLOUD_PROJECT, functions.config().iot.core.region, functions.config().iot.core.registry, deviceId);
   let dataValue;
-  if(isBinary) {
+  if (isBinary) {
     const encoded = cbor.encode(configData);
-    dataValue = encoded.toString("base64")
+    dataValue = encoded.toString("base64");
   } else {
-    dataValue = Buffer.from(JSON.stringify(configData)).toString("base64")
+    dataValue = Buffer.from(JSON.stringify(configData)).toString("base64");
   }
   return {
-      name: formattedName,
-      binaryData: dataValue
+    name: formattedName,
+    binaryData: dataValue
   };
 }
 ```

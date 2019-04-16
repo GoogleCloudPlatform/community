@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 */
-
-
 'use strict';
 
 import cbor = require('cbor');
@@ -38,7 +36,7 @@ exports.configUpdate = functions.firestore
     }
   });
 
-  exports.configUpdateBinary = functions.firestore
+exports.configUpdateBinary = functions.firestore
   // assumes a document whose ID is the same as the deviceid
   .document('device-configs-binary/{deviceId}')
   .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
@@ -51,17 +49,17 @@ exports.configUpdate = functions.firestore
     }
   });
 
-  function generateRequest(deviceId:string, configData:any, isBinary:Boolean) {
-    const formattedName = client.devicePath(process.env.GCLOUD_PROJECT, functions.config().iot.core.region, functions.config().iot.core.registry, deviceId);
-    let dataValue;
-    if(isBinary) {
-      const encoded = cbor.encode(configData);
-      dataValue = encoded.toString("base64")
-    } else {
-      dataValue = Buffer.from(JSON.stringify(configData)).toString("base64")
-    }
-    return {
-        name: formattedName,
-        binaryData: dataValue
-    };
+function generateRequest(deviceId:string, configData:any, isBinary:Boolean) {
+  const formattedName = client.devicePath(process.env.GCLOUD_PROJECT, functions.config().iot.core.region, functions.config().iot.core.registry, deviceId);
+  let dataValue;
+  if (isBinary) {
+    const encoded = cbor.encode(configData);
+    dataValue = encoded.toString("base64");
+  } else {
+    dataValue = Buffer.from(JSON.stringify(configData)).toString("base64");
   }
+  return {
+    name: formattedName,
+    binaryData: dataValue
+  };
+}
