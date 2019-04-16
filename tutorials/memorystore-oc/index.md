@@ -171,7 +171,7 @@ Near the top of the file, you’ll need to edit 3 of the following 4 Java String
 
     ...
 
-*   PROJECT_ID- Your GCP project ID. See [here](https://cloud.google.com/resource-manager/docs/creating-managing-projects%23identifying_projects) for information on locating your Project ID.
+*   PROJECT_ID- Your GCP project ID. See [here](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects) for information on locating your Project ID.
 *   GCS_BUCKET_NAME- This is the Cloud Storage bucket you created in the section above titled: Upload JSON object to Cloud Storage bucket.
 *   REDIS_HOST - The IP address of the Cloud MemoryStore for Redis instance you created above. See the section above for details on how to get the IP address of the Cloud Memorystore for Redis instance.
 
