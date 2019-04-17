@@ -1,5 +1,5 @@
 ---
-title: Using Matplotlib to Visualize Stackdriver Monitoring Metrics for Cloud Bigtable
+title: Using Matplotlib to visualize Stackdriver Monitoring metrics for Cloud Bigtable
 description: Learn about using Matplotlib to plot Stackdriver Monitoring metrics for Cloud Bigtable.
 author: waprin
 tags: Stackdriver, Bigtable, matplotlib
@@ -66,7 +66,7 @@ pandas, and Matplotlib is helpful.
 
 This tutorial uses billable components of GCP, including:
 
-- Google Cloud Bigtable
+- Cloud Bigtable
 - Stackdriver Monitoring
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
@@ -76,9 +76,9 @@ projected usage.
 
 ## Before you begin
 
-1.  Create a project in the [Cloud Platform Console][console].
+1.  Create a project in the [GCP Console][console].
 1.  Enable billing for your project.
-1.  Install the [Google Cloud SDK][cloud-sdk].
+1.  Install the [Cloud SDK][cloud-sdk].
 1.  Create a client ID to run the sample code:
 
         gcloud auth application-default login
@@ -88,32 +88,25 @@ projected usage.
 
 ## Getting started
 
-1.  Install Jupyter by following the [installation instructions](jupyter).
+1.  Install Jupyter by following the [installation instructions](http://jupyter.readthedocs.io/en/latest/install.html).
 
-1. Install `virtualenv` by following the [installation instructions](virtualenv).
+1.  Install `virtualenv` by following the [installation instructions](https://virtualenv.pypa.io/en/stable/installation/).
 
-1. Create and activate a `virtualenv` virtual environment.
+1.  Create and activate a `virtualenv` virtual environment.
 
-1. Download the [`requirements.txt`](requirements.txt) and use `pip` to install
-the requirements:
+1.  Download [`requirements.txt`](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/bigtable-stackdriver/requirements.txt) and use `pip` to install
+the required components:
 
         pip install -r requirements.txt
 
-[jupyter]: http://jupyter.readthedocs.io/en/latest/install.html
-[virutalenv]: https://virtualenv.pypa.io/en/stable/installation/
-[requirements.txt]: https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/bigtable-stackdriver/requirements.txt
-
 ## Loading the notebook
 
-Download the [tutorial notebook](monitoring_metrics.ipynb).
+Download the [tutorial notebook](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/bigtable-stackdriver/monitoring_metrics.ipynb).
 
 With the necessary dependencies installed into the `virtualenv` environment, start a new
 Jupyter notebook:
 
     jupyter notebook
 
-Open the Jupyter notebook in the browser. From there you can follow the
- tutorial to see how basic Cloud Bigtable metrics were plotted, and how they
- responded to programmatic scaling.
-
-[monitoring_metrics.ipynb](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/bigtable-stackdriver/monitoring_metrics.ipynb)
+Open the Jupyter notebook in the browser. From there you can follow the tutorial to see
+how basic Cloud Bigtable metrics are plotted and how they respond to programmatic scaling.
