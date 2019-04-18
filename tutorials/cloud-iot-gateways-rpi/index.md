@@ -137,7 +137,7 @@ To set up your gateway:
 
 ## Raspberry Pi setup
 
-In this tutorial, you'll use a [Raspberry Pi][rpi] to manage the LED/temperature sensor. Devices will connect to the gateway device through [UDP sockets][udp-socket] over a local network, which will connect to Cloud IoT Core via the [MQTT bridge][mqtt-bridge]. A Raspberry Pi could theoretically connect directly to the cloud (since the Pi can connect to the internet), so using a Raspberry Pi for this part is mostly for demonstration purposes.
+In this tutorial, you'll use a [Raspberry Pi*][rpi] to manage the LED/temperature sensor. Devices will connect to the gateway device through [UDP sockets][udp-socket] over a local network, which will connect to Cloud IoT Core via the [MQTT bridge][mqtt-bridge]. A Raspberry Pi could theoretically connect directly to the cloud (since the Pi can connect to the internet), so using a Raspberry Pi for this part is mostly for demonstration purposes.
 
 1. [Download Raspbian][raspbian-download] (the full image with Desktop and recommended software) and follow [the installation guide][raspbian-installation] to flash Raspbian onto your microSD card.
 2. Insert the microSD card with Raspbian into your Raspberry Pi.
@@ -263,3 +263,5 @@ To avoid incurring any future billing costs, it is recommended that you delete y
 
 - [Real time data processing with Cloud IoT Core](https://cloud.google.com/community/tutorials/cloud-iot-rtdp)
 - [Connect a Bluetooth device to a gateway](https://www.hackster.io/mayooghgirish/arduino-bluetooth-basic-tutorial-d8b737)
+
+*Raspberry Pi is a trademark of the Raspberry Pi Foundation.
