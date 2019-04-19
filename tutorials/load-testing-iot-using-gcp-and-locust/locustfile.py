@@ -72,7 +72,7 @@ class LtkDevice(TaskSet):
             username='unused',
             password=self.get_jwt())
 
-        certs = path.join(path.dirname(__file__), "./gcp_rootCAs.pem")
+        certs = path.join(path.dirname(__file__), "./iot_rootCAs.pem")
         self.mqtt_client.tls_set(ca_certs=certs, tls_version=ssl.PROTOCOL_TLSv1_2)
 
         self.mqtt_client.on_connect = self.on_connect
@@ -83,7 +83,9 @@ class LtkDevice(TaskSet):
         # self.mqtt_client.on_log = self.on_log
 
         self.connectStartTime = time.time()
-        self.mqtt_client.connect('mqtt.googleapis.com', '8883')
+        # Use the long-term support domain, mqtt.googleapis.com should be considered deprecated.
+        # Use of mqtt.googleapis.com requires a different trust bundle, located at https://pki.goog/roots.pem.
+        self.mqtt_client.connect('mqtt.2030.ltsapis.goog', '443')
         self.mqtt_client.loop_start()
         sys.stdout.write('*** clientId {} set up for deviceId {}'.format(self.get_clientId(), self.deviceId))
 
