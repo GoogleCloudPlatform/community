@@ -214,7 +214,7 @@ Engine application and importing the required libraries.
 1.  In your host directory, create the file `requirements.txt` and copy in the
     following text:
 
-        jinja2==2.9.6
+        jinja2>=2.10.1
         webapp2==3.0.0b1
         GoogleAppEngineCloudStorageClient==1.9.22.1
         google-api-python-client==1.6.2
