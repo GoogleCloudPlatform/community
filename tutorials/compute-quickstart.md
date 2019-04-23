@@ -1,12 +1,12 @@
 ---
-title: Compute Engine Quickstart - To-Do App
+title: Compute Engine quickstart: Create a to-do app
 description: Use Compute Engine to create a two-tier application.
 author: jscud
 tags: Compute Engine
-date_published: 2019-04-12
+date_published: 2019-04-30
 ---
 
-# Compute Engine Quickstart
+# Compute Engine quickstart
 
 ## Build a to-do app with MongoDB
 
@@ -22,7 +22,7 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 In this quickstart, you'll use Compute Engine to create a two-tier application.
 The frontend VM runs a Node.js to-do web app, and the backend VM runs MongoDB.
 
-This tutorial will walk you through:
+This tutorial will walk you through the following:
 
 -   Creating and configuring two VMs
 -   Setting up firewall rules
@@ -30,66 +30,61 @@ This tutorial will walk you through:
 
 ## Project setup
 
-Google Cloud Platform organizes resources into projects. This allows you to
-collect all the related resources for a single application in one place.
+GCP organizes resources into projects. This allows you to
+collect all of the related resources for a single application in one place.
 
 <walkthrough-project-billing-setup></walkthrough-project-billing-setup>
 
 ## Navigate to Compute Engine
 
-Open the [menu][spotlight-console-menu] on the left side of the console.
-
-Then, select the **Compute Engine** section.
+Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console and select 
+**Compute Engine**.
 
 <walkthrough-menu-navigation sectionId="COMPUTE_SECTION"></walkthrough-menu-navigation>
 
 ## Create instances
 
-You will create 2 instances to be backend and frontend servers for the
-application.
+You will create two instances for the application, one to be backend server and one to be the frontend server.
 
 ### Create the backend instance
 
-First, create the backend instance that runs MongoDB. This server stores the
-to-do items.
+First, create the backend instance, which runs MongoDB and stores the to-do items:
 
-Click the [Create instance][spotlight-create-instance] button.
+1.  In the **VM instances** section, click [**Create**][spotlight-create-instance].
 
-*   Select a [name][spotlight-instance-name] and [zone][spotlight-instance-zone]
-    for this instance.
+1.   Enter a [name][spotlight-instance-name] for this instance.
 
-*   Select [f1-micro][spotlight-machine-type]. This will incur fewer charges.
+1.   Choose a region and a [zone][spotlight-instance-zone] for this instance.
 
-    *   [Learn more about pricing][pricing]
+1.  In the [**Machine type**][spotlight-machine-type] menu, select **micro**, which specifies a lower-cost
+    machine type. ([Learn more about pricing][pricing].)
 
-*   Select [Ubuntu 14.04 LTS][spotlight-boot-disk] as your boot disk image for
-    this tutorial.
+1.  In the [**Boot disk**][spotlight-boot-disk] section, click **Change** and choose **Google Drawfork Ubuntu 14.04 LTS**.
 
-*   In the [Firewall selector][spotlight-firewall], select **Allow HTTP
-    traffic**. This opens port 80 (HTTP) to access the app.
+1.  In the [**Firewall selector**][spotlight-firewall] section, select **Allow HTTP traffic**.
+    This opens port 80 (HTTP) to access the app.
 
-*   Click the [Create][spotlight-submit-create] button to create the instance.
+1.  Click [**Create**][spotlight-submit-create] to create the instance.
 
-Note: Once the instance is created your billing account will start being charged
-according to the GCE pricing. You will remove the instance later to avoid extra
+Note: After the instance is created, your billing account will start being charged
+according to the Compute Engine pricing. You will remove the instance later to avoid extra
 charges.
 
 ### Create the frontend instance
 
-While the backend VM is spinning up, create the frontend instance that runs the
+While the backend VM is starting, create the frontend instance, which runs the
 Node.js to-do application. Use the same configuration as the backend instance.
 
 ## Setup
 
-You'll install a MongoDB database on the backend instance to save your data.
+You install a MongoDB database on the backend instance to save your data.
 
-The [SSH buttons][spotlight-ssh-buttons] in the table will open up an SSH
-session to your instance in a separate window.
+You can click the [**SSH**][spotlight-ssh-buttons] button for each instance in the VM instances table to open an SSH
+session to the instance in a separate window.
 
-For this tutorial you will connect using Cloud Shell. Cloud Shell is a built-in
-command line tool for the console.
+For this tutorial you connect using Cloud Shell. Cloud Shell is a built-in command-line tool for the console.
 
-### Open the Cloud Shell
+### Open Cloud Shell
 
 Open Cloud Shell by clicking the
 <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
@@ -98,12 +93,11 @@ in the upper-right corner of the console.
 
 ### Wait for the instance creation to finish
 
-The instances need to finish creating before the tutorial can proceed. The
-activity can be tracked by clicking the
-[notification menu][spotlight-notification-menu] from the navigation bar at the
-top.
+The instances need to finish being created before the tutorial can proceed. To track the progress of this activity
+and others, click the [**Notifications**][spotlight-notification-menu] button in the navigation bar
+in the upper-right corner of the console.
 
-## Connect to your backend instance
+## Set up to the backend instance
 
 ### Connect to the instance
 
@@ -112,7 +106,7 @@ SSH from Cloud Shell, you will need to create a private key. Enter the zone and
 name of the instance you created.
 
 ```bash
-gcloud compute --project "{{project-id}}" ssh --zone <backend-zone> <backend-name>
+gcloud compute --project "{{project-id}}" ssh --zone [backend-zone] [backend-name]
 ```
 
 It may take several minutes for the SSH key to propagate.
@@ -159,7 +153,7 @@ After, exit the SSH session using the `exit` command:
 exit
 ```
 
-## Connect to your frontend instance
+## Set up the frontend instance
 
 ### Install and run the web app on your frontend VM
 
@@ -168,7 +162,7 @@ application.
 
 ### Connect to the instance
 
-Enter the following command to SSH into the VM. Enter the zone and name of the
+Enter the following command to connect to the VM with SSH. Enter the zone and name of the
 instance you created.
 
 ```bash
@@ -221,7 +215,7 @@ After, exit the SSH session using the `exit` command:
 exit
 ```
 
-### Visit your application
+### Visit the application
 
 Visit your webserver at the IP address listed in the
 [External IP][spotlight-external-ip] column next to your frontend instance.
@@ -230,7 +224,7 @@ Visit your webserver at the IP address listed in the
 
 To remove your instances, select the [checkbox][spotlight-instance-checkbox]
 next to your instance names and click the
-[Delete button][spotlight-delete-button].
+[Delete][spotlight-delete-button] button.
 
 ## Conclusion
 
@@ -244,10 +238,10 @@ Here's what you can do next:
     [samples on GitHub](http://googlecloudplatform.github.io/).
 
 *   Learn how to set up
-    [Load Balancing](https://cloud.google.com/compute/docs/load-balancing/).
+    [Cloud Load Balancing](https://cloud.google.com/compute/docs/load-balancing/).
 
 *   Learn how to
-    [transfer files to your Virtual Machine](https://cloud.google.com/compute/docs/instances/transfer-files/).
+    [transfer files to your virtual machine](https://cloud.google.com/compute/docs/instances/transfer-files/).
 
 *   Learn how to
     [run containers](https://cloud.google.com/compute/docs/containers).
