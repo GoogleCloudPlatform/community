@@ -82,7 +82,7 @@ You install a MongoDB database on the backend instance to save your data.
 You can click the [**SSH**][spotlight-ssh-buttons] button for each instance in the VM instances table to open an SSH
 session to the instance in a separate window.
 
-For this tutorial you connect using Cloud Shell. Cloud Shell is a built-in command-line tool for the console.
+For this tutorial, you connect using Cloud Shell. Cloud Shell is a built-in command-line tool for the console.
 
 ### Open Cloud Shell
 
@@ -97,27 +97,25 @@ The instances need to finish being created before the tutorial can proceed. To t
 and others, click the [**Notifications**][spotlight-notification-menu] button in the navigation bar
 in the upper-right corner of the console.
 
-## Set up to the backend instance
+## Set up the backend instance
 
 ### Connect to the instance
 
-Enter the following command to SSH into the VM. If this is your first time using
-SSH from Cloud Shell, you will need to create a private key. Enter the zone and
-name of the instance you created.
+Enter the following command to connect to the VM:  
 
 ```bash
 gcloud compute --project "{{project-id}}" ssh --zone [backend-zone] [backend-name]
 ```
 
+Replace `[backend-zone]` and `[backend-name]` with the zone and name of the instance that you created.
+
+If this is your first time using SSH from Cloud Shell, you need to create a private key.
+
 It may take several minutes for the SSH key to propagate.
 
 ### Install the backend database
 
-Now that you have an SSH connection to the backend instance, use the following
-commands to install the backend database:
-
-Update packages and install MongoDB. When asked if you want to continue, type
-`Y`:
+Use the following commands to update packages and install the backend MongoDB database:
 
 ```bash
 sudo apt-get update
@@ -127,17 +125,17 @@ sudo apt-get update
 sudo apt-get install mongodb
 ```
 
+When asked if you want to continue, type `Y`.
+
 ### Run the database
 
-The MongoDB service started when you installed it. You must stop it so you can
-change how it runs.
+The MongoDB service starts when you install it. You must stop it so that you can change how it runs:
 
 ```bash
 sudo service mongodb stop
 ```
 
-Create a directory for MongoDB and then run the MongoDB service in the
-background on port 80.
+Create a directory for MongoDB and then run the MongoDB service in the background on port 80.
 
 ```bash
 sudo mkdir $HOME/db
@@ -147,7 +145,7 @@ sudo mkdir $HOME/db
 sudo mongod --dbpath $HOME/db --port 80 --fork --logpath /var/tmp/mongodb
 ```
 
-After, exit the SSH session using the `exit` command:
+Exit the SSH session using the `exit` command:
 
 ```bash
 exit
