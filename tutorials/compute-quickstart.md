@@ -1,5 +1,5 @@
 ---
-title: Compute Engine quickstart: Create a to-do app
+title: Compute Engine quickstart - Create a to-do app
 description: Use Compute Engine to create a two-tier application.
 author: jscud
 tags: Compute Engine
