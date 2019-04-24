@@ -1,6 +1,6 @@
 ---
 title: Compute Engine quickstart - Create a to-do app
-description: Use Compute Engine to create a two-tier application.
+description: Use Compute Engine to create a two-tier web application.
 author: jscud
 tags: Compute Engine
 date_published: 2019-04-30
@@ -19,10 +19,10 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 
 </walkthrough-alt>
 
-In this quickstart, you'll use Compute Engine to create a two-tier application.
+In this quickstart, you'll use Compute Engine to create a two-tier web app.
 The frontend VM runs a Node.js to-do web app, and the backend VM runs MongoDB.
 
-This tutorial will walk you through the following:
+This tutorial guides you through the following:
 
 -   Creating and configuring two VMs
 -   Setting up firewall rules
@@ -44,7 +44,7 @@ Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner 
 
 ## Create instances
 
-You will create two instances for the application, one to be backend server and one to be the frontend server.
+You create two instances for the web app, one to be the backend server and one to be the frontend server.
 
 ### Create the backend instance
 
@@ -59,7 +59,8 @@ First, create the backend instance, which runs MongoDB and stores the to-do item
 1.  In the [**Machine type**][spotlight-machine-type] menu, select **micro**, which specifies a lower-cost
     machine type. ([Learn more about pricing][pricing].)
 
-1.  In the [**Boot disk**][spotlight-boot-disk] section, click **Change** and choose **Google Drawfork Ubuntu 14.04 LTS**.
+1.  In the [**Boot disk**][spotlight-boot-disk] section, click **Change**, choose
+    **Google Drawfork Ubuntu 14.04 LTS**, and click **Select**.
 
 1.  In the [**Firewall selector**][spotlight-firewall] section, select **Allow HTTP traffic**.
     This opens port 80 (HTTP) to access the app.
@@ -73,16 +74,17 @@ charges.
 ### Create the frontend instance
 
 While the backend VM is starting, create the frontend instance, which runs the
-Node.js to-do application. Use the same configuration as the backend instance.
+Node.js to-do app:
 
-## Setup
+1.  In the **VM instances** toolbar, click [**Create Instance**][spotlight-create-instance].
 
-You install a MongoDB database on the backend instance to save your data.
+1.  Use the same configuration settings as the backend instance.
 
-You can click the [**SSH**][spotlight-ssh-buttons] button for each instance in the VM instances table to open an SSH
-session to the instance in a separate window.
+1.  Click [**Create**][spotlight-submit-create] to create the instance.
 
-For this tutorial, you connect using Cloud Shell. Cloud Shell is a built-in command-line tool for the console.
+## Opening Cloud Shell
+
+For this tutorial, you connect using Cloud Shell, which is a built-in command-line tool for the console.
 
 ### Open Cloud Shell
 
@@ -99,9 +101,11 @@ in the upper-right corner of the console.
 
 ## Set up the backend instance
 
+In this section, you install a MongoDB database on the backend instance to save your data.
+
 ### Connect to the instance
 
-Enter the following command to connect to the VM:  
+Connect to the VM using SSH:  
 
 ```bash
 gcloud compute --project "{{project-id}}" ssh --zone [backend-zone] [backend-name]
@@ -109,23 +113,25 @@ gcloud compute --project "{{project-id}}" ssh --zone [backend-zone] [backend-nam
 
 Replace `[backend-zone]` and `[backend-name]` with the zone and name of the instance that you created.
 
-If this is your first time using SSH from Cloud Shell, you need to create a private key.
+If this is your first time using SSH from Cloud Shell, follow the instructions to create a private key.
 
 It may take several minutes for the SSH key to propagate.
 
 ### Install the backend database
 
-Use the following commands to update packages and install the backend MongoDB database:
+Update packages:
 
 ```bash
 sudo apt-get update
 ```
 
+Install the backend MongoDB database:
+
 ```bash
 sudo apt-get install mongodb
 ```
 
-When asked if you want to continue, type `Y`.
+When asked if you want to continue, enter `Y`.
 
 ### Run the database
 
@@ -135,17 +141,19 @@ The MongoDB service starts when you install it. You must stop it so that you can
 sudo service mongodb stop
 ```
 
-Create a directory for MongoDB and then run the MongoDB service in the background on port 80.
+Create a directory for MongoDB:
 
 ```bash
 sudo mkdir $HOME/db
 ```
 
+Run the MongoDB service in the background on port 80:
+
 ```bash
 sudo mongod --dbpath $HOME/db --port 80 --fork --logpath /var/tmp/mongodb
 ```
 
-Exit the SSH session using the `exit` command:
+Exit the SSH session and disconnect from the backend instance:
 
 ```bash
 exit
@@ -153,44 +161,50 @@ exit
 
 ## Set up the frontend instance
 
-### Install and run the web app on your frontend VM
-
-The backend server is running, so it is time to install the frontend web
-application.
+In this section, you install the dependedncies for the web app and then install and run the frontend web app.
 
 ### Connect to the instance
 
-Enter the following command to connect to the VM with SSH. Enter the zone and name of the
+Cnnect to the VM with SSH: Enter the zone and name of the
 instance you created.
 
 ```bash
-gcloud compute --project "{{project-id}}" ssh --zone <frontend-zone> <frontend-name>
+gcloud compute --project "{{project-id}}" ssh --zone [frontend-zone] [frontend-name]
 ```
+
+Replace `[frontend-zone]` and `[frontend-name]` with the zone and name of the instance that you created.
 
 ### Install the dependencies
 
-Now that you're connected to your frontend instance, update packages and install
-git, Node.js and npm. When asked if you want to continue, type `Y`:
+Update packages:
 
 ```bash
 sudo apt-get update
 ```
 
+Install git and npm:
+
 ```bash
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 ```
+
+Install Node.js:
 
 ```bash
 sudo apt-get install git nodejs
 ```
 
+When asked if you want to continue, enter `Y`.
+
 ### Install and run the frontend web app
 
-Clone the sample application and install application dependencies.
+Clone the sample app:
 
 ```bash
 git clone https://github.com/GoogleCloudPlatform/todomvc-mongodb.git
 ```
+
+Install the app dependencies:
 
 ```bash
 cd todomvc-mongodb; npm install
@@ -200,29 +214,31 @@ cd todomvc-mongodb; npm install
 sed -i -e 's/8080/80/g' server.js
 ```
 
-Start the to-do web application with the following command, entering the
-[internal ip addresses][spotlight-internal-ip] for the instances you created.
+Start the to-do web app:
 
 ```bash
-sudo nohup nodejs server.js --be_ip <backend-internal-ip> --fe_ip <frontend-internal-ip> &
+sudo nohup nodejs server.js --be_ip [backend-internal-ip] --fe_ip [frontend-internal-ip] &
 ```
 
-After, exit the SSH session using the `exit` command:
+Replace `[frontend-internal-ip]` and `[frontend-internal-ip]` with 
+[internal IP addresses][spotlight-internal-ip] for the instances that you created.
+These IP addresses are listed for each instance in the **VM instances** table.
+
+Exit the SSH session and disconnect from the frontend instance:
 
 ```bash
 exit
 ```
 
-### Visit the application
+### Visit the web app
 
-Visit your webserver at the IP address listed in the
-[External IP][spotlight-external-ip] column next to your frontend instance.
+Visit your webserver at the [external IP address][spotlight-external-ip] listed next to your frontend
+instance in the **VM instances** table.
 
 ## Cleanup
 
 To remove your instances, select the [checkbox][spotlight-instance-checkbox]
-next to your instance names and click the
-[Delete][spotlight-delete-button] button.
+next to your instance names and click the [**Delete**][spotlight-delete-button] button.
 
 ## Conclusion
 
