@@ -219,7 +219,7 @@ Start the to-do web app:
 sudo nohup nodejs server.js --be_ip [backend-internal-ip] --fe_ip [frontend-internal-ip] &
 ```
 
-Replace `[frontend-internal-ip]` and `[frontend-internal-ip]` with 
+Replace `[backend-internal-ip]` and `[frontend-internal-ip]` with 
 [internal IP addresses][spotlight-internal-ip] for the instances that you created.
 These IP addresses are listed for each instance in the **VM instances** table.
 
