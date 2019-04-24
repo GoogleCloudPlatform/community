@@ -161,12 +161,11 @@ exit
 
 ## Set up the frontend instance
 
-In this section, you install the dependedncies for the web app and then install and run the frontend web app.
+In this section, you install the dependencies for the web app and then install and run the frontend web app.
 
 ### Connect to the instance
 
-Cnnect to the VM with SSH: Enter the zone and name of the
-instance you created.
+Connect to the VM with SSH:
 
 ```bash
 gcloud compute --project "{{project-id}}" ssh --zone [frontend-zone] [frontend-name]
