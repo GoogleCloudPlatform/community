@@ -37,8 +37,8 @@ collect all of the related resources for a single application in one place.
 
 ## Navigate to Compute Engine
 
-Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console and select 
-**Compute Engine**.
+Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console, and 
+then select **Compute Engine**.
 
 <walkthrough-menu-navigation sectionId="COMPUTE_SECTION"></walkthrough-menu-navigation>
 
