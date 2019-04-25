@@ -159,10 +159,3 @@ Here are some suggestion for what you can do next:
 [spotlight-external-ip]: walkthrough://spotlight-pointer?cssSelector=.p6n-external-link
 [spotlight-instance-checkbox]: walkthrough://spotlight-pointer?cssSelector=.p6n-checkbox-form-label
 [spotlight-delete-button]: walkthrough://spotlight-pointer?cssSelector=.p6n-icon-delete
-
-
-
-
-
-
-<walkthrough-tutorial-url url="https://cloud.google.com/compute/docs/quickstart-linux"></walkthrough-tutorial-url>
