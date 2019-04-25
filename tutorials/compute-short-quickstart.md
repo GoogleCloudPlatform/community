@@ -1,6 +1,6 @@
 ---
-title: Compute Engine quickstart - Create a Linux virtual machine
-description: Create a Linux virtual machine in Compute Engine.
+title: Compute Engine quickstart - Create a virtual machine
+description: Create a virtual machine instance in Compute Engine.
 author: jscud
 tags: Compute Engine
 date_published: 2019-04-30
@@ -8,7 +8,7 @@ date_published: 2019-04-30
 
 # Compute Engine quickstart
 
-## Create a Linux virtual machine
+## Create a virtual machine
 
 <walkthrough-tutorial-duration duration="10"></walkthrough-tutorial-duration>
 
@@ -19,7 +19,7 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 
 </walkthrough-alt>
 
-This tutorial explains how to create a Linux virtual machine instance in Compute
+This tutorial explains how to create a virtual machine instance in Compute
 Engine using the GCP Console.
 
 ## Project setup
@@ -128,16 +128,16 @@ next to the instance name and click the [**Delete**][spotlight-delete-button] bu
 
 You're done!
 
-Here's what you can do next:
+Here are some suggestion for what you can do next:
 
 *   Find Google Cloud Platform
     [samples on GitHub](http://googlecloudplatform.github.io/).
 
 *   Learn how to set up
-    [Load Balancing](https://cloud.google.com/compute/docs/load-balancing/).
+    [Cloud Load Balancing](https://cloud.google.com/compute/docs/load-balancing/).
 
 *   Learn how to
-    [transfer files to your Virtual Machine](https://cloud.google.com/compute/docs/instances/transfer-files/).
+    [transfer files to your virtual machine](https://cloud.google.com/compute/docs/instances/transfer-files/).
 
 *   Learn how to
     [run containers](https://cloud.google.com/compute/docs/containers).
