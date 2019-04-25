@@ -1,14 +1,16 @@
 ---
-title: Compute Engine Quickstart - Linux VM
+title: Compute Engine quickstart - Create a Linux virtual machine
 description: Create a Linux virtual machine in Compute Engine.
 author: jscud
 tags: Compute Engine
-date_published: 2019-04-12
+date_published: 2019-04-30
 ---
 
-# Compute Engine Quickstart
+# Compute Engine quickstart
 
-<walkthrough-tutorial-url url="https://cloud.google.com/compute/docs/quickstart-linux"></walkthrough-tutorial-url>
+## Create a Linux virtual machine
+
+<walkthrough-tutorial-duration duration="10"></walkthrough-tutorial-duration>
 
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
@@ -17,64 +19,63 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 
 </walkthrough-alt>
 
-## Introduction
-
-<walkthrough-tutorial-duration duration="10"></walkthrough-tutorial-duration>
-
 This tutorial explains how to create a Linux virtual machine instance in Compute
-Engine using the Google Cloud Platform Console.
+Engine using the GCP Console.
 
 ## Project setup
 
-Google Cloud Platform organizes resources into projects. This allows you to
-collect all the related resources for a single application in one place.
+GCP organizes resources into projects. This allows you to
+collect all of the related resources for a single application in one place.
 
 <walkthrough-project-billing-setup></walkthrough-project-billing-setup>
 
 ## Navigate to Compute Engine
 
-Open the [menu][spotlight-console-menu] on the left side of the console.
-
-Then, select the **Compute Engine** section.
+Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console, and 
+then select **Compute Engine**.
 
 <walkthrough-menu-navigation sectionId="COMPUTE_SECTION"></walkthrough-menu-navigation>
 
 ## Create a virtual machine instance
 
-Click the [Create instance][spotlight-create-instance] button.
+1.  In the **VM instances** section, click [**Create**][spotlight-create-instance].
 
-*   Select a [name][spotlight-instance-name] and [zone][spotlight-instance-zone]
-    for this instance.
+1.   Enter a [name][spotlight-instance-name] for this instance.
 
-*   In the [Firewall selector][spotlight-firewall], select **Allow HTTP
-    traffic**. This opens port 80 (HTTP) to access the app.
+1.   Choose a region and a [zone][spotlight-instance-zone] for this instance.
 
-*   Click the [Create][spotlight-submit-create] button to create the instance.
+1.  In the [**Machine type**][spotlight-machine-type] menu, select **micro**, which specifies a lower-cost
+    machine type. ([Learn more about pricing][pricing].)
 
-Note: Once the instance is created your billing account will start being charged
-according to the GCE pricing. You will remove the instance later to avoid extra
+1.  In the [**Firewall selector**][spotlight-firewall] section, select **Allow HTTP traffic**.
+    This opens port 80 (HTTP) to access the app.
+
+1.  Click [**Create**][spotlight-submit-create] to create the instance.
+
+The instances need to finish being created before the tutorial can proceed. To track the progress of this
+activity and others, click the [**Notifications**][spotlight-notification-menu] button in the navigation
+bar in the upper-right corner of the console.
+
+Note: After the instance is created, your billing account will start being charged
+according to the Compute Engine pricing. You will remove the instance later to avoid extra
 charges.
 
 ## VM instances page
 
-While the instance is being created take your time to explore the VM instances
+While the instance is being created, take your time to explore the VM instances
 page.
 
-*   At the bottom you can see the [list of your VMs][spotlight-vm-list]
-*   At the top you can see a [control panel][spotlight-control-panel] allowing
-    you to
-    *   Create a new VM instance or an instance group
-    *   Start, stop, reset and delete instances
+At the top is a [control panel][spotlight-control-panel] with controls for doing the following:
+* Create a VM instance or instance group
+* Start, stop, reset, and delete instances
 
-## Connect to your instance
+The body of the page contains a [list of your VMs][spotlight-vm-list].
 
-When the VM instance is created, you'll run a web server on the virtual machine.
+## Set up a web server on the VM instance
 
-The [SSH buttons][spotlight-ssh-buttons] in the table will open up an SSH
-session to your instance in a separate window.
+After the VM instance is created, you run a web server on the virtual machine.
 
-For this tutorial you will connect using Cloud Shell. Cloud Shell is a built-in
-command line tool for the console.
+For this tutorial, you connect using Cloud Shell, which is a built-in command-line tool for the console.
 
 ### Open the Cloud Shell
 
@@ -83,48 +84,43 @@ Open Cloud Shell by clicking the
 [**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar
 in the upper-right corner of the console.
 
-### Wait for the instance creation to finish
-
-The instance creation needs to finish before the tutorial can proceed. The
-activity can be tracked by clicking the
-[notification menu][spotlight-notification-menu] from the navigation bar at the
-top.
-
 ### Connect to the instance
 
-Enter the following command to SSH into the VM. If this is your first time using
-SSH from Cloud Shell, you will need to create a private key. Enter the zone and
-name of the instance you created.
+Connect to the VM using SSH:  
 
 ```bash
-gcloud compute --project "{{project-id}}" ssh --zone <vm-zone> <vm-name>
+gcloud compute --project "{{project-id}}" ssh --zone [vm-zone] [vm-name]
 ```
+
+Replace `[vm-zone]` and `[vm-name]` with the zone and name of the instance that you created.
+
+If this is your first time using SSH from Cloud Shell, follow the instructions to create a private key.
 
 It may take several minutes for the SSH key to propagate.
 
 ### Run a simple web server
 
-Create a simple index.html file with the following command:
+Create a simple `index.html` file:
 
 ```bash
-echo "<h1>Hello World</h1>" > index.html
+echo "Hello, world!" > index.html
 ```
 
-Then, enter this command to run a simple Python webserver:
+Start a simple Python webserver:
 
 ```bash
 sudo python -m SimpleHTTPServer 80
 ```
 
-### Visit your application
+### Visit the webserver application
 
-Visit your webserver at the IP address listed in the
-[External IP][spotlight-external-ip] column.
+Visit your webserver at the [external IP address][spotlight-external-ip] listed next to the 
+instance in the **VM instances** table.
 
 ## Cleanup
 
-To remove your instance, select the [checkbox][spotlight-instance-checkbox] next
-to your instance name and click the [Delete button][spotlight-delete-button].
+To remove your instance, select the [checkbox][spotlight-instance-checkbox]
+next to the instance name and click the [**Delete**][spotlight-delete-button] button.
 
 ## Conclusion
 
@@ -163,3 +159,10 @@ Here's what you can do next:
 [spotlight-external-ip]: walkthrough://spotlight-pointer?cssSelector=.p6n-external-link
 [spotlight-instance-checkbox]: walkthrough://spotlight-pointer?cssSelector=.p6n-checkbox-form-label
 [spotlight-delete-button]: walkthrough://spotlight-pointer?cssSelector=.p6n-icon-delete
+
+
+
+
+
+
+<walkthrough-tutorial-url url="https://cloud.google.com/compute/docs/quickstart-linux"></walkthrough-tutorial-url>
