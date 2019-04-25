@@ -237,7 +237,7 @@ instance in the **VM instances** table.
 ## Cleanup
 
 To remove your instances, select the [checkbox][spotlight-instance-checkbox]
-next to your instance names and click the [**Delete**][spotlight-delete-button] button.
+next to the instance names and click the [**Delete**][spotlight-delete-button] button.
 
 ## Conclusion
 
