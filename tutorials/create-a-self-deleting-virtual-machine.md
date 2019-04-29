@@ -151,25 +151,25 @@ project. Click on the menu icon in the upper left corner and select
 _Compute Engine_ / _VM Instances_. The *VM Instances* control panel will
 display.
 
-Click *CREATE INSTANCE*. A form to set the properties of the new instance
+Click **CREATE INSTANCE**. A form to set the properties of the new instance
 will display. Leave most values at the default value already filled in for
 you, but change the following values:
 
-*Name:* Fill in any name (e.g., `myinstance`).
+**Name:** Fill in any name (e.g., `myinstance`).
 
-*Region and Zone:* Select a location near you.
+**Region and Zone:** Select a location near you.
 
-*Access Scopes (under Identity and API access):* Click _Set access for each API_,
+**Access Scopes (under Identity and API access):** Click _Set access for each API_,
 the set the value for *Compute Engine* to _Read Write_.
 
 Click _More_ at the bottom of the form.
 
-*Startup script (under Automation):* Copy and past the script shown above.
+**Startup script (under Automation):** Copy and past the script shown above.
 For testing purposes you may want to change the sleep duration from `3600s`
 to `300s`, so you will only have to wait five minutes to see that the
 deletion worked.
 
-Click *CREATE*.
+Click **CREATE**.
 
 You will see a list of your VM instances, with a spinning icon next to your
 new instance. In a short while, the spinner will change to a green check mark.
@@ -233,3 +233,16 @@ Wait until the specified sleep time has expired, and run that command again.
 The instance should be gone.
     
 ## Cleaning up
+
+If everything went as planned, the only resource you created, the new
+instance, cleaned itself up. If you no longer need the project you created
+for trying this out, you can delete it, too, eliminating every resource
+in it.
+
+Click the menu icon in the upper left-hand corner of the cloud console and
+select _Home_. There should be a box labeled _Project info_. Click
+_Go to project settings_ at the bottom of that box.
+
+Click **SHUT DOWN**. Type the project ID you gave the project and
+click **SHUT DOWN**. The project will be shut down and will be deleted
+in thirty days.
