@@ -30,12 +30,30 @@ a set period of time. You will see two ways to do this.
 
 Create a Google Cloud Platform project in a web browser.
 
+1. Open your web browser to the [Google Cloud Console](https://console.cloud.google.com/).
+1. Sign in with a Google or GSuite account. You can create an account by clicking _Create account_
+if you don't already have one.
+1. Click the _Select a project_ drop-down at the top of the page and then
+click **NEW PROJECT**.
+1. Enter a name for your project, and note the _Project ID_ shown under
+the name.
+1. Click **CREATE**. A notification will pop up saying that the project is
+being created.
+1. Once the notification says the project is ready, click on the notification
+or select the project from the _Select a project_ drop down to open it
+in the console.
+
+Use this new project in the tutorial below so that you don't inadvertently
+affect your other projects, if you have any.
+
 ## Costs
 
 This tutorial has you create a Compute Engine instance. That instance
-will incur charges as long as it exists. Your account can use one free
-micro instance (the kind created in this tutorial) as part of the
-[Free Tier](https://cloud.google.com/free).
+will incur charges as long as it exists, as listed in [Google Compute
+Engine Pricing](https://cloud.google.com/compute/pricing). Your 
+account can use one free micro instance (the kind created in this
+tutorial) as part of the [Free Tier](https://cloud.google.com/free),
+in which case you will incur no costs.
 
 ## Preparation
 
@@ -45,17 +63,17 @@ startup script that waits a set amount of time and then issues a
 command to delete itself. This script needs to be provided in a file or
 at an available URL when launching the instance.
 
-Begin this tutorial by opening a text editor and creating a file named
-`startup.sh` with the following contents:
-
+1. Open a text editor and enter the following text:
     #!/bin/sh
     sleep 3600s
     export NAME=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/name -H 'Metadata-Flavor: Google')
     export ZONE=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google')
     gcloud --quiet compute instances delete $NAME --zone=$ZONE
 
+2. Save the file as `startup.sh`.
+
 When you start a new instance and specify that it should automatically run
-this script it will do nothing for one hour (the `3600s` value on the second
+this script, it will do nothing for one hour (the `3600s` value on the second
 line), then look up information about the running instance and put it in shell
 variables (the third and fourth lines), and finally run a `gcloud` command to
 delete itself.
@@ -79,7 +97,7 @@ This section explains how the file shown above works. You can safely skip
 this if you just want to create self-deleting instances.
 
 Every Linux OS image available by default in Google Compute Engine is
-configured to run a program when it first boots if you specify such a program.
+configured to run a program when it first boots, if you specify such a program.
 The `startup.sh` file in the previous section is such a program. When you
 create an image with that option it will run the `startup.sh` program when
 it launches. In this case, that program does nothing but wait for an hour
@@ -146,12 +164,18 @@ installed for your use.
 
 ## Using the console
 
-Open the [Cloud Console] (https://console.cloud.google.com/) and select your
-project. Click on the menu icon in the upper left corner and select
+This section gives the steps to create a self-deleting instance by using the
+Google Cloud console in your web browser. If you prefer to use the command line
+instead, see the next section, **Using the command line**.
+
+1. Open the [Cloud Console] (https://console.cloud.google.com/) and select your
+project, if it is not already selected.
+
+1. Click on the menu icon in the upper left corner and select
 _Compute Engine_ / _VM Instances_. The *VM Instances* control panel will
 display.
 
-Click **CREATE INSTANCE**. A form to set the properties of the new instance
+1. Click **CREATE INSTANCE**. A form to set the properties of the new instance
 will display. Leave most values at the default value already filled in for
 you, but change the following values:
 
@@ -162,14 +186,14 @@ you, but change the following values:
 **Access Scopes (under Identity and API access):** Click _Set access for each API_,
 the set the value for *Compute Engine* to _Read Write_.
 
-Click _More_ at the bottom of the form.
+1. Click _More_ at the bottom of the form.
 
 **Startup script (under Automation):** Copy and past the script shown above.
 For testing purposes you may want to change the sleep duration from `3600s`
 to `300s`, so you will only have to wait five minutes to see that the
 deletion worked.
 
-Click **CREATE**.
+1. Click **CREATE**.
 
 You will see a list of your VM instances, with a spinning icon next to your
 new instance. In a short while, the spinner will change to a green check mark.
@@ -178,8 +202,14 @@ Wait the duration you specified in the script. The instance you created should
 disappear from the list. You can click the refresh icon if it doesn't update
 on its own.
 
+This completes the tutorial.
+
 
 ## Using the command line
+
+This section gives the steps to create a self-deleting instance by using the
+command line on your PC. If you prefer to use the command line
+instead, see the previous section, **Using the console**.
 
 Install the [Google Cloud SDK] (https://cloud.google.com/sdk/), then run
 `gcloud init` to log in to your Google Cloud account and select the project
