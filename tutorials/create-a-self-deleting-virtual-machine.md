@@ -146,6 +146,41 @@ installed for your use.
 
 ## Using the console
 
+Open the [Cloud Console] (https://console.cloud.google.com/) and select your
+project. Click on the menu icon in the upper left corner and select
+_Compute Engine_ / _VM Instances_. The *VM Instances* control panel will
+display.
+
+Click *CREATE INSTANCE*. A form to set the properties of the new instance
+will display. Leave most values at the default value already filled in for
+you, but change the following values:
+
+*Name:* Fill in any name (e.g., `myinstance`).
+
+*Region and Zone:* Select a location near you.
+
+*Access Scopes (under Identity and API access):* Click _Set access for each API_,
+the set the value for *Compute Engine* to _Read Write_.
+
+Click _More_ at the bottom of the form.
+
+*Startup script (under Automation):* Copy and past the script shown above.
+For testing purposes you may want to change the sleep duration from `3600s`
+to `300s`, so you will only have to wait five minutes to see that the
+deletion worked.
+
+Click *CREATE*.
+
+You will see a list of your VM instances, with a spinning icon next to your
+new instance. In a short while, the spinner will change to a green check mark.
+
+Wait the duration you specified in the script. The instance you created should
+disappear from the list. You can click the refresh icon if it doesn't update
+on its own.
+
+
+## Using the command line
+
 Install the [Google Cloud SDK] (https://cloud.google.com/sdk/), then run
 `gcloud init` to log in to your Google Cloud account and select the project
 you want to work in. Alternatively, you can open the
@@ -197,6 +232,4 @@ You can check on your running instances at any time with the command:
 Wait until the specified sleep time has expired, and run that command again.
 The instance should be gone.
     
-## Using the command line
-
 ## Cleaning up
