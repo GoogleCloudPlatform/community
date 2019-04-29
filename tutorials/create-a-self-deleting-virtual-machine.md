@@ -180,17 +180,13 @@ display.
 1. Click **CREATE INSTANCE**. A form to set the properties of the new instance
 will display. Leave most values at the default value already filled in for
 you, but change the following values:
-
-**Name:** Fill in any name (e.g., `myinstance`).
-
-**Region and Zone:** Select a location near you.
-
-**Access Scopes (under Identity and API access):** Click _Set access for each API_,
+  - **Name:** Fill in any name (e.g., `myinstance`).
+  - **Region and Zone:** Select a location near you.
+  - **Access Scopes (under Identity and API access):** Click _Set access for each API_,
 the set the value for *Compute Engine* to _Read Write_.
 
-1. Click _More_ at the bottom of the form.
-
-**Startup script (under Automation):** Copy and past the script shown above.
+1. Click _More_ at the bottom of the form, then fill in the following value:
+  -- **Startup script (under Automation):** Copy and past the script shown above.
 For testing purposes you may want to change the sleep duration from `3600s`
 to `300s`, so you will only have to wait five minutes to see that the
 deletion worked.
