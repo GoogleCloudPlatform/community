@@ -154,17 +154,31 @@ and then open the Cloud Shell command line by clicking the _Activate Cloud
 Shell_ icon near the top right of the screen. The SDK is already installed
 and initialized for you in the Cloud Shell.
 
-Create the `startup.sh` file from the previous section, except change the
-sleep time from `3600s` to `300s` for a test, so you won't have to wait
+Create the `startup.sh` file from the previous section. If you just want to
+test whether the self-deleting code works, you can change the
+sleep time from `3600s` to `300s` so you won't have to wait
 for a full hour to see if it deletes itself. Then create a
 self-deleting virtual machine called `myinstance` with the command:
 
     gcloud compute instances create myinstance \
-    --metadata-from-file=startup-script=startup.sh
+    --metadata-from-file=startup-script=startup.sh \
+    --scopes=compute-rw
 
-You can use a different name than `myinstance` if you desire. You may be
-prompted to allow the SDK to create the needed API if you haven't used it
-before. Go ahead and answer `Y` for yes if needed.
+You can use a different name than `myinstance` if you desire.
+
+The `--metadata-from-file=startup-script=startup.sh` option specifies
+that the new instance's metadata-server should provide the contents
+of the `startup.sh` file as the value of `startup-script` when the
+instance requests it. For standard Google Compute Engine instances,
+that will cause the instance to run that script when it is first started.
+
+The `--scopes=compute-rw` option specifies that the instance should have
+permission to use all Compute APIs, including the API to delete an
+instance. By default, new instances do *not* have that privilege, so it
+needs to be added here so it can delete itself.
+
+You may be prompted to allow the SDK to create the needed API if you
+haven't used it before. Go ahead and answer `Y` for yes if needed.
 
 You will be asked to select a region for your instance to run in. Select
 one in a convenient location for you and likely users.
