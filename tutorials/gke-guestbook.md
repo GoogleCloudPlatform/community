@@ -3,7 +3,7 @@ title: Google Kubernetes Engine quickstart - Create a guestbook with Redis and P
 description: Use Google Kubernetes Engine to deploy a Guestbook application with Redis and PHP.
 author: jscud
 tags: Kubernetes
-date_published: 2019-04-30
+date_published: 2019-05-09
 ---
 
 # Google Kubernetes Engine quickstart
