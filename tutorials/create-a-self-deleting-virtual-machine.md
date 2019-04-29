@@ -3,18 +3,18 @@ title: Create a Self-Deleting Virtual Machine
 description: Learn how to launch a Compute Engine VM that will delete itself after a set duration, insuring that costly resources are not left running.
 author: engelke
 tags: Compute Engine, self-deleting, education, cost control
-date_published: 2019-03-18
+date_published: 2019-04-30
 ---
 # Create a Self-Deleting Virtual Machine on Google Compute Engine
 
 Learning to use Google Cloud is best done hands-on, by actually creating, using,
-and removing resources. But a common problem with doing this is learners may
+and removing resources. But a common problem with doing this is that learners may
 forget to clean up their resources when finished trying something, resulting
 in continuing running resources, often at a cost.
 
 This tutorial shows how to create Compute Engine instances (virtual machines)
 that will automatically delete themselves after a set time, insuring that
-those resources will not remain, and incur charges, indefinitely even
+those resources will not remain and incur charges indefinitely even
 if the learner forgets to clean them up. This will be particularly useful
 in class settings.
 
@@ -55,7 +55,7 @@ Begin this tutorial by opening a text editor and creating a file named
     gcloud --quiet compute instances delete $NAME --zone=$ZONE
 
 When you start a new instance and specify that it should automatically run
-this script, it will do nothing for one hour (the `3600s` value on the second
+this script it will do nothing for one hour (the `3600s` value on the second
 line), then look up information about the running instance and put it in shell
 variables (the third and fourth lines), and finally run a `gcloud` command to
 delete itself.
@@ -70,7 +70,7 @@ the suffix `m`, `h`, or `d` in place of `s`.
 
 * Instead of the instance deleting itself after a given duration, you can have
 the instance install and configure a program to run, and then delete itself
-when that program deletes. Replace the `sleep 3600s` line with one or more
+when that program completes. Replace the `sleep 3600s` line with one or more
 commands to install, configure, and run the program you want.
 
 ## Explanation
@@ -146,6 +146,43 @@ installed for your use.
 
 ## Using the console
 
+Install the [Google Cloud SDK] (https://cloud.google.com/sdk/), then run
+`gcloud init` to log in to your Google Cloud account and select the project
+you want to work in. Alternatively, you can open the
+[Cloud Console] (https://console.cloud.google.com/), select your project,
+and then open the Cloud Shell command line by clicking the _Activate Cloud
+Shell_ icon near the top right of the screen. The SDK is already installed
+and initialized for you in the Cloud Shell.
+
+Create the `startup.sh` file from the previous section, except change the
+sleep time from `3600s` to `300s` for a test, so you won't have to wait
+for a full hour to see if it deletes itself. Then create a
+self-deleting virtual machine called `myinstance` with the command:
+
+    gcloud compute instances create myinstance \
+    --metadata-from-file=startup-script=startup.sh
+
+You can use a different name than `myinstance` if you desire. You may be
+prompted to allow the SDK to create the needed API if you haven't used it
+before. Go ahead and answer `Y` for yes if needed.
+
+You will be asked to select a region for your instance to run in. Select
+one in a convenient location for you and likely users.
+
+In a few minutes you should see a confirmation that the instance has been
+created successfully:
+
+    Created [https://www.googleapis.com/compute/v1/projects/myproject/zones/us-central1-a/instances/myinstance].
+    NAME        ZONE           MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP     STATUS
+    myinstance  us-central1-a  n1-standard-1               10.128.0.2   35.239.136.206  RUNNING
+
+You can check on your running instances at any time with the command:
+
+    gcloud compute instances list
+
+Wait until the specified sleep time has expired, and run that command again.
+The instance should be gone.
+    
 ## Using the command line
 
 ## Cleaning up
