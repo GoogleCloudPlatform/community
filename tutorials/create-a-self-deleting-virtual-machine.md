@@ -187,9 +187,8 @@ the set the value for *Compute Engine* to _Read Write_.
 
 1. Click _More_ at the bottom of the form, then fill in the following value:
   -- **Startup script (under Automation):** Copy and past the script shown above.
-For testing purposes you may want to change the sleep duration from `3600s`
-to `300s`, so you will only have to wait five minutes to see that the
-deletion worked.
+  -- For testing purposes you may want to change the sleep duration from `3600s`
+to only `300s`.
 
 1. Click **CREATE**.
 
@@ -209,41 +208,24 @@ This section gives the steps to create a self-deleting instance by using the
 command line on your PC. If you prefer to use the command line
 instead, see the previous section, **Using the console**.
 
-Install the [Google Cloud SDK] (https://cloud.google.com/sdk/), then run
-`gcloud init` to log in to your Google Cloud account and select the project
-you want to work in. Alternatively, you can open the
-[Cloud Console] (https://console.cloud.google.com/), select your project,
-and then open the Cloud Shell command line by clicking the _Activate Cloud
-Shell_ icon near the top right of the screen. The SDK is already installed
-and initialized for you in the Cloud Shell.
+1. Install the [Google Cloud SDK] (https://cloud.google.com/sdk/).
 
-Create the `startup.sh` file from the previous section. If you just want to
-test whether the self-deleting code works, you can change the
-sleep time from `3600s` to `300s` so you won't have to wait
-for a full hour to see if it deletes itself. Then create a
-self-deleting virtual machine called `myinstance` with the command:
+1. Run `gcloud init` to log in to your Google Cloud account and select 
+the project you want to work in.
+
+1. Create a self-deleting virtual machine called `myinstance` (or
+any name you prefer) with the command below. Recall that you created
+the `startup.sh` file in the **Preparation** steps, above. See below
+for an explanation of the options in the command.
 
     gcloud compute instances create myinstance \
     --metadata-from-file=startup-script=startup.sh \
     --scopes=compute-rw
 
-You can use a different name than `myinstance` if you desire.
-
-The `--metadata-from-file=startup-script=startup.sh` option specifies
-that the new instance's metadata-server should provide the contents
-of the `startup.sh` file as the value of `startup-script` when the
-instance requests it. For standard Google Compute Engine instances,
-that will cause the instance to run that script when it is first started.
-
-The `--scopes=compute-rw` option specifies that the instance should have
-permission to use all Compute APIs, including the API to delete an
-instance. By default, new instances do *not* have that privilege, so it
-needs to be added here so it can delete itself.
-
-You may be prompted to allow the SDK to create the needed API if you
+1. You may be prompted to allow the SDK to create the needed API if you
 haven't used it before. Go ahead and answer `Y` for yes if needed.
 
-You will be asked to select a region for your instance to run in. Select
+1. You will be asked to select a region for your instance to run in. Select
 one in a convenient location for you and likely users.
 
 In a few minutes you should see a confirmation that the instance has been
@@ -259,7 +241,22 @@ You can check on your running instances at any time with the command:
 
 Wait until the specified sleep time has expired, and run that command again.
 The instance should be gone.
+
+This completes the tutorial.
     
+### Explanations
+
+The `--metadata-from-file=startup-script=startup.sh` option specifies
+that the new instance's metadata-server should provide the contents
+of the `startup.sh` file as the value of `startup-script` when the
+instance requests it. For standard Google Compute Engine instances,
+that will cause the instance to run that script when it is first started.
+
+The `--scopes=compute-rw` option specifies that the instance should have
+permission to use all Compute APIs, including the API to delete an
+instance. By default, new instances do *not* have that privilege, so it
+needs to be added here so it can delete itself.
+
 ## Cleaning up
 
 If everything went as planned, the only resource you created, the new
@@ -267,10 +264,12 @@ instance, cleaned itself up. If you no longer need the project you created
 for trying this out, you can delete it, too, eliminating every resource
 in it.
 
-Click the menu icon in the upper left-hand corner of the cloud console and
-select _Home_. There should be a box labeled _Project info_. Click
-_Go to project settings_ at the bottom of that box.
+1. Click the menu icon in the upper left-hand corner of the cloud console and
+select _Home_. There should be a box labeled _Project info_.
 
-Click **SHUT DOWN**. Type the project ID you gave the project and
-click **SHUT DOWN**. The project will be shut down and will be deleted
-in thirty days.
+1. Click _Go to project settings_ at the bottom of that box.
+
+1. Click **SHUT DOWN**. Type the project ID you gave the project.
+
+1. Click **SHUT DOWN** below the project ID you entered. The project
+will be shut down and will be deleted in thirty days.
