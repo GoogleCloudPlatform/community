@@ -236,7 +236,7 @@ latest version of Cloud Endpoints service (the one that was deployed last).
 1.  Create `app.yaml` file in VS Code at `ExploreApiWithEndpointsCore` directory.
     The content of the file should be:
 
-        Runtime: aspnetcore
+        runtime: aspnetcore
         env: flex
         endpoints_api_service:
             name: [SERVICE_NAME]
