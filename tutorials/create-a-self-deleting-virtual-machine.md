@@ -217,10 +217,11 @@ the project you want to work in.
 any name you prefer) with the command below. Recall that you created
 the `startup.sh` file in the **Preparation** steps, above. See below
 for an explanation of the options in the command.
-
+```
     gcloud compute instances create myinstance \
     --metadata-from-file=startup-script=startup.sh \
     --scopes=compute-rw
+```
 
 1. You may be prompted to allow the SDK to create the needed API if you
 haven't used it before. Go ahead and answer `Y` for yes if needed.
