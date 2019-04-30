@@ -55,10 +55,11 @@ run on the nodes.
 
 1.  Click [**Create**][spotlight-submit-create] to create the cluster.
 
-## Create the sample application
+## Get the sample application code
 
-Cloud Shell is a built-in command-line tool for the console. You use
-Cloud Shell to run the example app using a prebuilt container image.
+Cloud Shell is a built-in command-line tool for the console. In this section,
+you start Cloud Shell and use it to get the sample application code. Later,
+you use Cloud Shell to run the example app using a prebuilt container image.
 
 ### Open Cloud Shell
 
@@ -66,7 +67,7 @@ Open Cloud Shell by clicking the
 <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
 [**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
-### Clone the sample code
+### Get the sample code
 
 Clone the sample code:
 
@@ -82,8 +83,7 @@ cd examples/guestbook
 
 ## Set up a Redis master
 
-You are now in the main directory for the sample code. First, look at the files
-that configure your application.
+In this section, you deploy a Redis master and verify that it is running.
 
 ### Set up gcloud and kubectl credentials
 
@@ -93,7 +93,7 @@ gcloud container clusters get-credentials <cluster-name> --zone <cluster-zone>
 
 ### Exploring the controller
 
-Enter the following command to view your controller configuration:
+View the configuration file for the controller:
 
 ```bash
 cat redis-master-deployment.yaml
@@ -105,7 +105,7 @@ refers to a Docker image to be pulled from a registry.
 
 ### Deploy the master controller
 
-Run the following command to deploy the Redis master.
+Deploy the Redis master:
 
 ```bash
 kubectl create -f redis-master-deployment.yaml
@@ -113,7 +113,7 @@ kubectl create -f redis-master-deployment.yaml
 
 ### View the running pod
 
-Verify that the Redis master pod is running.
+Verify that the Redis master pod is running:
 
 ```bash
 kubectl get pods
@@ -121,7 +121,7 @@ kubectl get pods
 
 ## Create redis-master service
 
-You need to create a service to proxy the traffic to the Redis master pod.
+In this section, you create a service to proxy the traffic to the Redis master pod.
 
 View your service configuration:
 
@@ -147,13 +147,14 @@ kubectl get service
 
 ## Set up Redis workers
 
-Although the Redis master is a single pod, you can make it highly available and meet traffic demands by adding a few Redis worker replicas.
+Although the Redis master is a single pod, you can make it more highly available to meet traffic
+demands by adding a few Redis worker replicas.
+
+View the manifest file, which defines two replicas for the Redis workers:
 
 ```bash
 cat redis-slave-deployment.yaml
 ```
-
-This manifest file defines two replicas for the Redis workers.
 
 Start the two replicas on your container cluster:
 
