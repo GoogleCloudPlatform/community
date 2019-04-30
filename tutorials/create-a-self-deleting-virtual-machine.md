@@ -64,11 +64,13 @@ command to delete itself. This script needs to be provided in a file or
 at an available URL when launching the instance.
 
 1. Open a text editor and enter the following text:
-    ```#!/bin/sh
+    ```
+    #!/bin/sh
     sleep 3600s
     export NAME=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/name -H 'Metadata-Flavor: Google')
     export ZONE=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google')
-    gcloud --quiet compute instances delete $NAME --zone=$ZONE```
+    gcloud --quiet compute instances delete $NAME --zone=$ZONE
+    ```
 
 2. Save the file as `startup.sh`.
 
@@ -215,9 +217,11 @@ the project you want to work in.
 any name you prefer) with the command below. Recall that you created
 the `startup.sh` file in the **Preparation** steps, above. See below
 for an explanation of the options in the command.
-    ```gcloud compute instances create myinstance \
+    ```
+    gcloud compute instances create myinstance \
     --metadata-from-file=startup-script=startup.sh \
-    --scopes=compute-rw```
+    --scopes=compute-rw
+    ```
 
 4. You may be prompted to allow the SDK to create the needed API if you
 haven't used it before. Go ahead and answer `Y` for yes if needed.
