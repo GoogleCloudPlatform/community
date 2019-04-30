@@ -64,11 +64,11 @@ command to delete itself. This script needs to be provided in a file or
 at an available URL when launching the instance.
 
 1. Open a text editor and enter the following text:
-    `#!/bin/sh
+    ```#!/bin/sh
     sleep 3600s
     export NAME=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/name -H 'Metadata-Flavor: Google')
     export ZONE=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google')
-    gcloud --quiet compute instances delete $NAME --zone=$ZONE`
+    gcloud --quiet compute instances delete $NAME --zone=$ZONE```
 
 2. Save the file as `startup.sh`.
 
