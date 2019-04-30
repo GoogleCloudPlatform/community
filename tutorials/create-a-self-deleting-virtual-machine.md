@@ -15,8 +15,14 @@ in continuing running resources, often at a cost.
 This tutorial shows how to create Compute Engine instances (virtual machines)
 that will automatically delete themselves after a set time, insuring that
 those resources will not remain and incur charges indefinitely even
-if the learner forgets to clean them up. This will be particularly useful
-in class settings.
+if the learner forgets to clean them up. A variation is also shown that
+will simply stop the instances after a set time, after which they can
+be restarted. Be aware that, unlike deleted instances, stopped instances
+still incur some charges
+(see [Google Compute Engine Pricing](https://cloud.google.com/compute/pricing)
+for details).
+
+This will be particularly useful in class settings.
 
 ## Objectives
 
@@ -73,6 +79,9 @@ at an available URL when launching the instance.
     ```
 
 2. Save the file as `startup.sh`.
+
+**To stop, rather than delete, the instance after the set time, replace the
+`delete` in the `gcloud` command with `stop`.**
 
 When you start a new instance and specify that it should automatically run
 this script, it will do nothing for one hour (the `3600s` value on the second
@@ -159,7 +168,8 @@ user confirmation of an action, since it is running in batch mode with no
 user available. The `compute instances` command group performs operations on
 Compute Engine instances. The `delete` command completely removes an
 instance. Which instance is to be deleted is specified by the instance
-_NAME_ and _ZONE_ in the command.
+_NAME_ and _ZONE_ in the command. **A `stop` command can be given in place
+of `delete` to simply stop the instance so it can be restarted later.**
 
 Every standard Linux option in Compute Engine has the `gcloud` command already
 installed for your use.
