@@ -219,8 +219,8 @@ Start the to-do web app:
 sudo nohup nodejs server.js --be_ip [backend-internal-ip] --fe_ip [frontend-internal-ip] &
 ```
 
-Replace `[backend-internal-ip]` and `[frontend-internal-ip]` with 
-[internal IP addresses][spotlight-internal-ip] for the instances that you created.
+Replace `[backend-internal-ip]` and `[frontend-internal-ip]` with the
+internal IP addresses for the instances that you created.
 These IP addresses are listed for each instance in the **VM instances** table.
 
 Exit the SSH session and disconnect from the frontend instance:
@@ -273,7 +273,6 @@ Here are some suggestion for what you can do next:
 [spotlight-open-devshell]: walkthrough://spotlight-pointer?spotlightId=devshell-activate-button
 [spotlight-machine-type]: walkthrough://spotlight-pointer?spotlightId=gce-add-machine-type-select
 [spotlight-submit-create]: walkthrough://spotlight-pointer?spotlightId=gce-submit
-[spotlight-internal-ip]: walkthrough://spotlight-pointer?cssSelector=gce-internal-ip
 [spotlight-external-ip]: walkthrough://spotlight-pointer?cssSelector=.p6n-external-link
 [spotlight-instance-checkbox]: walkthrough://spotlight-pointer?cssSelector=.p6n-checkbox-form-label
 [spotlight-delete-button]: walkthrough://spotlight-pointer?cssSelector=.p6n-icon-delete
