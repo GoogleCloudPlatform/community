@@ -210,10 +210,10 @@ instead, see the previous section, **Using the console**.
 
 1. Install the [Google Cloud SDK] (https://cloud.google.com/sdk/).
 
-1. Run `gcloud init` to log in to your Google Cloud account and select 
+2. Run `gcloud init` to log in to your Google Cloud account and select 
 the project you want to work in.
 
-1. Create a self-deleting virtual machine called `myinstance` (or
+3. Create a self-deleting virtual machine called `myinstance` (or
 any name you prefer) with the command below. Recall that you created
 the `startup.sh` file in the **Preparation** steps, above. See below
 for an explanation of the options in the command.
@@ -223,10 +223,10 @@ for an explanation of the options in the command.
     --scopes=compute-rw
 ```
 
-1. You may be prompted to allow the SDK to create the needed API if you
+4. You may be prompted to allow the SDK to create the needed API if you
 haven't used it before. Go ahead and answer `Y` for yes if needed.
 
-1. You will be asked to select a region for your instance to run in. Select
+5. You will be asked to select a region for your instance to run in. Select
 one in a convenient location for you and likely users.
 
 In a few minutes you should see a confirmation that the instance has been
@@ -245,7 +245,7 @@ The instance should be gone.
 
 This completes the tutorial.
     
-### Explanations
+### Options
 
 The `--metadata-from-file=startup-script=startup.sh` option specifies
 that the new instance's metadata-server should provide the contents
