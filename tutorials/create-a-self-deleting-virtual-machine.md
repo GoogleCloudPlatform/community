@@ -196,8 +196,8 @@ you, but change the following values:
 the set the value for *Compute Engine* to _Read Write_.
 
 1. Click _More_ at the bottom of the form, then fill in the following value:
-  -- **Startup script (under Automation):** Copy and paste the script shown above.
-  -- For testing purposes you may want to change the sleep duration from `3600s`
+  - **Startup script (under Automation):** Copy and paste the script shown above.
+  - For testing purposes you may want to change the sleep duration from `3600s`
 to only `300s`.
 
 1. Click **CREATE**.
@@ -215,13 +215,14 @@ This completes the tutorial.
 ## Using the command line
 
 This section gives the steps to create a self-deleting instance by using the
-command line on your PC. If you prefer to use the command line
+command line on your PC. If you prefer to use the web console
 instead, see the previous section, **Using the console**.
 
 1. Install the [Google Cloud SDK] (https://cloud.google.com/sdk/).
 
-2. Run `gcloud init` to log in to your Google Cloud account and select 
-the project you want to work in.
+2. Run `gcloud auth login` to log in to your Google Cloud account.
+
+2. Run `gcloud init` to select the project you want to work in.
 
 3. Create a self-deleting virtual machine called `myinstance` (or
 any name you prefer) with the command below. Recall that you created
@@ -261,7 +262,7 @@ The `--metadata-from-file=startup-script=startup.sh` option specifies
 that the new instance's metadata-server should provide the contents
 of the `startup.sh` file as the value of `startup-script` when the
 instance requests it. For standard Google Compute Engine instances,
-that will cause the instance to run that script when it is first started.
+that will cause the instance to run that script when it starts.
 
 The `--scopes=compute-rw` option specifies that the instance should have
 permission to use all Compute APIs, including the API to delete an
