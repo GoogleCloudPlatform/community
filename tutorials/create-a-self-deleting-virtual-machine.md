@@ -17,8 +17,8 @@ that will automatically delete themselves after a set time, insuring that
 those resources will not remain and incur charges indefinitely even
 if the learner forgets to clean them up. A variation is also shown that
 will simply stop the instances after a set time, after which they can
-be restarted. Be aware that, unlike deleted instances, stopped instances
-still incur some charges
+be restarted (and again automatically stop after the set time). Be aware
+that stopped instances, unlike deleted instances, still incur some charges
 (see [Google Compute Engine Pricing](https://cloud.google.com/compute/pricing)
 for details).
 
@@ -108,10 +108,10 @@ This section explains how the file shown above works. You can safely skip
 this if you just want to create self-deleting instances.
 
 Every Linux OS image available by default in Google Compute Engine is
-configured to run a program when it first boots, if you specify such a program.
+configured to run a program when it starts, if you specify such a program.
 The `startup.sh` file in the previous section is such a program. When you
 create an image with that option it will run the `startup.sh` program when
-it launches. In this case, that program does nothing but wait for an hour
+it boots. In this case, that program does nothing but wait for an hour
 and then issue a command to delete the instance that runs it.
 
 _Default Windows instances have a similar capability, but there are some
