@@ -184,7 +184,7 @@ you, but change the following values:
 the set the value for *Compute Engine* to _Read Write_.
 
 1. Click _More_ at the bottom of the form, then fill in the following value:
-  -- **Startup script (under Automation):** Copy and past the script shown above.
+  -- **Startup script (under Automation):** Copy and paste the script shown above.
   -- For testing purposes you may want to change the sleep duration from `3600s`
 to only `300s`.
 
@@ -215,9 +215,9 @@ the project you want to work in.
 any name you prefer) with the command below. Recall that you created
 the `startup.sh` file in the **Preparation** steps, above. See below
 for an explanation of the options in the command.
-    `gcloud compute instances create myinstance \
+    ```gcloud compute instances create myinstance \
     --metadata-from-file=startup-script=startup.sh \
-    --scopes=compute-rw`
+    --scopes=compute-rw```
 
 4. You may be prompted to allow the SDK to create the needed API if you
 haven't used it before. Go ahead and answer `Y` for yes if needed.
