@@ -72,7 +72,16 @@ image](https://hub.docker.com/r/docker/compose/).
     Compose](https://hub.docker.com/r/docker/compose/tags/) to use the latest
     version.
 
-        docker run docker/compose:1.13.0 version
+        docker run docker/compose:1.24.0 version
+
+1.  Ensure that your location is a writable directory.
+
+    Many directories are [mounted as read-only in the Container-Optimized
+    OS](/container-optimized-os/docs/concepts/disks-and-filesystem). Change
+    to a writable directory such as your home directory.
+
+        $ pwd
+        /home/username/dockercloud-hello-world
 
 1.  Run the Docker Compose command to run the sample code.
 
@@ -81,14 +90,14 @@ image](https://hub.docker.com/r/docker/compose/).
     option.
 
     To make the current directory available to the container, use the `-v
-    "$PWD:/rootfs/$PWD"` option to mount it as a volume and the `-w="/rootfs/$PWD"` to
+    "$PWD:$PWD"` option to mount it as a volume and the `-w="$PWD"` to
     change the working directory.
 
         docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -v "$PWD:/rootfs/$PWD" \
-            -w="/rootfs/$PWD" \
-            docker/compose:1.13.0 up
+            -v "$PWD:$PWD" \
+            -w="$PWD" \
+            docker/compose:1.24.0 up
 
 1.  With the `docker run` command still running, open the [Google Cloud
     Platform Console instances
@@ -102,7 +111,7 @@ image](https://hub.docker.com/r/docker/compose/).
 
 ## Making an alias to Docker Compose
 
-The `docker run ... docker/compose:1.13.0 up` command is equivalent to running
+The `docker run ... docker/compose:1.24.0 up` command is equivalent to running
 the `docker-compose up` command on systems where Docker Compose is installed by
 the usual method. So that you don't have to remember or type this long command,
 create an alias for it.
@@ -112,9 +121,9 @@ create an alias for it.
 
         echo alias docker-compose="'"'docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -v "$PWD:/rootfs/$PWD" \
-            -w="/rootfs/$PWD" \
-            docker/compose:1.13.0'"'" >> ~/.bashrc
+            -v "$PWD:$PWD" \
+            -w="$PWD" \
+            docker/compose:1.24.0'"'" >> ~/.bashrc
 
 1.  Reload the Bash configuration.
 

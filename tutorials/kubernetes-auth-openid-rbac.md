@@ -33,7 +33,7 @@ After initializing the master instance, you need to update the `kube api server`
 More information about the OIDC attributes can be found in the [Authenticating](https://kubernetes.io/docs/admin/authentication/#option-1---oidc-authenticator) reference documentation.
 
 
-    sed -i "/- kube-apiserver/a\    - --oidc-issuer-url=https://accounts.google.com\n    - --oidc-username-claim=email\n    - --oidc-client-id=<Your Google Client ID>" /etc/kubernetes/manifests/kube-apiserver.yaml
+    sed -i "/- kube-apiserver/a\    - --oidc-issuer-url=https://accounts.google.com\n    - --oidc-username-claim=email\n    - --oidc-client-id=[YOUR_GOOGLE_CLIENT_ID]" /etc/kubernetes/manifests/kube-apiserver.yaml
 
 
 Add any network CNI plugin and the cluster is ready. Copy `/etc/kubernetes/admin.conf` to local `~/.kube/config` and change the cluster ip.

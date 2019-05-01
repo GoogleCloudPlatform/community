@@ -72,7 +72,7 @@ class LtkDevice(TaskSet):
             username='unused',
             password=self.get_jwt())
 
-        certs = path.join(path.dirname(__file__), "./gcp_rootCAs.pem")
+        certs = path.join(path.dirname(__file__), "./iot_rootCAs.pem")
         self.mqtt_client.tls_set(ca_certs=certs, tls_version=ssl.PROTOCOL_TLSv1_2)
 
         self.mqtt_client.on_connect = self.on_connect
@@ -83,7 +83,9 @@ class LtkDevice(TaskSet):
         # self.mqtt_client.on_log = self.on_log
 
         self.connectStartTime = time.time()
-        self.mqtt_client.connect('mqtt.googleapis.com', '8883')
+        # Use the long-term support domain, mqtt.googleapis.com should be considered deprecated.
+        # Use of mqtt.googleapis.com requires a different trust bundle, located at https://pki.goog/roots.pem.
+        self.mqtt_client.connect('mqtt.2030.ltsapis.goog', '443')
         self.mqtt_client.loop_start()
         sys.stdout.write('*** clientId {} set up for deviceId {}'.format(self.get_clientId(), self.deviceId))
 
@@ -202,16 +204,17 @@ class LtkDevice(TaskSet):
                 # we're up to date on messages received, so send the next seqNum
                 topic = '/devices/{}/events'.format(self.deviceId)
                 seqNum = self.lastSent + 1
-                # temp to force larger payload
-                pad = ''.join(random.choice(string.letters + string.digits) for _ in range(0))
-                # payload format & contents affects code in on_message
+                # optional - add pad to force larger payload
+                # pad = ''.join(random.choice(string.letters + string.digits) for _ in range(0))
                 sendTime = time.time()
                 # sys.stdout.write('*** sendTime {:.5f} '.format(sendTime))
-                payload = '{} {} payload {} at {} {}'.format(self.deviceId, self.get_clientId(), seqNum, int(sendTime * 100000), pad)
-                # verbose message but needed for tracing cases where hit skip limit
-                sys.stdout.write('*** TASK publishing {} '.format(payload))
+                payload = '{} {} payload {} at {}'.format(self.deviceId, self.get_clientId(), seqNum, int(sendTime * 100000))
+                # optional - if using padding, add to end of payload as follows (note: payload format and contents affects code in on_message)
+                # payload = '{} {} payload {} at {} {}'.format(self.deviceId, self.get_clientId(), seqNum, int(sendTime * 100000), pad)
                 self.mqtt_client.publish(topic, payload)
                 self.lastSent = seqNum
+                # verbose message but needed for tracing cases of "echo timeout" events
+                sys.stdout.write('*** TASK published {}'.format(payload))
             elif self.numSkips == skipLimit:
                 # waited too long for response to last message sent, so fire error and move on
                 msg = '{} {} payload {}'.format(self.deviceId, self.get_clientId(), self.lastSent)

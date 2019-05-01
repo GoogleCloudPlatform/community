@@ -21,6 +21,10 @@ info "Setting gcloud command line config to project $LTK_DRIVER_PROJECT_ID"
 gcloud config set project $LTK_DRIVER_PROJECT_ID 1>/dev/null 2>&1 || \
   errorExit "Unable to set projectId"
 
+# Make sure kubectl is pointing to the driver cluster before we start deleting kubernetes objects.
+info "Setting kubectl context to existing cluster."
+gcloud container clusters get-credentials ltk-driver --zone $LTK_DRIVER_ZONE
+
 ### Clean up kubernetes.
 
 info "Deleting pod for worker"

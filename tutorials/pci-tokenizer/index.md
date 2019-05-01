@@ -3,14 +3,14 @@ title: Credit card tokenization service for Google Cloud Platform
 description: Learn how to build a PCI DSS compliant credit card tokenization service.
 author: ianmaddox
 tags: serverless, cloud functions, javascript, iam, PCI, DSS, credit, card
-date_published: 2019-04-02
+date_published: 2019-03-15
 ---
 
 # Overview
 
 This example provides a PCI DSS compliant credit card tokenization service built for Google Cloud Platform (GCP), which
 can run in both Docker and Cloud Functions. This code is based on Google's 
-[Tokenizing sensitive cardholder data for PCI DSS](/solutions/tokenizing-sensitive-cardholder-data-for-pci-dss) whitepaper.
+[Tokenizing sensitive cardholder data for PCI DSS](https://cloud.google.com/solutions/tokenizing-sensitive-cardholder-data-for-pci-dss) whitepaper.
 
 This project uses [KMS](https://cloud.google.com/kms/) and [Datastore](https://cloud.google.com/datastore/) to securely
 encrypt and tokenize sensitive credit card data in a manner consistent with the PCI Data Security Standard. This code is
