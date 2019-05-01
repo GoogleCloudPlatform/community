@@ -1,9 +1,9 @@
 ---
 title: Create a Self-Deleting Virtual Machine
 description: Learn how to launch a Compute Engine VM that will delete itself after a set duration, insuring that costly resources are not left running.
-author: engelke
+author: engelke,lauriewhite
 tags: Compute Engine, self-deleting, education, cost control
-date_published: 2019-04-30
+date_published: 2019-05-01
 ---
 # Create a Self-Deleting Virtual Machine on Google Compute Engine
 
