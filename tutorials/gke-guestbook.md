@@ -1,6 +1,6 @@
 ---
 title: Google Kubernetes Engine quickstart - Create a guestbook with Redis and PHP
-description: Use Google Kubernetes Engine to deploy a Guestbook application with Redis and PHP.
+description: Use Google Kubernetes Engine to deploy a guestbook application with Redis and PHP.
 author: jscud
 tags: Kubernetes
 date_published: 2019-05-09
@@ -44,14 +44,14 @@ A cluster consists of at least one cluster master machine and multiple worker
 machines called *nodes*. You deploy applications to clusters, and the applications
 run on the nodes.
 
-1.  Click the [Create cluster][spotlight-create-cluster] button.
+1.  Click the [**Create cluster**][spotlight-create-cluster] button.
 
 1.  On the **Create a Kubernetes cluster** page, select the
     <walkthrough-spotlight-pointer cssSelector="button[aria-label='Standard cluster']">Standard cluster</walkthrough-spotlight-pointer> template.
 
 1.   Enter a [name][spotlight-instance-name] for this cluster.
 
-1.   Choose a region and a [zone][spotlight-instance-zone] for this cluster.
+1.   Choose a [zone][spotlight-instance-zone] for this cluster.
 
 1.  Click [**Create**][spotlight-submit-create] to create the cluster.
 
@@ -88,8 +88,10 @@ In this section, you deploy a Redis master and verify that it is running.
 ### Set up gcloud and kubectl credentials
 
 ```bash
-gcloud container clusters get-credentials <cluster-name> --zone <cluster-zone>
+gcloud container clusters get-credentials [cluster-name] --zone [cluster-zone]
 ```
+
+Replace `[cluster-name]` and `[cluster-zone]` with the name and zone of the instance that you created.
 
 ### Exploring the controller
 
@@ -119,7 +121,7 @@ Verify that the Redis master pod is running:
 kubectl get pods
 ```
 
-## Create redis-master service
+## Create the redis-master service
 
 In this section, you create a service to proxy the traffic to the Redis master pod.
 
@@ -139,7 +141,7 @@ Create the service:
 kubectl create -f redis-master-service.yaml
 ```
 
-Verify that the service is created:
+Verify that the service has been created:
 
 ```bash
 kubectl get service
@@ -170,19 +172,27 @@ kubectl get pods
 
 ## Create the Redis worker service
 
-The guestbook application needs to communicate to Redis workers to read data. To make the Redis workers discoverable, you need to set up a service. A service provides transparent load balancing to a set of pods.
+The guestbook application needs to communicate to Redis workers to read data. To make the
+Redis workers discoverable, you need to set up a service. A service provides transparent
+load balancing to a set of pods.
+
+View the configuration file that defines the worker service:
 
 ```bash
 cat redis-slave-service.yaml
 ```
 
-This file defines a service named `redis-slave` running on port 6379. Note that the `selector` field of the service matches the Redis worker pods created in the previous step.
+This file defines a service named `redis-slave` running on port 6379. Note that
+the `selector` field of the service matches the Redis worker pods created in the previous
+step.
+
+Create the service:
 
 ```bash
 kubectl create -f redis-slave-service.yaml
 ```
 
-Verify that the service is created:
+Verify that the service has been created:
 
 ```bash
 kubectl get service
@@ -190,20 +200,29 @@ kubectl get service
 
 ## Set up the guestbook web frontend
 
-Now that you have the Redis storage of your guestbook up and running, start the guestbook web servers. Like the Redis workers, this is a replicated application managed by a deployment.
+Now that you have the Redis storage of your guestbook up and running, start the guestbook web
+servers. Like the Redis workers, this is a replicated application managed by a deployment.
 
-This tutorial uses a simple PHP frontend. It is configured to talk to either the Redis worker or master services, depending on whether the request is a read or a write. It exposes a simple JSON interface, and serves a jQuery-Ajax-based UX.
+This tutorial uses a simple PHP frontend. It is configured to talk to either the Redis worker
+or master services, depending on whether the request is a read or a write. It exposes a simple
+JSON interface and serves a user experience based on jQuery and Ajax.
+
+### Create the frontend deployment
 
 ```bash
 kubectl create -f frontend-deployment.yaml
 ```
 
-### Expose frontend on an external IP address
+### Expose the frontend on an external IP address
 
-The services you created in the previous steps are only accessible within the container cluster, because the default type for a Service is `ClusterIP`.
-To make the guestbook web frontend service to be externally visible, you need to specify type: `LoadBalancer` in the service configuration.
+The services that you created in the previous steps are only accessible within the container cluster,
+because the default type for a service does not expose it to the internet.
 
-To create the service, first, uncomment the following line in the `frontend-service.yaml` file:
+To make the guestbook web frontend service externally visible, you need to specify the type
+`LoadBalancer` in the service configuration.
+
+Use the following command to replace `NodePort` with `LoadBalancer` in the `type` specification
+in the `frontend-service.yaml` configuration file:
 
 ```bash
 sed -i -e 's/NodePort/LoadBalancer/g' frontend-service.yaml
@@ -221,18 +240,20 @@ kubectl create -f frontend-service.yaml
 
 Your website is now running!
 
-### Find your external IP
+### Find your external IP address
 
-List the services, and look for the frontend service. Wait until
-you see an IP show up under the External IP column. This may take a minute. You can stop monitoring by pressing Ctrl+C.
+List the services:
 
 ```bash
 kubectl get services --watch
 ```
 
+Wait until you see an IP address in the `External IP` column for the `frontend` service.
+This may take a minute. To stop monitoring the services, press Ctrl+C.
+
 ### Visit the application
 
-Copy the IP address in EXTERNAL-IP column, and load the page in your browser.
+Copy the IP address from the `External IP` column, and load the page in your browser.
 
 ## Cleanup
 
@@ -246,7 +267,7 @@ to the cluster name and click the [**Delete**][spotlight-delete-button] button.
 
 <walkthrough-conclusion-trophy></walkthrough-conclusion-trophy>
 
-Congratulations! You have deployed a multi-tier Guestbook application using
+Congratulations! You have deployed a multi-tier guestbook application using
 Google Kubernetes Engine.
 
 Here are some suggestion for what you can do next:
