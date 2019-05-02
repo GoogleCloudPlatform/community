@@ -31,26 +31,29 @@ collect all of the related resources for a single application in one place.
 
 <walkthrough-project-billing-setup></walkthrough-project-billing-setup>
 
-## Navigate to Kubernetes Engine
+## Navigate to Kubernetes Engine page
 
-Open the [menu][spotlight-console-menu] on the left side of the console.
-
-Then, select the **Kubernetes Engine** section.
+Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console, and 
+then select **Kubernetes Engine**.
 
 <walkthrough-menu-navigation sectionId="KUBERNETES_SECTION"></walkthrough-menu-navigation>
 
 ## Create a Kubernetes cluster
 
 A cluster consists of at least one cluster master machine and multiple worker
-machines called nodes. You deploy applications to clusters, and the applications
+machines called *nodes*. You deploy applications to clusters, and the applications
 run on the nodes.
 
-Click the [Create cluster][spotlight-create-cluster] button.
+1.  Click the [**Create cluster**][spotlight-create-cluster] button.
 
-*   Select a [name][spotlight-instance-name] and [zone][spotlight-instance-zone]
-    for this cluster.
+1.  On the **Create a Kubernetes cluster** page, select the
+    <walkthrough-spotlight-pointer cssSelector="button[aria-label='Standard cluster']">Standard cluster</walkthrough-spotlight-pointer> template.
 
-*   Click the [Create][spotlight-submit-create] button to create the cluster.
+1.   Enter a [name][spotlight-instance-name] for this cluster.
+
+1.   Choose a [zone][spotlight-instance-zone] for this cluster.
+
+1.  Click [**Create**][spotlight-submit-create] to create the cluster.
 
 ## Create the sample application
 
