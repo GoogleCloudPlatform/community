@@ -31,7 +31,7 @@ collect all of the related resources for a single application in one place.
 
 <walkthrough-project-billing-setup></walkthrough-project-billing-setup>
 
-## Create a GKE cluster
+## Navigate to Kubernetes Engine page
 
 Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console, and 
 then select **Kubernetes Engine**.
