@@ -1,14 +1,15 @@
 ---
-title: Kubernetes Engine Quickstart
+title: Google Kubernetes Engine quickstart - Deploy a prebuilt Docker container image
 description: Deploy a prebuilt Docker container image using GKE.
 author: jscud
 tags: Kubernetes
-date_published: 2019-04-12
+date_published: 2019-05-09
 ---
 
-# Google Kubernetes Engine Quickstart
+# Google Kubernetes Engine quickstart
 
-<walkthrough-tutorial-url url="https://cloud.google.com/kubernetes-engine/docs/quickstart"></walkthrough-tutorial-url>
+## Deploy a prebuilt Docker container image
+
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/kubernetes-engine-samples" %} -->
 <!-- {% setvar repo_dir "kubernetes-engine-samples/hello-app" %} -->
 <!-- {% setvar project_id "<your-project>" %} -->
@@ -20,28 +21,13 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 
 </walkthrough-alt>
 
-## Introduction
-
-This quickstart shows you how to deploy a prebuilt Docker container image with a
-simple Node.js example app.
-
-Here are the steps you will be taking.
-
-*   **Start a cluster**
-    *   Using the Google Cloud Console, start a cluster of virtual machines with
-        the click of a button.
-*   **Deploy the app**
-    *   You will be guided through the Kubernetes configuration and commands
-        required to deploy the application using Google Cloud Shell, right in
-        your browser.
-*   **After the app...**
-    *   Your app and cluster will be live and you'll be able to experiment with
-        it after you deploy, or you can remove them and start fresh.
+This quickstart shows you how to start a cluster of virtual machines and deploy a prebuilt
+Docker container image with a simple Node.js example app.
 
 ## Project setup
 
-Google Cloud Platform organizes resources into projects. This allows you to
-collect all the related resources for a single application in one place.
+GCP organizes resources into projects. This allows you to
+collect all of the related resources for a single application in one place.
 
 <walkthrough-project-billing-setup></walkthrough-project-billing-setup>
 
