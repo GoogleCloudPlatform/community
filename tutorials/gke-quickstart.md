@@ -92,7 +92,7 @@ cat main.go
 ```
 
 `main.go` is a web server implementation written in the Go programming language.
-The server responds to any HTTP request with a "Hello, world!" message.
+The server responds to any HTTP request with a `"Hello, world!"` message.
 
 ### Exploring the image configuration
 
@@ -114,7 +114,7 @@ To learn more about how this file work, refer to the Dockerfile reference in the
 ### Wait for the cluster creation to finish
 
 The cluster creation needs to finish before the tutorial can proceed. To track the
-progress of this activityand others, click the [**Notifications**][spotlight-notification-menu]
+progress of this activity and others, click the [**Notifications**][spotlight-notification-menu]
 button in the navigation bar in the upper-right corner of the console.
 
 ### Setup gcloud and kubectl credentials
@@ -215,7 +215,7 @@ application, and push the new version.
 ### Modify the application
 
 Use this command to make a text substitution in your local copy of `main.go`
-to make it to return a different message:
+to make it to return a different version number in its output:
 
 ```bash
 sed -i -e 's/1.0.0/2.0.0/g' main.go
@@ -293,3 +293,4 @@ Here are some suggestions for what you can do next:
 [spotlight-delete-button]: walkthrough://spotlight-pointer?cssSelector=.p6n-icon-delete
 [spotlight-cluster-row]: walkthrough://spotlight-pointer?cssSelector=.p6n-kubernetes-cluster-row
 [docker-docs]: https://docs.docker.com/engine/reference/builder/
+[kubernetes-tutorials]: https://cloud.google.com/kubernetes-engine/docs/tutorials/
