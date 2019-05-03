@@ -245,7 +245,7 @@ next to the instance names and click the [**Delete**][spotlight-delete-button] b
 
 You're done!
 
-Here are some suggestion for what you can do next:
+Here are some suggestions for what you can do next:
 
 *   Find Google Cloud Platform
     [samples on GitHub](http://googlecloudplatform.github.io/).
