@@ -10,8 +10,6 @@ date_published: 2019-05-09
 
 ## Deploy a prebuilt Docker container image
 
-<!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/kubernetes-engine-samples" %} -->
-<!-- {% setvar repo_dir "kubernetes-engine-samples/hello-app" %} -->
 <!-- {% setvar project_id "<your-project>" %} -->
 
 <walkthrough-alt>
@@ -55,40 +53,39 @@ run on the nodes.
 
 1.  Click [**Create**][spotlight-submit-create] to create the cluster.
 
-## Create the sample application
+## Get the sample application code
 
-Cloud Shell is a built-in command line tool for the console. You're going to use
-Cloud Shell to run the example app using the prebuilt container image at
-[Google Kubernetes Registry][gke-registry].
+Cloud Shell is a built-in command-line tool for the console. In this section,
+you start Cloud Shell and use it to get the sample application code. Later,
+you use Cloud Shell to run the example app using a prebuilt container image.
 
-### Open the Cloud Shell
+### Open Cloud Shell
 
 Open Cloud Shell by clicking the
 <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar
-in the upper-right corner of the console.
+[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
-### Clone the sample code
+### Get the sample code
 
-Use Cloud Shell to clone and navigate to the sample code to the Cloud Shell.
-
-Note: If the directory already exists, remove the previous files before cloning.
+Clone the sample code:
 
 ```bash
-git clone {{repo_url}}
+git clone https://github.com/GoogleCloudPlatform/kubernetes-engine-samples
 ```
+
+Navigate to the directory containing the sample code:
 
 ```bash
-cd {{repo_dir}}
+cd kubernetes-engine-samples/hello-app
 ```
 
-## Configuring your deployment
+## Exploring the deployment
 
 You are now in the main directory for the sample code.
 
 ### Exploring the application
 
-Enter the following command to view your application code:
+View the application code:
 
 ```bash
 cat main.go
@@ -97,52 +94,56 @@ cat main.go
 `main.go` is a web server implementation written in the Go programming language.
 The server responds to any HTTP request with a "Hello, world!" message.
 
-### Exploring your configuration
+### Exploring the image configuration
 
-`Dockerfile` describes the image you want Docker to build, including all of its
-resources and dependencies, and specifies which network port the app should
-expose.
+View the image configuration:
 
 ```bash
 cat Dockerfile
 ```
 
-To learn more about how this file work, refer to Dockerfile reference in the
+`Dockerfile` describes the image that you want Docker to build, including all of
+its resources and dependencies, and specifies which network port the app should
+expose.
+
+To learn more about how this file work, refer to the Dockerfile reference in the
 [Docker documentation][docker-docs].
 
 ## Deploy the application
 
 ### Wait for the cluster creation to finish
 
-The cluster creation needs to finish before the tutorial can proceed. The
-activity can be tracked by clicking the
-[notification menu][spotlight-notification-menu] from the navigation bar at the
-top.
+The cluster creation needs to finish before the tutorial can proceed. To track the
+progress of this activityand others, click the [**Notifications**][spotlight-notification-menu]
+button in the navigation bar in the upper-right corner of the console.
 
 ### Setup gcloud and kubectl credentials
 
-Get the gcloud credentials for the cluster that you created. Enter the zone and
-name of the cluster you created.
+Get the gcloud credentials for the cluster that you created:
 
 ```bash
-gcloud container clusters get-credentials <cluster-name> --zone <cluster-zone>
+gcloud container clusters get-credentials [cluster-name] --zone [cluster-zone]
 ```
 
-### Build the container
+Replace `[cluster-name]` and `[cluster-zone]` with the name and zone of the instance that you created.
 
-Use the following command to build and push the application image.
+### Build and push the container
+
+Build the image:
 
 ```bash
 docker build -t gcr.io/{{project_id}}/hello-app:v1 $PWD
 ```
 
+Push the image:
+
 ```bash
 gcloud docker -- push gcr.io/{{project_id}}/hello-app:v1
 ```
 
-### Run the container
+### Run the application
 
-Now, run the application on your Kubernetes cluster.
+Run the application on your Kubernetes cluster:
 
 ```bash
 kubectl run hello-app --image=gcr.io/{{project_id}}/hello-app:v1 --port=8080
@@ -152,7 +153,7 @@ kubectl run hello-app --image=gcr.io/{{project_id}}/hello-app:v1 --port=8080
 
 ### Expose the cluster
 
-Then, make the cluster available to the public.
+Make the cluster available to the public:
 
 ```bash
 kubectl expose deployment hello-app --type="LoadBalancer"
@@ -160,21 +161,24 @@ kubectl expose deployment hello-app --type="LoadBalancer"
 
 ### Find your external IP
 
-List the services, and look for the hello-app service. Wait until you see an IP
-show up under the External IP column. This may take a minute. Afterwards you can
-stop monitoring by pressing Ctrl+C.
+List the services, and look for the `hello-app` service:
 
 ```bash
 kubectl get service hello-app --watch
 ```
 
+Wait until you see an IP address in the `External IP` column. This may take a
+minute. To stop monitoring the services, press Ctrl+C.
+
 ### Visit your running app
 
-Copy the IP in the External IP column.
+Copy the IP address from the `External IP` column.
 
-Open a new tab and visit your app, by connecting to the IP address on port 8080:
+Open a new web browser tab, and visit your app by connecting to the IP address on port 8080:
 
-http://EXTERNAL-IP:8080 (replace EXTERNAL-IP with the external IP address)
+`http://[external-IP]:8080`
+
+Replace [external-IP] with the external IP address copied in the previous step.
 
 ## Modifying your cluster
 
@@ -182,13 +186,14 @@ Kubernetes allows you to easily scale or upgrade your application.
 
 ### Scale your application
 
-Use the following command to scale up your application to four replicas. Each
-runs independently on the cluster with the load balanced serving traffic to all
-of them.
+Use the following command to scale your application up to four replicas:
 
 ```bash
 kubectl scale deployment hello-app --replicas=4
 ```
+
+Each replica runs independently on the cluster, with the load balancer serving traffic to
+all of them.
 
 ### View your application settings
 
@@ -202,22 +207,29 @@ kubectl get deployment
 kubectl get pods
 ```
 
-## Update your application
+## Update the application
 
-You can modify your local copy of `main.go` to return a different message using
-an editor or the first command, then build the docker image.
+In this section, you modify your local copy of `main.go`, rebuild the
+application, and push the new version.
 
-### Modify your application
+### Modify the application
+
+Use this command to make a text substitution in your local copy of `main.go`
+to make it to return a different message:
 
 ```bash
 sed -i -e 's/1.0.0/2.0.0/g' main.go
 ```
 
+You could also modify the file with a text editor instead of using this command.
+
+### Rebuild the application
+
 ```bash
 docker build -t gcr.io/{{project_id}}/hello-app:v2 $PWD
 ```
 
-### Publish your application
+### Publish the application
 
 ```bash
 gcloud docker -- push gcr.io/{{project_id}}/hello-app:v2
@@ -227,25 +239,21 @@ gcloud docker -- push gcr.io/{{project_id}}/hello-app:v2
 kubectl set image deployment/hello-app hello-app=gcr.io/{{project_id}}/hello-app:v2 && echo 'image updated'
 ```
 
-### View your modified application
+### View the modified application
 
-View the new version of the application at the same address. It make take a
-minute for the application image to update:
+Wait a minute to give the application image time to update, and
+then view the modified application at the same address as before:
 
-```bash
-kubectl get service hello-app
-```
-
-http://EXTERNAL-IP:8080
+`http://[external-IP]:8080`
 
 ## Inspect your cluster
 
-You can inspect properties of your cluster through the cloud console.
+You can inspect properties of your cluster through the GCP Console.
 
 ### View cluster details
 
-Click on the [name of the cluster][spotlight-cluster-row] that you created. This
-will bring up the cluster details page.
+Click the [name of the cluster][spotlight-cluster-row] that you created. This
+opens the cluster details page.
 
 ### Delete the cluster
 
@@ -253,7 +261,7 @@ You can continue to use your app, or you can shut down the entire cluster to
 avoid subsequent charges.
 
 To remove your cluster, select the [checkbox][spotlight-instance-checkbox] next
-to your cluster name and click the [Delete button][spotlight-delete-button].
+to the cluster name and click the [**Delete**][spotlight-delete-button] button.
 
 ## Conclusion
 
@@ -262,11 +270,14 @@ to your cluster name and click the [Delete button][spotlight-delete-button].
 Congratulations! You have deployed a simple Hello World application using Google
 Kubernetes Engine.
 
-Here's what you can do next:
+Here are some suggestions for what you can do next:
 
-Find Google Cloud Platform [samples on GitHub][gcp-github]
+*   Find Google Cloud Platform
+    [samples on GitHub](http://googlecloudplatform.github.io/).
 
-Learn how to set up [HTTP Load Balancing][http-balancer]
+*   Learn how to set up [HTTP load balancing][http-balancer].
+
+*   Explore other [Kubernetes Engine tutorials][kubernetes-tutorials].
 
 [gke-registry]: https://cloud.google.com/container-registry
 [gcp-github]: http://googlecloudplatform.github.io/
