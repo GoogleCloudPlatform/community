@@ -1,6 +1,6 @@
 ---
 title: How to set up VPN between Cisco ASR and Cloud VPN
-description: Learn how to build site-to-site IPSEC VPN between Cisco ASR and Cloud VPN.
+description: Learn how to build site-to-site IPsec VPN between Cisco ASR and Cloud VPN.
 author: ashishverm
 tags: Compute Engine, Cloud VPN, Cisco ASR
 date_published: 2017-08-25
