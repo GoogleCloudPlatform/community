@@ -443,24 +443,24 @@ are set:
 * Integrity algorithm - set to SHA256
 * Diffie-Hellman group - set to 16
 
-    crypto ikev2 proposal VPN_SCALE_TEST_IKEV2_PROPOSAL
-     encryption aes-cbc-256 aes-cbc-192 aes-cbc-128
-     integrity sha256
-     group 16
-    !         
-    crypto ikev2 policy VPN_SCALE_TEST_IKEV2_POLICY
-     proposal VPN_SCALE_TEST_IKEV2_PROPOSAL
+        crypto ikev2 proposal VPN_SCALE_TEST_IKEV2_PROPOSAL
+         encryption aes-cbc-256 aes-cbc-192 aes-cbc-128
+         integrity sha256
+         group 16
+        !         
+        crypto ikev2 policy VPN_SCALE_TEST_IKEV2_POLICY
+         proposal VPN_SCALE_TEST_IKEV2_PROPOSAL
  
 #### Configure IKEv2 keyring
 
 The IKEv2 keyring is associated with an IKEv2 profile and hence, caters to a set
 of peers that match the IKEv2 profile.
 
-    crypto ikev2 keyring VPN_SCALE_TEST_KEY
-     peer GCP1
-      address 104.196.200.68
-      pre-shared-key MySharedSecret
-    !
+        crypto ikev2 keyring VPN_SCALE_TEST_KEY
+         peer GCP1
+          address 104.196.200.68
+          pre-shared-key MySharedSecret
+        !
 
 #### Configure IKEv2 profile
 
@@ -468,22 +468,22 @@ An IKEv2 profile must be configured and must be attached to an IPsec profile on
 both the IKEv2 initiator and responder. In this block, the following parameters
 are set:
 
-* IKEv2 Lifetime - set the lifetime of the security associations (after which a
-  reconnection will occur). Set to 36,000 seconds as recommended configuration
-  on ASR 1000 router.
-* DPD – set the dead peer detection interval and retry interval, if there are no
-  response from the peer, the SA created for that peer is deleted. Set to 60
-  seconds keepalive interval and 5 seconds retry interval as recommended
-  configuration on ASR 1000 router.
+*  IKEv2 Lifetime - set the lifetime of the security associations (after which a
+   reconnection will occur). Set to 36,000 seconds as recommended configuration
+   on ASR 1000 router.
+*  DPD – set the dead peer detection interval and retry interval, if there are no
+   response from the peer, the SA created for that peer is deleted. Set to 60
+   seconds keepalive interval and 5 seconds retry interval as recommended
+   configuration on ASR 1000 router.
 
-      crypto ikev2 profile VPN_SCALE_TEST_IKEV2_PROFILE
-       match address local interface TenGigabitEthernet0/0/0
-       match identity remote any
-       authentication local pre-share
-       authentication remote pre-share
-       keyring local VPN_SCALE_TEST_KEY
-       lifetime 36000
-       dpd 60 5 periodic
+        crypto ikev2 profile VPN_SCALE_TEST_IKEV2_PROFILE
+         match address local interface TenGigabitEthernet0/0/0
+         match identity remote any
+         authentication local pre-share
+         authentication remote pre-share
+         keyring local VPN_SCALE_TEST_KEY
+         lifetime 36000
+         dpd 60 5 periodic
    
 #### Configure IPsec security association
 
@@ -496,12 +496,12 @@ phases: first, to establish the tunnel (the IKE SA) and second, to govern
 traffic within the tunnel (the IPsec SA). The following commands set the SA
 lifetime and timing parameters.
 
-* `IPsec SA lifetime` – 1 hour is the recommended value on ASR 1000 router.
+*  `IPsec SA lifetime` – 1 hour is the recommended value on ASR 1000 router.
 
-* `IPsec SA replay window-size` – 1024 is the recommended value on ASR 1000 router.
+*  `IPsec SA replay window-size` – 1024 is the recommended value on ASR 1000 router.
 
-      crypto ipsec security-association lifetime seconds 3600
-      crypto ipsec security-association replay window-size 1024
+        crypto ipsec security-association lifetime seconds 3600
+        crypto ipsec security-association replay window-size 1024
    
 #### Configure IPsec transform set
 
@@ -524,11 +524,11 @@ parameters are set
   reconnection will occur). Set to `3600 seconds` as recommended configuration
   on ASR 1000 router.
 
-      crypto ipsec profile VPN_SCALE_TEST_VTI
-      set security-association lifetime seconds 3600
-      set transform-set VPN_SCALE_TEST_TS
-      set pfs group16
-      set ikev2-profile VPN_SCALE_TEST_IKEV2_PROFILE
+        crypto ipsec profile VPN_SCALE_TEST_VTI
+        set security-association lifetime seconds 3600
+        set transform-set VPN_SCALE_TEST_TS
+        set pfs group16
+        set ikev2-profile VPN_SCALE_TEST_IKEV2_PROFILE
 
 #### Configure IPsec static virtual tunnel interface (SVTI)
 
