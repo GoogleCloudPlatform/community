@@ -27,7 +27,12 @@ Docker container image with a simple Node.js example app.
 GCP organizes resources into projects. This allows you to
 collect all of the related resources for a single application in one place.
 
+Begin by creating a new project or selecting an exisitng project for this tutorial.
+
 <walkthrough-project-billing-setup></walkthrough-project-billing-setup>
+
+For details, see
+[Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
 ## Navigate to Kubernetes Engine page
 
