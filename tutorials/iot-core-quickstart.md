@@ -19,17 +19,22 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 
 ## Introduction
 
-Cloud IoT Core is a fully managed service for securely connecting and managing IoT devices,
-from a few to millions. This tutorial uses the `gcloud` command-line tool to
-create a Cloud IoT Core device registry, add a device, and to run an MQTT
-sample to connect a device and publish device telemetry events.
+[Cloud IoT Core](https://cloud.google.com/iot/docs/) is a fully managed service for connecting
+and managing IoT devices. This tutorial uses the `gcloud` command-line tool to create a
+Cloud IoT Core device registry, add a device, and to run an MQTT sample to connect a device and
+publish device telemetry events.
 
 ## Project setup
 
 GCP organizes resources into projects. This allows you to
 collect all of the related resources for a single application in one place.
 
+Begin by creating a new project for this tutorial.
+
 <walkthrough-project-billing-setup></walkthrough-project-billing-setup>
+
+For details, see
+[Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
 ## Using Google Cloud Shell
 
