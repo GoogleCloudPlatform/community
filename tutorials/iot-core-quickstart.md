@@ -29,7 +29,7 @@ publish device telemetry events.
 GCP organizes resources into projects. This allows you to
 collect all of the related resources for a single application in one place.
 
-Begin by creating a new project for this tutorial.
+Begin by creating a new project or selecting an exisitng project for this tutorial.
 
 <walkthrough-project-billing-setup></walkthrough-project-billing-setup>
 
