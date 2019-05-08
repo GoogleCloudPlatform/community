@@ -44,14 +44,17 @@ Here are the steps you will be taking.
 
 ## Project setup
 
-To deploy an application, you need to first create a project.
+GCP organizes resources into projects, which collect all of the related resources for a single
+application in one place.
 
-GCP organizes resources into projects. This allows you to collect all of the related resources for a single application in
-one place.
+Begin by creating a new project or selecting an existing project for this tutorial.
 
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
 <walkthrough-project-setup></walkthrough-project-setup>
+
+For details, see
+[Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
 ## Using Cloud Shell
 
