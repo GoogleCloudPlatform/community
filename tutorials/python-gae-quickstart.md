@@ -49,10 +49,10 @@ Python Software Foundation.](walkthrough://footnote)
 
 ## Project setup
 
-GCP organizes resources into projects. This allows you to collect all of the related resources for a single
+GCP organizes resources into projects, which collects all of the related resources for a single
 application in one place.
 
-Begin by creating a new project or selecting an exisitng project for this tutorial.
+Begin by creating a new project or selecting an existing project for this tutorial.
 
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
