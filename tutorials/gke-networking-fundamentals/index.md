@@ -696,6 +696,11 @@ sudo iptables -L -tnat
 exit
 ```
 
+This is how one of the nodes on the cluster might look. It's peers are largely identical except for a varying number of pods and namespaces, depending on pod placement
+
+![](lab2-1.png)
+
+The rest of this labs extends our work with iptables to help understand how all the pods are reachable.
 
 _This is probably a good time to familiarize yourself with the kubectl command: [overview](https://kubernetes.io/docs/reference/kubectl/overview/)_ and _[command reference](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#exec)_
 
@@ -1452,11 +1457,15 @@ Here we introduce the concept of an _Ingress._ An Ingress is a logical layer 7 t
 
 https://kubernetes.io/docs/concepts/services-networking/ingress/
 
-_"GCE/Google Kubernetes Engine deploys an ingress controller on the master. _
+_"GCE/Google Kubernetes Engine deploys an ingress controller on the master._
 
 _.. In environments other than GCE/Google Kubernetes Engine, you need to deploy a controller as a pod"_
 
 _This means that we want to edit this rule with kubectl. Any change made directly with gcloud will be reverted. By the master._
+
+This is the environment we have created. Here, the service is deployed in pods across the available nodes
+
+![](lab3-1.png)
 
 So where is this master? We can find out like so
 
@@ -1485,7 +1494,7 @@ This is also a good place to bring attention to the fact that the on-VM forwardi
 
 https://kubernetes.io/docs/concepts/cluster-administration/networking/ 
 
-_ How might some of these extend the reach and capabilities of GKE?_
+_How might some of these extend the reach and capabilities of GKE?_
 
 
 Observe that many of these allow integration with on-premises technologies (VMware, etc.)
