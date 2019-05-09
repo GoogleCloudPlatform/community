@@ -1457,7 +1457,7 @@ Here we introduce the concept of an _Ingress._ An Ingress is a logical layer 7 t
 
 https://kubernetes.io/docs/concepts/services-networking/ingress/
 
-_"GCE/Google Kubernetes Engine deploys an ingress controller on the master._
+_"GCE/Google Kubernetes Engine deploys an ingress controller on the master.._
 
 _.. In environments other than GCE/Google Kubernetes Engine, you need to deploy a controller as a pod"_
 
