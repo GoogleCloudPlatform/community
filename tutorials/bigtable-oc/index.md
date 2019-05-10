@@ -3,14 +3,10 @@ title: Using OpenCensus with Cloud Bigtable and Stackdriver Trace
 description: Implement client-side tracing in Cloud Bigtable with OpenCensus and Stackdriver.
 author: googledrew
 tags: Cloud Bigtable, OpenCensus, tracing
-date_published: 2019-04-03
+date_published: 2019-05-14
 ---
 
-This tutorial shows how to implement client-side tracing in your Cloud Bigtable workloads 
-using OpenCensus and Stackdriver. While Cloud Bigtable surfaces a number of helpful server-side 
-metrics with Stackdriver, applications can realize added benefits from implementing client-side tracing.
-For example, server-side metrics do not give you a window into the round-trip latency of calls made to your 
-Cloud Bigtable endpoint, which can only be surfaced using client-side tracing.
+This tutorial shows how to implement client-side tracing and metrics recording in your Cloud Bigtable workloads using OpenCensus and Stackdriver. While Cloud Bigtable surfaces a number of helpful server-side metrics via Stackdriver, applications can realize added benefits by implementing client-side tracing and application defined metrics. For example, server-side metrics do not give you a window into the round-trip latency of calls made to your Bigtable endpoint and can only be surfaced using client-side tracing.
 
 ## Costs
 
@@ -44,6 +40,7 @@ We recommend that you deploy this tutorial into an ephemeral project, which can 
 
         gcloud services enable compute.googleapis.com \
                                bigtable.googleapis.com \
+                               bigtableadmin.googleapis.com \
                                logging.googleapis.com
     
 
@@ -87,15 +84,10 @@ Update the Java application with some configuration specific to your project.
 1.  Navigate to the folder containing the Java source:
 
         cd community/tutorials/bigtable-oc/java/
-        
-1.  Configure the application code to use the current project ID:
- 
-        PROJECT_ID=`curl http://metadata.google.internal/computeMetadata/v1/project/project-id -H "Metadata-Flavor: Google"`
-        sed -i "s/my-project-id/$PROJECT_ID/g" src/main/java/com/example/bigtable/App.java
 
-1.  Configure the application code to use the `cbt-oc` Bigtable instance:
+1.  Configure the environment variable for the application code to use the `cbt-oc` Bigtable instance:
 
-        sed -i "s/my-bigtable-instance-id/cbt-oc/g" src/main/java/com/example/bigtable/App.java
+        export INSTANCE_ID=cbt-oc
         
 1.  Run the following maven commands to build and run the program:
 
@@ -108,7 +100,7 @@ Update the Java application with some configuration specific to your project.
 
 1.  Select **Trace List** on the left side to show a table similar to the following:
 
-    ![](https://storage.googleapis.com/gcp-community/tutorials/bigtable-oc/trace-list.png)
+    ![](images/trace-list-2.png)
 
 The tracing label **opencensus.Bigtable.Tutorial** in the **Timeline** is the name of 
 the outermost tracing scope that is defined in the code snippet above.
@@ -122,10 +114,27 @@ by the lower level, user-defined  **WriteRows** and **ReadRows** tracing spans r
 
 Below **ReadRows**, you can first see the get operation, followed by the table scan operations.
 
-![](https://storage.googleapis.com/gcp-community/tutorials/bigtable-oc/trace-timeline.png)
+![](images/trace-timeline-2.png)
 
 The other items included in the trace list, such as **Operation.google.bigtable.admin.v2.BigtableTableAdmin.CreateTable**,  
 occurred outside of the manually defined tracing scope, so these are included as separate operations in the list.
+
+## Viewing metrics with Stackdriver Metrics Explorer
+
+To review the captured merrics:
+
+1. navigate to the [Metrics Explorer](https://app.google.stackdriver.com/metrics-explorer).
+
+1. In the **Find resource type and metric** field type: **opencensus/btappmetrics/write_latency** 
+
+1. Select this metric from the list.
+
+1. In the right pane, the distribution heatmap graph is shown.
+
+
+![](images/metrics-heatmap.png)
+
+
 
 ## Cleaning up
 
