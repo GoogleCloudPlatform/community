@@ -8,7 +8,7 @@ date_published: 2019-05-14
 
 # Private Forseti with SCC integration
 
-This guide will guide you on through a private Forseti installation, following production best practices. This means you will:
+This guide will walk you through a private Forseti installation, following production best practices. This means you will:
 - Deploy Forseti in it's own VPC (not the default VPC).
 - Restrict the firewall rules that are pre-configured.
 - Optionally, remove the public IP from the GCE instances.
