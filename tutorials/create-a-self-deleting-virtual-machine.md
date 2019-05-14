@@ -180,33 +180,33 @@ This section gives the steps to create a self-deleting instance by using the
 GCP Console in your web browser. If you prefer to use the command line
 instead, see the next section.
 
-1. Open the [GCP Console](https://console.cloud.google.com/) and select your
-project, if it is not already selected.
+1.  Open the [GCP Console](https://console.cloud.google.com/) and select your
+    project, if it is not already selected.
 
-1. Click the **Navigation menu** in the upper-left corner of the console, and 
-then select **Compute Engine** > **VM instances**. 
+1.  Click the **Navigation menu** in the upper-left corner of the console, and 
+    then select **Compute Engine** > **VM instances**. 
 
-1. On the **VM instances** page, click **Create**.
+1.  On the **VM instances** page, click **Create**.
 
-1. In the **New VM instance** form, leave most values at the default values
-already filled in for you, but change the following values:
-  - **Name**: Fill in any name (for example, `myinstance`).
-  - **Region** and **Zone**: Select a location near you.
-  - **Access Scopes** (in the **Identity and API access** section): Select
-    **Set access for each API**, and then choose **Read Write** from the 
-    **Compute Engine** menu in this section.
+1.  In the **New VM instance** form, leave most values at the default values
+    already filled in for you, but change the following values:
+      - **Name**: Fill in any name (for example, `myinstance`).
+      - **Region** and **Zone**: Select a location near you.
+      - **Access Scopes** (in the **Identity and API access** section): Select
+        **Set access for each API**, and then choose **Read Write** from the 
+        **Compute Engine** menu in this section.
 
-1. Click **Management, security, disks, networking, sole tenancy** at the bottom
-of the form to open more sections of the form.
+1.  Click **Management, security, disks, networking, sole tenancy** at the bottom
+    of the form to open more sections of the form.
 
-1. Copy the statup script from the "Preparation" section in this tutorial, and 
-   paste the script into the **Startup script** field in the **Automation**
-   section of the form.
+1.  Copy the statup script from the "Preparation" section in this tutorial, and 
+    paste the script into the **Startup script** field in the **Automation**
+    section of the form.
    
-   For testing purposes you may want to change the sleep duration from `3600s`
-   to only `300s`.
+    For testing purposes you may want to change the sleep duration from `3600s`
+    to only `300s`.
 
-1. Click **Create**.
+1.  Click **Create**.
 
 In the list of your VM instances, a spinning icon next to your new instance
 indicates that it is starting. When the instance is ready, the spinner 
