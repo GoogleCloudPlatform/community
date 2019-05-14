@@ -9,9 +9,9 @@ date_published: 2019-05-15
 # Create a self-deleting virtual machine on Compute Engine
 
 Learning to use Google Cloud Platform (GCP) is best done hands-on, by actually
-creating, using, and removing resources. But a common problem with doing this
-is that learners may forget to clean up their resources when finished trying
-something, resulting in continuing running resources, often at a cost.
+creating, using, and removing resources. However, a common problem with doing
+this is that learners may forget to clean up their resources when finished
+trying something, resulting in continuing running resources, often at a cost.
 
 This tutorial shows how to create Compute Engine instances (virtual machines)
 that will automatically delete themselves after a set time, ensuring that
@@ -109,9 +109,6 @@ tool.
 This section explains how the file shown above works. You can skip this if you
 just want to create self-deleting instances.
 
-Every standard Linux option in Compute Engine has the `gcloud` command already
-installed for your use.
-
 Every Linux OS image available by default in Compute Engine is configured to run
 a program when it starts, if you specify such a program. The `startup.sh` file in
 the previous section is such a program. When you create an image with that option,
@@ -138,19 +135,18 @@ program for running commands.
 
     sleep 3600s
 
-This line runs the `sleep` program, which does nothing at all except wait
-the specified time before it exits. That introduces a delay of an hour
+This line runs the `sleep` program, which does nothing but wait the
+specified time before it exits, which introduces a delay of an hour
 (3600 seconds) before the following commands are run:
 
     export NAME=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/name -H 'Metadata-Flavor: Google')
     export ZONE=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google')
 
-These two lines may not be clear at first. Each of them sets the value of a
-shell variable (`NAME` and `ZONE`). These variables are used in a later
-command. The `$(command)` portion runs the command in the parentheses and
-returns the output of that command as its value. The commands here are each
-[`curl`](https://curl.haxx.se/) commands that make web requests and output the
-responses to the requests.
+Each of these lines sets the value of a shell variable (`NAME` and `ZONE`). 
+These variables are used in a later command. The `$(command)` portion runs the
+command in the parentheses and returns the output of that command as its value.
+The commands here are each [`curl`](https://curl.haxx.se/) commands that make
+web requests and output the responses to the requests.
 
 Compute Engine instances have access to a *metadata service* that looks like a
 web site. Any web request made to that apparent site
@@ -162,11 +158,11 @@ because there is no actual network activity, there is no need for a secure netwo
 connection.
 
 These two metadata requests discover the running instance's name and zone,
-which are required for the last line of the program.
+which are required for the last line of the program:
 
     gcloud --quiet compute instances delete $NAME --zone=$ZONE
 
-Finally, the `gcloud` command runs. The `--quiet` option indicates that the command
+This last line runs the `gcloud` command. The `--quiet` option indicates that the command
 should not ask for user confirmation of an action, because it runs in batch mode with
 no user available. The `compute instances` command group performs operations on
 Compute Engine instances. The `delete` command completely removes an instance.
@@ -188,8 +184,8 @@ instead, see the next section.
 
 1.  On the **VM instances** page, click **Create**.
 
-1.  In the **New VM instance** form, leave most values at the default values
-    already filled in for you, but change the following values:
+1.  In the **New VM instance** form, leave most values at the default values,
+    but change the following values:
       - **Name**: Fill in any name (for example, `myinstance`).
       - **Region** and **Zone**: Select a location near you.
       - **Access Scopes** (in the **Identity and API access** section): Select
@@ -300,4 +296,4 @@ then select **Home**.
 1. To confirm project deletion, enter the project ID.
 
 1. Click **Shut down** below the project ID you entered. The project
-will be shut down and will be deleted in thirty days.
+will be shut down and will be deleted in 30 days.
