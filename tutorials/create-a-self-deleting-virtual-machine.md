@@ -38,17 +38,22 @@ a set period of time. You will see two ways to do this:
 
 Create a GCP project in a web browser:
 
-1. Open your web browser to the [GCP Console](https://console.cloud.google.com/).
-1. Sign in with a Google or G Suite account. If you don't have an account, you can
-   create one by clicking **Create account**.
-1. Click **Select a project** at the top of the page, and then click **New Project**.
-1. Enter a name for your project, and note the project ID shown under the
-   **Project name** field.
-1. Select a billing account and location. 
-1. Click **Create**. A notification appears, saying that the project is
-being created.
-1. When the notification says that the project is ready, click the notification
-or select the project from the project selector menu to open the project.
+1.  Open your web browser to the [GCP Console](https://console.cloud.google.com/).
+1.  Sign in with a Google or G Suite account. If you don't have an account, you can
+    create one by clicking **Create account**.
+1.  Click **Select a project** at the top of the page, and then click **New Project**.
+1.  Enter a name for your project, and note the project ID shown under the
+    **Project name** field.
+1.  Select a location. 
+1.  Click **Create**.
+
+    A notification appears, saying that the project is being created.
+    
+    Note: If you are prompted to enter billing information, follow the instructions
+    for doing so.
+   
+1.  When the notification says that the project is ready, click the notification
+    or select the project from the project selector menu to open the project.
 
 Use this new project in the tutorial below so that you don't inadvertently
 affect your other projects, if you have any.
