@@ -24,7 +24,7 @@ This guide was developed using Forseti version 2.14.1.
 
 ### Pre-requisites
 
-For executing the stefps below you will need:
+For executing the steps below you will need:
 - Access to a G Suite or Cloud Identity Super Admin account.
 - Access to the Admin Console (https://admin.google.com) > Security page.
 - Access to the Web Console (https://console.cloud.google.com).
@@ -127,9 +127,9 @@ Note: This is also a good time to ensure the database is in the same zone as the
 ![58b996ae.png](58b996ae.png)
 
 5. (Optional) Navigate to the "Compute Engine" > "VM Instances" page and remove the public IP of both the server and client VMs.
-   - This will require you to access the instances through IAP proxy or VPN as well as Interconnect
+   - This will require you to access the instances through IAP proxy, VPN or Interconnect
 
-6. (Optional)  More details on how to setup [IAP](https://cloud.google.com/iap/docs/using-tcp-forwarding#ssh_tunneling) to access forseti VM through SSH from internet.
+6. (Optional)  IAP will provide Google Identity verified proxy tunnel to compute instances without internet access. More details on how to setup [IAP](https://cloud.google.com/iap/docs/using-tcp-forwarding#ssh_tunneling) to access forseti VM through SSH.
 
 
 ### Configuring Forseti
@@ -192,7 +192,7 @@ https://www.googleapis.com/auth/admin.directory.group.readonly,https://www.googl
 10. Copy the `source_id` for later use. The `source_id` is in the fomat: `organizations/[ORGANIZATION_ID]/sources/[SOURCE_ID]`
 11. Navigate to the Organization IAM page and ensure the service account was granted the `Security Center Findings Editor` role, if not then grant it.
 
-Note: if you did not re-use the Forseti Server service account and created a new service account for SCC, you need to grant `Security Center Findings Editor` role.
+Note: if you did not re-use the Forseti Server service account and created a new service account for SCC, you need to grant `Security Center Findings Editor` role for both the Foresti Server service acconut and the newly created service account for SCC.
 
 
 #### Editing Forseti configuration file & running Forseti
@@ -207,7 +207,7 @@ gsutil ls
 
 2. Find the forseti-server bucket.
 
-2. Copy the configuraiton file from Cloud storage to Cloud Shell:
+2. Copy the configuraiton file from Cloud Storage to Cloud Shell:
 ```
 gsutil cp gs://forseti-server-[id]/configs/forseti_conf_server.yaml .
 ```
