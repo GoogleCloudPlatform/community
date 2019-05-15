@@ -8,11 +8,11 @@ date_published: 2019-05-14
 
 # Private Forseti with SCC integration
 
-This guide will walk you through a private Forseti installation, following production best practices. This means you will:
+This guide will walk you through a private Forseti installation, following enterprise best practices. This means you will:
 - Deploy Forseti in it's own VPC (not the default VPC).
 - Restrict the firewall rules that are pre-configured.
 - Optionally, remove the public IP from the GCE instances.
-- Configure Cloud SQL to be private.
+- Configure Cloud SQL to be a private instance.
 - Configure Forseti to send violations to Cloud Security Command Center (SCC).
 
 What this guide will **not** do:
@@ -24,15 +24,14 @@ This guide was developed using Forseti version 2.14.1.
 
 ### Pre-requisites
 
-For executing the process below you will need:
+For executing the steps below you will need:
 - Access to a G Suite or Cloud Identity Super Admin account.
-- Access to the Admin Console (https://admin.google.com) security page.
+- Access to the Admin Console (https://admin.google.com) > Security page.
 - Access to the Web Console (https://console.cloud.google.com).
 - Access to rights to modify IAM permissions at the Organization level.
-- A project where you will deploy Forseti, which will be referred to `forseti` in this guide
+- A project where you will deploy Forseti, which will be referred to as `forseti` in this guide
 - Editor or owner to the `forseti` project.
-- Define the `Region` where you want to install Forseti.
-- Define the `Zone` you want to install Forseti.
+- Define the `Region`and `Zone` where you want to install Forseti Compute Instance.
 
 There is a [bug](https://github.com/forseti-security/forseti-security/issues/2759) on the Forseti installer, so ensure you choose a "-c" zone until it's fixed.
 
@@ -41,7 +40,7 @@ There is a [bug](https://github.com/forseti-security/forseti-security/issues/275
 
 In the `forseti` project:
 1. Navigate to the "VPC Networks" Pages on the Cloud Console
-2. Create a VPC for Forseti with one subnet. Configure it as follows:
+2. Create a VPC for Forseti with one subnet. Configure it with the following parameters:
    - Private access enabled
    - Flow logs enabled [optional]
    - Regional dynamic routing mode
@@ -88,7 +87,7 @@ python install/gcp_installer.py /
 --gcs-location [REGION_NAME]
 ```
 
-Where the `[REGION_NAME]` should be the same region you created the subnetwork on. Matching the network screenshot above this command would look like the following:
+Where the `[REGION_NAME]` should be the same region you created the subnetwork on. Matching with the network screenshot above, this command would look like the following:
 
 ```
 cd forseti-security
@@ -100,7 +99,7 @@ python install/gcp_installer.py /
 --gcs-location us-east4
 ```
 
-This step we are essentially running deployment manager to create the components necessary to install Forseti and you can follow the installation in deployment page as well as the command line.
+With this step we are essentially running deployment manager to create the components necessary to install Forseti and you can follow the installation in deployment page as well as the command line.
 
 *Note:** that in this step Forseti installer will still try to remove the default firewall rules, as we removed the default VPC this step will error out in the installation.
 
@@ -123,14 +122,14 @@ In Cloud Console ensure you have the `forseti` project selected, then do the fol
 
 Note: This is also a good time to ensure the database is in the same zone as the server VM (optional).
 
-4. Navigate to "VCP Network > Firewall Rules" page and edit the rules of both `forseti-client-allow-ssh-external` and `forseti-server-allow-ssh-external` to restrict the `Source IP Ranges` to that of the locaton (on-premise) you will be connecting from:
+4. Navigate to "VCP Network > Firewall Rules" page and edit the rules of both `forseti-client-allow-ssh-external` and `forseti-server-allow-ssh-external` to restrict the `Source IP Ranges` to that of the locaton (on-premise or datacenter range) you will be connecting from:
 
 ![58b996ae.png](58b996ae.png)
 
 5. (Optional) Navigate to the "Compute Engine" > "VM Instances" page and remove the public IP of both the server and client VMs.
-   - This will require you to access the instances through IAP proxy or NAT gateway
+   - This will require you to access the instances through IAP proxy, VPN or Interconnect.
 
-6. (Optional) Set up a [NAT gatway](https://cloud.google.com/nat/docs/using-nat#gce-setup) for internet access.
+6. (Optional)  IAP will provide Google Identity verified proxy tunnel to compute instances without internet access. More details on how to setup [IAP](https://cloud.google.com/iap/docs/using-tcp-forwarding#ssh_tunneling) to access forseti VM through SSH.
 
 
 ### Configuring Forseti
@@ -139,7 +138,7 @@ In this section you will perform the base configuration to get Forseti up and ru
 
 #### Enable Domain Wide Delegation (DWD)
 
-*Important:* ensure you are logged in with the Super Admin account for the next steps
+*Important:*  You need to be logged in with the Super Admin account for the next steps:
 
 [Forseti Documentaton > G Suite](https://forsetisecurity.org/docs/v2.2/configure/inventory/gsuite.html)
 
@@ -157,14 +156,14 @@ In this section you will perform the base configuration to get Forseti up and ru
 ![42fa4d69.png](42fa4d69.png)
 
 Copy the value from Client ID and save it for the next steps.
-Note: you may also copy it from the Edit page if you are unable to copy it from the popover that display the info.
+Note: you may also copy it from the Edit page if you are unable to copy it from the popover that displays the info.
 
 ![249d1377.png](249d1377.png)
 
 
 5. Navigate to the Google Admin page and go to [Manage API client access] (https://admin.google.com/ManageOauthClients) in the Security Settings.
 6. Paste the Client ID in the client name box.
-7. Authorize the following scopes
+7. Authorize the following scopes:
 ```
 https://www.googleapis.com/auth/admin.directory.group.readonly,https://www.googleapis.com/auth/admin.directory.user.readonly,https://www.googleapis.com/auth/cloudplatformprojects.readonly,https://www.googleapis.com/auth/apps.groups.settings
 ```
@@ -189,11 +188,11 @@ https://www.googleapis.com/auth/admin.directory.group.readonly,https://www.googl
 ![2c9ff5f6.png](2c9ff5f6.png)
 
 8. Follow the steps in the screen to enable the extension.
-9. When asked for a sevice account use the Forseti Server service account, chose the `forseti` project.
+9. When asked for a sevice account use the Forseti Server service account, choose the `forseti` project.
 10. Copy the `source_id` for later use. The `source_id` is in the fomat: `organizations/[ORGANIZATION_ID]/sources/[SOURCE_ID]`
-11. Navigate to the Organization IAM page and ensure the service account was granteed the `Security Center Findings Editor` role, if not then grant it.
+11. Navigate to the Organization IAM page and ensure the service account was granted the `Security Center Findings Editor` role, if not then grant it.
 
-Note: if you did not re-use the Forseti Server service account you need to grant `Security Center Findings Editor` role to it as well as the Service Account used by SCC.
+Note: if you did not re-use the Forseti Server service account and created a new service account for SCC, you need to grant `Security Center Findings Editor` role for both the Foresti Server service acconut and the newly created service account for SCC.
 
 
 #### Editing Forseti configuration file & running Forseti
@@ -208,17 +207,17 @@ gsutil ls
 
 2. Find the forseti-server bucket.
 
-2. Copy the configuraiton file to Cloud Shell:
+2. Copy the configuraiton file from Cloud Storage to Cloud Shell:
 ```
 gsutil cp gs://forseti-server-[id]/configs/forseti_conf_server.yaml .
 ```
 
 3. Click on the pencil icon to open in the editor ![4a724bc0.png](011b3934.png)
 
-4. On `notifier > violations > cscc` element configure it as follows:
+4. Under `notifier > violations > cscc` element section of the configuration, modify it as follows:
 
 ```
-        enabled: false
+        enabled: true
         # Cloud SCC uses a source_id. It is unique per
         # organization and must be generated via a self-registration process.
         # The format is: organizations/ORG_ID/sources/SOURCE_ID
@@ -254,7 +253,7 @@ At the end of this step the output should give us an `Inventory ID` - copy it fo
 }
 ```
 
-9. Create a model based on the inventory & tell Forseti to use it:
+9. Create a model based on the inventory & configure Forseti to use it:
 ```
 forseti model create --inventory_index_id [INVENTORY_ID] [MODEL_NAME]
 forseti model use [MODEL_NAME]
@@ -270,13 +269,13 @@ forseti scanner run
 forseti notifier run
 ```
 
-13. Check the output for Violations.
-12. Validate the Forseti Violations are shown as Findings in the Security COmmand Center page.
+13. Check the output for any Violations.
+12. Validate the Forseti Violations are shown as Findings in the Security Command Center page.
 
 ## Conclusion
 
 This gives you a production ready base intall of Forseti, however it's important to note that you still need to create Organizaton specific configuration;
-Typically you will need to refine the base rules to remove the noise and catch specific use-cases that are specific to your organization (for example traffic coming from on-premise IP range is allowed).
+Typically you will need to refine the base rules to remove the noise and catch specific use-cases that are specific to your organization (for example allow SSH and RDP traffic coming is allowed only from on-premise IP range).
 
 See the Forseti documentation on [how to create your own rules](https://forsetisecurity.org/docs/latest/configure/scanner/rules.html).
 
