@@ -6,8 +6,6 @@ tags: Compute Engine, self-deleting, education, cost control
 date_published: 2019-05-15
 ---
 
-# Create a self-deleting virtual machine on Compute Engine
-
 Learning to use Google Cloud Platform (GCP) is best done hands-on, by actually
 creating, using, and removing resources. However, a common problem with doing
 this is that learners may forget to clean up their resources when finished
