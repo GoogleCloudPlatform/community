@@ -127,7 +127,7 @@ Note: This is also a good time to ensure the database is in the same zone as the
 ![58b996ae.png](58b996ae.png)
 
 5. (Optional) Navigate to the "Compute Engine" > "VM Instances" page and remove the public IP of both the server and client VMs.
-   - This will require you to access the instances through IAP proxy, VPN or Interconnect
+   - This will require you to access the instances through IAP proxy, VPN or Interconnect.
 
 6. (Optional)  IAP will provide Google Identity verified proxy tunnel to compute instances without internet access. More details on how to setup [IAP](https://cloud.google.com/iap/docs/using-tcp-forwarding#ssh_tunneling) to access forseti VM through SSH.
 
@@ -138,7 +138,7 @@ In this section you will perform the base configuration to get Forseti up and ru
 
 #### Enable Domain Wide Delegation (DWD)
 
-*Important:*  You need to be logged in with the Super Admin account for the next steps
+*Important:*  You need to be logged in with the Super Admin account for the next steps:
 
 [Forseti Documentaton > G Suite](https://forsetisecurity.org/docs/v2.2/configure/inventory/gsuite.html)
 
@@ -163,7 +163,7 @@ Note: you may also copy it from the Edit page if you are unable to copy it from 
 
 5. Navigate to the Google Admin page and go to [Manage API client access] (https://admin.google.com/ManageOauthClients) in the Security Settings.
 6. Paste the Client ID in the client name box.
-7. Authorize the following scopes
+7. Authorize the following scopes:
 ```
 https://www.googleapis.com/auth/admin.directory.group.readonly,https://www.googleapis.com/auth/admin.directory.user.readonly,https://www.googleapis.com/auth/cloudplatformprojects.readonly,https://www.googleapis.com/auth/apps.groups.settings
 ```
