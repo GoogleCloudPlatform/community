@@ -218,11 +218,16 @@ gsutil cp gs://forseti-server-[id]/configs/forseti_conf_server.yaml .
 4. Under `notifier > violations > cscc` element section of the configuration, modify it as follows:
 
 ```
+    violation:
+      cscc:
         enabled: true
         # Cloud SCC uses a source_id. It is unique per
         # organization and must be generated via a self-registration process.
         # The format is: organizations/ORG_ID/sources/SOURCE_ID
         source_id: [paste_value_from_prior_step]
+        # Added the following fields:
+        mode: api
+        organization_id: organizations/[ORG_ID]
 ```
 
  5. Upload the modified file to the bucket:
@@ -277,9 +282,7 @@ forseti notifier run
 
 ## Conclusion
 
-This gives you a production ready base intall of Forseti, howeve:storage/6dc259fd-baf1-4c59-9b75-9b491f3486e3/r it's important to note that you still need to create Organizaton specific configuration;
+This gives you a production ready base intall of Forseti, however it's important to note that you still need to create Organizaton specific configuration;
 Typically you will need to refine the base rules to remove the noise and catch specific use-cases that are specific to your organization (for example allow SSH and RDP traffic coming is allowed only from on-premise IP range).
 
 See the Forseti documentation on [how to create your own rules](https://forsetisecurity.org/docs/latest/configure/scanner/rules.html).
-
-
