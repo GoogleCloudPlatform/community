@@ -97,13 +97,13 @@ You can create a trigger on the [build triggers page](https://console.cloud.goog
 
 1. Click **"Create Trigger"**
 1. Select "Cloud Source Repository" Click "Continue".
-1. Select "helloworld-image-factory" anc click "Continue"
+1. Select "helloworld-image-factory" and click "Continue".
 1. Enter "Hello world image factory" for Name."
 1. Set the trigger for "Tag".
-1. Set the build type to "cloudbuild.yaml"
-1. Set the substitution, `_IMAGE_FAMILY` to centos-7
+1. Set the build type to "cloudbuild.yaml".
+1. Set the substitution, `_IMAGE_FAMILY` to centos-7.
 1. Set the substitution, `_IMAGE_ZONE` to the zone you want to use the value of `$ZONE`.
-1. Click "Create Trigger"
+1. Click "Create Trigger".
 
 **Note: To see a list of image families:**
 
