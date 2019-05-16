@@ -137,7 +137,7 @@ So we created a virtual bridge and connected two of the ports to it. This behave
 This is what the environment looks like now:
 
 
-![](gke-cbr0.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/gke-networking-fundamentals/gke-cbr0.png)
 
 
 View other `brctl` commands:
@@ -333,7 +333,7 @@ We should be able to see `192.168.255.2`'s MAC address with a non-zero aging tim
 
 This is the environment we just brought up:
 
-![](gke-demo-ns.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/gke-networking-fundamentals/gke-demo-ns.png)
 
 _Let's stop and consider what we've just done:_
 
@@ -698,7 +698,7 @@ exit
 
 This is how one of the nodes on the cluster might look. It's peers are largely identical except for a varying number of pods and namespaces, depending on pod placement
 
-![](lab2-1.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/gke-networking-fundamentals/lab2-1.png)
 
 The rest of this labs extends our work with iptables to help understand how all the pods are reachable.
 
@@ -1465,7 +1465,7 @@ _This means that we want to edit this rule with kubectl. Any change made directl
 
 This is the environment we have created. Here, the service is deployed in pods across the available nodes
 
-![](lab3-1.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/gke-networking-fundamentals/lab3-1.png)
 
 So where is this master? We can find out like so
 
