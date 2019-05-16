@@ -6,8 +6,6 @@ tags: Compute Engine, self-deleting, education, cost control
 date_published: 2019-05-15
 ---
 
-# Create a self-deleting virtual machine on Compute Engine
-
 Learning to use Google Cloud Platform (GCP) is best done hands-on, by actually
 creating, using, and removing resources. However, a common problem with doing
 this is that learners may forget to clean up their resources when finished
@@ -66,7 +64,7 @@ incurs charges as long as it exists, as listed in the
 account can use one micro instance (the kind created in this tutorial)
 as part of the [Free Tier](https://cloud.google.com/free), which incurs no costs.
 
-## Preparation
+## Creating the startup script
 
 The self-deleting instance works by automatically executing a startup script that
 waits a set amount of time and then issues a
@@ -109,23 +107,25 @@ commands to install, configure, and run the program you want.
 Every standard Linux option in Compute Engine includes the `gcloud` command-line
 tool.
 
-## Explanation
+### How the startup script works
 
-This section explains how the file shown above works. You can skip this if you
-just want to create self-deleting instances.
+This section explains how the file created in the previous section works. You can
+skip this section if you just want to create self-deleting instances.
 
 Every Linux OS image available by default in Compute Engine is configured to run
-a program when it starts, if you specify such a program. The `startup.sh` file in
-the previous section is such a program. When you create an image with that option,
-it will run the `startup.sh` program when it boots. In this case, that program
-does nothing but wait for an hour and then issue a command to delete the instance
-that runs it.
+a program when the operating system starts, if you specify such a program. The
+`startup.sh` file created in the previous section is such a program.
 
 Note: Default Windows instances have a similar capability, but there are some
 important differences in exactly how it works. The ideas in this tutorial can be
 adapted to work with Windows instances.
 
-Here is an explanation of what each line in `startup.sh` does:
+The startup script that you created in the previous section does nothing but wait
+for an hour and then issue a command to delete the instance that runs the script.
+
+Let's look at an explanation of what each line in `startup.sh` does:
+
+**Invoking the Bourne shell**
 
     #!/bin/sh
     
@@ -138,11 +138,15 @@ to run this file. You may be familiar with
 window for Linux and Mac machines. The Bourne shell is an earlier, similar
 program for running commands.
 
+**Waiting for an hour**
+
     sleep 3600s
 
 This line runs the `sleep` program, which does nothing but wait the
 specified time before it exits, which introduces a delay of an hour
-(3600 seconds) before the following commands are run:
+(3600 seconds) before the next commands are run.
+
+**Setting shell variables to specify the instance**
 
     export NAME=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/name -H 'Metadata-Flavor: Google')
     export ZONE=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google')
@@ -163,7 +167,9 @@ because there is no actual network activity, there is no need for a secure netwo
 connection.
 
 These two metadata requests discover the running instance's name and zone,
-which are required for the last line of the program:
+which are required for the last line of the program.
+
+**Deleting the instance**
 
     gcloud --quiet compute instances delete $NAME --zone=$ZONE
 
@@ -175,7 +181,7 @@ The instance `NAME` and `ZONE` variables in the command specify which instance t
 delete. You can replace `delete` with `stop` to stop the instance so that it can be
 restarted later.
 
-## Using the console
+## Using the console to create a self-deleting instance
 
 This section gives the steps to create a self-deleting instance by using the
 GCP Console in your web browser. If you prefer to use the command line
@@ -217,9 +223,7 @@ Wait the duration that you specified in the script. The instance that you create
 should disappear from the list. The list is automatically updated periodically;
 you can click the **Refresh** button to update the list at any time.
 
-This completes the tutorial.
-
-## Using the command line
+## Using the command line to create a self-deleting instance
 
 This section gives the steps to create a self-deleting instance by using the
 command line on your local computer. If you prefer to use the web console
@@ -268,8 +272,6 @@ You can check on your running instances at any time with this command:
 
 Wait until the specified sleep time has expired, and run that command again. The
 instance should be gone.
-
-This completes the tutorial.
     
 ### Options
 
