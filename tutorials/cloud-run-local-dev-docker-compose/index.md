@@ -1,26 +1,33 @@
 ---
-title: Local Development for Cloud Run with Docker Compose
+title: Local development for Cloud Run with Docker Compose
 description: Learn how to use Docker Compose to manage local development of Cloud Run services.
 author: grayside
 tags: Cloud Run, docker-compose, local development
-date_published: 2010-05-19
+date_published: 2010-05-21
 ---
 
 This tutorial shows how to use [Docker Compose](https://docs.docker.com/compose/overview/) to streamline your local development environment for [Cloud Run](https://cloud.google.com/run).
 
 ## Overview
 
-Services running on Cloud Run are running in containers, so you probably want to identify how to use or build a local container toolchain that can work with Cloud Run and integrate with other Google Cloud Platform products.
+Services running on Cloud Run are running in containers, so you probably want to identify how to use or build a local 
+container toolchain that can work with Cloud Run and integrate with other Google Cloud Platform (GCP) products.
 
-The first thing to know: you do not have to use Docker locally. Cloud Build can build your container images remotely, and your services can be built to work outside a container. Deciding whether the practice of containerizing services for local development is outside the scope of this tutorial. Instead, we will assume you want to use containers as much as possible.
+The first thing to know: you do not have to use Docker locally. Cloud Build can build your container images remotely, and 
+your services can be built to work outside a container. Deciding whether the practice of containerizing services for local
+development is outside the scope of this tutorial. Instead, we will assume that you want to use containers as much as 
+possible.
 
-Docker Compose is a wonderful utility to build out a locally containerized workflow and align your team on common practices. It allows many of the docker management details to be pulled out of your head (and shell scripts) and captured in declarative configuration files for your version control system.
+Docker Compose is a wonderful utility to build out a locally containerized workflow and align your team on common practices. 
+It allows many of the Docker management details to be pulled out of your head (and shell scripts) and captured in 
+declarative configuration files for your version control system.
 
 Let's explore how we can use it to build a local development workflow for your Cloud Run project.
 
-This tutorial builds on some of the details in the [Local Testing documentation](https://cloud.google.com/run/docs/testing/local).
+This tutorial builds on some of the details in the
+[Local testing documentation](https://cloud.google.com/run/docs/testing/local).
 
-### Service Directory Structure
+### Service directory structure
 
 Let's imagine a service written in Go and ready for production on Cloud Run:
 
@@ -34,11 +41,14 @@ Let's imagine a service written in Go and ready for production on Cloud Run:
 └── main.go
 ```
 
-Our goal is now to add the YAML configuration files that Docker Compose will use to create, configure, and build the local container images for this service.
+Our goal is now to add the YAML configuration files that Docker Compose will use to create, configure, and build the local
+container images for this service.
 
-## Your Local, Basic Setup: docker-compose.yml
+## Your local, basic setup: `docker-compose.yml`
 
-This foundational configuration file demonstrates how to configure your Cloud Run service for local use. It does not attempt to replicate Knative beyond some environment variables to approximate the [Container Runtime Contract](https://cloud.google.com/run/docs/reference/container-contract).
+This foundational configuration file demonstrates how to configure your Cloud Run service for local use. It does not attempt 
+to replicate Knative beyond some environment variables to approximate the
+[Container runtime contract](https://cloud.google.com/run/docs/reference/container-contract).
 
 
 ```
@@ -63,56 +73,60 @@ services:
 
 ### What can you do with this?
 
-*   Create and start all configured services with **docker-compose up**
-*   Build your container images for local use with **docker-compose build**
+*   Create and start all configured services with `docker-compose up`.
+*   Build your container images for local use with `docker-compose build`.
 
 For more, check out the [Docker Compose CLI documentation](https://docs.docker.com/compose/reference/overview/).
 
-## Using Google Cloud Platform APIs from your local container
+## Using GCP APIs from your local container
 
-When using the official GCP client libraries on Cloud Run, authentication to other Google Cloud Platform services is automatically handled via the service account provisioned into your Cloud Run service. No further steps are required.
+When using the official GCP client libraries on Cloud Run, authentication to other GCP services is automatically handled 
+through the service account provisioned into your Cloud Run service. No further steps are required.
 
-When running your containerized services locally you can take advantage of this same library capability by injecting service account credentials into your container at runtime.
+When running your containerized services locally, you can take advantage of this same library capability by injecting 
+service account credentials into your container at runtime.
 
-To authenticate your local service with GCP:
+To authenticate your local service with GCP, do the following:
 
-1.  [Follow the steps in the documentation](https://cloud.google.com/docs/authentication/getting-started) to create a service account and download service account keys to your local machine.
-1.  Configure your container and service to leverage these keys for authentication.
+1.  Follow the steps in the [authentication documentation](https://cloud.google.com/docs/authentication/getting-started) to 
+    create a service account and download service account keys to your local machine.
+1.  Configure your container and service to use these keys for authentication.
 
-(Files in this tutorial named docker-compose.[topic].yml rely on an [inheritance model built into docker-compose for multiple config files](https://docs.docker.com/compose/extends/#multiple-compose-files). The way you choose to split up these configurations will be dependent on your needs, the approach here is driven by the sequence of topics.)
+    Files in this tutorial named docker-compose.[topic].yml rely on an inheritance model built into `docker-compose` for
+    [multiple configuration files](https://docs.docker.com/compose/extends/#multiple-compose-files). The way you choose to
+    split up these configurations will be dependent on your needs. The approach here is driven by the sequence of topics:
 
-```
-# docker-compose.access.yml
-# Usage: 
-#   export GCP_KEY_PATH=~/keys/project-key.json 
-#   docker-compose -f docker-compose.yml -f docker-compose.access.yml
-version: '3'
-  services:
-    app:
-      environment:
-        # https://cloud.google.com/docs/authentication/production
-        GOOGLE_APPLICATION_CREDENTIALS: /root/keys/keyfile.json
-      volumes:
-        # Inject your specific service account keyfile into the container at runtime.
-        - ${GCP_KEY_PATH}:/root/keys/keyfile.json:ro
-```
+        # docker-compose.access.yml
+        # Usage: 
+        #   export GCP_KEY_PATH=~/keys/project-key.json 
+        #   docker-compose -f docker-compose.yml -f docker-compose.access.yml
+        version: '3'
+          services:
+            app:
+              environment:
+                # https://cloud.google.com/docs/authentication/production
+                GOOGLE_APPLICATION_CREDENTIALS: /root/keys/keyfile.json
+              volumes:
+                # Inject your specific service account keyfile into the container at runtime.
+                - ${GCP_KEY_PATH}:/root/keys/keyfile.json:ro
 
-The `$GCP_KEY_PATH` environment variable is set in your local machine--outside the container-- to pass inject the contents of your key file into the container.
+    The `$GCP_KEY_PATH` environment variable is set in your local machine—outside the container—to pass the 
+    contents of your key file into the container.
 
-Now you can start your service with a command such as:
+1.  Now you can start your service with a command such as the following:
 
-```
-export GCP_KEY_PATH=~/keys/project-key.json 
-docker-compose -f docker-compose.yml -f docker-compose.access.yml up
-```
+        export GCP_KEY_PATH=~/keys/project-key.json 
+        docker-compose -f docker-compose.yml -f docker-compose.access.yml up
 
 The client libraries will make API calls with the service account credentials. Access to other services will be limited by the roles and permissions associated with that account.
 
-## Shipping Releases to Google Container Registry
+## Shipping releases to Container Registry
 
-This section provides guidance on interacting with the [Google Container Registry](https://cloud.google.com/container-registry), a Docker Container registry used as the source of container images deployed to Cloud Run.
+This section provides guidance on interacting with [Container Registry](https://cloud.google.com/container-registry),
+a Docker Container registry used as the source of container images deployed to Cloud Run.
 
-Using the configuration inheritance described above to **override** a setting allows us to locallly build and push a release artifact to the Container Registry.
+Using the configuration inheritance described above to *override* a setting allows us to locallly build and push a release 
+artifact to Container Registry.
 
 ```
 ##
@@ -131,9 +145,10 @@ services:
 
 This image name override helps differentiate images built for local use from images built to push to gcr.io.
 
-You may prefer to use [Cloud Build](https://cloud.google.com/cloud-build) to build your images without tying up local resources.
+You may prefer to use [Cloud Build](https://cloud.google.com/cloud-build) to build your images without tying up local
+resources.
 
-### Build a container image for each docker-compose service
+### Build a container image for each `docker-compose` service
 
 ```
 docker-compose \
@@ -142,7 +157,7 @@ docker-compose \
 build
 ```
 
-### Build a container image for the specified docker-compose service
+### Build a container image for the specified `docker-compose` service
 
 ```
 docker-compose \
@@ -151,9 +166,9 @@ docker-compose \
 build app
 ```
 
-### Push your container images to the container registry
+### Push your container images to Container Registry
 
-First you must [authenticate the Docker CLI with Google Container Registry](https://cloud.google.com/run/docs/building/containers#building_locally_and_pushing_using_docker).
+First you must [authenticate the Docker CLI with Container Registry](https://cloud.google.com/run/docs/building/containers#building_locally_and_pushing_using_docker):
 
 ```
 docker-compose \
@@ -164,9 +179,12 @@ push
 
 ### Pull your published container images for local use
 
-If you want to explore your published container image, such as getting a closer look at the Docker image your production service is currently running, you may pull the image down from Google Container Registry. This also requires Docker CLI authentication. 
+If you want to explore your published container image, such as getting a closer look at the Docker image that your
+production service is currently running, you may pull the image down from Container Registry. This also requires Docker CLI 
+authentication. 
 
-**Your services will not be updated to this pulled image automatically, you may need to restart or remove the existing containers.**
+Note: Your services will not be updated to this pulled image automatically; you may need to restart or remove the existing 
+containers.
 
 ```
 export DOCKER_IMAGE_TAG=[PRODUCT_TAG]
@@ -176,14 +194,16 @@ docker-compose \
 pull
 ```
 
-## Connect Local Service to Cloud SQL
+## Connect your local service to Cloud SQL
 
-It is common for local development to use a local database server. However, if you need to access a Cloud SQL instance, such as for remote administration, you can use the [Cloud SQL Proxy](https://cloud.google.com/sql/docs/mysql/sql-proxy).
+It is common for local development to use a local database server. However, if you need to access a Cloud SQL instance, such
+as for remote administration, you can use the [Cloud SQL Proxy](https://cloud.google.com/sql/docs/mysql/sql-proxy).
 
-The Cloud SQL Proxy has an [officially supported containerized solution](https://cloud.google.com/sql/docs/mysql/connect-docker). 
+The Cloud SQL Proxy has an
+[officially supported containerized solution](https://cloud.google.com/sql/docs/mysql/connect-docker). 
 
-Let's adapt that documentation for use with our docker-compose configuration. We will use environment variables to configure
-the proxy:
+Let's adapt that documentation for use with our `docker-compose` configuration. We will use environment variables to 
+configure the proxy:
 
 ```
 # docker-compose.sql.yml
@@ -229,7 +249,8 @@ volumes:
 
 The service account used by the Cloud SQL Proxy must include the Project Viewer, Cloud SQL Viewer, and Cloud SQL Client roles. Do not whitelist your IP address with the MySQL instance.
 
-Similar to the docker-compose.access.yml example, this file layers on top of your docker-compose.yml. You can stack all three together to spin up your service with full GCP access:
+Similar to the `docker-compose.access.yml` example, this file layers on top of your `docker-compose.yml`. You can stack all
+three together to start your service with full GCP access:
 
 ```
 docker-compose \
@@ -239,4 +260,5 @@ docker-compose \
 up
 ```
 
-This configuration will start up two containers: one for your service and one for the Cloud SQL Proxy. They will hand off interactions with the Cloud SQL database via the shared **cloudsql** volume.
+This configuration will start up two containers: one for your service and one for the Cloud SQL Proxy. They will hand off
+interactions with the Cloud SQL database via the shared `cloudsql` volume.
