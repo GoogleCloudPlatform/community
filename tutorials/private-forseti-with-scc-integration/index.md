@@ -1,7 +1,7 @@
 ---
 title: Private Forseti with SCC integration
 description: Deploy Private Forseti Security scanning tool with integration with Cloud Security Command Center.
-author: fawix, valavan007
+author: fawix,valavan007
 tags: Forseti Security, Cloud Security Command Center
 date_published: 2019-05-14
 ---
