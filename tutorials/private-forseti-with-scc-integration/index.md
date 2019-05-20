@@ -188,9 +188,15 @@ https://www.googleapis.com/auth/admin.directory.group.readonly,https://www.googl
 7. Click on Sign-up button to get started.
 ![2c9ff5f6.png](2c9ff5f6.png)
 
-8. Follow the steps in the screen to enable the extension.
-9. When asked for a sevice account use the Forseti Server service account, choose the `forseti` project.
-10. Copy the `source_id` for later use. The `source_id` is in the fomat: `organizations/[ORGANIZATION_ID]/sources/[SOURCE_ID]`.
+8. Follow the steps in the screen to enable the extension, first select your organization:
+![forseti_source_id.png](forseti_source_id.png)
+
+9. Follow the insturctions on screen, when asked for a sevice account use the Forseti Server service account, choose the `forseti` project.
+
+![forseti_source_id_2.png](forseti_source_id_2.png)
+
+10. Copy the `source_id` for later use. The `source_id` is in the fomat: `organizations/[ORGANIZATION_ID]/sources/[SOURCE_ID]` as shown in the screenshot above.
+
 11. Navigate to the Organization IAM page and ensure the service account was granted the `Security Center Findings Editor` role, if not then grant it.
 
 Note: if you did not re-use the Forseti Server service account and created a new service account for SCC, you need to grant `Security Center Findings Editor` role for both the Foresti Server service acconut and the newly created service account for SCC.
