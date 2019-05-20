@@ -3,7 +3,7 @@ title: Local development for Cloud Run with Docker Compose
 description: Learn how to use Docker Compose to manage local development of Cloud Run services.
 author: grayside
 tags: Cloud Run, docker-compose, local development
-date_published: 2010-05-21
+date_published: 2019-05-21
 ---
 
 This tutorial shows how to use [Docker Compose](https://docs.docker.com/compose/overview/) to streamline your local development environment for [Cloud Run](https://cloud.google.com/run).
