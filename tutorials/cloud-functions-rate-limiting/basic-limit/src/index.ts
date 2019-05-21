@@ -22,6 +22,8 @@ export function basicRateDemo(req: Request, res: Response) {
     limit(req, function (err: Error, rate: any) {
         if (err) {
             console.warn('Rate limiting not available');
+            // fail open
+            res.send("OK\n");
         } else {
             if (rate.over) {
                 console.error('Over the limit!');
