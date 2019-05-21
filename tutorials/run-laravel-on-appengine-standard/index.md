@@ -53,6 +53,7 @@ from laravel.com.
           APP_KEY: YOUR_APP_KEY
           APP_STORAGE: /tmp
           VIEW_COMPILED_PATH: /tmp
+          SESSION_DRIVER: cookie
 
 1.  Replace `YOUR_APP_KEY` in `app.yaml` with an application key you generate
     with the following command:
@@ -151,6 +152,7 @@ Laravel, you need to manually add the `DB_SOCKET` value to
           ## Put production environment variables here.
           APP_KEY: YOUR_APP_KEY
           APP_STORAGE: /tmp
+          VIEW_COMPILED_PATH: /tmp
           CACHE_DRIVER: database
           SESSION_DRIVER: database
           ## Set these environment variables according to your CloudSQL configuration.
