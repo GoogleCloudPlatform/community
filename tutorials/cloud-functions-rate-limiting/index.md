@@ -1,7 +1,7 @@
 
 ---
 title: Rate limiting Serverless with Redis and VPC Connector
-description: Build a simple HTTP function API for long running job or tasks.
+description: Use rate limiting techiques with serverless functions.
 author: ptone
 tags: Cloud Functions, Cloud Firestore, serverless, redis, VPC
 date_published: 2019-05-31
@@ -9,10 +9,9 @@ date_published: 2019-05-31
 
 Preston Holmes | Solution Architect | Google
 
-
 ## Introduction
 
-This tutorial demonstrates several rate limiting techniques which from an [accompanying concept paper](go/rate-limiting-patterns). Specifically you will learn how to use private networking and [Redis](https://redis.io/) to synchronized global rate limiting state to otherwise stateless serverless functions.
+This tutorial demonstrates several rate limiting techniques from an [accompanying concept paper - temporary internal link](https://go/rate-limiting-patterns). Specifically you will learn how to use private networking and [Redis](https://redis.io/) to synchronized global rate limiting state to otherwise stateless serverless functions.
 
 ## Objectives
 
@@ -20,9 +19,6 @@ This tutorial demonstrates several rate limiting techniques which from an [accom
 * Use Node + [Redis](https://redis.io/) based rate limiting library in a Cloud function to limit function invocations.
 * Use these technique to limit function invocations by IP address of the caller.
 * Combine rate limiting with a [Redis](https://redis.io/) based counter to provide a high speed counter implementation for [Cloud Firestore](https://cloud.google.com/firestore/).
-
-
-
 
 ## Setup
 
@@ -45,12 +41,9 @@ gcloud config set project [ your project id ]
 
 export REGION=us-central1
 export GOOGLE_CLOUD_PROJECT=$(gcloud config list project --format "value(core.project)" )
-
-export NETWORK=rate-limiting-demo
-
 ```
 
-Enable APIs:
+Enable APIs, this may take a moment:
 
 ```
 gcloud services enable \
@@ -74,15 +67,38 @@ cd tutorials/cloud-functions-rate-limiting
 
 For this tutorial you will create a dedicated VPC network and an associated serverless connector. You use the VPC Serverless connector to allow a Serverless function to reach a Redis service on a private IP address, as Redis is not designed to be exposed to public internet.
 
+Create the network:
+
 ```
+export NETWORK=rate-limiting-demo
+
 gcloud compute networks create $NETWORK 
+
+```
+
+Create the VPC connector:
+
+```
 gcloud compute networks subnets update ${NETWORK} --region ${REGION} --enable-private-ip-google-access
-https://cloud.google.com/functions/docs/connecting-vpc
+
 gcloud beta compute networks vpc-access connectors create functions-connector \
 --network ${NETWORK} \
 --region ${REGION} \
 --range 10.8.0.0/28
 ```
+
+### Set Permissions 
+
+Your project's Cloud Functions service account needs appropriate permissions in order for your function to use a Serverless VPC Access connector. You only need to grant these permissions once per project. Alternate console instructions are [here](https://cloud.google.com/functions/docs/connecting-vpc#setting_up_permissions).
+
+```
+export AGENT=service-$(gcloud projects describe $GOOGLE_CLOUD_PROJECT --format="value(projectNumber)")@gcf-admin-robot.iam.gserviceaccount.com
+
+gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT --member serviceAccount:$AGENT --role roles/viewer
+
+gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT --member serviceAccount:$AGENT --role roles/compute.networkUser
+```
+
 
 ## Create a Redis server
 
@@ -117,22 +133,25 @@ Deploy a cloud function that uses basic rate limiting.
 ```
 cd ./basic-rate/
 
-`# deploy a named function`
-gcloud beta functions deploy basicRateDemo \ 
-  `# Using the node 10 runtime` \
-  --runtime nodejs10 \ 
-  `# triggered by HTTP requests` \
-  --trigger-http \ 
-  `# From the Typescript transpiled JS src code` \
-  --source ./build  \ 
-  `# Set a runtime env var to the Redis svc IP`
-  --set-env-vars=REDIS_HOST=${REDIS_HOST} \ 
-  `# Connected to VPC` \
-  --vpc-connector projects/${GOOGLE_CLOUD_PROJECT}/locations/${REGION}/connectors/ functions-connector \
-  `# in target region`
+gcloud beta functions deploy basicRateDemo \
+  --runtime nodejs10 \
+  --trigger-http \
+  --source ./build  \
+  --set-env-vars=REDIS_HOST=${REDIS_HOST} \
+  --vpc-connector projects/${GOOGLE_CLOUD_PROJECT}/locations/${REGION}/connectors/functions-connector \
   --region ${REGION}
 ```
-  
+
+The flags in the gcloud command:
+
+- Deploy a function named `basicRateDemo`
+- Using the node 10 runtime
+- triggered by HTTP requests
+- From the Typescript transpiled JS src code
+- Set a runtime env var to the Redis svc IP
+- Connected to VPC
+- in target region
+
 This function uses a Redis backed [rate limiting library](https://www.npmjs.com/package/redis-rate-limiter) for Node. You use an environment variable to connect a Redis client in [global scope](https://cloud.google.com/functions/docs/concepts/exec#function_scope_versus_global_scope) to make the function more efficient:
 
 ```
@@ -220,7 +239,8 @@ cd ../ip-limit/
 
 gcloud beta functions deploy IPRateDemo \
   --runtime nodejs10 \
-  --trigger-http --source ./build  \
+  --trigger-http \
+  --source ./build  \
   --set-env-vars=REDIS_HOST=${REDIS_HOST} \
   --vpc-connector projects/${GOOGLE_CLOUD_PROJECT}/locations/${REGION}/connectors/functions-connector \
   --region ${REGION}
@@ -257,11 +277,9 @@ In Cloud Firestore, you can only update a single document about once per second,
 
 In this approach you will use a high speed Redis counter to increment a value at a very high rate and combine this with a rate limiter that controls how often that value is written to Firestore for application visibility.
 
+![](images/counter.png)
 
-Deploy a function which uses redis in two ways:
-
-* Keep a high speed counter value in redis
-* Use a rate limiter to periodically flush the counter value to Firestore
+Deploy the function:
 
 ```
 cd ../firestore-counter/
@@ -277,35 +295,22 @@ gcloud beta functions deploy counterLimit \
 
 Now you want to open the [Cloud Firestore console](https://console.cloud.google.com/firestore/data) and create a database in Firestore **Native Mode**. Choose the same region as where you are deploying your functions (North America by default).
 
+```
+export URL=$(gcloud functions describe counterLimit --format='value(httpsTrigger.url)')
+bombardier -r 500 -d 20s $URL
+```
 
+You may need to reload the Firestore console page to see the counter document, but while the `counter` document is visible in the `demo` collection, you should see the value increase in large increments every several seconds.
 
 ## Cleanup
 
+The simplest way to clean up the tutorial is to delete a project you created just for this tutorial. Alternatively, the following compound command will delete resources created in this tutorial with the exception of Firestore, which can not be deleted once created in a project.
+
+```
 gcloud functions delete basicRateDemo --quiet && \
 gcloud functions delete IPRateDemo --quiet && \
+gcloud functions delete counterLimit --quiet && \
 gcloud beta compute instances delete redis --zone=${REGION}-a --quiet && \
 gcloud beta compute networks vpc-access connectors create functions-connector --quiet && \
 gcloud compute networks delete $NETWORK --quiet
-
-
-
-# appendix - scratch notes
-gcloud beta redis instances create mredis --size=1 --region=us-central1 --redis-version=redis_4_0 --project ptone-anthos
-
-gcloud compute instances create --zone us-central1-a \
---subnet=${NETWORK} \
-util
---project ptone-anthos util
-
-
-gcloud beta compute instances create-with-container redis-pub --zone=us-central1-c --machine-type=g1-small  --image=cos-stable-74-11895-86-0 --image-project=cos-cloud --container-image=us.gcr.io/cloud-solutions-images/redis --container-restart-policy=always  --scopes=https://www.googleapis.com/auth/devstorage.read_only
-
-
-gcloud beta functions deploy basicRateDemoC --runtime nodejs10 --trigger-http --source ./build  --set-env-vars=REDIS_HOST=${REDISP}
-
-go get -u github.com/codesenberg/bombardier
-
-
-
-
-https://bit.googleplex.com/#/ptone/5907504743579648
+```
