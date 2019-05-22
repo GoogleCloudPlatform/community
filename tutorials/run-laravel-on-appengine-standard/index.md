@@ -238,9 +238,9 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
             Log::info("Hello my log, message: $message");
             return view('welcome');
         });
-        
-    These logs will appear in the Logging UI with the log of their corresponding
-    request, and can be filtered individually by their log name ("app", in this
+
+    These entries will appear within the log of the request they occurred under,
+    as well as in the individual log specified by their log name (`app`, in this
     case).
 
     **Note**: The first time you deploy, you may get the log message `This
