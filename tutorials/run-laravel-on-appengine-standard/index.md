@@ -238,7 +238,10 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
             Log::info("Hello my log, message: $message");
             return view('welcome');
         });
-
+        
+    These logs will appear in the Logging UI with the log of their corresponding
+    request, and can be filtered individually by their log name ("app", in this
+    case).
 
     **Note**: The first time you deploy, you may get the log message `This
     request caused a new process to be started for your application, and thus
@@ -246,6 +249,7 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
     may thus take longer and use more CPU than a typical request for your
     application.`. If you see this, ignore it and make a second request. On your
     next request, your logged message should appear in the logs as expected.
+
 
 ### Stackdriver Error Reporting
 
