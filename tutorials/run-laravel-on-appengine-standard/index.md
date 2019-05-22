@@ -250,7 +250,6 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
     application.`. If you see this, ignore it and make a second request. On your
     next request, your logged message should appear in the logs as expected.
 
-
 ### Stackdriver Error Reporting
 
 You can send error reports to Stackdriver Error Reporting from PHP applications by using the
