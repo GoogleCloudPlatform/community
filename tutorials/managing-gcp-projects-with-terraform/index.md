@@ -103,6 +103,7 @@ gcloud services enable cloudresourcemanager.googleapis.com
 gcloud services enable cloudbilling.googleapis.com
 gcloud services enable iam.googleapis.com
 gcloud services enable compute.googleapis.com
+gcloud services enable serviceusage.googleapis.com
 ```
 
 ### Add organization/folder-level permissions
@@ -196,7 +197,7 @@ output "project_id" {
 
 Terraform resources used:
 
-- [`provider "google"`](https://www.terraform.io/docs/providers/google/index.html): The Google cloud provider config. The credentials will be pulled from the `GOOGLE_CREDENTIALS` environment variable (set later in tutorial).
+- [`provider "google"`](https://www.terraform.io/docs/providers/google/index.html): The Google cloud provider config. The credentials will be pulled using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable, set earlier in this tutorial.
 - [`resource "random_id"`](https://www.terraform.io/docs/providers/random/r/id.html): Project IDs must be unique. Generate a random one prefixed by the desired project ID.
 - [`resource "google_project"`](https://www.terraform.io/docs/providers/google/r/google_project.html): The new project to create, bound to the desired organization ID and billing account.
 - [`resource "google_project_services"`](https://www.terraform.io/docs/providers/google/r/google_project_services.html): Services and APIs enabled within the new project. Note that if you visit the web console after running Terraform, additional APIs may be implicitly enabled and Terraform would become out of sync. Re-running `terraform plan` will show you these changes before Terraform attempts to disable the APIs that were implicitly enabled. You can also set the full set of expected APIs beforehand to avoid the synchronization issue.

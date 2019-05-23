@@ -81,7 +81,7 @@ PROJECT=$(gcloud config get-value project)
 
 First find the cloudbuild service account. Next add the editor role to it.
 
-    CLOUD_BUILD_ACCOUNT=$(gcloud projects get-iam-policy $PROJECT --filter="(bindings.role:roles/cloudbuild)"  --flatten="bindings[].members" --format="value(bindings.members[])")
+    CLOUD_BUILD_ACCOUNT=$(gcloud projects get-iam-policy $PROJECT --filter="(bindings.role:roles/cloudbuild.builds.builder)"  --flatten="bindings[].members" --format="value(bindings.members[])")
 
     gcloud projects add-iam-policy-binding $PROJECT \
       --member $CLOUD_BUILD_ACCOUNT \
@@ -96,14 +96,14 @@ First find the cloudbuild service account. Next add the editor role to it.
 You can create a trigger on the [build triggers page](https://console.cloud.google.com/cloud-build/triggers) of the GCP Console by following these steps:
 
 1. Click **"Create Trigger"**
-1. Select "Cloud Source Repository" Click "Continue".
-1. Select "helloworld-image-factory" anc click "Continue"
-1. Enter "Hello world image factory" for Name."
+1. Select "Cloud Source Repository" and click "Continue".
+1. Select "helloworld-image-factory" and click "Continue".
+1. Enter "Hello world image factory" for "Name".
 1. Set the trigger for "Tag".
-1. Set the build type to "cloudbuild.yaml"
-1. Set the substitution, `_IMAGE_FAMILY` to centos-7
+1. Set the build type to "cloudbuild.yaml".
+1. Set the substitution, `_IMAGE_FAMILY` to centos-7.
 1. Set the substitution, `_IMAGE_ZONE` to the zone you want to use the value of `$ZONE`.
-1. Click "Create Trigger"
+1. Click "Create Trigger".
 
 **Note: To see a list of image families:**
 
