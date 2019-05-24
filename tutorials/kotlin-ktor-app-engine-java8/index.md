@@ -156,7 +156,7 @@ you already have an app to deploy, you can use it instead.
 1.  Copy [this XML](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-ktor-app-engine-java8/web-example.xml) into `src/main/webapp/WEB-INF/web.xml`.
 
 Now you have a basic Ktor app set up. You can go ahead and run this locally,
-but  but let's add App Engine configuration and
+but let's add App Engine configuration and run it with the App Engine plugin.
 
 ## Running your application locally with the App Engine plugin
 
