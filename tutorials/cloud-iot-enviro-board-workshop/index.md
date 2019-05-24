@@ -6,7 +6,7 @@ author: chwa
 tags: IoT, Internet of Things, Environmental Sensor Board, Raspberry Pi, Google Sheets
 date_published: 2019-06-10
 ---
-# Sensor data collection and ad-hoc analytics
+## Introduction
 In this tutorial you use [Environmental Sensor Board](https://coral.withgoogle.com/products/environmental) to connect to [Cloud IoT Core](https://cloud.google.com/iot-core/) and stream sensor data to [Cloud Pub/Sub](https://cloud.google.com/pubsub/). You use [Cloud Functions](https://cloud.google.com/functions/) to collect and process the sensor data from Pub/Sub and store them in [BigQuery](https://cloud.google.com/bigquery/). [Google Sheets](https://docs.google.com/spreadsheets) is use for doing analytics on the sensor data in BigQuery and send command messages to the Sensor Board using the [IoT Core Commands API](https://cloud.google.com/iot/docs/how-tos/commands).
 
 ## Architecture
