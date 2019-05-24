@@ -1,4 +1,3 @@
-
 ---
 title: Sensor data collection and ad-hoc analytics
 description: Deployment of an end-to-end setup from Environmental Sensor Board through Google Cloud IoT Core to BigQuery. Last conduct data visualization and analytics through Google Sheets
