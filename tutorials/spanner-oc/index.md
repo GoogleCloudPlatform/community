@@ -1,7 +1,7 @@
 ---
 title: Using OpenCensus with Cloud Spanner and Stackdriver Trace and Monitoring
 description: Implement client-side tracing in Cloud Spanner with OpenCensus and Stackdriver.
-author: mayurkale, rghetia
+author: mayurkale,rghetia
 tags: Cloud Spanner, OpenCensus, Stackdriver, tracing, stats
 date_published: 2019-05-21
 ---
