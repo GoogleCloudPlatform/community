@@ -5,11 +5,9 @@ author: bshaffer
 tags: App Engine, Laravel, PHP
 date_published: 2019-01-31
 ---
-
 ## Laravel
 
-[Laravel][laravel] is an open source web framework for PHP developers that encourages the use of the
-model-view-controller (MVC) pattern.
+[Laravel][laravel] is an open source web framework for PHP developers that encourages the use of the model-view-controller (MVC) pattern.
 
 You can check out [PHP on Google Cloud Platform][php-gcp] (GCP) to get an
 overview of PHP and learn ways to run PHP apps on GCP.
@@ -241,9 +239,6 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
             return view('welcome');
         });
 
-    These entries appear in the log of the request they occurred under,
-    as well as in the individual log specified by their log name (`app`, in this
-    case).
 
     **Note**: The first time you deploy, you may get the log message `This
     request caused a new process to be started for your application, and thus
