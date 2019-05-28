@@ -240,6 +240,8 @@ Run `terraform apply` followed by `terraform output ip` to return the instance's
 external ip address. Validate that everything is set up correctly at this point
 by ssh'ing to that ip address.
 
+Note that this tutorial needs the `default` network's `default-allow-ssh` firewall rule to be in place before you can ssh to the instance. If you are starting with a brand new project this can take a few minutes to complete so check https://console.cloud.google.com/networking/firewalls/list to make sure it's created.
+
 ```Shell
 ssh `terraform output ip`
 ```
