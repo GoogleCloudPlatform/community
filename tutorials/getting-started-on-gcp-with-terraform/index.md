@@ -197,7 +197,7 @@ instance. [More information on managing ssh keys is available here](https://clou
 ```HCL
 resource "google_compute_instance" "default" {
  ...
-metadata {
+metadata = {
    sshKeys = "INSERT_USERNAME:${file("~/.ssh/id_rsa.pub")}"
  }
 }
