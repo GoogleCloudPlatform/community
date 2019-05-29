@@ -106,7 +106,7 @@ With this step we are essentially running deployment manager to create the compo
 *Note:** that in this step Forseti installer will still try to remove the default firewall rules, as we removed the default VPC this step will error out in the installation.
 
 
-### Making Forsei private
+### Making Forseti private
 
 At this stage we have Forseti installed, however it is not yet configured as private, below are the necessary steps to make it private.
 
@@ -223,7 +223,7 @@ gsutil ls
 
 2. Find the forseti-server bucket.
 
-2. Copy the configuraiton file from Cloud Storage to Cloud Shell:
+2. Copy the configuration file from Cloud Storage to Cloud Shell:
 ```
 gsutil cp gs://forseti-server-[id]/configs/forseti_conf_server.yaml .
 ```
@@ -299,8 +299,7 @@ forseti notifier run
 
 This gives you a production-ready base intallation of Forseti. However, it's important to note that you still need to create
 an organizaton-specific configuration. Typically, you need to refine the base rules to remove the noise and catch 
-use-cases that are specific to your organization (for example, allow SSH and RDP traffic to come in only from on-premises IP
-ranges).
+use-cases that are specific to your organization (for example, allow firewall rules opening SSH and RDP traffic only for your defined IP ranges).
 
 See the Forseti documentation on
 [how to create your own rules](https://forsetisecurity.org/docs/latest/configure/scanner/rules.html).
