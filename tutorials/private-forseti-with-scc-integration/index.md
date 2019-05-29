@@ -18,108 +18,106 @@ This guide shows how to do the following:
 This guide does **not** show how to do the following:
 - Customize Forseti.
 - Configure Forseti beyond the basic setup.
-- Configure Forseti enforcer.
+- Configure Forseti Enforcer.
 
 This guide was developed using Forseti version 2.14.1.
 
 ### Pre-requisites
 
-For executing the steps below you need the following:
-- Access to a G Suite or Cloud Identity Super Admin account.
-- Access to the Admin Console (https://admin.google.com) > Security page.
-- Access to the Web Console (https://console.cloud.google.com).
+To perform the steps in this tutorial, you need the following:
+
+- Access to a G Suite or Cloud Identity super admin account.
+- Access to the  **Security** page in the Google Admin console (https://admin.google.com).
+- Access to the GCP Console (https://console.cloud.google.com).
 - Access to rights to modify IAM permissions at the Organization level.
 - A project where you will deploy Forseti. In this guide, we'll use the project name `forseti`.
-- Editor or owner to the `forseti` project.
-- Define the `Region`and `Zone` where you want to install Forseti Compute Instance. For now, because of
-a [bug in the Forseti installer](https://github.com/forseti-security/forseti-security/issues/2759), you must choose
-a "-c" zone.
+- Editor or owner permissions for the `forseti` project.
 
+Note: Because of a [bug in the Forseti installer](https://github.com/forseti-security/forseti-security/issues/2759),
+you must choose a zone that ends with `-c`, such as  `us-east4-c` when you define the region and zone where you want to
+install Forseti. 
 
 ### Installing Forseti
 
 In the `forseti` project, do the following:
 
-1.  Navigate to the "VPC Networks" Pages on the Cloud Console
-2.  Create a VPC for Forseti with one subnet. Configure it with the following parameters:
-       - Private access enabled.
-       - Flow logs enabled [optional].
-       - Regional dynamic routing mode.
+1.  Go to the [**VPC Networks** page](https://console.cloud.google.com/networking/networks/list) in the GCP Console.
+1.  Create a VPC for Forseti with one subnet. Configure it with the following parameters:
+       - **Private Google access**: **On**
+       - **Flow logs**: **On** (optional)
+       - **Dynamic routing mode**: **Regional**
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/f4ab14ea.png)
 
 In the example above, the VPC was created with the name `forseti` and the subnet with the name `forseti-subnet1`. The
-chosen region is `us-east4`. The chosen zone is `us-east4-c`. During this step make a point to note down the
-`network`, `subnet`, and `region` names as it will be required in the next steps.
+chosen region is `us-east4`. The chosen zone is `us-east4-c`. During this step, record the network, subnet, and region
+names; you will use them in later steps.
 
-3. Remove the default network, unless it's being used by other resources.
-4. Open Cloud Shell and configure the gcloud session as follows:
+1.  Remove the default network, unless it's being used by other resources.
+1.  Open Cloud Shell and configure the gcloud session as follows:
 
-```
-gcloud config set project [PROJECT_ID]
-gcloud config set compute/region [REGION_NAME]
-gcloud config set compute/zone [ZONE_NAME]
-```
+        gcloud config set project [PROJECT_ID]
+        gcloud config set compute/region [REGION_NAME]
+        gcloud config set compute/zone [ZONE_NAME]
 
-In our example this will be:
-```
-gcloud config set project forseti-pj-id
-gcloud config set compute/region us-east4
-gcloud config set compute/zone us-east4-c
-```
-Ensure you are configuring the above since these are implicity used by the Forseti installer.
+    These settings are used by the Forseti installer.
+    
+    Using the values from the example above:
 
+        gcloud config set project forseti-pj-id
+        gcloud config set compute/region us-east4
+        gcloud config set compute/zone us-east4-c
 
-4. Clone Forseti Repository, this contains the installer we will use:
-```
-git clone https://github.com/GoogleCloudPlatform/forseti-security.git`
-```
+1.  Clone Forseti Repository, this contains the installer we will use:
 
-5. Install Forseti and make it use the correct network we created.
+        git clone https://github.com/GoogleCloudPlatform/forseti-security.git`
 
-> If you plan to use SendGrid email service ensure you obtain an API Key before proceeding as it will ask you during this step.
+5.  Install Forseti and make it use the network that we created. (If you plan to use the SendGrid email service, ensure 
+    that you obtain an API key before proceeding, because it will ask you during this step.)
 
-```
-cd forseti-security
-python install/gcp_installer.py /
---vpc-host-network [NETWORK_NAME] /
---vpc-host-subnetwork [SUBNETWORK_NAME] /
---gsuite-superadmin-email [SUPER_ADMIN_ACCOUNT] /
---cloudsql-region [REGION_NAME] /
---gcs-location [REGION_NAME]
-```
+        cd forseti-security
+        python install/gcp_installer.py /
+        --vpc-host-network [NETWORK_NAME] /
+        --vpc-host-subnetwork [SUBNETWORK_NAME] /
+        --gsuite-superadmin-email [SUPER_ADMIN_ACCOUNT] /
+        --cloudsql-region [REGION_NAME] /
+        --gcs-location [REGION_NAME]
 
-Where the `[REGION_NAME]` should be the same region you created the subnetwork on. Matching with the network screenshot above, this command would look like the following:
+    Where the `[REGION_NAME]` should be the same region you created the subnetwork on.
+    
+    Using the values from the example above:
 
-```
-cd forseti-security
-python install/gcp_installer.py /
---vpc-host-network forseti /
---vpc-host-subnetwork forseti-subnet1 /
---gsuite-superadmin-email [SUPER_ADMIN_ACCOUNT] /
---cloudsql-region us-east4 /
---gcs-location us-east4
-```
+        cd forseti-security
+        python install/gcp_installer.py /
+        --vpc-host-network forseti /
+        --vpc-host-subnetwork forseti-subnet1 /
+        --gsuite-superadmin-email [SUPER_ADMIN_ACCOUNT] /
+        --cloudsql-region us-east4 /
+        --gcs-location us-east4
 
-With this step we are essentially running deployment manager to create the components necessary to install Forseti and you can follow the installation in deployment page as well as the command line.
+    With this step, we are essentially running Deployment Manager to create the components necessary to install Forseti.
+    You can follow the installation on the [deployment page](http://console.cloud.google.com/dm/deployments) as well as
+    the command line.
 
-*Note:** that in this step Forseti installer will still try to remove the default firewall rules, as we removed the default VPC this step will error out in the installation.
-
+    Note: In this step, the Forseti installer will try to remove the default firewall rules. Because we removed the
+    default VPC network, this step will cause an error in the installation.
 
 ### Making Forseti private
 
-At this stage we have Forseti installed, however it is not yet configured as private, below are the necessary steps to make it private.
+At this stage, Forseti is installed, but it is not yet configured as private. In this section, you make Forseti 
+private.
 
-In Cloud Console ensure you have the `forseti` project selected, then do the following:
-1. Navigate to Cloud SQL page.
-2. Find the `forseti-server-db` instance.
+In the GCP Console, ensure that you have the `forseti` project selected, then do the following:
+
+1.  Go to the [**Cloud SQL** page](https://console.cloud.google.com/sql) in the GCP Console.
+1.  Find the `forseti-server-db` instance.
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/5dacd607.png)
 
-3. Click on Edit.
-4. Add the Private IP.
-5. Remove the Public IP.
-6. Save changes.
+1.  Click **Edit**.
+1.  Add the private IP address.
+1.  Remove the public IP address.
+1.  Save the changes.
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/fed98394.png)
 
