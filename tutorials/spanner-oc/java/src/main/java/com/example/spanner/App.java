@@ -53,8 +53,9 @@ public class App {
 
   // [START configChanges]
   private static final String PROJECT_ID = ServiceOptions.getDefaultProjectId();
-  private static final String INSTANCE_ID = System.getenv( "INSTANCE_ID");
-  private static final String DATABASE_ID = System.getenv( "DATABASE_ID");
+  private static final String INSTANCE_ID = System.getenv("INSTANCE_ID");
+  private static final String DATABASE_ID = System.getenv("DATABASE_ID");
+  private static final int EXPORT_INTERVAL = 70;
   // [END configChanges]
 
   // [START config_oc_stackdriver_export]
@@ -187,8 +188,9 @@ public class App {
     configureOpenCensusExporters();
     doSpannerOperations();
 
-    // IMPORTANT: do NOT exit right away. Wait for a duration longer than reporting
-    // duration (5s) to ensure spans are exported. Spans are exported every 5 seconds.
-    sleep(5100);
+    // The default export interval is 60 seconds. The thread with the StackdriverStatsExporter must
+    // live for at least the interval past any metrics that must be collected, or some risk being
+    // lost if they are recorded after the last export.
+    sleep(EXPORT_INTERVAL * 1000);
   }
 }
