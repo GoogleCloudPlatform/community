@@ -212,7 +212,7 @@ solution on Kubernetes Engine.
 
 If your Kubernetes cluster has RBAC enabled, from the Cloud Shell, deploy an NGINX controller Deployment and Service by running the following command:
 
-    helm install --name nginx-ingress stable/nginx-ingress --set rbac.create=true
+    helm install --name nginx-ingress stable/nginx-ingress --set rbac.create=true --set controller.publishService.enabled=true
 
 #### Deploy NGINX Ingress Controller with RBAC disabled
 
