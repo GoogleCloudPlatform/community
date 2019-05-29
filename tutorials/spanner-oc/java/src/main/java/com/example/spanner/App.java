@@ -61,7 +61,7 @@ public class App {
   private static void configureOpenCensusExporters() throws IOException {
     TraceConfig traceConfig = Tracing.getTraceConfig();
 
-    // default sampler is set to Samplers.alwaysSample() for demonstration. In production
+    // Sampler is set to Samplers.alwaysSample() for demonstration. In production
     // or in high QPS environment please use default sampler.
     traceConfig.updateActiveTraceParams(
       traceConfig.getActiveTraceParams().toBuilder().setSampler(Samplers.alwaysSample()).build());

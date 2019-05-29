@@ -119,11 +119,11 @@ information such as lower-level tracing and operation-level call latencies.
 
 1.  The power of visualization helps teams perform root cause analyses, post-mortems, bisect bad changes, figure out what needs to be optimized.
 
-1.  Please note that for this demo we are always sampling and that is very high. More realistically perhaps tracing 1 in 10,000 might be suffice.
+1.  Please note that for this demo we are always sampling and that is very high. More realistically perhaps tracing 1 in 10,000 might suffice.
 
 ## Viewing metrics in Stackdriver Metrics Explorer UI
 
-The tutorial also demonstrates the recording of application metrics. Latency and transaction counts will be measured by the application code and recorded.
+The tutorial also demonstrates the recording of application metrics. Transaction Latency and Transaction Count will be measured by the application code and recorded.
 
 1.  Go to the [Stackdriver Monitoring console](https://cloud.google.com/console/monitoring).
     
