@@ -1,5 +1,5 @@
 ---
-title: Private Forseti with SCC integration
+title: Integrate private Forseti Security with Cloud Security Command Center
 description: Deploy private Forseti Security scanning tool with integration with Cloud Security Command Center.
 author: fawix,valavan007
 tags: Forseti Security, Cloud Security Command Center
@@ -106,9 +106,10 @@ private.
 In the GCP Console, ensure that you have the `forseti` project selected, and then do the following:
 
 1.  Go to the [**Cloud SQL** page](https://console.cloud.google.com/sql) in the GCP Console.
-1.  Find the `forseti-server-db` instance. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/5dacd607.png)
-1.  Click the more icon (3 dots), and then click **Edit**.
-1.  Add the private IP address,remove the public IP address, and save the changes. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/fed98394.png)
+1.  Find the row for the `forseti-server-db` instance, click the more icon (three dots) at the end of the row, and then
+    click **Edit**. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/5dacd607.png)
+
+1.  Add the private IP address, remove the public IP address, and save the changes. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/fed98394.png)
 
     Note: This is also a good time to ensure that the database is in the same zone as the server VM (optional).
 
@@ -120,9 +121,9 @@ In the GCP Console, ensure that you have the `forseti` project selected, and the
 1.  (Optional) Go to the [**VM instances** page](https://console.cloud.google.com/compute/instances) and remove the public
     IP addresses for the server and client VMs. 
     
-    If you remove the public IP addresses, then access to the instances will be through Cloud Identity-Aware Proxy (IAP),
-    Cloud VPN, or Cloud Interconnect. Cloud IAP provides Google Identity verified proxy tunnel to compute instances without
-    internet access. For details on how to set up Cloud IAP to access a Forseti VM through SSH, see
+    If you remove the public IP addresses, then connections to the instances must be through Cloud Identity-Aware Proxy 
+    (IAP), Cloud VPN, or Cloud Interconnect. Cloud IAP provides Google Identity verified proxy tunnel to compute instances 
+    without internet access. For details on how to set up Cloud IAP to access a Forseti VM through SSH, see
     the [Cloud IAP documentation](https://cloud.google.com/iap/docs/using-tcp-forwarding#ssh_tunneling).
 
 ### Configuring Forseti
@@ -138,11 +139,11 @@ For details of domain-wide delegation, see
 the Forseti documentaton.
 
 1.  Navigate to the Service account page on the `forseti` project.
-1.  Find the `Forseti Server` service account, click the more icon (3 dots), and then click **Edit**. Note the service
+1.  Find the `Forseti Server` service account, click the more icon (three dots), and then click **Edit**. Note the service
     account address for use in the next
     section. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/c23aed4f.png)
 
-1.  Click checkbox to select **Enable G Suite Domain-wide Delegation**. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/96628a59.png)
+1.  Click the checkbox to select **Enable G Suite Domain-wide Delegation**. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/96628a59.png)
 
 1.  Click **View Client ID**. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/42fa4d69.png)
 
@@ -226,7 +227,7 @@ Go back to Cloud Shell, ensure you are in the `forseti` project, and perform the
 
         forseti inventory create
 
-    At the end of this step the output should give us an `Inventory ID` - copy it for the next step:
+    At the end of this step, the output gives an inventory ID; copy it for the next step.
 
         {
           "errors": 0,
@@ -234,11 +235,11 @@ Go back to Cloud Shell, ensure you are in the `forseti` project, and perform the
           "step": "bucket/test-function-http-tpc6nm6zh2",
           "finalMessage": false,
           "lastError": "",
-          "id": "1556128018126591", # <== THIS!
+          "id": "1556128018126591", # <== This is the inventory ID.
           "lastWarning": ""
         }
 
-1.  Create a model based on the inventory & configure Forseti to use it:
+1.  Create a model based on the inventory, and configure Forseti to use it:
 
         forseti model create --inventory_index_id [INVENTORY_ID] [MODEL_NAME]
         forseti model use [MODEL_NAME]
