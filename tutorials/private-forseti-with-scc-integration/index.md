@@ -9,13 +9,15 @@ date_published: 2019-05-31
 This guide walks you through a private Forseti Security installation, following enterprise best practices.
 
 This guide shows how to do the following:
+
 - Deploy Forseti in its own VPC (not the default VPC).
 - Restrict the firewall rules that are pre-configured.
 - Optionally, remove the public IP address from Compute Engine instances.
 - Configure Cloud SQL to be a private instance.
 - Configure Forseti to send violations to Cloud Security Command Center (Cloud SCC).
 
-This guide does **not** show how to do the following:
+This guide does *not* show how to do the following:
+
 - Customize Forseti.
 - Configure Forseti beyond the basic setup.
 - Configure Forseti Enforcer.
@@ -147,12 +149,13 @@ the Forseti documentaton.
 
 1.  Click **View Client ID**. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/42fa4d69.png)
 
-1.  Copy the value from **Client ID** and save it for the next steps. You can also copy it from the **Edit** page
-    if you are unable to copy it from the popover that displays the information. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/249d1377.png)
+1.  Copy the value from the **Client ID** field and save it for the next step. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/249d1377.png)
+
+    You can also copy the client ID from the **Edit** page if you are unable to copy it from the popover that displays
+    the information.
 
 1.  In the Google Admin Console, go to [Manage API client access](https://admin.google.com/ManageOauthClients)
-    in **Security Settings**.
-1.  Paste the client ID in the client name box.
+    in **Security Settings**, and paste the client ID in the client name box.
 1.  Authorize the following scopes: `https://www.googleapis.com/auth/admin.directory.group.readonly,https://www.googleapis.com/auth/admin.directory.user.readonly,https://www.googleapis.com/auth/cloudplatformprojects.readonly,https://www.googleapis.com/auth/apps.groups.settings`
 
 #### Enable Cloud SCC with Forseti plugin
