@@ -52,7 +52,7 @@ In the `forseti` project, do the following:
     names; you will use them in later steps.
 
 1.  Remove the default network, unless it's being used by other resources.
-1.  Open Cloud Shell and configure the gcloud session with settings that are used by the Forseti installer:
+1.  Open Cloud Shell and configure the gcloud session; these settings will be used by the Forseti installer:
 
         gcloud config set project [PROJECT_ID]
         gcloud config set compute/region [REGION_NAME]
@@ -91,7 +91,7 @@ In the `forseti` project, do the following:
         --cloudsql-region us-east4 /
         --gcs-location us-east4
 
-    With this step, we are essentially running Deployment Manager to create the components necessary to install Forseti.
+    With this step, you are essentially running Deployment Manager to create the components necessary to install Forseti.
     You can follow the installation on the [**Deployments** page](http://console.cloud.google.com/dm/deployments) as well as
     the command line.
 
@@ -107,12 +107,10 @@ In the GCP Console, ensure that you have the `forseti` project selected, and the
 
 1.  Go to the [**Cloud SQL** page](https://console.cloud.google.com/sql) in the GCP Console.
 1.  Find the `forseti-server-db` instance. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/5dacd607.png)
-1.  Click **Edit**.
-1.  Add the private IP address.
-1.  Remove the public IP address.
-1.  Save the changes. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/fed98394.png)
+1.  Click the more icon (3 dots), and then click **Edit**.
+1.  Add the private IP address,remove the public IP address, and save the changes. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/fed98394.png)
 
-    Note: This is also a good time to ensure the database is in the same zone as the server VM (optional).
+    Note: This is also a good time to ensure that the database is in the same zone as the server VM (optional).
 
 1.  Go to the [**Firewall rules** page](https://console.cloud.google.com/networking/firewalls/list) and edit the rules of
     both `forseti-client-allow-ssh-external` and `forseti-server-allow-ssh-external` to restrict the source IP ranges to
@@ -144,15 +142,15 @@ the Forseti documentaton.
     account address for use in the next
     section. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/c23aed4f.png)
 
-1.  Enable domain-wide delegation. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/96628a59.png)
+1.  Click checkbox to select **Enable G Suite Domain-wide Delegation**. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/96628a59.png)
 
 1.  Click **View Client ID**. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/42fa4d69.png)
 
 1.  Copy the value from **Client ID** and save it for the next steps. You can also copy it from the **Edit** page
     if you are unable to copy it from the popover that displays the information. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/249d1377.png)
 
-1.  Navigate to the Google Admin page and go to [Manage API client access](https://admin.google.com/ManageOauthClients)
-    in the Security Settings.
+1.  In the Google Admin Console, go to [Manage API client access](https://admin.google.com/ManageOauthClients)
+    in **Security Settings**.
 1.  Paste the client ID in the client name box.
 1.  Authorize the following scopes: `https://www.googleapis.com/auth/admin.directory.group.readonly,https://www.googleapis.com/auth/admin.directory.user.readonly,https://www.googleapis.com/auth/cloudplatformprojects.readonly,https://www.googleapis.com/auth/apps.groups.settings`
 
@@ -162,27 +160,26 @@ the Forseti documentaton.
     search for the Cloud Security Command Center API (`securitycenter.googleapis.com`), and enable it.
 
 1.  Navigate to the Organization level.
-1.  Navigate to "Security > Security Command Center" menu.
+1.  Use the menu in the upper-left corner of the GCP Console to navigate to **Security > Security Command Center**.
 1.  Enable the service.
-1.  Click **Add Security Sources**. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/f98fc029.png)
+1.  At the top of the **Security Command Center** page, click **Add Security Sources**.
 
-1.  Select the Forseti plugin. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/4de2ba3a.png)
+1.  Select the **Forseti Cloud SCC Connector** plugin.
 
-1.  Click the **Sign-up** button to get started: ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/2c9ff5f6.png)
+1.  Click the **Visit Forseti Security to sign up** button to get started.
 
-1.  Follow the steps to enable the extension. First select your organization: ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/forseti_source_id.png)
+1.  Follow the steps to enable the extension. First, select your organization.
 
 1.  Follow the instructions on the screen. When asked for a service account, use the Forseti Server service account.
     Choose the `forseti` project. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/forseti_source_id_2.png)
 
-1.  Copy the `source_id` for later use. The `source_id` is in this format, as shown in the screenshot above: 
-
-        `organizations/[ORGANIZATION_ID]/sources/[SOURCE_ID]`
+1.  Copy the `source_id` for later use. The `source_id` is in this format, as shown in the screenshot
+    above: `organizations/[ORGANIZATION_ID]/sources/[SOURCE_ID]`
 
 1.  Navigate to the Organization IAM page and ensure the service account was granted
-    the `Security Center Findings Editor` role, if not then grant it.
+    the **Security Center Findings Editor** role, if not then grant it.
 
-    Note: if you did not re-use the Forseti Server service account and created a new service account for Cloud SCC, you
+    Note: If you did not re-use the Forseti Server service account and created a new service account for Cloud SCC, you
     need to grant `Security Center Findings Editor` role for both the Foresti Server service acconut and the newly created 
     service account for Cloud SCC.
 
