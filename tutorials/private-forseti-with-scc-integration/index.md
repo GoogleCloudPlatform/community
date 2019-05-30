@@ -16,7 +16,7 @@ This guide shows how to do the following:
 - Configure Cloud SQL to be a private instance.
 - Configure Forseti to send violations to Cloud Security Command Center (Cloud SCC).
 
-This guide does **not** show how to do the following:
+This guide does *not* show how to do the following:
 
 - Customize Forseti.
 - Configure Forseti beyond the basic setup.
