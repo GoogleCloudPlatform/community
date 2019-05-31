@@ -45,14 +45,14 @@ projected usage.
 
 This document includes four exercises: 
 
-* Exercise 1: "Introduction to network namespaces" introduces Linux virtual network devices. In this exercise, you configure 
-  devices, connect them, and configure the iptables rules that facilitate connectivity. This exercise also introduces 
-  techniques for interrogating the connection states.
-* Exercise 2: "Introduction to GKE networking" explains the creation of a simple HTTP service in GKE. Using the techniques
-  you learned in the previous exercise, you rerun captures.
-* Exercise 3: "GCP load balancing and GKE" introduces the ingress controller as implemented by GKE, building on the load
+* **Exercise 1: "Introduction to network namespaces"** introduces Linux virtual network devices. In this exercise, you
+  configure devices, connect them, and configure the iptables rules that facilitate connectivity. This exercise also 
+  introduces techniques for interrogating the connection states.
+* **Exercise 2: "Introduction to GKE networking"** explains the creation of a simple HTTP service in GKE. Using the 
+  techniques you learned in the previous exercise, you rerun captures.
+* **Exercise 3: "GCP load balancing and GKE"** introduces the ingress controller as implemented by GKE, building on the load
   balancer service from the previous exercise.
-* Exercise 4: "Visiting namespaces in GKE" demonstrates how to visit a pod's namespace directly.
+* **Exercise 4: "Visiting namespaces in GKE"** demonstrates how to visit a pod's namespace directly.
 
 ## Exercise 1: Introduction to network namespaces
 
