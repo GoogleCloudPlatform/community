@@ -938,8 +938,7 @@ Note: After the `OUTPUT` and `KUBE-SERVICES` chains below, the rest of the chain
 iptables -L | less
 ```
 
-*   Node tries to route packets to `10.43.234.223` and send them to the `OUTPUT` chain. All `OUTPUT` packets are forwarded
-    to the `KUBE_SERVICES` chain because of this rule:
+Node tries to route packets to `10.43.234.223` and send them to the `OUTPUT` chain. All `OUTPUT` packets are forwarded to the `KUBE_SERVICES` chain because of this rule:
 
 ```
 Chain OUTPUT (policy ACCEPT)
@@ -953,7 +952,7 @@ Also consider the translation configuration:
 iptables -L -tnat | less
 ```
 
-*   Doesn't match anything else in the `KUBE-SERVICES` chain, so it goes to the `KUBE-NODEPORTS` chain:
+It doesn't match anything else in the `KUBE-SERVICES` chain, so it goes to the `KUBE-NODEPORTS` chain:
 
 ```
 Chain KUBE-SERVICES (2 references)
@@ -962,8 +961,8 @@ target     prot opt source               destination
 KUBE-NODEPORTS  all  --  anywhere             anywhere             /* kubernetes service nodeports; NOTE: this must be the last rule in this chain */ ADDRTYPE match dst-type LOCAL
 ```
 
-*   First match in `KUBE-NODEPORTS` makes us masquerade/SNAT the packets with the outbound IP (`cbr0` in this case)
-    and sent to `KUBE-SVC-AZMBASOGS4B7PAAL`:
+First match in `KUBE-NODEPORTS` makes us masquerade/SNAT the packets with the outbound IP (`cbr0` in this case)
+and sent to `KUBE-SVC-AZMBASOGS4B7PAAL`:
 
 ```
 Chain KUBE-NODEPORTS (1 references)
@@ -974,7 +973,7 @@ KUBE-SVC-AZMBASOGS4B7PAAL  tcp  --  anywhere             anywhere             /*
 
 ```
 
-*   `KUBE-SVC-AZMBASOGS4B7PAAL` just sends to `KUBE-SEP-WGEM4BP3ARCHJ5MF` 
+`KUBE-SVC-AZMBASOGS4B7PAAL` just sends to `KUBE-SEP-WGEM4BP3ARCHJ5MF` 
 
 ```
 Chain KUBE-SVC-AZMBASOGS4B7PAAL (3 references)
@@ -982,7 +981,7 @@ target     prot opt source               destination
 KUBE-SEP-WGEM4BP3ARCHJ5MF  all  --  anywhere             anywhere             /* default/hello-server: */
 ```
 
-*   `KUBE-SEP-WGEM4BP3ARCHJ5MF` DNATs to the EndPointIP and port:
+`KUBE-SEP-WGEM4BP3ARCHJ5MF` DNATs to the EndPointIP and port:
 
 ```
 Chain KUBE-SEP-WGEM4BP3ARCHJ5MF (1 references)
@@ -991,7 +990,7 @@ KUBE-MARK-MASQ  all  --  10.40.0.6            anywhere             /* default/he
 DNAT       tcp  --  anywhere             anywhere             /* default/hello-server: */ tcp to:10.40.0.6:8080
 ```
 
-*   You will find a similar configuration on every node.
+You will find a similar configuration on every node.
 
 We should stop here and make sure that we understand why the service is available of every node’s `$NodePort` TCP port and
 how connections get forwarded for `$NodePort` to the EndPoint on every node.
@@ -1008,6 +1007,7 @@ kubectl describe service hello-server
 ```
 
 Sample output:
+
 ```
 Name:                     hello-server
 Namespace:                default
@@ -1055,7 +1055,7 @@ listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
 21:53:45.600739 IP 10.142.0.2.48156 > 10.43.246.223.80: Flags [.], ack 188, win 231, options [nop,nop,TS val 216982484 ecr 610350644], length 0
 ```
 
-*   Confirm that we also see the translations on `cbr0`: 
+Confirm that we also see the translations on `cbr0`: 
 
 ```
 tcpdump -ni cbr0 port 8080                     
@@ -1077,7 +1077,7 @@ listening on cbr0, link-type EN10MB (Ethernet), capture size 262144 bytes
 21:55:32.238946 IP 10.40.0.6.8080 > 10.142.0.2.48170: Flags [F.], seq 187, ack 79, win 220, options [nop,nop,TS val 610457283 ecr 217009144], length 0
 ```
 
-*   Once again, telnet from the client to $IP port 80 to hold that connection up and see how that flow entry looks on the node:
+Once again, telnet from the client to $IP port 80 to hold that connection up and see how that flow entry looks on the node:
 
 ```
 conntrack -L | grep 10.43.246.223
@@ -1096,8 +1096,8 @@ Use `iptables -L` and `iptables -L --tnat` to find this processing order.
 After the `OUTPUT` and `KUBE-SERVICES` chains below, the rest of the chains will be named differently on
 your system.
 
-*   Node tries to route packets to `10.43.234.223` and send them to the `OUTPUT` chain. All `OUTPUT` packets are forwarded
-    to the `KUBE_SERVICES` chain because of this rule:
+Node tries to route packets to `10.43.234.223` and send them to the `OUTPUT` chain. All `OUTPUT` packets are forwarded
+to the `KUBE_SERVICES` chain because of this rule:
 
 ```
 Chain OUTPUT (policy ACCEPT)
@@ -1105,7 +1105,7 @@ target     prot opt source               destination
 KUBE-SERVICES  all  --  anywhere             anywhere             /* kubernetes service portals */
 ```
 
-*   `10.43.236.223` matches this rule in `KUBE-SERVICES`, which forwards to `KUBE-SVC-AZMBASOGS4B7PAAL:`
+`10.43.236.223` matches this rule in `KUBE-SERVICES`, which forwards to `KUBE-SVC-AZMBASOGS4B7PAAL:`
 
 ```
 Chain KUBE-SERVICES (2 references)
@@ -1113,7 +1113,7 @@ Chain KUBE-SERVICES (2 references)
 KUBE-SVC-AZMBASOGS4B7PAAL  tcp  --  anywhere             10.43.246.223        /* default/hello-server: cluster IP */ tcp dpt:http
 ```
 
-*   In `KUBE-SVC-AZMBASOGS4B7PAAL`, we send everything to the `KUBE-SEP-WGEM4BP3ARCHJ5MF` chain:
+In `KUBE-SVC-AZMBASOGS4B7PAAL`, we send everything to the `KUBE-SEP-WGEM4BP3ARCHJ5MF` chain:
 
 ```
 Chain KUBE-SVC-AZMBASOGS4B7PAAL (3 references)
@@ -1121,7 +1121,7 @@ target     prot opt source               destination
 KUBE-SEP-WGEM4BP3ARCHJ5MF  all  --  anywhere             anywhere             /* default/hello-server: */
 ```
 
-*   `KUBE-SEP-WGEM4BP3ARCHJ5MF` DNATs to the EndPointIP and port:
+`KUBE-SEP-WGEM4BP3ARCHJ5MF` DNATs to the EndPointIP and port:
 
 ```
 Chain KUBE-SEP-WGEM4BP3ARCHJ5MF (1 references)
@@ -1143,7 +1143,8 @@ Again, revisit the `kubectl describe service` output:
 kubectl describe service hello-server
 ```
 
-Sample output
+Sample output:
+
 ```
 Name:                     hello-server
 Namespace:                default
@@ -1162,25 +1163,27 @@ External Traffic Policy:  Cluster
 Events:                   <none>
 ```
 
-*   We can find the load-balancer IP address from `gcloud` like so:
+We can find the load-balancer IP address from `gcloud` like so:
 
 ```
 gcloud compute forwarding-rules list
 ```
 
 Sample output:
+
 ```
 NAME                              REGION    IP_ADDRESS          IP_PROTOCOL  TARGET
 a88cd35f5879e11e892a242010a8e007  us-east1  35.231.121.11       TCP          us-east1/targetPools/a88cd35f5879e11e892a242010a8e007
 ```
 
-*   Describe the forwarding rule to see the target pool:
+Describe the forwarding rule to see the target pool:
 
 ```
 gcloud compute forwarding-rules describe a88cd35f5879e11e892a242010a8e007
 ```
 
 Sample output:
+
 ```
 IPAddress: 35.231.121.11
 IPProtocol: TCP
@@ -1197,13 +1200,14 @@ selfLink: https://www.googleapis.com/compute/v1/projects/bernieongewe-dev1/regio
 target: https://www.googleapis.com/compute/v1/projects/bernieongewe-dev1/regions/us-east1/targetPools/a88cd35f5879e11e892a242010a8e007
 ```
 
-*   Describe the target pool where we should see instances:
+Describe the target pool where we should see instances:
 
 ```
 gcloud compute target-pools describe a88cd35f5879e11e892a242010a8e007
 ```
 
 Sample output:
+
 ```
 creationTimestamp: '2018-07-14T12:46:26.956-07:00'
 description: '{"kubernetes.io/service-name":"default/hello-server"}'
@@ -1216,15 +1220,14 @@ instances:
 - https://www.googleapis.com/compute/v1/projects/bernieongewe-dev1/zones/us-east1-b/instances/gke-lab-cluster-default-pool-9e4ce61e-33fg
 ```
 
-*   Launch `tcpdump` sessions on all the nodes watching for 80/TCP on `eth0` while being careful to filter out conversations
-    with the metadata server:
+Launch `tcpdump` sessions on all the nodes watching for 80/TCP on `eth0` while being careful to filter out conversations
+with the metadata server:
 
 ```
 tcpdump -ni eth0 port 80 and not '(host 169.254.169.254)'
 ```
 
-*   Visit `http://$LoadBalancerIP` from any browser. Hit refresh a few times as you watch the `tcpdump` sessions.
-    An example appears below:
+Visit `http://$LoadBalancerIP` from any browser. Hit refresh a few times as you watch the `tcpdump` sessions. An example appears below:
 
 ```
 3:03:42.410455 IP 104.132.154.90.39295 > 35.231.121.11.80: Flags [S], seq 1041591234, win 29200, options [mss 1338,sackOK,TS val 547281946 ecr 0,nop,wscale 7], length 0
@@ -1277,6 +1280,7 @@ kubectl cluster-info
 ```
 
 Sample output:
+
 ```
 Kubernetes master is running at https://35.231.234.26
 GLBCDefaultBackend is running at https://35.231.234.26/api/v1/namespaces/kube-system/services/default-http-backend:http/proxy
@@ -1294,9 +1298,8 @@ For now, it's only important to appreciate that GKE takes care of building the m
 this difference will become important when we begin to integrate with external environments.
 
 This is also a good place to bring attention to the fact that the on-VM forwarding configurations we've seen so far
-are also GKE artifacts. The customer may introduce plugins to other network drivers. Some examples:
-
-https://kubernetes.io/docs/concepts/cluster-administration/networking/ 
+are also GKE artifacts. The customer may introduce plugins to other network drivers. See
+the [Kubernetes documentation](https://kubernetes.io/docs/concepts/cluster-administration/networking/) for some examples.
 
 How might some of these extend the reach and capabilities of GKE?
 
@@ -1317,6 +1320,7 @@ gcloud compute forwarding-rules list
 ```
 
 Sample output:
+
 ```
 NAME                              REGION    IP_ADDRESS          IP_PROTOCOL  TARGET
 ..
@@ -1357,6 +1361,7 @@ gcloud compute http-health-checks describe k8s-c1f99c83f2e87324-node
 ```
 
 Sample output:
+
 ```
 checkIntervalSec: 2
 creationTimestamp: '2018-07-14T12:46:23.030-07:00'
