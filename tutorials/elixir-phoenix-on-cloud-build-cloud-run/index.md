@@ -3,7 +3,7 @@ title: Run an Elixir Phoenix App with Google Cloud Run
 description: Learn how to create a CI CD pipeline for an Elixir Phoenix app with Google Cloud Run and Google Cloud Build.
 author: arciola
 tags: Cloud Run, Cloud Build, Elixir, Phoenix
-date_published: 2019-06-3
+date_published: 2019-06-03
 ---
 
 **Note:** [Google Cloud Run](https://cloud.google.com/run/) is in beta. Google Cloud Platform products in beta are not covered under any SLA’s.
