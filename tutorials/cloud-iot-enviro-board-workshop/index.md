@@ -68,7 +68,7 @@ sudo shutdown -r now
 ```bash
 cd ~
 
-git clone https://github.com/kingman/enviro-workshop.git
+git clone https://github.com/kingman/community.git
 ```
 ### Get the public key of the secure element of your sensor board
 ```bash
@@ -77,6 +77,11 @@ cd /usr/lib/python3/dist-packages/coral/cloudiot
 python3 ecc608_pubkey.py
 ```
 Copy the public key which is used at later stage when creating device identity in cloud.
+
+## Run Cloud Shell tutorial
+Click the following button to set up GCP components by the [Tutorials in Cloud Shell](https://cloud.google.com/shell/docs/tutorials) format
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/kingman/community&tutorial=tutorials/cloud-iot-enviro-board-workshop/cloud_shell_tutorial.md).
+Or omit this step and continue to next step to manually follow this tutorial.  
 
 ## Provision device identity on GCP
 For device to communicate with IoT Core, the device identity needs to be created in IoT Core. Following commands are run in [Cloud Shell](https://cloud.google.com/shell/docs/features).
@@ -88,11 +93,11 @@ For device to communicate with IoT Core, the device identity needs to be created
 ```bash
 cd ~
 
-git clone https://github.com/kingman/enviro-workshop.git
+git clone https://github.com/kingman/community.git
 ```
 ### Set the environment variables
 ```bash
-cd ~/enviro-workshop/cloud-setup
+cd ~/community/tutorials/cloud-iot-enviro-board-workshop/cloud-setup
 ```
 In the file: `set_env_variables.sh` replace the values for `EVENT_TOPIC`,`REGISTRY_ID` and `DEVICE_ID` with id:s of your choice.
 
@@ -117,7 +122,7 @@ gcloud iot registries create $REGISTRY_ID \
 ### Create the public key file of the sensor board
 Create a file named `device_pub_key.pem` with the public key that were printed out earlier in the **Get the public key...** step.
 ```bash
-cd ~/enviro-workshop/cloud-setup
+cd ~/community/tutorials/cloud-iot-enviro-board-workshop/cloud-setup
 
 touch device_pub_key.pem
 ```
@@ -141,19 +146,19 @@ gcloud pubsub subscriptions create verify-event \
 ```
 ### Configure Raspberry Pi
 Configure Raspberry Pi to send sensor data to IoT Core
-In Raspberry Pi shell open the cloud config file: `~/enviro-workshop/enviro-device/cloud_config.ini` and replace the place holders `<project-id>`, `<registry-id>` and `<device-id>` with the actual values for the Cloud IoT Core environment setup in earlier step.
+In Raspberry Pi shell open the cloud config file: `~/community/tutorials/cloud-iot-enviro-board-workshop/enviro-device/cloud_config.ini` and replace the place holders `<project-id>`, `<registry-id>` and `<device-id>` with the actual values for the Cloud IoT Core environment setup in earlier step.
 
 ### Download the CA-certificate
 In Raspberry Pi shell run:
 ```bash
-cd ~/enviro-workshop/enviro-device/
+cd ~/community/tutorials/cloud-iot-enviro-board-workshop/enviro-device/
 
 wget https://pki.goog/roots.pem
 ```
 ### Run the streaming script
 In Raspberry Pi shell run:
 ```bash
-cd ~/enviro-workshop/enviro-device/
+cd ~/community/tutorials/cloud-iot-enviro-board-workshop/enviro-device/
 
 python3 enviro_demo.py --upload_delay 10
 ```
@@ -176,7 +181,7 @@ export TABLE=<replace_with_your_table_name>
 ### Deploy Cloud Function
 In Cloud Shell run:
 ```bash
-cd ~/enviro-workshop/functions
+cd ~/community/tutorials/cloud-iot-enviro-board-workshop/functions
 
 gcloud functions deploy enviro \
 --set-env-vars DATASET=${DATASET},\
@@ -190,7 +195,7 @@ TABLE=${TABLE} \
 Create the dataset and table in BigQuery.
 In Cloud Shell run:
 ```bash
-cd ~/enviro-workshop/bq
+cd ~/community/tutorials/cloud-iot-enviro-board-workshop/bq
 
 bq mk $DATASET
 
@@ -199,7 +204,7 @@ bq mk ${DATASET}.${TABLE} schema.json
 ## Start the sensor data stream
 You can control the interval of sensor data is sent to Cloud by setting the `upload_delay` parameter. In Raspberry Pi shell run:
 ```bash
-cd ~/enviro-workshop/enviro-device/
+cd ~/community/tutorials/cloud-iot-enviro-board-workshop/enviro-device/
 
 python3 enviro_demo.py --upload_delay 15
 ```
