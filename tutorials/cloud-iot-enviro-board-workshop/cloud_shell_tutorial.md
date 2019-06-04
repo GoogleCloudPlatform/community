@@ -3,7 +3,7 @@ Set your GCP project, replace `[PROJECT_ID]` with your project id:
 ```bash
 gcloud config set project [PROJECT_ID]
 ```
-<walkthrough-editor-open-file filePath="cloud-setup/set_env_variables.sh"
+<walkthrough-editor-open-file filePath="community/tutorials/cloud-iot-enviro-board-workshop/cloud-setup/set_env_variables.sh"
 text="Open set environment variables script">
 </walkthrough-editor-open-file>
 In the script file replace the values for `EVENT_TOPIC`,`REGISTRY_ID` and `DEVICE_ID` with id:s of your choice, and save the file.
@@ -35,8 +35,8 @@ cd ~/community/tutorials/cloud-iot-enviro-board-workshop/cloud-setup
 
 touch device_pub_key.pem
 ```
-<walkthrough-editor-open-file filePath="cloud-setup/device_pub_key.pem"
-text="Open public key file">
+<walkthrough-editor-open-file filePath="community/tutorials/cloud-iot-enviro-board-workshop/cloud-setup/device_pub_key.pem" text="Open public key file">
+</walkthrough-editor-open-file>
 Paste the public key in the file and save the change. Content starts with `-----BEGIN PUBLIC KEY-----` and ends with `-----END PUBLIC KEY-----`
 ## Create IoT Core device
 Create the sensor board identity in the newly created IoT Core registry with Sensor Board public key. In Cloud Shell run:
