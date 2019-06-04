@@ -193,7 +193,7 @@ instance. [More information on managing ssh keys is available here](https://clou
 resource "google_compute_instance" "default" {
  ...
 metadata = {
-   sshKeys = "INSERT_USERNAME:${file("~/.ssh/id_rsa.pub")}"
+   ssh-keys = "INSERT_USERNAME:${file("~/.ssh/id_rsa.pub")}"
  }
 }
 ```
