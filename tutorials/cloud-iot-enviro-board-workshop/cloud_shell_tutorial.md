@@ -64,6 +64,7 @@ Now you can go back to the workshop guide and continue with following steps from
 - Configure Raspberry Pi
 - Download the CA-certificate
 - Run the streaming script
+
 Come back here, once the previous steps are done and continue to the next step.
 ## Verify sensor data in Pub/Sub
 Pull message from Pub/Sub subscription. In Cloud Shell run:
