@@ -84,8 +84,7 @@ cd ~/community/tutorials/cloud-iot-enviro-board-workshop/functions
 and
 ```bash
 gcloud functions deploy enviro \
---set-env-vars DATASET=${DATASET},\
-TABLE=${TABLE} \
+--set-env-vars DATASET=${DATASET},TABLE=${TABLE} \
 --region ${REGION} \
 --trigger-topic ${EVENT_TOPIC} \
 --runtime nodejs8 \
