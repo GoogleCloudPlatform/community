@@ -1,56 +1,59 @@
 ---
-title: Run an Elixir Phoenix App with Google Cloud Run
-description: Learn how to create a CI CD pipeline for an Elixir Phoenix app with Google Cloud Run and Google Cloud Build.
-author: arciola
+title: Run an Elixir Phoenix App with Cloud Run
+description: Learn how to create a CI/CD pipeline for an Elixir Phoenix app with Google Cloud Run and Google Cloud Build.
+author: marciola
 tags: Cloud Run, Cloud Build, Elixir, Phoenix
-date_published: 2019-06-03
+date_published: 2019-06-06
 ---
 
-**Note:** [Google Cloud Run](https://cloud.google.com/run/) is in beta. Google Cloud Platform products in beta are not covered under any SLA’s.
+At the time of this document's publication, [Cloud Run](https://cloud.google.com/run/) is in beta. Google Cloud Platform
+products in beta are not covered under any SLAs.
 
-[Google Cloud Run](https://cloud.google.com/run/)
-is an easy way to deploy your apps to the same infrastructure that powers
-Google's products. Using Cloud Build, Cloud Run, and Github you can create a CI/CD pipeline for your
-app written in [Elixir](http://elixir-lang.org/) with the
-[Phoenix](http://phoenixframework.org/) Framework and have it up and running in minutes. 
-**Note:** Due to processes being managed and throttled by Cloud Run some features may not work (websockets, presence, pubsub).
+[Cloud Run](https://cloud.google.com/run/) is an easy way to deploy your apps to the same infrastructure that powers
+Google's products. Using Cloud Build, Cloud Run, and GitHub, you can create a CI/CD pipeline for your
+app written in [Elixir](http://elixir-lang.org/) with the [Phoenix Framework](http://phoenixframework.org/) and have it up
+and running in minutes. 
 
-This tutorial will help you get started deploying a Phoenix app (without ecto) to Google Cloud Run using Google Cloud Build. You will create a new Phoenix application, and learn how to configure, build, deploy, and update it. 
+**Note:** Due to processes being managed and throttled by Cloud Run, some features (such as websockets, presence, and
+Cloud Pub/Sub) may not work.
 
-This tutorial requires Elixir 1.5 and Phoenix 1.4 or later. It assumes you are
-already familiar with basic Phoenix web development. 
+This tutorial will help you to get started deploying a Phoenix app (without Ecto) to Cloud Run using Cloud Build. You will
+create a new Phoenix application and learn how to configure, build, deploy, and update it. 
+
+This tutorial requires Elixir 1.5 and Phoenix 1.4 or later. It assumes that you are already familiar with basic Phoenix web
+development. 
 
 ## Before you begin
 
 Before running this tutorial, take the following steps:
 
-1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
-    to create a new GCP project.
+1.  Use the [Google Cloud Platform (GCP) Console](https://console.cloud.google.com/) to create a new GCP project.
 
-2.  Enable billing for your project.
+1.  Enable billing for your project.
 
-3.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/). Make sure
-    you [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK
+1.  Install the [Cloud SDK](https://cloud.google.com/sdk/).
+
+    Make sure that you [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK
     and set the default project to the new project you created.
 
     Version 248.0.0 or later of the SDK is required. If you have an earlier
-    version installed, you may upgrade it by running:
+    version installed, you may upgrade it by running the following command:
 
         gcloud components update
 
-4. [Install git](https://help.github.com/en/articles/set-up-git#setting-up-git) for use with Github. Follow the 3 steps to setup git on your local machine.
+1.  [Install git](https://help.github.com/en/articles/set-up-git#setting-up-git) for use with Github. Follow the
+    steps to set git up on your local machine.
 
-If you have not yet installed Elixir and Phoenix, do so.
+    If you have not yet installed Elixir and Phoenix, do so.
 
-1.  Install Elixir and Node.js. If you are on macOS with Homebrew, you can run:
+1.  Install Elixir and Node.js. If you are on macOS with Homebrew, you can run the following command:
 
         brew install elixir node
 
-    Otherwise consult the [Node download](https://nodejs.org/en/download/) and
-    [Elixir install](https://elixir-lang.org/install.html) guides for your
-    operating system.
+    Otherwise, see the [Node download](https://nodejs.org/en/download/) and
+    [Elixir install](https://elixir-lang.org/install.html) guides for your operating system.
 
-2. Install the hex, rebar3, and phx_new archives:
+1.  Install the hex, rebar3, and phx_new archives:
 
         mix local.hex
         mix local.rebar
@@ -58,8 +61,8 @@ If you have not yet installed Elixir and Phoenix, do so.
 
 ## Create a new app and run it locally
 
-In this section, you will create a new Phoenix app **without** a database, and make
-sure it runs locally in development. If you already have an app to deploy, you
+In this section, you will create a new Phoenix app *without* a database and make
+sure that it runs locally in development. If you already have an app to deploy, you
 may use it instead.
 
 ### Create a new Phoenix app
@@ -71,28 +74,34 @@ may use it instead.
     Answer `Y` when the tool asks you if you want to fetch and install
     dependencies.
 
-2.  Go into the directory with the new application:
+1.  Go into the directory with the new application:
 
         cd hello
 
-3.  Run the app with the following command:
+1.  Run the app with the following command:
 
         mix phx.server
 
     This compiles your server and runs it on port 4000.
 
-4.  Visit [http://localhost:4000](http://localhost:4000) to see the Phoenix
+1.  Visit [http://localhost:4000](http://localhost:4000) to see the Phoenix
     welcome screen running locally on your workstation.
 
-## Enable Source Control with Github
+## Enable source control with Github
 
-[Github](https://github.com/) is a web-based hosting service for version control using Git. It is completely free and connects to Google Cloud Platform via Github Apps.
+[GitHub](https://github.com/) is a web-based hosting service for version control using Git. It is free and connects to
+GCP through GitHub Apps.
 
-1.  Create or login into your Github account and install the [Google Cloud Build App](https://github.com/marketplace/google-cloud-build). This gives your GCP account access to your repo.
+1.  Create or log in to your GitHub account and install the
+    [Google Cloud Build app](https://github.com/marketplace/google-cloud-build).
+    
+    This app gives your GCP account access to your repository.
 
-2.  Next we will [create the new repo](https://help.github.com/en/articles/creating-a-new-repository). We suggest you create a private repo, with no Readme as Phoenix creates one for you. 
+1.  [Create the new repository](https://help.github.com/en/articles/creating-a-new-repository). We suggest
+    that you create a private repository, with no Readme file, because Phoenix creates one for you. 
 
-3.  Now follow the prompts to push your local Phoenix app to your new Github repo. The following steps are listed below for convenience:
+3.  Follow the prompts to push your local Phoenix app to your new GitHub repository. The steps are listed here
+    for convenience:
 
         git init
         git add .
@@ -100,92 +109,107 @@ may use it instead.
         git remote add origin https://github.com/{USERNAME}/{REPO_NAME}.git
         git push -u origin master
 
-4. You should now see your code in the Github repository.
+You should now see your code in the GitHub repository.
 
-## Setup Cloud Build Trigger
+## Set up a Cloud Build trigger
 
-Now you setup Cloud Build to build on every code change in your Github repo.
+Now you set up Cloud Build to build on every code change in your GitHub repository.
 
-1.  Go to the [Cloud Build](http://console.cloud.google.com/cloud-build) and navigate to the “Triggers” page.
+1.  Go to the Cloud Build [**Triggers** page](https://console.cloud.google.com/cloud-build/triggers) in the GCP Console.
 
-2.  Create a new trigger for your Phoenix app and follow the prompt. You will need to set the “Build Configuration” to Cloud Build configuration file on the trigger settings page, everything else can stay as the default. 
+1.  Create a new trigger for your Phoenix app, following the on-screen prompts. On the **Trigger settings** page, 
+    set the **Build configuration** to **Cloud Build configuration file**; everything else can stay at the default values. 
 
-## Prepare your Phoenix App
+## Prepare your Phoenix app
 
 You will now configure the build files for Cloud Build and Cloud Run.
 
-1.  [Create your own dockerfile](https://cloud.google.com/cloud-build/docs/quickstart-docker) or use [this template for Phoenix](./elixir-phoenix-on-cloud-build-cloud-run/Dockerfile). This will be used by Cloud Build to build your container.
+1.  [Create your own dockerfile](https://cloud.google.com/cloud-build/docs/quickstart-docker) or use
+    [this template for Phoenix](./elixir-phoenix-on-cloud-build-cloud-run/Dockerfile).
+    
+    This will be used by Cloud Build to build your container.
 
-2.  Next you will need to create the Cloud Build configuration file, which we said we would use in the Cloud Build Trigger. You can [create your own build configuration file](https://cloud.google.com/cloud-build/docs/build-config), or use [this template for Phoenix](./elixir-phoenix-on-cloud-build-cloud-run/cloudbuild.yaml).
+1.  Create the Cloud Build configuration file, which is used by the Cloud Build trigger. You can
+    [create your own build configuration file](https://cloud.google.com/cloud-build/docs/build-config),
+    or use [this template for Phoenix](./elixir-phoenix-on-cloud-build-cloud-run/cloudbuild.yaml).
 
-**Note:** If you use the template you will need to replace {GITHUB_USERNAME} and {REPO_NAME} on 4 different lines. 
+    **Note:** If you use the template, replace {GITHUB_USERNAME} and {REPO_NAME} on 4 different lines. 
 
-3. Lastly, you will need to edit your .gitginore file to allow prod.secrets.exs to be included in the repo (**Note:** this step is only included to get your demo up and running. Do not use in production). Open .gitignore in the root folder and comment out the “/config/*.secret.exs” in the last line. For production ready secrets management take a look at Cloud Key Management Service.
+1.  Edit your `.gitginore` file to allow `prod.secrets.exs` to be included in the repository.
 
-4. Now you will push the code changes to Github.
+    **Note:** This step is only included to get your demo up and running. Do not use in production.
+
+    Open `.gitignore` in the root folder and comment out the `/config/*.secret.exs` in the last line.
+    For production-ready secrets management, take a look at Cloud Key Management Service.
+
+1. Push the code changes to GitHub, using the following commands:
 
         git add .
         git commit -m "Configuration for Cloud Build and Cloud Run"
         git push -u origin master
 
-## Live Application
+## Live application
 
 Your Phoenix application should now be live. 
 
-1. If you visit the [Cloud Build History page](http://console.cloud.google.com/cloud-build) you should see your build either building, successfully built, or possibly failed. 
+If you visit the [Cloud Build History page](http://console.cloud.google.com/cloud-build), you should see your build
+either building, successfully built, or possibly failed. 
 
-2. If if has successfully built, you can check the [Cloud Run Services page](console.cloud.google.com/run) to see if your service has successfully launched. Assuming it has, you can click the service, and then follow the URL on the page to view your Phoenix app.
+If it has successfully built, you can check the [Cloud Run Services page](console.cloud.google.com/run) to see if your 
+service has successfully launched. When it has, click the service and follow the URL on the page to view your Phoenix app.
 
-**Note:** if you encountered an error on either step, [view the logs](https://cloud.google.com/run/docs/logging) to further debug the issue. Issues generally arise from misspelling.
+**Note:** If you encountered an error, [view the logs](https://cloud.google.com/run/docs/logging) to debug the issue.
+Issues generally arise from misspelling.
 
 ## Update your application
 
 Let's make a simple change and redeploy.
 
-1.  Open the front page template
-    `lib/hello_web/templates/page/index.html.eex` in your editor.
-    Make a change to the HTML template.
+1.  Open the front page template `lib/hello_web/templates/page/index.html.eex` in your editor.
 
-2.  Push the changes to Github:
+1.  Make a change to the HTML template.
+
+2.  Push the changes to GitHub:
 
         git add .
         git commit -m "Homepage updates"
         git push -u origin master
 
-Cloud Build will take care of rebuilding your app and trigger a deployment of the updated    version on successful complication. Then Cloud Run will migrating traffic to the newly deployed version.
+    Cloud Build will take care of rebuilding your app and trigger a deployment of the updated version on successful 
+    compilation. Then Cloud Run will migrate traffic to the newly deployed version.
 
-3.  View your changes live by visiting the URL link on the Cloud Run services page.
+1.  View your changes live by visiting the URL on the Cloud Run services page.
 
 ## Cleaning up
 
 After you've finished this tutorial, you can clean up the resources you created
-on Google Cloud Platform so you won't be billed for them in the future. To clean
+on GCP so you won't be billed for them in the future. To clean
 up the resources, you can delete the project or stop the individual services.
 
 ### Deleting the project
 
 The easiest way to eliminate billing is to delete the project you created for
-the tutorial. To do so using `gcloud`, run:
+the tutorial. To do so using `gcloud`, run the following command:
 
     gcloud projects delete [YOUR_PROJECT_ID]
 
-where `[YOUR_PROJECT_ID]` is your Google Cloud Platform project ID.
+where `[YOUR_PROJECT_ID]` is your GCP project ID.
 
-**Warning**: Deleting a project has the following consequences:
-
-If you used an existing project, you'll also delete any other work you've done
-in the project. You can't reuse the project ID of a deleted project. If you
-created a custom project ID that you plan to use in the future, you should
-delete the resources inside the project instead. This ensures that URLs that
-use the project ID, such as an appspot.com URL, remain available.
+**Warning**: Deleting a project has the following consequences: If you used an existing project, you'll also delete any 
+other work you've done in the project. You can't reuse the project ID of a deleted project. If you created a custom project 
+ID that you plan to use in the future, you should delete the resources inside the project instead. This ensures that URLs 
+that use the project ID, such as an appspot.com URL, remain available.
 
 ### Deleting individual services
 
-In this tutorial, you created a Cloud Build instance and deployed a Cloud run service. Here is how to stop these two services.
+In this tutorial, you created a Cloud Build instance and deployed a Cloud Run service. Here is how to stop these two 
+services.
 
-1.  To delete the Cloud Build instance visit the Triggers page and delete the Trigger. This will prevent Cloud Build from running automatically on code pushes.
+*   To delete the Cloud Build instance, visit the **Triggers** page and delete the trigger. This will prevent Cloud Build 
+    from running automatically on code pushes.
 
-2. To delete the Cloud Run instance visit the Cloud Run services page, highlight the services, and select delete. This will stop the current service.
+*   To delete the Cloud Run instance, visit the Cloud Run services page, highlight the services, and select delete. This
+    will stop the current service.
 
 ## Next steps
 
