@@ -65,10 +65,17 @@ Reboot your board
 sudo shutdown -r now
 ```
 ### Check out the tutorial source code on your board
+Use git [SPARSE CHECKOUT](https://git-scm.com/docs/git-read-tree#_sparse_checkout) option to check out the minimal necessary source code on Raspberry Pi.
+In Raspberry Pi shell run:
 ```bash
 cd ~
-
-git clone https://github.com/kingman/community.git
+mkdir community
+cd community
+git init
+git remote add origin -f https://github.com/kingman/community.git
+git config core.sparseCheckout true
+echo "tutorials/cloud-iot-enviro-board-workshop/enviro-device" >> .git/info/sparse-checkout
+git pull origin master
 ```
 ### Get the public key of the secure element of your sensor board
 ```bash
