@@ -184,7 +184,7 @@ In Cloud Shell run:
 cd ~/community/tutorials/cloud-iot-enviro-board-workshop/functions
 
 gcloud functions deploy enviro \
---set-env-vars DATASET=${DATASET},TABLE=${TABLE} \
+--set-env-vars=DATASET=${DATASET},TABLE=${TABLE} \
 --region ${REGION} \
 --trigger-topic ${EVENT_TOPIC} \
 --runtime nodejs8 \
