@@ -37,6 +37,7 @@ touch device_pub_key.pem
 ```
 <walkthrough-editor-open-file filePath="community/tutorials/cloud-iot-enviro-board-workshop/cloud-setup/device_pub_key.pem" text="Open public key file">
 </walkthrough-editor-open-file>
+### Store the Sensor Board public key
 Paste the public key in the file and save the change. Content starts with `-----BEGIN PUBLIC KEY-----` and ends with `-----END PUBLIC KEY-----`
 ## Create IoT Core device
 Create the sensor board identity in the newly created IoT Core registry with Sensor Board public key. In Cloud Shell run:
