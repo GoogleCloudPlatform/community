@@ -106,7 +106,7 @@ As there are different ways to install the
 on your gateway, only the configuration is covered here. For installation instructions,
 please refer to [LoRa Gateway Bridge gateway installation & configuration](https://www.loraserver.io/lora-gateway-bridge/install/gateway/).
 
-To configure a LoRa Gateway Bridge to forward its data to Cloud IoT, you need update the `lora-gateway-bridge.toml`
+To configure a LoRa Gateway Bridge to forward its data to Cloud IoT, you need to update the `lora-gateway-bridge.toml`
 [Configuration file](https://www.loraserver.io/lora-gateway-bridge/install/config/).
 
 A minimal configuration example:
@@ -124,7 +124,6 @@ A minimal configuration example:
 
 In short:
 
-* This will configure the `protobuf` marshaler (either `protobuf` or `json` must be configured)
 * This will configure the Google Cloud IoT Core MQTT authentication
 * This will configure the GCP project ID, cloud-region and registry ID
 
