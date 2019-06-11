@@ -163,5 +163,5 @@ Laravel, you need to manually add the `DB_SOCKET` value to
 [cloud_sdk]: https://cloud.google.com/sdk/
 [composer-json]: https://storage.googleapis.com/gcp-community/tutorials/run-laravel-on-appengine-flexible/composer-json.png
 [cloudsql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
-[cloudsql-api-enable]: https://console.cloud.google.com/flows/enableapi?apiid=sqladmin
+[cloudsql-enable-api]: https://console.cloud.google.com/flows/enableapi?apiid=sqladmin
 [cloudsql-install]: https://cloud.google.com/sql/docs/mysql/connect-external-app#install
