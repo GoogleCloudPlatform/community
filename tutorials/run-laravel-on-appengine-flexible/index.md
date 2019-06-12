@@ -87,6 +87,8 @@ from laravel.com.
 Laravel, you need to manually add the `DB_SOCKET` value to
 `config/database.php` (see [#4178](https://github.com/laravel/laravel/pull/4179/files))
 
+1. [Enable the Cloud SQL API][cloudsql-enable-api] in your project.
+
 1. Follow the instructions to set up a
    [Google Cloud SQL Second Generation instance for MySQL][cloudsql-create].
 
@@ -161,4 +163,5 @@ Laravel, you need to manually add the `DB_SOCKET` value to
 [cloud_sdk]: https://cloud.google.com/sdk/
 [composer-json]: https://storage.googleapis.com/gcp-community/tutorials/run-laravel-on-appengine-flexible/composer-json.png
 [cloudsql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
+[cloudsql-enable-api]: https://console.cloud.google.com/flows/enableapi?apiid=sqladmin
 [cloudsql-install]: https://cloud.google.com/sql/docs/mysql/connect-external-app#install
