@@ -74,7 +74,7 @@ Set the project ID from the first step to the `project` property and point the
 credentials section to the file that was downloaded in the last step. The
 `provider “google”` line indicates that you are using the
 [Google Cloud Terraform provider](https://www.terraform.io/docs/providers/google/index.html)
-and at this point you can run `terraform init` to download the latest version o
+and at this point you can run `terraform init` to download the latest version of
  the provider and build the `.terraform` directory.
 
 ```
