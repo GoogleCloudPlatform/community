@@ -199,7 +199,7 @@ metadata = {
 ```
 
 Be sure to replace `INSERT_USERNAME` with your username and then run
-`terraform plan` and verify the output looks correct. If it does run
+`terraform plan` and verify the output looks correct. If it does, run
 `terraform apply` to apply the changes.
 
 The output shows that it will modify the existing compute instance:
