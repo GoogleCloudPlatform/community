@@ -159,7 +159,7 @@ web requests and output the responses to the requests.
 
 Compute Engine instances have access to a *metadata service* that looks like a
 web site. Any web request made to that apparent site
-(http://metadata.google.com.internal) will fetch some information about the
+(http://metadata.google.internal) will fetch some information about the
 instance itself. There is no actual network traffic involved, though; the GCP
 infrastructure handles the requests and responses internally. That's one of the
 reasons that it is safe for the URL to start with `http` instead of `https`: 
