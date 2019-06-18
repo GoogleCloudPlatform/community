@@ -1,7 +1,7 @@
 ---
 title: Seamless migration with Stratozone and Velostrata integration
 description: Learn how to use Stratozone and Velostrata to migrate On Premises VMs to Google Cloud Platform.
-author: laidig, ravichin@google.com
+author: laidig
 tags: VM Migration, Velostrata, Stratozone
 date_published: 2019-06-18
 ---
