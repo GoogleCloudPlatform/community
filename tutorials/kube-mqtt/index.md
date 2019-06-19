@@ -1,8 +1,8 @@
 ---
 title: Running a Cloud MQTT bridge in Kubernetes
-description: Bridge MQTT messages between cluster and Cloud IoT Core with Mosquitto
+description: Bridge MQTT messages between a cluster and Cloud IoT Core with Mosquitto
 author: ptone
-tags: Kubernetes, iot, iot core
+tags: Kubernetes, iot, Internet of Things, cloud iot core
 date_published: 2019-07-01
 ---
 
@@ -12,24 +12,41 @@ Preston Holmes | Solution Architect | Google
 
 ## Introduction
 
-This tutorial demonstrates how to deploy [Mosquitto](https://mosquitto.org/) in [Kubernetes](https://kubernetes.io/) using a bridge feature to map a specific [MQTT](http://mqtt.org/) topic namespace to Google Cloud IoT Core.
+This tutorial demonstrates how to deploy [Mosquitto](https://mosquitto.org/) MQTT broker in [Kubernetes](https://kubernetes.io/) using the broker's bridge feature to map a specific [MQTT](http://mqtt.org/) topic namespace to Google Cloud IoT Core.
 
-![architecture](image/architecture.png)
 
 ## Setup
 
-#### TODO git clone ....
+#### TODO update to prod
 
-### Kubernetes Cluster
+	git clone https://github.com/ptone/community.git
+	cd community
+	git checkout kube-mqtt
+	cd tutorials/kube-mqtt
 
-It is assumed you have have running Kubernetes cluster, with working `kubectl` command.
+### Prerequisite: Kubernetes Cluster
+
+It is assumed you have have running Kubernetes cluster, with recent `kubectl` command (>=1.14) with [kustomize integration](https://kubernetes.io/blog/2019/03/25/kubernetes-1-14-release-announcement/).
 
 This can be via [Minikube](https://kubernetes.io/docs/tutorials/hello-minikube/), [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/), etc.
 
 ### Setting up the cloud environment
 
-#### TODO Use Cloud Shell
+1.  Create a project in the [GCP Console][console].
+1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
+1.  Use [Cloud Shell][shell] or install the [Google Cloud SDK][sdk].
+1.  Enable APIs:
+	
+		gcloud services enable \
+		cloudiot.googleapis.com \
+		container.googleapis.com \
+		containerregistry.googleapis.com \
+		pubsub.googleapis.com \
+		cloudbuild.googleapis.com
 
+In this tutorial, you may open multiple shell tabs or sessions. You should set these environment variables in each one:
+
+	# the project should already be set in cloud shell
 	gcloud config set project <project-id>
 	
 	export PROJECT=$(gcloud config list project --format "value(core.project)" )
@@ -37,16 +54,15 @@ This can be via [Minikube](https://kubernetes.io/docs/tutorials/hello-minikube/)
 	export REGISTRY=gadgets
 	export DEVICE=bridge
 	
-	gcloud services enable \
-	cloudiot.googleapis.com \
-	container.googleapis.com \
-	containerregistry.googleapis.com \
-	pubsub.googleapis.com \
-	cloudbuild.googleapis.com
+	
+[console]: https://console.cloud.google.com/
+[shell]: https://cloud.google.com/shell/
+[sdk]: https://cloud.google.com/sdk/
+
 
 ## Build the bridge manager container
 
-For Mosquitto we will use the default published container. But we need another container in the deployment which manages the credentials that allow the bridge to connect to Google Cloud.
+For Mosquitto you will use the default published container from Docker. But you need another container in the deployment which manages the credentials that allow the bridge to connect to Google Cloud.
 
 	cd refresher-container
 	gcloud builds submit --tag gcr.io/$PROJECT/refresher .
@@ -73,9 +89,11 @@ For Mosquitto we will use the default published container. But we need another c
 	--registry $REGISTRY \
 	--public-key path=ec_public.pem,type=es256-pem
 
+This creates an IoT Core device called "bridge" that you will use to authenticate the bridge to IoT Core with.
 
+The pubsub topics are used to verify that data is being bridged to cloud correctly.
 
-## Deploy the bridge
+## Deploy the bridge to Kubernetes
 
 ### Update project specific settings
 
@@ -83,59 +101,100 @@ Get the specific address for the bridge manager container:
 
 	gcloud container images describe gcr.io/$PROJECT/refresher --format="value(image_summary.fully_qualified_digest)"
 
+add this as the image address in repo file: `bridge/project-image.yaml`.
 
-add this as the image address in  `bridge/project-image.yaml`.
-
-If running the kubernetes cluster outside the project, make the built images public:
+If running the Kubernetes cluster outside the Cloud Project, make the images public:
 
 	gsutil iam ch allUsers:objectViewer gs://artifacts.$PROJECT.appspot.com
+
+Note this will make the container registry for the project public.
+
+In production environments, you would provision the cluster with the required [image pull secrets](http://docs.heptio.com/content/private-registries/pr-gcr.html).
 
 Edit PROJECT_ID value in `device-config.yaml`
 
 ### Deploy
 
-	# make sure you are in the base directory for this tutorial
-	cd ..
-	kubectl apply -k bridge/
+You are going to use the built in version of [kustomize](https://kustomize.io/) in recent kubectl versions to deploy the solution to kubernetes.
+
+Make sure you are in the base directory for this tutorial: `community/tutorials/kube-mqtt`. More about the deployment is explained in the following section, for now, deploy the workload with:
 	
-#### TODO - explain parts of the deployment:
+	kubectl apply -k bridge/
 
- - shared pod process space
- - config file re-write and restart
- 	- config reload does not reload remote_password
- - kustomize overlay and configmaps
- - bridge mappings
+## Understanding the bridge deployment
 
-Bridged Topics:
+Lets explain a few parts of this deployment
+	
+### Use of kustomize
+
+The layout of this project uses a base folder which contains default resources including yaml files for a deployment with 2 containers and a service, as well as a kustomize generated configmap.
+
+The bridge folder in the repo acts as an overlay which:
+
+ - merges the device private key file into a configmap defined in the base
+ - patches a container image with a project specific address
+ - adds project specific environment variables
+
+By keeping these more variable parts in an overlay - the based might be managed separates, or may be shared among several different overlay variants. For example, when following this tutorial you only need to change the project-id in the device-config.yaml file, but you could use different registries or device-id values if you changed those parts.
+
+### Using a pod combining 3p image with a project custom image
+
+The deployment defined in the base defines a pod that combines a stock mosquitto image with a custom manager sidecar.  This pod demonstrates a couple interesting kubernetes capabilities:
+
+ - The different containers in the pod use a shared volume where the manager writes a config file which is read by mosquitto container
+ - The pod has `shareProcessNamespace` enabled so that the refreshing managing container can restart a process in the stock container.
+
+### The bridge configuration
+
+In the template for the mosquitto configuration is a section that contains directives on how to bridge the MQTT topics.  This is documented [here](https://mosquitto.org/man/mosquitto-conf-5.html). The topic routing takes the form of:
+
+	topic pattern [[[ out | in | both ] qos-level] local-prefix remote-prefix]
+
+In the configuration template a prefix of `gcp/` is used for any topic connected to IoT Core.
+
+For "out" topics, those going from the bridge to the cloud, different routes are used for exact vs pattern matches:
 
 	topic "" out 1 gcp/events /devices/CONFIG_DEVICE_ID/events
 	topic "" out 1 gcp/state /devices/CONFIG_DEVICE_ID/state
 	topic # out 1 gcp/events/ /devices/CONFIG_DEVICE_ID/events/
+
+And a similar duplication is used for cloud topics the bridge subscribes to:
+
 	topic "" in 1 gcp/config /devices/CONFIG_DEVICE_ID/config
 	topic "" in 1 gcp/commands /devices/CONFIG_DEVICE_ID/commands
 	topic # in 1 gcp/commands/ /devices/CONFIG_DEVICE_ID/commands/
+
+## Test the Bridge
 
 ### Check that the bridge deployed
 
 	kubectl wait --for=condition=Ready pod -l "app=iot-core-bridge"
 	kubectl logs -f -l "app=iot-core-bridge" -c mosquitto
 
-## Using a cluster based MQTT client
+You may choose to keep the log open in a dedicated terminal, or close it after verifying there are no errors.
 
-### Build the client image
+### Build the image for a cluster based MQTT client
+
+It is assumed that the broker will be used inside the context of the cluster, as well as potentially by external local devices. For demo purposes you will use a simple MQTT CLI client.
 
 	cd client
 	gcloud builds submit --tag gcr.io/$PROJECT/mqtt-client .
 
-### Run a couple clients
+### Run a couple instances of the client
 
-You will want to start a couple terminal windows for each of these next steps
+You will want to start a couple terminal windows for each of these next steps, remember to set the environment variables from the setup section in each. In Cloud Shell you can open these by clicking the + icon to create a new tab.
 
 	kubectl run client-a --rm -i --tty --image gcr.io/$PROJECT/mqtt-client --generator=run-pod/v1 -- /bin/sh
 	
 And in another window:
 
 	kubectl run client-b --rm -i --tty --image gcr.io/$PROJECT/mqtt-client --generator=run-pod/v1 -- /bin/sh
+
+### Local broker communication
+
+In this pattern, clients can communicate on unbridged broker topics in a conventional way.
+
+![](diagram/local.png)
 
 Note that the client can use the cluster local service name (mqtt-bridge) as the hostname.
 
@@ -147,19 +206,29 @@ In client "a" publish to this topic:
 
 	pub -h mqtt-bridge -m hello -t test/topic -d
 
+You should see the message relayed by the broker.
+
+### Send bridged telemetry to the Cloud
+
+![](diagram/telemetry.png)
+
 In client "a" publish to the bridged event topic:
 
 	pub -h mqtt-bridge -m hello -t gcp/events -d
 	
-Verify the bridged message was published to cloud:
+Verify the bridged message was published to cloud in another terminal:
 
 	gcloud pubsub subscriptions pull debug --auto-ack --limit=100 
+	
+### Send commands from the cloud to cluster-local clients
 
-In both clients, subscribe to bridged IoT commands:
+![](diagram/command.png)
+
+In both client windows, subscribe to bridged IoT commands topic:
 
 	sub -h mqtt-bridge -t "gcp/commands/#" -v
 
-Publish a command via IoT Core:
+Publish a command via IoT Core API:
 
 	gcloud iot devices commands send --region=us-central1 \
 	--registry=$REGISTRY \
@@ -169,16 +238,25 @@ Publish a command via IoT Core:
 
 You should see the command arrive at both clients.
 
-
 ### To connect a local MQTT client
 
-If instead you want to connect a client local to the machine where you are running the `kubectl` commands, you can forward the MQTT port:
+If instead you want to connect a client outside the cluster, you can forward the MQTT port:
 
 	kubectl port-forward svc/mqtt-bridge 1883:1883
+	
+Depending on the kubernetes setup, you may choose to expose the MQTT service externally.
 
 ## Cleanup and Next Steps
 
+To use kustomize to delete the resources in Kubernetes:
+
 	kubectl delete -k bridge/
 	
-Delete the cloud project
+To delete the cloud resources, delete the tutorial cloud project.
+
+Some areas this pattern can be extended:
+
+ - Integrate the bridge with IoT Core's [Gateway Feature](https://cloud.google.com/iot/docs/how-tos/gateways/)
+ - Add a form of device local auth via a custom mosquitto auth layer
+ - Add local TLS to MQTT broker
 
