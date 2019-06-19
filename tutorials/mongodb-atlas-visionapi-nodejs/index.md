@@ -1,6 +1,6 @@
 ---
-title: Google Vision API and MongoDB Atlas on Google Cloud
-description: Learn how to use Google's Vision API and MongoDB Atlas to build a metadata database with Express server and Node.js.
+title: Use Cloud Vision API with MongoDB Atlas on Google Cloud Platform
+description: Learn how to use the Google Cloud Vision API and MongoDB Atlas to build a metadata database with Express server and Node.js.
 author: ksmith,arajwade
 tags: Vision API, Node.js, express, MongoDB Atlas
 date_published: 2019-06-18
@@ -8,92 +8,64 @@ date_published: 2019-06-18
 
 ## Overview
 
-In this tutorial, we will demonstrate how easy it is to use Machine Learning to gain additional insights from a batch of photos that have no prior metadata attached.  By using this workflow, we will be able to quickly build a descriptive metadata MongoDB database on Atlas that can be leveraged for a variety of business use-cases.
-
-
-### Technical Complecity
-
-Beginner
-
-### Duration
-
-45 Minutes
+In this tutorial, we will demonstrate how easy it is to use machine learning to gain additional insights from a batch of 
+photos that have no prior metadata attached. By using this workflow, we will be able to quickly build a descriptive 
+metadata MongoDB database on Atlas that can be used for a variety of business use cases.
 
 ### Objectives
 
-1.  Create and configure MongoDB Atlas Free-Tier cluster on GCP
-2.  Configuring our Google Cloud Platform Account.
-3.  Configure a Node JS application on a GCE Debian VM to use Vision API 
-    (labels,landmarks and safe search)
-4.  Kick off the batch process from any web-enabled client terminal
-5.  Verify our new metadata in both the console and in our MongoDB Atlas database
+* Create and configure a MongoDB Atlas free tier cluster on Google Cloud Platform (GCP).
+* Configure a GCP account.
+* Configure a Node.js application on a Compute Engine Debian virtual machine to use the Vision API (labels, landmarks,
+  and safe search).
+* Start a batch process from a web-enabled client terminal.
+* Verify new metadata in the GCP Console and in the MongoDB Atlas database.
 
-## Part 1: Create and configure MongoDB Atlas Free-Tier cluster on GCP
+## Part 1: Create and configure a MongoDB Atlas free tier cluster on GCP
 
-1.  Create a free account on MongoDB Atlas on www.mongodb.com/cloud/atlas
-    Click on “Try Free”at the top right if you do not have an account or “Sign In” if you already have a login. 
+1.  Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) and either sign in to your existing account or 
+    click **Try Free** to create a new account. 
 
-    ![image](images/image1.png)
+1.  Click **Build a Cluster**.
 
-2.  Once on the MongoDB Atlas Homepage, select “Build a Cluster”
+1.  In the **Cloud Provider & Region** section, choose **Google Cloud Platform** and select the region for your
+    Atlas cluster. To minimize latency, choose a region close to your end user. For this tutorial, choose a region
+    with the **Free Tier Available** label.
 
-    ![image](images/imageXX.png)
+    The examples in this tutorial use Iowa (us-central1) in North America.
 
-3.  Create New Cluster by selecting Google Cloud Platform as a “Cloud Provider”.
+1.  In the **Cluster Tier** section, accept the default **M0** tier.
 
-    Next select the region where you want to place your Atlas cluster.  Ideally, your cluster will be located close to your end user for lower latency.
+1.  Click **Create Cluster** at the bottom of the page.
 
-    Note that we can select a free tier region in your area of choice, as noted by the “Free Tier Available” icon  This is a no-cost option to get started.
+    The creation of the cluster may take several minutes. While the cluster is being created, you can continue with the
+    next setup steps.
 
-    As such, we will select our primary region to be in North America, based in Iowa (us-central1) since it is the closest Free Tier option, at time of writing.
+1.  Click **Database Access** under the **Security** heading in the menu on the left side of the page. 
 
-    ![image](images/image15.png)
+1.  Click the **Add New User** button in top-right corner of the page.
 
-4.  Next, let's configure our cluster size under “Cluster Tier”.  We will take the default tier of “M0” since it is a free, no cost option.
+1.  Enter a username and password. For this tutorial, use the username `mdbadmin`. Record your username and password
+    in a safe location for reference later.
+    
+1.  In the **User Privileges** section of the **Add New User** dialog box, select **Atlas admin**.
 
-    ![image](images/image13.png)
+1.  Click the **Add User** button to complete this section.
 
-5.  We can skip the section “Additional settings” and “Cluster Name”. For this demo, we will keep the default of “Cluster0”. Click on “Create Cluster” button at the bottom of the page.
+1.  Click **Network Access** under the **Security** heading in the menu on the left side of the page. 
 
-    ![image](images/image32.png)
+1.  Click the **Add IP Address** button in top-right corner of the page.
 
-6.  Our cluster is spinning up…
+1.  Select **Allow Access from Anywhere** and click **Confirm**.
 
-    ![image](images/image12.png)
+    Note: When actually putting something into production, you should narrow the scope of where your database
+    can be accessed by specifying an IP address or CIDR block.
 
-7.  While this spins up, lets click on the “Database Access” submenu, under “Security” on the left menu. 
+1.  Click **Clusters** under the **Atlas** heading in the menu on the left side of the page. 
 
-    ![image](images/image33.png)
+1.  Click the **Connect** button.
 
-8.  Please click the “Add New User” button on top right
-
-    ![image](images/image24.png)
-
-9.  Enter a user name. For our demo, let’s enter “mdbadmin” and enter a secure password.  Record your user name and password in a safe location for reference later. Under “User Privileges”, select “Atlas admin” and click on the “Add User” button to complete this section.
-
-    ![image](images/image9.png)
-
-10. Once done, we will see a screen similar to this…
-
-    ![image](images/image23.png)
-
-11. Lets click on the “Network Access” submenu, under “Security” on the left menu. Click on “Add IP Address”.
-
-    ![image](images/image39.png)
-
-12. Select “Allow Access from Anywhere” for the purpose of this demo and click on “Confirm”.  
-
-Note:  When actually putting something into production, you will want to narrow the scope of where your database can be accessed and specify a specific IP address/CIDR block.
-
-    ![image](images/image4.png)
-
-13. Go to “Clusters” submenu, under “Atlas” on the left menu. Click on “Connect” button.
-
-    ![image](images/image6.png)
-
-14. A window will open. Select “Connect Your Application”
-
-    ![image](images/image20.png)
+1.  In the dialog box that opens, click **Connect Your Application**.
 
 15. For step 1, choose “Node.js” for Driver and Version “2.2.12 or later”. For step 2, copy the connection string and keep it in a text file. We will be using it in our node JS application to connect to MongoDB Atlas in a later part of this document.
 
