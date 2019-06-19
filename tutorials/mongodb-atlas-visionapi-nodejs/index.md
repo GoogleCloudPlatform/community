@@ -67,44 +67,31 @@ metadata MongoDB database on Atlas that can be used for a variety of business us
 
 1.  In the dialog box that opens, click **Connect Your Application**.
 
-15. For step 1, choose “Node.js” for Driver and Version “2.2.12 or later”. For step 2, copy the connection string and keep it in a text file. We will be using it in our node JS application to connect to MongoDB Atlas in a later part of this document.
+1.  In the **Driver** menu, select **Node.js**.
 
-    Close the pop-up dialogue
+1.  In the **Version** menu, choose **2.2.12 or later**.
 
-    ![image](images/image11.png)
+1.  Click the **Copy** button to copy the connection string, and save it in a text file. Later in this tutorial, you
+    will use this connection string in a Node.js application to connect to MongoDB Atlas.
 
-## Part 2: Configuring our Google Cloud Platform Account
+1.  Click **Close**.
 
-1.  Go to cloud.google.com and login with your Google account. If you don't have
-    a Google account, please create a free trial account by following
-    instructions at this [link](https://console.cloud.google.com/freetrial).
+## Part 2: Configure your Google Cloud Platform Account
 
-2.  If not already there, go to https://console.cloud.google.com/
+1.  If you have a Google Account, go to the [GCP Console](https://console.cloud.google.com/) and log in.
 
-3.  Create a new project, by selecting the following dropdown in the top left:
+    If you don't have a Google Account, [create a free trial account](https://console.cloud.google.com/freetrial).
 
-    ![image](images/image30.png)
+1.  In the [GCP Console](https://console.cloud.google.com/), click the project selector in the top left.
 
-4.  A new window will pop up.  In it, select "New Project" in the top right:
+1.  In the top right corner of the dialog box that appears, click **New Project**.
 
-    ![image](images/image14.png)
+1.  In the **Project name** field, enter `mongodb-vision-demo`, and click **Create**.
 
-5.  Give your Vision API demo a new project name.  Let's go with “mongodb-vision-demo” and click the “Create” button:
+1.  If the new project name isn't shown in the project selector in the top left of the GCP Console, click the project
+    selector and select the new project in the dialog box that opens.
 
-    ![image](images/image28.png)
-
-    ![image](images/image31.png)
-
-6.  After your new project is done being created. Go back to the dropdown in
-    Step 3, select your new project name:
-
-    ![image](images/image22.png)
-
-7.  When the right project is selected, the name will change to reflect this in the dropdown in the top left of your console:
-
-    ![image](images/image5.png)
-
-## Part 3: Configure a Node JS application on a GCE Debian VM on GCP
+## Part 3: Configure a Node.js application on a Compute Engine Debian virtual machine
 
 1. Create a Debian Linux GCE VM instance using the instructions given here [link](https://www.google.com/url?q=https://cloud.google.com/compute/docs/quickstart-linux&sa=D&ust=1560383195254000)
 
