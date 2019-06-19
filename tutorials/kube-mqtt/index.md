@@ -12,11 +12,12 @@ Preston Holmes | Solution Architect | Google
 
 ## Introduction
 
-This tutorial demonstrates how to deploy [Mosquitto](https://mosquitto.org/) MQTT broker in [Kubernetes](https://kubernetes.io/) using the broker's bridge feature to map a specific [MQTT](http://mqtt.org/) topic namespace to Google Cloud IoT Core.
+This tutorial demonstrates how to deploy [Mosquitto](https://mosquitto.org/) MQTT broker in [Kubernetes](https://kubernetes.io/) using the broker's bridge feature to map a specific [MQTT](http://mqtt.org/) topic namespace to [Google Cloud IoT Core](https://cloud.google.com/iot-core/).
 
 
 ## Setup
 
+### Clone the tutorial Repo
 #### TODO update to prod
 
 	git clone https://github.com/ptone/community.git
@@ -142,7 +143,7 @@ By keeping these more variable parts in an overlay - the based might be managed 
 The deployment defined in the base defines a pod that combines a stock mosquitto image with a custom manager sidecar.  This pod demonstrates a couple interesting kubernetes capabilities:
 
  - The different containers in the pod use a shared volume where the manager writes a config file which is read by mosquitto container
- - The pod has `shareProcessNamespace` enabled so that the refreshing managing container can restart a process in the stock container.
+ - The pod has `shareProcessNamespace` enabled so that the refreshing managing container can restart a process in the stock container. This is done because the `remote_password` configuration value is an expiring JWT token per the auth design of IoT Core.
 
 ### The bridge configuration
 
