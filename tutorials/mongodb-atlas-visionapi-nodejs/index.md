@@ -1,15 +1,15 @@
 ---
-title: Use Cloud Vision API with MongoDB Atlas on Google Cloud Platform
+title: Use Cloud Vision API with MongoDB Atlas
 description: Learn how to use the Google Cloud Vision API and MongoDB Atlas to build a metadata database with Express server and Node.js.
 author: ksmith,arajwade
-tags: Vision API, Node.js, express, MongoDB Atlas
-date_published: 2019-06-18
+tags: Vision API, Node.js, Express, MongoDB Atlas
+date_published: 2019-06-20
 ---
 
 ## Overview
 
-In this tutorial, we will demonstrate how easy it is to use machine learning to gain additional insights from a batch of 
-photos that have no prior metadata attached. By using this workflow, we will be able to quickly build a descriptive 
+This tutorial demonstrates how easy it is to use machine learning to gain additional insights from a batch of 
+photos that have no prior metadata attached. By using this workflow, you will be able to quickly build a descriptive 
 metadata MongoDB database on Atlas that can be used for a variety of business use cases.
 
 ### Objectives
@@ -152,15 +152,12 @@ metadata MongoDB database on Atlas that can be used for a variety of business us
 
         gsutil defacl set public-read gs://[BUCKET_NAME]
 
-1. Go to the [**Storage** page](https://console.cloud.google.com/storage) and select your bucket.
+1.  Go to the [**Storage** page](https://console.cloud.google.com/storage) and select your bucket.
 
-1. Drag and drop a few sample images for the demonstration server to process:   
+1.  Add a few sample images to the bucket for the demonstration server to process. To add images to a bucket, you
+    can use the **Upload** buttons or drag and drop images to the bottom of the **Storage** page.   
 
-    ![image](images/image8.png)
-
-    ![image](images/image10.png)    
-
-1.  Switch back to Cloud Shell window and create a new folder:
+1.  Switch back to the Cloud Shell window and create a new folder:
 
         mkdir nodejs-express-mongodb
 
@@ -174,7 +171,7 @@ metadata MongoDB database on Atlas that can be used for a variety of business us
 
         npm init
                 
-    Set up a new project. You can press enter to accept the default settings, but when you get to entry point,
+    Set up a new project. You can press enter to accept the default settings, but when you get to the entry point,
     type in `server.js`. 
     
     Enter `yes` when prompted, and press Enter.
@@ -455,11 +452,11 @@ From the `nodejs-express-mongodb` directory, run `server.js`:
 
 ## Part 5: Verify your new metadata in both the GCP Console and the MongoDB Atlas database
 
-1.  Click the **Trigger batch Vision API job** button to start the job. You should see a flurry of results in the Cloud 
-    Shell SSH window as the job processes your GCS bucket for images. Here is an example when done:
+Click the **Trigger batch Vision API job** button to start the job. You should see a flurry of results in the Cloud 
+Shell SSH window as the job processes your Cloud Storage bucket for images. Here is an example when done:
 
-    ![image](images/image35.png)
+![image](images/image35.png)
 
-1.  Switch to your MongoDB Atlas cluster and verify the results. Success! Enjoy your new ML keywords!
+Switch to your MongoDB Atlas cluster and verify the results. Success! Enjoy your new ML keywords!
 
-    ![image](images/image40.png)
+![image](images/image40.png)
