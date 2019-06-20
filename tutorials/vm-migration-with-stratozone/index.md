@@ -56,8 +56,8 @@ After credentials groups are created, add target assets to that group:
 
 1.  Select the **Scanning Target Guest OS Method**:
     * **Manually**: You will provide the following for each asset individually: name, IP address, OS type, and credentials.
-    * **CSV Load**: You will provide a CSV file containing pre-identified assets. You can download a pre-formatted CSV by
-      clicking the gear icon in the upper right and clicking **Export File: Asset Import Template**.
+    * **CSV Load**: You will provide a CSV file containing pre-identified assets. You can download a pre-formatted CSV file 
+      by clicking the gear icon in the upper right and clicking **Export File: Asset Import Template**.
     * **Bulk Scan**: Automatically scans IP ranges to discover assets. Before beginning a bulk scan, you must agree to the 
       terms and conditions. After agreeing, you will provide CIDR IP ranges (`/16` or smaller). To start a scan on a range,
       click the **Play** button on the row with the range you would like to scan. When scanning, StratoZone will attempt to 
@@ -67,13 +67,13 @@ After credentials groups are created, add target assets to that group:
 #### Schedule asset collection
 
 To schedule an asset group for collection, click the **Calendar** icon from the **StratoProbe Data Collector** panel.
-The **Schedule Group Collection** dialog appears. Choose to **Run on Schedule**, and select the **Start Date**,
-**End Date**, and which days of the week the scan will **Run On**. Run a collector in each data center, and leave it running 
+The **Schedule Group Collection** dialog appears. Choose **Run on Schedule**, and select the start date, end date, and which
+days of the week the scan will run on. Run a collector in each data center, and leave it running 
 for at least 1-2 weeks so that it can accurately collect utilization data.
 
 ## Analyze
 
-This module allows the users to analyze discovered assets, cloud-fit scoring, and server dependency mapping.
+Use this module to analyze discovered assets, cloud-fit scoring, and server dependency mapping.
 
 Log in to the [StratoZone portal](https://portal.stratozone.com/). Data on your assets appears. From here, you will see 
 several tabs:
@@ -90,7 +90,7 @@ several tabs:
 
 ## Plan
 
-In this section, you will build application groups based on the dependencies, right-size assets, and perform a total cost
+In this section, you build application groups based on dependencies, right-size assets, and perform a total cost
 of ownership (TCO) analysis.
 
 ### Create dependency groups
