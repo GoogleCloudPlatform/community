@@ -115,7 +115,7 @@ metadata MongoDB database on Atlas that can be used for a variety of business us
 
 1.  Click **Create**.
 
-1.  Go to the [**VM instances** page](https://pantheon.corp.google.com/compute/instances).
+1.  Go to the [**VM instances** page](https://console.cloud.google.com/compute/instances).
 
 1.  Click the **SSH** button for your instance to connect to it with SSH and open a Cloud Shell window for the connection.
 
@@ -179,7 +179,7 @@ metadata MongoDB database on Atlas that can be used for a variety of business us
     
     Enter `yes` when prompted, and press Enter.
 
-1.  Create a public folder for your server and select it with following commands:
+1.  Create a public folder for your server and enter the new folder with following commands:
 
         mkdir public
         cd public
