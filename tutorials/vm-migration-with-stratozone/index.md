@@ -24,7 +24,7 @@ Once registered, sign in to the [Stratozone portal](https://portal.stratozone.co
 
 1. Click "Create new assessment"
 
-![The placement of the Create New Assessment button on the Stratozone page](seamlessmigrat--ozuclxm8r4f.png)
+![The placement of the Create New Assessment button on the Stratozone page](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-stratozone/seamlessmigrat--ozuclxm8r4f.png)
 
 1. Select your **Assessment Type** and fill out the rest of the form. Note the **Activation Code** provided to you.
 1. You will then be able to download the StratoProbe collector application.
@@ -76,7 +76,7 @@ Log into your [StratoZone portal](https://portal.stratozone.com/). Data on your 
 - The **Inventory** tab allows users to view detailed information about all the assets. (for example: storage, network, running processes, installed software, memory and CPU Utilization)
 - The **Dependency** tab allows users to view the dependencies between servers. Additionally users can view all the details relating to network traffic (ports, traffic type, protocol etc.) for each network relationship in the dependency map.
 
-![An example graph of workload dependencies](seamlessmigrat--t13ecagmadj.png)
+![An example graph of workload dependencies](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-stratozone/seamlessmigrat--t13ecagmadj.png)
 
 - The **StratoFit** tab scores how well applications are suited for  migration to the cloud. StratoFit scoring is categorized into high, medium, and low, which is assigned to assets based on the size of system and number of dependencies.
 
@@ -101,26 +101,26 @@ The StratoZone Migrate module allows you to:
 
 On the Stratozone portal, select migrate module and click the "setup" tab
 
-![Where to set up Velostrata configuration in Stratozone](seamlessmigrat--qg4mkjg2r3q.png)
+![Where to set up Velostrata configuration in Stratozone](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-stratozone/seamlessmigrat--qg4mkjg2r3q.png)
 
 Provide your **GCP account credentials**, **Velostrata Manager IP** and **Password**  
 Stratozone groups workloads into Move Groups. Click the **Move Groups** tab to create groups and assign migration date to them.
 
-![Move Groups in Stratozone Velostrata integration](seamlessmigrat--9x3h33xbz4c.png)
+![Move Groups in Stratozone Velostrata integration](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-stratozone/seamlessmigrat--9x3h33xbz4c.png)
 
-![Create new Move Group](seamlessmigrat--z6t5la7bsu.png)
+![Create new Move Group](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-stratozone/seamlessmigrat--z6t5la7bsu.png)
 
 1. Add workloads (servers) to newly created move group.
 
-![The plus icon adds workloads to a move group](seamlessmigrat--jmi7c7n05hr.png)
+![The plus icon adds workloads to a move group](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-stratozone/seamlessmigrat--jmi7c7n05hr.png)
 
 1. For each added workload configure migration settings
 
-![Where to set workload migration preferences](seamlessmigrat--e08674y0y2n.png)
+![Where to set workload migration preferences](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-stratozone/seamlessmigrat--e08674y0y2n.png)
 
 1. Click on the **migrate** tab.
 
-![The Migrate Tab](seamlessmigrat--fta43u2jvfs.png)
+![The Migrate Tab](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-stratozone/seamlessmigrat--fta43u2jvfs.png)
 
 1. To start a migration, click **Migration** and select action to be performed
 1. Migration progress can be tracked by clicking the down arrow to see list of completed migration steps.	
@@ -132,7 +132,7 @@ You can also download a pre-configured CSV file and import it manually into Velo
 1. When creating move groups, select **Velostrata CSV**
 1. To download CSV, click the download icon next to Move group.
 
-![Exporting a Velostrata CSV](seamlessmigrat--fta43u2jvfs.png)
+![Exporting a Velostrata CSV](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-stratozone/seamlessmigrat--fta43u2jvfs.png)
 
 ### Next Steps
 
