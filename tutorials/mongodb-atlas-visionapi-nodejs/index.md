@@ -24,33 +24,53 @@ metadata MongoDB database on Atlas that can be used for a variety of business us
 ## Part 1: Create and configure a MongoDB Atlas free tier cluster on GCP
 
 1.  Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) and either sign in to your existing account or 
-    click **Try Free** to create a new account. 
+    click **Try Free** to create a new account.
+    
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image1.png)
 
 1.  Click **Build a Cluster**.
+
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/imageXX.png)
 
 1.  In the **Cloud Provider & Region** section, choose **Google Cloud Platform** and select the region for your
     Atlas cluster. To minimize latency, choose a region close to your end user. For this tutorial, choose a region
     with the **Free Tier Available** label.
 
     The examples in this tutorial use Iowa (us-central1) in North America.
+    
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image15.png)
 
 1.  In the **Cluster Tier** section, accept the default **M0** tier.
 
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image13.png)
+
 1.  Click **Create Cluster** at the bottom of the page.
+
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image32.png)
 
     The creation of the cluster may take several minutes. While the cluster is being created, you can continue with the
     next setup steps.
+    
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image12.png)
 
 1.  Click **Database Access** under the **Security** heading in the menu on the left side of the page. 
 
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image33.png)
+
 1.  Click the **Add New User** button in top-right corner of the page.
+
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image24.png)
 
 1.  Enter a username and password. For this tutorial, use the username `mdbadmin`. Record your username and password
     in a safe location for reference later.
     
 1.  In the **User Privileges** section of the **Add New User** dialog box, select **Atlas admin**.
 
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image9.png)
+
 1.  Click the **Add User** button to complete this section.
+
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image23.png)
 
 1.  Click **Network Access** under the **Security** heading in the menu on the left side of the page. 
 
@@ -60,14 +80,22 @@ metadata MongoDB database on Atlas that can be used for a variety of business us
 
     Note: When actually putting something into production, you should narrow the scope of where your database
     can be accessed by specifying an IP address or CIDR block.
+    
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image4.png)
 
 1.  Click **Clusters** under the **Atlas** heading in the menu on the left side of the page. 
 
 1.  Click the **Connect** button.
 
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image6.png)
+
 1.  In the dialog box that opens, click **Connect Your Application**.
 
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image20.png)
+
 1.  In the **Driver** menu, select **Node.js**.
+
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image11.png)
 
 1.  In the **Version** menu, select **2.2.12 or later**.
 
@@ -84,12 +112,24 @@ metadata MongoDB database on Atlas that can be used for a variety of business us
 
 1.  In the [GCP Console](https://console.cloud.google.com/), click the project selector in the top left.
 
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image30.png)
+
 1.  In the top right corner of the dialog box that appears, click **New Project**.
+
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image14.png)
 
 1.  In the **Project name** field, enter `mongodb-vision-demo`, and click **Create**.
 
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image28.png)
+
+1.  The active project is shown in the project selector in the top left of the GCP Console.
+
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image5.png)
+
 1.  If the new project name isn't shown in the project selector in the top left of the GCP Console, click the project
     selector and select the new project in the dialog box that opens.
+    
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image22.png)
 
 ## Part 3: Configure a Node.js application on a virtual machine
 
@@ -99,9 +139,13 @@ metadata MongoDB database on Atlas that can be used for a variety of business us
     **Allow full access to all Cloud APIs** in **Identity and API access > Access scopes** on the
     **Create an instance** page.
     
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image3.png)
+    
     Creation of the instance might take more than a minute.
 
 1.  Go to the [**Firewall rules** page](https://console.cloud.google.com/networking/firewalls/list) in the GCP Console.
+
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image18.png)  
 
 1.  Click **Create Firewall Rule** at the top of the page, and use the following settings to create a new rule to open
     the port for your new server:
@@ -112,12 +156,20 @@ metadata MongoDB database on Atlas that can be used for a variety of business us
       you can use [this search](https://www.google.com/search?q=what+is+my+ip).
     * **Protocols and ports**: Select **Specified protocols and ports**, select **tcp**, and enter `8080` in the **tcp**
       field.
-
+      
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image38.png)
+      
 1.  Click **Create**.
 
 1.  Go to the [**VM instances** page](https://console.cloud.google.com/compute/instances).
 
-1.  Click the **SSH** button for your instance to connect to it with SSH and open a Cloud Shell window for the connection.
+1.  Click the **SSH** button for your instance to connect to it with SSH.
+
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image16.png)
+    
+    This opens a Cloud Shell window for the connection.
+    
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image7.png)
 
 1.  Install Node.js and Express with the following commands:
 
@@ -147,15 +199,23 @@ metadata MongoDB database on Atlas that can be used for a variety of business us
         gsutil mb gs://[BUCKET_NAME]
         
     Note: A bucket must have a globally unique name to be accepted.
+    
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image26.png)
 
 1.  Make the bucket public:
 
         gsutil defacl set public-read gs://[BUCKET_NAME]
+        
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image29.png)
 
 1.  Go to the [**Storage** page](https://console.cloud.google.com/storage) and select your bucket.
 
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image36.png)
+
 1.  Add a few sample images to the bucket for the demonstration server to process. To add images to a bucket, you
-    can use the **Upload** buttons or drag and drop images to the bottom of the **Storage** page.   
+    can use the **Upload** buttons or drag and drop images to the bottom of the **Storage** page.  
+    
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image8.png)
 
 1.  Switch back to the Cloud Shell window and create a new folder:
 
@@ -171,15 +231,21 @@ metadata MongoDB database on Atlas that can be used for a variety of business us
 
         npm init
                 
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image21.png)
+
     Set up a new project. You can press enter to accept the default settings, but when you get to the entry point,
     type in `server.js`. 
     
     Enter `yes` when prompted, and press Enter.
+    
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image17.png)
 
 1.  Create a public folder for your server and enter the new folder with following commands:
 
         mkdir public
         cd public
+
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image2.png)
 
 1.  Open a text editor to create the client-side file:
 
@@ -439,24 +505,28 @@ metadata MongoDB database on Atlas that can be used for a variety of business us
 From the `nodejs-express-mongodb` directory, run `server.js`:
 
     node server.js
+    
+![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image34.png)
 
 ## Part 4: Start the batch process from a web-enabled client terminal
 
 1.  Go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances) in the GCP Console. Your external
     IP address is listed next to your instance.
+    
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image37.png)
 
 2.  Use a web-enabled client terminal to visit your new application using the external URL in the previous step, and specify
     port 8080.   You should see a webpage similar to this:
 
-    ![image](images/image25.png)
+    ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image25.png)
 
 ## Part 5: Verify your new metadata in both the GCP Console and the MongoDB Atlas database
 
 Click the **Trigger batch Vision API job** button to start the job. You should see a flurry of results in the Cloud 
 Shell SSH window as the job processes your Cloud Storage bucket for images. Here is an example when done:
 
-![image](images/image35.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image35.png)
 
 Switch to your MongoDB Atlas cluster and verify the results. Success! Enjoy your new ML keywords!
 
-![image](images/image40.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image40.png)
