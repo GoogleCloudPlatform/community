@@ -288,15 +288,15 @@ Enter `yes` when prompted, and press Enter.
 
 **Step 5**: Press Ctrl+X to save the file.
 
-**Step 6**: Open a text editor to create the web server home page:
+**Step 6**: Go to the
+[source repository](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/mongodb-atlas-visionapi-nodejs) for this 
+tutorial, open the `index.html` file, and copy the contents of that file to the clipboard.
+
+**Step 7**: Open a text editor to create the web server home page:
 
     nano index.html
 
-**Step 7**: Copy and paste the contents of
-[this `index.html` file](TMGK_TODO) into
-the text editor.
-
-**Step 8**: Press Ctrl+X to save the new file.
+**Step 8**: Paste the contents of the source file into the new file, and press Ctrl+X to save the new file.
 
 **Step 9**: Navigate back to your `nodejs-express-mongodb` folder:
 
