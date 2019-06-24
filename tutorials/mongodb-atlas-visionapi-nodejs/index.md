@@ -289,8 +289,8 @@ Enter `yes` when prompted, and press Enter.
 **Step 5**: Press Ctrl+X to save the file.
 
 **Step 6**: Go to the
-[source repository](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/mongodb-atlas-visionapi-nodejs) for this 
-tutorial, open the `index.html` file, and copy the contents of that file to the clipboard.
+[source repository](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/mongodb-atlas-visionapi-nodejs/src) for
+this tutorial, open the `index.html` file, and copy the contents of that file to the clipboard.
 
 **Step 7**: Open a text editor to create the web server home page:
 
