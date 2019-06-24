@@ -3,7 +3,7 @@ title: Use Cloud Vision API with MongoDB Atlas
 description: Learn how to use the Google Cloud Vision API and MongoDB Atlas to build a metadata database with Express server and Node.js.
 author: ksmith,arajwade
 tags: Vision API, Node.js, Express, MongoDB Atlas
-date_published: 2019-06-20
+date_published: 2019-06-24
 ---
 
 ## Overview
