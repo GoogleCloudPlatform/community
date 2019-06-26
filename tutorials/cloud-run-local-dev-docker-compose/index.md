@@ -65,7 +65,6 @@ services:
    environment:
      # https://cloud.google.com/run/docs/reference/container-contract
      PORT: ${PORT:-8080}
-     GOOGLE_CLOUD_PROJECT: my-project-name
      K_SERVICE: sample-app
      K_REVISION: 0
      K_CONFIGURATION: sample-app 
