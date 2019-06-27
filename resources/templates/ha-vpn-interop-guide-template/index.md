@@ -150,7 +150,7 @@ chassis only.
 
 <For detailed <vendor-name><product-name> license information, see the
 <Vendor-Guide-link> documentation.>
-    
+
 ### Configuration parameters and values
 
 The `gcloud` commands in this guide include parameters whose value you must
@@ -452,7 +452,7 @@ The command output should look similar to the following example:
     --vpn-gateway peer-gw \
     --interface 1`
     
- ### Create Cloud Router interfaces and BGP peers
+### Create Cloud Router interfaces and BGP peers
  
 Create a Cloud Router BGP interface and BGP peer for each tunnel you previously
 configured on the HA VPN gateway interfaces.
@@ -464,6 +464,14 @@ For the first VPN tunnel
 
 1.Add a new BGP interface to the Cloud Router.
 
+    `gcloud compute routers add-interface [ROUTER_NAME] \
+    --interface-name [ROUTER_INTERFACE_NAME_0] \
+    --mask-length [MASK_LENGTH] \
+    --vpn-tunnel [TUNNEL_NAME_0] \
+    --region [REGION]
+    
+The command output should look similar to the following example:
+    
     `gcloud compute routers add-interface router-a \
     --interface-name if-tunnel-a-to-on-prem-if-0 \
     --mask-length 30 \
@@ -472,6 +480,14 @@ For the first VPN tunnel
 
 1.Add a BGP peer to the interface for the first tunnel.
 
+    `gcloud compute routers add-bgp-peer [ROUTER_NAME] \
+    --peer-name [PEER_NAME] \
+    --peer-asn [PEER_ASN] \
+    --interface [ROUTER_INTERFACE_NAME_0] \
+    --region [REGION] \`
+    
+ The command output should look similar to the following example:   
+ 
     `gcloud compute routers add-bgp-peer router-a \
     --peer-name peer-a \
     --peer-asn 65002 \
@@ -482,6 +498,14 @@ For the second VPN tunnel
 
 1.Add a new BGP interface to the Cloud Router.
 
+    `gcloud compute routers add-interface [ROUTER_NAME] \
+    --interface-name [ROUTER_INTERFACE_NAME_1] \
+    --mask-length [MASK_LENGTH] \
+    --vpn-tunnel [TUNNEL_NAME_1] \
+    --region [REGION]`
+
+The command output should look similar to the following example:
+
     `gcloud compute routers add-interface router-a \
     --interface-name if-tunnel-a-to-on-prem-if-1 \
     --mask-length 30 \
@@ -490,6 +514,14 @@ For the second VPN tunnel
     
     
 1.Add a BGP peer to the interface for the second tunnel.
+
+    `gcloud compute routers add-bgp-peer [ROUTER_NAME] \
+    --peer-name [PEER_NAME] \
+    --peer-asn [PEER_ASN] \
+    --interface [ROUTER_INTERFACE_NAME_1] \
+    --region [REGION] \`
+
+The command output should look similar to the following example:
 
     `gcloud compute routers add-bgp-peer router-a \
     --peer-name peer-a \
@@ -506,3 +538,202 @@ Verify the Cloud Router configuration
     
     `gcloud compute routers describe [ROUTER_NAME] \
     --region [REGION]`
+
+## Configure the <vendor-name><vendor product> side
+
+<This section includes sample tasks that describe how to configure the
+on-premises side of the VPN gateway configuration using <vendor-name>
+equipment.>
+
+### Creating the base network configuration
+
+<The sample wording below assumes that you are showing the configuration steps
+in the configuration code snippet below. If not, list the steps needed.>
+
+Follow the procedure listed in the configuration code snippet below to create
+the base Layer 3 network configuration of <vendor-name>. Note the following:
+
+-  At least one internal-facing network interface is required in order to
+connect to your on-premises network, and one external-facing interface is
+required in order to connect to GCP.
+
+```
+<insert configuration code snippet here>
+```
+
+### Creating the base VPN gateway configuration
+
+Follow the procedures in this section to create the base VPN configuration.
+
+<This section contains outlines of subsections for different aspects of
+configuring IPsec and IKE on the vendor side. Fill in the sections that are
+relevant to the current configuration, and remove any sections that don't
+apply.>
+
+
+#### Configure the IKE proposal and policy
+
+<Insert the instructions for creating the IKE proposal and policy here. Below
+are some examples of IKE algorithms to specify as part of the instructions.>
+
+-  **Encryption algorithm**—< list required algorithms here>
+-  **Integrity algorithm**—< list required algorithms here>
+-  **Diffie-Hellman group—**< list required group here>
+
+```
+<insert configuration code snippet here>
+```
+
+#### Configure the IKEv2 keyring
+
+< insert the instructions for creating the IKEv2 keyring here.>
+
+```
+<insert configuration code snippet here>
+```
+
+#### Configure the IKEv2 profile
+
+< insert the instructions for creating the IKEv2 profile here.>
+
+```
+<insert configuration code snippet here>
+```
+
+#### Configure the IPsec security association (SA)
+
+< insert the instructions for creating the IPsec SA here. Below is an example of
+parameters to set.>
+
+-  **IPsec SA replay window-size**—Set this to 1024, which is the
+recommended value for <vendor-name><product-name>.
+
+```
+<insert configuration code snippet here>
+```
+
+#### Configure the IPsec transform set
+
+< insert the instructions for creating the IPsec transform set here.>
+
+```
+<insert configuration code snippet here>
+```
+
+#### Configure the IPsec static virtual tunnel interface (SVTI)
+
+< insert the instructions for creating the IPsec SVTI here. Below are some
+examples of parameters to set.>
+
+-  Adjust the maximum segment size (MSS) value of TCP packets going through a
+router as discussed in
+[MTU Considerations](https://cloud.google.com/vpn/docs/concepts/mtu-considerations)
+for Cloud VPN.
+
+```
+<insert configuration code snippet here>
+```
+
+### Configuring the dynamic routing protocol
+
+Follow the procedure in this section to configure dynamic routing for traffic
+through the VPN tunnel or tunnels using the BGP routing protocol.
+
+< insert the instructions for configuring dynamic routing here. Below are some
+examples of parameters to set.>
+
+BGP timers are adjusted to provide more rapid detection of outages.
+
+To advertise additional prefixes to GCP, < insert instructions here>.
+
+```
+<insert configuration code snippet here>
+```
+
+### Saving the configuration
+
+Follow the procedure in this section to save the on-premises configuration.
+
+< insert the instructions for saving the configuration here.>
+
+```
+<insert configuration code snippet here>
+```
+
+### Testing the configuration
+
+It's important to test the VPN connection from both sides of a VPN tunnel. For either side, make sure that the subnet that a machine or virtual machine is located in is being forwarded through the VPN tunnel.
+
+First, create VMs on both sides of the tunnel. Make sure that you configure the
+VMs on a subnet that will pass traffic through the VPN tunnel.
+
+-  Instructions for creating virtual machines in Compute Engine are located
+in the 
+[Getting Started Guide](https://cloud.google.com/compute/docs/quickstart).
+-  Instructions for creating virtual machine for <vendor-name><product-name>
+platforms are located at <link here>.
+
+After VMs have been deployed on both the GCP and <vendor-name><product-name>
+platforms, you can use an ICMP echo (ping) test to test network connectivity
+through the VPN tunnel.
+
+On the GCP side, use the following instructions to test the connection to a
+machine that's behind the on-premises gateway:
+
+1. In the GCP Console,
+[go to the VM Instances page](https://console.cloud.google.com/compute?).
+1. Find the GCP virtual machine you created.
+1. In the **Connect** column, click **SSH**. A browser window opens at the VM
+command line.
+1. Ping a machine that's behind the on-premises gateway.
+
+<Insert any additional instructions for testing the VPN tunnels from the <vendor
+name><product-name> here. For example, below is an example of a successful ping
+from a Cisco ASR router to GCP.>
+
+    cisco-asr#ping 172.16.100.2 source 10.0.200.1
+    Type escape sequence to abort.
+    Sending 5, 100-byte ICMP Echos to 172.16.100.2, timeout is 2 seconds:
+    Packet sent with a source address of 10.0.200.1
+    !!!!!
+    Success rate is 100 percent (5/5), round-trip min/avg/max = 18/19/20 ms
+
+
+## Troubleshooting IPsec on <vendor-name><product-name>
+
+For troubleshooting information, see the <vendor-name><product-name>
+troubleshooting guide <add link>.
+
+<Add details here about what kind of troubleshooting information can be found in
+the <vendor-name><product-name> guide.>
+
+
+## Reference documentation
+
+You can refer to the following <vendor-name><product-name> documentation and
+Cloud VPN documentation for additional information about both products.
+
+### GCP documentation
+
+To learn more about GCP networking, see the following documents:
+
+-  [VPC Networks](https://cloud.google.com/vpc/docs)
+-  [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview)
+-  [Creating Route-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-route-based-vpns)
+-  [Creating Policy-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-policy-based-vpns)
+-  [Advanced Cloud VPN Configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
+-  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
+
+### <vendor-name><product-name> documentation
+
+For more product information on <vendor-name><product-name>, see the following
+<product-name> feature configuration guides and datasheets:
+
+-  <guide name>
+-  <guide name>
+
+For common <vendor-name><product-name> error messages and debug commands, see
+the following guides:
+
+-  <guide name>
+-  <guide name>
