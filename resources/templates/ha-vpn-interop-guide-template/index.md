@@ -63,7 +63,7 @@ This guide walks you through the process of configuring
 <vendor-name><product-name> for integration with the
 [HA VPN service](https://cloud.google.com/vpn/docs) on GCP.
 
-For more information about Cloud VPN, see the
+For more information about HA VPN, see the
 [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).
 
 ## Terminology
@@ -90,7 +90,7 @@ within a GCP project that exists at the edge of the GCP network.
 
 HA VPN supports [multiple topologies](https://cloud.google.com/vpn/docs/concepts/topologies):
 
-This interop guide is based on [1-peer-1-address](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-1-address) topology.
+This interop guide is based on [1-peer-2-address](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses) topology.
 
 ## Product environment
 
@@ -110,7 +110,7 @@ platform.>
 
 1. Make sure your peer VPN gateway supports BGP.
 
-Setting up the following items in GCP makes it easier to configure Cloud VPN:
+Setting up the following items in GCP makes it easier to configure HA VPN:
 
 1. Select or [create](https://console.cloud.google.com/cloud-resource-manager) 
 a Google Cloud Platform project.
@@ -135,7 +135,7 @@ issuing commands.
 <This section is optional, because some VPN vendors can be open source or cloud
 providers that don't require licensing>
 
-Before you configure your <vendor-name><product-name> for use with Cloud VPN,
+Before you configure your <vendor-name><product-name> for use with HA VPN,
 make sure that the following licenses are available:
 
 <Below are some examples. Replace with information that applies to the
@@ -240,7 +240,7 @@ on-premises gateway.</td>
 <td>IP address range for the on-premises subnet. You will use this range when
 creating rules for inbound traffic to GCP.</td>
 <td><code>[IP_ON_PREM_SUBNET]<code></td>
-<td><code>192.168.0.0/16<code></td>
+<td><code>192.168.1.0/24<code></td>
 </tr>
 
 <tr>
@@ -253,59 +253,37 @@ name><product-name></td>
 <tr>
 <td>Cloud Router name (for dynamic routing)</td>
 <td><code>[CLOUD_ROUTER_NAME]<code></td>
-<td><code>vpn-test-vendor-rtr<code></td>
+<td><code>router-a<code></td>
 </tr>
 
 <tr>
-<td>BGP interface name</td>
-<td><code>[BGP_IF]<code></td>
-<td><code>if-0<code></td>
+<td>External VPN Gateway</td>
+<td><code>[EXT_VPN_GW]<code></td>
+<td><code>peer-gw<code></td>
 </tr>
     
 <tr>
-<td>BGP interface name</td>
-<td><code>[BGP_IF]<code></td>
-<td><code>if-1<code></td>
+<td>First VPN Tunnel</td>
+<td><code>[TUNNEL_NAME_IF0]<code></td>
+<td><code>tunnel-a-to-on-prem-if-0<code></td>
 </tr>
 
 <tr>
-<td>BGP session name (for dynamic routing)</td>
-<td><code>[BGP_SESSION_NAME]<code></td>
-<td><code>bgp-peer0<code></td>
-</tr>
-    
-<tr>
-<td>BGP session name (for dynamic routing)</td>
-<td><code>[BGP_SESSION_NAME]<code></td>
-<td><code>bgp-peer1<code></td>
+<td>Second VPN Tunnel</td>
+<td><code>[TUNNEL_NAME_IF1]<code></td>
+<td><code>tunnel-a-to-on-prem-if-1<code></td>
 </tr>
 
 <tr>
-<td>The name for the first GCP VPN gateway.</td>
-<td><code>[VPN_GATEWAY_1]<code></td>
-<td><code>vpn-test-[VENDOR_NAME]-gw-1</code>, where <code>[VENDOR_ NAME]</code>
-is the <code>[VENDOR_NAME]</code> string</td>
+<td>First BGP peer interface</td>
+<td><code>[ROUTER_INTERFACE_NAME_0]<code></td>
+<td><code>bgp-peer-tunnel-a-to-on-prem-if-0<code></td>
 </tr>
 
 <tr>
-<td>The name for the first VPN tunnel for
-<code>vpn-test-[VENDOR_NAME]-gw-1</code></td>
-<td><code>[VPN_TUNNEL_1]<code></td>
-<td><code>vpn-test-tunnel1<code></td>
-</tr>
-    
-<tr>
-<td>The name for the first VPN tunnel for
-<code>vpn-test-[VENDOR_NAME]-gw-1</code></td>
-<td><code>[VPN_TUNNEL_2]<code></td>
-<td><code>vpn-test-tunnel1<code></td>
-</tr>
-
-<tr>
-<td>The name of a firewall rule that allows traffic between the on-premises
-network and GCP VPC networks</td>
-<td><code>[VPN_RULE]<code></td>
-<td><code>vpnrule1<code></td>
+<td>Second BGP peer interface</td>
+<td><code>[ROUTER_INTERFACE_NAME_1]<code></td>
+<td><code>bgp-peer-tunnel-a-to-on-prem-if-1<code></td>
 </tr>
 
 </tbody>
@@ -328,7 +306,9 @@ Complete the following procedures before configuring a GCP HA VPN gateway and tu
 
 #### Create a custom VPC network
 
-If you haven't already, create a VPC network. These example instructions create a [custom mode](https://cloud.google.com/vpc/docs/vpc#subnet-ranges) VPC network with one subnet in one region and another subnet in another region.
+If you haven't already, create a VPC network. These example instructions 
+create a [custom mode](https://cloud.google.com/vpc/docs/vpc#subnet-ranges) 
+VPC network with one subnet in one region and another subnet in another region.
 
 In the following commands, replace the options as noted below:
 
@@ -336,21 +316,39 @@ In the following commands, replace the options as noted below:
 [SUBNET_MODE] set as custom.
 [BGP_ROUTING_MODE] set as global.
 
+    `gcloud compute networks create [NETWORK] \
+    --subnet-mode [SUBNET_MODE]  \
+    --bgp-routing-mode [BGP_ROUTING_MODE]`
+
+The command output should look similar to the following example:
+
     `gcloud compute networks create network-a \
     --subnet-mode custom  \
     --bgp-routing-mode global`
-
+    
 #### Create subnets
 
-Create two subnets in [NETWORK] as follows:
+Create two subnets in as follows:
+
+    `gcloud compute networks subnets create [SUBNET_NAME_1]  \
+    --network  [NETWORK] \
+    --region [REGION_1] \
+    --range [RANGE_1]`
+    
+    `gcloud compute networks subnets create [SUBNET_NAME_2] \
+    --network [NETWORK] \
+    --region [REGION_2] \
+    --range [RANGE_2]`
+
+The command output should look similar to the following example:
 
     `gcloud compute networks subnets create subnet-a-central  \
-    --network  vpn-vendor-test-network \
+    --network  network-a \
     --region us-cenral1 \
     --range 10.0.1.0/24`
     
     `gcloud compute networks subnets create subnet-a-west \
-    --network vpn-vendor-test-network \
+    --network network-a \
     --region us-west1 \
     --range 10.0.2.0/24`
     
@@ -361,7 +359,13 @@ Complete the following command sequence to create the HA VPN gateway:
 Create an HA VPN gateway. When the gateway is created, two external IP 
 addresses are automatically allocated, one for each gateway interface.
 
-    `gcloud compute vpn-gateways create vpn-test-vendor-gw-1 \
+    `gcloud beta compute vpn-gateways create [GW_NAME] \
+    --network [NETWORK] \
+    --region [REGION]`
+    
+The command output should look similar to the following example:
+    
+    `gcloud compute vpn-gateways create ha-vpn-gw-a \
     --network network-a \
     --region us-central1
     `
@@ -371,6 +375,13 @@ Complete the following command sequence to create a Cloud Router. In the followi
 
 Replace [ROUTER_NAME] with the name of the Cloud Router in the same region as the Cloud VPN gateway.
 Replace [GOOGLE_ASN] with any private ASN (64512 - 65534, 4200000000 - 4294967294) that you are not already using in the peer network. The Google ASN is used for all BGP sessions on the same Cloud Router and it cannot be changed later.
+
+    `gcloud compute routers create [ROUTER_NAME] \
+    --region [REGION] \
+    --network [NETWORK] \
+    --asn [GOOGLE_ASN]`
+
+The command output should look similar to the following example:
 
     `gcloud compute routers create router-a \
     --region us-central1 \
@@ -389,11 +400,38 @@ This interop guide covers option 2 only.
 
 #### Create an External VPN Gateway resource for a single peer VPN gateway with two separate interfaces
 
+    `gcloud compute external-vpn-gateways create [PEER_GW_NAME] \
+    --interfaces 0=[ON_PREM_GW_IP_0],1=[ON_PREM_GW_IP_1] \`
+
+The command output should look similar to the following example:
+ 
     `gcloud compute external-vpn-gateways create peer-gw   \
      --interfaces 0=[ON_PREM_GW_IP_0],1=[ON_PREM_GW_IP_1] \`
 
 ### Create two VPN tunnels, one for each interface on the HA VPN gateway
 
+    `gcloud beta compute vpn-tunnels create [TUNNEL_NAME_IF0] \
+    --peer-external-gateway [PEER_GW_NAME] \
+    --peer-external-gateway-interface [PEER_EXT_GW_IF0]  \
+    --region [REGION] \
+    --ike-version [IKE_VERS] \
+    --shared-secret [SHARED_SECRET] \
+    --router [ROUTER_NAME] \
+    --vpn-gateway [GW_NAME] \
+    --interface [INT_NUM_0]`
+    
+    `gcloud beta compute vpn-tunnels create [TUNNEL_NAME_IF1] \
+    --peer-external-gateway [PEER_GW_NAME] \
+    --peer-external-gateway-interface [PEER_EXT_GW_IF1] \
+    --region [REGION] \
+    --ike-version [IKE_VERS] \
+    --shared-secret [SHARED_SECRET] \
+    --router [ROUTER_NAME] \
+    --vpn-gateway [GW_NAME] \
+    --interface [INT_NUM_1]`
+    
+The command output should look similar to the following example:
+ 
     `gcloud compute vpn-tunnels create tunnel-a-to-on-prem-if-0 \
     --peer-external-gateway peer-gw \
     --peer-external-gateway-interface 0  \
@@ -401,7 +439,7 @@ This interop guide covers option 2 only.
     --ike-version 2 \
     --shared-secret mysharedsecret \
     --router router-a \
-    --vpn-gateway vpn-test-vendor-gw-1 \
+    --vpn-gateway peer-gw \
     --interface 0`
     
     `gcloud compute vpn-tunnels create tunnel-a-to-on-prem-if-1 \
@@ -411,7 +449,7 @@ This interop guide covers option 2 only.
     --ike-version 2 \
     --shared-secret mysharedsecret \
     --router router-a \
-    --vpn-gateway vpn-test-vendor-gw-1 \
+    --vpn-gateway peer-gw \
     --interface 1`
     
  ### Create Cloud Router interfaces and BGP peers
