@@ -388,8 +388,7 @@ interface configuration, including MTU, etc.
     set -o errexit
 
     IP=$(which ip)
-    IPTABLES=$(which iptables)
-
+    
     PLUTO_MARK_OUT_ARR=(${PLUTO_MARK_OUT//// })
     PLUTO_MARK_IN_ARR=(${PLUTO_MARK_IN//// })
 
@@ -416,8 +415,6 @@ interface configuration, including MTU, etc.
             # Enable loosy source validation, if possible. Otherwise disable validation.
             sysctl -w net.ipv4.conf.${VTI_IF}.rp_filter=2 || sysctl -w net.ipv4.conf.${VTI_IF}.rp_filter=0
 
-            ${IPTABLES} -t mangle -I INPUT -p esp -s ${PLUTO_PEER} -d ${PLUTO_ME} -j MARK --set-xmark ${PLUTO_MARK_IN}
-
             # If you would like to use VTI for policy-based you shoud take care of routing by yourselv, e.x.
             #if [[ "${PLUTO_PEER_CLIENT}" != "0.0.0.0/0" ]]; then
             #    ${IP} r add "${PLUTO_PEER_CLIENT}" dev "${VTI_IF}"
@@ -425,7 +422,6 @@ interface configuration, including MTU, etc.
             ;;
         down-client)
             ${IP} tunnel del "${VTI_IF}"
-            ${IPTABLES} -t mangle -D INPUT -p esp -s ${PLUTO_PEER} -d ${PLUTO_ME} -j MARK --set-xmark ${PLUTO_MARK_IN}
             ;;
     esac
 
