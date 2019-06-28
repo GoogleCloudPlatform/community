@@ -38,11 +38,11 @@ date_published: YYYY-mm-dd
 Learn how to build site-to-site IPsec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
 on Google Cloud Platform (GCP) and \<vendor-name>\<product-name>.
 
-To see a finished version of this guide, see the
-[Using Cloud VPN with Cisco ASR](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#top_of_page).
+<To see a finished version of this guide, see the
+[Using Cloud VPN with Cisco ASR](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#top_of_page).>
 
-**NOTE**: Options or instructions are shown in angle brackets throughout this
-template. Change or remove these items as needed.
+<**NOTE**: Options or instructions are shown in angle brackets throughout this
+template. Change or remove these items as needed.>
 
 - [Introduction](#introduction)
 - [Terminology](#terminology)
@@ -176,8 +176,8 @@ Technology Package License (SLASR1-AIS).
 Tiered Crypto throughput license, which applies to ASR1002-HX and ASR1001-HX
 chassis only.
 
-<For detailed <vendor-name><product-name> license information, see the
-<Vendor-Guide-link> documentation.>
+<For detailed \<vendor-name>\<product-name> license information, see the
+\<Vendor-Guide-link> documentation.>
 
 ### Configuration parameters and values
 
