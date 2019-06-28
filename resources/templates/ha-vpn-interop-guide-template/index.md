@@ -2,7 +2,7 @@
 title: Google Cloud HA VPN Interop Guide for [PRODUCT]
 description: Describes how to build site-to-site IPsec VPNs between HA VPN on Google Cloud Platform (GCP) and [VENDOR] [PRODUCT]
 author: [AUTHOR]
-tags: Cloud VPN, interop, [VENDOR], [PRODUCT]
+tags: HA VPN, Cloud VPN, interop, [VENDOR], [PRODUCT]
 date_published: YYYY-mm-dd
 ---
 
@@ -194,33 +194,39 @@ a Strong Pre-shared Key</a>.</td>
 
 <tr>
 <td>VPC network name</td>
-<td><code>[VPC_NETWORK_NAME]<code></td>
+<td><code>[NETWORK]<code></td>
 <td><code>network-a<code></td>
 </tr>
 
 <tr>
+<td>Subnet mode</td>
+<td><code>[SUBNET_MODE]<code></td>
+<td><code>custom<code></td>
+</tr>
+
+<tr>
 <td>Subnet on the GCP VPC network (for example, <code>vpn-vendor-test-network</code>)</td>
-<td><code>[VPC_SUBNET_NAME]<code></td>
+<td><code>[SUBNET_NAME_1]<code></td>
 <td><code>subnet-a-central<code></td>
 </tr>
     
 <tr>
 <td>Subnet on the GCP VPC network (for example, <code>vpn-vendor-test-network</code>)</td>
-<td><code>[VPC_SUBNET_NAME]<code></td>
+<td><code>[SUBNET_NAME_2]<code></td>
 <td><code>subnet-a-west<code></td>
 </tr>
     
 <tr>
 <td>GCP region. Can be any region, but it should be geographically close to the
 on-premises gateway.</td>
-<td><code>[REGION]<code></td>
+<td><code>[REGION1]<code></td>
 <td><code>us-central1<code></td>
 </tr>
     
 <tr>
 <td>GCP region. Can be any region, but it should be geographically close to the
 on-premises gateway.</td>
-<td><code>[REGION]<code></td>
+<td><code>[REGION2]<code></td>
 <td><code>us-west1<code></td>
 </tr>
 
@@ -252,7 +258,7 @@ name><product-name></td>
 
 <tr>
 <td>Cloud Router name (for dynamic routing)</td>
-<td><code>[CLOUD_ROUTER_NAME]<code></td>
+<td><code>[ROUTER_NAME]<code></td>
 <td><code>router-a<code></td>
 </tr>
 
