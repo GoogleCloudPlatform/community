@@ -615,6 +615,24 @@ Verify the Cloud Router configuration
     gcloud compute routers describe [ROUTER_NAME] \
     --region [REGION]
 
+### Configure firewall rules
+
+Configure firewall rules to allow inbound traffic from the on-premises
+network subnets. You must also configure the on-premises network firewall to
+allow inbound traffic from your VPC subnet prefixes.
+
+    gcloud compute firewall-rules create [VPN_RULE] \
+    --network [NETWORK] \
+    --allow tcp,udp,icmp \
+    --source-ranges [IP_ON_PREM_SUBNET]
+    
+The command output should look similar to the following example:    
+    
+     gcloud compute firewall-rules create network-a-to-on-prem \
+    --network network-a \
+    --allow tcp,udp,icmp \
+    --source-ranges 192.168.1.0/24
+    
 ## Configure the \<vendor-name>\<vendor product> side
 
 <This section includes sample tasks that describe how to configure the
@@ -647,6 +665,8 @@ relevant to the current configuration, and remove any sections that don't
 apply.>
 
 ### GCP-compatible settings for IPSec and IKE
+
+ [GCP support ciphers](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike).
 
 #### Configure the IKE proposal and policy
 
