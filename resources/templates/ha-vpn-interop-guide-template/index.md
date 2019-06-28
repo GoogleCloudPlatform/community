@@ -38,6 +38,7 @@ date_published: YYYY-mm-dd
 Learn how to build site-to-site IPsec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
 on Google Cloud Platform (GCP) and \<vendor-name>\<product-name>.
 
+[TODO: Change it with a real HA VPN guide when available]
 <To see a finished version of this guide, see the
 [Using Cloud VPN with Cisco ASR](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#top_of_page).>
 
