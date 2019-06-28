@@ -36,13 +36,13 @@ date_published: YYYY-mm-dd
 # Using HA VPN with \<vendor-name>\<product-name>
 
 Learn how to build site-to-site IPsec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
-on Google Cloud Platform (GCP) and <vendor-name><product-name>.
+on Google Cloud Platform (GCP) and \<vendor-name>\<product-name>.
 
-<To see a finished version of this guide, see the
-[Using Cloud VPN with Cisco ASR](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#top_of_page).>
+To see a finished version of this guide, see the
+[Using Cloud VPN with Cisco ASR](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#top_of_page).
 
-<NOTE: Options or instructions are shown in angle brackets throughout this
-template. Change or remove these items as needed.>
+**NOTE**: Options or instructions are shown in angle brackets throughout this
+template. Change or remove these items as needed.
 
 - [Introduction](#introduction)
 - [Terminology](#terminology)
@@ -92,10 +92,10 @@ Author: <author name and email address>
 ## Introduction
 
 This guide walks you through the process of configuring
-<vendor-name><product-name> for integration with the
+\<vendor-name>\<product-name> for integration with the
 [HA VPN service](https://cloud.google.com/vpn/docs) on GCP.
 
-For more information about HA VPN, see the
+For more information about HA or Classic VPN, see the
 [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).
 
 ## Terminology
@@ -115,8 +115,8 @@ gateway that's connecting _to_ GCP.
 within a GCP project that exists at the edge of the GCP network.
 -  **Dynamic routing**—GCP dynamic routing for VPN using the
 [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
--  <<vendor-name><product-name> term>
--  <<vendor-name><product-name> term>
+-  \<vendor-name>\<product-name> term
+-  \<vendor-name>\<product-name> term
 
 ## Topology
 
@@ -126,15 +126,11 @@ This interop guide is based on [1-peer-2-address](https://cloud.google.com/vpn/d
 
 ## Product environment
 
-The <vendor-name><product-name> equipment used in this guide is as follows:
+The \<vendor-name>\<product-name> equipment used in this guide is as follows:
 
 -  Vendor — <vendor-name>
 -  Model — <model name>
 -  Software release — <full software release name>
-
-<Fill in the following if the vendor supports more than one platform. However,
-the following section is optional, because some vendors might only have one
-platform.>
 
 ## Before you begin
 
@@ -371,9 +367,7 @@ This section covers how to configure HA VPN.
 There are two ways to create HA VPN gateways on GCP: using the Google Cloud
 Platform Console and using the
 [gcloud command-line tool](https://cloud.google.com/sdk/).
-This section describes how to perform the tasks using the GCP Console. To see
-the `gcloud` commands for performing these tasks, see the
-[appendix](#appendix-using-gcloud-commands).
+This section describes how to perform the tasks using `gcloud`. 
 
 ### Initial tasks
 
@@ -406,7 +400,7 @@ The command output should look similar to the following example:
 Create two subnets in as follows:
 
     gcloud compute networks subnets create [SUBNET_NAME_1]  \
-    --network  [NETWORK] \
+    --network NETWORK] \
     --region [REGION_1] \
     --range [RANGE_1]
     
@@ -418,7 +412,7 @@ Create two subnets in as follows:
 The command output should look similar to the following example:
 
     gcloud compute networks subnets create subnet-a-central  \
-    --network  network-a \
+    --network network-a \
     --region us-cenral1 \
     --range 10.0.1.0/24
     
@@ -434,7 +428,7 @@ Complete the following command sequence to create the HA VPN gateway:
 Create an HA VPN gateway. When the gateway is created, two external IP 
 addresses are automatically allocated, one for each gateway interface.
 
-    gcloud beta compute vpn-gateways create [GW_NAME] \
+    gcloud compute vpn-gateways create [GW_NAME] \
     --network [NETWORK] \
     --region [REGION]
     
@@ -485,7 +479,7 @@ The command output should look similar to the following example:
 
 ### Create two VPN tunnels, one for each interface on the HA VPN gateway
 
-    gcloud beta compute vpn-tunnels create [TUNNEL_NAME_IF0] \
+    gcloud compute vpn-tunnels create [TUNNEL_NAME_IF0] \
     --peer-external-gateway [PEER_GW_NAME] \
     --peer-external-gateway-interface [PEER_EXT_GW_IF0]  \
     --region [REGION] \
@@ -495,7 +489,7 @@ The command output should look similar to the following example:
     --vpn-gateway [GW_NAME] \
     --interface [INT_NUM_0]
     
-    gcloud beta compute vpn-tunnels create [TUNNEL_NAME_IF1] \
+    gcloud compute vpn-tunnels create [TUNNEL_NAME_IF1] \
     --peer-external-gateway [PEER_GW_NAME] \
     --peer-external-gateway-interface [PEER_EXT_GW_IF1] \
     --region [REGION] \
