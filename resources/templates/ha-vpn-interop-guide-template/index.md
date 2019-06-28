@@ -75,17 +75,10 @@ template. Change or remove these items as needed.>
     - [Configuring the dynamic routing protocol](#configuring-the-dynamic-routing-protocol)
     - [Saving the configuration](#saving-the-configuration)
     - [Testing the configuration](#testing-the-configuration)
-- [Troubleshooting IPsec on <vendor-name><product-name>](#troubleshooting-ipsec-on-vendor-nameproduct-name)
+- [Troubleshooting IPsec on \<vendor-name>\<product-name>](#troubleshooting-ipsec-on-vendor-nameproduct-name)
 - [Reference documentation](#reference-documentation)
     - [GCP documentation](#gcp-documentation)
-    - [<vendor-name><product-name> documentation](#vendor-nameproduct-name-documentation)
-- [Appendix: Using gcloud commands](#appendix-using-gcloud-commands)
-    - [Running gcloud commands](#running-gcloud-commands)
-    - [Configuration parameters and values](#configuration-parameters-and-values)
-    - [Setting environment variables for gcloud command parameters](#setting-environment-variables-for-gcloud-command-parameters)
-    - [Configuring an IPsec VPN using dynamic routing](#configuring-an-ipsec-vpn-using-dynamic-routing)
-    - [Configuring route-based IPsec VPN using static routing](#configuring-route-based-ipsec-vpn-using-static-routing)
-
+    - [\<vendor-name>\<product-name> documentation](#vendor-nameproduct-name-documentation)
 
 <Put trademark statements here>: <vendor terminology> and the <vendor> logo are
 trademarks of <vendor company name> or its affiliates in the United States
@@ -616,6 +609,7 @@ configuring IPsec and IKE on the vendor side. Fill in the sections that are
 relevant to the current configuration, and remove any sections that don't
 apply.>
 
+### GCP-compatible settings for IPSec and IKE
 
 #### Configure the IKE proposal and policy
 
@@ -745,7 +739,7 @@ from a Cisco ASR router to GCP.>
     Success rate is 100 percent (5/5), round-trip min/avg/max = 18/19/20 ms
 
 
-## Troubleshooting IPsec on <vendor-name><product-name>
+## Troubleshooting IPsec on \<vendor-name>\<product-name>
 
 For troubleshooting information, see the <vendor-name><product-name>
 troubleshooting guide <add link>.
@@ -770,7 +764,7 @@ To learn more about GCP networking, see the following documents:
 -  [Advanced Cloud VPN Configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
 -  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
 
-### <vendor-name><product-name> documentation
+### \<vendor-name>\<product-name> documentation
 
 For more product information on <vendor-name><product-name>, see the following
 <product-name> feature configuration guides and datasheets:
