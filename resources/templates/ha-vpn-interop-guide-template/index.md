@@ -138,8 +138,6 @@ The \<vendor-name>\<product-name> equipment used in this guide is as follows:
 
 1. Make sure your peer VPN gateway supports BGP.
 
-Setting up the following items in GCP makes it easier to configure HA VPN:
-
 1. Select or [create](https://console.cloud.google.com/cloud-resource-manager) 
 a Google Cloud Platform project.
 
