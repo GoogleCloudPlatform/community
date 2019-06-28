@@ -413,7 +413,7 @@ The command output should look similar to the following example:
 
     gcloud compute networks subnets create subnet-a-central  \
     --network network-a \
-    --region us-cenral1 \
+    --region us-central1 \
     --range 10.0.1.0/24
     
     gcloud compute networks subnets create subnet-a-west \
@@ -475,7 +475,7 @@ This interop guide covers option 2 only.
 The command output should look similar to the following example:
  
     gcloud compute external-vpn-gateways create peer-gw   \
-     --interfaces 0=[ON_PREM_GW_IP_0],1=[ON_PREM_GW_IP_1] \
+     --interfaces 0=204.237.220.4,1=204.237.220.35 \
 
 ### Create two VPN tunnels, one for each interface on the HA VPN gateway
 
@@ -508,7 +508,7 @@ The command output should look similar to the following example:
     --ike-version 2 \
     --shared-secret mysharedsecret \
     --router router-a \
-    --vpn-gateway peer-gw \
+    --vpn-gateway ha-vpn-gw-a \
     --interface 0
     
     gcloud compute vpn-tunnels create tunnel-a-to-on-prem-if-1 \
@@ -518,7 +518,7 @@ The command output should look similar to the following example:
     --ike-version 2 \
     --shared-secret mysharedsecret \
     --router router-a \
-    --vpn-gateway peer-gw \
+    --vpn-gateway ha-vpn-gw-a \
     --interface 1
     
 ### Create Cloud Router interfaces and BGP peers
@@ -558,7 +558,7 @@ The command output should look similar to the following example:
  The command output should look similar to the following example:   
  
     gcloud compute routers add-bgp-peer router-a \
-    --peer-name peer-a \
+    --peer-name peer-b \
     --peer-asn 65002 \
     --interface if-tunnel-a-to-on-prem-if-0 \
     --region us-central1 \
@@ -605,6 +605,13 @@ Verify the Cloud Router configuration
      --format='flattened(result.bgpPeerStatus[].name,
        result.bgpPeerStatus[].ipAddress, result.bgpPeerStatus[].peerIpAddress)'
     
+    result.bgpPeerStatus[0].ipAddress:     169.254.174.249
+    result.bgpPeerStatus[0].name:          peer-a
+    result.bgpPeerStatus[0].peerIpAddress: 169.254.174.250
+    result.bgpPeerStatus[1].ipAddress:     169.254.36.85
+    result.bgpPeerStatus[1].name:          peer-b
+    result.bgpPeerStatus[1].peerIpAddress: 169.254.36.86
+
     gcloud compute routers describe [ROUTER_NAME] \
     --region [REGION]
 
