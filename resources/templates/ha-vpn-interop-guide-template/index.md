@@ -21,12 +21,12 @@ date_published: YYYY-mm-dd
     + After you've made appropriate updates, _remove_ bracketed content.
     + Remove these instructions.
     + Because this is a template for a variety of setups, it might contain
-      content that isn't releavent to your scenario. Remove (or update)
+      content that isn't relevant to your scenario. Remove (or update)
       any sections that don't apply to you.
 1. Fork the [GoogleCloudPlatform/community/](https://github.com/GoogleCloudPlatform/community/) repo.
 4. In your fork, add a new folder named `/tutorials/[YOUR_TUTORIAL]`. For the
    folder name, use hyphens to separate words. We recommend that you 
-   include a product name in the folder name, such as `https-load-balancing-ingix`.
+   include a product name in the folder name, such as `using-cloud-vpn-with-cisco-asr`.
 5. Copy the updated file to the `index.md` file of the new folder.
 6. Create a branch.
 7. Issue a PR to get your new content into the community site.
@@ -80,8 +80,8 @@ template. Change or remove these items as needed.>
     - [GCP documentation](#gcp-documentation)
     - [\<vendor-name>\<product-name> documentation](#vendor-nameproduct-name-documentation)
 
-<Put trademark statements here>: <vendor terminology> and the <vendor> logo are
-trademarks of <vendor company name> or its affiliates in the United States
+\<Put trademark statements here>: \<vendor terminology> and the \<vendor> logo are
+trademarks of \<vendor company name> or its affiliates in the United States
 and/or other countries.
 
 _Disclaimer: This interoperability guide is intended to be informational in
