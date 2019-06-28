@@ -135,7 +135,7 @@ The \<vendor-name>\<product-name> equipment used in this guide is as follows:
 
 ## Before you begin
 
-1. Review information about how [dynamic routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#dynamic-routing) works in GCP.
+1. Review information about how [dynamic routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#dynamic-routing) works in Google Cloud Platform.
 
 1. Make sure your peer VPN gateway supports BGP.
 
