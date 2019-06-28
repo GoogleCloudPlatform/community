@@ -45,7 +45,47 @@ Learn how to build site-to-site IPsec VPNs between
 <NOTE: Options or instructions are shown in angle brackets throughout this
 template. Change or remove these items as needed.>
 
-#####add TOC here####
+- [Introduction](#introduction)
+- [Terminology](#terminology)
+- [Topology](#topology)
+- [Product environment](#product-environment)
+- [Before you begin](#before-you-begin)
+    - [Licenses and modules](#licenses-and-modules)
+    - [Configuration parameters and values](#configuration-parameters-and-values)
+- [Configure the GCP side](#configure-the-gcp-side)
+    - [Initial tasks](#initial-tasks)
+        - [Create a custom VPC network](#create-a-custom-vpc-network)
+        - [Create subnets](#create-subnets)
+    - [Create the HA VPN gateway](#create-the-ha-vpn-gateway)
+    - [Create Cloud Router](#create-cloud-router)
+    - [Create an External VPN Gateway resource](#create-an-external-vpn-gateway-resource)
+        - [Create an External VPN Gateway resource for a single peer VPN gateway with two separate interfaces](#create-an-external-vpn-gateway-resource-for-a-single-peer-vpn-gateway-with-two-separate-interfaces)
+    - [Create two VPN tunnels, one for each interface on the HA VPN gateway](#create-two-vpn-tunnels-one-for-each-interface-on-the-ha-vpn-gateway)
+    - [Create Cloud Router interfaces and BGP peers](#create-cloud-router-interfaces-and-bgp-peers)
+- [Configure the \<vendor-name>\<vendor product> side](#configure-the-vendor-namevendor-product-side)
+    - [Creating the base network configuration](#creating-the-base-network-configuration)
+    - [Creating the base VPN gateway configuration](#creating-the-base-vpn-gateway-configuration)
+    - [GCP-compatible settings for IPSec and IKE](#gcp-compatible-settings-for-ipsec-and-ike)
+        - [Configure the IKE proposal and policy](#configure-the-ike-proposal-and-policy)
+        - [Configure the IKEv2 keyring](#configure-the-ikev2-keyring)
+        - [Configure the IKEv2 profile](#configure-the-ikev2-profile)
+        - [Configure the IPsec security association (SA)](#configure-the-ipsec-security-association-sa)
+        - [Configure the IPsec transform set](#configure-the-ipsec-transform-set)
+        - [Configure the IPsec static virtual tunnel interface (SVTI)](#configure-the-ipsec-static-virtual-tunnel-interface-svti)
+    - [Configuring the dynamic routing protocol](#configuring-the-dynamic-routing-protocol)
+    - [Saving the configuration](#saving-the-configuration)
+    - [Testing the configuration](#testing-the-configuration)
+- [Troubleshooting IPsec on <vendor-name><product-name>](#troubleshooting-ipsec-on-vendor-nameproduct-name)
+- [Reference documentation](#reference-documentation)
+    - [GCP documentation](#gcp-documentation)
+    - [<vendor-name><product-name> documentation](#vendor-nameproduct-name-documentation)
+- [Appendix: Using gcloud commands](#appendix-using-gcloud-commands)
+    - [Running gcloud commands](#running-gcloud-commands)
+    - [Configuration parameters and values](#configuration-parameters-and-values)
+    - [Setting environment variables for gcloud command parameters](#setting-environment-variables-for-gcloud-command-parameters)
+    - [Configuring an IPsec VPN using dynamic routing](#configuring-an-ipsec-vpn-using-dynamic-routing)
+    - [Configuring route-based IPsec VPN using static routing](#configuring-route-based-ipsec-vpn-using-static-routing)
+
 
 <Put trademark statements here>: <vendor terminology> and the <vendor> logo are
 trademarks of <vendor company name> or its affiliates in the United States
@@ -545,7 +585,7 @@ Verify the Cloud Router configuration
     `gcloud compute routers describe [ROUTER_NAME] \
     --region [REGION]`
 
-## Configure the <vendor-name><vendor product> side
+## Configure the \<vendor-name>\<vendor product> side
 
 <This section includes sample tasks that describe how to configure the
 on-premises side of the VPN gateway configuration using <vendor-name>
