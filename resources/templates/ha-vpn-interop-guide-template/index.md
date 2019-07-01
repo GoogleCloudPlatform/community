@@ -234,7 +234,7 @@ a Strong Pre-shared Key</a>.</td>
 </tr>
 
 <tr>
-<td>BGP routing mode</td>
+<td>VPN BGP routing mode</td>
 <td><code>[BGP_ROUTING_MODE]<code></td>
 <td><code>global</td>
 </tr>
@@ -390,7 +390,7 @@ In the following commands, replace the options as noted below:
     --subnet-mode [SUBNET_MODE]  \
     --bgp-routing-mode [BGP_ROUTING_MODE]
 
-The command output should look similar to the following example:
+The command should look similar to the following example:
 
     gcloud compute networks create network-a \
     --subnet-mode custom  \
@@ -401,7 +401,7 @@ The command output should look similar to the following example:
 Create two subnets in as follows:
 
     gcloud compute networks subnets create [SUBNET_NAME_1]  \
-    --network NETWORK] \
+    --network [NETWORK] \
     --region [REGION_1] \
     --range [RANGE_1]
     
@@ -410,7 +410,7 @@ Create two subnets in as follows:
     --region [REGION_2] \
     --range [RANGE_2]
 
-The command output should look similar to the following example:
+The command should look similar to the following example:
 
     gcloud compute networks subnets create subnet-a-central  \
     --network network-a \
@@ -433,25 +433,29 @@ addresses are automatically allocated, one for each gateway interface.
     --network [NETWORK] \
     --region [REGION]
     
-The command output should look similar to the following example:
+The command should look similar to the following example:
     
     gcloud beta compute vpn-gateways create ha-vpn-gw-a \
     --network network-a \
     --region us-central1
-    
+
 ### Create Cloud Router
 
-Complete the following command sequence to create a Cloud Router. In the following commands, replace the options as noted below:
+Complete the following command sequence to create a Cloud Router. In the following 
+commands, replace the options as noted below:
 
-Replace [ROUTER_NAME] with the name of the Cloud Router in the same region as the Cloud VPN gateway.
-Replace [GOOGLE_ASN] with any private ASN (64512 - 65534, 4200000000 - 4294967294) that you are not already using in the peer network. The Google ASN is used for all BGP sessions on the same Cloud Router and it cannot be changed later.
+Replace [ROUTER_NAME] with the name of the new Cloud Router, which you must create 
+in the same GCP region as the Cloud HA VPN gateway.
+Replace [GOOGLE_ASN] with any private ASN (64512 - 65534, 4200000000 - 4294967294) 
+that you are not already using in the peer network. The Google ASN is used for all 
+BGP sessions on the same Cloud Router and it cannot be changed later.
 
     gcloud compute routers create [ROUTER_NAME] \
     --region [REGION] \
     --network [NETWORK] \
     --asn [GOOGLE_ASN]
 
-The command output should look similar to the following example:
+The command should look similar to the following example:
 
     gcloud compute routers create router-a \
     --region us-central1 \
@@ -462,9 +466,9 @@ The command output should look similar to the following example:
 
 Create an external VPN gateway resource that provides information to GCP about your peer VPN gateway or gateways. Depending on the HA recommendations for your peer VPN gateway, you can create external VPN gateway resource for the following different types of on-premises VPN gateways:
 
-1. Two separate peer VPN gateway devices where the two devices are redundant with each other and each device has its own public IP address.
-1. A single peer VPN gateway that uses two separate interfaces, each with its own public IP address. For this kind of peer gateway, you can create a single external VPN gateway with two interfaces.
-1. A single peer VPN gateway with a single public IP address.
+- Two separate peer VPN gateway devices where the two devices are redundant with each other and each device has its own public IP address.
+- A single peer VPN gateway that uses two separate interfaces, each with its own public IP address. For this kind of peer gateway, you can create a single external VPN gateway with two interfaces.
+- A single peer VPN gateway with a single public IP address.
 
 This interop guide covers option 2 only. 
 
@@ -473,7 +477,7 @@ This interop guide covers option 2 only.
     gcloud beta compute external-vpn-gateways create [PEER_GW_NAME] \
     --interfaces 0=[ON_PREM_GW_IP_0],1=[ON_PREM_GW_IP_1] \
 
-The command output should look similar to the following example:
+The command should look similar to the following example:
  
     gcloud beta compute external-vpn-gateways create peer-gw   \
      --interfaces 0=204.237.220.4,1=204.237.220.35 \
@@ -500,7 +504,7 @@ The command output should look similar to the following example:
     --vpn-gateway [GW_NAME] \
     --interface [INT_NUM_1]
     
-The command output should look similar to the following example:
+The command should look similar to the following example:
  
     gcloud beta compute vpn-tunnels create tunnel-a-to-on-prem-if-0 \
     --peer-external-gateway peer-gw \
@@ -540,7 +544,7 @@ For the first VPN tunnel
     --vpn-tunnel [TUNNEL_NAME_0] \
     --region [REGION]
     
-The command output should look similar to the following example:
+The command should look similar to the following example:
     
     gcloud compute routers add-interface router-a \
     --interface-name if-tunnel-a-to-on-prem-if-0 \
@@ -548,7 +552,7 @@ The command output should look similar to the following example:
     --vpn-tunnel tunnel-a-to-on-prem-if-0 \
     --region us-central1  
 
-1.Add a BGP peer to the interface for the first tunnel.
+2.Add a BGP peer to the interface for the first tunnel.
 
     gcloud compute routers add-bgp-peer [ROUTER_NAME] \
     --peer-name [PEER_NAME] \
@@ -556,7 +560,7 @@ The command output should look similar to the following example:
     --interface [ROUTER_INTERFACE_NAME_0] \
     --region [REGION] \
     
- The command output should look similar to the following example:   
+ The command should look similar to the following example:   
  
     gcloud compute routers add-bgp-peer router-a \
     --peer-name peer-b \
@@ -574,7 +578,7 @@ For the second VPN tunnel
     --vpn-tunnel [TUNNEL_NAME_1] \
     --region [REGION]
 
-The command output should look similar to the following example:
+The command should look similar to the following example:
 
     gcloud compute routers add-interface router-a \
     --interface-name if-tunnel-a-to-on-prem-if-1 \
@@ -583,7 +587,7 @@ The command output should look similar to the following example:
     --region us-central1
     
     
-1.Add a BGP peer to the interface for the second tunnel.
+2.Add a BGP peer to the interface for the second tunnel.
 
     gcloud compute routers add-bgp-peer [ROUTER_NAME] \
     --peer-name [PEER_NAME] \
@@ -591,7 +595,7 @@ The command output should look similar to the following example:
     --interface [ROUTER_INTERFACE_NAME_1] \
     --region [REGION] \
 
-The command output should look similar to the following example:
+The command should look similar to the following example:
 
     gcloud compute routers add-bgp-peer router-a \
     --peer-name peer-a \
@@ -606,13 +610,6 @@ Verify the Cloud Router configuration
      --format='flattened(result.bgpPeerStatus[].name,
        result.bgpPeerStatus[].ipAddress, result.bgpPeerStatus[].peerIpAddress)'
     
-    result.bgpPeerStatus[0].ipAddress:     169.254.174.249
-    result.bgpPeerStatus[0].name:          peer-a
-    result.bgpPeerStatus[0].peerIpAddress: 169.254.174.250
-    result.bgpPeerStatus[1].ipAddress:     169.254.36.85
-    result.bgpPeerStatus[1].name:          peer-b
-    result.bgpPeerStatus[1].peerIpAddress: 169.254.36.86
-
     gcloud compute routers describe [ROUTER_NAME] \
     --region [REGION]
 
@@ -622,12 +619,12 @@ Configure firewall rules to allow inbound traffic from the on-premises
 network subnets. You must also configure the on-premises network firewall to
 allow inbound traffic from your VPC subnet prefixes.
 
-    gcloud compute firewall-rules create [VPN_RULE] \
+    gcloud compute firewall-rules create [VPN_RULE_NAME] \
     --network [NETWORK] \
     --allow tcp,udp,icmp \
     --source-ranges [IP_ON_PREM_SUBNET]
     
-The command output should look similar to the following example:    
+The command should look similar to the following example:    
     
      gcloud compute firewall-rules create network-a-to-on-prem \
     --network network-a \
@@ -760,20 +757,21 @@ Follow the procedure in this section to save the on-premises configuration.
 
 ### Testing the configuration
 
-It's important to test the VPN connection from both sides of a VPN tunnel. For either side, make sure that the subnet that a machine or virtual machine is located in is being forwarded through the VPN tunnel.
+It's important to test the VPN connection from both sides of a VPN tunnel. For either side, 
+make sure that the subnet that a machine or virtual machine is located in is being forwarded 
+through the VPN tunnel.
 
-First, create VMs on both sides of the tunnel. Make sure that you configure the
+1. Create VMs on both sides of the tunnel. Make sure that you configure the
 VMs on a subnet that will pass traffic through the VPN tunnel.
 
 -  Instructions for creating virtual machines in Compute Engine are located
 in the 
 [Getting Started Guide](https://cloud.google.com/compute/docs/quickstart).
--  Instructions for creating virtual machine for <vendor-name><product-name>
-platforms are located at <link here>.
+- Instructions for creating machines machines on-premises are located
+\<here>.
 
-After VMs have been deployed on both the GCP and <vendor-name><product-name>
-platforms, you can use an ICMP echo (ping) test to test network connectivity
-through the VPN tunnel.
+2. After you have deployed VMs on both the GCP and on-premises, you can use 
+an ICMP echo (ping) test to test network connectivity through the VPN tunnel.
 
 On the GCP side, use the following instructions to test the connection to a
 machine that's behind the on-premises gateway:
@@ -785,8 +783,8 @@ machine that's behind the on-premises gateway:
 command line.
 1. Ping a machine that's behind the on-premises gateway.
 
-<Insert any additional instructions for testing the VPN tunnels from the <vendor
-name><product-name> here. For example, below is an example of a successful ping
+<Insert any additional instructions for testing the VPN tunnels from the \<vendor
+name>\<product-name> here. For example, below is an example of a successful ping
 from a Cisco ASR router to GCP.>
 
     cisco-asr#ping 172.16.100.2 source 10.0.200.1
@@ -799,16 +797,16 @@ from a Cisco ASR router to GCP.>
 
 ## Troubleshooting IPsec on \<vendor-name>\<product-name>
 
-For troubleshooting information, see the <vendor-name><product-name>
+For troubleshooting information, see the \<vendor-name>\<product-name>
 troubleshooting guide <add link>.
 
 <Add details here about what kind of troubleshooting information can be found in
-the <vendor-name><product-name> guide.>
+the \<vendor-name>\<product-name> guide.>
 
 
 ## Reference documentation
 
-You can refer to the following <vendor-name><product-name> documentation and
+You can refer to the following \<vendor-name>\<product-name> documentation and
 Cloud VPN documentation for additional information about both products.
 
 ### GCP documentation
@@ -817,21 +815,20 @@ To learn more about GCP networking, see the following documents:
 
 -  [VPC Networks](https://cloud.google.com/vpc/docs)
 -  [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview)
--  [Creating Route-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-route-based-vpns)
--  [Creating Policy-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-policy-based-vpns)
 -  [Advanced Cloud VPN Configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
+-  [Check VPN status](#https://cloud.google.com/vpn/docs/how-to/checking-vpn-status)
 -  [Terraform template for HA VPN](https://www.terraform.io/docs/providers/google/r/compute_ha_vpn_gateway.html)
 -  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
 
 ### \<vendor-name>\<product-name> documentation
 
-For more product information on <vendor-name><product-name>, see the following
-<product-name> feature configuration guides and datasheets:
+For more product information on \<vendor-name>\<product-name>, refer to the following
+\<product-name> feature configuration guides and datasheets:
 
 -  <guide name>
 -  <guide name>
 
-For common <vendor-name><product-name> error messages and debug commands, see
+For common \<vendor-name>\<product-name> error messages and debug commands, see
 the following guides:
 
 -  <guide name>
