@@ -36,7 +36,7 @@ date_published: YYYY-mm-dd
 # Using HA VPN with \<vendor-name>\<product-name>
 
 Learn how to build site-to-site IPsec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
-on Google Cloud Platform (GCP) and \<vendor-name>\<product-name>.
+on Google Cloud Platform (GCP) and [VENDOR] [PRODUCT].
 
 [TODO: Change it with a real HA VPN guide when available]
 <To see a finished version of this guide, see the
