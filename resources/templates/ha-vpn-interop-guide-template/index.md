@@ -532,7 +532,7 @@ Create a Cloud Router BGP interface and BGP peer for each tunnel you previously
 configured on the HA VPN gateway interfaces.
 
 You can choose the automatic or manual configuration method of configuring BGP 
-interfaces and BGP peers, this example is using automatic method.
+interfaces and BGP peers, this example uses the automatic method.
 
 For the first VPN tunnel
 
@@ -634,7 +634,7 @@ The command should look similar to the following example:
 ## Configure the \<vendor-name>\<vendor product> side
 
 <This section includes sample tasks that describe how to configure the
-on-premises side of the VPN gateway configuration using <vendor-name>
+on-premises side of the VPN gateway configuration using \<vendor-name>
 equipment.>
 
 ### Creating the base network configuration
@@ -643,7 +643,7 @@ equipment.>
 in the configuration code snippet below. If not, list the steps needed.>
 
 Follow the procedure listed in the configuration code snippet below to create
-the base Layer 3 network configuration of <vendor-name>. Note the following:
+the base Layer 3 network configuration of \<vendor-name>. Note the following:
 
 -  At least one internal-facing network interface is required in order to
 connect to your on-premises network, and one external-facing interface is
@@ -664,7 +664,7 @@ apply.>
 
 ### GCP-compatible settings for IPSec and IKE
 
- [GCP support ciphers](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike).
+ [Ciphers supported by GCP](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike).
 
 #### Configure the IKE proposal and policy
 
@@ -676,7 +676,7 @@ are some examples of IKE algorithms to specify as part of the instructions.>
 -  **Diffie-Hellman group—**< list required group here>
 
 ```
-<insert configuration code snippet here>
+<Insert configuration code snippet here>
 ```
 
 #### Configure the IKEv2 keyring
@@ -684,7 +684,7 @@ are some examples of IKE algorithms to specify as part of the instructions.>
 < insert the instructions for creating the IKEv2 keyring here.>
 
 ```
-<insert configuration code snippet here>
+<Insert configuration code snippet here>
 ```
 
 #### Configure the IKEv2 profile
@@ -692,7 +692,7 @@ are some examples of IKE algorithms to specify as part of the instructions.>
 < insert the instructions for creating the IKEv2 profile here.>
 
 ```
-<insert configuration code snippet here>
+<Insert configuration code snippet here>
 ```
 
 #### Configure the IPsec security association (SA)
@@ -701,10 +701,10 @@ are some examples of IKE algorithms to specify as part of the instructions.>
 parameters to set.>
 
 -  **IPsec SA replay window-size**—Set this to 1024, which is the
-recommended value for <vendor-name><product-name>.
+recommended value for \<vendor-name>\<product-name>.
 
 ```
-<insert configuration code snippet here>
+<Insert configuration code snippet here>
 ```
 
 #### Configure the IPsec transform set
@@ -712,7 +712,7 @@ recommended value for <vendor-name><product-name>.
 < insert the instructions for creating the IPsec transform set here.>
 
 ```
-<insert configuration code snippet here>
+<Insert configuration code snippet here>
 ```
 
 #### Configure the IPsec static virtual tunnel interface (SVTI)
@@ -726,7 +726,7 @@ router as discussed in
 for Cloud VPN.
 
 ```
-<insert configuration code snippet here>
+<Insert configuration code snippet here>
 ```
 
 ### Configuring the dynamic routing protocol
@@ -734,15 +734,23 @@ for Cloud VPN.
 Follow the procedure in this section to configure dynamic routing for traffic
 through the VPN tunnel or tunnels using the BGP routing protocol.
 
-< insert the instructions for configuring dynamic routing here. Below are some
-examples of parameters to set.>
+```< insert the instructions for configuring dynamic routing here.>```
 
-BGP timers are adjusted to provide more rapid detection of outages.
-
-To advertise additional prefixes to GCP, < insert instructions here>.
+To advertise additional prefixes to GCP, <insert instructions here>.
 
 ```
-<insert configuration code snippet here>
+<Insert configuration code snippet here>
+```
+
+Additional recommended BGP configurations.
+
+- Configure keepalive timer = 20
+- Hold timer = 60s; 
+- BGP Graceful Restart time = 1s
+- Stalepath-time = 300s
+
+```
+<Insert configuration code snippet here>
 ```
 
 ### Saving the configuration
@@ -752,7 +760,7 @@ Follow the procedure in this section to save the on-premises configuration.
 < insert the instructions for saving the configuration here.>
 
 ```
-<insert configuration code snippet here>
+<Insert configuration code snippet here>
 ```
 
 ### Testing the configuration
