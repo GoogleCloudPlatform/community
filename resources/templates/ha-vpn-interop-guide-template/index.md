@@ -113,7 +113,8 @@ another cloud provider's network. GCP instructions are written from the
 point of view of the GCP VPC network, so "on-premises gateway" refers to the
 gateway that's connecting _to_ GCP.
 -  **External IP address** or **GCP peer address**—a single static IP address
-within a GCP project that exists at the edge of the GCP network.
+(created dynamically for HA VPN)within a GCP project that exists at the edge of 
+the GCP network. 
 -  **Dynamic routing**—GCP dynamic routing for VPN using the
 [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
 -  \<vendor-name>\<product-name> term
@@ -162,7 +163,7 @@ issuing commands.
 <This section is optional, because some VPN vendors can be open source or cloud
 providers that don't require licensing>
 
-Before you configure your <vendor-name><product-name> for use with HA VPN,
+Before you configure your \<vendor-name>\<product-name> for use with HA VPN,
 make sure that the following licenses are available:
 
 <Below are some examples. Replace with information that applies to the
