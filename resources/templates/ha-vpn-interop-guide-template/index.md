@@ -429,13 +429,13 @@ Complete the following command sequence to create the HA VPN gateway:
 Create an HA VPN gateway. When the gateway is created, two external IP 
 addresses are automatically allocated, one for each gateway interface.
 
-    gcloud compute vpn-gateways create [GW_NAME] \
+    gcloud beta compute vpn-gateways create [GW_NAME] \
     --network [NETWORK] \
     --region [REGION]
     
 The command output should look similar to the following example:
     
-    gcloud compute vpn-gateways create ha-vpn-gw-a \
+    gcloud beta compute vpn-gateways create ha-vpn-gw-a \
     --network network-a \
     --region us-central1
     
@@ -470,17 +470,17 @@ This interop guide covers option 2 only.
 
 #### Create an External VPN Gateway resource for a single peer VPN gateway with two separate interfaces
 
-    gcloud compute external-vpn-gateways create [PEER_GW_NAME] \
+    gcloud beta compute external-vpn-gateways create [PEER_GW_NAME] \
     --interfaces 0=[ON_PREM_GW_IP_0],1=[ON_PREM_GW_IP_1] \
 
 The command output should look similar to the following example:
  
-    gcloud compute external-vpn-gateways create peer-gw   \
+    gcloud beta compute external-vpn-gateways create peer-gw   \
      --interfaces 0=204.237.220.4,1=204.237.220.35 \
 
 ### Create two VPN tunnels, one for each interface on the HA VPN gateway
 
-    gcloud compute vpn-tunnels create [TUNNEL_NAME_IF0] \
+    gcloud beta compute vpn-tunnels create [TUNNEL_NAME_IF0] \
     --peer-external-gateway [PEER_GW_NAME] \
     --peer-external-gateway-interface [PEER_EXT_GW_IF0]  \
     --region [REGION] \
@@ -490,7 +490,7 @@ The command output should look similar to the following example:
     --vpn-gateway [GW_NAME] \
     --interface [INT_NUM_0]
     
-    gcloud compute vpn-tunnels create [TUNNEL_NAME_IF1] \
+    gcloud beta compute vpn-tunnels create [TUNNEL_NAME_IF1] \
     --peer-external-gateway [PEER_GW_NAME] \
     --peer-external-gateway-interface [PEER_EXT_GW_IF1] \
     --region [REGION] \
@@ -502,7 +502,7 @@ The command output should look similar to the following example:
     
 The command output should look similar to the following example:
  
-    gcloud compute vpn-tunnels create tunnel-a-to-on-prem-if-0 \
+    gcloud beta compute vpn-tunnels create tunnel-a-to-on-prem-if-0 \
     --peer-external-gateway peer-gw \
     --peer-external-gateway-interface 0  \
     --region us-central1 \
@@ -512,7 +512,7 @@ The command output should look similar to the following example:
     --vpn-gateway ha-vpn-gw-a \
     --interface 0
     
-    gcloud compute vpn-tunnels create tunnel-a-to-on-prem-if-1 \
+    gcloud beta compute vpn-tunnels create tunnel-a-to-on-prem-if-1 \
     --peer-external-gateway peer-gw \
     --peer-external-gateway-interface 1  \
     --region us-central1 \
