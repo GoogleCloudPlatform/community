@@ -13,7 +13,8 @@ date_published: YYYY-mm-dd
     + Fill in the meta information (title, description, author, date_published at the top
       of this file.
     + There are notes in the template for you, the author, that explain where you need to
-      make changes. These notes are enclosed in brackets (&lt; &gt;).
+      make changes. These notes are enclosed in brackets (&lt; &gt;). Make sure you remove
+      all text enclosed in (&lt; &gt;).
     + The template contains placeholders for things like the vendor and 
       product name. These are also enclosed in brackets—for example, 
       every place you see `<vendor-name>` and `<product-name>`, 
@@ -36,7 +37,7 @@ date_published: YYYY-mm-dd
 # Using HA VPN with \<vendor-name>\<product-name>
 
 Learn how to build site-to-site IPsec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
-on Google Cloud Platform (GCP) and [VENDOR] [PRODUCT].
+on Google Cloud Platform (GCP) and \<vendor-name>\<product-name>.
 
 [TODO: Change it with a real HA VPN guide when available]
 <To see a finished version of this guide, see the
@@ -80,7 +81,7 @@ template. Change or remove these items as needed.>
     - [GCP documentation](#gcp-documentation)
     - [\<vendor-name>\<product-name> documentation](#vendor-nameproduct-name-documentation)
 
-\<Put trademark statements here>: \<vendor terminology> and the \<vendor> logo are
+<Put trademark statements here>: \<vendor terminology> and the \<vendor> logo are
 trademarks of \<vendor company name> or its affiliates in the United States
 and/or other countries.
 
