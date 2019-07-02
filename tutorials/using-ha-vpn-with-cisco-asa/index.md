@@ -75,9 +75,9 @@ connection, which is usually a device in a physical data center or in
 another cloud provider's network. GCP instructions are written from the
 point of view of the GCP VPC network, so "on-premises gateway" refers to the
 gateway that's connecting _to_ GCP.
--  **External IP address** or **GCP peer address**—a single static IP address
-(created dynamically for HA VPN) within a GCP project that exists at the edge of 
-the GCP network. 
+-  **External IP address** or **GCP peer address**—external IP addresses used 
+by peer VPN devices to establish HA VPN with Google Cloud. External IP addresses
+are allocated automatically, one for each gateway interface within a GCP project.
 -  **Dynamic routing**—GCP dynamic routing for VPN using the
 [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
 Note that HA VPN only supports dynamic routing.
