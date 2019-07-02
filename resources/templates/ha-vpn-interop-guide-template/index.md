@@ -187,30 +187,31 @@ you need for these parameters.
 
 This section covers how to configure HA VPN.
 
-There are two ways to create HA VPN gateways on GCP: using the Google Cloud
-Platform Console and using the
-[gcloud command-line tool](https://cloud.google.com/sdk/).
-This section describes how to perform the tasks using `gcloud`. 
+There are two ways to create HA VPN gateways on GCP: using the GCP Console and using
+[`gcloud` commands](https://cloud.google.com/sdk/).
+
+This section describes how to perform the tasks using `gcloud` commands. 
 
 ### Initial tasks
 
 Complete the following procedures before configuring a GCP HA VPN gateway and tunnel.
 
-#### Create a custom VPC network
-
-If you haven't already, create a VPC network. These example instructions 
-create a [custom mode](https://cloud.google.com/vpc/docs/vpc#subnet-ranges) 
+These instructions create a [custom mode](https://cloud.google.com/vpc/docs/vpc#subnet-ranges) 
 VPC network with one subnet in one region and another subnet in another region.
 
-In the following commands, replace the options as noted below:
+#### Create a custom VPC network
 
-[NETWORK] assign a network name.
-[SUBNET_MODE] set as custom.
-[BGP_ROUTING_MODE] set as global.
+If you haven't already, create a VPC network with this command:
 
     gcloud compute networks create [NETWORK] \
     --subnet-mode [SUBNET_MODE]  \
     --bgp-routing-mode [BGP_ROUTING_MODE]
+
+Replace the placeholders as follows:
+
+- `[NETWORK]`: Assign a network name.
+- `[SUBNET_MODE]`: Set as `custom`.
+- `[BGP_ROUTING_MODE]`: Set as `global`.
 
 The command should look similar to the following example:
 
@@ -220,7 +221,7 @@ The command should look similar to the following example:
     
 #### Create subnets
 
-Create two subnets in as follows:
+Create two subnets:
 
     gcloud compute networks subnets create [SUBNET_NAME_1]  \
     --network [NETWORK] \
@@ -232,7 +233,7 @@ Create two subnets in as follows:
     --region [REGION_2] \
     --range [RANGE_2]
 
-The command should look similar to the following example:
+The commands should look similar to the following example:
 
     gcloud compute networks subnets create subnet-a-central  \
     --network network-a \
@@ -246,10 +247,7 @@ The command should look similar to the following example:
     
 ### Create the HA VPN gateway
 
-Complete the following command sequence to create the HA VPN gateway:
-
-Create an HA VPN gateway. When the gateway is created, two external IP 
-addresses are automatically allocated, one for each gateway interface.
+Create the HA VPN gateway:
 
     gcloud beta compute vpn-gateways create [GW_NAME] \
     --network [NETWORK] \
@@ -261,21 +259,25 @@ The command should look similar to the following example:
     --network network-a \
     --region us-central1
 
+When the gateway is created, two external IP addresses are automatically allocated,
+one for each gateway interface.
+
 ### Create Cloud Router
 
-Complete the following command sequence to create a Cloud Router. In the following 
-commands, replace the options as noted below:
-
-Replace [ROUTER_NAME] with the name of the new Cloud Router, which you must create 
-in the same GCP region as the Cloud HA VPN gateway.
-Replace [GOOGLE_ASN] with any private ASN (64512 - 65534, 4200000000 - 4294967294) 
-that you are not already using in the peer network. The Google ASN is used for all 
-BGP sessions on the same Cloud Router and it cannot be changed later.
+Create a Cloud Router:
 
     gcloud compute routers create [ROUTER_NAME] \
     --region [REGION] \
     --network [NETWORK] \
     --asn [GOOGLE_ASN]
+
+Replace the placeholders as follows:
+
+- `[ROUTER_NAME]`: The name of the new Cloud Router, which you must create in the same GCP
+  region as the Cloud HA VPN gateway.
+- `[GOOGLE_ASN]`: Any private ASN (64512-65534, 4200000000-4294967294) that you are not
+  already using in the peer network. The Google ASN is used for all BGP sessions on the
+  same Cloud Router, and it cannot be changed later.
 
 The command should look similar to the following example:
 
@@ -286,13 +288,17 @@ The command should look similar to the following example:
     
 ### Create an External VPN Gateway resource
 
-Create an external VPN gateway resource that provides information to GCP about your peer VPN gateway or gateways. Depending on the HA recommendations for your peer VPN gateway, you can create external VPN gateway resource for the following different types of on-premises VPN gateways:
+Create an external VPN gateway resource that provides information to GCP about your peer VPN gateway or gateways.
+Depending on the HA recommendations for your peer VPN gateway, you can create external VPN gateway resource for the 
+following different types of on-premises VPN gateways:
 
-- Two separate peer VPN gateway devices where the two devices are redundant with each other and each device has its own public IP address.
-- A single peer VPN gateway that uses two separate interfaces, each with its own public IP address. For this kind of peer gateway, you can create a single external VPN gateway with two interfaces.
+- Two separate peer VPN gateway devices where the two devices are redundant with each other and each device
+  has its own public IP address.
+- A single peer VPN gateway that uses two separate interfaces, each with its own public IP address. For this
+  kind of peer gateway, you can create a single external VPN gateway with two interfaces.
 - A single peer VPN gateway with a single public IP address.
 
-This interop guide covers option 2 only. 
+This interop guide only covers the second option (one peer, two addresses). 
 
 #### Create an External VPN Gateway resource for a single peer VPN gateway with two separate interfaces
 
@@ -349,91 +355,86 @@ The command should look similar to the following example:
     --interface 1
     
 ### Create Cloud Router interfaces and BGP peers
- 
+
 Create a Cloud Router BGP interface and BGP peer for each tunnel you previously
 configured on the HA VPN gateway interfaces.
 
 You can choose the automatic or manual configuration method of configuring BGP 
-interfaces and BGP peers, this example uses the automatic method.
+interfaces and BGP peers. This example uses the automatic method.
 
-For the first VPN tunnel
+1.  For the first VPN tunnel, add a new BGP interface to the Cloud Router:
 
-1.Add a new BGP interface to the Cloud Router.
-
-    gcloud compute routers add-interface [ROUTER_NAME] \
-    --interface-name [ROUTER_INTERFACE_NAME_0] \
-    --mask-length [MASK_LENGTH] \
-    --vpn-tunnel [TUNNEL_NAME_0] \
-    --region [REGION]
+        gcloud compute routers add-interface [ROUTER_NAME] \
+        --interface-name [ROUTER_INTERFACE_NAME_0] \
+        --mask-length [MASK_LENGTH] \
+        --vpn-tunnel [TUNNEL_NAME_0] \
+        --region [REGION]
     
-The command should look similar to the following example:
+    The command should look similar to the following example:
     
-    gcloud compute routers add-interface router-a \
-    --interface-name if-tunnel-a-to-on-prem-if-0 \
-    --mask-length 30 \
-    --vpn-tunnel tunnel-a-to-on-prem-if-0 \
-    --region us-central1  
+        gcloud compute routers add-interface router-a \
+        --interface-name if-tunnel-a-to-on-prem-if-0 \
+        --mask-length 30 \
+        --vpn-tunnel tunnel-a-to-on-prem-if-0 \
+        --region us-central1  
 
-2.Add a BGP peer to the interface for the first tunnel.
+1.  Add a BGP peer to the interface for the first tunnel:
 
-    gcloud compute routers add-bgp-peer [ROUTER_NAME] \
-    --peer-name [PEER_NAME] \
-    --peer-asn [PEER_ASN] \
-    --interface [ROUTER_INTERFACE_NAME_0] \
-    --region [REGION] \
+        gcloud compute routers add-bgp-peer [ROUTER_NAME] \
+        --peer-name [PEER_NAME] \
+        --peer-asn [PEER_ASN] \
+        --interface [ROUTER_INTERFACE_NAME_0] \
+        --region [REGION] \
     
- The command should look similar to the following example:   
+    The command should look similar to the following example:   
  
-    gcloud compute routers add-bgp-peer router-a \
-    --peer-name peer-b \
-    --peer-asn 65002 \
-    --interface if-tunnel-a-to-on-prem-if-0 \
-    --region us-central1 \
+        gcloud compute routers add-bgp-peer router-a \
+        --peer-name peer-b \
+        --peer-asn 65002 \
+        --interface if-tunnel-a-to-on-prem-if-0 \
+        --region us-central1 \
 
-For the second VPN tunnel
+1.  For the second VPN tunnel, add a new BGP interface to the Cloud Router:
 
-1.Add a new BGP interface to the Cloud Router.
+        gcloud compute routers add-interface [ROUTER_NAME] \
+        --interface-name [ROUTER_INTERFACE_NAME_1] \
+        --mask-length [MASK_LENGTH] \
+        --vpn-tunnel [TUNNEL_NAME_1] \
+        --region [REGION]
 
-    gcloud compute routers add-interface [ROUTER_NAME] \
-    --interface-name [ROUTER_INTERFACE_NAME_1] \
-    --mask-length [MASK_LENGTH] \
-    --vpn-tunnel [TUNNEL_NAME_1] \
-    --region [REGION]
-
-The command should look similar to the following example:
-
-    gcloud compute routers add-interface router-a \
-    --interface-name if-tunnel-a-to-on-prem-if-1 \
-    --mask-length 30 \
-    --vpn-tunnel tunnel-a-to-on-prem-if-1 \
-    --region us-central1
+    The command should look similar to the following example:
+  
+        gcloud compute routers add-interface router-a \
+        --interface-name if-tunnel-a-to-on-prem-if-1 \
+        --mask-length 30 \
+        --vpn-tunnel tunnel-a-to-on-prem-if-1 \
+        --region us-central1
     
-    
-2.Add a BGP peer to the interface for the second tunnel.
+1.  Add a BGP peer to the interface for the second tunnel:
 
-    gcloud compute routers add-bgp-peer [ROUTER_NAME] \
-    --peer-name [PEER_NAME] \
-    --peer-asn [PEER_ASN] \
-    --interface [ROUTER_INTERFACE_NAME_1] \
-    --region [REGION] \
+        gcloud compute routers add-bgp-peer [ROUTER_NAME] \
+        --peer-name [PEER_NAME] \
+        --peer-asn [PEER_ASN] \
+        --interface [ROUTER_INTERFACE_NAME_1] \
+        --region [REGION] \
 
-The command should look similar to the following example:
+    The command should look similar to the following example:
 
-    gcloud compute routers add-bgp-peer router-a \
-    --peer-name peer-a \
-    --peer-asn 65002 \
-    --interface if-tunnel-a-to-on-prem-if-1 \
-    --region us-central1 \
+        gcloud compute routers add-bgp-peer router-a \
+        --peer-name peer-a \
+        --peer-asn 65002 \
+        --interface if-tunnel-a-to-on-prem-if-1 \
+        --region us-central1 \
  
-Verify the Cloud Router configuration
+1.  Verify the Cloud Router configuration
  
-    gcloud compute routers get-status router-a \
-     --region us-central1 \
-     --format='flattened(result.bgpPeerStatus[].name,
-       result.bgpPeerStatus[].ipAddress, result.bgpPeerStatus[].peerIpAddress)'
+        gcloud compute routers get-status router-a \
+         --region us-central1 \
+         --format='flattened(result.bgpPeerStatus[].name,
+           result.bgpPeerStatus[].ipAddress, result.bgpPeerStatus[].peerIpAddress)'
     
-    gcloud compute routers describe [ROUTER_NAME] \
-    --region [REGION]
+        gcloud compute routers describe [ROUTER_NAME] \
+        --region [REGION]
 
 ### Configure firewall rules
 
