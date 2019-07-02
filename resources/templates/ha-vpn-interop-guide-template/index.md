@@ -36,7 +36,7 @@ date_published: YYYY-mm-dd
 
 # Using HA VPN with \<vendor-name>\<product-name>
 
-Author: \<author name and email address\>
+Author: \<author name and email address>
 
 Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
 on Google Cloud Platform (GCP) and \<vendor-name>\<product-name>.
@@ -45,7 +45,7 @@ on Google Cloud Platform (GCP) and \<vendor-name>\<product-name>.
 <To see a finished version of this guide, see the
 [Using Cloud VPN with Cisco ASR](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#top_of_page).>
 
-\<Put trademark statements here\>: \<vendor terminology> and the \<vendor> logo are
+\<Put trademark statements here>: \<vendor terminology> and the \<vendor> logo are
 trademarks of \<vendor company name> or its affiliates in the United States
 and/or other countries.
 
@@ -67,7 +67,7 @@ For more information about HA or Classic VPN, see the
 Below are definitions of terms used throughout this guide.
 
 \<This is some sample terminology. Add any terminology to this section that needs
-explanation.\>
+explanation.>
 
 -  **GCP VPC network**: A single virtual network within a single GCP project.
 -  **On-premises gateway**: The VPN device on the non-GCP side of the
@@ -95,9 +95,9 @@ This interop guide is based on the [1-peer-2-address](https://cloud.google.com/v
 
 The \<vendor-name>\<product-name> equipment used in this guide is as follows:
 
--  **Vendor**: \<vendor-name\>
--  **Model**: \<model name\>
--  **Software release**: \<full software release name\>
+-  **Vendor**: \<vendor-name>
+-  **Model**: \<model name>
+-  **Software release**: \<full software release name>
 
 ## Before you begin
 
@@ -128,13 +128,13 @@ The \<vendor-name>\<product-name> equipment used in this guide is as follows:
 ### Licenses and modules
 
 \<This section is optional, because some VPN vendors can be open source or cloud
-providers that don't require such licensing\>
+providers that don't require such licensing>
 
 Before you configure your \<vendor-name>\<product-name> for use with HA VPN,
 make sure that the following licenses are available:
 
 \<Below are some examples. Replace with information that applies to the
-product>\
+product>
 
 -  Advanced Enterprise Services (SLASR1-AES) or Advanced IP Services
 Technology Package License (SLASR1-AIS).
@@ -155,177 +155,33 @@ lists the parameters and gives examples of the values. The section that follows
 the table describes how to set Linux environment variables to hold the values
 you need for these parameters.
 
-<table>
-<thead>
-<tr>
-<th><strong>Parameter description</strong></th>
-<th><strong>Placeholder</strong></th>
-<th><strong>Example value</strong></th>
-</tr>
-</thead>
-<tbody>
-
-<tr>
-<td>Vendor name</td>
-<td><code>[VENDOR_NAME]<code></td>
-<td>(Your product's vendor name. This value should have no spaces or
-punctuation in it other than underscores or hyphens, because it will be
-used as part of the names for GCP entities.)</td>
-</tr>
-
-<tr>
-<td>GCP project name </td>
-<td><code>[PROJECT_NAME]<code></td>
-<td><code>vpn-guide<code></td>
-</tr>
-
-<tr>
-<td>Shared secret</td>
-<td><code>[SHARED_SECRET]<code></td>
-<td>See <a
-href="https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key">Generating
-a Strong Pre-shared Key</a>.</td>
-</tr>
-
-<tr>
-<td>VPC network name</td>
-<td><code>[NETWORK]<code></td>
-<td><code>network-a<code></td>
-</tr>
-
-<tr>
-<td>Subnet mode</td>
-<td><code>[SUBNET_MODE]<code></td>
-<td><code>custom<code></td>
-</tr>
-
-<tr>
-<td>VPN BGP routing mode</td>
-<td><code>[BGP_ROUTING_MODE]<code></td>
-<td><code>global</td>
-</tr>
-
-<tr>
-<td>Subnet on the GCP VPC network (for example, <code>vpn-vendor-test-network</code>)</td>
-<td><code>[SUBNET_NAME_1]<code></td>
-<td><code>subnet-a-central<code></td>
-</tr>
-    
-<tr>
-<td>Subnet on the GCP VPC network (for example, <code>vpn-vendor-test-network</code>)</td>
-<td><code>[SUBNET_NAME_2]<code></td>
-<td><code>subnet-a-west<code></td>
-</tr>
-    
-<tr>
-<td>GCP region. Can be any region, but it should be geographically close to the
-on-premises gateway.</td>
-<td><code>[REGION1]<code></td>
-<td><code>us-central1<code></td>
-</tr>
-    
-<tr>
-<td>GCP region. Can be any region, but it should be geographically close to the
-on-premises gateway.</td>
-<td><code>[REGION2]<code></td>
-<td><code>us-west1<code></td>
-</tr>
-
-<tr>
-<td>IP address range for the GCP VPC subnet (<code>vpn-subnet-1</code>)</td>
-<td><code>[RANGE_1]<code></td>
-<td><code>10.0.1.0/24<code></td>
-</tr>
-    
-<tr>
-<td>IP address range for the GCP VPC subnet (<code>vpn-subnet-2</code>)</td>
-<td><code>[RANGE_2]<code></td>
-<td><code>10.0.2.0/24<code></td>
-</tr>
-
-<tr>
-<td>IP address range for the on-premises subnet. You will use this range when
-creating rules for inbound traffic to GCP.</td>
-<td><code>[IP_ON_PREM_SUBNET]<code></td>
-<td><code>192.168.1.0/24<code></td>
-</tr>
-
-<tr>
-<td>External static IP address for the first internet interface of <vendor
-name><product-name></td>
-<td><code>[ON_PREM_GW_IP_0]</code> </td>
-<td>For example, <code>199.203.248.181</code></td>
-</tr>
-
-<tr>
-<td>External static IP address for the second internet interface of <vendor
-name><product-name></td>
-<td><code>[ON_PREM_GW_IP_1]</code> </td>
-<td>For example, <code>199.203.248.182</code></td>
-</tr>
-
-<tr>
-<td>HA VPN Gateway</td>
-<td><code>[GW_NAME]<code></td>
-<td><code>ha-vpn-gw-a<code></td>
-</tr>
-    
-<tr>
-<td>Cloud Router name (for dynamic routing)</td>
-<td><code>[ROUTER_NAME]<code></td>
-<td><code>router-a<code></td>
-</tr>
-
-<tr>
-<td>Google ASN</td>
-<td><code>[GOOGLE_ASN]<code></td>
-<td><code>65001<code></td>
-</tr>
-
-<tr>
-<td>Peer ASN</td>
-<td><code>[PEER_ASN]<code></td>
-<td><code>65002<code></td>
-</tr>
-
-<tr>
-<td>External VPN Gateway resource</td>
-<td><code>[PEER_GW_NAME]<code></td>
-<td><code>peer-gw<code></td>
-</tr>
-
-<tr>
-<td>First VPN Tunnel</td>
-<td><code>[TUNNEL_NAME_IF0]<code></td>
-<td><code>tunnel-a-to-on-prem-if-0<code></td>
-</tr>
-
-<tr>
-<td>Second VPN Tunnel</td>
-<td><code>[TUNNEL_NAME_IF1]<code></td>
-<td><code>tunnel-a-to-on-prem-if-1<code></td>
-</tr>
-
-<tr>
-<td>First BGP peer interface</td>
-<td><code>[ROUTER_INTERFACE_NAME_0]<code></td>
-<td><code>bgp-peer-tunnel-a-to-on-prem-if-0<code></td>
-</tr>
-
-<tr>
-<td>Second BGP peer interface</td>
-<td><code>[ROUTER_INTERFACE_NAME_1]<code></td>
-<td><code>bgp-peer-tunnel-a-to-on-prem-if-1<code></td>
-</tr>
-    
-<tr>
-<td>BGP interface netmask length</td>
-<td><code>[MASK_LENGTH]<code></td>
-<td><code>/30<code></td>
-</tr>
-
-</tbody>
-</table>
+| Parameter description | Placeholder          | Example value                                          |
+|-----------------------|----------------------|--------------------------------------------------------|
+| Vendor name           | `[VENDOR_NAME]`      | Your product's vendor name. This value should have no spaces or punctuation in it other than underscores or hyphens, because it will be used as part of the names for GCP entities. |
+| GCP project name      | `[PROJECT_NAME]`     | `vpn-guide`                                            |
+| Shared secret         | `[SHARED_SECRET]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
+| VPC network name      | `[NETWORK]`          | `network-a`                                            |
+| Subnet mode           | `[SUBNET_MODE]`      | `custom`                                               |
+| VPN BGP routing mode  | `[BGP_ROUTING_MODE]` | `global`                                               |
+| Subnet on the GCP VPC network (for example, `vpn-vendor-test-network`) | `[SUBNET_NAME_1]` | `subnet-a-central` |
+| Subnet on the GCP VPC network (for example, `vpn-vendor-test-network`) | `[SUBNET_NAME_2]` | `subnet-a-west` |
+| GCP region. Can be any region, but should be geographically close to on-premises gateway. | `[REGION1]` | `us-central1` |
+| GCP region. Can be any region, but should be geographically close to on-premises gateway. | `[REGION2]` | `us-west1` |
+| IP address range for the GCP VPC subnet (`vpn-subnet-1`) | `[RANGE_1]` | `10.0.1.0/24` |
+| IP address range for the GCP VPC subnet (`vpn-subnet-2`) | `[RANGE_2]` | `10.0.2.0/24` |
+| IP address range for the on-premises subnet. You will use this range when creating rules for inbound traffic to GCP. | `[IP_ON_PREM_SUBNET]` | `192.168.1.0/24` |
+| External static IP address for the first internet interface of \<vendor-name>\<product-name>  | `[ON_PREM_GW_IP_0]` | `199.203.248.181` |
+| External static IP address for the second internet interface of \<vendor-name>\<product-name> | `[ON_PREM_GW_IP_1]` | `199.203.248.182` |
+| HA VPN gateway                          | `[GW_NAME]`                 | `ha-vpn-gw-a`                       |
+| Cloud Router name (for dynamic routing) | `[ROUTER_NAME]`             | `router-a`                          |
+| Google ASN                              | `[GOOGLE_ASN]`              | `65001`                             |
+| Peer ASN                                | `[PEER_ASN]`                | `65002`                             |
+| External VPN gateway resource           | `[PEER_GW_NAME]`            | `peer-gw`                           |
+| First VPN tunnel                        | `[TUNNEL_NAME_IF0]`         | `tunnel-a-to-on-prem-if-0`          |
+| Second VPN tunnel                       | `[TUNNEL_NAME_IF1]`         | `tunnel-a-to-on-prem-if-1`          |
+| First BGP peer interface                | `[ROUTER_INTERFACE_NAME_0]` | `bgp-peer-tunnel-a-to-on-prem-if-0` |
+| Second BGP peer interface               | `[ROUTER_INTERFACE_NAME_1]` | `bgp-peer-tunnel-a-to-on-prem-if-1` |
+| BGP interface netmask length            | `[MASK_LENGTH]`             | `/30`                               |
 
 ## Configure the GCP side
 
