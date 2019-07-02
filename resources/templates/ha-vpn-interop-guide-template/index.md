@@ -1,6 +1,6 @@
 ---
 title: Google Cloud HA VPN Interop Guide for [PRODUCT]
-description: Describes how to build site-to-site IPsec VPNs between HA VPN on Google Cloud Platform (GCP) and [VENDOR] [PRODUCT]
+description: Describes how to build site-to-site IPsec VPNs between HA VPN on Google Cloud Platform (GCP) and [VENDOR] [PRODUCT].
 author: [AUTHOR]
 tags: HA VPN, Cloud VPN, interop, [VENDOR], [PRODUCT]
 date_published: YYYY-mm-dd
