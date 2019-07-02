@@ -10,16 +10,16 @@ date_published: YYYY-mm-dd
 
 1. Make a copy of this template.
 1. On your local computer, update and add information as indicated:
-    + Fill in the metadata (title, description, author, date_published at the top
+    + Fill in the metadata (title, description, author, date_published) at the top
       of this file.
     + There are notes in the template for you, the author, that explain where you need to
-      make changes. These notes are enclosed in brackets (&lt; &gt;). Make sure you remove
-      all text enclosed in (&lt; &gt;).
+      make changes. These notes are enclosed in angle brackets (&lt; &gt;). Make sure you remove
+      all text enclosed in angle brackets (&lt; &gt;).
     + The template contains placeholders for things like the vendor and 
       product name. These are also enclosed in brackets—for example, 
       every place you see `<vendor-name>` and `<product-name>`, 
       substitute approriate names.
-    + After you've made appropriate updates, _remove_ bracketed content.
+    + After you've made appropriate updates, _remove_ content in angle brackets.
     + Remove these instructions.
     + Because this is a template for a variety of setups, it might contain
       content that isn't relevant to your scenario. Remove (or update)
@@ -45,7 +45,7 @@ on Google Cloud Platform (GCP) and \<vendor-name>\<product-name>.
 <To see a finished version of this guide, see the
 [Using Cloud VPN with Cisco ASR](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#top_of_page).>
 
-\<Put trademark statements here>: \<vendor terminology> and the \<vendor> logo are
+\<Put trademark statements here:> \<vendor terminology> and the \<vendor> logo are
 trademarks of \<vendor company name> or its affiliates in the United States
 and/or other countries.
 
@@ -128,13 +128,13 @@ The \<vendor-name>\<product-name> equipment used in this guide is as follows:
 ### Licenses and modules
 
 \<This section is optional, because some VPN vendors can be open source or cloud
-providers that don't require such licensing>
+providers that don't require such licensing.>
 
 Before you configure your \<vendor-name>\<product-name> for use with HA VPN,
 make sure that the following licenses are available:
 
 \<Below are some examples. Replace with information that applies to the
-product>
+product.>
 
 -  Advanced Enterprise Services (SLASR1-AES) or Advanced IP Services
 Technology Package License (SLASR1-AIS).
