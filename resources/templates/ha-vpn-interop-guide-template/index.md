@@ -9,8 +9,8 @@ date_published: YYYY-mm-dd
 **BEGIN: HOW TO USE THIS TEMPLATE**
 
 1. Make a copy of this template.
-1. On your local computer, update and add information as indicated. Note:
-    + Fill in the meta information (title, description, author, date_published at the top
+1. On your local computer, update and add information as indicated:
+    + Fill in the metadata (title, description, author, date_published at the top
       of this file.
     + There are notes in the template for you, the author, that explain where you need to
       make changes. These notes are enclosed in brackets (&lt; &gt;). Make sure you remove
@@ -25,71 +25,33 @@ date_published: YYYY-mm-dd
       content that isn't relevant to your scenario. Remove (or update)
       any sections that don't apply to you.
 1. Fork the [GoogleCloudPlatform/community/](https://github.com/GoogleCloudPlatform/community/) repo.
-4. In your fork, add a new folder named `/tutorials/[YOUR_TUTORIAL]`. For the
+1. In your fork, add a new folder named `/tutorials/[YOUR_TUTORIAL]`. For the
    folder name, use hyphens to separate words. We recommend that you 
    include a product name in the folder name, such as `using-cloud-vpn-with-cisco-asr`.
-5. Copy the updated file to the `index.md` file of the new folder.
-6. Create a branch.
-7. Issue a PR to get your new content into the community site.
+1. Copy the updated file to the `index.md` file of the new folder.
+1. Create a branch.
+1. Issue a PR to get your new content into the community site.
    
 <**END: HOW TO USE THIS TEMPLATE**>
 
 # Using HA VPN with \<vendor-name>\<product-name>
 
-Learn how to build site-to-site IPsec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
+Author: \<author name and email address\>
+
+Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
 on Google Cloud Platform (GCP) and \<vendor-name>\<product-name>.
 
 [TODO: Change it with a real HA VPN guide when available]
 <To see a finished version of this guide, see the
 [Using Cloud VPN with Cisco ASR](https://cloud.google.com/community/tutorials/using-cloud-vpn-with-cisco-asr#top_of_page).>
 
-<**NOTE**: Options or instructions are shown in angle brackets throughout this
-template. Change or remove these items as needed.>
-
-- [Introduction](#introduction)
-- [Terminology](#terminology)
-- [Topology](#topology)
-- [Product environment](#product-environment)
-- [Before you begin](#before-you-begin)
-    - [Licenses and modules](#licenses-and-modules)
-    - [Configuration parameters and values](#configuration-parameters-and-values)
-- [Configure the GCP side](#configure-the-gcp-side)
-    - [Initial tasks](#initial-tasks)
-        - [Create a custom VPC network](#create-a-custom-vpc-network)
-        - [Create subnets](#create-subnets)
-    - [Create the HA VPN gateway](#create-the-ha-vpn-gateway)
-    - [Create Cloud Router](#create-cloud-router)
-    - [Create an External VPN Gateway resource](#create-an-external-vpn-gateway-resource)
-        - [Create an External VPN Gateway resource for a single peer VPN gateway with two separate interfaces](#create-an-external-vpn-gateway-resource-for-a-single-peer-vpn-gateway-with-two-separate-interfaces)
-    - [Create two VPN tunnels, one for each interface on the HA VPN gateway](#create-two-vpn-tunnels-one-for-each-interface-on-the-ha-vpn-gateway)
-    - [Create Cloud Router interfaces and BGP peers](#create-cloud-router-interfaces-and-bgp-peers)
-- [Configure the \<vendor-name>\<vendor product> side](#configure-the-vendor-namevendor-product-side)
-    - [Creating the base network configuration](#creating-the-base-network-configuration)
-    - [Creating the base VPN gateway configuration](#creating-the-base-vpn-gateway-configuration)
-    - [GCP-compatible settings for IPSec and IKE](#gcp-compatible-settings-for-ipsec-and-ike)
-        - [Configure the IKE proposal and policy](#configure-the-ike-proposal-and-policy)
-        - [Configure the IKEv2 keyring](#configure-the-ikev2-keyring)
-        - [Configure the IKEv2 profile](#configure-the-ikev2-profile)
-        - [Configure the IPsec security association (SA)](#configure-the-ipsec-security-association-sa)
-        - [Configure the IPsec transform set](#configure-the-ipsec-transform-set)
-        - [Configure the IPsec static virtual tunnel interface (SVTI)](#configure-the-ipsec-static-virtual-tunnel-interface-svti)
-    - [Configuring the dynamic routing protocol](#configuring-the-dynamic-routing-protocol)
-    - [Saving the configuration](#saving-the-configuration)
-    - [Testing the configuration](#testing-the-configuration)
-- [Troubleshooting IPsec on \<vendor-name>\<product-name>](#troubleshooting-ipsec-on-vendor-nameproduct-name)
-- [Reference documentation](#reference-documentation)
-    - [GCP documentation](#gcp-documentation)
-    - [\<vendor-name>\<product-name> documentation](#vendor-nameproduct-name-documentation)
-
-<Put trademark statements here>: \<vendor terminology> and the \<vendor> logo are
+\<Put trademark statements here\>: \<vendor terminology> and the \<vendor> logo are
 trademarks of \<vendor company name> or its affiliates in the United States
 and/or other countries.
 
 _Disclaimer: This interoperability guide is intended to be informational in
 nature and shows examples only. Customers should verify this information by
 testing it._
-
-Author: <author name and email address>
 
 ## Introduction
 
@@ -98,89 +60,91 @@ This guide walks you through the process of configuring
 [HA VPN service](https://cloud.google.com/vpn/docs) on GCP.
 
 For more information about HA or Classic VPN, see the
-[Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).
+[Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
 
 ## Terminology
 
 Below are definitions of terms used throughout this guide.
 
-<This is some sample terminology. Add any terminology to this section that needs
-explanation.>
+\<This is some sample terminology. Add any terminology to this section that needs
+explanation.\>
 
--  **GCP VPC network**—A single virtual network within a single GCP project.
--  **On-premises gateway**—The VPN device on the non-GCP side of the
+-  **GCP VPC network**: A single virtual network within a single GCP project.
+-  **On-premises gateway**: The VPN device on the non-GCP side of the
 connection, which is usually a device in a physical data center or in
 another cloud provider's network. GCP instructions are written from the
-point of view of the GCP VPC network, so "on-premises gateway" refers to the
+point of view of the GCP VPC network, so *on-premises gateway* refers to the
 gateway that's connecting _to_ GCP.
--  **External IP address** or **GCP peer address**—external IP 
-addresses used by peer VPN devices to establish HA VPN with Google Cloud. 
+-  **External IP address** or **GCP peer address**: External IP 
+addresses used by peer VPN devices to establish HA VPN with GCP. 
 External IP addresses are allocated automatically, one for each gateway interface within a 
 GCP project.
--  **Dynamic routing**—GCP dynamic routing for VPN using the
+-  **Dynamic routing**: GCP dynamic routing for VPN using the
 [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
 Note that HA VPN only supports dynamic routing.
--  \<vendor-name>\<product-name> term
--  \<vendor-name>\<product-name> term
+-  **\<vendor-name>\<product-name>**: Definition.
+-  **\<vendor-name>\<product-name>**: Definition.
 
 ## Topology
 
-HA VPN supports [multiple topologies](https://cloud.google.com/vpn/docs/concepts/topologies):
+HA VPN supports [multiple topologies](https://cloud.google.com/vpn/docs/concepts/topologies).
 
-This interop guide is based on [1-peer-2-address](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses) topology.
+This interop guide is based on the [1-peer-2-address](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses) topology.
 
 ## Product environment
 
 The \<vendor-name>\<product-name> equipment used in this guide is as follows:
 
--  Vendor — <vendor-name>
--  Model — <model name>
--  Software release — <full software release name>
+-  **Vendor**: \<vendor-name\>
+-  **Model**: \<model name\>
+-  **Software release**: \<full software release name\>
 
 ## Before you begin
 
-1. Review information about how [dynamic routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#dynamic-routing) works in Google Cloud Platform.
+1.  Review information about how
+    [dynamic routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#dynamic-routing)
+    works in Google Cloud Platform.
 
-1. Make sure your peer VPN gateway supports BGP.
+1.  Make sure your peer VPN gateway supports BGP.
 
-1. Select or [create](https://console.cloud.google.com/cloud-resource-manager) 
-a Google Cloud Platform project.
+1.  Select or [create](https://console.cloud.google.com/cloud-resource-manager) a GCP project.
 
-1. Make sure that [billing](https://cloud.google.com/billing/docs/how-to/modify-project) 
-is enabled for your Google Cloud Platform project.
+1.  Make sure that [billing](https://cloud.google.com/billing/docs/how-to/modify-project) is
+    enabled for your GCP project.
 
-1. [Install and initialize the Cloud SDK](https://cloud.google.com/sdk/docs/).
+1.  [Install and initialize the Cloud SDK](https://cloud.google.com/sdk/docs/).
 
-1. If you are using gcloud commands, set your project ID with the following command. 
-The gcloud instructions on this page assume that you have set your project ID before 
-issuing commands.
+1.  If you are using `gcloud` commands, set your project ID with the following command:
 
-   `gcloud config set project [PROJECT_ID]`
+        gcloud config set project [PROJECT_ID]
+        
+    The `gcloud` instructions on this page assume that you have set your project ID before
+    issuing commands.
     
-1. You can also view a project ID that has already been set:
+1.  You can also view a project ID that has already been set:
 
-    `gcloud config list --format='text(core.project)'`
+        gcloud config list --format='text(core.project)'
 
 ### Licenses and modules
 
-<This section is optional, because some VPN vendors can be open source or cloud
-providers that don't require licensing>
+\<This section is optional, because some VPN vendors can be open source or cloud
+providers that don't require such licensing\>
 
 Before you configure your \<vendor-name>\<product-name> for use with HA VPN,
 make sure that the following licenses are available:
 
-<Below are some examples. Replace with information that applies to the
-product>
+\<Below are some examples. Replace with information that applies to the
+product>\
 
 -  Advanced Enterprise Services (SLASR1-AES) or Advanced IP Services
 Technology Package License (SLASR1-AIS).
--  IPsec RTU license (FLASR1-IPsec-RTU).
--  Encryption HW module (ASR1002HX-IPsecHW(=) and ASR1001HX-IPsecW(=)) and
+-  IPSec RTU license (FLASR1-IPSEC-RTU).
+-  Encryption HW module (ASR1002HX-IPSECHW(=) and ASR1001HX-IPSECW(=)) and
 Tiered Crypto throughput license, which applies to ASR1002-HX and ASR1001-HX
 chassis only.
 
-<For detailed \<vendor-name>\<product-name> license information, see the
-\<Vendor-Guide-link> documentation.>
+For detailed \<vendor-name>\<product-name> license information, see the
+\<Vendor-Guide-link> documentation.
 
 ### Configuration parameters and values
 
