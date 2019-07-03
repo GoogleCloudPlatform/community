@@ -483,7 +483,7 @@ configuring IPSec and IKE on the vendor side. Fill in the sections that are
 relevant to the current configuration, and remove any sections that don't
 apply.>
 
-### GCP-compatible settings for IPSec and IKE
+#### GCP-compatible settings for IPSec and IKE
 
 [Ciphers supported by GCP](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike)
 
