@@ -27,23 +27,18 @@ This tutorial demonstrates how to deploy [Mosquitto](https://mosquitto.org/) MQT
 
 ### Prerequisite: Kubernetes Cluster
 
-It is assumed you have have running Kubernetes cluster, with recent `kubectl` command (>=1.14) with [kustomize integration](https://kubernetes.io/blog/2019/03/25/kubernetes-1-14-release-announcement/).
 
-This can be via [Minikube](https://kubernetes.io/docs/tutorials/hello-minikube/), [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/), etc.
+
+It is assumed you have running Kubernetes cluster. This can be via [Minikube](https://kubernetes.io/docs/tutorials/hello-minikube/), [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/), etc. For the tutorial, you can also use Kubernetes Engine clusters, however the context of this solution is based on non-cloud clusters in Edge environments.
+
+You will also need a recent `kubectl` command (>=1.14) with [kustomize integration](https://kubernetes.io/blog/2019/03/25/kubernetes-1-14-release-announcement/). If not, install it from [here](https://kubernetes.io/docs/tasks/tools/install-kubectl/). Ensure that Kubectl is configured to talk to your cluster.
 
 ### Setting up the cloud environment
 
 1.  Create a project in the [GCP Console][console].
 1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 1.  Use [Cloud Shell][shell] or install the [Google Cloud SDK][sdk].
-1.  Enable APIs:
-	
-		gcloud services enable \
-		cloudiot.googleapis.com \
-		container.googleapis.com \
-		containerregistry.googleapis.com \
-		pubsub.googleapis.com \
-		cloudbuild.googleapis.com
+
 
 In this tutorial, you may open multiple shell tabs or sessions. You should set these environment variables in each one:
 
@@ -60,7 +55,16 @@ In this tutorial, you may open multiple shell tabs or sessions. You should set t
 [shell]: https://cloud.google.com/shell/
 [sdk]: https://cloud.google.com/sdk/
 
-
+Enable APIs:
+	
+	gcloud services enable \
+	cloudiot.googleapis.com \
+	container.googleapis.com \
+	containerregistry.googleapis.com \
+	pubsub.googleapis.com \
+	cloudbuild.googleapis.com
+		
+	
 ## Build the bridge manager container
 
 For Mosquitto you will use the default published container from Docker. But you need another container in the deployment which manages the credentials that allow the bridge to connect to Google Cloud.
@@ -102,7 +106,7 @@ Get the specific address for the bridge manager container:
 
 	gcloud container images describe gcr.io/$PROJECT/refresher --format="value(image_summary.fully_qualified_digest)"
 
-add this as the image address in repo file: `bridge/project-image.yaml`.
+In the repo file `bridge/project-image.yaml`, add the output from the previous command as `image` .
 
 If running the Kubernetes cluster outside the Cloud Project, make the images public:
 
@@ -217,7 +221,7 @@ In client "a" publish to the bridged event topic:
 
 	pub -h mqtt-bridge -m hello -t gcp/events -d
 	
-Verify the bridged message was published to cloud in another terminal:
+Verify the bridged message was published to cloud in another terminal (reminder, set the env variables in this terminal per the initial setup):
 
 	gcloud pubsub subscriptions pull debug --auto-ack --limit=100 
 	
