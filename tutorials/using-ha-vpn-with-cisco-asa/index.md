@@ -430,9 +430,7 @@ the base Layer 3 network configuration of Cisco.
 ### Creating the base VPN gateway configuration
 Follow the procedures in this section to create the base VPN configuration.
 
-#### GCP-compatible settings for IPSec and IKE
-
-[Ciphers supported by GCP](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike)
+Make sure to configure [Ciphers supported by GCP](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike) only.
 
 #### Configure the IKEv2 policy
 
