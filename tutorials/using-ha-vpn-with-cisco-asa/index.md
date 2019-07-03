@@ -71,6 +71,8 @@ The Cisco ASA 5506H equipment used in this guide is as follows:
 
 1.  Make sure your peer VPN gateway supports BGP.
 
+1.  For IKEv2 route-based VPN using VTI on ASA: make sure code version is 9.8(1) or later. 
+
 1.  Select or [create](https://console.cloud.google.com/cloud-resource-manager) a GCP project.
 
 1.  Make sure that [billing](https://cloud.google.com/billing/docs/how-to/modify-project) is
