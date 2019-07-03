@@ -479,7 +479,7 @@ Follow the procedures in this section to create the base VPN configuration.
 
     interface Tunnel10
      nameif gcp-if-0
-     ip address 169.254.0.2 255.255.255.252 
+     ip address 169.254.163.218 255.255.255.252 
      tunnel source interface outside-0
      tunnel destination 35.242.106.213
      tunnel mode ipsec ipv4
@@ -487,7 +487,7 @@ Follow the procedures in this section to create the base VPN configuration.
     !
     interface Tunnel20
      nameif gcp-if-1
-     ip address 169.254.0.6 255.255.255.252 
+     ip address 169.254.92.230 255.255.255.252 
      tunnel source interface outside-1
      tunnel destination 35.220.86.219
      tunnel mode ipsec ipv4
