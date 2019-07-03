@@ -1,0 +1,5 @@
+resources:
+- k8s-namespace.yaml
+- k8s-service-account.yaml
+- k8s-client-pod.yaml
+namespace: id-namespace
