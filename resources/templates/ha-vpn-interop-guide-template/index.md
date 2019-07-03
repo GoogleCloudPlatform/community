@@ -151,9 +151,7 @@ For detailed \<vendor-name>\<product-name> license information, see the
 The `gcloud` commands in this guide include parameters whose value you must
 provide. For example, a command might include a GCP project name or a region or
 other parameters whose values are unique to your context. The following table
-lists the parameters and gives examples of the values. The section that follows
-the table describes how to set Linux environment variables to hold the values
-you need for these parameters.
+lists the parameters and gives examples of the values used in this guide. 
 
 | Parameter description | Placeholder          | Example value                                          |
 |-----------------------|----------------------|--------------------------------------------------------|
