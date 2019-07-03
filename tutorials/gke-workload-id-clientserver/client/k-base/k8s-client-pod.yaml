@@ -6,9 +6,9 @@ spec:
   containers:
   - image: gcr.io/ptone-kf/auth-client
     name: auth-client
-    env:
-    - name: SERVICE_ENDPOINT
-      value: "https://auth-server-2tp6v3vvsq-uc.a.run.app"
+    envFrom:
+      - configMapRef:
+          name: client-config
     volumeMounts:
     - mountPath: /var/run/secrets/tokens
       name: client-token

@@ -35,7 +35,6 @@ func NewAuth(opts AuthConfig) *AuthMiddleware {
 	if err != nil {
 		panic(err)
 	}
-	// var verifier = provider.Verifier(&oidc.Config{SkipClientIDCheck: true})
 	return &AuthMiddleware{
 		Options:  opts,
 		verifier: provider.Verifier(&oidc.Config{ClientID: opts.Audience}),
@@ -50,7 +49,7 @@ func NewAuthFromEnv() *AuthMiddleware {
 	return NewAuth(opts)
 }
 
-// FromAuthHeader is a "TokenExtractor" that takes a give request and extracts
+// FromAuthHeader is a "TokenExtractor" that takes a given request and extracts
 // the JWT token from the Authorization header.
 func FromAuthHeader(r *http.Request) (string, error) {
 	authHeader := r.Header.Get("Authorization")
@@ -79,6 +78,7 @@ func (m *AuthMiddleware) CheckToken(next http.HandlerFunc) http.HandlerFunc {
 		log.Printf("getting token for for %s", r.RequestURI)
 		token, err := FromAuthHeader(r)
 		if err != nil {
+			// no valid auth header
 			w.Header().Add("WWW-Authenticate", `Bearer realm="private API requires valid oidc-token"`)
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte("401 - Unauthorized\n"))
@@ -87,20 +87,11 @@ func (m *AuthMiddleware) CheckToken(next http.HandlerFunc) http.HandlerFunc {
 		// verifies issuer and audience
 		idToken, err := m.verifier.Verify(m.ctx, token)
 		if err != nil {
+			// the token was invalid (expired, wrong issuer, wrong audience)
 			log.Printf("invalid token", err)
 			forbid(w)
 			return
 		}
-
-		// TODO this can be the custom kubernetes claims struct - may be able to find in the kubernetes code
-		// 	var claims struct {
-		// 		Email    string `json:"email"`
-		// 		Verified bool   `json:"email_verified"`
-		// 		Subject string `json:"sub"`
-		// }
-		// if err := idToken.Claims(&claims); err != nil {
-		// 		// handle error
-		// }
 
 		// check for authorized subjects, if none are given, all from issuer are assumed authorized
 		if len(m.Options.AuthorizedSubjects) > 0 {
@@ -119,9 +110,8 @@ func (m *AuthMiddleware) CheckToken(next http.HandlerFunc) http.HandlerFunc {
 		}
 		// Update the current request with the ID Token
 		newRequest := r.WithContext(context.WithValue(r.Context(), AuthTokenContext{}, idToken))
-		// retrieve with:
-		// token := r.Context().Value(AuthTokenContext{}).(*oidc.IDToken)
 		*r = *newRequest
+		// continue to handler
 		next.ServeHTTP(w, r)
 	}
 }
