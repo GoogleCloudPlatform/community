@@ -581,7 +581,7 @@ To learn more about GCP networking, see the following documents:
 -  [VPC networks](https://cloud.google.com/vpc/docs)
 -  [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview)
 -  [Advanced Cloud VPN configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
--  [Check VPN status](#https://cloud.google.com/vpn/docs/how-to/checking-vpn-status)
+-  [Check VPN status](https://cloud.google.com/vpn/docs/how-to/checking-vpn-status)
 -  [Terraform template for HA VPN](https://www.terraform.io/docs/providers/google/r/compute_ha_vpn_gateway.html)
 -  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
 -  [Create virtual machine on GCP](https://cloud.google.com/compute/docs/quickstart)
@@ -591,4 +591,4 @@ To learn more about GCP networking, see the following documents:
 For more product information on Cisco ASA 5506H, refer to the following
 configuration guides and datasheets:
 
--  [ASA Virtual Tunnel Interface](#https://www.cisco.com/c/en/us/td/docs/security/asa/asa97/configuration/vpn/asa-97-vpn-config/vpn-vti.html)
+-  [ASA Virtual Tunnel Interface](https://www.cisco.com/c/en/us/td/docs/security/asa/asa97/configuration/vpn/asa-97-vpn-config/vpn-vti.html)
