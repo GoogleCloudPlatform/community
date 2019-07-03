@@ -557,10 +557,10 @@ through the VPN tunnel.
   On the GCP side, use the following instructions to test the connection to a
   machine that's behind the on-premises gateway:
 
-  1.In the GCP Console, [go to the VM Instances page](https://console.cloud.google.com/compute).
-  1.Find the GCP virtual machine you created.
-  1.In the **Connect** column, click **SSH**. A Cloud Shell window opens at the VM command line.
-  1.Ping a machine that's behind the on-premises gateway.
+  1.  In the GCP Console, [go to the VM Instances page](https://console.cloud.google.com/compute).
+  1.  Find the GCP virtual machine you created.
+  1.  In the **Connect** column, click **SSH**. A Cloud Shell window opens at the VM command line.
+  1.  Ping a machine that's behind the on-premises gateway.
 
     CISCO-ASA5506H-001#ping 10.0.1.3 source 192.168.1.1
     Type escape sequence to abort.
