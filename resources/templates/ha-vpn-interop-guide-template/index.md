@@ -55,9 +55,9 @@ testing it._
 
 ## Introduction
 
-This guide walks you through the process of configuring
-\<vendor-name>\<product-name> for integration with the
-[HA VPN service](https://cloud.google.com/vpn/docs) on GCP.
+This guide walks you through the process of configuring route based VPN
+tunnel between \<vendor-name>\<product-name> and the [HA VPN service](https://cloud.google.com/vpn/docs) 
+on GCP.
 
 For more information about HA or Classic VPN, see the
 [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
@@ -485,17 +485,11 @@ apply.>
 
 #### GCP-compatible settings for IPSec and IKE
 
-[Ciphers supported by GCP](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike)
+Make sure to configure [Ciphers supported by GCP](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike) only.
 
 #### Configure the IKE proposal and policy
 
 \<Insert the instructions for creating the IKE proposal and policy here.>
-
-\<Below are some examples of IKE algorithms to specify as part of the instructions.>
-
-- **Encryption algorithm**: \<List required algorithms here.>
-- **Integrity algorithm**: \<List required algorithms here.>
-- **Diffie-Hellman group**: \<List required group here.>
 
 \<Insert configuration code here, indented so that it appears as a codeblock.>
 
