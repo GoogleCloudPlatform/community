@@ -1,11 +1,11 @@
 
----
+<!--
 title: Monitoring slow queries in MySQL with Stackdriver
 description: Learn how to monitoring slow queries with sql statements in MySQL with Stackdriver logging and monitoring 
 author: jungwoonlee@, jani@
 tags: Stackdriver, logging, monitoring, slow queries, MySQL
 date_published: 20190705
----
+-->
 
 
 
@@ -17,7 +17,7 @@ This solution describes how to log and monitor [Cloud SQL for MySQL](https://clo
 The slow query log feature in [MySQL](http://mysql.com) enables you to log queries that exceed a predefined time limit. This greatly simplifies the task of finding inefficient or time-consuming queries. By integrating these logs with Stackdriver, you can keep an eye on database performance, allowing you to identify which queries need optimization and, optionally, be alerted when there are too many slow queries.
 
 
-![architecture diagram](stackdriver-monitor-slow-query-mysql/Copy-of0.jpg "image_tooltip")
+![architecture diagram](images/Copy-of0.jpg "image_tooltip")
 
 
 This solution can also be used with self-managed MySQL instances running on Compute Engine. 
@@ -99,7 +99,7 @@ The slow query log is now visible in the Stackdriver Logging viewer.
 1.  From the **All logs** dropdown, select **cloudsql.googleapis.com/mysql-slow.log**.
 
 
-![logviewer01](stackdriver-monitor-slow-query-mysql/Copy-of1.png "image_tooltip")
+![logviewer01](images/Copy-of1.png "image_tooltip")
 
 
 
@@ -212,7 +212,7 @@ Benchmark
 The test may take several minutes. Once it has completed, return to the Stackdriver Logging Cloud SQL view at https://console.cloud.google.com/logs/viewer. 
 
 
-![logviewer02](stackdriver-monitor-slow-query-mysql/Copy-of2.png "image_tooltip")
+![logviewer02](images/Copy-of2.png "image_tooltip")
 
 
 Slow queries from the load test starting with "`SELECT"` should now be visible.
@@ -231,7 +231,7 @@ Click the small triangle at the far right side of the "Filter by label or text s
 
 
 
-![logviwer03](stackdriver-monitor-slow-query-mysql/Copy-of3.png "image_tooltip")
+![logviwer03](images/Copy-of3.png "image_tooltip")
 
 
 Note: If you are targeting MySQL on Compute Engine, the log format is different, so add “`textPayload:"# User@Host"`” instead.
@@ -250,7 +250,7 @@ mysqlslap --no-defaults --user=root --password=<var>password</var> --host=${MYSQ
 The new metric is now visible under [User-defined metrics](https://console.cloud.google.com/logs/metrics). Click the three dots icon to the left of the `user/sql_slow` metric to open the menu, then click **View in Metrics Explorer** to see the new metric in Stackdriver Monitoring.
 
 
-![userdefinedmetric](stackdriver-monitor-slow-query-mysql/Copy-of4.png "image_tooltip")
+![userdefinedmetric](images/Copy-of4.png "image_tooltip")
 
 
 Note: It may take several minutes for the resulting data to appear in Stackdriver. 
@@ -258,7 +258,7 @@ Note: It may take several minutes for the resulting data to appear in Stackdrive
 
 
 
-![metricexplorer](stackdriver-monitor-slow-query-mysql/Copy-of5.png "image_tooltip")
+![metricexplorer](images/Copy-of5.png "image_tooltip")
 
 
 
@@ -282,7 +282,7 @@ Label type: String<br/>
 Field name: textPayload<br/>
 Extraction regular expression: \b(SELECT.* WHERE|INSERT.* VALUES|UPDATE.* WHERE|CREATE.*|DELETE.*).*\z<br/>
 
-![metriceditor](stackdriver-monitor-slow-query-mysql/Copy-of6.png "image_tooltip")
+![metriceditor](images/Copy-of6.png "image_tooltip")
 
 
 This [regular expression](https://github.com/google/re2/wiki/Syntax) instructs Stackdriver to find strings beginning with the common SQL operations SELECT, INSERT, UPDATE, CREATE or DELETE. For CREATE and DELETE, text is extracted until the end of the line. For SELECT, INSERT and UPDATE, text is extracted until a keyword (WHERE or VALUES) that is typically followed by values that are likely to change in every execution. This groups together similar queries.
@@ -291,7 +291,7 @@ To test the expression, click on **Build** to open the Regular Expression Editor
 
 
 
-![regularexpression](stackdriver-monitor-slow-query-mysql/Copy-of7.png "image_tooltip")
+![regularexpression](images/Copy-of7.png "image_tooltip")
 
 
 Click **Done** and then **Update metric**.
@@ -304,7 +304,7 @@ Click **Show Advanced Options** and add “sql” in Legend Template:
 
 
 
-![metricexplorer02](stackdriver-monitor-slow-query-mysql/Copy-of8.png "image_tooltip"){: width=500 height=800 }
+![metricexplorer02](images/Copy-of8.png "image_tooltip"){: width=500 height=800 }
 
 
 Rerun the earlier `mysqlslap` command once more to generate some new data with labels. \
@@ -320,7 +320,7 @@ The dashboard now shows you slow MySQL queries, broken down by SQL statement. Yo
 
 
 
-![sqllogview](stackdriver-monitor-slow-query-mysql/Copy-of9.png "image_tooltip")
+![sqllogview](images/Copy-of9.png "image_tooltip")
 
 
 
