@@ -1,7 +1,4 @@
 
-
-&nbsp;
-
 ## Monitoring slow queries in MySQL with Stackdriver
 
 <p style="text-align: right">
