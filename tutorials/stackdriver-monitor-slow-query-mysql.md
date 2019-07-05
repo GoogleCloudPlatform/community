@@ -311,7 +311,7 @@ Click **Show Advanced Options** and add “sql” in Legend Template:
 
 
 
-![metricexplorer02](stackdriver-monitor-slow-query-mysql/Copy-of8.png "image_tooltip")
+![metricexplorer02](stackdriver-monitor-slow-query-mysql/Copy-of8.png "image_tooltip"){: width="500" height="800")
 
 
 Rerun the earlier `mysqlslap` command once more to generate some new data with labels. \
