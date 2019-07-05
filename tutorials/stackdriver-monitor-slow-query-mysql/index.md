@@ -304,7 +304,7 @@ Click **Show Advanced Options** and add “sql” in Legend Template:
 
 
 
-![metricexplorer02](images/Copy-of8.png "image_tooltip"){: width=500 height=800 }
+![metricexplorer02](images/Copy-of8.png "image_tooltip")
 
 
 Rerun the earlier `mysqlslap` command once more to generate some new data with labels. \
