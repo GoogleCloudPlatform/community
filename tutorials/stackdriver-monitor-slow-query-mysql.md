@@ -279,15 +279,10 @@ The previously created metric measures the number of slow queries, but it does n
 
 Return to the **User-Defined Metrics** view. Click the three dots icon to the left to open the menu, then select **Edit metric**. Choose **Add item** under **Labels** and enter the following values:
 
-Name: sql
-
-Label type: String
-
-Field name: textPayload
-
-Extraction regular expression: \b(SELECT.* WHERE|INSERT.* VALUES|UPDATE.* WHERE|CREATE.*|DELETE.*).*\z
-
-
+Name: sql<br/>
+Label type: String<br/>
+Field name: textPayload<br/>
+Extraction regular expression: \b(SELECT.* WHERE|INSERT.* VALUES|UPDATE.* WHERE|CREATE.*|DELETE.*).*\z<br/>
 
 ![metriceditor](stackdriver-monitor-slow-query-mysql/Copy-of6.png "image_tooltip")
 
