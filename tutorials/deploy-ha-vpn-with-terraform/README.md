@@ -11,7 +11,7 @@ used in [interop guides](https://cloud.google.com/vpn/docs/how-to/interop-guides
 
 ## Objectives
 
-Deploy HA VPN with [1-peer-2-address](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses) configuration
+Deploy HA VPN with [1-peer-2-addresses](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses) configuration
 on Google Cloud Platform.
 
 ## Before you begin
