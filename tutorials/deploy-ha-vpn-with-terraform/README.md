@@ -28,7 +28,7 @@ to setup your Terraform envrionment for Google Cloud Platform.
 
 *   `git clone https://github.com/GoogleCloudPlatform/deploy-ha-vpn-with-terraform.git`
 *   `cd deploy-ha-vpn-with-terraform`
-*   [optional]Change variable values in `gcp_variables.tf` per your envrionment.
+*   [optional] Change variable values in `gcp_variables.tf` per your envrionment.
 *   Run Terraform.
     *   Examine configuration files.
         *   `terraform init`
