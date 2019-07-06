@@ -31,22 +31,22 @@ used in this tutorial.
 *   Activate Google Cloud Shell. Use Cloud Shell because the Google Cloud SDK
     (gcloud) and other tools are included.
 *   git clone https://github.com/GoogleCloudPlatform/deploy-ha-vpn-with-terraform.git
-*   cd deploy-ha-vpn-with-terraform
-*   [optional]Change variable values in gcp_variables.tf per your envrionment.
+*   cd `deploy-ha-vpn-with-terraform`
+*   [optional]Change variable values in `gcp_variables.tf` per your envrionment.
 *   Run Terraform.
     *   Examine configuration files.
-        *   terraform init
-        *   terraform validate
-        *   terraform plan
+        *   `terraform init`
+        *   `terraform validate`
+        *   `terraform plan`
     *   Apply configurations.
-        *   terraform apply
+        *   `terraform apply`
     *   Confirm configurations.
-        *   terraform output
-        *   terraform show
+        *   `terraform output`
+        *   `terraform show`
 *   Clean up
-    *   terraform plan -destroy
-    *   terraform destroy
-    *   terraform show
+    *   `terraform plan -destroy`
+    *   `terraform destroy`
+    *   `terraform show`
 
 ## References
 
