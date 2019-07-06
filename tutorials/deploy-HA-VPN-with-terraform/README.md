@@ -7,7 +7,7 @@ date_published: 2019-07-06
 ---
 
 This tutorial demonstrates how to deploy High Availability VPN resources on Google Cloud Platform
-used in interop guides with Terraform.
+used in [interop guides](https://cloud.google.com/vpn/docs/how-to/interop-guides) with Terraform.
 
 ## Objectives
 
