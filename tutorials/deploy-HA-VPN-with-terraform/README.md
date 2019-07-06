@@ -30,7 +30,7 @@ used in this tutorial.
 
 *   Activate Google Cloud Shell. Use Cloud Shell because the Google Cloud SDK
     (gcloud) and other tools are included.
-*   git clone https://github.com/GoogleCloudPlatform/deploy-HA-VPN-with-terraform.git
+*   git clone https://github.com/GoogleCloudPlatform/deploy-ha-vpn-with-terraform.git
 *   cd deploy-ha-vpn-with-terraform
 *   [optional]Change variable values in gcp_variables.tf per your envrionment.
 *   Run Terraform.
