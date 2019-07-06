@@ -47,3 +47,10 @@ used in this tutorial.
     *   terraform plan -destroy
     *   terraform destroy
     *   terraform show
+
+## References
+
+*   [Automated multi cloud classic VPN](https://github.com/GoogleCloudPlatform/autonetdeploy-multicloudvpn)
+*   [HA VPN Topologies](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses)
+*   [Creating HA VPN](https://cloud.google.com/vpn/docs/how-to/creating-ha-vpn)
+*   [VPN interop guides](https://cloud.google.com/vpn/docs/how-to/interop-guides)
