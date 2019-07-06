@@ -16,9 +16,8 @@ on Google Cloud Platform.
 
 ## Before you begin
 
-This guide assumes you are familiar with Terraform. Instructions provided in this guide
-are based on the GCP envrionment depicted in HA VPN interop guides and only for testing
-purposes.
+This guide assumes you are familiar with [Terraform](https://www.terraform.io/). Instructions provided in this guide
+are based on the GCP envrionment depicted in [HA VPN interop guides](https://cloud.google.com/vpn/docs/how-to/interop-guides) and only for testing purposes.
 
 See [getting-started-on-gcp-with-terraform](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/getting-started-on-gcp-with-terraform/index.md)
 to setup your Terraform envrionment for Google Cloud Platform.
@@ -27,8 +26,6 @@ Ensure you have [service account](https://cloud.google.com/iam/docs/creating-man
 
 ## Quick Start
 
-*   Activate Google Cloud Shell. Use Cloud Shell because the Google Cloud SDK
-    (gcloud) and other tools are included.
 *   `git clone https://github.com/GoogleCloudPlatform/deploy-ha-vpn-with-terraform.git`
 *   `cd deploy-ha-vpn-with-terraform`
 *   [optional]Change variable values in `gcp_variables.tf` per your envrionment.
