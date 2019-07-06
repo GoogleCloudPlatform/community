@@ -16,13 +16,13 @@ on Google Cloud Platform.
 
 ## Before you begin
 
-This guide assumes you are familiar with [Terraform](https://www.terraform.io/). Instructions provided in this guide
+*  This guide assumes you are familiar with [Terraform](https://www.terraform.io/). Instructions provided in this guide
 are based on the GCP envrionment depicted in [HA VPN interop guides](https://cloud.google.com/vpn/docs/how-to/interop-guides) and only for testing purposes.
 
-See [getting-started-on-gcp-with-terraform](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/getting-started-on-gcp-with-terraform/index.md)
+*  See [getting-started-on-gcp-with-terraform](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/getting-started-on-gcp-with-terraform/index.md)
 to setup your Terraform envrionment for Google Cloud Platform.
 
-Ensure you have [service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with [sufficient permissions](https://cloud.google.com/vpn/docs/how-to/creating-ha-vpn2#permissions) to deploy resources used in this tutorial.
+*  Ensure you have [service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with [sufficient permissions](https://cloud.google.com/vpn/docs/how-to/creating-ha-vpn2#permissions) to deploy resources used in this tutorial.
 
 ## Quick Start
 
