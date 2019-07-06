@@ -1,6 +1,6 @@
 ---
 title: Deploy HA VPN with Terraform
-description: Deploy full GCP envrionment used in HA VPN interop guides with Terraform.
+description: Deploy GCP envrionment used in HA VPN interop guides with Terraform.
 author: ashishverm
 tags: terraform, ha vpn,
 date_published: 2019-07-06
@@ -23,8 +23,7 @@ purposes.
 See [getting-started-on-gcp-with-terraform](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/getting-started-on-gcp-with-terraform/index.md)
 to setup your Terraform envrionment for Google Cloud Platform.
 
-Ensure you have service account with sufficient permissions to deploy resources
-used in this tutorial.
+Ensure you have [service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with [sufficient permissions](https://cloud.google.com/vpn/docs/how-to/creating-ha-vpn2#permissions) to deploy resources used in this tutorial.
 
 ## Quick Start
 
