@@ -1,16 +1,11 @@
 
-<!--
+---
 title: Monitoring slow queries in MySQL with Stackdriver
-description: Learn how to monitoring slow queries with sql statements in MySQL with Stackdriver logging and monitoring 
-author: jungwoonlee@, jani@
+description: Learn how to monitor slow queries with SQL statements in MySQL with Stackdriver Logging and Monitoring. 
+author: jungwoonlee,jani
 tags: Stackdriver, logging, monitoring, slow queries, MySQL
-date_published: 20190705
--->
-
-
-
-## Monitoring slow queries in MySQL with Stackdriver
-
+date_published: 2019-07-10
+---
 
 This solution describes how to log and monitor [Cloud SQL for MySQL](https://cloud.google.com/sql/) slow queries using [Stackdriver](https://cloud.google.com/monitoring/). It is intended for database administrators and DevOps personnel responsible for monitoring and maintaining MySQL databases.
 
