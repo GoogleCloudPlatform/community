@@ -87,7 +87,7 @@ variable tunnel_name_if0 {
 }
 
 variable shared_secret {
-  default = "mysharedsecret"
+  type = "string"
 }
 
 variable tunnel_name_if1 {
