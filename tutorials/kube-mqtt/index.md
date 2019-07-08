@@ -201,7 +201,7 @@ And in another window:
 
 In this pattern, clients can communicate on unbridged broker topics in a conventional way.
 
-![local communication diagram](diagram/local.png)
+![local communication diagram](https://storage.googleapis.com/gcp-community/tutorials/kube-mqtt/local.png)
 
 Note that the client can use the cluster local service name (mqtt-bridge) as the hostname.
 
@@ -217,7 +217,7 @@ You should see the message relayed by the broker.
 
 ### Send bridged telemetry to the Cloud
 
-![cloud telemetry diagram](diagram/telemetry.png)
+![cloud telemetry diagram](https://storage.googleapis.com/gcp-community/tutorials/kube-mqtt/telemetry.png)
 
 In client "a" publish to the bridged event topic:
 
@@ -229,7 +229,7 @@ Verify the bridged message was published to cloud in another terminal (reminder,
 	
 ### Send commands from the cloud to cluster-local clients
 
-![Commands from cloud diagram](diagram/command.png)
+![Commands from cloud diagram](https://storage.googleapis.com/gcp-community/tutorials/kube-mqtt/command.png)
 
 In both client windows, subscribe to bridged IoT commands topic:
 
