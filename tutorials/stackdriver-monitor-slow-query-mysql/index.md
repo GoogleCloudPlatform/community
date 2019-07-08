@@ -104,7 +104,7 @@ simulating simultaneous connections to the database server.
 
 1.  Import the `employees` database to your MySQL instance:
 
-        gcloud sql connect cloudsql001 --user=root < employees.sql
+        gcloud sql connect cloudsql001 --user=root &lt; employees.sql
         
     Enter the root password you selected earlier when prompted to
     do so.
@@ -133,11 +133,11 @@ simulating simultaneous connections to the database server.
 
 1.  Create a file with a list of resource-intensive SQL queries.
 
-        cat <<EOF >select_query.sql
+        cat &lt;&lt; EOF >select_query.sql
         use employees;
         SELECT * FROM salaries WHERE salary > 0 LIMIT 100000;
         SELECT departments.dept_name,dept_emp.from_date,employees.* FROM departments LEFT JOIN dept_emp ON (departments.dept_no = dept_emp.dept_no) LEFT JOIN employees ON (dept_emp.emp_no = employees.emp_no) WHERE to_date = '9999-01-01' LIMIT 100000;
-        SELECT employees.* FROM employees LEFT JOIN dept_emp ON ( dept_emp.emp_no = employees.emp_no ) LEFT JOIN salaries ON ( salaries.emp_no = salaries.emp_no ) WHERE employees.first_name LIKE '%Jo%' AND salaries.from_date > '1993-01-21' AND salaries.to_date < '1998-01-01' limit 1000000;
+        SELECT employees.* FROM employees LEFT JOIN dept_emp ON ( dept_emp.emp_no = employees.emp_no ) LEFT JOIN salaries ON ( salaries.emp_no = salaries.emp_no ) WHERE employees.first_name LIKE '%Jo%' AND salaries.from_date > '1993-01-21' AND salaries.to_date &lt; '1998-01-01' limit 1000000;
         EOF
 
 1.  Grant the public IP address of your Cloud Shell instance access to your Cloud SQL instance:
@@ -175,7 +175,7 @@ simulating simultaneous connections to the database server.
 
 ![logviewer02](https://storage.googleapis.com/gcp-community/tutorials/stackdriver-monitor-slow-query-mysql/stackdriver-monitor-slow-query-mysql-2.png)
 
-Slow queries from the load test starting with "`SELECT"` should now be visible.
+Slow queries from the load test starting with `SELECT` should now be visible.
 
 ## Create log-based metrics with Stackdriver Monitoring
 
@@ -199,7 +199,7 @@ Click the **Create Metric** button at the top left to create a logs-based metric
 Metrics only start recording data after they have been created. In Cloud Shell, rerun the earlier `mysqlslap` command to generate some new data. \
 
 ```
-mysqlslap --no-defaults --user=root --password=<var>password</var> --host=${MYSQL_IP} --concurrency=5 --number-of-queries=50 --create-schema=employees --query="./select_query.sql" --delimiter=";" --verbose --iterations=1
+mysqlslap --no-defaults --user=root --password=[PASSWORD] --host=${MYSQL_IP} --concurrency=5 --number-of-queries=50 --create-schema=employees --query="./select_query.sql" --delimiter=";" --verbose --iterations=1
 ```
 
 The new metric is now visible under [User-defined metrics](https://console.cloud.google.com/logs/metrics). Click the three dots icon to the left of the `user/sql_slow` metric to open the menu, then click **View in Metrics Explorer** to see the new metric in Stackdriver Monitoring.
@@ -220,10 +220,10 @@ The previously created metric measures the number of slow queries, but it does n
 
 Return to the **User-Defined Metrics** view. Click the three dots icon to the left to open the menu, then select **Edit metric**. Choose **Add item** under **Labels** and enter the following values:
 
-Name: sql<br/>
-Label type: String<br/>
-Field name: textPayload<br/>
-Extraction regular expression: \b(SELECT.* WHERE|INSERT.* VALUES|UPDATE.* WHERE|CREATE.*|DELETE.*).*\z<br/>
+- **Name**: `sql`
+- **Label type**: `String`
+- **Field name**: `textPayload`
+- **Extraction regular expression**: `\b(SELECT.* WHERE|INSERT.* VALUES|UPDATE.* WHERE|CREATE.*|DELETE.*).*\z`
 
 ![metriceditor](https://storage.googleapis.com/gcp-community/tutorials/stackdriver-monitor-slow-query-mysql/stackdriver-monitor-slow-query-mysql-6.png)
 
@@ -243,10 +243,10 @@ Click **Show Advanced Options** and add “sql” in Legend Template:
 
 ![metricexplorer02](https://storage.googleapis.com/gcp-community/tutorials/stackdriver-monitor-slow-query-mysql/stackdriver-monitor-slow-query-mysql-8.png)
 
-Rerun the earlier `mysqlslap` command once more to generate some new data with labels. \
+Rerun the earlier `mysqlslap` command once more to generate some new data with labels.
 
 ```
-mysqlslap --no-defaults --user=root --password=<var>password</var> --host=${MYSQL_IP} --concurrency=5 --number-of-queries=50 --create-schema=employees --query="./select_query.sql" --delimiter=";" --verbose --iterations=1
+mysqlslap --no-defaults --user=root --password=[PASSWORD] --host=${MYSQL_IP} --concurrency=5 --number-of-queries=50 --create-schema=employees --query="./select_query.sql" --delimiter=";" --verbose --iterations=1
 ```
 
 The dashboard now shows you slow MySQL queries, broken down by SQL statement. You can also hover over the graph to see queries per second rates for each statement. This allows you to quickly identify the culprit when alerted about database slowness. 
