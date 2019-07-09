@@ -461,10 +461,10 @@ Enter the configuration mode on Cisco ASA and create IKEv2 policies.
 
 #### Configure tunnel groups for each peer IP address
 
-Tunnel group parameters set the access policies and protocol specific connection 
-parameters for the IPsec tunnel. The first command sets the tunnel type to `ipsec-l2l` 
+Tunnel group parameters set the access policies and protocol-specific connection 
+parameters for the IPSec tunnel. The first command sets the tunnel type to `ipsec-l2l` 
 (site-to-site or, in Cisco terms, lan-to-lan). The next command block sets 
-the general-attributes for the IPsec tunnel. In this case the `default-group-policy`
+the `general-attributes` for the IPSec tunnel. In this case the `default-group-policy`
 for the tunnel is being set to the policy named `GCP` and the `ipsec-attributes`
 for the tunnel are being set. 
 
@@ -490,8 +490,8 @@ for the tunnel are being set.
 
 #### Configure the IPSec virtual tunnel interface (VTI)
 
-VTI allows route based VPNs on Cisco ASA. Below configuration creates 2 VTIs with 
-interface name and ipsec configurations.
+VTI allows route-based VPNs on Cisco ASA. This configuration creates two VTIs with 
+interface name and ipsec configurations:
 
     interface Tunnel10
      nameif gcp-if-0
@@ -562,7 +562,7 @@ Save the on-premises configuration:
 
     write memory
 
-### Verify configurations
+### Verify the configurations
 
     CISCO-ASA5506H-001# sh crypto ikev2 sa  detail
 
