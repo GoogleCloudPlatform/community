@@ -173,7 +173,7 @@ simulating simultaneous connections to the database server.
 1.  After the test has completed, return to the Stackdriver Logging
     [**Logs Viewer** page](https://console.cloud.google.com/logs/viewer). 
 
-![logviewer02](https://storage.googleapis.com/gcp-community/tutorials/stackdriver-monitor-slow-query-mysql/stackdriver-monitor-slow-query-mysql-2.png)
+    ![logviewer02](https://storage.googleapis.com/gcp-community/tutorials/stackdriver-monitor-slow-query-mysql/stackdriver-monitor-slow-query-mysql-2.png)
 
 Slow queries from the load test starting with `SELECT` should now be visible.
 
