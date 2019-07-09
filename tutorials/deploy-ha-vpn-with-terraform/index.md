@@ -20,8 +20,7 @@ configuration on Google Cloud Platform (GCP).
     are based on the GCP envrionment depicted in the
     [HA VPN interop guides](https://cloud.google.com/vpn/docs/how-to/interop-guides) and are only for testing purposes.
 
-*   See [getting-started-on-gcp-with-terraform](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/getting-started-on-gcp-with-terraform/index.md)
-    to set up your Terraform envrionment for GCP.
+*   See [Getting started with Terraform on GCP](https://cloud.google.com/community/tutorials/getting-started-on-gcp-with-terraform) to set up your Terraform envrionment for GCP.
 
 *   Ensure the you have a [service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with 
     [sufficient permissions](https://cloud.google.com/vpn/docs/how-to/creating-ha-vpn2#permissions) to deploy the resources
