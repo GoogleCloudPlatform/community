@@ -403,12 +403,12 @@ VPC subnet prefixes.
 
 ### Creating the base network configuration
 
-For [1-peer-2-address](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses) 
-at a minimum configure 3 interfaces named as `outside-0`, `outside-1` and `inside`. Outside 
-interfaces are connected to the Internet and inside interface is connected to the private network.
+For the [1-peer-2-address](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses)
+topology, configure a minimum of three interfaces, named `outside-0`, `outside-1`, and `inside`. Outside 
+interfaces are connected to the internet; the inside interface is connected to the private network.
 
 Enter the configuration mode to create the base Layer 3 network configuration for the Cisco system,
-replace the IP addresses based on your envrionment:
+replacing the IP addresses based on your envrionment:
 
     configure terminal
     interface GigabitEthernet1/1
@@ -506,13 +506,13 @@ Follow the procedure in this section to configure dynamic routing for traffic
 through the VPN tunnel or tunnels using the BGP routing protocol. This configuration
 will use ECMP to load-balance the traffic between the two tunnels.
 
-Configure prefix lists to limit the inbound and outbound prefix advertisement.
+Configure prefix lists to limit the inbound and outbound prefix advertisement:
 
     prefix-list GCP-IN seq 5 permit 10.0.1.0/24 le 32
     prefix-list GCP-IN seq 6 permit 10.0.2.0/24 le 32
     prefix-list GCP-OUT seq 5 permit 192.168.1.0/24 le 32
 
-Configure BGP peers to dynamically exchange prefixes between on-premises and GCP.
+Configure BGP peers to dynamically exchange prefixes between on-premises and GCP:
 
     router bgp 65002
      bgp log-neighbor-changes
@@ -543,9 +543,9 @@ Configure BGP peers to dynamically exchange prefixes between on-premises and GCP
     access-group GCP-IN in interface gcp-if-1
     access-group GCP-IN in interface gcp-if-1 control-plane
 
-### Saving the configuration
+### Save the configuration
 
-Follow the procedure in this section to save the on-premises configuration.
+Save the on-premises configuration:
 
     write memory
 
@@ -597,6 +597,5 @@ To learn more about GCP networking, see the following documents:
 
 ### Cisco ASA 5506H documentation
 
-For more information on Cisco ASA 5506H, see
 -  [ASA Virtual Tunnel Interface](https://www.cisco.com/c/en/us/td/docs/security/asa/asa97/configuration/vpn/asa-97-vpn-config/vpn-vti.html)
 -  [ASA site2site VPN](https://www.cisco.com/c/en/us/td/docs/security/asa/asa84/configuration/guide/asa_84_cli_config/vpn_site2site.html)
