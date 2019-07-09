@@ -1,20 +1,15 @@
 ---
-title: Google Cloud HA VPN Interop Guide for Cisco ASA 5506H
-description: Describes how to build site-to-site IPsec VPNs between HA VPN on Google Cloud Platform (GCP) and Cisco ASA 5506H.
+title: Google Cloud HA VPN interoperability guide for Cisco ASA 5506H
+description: Build site-to-site IPSec VPNs between HA VPN on Google Cloud Platform (GCP) and Cisco ASA 5506H.
 author: ashishverm
 tags: HA VPN, Cloud VPN, interop, Cisco, ASA 5506H
 date_published: 2019-07-06
 ---
 
-# Using HA VPN with Cisco ASA 5506H
-
-Author: ashishverm
-
 Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
 on Google Cloud Platform (GCP) and Cisco ASA 5506H.
 
-Cisco terminology and the Cisco logo are
-trademarks of Cisco or its affiliates in the United States
+Cisco terminology and the Cisco logo are trademarks of Cisco or its affiliates in the United States
 and/or other countries.
 
 _Disclaimer: This interoperability guide is intended to be informational in
@@ -23,31 +18,32 @@ testing it._
 
 ## Introduction
 
-This guide walks you through the process of configuring
-route based VPN tunnel between Cisco ASA 5506H and the
-[HA VPN service](https://cloud.google.com/vpn/docs) on GCP.
+This guide walks you through the process of configuring a route-based VPN tunnel
+between Cisco ASA 5506H and the [HA VPN service](https://cloud.google.com/vpn/docs)
+on GCP.
 
-For more information about HA or Classic VPN, see the
+For more information about HA and Classic VPN, see the
 [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
 
 ## Terminology
 
 Below are definitions of terms used throughout this guide.
 
--  **GCP VPC network**: A single virtual network within a single GCP project.
--  **On-premises gateway**: The VPN device on the non-GCP side of the
-connection, which is usually a device in a physical data center or in
-another cloud provider's network. GCP instructions are written from the
-point of view of the GCP VPC network, so *on-premises gateway* refers to the
-gateway that's connecting _to_ GCP.
--  **External IP address** or **GCP peer address**: External IP
-addresses used by peer VPN devices to establish HA VPN with GCP.
-External IP addresses are allocated automatically, one for each gateway interface within a
-GCP project.
--  **Dynamic routing**: GCP dynamic routing for VPN using the [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
-Note that HA VPN only supports dynamic routing.
--  **VTI**: The ASA supports a logical interface called Virtual Tunnel Interface (VTI). 
-A VPN tunnel can be created between peers with Virtual Tunnel Interfaces configured. 
+-   **GCP VPC network**: A single virtual network within a single GCP project.
+-   **On-premises gateway**: The VPN device on the non-GCP side of the
+    connection, which is usually a device in a physical data center or in
+    another cloud provider's network. GCP instructions are written from the
+    point of view of the GCP VPC network, so *on-premises gateway* refers to the
+    gateway that's connecting _to_ GCP.
+-   **External IP address** or **GCP peer address**: External IP
+    addresses used by peer VPN devices to establish HA VPN with GCP.
+    External IP addresses are allocated automatically, one for each gateway interface within a
+    GCP project.
+-   **Dynamic routing**: GCP dynamic routing for VPN using the
+    [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
+    Note that HA VPN only supports dynamic routing.
+-   **VTI**: The ASA supports a logical interface called Virtual Tunnel Interface (VTI). 
+    A VPN tunnel can be created between peers with Virtual Tunnel Interfaces configured. 
 
 ## Topology
 
@@ -67,11 +63,11 @@ The Cisco ASA 5506H equipment used in this guide is as follows:
 
 1.  Review information about how
     [dynamic routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#dynamic-routing)
-    works in Google Cloud Platform.
+    works in GCP.
 
-1.  Make sure your peer VPN gateway supports BGP.
+1.  Make sure that your peer VPN gateway supports BGP.
 
-1.  For IKEv2 route-based VPN using VTI on ASA: make sure code version is 9.8(1) or later. 
+1.  For IKEv2 route-based VPN using VTI on ASA: Make sure that the code version is 9.8(1) or later. 
 
 1.  Select or [create](https://console.cloud.google.com/cloud-resource-manager) a GCP project.
 
@@ -93,26 +89,25 @@ The Cisco ASA 5506H equipment used in this guide is as follows:
 
 ### Licenses and modules
 
-There are no additional licenses required for site-to-site VPN on Cisco
-ASA 5506H.
+There are no additional licenses required for site-to-site VPN on Cisco ASA 5506H.
 
 ### Configuration parameters and values
 
 The `gcloud` commands in this guide include parameters whose value you must
 provide. For example, a command might include a GCP project name or a region or
 other parameters whose values are unique to your context. The following table 
-lists the parameters and gives examples of the values used in this guide.
+lists the parameters and gives examples of the values used in this guide:
 
-| Parameter description | Placeholder          | Example value                                          |
-|-----------------------|----------------------|--------------------------------------------------------|
-| Vendor name           | `[VENDOR_NAME]`      | Cisco |
-| GCP project name      | `[PROJECT_NAME]`     | `vpn-guide`                                            |
-| Shared secret         | `[SHARED_SECRET]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
-| VPC network name      | `[NETWORK]`          | `network-a`                                            |
-| Subnet mode           | `[SUBNET_MODE]`      | `custom`                                               |
-| VPN BGP routing mode  | `[BGP_ROUTING_MODE]` | `global`                                               |
-| Subnet on the GCP VPC network | `[SUBNET_NAME_1]` | `subnet-a-central` |
-| Subnet on the GCP VPC network | `[SUBNET_NAME_2]` | `subnet-a-west` |
+| Parameter description         | Placeholder               | Example value                                          |
+|-------------------------------|---------------------------|--------------------------------------------------------|
+| Vendor name                   | `[VENDOR_NAME]`           | Cisco                                                  |
+| GCP project name              | `[PROJECT_NAME]`          | `vpn-guide`                                            |
+| Shared secret                 | `[SHARED_SECRET]`         | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                                |
+| VPC network name              | `[NETWORK]`               | `network-a`                                            |
+| Subnet mode                   | `[SUBNET_MODE]`           | `custom`                                               |
+| VPN BGP routing mode          | `[BGP_ROUTING_MODE]`      | `global`                                               |
+| Subnet on the GCP VPC network | `[SUBNET_NAME_1]`         | `subnet-a-central`                                     |
+| Subnet on the GCP VPC network | `[SUBNET_NAME_2]`         | `subnet-a-west`                                        |
 | GCP region. Can be any region, but should be geographically close to on-premises gateway. | `[REGION1]` | `us-central1` |
 | GCP region. Can be any region, but should be geographically close to on-premises gateway. | `[REGION2]` | `us-west1` |
 | IP address range for the GCP VPC subnet | `[RANGE_1]` | `10.0.1.0/24` |
@@ -234,13 +229,13 @@ The command should look similar to the following example:
     --network network-a \
     --asn 65001
 
-### Create an External VPN Gateway resource
+### Create an external VPN gateway resource
 
 Create an external VPN gateway resource that provides information to GCP about your peer VPN gateway or gateways.
-Depending on the HA recommendations for your peer VPN gateway, you can create external VPN gateway resource for the
+Depending on the HA recommendations for your peer VPN gateway, you can create external VPN gateway resources for the
 following different types of on-premises VPN gateways:
 
-- Two separate peer VPN gateway devices where the two devices are redundant with each other and each device
+- Two separate peer VPN gateway devices, where the two devices are redundant with each other and each device
   has its own public IP address.
 - A single peer VPN gateway that uses two separate interfaces, each with its own public IP address. For this
   kind of peer gateway, you can create a single external VPN gateway with two interfaces.
@@ -248,7 +243,7 @@ following different types of on-premises VPN gateways:
 
 This interop guide only covers the second option (one peer, two addresses).
 
-#### Create an External VPN Gateway resource for a single peer VPN gateway with two separate interfaces
+#### Create an external VPN gateway resource for a single peer VPN gateway with two separate interfaces
 
     gcloud beta compute external-vpn-gateways create [PEER_GW_NAME] \
     --interfaces 0=[ON_PREM_GW_IP_0],1=[ON_PREM_GW_IP_1] \
@@ -408,8 +403,7 @@ VPC subnet prefixes.
 
 ### Creating the base network configuration
 
-Follow the procedure listed in the configuration code snippet below to create
-the base Layer 3 network configuration of Cisco.
+Use the configuration code below to create the base Layer 3 network configuration for the Cisco system:
 
     interface GigabitEthernet1/1
      nameif outside-0
@@ -428,6 +422,7 @@ the base Layer 3 network configuration of Cisco.
     !
     
 ### Creating the base VPN gateway configuration
+
 Follow the procedures in this section to create the base VPN configuration.
 
 Make sure to configure [Ciphers supported by GCP](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike) only.
@@ -455,7 +450,7 @@ Make sure to configure [Ciphers supported by GCP](https://cloud.google.com/vpn/d
      set security-association lifetime seconds 10800
      set security-association lifetime kilobytes unlimited
 
-#### Configure Tunnel-groups for each peer IP address
+#### Configure tunnel groups for each peer IP address
 
     group-policy GCP internal
     group-policy GCP attributes
@@ -498,7 +493,7 @@ Make sure to configure [Ciphers supported by GCP](https://cloud.google.com/vpn/d
 
 Follow the procedure in this section to configure dynamic routing for traffic
 through the VPN tunnel or tunnels using the BGP routing protocol. This configuration
-will load balance (ECMP) the traffic between the two tunnels.
+will use ECMP to load-balance the traffic between the two tunnels.
 
     prefix-list GCP-IN seq 5 permit 10.0.1.0/24 le 32
     prefix-list GCP-IN seq 6 permit 10.0.2.0/24 le 32
@@ -545,34 +540,33 @@ It's important to test the VPN connection from both sides of a VPN tunnel. For e
 make sure that the subnet that a machine or virtual machine is located in is being forwarded
 through the VPN tunnel.
 
-1.Create a VM on GCP. Make sure that you configure the
-  VMs on a subnet that will pass traffic through the VPN tunnel.
+1.  Create a VM on GCP, configuring the VMs on a subnet that will pass traffic through the VPN tunnel:
     
-    gcloud compute instances create test-vpn-tunnel-1 --subnet=subnet-a-central \
-    --machine-type=f1-micro --image-family=debian-9 --image-project=debian-cloud --no-address      
+        gcloud compute instances create test-vpn-tunnel-1 --subnet=subnet-a-central \
+        --machine-type=f1-micro --image-family=debian-9 --image-project=debian-cloud --no-address      
 
-2.After you have deployed VMs on both GCP and on-premises, you can use
-  an ICMP echo (ping) test to test network connectivity through the VPN tunnel.
+1.  After you have deployed VMs on GCP and on-premises, you can use
+    an ICMP echo (ping) test to test network connectivity through the VPN tunnel.
 
-  On the GCP side, use the following instructions to test the connection to a
-  machine that's behind the on-premises gateway:
+    On the GCP side, use the following instructions to test the connection to a
+    machine that's behind the on-premises gateway:
 
-  1.  In the GCP Console, [go to the VM Instances page](https://console.cloud.google.com/compute).
-  1.  Find the GCP virtual machine you created.
-  1.  In the **Connect** column, click **SSH**. A Cloud Shell window opens at the VM command line.
-  1.  Ping a machine that's behind the on-premises gateway.
+    1.  In the GCP Console, [go to the VM Instances page](https://console.cloud.google.com/compute).
+    1.  Find the GCP virtual machine you created.
+    1.  In the **Connect** column, click **SSH**. A Cloud Shell window opens at the VM command line.
+    1.  Ping a machine that's behind the on-premises gateway.
 
-    CISCO-ASA5506H-001#ping 10.0.1.3 source 192.168.1.1
-    Type escape sequence to abort.
-    Sending 5, 100-byte ICMP Echos to 10.0.1.3, timeout is 2 seconds:
-    Packet sent with a source address of 192.168.1.1
-    !!!!!
-    Success rate is 100 percent (5/5), round-trip min/avg/max = 20/21/20 ms
+            CISCO-ASA5506H-001#ping 10.0.1.3 source 192.168.1.1
+            Type escape sequence to abort.
+            Sending 5, 100-byte ICMP Echos to 10.0.1.3, timeout is 2 seconds:
+            Packet sent with a source address of 192.168.1.1
+            !!!!!
+            Success rate is 100 percent (5/5), round-trip min/avg/max = 20/21/20 ms
 
 ## Reference documentation
 
-You can refer to the following Cisco ASA 5506H documentation and
-Cloud VPN documentation for additional information about both products.
+See the following Cisco ASA 5506H documentation and Cloud VPN documentation for additional information
+about both products.
 
 ### GCP documentation
 
@@ -584,11 +578,9 @@ To learn more about GCP networking, see the following documents:
 -  [Check VPN status](https://cloud.google.com/vpn/docs/how-to/checking-vpn-status)
 -  [Terraform template for HA VPN](https://www.terraform.io/docs/providers/google/r/compute_ha_vpn_gateway.html)
 -  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
--  [Create virtual machine on GCP](https://cloud.google.com/compute/docs/quickstart)
+-  [Create a virtual machine on GCP](https://cloud.google.com/compute/docs/quickstart)
 
 ### Cisco ASA 5506H documentation
 
-For more product information on Cisco ASA 5506H, refer to the following
-configuration guides and datasheets:
-
--  [ASA Virtual Tunnel Interface](https://www.cisco.com/c/en/us/td/docs/security/asa/asa97/configuration/vpn/asa-97-vpn-config/vpn-vti.html)
+For more information on Cisco ASA 5506H, see
+[ASA Virtual Tunnel Interface](https://www.cisco.com/c/en/us/td/docs/security/asa/asa97/configuration/vpn/asa-97-vpn-config/vpn-vti.html)
