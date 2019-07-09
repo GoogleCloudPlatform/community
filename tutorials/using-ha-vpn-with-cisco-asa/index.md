@@ -114,7 +114,7 @@ lists the parameters and gives examples of the values used in this guide:
 | IP address range for the GCP VPC subnet | `[RANGE_2]` | `10.0.2.0/24` |
 | IP address range for the on-premises subnet. You will use this range when creating rules for inbound traffic to GCP. | `[IP_ON_PREM_SUBNET]` | `192.168.1.0/24` |
 | External static IP address for the first internet interface of Cisco ASA 5506H  | `[ON_PREM_GW_IP_0]` | `209.119.81.225` |
-| External static IP address for the second internet interface of Cisco ASA 5506H | `[ON_PREM_GW_IP_1]` | `209.119.81.226` |
+| External static IP address for the second internet interface of Cisco ASA 5506H | `[ON_PREM_GW_IP_1]` | `209.119.82.226` |
 | HA VPN gateway                          | `[GW_NAME]`                 | `ha-vpn-gw-a`                       |
 | Cloud Router name (for dynamic routing) | `[ROUTER_NAME]`             | `router-a`                          |
 | Google ASN                              | `[GOOGLE_ASN]`              | `65001`                             |
@@ -251,7 +251,7 @@ This interop guide only covers the second option (one peer, two addresses).
 The command should look similar to the following example:
 
     gcloud beta compute external-vpn-gateways create peer-gw   \
-     --interfaces 0=209.119.81.225,1=209.119.81.226
+     --interfaces 0=209.119.81.225,1=209.119.82.226
 
 ### Create two VPN tunnels, one for each interface on the HA VPN gateway
 
@@ -403,8 +403,14 @@ VPC subnet prefixes.
 
 ### Creating the base network configuration
 
-Use the configuration code below to create the base Layer 3 network configuration for the Cisco system:
+For [1-peer-2-address](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses) 
+at a minimum configure 3 interfaces named as `outside-0`, `outside-1` and `inside`. Outside 
+interfaces are connected to the Internet and inside interface is connected to the private network.
 
+Enter the configuration mode to create the base Layer 3 network configuration for the Cisco system,
+replace the IP addresses based on your envrionment:
+
+    configure terminal
     interface GigabitEthernet1/1
      nameif outside-0
      security-level 0
@@ -418,7 +424,7 @@ Use the configuration code below to create the base Layer 3 network configuratio
     interface GigabitEthernet1/3
      nameif outside-1
      security-level 0
-     ip address 209.119.81.226 255.255.255.248
+     ip address 209.119.82.226 255.255.255.248
     !
     
 ### Creating the base VPN gateway configuration
@@ -429,12 +435,15 @@ Make sure to configure [Ciphers supported by GCP](https://cloud.google.com/vpn/d
 
 #### Configure the IKEv2 policy
 
+Enter the configuration mode on Cisco ASA and create IKEv2 policies.
+
     crypto ikev2 policy 10
      encryption aes-gcm-256
      group 14
      prf sha512 sha384 sha256 sha
      lifetime seconds 36000
-    crypto ikev2 enable outside
+    crypto ikev2 enable outside-0
+    crypto ikev2 enable outside-1
     
 #### Configure the IKEv2 proposal
 
@@ -456,6 +465,7 @@ Make sure to configure [Ciphers supported by GCP](https://cloud.google.com/vpn/d
     group-policy GCP attributes
      vpn-tunnel-protocol ikev2 
 
+    tunnel-group 35.242.106.213 type ipsec-l2l
     tunnel-group 35.242.106.213 general-attributes
      default-group-policy GCP
     tunnel-group 35.242.106.213 ipsec-attributes
@@ -463,6 +473,7 @@ Make sure to configure [Ciphers supported by GCP](https://cloud.google.com/vpn/d
      ikev2 remote-authentication pre-shared-key mysharedsecret
      ikev2 local-authentication pre-shared-key mysharedsecret
 
+    tunnel-group 35.220.86.219 type ipsec-l2l
     tunnel-group 35.220.86.219 general-attributes
      default-group-policy GCP
     tunnel-group 35.220.86.219 ipsec-attributes
@@ -495,9 +506,13 @@ Follow the procedure in this section to configure dynamic routing for traffic
 through the VPN tunnel or tunnels using the BGP routing protocol. This configuration
 will use ECMP to load-balance the traffic between the two tunnels.
 
+Configure prefix lists to limit the inbound and outbound prefix advertisement.
+
     prefix-list GCP-IN seq 5 permit 10.0.1.0/24 le 32
     prefix-list GCP-IN seq 6 permit 10.0.2.0/24 le 32
     prefix-list GCP-OUT seq 5 permit 192.168.1.0/24 le 32
+
+Configure BGP peers to dynamically exchange prefixes between on-premises and GCP.
 
     router bgp 65002
      bgp log-neighbor-changes
@@ -583,4 +598,5 @@ To learn more about GCP networking, see the following documents:
 ### Cisco ASA 5506H documentation
 
 For more information on Cisco ASA 5506H, see
-[ASA Virtual Tunnel Interface](https://www.cisco.com/c/en/us/td/docs/security/asa/asa97/configuration/vpn/asa-97-vpn-config/vpn-vti.html)
+-  [ASA Virtual Tunnel Interface](https://www.cisco.com/c/en/us/td/docs/security/asa/asa97/configuration/vpn/asa-97-vpn-config/vpn-vti.html)
+-  [ASA site2site VPN](https://www.cisco.com/c/en/us/td/docs/security/asa/asa84/configuration/guide/asa_84_cli_config/vpn_site2site.html)
