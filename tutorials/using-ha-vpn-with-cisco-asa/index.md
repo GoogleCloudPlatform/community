@@ -461,6 +461,13 @@ Enter the configuration mode on Cisco ASA and create IKEv2 policies.
 
 #### Configure tunnel groups for each peer IP address
 
+Tunnel group parameters set the access policies and protocol specific connection 
+parameters for the IPsec tunnel. The first command sets the tunnel type to `ipsec-l2l` 
+(site-to-site or, in Cisco terms, lan-to-lan). The next command block sets 
+the general-attributes for the IPsec tunnel. In this case the `default-group-policy`
+for the tunnel is being set to the policy named `GCP` and the `ipsec-attributes`
+for the tunnel are being set. 
+
     group-policy GCP internal
     group-policy GCP attributes
      vpn-tunnel-protocol ikev2 
@@ -481,7 +488,10 @@ Enter the configuration mode on Cisco ASA and create IKEv2 policies.
      ikev2 remote-authentication pre-shared-key mysharedsecret
      ikev2 local-authentication pre-shared-key mysharedsecret
 
-#### Configure the IPSec static virtual tunnel interface (SVTI)
+#### Configure the IPSec virtual tunnel interface (VTI)
+
+VTI allows route based VPNs on Cisco ASA. Below configuration creates 2 VTIs with 
+interface name and ipsec configurations.
 
     interface Tunnel10
      nameif gcp-if-0
@@ -500,7 +510,7 @@ Enter the configuration mode on Cisco ASA and create IKEv2 policies.
      tunnel protection ipsec profile GCP
     !
 
-### Configuring the dynamic routing protocol
+### Configuring the dynamic routing protocol and access policies
 
 Follow the procedure in this section to configure dynamic routing for traffic
 through the VPN tunnel or tunnels using the BGP routing protocol. This configuration
@@ -537,6 +547,9 @@ Configure BGP peers to dynamically exchange prefixes between on-premises and GCP
       no synchronization
      exit-address-family
     !
+    
+Create an access list to allow traffic from GCP and apply on tunnel interfaces.
+
     access-list GCP-IN extended permit ip any any 
     access-group GCP-IN in interface gcp-if-0
     access-group GCP-IN in interface gcp-if-0 control-plane
@@ -548,6 +561,28 @@ Configure BGP peers to dynamically exchange prefixes between on-premises and GCP
 Save the on-premises configuration:
 
     write memory
+
+### Verify configurations
+
+    CISCO-ASA5506H-001# sh crypto ikev2 sa  detail
+
+    IKEv2 SAs:
+
+    Session-id:100, Status:UP-ACTIVE, IKE count:1, CHILD count:1
+
+    Tunnel-id Local                   Remote                Status         Role
+    1738689761 209.119.81.225/500     35.220.72.68/500       READY    INITIATOR
+          Encr: AES-GCM, keysize: 256, Hash: N/A, DH Grp:14, Auth sign: PSK, Auth verify: PSK
+          Life/Active Time: 36000/24695 sec
+          Session-id: 100
+          
+    CISCO-ASA5506H-001# sh crypto ipsec sa detail
+    interface: tunnel-a
+        Crypto map tag: __vti-crypto-map-4-0-10, seq num: 65280, local addr: 209.119.81.225
+
+      local ident (addr/mask/prot/port): (0.0.0.0/0.0.0.0/0/0)
+      remote ident (addr/mask/prot/port): (0.0.0.0/0.0.0.0/0/0)
+      current_peer: 35.242.111.74
 
 ### Testing the configuration
 
