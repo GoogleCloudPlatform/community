@@ -3,7 +3,7 @@ title: Google Cloud HA VPN interoperability guide for Cisco ASA 5506H
 description: Build site-to-site IPSec VPNs between HA VPN on Google Cloud Platform (GCP) and Cisco ASA 5506H.
 author: ashishverm
 tags: HA VPN, Cloud VPN, interop, Cisco, ASA 5506H
-date_published: 2019-07-06
+date_published: 2019-07-12
 ---
 
 Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
