@@ -55,7 +55,7 @@ In this tutorial, you may open multiple shell tabs or sessions. Set these enviro
     export REGISTRY=gadgets
     export DEVICE=bridge
 		
-Enable APIs:
+#### Enable APIs
 	
     gcloud services enable \
     cloudiot.googleapis.com \
