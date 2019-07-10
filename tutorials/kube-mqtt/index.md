@@ -23,14 +23,14 @@ topic namespace to [Cloud IoT Core](https://cloud.google.com/iot-core/).
 
 ### Prerequisite: Kubernetes cluster
 
-This tutorial assumes you have a running Kubernetes cluster. This can be a cluster created through
+This tutorial assumes that you have a running Kubernetes cluster. This can be a cluster created through
 [Minikube](https://kubernetes.io/docs/tutorials/hello-minikube/),
 [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/), or other means. For the tutorial, you can also use 
 Kubernetes Engine clusters; however, the context of this solution is based on non-cloud clusters in Edge environments.
 
 You will also need a recent `kubectl` command-line interface (version 1.14 or greater) with
 [kustomize integration](https://kubernetes.io/blog/2019/03/25/kubernetes-1-14-release-announcement/). If you have an older 
-version of `kubectl`, install a newer one from the
+version of `kubectl`, install version 1.14 or greater from the
 [Kubernetes website](https://kubernetes.io/docs/tasks/tools/install-kubectl/). Ensure that `kubectl` is configured to 
 communicate with your cluster.
 
