@@ -19,12 +19,8 @@ topic namespace to [Cloud IoT Core](https://cloud.google.com/iot-core/).
 
 ### Clone the tutorial repository
 
-#### TODO update to prod
-
-	git clone https://github.com/ptone/community.git
-	cd community
-	git checkout kube-mqtt
-	cd tutorials/kube-mqtt
+	git clone https://github.com/GoogleCloudPlatform/community.git
+	cd community/tutorials/kube-mqtt
 
 ### Prerequisite: Kubernetes Cluster
 
