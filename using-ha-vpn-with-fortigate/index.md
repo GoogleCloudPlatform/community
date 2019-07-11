@@ -547,8 +547,8 @@ for advanced BGP configurations.
 
 Create firewall policies to allow traffic between on-premises and GCP private networks.
 
-These policies will allows all services, make required changes to the policy to allow
-specific services.
+These policies will allows traffic from all source and destination address, make required changes to the policy to allow
+specific services and IP ranges.
 
     config firewall policy
         edit 1
