@@ -582,7 +582,7 @@ specific services and IP ranges.
 
       get router bgp
 
-- Verify routes are being exchanged from GCP.
+- Verify routes are being exchanged with GCP.
 
       get router info bgp neighbors 169.254.142.153 advertised-routes
 
