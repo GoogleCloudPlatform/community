@@ -1,97 +1,97 @@
 ---
-title: Building a Slack Reminder App with Google Cloud Functions and Google Cloud Scheduler
-description: Build a Slack App that sends messages to a channel at an interval of 3 hours.
+title: Building a Slack reminder app with Cloud Functions and Cloud Scheduler
+description: Build a Slack app that sends messages to a channel at an interval of 3 hours.
 author: timtech4u
 tags: Cloud Function, Cloud Scheduler, Slack
-date_published: 2019-07-11
+date_published: 2019-07-13
 ---
 
-In this tutorial we will build and deploy a serverless application that sends messages to Slack by leveraging on Google Cloud Function.
-We will also use Google Cloud Scheduler to periodically run our application at an interval of 3hours.
+In this tutorial, you build and deploy a serverless application that sends messages to Slack using a Cloud Function.
+You also use Cloud Scheduler to periodically run your application at an interval of 3 hours.
 
 ## Objectives
 
-- Create a [Slack App](https://api.slack.com/apps?new_app=1).
-- Create a HTTP Serverless Function that sends messages to Slack with [Cloud Function](https://cloud.google.com/functions)
-- Create a Scheduled Job that calls our Cloud Function every 3hours with [Cloud Scheduler](https://cloud.google.com/scheduler)
+- Create a [Slack app](https://api.slack.com/apps?new_app=1).
+- Create an HTTP serverless function that sends messages to Slack with a
+  [Cloud Function](https://cloud.google.com/functions).
+- Create a scheduled job that calls your Cloud Function every 3 hours with
+  [Cloud Scheduler](https://cloud.google.com/scheduler).
 
 ## Before you begin
 
-1.  [Create a new Google Cloud Platform project, or use an existing one](https://console.cloud.google.com/project).
+1.  [Create a new Google Cloud Platform (GCP) project](https://console.cloud.google.com/project), or use an existing one.
 2.  [Enable billing for your project](https://support.google.com/cloud/answer/6293499#enable-billing).
-3.  Create a [new Slack team](https://slack.com/create), or use an team where you have permissions to add integrations.
+3.  Create a [new Slack team](https://slack.com/create), or use a team for which you have permissions to add integrations.
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform including Google
-Compute Engine. Use the [Pricing
-Calculator](https://cloud.google.com/products/calculator/#id=6d866c0e-b928-4786-b2ab-bed5c380a2fd)
+This tutorial uses billable components of GCP including Compute Engine. Use the
+[Pricing Calculator](https://cloud.google.com/products/calculator/#id=6d866c0e-b928-4786-b2ab-bed5c380a2fd)
 to estimate the costs for your usage.
 
-Slack is free for up to 10 apps and integrations. Check the [Slack pricing
-page](https://slack.com/pricing) for details.
+Slack is free for up to 10 apps and integrations. Check the [Slack pricing page](https://slack.com/pricing) for details.
 
-## Getting the sample code
+## Get the sample code
 
-Get the sample code from GitHub Gist.
-([here](https://gist.github.com/Timtech4u/2f59976a183eefe57bb65be247de49b5))
+Get the sample code from GitHub Gist, [here](https://gist.github.com/Timtech4u/2f59976a183eefe57bb65be247de49b5).
 
-## Setting up Slack
+## Create a new Slack app and set up Slack
 
-To create a new Slack app, go to the [app management
-page](https://api.slack.com/apps?new_app=1) and click **Create new app**.
-
+1.  Go to the [Slack app management page](https://api.slack.com/apps?new_app=1).
+1.  Click **Create new app**.
 1.  Give the app a name, such as "RestReminder".
-2.  Choose the Slack team for development and where you will eventually install it.
-3.  Click Incoming Webhooks.
-4.  Enable incoming webhooks.
-5.  Click Add New Webhook to Team. An authorization page opens.
-6.  From the drop-down menu, select the channel to which you would like notifications sent. We'll be using the #random channel
-7.  Click Authorize.
-8.  A webhook for your Slack application has been created. Copy the webhook and save it for later use. 
+1.  Choose the Slack team for development and where you will eventually install it.
+1.  Click **Incoming Webhooks**.
+1.  Enable incoming webhooks.
+1.  Click **Add New Webhook to Team**. An authorization page opens.
+1.  From the drop-down menu, select the channel to which you would like notifications sent. We'll be using
+    the #random channel.
+1.  Click **Authorize**.
+1.  A webhook for your Slack application has been created. Copy the webhook and save it for later use. 
 
-## Setting up Cloud Function
+## Set up the Cloud Function
 
-Visit [Cloud Function Console](https://console.cloud.google.com/functions) and click **Create Function**
+1.  Go to the [**Cloud Functions** page of the GCP Console](https://console.cloud.google.com/functions).
+1.  Click **Create Function**.
+1.  Enter your function's name in the **Name** field.
+1.  Set **Memory allocated** to **256MB**.
+1.  Set **Trigger** to **HTTP**.
+1.  For **Authentication**, check **Allow unauthenticated invocations**.
+1.  For **Source code**, select **Inline editor**.
+1.  For **Runtime**, choose **Node.js 8**. (Feel free to change this to suit your choice in future.)
+1.  Paste the sample code into the inline editor, both `index.js` and `package.json`.
+1.  For **Function to execute**, enter `sendToSlack`.
+1.  Click the **Create** button to deploy the new Cloud Function.
 
-1.  Enter your function's name
-2.  Set Memory Allocated : 256MB
-3.  Set Trigger : HTTP
-4.  Authentication : Check - Allow unauthenticated invocations
-5.  Source code : Select - Inline editor
-6.  Runtime : Node.js 8 (Feel free to change this to suit your choice in future)
-7.  Function to execute : sendToSlack 
-8.  Paste the sample code snippet into the Inline editor both index.js and package.json
-9. Deploy
+After these steps are done, you can visit the URL on your Cloud Function URL to test.
 
-Once done, you can visit the URL on your Cloud Function URL to test.
+## Set up Cloud Scheduler
 
-## Setting up Cloud Scheduler
+1.  Go to the [**Cloud Scheduler** page of the GCP Console](https://console.cloud.google.com/cloudscheduler).
+1.  Click **Create Job**.
+1.  Enter a job name in the **Name** field.
+2.  In the **Frequency** field, enter `0 */3 * * *`, which indicates every 3 hours in unix-cron format.
+3.  For **Target**, select **HTTP**.
+4.  In the **URL** field, enter your deployed Cloud Function URL.
+5.  For **HTTP method**, select GET.
 
-Visit [Cloud Scheduler Console](https://console.cloud.google.com/cloudscheduler) and click **Create Job**
-
-1.  Enter job name
-2.  Set Frequency : every 3 hours
-3.  Target : Select HTTP
-4.  Set URL : (Use your deployed Cloud Function URL)
-5.  HTTP Method : Select GET
-
-Great! You just scheduled a Slack Bot that sends a message to your Slack Channel every 3 hours. 
+Great! You just scheduled a Slack Bot that sends a message to your Slack channel every 3 hours. 
 
 ## Cleaning up
 
 To prevent unnecessary charges, clean up the resources created for this tutorial.
 
-1. Delete the project used (if you create a new project).
-2. Delete the Cloud Scheduler Job and Cloud Function.
-2. OR Pause the Cloud Scheduler Job.
+1. Delete the project used (if you created a new project).
+2. Delete the Cloud Scheduler job and Cloud Function.
+
+You might also choose to pause the Cloud Scheduler job.
 
 ## Next steps
 
-If you want to learn more about Google Cloud Functions and Google Cloud Scheduler, check out the following resources.
+If you want to learn more about Cloud Functions and Cloud Scheduler, check out the following resources:
 
--  [Google Cloud Function](https://cloud.google.com/functions)
--  [Google Cloud Scheduler](https://cloud.google.com/scheduler)
+-  [Cloud Function](https://cloud.google.com/functions)
+-  [Cloud Scheduler](https://cloud.google.com/scheduler)
 -  [Cloud Functions for Firebase](https://firebase.google.com/docs/functions)
 -  [Scheduled Cloud Functions for Firebase](https://firebase.google.com/docs/functions/schedule-functions)
 -  [Awesome List for Google Cloud Platform](https://github.com/GoogleCloudPlatform/awesome-google-cloud)
