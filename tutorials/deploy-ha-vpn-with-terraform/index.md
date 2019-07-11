@@ -30,11 +30,11 @@ configuration on Google Cloud Platform (GCP).
 
 1.  Clone the repository:
 
-        git clone https://github.com/GoogleCloudPlatform/deploy-ha-vpn-with-terraform.git
+        git clone https://github.com/GoogleCloudPlatform/community.git
         
-1.  Go to the `deploy-ha-vpn-with-terraform` directory:
+1.  Go to the `deploy-ha-vpn-with-terraform/terraform` directory:
 
-        cd deploy-ha-vpn-with-terraform
+        cd community/tutorials/deploy-ha-vpn-with-terraform/terraform
 
 1.  (optional) Change variable values in `gcp_variables.tf` for your envrionment.
 
