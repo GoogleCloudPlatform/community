@@ -599,8 +599,7 @@ through the VPN tunnel.
 
     - Instructions for creating virtual machines in Compute Engine are in the
       [Getting started guide](https://cloud.google.com/compute/docs/quickstart).
-    - Instructions for creating machines machines on-premises are located \<here>.
-
+    
 1.  After you have deployed VMs on both GCP and on-premises, you can use
     an ICMP echo (ping) test to test network connectivity through the VPN tunnel.
 
