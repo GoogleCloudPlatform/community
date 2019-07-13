@@ -55,6 +55,8 @@ HA VPN supports [multiple topologies](https://cloud.google.com/vpn/docs/concepts
 This interop guide is based on the [AWS-peer-gateways](https://cloud.google.com/vpn/docs/concepts/topologies#aws_peer_gateways) 
 using `FOUR_IPS_REDUNDANCY` REDUNDANCY_TYPE.
 
+![Topology Diagram](gcp-aws-ha-vpn-topology.png)
+
 There are three major gateway components to set up for this configuration, as shown in the following topology diagram:
 
 -  An HA VPN gateway in Google Cloud Platform with two interfaces.
