@@ -55,16 +55,14 @@ HA VPN supports [multiple topologies](https://cloud.google.com/vpn/docs/concepts
 This interop guide is based on the [AWS-peer-gateways](https://cloud.google.com/vpn/docs/concepts/topologies#aws_peer_gateways) 
 using `FOUR_IPS_REDUNDANCY` REDUNDANCY_TYPE.
 
-![Topology Diagram](gcp-aws-ha-vpn-topology.png)
-
 There are three major gateway components to set up for this configuration, as shown in the following topology diagram:
 
 -  An HA VPN gateway in Google Cloud Platform with two interfaces.
 -  Two AWS Virtual Private Gateways, which connect to your HA VPN gateway.
 -  An external VPN gateway resource in GCP that represents your AWS Virtual Private Gateway. 
    This resource provides information to GCP about your AWS gateway.
-   
-   <insert-diagram>
+
+![Topology Diagram](gcp-aws-ha-vpn-topology.png)
 
 The supported AWS configuration uses 4 tunnels total:
 
@@ -106,7 +104,10 @@ lists the parameters and gives examples of the values used in this guide.
 |-----------------------|----------------------|--------------------------------------------------------|
 | Vendor name           | `[VENDOR_NAME]`      | AWS                                                    |
 | GCP project name      | `[PROJECT_NAME]`     | `vpn-guide`                                            |
-| Shared secret         | `[SHARED_SECRET]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
+| Shared secret         | `[SHARED_SECRET_0]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
+| Shared secret         | `[SHARED_SECRET_1]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
+| Shared secret         | `[SHARED_SECRET_2]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
+| Shared secret         | `[SHARED_SECRET_3]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
 | VPC network name      | `[NETWORK]`          | `network-a`                                            |
 | Subnet mode           | `[SUBNET_MODE]`      | `custom`                                               |
 | VPN BGP routing mode  | `[BGP_ROUTING_MODE]` | `global`                                               |
@@ -126,10 +127,10 @@ lists the parameters and gives examples of the values used in this guide.
 | Google ASN                              | `[GOOGLE_ASN]`              | `65001`                             |
 | Peer ASN                                | `[PEER_ASN]`                | `65002`                             |
 | External VPN gateway resource           | `[PEER_GW_NAME]`            | `peer-gw`                           |
-| First VPN tunnel                        | `[TUNNEL_NAME_IF0]`         | `aws-connection-0-ip0`          |
-| Second VPN tunnel                       | `[TUNNEL_NAME_IF1]`         | `aws-connection-0-ip1`          |
-| Third VPN tunnel                        | `[TUNNEL_NAME_IF2]`         | `aws-connection-1-ip0`          |
-| Fourth VPN tunnel                       | `[TUNNEL_NAME_IF3]`         | `aws-connection-1-ip1`          |
+| First VPN tunnel                        | `[TUNNEL_NAME_IF0]`         | `tunnel-a-to-aws-connection-0-ip0`  |
+| Second VPN tunnel                       | `[TUNNEL_NAME_IF1]`         | `tunnel-a-to-aws-connection-0-ip1`  |
+| Third VPN tunnel                        | `[TUNNEL_NAME_IF2]`         | `tunnel-a-to-aws-connection-1-ip0`  |
+| Fourth VPN tunnel                       | `[TUNNEL_NAME_IF3]`         | `tunnel-a-to-aws-connection-1-ip1`  |
 | First BGP peer interface                | `[ROUTER_INTERFACE_NAME_0]` | `bgp-peer-tunnel-a-to-aws-connection-0-ip0` |
 | Second BGP peer interface               | `[ROUTER_INTERFACE_NAME_1]` | `bgp-peer-tunnel-a-to-aws-connection-0-ip1` |
 | Third BGP peer interface                | `[ROUTER_INTERFACE_NAME_3]` | `bgp-peer-tunnel-a-to-aws-connection-1-ip0` |
@@ -267,7 +268,7 @@ component in the dashboard's navigation bar.
 1. In the AWS dashboard, under **Virtual Private Network**, select **Virtual Private Gateways**.
 1. Click **Create Virtual Private Gateway**.
 1. Enter a **Name** for the gateway.
-1. Select **Custom ASN** and give the gateway an AWS ASN that doesn't conflict with the [GOOGLE_ASN].
+1. Select **Custom ASN** and give the gateway an AWS ASN that doesn't conflict with the `[GOOGLE_ASN]`.
 1. Click **Create Virtual Private Gateway**. Click **Close**.
 1. Attach the gateway to the AWS VPC by selecting the gateway you just created, clicking **Actions, Attach to VPC**.
    1. Pull down the menu and select a VPC for this gateway and click **Yes, Attach**.
@@ -293,7 +294,7 @@ component in the dashboard's navigation bar.
 **Create the second AWS gateway**
 
 Repeat the above steps to create a second AWS gateway, site-to-site connection, and customer gateway, 
-but use the IP address generated for HA VPN gateway interface 1 instead. Use the same [GOOGLE_ASN].
+but use the IP address generated for HA VPN gateway interface 1 instead. Use the same `[GOOGLE_ASN]`.
 
 **Download the AWS configuration settings for each site-to-site connection**
 
@@ -637,5 +638,26 @@ There are two methods you can use to verify the Cloud Router configuration; one 
             result.bgpPeerStatus[3].name:          bgp-peer-tunnel-a-to-on-prem-if-2
             result.bgpPeerStatus[3].peerIpAddress: 169.254.1.17
             
-   1. Continue to the next section to complete the gateway configuration.
+## Testing connectivity
+ 
+1. Create VMs on both sides of the tunnel. Make sure that you configure the VMs on a subnet that will pass traffic through the VPN tunnel.
+
+   1. Instructions for creating virtual machines in Compute Engine are in the [Getting started guide](https://cloud.google.com/compute/docs/quickstarts).
+   1. See [Launch a virtual machine](https://aws.amazon.com/getting-started/tutorials/launch-a-virtual-machine/) for AWS instructions.
+
+1. After you have deployed VMs on both GCP and on-premises, you can use an ICMP echo (ping) test to test network connectivity through the VPN tunnel.
+
+   1. In the GCP Console, go to the VM Instances page.
+   1. Find the GCP virtual machine you created.
+   1. In the Connect column, click SSH. A Cloud Shell window opens at the VM command line.
+   1. Ping a machine that's behind the on-premises gateway.
+
+            host@gcp-ha-vpn-test-instance:~$ ping 192.168.1.134
+            PING 192.168.1.134 (192.168.1.134) 56(84) bytes of data.
+            64 bytes from 192.168.1.134: icmp_seq=1 ttl=253 time=39.1 ms
+            64 bytes from 192.168.1.134: icmp_seq=2 ttl=253 time=37.7 ms
+            64 bytes from 192.168.1.134: icmp_seq=3 ttl=253 time=37.6 ms
+            --- 192.168.1.134 ping statistics ---
+            11 packets transmitted, 11 received, 0% packet loss, time 10015ms
+            rtt min/avg/max/mdev = 37.673/37.890/39.145/0.417 ms
 
