@@ -410,28 +410,28 @@ Replace `[INT_NUM_1]` with the number `1` for the second interface on the HA VPN
 The command output should look similar to the following example:
 
       gcloud beta compute vpn-tunnels create tunnel-a-to-aws-connection-0-ip0 --peer-external-gateway \
-      aws-peer-gw --peer-external-gateway-interface 0 --region us-central1 --ike-version 2 \
+      peer-gw --peer-external-gateway-interface 0 --region us-central1 --ike-version 2 \
       --shared-secret mysharedsecret --router router-a --vpn-gateway ha-vpn-gw-a --interface 0
       Creating VPN tunnel...done.
       NAME                              REGION       GATEWAY      VPN_INTERFACE  PEER_ADDRESS
       tunnel-a-to-aws-connection-0-ip0  us-central1  ha-vpn-gw-a  0              52.52.128.71
 
        gcloud beta compute vpn-tunnels create tunnel-a-to-aws-connection-0-ip1 --peer-external-gateway \
-       aws-peer-gw --peer-external-gateway-interface 1 --region us-central1 --ike-version 2 \
+       peer-gw --peer-external-gateway-interface 1 --region us-central1 --ike-version 2 \
        --shared-secret mysharedsecret --router router-a --vpn-gateway ha-vpn-gw-a --interface 0
       Creating VPN tunnel...done.
       NAME                              REGION       GATEWAY      VPN_INTERFACE  PEER_ADDRESS
       tunnel-a-to-aws-connection-0-ip1  us-central1  ha-vpn-gw-a  0              184.169.223.3
 
       gcloud beta compute vpn-tunnels create tunnel-a-to-aws-connection-1-ip0 --peer-external-gateway \
-      aws-peer-gw --peer-external-gateway-interface 2 --region us-central1 --ike-version 2 \
+      peer-gw --peer-external-gateway-interface 2 --region us-central1 --ike-version 2 \
       --shared-secret mysharedsecret --router router-a --vpn-gateway ha-vpn-gw-a --interface 1
       Creating VPN tunnel...done.
       NAME                              REGION       GATEWAY      VPN_INTERFACE  PEER_ADDRESS
       tunnel-a-to-aws-connection-1-ip0  us-central1  ha-vpn-gw-a  1              13.52.115.71
 
       gcloud beta compute vpn-tunnels create tunnel-a-to-aws-connection-1-ip1 --peer-external-gateway \
-      aws-peer-gw --peer-external-gateway-interface 3 --region us-central1 --ike-version 2 \
+      peer-gw --peer-external-gateway-interface 3 --region us-central1 --ike-version 2 \
       --shared-secret mysharedsecret --router router-a --vpn-gateway ha-vpn-gw-a --interface 1
       Creating VPN tunnel...done.
       NAME                              REGION       GATEWAY      VPN_INTERFACE  PEER_ADDRESS
