@@ -1,6 +1,6 @@
 ---
 title: Deploy HA VPN with Terraform
-description: Deploy GCP envrionment used in HA VPN interop guides with Terraform.
+description: Deploy GCP environment used in HA VPN interop guides with Terraform.
 author: ashishverm
 tags: terraform, ha vpn,
 date_published: 2019-07-12
