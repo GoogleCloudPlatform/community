@@ -66,7 +66,7 @@ The Foritgate equipment used in this guide is as follows:
     [dynamic routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#dynamic-routing)
     works in GCP.
 
-1.  Make sure that your peer VPN gateway supports BGP and is directly connected to the Internet. Fortigate configurations
+1.  Make sure that your peer VPN gateway supports BGP and is directly connected to the internet. Fortigate configurations
     are not tested with a device behind 1:1 NAT.
 
 1.  Select or [create](https://console.cloud.google.com/cloud-resource-manager) a GCP project.
@@ -130,7 +130,7 @@ This section covers how to configure HA VPN. See
 for a quick deployment.
 
 There are two ways to create HA VPN gateways on GCP: using the GCP Console and using
-[`gcloud` commands](https://cloud.google.com/sdk/). This section describes how to perform the tasks
+[`gcloud` commands](https://cloud.google.com/sdk/gcloud/). This section describes how to perform the tasks
 using `gcloud` commands.
 
 ### Initial tasks
@@ -447,7 +447,7 @@ Follow the procedures in this section to create the base VPN configuration.
 #### GCP-compatible settings for IPSec and IKE
 
 Make sure to configure only 
-[Ciphers supported by GCP](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike).
+[ciphers supported by GCP](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike).
 
 #### Configure Phase 1 policy
 
