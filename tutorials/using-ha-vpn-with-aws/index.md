@@ -1,14 +1,10 @@
 ---
-title: Google Cloud HA VPN Interop Guide for AWS
-description: Describes how to build site-to-site IPsec VPNs between HA VPN on Google Cloud Platform (GCP) and AWS.
+title: Google Cloud HA VPN interoperability guide for AWS
+description: Describes how to build site-to-site IPSec VPNs between HA VPN on Google Cloud Platform (GCP) and AWS.
 author: ashishverm,
 tags: HA VPN, Cloud VPN, interop, AWS
-date_published: 2019-07-06
+date_published: 2019-07-16
 ---
-
-# Using HA VPN with AWS
-
-Author: ashishverm
 
 Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
 on Google Cloud Platform (GCP) and AWS.
@@ -62,7 +58,7 @@ There are three major gateway components to set up for this configuration, as sh
 -  An external VPN gateway resource in GCP that represents your AWS Virtual Private Gateway. 
    This resource provides information to GCP about your AWS gateway.
 
-![Topology Diagram](gcp-aws-ha-vpn-topology.png)
+![Topology diagram](https://storage.googleapis.com/gcp-community/tutorials/using-ha-vpn-with-aws/gcp-aws-ha-vpn-topology.png)
 
 The supported AWS configuration uses 4 tunnels total:
 
