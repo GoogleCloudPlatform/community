@@ -46,8 +46,11 @@ Note that HA VPN only supports dynamic routing.
 
 HA VPN supports [multiple topologies](https://cloud.google.com/vpn/docs/concepts/topologies).
 
-This interop guide is based on the [1-peer-2-address](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses) topology.
-Same HA VPN configuration applies to [2-peers](https://cloud.google.com/vpn/docs/concepts/topologies#2-peers) as well.
+This interop guide is based on the
+[1-peer-2-address](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses) topology.
+
+The same HA VPN configuration also applies to the [2-peers](https://cloud.google.com/vpn/docs/concepts/topologies#2-peers)
+topology.
 
 ## Product environment
 
@@ -61,9 +64,9 @@ The Foritgate equipment used in this guide is as follows:
 
 1.  Review information about how
     [dynamic routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#dynamic-routing)
-    works in Google Cloud Platform.
+    works in GCP.
 
-1.  Make sure your peer VPN gateway supports BGP and directly connected to the Internet. Fortigate configurations
+1.  Make sure that your peer VPN gateway supports BGP and is directly connected to the Internet. Fortigate configurations
     are not tested with a device behind 1:1 NAT.
 
 1.  Select or [create](https://console.cloud.google.com/cloud-resource-manager) a GCP project.
@@ -87,14 +90,14 @@ The Foritgate equipment used in this guide is as follows:
 
 ### Configuration parameters and values
 
-The `gcloud` commands in this guide include parameters whose value you must
+The `gcloud` commands in this guide include parameters whose values you must
 provide. For example, a command might include a GCP project name or a region or
 other parameters whose values are unique to your context. The following table
 lists the parameters and gives examples of the values used in this guide.
 
 | Parameter description | Placeholder          | Example value                                          |
 |-----------------------|----------------------|--------------------------------------------------------|
-| Vendor name           | `[VENDOR_NAME]`      | Fortinet |
+| Vendor name           | `[VENDOR_NAME]`      | Fortinet                                               |
 | GCP project name      | `[PROJECT_NAME]`     | `vpn-guide`                                            |
 | Shared secret         | `[SHARED_SECRET]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
 | VPC network name      | `[NETWORK]`          | `network-a`                                            |
@@ -122,13 +125,13 @@ lists the parameters and gives examples of the values used in this guide.
 
 ## Configure the GCP side
 
-This section covers how to configure HA VPN. See [deply-ha-vpn-with-terraform](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/deploy-ha-vpn-with-terraform/index.md)
+This section covers how to configure HA VPN. See
+[deply-ha-vpn-with-terraform](https://cloud.google.com/community/tutorials/deploy-ha-vpn-with-terraform)
 for a quick deployment.
 
 There are two ways to create HA VPN gateways on GCP: using the GCP Console and using
-[`gcloud` commands](https://cloud.google.com/sdk/).
-
-This section describes how to perform the tasks using `gcloud` commands.
+[`gcloud` commands](https://cloud.google.com/sdk/). This section describes how to perform the tasks
+using `gcloud` commands.
 
 ### Initial tasks
 
@@ -224,13 +227,13 @@ The command should look similar to the following example:
     --network network-a \
     --asn 65001
 
-### Create an External VPN Gateway resource
+### Create an external VPN gateway resource
 
 Create an external VPN gateway resource that provides information to GCP about your peer VPN gateway or gateways.
-Depending on the HA recommendations for your peer VPN gateway, you can create external VPN gateway resource for the
+Depending on the HA recommendations for your peer VPN gateway, you can create external VPN gateway resources for the
 following different types of on-premises VPN gateways:
 
-- Two separate peer VPN gateway devices where the two devices are redundant with each other and each device
+- Two separate peer VPN gateway devices, where the two devices are redundant with each other and each device
   has its own public IP address.
 - A single peer VPN gateway that uses two separate interfaces, each with its own public IP address. For this
   kind of peer gateway, you can create a single external VPN gateway with two interfaces.
@@ -238,7 +241,7 @@ following different types of on-premises VPN gateways:
 
 This interop guide only covers the second option (one peer, two addresses).
 
-#### Create an External VPN Gateway resource for a single peer VPN gateway with two separate interfaces
+#### Create an external VPN gateway resource for a single peer VPN gateway with two separate interfaces
 
     gcloud beta compute external-vpn-gateways create [PEER_GW_NAME] \
     --interfaces 0=[ON_PREM_GW_IP_0],1=[ON_PREM_GW_IP_1] \
@@ -396,20 +399,20 @@ VPC subnet prefixes.
 
 ## Configure the Fortigate side
 
-Below instructions are based on CLI, Fortigate supports these configurations
-through GUI as well.
+The instructions in this section use the command-line interface. You can also use the graphical 
+user interface for these configurations.
 
 ### Creating the base network configuration
 
-Follow the procedure listed in the configuration code snippet below to create
+Follow the procedure listed in the configuration code below to create
 the base Layer 3 network configuration of Fortigate.
 
-At least one internal-facing network interface is required in order to
+At least one internal-facing network interface is required to
 connect to your on-premises network, and one external-facing interface is
-required in order to connect to GCP.
+required to connect to GCP.
 
-For the 1-peer-2-address topology, configure a minimum of three interfaces,
-2 outside interfaces that are connected to the internet; 1 inside interface
+For the 1-peer-2-address topology, configure a minimum of three interfaces:
+two outside interfaces that are connected to the internet and one inside interface
 that is connected to the private network.
 
 Make sure to replace the IP addresses based on your envrionment:
@@ -443,12 +446,13 @@ Follow the procedures in this section to create the base VPN configuration.
 
 #### GCP-compatible settings for IPSec and IKE
 
-Make sure to configure [Ciphers supported by GCP](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike) only.
+Make sure to configure only 
+[Ciphers supported by GCP](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike).
 
-#### Configure Phase1 policy
+#### Configure Phase 1 policy
 
-Below instructions will create the phase1 proposal. Make sure to change the
-`local-gw`, `remote-gw` and `psksecret` as per your envrionment.
+This configuration creates the Phase 1 proposal. Make sure to change the
+`local-gw`, `remote-gw`, and `psksecret` for your envrionment.
 
     config vpn ipsec phase1-interface
         edit GCP-HA-VPN-INT0
@@ -473,7 +477,9 @@ Below instructions will create the phase1 proposal. Make sure to change the
         next
     end
 
-#### Configure Phase2 policy
+#### Configure Phase 2 policy
+
+This configuration creates the Phase 2 proposal.
 
     config vpn ipsec phase2-interface
         edit GCP-HA-VPN-INT0
@@ -510,7 +516,7 @@ Edit tunnel interfaces for each VPN tunnel. Change `ip` and `remote-ip` values a
 Follow the procedure in this section to configure dynamic routing for traffic
 through the VPN tunnel or tunnels using the BGP routing protocol.
 
-With below configuration BGP peering will be enabled and all "connected" routes
+With the configuration below, BGP peering will be enabled and all "connected" routes
 will be advertised to the peer. Change redistribution of routes based on your
 envrionment.
 
@@ -541,7 +547,7 @@ for advanced BGP configurations.
 
 Create firewall policies to allow traffic between on-premises and GCP private networks.
 
-These policies will allows traffic from all source and destination address, make required changes to the policy to allow
+These policies allow traffic from all source and destination addresses, make required changes to the policy to allow
 specific services and IP ranges.
 
     config firewall policy
@@ -568,19 +574,19 @@ specific services and IP ranges.
 
 ### Verify configurations
 
-- Verify IPsec tunnels are up.
+1.  Verify that the IPsec tunnels are up:
 
-      get vpn ipsec tunnel summary
+        get vpn ipsec tunnel summary
 
-- Verify BGP peering is up.
+1.  Verify that BGP peering is up:
 
-      get router bgp
+        get router bgp
 
-- Verify routes are being exchanged with GCP.
+1.  Verify that routes are being exchanged with GCP:
 
-      get router info bgp neighbors 169.254.142.153 advertised-routes
+        get router info bgp neighbors 169.254.142.153 advertised-routes
 
-      get router info bgp neighbors 169.254.142.153 received-routes
+        get router info bgp neighbors 169.254.142.153 received-routes
 
 ### Test connectivity
 
@@ -591,8 +597,8 @@ through the VPN tunnel.
 1.  Create VMs on both sides of the tunnel. Make sure that you configure the
     VMs on a subnet that will pass traffic through the VPN tunnel.
 
-    - Instructions for creating virtual machines in Compute Engine are in the
-      [Getting started guide](https://cloud.google.com/compute/docs/quickstart).
+    Instructions for creating virtual machines in Compute Engine are in the
+    [Getting started guide](https://cloud.google.com/compute/docs/quickstart).
     
 1.  After you have deployed VMs on both GCP and on-premises, you can use
     an ICMP echo (ping) test to test network connectivity through the VPN tunnel.
@@ -613,12 +619,12 @@ through the VPN tunnel.
 
 ## Troubleshooting IPSec on Foritgate
 
-For troubleshooting information, see the [Foritgate VPN troubleshooting guide](https://cookbook.fortinet.com/ipsec-vpn-troubleshooting).
+For troubleshooting information, see
+the [Foritgate VPN troubleshooting guide](https://cookbook.fortinet.com/ipsec-vpn-troubleshooting).
 
 ## Reference documentation
 
-You can refer to the following Foritgate documentation and
-Cloud VPN documentation for additional information about both products.
+See the following Foritgate documentation and Cloud VPN documentation for additional information.
 
 ### GCP documentation
 
@@ -633,8 +639,7 @@ To learn more about GCP networking, see the following documents:
 
 ### Foritgate documentation
 
-For more product information on Foritgate, refer to the following
-feature configuration guides.
+For more Fortigate product information, see the following feature configuration guides:
 
 -  [Fortinet next generation firewalls](https://www.fortinet.com/products/next-generation-firewall.html#overview)
--  [IPsec VPN web wizard](https://help.fortinet.com/fos60hlp/60/Content/FortiOS/fortigate-ipsecvpn/IPsec_VPN_Web-based_Manager/ipsec_vpn_help.htm?Highlight=ipsec)
+-  [IPSec VPN web wizard](https://help.fortinet.com/fos60hlp/60/Content/FortiOS/fortigate-ipsecvpn/IPsec_VPN_Web-based_Manager/ipsec_vpn_help.htm?Highlight=ipsec)
