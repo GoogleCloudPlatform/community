@@ -349,15 +349,15 @@ The command should look similar to the following example.
 
 In the following commands to create each tunnel, replace the options as noted in the configuration below:
 
-Replace `[TUNNEL_NAME_IF0]` with the name of the tunnel to `aws-connection-0-ip0`.
-Replace `[TUNNEL_NAME_IF1]` with the name of the tunnel to `aws-connection-0-ip1`.
-Replace `[TUNNEL_NAME_IF2]` with the name of the tunnel to `aws-connection-1-ip0`.
-Replace `[TUNNEL_NAME_IF3]` with the name of the tunnel to `aws-connection-1-ip1`.
-Replace `PEER_GW_NAME]` with a name of the external peer gateway created earlier.
-Replace `[IKE_VERS]` with 2. Although the AWS virtual private gateway supports IKEv1 or IKEv2, using IKEv2 is recommended. All four tunnels created in this example use IKEv2.
-Replace `[SHARED_SECRET_0]` through `[SHARED_SECRET_3]` with the shared secret, which must be the same as the shared secret used for the partner tunnel you create on your AWS virtual gateway. See [Generating a strong pre-shared key](https://cloud-dot-devsite.googleplex.com/vpn/docs/how-to/generating-pre-shared-key) for recommendations. You can also find the shared secrets in the AWS configuration files that you downloaded earlier.
-Replace `[INT_NUM_0]` with the number `0` for the first interface on the HA VPN gateway you created earlier.
-Replace `[INT_NUM_1]` with the number `1` for the second interface on the HA VPN gateway you created earlier.
+- Replace `[TUNNEL_NAME_IF0]` with the name of the tunnel to `aws-connection-0-ip0`.
+- Replace `[TUNNEL_NAME_IF1]` with the name of the tunnel to `aws-connection-0-ip1`.
+- Replace `[TUNNEL_NAME_IF2]` with the name of the tunnel to `aws-connection-1-ip0`.
+- Replace `[TUNNEL_NAME_IF3]` with the name of the tunnel to `aws-connection-1-ip1`.
+- Replace `PEER_GW_NAME]` with a name of the external peer gateway created earlier.
+- Replace `[IKE_VERS]` with 2. Although the AWS virtual private gateway supports IKEv1 or IKEv2, using IKEv2 is recommended. All four tunnels created in this example use IKEv2.
+- Replace `[SHARED_SECRET_0]` through `[SHARED_SECRET_3]` with the shared secret, which must be the same as the shared secret used for the partner tunnel you create on your AWS virtual gateway. See [Generating a strong pre-shared key](https://cloud-dot-devsite.googleplex.com/vpn/docs/how-to/generating-pre-shared-key) for recommendations. You can also find the shared secrets in the AWS configuration files that you downloaded earlier.
+- Replace `[INT_NUM_0]` with the number `0` for the first interface on the HA VPN gateway you created earlier.
+- Replace `[INT_NUM_1]` with the number `1` for the second interface on the HA VPN gateway you created earlier.
 
 ### Create the tunnel to AWS Connection 0, IP address 0
 
@@ -378,7 +378,7 @@ Replace `[INT_NUM_1]` with the number `1` for the second interface on the HA VPN
        --peer-external-gateway-interface 1 \
        --region [REGION] \
        --ike-version [IKE_VERS] \
-       --shared-secret [SHARED_SECRET1] \
+       --shared-secret [SHARED_SECRET_1] \
        --router [ROUTER_NAME] \
        --vpn-gateway [GW_NAME] \
        --interface [INT_NUM_0]
@@ -390,7 +390,7 @@ Replace `[INT_NUM_1]` with the number `1` for the second interface on the HA VPN
        --peer-external-gateway-interface 2 \
        --region [REGION] \
        --ike-version [IKE_VERS] \
-       --shared-secret [SHARED_SECRET2] \
+       --shared-secret [SHARED_SECRET_2] \
        --router [ROUTER_NAME] \
        --vpn-gateway [GW_NAME] \
        --interface [INT_NUM_1]
@@ -402,7 +402,7 @@ Replace `[INT_NUM_1]` with the number `1` for the second interface on the HA VPN
        --peer-external-gateway-interface 3 \
        --region [REGION] \
        --ike-version [IKE_VERS] \
-       --shared-secret [SHARED_SECRET3] \
+       --shared-secret [SHARED_SECRET_3] \
        --router [ROUTER_NAME] \
        --vpn-gateway [GW_NAME] \
        --interface [INT_NUM_1]
