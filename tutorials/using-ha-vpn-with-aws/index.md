@@ -496,7 +496,7 @@ Replace the options for the AWS side as noted below:
 
 The command output should look similar to the following example:
 
-      gcloud compute routers add-interface router-a --interface-name if-tunnel-a-to-on-prem-if-0 \
+      gcloud compute routers add-interface router-a --interface-name if-tunnel-a-to-aws-connection-0-ip0 \
       --vpn-tunnel tunnel-a-to-aws-connection-0-ip0 --ip-address 169.254.1.10 --mask-length 30 \
       --region us-central1
       Updated [https://www.googleapis.com/compute/v1/projects/cpe-vpn-testing/regions/us-central1/routers/router-a].
@@ -513,10 +513,10 @@ The command output should look similar to the following example:
        
    The command output should look similar to the following example:
 
-      gcloud compute routers add-bgp-peer router-a --peer-name bgp-peer-tunnel-a-to-on-prem-if-0 \ 
-      --peer-asn 65002 --interface if-tunnel-a-to-on-prem-if-0 --peer-ip-address 169.254.1.9 \
+      gcloud compute routers add-bgp-peer router-a --peer-name bgp-peer-tunnel-a-to-aws-connection-0-ip0 \ 
+      --peer-asn 65002 --interface if-tunnel-a-to-aws-connection-0-ip0 --peer-ip-address 169.254.1.9 \
       --region us-central1
-      Creating peer [bgp-peer-tunnel-a-to-on-prem-if-0] in router [router-a]...done.
+      Creating peer [bgp-peer-tunnel-a-to-aws-connection-0-ip0] in router [router-a]...done.
 
 
 **For the second VPN tunnel**
@@ -581,35 +581,35 @@ The command output should look similar to the following example:
              
    The command output should look similar to the following example:
         
-      gcloud compute routers add-interface router-a --interface-name if-tunnel-a-to-on-prem-if-1 \
+      gcloud compute routers add-interface router-a --interface-name if-tunnel-a-to-aws-connection-0-ip1 \
       --vpn-tunnel tunnel-a-to-aws-connection-0-ip1 --ip-address 169.254.1.6 --mask-length 30 \
       --region us-central1
       Updated [https://www.googleapis.com/compute/v1/projects/cpe-vpn-testing/regions/us-central1/routers/router-a].
 
-      gcloud compute routers add-bgp-peer router-a --peer-name bgp-peer-tunnel-a-to-on-prem-if-1 \
-      --peer-asn 65002 --interface if-tunnel-a-to-on-prem-if-1 --peer-ip-address 169.254.1.5 \
+      gcloud compute routers add-bgp-peer router-a --peer-name bgp-peer-tunnel-a-to-aws-connection-0-ip1 \
+      --peer-asn 65002 --interface if-tunnel-a-to-aws-connection-0-ip1 --peer-ip-address 169.254.1.5 \
       --region us-central1
-      Creating peer [bgp-peer-tunnel-a-to-on-prem-if-1] in router [router-a]...done.
+      Creating peer [bgp-peer-tunnel-a-to-aws-connection-0-ip1] in router [router-a]...done.
 
-      gcloud compute routers add-interface router-a --interface-name if-tunnel-a-to-on-prem-if-2 \
+      gcloud compute routers add-interface router-a --interface-name if-tunnel-a-to-aws-connection-1-ip0 \
       --vpn-tunnel tunnel-a-to-aws-connection-1-ip0 --ip-address 169.254.1.18 --mask-length 30 \
       --region us-central1
       Updated [https://www.googleapis.com/compute/v1/projects/cpe-vpn-testing/regions/us-central1/routers/router-a].
 
-      gcloud compute routers add-bgp-peer router-a --peer-name bgp-peer-tunnel-a-to-on-prem-if-2 \
-      --peer-asn 65002 --interface if-tunnel-a-to-on-prem-if-2 --peer-ip-address 169.254.1.17 \
+      gcloud compute routers add-bgp-peer router-a --peer-name bgp-peer-tunnel-a-to-aws-connection-1-ip0 \
+      --peer-asn 65002 --interface if-tunnel-a-to-aws-connection-1-ip0 --peer-ip-address 169.254.1.17 \
       --region us-central1
-      Creating peer [bgp-peer-tunnel-a-to-on-prem-if-2] in router [router-a]...done.
+      Creating peer [bgp-peer-tunnel-a-to-aws-connection-1-ip0] in router [router-a]...done.
 
-      gcloud compute routers add-interface router-a --interface-name if-tunnel-a-to-on-prem-if-3 \
+      gcloud compute routers add-interface router-a --interface-name if-tunnel-a-to-aws-connection-1-ip1 \
       --vpn-tunnel tunnel-a-to-aws-connection-1-ip1 --ip-address 169.254.1.14 --mask-length 30 \
       --region us-central1
       Updated [https://www.googleapis.com/compute/v1/projects/cpe-vpn-testing/regions/us-central1/routers/router-a].
 
-      gcloud compute routers add-bgp-peer router-a --peer-name bgp-peer-tunnel-a-to-on-prem-if-3 \
-      --peer-asn 65002 --interface if-tunnel-a-to-on-prem-if-3 --peer-ip-address 169.254.1.13 \
+      gcloud compute routers add-bgp-peer router-a --peer-name bgp-peer-tunnel-a-to-aws-connection-1-ip1 \
+      --peer-asn 65002 --interface if-tunnel-a-to-aws-connection-1-ip1 --peer-ip-address 169.254.1.13 \
       --region us-central1
-      Creating peer [bgp-peer-tunnel-a-to-on-prem-if-3] in router [router-a]...done.
+      Creating peer [bgp-peer-tunnel-a-to-aws-connection-1-ip1] in router [router-a]...done.
 
 ## Verify the Cloud Router configuration
 
@@ -626,16 +626,16 @@ There are two methods you can use to verify the Cloud Router configuration; one 
             gcloud compute routers get-status router-a  --region us-central1  --format='flattened(result.bgpPeerStatus[].name, result.bgpPeerStatus[].ipAddress, result.bgpPeerStatus[].peerIpAddress)'
 
             result.bgpPeerStatus[0].ipAddress:     169.254.1.6
-            result.bgpPeerStatus[0].name:          bgp-peer-tunnel-a-to-on-prem-if-1
+            result.bgpPeerStatus[0].name:          bgp-peer-tunnel-a-to-aws-connection-0-ip0
             result.bgpPeerStatus[0].peerIpAddress: 169.254.1.5
             result.bgpPeerStatus[1].ipAddress:     169.254.1.10
-            result.bgpPeerStatus[1].name:          bgp-peer-tunnel-a-to-on-prem-if-0
+            result.bgpPeerStatus[1].name:          bgp-peer-tunnel-a-to-aws-connection-0-ip1
             result.bgpPeerStatus[1].peerIpAddress: 169.254.1.9
             result.bgpPeerStatus[2].ipAddress:     169.254.1.14
-            result.bgpPeerStatus[2].name:          bgp-peer-tunnel-a-to-on-prem-if-3
+            result.bgpPeerStatus[2].name:          bgp-peer-tunnel-a-to-aws-connection-1-ip0
             result.bgpPeerStatus[2].peerIpAddress: 169.254.1.13
             result.bgpPeerStatus[3].ipAddress:     169.254.1.18
-            result.bgpPeerStatus[3].name:          bgp-peer-tunnel-a-to-on-prem-if-2
+            result.bgpPeerStatus[3].name:          bgp-peer-tunnel-a-to-aws-connection-1-ip1
             result.bgpPeerStatus[3].peerIpAddress: 169.254.1.17
             
 ## Testing connectivity
