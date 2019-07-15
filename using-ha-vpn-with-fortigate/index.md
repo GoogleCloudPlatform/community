@@ -1,21 +1,16 @@
 ---
-title: Google Cloud HA VPN Interop Guide for Fortigate
-description: Describes how to build site-to-site IPsec VPNs between HA VPN on Google Cloud Platform (GCP) and Fortigate.
+title: Google Cloud HA VPN interoperability guide for Fortigate
+description: Describes how to build site-to-site IPSec VPNs between HA VPN on Google Cloud Platform (GCP) and Fortigate.
 author: ashishverm
 tags: HA VPN, Cloud VPN, interop, Fortinet, FortiOS
-date_published: 2019-07-06
+date_published: 2019-07-16
 ---
-
-# Using HA VPN with Fortigate
-
-Author: ashishverm
 
 Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
 on Google Cloud Platform (GCP) and Fortigate.
 
-Fortinet terminology and the Fortinet logo are
-trademarks of Fortinet or its affiliates in the United States
-and/or other countries.
+Fortinet terminology and the Fortinet logo are trademarks of Fortinet or its affiliates in the
+United States and/or other countries.
 
 _Disclaimer: This interoperability guide is intended to be informational in
 nature and shows examples only. Customers should verify this information by
@@ -23,9 +18,8 @@ testing it._
 
 ## Introduction
 
-This guide walks you through the process of configuring route based VPN
-tunnel between Fortigate and the [HA VPN service](https://cloud.google.com/vpn/docs)
-on GCP.
+This guide walks you through the process of configuring a route-based VPN tunnel between
+Fortigate and the [HA VPN service](https://cloud.google.com/vpn/docs) on GCP.
 
 For more information about HA or Classic VPN, see the
 [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
