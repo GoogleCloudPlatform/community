@@ -46,8 +46,9 @@ Note that HA VPN only supports dynamic routing.
 
 HA VPN supports [multiple topologies](https://cloud.google.com/vpn/docs/concepts/topologies).
 
-This interop guide is based on the [AWS-peer-gateways](https://cloud.google.com/vpn/docs/concepts/topologies#aws_peer_gateways) 
-using `FOUR_IPS_REDUNDANCY` REDUNDANCY_TYPE.
+This interop guide is based on the
+[AWS-peer-gateways](https://cloud.google.com/vpn/docs/concepts/topologies#aws_peer_gateways) topology
+using with `REDUNDANCY_TYPE` of `FOUR_IPS_REDUNDANCY`.
 
 There are three major gateway components to set up for this configuration, as shown in the following topology diagram:
 
@@ -674,7 +675,7 @@ The command output should look similar to the following example:
     the VPN tunnel.
 
     Instructions for creating virtual machines in Compute Engine are in the
-    [Getting started guide](https://cloud.google.com/compute/docs/quickstarts).
+    [getting started guide](https://cloud.google.com/compute/docs/quickstarts).
     
     See [Launch a virtual machine](https://aws.amazon.com/getting-started/tutorials/launch-a-virtual-machine/)
     for AWS instructions.
