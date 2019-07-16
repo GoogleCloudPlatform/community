@@ -92,7 +92,9 @@ First, create a device registry that will contain your gateway and devices.
 
 ## Set up your gateway
 
-For the purposes of this tutorial, you will use your laptop or desktop as the gateway device. You will first generate an RSA public/private key pair, which will be used to sign the JWTs for authenticating to Cloud IoT Core.
+For the purposes of this tutorial, you can use your laptop or desktop as the gateway device for a simpler setup process. Alternatively, you can use a more realistic device like an additional Raspberry Pi*.
+
+You will first generate an RSA public/private key pair, which will be used to sign the JWTs for authenticating to Cloud IoT Core.
 
 To set up your gateway:
 
@@ -123,21 +125,27 @@ To set up your gateway:
 
         wget https://pki.goog/roots.pem
 
-12. Install the following packages by running the following command. Feel free to do this in a virtual environment of your choice.
+12. Use a [virtual environment](https://virtualenv.pypa.io/en/stable/userguide/) to keep installations local to a workspace rather than installing libraries onto your system directly.
+
+        pip install virtualenv
+        virtualenv env
+        source env/bin/activate
+
+13. Install the following packages by running the following command.
 
         pip install -r requirements-gateway.txt
 
-13. Run the following command to start the gateway:
+14. Run the following command to start the gateway:
 
         source run-gateway
 
-14. Keep this process running while you proceed through the next steps. We recommend that you use a new tab or window for each gateway and device.
+15. Keep this process running while you proceed through the next steps. We recommend that you use a new tab or window for each gateway and device.
 
-15. Find the local IP address of the gateway using `ifconfig` on  Mac/Linux or `ipconfig /all` on Windows. Copy this somewhere as you will need to add this IP address to `led-light.py` and `thermostat.py` later for connecting devices to the gateway. Your gateway and devices need to be on the same network and be visible to each other.
+16. Find the local IP address of the gateway using `ifconfig` on  MacOS/Linux or `ipconfig /all` on Windows. Copy this somewhere as you will need to add this IP address to `led-light.py` and `thermostat.py` later for connecting devices to the gateway. Your gateway and devices need to be on the same network and be visible to each other.
 
 ## Raspberry Pi setup
 
-In this tutorial, you'll use a [Raspberry Pi*][rpi] to manage the LED/temperature sensor. Devices will connect to the gateway device through [UDP sockets][udp-socket] over a local network, which will connect to Cloud IoT Core via the [MQTT bridge][mqtt-bridge]. A Raspberry Pi could theoretically connect directly to the cloud (since the Pi can connect to the internet), so using a Raspberry Pi for this part is mostly for demonstration purposes.
+In this tutorial, you'll use a [Raspberry Pi*][rpi] to manage the LED/temperature sensor. Devices will connect to the gateway device through [UDP sockets][udp-socket] over a local network, which will connect to Cloud IoT Core via the [MQTT bridge][mqtt-bridge]. The Raspberry Pi is not really a constrained device since it has IP connectivity and the ability to sign JWTs, so its use here is mostly for demonstration purposes.
 
 1. [Download Raspbian][raspbian-download] (the full image with Desktop and recommended software) and follow [the installation guide][raspbian-installation] to flash Raspbian onto your microSD card.
 2. Insert the microSD card with Raspbian into your Raspberry Pi.
@@ -157,11 +165,15 @@ In this tutorial, you'll use a [Raspberry Pi*][rpi] to manage the LED/temperatur
         git clone https://github.com/GoogleCloudPlatform/community.git
         cd community/tutorials/cloud-iot-gateways-rpi
 
-9. Install Python dependencies by running the following:
+9. Create and activate your virtual environment. Make sure to run the last step whenever you open a new tab to activate the virtual environment.
+
+        pip install virtualenv
+        virtualenv env
+        source env/bin/activate
+
+10. Install Python dependencies by running the following:
 
         pip install -r requirements-pi.txt
-
-    Feel free to do this part in the virtual environment manager of your choosing, though make sure to switch into those environments when opening new tabs.
 
 [udp-socket]: https://docs.python.org/2/library/socket.html
 [mqtt-bridge]: https://cloud.google.com/iot/docs/how-tos/mqtt-bridge
@@ -252,7 +264,7 @@ To avoid incurring any future billing costs, it is recommended that you delete y
 - The reason why **Association Only** was chosen when creating the gateway is so that the device does not have to store its own JWT when authenticating to Cloud IoT Core. You can read more about [authentication methods here][iot-auth].
 - You can set up a second Raspberry Pi or another internet enabled device to act as the gateway for a more realistic example.
 - A slightly less expensive alternative to the DHT22 is the [DHT11][dht-alt].
-- If you have difficulty installing the packages from `requirements-pi.txt`, make sure you are on the latest version of Raspbian. In addition, [updating some packages could solve the issue][installation-issue].
+- If you encounter issues while installing the packages from `requirements-pi.txt`, make sure you are on the latest version of Raspbian. In addition, [updating some packages could solve the issue][installation-issue].
 
         sudo apt-get install build-essential libssl-dev libffi-dev python-dev
 
