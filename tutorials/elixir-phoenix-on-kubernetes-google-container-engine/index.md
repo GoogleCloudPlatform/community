@@ -482,7 +482,7 @@ your Docker image in the cloud and store the resulting Docker image in the
 
         steps:
         - name: "gcr.io/cloud-builders/docker"
-        args: ["build", "-t", "gcr.io/$PROJECT_ID/hello:$_TAG",
+          args: ["build", "-t", "gcr.io/$PROJECT_ID/hello:$_TAG",
                "--build-arg", "project_id=$PROJECT_ID", "."]
         images: ["gcr.io/$PROJECT_ID/hello:$_TAG"]
 
