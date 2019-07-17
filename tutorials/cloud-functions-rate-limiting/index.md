@@ -4,14 +4,14 @@ title: Rate limiting Serverless with Redis and VPC Connector
 description: Use rate limiting techiques with serverless functions.
 author: ptone
 tags: Cloud Functions, Cloud Firestore, serverless, redis, VPC
-date_published: 2019-05-31
+date_published: 2019-07-21
 ---
 
 Preston Holmes | Solution Architect | Google
 
 ## Introduction
 
-This tutorial demonstrates several rate limiting techniques from an [accompanying concept paper - temporary internal link](https://go/rate-limiting-patterns). Specifically you will learn how to use private networking and [Redis](https://redis.io/) to synchronized global rate limiting state to otherwise stateless serverless functions.
+This tutorial demonstrates several rate limiting techniques that can be used with Serverless runtimes. Specifically you will learn how to use private networking and [Redis](https://redis.io/) to perform synchronized global rate limiting state to otherwise stateless serverless functions.
 
 ## Objectives
 
