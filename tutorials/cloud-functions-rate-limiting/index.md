@@ -1,10 +1,9 @@
-
 ---
 title: Rate limiting Serverless with Redis and VPC Connector
 description: Use rate limiting techiques with serverless functions.
 author: ptone
 tags: Cloud Functions, Cloud Firestore, serverless, redis, VPC
-date_published: 2019-07-21
+date_published: 2019-07-22
 ---
 
 Preston Holmes | Solution Architect | Google
