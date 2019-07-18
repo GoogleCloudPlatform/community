@@ -1,47 +1,49 @@
 ---
-title: Automate Building Android APKs with Google Cloud Build CI/CD and a Gradle Docker Image
-description: Cloud Build trigger that builds your android application and uploads it to a Cloud Storage Bucket.
+title: Automate building Android APK files with Cloud Build CI/CD and a Gradle Docker image
+description: Set up a Cloud Build trigger that builds your Android app and uploads it to a Cloud Storage bucket.
 author: timtech4u
-tags: Android, Automation, Gradle, Google Cloud, Google Cloud Build
-date_published: 2019-07-13
+tags: Android, automation, Gradle, Cloud Build
+date_published: 2019-07-19
 ---
 
-In this tutorial, you would setup a Cloud Build trigger that builds your android application and uploads it to a Cloud Storage Bucket.
-The builds of new APK bundle would also be automatically triggered once code is pushed code to your code repository.
+In this tutorial, you set up a Cloud Build trigger that builds your Android application and uploads it to a Cloud Storage
+bucket. The builds of new APK bundles are automatically triggered after code is pushed code to your code repository.
 
 ## Objectives
 
-- Create a [Google Cloud Build (GCB) Trigger](https://cloud.google.com/cloud-build).
-- Add a **cloudbuild.yaml* build configuration file to your code repository.
-- Create a [Google Cloud Storage(GCS)](https://cloud.google.com/storage/) Bucket for your build APKs].
+- Create a [Cloud Build trigger](https://cloud.google.com/cloud-build).
+- Add a `cloudbuild.yaml` build configuration file to your code repository.
+- Create a [Cloud Storage](https://cloud.google.com/storage/) bucket for your built APKs.
 
 ## Before you begin
 
 1.  [Create a new Google Cloud Platform (GCP) project](https://console.cloud.google.com/project), or use an existing one.
 2.  [Enable billing for your project](https://support.google.com/cloud/answer/6293499#enable-billing).
-3.  [Enable the Cloud Build API](https://console.cloud.google.com/cloud-build/builds)
+3.  [Enable the Cloud Build API](https://console.cloud.google.com/cloud-build/builds).
 
 ## Costs
 
-Cloud Build is free for up to the first 120 build minutes per day. Check the [Cloud Build pricing page](https://cloud.google.com/pricing/) for details.
+Cloud Build is free for up to the first 120 build minutes per day. Check the
+[Cloud Build pricing page](https://cloud.google.com/pricing/) for details.
 
 ## Get the sample code
 
-Get the sample code from GitHub Gist, [here](https://github.com/Timtech4u/gcb-android-tutorial).
+Get the sample code from [GitHub Gist](https://github.com/Timtech4u/gcb-android-tutorial).
 
-## Set up Cloud Storage Bucket
+## Set up the Cloud Storage
 
-This is where your project APKs will be stored, you are expected to provide a unique Bucket name.
+This is where your project APKs will be stored.
 
-1.  Go to the [GCS Storage Browser](https://console.cloud.google.com/storage/browser)
-2.  Click **Create Bucket**
-3.  Make Bucket Public (Optional)
+1.  Go to the [**Browser** page](https://console.cloud.google.com/storage/browser) for Cloud Storage.
+1.  Click **Create bucket**.
+1.  Provide a unique bucket name.
+1.  Make Bucket Public (Optional)
   - Enable **Bucket-level** permissions.
   - Click **Add Members** on the **Permissions** tab of your Bucket.
   - Enter **New Members** value to be **allUsers**
   - Select **Storage Object Viewer** Role under **Storage** and click **Save**
   Note that: **Your bucket is public and can be accessed by anyone on the internet**
-4. Granting Cloud Build access to Cloud Storage (Optional - If your bucket is public)
+1. Granting Cloud Build access to Cloud Storage (Optional - If your bucket is public)
   - [Open the IAM page in GCP Console.](https://console.cloud.google.com/project/_/iam-admin/iam?_ga=2.2968627.-2014380672.1551979429)
   - Select your project and click **Continue**.
   - In the list of members look for your Cloud Build service account named  *[PROJECT_NUMBER]@cloudbuild.gserviceaccount.com*, where  *[PROJECT_NUMBER]* is your GCP project number.
