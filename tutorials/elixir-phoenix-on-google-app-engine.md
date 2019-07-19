@@ -351,7 +351,7 @@ choose to use Distillery, be sure to adjust these steps accordingly.
             root: ".",
             cache_static_manifest: "priv/static/cache_manifest.json"
 
-    Alternately, if you are using Elixir 1.9 or later, you can provide this
+    Alternatively, if you are using Elixir 1.9 or later, you can provide this
     information in the runtime configuration file `config/releases.exs`.
 
 ## Deploy your application
