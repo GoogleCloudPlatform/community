@@ -1,7 +1,7 @@
 ---
 title: Google Cloud VPN Interop Guide for [PRODUCT]
 description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on Google Cloud Platform (GCP) and  [VENDOR] [PRODUCT]
-author: antiabong, ashisverma
+author: antiabong, ashisverm
 tags: VPN, interop, Juniper, SRX
 date_published: 2018-09-12
 ---
@@ -99,9 +99,9 @@ For detailed topology information, see the following resources:
 
 
 
-For this tutorial, we will be using topology shown below as guide to create the configurations.
+For this tutorial, we will be using the topology shown below as guide to create the SRX300 configurations, and GCP environment
 
-![Topology](https://raw.githubusercontent.com/antiabong/community/master/tutorials/using-cloud-vpn-with-juniper-srx/Juniper-SRX-VPN.png)
+![Topology](https://cloud.google.com/vpn/images/cloud-vpn-overview-01.svg)
 
 ## Product environment
 
@@ -162,8 +162,7 @@ Complete the following procedures before configuring either a dynamic or static 
 
 #### Create a custom VPC network and subnet
 
-1. In the GCP Console,
-[go to the VPC Networks page](https://console.cloud.google.com/networking/networks/list).
+1. In the GCP Console, [go to the VPC Networks page](https://console.cloud.google.com/networking/networks/list).
 1. Click **Create VPC network**.
 1. For **Name**, enter a name such as `vpn-juniper-test-network`. Remember this name for later.
 1. Under **Subnets, Subnet creation mode**, select the **Custom** tab and then populate the following fields:
@@ -1377,7 +1376,7 @@ This section describes how to use the `gcloud` command-line tool to configure IP
     ```
 
 1. Create a [Cloud Router](https://cloud.google.com/compute/docs/cloudrouter).
-  Note the following:
+    Note the following:
 
     -  For `[PRIVATE_ASN]`, use the [private ASN](https://tools.ietf.org/html/rfc6996) (`64512–65534`, `4200000000–4294967294`) for the router you are configuring. It can be any private ASN you are not already using, such as `65001`.
 
@@ -1424,7 +1423,7 @@ This section describes how to use the `gcloud` command-line tool to configure IP
     ```
 
 1. Update the Cloud Router config to add the BGP peer to the interface. Note
-  the following:
+    the following:
 
     -  For `[PEER_ASN]`, use your public ASN or any [private ASN](https://tools.ietf.org/html/rfc6996) (`64512–65534`, `4200000000–4294967294`) that you are not already using in the peer network.
         For example, you can use `65001`.
