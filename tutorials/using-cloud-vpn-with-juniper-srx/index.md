@@ -169,7 +169,7 @@ Complete the following procedures before configuring either a dynamic or static 
 
 + **Name**—The name for the subnet, such as `vpn-subnet-1`.
 + **Region**—The region that is geographically closest to the on-premises gateway, such as  `us-east1`.
-+ **IP address range**—A range such as `172.16.100.0/24`.
++ **IP address range**—A range such as `192.168.1.0/24`.
 
 1. In the **New subnet** window, click **Done**.
 1. Click **Create**. You're returned to the **VPC networks** page, where it takes about a minute for this network and its subnet to appear.
@@ -1486,7 +1486,7 @@ The procedure suggests creating a custom VPC network. This is preferred over usi
 
 1. Create a custom VPC network. Make sure there is no conflict with your local network IP address range. Note the following:
 
-    -  For `[RANGE]`, substitute an appropriate CIDR range, such as `172.16.100.0/24`.
+    -  For `[RANGE]`, substitute an appropriate CIDR range, such as `192.168.1.0/24`.
 
     ```
     gcloud compute networks create $VPC_NETWORK_NAME \
@@ -1552,7 +1552,7 @@ This step creates an unconfigured VPN gateway in your GCP VPC network.
 
 - Set the IKE version. The following command sets the IKE version to 2, which is the default, preferred IKE version. If you need to set it to 1, use `--ike-version 1`.
 - For `[SHARED_SECRET]`, supply the shared secret.  For details, see [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
-- For `[LOCAL_TRAFFIC_SELECTOR_IP]`, supply an IP address range, like `172.16.100.0/24`,  that will be accessed on the GCP side of the  tunnel, as described in [Traffic selectors](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#static-routing-networks) in the GCP VPN networking documentation.
+- For `[LOCAL_TRAFFIC_SELECTOR_IP]`, supply an IP address range, like `192.168.1.0/24`,  that will be accessed on the GCP side of the  tunnel, as described in [Traffic selectors](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#static-routing-networks) in the GCP VPN networking documentation.
 
 
 ```
