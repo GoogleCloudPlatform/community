@@ -1,6 +1,6 @@
 ---
-title: Run an Elixir Phoenix app on the Google App Engine Flexible Environment
-description: Learn how to deploy a Phoenix app to the Google App Engine flexible environment.
+title: Run an Elixir Phoenix app in the App Engine flexible environment
+description: Learn how to deploy a Phoenix app to the App Engine flexible environment.
 author: dazuma
 tags: App Engine, Elixir, Phoenix
 date_published: 2019-01-04
