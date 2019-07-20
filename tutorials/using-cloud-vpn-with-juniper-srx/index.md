@@ -323,7 +323,7 @@ Follow the procedures in this section to create the base VPN configuration. <Thi
 
 Configuring the vendor side of the VPN network requires you to use IPsec and IKE settings that are compatible with the GCP side of the network. The following table lists settings and information about values compatible with GCP VPN. Use these settings for the procedures in the subsections that follow.
 
-<Not all of the settings in the following table are applicable to all vendor setups; use the settings that apply to your configuration. Remove the settings in the table that do not apply to current configuration.>
+*Not all of the settings in the following table are applicable to all vendor setups; use the settings that apply to your configuration. Remove the settings in the table that do not apply to current configuration*.
 
 **Note**: The Juniper SRX300 solution might have its own specifications for replay window size.
 
@@ -838,9 +838,9 @@ documentation for more information.
 -  **Packet size.** Because processing happens on a per-packet basis, traffic with a significant percentage of smaller packets can reduce overall throughput.
 -  **[High Round Trip Time (RTT)](https://en.wikipedia.org/wiki/Round-trip_delay_time) and packet loss rates.** This can greatly reduce throughput for TCP.
 
-#### Configuring Juniper SRX300 for higher throughput
+#### Configuring Juniper SRX300 for higher throughput (using ECMP)
 
-Juniper SRX300 would use ECMP to forward traffic when mulitiple paths exists to a destination prefix and all the metrics considered for selecting paths to the destination are the equal. See [BGP Path Selection](https://www.juniper.net/documentation/en_US/junos/topics/reference/general/routing-protocols-address-representation.html) for more information on how bgp routing decisions are made in the SRX300.
+Juniper SRX300 would use ECMP to forward traffic when multiple paths exists to a destination prefix and all the metrics considered for selecting paths to the destination are the equal. See [BGP Path Selection](https://www.juniper.net/documentation/en_US/junos/topics/reference/general/routing-protocols-address-representation.html) for more information on how BGP routing decisions are made in the SRX300.
 
 Below is the complete configuration for setting up multiple tunnels on the same SRX300 device for higher throughput.
 
@@ -1113,19 +1113,18 @@ To learn more about GCP networking, see the following documents:
 -  [Advanced Cloud VPN Configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
 -  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
 
-### Juniper SRX300 documentation
+### Juniper SRX documentation
 
-For more product information on <vendor-name><product-name>, see the following
-<product-name> feature configuration guides and datasheets:
+For more product information on Juniper SRX devices, see the following Juniper OS feature configuration guides and datasheets:
 
--  <guide name>
--  <guide name>
+-  [Juniper Route-Based IPSec VPNs](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-route-based-ipsec-vpns.html)
+-  [Juniper Security Policies](https://www.juniper.net/documentation/en_US/junos/information-products/pathway-pages/security/security-policies-feature-guide.html)
+-  [Juniper BGP Feature Guide](https://www.juniper.net/documentation/en_US/junos/topics/concept/routing-protocol-bgp-security-peering-session-understanding.html)
 
-For common <vendor-name><product-name> error messages and debug commands, see
-the following guides:
+For common Juniper SRX troubleshooting steps and commands, see the following guides/KB:
 
--  <guide name>
--  <guide name>
+-  [Troubleshooting VPNs in SRX](https://kb.juniper.net/InfoCenter/index?page=content&id=KB10104&actp=METADATA)
+-  [Checklist for verifying BGP in JunOS](https://www.juniper.net/documentation/en_US/junos/topics/task/verification/bgp-configuration-process-summary.html)
 
 ## Appendix: Using gcloud commands
 
