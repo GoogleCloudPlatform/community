@@ -1093,14 +1093,12 @@ root@freebsd:~ #
 
 ## Troubleshooting IPsec on Juniper SRX300
 
-For troubleshooting information, see the <vendor-name><product-name> troubleshooting guide <add link>.
-
-<Add details here about what kind of troubleshooting information can be found in the <vendor-name><product-name> guide.>
+For troubleshooting information, see the Juniper SRX VPN troubleshooting [guide](https://kb.juniper.net/InfoCenter/index?page=content&id=KB21899&actp=METADATA). In this page you will find the JTAC certified resolution guide for SRX VPNs. 
 
 
 ## Reference documentation
 
-You can refer to the following <vendor-name><product-name> documentation and Cloud VPN documentation for additional information about both products.
+You can refer to the following Juniper documentation and Cloud VPN documentation for additional information about both products.
 
 ### GCP documentation
 
