@@ -3,7 +3,7 @@ title: Run an Elixir Phoenix app in the App Engine flexible environment
 description: Learn how to deploy a Phoenix app to the App Engine flexible environment.
 author: dazuma
 tags: App Engine, Elixir, Phoenix
-date_published: 2019-01-04
+date_published: 2019-07-22
 ---
 
 The [Google App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/)
@@ -256,12 +256,17 @@ instance, and tell Ecto to create and migrate the database.
     Remember to replace `[CONNECTION-NAME]` with your database's connection
     name, and include the password you set for the "postgres" user.
 
-3.  Now you can use Phoenix to create and migrate your production database:
+3.  Hard-code `secret_key_base` in `config/prod.secret.exs`. (If you're doing a
+    real application, you might want to create a different mechanism to inject
+    the database password and the secret key base into this file, but we will
+    keep things simple for this tutorial.)
+
+4.  Now you can use Phoenix to create and migrate your production database:
 
         MIX_ENV=prod mix ecto.create
         MIX_ENV=prod mix ecto.migrate
 
-4.  Stop the Cloud SQL Proxy when you are finished.
+5.  Stop the Cloud SQL Proxy when you are finished.
 
 ### Access the production database from App Engine
 
