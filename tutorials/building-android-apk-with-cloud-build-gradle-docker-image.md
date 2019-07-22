@@ -3,7 +3,7 @@ title: Automate building Android APK files with Cloud Build CI/CD and a Gradle D
 description: Set up a Cloud Build trigger that builds your Android app and uploads it to a Cloud Storage bucket.
 author: timtech4u
 tags: Android, automation, Gradle, Cloud Build
-date_published: 2019-07-19
+date_published: 2019-07-24
 ---
 
 In this tutorial, you set up a Cloud Build trigger that builds your Android application and uploads it to a Cloud Storage
