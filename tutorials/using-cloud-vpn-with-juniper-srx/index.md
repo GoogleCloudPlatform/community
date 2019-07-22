@@ -101,7 +101,7 @@ For detailed topology information, see the following resources:
 
 For this tutorial, we will be using the topology shown below as guide to create the SRX300 configurations, and GCP environment
 
-![Alt Text](https://raw.githubusercontent.com/antiabong/community/master/tutorials/using-cloud-vpn-with-juniper-srx/Juniper-SRX-VPN.svg?sanitize=true)
+![Topology](https://raw.githubusercontent.com/antiabong/community/master/tutorials/using-cloud-vpn-with-juniper-srx/Juniper-SRX-VPN.png)
 
 ## Product environment
 
