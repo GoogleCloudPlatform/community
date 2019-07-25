@@ -3,7 +3,7 @@ title: Google Kubernetes Engine quickstart - Deploy a prebuilt Docker container 
 description: Deploy a prebuilt Docker container image using GKE.
 author: jscud
 tags: Kubernetes
-date_published: 2019-05-09
+date_published: 2019-07-28
 ---
 
 # Google Kubernetes Engine quickstart
@@ -34,7 +34,7 @@ Begin by creating a new project or selecting an exisitng project for this tutori
 For details, see
 [Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
-## Navigate to Kubernetes Engine page
+## Navigate to the Kubernetes Engine page
 
 Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console, and 
 then select **Kubernetes Engine**.
@@ -111,7 +111,7 @@ cat Dockerfile
 its resources and dependencies, and specifies which network port the app should
 expose.
 
-To learn more about how this file work, refer to the Dockerfile reference in the
+To learn more about how this file works, refer to the Dockerfile reference in the
 [Docker documentation][docker-docs].
 
 ## Deploy the application
@@ -122,9 +122,9 @@ The cluster creation needs to finish before the tutorial can proceed. To track t
 progress of this activity and others, click the [**Notifications**][spotlight-notification-menu]
 button in the navigation bar in the upper-right corner of the console.
 
-### Setup gcloud and kubectl credentials
+### Set up gcloud and kubectl credentials
 
-Get the gcloud credentials for the cluster that you created:
+Get the `gcloud` credentials for the cluster that you created:
 
 ```bash
 gcloud container clusters get-credentials [cluster-name] --zone [cluster-zone]
@@ -164,7 +164,7 @@ Make the cluster available to the public:
 kubectl expose deployment hello-app --type="LoadBalancer"
 ```
 
-### Find your external IP
+### Find your external IP address
 
 List the services, and look for the `hello-app` service:
 
@@ -173,7 +173,7 @@ kubectl get service hello-app --watch
 ```
 
 Wait until you see an IP address in the `External IP` column. This may take a
-minute. To stop monitoring the services, press Ctrl+C.
+minute. To stop monitoring the services, press `Ctrl+C`.
 
 ### Visit your running app
 
@@ -183,7 +183,7 @@ Open a new web browser tab, and visit your app by connecting to the IP address o
 
 `http://[external-IP]:8080`
 
-Replace [external-IP] with the external IP address copied in the previous step.
+Replace `[external-IP]` with the external IP address copied in the previous step.
 
 ## Modifying your cluster
 
@@ -220,13 +220,13 @@ application, and push the new version.
 ### Modify the application
 
 Use this command to make a text substitution in your local copy of `main.go`
-to make it to return a different version number in its output:
+to make it return a different version number in its output:
 
 ```bash
 sed -i -e 's/1.0.0/2.0.0/g' main.go
 ```
 
-You could also modify the file with a text editor instead of using this command.
+You can also modify the file with a text editor instead of using this `sed` command.
 
 ### Rebuild the application
 
@@ -272,7 +272,7 @@ to the cluster name and click the [**Delete**][spotlight-delete-button] button.
 
 <walkthrough-conclusion-trophy></walkthrough-conclusion-trophy>
 
-Congratulations! You have deployed a simple Hello World application using Google
+Congratulations! You have deployed a simple "Hello, world" application using Google
 Kubernetes Engine.
 
 Here are some suggestions for what you can do next:
