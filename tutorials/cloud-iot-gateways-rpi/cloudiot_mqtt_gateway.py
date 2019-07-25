@@ -274,8 +274,8 @@ def main():
       data, client_addr = udpSerSock.recvfrom(BUFSIZE)
     except socket.error:
       continue
-    print "[%s]: From Address %s:%s receive data: %s" % (
-        ctime(), client_addr[0], client_addr[1], data)
+    print('[%s]: From Address %s:%s receive data: %s'.format(
+        ctime(), client_addr[0], client_addr[1], data))
 
     command = json.loads(data)
     if not command:
@@ -286,7 +286,6 @@ def main():
     device_id = command["device"]
 
     if action == 'event':
-
       print('Sending telemetry event for device {}'.format(device_id))
       payload = command["data"]
       mqtt_topic = '/devices/{}/{}'.format(device_id,  'events')
@@ -297,18 +296,21 @@ def main():
           device_id)
       print('Save mid {} for response {}'.format(event_mid, response))
       gateway_state.pending_responses[event_mid] = (client_addr, response)
+
     elif action == 'attach':
       rc, attach_mid = attach_device(client, device_id)
       response = (
           '{{ "device": {}, "command": "attach", "status" : "ok" }}'.format(device_id))
       print('Save mid {} for response {}'.format(attach_mid, response))
       gateway_state.pending_responses[attach_mid] = (client_addr, response)
+
     elif action == 'detach':
       rc, detach_mid = detatch_device(client, device_id)
       response = (
           '{{ "device": {}, "command": "detach", "status" : "ok" }}'.format(device_id))
       print('Save mid {} for response {}'.format(detach_mid, response))
       gateway_state.pending_responses[detach_mid] = (client_addr, response)
+
     elif action == "subscribe":
       print('subscribe config for {}'.format(device_id))
       subscribe_topic = '/devices/{}/config'.format(device_id)
@@ -318,9 +320,9 @@ def main():
       gateway_state.subscriptions[subscribe_topic] = (client_addr)
       print('Save mid {} for response {}'.format(mid, response))
       gateway_state.pending_subscribes[mid] = (client_addr, response)
-  else: 
-      print('undefined action {}'.format(action))
 
+  else:
+      print('undefined action {}'.format(action))
       print('Finished.')
 # [END iot_mqtt_run]
 

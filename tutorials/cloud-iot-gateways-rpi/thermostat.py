@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import print_function
 import json
 import sys
 import socket
@@ -40,20 +41,20 @@ print('Bringing up device {}'.format(device_id))
 # return message received
 def SendCommand(sock, message, log=True):
   if log:
-    print >>sys.stderr, 'sending: "%s"' % message
+    print('sending: "{}"'.format(message), file=sys.stderr)
   sock.sendto(message, server_address)
 
   # Receive response
   if log:
-    print >>sys.stderr, 'waiting for response'
+    print('waiting for response', file=sys.stderr)
   response, _ = sock.recvfrom(4096)
   if log:
-    print >>sys.stderr, 'received: "%s"' % response
+    print('received: "{}"'.format(response), file=sys.stderr)
 
   return response
 
 
-print 'Bring up device 1'
+print('Bring up device 1')
 
 
 def MakeMessage(device_id, action, data=''):
@@ -69,7 +70,7 @@ def RunAction(action):
     return
   print('Send data: {} '.format(message))
   event_response = SendCommand(client_sock, message)
-  print "Response " + event_response
+  print('Response {}'.format(event_response))
 
 
 try:
@@ -95,5 +96,5 @@ try:
 
 
 finally:
-    print >>sys.stderr, 'closing socket'
+    print('closing socket', file=sys.stderr)
     client_sock.close()
