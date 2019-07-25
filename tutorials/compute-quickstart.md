@@ -3,7 +3,7 @@ title: Compute Engine quickstart - Create a to-do app with MongoDB
 description: Use Compute Engine to create a two-tier web application.
 author: jscud
 tags: Compute Engine
-date_published: 2019-05-09
+date_published: 2019-07-28
 ---
 
 # Compute Engine quickstart
