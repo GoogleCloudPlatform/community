@@ -48,10 +48,13 @@ Open Cloud Shell by clicking the
 
 To use the Cloud IoT Core API, you must first enable it.
 
-If you're using the interactive version of this tutorial in the GCP Console,
-you can use the following control to directly enable the Cloud IoT Core API:
+Click the following to enable the API:
 
 <walkthrough-enable-apis apis="cloudiot.googleapis.com"/>
+
+<walkthrough-alt>
+https://console.cloud.google.com/flows/enableapi?apiid=cloudiot.googleapis.com
+</walkthrough-alt>
 
 ## Create your first Cloud Pub/Sub topic
 
@@ -79,7 +82,7 @@ gcloud pubsub subscriptions create \
 
 ## Clone the Cloud IoT Core Node.js sample files from GitHub
 
-You'll use the MQTT sample to send messages to Cloud IoT Core.
+You use the MQTT sample to send messages to Cloud IoT Core.
 
 Clone the sample program with the following command:
 
@@ -132,7 +135,7 @@ gcloud iot registries create my-registry \
 
 ## Generate your signing keys
 
-To authenticate to Cloud IoT core, a device needs a private key and a public
+To authenticate to Cloud IoT Core, a device needs a private key and a public
 key. Generate your signing keys by running the following command:
 
 ```bash
@@ -213,7 +216,7 @@ the same command multiple times to see the other messages.
 
 ## View resources in the GCP Console
 
-This concludes the `gcloud` command line tutorial, but you can also use the GCP
+This concludes the `gcloud` command-line tutorial, but you can also use the GCP
 Console to view the resources you just created.
 
 Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console, and 
