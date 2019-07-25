@@ -186,7 +186,7 @@ Update packages:
 sudo apt-get update
 ```
 
-Install git and npm:
+Install `git` and `npm`:
 
 ```bash
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
