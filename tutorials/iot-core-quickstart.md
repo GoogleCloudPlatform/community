@@ -3,7 +3,7 @@ title: Introduction to Cloud IoT Core
 description: Create a Cloud IoT Core device registry, add a device, and connect.
 author: jscud
 tags: Cloud IoT
-date_published: 2019-05-09
+date_published: 2019-07-28
 ---
 
 # Introduction to Cloud IoT Core
@@ -21,7 +21,7 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 
 [Cloud IoT Core](https://cloud.google.com/iot/docs/) is a fully managed service for connecting
 and managing IoT devices. This tutorial uses the `gcloud` command-line tool to create a
-Cloud IoT Core device registry, add a device, and to run an MQTT sample to connect a device and
+Cloud IoT Core device registry, add a device, and run an MQTT sample to connect a device and
 publish device telemetry events.
 
 ## Project setup
@@ -36,9 +36,9 @@ Begin by creating a new project or selecting an exisitng project for this tutori
 For details, see
 [Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
-## Using Google Cloud Shell
+## Using Cloud Shell
 
-In this tutorial, you will do all of your work in the Cloud Shell, which is a built-in command-line tool for the console.
+In this tutorial, you do all of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
 
 Open Cloud Shell by clicking the
 <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
