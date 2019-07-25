@@ -3,7 +3,7 @@ title: Google Kubernetes Engine quickstart - Create a guestbook with Redis and P
 description: Use Google Kubernetes Engine to deploy a guestbook application with Redis and PHP.
 author: jscud
 tags: Kubernetes
-date_published: 2019-05-09
+date_published: 2019-07-28
 ---
 
 # Google Kubernetes Engine quickstart
@@ -17,8 +17,8 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 
 </walkthrough-alt>
 
-This tutorial demonstrates how to build a multi-tier web application
-using [Google Kubernetes Engine (GKE)][gke-docs]. The tutorial application is a guestbook that allows
+This tutorial demonstrates how to build a multi-tier web app
+using [Google Kubernetes Engine (GKE)][gke-docs]. The tutorial app is a guestbook that allows
 visitors to enter text in a log and to see the last few logged entries.
 
 The tutorial shows how to set up the guestbook web service on an external IP address with a load
