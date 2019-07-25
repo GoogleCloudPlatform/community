@@ -119,8 +119,8 @@ sudo python -m SimpleHTTPServer 80
 
 ### Visit the webserver application
 
-Visit your webserver at the [external IP address][spotlight-external-ip] listed next to the 
-instance in the **VM instances** table.
+Visit your webserver over an HTTP connection at the [external IP address][spotlight-external-ip] listed
+next to the instance in the **VM instances** table. Use a URL in the form `http://[external-ip-address]`.
 
 ## Cleanup
 
