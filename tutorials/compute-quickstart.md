@@ -236,8 +236,10 @@ exit
 
 ### Visit the web app
 
-Visit your webserver at the [external IP address][spotlight-external-ip] listed next to your frontend
-instance in the **VM instances** table.
+Visit your webserver over an HTTP connection at the [external IP address][spotlight-external-ip] listed
+next to your frontend instance in the **VM instances** table.
+
+To see the app, the URL you visit must be in the form `http://[external-ip-address]`.
 
 ## Cleanup
 
