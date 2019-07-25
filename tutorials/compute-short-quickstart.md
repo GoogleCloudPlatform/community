@@ -3,7 +3,7 @@ title: Compute Engine quickstart - Create a virtual machine
 description: Create a virtual machine instance in Compute Engine.
 author: jscud
 tags: Compute Engine
-date_published: 2019-05-09
+date_published: 2019-07-28
 ---
 
 # Compute Engine quickstart
