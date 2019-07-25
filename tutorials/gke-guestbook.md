@@ -36,7 +36,7 @@ Begin by creating a new project or selecting an exisitng project for this tutori
 For details, see
 [Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
-## Navigate to Kubernetes Engine page
+## Navigate to the Kubernetes Engine page
 
 Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console, and 
 then select **Kubernetes Engine**.
