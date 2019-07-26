@@ -1,12 +1,12 @@
 ---
-title: Cloud Storage Quickstart
-description: Quickly learn how to store objects in Cloud Storage.
+title: Cloud Storage quickstart
+description: Learn how to store objects in Cloud Storage.
 author: jscud
 tags: Cloud Storage
-date_published: 2019-04-15
+date_published: 2019-07-28
 ---
 
-# Cloud Storage Quickstart
+# Cloud Storage quickstart
 
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
@@ -15,104 +15,81 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 
 </walkthrough-alt>
 
-## Welcome to Google Cloud Storage!
+## Overview
 
-<walkthrough-tutorial-url url="https://cloud.google.com/storage/docs/quickstart-console"></walkthrough-tutorial-url>
+Cloud Storage is a powerful and cost-effective storage solution for unstructured objects. In this tutorial,
+you'll see how easy it is to store objects in Cloud Storage.
 
-Google Cloud Storage is a powerful and cost-effective storage solution for
-unstructured objects, perfect for everything from hosting live web content to
-storing data for analytics to archiving and backup.
+Here's what you'll do:
 
-In this tutorial, we'll show you how easy it is to start storing objects in
-Cloud Storage. Here's what you'll do:
+*   **Create a bucket**: Buckets hold the objects (any type of file) that you store in Cloud Storage.
+*   **Upload and share objects**: Start using your bucket by uploading an object and making it publicly
+    available.
+*   **Clean up**: As a final step, you'll delete the bucket and object you created for this tutorial.
+    It's important that you follow the cleanup steps at the end of the tutorial so that you don't incur
+    unexpected charges.
 
-  *  **Create a bucket**
+## Project setup
 
-     Buckets hold the objects (any type of file) you want to store in Cloud
-Storage.
+GCP organizes resources into projects. This allows you to
+collect all of the related resources for a single application in one place.
 
-  *  **Upload and share objects**
-
-     Start using your bucket by uploading an object and making it publicly
-available.
-
-  *  **Clean up**
-
-     As a final step, you'll delete the bucket and object you created for this
-tutorial.
-
-Since you'll be deleting your bucket and object at the end, don't worry about
-getting charged for trying this tutorial.
-
-## Project Setup
-
-Cloud Storage needs a project to create resources.
+Begin by creating a new project or selecting an existing project for this tutorial.
 
 <walkthrough-project-billing-setup></walkthrough-project-billing-setup>
 
-## Create a bucket
-
-In Cloud Storage, you store your objects in buckets. To create a bucket, you
-need to go to the Cloud Storage browser.
-
-Open the [menu][spotlight-menu] on the left side of the console.
-
-Then, select the **Storage** section.
-
-<walkthrough-menu-navigation sectionId="STORAGE_SECTION"></walkthrough-menu-navigation>
+For details, see
+[Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
 ## Create a bucket
 
-Before you can start uploading objects, you need to create a "bucket" to store
-them in. Buckets help you organize your objects and control access to them.
+1.  Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console, and 
+    then select **Storage**.
+    
+    <walkthrough-menu-navigation sectionId="STORAGE_SECTION"></walkthrough-menu-navigation>
 
-  1. Click [Create bucket][spotlight-create-bucket]
+1.  Click [**Create bucket**][spotlight-create-bucket].
 
-  1. On the bucket creation page, specify the bucket's properties. Here are some
-    things to keep in mind:
+1.  On the **Create a bucket** page, specify the bucket's properties.
 
-     *  **Name:** Think of something unique. You'll see an error if you enter a
+    For this tutorial, you can use the default values for everything but **Name**.
+
+    Here are some things to keep in mind:
+
+     *  **Name**: Names must be globally unique. You'll see an error if you enter a
     name that's the same as another bucket's name in Cloud Storage.
-     *  **Default storage class:** This is the storage class assigned to your
+     *  **Default storage class**: This is the storage class assigned to your
     bucket's objects by default. Your choice depends mainly on how
     frequently you expect the objects to be accessed and whether you're
     serving the data worldwide. The storage class affects your cost.
-     *  **Location:** You'll want to keep your data close to the applications
+     *  **Location**: You'll want to keep your data close to the applications
     and users accessing it. The available choices depend on your storage
     class selection.
 
-For this trial run, any storage class and location will do, as you'll be
-deleting the bucket at the end.
-
-  1. Click [Create][spotlight-create-button]
+1.  Click the **Create** button.
 
 ## Upload an object
 
-Now that you have a bucket, you can start uploading objects.
+Now that you have a bucket, you can start uploading objects. You can upload any type of file.
 
-  1. At the top of the page, click [Upload files][spotlight-upload-file]
+* At the top of the **Bucket details** page, click [**Upload files**][spotlight-upload-file]
+  and select a file to upload.
+* Drag and drop a file onto the space below the bucket name.
+* If you're using the interactive version of this tutorial in the GCP Console, you can
+  [click this link to create a sample text file][create-sample-file], and then click
+  [**Refresh Bucket**][spotlight-refresh-bucket] at the top of the page to see it in your bucket.
+  
+## Clean up
 
-  1. Select a file to upload. You can upload any type of file.
+To clean up the resources used in this tutorial, delete the bucket that you just created. Deleting
+a bucket also deletes its contents.
 
-     Don't have a file? [Create a sample file][create-sample-file], then click
-[Refresh Bucket][spotlight-refresh-bucket] at the top of the page to see it
-in your bucket. (Tip: You can also upload objects by dragging and dropping
-them onto the space below your bucket name.)
+1.  At the top of the table that lists the contents of your bucket, click [**Buckets**][spotlight-buckets-link]
+    to go back to the **Browser** page.
 
-## Delete the bucket
+1.  Check the box next to your bucket.
 
-Now let's delete the bucket you just created. Deleting a bucket also deletes its
-contents.
-
-  1. At the top of the table, click [Buckets][spotlight-buckets-link] to go back
-    to the list of buckets.
-
-  1. Check the box next to your bucket. If there are other buckets in this
-    project and you need help finding yours, use the search bar to filter the
-    bucket list.
-
-  1. At the top of the page, click [Delete][spotlight-delete-buckets] and confirm
-    your deletion.
+1.  At the top of the page, click [**Delete**][spotlight-delete-buckets] and confirm the deletion.
 
 ## Conclusion
 
@@ -120,15 +97,13 @@ contents.
 
 Congratulations!
 
-Now that you know how to start storing objects in Cloud Storage, you may want to
-learn about putting it to real-world use by [hosting a static
-website](https://cloud.google.com/storage/docs/hosting-static-website).
+Now that you know how to store objects in Cloud Storage, here are some things
+that you can do next:
 
-Or learn to use Cloud Storage with [the gsutil command-line
-tool](https://cloud.google.com/storage/docs/quickstart-gsutil).
-
-Learn how you can start using Cloud Storage and other GCP services for
-[free](https://cloud.google.com/free).
+*   Put Cloud Storage to real-world use by
+    [hosting a static website](https://cloud.google.com/storage/docs/hosting-static-website).
+*   Learn to use Cloud Storage with [the gsutil command-line tool](https://cloud.google.com/storage/docs/quickstart-gsutil).
+*   Learn how you can start using Cloud Storage and other GCP services for [free](https://cloud.google.com/free).
 
 [create-sample-file]: walkthrough://create-sample-storage-file
 [spotlight-buckets-link]: walkthrough://spotlight-pointer?cssSelector=.p6n-cloudstorage-path-link
