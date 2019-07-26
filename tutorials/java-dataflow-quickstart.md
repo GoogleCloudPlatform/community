@@ -47,7 +47,7 @@ For details, see
 
 ## Set up Cloud Dataflow
 
-To use Dataflow, enable the Cloud Dataflow APIs and open Cloud Shell.
+To use Cloud Dataflow, enable the Cloud Dataflow APIs and open Cloud Shell.
 
 ### Enable Cloud APIs
 
