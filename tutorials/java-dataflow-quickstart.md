@@ -47,9 +47,9 @@ For details, see
 
 ## Set up Cloud Dataflow
 
-To use Dataflow, turn on the Cloud Dataflow APIs and open the Cloud Shell.
+To use Dataflow, enable the Cloud Dataflow APIs and open Cloud Shell.
 
-### Turn on Cloud APIs
+### Enable Cloud APIs
 
 Dataflow processes data in many GCP data stores and messaging services,
 including BigQuery, Cloud Storage, and Cloud Pub/Sub. To use these services,
@@ -65,7 +65,7 @@ Click the following to enable the APIs:
 https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,dataflow,cloudresourcemanager.googleapis.com,logging,storage_component,storage_api,bigquery,pubsub
 </walkthrough-alt>
 
-### Open the Cloud Shell
+### Open Cloud Shell
 
 In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
 
@@ -73,13 +73,13 @@ Open Cloud Shell by clicking the
 <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
 [**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
-## Install Cloud Dataflow samples on Cloud Shell
+## Install Cloud Dataflow samples
 
 Dataflow runs jobs written using the Apache Beam SDK. To submit jobs to the
 Dataflow service using Java, your development environment requires Java, the
 Google Cloud SDK, the Apache Beam SDK for Java, and Apache Maven for managing
-SDK dependencies. This tutorial uses a Cloud Shell that has Java, the Google
-Cloud SDK, and Maven already installed.
+SDK dependencies. This tutorial uses a Cloud Shell environment that has Java, the Google
+Cloud SDK, and Maven installed.
 
 Alternatively, you can do this tutorial [on your local machine][dataflow-java-tutorial].
 
