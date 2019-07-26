@@ -106,7 +106,7 @@ structure of such a request. Your JSON request is only sent when you call
 `execute`. This pattern allows you to pass around such requests and call
 `execute` as needed.
 
-## Setup up a service account and credentials
+## Set up up a service account and credentials
 
 To use a Cloud API, you need to set up the proper [credentials][auth-doc] for 
 your application. This enables your application to authenticate its identity to
