@@ -75,8 +75,8 @@ Open Cloud Shell by clicking the
 
 ## Install Cloud Dataflow samples
 
-Dataflow runs jobs written using the Apache Beam SDK. To submit jobs to the
-Dataflow service using Java, your development environment requires Java, the
+Cloud Dataflow runs jobs written using the Apache Beam SDK. To submit jobs to the
+Cloud Dataflow service using Java, your development environment requires Java, the
 Google Cloud SDK, the Apache Beam SDK for Java, and Apache Maven for managing
 SDK dependencies. This tutorial uses a Cloud Shell environment that has Java, the Google
 Cloud SDK, and Maven installed.
@@ -85,7 +85,7 @@ Alternatively, you can do this tutorial [on your local machine][dataflow-java-tu
 
 ### Download the samples and the Apache Beam SDK for Java using the Maven command
 
-To write a Java Dataflow job, you first need to download the SDK
+To write a Cloud Dataflow job with Java, you first need to download the SDK
 from the Maven repository.
 
 When you run this command, Maven creates a project structure and config file
