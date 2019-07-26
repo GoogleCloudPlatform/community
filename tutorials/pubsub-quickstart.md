@@ -1,14 +1,12 @@
 ---
-title: Introduction to Cloud Pub/Sub
+title: Use Cloud Pub/Sub to send and receive real-time messages
 description: Learn to use Cloud Pub/Sub to send and receive real-time messages.
 author: jscud
 tags: PubSub
-date_published: 2019-04-15
+date_published: 2019-07-28
 ---
 
-# Introduction to Cloud Pub/Sub
-
-<walkthrough-tutorial-url url="https://cloud.google.com/pubsub/quickstart-console"></walkthrough-tutorial-url>
+# Use Cloud Pub/Sub to send and receive real-time messages
 
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
@@ -22,33 +20,33 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 ## Introduction
 
 Cloud Pub/Sub is a fully-managed real-time messaging service that allows you to
-send and receive messages independent applications. This tutorial gives a brief
-introduction to Cloud Pub/Sub's command-line interface using the `gcloud`
-command.
+send and receive messages between independent applications. This tutorial gives a brief
+introduction to the command-line interface for Cloud Pub/Sub, using the `gcloud`
+command-line tool.
 
-## Project Setup
+## Project setup
 
-Google Cloud Platform organizes resources into projects. This allows you to
-collect all the related resources for a single application in one place.
+GCP organizes resources into projects. This allows you to
+collect all of the related resources for a single application in one place.
 
-Cloud Pub/Sub needs a project to set up messages.
+Begin by creating a new project or selecting an existing project for this tutorial.
 
 <walkthrough-project-setup></walkthrough-project-setup>
 
-## Create your first topic
+For details, see
+[Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
-### Open Google Cloud Shell
+## Open Cloud Shell
 
-Cloud Shell is a built-in command line tool for the console. You're going to use
-Cloud Shell to set up Cloud Pub/Sub.
+In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
 
 Open Cloud Shell by clicking the
 <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
 [**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
-### Create a topic
+## Create your first topic
 
-A topic is a named resource to which you will send messages. Create your first
+A topic is a named resource to which you send messages. Create your first
 topic with the following command:
 
 ```bash
@@ -68,18 +66,18 @@ gcloud pubsub subscriptions \
 ```
 
 This command creates a subscription named `my-sub` attached to the topic
-`my-topic`. All the messages published to `my-topic` will be delivered to this
+`my-topic`. All of the messages published to `my-topic` will be delivered to this
 subscription.
 
-You may notice the `--ack-deadline=60` option. `ack-deadline` stands for
-`Acknowledgement deadline`. This new subscription has a 60 seconds
-`Acknowledgement deadline`. We will explain this a bit later.
+The `ack-deadline` option sets an *acknowledgement deadline* of 60 seconds
+for this subscription. This deadline is explained in more detail later.
 
 ## List topics and subscriptions
 
-Before sending your first message, check if the topic and the subscription are
-successfully created. List your topic and subscription using the following
-command:
+Before sending your first message, check whether the topic and the subscription
+have been successfully created. 
+
+List your topic and subscription using the following commands:
 
 ```bash
 gcloud pubsub topics list
@@ -103,12 +101,10 @@ gcloud pubsub topics publish my-topic --message goodbye
 
 Each of these commands sends a message. The first message is `hello` and the
 second is `goodbye`. When you successfully publish a message, you should see the
-messageId returned from the server. This is a unique id automatically assigned
+`messageId` returned from the server. This is a unique ID automatically assigned
 by the server to each message.
 
 ## Pull messages from the subscription
-
-### Pull messages
 
 Now, pull the messages with the following command:
 
@@ -117,22 +113,22 @@ gcloud pubsub subscriptions \
     pull --auto-ack --limit=2 my-sub
 ```
 
-You likely saw the two messages that you have just published. The messages have
+This should return the two messages that you have just published. The messages have
 the data, `hello` and `goodbye`, as well as `MESSAGE_ID`. The `MESSAGE_ID` is a
-unique id of the message that the server assigned.
+unique ID of the message that the server assigned.
 
 Note: Cloud Pub/Sub doesn't guarantee the order of the messages. It is also
-possible that you saw only one message. In that case, try running the same
-command several times until you see the other message.
+possible that only one message was returned; in that case, run the same
+command again until you see the other message.
 
-### Acknowledge and acknowledgement deadline
+### Acknowledging messages
 
-After you pull a message and correctly process it, you must notify Cloud Pub/Sub
+After you pull a message and process it, you must notify Cloud Pub/Sub
 that you successfully received the message. This action is called
-**acknowledge**.
+**acknowledgement**.
 
-You may have noticed the `--auto-ack` flag passed along with the `pull` command.
-The `--auto-ack` flag automatically pulls the message and acknowledges it.
+The `--auto-ack` flag passed with the `pull` command automatically acknowledges
+a message when it is pulled.
 
 ## Manual acknowledgement
 
@@ -147,7 +143,7 @@ gcloud pubsub \
 
 ### Pull messages again
 
-Pull the messages with:
+Pull the messages with this command:
 
 ```bash
 gcloud pubsub subscriptions \
@@ -155,45 +151,46 @@ gcloud pubsub subscriptions \
 ```
 
 This should display the `thanks` message, as well as `MESSAGE_ID`, and `ACK_ID`.
-The `ACK_ID` is another id that you can use for acknowledging the message.
+The `ACK_ID` is an ID that you can use for acknowledging the message. Copy
+the `ACK_ID` value, which you will paste into an acknowledgement in the next
+step.
 
 ### Acknowledge the message
 
 After you pull a message, you need to acknowledge the message before the
-**acknowledgement deadline** has passed. For example, if a subscription is
-configured to have a 60 seconds **acknowledgement deadline**, as we did in this
-tutorial, you need to acknowledge the message within 60 seconds after you pulled
-the message. Otherwise, Cloud Pub/Sub will re-send the message.
+acknowledgement deadline has passed. If you do not acknowledge the message
+before the acknowledgement deadline has passed, Cloud Pub/Sub will re-send
+the message.
 
-Acknowledge the message with the following command (replace the `ACK_ID` with
-the real one by copy/paste):
+Acknowledge the message with the following command, replacing `[ACK_ID]` with
+the ID that you copied in the previous step:
 
 ```bash
 gcloud pubsub subscriptions ack \
-    my-sub --ack-ids ACK_ID
+    my-sub --ack-ids [ACK_ID]
 ```
 
-## See the topic and the subscription in Pub/Sub UI
+## See the topic and the subscription in the GCP Console
 
-This concludes the `gcloud` command line tutorial, but let's look at the UI on
-the Google Cloud Console before finishing the tutorial.
+This concludes the `gcloud` command-line tutorial, but let's look at the web
+interface for the GCP Console before finishing the tutorial.
 
-You can also see the topics and subscriptions in the Pub/Sub section.
+### Navigate to the Cloud Pub/Sub section
 
-### Navigate to the Pub/Sub section
-
-Open the [menu][spotlight-console-menu] on the left side of the console.
-
-Then, select the **Pub/Sub** section.
+Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console,
+and select **Pub/Sub**.
 
 <walkthrough-menu-navigation sectionId="CLOUDPUBSUB_SECTION"></walkthrough-menu-navigation>
 
-The UI also allows you to create and manage topics and subscriptions.
+You can use this web interface to create and manage topics and subscriptions.
 
-### Delete the topic
+## Clean up
 
-Check the checkbox next to the topic that you created and click the [Delete
-button][spotlight-delete-button] to permanently delete the topic.
+Now that you have completed the tutorial, you should delete the resources that you created for the
+tutorial.
+
+Select the checkbox next to the topic that you created, and click the [**Delete**][spotlight-delete-button]
+button to permanently delete the topic.
 
 ## Conclusion
 
@@ -201,15 +198,11 @@ Congratulations!
 
 <walkthrough-conclusion-trophy></walkthrough-conclusion-trophy>
 
-You have just walked through the basic concepts of Cloud
-Pub/Sub using the `gcloud` command line tool, and you got a glimpse of the Cloud
-Pub/Sub UI. The next step is to create your awesome applications! For more
-information, see [the Pub/Sub documentation][pubsub-docs].
+You have just walked through the basic concepts of Cloud Pub/Sub.
+The next step is to create your awesome applications!
 
-Here's what you can do next:
-
-[See code
-samples](https://cloud.google.com/pubsub/docs/quickstart-client-libraries)
+For more information, see the [Cloud Pub/Sub documentation][pubsub-docs]
+and [explore our code samples](https://cloud.google.com/pubsub/docs/quickstart-client-libraries).
 
 [pubsub-docs]: https://cloud.google.com/pubsub/docs/
 [spotlight-console-menu]: walkthrough://spotlight-pointer?spotlightId=console-nav-menu
