@@ -249,14 +249,14 @@ created.
 
 Here's what you can do next:
 
-*   [Read more about the Word Count example][wordcount]
+*   [Read more about the WordCount example][wordcount]
 *   [Learn about the Cloud Dataflow programming model][df-model]
 *   [Explore the Apache Beam SDK on GitHub][df-sdk]
 
 Set up your local environment:
 
-*   [Use Eclipse to run Dataflow][df-eclipse]
-*   [Use Python to run Dataflow][df-python]
+*   [Use Eclipse to run Cloud Dataflow][df-eclipse]
+*   [Use Python to run Cloud Dataflow][df-python]
 
 [dataflow-java-tutorial]: https://cloud.google.com/dataflow/docs/quickstarts/quickstart-java-maven
 [df-eclipse]: https://cloud.google.com/dataflow/docs/quickstarts/quickstart-java-eclipse
