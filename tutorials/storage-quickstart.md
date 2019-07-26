@@ -115,3 +115,4 @@ that you can do next:
 [spotlight-refresh-bucket]: walkthrough://spotlight-pointer?spotlightId=gcs-action-bar-refresh-objects
 [spotlight-share-public]: walkthrough://spotlight-pointer?cssSelector=.p6n-cloudstorage-browser-public-checkbox
 [spotlight-upload-file]: walkthrough://spotlight-pointer?spotlightId=gcs-action-bar-upload-file
+[spotlight-console-menu]: walkthrough://spotlight-pointer?spotlightId=console-nav-menu
