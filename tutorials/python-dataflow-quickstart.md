@@ -24,67 +24,75 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 In this tutorial, you'll learn the basics of the Cloud Dataflow service by
 running a simple example pipeline using Python.
 
-Dataflow pipelines are either *batch* (processing bounded input like a file or
+Cloud Dataflow pipelines are either *batch* (processing bounded input like a file or
 database table) or *streaming* (processing unbounded input from a source like
 Cloud Pub/Sub). The example in this tutorial is a batch pipeline that counts
 words in a collection of Shakespeare's works.
 
-Before you start, you'll need to check for prerequisites in your Cloud Platform
+Before you start, you'll need to check for prerequisites in your GCP
 project and perform initial setup.
 
 ## Project setup
 
-Google Cloud Platform organizes resources into projects. This allows you to
-collect all the related resources for a single application in one place.
+GCP organizes resources into projects. This allows you to
+collect all of the related resources for a single application in one place.
+
+Begin by creating a new project or selecting an exisitng project for this tutorial.
 
 <walkthrough-project-billing-setup></walkthrough-project-billing-setup>
 
+For details, see
+[Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
+
 ## Set up Cloud Dataflow
 
-To use Dataflow, turn on the Cloud Dataflow APIs and open the Cloud Shell.
+To use Cloud Dataflow, enable the Cloud Dataflow APIs and open Cloud Shell.
 
-### Turn on Google Cloud APIs
-Dataflow processes data in many GCP data stores and messaging services,
-including BigQuery, Google Cloud Storage, and Cloud Pub/Sub. Enable the APIs for
-these services to take advantage of Dataflow's data processing capabilities.
+### Enable Cloud APIs
+
+Cloud Dataflow processes data in many GCP data stores and messaging services,
+including BigQuery, Cloud Storage, and Cloud Pub/Sub. To use these services,
+you must first enable their APIs.
+
+Click the following to enable the APIs:
 
 <walkthrough-enable-apis apis=
-  "compute.googleapis.com,dataflow,cloudresourcemanager.googleapis.com,logging,storage_component,storage_api,bigquery,pubsub">
+"compute.googleapis.com,dataflow,cloudresourcemanager.googleapis.com,logging,storage_component,storage_api,bigquery,pubsub">
 </walkthrough-enable-apis>
 
-### Open the Cloud Shell
+<walkthrough-alt>
+https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,dataflow,cloudresourcemanager.googleapis.com,logging,storage_component,storage_api,bigquery,pubsub
+</walkthrough-alt>
 
-Cloud Shell is a built-in command line tool for the console. You're going to use
-Cloud Shell to deploy your app.
+### Open Cloud Shell
+
+In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
 
 Open Cloud Shell by clicking the
 <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
 [**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
-## Install Cloud Dataflow samples on Cloud Shell
+## Install Cloud Dataflow samples
 
-Dataflow runs jobs written using the Apache Beam SDK. To submit jobs to the
-Dataflow Service using Python, your development environment will require Python,
+Cloud Dataflow runs jobs written using the Apache Beam SDK. To submit jobs to the
+Cloud Dataflow service using Python, your development environment requires Python,
 the Google Cloud SDK, and the Apache Beam SDK for Python. Additionally, Cloud
 Dataflow uses pip, Python's package manager, to manage SDK dependencies.
 
-This tutorial uses a Cloud Shell that has Python and pip already installed. If
-you prefer, you can do this tutorial [on your local
-machine.][dataflow-python-tutorial]
+This tutorial uses a Cloud Shell environment that has Python and pip installed. If
+you prefer, you can do this tutorial [on your local machine][dataflow-python-tutorial].
 
 ### Download the samples and the Apache Beam SDK for Python using the pip command
 
-In order to write a Python Dataflow job, you will first need to download the SDK
+To write a Cloud Dataflow job with Python, you first need to download the SDK
 from the repository.
 
-When you run this command, pip will download and install the appropriate version
-of the Apache Beam SDK.
+When you run this command in Cloud Shell, pip will download and install the appropriate version
+of the Apache Beam SDK:
 
 ```bash
 pip install --user --quiet apache-beam[gcp]
 ```
-
-Run the pip command in Cloud Shell.
 
 ## Set up a Cloud Storage bucket
 
@@ -93,14 +101,15 @@ pipeline code.
 
 ### Run gsutil mb
 
-In Cloud Shell, use the command `gsutil mb` to create a Cloud Storage bucket.
+In Cloud Shell, use the command `gsutil mb` to create a Cloud Storage bucket:
 
 ```bash
 gsutil mb gs://{{project_id_no_domain}}
 ```
 
-For more information about the `gsutil` tool, see the
-[documentation][gsutil-docs].
+`{{project_id_no_domain}}` is your GCP project ID.
+
+For more information about the `gsutil` tool, see the [documentation][gsutil-docs].
 
 ## Create and launch a pipeline
 
@@ -109,10 +118,10 @@ pipeline reads input data, performs transformations on that data, and then
 produces output data. A pipeline's transformations might include filtering,
 grouping, comparing, or joining data.
 
-### Launch your pipeline on the Dataflow Service
+### Launch your pipeline on the Cloud Dataflow service
 
 Use Python to launch your pipeline on the Cloud Dataflow service. The running
-pipeline is referred to as a *job.*
+pipeline is referred to as a *job*.
 
 ```bash
 python -m apache_beam.examples.wordcount \
@@ -120,11 +129,11 @@ python -m apache_beam.examples.wordcount \
   --runner DataflowRunner \
   --temp_location gs://{{project_id_no_domain}}/temp \
   --output gs://{{project_id_no_domain}}/results/output \
-  --job_name {{job_name}}
+  --job_name dataflow-intro
 ```
 
-*   `output` is the bucket used by the WordCount example to store the job
-    results.
+*   `{{project_id}}` is your GCP project ID.
+*   `output` is the bucket used by the WordCount example to store the job results.
 
 ### Your job is running
 
@@ -135,32 +144,33 @@ machines in parallel.
 
 ## Monitor your job
 
-Check the progress of your pipeline on the Cloud Dataflow page.
+In this section, you check the progress of your pipeline on the **Dataflow** page
+in the GCP Console.
 
-### Go to the Cloud Dataflow Monitoring UI page
+### Go to the Dataflow page
 
-If you haven't already, navigate to the Cloud Dataflow Monitoring UI page.
-
-Open the [menu][spotlight-console-menu] on the left side of the console.
-
-Then, select the **Dataflow** section.
+Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console, and 
+then select **Dataflow**.
 
 <walkthrough-menu-navigation sectionId="DATAFLOW_SECTION"></walkthrough-menu-navigation>
 
 ### Select your job
 
-Click on the job name "{{job_name}}" to view its details.
+Click the job name to view the job details.
+
+### Explore pipeline details and metrics
 
 ### Explore pipeline details and metrics
 
 Explore the pipeline on the left and the job information on the right. To see
-detailed job status, click [Logs][spotlight-job-logs]. Try clicking a step in
-the pipeline to view its metrics.
+detailed job status, click [**Logs**][spotlight-job-logs] at the top of the page.
+
+Click a step in the pipeline to view its metrics.
 
 As your job finishes, you'll see the job status change, and the Compute Engine
 instances used by the job will stop automatically.
 
-Note: When you see the "JOB_STATE_DONE" message, you can close Cloud Shell.
+Note: When you see the message in Cloud Shell that the job is finished, you can close Cloud Shell.
 
 ## View your output
 
@@ -168,42 +178,32 @@ Now that your job has run, you can explore the output files in Cloud Storage.
 
 ### Go to the Cloud Storage page
 
-Open the [menu][spotlight-console-menu] on the left side of the console.
-
-Then, select the **Storage** section, and click on **Browser**. You can verify
-that you are on the correct screen if you can see your previously created GCS
-bucket "{{project_id_no_domain}}".
+Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console,
+select **Storage**, and then click **Browser**.
 
 <walkthrough-menu-navigation sectionId=STORAGE_SECTION></walkthrough-menu-navigation>
 
 ### Go to the storage bucket
 
-In the list of buckets, select the bucket you created earlier. If you used the
-suggested name, it will be named `{{project_id_no_domain}}`.
+In the list of buckets, select the bucket that you created earlier.
 
-The bucket contains a "results" folder and "temp" folders. Dataflow saves the
-output in shards, so your bucket will contain several output files in the
-"results" folder.
+The bucket contains output and temp folders. Dataflow saves the
+output in shards, so your bucket will contain several output files.
 
-The "temp" folder is for staging binaries needed by the workers, and for
+The temp folder is for staging binaries needed by the workers and for
 temporary files needed by the job execution.
 
 ## Clean up
 
-In order to prevent being charged for Cloud Storage usage, delete the bucket you
+To prevent being charged for Cloud Storage usage, delete the bucket you
 created.
 
-### Go back to the buckets browser
+1.  Click the [**Buckets**][spotlight-buckets-link] link to go back to the bucket browser.
 
-Click the [Buckets][spotlight-buckets-link] link.
+1.  Check the box next to the bucket that you created.
 
-### Select the bucket
-
-Check the box next to the bucket you created.
-
-### Delete the bucket
-
-Click [Delete][spotlight-delete-bucket] and confirm your deletion.
+1.  Click the [**Delete**][spotlight-delete-bucket] button at the top of the GCP Console, and
+    confirm the deletion.
 
 ## Conclusion
 
@@ -211,14 +211,14 @@ Click [Delete][spotlight-delete-bucket] and confirm your deletion.
 
 Here's what you can do next:
 
-*   [Read more about the Word Count example][wordcount]
+*   [Read more about the WordCount example][wordcount]
 *   [Learn about the Cloud Dataflow programming model][df-pipelines]
 *   [Explore the Apache Beam SDK on GitHub][beam-sdk]
 
 Set up your local environment:
 
-*   [Use Java and Eclipse to run Dataflow][df-eclipse]
-*   [Use Java and Maven to run Dataflow][df-maven]
+*   [Use Java and Eclipse to run Cloud Dataflow][df-eclipse]
+*   [Use Java and Maven to run Cloud Dataflow][df-maven]
 
 [df-eclipse]: https://cloud.google.com/dataflow/docs/quickstarts/quickstart-java-eclipse
 [df-maven]: https://cloud.google.com/dataflow/docs/quickstarts/quickstart-java-maven
