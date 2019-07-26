@@ -125,7 +125,10 @@ command again until you see the other message.
 
 After you pull a message and process it, you must notify Cloud Pub/Sub
 that you successfully received the message. This action is called
-**acknowledgement**.
+*acknowledgement*.
+
+If you do not acknowledge the message before the acknowledgement deadline has
+passed, Cloud Pub/Sub will re-send the message.
 
 The `--auto-ack` flag passed with the `pull` command automatically acknowledges
 a message when it is pulled.
@@ -150,17 +153,12 @@ gcloud pubsub subscriptions \
     pull my-sub
 ```
 
-This should display the `thanks` message, as well as `MESSAGE_ID`, and `ACK_ID`.
+This should display the `thanks` message, as well as `MESSAGE_ID` and `ACK_ID`.
 The `ACK_ID` is an ID that you can use for acknowledging the message. Copy
 the `ACK_ID` value, which you will paste into an acknowledgement in the next
 step.
 
 ### Acknowledge the message
-
-After you pull a message, you need to acknowledge the message before the
-acknowledgement deadline has passed. If you do not acknowledge the message
-before the acknowledgement deadline has passed, Cloud Pub/Sub will re-send
-the message.
 
 Acknowledge the message with the following command, replacing `[ACK_ID]` with
 the ID that you copied in the previous step:
@@ -174,8 +172,6 @@ gcloud pubsub subscriptions ack \
 
 This concludes the `gcloud` command-line tutorial, but let's look at the web
 interface for the GCP Console before finishing the tutorial.
-
-### Navigate to the Cloud Pub/Sub section
 
 Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console,
 and select **Pub/Sub**.
