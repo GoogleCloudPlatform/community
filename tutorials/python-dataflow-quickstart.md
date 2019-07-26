@@ -82,7 +82,7 @@ Dataflow uses pip, Python's package manager, to manage SDK dependencies.
 This tutorial uses a Cloud Shell environment that has Python and pip installed. If
 you prefer, you can do this tutorial [on your local machine][dataflow-python-tutorial].
 
-### Download the samples and the Apache Beam SDK for Python using the pip command
+### Download the samples and the Apache Beam SDK for Python
 
 To write a Cloud Dataflow job with Python, you first need to download the SDK
 from the repository.
