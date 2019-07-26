@@ -88,8 +88,8 @@ Alternatively, you can do this tutorial [on your local machine][dataflow-java-tu
 To write a Cloud Dataflow job with Java, you first need to download the SDK
 from the Maven repository.
 
-When you run this command, Maven creates a project structure and config file
-for downloading the appropriate version of the Apache Beam SDK.
+When you run this command in Cloud Shell, Maven creates a project structure and config file
+for downloading the appropriate version of the Apache Beam SDK:
 
 ```bash
 mvn archetype:generate \
@@ -108,8 +108,6 @@ mvn archetype:generate \
     `com.mycompany`.
 *   `artifactId` sets the name of the created `.jar` file. Use the default value
     (`dataflow-intro`) for this tutorial.
-
-Run the Maven command in Cloud Shell.
 
 ### Change directory
 
