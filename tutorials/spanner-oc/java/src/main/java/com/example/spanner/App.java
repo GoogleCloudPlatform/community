@@ -37,6 +37,17 @@ import io.opencensus.contrib.grpc.metrics.RpcViews;
 import io.opencensus.exporter.stats.stackdriver.StackdriverStatsExporter;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceConfiguration;
 import io.opencensus.exporter.trace.stackdriver.StackdriverTraceExporter;
+import io.opencensus.stats.Aggregation;
+import io.opencensus.stats.Aggregation.Distribution;
+import io.opencensus.stats.BucketBoundaries;
+import io.opencensus.stats.Measure.MeasureLong;
+import io.opencensus.stats.Measure.MeasureDouble;
+import io.opencensus.stats.Stats;
+import io.opencensus.stats.StatsRecorder;
+import io.opencensus.tags.TagKey;
+import io.opencensus.stats.View;
+import io.opencensus.stats.View.Name;
+import io.opencensus.stats.ViewManager;
 import io.opencensus.trace.Tracing;
 import io.opencensus.trace.config.TraceConfig;
 import io.opencensus.trace.samplers.Samplers;
@@ -57,6 +68,63 @@ public class App {
   private static final String DATABASE_ID = System.getenv("DATABASE_ID");
   private static final int EXPORT_INTERVAL = 70;
   // [END configChanges]
+
+  // The read latency in milliseconds
+  private static final MeasureDouble M_READ_LATENCY_MS = MeasureDouble.create("spannerapp/read_latency", "The latency in milliseconds for read", "ms");
+
+  // [START config_oc_write_latency_measure]
+  // The write latency in milliseconds
+  private static final MeasureDouble M_WRITE_LATENCY_MS = MeasureDouble.create("spannerapp/write_latency", "The latency in milliseconds for write", "ms");
+  // [END config_oc_write_latency_measure]
+
+  // Counts the number of transactions
+  private static final MeasureLong M_TRANSACTION_SETS = MeasureLong.create("spannerapp/transaction_set_count", "The count of transactions", "1");
+
+  // Define the tags for potential grouping
+  private static final TagKey KEY_LATENCY = TagKey.create("latency");
+  private static final TagKey KEY_TRANSACTIONS = TagKey.create("transactions");
+
+  private static final StatsRecorder STATS_RECORDER = Stats.getStatsRecorder();
+
+  private static void registerMetricViews() {
+    // [START config_oc_latency_distribution]
+    Aggregation latencyDistribution = Distribution.create(BucketBoundaries.create(
+      Arrays.asList(
+        0.0, 5.0, 10.0, 25.0, 100.0, 200.0, 400.0, 800.0, 10000.0)));
+    // [END config_oc_latency_distribution]
+
+    // Define the count aggregation
+    Aggregation countAggregation = Aggregation.Count.create();
+
+
+    View[] views = new View[]{
+      View.create(Name.create("spannerappmetrics/read_latency"),
+        "The distribution of the read latencies",
+        M_READ_LATENCY_MS,
+        latencyDistribution,
+        Collections.singletonList(KEY_LATENCY)),
+
+      // [START config_oc_write_latency_view]
+      View.create(Name.create("spannerappmetrics/write_latency"),
+        "The distribution of the write latencies",
+        M_WRITE_LATENCY_MS,
+        latencyDistribution,
+        Collections.singletonList(KEY_LATENCY)),
+      // [END config_oc_write_latency_view]
+
+      View.create(Name.create("spannerappmetrics/transaction_set_count"),
+        "The number of transaction sets performed",
+        M_TRANSACTION_SETS,
+        countAggregation,
+        Collections.singletonList(KEY_TRANSACTIONS))
+    };
+
+    // Ensure that they are registered so
+    // that measurements won't be dropped.
+    ViewManager manager = Stats.getViewManager();
+    for (View view : views)
+      manager.registerView(view);
+  }
 
   // [START config_oc_stackdriver_export]
   private static void configureOpenCensusExporters() throws IOException {
@@ -90,6 +158,11 @@ public class App {
    * Connects to Cloud Spanner, runs some basic operations.
    */
   private static void doSpannerOperations() {
+    long startRead;
+    long endRead;
+    long startWrite;
+    long endWrite;
+
     // Instantiate the client.
     SpannerOptions options = SpannerOptions.getDefaultInstance();
     Spanner spanner = options.getService();
@@ -106,8 +179,10 @@ public class App {
       try (Scope ss = Tracing.getTracer().spanBuilder("create-players").startScopedSpan()) {
         // Warm up the spanner client session. In normal usage
         // you'd have hit this point after the first operation.
+        startRead = System.currentTimeMillis();
         dbClient.singleUse().readRow("Players", Key.of("foo@gmail.com"),
           Collections.singletonList("email"));
+        endRead = System.currentTimeMillis();
 
         // [START spanner_insert_data]
         for (int i = 0; i < 3; i++) {
@@ -122,7 +197,19 @@ public class App {
           );
 
           // write to Spanner
+          startWrite = System.currentTimeMillis();
           dbClient.write(mutations);
+          endWrite = System.currentTimeMillis();
+
+
+          // [START opencensus_metric_record]
+          // record read, write latency metrics and count
+          STATS_RECORDER.newMeasureMap()
+            .put(M_READ_LATENCY_MS, endRead - startRead)
+            .put(M_WRITE_LATENCY_MS, endWrite - startWrite)
+            .put(M_TRANSACTION_SETS, 1)
+            .record();
+          // [END opencensus_metric_record]
         }
         // [END spanner_insert_data]
       }
@@ -185,6 +272,10 @@ public class App {
   }
 
   public static void main(String ...args) throws Exception {
+
+    // set up the views to expose the metrics
+    registerMetricViews();
+
     configureOpenCensusExporters();
     doSpannerOperations();
 
