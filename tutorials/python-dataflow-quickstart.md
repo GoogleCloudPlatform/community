@@ -160,8 +160,6 @@ Click the job name to view the job details.
 
 ### Explore pipeline details and metrics
 
-### Explore pipeline details and metrics
-
 Explore the pipeline on the left and the job information on the right. To see
 detailed job status, click [**Logs**][spotlight-job-logs] at the top of the page.
 
