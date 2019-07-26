@@ -1,12 +1,12 @@
 ---
-title: Dataflow word count using Java
-description: Learn to use the Cloud Dataflow service by running an example in Java.
+title: Count words with Cloud Dataflow and Java
+description: Learn to use the Cloud Dataflow service by running a word count example in Java.
 author: jscud
 tags: Dataflow
 date_published: 2019-07-28
 ---
 
-# Dataflow word count using Java
+# Count words with Cloud Dataflow and Java
 
 <!-- {% setvar directory "dataflow-intro" %} -->
 <!-- {% setvar job_name "dataflow-intro" %} -->
