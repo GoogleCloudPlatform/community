@@ -1,14 +1,13 @@
 ---
-title: Dataflow Word Count Tutorial using Python
-description: Learn the Cloud Dataflow service by running an example in Python.
+title: Count words with Cloud Dataflow and Python
+description: Learn the Cloud Dataflow service by running a word count example in Python.
 author: jscud
 tags: Dataflow
-date_published: 2019-04-12
+date_published: 2019-07-28
 ---
 
-# Dataflow Word Count Tutorial
+# Count words with Cloud Dataflow and Python
 
-<walkthrough-tutorial-url url="https://cloud.google.com/dataflow/docs/quickstarts/quickstart-python"></walkthrough-tutorial-url>
 <!-- {% setvar job_name "dataflow-intro" %} -->
 <!-- {% setvar project_id_no_domain "<your-project>" %} -->
 <!-- {% setvar project_id "<your-project>" %} -->
