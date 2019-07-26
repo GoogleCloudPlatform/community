@@ -25,7 +25,7 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 In this tutorial, you'll learn the basics of the Cloud Dataflow service by
 running a simple example pipeline using Java.
 
-Dataflow pipelines are either *batch* (processing bounded input like a file or
+Cloud Dataflow pipelines are either *batch* (processing bounded input like a file or
 database table) or *streaming* (processing unbounded input from a source like
 Cloud Pub/Sub). The example in this tutorial is a batch pipeline that counts
 words in a collection of Shakespeare's works.
@@ -51,7 +51,7 @@ To use Cloud Dataflow, enable the Cloud Dataflow APIs and open Cloud Shell.
 
 ### Enable Cloud APIs
 
-Dataflow processes data in many GCP data stores and messaging services,
+Cloud Dataflow processes data in many GCP data stores and messaging services,
 including BigQuery, Cloud Storage, and Cloud Pub/Sub. To use these services,
 you must first enable their APIs.
 
