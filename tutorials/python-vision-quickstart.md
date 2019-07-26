@@ -1,14 +1,13 @@
 ---
-title: Cloud Vision API
-description: Try out image labeling in a basic Vision API application.
+title: Label images with the Cloud Vision API
+description: Learn the basics of image labeling with a simple Cloud Vision API application.
 author: jscud
 tags: Cloud Vision
-date_published: 2019-04-15
+date_published: 2019-07-28
 ---
 
-# Cloud Vision API
+# Label images with the Cloud Vision API
 
-<walkthrough-tutorial-url url="https://cloud.google.com/vision/docs/label-tutorial"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/python-docs-samples.git" %} -->
 <!-- {% setvar repo_name "python-docs-samples" %} -->
 <!-- {% setvar project_id "<your-project>" %} -->
@@ -23,79 +22,76 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 
 ## Introduction
 
-This tutorial walks you through a basic Vision API application, using a
-`LABEL_DETECTION` request. A `LABEL_DETECTION` request annotates an image with a
-label (or "tag") that is selected based on the image content. For example, a
-picture of a barn may produce a label of "barn", "farm", or some other similar
+This tutorial walks you through a basic application that uses the Vision API.
+In this application, a `LABEL_DETECTION` request annotates an image with a
+label (tag) that is selected based on the image content. For example, a
+picture of a barn may produce a label of `barn`, `farm`, or some other similar
 annotation.
-
-Here are the steps you will be taking:
-
-*   **Run your label detection app** You will learn how to run your app using
-    Google Cloud Shell, right in your browser.
-*   **After the app...** Your app will be real and you'll be able to experiment
-    with it, or you can remove it and start fresh.
 
 ["Python" and the Python logos are trademarks or registered trademarks of the
 Python Software Foundation.](walkthrough://footnote)
 
-# Project Setup
+## Project setup
 
-You will need to enable the Cloud Vision API through a project.
+GCP organizes resources into projects. This allows you to
+collect all of the related resources for a single application in one place.
 
-Google Cloud Platform organizes resources into projects. This allows you to
-collect all the related resources for a single application in one place.
+Begin by creating a new project or selecting an existing project for this tutorial.
 
 <walkthrough-project-billing-setup></walkthrough-project-billing-setup>
 
+For details, see
+[Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
+
 ## Enable the Vision API
 
-Your project must enable the Vision API to accept requests.
+Before your project can use a service like the Vision API, you must enable the
+API for the project.
+
+Click the following to enable the API:
 
 <walkthrough-enable-apis apis="vision.googleapis.com"></walkthrough-enable-apis>
 
-## Using Google Cloud Shell
+<walkthrough-alt>
+https://console.cloud.google.com/flows/enableapi?apiid=vision.googleapis.com
+</walkthrough-alt>
 
-Cloud Shell is a built-in command line tool for the console. You're going to use
-Cloud Shell to run your app.
+## Open Cloud Shell
 
-### Open Google Cloud Shell
+In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
 
 Open Cloud Shell by clicking the
 <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
 [**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
-### Clone the sample code
+## Clone the sample code
 
-Use Cloud Shell to clone and navigate to the "Hello World" code. The sample code
+Use Cloud Shell to clone and navigate to the sample code. The sample code
 is cloned from your project repository to the Cloud Shell.
 
 Note: If the directory already exists, remove the previous files before cloning:
 
 ```bash
-rm -rf {{repo_name}}
+rm -rf python-docs-samples
 ```
 
-Clone a sample repository:
+Clone the sample repository:
 
 ```bash
-git clone {{repo_url}}
+git clone https://github.com/GoogleCloudPlatform/python-docs-samples.git
 ```
 
-Then, switch to the tutorial directory:
+Change directory to the tutorial directory:
 
 ```bash
-cd {{repo_name}}/vision/cloud-client/quickstart
+cd python-docs-samples/vision/cloud-client/quickstart
 ```
 
-## Configuring your deployment
+You are now in the main directory for the sample code.
 
-You are now in the main directory for the sample code. You'll look at the files
-that configure your application.
+## Explore the application
 
-### Exploring the application
-
-Enter the following command to view your application code:
+Enter the following command to view the application code:
 
 ```bash
 cat quickstart.py
@@ -104,19 +100,17 @@ cat quickstart.py
 The `quickstart.py` file formats your request information, like the request type
 and content. Expand each section below to learn about the details.
 
-Requests to the Vision API are provided as JSON objects. See the [Vision API
-Reference][vision-request-doc] for complete information on the specific
+Requests to the Vision API are provided as JSON objects. See the
+[Vision API reference][vision-request-doc] for complete information on the specific
 structure of such a request. Your JSON request is only sent when you call
 `execute`. This pattern allows you to pass around such requests and call
 `execute` as needed.
 
-## Testing the application
+## Setup up a service account and credentials
 
-In order to use the API, you need to set up credentials. To use a Cloud API, you
-will need to set up the proper [credentials][auth-doc] for your application.
-This will enable your application to authenticate its identity to the service
-and to obtain authorization to perform tasks. Then you will test the API with
-sample images.
+To use a Cloud API, you need to set up the proper [credentials][auth-doc] for 
+your application. This enables your application to authenticate its identity to
+the service and obtain authorization to perform tasks.
 
 ### Create a service account
 
@@ -126,6 +120,8 @@ already have the service account created, it will be reused.
 ```bash
 gcloud iam service-accounts create vision-quickstart --project {{project_id}}
 ```
+
+`{{project_id}}` is your GCP project ID.
 
 ### Create credentials
 
@@ -142,16 +138,16 @@ export GOOGLE_APPLICATION_CREDENTIALS=key.json
 
 <walkthrough-test-code-output text="created key"></walkthrough-test-code-output>
 
-### Test your app
+## Test your app
 
-To test your app with a sample image enter:
+To test your app with a sample image, enter the following command:
 
 ```bash
 python quickstart.py
 ```
 
 The image resource, `resources/wakeupcat.jpg`, is specified in the source.
-([View Image][cat-picture])
+([View image][cat-picture])
 
 ## Conclusion
 
@@ -161,9 +157,9 @@ Congratulations! You are ready to use the Cloud Vision API.
 
 Here's what you can do next:
 
-*   Work through the [Face Detection][face-tutorial] tutorial.
-*   Try the [Document Text][document-text-tutorial] tutorial.
-*   See the [Sample Applications][vision-samples].
+*   Work through the [face detection][face-tutorial] tutorial.
+*   Try the [document text][document-text-tutorial] tutorial.
+*   See the [sample applications][vision-samples].
 *   Download the [Google Cloud SDK][get-cloud-sdk] to run on your local machine.
 
 [auth-doc]: https://cloud.google.com/vision/docs/auth
