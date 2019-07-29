@@ -3,7 +3,7 @@ title: Automate building Android APK files with Cloud Build CI/CD and a Gradle D
 description: Set up a Cloud Build trigger that builds your Android app and uploads it to a Cloud Storage bucket.
 author: timtech4u
 tags: Android, automation, Gradle, Cloud Build
-date_published: 2019-07-27
+date_published: 2019-07-30
 ---
 
 In this tutorial, you set up a Cloud Build trigger that builds your Android application and uploads it to a Cloud Storage
@@ -56,9 +56,13 @@ In this section, you create a Cloud Storage bucket, where your project APK files
 
 ## Set up Cloud Build
 
--  You need to ensure your application codes and all necessary files needed for building an APK are available on a code repository. Cloud Build currently supports Cloud Source Repositories, GitHub, or Bitbucket. You can also make use of the sample codes for this tutorial, [here](https://github.com/Timtech4u/gcb-android-tutorial) 
--  In your repository, create a build configuration file: cloudbuild.yaml, which contains instructions for Cloud Build. The configuration file for this tutorial is as follows:
-    ```yaml
+You need to ensure that your application code and all necessary files needed for building an APK are available in a code 
+repository. Cloud Build currently supports Cloud Source Repositories, GitHub, and Bitbucket. You can also make use of the 
+sample code for this tutorial, [here](https://github.com/Timtech4u/gcb-android-tutorial).
+
+In your repository, create a build configuration file, `cloudbuild.yaml`, which contains instructions for Cloud Build. The 
+configuration file for this tutorial is as follows:
+
     # cloudbuild.yaml
     steps:
     # Set a persistent volume according to https://cloud.google.com/cloud-build/docs/build-config (search for volumes)
@@ -83,18 +87,20 @@ In this section, you create a Cloud Storage bucket, where your project APK files
       args: ['cp', '/persistent_volume/app/build/outputs/apk/debug/app-debug.apk', 'gs://fullstackgcp-apk-builds/app-debug-$SHORT_SHA.apk']
 
     timeout: 1200s
-    ```
--  In a nutshell, Cloud Build helps you run the following docker command:
-   `docker run -v $(pwd):/home/app --rm gcr.io/fullstackgcp/gradle /bin/bash -c 'cd /home/app && ./gradlew clean assembleDebug'`
+    
+In a nutshell, Cloud Build helps you run the following docker command:
+
+    docker run -v $(pwd):/home/app --rm gcr.io/fullstackgcp/gradle /bin/bash -c 'cd /home/app && ./gradlew clean assembleDebug'`
    
-   In the command, we specify: **-v** which mounts our current directory as the volume, **--rm** which removes the container on exit.
+In the command, we specify: `-v`, which mounts our current directory as the volume. and `--rm`, which removes the container 
+on exit.
    
    You can change the  **-c** command on your **cloudbuild.yaml** file if you would like to use other Gradle commands.
    
    Cloud Build also copies the output: **app-debug.apk** into your  GCS Bucket as **app-debug-$SHORT_SHA.apk** , where *$SHORT_SHA* is the first seven characters of *COMMIT_SHA* of the commit which triggered Cloud Build, it is meant to tag the APK builds on your GCS Bucket.
 
 
-### Set up Cloud Build Trigger
+### Set up Cloud Build trigger
 
 Cloud Build trigger listens to changes in your code repository, follow the steps below to create a GCB trigger.
 
