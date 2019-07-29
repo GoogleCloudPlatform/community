@@ -107,11 +107,12 @@ A Cloud Build trigger listens to changes in your code repository. Follow the ste
 
 1.  Visit the [Cloud Build **Triggers** page](https://console.cloud.google.com/cloud-build/triggers) and
     click **Create Trigger**.
-1.  Select **Code Repository Source*.
+1.  Select **Cloud Source Repositories**.
 1.  Select **Repository**. (Filter your search by entering the repository name.)
 1.  Enter **Description** and **Set Build Configuration** to `cloudbuild.yaml`. (Set a **Branch Regex** if you would
     like to limit the trigger to certain branches.)
-1.  Click **Create Trigger**. You can optionally also **Run Trigger*
+1.  Click **Create Trigger**. 
+1.  (Optional) To manually test a build trigger, click **Run trigger** on your trigger's entry in the triggers list.
 
 Great! You have just configured Cloud Build for your code repository. On code push, it builds your Android APK and uploads
 to your Cloud Storage bucket. 
