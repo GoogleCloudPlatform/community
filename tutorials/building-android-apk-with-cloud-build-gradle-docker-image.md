@@ -7,7 +7,7 @@ date_published: 2019-07-30
 ---
 
 In this tutorial, you set up a Cloud Build trigger that builds your Android application and uploads it to a Cloud Storage
-bucket. The builds of new APK bundles are automatically triggered after code is pushed code to your code repository.
+bucket. The builds of new APK bundles are automatically triggered after code is pushed to your repository.
 
 ## Objectives
 
@@ -49,7 +49,7 @@ In this section, you create a Cloud Storage bucket, where your project APK files
        in the GCP Console.
     1. Select your project and click **Continue**.
     1. In the list of members, look for your Cloud Build service account named
-       [PROJECT_ID]@cloudbuild.gserviceaccount.com, where  [PROJECT_ID] is your GCP project ID.
+       [PROJECT_ID]@cloudbuild.gserviceaccount.com, where [PROJECT_ID] is your GCP project ID.
     1. Click the pencil icon in that row.
     1. Click **Add another role**, select **Storage Object Admin** under **Storage**, and click Save.
 
@@ -92,7 +92,7 @@ In a nutshell, Cloud Build helps you run the following Docker command:
 
     docker run -v $(pwd):/home/app --rm gcr.io/fullstackgcp/gradle /bin/bash -c 'cd /home/app && ./gradlew clean assembleDebug'`
    
-In the command, we specify: `-v`, which mounts our current directory as the volume. and `--rm`, which removes the container 
+In the command, we specify `-v`, which mounts our current directory as the volume, and `--rm`, which removes the container 
 on exit.
    
 You can change the  `-c` command on your `cloudbuild.yaml` file if you would like to use other Gradle commands.
@@ -106,10 +106,10 @@ APK builds in your GCS bucket.
 A Cloud Build trigger listens to changes in your code repository. Follow the steps below to create a Cloud Build trigger:
 
 1.  Visit the [Cloud Build **Triggers** page](https://console.cloud.google.com/cloud-build/triggers) and
-    click **Create Trigger**
+    click **Create Trigger**.
 1.  Select **Code Repository Source*.
 1.  Select **Repository**. (Filter your search by entering the repository name.)
-1.  Enter **Description** and **Set Build Configuration** : **cloudbuild.yaml**. (Set a **Branch Regex** if you would
+1.  Enter **Description** and **Set Build Configuration** to `cloudbuild.yaml`. (Set a **Branch Regex** if you would
     like to limit the trigger to certain branches.)
 1.  Click **Create Trigger**. You can optionally also **Run Trigger*
 
