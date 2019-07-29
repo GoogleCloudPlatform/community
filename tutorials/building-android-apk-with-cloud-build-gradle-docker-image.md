@@ -30,24 +30,28 @@ Cloud Build is free for up to the first 120 build minutes per day. Check the
 
 Get the sample code from [GitHub Gist](https://github.com/Timtech4u/gcb-android-tutorial).
 
-## Set up the Cloud Storage
+## Set up Cloud Storage
 
-This is where your project APKs will be stored.
+In this section, you create a Cloud Storage bucket, where your project APK files will be stored.
 
 1.  Go to the [**Browser** page](https://console.cloud.google.com/storage/browser) for Cloud Storage.
-2.  Click **Create bucket**.
-3.  Provide a unique bucket name.
-4.  Make Bucket Public (Optional)
-4a. Enable **Bucket-level** permissions.
-4b. Click **Add Members** on the **Permissions** tab of your Bucket.
-4c. Enter **New Members** value to be **allUsers**
-4d. Select **Storage Object Viewer** Role under **Storage** and click **Save** (Note that: **Your bucket is public and can be accessed by anyone on the internet** )
-5. Granting Cloud Build access to Cloud Storage (Optional, If bucket is public)
-5a. [Open the IAM page in GCP Console.](https://console.cloud.google.com/project/_/iam-admin/iam?_ga=2.2968627.-2014380672.1551979429)
-5b. Select your project and click **Continue**.
-5c. In the list of members look for your Cloud Build service account named  *[PROJECT_NUMBER]@cloudbuild.gserviceaccount.com*, where  *[PROJECT_NUMBER]* is your GCP project number.
-5d. Click the pencil icon in that row.
-5e. Click **Add another role**, select **Storage Object Admin** under **Storage** and click Save.
+1.  Click **Create bucket**.
+1.  On the **Create a bucket** page, provide a unique bucket name.
+1.  Click the **Create** button.
+1.  (Optional) [Make the bucket public](https://cloud.google.com/storage/docs/access-control/making-data-public#buckets).
+    1. On the **Bucket details** page, on the **Permissions** tab, enable bucket-level permissions.
+    1. Click **Add members**.
+    1. In the **New members** field, enter `allUsers`.
+    1. In the **Role** field, choose **Storage Object Viewer**, and then click **Save**.
+       (*Note: Your bucket is public and can be accessed by anyone on the internet.*)
+1.  Grant Cloud Build access to Cloud Storage (optional, if bucket is public):
+    1. Open the [IAM page](https://console.cloud.google.com/project/_/iam-admin/iam?_ga=2.2968627.-2014380672.1551979429)
+       in the GCP Console.
+    1. Select your project and click **Continue**.
+    1. In the list of members, look for your Cloud Build service account named
+       [PROJECT_ID]@cloudbuild.gserviceaccount.com, where  [PROJECT_ID] is your GCP project ID.
+    1. Click the pencil icon in that row.
+    1. Click **Add another role**, select **Storage Object Admin** under **Storage**, and click Save.
 
 
 ## Set up Cloud Build
