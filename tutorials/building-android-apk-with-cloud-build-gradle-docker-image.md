@@ -88,47 +88,50 @@ configuration file for this tutorial is as follows:
 
     timeout: 1200s
     
-In a nutshell, Cloud Build helps you run the following docker command:
+In a nutshell, Cloud Build helps you run the following Docker command:
 
     docker run -v $(pwd):/home/app --rm gcr.io/fullstackgcp/gradle /bin/bash -c 'cd /home/app && ./gradlew clean assembleDebug'`
    
 In the command, we specify: `-v`, which mounts our current directory as the volume. and `--rm`, which removes the container 
 on exit.
    
-   You can change the  **-c** command on your **cloudbuild.yaml** file if you would like to use other Gradle commands.
+You can change the  `-c` command on your `cloudbuild.yaml` file if you would like to use other Gradle commands.
    
-   Cloud Build also copies the output: **app-debug.apk** into your  GCS Bucket as **app-debug-$SHORT_SHA.apk** , where *$SHORT_SHA* is the first seven characters of *COMMIT_SHA* of the commit which triggered Cloud Build, it is meant to tag the APK builds on your GCS Bucket.
+Cloud Build also copies the output `app-debug.apk` into your Cloud Storage bucket as `app-debug-$SHORT_SHA.apk`, where
+`$SHORT_SHA` is the first seven characters of `COMMIT_SHA` of the commit that triggered Cloud Build; it is meant to tag the
+APK builds in your GCS bucket.
 
+### Set up a Cloud Build trigger
 
-### Set up Cloud Build trigger
+A Cloud Build trigger listens to changes in your code repository. Follow the steps below to create a Cloud Build trigger:
 
-Cloud Build trigger listens to changes in your code repository, follow the steps below to create a GCB trigger.
+1.  Visit the [Cloud Build **Triggers** page](https://console.cloud.google.com/cloud-build/triggers) and
+    click **Create Trigger**
+1.  Select **Code Repository Source*.
+1.  Select **Repository**. (Filter your search by entering the repository name.)
+1.  Enter **Description** and **Set Build Configuration** : **cloudbuild.yaml**. (Set a **Branch Regex** if you would
+    like to limit the trigger to certain branches.)
+1.  Click **Create Trigger**. You can optionally also **Run Trigger*
 
--  Visit the  [Cloud Build Triggers Page](https://console.cloud.google.com/cloud-build/triggers) and Click **Create Trigger**
--  Select *Code Repository Source*
--  Select **Repository** (Filter your search by entering the repository name)
--  Enter **Description** and **Set Build Configuration** : **cloudbuild.yaml** (Set a **Branch Regex** if you would like to limit the trigger to certain branches)
--  Click **Create Trigger**, you can optionally also **Run Trigger*
-
-Great! You have just configured Cloud Build for your code repository, on code push, it builds your Android APK and uploads to your GCS Bucket. 
+Great! You have just configured Cloud Build for your code repository. On code push, it builds your Android APK and uploads
+to your Cloud Storage bucket. 
 
 ## Cleaning up
 
 To prevent unnecessary charges, clean up the resources created for this tutorial.
 
 1.  Delete the project used (if you created a new project).
-2.  Delete the Cloud Build Trigger and Cloud Storage Bucket.
+2.  Delete the Cloud Build trigger and Cloud Storage bucket.
 
-You might also choose to disable the Cloud Build Trigger.
-
+You might choose to disable the Cloud Build trigger, rather than deleting it.
 
 You might also choose to pause the Cloud Scheduler job.
 
 ## Next steps
 
-If you want to learn more about Cloud Build check out the following resources:
+If you want to learn more about Cloud Build, check out the following resources:
 
--  [Cloud Build Documentation](https://cloud.google.com/cloud-build/docs/) 
+-  [Cloud Build documentation](https://cloud.google.com/cloud-build/docs/) 
 -  [Official Cloud Builder](https://github.com/GoogleCloudPlatform/cloud-builders)
 -  [Community Cloud Builders](https://github.com/GoogleCloudPlatform/cloud-builders-community)
 -  [Google Cloud Platform Awesome List](https://github.com/GoogleCloudPlatform/awesome-google-cloud)
