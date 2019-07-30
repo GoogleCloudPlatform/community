@@ -268,7 +268,7 @@ shards and sum them when a total is needed.
 In this section, you use a high-speed Redis counter to increment a value at a very high rate and combine this with a rate
 limiter that controls how often that value is written to Cloud Firestore for application visibility.
 
-![](images/counter.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-rate-limiting/counter.png)
 
 Deploy the function:
 
