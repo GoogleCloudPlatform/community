@@ -18,7 +18,7 @@ to otherwise stateless serverless functions.
 
 * Use [Serverless VPC Access](https://cloud.google.com/vpc/docs/configure-serverless-vpc-access) to connect functions to 
 [Redis](https://redis.io/) in a private VPC network.
-* Use Node + [Redis](https://redis.io/)-based rate-limiting library in a Cloud Function to limit function invocations.
+* Use a Node.js and [Redis](https://redis.io/) rate-limiting library in a Cloud Function to limit function invocations.
 * Use these technique to limit function invocations by the IP address of the caller.
 * Combine rate limiting with a [Redis](https://redis.io/)-based counter to provide a high-speed counter implementation for
 [Cloud Firestore](https://cloud.google.com/firestore/).
@@ -147,7 +147,7 @@ The `gcloud` command does the following (with each line below corresponding to a
 - connected to the VPC netowrk,
 - in the target region.
 
-This function uses a Redis backed [rate-limiting library](https://www.npmjs.com/package/redis-rate-limiter) for Node.js.
+This function uses a Redis-backed [rate-limiting library](https://www.npmjs.com/package/redis-rate-limiter) for Node.js.
 You use an environment variable to connect a Redis client in
 [global scope](https://cloud.google.com/functions/docs/concepts/exec#function_scope_versus_global_scope) to make
 the function more efficient:
@@ -220,7 +220,7 @@ function and therefore a higher 429 response rate.
 
 You can try changing the rate to see that the ratio of 4xx responses increases as you increase the rate.
 
-## IP rate Demo
+## Limiting rate by IP address of the caller
 
 Deploy a function that limits by IP address:
 
@@ -257,7 +257,7 @@ function would be 2 x 8 = 16 QPS which is > 10.
 
 ## Set up a counter with Cloud Firestore
 
-In this section, you combine a rate limiter with a Redis backed counter to provide a high-speed counter persisted with
+In this section, you combine a rate limiter with a Redis-backed counter to provide a high-speed counter persisted with
 Cloud Firestore.
 
 In Cloud Firestore, you can only update a single document about once per second, which might be too low for some
