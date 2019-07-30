@@ -425,7 +425,7 @@ from live data serving to data analytics/ML to data archiving.
 
     _build.gradle_
 
-        compile 'com.google.cloud:google-cloud-storage:1.2.3'
+        compile 'com.google.cloud:google-cloud-storage:1.84.0'
 
 1.  Exclude `com.google.guava:guava-jdk5` too:
 
