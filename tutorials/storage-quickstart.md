@@ -1,12 +1,12 @@
 ---
-title: Cloud Storage quickstart
+title: Cloud Storage quickstart: Create a bucket and upload files
 description: Learn how to store objects in Cloud Storage.
 author: jscud
 tags: Cloud Storage
-date_published: 2019-07-28
+date_published: 2019-07-31
 ---
 
-# Cloud Storage quickstart
+# Cloud Storage quickstart: Create a bucket and upload files
 
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
