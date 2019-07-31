@@ -3,12 +3,10 @@ title: Compute Engine quickstart - Create a virtual machine
 description: Create a virtual machine instance in Compute Engine.
 author: jscud
 tags: Compute Engine
-date_published: 2019-07-28
+date_published: 2019-07-31
 ---
 
-# Compute Engine quickstart
-
-## Create a virtual machine
+# Compute Engine quickstart: Create a virtual machine 
 
 <walkthrough-tutorial-duration duration="10"></walkthrough-tutorial-duration>
 
@@ -71,8 +69,9 @@ While the instance is being created, take your time to explore the VM instances
 page.
 
 At the top is a [control panel][spotlight-control-panel] with controls for doing the following:
-* Create a VM instance or instance group
-* Start, stop, reset, and delete instances
+
+- Create a VM instance or instance group.
+- Start, stop, reset, and delete instances.
 
 The body of the page contains a [list of your VMs][spotlight-vm-list].
 
@@ -84,10 +83,7 @@ For this tutorial, you connect using Cloud Shell, which is a built-in command-li
 
 ### Open the Cloud Shell
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar
-in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ### Connect to the instance
 
