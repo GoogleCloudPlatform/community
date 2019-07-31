@@ -3,7 +3,7 @@ title: Use Cloud Pub/Sub to send and receive real-time messages
 description: Learn to use Cloud Pub/Sub to send and receive real-time messages.
 author: jscud
 tags: PubSub
-date_published: 2019-07-28
+date_published: 2019-07-31
 ---
 
 # Use Cloud Pub/Sub to send and receive real-time messages
@@ -40,9 +40,7 @@ For details, see
 
 In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ## Create your first topic
 
