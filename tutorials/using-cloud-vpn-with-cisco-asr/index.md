@@ -509,7 +509,8 @@ A transform set represents a certain combination of security protocols and
 algorithms. During the IPsec SA negotiation, the peers agree to use a particular
 transform set for protecting a particular data flow.
 
-    crypto ipsec transform-set VPN_SCALE_TEST_TS esp-aes 256 esp-sha-hmac mode tunnel
+    crypto ipsec transform-set VPN_SCALE_TEST_TS esp-aes 256 esp-sha-hmac
+    mode tunnel
 
 #### Configure IPsec profile
 
