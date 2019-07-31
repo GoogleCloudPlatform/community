@@ -1,5 +1,5 @@
 ---
-title: Cloud Storage quickstart: Create a bucket and upload files
+title: Cloud Storage quickstart - Create a bucket and upload files
 description: Learn how to store objects in Cloud Storage.
 author: jscud
 tags: Cloud Storage
