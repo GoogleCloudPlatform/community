@@ -3,7 +3,7 @@ title: Set up a MySQL database with Cloud SQL
 description: Set up a MySQL database with Cloud SQL on GCP.
 author: jscud
 tags: Cloud SQL
-date_published: 2019-07-28
+date_published: 2019-07-31
 ---
 
 # Set up a MySQL database with Cloud SQL
@@ -64,9 +64,7 @@ For details, see
 
 In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 Use this command to connect to the instance, replacing `[INSTANCE_ID]` with the instance ID that you noted
 in the previous step:

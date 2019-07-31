@@ -1,12 +1,12 @@
 ---
-title: App Engine Quickstart using Java
+title: App Engine quickstart using Java
 description: Learn how to deploy a Java sample app to App Engine.
 author: jscud
 tags: App Engine
 date_published: 2019-03-22
 ---
 
-# App Engine Quickstart
+# App Engine quickstart using Java
 
 <walkthrough-test-start-page url="/getting-started?tutorial=java_gae_quickstart_2"/>
 
@@ -83,19 +83,19 @@ code is cloned from your project repository to the Cloud Shell.
 Note: If the directory already exists, remove the previous files before cloning:
 
 ```bash
-rm -rf {{repo_name}}
+rm -rf appengine-try-java
 ```
 
 In Cloud Shell enter the following:
 
 ```bash
-git clone {{repo_url}}
+git clone https://github.com/GoogleCloudPlatform/appengine-try-java
 ```
 
 Then, switch to the tutorial directory:
 
 ```bash
-cd {{repo_name}}
+cd appengine-try-java
 ```
 
 ## Configuring your deployment

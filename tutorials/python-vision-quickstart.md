@@ -3,7 +3,7 @@ title: Label images with the Cloud Vision API
 description: Learn the basics of image labeling with a simple Cloud Vision API application.
 author: jscud
 tags: Cloud Vision
-date_published: 2019-07-28
+date_published: 2019-07-31
 ---
 
 # Label images with the Cloud Vision API
@@ -48,7 +48,7 @@ For details, see
 Before your project can use a service like the Vision API, you must enable the
 API for the project.
 
-Click the following to enable the API:
+Use the following to enable the API:
 
 <walkthrough-enable-apis apis="vision.googleapis.com"></walkthrough-enable-apis>
 
@@ -60,9 +60,7 @@ https://console.cloud.google.com/flows/enableapi?apiid=vision.googleapis.com
 
 In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ## Clone the sample code
 
