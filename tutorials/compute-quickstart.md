@@ -6,7 +6,7 @@ tags: Compute Engine
 date_published: 2019-07-31
 ---
 
-# Compute Engine quickstart - Create a to-do app with MongoDB
+# Compute Engine quickstart: Create a to-do app with MongoDB
 
 <walkthrough-tutorial-duration duration="15"></walkthrough-tutorial-duration>
 
