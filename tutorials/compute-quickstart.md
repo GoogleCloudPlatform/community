@@ -3,12 +3,10 @@ title: Compute Engine quickstart - Create a to-do app with MongoDB
 description: Use Compute Engine to create a two-tier web application.
 author: jscud
 tags: Compute Engine
-date_published: 2019-07-28
+date_published: 2019-07-31
 ---
 
-# Compute Engine quickstart
-
-## Create a to-do app with MongoDB
+# Compute Engine quickstart - Create a to-do app with MongoDB
 
 <walkthrough-tutorial-duration duration="15"></walkthrough-tutorial-duration>
 
@@ -93,10 +91,7 @@ For this tutorial, you connect using Cloud Shell, which is a built-in command-li
 
 ### Open Cloud Shell
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar
-in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ### Wait for the instance creation to finish
 
