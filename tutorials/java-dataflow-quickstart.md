@@ -3,7 +3,7 @@ title: Count words with Cloud Dataflow and Java
 description: Learn to use the Cloud Dataflow service by running a word count example in Java.
 author: jscud
 tags: Dataflow
-date_published: 2019-07-28
+date_published: 2019-07-31
 ---
 
 # Count words with Cloud Dataflow and Java
@@ -69,9 +69,7 @@ https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,da
 
 In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ## Install Cloud Dataflow samples
 
