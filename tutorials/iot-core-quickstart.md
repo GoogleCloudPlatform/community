@@ -3,7 +3,7 @@ title: Introduction to Cloud IoT Core
 description: Create a Cloud IoT Core device registry, add a device, and connect.
 author: jscud
 tags: Cloud IoT
-date_published: 2019-07-28
+date_published: 2019-07-31
 ---
 
 # Introduction to Cloud IoT Core
@@ -40,15 +40,13 @@ For details, see
 
 In this tutorial, you do all of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ## Enable the Cloud IoT Core API
 
 To use the Cloud IoT Core API, you must first enable it.
 
-Click the following to enable the API:
+Use the following to enable the API:
 
 <walkthrough-enable-apis apis="cloudiot.googleapis.com"/>
 
@@ -245,3 +243,4 @@ View more Cloud IoT Core samples on GitHub in any of several programming languag
 -   [Python](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/iot/api-client)
 
 [spotlight-open-devshell]: walkthrough://spotlight-pointer?spotlightId=devshell-activate-button
+[spotlight-console-menu]: walkthrough://spotlight-pointer?spotlightId=console-nav-menu
