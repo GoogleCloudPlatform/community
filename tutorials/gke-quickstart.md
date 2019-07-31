@@ -3,12 +3,10 @@ title: Google Kubernetes Engine quickstart - Deploy a prebuilt Docker container 
 description: Deploy a prebuilt Docker container image using GKE.
 author: jscud
 tags: Kubernetes
-date_published: 2019-07-28
+date_published: 2019-07-31
 ---
 
-# Google Kubernetes Engine quickstart
-
-## Deploy a prebuilt Docker container image
+# Google Kubernetes Engine quickstart: Deploy a prebuilt Docker container image
 
 <!-- {% setvar project_id "<your-project>" %} -->
 
@@ -66,9 +64,7 @@ you use Cloud Shell to run the example app using a prebuilt container image.
 
 ### Open Cloud Shell
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ### Get the sample code
 
