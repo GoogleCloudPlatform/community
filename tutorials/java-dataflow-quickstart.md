@@ -55,7 +55,7 @@ Cloud Dataflow processes data in many GCP data stores and messaging services,
 including BigQuery, Cloud Storage, and Cloud Pub/Sub. To use these services,
 you must first enable their APIs.
 
-Click the following to enable the APIs:
+Use the following to enable the APIs:
 
 <walkthrough-enable-apis apis=
 "compute.googleapis.com,dataflow,cloudresourcemanager.googleapis.com,logging,storage_component,storage_api,bigquery,pubsub">
