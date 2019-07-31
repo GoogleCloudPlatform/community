@@ -3,12 +3,10 @@ title: Google Kubernetes Engine quickstart - Create a guestbook with Redis and P
 description: Use Google Kubernetes Engine to deploy a guestbook application with Redis and PHP.
 author: jscud
 tags: Kubernetes
-date_published: 2019-07-28
+date_published: 2019-07-31
 ---
 
-# Google Kubernetes Engine quickstart
-
-## Create a guestbook with Redis and PHP
+# Google Kubernetes Engine quickstart: Create a guestbook with Redis and PHP
 
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
@@ -68,9 +66,7 @@ you use Cloud Shell to run the example app using a prebuilt container image.
 
 ### Open Cloud Shell
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ### Get the sample code
 
