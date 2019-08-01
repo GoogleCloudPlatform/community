@@ -1,0 +1,16 @@
+{
+  "name": "sample-client",
+  "version": "1.0.0",
+  "description": "client that connects to the sample-server",
+  "main": "client.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node client.js"
+  },
+  "dependencies": {
+    "node-opcua": "^0.7.2",
+    "async": "^2.6.2",
+    "async-mqtt": "^2.3.0",
+    "jsonwebtoken": "^8.5.1"
+  }
+}

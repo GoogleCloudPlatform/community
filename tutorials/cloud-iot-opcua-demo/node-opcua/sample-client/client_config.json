@@ -1,0 +1,41 @@
+{
+  "opcServer": {
+    "endpointUrl": "opc.tcp://localhost:4334/UA/SensorServer",
+    "sensor": {
+      "browseName": "CounterSensor"
+    },
+    "metaData": {
+      "browseName": ["PlantId", "LineId"],
+      "value": []
+    },
+    "monitorItem": {
+      "browseName": "Counter",
+      "config": {
+        "samplingInterval": 500,
+        "discardOldest": false,
+        "queueSize": 20
+      },
+      "monitoringTime": 15000
+    },
+    "subscriptionConfig": {
+      "requestedPublishingInterval": 5000,
+      "requestedLifetimeCount": 100,
+      "requestedMaxKeepAliveCount": 5,
+      "maxNotificationsPerPublish": 20,
+      "publishingEnabled": true,
+      "priority": 10
+    }
+  },
+  "cloud": {
+    "projectId": "<replace with project id>",
+    "registryId": "opc-devices",
+    "region": "us-central1",
+    "deviceId": "opc-device",
+    "algorithm": "RS256",
+    "privateKeyFile": "rsa_private.pem",
+    "mqttBridgeHostname": "mqtt.googleapis.com",
+    "mqttBridgePort": "8883",
+    "messageInterval": 10000
+  },
+  "cloudEnabled": true
+}

@@ -1,0 +1,15 @@
+{
+  "name": "sample-server",
+  "version": "1.0.0",
+  "description": "opc-ua server that generate sensor metrics",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-opcua": "^0.7.2"
+  }
+}

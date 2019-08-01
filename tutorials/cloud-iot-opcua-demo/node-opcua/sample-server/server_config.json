@@ -1,0 +1,34 @@
+{
+    "port": 4334,
+    "resourcePath": "UA/SensorServer",
+    "buildInfo": {
+        "productName": "SampleServer",
+        "buildNumber": "7658"
+    },
+    "alternateHostname": "localhost",
+    "objects": [
+        {
+            "browseName": "CounterSensor",
+            "metaData": [
+                {
+                    "browseName": "PlantId",
+                    "value": "SWE-STO-42",
+                    "dataType": "String"
+                },
+                {
+                    "browseName": "LineId",
+                    "value": "Line-1",
+                    "dataType": "String"
+                }
+            ],
+            "value": {
+                "browseName": "Counter",
+                "dataType": "UInt16",
+                "updatefrequency": 500,
+                "max": 100,
+                "min": 0
+            }
+        }
+    ]
+
+}
