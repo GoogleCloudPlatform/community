@@ -24,7 +24,7 @@ This tutorial is run entirely from [Cloud Shell](https://cloud.google.com/shell/
 ```bash
 cd ~
 
-git clone https://github.com/kingman/opcua-demo.git
+git clone https://github.com/kingman/community.git
 ```
 
 ## Cloud IoT setup
@@ -54,7 +54,7 @@ gcloud iot registries create $REGISTRY_ID \
 ### Generate key pair for OPC-UA client
 In Cloud Shell run:
 ```bash
-cd ~/opcua-demo/node-opcua/sample-client
+cd ~/community/tutorials/cloud-iot-opcua-demo/node-opcua/sample-client
 
 openssl req -x509 -newkey rsa:2048 -keyout rsa_private.pem -nodes -out rsa_cert.pem -subj "/CN=unused"
 ```
@@ -76,12 +76,12 @@ gcloud pubsub subscriptions create read-opcua-data \
 ## Configure the sample client
 Set your GCP project id in the client config file. In Cloud Shell run:
 ```bash
-sed -i -e 's/<replace with project id>/'"${PROJECT_ID}"'/g' ~/opcua-demo/node-opcua/sample-client/client_config.json
+sed -i -e 's/<replace with project id>/'"${PROJECT_ID}"'/g' ~/community/tutorials/cloud-iot-opcua-demo/node-opcua/sample-client/client_config.json
 ```
 ## Start the sample server
 In Cloud Shell run:
 ```bash
-cd ~/opcua-demo/node-opcua/sample-server
+cd ~/community/tutorials/cloud-iot-opcua-demo/node-opcua/sample-server
 
 npm install
 
@@ -92,7 +92,7 @@ npm start
 Start another Cloud Shell session in the same project by click at **+** button
 In Cloud Shell run:
 ```bash
-cd ~/opcua-demo/node-opcua/sample-client
+cd ~/community/tutorials/cloud-iot-opcua-demo/node-opcua/sample-client
 
 npm install
 
