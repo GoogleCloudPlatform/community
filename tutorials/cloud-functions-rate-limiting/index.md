@@ -59,9 +59,7 @@ to otherwise stateless serverless functions.
 1.  Clone the tutorial code:
 
         git clone https://github.com/GoogleCloudPlatform/community.git
-        cd community
-        git checkout rate-limiting
-        cd tutorials/cloud-functions-rate-limiting
+        cd community/tutorials/cloud-functions-rate-limiting
 
 ## Create a network and VPC connector
 
