@@ -1,6 +1,6 @@
 ---
 title: Calculating Network Throughput
-description: How to measure and troubleshoot Network Throughput in GCP
+description: How to measure and troubleshoot Network Throughput in GCP.
 author: dcavalheiro
 tags: Cloud Networking
 date_published: 2019-08-02
