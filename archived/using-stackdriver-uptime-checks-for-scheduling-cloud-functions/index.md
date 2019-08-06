@@ -6,6 +6,10 @@ tags: Stackdriver, Monitoring, Cloud Functions, cron
 date_published: 2017-12-22
 ---
 
+Important: This document was archived on 2 August 2019 because it was made obsolete by a newer tutorial: [Using Pub/Sub to trigger a Cloud Function](https://cloud.google.com/scheduler/docs/tut-pub-sub)
+
+## Overview
+
 This tutorial describes a method of triggering [Cloud Functions](https://cloud.google.com/functions/docs/)
 at regular intervals using [Stackdriver uptime checks](https://cloud.google.com/monitoring/alerts/uptime-checks).
 
