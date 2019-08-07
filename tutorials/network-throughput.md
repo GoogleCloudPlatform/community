@@ -85,8 +85,8 @@ For example, if you sequentially download a single file from start to end, you u
 many smaller files, or break a large file into small chunks and download them at the same time, each thread is responsible
 for each file or chunk.
 
-Because the maximum egress data rate is a *limit*, it is possible to achieve values close to this limit using multi-thread 
-mode. However, even under ideal conditions the data rate will not go over this maximum egress limit.
+it is possible to achieve values close to the maximum egress data rate using multi-thread mode. However, because the maximum
+egress data rate is a *limit*, the data rate will not go over the maximum egress data rate, even under ideal conditions.
 
 Single connection mode is best for testing over a VPN (non HA) or simulating the download of a single file. Expect it to 
 have lower transfer speeds than multi-thread mode.
@@ -95,7 +95,7 @@ have lower transfer speeds than multi-thread mode.
 
 Follow this procedure to measure throughput from the perspective of a single VM.
 
-#### Choose the right machine type
+#### Choose a large machine type
 
 To perform throughput tests, we recommend that you use a large machine type, such as n1-standard-8. This machine type
 provides a maximum egress throughput limit of 16 Gbps, so the per-VM egress throughput will not interfere with the tests.
@@ -133,7 +133,7 @@ rule allowing incoming UDP traffic to the server is required.
 If you run the server on a custom port, you'll need to specify that same port using the `-p` (port) flag. If you omit the 
 port flag, the client assumes that the destination port is 5201.
 
-Use the `-P` (Parallel threads) flag to specify a number of simultaneous threads, and use the `-t` (time) flag to specify 
+Use the `-P` (parallel threads) flag to specify a number of simultaneous threads, and use the `-t` (time) flag to specify 
 the duration of the test, in seconds.
 
     iperf3 -c [VM_IP] -P [THREADS] -p [PORT_NUMBER] -t [DURATION] -R
@@ -159,9 +159,7 @@ distributions, and you'll need to specifically choose the right interface for a
 ### Measuring VPC network throughput with PerfKit Benchmarker
 
 To measure network throughput performance from a given machine type in a specific
-zone, use [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker).
-
-This tool is very valuable because it creates an instance and measures its performance, without the need to install the 
+zone, use [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker). This tool is very valuable because it creates an instance and measures its performance, without the need to install the 
 tools on an existing VM.
 
 Replace the placeholders in the commands below with the following:
@@ -192,7 +190,7 @@ the following:
 
 ## Troubleshooting
 
-This section includes tips for investigating and troubleshooting some common issues that may occur when you measuring 
+This section includes tips for investigating and troubleshooting some common issues that may occur when measuring 
 network throughput.
 
 ### iPerf3 server and client are not able to establish a connection
@@ -200,7 +198,7 @@ network throughput.
 1. Verify that the firewall rules allow ingress and egress traffic to and from the VM on your VPC.
 2. If using multiple VPCs, the firewall must allow traffic on the selected port for all VPCs.
 3. Selecting the nic0 of the instance will open a console page with the breakdown of the firewall rules and route that 
-   affect this specific instance, which is very valuable source of information.
+   affect this specific instance, which is a very valuable source of information.
 
 ### TCP window size and RTT not optimized
 
