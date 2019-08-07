@@ -48,7 +48,8 @@ When calculating network throughput, it's important to use well-tested, well-doc
 
 When analyzing network performance, one of the most common mistakes is to measure data transfer speed without considering 
 the characteristics of the network or the actual distance between network endpoints. Network performance analysis is highly 
-dependent on factors such as latency and distance.
+dependent on factors such as latency and distance. You need to consider these real-world characteristics, and not rely on
+simple assumptions.
 
 For example, the speed of light traveling in a vacuum is around 300,000 km/s, but the speed of light through the fiber-optic
 cable that makes up most of the internet is approximatey 200,000 km/s.
@@ -62,8 +63,8 @@ Because of the [bandwidth-delay product](https://en.wikipedia.org/wiki/Bandwidth
 bandwidth capabilities will perform poorly when tested via TCP, since their
 [TCP window](https://en.wikipedia.org/wiki/TCP_tuning#Window_size) may not allow for full link utilization.
 
-For these reasons, choosing the closest distance from your on-premises location to the closest
-[GCP location](https://cloud.google.com/about/locations/) is the best approach to reduce latency.
+Choosing the closest [GCP location](https://cloud.google.com/about/locations/) to your on-premises location is the best
+approach to reduce latency.
 
 You can use the [GCPing](http://www.gcping.com/) website to determine median latencies from your on-premises location to 
 various GCP regions.
@@ -116,21 +117,21 @@ By default, the server listens on port 5201 for both TCP and UDP traffic. To cha
 
     iperf3 -s -p [PORT_NUMBER]
     
-The `-s`flag tells iPerf3 to run as a server. 
+The `-s` flag tells iPerf3 to run as a server. 
 
 #### Allow the server and client communication through the GCP firewall
 
-Create a firewall rule to the iPerf3 server to allow ingress TCP on the selected port, as in the
-[following example](https://cloud.google.com/vpc/docs/using-firewalls#creating_firewall_rules).
+Create a firewall rule to the iPerf3 server to allow ingress TCP on the selected port, as described in 
+[Creating firewall rules](https://cloud.google.com/vpc/docs/using-firewalls#creating_firewall_rules).
 
 #### Run an iPerf3 client
 
-Run iPerf3 with the `-c` (client flag) and specify the destination IP address of the iPerf3 server. By default, iPerf3 uses 
-TCP, unless you specify the `-u` (UDP flag) in the client. No such flag is needed server-side for UDP; however, a firewall
+Run iPerf3 with the `-c` (client) flag and specify the destination IP address of the iPerf3 server. By default, iPerf3 uses 
+TCP, unless you specify the `-u` (UDP) flag for the client. No such flag is needed server-side for UDP; however, a firewall
 rule allowing incoming UDP traffic to the server is required.
 
-If you run the server on a custom port, you'll need to specify that same port using the `-p` flag. If you omit the port 
-flag, the client assumes that the destination port is 5201.
+If you run the server on a custom port, you'll need to specify that same port using the `-p` (port) flag. If you omit the 
+port flag, the client assumes that the destination port is 5201.
 
 Use the `-P` (Parallel threads) flag to specify a number of simultaneous threads, and use the `-t` (time) flag to specify 
 the duration of the test, in seconds.
@@ -140,41 +141,41 @@ the duration of the test, in seconds.
 #### Capturing packets
 
 It's sometimes helpful to get packet captures on the iPerf3 client or server. The following example command shows you how to
-capture full packets for a given destination port range from an eth0 interface, saving a file in the working directory 
+capture full packets for a given destination port range from an `eth0` interface, saving a file in the working directory 
 called `mycap.pcap`.
 
-Important: Using the `-s` (snaplen) flag with a value of 0 tcpdump will capture entire packets. Just be aware that the 
-packet captures could have sensitive information. Most tcpdump implementations interpret `-s 0` to be the same
-as `-s 262144`. See the [tcpdump manpage](https://www.tcpdump.org/manpages/tcpdump.1.html) for details.
-
-To reduce the chances of capturing sensitive information, you can capture just packet headers by providing a lower
-snaplen value, such as `-s 100`.
+Important: If you use the `-s` (snapshot length) flag with a value of `0`, then `tcpdump` will capture entire packets. Be
+aware that the packet captures could have sensitive information. Most `tcpdump` implementations interpret `-s 0` to be the 
+same as `-s 262144`. See the [tcpdump man page](https://www.tcpdump.org/manpages/tcpdump.1.html) for details. To reduce the 
+chances of capturing sensitive information, you can capture just packet headers by providing a lower snapshot length value,
+such as `-s 100`.
 
     sudo /usr/sbin/tcpdump -s 100 -i eth0 dst port [PORT_NUMBER] -w mycap.pcap
 
-You'll have to modify this command to suit the use case; for example, the interface name isn't always `eth0` on all
+You'll have to modify this command to suit your use case; for example, the interface name isn't always `eth0` on all
 distributions, and you'll need to specifically choose the right interface for a
-[Multiple Network Interfaces VM](https://cloud.google.com/vpc/docs/multiple-interfaces-concepts).
+[multiple network interface VM](https://cloud.google.com/vpc/docs/multiple-interfaces-concepts).
 
-### Measuring VPC network throughput with PerfKitBenchMarker
+### Measuring VPC network throughput with PerfKit Benchmarker
 
 To measure network throughput performance from a given machine type in a specific
-zone, [PerfKitBenchMarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker) will be the right tool.
+zone, use [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker).
 
-This option is very valuable because it creates an instance and measures its performance, without the need to install the 
-tools on an existing VM. To use this tool, you just need to run the following commands, where:
+This tool is very valuable because it creates an instance and measures its performance, without the need to install the 
+tools on an existing VM.
 
+Replace the placeholders in the commands below with the following:
 
-+ `[MACHINE_TYPE]` is the machine type you want to test (for example, n1-standard-32).
-+ `[ZONE]` is the zone to create the instance in.
-+ `[NUMBER_OF_VCPUS]` is the number of vCPUs of the instance (for example, 32 for n1-standard-32 machine type).
++ `[MACHINE_TYPE]`: The machine type that you want to test (for example, n1-standard-32).
++ `[ZONE]`: The zone to create the instance in.
++ `[NUMBER_OF_VCPUS]`: The number of vCPUs of the instance (for example, 32 for the n1-standard-32 machine type).
 
-To measure single thread performance:
+Measure single thread performance:
 
     ./pkb.py --cloud=GCP --machine_type=[MACHINE_TYPE]
     --benchmarks=iperf --ip_addresses=INTERNAL --zones=[ZONE]
 
-To measure multi-thread performance:
+Measure multi-thread performance:
 
     ./pkb.py --cloud=GCP --machine_type=,[MACHINE_TYPE]
     --benchmarks=iperf --ip_addresses=INTERNAL --zones=[ZONE]
@@ -182,7 +183,8 @@ To measure multi-thread performance:
 
 ### Speed test
 
-To measure network data transfer speed from a VM to the global internet, there are a number of available tools:
+To measure network data transfer speed from a VM to the global internet, you can choose from many available tools, including
+the following:
 
 * [Speedtest website](https://speedtest.net/), provided by Ookla.
 * [FAST.com website](https://fast.com), provided by Netflix.
@@ -190,8 +192,8 @@ To measure network data transfer speed from a VM to the global internet, there a
 
 ## Troubleshooting
 
-Capturing and analyzing network throughput data is the most important step, but there are some common scenarios that require 
-some extra investigation.
+This section includes tips for investigating and troubleshooting some common issues that may occur when you measuring 
+network throughput.
 
 ### iPerf3 server and client are not able to establish a connection
 
@@ -203,11 +205,12 @@ some extra investigation.
 ### TCP window size and RTT not optimized
 
 If you are not able to realize your full connection bandwidth over a TCP connection, the cause may be TCP send and receive 
-windows. This [video](https://www.youtube.com/watch?time_continue=5&v=iqEpoi00_Ws) explains this behavior, and you can use
-this [calculator](https://www.switch.ch/network/tools/tcp_throughput/) to understand the impact of window size on your 
-connection bandwidth.
+windows. For an explanation of this behavior, see
+[this video on the bandwidth delay problem](https://www.youtube.com/watch?time_continue=5&v=iqEpoi00_Ws). You can use
+the [TCP throughput calculator](https://www.switch.ch/network/tools/tcp_throughput/) to understand the impact of window size
+on your connection bandwidth.
 
-To fix this issue, you may increase send and receive windows:
+To fix this issue, you may increase the TCP send and receive windows:
 
 - `SO_RCVBUF` is influenced by increasing `net.core.rmem_default` and `net.core.rmem_max`.
 - `SO_SNDBUF` is influenced by increasing `net.core.wmem_default` and `net.core.wmem_max`.
