@@ -39,18 +39,18 @@ if not device_id:
 
 print('Bringing up device {}'.format(device_id))
 
+
 def SendCommand(sock, message):
-  print('sending "{}"'.format(message), file=sys.stderr)
-  sock.sendto(message, server_address)
+  print('sending "{}"'.format(message))
+  sock.sendto(message.encode(), server_address)
 
   # Receive response
-  print('waiting for response', file=sys.stderr)
-  response, _ = sock.recvfrom(4096)
-  print('received: "{}"'.format(response), file=sys.stderr)
+  print('waiting for response')
+  response = sock.recv(4096)
+  print('received: "{}"'.format(response))
 
   return response
 
-print('Bring up device')
 
 def MakeMessage(device_id, action, data=''):
   if data:
@@ -60,13 +60,16 @@ def MakeMessage(device_id, action, data=''):
     return '{{ "device" : "{}", "action":"{}" }}'.format(
         device_id, action)
 
+
 def RunAction(action, data=''):
+  global client_sock
   message = MakeMessage(device_id, action, data)
   if not message:
     return
   print('Send data: {} '.format(message))
   event_response = SendCommand(client_sock, message)
   print('Response: {}'.format(event_response))
+
 
 try:
   RunAction('detach')
@@ -75,18 +78,20 @@ try:
   RunAction('subscribe')
 
   while True:
-    response, server = client_sock.recvfrom(4096)
-    if response.upper() == "ON":
+    response = client_sock.recv(4096).decode('utf8')
+    print('Client received {}'.format(response))
+    if response.upper() == 'ON' or response.upper() == b'ON':
       GPIO.output(LED_IOPIN, GPIO.HIGH)
       sys.stdout.write('\r>> ' + bcolors.OKGREEN + bcolors.CBLINK +
                        " LED is ON " + bcolors.ENDC + ' <<')
       sys.stdout.flush()
-    elif response.upper() == "OFF":
+    elif response.upper() == "OFF" or response.upper() == b'OFF':
       GPIO.output(LED_IOPIN, GPIO.LOW)
       sys.stdout.write('\r >>' + bcolors.CRED + bcolors.BOLD +
                        ' LED is OFF ' + bcolors.ENDC + ' <<')
       sys.stdout.flush()
-
+    else:
+      print('Invalid message {}'.format(response))
 
 finally:
     print('closing socket', file=sys.stderr)

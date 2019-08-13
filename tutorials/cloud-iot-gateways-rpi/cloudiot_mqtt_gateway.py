@@ -33,12 +33,17 @@ BUFSIZE = 2048
 ADDR = (HOST, PORT)
 
 udpSerSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-udpSerSock.setblocking(0)
+udpSerSock.setblocking(False)
 udpSerSock.bind(ADDR)
+
+skip_next_sub = False
 
 class GatewayState:
   # This is the topic that the device will receive configuration updates on.
   mqtt_config_topic = ''
+
+  # This is the topic that the device will receive configuration updates on.
+  mqtt_error_topic = ''
 
   # Host the gateway will connect to
   mqtt_bridge_hostname = ''
@@ -111,6 +116,8 @@ def on_connect(client, unused_userdata, unused_flags, rc):
 
     # Subscribe to the config topic.
     client.subscribe(gateway_state.mqtt_config_topic, qos=1)
+    client.subscribe(error_topic, qos=0)
+
 
 def on_disconnect(client, unused_userdata, rc):
     """Paho callback for when a device disconnects."""
@@ -121,12 +128,14 @@ def on_disconnect(client, unused_userdata, rc):
     # NOTE: should implement back-off here, but it's a tutorial
     client.connect(gateway_state.mqtt_bridge_hostname, gateway_state.mqtt_bridge_port)
 
+
 def on_publish(unused_client, userdata, mid):
   """Paho callback when a message is sent to the broker."""
   print('on_publish, userdata {}, mid {}'.format(userdata, mid))
 
   try:
     client_addr, message = gateway_state.pending_responses.pop(mid)
+    print('sending data over UDP {} {}'.format(client_addr, message))
     udpSerSock.sendto(message, client_addr)
     print('pending response count {}'.format(
         len(gateway_state.pending_responses)))
@@ -136,21 +145,24 @@ def on_publish(unused_client, userdata, mid):
 
 def on_subscribe(unused_client, unused_userdata, mid, granted_qos):
   print('on_subscribe: mid {}, qos {}'.format(mid, granted_qos))
-  try:
-    client_addr, response = gateway_state.pending_subscribes[mid]
-    udpSerSock.sendto(response, client_addr)
-  except KeyError:
-    print('Unable to find key {}'.format(mid))
+  process_subscribe(mid)
 
 
 def on_message(unused_client, unused_userdata, message):
   """Callback when the device receives a message on a subscription."""
-  payload = str(message.payload)
+  payload = message.payload.decode('utf8')
   print('Received message \'{}\' on topic \'{}\' with Qos {}'.format(
       payload, message.topic, str(message.qos)))
+
   try:
     client_addr = gateway_state.subscriptions[message.topic]
-    udpSerSock.sendto(payload, client_addr)
+    print('Relaying config[{}] to {}'.format(payload, client_addr))
+    if payload == 'ON' or payload == b'ON':
+      udpSerSock.sendto('ON'.encode('utf8'), client_addr)
+    elif payload == 'OFF' or payload == b'OFF':
+      udpSerSock.sendto('OFF'.encode('utf8'), client_addr)
+    else:
+      print('Unrecognized command: {}'.format(payload))
   except KeyError:
     print('Nobody subscribes to topic {}'.format(message.topic))
 
@@ -189,6 +201,9 @@ def get_client(
 
     # Connect to the Google MQTT bridge.
     client.connect(mqtt_bridge_hostname, mqtt_bridge_port)
+
+    mqtt_topic = '/devices/{}/events'.format(gateway_id)
+    client.publish(mqtt_topic, 'RPI Gateway started.', qos=0)
 
     return client
 # [END iot_mqtt_config]
@@ -239,34 +254,31 @@ def parse_command_line_args():
     return parser.parse_args()
 
 
-def attach_device(client, device_id):
-  attach_topic = '/devices/{}/attach'.format(device_id)
-  print(attach_topic)
-  return client.publish(attach_topic,  "", qos=1)
-
-def detatch_device(client, device_id):
-  detach_topic = '/devices/{}/detach'.format(device_id)
-  print(detach_topic)
-  return client.publish(detach_topic, "", qos=1)
-
 # [START iot_mqtt_run]
 def main():
   global gateway_state
+  global skip_next_sub
 
   args = parse_command_line_args()
 
-  gateway_state.mqtt_config_topic = '/devices/{}/config'.format(parse_command_line_args().gateway_id)
+  gateway_state.mqtt_config_topic = '/devices/{}/config'.format(
+      parse_command_line_args().gateway_id)
+  gateway_state.mqtt_error_topic = '/devices/{}/errors'.format(
+      parse_command_line_args().gateway_id)
+  gateway_events_topic = '/devices/{}/events'.format(args.gateway_id)
   gateway_state.mqtt_bridge_hostname = args.mqtt_bridge_hostname
   gateway_state.mqtt_bridge_port = args.mqtt_bridge_hostname
 
   client = get_client(
       args.project_id, args.cloud_region, args.registry_id, args.gateway_id,
       args.private_key_file, args.algorithm, args.ca_certs,
-      args.mqtt_bridge_hostname, args.mqtt_bridge_port, args.jwt_expires_minutes)
+      args.mqtt_bridge_hostname, args.mqtt_bridge_port,
+      args.jwt_expires_minutes)
+  client.subscribe(gateway_state.mqtt_error_topic, qos=0)
 
   while True:
     client.loop()
-    if gateway_state.connected == False:
+    if gateway_state.connected is False:
       print('connect status {}'.format(gateway_state.connected))
       time.sleep(1)
       continue
@@ -275,58 +287,67 @@ def main():
       data, client_addr = udpSerSock.recvfrom(BUFSIZE)
     except socket.error:
       continue
-    print('[%s]: From Address %s:%s receive data: %s'.format(
-        ctime(), client_addr[0], client_addr[1], data))
+    print('[{}]: From Address {}:{} receive data: {}'.format(
+        ctime(), client_addr[0], client_addr[1], data.decode("utf-8")))
 
-    command = json.loads(data)
+    command = json.loads(data.decode('utf-8'))
     if not command:
       print('invalid json command {}'.format(data))
       continue
 
     action = command["action"]
     device_id = command["device"]
+    template = '{{ "device": "{}", "command": "{}", "status" : "ok" }}'
 
     if action == 'event':
       print('Sending telemetry event for device {}'.format(device_id))
       payload = command["data"]
-      mqtt_topic = '/devices/{}/{}'.format(device_id,  'events')
+
+      mqtt_topic = '/devices/{}/events'.format(device_id)
       print('Publishing message to topic {} with payload \'{}\''.format(
           mqtt_topic, payload))
-      rc, event_mid = client.publish(mqtt_topic, payload, qos=1)
-      response = '{{ "device": {}, "command": "event", "status" : "ok"}}'.format(
-          device_id)
-      print('Save mid {} for response {}'.format(event_mid, response))
-      gateway_state.pending_responses[event_mid] = (client_addr, response)
+      _, event_mid = client.publish(mqtt_topic, payload, qos=0)
+
+      message = template.format(device_id, 'event')
+      udpSerSock.sendto(message.encode('utf8'), client_addr)
 
     elif action == 'attach':
-      rc, attach_mid = attach_device(client, device_id)
-      response = (
-          '{{ "device": {}, "command": "attach", "status" : "ok" }}'.format(device_id))
-      print('Save mid {} for response {}'.format(attach_mid, response))
-      gateway_state.pending_responses[attach_mid] = (client_addr, response)
+      print('Sending telemetry event for device {}'.format(device_id))
+      attach_topic = '/devices/{}/attach'.format(device_id)
+      auth = '' # TODO:  auth = command["jwt"]
+      attach_payload = '{{"authorization" : "{}"}}'.format(auth)
 
+      print('Attaching device {}'.format(device_id))
+      print(attach_topic)
+      response, attach_mid = client.publish(
+          attach_topic, attach_payload, qos=1)
+
+      message = template.format(device_id, 'attach')
+      udpSerSock.sendto(message.encode('utf8'), client_addr)
     elif action == 'detach':
-      rc, detach_mid = detatch_device(client, device_id)
-      response = (
-          '{{ "device": {}, "command": "detach", "status" : "ok" }}'.format(device_id))
-      print('Save mid {} for response {}'.format(detach_mid, response))
-      gateway_state.pending_responses[detach_mid] = (client_addr, response)
+      detach_topic = '/devices/{}/detach'.format(device_id)
+      print(detach_topic)
+
+      res, mid = client.publish(detach_topic, "{}", qos=1)
+
+      message = template.format(res, mid)
+      print('sending data over UDP {} {}'.format(client_addr, message))
+      udpSerSock.sendto(message.encode('utf8'), client_addr)
 
     elif action == "subscribe":
       print('subscribe config for {}'.format(device_id))
       subscribe_topic = '/devices/{}/config'.format(device_id)
-      rc, mid = client.subscribe(subscribe_topic, qos=1)
-      response = (
-          '{{ "device": {}, "command": "subscribe", "status" : "ok" }}'.format(device_id))
-      gateway_state.subscriptions[subscribe_topic] = (client_addr)
-      print('Save mid {} for response {}'.format(mid, response))
-      gateway_state.pending_subscribes[mid] = (client_addr, response)
+      skip_next_sub = True
 
+      _, mid = client.subscribe(subscribe_topic, qos=1)
+      message = template.format(device_id, 'subscribe')
+      gateway_state.subscriptions[subscribe_topic] = client_addr
+
+      udpSerSock.sendto(message.encode('utf8'), client_addr)
   else:
-      print('undefined action {}'.format(action))
-      print('Finished.')
-# [END iot_mqtt_run]
+      print('undefined action: {}'.format(action))
 
+  print('Finished.')
 
 if __name__ == '__main__':
     main()

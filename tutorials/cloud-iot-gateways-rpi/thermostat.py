@@ -42,7 +42,8 @@ print('Bringing up device {}'.format(device_id))
 def SendCommand(sock, message, log=True):
   if log:
     print('sending: "{}"'.format(message), file=sys.stderr)
-  sock.sendto(message, server_address)
+
+  sock.sendto(message.encode('utf8'), server_address)
 
   # Receive response
   if log:
