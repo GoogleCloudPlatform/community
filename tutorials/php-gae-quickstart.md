@@ -1,14 +1,13 @@
 ---
-title: App Engine Quickstart using PHP
+title: App Engine quickstart using PHP
 description: Learn how to deploy a PHP sample app to App Engine.
 author: jscud
 tags: App Engine
 date_published: 2019-03-22
 ---
 
-# App Engine Quickstart
+# App Engine quickstart using PHP
 
-<walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/php/quickstart"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "-b phase0-helloworld https://github.com/GoogleCloudPlatform/appengine-php-guestbook" %} -->
 <!-- {% setvar repo_dir "appengine-php-guestbook" %} -->
 
@@ -69,19 +68,19 @@ Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-clo
 
 ### Clone the sample code
 
-Use Cloud Shell to clone and navigate to the "Hello World" code. The sample code
-is cloned from your project repository to the Cloud Shell.
+Use Cloud Shell to clone and navigate to the "Hello World" code. The sample code is cloned from your 
+project repository to the Cloud Shell.
 
 Note: If the directory already exists, remove the previous files before cloning.
 
 ```bash
-git clone {{repo_url}}
+git clone -b phase0-helloworld https://github.com/GoogleCloudPlatform/appengine-php-guestbook
 ```
 
 Then, switch to the tutorial directory:
 
 ```bash
-cd {{repo_dir}}
+cd appengine-php-guestbook
 ```
 
 ## Configuring your deployment

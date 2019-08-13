@@ -1,12 +1,12 @@
 ---
-title: App Engine flexible environment Quickstart using Python
+title: App Engine flexible environment quickstart using Python
 description: Learn how to deploy a Python sample app to App Engine.
 author: jscud
 tags: App Engine
 date_published: 2019-03-22
 ---
 
-# App Engine Quickstart
+# App Engine flexible environment quickstart using Python
 
 <walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/flexible/python/quickstart"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/python-docs-samples" %} -->
@@ -75,13 +75,13 @@ is cloned from your project repository to the Cloud Shell.
 Note: If the directory already exists, remove the previous files before cloning.
 
 ```bash
-git clone {{repo_url}}
+git clone https://github.com/GoogleCloudPlatform/python-docs-samples
 ```
 
 Then, switch to the tutorial directory:
 
 ```bash
-cd {{repo_dir}}
+cd python-docs-samples/appengine/flexible/hello_world
 ```
 
 ## Configuring your deployment
