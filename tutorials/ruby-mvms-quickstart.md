@@ -1,14 +1,13 @@
 ---
-title: App Engine flexible environment Quickstart using Ruby
+title: App Engine flexible environment quickstart using Ruby
 description: Learn how to deploy a Ruby sample app to App Engine.
 author: jscud
 tags: App Engine
 date_published: 2019-03-22
 ---
 
-# App Engine Quickstart
+# App Engine flexible environment quickstart using Ruby
 
-<walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/flexible/ruby/quickstart"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/ruby-docs-samples" %} -->
 <!-- {% setvar repo_dir "ruby-docs-samples/appengine/hello_world" %} -->
 
@@ -75,13 +74,13 @@ is cloned from your project repository to the Cloud Shell.
 Note: If the directory already exists, remove the previous files before cloning.
 
 ```bash
-git clone {{repo_url}}
+git clone https://github.com/GoogleCloudPlatform/ruby-docs-samples
 ```
 
 Then, switch to the tutorial directory:
 
 ```bash
-cd {{repo_dir}}
+cd ruby-docs-samples/appengine/hello_world
 ```
 
 ## Configuring your deployment

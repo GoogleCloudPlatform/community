@@ -21,7 +21,7 @@ import RPi.GPIO as GPIO
 from colors import bcolors
 
 
-LED_IOPIN = 4
+LED_IOPIN = 14
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(LED_IOPIN, GPIO.OUT)
