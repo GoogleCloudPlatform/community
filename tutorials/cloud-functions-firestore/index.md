@@ -39,7 +39,7 @@ which you can simulate with `curl`.
 [sdk]: https://cloud.google.com/sdk/
 [native_mode]: https://cloud.google.com/firestore/docs/firestore-or-datastore
 
-This guide uses `cloud-functions-firestore` as the project_id, as well as the firestore collection.
+This guide uses `cloud-functions-firestore` as the project ID, as well as the firestore collection.
 
 ## Preparing the Cloud Function
 
