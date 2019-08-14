@@ -21,7 +21,7 @@ from colors import bcolors
 from pprint import pprint
 
 
-LED_IOPIN = 4
+LED_IOPIN = 14
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(LED_IOPIN, GPIO.OUT)
