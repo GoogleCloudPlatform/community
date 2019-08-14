@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     https://www.apache.org/licenses/LICENSE-2.0
+#         https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,19 +13,18 @@
 # limitations under the License.
 
 from __future__ import print_function
+
 import argparse
 import datetime
 import os
-import random
 import ssl
 import time
 import json
-import jwt
 import socket
 from time import ctime
+
+import jwt
 import paho.mqtt.client as mqtt
-from colors import bcolors
-import threading
 
 HOST = ''
 PORT = 10000
@@ -36,69 +35,70 @@ udpSerSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 udpSerSock.setblocking(False)
 udpSerSock.bind(ADDR)
 
-skip_next_sub = False
 
 class GatewayState:
-  # This is the topic that the device will receive configuration updates on.
-  mqtt_config_topic = ''
+    # This is the topic that the device will receive configuration updates on.
+    mqtt_config_topic = ''
 
-  # This is the topic that the device will receive configuration updates on.
-  mqtt_error_topic = ''
+    # This is the topic that the device will receive configuration updates on.
+    mqtt_error_topic = ''
 
-  # Host the gateway will connect to
-  mqtt_bridge_hostname = ''
-  mqtt_bridge_port = 8883
+    # Host the gateway will connect to
+    mqtt_bridge_hostname = ''
+    mqtt_bridge_port = 8883
 
-  # for all PUBLISH messages which are waiting for PUBACK. The key is 'mid'
-  # returned by publish().
-  pending_responses = {}
+    # for all PUBLISH messages which are waiting for PUBACK. The key is 'mid'
+    # returned by publish().
+    pending_responses = {}
 
-  # for all SUBSCRIBE messages which are waiting for SUBACK. The key is 'mid'.
-  pending_subscribes = {}
+    # SUBSCRIBE messages waiting for SUBACK. The key is 'mid' from Paho.
+    pending_subscribes = {}
 
-  # for all SUBSCRIPTIONS. The key is subscription topic.
-  subscriptions = {}
+    # for all SUBSCRIPTIONS. The key is subscription topic.
+    subscriptions = {}
 
-  # Indicates if MQTT client is connected or not
-  connected = False
+    # Indicates if MQTT client is connected or not
+    connected = False
 
 
 gateway_state = GatewayState()
 
 
 def create_jwt(project_id, private_key_file, algorithm, jwt_expires_minutes):
-  """Creates a JWT (https://jwt.io) to establish an MQTT connection.
-      Args:
+    """Creates a JWT (https://jwt.io) to establish an MQTT connection.
+    Args:
        project_id: The cloud project ID this device belongs to
        private_key_file: A path to a file containing either an RSA256 or
-               ES256 private key.
+                       ES256 private key.
        algorithm: The encryption algorithm to use. Either 'RS256' or 'ES256'
        jwt_expires_minutes: The time in minutes before the JWT expires.
-      Returns:
-          An MQTT generated from the given project_id and private key, which
-          expires in 20 minutes. After 20 minutes, your client will be
-          disconnected, and a new JWT will have to be generated.
-      Raises:
-          ValueError: If the private_key_file does not contain a known key.
-      """
+    Returns:
+        An MQTT generated from the given project_id and private key, which
+        expires in 20 minutes. After 20 minutes, your client will be
+        disconnected, and a new JWT will have to be generated.
+    Raises:
+        ValueError: If the private_key_file does not contain a known key.
+    """
 
-  token = {
+    token = {
       # The time that the token was issued at
       'iat': datetime.datetime.utcnow(),
       # The time the token expires.
-      'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=jwt_expires_minutes),
+      'exp':
+      datetime.datetime.utcnow() +
+      datetime.timedelta(minutes=jwt_expires_minutes),
       # The audience field should always be set to the GCP project id.
       'aud': project_id
-  }
+    }
 
-  # Read the private key file.
-  with open(private_key_file, 'r') as f:
-      private_key = f.read()
+    # Read the private key file.
+    with open(private_key_file, 'r') as f:
+        private_key = f.read()
 
-  print('Creating JWT using {} from private key file {}'.format(
-      algorithm, private_key_file))
+    print('Creating JWT using {} from private key file {}'.format(
+        algorithm, private_key_file))
 
-  return jwt.encode(token, private_key, algorithm=algorithm)
+    return jwt.encode(token, private_key, algorithm=algorithm)
 # [END iot_mqtt_jwt]
 
 
@@ -114,9 +114,9 @@ def on_connect(client, unused_userdata, unused_flags, rc):
 
     gateway_state.connected = True
 
-    # Subscribe to the config topic.
+    # Subscribe to the config and error topics.
     client.subscribe(gateway_state.mqtt_config_topic, qos=1)
-    client.subscribe(error_topic, qos=0)
+    client.subscribe(gateway_state.error_topic, qos=0)
 
 
 def on_disconnect(client, unused_userdata, rc):
@@ -126,59 +126,59 @@ def on_disconnect(client, unused_userdata, rc):
 
     # re-connect
     # NOTE: should implement back-off here, but it's a tutorial
-    client.connect(gateway_state.mqtt_bridge_hostname, gateway_state.mqtt_bridge_port)
+    client.connect(
+        gateway_state.mqtt_bridge_hostname, gateway_state.mqtt_bridge_port)
 
 
 def on_publish(unused_client, userdata, mid):
-  """Paho callback when a message is sent to the broker."""
-  print('on_publish, userdata {}, mid {}'.format(userdata, mid))
+    """Paho callback when a message is sent to the broker."""
+    print('on_publish, userdata {}, mid {}'.format(userdata, mid))
 
-  try:
-    client_addr, message = gateway_state.pending_responses.pop(mid)
-    print('sending data over UDP {} {}'.format(client_addr, message))
-    udpSerSock.sendto(message, client_addr)
-    print('pending response count {}'.format(
-        len(gateway_state.pending_responses)))
-  except KeyError:
-    print('Unable to find key {}'.format(mid))
+    try:
+        client_addr, message = gateway_state.pending_responses.pop(mid)
+        print('sending data over UDP {} {}'.format(client_addr, message))
+        udpSerSock.sendto(message, client_addr)
+        print('pending response count {}'.format(
+                len(gateway_state.pending_responses)))
+    except KeyError:
+        print('Unable to find key {}'.format(mid))
 
 
 def on_subscribe(unused_client, unused_userdata, mid, granted_qos):
-  print('on_subscribe: mid {}, qos {}'.format(mid, granted_qos))
-  process_subscribe(mid)
+    print('on_subscribe: mid {}, qos {}'.format(mid, granted_qos))
 
 
 def on_message(unused_client, unused_userdata, message):
-  """Callback when the device receives a message on a subscription."""
-  payload = message.payload.decode('utf8')
-  print('Received message \'{}\' on topic \'{}\' with Qos {}'.format(
-      payload, message.topic, str(message.qos)))
+    """Callback when the device receives a message on a subscription."""
+    payload = message.payload.decode('utf8')
+    print('Received message \'{}\' on topic \'{}\' with Qos {}'.format(
+            payload, message.topic, str(message.qos)))
 
-  try:
-    client_addr = gateway_state.subscriptions[message.topic]
-    print('Relaying config[{}] to {}'.format(payload, client_addr))
-    if payload == 'ON' or payload == b'ON':
-      udpSerSock.sendto('ON'.encode('utf8'), client_addr)
-    elif payload == 'OFF' or payload == b'OFF':
-      udpSerSock.sendto('OFF'.encode('utf8'), client_addr)
-    else:
-      print('Unrecognized command: {}'.format(payload))
-  except KeyError:
-    print('Nobody subscribes to topic {}'.format(message.topic))
+    try:
+        client_addr = gateway_state.subscriptions[message.topic]
+        print('Relaying config[{}] to {}'.format(payload, client_addr))
+        if payload == 'ON' or payload == b'ON':
+            udpSerSock.sendto('ON'.encode('utf8'), client_addr)
+        elif payload == 'OFF' or payload == b'OFF':
+            udpSerSock.sendto('OFF'.encode('utf8'), client_addr)
+        else:
+            print('Unrecognized command: {}'.format(payload))
+    except KeyError:
+        print('Nobody subscribes to topic {}'.format(message.topic))
 
 
 def get_client(
         project_id, cloud_region, registry_id, gateway_id, private_key_file,
-        algorithm, ca_certs, mqtt_bridge_hostname, mqtt_bridge_port, jwt_expires_minutes):
+        algorithm, ca_certs, mqtt_bridge_hostname, mqtt_bridge_port,
+        jwt_expires_minutes):
     """Create our MQTT client. The client_id is a unique string that identifies
     this device. For Google Cloud IoT Core, it must be in the format below."""
     client = mqtt.Client(
-        client_id=('projects/{}/locations/{}/registries/{}/devices/{}'
-                   .format(
-                       project_id,
-                       cloud_region,
-                       registry_id,
-                       gateway_id)))
+        client_id=('projects/{}/locations/{}/registries/{}/devices/{}'.format(
+            project_id,
+            cloud_region,
+            registry_id,
+            gateway_id)))
 
     # With Google Cloud IoT Core, the username field is ignored, and the
     # password field is used to transmit a JWT to authorize the device.
@@ -190,9 +190,9 @@ def get_client(
     # Enable SSL/TLS support.
     client.tls_set(ca_certs=ca_certs, tls_version=ssl.PROTOCOL_TLSv1_2)
 
-    # Register message callbacks. https://eclipse.org/paho/clients/python/docs/
-    # describes additional callbacks that Paho supports. In this example, the
-    # callbacks just print to standard out.
+    # Register callbacks. https://eclipse.org/paho/clients/python/docs/
+    # describes additional callbacks that Paho supports. In this example,
+    # the callbacks just print to standard out.
     client.on_connect = on_connect
     client.on_publish = on_publish
     client.on_disconnect = on_disconnect
@@ -218,7 +218,8 @@ def parse_command_line_args():
         default=os.environ.get('GOOGLE_CLOUD_PROJECT'),
         help='GCP cloud project name')
     parser.add_argument(
-        '--registry_id', required=True, help='Cloud IoT Core registry id')
+        '--registry_id', required=True,
+        help='Cloud IoT Core registry id')
     parser.add_argument(
         '--gateway_id', required=True, help='Cloud IoT Core gateway id')
     parser.add_argument(
@@ -230,7 +231,8 @@ def parse_command_line_args():
         required=True,
         help='Which encryption algorithm to use to generate the JWT.')
     parser.add_argument(
-        '--cloud_region', default='us-central1', help='GCP cloud region')
+        '--cloud_region', default='us-central1',
+        help='GCP cloud region')
     parser.add_argument(
         '--ca_certs',
         default='roots.pem',
@@ -256,98 +258,99 @@ def parse_command_line_args():
 
 # [START iot_mqtt_run]
 def main():
-  global gateway_state
-  global skip_next_sub
+    global gateway_state
+    global skip_next_sub
 
-  args = parse_command_line_args()
+    args = parse_command_line_args()
 
-  gateway_state.mqtt_config_topic = '/devices/{}/config'.format(
-      parse_command_line_args().gateway_id)
-  gateway_state.mqtt_error_topic = '/devices/{}/errors'.format(
-      parse_command_line_args().gateway_id)
-  gateway_events_topic = '/devices/{}/events'.format(args.gateway_id)
-  gateway_state.mqtt_bridge_hostname = args.mqtt_bridge_hostname
-  gateway_state.mqtt_bridge_port = args.mqtt_bridge_hostname
+    gateway_state.mqtt_config_topic = '/devices/{}/config'.format(
+            parse_command_line_args().gateway_id)
+    gateway_state.mqtt_error_topic = '/devices/{}/errors'.format(
+            parse_command_line_args().gateway_id)
 
-  client = get_client(
-      args.project_id, args.cloud_region, args.registry_id, args.gateway_id,
-      args.private_key_file, args.algorithm, args.ca_certs,
-      args.mqtt_bridge_hostname, args.mqtt_bridge_port,
-      args.jwt_expires_minutes)
-  client.subscribe(gateway_state.mqtt_error_topic, qos=0)
+    gateway_state.mqtt_bridge_hostname = args.mqtt_bridge_hostname
+    gateway_state.mqtt_bridge_port = args.mqtt_bridge_hostname
 
-  while True:
-    client.loop()
-    if gateway_state.connected is False:
-      print('connect status {}'.format(gateway_state.connected))
-      time.sleep(1)
-      continue
+    client = get_client(
+        args.project_id, args.cloud_region, args.registry_id, args.gateway_id,
+        args.private_key_file, args.algorithm, args.ca_certs,
+        args.mqtt_bridge_hostname, args.mqtt_bridge_port,
+        args.jwt_expires_minutes)
 
-    try:
-      data, client_addr = udpSerSock.recvfrom(BUFSIZE)
-    except socket.error:
-      continue
-    print('[{}]: From Address {}:{} receive data: {}'.format(
-        ctime(), client_addr[0], client_addr[1], data.decode("utf-8")))
+    while True:
+        client.loop()
+        if gateway_state.connected is False:
+            print('connect status {}'.format(gateway_state.connected))
+            time.sleep(1)
+            continue
 
-    command = json.loads(data.decode('utf-8'))
-    if not command:
-      print('invalid json command {}'.format(data))
-      continue
+        try:
+            data, client_addr = udpSerSock.recvfrom(BUFSIZE)
+        except socket.error:
+            continue
+        print('[{}]: From Address {}:{} receive data: {}'.format(
+                ctime(), client_addr[0], client_addr[1], data.decode("utf-8")))
 
-    action = command["action"]
-    device_id = command["device"]
-    template = '{{ "device": "{}", "command": "{}", "status" : "ok" }}'
+        command = json.loads(data.decode('utf-8'))
+        if not command:
+            print('invalid json command {}'.format(data))
+            continue
 
-    if action == 'event':
-      print('Sending telemetry event for device {}'.format(device_id))
-      payload = command["data"]
+        action = command["action"]
+        device_id = command["device"]
+        template = '{{ "device": "{}", "command": "{}", "status" : "ok" }}'
 
-      mqtt_topic = '/devices/{}/events'.format(device_id)
-      print('Publishing message to topic {} with payload \'{}\''.format(
-          mqtt_topic, payload))
-      _, event_mid = client.publish(mqtt_topic, payload, qos=0)
+        if action == 'event':
+            print('Sending telemetry event for device {}'.format(device_id))
+            payload = command["data"]
 
-      message = template.format(device_id, 'event')
-      udpSerSock.sendto(message.encode('utf8'), client_addr)
+            mqtt_topic = '/devices/{}/events'.format(device_id)
+            print('Publishing message to topic {} with payload \'{}\''.format(
+                    mqtt_topic, payload))
+            _, event_mid = client.publish(mqtt_topic, payload, qos=0)
 
-    elif action == 'attach':
-      print('Sending telemetry event for device {}'.format(device_id))
-      attach_topic = '/devices/{}/attach'.format(device_id)
-      auth = '' # TODO:  auth = command["jwt"]
-      attach_payload = '{{"authorization" : "{}"}}'.format(auth)
+            message = template.format(device_id, 'event')
+            udpSerSock.sendto(message.encode('utf8'), client_addr)
 
-      print('Attaching device {}'.format(device_id))
-      print(attach_topic)
-      response, attach_mid = client.publish(
-          attach_topic, attach_payload, qos=1)
+        elif action == 'attach':
+            print('Sending telemetry event for device {}'.format(device_id))
+            attach_topic = '/devices/{}/attach'.format(device_id)
+            auth = ''  # TODO:    auth = command["jwt"]
+            attach_payload = '{{"authorization" : "{}"}}'.format(auth)
 
-      message = template.format(device_id, 'attach')
-      udpSerSock.sendto(message.encode('utf8'), client_addr)
-    elif action == 'detach':
-      detach_topic = '/devices/{}/detach'.format(device_id)
-      print(detach_topic)
+            print('Attaching device {}'.format(device_id))
+            print(attach_topic)
+            response, attach_mid = client.publish(
+                    attach_topic, attach_payload, qos=1)
 
-      res, mid = client.publish(detach_topic, "{}", qos=1)
+            message = template.format(device_id, 'attach')
+            udpSerSock.sendto(message.encode('utf8'), client_addr)
+        elif action == 'detach':
+            detach_topic = '/devices/{}/detach'.format(device_id)
+            print(detach_topic)
 
-      message = template.format(res, mid)
-      print('sending data over UDP {} {}'.format(client_addr, message))
-      udpSerSock.sendto(message.encode('utf8'), client_addr)
+            res, mid = client.publish(detach_topic, "{}", qos=1)
 
-    elif action == "subscribe":
-      print('subscribe config for {}'.format(device_id))
-      subscribe_topic = '/devices/{}/config'.format(device_id)
-      skip_next_sub = True
+            message = template.format(res, mid)
+            print('sending data over UDP {} {}'.format(client_addr, message))
+            udpSerSock.sendto(message.encode('utf8'), client_addr)
 
-      _, mid = client.subscribe(subscribe_topic, qos=1)
-      message = template.format(device_id, 'subscribe')
-      gateway_state.subscriptions[subscribe_topic] = client_addr
+        elif action == "subscribe":
+            print('subscribe config for {}'.format(device_id))
+            subscribe_topic = '/devices/{}/config'.format(device_id)
+            skip_next_sub = True
 
-      udpSerSock.sendto(message.encode('utf8'), client_addr)
-  else:
-      print('undefined action: {}'.format(action))
+            _, mid = client.subscribe(subscribe_topic, qos=1)
+            message = template.format(device_id, 'subscribe')
+            gateway_state.subscriptions[subscribe_topic] = client_addr
 
-  print('Finished.')
+            udpSerSock.sendto(message.encode('utf8'), client_addr)
+
+        else:
+            print('undefined action: {}'.format(action))
+
+    print('Finished.')
+
 
 if __name__ == '__main__':
     main()
