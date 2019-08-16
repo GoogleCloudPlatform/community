@@ -474,7 +474,7 @@ function handleROPCTokenRequest (req, res) {
 }
 
 function verifyAuthorizationCode (authorizationCode, clientId, redirectUrl,
-                                  codeVerifier = undefined) {
+  codeVerifier = undefined) {
   const transaction = datastore.transaction();
   const key = datastore.key(['authorization_code', authorizationCode]);
 
@@ -503,13 +503,13 @@ function verifyAuthorizationCode (authorizationCode, clientId, redirectUrl,
           entry.code_challenge !== undefined) {
         let codeVerifierBuffer = Buffer.from(codeVerifier);
         let codeChallenge = crypto
-                              .createHash('sha256')
-                              .update(codeVerifierBuffer)
-                              .digest()
-                              .toString('base64')
-                              .replace(/\+/g, '-')
-                              .replace(/\//g, '_')
-                              .replace(/=/g, '');
+          .createHash('sha256')
+          .update(codeVerifierBuffer)
+          .digest()
+          .toString('base64')
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_')
+          .replace(/=/g, '');
         if (codeChallenge !== entry.code_challenge) {
           return Promise.reject(new Error('Code verifier does not match code challenge.'));
         }
@@ -542,10 +542,10 @@ function handleACTokenRequest (req, res) {
   }
 
   const clientQuery = datastore
-      .createQuery('client')
-      .filter('client-id', '=', req.body.client_id)
-      .filter('client-secret', '=', req.body.client_secret)
-      .filter('ac-enabled', '=', true);
+    .createQuery('client')
+    .filter('client-id', '=', req.body.client_id)
+    .filter('client-secret', '=', req.body.client_secret)
+    .filter('ac-enabled', '=', true);
 
   datastore
     .runQuery(clientQuery)

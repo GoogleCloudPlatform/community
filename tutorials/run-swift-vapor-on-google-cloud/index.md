@@ -1,12 +1,13 @@
 ---
-title: Vapor on Google App Engine Tutorial
-description: Learn how to build an app with Swift and Vapor in the Google App Engine environment flexible environment.
+title: Vapor on App Engine tutorial
+description: Learn how to build an app with Swift and Vapor in the App Engine flexible environment.
 author: mcdonamp
 tags: App Engine, Swift, Vapor
 date_published: 2017-03-21
 ---
+
 This tutorial shows a sample [Swift][swift] app built with [Vapor][vapor]
-deployed to Google App Engine.
+deployed to App Engine.
 
 Vapor is "a web framework and server for Swift that works on macOS and Ubuntu."
 It is [open source on GitHub][vapor-github].
@@ -26,7 +27,7 @@ This tutorial assumes basic familiarity with Swift programming.
 
 This tutorial uses billable components of Google Cloud Platform, including:
 
-+ Google App Engine flexible environment
++ App Engine flexible environment
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
 projected usage.
@@ -46,10 +47,10 @@ projected usage.
 
 We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
 
-1.  Create a `package.swift` file with the following contents:
+1.  Create a `Package.swift` file with the following contents:
 
         import PackageDescription
-
+    
         let package = Package(
             name: "VaporGAE",
             targets: [
@@ -80,14 +81,14 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         // Start server on 8080 (default)
         drop.run()
 
-1.  Create a route to handle App Engine health-check requests" (per the [custom runtime docs][custom-runtime]):
+1.  Create a route to handle App Engine health-check requests (per the [custom runtime docs][custom-runtime]):
 
         // Respond to App Engine health check requests
         drop.get("/_ah/health") { request in
             print("ALL - /_ah/health route handler...")
             return "OK"
         }
-
+    
 1.  Create a route to handle `GET` requests to `/hello`:
 
         // Basic GET request
@@ -95,7 +96,7 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
             print("GET - /hello route handler...")
             return "Hello from Vapor on Google App Engine flexible environment!"
         }
-
+    
 [custom-runtime]: https://cloud.google.com/appengine/docs/flexible/custom-runtimes/build#lifecycle_events
 
 ## Creating the `Dockerfile`

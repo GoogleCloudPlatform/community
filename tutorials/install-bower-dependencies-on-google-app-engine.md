@@ -1,5 +1,5 @@
 ---
-title: Install Bower dependencies on Google App Engine Flexible Environment
+title: Install Bower dependencies on App Engine flexible environment
 description: Learn how to use Bower in a Node.js App Engine flexible environment app.
 author: jmdobry
 tags: App Engine, Bower, Node.js
@@ -7,12 +7,10 @@ date_published: 2016-05-20
 ---
 ## Bower
 
-> [Bower][bower]: A package manager for the web.
->
-> – bower.io
+"[Bower][bower]: A package manager for the web." – bower.io
 
 If you're using Bower to install web dependencies for your app and you're
-deploying your app to Google App Engine Flexible environment, then there are
+deploying your app to App Engine flexible environment, then there are
 several ways to make sure the dependencies are available to your deployed app.
 This tutorial discusses three different methods.
 
@@ -32,13 +30,13 @@ This tutorial discusses three different methods.
 
         bower init
 
-1. Then save new dependencies to your bower.json with:
+1. Then save new dependencies to your `bower.json` file with:
 
-        bower install --save <package-name>
+        bower install --save [YOUR_PACKAGE_NAME]
 
-## Easiest - Do nothing
+## Easiest: Do nothing
 
-When you deploy to App Engine Flexible enviroment a Docker image is created for
+When you deploy to App Engine flexible enviroment a Docker image is created for
 you and your code is copied into the image. This first method relies on the
 Docker image build step to make Bower dependencies available to your app. This
 method is the easiest.
@@ -58,19 +56,19 @@ The Bower dependencies will be installed, and during the deployment the files
 will be copied into the Docker image, and thus will be available to your
 deployed app.
 
-## Less Easy - Use package.json
+## Less easy: Use package.json
 
 Let's say you _don't_ want locally installed Bower dependencies to be copied
 into the Docker image. To make the dependencies available to your deployed app,
 you can have the dependencies installed _inside_ the Docker image as it is
 constructed.
 
-1. Run the following command to generate an `app.yaml file if you don't already
+1.  Run the following command to generate an `app.yaml file if you don't already
 have one:
 
         gcloud app gen-config . --runtime=nodejs
 
-1. To prevent locally installed Bower dependencies from being copied into the
+1.  To prevent locally installed Bower dependencies from being copied into the
 Docker image, add the following to `app.yaml`:
 
         # Prevents locally installed Bower dependencies
@@ -78,9 +76,8 @@ Docker image, add the following to `app.yaml`:
         skip_files:
           - ^(.*/)?.*/bower_components/.*$
 
-1. If you're deploying a Node.js app then you almost certainly have a
-`package.json` file. Add the following to `package.json`:
-
+1.  If you're deploying a Node.js app then you almost certainly have a `package.json` file. Add the following to `package.json`:
+        
         "scripts": {
           ...
           "postinstall": "bower install --config.interactive=false",
@@ -94,14 +91,14 @@ Docker image, add the following to `app.yaml`:
 
     The ellipses hide other configurations that may exist in `package.json`.
 
-1. Now deploy:
+1.  Now deploy:
 
         gcloud app deploy
 
     As the Docker image is built it will run `npm install`, which will in turn
     run `bower install`.
 
-## Much Less Easy - Use a Dockerfile
+## Much less easy: Use a Dockerfile
 
 Another method that does not rely on `package.json` is to use a custom
 `Dockerfile`.
@@ -110,13 +107,13 @@ To make Docker install the Bower dependencies you need to use `runtime: custom`.
 Here we assume you're deploying a Node.js app, but with a little extra
 customization in the `Dockerfile` you can make this work for other languages.
 
-1. Run the following command to generate the necessary files:
+1.  Run the following command to generate the necessary files:
 
         gcloud app gen-config . --custom --runtime=nodejs
 
     This generates three files: `Dockerfile`, `.dockerignore`, and `app.yaml`.
 
-1. To prevent locally installed Bower dependencies from being copied into the
+1.  To prevent locally installed Bower dependencies from being copied into the
 Docker image. Add the following to `app.yaml`:
 
         # Prevents locally installed Bower dependencies
@@ -124,7 +121,7 @@ Docker image. Add the following to `app.yaml`:
         skip_files:
           - ^(.*/)?.*/bower_components/.*$
 
-1. Now edit `Dockerfile` and insert the following beneath `COPY ./app/`:
+1.  Now edit `Dockerfile` and insert the following beneath `COPY ./app/`:
 
         npm i -g bower
         bower install --config.interactive=false
@@ -135,7 +132,7 @@ Docker image. Add the following to `app.yaml`:
         npm i -g bower
         bower install --config.interactive=false
 
-1. Now deploy:
+1.  Now deploy:
 
         gcloud app deploy
 

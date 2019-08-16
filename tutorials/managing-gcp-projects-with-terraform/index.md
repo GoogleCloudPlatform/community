@@ -1,5 +1,5 @@
 ---
-title: Managing GCP Projects with Terraform
+title: Managing GCP projects with Terraform
 description: Learn how to manage projects within an organization and project resources with Terraform.
 author: danisla
 tags: Terraform
@@ -37,7 +37,7 @@ This tutorial uses billable components of GCP, including:
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=cdaa96a1-84a6-468d-b5cc-493af9895149) to generate a cost estimate based on your projected usage.
 
-## set up the environment
+## Set up the environment
 
 Export the following variables to your environment for use throughout the tutorial.
 
@@ -45,10 +45,10 @@ Export the following variables to your environment for use throughout the tutori
 export TF_VAR_org_id=YOUR_ORG_ID
 export TF_VAR_billing_account=YOUR_BILLING_ACCOUNT_ID
 export TF_ADMIN=${USER}-terraform-admin
-export TF_CREDS=~/.config/gcloud/terraform-admin.json
+export TF_CREDS=~/.config/gcloud/${USER}-terraform-admin.json
 ```
 
-> Note: The `TF_ADMIN` variable will be used for the name of the Terraform Admin Project and must be unique.
+**Note**: The `TF_ADMIN` variable will be used for the name of the Terraform Admin Project and must be unique.
 
 You can find the values for `YOUR_ORG_ID` and `YOUR_BILLING_ACCOUNT_ID` using the following commands:
 
@@ -59,7 +59,7 @@ gcloud beta billing accounts list
 
 ## Create the Terraform Admin Project
 
-Using an Admin Project for your Terraform service account keeps the resources needed for managing your projects separate from the actual projects you create. While these resources could be created with Terraform using a service account from an existing project, in this tutorial you will create a separate project and service account exclusively for Terraform.
+Using an Admin Project for your Terraform service account keeps the resources needed for managing your projects separate from the actual projects you create. While these resources could be created with Terraform using a service account from an existing project, or using Cloud Shell, in this tutorial you will create a separate project and service account exclusively for Terraform.
 
 Create a new project and link it to your billing account:
 
@@ -103,6 +103,7 @@ gcloud services enable cloudresourcemanager.googleapis.com
 gcloud services enable cloudbilling.googleapis.com
 gcloud services enable iam.googleapis.com
 gcloud services enable compute.googleapis.com
+gcloud services enable serviceusage.googleapis.com
 ```
 
 ### Add organization/folder-level permissions
@@ -128,12 +129,11 @@ Create the remote backend bucket in Cloud Storage and the `backend.tf` file for 
 ```sh
 gsutil mb -p ${TF_ADMIN} gs://${TF_ADMIN}
 
-cat > backend.tf <<EOF
+cat > backend.tf << EOF
 terraform {
  backend "gcs" {
    bucket  = "${TF_ADMIN}"
-   path    = "/terraform.tfstate"
-   project = "${TF_ADMIN}"
+   prefix  = "terraform/state"
  }
 }
 EOF
@@ -150,12 +150,6 @@ Configure your environment for the Google Cloud Terraform provider:
 ```sh
 export GOOGLE_APPLICATION_CREDENTIALS=${TF_CREDS}
 export GOOGLE_PROJECT=${TF_ADMIN}
-```
-
-Next, initialize the backend:
-
-```sh
-terraform init
 ```
 
 ## Use Terraform to create a new project and Compute Engine instance
@@ -202,7 +196,7 @@ output "project_id" {
 
 Terraform resources used:
 
-- [`provider "google"`](https://www.terraform.io/docs/providers/google/index.html): The Google cloud provider config. The credentials will be pulled from the `GOOGLE_CREDENTIALS` environment variable (set later in tutorial).
+- [`provider "google"`](https://www.terraform.io/docs/providers/google/index.html): The Google cloud provider config. The credentials will be pulled using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable, set earlier in this tutorial.
 - [`resource "random_id"`](https://www.terraform.io/docs/providers/random/r/id.html): Project IDs must be unique. Generate a random one prefixed by the desired project ID.
 - [`resource "google_project"`](https://www.terraform.io/docs/providers/google/r/google_project.html): The new project to create, bound to the desired organization ID and billing account.
 - [`resource "google_project_services"`](https://www.terraform.io/docs/providers/google/r/google_project_services.html): Services and APIs enabled within the new project. Note that if you visit the web console after running Terraform, additional APIs may be implicitly enabled and Terraform would become out of sync. Re-running `terraform plan` will show you these changes before Terraform attempts to disable the APIs that were implicitly enabled. You can also set the full set of expected APIs beforehand to avoid the synchronization issue.
@@ -250,6 +244,11 @@ Set the name of the project you want to create and the region you want to create
 ```sh
 export TF_VAR_project_name=${USER}-test-compute
 export TF_VAR_region=us-central1
+```
+Next, initialize the backend:
+
+```sh
+terraform init
 ```
 
 Preview the Terraform changes:

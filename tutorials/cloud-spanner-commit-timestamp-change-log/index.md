@@ -33,7 +33,7 @@ The simplest way to incorporate timestamps into your database is to include a co
 when you create your table. Below is a SQL statement that will create a Spanner table that includes a timestamp column named **Timestamp**. The extra
 options attribute "OPTIONS(allow_commit_timestamp=true)" makes **Timestamp** a commit timestamp column and enables it to be auto-populated with the exact transaction timestamp for INSERT and UPDATE operations on a given table row.
 
-```
+```sql
 CREATE TABLE DocumentsWithTimestamp(
   UserId INT64 NOT NULL,
   DocumentId INT64 NOT NULL,
@@ -55,7 +55,7 @@ When inserting records, use a method like the following Go sample code to
 insert a timestamp in the commit timestamp column. This code snippet inserts the
 **spanner.CommitTimestamp** constant which will populate the **Timestamp** column
 with the exact timestamp of when each record was inserted.
-```
+```go
 func writeToDocumentsTable(ctx context.Context, w io.Writer, client *spanner.Client) error {
 	documentsColumns := []string{"UserId", "DocumentId", "Timestamp", "Contents"}
 	m := []*spanner.Mutation{
@@ -72,7 +72,7 @@ When updating records, use a method like the following Go sample code to update 
 This code updates five records and uses the **spanner.CommitTimestamp** constant which populates the **Timestamp** column
 with the exact timestamp of when each record was updated.
 
-```
+```go
 func updateDocumentsTable(ctx context.Context, w io.Writer, client *spanner.Client) error {
 	cols := []string{"UserId", "DocumentId", "Timestamp", "Contents"}
 	_, err := client.Apply(ctx, []*spanner.Mutation{
@@ -93,7 +93,7 @@ func updateDocumentsTable(ctx context.Context, w io.Writer, client *spanner.Clie
 If you want to find the last five records that were updated in the table,
 the commit timestamp column allows you to use a query like the following.
 
-```
+```sql
 SELECT UserId, DocumentId, Timestamp, Contents
 FROM DocumentsWithTimestamp
 ORDER BY Timestamp DESC Limit 5
@@ -115,7 +115,7 @@ when you create your table.
 
 The following SQL statements create two tables, a **Documents** table and a **DocumentHistory** table.
 
-```
+```sql
 CREATE TABLE Documents(
   UserId INT64 NOT NULL,
   DocumentId INT64 NOT NULL,
@@ -138,7 +138,7 @@ table's **PreviousContents** column along with a transaction timestamp in the **
 
 This snippet of Go code inserts 5 records into each of the tables as a transaction with commit timestamps:
 
-```
+```go
 func writeWithHistory(ctx context.Context, w io.Writer, client *spanner.Client) error {
 	_, err := client.ReadWriteTransaction(ctx, func(ctx context.Context, txn *spanner.ReadWriteTransaction) error {
 		documentsColumns := []string{"UserId", "DocumentId", "Contents"}
@@ -173,7 +173,7 @@ func writeWithHistory(ctx context.Context, w io.Writer, client *spanner.Client) 
 
 This snippet of Go code updates 3 records in each table as a transaction with commit timestamps:
 
-```
+```go
 func updateWithHistory(ctx context.Context, w io.Writer, client *spanner.Client) error {
 	_, err := client.ReadWriteTransaction(ctx, func(ctx context.Context, txn *spanner.ReadWriteTransaction) error {
 		// Create anonymous function "getContents" to read the current value of the Contents column for a given row.
@@ -232,7 +232,7 @@ func updateWithHistory(ctx context.Context, w io.Writer, client *spanner.Client)
 Now you can execute a query like the following that returns the last 3 documents that were updated
 together with the previous versions of those 3 documents.
 
-```
+```sql
 SELECT d.UserId, d.DocumentId, d.Contents, dh.Timestamp, dh.PreviousContents
 FROM Documents d JOIN DocumentHistory dh
 ON dh.UserId = d.UserId AND dh.DocumentId = d.DocumentId
