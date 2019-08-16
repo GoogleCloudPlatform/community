@@ -7,6 +7,7 @@ date_published: 2018-12-10
 ---
 
 Alex Hong | Developer Programs Engineer | Google Cloud IoT Core
+
 Fengrui Gu | Software Engineer | Google Cloud IoT Core
 
 This tutorial shows you how to set up and use gateways on Cloud IoT Core. From the [documentation][gateways-overview], a
