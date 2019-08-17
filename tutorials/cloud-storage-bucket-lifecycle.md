@@ -1,6 +1,6 @@
 ---
 title: Cloud Storage bucket lifecycle
-description: Learn how to automatically change an objects storage class based on file age
+description: Learn how to automatically change an objects storage class based on file age.
 author: Phuurl
 tags: Cloud Storage
 date_published: 2019-08-17
