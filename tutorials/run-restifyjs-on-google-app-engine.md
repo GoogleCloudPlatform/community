@@ -36,24 +36,26 @@ Platform.
 
 Create a `server.js` file with the following contents:
 
-    const restify = require('restify');
+```js
+ const restify = require('restify');
 
-    const server = restify.createServer({
-      name: 'appengine-restify',
-      version: '1.0.0'
-    });
+ const server = restify.createServer({
+   name: 'appengine-restify',
+   version: '1.0.0'
+ });
 
-    server.use(restify.acceptParser(server.acceptable));
-    server.use(restify.queryParser());
-    server.use(restify.bodyParser());
+ server.use(restify.plugins.acceptParser(server.acceptable));
+ server.use(restify.plugins.queryParser());
+ server.use(restify.plugins.bodyParser());
 
-    server.get('/', (req, res) => {
-      res.send('Hello World!');
-    });
+ server.get('/', (req, res) => {
+   res.send('Hello World!');
+ });
 
-    server.listen(process.env.PORT || 8080, () => {
-      console.log(`${server.name} listening at ${server.url}`);
-    });
+ server.listen(process.env.PORT || 8080, () => {
+   console.log(`${server.name} listening at ${server.url}`);
+ });
+ ```
 
 ## Run
 
@@ -68,8 +70,10 @@ message.
 
 1. Create an `app.yaml` file with the following contents:
 
-        runtime: nodejs
-        env: flex
+    ```yaml
+    runtime: nodejs
+    env: flex
+    ```
 
 1. Run the following command to deploy your app:
 

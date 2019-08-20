@@ -71,78 +71,82 @@ The results of the POST call are returned using JSON format. There are numerous 
 
 Once a string representing the JSON data is created, it can be sent to the GSON library, which will return an object that represents the data. You will need to create a class that represents the data you are interested in, based on the return types of the [Cloud Natural Language API](https://cloud.google.com/natural-language/docs/reference/rest/v1beta1/documents/analyzeEntities). This object is an instance of the class  `AnalyzeEntitiesResponse`, shown below. You will need to define this class in your `Magpie` class.
 
-
-	public class AnalyzeEntitiesResponse {
-	   private Entity [] entities;
-	   public Entity [] getEntities () {
-		   return entities;
-	   }
+```java
+public class AnalyzeEntitiesResponse {
+	private Entity [] entities;
+	public Entity [] getEntities () {
+		return entities;
 	}
+}
+```
 
 
 Notice that even though there is another field in the response (the language), since this example doesn't need it, it does not have to be included in the class.
 
 This example is concerned with entities though, so it needs to define a class that represents an entity:
 
-	public class Entity {
-		private String name;
-		private String type;
-		  //  Currently type is one of UNKNOWN, PERSON, LOCATION, ORGANIZATION, EVENT, WORK_OF_ART, CONSUMER_GOOD, OTHER
+```java
+public class Entity {
+	private String name;
+	private String type;
+		//  Currently type is one of UNKNOWN, PERSON, LOCATION, ORGANIZATION, EVENT, WORK_OF_ART, CONSUMER_GOOD, OTHER
 
-		private Map<String, String> metadata;
+	private Map&lt;String, String&gt; metadata;
 
-		public String getName() {
-			return name;
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		public Map<String, String> getMetadata() {
-			return metadata;
-		}
+	public String getName() {
+		return name;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public Map&lt;String, String&gt; getMetadata() {
+		return metadata;
+	}
+}
+```
 
 Additional information returned about an entity (such as mentions and salience) are not included since this example does not need them. Once the classes that represent the results you want are defined, you can create a `Gson` object and use it to parse the string you have created as shown below. In this example, it will just return a list of the entities in the user input.
 
+```java
+private List&lt;String&gt; getEntities (String jsonString) {
+	List&lt;String&gt; result = new ArrayList&lt;String&gt;();
+	Gson gson = new GsonBuilder().create();
 
-	private List<String> getEntities (String jsonString) {
-		List<String> result = new ArrayList<String>();
-		Gson gson = new GsonBuilder().create();
+	AnalyzeEntitiesResponse json = (AnalyzeEntitiesResponse)gson.fromJson(jsonString, AnalyzeEntitiesResponse.class);
 
-		AnalyzeEntitiesResponse json = (AnalyzeEntitiesResponse)gson.fromJson(jsonString, AnalyzeEntitiesResponse.class);
-
-		if (json != null)  {
-				for (Entity entity:json.getEntities()) {
-					result.add (entity.getName());
-				}
+	if (json != null)  {
+			for (Entity entity:json.getEntities()) {
+				result.add (entity.getName());
 			}
-		return result;
-	}
-
+		}
+	return result;
+}
+```
 
 At this point, you can call this method and use the results to have your chatbot respond to the entities in user statements. A simple response would be to react to the first entity it finds.
 
+```java
+List<String> entities = getEntities(results);
 
-	List<String> entities = getEntities(results);
+if (entities.size() > 0) {
+	// Pick the first entity and ask about it
+	response = "I've always been interested in " + entities.get(0)
+			+ ". Can you tell me more about it?";
+}
+else if (statement.indexOf("cats") >= 0) { ...
+```
 
-	if (entities.size() > 0) {
-		// Pick the first entity and ask about it
-		response = "I've always been interested in " + entities.get(0)
-				+ ". Can you tell me more about it?";
-	}
-	else if (statement.indexOf("cats") >= 0) { ...
+## Going beyond the basics
 
-
-## Going Beyond the Basics
 While this tutorial just finds the first entity, there is so much more your chatbot can do. Some things to try out:
 * Instead of selecting the first entity, select a random one.
 * Prioritize the type of entities your chatbot will respond to. Perhaps look for any WORK_OF_ART first. If one isn't found, try EVENT, then LOCATION, etc..
 * For entities which have Wikipedia links, learn more about the [Wikipedia API](https://www.mediawiki.org/wiki/API:Main_page) and include information from Wikipedia in your response.
 
 ## Summary
+
 * You can use the Cloud Natural Language API to analyze the entities in a string.
 * You'll need to provide a Java class (or classes) that represent the information you want from the JSON result of an API call.
 * You can get the type of these entities and additional information like Wikipedia links if you want to make your chatbot more responsive.

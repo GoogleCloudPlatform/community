@@ -1,16 +1,14 @@
 ---
-title: Connect to MongoDB from Node.js on Google App Engine Flexible Environment
-description: Learn how to connect to MongoDB from a Node.js app running on Google App Engine flexible environment.
+title: Connect to MongoDB from Node.js on App Engine flexible environment
+description: Learn how to connect to MongoDB from a Node.js app running on App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Node.js, MongoDB
 date_published: 2017-11-02
 ---
+
 ## MongoDB
 
-> [MongoDB][mongo] is a document database with the scalability and flexibility
-> that you want with the querying and indexing that you need
->
-> – mongodb.com
+"[MongoDB][mongo] is a document database with the scalability and flexibility that you want with the querying and indexing that you need" – mongodb.com
 
 You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
 overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
@@ -89,10 +87,12 @@ There are multiple options for creating a new MongoDB database. For example:
               address: req.connection.remoteAddress
             };
 
-            collection.insert(ip, (err) => {
+            mongodb.MongoClient.connect(uri, { useNewUrlParser: true }, (err, client) => {
               if (err) {
                 throw err;
               }
+        
+             const db = client.db(nconf.get("mongoDatabase"))
 
               // push out a range
               let iplist = '';
@@ -100,8 +100,34 @@ There are multiple options for creating a new MongoDB database. For example:
                 if (err) {
                   throw err;
                 }
-                data.forEach((ip) => {
-                  iplist += `${ip.address}; `;
+                // Track every IP that has visited this site
+                const collection = db.collection('IPs');
+
+                const ip = {
+                  address: req.connection.remoteAddress
+                };
+
+                collection.insertOne(ip, (err) => {
+                  if (err) {
+                    throw err;
+                  }
+
+                  // push out a range
+                  let iplist = '';
+                  collection.find().toArray((err, data) => {
+                    if (err) {
+                      throw err;
+                    }
+                    data.forEach((ip) => {
+                      iplist += `${ip.address}; `;
+                    });
+
+                    res.writeHead(200, {
+                      'Content-Type': 'text/plain'
+                    });
+                    res.write('IPs:\n');
+                    res.end(iplist);
+                  });
                 });
 
                 res.writeHead(200, {

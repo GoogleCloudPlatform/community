@@ -117,39 +117,41 @@ Run the following steps:
 
 1.  Create a method to FcmController, so it will looks like this.
 
-        package grails.fcm
+    ```groovy
+    package grails.fcm
 
-        import grails.plugins.rest.client.RestBuilder
+    import grails.plugins.rest.client.RestBuilder
 
-        class FcmController {
+    class FcmController {
 
-          def index() { }
+      def index() { }
 
-          def sendPushNotification() {
-            def regid = params.regid
-            def title = params.title
-            def body = params.body
+      def sendPushNotification() {
+        def regid = params.regid
+        def title = params.title
+        def body = params.body
 
-            def rest = new RestBuilder(connectTimeout:1000, readTimeout:20000)
-            def resp = rest.post("https://fcm.googleapis.com/fcm/send") {
-              header 'Content-Type', 'application/json'
-              header 'Authorization', 'key=AIza*****'
-              json {
-                notification = {
-                  title = title
-                  body = body
-                  sound = "default"
-                  click_action = "FCM_PLUGIN_ACTIVITY"
-                  icon = "fcm_push_icon"
-                }
-                to = regid
-              }
+        def rest = new RestBuilder(connectTimeout:1000, readTimeout:20000)
+        def resp = rest.post("https://fcm.googleapis.com/fcm/send") {
+          header 'Content-Type', 'application/json'
+          header 'Authorization', 'key=AIza*****'
+          json {
+            notification = {
+              title = title
+              body = body
+              sound = "default"
+              click_action = "FCM_PLUGIN_ACTIVITY"
+              icon = "fcm_push_icon"
             }
-
-            flash.message = "Notification sent"
-            redirect action: "index"
+            to = regid
           }
         }
+
+        flash.message = "Notification sent"
+        redirect action: "index"
+      }
+    }
+    ```
 
     Enter the Legacy Server key you saved from your project dashboard in the
     line that begins with 'key=':

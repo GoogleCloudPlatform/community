@@ -172,12 +172,12 @@ public class AuthorizeServlet extends HttpServlet {
 	String query = CharStreams.toString(request.getReader());
 	// socket_id, channel_name parameters are automatically set in the POST body of the request
 	// eg.socket_id=1232.12&channel_name=presence-my-channel
-	Map<String, String> data = splitQuery(query);
+	Map&lt;String, String&gt; data = splitQuery(query);
 	String socketId = data.get("socket_id");
 	String channelId = data.get("channel_name");
 
 	// Presence channels (presence-*) require user identification for authentication
-	Map<String, String> userInfo = new HashMap<>();
+	Map&lt;String, String&gt; userInfo = new HashMap<>();
 	userInfo.put("displayName", displayName);
 
 	// Inject custom authentication code for your application here to allow/deny current request
@@ -193,8 +193,8 @@ public class AuthorizeServlet extends HttpServlet {
 	response.getWriter().append(auth);
   }
 
-  private static Map<String, String> splitQuery(String query) throws UnsupportedEncodingException {
-	Map<String, String> query_pairs = new HashMap<>();
+  private static Map&lt;String, String&gt; splitQuery(String query) throws UnsupportedEncodingException {
+	Map&lt;String, String&gt; query_pairs = new HashMap<>();
 	String[] pairs = query.split("&");
 	for (String pair : pairs) {
 	  int idx = pair.indexOf("=");
@@ -226,8 +226,8 @@ documentation.
 public class SendMessageServlet extends HttpServlet {
 
   private Gson gson = new GsonBuilder().create();
-  private TypeReference<Map<String, String>> typeReference =
-	  new TypeReference<Map<String, String>>() {};
+  private TypeReference&lt;Map&lt;String, String&gt;&gt; typeReference =
+	  new TypeReference&lt;Map&lt;String, String&gt;&gt;() {};
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -236,7 +236,7 @@ public class SendMessageServlet extends HttpServlet {
 
 	String body = CharStreams.readLines(request.getReader()).toString();
 	String json = body.replaceFirst("^\\[", "").replaceFirst("\\]$", "");
-	Map<String, String> data = gson.fromJson(json, typeReference.getType());
+	Map&lt;String, String&gt; data = gson.fromJson(json, typeReference.getType());
 	String message = data.get("message");
 	String socketId = data.get("socket_id");
 	String channelId = data.get("channel_id");
@@ -247,7 +247,7 @@ public class SendMessageServlet extends HttpServlet {
 
 	// Create a message including the user email prefix to display in the chat window
 	String taggedMessage = "<strong>&lt;" + displayName + "&gt;</strong> " + message;
-	Map<String, String> messageData = new HashMap<>();
+	Map&lt;String, String&gt; messageData = new HashMap<>();
 	messageData.put("message", taggedMessage);
 
 	// Send a message over the Pusher channel (maximum size of a message is 10KB)
@@ -317,39 +317,39 @@ or disconnects from the channel.
 The following code snippets show to bind event handlers to Pusher events:
 
 [embedmd]:# (java/src/main/webapp/WEB-INF/view/chat.jsp /\/\/ bind to successful Pusher connection/ /}\);\n\n/)
-```jsp
+```js
 // bind to successful Pusher connection
-	pusher.connection.bind('connected', function () {
+pusher.connection.bind('connected', function () {
 
-		// show chat window once logged in and successfully connected
-		$('#chat_widget_main_container').show();
-		// ...
-		// bind to successful subscription
-		channel.bind('pusher:subscription_succeeded', function (members) {
-			// receive list of members on this channel
-			var whosonline_html = '';
-			members.each(function (member) {
-				whosonline_html += '<li class="chat_widget_member" id="chat_widget_member_'
-					+
-					member.id + '">' + member.info.displayName + '</li>';
-			});
-			$('#chat_widget_online_list').html(whosonline_html);
-			updateOnlineCount();
+	// show chat window once logged in and successfully connected
+	$('#chat_widget_main_container').show();
+	// ...
+	// bind to successful subscription
+	channel.bind('pusher:subscription_succeeded', function (members) {
+		// receive list of members on this channel
+		var whosonline_html = '';
+		members.each(function (member) {
+			whosonline_html += '<li class="chat_widget_member" id="chat_widget_member_'
+				+
+				member.id + '">' + member.info.displayName + '</li>';
 		});
-		// presence channel receive events when members are added / removed
-		channel.bind('pusher:member_added', function (member) {
-			// track member additions to channel
-			$('#chat_widget_online_list').append('<li class="chat_widget_member" ' +
-				'id="chat_widget_member_' + member.id + '">'
-				+ member.info.displayName + '</li>');
-			updateOnlineCount();
-		});
-		channel.bind('pusher:member_removed', function (member) {
-			// track member removals from channel
-			$('#chat_widget_member_' + member.id).remove();
-			updateOnlineCount();
-		});
-
+		$('#chat_widget_online_list').html(whosonline_html);
+		updateOnlineCount();
+	});
+	// presence channel receive events when members are added / removed
+	channel.bind('pusher:member_added', function (member) {
+		// track member additions to channel
+		$('#chat_widget_online_list').append('<li class="chat_widget_member" ' +
+			'id="chat_widget_member_' + member.id + '">'
+			+ member.info.displayName + '</li>');
+		updateOnlineCount();
+	});
+	channel.bind('pusher:member_removed', function (member) {
+		// track member removals from channel
+		$('#chat_widget_member_' + member.id).remove();
+		updateOnlineCount();
+	});
+});
 ```
 
 ### Receive events
@@ -363,16 +363,17 @@ In the case of the chat application, the event callback is used to update the me
 displayed by the chat application.
 
 [embedmd]:# (java/src/main/webapp/WEB-INF/view/chat.jsp /\/\/ bind to successful subscription/ /}\);/)
-```jsp
+```js
 // bind to successful subscription
-		channel.bind('pusher:subscription_succeeded', function (members) {
-			// receive list of members on this channel
-			var whosonline_html = '';
-			members.each(function (member) {
-				whosonline_html += '<li class="chat_widget_member" id="chat_widget_member_'
-					+
-					member.id + '">' + member.info.displayName + '</li>';
-			});
+channel.bind('pusher:subscription_succeeded', function (members) {
+	// receive list of members on this channel
+	var whosonline_html = '';
+	members.each(function (member) {
+		whosonline_html += '<li class="chat_widget_member" id="chat_widget_member_'
+			+
+			member.id + '">' + member.info.displayName + '</li>';
+	});
+});
 ```
 
 
@@ -382,34 +383,34 @@ Now you can use a server-side endpoint as described earlier to trigger an event 
 The client can be excluded from receiving the broadcast message by providing the socket ID.
 
 [embedmd]:# (java/src/main/webapp/WEB-INF/view/chat.jsp /\/\/ track socket_id/ /false;\n.*}\);/)
-```jsp
+```js
 // track socket_id to exclude recipient in subscription
-		socket_id = pusher.connection.socket_id;
+socket_id = pusher.connection.socket_id;
 
-		// submit the message to /chat
-		$('#chat_widget_form').submit(function () {
-			var chat_widget_input = $('#chat_widget_input'),
-				chat_widget_button = $('#chat_widget_button'),
-				message = chat_widget_input.val(); //get the value from the text input
-			var data = JSON.stringify({
-				message: message,
-				channel_id: channel_name,
-				socket_id: socket_id
-			});
-			// trigger a server-side endpoint to send the message via Pusher
-			$.post('/message', data,
-				function (msg) {
-					chat_widget_button.show(); //show the chat button
-					if (msg.status == "SUCCESS") {
-						chat_widget_input.val('');
-						handleMessage(msg); //display the message
-					} else {
-						alert("Error sending chat message : " + msg.status);
-					}
-				}, "json");
+// submit the message to /chat
+$('#chat_widget_form').submit(function () {
+	var chat_widget_input = $('#chat_widget_input'),
+		chat_widget_button = $('#chat_widget_button'),
+		message = chat_widget_input.val(); //get the value from the text input
+	var data = JSON.stringify({
+		message: message,
+		channel_id: channel_name,
+		socket_id: socket_id
+	});
+	// trigger a server-side endpoint to send the message via Pusher
+	$.post('/message', data,
+		function (msg) {
+			chat_widget_button.show(); //show the chat button
+			if (msg.status == "SUCCESS") {
+				chat_widget_input.val('');
+				handleMessage(msg); //display the message
+			} else {
+				alert("Error sending chat message : " + msg.status);
+			}
+		}, "json");
 
-			return false;
-		});
+	return false;
+});
 ```
 
 ## Disconnecting from Pusher
@@ -436,7 +437,7 @@ You should now be able to view both the users within the chat application window
 
 - Deploy the application to the project:
 
-      mvn clean appengine:deploy
+		mvn clean appengine:deploy
 
 - Access `https://YOUR_PROJECT_ID.appspot.com`
 
