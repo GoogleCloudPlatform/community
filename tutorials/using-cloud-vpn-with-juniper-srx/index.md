@@ -1,7 +1,7 @@
 ---
 title: Google Cloud VPN Interop Guide for Juniper SRX.
 description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on Google Cloud Platform and Juniper SRX300.
-author: antiabong, ashisverm.
+author: antiabong, ashisverm
 tags: VPN, interop, Juniper, SRX.
 date_published: 2019-07-18.
 ---
