@@ -1,6 +1,6 @@
 ---
 title: Seamless migration through integration of RISC Networks and Migrate for Compute Engine
-description: Learn how to migrate VMs from VMware to GCP using RISC Networks and Migrate for Compute Engine
+description: Learn how to migrate VMs from VMware to GCP using RISC Networks and Migrate for Compute Engine.
 author: laidig
 tags: Migrate for Compute Engine, RISC Networks
 date_published: 2019-08-19
