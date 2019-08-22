@@ -178,7 +178,7 @@ the RN150.
 A full description of the Application Stacks feature is available in this
 _[video_](http://www.youtube.com/watch?v=2UHYGso_BKc).
 
-![image](seamlessmigrat--68xpj7vgzna.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-risc-networks/seamlessmigrat--68xpj7vgzna.png)
 
 ## Export Application Stacks
 
@@ -188,11 +188,11 @@ Export
 1. Sign in to the [RISC Portal](https://portal.riscnetworks.com),
 1. Click the **Add Intelligence** dropdown, then click** Available Reports.**
 
-![image](seamlessmigrat--6qzgse7y6pm.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-risc-networks/seamlessmigrat--6qzgse7y6pm.png)
 
 1. Click **Velostrata Export**
 
-![image](seamlessmigrat--qdj7zg672hg.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-risc-networks/seamlessmigrat--qdj7zg672hg.png)
 
 1. Select the application stack from the dropdown.
 1. Fill out any missing entries.
@@ -201,7 +201,7 @@ Export
 1. The CSV is downloaded. Note the file location to upload it to Migrate
     for Compute Engine (formerly Velostrata).
 
-### Next Steps
+### Next steps
 
 Continue with the
 [Wave](https://cloud.google.com/velostrata/docs/how-to/organizing-migrations/overview) process
