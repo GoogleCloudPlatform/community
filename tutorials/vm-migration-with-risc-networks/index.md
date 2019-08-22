@@ -1,16 +1,16 @@
 ---
-title: Seamless migration through integration of RISC Networks and Migrate for Compute Engine
-description: Learn how to migrate VMs from VMware to GCP using RISC Networks and Migrate for Compute Engine.
+title: Migrate virtual machines with RISC Networks and Migrate for Compute Engine
+description: Learn how to migrate virtual machines (VMs) from VMware to GCP using RISC Networks and Migrate for Compute Engine.
 author: laidig
 tags: Migrate for Compute Engine, RISC Networks
-date_published: 2019-08-19
+date_published: 2019-08-23
 ---
 
-This article walks you through a VMware to Google Cloud Platform (GCP) migration
+This article walks you through a VM migration from VMware to Google Cloud Platform (GCP), migration
 from planning to completion. Integrations between GCP, RISC Networks (now
 [Flexera](https://www.flexera.com/about-us/press-center/flexera-acquires-risc-networks.html)),
 and Migrate for Compute Engine (formerly Velostrata) enable you to export your
-plans directly into the Migrate for Compute Engine UI.
+plans directly into Migrate for Compute Engine.
 
 ## Prerequisites
 
@@ -103,7 +103,7 @@ enter Windows Credentials. To enter the credentials:
 1. Click **Validate Credential** and enter an **IP address** of a Windows
    host. RISC Networks will connect and attempt to run `netstat`. A validation
    screen appears.
-1. If the validation is successful, click **Add Credential.**
+1. If the validation is successful, click **Add Credential.**S
 
 Note: After adding credentials, you must rescan to inventory your Windows
 resources.  
