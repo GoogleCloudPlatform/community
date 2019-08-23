@@ -155,7 +155,7 @@ You can install a
     npm install -g @google-cloud/functions-emulator
     export GOOGLE_APPLICATION_CREDENTIALS=/Users/myname/.cred/myserviceaccount.json
     functions start
-    functions deploy main --trigger-http
+    functions deploy main --trigger-http --runtime=nodejs10
 
 In this case, `main` is the name of the function you want to trigger in your code, triggered by an HTTP request.
 
@@ -185,7 +185,7 @@ NOTE that our function code added `created`.
 
 This is very easy thanks to the gcloud CLI.
 
-    gcloud functions deploy main --trigger-http
+    gcloud functions deploy main --trigger-http --runtime=nodejs10
 
 In this case, `main` is the name of the function you want to trigger in your code, triggered by an HTTP request.
 
@@ -199,7 +199,7 @@ In this case, `main` is the name of the function you want to trigger in your cod
     labels:
       deployment-tool: cli-gcloud
     name: projects/cloud-functions-firestore/locations/us-central1/functions/main
-    runtime: nodejs6
+    runtime: nodejs10
     serviceAccountEmail: cloud-functions-firestore@appspot.gserviceaccount.com
     sourceUploadUrl: https://storage.googleapis.com/gcf-upload-us-central1-0000000000.zip?GoogleAccessId=service-...
     status: ACTIVE
