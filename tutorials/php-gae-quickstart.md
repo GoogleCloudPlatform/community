@@ -1,14 +1,13 @@
 ---
-title: App Engine Quickstart using PHP
+title: App Engine quickstart using PHP
 description: Learn how to deploy a PHP sample app to App Engine.
 author: jscud
 tags: App Engine
 date_published: 2019-03-22
 ---
 
-# App Engine Quickstart
+# App Engine quickstart using PHP
 
-<walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/php/quickstart"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "-b phase0-helloworld https://github.com/GoogleCloudPlatform/appengine-php-guestbook" %} -->
 <!-- {% setvar repo_dir "appengine-php-guestbook" %} -->
 
@@ -46,14 +45,17 @@ Here are the steps you will be taking.
 
 ## Project setup
 
-To deploy an application, you need to first create a project.
+GCP organizes resources into projects, which collect all of the related resources for a single
+application in one place.
 
-GCP organizes resources into projects. This allows you to
-collect all of the related resources for a single application in one place.
+Begin by creating a new project or selecting an existing project for this tutorial.
 
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
 <walkthrough-project-setup></walkthrough-project-setup>
+
+For details, see
+[Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
 ## Using Cloud Shell
 
@@ -66,19 +68,19 @@ Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-clo
 
 ### Clone the sample code
 
-Use Cloud Shell to clone and navigate to the "Hello World" code. The sample code
-is cloned from your project repository to the Cloud Shell.
+Use Cloud Shell to clone and navigate to the "Hello World" code. The sample code is cloned from your 
+project repository to the Cloud Shell.
 
 Note: If the directory already exists, remove the previous files before cloning.
 
 ```bash
-git clone {{repo_url}}
+git clone -b phase0-helloworld https://github.com/GoogleCloudPlatform/appengine-php-guestbook
 ```
 
 Then, switch to the tutorial directory:
 
 ```bash
-cd {{repo_dir}}
+cd appengine-php-guestbook
 ```
 
 ## Configuring your deployment
@@ -167,7 +169,7 @@ Try visiting your deployed application.
 You can check in on your app by monitoring its status on the App Engine
 dashboard.
 
-Open the [menu][spotlight-console-menu] on the left side of the console.
+Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console.
 
 Then, select the **App Engine** section.
 

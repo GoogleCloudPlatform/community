@@ -236,9 +236,9 @@ Exception Subscriber:
 
 The files needed are as follows:
 
-[`config/packages/prod/monolog.yaml`](app/config/packages/prod/monolog.yaml): Adds Stackdriver Logging to your Monolog configuration.
+[`config/packages/prod/monolog.yaml`](https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php72/symfony-framework/config/packages/prod/monolog.yaml): Adds Stackdriver Logging to your Monolog configuration.
 
-[`src/EventSubscriber/ExceptionSubscriber.php`](src/EventSubscriber/ExceptionSubscriber.php): Event subscriber that sends exceptions to Stackdriver Error Reporting.
+[`src/EventSubscriber/ExceptionSubscriber.php`](https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php72/symfony-framework/src/EventSubscriber/ExceptionSubscriber.php): Event subscriber that sends exceptions to Stackdriver Error Reporting.
 
 If you'd like to test the logging and error reporting, you can also copy over `LoggingController.php`, which
 exposes the routes `/en/logging/notice` and `/en/logging/exception` for ensuring your logs are being sent to
@@ -249,7 +249,7 @@ Stackdriver:
         $SYMFONY_PROJECT_PATH/src/Controller
 
 
-[`src/Controller/LoggingController.php`](src/Controller/LoggingController.php): Controller for testing logging and exceptions.
+[`src/Controller/LoggingController.php`](https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php72/symfony-framework/src/Controller/LoggingController.php): Controller for testing logging and exceptions.
 
 ### View application logs and errors
 
@@ -267,7 +267,7 @@ the [Stackdriver Error Reporting UI][stackdriver-errorreporting-ui]! If you copi
 [cloud-sql]: https://cloud.google.com/sql/docs/
 [cloud-sql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
 [cloud-sql-install]: https://cloud.google.com/sql/docs/mysql/connect-external-app#install
-[cloud-sql-apis]:https://pantheon.corp.google.com/apis/library/sqladmin.googleapis.com/?pro
+[cloud-sql-apis]:https://console.cloud.google.com/apis/library/sqladmin.googleapis.com/?pro
 [create-project]: https://cloud.google.com/resource-manager/docs/creating-managing-projects
 [enable-billing]: https://support.google.com/cloud/answer/6293499?hl=en
 [symfony]: http://symfony.com

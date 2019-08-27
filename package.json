@@ -16,7 +16,8 @@
     ],
     "ignore": [
       "**/node_modules/**",
-      "tutorials/appengine-nodejs-webpack/**"
+      "tutorials/appengine-nodejs-webpack/**",
+      "tutorials/cloud-functions-rate-limiting/**"
     ]
   },
   "devDependencies": {

@@ -1,12 +1,12 @@
 ---
-title: App Engine Quickstart using Java
+title: App Engine quickstart using Java
 description: Learn how to deploy a Java sample app to App Engine.
 author: jscud
 tags: App Engine
 date_published: 2019-03-22
 ---
 
-# App Engine Quickstart
+# App Engine quickstart using Java
 
 <walkthrough-test-start-page url="/getting-started?tutorial=java_gae_quickstart_2"/>
 
@@ -54,14 +54,17 @@ Here are the steps you will be taking.
 
 ## Project setup
 
-To deploy an application you need to first create a project.
+GCP organizes resources into projects, which collect all of the related resources for a single
+application in one place.
 
-GCP organizes resources into projects. This allows you to
-collect all of the related resources for a single application in one place.
+Begin by creating a new project or selecting an existing project for this tutorial.
 
 <walkthrough-devshell-precreate/>
 
 <walkthrough-project-setup></walkthrough-project-setup>
+
+For details, see
+[Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
 ## Using Cloud Shell
 
@@ -80,19 +83,19 @@ code is cloned from your project repository to the Cloud Shell.
 Note: If the directory already exists, remove the previous files before cloning:
 
 ```bash
-rm -rf {{repo_name}}
+rm -rf appengine-try-java
 ```
 
 In Cloud Shell enter the following:
 
 ```bash
-git clone {{repo_url}}
+git clone https://github.com/GoogleCloudPlatform/appengine-try-java
 ```
 
 Then, switch to the tutorial directory:
 
 ```bash
-cd {{repo_name}}
+cd appengine-try-java
 ```
 
 ## Configuring your deployment

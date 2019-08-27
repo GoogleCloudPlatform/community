@@ -1,14 +1,13 @@
 ---
-title: App Engine Flex Quickstart using PHP
+title: App Engine flexible environment quickstart using PHP
 description: Learn how to deploy a PHP sample app to App Engine.
 author: jscud
 tags: App Engine
 date_published: 2019-03-22
 ---
 
-# App Engine Quickstart
+# App Engine flexible environment quickstart using PHP
 
-<walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/flexible/php/quickstart"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/getting-started-php" %} -->
 <!-- {% setvar repo_dir "getting-started-php/1-hello-world" %} -->
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
@@ -45,14 +44,17 @@ Here are the steps you will be taking.
 
 ## Project setup
 
-To deploy an application you need to first create a project.
+GCP organizes resources into projects, which collect all of the related resources for a single
+application in one place.
 
-GCP organizes resources into projects. This allows you to
-collect all of the related resources for a single application in one place.
+Begin by creating a new project or selecting an existing project for this tutorial.
 
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
 <walkthrough-project-setup></walkthrough-project-setup>
+
+For details, see
+[Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
 ## Using Cloud Shell
 
@@ -71,13 +73,13 @@ is cloned from your project repository to the Cloud Shell.
 Note: If the directory already exists, remove the previous files before cloning.
 
 ```bash
-git clone {{repo_url}}
+git clone https://github.com/GoogleCloudPlatform/getting-started-php
 ```
 
 Then, switch to the tutorial directory:
 
 ```bash
-cd {{repo_dir}}
+cd getting-started-php/1-hello-world
 ```
 
 ## Configuring your deployment
