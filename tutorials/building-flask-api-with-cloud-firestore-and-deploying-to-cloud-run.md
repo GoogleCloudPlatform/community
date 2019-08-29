@@ -1,6 +1,6 @@
 ---
 title: Building a Flask(Python) CRUD API with Cloud Firestore(Firebase) and Deploying on Cloud Run.
-description: Build a CRUD (Create, Read, Update, Delete) API to manage **Todo Lists** using Flask (a microframework for Python), Cloud Firestore and deploy to Cloud Run.
+description: Build a CRUD (Create, Read, Update, Delete) API to manage Todo Lists using Flask (a microframework for Python), Cloud Firestore and deploy to Cloud Run.
 author: timtech4u
 tags: Flask Framework, Python 3, REST API, Cloud Firestore, Cloud Run
 date_published: 2019-08-29
