@@ -3,7 +3,7 @@ title: Count words with Cloud Dataflow and Python
 description: Learn the Cloud Dataflow service by running a word count example in Python.
 author: jscud
 tags: Dataflow
-date_published: 2019-07-28
+date_published: 2019-07-31
 ---
 
 # Count words with Cloud Dataflow and Python
@@ -54,7 +54,7 @@ Cloud Dataflow processes data in many GCP data stores and messaging services,
 including BigQuery, Cloud Storage, and Cloud Pub/Sub. To use these services,
 you must first enable their APIs.
 
-Click the following to enable the APIs:
+Use the following to enable the APIs:
 
 <walkthrough-enable-apis apis=
 "compute.googleapis.com,dataflow,cloudresourcemanager.googleapis.com,logging,storage_component,storage_api,bigquery,pubsub">
@@ -68,9 +68,7 @@ https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,da
 
 In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
 
-Open Cloud Shell by clicking the
-<walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>
-[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
+Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
 ## Install Cloud Dataflow samples
 

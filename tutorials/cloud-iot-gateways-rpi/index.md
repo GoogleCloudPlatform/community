@@ -6,10 +6,11 @@ tags: Cloud IoT Core, Gateways, Raspberry Pi, Python, MQTT, internet of things
 date_published: 2018-12-10
 ---
 
-Alex Hong | Developer Programs Engineer | Google Cloud IoT Core  
+Alex Hong | Developer Programs Engineer | Google Cloud IoT Core
+
 Fengrui Gu | Software Engineer | Google Cloud IoT Core
 
-This tutorial shows you how to set up and use gateways on Cloud IoT Core. From the [documentation][gateways-overview], a 
+This tutorial shows you how to set up and use gateways on Cloud IoT Core. From the [documentation][gateways-overview], a
 "gateway is a device that connects less capable devices to Cloud IoT Core and performs several tasks on the device's behalf,
 such as communication, authentication, storage, and processing."
 
@@ -197,7 +198,7 @@ Next, you will manage an LED light connected to the gateway through Cloud IoT Co
 2.  Click on the registry you created. The gateway you created should be listed in this registry.
 3.  Click **Create Device**.
 4.  For **Device ID**, enter **led-light**.
-5.  Leave everything else blank or as-is. You don't need to enter a public key since the device will be authenticated 
+5.  Leave everything else blank or as-is. You don't need to enter a public key since the device will be authenticated
     through the gateway.
 6.  Bind the device to the gateway.
     - Click the browser's button to return to your registry page.
@@ -207,9 +208,9 @@ Next, you will manage an LED light connected to the gateway through Cloud IoT Co
     - Confirm by clicking **Bind** in the lower right.
 
     ![bind device to gateway](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-gateways-rpi/bind-device.png)
-    
+
 7.  Edit `led-light.py` by adding the IP address of your gateway on line 28 `ADDR = ''`.
-8.  Connect the LED to the Raspberry Pi's [GPIO Pin 4][rpi-gpio] and ground using an appropriate resistor.
+8.  Connect the LED to the Raspberry Pi's [GPIO Pin 14][rpi-gpio] and ground using an appropriate resistor.
 9.  Ensure the gateway Python sample is still running on your desktop or laptop.
 10. Run the following from your terminal on the Raspberry Pi:
 
@@ -262,7 +263,7 @@ In this section, you will set up a DHT22 sensor to send telemetry from the senso
 
 The topic should have received a lot of messages from both the LED and DHT22. In practice, services that ingest data from Pub/Sub should process that data in regular intervals as telemetry events are published.
 
-[pub-sub]: https://console.cloud.google.com/cloudpubsub 
+[pub-sub]: https://console.cloud.google.com/cloudpubsub
 
 ## Cleanup
 
