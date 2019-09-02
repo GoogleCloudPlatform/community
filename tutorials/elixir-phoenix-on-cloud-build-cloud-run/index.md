@@ -125,13 +125,13 @@ Now you set up Cloud Build to build on every code change in your GitHub reposito
 You will now configure the build files for Cloud Build and Cloud Run.
 
 1.  [Create your own dockerfile](https://cloud.google.com/cloud-build/docs/quickstart-docker) or use
-    [this template for Phoenix](./elixir-phoenix-on-cloud-build-cloud-run/Dockerfile).
+    [this template for Phoenix](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/elixir-phoenix-on-cloud-build-cloud-run/Dockerfile).
     
     This will be used by Cloud Build to build your container.
 
 1.  Create the Cloud Build configuration file, which is used by the Cloud Build trigger. You can
     [create your own build configuration file](https://cloud.google.com/cloud-build/docs/build-config),
-    or use [this template for Phoenix](./elixir-phoenix-on-cloud-build-cloud-run/cloudbuild.yaml).
+    or use [this template for Phoenix](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/elixir-phoenix-on-cloud-build-cloud-run/cloudbuild.yaml).
 
     **Note:** If you use the template, replace {GITHUB_USERNAME} and {REPO_NAME} on 4 different lines. 
 
