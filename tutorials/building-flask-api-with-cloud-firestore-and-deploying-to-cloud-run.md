@@ -1,16 +1,17 @@
 ---
-title: Building a Flask(Python) CRUD API with Cloud Firestore(Firebase) and Deploying on Cloud Run.
-description: Build a CRUD (Create, Read, Update, Delete) API to manage Todo Lists using Flask (a microframework for Python), Cloud Firestore and deploy to Cloud Run.
+title: Build and deploy a Flask CRUD API with Cloud Firestore and Cloud Run
+description: Build a CRUD (create, read, update, delete) API to manage to-do lists using Flask (a microframework for Python) and Cloud Firestore, and deploy with Cloud Run.
 author: timtech4u
 tags: Flask Framework, Python 3, REST API, Cloud Firestore, Cloud Run
-date_published: 2019-08-29
+date_published: 2019-09-03
 ---
 
+In this tutorial, you build a CRUD (create, read, update, delete) API to manage to-do lists using Flask (a
+microframework for Python), Cloud Firestore (a flexible, scalable database for mobile, web, and server development from
+Firebase), and deploy the API to  [Cloud Run](https://cloud.google.com/run/) (a serverless environment to run containers
+on Google Cloud Platform).
 
-> 
-In this tutorial, you will build a CRUD (Create, Read, Update, Delete) API to manage **Todo Lists** using Flask (a microframework for Python), Cloud Firestore (a flexible, scalable database for mobile, web, and server development from Firebase) and deploy the API to  [Cloud Run](https://cloud.google.com/run/)  (a serverless environment to run containers on Google Cloud Platform).
-
- [Cloud Firestore](https://firebase.google.com/docs/firestore)  stores data as collections of documents, it also features richer, faster queries and scales further than the  [Realtime Database](https://firebase.google.com/docs/database).  
+[Cloud Firestore](https://firebase.google.com/docs/firestore)  stores data as collections of documents, it also features richer, faster queries and scales further than the  [Realtime Database](https://firebase.google.com/docs/database).  
 You would be able to manage *Todo List* documents of varying fields via the API.
 
 # Requirements
@@ -22,22 +23,19 @@ You would be able to manage *Todo List* documents of varying fields via the API.
 -  [Create a new Firebase project](https://console.firebase.google.com), or use an existing one.
   - Click on **Database** and **Create database** in the Cloud Firestore section.
   - Set your [Security Rules](https://firebase.google.com/docs/firestore/security/get-started) and [Location](https://firebase.google.com/docs/projects/locations)
-  -  You should have an initial screen similar to:  ![Screenshot from 2019-08-28 15-33-32.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1567002992203/utHBNSvvO.png)
+  -  You should have an initial screen similar to:  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/v1567002992203/utHBNSvvO.png)
 -  Download your Firebase Service Account Key
   - Click on the **Settings Icon** at the top of your dashboard
   - Click on the **Service Account** Tab
   - Select **Python** option for **Admin SDK configuration snippet** and Click on **Generate new private key** and save it as **`key.json`**
-![Screenshot from 2019-08-28 21-01-04.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1567028708091/e2TxYLV5d.png)
+![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/v1567028708091/e2TxYLV5d.png)
 
 -  [Create a new Google Cloud Platform (GCP) project](https://console.cloud.google.com/project?_ga=2.69989718.-735545701.1566156833), or use an existing one (you would need this to deploy to Cloud Run)
   - Install [Cloud SDK](https://cloud.google.com/sdk/) or use Cloud Shell available on the Googl
   - (Optional) To set up Continuous Deployment check out [this](https://fullstackgcp.com/simplified-continuous-deployment-on-google-cloud-platform-bc5b0a025c4e)
-  -  Ensure you can run **`gcloud -h`** on your shell.  ![Screenshot from 2019-08-29 00-01-27.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1567033394400/wH8YC5i0S.png)
+  -  Ensure you can run **`gcloud -h`** on your shell.  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/wH8YC5i0S.png)
 
-# Source Code
-
-![coding.gif](https://cdn.hashnode.com/res/hashnode/image/upload/v1567059394370/2R4J0VjHA.gif)
-Time to write some codes.
+# Source code
 
 ```python
 # app.py
@@ -180,13 +178,11 @@ The steps to add the Cloud Run Button to your repository are:
 - Copy & paste this markdown into your **`README.md`** file
   ```
 [![Run on Google Cloud](https://storage.googleapis.com/cloudrun/button.svg)](https://console.cloud.google.com/cloudshell/editor?shellonly=true&cloudshell_image=gcr.io/cloudrun/button&cloudshell_git_repo=YOUR_HTTP_GIT_URL)
-  ```
+
 - Replace **`YOUR_HTTP_GIT_URL`** with your HTTP git URL, like:
 **`https://github.com/Timtech4u/flask-firestore.git`**
 - Ensure that your repository has a **`Dockerfile`**
   
-![Screenshot from 2019-08-29 07-12-49.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1567060137292/KeF_Xa64m.png)
-
 # Cleaning up
 
 To prevent unnecessary charges, clean up the resources created for this tutorial, delete the resources or projects used (if you created a new project).
