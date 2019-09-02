@@ -11,8 +11,9 @@ microframework for Python) and Cloud Firestore (a flexible, scalable database fo
 Firebase), and you deploy the API to [Cloud Run](https://cloud.google.com/run/) (a serverless environment to run containers
 on Google Cloud Platform).
 
-[Cloud Firestore](https://firebase.google.com/docs/firestore) stores data as collections of documents, it also features richer, faster queries and scales further than the  [Realtime Database](https://firebase.google.com/docs/database).  
-You would be able to manage *Todo List* documents of varying fields via the API.
+[Cloud Firestore](https://firebase.google.com/docs/firestore) stores data as collections of documents. It also features
+richer, faster queries and scales further than the [Firebase Realtime Database](https://firebase.google.com/docs/database).
+You can manage to-do list fields through the API.
 
 # Requirements
 
