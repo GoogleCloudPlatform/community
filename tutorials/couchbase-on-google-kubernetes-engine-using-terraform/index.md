@@ -1,9 +1,9 @@
 ---
 title: Provision Couchbase on Google Kubernetes Engine using Terraform
 description: Learn how to provision a Couchbase Autonomous Operator and Cluster inside a Google Kubernetes Engine cluster using Terraform scripts.
-author: Kishore Allwynraj
+author: kishoreallwynraj
 tags: Google Kubernetes Engine, Couchbase Autonomous Operator, Couchbase Cluster, Terraform
-date_published: 
+date_published: 2019-09-04
 ---
 
 ## Introduction
