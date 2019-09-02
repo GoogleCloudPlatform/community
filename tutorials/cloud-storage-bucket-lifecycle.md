@@ -48,7 +48,7 @@ Changes to a lifecycle rule take up to 24 hours to take effect.
 
 ## Clean up
 
-To clean up the resources from this tutorial, you can either delete the bucket, or you can remove the lifecycle rule that
+To clean up the resources for this tutorial, you can either delete the bucket or remove the lifecycle rule that
 you added.
 
 To remove the rule, do the following:
@@ -59,7 +59,7 @@ To remove the rule, do the following:
 
 3.  Click the delete button (trash-can icon) for the rule that you created.
 
-## Conclusion
+## What's next
 
 Now that you know how to configure bucket lifecycles in Cloud Storage, here are some things you may want to look at:
 
