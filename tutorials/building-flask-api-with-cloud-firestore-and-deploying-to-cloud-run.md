@@ -7,11 +7,11 @@ date_published: 2019-09-03
 ---
 
 In this tutorial, you build a CRUD (create, read, update, delete) API to manage to-do lists using Flask (a
-microframework for Python), Cloud Firestore (a flexible, scalable database for mobile, web, and server development from
-Firebase), and deploy the API to  [Cloud Run](https://cloud.google.com/run/) (a serverless environment to run containers
+microframework for Python) and Cloud Firestore (a flexible, scalable database for mobile, web, and server development from
+Firebase), and you deploy the API to [Cloud Run](https://cloud.google.com/run/) (a serverless environment to run containers
 on Google Cloud Platform).
 
-[Cloud Firestore](https://firebase.google.com/docs/firestore)  stores data as collections of documents, it also features richer, faster queries and scales further than the  [Realtime Database](https://firebase.google.com/docs/database).  
+[Cloud Firestore](https://firebase.google.com/docs/firestore) stores data as collections of documents, it also features richer, faster queries and scales further than the  [Realtime Database](https://firebase.google.com/docs/database).  
 You would be able to manage *Todo List* documents of varying fields via the API.
 
 # Requirements
@@ -23,7 +23,7 @@ You would be able to manage *Todo List* documents of varying fields via the API.
 -  [Create a new Firebase project](https://console.firebase.google.com), or use an existing one.
   - Click on **Database** and **Create database** in the Cloud Firestore section.
   - Set your [Security Rules](https://firebase.google.com/docs/firestore/security/get-started) and [Location](https://firebase.google.com/docs/projects/locations)
-  -  You should have an initial screen similar to:  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/utHBNSvvO.png)
+  -  You should have an initial screen similar to the following:  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/utHBNSvvO.png)
 -  Download your Firebase Service Account Key
   - Click on the **Settings Icon** at the top of your dashboard
   - Click on the **Service Account** Tab
@@ -33,7 +33,7 @@ You would be able to manage *Todo List* documents of varying fields via the API.
 -  [Create a new Google Cloud Platform (GCP) project](https://console.cloud.google.com/project?_ga=2.69989718.-735545701.1566156833), or use an existing one (you would need this to deploy to Cloud Run)
   - Install [Cloud SDK](https://cloud.google.com/sdk/) or use Cloud Shell available on the Googl
   - (Optional) To set up Continuous Deployment check out [this](https://fullstackgcp.com/simplified-continuous-deployment-on-google-cloud-platform-bc5b0a025c4e)
-  -  Ensure you can run **`gcloud -h`** on your shell.  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/wH8YC5i0S.png)
+  -  Ensure that you can run **`gcloud -h`** on your shell.  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/wH8YC5i0S.png)
 
 # Source code
 
@@ -80,7 +80,7 @@ def read():
     """
     try:
         # Check if ID was passed to URL query
-        todo_id = request.args.get('id')    
+        todo_id = request.args.get('id')
         if todo_id:
             todo = todo_ref.document(todo_id).get()
             return jsonify(todo.to_dict()), 200
@@ -163,33 +163,40 @@ steps:
   args: ['beta', 'run', 'deploy', 'todo', '--image', 'gcr.io/$PROJECT_ID/todo:latest', '--region', 'us-central1', '--allow-unauthenticated', '--platform', 'managed']
 ```
 
-In addition, you can also import your **`key.json`** Firebase service account file into the same directory as it is not advisable to have it pushed to your source repository.  A fast approach to this is to add an additional Cloud Build step that downloads the service account from a private location such as a Google Cloud Storage Bucket.
+In addition, you can also import your **`key.json`** Firebase service account file into the same directory as it is not advisable to have it pushed to your source repository. A fast approach to this is to add an additional Cloud Build step that downloads the service account from a private location such as a Google Cloud Storage Bucket.
 
 ## Execute Build & Deploy Steps on Cloud Shell
-Run the following command to build your Docker container and push to Container Registry as specified in the **cloudbuild.yaml** file.  This also performs an extra step of deploying to Cloud Run.
+Run the following command to build your Docker container and push to Container Registry as specified in the **cloudbuild.yaml** file. This also performs an extra step of deploying to Cloud Run.
 
 ```
 gcloud builds submit --config cloudbuild.yaml .
 ```
 
 ## Deploy using Cloud Run Button
-Recently, Google Cloud announced  [Cloud Run Button](https://cloud.google.com/blog/products/serverless/introducing-cloud-run-button-click-to-deploy-your-git-repos-to-google-cloud), an image and link you can add to the README of your source code repositories to allow others to deploy your application to Google Cloud Platform using Cloud Run.
-The steps to add the Cloud Run Button to your repository are:
-- Copy & paste this markdown into your **`README.md`** file
-  ```
-[![Run on Google Cloud](https://storage.googleapis.com/cloudrun/button.svg)](https://console.cloud.google.com/cloudshell/editor?shellonly=true&cloudshell_image=gcr.io/cloudrun/button&cloudshell_git_repo=YOUR_HTTP_GIT_URL)
+Recently, Google announced [Cloud Run Button](https://cloud.google.com/blog/products/serverless/introducing-cloud-run-button-click-to-deploy-your-git-repos-to-google-cloud), an image and link you can add to the README of your source code repositories to allow others to deploy your application to Google Cloud Platform using Cloud Run.
+The steps to add the Cloud Run Button to your repository are as follows:
+- Copy and paste this markdown into your **`README.md`** file:
+    
+        [![Run on Google Cloud](https://storage.googleapis.com/cloudrun/button.svg)](https://console.cloud.google.com/cloudshell/editor?shellonly=true&cloudshell_image=gcr.io/cloudrun/button&cloudshell_git_repo=[YOUR_HTTP_GIT_URL])
 
-- Replace **`YOUR_HTTP_GIT_URL`** with your HTTP git URL, like:
-**`https://github.com/Timtech4u/flask-firestore.git`**
-- Ensure that your repository has a **`Dockerfile`**
+- Replace **`[YOUR_HTTP_GIT_URL]`** with your HTTP git URL, as in the following example:
+
+        [![Run on Google Cloud](https://storage.googleapis.com/cloudrun/button.svg)](https://console.cloud.google.com/cloudshell/editor?shellonly=true&cloudshell_image=gcr.io/cloudrun/button&cloudshell_git_repo=https://github.com/GoogleCloudPlatform/flask-firestore.git)
+
+    This creates a button like the following:
+
+    [![Run on Google Cloud](https://storage.googleapis.com/cloudrun/button.svg)](https://console.cloud.google.com/cloudshell/editor?shellonly=true&cloudshell_image=gcr.io/cloudrun/button&cloudshell_git_repo=https://github.com/GoogleCloudPlatform/flask-firestore.git)
+
+- Ensure that your repository has a **`Dockerfile`**.
   
 # Cleaning up
 
-To prevent unnecessary charges, clean up the resources created for this tutorial, delete the resources or projects used (if you created a new project).
+To prevent unnecessary charges, clean up the resources created for this tutorial. This includes deleting any projects 
+that you created for this tutorial.
 
 # Useful Links
--  [Source Codes on GitHub](https://github.com/Timtech4u/flask-firestore) 
--  [Flask Documenation](https://flask.palletsprojects.com/en/1.1.x/)
--  [Cloud Firestore Documentation](https://firebase.google.com/docs/firestore) 
--  [Cloud Run Documentation](https://cloud.google.com/run/docs/) 
--  [Cloud Build Documentation](https://cloud.google.com/cloud-build/docs/)
+-  [Source code on GitHub](https://github.com/Timtech4u/flask-firestore) 
+-  [Flask documenation](https://flask.palletsprojects.com/en/1.1.x/)
+-  [Cloud Firestore documentation](https://firebase.google.com/docs/firestore) 
+-  [Cloud Run documentation](https://cloud.google.com/run/docs/) 
+-  [Cloud Build documentation](https://cloud.google.com/cloud-build/docs/)
