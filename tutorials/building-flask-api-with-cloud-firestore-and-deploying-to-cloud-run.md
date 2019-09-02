@@ -15,25 +15,32 @@ on Google Cloud Platform).
 You would be able to manage *Todo List* documents of varying fields via the API.
 
 # Requirements
+
 -  [Python3.7](https://www.python.org/downloads/) 
 -  [Flask](https://github.com/pallets/flask) 
--   [Firebase Admin Python SDK](https://github.com/firebase/firebase-admin-python) 
+-  [Firebase Admin Python SDK](https://github.com/firebase/firebase-admin-python) 
 
 # Before you begin
--  [Create a new Firebase project](https://console.firebase.google.com), or use an existing one.
-  - Click on **Database** and **Create database** in the Cloud Firestore section.
-  - Set your [Security Rules](https://firebase.google.com/docs/firestore/security/get-started) and [Location](https://firebase.google.com/docs/projects/locations)
-  -  You should have an initial screen similar to the following:  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/utHBNSvvO.png)
--  Download your Firebase Service Account Key
-  - Click on the **Settings Icon** at the top of your dashboard
-  - Click on the **Service Account** Tab
-  - Select **Python** option for **Admin SDK configuration snippet** and Click on **Generate new private key** and save it as **`key.json`**
-![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/e2TxYLV5d.png)
 
--  [Create a new Google Cloud Platform (GCP) project](https://console.cloud.google.com/project?_ga=2.69989718.-735545701.1566156833), or use an existing one (you would need this to deploy to Cloud Run)
-  - Install [Cloud SDK](https://cloud.google.com/sdk/) or use Cloud Shell available on the Googl
-  - (Optional) To set up Continuous Deployment check out [this](https://fullstackgcp.com/simplified-continuous-deployment-on-google-cloud-platform-bc5b0a025c4e)
-  -  Ensure that you can run **`gcloud -h`** on your shell.  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/wH8YC5i0S.png)
+-   [Create a new Firebase project](https://console.firebase.google.com), or use an existing one.
+    -   Click **Database** and **Create database** in the Cloud Firestore section.
+    -   Set your [security rules](https://firebase.google.com/docs/firestore/security/get-started) and
+    [location](https://firebase.google.com/docs/projects/locations).
+    
+    You should have an initial screen similar to the following:  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/utHBNSvvO.png)
+    
+-   Download your Firebase Service Account Key.
+    -   Click the **Settings** icon at the top of the dashboard.
+    -   Click the **Service Account** tab.
+    -   Select **Python** option for **Admin SDK configuration snippet**, click **Generate new private key**, and save it
+        as **`key.json`**.  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/e2TxYLV5d.png)
+
+-   [Create a new GCP project](https://console.cloud.google.com/project?_ga=2.69989718.-735545701.1566156833), or use an 
+    existing one. You need the GCP project so that you can deploy to Cloud Run.
+-   Open [Cloud Shell](https://cloud.google.com/shell/) or install the [Cloud SDK](https://cloud.google.com/sdk/docs/).
+-   (Optional) To set up continuous deployment follow the instructions
+    [here](https://fullstackgcp.com/simplified-continuous-deployment-on-google-cloud-platform-bc5b0a025c4e).
+-   Ensure that you can run **`gcloud -h`** on in Cloud Shell.  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/wH8YC5i0S.png)
 
 # Source code
 
