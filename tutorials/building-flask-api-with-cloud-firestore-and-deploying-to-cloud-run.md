@@ -23,25 +23,25 @@ You can manage to-do list fields through the API.
 
 # Before you begin
 
--   [Create a new Firebase project](https://console.firebase.google.com), or use an existing one.
-    -   Click **Database** and **Create database** in the Cloud Firestore section.
-    -   Set your [security rules](https://firebase.google.com/docs/firestore/security/get-started) and
+1.  [Create a new Firebase project](https://console.firebase.google.com), or use an existing one.
+    1.  Click **Database** and **Create database** in the Cloud Firestore section.
+    1.  Set your [security rules](https://firebase.google.com/docs/firestore/security/get-started) and
     [location](https://firebase.google.com/docs/projects/locations).
     
     You should have an initial screen similar to the following:  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/utHBNSvvO.png)
     
--   Download your Firebase Service Account Key.
-    -   Click the **Settings** icon at the top of the dashboard.
-    -   Click the **Service Account** tab.
-    -   Select **Python** option for **Admin SDK configuration snippet**, click **Generate new private key**, and save it
+1.  Download your Firebase Service Account Key.
+    1.  Click the **Settings** icon at the top of the dashboard.
+    1.  Click the **Service Account** tab.
+    1.  Select **Python** option for **Admin SDK configuration snippet**, click **Generate new private key**, and save it
         as `key.json`.  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/e2TxYLV5d.png)
 
--   [Create a new GCP project](https://console.cloud.google.com/project?_ga=2.69989718.-735545701.1566156833), or use an 
+1.  [Create a new GCP project](https://console.cloud.google.com/project?_ga=2.69989718.-735545701.1566156833), or use an 
     existing one. You need the GCP project so that you can deploy to Cloud Run.
--   Open [Cloud Shell](https://cloud.google.com/shell/) or install the [Cloud SDK](https://cloud.google.com/sdk/docs/).
--   (Optional) To set up continuous deployment follow the instructions
+1.  Open [Cloud Shell](https://cloud.google.com/shell/) or install the [Cloud SDK](https://cloud.google.com/sdk/docs/).
+1.  (Optional) To set up continuous deployment follow the instructions
     [here](https://fullstackgcp.com/simplified-continuous-deployment-on-google-cloud-platform-bc5b0a025c4e).
--   Ensure that you can run `gcloud -h` on in Cloud Shell.  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/wH8YC5i0S.png)
+1.  Ensure that you can run `gcloud -h` on in Cloud Shell.  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/wH8YC5i0S.png)
 
 # Source code
 
@@ -187,11 +187,11 @@ application to GCP using Cloud Run.
 
 The steps to add the Cloud Run Button to your repository are as follows:
 
--   Copy and paste this Markdown into your `README.md` file:
+1.  Copy and paste this Markdown into your `README.md` file:
     
         [![Run on Google Cloud](https://storage.googleapis.com/cloudrun/button.svg)](https://console.cloud.google.com/cloudshell/editor?shellonly=true&cloudshell_image=gcr.io/cloudrun/button&cloudshell_git_repo=[YOUR_HTTP_GIT_URL])
 
-- Replace `[YOUR_HTTP_GIT_URL]` with your HTTP git URL, as in the following example:
+1.  Replace `[YOUR_HTTP_GIT_URL]` with your HTTP git URL, as in the following example:
 
         [![Run on Google Cloud](https://storage.googleapis.com/cloudrun/button.svg)](https://console.cloud.google.com/cloudshell/editor?shellonly=true&cloudshell_image=gcr.io/cloudrun/button&cloudshell_git_repo=https://github.com/GoogleCloudPlatform/flask-firestore.git)
 
@@ -199,7 +199,7 @@ The steps to add the Cloud Run Button to your repository are as follows:
 
     [![Run on Google Cloud](https://storage.googleapis.com/cloudrun/button.svg)](https://console.cloud.google.com/cloudshell/editor?shellonly=true&cloudshell_image=gcr.io/cloudrun/button&cloudshell_git_repo=https://github.com/GoogleCloudPlatform/flask-firestore.git)
 
-- Ensure that your repository has a `Dockerfile`.
+1.  Ensure that your repository has a `Dockerfile`.
   
 # Cleaning up
 
