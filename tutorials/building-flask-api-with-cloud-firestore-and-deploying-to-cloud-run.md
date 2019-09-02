@@ -169,7 +169,7 @@ You can also import your `key.json` Firebase service account file into the same 
 push it to your source repository. A fast approach to this is to add an additional Cloud Build step that downloads the 
 service account from a private location, such as a Cloud Storage bucket.
 
-## Execute the build and deploy steps on Cloud Shell
+## Execute the build and deploy steps with Cloud Shell
 
 Run the following command to build your Docker container and push to Container Registry as specified in the 
 `cloudbuild.yaml` file.
@@ -178,7 +178,7 @@ Run the following command to build your Docker container and push to Container R
 
  This also performs the step of deploying to Cloud Run.
 
-## Deploy using Cloud Run Button
+## (Optional) Deploy using the Cloud Run Button
 
 Recently, Google announced
 [Cloud Run Button](https://cloud.google.com/blog/products/serverless/introducing-cloud-run-button-click-to-deploy-your-git-repos-to-google-cloud),
