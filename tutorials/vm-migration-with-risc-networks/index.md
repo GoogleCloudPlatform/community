@@ -9,7 +9,7 @@ date_published: 2019-09-03
 This article walks you through a VM migration from VMware to Google Cloud Platform (GCP), from planning to completion.
 Integrations between GCP, RISC Networks (now
 [Flexera](https://www.flexera.com/about-us/press-center/flexera-acquires-risc-networks.html)),
-and Migrate for Compute Engine (formerly Velostrata) enable you to export your plans directly into Migrate for Compute 
+and Migrate for Compute Engine (formerly Velostrata) enable you to export your plans into Migrate for Compute 
 Engine.
 
 ## Prerequisites
@@ -45,7 +45,7 @@ The RISC Networks RN150 virtual appliance handles discovery.
 1.  Extract the contents of the file.
 1.  Use VMware Player or vSphere vCenter to install the OVF template extracted from the ZIP file.
 
-For more information abut downloading and deploying the RN150 virtual appliance, see
+For more information about downloading and deploying the RN150 virtual appliance, see
 [this video](https://www.youtube.com/watch?v=GsunC6IaAq4).
 
 ### Sign in to the RN150 virtual appliance
@@ -159,7 +159,7 @@ You are now ready to plan a migration using the information collected by the RN1
 1.  Select **Collect Data > Licensing**.
 1.  Select the **License** checkbox for only those assets that you would like to collect additional data from for planning. 
 
-For more information, see [this video_](https://www.youtube.com/watch?v=nYCEaXwvl1w).
+For more information, see [this video](https://www.youtube.com/watch?v=nYCEaXwvl1w).
 
 After you have collected data for two to four weeks, RISC Networks can automatically determine the dependencies of your 
 applications for planning your migration.
