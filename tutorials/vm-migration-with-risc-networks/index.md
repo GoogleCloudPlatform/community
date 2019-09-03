@@ -175,7 +175,7 @@ For a full description of the application stacks feature, see [this video](http:
 
 1.  Sign in to the [RISC Networks website](https://portal.riscnetworks.com).
 1.  Click **Add Intelligence**, and choose **Available Reports** near the bottom of the menu.
-1.  Click **Velostrata Export**.  ![image](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-risc-networks/seamlessmigrat--qdj7zg672hg.png)
+1.  Click **Velostrata Export** in the **Available Reports** list.  ![image](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-risc-networks/seamlessmigrat--qdj7zg672hg.png)
 1.  Select the application stack from the dropdown.
 1.  Fill out any missing entries.
 1.  Click **Save**.
