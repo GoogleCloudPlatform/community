@@ -8,8 +8,8 @@ date_published: 2019-09-04
 
 ## Introduction
 
-This guide helps you learn how to provision a Couchbase Autonomous Operator and cluster inside a Kubernetes Engine cluster
-in Google Cloud Platform (GCP) using Terraform scripts.
+This tutorial helps you learn how to provision a Couchbase Autonomous Operator and cluster inside a Kubernetes Engine 
+cluster in Google Cloud Platform (GCP) using Terraform scripts.
 
 ## Prerequisites
 
@@ -19,12 +19,12 @@ in Google Cloud Platform (GCP) using Terraform scripts.
     You need the project ID later in this tutorial.
 -   **GCP service account key**: Terraform will access your GCP account by using a service account key. You
     can [create one][gcpcreatesvcacc] in the GCP Console. While creating the key, assign the role as **Project > Editor**.
--   **Terraform**: You can install Terraform with [these instructions][terraform].
 -   **Cloud SDK**: You can install the Cloud SDK with [these instructions][googlesdk]. This SDK installs `kubectl`, which
     is required for this tutorial. Go ahead and log in to your project using `gcloud`.
--   **Helm**: You can install Helm with [these instructions][helm].
 -   **Google Kubernetes Engine API**: You can enable the Google Kubernetes Engine API for your project in
     the [GCP Console][gcpk8api].
+-   **Terraform**: You can install Terraform with [these instructions][terraform].
+-   **Helm**: You can install Helm with [these instructions][helm].
 
 [gcpcreateaccount]: https://console.cloud.google.com/freetrial/
 [gcpfree]: https://cloud.google.com/free/
@@ -47,7 +47,7 @@ Create a directory for the examples in this tutorial, create a file named `main.
     }
 
 Be sure to replace the `[SERVICE_ACCOUNT]` and `[PROJECT_ID]` with the file name and the ID you got while setting up your
-GCP.
+GCP project.
 
 The provider block is used to configure the named provider, in this case `google`. A provider is responsible for creating 
 and managing the resources. Multiple provider blocks can exist in the Terraform file if you need to manage resources from 
@@ -90,9 +90,9 @@ you use the `local-exec` provisioner:
 
 For information about other provisioners available in Terraform, see the [Terraform documentation][tfprovisioner].
 
-Now run the `terraform apply` command. This command outputs the same details as the `terraform plan`, and it also asks
-for confirmation from you to proceed further. After you type `yes`, Terraform creates the cluster. The cluster creation
-takes a few minutes. You can verify the creation of the cluster in the GCP Console.
+Now run the `terraform apply` command. This command outputs the same details as the `terraform plan` command, and it also
+asks for confirmation from you to proceed further. After you enter `yes`, Terraform creates the cluster. The cluster 
+creation takes a few minutes. You can verify the creation of the cluster in the GCP Console.
 
 To verify that the cluster credentials are saved in your kube config, run `kubectl config view`. The output should look 
 something like this:
