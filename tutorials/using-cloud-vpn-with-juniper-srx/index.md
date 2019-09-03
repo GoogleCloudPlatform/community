@@ -1,78 +1,20 @@
 ---
-title: Google Cloud VPN Interop Guide for Juniper SRX.
+title: Google Cloud VPN interoperability guide for Juniper SRX
 description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on Google Cloud Platform and Juniper SRX300.
 author: antiabong,ashisverm
 tags: VPN, interop, Juniper, SRX.
-date_published: 2019-07-18
+date_published: 2019-09-04
 ---
-
-# Using Cloud VPN with Juniper SRX300
-
-Learn how to build site-to-site IPsec VPNs between [Cloud VPN](https://cloud.google.com/vpn/docs/) on Google Cloud Platform (GCP) and Juniper SRX300
-
-- [Using Cloud VPN with Juniper SRX300](#Using-Cloud-VPN-with-Juniper-SRX300)
-- [Introduction](#introduction)
-- [Topology](#topology)
-- [Product environment](#product-environment)
-- [Before you begin](#before-you-begin)
-    - [GCP account and project](#gcp-account-and-project)
-    - [Permissions](#permissions)
-    - [Licenses and modules](#licenses-and-modules)
-- [Configure the GCP side](#configure-the-gcp-side)
-    - [Initial tasks](#initial-tasks)
-        - [Select a GCP project name](#select-a-gcp-project-name)
-        - [Create a custom VPC network and subnet](#create-a-custom-vpc-network-and-subnet)
-        - [Create the GCP external IP address](#create-the-gcp-external-ip-address)
-    - [Configuring an IPsec VPN using dynamic routing](#configuring-an-ipsec-vpn-using-dynamic-routing)
-        - [Configure the VPN gateway](#configure-the-vpn-gateway)
-        - [Configure firewall rules](#configure-firewall-rules)
-    - [Configuring route-based IPsec VPN using static routing](#configuring-route-based-ipsec-vpn-using-static-routing)
-- [Configure the Juniper SRX300 side](#configure-the-juniper-srx300-side)
-    - [Creating the base network configuration](#creating-the-base-network-configuration)
-    - [Creating the base VPN gateway configuration](#creating-the-base-vpn-gateway-configuration)
-    - [GCP-compatible settings for IPSec and IKE](#gcp-compatible-settings-for-ipsec-and-ike)
-        - [Configure the IKE proposal and policy](#configure-the-ike-proposal-and-policy)
-        - [Configure the IKEv2 keyring](#configure-the-ikev2-keyring)
-        - [Configure the IKEv2 profile](#configure-the-ikev2-profile)
-        - [Configure the IPsec security association (SA)](#configure-the-ipsec-security-association-sa)
-        - [Configure the IPsec transform set](#configure-the-ipsec-transform-set)
-        - [Configure the IPsec static virtual tunnel interface (SVTI)](#configure-the-ipsec-static-virtual-tunnel-interface-svti)
-    - [Configuring the dynamic routing protocol](#configuring-the-dynamic-routing-protocol)
-    - [Configuring static routing](#configuring-static-routing)
-    - [Saving the configuration](#saving-the-configuration)
-    - [Testing the configuration](#testing-the-configuration)
-- [Advanced VPN configurations](#advanced-vpn-configurations)
-    - [Configuring VPN redundancy](#configuring-vpn-redundancy)
-        - [Configuring SRX300 dynamic route priority settings](#Configuring-Juniper-SRX300-dynamic-route-priority-settings-(Using-BGP-MED))
-        - [Configuring Juniper SRX300 static route metrics](#Configuring-Juniper-SRX300-static-route-metrics)
-        - [Configuring GCP BGP route priority](#configuring-gcp-bgp-route-priority)
-        - [Configuring GCP static route priority](#configuring-gcp-static-route-priority)
-    - [Getting higher throughput](#getting-higher-throughput)
-        - [Configuring GCP for higher throughput](#configuring-gcp-for-higher-throughput)
-        - [Configuring Juniper SRX300 for higher throughput](#Configuring-Juniper-SRX300-for-higher-throughput)
-        - [Testing the higher-throughput configuration](#testing-the-higher-throughput-configuration)
-- [Troubleshooting IPsec on Juniper SRX300](#troubleshooting-IPsec-on-Juniper-SRX300)
-- [Reference documentation](#reference-documentation)
-    - [GCP documentation](#gcp-documentation)
-    - [Juniper SRX300 documentation](#Juniper-SRX300-documentation)
-- [Appendix: Using gcloud commands](#appendix-using-gcloud-commands)
-    - [Running gcloud commands](#running-gcloud-commands)
-    - [Configuration parameters and values](#configuration-parameters-and-values)
-    - [Setting environment variables for gcloud command parameters](#setting-environment-variables-for-gcloud-command-parameters)
-    - [Configuring an IPsec VPN using dynamic routing](#configuring-an-ipsec-vpn-using-dynamic-routing)
-    - [Configuring route-based IPsec VPN using static routing](#configuring-route-based-ipsec-vpn-using-static-routing)
 
 Juniper, SRX and Junos are trademarks of Juniper Networks Inc or its affiliates in the United States and/or other countries.
 
 _Disclaimer: This interoperability guide is intended to be informational in nature and shows examples only. Customers should verify this information by testing it._
 
-Author: Richard Antiabong; richardantiabong@gmail.com |Ashish Verma
-
 ## Introduction
 
-This guide walks you through the process of configuring Juniper SRX300 for integration with the [Cloud VPN service](https://cloud.google.com/vpn/docs) on GCP.
+Learn how to build site-to-site IPsec VPNs between [Cloud VPN](https://cloud.google.com/vpn/docs/) on Google Cloud Platform (GCP) and Juniper SRX300
 
-For more information about Cloud VPN, see the [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).
+For more information about Cloud VPN, see the [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
 
 ## Terminology
 
@@ -97,11 +39,9 @@ For detailed topology information, see the following resources:
 -  For basic VPN topologies, see [Cloud VPN Overview](https://cloud.google.com/vpn/docs/concepts/overview).
 -  For redundant topologies,  the [Cloud VPN documentation on redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns). 
 
+This tutorial uses the topology shown below as a guide to create the SRX300 configurations and GCP environment
 
-
-For this tutorial, we will be using the topology shown below as guide to create the SRX300 configurations, and GCP environment
-
-![Topology](https://raw.githubusercontent.com/antiabong/community/master/tutorials/using-cloud-vpn-with-juniper-srx/Juniper-SRX-VPN.png)
+![Topology](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-juniper-srx/Juniper-SRX-VPN.png)
 
 ## Product environment
 
