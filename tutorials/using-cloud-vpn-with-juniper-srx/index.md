@@ -6,13 +6,16 @@ tags: VPN, interop, Juniper, SRX.
 date_published: 2019-09-04
 ---
 
-Juniper, SRX and Junos are trademarks of Juniper Networks Inc or its affiliates in the United States and/or other countries.
+Juniper, SRX, and Junos are trademarks of Juniper Networks, Inc. or its affiliates in the United States and/or other 
+countries.
 
-_Disclaimer: This interoperability guide is intended to be informational in nature and shows examples only. Customers should verify this information by testing it._
+_Disclaimer: This interoperability guide is intended to be informational in nature and shows examples only. Customers
+should verify this information by testing it._
 
 ## Introduction
 
-Learn how to build site-to-site IPsec VPNs between [Cloud VPN](https://cloud.google.com/vpn/docs/) on Google Cloud Platform (GCP) and Juniper SRX300
+Learn how to build site-to-site IPsec VPNs between [Cloud VPN](https://cloud.google.com/vpn/docs/) on Google Cloud
+Platform (GCP) and Juniper SRX300
 
 For more information about Cloud VPN, see the [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
 
@@ -20,26 +23,32 @@ For more information about Cloud VPN, see the [Cloud VPN overview](https://cloud
 
 Below are definitions of terms used throughout this guide.
 
--  **GCP VPC network**—A single virtual network within a single GCP project.
--  **On-premises gateway**—The VPN device on the non-GCP side of the connection, which is usually a device in a physical data center or in another cloud provider's network. GCP instructions are written from the point of view of the GCP VPC network, so "on-premises gateway" refers to the gateway that's connecting _to_ GCP.
--  **External IP address** or **GCP peer address**—a single static IP address within a GCP project that exists at the edge of the GCP network.
--  **Static routing**—Manually specifying the route to subnets on the GCP side and to the on-premises side of the VPN gateway.
--  **Dynamic routing**—GCP dynamic routing for VPN using the [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
+-   **GCP VPC network**: A single virtual network within a single GCP project.
+-   **On-premises gateway**: The VPN device on the non-GCP side of the connection, which is usually a device in a physical 
+    data center or in another cloud provider's network. GCP instructions are written from the point of view of the GCP VPC
+    network, so *on-premises gateway* refers to the gateway that's connecting *to* GCP.
+-   **External IP address** or **GCP peer address**: A single static IP address within a GCP project that exists at the edge
+    of the GCP network.
+-   **Static routing**: Manually specifying the route to subnets on the GCP side and to the on-premises side of the VPN 
+    gateway.
+-   **Dynamic routing**: GCP dynamic routing for VPN using the
+    [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
 
 ## Topology
 
 Cloud VPN supports the following topologies:
 
--  A site-to-site IPsec VPN tunnel configuration using [Cloud Router](https://cloud.google.com/router/docs/) and providing dynamic routing with the
-  [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
--  A site-to-site IPsec VPN tunnel configuration using static routing.
+-   A site-to-site IPsec VPN tunnel configuration using [Cloud Router](https://cloud.google.com/router/docs/) and 
+    providing dynamic routing with the [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
+-   A site-to-site IPsec VPN tunnel configuration using static routing.
 
 For detailed topology information, see the following resources:
 
--  For basic VPN topologies, see [Cloud VPN Overview](https://cloud.google.com/vpn/docs/concepts/overview).
--  For redundant topologies,  the [Cloud VPN documentation on redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns). 
+-   For basic VPN topologies, see [Cloud VPN overview](https://cloud.google.com/vpn/docs/concepts/overview).
+-   For redundant topologies, the
+    [Cloud VPN documentation on redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns). 
 
-This tutorial uses the topology shown below as a guide to create the SRX300 configurations and GCP environment
+This tutorial uses the topology shown below as a guide to create the SRX300 configurations and GCP environment:
 
 ![Topology](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-juniper-srx/Juniper-SRX-VPN.png)
 
@@ -47,17 +56,17 @@ This tutorial uses the topology shown below as a guide to create the SRX300 conf
 
 The equipment used in this guide is as follows:
 
--  Vendor: Juniper
--  Model: SRX300
--  Software release: JUNOS Software Release [15.1X49-D100.6]
+-   Vendor: Juniper
+-   Model: SRX300
+-   Software release: Junos software release 15.1X49-D100.6
 
 Although the steps in this guide use Juniper SRX300, this guide also applies to the following SRX platforms:
 
--  SRX220 and SRX240
--  SRX550
--  SRX1400
--  SRX3400
--  vSRX
+-   SRX220 and SRX240
+-   SRX550
+-   SRX1400
+-   SRX3400
+-   vSRX
 
 ## Before you begin
 
@@ -67,20 +76,24 @@ Follow the steps in this section to prepare for VPN configuration.
 
 ### GCP account and project
 
-Make sure you have a GCP account. When you begin, you must select or create a GCP project where you will build the VPN. For details, see [Creating and Managing Projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects). 
+Make sure that you have a GCP account. When you begin, you must select or create a GCP project where you will build
+the VPN. For details, see
+[Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects). 
 
 ### Permissions
 
-To create a GCP network, a subnetwork, and other entities described in this guide, you must be able to sign in to GCP as a user who has [Network Admin](https://cloud.google.com/compute/docs/access/iam#network_admin_role) permissions. For details, see [Required Permissions](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes#required_permissions) in the article [Creating a VPN Tunnel using Dynamic Routing](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes).
+To create a GCP network, a subnetwork, and other entities described in this guide, you must be able to sign in to GCP as a 
+user who has the [Network Admin](https://cloud.google.com/compute/docs/access/iam#network_admin_role) role. For details, see
+[Required permissions](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes#required_permissions).
 
 ### Licenses and modules
 
-Before you configure your Juniper SRX300 for use with Cloud VPN, make sure that the following licenses are available:
+Before you configure your Juniper SRX300 for use with Cloud VPN, make sure that this license is available:
 
 - Junos Software Base (JSB/JB) license for SRX300 or Junos Software Enhanced (JSE/JE) license
 
-For a detailed Juniper SRX series license information, refer to the [SRX Series Services Gateways](https://www.juniper.net/us/en/products-services/security/srx-series/).
-
+For detailed Juniper SRX series license information, refer to
+[SRX Series Services Gateways](https://www.juniper.net/us/en/products-services/security/srx-series/).
 
 ## Configure the GCP side
 
@@ -259,7 +272,7 @@ set interfaces st0 unit 0 family inet address 169.254.0.2/30
 
 Follow the procedures in this section to create the base VPN configuration. <This section contains outlines of subsections for different aspects of configuring IPsec and IKE on the vendor side. Fill in the sections that are relevant to the current configuration, and remove any sections that do not apply >
 
-#### GCP-compatible settings for IPSec and IKE
+#### GCP-compatible settings for IPsec and IKE
 
 Configuring the vendor side of the VPN network requires you to use IPsec and IKE settings that are compatible with the GCP side of the network. The following table lists settings and information about values compatible with GCP VPN. Use these settings for the procedures in the subsections that follow.
 
@@ -484,7 +497,7 @@ set security zones security-zone vpn-gcp address-book address-set gcp-addr-prefi
 
 
 
-##### Configure Security policies
+##### Configure security policies
 
 Security policies are statements that allow for control to placed on traffic going from a specific source to a specific destination using a specific service and/or IP address. See [Juniper security policy configuration](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-policy-configuration.html), for more information security zones. For the configuration below the sources and destinations are the zones `untrust`, `trust` and `vpn-gcp` configured above. 
 
@@ -623,7 +636,7 @@ On the GCP side, use the following instructions to test the connection to a mach
     7877087 UP     412c5a43aad7682b  b6d24ef8bf25e9ea  IKEv2          35.187.170.191
     ```
 
-- Show IPSec Security Associations
+- Show IPsec Security Associations
 
    ```
    root@vsrx# run show security ipsec security-associations
@@ -832,9 +845,9 @@ set security ike gateway gw_onprem-2-gcp-vpn-2 external-interface ge-0/0/0.0
 set security ike gateway gw_onprem-2-gcp-vpn-2 version v2-only
 ```
 
-###### Configure IPSec Policy and IPSec VPN
+###### Configure IPsec Policy and IPsec VPN
 
-Notice the use of Juniper's inbuilt proposal set (standard) the `ike policy` configuration above and `ipsec policy` configuration below.
+Notice the use of Juniper's built-in proposal set (standard) the `ike policy` configuration above and `ipsec policy` configuration below.
 
 ```
 [edit]
@@ -880,7 +893,7 @@ root@vsrx#
 exit
 ```
 
-###### Configure Security Policies
+###### Configure security policies
 
 ```
 [edit]
@@ -912,7 +925,7 @@ exit
 
 ```
 
-###### Configure BGP Routing
+###### Configure BGP routing
 
 ```
 [edit]
@@ -948,7 +961,7 @@ Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
 1590402 UP     9d0688eeb4ced592  3e2a86428dbd9d01  IKEv2          35.230.59.183
 ```
 
-IPSec security associations
+IPsec security associations
 
 ```
 root@vsrx# run show security ipsec security-associations
@@ -1055,7 +1068,7 @@ To learn more about GCP networking, see the following documents:
 
 For more product information on Juniper SRX devices, see the following Juniper OS feature configuration guides and datasheets:
 
--  [Juniper Route-Based IPSec VPNs](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-route-based-ipsec-vpns.html)
+-  [Juniper Route-Based IPsec VPNs](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-route-based-ipsec-vpns.html)
 -  [Juniper Security Policies](https://www.juniper.net/documentation/en_US/junos/information-products/pathway-pages/security/security-policies-feature-guide.html)
 -  [Juniper BGP Feature Guide](https://www.juniper.net/documentation/en_US/junos/topics/concept/routing-protocol-bgp-security-peering-session-understanding.html)
 
