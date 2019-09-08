@@ -19,9 +19,11 @@ Platform (GCP) and Juniper SRX300
 
 For more information about Cloud VPN, see the [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
 
+Note: This guide assumes that you have basic knowledge of the [IPsec](https://wikipedia.org/wiki/IPsec) protocol.
+
 ## Terminology
 
-Below are definitions of terms used throughout this guide.
+Definitions of terms used throughout this guide:
 
 -   **GCP VPC network**: A single virtual network within a single GCP project.
 -   **On-premises gateway**: The VPN device on the non-GCP side of the connection, which is usually a device in a physical 
@@ -72,8 +74,6 @@ Although the steps in this guide use Juniper SRX300, this guide also applies to 
 
 Follow the steps in this section to prepare for VPN configuration.
 
-**Note**: This guide assumes that you have basic knowledge of the [IPsec](https://wikipedia.org/wiki/IPsec) protocol.
-
 ### GCP account and project
 
 Make sure that you have a GCP account. When you begin, you must select or create a GCP project where you will build
@@ -83,7 +83,8 @@ the VPN. For details, see
 ### Permissions
 
 To create a GCP network, a subnetwork, and other entities described in this guide, you must be able to sign in to GCP as a 
-user who has the [Network Admin](https://cloud.google.com/compute/docs/access/iam#network_admin_role) role. For details, see
+user who has the [Network Admin](https://cloud.google.com/compute/docs/access/iam#network_admin_role) role. For details,
+see
 [Required permissions](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes#required_permissions).
 
 ### Licenses and modules
@@ -97,43 +98,45 @@ For detailed Juniper SRX series license information, refer to
 
 ## Configure the GCP side
 
-This section covers how to configure Cloud VPN. The preferred approach is to use dynamic routing with the BGP protocol, but this section also includes instructions for configuring static routing.
+This section covers how to configure Cloud VPN. The preferred approach is to use dynamic routing with the BGP protocol, but
+this section also includes instructions for configuring static routing.
 
-There are two ways to create VPN gateways on GCP: using the Google Cloud Platform Console and using the [gcloud command-line tool](https://cloud.google.com/sdk/). This section describes how to perform the tasks using the GCP Console. To see the `gcloud` commands for performing these tasks, see the [appendix](#appendix-using-gcloud-commands).
+There are two ways to create VPN gateways on GCP: using the Google Cloud Platform Console and using the
+[`gcloud` command-line tool](https://cloud.google.com/sdk/). This section describes how to perform the tasks using the GCP
+Console. To see the `gcloud` commands for performing these tasks, see the [appendix](#appendix-using-gcloud-commands).
 
 ### Initial tasks
 
 Complete the following procedures before configuring either a dynamic or static GCP VPN gateway and tunnel.
 
-#### Select a GCP project name
+#### Select a GCP project
 
-1. [Open the GCP Console](https://console.cloud.google.com).
-1. At the top of the page, select the GCP project you want to use.
+1.  [Open the GCP Console](https://console.cloud.google.com).
+1.  At the top of the page, select the GCP project you want to use.
 
-    **Note**: Make sure that you use the same GCP project for all of the GCP
-    procedures in this guide.
+    Note: Make sure that you use the same GCP project for all of the GCP procedures in this guide.
 
 #### Create a custom VPC network and subnet
 
-1. In the GCP Console, [go to the VPC Networks page](https://console.cloud.google.com/networking/networks/list).
-1. Click **Create VPC network**.
-1. For **Name**, enter a name such as `vpn-juniper-test-network`. Remember this name for later.
-1. Under **Subnets, Subnet creation mode**, select the **Custom** tab and then populate the following fields:
+1.  In the GCP Console, go to the [**VPC networks** page](https://console.cloud.google.com/networking/networks/list).
+1.  Click **Create VPC network**.
+1.  For **Name**, enter a name, such as `vpn-juniper-test-network`. Remember this name for later.
+1.  In the **Subnets** section, for **Subnet creation mode**, select **Custom**.
+1.  In the **New subnet** section, enter the following values:
+    + **Name**: The name for the subnet, such as `vpn-subnet-1`.
+    + **Region**: The region that is geographically closest to the on-premises gateway, such as  `us-east1`.
+    + **IP address range**: An IP address range, such as `172.16.100.0/24`.
+1.  In the **New subnet** section, click **Done**.
+1.  Click **Create**.
 
-+ **Name**—The name for the subnet, such as `vpn-subnet-1`.
-+ **Region**—The region that is geographically closest to the on-premises gateway, such as  `us-east1`.
-+ **IP address range**—A range such as `172.16.100.0/24`.
-
-1. In the **New subnet** window, click **Done**.
-1. Click **Create**. You're returned to the **VPC networks** page, where it takes about a minute for this network and its subnet to appear.
+The creation of the network and its subnet to can take a minute or more.
 
 #### Create the GCP external IP address
 
-1.  In the GCP Console,
-[go to the External IP addresses page](https://pantheon.corp.google.com/networking/addresses/list).
-
-1. Click **Reserve Static Address**.
-1. Populate the following fields for the Cloud VPN address:
+1.  In the GCP Console, go to the
+    [**External IP addresses** page](https://console.cloud.google.com/networking/addresses/list).
+1.  Click **Reserve static address**.
+1.  Populate the following fields for the Cloud VPN address:
 
 -  **Name**—The name of the address, such as `vpn-test-static-ip`. Remember the name for later.
 -  **Region**—The region where you want to locate the VPN gateway. Normally, this is the region that contains the instances you want to reach.
