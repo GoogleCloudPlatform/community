@@ -74,6 +74,9 @@ Although the steps in this guide use Juniper SRX300, this guide also applies to 
 
 Follow the steps in this section to prepare for VPN configuration.
 
+Important: Throughout these procedures, you assign names to entities such as the VPC network, subnet, and IP address. Each 
+time you assign a name, make a note of it, because you often need to use those names in later procedures.
+
 ### GCP account and project
 
 Make sure that you have a GCP account. When you begin, you must select or create a GCP project where you will build
@@ -103,11 +106,11 @@ this section also includes instructions for configuring static routing.
 
 There are two ways to create VPN gateways on GCP: using the Google Cloud Platform Console and using the
 [`gcloud` command-line tool](https://cloud.google.com/sdk/). This section describes how to perform the tasks using the GCP
-Console. To see the `gcloud` commands for performing these tasks, see the [appendix](#appendix-using-gcloud-commands).
+Console. For the `gcloud` commands for performing these tasks, see the [appendix](#appendix-using-gcloud-commands).
 
 ### Initial tasks
 
-Complete the following procedures before configuring either a dynamic or static GCP VPN gateway and tunnel.
+Complete the following procedures before configuring a GCP VPN gateway and tunnel.
 
 #### Select a GCP project
 
@@ -136,21 +139,21 @@ The creation of the network and its subnet to can take a minute or more.
 1.  In the GCP Console, go to the
     [**External IP addresses** page](https://console.cloud.google.com/networking/addresses/list).
 1.  Click **Reserve static address**.
-1.  Populate the following fields for the Cloud VPN address:
+1.  For **Name**, enter a name, such as `vpn-test-static-ip`. Remember the name for later.
+1.  For **Region**, select the region where you want to locate the VPN gateway. Normally, this is the region that contains
+    the instances you want to reach.
+1.  Click **Reserve**.
 
--  **Name**—The name of the address, such as `vpn-test-static-ip`. Remember the name for later.
--  **Region**—The region where you want to locate the VPN gateway. Normally, this is the region that contains the instances you want to reach.
+    It can take several seconds for your static external IP address to appear on the **External IP addresses** page.
 
-1. Click **Reserve**. You are returned to the **External IP addresses** page. After a moment, the page displays the static external IP address that you have created.
-
-1. Make a note of the IP address that is created so that you can use it to configure the VPN gateway later.
+1. Make a note of the IP address so that you can use it to configure the VPN gateway later.
 
 ### Configuring an IPsec VPN using dynamic routing
 
-For dynamic routing, you use [Cloud Router](https://cloud.google.com/router/docs/concepts/overview) to establish BGP sessions between GCP and the on-premises
-Juniper SRX300 equipment. We recommend dynamic routing over static routing where possible, as discussed in the [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview) and [Cloud VPN Network and Tunnel Routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing).
-
-**Important:** Throughout these procedures, you assign names to entities like the VPC network and subnet, IP address, and so on. Each time you assign a name, make a note of it, because you often need to use those names in later procedures.
+For dynamic routing, you use [Cloud Router](https://cloud.google.com/router/docs/concepts/overview) to establish BGP
+sessions between GCP and the on-premises Juniper SRX300 equipment. We recommend dynamic routing over static routing where 
+possible, as discussed in the [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview) and
+[Cloud VPN network and tunnel routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing) documents.
 
 #### Configure the VPN gateway
 
