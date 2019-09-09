@@ -28,32 +28,40 @@ Platform.
 
 1. Install Hapi.js:
 
-        npm install --save hapi
+        npm install --save @hapi/hapi
 
 ## Create
 
 Create a `server.js` file with the following contents:
 
-     const Hapi = require('hapi');
+        "use strict";
 
-     // Create a server with a host and port
-     const server = new Hapi.Server();
-     server.connection({
-       host: '0.0.0.0',
-       port: process.env.PORT || 8080
-     });
+        const Hapi = require("@hapi/hapi");
 
-     server.route({
-       method: 'GET',
-       path:'/',
-       handler: (request, reply) => {
-         reply('Hello World!');
-       }
-     });
+        const init = async () => {
+          const server = Hapi.server({
+            port: process.env.PORT || 8080,
+            host: "0.0.0.0"
+          });
 
-     server.start(() => {
-       console.log('Server running at:', server.info.uri);
-     });
+          server.route({
+            method: "GET",
+            path: "/",
+            handler: (request, h) => {
+              return "Hello World!";
+            }
+          });
+
+          await server.start();
+          console.log("Server running on %s", server.info.uri);
+        };
+
+        process.on("unhandledRejection", err => {
+          console.log(err);
+          process.exit(1);
+        });
+
+        init();
 
 
 ## Run
