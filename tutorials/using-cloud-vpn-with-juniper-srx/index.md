@@ -214,19 +214,17 @@ gateway.
 
 #### Configure firewall rules
 
-Next, you configure GCP firewall rules to allow inbound traffic from the on-premises network subnets. You must also configure the on-premises network firewall to allow inbound traffic from your VPC subnet prefixes.
+You configure GCP firewall rules to allow inbound traffic from the on-premises network subnets. You configure the
+on-premises network firewall to allow inbound traffic from your VPC subnet prefixes.
 
-1. In the GCP Console,
-[go to the GCP Firewall rules page](https://console.cloud.google.com/networking/firewalls).
-1. Click **Create firewall rule**.
-1. Populate the following fields:
-
-1. **Name**—A name such as `vpnrule1`.
-1. **VPC network**—The name of the VPC network that you created previously (for example,  `vpn-vendor-test-network`).
-1. **Source filter**—A filter to apply your rule to specific sources of traffic. In this case, choose source IP ranges.
-1. **Source IP ranges**—The on-premises IP ranges to accept from the on-premises VPN gateway.
-1. **Allowed protocols and ports**—The string `tcp;udp;icmp`.
-
+1.  In the GCP Console, go to the [**Firewall rules** page](https://console.cloud.google.com/networking/firewalls).
+1.  Click **Create firewall rule**.
+1.  Set the following values:
+    -   **Name**: A name for the firewall rule, such as `vpnrule1`.
+    -   **VPC network**: The name of the VPC network that you created previously (for example, `vpn-vendor-test-network`).
+    -   **Source filter**: A filter to apply your rule to specific sources of traffic. In this case, choose **IP ranges**.
+    -   **Source IP ranges**: The on-premises IP ranges to accept from the on-premises VPN gateway.
+    -   **Allowed protocols and ports**: The string `tcp;udp;icmp`.
 1. Click **Create**.
 
 ### Configuring route-based IPsec VPN using static routing
