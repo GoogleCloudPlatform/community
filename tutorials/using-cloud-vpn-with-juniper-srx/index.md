@@ -157,51 +157,60 @@ possible, as discussed in the [Cloud VPN overview](https://cloud.google.com/comp
 
 #### Configure the VPN gateway
 
-1. In the GCP Console, 
-[go to the VPN page](https://console.cloud.google.com/networking/vpn/list).
-1. Click **Create VPN connection**.
-1. Populate the following fields for the gateway:
+1.  In the GCP Console, go to the [**VPN** page](https://console.cloud.google.com/networking/vpn/list).
+1.  Click **Create VPN connection**.
+1.  Choose **Claasic VPN** and click **Continue**.
+1.  Set the following values for the VPN gateway:
+    -   **Name**: The name of the VPN gateway. This name is displayed in the GCP Console and is used by the `gcloud`
+        command-line tool to refer to the gateway. Use a name like `vpn-test-juniper-gw-1`.
+    -   **Network**: The VPC network that you created previously (for example, `vpn-juniper-test-network`) that contains the
+        instances that the VPN gateway will serve.
+    -   **Region**: Normally, you put the gateway in the region that contains the instances that you want to reach.
+    -   **IP address**: Select the [static external IP address](#create-the-gcp-external-ip-address) (for example,
+        `vpn-test-static-ip`) that you created for this gateway in the previous section.
+1.  Set the following values for at least one tunnel:
+    -   **Name**: The name of the VPN tunnel, such as `vpn-test-tunnel1`.
+    -   **Remote peer IP address**: The public external IP address of the on-premises VPN gateway.
+    -   **IKE version**: `IKEv2` or `IKEv1`. IKEv2 is preferred, but you can use IKEv1 if it is the only IKE version that
+        the on-premises gateway can use.
+    -   **IKE pre-shared key**: A character string, also known as a *shared secret*, that is used in establishing encryption
+        for the tunnel. You must enter the same shared secret into both VPN gateways. For more information, see
+        [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
+1.  Under **Routing options**, select the **Dynamic (BGP)** tab.
+1.  In the **Cloud router** menu, select **Create cloud router** and set the following values in the
+    **Create a cloud router** dialog:
+    -   **Name**: The name of the Cloud Router, such as `vpn-test-vendor-rtr`. This name is displayed in the GCP Console.
+        If you use the `gcloud` command-line tool to perform VPN tasks, you use this name to refer to the router.
+    -   **Google ASN**: The [private ASN](https://tools.ietf.org/html/rfc6996) for the router you are configuring. It can be
+        any private ASN in the range `64512–65534` or `4200000000–4294967294` that you are not already using. Example:
+        `65002`.
+1.  Click **Save and continue**.
+1.  Next to the **BGP session** menu, click the **Add BGP session** button (pencil icon) and set the following values:
+    -   **Name**: A name for the session, such as `bgp-peer1`.
+    -   **Peer ASN**: The [private ASN](https://tools.ietf.org/html/rfc6996) for the on-premises VPN device you are
+        configuring. It can be any private ASN in the range `64512–65534` or `4200000000–4294967294` that you are not
+        already using. Example: `65001`.
+    -   **Google BGP IP address**: A [link-local](https://wikipedia.org/wiki/Link-local_address) IP address that belongs to 
+        the same `/30` subnet in `169.254.0.0/16`. Example: `169.254.1.1`.
+    -   **Peer BGP IP address**: A link-local IP address for the on-premises peer. Example: `169.254.1.2`. For details, see
+        [this explanation of dynamic routing for VPN tunnels in VPC networks](https://cloud.google.com/router/docs/concepts/overview#dynamic_routing_for_vpn_tunnels_in_vpc_networks).
+    -   **Remote network IP range**: The IP address range of the on-premises subnet on the other side of the tunnel from
+        this gateway.
+    -   **Advertised route priority**: Configure this option if you want to configure redundant or high-throughput VPNs as 
+        described in [advanced VPN configurations](#advanced-vpn-configurations). Note that if you don't need advanced VPN 
+        now, you will need to configure a new VPN tunnel later to support it. The advertised route priority is the base
+        priority that Cloud Router uses when advertising the "to GCP" routes. For more information, see
+        [Route metrics](https://cloud.google.com/router/docs/concepts/overview#route_metrics).
+        Your on-premises VPN gateway imports these as MED values.
+1.  Click **Save and continue**.
+1.  Click **Create**.
 
--  **Name**—The name of the VPN gateway. This name is displayed in the console and used in by the gcloud tool to reference the gateway. Use a name like `vpn-test-juniper-gw-1`, where `[VENDOR_NAME]` is a
-    string that identifies the vendor.
--  **Network**—The VPC network that you created previously (for example,  `vpn-juniper-test-network`) that contains the instances that the VPN gateway will serve.
--  **Region**—The region where you want to locate the VPN gateway. Normally, this is the region that contains the instances you want to reach.
--  **IP address**—Select the 
-    [static external IP address](#create-the-gcp-external-ip-address)
-    (for example, `vpn-test-static-ip`) that you created for this gateway in the previous section.
+    The GCP VPN gateway and Cloud Router are initiated, and the tunnel is initiated.
 
-1. Populate the fields for at least one tunnel:
-
--  **Name**—The name of the VPN tunnel, such as `vpn-test-tunnel1`.
--  **Remote peer IP address**—The public external IP address of the
-    on-premises VPN gateway.
--  **IKE version**—`IKEv2` or `IKEv1`. IKEv2 is preferred, but IKEv1 is supported if it is the only supported IKE version that the on-premises gateway can use.
--  **Shared secret**—A character string used in establishing encryption for the tunnel. You must enter the same shared secret into both VPN gateways. For more information, see [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
-
-1. Under **Routing options**, select the **Dynamic (BGP)** tab.
-1. Under **Cloud router, **select **Create cloud router** and then populate the following fields:
-
--  **Name**—The name of the Cloud Router. This name is displayed in the console. If you use `gcloud`  command-line tool to perform VPN tasks, you use this name to reference the router. Example: `vpn-test-vendor-rtr.`
--  **Google ASN**—The  [private ASN](https://tools.ietf.org/html/rfc6996) (`64512–65534`, `4200000000–4294967294`) for the router you are configuring. It can be any private ASN that you are not already using. Example: `65002`.
-
-1. Click **Save and continue**.
-1. Next to **BGP session**, click the pencil icon and then populate the following fields:
-
-- **Name**—A name for the session, such as `bgp-peer1`.
-- **Peer ASN**—The [private ASN](https://tools.ietf.org/html/rfc6996)
-    (`64512–65534`, `4200000000–4294967294`) for the on-premises VPN device you are configuring. It can be any private ASN that you are not already using. Example: `65001`.
-- **Google BGP IP address**—A [link-local](https://wikipedia.org/wiki/Link-local_address) IP address that belongs to the same `/30` subnet in `169.254.0.0/16`. Example: `169.254.1.1`.
-- **Peer BGP IP address**—A link-local IP address for the on-premises peer. Example: `169.254.1.2`. For details, see [this explanation of dynamic routing for VPN tunnels in VPC networks](https://cloud.google.com/router/docs/concepts/overview#dynamic_routing_for_vpn_tunnels_in_vpc_networks).
-- **Remote network IP range**—The IP address range of the on-premises subnet on the other side of the tunnel from this gateway.
-- **Advertised route priority**–Configure this option if you want to configure redundant or high-throughput VPNs as described in [advanced VPN configurations](#advanced-vpn-configurations). Note that if you don't need advanced VPN now, you will need to configure a new VPN tunnel later to support it. The advertised route priority is the base priority that Cloud Router uses when advertising the "to GCP" routes. For more information, see [Route metrics](https://cloud.google.com/router/docs/concepts/overview#route_metrics).
-    Your on-premises VPN gateway imports these as MED values.
-
-1. Click **Save and continue**.
-1. Click **Create**. The GCP VPN gateway and the Cloud Router are initiated,
-and the tunnel is initiated.
-
-This procedure automatically creates a static route to the on-premises subnet as well as forwarding rules for UDP ports 500 and 4500 and for ESP traffic. The VPN gateways will not connect until you've configured the on-premises gateway and created firewall rules in GCP to allow traffic through the tunnel between the
-Cloud VPN  gateway and the on-premises gateway.
+This procedure automatically creates a static route to the on-premises subnet as well as forwarding rules for UDP ports
+500 and 4500 and for ESP traffic. The VPN gateways will not connect until you've configured the on-premises gateway and 
+created firewall rules in GCP to allow traffic through the tunnel between the Cloud VPN  gateway and the on-premises 
+gateway.
 
 #### Configure firewall rules
 
