@@ -112,6 +112,8 @@ Console. For the `gcloud` commands for performing these tasks, see the [appendix
 
 Complete the following procedures before configuring a GCP VPN gateway and tunnel.
 
+These initial tasks are the same whether you are creating an IPsec VPN using dynamic routing or static routing.
+
 #### Select a GCP project
 
 1.  [Open the GCP Console](https://console.cloud.google.com).
@@ -221,38 +223,39 @@ on-premises network firewall to allow inbound traffic from your VPC subnet prefi
 1.  Click **Create firewall rule**.
 1.  Set the following values:
     -   **Name**: A name for the firewall rule, such as `vpnrule1`.
-    -   **VPC network**: The name of the VPC network that you created previously (for example, `vpn-vendor-test-network`).
+    -   **VPC network**: The name of the VPC network that you created previously (for example, `vpn-juniper-test-network`).
     -   **Source filter**: A filter to apply your rule to specific sources of traffic. In this case, choose **IP ranges**.
     -   **Source IP ranges**: The on-premises IP ranges to accept from the on-premises VPN gateway.
     -   **Allowed protocols and ports**: The string `tcp;udp;icmp`.
 1. Click **Create**.
 
-### Configuring route-based IPsec VPN using static routing
+### Configuring a route-based IPsec VPN using static routing
 
-This section covers the steps for creating a GCP IPsec VPN using static routing. Both route-based Cloud VPN and policy-based Cloud VPN use static routing.  For information on how this works, see the [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview).
+This section covers the steps for creating a GCP IPsec VPN using static routing. Both route-based Cloud VPN and
+policy-based Cloud VPN use static routing. For information on how this works, see the
+[Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
 
-**Note**: Some steps in the procedure for using static routing are the same as steps for using dynamic routing. Rather than repeat those steps in the following procedure, the procedure links to earlier sections of this guide.
+Note: Most steps in the procedure for configuring an IPsec VPN using static routing are the same as for configuring an 
+IPsec VPN using dynamic routing. Rather than repeat those steps in the following procedure, the procedure links to the 
+previous section.
 
-1. Complete the [initial tasks](#initial-tasks) for creating a VPN as described earlier in this guide.
-1. Follow the steps for [setting up a GCP gateway for dynamic routing](#configuring-an-ipsec-vpn-using-dynamic-routing) with these changes:
-
-1. In the configuration for a tunnel, under **Routing options**, 
-    choose **route based**.
-1. For **Remote network IP ranges**, set the IP address range or ranges of the on-premises network, which is the network on the other side of the tunnel from the Cloud VPN gateway you are currently configuring.
-
-1. Click **Create** to create the gateway and initiate all tunnels. This step automatically creates a network-wide route and the necessary forwarding rules for the tunnel. The tunnels will not pass traffic until you've configured the firewall rules.
-
-1. Configure firewall rules to allow inbound traffic from the on-premises network subnets. You must also configure the on-premises network firewall to allow inbound traffic from your VPC subnet prefixes.
-
-1. [Go to the Firewall rules page](https://console.cloud.google.com/networking/firewalls).
+1.  Follow the steps for [setting up a GCP gateway for dynamic routing](#configuring-an-ipsec-vpn-using-dynamic-routing), 
+    with these changes:
+    1.  In the configuration for a tunnel, under **Routing options**, select **Route-based**.
+    1.  For **Remote network IP ranges**, set the IP address range or ranges of the on-premises network, which is the 
+        network on the other side of the tunnel from the Cloud VPN gateway that you are currently configuring.
+    1.  Click **Create** to create the gateway and initiate all tunnels.
+    
+        This step automatically creates a network-wide route and the necessary forwarding rules for the tunnel. The tunnels 
+        will not pass traffic until you've configured the firewall rules.
+1. Go to the [**Firewall rules** page](https://console.cloud.google.com/networking/firewalls).
 1. Click **Create firewall rule**.
-1. Populate the following fields:
-    -  **Name**—A name such as `vpnrule1`.
+1.  Set the following values:
+    -   **Name**: A name for the firewall rule, such as `vpnrule1`.
     -  **VPC network**—The name you used earlier for the VPC network, such as `vpn-juniper-test-network`.
-    -  **Source filter**—A filter to apply your rule to specific sources of traffic. In this case, choose source IP ranges.
-    -  **Source IP ranges**—The peer ranges to accept from the peer VPN gateway.
-    -  **Allowed protocols and ports**—The string `tcp;udp;icmp`.
-
+    -  **Source filter**: A filter to apply your rule to specific sources of traffic. In this case, choose **IP ranges**.
+    -  **Source IP ranges**: The peer ranges to accept from the peer VPN gateway.
+    -  **Allowed protocols and ports**: The string `tcp;udp;icmp`.
 1. Click **Create**.
 
 ## Configure the Juniper SRX300 side
