@@ -160,8 +160,8 @@ You can also download a pre-configured CSV file and import it manually into the 
 
 For more help with StratoZone, see [Troubleshooting](https://portal.stratozone.com/Documentation/StratoProbe_Troubleshooting.html).
 
-Continue with the [wave](https://cloud.google.com/migrate/compute-engine/docs/how-to/organizing-migrations/overview) process on your Migrate for Compute Engine Manager:
+Continue with the [wave](https://cloud.google.com/velostrata/docs/how-to/organizing-migrations/overview) process on your Migrate for Compute Engine Manager:
 
-* [Create a wave](https://cloud.google.com/migrate/compute-engine/docs/how-to/organizing-migrations/creating-new-waves) from the CSV.
-* [Add jobs](https://cloud.google.com/migrate/compute-engine/docs/how-to/organizing-migrations/creating-aborting-jobs) to that wave
-* [Monitor the progress](https://cloud.google.com/migrate/compute-engine/docs/how-to/organizing-migrations/monitoring-waves-runbooks-jobs) of your waves.
+* [Create a wave](https://cloud.google.com/velostrata/docs/how-to/organizing-migrations/creating-new-waves) from the CSV.
+* [Add jobs](https://cloud.google.com/velostrata/docs/how-to/organizing-migrations/creating-aborting-jobs) to that wave
+* [Monitor the progress](https://cloud.google.com/velostrata/docs/how-to/organizing-migrations/monitoring-waves-runbooks-jobs) of your waves.
