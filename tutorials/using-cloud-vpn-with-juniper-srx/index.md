@@ -47,8 +47,8 @@ Cloud VPN supports the following topologies:
 For detailed topology information, see the following resources:
 
 -   For basic VPN topologies, see [Cloud VPN overview](https://cloud.google.com/vpn/docs/concepts/overview).
--   For redundant topologies, the
-    [Cloud VPN documentation on redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns). 
+-   For redundant topologies, the Cloud VPN documentation on 
+    [redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns). 
 
 This tutorial uses the topology shown below as a guide to create the SRX300 configurations and GCP environment:
 
@@ -128,9 +128,9 @@ These initial tasks are the same whether you are creating an IPsec VPN using dyn
 1.  For **Name**, enter a name, such as `vpn-juniper-test-network`. Remember this name for later.
 1.  In the **Subnets** section, for **Subnet creation mode**, select **Custom**.
 1.  In the **New subnet** section, enter the following values:
-    + **Name**: The name for the subnet, such as `vpn-subnet-1`.
-    + **Region**: The region that is geographically closest to the on-premises gateway, such as  `us-east1`.
-    + **IP address range**: An IP address range, such as `172.16.100.0/24`.
+    -   **Name**: The name for the subnet, such as `vpn-subnet-1`.
+    -   **Region**: The region that is geographically closest to the on-premises gateway, such as  `us-east1`.
+    -   **IP address range**: An IP address range, such as `172.16.100.0/24`.
 1.  In the **New subnet** section, click **Done**.
 1.  Click **Create**.
 
@@ -283,91 +283,25 @@ Follow the procedures in this section to create the base VPN configuration.
 
 #### GCP-compatible settings for IPsec and IKE
 
-Configuring the vendor side of the VPN network requires you to use IPsec and IKE settings that are compatible with the GCP side of the network. The following table lists settings and information about values compatible with GCP VPN. Use these settings for the procedures in the subsections that follow.
+Configuring the vendor side of the VPN network requires you to use IPsec and IKE settings that are compatible with the GCP 
+side of the network. The following table lists settings and information about values compatible with GCP VPN. Use these 
+settings for the procedures in the subsections that follow.
 
-*Not all of the settings in the following table are applicable to all vendor setups; use the settings that apply to your configuration. Remove the settings in the table that do not apply to current configuration*.
+Note: The Juniper SRX300 solution might have its own specifications for replay window size.
 
-**Note**: The Juniper SRX300 solution might have its own specifications for replay window size.
-
-<table>
-<thead>
-<tr>
-<th><strong>Setting</strong></th>
-<th><strong>Description or value</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>IPsec Mode</td>
-<td>ESP+Auth Tunnel mode (Site-to-Site)</td>
-</tr>
-<tr>
-<td>Auth Protocol</td>
-<td>`psk`</td>
-</tr>
-<tr>
-<td>Shared Secret</td>
-<td>Also known as an IKE pre-shared key. Choose a strong password by following
-<a
-href="https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key">these
-guidelines</a>. The shared secret is very sensitive as it allows access
-into your network.</td>
-</tr>
-<tr>
-<td>Start</td>
-<td>`auto` (On-premises device should automatically restart the
-connection if it drops.)</td>
-</tr>
-<tr>
-<td>PFS (Perfect Forward Secrecy)</td>
-<td>on</td>
-</tr>
-<tr>
-<td>DPD (Dead Peer Detection)</td>
-<td>Recommended: `Aggressive`. DPD detects when the Cloud VPN
-restarts and routes traffic using alternate tunnels.</td>
-</tr>
-<tr>
-<td>INITIAL_CONTACT (sometimes called <i>uniqueids</i>)</td>
-<td>Recommended: `on` (sometimes called `restart`). The
-purpose is to detect restarts faster so that perceived downtime is
-reduced.</td>
-</tr>
-<tr>
-<td>TSi (Traffic Selector - Initiator)</td>
-<td>Subnet networks: the ranges specified by the GCP local traffic selector. If
-no local traffic selector range was specified because the VPN is in an auto-mode
-VPC network and is announcing only the gateway's subnet, that subnet range is
-used. <br>
-<br>
-Legacy networks: the range of the network.</td>
-</tr>
-<tr>
-<td>TSr (Traffic Selector - Responder)</td>
-<td>IKEv2: The destination ranges of all of the routes that have the next hop
-VPN tunnel set to this tunnel on the GCP side.<br>
-<br>
-IKEv1: Arbitrarily, the destination range of one of the routes that has the
-next hop VPN tunnel set to this tunnel on the GCP side.</td>
-</tr>
-<tr>
-<td>MTU</td>
-<td>The MTU of the on-premises VPN device must be set to 1460 or lower. ESP
-packets leaving the device must not exceed 1460 bytes. You must enable
-prefragmentation on your device, which means that packets must be
-fragmented first, then encapsulated. For more information, see <a
-href="https://cloud.google.com/vpn/docs/concepts/mtu-considerations">Maximum
-Transmission Unit (MTU) considerations</a>.</td>
-</tr>
-<tr>
-<td>IKE ciphers</td>
-<td>For details about IKE ciphers for IKEv1 or IKEv2 supported by GCP,
-including the additional ciphers for PFS, see <a
-href="https://cloud.google.com/vpn/docs/concepts/supported-ike-ciphers">Supported
-IKE Ciphers</a>.</td>
-</tr>
-</tbody>
-</table>
+| Setting       | Description or value                   |
+|---------------|----------------------------------------|
+| IPsec Mode    | ESP+Auth Tunnel mode (Site-to-Site)    |
+| Auth Protocol | `psk`                                  |
+| Shared Secret | Also known as an IKE pre-shared key. Choose a strong password by following [these guidelines](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key). The shared secret is very sensitive because it allows access to your network. |
+| Start         | `auto` (On-premises device should automatically restart the connection if it drops.) |
+| PFS (Perfect Forward Secrecy) | on |
+| DPD (Dead Peer Detection) |  Recommended: `Aggressive`. DPD detects when the Cloud VPN restarts and routes traffic using alternate tunnels. |
+| INITIAL_CONTACT (sometimes called *uniqueids*) | Recommended: `on` (sometimes called `restart`). The purpose is to detect restarts faster so that perceived downtime is reduced. |
+| TSi (Traffic Selector - Initiator) | **Subnet networks**: the ranges specified by the GCP local traffic selector. If no local traffic selector range was specified because the VPN is in an auto-mode VPC network and is announcing only the gateway's subnet, that subnet range is used. **Legacy networks**: the range of the network. |
+| TSr (Traffic Selector - Responder) | **IKEv2**: The destination ranges of all of the routes that have the next hop VPN tunnel set to this tunnel on the GCP side. **IKEv1**: Arbitrarily, the destination range of one of the routes that has the next hop VPN tunnel set to this tunnel on the GCP side. |
+| MTU | The MTU of the on-premises VPN device must be set to 1460 or lower. ESP packets leaving the device must not exceed 1460 bytes. You must enable prefragmentation on your device, which means that packets must be fragmented first, then encapsulated. For more information, see [MTU considerations](https://cloud.google.com/vpn/docs/concepts/mtu-considerations). |
+| IKE ciphers | For details about IKE ciphers for IKEv1 or IKEv2 supported by GCP, including the additional ciphers for PFS, see [Supported IKE ciphers](https://cloud.google.com/vpn/docs/concepts/supported-ike-ciphers). |
 
 ### Configure the IKE proposal and policy
 
@@ -1074,35 +1008,29 @@ You can run `gcloud` commands on your local computer by installing the [Cloud SD
 
 The `gcloud` commands in this guide include parameters whose value you must provide. For example, a command might include a GCP project name or a region or other parameters whose values are unique to your context. The following table lists the parameters and gives examples of the values. The section that follows the table describes how to set Linux environment variables to hold the values you need for these parameters.
 
-<table>
-<thead>
-<tr>
-<th><strong>Parameter description</strong></th>
-<th><strong>Placeholder</strong></th>
-<th><strong>Example value</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Vendor name</td>
-<td>`[VENDOR_NAME]`</td>
-<td>(Your product's vendor name. This value should have no spaces or
-punctuation in it other than underscores or hyphens, because it will be
-used as part of the names for GCP entities)</td>
-</tr>
-<tr>
-<td>GCP project name </td>
-<td>`[PROJECT_NAME]`</td>
-<td>`vpn-guide`</td>
-</tr>
-<tr>
-<td>Shared secret</td>
-<td>`[SHARED_SECRET]`</td>
-<td>See <a
-href="https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key">Generating
-a Strong Pre-shared Key</a></td>
-</tr>
-<tr>
+
+| Parameter description | Placeholder       | Example value                             |
+|-----------------------|-------------------|-------------------------------------------|
+| Vendor name           | `[VENDOR_NAME]`   | (Your product's vendor name. This value should have no spaces or punctuation in it other than underscores or hyphens, because it will be used as part of the names for GCP entities) |
+| GCP project name      | `[PROJECT_NAME]`  | `vpn-guide`                               |
+| Shared secret         | `[SHARED_SECRET]` | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key). |
+|                       |                   |                                           |
+|                       |                   |                                           |
+|                       |                   |                                           |
+|                       |                   |                                           |
+|                       |                   |                                           |
+|                       |                   |                                           |
+|                       |                   |                                           |
+|                       |                   |                                           |
+
+
+
+
+
+
+
+
+
 <td>VPC network name</td>
 <td>`[VPC_NETWORK_NAME]`</td>
 <td>`vpn-vendor-test-network`</td>
