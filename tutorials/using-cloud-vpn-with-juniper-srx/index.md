@@ -252,7 +252,7 @@ previous section.
 1. Click **Create firewall rule**.
 1.  Set the following values:
     -   **Name**: A name for the firewall rule, such as `vpnrule1`.
-    -  **VPC network**—The name you used earlier for the VPC network, such as `vpn-juniper-test-network`.
+    -  **VPC network**: The name you used earlier for the VPC network, such as `vpn-juniper-test-network`.
     -  **Source filter**: A filter to apply your rule to specific sources of traffic. In this case, choose **IP ranges**.
     -  **Source IP ranges**: The peer ranges to accept from the peer VPN gateway.
     -  **Allowed protocols and ports**: The string `tcp;udp;icmp`.
