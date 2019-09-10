@@ -255,31 +255,31 @@ previous section.
 
 ### Creating the base network configuration
 
-Follow the procedure listed in the configuration code snippet below to create the base Layer 3 network configuration for Juniper SRX300. 
+Follow the procedure listed in the configuration code snippet below to create the base Layer 3 network configuration for 
+Juniper SRX300. 
 
-**Note the following:** At least one internal-facing network interface is required in order to connect to your on-premises network, and one external-facing interface is required in order to connect to GCP.
+At least one internal-facing network interface is required in order to connect to your on-premises network, and one 
+external-facing interface is required in order to connect to GCP.
 
 A sample interface configuration is provided below for reference:
 
-```
-[edit]
-root@vsrx#
-# Internal interface configuration
-set interfaces ge-0/0/1 unit 0 family inet address 192.168.0.1/24
-set interfaces ge-0/0/1 unit 0 description "internal facing interface 1"
-set interfaces ge-0/0/2 unit 0 family inet address 192.168.1.1/24
-set interfaces ge-0/0/2 unit 0 description "internal facing interface 2"
-# External interface configuration
-set interfaces ge-0/0/0 unit 0 family inet address 104.196.65.171/31
-set interfaces ge-0/0/0 unit 0 description "external facing interface"
-# Tunnel interface configuration
-set interfaces st0 unit 0 family inet mtu 1460
-set interfaces st0 unit 0 family inet address 169.254.0.2/30
-```
+    [edit]
+    root@vsrx#
+    # Internal interface configuration
+    set interfaces ge-0/0/1 unit 0 family inet address 192.168.0.1/24
+    set interfaces ge-0/0/1 unit 0 description "internal facing interface 1"
+    set interfaces ge-0/0/2 unit 0 family inet address 192.168.1.1/24
+    set interfaces ge-0/0/2 unit 0 description "internal facing interface 2"
+    # External interface configuration
+    set interfaces ge-0/0/0 unit 0 family inet address 104.196.65.171/31
+    set interfaces ge-0/0/0 unit 0 description "external facing interface"
+    # Tunnel interface configuration
+    set interfaces st0 unit 0 family inet mtu 1460
+    set interfaces st0 unit 0 family inet address 169.254.0.2/30
 
 ### Creating the base VPN gateway configuration
 
-Follow the procedures in this section to create the base VPN configuration. <This section contains outlines of subsections for different aspects of configuring IPsec and IKE on the vendor side. Fill in the sections that are relevant to the current configuration, and remove any sections that do not apply >
+Follow the procedures in this section to create the base VPN configuration.
 
 #### GCP-compatible settings for IPsec and IKE
 
@@ -303,7 +303,7 @@ Configuring the vendor side of the VPN network requires you to use IPsec and IKE
 </tr>
 <tr>
 <td>Auth Protocol</td>
-<td><code>psk</code></td>
+<td>`psk`</td>
 </tr>
 <tr>
 <td>Shared Secret</td>
@@ -315,8 +315,8 @@ into your network.</td>
 </tr>
 <tr>
 <td>Start</td>
-<td><code>auto</code> (on-premises device should automatically restart the
-connection if it drops)</td>
+<td>`auto` (On-premises device should automatically restart the
+connection if it drops.)</td>
 </tr>
 <tr>
 <td>PFS (Perfect Forward Secrecy)</td>
@@ -324,12 +324,12 @@ connection if it drops)</td>
 </tr>
 <tr>
 <td>DPD (Dead Peer Detection)</td>
-<td>Recommended: <code>Aggressive</code>. DPD detects when the Cloud VPN
+<td>Recommended: `Aggressive`. DPD detects when the Cloud VPN
 restarts and routes traffic using alternate tunnels.</td>
 </tr>
 <tr>
 <td>INITIAL_CONTACT (sometimes called <i>uniqueids</i>)</td>
-<td>Recommended: <code>on</code> (sometimes called <code>restart</code>). The
+<td>Recommended: `on` (sometimes called `restart`). The
 purpose is to detect restarts faster so that perceived downtime is
 reduced.</td>
 </tr>
@@ -379,18 +379,16 @@ automatically establish IPsec security associations (SAs). The default proposal 
 -  **Diffie-Hellman group**— set to `14`
 -  **IKEv2 Lifetime** — set the lifetime of the security associations (after which a reconnection will occur). The default on most SRX platforms is 28800 seconds
 
-```
-[edit]
-  root@vsrx#
-  set security ike proposal ike-phase1-proposal authentication-method pre-shared-keys
-  set security ike proposal ike-phase1-proposal dh-group group14
-  set security ike proposal ike-phase1-proposal authentication-algorithm sha-256
-  set security ike proposal ike-phase1-proposal encryption-algorithm aes-256-cbc
-  set security ike proposal ike-phase1-proposal lifetime-seconds 28800
-  set security ike policy ike_pol_onprem-2-gcp-vpn mode main
-  set security ike policy ike_pol_onprem-2-gcp-vpn proposals ike-phase1-proposal
-  set security ike policy ike_pol_onprem-2-gcp-vpn pre-shared-key ascii-text <*****>
-```
+       [edit]
+         root@vsrx#
+         set security ike proposal ike-phase1-proposal authentication-method pre-shared-keys
+         set security ike proposal ike-phase1-proposal dh-group group14
+         set security ike proposal ike-phase1-proposal authentication-algorithm sha-256
+         set security ike proposal ike-phase1-proposal encryption-algorithm aes-256-cbc
+         set security ike proposal ike-phase1-proposal lifetime-seconds 28800
+         set security ike policy ike_pol_onprem-2-gcp-vpn mode main
+         set security ike policy ike_pol_onprem-2-gcp-vpn proposals ike-phase1-proposal
+         set security ike policy ike_pol_onprem-2-gcp-vpn pre-shared-key ascii-text [*****]
 
 #### Configure IKEv2 Gateway
 
@@ -403,20 +401,18 @@ An IKEv2 profile must be configured and must be attached to an IPsec profile on 
 - The IKE local identity should be the IP address of the external interface. If SRX device is sitting 
   behind a NAT, the local identity should be configured as the public IP address of the NAT. Where NAT maps to a pool of public IP addresses, a dedicated 1-to-1 NAT should be configured to the SRX device.
 
-  ```
-  [edit]
-    root@vsrx#
-    set security ike gateway gw_onprem-2-gcp-vpn ike-policy ike_pol_onprem-2-gcp-vpn
-    set security ike gateway gw_onprem-2-gcp-vpn address 35.187.170.191
-    set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection probe-idle-tunnel
-    set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection interval 20
-    set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection threshold 4
-    set security ike gateway gw_onprem-2-gcp-vpn external-interface ge-0/0/1.0
-    set security ike gateway gw_onprem-2-gcp-vpn version v2-only
+      [edit]
+        root@vsrx#
+        set security ike gateway gw_onprem-2-gcp-vpn ike-policy ike_pol_onprem-2-gcp-vpn
+        set security ike gateway gw_onprem-2-gcp-vpn address 35.187.170.191
+        set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection probe-idle-tunnel
+        set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection interval 20
+        set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection threshold 4
+        set security ike gateway gw_onprem-2-gcp-vpn external-interface ge-0/0/1.0
+        set security ike gateway gw_onprem-2-gcp-vpn version v2-only
     
-  #Configure local-identity as public IP address of the VPN device, if behind NA
-    set security ike gateway gw_onprem-2-gcp-vpn local-identity inet 104.196.65.171
-  ```
+      #Configure local-identity as public IP address of the VPN device, if behind NA
+        set security ike gateway gw_onprem-2-gcp-vpn local-identity inet 104.196.65.171
 
 ### Configure the IPsec security association (SA)
 
@@ -425,16 +421,14 @@ Defines the IPsec parameters that are to be used for IPsec encryption between tw
 - **IPsec SA lifetime** – 1 hour `3600 seconds` is the recommended value for most VPN sessions. The default on a Juniper SRX is 3600 seconds
 - **Perfect Forward Secrecy (PFS)** – PFS ensures that the same key will not be generated again, so forces a new diffie-hellman key exchange. This config is set to `group14` 
 
-```
-[edit]
-  root@vsrx#
-  set security ipsec proposal ipsec-phase2-proposal protocol esp
-  set security ipsec proposal ipsec-phase2-proposal lifetime-seconds 3600
-  set security ipsec proposal ipsec-phase2-proposal authentication-algorithm hmac-sha-256-128
-  set security ipsec proposal ipsec-phase2-proposal encryption-algorithm aes-256-cbc
-  set security ipsec policy ipsec_pol_home-2-gcp-vpn perfect-forward-secrecy keys group14
-  set security ipsec policy ipsec_pol_home-2-gcp-vpn proposals ipsec-phase2-proposal
-```
+      [edit]
+        root@vsrx#
+        set security ipsec proposal ipsec-phase2-proposal protocol esp
+        set security ipsec proposal ipsec-phase2-proposal lifetime-seconds 3600
+        set security ipsec proposal ipsec-phase2-proposal authentication-algorithm hmac-sha-256-128
+        set security ipsec proposal ipsec-phase2-proposal encryption-algorithm aes-256-cbc
+        set security ipsec policy ipsec_pol_home-2-gcp-vpn perfect-forward-secrecy keys group14
+        set security ipsec policy ipsec_pol_home-2-gcp-vpn proposals ipsec-phase2-proposal
 
 #### Configure IPsec Profile and Tunnel Binding Interface
 
@@ -446,16 +440,14 @@ Adjust the maximum segment size (MSS) value of TCP packets going through a route
 
 - With these recommended settings, TCP sessions quickly scale back to 1400-byte IP packets so the packets will "fit" in the tunnel.
 
-  ```
-   [edit]
-   root@vsrx#
-   set security ipsec vpn home-2-gcp-vpn bind-interface st0.0
-   set security ipsec vpn home-2-gcp-vpn ike gateway gw_home-2-gcp-vpn
-   set security ipsec vpn home-2-gcp-vpn ike ipsec-policy ipsec_pol_home-2-gcp-vpn
-   set security ipsec vpn home-2-gcp-vpn establish-tunnels immediately
-   set security flow tcp-mss ipsec-vpn mss 1360
-   set security flow tcp-session rst-invalidate-session
-  ```
+       [edit]
+       root@vsrx#
+       set security ipsec vpn home-2-gcp-vpn bind-interface st0.0
+       set security ipsec vpn home-2-gcp-vpn ike gateway gw_home-2-gcp-vpn
+       set security ipsec vpn home-2-gcp-vpn ike ipsec-policy ipsec_pol_home-2-gcp-vpn
+       set security ipsec vpn home-2-gcp-vpn establish-tunnels immediately
+       set security flow tcp-mss ipsec-vpn mss 1360
+       set security flow tcp-session rst-invalidate-session
 
 #### Configure Security Zones and Policies
 
@@ -465,195 +457,177 @@ Juniper SRX uses security zones to isolate network segments and regulates traffi
 
 Below are the security zone configuration entered in the on-prem Juniper SRX300 device.
 
-```
-[edit]
-root@vsrx#
-set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ike
-set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
-set security zones security-zone vpn-gcp interfaces st0.0
-
-# Allow BGP Session
-set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
-
-#Address book configuration on-prem prefix
-set security zones security-zone trust address-book address 192.168.0.0/24 192.168.0.0/24
-set security zones security-zone trust address-book address 192.168.1.0/24 192.168.1.0/24
-set security zones security-zone trust address-book address 172.16.0.0/24 172.16.0.0/24
-set security zones security-zone trust address-book address 172.16.1.0/24 172.16.1.0/24
-set security zones security-zone trust address-book address-set onprem-addr-prefixes address 192.168.0.0/24
-set security zones security-zone trust address-book address-set onprem-addr-prefixes address 192.168.1.0/24
-set security zones security-zone trust address-book address-set onprem-addr-prefixes address 172.16.0.0/24
-set security zones security-zone trust address-book address-set onprem-addr-prefixes address 172.16.1.0/24
-set security zones security-zone trust tcp-rst
-set security zones security-zone trust host-inbound-traffic system-services all
-set security zones security-zone trust host-inbound-traffic protocols all
-set security zones security-zone trust interfaces ge-0/0/1.0
-set security zones security-zone trust interfaces ge-0/0/2.0
-set security zones security-zone untrust screen untrust-screen
-set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services dhcp
-set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services tftp
-set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ssh
-set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ike
-set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
-set security zones security-zone vpn-gcp interfaces st0.0
-
-#Address book configuration for GCP prefixes
-set security zones security-zone vpn-gcp address-book address 10.120.0.0/16 10.120.0.0/16
-set security zones security-zone vpn-gcp address-book address 10.121.0.0/16 10.121.0.0/16
-set security zones security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 10.120.0.0/16
-set security zones security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 10.121.0.0/16
-```
-
-
+    [edit]
+    root@vsrx#
+    set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ike
+    set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
+    set security zones security-zone vpn-gcp interfaces st0.0
+    
+    # Allow BGP Session
+    set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
+    
+    #Address book configuration on-prem prefix
+    set security zones security-zone trust address-book address 192.168.0.0/24 192.168.0.0/24
+    set security zones security-zone trust address-book address 192.168.1.0/24 192.168.1.0/24
+    set security zones security-zone trust address-book address 172.16.0.0/24 172.16.0.0/24
+    set security zones security-zone trust address-book address 172.16.1.0/24 172.16.1.0/24
+    set security zones security-zone trust address-book address-set onprem-addr-prefixes address 192.168.0.0/24
+    set security zones security-zone trust address-book address-set onprem-addr-prefixes address 192.168.1.0/24
+    set security zones security-zone trust address-book address-set onprem-addr-prefixes address 172.16.0.0/24
+    set security zones security-zone trust address-book address-set onprem-addr-prefixes address 172.16.1.0/24
+    set security zones security-zone trust tcp-rst
+    set security zones security-zone trust host-inbound-traffic system-services all
+    set security zones security-zone trust host-inbound-traffic protocols all
+    set security zones security-zone trust interfaces ge-0/0/1.0
+    set security zones security-zone trust interfaces ge-0/0/2.0
+    set security zones security-zone untrust screen untrust-screen
+    set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services dhcp
+    set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services tftp
+    set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ssh
+    set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ike
+    set security zones security-zone vpn-gcp host-inbound-traffic protocols bgp
+    set security zones security-zone vpn-gcp interfaces st0.0
+    
+    #Address book configuration for GCP prefixes
+    set security zones security-zone vpn-gcp address-book address 10.120.0.0/16 10.120.0.0/16
+    set security zones security-zone vpn-gcp address-book address 10.121.0.0/16 10.121.0.0/16
+    set security zones security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 10.120.0.0/16
+    set security zones security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 10.121.0.0/16
 
 ##### Configure security policies
 
 Security policies are statements that allow for control to placed on traffic going from a specific source to a specific destination using a specific service and/or IP address. See [Juniper security policy configuration](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-policy-configuration.html), for more information security zones. For the configuration below the sources and destinations are the zones `untrust`, `trust` and `vpn-gcp` configured above. 
 
-```
-[edit]
-root@vsrx#
-set security policies from-zone trust to-zone trust policy default-permit match source-address any
-set security policies from-zone trust to-zone trust policy default-permit match destination-address any
-set security policies from-zone trust to-zone trust policy default-permit match application any
-set security policies from-zone trust to-zone trust policy default-permit then permit
-set security policies from-zone trust to-zone trust policy trust-to-trust match source-address any
-set security policies from-zone trust to-zone trust policy trust-to-trust match destination-address any
-set security policies from-zone trust to-zone trust policy trust-to-trust match application any
-set security policies from-zone trust to-zone trust policy trust-to-trust then permit
-set security policies from-zone trust to-zone untrust policy default-permit match source-address any
-set security policies from-zone trust to-zone untrust policy default-permit match destination-address any
-set security policies from-zone trust to-zone untrust policy default-permit match application any
-set security policies from-zone trust to-zone untrust policy default-permit then permit
-set security policies from-zone trust to-zone untrust policy trust-to-untrust match source-address any
-set security policies from-zone trust to-zone untrust policy trust-to-untrust match destination-address any
-set security policies from-zone trust to-zone untrust policy trust-to-untrust match application any
-set security policies from-zone trust to-zone untrust policy trust-to-untrust then permit
-set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match source-address onprem-addr-prefixes
-set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match destination-address gcp-addr-prefixes
-set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match application any
-set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn then permit
-set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match source-address gcp-addr-prefixes
-set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match destination-address onprem-addr-prefixes
-set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match application any
-set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn then permit
-```
-
-
+    [edit]
+    root@vsrx#
+    set security policies from-zone trust to-zone trust policy default-permit match source-address any
+    set security policies from-zone trust to-zone trust policy default-permit match destination-address any
+    set security policies from-zone trust to-zone trust policy default-permit match application any
+    set security policies from-zone trust to-zone trust policy default-permit then permit
+    set security policies from-zone trust to-zone trust policy trust-to-trust match source-address any
+    set security policies from-zone trust to-zone trust policy trust-to-trust match destination-address any
+    set security policies from-zone trust to-zone trust policy trust-to-trust match application any
+    set security policies from-zone trust to-zone trust policy trust-to-trust then permit
+    set security policies from-zone trust to-zone untrust policy default-permit match source-address any
+    set security policies from-zone trust to-zone untrust policy default-permit match destination-address any
+    set security policies from-zone trust to-zone untrust policy default-permit match application any
+    set security policies from-zone trust to-zone untrust policy default-permit then permit
+    set security policies from-zone trust to-zone untrust policy trust-to-untrust match source-address any
+    set security policies from-zone trust to-zone untrust policy trust-to-untrust match destination-address any
+    set security policies from-zone trust to-zone untrust policy trust-to-untrust match application any
+    set security policies from-zone trust to-zone untrust policy trust-to-untrust then permit
+    set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match source-address onprem-addr-prefixes
+    set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match destination-address gcp-addr-prefixes
+    set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match application any
+    set security policies from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn then permit
+    set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match source-address gcp-addr-prefixes
+    set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match destination-address onprem-addr-prefixes
+    set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match application any
+    set security policies from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn then permit
 
 ### Configuring the dynamic routing protocol
 
-BGP is used within the tunnel to exchange prefixes between the GCP cloud router and the Juniper SRX appliance. The GCP cloud router will announce the prefix corresponding to your GCP VPC.
+BGP is used within the tunnel to exchange prefixes between the GCP cloud router and the Juniper SRX appliance. The GCP
+cloud router will announce the prefix corresponding to your GCP VPC.
 
 BGP timers are adjusted to provide more rapid detection of outages.
 
 - Configure BGP peering between SRX and cloud router
 
-```
-[edit]
-root@vsrx#
-set protocols bgp group ebgp-peers type external
-set protocols bgp group ebgp-peers multihop
-set protocols bgp group ebgp-peers local-as 65501
-set protocols bgp group ebgp-peers neighbor 169.254.1.1 peer-as 65500
-```
+      [edit]
+      root@vsrx#
+      set protocols bgp group ebgp-peers type external
+      set protocols bgp group ebgp-peers multihop
+      set protocols bgp group ebgp-peers local-as 65501
+      set protocols bgp group ebgp-peers neighbor 169.254.1.1 peer-as 65500
 
-- Configure routing policies to inject routes into BGP and advertise it to the cloud router. In this case we are only advertising `192.168.0.0/24` and `192.168.1.0/24`
+- Configure routing policies to inject routes into BGP and advertise it to the cloud router. In this case we are only
+  advertising `192.168.0.0/24` and `192.168.1.0/24`
 
-
-```
-[edit]
-root@vsrx#
-set policy-options policy-statement gcp-bgp-policy term 1 from protocol direct
-set policy-options policy-statement gcp-bgp-policy term 1 from route-filter 192.168.1.0/24 exact
-set policy-options policy-statement gcp-bgp-policy term 1 then accept
-set policy-options policy-statement gcp-bgp-policy term 2 from protocol direct
-set policy-options policy-statement gcp-bgp-policy term 2 from route-filter 192.168.0.0/24 exact
-set policy-options policy-statement gcp-bgp-policy term 2 then accept
-set protocols bgp group ebgp-peers export gcp-bgp-policy
-```
+      [edit]
+      root@vsrx#
+      set policy-options policy-statement gcp-bgp-policy term 1 from protocol direct
+      set policy-options policy-statement gcp-bgp-policy term 1 from route-filter 192.168.1.0/24 exact
+      set policy-options policy-statement gcp-bgp-policy term 1 then accept
+      set policy-options policy-statement gcp-bgp-policy term 2 from protocol direct
+      set policy-options policy-statement gcp-bgp-policy term 2 from route-filter 192.168.0.0/24 exact
+      set policy-options policy-statement gcp-bgp-policy term 2 then accept
+      set protocols bgp group ebgp-peers export gcp-bgp-policy
 
 ### Configuring static routing (Optional if using Cloud Router)
 
-Follow the procedure in this section to configure static routing of traffic to the GCP network through the VPN tunnel interface `st0.0`.
+Follow the procedure in this section to configure static routing of traffic to the GCP network through the VPN tunnel 
+interface `st0.0`.
 
-```
-[edit]
-root@vsrx#
-set routing-options static route 10.120.0.0/16 next-hop st0.0
-set routing-options static route 10.121.0.0/16 next-hop st0.0
-```
+    [edit]
+    root@vsrx#
+    set routing-options static route 10.120.0.0/16 next-hop st0.0
+    set routing-options static route 10.121.0.0/16 next-hop st0.0
 
-For more recommendations about on-premises routing configurations, see [GCP Best Practices](https://cloud.google.com/router/docs/resources/best-practices).
+For more recommendations about on-premises routing configurations, see
+[GCP best practices](https://cloud.google.com/router/docs/resources/best-practices).
 
 ### Saving the configuration
 
 Follow the procedure in this section to save the on-premises configuration.
 
-```
-root@vsrx# commit and-quit 
-```
+    root@vsrx# commit and-quit 
 
 ### Testing/Verifying the VPN configuration/connectivity
 
-It's important to test the VPN connection from both sides of a VPN tunnel. For either side, make sure that the subnet that a machine or virtual machine is located in is being forwarded through the VPN tunnel.
+It's important to test the VPN connection from both sides of a VPN tunnel. For either side, make sure that the subnet that
+a machine or virtual machine is located in is being forwarded through the VPN tunnel.
 
-First, create VMs/hosts on both sides of the tunnel depending on the scenario being tested. Make sure that you configure the VMs/hosts on a subnet that will pass traffic through the VPN tunnel.
+First, create VMs/hosts on both sides of the tunnel depending on the scenario being tested. Make sure that you configure
+the VMs/hosts on a subnet that will pass traffic through the VPN tunnel.
 
--  Instructions for creating virtual machines in Compute Engine are located in the [Getting Started Guide](https://cloud.google.com/compute/docs/quickstart).
+Instructions for creating virtual machines in Compute Engine are located in the
+[getting started guide](https://cloud.google.com/compute/docs/quickstart).
 
-After VMs have been deployed on both the GCP and the other side of the tunnel (Onprem/another cloud etc), you can use an ICMP echo (ping) test to test network connectivity through the VPN tunnel; and telnet|netcat to test tcp connectivity
+After VMs have been deployed on both the GCP and the other side of the tunnel (for example, on-premises or another cloud),
+you can use an ICMP echo (`ping`) test to test network connectivity through the VPN tunnel; and telnet|netcat to test tcp 
+connectivity
 
 On the GCP side, use the following instructions to test the connection to a machine that's behind the on-premises gateway:
 
--  In the GCP Console, [go to the VM Instances page](https://console.cloud.google.com/compute?).
+1.  In the GCP Console, [go to the VM Instances page](https://console.cloud.google.com/compute?).
+1.  Find the GCP virtual machine you created.
+1.  In the **Connect** column, click **SSH**. A browser window opens at the VM command line.
+1.  Ping a machine that's behind the on-premises gateway.
 
--  Find the GCP virtual machine you created.
-
--  In the **Connect** column, click **SSH**. A browser window opens at the VM command line.
-
--  Ping a machine that's behind the on-premises gateway.
-
-   ```
-   root@freebsd:~ # ping 192.168.1.91
-   PING 192.168.1.91 (192.168.1.91): 56 data bytes
-   64 bytes from 192.168.1.91: icmp_seq=0 ttl=63 time=21.387 ms
-   64 bytes from 192.168.1.91: icmp_seq=1 ttl=63 time=19.402 ms
-   64 bytes from 192.168.1.91: icmp_seq=2 ttl=63 time=20.535 ms
-   64 bytes from 192.168.1.91: icmp_seq=3 ttl=63 time=35.592 ms
-   64 bytes from 192.168.1.91: icmp_seq=4 ttl=63 time=23.347 ms
-   64 bytes from 192.168.1.91: icmp_seq=5 ttl=63 time=17.600 ms
-   64 bytes from 192.168.1.91: icmp_seq=6 ttl=63 time=19.083 ms
-   64 bytes from 192.168.1.91: icmp_seq=7 ttl=63 time=19.383 ms
-   64 bytes from 192.168.1.91: icmp_seq=8 ttl=63 time=21.689 ms
-   64 bytes from 192.168.1.91: icmp_seq=9 ttl=63 time=28.000 ms
-   ^C
-   --- 192.168.1.91 ping statistics ---
-   11 packets transmitted, 10 packets received, 9.1% packet loss
-   round-trip min/avg/max/stddev = 17.600/22.602/35.592/5.129 ms
-   root@freebsd:~ #
-   ```
-
+        root@freebsd:~ # ping 192.168.1.91
+        PING 192.168.1.91 (192.168.1.91): 56 data bytes
+        64 bytes from 192.168.1.91: icmp_seq=0 ttl=63 time=21.387 ms
+        64 bytes from 192.168.1.91: icmp_seq=1 ttl=63 time=19.402 ms
+        64 bytes from 192.168.1.91: icmp_seq=2 ttl=63 time=20.535 ms
+        64 bytes from 192.168.1.91: icmp_seq=3 ttl=63 time=35.592 ms
+        64 bytes from 192.168.1.91: icmp_seq=4 ttl=63 time=23.347 ms
+        64 bytes from 192.168.1.91: icmp_seq=5 ttl=63 time=17.600 ms
+        64 bytes from 192.168.1.91: icmp_seq=6 ttl=63 time=19.083 ms
+        64 bytes from 192.168.1.91: icmp_seq=7 ttl=63 time=19.383 ms
+        64 bytes from 192.168.1.91: icmp_seq=8 ttl=63 time=21.689 ms
+        64 bytes from 192.168.1.91: icmp_seq=9 ttl=63 time=28.000 ms
+        ^C
+        --- 192.168.1.91 ping statistics ---
+        11 packets transmitted, 10 packets received, 9.1% packet loss
+        round-trip min/avg/max/stddev = 17.600/22.602/35.592/5.129 ms
+        root@freebsd:~ #
 
 ##### Testing/verifying VPN connectivity on Juniper SRX
 
 - Show IKE Security Associations
 
-    ```
-    root@vsrx# run show security ike security-associations
-    Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
-    7877087 UP     412c5a43aad7682b  b6d24ef8bf25e9ea  IKEv2          35.187.170.191
-    ```
+        root@vsrx# run show security ike security-associations
+        Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
+        7877087 UP     412c5a43aad7682b  b6d24ef8bf25e9ea  IKEv2          35.187.170.191
 
 - Show IPsec Security Associations
 
-   ```
-   root@vsrx# run show security ipsec security-associations
-   Total active tunnels: 1
-   ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
-   <131073 ESP:aes-cbc-256/sha256 9beb1bf0 729/ unlim - root 4500 35.187.170.191
-   >131073 ESP:aes-cbc-256/sha256 97791a28 729/ unlim - root 4500 35.187.170.191  		
-   ```
+       root@vsrx# run show security ipsec security-associations
+       Total active tunnels: 1
+       ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
+       &lt;131073 ESP:aes-cbc-256/sha256 9beb1bf0 729/ unlim - root 4500 35.187.170.191
+       >131073 ESP:aes-cbc-256/sha256 97791a28 729/ unlim - root 4500 35.187.170.191
 
 - List BGP learned routes:
 
@@ -717,7 +691,7 @@ Below is the sample configuration for setting MED values of all routes advertise
 set protocols bgp group ebgp-peers neighbor 169.254.0.1 metric-out 100
 ```
 
-**Note:** `set protocols bgp metric-out <metric-value>` will set the BGP metric for all neighbors which may be undesirable.
+**Note:** `set protocols bgp metric-out [METRIC_VALUE]` will set the BGP metric for all neighbors which may be undesirable.
 
 To list the BGP metrics of routes received by a BGP peer (GCP Cloud Router) enter the command below. The MED is shown in the third column.
 
@@ -976,9 +950,9 @@ IPsec security associations
 root@vsrx# run show security ipsec security-associations
   Total active tunnels: 2
   ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
-  <131073 ESP:aes-cbc-128/sha1 a2fde6d8 2618/ unlim - root 500 35.230.59.183
+  &lt;131073 ESP:aes-cbc-128/sha1 a2fde6d8 2618/ unlim - root 500 35.230.59.183
   >131073 ESP:aes-cbc-128/sha1 a1854938 2618/ unlim - root 500 35.230.59.183
-  <131074 ESP:aes-cbc-128/sha1 9b593cad 2310/ unlim - root 500 35.233.197.145
+  &lt;131074 ESP:aes-cbc-128/sha1 9b593cad 2310/ unlim - root 500 35.233.197.145
   >131074 ESP:aes-cbc-128/sha1 6ecac98d 2310/ unlim - root 500 35.233.197.145
 ```
 
@@ -1111,94 +1085,94 @@ The `gcloud` commands in this guide include parameters whose value you must prov
 <tbody>
 <tr>
 <td>Vendor name</td>
-<td><code>[VENDOR_NAME]</code></td>
+<td>`[VENDOR_NAME]`</td>
 <td>(Your product's vendor name. This value should have no spaces or
 punctuation in it other than underscores or hyphens, because it will be
 used as part of the names for GCP entities)</td>
 </tr>
 <tr>
 <td>GCP project name </td>
-<td><code>[PROJECT_NAME]</code></td>
-<td><code>vpn-guide</code></td>
+<td>`[PROJECT_NAME]`</td>
+<td>`vpn-guide`</td>
 </tr>
 <tr>
 <td>Shared secret</td>
-<td><code>[SHARED_SECRET]</code></td>
+<td>`[SHARED_SECRET]`</td>
 <td>See <a
 href="https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key">Generating
 a Strong Pre-shared Key</a></td>
 </tr>
 <tr>
 <td>VPC network name</td>
-<td><code>[VPC_NETWORK_NAME]</code></td>
-<td><code>vpn-vendor-test-network</code></td>
+<td>`[VPC_NETWORK_NAME]`</td>
+<td>`vpn-vendor-test-network`</td>
 </tr>
 <tr>
-<td>Subnet on the GCP VPC network (for example, <code>vpn-vendor-test-network</code>)</td>
-<td><code>[VPC_SUBNET_NAME]</code></td>
-<td><code>vpn-subnet-1</code></td>
+<td>Subnet on the GCP VPC network (for example, `vpn-vendor-test-network`)</td>
+<td>`[VPC_SUBNET_NAME]`</td>
+<td>`vpn-subnet-1`</td>
 </tr>
 <tr>
 <td>GCP region. Can be any region, but it should be geographically close to the
 on-premises gateway.</td>
-<td><code>[REGION]</code></td>
-<td><code>us-east1</code></td>
+<td>`[REGION]`</td>
+<td>`us-east1`</td>
 </tr>
 <tr>
 <td>Pre-existing external static IP address that you configure for the internet
 side of the Cloud VPN gateway.</td>
-<td><code>[STATIC_EXTERNAL_IP]</code></td>
-<td><code>vpn-test-static-ip</code></td>
+<td>`[STATIC_EXTERNAL_IP]`</td>
+<td>`vpn-test-static-ip`</td>
 </tr>
 <tr>
-<td>IP address range for the GCP VPC subnet (<code>vpn-subnet-1</code>)</td>
-<td><code>[SUBNET_IP]</code></td>
-<td><code>172.16.100.0/24</code>and<code>172.16.200.0/24</code></td>
+<td>IP address range for the GCP VPC subnet (`vpn-subnet-1`)</td>
+<td>`[SUBNET_IP]`</td>
+<td>`172.16.100.0/24`and`172.16.200.0/24`</td>
 </tr>
 <tr>
 <td>IP address range for the on-premises subnet. You will use this range when
 creating rules for inbound traffic to GCP.</td>
-<td><code>[IP_ON_PREM_SUBNET]</code></td>
-<td><code>10.1.0.0/16</code>and<code>10.0.0.0/16</code></td>
+<td>`[IP_ON_PREM_SUBNET]`</td>
+<td>`10.1.0.0/16`and`10.0.0.0/16`</td>
 </tr>
 <tr>
 <td>External static IP address for the internet interface of <vendor
 name><product-name></td>
-<td><code>[CUST_GW_EXT_IP]</code> </td>
-<td>For example <code>199.203.248.181</code></td>
+<td>`[CUST_GW_EXT_IP]` </td>
+<td>For example `199.203.248.181`</td>
 </tr>
 <tr>
 <td>Cloud Router name (for dynamic routing)</td>
-<td><code>[CLOUD_ROUTER_NAME]<code></td>
-<td><code>vpn-test-vendor-rtr<code></td>
+<td>`[CLOUD_ROUTER_NAME]`</td>
+<td>`vpn-test-vendor-rtr`</td>
 </tr>
 <tr>
 <td>BGP interface name</td>
-<td><code>[BGP_IF]</code></td>
-<td><code>if-1</code></td>
+<td>`[BGP_IF]`</td>
+<td>`if-1`</td>
 </tr>
 <tr>
 <td>BGP session name (for dynamic routing)</td>
-<td><code>[BGP_SESSION_NAME]<code></td>
-<td><code>bgp-peer1</code></td>
+<td>`[BGP_SESSION_NAME]`</td>
+<td>`bgp-peer1`</td>
 </tr>
 <tr>
 <td>The name for the first GCP VPN gateway.</td>
-<td><code>[VPN_GATEWAY_1]</code></td>
-<td><code>vpn-test-[VENDOR_NAME]-gw-1</code>, where <code>[VENDOR_ NAME]</code>
-is the <code>[VENDOR_NAME]</code> string</td>
+<td>`[VPN_GATEWAY_1]`</td>
+<td>`vpn-test-[VENDOR_NAME]-gw-1`, where `[VENDOR_ NAME]`
+is the `[VENDOR_NAME]` string</td>
 </tr>
 <tr>
 <td>The name for the first VPN tunnel for
-<code>vpn-test-[VENDOR_NAME]-gw-1</code></td>
-<td><code>[VPN_TUNNEL_1]</code></td>
-<td><code>vpn-test-tunnel1</code></td>
+`vpn-test-[VENDOR_NAME]-gw-1`</td>
+<td>`[VPN_TUNNEL_1]`</td>
+<td>`vpn-test-tunnel1`</td>
 </tr>
 <tr>
 <td>The name of a firewall rule that allows traffic between the on-premises
 network and GCP VPC networks</td>
-<td><code>[VPN_RULE]</code></td>
-<td><code>vpnrule1</code></td>
+<td>`[VPN_RULE]`</td>
+<td>`vpnrule1`</td>
 </tr>
 <tr>
 <td>The name for the <a
@@ -1207,33 +1181,32 @@ route</a> used to forward traffic to the on-premises network.<br>
 <br>
 <strong>Note</strong>: You need this value only if you are creating a VPN
 using a static route.</td>
-<td><code>[ROUTE_NAME]</code>
+<td>`[ROUTE_NAME]`
 </td>
-<td><code>vpn-static-route</code>
+<td>`vpn-static-route`
 </td>
 </tr>
 <tr>
 <td>The name for the forwarding rule for the <a
 href="https://wikipedia.org/wiki/IPsec#Encapsulating_Security_Payload">ESP
 protocol</a></td>
-<td><code>[FWD_RULE_ESP]</code></td>
-<td><code>fr-esp</code></td>
+<td>`[FWD_RULE_ESP]`</td>
+<td>`fr-esp`</td>
 </tr>
 <tr>
 <td>The name for the forwarding rule for the <a
 href="https://wikipedia.org/wiki/User_Datagram_Protocol">UDP
 protocol</a>, port 500</td>
-<td><code>[FWD_RULE_UDP_500]</code></td>
-<td><code>fr-udp500</code></td>
+<td>`[FWD_RULE_UDP_500]`</td>
+<td>`fr-udp500`</td>
 </tr>
 <tr>
 <td>The name for the forwarding rule for the UDP protocol, port 4500</td>
-<td><code>[FWD_RULE_UDP_4500]</code></td>
-<td><code>fr-udp4500</code></td>
+<td>`[FWD_RULE_UDP_4500]`</td>
+<td>`fr-udp4500`</td>
 </tr>
 </tbody>
 </table>
-
 
 ### Setting environment variables for gcloud command parameters
 
@@ -1241,311 +1214,318 @@ To make it easier to run `gcloud` commands that contain parameters, you can crea
 
 To set the environment variables, run the following commands at the command line _before_ you run `gcloud` commands, substituting your own values for all the placeholders in square brackets, such as `[PROJECT_NAME]`, `[VPC_NETWORK_NAME]`, and `[SUBNET_IP]`. If you don't know what values to use for the placeholders, use the example values from the parameters table in the preceding section.
 
-```
-export PROJECT_NAME=[PROJECT_NAME]
-export REGION=[REGION]
-export VPC_SUBNET_NAME=[VPC_SUBNET_NAME]
-export VPC_NETWORK_NAME=[VPC_NETWORK_NAME]
-export FWD_RULE_ESP=[FWD_RULE_ESP]
-export FWD_RULE_UDP_500=[FWD_RULE_UDP_500]
-export FWD_RULE_UDP_4500=[FWD_RULE_UDP_4500]
-export SUBNET_IP=[SUBNET_IP]
-export VPN_GATEWAY_1=[VPN_GATEWAY_1]
-export STATIC_EXTERNAL_IP=[STATIC_EXTERNAL_IP]
-export VPN_RULE=[VPN_RULE]
-export IP_ON_PREM_SUBNET=[IP_ON_PREM_SUBNET]
-export CLOUD_ROUTER_NAME=[CLOUD_ROUTER_NAME]
-export BGP_IF=[BGP_IF]
-export BGP_SESSION_NAME=[BGP_SESSION_NAME]
-export VPN_TUNNEL_1=[VPN_TUNNEL_1]
-export CUST_GW_EXT_IP=[CUST_GW_EXT_IP]
-export ROUTE_NAME=[ROUTE_NAME]
-```
+    export PROJECT_NAME=[PROJECT_NAME]
+    export REGION=[REGION]
+    export VPC_SUBNET_NAME=[VPC_SUBNET_NAME]
+    export VPC_NETWORK_NAME=[VPC_NETWORK_NAME]
+    export FWD_RULE_ESP=[FWD_RULE_ESP]
+    export FWD_RULE_UDP_500=[FWD_RULE_UDP_500]
+    export FWD_RULE_UDP_4500=[FWD_RULE_UDP_4500]
+    export SUBNET_IP=[SUBNET_IP]
+    export VPN_GATEWAY_1=[VPN_GATEWAY_1]
+    export STATIC_EXTERNAL_IP=[STATIC_EXTERNAL_IP]
+    export VPN_RULE=[VPN_RULE]
+    export IP_ON_PREM_SUBNET=[IP_ON_PREM_SUBNET]
+    export CLOUD_ROUTER_NAME=[CLOUD_ROUTER_NAME]
+    export BGP_IF=[BGP_IF]
+    export BGP_SESSION_NAME=[BGP_SESSION_NAME]
+    export VPN_TUNNEL_1=[VPN_TUNNEL_1]
+    export CUST_GW_EXT_IP=[CUST_GW_EXT_IP]
+    export ROUTE_NAME=[ROUTE_NAME]
 
 ### Configuring an IPsec VPN using dynamic routing
 
-This section describes how to use the `gcloud` command-line tool to configure IPsec VPN with dynamic routing. To perform the same task using the GCP Console, see [Configuring IPsec VPN using dynamic routing](##configuring-an-ipsec-vpn-using-dynamic-routing) earlier in this guide.
+This section describes how to use the `gcloud` command-line tool to configure IPsec VPN with dynamic routing. To perform
+the same task using the GCP Console, see
+[Configuring IPsec VPN using dynamic routing](##configuring-an-ipsec-vpn-using-dynamic-routing) earlier in this guide.
 
-**Note**: Before you run the `gcloud` commands in this section, make sure that you've set the variables as described earlier under [Setting environment variables for gcloud command parameters](#setting-environment-variables-for-gcloud-command-parameters).
+Note: Before you run the `gcloud` commands in this section, make sure that you've set the variables as described earlier, in
+[Setting environment variables for gcloud command parameters](#setting-environment-variables-for-gcloud-command-parameters).
 
 1. Create a custom VPC network.
 
-    ```
-    gcloud compute networks create $VPC_NETWORK_NAME \
-        --project $PROJECT_NAME \
-        --subnet-mode custom
-    ```
+        gcloud compute networks create $VPC_NETWORK_NAME \
+            --project $PROJECT_NAME \
+            --subnet-mode custom
 
-1. Create a subnet on that network. Make sure there is no conflict with your local network IP address range or any other configured subnets.
+1. Create a subnet on that network. Make sure that there is no conflict with your local network IP address range or any 
+other configured subnets.
 
-    ```
-    gcloud compute networks subnets create $VPC_SUBNET_NAME \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --region $REGION \
-        --range $SUBNET_IP
-    ```
+        gcloud compute networks subnets create $VPC_SUBNET_NAME \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --region $REGION \
+            --range $SUBNET_IP
 
 1. Create a GCP VPN gateway in the region you are using.
 
-    ```
-    gcloud compute target-vpn-gateways create $VPN_GATEWAY_1 \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --region $REGION
-    ```
+        gcloud compute target-vpn-gateways create $VPN_GATEWAY_1 \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --region $REGION
 
     This step creates an unconfigured VPN gateway in your VPC network.
 
-1. Reserve a static IP address in the VPC network and region where you created the VPN gateway. Make a note of the created address for use in future steps.
+1.  Reserve a static IP address in the VPC network and region where you created the VPN gateway. Make a note of the
+    created address for use in future steps.
 
-    ```
-    gcloud compute addresses create $STATIC_EXTERNAL_IP \
-        --project $PROJECT_NAME \
-        --region $REGION
-    ```
+        gcloud compute addresses create $STATIC_EXTERNAL_IP \
+            --project $PROJECT_NAME \
+            --region $REGION
 
-1. Create three forwarding rules, one each to forward ESP, IKE, and NAT-T traffic to the Cloud VPN gateway. Note the following:
+1. Create three forwarding rules, one each to forward ESP, IKE, and NAT-T traffic to the Cloud VPN gateway.
 
-    -  For the `[STATIC_IP_ADDRESS]` in the following commands, use the static IP address that you reserved in the previous step.
+Note the following:
 
-    ```
-    gcloud compute forwarding-rules create $FWD_RULE_ESP \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol ESP \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --address [STATIC_IP_ADDRESS]
-    
-    gcloud compute forwarding-rules create $FWD_RULE_UDP_500 \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol UDP \
-        --ports 500 \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --address [STATIC_IP_ADDRESS]
-    
-    gcloud compute forwarding-rules create $FWD_RULE_UDP_4500 \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol UDP \
-        --ports 4500 \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --address [STATIC_IP_ADDRESS]
-    ```
+-   For the `[STATIC_IP_ADDRESS]` in the following commands, use the static IP address that you reserved in the previous
+    step.
 
-1. Create a [Cloud Router](https://cloud.google.com/compute/docs/cloudrouter).
+        gcloud compute forwarding-rules create $FWD_RULE_ESP \
+            --project $PROJECT_NAME \
+            --region $REGION \
+            --ip-protocol ESP \
+            --target-vpn-gateway $VPN_GATEWAY_1 \
+            --address [STATIC_IP_ADDRESS]
+        
+        gcloud compute forwarding-rules create $FWD_RULE_UDP_500 \
+            --project $PROJECT_NAME \
+            --region $REGION \
+            --ip-protocol UDP \
+            --ports 500 \
+            --target-vpn-gateway $VPN_GATEWAY_1 \
+            --address [STATIC_IP_ADDRESS]
+        
+        gcloud compute forwarding-rules create $FWD_RULE_UDP_4500 \
+            --project $PROJECT_NAME \
+            --region $REGION \
+            --ip-protocol UDP \
+            --ports 4500 \
+            --target-vpn-gateway $VPN_GATEWAY_1 \
+            --address [STATIC_IP_ADDRESS]
+
+1.  Create a [Cloud Router](https://cloud.google.com/compute/docs/cloudrouter).
+
     Note the following:
 
-    -  For `[PRIVATE_ASN]`, use the [private ASN](https://tools.ietf.org/html/rfc6996) (`64512–65534`, `4200000000–4294967294`) for the router you are configuring. It can be any private ASN you are not already using, such as `65001`.
+-  For `[PRIVATE_ASN]`, use the
+   [private ASN](https://tools.ietf.org/html/rfc6996) (`64512–65534`, `4200000000–4294967294`) for the router you are 
+   configuring. It can be any private ASN you are not already using, such as `65001`.
 
-    ```
-    gcloud compute routers create $CLOUD_ROUTER_NAME \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --network $VPC_NETWORK_NAME \
-        --asn [PRIVATE_ASN]
-    ```
+        gcloud compute routers create $CLOUD_ROUTER_NAME \
+            --project $PROJECT_NAME \
+            --region $REGION \
+            --network $VPC_NETWORK_NAME \
+            --asn [PRIVATE_ASN]
 
-1. Create a VPN tunnel on the Cloud VPN Gateway that points to the external IP address of your on-premises VPN gateway. Note the following:
+1.  Create a VPN tunnel on the Cloud VPN Gateway that points to the external IP address of your on-premises VPN gateway. 
 
-    - Set the IKE version. The following command sets the IKE version to 2, which is the default, preferred IKE version. If you need to set it to 1, use `--ike-version 1`.
-    - For `[SHARED_SECRET]`, supply the shared secret. For details, see [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
+    Note the following:
 
+    -   Set the IKE version. The following command sets the IKE version to 2, which is the default, preferred IKE version. 
+        If you need to set it to 1, use `--ike-version 1`.
+    -   For `[SHARED_SECRET]`, supply the shared secret. For details, see
+        [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
 
-    gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ike-version 2 \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --router $CLOUD_ROUTER_NAME \
-        --peer-address $CUST_GW_EXT_IP \
-        --shared-secret [SHARED_SECRET]
+            gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
+                --project $PROJECT_NAME \
+                --region $REGION \
+                --ike-version 2 \
+                --target-vpn-gateway $VPN_GATEWAY_1 \
+                --router $CLOUD_ROUTER_NAME \
+                --peer-address $CUST_GW_EXT_IP \
+                --shared-secret [SHARED_SECRET]
     
     After you run this command, resources are allocated for this VPN tunnel, but the
     tunnel is not yet passing traffic.
 
-1. Update the Cloud Router configuration to add a virtual interface (`--interface-name`) for the BGP peer. Note the following:
+1.  Update the Cloud Router configuration to add a virtual interface (`--interface-name`) for the BGP peer. Note the 
+    following:
 
-    -  The recommended netmask length is `30`.
-    -  Make sure each tunnel has a unique pair of IP addresses. Alternatively, you can leave out `--ip-address` and `--mask-length`. In that case, the addresses will be automatically generated.
-    -  For `[BGP_IF_IP_ADDRESS]`, use a [link-local](https://wikipedia.org/wiki/Link-local_address) IP address belonging to the IP address range `169.254.0.0/16`. The address must belong to the same subnet as the interface address of the peer router.
+    -   The recommended netmask length is `30`.
+    -   Make sure that each tunnel has a unique pair of IP addresses. Alternatively, you can leave out `--ip-address`
+        and `--mask-length`. In that case, the addresses will be automatically generated.
+    -   For `[BGP_IF_IP_ADDRESS]`, use a [link-local](https://wikipedia.org/wiki/Link-local_address) IP address belonging
+        to the IP address range `169.254.0.0/16`. The address must belong to the same subnet as the interface address of
+        the peer router.
 
-    ```
-    gcloud compute routers add-interface $CLOUD_ROUTER_NAME \
-        --project $PROJECT_NAME \
-        --interface-name $BGP_IF \
-        --mask-length 30 \
-        --vpn-tunnel $VPN_TUNNEL_1 \
-        --region $REGION \
-        --ip-address [BGP_IF_IP_ADDRESS]
-    ```
+            gcloud compute routers add-interface $CLOUD_ROUTER_NAME \
+                --project $PROJECT_NAME \
+                --interface-name $BGP_IF \
+                --mask-length 30 \
+                --vpn-tunnel $VPN_TUNNEL_1 \
+                --region $REGION \
+                --ip-address [BGP_IF_IP_ADDRESS]
 
-1. Update the Cloud Router config to add the BGP peer to the interface. Note
-    the following:
+1.  Update the Cloud Router configuration to add the BGP peer to the interface.
 
-    -  For `[PEER_ASN]`, use your public ASN or any [private ASN](https://tools.ietf.org/html/rfc6996) (`64512–65534`, `4200000000–4294967294`) that you are not already using in the peer network.
+    Note the following:
+
+    -   For `[PEER_ASN]`, use your public ASN or any [private ASN](https://tools.ietf.org/html/rfc6996)
+        (`64512–65534`, `4200000000–4294967294`) that you are not already using in the peer network.
         For example, you can use `65001`.
-    -  For `[PEER_IP_ADDRESS]`, use a [link-local](https://wikipedia.org/wiki/Link-local_address) IP address belonging to the IP address range `169.254.0.0/16`. It must belong to the same subnet as the GCP-side interface.
-    -  If you left out the IP address and mask length in the previous step, leave out the peer IP address in this command.
-    -  Make sure each tunnel has a unique pair of IPs.
+    -   For `[PEER_IP_ADDRESS]`, use a [link-local](https://wikipedia.org/wiki/Link-local_address) IP address belonging to 
+        the IP address range `169.254.0.0/16`. It must belong to the same subnet as the GCP-side interface.
+    -   If you left out the IP address and mask length in the previous step, leave out the peer IP address in this command.
+    -   Make sure that each tunnel has a unique pair of IPs.
 
-    ```
-    gcloud compute routers add-bgp-peer $CLOUD_ROUTER_NAME \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --peer-name $BGP_SESSION_NAME \
-        --interface $BGP_IF \
-        --peer-asn [PEER_ASN] \
-        --peer-ip-address [PEER_IP_ADDRESS]
-    ```
+            gcloud compute routers add-bgp-peer $CLOUD_ROUTER_NAME \
+                --project $PROJECT_NAME \
+                --region $REGION \
+                --peer-name $BGP_SESSION_NAME \
+                --interface $BGP_IF \
+                --peer-asn [PEER_ASN] \
+                --peer-ip-address [PEER_IP_ADDRESS]
 
-1. View details of the configured Cloud Router in order to confirm your settings.
+1.  View details of the configured Cloud Router in order to confirm your settings.
 
-    ```
-    gcloud compute routers describe $CLOUD_ROUTER_NAME \
-        --project $PROJECT_NAME \
-        --region $REGION
-    ```
+        gcloud compute routers describe $CLOUD_ROUTER_NAME \
+            --project $PROJECT_NAME \
+            --region $REGION
 
-  The output for a configured Cloud Router will look like the following example. (This output shows sample values—your output will include an ID unique to you, your project name, the region you've selected, and so on.)
+    The output for a configured Cloud Router will look like the following example. (This output shows sample
+    values—your output will include an ID unique to you, your project name, the region you've selected, and so on.)
 
-     Output:
-      bgp:
-      advertiseMode: DEFAULT
-      asn: 65001
-      creationTimestamp: '2018-04-23T09:54:46.633-07:00'
-      description: ''
-      id: '2327390853769965881'
-      kind: compute#router
-      name: vpn-test-juniper
-      network: https://www.googleapis.com/compute/v1/projects/vpn-guide/global/networks/default
-      region: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1
-      selfLink: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1/routers/vpn-test-juniper
+         Output:
+          bgp:
+          advertiseMode: DEFAULT
+          asn: 65001
+          creationTimestamp: '2018-04-23T09:54:46.633-07:00'
+          description: ''
+          id: '2327390853769965881'
+          kind: compute#router
+          name: vpn-test-juniper
+          network: https://www.googleapis.com/compute/v1/projects/vpn-guide/global/networks/default
+          region: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1
+          selfLink: https://www.googleapis.com/compute/v1/projects/vpn-guide/regions/us-east1/routers/vpn-test-juniper
 
 
-1. Create GCP firewall rules to allow inbound traffic from the on-premises network subnets and from your VPC subnet prefixes.
+1.  Create GCP firewall rules to allow inbound traffic from the on-premises network subnets and from your VPC subnet 
+    prefixes.
 
-    ```
-    gcloud compute firewall-rules create $VPN_RULE \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --allow tcp,udp,icmp \
-        --source-ranges $IP_ON_PREM_SUBNET
-    ```
+        gcloud compute firewall-rules create $VPN_RULE \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --allow tcp,udp,icmp \
+            --source-ranges $IP_ON_PREM_SUBNET
 
 ### Configuring route-based IPsec VPN using static routing
 
-This section describes how to use the `gcloud` command-line tool to configure IPsec VPN with static routing. To perform the same task using the GPC Console, see [Configuring IPsec VPN using static routing](#configuring-route-based-ipsec-vpn-using-static-routing) 
+This section describes how to use the `gcloud` command-line tool to configure IPsec VPN with static routing. To perform the 
+same task using the GPC Console, see
+[Configuring IPsec VPN using static routing](#configuring-route-based-ipsec-vpn-using-static-routing) 
 earlier in this guide.
 
-The procedure suggests creating a custom VPC network. This is preferred over using an auto-created network. For more information, see [Networks and Tunnel Routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#network-types) in the Cloud VPN documentation.
+The procedure suggests creating a custom VPC network. This is preferred over using an auto-created network. For more 
+information, see
+[Networks and tunnel routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#network-types) in
+the Cloud VPN documentation.
 
-**Note**: Before you run the `gcloud` commands in this section, make sure that you've set the variables as described earlier under [Setting environment variables for gcloud command parameters](#setting-environment-variables-for-gcloud-command-parameters).
+Note: Before you run the `gcloud` commands in this section, make sure that you've set the variables as described earlier in
+[Setting environment variables for gcloud command parameters](#setting-environment-variables-for-gcloud-command-parameters).
 
-1. Create a custom VPC network. Make sure there is no conflict with your local network IP address range. Note the following:
+1.  Create a custom VPC network. Make sure there is no conflict with your local network IP address range.
 
-    -  For `[RANGE]`, substitute an appropriate CIDR range, such as `172.16.100.0/24`.
+    Note the following:
 
-    ```
-    gcloud compute networks create $VPC_NETWORK_NAME \
-        --project $PROJECT_NAME \
-        --subnet-mode custom
+    -   For `[RANGE]`, substitute an appropriate CIDR range, such as `172.16.100.0/24`.
+
+            gcloud compute networks create $VPC_NETWORK_NAME \
+                --project $PROJECT_NAME \
+                --subnet-mode custom
     
-    gcloud compute networks subnets create $VPC_SUBNET_NAME \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --region $REGION \
-        --range [RANGE]
-    ```
+            gcloud compute networks subnets create $VPC_SUBNET_NAME \
+                --project $PROJECT_NAME \
+                --network $VPC_NETWORK_NAME \
+                --region $REGION \
+                --range [RANGE]
 
-1. Create a VPN gateway in the region you are using. Normally, this is the region that contains the instances you want to reach.
+1.  Create a VPN gateway in the region you are using. Normally, this is the region that contains the instances you want to
+    reach.
 
-    ```
-    gcloud compute target-vpn-gateways create $VPN_GATEWAY_1 \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --region $REGION
-    ```
+        gcloud compute target-vpn-gateways create $VPN_GATEWAY_1 \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --region $REGION
 
-This step creates an unconfigured VPN gateway in your GCP VPC network.
+    This step creates an unconfigured VPN gateway in your GCP VPC network.
 
-1. Reserve a static IP address in the VPC network and region where you created the VPN gateway. Make a note of the address that is created for use in future steps.
+1.  Reserve a static IP address in the VPC network and region where you created the VPN gateway. Make a note of the address
+    that is created for use in future steps.
 
-    ```
-    gcloud compute addresses create $STATIC_EXTERNAL_IP \
-        --project $PROJECT_NAME \
-        --region $REGION
-    ```
+        gcloud compute addresses create $STATIC_EXTERNAL_IP \
+            --project $PROJECT_NAME \
+            --region $REGION
 
-1. Create three forwarding rules, one each to forward ESP, IKE, and NAT-T traffic to the Cloud VPN gateway. Note the following:
+1.  Create three forwarding rules, one each to forward ESP, IKE, and NAT-T traffic to the Cloud VPN gateway.
 
-    -  For `[STATIC_IP_ADDRESS]`, use the static IP address that you reserved in the previous step.
+    Note the following:
 
-    ```
-    gcloud compute forwarding-rules create $FWD_RULE_ESP \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol ESP \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --address [STATIC_IP_ADDRESS]
+    -   For `[STATIC_IP_ADDRESS]`, use the static IP address that you reserved in the previous step.
+
+            gcloud compute forwarding-rules create $FWD_RULE_ESP \
+                --project $PROJECT_NAME \
+                --region $REGION \
+                --ip-protocol ESP \
+                --target-vpn-gateway $VPN_GATEWAY_1 \
+                --address [STATIC_IP_ADDRESS]
       
-    gcloud compute forwarding-rules create $FWD_RULE_UDP_500 \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol UDP \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --ports 500 \
-        --address [STATIC_IP_ADDRESS]
+            gcloud compute forwarding-rules create $FWD_RULE_UDP_500 \
+                --project $PROJECT_NAME \
+                --region $REGION \
+                --ip-protocol UDP \
+                --target-vpn-gateway $VPN_GATEWAY_1 \
+                --ports 500 \
+                --address [STATIC_IP_ADDRESS]
       
-    gcloud compute forwarding-rules create $FWD_RULE_UDP_4500 \
-        --project $PROJECT_NAME \
-        --region $REGION \
-        --ip-protocol UDP \
-        --target-vpn-gateway $VPN_GATEWAY_1 \
-        --ports 4500 \
-        --address [STATIC_IP_ADDRESS]
-    ```
+            gcloud compute forwarding-rules create $FWD_RULE_UDP_4500 \
+                --project $PROJECT_NAME \
+                --region $REGION \
+                --ip-protocol UDP \
+                --target-vpn-gateway $VPN_GATEWAY_1 \
+                --ports 4500 \
+                --address [STATIC_IP_ADDRESS]
 
-1. Create a VPN tunnel on the Cloud VPN Gateway that points to the external IP address of your on-premises VPN gateway. Note the following:
+1.  Create a VPN tunnel on the Cloud VPN Gateway that points to the external IP address of your on-premises VPN gateway. 
 
-- Set the IKE version. The following command sets the IKE version to 2, which is the default, preferred IKE version. If you need to set it to 1, use `--ike-version 1`.
-- For `[SHARED_SECRET]`, supply the shared secret.  For details, see [Generating a Strong Pre-shared Key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
-- For `[LOCAL_TRAFFIC_SELECTOR_IP]`, supply an IP address range, like `172.16.100.0/24`,  that will be accessed on the GCP side of the  tunnel, as described in [Traffic selectors](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#static-routing-networks) in the GCP VPN networking documentation.
+    Note the following:
 
+    -   Set the IKE version. The following command sets the IKE version to 2, which is the default, preferred IKE version.
+        If you need to set it to 1, use `--ike-version 1`.
+    -   For `[SHARED_SECRET]`, supply the shared secret.  For details, see
+        [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
+    -   For `[LOCAL_TRAFFIC_SELECTOR_IP]`, supply an IP address range, like `172.16.100.0/24`, that will be accessed on the 
+        GCP side of the  tunnel, as described in
+        [Traffic selectors](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#static-routing-networks)
+        in the GCP VPN networking documentation.
 
-```
-gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
-    --project $PROJECT_NAME \
-    --peer-address $CUST_GW_EXT_IP \
-    --region $REGION \
-    --ike-version 2 \
-    --shared-secret [SHARED_SECRET] \
-    --target-vpn-gateway $VPN_GATEWAY_1 \
-    --local-traffic-selector [LOCAL_TRAFFIC_SELECTOR_IP]
-```
+            gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
+                --project $PROJECT_NAME \
+                --peer-address $CUST_GW_EXT_IP \
+                --region $REGION \
+                --ike-version 2 \
+                --shared-secret [SHARED_SECRET] \
+                --target-vpn-gateway $VPN_GATEWAY_1 \
+                --local-traffic-selector [LOCAL_TRAFFIC_SELECTOR_IP]
 
 After you run this command, resources are allocated for this VPN tunnel, but it is not yet passing traffic.
 
-1. Use a [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create) to forward traffic to the destination range of IP addresses in your on-premises network. The region must be the   same region as for the VPN tunnel.
+1.  Use a [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create) to forward traffic to the 
+    destination range of IP addresses in your on-premises network. The region must be the same region as for the VPN tunnel.
 
-    ```
-    gcloud compute routes create $ROUTE_NAME \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --next-hop-vpn-tunnel $VPN_TUNNEL_1 \
-        --next-hop-vpn-tunnel-region $REGION \
-        --destination-range $IP_ON_PREM_SUBNET
-    ```
+        gcloud compute routes create $ROUTE_NAME \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --next-hop-vpn-tunnel $VPN_TUNNEL_1 \
+            --next-hop-vpn-tunnel-region $REGION \
+            --destination-range $IP_ON_PREM_SUBNET
 
-1. If you want to pass traffic from multiple subnets through the VPN tunnel, repeat the previous step to forward the IP address of each of the subnets.
+1.  If you want to pass traffic from multiple subnets through the VPN tunnel, repeat the previous step to forward the IP 
+    address of each of the subnets.
 
-1. Create firewall rules to allow traffic between the on-premises network and GCP VPC networks.
+1.  Create firewall rules to allow traffic between the on-premises network and GCP VPC networks.
 
-    ```
-    gcloud compute firewall-rules create $VPN_RULE \
-        --project $PROJECT_NAME \
-        --network $VPC_NETWORK_NAME \
-        --allow tcp,udp,icmp \
-        --source-ranges $IP_ON_PREM_SUBNET
-    ```
+        gcloud compute firewall-rules create $VPN_RULE \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --allow tcp,udp,icmp \
+            --source-ranges $IP_ON_PREM_SUBNET
