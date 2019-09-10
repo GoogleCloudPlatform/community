@@ -89,13 +89,13 @@ several tabs:
 
   software, memory, and CPU utilization.
 
-* **Dependency**: View dependencies between servers. You can also view details relating to network traffic (ports, 
+* **Dependency**: View dependencies between servers. You can also view details relating to network traffic (ports,
 
   traffic type, protocol) for each network relationship in the dependency map.
   
 ![An example graph of workload dependencies](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-stratozone/seamlessmigrat--t13ecagmadj.png)
 
-* **StratoFit**: Scores how well applications are suited for migration to the cloud. A StratoFit score of high, medium, 
+* **StratoFit**: Scores how well applications are suited for migration to the cloud. A StratoFit score of high, medium,
 
   or low is assigned to assets based on the size of system and number of dependencies.
 
@@ -150,7 +150,7 @@ Migration progress can be tracked by clicking the down arrow to see list of comp
 
 You can also download a pre-configured CSV file and import it manually into the Migrate for Compute Engine Runbook Automation portal.
 
-1. When creating move groups, select **Migrate for Compute Engine CSV**.
+1. When creating move groups, select **Velostrata CSV**.
 
 1. To download the CSV, click the download icon next to move group.
 
@@ -160,8 +160,8 @@ You can also download a pre-configured CSV file and import it manually into the 
 
 For more help with StratoZone, see [Troubleshooting](https://portal.stratozone.com/Documentation/StratoProbe_Troubleshooting.html).
 
-Continue with the [wave](https://cloud.google.com/Migrate for Compute Engine/docs/how-to/organizing-migrations/overview) process on your Migrate for Compute Engine Manager:
+Continue with the [wave](https://cloud.google.com/migrate/compute-engine/docs/how-to/organizing-migrations/overview) process on your Migrate for Compute Engine Manager:
 
-* [Create a wave](https://cloud.google.com/Migrate for Compute Engine/docs/how-to/organizing-migrations/creating-new-waves) from the CSV.
-* [Add jobs](https://cloud.google.com/Migrate for Compute Engine/docs/how-to/organizing-migrations/creating-aborting-jobs) to that wave
-* [Monitor the progress](https://cloud.google.com/Migrate for Compute Engine/docs/how-to/organizing-migrations/monitoring-waves-runbooks-jobs) of your waves.
+* [Create a wave](https://cloud.google.com/migrate/compute-engine/docs/how-to/organizing-migrations/creating-new-waves) from the CSV.
+* [Add jobs](https://cloud.google.com/migrate/compute-engine/docs/how-to/organizing-migrations/creating-aborting-jobs) to that wave
+* [Monitor the progress](https://cloud.google.com/migrate/compute-engine/docs/how-to/organizing-migrations/monitoring-waves-runbooks-jobs) of your waves.
