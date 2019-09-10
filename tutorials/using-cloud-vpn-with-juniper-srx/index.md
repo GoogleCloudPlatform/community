@@ -134,7 +134,7 @@ These initial tasks are the same whether you are creating an IPsec VPN using dyn
 1.  In the **New subnet** section, click **Done**.
 1.  Click **Create**.
 
-The creation of the network and its subnet to can take a minute or more.
+The creation of the network and its subnet can take a minute or more.
 
 #### Create the GCP external IP address
 
@@ -198,7 +198,7 @@ possible, as discussed in the [Cloud VPN overview](https://cloud.google.com/comp
         [this explanation of dynamic routing for VPN tunnels in VPC networks](https://cloud.google.com/router/docs/concepts/overview#dynamic_routing_for_vpn_tunnels_in_vpc_networks).
     -   **Remote network IP range**: The IP address range of the on-premises subnet on the other side of the tunnel from
         this gateway.
-    -   **Advertised route priority**: Configure this option if you want to configure redundant or high-throughput VPNs as 
+    -   **Advertised route priority**: Configure this option if you want to set up redundant or high-throughput VPNs as 
         described in [advanced VPN configurations](#advanced-vpn-configurations). Note that if you don't need advanced VPN 
         now, you will need to configure a new VPN tunnel later to support it. The advertised route priority is the base
         priority that Cloud Router uses when advertising the "to GCP" routes. For more information, see
@@ -239,24 +239,17 @@ Note: Most steps in the procedure for configuring an IPsec VPN using static rout
 IPsec VPN using dynamic routing. Rather than repeat those steps in the following procedure, the procedure links to the 
 previous section.
 
-1.  Follow the steps for [setting up a GCP gateway for dynamic routing](#configuring-an-ipsec-vpn-using-dynamic-routing), 
+1.  Follow the steps for [configuring an IPsec VPN using dynamic routing](#configuring-an-ipsec-vpn-using-dynamic-routing), 
     with these changes:
-    1.  In the configuration for a tunnel, under **Routing options**, select **Route-based**.
-    1.  For **Remote network IP ranges**, set the IP address range or ranges of the on-premises network, which is the 
+    -   In the configuration for a tunnel, under **Routing options**, select **Route-based**.
+    -   For **Remote network IP ranges**, set the IP address range or ranges of the on-premises network, which is the 
         network on the other side of the tunnel from the Cloud VPN gateway that you are currently configuring.
-    1.  Click **Create** to create the gateway and initiate all tunnels.
-    
-        This step automatically creates a network-wide route and the necessary forwarding rules for the tunnel. The tunnels 
-        will not pass traffic until you've configured the firewall rules.
-1. Go to the [**Firewall rules** page](https://console.cloud.google.com/networking/firewalls).
-1. Click **Create firewall rule**.
-1.  Set the following values:
+1.  Follow the steps for configuring firewall rules in the previous section, and set the following values:
     -   **Name**: A name for the firewall rule, such as `vpnrule1`.
-    -  **VPC network**: The name you used earlier for the VPC network, such as `vpn-juniper-test-network`.
-    -  **Source filter**: A filter to apply your rule to specific sources of traffic. In this case, choose **IP ranges**.
-    -  **Source IP ranges**: The peer ranges to accept from the peer VPN gateway.
-    -  **Allowed protocols and ports**: The string `tcp;udp;icmp`.
-1. Click **Create**.
+    -   **VPC network**: The name you used earlier for the VPC network, such as `vpn-juniper-test-network`.
+    -   **Source filter**: A filter to apply your rule to specific sources of traffic. In this case, choose **IP ranges**.
+    -   **Source IP ranges**: The peer ranges to accept from the peer VPN gateway.
+    -   **Allowed protocols and ports**: The string `tcp;udp;icmp`.
 
 ## Configure the Juniper SRX300 side
 
