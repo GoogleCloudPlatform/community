@@ -2,7 +2,7 @@
 title: Migrate on-premises virtual machines with StratoZone and Migrate for Compute Engine
 description: Learn how to use StratoZone and Migrate for Compute Engine to migrate on-premises VMs to Google Cloud Platform.
 author: laidig
-tags: VM migration, Migrate for Compute Engine, StratoZone, Migrate for Compute Engine
+tags: VM migration, Migrate for Compute Engine, StratoZone, Velostrata
 date_published: 2019-06-21
 ---
 
