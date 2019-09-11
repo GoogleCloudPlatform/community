@@ -1010,131 +1010,29 @@ The `gcloud` commands in this guide include parameters whose value you must prov
 
 
 | Parameter description | Placeholder       | Example value                             |
-|-----------------------|-------------------|-------------------------------------------|
-| Vendor name           | `[VENDOR_NAME]`   | (Your product's vendor name. This value should have no spaces or punctuation in it other than underscores or hyphens, because it will be used as part of the names for GCP entities) |
-| GCP project name      | `[PROJECT_NAME]`  | `vpn-guide`                               |
-| Shared secret         | `[SHARED_SECRET]` | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key). |
-|                       |                   |                                           |
-|                       |                   |                                           |
-|                       |                   |                                           |
-|                       |                   |                                           |
-|                       |                   |                                           |
-|                       |                   |                                           |
-|                       |                   |                                           |
-|                       |                   |                                           |
+|-----------------------|----------------------|-------------------------------------------|
+| Vendor name           | `[VENDOR_NAME]`      | (Your product's vendor name. This value should have no spaces or punctuation in it other than underscores or hyphens, because it will be used as part of the names for GCP entities) |
+| GCP project name      | `[PROJECT_NAME]`     | `vpn-guide`                               |
+| Shared secret         | `[SHARED_SECRET]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key). |
+| VPC network name      | `[VPC_NETWORK_NAME]` | `vpn-vendor-test-network`                 |
+| Subnet on the GCP VPC network (for example, `vpn-vendor-test-network`) | `[VPC_SUBNET_NAME]` | `vpn-subnet-1` |
+| GCP region. Can be any region, but should be geographically close to the on-premises gateway. | `[REGION]` | `us-east1` |
+| Pre-existing external static IP address that you configure for the internet side of the Cloud VPN gateway. | `[STATIC_EXTERNAL_IP]` | `vpn-test-static-ip` |
+| IP address range for the GCP VPC subnet (`vpn-subnet-1`) | `[SUBNET_IP]` | `172.16.100.0/24`and`172.16.200.0/24` |
+| IP address range for the on-premises subnet. You will use this range when creating rules for inbound traffic to GCP. | `[IP_ON_PREM_SUBNET]` | `10.1.0.0/16`and`10.0.0.0/16` |
+| External static IP address for the internet interface of Juniper SRX | `[CUST_GW_EXT_IP]` | `199.203.248.181` 
+| Cloud Router name (for dynamic routing) | `[CLOUD_ROUTER_NAME]` | `vpn-test-vendor-rtr` |
+| BGP interface name    | `[BGP_IF]`           | `if-1`                                    |
+| BGP session name (for dynamic routing) | `[BGP_SESSION_NAME]` | `bgp-peer1` |
+| The name for the first GCP VPN gateway | `[VPN_GATEWAY_1]`    | `vpn-test-[VENDOR_NAME]-gw-1`, where `[VENDOR_ NAME]` is the `[VENDOR_NAME]` string |
+| The name for the first VPN tunnel for `vpn-test-[VENDOR_NAME]-gw-1` | `[VPN_TUNNEL_1]` | `vpn-test-tunnel1` |
+| The name of a firewall rule that allows traffic between the on-premises network and GCP VPC networks | `[VPN_RULE]` | `vpnrule1` |
+| The name for the [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create) used to forward
+traffic to the on-premises network. Note: You need this value only if you are creating a VPN using a static route. | `[ROUTE_NAME]` | `vpn-static-route` |
+| The name for the forwarding rule for the [ESP protocol](https://wikipedia.org/wiki/IPsec#Encapsulating_Security_Payload) | `[FWD_RULE_ESP]` | `fr-esp` |
+| The name for the forwarding rule for the (https://wikipedia.org/wiki/User_Datagram_Protocol)[UDP protocol], port 500 | `[FWD_RULE_UDP_500]` | `fr-udp500` |
+| The name for the forwarding rule for the UDP protocol, port 4500 | `[FWD_RULE_UDP_4500]` | `fr-udp4500` |
 
-
-
-
-
-
-
-
-
-<td>VPC network name</td>
-<td>`[VPC_NETWORK_NAME]`</td>
-<td>`vpn-vendor-test-network`</td>
-</tr>
-<tr>
-<td>Subnet on the GCP VPC network (for example, `vpn-vendor-test-network`)</td>
-<td>`[VPC_SUBNET_NAME]`</td>
-<td>`vpn-subnet-1`</td>
-</tr>
-<tr>
-<td>GCP region. Can be any region, but it should be geographically close to the
-on-premises gateway.</td>
-<td>`[REGION]`</td>
-<td>`us-east1`</td>
-</tr>
-<tr>
-<td>Pre-existing external static IP address that you configure for the internet
-side of the Cloud VPN gateway.</td>
-<td>`[STATIC_EXTERNAL_IP]`</td>
-<td>`vpn-test-static-ip`</td>
-</tr>
-<tr>
-<td>IP address range for the GCP VPC subnet (`vpn-subnet-1`)</td>
-<td>`[SUBNET_IP]`</td>
-<td>`172.16.100.0/24`and`172.16.200.0/24`</td>
-</tr>
-<tr>
-<td>IP address range for the on-premises subnet. You will use this range when
-creating rules for inbound traffic to GCP.</td>
-<td>`[IP_ON_PREM_SUBNET]`</td>
-<td>`10.1.0.0/16`and`10.0.0.0/16`</td>
-</tr>
-<tr>
-<td>External static IP address for the internet interface of <vendor
-name><product-name></td>
-<td>`[CUST_GW_EXT_IP]` </td>
-<td>For example `199.203.248.181`</td>
-</tr>
-<tr>
-<td>Cloud Router name (for dynamic routing)</td>
-<td>`[CLOUD_ROUTER_NAME]`</td>
-<td>`vpn-test-vendor-rtr`</td>
-</tr>
-<tr>
-<td>BGP interface name</td>
-<td>`[BGP_IF]`</td>
-<td>`if-1`</td>
-</tr>
-<tr>
-<td>BGP session name (for dynamic routing)</td>
-<td>`[BGP_SESSION_NAME]`</td>
-<td>`bgp-peer1`</td>
-</tr>
-<tr>
-<td>The name for the first GCP VPN gateway.</td>
-<td>`[VPN_GATEWAY_1]`</td>
-<td>`vpn-test-[VENDOR_NAME]-gw-1`, where `[VENDOR_ NAME]`
-is the `[VENDOR_NAME]` string</td>
-</tr>
-<tr>
-<td>The name for the first VPN tunnel for
-`vpn-test-[VENDOR_NAME]-gw-1`</td>
-<td>`[VPN_TUNNEL_1]`</td>
-<td>`vpn-test-tunnel1`</td>
-</tr>
-<tr>
-<td>The name of a firewall rule that allows traffic between the on-premises
-network and GCP VPC networks</td>
-<td>`[VPN_RULE]`</td>
-<td>`vpnrule1`</td>
-</tr>
-<tr>
-<td>The name for the <a
-href="https://cloud.google.com/sdk/gcloud/reference/compute/routes/create">static
-route</a> used to forward traffic to the on-premises network.<br>
-<br>
-<strong>Note</strong>: You need this value only if you are creating a VPN
-using a static route.</td>
-<td>`[ROUTE_NAME]`
-</td>
-<td>`vpn-static-route`
-</td>
-</tr>
-<tr>
-<td>The name for the forwarding rule for the <a
-href="https://wikipedia.org/wiki/IPsec#Encapsulating_Security_Payload">ESP
-protocol</a></td>
-<td>`[FWD_RULE_ESP]`</td>
-<td>`fr-esp`</td>
-</tr>
-<tr>
-<td>The name for the forwarding rule for the <a
-href="https://wikipedia.org/wiki/User_Datagram_Protocol">UDP
-protocol</a>, port 500</td>
-<td>`[FWD_RULE_UDP_500]`</td>
-<td>`fr-udp500`</td>
-</tr>
-<tr>
-<td>The name for the forwarding rule for the UDP protocol, port 4500</td>
-<td>`[FWD_RULE_UDP_4500]`</td>
-<td>`fr-udp4500`</td>
-</tr>
-</tbody>
-</table>
 
 ### Setting environment variables for gcloud command parameters
 
