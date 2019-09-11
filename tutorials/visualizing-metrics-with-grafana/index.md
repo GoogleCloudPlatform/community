@@ -241,7 +241,7 @@ kubectl port-forward $GRAFANA_POD 3000 -n $MONITORING_NS
 
 4.  Use the web preview functionality in Cloud Shell to access the UI after changing the port to 3000:
 
-![image](2-preview.png)
+![image](2-webpreview.png)
 
 5.  At the Grafana login screen, enter **admin** as the username and paste in the password from step 8 above to access Grafana.
 
