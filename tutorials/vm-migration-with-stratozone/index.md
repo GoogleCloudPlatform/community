@@ -29,9 +29,9 @@ register.
 
 After you have registered, sign in to the [StratoZone portal](https://portal.stratozone.com/).
 
-1. At the bottom of the **Getting Started** section on the StratoZone portal page, click **Create New Assessment**.
-1. Select your **Assessment Type** and fill out the rest of the form. Note the **Activation Code** provided to you.
-1. You will then be able to download the StratoProbe collector application.
+1.  At the bottom of the **Getting Started** section on the StratoZone portal page, click **Create New Assessment**.
+1.  Select your **Assessment Type** and fill out the rest of the form. Note the **Activation Code** provided to you.
+1.  You will then be able to download the StratoProbe collector application.
 
 ### Discovery
 
@@ -49,11 +49,10 @@ To begin the collection process, you must create credentials groups, which are u
 From the StratoZone portal, select **Create Credentials Group**.
 
 In the **Group Credentials** dropdown, choose one of the following:
-
-* **No Group Credentials**: Specify credentials for each asset.
-* **Username and Password**: For Windows and Linux.
-* **SSH Key / Certificate**: For Linux only. You will need a `.pem` certificate to proceed.
-* **vCenter**: Use vCenter host and credentials to gather asset data.
+-   **No Group Credentials**: Specify credentials for each asset.
+-   **Username and Password**: For Windows and Linux.
+-   **SSH Key / Certificate**: For Linux only. You will need a `.pem` certificate to proceed.
+-   **vCenter**: Use vCenter host and credentials to gather asset data.
 
 #### Add target assets
 
@@ -84,14 +83,14 @@ Use this module to analyze discovered assets, cloud-fit scoring, and server depe
 Log in to the [StratoZone portal](https://portal.stratozone.com/). Data on your assets appears. From here, you will see
 several tabs:
 
-*   **Inventory**: View detailed information about all assets, including storage, network, running processes, installed
+-   **Inventory**: View detailed information about all assets, including storage, network, running processes, installed
     software, memory, and CPU utilization.
-*   **Dependency**: View dependencies between servers. You can also view details relating to network traffic (ports, traffic
+-   **Dependency**: View dependencies between servers. You can also view details relating to network traffic (ports, traffic
     type, protocol) for each network relationship in the dependency map.
   
     ![An example graph of workload dependencies](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-stratozone/seamlessmigrat--t13ecagmadj.png)
 
-*   **StratoFit**: Scores how well applications are suited for migration to the cloud. A StratoFit score of high, medium,
+-   **StratoFit**: Scores how well applications are suited for migration to the cloud. A StratoFit score of high, medium,
     or low is assigned to assets based on the size of system and number of dependencies.
 
 ## Plan
@@ -110,10 +109,10 @@ of ownership (TCO) analysis.
 
 The StratoZone Migrate module allows you to do the following:
 
-* Group workload servers into waves.
-* Assign migration date and time.
-* Track tasks associated with each migration.
-* Migrate the servers to GCP using Migrate for Compute Engine.
+-   Group workload servers into waves.
+-   Assign migration date and time.
+-   Track tasks associated with each migration.
+-   Migrate the servers to GCP using Migrate for Compute Engine.
 
 On the StratoZone portal, select the **Migrate** module and click the **Setup** tab.
 
@@ -161,6 +160,6 @@ For more help with StratoZone, see
 Continue with the [wave](https://cloud.google.com/velostrata/docs/how-to/organizing-migrations/overview) process on your
 Migrate for Compute Engine Manager:
 
-*   [Create a wave](https://cloud.google.com/velostrata/docs/how-to/organizing-migrations/creating-new-waves) from the CSV.
-*   [Add jobs](https://cloud.google.com/velostrata/docs/how-to/organizing-migrations/creating-aborting-jobs) to that wave
-*   [Monitor the progress](https://cloud.google.com/velostrata/docs/how-to/organizing-migrations/monitoring-waves-runbooks-jobs) of your waves.
+-   [Create a wave](https://cloud.google.com/velostrata/docs/how-to/organizing-migrations/creating-new-waves) from the CSV.
+-   [Add jobs](https://cloud.google.com/velostrata/docs/how-to/organizing-migrations/creating-aborting-jobs) to that wave
+-   [Monitor the progress](https://cloud.google.com/velostrata/docs/how-to/organizing-migrations/monitoring-waves-runbooks-jobs) of your waves.
