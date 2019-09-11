@@ -640,17 +640,18 @@ feature is not supported in the SRX300 series devices. See
 [Chassis Clustering](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-chassis-cluster-verification.html) and
 [Chassis Cluster Overview](https://www.juniper.net/documentation/en_US/release-independent/nce/topics/concept/chassis-cluster-high-end-srx-overview.html) for more information.
 
-To achieve high availability in the SRX300 platform, multiple SRX300s are needed (at least two) and the high availability 
-is done by manipulating BGP routing within the devices. This is beyond the scope of this document. See the
-[Juniper BGP Feature Guide](https://www.juniper.net/documentation/en_US/junos/information-products/pathway-pages/config-guide-routing/config-guide-routing-bgp.html)
+To achieve high availability in the SRX300 platform, multiple (at least two) SRX300 devices are needed. The high 
+availability is accomplished by manipulating BGP routing within the devices. This is beyond the scope of this document. See
+the [Juniper BGP Feature Guide](https://www.juniper.net/documentation/en_US/junos/information-products/pathway-pages/config-guide-routing/config-guide-routing-bgp.html)
 for more in-depth information on how to configure BGP (internal and external) and manipulate BGP attributes for different 
 route preferences.
 
 This section contains procedures for configuring route priority settings on Juniper SRX300 and GCP. The GCP instructions 
 assume that you have built each GCP gateway in a set of redundant gateways as described in the
 [dynamic routing section](#configuring-an-ipsec-vpn-using-dynamic-routing) and configured the **Advertised route priority** 
-field when you configured the VPN gateway. If you didn't do this, you will need to
-[create a new tunnel and BGP session for the gateways involved and configure the Advertised route priority field](#configure-the-vpn-gateway) as described in the following sections.
+field when you [configured the VPN gateway](#configure-the-vpn-gateway). If you didn't do this, then you will need to create
+a new tunnel and BGP session for the gateways involved and configure the Advertised route priority field as described in the 
+following sections.
 
 Note: Some of the procedures in this section use `gcloud` commands. For information about using `gcloud` commands, and about
 setting environment variables for parameter values such as the GCP network name, see the
@@ -658,16 +659,16 @@ setting environment variables for parameter values such as the GCP network name,
 
 #### Configuring Juniper SRX300 dynamic route priority settings using BGP MED
 
-GCP Cloud Router uses only BGP MED (Multi-Exit Discriminator) values to determine route priorities, see
-[here](https://cloud.google.com/router/docs/concepts/overview) for more information. MED is a routing metric and routes with 
-lower values are considered the better routes. MED values on SRX300 can be set for all prefixes per neighbor or for specific 
-routes using route filters. See Juniper documentation
+GCP Cloud Router uses only BGP MED (Multi-Exit Discriminator) values to determine route priorities. For more information,
+see [this page](https://cloud.google.com/router/docs/concepts/overview). MED is a routing metric; routes with lower values
+are considered better routes. MED values on SRX300 devices can be set for all prefixes per neighbor or for specific 
+routes using route filters. See the 
 [Configuring BGP MED](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/bgp-med.html) and
 [Configuring the MED Using Route Filters](https://www.juniper.net/documentation/en_US/junos/topics/example/bgp-med-route-filter.html)
-for details of how to set BGP MED in the Juniper SRX300.
+sections of the Juniper documentation for details of how to set BGP MED in the Juniper SRX300.
 
-Below is the sample configuration for setting MED values of all routes advertised to a BGP neighbor (for example GCP Cloud
-Router) to `100`
+This sample configuration sets MED values of all routes advertised to a BGP neighbor (for example, GCP Cloud Router) to 
+`100`:
 
     set protocols bgp group ebgp-peers neighbor 169.254.0.1 metric-out 100
 
