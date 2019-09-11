@@ -181,7 +181,7 @@ possible, as discussed in the [Cloud VPN overview](https://cloud.google.com/comp
 1.  Under **Routing options**, select the **Dynamic (BGP)** tab.
 1.  In the **Cloud router** menu, select **Create cloud router** and set the following values in the
     **Create a cloud router** dialog:
-    -   **Name**: The name of the Cloud Router, such as `vpn-test-vendor-rtr`. This name is displayed in the GCP Console.
+    -   **Name**: The name of the Cloud Router, such as `vpn-test-juniper-rtr`. This name is displayed in the GCP Console.
         If you use the `gcloud` command-line tool to perform VPN tasks, you use this name to refer to the router.
     -   **Google ASN**: The [private ASN](https://tools.ietf.org/html/rfc6996) for the router you are configuring. It can be
         any private ASN in the range `64512–65534` or `4200000000–4294967294` that you are not already using. Example:
@@ -549,168 +549,196 @@ On the GCP side, use the following instructions to test the connection to a mach
 
 ##### Testing/verifying VPN connectivity on Juniper SRX
 
-- Show IKE Security Associations
+1.  Show IKE security associations
 
         root@vsrx# run show security ike security-associations
         Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
         7877087 UP     412c5a43aad7682b  b6d24ef8bf25e9ea  IKEv2          35.187.170.191
 
-- Show IPsec Security Associations
+1.  Show IPsec security associations
 
-       root@vsrx# run show security ipsec security-associations
-       Total active tunnels: 1
-       ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
-       &lt;131073 ESP:aes-cbc-256/sha256 9beb1bf0 729/ unlim - root 4500 35.187.170.191
-       >131073 ESP:aes-cbc-256/sha256 97791a28 729/ unlim - root 4500 35.187.170.191
+        root@vsrx# run show security ipsec security-associations
+        Total active tunnels: 1
+        ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
+        &lt;131073 ESP:aes-cbc-256/sha256 9beb1bf0 729/ unlim - root 4500 35.187.170.191
+        >131073 ESP:aes-cbc-256/sha256 97791a28 729/ unlim - root 4500 35.187.170.191
 
-- List BGP learned routes:
+1.  List BGP learned routes:
 
-   ```
-   root@vsrx# run show route protocol bgp
+        root@vsrx# run show route protocol bgp
    
-   inet.0: 11 destinations, 11 routes (11 active, 0 holddown, 0 hidden)
-   + = Active Route, - = Last Active, * = Both
-   
-   10.120.0.0/16      *[BGP/170] 23:02:00, MED 100, localpref 100
-                         AS path: 65500 ?, validation-state: unverified
-                       > to 169.254.0.1 via st0.0
-   10.121.0.0/16      *[BGP/170] 23:02:00, MED 100, localpref 100
-                         AS path: 65500 ?, validation-state: unverified
-                       > to 169.254.0.1 via st0.0
-   10.122.0.0/16      *[BGP/170] 23:02:00, MED 100, localpref 100
-                         AS path: 65500 ?, validation-state: unverified
-                       > to 169.254.0.1 via st0.0
-   ```
+        inet.0: 11 destinations, 11 routes (11 active, 0 holddown, 0 hidden)
+        + = Active Route, - = Last Active, * = Both
+        
+        10.120.0.0/16      *[BGP/170] 23:02:00, MED 100, localpref 100
+                              AS path: 65500 ?, validation-state: unverified
+                            > to 169.254.0.1 via st0.0
+        10.121.0.0/16      *[BGP/170] 23:02:00, MED 100, localpref 100
+                              AS path: 65500 ?, validation-state: unverified
+                            > to 169.254.0.1 via st0.0
+        10.122.0.0/16      *[BGP/170] 23:02:00, MED 100, localpref 100
+                              AS path: 65500 ?, validation-state: unverified
+                            > to 169.254.0.1 via st0.0
 
-- Pinging an IP address in GCP via the Tunnel
+1.  Ping an IP address in GCP through the tunnel:
 
-   ```
-   root@vsrx> ping 10.120.0.2 count 5 source 192.168.1.1
-   PING 10.120.0.2 (10.120.0.2): 56 data bytes
-   64 bytes from 10.120.0.2: icmp_seq=0 ttl=64 time=20.758 ms
-   64 bytes from 10.120.0.2: icmp_seq=1 ttl=64 time=20.024 ms
-   64 bytes from 10.120.0.2: icmp_seq=2 ttl=64 time=23.783 ms
-   64 bytes from 10.120.0.2: icmp_seq=3 ttl=64 time=19.472 ms
-   64 bytes from 10.120.0.2: icmp_seq=4 ttl=64 time=21.183 ms
-   
-   --- 172.16.0.2 ping statistics ---
-   5 packets transmitted, 5 packets received, 0% packet loss
-   round-trip min/avg/max/stddev = 19.472/21.044/23.783/1.491 ms
-   
-   root@vsrx>
-   ```
+        root@vsrx> ping 10.120.0.2 count 5 source 192.168.1.1
+        PING 10.120.0.2 (10.120.0.2): 56 data bytes
+        64 bytes from 10.120.0.2: icmp_seq=0 ttl=64 time=20.758 ms
+        64 bytes from 10.120.0.2: icmp_seq=1 ttl=64 time=20.024 ms
+        64 bytes from 10.120.0.2: icmp_seq=2 ttl=64 time=23.783 ms
+        64 bytes from 10.120.0.2: icmp_seq=3 ttl=64 time=19.472 ms
+        64 bytes from 10.120.0.2: icmp_seq=4 ttl=64 time=21.183 ms
+        
+        --- 172.16.0.2 ping statistics ---
+        5 packets transmitted, 5 packets received, 0% packet loss
+        round-trip min/avg/max/stddev = 19.472/21.044/23.783/1.491 ms
+        
+        root@vsrx>
 
 ### Advanced VPN configurationsAdvanced VPN configurations
 
-This section covers how to configure redundant on-premises VPN gateways and how
-to get higher throughput through VPN tunnels.
+This section covers how to configure redundant on-premises VPN gateways and how to get higher throughput through VPN tunnels.
 
 ### Configuring VPN redundancy
 
-Using redundant on-premises VPN gateways ensures continuous availability when a tunnel fails. The article [Redundancy and High-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns) in the Cloud VPN documentation provides configuration guidelines for both GCP and on-premises VPN gateways, including guidance on setting route priorities for redundant gateways. Juniper SRX devices use chassis clustering to provide high availability. This feature is not supported in the SRX300 series devices [See Chassis Clustering](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-chassis-cluster-verification.html) and [Chassis Cluster Overview](https://www.juniper.net/documentation/en_US/release-independent/nce/topics/concept/chassis-cluster-high-end-srx-overview.html) for more information.
+Using redundant on-premises VPN gateways ensures continuous availability when a tunnel fails. The article
+[Redundancy and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns) in the Cloud VPN 
+documentation provides configuration guidelines for both GCP and on-premises VPN gateways, including guidance on setting 
+route priorities for redundant gateways. Juniper SRX devices use chassis clustering to provide high availability. This 
+feature is not supported in the SRX300 series devices. See
+[Chassis Clustering](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-chassis-cluster-verification.html) and
+[Chassis Cluster Overview](https://www.juniper.net/documentation/en_US/release-independent/nce/topics/concept/chassis-cluster-high-end-srx-overview.html) for more information.
 
-To achieve high availability in the SRX300 platform, multiple SRX300s are needed (at least two) and the high availability is done in the by manipulating BGP routing within the devices, this is beyond the scope of this document. See [Juniper BGP Feature Guide](https://www.juniper.net/documentation/en_US/junos/information-products/pathway-pages/config-guide-routing/config-guide-routing-bgp.html) for more in-depth guide on how to configure BGP (internal and external) and manipulate BGP attributes for different route preferences.
+To achieve high availability in the SRX300 platform, multiple SRX300s are needed (at least two) and the high availability 
+is done by manipulating BGP routing within the devices. This is beyond the scope of this document. See the
+[Juniper BGP Feature Guide](https://www.juniper.net/documentation/en_US/junos/information-products/pathway-pages/config-guide-routing/config-guide-routing-bgp.html)
+for more in-depth information on how to configure BGP (internal and external) and manipulate BGP attributes for different 
+route preferences.
 
-This section contains procedures for configuring route priority settings on Juniper SRX300 and GCP. The GCP instructions assume you have built each GCP gateway in a set of redundant gateways as described in the [dynamic routing section](#configuring-an-ipsec-vpn-using-dynamic-routing) and configured the **Advertised route priority** field when you configured the VPN gateway. If you didn't do this, you will need to [create a new tunnel and BGP session for the gateways involved and configure the Advertised route priority field](#configure-the-vpn-gateway) as described in the following sections.
+This section contains procedures for configuring route priority settings on Juniper SRX300 and GCP. The GCP instructions 
+assume that you have built each GCP gateway in a set of redundant gateways as described in the
+[dynamic routing section](#configuring-an-ipsec-vpn-using-dynamic-routing) and configured the **Advertised route priority** 
+field when you configured the VPN gateway. If you didn't do this, you will need to
+[create a new tunnel and BGP session for the gateways involved and configure the Advertised route priority field](#configure-the-vpn-gateway) as described in the following sections.
 
-**Note**: Some of the procedures in this section use `gcloud` commands. For information about using `gcloud` commands, and about setting environment variables for parameter values such as the GCP network name, see the [appendix](#appendix-using-gcloud-commands).
+Note: Some of the procedures in this section use `gcloud` commands. For information about using `gcloud` commands, and about
+setting environment variables for parameter values such as the GCP network name, see the
+[appendix](#appendix-using-gcloud-commands).
 
-#### Configuring Juniper SRX300 dynamic route priority settings (Using BGP MED)
+#### Configuring Juniper SRX300 dynamic route priority settings using BGP MED
 
-GCP cloud routers use only BGP MED (Multi-Exit Discriminator) values to determine route priorities, see [here](https://cloud.google.com/router/docs/concepts/overview) for more information. MED is a routing metric and routes with lower values are considered the better routes. MED values on SRX300 can be set for all prefixes per neighbor or for specific routes using route filters. Please see Juniper documentation ["Configuring BGP MED"](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/bgp-med.html) and  ["Configuring the MED Using Route Filters"](https://www.juniper.net/documentation/en_US/junos/topics/example/bgp-med-route-filter.html) on more details on how to set BGP MED in the Juniper SRX300.
+GCP cloud routers use only BGP MED (Multi-Exit Discriminator) values to determine route priorities, see
+[here](https://cloud.google.com/router/docs/concepts/overview) for more information. MED is a routing metric and routes with 
+lower values are considered the better routes. MED values on SRX300 can be set for all prefixes per neighbor or for specific 
+routes using route filters. See Juniper documentation
+[Configuring BGP MED](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/bgp-med.html) and
+[Configuring the MED Using Route Filters](https://www.juniper.net/documentation/en_US/junos/topics/example/bgp-med-route-filter.html)
+for details of how to set BGP MED in the Juniper SRX300.
 
-Below is the sample configuration for setting MED values of all routes advertised to a BGP neighbor (for example GCP cloud router) to `100`
+Below is the sample configuration for setting MED values of all routes advertised to a BGP neighbor (for example GCP Cloud
+Router) to `100`
 
-```
-set protocols bgp group ebgp-peers neighbor 169.254.0.1 metric-out 100
-```
+    set protocols bgp group ebgp-peers neighbor 169.254.0.1 metric-out 100
 
-**Note:** `set protocols bgp metric-out [METRIC_VALUE]` will set the BGP metric for all neighbors which may be undesirable.
+Note: The `set protocols bgp metric-out [METRIC_VALUE]` command sets the BGP metric for all neighbors, which may be
+undesirable.
 
-To list the BGP metrics of routes received by a BGP peer (GCP Cloud Router) enter the command below. The MED is shown in the third column.
+To list the BGP metrics of routes received by a BGP peer (GCP Cloud Router) enter the command below. The MED is shown in
+the third column.
 
-```
-root@vsrx# run show route receive-protocol bgp 169.254.0.1    
+    root@vsrx# run show route receive-protocol bgp 169.254.0.1    
 
-inet.0: 11 destinations, 11 routes (11 active, 0 holddown, 0 hidden)
-  Prefix                 Nexthop              MED     Lclpref    AS path
-* 10.120.0.0/16          169.254.0.1          100                65500 ?
-* 10.121.0.0/16          169.254.0.1          100                65500 ?
-* 10.122.0.0/16          169.254.0.1          100                65500 ?
-```
+    inet.0: 11 destinations, 11 routes (11 active, 0 holddown, 0 hidden)
+      Prefix                 Nexthop              MED     Lclpref    AS path
+    * 10.120.0.0/16          169.254.0.1          100                65500 ?
+    * 10.121.0.0/16          169.254.0.1          100                65500 ?
+    * 10.122.0.0/16          169.254.0.1          100                65500 ?
 
 #### Configuring Juniper SRX300 static route metrics
 
-Route metrics can be configured with Juniper SRX300 static routes which will dictate how the device handles chooses paths for packets to the destination prefix. Static route metrics can be useful when the device has multiple tunnels to GCP and BGP is not used to exchange prefixes between GCP and on-prem and preferences need to placed on the tunnels.
+Route metrics can be configured with Juniper SRX300 static routes, which will dictate how the device chooses paths for 
+packets to the destination prefix. Static route metrics can be useful when the device has multiple tunnels to GCP and 
+BGP is not used to exchange prefixes between GCP and on-premises, and preferences need to placed on the tunnels.
 
-Below is the configuration for setting static routes with metrics in the Juniper SRX300
+Below is the configuration for setting static routes with metrics in the Juniper SRX300:
 
-```
-set routing-options static route 172.16.0.0/16 next-hop st0.0 metric 100
-```
+    set routing-options static route 172.16.0.0/16 next-hop st0.0 metric 100
 
 #### Configuring GCP BGP route priority
 
-With GCP dynamic routing, you can configure advertised route priority. For details, see the [Cloud Router overview](https://cloud.google.com/router/docs/concepts/overview) and the [Cloud Router API documentation](https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer). If you have a preferred route announced to the on-premises side of the network, BGP will prefer the higher priority on-premises route.
+With GCP dynamic routing, you can configure advertised route priority. For details, see the
+[Cloud Router overview](https://cloud.google.com/router/docs/concepts/overview) and the
+[Cloud Router API documentation](https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer). If you have 
+a preferred route announced to the on-premises side of the network, BGP will prefer the higher-priority on-premises route.
 
-You can set BGP route priority using [the console](#configure-the-vpn-gateway) or the following `gcloud` command. Note the following:
+You can set BGP route priority using [the console](#configure-the-vpn-gateway) or the following `gcloud` command.
 
--  Make sure you've set environment variables as described in the [appendix](#appendix-using-gcloud-commands).
--  For `[PEER_ASN]`, use a [private ASN](https://tools.ietf.org/html/rfc6996) value (`64512–65534`, `4200000000–4294967294`) that's not already in use, such as `65001`.
--  For `[PRIORITY]`, use an appropriate value, such as `2000`.
--  For `[PEER-IP-ADDRESS]`, use an address in the range `169.254.n.n`.
+Note the following:
 
-```
-gcloud compute --project $PROJECT_NAME routers add-bgp-peer \
-    $CLOUD_ROUTER_NAME \
-    --peer-name $BGP_SESSION_NAME \
-    --interface $BGP_IF \
-    --peer-ip-address [PEER-IP-ADDRESS] \
-    --peer-asn [PEER_ASN] \
-    --region $REGION \
-    --advertised-route-priority=[PRIORITY]
-```
+-   Make sure you've set environment variables as described in the [appendix](#appendix-using-gcloud-commands).
+-   For `[PEER_ASN]`, use a [private ASN](https://tools.ietf.org/html/rfc6996) value (`64512–65534`, `4200000000–4294967294`) that's not already in use, such as `65001`.
+-   For `[PRIORITY]`, use an appropriate value, such as `2000`.
+-   For `[PEER-IP-ADDRESS]`, use an address in the range `169.254.n.n`.
+
+        gcloud compute --project $PROJECT_NAME routers add-bgp-peer \
+            $CLOUD_ROUTER_NAME \
+            --peer-name $BGP_SESSION_NAME \
+            --interface $BGP_IF \
+            --peer-ip-address [PEER-IP-ADDRESS] \
+            --peer-asn [PEER_ASN] \
+            --region $REGION \
+            --advertised-route-priority=[PRIORITY]
 
 #### Configuring GCP static route priority
 
-When you use static routing, GCP gives you an option to customize route priority if there are multiple routes with the same prefix length. To enable symmetric traffic flow, make sure that you set the priority of your secondary GCP tunnel to a higher value than the primary tunnel. (The default priority is 1000.) To
-define the route priority, run the following command. Note the following:
+When you use static routing, GCP gives you an option to customize route priority if there are multiple routes with the same
+prefix length. To enable symmetric traffic flow, make sure that you set the priority of your secondary GCP tunnel to a 
+higher value than the primary tunnel. (The default priority is 1000.) To
+define the route priority, run the following command.
+
+Note the following:
 
 -  Make sure you've set environment variables as described in the [appendix](#appendix-using-gcloud-commands).
 -  For `[PRIORITY]` use an appropriate priority value, such as `2000`.
 
-
-```
-gcloud compute routes create $ROUTE_NAME \
-    --project $PROJECT_NAME \
-    --network $VPC_NETWORK_NAME \
-    --next-hop-vpn-tunnel $VPN_TUNNEL_1 \
-    --next-hop-vpn-tunnel-region $REGION \
-    --destination-range $IP_ON_PREM_SUBNET \
-    --priority=[PRIORITY]
-```
+        gcloud compute routes create $ROUTE_NAME \
+            --project $PROJECT_NAME \
+            --network $VPC_NETWORK_NAME \
+            --next-hop-vpn-tunnel $VPN_TUNNEL_1 \
+            --next-hop-vpn-tunnel-region $REGION \
+            --destination-range $IP_ON_PREM_SUBNET \
+            --priority=[PRIORITY]
 
 ### Getting higher throughput
 
-Each Cloud VPN tunnel can support up to 3 Gbps when the tunnel traffic traverses a direct peering link, or 1.5 Gbps when the tunnel traffic traverses the public internet. For more information, see [Redundant and High Throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns).
+Each Cloud VPN tunnel can support up to 3 Gbps when the tunnel traffic traverses a direct peering link, or 1.5 Gbps when 
+the tunnel traffic traverses the public internet. For more information, see
+[Redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns).
 
 #### Configuring GCP for higher throughput
 
 To increase throughput, add multiple Cloud VPN gateways in the same region to load balance the traffic across the tunnels. For more information, see the [Topology](#topology) section in this guide. 
 
-GCP performs ECMP routing by default, so no additional configuration is required apart from creating the number of tunnels that meet your throughput requirements. You can either use a single VPN gateway to create multiple tunnels, or you can create a separate VPN gateway for each tunnel.
+GCP performs ECMP routing by default, so no additional configuration is required apart from creating the number of tunnels 
+that meet your throughput requirements. You can either use a single VPN gateway to create multiple tunnels, or you can 
+create a separate VPN gateway for each tunnel.
 
 Actual tunnel throughput can vary depending on the following factors:
 
--  **Network capacity** between the GCP and on-premises VPN gateways.
--  **Capabilities of the on-premises VPN device**. See your device's
-documentation for more information.
--  **Packet size.** Because processing happens on a per-packet basis, traffic with a significant percentage of smaller packets can reduce overall throughput.
--  **[High Round Trip Time (RTT)](https://en.wikipedia.org/wiki/Round-trip_delay_time) and packet loss rates.** This can greatly reduce throughput for TCP.
+-   **Network capacity** between the GCP and on-premises VPN gateways.
+-   **Capabilities of the on-premises VPN device** See your device's documentation for more information.
+-   **Packet size** Because processing happens on a per-packet basis, traffic with a significant percentage of smaller 
+    packets can reduce overall throughput.
+-   **[High round-trip time (RTT)](https://en.wikipedia.org/wiki/Round-trip_delay_time) and packet loss rates** This can
+    greatly reduce throughput for TCP.
 
 #### Configuring Juniper SRX300 for higher throughput (using ECMP)
 
-Juniper SRX300 would use ECMP to forward traffic when multiple paths exists to a destination prefix and all the metrics considered for selecting paths to the destination are the equal. See [BGP Path Selection](https://www.juniper.net/documentation/en_US/junos/topics/reference/general/routing-protocols-address-representation.html) for more information on how BGP routing decisions are made in the SRX300.
+Juniper SRX300 would use ECMP to forward traffic when multiple paths exists to a destination prefix and all the metrics 
+considered for selecting paths to the destination are the equal. See
+[BGP Path Selection](https://www.juniper.net/documentation/en_US/junos/topics/reference/general/routing-protocols-address-representation.html)
+for more information on how BGP routing decisions are made in the SRX300.
 
 Below is the complete configuration for setting up multiple tunnels on the same SRX300 device for higher throughput.
 
@@ -718,314 +746,304 @@ Below is the complete configuration for setting up multiple tunnels on the same 
 
 ###### Configure Basic Networking
 
-```
-[edit]
-root@vsrx#
-# Internal interface configuration
-set interfaces ge-0/0/1 unit 0 family inet address 192.168.0.1/24
-set interfaces ge-0/0/1 unit 0 description "internal facing interface"
-set interfaces ge-0/0/2 unit 0 family inet address 192.168.1.1/24
-set interfaces ge-0/0/2 unit 0 description "internal facing interface"
-# External interface configuration
-set interfaces ge-0/0/0 unit 0 family inet address 76.104.213.79/31
-set interfaces ge-0/0/0 unit 0 description "external facing interface"
-# Tunnel interfaces configuration
-set interfaces st0 unit 0 family inet mtu 1460
-set interfaces st0 unit 0 family inet address 169.254.1.2/30
-set interfaces st0 unit 1 family inet mtu 1460
-set interfaces st0 unit 1 family inet address 169.254.2.2/30
-```
+    [edit]
+    root@vsrx#
+    # Internal interface configuration
+    set interfaces ge-0/0/1 unit 0 family inet address 192.168.0.1/24
+    set interfaces ge-0/0/1 unit 0 description "internal facing interface"
+    set interfaces ge-0/0/2 unit 0 family inet address 192.168.1.1/24
+    set interfaces ge-0/0/2 unit 0 description "internal facing interface"
+    # External interface configuration
+    set interfaces ge-0/0/0 unit 0 family inet address 76.104.213.79/31
+    set interfaces ge-0/0/0 unit 0 description "external facing interface"
+    # Tunnel interfaces configuration
+    set interfaces st0 unit 0 family inet mtu 1460
+    set interfaces st0 unit 0 family inet address 169.254.1.2/30
+    set interfaces st0 unit 1 family inet mtu 1460
+    set interfaces st0 unit 1 family inet address 169.254.2.2/30
 
 ###### Configure Ike Policy and Ike Gateway
 
-```
-[edit]
-root@vsrx#
-set security ike policy ike_pol_onprem-2-gcp-vpn mode main
-set security ike policy ike_pol_onprem-2-gcp-vpn proposal-set standard
-set security ike policy ike_pol_onprem-2-gcp-vpn pre-shared-key ascii-text "********"
-set security ike gateway gw_onprem-2-gcp-vpn ike-policy ike_pol_onprem-2-gcp-vpn
-set security ike gateway gw_onprem-2-gcp-vpn address 35.230.59.183
-set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection probe-idle-tunnel
-set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection interval 20
-set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection threshold 3
-set security ike gateway gw_onprem-2-gcp-vpn local-identity inet 76.104.213.79
-set security ike gateway gw_onprem-2-gcp-vpn external-interface ge-0/0/0.0
-set security ike gateway gw_onprem-2-gcp-vpn version v2-only
-set security ike gateway gw_onprem-2-gcp-vpn-2 ike-policy ike_pol_onprem-2-gcp-vpn
-set security ike gateway gw_onprem-2-gcp-vpn-2 address 35.233.197.145
-set security ike gateway gw_onprem-2-gcp-vpn-2 dead-peer-detection probe-idle-tunnel
-set security ike gateway gw_onprem-2-gcp-vpn-2 dead-peer-detection interval 20
-set security ike gateway gw_onprem-2-gcp-vpn-2 dead-peer-detection threshold 3
-set security ike gateway gw_onprem-2-gcp-vpn-2 local-identity inet 76.104.213.79
-set security ike gateway gw_onprem-2-gcp-vpn-2 external-interface ge-0/0/0.0
-set security ike gateway gw_onprem-2-gcp-vpn-2 version v2-only
-```
+    [edit]
+    root@vsrx#
+    set security ike policy ike_pol_onprem-2-gcp-vpn mode main
+    set security ike policy ike_pol_onprem-2-gcp-vpn proposal-set standard
+    set security ike policy ike_pol_onprem-2-gcp-vpn pre-shared-key ascii-text "********"
+    set security ike gateway gw_onprem-2-gcp-vpn ike-policy ike_pol_onprem-2-gcp-vpn
+    set security ike gateway gw_onprem-2-gcp-vpn address 35.230.59.183
+    set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection probe-idle-tunnel
+    set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection interval 20
+    set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection threshold 3
+    set security ike gateway gw_onprem-2-gcp-vpn local-identity inet 76.104.213.79
+    set security ike gateway gw_onprem-2-gcp-vpn external-interface ge-0/0/0.0
+    set security ike gateway gw_onprem-2-gcp-vpn version v2-only
+    set security ike gateway gw_onprem-2-gcp-vpn-2 ike-policy ike_pol_onprem-2-gcp-vpn
+    set security ike gateway gw_onprem-2-gcp-vpn-2 address 35.233.197.145
+    set security ike gateway gw_onprem-2-gcp-vpn-2 dead-peer-detection probe-idle-tunnel
+    set security ike gateway gw_onprem-2-gcp-vpn-2 dead-peer-detection interval 20
+    set security ike gateway gw_onprem-2-gcp-vpn-2 dead-peer-detection threshold 3
+    set security ike gateway gw_onprem-2-gcp-vpn-2 local-identity inet 76.104.213.79
+    set security ike gateway gw_onprem-2-gcp-vpn-2 external-interface ge-0/0/0.0
+    set security ike gateway gw_onprem-2-gcp-vpn-2 version v2-only
 
 ###### Configure IPsec Policy and IPsec VPN
 
-Notice the use of Juniper's built-in proposal set (standard) the `ike policy` configuration above and `ipsec policy` configuration below.
+Notice the use of Juniper's built-in proposal set (standard) the `ike policy` configuration above and
+`ipsec policy` configuration below.
 
-```
-[edit]
-root@vsrx#
-set security ipsec policy ipsec_pol_onprem-2-gcp-vpn perfect-forward-secrecy keys group2
-set security ipsec policy ipsec_pol_onprem-2-gcp-vpn proposal-set standard
-set security ipsec policy ipsec_pol_onprem-2-gcp-vpn-2 perfect-forward-secrecy keys group2
-set security ipsec policy ipsec_pol_onprem-2-gcp-vpn-2 proposal-set standard
-set security ipsec vpn onprem-2-gcp-vpn bind-interface st0.0
-set security ipsec vpn onprem-2-gcp-vpn ike gateway gw_onprem-2-gcp-vpn
-set security ipsec vpn onprem-2-gcp-vpn ike ipsec-policy ipsec_pol_onprem-2-gcp-vpn
-set security ipsec vpn onprem-2-gcp-vpn establish-tunnels immediately
-set security ipsec vpn onprem-2-gcp-vpn-2 bind-interface st0.1
-set security ipsec vpn onprem-2-gcp-vpn-2 ike gateway gw_onprem-2-gcp-vpn-2
-set security ipsec vpn onprem-2-gcp-vpn-2 ike ipsec-policy ipsec_pol_onprem-2-gcp-vpn-2
-set security ipsec vpn onprem-2-gcp-vpn-2 establish-tunnels immediately
-set security flow tcp-mss ipsec-vpn mss 1300
-```
+    [edit]
+    root@vsrx#
+    set security ipsec policy ipsec_pol_onprem-2-gcp-vpn perfect-forward-secrecy keys group2
+    set security ipsec policy ipsec_pol_onprem-2-gcp-vpn proposal-set standard
+    set security ipsec policy ipsec_pol_onprem-2-gcp-vpn-2 perfect-forward-secrecy keys group2
+    set security ipsec policy ipsec_pol_onprem-2-gcp-vpn-2 proposal-set standard
+    set security ipsec vpn onprem-2-gcp-vpn bind-interface st0.0
+    set security ipsec vpn onprem-2-gcp-vpn ike gateway gw_onprem-2-gcp-vpn
+    set security ipsec vpn onprem-2-gcp-vpn ike ipsec-policy ipsec_pol_onprem-2-gcp-vpn
+    set security ipsec vpn onprem-2-gcp-vpn establish-tunnels immediately
+    set security ipsec vpn onprem-2-gcp-vpn-2 bind-interface st0.1
+    set security ipsec vpn onprem-2-gcp-vpn-2 ike gateway gw_onprem-2-gcp-vpn-2
+    set security ipsec vpn onprem-2-gcp-vpn-2 ike ipsec-policy ipsec_pol_onprem-2-gcp-vpn-2
+    set security ipsec vpn onprem-2-gcp-vpn-2 establish-tunnels immediately
+    set security flow tcp-mss ipsec-vpn mss 1300
 
 ###### Configure Security Zones
 
-```
-[edit]
-root@vsrx# edit security zones
+    [edit]
+    root@vsrx# edit security zones
+    
+    [edit security zones]
+    root@vsrx#
+    set security-zone trust address-book address addr_192_168_1_0_24 192.168.1.0/24
+    set security-zone trust host-inbound-traffic system-services all
+    set security-zone trust host-inbound-traffic protocols all
+    set security-zone trust interfaces irb.0
+    set security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ike
+    set security-zone vpn-gcp address-book address 10.0.0.0/8 10.0.0.0/8
+    set security-zone vpn-gcp address-book address 172.16.0.0/16 172.16.0.0/16
+    set security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 172.16.0.0/16
+    set security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 10.0.0.0/8
+    set security-zone vpn-gcp host-inbound-traffic protocols bgp
+    set security-zone vpn-gcp interfaces st0.0
+    set security-zone vpn-gcp interfaces st0.1
 
-[edit security zones]
-root@vsrx#
-set security-zone trust address-book address addr_192_168_1_0_24 192.168.1.0/24
-set security-zone trust host-inbound-traffic system-services all
-set security-zone trust host-inbound-traffic protocols all
-set security-zone trust interfaces irb.0
-set security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services ike
-set security-zone vpn-gcp address-book address 10.0.0.0/8 10.0.0.0/8
-set security-zone vpn-gcp address-book address 172.16.0.0/16 172.16.0.0/16
-set security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 172.16.0.0/16
-set security-zone vpn-gcp address-book address-set gcp-addr-prefixes address 10.0.0.0/8
-set security-zone vpn-gcp host-inbound-traffic protocols bgp
-set security-zone vpn-gcp interfaces st0.0
-set security-zone vpn-gcp interfaces st0.1
-
-[edit security zones]
-root@vsrx#
-exit
-```
+    [edit security zones]
+    root@vsrx#
+    exit
 
 ###### Configure security policies
 
-```
-[edit]
-root@vsrx# edit security policies
+    [edit]
+    root@vsrx# edit security policies
+    
+    [edit security policies]
+    root@vsrx#
+    set from-zone trust to-zone trust policy trust-to-trust match source-address any
+    set from-zone trust to-zone trust policy trust-to-trust match destination-address any
+    set from-zone trust to-zone trust policy trust-to-trust match application any
+    set from-zone trust to-zone trust policy trust-to-trust then permit
+    set from-zone trust to-zone untrust policy trust-to-untrust match source-address any
+    set from-zone trust to-zone untrust policy trust-to-untrust match destination-address any
+    set from-zone trust to-zone untrust policy trust-to-untrust match application any
+    set from-zone trust to-zone untrust policy trust-to-untrust then permit
+    set from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match source-address addr_192_168_1_0_24
+    set from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match destination-address gcp-addr-prefixes
+    set from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match application any
+    set from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn then permit
+    set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match source-address gcp-addr-prefixes
+    set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match destination-address addr_192_168_1_0_24
+    set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match application any
+    set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn then permit
 
-[edit security policies]
-root@vsrx#
-set from-zone trust to-zone trust policy trust-to-trust match source-address any
-set from-zone trust to-zone trust policy trust-to-trust match destination-address any
-set from-zone trust to-zone trust policy trust-to-trust match application any
-set from-zone trust to-zone trust policy trust-to-trust then permit
-set from-zone trust to-zone untrust policy trust-to-untrust match source-address any
-set from-zone trust to-zone untrust policy trust-to-untrust match destination-address any
-set from-zone trust to-zone untrust policy trust-to-untrust match application any
-set from-zone trust to-zone untrust policy trust-to-untrust then permit
-set from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match source-address addr_192_168_1_0_24
-set from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match destination-address gcp-addr-prefixes
-set from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn match application any
-set from-zone trust to-zone vpn-gcp policy policy_out_onprem-2-gcp-vpn then permit
-set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match source-address gcp-addr-prefixes
-set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match destination-address addr_192_168_1_0_24
-set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn match application any
-set from-zone vpn-gcp to-zone trust policy policy_in_onprem-2-gcp-vpn then permit
-
-[edit security policies]
-root@vsrx#
-exit
-
-
-```
+    [edit security policies]
+    root@vsrx#
+    exit
 
 ###### Configure BGP routing
 
-```
-[edit]
-root@vsrx#
-set routing-options aggregate route 192.168.1.0/24
-set protocols bgp group ebgp-peers type external
-set protocols bgp group ebgp-peers multihop
-set protocols bgp group ebgp-peers export gcp-bgp-policy
-set protocols bgp group ebgp-peers local-as 65501
-set protocols bgp group ebgp-peers neighbor 169.254.1.1 peer-as 65500
-set protocols bgp group ebgp-peers neighbor 169.254.2.1 peer-as 65500
-set protocols l2-learning global-mode switching
-set policy-options policy-statement gcp-bgp-policy term 1 from protocol direct
-set policy-options policy-statement gcp-bgp-policy term 1 from route-filter 192.168.1.0/24 exact
-set policy-options policy-statement gcp-bgp-policy term 1 then accept
-
-[edit]
-root@vsrx#
-```
+    [edit]
+    root@vsrx#
+    set routing-options aggregate route 192.168.1.0/24
+    set protocols bgp group ebgp-peers type external
+    set protocols bgp group ebgp-peers multihop
+    set protocols bgp group ebgp-peers export gcp-bgp-policy
+    set protocols bgp group ebgp-peers local-as 65501
+    set protocols bgp group ebgp-peers neighbor 169.254.1.1 peer-as 65500
+    set protocols bgp group ebgp-peers neighbor 169.254.2.1 peer-as 65500
+    set protocols l2-learning global-mode switching
+    set policy-options policy-statement gcp-bgp-policy term 1 from protocol direct
+    set policy-options policy-statement gcp-bgp-policy term 1 from route-filter 192.168.1.0/24 exact
+    set policy-options policy-statement gcp-bgp-policy term 1 then accept
+    
+    [edit]
+    root@vsrx#
 
 #### Testing the higher-throughput configuration
 
-You can test the IPsec tunnel from GCP with the instructions in the [Building High-throughput VPNs](https://cloud-dot-devsite.googleplex.com/solutions/building-high-throughput-vpns) guide. You can verify and test that multiple tunnels have been initiated and established between your on-prem environment and GCP via the commands below.
+You can test the IPsec tunnel from GCP with the instructions in the
+[Building High-throughput VPNs](https://cloud-dot-devsite.googleplex.com/solutions/building-high-throughput-vpns) guide.
+You can verify and test that multiple tunnels have been initiated and established between your on-prem environment and GCP
+via the commands below.
 
 ###### Listing Security Associations for Bundled Tunnel
 
-Ike security associations
+IKE security associations:
 
-```
-root@vsrx# run show security ike security-associations
-Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
-1590399 UP     e1f16b380e661b93  34379d5726ea8545  IKEv2          35.233.197.145
-1590402 UP     9d0688eeb4ced592  3e2a86428dbd9d01  IKEv2          35.230.59.183
-```
+    root@vsrx# run show security ike security-associations
+    Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
+    1590399 UP     e1f16b380e661b93  34379d5726ea8545  IKEv2          35.233.197.145
+    1590402 UP     9d0688eeb4ced592  3e2a86428dbd9d01  IKEv2          35.230.59.183
 
-IPsec security associations
+IPsec security associations:
 
-```
-root@vsrx# run show security ipsec security-associations
-  Total active tunnels: 2
-  ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
-  &lt;131073 ESP:aes-cbc-128/sha1 a2fde6d8 2618/ unlim - root 500 35.230.59.183
-  >131073 ESP:aes-cbc-128/sha1 a1854938 2618/ unlim - root 500 35.230.59.183
-  &lt;131074 ESP:aes-cbc-128/sha1 9b593cad 2310/ unlim - root 500 35.233.197.145
-  >131074 ESP:aes-cbc-128/sha1 6ecac98d 2310/ unlim - root 500 35.233.197.145
-```
+    root@vsrx# run show security ipsec security-associations
+      Total active tunnels: 2
+      ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
+      &lt;131073 ESP:aes-cbc-128/sha1 a2fde6d8 2618/ unlim - root 500 35.230.59.183
+      >131073 ESP:aes-cbc-128/sha1 a1854938 2618/ unlim - root 500 35.230.59.183
+      &lt;131074 ESP:aes-cbc-128/sha1 9b593cad 2310/ unlim - root 500 35.233.197.145
+      >131074 ESP:aes-cbc-128/sha1 6ecac98d 2310/ unlim - root 500 35.233.197.145
 
 ###### Listing routing table
 
-As shown below, it can be seen that there are multiple paths listed/selected for the BGP routes. This indicates that packets destined for routes in GCP will be routed via ECMP.
+As shown below, there are multiple paths listed/selected for the BGP routes. This indicates that packets destined for 
+routes in GCP will be routed via ECMP.
 
-```
-root@vsrx# run show route
+    root@vsrx# run show route
+    
+    inet.0: 59 destinations, 88 routes (59 active, 0 holddown, 0 hidden)
+    + = Active Route, - = Last Active, * = Both
+    
+    10.44.0.0/14       *[BGP/170] 00:00:17, MED 371, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.1.1 via st0.0
+                        [BGP/170] 00:00:36, MED 371, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.2.1 via st0.1
+    10.110.0.0/20      *[BGP/170] 00:00:17, MED 371, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.1.1 via st0.0
+                        [BGP/170] 00:00:36, MED 371, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.2.1 via st0.1
+    10.128.0.0/20      *[BGP/170] 00:00:17, MED 337, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.1.1 via st0.0
+                        [BGP/170] 00:00:36, MED 337, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.2.1 via st0.1
+    10.132.0.0/20      *[BGP/170] 00:00:17, MED 448, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.1.1 via st0.0
+                        [BGP/170] 00:00:36, MED 448, localpref 100
+                          AS path: 65500 ?, validation-state: unverified
+                        > to 169.254.2.1 via st0.1
 
-inet.0: 59 destinations, 88 routes (59 active, 0 holddown, 0 hidden)
-+ = Active Route, - = Last Active, * = Both
+BGP peers listed from BGP summary:
 
-10.44.0.0/14       *[BGP/170] 00:00:17, MED 371, localpref 100
-                      AS path: 65500 ?, validation-state: unverified
-                    > to 169.254.1.1 via st0.0
-                    [BGP/170] 00:00:36, MED 371, localpref 100
-                      AS path: 65500 ?, validation-state: unverified
-                    > to 169.254.2.1 via st0.1
-10.110.0.0/20      *[BGP/170] 00:00:17, MED 371, localpref 100
-                      AS path: 65500 ?, validation-state: unverified
-                    > to 169.254.1.1 via st0.0
-                    [BGP/170] 00:00:36, MED 371, localpref 100
-                      AS path: 65500 ?, validation-state: unverified
-                    > to 169.254.2.1 via st0.1
-10.128.0.0/20      *[BGP/170] 00:00:17, MED 337, localpref 100
-                      AS path: 65500 ?, validation-state: unverified
-                    > to 169.254.1.1 via st0.0
-                    [BGP/170] 00:00:36, MED 337, localpref 100
-                      AS path: 65500 ?, validation-state: unverified
-                    > to 169.254.2.1 via st0.1
-10.132.0.0/20      *[BGP/170] 00:00:17, MED 448, localpref 100
-                      AS path: 65500 ?, validation-state: unverified
-                    > to 169.254.1.1 via st0.0
-                    [BGP/170] 00:00:36, MED 448, localpref 100
-                      AS path: 65500 ?, validation-state: unverified
-                    > to 169.254.2.1 via st0.1
-```
+    root@vsrx# run show bgp summary
+    Groups: 1 Peers: 2 Down peers: 0
+    Table          Tot Paths  Act Paths Suppressed    History Damp State    Pending
+    inet.0
+                          56         28          0          0          0          0
+    Peer                     AS      InPkt     OutPkt    OutQ   Flaps Last Up/Dwn State|#Active/Received/Accepted/Damped...
+    169.254.1.1           65500         36         21       0       5        5:48 28/28/28/0           0/0/0/0
+    169.254.2.1           65500         37         23       0       0        6:07 0/28/28/0            0/0/0/0
 
-BGP peers listed from BGP summary
+Finally, run pings from on-premises to GCP and vice-versa:
 
-```
-root@vsrx# run show bgp summary
-Groups: 1 Peers: 2 Down peers: 0
-Table          Tot Paths  Act Paths Suppressed    History Damp State    Pending
-inet.0
-                      56         28          0          0          0          0
-Peer                     AS      InPkt     OutPkt    OutQ   Flaps Last Up/Dwn State|#Active/Received/Accepted/Damped...
-169.254.1.1           65500         36         21       0       5        5:48 28/28/28/0           0/0/0/0
-169.254.2.1           65500         37         23       0       0        6:07 0/28/28/0            0/0/0/0
-```
-
-Finally run pings from on-prem to GCP and vice-versa
-
-```
-root@freebsd:~ # ping 192.168.1.91
-PING 192.168.1.91 (192.168.1.91): 56 data bytes
-64 bytes from 192.168.1.91: icmp_seq=0 ttl=63 time=21.387 ms
-64 bytes from 192.168.1.91: icmp_seq=1 ttl=63 time=19.402 ms
-64 bytes from 192.168.1.91: icmp_seq=2 ttl=63 time=20.535 ms
-64 bytes from 192.168.1.91: icmp_seq=3 ttl=63 time=35.592 ms
-64 bytes from 192.168.1.91: icmp_seq=4 ttl=63 time=23.347 ms
-64 bytes from 192.168.1.91: icmp_seq=5 ttl=63 time=17.600 ms
-64 bytes from 192.168.1.91: icmp_seq=6 ttl=63 time=19.083 ms
-64 bytes from 192.168.1.91: icmp_seq=7 ttl=63 time=19.383 ms
-64 bytes from 192.168.1.91: icmp_seq=8 ttl=63 time=21.689 ms
-64 bytes from 192.168.1.91: icmp_seq=9 ttl=63 time=28.000 ms
-^C
---- 192.168.1.91 ping statistics ---
-11 packets transmitted, 10 packets received, 9.1% packet loss
-round-trip min/avg/max/stddev = 17.600/22.602/35.592/5.129 ms
-root@freebsd:~ #
-```
+    root@freebsd:~ # ping 192.168.1.91
+    PING 192.168.1.91 (192.168.1.91): 56 data bytes
+    64 bytes from 192.168.1.91: icmp_seq=0 ttl=63 time=21.387 ms
+    64 bytes from 192.168.1.91: icmp_seq=1 ttl=63 time=19.402 ms
+    64 bytes from 192.168.1.91: icmp_seq=2 ttl=63 time=20.535 ms
+    64 bytes from 192.168.1.91: icmp_seq=3 ttl=63 time=35.592 ms
+    64 bytes from 192.168.1.91: icmp_seq=4 ttl=63 time=23.347 ms
+    64 bytes from 192.168.1.91: icmp_seq=5 ttl=63 time=17.600 ms
+    64 bytes from 192.168.1.91: icmp_seq=6 ttl=63 time=19.083 ms
+    64 bytes from 192.168.1.91: icmp_seq=7 ttl=63 time=19.383 ms
+    64 bytes from 192.168.1.91: icmp_seq=8 ttl=63 time=21.689 ms
+    64 bytes from 192.168.1.91: icmp_seq=9 ttl=63 time=28.000 ms
+    ^C
+    --- 192.168.1.91 ping statistics ---
+    11 packets transmitted, 10 packets received, 9.1% packet loss
+    round-trip min/avg/max/stddev = 17.600/22.602/35.592/5.129 ms
+    root@freebsd:~ #
 
 ## Troubleshooting IPsec on Juniper SRX300
 
-For troubleshooting information, see the Juniper SRX VPN troubleshooting [guide](https://kb.juniper.net/InfoCenter/index?page=content&id=KB21899&actp=METADATA). In this page you will find the JTAC certified resolution guide for SRX VPNs. 
-
+For troubleshooting information, see the
+[Juniper SRX VPN troubleshooting guide](https://kb.juniper.net/InfoCenter/index?page=content&id=KB21899&actp=METADATA), 
+which includes the JTAC-certified resolution guide for SRX VPNs. 
 
 ## Reference documentation
 
-You can refer to the following Juniper documentation and Cloud VPN documentation for additional information about both products.
+You can refer to the following Juniper documentation and Cloud VPN documentation for additional information about both 
+products.
 
 ### GCP documentation
 
 To learn more about GCP networking, see the following documents:
 
--  [VPC Networks](https://cloud.google.com/vpc/docs)
--  [Cloud VPN Overview](https://cloud.google.com/compute/docs/vpn/overview)
--  [Creating Route-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-route-based-vpns)
--  [Creating Policy-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-policy-based-vpns)
--  [Advanced Cloud VPN Configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
+-  [VPC networks](https://cloud.google.com/vpc/docs)
+-  [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview)
+-  [Creating route-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-route-based-vpns)
+-  [Creating policy-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-policy-based-vpns)
+-  [Advanced Cloud VPN configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
 -  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
 
 ### Juniper SRX documentation
 
-For more product information on Juniper SRX devices, see the following Juniper OS feature configuration guides and datasheets:
+For more product information on Juniper SRX devices, see the following Juniper documents:
 
 -  [Juniper Route-Based IPsec VPNs](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-route-based-ipsec-vpns.html)
 -  [Juniper Security Policies](https://www.juniper.net/documentation/en_US/junos/information-products/pathway-pages/security/security-policies-feature-guide.html)
 -  [Juniper BGP Feature Guide](https://www.juniper.net/documentation/en_US/junos/topics/concept/routing-protocol-bgp-security-peering-session-understanding.html)
 
-For common Juniper SRX troubleshooting steps and commands, see the following guides/KB:
+For common Juniper SRX troubleshooting steps and commands, see the following documents:
 
 -  [Troubleshooting VPNs in SRX](https://kb.juniper.net/InfoCenter/index?page=content&id=KB10104&actp=METADATA)
 -  [Checklist for verifying BGP in JunOS](https://www.juniper.net/documentation/en_US/junos/topics/task/verification/bgp-configuration-process-summary.html)
 
 ## Appendix: Using gcloud commands
 
-The instructions in this guide focus on using the GCP Console. However, you can perform many of the tasks for the GPC side of the VPN configuration by using the [gcloud command-line tool](https://cloud.google.com/sdk/gcloud/). Using `gcloud`  commands can be faster and more convenient if you're comfortable with using a command-line interface.
+The instructions in this guide focus on using the GCP Console. However, you can perform many of the tasks for the GPC side 
+of the VPN configuration by using the [gcloud command-line tool](https://cloud.google.com/sdk/gcloud/). Using `gcloud`  
+commands can be faster and more convenient if you're comfortable with using a command-line interface.
 
 ### Running gcloud commands
 
-You can run `gcloud` commands on your local computer by installing the [Cloud SDK](https://cloud.google.com/sdk/).  Alternatively, you can run `gcloud` commands in [Cloud Shell](https://cloud.google.com/shell/), a browser-based command line. If you use Cloud Shell, you don't need to install the SDK on your own computer, and you don't need to set up authentication.
+You can run `gcloud` commands on your local computer by installing the [Cloud SDK](https://cloud.google.com/sdk/). 
+Alternatively, you can run `gcloud` commands in [Cloud Shell](https://cloud.google.com/shell/), a browser-based command 
+line. If you use Cloud Shell, you don't need to install the SDK on your own computer, and you don't need to set up 
+authentication.
 
-**Note**: The `gcloud` commands presented in this guide assume you are working in a Linux environment. (Cloud Shell is a Linux environment.)
+Note: The `gcloud` commands presented in this guide assume you are working in a Linux environment. (Cloud Shell is a Linux 
+environment.)
 
 ### Configuration parameters and values
 
-The `gcloud` commands in this guide include parameters whose value you must provide. For example, a command might include a GCP project name or a region or other parameters whose values are unique to your context. The following table lists the parameters and gives examples of the values. The section that follows the table describes how to set Linux environment variables to hold the values you need for these parameters.
+The `gcloud` commands in this guide include parameters whose value you must provide. For example, a command might include a
+GCP project name or a region or other parameters whose values are unique to your context. The following table lists the 
+parameters and gives examples of the values. The section that follows the table describes how to set Linux environment 
+variables to hold the values you need for these parameters.
 
-
-| Parameter description | Placeholder       | Example value                             |
+| Parameter description | Placeholder          | Example value                             |
 |-----------------------|----------------------|-------------------------------------------|
-| Vendor name           | `[VENDOR_NAME]`      | (Your product's vendor name. This value should have no spaces or punctuation in it other than underscores or hyphens, because it will be used as part of the names for GCP entities) |
 | GCP project name      | `[PROJECT_NAME]`     | `vpn-guide`                               |
 | Shared secret         | `[SHARED_SECRET]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key). |
-| VPC network name      | `[VPC_NETWORK_NAME]` | `vpn-vendor-test-network`                 |
-| Subnet on the GCP VPC network (for example, `vpn-vendor-test-network`) | `[VPC_SUBNET_NAME]` | `vpn-subnet-1` |
+| VPC network name      | `[VPC_NETWORK_NAME]` | `vpn-juniper-test-network` |
+| Subnet on the GCP VPC network (for example, `vpn-juniper-test-network`) | `[VPC_SUBNET_NAME]` | `vpn-subnet-1` |
 | GCP region. Can be any region, but should be geographically close to the on-premises gateway. | `[REGION]` | `us-east1` |
 | Pre-existing external static IP address that you configure for the internet side of the Cloud VPN gateway. | `[STATIC_EXTERNAL_IP]` | `vpn-test-static-ip` |
 | IP address range for the GCP VPC subnet (`vpn-subnet-1`) | `[SUBNET_IP]` | `172.16.100.0/24`and`172.16.200.0/24` |
 | IP address range for the on-premises subnet. You will use this range when creating rules for inbound traffic to GCP. | `[IP_ON_PREM_SUBNET]` | `10.1.0.0/16`and`10.0.0.0/16` |
 | External static IP address for the internet interface of Juniper SRX | `[CUST_GW_EXT_IP]` | `199.203.248.181` 
-| Cloud Router name (for dynamic routing) | `[CLOUD_ROUTER_NAME]` | `vpn-test-vendor-rtr` |
-| BGP interface name    | `[BGP_IF]`           | `if-1`                                    |
+| Cloud Router name (for dynamic routing) | `[CLOUD_ROUTER_NAME]` | `vpn-test-juniper-rtr` |
+| BGP interface name    | `[BGP_IF]` | `if-1` |
 | BGP session name (for dynamic routing) | `[BGP_SESSION_NAME]` | `bgp-peer1` |
-| The name for the first GCP VPN gateway | `[VPN_GATEWAY_1]`    | `vpn-test-[VENDOR_NAME]-gw-1`, where `[VENDOR_ NAME]` is the `[VENDOR_NAME]` string |
-| The name for the first VPN tunnel for `vpn-test-[VENDOR_NAME]-gw-1` | `[VPN_TUNNEL_1]` | `vpn-test-tunnel1` |
+| The name for the first GCP VPN gateway | `[VPN_GATEWAY_1]`    | `vpn-test-juniper-gw-1` |
+| The name for the first VPN tunnel for `vpn-test-juniper-gw-1` | `[VPN_TUNNEL_1]` | `vpn-test-tunnel1` |
 | The name of a firewall rule that allows traffic between the on-premises network and GCP VPC networks | `[VPN_RULE]` | `vpnrule1` |
 | The name for the [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create) used to forward
 traffic to the on-premises network. Note: You need this value only if you are creating a VPN using a static route. | `[ROUTE_NAME]` | `vpn-static-route` |
@@ -1033,12 +1051,16 @@ traffic to the on-premises network. Note: You need this value only if you are cr
 | The name for the forwarding rule for the (https://wikipedia.org/wiki/User_Datagram_Protocol)[UDP protocol], port 500 | `[FWD_RULE_UDP_500]` | `fr-udp500` |
 | The name for the forwarding rule for the UDP protocol, port 4500 | `[FWD_RULE_UDP_4500]` | `fr-udp4500` |
 
-
 ### Setting environment variables for gcloud command parameters
 
-To make it easier to run `gcloud` commands that contain parameters, you can create environment variables to hold the values you need, such as your project name, the names of subnets and forwarding rules, and so on. The `gcloud` commands presented in this section reference variables that contain your values.
+To make it easier to run `gcloud` commands that contain parameters, you can create environment variables to hold the values 
+you need, such as your project name, the names of subnets and forwarding rules, and so on. The `gcloud` commands presented 
+in this section reference variables that contain your values.
 
-To set the environment variables, run the following commands at the command line _before_ you run `gcloud` commands, substituting your own values for all the placeholders in square brackets, such as `[PROJECT_NAME]`, `[VPC_NETWORK_NAME]`, and `[SUBNET_IP]`. If you don't know what values to use for the placeholders, use the example values from the parameters table in the preceding section.
+To set the environment variables, run the following commands at the command line _before_ you run `gcloud` commands, 
+substituting your own values for all the placeholders in square brackets, such as `[PROJECT_NAME]`, `[VPC_NETWORK_NAME]`, 
+and `[SUBNET_IP]`. If you don't know what values to use for the placeholders, use the example values from the parameters 
+table in the preceding section.
 
     export PROJECT_NAME=[PROJECT_NAME]
     export REGION=[REGION]
@@ -1068,14 +1090,14 @@ the same task using the GCP Console, see
 Note: Before you run the `gcloud` commands in this section, make sure that you've set the variables as described earlier, in
 [Setting environment variables for gcloud command parameters](#setting-environment-variables-for-gcloud-command-parameters).
 
-1. Create a custom VPC network.
+1.  Create a custom VPC network.
 
         gcloud compute networks create $VPC_NETWORK_NAME \
             --project $PROJECT_NAME \
             --subnet-mode custom
 
-1. Create a subnet on that network. Make sure that there is no conflict with your local network IP address range or any 
-other configured subnets.
+1.  Create a subnet on that network. Make sure that there is no conflict with your local network IP address range or any 
+    other configured subnets.
 
         gcloud compute networks subnets create $VPC_SUBNET_NAME \
             --project $PROJECT_NAME \
@@ -1083,7 +1105,7 @@ other configured subnets.
             --region $REGION \
             --range $SUBNET_IP
 
-1. Create a GCP VPN gateway in the region you are using.
+1.  Create a GCP VPN gateway in the region you are using.
 
         gcloud compute target-vpn-gateways create $VPN_GATEWAY_1 \
             --project $PROJECT_NAME \
@@ -1243,8 +1265,8 @@ earlier in this guide.
 
 The procedure suggests creating a custom VPC network. This is preferred over using an auto-created network. For more 
 information, see
-[Networks and tunnel routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#network-types) in
-the Cloud VPN documentation.
+[Networks and tunnel routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#network-types)
+in the Cloud VPN documentation.
 
 Note: Before you run the `gcloud` commands in this section, make sure that you've set the variables as described earlier in
 [Setting environment variables for gcloud command parameters](#setting-environment-variables-for-gcloud-command-parameters).
