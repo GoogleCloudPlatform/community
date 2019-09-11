@@ -271,31 +271,31 @@ In this section, you create a dashboard focusing on the [golden signals](https:/
 
 2.  Click **Add Query.**
    
-3.  From the **Service** dropdown menu**, **select** Istio**.
+3.  From the **Service** dropdown menu, select **Istio**.
    
-4.  From the **Metric** dropdown, select Server Request Count.
+4.  From the **Metric** dropdown, select **Server Request Count**.
 
-5.  Click the + next to Group By and select metric.label.destination_service_name.
+5.  Click the + next to **Group By** and select **metric.label.destination_service_name**.
 
-6.  From the Aggregation menu, select Sum.
+6.  From the **Aggregation menu**, select **Sum**.
 
-7.  On the left side, click on Visualization.
+7.  On the left side, click on **Visualization**.
 
 8.  Under **Axes** -> **Left Y**, click on the **Units** menu and select **Throughput -> requests/sec (rps)**.
 
-9.  On the left side, click on General:
+9.  On the left side, click on **General**:
 
 ![image](4-query.png)
 
-10.  In the Panel Title field, enter **Request Rates by Service.**
+10.  In the **Panel Title** field, enter **Request Rates by Service.**
     
-11. Click the Save Dashboard button at the top right to save your work.
+11. Click the **Save Dashboard** button at the top right to save your work.
     
-12. Click the left arrow at the top left to go back.
+12. Click the **left arrow** at the top left to go back.
     
-13. Click the Dashboard Settings button at the top right.
+13. Click the **Dashboard Settings** button at the top right.
     
-14. Under **General**, in the **Name** field, enter **"GKE Services Dashboard"** and click **Save.**
+14. Under **General**, in the **Name** field, enter **"GKE Services Dashboard"** and click **Save**.
 
 At this point, you should have a dashboard with a single view on it showing request rates for the services in your Istio service mesh.
 
@@ -303,35 +303,35 @@ At this point, you should have a dashboard with a single view on it showing requ
 
 #### Create errors view
 
-1.  At the top right, click the Add Panel button.
+1.  At the top right, click the **Add Panel** button.
 
-2.  Click Add Query.
+2.  Click **Add Query**.
    
-3.  From the Service menu, select Istio.
+3.  From the **Service** menu, select **Istio**.
    
-4.  From the **Metric** dropdown, select Server Request Count.
+4.  From the **Metric** dropdown, select **Server Request Count**.
    
-5.  Click the + next to Group By and select metric.label.destination_service_name.
+5.  Click the + next to **Group By** and select m**etric.label.destination_service_name**.
    
-6.  Click the + next to Filter and select metric.label.response_code.
+6.  Click the + next to **Filter** and select **metric.label.response_code**.
 
-7.  Select != as the operator and 200 as the value to only count failed requests.
+7.  Select **!=** as the operator and **200** as the value to only count failed requests.
 
     **Note** that in this example, you're including 4xx errors in your count - often, users choose to exclude these, as they may be caused by issues on the client.
 
-8.  From the Aggregation menu, select Sum.
+8.  From the **Aggregation** menu, select **Sum**.
    
-9.  On the left side, click on Visualization.
+9.  On the left side, click on **Visualization**.
 
 10. Under **Axes** -> **Left Y**, click on the **Units** menu and select **Throughput -> requests/sec (rps)**.
     
-11. On the left side, click on General:
+11. On the left side, click on **General**:
 
 ![image](6-query.png)
 
-12.  In the Panel Title field, enter **Errors by Service.**
+12.  In the **Panel Title** field, enter **Errors by Service.**
     
-13. At the top right, click the Save Dashboard button.
+13. At the top right, click the **Save Dashboard** button.
 
 At this point, your dashboard should contain two panels showing request rates and errors.
 
@@ -339,7 +339,7 @@ At this point, your dashboard should contain two panels showing request rates an
 
 #### Create latencies view
 
-At this point, you have enough information to create the third view showing server latency.  Use the Server Response Latency metric from the Istio service, filter out requests where the metric.label.response_code!=200, and group by metric.label.destination_service_name.  Use 99th percentile as the aggregator (refer to this [publication](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/9c3491f50f97dd01a973173d09dd8590c688eba6.pdf){: target="external" track-type="tutorial" track-name="externalLink" track-metadata-position="body" } by Ben Traynor from Google [SRE](https://landing.google.com/sre/){: target="external" track-type="tutorial" track-name="externalLink" track-metadata-position="body" } to learn more about why 99th percentile latency is the right signal to measure). When you're done, name the panel, save the dashboard, and organize the panels as you like.  Your final result looks like this:
+At this point, you have enough information to create the third view showing server latency.  Use the Server Response Latency metric from the Istio service, filter out requests where the metric.label.response_code!=200, and group by metric.label.destination_service_name.  Use 99th percentile as the aggregator (refer to this [publication](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/9c3491f50f97dd01a973173d09dd8590c688eba6.pdf) by Ben Traynor from Google [SRE](https://landing.google.com/sre/) to learn more about why 99th percentile latency is the right signal to measure). When you're done, name the panel, save the dashboard, and organize the panels as you like.  Your final result looks like this:
 
 ![image](8-dashboard.png)
 
@@ -356,9 +356,7 @@ To avoid incurring charges to your Google Cloud Platform account for the resourc
 The easiest way to eliminate billing is to delete the project you created for the tutorial.6\
 To delete the project:
 
-1.  In the {{console_name_short}}, go to the Projects page.
-
-    [GO TO THE PROJECTS PAGE]({{console_url}}iam-admin/projects){: target="console" track-type="tutorial" track-name="consoleLink" track-metadata-position="body" }
+1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 
 2.  In the project list, select the project you want to delete and click **Delete**.
 
@@ -368,4 +366,4 @@ To delete the project:
 
 ## What's next
 
--   Try out other Google Cloud Platform features for yourself. Have a look at our [tutorials](/docs/tutorials){: track-type="tutorial" track-name="internalLink" track-metadata-position="body" }.
+-   Try out other Google Cloud Platform features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
