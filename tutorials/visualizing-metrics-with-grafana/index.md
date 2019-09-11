@@ -23,7 +23,7 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to ge
 
 1.  Select or create a GCP project.
 
-[GO TO THE MANAGE RESOURCES PAGE](https://console.cloud.google..com/cloud-resource-manager
+Go to the [Manage Resources Page](https://console.cloud.google..com/cloud-resource-manager)
 
 1.  Enable billing for your project if you have not selected a billing account during project creation.
 
