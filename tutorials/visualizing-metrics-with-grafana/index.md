@@ -17,18 +17,19 @@ This tutorial uses billable components of Google Cloud Platform, including:
 -   Kubernetes Engine
 -   Stackdriver
 
-Use the [Pricing Calculator](/products/calculator){: track-type="tutorial" track-name="pricingCalculator" track-metadata-position="body" } to generate a cost estimate based on your projected usage.
+Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
 1.  Select or create a GCP project.
 
-[GO TO THE MANAGE RESOURCES PAGE]({{console_url}}cloud-resource-manager){: target="console" track-type="tutorial" track-name="consoleLink" track-metadata-position="body" }
+[GO TO THE MANAGE RESOURCES PAGE](https://console.cloud.google..com/cloud-resource-manager
 
 1.  Enable billing for your project if you have not selected a billing account during project creation.
 
-[ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing){: target="support" track-type="tutorial" track-name="supportLink" track-metadata-position="body" }\
-When you finish this tutorial, you can avoid continued billing by deleting the resources you created. See [Cleaning up](https://docs.google.com/document/d/1vaelwoytZYoZ5WvyzwdksRTysig0bncoThU9I-T0In0/edit#heading=h.mlrdlgcohh7k){: target="external" track-type="tutorial" track-name="externalLink" track-metadata-position="body" } for more detail.
+[ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
+
+When you finish this tutorial, you can avoid continued billing by deleting the resources you created. See the Cleaning Up section for more detail.
 
 ## Set up your environment
 
@@ -36,15 +37,15 @@ In this section, you set up your environment with the tools you'll be using thro
 
 1.  Open Cloud Shell:
 
-> [OPEN CLOUD SHELL]({{console_url}}?cloudshell=true){: target="console" track-type="tutorial" track-name="consoleLink" track-metadata-position="body" }	
+> [OPEN CLOUD SHELL](https://console.cloud.google.com?cloudshell=true)
 
-1.  Set environment variables:
+2.  Set environment variables:
 
 ```
 export PROJECT_ID=$(gcloud config list --format 'value(core.project)' 2>/dev/null)
 ```
 
-1.  Enable the relevant APIs:
+3.  Enable the relevant APIs:
 
 ```
 gcloud services enable \
@@ -55,7 +56,7 @@ container.googleapis.com \
 cloudtrace.googleapis.com
 ```
 
-1.  Download the required files for this tutorial by cloning the sample application git repo.  Make the repo folder your `$WORKDIR` from which you do all the tasks related to this tutorial.  This way you can delete the folder when finished:
+4.  Download the required files for this tutorial by cloning the sample application git repo.  Make the repo folder your `$WORKDIR` from which you do all the tasks related to this tutorial.  This way you can delete the folder when finished:
 
 ```
 cd $HOME
@@ -66,11 +67,10 @@ WORKDIR=$(pwd)
 
 ### Install tools
 
-1.  Install [kubectx and kubens](https://github.com/ahmetb/kubectx){: target="github" track-type="tutorial" track-name="gitHubLink" track-metadata-position="body" }.  These tools make it easier to work with multiple Kubernetes clusters, contexts, and namespaces
-
-	`git clone https://github.com/ahmetb/kubectx $WORKDIR/kubectx`
+Install [kubectx and kubens](https://github.com/ahmetb/kubectx).  These tools make it easier to work with multiple Kubernetes clusters, contexts, and namespaces
 
 ```
+git clone https://github.com/ahmetb/kubectx $WORKDIR/kubectx
 export PATH=$PATH:$WORKDIR/kubectx
 ```
 
@@ -94,7 +94,7 @@ export APP_NS=hipstershop
 export MONITORING_NS=grafana		
 ```
 
-1.  In Cloud Shell, issue this command to create the GKE cluster:
+2.  In Cloud Shell, issue this command to create the GKE cluster:
 
 ```
 gcloud beta container clusters create $CLUSTER \
@@ -106,47 +106,47 @@ gcloud beta container clusters create $CLUSTER \
 --istio-config=auth=MTLS_PERMISSIVE
 ```
 
-> **Note** that you are using the PERMISSIVE setting for MTLS configuration for the sake of simplicity. We recommend reviewing the appropriate Istio [documentation](https://istio.io/docs/concepts/security/#mutual-tls-authentication){: target="external" track-type="tutorial" track-name="externalLink" track-metadata-position="body" } to choose the appropriate policy for your deployment.
+> **Note** that you are using the PERMISSIVE setting for MTLS configuration for the sake of simplicity. We recommend reviewing the appropriate Istio [documentation](https://istio.io/docs/concepts/security/#mutual-tls-authentication) to choose the appropriate policy for your deployment.
 
-1.  Issue this command to get cluster credentials:
+3.  Issue this command to get cluster credentials:
 
 ```
 gcloud container clusters get-credentials $CLUSTER --zone=$ZONE
 ```
 
-1.  Issue these commands to set kubectx context and switch to it:
+4.  Issue these commands to set kubectx context and switch to it:
 
 ```
 kubectx cluster=gke_${PROJECT_ID}_${ZONE}_${CLUSTER}
 kubectx cluster
 ```
 
-1.  Issue this command to create a dedicated namespace for your application and switch to it:
+5.  Issue this command to create a dedicated namespace for your application and switch to it:
 
 ```
 kubectl create namespace $APP_NS
 kubens $APP_NS
 ```
 
-1.  Label the namespace to enable automatic Istio sidecar injection:
+6.  Label the namespace to enable automatic Istio sidecar injection:
 
 ```
 kubectl label namespace $APP_NS istio-injection=enabled
 ```
 
-1.  Apply the Istio manifests:
+7.  Apply the Istio manifests:
 
 ```
 kubectl apply -f $WORKDIR/istio-manifests
 ```
 
-1.  Deploy the sample application:
+8.  Deploy the sample application:
 
 ```
 kubectl apply -f $WORKDIR/release/kubernetes-manifests.yaml
 ```
 
-1.  Confirm that all components of the application have been deployed correctly:
+9.  Confirm that all components of the application have been deployed correctly:
 
 ```
 kubectl get pods -n $APP_NS
@@ -171,7 +171,7 @@ shippingservice-55bc4768dd-8fgtv         2/2     Running    0          79s
 
 ## Deploy Grafana
 
-In this section, you deploy Grafana in a dedicated namespace in your cluster using a Helm chart and template.  [Helm](helm.sh){: target="external" track-type="tutorial" track-name="externalLink" track-metadata-position="body" } is an open-source package manager for Kubernetes.
+In this section, you deploy Grafana in a dedicated namespace in your cluster using a Helm chart and template.  [Helm](helm.sh) is an open-source package manager for Kubernetes.
 
 ### Install Grafana
 
@@ -181,31 +181,31 @@ In this section, you deploy Grafana in a dedicated namespace in your cluster usi
 helm repo update
 ```
 
-1.  Download Grafana:
+2.  Download Grafana:
 
 ```
 helm fetch stable/grafana --untar
 ```
 
-1.  Create a namespace dedicated to Grafana:
+3.  Create a namespace dedicated to Grafana:
 
 ```
 kubectl create ns $MONITORING_NS
 ```
 
-1.  Use the Helm chart to create the .yaml file:
+4.  Use the Helm chart to create the .yaml file:
 
 ```
 helm template grafana --namespace $MONITORING_NS --name grafana > $WORKDIR/grafana.yaml
 ```
 
-1.  Deploy Grafana using the file:
+5.  Deploy Grafana using the file:
 
 ```
 kubectl apply -f $WORKDIR/grafana.yaml -n $MONITORING_NS
 ```
 
-1.  Verify the installation:
+6.  Verify the installation:
 
 ```
 kubectl get pods -n $MONITORING_NS
@@ -227,23 +227,23 @@ kubectl get secret \
     | base64 --decode ; echo
 ```
 
-1.  Capture the name of the Grafana pod as a variable:
+2.  Capture the name of the Grafana pod as a variable:
 
 ```
 export GRAFANA_POD=$(kubectl get pods --namespace $MONITORING_NS -l "app=grafana,release=grafana" -o jsonpath="{.items[0].metadata.name}")
 ```
 
-1.  Use port-forwarding to enable access to the Grafana UI:
+3.  Use port-forwarding to enable access to the Grafana UI:
 
 ```
 kubectl port-forward $GRAFANA_POD 3000 -n $MONITORING_NS
 ```
 
-1.  Use the web preview functionality in Cloud Shell to access the UI after changing the port to 3000:
+4.  Use the web preview functionality in Cloud Shell to access the UI after changing the port to 3000:
 
 ![image](2-preview.png)
 
-1.  At the Grafana login screen, enter **admin** as the username and paste in the password from step 8 above to access Grafana.
+5.  At the Grafana login screen, enter **admin** as the username and paste in the password from step 8 above to access Grafana.
 
 ## Configure data source and create dashboards
 
@@ -253,15 +253,15 @@ In this section, you configure Grafana to use Stackdriver as the data source and
 
 1.  In the Grafana UI, click **Add data source.**
 
-1.  Click **Stackdriver.**
+2.  Click **Stackdriver.**
 
-1.  Switch **Authentication Type **to** Default GCE Service Account**. Note that this works because Grafana is running on a GKE cluster with default access scopes configured.
+3.  Switch **Authentication Type **to** Default GCE Service Account**. Note that this works because Grafana is running on a GKE cluster with default access scopes configured.
 
-1.  Click **Save and Test.**
+4.  Click **Save and Test.**
 
 ### Create the dashboard
 
-In this section, you create a dashboard focusing on the [golden signals](https://landing.google.com/sre/sre-book/chapters/monitoring-distributed-systems/){: target="external" track-type="tutorial" track-name="externalLink" track-metadata-position="body" } of monitoring - request rates, errors, and latencies.
+In this section, you create a dashboard focusing on the [golden signals](https://landing.google.com/sre/sre-book/chapters/monitoring-distributed-systems/) of monitoring - request rates, errors, and latencies.
 
 #### Create request rates view
 
@@ -269,22 +269,33 @@ In this section, you create a dashboard focusing on the [golden signals](https:/
 
 ![image](3-create.png)
 
-1.  Click **Add Query.**
-1.  From the **Service** dropdown menu**, **select** Istio**.
-1.  From the **Metric** dropdown, select Server Request Count.
-1.  Click the + next to Group By and select metric.label.destination_service_name.
-1.  From the Aggregation menu, select Sum.
-1.  On the left side, click on Visualization.
-1.  Under **Axes** -> **Left Y**, click on the **Units** menu and select **Throughput -> requests/sec (rps)**.
-1.  On the left side, click on General:
+2.  Click **Add Query.**
+   
+3.  From the **Service** dropdown menu**, **select** Istio**.
+   
+4.  From the **Metric** dropdown, select Server Request Count.
+
+5.  Click the + next to Group By and select metric.label.destination_service_name.
+
+6.  From the Aggregation menu, select Sum.
+
+7.  On the left side, click on Visualization.
+
+8.  Under **Axes** -> **Left Y**, click on the **Units** menu and select **Throughput -> requests/sec (rps)**.
+
+9.  On the left side, click on General:
 
 ![image](4-query.png)
 
-1.  In the Panel Title field, enter **Request Rates by Service.**
-1.  Click the Save Dashboard button at the top right to save your work.
-1.  Click the left arrow at the top left to go back.
-1.  Click the Dashboard Settings button at the top right.
-1.  Under **General**, in the **Name** field, enter **"GKE Services Dashboard"** and click **Save.**
+10.  In the Panel Title field, enter **Request Rates by Service.**
+    
+11. Click the Save Dashboard button at the top right to save your work.
+    
+12. Click the left arrow at the top left to go back.
+    
+13. Click the Dashboard Settings button at the top right.
+    
+14. Under **General**, in the **Name** field, enter **"GKE Services Dashboard"** and click **Save.**
 
 At this point, you should have a dashboard with a single view on it showing request rates for the services in your Istio service mesh.
 
@@ -293,24 +304,34 @@ At this point, you should have a dashboard with a single view on it showing requ
 #### Create errors view
 
 1.  At the top right, click the Add Panel button.
-1.  Click Add Query.
-1.  From the Service menu, select Istio.
-1.  From the **Metric** dropdown, select Server Request Count.
-1.  Click the + next to Group By and select metric.label.destination_service_name.
-1.  Click the + next to Filter and select metric.label.response_code.
-1.  Select != as the operator and 200 as the value to only count failed requests.
+
+2.  Click Add Query.
+   
+3.  From the Service menu, select Istio.
+   
+4.  From the **Metric** dropdown, select Server Request Count.
+   
+5.  Click the + next to Group By and select metric.label.destination_service_name.
+   
+6.  Click the + next to Filter and select metric.label.response_code.
+
+7.  Select != as the operator and 200 as the value to only count failed requests.
 
     **Note** that in this example, you're including 4xx errors in your count - often, users choose to exclude these, as they may be caused by issues on the client.
 
-1.  From the Aggregation menu, select Sum.
-1.  On the left side, click on Visualization.
-1.  Under **Axes** -> **Left Y**, click on the **Units** menu and select **Throughput -> requests/sec (rps)**.
-1.  On the left side, click on General:
+8.  From the Aggregation menu, select Sum.
+   
+9.  On the left side, click on Visualization.
+
+10. Under **Axes** -> **Left Y**, click on the **Units** menu and select **Throughput -> requests/sec (rps)**.
+    
+11. On the left side, click on General:
 
 ![image](6-query.png)
 
-1.  In the Panel Title field, enter **Errors by Service.**
-1.  At the top right, click the Save Dashboard button.
+12.  In the Panel Title field, enter **Errors by Service.**
+    
+13. At the top right, click the Save Dashboard button.
 
 At this point, your dashboard should contain two panels showing request rates and errors.
 
@@ -339,11 +360,11 @@ To delete the project:
 
     [GO TO THE PROJECTS PAGE]({{console_url}}iam-admin/projects){: target="console" track-type="tutorial" track-name="consoleLink" track-metadata-position="body" }
 
-1.  In the project list, select the project you want to delete and click **Delete**.
+2.  In the project list, select the project you want to delete and click **Delete**.
 
 ![image](9-delete.png)
 
-1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
+3.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
 ## What's next
 
