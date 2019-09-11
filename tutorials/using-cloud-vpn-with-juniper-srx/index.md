@@ -1,9 +1,9 @@
 ---
-title: Google Cloud VPN interoperability guide for Juniper SRX
+title: Cloud VPN interoperability guide for Juniper SRX
 description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on Google Cloud Platform and Juniper SRX300.
 author: antiabong,ashisverm
 tags: VPN, interop, Juniper, SRX.
-date_published: 2019-09-04
+date_published: 2019-09-12
 ---
 
 Juniper, SRX, and Junos are trademarks of Juniper Networks, Inc. or its affiliates in the United States and/or other 
@@ -1076,14 +1076,13 @@ variables to hold the values that you need for these parameters.
 | Cloud Router name (for dynamic routing) | `[CLOUD_ROUTER_NAME]` | `vpn-test-juniper-rtr` |
 | BGP interface name    | `[BGP_IF]` | `if-1` |
 | BGP session name (for dynamic routing) | `[BGP_SESSION_NAME]` | `bgp-peer1` |
-| The name for the first GCP VPN gateway | `[VPN_GATEWAY_1]`    | `vpn-test-juniper-gw-1` |
-| The name for the first VPN tunnel for `vpn-test-juniper-gw-1` | `[VPN_TUNNEL_1]` | `vpn-test-tunnel1` |
-| The name of a firewall rule that allows traffic between the on-premises network and GCP VPC networks | `[VPN_RULE]` | `vpnrule1` |
-| The name for the [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create) used to forward
-traffic to the on-premises network. Note: You need this value only if you are creating a VPN using a static route. | `[ROUTE_NAME]` | `vpn-static-route` |
-| The name for the forwarding rule for the [ESP protocol](https://wikipedia.org/wiki/IPsec#Encapsulating_Security_Payload) | `[FWD_RULE_ESP]` | `fr-esp` |
-| The name for the forwarding rule for the (https://wikipedia.org/wiki/User_Datagram_Protocol)[UDP protocol], port 500 | `[FWD_RULE_UDP_500]` | `fr-udp500` |
-| The name for the forwarding rule for the UDP protocol, port 4500 | `[FWD_RULE_UDP_4500]` | `fr-udp4500` |
+| Name for the first GCP VPN gateway | `[VPN_GATEWAY_1]`    | `vpn-test-juniper-gw-1` |
+| Name for the first VPN tunnel for `vpn-test-juniper-gw-1` | `[VPN_TUNNEL_1]` | `vpn-test-tunnel1` |
+| Name of a firewall rule that allows traffic between the on-premises network and GCP VPC networks | `[VPN_RULE]` | `vpnrule1` |
+| Name for the [static route](https://cloud.google.com/sdk/gcloud/reference/compute/routes/create) used to forward traffic to the on-premises network. Note: You need this value only if you are creating a VPN using a static route. | `[ROUTE_NAME]` | `vpn-static-route` |
+| Name for the forwarding rule for the [ESP protocol](https://wikipedia.org/wiki/IPsec#Encapsulating_Security_Payload) | `[FWD_RULE_ESP]` | `fr-esp` |
+| Name for the forwarding rule for the (https://wikipedia.org/wiki/User_Datagram_Protocol)[UDP protocol], port 500 | `[FWD_RULE_UDP_500]` | `fr-udp500` |
+| Name for the forwarding rule for the UDP protocol, port 4500 | `[FWD_RULE_UDP_4500]` | `fr-udp4500` |
 
 ### Setting environment variables for gcloud command parameters
 
