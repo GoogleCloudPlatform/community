@@ -243,7 +243,7 @@ kubectl port-forward $GRAFANA_POD 3000 -n $MONITORING_NS
 
 ![image](2-webpreview.png)
 
-5.  At the Grafana login screen, enter **admin** as the username and paste in the password from step 8 above to access Grafana.
+5.  At the Grafana login screen, enter **admin** as the username and paste in the password from step 1 above to access Grafana.
 
 ## Configure data source and create dashboards
 
