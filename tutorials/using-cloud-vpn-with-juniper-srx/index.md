@@ -305,50 +305,59 @@ Note: The Juniper SRX300 solution might have its own specifications for replay w
 
 ### Configure the IKE proposal and policy
 
-Create an Internet Key Exchange (IKE) version 2 proposal object. IKEv2 proposal objects contain the parameters required for creating IKEv2 proposals when defining remote access and site-to-site VPN policies. IKE is used to authenticate IPsec peers, negotiate and distribute IPsec encryption keys, and
-automatically establish IPsec security associations (SAs). The default proposal associated with the default policy is used for negotiation. An IKEv2 policy with no proposal is considered incomplete. In this block, the following parameters are set:
+Create an Internet Key Exchange (IKE) version 2 proposal object. IKEv2 proposal objects contain the parameters required for
+creating IKEv2 proposals when defining remote access and site-to-site VPN policies. IKE is used to authenticate IPsec peers, 
+negotiate and distribute IPsec encryption keys, and automatically establish IPsec security associations (SAs). The default 
+proposal associated with the default policy is used for negotiation. An IKEv2 policy with no proposal is considered 
+incomplete.
 
--  **Encryption algorithm**— set to `AES-CBC-256`
--  **Integrity algorithm**— set to `SHA256`
--  **Diffie-Hellman group**— set to `14`
--  **IKEv2 Lifetime** — set the lifetime of the security associations (after which a reconnection will occur). The default on most SRX platforms is 28800 seconds
+In this block, the following parameters are set:
 
-       [edit]
-         root@vsrx#
-         set security ike proposal ike-phase1-proposal authentication-method pre-shared-keys
-         set security ike proposal ike-phase1-proposal dh-group group14
-         set security ike proposal ike-phase1-proposal authentication-algorithm sha-256
-         set security ike proposal ike-phase1-proposal encryption-algorithm aes-256-cbc
-         set security ike proposal ike-phase1-proposal lifetime-seconds 28800
-         set security ike policy ike_pol_onprem-2-gcp-vpn mode main
-         set security ike policy ike_pol_onprem-2-gcp-vpn proposals ike-phase1-proposal
-         set security ike policy ike_pol_onprem-2-gcp-vpn pre-shared-key ascii-text [*****]
+-   **Encryption algorithm**: `AES-CBC-256`
+-   **Integrity algorithm**: `SHA256`
+-   **Diffie-Hellman group**: `14`
+-   **IKEv2 Lifetime** : The lifetime of the security associations, after which a reconnection will occur. The default
+    on most SRX platforms is 28800 seconds.
+
+        [edit]
+          root@vsrx#
+          set security ike proposal ike-phase1-proposal authentication-method pre-shared-keys
+          set security ike proposal ike-phase1-proposal dh-group group14
+          set security ike proposal ike-phase1-proposal authentication-algorithm sha-256
+          set security ike proposal ike-phase1-proposal encryption-algorithm aes-256-cbc
+          set security ike proposal ike-phase1-proposal lifetime-seconds 28800
+          set security ike policy ike_pol_onprem-2-gcp-vpn mode main
+          set security ike policy ike_pol_onprem-2-gcp-vpn proposals ike-phase1-proposal
+          set security ike policy ike_pol_onprem-2-gcp-vpn pre-shared-key ascii-text [*****]
 
 #### Configure IKEv2 Gateway
 
-An IKEv2 profile must be configured and must be attached to an IPsec profile on both the IKEv2 initiator and responder. In this block, the following parameters are set:
+An IKEv2 profile must be configured and must be attached to an IPsec profile on both the IKEv2 initiator and the responder.
 
-- DPD – set the dead peer detection interval and retry threshold, if there are no response from the peer, the SA created for that peer is deleted. Set DPD type to `probe-idle-tunnel`,  set DPD interval to `20` and the DPD retry threshold to `4`.
+In this block, the following parameters are set:
 
-- Set the IKE remote address, IKE external interface and the IKE version (v2)
+-   **DPD**: The dead peer detection interval and retry threshold. If there are no responses from the peer, the security
+    association created for that peer is deleted. Set the DPD type to `probe-idle-tunnel`, the DPD interval to `20`, and the
+    DPD retry threshold to `4`.
+-   **IKE**: Set the IKE remote address, IKE external interface, and the IKE version (v2). Set the IKE local identity to
+    the IP address of the external interface. If the SRX device is behind a NAT, the local identity should be configured as
+    the public IP address of the NAT. Where the NAT maps to a pool of public IP addresses, a dedicated 1-to-1 NAT should be
+    configured to the SRX device.
 
-- The IKE local identity should be the IP address of the external interface. If SRX device is sitting 
-  behind a NAT, the local identity should be configured as the public IP address of the NAT. Where NAT maps to a pool of public IP addresses, a dedicated 1-to-1 NAT should be configured to the SRX device.
-
-      [edit]
-        root@vsrx#
-        set security ike gateway gw_onprem-2-gcp-vpn ike-policy ike_pol_onprem-2-gcp-vpn
-        set security ike gateway gw_onprem-2-gcp-vpn address 35.187.170.191
-        set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection probe-idle-tunnel
-        set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection interval 20
-        set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection threshold 4
-        set security ike gateway gw_onprem-2-gcp-vpn external-interface ge-0/0/1.0
-        set security ike gateway gw_onprem-2-gcp-vpn version v2-only
+        [edit]
+          root@vsrx#
+          set security ike gateway gw_onprem-2-gcp-vpn ike-policy ike_pol_onprem-2-gcp-vpn
+          set security ike gateway gw_onprem-2-gcp-vpn address 35.187.170.191
+          set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection probe-idle-tunnel
+          set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection interval 20
+          set security ike gateway gw_onprem-2-gcp-vpn dead-peer-detection threshold 4
+          set security ike gateway gw_onprem-2-gcp-vpn external-interface ge-0/0/1.0
+          set security ike gateway gw_onprem-2-gcp-vpn version v2-only
     
-      #Configure local-identity as public IP address of the VPN device, if behind NA
-        set security ike gateway gw_onprem-2-gcp-vpn local-identity inet 104.196.65.171
+        #Configure local-identity as public IP address of the VPN device, if behind NA
+          set security ike gateway gw_onprem-2-gcp-vpn local-identity inet 104.196.65.171
 
-### Configure the IPsec security association (SA)
+### Configure the IPsec security association
 
 Defines the IPsec parameters that are to be used for IPsec encryption between two IPsec routers in IPsec profile configuration. In this block, the following parameters are set
 
@@ -881,7 +890,7 @@ Notice the use of Juniper's built-in proposal set (standard) the `ike policy` co
 #### Testing the higher-throughput configuration
 
 You can test the IPsec tunnel from GCP with the instructions in the
-[Building High-throughput VPNs](https://cloud-dot-devsite.googleplex.com/solutions/building-high-throughput-vpns) guide.
+[Building high-throughput VPNs](https://cloud.google.com/solutions/building-high-throughput-vpns) guide.
 You can verify and test that multiple tunnels have been initiated and established between your on-prem environment and GCP
 via the commands below.
 
