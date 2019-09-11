@@ -359,29 +359,37 @@ In this block, the following parameters are set:
 
 ### Configure the IPsec security association
 
-Defines the IPsec parameters that are to be used for IPsec encryption between two IPsec routers in IPsec profile configuration. In this block, the following parameters are set
+Define the IPsec parameters that are used for IPsec encryption between two IPsec routers in IPsec profile configuration.
 
-- **IPsec SA lifetime** – 1 hour `3600 seconds` is the recommended value for most VPN sessions. The default on a Juniper SRX is 3600 seconds
-- **Perfect Forward Secrecy (PFS)** – PFS ensures that the same key will not be generated again, so forces a new diffie-hellman key exchange. This config is set to `group14` 
+In this block, the following parameters are set:
 
-      [edit]
-        root@vsrx#
-        set security ipsec proposal ipsec-phase2-proposal protocol esp
-        set security ipsec proposal ipsec-phase2-proposal lifetime-seconds 3600
-        set security ipsec proposal ipsec-phase2-proposal authentication-algorithm hmac-sha-256-128
-        set security ipsec proposal ipsec-phase2-proposal encryption-algorithm aes-256-cbc
-        set security ipsec policy ipsec_pol_home-2-gcp-vpn perfect-forward-secrecy keys group14
-        set security ipsec policy ipsec_pol_home-2-gcp-vpn proposals ipsec-phase2-proposal
+-   **IPsec SA lifetime**: Setting `lifetime-seconds` to `3600` (1 hour) is recommended for most VPN sessions. The default
+    on a Juniper SRX is 3600 seconds.
+-   **Perfect Forward Secrecy (PFS)**: PFS forces a new Diffie-Hellman key exchange. The same key will not be generated
+    again. This value is set to `group14`. 
 
-#### Configure IPsec Profile and Tunnel Binding Interface
+        [edit]
+          root@vsrx#
+          set security ipsec proposal ipsec-phase2-proposal protocol esp
+          set security ipsec proposal ipsec-phase2-proposal lifetime-seconds 3600
+          set security ipsec proposal ipsec-phase2-proposal authentication-algorithm hmac-sha-256-128
+          set security ipsec proposal ipsec-phase2-proposal encryption-algorithm aes-256-cbc
+          set security ipsec policy ipsec_pol_home-2-gcp-vpn perfect-forward-secrecy keys group14
+          set security ipsec policy ipsec_pol_home-2-gcp-vpn proposals ipsec-phase2-proposal
 
-A tunnel interface is configured to be the logical interface associated with the tunnel. All traffic routed to the tunnel interface will be encrypted and transmitted to the GCP. Similarly, traffic from the GCP will be logically received on this interface.
+#### Configure IPsec profile and tunnel binding interface
 
-Association with the IPsec security association is done through the `tunnel protection` command.
+A tunnel interface is configured to be the logical interface associated with the tunnel. All traffic routed to the tunnel 
+interface will be encrypted and transmitted to GCP. Similarly, traffic from GCP will be logically received on this 
+interface.
 
-Adjust the maximum segment size (MSS) value of TCP packets going through a router. The recommended value is 1360 when the number of IP MTU bytes is set to 1460
+Association with the IPsec SA is done through the `tunnel protection` command.
 
-- With these recommended settings, TCP sessions quickly scale back to 1400-byte IP packets so the packets will "fit" in the tunnel.
+Adjust the maximum segment size (MSS) value of TCP packets going through a router. The recommended value is `1360` when the
+number of IP MTU bytes is set to 1460.
+
+With these recommended settings, TCP sessions quickly scale back to 1400-byte IP packets so the packets will "fit" in the
+tunnel.
 
        [edit]
        root@vsrx#
@@ -392,9 +400,9 @@ Adjust the maximum segment size (MSS) value of TCP packets going through a route
        set security flow tcp-mss ipsec-vpn mss 1360
        set security flow tcp-session rst-invalidate-session
 
-#### Configure Security Zones and Policies
+#### Configure security zones and policies
 
-##### Security Zone Configuration
+##### Security zone configuration
 
 Juniper SRX uses security zones to isolate network segments and regulates traffic inbound and outbound from these zones using security policies. Security zones logically bind interfaces (which may represent network segments). For this configuration, we have three security zones: the `untrust` zone which the internet facing interface `ge-0/0/0.0` is bound, the `trust` zone with the internal facing interfaces `ge-0/0/1.0`and  `ge-0/0/2.0` are bound and the `vpn-gcp` zone which the vpn tunnel interface `st0.0` is bound. In addition to binding interfaces to the defined zones, traffic destined for the Juniper device is allowed/denied in the security zone configuration; also, address-book configuration which can be used in security policies to specify what IP addresses are allowed to pass traffic from a zone is configured here. See [Juniper security zone configuration](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-zone-configuration.html) for more information on how to configure security zones.
 
