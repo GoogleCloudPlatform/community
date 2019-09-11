@@ -404,9 +404,17 @@ tunnel.
 
 ##### Security zone configuration
 
-Juniper SRX uses security zones to isolate network segments and regulates traffic inbound and outbound from these zones using security policies. Security zones logically bind interfaces (which may represent network segments). For this configuration, we have three security zones: the `untrust` zone which the internet facing interface `ge-0/0/0.0` is bound, the `trust` zone with the internal facing interfaces `ge-0/0/1.0`and  `ge-0/0/2.0` are bound and the `vpn-gcp` zone which the vpn tunnel interface `st0.0` is bound. In addition to binding interfaces to the defined zones, traffic destined for the Juniper device is allowed/denied in the security zone configuration; also, address-book configuration which can be used in security policies to specify what IP addresses are allowed to pass traffic from a zone is configured here. See [Juniper security zone configuration](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-zone-configuration.html) for more information on how to configure security zones.
+Juniper SRX uses security zones to isolate network segments and regulates traffic inbound and outbound from these zones 
+using security policies. Security zones logically bind interfaces (which may represent network segments). For this 
+configuration, there are three security zones: the `untrust` zone, with which the internet-facing interface `ge-0/0/0.0` is
+bound; the `trust` zone, with which the internal-facing interfaces `ge-0/0/1.0`and `ge-0/0/2.0` are bound; and the `vpn-gcp`
+zone, with which the VPN tunnel interface `st0.0` is bound. In addition to binding interfaces to the defined zones, traffic
+destined for the Juniper device is allowed or denied in the security zone configuration; also, address-book configuration
+(which can be used in security policies to specify what IP addresses are allowed to pass traffic from a zone) is configured
+here. For more information on how to configure security zones, see
+[Juniper security zone configuration](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-zone-configuration.html).
 
-Below are the security zone configuration entered in the on-prem Juniper SRX300 device.
+Below is the security zone configuration for the on-premises Juniper SRX300 device:
 
     [edit]
     root@vsrx#
@@ -447,7 +455,11 @@ Below are the security zone configuration entered in the on-prem Juniper SRX300 
 
 ##### Configure security policies
 
-Security policies are statements that allow for control to placed on traffic going from a specific source to a specific destination using a specific service and/or IP address. See [Juniper security policy configuration](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-policy-configuration.html), for more information security zones. For the configuration below the sources and destinations are the zones `untrust`, `trust` and `vpn-gcp` configured above. 
+Security policies are statements that allow for control to placed on traffic going from a specific source to a specific 
+destination using a specific service or IP address. For more information on security zones, see
+[Juniper security policy configuration](https://www.juniper.net/documentation/en_US/junos/topics/topic-map/security-policy-configuration.html).
+
+For the configuration below, the sources and destinations are the zones `untrust`, `trust`, and `vpn-gcp` configured above. 
 
     [edit]
     root@vsrx#
@@ -478,34 +490,34 @@ Security policies are statements that allow for control to placed on traffic goi
 
 ### Configuring the dynamic routing protocol
 
-BGP is used within the tunnel to exchange prefixes between the GCP cloud router and the Juniper SRX appliance. The GCP
-cloud router will announce the prefix corresponding to your GCP VPC.
+BGP is used within the tunnel to exchange prefixes between the GCP Cloud Router and the Juniper SRX appliance. The GCP
+Cloud Router will announce the prefix corresponding to your GCP VPC.
 
 BGP timers are adjusted to provide more rapid detection of outages.
 
-- Configure BGP peering between SRX and cloud router
+1.  Configure BGP peering between SRX and Cloud Router
 
-      [edit]
-      root@vsrx#
-      set protocols bgp group ebgp-peers type external
-      set protocols bgp group ebgp-peers multihop
-      set protocols bgp group ebgp-peers local-as 65501
-      set protocols bgp group ebgp-peers neighbor 169.254.1.1 peer-as 65500
+        [edit]
+        root@vsrx#
+        set protocols bgp group ebgp-peers type external
+        set protocols bgp group ebgp-peers multihop
+        set protocols bgp group ebgp-peers local-as 65501
+        set protocols bgp group ebgp-peers neighbor 169.254.1.1 peer-as 65500
 
-- Configure routing policies to inject routes into BGP and advertise it to the cloud router. In this case we are only
-  advertising `192.168.0.0/24` and `192.168.1.0/24`
+1.  Configure routing policies to inject routes into BGP and advertise it to the Cloud Router. In this case, only
+    `192.168.0.0/24` and `192.168.1.0/24` are advertised:
 
-      [edit]
-      root@vsrx#
-      set policy-options policy-statement gcp-bgp-policy term 1 from protocol direct
-      set policy-options policy-statement gcp-bgp-policy term 1 from route-filter 192.168.1.0/24 exact
-      set policy-options policy-statement gcp-bgp-policy term 1 then accept
-      set policy-options policy-statement gcp-bgp-policy term 2 from protocol direct
-      set policy-options policy-statement gcp-bgp-policy term 2 from route-filter 192.168.0.0/24 exact
-      set policy-options policy-statement gcp-bgp-policy term 2 then accept
-      set protocols bgp group ebgp-peers export gcp-bgp-policy
+        [edit]
+        root@vsrx#
+        set policy-options policy-statement gcp-bgp-policy term 1 from protocol direct
+        set policy-options policy-statement gcp-bgp-policy term 1 from route-filter 192.168.1.0/24 exact
+        set policy-options policy-statement gcp-bgp-policy term 1 then accept
+        set policy-options policy-statement gcp-bgp-policy term 2 from protocol direct
+        set policy-options policy-statement gcp-bgp-policy term 2 from route-filter 192.168.0.0/24 exact
+        set policy-options policy-statement gcp-bgp-policy term 2 then accept
+        set protocols bgp group ebgp-peers export gcp-bgp-policy
 
-### Configuring static routing (Optional if using Cloud Router)
+### Configuring static routing (optional if using Cloud Router)
 
 Follow the procedure in this section to configure static routing of traffic to the GCP network through the VPN tunnel 
 interface `st0.0`.
@@ -520,31 +532,31 @@ For more recommendations about on-premises routing configurations, see
 
 ### Saving the configuration
 
-Follow the procedure in this section to save the on-premises configuration.
+Use this command to save the on-premises configuration:
 
     root@vsrx# commit and-quit 
 
-### Testing/Verifying the VPN configuration/connectivity
+### Testing and verifying the VPN configuration and connectivity
 
 It's important to test the VPN connection from both sides of a VPN tunnel. For either side, make sure that the subnet that
 a machine or virtual machine is located in is being forwarded through the VPN tunnel.
 
-First, create VMs/hosts on both sides of the tunnel depending on the scenario being tested. Make sure that you configure
+First, create VMs/hosts on both sides of the tunnel, depending on the scenario being tested. Make sure that you configure
 the VMs/hosts on a subnet that will pass traffic through the VPN tunnel.
 
 Instructions for creating virtual machines in Compute Engine are located in the
 [getting started guide](https://cloud.google.com/compute/docs/quickstart).
 
 After VMs have been deployed on both the GCP and the other side of the tunnel (for example, on-premises or another cloud),
-you can use an ICMP echo (`ping`) test to test network connectivity through the VPN tunnel; and telnet|netcat to test tcp 
-connectivity
+you can use an ICMP echo (`ping`) test to test network connectivity through the VPN tunnel, and you can use `telnet` or 
+`netcat` to test TCP connectivity.
 
 On the GCP side, use the following instructions to test the connection to a machine that's behind the on-premises gateway:
 
-1.  In the GCP Console, [go to the VM Instances page](https://console.cloud.google.com/compute?).
+1.  In the GCP Console, go to the [VM instances page](https://console.cloud.google.com/compute).
 1.  Find the GCP virtual machine you created.
 1.  In the **Connect** column, click **SSH**. A browser window opens at the VM command line.
-1.  Ping a machine that's behind the on-premises gateway.
+1.  Ping a machine that's behind the on-premises gateway:
 
         root@freebsd:~ # ping 192.168.1.91
         PING 192.168.1.91 (192.168.1.91): 56 data bytes
@@ -564,15 +576,15 @@ On the GCP side, use the following instructions to test the connection to a mach
         round-trip min/avg/max/stddev = 17.600/22.602/35.592/5.129 ms
         root@freebsd:~ #
 
-##### Testing/verifying VPN connectivity on Juniper SRX
+##### Testing and verifying VPN connectivity on Juniper SRX
 
-1.  Show IKE security associations
+1.  Show IKE security associations:
 
         root@vsrx# run show security ike security-associations
         Index   State  Initiator cookie  Responder cookie  Mode           Remote Address
         7877087 UP     412c5a43aad7682b  b6d24ef8bf25e9ea  IKEv2          35.187.170.191
 
-1.  Show IPsec security associations
+1.  Show IPsec security associations:
 
         root@vsrx# run show security ipsec security-associations
         Total active tunnels: 1
@@ -613,9 +625,10 @@ On the GCP side, use the following instructions to test the connection to a mach
         
         root@vsrx>
 
-### Advanced VPN configurationsAdvanced VPN configurations
+## Advanced VPN configuration
 
-This section covers how to configure redundant on-premises VPN gateways and how to get higher throughput through VPN tunnels.
+This section covers how to configure redundant on-premises VPN gateways and how to get higher throughput through VPN
+tunnels.
 
 ### Configuring VPN redundancy
 
@@ -645,7 +658,7 @@ setting environment variables for parameter values such as the GCP network name,
 
 #### Configuring Juniper SRX300 dynamic route priority settings using BGP MED
 
-GCP cloud routers use only BGP MED (Multi-Exit Discriminator) values to determine route priorities, see
+GCP Cloud Router uses only BGP MED (Multi-Exit Discriminator) values to determine route priorities, see
 [here](https://cloud.google.com/router/docs/concepts/overview) for more information. MED is a routing metric and routes with 
 lower values are considered the better routes. MED values on SRX300 can be set for all prefixes per neighbor or for specific 
 routes using route filters. See Juniper documentation
@@ -661,7 +674,7 @@ Router) to `100`
 Note: The `set protocols bgp metric-out [METRIC_VALUE]` command sets the BGP metric for all neighbors, which may be
 undesirable.
 
-To list the BGP metrics of routes received by a BGP peer (GCP Cloud Router) enter the command below. The MED is shown in
+To list the BGP metrics of routes received by a BGP peer (GCP Cloud Router), enter the command below. The MED is shown in
 the third column.
 
     root@vsrx# run show route receive-protocol bgp 169.254.0.1    
@@ -824,7 +837,7 @@ Notice the use of Juniper's built-in proposal set (standard) the `ike policy` co
     set security ipsec vpn onprem-2-gcp-vpn-2 establish-tunnels immediately
     set security flow tcp-mss ipsec-vpn mss 1300
 
-###### Configure Security Zones
+###### Configure security zones
 
     [edit]
     root@vsrx# edit security zones
