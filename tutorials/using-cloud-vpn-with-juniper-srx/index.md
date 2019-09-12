@@ -1,8 +1,8 @@
 ---
 title: Cloud VPN interoperability guide for Juniper SRX
 description: Describes how to build site-to-site IPsec VPNs between Cloud VPN on Google Cloud Platform and Juniper SRX300.
-author: antiabong,ashisverm
-tags: VPN, interop, Juniper, SRX.
+author: antiabong,ashishverm
+tags: VPN, interop, Juniper, SRX
 date_published: 2019-09-12
 ---
 
@@ -15,7 +15,7 @@ should verify this information by testing it._
 ## Introduction
 
 Learn how to build site-to-site IPsec VPNs between [Cloud VPN](https://cloud.google.com/vpn/docs/) on Google Cloud
-Platform (GCP) and Juniper SRX300
+Platform (GCP) and Juniper SRX300.
 
 For more information about Cloud VPN, see the [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
 
@@ -354,7 +354,7 @@ In this block, the following parameters are set:
           set security ike gateway gw_onprem-2-gcp-vpn external-interface ge-0/0/1.0
           set security ike gateway gw_onprem-2-gcp-vpn version v2-only
     
-        #Configure local-identity as public IP address of the VPN device, if behind NA
+        #Configure local-identity as public IP address of the VPN device, if behind NAT
           set security ike gateway gw_onprem-2-gcp-vpn local-identity inet 104.196.65.171
 
 ### Configure the IPsec security association
@@ -382,8 +382,6 @@ In this block, the following parameters are set:
 A tunnel interface is configured to be the logical interface associated with the tunnel. All traffic routed to the tunnel 
 interface will be encrypted and transmitted to GCP. Similarly, traffic from GCP will be logically received on this 
 interface.
-
-Association with the IPsec SA is done through the `tunnel protection` command.
 
 Adjust the maximum segment size (MSS) value of TCP packets going through a router. The recommended value is `1360` when the
 number of IP MTU bytes is set to 1460.
@@ -1011,8 +1009,7 @@ which includes the JTAC-certified resolution guide for SRX VPNs.
 
 ## Reference documentation
 
-Refer to the following documentation for additional information. 
-products.
+Refer to the following documentation for additional information.
 
 ### GCP documentation
 
