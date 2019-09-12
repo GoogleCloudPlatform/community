@@ -1011,8 +1011,7 @@ which includes the JTAC-certified resolution guide for SRX VPNs.
 
 ## Reference documentation
 
-Refer to the following documentation for additional information. 
-products.
+Refer to the following documentation for additional information.
 
 ### GCP documentation
 
