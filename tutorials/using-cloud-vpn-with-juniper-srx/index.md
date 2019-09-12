@@ -15,7 +15,7 @@ should verify this information by testing it._
 ## Introduction
 
 Learn how to build site-to-site IPsec VPNs between [Cloud VPN](https://cloud.google.com/vpn/docs/) on Google Cloud
-Platform (GCP) and Juniper SRX300
+Platform (GCP) and Juniper SRX300.
 
 For more information about Cloud VPN, see the [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
 
