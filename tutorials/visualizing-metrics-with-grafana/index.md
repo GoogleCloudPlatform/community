@@ -1,3 +1,11 @@
+---
+title: Visualizing GKE and Istio Metrics with Grafana
+description: In this tutorial, you will learn how to deploy a sample application and Grafana on a GKE cluster and configure Stackdriver as a backend for Grafana to create dashboards displaying key observability details about the cluster and application running on it.
+author: yuriatgoogle
+tags: stackdriver, gke, istio, monitoring, grafana, metrics, charts, dashboards.
+date_published: 2019-09-18
+---
+
 # Visualizing GKE and Istio Metrics with Grafana
 
 ## Introduction
