@@ -7,8 +7,8 @@
   },
   "kms": {
     "key_ring_location": "global",
-    "key_ring_id":       "tokenization-service",
-    "crypto_key_id":     "tokenization-v1"
+    "key_ring_id":       "tokenization-service-kr",
+    "crypto_key_id":     "cc-tokenization"
   },
   "datastore": {
     "namespace":         "tokenizer",

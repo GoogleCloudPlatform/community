@@ -45,7 +45,7 @@ gcloud config set account $ACCOUNT
 
 Ensure you are working with the project you want to use in gcloud.
 For more information on configuraitons see [configurations](https://cloud.google.com/sdk/gcloud/reference/config/configurations/).
-Fill in `[CONFIGURATION NAME]` with the name of hte configuration you want to use.
+Fill in `[CONFIGURATION NAME]` with the name of the configuration you want to use.
 
 ```sh
 gcloud config configurations activate [CONFIGURATION NAME] #The configuration for the project you want to use
