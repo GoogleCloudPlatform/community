@@ -246,25 +246,24 @@ The command should look similar to the following example:
     
 ## Configure AWS VPN gateways
 
-      Known issue: When configuring VPN tunnels to AWS, use the IKEv2 encryption protocol 
-      and select fewer transform sets on the AWS side, otherwise the Cloud VPN tunnel can fail
-      to rekey. For example, select a combination of single Phase 1 and Phase 2 encryption 
-      algorithms, integrity algorithms, and DH group numbers.
+Create two AWS virtual private gateways, each associated with an AWS site-to-site VPN connection and a customer gateway. The
+first AWS gateway has one site-to-site connection and two customer gateways. The first AWS configuration connects to 
+interface 0 on the HA VPN gateway. The second AWS gateway has the same configuration and connects to interface 1 on the
+HA VPN gateway.
 
-      This rekeying issue is caused by a large SA payload size for the default set of AWS 
-      transform sets. This large payload size results in IP fragmentation of IKE packets 
-      on the AWS side, which Cloud VPN does not support.
+Create all AWS components in the AWS VPC console dashboard by selecting each top-level component in the dashboard's 
+navigation bar.
 
-Create two AWS virtual private gateways, each associated with an AWS site-to-site 
-VPN connection and a customer gateway. The first AWS gateway has one site-to-site 
-connection and two customer gateways. The first AWS configuration connects to 
-interface 0 on the HA VPN gateway. The second AWS gateway has the same configuration
-and connects to interface 1 on the HA VPN gateway.
+These instructions assume that you have created an AWS VPC for this gateway.
 
-Create all AWS components in the AWS VPC console dashboard by selecting each top-level 
-component in the dashboard's navigation bar.
+### Known issue
 
-**Note:** These instructions assume that you have created an AWS VPC for this gateway.
+When configuring VPN tunnels to AWS, use the IKEv2 encryption protocol and select fewer transform sets on the AWS side.
+Otherwise, the Cloud VPN tunnel can fail to rekey. For example, select a combination of single Phase 1 and Phase 2
+encryption algorithms, integrity algorithms, and DH group numbers.
+
+This rekeying issue is caused by a large SA payload size for the default set of AWS transform sets. This large payload size 
+results in IP fragmentation of IKE packets on the AWS side, which Cloud VPN does not support.
 
 ### Create the AWS gateway and attach it to a VPC
 
