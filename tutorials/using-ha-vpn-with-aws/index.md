@@ -246,6 +246,15 @@ The command should look similar to the following example:
     
 ## Configure AWS VPN gateways
 
+      Known issue: When configuring VPN tunnels to AWS, use the IKEv2 encryption protocol 
+      and select fewer transform sets on the AWS side, otherwise the Cloud VPN tunnel can fail
+      to rekey. For example, select a combination of single Phase 1 and Phase 2 encryption 
+      algorithms, integrity algorithms, and DH group numbers.
+
+      This rekeying issue is caused by a large SA payload size for the default set of AWS 
+      transform sets. This large payload size results in IP fragmentation of IKE packets 
+      on the AWS side, which Cloud VPN does not support.
+
 Create two AWS virtual private gateways, each associated with an AWS site-to-site 
 VPN connection and a customer gateway. The first AWS gateway has one site-to-site 
 connection and two customer gateways. The first AWS configuration connects to 
