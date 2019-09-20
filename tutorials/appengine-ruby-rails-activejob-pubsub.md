@@ -117,12 +117,12 @@ our `HelloJob` to execute in the background.
 ## Configuring your background worker to use Cloud Pub/Sub
 
 ActiveJob can be configured with various different background job runners. This tutorial will cover
-[ActiveJob::GoogleCloudPubsub](https://github.com/ursm/activejob-google_cloud_pubsub) which uses Cloud Pub/Sub
+[ActiveJob::GoogleCloudPubsub](https://github.com/tracyloisel/activejob-google_cloud_pubsub) which uses Cloud Pub/Sub
 to manage the job queue.
 
 1.  Add `activejob-google_cloud_pubsub` gem to your `Gemfile`:
 
-        bundle add activejob-google_cloud_pubsub
+        bundle add activejob-google_cloud_pubsub -s https://github.com/tracyloisel/activejob-google_cloud_pubsub
 
 1.  Configure ActiveJob to use GoogleCloudPubsub as its queue adapter. In `config/application.rb`:
 
