@@ -10,7 +10,7 @@ This tutorial helps you get started deploying your
 [Elixir](http://elixir-lang.org/) app using the
 [Phoenix](http://phoenixframework.org/) Framework to
 [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/),
-Google's hosting solution for containerized applications. Kubernetes Engine is
+Google's hosting solution for containerized applications. Google Kubernetes Engine is
 based on the popular open-source [Kubernetes](https://kubernetes.io/) system,
 and leverages Google's deep expertise with container-based deployments.
 
@@ -507,7 +507,7 @@ If you are experienced with Docker, you can customize your image.
 
 ## Deploying your application
 
-Now you're ready to deploy your application to Kubernetes Engine!
+Now you're ready to deploy your application to Google Kubernetes Engine!
 
 ### Build the production image
 
@@ -559,7 +559,7 @@ for more details.
 
 ### Create a cluster
 
-Kubernetes Engine lets you create Kubernetes clusters to host your application.
+Google Kubernetes Engine lets you create Kubernetes clusters to host your application.
 These are clusters of VMs in the cloud, managed by a Kubernetes server.
 
 1.  Choose a cluster name. For the rest of these instructions, I'll assume that
@@ -640,7 +640,7 @@ you've created the Kubernetes cluster as described above.
 
         kubectl get service
 
-    Initially, the external IP field will be pending while Kubernetes Engine
+    Initially, the external IP field will be pending while Google Kubernetes Engine
     procures an IP address for you. If you rerun the `kubectl get service`
     command repeatedly, eventually the IP address will appear. You can then
     point your browser at that URL to view the running application.
@@ -711,8 +711,8 @@ the entire project.
 
 ### Deleting individual resources
 
-To delete your app from Kubernetes Engine, you must remove both the load
-balancer and the Kubernetes Engine cluster.
+To delete your app from Google Kubernetes Engine, you must remove both the load
+balancer and the Google Kubernetes Engine cluster.
 
 1.  Delete the service, which deallocates the load balancer:
 
@@ -761,15 +761,15 @@ repository contains a growing set of sample Elixir applications ready to deploy
 to Google Cloud and examples of communicating with Google APIs from Elixir.
 
 See [this guide](https://cloud.google.com/sql/docs/postgres/connect-kubernetes-engine)
-to learn about more options for connecting to Cloud SQL from Kubernetes Engine,
+to learn about more options for connecting to Cloud SQL from Google Kubernetes Engine,
 including using a Private IP address or a container sidecar.
 
 If you want to procure a static IP address and connect your domain name, you
 might find [this tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/configuring-domain-name-static-ip)
 helpful.
 
-See the [Kubernetes Engine documentation](https://cloud.google.com/kubernetes-engine/docs/)
-for more information on managing Kubernetes Engine clusters.
+See the [Google Kubernetes Engine documentation](https://cloud.google.com/kubernetes-engine/docs/)
+for more information on managing Google Kubernetes Engine clusters.
 
 See the [Kubernetes documentation](https://kubernetes.io/docs/home/) for more
 information on managing your application deployment using Kubernetes.
