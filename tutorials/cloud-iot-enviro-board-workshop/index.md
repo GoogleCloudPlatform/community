@@ -247,7 +247,7 @@ Here you configure your spreadsheet with your GCP project specific value. The sp
 ### Load devices
 In the section you go through the authorization steps that enable the spreadsheet to retrieve information from GCP and use the spreadsheet to fetch your device id from Cloud IoT Core.
 1. Click **IoT** > **Load Devices** and first time the sidebar opens.
-1. Click **Authorize** link in the sidebar and follow through the authorization follow to allow the script to access the IoT Core API on your behalf.
+1. Click the **Authorize** link in the sidebar and follow through the authorization follow to allow the script to access the IoT Core API on your behalf.
 1. When the OAuth2 flow is successful a new tab is opened with message: **Success! You can close this tab.**
 1. Close the tab.
 1. Click **IoT** > **Load Devices** once again and verify your device name gets populated under the devices column
@@ -257,7 +257,7 @@ In the section you go through the authorization steps that enable the spreadshee
 Here you configure your spreadsheet BigQuery connector to load data from your sensor_data table in BigQuery
 1. Click **Data** > **Data Connectors** > **BigQuery**
 1. Choose you GCP project from the dropdown list and click **Write query**
-1. Paste following query into the editor and replace the place holder ``<PROJECT_ID>`` with your project id.
+1. Paste following query into the editor and replace the placeholder ``<PROJECT_ID>`` with your project id.
 ```sql
 SELECT * FROM `<PROJECT_ID>.enviro_dataset.sensor_data`
 WHERE time > TIMESTAMP(CURRENT_DATE())
@@ -268,8 +268,8 @@ ORDER BY time
 1. Click **Insert result**
 
 ### Send command to your board
-In this section you use your spreadsheet to send abitrary string message to your Raspberry Pi and the message is displayed on the OLED display of the Coral Environmental Sensor Board.
-1. In cell under the **Command** cell write a simple text message.
+In this section you use your spreadsheet to send arbitrary string messages to your Raspberry Pi and the message is displayed on the OLED display of the Coral Environmental Sensor Board.
+1. In the cell under the **Command** cell write a simple text message.
 1. Send command by click **IoT** > **Send command to device**.
 1. Verify you get an `Device is not connected` error message when the demo script is turned off on your Raspberry Pi.
 1. Restart the demo script from your Raspberry Pi shell by running: `python3 enviro_demo.py`
