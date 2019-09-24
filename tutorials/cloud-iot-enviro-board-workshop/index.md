@@ -39,7 +39,7 @@ To control the Coral Environmental Sensor Board, command messages are sent from 
     internet. (This tutorial uses the Raspberry Pi Zero W board, but you can use this tutorial with any Raspberry Pi model 
     with a 40-pin header.)
 *   A [GCP account](https://console.cloud.google.com/freetrial).
-*   A user account linked to [G Suite Business, Enterprise, Education](https://gsuite.google.com/) for accessing the
+*   A user account linked to [G Suite Business, Enterprise, or Education](https://gsuite.google.com/) for accessing the
     [Sheets data connector for BigQuery](https://cloud.google.com/blog/products/g-suite/connecting-bigquery-and-google-sheets-to-help-with-hefty-data-analysis).
 
 ## Costs
@@ -85,9 +85,7 @@ Install the Coral Environmental Sensor Board library and driver on the Raspberry
 
 ### Download the tutorial source code to the board
 
-Here you use the `wget` command to download the necessary source code to the Raspberry Pi.
-
-In the Raspberry Pi shell run the following:
+In the Raspberry Pi shell run the following command to download the necessary source code to the Raspberry Pi:
 
     mkdir -p "$HOME"/enviro-board
     cd "$HOME"/enviro-board
