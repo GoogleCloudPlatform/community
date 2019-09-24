@@ -1,10 +1,11 @@
 ---
-title: Sensor data collection and ad-hoc analytics
-description: Deployment of an end-to-end setup from Coral Environmental Sensor Board through Google Cloud IoT Core to BigQuery. Last conduct data visualization and analytics through Google Spreadsheets.
+title: Sensor data collection and ad-hoc analytics with Cloud IoT Core
+description: Deploy an end-to-end monitoring and analysis setup with a Coral Environmental Sensor Board, Cloud IoT Core, and BigQuery. Conduct data visualization and analytics through Google Sheets.
 author: chwa
-tags: IoT, Internet of Things, Environmental Sensor Board, Raspberry Pi, Google Spreadsheets
-date_published: 2019-09-20
+tags: Internet of Things, Raspberry Pi
+date_published: 2019-09-25
 ---
+
 This tutorial shows you how to monitor an environment over a period of time and conduct an ad-hoc analysis on the collected data. You will
 * Setup up the [Coral Environmental Sensor Board](https://coral.withgoogle.com/products/environmental) with a [Raspberry Pi Zero W](https://www.raspberrypi.org/products/raspberry-pi-zero-w/) with a 40-pin header.
 * Connect the setup to Google Cloud Platform (GCP).
