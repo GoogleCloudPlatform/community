@@ -37,7 +37,7 @@ class CloudIot:
     Manages a connection to Google Cloud IoT Core via MQTT, using a JWT for device
     authentication.
 
-    You must configure a connection by specifying a Clout IoT configuration file (.ini). Then
+    You must configure a connection by specifying a Cloud IoT configuration file (.ini). Then
     you can use :meth:`publish_message` to send an arbitrary message to your cloud project.
     """
 
@@ -114,12 +114,12 @@ class CloudIot:
 
         logger.info('Successfully connected to Cloud IoT')
         self._enabled = True
-        self._client.loop_start()	
-	# The topic that the device will receive commands on.
+        self._client.loop_start()
+        # The topic that the device will receive commands on.
         mqtt_command_topic = '/devices/{}/commands/#'.format(self._device_id)
-        
+
         # Subscribe to the commands topic, QoS 1 enables message acknowledgement.
-        self._client.subscribe(mqtt_command_topic, qos=1)	
+        self._client.subscribe(mqtt_command_topic, qos=1)
 
     def __enter__(self):
         return self
