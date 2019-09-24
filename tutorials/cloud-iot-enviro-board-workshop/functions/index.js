@@ -17,7 +17,7 @@ const {BigQuery} = require('@google-cloud/bigquery');
 const bigquery = new BigQuery();
 
 /**
- * Cloud Function entry point, Pub/Sub trigger.
+ * Cloud Function entry point, Cloud Pub/Sub trigger.
  * Extracts the metrics data from payload and insert to BigQuery
  * @param {Object} event The event payload.
  * @param {object} context The event metadata.
