@@ -36,8 +36,8 @@ To control the Coral Environmental Sensor Board, command messages are sent from 
     [Mouser](https://www.mouser.com/ProductDetail/Coral/G650-04023-01?qs=sGAEpiMZZMve4%2FbfQkoj%252BLRlYTc0g%252BeK1GNpvUlp1KI%3D).
 *   A [Raspberry Pi Zero W](https://www.raspberrypi.org/products/raspberry-pi-zero-w/) with a 40-pin header and the
     [Raspbian](https://www.raspberrypi.org/downloads/) operating system installed. The Raspberry Pi must be connected to the
-    internet.
-    Note: This tutorial uses the Raspberry Pi Zero W board, but you can use any Raspberry Pi model with a 40-pin header.
+    internet. (This tutorial uses the Raspberry Pi Zero W board, but you can use this tutorial with any Raspberry Pi model 
+    with a 40-pin header.)
 *   A [GCP account](https://console.cloud.google.com/freetrial).
 *   A user account linked to [G Suite Business, Enterprise, Education](https://gsuite.google.com/) for accessing the
     [Sheets data connector for BigQuery](https://cloud.google.com/blog/products/g-suite/connecting-bigquery-and-google-sheets-to-help-with-hefty-data-analysis).
@@ -55,38 +55,57 @@ You can use the [Pricing Calculator](https://cloud.google.com/products/calculato
 to generate a cost estimate based on your projected production usage.
 
 ## Before you begin
-1. [Select or create a GCP project](https://console.cloud.google.com/projectselector2/home/dashboard)
-1. Make sure that [billing is enabled](https://cloud.google.com/billing/docs/how-to/modify-project) for your GCP project.
-1. [Enable the Cloud IoT, Cloud Functions, Cloud Pub/Sub and Cloud BigQuery APIs](https://console.cloud.google.com/flows/enableapi?apiid=cloudiot.googleapis.com,pubsub.googleapis.com,cloudfunctions.googleapis.com,bigquery-json.googleapis.com).
 
-When you finish this tutorial, you can avoid continued billing by deleting the resources you created. For more information, see [Cleaning up](#Cleaning-up).
+1.  [Select or create a GCP project](https://console.cloud.google.com/projectselector2/home/dashboard).
+1.  Make sure that [billing is enabled](https://cloud.google.com/billing/docs/how-to/modify-project) for your GCP project.
+1.  [Enable the Cloud IoT, Cloud Functions, Cloud Pub/Sub, and Cloud BigQuery APIs](https://console.cloud.google.com/flows/enableapi?apiid=cloudiot.googleapis.com,pubsub.googleapis.com,cloudfunctions.googleapis.com,bigquery-json.googleapis.com).
 
-## Provisioning the Coral Environmental Sensor Board
-Attach the Sensor Board to the 40-pin header of your Raspberry Pi and power on your Raspberry Pi by plugging the power cable to it.
+When you finish this tutorial, you can avoid continued billing by deleting the resources you created. For more information,
+see [Cleaning up](#Cleaning-up).
+
+## Set up the devices
+
+In this section, you set up the Coral Environmental Sensor Board and Raspberry Pi.
+
+### Attach the devices
+
+Attach the Coral Environmental Sensor Board to the 40-pin header of your Raspberry Pi and power on your Raspberry Pi by 
+plugging the power cable into it.
+
 ![board setup](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-enviro-board-workshop/board-setup.jpg)
 
-### Install the Coral Environmental Sensor Board library and driver
-In this section, you install the Coral Environmental Sensor Board library and driver on the Raspberry Pi.
+### Install the library and driver
 
-1. Follow the instructions of the [Install the Python library](https://coral.withgoogle.com/docs/enviro-board/get-started/#install-the-python-library) section on the Coral Environmental Sensor Board official page.
-**Note:** Last step you do is rebooting your Raspberry Pi board.
+Install the Coral Environmental Sensor Board library and driver on the Raspberry Pi:
 
-### Checking out the tutorial source code on your board
-Here you use the `wget` command to download the minimal necessary source code on Raspberry Pi. In Raspberry Pi shell run:
-```bash
-mkdir -p "$HOME"/enviro-board
-cd "$HOME"/enviro-board
-wget https://raw.githubusercontent.com/kingman/community/master/tutorials/cloud-iot-enviro-board-workshop/enviro-device/cloud_config.ini
-wget https://raw.githubusercontent.com/kingman/community/master/tutorials/cloud-iot-enviro-board-workshop/enviro-device/core.py
-wget https://raw.githubusercontent.com/kingman/community/master/tutorials/cloud-iot-enviro-board-workshop/enviro-device/enviro_demo.py
-```
-### Getting the public key of the secure element of your sensor board
-The command outputs the public key of [cryptoprocessor](https://coral.withgoogle.com/docs/enviro-board/datasheet/#secure-cryptoprocessor) on the Coral Environmental Sensor Board. Copy the public key and save it so that you can access it at a later stage when creating device identity in Cloud IoT Core. In Raspberry Pi shell run:
-```bash
-cd /usr/lib/python3/dist-packages/coral/cloudiot
+1.  Follow the
+    [instructions for installing the Python library](https://coral.withgoogle.com/docs/enviro-board/get-started/#install-the-python-library)
+    on the Coral Environmental Sensor Board official page.
+1.  Reboot the Raspberry Pi board.
 
-python3 ecc608_pubkey.py
-```
+### Download the tutorial source code to the board
+
+Here you use the `wget` command to download the necessary source code to the Raspberry Pi.
+
+In the Raspberry Pi shell run the following:
+
+    mkdir -p "$HOME"/enviro-board
+    cd "$HOME"/enviro-board
+    wget https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-iot-enviro-board-workshop/enviro-device/cloud_config.ini
+    wget https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-iot-enviro-board-workshop/enviro-device/core.py
+    wget https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-iot-enviro-board-workshop/enviro-device/enviro_demo.py
+
+### Getting the public key of the secure element of the sensor board
+
+Run the following command in the Raspberry Pi shell to get the
+[cryptoprocessor](https://coral.withgoogle.com/docs/enviro-board/datasheet/#secure-cryptoprocessor) public key of the Coral
+Environmental Sensor Board: 
+
+    cd /usr/lib/python3/dist-packages/coral/cloudiot
+
+    python3 ecc608_pubkey.py
+
+Copy the public key and save it so that you can use it later, when creating the device identity in Cloud IoT Core.
 
 ## Check out the tutorial source code on Cloud Shell
 1. In the GCP Console, [open Cloud Shell](http://console.cloud.google.com/?cloudshell=true)
