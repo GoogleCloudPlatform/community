@@ -169,7 +169,7 @@ For a device to communicate with Cloud IoT Core, the device identity needs to be
 
 ## Verify the data ingestion setup
 
-You now have all the building blocks set up and integrated to ingest data from the Coral Environmental Sensor Board to GCP.
+You now have the building blocks set up to ingest data from the Coral Environmental Sensor Board to GCP.
 
 In this section you verify the end-to-end integration between the sensor board and Cloud Pub/Sub.
 
@@ -184,11 +184,9 @@ Create a subscription to the Cloud Pub/Pub topic:
 
 Later, you use the subscription to get the messages.
 
-### Configure the Raspberry Pi
+### Configure the Raspberry Pi to send sensor data to Cloud IoT Core
 
-Configure the Raspberry Pi to send sensor data to Cloud IoT Core:
-
-1.  In the Raspberry Pi shell, set the your GCP project ID as an environment variable:
+1.  In the Raspberry Pi shell, set your GCP project ID as an environment variable:
 
         export PROJECT_ID=your-gcp-project-id
 
@@ -205,16 +203,21 @@ Run the following in the Raspeberry Pi shell to download the Google root CA cert
 
 This establishes the chain of trust to communicate with Cloud IoT using TLS transport.
 
-### Running the streaming script
-You start the demo script to read the sensors measurement values of the Coral Environment Board and publishes the data to Cloud Pub/Sub via Cloud IoT Core.
-1. To start the demo script run following commands In Raspberry Pi shell run:
-```bash
-cd $HOME/enviro-board/
-python3 enviro_demo.py --upload_delay 10
-```
-1. Let the script run for 20 second before stop it by press `Control+C`
+### Run the streaming script
 
-### Verifying sensor data in Pub/Sub
+The streaming script reads the sensor measurement values of the sensor board and publishes the data to Cloud Pub/Sub 
+through Cloud IoT Core.
+
+1.  Start the script with the following commands in the Raspberry Pi shell:
+
+        cd $HOME/enviro-board/
+        python3 enviro_demo.py --upload_delay 10
+        
+1.  Let the script run for 20 seconds.
+1.  Press `Ctrl+C` to stop the script.
+
+### Verify sensor data in Cloud Pub/Sub
+
 The sensor values sent from the Raspberry Pi will be published to Cloud Pub/Pub. In this step you pull the messages from the Pub/Sub subscription created in the earlier step and verify that the values are delivered to Cloud Pub/Sub.
 1. Pull message from Pub/Sub subscription. In Cloud Shell run:
 ```bash
