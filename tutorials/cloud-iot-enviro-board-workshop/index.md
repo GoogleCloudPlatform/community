@@ -115,7 +115,7 @@ In the Raspberry Pi shell run the following command to download the necessary so
 
 ## Create the public key file for the sensor board
 
-The cryptoprocessor exposes an Elliptic Curve public key, which you got in a previous section. In the current section,
+The cryptoprocessor exposes an elliptic curve public key, which you got in a previous section. In the current section,
 you save the public key in Cloud Shell in [PEM](https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail) format and wrap the key
 with `-----BEGIN PUBLIC KEY-----` and `-----END PUBLIC KEY-----`.
 
@@ -167,31 +167,43 @@ For a device to communicate with Cloud IoT Core, the device identity needs to be
           --registry=$REGISTRY_ID \
           --public-key=path=device_pub_key.pem,type=es256
 
-## Verifying the data ingestion setup
-You now have all the building blocks set up and integrated to ingest data from the Coral Sensor Board to GCP. In this section you verify the end-to-end integration between the Sensor board and Cloud Pub/Sub.
-### Creating the event topic subscription
-Messages sent from device to Cloud IoT Core are automatically published on Cloud Pub/Sub. Here you create a subscription to Cloud Pub/Pub topic and later use the subscription to get the messages. In Cloud Shell run:
-```bash
-gcloud pubsub subscriptions create verify-event \
---topic=$EVENT_TOPIC
-```
-### Configuring the Raspberry Pi
-In this section, you configure the Raspberry Pi to send sensor data to IoT Core.
-1. In Raspberry Pi shell set the your GCP project id as environment variable
-```bash
-export PROJECT_ID=your-gcp-project-id
-```
-1.  In the Raspberry Pi shell set your GCP project ID in the device application configuration file.
+## Verify the data ingestion setup
+
+You now have all the building blocks set up and integrated to ingest data from the Coral Environmental Sensor Board to GCP.
+
+In this section you verify the end-to-end integration between the sensor board and Cloud Pub/Sub.
+
+### Create the event topic subscription
+
+Messages sent from the device to Cloud IoT Core are automatically published on Cloud Pub/Sub.
+
+Create a subscription to the Cloud Pub/Pub topic:
+
+    gcloud pubsub subscriptions create verify-event \
+    --topic=$EVENT_TOPIC
+
+Later, you use the subscription to get the messages.
+
+### Configure the Raspberry Pi
+
+Configure the Raspberry Pi to send sensor data to Cloud IoT Core:
+
+1.  In the Raspberry Pi shell, set the your GCP project ID as an environment variable:
+
+        export PROJECT_ID=your-gcp-project-id
+
+1.  In the Raspberry Pi shell, set your GCP project ID in the device application configuration file:
 
         sed -i -e 's/&lt;replace with project id&gt;/'"${PROJECT_ID}"'/g' $HOME/enviro-board/cloud_config.ini
 
-### Downloading the CA-certificate
-Download the Google root CA certificate to establish the chain of trust to communicate with Google Cloud IoT using TLS transport.
-In Raspberry Pi shell run:
-```bash
-cd $HOME/enviro-board/
-wget https://pki.goog/roots.pem
-```
+### Download the CA certificate
+
+Run the following in the Raspeberry Pi shell to download the Google root CA certificate:
+
+    cd $HOME/enviro-board/
+    wget https://pki.goog/roots.pem
+
+This establishes the chain of trust to communicate with Cloud IoT using TLS transport.
 
 ### Running the streaming script
 You start the demo script to read the sensors measurement values of the Coral Environment Board and publishes the data to Cloud Pub/Sub via Cloud IoT Core.
