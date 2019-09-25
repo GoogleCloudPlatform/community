@@ -167,7 +167,7 @@ class CloudIot:
 
     def register_message_callbacks(self, callbacks):
         """
-        Specifies functions to call upon various MQTT Cloud Pub/Sub messages.
+        Specifies functions to call upon various MQTT pub/sub messages.
 
         Args:
             callbacks (dict): A mapping of callback names from `paho.mqtt.client callbacks
