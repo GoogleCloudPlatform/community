@@ -69,7 +69,7 @@ In this section, you set up the Coral Environmental Sensor Board and Raspberry P
 
 ### Attach the devices
 
-Attach the Coral Environmental Sensor Board to the 40-pin header of your Raspberry Pi and power on your Raspberry Pi by 
+Attach the Coral Environmental Sensor Board to the 40-pin header of the Raspberry Pi and power on the Raspberry Pi by 
 plugging the power cable into it.
 
 ![board setup](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-enviro-board-workshop/board-setup.jpg)
@@ -93,77 +93,79 @@ In the Raspberry Pi shell run the following command to download the necessary so
     wget https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-iot-enviro-board-workshop/enviro-device/core.py
     wget https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-iot-enviro-board-workshop/enviro-device/enviro_demo.py
 
-### Getting the public key of the secure element of the sensor board
+### Get the public key of the secure element of the sensor board
 
-Run the following command in the Raspberry Pi shell to get the
-[cryptoprocessor](https://coral.withgoogle.com/docs/enviro-board/datasheet/#secure-cryptoprocessor) public key of the Coral
-Environmental Sensor Board: 
+1.  Run the following command in the Raspberry Pi shell to get the
+    [cryptoprocessor](https://coral.withgoogle.com/docs/enviro-board/datasheet/#secure-cryptoprocessor) public key of
+    the Coral Environmental Sensor Board: 
 
-    cd /usr/lib/python3/dist-packages/coral/cloudiot
+        cd /usr/lib/python3/dist-packages/coral/cloudiot
 
-    python3 ecc608_pubkey.py
+        python3 ecc608_pubkey.py
 
-Copy the public key and save it so that you can use it later, when creating the device identity in Cloud IoT Core.
+1.  Copy the public key and save it so that you can use it later, when creating the device identity in Cloud IoT Core.
 
-## Check out the tutorial source code on Cloud Shell
-1. In the GCP Console, [open Cloud Shell](http://console.cloud.google.com/?cloudshell=true)
-1. Clone the source code repository, in Cloud Shell run:
-```bash
-cd $HOME
-git clone https://github.com/kingman/community.git
-```
+## Check out the tutorial source code in Cloud Shell
 
-## Creating the public key file of the sensor board
-The cryptoprocessor exposes an Elliptic Curve public that was extracted in a previous step. In this step you save the public key in Cloud Shell in [PEM](https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail) format. The key inside of the key file is wrapped by `-----BEGIN PUBLIC KEY-----` and `-----END PUBLIC KEY-----`.
-1. Create the key file in Cloud Shell and name it: `device_pub_key.pem`
-```bash
-touch $HOME/community/tutorials/cloud-iot-enviro-board-workshop/device_pub_key.pem
-```
-1. Add the start wrapper to the key file
-```bash
-echo '-----BEGIN PUBLIC KEY-----' >> $HOME/community/tutorials/cloud-iot-enviro-board-workshop/device_pub_key.pem
-```
-1. Add the public key to the key file
-```bash
-echo 'replace with public key string' >> $HOME/community/tutorials/cloud-iot-enviro-board-workshop/device_pub_key.pem
-```
-1. Add the end wrapper to the key file
-```bash
-echo '-----END PUBLIC KEY-----' >> $HOME/community/tutorials/cloud-iot-enviro-board-workshop/device_pub_key.pem
-```
+1.  In the GCP Console, [open Cloud Shell](http://console.cloud.google.com/?cloudshell=true).
+1.  Clone the source code repository:
 
-## Provisioning device identity on GCP
-For a device to communicate with IoT Core, the device identity needs to be created in IoT Core.
+        cd $HOME
+        git clone https://github.com/GoogleCloudPlatform/community.git
 
-1. Configuring environment variables
-To make it easier to run commands when you create cloud resources you set environment variables to hold the names and properties of the resources. In Cloud Shell run:
-```bash
-export EVENT_TOPIC=enviro-event
-export REGISTRY_ID=enviro-registry
-export REGION=europe-west1
-export DEVICE_ID=enviro-board
-export DATASET=enviro_dataset
-export TABLE=sensor_data
-```
-1. Creating the Pub/Sub topic
-```bash
-gcloud pubsub topics create $EVENT_TOPIC
-```
-1. Creating the IoT Core registry
-```bash
-gcloud iot registries create $REGISTRY_ID \
-  --region $REGION \
-  --event-notification-config=topic=$EVENT_TOPIC
-```
-1. Creating the device identity in IoT Core
-Here you create the sensor board identity in the newly created IoT Core registry with Sensor Board public key. In Cloud Shell run:
-```bash
-cd $HOME/community/tutorials/cloud-iot-enviro-board-workshop/
-gcloud iot devices create $DEVICE_ID \
-  --region=$REGION \
-  --registry=$REGISTRY_ID \
-  --public-key=path=device_pub_key.pem,type=es256
-```
+## Create the public key file for the sensor board
+
+The cryptoprocessor exposes an Elliptic Curve public key, which you got in a previous section. In the current section,
+you save the public key in Cloud Shell in [PEM](https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail) format and wrap the key
+with `-----BEGIN PUBLIC KEY-----` and `-----END PUBLIC KEY-----`.
+
+1.  Create the key file in Cloud Shell and name it `device_pub_key.pem`:
+
+        touch $HOME/community/tutorials/cloud-iot-enviro-board-workshop/device_pub_key.pem
+
+1.  Add the start wrapper to the key file:
+
+        echo '-----BEGIN PUBLIC KEY-----' >> $HOME/community/tutorials/cloud-iot-enviro-board-workshop/device_pub_key.pem
+
+1.  Add the public key to the key file:
+
+        echo 'replace with public key string' >> $HOME/community/tutorials/cloud-iot-enviro-board-workshop/device_pub_key.pem
+
+1.  Add the end wrapper to the key file:
+
+        echo '-----END PUBLIC KEY-----' >> $HOME/community/tutorials/cloud-iot-enviro-board-workshop/device_pub_key.pem
+
+## Set up the device identity on GCP
+
+For a device to communicate with Cloud IoT Core, the device identity needs to be created in Cloud IoT Core.
+
+1.  To make it easier to run commands when you create cloud resources, set environment variables in Cloud Shell to hold the
+    names and properties of the resources:
+
+        export EVENT_TOPIC=enviro-event
+        export REGISTRY_ID=enviro-registry
+        export REGION=europe-west1
+        export DEVICE_ID=enviro-board
+        export DATASET=enviro_dataset
+        export TABLE=sensor_data
+
+1.  Create the Cloud Pub/Sub topic:
+
+        gcloud pubsub topics create $EVENT_TOPIC
+
+1.  Create the Cloud IoT Core registry:
+
+        gcloud iot registries create $REGISTRY_ID \
+          --region $REGION \
+          --event-notification-config=topic=$EVENT_TOPIC
+
+1.  Create the the sensor board identity in the newly created Cloud IoT Core registry with the public key:
+
+        cd $HOME/community/tutorials/cloud-iot-enviro-board-workshop/
+        gcloud iot devices create $DEVICE_ID \
+          --region=$REGION \
+          --registry=$REGISTRY_ID \
+          --public-key=path=device_pub_key.pem,type=es256
 
 ## Verifying the data ingestion setup
 You now have all the building blocks set up and integrated to ingest data from the Coral Sensor Board to GCP. In this section you verify the end-to-end integration between the Sensor board and Cloud Pub/Sub.
@@ -179,10 +181,9 @@ In this section, you configure the Raspberry Pi to send sensor data to IoT Core.
 ```bash
 export PROJECT_ID=your-gcp-project-id
 ```
-1. In Raspberry Pi shell set the your GCP project id in the device application configuration file.
-```bash
-sed -i -e 's/<replace with project id>/'"${PROJECT_ID}"'/g' $HOME/enviro-board/cloud_config.ini
-```
+1.  In the Raspberry Pi shell set your GCP project ID in the device application configuration file.
+
+        sed -i -e 's/&lt;replace with project id&gt;/'"${PROJECT_ID}"'/g' $HOME/enviro-board/cloud_config.ini
 
 ### Downloading the CA-certificate
 Download the Google root CA certificate to establish the chain of trust to communicate with Google Cloud IoT using TLS transport.
