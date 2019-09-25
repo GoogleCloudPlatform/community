@@ -201,7 +201,8 @@ Run the following in the Raspeberry Pi shell to download the Google root CA cert
     cd $HOME/enviro-board/
     wget https://pki.goog/roots.pem
 
-This establishes the chain of trust to communicate with Cloud IoT using TLS transport.
+The CA certificate is used to establish the chain of trust to communicate with Cloud IoT Core using the Transport Layer 
+Security (TLS) protocol.
 
 ### Run the streaming script
 
