@@ -219,58 +219,73 @@ through Cloud IoT Core.
 
 ### Verify sensor data in Cloud Pub/Sub
 
-The sensor values sent from the Raspberry Pi will be published to Cloud Pub/Pub. In this step you pull the messages from the Pub/Sub subscription created in the earlier step and verify that the values are delivered to Cloud Pub/Sub.
-1. Pull message from Pub/Sub subscription. In Cloud Shell run:
-```bash
-gcloud pubsub subscriptions pull verify-event --auto-ack
-```
-1. Verify you get the messages from the Sensor Board
+The sensor values sent from the Raspberry Pi will be published to Cloud Pub/Pub. In this step, you pull the messages from 
+the Cloud Pub/Sub subscription created in a previous step and verify that the values are delivered to Cloud Pub/Sub.
 
-## Setting up the Cloud Function for process sensor data
+1.  Run the following command in Cloud Shell to pull messages from the Cloud Pub/Sub subscription:
 
-### Deploying Cloud Function
-In this section, you deploy the Cloud Functions that gets triggered by the sensor data messages published to Cloud Pub/Sub. The function parses the message and adds the values to BigQuery.
-1. To deploy the function, in Cloud Shell run:
-```bash
-cd $HOME/community/tutorials/cloud-iot-enviro-board-workshop/functions
-gcloud functions deploy enviro \
- --set-env-vars=DATASET=${DATASET},TABLE=${TABLE} \
- --region ${REGION} \
- --trigger-topic ${EVENT_TOPIC} \
- --runtime nodejs8 \
- --memory 128mb
-```
+        gcloud pubsub subscriptions pull verify-event --auto-ack
 
-## Setting up data storage
-In this section you create the dataset and table in BigQuery, to store the sensor data. In Cloud Shell run:
-```bash
-bq mk $DATASET
+1.  Verify that you get the messages from the Coral Environmental Sensor Board.
 
-bq mk ${DATASET}.${TABLE} $HOME/community/tutorials/cloud-iot-enviro-board-workshop/bq/schema.json
-```
+## Set up the Cloud Function to process sensor data
 
-## Starting the sensor data stream
-In this section you restart the demo-script on the Raspberry Pi to generate sensor data that triggers the Cloud Function to store the data in BigQuery. You can control the interval of which the sensor data is being sent to Cloud by setting the upload_delay parameter.
-1. In Raspberry Pi shell run:
-```bash
-cd $HOME/enviro-board/
-python3 enviro_demo.py --upload_delay 15
-```
+In this section, you deploy the Cloud Function that gets triggered by the sensor data messages published to Cloud Pub/Sub.
+The function parses the message and adds the values to BigQuery.
 
-## Viewing sensor data in BigQuery
-Open the [BigQuery console](http://console.cloud.google.com/bigquery), paste the following query into the Query editor and select Run. Replace the placeholder `<PROJECT_ID>` with your project id.
+In Cloud Shell, run the following:
 
-```sql
-SELECT * FROM `<PROJECT_ID>.enviro_dataset.sensor_data`
-ORDER BY time DESC
-LIMIT 20
-```
-Verify a table with sensor data is returned. Discontinue the sensor data streaming from the Raspberry Pi shell by press `Control+C`
+    cd $HOME/community/tutorials/cloud-iot-enviro-board-workshop/functions
+    gcloud functions deploy enviro \
+     --set-env-vars=DATASET=${DATASET},TABLE=${TABLE} \
+     --region ${REGION} \
+     --trigger-topic ${EVENT_TOPIC} \
+     --runtime nodejs8 \
+     --memory 128mb
+
+## Set up data storage
+
+In this section, you create the data set and table in BigQuery to store the sensor data.
+
+In Cloud Shell, run the following:
+
+    bq mk $DATASET
+
+    bq mk ${DATASET}.${TABLE} $HOME/community/tutorials/cloud-iot-enviro-board-workshop/bq/schema.json
+
+## Start the sensor data stream
+
+In this section, you restart the demonstration script on the Raspberry Pi to generate sensor data that triggers the Cloud
+Function to store the data in BigQuery. You can control the interval at which the sensor data is sent to GCP by setting the
+`upload_delay` parameter.
+
+In the Raspberry Pi shell, run the following:
+
+    cd $HOME/enviro-board/
+    python3 enviro_demo.py --upload_delay 15
+
+## View sensor data in BigQuery
+
+1.  Open the [BigQuery console](http://console.cloud.google.com/bigquery).
+1.  Paste the following query into the **Query editor**:
+
+        SELECT * FROM `[PROJECT_ID].enviro_dataset.sensor_data`
+        ORDER BY time DESC
+        LIMIT 20
+    
+    Replace the placeholder `[PROJECT_ID]` with your project ID.
+     
+1.  Click **Run**.
+1.  Verify that a table with sensor data is returned.
+1.  Press `Ctrl+C` to stop the sensor data streaming from the Raspberry Pi shell. 
 
 ## Perform data analytics and device control
-In this section you start from the sample spreadsheet and configure it to retrieve data from your cloud project and send commands to your device.
 
-### Setting up Google Spreadsheets
+In this section, you start from the sample spreadsheet and configure it to retrieve data from your cloud project and send 
+commands to your device.
+
+### Set up Google Sheets
+
 1. Open the [sample spreadsheet](https://docs.google.com/spreadsheets/d/1LI07utVbiuonjZfn2ORWmC0kC5_OYc7CYw3vZF1aEuo).
 1. Click **File** > **Make a copy…** to make a copy of it.
 1. Input a name for the copy and click **OK** to save.
