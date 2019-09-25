@@ -286,25 +286,32 @@ commands to your device.
 
 ### Set up Google Sheets
 
-1. Open the [sample spreadsheet](https://docs.google.com/spreadsheets/d/1LI07utVbiuonjZfn2ORWmC0kC5_OYc7CYw3vZF1aEuo).
-1. Click **File** > **Make a copy…** to make a copy of it.
-1. Input a name for the copy and click **OK** to save.
+1.  Open the [sample spreadsheet](https://docs.google.com/spreadsheets/d/1LI07utVbiuonjZfn2ORWmC0kC5_OYc7CYw3vZF1aEuo).
+1.  Click **File** > **Make a copy**.
+1.  Enter a name for the copy, and click **OK**.
 
 #### Configure OAuth2
-Here you create an OAuth client and configure your spreadsheet to use the client.
-1. In your spreadsheet click **IoT** > **OAuth Configuration**, to open the OAuth configuration menu.
-1. Make a copy of the Authorized redirect URI shown in the configuration menu.
-1. Go to the [API Credentials page](https://console.cloud.google.com/apis/credentials)
-1. Click **Create credentials** > **OAuth client ID**
-1. Choose Web application
-1. Give the credential an identifiable name
-1. Paste the Authorized redirect URI you retrieved in the earlier step into the **Authorized redirect URIs** input field
-1. Click **Create**
-1. Make a copy of the **client ID** and the **client secret** that are shown after the client is created.
-1. Go back to your spreadsheet and paste the **client ID** and the **client secret** values into their corresponding input field in the **OAuth Configuration** menu
-1. Click **Save** and wait for the **config saved!** response before **Close** the menu.
 
-#### Configure IoT Core
+Create an OAuth client and configure your spreadsheet to use the client:
+
+1.  In Google Sheets, select **OAuth Configuration** in the **IoT** menu.
+
+    This opens the **Oauth credential configuration** dialog box.
+1.  Copy the authorized redirect URI shown in the **Oauth credential configuration** dialog box.
+1.  Go to the [**Credentials** page](https://console.cloud.google.com/apis/credentials).
+1.  Click **Create credentials**, and choose **OAuth client ID**.
+1.  In the **Application type** section, choose **Web application**.
+1.  Give the credential an identifiable name.
+1.  Paste the authorized redirect URI that you retrieved in the second step into the **Authorized redirect URIs** field.
+1.  Click **Create**.
+1.  Make a copy of the client ID and the client secret that are shown after the client is created.
+1.  Go back to your spreadsheet and paste the client ID and the client secret values into their corresponding fields in the
+    **Oauth credential configuration** dialog box.
+1.  Click **Save** and wait for the **config saved!** response.
+1.  Click **Close**.
+
+#### Configure Cloud IoT Core
+
 Here you configure your spreadsheet with your GCP project specific value. The spreadsheet needs these values to retrieve device data from Cloud IoT Core.
 1. Click **IoT** > **IoT Core Configuration**
 1. Fill in values of your GCP **project**, IoT Core **region** and **registry**
