@@ -307,66 +307,95 @@ Create an OAuth client and configure your spreadsheet to use the client:
 1.  Make a copy of the client ID and the client secret that are shown after the client is created.
 1.  Go back to your spreadsheet and paste the client ID and the client secret values into their corresponding fields in the
     **Oauth credential configuration** dialog box.
-1.  Click **Save** and wait for the **config saved!** response.
+1.  Click **Save**, and wait for the `config saved!` response.
 1.  Click **Close**.
 
 #### Configure Cloud IoT Core
 
-Here you configure your spreadsheet with your GCP project specific value. The spreadsheet needs these values to retrieve device data from Cloud IoT Core.
-1. Click **IoT** > **IoT Core Configuration**
-1. Fill in values of your GCP **project**, IoT Core **region** and **registry**
-1. Click **Save** and wait for the **config saved!** response before **Close** the menu.
+In this section, you configure your spreadsheet with your GCP project-specific values. The spreadsheet needs these values to
+retrieve device data from Cloud IoT Core.
+
+1.  In Google Sheets, select **IoT Core Configuration** in the **IoT** menu.
+1.  Fill in values of your GCP project, Cloud IoT Core region and registry.
+1.  Click **Save**, and wait for the `config saved!` response.
+1.  Click **Close**.
 
 ### Load devices
-In the section you go through the authorization steps that enable the spreadsheet to retrieve information from GCP and use the spreadsheet to fetch your device id from Cloud IoT Core.
-1. Click **IoT** > **Load Devices** and first time the sidebar opens.
-1. Click the **Authorize** link in the sidebar and follow through the authorization follow to allow the script to access the IoT Core API on your behalf.
-1. When the OAuth2 flow is successful a new tab is opened with message: **Success! You can close this tab.**
-1. Close the tab.
-1. Click **IoT** > **Load Devices** once again and verify your device name gets populated under the devices column
-1. Click on the check box next to the device name cell to select it.
 
-### Setup BigQuery connector
-Here you configure your spreadsheet BigQuery connector to load data from your sensor_data table in BigQuery
-1. Click **Data** > **Data Connectors** > **BigQuery**
-1. Choose you GCP project from the dropdown list and click **Write query**
-1. Paste following query into the editor and replace the placeholder ``<PROJECT_ID>`` with your project id.
-```sql
-SELECT * FROM `<PROJECT_ID>.enviro_dataset.sensor_data`
-WHERE time > TIMESTAMP(CURRENT_DATE())
-AND device_id = @DEVICE_ID
-ORDER BY time
-```
-1. Add a new parameter. Click **Parameters** > **Add**. Fill in `DEVICE_ID` for **Name** and `Sheet1!C2` for **Cell reference**. Click **Add**
-1. Click **Insert result**
+In this section, you go through the authorization steps that enable the spreadsheet to retrieve information from GCP, and
+you use the spreadsheet to fetch your device ID from Cloud IoT Core.
 
-### Send command to your board
-In this section you use your spreadsheet to send arbitrary string messages to your Raspberry Pi and the message is displayed on the OLED display of the Coral Environmental Sensor Board.
-1. In the cell under the **Command** cell write a simple text message.
-1. Send command by click **IoT** > **Send command to device**.
-1. Verify you get an `Device is not connected` error message when the demo script is turned off on your Raspberry Pi.
-1. Restart the demo script from your Raspberry Pi shell by running: `python3 enviro_demo.py`
-1. Click **IoT** > **Send command to device** to resend the message.
-1. Verify the message gets displayed on the OLED display.
+1.  In Google Sheets, select **Load Devices** in the **IoT** menu.
+
+    The first time you use this command, a sidebar opens.
+1.  Click **Authorize** in the sidebar and continue with the authorization to allow the script to access the
+    Cloud IoT Core API on your behalf.
+1.  When the OAuth2 flow is successful, a new tab opens with this message: `Success! You can close this tab.`
+1.  Close the tab.
+1.  Select **Load Devices** in the **IoT** menu again, and verify that your device name appears in the **Devices** column.
+1.  Click the checkbox next to the device name cell to select it.
+
+### Set up the BigQuery connector
+
+In this section, you configure the connector between Google Sheets and BigQuery to load data from your `sensor_data` table
+in BigQuery.
+
+1.  In Google Sheets, choose **Data** > **Data connectors** > **Connect to BigQuery**.
+1.  Choose your GCP project from the list and click **Write query**.
+1.  Paste following query into the BigQuery query editor, replacing the placeholder `[PROJECT_ID]` with your project ID:
+
+        SELECT * FROM `<PROJECT_ID>.enviro_dataset.sensor_data`
+        WHERE time > TIMESTAMP(CURRENT_DATE())
+        AND device_id = @DEVICE_ID
+        ORDER BY time
+
+1.  Add a new parameter:
+    1.  Click **Parameters** > **Add**.
+    1.  Fill in `DEVICE_ID` for **Name** and `Sheet1!C2` for **Cell reference**.
+    1.  Click **Add**.
+1. Click **Insert result**.
+
+### Send commands to your board
+
+In this section, you use your spreadsheet to send arbitrary string messages to your Raspberry Pi, and the messages appear
+on the OLED display of the Coral Environmental Sensor Board.
+
+1.  In the cell under **Command**, write a simple text message.
+1.  Choose **IoT** > **Send command to device**.
+1.  Verify that you get a `Device is not connected` error message when the demo script is turned off on your Raspberry Pi.
+1.  Restart the demo script from your Raspberry Pi shell by running the following: `python3 enviro_demo.py`
+1.  Click **IoT** > **Send command to device** to resend the message.
+1.  Verify that the message appears on the OLED display.
 
 ### Analytics in Google Sheets
-Here is a list of things that you can do to further experiment with the data and device command functions from within your spreadsheet.
-- Create time series graph over the sensor data.
-- Derive moving time average value from raw sensor data.
-- Create recurring job that [auto loads](https://gsuiteupdates.googleblog.com/2019/02/refresh-bigquery-data-sheets.html) the data from BigQuery.
-- Create function that monitors the sensor values and automatically sends commands when configure threshold values are breached.
+
+Here are some things that you can do to further experiment with the data and device command functions from within your
+spreadsheet:
+
+-   Create time series graphs over the sensor data.
+-   Derive moving time average values from raw sensor data.
+-   Create recurring jobs that [auto-load](https://gsuiteupdates.googleblog.com/2019/02/refresh-bigquery-data-sheets.html) 
+    the data from BigQuery.
+-   Create function that monitors the sensor values and automatically sends commands when configured threshold values are 
+    reached or exceeded.
 
 ## Cleaning up
-To avoid incurring charges to your Google Cloud Platform account for the resources used in this tutorial:
-### Delete the project
-The easiest way to eliminate billing is to delete the project you created for the tutorial.
-To delete the project:
-1. In the Cloud Platform Console, go to the Projects page. [GO TO THE PROJECTS PAGE](https://console.cloud.google.com/iam-admin/projects)
-1. In the project list, select the project you want to delete and click **Delete**.
-1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
+
+To avoid incurring charges to your Google Cloud Platform account for the resources used in this tutorial, you can delete
+the project.
+
+The easiest way to eliminate billing is to delete the project you created for the tutorial:
+
+1.  In the GCP Console, go to the [**Projects** page](https://console.cloud.google.com/iam-admin/projects).
+1.  In the project list, select the project you want to delete, and click **Delete**.
+1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
 ## Next steps
-- Learn more about [Google Cloud IoT](https://cloud.google.com/solutions/iot/)
-- Learn more about [Microcontrollers and real-time analytics](https://cloud.google.com/community/tutorials/ardu-pi-serial-part-1)
-- Learn more about [Streaming into BigQuery](https://cloud.google.com/solutions/streaming-data-from-cloud-storage-into-bigquery-using-cloud-functions)
-- Learn more about [Asynchronous patterns for Cloud Functions](https://cloud.google.com/community/tutorials/cloud-functions-async)
+
+-   Learn more about [Google Cloud IoT](https://cloud.google.com/solutions/iot/).
+-   Learn more about
+    [microcontrollers and real-time analytics](https://cloud.google.com/community/tutorials/ardu-pi-serial-part-1).
+-   Learn more about
+    [streaming into BigQuery](https://cloud.google.com/solutions/streaming-data-from-cloud-storage-into-bigquery-using-cloud-functions).
+-   Learn more about
+    [asynchronous patterns for Cloud Functions](https://cloud.google.com/community/tutorials/cloud-functions-async).
