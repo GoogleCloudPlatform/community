@@ -85,7 +85,7 @@ Install the Coral Environmental Sensor Board library and driver on the Raspberry
 
 ### Download the tutorial source code to the board
 
-In the Raspberry Pi shell run the following command to download the necessary source code to the Raspberry Pi:
+In the Raspberry Pi shell, run the following command to download the necessary source code to the Raspberry Pi:
 
     mkdir -p "$HOME"/enviro-board
     cd "$HOME"/enviro-board
@@ -105,7 +105,7 @@ In the Raspberry Pi shell run the following command to download the necessary so
 
 1.  Copy the public key and save it so that you can use it later, when creating the device identity in Cloud IoT Core.
 
-## Check out the tutorial source code in Cloud Shell
+## Get the tutorial source code in Cloud Shell
 
 1.  In the GCP Console, [open Cloud Shell](http://console.cloud.google.com/?cloudshell=true).
 1.  Clone the source code repository:
@@ -171,7 +171,7 @@ For a device to communicate with Cloud IoT Core, the device identity needs to be
 
 You now have the building blocks set up to ingest data from the Coral Environmental Sensor Board to GCP.
 
-In this section you verify the end-to-end integration between the sensor board and Cloud Pub/Sub.
+In this section, you verify the end-to-end integration between the sensor board and Cloud Pub/Sub.
 
 ### Create the event topic subscription
 
@@ -219,7 +219,7 @@ through Cloud IoT Core.
 
 ### Verify sensor data in Cloud Pub/Sub
 
-The sensor values sent from the Raspberry Pi will be published to Cloud Pub/Pub. In this step, you pull the messages from 
+The sensor values sent from the Raspberry Pi are published to Cloud Pub/Pub. In this step, you pull the messages from 
 the Cloud Pub/Sub subscription created in a previous step and verify that the values are delivered to Cloud Pub/Sub.
 
 1.  Run the following command in Cloud Shell to pull messages from the Cloud Pub/Sub subscription:
@@ -342,9 +342,9 @@ in BigQuery.
 
 1.  In Google Sheets, choose **Data** > **Data connectors** > **Connect to BigQuery**.
 1.  Choose your GCP project from the list and click **Write query**.
-1.  Paste following query into the BigQuery query editor, replacing the placeholder `[PROJECT_ID]` with your project ID:
+1.  Paste the following query into the BigQuery query editor, replacing the placeholder `[PROJECT_ID]` with your project ID:
 
-        SELECT * FROM `<PROJECT_ID>.enviro_dataset.sensor_data`
+        SELECT * FROM `[PROJECT_ID].enviro_dataset.sensor_data`
         WHERE time > TIMESTAMP(CURRENT_DATE())
         AND device_id = @DEVICE_ID
         ORDER BY time
