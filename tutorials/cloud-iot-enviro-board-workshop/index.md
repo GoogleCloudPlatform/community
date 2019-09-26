@@ -1,7 +1,7 @@
 ---
 title: Sensor data collection and ad-hoc analytics with Cloud IoT Core
 description: Deploy an end-to-end monitoring and analysis setup with a Coral Environmental Sensor Board, Cloud IoT Core, and BigQuery. Visualize and analyze data with Google Sheets.
-author: chwa
+author: kingman
 tags: Internet of Things, Raspberry Pi
 date_published: 2019-09-25
 ---
