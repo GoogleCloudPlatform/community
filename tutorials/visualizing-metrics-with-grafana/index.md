@@ -3,7 +3,7 @@ title: Visualizing Google Kubernetes Engine and Istio metrics with Grafana
 description: Learn how to deploy a sample application and Grafana on a GKE cluster and configure Stackdriver as a backend
 for Grafana to create dashboards displaying key observability details about the cluster and application running on it.
 author: yuriatgoogle
-tags: stackdriver, gke, istio, monitoring, charts, dashboards
+tags: stackdriver, gke, istio, monitoring, charts, dashboards.
 date_published: 2019-09-27
 ---
 
