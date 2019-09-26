@@ -14,9 +14,12 @@ Kubernetes observability. However, users with experience in this area tend to ha
 observability toolkit that includes the ELK [stack](https://www.elastic.co/what-is/elk-stack) and
 [Prometheus](https://prometheus.io) and often prefer to use [Grafana](https://grafana.com) as their visualization layer.
 
-In this tutorial, you will learn how to deploy a sample application and Grafana on a GKE cluster and configure Stackdriver 
-as a backend for Grafana to create dashboards displaying key observability details about the cluster and application running
-on it. The sample application is provided [here](https://github.com/GoogleCloudPlatform/microservices-demo).
+In this tutorial, you learn how to how to install Grafana using Helm templates, deploy a sample application on a GKE 
+cluster, and configure Stackdriver as a backend for Grafana to create dashboards displaying key observability details about
+the cluster and application running on it. At the end of the tutorial, you will have a fully functional monitoring system 
+that will scale with your needs and can be further customized to evolve with your monitoring requirements.
+
+The sample application is provided [here](https://github.com/GoogleCloudPlatform/microservices-demo).
 
 The architecture you deploy in this tutorial is as follows:
 
@@ -26,7 +29,7 @@ The architecture you deploy in this tutorial is as follows:
 
 This tutorial uses billable components of Google Cloud Platform, including the following:
 
--   Kubernetes Engine
+-   Google Kubernetes Engine
 -   Stackdriver
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your 
@@ -34,24 +37,22 @@ projected usage.
 
 ## Before you begin
 
-1.  Select or create a GCP project.
+1.  Select or create a GCP project on the
+    [**Manage resources** page](https://console.cloud.google.com/cloud-resource-manager).
 
-Go to the [**Manage resources** page](https://console.cloud.google.com/cloud-resource-manager).
+1.  If you didn't select a billing account during project creation, enable billing for your project.
 
-1.  Enable billing for your project if you have not selected a billing account during project creation.
+    For information about enabling billing, see [this page](https://support.google.com/cloud/answer/6293499#enable-billing).
 
-[ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
-
-When you finish this tutorial, you can avoid continued billing by deleting the resources you created. See the Cleaning Up section for more detail.
+When you finish this tutorial, you can avoid continued billing by deleting the resources that you created. See the "Cleaning
+up" section at the end of this tutorial for details.
 
 ## Set up your environment
 
-In this section, you set up your environment with the tools you'll be using throughout this tutorial. You run all the 
+In this section, you set up your environment with the tools that you use throughout this tutorial. You run all of the 
 terminal commands in this tutorial from Cloud Shell.
 
-1.  Open Cloud Shell:
-
-    [OPEN CLOUD SHELL](https://console.cloud.google.com?cloudshell=true)
+1.  [Open Cloud Shell](https://console.cloud.google.com?cloudshell=true).
 
 2.  Set environment variables:
 
@@ -66,14 +67,15 @@ terminal commands in this tutorial from Cloud Shell.
         container.googleapis.com \
         cloudtrace.googleapis.com
 
-4.  Download the required files for this tutorial by cloning the sample application repository. Make the repository folder
-    your `$WORKDIR`, from which you do all the tasks related to this tutorial. This way you can delete the folder when 
-    finished.
+4.  Run the following commands to download the files for this tutorial and set up your working directory:
 
         cd $HOME
         git clone https://github.com/GoogleCloudPlatform/microservices-demo
         cd $HOME/microservices-demo
         WORKDIR=$(pwd)
+
+     These commands clone the sample application repository and make the repository folder your working directory. You
+     perform all of the tutorial tasks in the working directory, which you can delete when finished.
 
 ### Install tools
 
@@ -85,8 +87,8 @@ clusters, contexts, and namespaces:
 
 ## Deploy application on GKE cluster
 
-In this section, you create a GKE cluster with the Istio on GKE Addon and Stackdriver and deploy the sample application on
-it.
+In this section, you create a GKE cluster with the Istio on GKE add-on and Stackdriver, and you deploy the sample 
+application on the cluster.
 
 1.  In Cloud Shell, set the environment variables to be used for cluster creation:
 
@@ -102,7 +104,7 @@ it.
         #namespace for Grafana
         export MONITORING_NS=grafana
 
-2.  In Cloud Shell, issue this command to create the GKE cluster:
+2.  Create the GKE cluster:
 
         gcloud beta container clusters create $CLUSTER \
         --zone=$ZONE \
@@ -112,20 +114,20 @@ it.
         --addons=Istio \
         --istio-config=auth=MTLS_PERMISSIVE
 
-Note: You are using the PERMISSIVE setting for MTLS configuration for the sake of simplicity. We recommend reviewing the 
-appropriate Istio [documentation](https://istio.io/docs/concepts/security/#mutual-tls-authentication) to choose the 
-appropriate policy for your deployment.
+    Note: You are using the `PERMISSIVE` setting for MTLS configuration for the sake of simplicity. Review the
+    [Istio documentation](https://istio.io/docs/concepts/security/#mutual-tls-authentication) to choose the appropriate 
+    policy for your deployment.
 
-3.  Issue this command to get cluster credentials:
+3.  Get cluster credentials:
 
         gcloud container clusters get-credentials $CLUSTER --zone=$ZONE
 
-4.  Issue these commands to set kubectx context and switch to it:
+4.  Set the context for `kubectx` and switch to it:
 
         kubectx cluster=gke_${PROJECT_ID}_${ZONE}_${CLUSTER}
         kubectx cluster
 
-5.  Issue this command to create a dedicated namespace for your application and switch to it:
+5.  Create a dedicated namespace for your application and switch to it:
 
         kubectl create namespace $APP_NS
         kubens $APP_NS
@@ -146,7 +148,8 @@ appropriate policy for your deployment.
 
         kubectl get pods -n $APP_NS
 
-        Output is similar to this:
+    The output should be similar to this:
+    
         NAME                                     READY   STATUS     RESTARTS   AGE
         adservice-5d9dc7989b-8t2ql               0/2     Pending    0          78s
         cartservice-7555f749f-dw8mq              1/2     Running    2          80s
@@ -161,7 +164,7 @@ appropriate policy for your deployment.
         redis-cart-65bf66b8fd-hclhm              2/2     Running    0          79s
         shippingservice-55bc4768dd-8fgtv         2/2     Running    0          79s
 
-It may take some time for all pods to switch to the 'running' state.
+    It may take some time for all pods to switch to the `Running` status.
 
 ## Deploy Grafana
 
@@ -182,7 +185,7 @@ is an open-source package manager for Kubernetes.
 
         kubectl create ns $MONITORING_NS
 
-4.  Use the Helm chart to create the .yaml file:
+4.  Use the Helm chart to create the `.yaml` file:
 
         helm template grafana --namespace $MONITORING_NS --name grafana > $WORKDIR/grafana.yaml
 
@@ -194,7 +197,8 @@ is an open-source package manager for Kubernetes.
 
         kubectl get pods -n $MONITORING_NS
 
-        Output is similar to this:
+    The output should be similar to this:
+    
         NAME                      READY   STATUS    RESTARTS   AGE
         grafana-8cf6ddd7b-d5srh   1/1     Running   0          23s
         grafana-test              0/1     Error     0          23s
@@ -212,16 +216,15 @@ is an open-source package manager for Kubernetes.
 
         export GRAFANA_POD=$(kubectl get pods --namespace $MONITORING_NS -l "app=grafana,release=grafana" -o jsonpath="{.items[0].metadata.name}")
 
-3.  Use port-forwarding to enable access to the Grafana UI:
+3.  Use port forwarding to enable access to the Grafana UI:
 
         kubectl port-forward $GRAFANA_POD 3000 -n $MONITORING_NS
 
-4.  Use the web preview functionality in Cloud Shell to access the UI after changing the port to 3000:
+4.  Use the web preview in Cloud Shell to access the UI after changing the port to 3000:
 
     ![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/2-webpreview.png)
 
-5.  At the Grafana login screen, enter **admin** as the username and paste in the password from step 1 above to access
-    Grafana.
+5.  At the Grafana login screen, enter `admin` as the username and paste in the password from step 1 to access Grafana.
 
 ## Configure data source and create dashboards
 
@@ -234,7 +237,7 @@ visualize the health and status of your application.
 
 2.  Click **Stackdriver**.
 
-3.  Switch **Authentication Type **to** Default GCE Service Account**. Note that this works because Grafana is running on a
+3.  Switch **Authentication Type** to **Default GCE Service Account**. Note that this works because Grafana is running on a
     GKE cluster with default access scopes configured.
 
 4.  Click **Save and Test**.
@@ -247,23 +250,23 @@ rates, errors, and latencies.
 
 #### Create request rates view
 
-1.  Mouse over the + on the left side and select **Create > Dashboard**:
+1.  Hold your pointer over the **+** on the left side and select **Create** > **Dashboard**:
 
     ![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/3-create.png)
 
 2.  Click **Add Query**.
    
-3.  From the **Service** dropdown menu, select **Istio**.
+3.  From the **Service** dropdown, select **Istio**.
    
 4.  From the **Metric** dropdown, select **Server Request Count**.
 
 5.  Click the **+** next to **Group By** and select **metric.label.destination_service_name**.
 
-6.  From the **Aggregation menu**, select **Sum**.
+6.  From the **Aggregation** menu, select **Sum**.
 
 7.  On the left side, click **Visualization**.
 
-8.  Under **Axes** > **Left Y**, click the **Units** menu and select **Throughput > requests/sec (rps)**.
+8.  Under **Axes** > **Left Y**, click the **Units** menu and select **Throughput** > **requests/sec (rps)**.
 
 9.  On the left side, click **General**:
 
@@ -277,7 +280,7 @@ rates, errors, and latencies.
     
 13. Click the **Dashboard Settings** button at the top right.
     
-14. Under **General**, in the **Name** field, enter **"GKE Services Dashboard"** and click **Save**.
+14. Under **General**, in the **Name** field, enter `GKE Services Dashboard` and click **Save**.
 
 At this point, you should have a dashboard with a single view on it showing request rates for the services in your Istio 
 service mesh.
@@ -294,20 +297,20 @@ service mesh.
    
 4.  From the **Metric** dropdown, select **Server Request Count**.
    
-5.  Click the + next to **Group By** and select m**etric.label.destination_service_name**.
+5.  Click the **+** next to **Group By** and select **metric.label.destination_service_name**.
    
-6.  Click the + next to **Filter** and select **metric.label.response_code**.
+6.  Click the **+** next to **Filter** and select **metric.label.response_code**.
 
 7.  Select **!=** as the operator and **200** as the value to only count failed requests.
 
-    Note: In this example, you're including 4xx errors in your count. Often, users choose to exclude these, because they may
-    be caused by issues on the client.
+    Note: In this example, you're including 4xx errors in your count. Often, people choose to exclude these, because they 
+    may be caused by issues on the client.
 
 8.  From the **Aggregation** menu, select **Sum**.
    
 9.  On the left side, click **Visualization**.
 
-10. Under **Axes** > **Left Y**, click the **Units** menu and select **Throughput > requests/sec (rps)**.
+10. Under **Axes** > **Left Y**, click the **Units** menu and select **Throughput** > **requests/sec (rps)**.
     
 11. On the left side, click on **General**:
 
@@ -323,38 +326,28 @@ At this point, your dashboard should contain two panels showing request rates an
 
 #### Create latencies view
 
-At this point, you have enough information to create the third view showing server latency.  Use the Server Response Latency
-metric from the Istio service, filter out requests where the metric.label.response_code!=200, and group by  
-metric.label.destination_service_name.  Use 99th percentile as the aggregator (refer to this
-[publication](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/9c3491f50f97dd01a973173d09dd8590c688eba6.pdf) by Ben Traynor from Google [SRE](https://landing.google.com/sre/) to
-learn more about why 99th percentile latency is the right signal to measure). When you're done, name the panel, save the
-dashboard, and organize the panels as you like.  Your final result looks like this:
+At this point, you have enough information to create the third view, showing server latency. Use the Server Response Latency
+metric from the Istio service, filter out requests that meet the condition `metric.label.response_code!=200`, and group by  
+`metric.label.destination_service_name`. Use 99th percentile as the aggregator. (For information about why 99th percentile 
+latency is the right signal to measure, see
+[Metrics that matter](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/9c3491f50f97dd01a973173d09dd8590c688eba6.pdf), by Ben Traynor, from Google's
+[SRE](https://landing.google.com/sre/) group). When you're done, name the panel, save the dashboard, and organize the panels 
+as you like. Your final result looks like this:
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/8-dashboard.png)
 
-## Conclusions and summary
-
-Congratulations on completing this tutorial!  You've now learned how to install Grafana using Helm templates, configure it 
-to use Stackdriver as a data source, and create dashboards to visualize the health of a microservices application. You have
-a fully functional monitoring system that will scale with your needs and can be further customized to evolve with your 
-monitoring requirements.
-
 ## Cleaning up
 
-To avoid incurring charges to your Google Cloud Platform account for the resources used in this tutorial:
+The easiest way to avoid incurring charges to your Google Cloud Platform account for the resources used in this tutorial is
+to delete the project that you created for the tutorial:
 
-### Delete the project
+1.  In the GCP Console, go to the [**Projects** page](https://console.cloud.google.com/iam-admin/projects).
 
-The easiest way to eliminate billing is to delete the project you created for the tutorial.6\
-To delete the project:
-
-1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-
-2.  In the project list, select the project you want to delete and click **Delete**.
+2.  In the project list, select the project you want to delete, and click **Delete**.
 
     ![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/9-delete.png)
 
-3.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
+3.  In the dialog, type the project ID, and then click **Shut down**.
 
 ## What's next
 
