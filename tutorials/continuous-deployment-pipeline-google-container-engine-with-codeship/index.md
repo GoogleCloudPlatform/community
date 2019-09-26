@@ -1,16 +1,17 @@
 ---
-title: Continuous Deployment Pipeline to Google Kubernetes Engine using Codeship
-description: Learn how to create a continuous deployment pipeline to Kubernetes Engine from Codeship.
+title: Continuous deployment pipeline to Google Kubernetes Engine using Codeship
+description: Learn how to create a continuous deployment pipeline to Google Kubernetes Engine from Codeship.
 author: kellyjandrews
 tags: CD, Kubernetes Engine, Codeship, Pipeline
 date_published: 2017-08-28
 ---
-This tutorial explains how to create a Continuous Deployment
+
+This tutorial explains how to create a continuous deployment
 pipeline to Google Kubernetes Engine using Codeship. You will
 learn how to deploy a containerized application when new code is merged into the
 master branch and all integration tests have passed.
 
-Continuous Deployment is the practice of automating the delivery of software to
+Continuous deployment is the practice of automating the delivery of software to
 production after passing a series of tests. Although not for everyone, it should
 be the goal of any software development and DevOps team not restricted by
 regulatory constraints.
@@ -42,7 +43,7 @@ Make sure you have the following:
 ### Step 1: Create service account
 
 The interactions with the Google Cloud Platform API from Codeship require a service
-account with permissions to the Cloud Storage and Kubernetes Engine services.
+account with permissions to the Cloud Storage and Google Kubernetes Engine services.
 
 Follow these steps to create a service account:
 
@@ -88,7 +89,7 @@ Save the `.env` file once these items are finished.
 
 ### Step 3: Run initial deployment
 
-You need to create your clusters and push an image in Kubernetes Engine initially before you
+You need to create your clusters and push an image in Google Kubernetes Engine initially before you
 can set up a fully automated pipeline in Codeship.
 
 Create your container clusters using the Google Cloud SDK by running the following command:
@@ -156,7 +157,7 @@ Codeship Jet CLI.
 
 This pipeline runs each step in series. The `build-image` step instructs Codeship to build the `hello-express` Docker image on the CI server. After Codeship builds the Docker image, the `push-image-with-sha` step will push the image to Google Container Registry using the name `gcr.io/YOUR_PROJECT_ID/hello-express`, adding a tag using the first 8 characters of the commit SHA for every commit to the repository.
 
-The third and fourth step will run only if the branch is tagged as `master`. The `tag-as-master` step will add the `master` tag to the image pushed to Google Container Registry. This indicates the image in Google Container Registry that is currently deployed. The following step, `gke-initial-deployment`, builds the Kubernetes Engine cluster and deploys the `gcr.io/YOUR_PROJECT_ID/hello-express` Docker image.
+The third and fourth step will run only if the branch is tagged as `master`. The `tag-as-master` step will add the `master` tag to the image pushed to Google Container Registry. This indicates the image in Google Container Registry that is currently deployed. The following step, `gke-initial-deployment`, builds the Google Kubernetes Engine cluster and deploys the `gcr.io/YOUR_PROJECT_ID/hello-express` Docker image.
 
 You will run this pipeline locally using the [Codeship Jet CLI](https://documentation.codeship.com/pro/builds-and-configuration/cli/). Since there is no git commit or branch to reference, use the `ci-commit-id` and `tag` flags with the Codeship Jet CLI to pass in test strings at runtime, (for example, `1234ABCD` and `master`). The build on the Codeship CI server populates `ci-commit-id` with the git commit SHA, and `tag` with the branch or tag name. Finally, the `--push` flag instructs the Codeship Jet CLI to run the push steps in the `codeship-steps.yml` file.  
 
