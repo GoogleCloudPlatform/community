@@ -1,6 +1,6 @@
 ---
 title: Visualizing Google Kubernetes Engine and Istio metrics with Grafana
-description: Learn how to deploy a sample application and Grafana on a GKE cluster and configure Stackdriver as a backend for Grafana to create dashboards displaying key observability details about the cluster and application running on it.
+description: Deploy a sample application and Grafana on a GKE cluster and configure Stackdriver as a backend for Grafana to create dashboards displaying key observability details about the cluster and application running on it.
 author: yuriatgoogle
 tags: stackdriver, gke, istio, monitoring, charts, dashboards
 date_published: 2019-09-27
@@ -11,7 +11,7 @@ date_published: 2019-09-27
 Stackdriver is a full-featured operations and observability toolkit that includes capabilities specifically targeted at 
 Kubernetes operators, including a rich set of [features](https://cloud.google.com/monitoring/kubernetes-engine/) for 
 Kubernetes observability. However, users with experience in this area tend to have familiarity with the open-source 
-observability toolkit that includes the ELK [stack](https://www.elastic.co/what-is/elk-stack) and
+observability toolkit that includes the [ELK stack](https://www.elastic.co/what-is/elk-stack) and
 [Prometheus](https://prometheus.io) and often prefer to use [Grafana](https://grafana.com) as their visualization layer.
 
 In this tutorial, you learn how to how to install Grafana using Helm templates, deploy a sample application on a GKE 
@@ -312,7 +312,7 @@ service mesh.
 
 10. Under **Axes** > **Left Y**, click the **Units** menu and select **Throughput** > **requests/sec (rps)**.
     
-11. On the left side, click on **General**:
+11. On the left side, click **General**:
 
     ![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/6-query.png)
 
@@ -327,9 +327,8 @@ At this point, your dashboard should contain two panels showing request rates an
 #### Create latencies view
 
 At this point, you have enough information to create the third view, showing server latency. Use the Server Response Latency
-metric from the Istio service, filter out requests that meet the condition `metric.label.response_code!=200`, and group by  
-`metric.label.destination_service_name`. Use 99th percentile as the aggregator. (For information about why 99th percentile 
-latency is the right signal to measure, see
+metric from the Istio service, filter out requests that meet the condition `metric.label.response_code!=200`, and group
+by `metric.label.destination_service_name`. Use 99th percentile as the aggregator. (For information about why 99th percentile latency is the right signal to measure, see
 [Metrics that matter](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/9c3491f50f97dd01a973173d09dd8590c688eba6.pdf), by Ben Traynor, from Google's
 [SRE](https://landing.google.com/sre/) group). When you're done, name the panel, save the dashboard, and organize the panels 
 as you like. Your final result looks like this:
