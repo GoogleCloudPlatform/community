@@ -16,7 +16,7 @@ In this tutorial, you will learn how to deploy a sample application and Grafana 
 
 The architecture you will be deploying in this tutorial is as follows:
 
-![image](1-architecture.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/1-architecture.png)
 
 ## Costs
 
@@ -249,7 +249,7 @@ kubectl port-forward $GRAFANA_POD 3000 -n $MONITORING_NS
 
 4.  Use the web preview functionality in Cloud Shell to access the UI after changing the port to 3000:
 
-![image](2-webpreview.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/2-webpreview.png)
 
 5.  At the Grafana login screen, enter **admin** as the username and paste in the password from step 1 above to access Grafana.
 
@@ -275,7 +275,7 @@ In this section, you create a dashboard focusing on the [golden signals](https:/
 
 1.  Mouse over the + on the left side and select **Create -> Dashboard:**
 
-![image](3-create.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/3-create.png)
 
 2.  Click **Add Query.**
    
@@ -293,7 +293,7 @@ In this section, you create a dashboard focusing on the [golden signals](https:/
 
 9.  On the left side, click on **General**:
 
-![image](4-query.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/4-query.png)
 
 10.  In the **Panel Title** field, enter **Request Rates by Service.**
     
@@ -307,7 +307,7 @@ In this section, you create a dashboard focusing on the [golden signals](https:/
 
 At this point, you should have a dashboard with a single view on it showing request rates for the services in your Istio service mesh.
 
-![image](5-dashboard.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/5-dashboard.png)
 
 #### Create errors view
 
@@ -335,7 +335,7 @@ At this point, you should have a dashboard with a single view on it showing requ
     
 11. On the left side, click on **General**:
 
-![image](6-query.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/6-query.png)
 
 12.  In the **Panel Title** field, enter **Errors by Service.**
     
@@ -343,13 +343,13 @@ At this point, you should have a dashboard with a single view on it showing requ
 
 At this point, your dashboard should contain two panels showing request rates and errors.
 
-![image](7-dashboard.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/7-dashboard.png)
 
 #### Create latencies view
 
 At this point, you have enough information to create the third view showing server latency.  Use the Server Response Latency metric from the Istio service, filter out requests where the metric.label.response_code!=200, and group by metric.label.destination_service_name.  Use 99th percentile as the aggregator (refer to this [publication](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/9c3491f50f97dd01a973173d09dd8590c688eba6.pdf) by Ben Traynor from Google [SRE](https://landing.google.com/sre/) to learn more about why 99th percentile latency is the right signal to measure). When you're done, name the panel, save the dashboard, and organize the panels as you like.  Your final result looks like this:
 
-![image](8-dashboard.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/8-dashboard.png)
 
 ## Conclusions and Summary
 
@@ -368,7 +368,7 @@ To delete the project:
 
 2.  In the project list, select the project you want to delete and click **Delete**.
 
-![image](9-delete.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/visualizing-metrics-with-grafana/9-delete.png)
 
 3.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
