@@ -1,5 +1,5 @@
 ---
-title: Sensor data collection and ad-hoc analytics with Cloud IoT Core
+title: Sensor data collection and analytics with Cloud IoT Core
 description: Deploy an end-to-end monitoring and analysis setup with a Coral Environmental Sensor Board, Cloud IoT Core, and BigQuery. Visualize and analyze data with Google Sheets.
 author: kingman
 tags: Internet of Things, Raspberry Pi
@@ -177,7 +177,7 @@ In this section, you verify the end-to-end integration between the sensor board 
 
 Messages sent from the device to Cloud IoT Core are automatically published on Cloud Pub/Sub.
 
-Create a subscription to the Cloud Pub/Pub topic:
+Create a subscription to the Cloud Pub/Sub topic:
 
     gcloud pubsub subscriptions create verify-event \
     --topic=$EVENT_TOPIC
