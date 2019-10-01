@@ -8,8 +8,8 @@ date_published: 2018-08-13
 
 [Ibis](http://ibis-project.org/) is a Python library for doing data
 analysis. It offers a Pandas-like environment for executing data analysis in
-big data processing systems such as Google BigQuery. Ibis's primary goals are
-to be a type safe, expressive, composable, and familiar replacement for SQL.
+big data processing systems such as BigQuery. Ibis's primary goals are to be
+a type safe, expressive, composable, and familiar replacement for SQL.
 
 In this tutorial, you'll use Ibis to query the [Stack Overflow public dataset
 in BigQuery](https://cloud.google.com/bigquery/public-data/stackoverflow).
@@ -31,7 +31,7 @@ develop Python code that connects to Google Cloud Platform:
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform including Google
+This tutorial uses billable components of Cloud Platform including
 BigQuery. Use the [Pricing
 Calculator](https://cloud.google.com/products/calculator/#id=d343aa2d-457b-4778-b4cb-ef0ea35605ea)
 to estimate the costs for your usage.
