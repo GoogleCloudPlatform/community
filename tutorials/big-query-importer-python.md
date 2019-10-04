@@ -1,0 +1,1 @@
+i created a script in python to query mysql and import the data into bigquery 
