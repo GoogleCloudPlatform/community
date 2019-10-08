@@ -207,13 +207,13 @@ The commands should look similar to the following example:
 
 Create the HA VPN gateway:
 
-    gcloud beta compute vpn-gateways create [GW_NAME] \
+    gcloud compute vpn-gateways create [GW_NAME] \
     --network [NETWORK] \
     --region [REGION]
 
 The command should look similar to the following example:
 
-    gcloud beta compute vpn-gateways create ha-vpn-gw-a \
+    gcloud compute vpn-gateways create ha-vpn-gw-a \
     --network network-a \
     --region us-central1
 
@@ -337,7 +337,7 @@ Use the following command to create the External VPN gateway resource. Replace t
     under **IPSec tunnel #2, #3 Tunnel Interface Configuration**, use the IP address under
     **Outside IP address, Virtual private gateway**.
 
-        gcloud beta compute external-vpn-gateways create [PEER_GW_NAME] \
+        gcloud compute external-vpn-gateways create [PEER_GW_NAME] \
         --interfaces 0=[AWS_GW_IP_0],  \
                      1=[AWS_GW_IP_1],  \
                      2=[AWS_GW_IP_2],  \
@@ -345,7 +345,7 @@ Use the following command to create the External VPN gateway resource. Replace t
 
 The command should look similar to the following example:
 
-    gcloud beta compute external-vpn-gateways create peer-gw --interfaces \   
+    gcloud compute external-vpn-gateways create peer-gw --interfaces \   
     0=52.52.128.71,1=184.169.223.3,2=13.52.115.71,3=52.9.164.225
 
 ## Create VPN tunnels on the HA VPN gateway
@@ -419,28 +419,28 @@ In the following commands to create each tunnel, replace the options as noted in
        
 The command output should look similar to the following example:
 
-    gcloud beta compute vpn-tunnels create tunnel-a-to-aws-connection-0-ip0 --peer-external-gateway \
+    gcloud compute vpn-tunnels create tunnel-a-to-aws-connection-0-ip0 --peer-external-gateway \
     peer-gw --peer-external-gateway-interface 0 --region us-central1 --ike-version 2 \
     --shared-secret mysharedsecret --router router-a --vpn-gateway ha-vpn-gw-a --interface 0
     Creating VPN tunnel...done.
     NAME                              REGION       GATEWAY      VPN_INTERFACE  PEER_ADDRESS
     tunnel-a-to-aws-connection-0-ip0  us-central1  ha-vpn-gw-a  0              52.52.128.71
 
-    gcloud beta compute vpn-tunnels create tunnel-a-to-aws-connection-0-ip1 --peer-external-gateway \
+    gcloud compute vpn-tunnels create tunnel-a-to-aws-connection-0-ip1 --peer-external-gateway \
     peer-gw --peer-external-gateway-interface 1 --region us-central1 --ike-version 2 \
       --shared-secret mysharedsecret --router router-a --vpn-gateway ha-vpn-gw-a --interface 0
     Creating VPN tunnel...done.
     NAME                              REGION       GATEWAY      VPN_INTERFACE  PEER_ADDRESS
     tunnel-a-to-aws-connection-0-ip1  us-central1  ha-vpn-gw-a  0              184.169.223.3
 
-    gcloud beta compute vpn-tunnels create tunnel-a-to-aws-connection-1-ip0 --peer-external-gateway \
+    gcloud compute vpn-tunnels create tunnel-a-to-aws-connection-1-ip0 --peer-external-gateway \
     peer-gw --peer-external-gateway-interface 2 --region us-central1 --ike-version 2 \
     --shared-secret mysharedsecret --router router-a --vpn-gateway ha-vpn-gw-a --interface 1
     Creating VPN tunnel...done.
     NAME                              REGION       GATEWAY      VPN_INTERFACE  PEER_ADDRESS
     tunnel-a-to-aws-connection-1-ip0  us-central1  ha-vpn-gw-a  1              13.52.115.71
 
-    gcloud beta compute vpn-tunnels create tunnel-a-to-aws-connection-1-ip1 --peer-external-gateway \
+    gcloud compute vpn-tunnels create tunnel-a-to-aws-connection-1-ip1 --peer-external-gateway \
     peer-gw --peer-external-gateway-interface 3 --region us-central1 --ike-version 2 \
     --shared-secret mysharedsecret --router router-a --vpn-gateway ha-vpn-gw-a --interface 1
     Creating VPN tunnel...done.
