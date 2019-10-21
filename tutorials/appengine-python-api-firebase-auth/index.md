@@ -66,19 +66,19 @@ in case you need some information about how to do it, see: [https://firebase.goo
         class AuthMiddleware(object):
         """."""
     
-        def process_request(self, req, resp):
+            def process_request(self, req, resp):
                 auth_value = req.get_header('Authorization', None)
                 if auth_value is None or len(auth_value.split(' ')) != 2 or not self.token_is_valid(req, auth_value.split(' ')[1]):
-                raise falcon.HTTPUnauthorized(description='Unauthorized')
+                    raise falcon.HTTPUnauthorized(description='Unauthorized')
     
-        def token_is_valid(self, req, token):
+            def token_is_valid(self, req, token):
                 try:
-                decoded_token = auth.verify_id_token(token)
-                req.context['auth_user'] = decoded_token
+                    decoded_token = auth.verify_id_token(token)
+                    req.context['auth_user'] = decoded_token
                 except Exception as e:
-                return False
+                    return False
                 if not decoded_token:
-                return False
+                   return False
                 return True
 
     Because this middleware applies to all endpoints, from now you will need to send your requests
@@ -90,8 +90,8 @@ in case you need some information about how to do it, see: [https://firebase.goo
     permission to do the operation.
 
         def is_admin(req, resp, resource, params):
-                # Good place to check the user role.
-                logging.info(req.context['auth_user'])
+            # Good place to check the user role.
+            logging.info(req.context['auth_user'])
     
         ...
     
