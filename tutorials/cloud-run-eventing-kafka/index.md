@@ -1,3 +1,14 @@
+---
+title: Serverless Eventings with Cloud Run on Anthos, Knative Evetnings and Apache Kafka from Confluent&copy;
+description: Create a simple event driven application for currency exchange rate traking using Cloud Run on Anthos, Knative Eventing, Apache Kafka, and AlphaVantage
+author: thejaysmith
+tags: Serverless, Eventing, Cloud Run, Kafka, Knative
+date_published: 2019-11-04
+---
+
+* Jason "Jay" Smith | Customer Engineer Specialist | Google Cloud
+  
+
 # Using Google Cloud Run with Knative Eventing and Confluent Cloud
 
 [Cloud Run](https://cloud.google.com/run/ "Cloud Run") is a Google Cloud Platform offering built on the [Knative Serving](https://knative.dev/docs/serving/ "Knative Serving") APIs. This brought a lot of serverless practices to Kubernetes, allowing developers to focus on code while the operators focus on the infrastructure.
