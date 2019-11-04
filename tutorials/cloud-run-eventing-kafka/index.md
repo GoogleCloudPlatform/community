@@ -1,13 +1,13 @@
 ---
-title: Serverless Eventings with Cloud Run on Anthos, Knative Evetnings and Apache Kafka from Confluent
-description: Create a simple event driven application for currency exchange rate traking using Cloud Run on Anthos, Knative Eventing, Apache Kafka, and AlphaVantage
+title: Serverless Eventings with Cloud Run on Anthos with Knative Evetning and Apache Kafka from Confluent
+description: Create a simple event driven application for currency exchange rate traking.
 author: thejaysmith
 tags: Serverless, Eventing, Cloud Run, Kafka, Knative
 date_published: 2019-11-04
 ---
 
 * Jason "Jay" Smith | Customer Engineer Specialist | Google Cloud
-  
+
 ## Using Google Cloud Run with Knative Eventing and Confluent Cloud
 
 [Cloud Run](https://cloud.google.com/run/ "Cloud Run") is a Google Cloud Platform offering built on the [Knative Serving](https://knative.dev/docs/serving/ "Knative Serving") APIs. This brought a lot of serverless practices to Kubernetes, allowing developers to focus on code while the operators focus on the infrastructure.
@@ -34,7 +34,7 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-Once the script is done, let's take the next step. Give it about a minute of two from the cronjob to run. Open a tab in your terminal and run this command. 
+Once the script is done, let's take the next step. Give it about a minute of two from the cronjob to run. Open a tab in your terminal and run this command.
 
 ``` bash
 ccloud kafka topic consume cloudevents #Note, you may need to login with 'ccloud login`
@@ -48,7 +48,7 @@ event-display-hbrjj-deployment-79f85796d9-n4ftd   2/2     Running   0          5
 kafka-source-9mmvw-78cf98d4c4-g4pmm               1/1     Running   0          10s
 ```
 
-Take the event-display-xxxxx-deployment-xxx-xxxx pods and let's check the logs. 
+Take the event-display-xxxxx-deployment-xxx-xxxx pods and let's check the logs.
 
 ```bash
 $ kubectl logs event-display-hbrjj-deployment-79f85796d9-n4ftd -c user-container
