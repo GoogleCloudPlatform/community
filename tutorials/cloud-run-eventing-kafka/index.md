@@ -88,3 +88,6 @@ cd kafka-cr-eventing/scripts
 chmod +x cleanup.sh
 ./cleanup.sh
 ```
+
+You are now good to go!
+[EOF]
