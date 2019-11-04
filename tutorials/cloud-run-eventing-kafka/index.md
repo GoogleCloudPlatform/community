@@ -1,6 +1,6 @@
 ---
 title: Serverless Eventings with Cloud Run on Anthos with Knative Evetning and Apache Kafka from Confluent
-description: Create a simple event driven application for currency exchange rate traking using Cloud Run on Anthos, Knative Eventing, Apache Kafka, and AlphaVantage
+description: Create a simple event driven application for currency exchange rate traking using Cloud Run on Anthos with Knative Eventing plus Apache Kafka and AlphaVantage
 author: thejaysmith
 tags: Serverless, Eventing, Cloud Run, Kafka, Knative
 date_published: 2019-11-04
