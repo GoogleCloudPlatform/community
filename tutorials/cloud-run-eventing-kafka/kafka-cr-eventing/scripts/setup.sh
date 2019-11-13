@@ -6,7 +6,6 @@
 #### logging 
 exec > >(tee -i logfile.txt)
 
-
 #### Declare MYROOT directory for cloned repo
 export MYROOT=$(pwd)
 clear 
@@ -80,10 +79,16 @@ fi
 
 echo "***** Log into Confluent Cloud *****"
 ccloud login --url https://confluent.cloud
-echo "***** Create a Kafka Cluster called 'cloudrun' and Topic called 'cloudevents'*****"
+echo "***** Create a Kafka Cluster called 'cloudrun' *****"
 export CONFLUENT_ID=$(ccloud kafka cluster create cloudrun --cloud gcp --region us-central1 | grep 'Id' | sed 's/^.* | //' | cut -f3-4 -d"/" | tr -d '|')
-ccloud kafka cluster use ${CONFLUENT_ID}
-ccloud kafka topic create cloudevents
+export CONFLUENT_ENV=$(ccloud environment list | grep "*" | cut -c4-9)
+ccloud environment use $CONFLUENT_ENV
+ccloud kafka cluster use $CONFLUENT_ID
+ccloud kafka cluster list
+sleep 60
+#echo "***** Create a Kafka Topic called 'cloudevents' *****"
+#ccloud kafka topic create cloudevents
+
 
 #### Get Confluent 
 export CONFLUENT_HOST=$(ccloud kafka cluster describe `ccloud kafka cluster list | grep "*" | cut -c4-14` | grep 'SASL_SSL'  | sed 's/^.* | //' | cut -f3-4 -d"/" | tr -d '|')
@@ -94,8 +99,12 @@ export CONFLUENT_SECRET=$(grep 'Secret  |' secrets.txt | sed 's/^.* | //' | cut 
 rm -rf secrets.txt
 clear
 
+
+ccloud api-key use $CONFLUENT_KEY
+
+
 #### BoilerPlate Code for
-cd ${MYROOT}
+cd $MYROOT
 
 clear
 echo "******Setting Variables******"
@@ -129,13 +138,16 @@ gcloud components install kubectl
 ### Creating Cluster
 clear
 echo "******Now we shall create your cluster******"
-gcloud beta container clusters create ${CLUSTER_NAME} \
+gcloud beta container clusters create $CLUSTER_NAME \
   --addons=HorizontalPodAutoscaling,HttpLoadBalancing,Istio,CloudRun \
   --machine-type=n1-standard-2 \
   --cluster-version=latest \
-  --zone=${ZONE} \
+  --zone=$ZONE \
   --enable-stackdriver-kubernetes \
   --scopes cloud-platform
+
+echo "***** Create a Kafka Topic called 'cloudevents' *****"
+ccloud kafka topic create cloudevents
 
 #wait for 90 seconds
 echo "***** Waiting for 90 second for cluster to complete *****"
@@ -197,20 +209,20 @@ echo "***** CCONTAINER BUILT! *****"
 
 ### And Now we Deploy the new one
 clear
-echo "****** Lets deploy a simple Hello World app ******"
-echo "First, get your Alpha Vantage Key. If you don't have one, go to https://alphavantage.co"
-read -s ALPHAVANTAGE_KEY
+echo "****** Lets deploy our Currency App ******"
+#echo "First, get your Alpha Vantage Key. If you don't have one, go to https://alphavantage.co"
+#read -s ALPHAVANTAGE_KEY
 
-gcloud beta run deploy currency-app --image gcr.io/${PROJECT_ID}/currency-app \
+gcloud beta run deploy currency-app --image gcr.io/$PROJECT_ID/currency-app \
 --platform gke --cluster $CLUSTER_NAME --cluster-location $ZONE \
 --connectivity=external \
---update-env-vars CONFLUENT_KEY=${CONFLUENT_KEY},CONFLUENT_SECRET=${CONFLUENT_SECRET},ALPHAVANTAGE_KEY=${ALPHAVANTAGE_KEY},CONFLUENT_HOST=${CONFLUENT_HOST}
+--update-env-vars CONFLUENT_KEY=$CONFLUENT_KEY,CONFLUENT_SECRET=$CONFLUENT_SECRET,ALPHAVANTAGE_KEY=$AV_KEY,CONFLUENT_HOST=$CONFLUENT_HOST
 
 
 
 ### Cloud Scheduler Time
 
-gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:${PROJ_NUMBER}-compute@developer.gserviceaccount.com --role roles/cloudscheduler.jobRunner
+gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:$PROJ_NUMBER-compute@developer.gserviceaccount.com --role roles/cloudscheduler.jobRunner
 
 clear
 echo "***** Wait 60 seconds *****"
@@ -218,13 +230,13 @@ sleep 60
 
 export SVCURL="$(gcloud beta run services list --format=json| grep "currency-app" | grep "xip.io" | cut -d: -f2- |tr -d '"')/api/v1/currency?currency1=USD&currency2=JPY"
 
-gcloud scheduler jobs create http currency-job --schedule="* * * * *" --uri ${SVCURL} --http-method POST
+gcloud scheduler jobs create http currency-job --schedule="* * * * *" --uri $SVCURL --http-method POST
 
 ###TODO -- Google Cloud Build Tutorial ###
 ### Setting up Cloud Build
 #### https://cloud.google.com/cloud-build/docs/securing-builds/use-encrypted-secrets-credentials
 
-gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:${PROJ_NUMBER}@cloudbuild.gserviceaccount.com --role roles/container.developer
+gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:$PROJ_NUMBER@cloudbuild.gserviceaccount.com --role roles/container.developer
 
 clear
 echo "***** Congrats! You are good to go! *****"

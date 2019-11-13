@@ -30,8 +30,10 @@ So let's execute the script below. **Note:** *I encourage reading through the sc
 
 ``` bash
 export CLUSTER_NAME="kafka-events" #You can change this to whatever you want"
-chmod +x setup.sh
-./setup.sh
+export AV_KEY="<ENTER ALPHAVANTAGE KEY HERE>"
+cd kafka-cr-eventing
+chmod +x scripts/setup.sh
+./scripts/setup.sh
 ```
 
 Once the script is done, let's take the next step. Give it about a minute of two from the cronjob to run. Open a tab in your terminal and run this command.
