@@ -161,27 +161,36 @@ clear
 echo "***** Installing Knative Eventing ******"
 
 kubectl apply --selector knative.dev/crd-install=true \
---filename https://github.com/knative/eventing/releases/download/v0.9.0/release.yaml \
---filename https://github.com/knative/serving/releases/download/v0.9.0/monitoring.yaml
+--filename https://github.com/knative/eventing/releases/download/v0.10.0/release.yaml \
+--filename https://github.com/knative/serving/releases/download/v0.10.0/monitoring.yaml
 
-kubectl apply --filename https://github.com/knative/eventing/releases/download/v0.9.0/release.yaml \
---filename https://github.com/knative/serving/releases/download/v0.9.0/monitoring.yaml
+kubectl apply --filename https://github.com/knative/eventing/releases/download/v0.10.0/release.yaml \
+--filename https://github.com/knative/serving/releases/download/v0.10.0/monitoring.yaml
 
 #ElasticSearch Monitoring
-kubectl apply --filename https://github.com/knative/serving/releases/download/v0.9.0/monitoring-logs-elasticsearch.yaml
+kubectl apply --filename https://github.com/knative/serving/releases/download/v0.10.0/monitoring-logs-elasticsearch.yaml
 
 kubectl get pods --namespace knative-eventing
 kubectl get pods --namespace knative-monitoring
+
+# Setup namespace
+kubectl create namespace kafka-eventing
+
+kubectl label namespace kafka-eventing knative-eventing-injection=enabled
+
+
 
 #### Prepaing YAML
 clear
 echo "***** Let's deploy Knative Eventing for Kafka *****"
 cd $MYROOT && cd config/kafka
-kubectl apply -f kafka-source-release.yaml
+kubectl apply -f kafka-source-release-0.10.yaml
 sed 's|KAFKA-KEY|'"$CONFLUENT_KEY"'|g; s|KAFKA-SECRET|'"$CONFLUENT_SECRET"'|g' kafka-secrets.sample.yaml > kafka-secrets.yaml
 kubectl apply -f kafka-secrets.yaml
 sed 's|CONFLUENT-SERVER|'"$CONFLUENT_HOST"'|g' kafka-source-deploy.sample.yaml > kafka-source-deploy.yaml
 kubectl apply -f kafka-source-deploy.yaml
+sed 's|CONFLUENT-SERVER|'"$CONFLUENT_HOST"'|g' kafka-source-display.sample.yaml > kafka-source-display.yaml
+kubectl apply -f kafka-source-display.yaml
 clear
 echo "***** DEPLOYED! *****"
 kubectl label namespace default knative-eventing-injection=enabled
