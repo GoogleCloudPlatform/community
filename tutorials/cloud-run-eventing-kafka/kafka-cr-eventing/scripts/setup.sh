@@ -102,7 +102,7 @@ ccloud api-key use $CONFLUENT_KEY
 
 
 #### BoilerPlate Code for
-cd ${MYROOT}
+cd $MYROOT
 
 clear
 echo "******Setting Variables******"
@@ -136,11 +136,11 @@ gcloud components install kubectl
 ### Creating Cluster
 clear
 echo "******Now we shall create your cluster******"
-gcloud beta container clusters create ${CLUSTER_NAME} \
+gcloud beta container clusters create $CLUSTER_NAME \
   --addons=HorizontalPodAutoscaling,HttpLoadBalancing,Istio,CloudRun \
   --machine-type=n1-standard-2 \
   --cluster-version=latest \
-  --zone=${ZONE} \
+  --zone=$ZONE \
   --enable-stackdriver-kubernetes \
   --scopes cloud-platform
 
@@ -210,26 +210,24 @@ kubectl label namespace default knative-eventing-injection=enabled
 clear
 cd $MYROOT && cd apps/currency
 echo "***** Building Container *****"
-gcloud builds submit --tag gcr.io/${PROJECT_ID}/currency-app . 
+gcloud builds submit --tag gcr.io/$PROJECT_ID/currency-app . 
 echo ''
 echo "***** CCONTAINER BUILT! *****"
 
 ### And Now we Deploy the new one
 clear
-echo "****** Lets deploy a simple Hello World app ******"
-echo "First, get your Alpha Vantage Key. If you don't have one, go to https://alphavantage.co"
-read -s ALPHAVANTAGE_KEY
+echo "****** Lets deploy our Currency App ******"
 
-gcloud beta run deploy currency-app --image gcr.io/${PROJECT_ID}/currency-app \
+gcloud beta run deploy currency-app --image gcr.io/$PROJECT_ID/currency-app \
 --platform gke --cluster $CLUSTER_NAME --cluster-location $ZONE \
 --connectivity=external \
---update-env-vars CONFLUENT_KEY=${CONFLUENT_KEY},CONFLUENT_SECRET=${CONFLUENT_SECRET},ALPHAVANTAGE_KEY=${ALPHAVANTAGE_KEY},CONFLUENT_HOST=${CONFLUENT_HOST}
+--update-env-vars CONFLUENT_KEY=$CONFLUENT_KEY,CONFLUENT_SECRET=$CONFLUENT_SECRET,ALPHAVANTAGE_KEY=$AV_KEY,CONFLUENT_HOST=$CONFLUENT_HOST
 
 
 
 ### Cloud Scheduler Time
 
-gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:${PROJ_NUMBER}-compute@developer.gserviceaccount.com --role roles/cloudscheduler.jobRunner
+gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:$PROJ_NUMBER-compute@developer.gserviceaccount.com --role roles/cloudscheduler.jobRunner
 
 clear
 echo "***** Wait 60 seconds *****"
@@ -237,13 +235,13 @@ sleep 60
 
 export SVCURL="$(gcloud beta run services list --format=json| grep "currency-app" | grep "xip.io" | cut -d: -f2- |tr -d '"')/api/v1/currency?currency1=USD&currency2=JPY"
 
-gcloud scheduler jobs create http currency-job --schedule="* * * * *" --uri ${SVCURL} --http-method POST
+gcloud scheduler jobs create http currency-job --schedule="* * * * *" --uri $SVCURL --http-method POST
 
 ###TODO -- Google Cloud Build Tutorial ###
 ### Setting up Cloud Build
 #### https://cloud.google.com/cloud-build/docs/securing-builds/use-encrypted-secrets-credentials
 
-gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:${PROJ_NUMBER}@cloudbuild.gserviceaccount.com --role roles/container.developer
+gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:$PROJ_NUMBER@cloudbuild.gserviceaccount.com --role roles/container.developer
 
 clear
 echo "***** Congrats! You are good to go! *****"
