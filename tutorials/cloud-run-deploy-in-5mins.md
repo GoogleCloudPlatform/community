@@ -1,5 +1,5 @@
 ---
-title: Deploying Containers to Cloud Run in <5mins
+title: Deploying Containers to Cloud Run in 5mins
 description: Quickly build and deploy a containerized application and deploy to Cloud Run.
 author: timtech4u
 tags: Cloud Run, Container Registry, Cloud Build
