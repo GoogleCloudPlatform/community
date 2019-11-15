@@ -8,6 +8,8 @@ date_published: 2019-07-31
 
 # Compute Engine quickstart: Create a to-do app with MongoDB
 
+<!-- {% setvar project_id "<your-project>" %} -->
+
 <walkthrough-tutorial-duration duration="15"></walkthrough-tutorial-duration>
 
 <walkthrough-alt>
@@ -108,7 +110,7 @@ In this section, you install a MongoDB database on the backend instance to save 
 Connect to the VM using SSH:  
 
 ```bash
-gcloud compute --project "{{project-id}}" ssh --zone [backend-zone] [backend-name]
+gcloud compute --project "{{project_id}}" ssh --zone [backend-zone] [backend-name]
 ```
 
 Replace `[backend-zone]` and `[backend-name]` with the zone and name of the instance that you created.
@@ -168,7 +170,7 @@ In this section, you install the dependencies for the web app and then install a
 Connect to the VM with SSH:
 
 ```bash
-gcloud compute --project "{{project-id}}" ssh --zone [frontend-zone] [frontend-name]
+gcloud compute --project "{{project_id}}" ssh --zone [frontend-zone] [frontend-name]
 ```
 
 Replace `[frontend-zone]` and `[frontend-name]` with the zone and name of the instance that you created.
