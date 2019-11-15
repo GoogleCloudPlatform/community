@@ -61,7 +61,7 @@ spec:
   sink:
     apiVersion: eventing.knative.dev/v1alpha1
     kind: Broker
-    name: event-display
+    name: hello-display
 
 ---
 apiVersion: eventing.knative.dev/v1alpha1
