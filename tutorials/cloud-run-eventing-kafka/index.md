@@ -30,6 +30,7 @@ So let's execute the script below. **Note:** *I encourage reading through the sc
 
 ``` bash
 export CLUSTER_NAME="kafka-events" #You can change this to whatever you want"
+export AV_KEY="<your AlphaVantage Key>"
 chmod +x setup.sh
 ./setup.sh
 ```

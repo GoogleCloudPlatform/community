@@ -80,10 +80,14 @@ fi
 
 echo "***** Log into Confluent Cloud *****"
 ccloud login --url https://confluent.cloud
-echo "***** Create a Kafka Cluster called 'cloudrun' and Topic called 'cloudevents'*****"
+
+echo "***** Create a Kafka Cluster called 'cloudrun' *****"
 export CONFLUENT_ID=$(ccloud kafka cluster create cloudrun --cloud gcp --region us-central1 | grep 'Id' | sed 's/^.* | //' | cut -f3-4 -d"/" | tr -d '|')
-ccloud kafka cluster use ${CONFLUENT_ID}
-ccloud kafka topic create cloudevents
+export CONFLUENT_ENV=$(ccloud environment list | grep "*" | cut -c4-9)
+ccloud environment use $CONFLUENT_ENV
+ccloud kafka cluster use $CONFLUENT_ID
+ccloud kafka cluster list
+sleep 60
 
 #### Get Confluent 
 export CONFLUENT_HOST=$(ccloud kafka cluster describe `ccloud kafka cluster list | grep "*" | cut -c4-14` | grep 'SASL_SSL'  | sed 's/^.* | //' | cut -f3-4 -d"/" | tr -d '|')
@@ -93,6 +97,9 @@ export CONFLUENT_KEY=$(grep 'API Key |' secrets.txt | sed 's/^.* | //' | cut -d'
 export CONFLUENT_SECRET=$(grep 'Secret  |' secrets.txt | sed 's/^.* | //' | cut -d' ' -f1)
 rm -rf secrets.txt
 clear
+
+ccloud api-key use $CONFLUENT_KEY
+
 
 #### BoilerPlate Code for
 cd ${MYROOT}
@@ -140,6 +147,9 @@ gcloud beta container clusters create ${CLUSTER_NAME} \
 #wait for 90 seconds
 echo "***** Waiting for 90 second for cluster to complete *****"
 sleep 90
+
+echo "***** Create a Kafka Topic called 'cloudevents' *****"
+ccloud kafka topic create cloudevents
 
 ### Configuring your cluster for Run
 echo "******Now we ensure that your cluster has Cloud Run******"
