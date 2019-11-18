@@ -61,18 +61,30 @@ spec:
   sink:
     apiVersion: eventing.knative.dev/v1alpha1
     kind: Broker
-    name: hello-display
+    name: hello-display-broker
 
 ---
 apiVersion: eventing.knative.dev/v1alpha1
-kind: Trigger
+kind: Broker
 metadata:
-  name: hello-display
+  name: hello-display-broker
   namespace: kafka-eventing
 spec:
-  broker: default
+  channelTemplateSpec:
+    apiVersion: messaging.knative.dev/v1alpha1
+    kind: InMemoryChannel
+
+---
+#https://knative.dev/docs/eventing/broker-trigger/
+apiVersion: eventing.knative.dev/v1alpha1
+kind: Trigger
+metadata:
+  name: hello-display-trigger
+  namespace: kafka-eventing
+spec:
+  broker: hello-display-broker
   subscriber:
     ref:
-     apiVersion: v1
+     apiVersion: serving.knative.dev/v1
      kind: Service
      name: hello-display

@@ -158,7 +158,10 @@ gcloud config set run/cluster $CLUSTER_NAME
 gcloud config set run/cluster_location $ZONE
 gcloud container clusters get-credentials $CLUSTER_NAME
 kubectl create namespace kafka-eventing
+kubectl label namespace default knative-eventing-injection=enabled
+kubectl label namespace kafka-eventing knative-eventing-injection=enabled
 gcloud config set run/namespace kafka-eventing
+
 
 ##### Get istio-gateway external IP
 echo "****** We are going to grab the external IP ******"
