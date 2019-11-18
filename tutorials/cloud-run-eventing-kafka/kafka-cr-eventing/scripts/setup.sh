@@ -202,8 +202,8 @@ cd $MYROOT && cd config/kafka
 kubectl apply -f kafka-source-release-0.10.yaml
 sed 's|KAFKA-KEY|'"$CONFLUENT_KEY"'|g; s|KAFKA-SECRET|'"$CONFLUENT_SECRET"'|g' kafka-secrets.sample.yaml > kafka-secrets.yaml
 kubectl apply -f kafka-secrets.yaml
-#sed 's|CONFLUENT-SERVER|'"$CONFLUENT_HOST"'|g' kafka-source-deploy.sample.yaml > kafka-source-deploy.yaml
-#kubectl apply -f kafka-source-deploy.yaml
+sed 's|CONFLUENT-SERVER|'"$CONFLUENT_HOST"'|g' kafka-source-deploy.sample.yaml > kafka-source-deploy.yaml
+kubectl apply -f kafka-source-deploy.yaml
 sed 's|CONFLUENT-SERVER|'"$CONFLUENT_HOST"'|g' kafka-source-display.sample.yaml > kafka-source-display.yaml
 kubectl apply -f kafka-source-display.yaml
 clear
