@@ -157,6 +157,8 @@ gcloud config set run/platform gke
 gcloud config set run/cluster $CLUSTER_NAME
 gcloud config set run/cluster_location $ZONE
 gcloud container clusters get-credentials $CLUSTER_NAME
+kubectl create namespace kafka-eventing
+gcloud config set run/namespace kafka-eventing
 
 ##### Get istio-gateway external IP
 echo "****** We are going to grab the external IP ******"
@@ -221,6 +223,7 @@ echo "****** Lets deploy our Currency App ******"
 gcloud beta run deploy currency-app --image gcr.io/$PROJECT_ID/currency-app \
 --platform gke --cluster $CLUSTER_NAME --cluster-location $ZONE \
 --connectivity=external \
+--namespace kafka-eventing
 --update-env-vars CONFLUENT_KEY=$CONFLUENT_KEY,CONFLUENT_SECRET=$CONFLUENT_SECRET,ALPHAVANTAGE_KEY=$AV_KEY,CONFLUENT_HOST=$CONFLUENT_HOST
 
 

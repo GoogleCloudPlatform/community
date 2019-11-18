@@ -70,9 +70,7 @@ metadata:
   name: hello-display
   namespace: kafka-eventing
 spec:
-  filter:
-    attributes:
-      source: sendoff
+  broker: default
   subscriber:
     ref:
      apiVersion: v1
