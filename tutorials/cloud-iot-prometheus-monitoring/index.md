@@ -538,7 +538,7 @@ which can be grouped.
 
 The chart that you deployed contains two preconfigured alerting rules:
 
-```
+```yaml
     alerts:
       groups:
         - name: device_alerts

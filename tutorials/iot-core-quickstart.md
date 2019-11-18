@@ -17,6 +17,8 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 
 </walkthrough-alt>
 
+<!-- {% setvar project_id "<your-project>" %} -->
+
 ## Introduction
 
 [Cloud IoT Core](https://cloud.google.com/iot/docs/) is a fully managed service for connecting
