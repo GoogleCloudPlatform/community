@@ -223,7 +223,7 @@ echo "****** Lets deploy our Currency App ******"
 gcloud beta run deploy currency-app --image gcr.io/$PROJECT_ID/currency-app \
 --platform gke --cluster $CLUSTER_NAME --cluster-location $ZONE \
 --connectivity=external \
---namespace kafka-eventing
+--namespace kafka-eventing \
 --update-env-vars CONFLUENT_KEY=$CONFLUENT_KEY,CONFLUENT_SECRET=$CONFLUENT_SECRET,ALPHAVANTAGE_KEY=$AV_KEY,CONFLUENT_HOST=$CONFLUENT_HOST
 
 
