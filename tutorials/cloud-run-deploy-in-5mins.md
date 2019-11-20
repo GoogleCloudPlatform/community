@@ -51,7 +51,7 @@ Run the following command in Cloud Shell to build our Docker image and push the 
 
 Replace `[PROJECT_ID]` with your actual project ID value.
 
-Note that if you’re building larger images, you can pass a timeout parameter such as `_--timeout=600s_` as part of this
+Note that if you’re building larger images, you can pass a timeout parameter such as `--timeout=600s` as part of this
 command.
 
 # Deploy to Cloud Run
