@@ -1,6 +1,6 @@
 ---
 title: Scheduling periodic jobs with Cloud Scheduler
-description: Schedule virtually any job, including batch, big data jobs, cloud infrastructure operations, and more with Cloud Scheduler.   
+description: Schedule virtually any job, including batch, big data jobs, cloud infrastructure operations, and more with Cloud Scheduler.
 author: timtech4u
 tags: Cloud Scheduler, Cron, Automation
 date_published: 2019-11-21
