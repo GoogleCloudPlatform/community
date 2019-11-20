@@ -47,7 +47,7 @@ project files (which include a Dockerfile).
 Run the following command in Cloud Shell to build our Docker image and push the image to
 [Container Registry](https://cloud.google.com/container-registry/):
 
-    gcloud builds submit --tag gcr.io/[PROJECT_ID]/demo-image .</span>
+    gcloud builds submit --tag gcr.io/[PROJECT_ID]/demo-image .
 
 Replace `[PROJECT_ID]` with your actual project ID value.
 
