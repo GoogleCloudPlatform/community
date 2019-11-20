@@ -39,7 +39,7 @@ In this article, we’ll quickly build a containerized application and deploy it
 
 Get the sample code from [GitHub Gist](https://gist.github.com/Timtech4u/6639a92b4197ea831ba9b975c9b34a76).
 
-# Build and publish container images
+## Build and publish container images
 
 [Cloud Build](https://cloud.google.com/cloud-build/) allows us to build Docker images in the cloud. We just need our
 project files (which include a Dockerfile).
@@ -54,13 +54,15 @@ Replace `[PROJECT_ID]` with your actual project ID value.
 Note that if you’re building larger images, you can pass a timeout parameter such as `--timeout=600s` as part of this
 command.
 
-# Deploy to Cloud Run
+## Deploy to Cloud Run
 
 Deploy our image from Cloud Shell using the following command:
 
     gcloud beta run deploy demo-app --image gcr.io/[PROJECT_ID]/demo-image --region us-central1 --platform managed --allow-unauthenticated --quiet
 
 Boom! You have deployed the application container to Cloud Run.
+
+## Next steps
 
 Cloud Run is worth looking into by teams. It provides affordability, security, isolation, and flexibility by allowing
 deployment to a Kubernetes cluster
@@ -71,8 +73,6 @@ Cloud Run.
 
 [This video](https://youtu.be/14B2zdoBnIY) demonstrates deploying directly to Cloud Run from your Git repository using the
 Cloud Run Button.
-
-## Next steps
 
 If you want to learn more about Cloud Run, check out the following resources:
 
