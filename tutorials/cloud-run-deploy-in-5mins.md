@@ -1,14 +1,14 @@
 ---
-title: Deploying containers to Cloud Run in 5 minutes
+title: Deploy a container to Cloud Run in 5 minutes
 description: Quickly build and deploy a containerized application and deploy it to Cloud Run.
 author: timtech4u
 tags: Cloud Run, Container Registry, Cloud Build
 date_published: 2019-11-20
 ---
 
-**Cloud Run is now generally available.**
+**[Cloud Run](https://cloud.google.com/run/) is now generally available.**
 
-Learn more on the
+Learn more about Cloud Run on the
 [Google website](https://cloud.google.com/blog/products/serverless/knative-based-cloud-run-services-are-ga), in
 [this announcement](https://twitter.com/ahmetb/status/1195056373983145984), and in
 [this video](https://youtu.be/gx8VTa1c8DA).
@@ -19,13 +19,12 @@ dependencies into an efficient way of running it across different environments.
 
 Deploying containers (Docker or Kubernetes) can also be a headache when you have to take care of provisioning the 
 underlying infrastructure. However, Google Cloud provides a way for you to deploy containerized applications to the cloud in
-a serverless fashion using [*Cloud Run*](https://cloud.google.com/run/), which abstracts away the underlying 
-infrastructure and runs and scales your stateless application automatically.
+a serverless fashion using Cloud Run, which abstracts away the underlying infrastructure and runs and scales your stateless
+application automatically.
 
 ## Objective
 
-In this article, we’ll briefly build a containerized application and deploy it to Cloud Run.
-
+In this article, we’ll quickly build a containerized application and deploy it to Cloud Run.
 
 ## Before you begin
 
