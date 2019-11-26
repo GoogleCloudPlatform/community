@@ -1,96 +1,129 @@
 ---
-title: Serverless Eventings with Cloud Run on Anthos with Knative Evetning and Apache Kafka from Confluent
-description: Create a simple event driven application for currency exchange rate traking.
+title: Serverless eventing with Cloud Run on Anthos with Knative Eventing and Apache Kafka
+description: Create a simple event-driven application for currency exchange rate tracking.
 author: thejaysmith
 tags: Serverless, Eventing, Cloud Run, Kafka, Knative
-date_published: 2019-11-04
+date_published: 2019-11-27
 ---
 
 * Jason "Jay" Smith | Customer Engineer Specialist | Google Cloud
 
-## Using Google Cloud Run with Knative Eventing and Confluent Cloud
+## Using Cloud Run with Knative Eventing and Confluent Cloud
 
-[Cloud Run](https://cloud.google.com/run/ "Cloud Run") is a Google Cloud Platform offering built on the [Knative Serving](https://knative.dev/docs/serving/ "Knative Serving") APIs. This brought a lot of serverless practices to Kubernetes, allowing developers to focus on code while the operators focus on the infrastructure.
+[Cloud Run](https://cloud.google.com/run/ "Cloud Run") is a Google Cloud offering built on the
+[Knative Serving](https://knative.dev/docs/serving/) APIs, which brings serverless practices to Kubernetes, allowing 
+developers to focus on code while operators focus on the infrastructure.
 
-Developers are allowed to containerize their applications and deploy them into the cloud without worrying about configuring networking, machine types, etc. By default, Cloud Run listens to HTTP and HTTPS traffic. In a world of event streaming, we need to concern ourselves with other types of event sources.
+Developers can containerize their applications and deploy them to the cloud without worrying about configuring networking,
+machine types, and so on. By default, Cloud Run listens to HTTP and HTTPS traffic. In a world of event streaming, we need to
+concern ourselves with other types of event sources, too.
 
-One popular tool for handling event streaming in a scalable manner is [Apache Kafka](https://kafka.apache.org). Google Cloud has a fully managed Kafka solution through our SaaS partner [Confluent](https://confluent.io).
+One popular tool for handling event streaming in a scalable manner is [Apache Kafka](https://kafka.apache.org). Google Cloud 
+has a fully managed Kafka solution through our SaaS partner [Confluent](https://confluent.io).
 
-For this demo, we will be using [Confluent Cloud](https://www.confluent.io/confluent-cloud/) as well as [AlphaVantage](https://www.alphavantage.co/). Both offer a free tier solution so using them won't cost anything additionally within the scope of this demo. I would recommend destroying your cluster afterwards to prevent paying for anything after the fact.
+For this demonstration, we use [Confluent Cloud](https://www.confluent.io/confluent-cloud/) and
+[AlphaVantage](https://www.alphavantage.co/). Both offer a free-tier solution, so using them for this demonstration won't
+incur additional charges. We recommend deleting your cluster after you have finished with this tutorial, to prevent 
+incurring charges.
 
-In `kafka-cr-eventing/scripts` you will see `setup.sh`. If you want to do this the easy way, simply run the following commands and follow the prompts. BUT FIRST, let's setup an account with AlphaVantage [here](https://www.alphavantage.co/support/#api-key) to get a free API Key as well as signing up for Confluent Cloud as seen [here](https://confluent.cloud/signup).
+## Before you begin
 
-***I would also recommend running this script in Cloud Shell vs running it on your own machine as it will attempt to install GoLang.***
+1. Set up an account with [AlphaVantage](https://www.alphavantage.co/support/#api-key) to get a free API key.
+1. Sign up for [Confluent Cloud](https://confluent.cloud/signup).
 
-This script will do a few things for you. First it will check to see if [GoLang 1.13.1](https://golang.org/doc/go1.13), [Google Cloud SDK](https://cloud.google.com/sdk/), and [Confluent Cloud CLI](https://docs.confluent.io/current/cloud/cli/install.html) if these aren't already installed.
+## Run the setup script
 
-It will then enable different Google Cloud APIs, install a GKE cluster, prepare that cluster for Cloud Run, and deploy an app that collects currency exchange information.
+The `kafka-cr-eventing/scripts` folder contains the `setup.sh` setup script for this demonstration. 
 
-So let's execute the script below. **Note:** *I encourage reading through the script to see what it actually does*
+Note: We recommend that you run this script in [Cloud Shell](https://cloud.google.com/shell/), rather than running it on
+your local machine.
 
-``` bash
-export CLUSTER_NAME="kafka-events" #You can change this to whatever you want"
-export AV_KEY="<your AlphaVantage Key>"
+The setup installs [GoLang 1.13.1](https://golang.org/doc/go1.13), [Google Cloud SDK](https://cloud.google.com/sdk/), and 
+[Confluent Cloud CLI](https://docs.confluent.io/current/cloud/cli/install.html) if they aren't already installed.
+
+The setup script then enables some Google Cloud APIs, installs a GKE cluster, prepares that cluster for Cloud Run, and
+deploys an app that collects currency exchange information.
+
+Note: We encourage you to read through the script for the details of what it does.
+
+To execute the script, run the following commands (replacing `[your_AlphaVantage_API_key]` with the API key value):
+
+```bash
+export CLUSTER_NAME="kafka-events" #You can change this to whatever you want.
+export AV_KEY="[your_AlphaVantage_API_key]"
 chmod +x setup.sh
 ./setup.sh
 ```
 
-Once the script is done, let's take the next step. Give it about a minute of two from the cronjob to run. Open a tab in your terminal and run this command.
+Wait for a couple of minutes for all of the steps in the script to finish.
 
-``` bash
-ccloud kafka topic consume cloudevents #Note, you may need to login with 'ccloud login`
-```
+## Use the simple streaming event serverless application
 
-You will leave this running and it will show you events being written to your Kafka topic. Now let's run `kubectl get pods` and you should see something like this.
+1.  After the script has finished, open a tab in your terminal and run this command:
 
-```bash
-currency-app-l6g6g-deployment-5d679fcf5c-mnvjh    2/2     Running   0          62s
-event-display-hbrjj-deployment-79f85796d9-n4ftd   2/2     Running   0          5s
-kafka-source-9mmvw-78cf98d4c4-g4pmm               1/1     Running   0          10s
-```
+        ccloud kafka topic consume cloudevents
+        
+    Note:  You may need to log in with `ccloud login`.
 
-Take the event-display-xxxxx-deployment-xxx-xxxx pods and let's check the logs.
+    You will leave this running, and it will show you events being written to your Kafka topic.
+    
+1.  Run this command:
 
-```bash
-$ kubectl logs event-display-hbrjj-deployment-79f85796d9-n4ftd -c user-container
-☁️  cloudevents.Event
-Validation: valid
-Context Attributes,
-  specversion: 0.2
-  type: dev.knative.kafka.event
-  source: /apis/v1/namespaces/default/kafkasources/kafka-source#cloudevents
-  id: partition:1/offset:11
-  time: 2019-11-04T21:11:55.111Z
-  contenttype: application/json
-Extensions,
-  key:
-Data,
-  "MTA4LjU5MDAwMDAw"
-☁️  cloudevents.Event
-Validation: valid
-Context Attributes,
-  specversion: 0.2
-  type: dev.knative.kafka.event
-  source: /apis/v1/namespaces/default/kafkasources/kafka-source#cloudevents
-  id: partition:3/offset:7
-  time: 2019-11-04T21:12:02.879Z
-  contenttype: application/json
-Extensions,
-  key:
-Data,
-  "MTA4LjU5MDAwMDAw"
-```
+        kubectl get pods
+        
+    You should see something like this:
 
-Under **Data** you should see something like `MTA4LjU5MDAwMDAw`. Yours may look a little different. CloudEvents are in Base64 so let's decode it.
+        currency-app-l6g6g-deployment-5d679fcf5c-mnvjh    2/2     Running   0          62s
+        event-display-hbrjj-deployment-79f85796d9-n4ftd   2/2     Running   0          5s
+        kafka-source-9mmvw-78cf98d4c4-g4pmm               1/1     Running   0          10s
 
-```bash
-$ echo `echo MTA4LjU5MDAwMDAw | base64 --decode`
-108.59000000
-```
+1.  Check the logs for the `event-display-xxxxx-deployment-xxx-xxxx` pods:
 
-This should be your exchange rate and if you look at your ccloud tab in terminal, it should match the consumed message. Congratulations, you have now created a simple streaming event serverless application.
+        $ kubectl logs event-display-hbrjj-deployment-79f85796d9-n4ftd -c user-container
+        ☁️  cloudevents.Event
+        Validation: valid
+        Context Attributes,
+          specversion: 0.2
+          type: dev.knative.kafka.event
+          source: /apis/v1/namespaces/default/kafkasources/kafka-source#cloudevents
+          id: partition:1/offset:11
+          time: 2019-11-04T21:11:55.111Z
+          contenttype: application/json
+        Extensions,
+          key:
+        Data,
+          "MTA4LjU5MDAwMDAw"
+        ☁️  cloudevents.Event
+        Validation: valid
+        Context Attributes,
+          specversion: 0.2
+          type: dev.knative.kafka.event
+          source: /apis/v1/namespaces/default/kafkasources/kafka-source#cloudevents
+          id: partition:3/offset:7
+          time: 2019-11-04T21:12:02.879Z
+          contenttype: application/json
+        Extensions,
+          key:
+        Data,
+          "MTA4LjU5MDAwMDAw"
 
-Now we will teardown what we built using our cleanup script. ***Running this script will delete whatever cluster is assigned to the bash variable `$CLUSTER_NAME`. Be sure that you only assign the cluster that you created for this demo.
+    Under `Data` you should see something like `MTA4LjU5MDAwMDAw`. Yours may look a little different. 
+    
+1.  Cloud events are encoded in base64, so let's decode it:
+    
+        $ echo `echo MTA4LjU5MDAwMDAw | base64 --decode`
+        108.59000000
+
+    This is your exchange rate. Look at your ccloud tab in the terminal, to check that it matches the consumed message. 
+    
+Congratulations, you have now created a simple streaming event serverless application.
+
+## Cleaning up
+
+Now, it's time to clean up what you built using the cleanup script.
+
+Running this script will delete whatever cluster is assigned to the bash variable `$CLUSTER_NAME`. Be sure that you only 
+assign the cluster that you created for this demo.
 
 ```  bash
 export CLUSTER_NAME="YOUR CLUSTER"
@@ -101,4 +134,3 @@ chmod +x cleanup.sh
 ```
 
 You are now good to go!
-[EOF]
