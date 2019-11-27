@@ -6,7 +6,7 @@ tags: Serverless, Eventing, Cloud Run, Kafka, Knative
 date_published: 2019-11-27
 ---
 
-* Jason "Jay" Smith | Customer Engineer Specialist | Google Cloud
+Jason "Jay" Smith | Customer Engineer Specialist | Google Cloud
 
 ## Using Cloud Run with Knative Eventing and Confluent Cloud
 
@@ -35,16 +35,15 @@ incurring charges.
 
 The `kafka-cr-eventing/scripts` folder contains the `setup.sh` setup script for this demonstration. 
 
-Note: We recommend that you run this script in [Cloud Shell](https://cloud.google.com/shell/), rather than running it on
+We recommend that you run this script in [Cloud Shell](https://cloud.google.com/shell/), rather than running it on
 your local machine.
 
 The setup installs [GoLang 1.13.1](https://golang.org/doc/go1.13), [Google Cloud SDK](https://cloud.google.com/sdk/), and 
-[Confluent Cloud CLI](https://docs.confluent.io/current/cloud/cli/install.html) if they aren't already installed.
+[Confluent Cloud CLI](https://docs.confluent.io/current/cloud/cli/install.html) if they aren't already installed. The setup 
+script then enables some Google Cloud APIs, installs a GKE cluster, prepares that cluster for Cloud Run, and deploys an app 
+that collects currency exchange information.
 
-The setup script then enables some Google Cloud APIs, installs a GKE cluster, prepares that cluster for Cloud Run, and
-deploys an app that collects currency exchange information.
-
-Note: We encourage you to read through the script for the details of what it does.
+We encourage you to read through the script for the details of what it does.
 
 To execute the script, run the following commands (replacing `[your_AlphaVantage_API_key]` with the API key value):
 
