@@ -84,21 +84,21 @@ When you finish this tutorial, you can avoid continued billing by deleting the r
 ## Description of the policy
 
 The alert will be created with the
-[gcloud alpha monitoring policies create](https://cloud.google.com/sdk/gcloud/reference/alpha/monitoring/policies/create)
+[`gcloud alpha monitoring policies create`](https://cloud.google.com/sdk/gcloud/reference/alpha/monitoring/policies/create)
 command, which uses the Stackdriver Monitoring API. The specific REST resource used in that API is
 [AlertPolicy](https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.alertPolicies#AlertPolicy).
 
 This alert policy has two conditions:
 
--   Condition #1: Detect when the logic for writing time-series is broken
+-   Condition #1: Detect when the logic for writing time-series is broken.
 
-    Use a metric absence with a “crossSeriesReducer” that combines all of the time-series from different data sources 
-    together. That is: only fire when ALL of the time-series are absent, which would be expected to happen if there is 
-    something fundamentally broken with the time-series writing logic with the underlying assumption that all of the data 
+    Use a metric absence with a “crossSeriesReducer” that combines all of the time series from different data sources 
+    together. That is, only fire when *all* of the time series are absent, which would be expected to happen if there is 
+    something fundamentally broken with the time series writing logic, with the underlying assumption that all of the data 
     sources share the same logic for reporting the data.
 
--   Condition #2: Detect when one or more partitions fail to report data independent of the others, i.e. a cause other than
-    the time-series writing logic, such as loss of connectivity of a particular instance.
+-   Condition #2: Detect when one or more partitions fail to report data independent of the others⁠—i.e., a cause other than
+    the time series writing logic, such as loss of connectivity of a particular instance.
 
     For this condition, we use a
     [metric threshold](https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.alertPolicies#MetricThreshold)
@@ -124,8 +124,8 @@ The example app is based on the Go code in
 for a metric called `task_latency_distribution`. The app code has been extended to tag the time series with partition labels 
 and run indefinitely.
 
-If you run the test app on a Google Cloud Compute Engine instance, Google Kubernetes Engine, or Google Cloud serverless 
-environment you do not need to create a service account or download the credentials. For details, see
+If you run the test app on a Compute Engine instance, Google Kubernetes Engine, or Google Cloud serverless 
+environment, then you do not need to create a service account or download the credentials. For details, see
 [Setting up authentication](https://cloud.google.com/monitoring/docs/reference/libraries#setting_up_authentication).
 
 ### Install Go
@@ -182,10 +182,10 @@ Notice that the time series can be grouped by partition.
 ### Create a notification channel
 
 The notification channel can be created with the
-[gcloud alpha monitoring channels](https://cloud.google.com/sdk/gcloud/reference/alpha/monitoring/channels/)
+[`gcloud alpha monitoring channels`](https://cloud.google.com/sdk/gcloud/reference/alpha/monitoring/channels/)
 command. 
 
-Create a notification channel with the command, replacing your email address for the shell variable `EMAIL`:
+Create a notification channel with the command, replacing `[your_email_address]` with your email address:
 
     EMAIL="[your_email_address]"
     CHANNEL=$(gcloud alpha monitoring channels create \
@@ -213,7 +213,7 @@ Run the following in a new command shell:
 
 The policy includes the notification channel created above and the
 [alert documentation](https://cloud.google.com/monitoring/alerts/using-alerting-ui#documentation)
-content in markdown form in file `policy_doc.md`. This is a  good place to add playbook-like instructions to assist the 
+content in markdown form in the `policy_doc.md` file. This is a  good place to add playbook-like instructions to assist the 
 on-call person who responds to the alert. The documentation includes
 [template variables](https://cloud.google.com/monitoring/alerts/doc-variables)
 to make the content as relevant as possible.
@@ -222,7 +222,7 @@ At this point, no alerts should be firing. You can check that in the Stackdriver
 
 ### Test the policy
 
-1.  Kill the processes with Control-c and restart it with only two partitions:
+1.  Kill the processes with Control-c and restart the app with only two partitions:
 
         ./alert-absence-demo --labels "1,2"
 
@@ -235,7 +235,7 @@ At this point, no alerts should be firing. You can check that in the Stackdriver
 
         ./alert-absence-demo "1,2,3"
 
-    After a few minutes, the alert should resolve itself.
+    After a few minutes, the alert should be resolved.
 
 1.  Stop the process and restart it with only one partition:
 
@@ -261,7 +261,8 @@ the project that you created for the tutorial.
 ### Delete the project
 
 1.  In the Cloud Console, go to the Projects page.
-[GO TO THE PROJECTS PAGE](https://console.cloud.google.com/iam-admin/projects)
+
+    [GO TO THE PROJECTS PAGE](https://console.cloud.google.com/iam-admin/projects)
 
 1.  In the project list, select the project that you want to delete and click **Delete**.
 
@@ -269,6 +270,6 @@ the project that you created for the tutorial.
 
 ## What's next
 
-* Take a look at some more [Sample alert policies](https://cloud.google.com/monitoring/alerts/policies-in-json).
+* Take a look at some more [sample alert policies](https://cloud.google.com/monitoring/alerts/policies-in-json).
 * Try out other Google Cloud features for yourself. Have a look at our
 [tutorials](https://cloud.google.com/tutorials/).
