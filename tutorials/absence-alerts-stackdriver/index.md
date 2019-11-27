@@ -1,7 +1,6 @@
 ---
 title: Scaling times series absence alerts with Stackdriver
-description: Create alerts for missing monitoring data with Stackdriver, avoiding duplicate alerts so that you aren't 
-overwhelmed with notifications.
+description: Create alerts for missing monitoring data with Stackdriver, avoiding duplicate alerts so that you aren't overwhelmed with notifications.
 author: alexamies
 tags: Stackdriver, monitoring
 date_published: 2019-11-27
