@@ -1,5 +1,5 @@
 ---
-title: Scaling times series absence alerts with Stackdriver
+title: Scaling time series absence alerts with Stackdriver
 description: Create alerts for missing monitoring data with Stackdriver, avoiding duplicate alerts so that you aren't overwhelmed with notifications.
 author: alexamies
 tags: Stackdriver, monitoring
@@ -45,9 +45,11 @@ You can create a new one, or you can select a project that you have already crea
 workspace:
 
 1.  Select or create a GCP project.
+
     [GO TO THE MANAGE RESOURCES PAGE](https://console.cloud.google.com/cloud-resource-manager)
 
 1.  Enable billing for your project.
+
     [ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
 
 1.  In the Google Cloud Console, go to [Monitoring](https://console.cloud.google.com/monitoring).
