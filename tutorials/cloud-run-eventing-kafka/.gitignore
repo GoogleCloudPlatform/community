@@ -1,0 +1,7 @@
+kafka-secrets.yaml
+__pycache_
+kafka-source-deploy.yaml
+kafka-source-display.yaml
+kafka-source-display.orig.yaml
+logfile.txt
+.env
