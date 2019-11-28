@@ -1,0 +1,40 @@
+{
+  "name": "function-starter",
+  "version": "1.0.0",
+  "description": "Boilerplate for TS cloud functions",
+  "main": "index.js",
+  "author": "Preston Holmes <preston@ptone.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@google-cloud/functions-framework": "^1.1.0",
+    "@google-cloud/logging-winston": "^0.11.1",
+    "@types/redis": "^2.8.12",
+    "@types/redis-rate-limiter": "^1.2.1",
+    "firebase-admin": "^7.3.0",
+    "good-env": "^4.0.0",
+    "redis": "^2.8.0",
+    "redis-rate-limiter": "^1.2.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.1",
+    "@types/node": "^11.13.6",
+    "express": "^4.16.4",
+    "gts": "^0.9.0",
+    "ts-node": "^8.1.0",
+    "tsc-watch": "^2.1.2",
+    "typescript": "^3.4.4"
+  },
+  "scripts": {
+    "check": "gts check",
+    "clean": "gts clean",
+    "compile": "yarn tsc -p .",
+    "develop": "yarn tsc-watch --onSuccess 'yarn start'",
+    "fix": "gts fix",
+    "prepare": "yarn run compile",
+    "pretest": "yarn run compile",
+    "posttest": "yarn run check",
+    "deploy": "cp package.json build/ && yarn run compile && gcloud functions deploy --runtime nodejs10 --trigger-http --source ./build ${FUNCTION_TARGET}",
+    "start": "cd build;functions-framework --target ${FUNCTION_TARGET};cd .."
+  }
+}
