@@ -6,15 +6,15 @@ tags: Cloud Scheduler, Cron, Automation
 date_published: 2019-12-03
 ---
 
-Automating tasks that re-occur is definitely at the heart of every software developer. Google Cloud has a tool that allows 
-users to schedule jobs while maintaining the usual unix-cron format.  
+Automating tasks that re-occur is definitely at the heart of every software developer. Google Cloud provides Cloud Scheduler,
+a tool that allows users to schedule jobs with the conventional unix-cron format.  
 
-Cloud Scheduler can be referred to as *Cronjob as a Service* tool; it is fully managed by Google Cloud, so you don't need to 
-manage the scheduler's underlying infrastructure.
+Cloud Scheduler can be referred to as a *cron-job-as-a-service* tool. It is fully managed by Google Cloud, so you don't need 
+to manage the scheduler's underlying infrastructure.
 
 Cloud Scheduler can be used for multiple use cases, such as making requests to an HTTP/S endpoint, invoking a Pub/Sub topic, 
 making database updates and push notifications, triggering CI/CD pipelines, scheduling tasks such as image uploads and 
-sending an email, or even invoking Cloud Functions.
+sending email, and even invoking Cloud Functions.
 
 ## Objective
 
@@ -43,7 +43,7 @@ services to prevent them from having cold starts. Get the code from [GitHub](htt
 
 1.  **Target**: Select **HTTP**.
 
-1.  **URL**: Enter your application or function URL.
+1.  **URL**: Enter the application or function URL.
 
 1.  **HTTP Method**: Select **GET**.
 
