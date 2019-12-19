@@ -1,7 +1,7 @@
 #Deploy React and Nginx to Google Cloud Run.
 
 In this tutorial you'll learn how to run a Create-React-App (CRA) with Nginx and deploy it to Google Cloud Run.
-Although other services in Google Cloud Platform can easily serve similar web applications, Google Cloud Run is a good option in case some customization is needed to the underlying runtime.
+Although other services in Google Cloud Platform can easily serve similar web applications, Google Cloud Run is a good option in cases where some customization is needed to the underlying runtime.
 
 ## Before you begin.
 You'll need
@@ -15,9 +15,9 @@ Basic understanding of single page applications(SPA) is also desired.
 
 Clone the pre-configured React App to your computer by running the following command.
 
-    git clone....
+    git clone https://github.com/GoogleCloudPlatform/community
 
-Open the folder ... and open the file src/App.js with your preferred code editor. Notice the use of react-router-dom to create 3 routes (/, /users, /about)  and some links to browse between them.
+Open open the file ``tutorials/deploy-react-nginx-cloud-run/src/App.js`` with your preferred code editor. Notice the use of react-router-dom to create 3 routes ``/``, ``/users``, ``/about``,  and some links to browse between them.
 
 ## Enable the necessary APIs in the Google Cloud Platform Console
 Log in to the Google Cloud Platform Console and open the navigation menu, located in the top left portion of the page. 
@@ -84,7 +84,7 @@ Create a file in the root of the project named ``nginx.conf`` and add the follow
   
       cd C:\tutorials\react-cloud-run\
   
-   **Note:** Make sure you have logged in and selected a working project in the Google Cloud SDK, more information here.
+   **Note:** Make sure you have logged in and selected a working project in the Google Cloud SDK, more information  [in this link](https://cloud.google.com/sdk/gcloud/reference/config/set "Gcloud config set").
  
  ###Building the Docker container
  
