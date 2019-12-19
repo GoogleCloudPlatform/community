@@ -1,0 +1,32 @@
+[
+    {
+        "name": "device_id",
+        "type": "STRING",
+        "mode": "REQUIRED"
+    },
+    {
+        "name": "time",
+        "type": "TIMESTAMP",
+        "mode": "REQUIRED"
+    },
+    {
+        "name": "pressure",
+        "type": "FLOAT64",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "ambient_light",
+        "type": "FLOAT64",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "temperature",
+        "type": "FLOAT64",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "humidity",
+        "type": "FLOAT64",
+        "mode": "NULLABLE"
+    }
+]

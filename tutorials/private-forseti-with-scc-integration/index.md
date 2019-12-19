@@ -74,11 +74,11 @@ In the `forseti` project, do the following:
     that you obtain an API key before proceeding, because it will ask you during this step.)
 
         cd forseti-security
-        python install/gcp_installer.py /
-        --vpc-host-network [NETWORK_NAME] /
-        --vpc-host-subnetwork [SUBNETWORK_NAME] /
-        --gsuite-superadmin-email [SUPER_ADMIN_ACCOUNT] /
-        --cloudsql-region [REGION_NAME] /
+        python install/gcp_installer.py \
+        --vpc-host-network [NETWORK_NAME] \
+        --vpc-host-subnetwork [SUBNETWORK_NAME] \
+        --gsuite-superadmin-email [SUPER_ADMIN_ACCOUNT] \
+        --cloudsql-region [REGION_NAME] \
         --gcs-location [REGION_NAME]
 
     For `[REGION_NAME]`, use the region that you created the subnetwork on.
@@ -86,11 +86,11 @@ In the `forseti` project, do the following:
     For example, these are the commands using the values from the example above:
 
         cd forseti-security
-        python install/gcp_installer.py /
-        --vpc-host-network forseti /
-        --vpc-host-subnetwork forseti-subnet1 /
-        --gsuite-superadmin-email [SUPER_ADMIN_ACCOUNT] /
-        --cloudsql-region us-east4 /
+        python install/gcp_installer.py \
+        --vpc-host-network forseti \
+        --vpc-host-subnetwork forseti-subnet1 \
+        --gsuite-superadmin-email [SUPER_ADMIN_ACCOUNT] \
+        --cloudsql-region us-east4 \
         --gcs-location us-east4
 
     With this step, you are essentially running Deployment Manager to create the components necessary to install Forseti.

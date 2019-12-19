@@ -1,16 +1,14 @@
 ---
-title: App Engine Quickstart using .NET
+title: App Engine quickstart using .NET
 description: Learn how to deploy a .NET sample app to App Engine.
 author: jscud
 tags: App Engine
 date_published: 2019-03-22
 ---
 
-# App Engine Quickstart
+# App Engine quickstart using .NET
 
 <walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/flexible/dotnet/quickstart"></walkthrough-tutorial-url>
-<!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/dotnet-docs-samples" %} -->
-<!-- {% setvar repo_dir "dotnet-docs-samples/appengine/flexible/HelloWorld" %} -->
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
 
 <walkthrough-alt>
@@ -72,13 +70,13 @@ is cloned from your project repository to the Cloud Shell.
 Note: If the directory already exists, remove the previous files before cloning.
 
 ```bash
-git clone {{repo_url}}
+git clone https://github.com/GoogleCloudPlatform/dotnet-docs-samples
 ```
 
 Then, switch to the tutorial directory:
 
 ```bash
-cd {{repo_dir}}
+cd dotnet-docs-samples/appengine/flexible/HelloWorld
 ```
 
 ## Configuring your deployment

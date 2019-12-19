@@ -42,7 +42,8 @@ First, install the `gcloud` and `kubectl` command line tools. Follow the instruc
 % sudo gcloud components update kubectl
 ```
 
-We need to install Telepresence, which will proxy your locally running service to Kubernetes Engine (for the latest installation instructions and documentation, visit [the Telepresence website](http://www.telepresence.io)).
+You need to install Telepresence, which will proxy your locally running service to Google Kubernetes Engine. (For the latest 
+installation instructions and documentation, visit [the Telepresence website](http://www.telepresence.io).)
 
 On OS X:
 
@@ -86,7 +87,9 @@ All example files are in the [`examples/guestbook`](https://github.com/datawire/
 
 Setting up a production-ready Kubernetes cluster can be fairly complex, so we're going to use Google Kubernetes Engine in our example. If you already have a Kubernetes cluster handy, you can skip this section.
 
-To set up a Kubernetes cluster in Kubernetes Engine, go to [https://console.cloud.google.com](https://console.cloud.google.com), choose the Google Kubernetes Engine option from the menu, and then Create a Cluster.
+To set up a Kubernetes cluster in Google Kubernetes Engine, go to
+[https://console.cloud.google.com](https://console.cloud.google.com), choose the Google Kubernetes Engine option from the 
+menu, and then **Create a cluster**.
 
 The following `gcloud` command will create a small 2 node cluster in the us-central1-a region:
 
@@ -176,7 +179,7 @@ What's going on behind the scenes? Your incoming request goes to the load balanc
 * [Setting up a Python development environment for Docker](http://matthewminer.com/2015/01/25/docker-dev-environment-for-web-app.html) covers how to configure your Docker image for hot reload
 * [Doing the same for NodeJS](http://fostertheweb.com/2016/02/nodemon-inside-docker-container/)
 * The [Microservices Architecture Guide](https://www.datawire.io/guide) covers design patterns and HOWTOs in setting up an end-to-end microservices infrastructure
-* The [Kubernetes tutorial](https://kubernetes.io/docs/tutorials/kubernetes-basics/) gives a good walk-through of using Kubernetes, or visit the [Google Kubernetes Engine Quickstart](https://cloud.google.com/kubernetes-engine/docs/quickstart)
+* The [Kubernetes tutorial](https://kubernetes.io/docs/tutorials/kubernetes-basics/) gives a good walk-through of using Kubernetes, or visit the [Google Kubernetes Engine quickstart](https://cloud.google.com/kubernetes-engine/docs/quickstart)
 
 ## Conclusion
 
