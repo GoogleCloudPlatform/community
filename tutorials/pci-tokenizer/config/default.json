@@ -3,16 +3,10 @@
 // See above for more information on comments, environment-specific configs, and more.
 {
   "general": {
-    "project_id":        ""
+    "project_id": ""
   },
-  "kms": {
-    "key_ring_location": "global",
-    "key_ring_id":       "tokenization-service",
-    "crypto_key_id":     "tokenization-v1"
-  },
-  "datastore": {
-    "namespace":         "tokenizer",
-    "kind":              "cc"
+  "dlp": {
+    "crypto_key": "PROVIDE A VALUE OF 16, 24, or 32 BYTES",
   },
   "logging": {
     "debug":             false,
