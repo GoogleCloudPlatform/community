@@ -2,7 +2,7 @@
 title: Credit card tokenization service for Google Cloud Platform
 description: Deploy a PCI DSS ready credit card tokenization service.
 author: ianmaddox
-tags: serverless, cloud functions, javascript, iam, PCI, DSS, credit, card
+tags: serverless, cloud run, DLP, javascript, iam, PCI, DSS, credit, card
 date_published: 2019-12-18
 ---
 
@@ -26,7 +26,7 @@ The tokens created by this service are encrypted using [AES in Synthetic Initial
 This service relies on a secret encryption key stored in the [config/*.json](./config/) files. Before deploying to production, this plaintext key should be switched to a Cloud KMS wrapped key which will add an additional layer of security. See [DLP format-preserving encryption (FPE)](https://cloud.google.com/dlp/docs/deidentify-sensitive-data#cryptoreplaceffxfpeconfig) for information on how to wrap crypto keys.
 
 ### Access control
-Setting the --no-allow-unauthenticated prevents anonymous calls to your tokenization service. In order to grant access, you must navigate to [your tokenization service in the console](https://pantheon.corp.google.com/run) and add the service accounts and users authorized to invoke the service.
+Setting the --no-allow-unauthenticated prevents anonymous calls to your tokenization service. In order to grant access, you must navigate to [your tokenization service in the console](https://pantheon.corp.google.com/run) and add the service accounts and users authorized to invoke the service. They will need to be granted the [Cloud Run Invoker](https://cloud.google.com/run/docs/reference/iam/roles) IAM role.
 
 ### Salting and additional encryption
 The userID provided in the tokenization and detokenization requests is both a salt and validating factor. The addition of additional salt or encryption wrappers is possible by modifying [app.js](./src/app.js).
@@ -51,21 +51,25 @@ The userID provided in the tokenization and detokenization requests is both a sa
 
 1. Run the following commands to check out the project code and move into your working directory:
 ```
-git clone https://github.com/GoogleCloudPlatform/community/tutorials
-cd gcp-pci-tokenizer
+git clone https://github.com/GoogleCloudPlatform/community gcp-community
+cd gcp-community/tutorials/pci-tokenizer
 ```
 1. See the configuration file `config/default.json` for available options before proceeding. Copy `config/default.json` to `config/local.json` and make edits there. More functionality is available for [environment-specific configs](https://www.npmjs.com/package/config).
 
-  `general.project_id` can be set here. The value can be set or overridden with each API call.
+  `general.project_id` is required but it can either be set here or with each API call. API call project_id overrides this value if both are set.
 
   `dlp.crypto_key` is required to perform tokenization. Use a string 16, 24, or 32 bytes long
 
 # Containerizing and deploying the tokenizer service
 1. Assign your Google Cloud project ID to a variable for ease of use:
-  `PROJECT=[PROJECT-ID]`
+
+  ```
+  PROJECT=[PROJECT-ID]
+  ```
   where PROJECT-ID is your GCP project ID. You can get it by running gcloud config get-value project.
 
 1. Build your container image using Cloud Build, by running the following command from the directory containing the Dockerfile:
+
   ```
   gcloud builds submit --tag gcr.io/$PROJECT/tokenizer
   ```
@@ -73,8 +77,10 @@ cd gcp-pci-tokenizer
 
 1. Deploy using the following command:
 ```
-gcloud run deploy --image gcr.io/$PROJECT/tokenizer --platform managed --no-allow-unauthenticated --region us-central1 --memory 128M
+gcloud run deploy tokenizer --image gcr.io/$PROJECT/tokenizer --platform managed --no-allow-unauthenticated --region us-central1 --memory 128M
 ```
+ - `tokenizer` is the name of your service.
+ - `--image` is the image you created in the previous step
  - `--platform` should be set to managed
  - `--no-allow-unauthenticated` prevents anonymous calls
  - `--region` can be changed as desired to any of the [available regions](https://cloud.google.com/run/docs/locations).
@@ -123,4 +129,4 @@ Response:
 ```
 
 # Examples
-Example curl invocations of the tokenization and detokenization process can be found in ./examples. See [./examples/README.md](the readme file) for information on how to configure and use the example scripts on your tokenization service.
+Example curl invocations of the tokenization and detokenization process can be found in ./examples. See [the readme file](./examples/README.md) for information on how to configure and use the example scripts on your tokenization service.

@@ -3,7 +3,7 @@
 Simple utilities to demonstrate tokenization and detokenization of credit card numbers. Not for production use.
 
 ## Installation
-These scripts are only usable after installing your Cloud Run Tokenization service. See `../index.md` for more info.
+These scripts are only usable after installing your Cloud Run Tokenization service. See [../index.md](../index.md) for more info.
 
 ## Configuration
 Before you can run the tokenizer, you must provide the URL of the project running the Cloud Run Tokenization Service in the file `envvars`. You will need to provide the name of the project if you didn't enter it into the service config file.

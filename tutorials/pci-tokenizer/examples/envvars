@@ -1,7 +1,7 @@
 #Environmental variables used by the example tokenization scripts
 
 #Enter the URL to your Cloud Run Tokenization Service here:
-URL="https://tokenizer-5kedw2ghgq-uc.a.run.app"
+URL=""
 
 #Optionally enter the project ID here. Can also be provided in the service config file.
 PROJECT=""
