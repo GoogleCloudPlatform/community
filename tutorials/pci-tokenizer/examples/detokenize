@@ -8,7 +8,9 @@
 # Usage:
 # detokenize "CC_TOKEN_VALUE" ["USER_ID_VALUE"]
 
-. ./envvars
+. $(dirname "$0")/envvars
+test -f $(dirname "$0")/local.envvars && . $(dirname "$0")/local.envvars
+
 
 if [ "$URL" = "" ]; then
   echo "Error: Populate the tokenizer URL in ./envvars"
@@ -34,4 +36,4 @@ fi
 
 echo "Detokenizing: $CC_TOKEN"
 
-curl -s -X POST "$URL/detokenize" -H "Content-Type:application/json" --data '{"user_id": "'$USERID'", "token": "'$CC_TOKEN'", "project_id": "'$PROJ'"}'
+curl -s -X POST "$URL/detokenize" -H "Authorization: Bearer $(gcloud auth print-identity-token)" -H "Content-Type:application/json" --data '{"user_id": "'$USERID'", "token": "'$CC_TOKEN'", "project_id": "'$PROJ'"}'

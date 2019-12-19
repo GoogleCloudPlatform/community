@@ -35,7 +35,7 @@ const DLP_CUSTOM_INFO_TYPE = [{
 /* Project variables */
 // See config/default.json for more information
 const PROJECT_ID = config.get("general.project_id");
-const DLP_KEY = {"unwrapped":{ "key": config.get("dlp.crypto_key") }};
+const DLP_KEY = {"unwrapped":{ "key": config.get("dlp.crypto_key").toString() }};
 const DEBUG_LOGGING = config.get("logging.debug");
 const VERSION_LOGGING = config.get("logging.version");
 

@@ -9,7 +9,8 @@
 # tokenize ["CC_NUMBER" ["EXP_MM" ["EXP_YYYY" ["USER_ID_VALUE"]]]]
 # Example values will be provided for any missing input
 
-. ./envvars
+. $(dirname "$0")/envvars
+test -f $(dirname "$0")/local.envvars && . $(dirname "$0")/local.envvars
 
 if [ "$1" = "" ]; then
   CC="4111111111111111"
@@ -35,4 +36,5 @@ else
   USERID=$4
 fi
 
-echo $(curl -s -X POST "$URL/tokenize" -H "Content-Type:application/json" --data '{"cc": "'$CC'", "mm": "'$MM'", "yyyy": "'$YYYY'", "user_id": "'$USERID'", "project_id": "'$PROJ'"}')
+AUTH=$(gcloud auth print-identity-token)
+echo $(curl -s -X POST "$URL/tokenize" -H "Authorization: Bearer $(gcloud auth print-identity-token)" -H "Content-Type:application/json" --data '{"cc": "'$CC'", "mm": "'$MM'", "yyyy": "'$YYYY'", "user_id": "'$USERID'", "project_id": "'$PROJ'"}')
