@@ -27,14 +27,14 @@ BV3VH5ErFA+5ZNgDgRK6aWsYEWum6wcvPLPOXC/0fX3FMROA/G6A7dhaq0b7sy+j6N4=
 ```
 
 ### Detokenizing
-To reverse the tokenization example, pass the token as the first argument:
+To reverse the tokenization example, pass the token as the first argument and optionally the userID as the second:
 
 ```
 ./detokenize BV3VH5ErFA+5ZNgDgRK6aWsYEWum6wcvPLPOXC/0fX3FMROA/G6A7dhaq0b7sy+j6N4=
 
 {"cc":"5454545454545454","mm":"12","yyyy":"2029"}
 ```
-
+If you get a validation error, ensure the userID matches.
 
 ## License
 [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0)

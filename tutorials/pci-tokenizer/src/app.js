@@ -35,9 +35,23 @@ const DLP_CUSTOM_INFO_TYPE = [{
 /* Project variables */
 // See config/default.json for more information
 const PROJECT_ID = config.get("general.project_id");
-const DLP_KEY = {"unwrapped":{ "key": config.get("dlp.crypto_key").toString() }};
 const DEBUG_LOGGING = config.get("logging.debug");
 const VERSION_LOGGING = config.get("logging.version");
+
+var tmp_dlp_key = {};
+if(config.get("dlp.wrapped_key_resource_id") && config.get("dlp.wrapped_key")) {
+  tmp_dlp_key = {
+    "kmsWrapped": {
+      wrappedKey: config.get("dlp.wrapped_key"),
+      cryptoKeyName: config.get("dlp.wrapped_key_resource_id")
+    }
+  };
+  debug("Using key wrapped by", tmp_dlp_key.kmsWrapped.cryptoKeyName)
+} else {
+  tmp_dlp_key = {"unwrapped":{ "key": config.get("dlp.unwrapped_key").toString('utf8') }};
+  debug("Using unwrapped key of", Buffer.byteLength(config.get("dlp.unwrapped_key").toString('utf8'), 'utf8'), 'bytes')
+}
+const DLP_KEY = tmp_dlp_key;
 
 /* Helpful init stuff */
 const appVersion = require('fs').statSync(__filename).mtimeMs + " env:" + process.env.NODE_ENV;
@@ -233,11 +247,9 @@ function debug(...args) {
 
 
 /**
- * A handy utility function that can write the timestamp of index.js when the tokenizer
+ * A handy utility function that can write the timestamp of app.js when the tokenizer
  * is first launched and again each time it is executed. This is helpful when trying
  * to link log output of a particular run to the code version that generated it.
- * It can take up to 45 seconds for the new tokenizer to start getting traffic even after
- * a new tokenizer deploy is marked OK.
  */
 function logVersion(...args) {
   if(VERSION_LOGGING) console.log(...args);
