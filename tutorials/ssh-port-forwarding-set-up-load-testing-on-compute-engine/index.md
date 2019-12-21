@@ -1,3 +1,9 @@
+ssh -L 24000:127.0.0.1:24000   \
+-R 25000:127.0.0.1:25000   \
+-L 26000:127.0.0.1:26000 -N -f &lt;
+remote_hosts=127.0.0.1:24000
+client.rmi.localport=25000
+mode=Statistical
 ---
 title: How to configure SSH port forwarding and set up load testing on Compute Engine
 description: Learn how to use SSH port forwarding to set up a distributed load test environment with JMeter on Compute Engine instances.
