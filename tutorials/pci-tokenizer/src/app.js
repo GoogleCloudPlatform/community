@@ -78,10 +78,10 @@ logVersion(`Tokenizer LAUNCHED v.${appVersion}`);
 exports.dlp_crypto_tokenize = async (req, res) => {
   logVersion(`DLP tokenizing with tokenizer v.${appVersion}`);
   // The value contains a JSON document representing the entity we want to save
-  var cc = req.body.cc;
-  var mm = req.body.mm;
-  var yyyy = req.body.yyyy;
-  var userid = req.body.user_id.toString();
+  var cc = req.body.cc + "";
+  var mm = req.body.mm + "";
+  var yyyy = req.body.yyyy + "";
+  var userid = req.body.user_id + "";
   var projectId = req.body.project_id || PROJECT_ID || process.env.GCP_PROJECT;
 
   if (!projectId) {
@@ -161,8 +161,8 @@ exports.dlp_crypto_tokenize = async (req, res) => {
 exports.dlp_crypto_detokenize = async (req, res) => {
 let i = 0;
   logVersion(`DLP detokenizing ver ${appVersion}`);
-  var ccToken = req.body.token.toString();
-  var userid = req.body.user_id.toString();
+  var ccToken = req.body.token + "";
+  var userid = req.body.user_id + "";
   var projectId = req.body.project_id || PROJECT_ID || process.env.GCP_PROJECT;
 
   if (!projectId) {
