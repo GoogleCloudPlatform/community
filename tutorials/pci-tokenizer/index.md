@@ -44,7 +44,7 @@ The userID provided in the tokenization and detokenization requests is both a sa
 
 1. [Install and initialize the Cloud SDK](https://cloud.google.com/sdk/docs/).
 
-1. Update components:
+1. Update components:  
   ```
   gcloud components update
   ```
@@ -63,21 +63,18 @@ Create a data encryption key (DEK) and then wrap it in an additional layer of en
 
 1. Create a key for that ring  
   Note the key name
-
-1. Configure the token wrapping utility
+1. Configure the token wrapping utility  
   ```
   cp examples/envvars examples/local.envvars
   nano examples/local.envvars
   ```
   Once you have `local.envvars` open for editing, populate the variables `KMS_LOCATION`, `KMS_KEY_RING`, and `KMS_KEY_NAME` with the values you noted above.
-
 1. Generate the keys  
   There are many ways to generate random bytes. This command will use the Linux system's random number generator to generate 16 hexadecimal bytes (32 characters). It creates two files: `key_##B.txt` and `key_##B.wrapped.txt`.
   ```
   LEN=32
   openssl rand $LEN | tee key_${LEN}B.txt | examples/wrapkey | tee key_${LEN}B.wrapped.txt
   ```
-
 1. Preserve the wrapped and unwrapped keyfiles along with the KMS key details.
 
 1. Grant permissions to the invoking service account:  
@@ -100,24 +97,20 @@ The tokenizer service uses the configuration file [`config/default.json`](config
 - Other settings are documented in [`config/default.json`](config/default.json)
 
 # Containerizing and deploying the tokenizer service
-1. Assign your Google Cloud project ID to a variable for ease of use in your terminal:
-
+1. Assign your Google Cloud project ID to a variable for ease of use in your terminal:  
   ```
   PROJECT=PROJECT-ID
   ```
   where `PROJECT-ID` is your GCP project ID. You can get it by running gcloud config get-value project.
-
-1. Build your container image using Cloud Build, by running the following command from the directory containing the Dockerfile:
-
+1. Build your container image using Cloud Build, by running the following command from the directory containing the Dockerfile:  
   ```
   gcloud builds submit --tag gcr.io/$PROJECT/tokenizer
   ```
   Upon success, you will see a SUCCESS message containing the image name (gcr.io/`PROJECT-ID`/tokenizer). The image is stored in Container Registry and can be re-used if desired.
-
-1. Deploy using the following command:
-```
-gcloud run deploy tokenizer --image gcr.io/$PROJECT/tokenizer --platform managed --no-allow-unauthenticated --region us-central1 --memory 128M
-```
+1. Deploy using the following command:  
+  ```
+  gcloud run deploy tokenizer --image gcr.io/$PROJECT/tokenizer --platform managed --no-allow-unauthenticated --region us-central1 --memory 128M
+  ```
  - `tokenizer` is the name of your service.
  - `--image` is the image you created in the previous step
  - `--platform` should be set to managed
