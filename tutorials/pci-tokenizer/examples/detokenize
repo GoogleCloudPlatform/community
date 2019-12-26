@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # This script demonstrates the invocation of the Tokenizer script. It should
 # be run from a machine with an identity or service account authorized to call
-# your Cloud Run tokenizaiton Service.
+# your Cloud Run tokenization service.
 #
 # See the readme for more information.
 
