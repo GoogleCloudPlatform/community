@@ -42,10 +42,10 @@ gcloud services enable file.googleapis.com
     FS=[NAME FOR THE FILESTORE YOU WILL CREATE]
     gcloud beta filestore instances create ${FS} \
         --project=${PROJECT} \
-        --location=${ZONE} \
+        --zone=${ZONE} \
         --tier=STANDARD \
         --file-share=name="volumes",capacity=1TB \
-        --network=name="default",reserved-ip-range="10.0.0.0/29"
+        --network=name="default"
     ```
 
 2. Retrieve the IP address of the Cloud Filestore instance
@@ -53,7 +53,7 @@ gcloud services enable file.googleapis.com
     ```sh
     FSADDR=$(gcloud beta filestore instances describe ${FS} \
          --project=${PROJECT} \
-         --location=${ZONE} \
+         --zone=${ZONE} \
          --format="value(networks.ipAddresses[0])")
     ```
 

@@ -1,0 +1,558 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    contrib.eventing.knative.dev/release: "v0.10.0"
+  name: knative-sources
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    contrib.eventing.knative.dev/release: "v0.10.0"
+  name: kafka-controller-manager
+  namespace: knative-sources
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    contrib.eventing.knative.dev/release: "v0.10.0"
+  name: eventing-sources-kafka-controller
+rules:
+- apiGroups:
+  - sources.eventing.knative.dev
+  resources:
+  - kafkasources
+  - kafkasources/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - sources.eventing.knative.dev
+  resources:
+  - kafkasources/status
+  verbs:
+  - get
+  - update
+  - patch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  - endpoints
+  - persistentvolumeclaims
+  - events
+  - configmaps
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - eventing.knative.dev
+  resources:
+  - eventtypes
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    duck.knative.dev/source: "true"
+    eventing.knative.dev/release: devel
+  name: eventing-contrib-kafka-source-observer
+rules:
+- apiGroups:
+  - sources.eventing.knative.dev
+  resources:
+  - kafkasources
+  verbs:
+  - get
+  - list
+  - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    contrib.eventing.knative.dev/release: "v0.10.0"
+  name: eventing-sources-kafka-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: eventing-sources-kafka-controller
+subjects:
+- kind: ServiceAccount
+  name: kafka-controller-manager
+  namespace: knative-sources
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    contrib.eventing.knative.dev/release: "v0.10.0"
+  name: eventing-sources-kafka-controller-addressable-resolver
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: addressable-resolver
+subjects:
+- kind: ServiceAccount
+  name: kafka-controller-manager
+  namespace: knative-sources
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    registry.knative.dev/eventTypes: |
+      [
+        { "type": "dev.knative.kafka.event" }
+      ]
+  labels:
+    contrib.eventing.knative.dev/release: "v0.10.0"
+    eventing.knative.dev/source: "true"
+    knative.dev/crd-install: "true"
+  name: kafkasources.sources.eventing.knative.dev
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .spec.topics
+    name: Topics
+    type: string
+  - JSONPath: .spec.bootstrapServers
+    name: BootstrapServers
+    type: string
+  - JSONPath: .status.conditions[?(@.type=="Ready")].status
+    name: Ready
+    type: string
+  - JSONPath: .status.conditions[?(@.type=="Ready")].reason
+    name: Reason
+    type: string
+  - JSONPath: .metadata.creationTimestamp
+    name: Age
+    type: date
+  group: sources.eventing.knative.dev
+  names:
+    categories:
+    - all
+    - knative
+    - eventing
+    - sources
+    kind: KafkaSource
+    plural: kafkasources
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      properties:
+        spec:
+          properties:
+            bootstrapServers:
+              minLength: 1
+              type: string
+            consumerGroup:
+              minLength: 1
+              type: string
+            net:
+              properties:
+                sasl:
+                  properties:
+                    enable:
+                      type: boolean
+                    password:
+                      properties:
+                        secretKeyRef:
+                          type: object
+                      type: object
+                    user:
+                      properties:
+                        secretKeyRef:
+                          type: object
+                      type: object
+                  type: object
+                tls:
+                  properties:
+                    caCert:
+                      properties:
+                        secretKeyRef:
+                          type: object
+                      type: object
+                    cert:
+                      properties:
+                        secretKeyRef:
+                          type: object
+                      type: object
+                    enable:
+                      type: boolean
+                    key:
+                      properties:
+                        secretKeyRef:
+                          type: object
+                      type: object
+                  type: object
+              type: object
+            resources:
+              properties:
+                limits:
+                  properties:
+                    cpu:
+                      type: string
+                    memory:
+                      type: string
+                  type: object
+                requests:
+                  properties:
+                    cpu:
+                      type: string
+                    memory:
+                      type: string
+                  type: object
+              type: object
+            serviceAccountName:
+              type: string
+            sink:
+              anyOf:
+              - description: the destination that should receive events.
+                properties:
+                  ref:
+                    description: a reference to a Kubernetes object from which to
+                      retrieve the target URI.
+                    properties:
+                      apiVersion:
+                        minLength: 1
+                        type: string
+                      kind:
+                        minLength: 1
+                        type: string
+                      name:
+                        minLength: 1
+                        type: string
+                    required:
+                    - apiVersion
+                    - kind
+                    - name
+                    type: object
+                  uri:
+                    description: the target URI. If ref is provided, this must be
+                      relative URI reference.
+                    type: string
+                type: object
+              - description: 'DEPRECATED: a reference to a Kubernetes object from
+                  which to retrieve the target URI.'
+                properties:
+                  apiVersion:
+                    minLength: 1
+                    type: string
+                  kind:
+                    minLength: 1
+                    type: string
+                  name:
+                    minLength: 1
+                    type: string
+                  uri:
+                    description: the target URI. If ref is provided, this must be
+                      relative URI reference.
+                    type: string
+                required:
+                - apiVersion
+                - kind
+                - name
+                type: object
+            topics:
+              minLength: 1
+              type: string
+          required:
+          - bootstrapServers
+          - topics
+          - consumerGroup
+          type: object
+        status:
+          properties:
+            conditions:
+              items:
+                properties:
+                  lastTransitionTime:
+                    type: string
+                  message:
+                    type: string
+                  reason:
+                    type: string
+                  severity:
+                    type: string
+                  status:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - status
+                type: object
+              type: array
+            observedGeneration:
+              format: int64
+              type: integer
+            sinkUri:
+              type: string
+          type: object
+  version: v1alpha1
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    contrib.eventing.knative.dev/release: "v0.10.0"
+    control-plane: kafka-controller-manager
+  name: kafka-controller
+  namespace: knative-sources
+spec:
+  ports:
+  - port: 443
+  selector:
+    control-plane: kafka-controller-manager
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    contrib.eventing.knative.dev/release: "v0.10.0"
+    control-plane: kafka-controller-manager
+  name: kafka-controller-manager
+  namespace: knative-sources
+spec:
+  selector:
+    matchLabels:
+      control-plane: kafka-controller-manager
+  serviceName: kafka-controller-manager
+  template:
+    metadata:
+      labels:
+        control-plane: kafka-controller-manager
+    spec:
+      containers:
+      - env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: METRICS_DOMAIN
+          value: knative.dev/sources
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: KAFKA_RA_IMAGE
+          value: gcr.io/knative-releases/knative.dev/eventing-contrib/kafka/source/cmd/receive_adapter@sha256:29a27bc3e138e236df7378f65589a63bc26068996aef8be1e9b9db07f728b8c2
+        image: gcr.io/knative-releases/knative.dev/eventing-contrib/kafka/source/cmd/controller@sha256:d42cbd1233f2cc6bd0e75c44679bd408423fe89056f4ce67e18ccbd41f5ce7e7
+        name: manager
+        resources:
+          requests:
+            cpu: 20m
+            memory: 20Mi
+        volumeMounts: null
+      serviceAccount: kafka-controller-manager
+      serviceAccountName: kafka-controller-manager
+      terminationGracePeriodSeconds: 10
+
+---
+apiVersion: v1
+data:
+  loglevel.controller: info
+  loglevel.webhook: info
+  zap-logger-config: |
+    {
+      "level": "info",
+      "development": false,
+      "outputPaths": ["stdout"],
+      "errorOutputPaths": ["stderr"],
+      "encoding": "json",
+      "encoderConfig": {
+        "timeKey": "ts",
+        "levelKey": "level",
+        "nameKey": "logger",
+        "callerKey": "caller",
+        "messageKey": "msg",
+        "stacktraceKey": "stacktrace",
+        "lineEnding": "",
+        "levelEncoder": "",
+        "timeEncoder": "iso8601",
+        "durationEncoder": "",
+        "callerEncoder": ""
+      }
+    }
+kind: ConfigMap
+metadata:
+  name: config-logging
+  namespace: knative-sources
+---
+apiVersion: v1
+data:
+  _example: |
+    ################################
+    #                              #
+    #    EXAMPLE CONFIGURATION     #
+    #                              #
+    ################################
+
+    # This block is not actually functional configuration,
+    # but serves to illustrate the available configuration
+    # options and document them in a way that is accessible
+    # to users that `kubectl edit` this config map.
+    #
+    # These sample configuration options may be copied out of
+    # this example block and unindented to be in the data block
+    # to actually change the configuration.
+
+    # logging.enable-var-log-collection defaults to false.
+    # A fluentd sidecar will be set up to collect var log if
+    # this flag is true.
+    logging.enable-var-log-collection: false
+
+    # logging.fluentd-sidecar-image provides the fluentd sidecar image
+    # to inject as a sidecar to collect logs from /var/log.
+    # Must be presented if logging.enable-var-log-collection is true.
+    logging.fluentd-sidecar-image: k8s.gcr.io/fluentd-elasticsearch:v2.0.4
+
+    # logging.fluentd-sidecar-output-config provides the configuration
+    # for the fluentd sidecar, which will be placed into a configmap and
+    # mounted into the fluentd sidecar image.
+    logging.fluentd-sidecar-output-config: |
+      # Parse json log before sending to Elastic Search
+      <filter **>
+        @type parser
+        key_name log
+        <parse>
+          @type multi_format
+          <pattern>
+            format json
+            time_key fluentd-time # fluentd-time is reserved for structured logs
+            time_format %Y-%m-%dT%H:%M:%S.%NZ
+          </pattern>
+          <pattern>
+            format none
+            message_key log
+          </pattern>
+        </parse>
+      </filter>
+      # Send to Elastic Search
+      <match **>
+        @id elasticsearch
+        @type elasticsearch
+        @log_level info
+        include_tag_key true
+        # Elasticsearch service is in monitoring namespace.
+        host elasticsearch-logging.knative-monitoring
+        port 9200
+        logstash_format true
+        <buffer>
+          @type file
+          path /var/log/fluentd-buffers/kubernetes.system.buffer
+          flush_mode interval
+          retry_type exponential_backoff
+          flush_thread_count 2
+          flush_interval 5s
+          retry_forever
+          retry_max_interval 30
+          chunk_limit_size 2M
+          queue_limit_length 8
+          overflow_action block
+        </buffer>
+      </match>
+
+    # logging.revision-url-template provides a template to use for producing the
+    # logging URL that is injected into the status of each Revision.
+    # This value is what you might use the the Knative monitoring bundle, and provides
+    # access to Kibana after setting up kubectl proxy.
+    logging.revision-url-template: |
+      http://localhost:8001/api/v1/namespaces/knative-monitoring/services/kibana-logging/proxy/app/kibana#/discover?_a=(query:(match:(kubernetes.labels.knative-dev%2FrevisionUID:(query:'${REVISION_UID}',type:phrase))))
+
+    # If non-empty, this enables queue proxy writing request logs to stdout.
+    # The value determines the shape of the request logs and it must be a valid go text/template.
+    # It is important to keep this as a single line. Multiple lines are parsed as separate entities
+    # by most collection agents and will split the request logs into multiple records.
+    #
+    # The following fields and functions are available to the template:
+    #
+    # Request: An http.Request (see https://golang.org/pkg/net/http/#Request)
+    # representing an HTTP request received by the server.
+    #
+    # Response:
+    # struct {
+    #   Code    int       // HTTP status code (see https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml)
+    #   Size    int       // An int representing the size of the response.
+    #   Latency float64   // A float64 representing the latency of the response in seconds.
+    # }
+    #
+    # Revision:
+    # struct {
+    #   Name          string  // Knative revision name
+    #   Namespace     string  // Knative revision namespace
+    #   Service       string  // Knative service name
+    #   Configuration string  // Knative configuration name
+    #   PodName       string  // Name of the pod hosting the revision
+    #   PodIP         string  // IP of the pod hosting the revision
+    # }
+    #
+    logging.request-log-template: '{"httpRequest": {"requestMethod": "{{.Request.Method}}", "requestUrl": "{{js .Request.RequestURI}}", "requestSize": "{{.Request.ContentLength}}", "status": {{.Response.Code}}, "responseSize": "{{.Response.Size}}", "userAgent": "{{js .Request.UserAgent}}", "remoteIp": "{{js .Request.RemoteAddr}}", "serverIp": "{{.Revision.PodIP}}", "referer": "{{js .Request.Referer}}", "latency": "{{.Response.Latency}}s", "protocol": "{{.Request.Proto}}"}, "traceId": "{{index .Request.Header "X-B3-Traceid"}}"}'
+
+    # metrics.backend-destination field specifies the system metrics destination.
+    # It supports either prometheus (the default) or stackdriver.
+    # Note: Using stackdriver will incur additional charges
+    metrics.backend-destination: prometheus
+
+    # metrics.request-metrics-backend-destination specifies the request metrics
+    # destination. If non-empty, it enables queue proxy to send request metrics.
+    # Currently supported values: prometheus, stackdriver.
+    metrics.request-metrics-backend-destination: prometheus
+
+    # metrics.stackdriver-project-id field specifies the stackdriver project ID. This
+    # field is optional. When running on GCE, application default credentials will be
+    # used if this field is not provided.
+    metrics.stackdriver-project-id: "<your stackdriver project id>"
+
+    # metrics.allow-stackdriver-custom-metrics indicates whether it is allowed to send metrics to
+    # Stackdriver using "global" resource type and custom metric type if the
+    # metrics are not supported by "knative_revision" resource type. Setting this
+    # flag to "true" could cause extra Stackdriver charge.
+    # If metrics.backend-destination is not Stackdriver, this is ignored.
+    metrics.allow-stackdriver-custom-metrics: "false"
+kind: ConfigMap
+metadata:
+  name: config-observability
+  namespace: knative-sources
+
+---

@@ -137,7 +137,7 @@ Codeship Jet CLI.
       service: app
       type: push
       image_name: "gcr.io/YOUR_PROJECT_ID/hello-express" #update this line using your Google Cloud Platform project ID
-      image_tag: "{{printf \"%.8s\" .CommitID}}"
+      image_tag: "{% verbatim %}{{printf \"%.8s\" .CommitID}}{% endverbatim %}"
       registry: https://gcr.io
       dockercfg_service: codeship_gcr_dockercfg
     - name: tag-as-master
