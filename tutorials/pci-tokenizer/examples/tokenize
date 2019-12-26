@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# This script demonstrates the invocation of the Tokenizer script. It should
+# be run from a machine with an identity or service account authorized to call
+# your Cloud Run tokenization service.
+#
+# See the readme for more information.
+
+# Usage:
+# tokenize ["CC_NUMBER" ["EXP_MM" ["EXP_YYYY" ["USER_ID_VALUE"]]]]
+# Example values will be provided for any missing input
+
+. $(dirname "$0")/envvars
+test -f $(dirname "$0")/local.envvars && . $(dirname "$0")/local.envvars
+
+if [ "$1" = "" ]; then
+  CC="4111111111111111"
+else
+  CC=$1
+fi
+
+if [ "$2" = "" ]; then
+  MM=11
+else
+  MM=$2
+fi
+
+if [ "$3" = "" ]; then
+  YYYY=2026
+else
+  YYYY=$3
+fi
+
+if [ "$4" = "" ]; then
+  USERID=12345678
+else
+  USERID=$4
+fi
+
+AUTH=$(gcloud auth print-identity-token)
+echo $(curl -s -X POST "$URL/tokenize" -H "Authorization: Bearer $(gcloud auth print-identity-token)" -H "Content-Type:application/json" --data '{"cc": "'$CC'", "mm": "'$MM'", "yyyy": "'$YYYY'", "user_id": "'$USERID'", "project_id": "'$PROJ'"}')

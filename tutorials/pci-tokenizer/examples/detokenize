@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# This script demonstrates the invocation of the Tokenizer script. It should
+# be run from a machine with an identity or service account authorized to call
+# your Cloud Run tokenization service.
+#
+# See the readme for more information.
+
+# Usage:
+# detokenize "CC_TOKEN_VALUE" ["USER_ID_VALUE"]
+
+. $(dirname "$0")/envvars
+test -f $(dirname "$0")/local.envvars && . $(dirname "$0")/local.envvars
+
+
+if [ "$URL" = "" ]; then
+  echo "Error: Populate the tokenizer URL in ./envvars"
+  exit
+fi
+
+if [ "$1" = "" ]; then
+  CC_TOKEN=$(cat -) # Fall back to stdin to allow pipe
+  echo $CC_TOKEN
+  if [ "$CC_TOKEN" = "" ]; then
+    echo "Error: Token not provided"
+    exit
+  fi
+else
+  CC_TOKEN=$1
+fi
+
+if [ "$2" = "" ]; then
+  USERID=12345678
+else
+  USERID=$2
+fi
+
+echo "Detokenizing: $CC_TOKEN"
+
+curl -s -X POST "$URL/detokenize" -H "Authorization: Bearer $(gcloud auth print-identity-token)" -H "Content-Type:application/json" --data '{"user_id": "'$USERID'", "token": "'$CC_TOKEN'", "project_id": "'$PROJ'"}'
