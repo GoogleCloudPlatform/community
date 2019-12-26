@@ -18,8 +18,8 @@ This code uses [Cloud DLP](https://cloud.google.com/dlp/) to
 data in a manner consistent with the PCI Data Security Standard (DSS). This code is applicable to SAQ A-EP and SAQ D type 
 merchants of any compliance level.
 
-**Warning: Please confirm that your environment and installation are PCI-DSS-compliant before processing actual credit card 
-data. Google cannot guarantee PCI DSS compliance of customer applications.**
+Warning: Confirm that your environment and installation are PCI-DSS-compliant before processing actual credit card 
+data. Google cannot guarantee PCI DSS compliance of customer applications.
 
 For more information on PCI DSS compliance on Google CLoud, see
 [PCI Data Security Standard compliance](https://cloud.google.com/solutions/pci-dss-compliance-in-gcp).
@@ -33,12 +33,14 @@ breaches.
 ### Encryption
 
 The tokens created by this service are encrypted using
-[AES in Synthetic Initialization Vector mode (AES-SIV)](https://tools.ietf.org/html/rfc5297). For more information, see
+[AES in Synthetic Initialization Vector (AES-SIV)](https://tools.ietf.org/html/rfc5297) mode. For more information, see
 [DLP deterministic encryption](https://cloud.google.com/dlp/docs/transformations-reference#de).
 
 ### Crypto keys
 
-This service relies on a secret encryption key stored in the [config JSON](./config/) files. Before deploying to production, 
+This service relies on a secret encryption key stored in the
+[config JSON](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/config) files. Before 
+deploying to production, 
 this plaintext key should be switched to a Cloud KMS wrapped key, which adds an additional layer of security. See the 
 section below and the page on 
 [DLP format-preserving encryption (FPE)](https://cloud.google.com/dlp/docs/deidentify-sensitive-data#cryptoreplaceffxfpeconfig)
@@ -52,13 +54,13 @@ any service or system in-scope for PCI. To grant access, you must navigate to
 authorized to invoke the service. They will need to be granted the
 [Cloud Run Invoker](https://cloud.google.com/run/docs/reference/iam/roles) IAM role.
 
-Utility scripts have been provided in [`examples`](./examples/) that incorporate Google's recommended approach to 
+Utility scripts have been provided in [`examples`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/examples/) that incorporate Google's recommended approach to 
 [authenticating developers](https://cloud.google.com/run/docs/authenticating/developers).
 
 ### Salting and additional encryption
 
 The userID provided in the tokenization and detokenization requests is both a salt and validating factor. The addition of 
-additional salt or encryption wrappers is possible by modifying [app.js](./src/app.js).
+additional salt or encryption wrappers is possible by modifying [app.js](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/src/app.js).
 
 # Before you begin
 
@@ -180,7 +182,7 @@ networking consumed during request handling.
 # Usage
 
 After your tokenization service is deployed to Cloud Run and you have the URL, you can start calling the API. The 
-[`examples`](./examples/) directory contains demonstration `tokenize` and `detokenize` scripts that you can use to quickly 
+[`examples`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/examples/) directory contains demonstration `tokenize` and `detokenize` scripts that you can use to quickly 
 test your API.
 
 See the following sections for details on the `tokenize` and `detokenize` API methods.
@@ -222,6 +224,7 @@ Response:
 
 # Examples
 
-Example `curl` invocations of the tokenization and detokenization process can be found in [`examples`](./examples/). See 
-[the readme file](./examples/README.md) for information on how to configure and use the example scripts on your tokenization
+Example `curl` invocations of the tokenization and detokenization process can be found in [`examples`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/examples/). See 
+[the readme file](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/examples/README.md)
+for information on how to configure and use the example scripts on your tokenization
 service.
