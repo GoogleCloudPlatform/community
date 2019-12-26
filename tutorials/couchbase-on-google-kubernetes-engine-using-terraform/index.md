@@ -8,8 +8,8 @@ date_published: 2019-09-04
 
 ## Introduction
 
-This tutorial helps you learn how to provision a Couchbase Autonomous Operator and cluster inside a Kubernetes Engine 
-cluster in Google Cloud Platform (GCP) using Terraform scripts.
+This tutorial helps you learn how to provision a Couchbase Autonomous Operator and cluster inside a Google Kubernetes Engine 
+cluster on Google Cloud Platform (GCP) using Terraform scripts.
 
 ## Prerequisites
 

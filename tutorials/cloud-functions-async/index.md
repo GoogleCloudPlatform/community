@@ -15,8 +15,8 @@ Preston Holmes | Solution Architect | Google
 This tutorial demonstrates how to use [Cloud Functions](https://cloud.google.com/functions/) to extend the synchronous
 web-hook-style request/response to longer-running jobs, with a focus on trackable and stateful long-running operations.
 
-When a caller makes a request of a service, it is asking it perform some work. There are three integration patterns that
-can be applied, depending on the use-case:
+When a caller makes a request of a service, the caller is asking the service to perform some work. There are three 
+integration patterns that can be applied, depending on the use-case:
 
 ### Synchronous request/response
 ![sync](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-async/sync-request.png)

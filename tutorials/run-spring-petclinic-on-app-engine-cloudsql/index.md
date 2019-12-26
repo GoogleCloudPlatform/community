@@ -111,7 +111,7 @@ Spring Integration for Cloud SQL. The following sections demonstrate both option
 
 1.  Restart the Spring Boot application using the `mysql` [profile][profile]:
 
-        ./mvnw -Drun.profiles=mysql spring-boot:run
+        ./mvnw -Dspring-boot.run.profiles=mysql spring-boot:run
 
 #### Using Spring Cloud integration for Cloud SQL
 

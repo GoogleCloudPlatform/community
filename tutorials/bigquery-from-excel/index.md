@@ -37,7 +37,7 @@ This tutorial assumes you are using the Microsoft Windows operating system.
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform including Google
+This tutorial uses billable components of Cloud Platform including
 BigQuery. Use the [Pricing
 Calculator](https://cloud.google.com/products/calculator/#id=d343aa2d-457b-4778-b4cb-ef0ea35605ea)
 to estimate the costs for your usage.
@@ -52,7 +52,7 @@ to limit your costs](https://cloud.google.com/bigquery/cost-controls).
 1. Check whether your version of Excel is [32-bit or
   64-bit](https://liberty.service-now.com/kb_view.do?sys_kb_id=7e56d58e358829405af1cb6de5727f5a).
 1. Download the latest version  of the
-  ODBC driver from the [Simba Drivers for Google BigQuery
+  ODBC driver from the [Simba Drivers for BigQuery
   page](https://cloud.google.com/bigquery/partners/simba-drivers/) which
   matches your version of Excel.
 1. Run the ODBC driver installer.

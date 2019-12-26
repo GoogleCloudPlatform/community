@@ -13,6 +13,8 @@ date_published: 2019-03-22
 
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
 
+<!-- {% setvar project_id "<your-project>" %} -->
+
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
 
@@ -185,7 +187,7 @@ Note: If you already created an app, you can skip this step.
 You can use Cloud Shell to deploy your app. To deploy your app enter the following:
 
 ```bash
-gcloud app deploy app.yaml --project {{project-id}}
+gcloud app deploy app.yaml --project {{project_id}}
 ```
 
 ### Visit your app
