@@ -6,25 +6,24 @@
 */
 
 'use strict';
-const app = require('/tokenizer/index.js');
+const app = require('./app.js');
 const Express = require('express');
 const bodyParser = require('body-parser');
 const express = Express();
-const port = 80;
+const port = process.env.PORT || 8080;
 
 express.use(bodyParser.json());
 
 express.get('/', (req, res) => {
-  app.tokenize(req, res);
-  res.send('OK');
+  res.status(400).send('Invalid request format');
 });
 
 express.post('/detokenize', (req, res) => {
-  return app.detokenize(req, res);
+  return app.dlp_crypto_detokenize(req, res);
 });
 
 express.post('/tokenize', (req, res) => {
-  return app.tokenize(req, res);
+  return app.dlp_crypto_tokenize(req, res);
 });
 
 express.listen(port, (err) => {

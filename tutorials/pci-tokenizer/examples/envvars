@@ -1,0 +1,12 @@
+#Environment variables used by the example tokenization scripts
+
+#Enter the URL to your Cloud Run tokenization service here:
+URL=""
+
+#Optionally enter the project ID here. Can also be provided in the service config file.
+PROJECT=""
+
+#Optionally enter the KMS keyring data to use a wrapped key.
+KMS_LOCATION=""
+KMS_KEY_RING=""
+KMS_KEY_NAME=""
