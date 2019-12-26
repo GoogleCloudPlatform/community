@@ -15,7 +15,7 @@ const port = process.env.PORT || 8080;
 express.use(bodyParser.json());
 
 express.get('/', (req, res) => {
-  res.status(400).send("Invalid request format");
+  res.status(400).send('Invalid request format');
 });
 
 express.post('/detokenize', (req, res) => {
