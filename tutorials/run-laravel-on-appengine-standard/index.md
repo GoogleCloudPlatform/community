@@ -93,7 +93,7 @@ from laravel.com.
 
         composer remove --dev beyondcode/laravel-dump-server
         
-    If you're using Laravel 6, please remove `facade/ignition` instead:
+    If you're using Laravel 6, remove `facade/ignition` instead:
     
         composer remove --dev facade/ignition
 
