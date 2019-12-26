@@ -1,135 +1,192 @@
 ---
-title: Credit card tokenization service for Google Cloud Platform
-description: Deploy a PCI DSS ready credit card tokenization service.
+title: Credit card tokenization service for Google Cloud
+description: Deploy a PCI-DSS-ready credit card tokenization service.
 author: ianmaddox
 tags: serverless, cloud run, DLP, javascript, iam, PCI, DSS, credit, card
-date_published: 2019-12-18
+date_published: 2019-12-26
 ---
 
 # Overview
 
-This code provides a PCI-DSS-ready credit card tokenization service built for containers running in Google Cloud Platform (GCP). This code is based on Google's [Tokenizing sensitive cardholder data for PCI DSS](https://cloud.google.com/solutions/tokenizing-sensitive-cardholder-data-for-pci-dss) whitepaper.
+This code provides a PCI-DSS-ready credit card tokenization service built for containers running on Google Cloud. This code
+is based on Google's
+[Tokenizing sensitive cardholder data for PCI DSS](https://cloud.google.com/solutions/tokenizing-sensitive-cardholder-data-for-pci-dss)
+whitepaper.
 
-This code uses [DLP](https://cloud.google.com/dlp/)  to [securely encrypt](https://cloud.google.com/dlp/docs/transformations-reference#crypto) and tokenize sensitive credit card data in a manner consistent with the PCI Data Security Standard. This code is applicable to SAQ A-EP and SAQ D type merchants of any compliance level.
+This code uses [Cloud DLP](https://cloud.google.com/dlp/) to
+[securely encrypt](https://cloud.google.com/dlp/docs/transformations-reference#crypto) and tokenize sensitive credit card 
+data in a manner consistent with the PCI Data Security Standard (DSS). This code is applicable to SAQ A-EP and SAQ D type 
+merchants of any compliance level.
 
-**Warning: Please confirm your environment and installation are PCI DSS compliant before processing actual credit card data. Google can not guarantee PCI DSS compliance of customer applications.**
+**Warning: Please confirm that your environment and installation are PCI-DSS-compliant before processing actual credit card 
+data. Google cannot guarantee PCI DSS compliance of customer applications.**
 
-For more information on PCI DSS compliance on GCP, see [PCI Data Security Standard compliance](https://cloud.google.com/solutions/pci-dss-compliance-in-gcp).
+For more information on PCI DSS compliance on Google CLoud, see
+[PCI Data Security Standard compliance](https://cloud.google.com/solutions/pci-dss-compliance-in-gcp).
 
 # Security
-By definition, this service handles raw credit card numbers. As a result, this code and anything able to directly call it are considered in-scope for PCI DSS. Appropriate security controls must be enacted to avoid compliance failures and breaches.
+
+By definition, this service handles raw credit card numbers. As a result, this code and anything able to directly call it 
+are considered in-scope for PCI DSS. Appropriate security controls must be enacted to avoid compliance failures and 
+breaches.
 
 ### Encryption
-The tokens created by this service are encrypted using [AES in Synthetic Initialization Vector mode (AES-SIV)](https://tools.ietf.org/html/rfc5297). For more information, see [DLP deterministic encryption](https://cloud.google.com/dlp/docs/transformations-reference#de).
+
+The tokens created by this service are encrypted using
+[AES in Synthetic Initialization Vector mode (AES-SIV)](https://tools.ietf.org/html/rfc5297). For more information, see
+[DLP deterministic encryption](https://cloud.google.com/dlp/docs/transformations-reference#de).
 
 ### Crypto keys
-This service relies on a secret encryption key stored in the [config/*.json](./config/) files. Before deploying to production, this plaintext key should be switched to a Cloud KMS wrapped key which will add an additional layer of security. See the section below and the page on [DLP format-preserving encryption (FPE)](https://cloud.google.com/dlp/docs/deidentify-sensitive-data#cryptoreplaceffxfpeconfig) for information on how to wrap crypto keys.
+
+This service relies on a secret encryption key stored in the [config JSON](./config/) files. Before deploying to production, 
+this plaintext key should be switched to a Cloud KMS wrapped key, which adds an additional layer of security. See the 
+section below and the page on 
+[DLP format-preserving encryption (FPE)](https://cloud.google.com/dlp/docs/deidentify-sensitive-data#cryptoreplaceffxfpeconfig)
+for information on how to wrap crypto keys.
 
 ### Access control
-Setting the `--no-allow-unauthenticated` flag prevents unauthorized calls to your tokenization service. This is critical for any service or system in-scope for PCI. In order to grant access, you must navigate to [your tokenization service in the console](https://console.cloud.google.com/run) and add the service accounts and users authorized to invoke the service. They will need to be granted the [Cloud Run Invoker](https://cloud.google.com/run/docs/reference/iam/roles) IAM role.
 
-Utility scripts have been provided in [`examples`](./examples/) which incorporate Google's recommended approach to [authenticating developers](https://cloud.google.com/run/docs/authenticating/developers).
+Setting the `--no-allow-unauthenticated` flag prevents unauthorized calls to your tokenization service. This is critical for 
+any service or system in-scope for PCI. To grant access, you must navigate to 
+[your tokenization service in the console](https://console.cloud.google.com/run) and add the service accounts and users 
+authorized to invoke the service. They will need to be granted the
+[Cloud Run Invoker](https://cloud.google.com/run/docs/reference/iam/roles) IAM role.
+
+Utility scripts have been provided in [`examples`](./examples/) that incorporate Google's recommended approach to 
+[authenticating developers](https://cloud.google.com/run/docs/authenticating/developers).
 
 ### Salting and additional encryption
-The userID provided in the tokenization and detokenization requests is both a salt and validating factor. The addition of additional salt or encryption wrappers is possible by modifying [app.js](./src/app.js).
+
+The userID provided in the tokenization and detokenization requests is both a salt and validating factor. The addition of 
+additional salt or encryption wrappers is possible by modifying [app.js](./src/app.js).
 
 # Before you begin
-1. In the Cloud Console, on the project selector page, [select or create a Google Cloud project](https://console.cloud.google.com/projectselector2/home/dashboard).
 
-    **Note: If you don't plan to keep the resources that you create in this procedure, create a project instead of selecting an existing project. After you finish these steps, you can delete the project, removing all resources associated with the project.**
+1.  In the Cloud Console, on the project selector page,
+    [select or create a Google Cloud project](https://console.cloud.google.com/projectselector2/home/dashboard).
 
-1. Make sure that billing is enabled for your Google Cloud project. [Learn how to confirm billing is enabled for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
+    Note: If you don't plan to keep the resources that you create in this procedure, create a project instead of selecting 
+    an existing project. After you finish these steps, you can delete the project, removing all resources associated with 
+    the project.
 
-1. [Enable the Cloud Build and Cloud Run APIs](https://console.cloud.google.com/flows/enableapi?apiid=cloudbuild.googleapis.com,run.googleapis.com&redirect=https://console.cloud.google.com).
+1.  Make sure that billing is enabled for your Google Cloud project.
+    [Learn how to confirm that billing is enabled](https://cloud.google.com/billing/docs/how-to/modify-project).
 
-1. [Install and initialize the Cloud SDK](https://cloud.google.com/sdk/docs/).
+1.  [Enable the Cloud Build and Cloud Run APIs](https://console.cloud.google.com/flows/enableapi?apiid=cloudbuild.googleapis.com,run.googleapis.com&redirect=https://console.cloud.google.com).
 
-1. Update components:
-    ```
-    gcloud components update
-    ```
+1.  [Install and initialize the Cloud SDK](https://cloud.google.com/sdk/docs/).
+
+1.  Update components:
+
+        gcloud components update
   
-1. Run the following commands to check out the project code and move into your working directory:  
-    ```
-    git clone https://github.com/GoogleCloudPlatform/community gcp-community
-    cd gcp-community/tutorials/pci-tokenizer
-    ```
+1.  Run the following commands to check out the project code and move into your working directory:  
+
+        git clone https://github.com/GoogleCloudPlatform/community gcp-community
+        cd gcp-community/tutorials/pci-tokenizer
 
 # Create a wrapped encryption key (optional)
-Create a data encryption key (DEK) and then wrap it in an additional layer of encryption called the key encryption key (KEK). Note that the KEK is fully managed by [KMS](https://console.cloud.google.com/security/kms) and never leaves the service. This step is optional for testing but should be prerequisite for production environments.
 
-1. [Create a KMS keyring](https://console.cloud.google.com/security/kms)  
-  Note the keyring name and location ('global' is recommended)
+Create a data encryption key (DEK) and then wrap it in an additional layer of encryption called the *key encryption key 
+(KEK)*. Note that the KEK is fully managed by [KMS](https://console.cloud.google.com/security/kms) and never leaves the
+service. This step is optional for testing but should be a prerequisite for production environments.
 
-1. Create a key for that ring  
-  Note the key name
-1. Configure the token wrapping utility  
-    ```
-    cp examples/envvars examples/local.envvars
-    nano examples/local.envvars
-    ```
-    Once you have `local.envvars` open for editing, populate the variables `KMS_LOCATION`, `KMS_KEY_RING`, and `KMS_KEY_NAME` with the values you noted above.
-1. Generate the keys  
-  There are many ways to generate random bytes. This command will use the Linux system's random number generator to generate 16 hexadecimal bytes (32 characters). It creates two files: `key_##B.txt` and `key_##B.wrapped.txt`.
-    ```
-    LEN=32
-    openssl rand $LEN | tee key_${LEN}B.txt | examples/wrapkey | tee key_${LEN}B.wrapped.txt
-    ```
-1. Preserve the wrapped and unwrapped keyfiles along with the KMS key details.
+1.  [Create a KMS keyring](https://console.cloud.google.com/security/kms). Note the keyring name and location ("global" is 
+    recommended).
 
-1. Grant permissions to the invoking service account:  
-    1. Navigate to [IAM permissions](https://console.cloud.google.com/iam-admin/iam)
-    1. Edit permissions of the "Compute Engine default service account". It should look like `000000000000-compute@developer.gserviceaccount.com`
-    1. Grant the role "DLP User"
+1.  Create a key for that ring. Note the key name.
+
+1.  Copy and open the `local.envvars` file to configure the token wrapping utility:  
+
+        cp examples/envvars examples/local.envvars
+        nano examples/local.envvars
+        
+    Populate the variables `KMS_LOCATION`, `KMS_KEY_RING`, and `KMS_KEY_NAME` with the values noted in the previous steps.
+    
+1.  Generate the keys.
+
+    There are many ways to generate random bytes. This command will use the Linux system's random number generator to 
+    generate 16 hexadecimal bytes (32 characters); it creates two files: `key_##B.txt` and `key_##B.wrapped.txt`:
+
+        LEN=32
+        openssl rand $LEN | tee key_${LEN}B.txt | examples/wrapkey | tee key_${LEN}B.wrapped.txt
+
+1.  Preserve the wrapped and unwrapped keyfiles along with the KMS key details.
+
+1.  Grant permissions to the invoking service account:  
+
+    1.  Navigate to [IAM permissions](https://console.cloud.google.com/iam-admin/iam)
+    1.  Edit permissions of the "Compute Engine default service account".
+        It should look like this: `000000000000-compute@developer.gserviceaccount.com`
+    1.  Grant the role "DLP User".
 
 # Configuration
-The tokenizer service uses the configuration file [`config/default.json`](config/default.json) with overrides in `config/local.json`. **Best practice is to copy `config/default.json` to `config/local.json` and make edits there.**
 
-- `general.project_id` is required but it can either be set here or with each API call. API call project_id overrides this value if both are set.
+The tokenizer service uses the configuration file [`config/default.json`](config/default.json) with overrides in 
+`config/local.json`. The best practice is to copy `config/default.json` to `config/local.json` and make edits there.
 
-- `dlp.unwrapped_key` is required to perform tokenization. Use an ASCII string 16, 24, or 32 bytes long.
+-   `general.project_id` is required but it can either be set here or with each API call. API call project_id overrides this
+    value if both are set.
 
-- `dlp.wrapped_key` is used if you wrapped your encryption key using KMS. Instructions on how to do this are in the section above. Wrapping your keys using KMS is highly recommended to help avert leaks.
+-   `dlp.unwrapped_key` is required to perform tokenization. Use an ASCII string 16, 24, or 32 bytes long.
 
-- `dlp.wrapped_key_resource_id` is required for wrapped keys. The format is as follows:
-  "projects/`YOUR_GCLOUD_PROJECT`/locations/`KMS_LOCATION`/keyRings/`KMS_KEY_RING`/cryptoKeys/`KMS_KEY_NAME`".
+-   `dlp.wrapped_key` is used if you wrapped your encryption key using KMS. Instructions on how to do this are in the 
+    section above. Wrapping your keys using KMS is highly recommended to help avert leaks.
 
-- Other settings are documented in [`config/default.json`](config/default.json)
+-   `dlp.wrapped_key_resource_id` is required for wrapped keys. The format is as follows:
+
+        projects/[YOUR_GCLOUD_PROJECT]/locations/[KMS_LOCATION]/keyRings/[KMS_KEY_RING]/cryptoKeys/[KMS_KEY_NAME]
+
+-   Other settings are documented in [`config/default.json`](config/default.json).
 
 # Containerizing and deploying the tokenizer service
-1. Assign your Google Cloud project ID to a variable for ease of use in your terminal:  
-    ```
-    PROJECT=PROJECT-ID
-    ```
-    where `PROJECT-ID` is your GCP project ID. You can get it by running gcloud config get-value project.
-1. Build your container image using Cloud Build, by running the following command from the directory containing the Dockerfile:  
-    ```
-    gcloud builds submit --tag gcr.io/$PROJECT/tokenizer
-    ```
-    Upon success, you will see a SUCCESS message containing the image name (gcr.io/`PROJECT-ID`/tokenizer). The image is stored in Container Registry and can be re-used if desired.
-1. Deploy using the following command:  
-    ```
-    gcloud run deploy tokenizer --image gcr.io/$PROJECT/tokenizer --platform managed --no-allow-unauthenticated --region us-central1 --memory 128M
-    ```
+
+1.  Assign your Google Cloud project ID to a variable for ease of use in your terminal, replacing `[PROJECT_ID]` with your 
+    Google Cloud project ID:  
+
+        PROJECT=[PROJECT_ID]
+
+    You can get your project ID with this command:
+    
+        gcloud config get-value project
+    
+1.  Build your container image using Cloud Build, by running the following command from the directory containing the 
+    Dockerfile:  
+    
+        gcloud builds submit --tag gcr.io/$PROJECT/tokenizer
+    
+    Upon success, you will see a success message containing the image name (gcr.io/`PROJECT-ID`/tokenizer). The image is 
+    stored in Container Registry and can be re-used.
+    
+1.  Deploy using the following command:  
+
+        gcloud run deploy tokenizer --image gcr.io/$PROJECT/tokenizer --platform managed --no-allow-unauthenticated --region us-central1 --memory 128M
+
     - `tokenizer` is the name of your service.
-    - `--image` is the image you created in the previous step
-    - `--platform` should be set to managed
-    - `--no-allow-unauthenticated` prevents anonymous calls
-    - `--region` can be changed as desired to any of the [available regions](https://cloud.google.com/run/docs/locations).
+    - `--image` is the image you created in the previous step.
+    - `--platform` should be set to managed.
+    - `--no-allow-unauthenticated` prevents anonymous calls.
+    - `--region` can be changed to any of the [available regions](https://cloud.google.com/run/docs/locations).
     - `--memory` 128 MB ought to be enough for anyone.
 
-    Then wait a few moments until the deployment is complete. On success, the command line displays the service URL.
+    Wait a few moments until the deployment is complete. On success, the command line displays the service URL.
 
-1. Visit your deployed container by opening the service URL in a web browser.
+1.  Visit your deployed container by opening the service URL in a web browser.
 
-Congratulations! You have just deployed an application packaged in a container image to Cloud Run. Cloud Run automatically scales your service to match traffic demand. It scales down to zero when not in use. You only pay for the CPU, memory, and networking consumed during request handling.
+Congratulations! You have just deployed an application packaged in a container image to Cloud Run. Cloud Run automatically
+scales your service to match traffic demand. It scales down to zero when not in use. You only pay for the CPU, memory, and 
+networking consumed during request handling.
 
 # Usage
-Once your tokenization service is deployed to Cloud Run and you have the URL, you can start calling the API. The [`examples`](./examples/) directory contains demo `tokenize` and `detokenize` scripts you can use to quickly test your API.
 
-See the following sections for details on the `tokenize` and `detokenize` API methods:
+After your tokenization service is deployed to Cloud Run and you have the URL, you can start calling the API. The 
+[`examples`](./examples/) directory contains demonstration `tokenize` and `detokenize` scripts that you can use to quickly 
+test your API.
+
+See the following sections for details on the `tokenize` and `detokenize` API methods.
 
 ## Tokenizing a card
+
 ```
 Host and Port:  See deployment process output
 Path:           /tokenize
@@ -164,4 +221,7 @@ Response:
 ```
 
 # Examples
-Example curl invocations of the tokenization and detokenization process can be found in [`examples`](./examples/). See [the readme file](./examples/README.md) for information on how to configure and use the example scripts on your tokenization service.
+
+Example `curl` invocations of the tokenization and detokenization process can be found in [`examples`](./examples/). See 
+[the readme file](./examples/README.md) for information on how to configure and use the example scripts on your tokenization
+service.
