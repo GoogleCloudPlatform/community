@@ -15,8 +15,8 @@
 data "google_compute_zones" "available" {}
 
 resource "google_compute_instance" "default" {
-  project      = "${google_project_services.project.project}"
-  zone         = "${data.google_compute_zones.available.names[0]}"
+  project      = google_project.project.project_id
+  zone         = data.google_compute_zones.available.names[0]
   name         = "tf-compute-1"
   machine_type = "f1-micro"
 
@@ -33,5 +33,5 @@ resource "google_compute_instance" "default" {
 }
 
 output "instance_id" {
-  value = "${google_compute_instance.default.self_link}"
+  value = google_compute_instance.default.self_link
 }

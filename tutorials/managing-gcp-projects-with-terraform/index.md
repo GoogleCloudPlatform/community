@@ -28,6 +28,13 @@ This tutorial assumes you already have a Cloud Platform account set up for your 
 
 Changes in this tutorial made without Terraform are done with the Google [Cloud SDK](https://cloud.google.com/sdk/) `gcloud` command-line tool. This tutorial assumes that you have this tool installed and authorized to work with your account per the [documentation](https://cloud.google.com/sdk/docs/authorizing).
 
+This tutorial requires terraform v0.12.0+ and google_provider 3.0.0+ however the previous version using google_provider 2.x.x can still be found [here](https://github.com/GoogleCloudPlatform/community/tree/af5148120947b493d9a19531a763dac4b02b3e00/tutorials/managing-gcp-projects-with-terraform). Note that the current files have been tested with
+
+    Terraform v0.12.18
+    + provider.google v3.3.0
+    + provider.random v2.2.1
+
+
 ## Costs
 
 This tutorial uses billable components of GCP, including:
@@ -120,7 +127,7 @@ gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
   --role roles/billing.user
 ```
 
-If your billing account is owned by another organization, then make sure the service account email has been added as a Billing Account User to the billing account permissions. 
+If your billing account is owned by another organization, then make sure the service account email has been added as a Billing Account User to the billing account permissions.
 
 ## Set up remote state in Cloud Storage
 
@@ -165,30 +172,34 @@ variable "org_id" {}
 variable "region" {}
 
 provider "google" {
- region = "${var.region}"
+  region = var.region
 }
 
 resource "random_id" "id" {
- byte_length = 4
- prefix      = "${var.project_name}-"
+  byte_length = 4
+  prefix      = var.project_name
 }
 
 resource "google_project" "project" {
- name            = "${var.project_name}"
- project_id      = "${random_id.id.hex}"
- billing_account = "${var.billing_account}"
- org_id          = "${var.org_id}"
+  name            = var.project_name
+  project_id      = random_id.id.hex
+  billing_account = var.billing_account
+  org_id          = var.org_id
 }
 
-resource "google_project_services" "project" {
- project = "${google_project.project.project_id}"
- services = [
-   "compute.googleapis.com"
- ]
+resource "google_project_service" "service" {
+  for_each = toset([
+    "compute.googleapis.com"
+  ])
+
+  service = each.key
+
+  project = google_project.project.project_id
+  disable_on_destroy = false
 }
 
 output "project_id" {
- value = "${google_project.project.project_id}"
+  value = google_project.project.project_id
 }
 ```
 
@@ -210,24 +221,25 @@ The `compute.tf` file:
 data "google_compute_zones" "available" {}
 
 resource "google_compute_instance" "default" {
- project = "${google_project_services.project.project}"
- zone = "${data.google_compute_zones.available.names[0]}"
- name = "tf-compute-1"
- machine_type = "f1-micro"
- boot_disk {
-   initialize_params {
-     image = "ubuntu-1604-xenial-v20170328"
-   }
- }
- network_interface {
-   network = "default"
-   access_config {
-   }
- }
+  project      = google_project.project.project_id
+  zone         = data.google_compute_zones.available.names[0]
+  name         = "tf-compute-1"
+  machine_type = "f1-micro"
+
+  boot_disk {
+    initialize_params {
+      image = "ubuntu-1604-xenial-v20170328"
+    }
+  }
+
+  network_interface {
+    network       = "default"
+    access_config = {}
+  }
 }
 
 output "instance_id" {
- value = "${google_compute_instance.default.self_link}"
+  value = google_compute_instance.default.self_link
 }
 ```
 
