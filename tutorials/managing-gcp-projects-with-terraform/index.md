@@ -1,5 +1,5 @@
 ---
-title: Managing GCP projects with Terraform
+title: Managing Google Cloud projects with Terraform
 description: Learn how to manage projects within an organization and project resources with Terraform.
 author: danisla
 tags: Terraform
@@ -8,13 +8,16 @@ date_published: 2017-06-19
 
 Dan Isla | Google Cloud Solution Architect | Google
 
-This tutorial demonstrates how to create and manage projects on Google Cloud Platform with Terraform. With Terraform, many of your resources such as projects, IAM policies, networks, Compute Engine instances, and Kubernetes Engine clusters can be managed, versioned, and easily recreated for your organization or teams. The state that Terraform generates is saved to Google Cloud Storage for persistence.
+This tutorial demonstrates how to create and manage projects on Google Cloud with Terraform. With Terraform, many of your 
+resources such as projects, IAM policies, networks, Compute Engine instances, and Kubernetes Engine clusters can be managed,
+versioned, and easily recreated for your organization or teams. The state that Terraform generates is saved to Cloud Storage
+for persistence.
 
 ## Objectives
 
 - Create a Terraform Admin Project for the service account and remote state bucket.
 - Grant Organization-level permissions to the service account.
-- Configure the remote state in GCS.
+- Configure the remote state in Cloud Storage.
 - Use Terraform to provision a new project and an instance in that project.
 
 Architecture diagram for tutorial components:
@@ -24,11 +27,18 @@ Architecture diagram for tutorial components:
 
 ## Before you begin
 
-This tutorial assumes you already have a Cloud Platform account set up for your organization and that you are allowed to make organizational-level changes in the account. [See the documentation](https://cloud.google.com/resource-manager/docs/creating-managing-organization#setting-up) for details on creating and managing organizations.
+This tutorial assumes that you already have a Google Cloud account set up for your organization and that you are allowed to
+make organization-level changes in the account.
+[See the documentation](https://cloud.google.com/resource-manager/docs/creating-managing-organization#setting-up) for 
+details on creating and managing organizations.
 
-Changes in this tutorial made without Terraform are done with the Google [Cloud SDK](https://cloud.google.com/sdk/) `gcloud` command-line tool. This tutorial assumes that you have this tool installed and authorized to work with your account per the [documentation](https://cloud.google.com/sdk/docs/authorizing).
+Commands in this tutorial outside of Terrafrom are run with the [Google Cloud SDK](https://cloud.google.com/sdk/) `gcloud`
+command-line tool. This tutorial assumes that you have the `gcloud` tool installed and authorized to work with your account
+according to the [documentation](https://cloud.google.com/sdk/docs/authorizing).
 
-This tutorial requires terraform v0.12.0+ and google_provider 3.0.0+ however the previous version using google_provider 2.x.x can still be found [here](https://github.com/GoogleCloudPlatform/community/tree/af5148120947b493d9a19531a763dac4b02b3e00/tutorials/managing-gcp-projects-with-terraform). Note that the current files have been tested with
+This tutorial requires terraform v0.12.0+ and google_provider 3.0.0+. A previous of version of this tutorial using
+google_provider 2.x.x is
+[here](https://github.com/GoogleCloudPlatform/community/tree/af5148120947b493d9a19531a763dac4b02b3e00/tutorials/managing-gcp-projects-with-terraform). The current tutorial has been tested with the following:
 
     Terraform v0.12.18
     + provider.google v3.3.0
@@ -37,12 +47,13 @@ This tutorial requires terraform v0.12.0+ and google_provider 3.0.0+ however the
 
 ## Costs
 
-This tutorial uses billable components of GCP, including:
+This tutorial uses billable components of Google Cloud, including the following:
 
 - Compute Engine
-- Google Cloud Storage
+- Cloud Storage
 
-Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=cdaa96a1-84a6-468d-b5cc-493af9895149) to generate a cost estimate based on your projected usage.
+Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=cdaa96a1-84a6-468d-b5cc-493af9895149) to 
+generate a cost estimate based on your projected usage.
 
 ## Set up the environment
 
@@ -66,7 +77,10 @@ gcloud beta billing accounts list
 
 ## Create the Terraform Admin Project
 
-Using an Admin Project for your Terraform service account keeps the resources needed for managing your projects separate from the actual projects you create. While these resources could be created with Terraform using a service account from an existing project, or using Cloud Shell, in this tutorial you will create a separate project and service account exclusively for Terraform.
+Using an Admin Project for your Terraform service account keeps the resources needed for managing your projects separate 
+from the actual projects you create. While these resources could be created with Terraform using a service account from an 
+existing project, or using Cloud Shell, in this tutorial you will create a separate project and service account exclusively 
+for Terraform.
 
 Create a new project and link it to your billing account:
 
@@ -103,7 +117,8 @@ gcloud projects add-iam-policy-binding ${TF_ADMIN} \
   --role roles/storage.admin
 ```
 
-Any actions that Terraform performs require that the API be enabled to do so. In this guide, Terraform requires the following:
+Any actions that Terraform performs require that the API be enabled to do so. In this guide, Terraform requires the 
+following:
 
 ```sh
 gcloud services enable cloudresourcemanager.googleapis.com
@@ -127,7 +142,8 @@ gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
   --role roles/billing.user
 ```
 
-If your billing account is owned by another organization, then make sure the service account email has been added as a Billing Account User to the billing account permissions.
+If your billing account is owned by another organization, then make sure the service account email address has been added as
+a Billing Account User to the billing account permissions.
 
 ## Set up remote state in Cloud Storage
 
@@ -146,7 +162,7 @@ terraform {
 EOF
 ```
 
-Enable versioning for said remote bucket:
+Enable versioning for the remote bucket:
 
 ```sh
 gsutil versioning set on gs://${TF_ADMIN}
@@ -203,7 +219,7 @@ output "project_id" {
 }
 ```
 
-*View the code [on GitHub](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/managing-gcp-projects-with-terraform/project.tf).*
+View the code [on GitHub](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/managing-gcp-projects-with-terraform/project.tf).
 
 Terraform resources used:
 
@@ -243,7 +259,7 @@ output "instance_id" {
 }
 ```
 
-*View the code [on GitHub](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/managing-gcp-projects-with-terraform/compute.tf).*
+View the code [on GitHub](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/managing-gcp-projects-with-terraform/compute.tf).
 
 Terraform resources used:
 
@@ -287,7 +303,8 @@ gcloud compute ssh ${instance_id} --project ${project_id}
 Note that SSH may not work unless your organization user also has access to the newly created project resources.
 
 ## Cleaning up
-First, destroy the resources created by Terraform:
+
+First, permanently delete the resources created by Terraform:
 
 ```sh
 terraform destroy
