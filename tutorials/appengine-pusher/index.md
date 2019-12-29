@@ -172,12 +172,12 @@ public class AuthorizeServlet extends HttpServlet {
 	String query = CharStreams.toString(request.getReader());
 	// socket_id, channel_name parameters are automatically set in the POST body of the request
 	// eg.socket_id=1232.12&channel_name=presence-my-channel
-	Map&lt;String, String&gt; data = splitQuery(query);
+	Map<String, String> data = splitQuery(query);
 	String socketId = data.get("socket_id");
 	String channelId = data.get("channel_name");
 
 	// Presence channels (presence-*) require user identification for authentication
-	Map&lt;String, String&gt; userInfo = new HashMap<>();
+	Map<String, String> userInfo = new HashMap<>();
 	userInfo.put("displayName", displayName);
 
 	// Inject custom authentication code for your application here to allow/deny current request
@@ -193,8 +193,8 @@ public class AuthorizeServlet extends HttpServlet {
 	response.getWriter().append(auth);
   }
 
-  private static Map&lt;String, String&gt; splitQuery(String query) throws UnsupportedEncodingException {
-	Map&lt;String, String&gt; query_pairs = new HashMap<>();
+  private static Map<String, String> splitQuery(String query) throws UnsupportedEncodingException {
+	Map<String, String> query_pairs = new HashMap<>();
 	String[] pairs = query.split("&");
 	for (String pair : pairs) {
 	  int idx = pair.indexOf("=");
@@ -226,8 +226,8 @@ documentation.
 public class SendMessageServlet extends HttpServlet {
 
   private Gson gson = new GsonBuilder().create();
-  private TypeReference&lt;Map&lt;String, String&gt;&gt; typeReference =
-	  new TypeReference&lt;Map&lt;String, String&gt;&gt;() {};
+  private TypeReference<Map<String, String>> typeReference =
+	  new TypeReference<Map<String, String>>() {};
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -236,7 +236,7 @@ public class SendMessageServlet extends HttpServlet {
 
 	String body = CharStreams.readLines(request.getReader()).toString();
 	String json = body.replaceFirst("^\\[", "").replaceFirst("\\]$", "");
-	Map&lt;String, String&gt; data = gson.fromJson(json, typeReference.getType());
+	Map<String, String> data = gson.fromJson(json, typeReference.getType());
 	String message = data.get("message");
 	String socketId = data.get("socket_id");
 	String channelId = data.get("channel_id");
@@ -246,8 +246,8 @@ public class SendMessageServlet extends HttpServlet {
 	String displayName = user.getNickname().replaceFirst("@.*", "");
 
 	// Create a message including the user email prefix to display in the chat window
-	String taggedMessage = "<strong>&lt;" + displayName + "&gt;</strong> " + message;
-	Map&lt;String, String&gt; messageData = new HashMap<>();
+	String taggedMessage = "<strong><" + displayName + "></strong> " + message;
+	Map<String, String> messageData = new HashMap<>();
 	messageData.put("message", taggedMessage);
 
 	// Send a message over the Pusher channel (maximum size of a message is 10KB)
