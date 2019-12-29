@@ -117,6 +117,6 @@ $ cd armaserver
 $ ./armaserver -name=server -config=server.cfg
 ```
 
-
 Please follow this BI's wiki for more info
+
 https://community.bistudio.com/wiki/Arma_3_Dedicated_Server#Configuration
