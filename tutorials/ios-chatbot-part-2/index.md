@@ -135,7 +135,7 @@ iOS 7+ has a built-in text-to-speech SDK, [`AVSpeechSynthesizer`](https://develo
 
 
 ```m
-#import &lt;AVFoundation/AVFoundation.h&gt;
+#import <AVFoundation/AVFoundation.h>
 AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:message];
 AVSpeechSynthesizer *synthesizer = [[AVSpeechSynthesizer alloc] init];
 [synthesizer speakUtterance:utterance];
@@ -169,7 +169,7 @@ To support additional text-to-speech languages, add this line to the code:
 
 
 ```m
-#import &lt;AVFoundation/AVFoundation.h&gt;
+#import <AVFoundation/AVFoundation.h>
 AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:message];
 utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"zh-Hans"];
 AVSpeechSynthesizer *synthesizer = [[AVSpeechSynthesizer alloc] init];
