@@ -181,7 +181,7 @@ You will create a repository called `tour-of-heroes-universal`
 
 2.  Create the `cloudbuild.yaml` file:
 
-         cat <&lt;CLOUDBUILD_FILE&gt;cloudbuild.yaml
+         cat <<CLOUDBUILD_FILE>cloudbuild.yaml
          steps:
          - id: install_packages
            name: 'gcr.io/cloud-builders/npm'
