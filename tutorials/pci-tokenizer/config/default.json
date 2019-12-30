@@ -3,19 +3,25 @@
 // See above for more information on comments, environment-specific configs, and more.
 {
   "general": {
-    "project_id":        ""
+    "project_id":              ""
   },
-  "kms": {
-    "key_ring_location": "global",
-    "key_ring_id":       "tokenization-service-kr",
-    "crypto_key_id":     "cc-tokenization"
-  },
-  "datastore": {
-    "namespace":         "tokenizer",
-    "kind":              "cc"
+  "dlp": {
+    // You must either provide an unwrapped_key by itself OR both the wrapped_key and wrapped_key_resource_id
+    // unwrapped_key must be 16B, 24B, or 32B
+    "unwrapped_key":           "",
+
+    // --OR--
+
+    // Should be a base64 encoded string. See ../examples/wrapkey and ../index.md for more information
+    "wrapped_key":             "",
+    // Resource id format: projects/YOUR_GCLOUD_PROJECT/locations/YOUR_LOCATION/keyRings/YOUR_KEYRING_NAME/cryptoKeys/YOUR_KEY_NAME
+    "wrapped_key_resource_id": ""
   },
   "logging": {
-    "debug":             false,
-    "version":           true
+    // Toggle logging of debug() calls
+    "debug":                   false,
+
+    // Toggle logging of the script's timestamp on initial launch and subsequent execution
+    "version":                 true
   }
 }
