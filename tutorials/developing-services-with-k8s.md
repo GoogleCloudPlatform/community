@@ -32,11 +32,11 @@ One of the areas of complexity is setting up a productive development environmen
 
 In this tutorial, we're going to use the [Guestbook](https://cloud.google.com/kubernetes-engine/docs/tutorials/guestbook) sample application to illustrate a simple "microservices" architecture: the PHP service will represent one service, and the Redis database will represent another.
 
-### Setting up your local laptop
+### Setting up your local computer
 
-To set up your laptop, you'll need to install a few basic components.
+To set up your computer, you'll need to install a few basic components.
 
-First, install the `gcloud` and `kubectl` command line tools. Follow the instructions at [https://cloud.google.com/sdk/downloads](https://cloud.google.com/sdk/downloads) to download and install the Cloud SDK. Then, ensure `kubectl` is installed:
+First, install the `gcloud` and `kubectl` command line tools. Follow the instructions at [https://cloud.google.com/sdk/downloads](https://cloud.google.com/sdk/downloads) to download and install the Cloud SDK. Then, ensure that `kubectl` is installed:
 
 ```
 % sudo gcloud components update kubectl
@@ -134,8 +134,8 @@ It's time to check out our app in the browser. Let's look up the IP address of o
 % kubectl get services
 NAME           CLUSTER-IP     EXTERNAL-IP      PORT(S)        AGE
 frontend       10.7.252.209   104.196.217.24   80:30563/TCP   2m
-redis-master   10.7.248.117   &lt;none&gt;           6379/TCP       2m
-redis-slave    10.7.245.58    &lt;none&gt;           6379/TCP       2m
+redis-master   10.7.248.117   <none>           6379/TCP       2m
+redis-slave    10.7.245.58    <none>           6379/TCP       2m
 ```
 
 Go to the external IP address of your load balancer (in the above example, 104.196.217.24). You should see the Guestbook application running. Typing into the submit box will show how your message is persisting to the Redis cluster.

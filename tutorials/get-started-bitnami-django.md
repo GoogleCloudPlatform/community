@@ -1,35 +1,36 @@
 ---
-title: Get started with Bitnami Django on Google Cloud Platform
-description: Create and deploy a basic Django Web application on Google Cloud Platform with Bitnami Django.
+title: Get started with Bitnami Django on Google Cloud
+description: Create and deploy a basic Django Web application on Google Cloud with Bitnami Django.
 author: vikram-bitnami
 tags: django, python, Google Cloud Platform, bitnami
 date_published: 2017-03-15
 ---
 
-This tutorial demonstrates how to create and deploy a basic "hello world" Django Web application on Google Cloud Platform in just a few minutes using Bitnami Django.
+This tutorial demonstrates how to create and deploy a basic "hello world" Django web app on Google Cloud in just a few 
+minutes using Bitnami Django.
 
 ## Objectives
 
-* Install Bitnami Django on a Google Compute Engine instance.
+* Install Bitnami Django on a Compute Engine instance.
 * Create a "hello world" Django application.
 * Serve the application with Apache.
 * Configure a database (optional).
 
 ## Before you begin
 
-Before starting this tutorial, ensure that you have set up a Google Cloud Platform project. You can use an existing project or [create a new project](https://console.cloud.google.com/project).
+Before starting this tutorial, ensure that you have set up a Google Cloud project. You can use an existing project or [create a new project](https://console.cloud.google.com/project).
 
 ## Cost
 
-The default configuration allows you to run a low-traffic Web application powered by Django using an `f1-micro` instance with a standard 10 GB persistent disk. You can customize the configuration when deploying this solution or change it later, although the default configuration is fine for the purposes of this tutorial.
+The default configuration allows you to run a low-traffic web app powered by Django using an `f1-micro` instance with a standard 10 GB persistent disk. You can customize the configuration when deploying this solution or change it later, although the default configuration is fine for the purposes of this tutorial.
 
 Estimated cost for the above default configuration is $4.28 per month, based on 30-day, 24 hours per day usage in the Central US region. Sustained use discount is included.
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected usage. New Google Cloud customers may be eligible for a [free trial](https://cloud.google.com/free-trial).
 
-## Deploy Bitnami Django on a Google Compute Engine instance
+## Deploy Bitnami Django on a Compute Engine instance
 
-Deploy Bitnami Django on a Google Compute Engine instance:
+Deploy Bitnami Django on a Compute Engine instance:
 
 1. From the Google Cloud Platform menu, select the [Cloud Launcher](https://console.cloud.google.com/launcher).
 1. Search for "django certified by bitnami" and select the resulting `Django Certified by Bitnami` template.
@@ -110,22 +111,22 @@ Bitnami Django includes a pre-configured instance of the Apache Web server. Conf
 
 1. Add the following Apache directives in the `/opt/bitnami/apps/django/django_projects/myproject/conf/httpd-app.conf` file:
 
-        &lt;IfDefine !IS_DJANGOSTACK_LOADED&gt;
+        <IfDefine !IS_DJANGOSTACK_LOADED>
           Define IS_DJANGOSTACK_LOADED
           WSGIDaemonProcess wsgi-djangostack   processes=2 threads=15    display-name=%{GROUP}
-        &lt;/IfDefine&gt;
+        </IfDefine>
 
-        &lt;Directory "/opt/bitnami/apps/django/django_projects/myproject/myproject"&gt;
+        <Directory "/opt/bitnami/apps/django/django_projects/myproject/myproject">
             Options +MultiViews
             AllowOverride All
-            &lt;IfVersion >= 2.3&gt;
+            <IfVersion >= 2.3>
                 Require all granted
-            &lt;/IfVersion&gt;
+            </IfVersion>
 
             WSGIProcessGroup wsgi-djangostack
 
             WSGIApplicationGroup %{GLOBAL}
-        &lt;/Directory&gt;
+        </Directory>
 
         Alias /myproject/static "/opt/bitnami/apps/django/lib/python3.6/site-packages/Django-2.0.2-py3.6.egg/django/contrib/admin/static"
         WSGIScriptAlias /myproject '/opt/bitnami/apps/django/django_projects/myproject/myproject/wsgi.py'
