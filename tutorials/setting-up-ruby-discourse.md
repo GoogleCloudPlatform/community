@@ -1,17 +1,17 @@
 ---
-title: How to deploy a Ruby Discourse app on Google Cloud Platform
-description: Learn how to set up a Ruby Discourse app on Google Cloud Platform.
+title: How to deploy a Ruby Discourse app on Google Cloud
+description: Learn how to set up a Ruby Discourse app on Google Cloud.
 author: hxiong388
 tags: App Engine, Ruby, Ruby on Rails, Discourse, Redis, Postgres
 date_published: 2017-06-30
 ---
 
 This tutorial shows how to create and configure a [Ruby Discourse](http://www.discourse.org/) application
-to run on Google Cloud Platform (GCP) using the App Engine flexible environment.
+to run on Google Cloud using the App Engine flexible environment.
 
 ## Objectives
 
-* Set up dependency components, such as Redis and Postgres on GCP.
+* Set up dependency components, such as Redis and Postgres on Google Cloud.
 * Deploy a Discourse application to App Engine flexible environment.
 * Verify the application is launched properly.
 
@@ -19,7 +19,7 @@ to run on Google Cloud Platform (GCP) using the App Engine flexible environment.
 
 You'll need the following:
 
-* A GCP project. You can use an existing project or click the button to create a new project.
+* A Google Cloud project. You can use an existing project or click the button to create a new project.
 * [Ruby 2.3+ installation](https://www.ruby-lang.org/en/documentation/installation/).
 * [Cloud SDK installation](https://cloud.google.com/sdk/downloads).
 * A Redis instance running in your project. To set up Redis on Compute Engine, see [Setting up Redis](setting-up-redis.md). This tutorial assumes the Redis instance is running in the *default*
@@ -28,7 +28,7 @@ You'll need the following:
 
 ## Costs
 
-This tutorial uses billable components of GCP including:
+This tutorial uses billable components of Google Cloud including:
 
 * App Engine flexible environment
 * Cloud SQL instance
@@ -43,27 +43,30 @@ to generate a cost estimate based on your projected usage. GCP users might be el
 We're going to create a database named `discourse` on the Cloud SQL Postgres instance. This is going to be the production
 database your Discourse app will use.
 
-1. In the Cloud Platform Console, go to the [Cloud SQL Postgres](https://console.cloud.google.com/sql/instances) instance you have created.
+1.  In the Cloud Console, go to the [Cloud SQL Postgres](https://console.cloud.google.com/sql/instances) instance you have
+    created.
 
-1. Go to the **Databases** tab. Create a new database with name `discourse`.
+1.  Go to the **Databases** tab. Create a new database with name `discourse`.
 
-1. Go to **Access Control** tab, and then **Users** sub-tab. Create a new user with username `discourse` and password `discourse`.
+1.  Go to **Access Control** tab, and then **Users** sub-tab. Create a new user with username `discourse` and
+    password `discourse`.
 
-1. Go back to the **Overview** tab, and click on the **Connect using Cloud Shell** button.
+1.  Go back to the **Overview** tab, and click on the **Connect using Cloud Shell** button.
 
-1. In the Cloud Shell terminal that appears, run:
+1.  In the Cloud Shell terminal that appears, run the following command, replacing `[Cloud_SQL_instance_name]` with the 
+    name of the Cloud SQL instance:
 
-        gcloud beta sql connect &lt;The Cloud SQL instance name&gt; --user=discourse
+        gcloud beta sql connect [Cloud_SQL_instance_name] --user=discourse
 
-1. When prompted, type in the password `discourse`.
+1.  When prompted, type in the password `discourse`.
 
-1. After you connect to the instance, run:
+1.  After you connect to the instance, run:
 
         discourse=> GRANT ALL PRIVILEGES ON DATABASE discourse TO discourse;
 
-1. Close the Cloud Shell when done.
+1.  Close the Cloud Shell when done.
 
-1. On the same **Overview** page, note the **Instance connection name** for later use.
+1.  On the same **Overview** page, note the **Instance connection name** for later use.
 
 ## Configure Discourse Rails application
 
@@ -78,10 +81,10 @@ We'll configure the Discourse app to run on the App Engine flexible environment 
         db_password = discourse
 
         # socket name for database connection
-        db_host = /cloudsql/&lt;Cloud SQL instance connection name&gt;
+        db_host = /cloudsql/[Cloud_SQL_instance_connection_name]
 
         # Redis host address
-        redis_host = &lt;Redis instance internal IPv4 address&gt;
+        redis_host = [Redis_instance_internal_IPv4_address]
 
         # enable serve_static_assets for dockerized app
         serve_static_assets = true
@@ -108,22 +111,23 @@ We'll configure the Discourse app to run on the App Engine flexible environment 
 ## Deploy Discourse app to the App Engine flexible environment
 
 
-1. Under the application root directory of the Discourse app, create a file named `app.yaml`:
+1.  Under the application root directory of the Discourse app, create a file named `app.yaml`:
 
         runtime: ruby
         env: flex
         entrypoint: bundle exec rails s -p 8080
         beta_settings:
-          cloud_sql_instances: &lt;Cloud SQL instance connection name&gt;
+          cloud_sql_instances: [Cloud_SQL_instance_connection_name]
 
-1. In the same application root directory, run this gcloud SDK command to deploy:
+1.  In the same application root directory, run this gcloud SDK command to deploy:
 
         VERSION=$(date +%Y%m%dt%H%M%S); \
             gcloud app deploy --version=$VERSION --no-promote \
             && bundle exec rake appengine:exec -- bundle exec rake db:migrate \
             && gcloud app services set-traffic default $VERSION=1
 
-  This will deploy the app to the App Engine flexible environment, run database migration, and then switch the load balancer to the new deployment.
+    This will deploy the app to the App Engine flexible environment, run database migration, and then switch the load
+    balancer to the new deployment.
 
 
 ## Verify deployment
@@ -157,12 +161,12 @@ You can't reuse the project ID of a deleted project. If you created a custom pro
 
 To delete an App Engine service:
 
-1. In the Cloud Platform Console, go to the **[App Engine Services](https://console.cloud.google.com/appengine/services)** page.
+1. In the Cloud Console, go to the **[App Engine Services](https://console.cloud.google.com/appengine/services)** page.
 1. Click the checkbox next to the service you wish to delete.
 1. Click **Delete** at the top of the page to delete the service.
 
-If you are trying to delete the *default* service, you cannot. Instead:
+You can't delete the *default* service. Instead, do the following:
 
-1. Click on the number of versions which will navigate you to App Engine Versions page.
-1. Select all the versions you wish to disable and click **Stop** at the top of the page. This will free
+1. Click the version number, which will take you to App Engine Versions page.
+1. Select all the versions you want to disable, and click **Stop** at the top of the page. This frees
    all of the Compute Engine resources used for this App Engine service.
