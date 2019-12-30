@@ -104,7 +104,7 @@ simulating simultaneous connections to the database server.
 
 1.  Import the `employees` database to your MySQL instance:
 
-        gcloud sql connect cloudsql001 --user=root &lt; employees.sql
+        gcloud sql connect cloudsql001 --user=root < employees.sql
         
     Enter the root password you selected earlier when prompted to
     do so.
@@ -133,11 +133,11 @@ simulating simultaneous connections to the database server.
 
 1.  Create a file with a list of resource-intensive SQL queries.
 
-        cat &lt;&lt; EOF >select_query.sql
+        cat << EOF >select_query.sql
         use employees;
         SELECT * FROM salaries WHERE salary > 0 LIMIT 100000;
         SELECT departments.dept_name,dept_emp.from_date,employees.* FROM departments LEFT JOIN dept_emp ON (departments.dept_no = dept_emp.dept_no) LEFT JOIN employees ON (dept_emp.emp_no = employees.emp_no) WHERE to_date = '9999-01-01' LIMIT 100000;
-        SELECT employees.* FROM employees LEFT JOIN dept_emp ON ( dept_emp.emp_no = employees.emp_no ) LEFT JOIN salaries ON ( salaries.emp_no = salaries.emp_no ) WHERE employees.first_name LIKE '%Jo%' AND salaries.from_date > '1993-01-21' AND salaries.to_date &lt; '1998-01-01' limit 1000000;
+        SELECT employees.* FROM employees LEFT JOIN dept_emp ON ( dept_emp.emp_no = employees.emp_no ) LEFT JOIN salaries ON ( salaries.emp_no = salaries.emp_no ) WHERE employees.first_name LIKE '%Jo%' AND salaries.from_date > '1993-01-21' AND salaries.to_date < '1998-01-01' limit 1000000;
         EOF
 
 1.  Grant the public IP address of your Cloud Shell instance access to your Cloud SQL instance:
