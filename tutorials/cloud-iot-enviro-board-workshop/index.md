@@ -190,9 +190,10 @@ Later, you use the subscription to get the messages.
 
         export PROJECT_ID=your-gcp-project-id
 
-1.  In the Raspberry Pi shell, set your GCP project ID in the device application configuration file:
+1.  In the Raspberry Pi shell, set your GCP project ID in the device application configuration file with this command,
+    replacing `[REPLACE_THIS_WITH_YOUR_PROJECT_ID_VALUE]` with your project ID value:
 
-        sed -i -e 's/&lt;replace with project id&gt;/'"${PROJECT_ID}"'/g' $HOME/enviro-board/cloud_config.ini
+        sed -i -e 's/[REPLACE_THIS_WITH_YOUR_PROJECT_ID_VALUE]/'"${PROJECT_ID}"'/g' $HOME/enviro-board/cloud_config.ini
 
 ### Download the CA certificate
 
