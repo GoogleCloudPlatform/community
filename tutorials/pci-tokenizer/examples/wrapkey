@@ -42,4 +42,5 @@ echo $UNWRAPPED_KEY | gcloud kms encrypt \
   --key=$KMS_KEY_NAME \
   --plaintext-file - \
   --ciphertext-file - \
-  | base64
+  | base64 \
+  | tr -d \\n # base64 -w is not available on some systems

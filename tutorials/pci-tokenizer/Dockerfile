@@ -8,7 +8,7 @@ RUN mkdir -p /tokenizer/src /tokenizer/config
 WORKDIR "/tokenizer"
 
 # Deploy code
-COPY package.json package-lock.json /tokenizer/
+COPY package*.json /tokenizer/
 COPY src/* /tokenizer/src/
 COPY config/* /tokenizer/config/
 
