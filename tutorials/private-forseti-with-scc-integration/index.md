@@ -6,15 +6,17 @@ tags: Forseti Security, Cloud Security Command Center
 date_published: 2019-05-31
 ---
 
-Warning: This guide has been updated to reflect the new instalation process using terraform as the python installation script will no longer be supported; however you can still find the old instalation procedure [here](https://github.com/GoogleCloudPlatform/community/blob/987cff06da9c17ff34765a9ce5aa48b3623d64d6/tutorials/private-forseti-with-scc-integration/index.md).
+Note: This guide has been updated for the new installation process using Terraform. The Python installation script
+used in the previous version of this tutorial will no longer be supported. However, you can still find the old instalation 
+procedure
+[here](https://github.com/GoogleCloudPlatform/community/blob/987cff06da9c17ff34765a9ce5aa48b3623d64d6/tutorials/private-forseti-with-scc-integration/index.md).
 
-
-This guide walks you through a private Forseti Security installation on GCE, following enterprise best practices.
+This guide walks you through a private Forseti Security installation on Compute Engine, following enterprise best practices.
 
 This guide shows how to do the following:
 
-- Deploy Forseti in its own VPC (not the default VPC).
-- Restrict the firewall rules that are pre-configured.
+- Deploy Forseti in its own virtual private cloud (VPC), not the default VPC.
+- Restrict the firewall rules that are preconfigured.
 - Optionally, remove the public IP address from Compute Engine instances.
 - Configure Cloud SQL to be a private instance.
 - Configure Forseti to send violations to Cloud Security Command Center (Cloud SCC).
@@ -29,7 +31,7 @@ This guide was developed using Forseti version 2.24.0 (release v5.1.0).
 
 ### Prerequisites
 
-To perform the steps in this tutorial, you'll need:
+To perform the steps in this tutorial, you need the following:
 
 - Access to a G Suite or Cloud Identity super admin account.
 - Access to the  **Security** page in the [Google Admin console](https://admin.google.com).
@@ -37,39 +39,40 @@ To perform the steps in this tutorial, you'll need:
 - Rights to modify IAM permissions at the Organization level.
 - A project where you will deploy Forseti. In this guide, we'll use the project name `forseti`.
 - Editor or owner permissions for the `forseti` project.
-- Define the region and zone you would like to install forseti
 
-Software you'll need:
+Software that you need:
 - [Terraform 0.12.12](https://www.terraform.io/downloads.html) or higher
-- [Google Cloud SDK](https://cloud.google.com/sdk/install)
+- [Cloud SDK](https://cloud.google.com/sdk/install)
 
 
 ### Installing Forseti
 
 You have two options when following this guide:
 
-**Option 1.** Use a temporary shell workspace managed by Google:
+*   (Recommended) Clone the installer repository into your local workspace:
 
-<a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fforseti-security%2Fterraform-google-forseti.git&amp;cloudshell_git_branch=modulerelease510&amp;cloudshell_working_dir=examples/install_simple&amp;cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&amp;cloudshell_tutorial=.%2Ftutorial.md"><img src="https://gstatic.com/cloudssh/images/open-btn.svg" alt="Open in Google Cloud Shell"></a>
+    [Forseti Security: Terraform Google Installer](https://github.com/forseti-security/terraform-google-forseti).
 
-If you are using this option remember to backup your `terraform.tfvars` file at the end of the session!
+    For a stable build select the latest `module-release` branch.
 
+*   Use a temporary shell workspace managed by Google:
 
-**Option 2.** Clone the installer repository on your local workspace and use it instead (recommended):
-   - [Forseti Security: Terraform Google Installer](https://github.com/forseti-security/terraform-google-forseti).
-   - For a stable build select the latest `module-release` branch.
+    <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fforseti-security%2Fterraform-google-forseti.git&amp;cloudshell_git_branch=modulerelease510&amp;cloudshell_working_dir=examples/install_simple&amp;cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&amp;cloudshell_tutorial=.%2Ftutorial.md"><img src="https://gstatic.com/cloudssh/images/open-btn.svg" alt="Open in Google Cloud Shell"></a>
+    
+    If you use this option, be sure to back up your `terraform.tfvars` file at the end of the session.
 
-Regardless of which option you choose for working environment the steps below are the same, note that going forward whenever this guides refers to `shell session` it's whichever choice of environment you made above.
+Regardless of which option you choose for the working environment, the steps below are the same. When the steps below
+refer to your *shell session*, this refers to whichever choice of environment you made above.
 
-#### Preparing the GCP Environment
+#### Preparing the GCP environment
 
-If you do not have a dedicated `forseti` project yet create one, then navigate to the project [**Home**](https://console.cloud.google.com/home/dashboard) and take note of the Project ID information displayed in the Project Info panel.
-
-![](project_info.png)
+If you do not have a dedicated `forseti` project yet, then create one. Navigate to the project
+[**Home**](https://console.cloud.google.com/home/dashboard) and take note of the Project ID information displayed in the
+Project Info panel.
 
 In the `forseti` project, do the following:
 
-1.  Go to the [**VPC Networks** page](https://console.cloud.google.com/networking/networks/list) in the GCP Console.
+1.  Go to the [**VPC Networks** page](https://console.cloud.google.com/networking/networks/list) in the Cloud Console.
 1.  Create a VPC for Forseti with one subnet. Configure it with the following parameters:
        - **Private Google access**: **On**
        - **Flow logs**: **On** (optional)
@@ -80,7 +83,7 @@ In the `forseti` project, do the following:
     names; you will use them in later steps.
 
 1.  Remove the default network.
-1.  Open your shell session and confirm you have the required software properly installed
+1.  Open your shell session and confirm that you have the required software properly installed:
 
         terraform -v && gsutil -v && gcloud -v
 
@@ -90,45 +93,49 @@ In the `forseti` project, do the following:
         gsutil version: 4.46
         Google Cloud SDK 272.0.0
 
-1.  Before the next step ensure your shell session is authenticated by running `gcloud auth list` - if it's not yet authenticated run the `gcloud auth login` to authenticate.
+1.  Before the next step, ensure that your shell session is authenticated by running `gcloud auth list`. If your shell 
+    session is not yet authenticated, then use the `gcloud auth login` command to authenticate.
 
-Before we can run the terraform module we are required to create a service account and enable  specific APIs, the forseti installer has a helper script for this purpose which uses gcloud under the hood.
+Before you can run the terraform module, you must create a service account and enable specific APIs. The Forseti installer
+has a helper script that uses `gcloud` for this purpose.
 
-1.  First set the proper configuration context for gcloud, on your shell session do the following:
+1.  In your shell, run the following command to set the configuration context for `gcloud`:
 
         gcloud config set project [PROJECT_ID]
         gcloud config set compute/region [REGION_NAME]
         gcloud config set compute/zone [ZONE_NAME]
 
-    In our example this will be:
+    In our example:
 
         gcloud config set project forseti-project-id
         gcloud config set compute/region us-east4
         gcloud config set compute/zone us-east4-a
 
-1.  Navigate to `terraform-google-forseti/helpers`
+1.  Navigate to `terraform-google-forseti/helpers`.
 
 1.  Run the `setup.sh` script as follows:
 
         ./setup.sh -p [PROJECT_ID] -o [ORGANIZATION_ID]
 
-    To find our Organization ID you may use `gcloud organizations list` command to find the ID, which is a 12 digit string, another way to find the organization ID is to look at the select project popup as shown below:
+    To [find your Organization ID](https://cloud.google.com/resource-manager/docs/creating-managing-organization#retrieving_your_organization_id),
+    you can use the `gcloud organizations list` command. You will need the Organization ID for subsequent steps, too.
+    
+    This step creates a `credentials.json` file in the `helpers` folder, which you will need in a later step. This file
+    is removed at the end of the installation procedure.
 
-    ![](2019-11-28_16-11.png)
+#### Preparing the Terraform environment
 
-    Take note of the Organization ID since you will need it for subsequent steps as well. In addition, this step also creates a `credentials.json` file in the `helpers` folder which you will need in a later step - this file will be removed at the end of our installation procedure.
-
-#### Preparing the Terraform Environment
-
-1.  Move the `credentials.json` file to to `terraform-google-forseti/examples/install_simple` folder and navigate to that folder; we will use it as a base for our installation, doc details are [here](https://github.com/forseti-security/terraform-google-forseti/tree/master/examples/install_simple).
+1.  Move the `credentials.json` file to to `terraform-google-forseti/examples/install_simple` folder and navigate to that 
+    folder. You use it as a base for the installation. For details, see the
+    [installation documentation](https://github.com/forseti-security/terraform-google-forseti/tree/master/examples/install_simple).
 
         # from the helpers folder
         mv credentials.json ../examples/install_simple
         cd ../examples/install_simple
 
-1.  Open the `terraform.tfvars` file with your favorite text editor; this file contains the input provided to the terraform modude which we will change according to our preference.
+1.  Open the `terraform.tfvars` file with your text editor. This file contains the input provided to the Terraform module.
 
-1.  The default `terraform.tfvars` file looks like the following:
+    The default `terraform.tfvars` file looks like the following:
 
         project_id = "my-project-id"
         org_id     = "11111111"
@@ -144,13 +151,16 @@ Before we can run the terraform module we are required to create a service accou
         forseti_email_sender    = ""
         forseti_email_recipient = ""
 
-    - Configure `project_id` with the project ID that you took note on the steps above.
-    - Configure the `org_id` with your Organization ID that you took note on the steps above.
+1.  Configure the file as follows:
 
-    - Configure the `domain` with your organization's domain.
-    - Configure network and subnetwork and region with the information you recorded when creating the network in the step above, in this example it's `forseti`, `forseti-subnet1` and `us-east4` respectively.
+    -   Configure `project_id` with your project ID.
+    -   Configure the `org_id` with your Organization ID.
+    -   Configure the `domain` with your organization's domain.
+    -   Configure network and subnetwork and region with the information you recorded when creating the network. In this
+        example it's `forseti`, `forseti-subnet1` and `us-east4` respectively.
 
-    Note: if your organization is setup to use shared networks, you can instead use a network in your host project and populate the `network_project` accordingly; typically since Forseti toolset should be contained to GCP an isolated project / network combo is appropriated - also note that you will need to pass the `-f` flag to the helper script on the previous step.
+        Note: If your organization is set up to use shared networks, you can instead use a network in your host project and
+        populate the `network_project` accordingly. Typically, because the Forseti toolset should be contained to GCP an isolated project / network combo is appropriated - also note that you will need to pass the `-f` flag to the helper script on the previous step.
 
 1.  Add to the bottom of the `terraform.tfvars` the following line:
 
