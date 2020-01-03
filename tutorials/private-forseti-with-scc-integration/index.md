@@ -37,7 +37,7 @@ To perform the steps in this tutorial, you need the following:
 - Access to the  **Security** page in the [Google Admin console](https://admin.google.com).
 - Access to the [Google Cloud Platform (GCP) Console](https://console.cloud.google.com).
 - Rights to modify IAM permissions at the Organization level.
-- A project where you will deploy Forseti. In this guide, we'll use the project name `forseti`.
+- A project where you will deploy Forseti. In this tutorial, we use the project name `forseti`.
 - Editor or owner permissions for the `forseti` project.
 
 Software that you need:
@@ -47,19 +47,19 @@ Software that you need:
 
 ### Installing Forseti
 
-You have two options when following this guide:
+You have two options when following this tutorial:
 
 *   (Recommended) Clone the installer repository into your local workspace:
 
     [Forseti Security: Terraform Google Installer](https://github.com/forseti-security/terraform-google-forseti)
 
-    For a stable build select the latest `module-release` branch.
+    For a stable build, select the latest `module-release` branch.
 
 *   Use a temporary shell workspace managed by Google:
 
     <a href="https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fforseti-security%2Fterraform-google-forseti.git&amp;cloudshell_git_branch=modulerelease510&amp;cloudshell_working_dir=examples/install_simple&amp;cloudshell_image=gcr.io%2Fgraphite-cloud-shell-images%2Fterraform%3Alatest&amp;cloudshell_tutorial=.%2Ftutorial.md"><img src="https://gstatic.com/cloudssh/images/open-btn.svg" alt="Open in Google Cloud Shell"></a>
     
-    If you use this option, be sure to back up your `terraform.tfvars` file at the end of the session.
+    If you use the Cloud Shell option, be sure to back up your `terraform.tfvars` file at the end of the session.
 
 Regardless of which option you choose for the working environment, the steps below are the same. When the steps below
 refer to your *shell session*, this refers to whichever choice of environment you made above.
@@ -83,7 +83,7 @@ In the `forseti` project, do the following:
     names; you will use them in later steps.
 
 1.  Remove the default network.
-1.  Open your shell session and confirm that you have the required software properly installed:
+1.  Open your shell session and confirm that you have the required software installed:
 
         terraform -v && gsutil -v && gcloud -v
 
@@ -93,10 +93,11 @@ In the `forseti` project, do the following:
         gsutil version: 4.46
         Google Cloud SDK 272.0.0
 
-1.  Before the next step, ensure that your shell session is authenticated by running `gcloud auth list`. If your shell 
-    session is not yet authenticated, then use the `gcloud auth login` command to authenticate.
+1.  Before the next step, run `gcloud auth list` to ensure that your shell session is authenticated.
+
+    If your shell session is not yet authenticated, then use the `gcloud auth login` command to authenticate.
     
-1.  In your shell, run the following command to set the configuration context for `gcloud`:
+1.  In your shell, run the following commands to set the configuration context for `gcloud`:
 
         gcloud config set project [PROJECT_ID]
         gcloud config set compute/region [REGION_NAME]
