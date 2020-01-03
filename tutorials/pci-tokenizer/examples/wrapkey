@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# This utility is designed to ease the creation of wrapped KMS keys, as used
+# in the DLP cryptoDeterministicConfig infoType transformation.
+
+# Usage:
+# wrapkey [UNWRAPPED_KEY]
+#   OR
+# cat KEYFILE.TXT | wrapkey
+# The stdin approach is preferred for security of production keys
+
+. $(dirname "$0")/envvars
+test -f $(dirname "$0")/local.envvars && . $(dirname "$0")/local.envvars
+
+if [ "$1" = "" ]; then
+  UNWRAPPED_KEY=$(cat -) # Fall back to stdin to allow pipe
+  if [ "$UNWRAPPED_KEY" = "" ]; then
+    echo "Error: key not provided"
+    exit
+  fi
+else
+  UNWRAPPED_KEY=$1
+fi
+
+if [ "$KMS_LOCATION" = "" ]; then
+  echo "KMS_LOCATION must be defined in ./envvars or ./local.envvars"
+  exit
+fi
+
+if [ "$KMS_KEY_RING" = "" ]; then
+  echo "KMS_KEY_RING must be defined in ./envvars or ./local.envvars"
+  exit
+fi
+
+if [ "$KMS_KEY_NAME" = "" ]; then
+  echo "KMS_KEY_NAME must be defined in ./envvars or ./local.envvars"
+  exit
+fi
+
+echo $UNWRAPPED_KEY | gcloud kms encrypt \
+  --location=$KMS_LOCATION  \
+  --keyring=$KMS_KEY_RING \
+  --key=$KMS_KEY_NAME \
+  --plaintext-file - \
+  --ciphertext-file - \
+  | base64 \
+  | tr -d \\n # base64 -w is not available on some systems
