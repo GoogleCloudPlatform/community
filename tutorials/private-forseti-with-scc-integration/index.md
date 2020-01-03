@@ -7,7 +7,7 @@ date_published: 2019-05-31
 ---
 
 Note: This guide has been updated for the new installation process using Terraform. The Python installation script
-used in the previous version of this tutorial will no longer be supported. However, you can still find the old instalation 
+used in the previous version of this tutorial is no longer supported. However, you can still find the old installation 
 procedure
 [here](https://github.com/GoogleCloudPlatform/community/blob/987cff06da9c17ff34765a9ce5aa48b3623d64d6/tutorials/private-forseti-with-scc-integration/index.md).
 
@@ -51,7 +51,7 @@ You have two options when following this guide:
 
 *   (Recommended) Clone the installer repository into your local workspace:
 
-    [Forseti Security: Terraform Google Installer](https://github.com/forseti-security/terraform-google-forseti).
+    [Forseti Security: Terraform Google Installer](https://github.com/forseti-security/terraform-google-forseti)
 
     For a stable build select the latest `module-release` branch.
 
@@ -67,8 +67,8 @@ refer to your *shell session*, this refers to whichever choice of environment yo
 #### Preparing the GCP environment
 
 If you do not have a dedicated `forseti` project yet, then create one. Navigate to the project
-[**Home**](https://console.cloud.google.com/home/dashboard) and take note of the Project ID information displayed in the
-Project Info panel.
+[**Home** page](https://console.cloud.google.com/home/dashboard) and take note of the Project ID information displayed in
+the **Project info** panel.
 
 In the `forseti` project, do the following:
 
@@ -95,10 +95,7 @@ In the `forseti` project, do the following:
 
 1.  Before the next step, ensure that your shell session is authenticated by running `gcloud auth list`. If your shell 
     session is not yet authenticated, then use the `gcloud auth login` command to authenticate.
-
-Before you can run the terraform module, you must create a service account and enable specific APIs. The Forseti installer
-has a helper script that uses `gcloud` for this purpose.
-
+    
 1.  In your shell, run the following command to set the configuration context for `gcloud`:
 
         gcloud config set project [PROJECT_ID]
@@ -111,9 +108,14 @@ has a helper script that uses `gcloud` for this purpose.
         gcloud config set compute/region us-east4
         gcloud config set compute/zone us-east4-a
 
+#### Run a helper script to create a service account and enable APIs
+
+Before you can run the Terraform module, you must create a service account and enable specific APIs. The Forseti installer
+has a helper script that uses `gcloud` for this purpose.
+
 1.  Navigate to `terraform-google-forseti/helpers`.
 
-1.  Run the `setup.sh` script as follows:
+1.  Run the `setup.sh` script:
 
         ./setup.sh -p [PROJECT_ID] -o [ORGANIZATION_ID]
 
@@ -123,17 +125,19 @@ has a helper script that uses `gcloud` for this purpose.
     This step creates a `credentials.json` file in the `helpers` folder, which you will need in a later step. This file
     is removed at the end of the installation procedure.
 
-#### Preparing the Terraform environment
+#### Prepare the Terraform environment
 
-1.  Move the `credentials.json` file to to `terraform-google-forseti/examples/install_simple` folder and navigate to that 
-    folder. You use it as a base for the installation. For details, see the
-    [installation documentation](https://github.com/forseti-security/terraform-google-forseti/tree/master/examples/install_simple).
+1.  Move the `credentials.json` file to the `terraform-google-forseti/examples/install_simple` folder and navigate to that 
+    folder:
 
         # from the helpers folder
         mv credentials.json ../examples/install_simple
         cd ../examples/install_simple
+        
+    For details, see the
+    [installation documentation](https://github.com/forseti-security/terraform-google-forseti/tree/master/examples/install_simple).
 
-1.  Open the `terraform.tfvars` file with your text editor. This file contains the input provided to the Terraform module.
+1.  Open the `terraform.tfvars` file with a text editor. This file contains the input provided to the Terraform module.
 
     The default `terraform.tfvars` file looks like the following:
 
@@ -159,14 +163,16 @@ has a helper script that uses `gcloud` for this purpose.
     -   Configure network and subnetwork and region with the information you recorded when creating the network. In this
         example it's `forseti`, `forseti-subnet1` and `us-east4` respectively.
 
-        Note: If your organization is set up to use shared networks, you can instead use a network in your host project and
-        populate the `network_project` accordingly. Typically, because the Forseti toolset should be contained to GCP an isolated project / network combo is appropriated - also note that you will need to pass the `-f` flag to the helper script on the previous step.
+    If your organization is set up to use shared networks, you can instead use a network in your host project and
+    populate the `network_project` accordingly. Typically, because the Forseti toolset should be contained to GCP, an
+    isolated project/network combination is appropriate. Also note that in this case you would need to pass the `-f` flag
+    to the helper script in the previous section.
 
-1.  Add to the bottom of the `terraform.tfvars` the following line:
+1.  Add the following line to the end of the `terraform.tfvars` file:
 
         private = true
 
-1.  Your file should look somewhat like the following:
+1.  Your file should look like the following:
 
         project_id = "forseti-project-id"
         org_id     = "111111111111"
@@ -184,19 +190,21 @@ has a helper script that uses `gcloud` for this purpose.
 
         private = true
 
-1.  If you plan to use the SendGrid email service, ensure that you obtain an API key and properly configure the `sendgrid_api_key`, `forseti_email_sender` and `forseti_email_recipient` - for the last one you should use a group alias.
+1.  If you plan to use the SendGrid email service, ensure that you obtain an API key and configure the `sendgrid_api_key`, 
+    `forseti_email_sender`, and `forseti_email_recipient`. We recommend that you use a group alias as the email recipient.
 
-1.  Create a bucket to store the terraform state, the bucket name needs to be unique so we will use the project ID for that purpose, but you may change to anything you prefer as long as it's a unique name.
+1.  Create a bucket to store the Terraform state. The bucket name must be unique. In this tutorial, we use the project ID
+    as the bucket name, but you can use any unique name.
 
         PROJECT=`gcloud config list --format 'value(core.project)'`
         gsutil mb gs://$PROJECT-tfstate
 
-
     Take note of the bucket name for subsequent use.
 
-    Note: if your organization already uses terraform you may want to use the same backend as your other terraform scripts, just create a separate folder for the forseti installation.
+    Note: If your organization already uses Terraform, you can use the same backend as your other Terraform scripts,
+    with a separate folder for the Forseti installation.
 
-1.  Open the `backend.tf` file with your favorite text editor, the default contents should look like the following.
+1.  Open the `backend.tf` file with a text editor. The default contents should look like the following:
 
         # terraform {
         #   backend "gcs" {
@@ -205,7 +213,8 @@ has a helper script that uses `gcloud` for this purpose.
         #   }
         # }
 
-1.  Uncomment the block above and populate the "bucket" value with the bucket name saved above, the prefix is the folder in which the state will be saved within the bucket. The updated file should look as follows:
+1.  Uncomment the block above, and populate the `bucket` value with the bucket name from the previous step. The prefix is
+    the folder in which the state will be saved within the bucket. The updated file should look like the following:
 
         terraform {
             backend "gcs" {
@@ -216,42 +225,45 @@ has a helper script that uses `gcloud` for this purpose.
 
 #### Running the installer module
 
-Now that all pre-requisite work is in place let's install forseti
+With the prerequisite work done, you can install Forseti.
 
-1.  Run terraform init, this will initialize and download all the required modules.
+1.  Initialize and download the required modules:
 
         terraform init
 
-1.  Run terraform apply
+1.  Run the installer module:
 
         terraform apply
 
-Warning: at the time of writing this guide there is a bug when running with terraform higher than version `0.12.12` where the following error is thrown: `tls_private_key.policy_library_sync_ssh is empty tuple` ([more info](https://github.com/forseti-security/terraform-google-forseti/issues/367)); to work around this issue open the `main.tf` file and add the following line `policy_library_sync_enabled = true` to the module definition - this can be added after the private lines within the module definition. The module will look somewhat like the following:
+At the time of this writing, there is a bug when running with Terraform higher than version `0.12.12` that causes
+the following error: `tls_private_key.policy_library_sync_ssh is empty tuple`
+([more info](https://github.com/forseti-security/terraform-google-forseti/issues/367)). To work around this issue, open the
+`main.tf` file and add the following line after the private lines in the module definition:
+`policy_library_sync_enabled = true`. After this modification, the module will look like the following:
 
-        module "forseti-install-simple" {
-            source  = "terraform-google-modules/forseti/google"
-            version = "~> 5.0.0"
+    module "forseti-install-simple" {
+        source  = "terraform-google-modules/forseti/google"
+        version = "~> 5.0.0"
 
-            [... REDACTED for brevity ... ]
+        [... REDACTED for brevity ... ]
 
-            client_private = var.private
-            server_private = var.private
+        client_private = var.private
+        server_private = var.private
 
-            policy_library_sync_enabled = true
-        }
+        policy_library_sync_enabled = true
+    }
 
-
-
-Note: you may see other warnings such as `Warning: Quoted references are deprecated` or `Warning: Interpolation-only expressions are deprecated` - these do not impact the instalation and you should be able to proceed with the install as expected.
+You may see other warnings, such as `Warning: Quoted references are deprecated` or `Warning: Interpolation-only expressions 
+are deprecated`. These do not affect the installation, and you should be able to proceed with the installation as expected.
 
 ### Making Forseti private
 
 At this stage, Forseti is installed, but it is not yet fully private. In this section, you make Forseti
 private.
 
-In the GCP Console, ensure that you have the `forseti` project selected, and then do the following:
+In the Cloud Console, ensure that you have the `forseti` project selected, and then do the following:
 
-1.  Go to the [**Cloud SQL** page](https://console.cloud.google.com/sql) in the GCP Console.
+1.  Go to the [**Cloud SQL** page](https://console.cloud.google.com/sql) in the Cloud Console.
 1.  Find the row for the `forseti-server-db` instance, click the more icon (three dots) at the end of the row, and then
     click **Edit**. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/5dacd607.png)
 
@@ -264,7 +276,9 @@ In the GCP Console, ensure that you have the `forseti` project selected, and the
     the locaton (on-premises or datacenter range) that you will be connecting
     from. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/58b996ae.png)
 
-1.  (Optional) Go to the [**VM instances** page](https://console.cloud.google.com/compute/instances) and verify that there is no public IP addresses for the server and client VMs; since we set the `private` flag to true this should be properly configured.
+1.  (Optional) Go to the [**VM instances** page](https://console.cloud.google.com/compute/instances) and verify that there
+    is no public IP addresses for the server and client VMs; since we set the `private` flag to true, this should be 
+    properly configured.
 
     If you remove the public IP addresses, then connections to the instances must be through Cloud Identity-Aware Proxy
     (IAP), Cloud VPN, or Cloud Interconnect. Cloud IAP provides Google Identity verified proxy tunnel to compute instances
@@ -273,7 +287,7 @@ In the GCP Console, ensure that you have the `forseti` project selected, and the
 
 ### Configuring Forseti
 
-In this section you will perform the base configuration to get Forseti up and running.
+In this section, you perform the base configuration to get Forseti up and running.
 
 #### Enable domain-wide delegation
 
@@ -305,10 +319,13 @@ the Forseti documentaton.
 
 1.  In the Forseti project, go to [**API & Services > Library** page](https://console.cloud.google.com/apis/library),
     search for the Cloud Security Command Center API (`securitycenter.googleapis.com`), and enable it.
-
+    
 1.  Navigate to the Organization level.
-1.  Use the menu in the upper-left corner of the GCP Console to navigate to **Security > Security Command Center**.
+
+1.  Use the menu in the upper-left corner of the Cloud Console to navigate to **Security > Security Command Center**.
+
 1.  Enable the service.
+
 1.  At the top of the **Security Command Center** page, click **Add Security Sources**.
 
 1.  Select the **Forseti Cloud SCC Connector** plugin.
@@ -323,27 +340,27 @@ the Forseti documentaton.
 1.  Copy the `source_id` for later use. The `source_id` is in this format, as shown in the screenshot
     above: `organizations/[ORGANIZATION_ID]/sources/[SOURCE_ID]`
 
-1.  Navigate to the Organization IAM page and ensure the service account was granted
-    the **Security Center Findings Editor** role, if not then grant it.
+1.  Navigate to the Organization IAM page and ensure that the service account has
+    the **Security Center Findings Editor** role.
 
     Note: If you did not re-use the Forseti Server service account and created a new service account for Cloud SCC, you
-    need to grant `Security Center Findings Editor` role for both the Foresti Server service acconut and the newly created
+    need to grant **Security Center Findings Editor** role for both the Foresti Server service acconut and the newly created
     service account for Cloud SCC.
 
 #### Configuring the CSCC integration in Forseti
 
-Now we should now be able to edit the terraform files to enable CSCC integration
+Now you can edit the Terraform files to enable CSCC integration.
 
-1.  Ensure you are in the `terraform-google-forseti/examples/install_simple` folder for the next steps
+1.  Ensure that you are in the `terraform-google-forseti/examples/install_simple` folder for the next steps.
 
-1.  Add to the bottom of the `terraform.tfvars` the following line:
+1.  Add  the following line to the bottom of the `terraform.tfvars` file:
 
         cscc_violations_enabled = "true"
         cscc_source_id = "organizations/[ORGANIZATION_ID]/sources/[SOURCE]"
 
-    The `cscc_source_id` is the value of `source_id` you copied in the step above.
+    The `cscc_source_id` is the value of `source_id` that you copied in the previous section.
 
-1.  Your file should look somewhat like the following:
+1.  Your file should look like the following:
 
         project_id = "forseti-project-id"
         org_id     = "111111111111"
@@ -363,9 +380,9 @@ Now we should now be able to edit the terraform files to enable CSCC integration
         cscc_violations_enabled = "true"
         cscc_source_id = "organizations/[ORGANIZATION_ID]/sources/[SOURCE]"
 
-1.  In order for the SCC integration to work not only we need to pass in the `cscc_violations_enabled` flag and the `cscc_source_id` we also need to tell the module to use it, for that purpose we will edit both the `variables.tf` and the `main.tf`.
+1.  To tell the module how to to use the values set in the previous steps, you edit the `variables.tf` and `main.tf` files.
 
-    Add the following to the bottom of the `variables.tf` file
+    Add the following to the bottom of the `variables.tf` file:
 
         variable "cscc_violations_enabled" {
           description = "enables integraton with Cloud Security Command Center"
@@ -378,12 +395,13 @@ Now we should now be able to edit the terraform files to enable CSCC integration
           default = ""
         }
 
-    On the `main.tf` file find the `module "forseti-install-simple"` line; you'll notice this is a code block surrounded by `{}`; inside this code block add the following lines:
+    In the `main.tf` file, find the `module "forseti-install-simple"` line; this is a code block surrounded by `{}`. Inside
+    this code block, add the following lines:
 
-         cscc_violations_enabled = var.cscc_violations_enabled
-         cscc_source_id = var.cscc_source_id
+        cscc_violations_enabled = var.cscc_violations_enabled
+        cscc_source_id = var.cscc_source_id
 
-    The module will look somewhat like the following:
+    After the modification, the module will look like the following:
 
         module "forseti-install-simple" {
             source  = "terraform-google-modules/forseti/google"
@@ -398,11 +416,13 @@ Now we should now be able to edit the terraform files to enable CSCC integration
             cscc_source_id = var.cscc_source_id
         }
 
-1.  Run terraform apply again
+1.  Run `terraform apply` again:
 
         terraform apply
 
-To validate that the configuration was properly applied
+#### Validate the configuration
+
+To validate that the configuration was properly applied, do the following:
 
 1.  List the buckets:
 
@@ -410,7 +430,7 @@ To validate that the configuration was properly applied
 
 1.  Find the `forseti-server` bucket.
 
-1.  Grep the config file
+1.  View the relevant part of configuration file:
 
         gsutil cat gs://forseti-server-[id]/configs/forseti_conf_server.yaml | grep cscc -A6
 
@@ -423,10 +443,10 @@ To validate that the configuration was properly applied
             # The format is: organizations/ORG_ID/sources/SOURCE_ID
             source_id: organizations/[ORGANIZATION_ID]/sources/[SOURCE]
 
+For further validation, you can trigger a notification manually and verify that it shows up in the Security Command Center 
+page:
 
-For further validation you can trigger a notification manually and verify that it shows up in the Security Command Center page by following the subsequent steps.
-
-1.  Use SSH to connect to the Forseti server VM: forseti-server-vm.
+1.  Use SSH to connect to the Forseti server VM: `forseti-server-vm`.
 
 1.  Reload the server configuration:
 
@@ -448,10 +468,19 @@ For further validation you can trigger a notification manually and verify that i
           "lastWarning": ""
         }
 
-    Warning: sometimes the installation procedure does not complete as expected, in which case the VM might throw the following error `forseti: command not found`; if this is the case you have three options:
-    - restart the Forseti Server VM, since a [known issue](https://github.com/forseti-security/forseti-security/issues/2232) might have prevent the process to come up clean.
-    - destroy the installation ensure the project is clean and run terraform apply again.
-    - follow the steps detailed [here](https://forsetisecurity.org/docs/latest/develop/dev/setup.html#setting-up-a-local-environment) in the Forseti Server VM to install it locally.
+    Sometimes the installation procedure does not complete as expected, in which case the VM might give the following error: 
+
+        forseti: command not found
+
+    If you receive this error, you have three options:
+
+      - Restart the Forseti Server VM, because a
+        [known issue](https://github.com/forseti-security/forseti-security/issues/2232) might have prevented the process
+        from starting correctly.
+      - Destroy the installation, ensure that the project is clean, and run `terraform apply` again.
+      - Follow the steps detailed
+        [here](https://forsetisecurity.org/docs/latest/develop/dev/setup.html#setting-up-a-local-environment) in the Forseti
+        Server VM to install it locally.
 
 1.  Create a model based on the inventory, and configure Forseti to use it:
 
