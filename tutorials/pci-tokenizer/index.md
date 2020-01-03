@@ -112,16 +112,12 @@ administrator.
 
 1.  Update components:
 
-        ```
         gcloud components update
-        ```
 
 1.  Run the following commands to check out the project code and move into your working directory:  
 
-        ```
         git clone https://github.com/GoogleCloudPlatform/community gcp-community
         cd gcp-community/tutorials/pci-tokenizer
-        ```
 
 ## Create a wrapped encryption key for DLP tokenization
 
@@ -138,10 +134,8 @@ environments.
 
 1.  Copy and open the `local.envvars` file to configure the token wrapping utility:  
 
-        ```
         cp examples/envvars examples/local.envvars
         nano examples/local.envvars
-        ```
         
     Populate the variables `KMS_LOCATION`, `KMS_KEY_RING`, and `KMS_KEY_NAME` with the values noted in the previous steps.
 
@@ -150,10 +144,8 @@ environments.
     There are many ways to generate random bytes. This command will use the Linux system's random number generator to 
     generate 16 hexadecimal bytes (32 characters); it creates two files: `key_##B.txt` and `key_##B.wrapped.txt`:
     
-        ```
         LEN=32
         openssl rand $LEN | tee key_${LEN}B.txt | examples/wrapkey | tee key_${LEN}B.wrapped.txt
-        ```
 
 1.  Preserve the wrapped and unwrapped keyfiles along with the KMS key details.
 
@@ -191,31 +183,23 @@ The tokenizer service uses the configuration file [`config/default.json`](config
 1.  Assign your Google Cloud project ID to a variable for ease of use in your terminal, replacing `[PROJECT_ID]` with your 
     Google Cloud project ID:  
     
-        ```
         PROJECT=[PROJECT_ID]
-        ```
 
     You can get your project ID with this command:
     
-        ```
         gcloud config get-value project
-        ```
 
 1.  Build your container image using Cloud Build, by running the following command from the directory containing the
     Dockerfile: 
     
-        ```
         gcloud builds submit --tag gcr.io/$PROJECT/tokenizer
-        ```
 
     Upon success, you will see a success message containing the image name (gcr.io/`PROJECT-ID`/tokenizer). The image is
     stored in Container Registry and can be re-used.
 
 1.  Deploy using the following command:  
 
-        ```
         gcloud run deploy tokenizer --image gcr.io/$PROJECT/tokenizer --platform managed --no-allow-unauthenticated --region us-central1 --memory 128M
-        ```
 
     - `tokenizer` is the name of your service.
     - `--image` is the image you created in the previous step.
