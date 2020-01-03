@@ -6,29 +6,30 @@ tags: serverless, cloud run, DLP, javascript, iam, PCI, DSS, credit, card
 date_published: 2019-12-26
 ---
 
-# Overview
+## Overview
 
 This code provides a PCI-DSS-ready credit card tokenization service built for containers running on Google Cloud. This code
 is based on Google's
 [Tokenizing sensitive cardholder data for PCI DSS](https://cloud.google.com/solutions/tokenizing-sensitive-cardholder-data-for-pci-dss)
-whitepaper.
+whitepaper. It offers two methods of tokenizing: DLP and KMS. See the [Tokenization options](#tokenization-options) section 
+below for more info.
 
-This code uses [Cloud DLP](https://cloud.google.com/dlp/) to
+This code uses [Cloud DLP](https://cloud.google.com/dlp/) to 
 [securely encrypt](https://cloud.google.com/dlp/docs/transformations-reference#crypto) and tokenize sensitive credit card 
 data in a manner consistent with the PCI Data Security Standard (DSS). This code is applicable to SAQ A-EP and SAQ D type 
 merchants of any compliance level.
 
-Warning: Confirm that your environment and installation are PCI-DSS-compliant before processing actual credit card 
-data. Google cannot guarantee PCI DSS compliance of customer applications.
+Warning: Confirm that your environment and installation are PCI-DSS-compliant before processing actual credit card data.
+Google cannot guarantee PCI DSS compliance of customer applications.
 
-For more information on PCI DSS compliance on Google CLoud, see
+For more information on PCI DSS compliance on Google Cloud, see
 [PCI Data Security Standard compliance](https://cloud.google.com/solutions/pci-dss-compliance-in-gcp).
 
-# Security
+## Security
 
-By definition, this service handles raw credit card numbers. As a result, this code and anything able to directly call it 
-are considered in-scope for PCI DSS. Appropriate security controls must be enacted to avoid compliance failures and 
-breaches.
+By definition, this service handles raw credit card numbers and other sensitive cardholder data. As a result, this code and 
+anything able to directly call it are considered in-scope for PCI DSS. Appropriate security controls must be enacted to
+avoid compliance failures and breaches.
 
 ### Encryption
 
@@ -40,9 +41,8 @@ The tokens created by this service are encrypted using
 
 This service relies on a secret encryption key stored in the
 [config JSON](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/config) files. Before 
-deploying to production, 
-this plaintext key should be switched to a Cloud KMS wrapped key, which adds an additional layer of security. See the 
-section below and the page on 
+deploying to production, this plaintext key should be switched to a Cloud KMS wrapped key, which adds an additional layer of
+security. See the section below and the page on
 [DLP format-preserving encryption (FPE)](https://cloud.google.com/dlp/docs/deidentify-sensitive-data#cryptoreplaceffxfpeconfig)
 for information on how to wrap crypto keys.
 
@@ -54,20 +54,52 @@ any service or system in-scope for PCI. To grant access, you must navigate to
 authorized to invoke the service. They will need to be granted the
 [Cloud Run Invoker](https://cloud.google.com/run/docs/reference/iam/roles) IAM role.
 
-Utility scripts have been provided in [`examples`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/examples/) that incorporate Google's recommended approach to 
+Utility scripts have been provided in
+[`examples`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/examples/) that 
+incorporate Google's recommended approach to
 [authenticating developers](https://cloud.google.com/run/docs/authenticating/developers).
 
 ### Salting and additional encryption
 
-The userID provided in the tokenization and detokenization requests is both a salt and validating factor. The addition of 
-additional salt or encryption wrappers is possible by modifying [app.js](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/src/app.js).
+The userID provided in the tokenization and detokenization requests is both a salt and validating factor. The addition of
+additional salt or encryption wrappers is possible by modifying
+[app.js](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/src/app.js).
 
-# Before you begin
+## Tokenization options
+
+This tokenization service offers two methods of securing cardholder data, backed by DLP or KMS.
+
+| Tokenization Type:   | DLP            | KMS            |
+|----------------------|----------------|----------------|
+| Deterministic output | Yes            | No             |
+| Token type           | Encrypted data | Encrypted data |
+| Key management       | CSEK           | Fully managed  |
+
+**Deterministic output** means that a given set of inputs (card number, expiration, and userID) will always generate the 
+same token. This is useful if you want to rely on the token value to deduplicate your token stores. You can simply match a 
+newly generated token to your existing catalog of tokens to determine whether the card has been previously stored. Depending
+on your application architecture, this can be a very useful feature. However, this could also be accomplished using a salted
+hash of the input values.
+
+**Token type** indicates whether the token itself contains encrypted data or if it is merely an identifier to look up 
+information encrypted and stored elsewhere.
+
+**Key management** determines who is responsible for generating and managing the encryption keys. CSEK comes with the
+highest level of responsibility for the customer because they must securely generate, store, and rotate the encryption keys. 
+Even with a wrapped key, the customer must keep the key a secret. CSEK rotation means manually versioning and potentially 
+re-encrypting all existing data in the event of a suspected key breach. If the key is lost, all encrypted data will be
+unreadable.
+
+Fully-managed encryption keys take advantage of Google's internal 
+[key rotation](https://cloud.google.com/kms/docs/key-rotation). This happens on a schedule determined by the encryption key
+administrator.
+
+## Before you begin
 
 1.  In the Cloud Console, on the project selector page,
     [select or create a Google Cloud project](https://console.cloud.google.com/projectselector2/home/dashboard).
 
-    Note: If you don't plan to keep the resources that you create in this procedure, create a project instead of selecting 
+    Note: If you don't plan to keep the resources that you create in this procedure, create a project instead of selecting
     an existing project. After you finish these steps, you can delete the project, removing all resources associated with 
     the project.
 
@@ -81,19 +113,21 @@ additional salt or encryption wrappers is possible by modifying [app.js](https:/
 1.  Update components:
 
         gcloud components update
-  
+
 1.  Run the following commands to check out the project code and move into your working directory:  
 
         git clone https://github.com/GoogleCloudPlatform/community gcp-community
         cd gcp-community/tutorials/pci-tokenizer
 
-# Create a wrapped encryption key (optional)
+## Create a wrapped encryption key for DLP tokenization
 
-Create a data encryption key (DEK) and then wrap it in an additional layer of encryption called the *key encryption key 
-(KEK)*. Note that the KEK is fully managed by [KMS](https://console.cloud.google.com/security/kms) and never leaves the
-service. This step is optional for testing but should be a prerequisite for production environments.
+If you intend to use DLP tokenization, you will be supplying your own data encryption key (DEK). In this step, you create a
+data encryption key (DEK) and then wrap it in an additional layer of encryption called the *key encryption key (KEK)*. Note 
+that the KEK is fully managed by [KMS](https://console.cloud.google.com/security/kms) and never leaves the service. Key 
+wrapping is technically optional for testing DLP tokenization but should be a security requirement for production 
+environments.
 
-1.  [Create a KMS keyring](https://console.cloud.google.com/security/kms). Note the keyring name and location ("global" is 
+1.  [Create a KMS keyring](https://console.cloud.google.com/security/kms). Note the keyring name and location ("global" is
     recommended).
 
 1.  Create a key for that ring. Note the key name.
@@ -104,12 +138,12 @@ service. This step is optional for testing but should be a prerequisite for prod
         nano examples/local.envvars
         
     Populate the variables `KMS_LOCATION`, `KMS_KEY_RING`, and `KMS_KEY_NAME` with the values noted in the previous steps.
-    
+
 1.  Generate the keys.
 
     There are many ways to generate random bytes. This command will use the Linux system's random number generator to 
     generate 16 hexadecimal bytes (32 characters); it creates two files: `key_##B.txt` and `key_##B.wrapped.txt`:
-
+    
         LEN=32
         openssl rand $LEN | tee key_${LEN}B.txt | examples/wrapkey | tee key_${LEN}B.wrapped.txt
 
@@ -117,12 +151,12 @@ service. This step is optional for testing but should be a prerequisite for prod
 
 1.  Grant permissions to the invoking service account:  
 
-    1.  Navigate to [IAM permissions](https://console.cloud.google.com/iam-admin/iam)
-    1.  Edit permissions of the "Compute Engine default service account".
-        It should look like this: `000000000000-compute@developer.gserviceaccount.com`
-    1.  Grant the role "DLP User".
+    1.  Navigate to [IAM permissions](https://console.cloud.google.com/iam-admin/iam).
+    1.  Edit permissions of the **Compute Engine default service account**.
+        It should look like this: `000000000000-compute@developer.gserviceaccount.com`.
+    1.  Grant the role **DLP User**.
 
-# Configuration
+## Configuration
 
 The tokenizer service uses the configuration file [`config/default.json`](config/default.json) with overrides in 
 `config/local.json`. The best practice is to copy `config/default.json` to `config/local.json` and make edits there.
@@ -130,36 +164,39 @@ The tokenizer service uses the configuration file [`config/default.json`](config
 -   `general.project_id` is required but it can either be set here or with each API call. API call project_id overrides this
     value if both are set.
 
--   `dlp.unwrapped_key` is required to perform tokenization. Use an ASCII string 16, 24, or 32 bytes long.
+-   `dlp.unwrapped_key` is the minimum required to perform DLP tokenization. Use an ASCII string 16, 24, or 32 bytes long.
 
--   `dlp.wrapped_key` is used if you wrapped your encryption key using KMS. Instructions on how to do this are in the 
-    section above. Wrapping your keys using KMS is highly recommended to help avert leaks.
+-   `dlp.wrapped_key` is used if you wrapped your DLP encryption key using KMS. Instructions on how to do this are in the
+    section above. Wrapping your keys using KMS is highly recommended to help avert leaks. *If used, you must also provide 
+    the KMS key location, ring name, and key name.*
 
--   `dlp.wrapped_key_resource_id` is required for wrapped keys. The format is as follows:
+-   `kms.location` is typically "global".
 
-        projects/[YOUR_GCLOUD_PROJECT]/locations/[KMS_LOCATION]/keyRings/[KMS_KEY_RING]/cryptoKeys/[KMS_KEY_NAME]
+-   `kms.key_ring` is the name of the key ring.
+
+-   `kms.key_name` is the actual key name.
 
 -   Other settings are documented in [`config/default.json`](config/default.json).
 
-# Containerizing and deploying the tokenizer service
+## Containerizing and deploying the tokenizer service
 
 1.  Assign your Google Cloud project ID to a variable for ease of use in your terminal, replacing `[PROJECT_ID]` with your 
     Google Cloud project ID:  
-
+    
         PROJECT=[PROJECT_ID]
 
     You can get your project ID with this command:
     
         gcloud config get-value project
-    
-1.  Build your container image using Cloud Build, by running the following command from the directory containing the 
-    Dockerfile:  
+
+1.  Build your container image using Cloud Build, by running the following command from the directory containing the
+    Dockerfile: 
     
         gcloud builds submit --tag gcr.io/$PROJECT/tokenizer
-    
-    Upon success, you will see a success message containing the image name (gcr.io/`PROJECT-ID`/tokenizer). The image is 
+
+    Upon success, you will see a success message containing the image name (gcr.io/`PROJECT-ID`/tokenizer). The image is
     stored in Container Registry and can be re-used.
-    
+
 1.  Deploy using the following command:  
 
         gcloud run deploy tokenizer --image gcr.io/$PROJECT/tokenizer --platform managed --no-allow-unauthenticated --region us-central1 --memory 128M
@@ -175,23 +212,29 @@ The tokenizer service uses the configuration file [`config/default.json`](config
 
 1.  Visit your deployed container by opening the service URL in a web browser.
 
-Congratulations! You have just deployed an application packaged in a container image to Cloud Run. Cloud Run automatically
+Congratulations! You have just deployed an application packaged in a container image to Cloud Run. Cloud Run automatically 
 scales your service to match traffic demand. It scales down to zero when not in use. You only pay for the CPU, memory, and 
 networking consumed during request handling.
 
-# Usage
+## Usage
 
 After your tokenization service is deployed to Cloud Run and you have the URL, you can start calling the API. The 
-[`examples`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/examples/) directory contains demonstration `tokenize` and `detokenize` scripts that you can use to quickly 
-test your API.
+[`examples`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/examples/) directory 
+contains demonstration `tokenize` and `detokenize` scripts that you can use to quickly test your API.
 
 See the following sections for details on the `tokenize` and `detokenize` API methods.
 
-## Tokenizing a card
+### Tokenizing a card
+
+- Adding `/dlp` to the end of the path sets the mode to DLP deterministic CSEK encryption.
+- Adding `/kms` to the end of the path sets the mode to KMS non-deterministic encryption.
+
+**Note:** DLP is the default mode that is used if you do not specify a mode. DLP and KMS generated tokens are not
+cross-compatible.
 
 ```
 Host and Port:  See deployment process output
-Path:           /tokenize
+Path:           /tokenize/[dlp|kms]
 Method:         HTTP POST
 Params:
   * auth_token:   An OAuth 2.0 authentication token
@@ -206,11 +249,11 @@ Response:
   * On failure: HTTP 4xx,5xx and error message
 ```
 
-## Detokenizing a card
+### Detokenizing a card
 
 ```
 Host and Port:  See deployment process output
-Path:           /detokenize
+Path:           /detokenize/[dlp|kms]
 Method:         HTTP POST
 Params:
   * auth_token:   An OAuth 2.0 authentication token
@@ -222,9 +265,10 @@ Response:
   * On failure: HTTP 4xx,5xx and error message
 ```
 
-# Examples
+## Examples
 
-Example `curl` invocations of the tokenization and detokenization process can be found in [`examples`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/examples/). See 
-[the readme file](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/examples/README.md)
-for information on how to configure and use the example scripts on your tokenization
-service.
+Example `curl` invocations of the tokenization and detokenization process can be found in
+[`examples`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/examples/).
+See the 
+[readme file](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/pci-tokenizer/examples/README.md) for 
+information on how to configure and use the example scripts on your tokenization service.
