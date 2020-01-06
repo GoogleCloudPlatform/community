@@ -92,6 +92,10 @@ from laravel.com.
     `bootstrap/cache/services.php`.
 
         composer remove --dev beyondcode/laravel-dump-server
+        
+    If you're using Laravel 6, remove `facade/ignition` instead:
+    
+        composer remove --dev facade/ignition
 
 1.  Run the following command to deploy your app:
 

@@ -587,7 +587,7 @@ On the GCP side, use the following instructions to test the connection to a mach
         root@vsrx# run show security ipsec security-associations
         Total active tunnels: 1
         ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
-        &lt;131073 ESP:aes-cbc-256/sha256 9beb1bf0 729/ unlim - root 4500 35.187.170.191
+        <131073 ESP:aes-cbc-256/sha256 9beb1bf0 729/ unlim - root 4500 35.187.170.191
         >131073 ESP:aes-cbc-256/sha256 97791a28 729/ unlim - root 4500 35.187.170.191
 
 1.  List BGP learned routes:
@@ -930,9 +930,9 @@ GCP with the commands below.
         root@vsrx# run show security ipsec security-associations
           Total active tunnels: 2
           ID    Algorithm       SPI      Life:sec/kb  Mon lsys Port  Gateway
-          &lt;131073 ESP:aes-cbc-128/sha1 a2fde6d8 2618/ unlim - root 500 35.230.59.183
+          <131073 ESP:aes-cbc-128/sha1 a2fde6d8 2618/ unlim - root 500 35.230.59.183
           >131073 ESP:aes-cbc-128/sha1 a1854938 2618/ unlim - root 500 35.230.59.183
-          &lt;131074 ESP:aes-cbc-128/sha1 9b593cad 2310/ unlim - root 500 35.233.197.145
+          <131074 ESP:aes-cbc-128/sha1 9b593cad 2310/ unlim - root 500 35.233.197.145
           >131074 ESP:aes-cbc-128/sha1 6ecac98d 2310/ unlim - root 500 35.233.197.145
 
 ###### Listing routing table
