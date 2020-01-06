@@ -186,7 +186,7 @@ endpoint for consumption.
 
 You will need to add a public SSH key to the Compute Engine instance to
 access and manage it. Add the local location of your public key to the
-`google_compute_instace` metadata in `main.tf` to add your SSH key to the
+`google_compute_instance` metadata in `main.tf` to add your SSH key to the
 instance. [More information on managing ssh keys is available here](https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys).
 
 ```HCL
