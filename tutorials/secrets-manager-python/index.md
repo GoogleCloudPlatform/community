@@ -1,6 +1,6 @@
 ---
 title: Using Google Cloud Secrets Manager with Python
-description: Simple best practices around using Google's Cloud Secret Manager with Python
+description: Simple example around using Google Cloud Secret Manager with Python
 author: thejaysmith
 tags: Secret Manager, KMS, Security, Python
 date_published: 2020-01-09
