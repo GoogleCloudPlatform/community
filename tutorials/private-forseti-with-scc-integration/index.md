@@ -41,6 +41,7 @@ To perform the steps in this tutorial, you need the following:
 - Editor or owner permissions for the `forseti` project.
 
 Software that you need:
+
 - [Terraform 0.12.12](https://www.terraform.io/downloads.html) or higher
 - [Cloud SDK](https://cloud.google.com/sdk/install)
 
