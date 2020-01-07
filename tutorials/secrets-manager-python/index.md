@@ -10,9 +10,9 @@ Jason "Jay" Smith | Customer Engineer Specialist | Google Cloud
 
 ## Using Google Cloud Secrets Manager with Python
 
-Google Cloud has announced [Secret Manager](https://cloud.google.com/secret-manager/docs/ "Secret Manager") as a secure and convenient tool for storing API keys, passwords, certificates, and other sensitive data. It is currently in Beta but can still provide you with a secure way to store keys. It uses a simple key value system to store keys. 
+Google Cloud has announced [Secret Manager](https://cloud.google.com/secret-manager/docs/ "Secret Manager") as a secure and convenient tool for storing API keys, passwords, certificates, and other sensitive data. It is currently in Beta but it can still provide you with a secure way to store and use keys. It uses a simple key value structure to store keys.
 
-The purposes of this is to show how one can both store and access a secret for their Python app. We will create a simple containerized application runing on [Cloud Run](https://cloud.google.com/run/ "Cloud Run") that can pull stock data.
+The purposes of this tutorial is to show a simple example in storing and accessing a secret with a Python app. We will create a simple containerized application runing on [Cloud Run](https://cloud.google.com/run/ "Cloud Run") that can pull financial data.
 
 We will use one of my favorite financial APIS, [AlphaVantage](https://www.alphavantage.co/). They have a free tier that allows you to make 500 calls per 24 hour period so it's perfect for testing API features. All of the code that we will use is in the `py-secrets-manager` directory.
 
@@ -48,8 +48,6 @@ Now let's create our secret in Secret Manager. You are able to do this in the UI
 
  If you haven't already, go [here](https://www.alphavantage.co/support/#api-key, "AlphaVantage API Key") to acquire your API key from AlphaVantage. Once you have the key, replace the "Your AlphaVantage API Key" text with the actual key. Then run the below command to create a secret called `alpha-vantage-key`.
 
-
-
 ```bash
 echo -n "Your AlphaVantage API Key" | \
     gcloud beta secrets create alpha-vantage-key --replication-policy=automatic --data-file=-
@@ -59,7 +57,27 @@ This creates a key named `alpha-vantage-key` with the value being your API key. 
 
 Now the next step is to deploy our application to Google Cloud Run. The first step is to containerize the application. First, I would encourage you to review the code in `currencyapp/app.py`. It is a very simple Flask application that will read take an input (stock symbol) and give you a read out of the time series in 15 minute intervals.
 
-The first step is to containerize the application. Navigate to `py-secrets-manager/currencyapp` as that will be where we will execute the below command. Be sure to replace `PROJECT-ID` with your actual Project ID.
+```python
+secrets = secretmanager.SecretManagerServiceClient()
+
+ALPHA_VANTAGE_KEY = secrets.access_secret_version("projects/"+PROJECT_ID+"/secrets/alpha-vantage-key/versions/1").payload.data.decode("utf-8")
+```
+
+In the above block, we create a `secrets` object using [Python Client for Secret Manager API](https://github.com/googleapis/python-secret-manager, "Python Client for Secret Manager API"). Next, we create a variable called `ALPHA_VANTAGE_KEY`. We use `access_secret_version` and pass the name of the key. The standard format of the name will be `projects/PROJECT ID/secrets/SECRET NAME/versions/VERSION NUMBER`. From there I am pulling the key from `payload.data` attributes then decoding the response. This will give me the key in plain text.
+
+```python
+@app.route('/api/v1/symbol', methods=['POST'])
+def get_time_series():
+    if request.method == 'POST':
+        symbol = request.args['symbol']
+        data, metadata = ts.get_intraday(
+                symbol, interval='15min', outputsize="25")
+    return jsonify(data=data)
+```
+
+This route will create an endpoint call `/api/v1/symbol`. This simple example will take any value for 'symbol' abd then use this [AlphaVantage Python Library](https://github.com/RomelTorres/alpha_vantage, "AlphaVantage") to do the stock symbol lookup and give us information in 15 minute intervals. You can review the rest of the code for some standard Flask code.
+
+Now let's containerize the application. Navigate to `py-secrets-manager/currencyapp` as that will be where we will execute the below command. Be sure to replace `PROJECT-ID` with your actual Project ID.
 
 ```bash
 gcloud builds submit --tag gcr.io/PROJECT-ID/currency-secret .
@@ -121,3 +139,5 @@ You will get a JSON response that looks similar to this
 ```
 
 These are 15 minute snapshots of the stock price of the GOOG symbol (or whichever smbol you chose). Congratulations, you were able to execute an application that used a third-party API with key and didn't need to include the key in the code. This is great when you are wanting to execute code with Google Cloud but worry about sharing and storing keys.
+
+In a future tutorial, we will use JSON keys and show full [Cloud KMS](https://cloud.google.com/kms/, "Google Cloud KMS") integration.
