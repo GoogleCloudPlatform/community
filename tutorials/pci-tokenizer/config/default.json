@@ -14,14 +14,15 @@
 
     // Should be a base64 encoded string. See ../examples/wrapkey and ../index.md for more information
     "wrapped_key":             "",
-    // Resource id format: projects/YOUR_GCLOUD_PROJECT/locations/YOUR_LOCATION/keyRings/YOUR_KEYRING_NAME/cryptoKeys/YOUR_KEY_NAME
-    "wrapped_key_resource_id": ""
+  },
+  "kms": {
+    // These settings are required for direct KMS and KMS-wrapped DLP keys.
+    "location":                "", // Typically "global"
+    "key_ring":                "", // The name of the key ring
+    "key_name":                ""  // The actual key name
   },
   "logging": {
-    // Toggle logging of debug() calls
-    "debug":                   false,
-
-    // Toggle logging of the script's timestamp on initial launch and subsequent execution
-    "version":                 true
+    "debug":                   false, // Toggle logging of debug() calls
+    "version":                 true   // Log app file timestamp on launch and execution
   }
 }
