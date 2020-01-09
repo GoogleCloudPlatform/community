@@ -258,7 +258,8 @@ exports.getRecording = (req, res) => {
 
   const got = require('got');
   const path = require('path');
-  const storage = require('@google-cloud/storage')();
+  const {Storage} = require('@google-cloud/storage');
+  const storage = new Storage();
 
   const filename = `recordings/${path.parse(req.body.RecordingUrl).name}/audio.wav`;
   const file = storage
