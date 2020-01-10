@@ -86,7 +86,7 @@ const client = new iot.v1.DeviceManagerClient();
 exports.configUpdate = functions.firestore
   // assumes a document whose ID is the same as the deviceid
   .document('device-configs/{deviceId}')
-  .onWrite(async (change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
+  .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
     if (context) {
       console.log(context.params.deviceId);
       const request = generateRequest(context.params.deviceId, change.after.data(), false);
@@ -202,7 +202,7 @@ const client = new iot.v1.DeviceManagerClient();
 exports.configUpdate = functions.firestore
   // assumes a document whose ID is the same as the deviceid
   .document('device-configs/{deviceId}')
-  .onWrite(async (change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
+  .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
     if (context) {
       console.log(context.params.deviceId);
       const request = generateRequest(context.params.deviceId, change.after.data(), false);
@@ -215,7 +215,7 @@ exports.configUpdate = functions.firestore
 exports.configUpdateBinary = functions.firestore
   // assumes a document whose ID is the same as the deviceid
   .document('device-configs-binary/{deviceId}')
-  .onWrite(async (change: functions.Change&lt;admin.firestore.DocumentSnapshot&gt;, context?: functions.EventContext) => {
+  .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
     if (context) {
       console.log(context.params.deviceId);
       const request = generateRequest(context.params.deviceId, change.after.data(), true);

@@ -1,11 +1,10 @@
 ---
-title: On Beyond Magpie 2 - Entity Analysis
+title: On Beyond Magpie 2 - entity analysis
 description: An introduction to the Cloud Natural Language API, aimed at Advanced Placement Computer Science classes who have worked on the Magpie lab, but suitable for most people starting with the Cloud Natural Language API. Demonstrates how to parse JSON results from the  Cloud Natural Language API.
 author: Annie29
 tags: Cloud Natural Language API, APCS, JSON, Magpie, education
 date_published: 2017-03-28
 ---
-
 
 The Advanced Placement Computer Science A program provides the [Magpie lab](http://media.collegeboard.com/digitalServices/pdf/ap/ap-compscia-magpie-lab-student-guide.pdf) for students to practice using basic control structures to parse user input as part of a chatbot. This tutorial is designed to be an additional enrichment exercise (typically used after the AP exam) to go beyond  basic parsing and instead use Google's [Cloud Natural Language API][nlp], a pretrained machine learning model that will do text analysis for the user. The lab demonstrates how to use the Cloud Natural Language API to extract entities from user input.
 
@@ -91,7 +90,7 @@ public class Entity {
 	private String type;
 		//  Currently type is one of UNKNOWN, PERSON, LOCATION, ORGANIZATION, EVENT, WORK_OF_ART, CONSUMER_GOOD, OTHER
 
-	private Map&lt;String, String&gt; metadata;
+	private Map<String, String> metadata;
 
 	public String getName() {
 		return name;
@@ -101,7 +100,7 @@ public class Entity {
 		return type;
 	}
 
-	public Map&lt;String, String&gt; getMetadata() {
+	public Map<String, String> getMetadata() {
 		return metadata;
 	}
 }
@@ -110,8 +109,8 @@ public class Entity {
 Additional information returned about an entity (such as mentions and salience) are not included since this example does not need them. Once the classes that represent the results you want are defined, you can create a `Gson` object and use it to parse the string you have created as shown below. In this example, it will just return a list of the entities in the user input.
 
 ```java
-private List&lt;String&gt; getEntities (String jsonString) {
-	List&lt;String&gt; result = new ArrayList&lt;String&gt;();
+private List<String> getEntities (String jsonString) {
+	List<String> result = new ArrayList<String>();
 	Gson gson = new GsonBuilder().create();
 
 	AnalyzeEntitiesResponse json = (AnalyzeEntitiesResponse)gson.fromJson(jsonString, AnalyzeEntitiesResponse.class);
