@@ -1,33 +1,28 @@
 ---
-title: How to quickly setup an ArmA 3 Server
-description: Set up an ArmA 3 Server on Compute Engine.
+title: Set up an Arma 3 server on Compute Engine
+description: Learn how to quickly set up an Arma 3 server on Compute Engine.
 author: omar2205
 tags: Compute Engine, Gaming
-date_published: 2019-12-29
+date_published: 2020-01-10
 ---
 
-# Introduction
-
-This tutorial shows how to quickly set up an [ArmA 3](https://arma3.com/) server on Google Compute Engine (CE).
+This tutorial shows how to quickly set up an [Arma 3](https://arma3.com/) server on Compute Engine.
 
 ## Before you begin
 
-You'll need a GCP project. You can use an existing project or
-click the button to create a new project:
-
-**[Create a project](https://console.cloud.google.com/project)**
-
+To set up your server, you need a Google Cloud project. You can use an existing project or
+[create a project](https://console.cloud.google.com/project).
 
 ## Costs
 
-This tutorial uses billable components of GCP, including Compute Engine.
+This tutorial uses billable components of Google Cloud, including Compute Engine.
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator/)
 to generate a cost estimate based on your server needs.
 
+## Create a Compute Engine instance
 
-## Creating a Compute Engine instance
-We are going to use a custom machine configuration, meaning we are going to choose our server specs. We are goin to use 2vCPU (Cores) and 4 GB (Ram).
+For this tutorial, you use a custom machine configuration with 2 vCPU cores and 4 GB of RAM.
 
 1. Open Compute Engine then Choose VM Instances (If it's not chosen be default)
 1. Click **Create instance** button.
