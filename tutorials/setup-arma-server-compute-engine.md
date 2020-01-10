@@ -24,14 +24,16 @@ to generate a cost estimate based on your server needs.
 
 For this tutorial, you use a custom machine configuration with 2 vCPU cores and 4 GB of RAM.
 
-1. Open Compute Engine then Choose VM Instances (If it's not chosen be default)
-1. Click **Create instance** button.
-1. Set Name to `arma-server`.
-1. In the **Region** section Choose where you want your server to be.
-1. In the **Machine configuration** section, We are going to choose a custom **Machine Type** and manually enter or move the slider to pick: 2vCPU and 4GB Ram.
-1. In the **Boot disk** section: 
-   1. Click **Change** and Select **Public Images** and pick **Operating system** as **Ubuntu** and the version to be `Ubuntu 18.04 LTS`
-   1. Change **Boot disk type** to your needs (Increase the size according to your use of mods), We will pick 80 GB.
+1.  Go to the Compute Engine [**VM instances**](https://console.cloud.google.com/compute/instances) page.
+1.  Click **Create**.
+1.  Set the instance name to `arma-server`.
+1.  Set **Region** to where you want your server to be.
+1.  In the **Machine configuration** section, choose **Custom** from the **Machine Type** menu.
+1.  Set **Cores** to  2 vCPU, and set **Memory** to 4 GB.
+1.  In the **Boot disk** section, click **Change**, and make the following changes on the **Boot disk** page: 
+    1. In the **Public images** section, set **Operating system** to **Ubuntu**, and set **Version** to
+    **Ubuntu 18.04 LTS**.
+    1. Change **Boot disk type** to your needs (Increase the size according to your use of mods), We will pick 80 GB.
 1. in the **Firewall** section click **Management, security, disks, networking, sole tenancy**
    1. Switch to **Networking** tab, and enter `arma-server` in **Network tags** input (We are going to apply firewall rules to port forward ArmA 3 server's required ports by targeting this all the VMs with this specific tag) 
    1. In the **Network interfaces** click the pen icon and in the **External IP** dropbox change it from Ephemeral to Create IP address.
