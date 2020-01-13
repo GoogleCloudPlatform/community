@@ -113,4 +113,3 @@ Create a file in the root of the project named ``nginx.conf`` and add the follow
    When asked, select a zone, give the service a name and allow unauthenticated invocations.
    Once it's finished, browse to the URL provided in the Google Cloud SDK command line.
    You'll see the latest version of ``cra-cloud-run`` deployed to Google Cloud Run.
-     
