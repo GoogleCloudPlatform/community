@@ -3,7 +3,7 @@ title: Deploy React and Nginx to Google Cloud Run
 description: Learn how to integrate a front-end app that runs on a customized runtime, with Google Cloud Run.
 author: Felipe Luján
 tags: Cloud Run, React, Front-end, NGinx
-date_published: 
+date_published: 2020-01-01
 ---
 
 #Deploy React and Nginx to Google Cloud Run.
