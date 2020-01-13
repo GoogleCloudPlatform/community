@@ -3,19 +3,26 @@
 // See above for more information on comments, environment-specific configs, and more.
 {
   "general": {
-    "project_id":        ""
+    "project_id":              ""
+  },
+  "dlp": {
+    // You must either provide an unwrapped_key by itself OR both the wrapped_key and wrapped_key_resource_id
+    // unwrapped_key must be 16B, 24B, or 32B
+    "unwrapped_key":           "",
+
+    // --OR--
+
+    // Should be a base64 encoded string. See ../examples/wrapkey and ../index.md for more information
+    "wrapped_key":             "",
   },
   "kms": {
-    "key_ring_location": "global",
-    "key_ring_id":       "tokenization-service-kr",
-    "crypto_key_id":     "cc-tokenization"
-  },
-  "datastore": {
-    "namespace":         "tokenizer",
-    "kind":              "cc"
+    // These settings are required for direct KMS and KMS-wrapped DLP keys.
+    "location":                "", // Typically "global"
+    "key_ring":                "", // The name of the key ring
+    "key_name":                ""  // The actual key name
   },
   "logging": {
-    "debug":             false,
-    "version":           true
+    "debug":                   false, // Toggle logging of debug() calls
+    "version":                 true   // Log app file timestamp on launch and execution
   }
 }

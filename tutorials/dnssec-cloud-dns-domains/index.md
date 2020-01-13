@@ -579,14 +579,6 @@ API for 1API resellers.
 [23]: https://icannwiki.org/HEXONET
 [24]: https://wiki.hexonet.net/wiki/DNSSEC
 
-### Alpnames
-
-Alpnames supports DNSSEC only for a [small subset of the TLDs they offer][25],
-but they have instructions at https://my.alpnames.com/kb/answer/1909 to add
-and remove DS records through their web interface.
-
-[25]: https://my.alpnames.com/kb/answer/1908
-
 ### Amazon
 
 If Amazon Registrar, Inc. is your domain registrar (or your reseller, for
