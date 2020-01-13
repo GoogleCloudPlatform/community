@@ -1,3 +1,15 @@
+---
+title: Debugging Out-of-memory conditions in Java Dataflow
+description: How to troubleshoot Out-Of-Memory issues in Java Dataflow pipelines.
+author: nahuellofeudo
+tags: Dataflow, Java, OutOfMemoryError
+date_published: 2020-01-13
+---
+
+*Nahuel Lofeudo (Google LLC)*
+
+*January 2020*
+
 # Debugging Out-of-memory conditions in Java Dataflow
 
 One of the most common causes of failures and slowdowns in Dataflow pipelines is workers' Java virtual machines running out of memory. 
@@ -32,9 +44,9 @@ Pipelines having OOM issues will often get stuck, or fail with no obvious sympto
 To confirm that your job is failing due to memory issues, open your Cloud Console and go to **Logs** → **Logging** and on the right hand side of the text field that says "**Filter by label or text search**" you will see an arrow pointing down. Click on it and select convert to advanced Filter.
 Then use the following filter:
 
->resource.type="dataflow_step"
->resource.labels.job_id="**YOUR_JOB_ID**"
->("thrashing=true" OR "OutOfMemoryError" OR "Out of memory" OR "Shutting down JVM")
+	resource.type="dataflow_step"
+	resource.labels.job_id="**YOUR_JOB_ID**"
+	("thrashing=true" OR "OutOfMemoryError" OR "Out of memory" OR "Shutting down JVM")
 
 And click on **Submit filter** (you may also need to click on **Load older logs** to search all the logs from the start of the job)
 If you get any results back, your job is running out of memory.
@@ -46,7 +58,7 @@ This message means that the Linux kernel itself has started killing processes th
  
 Other memory-related messages may sound scary but are actually harmless. For example: 
 
-**[GC (Allocation Failure) [PSYoungGen: <n>K -> <n>K (<n>K)], <n> secs] [Times: user=<n> sys=<n>, real=<n> secs]**
+	[GC (Allocation Failure) [PSYoungGen: <n>K -> <n>K (<n>K)], <n> secs] [Times: user=<n> sys=<n>, real=<n> secs]
 
 Simply means that the JVM needed to run a Garbage Collection cycle and freed up some memory. The message also explains how much time (the "*real*" time) the garbage collection took to run.
 
@@ -65,38 +77,40 @@ All options have advantages and disadvantages. Let's go one by one:
 
 The best way to obtain heap dumps is to re-run the jobs with the flags:
 
-**--dumpHeapOnOOM**
+	--dumpHeapOnOOM
+
 and
-**--saveHeapDumpsToGcsPath=gs://<path_to_a_gcs_bucket>**
+
+	--saveHeapDumpsToGcsPath=gs://<path_to_a_gcs_bucket>
 
 
 This will automatically save heap dumps to the specified location when the OOM happens, without any manual intervention. 
 Your GCS bucket will have as many .hprof files as JVMs OOM'd (e.g.: if two workers have memory issues, you will have one or more heap dumps for each of the workers).
  
-**Caveat:** the heap dump is saved to the GCE machine's boot disk before being uploaded to GCS, and in jobs running on Dataflow Shuffle or Streaming Engine the root disks are generally too small to store dumps for machines larger than n1-standard-2.
+>**Caveat:** the heap dump is saved to the GCE machine's boot disk before being uploaded to GCS, and in jobs running on Dataflow Shuffle or Streaming Engine the root disks are generally too small to store dumps for machines larger than n1-standard-2.
 If your job uses Dataflow Shuffle or Streaming Engine,  you will need to use **--diskSizeGb** to increase the size of the workers' disks to hold the memory dump and set it to at least 30GB + the amount of RAM of the machine. Otherwise the heap dump might fail.
 
-**NOTE:** Make sure that the account the job is running under (normally the Dataflow service account) has write permissions on the bucket.
+>**NOTE:** Make sure that the account the job is running under (normally the Dataflow service account) has write permissions on the bucket.
 
 #### Connecting to the worker machine and downloading the heap
 This method is easier to carry out but involves manually triggering the memory dump, which means that you will need to keep track of the performance of your pipeline in order to dump the memory when it's about to cause issues.
 
 To create a heap dump, first find the name of the worker of which you want the heap dump and then *SSH into it* by running the following command on your local workstation:
 
-**gcloud compute ssh --project=$PROJECT --zone=$ZONE \
-  $WORKER_NAME --ssh-flag "-L 8081:127.0.0.1:8081"**
+	gcloud compute ssh --project=$PROJECT --zone=$ZONE \
+	  $WORKER_NAME --ssh-flag "-L 8081:127.0.0.1:8081"
   
 (Replace $PROJECT, $ZONE and $WORKER_NAME with the appropriate values)
 
 The SSH command will open a tunnel from the computer where it's run to the cloud host, and forward port 8081 through it.
 Once the ssh command connects and shows you the remote shell, open a browser and navigate to this url:
 
-**http://127.0.0.1:8081/heapz**
+	http://127.0.0.1:8081/heapz
 
 You will see a link to download the worker's heap dump. After downloading the heap dump you can exit the SSH session.
 
-**Caveat:** the heap dump is saved to the GCE machine's boot disk before being uploaded to GCS, and in jobs running on Dataflow Shuffle or Streaming Engine the root disks are generally too small to store dumps for machines larger than n1-standard-2.
-If your job uses Dataflow Shuffle or Streaming Engine,  you will need to use --diskSizeGb to increase the size of the workers' disks to hold the memory dump and set it to at least 30GB + the amount of RAM of the machine. Otherwise the heap dump might fail.
+	**Caveat:** the heap dump is saved to the GCE machine's boot disk before being uploaded to GCS, and in jobs running on Dataflow Shuffle or Streaming Engine the root disks are generally too small to store dumps for machines larger than n1-standard-2.
+	If your job uses Dataflow Shuffle or Streaming Engine,  you will need to use --diskSizeGb to increase the size of the workers' disks to hold the memory dump and set it to at least 30GB + the amount of RAM of the machine. Otherwise the heap dump might fail.
 
 #### Connecting directly to a JVM through JMX
 
@@ -104,8 +118,8 @@ Every version of Oracle JDK and OpenJDK since 1.6 has included a tool named **Vi
  
 You can use the following command on your local computer to examine the state of the JVM running on any Dataflow worker::
 
-**gcloud compute ssh --project=$PROJECT --zone=$ZONE \
-  $WORKER_NAME --ssh-flag "-L 5555:127.0.0.1:5555"**
+	gcloud compute ssh --project=$PROJECT --zone=$ZONE \
+	  $WORKER_NAME --ssh-flag "-L 5555:127.0.0.1:5555"
 
 (remember to replace $PROJECT, $ZONE and $WORKER_NAME with the appropriate values)
 
@@ -157,8 +171,9 @@ It's normal for some objects to be relatively large; some examples would be cach
 But if the objects are in fact too big, the next thing you will need to do is look at source code for signs of bugs. In order to do that, you will need to know where to look: are they part of Apache Beam's codebase, Google's codebase, a third party, or is it part of custom code written by you? 
 A good indicator is the package name of the object. If you are unsure, googling the full class name usually points to whatever the code belongs to. With this information, your final step should be to debug the code that manages these objects, if it's custom code, or to contact Google if the objects are from Google or Apache Beam. 
 
-**Note: using larger machines does not necessarily solve Out-Of-Memory problems:**
-Larger machines that come with more memory also have more CPU cores, so *the ratio of RAM over Cores* remains the same regardless of machine size. N1-standard machines have 3.75GB of RAM per core, and n1-highmem machines have 7.5GB of RAM per core. 
+>Note: using larger machines does not necessarily solve Out-Of-Memory problems:
+	
+>Larger machines that come with more memory also have more CPU cores, so *the ratio of RAM over Cores* remains the same regardless of machine size. N1-standard machines have 3.75GB of RAM per core, and n1-highmem machines have 7.5GB of RAM per core. 
  
 Dataflow starts as many threads to process data (the threads that run the code in your DoFn's) as there are CPU cores in the worker. Therefore, by default and on average, a DoFn should never use more than one core's worth of RAM. 
 For example, for n1-standard workers, your code should never use more than 3.75GB of memory (actually less than that, since other pieces of the worker also need some memory). 
