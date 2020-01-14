@@ -47,11 +47,10 @@ For this tutorial, you use a custom machine configuration with 2 vCPU cores and 
    1.  In the **Network interface** section, **Done**.
 1. Click **Create**.
 
-It takes a few moments to create and boot up your new instance.
+It takes a few moments to create and start your new instance.
 
-After your instance has been created, click the **SSH** button under the Connect column in your VM instances page and you will ssh to your vm.
+## Add Firewall rules
 
-# Add Firewall rules
 1. Open VPN network then Firewall rules or click here: https://console.cloud.google.com/networking/firewalls/list
 1. Click **Create Firewall Rule**
 1. Add Name, and Description.
@@ -65,10 +64,13 @@ After your instance has been created, click the **SSH** button under the Connect
    1. in the udp add the following: `2344,2302-2306`
 1. Click **Create**
 
-## Setup ArmA server
+## Set up the Arma server
 
 ### Install SteamCMD and Support Utilities
 [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) requires lib32gcc1 and lib32stdc++6 to be installed on your system (vm)
+
+Click the **SSH** button in the **Connect** column on the **VM instances** page to connect to your virtual machine instance using SSH.
+
 ``` bash
 $ sudo apt update
 $ sudo apt install lib32gcc1 lib32stdc++6 -y
