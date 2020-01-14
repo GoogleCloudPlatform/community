@@ -28,24 +28,28 @@ For this tutorial, you use a custom machine configuration with 2 vCPU cores and 
 1.  Click **Create**.
 1.  Set the instance name to `arma-server`.
 1.  Set **Region** to where you want your server to be.
-1.  In the **Machine configuration** section, choose **Custom** from the **Machine Type** menu.
+1.  In the **Machine configuration** section, choose **Custom** from the **Machine type** menu.
 1.  Set **Cores** to  2 vCPU, and set **Memory** to 4 GB.
 1.  In the **Boot disk** section, click **Change**, and make the following changes on the **Boot disk** page: 
-    1. In the **Public images** section, set **Operating system** to **Ubuntu**, and set **Version** to
+    1.  In the **Public images** section, set **Operating system** to **Ubuntu**, and set **Version** to
     **Ubuntu 18.04 LTS**.
-    1. Change **Boot disk type** to your needs (Increase the size according to your use of mods), We will pick 80 GB.
-1. in the **Firewall** section click **Management, security, disks, networking, sole tenancy**
-   1. Switch to **Networking** tab, and enter `arma-server` in **Network tags** input (We are going to apply firewall rules to port forward ArmA 3 server's required ports by targeting this all the VMs with this specific tag) 
-   1. In the **Network interfaces** click the pen icon and in the **External IP** dropbox change it from Ephemeral to Create IP address.
-   1. Enter a name for our IP address, for this tutorial we aren't going to worry about Network Service Tier.
-   1. Click **RESERVE**.
-   1. Click **Done**
-1. Click **Create**
+    1.  Set the **Boot disk type** and **Size** values to appropriate values for your setup. The amount of disk space
+        required increases with your use of mods (add-ons). For this tutorial, we use 80 GB.
+1.  Click **Select** to accept the changes in the **Boot disk** section.
+1.  Click **Management, security, disks, networking, sole tenancy** to expand additional sections.
+1.  Click the **Networking** tab, and make the following changes in the **Networking** settings:
+    1.  Enter `arma-server` in the **Network tags** field. You will apply firewall rules to forward data for the Arma 3
+        server's ports with this tag.
+   1.  In the **Network interfaces** section, click the pencil icon to edit the network interface settings. 
+   1.  In the **External IP** menu, choose **Create IP address**.
+   1.  Enter a name for your IP address. For this tutorial, don't change the **Network Service Tier** setting.
+   1.  Click **Reserve**.
+   1.  In the **Network interface** section, **Done**.
+1. Click **Create**.
 
+It takes a few moments to create and boot up your new instance.
 
-It will take a few moments to create and boot up your new instance.
-
-once your instance have been created click the **SSH** button under the Connect column in your VM instances page and you will ssh to your vm.
+After your instance has been created, click the **SSH** button under the Connect column in your VM instances page and you will ssh to your vm.
 
 # Add Firewall rules
 1. Open VPN network then Firewall rules or click here: https://console.cloud.google.com/networking/firewalls/list
