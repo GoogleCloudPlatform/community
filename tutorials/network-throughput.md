@@ -41,7 +41,8 @@ When calculating network throughput, it's important to use well-tested, well-doc
   [TCP window](https://tools.ietf.org/html/rfc1323#page-8) and [RTT](https://en.wikipedia.org/wiki/Round-trip_delay_time).
 * [Perfkit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker): A tool that contains a set of benchmarks 
   to measure and compare cloud offerings. The benchmarks use defaults to reflect what most users will see.
-* [gcping](https://github.com/googlecloudplatform/gcping): A tool that provides median latencies to various GCP regions.  
+* [`gcping`](https://github.com/googlecloudplatform/gcping): A command-line tool that provides median latencies to GCP 
+  regions.  
 
 ## Round-trip time, latency, and distances
 
@@ -65,7 +66,8 @@ bandwidth capabilities will perform poorly when tested via TCP, since their
 Choosing the closest [GCP location](https://cloud.google.com/about/locations/) to your on-premises location is the best
 approach to reduce latency.
 
-You can use the [gcping](https://github.com/googlecloudplatform/gcping) to determine median latencies from any location to various GCP regions.
+You can use the [`gcping`](https://github.com/googlecloudplatform/gcping) command-line tool to determine median latencies
+from any location to various GCP regions.
 
 ## Egress per virtual machine limit (all network interfaces)
 
