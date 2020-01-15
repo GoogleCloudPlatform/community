@@ -3,7 +3,7 @@ title: Set up an Arma 3 server on Compute Engine
 description: Learn how to quickly set up an Arma 3 server on Compute Engine.
 author: omar2205
 tags: Compute Engine, Gaming
-date_published: 2020-01-10
+date_published: 2020-01-14
 ---
 
 This tutorial shows how to quickly set up an [Arma 3](https://arma3.com/) server on Compute Engine.
@@ -40,11 +40,11 @@ For this tutorial, you use a custom machine configuration with 2 vCPU cores and 
 1.  Click the **Networking** tab, and make the following changes in the **Networking** settings:
     1.  Enter `arma-server` in the **Network tags** field. You will apply firewall rules to forward data for the Arma 3
         server's ports with this tag.
-   1.  In the **Network interfaces** section, click the pencil icon to edit the network interface settings. 
-   1.  In the **External IP** menu, choose **Create IP address**.
-   1.  Enter a name for your IP address. For this tutorial, don't change the **Network Service Tier** setting.
-   1.  Click **Reserve**.
-   1.  In the **Network interface** section, **Done**.
+    1.  In the **Network interfaces** section, click the pencil icon to edit the network interface settings. 
+    1.  In the **External IP** menu, choose **Create IP address**.
+    1.  Enter a name for your IP address. For this tutorial, don't change the **Network Service Tier** setting.
+    1.  Click **Reserve**.
+    1.  In the **Network interface** section, **Done**.
 1. Click **Create**.
 
 It takes a few moments to create and start your new instance.
@@ -71,7 +71,8 @@ To connect to your virtual machine instance using SSH, click the **SSH** button 
 
 ### Install SteamCMD and support utilities
 
-The Arma server depends on the Steam Console Client (SteamCMD), a command-line version of the Steam client, from the
+The Arma server depends on the [Steam Console Client (SteamCMD)](https://developer.valvesoftware.com/wiki/SteamCMD), a 
+command-line version of the Steam client, from the
 [Valve Developer Community](https://developer.valvesoftware.com/wiki/Valve_Developer_Community:About).
 
 SteamCMD requires `lib32gcc1` and `lib32stdc++6` to be installed on your VM instance.
@@ -128,10 +129,6 @@ To update the server, you repeat many of the installation steps, except for crea
     $ cd armaserver
     $ ./armaserver -name=server -config=server.cfg
 
-## What's next
-
-For more information, see the
+For information about the contents of the configuration file, see the
 [Arma 3 dedicated server page](https://community.bistudio.com/wiki/Arma_3_Dedicated_Server#Configuration) on the 
 Bohemia Interactive wiki.
-
-
