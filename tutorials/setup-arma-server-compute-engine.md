@@ -132,3 +132,12 @@ To update the server, you repeat many of the installation steps, except for crea
 For information about the contents of the configuration file, see the
 [Arma 3 dedicated server page](https://community.bistudio.com/wiki/Arma_3_Dedicated_Server#Configuration) on the 
 Bohemia Interactive wiki.
+
+## Cleaning up
+
+The easiest way to avoid incurring charges to your Google Cloud account for the resources used in this tutorial is to delete
+the project that you created for the tutorial.
+
+1.  In the Cloud Console, go to the [**Projects** page](https://console.cloud.google.com/iam-admin/projects).
+1.  In the project list, select the project that you want to delete and click **Delete**.
+1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
