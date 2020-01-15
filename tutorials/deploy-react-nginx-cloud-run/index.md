@@ -22,13 +22,13 @@ Before you begin this tutorial, you'll need the following:
 
 This tutorial presumes a basic understanding of single-page applications (SPAs). 
 
-## Obtain the React codebase
+## Get the React code
 
 1.  Clone the GitHub repository for this tutorial by running the following command:
 
         git clone https://github.com/GoogleCloudPlatform/community
         
-1.  Open open the pre-configured React app file, `tutorials/deploy-react-nginx-cloud-run/src/App.js`, with your preferred
+1.  Open the pre-configured React app file `tutorials/deploy-react-nginx-cloud-run/src/App.js` with your preferred
     code editor.
 
     Notice the use of `react-router-dom` to create three routes (`/`, `/users`, and `/about`) and some links to browse
@@ -39,9 +39,9 @@ This tutorial presumes a basic understanding of single-page applications (SPAs).
 1.  Go to the [**API Library**](http://console.cloud.google.com/apis/library) page in the Cloud Console.
 1.  Search for and enable the following APIs:
 
-    * **Cloud Run API**
-    * **Google Container Registry API**
-    * **Cloud Build API**
+    * Cloud Run API
+    * Google Container Registry API
+    * Cloud Build API
 
 ## Runtime configuration
 
