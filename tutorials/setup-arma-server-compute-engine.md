@@ -49,77 +49,89 @@ For this tutorial, you use a custom machine configuration with 2 vCPU cores and 
 
 It takes a few moments to create and start your new instance.
 
-## Add Firewall rules
+To connect to your virtual machine instance using SSH, click the **SSH** button in the **Connect** column on the
+**VM instances** page.
 
-1. Open VPN network then Firewall rules or click here: https://console.cloud.google.com/networking/firewalls/list
-1. Click **Create Firewall Rule**
-1. Add Name, and Description.
-1. Edit **Targets**
-   1. Make sure **Specified target tags** is selected
-   1. Add `arma-server` to **Target tags**
-   1. **Source IP ranges** add `0.0.0.0/0`
-1. **Protocols and ports**
-   1. Make sure **Specified protocols and ports** is selecte
-   1. in the tcp add the following: `2344,2345`
-   1. in the udp add the following: `2344,2302-2306`
-1. Click **Create**
+## Add firewall rules
+
+1.  Go to [**Firewall rules** page](https://console.cloud.google.com/networking/firewalls/list) in the **VPC network** 
+    section in the Cloud Console.
+1.  Click **Create firewall rule**.
+1.  On the **Create a firewall rule** page, enter a name and description.
+1.  In the **Targets** menu, select **Specified target tags**.
+1.  In the **Target tags** field, enter `arma-server` (which is the name that you gave in the **Network tags** field in
+    the previous section).
+1.  In the **Source IP ranges** field, enter `0.0.0.0/0`.
+1.  In the **Protocols and ports** section, select **Specified protocols and ports**.
+1.  Select **tcp** and enter the following: `2344,2345`
+1.  Select **udp** and enter the following: `2344,2302-2306`
+1.  Click **Create**.
 
 ## Set up the Arma server
 
-### Install SteamCMD and Support Utilities
-[SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD) requires lib32gcc1 and lib32stdc++6 to be installed on your system (vm)
+### Install SteamCMD and support utilities
 
-Click the **SSH** button in the **Connect** column on the **VM instances** page to connect to your virtual machine instance using SSH.
+The Arma server depends on the Steam Console Client (SteamCMD), a command-line version of the Steam client, from the
+[Valve Developer Community](https://developer.valvesoftware.com/wiki/Valve_Developer_Community:About).
 
-``` bash
-$ sudo apt update
-$ sudo apt install lib32gcc1 lib32stdc++6 -y
-```
+SteamCMD requires `lib32gcc1` and `lib32stdc++6` to be installed on your VM instance.
 
-Now we are going to make a steam dir and go inside it to download and install SteamCMD
-``` bash
-$ mkdir steam && cd steam
-$ wget "http://media.steampowered.com/installer/steamcmd_linux.tar.gz"
-$ tar -xvzf steamcmd_linux.tar.gz
-$ ./steamcmd.sh
-```
-After steam gets installed, Login to update steam to the latest version.
-```
-Steam> login anonymous
-```
-After that you can exit by typing `quit`
+Run the following commands in the VM instance, using the SSH connection that you opened at the end of the procedure to
+create the VM instance.
+    
+1.  Install the support packages:
 
-### Installing Arma 3 Server
-We are going to need a steam account which owns arma 3.
-``` bash
-$ mkdir armaserver
-$ cd steam
-$ ./steamcmd.sh
-Steam> login <steam_username> <steam_password>
-Steam> force_install_dir /home/<user_name>/armaserver/
-Steam> app_update 233780 validate
-Steam> exit
-```
-Make sure to replace <user_name> with your user name (run `echo $USER` to get it) and <steam_username> and <steam_password> with the account's details.
+        $ sudo apt update
+        $ sudo apt install lib32gcc1 lib32stdc++6 -y
 
-### Updating the serveer
-To update the server you will redo this process again:
-``` bash
-$ cd steam
-$ ./steamcmd.sh
-Steam> login <steam_username> <steam_password>
-Steam> force_install_dir /home/<user_name>/armaserver
-Steam> app_update 233780 validate
-Steam> exit
-```
+1.  Install SteamCMD:
+
+        $ mkdir steam && cd steam
+        $ wget "http://media.steampowered.com/installer/steamcmd_linux.tar.gz"
+        $ tar -xvzf steamcmd_linux.tar.gz
+        $ ./steamcmd.sh
+
+1.  Log in to update Steam to the latest version:
+
+        Steam> login anonymous
+        
+1.  Enter `quit` to exit.
+
+### Install the Arma 3 server
+
+To install the Arma 3 server, you need a Steam account that has Arma 3.
+
+In the following commands, replace [user_name] with your username. You can run `echo $USER` to get your username. Replace 
+[steam_username] and [steam_password] with your Steam account details.
+
+    $ mkdir armaserver
+    $ cd steam
+    $ ./steamcmd.sh
+    Steam> login [steam_username] [steam_password]
+    Steam> force_install_dir /home/[user_name]/armaserver/
+    Steam> app_update 233780 validate
+    Steam> exit
+
+### Update the server
+
+To update the server, you repeat many of the installation steps, except for creating the directory:
+
+    $ cd steam
+    $ ./steamcmd.sh
+    Steam> login [steam_username] [steam_password]
+    Steam> force_install_dir /home/[user_name]/armaserver
+    Steam> app_update 233780 validate
+    Steam> exit
+
+### Start the server
+
+    $ cd armaserver
+    $ ./armaserver -name=server -config=server.cfg
+
+## What's next
+
+For more information, see the
+[Arma 3 dedicated server page](https://community.bistudio.com/wiki/Arma_3_Dedicated_Server#Configuration) on the 
+Bohemia Interactive wiki.
 
 
-To launch the server
-``` bash
-$ cd armaserver
-$ ./armaserver -name=server -config=server.cfg
-```
-
-Please follow this BI's wiki for more info
-
-https://community.bistudio.com/wiki/Arma_3_Dedicated_Server#Configuration
