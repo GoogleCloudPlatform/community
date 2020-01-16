@@ -29,7 +29,7 @@ These machines run:
 
 #### Graphically:
 
-![Diagrams of the interaction between user code and Shuffle](worker_shuffle_modes.png  "Implementations of Shuffle")
+![Diagrams of the interaction between user code and Shuffle](https://storage.googleapis.com/gcp-community/tutorials/dataflow-debug-oom-conditions/worker_shuffle_modes.png  "Implementations of Shuffle")
 
 Here I am simplifying things a little. The implementations of Shuffle for batch and streaming pipelines are different from each other, but the idea is the same: there is more going on in worker machines than simply running your code.
 
@@ -142,7 +142,7 @@ Once you have a memory dump it's time to find which objects in the heap are the 
 The first step is to open VisualVM, which should be in the **bin/** directory of your java home directory.
 
 
-![VisualVM main window](visualvm_main.png  "VisualVM main window")
+![VisualVM main window](https://storage.googleapis.com/gcp-community/tutorials/dataflow-debug-oom-conditions/visualvm_main.png  "VisualVM main window")
 
 
 Then use **File** → **Load** and open your HPROF file.
@@ -150,12 +150,12 @@ Then use **File** → **Load** and open your HPROF file.
 Loading an HPROF file larger than a gigabyte can take some time, as VisualVM needs to parse the entire memory map and generate a graph of all the references between objects. The good news is that all this information is cached on disk so the next time you open the same file it will be much faster.
 Once the heap dump has been loaded, switch to the memory view by opening the drop-down labeled **Summary** and selecting **Objects**.
 
-![Select Objects in the drop-down](/home/nlofeudo/Documents/sources/community/tutorials/dataflow-debug-oom-conditions/summary_objects.png  "Select Objects in the drop-down")
+![Select Objects in the drop-down](https://storage.googleapis.com/gcp-community/tutorials/dataflow-debug-oom-conditions/summary_objects.png  "Select Objects in the drop-down")
 
 By default, VisualVM shows all objects by class, sorted by total amount of memory used. To search for causes of OOMs, it's best to start with the list of **Dominators**. A **Dominator** is an object that directly or transitively retains in memory a large number of other objects.
 For example, the following is a graph of objects. The arrows represent references from one object to another:
 
-![Object graph](object_graph.png  "Graph of objects")
+![Object graph](https://storage.googleapis.com/gcp-community/tutorials/dataflow-debug-oom-conditions/object_graph.png  "Graph of objects")
 *Object C is a Dominator because it references, and therefore keeps in memory, objects D to H. Source: [help.eclipse.org](https://help.eclipse.org)*
 
 Select **Preset: Dominators** and click on "**Retained**" to show the largest dominators and sort by the amount of memory retained.
