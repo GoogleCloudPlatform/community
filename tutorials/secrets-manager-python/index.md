@@ -26,9 +26,8 @@ All of the code used in this tutorial is in the `py-secrets-manager` directory.
 This tutorial requires a Google Cloud project. You can use an existing project or
 [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
 
-1.  Run the following commands to set some project variables, enable APIs, and install gcloud beta components:
+1.  Run the following commands to set some project variables, enable APIs, and install `gcloud` beta components:
 
-        ```bash
         # Set environment variables for project
         export PROJECT_ID=$(gcloud config get-value project)
         export PROJ_NUMBER=$(gcloud projects list --filter="${PROJECT_ID}" --format="value(PROJECT_NUMBER)")
@@ -46,13 +45,11 @@ This tutorial requires a Google Cloud project. You can use an existing project o
         # Enable gcloud beta components
         gcloud components update
         gcloud components install beta
-        ```
 
 1.  Give your service account the ability to access the Secret Manager:
 
-        ```bash
         gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:$PROJ_NUMBER-compute@developer.gserviceaccount.com --role roles/secretmanager.admin
-        ```
+
 ## Create the secret in Secret Manager
 
 This tutorial uses the `gcloud` command-line interface to create the secret. You can also create a secret using the web
@@ -63,9 +60,7 @@ interface or through the API. For more information, see
 1.  Create a secret called `alpha-vantage-key` with this command, replacing `[API_KEY]` with the API key value from the
     previous step:
 
-        ```bash
         echo -n [API_KEY] | gcloud beta secrets create alpha-vantage-key --replication-policy=automatic --data-file=-
-        ```
 
     This creates a key named `alpha-vantage-key` with the value of your API key. This example uses a string but, if you were
     given a flat file such as a JSON file, you could set that value.
@@ -81,90 +76,92 @@ The following excerpt from the app creates a `secrets` object using the
 `projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION_NUMBER`. The key is pulled from from `payload.data` attributes, 
 and the response is decoded, giving the key in plain text.
 
-    ```python
     secrets = secretmanager.SecretManagerServiceClient()
 
     ALPHA_VANTAGE_KEY = secrets.access_secret_version("projects/"+PROJECT_ID+"/secrets/alpha-vantage-key/versions/1").payload.data.decode("utf-8")
-    ```
 
 This route will create an endpoint call `/api/v1/symbol`. This simple example will take any value for 'symbol' abd then use
 this [Alpha Vantage Python library](https://github.com/RomelTorres/alpha_vantage) to do the stock symbol lookup and give us 
 information in 15 minute intervals. You can review the rest of the code for some standard Flask code.
 
 
-```python
-@app.route('/api/v1/symbol', methods=['POST'])
-def get_time_series():
-    if request.method == 'POST':
-        symbol = request.args['symbol']
-        data, metadata = ts.get_intraday(
-                symbol, interval='15min', outputsize="25")
-    return jsonify(data=data)
-```
+    @app.route('/api/v1/symbol', methods=['POST'])
+    def get_time_series():
+        if request.method == 'POST':
+            symbol = request.args['symbol']
+            data, metadata = ts.get_intraday(
+                    symbol, interval='15min', outputsize="25")
+        return jsonify(data=data)
 
 ## Containerize the application
 
-Navigate to `py-secrets-manager/currencyapp` as that will be where we will execute the below command. Be sure to replace `PROJECT-ID` with your actual Project ID.
+1.  Navigate to `py-secrets-manager/currencyapp`. 
+1.  Run the following command, replacing `[PROJECT-ID]` with your actual project ID:
 
-```bash
-gcloud builds submit --tag gcr.io/PROJECT-ID/currency-secret .
-```
+        gcloud builds submit --tag gcr.io/[PROJECT-ID]/currency-secret .
 
-We just created a container called "currency-secret". This has our app.py application and is ready to deploy to Google Cloud. 
+    This command creates a container called `currency-secret`, which has your `app.py` application and is ready to deploy
+    to Google Cloud. 
 
 ## Deploy the application
 
-```bash
-gcloud run deploy currency-secret --image gcr.io/PROJECT-ID/currency-secret --platform managed --region us-central1 --allow-unauthenticated --update-env-vars PROJECTID=$PROJECT_ID
-```
+1.  Run the following command, replacing `[PROJECT-ID]` with your actual project ID:
 
-This command will do a few things.
+        gcloud run deploy currency-secret --image gcr.io/[PROJECT-ID]/currency-secret --platform managed --region us-central1 --allow-unauthenticated --update-env-vars PROJECTID=$PROJECT_ID
 
-1. It will create a service called `currency-secret`
-2. It will use the image that we created using `gcloud builds submit` earlier
-3. It will be deployed on the Fully Managed version of Cloud Run
-   * You can learn more about the differences between Fully Managed and Anthos version [here](https://cloud.google.com/run/choosing-a-platform, "Cloud Run Platform")
-4. We will deploy in the `us-cental1` region but you can choose a different [supported region](https://cloud.google.com/run/docs/setup#before-you-begin, "Supported Region")
-5. This will allow the service to be publicly accessible to the internet
-6. We will set an environment variable for Project ID
+    This command will do a few things.
 
-Give yourself about 2-3 minutes for the service to deploy and start. Once done, run the below command. It will grab your service's URL and assign it to a variable called `SVCURL`
+    1.  It will create a service called `currency-secret`
+    1.  It will use the image that we created using `gcloud builds submit` earlier
+    1.  It will be deployed on the Fully Managed version of Cloud Run. You can learn more about the differences between
+        Fully Managed and Anthos version [here](https://cloud.google.com/run/choosing-a-platform, "Cloud Run Platform")
+    1.  We will deploy in the `us-cental1` region but you can choose a different
+        [supported region](https://cloud.google.com/run/docs/setup#before-you-begin, "Supported Region")
+    1.  This will allow the service to be publicly accessible to the internet
+    1.  We will set an environment variable for Project ID
 
-```bash
-export SVCURL="$(gcloud run services list --platform managed --format=json | grep "currency-secret" | grep "url" | head -1 | cut -d: -f2- | tr -d '"')/api/v1/symbol?symbol=GOOG"
-echo $SVCURL
-```
+1.  Give yourself about 2-3 minutes for the service to deploy and start.
+1.  Run the following commands:
 
-You will see a URL such
-`https://currency-secret-xxxxxxxxxx.a.run.app/api/v1/symbol?symbol=GOOG`
+        export SVCURL="$(gcloud run services list --platform managed --format=json | grep "currency-secret" | grep "url" | head -1 | cut -d: -f2- | tr -d '"')/api/v1/symbol?symbol=GOOG"
 
-The first part is the service name followed by a random string and then the URL base of `run.app`. In our Flask app, we have a route called `/api/v1/symbol` that only accepts POST commands. It looks for a key named `symbol` and the corresponding value should be a NYSE stock symbol. For our example, we used `GOOG` but you can use whatever you prefer.
+    It will grab your service's URL and assign it to a variable called `SVCURL`
+    
+1.  Run the following command:
 
-Finally, let's curl this URL and see what we get.
+        echo $SVCURL
+ 
+    You will see a URL such as this:
+    `https://currency-secret-xxxxxxxxxx.a.run.app/api/v1/symbol?symbol=GOOG`
 
-```bash
-curl -X POST $SVCURL
-```
+    The first part is the service name followed by a random string and then the URL base of `run.app`. In our Flask app, we 
+    have a route called `/api/v1/symbol` that only accepts POST commands. It looks for a key named `symbol` and the 
+    corresponding value should be an NYSE stock symbol. For our example, we used `GOOG` but you can use whatever you prefer.
 
-You will get a JSON response that looks similar to this
+1.  Use `curl` to query the service URL:
 
-```bash
-{
-    "data": {
-        "2019-12-31 10:45:00": {
-            "1. open": "1331.8400",
-            "2. high": "1332.0000",
-            "3. low": "1330.4948",
-            "4. close": "1331.0000",
-            "5. volume": "40492"
-        },
-        "2019-12-31 11:00:00": {
-            "1. open": "1330.3100",
-            "2. high": "1331.2800",
-            "3. low": "1329.4301",
-            "4. close": "1330.7900",
-            "5. volume": "23349"
-        },
-```
+        curl -X POST $SVCURL
 
-These are 15-minute snapshots of the stock price of the GOOG symbol (or whichever symbol you chose). Congratulations! You ran an application that used a third-party API with a key and didn't need to include the key in the code. This is great when you want to execute code with Google Cloud but worry about sharing and storing keys.
+    You get a JSON response similar to the following:
+
+        {
+            "data": {
+                "2019-12-31 10:45:00": {
+                    "1. open": "1331.8400",
+                    "2. high": "1332.0000",
+                    "3. low": "1330.4948",
+                    "4. close": "1331.0000",
+                    "5. volume": "40492"
+                },
+                "2019-12-31 11:00:00": {
+                    "1. open": "1330.3100",
+                    "2. high": "1331.2800",
+                    "3. low": "1329.4301",
+                    "4. close": "1330.7900",
+                    "5. volume": "23349"
+                },
+
+    These are 15-minute snapshots of the stock price associated with the symbol passed as a parameter in the service URL.
+    
+Congratulations! You ran an application that used a third-party API with a key and didn't need to include the key in the 
+code. This is great when you want to execute code with Google Cloud but worry about sharing and storing keys.
