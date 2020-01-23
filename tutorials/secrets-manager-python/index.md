@@ -14,7 +14,7 @@ Jason "Jay" Smith | Customer Engineer Specialist | Google Cloud
 certificates, and other sensitive data. Secret Manager provides convenience while improving security.
 
 This tutorial shows a simple example of storing and accessing a secret with a Python app. In this tutorial, you create a
-simple containerized application runing on [Cloud Run](https://cloud.google.com/run/) that can pull financial data.
+simple containerized application running on [Cloud Run](https://cloud.google.com/run/) that can pull financial data.
 
 This tutorial uses the [Alpha Vantage](https://www.alphavantage.co/) financial APIs. Alpha Vantage offers a free tier that 
 allows you to make 500 calls per 24-hour period, so it's well suited for testing API features.
@@ -80,10 +80,9 @@ and the response is decoded, giving the key in plain text.
 
     ALPHA_VANTAGE_KEY = secrets.access_secret_version("projects/"+PROJECT_ID+"/secrets/alpha-vantage-key/versions/1").payload.data.decode("utf-8")
 
-This route will create an endpoint call `/api/v1/symbol`. This simple example will take any value for 'symbol' abd then use
-this [Alpha Vantage Python library](https://github.com/RomelTorres/alpha_vantage) to do the stock symbol lookup and give us 
-information in 15 minute intervals. You can review the rest of the code for some standard Flask code.
-
+The following excerpt creates an endpoint called `/api/v1/symbol` and uses the
+[Alpha Vantage Python library](https://github.com/RomelTorres/alpha_vantage) to look up the stock symbol and give
+information in 15 minute intervals:
 
     @app.route('/api/v1/symbol', methods=['POST'])
     def get_time_series():
@@ -103,29 +102,25 @@ information in 15 minute intervals. You can review the rest of the code for some
     This command creates a container called `currency-secret`, which has your `app.py` application and is ready to deploy
     to Google Cloud. 
 
-## Deploy the application
+## Deploy and test the application
 
 1.  Run the following command, replacing `[PROJECT-ID]` with your actual project ID:
 
         gcloud run deploy currency-secret --image gcr.io/[PROJECT-ID]/currency-secret --platform managed --region us-central1 --allow-unauthenticated --update-env-vars PROJECTID=$PROJECT_ID
 
-    This command will do a few things.
+    This command does the following:
 
-    1.  It will create a service called `currency-secret`
-    1.  It will use the image that we created using `gcloud builds submit` earlier
-    1.  It will be deployed on the Fully Managed version of Cloud Run. You can learn more about the differences between
-        Fully Managed and Anthos version [here](https://cloud.google.com/run/choosing-a-platform, "Cloud Run Platform")
-    1.  We will deploy in the `us-cental1` region but you can choose a different
-        [supported region](https://cloud.google.com/run/docs/setup#before-you-begin, "Supported Region")
-    1.  This will allow the service to be publicly accessible to the internet
-    1.  We will set an environment variable for Project ID
+    - Creates a service called `currency-secret`, using the image that was created using `gcloud builds submit` in the 
+      previous step.
+    - Deploys on the Fully Managed version of Cloud Run. You can learn more about the differences between
+      Fully Managed and Anthos version [here](https://cloud.google.com/run/choosing-a-platform).
+    - Makes the service publicly accessible on the internet, with the `--allow-unauthenticated` option.
+    - Sets an enviroment variable for the project ID. 
 
-1.  Give yourself about 2-3 minutes for the service to deploy and start.
-1.  Run the following commands:
+1.  Wait for a few minutes for the service to deploy and start.
+1.  Run the following command, which assigns your service's URL to the variable `SVCURL`:
 
         export SVCURL="$(gcloud run services list --platform managed --format=json | grep "currency-secret" | grep "url" | head -1 | cut -d: -f2- | tr -d '"')/api/v1/symbol?symbol=GOOG"
-
-    It will grab your service's URL and assign it to a variable called `SVCURL`
     
 1.  Run the following command:
 
