@@ -133,7 +133,7 @@ information in 15 minute intervals:
     - Deploys on the Fully Managed version of Cloud Run. You can learn more about the differences between
       Fully Managed and Anthos version [here](https://cloud.google.com/run/choosing-a-platform).
     - Makes the service publicly accessible on the internet, with the `--allow-unauthenticated` option.
-    - Sets an enviroment variable for the project ID. 
+    - Sets an environment variable for the project ID. 
 
 1.  Wait for a few minutes for the service to deploy and start.
 1.  Run the following command, which assigns your service's URL to the variable `SVCURL`:
