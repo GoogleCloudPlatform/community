@@ -46,6 +46,7 @@ directory on GitHub.
         storage-api.googleapis.com \
         storage-component.googleapis.com \
         cloudscheduler.googleapis.com \
+        run.googleapis.com \
         secretmanager.googleapis.com
         
         # Enable gcloud beta components
