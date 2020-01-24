@@ -19,7 +19,9 @@ simple containerized application running on [Cloud Run](https://cloud.google.com
 This tutorial uses the [Alpha Vantage](https://www.alphavantage.co/) financial APIs. Alpha Vantage offers a free tier that 
 allows you to make 500 calls per 24-hour period, so it's well suited for testing API features.
 
-All of the code used in this tutorial is in the `py-secrets-manager` directory.
+The code used in this tutorial is in the
+[`py-secrets-manager`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/secrets-manager-python/py-secrets-manager/currencyapp)
+directory on GitHub.
 
 ## Set up the environment
 
@@ -65,10 +67,21 @@ interface or through the API. For more information, see
     This creates a key named `alpha-vantage-key` with the value of your API key. This example uses a string but, if you were
     given a flat file such as a JSON file, you could set that value.
 
+## Get the app code
+
+1.  Run the following command to get the app code:
+
+        git clone https://github.com/GoogleCloudPlatform/community gcp-community
+
+1.  Navigate into the app directory:
+
+        cd gcp-community/tutorials/secrets-manager-python/py-secrets-manager/currencyapp
+
 ## Review the app code
 
-Review the code in `currencyapp/app.py`, which is a simple Flask app that takes an input (a stock symbol) and returns
-stock information in 15-minute intervals.
+Review the code in
+[`app.py`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/secrets-manager-python/py-secrets-manager/currencyapp),
+which is a simple Flask app that takes an input (a stock symbol) and returns stock information in 15-minute intervals.
 
 The following excerpt from the app creates a `secrets` object using the
 [Python Client for Secret Manager API](https://github.com/googleapis/python-secret-manager). Then it creates a variable, 
@@ -93,9 +106,9 @@ information in 15 minute intervals:
         return jsonify(data=data)
 
 ## Containerize the application
-
-1.  Navigate to `py-secrets-manager/currencyapp`. 
-1.  Run the following command, replacing `[PROJECT-ID]` with your actual project ID:
+ 
+1.  In the `py-secrets-manager/currencyapp` directory, run the following command, replacing `[PROJECT-ID]` with your
+    actual project ID:
 
         gcloud builds submit --tag gcr.io/[PROJECT-ID]/currency-secret .
 
