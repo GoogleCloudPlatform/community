@@ -25,8 +25,12 @@ directory on GitHub.
 
 ## Set up the environment
 
-This tutorial requires a Google Cloud project. You can use an existing project or
-[create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
+1.  This tutorial requires a Google Cloud project.
+    [Create a new Google Cloud project](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
+    or open an exisitng project in the [Cloud Console](https://console.cloud.google.com/cloud-resource-manager).
+    
+1.  You use the Cloud Shell command-line interface in the Cloud Console to run commands in this tutorial. Open Cloud Shell
+    by clicking the **Activate Cloud Shell** button in the navigation bar in the upper-right corner of the Cloud Console.
 
 1.  Run the following commands to set some project variables, enable APIs, and install `gcloud` beta components:
 
@@ -45,7 +49,7 @@ This tutorial requires a Google Cloud project. You can use an existing project o
         secretmanager.googleapis.com
         
         # Enable gcloud beta components
-        gcloud components update
+        sudo gcloud components update
         gcloud components install beta
 
 1.  Give your service account the ability to access the Secret Manager:
