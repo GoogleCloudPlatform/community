@@ -12,10 +12,35 @@ This is a hands on tutorial and demo that demonstrates how GKE helps with reduci
 
 # Objectives
 
+* Run a simple demo application that serves HTTP requests. Processing of each request requires access to a resource. Each node of the cluster has access only to a limted pool of resources. If there's no available resources left, the server returns an error.
+* Test the application with lower and higher load and observe how error rate increases as the server runs out of resources.
+* Upgrade the nodes without using Surge Upgrade. Observe how the temporary loss of capacity causes increased error rates.
+* Upgrade the nodes using Surge Upgrade. Observe how error rates remain significantly lower due to the additional capacity provided by the surge node.
+
 # Before you begin
+
+This tutorial builds on top of [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app). It is strongly recommended to complete that tutorial before starting this one.
 
 # Costs
 
+You will create a GKE cluster for this demo with 3 g1-small VMs. See [VM Instances Pricing](https://cloud.google.com/compute/vm-instance-pricing) for pricing details. The total cost of the demo should be significantly less than $0.1.
+
 # Demonstrating less disruptive node upgrades
+
+## 1. Change the hello-app to include allocation of a limited resource
+
+## 2. Change the hello-app to provide health signals based on the available resources left
+
+## 3. Deploy the application and verify it’s running and health check works
+
+## 4. Start a client that generates load on the application and run tests with a single pod
+
+## 5. Add more replicas, configure pod anti affinity, readiness probe and generate load
+
+## 6. Run an upgrade without surge node while serving traffic
+
+## 7. Run upgrade with surge while serving traffic
+
+# Conclusion and follow up steps
 
 # Cleaning up
