@@ -33,6 +33,8 @@ To extend the application with the use of a limited resource, first you introduc
 
 First add the resource pool and implement related operations.
 
+[embedmd]:# (main.go)
+
 
 ## 2. Change the hello-app to provide health signals based on the available resources left
 
