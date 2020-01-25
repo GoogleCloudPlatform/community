@@ -29,6 +29,11 @@ You will create a GKE cluster for this demo with 3 g1-small VMs. See [VM Instanc
 
 ## 1. Change the hello-app to include allocation of a limited resource
 
+To extend the application with the use of a limited resource, first you introduce an (emulated) resource pool. In response to each request the application attempts to allocate a resource from the pool. If there is no available resources then the application returns an error. If the allocation is successful, then the application performs some work, then it releases the resource back to the pool.
+
+First add the resource pool and implement related operations.
+
+
 ## 2. Change the hello-app to provide health signals based on the available resources left
 
 ## 3. Deploy the application and verify it’s running and health check works
