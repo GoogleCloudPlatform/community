@@ -28,14 +28,14 @@ import (
 
 const resourcePoolSize = 50
 
-type resourcePoolType struct {
+type resourcePool struct {
 	mtx       sync.Mutex
 	allocated int
 }
 
-var resourcePool resourcePoolType
+var pool resourcePool
 
-func (p *resourcePoolType) alloc() bool {
+func (p *resourcePool) alloc() bool {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
 	if p.allocated < resourcePoolSize*0.9 {
@@ -45,13 +45,13 @@ func (p *resourcePoolType) alloc() bool {
 	return false
 }
 
-func (p *resourcePoolType) release() {
+func (p *resourcePool) release() {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
 	p.allocated--
 }
 
-func (p *resourcePoolType) hasResources() bool {
+func (p *resourcePool) hasResources() bool {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
 	return p.allocated < resourcePoolSize
@@ -76,8 +76,9 @@ func main() {
 }
 
 func healthz(w http.ResponseWriter, r *http.Request) {
+	// Log to make it simple to validate if healt checks are happening.
 	log.Printf("Serving healthcheck: %s", r.URL.Path)
-	if resourcePool.hasResources() {
+	if pool.hasResources() {
 		fmt.Fprintf(w, "Ok\n")
 		return
 	}
@@ -86,33 +87,20 @@ func healthz(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("503 - Error due to tight resource constraints in the pool!"))
 }
 
-// hello responds to the request with a plain-text "Hello, world" message.
+// hello responds to the request with a plain-text "Hello, world" message and a timestamp.
 func hello(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Serving request: %s", r.URL.Path)
-	// host, _ := os.Hostname()
-	// allocate memory as if some processing is happening
-	/*size := 10000000 //10 MB
-	temp := make([]int, size)
-	for n := 0; n < size; n++ {
-		temp[n] = n
-	}*/
-	success := resourcePool.alloc()
-	if !success {
+	if !pool.alloc() {
 		w.WriteHeader(http.StatusServiceUnavailable)
 		w.Write([]byte("503 - Error due to tight resource constraints in the pool!\n"))
 		return
 	} else {
-		defer resourcePool.release()
+		defer pool.release()
 	}
-	// make response take longer to emulate some processing is happening
+	// Make response take longer to emulate some processing is happening.
 	time.Sleep(950 * time.Millisecond)
 
-	// _ = temp
-
-	// time.Sleep(1000 * time.Hour) // stuck
 	fmt.Fprintf(w, "[%v] Hello, world10!\n", time.Now())
-	// fmt.Fprintf(w, "Version: 1.0.0\n")
-	// fmt.Fprintf(w, "Hostname: %s\n", host)
 }
 
 // [END all]
