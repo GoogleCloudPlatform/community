@@ -26,6 +26,8 @@ import (
 	"time"
 )
 
+// Start of resource pool code.
+
 const resourcePoolSize = 50
 
 type resourcePool struct {
@@ -56,6 +58,8 @@ func (p *resourcePool) hasResources() bool {
 	defer p.mtx.Unlock()
 	return p.allocated < resourcePoolSize
 }
+
+// End of resource pool code.
 
 func main() {
 	// use PORT environment variable, or default to 8080
