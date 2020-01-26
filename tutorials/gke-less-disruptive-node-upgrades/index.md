@@ -19,7 +19,7 @@ This is a hands on tutorial and demo that demonstrates how GKE helps with reduci
 
 # Before you begin
 
-This tutorial builds on top of [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app). It is strongly recommended to complete that tutorial before starting this one.
+This tutorial builds on top of [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app). Please complete that tutorial before starting this one.
 
 # Costs
 
@@ -27,7 +27,9 @@ You will create a GKE cluster for this demo with 3 g1-small VMs. See [VM Instanc
 
 # Demonstrating less disruptive node upgrades
 
-## 1. Change the hello-app to include allocation of a limited resource
+## 1. Modify hello-app to work with resources
+
+### A) Add a resource pool implementation
 
 To extend the application with the use of a limited resource, first you introduce an (emulated) resource pool. In response to each request the application attempts to allocate a resource from the pool. If there is no available resources then the application returns an error. If the allocation is successful, then the application performs some work, then it releases the resource back to the pool.
 
@@ -90,7 +92,7 @@ Then change the callback function that serves requests:
 	fmt.Fprintf(w, "[%v] Hello, world!\n", time.Now())
 ```
 
-## 2. Change the hello-app to provide health signals based on the available resources left
+### B) Implement health signals based on resource availability
 
 This will help the load balancer to route traffic only to pods that have available resources.
 
@@ -113,8 +115,6 @@ func healthz(w http.ResponseWriter, r *http.Request) {
 // End of healthz code.
 ```
 
-## 3. Deploy the application and verify it’s running and health check works
-
 You also have to register the healthz function under main().
 
 [embedmd]:# (main.go /\tserver.HandleFunc\("\/healthz", healthz\)/)
@@ -122,13 +122,19 @@ You also have to register the healthz function under main().
 	server.HandleFunc("/healthz", healthz)
 ```
 
-## 4. Start a client that generates load on the application and run tests with a single pod
+### C) Deploy the modified application and verify it’s running and health check works
 
-## 5. Add more replicas, configure pod anti affinity, readiness probe and generate load
+## 2. Generate load and measure error rate
 
-## 6. Run an upgrade without surge node while serving traffic
+### A) Run tests with a single pod
 
-## 7. Run upgrade with surge while serving traffic
+### B) Add more replicas, configure pod anti affinity, readiness probe and test again
+
+## 3. Test the impact of upgrades on application availability
+
+### A. Upgrade node pool without surge nodes
+
+### B. Upgrade node pool with surge nodes
 
 # Conclusion and follow up steps
 
