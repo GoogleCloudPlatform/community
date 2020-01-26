@@ -71,6 +71,24 @@ func (p *resourcePool) hasResources() bool {
 // End of resource pool code.
 ```
 
+Then change the callback function that serves requests:
+
+
+[embedmd]:# (main.go /\tlog.Printf\("Serving request:/ /fmt.Fprintf\(w,/) 
+```go
+	log.Printf("Serving request: %s", r.URL.Path)
+	if !pool.alloc() {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		w.Write([]byte("503 - Error due to tight resource constraints in the pool!\n"))
+		return
+	} else {
+		defer pool.release()
+	}
+	// Make response take longer to emulate some processing is happening.
+	time.Sleep(950 * time.Millisecond)
+
+	fmt.Fprintf(w,
+```
 
 ## 2. Change the hello-app to provide health signals based on the available resources left
 
