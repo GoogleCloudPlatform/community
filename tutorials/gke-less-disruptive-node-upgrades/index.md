@@ -115,6 +115,13 @@ func healthz(w http.ResponseWriter, r *http.Request) {
 
 ## 3. Deploy the application and verify it’s running and health check works
 
+You also have to register the healthz function under main().
+
+[embedmd]:# (main.go /\tserver.HandleFunc\("\/healthz", healthz\)/)
+```go
+	server.HandleFunc("/healthz", healthz)
+```
+
 ## 4. Start a client that generates load on the application and run tests with a single pod
 
 ## 5. Add more replicas, configure pod anti affinity, readiness probe and generate load
