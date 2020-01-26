@@ -104,7 +104,7 @@ func hello(w http.ResponseWriter, r *http.Request) {
 	// Make response take longer to emulate some processing is happening.
 	time.Sleep(950 * time.Millisecond)
 
-	fmt.Fprintf(w, "[%v] Hello, world10!\n", time.Now())
+	fmt.Fprintf(w, "[%v] Hello, world!\n", time.Now())
 }
 
 // [END all]
