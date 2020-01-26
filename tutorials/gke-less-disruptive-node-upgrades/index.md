@@ -92,6 +92,27 @@ Then change the callback function that serves requests:
 
 ## 2. Change the hello-app to provide health signals based on the available resources left
 
+This will help the load balancer to route traffic only to pods that have available resources.
+
+[embedmd]:# (main.go /\/\/ Start of healthz code./ /\/\/ End of healthz code./)
+```go
+// Start of healthz code.
+
+func healthz(w http.ResponseWriter, r *http.Request) {
+	// Log to make it simple to validate if healt checks are happening.
+	log.Printf("Serving healthcheck: %s", r.URL.Path)
+	if pool.hasResources() {
+		fmt.Fprintf(w, "Ok\n")
+		return
+	}
+
+	w.WriteHeader(http.StatusServiceUnavailable)
+	w.Write([]byte("503 - Error due to tight resource constraints in the pool!"))
+}
+
+// End of healthz code.
+```
+
 ## 3. Deploy the application and verify it’s running and health check works
 
 ## 4. Start a client that generates load on the application and run tests with a single pod

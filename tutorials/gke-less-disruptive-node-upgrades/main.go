@@ -79,6 +79,8 @@ func main() {
 	log.Fatal(err)
 }
 
+// Start of healthz code.
+
 func healthz(w http.ResponseWriter, r *http.Request) {
 	// Log to make it simple to validate if healt checks are happening.
 	log.Printf("Serving healthcheck: %s", r.URL.Path)
@@ -90,6 +92,8 @@ func healthz(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusServiceUnavailable)
 	w.Write([]byte("503 - Error due to tight resource constraints in the pool!"))
 }
+
+// End of healthz code.
 
 // hello responds to the request with a plain-text "Hello, world" message and a timestamp.
 func hello(w http.ResponseWriter, r *http.Request) {
