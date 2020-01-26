@@ -74,7 +74,7 @@ func (p *resourcePool) hasResources() bool {
 Then change the callback function that serves requests:
 
 
-[embedmd]:# (main.go /\tlog.Printf\("Serving request:/ /fmt.Fprintf\(w,/) 
+[embedmd]:# (main.go /\tlog.Printf\("Serving request:/ /fmt.Fprintf\(w,.*$/) 
 ```go
 	log.Printf("Serving request: %s", r.URL.Path)
 	if !pool.alloc() {
@@ -87,7 +87,7 @@ Then change the callback function that serves requests:
 	// Make response take longer to emulate some processing is happening.
 	time.Sleep(950 * time.Millisecond)
 
-	fmt.Fprintf(w,
+	fmt.Fprintf(w, "[%v] Hello, world10!\n", time.Now())
 ```
 
 ## 2. Change the hello-app to provide health signals based on the available resources left
