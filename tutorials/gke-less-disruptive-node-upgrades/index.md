@@ -182,6 +182,25 @@ $ ./generate_load.sh $IP $QPS 2>&1
 The above script is simply using curl to send traffic.
 
 [embedmd]:# (generate_load.sh)
+```sh
+#!/bin/bash
+
+# Usage:
+#  generate_load.sh <IP> <QPS>_
+#
+# Sends QPS number of HTTP requests every second to http://<IP>/ URL.
+# Saves the responses into the current directory to a file named "output".
+
+IP=$1
+QPS=$2
+
+while true
+  do for N in $(seq 1 $QPS)
+    do curl -sS http://${IP}/ >> output &
+    done
+  sleep 1
+done
+```
 
 To check error rates you can run:
 
@@ -192,6 +211,13 @@ $ watch ./print_error_rate.sh
 The above script calculates error rates based on the number of errors 
 
 [embedmd]:# (print_error_rate.sh)
+```sh
+#!/bin/bash
+
+TOTAL=$(cat output | wc -l); ERROR1=$(grep "Error" output |  wc -l)
+RATE=$((ERROR1 * 100 / TOTAL))
+echo "Error rate: $ERROR1/$TOTAL (${RATE}%)"
+```
 
 Anytime you want to "reset statistics” you can just delete the output file.
 
