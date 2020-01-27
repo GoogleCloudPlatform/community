@@ -232,7 +232,7 @@ You can change the numebr of replicas to three. To ensure each replica is schedu
 
 [embedmd]:# (hello_server_with_resource_pool.yaml /^.*# Pod anti affinity config START/ /# Readiness probe config END/)
 ```yaml
-# Pod anti affinity config START
+      # Pod anti affinity config START
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
