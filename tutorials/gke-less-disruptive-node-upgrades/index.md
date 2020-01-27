@@ -174,15 +174,24 @@ hello-server-85c7446cc6-zfpvc   1/1     Running   0          10m
 Now you can start sending traffic with given frequency. Let’s measure the load in Queries Per Second (QPS) and send the responses received into a file for further processing.
 
 ```shell
+$ export IP=35.238.176.215
 $ export QPS=40
-$ while true; do for N in $(seq 1 $QPS) ; do curl -sS http://35.238.176.215/ >> output 2>&1 &  done; sleep 1; done
+$ ./generate_load.sh $IP $QPS 2>&1
 ```
 
-Checking statistics of the lines in the output file, you can see the error rate.
+The above script is simply using curl to send traffic.
+
+[embedmd]:# (generate_load.sh)
+
+To check error rates you can run:
 
 ```shell
-$ watch 'TOTAL=$(cat output | wc -l); ERROR1=$(grep "Error" output |  wc -l); RATE=$((ERROR1 * 100 / TOTAL)); echo "Error rate: $ERROR1/$TOTAL (${RATE}%)"; '
+$ watch ./print_error_rate.sh
 ```
+
+The above script calculates error rates based on the number of errors 
+
+[embedmd]:# (print_error_rate.sh)
 
 Anytime you want to "reset statistics” you can just delete the output file.
 
