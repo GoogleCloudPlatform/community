@@ -415,6 +415,15 @@ Notice that how pods remain in running state while GKE is bringing up and regist
 Also notice that the error rate was still higher than the one we saw when there was no upgrade running. This points out an important detail that the **pods still need to be moved from one node to another**. Although we have sufficient compute capacity to schedule an evicted pod, stopping and starting it up again takes time, which causes disruption.
 
 
-# Conclusion and follow up steps
+# Conclusion
+
+Kubernetes node upgrades are disruptive since they cause pods to be moved and restarted. One key factor that may reduce the availability of an applications if there is no sufficient compute capacity to get pods, which were evicted due to an upgrade, scheduled immediately, so pods may remain unscheduled and unable to serve traffic. GKE Surge Upgrade solves this problem by bringing up additional (surge) nodes, so insufficient compute capacity cannot cause disruption. Other factors, for example the time it takes to restart a pod would still contribute to disruption.
+
 
 # Cleaning up
+
+Deleting the cluster removes all resources used in this demo.
+
+```shell
+$ gcloud container clusters delete standard-cluster-1
+```
