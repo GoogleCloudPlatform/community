@@ -6,6 +6,28 @@ tags: GKE, Upgrade, Node, Surge Upgrade
 date_published: 2020-01-24
 ---
 
+<!-- toc -->
+
+- [Overview](#overview)
+- [Objectives](#objectives)
+- [Before you begin](#before-you-begin)
+- [Costs](#costs)
+- [How to make node upgrades less disruptive](#how-to-make-node-upgrades-less-disruptive)
+  * [1. Modify hello-app to work with resources](#1-modify-hello-app-to-work-with-resources)
+    + [A) Add a resource pool implementation](#a-add-a-resource-pool-implementation)
+    + [B) Implement health signals based on resource availability](#b-implement-health-signals-based-on-resource-availability)
+    + [C) Deploy the modified application and verify it](#c-deploy-the-modified-application-and-verify-it)
+  * [2. Generate load and measure error rate](#2-generate-load-and-measure-error-rate)
+    + [A) Run tests with a single pod](#a-run-tests-with-a-single-pod)
+    + [B) Add more replicas, configure pod anti affinity, readiness probe and test again](#b-add-more-replicas-configure-pod-anti-affinity-readiness-probe-and-test-again)
+  * [3. Test the impact of upgrades on application availability](#3-test-the-impact-of-upgrades-on-application-availability)
+    + [A. Upgrade node pool without surge nodes](#a-upgrade-node-pool-without-surge-nodes)
+    + [B. Upgrade node pool with surge nodes](#b-upgrade-node-pool-with-surge-nodes)
+- [Conclusion](#conclusion)
+- [Cleaning up](#cleaning-up)
+
+<!-- tocstop -->
+
 # Overview
 
 This is a hands on tutorial and demo that demonstrates how GKE helps with reducing disruption of the workloads during node upgrades with the help of Surge Upgrade feature. We will build a demo application that uses some kind of a limited resource (like a connection pool to backend system, which we will emulate only). Then we deploy this application to a GKE cluster and start a client that puts load on the system. Then we’ll upgrade the node pool with and without surge upgrade and measure the error rate on the client side.
@@ -427,3 +449,4 @@ Deleting the cluster removes all resources used in this demo.
 ```shell
 $ gcloud container clusters delete standard-cluster-1
 ```
+
