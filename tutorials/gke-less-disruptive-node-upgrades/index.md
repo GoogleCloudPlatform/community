@@ -25,9 +25,11 @@ This tutorial builds on top of [Deploying a containerized web application tutori
 
 You will create a GKE cluster for this demo with 3 g1-small VMs. See [VM Instances Pricing](https://cloud.google.com/compute/vm-instance-pricing) for pricing details. The total cost of the demo should be significantly less than $0.1.
 
-# Demonstrating less disruptive node upgrades
+# How to make node upgrades less disruptive
 
 ## 1. Modify hello-app to work with resources
+
+TODO: add instructions how to just copy the source files over.
 
 ### A) Add a resource pool implementation
 
@@ -122,7 +124,35 @@ You also have to register the healthz function under main().
 	server.HandleFunc("/healthz", healthz)
 ```
 
-### C) Deploy the modified application and verify it’s running and health check works
+### C) Deploy the modified application and verify it
+
+Since you are done with code changes, you can build the application and push it.
+
+```shell
+export PROJECT_ID=<your-project-id>
+docker build -t gcr.io/${PROJECT_ID}/hello-app:v2-surge .
+docker push gcr.io/${PROJECT_ID}/hello-app:v2-surge
+```
+
+Once you have the new image pushed, you can update the deployment to use the new image.
+
+```shell
+kubectl set image deployment/hello-server hello-app=hello-app:v2-surge
+```
+
+As verification check if the server can respond to requests and if the health check reports the application being healthy. You can print the external IP as below in case you need it.
+
+```shell
+$ kubectl get service hello-server
+NAME           TYPE           CLUSTER-IP   EXTERNAL-IP      PORT(S)        AGE
+hello-server   LoadBalancer   10.12.5.60   35.238.176.215   80:32309/TCP   1d
+$ 
+$ curl http://35.238.176.215
+[2020-01-14 15:05:28.902724343 +0000 UTC] Hello, world!
+$ 
+$ curl http://35.238.176.215/healthz
+Ok
+```
 
 ## 2. Generate load and measure error rate
 
