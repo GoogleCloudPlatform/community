@@ -317,9 +317,103 @@ Error rate: 1901/11840 (16%)
 
 ## 3. Test the impact of upgrades on application availability
 
+This section is to demonstrate how the loss of capacity may hurt the service during a node upgrade if there is no extra capacity made available in the form of surge nodes. Before Surge Upgrade was introduced every upgrade of a node pool involved the temporary loss of a single node, since every node had to be recreated with a new image with the new version. Some customers were increasing the size of the node pool by one before upgrades then restored the size after successful upgrade, however this is error prone manual work. Surge Upgrade makes it possible to do this automatically and reliably.
+
 ### A. Upgrade node pool without surge nodes
 
+You can start with the case without surge node. Make sure your node pool has zero surge nodes configured.
+
+```shell
+$ gcloud beta container node-pools update default-pool --max-surge-upgrade=0 --max-unavailable-upgrade=1 --cluster=standard-cluster-1
+Updating node pool default-pool...done.                                        
+Updated [https://container.googleapis.com/v1beta1/projects/tamasr-gke-dev/zones/us-central1-a/clusters/standard-cluster-1/nodePools/default-pool].
+```
+
+You can now clear the output file you got from earlier runs and start watching the error rate.
+
+```shell
+$ rm output
+$
+$ watch ./print_error_rate.sh
+```
+
+In a separate terminal you can watch the state of the nodes and pods to follow the upgrade process closely.
+
+```shell
+$ watch 'kubectl get nodes,pods'
+```
+
+You can start sending some load now.
+
+```shell
+$ export QPS=120
+$ ./generate_load.sh $IP $QPS 2>&1
+```
+
+Then you can start an upgrade (in another terminal).
+
+```shell
+$ gcloud container clusters upgrade standard-cluster-1 --cluster-version=1.13 --node-pool=default-pool
+```
+
+*Note on cluster-version used. It is not possible to upgrade nodes to a higher version than the master, but it is possible to downgrade them. In this example you (most likely) started with a cluster that had nodes already on the master version. In that case you can pick a lower version (minor or patch) to perform a downgrade. In the next step you can bring the nodes back to their original version with an upgrade.*
+
+Notice that the pod on the first node to be updated gets evicted and remains unschedulable while GKE is recreating the node (since there is no node available to schedule the pod on). This reduces the capacity of the entire cluster and it leads to higher error rate. (~20% instead of earlier ~1% in your tests with the same QPS.) The same happens with subsequent nodes as well (i.e. the evicted pod remains unschedulable until the node upgrade finishes and the node becomes READY).
+
+At the end of the upgrade you should see high error rate. Something like:
+
+```shell
+Error rate: 25690/97080 (26%)
+```
+
 ### B. Upgrade node pool with surge nodes
+
+With surge upgrades it is possible to upgrade nodes in a way when the node pool won’t lose any capacity by setting maxUnavailble to 0 and maxSurge to greater than 0.
+
+```shell
+$ gcloud beta container node-pools update default-pool --max-surge-upgrade=1 --max-unavailable-upgrade=0 --cluster=standard-cluster-1
+Updating node pool default-pool...done.                                        
+Updated [https://container.googleapis.com/v1beta1/projects/tamasr-gke-dev/zones/us-central1-a/clusters/standard-cluster-1/nodePools/default-pool].
+```
+
+You can clear the output you got from earlier runs and watch the error rate.
+
+```shell
+$ rm output
+$
+$ watch ./print_error_rate.sh
+```
+
+In a separate terminal you can watch the state of the nodes and pods again to follow the upgrade process.
+
+```shell
+$ watch 'kubectl get nodes,pods'
+```
+
+You can start sending some load again.
+
+```shell
+$ export QPS=120
+$ ./generate_load.sh $IP $QPS 2>&1
+```
+
+Then you can start an upgrade (in another terminal).
+
+```shell
+$ gcloud container clusters upgrade standard-cluster-1 --cluster-version=1.14 --node-pool=default-pool
+```
+
+*Note on cluster-version. You can select here the version of your master. For more see the note on cluster-version at the previous section*
+
+There should be a significantly lower error rate measured for this upgrade.
+
+```shell
+Error rate: 3386/81956 (4%)
+```
+
+Notice that how pods remain in running state while GKE is bringing up and registering the new node.
+Also notice that the error rate was still higher than the one we saw when there was no upgrade running. This points out an important detail that the **pods still need to be moved from one node to another**. Although we have sufficient compute capacity to schedule an evicted pod, stopping and starting it up again takes time, which causes disruption.
+
 
 # Conclusion and follow up steps
 
