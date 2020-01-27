@@ -156,7 +156,36 @@ Ok
 
 ## 2. Generate load and measure error rate
 
+You can start sending traffic to your server. As a first step, you will use a single pod to demonstrate when the system can and when it cannot serve requests successfully.
+
 ### A) Run tests with a single pod
+
+First, ensure the deployment is running with a single replica:
+
+```shell
+$ kubectl scale --replicas=1 deployment/hello-server
+deployment.extensions/hello-server scaled
+$ 
+$ kubectl get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+hello-server-85c7446cc6-zfpvc   1/1     Running   0          10m
+```
+
+Now you can start sending traffic with given frequency. Let’s measure the load in Queries Per Second (QPS) and send the responses received into a file for further processing.
+
+```shell
+$ export QPS=40
+$ while true; do for N in $(seq 1 $QPS) ; do curl -sS http://35.238.176.215/ >> output 2>&1 &  done; sleep 1; done
+```
+
+Checking statistics of the lines in the output file, you can see the error rate.
+
+```shell
+$ watch 'TOTAL=$(cat output | wc -l); ERROR1=$(grep "Error" output |  wc -l); RATE=$((ERROR1 * 100 / TOTAL)); echo "Error rate: $ERROR1/$TOTAL (${RATE}%)"; '
+```
+
+Anytime you want to "reset statistics” you can just delete the output file.
+
 
 ### B) Add more replicas, configure pod anti affinity, readiness probe and test again
 
