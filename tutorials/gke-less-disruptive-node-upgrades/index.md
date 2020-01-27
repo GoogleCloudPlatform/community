@@ -51,7 +51,11 @@ You will create a GKE cluster for this demo with 3 g1-small VMs. See [VM Instanc
 
 ## 1. Modify hello-app to work with resources
 
-**TODO: add instructions how to just copy the source files over.**
+Instead of changing the source code manually, you can download the updated version of main.go and overwrite your local copy with it.
+
+```shell
+$ curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-less-disruptive-node-upgrades/main.go -O
+```
 
 ### A) Add a resource pool implementation
 
@@ -243,8 +247,20 @@ echo "Error rate: $ERROR1/$TOTAL (${RATE}%)"
 
 Anytime you want to "reset statistics” you can just delete the output file.
 
-**TODO: Add error case**
+You can test now the failure case, when the load cannot be served by a single pod.
 
+```shell
+$ rm output
+$ export QPS=60
+$ ./generate_load.sh $IP $QPS 2>&1
+```
+
+There should be an increased error rate.
+
+```shell
+$ ./print_error_rate.sh
+Error rate: 190/1080 (17%)
+```
 
 ### B) Add more replicas, configure pod anti affinity, readiness probe and test again
 
