@@ -229,7 +229,7 @@ Anytime you want to "reset statistics” you can just delete the output file.
 The changes below can be applied in one step by running
 
 ```shell
-kubectl replace kubectl replace -f hello_server_with_resource_pool.yaml
+kubectl replace -f hello_server_with_resource_pool.yaml
 ```
 
 The previous step demonstrated how a single server handles the load. By scaling up the application and increasing the load on it, you can see how the system behaves, when load balancing becomes relevant. 
