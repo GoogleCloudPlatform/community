@@ -230,6 +230,53 @@ The previous step demonstrated how a single server handles the load. By scaling 
 
 You can change the numebr of replicas to three. To ensure each replica is scheduled on a different node, you can configure pod anti affinity as well.
 
+[embedmd]:# (hello_server_with_resource_pool.yaml /# Pod anti affinity config START/ /# Readiness probe config END/)
+```yaml
+# Pod anti affinity config START
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - hello-server
+            topologyKey: kubernetes.io/hostname
+      # Pod anti affinity config END
+      containers:
+      - image: gcr.io/tamasr-gke-dev/hello-app:v2-surge
+        name: hello-app
+        # Readiness probe config START
+        readinessProbe:
+          failureThreshold: 1 
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 1
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 1
+        # Readiness probe config END
+```
+
+[embedmd]:# (hello_server_with_resource_pool.yaml /# Readiness probe config START/ /# Readiness probe config END/)
+```yaml
+# Readiness probe config START
+        readinessProbe:
+          failureThreshold: 1 
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 1
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 1
+        # Readiness probe config END
+```
+
 ```yaml
     spec:
       affinity:
