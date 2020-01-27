@@ -29,7 +29,7 @@ You will create a GKE cluster for this demo with 3 g1-small VMs. See [VM Instanc
 
 ## 1. Modify hello-app to work with resources
 
-TODO: add instructions how to just copy the source files over.
+**TODO: add instructions how to just copy the source files over.**
 
 ### A) Add a resource pool implementation
 
@@ -221,8 +221,47 @@ echo "Error rate: $ERROR1/$TOTAL (${RATE}%)"
 
 Anytime you want to "reset statistics” you can just delete the output file.
 
+**TODO: Add error case**
+
 
 ### B) Add more replicas, configure pod anti affinity, readiness probe and test again
+
+The previous step demonstrated how a single server handles the load. By scaling up the application and increasing the load on it, you can see how the system behaves, when load balancing becomes relevant. 
+
+You can change the numebr of replicas to three. To ensure each replica is scheduled on a different node, you can configure pod anti affinity as well.
+
+```yaml
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - hello-server
+            topologyKey: kubernetes.io/hostname
+```
+
+To ensure requests are routed to replicas that have capacity available, you need to configure readiness probes.
+
+```yaml
+      containers:
+      - image: gcr.io/<your project>/hello-app:v1
+        imagePullPolicy: Always
+        name: hello-app
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 1
+          periodSeconds: 1
+```
+
+*Note: Using this sample application the addition of the readiness probe does not improve the availability noticeably, since both the generated load and processing of each request is fairly deterministic and close enough to be evenly distributed among nodes. In a different situation the role of the readiness probe could be more significant. Also the right number of replicas and the signal when a pod would be considered healthy would require carefully optimization to match the incoming traffic.*
+
+TODO: include the replica number above, so the deployment can be updated instead of scaling manually.
 
 ## 3. Test the impact of upgrades on application availability
 
