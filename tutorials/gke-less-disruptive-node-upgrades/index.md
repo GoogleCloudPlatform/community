@@ -1,5 +1,5 @@
 ---
-title: GKE: Less disruptive node upgrades using Surge Upgrade
+title: GKE - Less disruptive node upgrades using Surge Upgrade
 description: Learn how Surge Upgrade reduces disruption caused by node upgrades through updating the nodes while running a sample application.
 author: tamasr
 tags: GKE, Upgrade, Node, Surge Upgrade
