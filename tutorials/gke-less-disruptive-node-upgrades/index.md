@@ -230,8 +230,9 @@ The previous step demonstrated how a single server handles the load. By scaling 
 
 You can change the numebr of replicas to three. To ensure each replica is scheduled on a different node, you can configure pod anti affinity as well.
 
+[embedmd]:# (hello_server_with_resource_pool.yaml /^.*# Pod anti affinity config START/ /# Readiness probe config END/)
 ```yaml
-    spec:
+      # Pod anti affinity config START
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -242,21 +243,40 @@ You can change the numebr of replicas to three. To ensure each replica is schedu
                 values:
                 - hello-server
             topologyKey: kubernetes.io/hostname
+      # Pod anti affinity config END
+      containers:
+      - image: gcr.io/tamasr-gke-dev/hello-app:v2-surge
+        name: hello-app
+        # Readiness probe config START
+        readinessProbe:
+          failureThreshold: 1 
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 1
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 1
+        # Readiness probe config END
 ```
 
 To ensure requests are routed to replicas that have capacity available, you need to configure readiness probes.
 
+[embedmd]:# (hello_server_with_resource_pool.yaml /^.*# Readiness probe config START/ /# Readiness probe config END/)
 ```yaml
-      containers:
-      - image: gcr.io/<your project>/hello-app:v1
-        imagePullPolicy: Always
-        name: hello-app
+        # Readiness probe config START
         readinessProbe:
+          failureThreshold: 1 
           httpGet:
             path: /healthz
             port: 8080
+            scheme: HTTP
           initialDelaySeconds: 1
           periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 1
+        # Readiness probe config END
 ```
 
 *Note: Using this sample application the addition of the readiness probe does not improve the availability noticeably, since both the generated load and processing of each request is fairly deterministic and close enough to be evenly distributed among nodes. In a different situation the role of the readiness probe could be more significant. Also the right number of replicas and the signal when a pod would be considered healthy would require carefully optimization to match the incoming traffic.*
