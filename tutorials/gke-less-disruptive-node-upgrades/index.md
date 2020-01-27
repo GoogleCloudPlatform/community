@@ -290,7 +290,6 @@ To ensure requests are routed to replicas that have capacity available, you need
 Now generate load the system can handle. One pod has a resource pool with the size of 50 and close to 1 second processing time. Also our health checks consider a pod healthy only if the node pool is less than 90% utilized (has less than 45 resources in use). This gives us a total of ~3x45 = 135 QPS load the system can handle. 120 QPS will be the choice for this test.
 
 ```shell
-$ export IP=35.238.176.215
 $ export QPS=120
 $ ./generate_load.sh $IP $QPS 2>&1
 ```
@@ -305,7 +304,6 @@ Error rate: 190/18960 (1%)
 As demonstration for the failure case, you can increase QPS to 160.
 
 ```shell
-$ export IP=35.238.176.215
 $ export QPS=160
 $ ./generate_load.sh $IP $QPS 2>&1
 ```
