@@ -226,9 +226,15 @@ Anytime you want to "reset statistics” you can just delete the output file.
 
 ### B) Add more replicas, configure pod anti affinity, readiness probe and test again
 
+The changes below can be applied in one step by running
+
+```shell
+kubectl replace kubectl replace -f hello_server_with_resource_pool.yaml
+```
+
 The previous step demonstrated how a single server handles the load. By scaling up the application and increasing the load on it, you can see how the system behaves, when load balancing becomes relevant. 
 
-You can change the numebr of replicas to three. To ensure each replica is scheduled on a different node, you can configure pod anti affinity as well.
+You can change the number of replicas to three. To ensure each replica is scheduled on a different node, you can configure pod anti affinity as well.
 
 [embedmd]:# (hello_server_with_resource_pool.yaml /^.*# Pod anti affinity config START/ /# Readiness probe config END/)
 ```yaml
