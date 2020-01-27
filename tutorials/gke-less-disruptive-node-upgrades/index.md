@@ -137,7 +137,7 @@ docker push gcr.io/${PROJECT_ID}/hello-app:v2-surge
 Once you have the new image pushed, you can update the deployment to use the new image.
 
 ```shell
-kubectl set image deployment/hello-server hello-app=hello-app:v2-surge
+kubectl set image deployment/hello-server hello-app=gcr.io/${PROJECT_ID}/hello-app:v2-surge
 ```
 
 As verification check if the server can respond to requests and if the health check reports the application being healthy. You can print the external IP as below in case you need it.
