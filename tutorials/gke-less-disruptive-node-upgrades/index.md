@@ -250,6 +250,7 @@ Next, download two small shell scripts: one to generate load and another to meas
 ```shell
 curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-less-disruptive-node-upgrades/generate_load.sh -O
 curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-less-disruptive-node-upgrades/print_error_rate.sh -O
+chmod u+x generate_load.sh print_error_rate.sh
 ```
 
 Now you can start sending traffic with given frequency. Let’s measure the load in Queries Per Second (QPS) and send the responses received into a file for further processing.
