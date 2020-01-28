@@ -332,14 +332,14 @@ Error rate: 190/1080 (17%)
 
 ### B) Add more replicas, configure pod anti affinity, readiness probe
 
-The changes below can be applied in one step by running
+The previous step demonstrated how a single server handles the load. By scaling up the application and increasing the load on it, you can see how the system behaves, when load balancing becomes relevant. 
+
+The changes below can be applied in one step running the below commands.
 
 ```shell
 curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-less-disruptive-node-upgrades/hello_server_with_resource_pool.yaml -O
 kubectl replace -f hello_server_with_resource_pool.yaml
 ```
-
-The previous step demonstrated how a single server handles the load. By scaling up the application and increasing the load on it, you can see how the system behaves, when load balancing becomes relevant. 
 
 You can change the number of replicas to three. To ensure each replica is scheduled on a different node, you can configure [pod anti affinity](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/) as well.
 
