@@ -170,14 +170,18 @@ func healthz(w http.ResponseWriter, r *http.Request) {
 
 You also have to register the healthz function under main().
 
+<details>
+<summary>Expand source code</summary>
+
 [embedmd]:# (main.go /\tserver.HandleFunc\("\/healthz", healthz\)/)
 ```go
 	server.HandleFunc("/healthz", healthz)
 ```
+</details>
 
 ### C) Deploy the modified application and verify it
 
-Since you are done with code changes, you can build the application and push it.
+Since you are done with code changes, you can build the image and push it.
 
 ```shell
 export PROJECT_ID=<your-project-id>
