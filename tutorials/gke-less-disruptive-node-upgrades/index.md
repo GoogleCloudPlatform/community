@@ -52,14 +52,18 @@ If you didn't complete the above tutorial and would like to immediately start th
 
 
 ```shell
+# clone the repo
 git clone https://github.com/GoogleCloudPlatform/kubernetes-engine-samples
+# build and push the image
 cd kubernetes-engine-samples/hello-app
 export PROJECT_ID=[PROJECT_ID]
 docker build -t gcr.io/${PROJECT_ID}/hello-app:v1 .
 gcloud auth configure-docker
 docker push gcr.io/${PROJECT_ID}/hello-app:v1
+# create a cluster
 gcloud config set compute/zone us-central1-a
 gcloud container clusters create hello-cluster --machine-type=g1-small --num-nodes=3
+# deploy and expose the application
 gcloud container clusters get-credentials hello-cluster
 kubectl create deployment hello-web --image=gcr.io/${PROJECT_ID}/hello-app:v1
 kubectl expose deployment hello-web --type=LoadBalancer --port 80 --target-port 8080
