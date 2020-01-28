@@ -3,14 +3,14 @@ title: Run an Elixir Phoenix app in containers using Google Kubernetes Engine
 description: Learn how to deploy a Phoenix app in containers using Google Kubernetes Engine.
 author: dazuma
 tags: Kubernetes, Kubernetes Engine, Elixir, Phoenix, Docker
-date_published: 2019-01-04
+date_published: 2019-07-22
 ---
 
 This tutorial helps you get started deploying your
 [Elixir](http://elixir-lang.org/) app using the
 [Phoenix](http://phoenixframework.org/) Framework to
 [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/),
-Google's hosting solution for containerized applications. Kubernetes Engine is
+Google's hosting solution for containerized applications. Google Kubernetes Engine is
 based on the popular open-source [Kubernetes](https://kubernetes.io/) system,
 and leverages Google's deep expertise with container-based deployments.
 
@@ -28,8 +28,9 @@ This tutorial requires Elixir 1.5 and Phoenix 1.4 or later. It assumes you are
 already familiar with basic Phoenix web development. It also requires the
 PostgreSQL database to be installed on your local development workstation.
 
-This tutorial was updated in January 2019 to cover Phoenix 1.4, Distillery 2.0, and
-connecting Ecto to a Cloud SQL database.
+This tutorial was updated in January 2019 to cover Phoenix 1.4, Distillery 2.0,
+and connecting Ecto to a Cloud SQL database. It was updated in July 2019 to
+cover changes in Elixir 1.9 and Distillery 2.1.
 
 ## Before you begin
 
@@ -48,9 +49,9 @@ an existing project.
 1.  Enable billing for your project.
 
 1.  In the Cloud Console, enable the following APIs:
-    *   [Google Cloud Build API](http://console.cloud.google.com/apis/library/cloudbuild.googleapis.com)
-    *   [Google Kubernetes Engine API](http://console.cloud.google.com/apis/library/container.googleapis.com)
-    *   [Google Cloud SQL Admin API](http://console.cloud.google.com/apis/library/sqladmin.googleapis.com)
+    *   [Cloud Build API](http://console.cloud.google.com/apis/library/cloudbuild.googleapis.com)
+    *   [Kubernetes Engine API](http://console.cloud.google.com/apis/library/container.googleapis.com)
+    *   [Cloud SQL Admin API](http://console.cloud.google.com/apis/library/sqladmin.googleapis.com)
 
 Perform the installations:
 
@@ -71,7 +72,7 @@ Perform the installations:
 
         gcloud components install kubectl
 
-1.  Install Elixir 1.5 or later if you do not already have it. If you are
+1.  Install Elixir 1.9 or later if you do not already have it. If you are
     on macOS and have [Homebrew](https://brew.sh), you can run:
 
         brew install elixir
@@ -83,7 +84,7 @@ Perform the installations:
 
         mix local.hex
         mix local.rebar
-        mix archive.install hex phx_new 1.4.0
+        mix archive.install hex phx_new 1.4.9
 
 1.  Install Node.js if you do not already have it. If you are on macOS and
     have Homebrew, you can run:
@@ -297,6 +298,11 @@ instance, and tell Ecto to create and migrate the database.
     Remember to replace `[CONNECTION-NAME]` with your database's connection
     name, and include the password you set for the "postgres" user.
 
+1.  Hard-code `secret_key_base` in `config/prod.secret.exs`. (If you're doing a
+    real application, you might want to create a different mechanism to inject
+    the database password and the secret key base into this file, but we will
+    keep things simple for this tutorial.)
+
 1.  Now you can use Phoenix to create and migrate your production database:
 
         MIX_ENV=prod mix ecto.create
@@ -304,30 +310,57 @@ instance, and tell Ecto to create and migrate the database.
 
 1.  Stop the Cloud SQL Proxy when you are finished.
 
-## Enabling releases with Distillery
+## Enabling releases
 
-Releases are the preferred way to package Elixir (and Erlang) applications for
-deployment. You will configure the
-[Distillery](https://github.com/bitwalker/distillery) tool to create releases
-for your app.
+Releases are the Elixir community's preferred way to package Elixir (and
+Erlang) applications for deployment. You will configure your app to create
+deployable releases.
 
-**Note:** If you already have Distillery set up for your application, you can
-skip this section. But make sure `include_erts: true` is set in your `:prod`
-release configuration. This tutorial assumes ERTS is included in releases.
+**Note:** You can also use the [Distillery](https://github.com/bitwalker/distillery)
+tool to create releases for your app. Distillery's configuration mechanism is
+somewhat different from that provided by Elixir's built-in releases, so if you
+choose to use Distillery, be sure to adjust these steps accordingly.
 
-### Set up Distillery
+### Configure releases
 
-1.  Add distillery to your application's dependencies. In the `mix.exs` file,
-    add `{:distillery, "~> 2.0"}` to the `deps`. Then install it by running:
-
-        mix deps.get
-
-1.  Create a default release configuration by running:
+1.  Initialize release configuration by running:
 
         mix release.init
 
-    This will create a file `rel/config.exs`. You can examine and edit it if
-    you wish, but the defaults should be sufficient for this tutorial.
+    This will create a `rel` directory containing several configuration files
+    and templates. You can examine and edit these if if you wish, but the
+    defaults should be sufficient for this tutorial.
+
+    If you are using Distillery 2.1 or later, the corresponding command is
+    `mix distillery.init`.
+
+1.  Configure releases in your `mix.exs` project configuration.
+
+    Add a `releases` section to the `project` function. For now, it should look
+    like this:
+
+        def project do
+          [
+            app: :hello,
+            # Add this section...
+            releases: [
+              hello: [
+                include_erts: true,
+                include_executables_for: [:unix],
+                applications: [
+                  runtime_tools: :permanent
+                ]
+              ]
+            ],
+            version: "0.0.1",
+            # additional fields...
+          ]
+        end
+
+    If you are using Distillery, this information will appear in the file
+    `rel/config.exs` instead. The defaults created by Distillery should be
+    sufficient. In particular, make sure `include_erts` is set to `true`
+    because the Elixir Runtime assumes ERTS is included in releases.
 
 1.  Prepare the Phoenix configuration for deployment by editing the prod
     config file `config/prod.exs`. In particular, set `server: true` to ensure
@@ -342,6 +375,9 @@ release configuration. This tutorial assumes ERTS is included in releases.
             server: true,
             root: ".",
             cache_static_manifest: "priv/static/cache_manifest.json"
+
+    Alternatively, if you are using Elixir 1.9 or later, you can provide this
+    information in the runtime configuration file `config/releases.exs`.
 
 ### Test a release
 
@@ -360,7 +396,7 @@ Now you can create a release to test out your configuration.
 
 1.  Build the release:
 
-        MIX_ENV=prod mix release --env=prod
+        MIX_ENV=prod mix release hello
 
 1.  Start the Cloud SQL Proxy so that Phoenix can connect to your database.
     Remember that this runs in the foreground by default.
@@ -369,7 +405,7 @@ Now you can create a release to test out your configuration.
 
 1.  Run the application from the release using:
 
-        PORT=8080 _build/prod/rel/hello/bin/hello foreground
+        PORT=8080 _build/prod/rel/hello/bin/hello start
 
 1.  Visit [http://localhost:8080](http://localhost:8080) to see the Phoenix
     welcome screen running locally from your release.
@@ -394,25 +430,25 @@ If you are experienced with Docker, you can customize your image.
         FROM elixir:alpine
         ARG app_name=hello
         ARG phoenix_subdir=.
-        ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm
+        ARG build_env=prod
+        ENV MIX_ENV=${build_env} TERM=xterm
         WORKDIR /opt/app
         RUN apk update \
             && apk --no-cache --update add nodejs nodejs-npm \
             && mix local.rebar --force \
             && mix local.hex --force
         COPY . .
-        RUN mix do deps.get, deps.compile, compile
+        RUN mix do deps.get, compile
         RUN cd ${phoenix_subdir}/assets \
             && npm install \
             && ./node_modules/webpack/bin/webpack.js --mode production \
             && cd .. \
             && mix phx.digest
-        RUN mix release --env=prod --verbose \
-            && mv _build/prod/rel/${app_name} /opt/release \
+        RUN mix release ${app_name} \
+            && mv _build/${build_env}/rel/${app_name} /opt/release \
             && mv /opt/release/bin/${app_name} /opt/release/bin/start_server
         FROM alpine:latest
         ARG project_id
-        ENV GCLOUD_PROJECT_ID=${project_id}
         RUN apk update \
             && apk --no-cache --update add bash ca-certificates openssl-dev \
             && mkdir -p /usr/local/bin \
@@ -420,16 +456,20 @@ If you are experienced with Docker, you can customize your image.
                 -O /usr/local/bin/cloud_sql_proxy \
             && chmod +x /usr/local/bin/cloud_sql_proxy \
             && mkdir -p /tmp/cloudsql
-        ENV PORT=8080 MIX_ENV=prod REPLACE_OS_VARS=true
-        WORKDIR /opt/app
+        ENV PORT=8080 GCLOUD_PROJECT_ID=${project_id} REPLACE_OS_VARS=true
         EXPOSE ${PORT}
+        WORKDIR /opt/app
         COPY --from=0 /opt/release .
         CMD (/usr/local/bin/cloud_sql_proxy \
               -projects=${GCLOUD_PROJECT_ID} -dir=/tmp/cloudsql &); \
-            exec /opt/app/bin/start_server foreground
+            exec /opt/app/bin/start_server start
 
     Note that there is a required argument called `project_id`, so if you build
     this image locally, you must provide a value via `--build-arg`.
+
+    If you are using Distillery instead of Elixir's built-in releases, you will
+    need to modify the `mix release` command appropriately, and use the
+    `foreground` command rather than the `start` command.
 
     If your app is named something other than `hello`, you must modify the
     `app_name` argument in the Dockerfile. If your app is an umbrella app, you
@@ -447,6 +487,7 @@ If you are experienced with Docker, you can customize your image.
         /doc/
         /priv/static/
         /test/
+        /tmp/
 
     **Note:** if your app is an umbrella app, you might need to adjust the
     paths to include the build, deps, and node_modules directories of the
@@ -466,7 +507,7 @@ If you are experienced with Docker, you can customize your image.
 
 ## Deploying your application
 
-Now you're ready to deploy your application to Kubernetes Engine!
+Now you're ready to deploy your application to Google Kubernetes Engine!
 
 ### Build the production image
 
@@ -518,7 +559,7 @@ for more details.
 
 ### Create a cluster
 
-Kubernetes Engine lets you create Kubernetes clusters to host your application.
+Google Kubernetes Engine lets you create Kubernetes clusters to host your application.
 These are clusters of VMs in the cloud, managed by a Kubernetes server.
 
 1.  Choose a cluster name. For the rest of these instructions, I'll assume that
@@ -569,9 +610,23 @@ you've created the Kubernetes cluster as described above.
     Kubernetes. The pod opens port 8080, which is the port your Phoenix
     application is listening on.
 
-    You can view the running pods using:
+1.  Check that your pod is running.
+
+    View the running pods using:
 
         kubectl get pods
+
+    Once the status changes to `Running`, your pod is ready.
+
+    If the status changes to `CrashLoopBackoff`, something is wrong. You could
+    try examining the logs by running the following, substituting the pod name.
+
+        kubectl logs {POD-NAME}
+
+    (As of mid-2019, you might encounter `dlsym: Resource temporarily unavailable`
+    which happens because the Elixir Alpine image is not compatible with the
+    latest Alpine Linux. Fix this by editing your Dockerfile, changing the
+    second stage from `FROM alpine:latest` to `FROM alpine:3.9`.)
 
 1.  Expose the application by creating a load balancer pointing at your pod:
 
@@ -585,7 +640,7 @@ you've created the Kubernetes cluster as described above.
 
         kubectl get service
 
-    Initially, the external IP field will be pending while Kubernetes Engine
+    Initially, the external IP field will be pending while Google Kubernetes Engine
     procures an IP address for you. If you rerun the `kubectl get service`
     command repeatedly, eventually the IP address will appear. You can then
     point your browser at that URL to view the running application.
@@ -656,8 +711,8 @@ the entire project.
 
 ### Deleting individual resources
 
-To delete your app from Kubernetes Engine, you must remove both the load
-balancer and the Kubernetes Engine cluster.
+To delete your app from Google Kubernetes Engine, you must remove both the load
+balancer and the Google Kubernetes Engine cluster.
 
 1.  Delete the service, which deallocates the load balancer:
 
@@ -706,15 +761,15 @@ repository contains a growing set of sample Elixir applications ready to deploy
 to Google Cloud and examples of communicating with Google APIs from Elixir.
 
 See [this guide](https://cloud.google.com/sql/docs/postgres/connect-kubernetes-engine)
-to learn about more options for connecting to Cloud SQL from Kubernetes Engine,
+to learn about more options for connecting to Cloud SQL from Google Kubernetes Engine,
 including using a Private IP address or a container sidecar.
 
 If you want to procure a static IP address and connect your domain name, you
 might find [this tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/configuring-domain-name-static-ip)
 helpful.
 
-See the [Kubernetes Engine documentation](https://cloud.google.com/kubernetes-engine/docs/)
-for more information on managing Kubernetes Engine clusters.
+See the [Google Kubernetes Engine documentation](https://cloud.google.com/kubernetes-engine/docs/)
+for more information on managing Google Kubernetes Engine clusters.
 
 See the [Kubernetes documentation](https://kubernetes.io/docs/home/) for more
 information on managing your application deployment using Kubernetes.

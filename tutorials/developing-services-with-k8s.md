@@ -32,17 +32,18 @@ One of the areas of complexity is setting up a productive development environmen
 
 In this tutorial, we're going to use the [Guestbook](https://cloud.google.com/kubernetes-engine/docs/tutorials/guestbook) sample application to illustrate a simple "microservices" architecture: the PHP service will represent one service, and the Redis database will represent another.
 
-### Setting up your local laptop
+### Setting up your local computer
 
-To set up your laptop, you'll need to install a few basic components.
+To set up your computer, you'll need to install a few basic components.
 
-First, install the `gcloud` and `kubectl` command line tools. Follow the instructions at [https://cloud.google.com/sdk/downloads](https://cloud.google.com/sdk/downloads) to download and install the Cloud SDK. Then, ensure `kubectl` is installed:
+First, install the `gcloud` and `kubectl` command line tools. Follow the instructions at [https://cloud.google.com/sdk/downloads](https://cloud.google.com/sdk/downloads) to download and install the Cloud SDK. Then, ensure that `kubectl` is installed:
 
 ```
 % sudo gcloud components update kubectl
 ```
 
-We need to install Telepresence, which will proxy your locally running service to Kubernetes Engine (for the latest installation instructions and documentation, visit [the Telepresence website](http://www.telepresence.io)).
+You need to install Telepresence, which will proxy your locally running service to Google Kubernetes Engine. (For the latest 
+installation instructions and documentation, visit [the Telepresence website](http://www.telepresence.io).)
 
 On OS X:
 
@@ -86,7 +87,9 @@ All example files are in the [`examples/guestbook`](https://github.com/datawire/
 
 Setting up a production-ready Kubernetes cluster can be fairly complex, so we're going to use Google Kubernetes Engine in our example. If you already have a Kubernetes cluster handy, you can skip this section.
 
-To set up a Kubernetes cluster in Kubernetes Engine, go to [https://console.cloud.google.com](https://console.cloud.google.com), choose the Google Kubernetes Engine option from the menu, and then Create a Cluster.
+To set up a Kubernetes cluster in Google Kubernetes Engine, go to
+[https://console.cloud.google.com](https://console.cloud.google.com), choose the Google Kubernetes Engine option from the 
+menu, and then **Create a cluster**.
 
 The following `gcloud` command will create a small 2 node cluster in the us-central1-a region:
 
@@ -131,8 +134,8 @@ It's time to check out our app in the browser. Let's look up the IP address of o
 % kubectl get services
 NAME           CLUSTER-IP     EXTERNAL-IP      PORT(S)        AGE
 frontend       10.7.252.209   104.196.217.24   80:30563/TCP   2m
-redis-master   10.7.248.117   &lt;none&gt;           6379/TCP       2m
-redis-slave    10.7.245.58    &lt;none&gt;           6379/TCP       2m
+redis-master   10.7.248.117   <none>           6379/TCP       2m
+redis-slave    10.7.245.58    <none>           6379/TCP       2m
 ```
 
 Go to the external IP address of your load balancer (in the above example, 104.196.217.24). You should see the Guestbook application running. Typing into the submit box will show how your message is persisting to the Redis cluster.
@@ -176,7 +179,7 @@ What's going on behind the scenes? Your incoming request goes to the load balanc
 * [Setting up a Python development environment for Docker](http://matthewminer.com/2015/01/25/docker-dev-environment-for-web-app.html) covers how to configure your Docker image for hot reload
 * [Doing the same for NodeJS](http://fostertheweb.com/2016/02/nodemon-inside-docker-container/)
 * The [Microservices Architecture Guide](https://www.datawire.io/guide) covers design patterns and HOWTOs in setting up an end-to-end microservices infrastructure
-* The [Kubernetes tutorial](https://kubernetes.io/docs/tutorials/kubernetes-basics/) gives a good walk-through of using Kubernetes, or visit the [Google Kubernetes Engine Quickstart](https://cloud.google.com/kubernetes-engine/docs/quickstart)
+* The [Kubernetes tutorial](https://kubernetes.io/docs/tutorials/kubernetes-basics/) gives a good walk-through of using Kubernetes, or visit the [Google Kubernetes Engine quickstart](https://cloud.google.com/kubernetes-engine/docs/quickstart)
 
 ## Conclusion
 

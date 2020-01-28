@@ -3,7 +3,7 @@ title: Run an Elixir Phoenix app on Google Compute Engine
 description: Learn how to deploy a Phoenix app to Google Compute Engine.
 author: dazuma
 tags: Compute Engine, Elixir, Phoenix
-date_published: 2019-01-04
+date_published: 2019-07-22
 ---
 
 This tutorial helps you get started deploying your
@@ -26,8 +26,9 @@ This tutorial requires Elixir 1.5 and Phoenix 1.4 or later. It assumes you are
 already familiar with basic Phoenix web development. It also requires the
 PostgreSQL database to be installed on your local development workstation.
 
-This tutorial was updated in January 2019 to cover Phoenix 1.4, Distillery 2.0, and
-connecting Ecto to a Cloud SQL database.
+This tutorial was updated in January 2019 to cover Phoenix 1.4, Distillery 2.0,
+and connecting Ecto to a Cloud SQL database. It was updated in July 2019 to
+improve the build procedure and cover changes in Distillery 2.1.
 
 ## Before you begin
 
@@ -51,8 +52,8 @@ To create a new project:
 2.  Enable billing for your project.
 
 3.  In the Cloud Console, enable the following APIs:
-    *   [Google Compute Engine API](http://console.cloud.google.com/apis/library/compute.googleapis.com)
-    *   [Google Cloud SQL Admin API](http://console.cloud.google.com/apis/library/sqladmin.googleapis.com)
+    *   [Compute Engine API](http://console.cloud.google.com/apis/library/compute.googleapis.com)
+    *   [Cloud SQL Admin API](http://console.cloud.google.com/apis/library/sqladmin.googleapis.com)
 
 ### Install required applications and services
 
@@ -72,7 +73,7 @@ tasks on your workstation:
 
         gcloud components update
 
-3.  Install **Elixir 1.5 or later** if you do not already have it. If you are
+3.  Install **Elixir 1.8 or later** if you do not already have it. If you are
     on macOS and have [Homebrew](https://brew.sh), you can run:
 
         brew install elixir
@@ -84,7 +85,7 @@ tasks on your workstation:
 
         mix local.hex
         mix local.rebar
-        mix archive.install hex phx_new 1.4.0
+        mix archive.install hex phx_new 1.4.9
 
 5.  Install **Node.js** if you do not already have it. If you are on macOS and
     have Homebrew, you can run:
@@ -298,12 +299,17 @@ instance, and tell Ecto to create and migrate the database.
     Remember to replace `[CONNECTION-NAME]` with your database's connection
     name, and include the password you set for the "postgres" user.
 
-3.  Now you can use Phoenix to create and migrate your production database:
+3.  Hard-code `secret_key_base` in `config/prod.secret.exs`. (If you're doing a
+    real application, you might want to create a different mechanism to inject
+    the database password and the secret key base into this file, but we will
+    keep things simple for this tutorial.)
+
+4.  Now you can use Phoenix to create and migrate your production database:
 
         MIX_ENV=prod mix ecto.create
         MIX_ENV=prod mix ecto.migrate
 
-4.  Stop the Cloud SQL Proxy when you are finished.
+5.  Stop the Cloud SQL Proxy when you are finished.
 
 ## Enabling releases with Distillery
 
@@ -312,6 +318,10 @@ deployment. You will configure the
 [Distillery](https://github.com/bitwalker/distillery) tool to create releases
 for your app.
 
+**Note:** Elixir 1.9 or later can build basic releases by itself, but this
+tutorial requires additional capabilities provided by Distillery, specifically
+the ability to create a self-extracting executable.
+
 **Note:** If you already have Distillery set up for your application, you can
 skip this section. But make sure `include_erts: true` is set in your `:prod`
 release configuration. This tutorial assumes ERTS is included in releases.
@@ -319,13 +329,13 @@ release configuration. This tutorial assumes ERTS is included in releases.
 ### Set up Distillery
 
 1.  Add distillery to your application's dependencies. In the `mix.exs` file,
-    add `{:distillery, "~> 2.0"}` to the `deps`. Then install it by running:
+    add `{:distillery, "~> 2.1"}` to the `deps`. Then install it by running:
 
         mix deps.get
 
 2.  Create a default release configuration by running:
 
-        mix release.init
+        mix distillery.init
 
     This will create a file `rel/config.exs`. You can examine and edit it if
     you wish, but the defaults should be sufficient for this tutorial.
@@ -344,6 +354,10 @@ release configuration. This tutorial assumes ERTS is included in releases.
             root: ".",
             cache_static_manifest: "priv/static/cache_manifest.json"
 
+    Some versions of phoenix override the `http` key when creating a new
+    `config/prod.secret.exs` file. Delete that line if it is present, so that
+    it does not interfere with your config.
+
 ### Test a release
 
 Now you can create a release to test out your configuration.
@@ -361,7 +375,7 @@ Now you can create a release to test out your configuration.
 
 2.  Build the release:
 
-        MIX_ENV=prod mix release --env=prod --executable
+        MIX_ENV=prod mix distillery.release --env=prod --executable
 
 3.  Start the Cloud SQL Proxy so that Phoenix can connect to your database.
     Remember that this runs in the foreground by default.
@@ -377,6 +391,12 @@ Now you can create a release to test out your configuration.
 
 5.  Visit [http://localhost:8080](http://localhost:8080) to see the Phoenix
     welcome screen running locally from your release.
+
+6.  After you stop the application, delete the `tmp` directory (which is where
+    `hello.run` extracts to). Otherwise, if you make changes and try running
+    again, `hello.run` may use the existing extraction rather than the new
+    code. Additionally, make sure you stop `cloud_sql_proxy` when you are done
+    testing.
 
 ## Building a release for deployment
 
@@ -399,83 +419,92 @@ Created a Cloud Storage bucket for your releases:
 
         gsutil mb gs://${BUCKET_NAME}
 
-### Create a builder image
+### Prepare a build script
 
-Because you will eventually deploy into a virtual machine running Debian, you
-need to create a Docker image with Debian and Elixir to use for builds.
+Now we'll create a Dockerfile script to build your app.
 
-1.  Create a directory called `builder` inside your `hello` directory. We will
-    build the "builder" image here because it does not require access to the
-    rest of your app.
+**Note:** This is *not* an image that can be deployed or run directly. We are
+simply using Docker to cross-compile your application for Debian. If you are
+interested in building a Docker image that can be deployed to a container-based
+environment such as Kubernetes, see the sister tutorial on
+[Deploying Phoenix to Kubernetes Engine](https://cloud.google.com/community/tutorials/elixir-phoenix-on-kubernetes-google-container-engine).
 
-        mkdir builder
-        pushd builder
-
-2.  Create a file called `Dockerfile` inside the `builder` directory, and copy
-    the following content into it:
-
-        FROM elixir:latest
-        WORKDIR /app
-        RUN mix local.rebar --force && mix local.hex --force
-        ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm
-        CMD ["mix", "release", "--env=prod", "--executable", "--verbose"]
-
-    Alternatively, you can
+1.  Create a file called `Dockerfile` in your `hello` directory, and copy the
+    following content into it. Alternately, you can
     [download](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/elixir-phoenix-on-google-compute-engine/Dockerfile)
     a sample annotated Dockerfile to study and customize.
 
-3.  Build the image. This is not an image of your app itself, but an image that
-    contains the necessary tools to build a release of your app. Remember to
-    run this while inside the `builder` directory:
+        FROM elixir:latest
+        ARG app_name=hello
+        ARG phoenix_subdir=.
+        ARG build_env=prod
+        ENV MIX_ENV=${build_env} TERM=xterm
+        WORKDIR /app
+        RUN apt-get update -y \
+            && curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+            && apt-get install -y -q --no-install-recommends nodejs \
+            && mix local.rebar --force \
+            && mix local.hex --force
+        COPY . .
+        RUN mix do deps.get, compile
+        RUN cd ${phoenix_subdir}/assets \
+            && npm install \
+            && ./node_modules/webpack/bin/webpack.js --mode production \
+            && cd .. \
+            && mix phx.digest
+        RUN mix distillery.release --env=${build_env} --executable --verbose \
+            && mv _build/${build_env}/rel/${app_name}/bin/${app_name}.run start_release
 
-        docker build -t hello-builder .
+2.  Create a file called `.dockerignore` in your `hello` directory. Copy the
+    following content into it. Alternately, you can
+    [download](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/elixir-phoenix-on-google-compute-engine/.dockerignore)
+    a sample annotated file to study and customize.
 
-    This tutorial assumes you have named your image `hello-builder`, though you
+        /_build/
+        /assets/node_modules/
+        /deps/
+        /doc/
+        /priv/static/
+        /test/
+        /tmp/
+
+    **Note:** if your app is an umbrella app, you might need to adjust the
+    paths to include the build, deps, and node_modules directories of the
+    constituent apps. In general, you want Docker to ignore artifacts that come
+    from your development environment, so it can perform clean builds.
+
+### Build and upload to Cloud Storage
+
+We'll now build the application image, extract the executable release file, and
+upload it to Cloud Storage.
+
+1.  Build the application image.
+
+        docker build -t hello-image .
+
+    This tutorial assumes you have named your image `hello-image`, though you
     can give it a different name.
 
-4.  Move back out into your `hello` directory for the rest of the tutorial:
+2.  Copy the executable out of the image. Docker doesn't currently provide a
+    command to do this directly, so we will create a temporary container from
+    the image and copy the executable from there.
 
-        popd
+        container_id=$(docker create hello-image)
+        docker cp ${container_id}:/app/start_release start_release
+        docker rm ${container_id}
 
-### Perform a production build
+    The executable release is now available in your current directory as
+    `start_release`. (Note that you might not be able to run this executable
+    release directly from your workstation, because it has been cross-compiled
+    for Debian.)
 
-1.  If you have not done so already, build and digest your assets:
+2.  Push the release to Google Cloud Storage:
 
-        pushd assets
-        npm install
-        ./node_modules/webpack/bin/webpack.js --mode production
-        popd
-        mix phx.digest
-
-    You might need to adjust the above steps if your app is an umbrella app or
-    if you are using a different toolchain for building assets.
-
-2.  Ensure artifacts from your local build environment don't leak into the
-    production build:
-
-        mix clean --deps
-
-3.  Build a release using the Docker image:
-
-        docker run --rm -it -v $(pwd):/app hello-builder
-
-    This command mounts your application directory into the Docker image, and
-    runs the image's default command, which builds a release of your
-    application. The result is a standalone executable, which, if your
-    application name is `hello`, will be located at
-    `_build/prod/rel/hello/bin/hello.run`.
-
-    **Note:** You might not be able to run this executable release directly
-    from your workstation, because it has been cross-compiled for Debian.
-
-4.  Push the built release to Google Cloud Storage:
-
-        gsutil cp _build/prod/rel/hello/bin/hello.run \
-            gs://${BUCKET_NAME}/hello-release
+        gsutil cp start_release gs://${BUCKET_NAME}/hello-release
 
 Whenever you want to do a new build, you only need to repeat the steps to
 perform a production build as described in this subsection. You do not need
-to create the build image again unless you want to update it.
+to modify the Dockerfile.
 
 ## Deploying your application to a single instance
 
@@ -546,8 +575,9 @@ Now you will start a Compute Engine instance.
         gcloud compute instances get-serial-port-output hello-instance \
             --zone us-central1-f
 
-    If the startup script has completed, you will see the text `Finished
-    running startup scripts` in the output.
+    This will include the output of the `instance-startup.sh` script. You can
+    continue when you see Cloud SQL Proxy report that it is receiving database
+    connections from your app.
 
 3.  Create a firewall rule to allow traffic to your instance:
 

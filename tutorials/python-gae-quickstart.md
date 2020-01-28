@@ -1,18 +1,19 @@
 ---
-title: App Engine Quickstart using Python
+title: App Engine quickstart using Python
 description: Learn how to deploy a Python sample app to App Engine.
 author: jscud
 tags: App Engine
 date_published: 2019-03-22
 ---
 
-# App Engine Quickstart
+# App Engine quickstart using Python
 
-<walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/python/quickstart"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/python-docs-samples" %} -->
 <!-- {% setvar repo_dir "python-docs-samples/appengine/standard_python37/hello_world" %} -->
 
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
+
+<!-- {% setvar project_id "<your-project>" %} -->
 
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
@@ -80,13 +81,13 @@ Note: If the directory already exists, remove the previous files before cloning.
 In Cloud Shell, enter the following:
 
 ```bash
-git clone {{repo_url}}
+git clone https://github.com/GoogleCloudPlatform/python-docs-samples
 ```
 
 Then, switch to the tutorial directory:
 
 ```bash
-cd {{repo_dir}}
+cd python-docs-samples/appengine/standard_python37/hello_world
 ```
 
 ## Configuring your deployment
@@ -186,7 +187,7 @@ Note: If you already created an app, you can skip this step.
 You can use Cloud Shell to deploy your app. To deploy your app enter the following:
 
 ```bash
-gcloud app deploy app.yaml --project {{project-id}}
+gcloud app deploy app.yaml --project {{project_id}}
 ```
 
 ### Visit your app

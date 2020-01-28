@@ -327,10 +327,12 @@ public class App {
 
         // set up the views to expose the metrics
         registerMetricViews();
-
+	    
+        // [START config_oc_trace_sample]
         // sample every 1000 transactions
         configureOpenCensusExporters(Samplers.probabilitySampler(1/1000.0));
-
+        // [END config_oc_trace_sample]
+	    
         doBigTableOperations(PROJECT_ID, INSTANCE_ID, 10000);
 
         // IMPORTANT: do NOT exit right away. Wait for a duration longer than reporting

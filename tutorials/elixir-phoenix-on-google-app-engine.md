@@ -1,9 +1,9 @@
 ---
-title: Run an Elixir Phoenix app on the Google App Engine Flexible Environment
-description: Learn how to deploy a Phoenix app to the Google App Engine flexible environment.
+title: Run an Elixir Phoenix app in the App Engine flexible environment
+description: Learn how to deploy a Phoenix app to the App Engine flexible environment.
 author: dazuma
 tags: App Engine, Elixir, Phoenix
-date_published: 2019-01-04
+date_published: 2019-07-22
 ---
 
 The [Google App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/)
@@ -19,12 +19,13 @@ You will create a new Phoenix application, and learn how to configure, deploy,
 and update it. The application will also demonstrate how to connect to a
 PostgreSQL database running on [Cloud SQL](https://cloud.google.com/sql).
 
-This tutorial requires Elixir 1.5 and Phoenix 1.4 or later. It assumes you are
+This tutorial requires Elixir 1.9 and Phoenix 1.4 or later. It assumes you are
 already familiar with basic Phoenix web development. It also requires the
 PostgreSQL database to be installed on your local development workstation.
 
-This tutorial was updated in January 2019 to cover Phoenix 1.4, Distillery 2.0, and
-connecting Ecto to a Cloud SQL database.
+This tutorial was updated in January 2019 to cover Phoenix 1.4, Distillery 2.0,
+and connecting Ecto to a Cloud SQL database. It was updated in July 2019 to
+cover changes in Elixir 1.9 and Distillery 2.1.
 
 ## Before you begin
 
@@ -60,7 +61,7 @@ If you have not yet installed Elixir and Phoenix, do so.
 
         mix local.hex
         mix local.rebar
-        mix archive.install hex phx_new 1.4.0
+        mix archive.install hex phx_new 1.4.9
 
 ## Create a new app and run it locally
 
@@ -255,12 +256,17 @@ instance, and tell Ecto to create and migrate the database.
     Remember to replace `[CONNECTION-NAME]` with your database's connection
     name, and include the password you set for the "postgres" user.
 
-3.  Now you can use Phoenix to create and migrate your production database:
+3.  Hard-code `secret_key_base` in `config/prod.secret.exs`. (If you're doing a
+    real application, you might want to create a different mechanism to inject
+    the database password and the secret key base into this file, but we will
+    keep things simple for this tutorial.)
+
+4.  Now you can use Phoenix to create and migrate your production database:
 
         MIX_ENV=prod mix ecto.create
         MIX_ENV=prod mix ecto.migrate
 
-4.  Stop the Cloud SQL Proxy when you are finished.
+5.  Stop the Cloud SQL Proxy when you are finished.
 
 ### Access the production database from App Engine
 
@@ -286,28 +292,55 @@ Alternatively, if you have the ability to create the directory `/cloudsql` on
 your local workstation, you can configure Cloud SQL Proxy to open its sockets
 there instead, and avoid the need to revert `socket_dir`.
 
-## Enable releases with Distillery
+## Enable releases
 
 Releases are the Elixir community's preferred way to package Elixir (and
-Erlang) applications for deployment. You will configure the
-[Distillery](https://github.com/bitwalker/distillery) tool to create releases
-for your app.
+Erlang) applications for deployment. You will configure your app to create
+deployable releases.
 
-**Note:** If you already have Distillery set up for your application, you can
-skip this section, but make sure `include_erts: true` is set in your `:prod`
-release configuration. The Elixir Runtime assumes ERTS is included in releases.
+**Note:** You can also use the [Distillery](https://github.com/bitwalker/distillery)
+tool to create releases for your app. Distillery's configuration mechanism is
+somewhat different from that provided by Elixir's built-in releases, so if you
+choose to use Distillery, be sure to adjust these steps accordingly.
 
-1.  Add distillery to your application's dependencies. In the `mix.exs` file,
-    add `{:distillery, "~> 2.0"}` to the `deps`. Then install it by running:
-
-        mix deps.get
-
-2.  Create a default release configuration by running:
+1.  Initialize release configuration by running:
 
         mix release.init
 
-    This will create a file `rel/config.exs`. You can examine and edit it if
-    you wish, but the defaults should be sufficient for this tutorial.
+    This will create a `rel` directory containing several configuration files
+    and templates. You can examine and edit these if if you wish, but the
+    defaults should be sufficient for this tutorial.
+
+    If you are using Distillery 2.1 or later, the corresponding command is
+    `mix distillery.init`.
+
+2.  Configure releases in your `mix.exs` project configuration.
+
+    Add a `releases` section to the `project` function. For now, it should look
+    like this:
+
+        def project do
+          [
+            app: :hello,
+            # Add this section...
+            releases: [
+              hello: [
+                include_erts: true,
+                include_executables_for: [:unix],
+                applications: [
+                  runtime_tools: :permanent
+                ]
+              ]
+            ],
+            version: "0.0.1",
+            # additional fields...
+          ]
+        end
+
+    If you are using Distillery, this information will appear in the file
+    `rel/config.exs` instead. The defaults created by Distillery should be
+    sufficient. In particular, make sure `include_erts` is set to `true`
+    because the Elixir Runtime assumes ERTS is included in releases.
 
 3.  Prepare the Phoenix configuration for deployment by editing the prod
     config file `config/prod.exs`. In particular, set `server: true` to ensure
@@ -322,6 +355,9 @@ release configuration. The Elixir Runtime assumes ERTS is included in releases.
             server: true,
             root: ".",
             cache_static_manifest: "priv/static/cache_manifest.json"
+
+    Alternatively, if you are using Elixir 1.9 or later, you can provide this
+    information in the runtime configuration file `config/releases.exs`.
 
 ## Deploy your application
 

@@ -18,6 +18,7 @@ python ./cloudiot_mqtt_gateway.py \
   --registry_id=my-registry \
   --gateway_id=my-gateway \
   --cloud_region=us-central1 \
+  --project_id=my-cloud-project \
   --private_key_file=rsa_private.pem \
   --algorithm=RS256 \
   --ca_certs=roots.pem \

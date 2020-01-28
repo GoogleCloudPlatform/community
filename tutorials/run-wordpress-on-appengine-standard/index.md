@@ -32,7 +32,8 @@ name. We use `root` for the database user name.
 
         $ gcloud sql instances create wordpress \
             --activation-policy=ALWAYS \
-            --tier=db-n1-standard-1
+            --tier=db-n1-standard-1 \
+            --region=us-central1
 
     **Note**: you can choose `db-f1-micro` or `db-g1-small` instead of
     `db-n1-standard-1` for the Cloud SQL machine type, especially for

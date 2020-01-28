@@ -359,9 +359,9 @@ production URL to use the Cloud SQL MySQL database which you created before.
 1.  Add the MySQL dependencies JDBC library and Cloud SQL MySQL Socket Factory:
 
     _build.gradle_
-
-        runtime 'mysql:mysql-connector-java:6.0.5'
-        runtime 'com.google.cloud.sql:mysql-socket-factory-connector-j-6:1.0.3'
+    
+        runtime 'mysql:mysql-connector-java:8.0.16'
+        runtime 'com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.0.14'
 
 1.  Replace the `production` environment `datasource` configuration to point to the
     Cloud SQL MySQL database in `application.yml`:
@@ -425,7 +425,7 @@ from live data serving to data analytics/ML to data archiving.
 
     _build.gradle_
 
-        compile 'com.google.cloud:google-cloud-storage:1.2.3'
+        compile 'com.google.cloud:google-cloud-storage:1.84.0'
 
 1.  Exclude `com.google.guava:guava-jdk5` too:
 

@@ -538,7 +538,7 @@ which can be grouped.
 
 The chart that you deployed contains two preconfigured alerting rules:
 
-```
+```yaml
     alerts:
       groups:
         - name: device_alerts
@@ -550,8 +550,8 @@ The chart that you deployed contains two preconfigured alerting rules:
               severity: page
               system: mechanical
             annotations:
-              summary: "Lid open on {{ $labels.instance }}"
-              description: "Lid has remained open for more than 15 minutes on {{ $labels.instance }}"
+              summary: "Lid open on {% verbatim %}{{ $labels.instance }}{% endverbatim %}"
+              description: "Lid has remained open for more than 15 minutes on {% verbatim %}{{ $labels.instance }}{% endverbatim %}"
           - alert: DeviceRebooting
             expr: changes(device_boot_time[1h]) > 20
             for: 2m
@@ -559,8 +559,8 @@ The chart that you deployed contains two preconfigured alerting rules:
               severity: debug
               system: software
             annotations:
-              summary: "{{ $labels.instance }} rebooting"
-              description: "{{ $labels.instance }} has been rebooting more than 20 times an hour"
+              summary: "{% verbatim %}{{ $labels.instance }}{% endverbatim %} rebooting"
+              description: "{% verbatim %}{{ $labels.instance }}{% endverbatim %} has been rebooting more than 20 times an hour"
 ```
 
 We can see in these rules the Prometheus query to run, along with threshold time required for the alert to fire.

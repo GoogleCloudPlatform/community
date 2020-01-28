@@ -1435,7 +1435,7 @@ kubectl get pod $PODNAME -o=jsonpath='{.status.hostIP}'
 Now that you have the IP address, use SSH to connect to the host running the container, then get the PID of the container:
 
 ```
-PID=$(docker inspect --format '{{ .State.Pid }}' $ContainerID)
+PID=$(docker inspect --format '{% verbatim %}{{ .State.Pid }}{% endverbatim %}' $ContainerID)
 ```
 
 Get the host running the container:

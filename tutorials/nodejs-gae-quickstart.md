@@ -1,14 +1,13 @@
 ---
-title: App Engine Quickstart using Node.js
+title: App Engine quickstart using Node.js
 description: Learn how to deploy a Node.js sample app to App Engine.
 author: jscud
 tags: App Engine
 date_published: 2019-03-22
 ---
 
-# App Engine Quickstart
+# App Engine quickstart using Node.js
 
-<walkthrough-tutorial-url url="https://cloud.google.com/nodejs/getting-started/hello-world"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/nodejs-getting-started" %} -->
 <!-- {% setvar repo_dir "nodejs-getting-started/1-hello-world" %} -->
 
@@ -74,13 +73,13 @@ is cloned from your project repository to the Cloud Shell.
 Note: If the directory already exists, remove the previous files before cloning.
 
 ```bash
-git clone {{repo_url}}
+git clone https://github.com/GoogleCloudPlatform/nodejs-getting-started
 ```
 
 Then, switch to the tutorial directory:
 
 ```bash
-cd {{repo_dir}}
+cd nodejs-getting-started/1-hello-world
 ```
 
 ## Configuring your deployment
