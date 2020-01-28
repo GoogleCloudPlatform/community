@@ -226,6 +226,13 @@ NAME                            READY   STATUS    RESTARTS   AGE
 hello-server-85c7446cc6-zfpvc   1/1     Running   0          10m
 ```
 
+Next, download two small shell scripts: one to generate load and another to measure error rate.
+
+```shell
+curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-less-disruptive-node-upgrades/generate_load.sh -O
+curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-less-disruptive-node-upgrades/print_error_rate.sh -O
+```
+
 Now you can start sending traffic with given frequency. Let’s measure the load in Queries Per Second (QPS) and send the responses received into a file for further processing.
 
 ```shell
