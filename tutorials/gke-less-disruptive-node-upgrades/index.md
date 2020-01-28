@@ -295,7 +295,7 @@ $ ./print_error_rate.sh
 Error rate: 190/1080 (17%)
 ```
 
-### B) Add more replicas, configure pod anti affinity, readiness probe and test again
+### B) Add more replicas, configure pod anti affinity, readiness probe
 
 The changes below can be applied in one step by running
 
