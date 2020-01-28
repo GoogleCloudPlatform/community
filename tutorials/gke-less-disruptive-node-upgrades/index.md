@@ -121,6 +121,8 @@ func (p *resourcePool) hasResources() bool {
 
 Then change the callback function that serves requests:
 
+<details>
+<summary>Expand source code</summary>
 
 [embedmd]:# (main.go /\tlog.Printf\("Serving request:/ /fmt.Fprintf\(w,.*$/) 
 ```go
@@ -137,10 +139,14 @@ Then change the callback function that serves requests:
 
 	fmt.Fprintf(w, "[%v] Hello, world!\n", time.Now())
 ```
+</details>
 
 ### B) Implement health signals based on resource availability
 
 This will help the load balancer to route traffic only to pods that have available resources.
+
+<details>
+<summary>Expand source code</summary>
 
 [embedmd]:# (main.go /\/\/ Start of healthz code./ /\/\/ End of healthz code./)
 ```go
@@ -160,6 +166,7 @@ func healthz(w http.ResponseWriter, r *http.Request) {
 
 // End of healthz code.
 ```
+</details>
 
 You also have to register the healthz function under main().
 
@@ -225,6 +232,9 @@ $ ./generate_load.sh $IP $QPS 2>&1
 
 The above script is simply using curl to send traffic.
 
+<details>
+<summary>Expand script</summary>
+
 [embedmd]:# (generate_load.sh)
 ```sh
 #!/bin/bash
@@ -245,6 +255,7 @@ while true
   sleep 1
 done
 ```
+</details>
 
 To check error rates you can run:
 
@@ -254,6 +265,9 @@ $ watch ./print_error_rate.sh
 
 The above script calculates error rates based on the number of errors 
 
+<details>
+<summary>Expand script</summary>
+
 [embedmd]:# (print_error_rate.sh)
 ```sh
 #!/bin/bash
@@ -262,6 +276,7 @@ TOTAL=$(cat output | wc -l); ERROR1=$(grep "Error" output |  wc -l)
 RATE=$((ERROR1 * 100 / TOTAL))
 echo "Error rate: $ERROR1/$TOTAL (${RATE}%)"
 ```
+</details>
 
 Anytime you want to "reset statistics” you can just delete the output file.
 
@@ -291,6 +306,9 @@ kubectl replace -f hello_server_with_resource_pool.yaml
 The previous step demonstrated how a single server handles the load. By scaling up the application and increasing the load on it, you can see how the system behaves, when load balancing becomes relevant. 
 
 You can change the number of replicas to three. To ensure each replica is scheduled on a different node, you can configure pod anti affinity as well.
+
+<details>
+<summary>Expand yaml fragment</summary>
 
 [embedmd]:# (hello_server_with_resource_pool.yaml /^.*# Pod anti affinity config START/ /# Readiness probe config END/)
 ```yaml
@@ -322,8 +340,12 @@ You can change the number of replicas to three. To ensure each replica is schedu
           timeoutSeconds: 1
         # Readiness probe config END
 ```
+</details>
 
 To ensure requests are routed to replicas that have capacity available, you need to configure readiness probes.
+
+<details>
+<summary>Expand yaml fragment</summary>
 
 [embedmd]:# (hello_server_with_resource_pool.yaml /^.*# Readiness probe config START/ /# Readiness probe config END/)
 ```yaml
@@ -340,6 +362,7 @@ To ensure requests are routed to replicas that have capacity available, you need
           timeoutSeconds: 1
         # Readiness probe config END
 ```
+</details>
 
 *Note: Using this sample application the addition of the readiness probe does not improve the availability noticeably, since both the generated load and processing of each request is fairly deterministic and close enough to be evenly distributed among nodes. In a different situation the role of the readiness probe could be more significant. Also the right number of replicas and the signal when a pod would be considered healthy would require carefully optimization to match the incoming traffic.*
 
