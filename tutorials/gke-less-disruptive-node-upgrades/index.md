@@ -19,7 +19,7 @@ date_published: 2020-01-24
     + [C) Deploy the modified application and verify it](#c-deploy-the-modified-application-and-verify-it)
   * [2. Generate load and measure error rate](#2-generate-load-and-measure-error-rate)
     + [A) Run tests with a single pod](#a-run-tests-with-a-single-pod)
-    + [B) Add more replicas, configure pod anti affinity, readiness probe and test again](#b-add-more-replicas-configure-pod-anti-affinity-readiness-probe-and-test-again)
+    + [B) Add more replicas, configure pod anti affinity, readiness probe](#b-add-more-replicas-configure-pod-anti-affinity-readiness-probe)
   * [3. Test the impact of upgrades on application availability](#3-test-the-impact-of-upgrades-on-application-availability)
     + [A. Upgrade node pool without surge nodes](#a-upgrade-node-pool-without-surge-nodes)
     + [B. Upgrade node pool with surge nodes](#b-upgrade-node-pool-with-surge-nodes)
