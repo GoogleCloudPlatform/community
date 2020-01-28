@@ -30,18 +30,22 @@ date_published: 2020-01-24
 
 # Overview
 
-This is a hands on tutorial and demo that demonstrates how GKE helps with reducing disruption of the workloads during node upgrades with the help of Surge Upgrade feature. We will build a demo application that uses some kind of a limited resource (like a connection pool to backend system, which we will emulate only). Then we deploy this application to a GKE cluster and start a client that puts load on the system. Then we’ll upgrade the node pool with and without surge upgrade and measure the error rate on the client side.
+This tutorial demonstrates how GKE helps with reducing disruption of the workloads during node upgrades with [Surge Upgrade](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades#surge) feature. You will build a demo application that uses a resource pool with limited number of resources per node. Then you deploy this application to a GKE cluster and start a client that generates load on the system. Finally you will upgrade the node pool with and without surge upgrade and measure the error rate on the client side.
 
 # Objectives
 
-* Run a simple demo application that serves HTTP requests. Processing of each request requires access to a resource. Each node of the cluster has access only to a limted pool of resources. If there's no available resources left, the server returns an error.
+* Run a demo application that serves HTTP requests. Processing of each request requires access to a resource. Each node of the cluster has access only to a limted number of resources. If there's no available resources left, the server returns an error.
 * Test the application with lower and higher load and observe how error rate increases as the server runs out of resources.
 * Upgrade the nodes without using Surge Upgrade. Observe how the temporary loss of capacity causes increased error rates.
 * Upgrade the nodes using Surge Upgrade. Observe how error rates remain significantly lower due to the additional capacity provided by the surge node.
 
 # Before you begin
 
-This tutorial builds on top of [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app). Please complete that tutorial before starting this one.
+This tutorial builds on top of [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app). It is recommended to complete it starting on this one.
+
+As an alternative you can just clone the repository, so you can rebuild and push the modified image.
+
+
 
 # Costs
 
