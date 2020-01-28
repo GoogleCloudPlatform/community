@@ -2,18 +2,18 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    app: hello-server
-  name: hello-server
+    app: hello-web
+  name: hello-web
   namespace: default
 spec:
   replicas: 3 
   selector:
     matchLabels:
-      app: hello-server
+      app: hello-web
   template:
     metadata:
       labels:
-        app: hello-server
+        app: hello-web
     spec:
       # Pod anti affinity config START
       affinity:
@@ -24,7 +24,7 @@ spec:
               - key: app
                 operator: In
                 values:
-                - hello-server
+                - hello-web
             topologyKey: kubernetes.io/hostname
       # Pod anti affinity config END
       containers:
