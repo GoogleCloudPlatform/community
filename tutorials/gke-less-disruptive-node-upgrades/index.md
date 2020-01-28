@@ -211,15 +211,15 @@ docker push gcr.io/${PROJECT_ID}/hello-app:v2-surge
 Once you have the new image pushed, you can update the deployment to use the new image.
 
 ```shell
-kubectl set image deployment/hello-server hello-app=gcr.io/${PROJECT_ID}/hello-app:v2-surge
+kubectl set image deployment/hello-web hello-app=gcr.io/${PROJECT_ID}/hello-app:v2-surge
 ```
 
 As verification check if the server can respond to requests and if the health check reports the application being healthy. You can print the external IP as below in case you need it.
 
 ```shell
-$ kubectl get service hello-server
+$ kubectl get service hello-web
 NAME           TYPE           CLUSTER-IP   EXTERNAL-IP      PORT(S)        AGE
-hello-server   LoadBalancer   10.12.5.60   35.238.176.215   80:32309/TCP   1d
+hello-web   LoadBalancer   10.12.5.60   35.238.176.215   80:32309/TCP   1d
 $ 
 $ curl http://35.238.176.215
 [2020-01-14 15:05:28.902724343 +0000 UTC] Hello, world!
@@ -237,12 +237,12 @@ You can start sending traffic to your server. As a first step, you will use a si
 First, ensure the deployment is running with a single replica:
 
 ```shell
-$ kubectl scale --replicas=1 deployment/hello-server
-deployment.extensions/hello-server scaled
+$ kubectl scale --replicas=1 deployment/hello-web
+deployment.extensions/hello-web scaled
 $ 
 $ kubectl get pods
 NAME                            READY   STATUS    RESTARTS   AGE
-hello-server-85c7446cc6-zfpvc   1/1     Running   0          10m
+hello-web-85c7446cc6-zfpvc   1/1     Running   0          10m
 ```
 
 Next, download two small shell scripts: one to generate load and another to measure error rate.
@@ -255,9 +255,9 @@ curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-les
 Now you can start sending traffic with given frequency. Let’s measure the load in Queries Per Second (QPS) and send the responses received into a file for further processing.
 
 ```shell
-$ kubectl get service hello-server
+$ kubectl get service hello-web
 NAME           TYPE           CLUSTER-IP   EXTERNAL-IP      PORT(S)        AGE
-hello-server   LoadBalancer   10.12.5.60   35.238.176.215   80:32309/TCP   25d
+hello-web   LoadBalancer   10.12.5.60   35.238.176.215   80:32309/TCP   25d
 $ export IP=35.238.176.215
 $ export QPS=40
 $ ./generate_load.sh $IP $QPS 2>&1
@@ -354,7 +354,7 @@ You can change the number of replicas to three. To ensure each replica is schedu
               - key: app
                 operator: In
                 values:
-                - hello-server
+                - hello-web
             topologyKey: kubernetes.io/hostname
       # Pod anti affinity config END
       containers:
