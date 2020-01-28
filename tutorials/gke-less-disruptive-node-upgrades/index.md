@@ -305,7 +305,7 @@ kubectl replace -f hello_server_with_resource_pool.yaml
 
 The previous step demonstrated how a single server handles the load. By scaling up the application and increasing the load on it, you can see how the system behaves, when load balancing becomes relevant. 
 
-You can change the number of replicas to three. To ensure each replica is scheduled on a different node, you can configure pod anti affinity as well.
+You can change the number of replicas to three. To ensure each replica is scheduled on a different node, you can configure [pod anti affinity](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/) as well.
 
 <details>
 <summary>Expand yaml fragment</summary>
@@ -342,7 +342,7 @@ You can change the number of replicas to three. To ensure each replica is schedu
 ```
 </details>
 
-To ensure requests are routed to replicas that have capacity available, you need to configure readiness probes.
+To ensure requests are routed to replicas that have capacity available, you need to configure [readiness probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes).
 
 <details>
 <summary>Expand yaml fragment</summary>
@@ -491,7 +491,9 @@ Error rate: 3386/81956 (4%)
 ```
 
 Notice that how pods remain in running state while GKE is bringing up and registering the new node.
-Also notice that the error rate was still higher than the one we saw when there was no upgrade running. This points out an important detail that the **pods still need to be moved from one node to another**. Although we have sufficient compute capacity to schedule an evicted pod, stopping and starting it up again takes time, which causes disruption.
+Also notice that the error rate was still higher than the one we saw when there was no upgrade running. This points out an important detail that the **pods still need to be moved from one node to another**. Although we have sufficient compute capacity to schedule an evicted pod, stopping and starting it up again takes time, which causes disruption. 
+
+The error rate can be reduced further by increasing the number of replicas, so workload can be served even if a pod is restarted. Also you can declare the number of pods required to serve requests using [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/) (PDB). With PDBs you can cover more failure cases. For example in case of an involuntary disruption (like a node error) pod eviction won't start unless the minimum number of pods declared by PDB can be maintained.
 
 
 # Conclusion
