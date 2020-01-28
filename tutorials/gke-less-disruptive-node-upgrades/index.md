@@ -45,10 +45,15 @@ This tutorial demonstrates how GKE helps with reducing disruption of the workloa
 
 This tutorial builds on top of [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app). It is recommended to complete it starting on this one.
 
-If you didn't complete the above tutorial and would like to start this one, you can just clone the repository, so you can rebuild and push images.
+If you didn't complete the above tutorial and would like to start this one, you can just run the below steps to have a cluster and the hello-server application running on it.
 
 ```shell
 git clone https://github.com/GoogleCloudPlatform/kubernetes-engine-samples
+cd kubernetes-engine-samples/hello-app
+export PROJECT_ID=[PROJECT_ID]
+docker build -t gcr.io/${PROJECT_ID}/hello-app:v1 .
+gcloud auth configure-docker
+docker push gcr.io/${PROJECT_ID}/hello-app:v1
 ```
 
 ## Where to run your terminal
