@@ -335,6 +335,7 @@ Error rate: 190/1080 (17%)
 The changes below can be applied in one step by running
 
 ```shell
+curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-less-disruptive-node-upgrades/hello_server_with_resource_pool.yaml -O
 kubectl replace -f hello_server_with_resource_pool.yaml
 ```
 
