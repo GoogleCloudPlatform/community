@@ -41,11 +41,21 @@ This tutorial demonstrates how GKE helps with reducing disruption of the workloa
 
 # Before you begin
 
+## Prerequisite
+
 This tutorial builds on top of [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app). It is recommended to complete it starting on this one.
 
-As an alternative you can just clone the repository, so you can rebuild and push the modified image.
+If you didn't complete the above tutorial and would like to start this one, you can just clone the repository, so you can rebuild and push images.
 
+```shell
+git clone https://github.com/GoogleCloudPlatform/kubernetes-engine-samples
+```
 
+## Where to run your terminal
+
+Similar to [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app) you can complete this tutorial using [Google Cloud Shell](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_a_use_google_cloud_shell). This is the recommended option. 
+
+As an alternative you can use your own workstation. In this case you will need to install the [required tools](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_b_use_command-line_tools_locally) to be able to perform the steps below.
 
 # Costs
 
