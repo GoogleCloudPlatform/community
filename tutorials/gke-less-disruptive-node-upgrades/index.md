@@ -422,9 +422,9 @@ This section is to demonstrate how the loss of capacity may hurt the service dur
 You can start with the case without surge node. Make sure your node pool has zero surge nodes configured.
 
 ```shell
-$ gcloud beta container node-pools update default-pool --max-surge-upgrade=0 --max-unavailable-upgrade=1 --cluster=standard-cluster-1
+$ gcloud beta container node-pools update default-pool --max-surge-upgrade=0 --max-unavailable-upgrade=1 --cluster=hello-cluster
 Updating node pool default-pool...done.                                        
-Updated [https://container.googleapis.com/v1beta1/projects/tamasr-gke-dev/zones/us-central1-a/clusters/standard-cluster-1/nodePools/default-pool].
+Updated [https://container.googleapis.com/v1beta1/projects/tamasr-gke-dev/zones/us-central1-a/clusters/hello-cluster/nodePools/default-pool].
 ```
 
 You can now clear the output file you got from earlier runs and start watching the error rate.
@@ -451,7 +451,7 @@ $ ./generate_load.sh $IP $QPS 2>&1
 Then you can start an upgrade (in another terminal).
 
 ```shell
-$ gcloud container clusters upgrade standard-cluster-1 --cluster-version=1.13 --node-pool=default-pool
+$ gcloud container clusters upgrade hello-cluster --cluster-version=1.13 --node-pool=default-pool
 ```
 
 *Note on cluster-version used. It is not possible to upgrade nodes to a higher version than the master, but it is possible to downgrade them. In this example you (most likely) started with a cluster that had nodes already on the master version. In that case you can pick a lower version (minor or patch) to perform a downgrade. In the next step you can bring the nodes back to their original version with an upgrade.*
@@ -469,9 +469,9 @@ Error rate: 25690/97080 (26%)
 With surge upgrades it is possible to upgrade nodes in a way when the node pool won’t lose any capacity by setting maxUnavailble to 0 and maxSurge to greater than 0.
 
 ```shell
-$ gcloud beta container node-pools update default-pool --max-surge-upgrade=1 --max-unavailable-upgrade=0 --cluster=standard-cluster-1
+$ gcloud beta container node-pools update default-pool --max-surge-upgrade=1 --max-unavailable-upgrade=0 --cluster=hello-cluster
 Updating node pool default-pool...done.                                        
-Updated [https://container.googleapis.com/v1beta1/projects/tamasr-gke-dev/zones/us-central1-a/clusters/standard-cluster-1/nodePools/default-pool].
+Updated [https://container.googleapis.com/v1beta1/projects/tamasr-gke-dev/zones/us-central1-a/clusters/hello-cluster/nodePools/default-pool].
 ```
 
 You can clear the output you got from earlier runs and watch the error rate.
@@ -498,7 +498,7 @@ $ ./generate_load.sh $IP $QPS 2>&1
 Then you can start an upgrade (in another terminal).
 
 ```shell
-$ gcloud container clusters upgrade standard-cluster-1 --cluster-version=1.14 --node-pool=default-pool
+$ gcloud container clusters upgrade hello-cluster --cluster-version=1.14 --node-pool=default-pool
 ```
 
 *Note on cluster-version. You can select here the version of your master. For more see the note on cluster-version at the previous section*
@@ -525,6 +525,6 @@ Kubernetes node upgrades are disruptive since they cause pods to be moved and re
 Deleting the cluster removes all resources used in this demo.
 
 ```shell
-$ gcloud container clusters delete standard-cluster-1
+$ gcloud container clusters delete hello-cluster
 ```
 
