@@ -529,7 +529,7 @@ Error rate: 3386/81956 (4%)
 Notice that how pods remain in running state while GKE is bringing up and registering the new node.
 Also notice that the error rate was still higher than the one we saw when there was no upgrade running. This points out an important detail that the **pods still need to be moved from one node to another**. Although we have sufficient compute capacity to schedule an evicted pod, stopping and starting it up again takes time, which causes disruption. 
 
-The error rate can be reduced further by increasing the number of replicas, so workload can be served even if a pod is restarted. Also you can declare the number of pods required to serve requests using [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/) (PDB). With PDBs you can cover more failure cases. For example in case of an involuntary disruption (like a node error) pod eviction won't start until the ongoing disruption is over (like the failed node is repaired), so restarting the pod won't make the number of replicas lower than declared in PDB.
+The error rate can be reduced further by increasing the number of replicas, so workload can be served even if a pod is restarted. Also you can declare the number of pods required to serve requests using [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/) (PDB). With PDBs you can cover more failure cases. For example in case of an involuntary disruption (like a node error) pod eviction won't start until the ongoing disruption is over (like the failed node is repaired), so restarting the pod won't cause the number of replicas to be lower than required by PDB.
 
 
 # Conclusion
