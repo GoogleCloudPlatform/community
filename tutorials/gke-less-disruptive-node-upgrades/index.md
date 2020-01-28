@@ -59,13 +59,13 @@ As an alternative you can use your own workstation. In this case you will need t
 
 # Costs
 
-You will create a GKE cluster for this demo with 3 g1-small VMs. See [VM Instances Pricing](https://cloud.google.com/compute/vm-instance-pricing) for pricing details. The total cost of the demo should be significantly less than $0.1.
+You will create a GKE cluster for this demo with 3 g1-small VMs. See [VM Instances Pricing](https://cloud.google.com/compute/vm-instance-pricing) for pricing details. The total cost of the demo should be less than $0.1.
 
 # How to make node upgrades less disruptive
 
 ## 1. Modify hello-app to work with resources
 
-Instead of changing the source code manually, you can download the updated version of main.go and overwrite your local copy with it.
+If you don't want to edit the source code manually, you can download the updated version of main.go and overwrite your local copy with it.
 
 ```shell
 $ curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-less-disruptive-node-upgrades/main.go -O
