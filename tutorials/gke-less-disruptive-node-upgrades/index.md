@@ -317,6 +317,7 @@ Anytime you want to "reset statistics” you can just delete the output file.
 You can test now the failure case, when the load cannot be served by a single pod.
 
 ```shell
+# first stop generate_load.sh by Ctrl+C
 $ rm output
 $ export QPS=60
 $ ./generate_load.sh $IP $QPS 2>&1
