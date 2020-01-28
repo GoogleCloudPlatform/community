@@ -236,6 +236,9 @@ curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-les
 Now you can start sending traffic with given frequency. Let’s measure the load in Queries Per Second (QPS) and send the responses received into a file for further processing.
 
 ```shell
+$ kubectl get service hello-server
+NAME           TYPE           CLUSTER-IP   EXTERNAL-IP      PORT(S)        AGE
+hello-server   LoadBalancer   10.12.5.60   35.238.176.215   80:32309/TCP   25d
 $ export IP=35.238.176.215
 $ export QPS=40
 $ ./generate_load.sh $IP $QPS 2>&1
