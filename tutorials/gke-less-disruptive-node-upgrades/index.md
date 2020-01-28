@@ -79,6 +79,7 @@ First add the resource pool and implement related operations.
 
 <details>
 <summary>Expand source code</summary>
+
 [embedmd]:# (main.go /\/\/ Start of resource pool code./ /\/\/ End of resource pool code./)
 ```go
 // Start of resource pool code.
