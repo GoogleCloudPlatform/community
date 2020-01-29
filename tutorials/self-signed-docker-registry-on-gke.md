@@ -1,6 +1,6 @@
 ---
 title: Using a self-signed Docker Registry on GKE
-description: Using a self signed Docker Registry on GKE
+description: Using a self-signed Docker Registry on GKE.
 author: samos123
 tags: Kubernetes Engine, GKE, Docker Registry
 date_published: 2020-01-28
