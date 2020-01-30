@@ -30,14 +30,18 @@ Pi software because it uses packages built for that version of Linux.
     [Raspbian downloads page](https://www.raspberrypi.org/downloads/raspbian/).
 
 1.  Extract the image that you downloaded, which creates a file with a name that ends
-    in `.img`. For example, if you download the full version of Raspbian, the file
-    is named `2019-09-26-raspbian-buster-full.img`.
+    in `.img`.
+    
+    For example, if you download the full version of Raspbian, the file is
+    named `2019-09-26-raspbian-buster-full.img`.
 
-1.  Create the SD card image for your Raspberry Pi using a disk image utility. Raspberry
-    Pi recommends that you use [balenaEtcher](https://www.balena.io/etcher/).
+1.  Create the SD card image for your Raspberry Pi using a disk image utility.
 
-1.  Flash your Raspberry Pi using the disk image that you created. For information
-    about flashing your Raspberry Pi, see the detailed instructions in the
+    Raspberry Pi recommends that you use [balenaEtcher](https://www.balena.io/etcher/).
+
+1.  Flash your Raspberry Pi using the disk image that you created.
+
+    For information about flashing your Raspberry Pi, see the detailed instructions in the
     [Raspberry Pi installation documentation](https://www.raspberrypi.org/documentation/installation/installing-images/README.md).
 
 1.  Set up access to the Raspberry Pi. 
@@ -48,41 +52,44 @@ Pi software because it uses packages built for that version of Linux.
     *   If you intend to access your Raspberry Pi locally, connect it to a keyboard,
         mouse, and display.
 
-1.  Do any final configuration of the Raspberry Pi-- such as expanding the filesystem and
-    setting the user password--with the
+1.  Do any final configuration of the Raspberry Pi—such as expanding the filesystem and
+    setting the user password—with the
     [raspi-config](https://www.raspberrypi.org/documentation/configuration/raspi-config.md)
     utility.
 
-You will be performing subsequent steps on the Raspberry Pi itself either over SSH
-if you're working headless or on the Raspberry Pi hardware if you're using the desktop
-UI.
+You perform subsequent steps on the Raspberry Pi itself either over SSH if you're working in
+headless mode or on the Raspberry Pi hardware if you're using the desktop UI.
 
 ## Download the Fledge packages
 
-1.  To get the latest version of the Fledge packages, visit the
+1.  Visit the
     [download page on the Dianomic site](https://dianomic.com/download-packages/)
-    and you will receieve an email with a link to the latest packages. Because we
-    are running Fledge on a Raspberry Pi, copy the link referencing v1.7 for ARM
-    based devices (Buster).
+    and fill out the form to get an email message with a link to the latest version
+    of the Fledge packages.
+    
+1.  When you receive the email message containing the link to the Fledge packages,
+    copy the link referencing v1.7 for ARM-based devices (Buster), the package
+    for Raspberyy Pi devices.
 
-1.  From your Raspberry Pi, download the Fledge packages to the file system. For
-    the purposes of this tutorial, we'll be placing them in a folder named
-    `foglamp` in your user's home directory.
+1.  From your Raspberry Pi, use the following commands to download the Fledge
+    packages to the file system and place them in a folder named `foglamp` in your
+    user's home directory. Replace `[LINK_FROM_EMAIL]` with the link that you copied
+    in the preivous step.
 
         mkdir $HOME/foglamp
         cd $HOME/foglamp
-        wget [paste link from email]
+        wget [LINK_FROM_EMAIL]
         tar -xzvf foglamp-1.7.0_armv7l_buster.tgz
 
-At this point, the `foglamp` folder in your user's home directly contains
-all the requirements for getting your Raspberry Pi up and running.
+    The `foglamp` folder in your user's home directory contains all the resources
+    required for getting your Raspberry Pi up and running.
 
 ## Install the Fledge service and Fledge GUI on your Raspberry Pi
 
 The Fledge graphical user interface (GUI) makes it easier to configure and
 control Fledge from your Raspberry Pi.
 
-1.  Browse to the folder that you downloaded the Fledge packages to and install
+1.  Browse to the folder that you downloaded the Fledge packages to, and install
     the Fledge and Fledge GUI packages:
 
         cd $HOME/foglamp/foglamp/1.7.0/buster/armv7l/
@@ -95,39 +102,43 @@ control Fledge from your Raspberry Pi.
         $FOGLAMP_ROOT/bin/foglamp start
         $FOGLAMP_ROOT/bin/foglamp status
 
-1.  To open the Fledge GUI, use your web browser to go to the web server that
-    started running on the Raspberry Pi when you installed the Fledge GUI.
-    
-    To determine the IP address of your server, run the ifconfig command:
+## Open the Fledge GUI
+
+To open the Fledge GUI, you use your web browser to go to the web server that
+started running on the Raspberry Pi when you installed the Fledge GUI.
+
+1.  To determine the IP address of your server, run the `ifconfig` command:
 
         ifconfig
 
-It will output the IP address of the network interfaces. The following example
-shows how the output might look.
+    The output looks similar to the following:
 
-```
-wlan0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 192.168.1.217  netmask 255.255.255.0  broadcast 192.168.1.255
-        inet6 fe80::9f73:3b56:93c2:4ed4  prefixlen 64  scopeid 0x20<link>
-        ether dc:a6:32:03:b7:cb  txqueuelen 1000  (Ethernet)
-        RX packets 426133  bytes 305815327 (291.6 MiB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 274458  bytes 172317386 (164.3 MiB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-```
+        wlan0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+                inet 192.168.1.217  netmask 255.255.255.0  broadcast 192.168.1.255
+                inet6 fe80::9f73:3b56:93c2:4ed4  prefixlen 64  scopeid 0x20<link>
+                ether dc:a6:32:03:b7:cb  txqueuelen 1000  (Ethernet)
+                RX packets 426133  bytes 305815327 (291.6 MiB)
+                RX errors 0  dropped 0  overruns 0  frame 0
+                TX packets 274458  bytes 172317386 (164.3 MiB)
+                TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
-In the above example, the ip address is `192.168.1.217` so you would open the
-URL http://192.168.1.217.
+    In this example, the IP address is `192.168.1.217`.
+    
+1.  Use your web browser to go to the URL for the IP address from the previous step,
+    such as this URL using the value from the preivous example:
+    
+        http://192.168.1.217
 
-When you navigate to the web server, you will see a dashboard similar to the
-following image.
+    When you navigate to the web server, you see a dashboard similar to the following:
 
-![Fledge GUI dashboard](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/foglamp-gui.png)
+    ![Fledge GUI dashboard](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/foglamp-gui.png)
+
+
+## Install a Fledge South plugin for generating data
 
 Now it's time to install the plug-ins for connecting to Google Cloud Platform
 and generating data.
 
-## Install a Fledge South plugin for generating data
 Before you set up a North Plugin for publishing data, you need data to publish.
 One quick approach to getting data is to install the "randomwalk" plugin.
 
