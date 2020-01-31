@@ -69,7 +69,7 @@ headless mode or on the Raspberry Pi hardware if you're using the desktop UI.
     
 1.  When you receive the email message containing the link to the Fledge packages,
     copy the link referencing v1.7 for ARM-based devices (Buster), the package
-    for Raspberyy Pi devices.
+    for Raspberry Pi devices.
 
 1.  From your Raspberry Pi, use the following commands to download the Fledge
     packages to the file system and place them in a folder named `foglamp` in your
@@ -150,7 +150,7 @@ One quick way to get some data is with the "randomwalk" plugin.
 
     ![Add button](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/foglamp-south-add.png)
 
-1.  Select the `randomwalk` plugin, give your plugin a name (for example, `random`), and
+1.  Select **randomwalk** in **South Plugin** list, give your plugin a name (for example, `random`), and
     click **Next**.
 
     ![Add random plugin](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/foglamp-south-add-random.png)
@@ -201,7 +201,7 @@ For information on creating registries and devices, see the
 
     ![Create registry form](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/foglamp-north-create-registry.png)
 
-    After the registry is created, the registry overview page opens.
+After the registry is created, the registry overview page opens.
     
 ## Create and configure a device for communicating with IoT Core
     
@@ -315,7 +315,7 @@ The output includes JSON data corresponding to the generated data, such as the f
 
 ## Cleaning up
 
-Now that you've seen how the plugin works end-to-end, you can delete the North
+Now that you've seen how the plugin works, you can delete the North
 instance to prevent data from continuing to be published:
 
 1.  In the left pane of the Fledge GUI, click **North**.
@@ -334,11 +334,11 @@ the following:
 
 You can analyze the data using Google Cloud Analytics products.
 
-You can also evaluate other South plugins such as the [SenseHat](https://github.com/foglamp/foglamp-south-sensehat)
+You can evaluate other South plugins such as the [SenseHat](https://github.com/foglamp/foglamp-south-sensehat)
 plugin, which transmits gyroscope, accelerometer, magnetometer, temperature,
 humidity, and barometric pressure.
 
-You can also look into the hardware partners for more robust and secure hardware
+You can look into the hardware partners for more robust and secure hardware
 solutions. The following reference hardware solutions are available from Nexcom:
 
 * [NISE50](http://www.nexcom.com/Products/industrial-computing-solutions/industrial-fanless-computer/atom-compact/fanless-nise-50-iot-gateway)
