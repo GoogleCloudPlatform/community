@@ -74,7 +74,7 @@ headless mode or on the Raspberry Pi hardware if you're using the desktop UI.
 1.  From your Raspberry Pi, use the following commands to download the Fledge
     packages to the file system and place them in a folder named `foglamp` in your
     user's home directory. Replace `[LINK_FROM_EMAIL]` with the link that you copied
-    in the preivous step.
+    in the previous step.
 
         mkdir $HOME/foglamp
         cd $HOME/foglamp
@@ -125,7 +125,7 @@ started running on the Raspberry Pi when you installed the Fledge GUI.
     In this example, the IP address is `192.168.1.217`.
     
 1.  Use your web browser to go to the URL for the IP address from the previous step,
-    such as this URL using the value from the preivous example:
+    such as this URL using the value from the previous example:
     
         http://192.168.1.217
 
@@ -184,6 +184,9 @@ publish that data to Google Cloud through the IoT Core device bridge.
 
 ## Create a registry
 
+For information on creating registries and devices, see the
+[IoT Core documentation](https://cloud.google.com/iot/docs/how-tos/devices).
+
 1.  Go to the [IoT Core page in the Cloud Console](https://console.cloud.google.com/iot).
 
 1.  At the top of the page, click **Create registry**.
@@ -192,8 +195,7 @@ publish that data to Google Cloud through the IoT Core device bridge.
 
 1.  Choose a region (for example, `us-central1`).
 
-1.  Select an existing telemetry topic or create a new topic (for example,
-    `projects/[YOUR_PROJECT_ID]/topics/foglamp`).
+1.  Select an existing telemetry topic or create a new topic (for example, `projects/[YOUR_PROJECT_ID]/topics/foglamp`).
     
 1.  Click **Create**.
 
@@ -204,11 +206,11 @@ publish that data to Google Cloud through the IoT Core device bridge.
 ## Create and configure a device for communicating with IoT Core
     
 In this section, you create a device that will be used to transmit data to IoT
-Core. Before you can register a device, you need to create a key pair used
-to authenticate the device.
+Core. Before you can register a device, you need to
+[create a key pair](https://cloud.google.com/iot/docs/how-tos/credentials/keys)
+used to authenticate the device.
 
-1.  Create an RSA public/private key pair as described in the
-    [IoT Core documentation](https://cloud.google.com/iot/docs/how-tos/devices):
+1.  Create an RSA public/private key pair:
 
         cd $HOME/foglamp
         openssl genpkey -algorithm RSA -out rsa_private.pem -pkeyopt rsa_keygen_bits:2048
@@ -237,60 +239,66 @@ to authenticate the device.
 
 ## Configure the North plugin to communicate using your device
 
-First, you will need to copy the
-device private key to the Fledge certificate store as well as the root
-certificate for Google Cloud IoT core.
+1.  Copy the device private key and the root certificate for Google Cloud IoT core
+    to the Fledge certificate store:
 
-```
-wget https://pki.goog/roots.pem
-cp roots.pem /usr/local/foglamp/data/etc/certs/
-cp rsa_private.pem /usr/local/foglamp/data/etc/certs/
-```
+        wget https://pki.goog/roots.pem
+        cp roots.pem /usr/local/foglamp/data/etc/certs/
+        cp rsa_private.pem /usr/local/foglamp/data/etc/certs/
 
-Now that the device has been created in the registry, you will need to
-return to the Fledge GUI screen to configure the North plugin. In the
-Review Configuration screen, input your Project ID from the Google Cloud IoT
-Core console (<your-project-id>, the registry name you used (foglamp), the
-device ID (foglamp), the key name that was created (rsa_private), the JWT
-algorithm (RS256), and the data source which is typically readings.
+1.  In the Fledge GUI, on the **Review Configuration** page, enter your Google Cloud project ID,
+    the registry name that you used (`foglamp` in the examples used in this tutorial), the
+    device ID (`foglamp`), and the key name that was created (`rsa_private`).
+    
+1.  Choose the JWT algorithm (**RS256**) and the data source (typically **readings**).
 
-![Fledge North GCP plugin configuration](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/foglamp-north-configure-gcp.png)
+    ![Fledge North GCP plugin configuration](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/foglamp-north-configure-gcp.png)
+    
+1.  Click **Next**.
 
-After you click Next, ensure the plugin is enabled on the following screen and
-click Done.
+1.  Ensure that the plugin is enabled on the following screen, and click **Done**.
 
-Now, if you return to the dashboard, the count of readings Sent should be
-incrementing while the Received readings increase. You can also navigate to the
-Cloud IoT Core Console page for your device and see that telemetry events were
-being received from the device.
+## Verify communication
 
-![Cloud IoT Core Device page](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/cloud-iot-console-device-telemetry.png)
+1.  Retun to the Fledge GUI dashboard.
 
-Congratulations, you've now setup Fledge to publish data generated on the
-Raspberry Pi! To see the telemetry messages, create a subscription to the
-PubSub subscription configured in your registry by first clicking on the link
-in the Registry Details page.
+    The count of readings sent and received readings should be increasing.
+    
+1.  Go to the IoT Core page for your device in the Cloud Console.
 
-![Cloud IoT Registry details](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/cloud-iot-registry-page.png)
+    Verify that telemetry events are received from the device.
 
-Clicking Create Subscription.
+    ![Cloud IoT Core Device page](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/cloud-iot-console-device-telemetry.png)
 
-![Create Subscription page](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/cloud-iot-pubsub-create-subscription.png)
+Congratulations! You have set up Fledge to publish data generated on the
+Raspberry Pi!
 
-And finally, entering the subscription details such as the name for your
-subscription (e.g. foglamp) before clicking the Create button.
+To see the telemetry messages, you can create a Pub/Sub subscription.
 
-![Input Subscription details page](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/cloud-iot-pubsub-create-subscription-details.png)
+## Create a Pub/Sub subscription to see telemetry messages
+
+1.  On the Cloud Iot **Registry details** page, click the channel entry in the
+    **Cloud Pub/Sub topics** section.
+
+    ![Cloud IoT Registry details](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/cloud-iot-registry-page.png)
+
+1.  Click **Create subscription**.
+
+    ![Create Subscription page](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/cloud-iot-pubsub-create-subscription.png)
+
+1.  Enter the subscription details, such as the name for your subscription
+    (for example, `foglamp`), and click **Create**.
+
+    ![Input Subscription details page](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/cloud-iot-pubsub-create-subscription-details.png)
 
 With the subscription created, you can see the messages published by Fledge
 using the [Google Cloud SDK](https://cloud.google.com/sdk). The following
-command lists the messages published to the foglamp subscription.
+command lists the messages published to the `foglamp` subscription:
 
-```
-gcloud pubsub subscriptions pull --limit 500 foglamp
-```
+    gcloud pubsub subscriptions pull --limit 500 foglamp
 
-The output will have JSON data corresponding to the generated data.
+The output includes JSON data corresponding to the generated data, such as the following.
+
 
 ```
 ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬─────────────────┬────────────────────────────────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -305,25 +313,29 @@ The output will have JSON data corresponding to the generated data.
 └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴─────────────────┴────────────────────────────────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
+## Cleaning up
+
 Now that you've seen how the plugin works end-to-end, you can delete the North
-instance to prevent data from continuing to be published by navigating to the
-North menu on the Fledge GUI, selecting your instance of the GCP plugin, and
-then clicking the Delete instance button.
+instance to prevent data from continuing to be published:
+
+1.  In the left pane of the Fledge GUI, click **North**.
+1   Select your instance of the GCP plugin.
+1.  Click **Delete instance**.
 
 ## Next steps
 
-Fledge provides a robust solution for getting data into Google Cloud Platform
-using Cloud IoT Core. You can readily migrate the data from PubSub to persistent
-data stores such as:
+Fledge provides a robust solution for getting data into Google Cloud using IoT Core.
+You can readily migrate the data from Pub/Sub to persistent data stores, including
+the following:
 
-* [Google Cloud BigQuery](https://cloud.google.com/bigquery/docs)
-* [Google Cloud SQL](https://cloud.google.com/sql/docs)
-* [Google Cloud Spanner](https://cloud.google.com/spanner/docs)
+* [BigQuery](https://cloud.google.com/bigquery/docs)
+* [Cloud SQL](https://cloud.google.com/sql/docs)
+* [Cloud Spanner](https://cloud.google.com/spanner/docs)
 
-and can analyze the data using Google Cloud Analytics products.
+You can analyze the data using Google Cloud Analytics products.
 
 You can also evaluate other South plugins such as the [SenseHat](https://github.com/foglamp/foglamp-south-sensehat)
-plugin which transmits gyroscope, accelerometer, magnetometer, temperature,
+plugin, which transmits gyroscope, accelerometer, magnetometer, temperature,
 humidity, and barometric pressure.
 
 You can also look into the hardware partners for more robust and secure hardware
@@ -333,8 +345,7 @@ solutions. The following reference hardware solutions are available from Nexcom:
 * [NISE105](http://www.nexcom.com/Products/industrial-computing-solutions/industrial-fanless-computer/atom-compact/fanless-computer-nise-105)
 * [NISE3800](http://www.nexcom.com/Products/industrial-computing-solutions/industrial-fanless-computer/core-i-performance/fanless-pc-fanless-computer-nise-3800e)
 
-Finally, you can look into advanced usage of the Fledge platform through
-features such as
+You can look into advanced usage of the Fledge platform through features such as
 [filters](https://foglamp.readthedocs.io/en/master/foglamp_architecture.html#filters),
 [events](https://foglamp.readthedocs.io/en/master/foglamp_architecture.html#event-engine),
 and API access to device data with
