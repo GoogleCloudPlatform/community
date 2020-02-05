@@ -272,11 +272,13 @@ Flask serves traffic on `localhost:5000` by default. Run `curl` in a separate SS
 instance to confirm that your greeting is being returned. To connect to this
 from your local computer, you must expose port 5000.
 
-This curl command will output "Hello Cloud!".
+Run this command to validate the server:
 
 ```Shell
 curl http://0.0.0.0:5000
 ```
+
+The output from this command is `Hello Cloud`.
 
 ### Open port 5000 on the instance
 
