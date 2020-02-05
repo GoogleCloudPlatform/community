@@ -9,7 +9,7 @@ This tutorial shows you how to use the [Google Cloud logging
 driver](https://docs.docker.com/engine/admin/logging/gcplogs/) to [upload logs
 from your Docker
 containers](https://docs.docker.com/engine/admin/logging/overview/) to
-[Stackdriver Logging](/logging/).
+[Stackdriver Logging](https://cloud.google.com/logging/).
 
 ## Objectives
 
@@ -28,16 +28,16 @@ containers](https://docs.docker.com/engine/admin/logging/overview/) to
 
 This tutorial uses billable components of Cloud Platform including
 
-- [Google Compute Engine](/compute/all-pricing)
-- [Stackdriver Logging](/stackdriver/pricing)
+- [Google Compute Engine](https://cloud.google.com/compute/all-pricing)
+- [Stackdriver Logging](https://cloud.google.com/stackdriver/pricing)
 
-Use the [Pricing Calculator](/products/calculator/) to estimate the costs for
+Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to estimate the costs for
 your usage.
 
 ## Setting up the virtual machine
 
 Create a new Compute Engine instance using the [Container-Optimized
-OS](/container-optimized-os/) stable image. Container-Optimized OS comes
+OS](https://cloud.google.com/container-optimized-os/) stable image. Container-Optimized OS comes
 with [Docker](https://www.docker.com/why-docker) pre-installed and supports
 automatic system updates.
 
@@ -149,14 +149,14 @@ to use the Google Cloud logging driver when it is started by systemd:
 
 ## Persisting configuration across reboots
 
-On [Container-Optimized OS](/container-optimized-os/), files in `/etc/` are
+On [Container-Optimized OS](https://cloud.google.com/container-optimized-os/), files in `/etc/` are
 writable, but [data does not persist across
-reboots](/container-optimized-os/docs/concepts/security#filesystem).
+reboots](https://cloud.google.com/container-optimized-os/docs/concepts/security#filesystem).
 Instead, [use cloud-init to configure Container-Optimized OS
-instances](/container-optimized-os/docs/how-to/create-configure-instance#using_cloud-init).
+instances](https://cloud.google.com/container-optimized-os/docs/how-to/create-configure-instance#using_cloud-init).
 
 To configure cloud-init, [update the instance
-metadata](/compute/docs/storing-retrieving-metadata#updatinginstancemetadata)
+metadata](https://cloud.google.com/compute/docs/storing-retrieving-metadata#updatinginstancemetadata)
 by writing a configuration to the `user-data` key.
 
 You can write the configuration to the instance metadata from the command line
@@ -189,10 +189,10 @@ sections.
 *If you have already written the metadata using the Cloud Platform Console,
 you can skip this section.*
 
-From [Google Cloud Shell](/shell/docs/quickstart) or a development machine
-where you have [installed and initialized the Google Cloud SDK](/sdk/docs/),
+From [Google Cloud Shell](https://cloud.google.com/shell/docs/quickstart) or a development machine
+where you have [installed and initialized the Google Cloud SDK](https://cloud.google.com/sdk/docs/),
 use the [gcloud compute intances
-add-metadata](/sdk/gcloud/reference/compute/instances/add-metadata)
+add-metadata](https://cloud.google.com/sdk/gcloud/reference/compute/instances/add-metadata)
 command to add the `user-data` key to your instance.
 
 1.  Create a file `instance-config.txt` with the contents:
@@ -220,7 +220,7 @@ command to add the `user-data` key to your instance.
 
 ## Next steps
 
-- [Install the Stackdriver Logging Agent to stream system logs to Stackdriver
-  Logging](/logging/docs/agent/installation).
-- [Try out some other DevOps tutorials](/docs/tutorials/#devops).
+- [Install the Stackdriver Logging agent to stream system logs to Stackdriver
+  Logging](https://cloud.google.com/logging/docs/agent/installation).
+- [Try out some other DevOps tutorials](https://cloud.google.com/docs/tutorials/#devops).
 
