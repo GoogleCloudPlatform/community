@@ -1,6 +1,6 @@
 ---
 title: Run a Kotlin Spring Boot application on Google Kubernetes Engine
-description: Learn how to deploy a Kotlin Spring Boot application in containers using Kubernetes Engine.
+description: Learn how to deploy a Kotlin Spring Boot application in containers using Google Kubernetes Engine.
 author: hhariri
 tags: Kubernetes, Container Engine, Kotlin, Spring Boot, Docker
 date_published: 2018-01-05
@@ -10,15 +10,15 @@ This tutorial helps you get started deploying your
 [Kotlin](https://kotlinlang.org/) app using the
 [Spring Boot](https://projects.spring.io/spring-boot/) Framework to
 [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/),
-Google's hosting solution for containerized applications. Kubernetes Engine,
-earlier known as Google Container Engine, is based on the popular open-source
+Google's hosting solution for containerized applications. Google Kubernetes Engine,
+earlier known as *Google Container Engine*, is based on the popular open-source
 [Kubernetes](https://kubernetes.io/) system, and leverages Google's deep
 expertise with container-based deployments.
 
 You will create a new Spring Boot application, and then you will learn how to:
 
 *   Create a Docker image file that will be used to build and run your app
-*   Deploy your app on Kubernetes Engine
+*   Deploy your app on Google Kubernetes Engine
 *   Scale and update your app using Kubernetes
 
 While the tutorial uses Kotlin 1.2 and Spring Boot 2 M7, other releases of Kotlin and Spring Boot should work
@@ -174,7 +174,7 @@ respond running locally from your Docker image.
 
 ## Deploying your application
 
-Now you're ready to deploy your application to Kubernetes Engine!
+Now you're ready to deploy your application to Google Kubernetes Engine!
 
 ### Build the production image
 
@@ -202,7 +202,7 @@ for more details.
 
 ### Create a cluster
 
-Kubernetes Engine lets you create Kubernetes clusters to host your application.
+Google Kubernetes Engine lets you create Kubernetes clusters to host your application.
 These are clusters of VMs in the cloud, managed by a Kubernetes server.
 
 1.  Choose a cluster name. For the rest of these instructions, I'll assume that
@@ -259,7 +259,7 @@ you've created the Kubernetes cluster as described above.
 
         kubectl get service
 
-    Initially, the external IP field will be pending while Kubernetes Engine
+    Initially, the external IP field will be pending while Google Kubernetes Engine
     procures an IP address for you. If you rerun the `kubectl get service`
     command repeatedly, eventually the IP address will appear. You can then
     point your browser at that URL to view the running application.
@@ -325,13 +325,13 @@ for more info.
 
 After you've finished this tutorial, clean up the resources you created
 on Google Cloud Platform so you won't be billed for them going forward. To
-clean, either delete your Kubernetes Engine resources, or
+clean, either delete your Google Kubernetes Engine resources, or
 delete the entire project.
 
-### Deleting Kubernetes Engine resources
+### Deleting Google Kubernetes Engine resources
 
-To delete your app from Kubernetes Engine, you must remove both the load
-balancer and the Kubernetes Engine cluster.
+To delete your app from Google Kubernetes Engine, you must remove both the load
+balancer and the Google Kubernetes Engine cluster.
 
 1.  Delete the service, which deallocates the load balancer:
 
@@ -372,8 +372,8 @@ If you want to procure a static IP address and connect your domain name, you
 might find [this tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/configuring-domain-name-static-ip)
 helpful.
 
-See the [Kubernetes Engine documentation](https://cloud.google.com/kubernetes-engine/docs/)
-for more information on managing Kubernetes Engine clusters.
+See the [Google Kubernetes Engine documentation](https://cloud.google.com/kubernetes-engine/docs/)
+for more information on managing Google Kubernetes Engine clusters.
 
 See the [Kubernetes documentation](https://kubernetes.io/docs/home/) for more
 information on managing your application deployment using Kubernetes.

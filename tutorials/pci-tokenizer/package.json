@@ -1,11 +1,19 @@
 {
   "name": "gcp-pci-tokenizer",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "description": "Simple credit card tokenization service",
+  "repository": "github.com/GoogleCloudPlatform/community",
+  "license": "Apache-2.0",
+  "main": "/tokenizer/src/server.js",
+  "scripts": {
+    "start": "node /tokenizer/src/server.js"
+  },
   "dependencies": {
-    "@google-cloud/datastore": "^1.4.1",
-    "config": "^2.0.1",
-    "express": "^4.16.3",
-    "google-auth-library": "^1.6.1",
-    "googleapis": "^33.0.0"
+    "@google-cloud/dlp": "^1.9",
+    "@google-cloud/kms": "^1.6",
+    "config": "^3.2",
+    "express": "^4.17",
+    "google-auth-library": "^5.7",
+    "googleapis": "^46"
   }
 }

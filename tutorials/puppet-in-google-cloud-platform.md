@@ -91,11 +91,12 @@ You can also do a single sign by
 
         class webserver {
           package { 'apache2':
-          ensure => present
-        }
-        file {'/var/www/html/index.html': # resource type file and filename
-          ensure => present, # make sure it exists
-          content => "<h1>This page is installed from Puppet Master</h1>", # content of the file
+           ensure => present
+          }
+          file {'/var/www/html/index.html': # resource type file and filename
+            ensure => present, # make sure it exists
+            content => "<h1>This page is installed from Puppet Master</h1>", # content of the file
+          }
         }
         
         

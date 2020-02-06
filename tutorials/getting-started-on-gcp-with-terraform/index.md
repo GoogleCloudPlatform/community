@@ -186,7 +186,7 @@ endpoint for consumption.
 
 You will need to add a public SSH key to the Compute Engine instance to
 access and manage it. Add the local location of your public key to the
-`google_compute_instace` metadata in `main.tf` to add your SSH key to the
+`google_compute_instance` metadata in `main.tf` to add your SSH key to the
 instance. [More information on managing ssh keys is available here](https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys).
 
 ```HCL
@@ -271,6 +271,14 @@ python app.py
 Flask serves traffic on `localhost:5000` by default. Run `curl` in a separate SSH
 instance to confirm that your greeting is being returned. To connect to this
 from your local computer, you must expose port 5000.
+
+Run this command to validate the server:
+
+```Shell
+curl http://0.0.0.0:5000
+```
+
+The output from this command is `Hello Cloud`.
 
 ### Open port 5000 on the instance
 

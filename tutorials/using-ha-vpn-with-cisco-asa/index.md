@@ -192,13 +192,13 @@ The commands should look similar to the following example:
 
 Create the HA VPN gateway:
 
-    gcloud beta compute vpn-gateways create [GW_NAME] \
+    gcloud compute vpn-gateways create [GW_NAME] \
     --network [NETWORK] \
     --region [REGION]
 
 The command should look similar to the following example:
 
-    gcloud beta compute vpn-gateways create ha-vpn-gw-a \
+    gcloud compute vpn-gateways create ha-vpn-gw-a \
     --network network-a \
     --region us-central1
 
@@ -245,17 +245,17 @@ This interop guide only covers the second option (one peer, two addresses).
 
 #### Create an external VPN gateway resource for a single peer VPN gateway with two separate interfaces
 
-    gcloud beta compute external-vpn-gateways create [PEER_GW_NAME] \
+    gcloud compute external-vpn-gateways create [PEER_GW_NAME] \
     --interfaces 0=[ON_PREM_GW_IP_0],1=[ON_PREM_GW_IP_1] \
 
 The command should look similar to the following example:
 
-    gcloud beta compute external-vpn-gateways create peer-gw   \
+    gcloud compute external-vpn-gateways create peer-gw   \
      --interfaces 0=209.119.81.225,1=209.119.82.226
 
 ### Create two VPN tunnels, one for each interface on the HA VPN gateway
 
-    gcloud beta compute vpn-tunnels create [TUNNEL_NAME_IF0] \
+    gcloud compute vpn-tunnels create [TUNNEL_NAME_IF0] \
     --peer-external-gateway [PEER_GW_NAME] \
     --peer-external-gateway-interface [PEER_EXT_GW_IF0]  \
     --region [REGION] \
@@ -265,7 +265,7 @@ The command should look similar to the following example:
     --vpn-gateway [GW_NAME] \
     --interface [INT_NUM_0]
 
-    gcloud beta compute vpn-tunnels create [TUNNEL_NAME_IF1] \
+    gcloud compute vpn-tunnels create [TUNNEL_NAME_IF1] \
     --peer-external-gateway [PEER_GW_NAME] \
     --peer-external-gateway-interface [PEER_EXT_GW_IF1] \
     --region [REGION] \
@@ -277,7 +277,7 @@ The command should look similar to the following example:
 
 The command should look similar to the following example:
 
-    gcloud beta compute vpn-tunnels create tunnel-a-to-on-prem-if-0 \
+    gcloud compute vpn-tunnels create tunnel-a-to-on-prem-if-0 \
     --peer-external-gateway peer-gw \
     --peer-external-gateway-interface 0  \
     --region us-central1 \
@@ -287,7 +287,7 @@ The command should look similar to the following example:
     --vpn-gateway ha-vpn-gw-a \
     --interface 0
 
-    gcloud beta compute vpn-tunnels create tunnel-a-to-on-prem-if-1 \
+    gcloud compute vpn-tunnels create tunnel-a-to-on-prem-if-1 \
     --peer-external-gateway peer-gw \
     --peer-external-gateway-interface 1  \
     --region us-central1 \

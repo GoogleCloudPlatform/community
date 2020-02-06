@@ -8,6 +8,8 @@ date_published: 2019-07-31
 
 # Compute Engine quickstart: Create a virtual machine 
 
+<!-- {% setvar project_id "<your-project>" %} -->
+
 <walkthrough-tutorial-duration duration="10"></walkthrough-tutorial-duration>
 
 <walkthrough-alt>
@@ -90,7 +92,7 @@ Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-clo
 Connect to the VM using SSH:  
 
 ```bash
-gcloud compute --project "{{project-id}}" ssh --zone [vm-zone] [vm-name]
+gcloud compute --project "{{project_id}}" ssh --zone [vm-zone] [vm-name]
 ```
 
 Replace `[vm-zone]` and `[vm-name]` with the zone and name of the instance that you created.

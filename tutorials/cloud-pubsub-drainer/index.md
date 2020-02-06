@@ -1,6 +1,6 @@
 ---
 title: Alert-based event archiver with Stackdriver and Cloud Pub/Sub
-description: Use Strackdriver alerting to trigger a serverless event archive task in Cloud Pub/Sub.
+description: Use Stackdriver alerting to trigger a serverless event archive task in Cloud Pub/Sub.
 author: ptone
 tags: IoT, Cloud Pubsub, Stackdriver, Cloud Functions, Serverless
 date_published: 2019-03-15

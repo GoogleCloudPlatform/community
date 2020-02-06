@@ -279,7 +279,7 @@ Here are some suggestions for what you can do next:
 *   Learn how to store persistent data in your application through the
     [MySQL and WordPress][mysql-wordpress-tutorial] tutorial.
 
-*   Explore other [Kubernetes Engine tutorials][kubernetes-tutorials].
+*   Explore other [Google Kubernetes Engine tutorials][kubernetes-tutorials].
 
 [gke-docs]: https://cloud.google.com/kubernetes-engine/
 [gke-registry]: https://cloud.google.com/container-registry
