@@ -104,7 +104,7 @@ Follow these steps.
 
         sudo nano /etc/redis/redis.conf
 
-1. Scroll down to the line that begins with `bind 127.0.0.1`
+1. Scroll down to the line that begins with `bind 127.0.0.1` 
 
 1. Replace `127.0.0.1` with `0.0.0.0`:
 
@@ -114,6 +114,14 @@ Follow these steps.
    a commonly used setting. When bound to `127.0.0.1`, Redis will only accept connections
    from the local machine running Redis -- meaning your application would have to reside on the
    same machine as the Redis server.
+   
+1. Scroll down to the line that begins with `# requirepass`.   
+
+1. Uncomment `# requirepass` and add a strong password (see the 'SECURITY' section of the [Redis configuration file example](http://download.redis.io/redis-stable/redis.conf) for details):
+
+         requirepass [REPLACE_WITH_YOUR_STRONG_PASSWORD]
+   
+   The `bind 0.0.0.0` setting you made in step 3 makes your instance publicly accessible. This requires you to add a strong password to protect your instance from unauthorized access and malicious activities. 
 
 1. Save the file and exit the editor.
 
@@ -183,9 +191,9 @@ your Compute Engine instance in the **External IP** column.
 
     **[Open VM instances](https://console.cloud.google.com/compute/instances)**
 
-1. Ping the Redis server. Replace `[REDIS_IPV4_ADDRESS]` with the external IP address from the previous step.
+1. Ping the Redis server. Replace `[REDIS_IPV4_ADDRESS]` with the external IP address from the previous step and `[YOUR_STRONG_PASSWORD]` with the password you defined in step 5 of the **Edit `redis.conf`** section:
 
-        redis-cli -h [REDIS_IPV4_ADDRESS] ping
+        redis-cli -h [REDIS_IPV4_ADDRESS] -a '[YOUR_STRONG_PASSWORD]' ping
 
 You should receive a response of `PONG` output to the terminal.
 
