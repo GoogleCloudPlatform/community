@@ -185,7 +185,8 @@ an officially supported command-line tool to interact with a Redis server.
    external IP address of your Compute Engine instance in the **External IP** column.
 
 1. Ping the Redis server. Replace `[REDIS_IPV4_ADDRESS]` with the external IP address from the previous step
-   and `[YOUR_STRONG_PASSWORD]` with the password you defined in step 5 of the "Edit `redis.conf`" section:
+   and `[YOUR_STRONG_PASSWORD]` with the password you defined in step 5 of the "Configure Redis remote access"
+   section:
 
         redis-cli -h [REDIS_IPV4_ADDRESS] -a '[YOUR_STRONG_PASSWORD]' ping
 
