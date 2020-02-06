@@ -95,10 +95,7 @@ running the Redis server.
 ## Configure Redis remote access
 
 By default, Redis doesn't allow remote connections. To change this setting,
-you can change the configuration in the [`redis.conf`](https://redis.io/topics/config) file, as described
-in the following sections.
-
-### Edit the `redis.conf` file
+you can change the configuration in the [`redis.conf`](https://redis.io/topics/config) file.
 
 1. In the SSH terminal window, edit the `redis.conf` file. This tutorial uses the
 `nano` editor, but you can substitute your favorite editor. Enter the following:
