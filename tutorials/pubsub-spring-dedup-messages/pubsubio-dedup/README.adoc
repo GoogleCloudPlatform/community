@@ -1,0 +1,20 @@
+## How to run
+
+
+In a terminal in this directory:
+
+  ```
+   mvn compile exec:java \
+     -Dexec.mainClass=com.example.DedupPubSub \
+     -Dexec.cleanupDaemonThreads=false \
+     -Dexec.args="\
+       --project=$PROJECT_NAME \
+       --inputTopic=projects/$PROJECT_NAME/topics/topicFirst \
+       --outputTopic=projects/$PROJECT_NAME/topics/topicSecond \
+       --idAttribute=key \
+       --runner=DataflowRunner"
+  ```
+
+
+
+
