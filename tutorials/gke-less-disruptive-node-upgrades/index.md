@@ -454,7 +454,7 @@ $ watch ./print_error_rate.sh
 In a separate terminal you can watch the state of the nodes and pods to follow the upgrade process closely.
 
 ```shell
-$ watch 'kubectl get nodes,pods'
+$ watch 'kubectl get nodes,pods -o wide'
 ```
 
 You can start sending some load now.
@@ -501,7 +501,7 @@ $ watch ./print_error_rate.sh
 In a separate terminal you can watch the state of the nodes and pods again to follow the upgrade process.
 
 ```shell
-$ watch 'kubectl get nodes,pods'
+$ watch 'kubectl get nodes,pods -o wide'
 ```
 
 You can start sending some load again.
