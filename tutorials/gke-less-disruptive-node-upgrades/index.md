@@ -65,6 +65,7 @@ docker build -t gcr.io/${PROJECT_ID}/hello-app:v1 .
 gcloud auth configure-docker
 docker push gcr.io/${PROJECT_ID}/hello-app:v1
 # create a cluster
+gcloud config set project $PROJECT_ID
 gcloud config set compute/zone us-central1-a
 gcloud container clusters create hello-cluster --machine-type=g1-small --num-nodes=3
 # deploy and expose the application
