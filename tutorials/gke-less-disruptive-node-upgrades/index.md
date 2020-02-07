@@ -464,7 +464,7 @@ $ export QPS=120
 $ ./generate_load.sh $IP $QPS 2>&1
 ```
 
-Then you can start an upgrade (in another terminal).
+Then you can start an upgrade (in another terminal). **Warning:** this operation may take 10-15 minutes to complete.
 
 ```shell
 $ gcloud container clusters upgrade hello-cluster --cluster-version=1.13 --node-pool=default-pool
@@ -511,7 +511,7 @@ $ export QPS=120
 $ ./generate_load.sh $IP $QPS 2>&1
 ```
 
-Then you can start an upgrade (in another terminal).
+Then you can start an upgrade (in another terminal). **Warning:** this operation may take 10-15 minutes to complete.
 
 ```shell
 $ gcloud container clusters upgrade hello-cluster --cluster-version=1.14 --node-pool=default-pool
