@@ -222,7 +222,7 @@ The easiest way to eliminate billing is to delete the project you created for th
 
 To delete the project:
 
-1. In the Cloud Console, go to the [**Projects**](https://console.cloud.google.com/iam-admin/projects)** page.
+1. In the Cloud Console, go to the [**Projects**](https://console.cloud.google.com/iam-admin/projects) page.
 1. Click the trash can icon to the right of the project name.
 
 **Warning**: Deleting a project has the following consequences:
