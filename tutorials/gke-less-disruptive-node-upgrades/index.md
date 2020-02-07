@@ -21,8 +21,8 @@ date_published: 2020-02-04
     + [A) Run tests with a single pod](#a-run-tests-with-a-single-pod)
     + [B) Add more replicas, configure pod anti affinity, readiness probe](#b-add-more-replicas-configure-pod-anti-affinity-readiness-probe)
   * [3. Test the impact of upgrades on application availability](#3-test-the-impact-of-upgrades-on-application-availability)
-    + [A. Upgrade node pool without surge nodes](#a-upgrade-node-pool-without-surge-nodes)
-    + [B. Upgrade node pool with surge nodes](#b-upgrade-node-pool-with-surge-nodes)
+    + [A) Upgrade node pool without surge nodes](#a-upgrade-node-pool-without-surge-nodes)
+    + [B) Upgrade node pool with surge nodes](#b-upgrade-node-pool-with-surge-nodes)
 - [Conclusion](#conclusion)
 - [Cleaning up](#cleaning-up)
 
@@ -52,7 +52,7 @@ As an alternative you can use your own workstation. In this case you will need t
 If you didn't complete [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app) and would like to immediately start this tutorial, you can just run the below steps to have a cluster and the hello-app running on it.
 
 <details>
-<summary>Expand source code</summary>
+<summary>Expand script</summary>
 
 
 ```shell
@@ -433,7 +433,7 @@ Error rate: 1901/11840 (16%)
 
 This section is to demonstrate how the loss of capacity may hurt the service during a node upgrade if there is no extra capacity made available in the form of surge nodes. Before Surge Upgrade was introduced every upgrade of a node pool involved the temporary loss of a single node, since every node had to be recreated with a new image with the new version. Some customers were increasing the size of the node pool by one before upgrades then restored the size after successful upgrade, however this is error prone manual work. Surge Upgrade makes it possible to do this automatically and reliably.
 
-### A. Upgrade node pool without surge nodes
+### A) Upgrade node pool without surge nodes
 
 You can start with the case without surge node. Make sure your node pool has zero surge nodes configured.
 
@@ -480,7 +480,7 @@ At the end of the upgrade you should see high error rate. Something like:
 Error rate: 25690/97080 (26%)
 ```
 
-### B. Upgrade node pool with surge nodes
+### B) Upgrade node pool with surge nodes
 
 With surge upgrades it is possible to upgrade nodes in a way when the node pool won’t lose any capacity by setting maxUnavailble to 0 and maxSurge to greater than 0.
 
