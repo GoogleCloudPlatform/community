@@ -469,10 +469,12 @@ $ ./generate_load.sh $IP $QPS 2>&1
 Then you can start an upgrade **(TERMINAL-4)**. **Warning:** this operation may take 10-15 minutes to complete.
 
 ```shell
-$ gcloud container clusters upgrade hello-cluster --cluster-version=1.13 --node-pool=default-pool
+# find a lower minor version
+$ V=$(gcloud container node-pools  describe default-pool --cluster=hello-cluster | grep version | sed -E "s/version: 1\.([^\.]+)\..*/\1/" | tr -d '\n');  V=$((V-1)); echo "1.$V"
+$ gcloud container clusters upgrade hello-cluster --cluster-version=$V --node-pool=default-pool
 ```
 
-*Note on cluster-version used. It is not possible to upgrade nodes to a higher version than the master, but it is possible to downgrade them. In this example you (most likely) started with a cluster that had nodes already on the master version. In that case you can pick a lower version (minor or patch) to perform a downgrade. In the next step you can bring the nodes back to their original version with an upgrade.*
+*Note on cluster-version used. It is not possible to upgrade nodes to a higher version than the master, but it is possible to downgrade them. In this example you (most likely) started with a cluster that had nodes already on the master version. In that case you can pick any lower version (minor or patch) to perform a downgrade. In the next step you can bring the nodes back to their original version with an upgrade.*
 
 Notice that the pod on the first node to be updated gets evicted and remains unschedulable while GKE is recreating the node (since there is no node available to schedule the pod on). This reduces the capacity of the entire cluster and it leads to higher error rate. (~20% instead of earlier ~1% in your tests with the same QPS.) The same happens with subsequent nodes as well (i.e. the evicted pod remains unschedulable until the node upgrade finishes and the node becomes READY).
 
@@ -518,7 +520,9 @@ $ ./generate_load.sh $IP $QPS 2>&1
 Then you can start an upgrade **(TERMINAL-4)**. **Warning:** this operation may take 10-15 minutes to complete.
 
 ```shell
-$ gcloud container clusters upgrade hello-cluster --cluster-version=1.14 --node-pool=default-pool
+# find the master version
+$ V=$(gcloud container clusters describe hello-cluster | grep "version:" | sed "s/version: //")
+$ gcloud container clusters upgrade hello-cluster --cluster-version=$V --node-pool=default-pool
 ```
 
 *Note on cluster-version. You can select here the version of your master. For more see the note on cluster-version at the previous section*
