@@ -43,9 +43,13 @@ This tutorial demonstrates how GKE helps with reducing disruption of the workloa
 
 ## Prerequisite
 
-This tutorial builds on top of [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app). It is recommended to complete it starting on this one.
+This tutorial builds on top of [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app). It is recommended to complete it, before starting this one.
 
-If you didn't complete the above tutorial and would like to immediately start this one, you can just run the below steps to have a cluster and the hello-app running on it.
+It is recommended to use [Google Cloud Shell](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_a_use_google_cloud_shell) throughout this tutorial. 
+
+As an alternative you can use your own workstation. In this case you will need to install the [required tools](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_b_use_command-line_tools_locally) to be able to perform the steps below.
+
+If you didn't complete [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app) and would like to immediately start this tutorial, you can just run the below steps to have a cluster and the hello-app running on it.
 
 <details>
 <summary>Expand source code</summary>
@@ -69,12 +73,6 @@ kubectl create deployment hello-web --image=gcr.io/${PROJECT_ID}/hello-app:v1
 kubectl expose deployment hello-web --type=LoadBalancer --port 80 --target-port 8080
 ```
 </details>
-
-## Where to run your terminal
-
-Similar to [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app) you can complete this tutorial using [Google Cloud Shell](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_a_use_google_cloud_shell). This is the recommended option. 
-
-As an alternative you can use your own workstation. In this case you will need to install the [required tools](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_b_use_command-line_tools_locally) to be able to perform the steps below.
 
 # Costs
 
