@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package com.google.example;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -28,36 +26,31 @@ import org.springframework.messaging.Message;
 import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
 
-/**
- *
- */
+/** */
 @SpringBootApplication
 public class App {
 
+  public static void main(String[] args) {
+    SpringApplication.run(App.class, args);
+  }
 
-	public static void main(String[] args) {
-		SpringApplication.run(App.class, args);
-	}
+  @Bean
+  public EmitterProcessor<Message<String>> frontEndListener() {
+    return EmitterProcessor.create();
+  }
 
-	@Bean
-	public EmitterProcessor<Message<String>> frontEndListener() {
-		return EmitterProcessor.create();
-	}
+  // This will automatically send all data from the internal queue to the Pub/Sub topic configured
+  // in application.properties.
+  @Bean
+  Supplier<Flux<Message<String>>> sendMessagesForDeduplication(
+    final EmitterProcessor<Message<String>> frontEndListener) {
+    return () -> frontEndListener;
+  }
 
-	// This will automatically send all data from the internal queue to the Pub/Sub topic configured
-	// in application.properties.
-	@Bean
-	Supplier<Flux<Message<String>>> sendMessagesForDeduplication(final EmitterProcessor<Message<String>> frontEndListener) {
-		return () -> frontEndListener;
-	}
-
-
-	@Bean
-	Consumer<Message<String>> receiveDedupedMessagesFromDataflow() {
-		return msg -> {
-			System.out.println("\tDE-DUPED message: \"" + msg.getPayload() + "\".");
-		};
-	}
-
-
+  @Bean
+  Consumer<Message<String>> receiveDedupedMessagesFromDataflow() {
+    return msg -> {
+      System.out.println("\tDE-DUPED message: \"" + msg.getPayload() + "\".");
+    };
+  }
 }

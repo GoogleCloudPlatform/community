@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,28 +25,27 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 import reactor.core.publisher.EmitterProcessor;
 
-
 /**
  * Takes strings from front-end and directs them to an internal processing queue, to be sent to Cloud Pub/Sub.
  */
 @RestController
 public class DataEntryController {
 
-	@Autowired
-	private EmitterProcessor<Message<String>> frontEndListener;
+  @Autowired
+  private EmitterProcessor<Message<String>> frontEndListener;
 
-	@PostMapping("/sendData")
-	public RedirectView mainPage(@RequestParam("data") String data, @RequestParam("key") String key) {
-		System.out.println("Sending data: \"" + data + "\" of key \"" + key + "\" ..");
+  @PostMapping("/sendData")
+  public RedirectView mainPage(@RequestParam("data") String data, @RequestParam("key") String key) {
+    System.out.println("Sending data: \"" + data + "\" of key \"" + key + "\" ..");
 
-		Message<String> message = MessageBuilder
-			.withPayload(data)
-			.setHeader("key", key)
-			.build();
+    Message<String> message = MessageBuilder
+      .withPayload(data)
+      .setHeader("key", key)
+      .build();
 
-		// Sends data into local processing queue
-		this.frontEndListener.onNext(message);
+    // Sends data into local processing queue
+    this.frontEndListener.onNext(message);
 
-		return new RedirectView("/");
-	}
+    return new RedirectView("/");
+  }
 }
