@@ -6,53 +6,83 @@ tags: GKE, upgrade, node, surge upgrade
 date_published: 2020-02-12
 ---
 
-This tutorial demonstrates how GKE helps with reducing disruption of the workloads during node upgrades with [surge upgrades](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades#surge). You will build a demo application that uses a resource pool with limited number of resources per node. Then you deploy this application to a GKE cluster and start a client that generates load on the system. Finally you will upgrade the node pool with and without surge upgrade and measure the error rate on the client side.
+This tutorial demonstrates how Google Kubernetes Engine (GKE) helps with reducing disruption of the workloads during node
+upgrades with [surge upgrades](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades#surge). In this 
+tutorial, you build a demonstration application that uses a resource pool with a limited number of resources per node. You 
+then deploy this application to a GKE cluster and start a client that generates load on the system. Finally, you upgrade the
+node pool with and without surge upgrades and measure the error rate on the client side.
 
 ## Objectives
 
-* Run a demo application that serves HTTP requests. Processing of each request requires access to a resource. Each node of the cluster has access only to a limted number of resources. If there's no available resources left, the server returns an error.
+* Run a demonstration application that serves HTTP requests. Processing of each request requires access to a resource. Each
+  node of the cluster has access only to a limted number of resources. If there's no available resources left, the server 
+  returns an error.
 * Test the application with lower and higher load and observe how error rate increases as the server runs out of resources.
-* Upgrade the nodes without using Surge Upgrade. Observe how the temporary loss of capacity causes increased error rates.
-* Upgrade the nodes using Surge Upgrade. Observe how error rates remain significantly lower due to the additional capacity provided by the surge node.
+* Upgrade the nodes without surge upgrades. Observe how the temporary loss of capacity causes increased error rates.
+* Upgrade the nodes using surge upgrades. Observe how error rates remain significantly lower due to the additional capacity
+  provided by the surge node.
 
 ## Before you begin
 
-### Prerequisite
+We recommend that you use 
+[Cloud Shell](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_a_use_google_cloud_shell) 
+to run the commands in this tutorial. As an alternative, you can use your own workstation to run commands locally. in which
+case you would need to install the
+[required tools](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_b_use_command-line_tools_locally).
 
-This tutorial builds on top of [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app). It is recommended to complete it, before starting this one.
+This tutorial requires a Google Cloud project. You can use an existing project or 
+[create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
-It is recommended to use [Google Cloud Shell](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_a_use_google_cloud_shell) throughout this tutorial. 
+This tutorial follows the
+[Deploying a containerized web application](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app) tutorial.
+We recommended that you complete the previous tutorial before starting this one.
 
-As an alternative you can use your own workstation. In this case you will need to install the [required tools](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_b_use_command-line_tools_locally) to be able to perform the steps below.
+If you didn't complete the
+[Deploying a containerized web application](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app) 
+tutorial and would like to immediately start this tutorial, you can run the following commands to create a cluster with
+the `hello-app` application running on it:
 
-If you didn't complete [Deploying a containerized web application tutorial](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app) and would like to immediately start this tutorial, you can just run the below steps to have a cluster and the hello-app running on it.
+1.  Clone the repository and navigate to the app directory:
 
-```shell
-# clone the repo
-git clone https://github.com/GoogleCloudPlatform/kubernetes-engine-samples
-# build and push the image
-cd kubernetes-engine-samples/hello-app
-export PROJECT_ID=[PROJECT_ID]
-docker build -t gcr.io/${PROJECT_ID}/hello-app:v1 .
-gcloud auth configure-docker
-docker push gcr.io/${PROJECT_ID}/hello-app:v1
-# create a cluster
-gcloud config set project $PROJECT_ID
-gcloud config set compute/zone us-central1-a
-gcloud container clusters create hello-cluster --machine-type=g1-small --num-nodes=3
-# deploy and expose the application
-gcloud container clusters get-credentials hello-cluster
-kubectl create deployment hello-web --image=gcr.io/${PROJECT_ID}/hello-app:v1
-kubectl expose deployment hello-web --type=LoadBalancer --port 80 --target-port 8080
-```
+        git clone https://github.com/GoogleCloudPlatform/kubernetes-engine-samples
+        cd kubernetes-engine-samples/hello-app
+
+1.  Set a variable for the
+    [project ID](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects)
+    by replacing `[PROJECT_ID]` with your project ID in this command:
+
+        export PROJECT_ID=[PROJECT_ID]
+        
+1.  Build and push the image:
+
+        docker build -t gcr.io/${PROJECT_ID}/hello-app:v1 .
+        gcloud auth configure-docker
+        docker push gcr.io/${PROJECT_ID}/hello-app:v1
+
+1.  Create a cluster
+
+        gcloud config set project $PROJECT_ID
+        gcloud config set compute/zone us-central1-a
+        gcloud container clusters create hello-cluster --machine-type=g1-small --num-nodes=3
+	
+1.  Deploy and expose the application:
+
+        gcloud container clusters get-credentials hello-cluster
+        kubectl create deployment hello-web --image=gcr.io/${PROJECT_ID}/hello-app:v1
+        kubectl expose deployment hello-web --type=LoadBalancer --port 80 --target-port 8080
 
 ## Costs
 
-You will create a GKE cluster for this demo with 3 g1-small VMs. See [VM Instances Pricing](https://cloud.google.com/compute/vm-instance-pricing) for pricing details. The total cost of the demo should be less than $0.1.
+In this tutorial, you create a GKE cluster with 3 g1-small virtual machine instances. The total cost of the resources used
+during for this tutorial is estimated to be less than $0.10. For details, see
+[VM instances pricing](https://cloud.google.com/compute/vm-instance-pricing).
 
 ## Modify hello-app to work with resources
 
-If you don't want to edit the source code manually, you can download the updated version of main.go and overwrite your local copy with it.
+In this section, you modify the `hello-app` source code.
+
+If you don't want to edit the source code manually, you can download the updated version of `main.go` and overwrite your 
+local copy with it.
 
 ```shell
 $ curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-less-disruptive-node-upgrades/main.go -O
