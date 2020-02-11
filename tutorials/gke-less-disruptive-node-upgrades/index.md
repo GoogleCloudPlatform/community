@@ -1,6 +1,6 @@
 ---
 title: Use surge upgrades to decrease disruptions from GKE node upgrades
-description: Learn how surge upgrades reduce disruption caused by node upgrades by updating the nodes while running a sample application and measuring its error rate.
+description: Run a sample application and measure its error rate to learn how surge upgrades reduce disruption caused by GKE node upgrades.
 author: tamasr
 tags: GKE, upgrade, node, surge upgrade
 date_published: 2020-02-12
@@ -74,15 +74,16 @@ the `hello-app` application running on it:
 ## Costs
 
 In this tutorial, you create a GKE cluster with 3 g1-small virtual machine instances. The total cost of the resources used
-during for this tutorial is estimated to be less than $0.10. For details, see
+for this tutorial is estimated to be less than $0.10. For details, see
 [VM instances pricing](https://cloud.google.com/compute/vm-instance-pricing).
 
 ## Modify hello-app to work with resources
 
-In this section, you modify the `hello-app` source code.
+In this section, you modify the `hello-app` source code to use a limited resource and provide health signals based on resource availability.
 
-If you don't want to edit the source code manually, you can download the updated version of `main.go` and overwrite your 
-local copy with it.
+If you don't want to edit the source code manually, you can download the updated version of
+[`main.go`](https://github.com/GoogleCloudPlatform/community/master/tutorials/gke-less-disruptive-node-upgrades/main.go) and 
+overwrite your local copy with it:
 
 ```shell
 $ curl https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/gke-less-disruptive-node-upgrades/main.go -O
@@ -90,9 +91,12 @@ $ curl https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tu
 
 ### Add a resource pool implementation
 
-To extend the application with the use of a limited resource, first you introduce an (emulated) resource pool. In response to each request the application attempts to allocate a resource from the pool. If there is no available resources then the application returns an error. If the allocation is successful, then the application performs some work, then it releases the resource back to the pool.
+To extend the application with the use of a limited resource, you introduce an (emulated) resource pool. In response 
+to each request, the application attempts to allocate a resource from the pool. If there are no available resources, then
+the application returns an error. If the allocation is successful, then the application performs some work, and then it 
+releases the resource back to the pool.
 
-First add the resource pool and implement related operations.
+Add the resource pool and implement related operations:
 
 [embedmd]:# (main.go /\/\/ Start of resource pool code./ /\/\/ End of resource pool code./)
 ```go
@@ -132,7 +136,7 @@ func (p *resourcePool) hasResources() bool {
 // End of resource pool code.
 ```
 
-Then change the callback function that serves requests:
+Change the callback function that serves requests:
 
 [embedmd]:# (main.go /\tlog.Printf\("Serving request:/ /fmt.Fprintf\(w,.*$/) 
 ```go
@@ -152,7 +156,8 @@ Then change the callback function that serves requests:
 
 ### Implement health signals based on resource availability
 
-This will help the load balancer to route traffic only to pods that have available resources.
+Health signals based on resource availability help the load balancer to route traffic only to pods that have available 
+resources.
 
 [embedmd]:# (main.go /\/\/ Start of healthz code./ /\/\/ End of healthz code./)
 ```go
@@ -173,61 +178,90 @@ func healthz(w http.ResponseWriter, r *http.Request) {
 // End of healthz code.
 ```
 
-You also have to register the healthz function under main().
+Register the `healthz` function under `main()`:
 
 [embedmd]:# (main.go /\tserver.HandleFunc\("\/healthz", healthz\)/)
 ```go
 	server.HandleFunc("/healthz", healthz)
 ```
 
-### Deploy the modified application and verify it
+### Deploy the modified application
 
-Since you are done with code changes, you can build the image and push it.
+Since you are done with source code changes, you can build, push, and deply the new image.
 
-```shell
-export PROJECT_ID=<your-project-id>
-docker build -t gcr.io/${PROJECT_ID}/hello-app:v2-surge .
-docker push gcr.io/${PROJECT_ID}/hello-app:v2-surge
-```
+1.  Set a variable for your project ID, replacing `[PROJECT_ID]` with your project ID:
 
-Once you have the new image pushed, you can update the deployment to use the new image.
+        export PROJECT_ID=[PROJECT_ID]
 
-```shell
-kubectl set image deployment/hello-web hello-app=gcr.io/${PROJECT_ID}/hello-app:v2-surge
-```
+1.  Build the new image:
 
-As verification check if the server can respond to requests and if the health check reports the application being healthy. You can print the external IP as below in case you need it.
+        docker build -t gcr.io/${PROJECT_ID}/hello-app:v2-surge .
+	
+1.  Push the new image:
 
-```shell
-$ kubectl get service hello-web
-NAME           TYPE           CLUSTER-IP   EXTERNAL-IP      PORT(S)        AGE
-hello-web   LoadBalancer   10.12.5.60   35.238.176.215   80:32309/TCP   1d
-$ 
-$ curl http://35.238.176.215
-[2020-01-14 15:05:28.902724343 +0000 UTC] Hello, world!
-$ 
-$ curl http://35.238.176.215/healthz
-Ok
-```
+        docker push gcr.io/${PROJECT_ID}/hello-app:v2-surge
+
+1.  Update the deployment to use the new image:
+
+        kubectl set image deployment/hello-web hello-app=gcr.io/${PROJECT_ID}/hello-app:v2-surge
+
+### Verify the modified application
+
+Verify that the server can respond to requests and whether the health check reports the application being healthy. You can
+print the external IP as below in case you need it.
+
+1.  Get information about the service:
+
+        kubectl get service hello-web
+	
+    The output should look like this:
+    
+        NAME           TYPE           CLUSTER-IP   EXTERNAL-IP      PORT(S)        AGE
+        hello-web   LoadBalancer   10.12.5.60   35.238.176.215   80:32309/TCP   1d
+	
+1.  Verify that the server can respond to requests:
+
+        curl http://35.238.176.215
+	
+    The output should look like this:
+    
+        [2020-01-14 15:05:28.902724343 +0000 UTC] Hello, world!
+
+1.  Check the health of the application:
+
+        curl http://35.238.176.215/healthz
+	
+    The response should be `Ok`.
 
 ## Generate load and measure error rate
 
-You can start sending traffic to your server. As a first step, you will use a single pod to demonstrate when the system can and when it cannot serve requests successfully.
+After verifying that the application can respond, you can start sending traffic to your server. As a first step, you  
+use a single pod to demonstrate when the system can and cannot serve requests successfully.
 
 ### Run tests with a single pod
 
-First, ensure the deployment is running with a single replica:
+#### Ensure that the deployment is running with a single replica
 
-```shell
-$ kubectl scale --replicas=1 deployment/hello-web
-deployment.extensions/hello-web scaled
-$ 
-$ kubectl get pods
-NAME                            READY   STATUS    RESTARTS   AGE
-hello-web-85c7446cc6-zfpvc   1/1     Running   0          10m
-```
+1.  Scale the deployment to 1 replica:
 
-Next, download two small shell scripts: one to generate load and another to measure error rate.
+        kubectl scale --replicas=1 deployment/hello-web
+	
+    Output:
+    
+        deployment.extensions/hello-web scaled
+
+1.  Get information about the single pod:
+
+        $ kubectl get pods
+	
+    Output:
+    
+        NAME                            READY   STATUS    RESTARTS   AGE
+        hello-web-85c7446cc6-zfpvc   1/1     Running   0          10m
+
+#### Download shell scripts
+
+Download two small shell scripts, one to generate load and another to measure error rate:
 
 ```shell
 curl https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/gke-less-disruptive-node-upgrades/generate_load.sh -O
@@ -235,18 +269,35 @@ curl https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tuto
 chmod u+x generate_load.sh print_error_rate.sh
 ```
 
-Now you can start sending traffic with given frequency. Let’s measure the load in Queries Per Second (QPS) and send the responses received into a file for further processing.
+#### Send traffic to the pod
 
-```shell
-$ kubectl get service hello-web
-NAME           TYPE           CLUSTER-IP   EXTERNAL-IP      PORT(S)        AGE
-hello-web   LoadBalancer   10.12.5.60   35.238.176.215   80:32309/TCP   25d
-$ export IP=35.238.176.215
-$ export QPS=40
-$ ./generate_load.sh $IP $QPS 2>&1
-```
+Now you can start sending traffic with given frequency, measured in queries per second (QPS). 
 
-The above script is simply using curl to send traffic.
+1.  Get information about the service:
+
+        kubectl get service hello-web
+	
+    The output should look like this:
+    
+        NAME           TYPE           CLUSTER-IP   EXTERNAL-IP      PORT(S)        AGE
+        hello-web   LoadBalancer   10.12.5.60   35.238.176.215   80:32309/TCP   25d
+
+1.  Set variables for the IP address and number of queries per second:
+
+        export IP=35.238.176.215
+        export QPS=40
+
+1.  Run the `generate_load` script, which uses `curl` to send traffic and sends the responses to a file for further
+    processing:
+
+        ./generate_load.sh $IP $QPS 2>&1
+
+1.  Check the error rate with the `print_error_rate.sh` script, which calculates error rates based on the number of errors:
+
+        watch ./print_error_rate.sh
+
+
+#### Content of the `generate_load` script:
 
 [embedmd]:# (generate_load.sh)
 ```sh
@@ -269,13 +320,7 @@ while true
 done
 ```
 
-To check error rates you can run:
-
-```shell
-$ watch ./print_error_rate.sh
-```
-
-The above script calculates error rates based on the number of errors 
+#### Content of the `print_error_rate` script:
 
 [embedmd]:# (print_error_rate.sh)
 ```sh
@@ -286,29 +331,39 @@ RATE=$((ERROR1 * 100 / TOTAL))
 echo "Error rate: $ERROR1/$TOTAL (${RATE}%)"
 ```
 
-Anytime you want to "reset statistics” you can just delete the output file.
+#### Test the failure case
 
-You can test now the failure case, when the load cannot be served by a single pod.
+You can now test now the failure case by sending more traffic than a single pod can serve.
 
-```shell
-# first stop generate_load.sh by Ctrl+C
-$ rm output
-$ export QPS=60
-$ ./generate_load.sh $IP $QPS 2>&1
-```
+1.  Stop the `generate_load` script by pressing Ctrl+C.
 
-There should be an increased error rate.
+1.  Reset the error rate statistics, by deleting the output file:
 
-```shell
-$ ./print_error_rate.sh
-Error rate: 190/1080 (17%)
-```
+        rm output
 
-### Add more replicas, configure pod anti affinity, readiness probe
+1.  Set the `QPS` variable to a higher value to increase the number of queries per second:
 
-The previous step demonstrated how a single server handles the load. By scaling up the application and increasing the load on it, you can see how the system behaves, when load balancing becomes relevant. 
+        export QPS=60
 
-The changes below can be applied in one step running the below commands.
+1.  Run the script with the new value:
+
+        ./generate_load.sh $IP $QPS 2>&1
+
+1.  Check the error rate, which should be greater:
+
+        ./print_error_rate.sh
+	
+    You should see output like the following:
+    
+        Error rate: 190/1080 (17%)
+
+### Add more replicas, configure pod anti-affinity, readiness probe
+
+The previous section demonstrated how a single server handles the load. By scaling up the application and increasing the 
+load on it, you can see how the system behaves when load balancing becomes relevant. 
+
+The following section describes how to make a series of changes, but you can apply all of the changes in one step by running
+the following two commands:
 
 ```shell
 curl https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/gke-less-disruptive-node-upgrades/hello_server_with_resource_pool.yaml -O
