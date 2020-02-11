@@ -85,7 +85,7 @@ If you don't want to edit the source code manually, you can download the updated
 local copy with it.
 
 ```shell
-$ curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-less-disruptive-node-upgrades/main.go -O
+$ curl https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/gke-less-disruptive-node-upgrades/main.go -O
 ```
 
 ### Add a resource pool implementation
@@ -230,8 +230,8 @@ hello-web-85c7446cc6-zfpvc   1/1     Running   0          10m
 Next, download two small shell scripts: one to generate load and another to measure error rate.
 
 ```shell
-curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-less-disruptive-node-upgrades/generate_load.sh -O
-curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-less-disruptive-node-upgrades/print_error_rate.sh -O
+curl https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/gke-less-disruptive-node-upgrades/generate_load.sh -O
+curl https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/gke-less-disruptive-node-upgrades/print_error_rate.sh -O
 chmod u+x generate_load.sh print_error_rate.sh
 ```
 
@@ -311,7 +311,7 @@ The previous step demonstrated how a single server handles the load. By scaling 
 The changes below can be applied in one step running the below commands.
 
 ```shell
-curl https://raw.githubusercontent.com/tamasr/community/master/tutorials/gke-less-disruptive-node-upgrades/hello_server_with_resource_pool.yaml -O
+curl https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/gke-less-disruptive-node-upgrades/hello_server_with_resource_pool.yaml -O
 kubectl replace -f hello_server_with_resource_pool.yaml
 ```
 
@@ -332,7 +332,7 @@ You can change the number of replicas to three. To ensure each replica is schedu
             topologyKey: kubernetes.io/hostname
       # Pod anti affinity config END
       containers:
-      - image: gcr.io/tamasr-gke-dev/hello-app:v2-surge
+      - image: gcr.io/<YOUR_PROJECT_ID>/hello-app:v2-surge
         name: hello-app
         # Readiness probe config START
         readinessProbe:
@@ -408,8 +408,6 @@ You can start with the case without surge node. Make sure your node pool has zer
 
 ```shell
 $ gcloud beta container node-pools update default-pool --max-surge-upgrade=0 --max-unavailable-upgrade=1 --cluster=hello-cluster
-Updating node pool default-pool...done.                                        
-Updated [https://container.googleapis.com/v1beta1/projects/tamasr-gke-dev/zones/us-central1-a/clusters/hello-cluster/nodePools/default-pool].
 ```
 
 You can now clear the output file you got from earlier runs and start watching the error rate. **(TERMINAL-1)**
@@ -459,8 +457,6 @@ With surge upgrades it is possible to upgrade nodes in a way when the node pool 
 
 ```shell
 $ gcloud beta container node-pools update default-pool --max-surge-upgrade=1 --max-unavailable-upgrade=0 --cluster=hello-cluster
-Updating node pool default-pool...done.                                        
-Updated [https://container.googleapis.com/v1beta1/projects/tamasr-gke-dev/zones/us-central1-a/clusters/hello-cluster/nodePools/default-pool].
 ```
 
 You can clear the output you got from earlier runs and watch the error rate. **(TERMINAL-1)**
