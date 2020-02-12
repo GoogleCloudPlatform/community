@@ -98,12 +98,12 @@ Tianzi Cai | Developer Programs Engineer | Google Cloud
 
 ## Bind Cloud Pub/Sub to Your Spring Boot Application
 
-For your Spring Boot application to send data to a Cloud Pub/Sub topic and receive data from a Cloud Pub/Sub subscription, it can make use of Google Cloud Platform-maintained Spring Cloud Stream binders for Cloud Pub/Sub.
+Spring makes use of Spring Cloud Stream binders for Cloud Pub/Sub to send data to a Cloud Pub/Sub topic and receive data from a Cloud Pub/Sub subscription.
 
 Your application will know how to send data from an internal queue to a Cloud Pub/Sub topic if you specify 1). a Spring Cloud Stream source and 2). a Cloud Pub/Sub topic.
 
 #### Specify a Spring Cloud Stream source
-Spring can recognize a Spring Cloud Stream source when it is defined as a Supplier bean.
+Spring can recognize a Spring Cloud Stream source as a Supplier bean.
 
 [embedmd]:# (pubsub-spring/src/main/java/com/google/example/App.java java /  \/\/ The Supplier Bean/ /}/)
 ```java
@@ -131,7 +131,7 @@ spring.cloud.stream.bindings.sendMessagesForDeduplication-out-0.destination=topi
 Similarly, your application will know how to receive data from a Cloud Pub/Sub subscription if you specify 1). a Spring Cloud Stream sink and 2). a pair of Cloud Pub/Sub topic and subscription.
 
 #### Specify a Spring Cloud Stream sink
-Spring can recognize a Spring Cloud Stream sink when it is defined as a Consumer bean.
+Spring can recognize a Spring Cloud Stream sink as a Consumer bean.
 
 [embedmd]:# (pubsub-spring/src/main/java/com/google/example/App.java java /  \/\/ The Consumer Bean/ /}/)
 ```java
@@ -165,11 +165,11 @@ cd pubsub-spring/
 mvn spring-boot:run
 ```
 
-Observe that your app has started successfully by pointing your browser to `localhost:8080`. You should be able to send messages using the form there. At this point, Spring will have automatically created the Cloud Pub/Sub topic that you have specified in `application.properties` to publish your message to. You can view Publish Message Request Count and Publish Message Operation Count in the topic details in [Cloud Console] to verify that publishing to Cloud Pub/Sub is successful.  
+Observe that your app has started successfully by pointing your browser to `localhost:8080`. You should be able to send messages using the form there. At this point, Spring will have automatically created the Cloud Pub/Sub topic that you have specified in `application.properties` to publish your message to. You can view Publish Message Request Count and Publish Message Operation Count in the topic details in [Cloud Console for Pub/Sub Topic] to verify that publishing to Cloud Pub/Sub is successful.  
 
 ## Start a Cloud Dataflow Job to Deduplicate Pub/Sub Messages
 
-As a middle process that takes data from a Cloud Pub/Sub topic and publishes processed data to another Cloud Pub/Sub topic, Cloud Dataflow achieves exactly once stream processing by asking the input stream for an `idAttribute`. Using the user-defined key name as the unique record identifier name, Cloud Dataflow avoid processing messages of the same key multiple times.
+As a middle process that takes data from a Cloud Pub/Sub topic and publishes processed data to another Cloud Pub/Sub topic, Cloud Dataflow achieves exactly once stream processing by asking the input stream for an `idAttribute`. Using the user-defined key name as the unique record identifier name, Cloud Dataflow avoids processing messages of the same key multiple times.
 
 [embedmd]:# (pubsubio-dedup/src/main/java/com/google/example/DedupPubSub.java java /  pipeline\n.*1\)./ /;/)
 ```java
@@ -185,6 +185,8 @@ As a middle process that takes data from a Cloud Pub/Sub topic and publishes pro
 ```
 
 #### Run the Dataflow job
+
+To start the Dataflow job, run: 
 ```shell script
   cd pubsubio-dedup/
   mvn compile exec:java \
@@ -197,6 +199,10 @@ As a middle process that takes data from a Cloud Pub/Sub topic and publishes pro
      --idAttribute=key \
      --runner=DataflowRunner"
 ```
+You can observe the job's progress in the [Cloud Console for Dataflow]. Wait a few minutes for the job status to change from "progress" to "running".
+
+#### Test your Code
+Publish a few messages of different keys via the localhost to observe the desired behavior of deduplicated messages.
 
 ## Cleanup
 
@@ -212,7 +218,8 @@ As a middle process that takes data from a Cloud Pub/Sub topic and publishes pro
 [GCP Console IAM page]: https://console.cloud.google.com/iam-admin/iam/
 [Granting roles to service accounts]: https://cloud.google.com/iam/docs/granting-roles-to-service-accounts/
 [Creating and managing service accounts]: https://cloud.google.com/iam/docs/creating-managing-service-accounts/
-[Cloud Console]: https://pantheon.corp.google.com/cloudpubsub/topic/
+[Cloud Console for Pub/Sub Topic]: https://console.cloud.google.com/cloudpubsub/topic/
+[Cloud Console for Dataflow]: http://console.cloud.google.com/dataflow/
 
 [Binding and Binding Names]: https://github.com/spring-cloud/spring-cloud-stream/blob/master/docs/src/main/asciidoc/spring-cloud-stream.adoc#binding-and-binding-names
 [Common Binding Properties]: https://github.com/spring-cloud/spring-cloud-stream/blob/master/docs/src/main/asciidoc/spring-cloud-stream.adoc#common-binding-properties
