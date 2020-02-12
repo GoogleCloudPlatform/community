@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: hello-web
+  name: hello-web
+  namespace: default
+spec:
+  replicas: 3 
+  selector:
+    matchLabels:
+      app: hello-web
+  template:
+    metadata:
+      labels:
+        app: hello-web
+    spec:
+      # Pod anti affinity config START
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - hello-web
+            topologyKey: kubernetes.io/hostname
+      # Pod anti affinity config END
+      containers:
+      - image: gcr.io/tamasr-gke-dev/hello-app:v2-surge
+        name: hello-app
+        # Readiness probe config START
+        readinessProbe:
+          failureThreshold: 1 
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 1
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 1
+        # Readiness probe config END
