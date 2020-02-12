@@ -15,18 +15,18 @@ node pool with and without surge upgrades and measure the error rate on the clie
 ## Objectives
 
 * Run a demonstration application that serves HTTP requests. Processing of each request requires access to a resource. Each
-  node of the cluster has access only to a limted number of resources. If there's no available resources left, the server 
+  node of the cluster has access only to a limted number of resources. If there are no available resources left, the server 
   returns an error.
 * Test the application with lower and higher load and observe how error rate increases as the server runs out of resources.
 * Upgrade the nodes without surge upgrades. Observe how the temporary loss of capacity causes increased error rates.
-* Upgrade the nodes using surge upgrades. Observe how error rates remain significantly lower due to the additional capacity
+* Upgrade the nodes using surge upgrades. Observe how error rates decrease because of the additional capacity
   provided by the surge node.
 
 ## Before you begin
 
 We recommend that you use 
 [Cloud Shell](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_a_use_google_cloud_shell) 
-to run the commands in this tutorial. As an alternative, you can use your own workstation to run commands locally. in which
+to run the commands in this tutorial. As an alternative, you can use your own workstation to run commands locally, in which
 case you would need to install the
 [required tools](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_b_use_command-line_tools_locally).
 
@@ -35,11 +35,9 @@ This tutorial requires a Google Cloud project. You can use an existing project o
 
 This tutorial follows the
 [Deploying a containerized web application](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app) tutorial.
-We recommended that you complete the previous tutorial before starting this one.
-
-If you didn't complete the
+We recommend that you complete the previous tutorial before starting this one. If you didn't complete the
 [Deploying a containerized web application](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app) 
-tutorial and would like to immediately start this tutorial, you can run the following commands to create a cluster with
+tutorial and would like to immediately start this tutorial, then you can run the following commands to create a cluster with
 the `hello-app` application running on it:
 
 1.  Clone the repository and navigate to the app directory:
@@ -91,7 +89,7 @@ $ curl https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tu
 
 ### Add a resource pool implementation
 
-To extend the application with the use of a limited resource, you introduce an (emulated) resource pool. In response 
+To extend the application with the use of a limited resource, you introduce an emulated resource pool. In response 
 to each request, the application attempts to allocate a resource from the pool. If there are no available resources, then
 the application returns an error. If the allocation is successful, then the application performs some work, and then it 
 releases the resource back to the pool.
@@ -207,8 +205,7 @@ Since you are done with source code changes, you can build, push, and deply the 
 
 ### Verify the modified application
 
-Verify that the server can respond to requests and whether the health check reports the application being healthy. You can
-print the external IP as below in case you need it.
+Verify that the server can respond to requests and whether the health check reports the application being healthy. 
 
 1.  Get information about the service:
 
@@ -271,7 +268,7 @@ chmod u+x generate_load.sh print_error_rate.sh
 
 #### Send traffic to the pod
 
-Now you can start sending traffic with given frequency, measured in queries per second (QPS). 
+Now you can start sending traffic with a given frequency, measured in queries per second (QPS). 
 
 1.  Get information about the service:
 
@@ -333,11 +330,11 @@ echo "Error rate: $ERROR1/$TOTAL (${RATE}%)"
 
 #### Test the failure case
 
-You can now test now the failure case by sending more traffic than a single pod can serve.
+Test the failure case by sending more traffic than a single pod can serve.
 
 1.  Stop the `generate_load` script by pressing Ctrl+C.
 
-1.  Reset the error rate statistics, by deleting the output file:
+1.  Reset the error rate statistics by deleting the output file:
 
         rm output
 
@@ -431,7 +428,7 @@ traffic.
 #### Generate traffic that the system can handle
 
 One pod has a resource pool of size 50 and ~1 second processing time. The health checks consider a pod healthy only if the 
-node pool is less than 90% utilized (has less than 45 resources in use). This gives us a total of ~3x45 = 135 QPS load that
+node pool is less than 90% utilized (has less than 45 resources in use). This gives a total of ~3x45 = 135 QPS load that
 the system can handle. Use 120 QPS for this test.
 
 1.  Set the number of queries per second:
@@ -480,17 +477,17 @@ As demonstration for the failure case, you can increase QPS to 160.
 
 ## Test the impact of upgrades on application availability
 
-This section is to demonstrate how the loss of capacity may hurt the service during a node upgrade if there is no extra 
+This section demonstrates how the loss of capacity may hurt the service during a node upgrade if there is no extra 
 capacity made available in the form of surge nodes. Before surge upgrades were introduced, every upgrade of a node pool
 involved the temporary loss of a single node, because every node had to be recreated with a new image with the new version. 
 
-Some customers were increasing the size of the node pool by one before upgrades and then restoring the size after a 
+Some users were increasing the size of the node pool by one before upgrades and then restoring the size after a 
 successful upgrade. However, this is error-prone manual work. Surge upgrades makes it possible to do this automatically and
 reliably.
 
 ### Upgrade the node pool without surge nodes
 
-In this section of the tutorial, you will need to open multiple terminals. Where it is relevant, the commands are labeled. 
+In this section of the tutorial, you open multiple terminals. Where it is relevant, the commands are labeled. 
 For example, the following precedes commands that you enter in the first terminal that you open: "In **terminal 1**:" 
 
 1.  To begin without surge upgrades, make sure that your node pool has zero surge nodes configured:
@@ -541,7 +538,7 @@ For example, the following precedes commands that you enter in the first termina
 
         Error rate: 25690/97080 (26%)
 
-### Upgrade node pool with surge nodes
+### Upgrade the node pool with surge nodes
 
 With surge upgrades, you can upgrade nodes so that the node pool doesn’t lose any capacity. 
 
