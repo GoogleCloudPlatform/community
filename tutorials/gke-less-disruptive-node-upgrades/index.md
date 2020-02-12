@@ -297,7 +297,7 @@ Now you can start sending traffic with given frequency, measured in queries per 
         watch ./print_error_rate.sh
 
 
-#### Content of the `generate_load` script:
+#### Content of the `generate_load` script
 
 [embedmd]:# (generate_load.sh)
 ```sh
@@ -320,7 +320,7 @@ while true
 done
 ```
 
-#### Content of the `print_error_rate` script:
+#### Content of the `print_error_rate` script
 
 [embedmd]:# (print_error_rate.sh)
 ```sh
@@ -357,22 +357,37 @@ You can now test now the failure case by sending more traffic than a single pod 
     
         Error rate: 190/1080 (17%)
 
-### Add more replicas, configure pod anti-affinity, readiness probe
+### Run tests with more replicas
 
 The previous section demonstrated how a single server handles the load. By scaling up the application and increasing the 
 load on it, you can see how the system behaves when load balancing becomes relevant. 
 
-The following section describes how to make a series of changes, but you can apply all of the changes in one step by running
-the following two commands:
+The following section describes how to make a series of changes to the configuration in the 
+`hello_server_with_resource_pool.yaml` file, but you can apply all of the changes in one step by running the following two
+commands:
 
 ```shell
 curl https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/gke-less-disruptive-node-upgrades/hello_server_with_resource_pool.yaml -O
 kubectl replace -f hello_server_with_resource_pool.yaml
 ```
 
-You can change the number of replicas to three. To ensure each replica is scheduled on a different node, you can configure [pod anti affinity](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/) as well.
+#### Add more replicas, configure pod anti-affinity, readiness probe
 
-[embedmd]:# (hello_server_with_resource_pool.yaml /^.*# Pod anti affinity config START/ /# Readiness probe config END/)
+You can change the number of replicas to 3 in the `spec` section of the `hello_server_with_resource_pool.yaml` file:
+
+```yaml
+spec:
+  replicas: 3 
+  selector:
+    matchLabels:
+      app: hello-web
+```
+
+To ensure that each replica is scheduled on a different node, use
+[pod anti-affinity](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/), as configured in this section of 
+the `hello_server_with_resource_pool.yaml` file: 
+
+[embedmd]:# (hello_server_with_resource_pool.yaml /^.*# Pod anti affinity config START/ /# Pod anti affinity config END/)
 ```yaml
       # Pod anti affinity config START
       affinity:
@@ -386,24 +401,10 @@ You can change the number of replicas to three. To ensure each replica is schedu
                 - hello-web
             topologyKey: kubernetes.io/hostname
       # Pod anti affinity config END
-      containers:
-      - image: gcr.io/<YOUR_PROJECT_ID>/hello-app:v2-surge
-        name: hello-app
-        # Readiness probe config START
-        readinessProbe:
-          failureThreshold: 1 
-          httpGet:
-            path: /healthz
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 1
-          periodSeconds: 1
-          successThreshold: 1
-          timeoutSeconds: 1
-        # Readiness probe config END
 ```
 
-To ensure requests are routed to replicas that have capacity available, you need to configure [readiness probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes).
+To ensure that requests are routed to replicas that have capacity available, use
+[readiness probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes), as configured in this section of the `hello_server_with_resource_pool.yaml` file:
 
 [embedmd]:# (hello_server_with_resource_pool.yaml /^.*# Readiness probe config START/ /# Readiness probe config END/)
 ```yaml
@@ -421,151 +422,193 @@ To ensure requests are routed to replicas that have capacity available, you need
         # Readiness probe config END
 ```
 
-Note: Using this sample application the addition of the readiness probe does not improve the availability noticeably, since both the generated load and processing of each request is fairly deterministic and close enough to be evenly distributed among nodes. In a different situation the role of the readiness probe could be more significant. Also the right number of replicas and the signal when a pod would be considered healthy would require carefully optimization to match the incoming traffic.
+Note: For this sample application, the addition of the readiness probe does not improve the availability noticeably, since 
+both the generated load and processing of each request are fairly deterministic and close enough to being evenly distributed
+among nodes. In a different situation, the role of the readiness probe could be more significant. Also, the right number of 
+replicas and the signal when a pod would be considered healthy would require careful optimization to match the incoming 
+traffic.
 
-Now generate load the system can handle. One pod has a resource pool with the size of 50 and close to 1 second processing time. Also our health checks consider a pod healthy only if the node pool is less than 90% utilized (has less than 45 resources in use). This gives us a total of ~3x45 = 135 QPS load the system can handle. 120 QPS will be the choice for this test.
+#### Generate traffic that the system can handle
 
-```shell
-$ export QPS=120
-$ ./generate_load.sh $IP $QPS 2>&1
-```
+One pod has a resource pool of size 50 and ~1 second processing time. The health checks consider a pod healthy only if the 
+node pool is less than 90% utilized (has less than 45 resources in use). This gives us a total of ~3x45 = 135 QPS load that
+the system can handle. Use 120 QPS for this test.
 
-It is likely that you see some errors in this case, although the rate should be relatively low. In spite of our efforts with replication and health checks there might be requests already in flight at the time a replica runs out of resources, so the load balancer won’t be able to prevent the requests from being rejected by the pod.
+1.  Set the number of queries per second:
 
-```shell
-$ ./print_error_rate.sh
-Error rate: 190/18960 (1%)
-```
+        export QPS=120
+	
+1.  Run the `generate_load` script:
+
+        ./generate_load.sh $IP $QPS 2>&1
+
+    You probably see some errors in this case, although the rate should be relatively low. In spite of the replication and
+    health checks, there might be requests already in transit when a replica runs out of resources, so the load balancer 
+    won’t be able to prevent the requests from being rejected by the pod.
+
+1.  Check the error rate:
+
+        ./print_error_rate.sh
+
+    You probably see some errors in this case, although the rate should be relatively low. For example, 
+    the output may look something like this:
+    
+        Error rate: 190/18960 (1%)
+    
+    In spite of the replication and health checks, there might be requests already in transit when a replica runs out of 
+    resources, so the load balancer won’t be able to prevent the requests from being rejected by the pod.
+    
+#### Demonstrate the failure case with a higher traffic rate
 
 As demonstration for the failure case, you can increase QPS to 160.
 
-```shell
-$ export QPS=160
-$ ./generate_load.sh $IP $QPS 2>&1
-```
+1.  Set the number of queries per second:
 
-The error rate increased:
+        export QPS=160
+	
+1.  Run the `generate_load` script:
 
-```shell
-$ ./print_error_rate.sh
-Error rate: 1901/11840 (16%)
-```
+        ./generate_load.sh $IP $QPS 2>&1
+
+1.  Check the error rate:
+
+        ./print_error_rate.sh
+	
+    The error rate should have increased, with output like the following:
+
+        Error rate: 1901/11840 (16%)
 
 ## Test the impact of upgrades on application availability
 
-This section is to demonstrate how the loss of capacity may hurt the service during a node upgrade if there is no extra capacity made available in the form of surge nodes. Before Surge Upgrade was introduced every upgrade of a node pool involved the temporary loss of a single node, since every node had to be recreated with a new image with the new version. Some customers were increasing the size of the node pool by one before upgrades then restored the size after successful upgrade, however this is error prone manual work. Surge Upgrade makes it possible to do this automatically and reliably.
+This section is to demonstrate how the loss of capacity may hurt the service during a node upgrade if there is no extra 
+capacity made available in the form of surge nodes. Before surge upgrades were introduced, every upgrade of a node pool
+involved the temporary loss of a single node, because every node had to be recreated with a new image with the new version. 
 
-### Upgrade node pool without surge nodes
+Some customers were increasing the size of the node pool by one before upgrades and then restoring the size after a 
+successful upgrade. However, this is error-prone manual work. Surge upgrades makes it possible to do this automatically and
+reliably.
 
-In this section of the tutorial you will need to open multiple terminals. Where it is relevant, the commands will be marked. For example before a command that needs to run in the first terminal you opened, there is a marker: **(TERMINAL-1)**
+### Upgrade the node pool without surge nodes
 
-You can start with the case without surge node. Make sure your node pool has zero surge nodes configured.
+In this section of the tutorial, you will need to open multiple terminals. Where it is relevant, the commands are labeled. 
+For example, the following precedes commands that you enter in the first terminal that you open: "In **terminal 1**:" 
 
-```shell
-$ gcloud beta container node-pools update default-pool --max-surge-upgrade=0 --max-unavailable-upgrade=1 --cluster=hello-cluster
-```
+1.  To begin without surge upgrades, make sure that your node pool has zero surge nodes configured:
 
-You can now clear the output file you got from earlier runs and start watching the error rate. **(TERMINAL-1)**
+        $ gcloud beta container node-pools update default-pool --max-surge-upgrade=0 --max-unavailable-upgrade=1 --cluster=hello-cluster
 
-```shell
-$ rm output
-$
-$ watch ./print_error_rate.sh
-```
+1.  Clear the output file from earlier runs and start watching the error rate.
 
-In a separate terminal **(TERMINAL-2)** you can watch the state of the nodes and pods to follow the upgrade process closely.
+    In **terminal 1**: 
 
-```shell
-$ watch 'kubectl get nodes,pods -o wide'
-```
+        rm output
+        watch ./print_error_rate.sh
 
-You can start sending some load now. **(TERMINAL-3)**
+1.  Watch the state of the nodes and pods to follow the upgrade process closely.
 
-```shell
-$ export QPS=120
-$ ./generate_load.sh $IP $QPS 2>&1
-```
+    In **terminal 2**:
 
-Then you can start an upgrade **(TERMINAL-4)**. **Warning:** this operation may take 10-15 minutes to complete.
+        watch 'kubectl get nodes,pods -o wide'
 
-```shell
-# find a lower minor version
-$ V=$(gcloud container node-pools  describe default-pool --cluster=hello-cluster | grep version | sed -E "s/version: 1\.([^\.]+)\..*/\1/" | tr -d '\n');  V=$((V-1)); echo "1.$V"
-$ gcloud container clusters upgrade hello-cluster --cluster-version=$V --node-pool=default-pool
-```
+1.  Start sending traffic.
 
-Note on cluster-version used. It is not possible to upgrade nodes to a higher version than the master, but it is possible to downgrade them. In this example you (most likely) started with a cluster that had nodes already on the master version. In that case you can pick any lower version (minor or patch) to perform a downgrade. In the next step you can bring the nodes back to their original version with an upgrade.
+    In **terminal 3**:
 
-Notice that the pod on the first node to be updated gets evicted and remains unschedulable while GKE is recreating the node (since there is no node available to schedule the pod on). This reduces the capacity of the entire cluster and it leads to higher error rate. (~20% instead of earlier ~1% in your tests with the same QPS.) The same happens with subsequent nodes as well (i.e. the evicted pod remains unschedulable until the node upgrade finishes and the node becomes READY).
+        export QPS=120
+        ./generate_load.sh $IP $QPS 2>&1
 
-At the end of the upgrade you should see high error rate **(TERMINAL-1)**. Something like:
+1.  Find a lower minor version and then start an upgrade.
 
-```shell
-Error rate: 25690/97080 (26%)
-```
+    In **terminal 4**:
+    
+        V=$(gcloud container node-pools  describe default-pool --cluster=hello-cluster | grep version | sed -E "s/version: 1\.([^\.]+)\..*/\1/" | tr -d '\n');  V=$((V-1)); echo "1.$V"
+        gcloud container clusters upgrade hello-cluster --cluster-version=$V --node-pool=default-pool
+
+    This operation may take 10-15 minutes to complete.
+
+    Note on `cluster-version` used: It is not possible to upgrade nodes to a higher version than the master, but it is 
+    possible to downgrade them. In this example, you most likely started with a cluster that had nodes already on the master 
+    version. In that case, you can pick any lower version (minor or patch) to perform a downgrade. In the next section, you 
+    can bring the nodes back to their original version with an upgrade.
+
+    Notice that the pod on the first node to be updated gets evicted and remains unschedulable while GKE is re-creating the
+    node (since there is no node available to schedule the pod on). This reduces the capacity of the entire cluster and 
+    leads to a higher error rate (~20% instead of ~1% in your earlier tests with the same traffic). The same happens with 
+    subsequent nodes, as well (that is, the evicted pod remains unschedulable until the node upgrade finishes and the node 
+    becomes ready).
+
+    When the upgrade is complete, you should see a higher error rate in **terminal 1**, like the following:
+
+        Error rate: 25690/97080 (26%)
 
 ### Upgrade node pool with surge nodes
 
-In this section of the tutorial, again you will need to open multiple terminals. Where it is relevant, the commands will be marked. For example before a command that needs to run in the first terminal you opened, there is a marker: **(TERMINAL-1)**
+With surge upgrades, you can upgrade nodes so that the node pool doesn’t lose any capacity. 
 
-With surge upgrades it is possible to upgrade nodes in a way when the node pool won’t lose any capacity by setting maxUnavailble to 0 and maxSurge to greater than 0.
+1.  Configure the node pool:
 
-```shell
-$ gcloud beta container node-pools update default-pool --max-surge-upgrade=1 --max-unavailable-upgrade=0 --cluster=hello-cluster
-```
+        gcloud beta container node-pools update default-pool --max-surge-upgrade=1 --max-unavailable-upgrade=0 --cluster=hello-cluster
+	
+1.  Clear the output from earlier runs and watch the error rate.
 
-You can clear the output you got from earlier runs and watch the error rate. **(TERMINAL-1)**
+    In **terminal 1**:
 
-```shell
-$ rm output
-$
-$ watch ./print_error_rate.sh
-```
+        rm output
+        watch ./print_error_rate.sh
 
-In a separate terminal **(TERMINAL-2)** you can watch the state of the nodes and pods again to follow the upgrade process.
+1.  Watch the state of the nodes and pods to follow the upgrade process.
 
-```shell
-$ watch 'kubectl get nodes,pods -o wide'
-```
+    In **terminal 2**:
 
-You can start sending some load again. **(TERMINAL-3)**
+        watch 'kubectl get nodes,pods -o wide'
 
-```shell
-$ export QPS=120
-$ ./generate_load.sh $IP $QPS 2>&1
-```
+1.  Start sending traffic:
 
-Then you can start an upgrade **(TERMINAL-4)**. **Warning:** this operation may take 10-15 minutes to complete.
+    In **terminal 3**:
 
-```shell
-# find the master version
-$ V=$(gcloud container clusters describe hello-cluster | grep "version:" | sed "s/version: //")
-$ gcloud container clusters upgrade hello-cluster --cluster-version=$V --node-pool=default-pool
-```
+        export QPS=120
+        ./generate_load.sh $IP $QPS 2>&1
 
-Note on cluster-version. You can select here the version of your master. For more see the note on cluster-version at the previous section
+1.  Find the master version and start an upgrade.
 
-There should be a significantly lower error rate measured for this upgrade. **(TERMINAL-1)**
+    In **terminal 4**:
 
-```shell
-Error rate: 3386/81956 (4%)
-```
+        V=$(gcloud container clusters describe hello-cluster | grep "version:" | sed "s/version: //")
+        gcloud container clusters upgrade hello-cluster --cluster-version=$V --node-pool=default-pool
 
-Notice that how pods remain in running state while GKE is bringing up and registering the new node.
-Also notice that the error rate was still higher than the one we saw when there was no upgrade running. This points out an important detail that the **pods still need to be moved from one node to another**. Although we have sufficient compute capacity to schedule an evicted pod, stopping and starting it up again takes time, which causes disruption. 
+    This operation may take 10-15 minutes to complete.
 
-The error rate can be reduced further by increasing the number of replicas, so workload can be served even if a pod is restarted. Also you can declare the number of pods required to serve requests using [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/) (PDB). With PDBs you can cover more failure cases. For example in case of an involuntary disruption (like a node error) pod eviction won't start until the ongoing disruption is over (like the failed node is repaired), so restarting the pod won't cause the number of replicas to be lower than required by PDB.
+    Note on `cluster-version`: In the first command, you can use version of your master.
 
+    When the upgrade is complete, you should see a lower error rate in **terminal 1**, like the following:
+
+        Error rate: 3386/81956 (4%)
+
+Notice that the pods remain in the running state while GKE is bringing up and registering a new node. Also notice that the 
+error rate was still higher than the one we saw when there was no upgrade running. This points out an important detail that 
+the *pods still need to be moved from one node to another*. Although we have sufficient compute capacity to schedule an
+evicted pod, stopping and starting it up again takes time, which causes disruption. 
+
+The error rate can be reduced further by increasing the number of replicas, so workload can be served even if a pod is
+restarted. Also, you can declare the number of pods required to serve requests using
+[PodDisruptionBudget (PDB)](https://kubernetes.io/docs/tasks/run-application/configure-pdb/). With a pod disruption budget, 
+you can cover more failure cases. For example, in the case of an involuntary disruption (like a node error), pod eviction 
+won't start until the ongoing disruption is over (for example, the failed node is repaired), so restarting the pod won't 
+cause the number of replicas to be lower than required by PDB.
 
 ## Conclusion
 
-Kubernetes node upgrades are disruptive since they cause pods to be moved and restarted. One key factor that may reduce the availability of an applications if there is no sufficient compute capacity to get pods, which were evicted due to an upgrade, scheduled immediately, so pods may remain unscheduled and unable to serve traffic. GKE Surge Upgrade solves this problem by bringing up additional (surge) nodes, so insufficient compute capacity cannot cause disruption. Other factors, for example the time it takes to restart a pod would still contribute to disruption.
-
+Kubernetes node upgrades are disruptive because they cause pods to be moved and restarted. This is a key factor that may 
+reduce the availability of an application if there is not sufficient compute capacity to get pods that were evicted due to 
+an upgrade scheduled immediately, so pods may remain unscheduled and unable to serve traffic. GKE surge upgrades solve this
+problem by bringing up additional (surge) nodes, so insufficient compute capacity cannot cause disruption. Other factors, 
+such as the time it takes to restart a pod, can still contribute to disruption.
 
 ## Cleaning up
 
-Deleting the cluster removes all resources used in this demo.
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the 
+resources that you created.
 
-```shell
-$ gcloud container clusters delete hello-cluster
-```
+Deleting the cluster removes all resources used in this demo:
+
+    gcloud container clusters delete hello-cluster
