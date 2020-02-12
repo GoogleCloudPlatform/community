@@ -26,7 +26,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import reactor.core.publisher.EmitterProcessor;
 
 /**
- * Takes strings from front-end and directs them to an internal processing queue, to be sent to Cloud Pub/Sub.
+ * A Rest Controller for users to submit a message body with a key.
  */
 @RestController
 public class DataEntryController {
@@ -35,15 +35,16 @@ public class DataEntryController {
   private EmitterProcessor<Message<String>> frontEndListener;
 
   @PostMapping("/sendData")
-  public RedirectView mainPage(@RequestParam("data") String data, @RequestParam("key") String key) {
-    System.out.println("Sending data: \"" + data + "\" of key \"" + key + "\" ..");
+  public RedirectView mainPage(
+    @RequestParam("data") String data, @RequestParam("key") String key) {
+    System.out.println("Sending data: " + data + " of key " + key + "..");
 
     Message<String> message = MessageBuilder
       .withPayload(data)
       .setHeader("key", key)
       .build();
 
-    // Sends data into local processing queue
+    // Sends message to a local processing queue, to be sent to Cloud Pub/Sub.
     this.frontEndListener.onNext(message);
 
     return new RedirectView("/");

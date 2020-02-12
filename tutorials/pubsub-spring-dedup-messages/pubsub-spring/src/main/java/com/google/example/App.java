@@ -26,7 +26,15 @@ import org.springframework.messaging.Message;
 import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
 
-/** */
+/**
+ * Spring Boot application that uses Cloud Pub/Sub as a message broker.
+ *
+ * This class bootstraps the application. The Supplier bean sends data from an
+ * internal queue to a Cloud Pub/Sub topic; the Consumer bean returns data from
+ * Cloud Pub/Sub to the application; the EmitterProcessor bean establishes
+ * communication between DataEntryController and a Spring Cloud Stream source.
+ *
+ */
 @SpringBootApplication
 public class App {
 
@@ -34,19 +42,24 @@ public class App {
     SpringApplication.run(App.class, args);
   }
 
+  // This acts as a bridge between the frontend and a Spring Cloud Stream source.
   @Bean
   public EmitterProcessor<Message<String>> frontEndListener() {
     return EmitterProcessor.create();
   }
 
-  // This will automatically send all data from the internal queue to the Pub/Sub topic configured
-  // in application.properties.
+  // The Supplier Bean makes this a valid Spring Cloud Stream source. It sends
+  // messages to a Cloud Pub/Sub topic configured with the binding name
+  // `sendMessagesForDeduplication-out-0` in application.properties.
   @Bean
   Supplier<Flux<Message<String>>> sendMessagesForDeduplication(
     final EmitterProcessor<Message<String>> frontEndListener) {
     return () -> frontEndListener;
   }
 
+  // The Consumer Bean makes this a valid Spring Cloud Stream sink. It receives
+  // messages from the Cloud Pub/Sub subscription configured with the binding
+  // name `receiveDedupedMessagesFromDataflow-in-0` in application.properties.
   @Bean
   Consumer<Message<String>> receiveDedupedMessagesFromDataflow() {
     return msg -> {
