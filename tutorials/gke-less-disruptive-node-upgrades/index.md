@@ -80,8 +80,8 @@ for this tutorial is estimated to be less than $0.10. For details, see
 In this section, you modify the `hello-app` source code to use a limited resource and provide health signals based on resource availability.
 
 If you don't want to edit the source code manually, you can download the updated version of
-[`main.go`](https://github.com/GoogleCloudPlatform/community/master/tutorials/gke-less-disruptive-node-upgrades/main.go) and 
-overwrite your local copy with it:
+[`main.go`](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/gke-less-disruptive-node-upgrades/main.go)
+and overwrite your local copy with it:
 
 ```shell
 $ curl https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/gke-less-disruptive-node-upgrades/main.go -O
