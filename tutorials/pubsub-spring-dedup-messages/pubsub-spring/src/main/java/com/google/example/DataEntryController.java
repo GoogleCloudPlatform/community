@@ -39,13 +39,13 @@ public class DataEntryController {
     @RequestParam("data") String data, @RequestParam("key") String key) {
     System.out.println("Sending data: " + data + " of key " + key + "..");
 
-    // Headers will be interpreted as Pub/Sub message attributes.
+    // Headers will populate Pub/Sub message attributes.
     Message<String> message = MessageBuilder
       .withPayload(data)
       .setHeader("key", key)
       .build();
 
-    // Sends a message to a local processing queue, to be sent to Cloud Pub/Sub.
+    // Send a message to a local processing queue (to be sent to Cloud Pub/Sub).
     this.frontEndListener.onNext(message);
 
     return new RedirectView("/");
