@@ -118,14 +118,14 @@ In [App.java](pubsub-spring/src/main/java/com/google/example/App.java):
 ```
 
 ### Specify a Cloud Pub/Sub topic for the source
-Spring can find the Cloud Pub/Sub topic that your code should publish data to when you provide a topic name in `application.properties` and assign it to a source using an output binder. Here, the output binding name is `sendMessagesForDeduplication-out-0`. For more information, see [Binding and Binding Names].
+Spring can find the Cloud Pub/Sub topic that your code should publish data to when you provide a topic name for your source in `application.properties` using an output binder. Here, the output binder's binding name is `sendMessagesForDeduplication-out-0`. For more information, see [Binding and Binding Names].
 
 In [application.properties](pubsub-spring/src/main/resources/application.properties):
 
 [embedmd]:# (pubsub-spring/src/main/resources/application.properties /.*Data going/ /=topicToDataflow/)
 ```properties
 # Data going to Cloud Pub/Sub from a Spring Cloud Stream source defined in the
-# functional bean `sendMessagesForDeduplication`. The application will
+# Supplier bean `sendMessagesForDeduplication`. The application will
 # create the Cloud Pub/Sub topic `topicToDataflow` if it does not exist.
 spring.cloud.stream.bindings.sendMessagesForDeduplication-out-0.destination=topicToDataflow
 ```
@@ -150,14 +150,14 @@ In [App.java](pubsub-spring/src/main/java/com/google/example/App.java):
 ```
 
 ### Specify a Cloud Pub/Sub topic and subscription for the sink
-Spring can find the Cloud Pub/Sub subscription that your code should receive data from when you provide a subscription name in `application.properties` and assign it to a consumer group of the sink using an input binder. Here, the input binding name is `receiveDedupedMessagesFromDataflow-in-0`. Because a subscription cannot exist without a topic, a topic must also be specified for the sink. Note that only input bindings have consumer groups. For more information, see [Common Binding Properties].
+Spring can find the Cloud Pub/Sub subscription that your code should receive data from when you provide a subscription name for your sink in `application.properties` using an input binder. Here, the input binder's binding name is `receiveDedupedMessagesFromDataflow-in-0`. Because a subscription cannot exist without a topic, a topic must also be specified. The input binder's destination is your Pub/Sub topic and its consumer group is your Pub/Sub subscription. Note that only input bindings have consumer groups. For more information, see [Common Binding Properties].
 
 In [application.properties](pubsub-spring/src/main/resources/application.properties):
 
 [embedmd]:# (pubsub-spring/src/main/resources/application.properties /.*Data coming/ /=subscriptionFromDataflow/)
 ```properties
 # Data coming from Cloud Pub/Sub to a Spring Cloud Stream sink defined in the
-# functional bean `receiveDedupedMessagesFromDataflow`. The application
+# Consumer bean `receiveDedupedMessagesFromDataflow`. The application
 # will create the Cloud Pub/Sub topic `topicFromDataflow` and subscription
 # `topicFromDataflow.subscriptionFromDataflow` if they do not exist.
 spring.cloud.stream.bindings.receiveDedupedMessagesFromDataflow-in-0.destination=topicFromDataflow
