@@ -1,9 +1,9 @@
 ---
-title: Using Kubernetes Workload identity for client-server auth
-description: Demonstrates the use of authorized HTTP clients and server middleware to make the use of Kubernetes workload identity more transparent.
+title: Using Kubernetes Workload Identity for client-server authorization
+description: Demonstrates the use of authorized HTTP clients and server middleware to make the use of Kubernetes Workload Identity more transparent.
 author: ptone
 tags: Kubernetes, identity
-date_published: 2020-01-29
+date_published: 2020-02-14
 ---
 
 Preston Holmes | Solution Architect | Google
