@@ -84,7 +84,7 @@ Tianzi Cai | Developer Programs Engineer | Google Cloud
    ```shell script
    export GOOGLE_APPLICATION_CREDENTIALS=path/to/your/credentials.json
    ```
-   Set your `PROJECT_NAME` environment variable to your GCP project.
+   If you have not done it, set your `PROJECT_NAME` environment variable to your GCP project.
    ```shell script
     export PROJECT_NAME=$(gcloud config get-value project)
    ```
@@ -98,17 +98,17 @@ Tianzi Cai | Developer Programs Engineer | Google Cloud
 
 ## Bind Cloud Pub/Sub to Your Spring Boot Application
 
-Spring makes use of Spring Cloud Stream binders for Cloud Pub/Sub to send data to a Cloud Pub/Sub topic and receive data from a Cloud Pub/Sub subscription.
+Spring makes use of Spring Cloud Stream binders to send data to a Cloud Pub/Sub topic and receive data from a Cloud Pub/Sub subscription.
 
 Your application will know how to send data from an internal queue to a Cloud Pub/Sub topic if you specify 1). a Spring Cloud Stream source and 2). a Cloud Pub/Sub topic.
 
-#### Specify a Spring Cloud Stream source
+### Specify a Spring Cloud Stream source
 Spring can recognize a Spring Cloud Stream source as a Supplier bean.
 
 [embedmd]:# (pubsub-spring/src/main/java/com/google/example/App.java java /  \/\/ The Supplier Bean/ /}/)
 ```java
-  // The Supplier Bean makes this a valid Spring Cloud Stream source. It sends
-  // messages to a Cloud Pub/Sub topic configured with the binding name
+  // The Supplier Bean makes the function a valid Spring Cloud Stream source. It
+  // sends messages to a Cloud Pub/Sub topic configured with the binding name
   // `sendMessagesForDeduplication-out-0` in application.properties.
   @Bean
   Supplier<Flux<Message<String>>> sendMessagesForDeduplication(
@@ -117,26 +117,26 @@ Spring can recognize a Spring Cloud Stream source as a Supplier bean.
   }
 ```
 
-#### Specify a Cloud Pub/Sub topic for the source
-Spring can find the Cloud Pub/Sub topic that your code should publish data to when you provide a topic name in `application.properties` and assign it to the source using an outbound binder. Here, the outbound binding name is `sendMessagesForDeduplication-out-0`. For more information, see [Binding and Binding Names].
+### Specify a Cloud Pub/Sub topic for the source
+Spring can find the Cloud Pub/Sub topic that your code should publish data to when you provide a topic name in `application.properties` and assign it to a source using an output binder. Here, the output binding name is `sendMessagesForDeduplication-out-0`. For more information, see [Binding and Binding Names].
 
 [embedmd]:# (pubsub-spring/src/main/resources/application.properties /.*Data going/ /=topicToDataflow/)
 ```properties
-# Data going to Cloud Pub/Sub from a Spring Cloud Stream source
-# `sendMessagesForDeduplication`. The Spring Boot application will
+# Data going to Cloud Pub/Sub from a Spring Cloud Stream source defined in the
+# functional bean `sendMessagesForDeduplication`. The application will
 # create the Cloud Pub/Sub topic `topicToDataflow` if it does not exist.
 spring.cloud.stream.bindings.sendMessagesForDeduplication-out-0.destination=topicToDataflow
 ```
 
 Similarly, your application will know how to receive data from a Cloud Pub/Sub subscription if you specify 1). a Spring Cloud Stream sink and 2). a pair of Cloud Pub/Sub topic and subscription.
 
-#### Specify a Spring Cloud Stream sink
+### Specify a Spring Cloud Stream sink
 Spring can recognize a Spring Cloud Stream sink as a Consumer bean.
 
 [embedmd]:# (pubsub-spring/src/main/java/com/google/example/App.java java /  \/\/ The Consumer Bean/ /}/)
 ```java
-  // The Consumer Bean makes this a valid Spring Cloud Stream sink. It receives
-  // messages from the Cloud Pub/Sub subscription configured with the binding
+  // The Consumer Bean makes the function a valid Spring Cloud Stream sink. It
+  // receives messages from a Cloud Pub/Sub subscription configured with the binding
   // name `receiveDedupedMessagesFromDataflow-in-0` in application.properties.
   @Bean
   Consumer<Message<String>> receiveDedupedMessagesFromDataflow() {
@@ -145,19 +145,19 @@ Spring can recognize a Spring Cloud Stream sink as a Consumer bean.
     }
 ```
 
-#### Specify a Cloud Pub/Sub topic and subscription for the sink
-Spring can find the Cloud Pub/Sub subscription that your code should receive data from when you provide a subscription name in `application.properties` and assign it to a consumer group of the sink using an inbound binder. Here, the inbound binding name is `receiveDedupedMessagesFromDataflow-in-0`. Because a subscription cannot exist without a topic, a topic must also be specified for the sink. Note that only inbound bindings have consumer groups. For more information, see [Common Binding Properties].
+### Specify a Cloud Pub/Sub topic and subscription for the sink
+Spring can find the Cloud Pub/Sub subscription that your code should receive data from when you provide a subscription name in `application.properties` and assign it to a consumer group of the sink using an input binder. Here, the input binding name is `receiveDedupedMessagesFromDataflow-in-0`. Because a subscription cannot exist without a topic, a topic must also be specified for the sink. Note that only input bindings have consumer groups. For more information, see [Common Binding Properties].
 
 [embedmd]:# (pubsub-spring/src/main/resources/application.properties /.*Data coming/ /=subscriptionFromDataflow/)
 ```properties
-# Data coming from Cloud Pub/Sub to a Spring Cloud Stream sink
-# `receiveDedupedMessagesFromDataflow`. The Spring Boot application
+# Data coming from Cloud Pub/Sub to a Spring Cloud Stream sink defined in the
+# functional bean `receiveDedupedMessagesFromDataflow`. The application
 # will create the Cloud Pub/Sub topic `topicFromDataflow` and subscription
 # `topicFromDataflow.subscriptionFromDataflow` if they do not exist.
 spring.cloud.stream.bindings.receiveDedupedMessagesFromDataflow-in-0.destination=topicFromDataflow
 spring.cloud.stream.bindings.receiveDedupedMessagesFromDataflow-in-0.group=subscriptionFromDataflow
 ```
-#### Run the application
+### Run the application
 To start your application, run: 
 
 ```shell script
@@ -169,7 +169,7 @@ Observe that your app has started successfully by pointing your browser to `loca
 
 ## Start a Cloud Dataflow Job to Deduplicate Pub/Sub Messages
 
-As a middle process that takes data from a Cloud Pub/Sub topic and publishes processed data to another Cloud Pub/Sub topic, Cloud Dataflow achieves exactly once stream processing by asking the input stream for an `idAttribute`. Using the user-defined key name as the unique record identifier name, Cloud Dataflow avoids processing messages of the same key multiple times.
+As a middle process that takes data from a Cloud Pub/Sub topic and publishes processed data to another Cloud Pub/Sub topic, Cloud Dataflow achieves exactly once stream processing by asking the input stream for an `idAttribute`. Using the user-defined key name as this unique record identifier name, Cloud Dataflow can avoid processing messages of the same key multiple times.
 
 [embedmd]:# (pubsubio-dedup/src/main/java/com/google/example/DedupPubSub.java java /  pipeline\n.*1\)./ /;/)
 ```java
@@ -184,7 +184,7 @@ As a middle process that takes data from a Cloud Pub/Sub topic and publishes pro
         .apply("Write to PubSub", PubsubIO.writeStrings().to(options.getOutputTopic()));
 ```
 
-#### Run the Dataflow job
+### Run the Dataflow job
 
 To start the Dataflow job, run: 
 ```shell script
@@ -199,14 +199,23 @@ To start the Dataflow job, run:
      --idAttribute=key \
      --runner=DataflowRunner"
 ```
-You can observe the job's progress in the [Cloud Console for Dataflow]. Wait a few minutes for the job status to change from "progress" to "running".
+You can observe the job's progress in the [Cloud Console for Dataflow]. Wait a few minutes for the job status to be "running". Then issue `Ctrl+C` to stop the program locally.
 
-#### Test your Code
-Publish a few messages of different keys via the localhost to observe the desired behavior of deduplicated messages.
+## Observe the Results
+Publish a few messages of different keys via the web host and observe deduplicated messages in your terminal.
 
 ## Cleanup
-
+1. Use `Ctrl+C` to stop the Spring Boot application and the Dataflow.
+1. In the [Cloud Console for Dataflow], select the Dataflow job and stop it. Cancel the pipeline instead of draining it. 
+1. Delete the subscriptions followed by the topics in the [Cloud Console for Pub/Sub] or via the command line.
+```shell script
+gcloud pubsub subscriptions delete topicFromDataflow.subscriptionFromDataflow
+gcloud pubsub topics delete topicFromDataflow topicToDataflow
+```
 ## Next Steps
+1. Learn more about [Cloud Pub/Sub].
+1. A list of [Google Cloud Platform services that integrate with Spring].
+1. Using [Cloud Dataflow templates] for stream processing.
 
 [Cloud Pub/Sub]: https://cloud.google.com/pubsub/docs/
 [Cloud Dataflow]: https://cloud.google.com/dataflow/docs/
@@ -220,6 +229,10 @@ Publish a few messages of different keys via the localhost to observe the desire
 [Creating and managing service accounts]: https://cloud.google.com/iam/docs/creating-managing-service-accounts/
 [Cloud Console for Pub/Sub Topic]: https://console.cloud.google.com/cloudpubsub/topic/
 [Cloud Console for Dataflow]: http://console.cloud.google.com/dataflow/
+[Cloud Console for Pub/Sub]: https://console.cloud.google.com/cloudpubsub/
 
 [Binding and Binding Names]: https://github.com/spring-cloud/spring-cloud-stream/blob/master/docs/src/main/asciidoc/spring-cloud-stream.adoc#binding-and-binding-names
 [Common Binding Properties]: https://github.com/spring-cloud/spring-cloud-stream/blob/master/docs/src/main/asciidoc/spring-cloud-stream.adoc#common-binding-properties
+ [Google Cloud Platform services that integrate with Spring]: https://spring.io/projects/spring-cloud-gcp
+ [Cloud Dataflow templates]: https://cloud.google.com/dataflow/docs/guides/templates/overview
+ 

@@ -48,8 +48,8 @@ public class App {
     return EmitterProcessor.create();
   }
 
-  // The Supplier Bean makes this a valid Spring Cloud Stream source. It sends
-  // messages to a Cloud Pub/Sub topic configured with the binding name
+  // The Supplier Bean makes the function a valid Spring Cloud Stream source. It
+  // sends messages to a Cloud Pub/Sub topic configured with the binding name
   // `sendMessagesForDeduplication-out-0` in application.properties.
   @Bean
   Supplier<Flux<Message<String>>> sendMessagesForDeduplication(
@@ -57,8 +57,8 @@ public class App {
     return () -> frontEndListener;
   }
 
-  // The Consumer Bean makes this a valid Spring Cloud Stream sink. It receives
-  // messages from the Cloud Pub/Sub subscription configured with the binding
+  // The Consumer Bean makes the function a valid Spring Cloud Stream sink. It
+  // receives messages from a Cloud Pub/Sub subscription configured with the binding
   // name `receiveDedupedMessagesFromDataflow-in-0` in application.properties.
   @Bean
   Consumer<Message<String>> receiveDedupedMessagesFromDataflow() {
