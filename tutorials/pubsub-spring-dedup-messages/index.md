@@ -2,7 +2,7 @@
 title: Deduplicate Pub/Sub Messages Using Dataflow in A Spring Boot Application
 description: Use Dataflow's PubsubIO to deduplicate Pub/Sub messages in a Spring Boot application.
 author: anguillanneuf
-tags: Cloud Pub/Sub, Spring, Spring Cloud GCP, Cloud Dataflow, Java
+tags: Cloud Pub/Sub, Spring, Spring Cloud GCP, Cloud Dataflow, Java.
 date_published: 2020-02-29
 ---
 
