@@ -39,7 +39,7 @@ public class DataEntryController {
     @RequestParam("data") String data, @RequestParam("key") String key) {
     System.out.println("Sending data: " + data + " of key " + key + "..");
 
-    // Headers will populate Pub/Sub message attributes.
+    // Headers become Pub/Sub message attributes.
     Message<String> message = MessageBuilder
       .withPayload(data)
       .setHeader("key", key)

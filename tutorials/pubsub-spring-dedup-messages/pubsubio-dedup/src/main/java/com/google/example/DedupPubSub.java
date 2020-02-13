@@ -64,13 +64,13 @@ public class DedupPubSub {
     Pipeline pipeline = Pipeline.create(options);
 
     pipeline
-        // 1) Read string messages from a Pub/Sub topic.
+        // 1) Read string messages with attributes from a Pub/Sub topic.
         .apply(
             "Read from PubSub",
             PubsubIO.readStrings()
                 .fromTopic(options.getInputTopic())
                 .withIdAttribute(options.getIdAttribute()))
-        // 2) Write string messages to a Pub/Sub topic.
+        // 2) Write string messages to another Pub/Sub topic.
         .apply("Write to PubSub", PubsubIO.writeStrings().to(options.getOutputTopic()));
 
     // Execute the pipeline.

@@ -1,5 +1,5 @@
 ---
-title: Deduplicate Pub/Sub Messages Using Dataflow in A Spring Boot Application
+title: Deduplicate Pub/Sub Messages Using Dataflow in a Spring Boot Application
 description: Use Dataflow's PubsubIO to deduplicate Pub/Sub messages in a Spring Boot application.
 author: anguillanneuf
 tags: PubSub, Spring, Spring Cloud GCP, Dataflow, Java
@@ -45,7 +45,7 @@ Tianzi Cai | Developer Programs Engineer | Google Cloud
    * From the **Service account** list, select **New service account**.
    * In the **Service account name** field, enter a name.
    * From the **Role** list, select **Project > Owner**.
-   * Click **Create**. A JSON file that contains your key downloads to your computer.
+   * Click **Create**. Save this JSON file to a location on your computer.
 
    Alternatively, you can use `gcloud` through the command line.
 
@@ -163,6 +163,22 @@ In [application.properties](pubsub-spring/src/main/resources/application.propert
 spring.cloud.stream.bindings.receiveDedupedMessagesFromDataflow-in-0.destination=topicFromDataflow
 spring.cloud.stream.bindings.receiveDedupedMessagesFromDataflow-in-0.group=subscriptionFromDataflow
 ```
+
+### Construct a Pub/Sub message with custom attributes
+
+Cloud Pub/Sub lets you publish messages with custom attributes, which are key value pairs. To construct such a message in your Spring Boot application, you can specify the attributes as headers. 
+
+In [DataEntryController.java](pubsub-spring/src/main/java/com/google/example/DataEntryController.java):
+
+[embedmd]:# (pubsub-spring/src/main/java/com/google/example/DataEntryController.java java /  \/\/ Headers/ /;/)
+```java
+  // Headers become Pub/Sub message attributes.
+    Message<String> message = MessageBuilder
+      .withPayload(data)
+      .setHeader("key", key)
+      .build();
+```
+
 ### Run the application
 To start your application, navigate to `pubsub-spring/` and run: 
 
@@ -170,24 +186,24 @@ To start your application, navigate to `pubsub-spring/` and run:
 mvn spring-boot:run
 ```
 
-Observe that your app has started successfully by pointing your browser to `localhost:8080`. You should be able to send messages using the form there. At this point, Spring will have automatically created the Cloud Pub/Sub topic that you have specified in `application.properties` to publish your message to. You can view Publish Message Request Count and Publish Message Operation Count in the topic details in [Cloud Console for Pub/Sub Topic] to verify that publishing to Cloud Pub/Sub is successful.  
+Check that your app has started successfully by pointing your browser to `localhost:8080`. You should be able to send messages using the form there. At this point, Spring will have automatically created the Cloud Pub/Sub topic that you have specified in `application.properties` to publish your message to. You can view Publish Message Request Count and Publish Message Operation Count in the topic details in [Cloud Console for Pub/Sub Topic] to verify that publishing to Cloud Pub/Sub is successful.  
 
 ## Start a Cloud Dataflow Job to Deduplicate Pub/Sub Messages
 
-As a middle process that takes data from a Cloud Pub/Sub topic and publishes processed data to another Cloud Pub/Sub topic, Cloud Dataflow achieves exactly once stream processing by asking the input stream for an `idAttribute`. Using the user-defined key name as this unique record identifier name, Cloud Dataflow can avoid processing messages of the same key multiple times.
+As a middle process that takes data from a Cloud Pub/Sub topic and publishes processed data to another Cloud Pub/Sub topic, Cloud Dataflow achieves exactly once stream processing by asking the input stream for an `idAttribute`. The `idAttribute` can be a Pub/Sub message attribute. Cloud Dataflow will avoid processing messages that have the same values in this `idAttribute` repeatedly.
 
 In [DedupPubSub.java](pubsubio-dedup/src/main/java/com/google/example/DedupPubSub.java):
 
 [embedmd]:# (pubsubio-dedup/src/main/java/com/google/example/DedupPubSub.java java /  pipeline\n.*1\)./ /;/)
 ```java
   pipeline
-        // 1) Read string messages from a Pub/Sub topic.
+        // 1) Read string messages with attributes from a Pub/Sub topic.
         .apply(
             "Read from PubSub",
             PubsubIO.readStrings()
                 .fromTopic(options.getInputTopic())
                 .withIdAttribute(options.getIdAttribute()))
-        // 2) Write string messages to a Pub/Sub topic.
+        // 2) Write string messages to another Pub/Sub topic.
         .apply("Write to PubSub", PubsubIO.writeStrings().to(options.getOutputTopic()));
 ```
 
@@ -212,8 +228,8 @@ Publish a few messages of different keys via the web host and observe deduplicat
 
 ## Cleanup
 1. Use `Ctrl+C` to stop the Spring Boot application and the Dataflow.
-1. In the [Cloud Console for Dataflow], select the Dataflow job and stop it. Cancel the pipeline instead of draining it. 
-1. Delete the subscriptions followed by the topics in the [Cloud Console for Pub/Sub] or via the command line.
+1. In the [Cloud Console for Dataflow], select the Dataflow job and stop it. Cancel the pipeline instead of draining it. Dataflow will automatically delete the subscription to the topic `topicFromDataflow` during this process. 
+1. Delete the subscription followed by the topics in the [Cloud Console for Pub/Sub] or via the command line.
 ```shell script
 gcloud pubsub subscriptions delete topicFromDataflow.subscriptionFromDataflow
 gcloud pubsub topics delete topicFromDataflow topicToDataflow
@@ -239,6 +255,6 @@ gcloud pubsub topics delete topicFromDataflow topicToDataflow
 
 [Binding and Binding Names]: https://github.com/spring-cloud/spring-cloud-stream/blob/master/docs/src/main/asciidoc/spring-cloud-stream.adoc#binding-and-binding-names
 [Common Binding Properties]: https://github.com/spring-cloud/spring-cloud-stream/blob/master/docs/src/main/asciidoc/spring-cloud-stream.adoc#common-binding-properties
- [Google Cloud Platform services that integrate with Spring]: https://spring.io/projects/spring-cloud-gcp
- [Cloud Dataflow templates]: https://cloud.google.com/dataflow/docs/guides/templates/overview
+[Google Cloud Platform services that integrate with Spring]: https://spring.io/projects/spring-cloud-gcp/
+[Cloud Dataflow templates]: https://cloud.google.com/dataflow/docs/guides/templates/overview/
  
