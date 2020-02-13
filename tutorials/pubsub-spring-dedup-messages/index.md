@@ -10,8 +10,6 @@ date_published: 2020-02-29
 Tianzi Cai | Developer Programs Engineer | Google Cloud
 
 
-## Architecture
-
 ## Objectives
 - Configure a Spring Boot application to use [Cloud Pub/Sub] as a message broker.
 - Use [Cloud Dataflow] to deduplicate messages.
