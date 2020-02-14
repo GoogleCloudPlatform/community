@@ -15,7 +15,8 @@ Kubernetes (role-based access control) RBAC to control authorization to the Kube
 been globally scoped credentials, and subject to relatively high replay risk and not usable outside the context of the
 cluster.
 
-With Kubernetes 1.12 and later, service account credentials can be exposed to workloads with a specific audience applied, using the
+With Kubernetes 1.12 and later, service account credentials can be exposed to workloads with a specific audience applied,
+using the
 [Service Account Token Volume Projection](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#service-account-token-volume-projection) feature.
 
 A service account token is exposed as a signed [JSON Web Token (JWT)](https://en.wikipedia.org/wiki/JSON_Web_Token). The
@@ -23,71 +24,87 @@ private keys that sign these tokens are specific to the cluster. In
 [Google Kubernetes Engine (GKE)]((https://cloud.google.com/kubernetes-engine/)), when 
 [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) is enabled, the 
 corresponding public keys are published at a URL that can be derived from the issuer field in the token conforming to the 
-[OIDC discovery standard](https://openid.net/specs/openid-connect-discovery-1_0.html).
+[OpenID Connect (OIDC) Discovery standard](https://openid.net/specs/openid-connect-discovery-1_0.html).
 
 In GKE, the Workload Identity feature allows these identities to also be associated with 
 [Cloud IAM service accounts](https://cloud.google.com/iam/docs/service-accounts). This allows a pod running as a Kubernetes 
 service account to act as the associated service account for authorized access to Google APIs and to services that verify 
-identity based on GCP-specific OpenID Connect (OIDC).
+identity based on GCP-specific OIDC.
 
 To make the use of this identity system easier for application developers, the mechanism can be made more transparent to 
 both the client and the server. On the client side, a derived authorized HTTP client can be used that automatically injects
 the service account token into all outgoing HTTP requests. On the server side, authorization middleware can use OIDC 
-discovery  and the cluster's public key to verify the request, before passing on the the business logic of the 
+discovery and the cluster's public key to verify the request, before passing on the the business logic of the 
 function/handler. This tutorial demonstrates the use of these conveniences in the Go programming language.
 
 ## Objectives
 
 1. Set up a GKE cluster with Workload Identity.
 1. Use Service Account Token Volume Projection to provide a cluster-issued OIDC ID token to a workload.
-1. Use the cluster-specific public keys to verify the workload's  ID token in a remote service.
+1. Use the cluster-specific public keys to verify the workload's ID token in a remote service.
 1. Associate Workload Identity and namespace with a Google service account.
 1. Retrieve credentials from the Google service account through Workload Identity association.
 1. Use the Google-issued ID token to call a Cloud Run service behind IAM invoker authorization.
 
 ## Setup
 
-### Set up the environment
+We recommend that you run all commands in this tutorial in [Cloud Shell](https://cloud.google.com/shell/), 
+the command-line interface built into the Cloud Console, which includes current versions of packages such as `kubectl` and
+`envsubst`.
+
+If you choose instead to use the [Google Cloud SDK](https://cloud.google.com/sdk/), then you need to install the SDK and the
+[`kubectl`]((https://kubernetes.io/docs/tasks/tools/install-kubectl/)) and `envsubst` packages. This tutorial requires 
+`kubectl` version 1.14 and later with
+[kustomize integration](https://kubernetes.io/blog/2019/03/25/kubernetes-1-14-release-announcement/).
+
+You can check your `kubectl` version with this command:  
+
+    kubectl version
+
+### Set up the project
 
 1.  Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 
-We recommend that you run all commands in this tutorial in [Cloud Shell](https://cloud.google.com/shell/), 
-the command-line interface built into the Cloud Console. If you choose instead to use the
-[Google Cloud SDK](https://cloud.google.com/sdk/), then you need to install the SDK and the `kubectl` and `envsubst`
-packages.
+### Get the tutorial files
 
-### Clone the tutorial repository
+Clone the repository, set up a branch, and navigate to the tutorial directory:
 
-#### TODO update to prod
+    git clone https://github.com/GoogleCloudPlatform/community.git
+    cd community
+    git checkout workload-id
+    cd tutorials/gke-workload-id-clientserver
 
-	git clone https://github.com/ptone/community.git
-	cd community
-	git checkout workload-id
-	cd tutorials/gke-workload-id-clientserver
+### Set environment variables
 
-Set these environment variables in each shell you use:
+Use the following commands to set environment variables in each shell that you use. You can skip setting the project 
+variable if you're using Cloud Shell, since Cloud Shell will already have this value set for the current project.
 	
-	# the project should already be set in Cloud Shell
-	gcloud config set project [YOUR_PROJECT_ID]
-	export PROJECT=$(gcloud config list project --format "value(core.project)" )
-	export CLUSTER=workload-id
-	export ZONE=us-central1-a
-	gcloud config set compute/zone $ZONE
-	gcloud config set compute/region us-central1
+    # the project should already be set in Cloud Shell
+    gcloud config set project [YOUR_PROJECT_ID]
+    export PROJECT=$(gcloud config list project --format "value(core.project)" )
+    export CLUSTER=workload-id
+    export ZONE=us-central1-a
+    gcloud config set compute/zone $ZONE
+    gcloud config set compute/region us-central1
 
 ### Create the cluster
 
-	gcloud beta container clusters create $CLUSTER \
-	   --identity-namespace=$PROJECT.svc.id.goog
+The following command creates the cluster:
 
-Note the `identity-namespace` flag, which is part of the enablement of the Workload Identity feature. Currently only the single, project-level namespace is supported. This will take several minutes to create. When it is done, retrieve the cluster credentials:
+    gcloud beta container clusters create $CLUSTER \
+        --identity-namespace=$PROJECT.svc.id.goog
 
-  	gcloud container clusters get-credentials $CLUSTER
+The `identity-namespace` flag is part of the enablement of the Workload Identity feature. Currently only the single, 
+project-level namespace is supported.
 
-You will also need a recent `kubectl` command (>=1.14) with [kustomize integration](https://kubernetes.io/blog/2019/03/25/kubernetes-1-14-release-announcement/). If not, install it from [here](https://kubernetes.io/docs/tasks/tools/install-kubectl/). Ensure that Kubectl is configured to talk to your cluster.
+Creation of the cluster can take several minutes.
 
-  	kubectl version
+### Retrieve the cluster credentials
+
+The following command gets the cluster credentials:
+
+    gcloud container clusters get-credentials $CLUSTER
 
 ## Build and deploy the test server
 
