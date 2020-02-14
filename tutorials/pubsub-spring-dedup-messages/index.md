@@ -54,7 +54,7 @@ Tianzi Cai | Developer Programs Engineer | Google Cloud
 
    ```shell script
    export PROJECT_NAME=$(gcloud config get-value project)
-   export SA_NAME=spring_app
+   export SA_NAME=spring-app
    export IAM_ACCOUNT=$SA_NAME@$PROJECT_NAME.iam.gserviceaccount.com
 
    # Create the service account.
@@ -224,7 +224,7 @@ To start the Dataflow job,  navigate to `pubsubio-dedup/` and run:
      --idAttribute=key \
      --runner=DataflowRunner"
 ```
-You can observe the job's progress in the [Cloud Console for Dataflow]. Wait a few minutes for the job status to be "running". Then issue `Ctrl+C` to stop the program locally.
+You can check the job's progress in the [Cloud Console for Dataflow]. Wait a few minutes for the job status to become "running". Then issue `Ctrl+C` to stop the program locally. Stopping the program locally does not affect the Dataflow job running in the Cloud.
 
 ## Observe the Results
 Publish a few messages of different keys via the web host and observe deduplicated messages in your terminal.
@@ -239,7 +239,7 @@ gcloud pubsub topics delete topicFromDataflow topicToDataflow
 ```
 ## Next Steps
 1. Learn more about [Cloud Pub/Sub].
-1. A list of [Google Cloud Platform services that integrate with Spring].
+1. [Google Cloud Platform services that integrate with Spring].
 1. Using [Cloud Dataflow templates] for stream processing.
 
 [Cloud Pub/Sub]: https://cloud.google.com/pubsub/docs/

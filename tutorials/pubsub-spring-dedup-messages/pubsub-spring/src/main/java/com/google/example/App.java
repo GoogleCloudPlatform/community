@@ -63,7 +63,7 @@ public class App {
   @Bean
   Consumer<Message<String>> receiveDedupedMessagesFromDataflow() {
     return msg -> {
-      System.out.println("\tDE-DUPED message: \"" + msg.getPayload() + "\".");
+      System.out.println("\tReceived message: \"" + msg.getPayload() + "\".");
     };
   }
 }
