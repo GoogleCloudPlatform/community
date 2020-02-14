@@ -14,6 +14,9 @@ Tianzi Cai | Developer Programs Engineer | Google Cloud
 - Configure a Spring Boot application to use [Cloud Pub/Sub] as a message broker.
 - Use [Cloud Dataflow] to deduplicate messages.
 
+## Architecture
+![img](architecture.png)
+
 ## Before You Begin
 
 1. Install the [Cloud SDK].
