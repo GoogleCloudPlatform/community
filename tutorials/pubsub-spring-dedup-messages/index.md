@@ -14,7 +14,7 @@ This tutorial demonstrates how to use Pub/Sub and Dataflow to deduplicate messag
 
 Many enterprise-level Java applications with distributed systems on the backend are built with [Spring Boot] and [Spring Cloud]. [Spring Cloud GCP] are libraries that enable Spring Boot applications to use GCP managed services such as [Pub/Sub] for added scalability and separation of concern. 
 
-[Pub/Sub] and [Dataflow] together can meet many different stream processing needs. In this tutorial, you will learn how to set up a simple Dataflow pipeline to process data out of a Spring Boot application before sending it back via Pub/Sub, but you shall realize that the same setup applies to more complex and demanding stream processing needs too.
+[Pub/Sub] and [Dataflow] together can meet many different stream processing needs. In this tutorial, you will learn how to set up a simple Dataflow pipeline to process data out of a Spring Boot application before sending it back via Pub/Sub, but you will see that the same setup also applies to more complex and demanding stream processing needs.
 
 ## Objectives
 - Configure a Spring Boot application to use [Pub/Sub] as a message broker.
