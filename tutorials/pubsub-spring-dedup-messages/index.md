@@ -10,6 +10,12 @@ date_published: 2020-02-29
 Tianzi Cai | Developer Programs Engineer | Google Cloud
 
 
+This tutorial demonstrates how to use Pub/Sub and Dataflow to deduplicate messages in a Spring Boot application.
+
+Many enterprise-level Java applications with distributed systems on the backend are built with [Spring Boot] and [Spring Cloud]. [Spring Cloud GCP] are libraries that enable Spring Boot applications to use GCP managed services such as [Pub/Sub] for added scalability and separation of concern. 
+
+[Pub/Sub] and [Dataflow] together can meet many different stream processing needs. In this tutorial, you will learn how to set up a simple Dataflow pipeline to process data out of a Spring Boot application before sending it back via Pub/Sub, but you shall realize that the same setup applies to more complex and demanding stream processing needs too.
+
 ## Objectives
 - Configure a Spring Boot application to use [Pub/Sub] as a message broker.
 - Use [Dataflow] to deduplicate messages.
@@ -123,7 +129,7 @@ In [App.java](pubsub-spring/src/main/java/com/google/example/App.java):
 ```
 
 ### Specify a Pub/Sub topic for the source
-To specify a Pub/Sub topic for the source, you assign a topic name to the output binding destination of your source in `application.properties`. Here, the topic name is `topicToDataflow`. The output binding destination is indicated by `-out-` in the binding name `sendMessagesForDeduplication-out-0` and binding property `destination`. Spring takes input to the function `sendMessagesForDeduplication` and sends it to the Pub/Sub topic `topicToDataflow`. Spring will create this topic if it does not exist. For more information, see [Binding and Binding Names].
+To specify a Pub/Sub topic for the source, you can assign a topic name to the output binding destination of your source in `application.properties`. Here, the topic name is `topicToDataflow`. The output binding destination is indicated by `-out-` in the binding name `sendMessagesForDeduplication-out-0` and binding property `destination`. Spring takes input to the function `sendMessagesForDeduplication` and sends it to the Pub/Sub topic `topicToDataflow`. Spring will create this topic if it does not exist. For more information, see [Binding and Binding Names].
 
 In [application.properties](pubsub-spring/src/main/resources/application.properties):
 
@@ -157,7 +163,7 @@ In [App.java](pubsub-spring/src/main/java/com/google/example/App.java):
 ```
 
 ### Specify a Pub/Sub topic and subscription for the sink
-To specify a Pub/Sub topic and subscription for your sink, you assign a topic name and a subscription name to the input binding destination and consumer group of your sink in `application.properties`. Here, the topic name is `topicFromDataflow` and the subscription name is `topicFromDataflow.subscriptionFromDataflow` (a concatenation of the user-provided topic name and subscription name). The input binding destination and consumer group are indicated by `-in-` in the binding name `receiveDedupedMessagesFromDataflow-in-0` and binding properties `destination` and `group` respectively. Spring receives messages from the subscription and use them as input to the function `receiveDedupedMessagesFromDataflow`. Note that only input bindings have consumer groups. For more information, see [Common Binding Properties].
+To specify a Pub/Sub topic and subscription for your sink, you can assign a topic name and a subscription name to the input binding destination and consumer group of your sink in `application.properties`. Here, the topic name is `topicFromDataflow` and the subscription name is a concatenation of the user-provided topic name and subscription name, i.e. `topicFromDataflow.subscriptionFromDataflow`. The input binding destination and consumer group are indicated by `-in-` in the binding name `receiveDedupedMessagesFromDataflow-in-0` and binding properties `destination` and `group` respectively. Spring receives messages from the subscription and use them as input to the function `receiveDedupedMessagesFromDataflow`. Only input bindings have consumer groups. For more information, see [Common Binding Properties].
 
 In [application.properties](pubsub-spring/src/main/resources/application.properties):
 
@@ -228,11 +234,11 @@ In [DedupPubSub.java](pubsubio-dedup/src/main/java/com/google/example/DedupPubSu
          --idAttribute=key \
          --runner=DataflowRunner"
     ```
-1. Check the job's progress in the [Cloud Console for Dataflow]. Wait a few minutes for the job status to become "running". 
+1. Check the job's progress in the [Cloud Console for Dataflow]. Wait a few minutes for the job status to become "Running". 
 1. Issue `Ctrl+C` to stop the program locally. Stopping the program locally does not affect the Dataflow job running on GCP.
 
 ## Observe the Results
-Publish a few more messages of different keys (i.e. `idAttributes`) via the web host and observe messages of the same key arrive only once in your terminal.
+Publish a few more messages of different keys via the web host and observe messages of the same key arrive only once in your terminal.
 
 ## Cleanup
 1. Use `Ctrl+C` to stop the Spring Boot application and the Dataflow.
@@ -247,6 +253,9 @@ gcloud pubsub topics delete topicFromDataflow topicToDataflow
 1. [Google Cloud Platform services that integrate with Spring].
 1. Using [Dataflow templates] for stream processing.
 
+[Spring Boot]: https://spring.io/projects/spring-boot
+[Spring Cloud]: https://spring.io/projects/spring-cloud
+[Spring Cloud GCP]: https://spring.io/projects/spring-cloud-gcp
 [Pub/Sub]: https://cloud.google.com/pubsub/docs/overview
 [Dataflow]: https://cloud.google.com/dataflow/docs/
 [Cloud SDK]: https://cloud.google.com/sdk/docs/
