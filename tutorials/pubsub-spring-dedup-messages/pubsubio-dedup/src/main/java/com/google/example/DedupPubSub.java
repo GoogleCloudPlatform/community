@@ -30,7 +30,7 @@ public class DedupPubSub {
 
   public interface PubSubToGCSOptions extends PipelineOptions, StreamingOptions {
     @Description(
-        "The Cloud Pub/Sub topic to read from."
+        "The Pub/Sub topic to read from."
             + "The name should be in the format of "
             + "projects/<project-id>/topics/<input-topic-name>.")
     @Required
@@ -39,7 +39,7 @@ public class DedupPubSub {
     void setInputTopic(String inputTopic);
 
     @Description(
-        "The Cloud Pub/Sub topic to publish to."
+        "The Pub/Sub topic to publish to."
             + "The name should be in the format of"
             + "projects/<project-id>/topics/<output-topic-name>.")
     @Required

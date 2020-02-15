@@ -45,7 +45,7 @@ public class DataEntryController {
       .setHeader("key", key)
       .build();
 
-    // Send a message to a local processing queue (to be sent to Cloud Pub/Sub).
+    // Send a message to a local processing queue (to be sent to Pub/Sub).
     this.frontEndListener.onNext(message);
 
     return new RedirectView("/");
