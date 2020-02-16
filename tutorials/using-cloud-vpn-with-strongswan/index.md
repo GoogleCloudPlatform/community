@@ -184,7 +184,6 @@ Ensure that the following line present in file:
         # dpdaction=restart - means strongSwan will try to reconnect if Dead Peer Detection spots
         #                  a problem. Change to 'clear' if needed
         dpdaction=restart
-        closeaction=restart
 
 **Step 4**: Start strongSwan
 
@@ -483,7 +482,6 @@ Ensure that the following line is in the file:
         # dpdaction=restart - means strongSwan will try to reconnect if Dead Peer Detection spots
         #                  a problem. Change to 'clear' if needed
         dpdaction=restart
-        closeaction=restart
         # mark=%unique - We use this to mark VPN-related packets with iptables
         #                %unique ensures that all tunnels will have a unique mark here
         mark=%unique
