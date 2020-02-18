@@ -93,7 +93,7 @@ Many enterprise-level Java applications with distributed systems on the backend 
    ```
    If you have not done it, set your `PROJECT_NAME` environment variable to your GCP project.
    ```shell script
-    export PROJECT_NAME=$(gcloud config get-value project)
+   export PROJECT_NAME=$(gcloud config get-value project)
    ```
 
 1. Clone this repository and navigate to the sample code:
@@ -240,6 +240,8 @@ In [DedupPubSub.java](pubsubio-dedup/src/main/java/com/google/example/DedupPubSu
 
 ## Observe the Results
 Publish a few more messages of different keys via the web host and observe messages of the same key arrive only once in your terminal.
+
+![results](results.png)
 
 ## Cleanup
 1. Use `Ctrl+C` to stop the Spring Boot application and the Dataflow.
