@@ -234,7 +234,8 @@ In [DedupPubSub.java](pubsubio-dedup/src/main/java/com/google/example/DedupPubSu
          --idAttribute=key \
          --runner=DataflowRunner"
     ```
-1. Check the job's progress in the [Cloud Console for Dataflow]. Wait a few minutes for the job status to become "Running". 
+1. Check the job's progress in the [Cloud Console for Dataflow]. Wait a few minutes for the job status to become **Running**.
+![Status](dataflow_job_status.png)
 1. Issue `Ctrl+C` to stop the program locally. Stopping the program locally does not affect the Dataflow job running on GCP.
 
 ## Observe the Results
@@ -242,7 +243,7 @@ Publish a few more messages of different keys via the web host and observe messa
 
 ## Cleanup
 1. Use `Ctrl+C` to stop the Spring Boot application and the Dataflow.
-1. In the [Cloud Console for Dataflow], select the Dataflow job and stop it. Cancel the pipeline instead of draining it. Dataflow will automatically delete the subscription to the topic `topicFromDataflow` during this process. 
+1. In the [Cloud Console for Dataflow], select the Dataflow job and stop it. Cancel the pipeline instead of draining it. Dataflow will automatically delete the subscription to the topic `topicFromDataflow` during this process.
 1. Delete the subscription followed by the topics in the [Cloud Console for Pub/Sub] or via the command line.
 ```shell script
 gcloud pubsub subscriptions delete topicFromDataflow.subscriptionFromDataflow
