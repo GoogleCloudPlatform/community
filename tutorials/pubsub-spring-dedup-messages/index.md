@@ -44,7 +44,7 @@ Many enterprise-level Java applications with distributed systems on the backend 
    gcloud init
    ```
 
-1. [Enable the APIs](https://console.cloud.google.com/flows/enableapi?apiid=dataflow,compute_component,pubsub,storage_component,storage_api): Dataflow, Compute Engine, Pub/Sub, Cloud Storage.
+1. [Enable the APIs](https://console.cloud.google.com/flows/enableapi?apiid=dataflow,compute_component,pubsub,storage_component,storage_api): Dataflow, Compute Engine, Pub/Sub, Cloud Storage, Logging
 
 1. Create a service account JSON key via the
    [*Create service account key* page],
@@ -53,7 +53,7 @@ Many enterprise-level Java applications with distributed systems on the backend 
 
    * From the **Service account** list, select **New service account**.
    * In the **Service account name** field, enter a name.
-   * From the **Role** list, select **Project > Owner**.
+   * From the **Role** list, select **PubSub > Admin** and **Dataflow > Admin**.
    * Click **Create**. Save this JSON file to a location on your computer.
 
    Alternatively, you can use `gcloud` through the command line.
@@ -66,10 +66,15 @@ Many enterprise-level Java applications with distributed systems on the backend 
    # Create the service account.
    gcloud iam service-accounts create $SA_NAME --display-name $SA_NAME
 
-   # Set the role to Project Owner (*).
+   # Add PubSub Admin role to your service account.
    gcloud projects add-iam-policy-binding $PROJECT_NAME \
      --member serviceAccount:$IAM_ACCOUNT \
-     --role roles/owner
+     --role roles/pubsub.admin
+
+   # Add Dataflow Admin role to your service account.
+   gcloud projects add-iam-policy-binding $PROJECT_NAME \
+     --member serviceAccount:$IAM_ACCOUNT \
+     --role roles/dataflow.admin   
 
    # Create a JSON file with the service account credentials.
    gcloud iam service-accounts keys create path/to/your/credentials.json \
@@ -79,7 +84,6 @@ Many enterprise-level Java applications with distributed systems on the backend 
    > *Note:* The **Role** field authorizes your service account to access resources.
    > You can view and change this field later by using the
    > [GCP Console IAM page].
-   > If you are developing a production app, specify more granular permissions like **PubSub > Admin** and **Dataflow > Admin** than **Project > Owner**.
    > For more information, see
    > [Granting roles to service accounts].
 
