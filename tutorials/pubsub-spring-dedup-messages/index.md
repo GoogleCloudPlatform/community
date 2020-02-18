@@ -44,7 +44,7 @@ Many enterprise-level Java applications with distributed systems on the backend 
    gcloud init
    ```
 
-1. [Enable the APIs](https://console.cloud.google.com/flows/enableapi?apiid=dataflow,compute_component,pubsub): Dataflow, Compute Engine, Pub/Sub.
+1. [Enable the APIs](https://console.cloud.google.com/flows/enableapi?apiid=dataflow,compute_component,pubsub,storage_component,storage_api): Dataflow, Compute Engine, Pub/Sub, Cloud Storage.
 
 1. Create a service account JSON key via the
    [*Create service account key* page],
