@@ -79,7 +79,7 @@ Many enterprise-level Java applications with distributed systems on the backend 
    > *Note:* The **Role** field authorizes your service account to access resources.
    > You can view and change this field later by using the
    > [GCP Console IAM page].
-   > If you are developing a production app, specify more granular permissions than **Project > Owner**.
+   > If you are developing a production app, specify more granular permissions like **PubSub > Admin** and **Dataflow > Admin** than **Project > Owner**.
    > For more information, see
    > [Granting roles to service accounts].
 
@@ -158,7 +158,7 @@ In [App.java](pubsub-spring/src/main/java/com/google/example/App.java):
   @Bean
   Consumer<Message<String>> receiveDedupedMessagesFromDataflow() {
     return msg -> {
-      System.out.println("\tDE-DUPED message: \"" + msg.getPayload() + "\".");
+      System.out.println("\tReceived message: \"" + msg.getPayload() + "\".");
     }
 ```
 
@@ -234,7 +234,7 @@ In [DedupPubSub.java](pubsubio-dedup/src/main/java/com/google/example/DedupPubSu
          --idAttribute=key \
          --runner=DataflowRunner"
     ```
-1. Check the job's progress in the [Cloud Console for Dataflow]. Wait a few minutes for the job status to become **Running**.
+1. Check the job's progress in the [Cloud Console for Dataflow]. Wait a few minutes for the job status to become **Running**. You should also see `INFO: ... Workers have started successfully` in the terminal at this point.
 ![Status](dataflow_job_status.png)
 1. Issue `Ctrl+C` to stop the program locally. Stopping the program locally does not affect the Dataflow job running on GCP.
 
