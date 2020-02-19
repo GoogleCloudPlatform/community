@@ -65,7 +65,7 @@ In this section, you create a project, download the tutorial files, and create a
 
 1.  Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
-1.  Clone the repository that contians the tutorial files, set up a branch, and navigate to the tutorial directory:
+1.  Clone the repository that contains the tutorial files, set up a branch, and navigate to the tutorial directory:
 
         git clone https://github.com/GoogleCloudPlatform/community.git
         cd community
@@ -198,7 +198,7 @@ authenticated with the Google-issued Google Cloud IAM service account ID token.
     Kubernetes YAML file dynamically as part of the `apply` operation, see
     [this explanation](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/eschewedFeatures.md#unstructured-edits).
 
-    The base resources:
+    The base resources in the configuration are the following:
 
     * A namespace: `id-namespace`
     * A service account: `gke-sa`
@@ -235,7 +235,7 @@ In the `k-project/project-details.yaml` file is a pod overlay that includes the 
 
 The `serviceAccountName` value specifies which Kubernetes service account the pod runs as.
 
-The `projected:serviceAccountTokens` includes details that expose a signed JWT token at a given path, for a specific 
+The `projected:serviceAccountTokens` includes details that expose a signed JWT at a given path, for a specific 
 audience.
 
 The same Kubernetes service account can be projected multiple times, each for a different audience.
