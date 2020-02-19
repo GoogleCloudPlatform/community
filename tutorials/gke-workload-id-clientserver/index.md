@@ -46,7 +46,7 @@ function/handler. This tutorial demonstrates the use of these conveniences in th
 1. Retrieve credentials from the Google service account through Workload Identity association.
 1. Use the Google-issued ID token to call a Cloud Run service behind IAM invoker authorization.
 
-## Setup
+## Before you begin
 
 We recommend that you run all commands in this tutorial in [Cloud Shell](https://cloud.google.com/shell/), 
 the command-line interface built into the Cloud Console, which includes current versions of packages such as `kubectl` and
@@ -60,6 +60,10 @@ If you choose instead to use the [Google Cloud SDK](https://cloud.google.com/sdk
 You can check your `kubectl` version with this command:  
 
     kubectl version
+
+## Setup
+
+In this section, you create a project, download the tutorial files, and create a GKE cluster.
 
 1.  Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
@@ -218,7 +222,7 @@ authenticated with the Google-issued Google Cloud IAM service account ID token.
 
 ### Understanding the projected service account token
 
-If you look at the `k-project/project-details.yaml` file, you see a pod overlay that includes the following:
+In the `k-project/project-details.yaml` file is a pod overlay that includes the following:
 
     serviceAccountName: gke-sa
     volumes:
@@ -237,27 +241,28 @@ audience.
 
 The same Kubernetes service account can be projected multiple times, each for a different audience.
 
-This client line:
+This line in the `main.go` file rereads this secret whenever it has expired and injects the value as an
+`Authorization` header in the form `Authorization: Bearer [JWT_VALUE]`:
 
     authTransport, err := transport.NewBearerAuthWithRefreshRoundTripper("", cfg.TokenPath, http.DefaultTransport)
 
-Will re-read this secret whenever it has expired, and inject the value as a `Authorization` header in the form of:
+## Using Cloud Run Invoker IAM authorization with Workload Identity
 
-    Authorization: Bearer [JWT value]
+Cloud Run offers a [built-in authorization feature](https://cloud.google.com/run/docs/securing/managing-access) that acts as
+an alternative to the authorization middleware used in the previous sections of this tutorial. 
 
+When the Cloud Run Invoker IAM feature is employed, the Cloud Run service performs the following checks:
 
-## Using Cloud Run IAM invoker authorization with workload identity
+- Is the JWT in an `Authorization` header issued (signed) by `https://accounts.google.com`?
+- Is the token un-expired?
+- Does the audience claim in the token match the target service?
+- Is the `sub` (subject), or principal, of the request a member of the service's IAM invoker role?
 
-Cloud Run offers a built in auth feature that acts as an alternative to the auth middleware used above. When this is employed, the Cloud Run service performs the following checks:
+The last check—against the service's IAM invoker role—is an additional authorization check not present in the middleware 
+discussed in previous sections of this tutorial, and it checks specific service accounts against a list or Google Group 
+membership.
 
-1. Is the JWT in an Authorization header issued (signed) by https://accounts.google.com?
-1. Is the token un-expired?
-1. Does the audience claim in the token match the target service?
-1. Is the `sub` (subject), or principal, of the request a member of the Service's IAM "invoker" role?
-
-That last step is an additional authorization check not present in the middleware above, and checks specific service accounts against a list or Google Group membership.
-
-If all of these checks pass, then the request is passed on to the Cloud Run service. The code in the Docker container now no
+If all of these checks pass, then the request is passed on to the Cloud Run service. The code in the container now no
 longer needs to implement any authorization middleware.
 
 ### Remove the `allow-unauthenticated` option for the Cloud Run service
@@ -265,36 +270,44 @@ longer needs to implement any authorization middleware.
 Cloud Run services are secure by default. There is a special member, `allUsers`, which can be added to the list of invokers, 
 which will allow any request to reach the service.
 
-    gcloud run services remove-iam-policy-binding --role=roles/run.invoker --member allUsers auth-server
+1.  Remove this option:
 
-It may take a **minute** or so for this change in policy to propagate, but if you now try to reach the "exposed" base path, you will see a 403 response:
+        gcloud run services remove-iam-policy-binding --role=roles/run.invoker --member allUsers auth-server
 
-    curl $SERVICE_URL
+    It may take a minute or more for this change in policy to propagate.
+    
+1.  Attempt to reach the "exposed" base path:
 
-### Create a service account to associate with workload identity (a GKE Google Service Account):
+        curl $SERVICE_URL
 
-A key use of GKE workload identity is to provide Kubernetes service accounts a way to act as a Google Cloud service account
-for accessing Google APIs. The first step is to create the Google Cloud service account in the project:
+    You should receive a `403` response.
 
-    gcloud iam service-accounts create gke-gsa
+### Create a service account to associate with Workload Identity
 
-Allow workloads running as the 'gke-sa' kubernetes service account in the 'id-namespace' to generate tokens for this service
-account.
+A key use of GKE Workload Identity is to provide a Kubernetes service account a way to act as a Google Cloud service account
+for accessing Google APIs.
 
-    gcloud iam service-accounts add-iam-policy-binding \
-        --role roles/iam.serviceAccountTokenCreator \
-        --member "serviceAccount:${PROJECT}.svc.id.goog[id-namespace/gke-sa]" \
-        gke-gsa@$PROJECT.iam.gserviceaccount.com
+1.  Create the Google Cloud service account in the project:
 
-Note that this permission applies to a combination of a project, a namespace, and a service account ID. It will apply to any
-cluster that contains a matching namespace and service-account in the project.
+        gcloud iam service-accounts create gke-gsa
 
-Now you need to annotate the namespace so that GKE knows that it can make use of the permission you just granted:
+1.  Allow workloads running as the `gke-sa` kubernetes service account in the `id-namespace` to generate tokens for this
+    service account:
 
-    kubectl annotate serviceaccount \
-        --namespace id-namespace \
-        gke-sa \
-    iam.gke.io/gcp-service-account=gke-gsa@$PROJECT.iam.gserviceaccount.com
+        gcloud iam service-accounts add-iam-policy-binding \
+            --role roles/iam.serviceAccountTokenCreator \
+            --member "serviceAccount:${PROJECT}.svc.id.goog[id-namespace/gke-sa]" \
+            gke-gsa@$PROJECT.iam.gserviceaccount.com
+
+    Note that this permission applies to a combination of a project, a namespace, and a service account ID. It will apply
+    to any cluster that contains a matching namespace and service account in the project.
+
+1.  Annotate the namespace so that GKE knows that it can make use of the permission you just granted:
+
+        kubectl annotate serviceaccount \
+            --namespace id-namespace \
+            gke-sa \
+        iam.gke.io/gcp-service-account=gke-gsa@$PROJECT.iam.gserviceaccount.com
 
 Now the Kubernetes workload has the ability to get credentials and act as the Google Cloud service account.
 
@@ -304,29 +317,27 @@ Google service account.
 
 ### Reconfigure the client to use the Google-issued identity
 
-In the file `client/k-project/project-details.yaml` change the value of an environment variable from:
+The `main.go` client program contains a switch statement that builds an authenticated HTTP client using the credential 
+provided by the metadata server. In this section, you change an environment variable and then update the client 
+configuration.
 
-    IDENTITY: cluster
+1.  In the `client/k-project/project-details.yaml` file, change the value of an environment variable from
+    `IDENTITY: cluster` to `IDENTITY: google` and save the change.
 
-to:
+1.  Update the client configuration:
 
-    IDENTITY: google
+        kubectl delete configmap client-config -n id-namespace
+        kubectl delete pod auth-client -n id-namespace
+        kubectl apply -k client/k-project
 
-You can see in the client program a switch statement that builds an authenticated HTTP client using a mechanism using the
-credential provided by the metadata server.
+### Add the Google Cloud service account to the invoker policy
 
-Update the client configuration after saving the change:
+1.  Add the associated Google Cloud service account to the invoker policy for the Cloud Run service:
 
-    kubectl delete configmap client-config -n id-namespace
-    kubectl delete pod auth-client -n id-namespace
-    kubectl apply -k client/k-project
+        gcloud run services add-iam-policy-binding --role=roles/run.invoker --member serviceAccount:gke-gsa@$PROJECT.iam.gserviceaccount.com auth-server
 
-### Add the associated GCP service-account to the invoker policy for the Cloud Run Service
-
-    gcloud run services add-iam-policy-binding --role=roles/run.invoker --member serviceAccount:gke-gsa@$PROJECT.iam.gserviceaccount.com auth-server
-
-In the client workload configured to use the Google-issued identity, the HTTP client does not use the projected token as the
-header, but instead reads an ID token from the metadataserver made available at this URL:
+In the client workload configured to use the Google-issued identity, the HTTP client does not use the projected token
+as the header, but instead reads an ID token from the metadataserver made available at this URL:
 
     http://metadata/computeMetadata/v1/instance/service-accounts/default/identity
 
@@ -341,14 +352,14 @@ Because this is a Google-issued token, it can be checked against the Cloud Run i
 
 ### Check client access
 
-After letting the permissions propagate for a moment, check the output of the client:
+1.  After letting the permissions propagate for a moment, check the output of the client:
 
         kubectl logs -f auth-client -n id-namespace
 
-This time you will see log lines under `##### mapped GCP SvcAccnt via Metadata server`
+This time, you should see log lines under `##### mapped GCP SvcAccnt via Metadata server`.
 
-You will see that the "exposed" path is reachable. This is the path the service is exposing without middleware. However as 
-you saw above, it is being guarded by Cloud Run. Since you are seeing a response, it means that the token that the workload 
+The "exposed" path is reachable. This is the path the service is exposing without middleware. However, as you saw above,
+this path is being guarded by Cloud Run. Since you are seeing a response, it means that the token that the workload 
 retrieved from the metadata server is passing the validation check by Cloud Run.
 
 You won't see a successful response to the `private` endpoint because it is now being double-guarded: once by Cloud Run and
