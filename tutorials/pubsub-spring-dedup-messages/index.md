@@ -53,7 +53,7 @@ Many enterprise-level Java applications with distributed systems on the backend 
 
    * From the **Service account** list, select **New service account**.
    * In the **Service account name** field, enter a name.
-   * From the **Role** list, select **PubSub > Admin** and **Dataflow > Admin**.
+   * From the **Role** list, select **PubSub > Admin**, **Dataflow > Admin** and **Storage > Admin**.
    * Click **Create**. Save this JSON file to a location on your computer.
 
    Alternatively, you can use `gcloud` through the command line.
@@ -76,6 +76,11 @@ Many enterprise-level Java applications with distributed systems on the backend 
      --member serviceAccount:$IAM_ACCOUNT \
      --role roles/dataflow.admin   
 
+   # Add Storage Admin role to your service account.
+   gcloud projects add-iam-policy-binding $PROJECT_NAME \
+     --member serviceAccount:$IAM_ACCOUNT \
+     --role roles/storage.admin   
+   
    # Create a JSON file with the service account credentials.
    gcloud iam service-accounts keys create path/to/your/credentials.json \
      --iam-account=$IAM_ACCOUNT
