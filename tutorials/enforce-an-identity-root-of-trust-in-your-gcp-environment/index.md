@@ -3,7 +3,7 @@ title: How to enforce an identity root of trust in your GCP environment.
 description: This post lets security savvy customers know how they can secure their identities in their GCP environment, especially how they can trust their setup by making sure no single individual - in their organization or not - can intentionally or not log in as a super admin and change any setting. This is especially relevant with our most "paranoid" customers who want to prove to their leadership that they have full control of their cloud environment, ensuring the root of trust on the admin console is the first step to demonstrate that.
 author: awalko
 tags: Security, identity, Google Cloud Platform, identity root of trust, super admins, GCP
-date_published: TBD
+date_published: 2020-02-26
 ---
 
 # Introduction
