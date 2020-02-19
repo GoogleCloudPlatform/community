@@ -114,9 +114,9 @@ header-based request authentication.
 
         export ISSUER="https://container.googleapis.com/v1/projects/${PROJECT}/locations/${ZONE}/clusters/${CLUSTER}"
 
-    The issuer is OIDC Identity Provider the server trusts, in this case a specific cluster.
+    The issuer is an OIDC identity provider that the server trusts, in this case a specific cluster.
 
-1.  Deploy the server with Cloud Run
+1.  Deploy the server with Cloud Run:
 
         gcloud run deploy --image gcr.io/${PROJECT}/auth-server --allow-unauthenticated --platform managed auth-server --set-env-vars="ID_ISSUER=${ISSUER},JWT_AUDIENCE=TBD"
 
@@ -153,6 +153,8 @@ header-based request authentication.
 
         gcloud run deploy --image gcr.io/${PROJECT}/auth-server --allow-unauthenticated --platform managed auth-server --set-env-vars="ID_ISSUER=${ISSUER},JWT_AUDIENCE=${SERVICE_URL}"
 
+### Understanding the authorization middleware
+
 The authorization middleware in this sample is in the `server/auth.go` file. It uses the `github.com/coreos/go-oidc` 
 package.
 
@@ -173,56 +175,69 @@ authenticate against a different service.
 
 ## Deploy the client to the cluster
 
-Because workload identity is available to a running workload, it is not easily demonstrated with a local `CURL` command. Instead - you will deploy a simple workload that loops and makes HTTP requests to the server.
+Because workload identity is available to a running workload, it is not easily demonstrated with a local `curl` command. 
+Instead, in this tutorial, you deploy a simple workload that loops and makes HTTP requests to the server.
 
-### Build the client:
+The workload makes a set of requests to the exposed and guarded paths on the server. It creates two different HTTP clients 
+to make these requests. One is authenticated with the cluster-issued projected service account token, and the other is 
+authenticated with the Google-issued Google Cloud IAM service account ID token.
 
-    gcloud builds submit --tag gcr.io/${PROJECT}/auth-client ./client
+1.  Build the client:
 
-### Configure the client
+        gcloud builds submit --tag gcr.io/${PROJECT}/auth-client ./client
 
-This next step uses Kustomize to create a project specific overlay variant of the client kubernetes resource yaml:
+1.  Configure the client:
 
-    cat client/k-project/project-details-template.yaml | envsubst > client/k-project/project-details.yaml 
+        cat client/k-project/project-details-template.yaml | envsubst > client/k-project/project-details.yaml 
 
-See [this explanation](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/eschewedFeatures.md#unstructured-edits) of why you want to capture these variables into an overlay, instead of modifying the Kubernetes yaml dynamically as part of the apply.
+    This command uses kustomize to create a project-specific overlay variant of the client Kubernetes resource YAML file.
+    For information about why we recommend that you capture these variables in an overlay, instead of modifying the
+    Kubernetes YAML file dynamically as part of the `apply` operation, see
+    [this explanation](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/eschewedFeatures.md#unstructured-edits).
 
-The base resources are:
+    The base resources:
 
-* A namespace: `id-namespace`
-* A service account: `gke-sa`
-* A client config map
-* A test-client pod
+    * A namespace: `id-namespace`
+    * A service account: `gke-sa`
+    * A client configuration map
+    * A test client pod
 
-Create the client resources in the cluster:
+1.  Create the client resources in the cluster:
 
-    kubectl create -k client/k-project/
+        kubectl create -k client/k-project/
+	
+1.  Observe the client logs:
 
-The workload makes a set of requests to the 'exposed' and 'guarded' paths on the server. It creates two different HTTP clients to make these requests.
+        kubectl logs -f auth-client -n id-namespace
 
-One is authenticated with the cluster-issued projected service account token, and the other is authenticated with the Google-issued GCP-IAM Service Account id-token which will be discussed below.
+    Under `##### Projected token client`, you should see both the exposed and guarded API responses in the logs.
+
+    The guarded response is only returned if the middleware succeeds in validating the JWT as configured above.
+    
+1.  Press Ctrl-C to stop logging.
 
 ### Understanding the projected service account token
 
-If you look at the `k-project/project-details.yaml` you will see a pod overlay which includes:
+If you look at the `k-project/project-details.yaml` file, you see a pod overlay that includes the following:
 
-      serviceAccountName: gke-sa
-      volumes:
-      - name: client-token
-        projected:
-          sources:
-          - serviceAccountToken:
-              path: gke-sa
-              expirationSeconds: 600
-              audience: https://auth-server-[hash]-uc.a.run.app
+    serviceAccountName: gke-sa
+    volumes:
+    - name: client-token
+      projected:
+        sources:
+        - serviceAccountToken:
+            path: gke-sa
+            expirationSeconds: 600
+            audience: https://auth-server-[hash]-uc.a.run.app
 
-The `serviceAccountName` specifies which Kubernetes Service Account the pod runs as.
+The `serviceAccountName` value specifies which Kubernetes service account the pod runs as.
 
-The `projected:serviceAccountTokens` includes details that expose a signed JWT token at a given path, for a specific audience.
+The `projected:serviceAccountTokens` includes details that expose a signed JWT token at a given path, for a specific 
+audience.
 
 The same Kubernetes service account can be projected multiple times, each for a different audience.
 
-The client line:
+This client line:
 
     authTransport, err := transport.NewBearerAuthWithRefreshRoundTripper("", cfg.TokenPath, http.DefaultTransport)
 
@@ -230,16 +245,6 @@ Will re-read this secret whenever it has expired, and inject the value as a `Aut
 
     Authorization: Bearer [JWT value]
 
-
-### Observe the client logs
-
-    kubectl logs -f auth-client -n id-namespace
-
-Look for the lines under `##### Projected token client`
-
-You should see both the exposed and guarded API responses in the logs.
-
-The guarded response is only returned if the middleware succeeds in validating the JWT token as configured above. Use `ctrl-c` to stop logging.
 
 ## Using Cloud Run IAM invoker authorization with workload identity
 
