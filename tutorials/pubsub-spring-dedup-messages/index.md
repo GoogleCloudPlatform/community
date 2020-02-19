@@ -12,7 +12,7 @@ Tianzi Cai | Developer Programs Engineer | Google Cloud
 
 This tutorial demonstrates how to use Pub/Sub and Dataflow to deduplicate messages in a Spring Cloud Stream application.
 
-Many enterprise-level Java applications with distributed systems on the backend are built with [Spring Boot] and [Spring Cloud]. [Spring Cloud GCP] are libraries that enable Spring Boot and Spring Cloud Stream applications to use GCP managed services such as [Pub/Sub] for added scalability and separation of concern. 
+Many enterprise-level Java applications with distributed systems on the backend are built with [Spring Boot] and [Spring Cloud]. [Spring Cloud GCP] are libraries that enable Spring Boot and Spring Cloud Stream applications to use GCP managed services such as [Pub/Sub] for added scalability and separation of concerns. 
 
 [Pub/Sub] and [Dataflow] together can meet many different stream processing needs. In this tutorial, you will learn how to set up a simple Dataflow pipeline to deduplicate data out of a Spring Cloud Stream application before sending it back via Pub/Sub. The same setup also applies to more complex and demanding stream processing needs.
 
@@ -197,6 +197,8 @@ spring.cloud.stream.bindings.receiveDedupedMessagesFromDataflow-in-0.destination
 spring.cloud.stream.bindings.receiveDedupedMessagesFromDataflow-in-0.group=subscriptionFromDataflow
 ```
 
+Pub/Sub messages received by your application are automatically acknowledged in this setup. Acknowledged messages are no longer be retained in the subscription.
+
 ### Construct a Pub/Sub message with custom attributes
 
 Pub/Sub lets you publish messages with custom attributes, which are key value pairs. To construct a message with custom attributes in your application, you can specify the attributes as headers. 
@@ -220,7 +222,7 @@ In [DataEntryController.java](pubsub-spring-cloud-stream/src/main/java/com/googl
     ```
 1. Point your browser to `localhost:8080`.
 1. Send a message using the form. 
-1. View Publish Message Request Count and Publish Message Operation Count in the topic details for `TopicToDataflow` in [Cloud Console for Pub/Sub Topic] to verify that publishing to Pub/Sub is successful. 
+1. View Publish Message Request Count and Publish Message Operation Count in the topic details for `TopicToDataflow` in the [Cloud Console for Pub/Sub Topic] to verify that publishing to Pub/Sub is successful. 
 
 ## Create a Dataflow Pipeline to Deduplicate Pub/Sub Messages
 
@@ -263,11 +265,11 @@ Publish a few more messages of different keys via the web host and observe messa
 
 ![results](results.png)
 
-Here, "Message 2", "Message 3", and "Message 4" have the same key "456", so only the first of them "Message 2" has been allowed to pass through the entire pipeline and arrived in the Spring Cloud Stream sink.
+Here, "Message 2", "Message 3", and "Message 4" have the same key "456", so only the first of them "Message 2" has passed through the pipeline and arrived in your application.
 
 ## Cleanup
 1. Use `Ctrl+C` to stop the Spring Boot application and the Dataflow.
-1. In the [Cloud Console for Dataflow], select the Dataflow job and stop it. Cancel the pipeline instead of draining it. Dataflow will automatically delete the subscription to the topic `topicFromDataflow` during this process.
+1. In the [Cloud Console for Dataflow], select the Dataflow job and stop it. Cancel the pipeline instead of draining it. Dataflow will automatically delete the subscription to the topic `topicFromDataflow` during this process. Your subscription name should look similar to `topicToDataflow.subscription-8732360904945383579` with a different alphanumeric string at the end.
 1. Delete the subscription followed by the topics in the [Cloud Console for Pub/Sub] or via the command line.
 ```shell script
 gcloud pubsub subscriptions delete topicFromDataflow.subscriptionFromDataflow
