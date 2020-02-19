@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: client-config
+data:
+  SERVICE_ENDPOINT: "https://auth-server-2tp6v3vvsq-uc.a.run.app"
+  IDENTITY: cluster

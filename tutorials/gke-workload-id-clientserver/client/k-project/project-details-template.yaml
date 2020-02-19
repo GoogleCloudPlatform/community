@@ -1,0 +1,25 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: auth-client
+spec:
+  containers:
+  - image: gcr.io/${PROJECT}/auth-client
+    name: auth-client
+  serviceAccountName: gke-sa
+  volumes:
+  - name: client-token
+    projected:
+      sources:
+      - serviceAccountToken:
+          path: gke-sa
+          expirationSeconds: 600
+          audience: ${SERVICE_URL}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: client-config
+data:
+  SERVICE_ENDPOINT: "${SERVICE_URL}"
+  IDENTITY: cluster
