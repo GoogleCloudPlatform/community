@@ -205,9 +205,9 @@ Pub/Sub lets you publish messages with custom attributes, which are key value pa
 
 In [DataEntryController.java](pubsub-spring-cloud-stream/src/main/java/com/google/example/DataEntryController.java):
 
-[embedmd]:# (pubsub-spring-cloud-stream/src/main/java/com/google/example/DataEntryController.java java /  \/\/ Headers/ /;/)
+[embedmd]:# (pubsub-spring-cloud-stream/src/main/java/com/google/example/DataEntryController.java java /    \/\/ Headers/ /;/)
 ```java
-  // Headers become Pub/Sub message attributes.
+    // Headers become Pub/Sub message attributes.
     Message<String> message = MessageBuilder
       .withPayload(data)
       .setHeader("key", key)
@@ -230,9 +230,9 @@ To deduplicate Pub/Sub messages in a Dataflow pipeline using a custom key, you n
 
 In [DedupPubSub.java](pubsubio-dedup/src/main/java/com/google/example/DedupPubSub.java):
 
-[embedmd]:# (pubsubio-dedup/src/main/java/com/google/example/DedupPubSub.java java /  pipeline\n.*1\)./ /;/)
+[embedmd]:# (pubsubio-dedup/src/main/java/com/google/example/DedupPubSub.java java /    pipeline\n.*1\)./ /;/)
 ```java
-  pipeline
+    pipeline
         // 1) Read string messages with attributes from a Pub/Sub topic.
         .apply(
             "Read from PubSub",
