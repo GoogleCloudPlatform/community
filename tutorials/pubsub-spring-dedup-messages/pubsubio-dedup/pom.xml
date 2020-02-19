@@ -37,20 +37,6 @@
     <slf4j.version>1.7.30</slf4j.version>
   </properties>
 
-  <repositories>
-    <repository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
-      <url>https://repository.apache.org/content/repositories/snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <build>
     <plugins>
       <plugin>
