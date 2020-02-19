@@ -1,5 +1,5 @@
 ---
-title: Using Kubernetes Workload Identity for client-server authentication
+title: Using Kubernetes Workload Identity for client-server authorization
 description: Demonstrates the use of authorized HTTP clients and server middleware to make the use of Kubernetes Workload Identity more transparent.
 author: ptone
 tags: Kubernetes, identity
@@ -7,8 +7,6 @@ date_published: 2020-02-14
 ---
 
 Preston Holmes | Solution Architect | Google
-
-## Introduction
 
 Kubernetes service accounts have been the primary mechanism of identity in Kubernetes clusters. They have been usable with 
 Kubernetes (role-based access control) RBAC to control authorization to the Kubernetes API server. Historically, these have 
@@ -159,8 +157,8 @@ header-based request authentication.
 
 ### Understanding the authorization middleware
 
-The authorization middleware in this sample is in the `server/auth.go` file. It uses the `github.com/coreos/go-oidc` 
-package.
+The authorization middleware in this sample is in the `server/auth.go` file. It uses the
+[`go-oidc` package](https://github.com/coreos/go-oidc).
 
 This package and middleware perform the following steps:
 
@@ -170,7 +168,8 @@ This package and middleware perform the following steps:
 1.  Verifies that the token has not expired.
 1.  Verifies that the signature on the [JSON Web Token (JWT)](https://jwt.io) sent as a header by the workload was signed by
     the retrieved issuer's public key.
-1.  Verifies the `aud` claim inside the JWT payload matches the service URL set as the `JWT_AUDIENCE` environment variable.
+1.  Verifies that the `aud` (audience) claim inside the JWT payload matches the service URL set as
+    the `JWT_AUDIENCE` environment variable.
 
 The authorization middleware does *not* perform any authorization actions based on which workload identity has been 
 verified—only 1) that it is a valid identity issued by a trusted issuer and 2) that the token was generated for use with 
@@ -179,7 +178,7 @@ authenticate against a different service.
 
 ## Deploy the client to the cluster
 
-Because workload identity is available to a running workload, it is not easily demonstrated with a local `curl` command. 
+Because Workload Identity is available to a running workload, it is not easily demonstrated with a local `curl` command. 
 Instead, in this tutorial, you deploy a simple workload that loops and makes HTTP requests to the server.
 
 The workload makes a set of requests to the exposed and guarded paths on the server. It creates two different HTTP clients 
@@ -284,14 +283,14 @@ which will allow any request to reach the service.
 
 ### Create a service account to associate with Workload Identity
 
-A key use of GKE Workload Identity is to provide a Kubernetes service account a way to act as a Google Cloud service account
-for accessing Google APIs.
+A key use of GKE Workload Identity is to provide a Kubernetes service account with a way to act as a Google Cloud service 
+account for accessing Google APIs.
 
 1.  Create the Google Cloud service account in the project:
 
         gcloud iam service-accounts create gke-gsa
 
-1.  Allow workloads running as the `gke-sa` kubernetes service account in the `id-namespace` to generate tokens for this
+1.  Allow workloads running as the `gke-sa` Kubernetes service account in the `id-namespace` to generate tokens for this
     service account:
 
         gcloud iam service-accounts add-iam-policy-binding \
@@ -302,18 +301,18 @@ for accessing Google APIs.
     Note that this permission applies to a combination of a project, a namespace, and a service account ID. It will apply
     to any cluster that contains a matching namespace and service account in the project.
 
-1.  Annotate the namespace so that GKE knows that it can make use of the permission you just granted:
+1.  Annotate the namespace so that GKE knows that it can make use of the permission that you just granted:
 
         kubectl annotate serviceaccount \
             --namespace id-namespace \
             gke-sa \
         iam.gke.io/gcp-service-account=gke-gsa@$PROJECT.iam.gserviceaccount.com
 
-Now the Kubernetes workload has the ability to get credentials and act as the Google Cloud service account.
+Now, the Kubernetes workload has the ability to get credentials and act as the Google Cloud service account.
 
 It can get access these credentials from the metadata server, which most Google Cloud client libraries will do 
-transparently. It allows the workload to access both Oauth2 access tokens, as well as the OIDC ID token for the associated 
-Google service account.
+transparently. It allows the workload to access both OAuth 2.0 access tokens, as well as the OIDC ID token for the 
+associated Google service account.
 
 ### Reconfigure the client to use the Google-issued identity
 
@@ -332,18 +331,14 @@ configuration.
 
 ### Add the Google Cloud service account to the invoker policy
 
-1.  Add the associated Google Cloud service account to the invoker policy for the Cloud Run service:
+Add the associated Google Cloud service account to the invoker policy for the Cloud Run service:
 
-        gcloud run services add-iam-policy-binding --role=roles/run.invoker --member serviceAccount:gke-gsa@$PROJECT.iam.gserviceaccount.com auth-server
+    gcloud run services add-iam-policy-binding --role=roles/run.invoker --member serviceAccount:gke-gsa@$PROJECT.iam.gserviceaccount.com auth-server
 
 In the client workload configured to use the Google-issued identity, the HTTP client does not use the projected token
-as the header, but instead reads an ID token from the metadataserver made available at this URL:
+as the header, but instead reads an ID token from the metadata server at this URL: `http://metadata/computeMetadata/v1/instance/service-accounts/default/identity`
 
-    http://metadata/computeMetadata/v1/instance/service-accounts/default/identity
-
-To specify the audience, a query string is used:
-
-    ?format=full&audience=[URL_of_target_service]
+To specify the audience, a query string is used: `?format=full&audience=[URL_of_target_service]`
 
 The response includes a Google-issued ID token for the associated Google Cloud service account, not the cluster-issued 
 Kubernetes service account as was done above.
@@ -352,26 +347,27 @@ Because this is a Google-issued token, it can be checked against the Cloud Run i
 
 ### Check client access
 
-1.  After letting the permissions propagate for a moment, check the output of the client:
+After letting the permissions propagate for a moment, check the output of the client:
 
-        kubectl logs -f auth-client -n id-namespace
+    kubectl logs -f auth-client -n id-namespace
 
 This time, you should see log lines under `##### mapped GCP SvcAccnt via Metadata server`.
 
-The "exposed" path is reachable. This is the path the service is exposing without middleware. However, as you saw above,
-this path is being guarded by Cloud Run. Since you are seeing a response, it means that the token that the workload 
-retrieved from the metadata server is passing the validation check by Cloud Run.
+The "exposed" path is reachable. This is the path that the service is exposing without middleware. However, as you saw 
+in a previous section, this path is being guarded by Cloud Run. Since you are seeing a response, it means that the token 
+that the workload retrieved from the metadata server is passing the validation check by Cloud Run.
 
-You won't see a successful response to the `private` endpoint because it is now being double-guarded: once by Cloud Run and
+You won't see a successful response to the `private` endpoint because it is guarded twice: once by Cloud Run and
 IAM, and once by the authorization middleware in the service that is still configured to check that the token was issued by 
 the cluster. You can't have a single token "dual issued". The server example here is being used to demonstrate several
 scenarios. 
 
-Also, a scenario that is possible, but not illustrated here, is using Google-issued ID tokens (those with an issuer of
-https://accounts.google.com) and verify them yourself in auth middleware, using on of Googles provided libraries, see 
-https://developers.google.com/identity/sign-in/web/backend-auth.
+Another scenario that is possible, but not illustrated here, is using Google-issued ID tokens (those with an issuer of
+`https://accounts.google.com`) and verifying them yourself in middleware, using one of the libraries provided by Google. 
+For information, see
+[Authenticate with a backend server](https://developers.google.com/identity/sign-in/web/backend-auth).
 
-## Cleaning Up
+## Cleaning up
 
 1.  Delete the client:
 
@@ -381,6 +377,6 @@ https://developers.google.com/identity/sign-in/web/backend-auth.
 
         gcloud beta container clusters delete $CLUSTER
 
-1.  Delete the Cloud Run service
+1.  Delete the Cloud Run service:
 
         gcloud run services delete auth-server
