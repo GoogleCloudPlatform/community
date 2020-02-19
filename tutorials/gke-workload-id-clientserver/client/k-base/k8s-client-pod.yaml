@@ -1,0 +1,23 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: auth-client
+spec:
+  containers:
+  - image: gcr.io/ptone-kf/auth-client
+    name: auth-client
+    envFrom:
+      - configMapRef:
+          name: client-config
+    volumeMounts:
+    - mountPath: /var/run/secrets/tokens
+      name: client-token
+  serviceAccountName: gke-sa
+  volumes:
+  - name: client-token
+    projected:
+      sources:
+      - serviceAccountToken:
+          path: gke-sa
+          expirationSeconds: 600
+          audience: https://auth-server-2tp6v3vvsq-uc.a.run.app
