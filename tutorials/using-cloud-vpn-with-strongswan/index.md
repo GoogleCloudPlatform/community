@@ -312,7 +312,10 @@ This guide assumes that you have strongSwan already installed. It also assumes a
     protocol kernel {
            learn;
            merge paths on; # For ECMP
-           export all; # Sync all routes to kernel
+           export filter { 
+                  krt_prefsrc = 10.164.0.6; # Internal IP Address of the strongSwan VM. 
+                  accept; # Sync all routes to kernel
+           };
            import all; # Required due to /32 on GCE VMs for the static route below
     }
 
