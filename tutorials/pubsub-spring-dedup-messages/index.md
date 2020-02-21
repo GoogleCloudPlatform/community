@@ -226,7 +226,7 @@ In [DataEntryController.java](pubsub-spring-cloud-stream/src/main/java/com/googl
 
 ## Create a Dataflow Pipeline to Deduplicate Pub/Sub Messages
 
-To deduplicate Pub/Sub messages in a Dataflow pipeline using a custom key, you need to set an `idAttribute` for the input stream. Here, the input stream is a Pub/Sub topic, its `idAttribute` can be a Pub/Sub message attribute. Dataflow will achieve exactly once processing on messages with the same attribute values.
+To deduplicate Pub/Sub messages in a Dataflow pipeline using a custom key, you need to set an `idAttribute` for the input stream. Here, the input stream is a Pub/Sub topic, its `idAttribute` can be a Pub/Sub message attribute. Dataflow will achieve exactly once processing on messages with the same attribute values. For more information about `PubSubIO`, check out its [source code](https://github.com/apache/beam/blob/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/pubsub/PubsubIO.java).
 
 In [DedupPubSub.java](pubsubio-dedup/src/main/java/com/google/example/DedupPubSub.java):
 
@@ -265,7 +265,7 @@ Publish a few more messages of different keys via the web host and observe messa
 
 ![results](results.png)
 
-Here, "Message 2", "Message 3", and "Message 4" have the same key "456", so only the first of them "Message 2" has passed through the pipeline and arrived in your application.
+Here, "Message 2", "Message 3", and "Message 4" have the same key "456", only the first of them "Message 2" has passed all the way through the pipeline and arrived in your application.
 
 ## Cleanup
 1. Use `Ctrl+C` to stop the Spring Boot application and the Dataflow.
@@ -279,6 +279,7 @@ gcloud pubsub topics delete topicFromDataflow topicToDataflow
 1. Learn more about [Pub/Sub].
 1. [Google Cloud Platform services that integrate with Spring].
 1. Using [Dataflow templates] for stream processing.
+1. [Building streaming pipelines with Pub/Sub using Dataflow].
 
 [Spring Boot]: https://spring.io/projects/spring-boot
 [Spring Cloud]: https://spring.io/projects/spring-cloud
@@ -303,3 +304,4 @@ gcloud pubsub topics delete topicFromDataflow topicToDataflow
 
 [Google Cloud Platform services that integrate with Spring]: https://spring.io/projects/spring-cloud-gcp/
 [Dataflow templates]: https://cloud.google.com/dataflow/docs/guides/templates/overview/
+[Building streaming pipelines with Pub/Sub using Dataflow]: https://cloud.google.com/dataflow/docs/concepts/streaming-with-cloud-pubsub
