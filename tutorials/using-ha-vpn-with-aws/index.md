@@ -363,7 +363,7 @@ In the following commands to create each tunnel, replace the options as noted in
     recommended. All four tunnels created in this example use IKEv2.
 -   Replace `[SHARED_SECRET_0]` through `[SHARED_SECRET_3]` with the shared secret, which must be the same as the
     shared secret used for the partner tunnel you create on your AWS virtual gateway. See
-    [Generating a strong pre-shared key](https://cloud-dot-devsite.googleplex.com/vpn/docs/how-to/generating-pre-shared-key)
+    [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key)
     for recommendations. You can also find the shared secrets in the AWS configuration files that you downloaded 
     earlier.
 -   Replace `[INT_NUM_0]` with the number `0` for the first interface on the HA VPN gateway you created earlier.
