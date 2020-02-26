@@ -72,7 +72,7 @@ you already have an app to deploy, you can use it instead.
             ext.kotlin_version = '1.2.61'
             ext.ktor_version = '0.9.4'
             ext.appengine_version = '1.9.60'
-            ext.appengine_plugin_version = '1.3.4'
+            ext.appengine_plugin_version = '2.1.0'
 
             repositories {
                 jcenter()
@@ -86,6 +86,9 @@ you already have an app to deploy, you can use it instead.
         apply plugin: 'kotlin'
         apply plugin: 'war'
         apply plugin: 'com.google.cloud.tools.appengine'
+
+        appengine.deploy.projectId = 'GCLOUD_CONFIG'
+        appengine.deploy.version = 'GCLOUD_CONFIG'
 
         sourceSets {
             main.kotlin.srcDirs = [ 'src/main/kotlin' ]
