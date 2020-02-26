@@ -190,16 +190,16 @@ public class App {
                     UUID uuid = UUID.randomUUID();
                     String randomUUIDString = uuid.toString();
     
-                    startRead = System.currentTimeMillis();
+                    startWrite = System.currentTimeMillis();
                     // write to Bigtable
                     writeRows(table, randomUUIDString);
-                    endRead = System.currentTimeMillis(); 
+                    endWrite = System.currentTimeMillis(); 
     
     
-                    startWrite = System.currentTimeMillis();
+                    startRead = System.currentTimeMillis();
                     // read from Bigtable
                     readRows(table, randomUUIDString);
-                    endWrite = System.currentTimeMillis(); 
+                    endRead = System.currentTimeMillis(); 
     
             // [END opencensus_scope_main]
             // [START opencensus_metric_record]
