@@ -87,6 +87,9 @@ you already have an app to deploy, you can use it instead.
         apply plugin: 'war'
         apply plugin: 'com.google.cloud.tools.appengine'
 
+        appengine.deploy.projectId = 'GCLOUD_CONFIG'
+        appengine.deploy.version = 'GCLOUD_CONFIG'
+
         sourceSets {
             main.kotlin.srcDirs = [ 'src/main/kotlin' ]
         }
