@@ -10,7 +10,7 @@ Nahuel Lofeudo, Google LLC
 
 One of the most common causes of failures and slowdowns in Dataflow pipelines is workers' Java virtual machines running out
 of memory. This document is a summary of the information that you need in order to detect and troubleshoot out-of-memory 
-(OOM) conditions in workers, either because of bugs or memory leaks or because the workers simply need more memory than the 
+(OOM) conditions in workers, either because of bugs or memory leaks or because the workers need more memory than the 
 system allows them to use.
 
 ## The Dataflow worker
@@ -21,8 +21,8 @@ These machines run the following:
 
 * The *user code* that actually transforms data. This is the code that you write, and it may also
   include third-party libraries that your code uses.
-* A framework (*harness*) that wraps the user code and communicates data back and forth between it and Dataflow components
-  (like Shuffle) and your pipeline's sources and sinks.
+* A framework (*harness*) that wraps the user code and communicates data between it and Dataflow components (like Shuffle)
+  and your pipeline's sources and sinks.
 * A series of monitoring agents that report statistics, progress, and worker health to the Dataflow backend. Some of this 
   information is displayed in the pipeline's view in Cloud Console.
 
@@ -49,25 +49,28 @@ If any of the user code needs to use more than its proportional amount of memory
 process threads), the JVM could run out of free space and into an out-of-memory condition.
 
 Even though there are hundreds of threads running in worker JVMs, most use a negligible amount of memory. Unless you need to
-account for every single kilobyte of memory use, you only need to worry about the process threads (as many as CPU cores, by 
+account for every single kilobyte of memory use, you only need to consider the process threads (as many as CPU cores, by 
 default).
 
-## Signs that you are having out-of-memory issues
+## Determining whether you are having out-of-memory issues
 
 Pipelines having out-of-memory issues will often get stuck, or fail with no obvious symptoms (for example, few if any
 errors logged in the job's view in Cloud Console).
 
-To confirm that your job is failing because of memory issues, open Cloud Console and go to **Logs** → **Logging** and on the
-right side of the text field that says **Filter by label or text search** click the downward-pointing arrow and select
-**Convert to advanced filter**.
+To confirm that your job is failing because of memory issues, do the following:
 
-Use the following filter:
+1.  Open the Cloud Console and go to **Logs** → **Logging**.
+1.  On the right side of the text field that says **Filter by label or text search**, click the downward-pointing arrow
+    and select **Convert to advanced filter**.
+1.  Enter the following filter:
 
-    resource.type="dataflow_step"
-    resource.labels.job_id="[YOUR_JOB_ID]"
-    ("thrashing=true" OR "OutOfMemoryError" OR "Out of memory" OR "Shutting down JVM")
+        resource.type="dataflow_step"
+        resource.labels.job_id="[YOUR_JOB_ID]"
+        ("thrashing=true" OR "OutOfMemoryError" OR "Out of memory" OR "Shutting down JVM")
 
-Click **Submit filter**. (You may also need to click **Load older logs** to search all the logs from the start of the job.)
+1.  Click **Submit filter**.
+
+    You may also need to click **Load older logs** to search all the logs from the start of the job.
 
 If you get any results back, then your job is running out of memory.
 
@@ -89,12 +92,12 @@ explains how much time (the `real` time) the garbage collection took to run.
 
 ## Obtaining a heap dump
 
-If you find that your job is failing due to the JVM running out of memory, you will need to take a heap dump to find out
-what is causing the OOM condition.
+If you find that your job is failing due to the JVM running out of memory, take a heap dump to determine what is causing
+the out-of-memory (OOM) condition.
 
 There are three main ways of obtaining a heap dump from JVMs running in Dataflow workers. In order of preference:
  
-* Instruct the pipeline's JVMs to automatically dump their heap on OOM.
+* Instruct the pipeline's JVMs to automatically dump their heap when out of memory.
 * Connect to the worker machine and download the heap through a browser.
 * Connect directly to a JVM through JMX.
 
@@ -118,6 +121,7 @@ If your job uses Dataflow Shuffle or Streaming Engine,  you will need to use **-
 >**NOTE:** Make sure that the account the job is running under (normally the Dataflow service account) has write permissions on the bucket.
 
 ### Connecting to the worker machine and downloading the heap
+
 This method is easier to carry out but involves manually triggering the memory dump, which means that you will need to keep track of the performance of your pipeline in order to dump the memory when it's about to cause issues.
 
 To create a heap dump, first find the name of the worker of which you want the heap dump and then *SSH into it* by running the following command on your local workstation:
@@ -139,7 +143,9 @@ You will see a link to download the worker's heap dump. After downloading the he
 
 ### Connecting directly to a JVM through JMX
 
-Every version of Oracle JDK and OpenJDK since 1.6 has included a tool named **VisualVM** which can connect to a running JVM (running locally or in a remote machine through the JMX protocol), monitor its state and extract information live. It should be in the **bin/** directory of your Java home directory.
+Every version of Oracle JDK and OpenJDK since 1.6 has included VisualVM, which can connect to a running JVM running locally
+or in a remote machine through the JMX (Java Management Extensions) protocol, monitor its state, and extract information 
+live. It should be in the `bin/` directory of your Java home directory.
  
 You can use the following command on your local computer to examine the state of the JVM running on any Dataflow worker::
 
