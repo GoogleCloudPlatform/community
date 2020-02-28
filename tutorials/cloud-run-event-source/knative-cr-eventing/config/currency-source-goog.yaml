@@ -1,0 +1,15 @@
+---
+apiVersion: sources.eventing.knative.dev/v1alpha1
+kind: ContainerSource
+metadata:
+  name: goog-currency-controller
+spec:
+  image: gcr.io/yokicloud/currency-source
+  sink:
+    #apiVersion: eventing.knative.dev/v1alpha1
+    #kind: Channel
+    #name: default
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: currency-sink
