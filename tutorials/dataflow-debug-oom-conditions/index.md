@@ -80,8 +80,8 @@ JVM's heap. Later sections of this document explain how to troubleshoot these er
 The message `"Out of memory: kill process [PID] ([PROCESS_NAME]) score [NUMBER] or sacrifice child"` means that some other
 process in the worker is causing the Compute Engine machine itself to run out of RAM. Dataflow workers don't have swap 
 space, so once the RAM is all used, there is nothing else left. This message means that the Linux kernel itself has 
-started killing processes that threatened the stability of the entire system. If you see this error message, open a support 
-ticket or report it to Google. 
+started killing processes that threatened the stability of the entire system. If you see this error message, 
+[contact Google support](https://console.cloud.google.com/support). 
  
 Other memory-related messages may sound scary but are actually harmless. For example: 
 
@@ -103,22 +103,26 @@ There are three main ways of obtaining a heap dump from JVMs running in Dataflow
 
 All options have advantages and disadvantages. Let's go one by one:
 
-### Instructing the pipeline to dump heap on OOM
+### Instruct the pipeline to dump heap on OOM
 
 The best way to obtain heap dumps is to re-run the jobs with these flags:
 
     --dumpHeapOnOOM
-    
     --saveHeapDumpsToGcsPath=gs://[PATH_TO_A_STORAGE_BUCKET]
 
+Running a job with these flags automatically saves heap dumps to the specified location when the out-of-memory condition
+happens, without any manual intervention. 
 
-This will automatically save heap dumps to the specified location when the OOM happens, without any manual intervention. 
-Your GCS bucket will have as many .hprof files as JVMs OOM'd (e.g.: if two workers have memory issues, you will have one or more heap dumps for each of the workers).
+Your Cloud Storage bucket will have as many heap dump (`.hprof`) files as JVMs that have run out of memory.
  
->**Caveat:** the heap dump is saved to the GCE machine's boot disk before being uploaded to GCS, and in jobs running on Dataflow Shuffle or Streaming Engine the root disks are generally too small to store dumps for machines larger than n1-standard-2.
-If your job uses Dataflow Shuffle or Streaming Engine,  you will need to use **--diskSizeGb** to increase the size of the workers' disks to hold the memory dump and set it to at least 30GB + the amount of RAM of the machine. Otherwise the heap dump might fail.
+The heap dump is saved to the Compute Engine machine's boot disk before being uploaded to Cloud Storage. For jobs running on
+Dataflow Shuffle or Streaming Engine, the root disks are generally too small to store dumps for machines larger than
+n1-standard-2. Therefore, if your job uses Dataflow Shuffle or Streaming Engine, use `--diskSizeGb` to increase the size of
+the workers' disks to hold the memory dump; set it to at least 30GB + *the amount of RAM of the machine*. Otherwise, the
+heap dump might fail.
 
->**NOTE:** Make sure that the account the job is running under (normally the Dataflow service account) has write permissions on the bucket.
+Make sure that the account that the job is running under (normally the Dataflow service account) has write permissions on 
+the bucket.
 
 ### Connecting to the worker machine and downloading the heap
 
