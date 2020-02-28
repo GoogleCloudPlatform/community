@@ -130,7 +130,7 @@ Connecting to the worker and downloading the heap is easier to carry out but inv
 which means that you would need to keep track of the performance of your pipeline in order to dump the memory when it's 
 about to cause problems.
 
-To create a heap dump, first find the name of the worker of which you want the heap dump and then connect to it using SSH
+To create a heap dump, first find the name of the worker for which you want the heap dump and then connect to it using SSH
 by running the following command on your local workstation:
 
     gcloud compute ssh --project=$PROJECT --zone=$ZONE \
@@ -152,91 +152,119 @@ n1-standard-2. Therefore, if your job uses Dataflow Shuffle or Streaming Engine,
 the workers' disks to hold the memory dump; set the disk size to at least 30 GB + *the amount of RAM of the machine*. 
 Otherwise, the heap dump might fail.
 
-### Connecting directly to a JVM through JMX
+### Connect directly to a JVM through JMX
 
 Every version of Oracle JDK and OpenJDK since 1.6 has included VisualVM, which can connect to a running JVM running locally
 or in a remote machine through the JMX (Java Management Extensions) protocol, monitor its state, and extract information 
-live. It should be in the `bin/` directory of your Java home directory.
+live. VisualVM is in the `bin/` directory of your Java home directory.
  
 You can use the following command on your local computer to examine the state of the JVM running on any Dataflow worker::
 
-	gcloud compute ssh --project=$PROJECT --zone=$ZONE \
-	  $WORKER_NAME --ssh-flag "-L 5555:127.0.0.1:5555"
+    gcloud compute ssh --project=$PROJECT --zone=$ZONE \
+      $WORKER_NAME --ssh-flag "-L 5555:127.0.0.1:5555"
 
-(remember to replace $PROJECT, $ZONE and $WORKER_NAME with the appropriate values)
+Replace `$PROJECT`, `$ZONE` and `$WORKER_NAME` with the appropriate values.
 
-Once the ssh command connects and shows you the remote shell, start VisualVM and follow these steps:
+After the `ssh` command completes and shows you the remote shell, start VisualVM and follow these steps:
 
-1. From the **File** menu, select **Add a JMX connection**.
-1. Enter "**localhost:5555**" for the hostname and select "**Do not require SSL connection**"
-1. Click on **Ok** and select the tab created for the connection "**localhost:5555**".
+1.  In the **File** menu, select **Add a JMX connection**.
+1.  Enter `localhost:5555` for the hostname.
+1.  Select **Do not require SSL connection**.
+1.  Click **OK**.
+1.  Select the tab created for the connection **localhost:5555**.
 
-At this point VisualVM will start showing telemetry from the remote worker. You will be able to see CPU and memory utilization, threads, and more detailed information. To learn more about VisualVM you can read its official documentation[official documentation](https://visualvm.github.io/documentation.html) .
+VisualVM starts showing telemetry from the remote worker. You can see CPU and memory utilization, threads, and more detailed
+information. To learn more, see [VisualVM Documentation and Resources](https://visualvm.github.io/documentation.html).
 
-To create a heap dump through VisualVM, navigate to the **Monitor** tab and click on the **Heap Dump** button. 
+To create a heap dump with VisualVM, go to the **Monitor** tab and click the **Heap Dump** button. 
 
-The caveat of this method is that the JVM is paused while the memory dump is captured and transferred to your computer. So if your connection is not fast enough to transfer the entire content of your heap in five minutes or less, the Dataflow backend could assume that the worker is dead and restart it. In that case all contents of the JVM's memory would be lost.
+The JVM is paused while the memory dump is captured and transferred to your computer. So, if your connection is not fast 
+enough to transfer the entire content of your heap in five minutes or less, the Dataflow backend could assume that the 
+worker is dead and restart it. In that case, all contents of the JVM's memory would be lost.
 
 ## Analyzing the memory dump
 
-Once you have a memory dump it's time to find which objects in the heap are the ones responsible for taking the largest portions of the available memory. One of the easiest tools to use for this purpose is VisualVM.
+After you have gotten a memory dump, it's time to find which objects in the heap are the ones responsible for taking the 
+largest portions of the available memory. One of the easiest tools to use for this purpose is VisualVM.
 
-The first step is to open VisualVM, which should be in the `bin/` directory of your java home directory.
+### View the memory dump
 
+1.  Open VisualVM, which is in the `bin/` directory of your Java home directory.
 
-![VisualVM main window](https://storage.googleapis.com/gcp-community/tutorials/dataflow-debug-oom-conditions/visualvm_main.png)
+    ![VisualVM main window](https://storage.googleapis.com/gcp-community/tutorials/dataflow-debug-oom-conditions/visualvm_main.png)
 
-Then use **File** → **Load** and open your HPROF file.
+1.  Select **File** → **Load** and choose your heap dump (`.hprof`) file.
 
-Loading an HPROF file larger than a gigabyte can take some time, as VisualVM needs to parse the entire memory map and generate a graph of all the references between objects. The good news is that all this information is cached on disk so the next time you open the same file it will be much faster.
-Once the heap dump has been loaded, switch to the memory view by opening the drop-down labeled **Summary** and selecting **Objects**.
+    The first time that you load a large heap dump file (e.g., larger than a gigabyte), it can take a long time. VisualVM
+    needs to parse the entire memory map and generate a graph of all of the references between objects. This information is
+    cached on disk, so loading the same file again is faster.
 
-![Select Objects in the drop-down](https://storage.googleapis.com/gcp-community/tutorials/dataflow-debug-oom-conditions/summary_objects.png  "Select Objects in the drop-down")
+1.  After the heap dump has been loaded, switch to the memory view by opening the **Summary** menu and selecting
+    **Objects**.
 
-By default, VisualVM shows all objects by class, sorted by total amount of memory used. To search for causes of OOMs, it's best to start with the list of **Dominators**. A **Dominator** is an object that directly or transitively retains in memory a large number of other objects.
-For example, the following is a graph of objects. The arrows represent references from one object to another:
+    ![Select Objects in the drop-down](https://storage.googleapis.com/gcp-community/tutorials/dataflow-debug-oom-conditions/summary_objects.png)
 
-![Object graph](https://storage.googleapis.com/gcp-community/tutorials/dataflow-debug-oom-conditions/object_graph.png  "Graph of objects")
-*Object C is a Dominator because it references, and therefore keeps in memory, objects D to H. Source: [help.eclipse.org](https://help.eclipse.org)*
+    By default, VisualVM shows all objects by class, sorted by the total amount of memory used. To search for causes of
+    out-of-memory conditions, it's best to start with the list of **Dominators**. A **Dominator** is an object that directly
+    or transitively retains in memory a large number of other objects.
+    
+    For an example a graphical example of object references and dominators, see [this page in the Eclipse Platform documentation](https://help.eclipse.org/2019-12/topic/org.eclipse.mat.ui.help/concepts/dominatortree.html?cp=60_2_3).
 
-Select **Preset: Dominators** and click on "**Retained**" to show the largest dominators and sort by the amount of memory retained.
+1.  Select **Preset: Dominators** and click **Retained** to show the largest dominators and sort by the amount of memory 
+    retained.
 
-Once VisualVM calculates and shows the largest Dominators, see if there is a single object or a single class that can account for a large fraction (over 70%) of the memory used. If so, chances are that any code that deals with that object or that class is what's causing the OOM. 
+    Once VisualVM calculates and shows the largest Dominators, see if there is a single object or a single class that can 
+    account for a large fraction (over 70%) of the memory used. If so, chances are that any code that deals with that object
+    or that class is what's causing the out-of-memory condition. 
 
-If you don't recognize the name of the class, you can see which other objects reference the Dominator objects by selecting them on the list and clicking on the button labeled **References**.
-That will open a separate pane with the list of objects that reference the object selected above. You will then be able to navigate the chain of references to understand where the Dominator objects are created and referenced (and, therefore, what keeps them in memory).
+    If you don't recognize the name of the class, you can see which other objects reference the dominator objects by   
+    selecting them in the list and clicking the button labeled **References**. This opens a separate pane with the list of 
+    objects that reference the selected object. You can then navigate the chain of references to understand where the
+    dominator objects are created and referenced (and, therefore, what keeps them in memory).
 
-Once you have found your dominator objects, ask yourself: *Are these dominator objects expected to be this size*?
-It's normal for some objects to be relatively large; some examples would be caches and read/write buffers. Understand what the dominator object is, and how large it needs to be. 
+### Understanding the memory dump and memory usage
 
-But if the objects are in fact too big, the next thing you will need to do is look at source code for signs of bugs. In order to do that, you will need to know where to look: are they part of Apache Beam's codebase, Google's codebase, a third party, or is it part of custom code written by you? 
-A good indicator is the package name of the object. If you are unsure, googling the full class name usually points to whatever the code belongs to. With this information, your final step should be to debug the code that manages these objects, if it's custom code, or to contact Google if the objects are from Google or Apache Beam. 
+Once you have found your dominator objects, ask yourself "Are these dominator objects expected to be this size?"
 
-Note: Using larger machines does not necessarily solve Out-Of-Memory problems. Larger machines that come with more memory also have more CPU cores, so the ratio of RAM to cores remains the same, regardless of machine size. N1-standard machines 
-have 3.75GB of RAM per core, and n1-highmem machines have 7.5GB of RAM per core. 
- 
-Dataflow starts as many threads to process data (the threads that run the code in your DoFn's) as there are CPU cores in the worker. Therefore, by default and on average, a DoFn should never use more than one core's worth of RAM. 
-For example, for n1-standard workers, your code should never use more than 3.75GB of memory (actually less than that, since other pieces of the worker also need some memory). 
-If your code needs more than one core's worth of RAM, you will need to tell Dataflow to use **fewer threads**, running your job with the parameter **--numberOfWorkerHarnessThreads=<n>**. The lower the number of threads, the larger the amount of RAM each one will be able to use.
+It's normal for some objects to be relatively large, such as caches and read/write buffers. Understand what the dominator
+object is, and how large it needs to be. 
+
+If the objects are bigger than you think they should be, the next thing to do is to look at the source code for signs of
+bugs. To do that, you need to know where to look: Are they part of the Apache Beam codebase, the Google codebase, the 
+codebase of some third party, or some custom code written by you? A good indicator is the package name of the object: If you 
+are unsure, doing a public internet search for the full class name usually points to whatever the code belongs to. With this
+information, your next step should be to debug the code that manages these objects, if it's custom code, or to contact
+Google if the objects are from Google or Apache Beam. 
+
+Using larger machines does not necessarily solve out-of-memory problems. Larger machines that come with more memory also 
+have more CPU cores, so the ratio of RAM to cores remains the same, regardless of machine size; n1-standard machines have
+3.75GB of RAM per core, and n1-highmem machines have 7.5GB of RAM per core. 
+
+Dataflow starts as many threads to process data (the threads that run the code in your DoFn methods) as there are CPU cores
+in the worker. Therefore, by default and on average, a DoFn should never use more than one core's worth of RAM. For example,
+for n1-standard workers, your code should never use more than 3.75GB of memory (actually less than that, since other pieces
+of the worker also need some memory). If your code needs more than one core's worth of RAM, you need to tell Dataflow to use 
+fewer threads; you do this by running your job with the parameter `--numberOfWorkerHarnessThreads=[n]` (replacing `[n]` with 
+the number of threads to use. The lower the number of threads, the larger the amount of RAM each one will be able to use.
 
 ## Takeaways
 
-Just because your Dataflow workers have a certain amount of RAM installed, that doesn't mean that your code can use all 
-of that memory. There are many other things going on in the worker machines.
+* Just because your Dataflow workers have a certain amount of RAM installed, that doesn't mean that your code can use all 
+  of that memory. There are many other things going on in the worker machines.
 
   * If your pipeline *doesn't* use Dataflow Shuffle (batch) or Streaming Engine (streaming), then the heap available to your 
     code is roughly 40% of the total memory.
   * If your pipeline *does* use Dataflow Shuffle or Streaming Engine, then the heap available to your code is roughly 80% of 
     the total memory.
 
-The java heap is shared across all Java threads and all instances of your DoFn's.
+* The Java heap is shared across all Java threads and all instances of your DoFns.
 
-Make sure that each DoFn never uses more than a fraction of the total memory. 
+* Make sure that each DoFn never uses more than a fraction of the total memory. 
 
-Don't cache or buffer data. Dataflow takes care of that for you. Keep as little state in RAM as possible.
+* Don't cache or buffer data. Dataflow takes care of that for you. Keep as little state in RAM as possible.
 
-If you run out of memory...
+* If you run out of memory...
   * Try using highmem workers.
   * Try using fewer threads.
   
-If everything else fails, obtain a heap dump and track down the source of the out-of-memory error.
+* If everything else fails, obtain a heap dump and track down the source of the out-of-memory condition.
