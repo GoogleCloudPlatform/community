@@ -258,7 +258,8 @@ exports.getRecording = (req, res) => {
 
   const got = require('got');
   const path = require('path');
-  const storage = require('@google-cloud/storage')();
+  const {Storage} = require('@google-cloud/storage');
+  const storage = new Storage();
 
   const filename = `recordings/${path.parse(req.body.RecordingUrl).name}/audio.wav`;
   const file = storage
@@ -367,19 +368,19 @@ exports.analyzeRecording = (event) => {
 1.  Read about [deploying Cloud Functions][deploying].
 1.  Run the following to deploy the `handleCall` function:
 
-        gcloud beta functions deploy handleCall --trigger-http --stage-bucket=[YOUR_STAGE_BUCKET]
+        gcloud beta functions deploy handleCall --trigger-http --stage-bucket=[YOUR_STAGE_BUCKET] --runtime=nodejs10
 
     Replace `[YOUR_STAGE_BUCKET]` with your Cloud Functions staging bucket.
 
 1.  Run the following to deploy the `getRecording` function:
 
-        gcloud beta functions deploy getRecording --trigger-http --stage-bucket=[YOUR_STAGE_BUCKET]
+        gcloud beta functions deploy getRecording --trigger-http --stage-bucket=[YOUR_STAGE_BUCKET] --runtime=nodejs10
 
     Replace `[YOUR_STAGE_BUCKET]` with your Cloud Functions staging bucket.
 
 1.  Run the following to deploy the `analyzeRecording` function:
 
-        gcloud beta functions deploy analyzeRecording --trigger-bucket=[RESULTS_BUCKET] --stage-bucket=[YOUR_STAGE_BUCKET] --timeout=240
+        gcloud beta functions deploy analyzeRecording --trigger-bucket=[RESULTS_BUCKET] --stage-bucket=[YOUR_STAGE_BUCKET] --timeout=240 --runtime=nodejs10
 
     * Replace `[YOUR_STAGE_BUCKET]` with your Cloud Functions staging bucket.
     * Replace `[RESULTS_BUCKET]` with the name of the bucket you created in step

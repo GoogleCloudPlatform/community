@@ -38,7 +38,7 @@ This tutorial uses Firebase Cloud Messaging service which is free for limited fe
     "GrailsFCM" then click Create Project button.
 1.  It will redirect to the Project dashboard. Click the gear icon in the left
     menu and select Project Settings.
-1.  Click the Cloud Messaging tab and copy the Legacy Server Key to your
+1.  Click the Cloud Messaging tab and copy the Server Key to your
     notepad. You will use it later in the Grails web application.
 1.  Next, configuration your app for
     [Android](https://firebase.google.com/docs/cloud-messaging/android/client)
