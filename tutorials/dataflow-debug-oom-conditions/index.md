@@ -101,7 +101,7 @@ There are three main ways of obtaining a heap dump from JVMs running in Dataflow
 * Connect to the worker machine and download the heap through a browser.
 * Connect directly to a JVM through JMX.
 
-All options have advantages and disadvantages. Let's go one by one:
+Each of these options has advantages and disadvantages, as discussed in the following sections.
 
 ### Instruct the pipeline to dump heap on OOM
 
@@ -118,32 +118,39 @@ Your Cloud Storage bucket will have as many heap dump (`.hprof`) files as JVMs t
 The heap dump is saved to the Compute Engine machine's boot disk before being uploaded to Cloud Storage. For jobs running on
 Dataflow Shuffle or Streaming Engine, the root disks are generally too small to store dumps for machines larger than
 n1-standard-2. Therefore, if your job uses Dataflow Shuffle or Streaming Engine, use `--diskSizeGb` to increase the size of
-the workers' disks to hold the memory dump; set it to at least 30GB + *the amount of RAM of the machine*. Otherwise, the
-heap dump might fail.
+the workers' disks to hold the memory dump; set the disk size to at least 30 GB + *the amount of RAM of the machine*. 
+Otherwise, the heap dump might fail.
 
 Make sure that the account that the job is running under (normally the Dataflow service account) has write permissions on 
 the bucket.
 
-### Connecting to the worker machine and downloading the heap
+### Connect to the worker machine and download the heap
 
-This method is easier to carry out but involves manually triggering the memory dump, which means that you will need to keep track of the performance of your pipeline in order to dump the memory when it's about to cause issues.
+Connecting to the worker and downloading the heap is easier to carry out but involves manually triggering the memory dump, 
+which means that you would need to keep track of the performance of your pipeline in order to dump the memory when it's 
+about to cause problems.
 
-To create a heap dump, first find the name of the worker of which you want the heap dump and then *SSH into it* by running the following command on your local workstation:
+To create a heap dump, first find the name of the worker of which you want the heap dump and then connect to it using SSH
+by running the following command on your local workstation:
 
-	gcloud compute ssh --project=$PROJECT --zone=$ZONE \
-	  $WORKER_NAME --ssh-flag "-L 8081:127.0.0.1:8081"
-  
-(Replace $PROJECT, $ZONE and $WORKER_NAME with the appropriate values)
+    gcloud compute ssh --project=$PROJECT --zone=$ZONE \
+      $WORKER_NAME --ssh-flag "-L 8081:127.0.0.1:8081"
 
-The SSH command will open a tunnel from the computer where it's run to the cloud host, and forward port 8081 through it.
-Once the ssh command connects and shows you the remote shell, open a browser and navigate to this url:
+Replace `$PROJECT`, `$ZONE` and `$WORKER_NAME` with the appropriate values.
 
-	http://127.0.0.1:8081/heapz
+The SSH command opens a tunnel from the computer where it's run to the cloud host and forwards port 8081 through it.
 
-You will see a link to download the worker's heap dump. After downloading the heap dump you can exit the SSH session.
+After the `ssh` command completes and shows you the remote shell, open a browser and navigate to this URL:
 
-	**Caveat:** the heap dump is saved to the GCE machine's boot disk before being uploaded to GCS, and in jobs running on Dataflow Shuffle or Streaming Engine the root disks are generally too small to store dumps for machines larger than n1-standard-2.
-	If your job uses Dataflow Shuffle or Streaming Engine,  you will need to use --diskSizeGb to increase the size of the workers' disks to hold the memory dump and set it to at least 30GB + the amount of RAM of the machine. Otherwise the heap dump might fail.
+    http://127.0.0.1:8081/heapz
+
+You will see a link to download the worker's heap dump. After downloading the heap dump, you can exit the SSH session.
+
+The heap dump is saved to the Compute Engine machine's boot disk before being uploaded to Cloud Storage. For jobs running on
+Dataflow Shuffle or Streaming Engine, the root disks are generally too small to store dumps for machines larger than
+n1-standard-2. Therefore, if your job uses Dataflow Shuffle or Streaming Engine, use `--diskSizeGb` to increase the size of
+the workers' disks to hold the memory dump; set the disk size to at least 30 GB + *the amount of RAM of the machine*. 
+Otherwise, the heap dump might fail.
 
 ### Connecting directly to a JVM through JMX
 
