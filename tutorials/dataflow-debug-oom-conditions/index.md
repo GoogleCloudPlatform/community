@@ -3,7 +3,7 @@ title: Debugging out-of-memory conditions in Dataflow
 description: How to troubleshoot out-of-memory issues in Dataflow pipelines using Java.
 author: nahuellofeudo
 tags: Dataflow, Java, OutOfMemoryError
-date_published: 2020-02-21
+date_published: 2020-02-28
 ---
 
 Nahuel Lofeudo, Google LLC
