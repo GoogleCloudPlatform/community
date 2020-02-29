@@ -15,7 +15,7 @@ system allows them to use.
 
 ## The Dataflow worker
 
-The term *worker* is refers to Compute Engine instances that act as processing nodes for Dataflow pipelines. 
+The term *worker* refers to Compute Engine instances that act as processing nodes for Dataflow pipelines. 
 
 These machines run the following: 
 
@@ -59,7 +59,7 @@ errors logged in the job's view in Cloud Console).
 
 To confirm that your job is failing because of memory issues, do the following:
 
-1.  Open the Cloud Console and go to **Logs** → **Logging**.
+1.  Open the [Cloud Console](https://console.cloud.google.com/logs/viewer) to the **Logs viewer** page.
 1.  On the right side of the text field that says **Filter by label or text search**, click the downward-pointing arrow
     and select **Convert to advanced filter**.
 1.  Enter the following filter:
@@ -70,7 +70,7 @@ To confirm that your job is failing because of memory issues, do the following:
 
 1.  Click **Submit filter**.
 
-    You may also need to click **Load older logs** to search all the logs from the start of the job.
+    In some cases, you might need to click **Load older logs** to search all logs from the start of the job.
 
 If you get any results back, then your job is running out of memory.
 
@@ -79,7 +79,7 @@ JVM's heap. Later sections of this document explain how to troubleshoot these er
 
 The message `"Out of memory: kill process [PID] ([PROCESS_NAME]) score [NUMBER] or sacrifice child"` means that some other
 process in the worker is causing the Compute Engine machine itself to run out of RAM. Dataflow workers don't have swap 
-space, so once the RAM is all used, there is nothing else left. This message means that the Linux kernel itself has 
+space, so when the RAM is all used, there is nothing else left. This message means that the Linux kernel itself has 
 started killing processes that threatened the stability of the entire system. If you see this error message, 
 [contact Google support](https://console.cloud.google.com/support). 
  
@@ -158,7 +158,7 @@ Every version of Oracle JDK and OpenJDK since 1.6 has included VisualVM, which c
 or in a remote machine through the JMX (Java Management Extensions) protocol, monitor its state, and extract information 
 live. VisualVM is in the `bin/` directory of your Java home directory.
  
-You can use the following command on your local computer to examine the state of the JVM running on any Dataflow worker::
+You can use the following command on your local computer to examine the state of the JVM running on any Dataflow worker:
 
     gcloud compute ssh --project=$PROJECT --zone=$ZONE \
       $WORKER_NAME --ssh-flag "-L 5555:127.0.0.1:5555"
@@ -205,26 +205,27 @@ largest portions of the available memory. One of the easiest tools to use for th
     ![Select Objects in the drop-down](https://storage.googleapis.com/gcp-community/tutorials/dataflow-debug-oom-conditions/summary_objects.png)
 
     By default, VisualVM shows all objects by class, sorted by the total amount of memory used. To search for causes of
-    out-of-memory conditions, it's best to start with the list of **Dominators**. A **Dominator** is an object that directly
+    out-of-memory conditions, it's best to start with the list of *dominators*. A dominator is an object that directly
     or transitively retains in memory a large number of other objects.
     
-    For an example a graphical example of object references and dominators, see [this page in the Eclipse Platform documentation](https://help.eclipse.org/2019-12/topic/org.eclipse.mat.ui.help/concepts/dominatortree.html?cp=60_2_3).
+    For a graphical example of object references and dominators, see the
+    [Eclipse Platform documentation](https://help.eclipse.org/2019-12/topic/org.eclipse.mat.ui.help/concepts/dominatortree.html?cp=60_2_3).
 
 1.  Select **Preset: Dominators** and click **Retained** to show the largest dominators and sort by the amount of memory 
     retained.
 
-    Once VisualVM calculates and shows the largest Dominators, see if there is a single object or a single class that can 
-    account for a large fraction (over 70%) of the memory used. If so, chances are that any code that deals with that object
-    or that class is what's causing the out-of-memory condition. 
-
-    If you don't recognize the name of the class, you can see which other objects reference the dominator objects by   
-    selecting them in the list and clicking the button labeled **References**. This opens a separate pane with the list of 
-    objects that reference the selected object. You can then navigate the chain of references to understand where the
-    dominator objects are created and referenced (and, therefore, what keeps them in memory).
-
 ### Understanding the memory dump and memory usage
 
-Once you have found your dominator objects, ask yourself "Are these dominator objects expected to be this size?"
+When VisualVM calculates and shows the largest dominators, see if there is a single object or a single class that can
+account for a large fraction (over 70%) of the memory used. If so, chances are that any code that deals with that object
+or that class is what's causing the out-of-memory condition. 
+
+If you don't recognize the name of the class, you can see which other objects reference the dominator objects by   
+selecting them in the list and clicking the button labeled **References**. This opens a separate pane with the list of 
+objects that reference the selected object. You can then navigate the chain of references to understand where the
+dominator objects are created and referenced (and, therefore, what keeps them in memory).
+
+When you have found your dominator objects, ask yourself "Are these dominator objects expected to be this size?"
 
 It's normal for some objects to be relatively large, such as caches and read/write buffers. Understand what the dominator
 object is, and how large it needs to be. 
@@ -241,7 +242,7 @@ have more CPU cores, so the ratio of RAM to cores remains the same, regardless o
 3.75GB of RAM per core, and n1-highmem machines have 7.5GB of RAM per core. 
 
 Dataflow starts as many threads to process data (the threads that run the code in your DoFn methods) as there are CPU cores
-in the worker. Therefore, by default and on average, a DoFn should never use more than one core's worth of RAM. For example,
+in the worker. Therefore, on average, a DoFn should never use more than one core's worth of RAM. For example,
 for n1-standard workers, your code should never use more than 3.75GB of memory (actually less than that, since other pieces
 of the worker also need some memory). If your code needs more than one core's worth of RAM, you need to tell Dataflow to use 
 fewer threads; you do this by running your job with the parameter `--numberOfWorkerHarnessThreads=[n]` (replacing `[n]` with 
@@ -263,8 +264,8 @@ the number of threads to use. The lower the number of threads, the larger the am
 
 * Don't cache or buffer data. Dataflow takes care of that for you. Keep as little state in RAM as possible.
 
-* If you run out of memory...
-  * Try using highmem workers.
-  * Try using fewer threads.
+* If you run out of memory, then try the following:
+  * Use highmem workers.
+  * Use fewer threads.
   
 * If everything else fails, obtain a heap dump and track down the source of the out-of-memory condition.
