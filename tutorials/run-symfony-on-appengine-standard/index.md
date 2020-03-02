@@ -19,7 +19,7 @@ Platform.
 
 1. [Create a project][create-project] in the GCP Console
    and make note of your project ID.
-1. [Enable billing][enable-billing] for your p  roject.
+1. [Enable billing][enable-billing] for your project.
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Install
