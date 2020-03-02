@@ -19,7 +19,7 @@ Many enterprise-level Java applications with distributed systems on the backend 
 - Use [Dataflow] to deduplicate messages.
 
 ## Architecture
-![img](architecture.png)
+![img](https://storage.googleapis.com/gcp-community/tutorials/pubsub-spring-dedup-messages/architecture.png)
 
 ## Before You Begin
 
@@ -255,13 +255,15 @@ In [DedupPubSub.java](pubsubio-dedup/src/main/java/com/google/example/DedupPubSu
          --runner=DataflowRunner"
     ```
 1. Check the job's progress in the [Cloud Console for Dataflow]. Wait a few minutes for the job status to become **Running**. You should see `INFO: ... Workers have started successfully` in the terminal at this point.
-![Status](dataflow_job_status.png)
+
+![Status](https://storage.googleapis.com/gcp-community/tutorials/pubsub-spring-dedup-messages/dataflow_job_status.png)
+
 1. Issue `Ctrl+C` to stop the program locally. Stopping the program locally does not affect the Dataflow job running on GCP.
 
 ## Observe the Results
 Publish a few more messages of different keys via the web host and observe messages of the same key arrive only once in your terminal.
 
-![results](results.png)
+![results](https://storage.googleapis.com/gcp-community/tutorials/pubsub-spring-dedup-messages/results.png)
 
 Here, "Message 2", "Message 3", and "Message 4" have the same key "456", only the first of them "Message 2" has passed all the way through the pipeline and arrived in your application.
 
