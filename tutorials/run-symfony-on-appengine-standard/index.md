@@ -19,7 +19,7 @@ Platform.
 
 1. [Create a project][create-project] in the GCP Console
    and make note of your project ID.
-1. [Enable billing][enable-billing] for your project.
+1. [Enable billing][enable-billing] for your p  roject.
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Install
@@ -28,7 +28,7 @@ This tutorial uses the [Symfony Demo][symfony-demo] application. Run the
 following command to install it:
 
     PROJECT_DIR='symfony-on-appengine'
-    composer create-project symfony/symfony-demo:^1.2 $PROJECT_DIR
+    composer create-project symfony/symfony-demo:^1.5 $PROJECT_DIR
 
 ## Run
 
@@ -77,8 +77,8 @@ Welcome page.
     parameters in Symfony's documentation.
 
 1.  [Override the cache and log directories][symfony-override-cache] so that
-    they use `/tmp` in production. This is done by modifying the functions
-    `getCacheDir` and `getLogDir` to the following in `src/Kernel.php`:
+    they use `/tmp` in production. This is done by adding the functions
+    `getCacheDir` and `getLogDir` to `src/Kernel.php`:
 
         class Kernel extends BaseKernel
         {
@@ -89,7 +89,7 @@ Welcome page.
                 if ($this->environment === 'prod') {
                     return sys_get_temp_dir();
                 }
-                return $this->getProjectDir() . '/var/cache/' . $this->environment;
+                return parent::getCacheDir();
             }
 
             public function getLogDir()
@@ -97,10 +97,8 @@ Welcome page.
                 if ($this->environment === 'prod') {
                     return sys_get_temp_dir();
                 }
-                return $this->getProjectDir() . '/var/log';
+                return parent::getLogDir();
             }
-
-            // ...
         }
    
     **Note**: This is required because App Engine's file system is **read-only**.
