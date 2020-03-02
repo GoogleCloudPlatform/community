@@ -258,6 +258,68 @@ the [Stackdriver Error Reporting UI][stackdriver-errorreporting-ui]! If you copi
 `https://YOUR_PROJECT_ID.appspot.com/en/logging/notice` and
 `https://YOUR_PROJECT_ID.appspot.com/en/logging/exception`
 
+## Send emails
+
+The recommended way to send emails is to use a third-party mail provider such as [Sendgrid][sendgrid], [Mailgun][mailgun] or [Mailjet][mailjet].
+Hosting your application on GAE, most of these providers will offer you up to 30,000 emails per month and you will be charged only if you send more.
+You will have the possibility to track your email delivery and benefit from all the feature of a real email broadcasting system.
+
+### Install
+
+First you need to install the mailer component:
+
+```
+composer require symfony/mailer
+```
+
+For this example, we will use `Mailgun`.  To use a different mail provider, see the [Symfony mailer documentation][symfony-mailer].
+
+```
+composer require symfony/mailgun-mailer
+```
+
+This recipe will automatically add the following ENV variable to your .env file:
+
+```
+# Will be provided by mailgun once your account will be created
+MAILGUN_KEY= xxxxxx
+# Should be your Mailgun MX record
+MAILGUN_DOMAIN= mg.yourdomain.com
+# Region is mandatory if you chose server outside the US otherwise your domain will not be found
+MAILER_DSN=mailgun://$MAILGUN_KEY:$MAILGUN_DOMAIN@default?region=eu
+```
+
+From that point, you just need to create your account and first domain adding all the DNS Records.
+[Mailgun documentation][mailgun-add-domain] will lead you through these steps.
+
+You can now send emails in Controller and Service as usual:
+
+```
+// src/Controller/MailerController.php
+namespace App\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+
+class ExampleController extends AbstractController
+{
+    /**
+     * @Route("/email")
+     */
+    public function sendEmail(MailerInterface $mailer)
+    {
+        $email = (new Email())
+            ->from('hello@example.com')
+            ->to('you@example.com')
+            ->subject('Time for Symfony Mailer!')
+            ->text('Sending emails is fun again!');
+
+        $mailer->send($email);
+    }
+}
+```
+
 [php-gcp]: https://cloud.google.com/php
 [cloud-sdk]: https://cloud.google.com/sdk/
 [app_yaml]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php72/symfony-framework/app.yaml
@@ -265,7 +327,7 @@ the [Stackdriver Error Reporting UI][stackdriver-errorreporting-ui]! If you copi
 [cloud-sql]: https://cloud.google.com/sql/docs/
 [cloud-sql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
 [cloud-sql-install]: https://cloud.google.com/sql/docs/mysql/connect-external-app#install
-[cloud-sql-apis]:https://console.cloud.google.com/apis/library/sqladmin.googleapis.com/?pro
+[cloud-sql-apis]: https://console.cloud.google.com/apis/library/sqladmin.googleapis.com/?pro
 [create-project]: https://cloud.google.com/resource-manager/docs/creating-managing-projects
 [enable-billing]: https://support.google.com/cloud/answer/6293499?hl=en
 [symfony]: http://symfony.com
@@ -274,6 +336,10 @@ the [Stackdriver Error Reporting UI][stackdriver-errorreporting-ui]! If you copi
 [symfony-secret]: http://symfony.com/doc/current/reference/configuration/framework.html#secret
 [symfony-env]: https://symfony.com/doc/current/configuration/environments.html#executing-an-application-in-different-environments
 [symfony-override-cache]: https://symfony.com/doc/current/configuration/override_dir_structure.html#override-the-cache-directory
+[symfony-mailer]: https://symfony.com/doc/current/mailer.html
 [symfony-welcome]: https://storage.googleapis.com/gcp-community/tutorials/run-symfony-on-appengine-standard/welcome-page.png
 [stackdriver-logging-ui]: https://console.cloud.google.com/logs
 [stackdriver-errorreporting-ui]: https://console.cloud.google.com/errors
+[mailgun]: https://www.mailgun.com/
+[mailjet]: https://www.mailjet.com/
+[mailgun-add-domain]: https://help.mailgun.com/hc/en-us/articles/203637190-How-Do-I-Add-or-Delete-a-Domain-
