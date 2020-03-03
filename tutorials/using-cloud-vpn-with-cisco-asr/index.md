@@ -1,12 +1,12 @@
 ---
-title: How to set up VPN between Cisco ASR and Cloud VPN
-description: Learn how to build site-to-site IPsec VPN between Cisco ASR and Cloud VPN.
+title: How to set up VPN between Cisco ISR and Cloud VPN
+description: Learn how to build site-to-site IPsec VPN between Cisco ISR and Cloud VPN.
 author: ashishverm
-tags: Compute Engine, Cloud VPN, Cisco ASR
+tags: Compute Engine, Cloud VPN, Cisco ISR
 date_published: 2017-08-25
 ---
 
-This guide walks you through the process to configure the Cisco ASR 1000 for
+This guide walks you through the process to configure the Cisco ISR 4000 for
 integration with the [Google Cloud VPN Services][cloud_vpn]. This information is
 provided as an example only. Please note that this guide is not meant to be a
 comprehensive overview of IPsec and assumes basic familiarity with the IPsec
@@ -19,24 +19,16 @@ protocol.
 The equipment used in the creation of this guide is as follows:
 
 * Vendor: Cisco
-* Model: ASR 1009-X
+* Model: ISR4451-X
 * Software Release: IOS XE 16.6.1
 
-Although this guide is created with ASR 1009-X exactly the same configuration
-also apply to other ASR 1000 platforms:
-
-* ASR 1001-X
-* ASR1002-X
-* ASR1001-HX
-* ASR1002-HX
-* ASR 1006-X
 
 ## Topology
 
 The topology outlined by this guide is a basic site-to-site IPsec VPN tunnel
 configuration using the referenced device:
 
-![Topology](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-cisco-asr/GCP-Cisco-ASR-Topology.jpg)
+![Topology](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-cisco-isr/GCP-Cisco-ISR-Topology.jpg)
 
 ## Before you begin
 
@@ -68,25 +60,19 @@ high-level overview of the configuration process which will be covered:
 
 ### Getting started
 
-The first step in configuring your Cisco ASR 1000 for use with the Google Cloud
+The first step in configuring your Cisco ISR 4000 for use with the Google Cloud
 VPN service is to ensure that the following prerequisite conditions have been
 met:
 
-The Cisco ASR 1000 Series Router IPsec application requires:
+The Cisco ISR Series Router IPsec application requires:
 
-* Advanced Enterprise Services(SLASR1-AES) or Advanced IP Services Technology
-  Package License (SLASR1-AIS)
-* IPsec RTU license (FLASR1-IPsec-RTU)
-* Encryption HW module (ASR1002HX-IPsecHW(=) and ASR1001HX-IPsecW(=)) and Tiered
-  Crypto throughput license which applies to ASR1002-HX and ASR1001-HX chassis
-  only.
+* Pending
 
-For a detailed ASR 1000 Series Router license information, refer to the
-[ASR 1000 Routers Ordering Guide](http://www.cisco.com/c/en/us/products/collateral/routers/asr-1000-series-aggregation-services-routers/guide-c07-731639.html).
+ 
 
 ### IPsec parameters
 
-For the Cisco ASR 1000 IPsec configuration, the following details will be used:
+For the Cisco ISR 4000 IPsec configuration, the following details will be used:
 
 |Parameter | Value|
 --------- |  -----
@@ -406,11 +392,11 @@ command-line tool. The upcoming section provide details to both in detail below:
         gcloud compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-scale-test-cisco \
             --allow tcp,udp,icmp --source-ranges 10.0.0.0/8
 
-## Configuration – Cisco ASR 1000
+## Configuration – Cisco ISR 4000
 
 ### Base network configurations (to establish L3 connectivity)
 
-This section provides the base network configuration of Cisco ASR 1000 to
+This section provides the base network configuration of Cisco ISR 4000 to
 establish network connectivity. At least one internal facing interface is
 required to connect to your own network, and one external facing interface is
 required to connect to GCP. A sample interface configuration is provided below
@@ -470,11 +456,11 @@ are set:
 
 *  IKEv2 Lifetime - set the lifetime of the security associations (after which a
    reconnection will occur). Set to 36,000 seconds as recommended configuration
-   on ASR 1000 router.
+   on ISR 4000 router.
 *  DPD – set the dead peer detection interval and retry interval, if there are no
    response from the peer, the SA created for that peer is deleted. Set to 60
    seconds keepalive interval and 5 seconds retry interval as recommended
-   configuration on ASR 1000 router.
+   configuration on ISR 4000 router.
 
         crypto ikev2 profile VPN_SCALE_TEST_IKEV2_PROFILE
          match address local interface TenGigabitEthernet0/0/0
@@ -496,9 +482,9 @@ phases: first, to establish the tunnel (the IKE SA) and second, to govern
 traffic within the tunnel (the IPsec SA). The following commands set the SA
 lifetime and timing parameters.
 
-*  `IPsec SA lifetime` – 1 hour is the recommended value on ASR 1000 router.
+*  `IPsec SA lifetime` – 1 hour is the recommended value on ISR 4000 router.
 
-*  `IPsec SA replay window-size` – 1024 is the recommended value on ASR 1000 router.
+*  `IPsec SA replay window-size` – 1024 is the recommended value on ISR 4000 router.
 
         crypto ipsec security-association lifetime seconds 3600
         crypto ipsec security-association replay window-size 1024
@@ -520,10 +506,10 @@ parameters are set
 
 * Perfect Forward Secrecy (PFS) - PFS ensures that the same key will not be
   generated again, so forces a new diffie-hellman key exchange. Set to group16
-  as recommended configuration on ASR 1000 router.
+  as recommended configuration on ISR 4000 router.
 * SA Lifetime - set the lifetime of the security associations (after which a
   reconnection will occur). Set to `3600 seconds` as recommended configuration
-  on ASR 1000 router.
+  on ISR 4000 router.
 
         crypto ipsec profile VPN_SCALE_TEST_VTI
         set security-association lifetime seconds 3600
@@ -559,14 +545,14 @@ router. The recommended value is 1360 when the number of IP MTU bytes is set to
 
 #### Configure static or dynamic routing protocol to route traffic into the IPsec tunnel
 
-BGP is used within the tunnel to exchange prefixes between the GCP and the ASR
+BGP is used within the tunnel to exchange prefixes between the GCP and the ISR
 1000 router. The GCP will announce the prefix corresponding to your Cloud.
 
 BGP timers are adjusted to provide more rapid detection of outages.
 
 To advertise additional prefixes to GCP, copy the "network" statement and
 identify the prefix you wish to advertise. Make sure the prefix is present in
-the routing table of the ASR 1000 with a valid next-hop.
+the routing table of the ISR 4000 with a valid next-hop.
 
     router bgp 65001
      bgp log-neighbor-changes
@@ -597,7 +583,7 @@ following command on Cisco IOS terminal:
 
 ### Test result
 
-    cisco-asr#ping 172.16.100.2 source 10.0.200.1
+    cisco-isr#ping 172.16.100.2 source 10.0.200.1
     Type escape sequence to abort.
     Sending 5, 100-byte ICMP Echos to 172.16.100.2, timeout is 2 seconds:
     Packet sent with a source address of 10.0.200.1
@@ -608,7 +594,7 @@ following command on Cisco IOS terminal:
 
 #### Configure VPN redundancy
 
-![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-cisco-asr/GCP-Cisco-ASR-Topology-Redundant.jpg)
+![alt_text](https://storage.googleapis.com/gcp-community/tutorials/using-cloud-vpn-with-cisco-isr/GCP-Cisco-ISR-Topology-Redundant.jpg)
 
 Using redundant tunnels ensures continuous availability in the case of a tunnel fails.
 
@@ -616,13 +602,13 @@ If a Cloud VPN tunnel goes down, it restarts automatically. If an entire virtual
 device fails, Cloud VPN automatically instantiates a new one with the same
 configuration, so you don't need to build two Cloud VPN gateways. The new
 gateway and tunnel connect automatically. For hardware appliances such as Cisco
-ASR it is recommended that you deploy atleast 2 ASRs and create VPN tunnels to
+ISR it is recommended that you deploy atleast 2 ISRs and create VPN tunnels to
 GCP from each for redundancy purposes.
 
 The VPN redundancy configuration example is built based on the IPsec tunnel and
 BGP configuration illustrated above.
 
-##### Cisco ASR
+##### Cisco ISR
 
 Cisco IOS BGP prefer the path with the highest `LOCAL-PREF`, the BGP routes are
 set with a value of 100 by default, by setting the `LOCAL-PREF` to 200 for the
@@ -700,11 +686,11 @@ If you are using static routing then instead of BGP configurations mentioned
 above, you can change the metric (higher the metric lower the preference) for
 your static route as shown below:
 
-      cisco-asr#ip route 172.16.100.0 255.255.255.0 Tunnel2 10
+      cisco-isr#ip route 172.16.100.0 255.255.255.0 Tunnel2 10
 
 ##### Configuring route priority – GCP
 
-###### Dynamic Routing (Optional)
+###### Dynamic Routing 
 
 With dynamic routing you have an option to define advertised-route-priority,
 lower priority is preferred. More details can be found [here](https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer).
@@ -716,21 +702,11 @@ mentioned above, BGP will prefer the higher `local_preference` first.
         bgp-peer1 --interface if-1 --peer-ip-address 169.254.1.2 --peer-asn 65001 --region us-east1 \
         --advertised-route-priority=2000
 
-###### Static Routing (Optional)
+ 
 
-When using static routing GCP provides you an option to customize the priority
-in case there are multiple routes with the same prefix length. In order to have
-symmetric traffic flow make sure that you set the priority of your secondary
-tunnel to higher value than the primary tunnel (default priority is 1000). To
-define the route priority run the below command.
+###### Test output on Cisco ISR
 
-    gcloud compute --project vpn-guide routes create route2 --network vpn-scale-test-cisco \
-        --next-hop-vpn-tunnel tunnel1 --next-hop-vpn-tunnel-region us-east1 --destination-range \
-        10.0.0.0/8 --priority=2000
-
-###### Test output on Cisco ASR
-
-    cisco-asr#sh ip bgp 172.16.100.0
+    cisco-isr#sh ip bgp 172.16.100.0
     BGP routing table entry for 172.16.100.0/24, version 690
     Paths: (3 available, best #1, table default)
     Multipath: eBGP
@@ -753,7 +729,7 @@ define the route priority run the below command.
           Origin incomplete, metric 100, localpref 100, valid, external
           rx pathid: 0, tx pathid: 0
 
-    cisco-asr#sh ip cef 172.16.100.0
+    cisco-isr#sh ip cef 172.16.100.0
     172.16.100.0/24
       nexthop 169.254.0.1 Tunnel1
 
@@ -768,9 +744,9 @@ balance the traffic across the tunnels. The 2 VPN tunnels configuration example
 here is built based on the IPsec tunnel and BGP configuration illustrated above,
 can be expanded to more tunnels if required.
 
-##### Cisco ASR configuration
+##### Cisco ISR configuration
 
-The ASR 1000 router run cef load balancing based on source and destination ip
+The ISR 4000 router run cef load balancing based on source and destination ip
 address hash, each VPN tunnels will be treated as an equal cost path by routing,
 it can support up to 16 equal cost paths load balancing.
 
@@ -842,29 +818,20 @@ Note: Actual performance vary depending on the following factors:
 ## Testing the IPsec connection
 
 The IPsec tunnel can be tested from the router by using ICMP to ping a host on
-GCP. Be sure to use the `inside interface` on the ASR 1000.
+GCP. Be sure to use the `inside interface` on the ISR 4000.
 
-    cisco-asr#ping 172.16.100.2 source 10.0.200.1
+    cisco-isr#ping 172.16.100.2 source 10.0.200.1
     Type escape sequence to abort.
     Sending 5, 100-byte ICMP Echos to 172.16.100.2, timeout is 2 seconds:
     Packet sent with a source address of 10.0.200.1
     !!!!!
     Success rate is 100 percent (5/5), round-trip min/avg/max = 18/19/20 ms
 
-## Troubleshooting IPsec on ASR 1000
-
-Please refer to the troubleshooting [ASR1k made easy](http://d2zmdbbm9feqrf.cloudfront.net/2017/usa/pdf/BRKCRS-3147.pdf) for
-
-* The ASR 1000 system architecture
-* IPsec Packet Flow
-* IPsec show command
-* Conditional feature debugging
-* Packet Tracer
-* IOS XE resource monitoring
+ 
 
 ## References
 
-Please refer to the following documentation for ASR 1000 Platform feature
+Please refer to the following documentation for ISR 4000 Platform feature
 configuration guide and datasheet:
 
 * [Security for VPNs with IPsec](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_vpnips/configuration/xe-3s/sec-sec-for-vpns-w-ipsec-xe-3s-book/sec-cfg-vpn-ipsec.html)
@@ -872,9 +839,6 @@ configuration guide and datasheet:
 * [IPsec Virtual Tunnel Interface](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_vpnips/configuration/xe-3s/sec-sec-for-vpns-w-ipsec-xe-3s-book/sec-ipsec-virt-tunnl.html)
 * [BGP Configuration Guide](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/configuration/xe-3s/irg-xe-3s-book.html)
 * [Load Balancing Configuration Guide](http://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipswitch_cef/configuration/xe-3s/isw-cef-xe-3s-book/isw-cef-load-balancing.html)
-* [ASR 1000 Routers Datasheet](http://www.cisco.com/c/en/us/products/collateral/routers/asr-1000-series-aggregation-services-routers/datasheet-c78-731632.html)
-* [ASR 1000 ESP Datasheet](http://www.cisco.com/c/en/us/products/collateral/routers/asr-1000-series-aggregation-services-routers/datasheet-c78-731640.html)
-* [ASR 1000 Ordering Guide](http://www.cisco.com/c/en/us/products/collateral/routers/asr-1000-series-aggregation-services-routers/guide-c07-731639.html)
 * [IOS-XE NGE Support Product Tech Note](http://www.cisco.com/c/en/us/support/docs/security-vpn/ipsec-negotiation-ike-protocols/116055-technote-ios-crypto.html)
 
 Refer to the following documentation for common error messages and debug commands:
