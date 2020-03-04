@@ -10,107 +10,117 @@ Tianzi Cai | Developer Programs Engineer | Google Cloud
 
 This tutorial demonstrates how to use Pub/Sub and Dataflow to deduplicate messages in a Spring Cloud Stream application.
 
-Many enterprise-level Java applications with distributed systems on the backend are built with [Spring Boot] and [Spring Cloud]. [Spring Cloud GCP] are libraries that enable Spring Boot and Spring Cloud Stream applications to use GCP managed services such as [Pub/Sub] for added scalability and separation of concerns. 
+Many enterprise-level Java applications with distributed systems on the backend are built with [Spring Boot] and
+[Spring Cloud]. [Spring Cloud GCP] provides libraries that enable Spring Boot and Spring Cloud Stream applications to use
+Google Cloud services such as [Pub/Sub] for added scalability and separation of concerns. 
 
-[Pub/Sub] and [Dataflow] together can meet many different stream processing needs. In this tutorial, you will learn how to set up a simple Dataflow pipeline to deduplicate data out of a Spring Cloud Stream application before sending it back via Pub/Sub. The same setup also applies to more complex and demanding stream processing needs.
+[Pub/Sub] and [Dataflow] together can meet many different stream processing needs. In this tutorial, you learn how to
+set up a simple Dataflow pipeline to deduplicate data out of a Spring Cloud Stream application before sending it back with 
+Pub/Sub. The same setup also applies to more complex and demanding stream-processing needs.
 
 ## Objectives
+
 - Configure a Spring Cloud Stream application to use [Pub/Sub] as a message broker.
 - Use [Dataflow] to deduplicate messages.
 
 ## Architecture
+
 ![img](https://storage.googleapis.com/gcp-community/tutorials/pubsub-spring-dedup-messages/architecture.png)
 
-## Before You Begin
+## Before you begin
 
-1. Install the [Cloud SDK].
+### Install the Cloud SDK and set up your project
 
-1. Create a new Google Cloud project via the
-   [*New Project* page],
-   or via the `gcloud` command line tool.
+1.  Install the [Cloud SDK].
 
-   ```shell script
-   export PROJECT_NAME=your-google-cloud-project-id
-   gcloud projects create $PROJECT_NAME
-   ```
+1.  Create a new Google Cloud project.
 
-1. [Enable billing].
+    You can create a new project in either of these ways:
 
-1. Setup the Cloud SDK to your GCP project.
+    -   Use the [**New Project** page](https://console.cloud.google.com/projectcreate) in the Cloud Console.
+    -   Use the `gcloud` command-line tool:
 
-   ```shell script
-   gcloud init
-   ```
+            export PROJECT_NAME=your-google-cloud-project-id
+            gcloud projects create $PROJECT_NAME
+  
+1.  [Enable billing].
 
-1. [Enable the APIs](https://console.cloud.google.com/flows/enableapi?apiid=dataflow,compute_component,pubsub,storage_component,storage_api): Dataflow, Compute Engine, Pub/Sub, Cloud Storage, Logging
+1.  Initialize the `gcloud` command-line tool and other parts of the Cloud SDK with the settings for your Google Cloud
+    project:
 
-1. Create a service account JSON key via the
-   [*Create service account key* page],
-   or via the `gcloud` command line tool.
-   Here is how to do it through the *Create service account key* page.
+        gcloud init
 
-   * From the **Service account** list, select **New service account**.
-   * In the **Service account name** field, enter a name.
-   * From the **Role** list, select **PubSub > Admin**, **Dataflow > Admin** and **Storage > Admin**.
-   * Click **Create**. Save this JSON file to a location on your computer.
+1.  [Enable the Dataflow, Compute Engine, Pub/Sub, Cloud Storage, and Logging APIs](https://console.cloud.google.com/flows/enableapi?apiid=dataflow,compute_component,pubsub,storage_component,storage_api). 
 
-   Alternatively, you can use `gcloud` through the command line.
+### Create a service account JSON key
 
-   ```shell script
-   export PROJECT_NAME=$(gcloud config get-value project)
-   export SA_NAME=spring-app
-   export IAM_ACCOUNT=$SA_NAME@$PROJECT_NAME.iam.gserviceaccount.com
+You can create a service account JSON key with either the Cloud Console or with the `gcloud` command-line tool.
 
-   # Create the service account.
-   gcloud iam service-accounts create $SA_NAME --display-name $SA_NAME
+To use the Cloud Console, do the following: 
 
-   # Add PubSub Admin role to your service account.
-   gcloud projects add-iam-policy-binding $PROJECT_NAME \
-     --member serviceAccount:$IAM_ACCOUNT \
-     --role roles/pubsub.admin
+1.  Go to the [**Create service account key** page](https://console.cloud.google.com/apis/credentials/serviceaccountkey/) 
+    in the Cloud Console.
+1.  From the **Service account** list, select **New service account**.
+1.  In the **Service account name** field, enter a name.
+1.  From the **Role** list, select **Pub/Sub > Admin**, **Dataflow > Admin** and **Storage > Admin**.
+1.  Click **Create**.
+1.  Save this JSON file to a location on your computer.
 
-   # Add Dataflow Admin role to your service account.
-   gcloud projects add-iam-policy-binding $PROJECT_NAME \
-     --member serviceAccount:$IAM_ACCOUNT \
-     --role roles/dataflow.admin   
+To use the `gcloud` command-line tool, run the following commands:
 
-   # Add Storage Admin role to your service account.
-   gcloud projects add-iam-policy-binding $PROJECT_NAME \
-     --member serviceAccount:$IAM_ACCOUNT \
-     --role roles/storage.admin   
+    export PROJECT_NAME=$(gcloud config get-value project)
+    export SA_NAME=spring-app
+    export IAM_ACCOUNT=$SA_NAME@$PROJECT_NAME.iam.gserviceaccount.com
+
+    # Create the service account.
+    gcloud iam service-accounts create $SA_NAME --display-name $SA_NAME
+
+    # Add Pub/Sub Admin role to your service account.
+    gcloud projects add-iam-policy-binding $PROJECT_NAME \
+              --member serviceAccount:$IAM_ACCOUNT \
+              --role roles/pubsub.admin
+
+    # Add Dataflow Admin role to your service account.
+    gcloud projects add-iam-policy-binding $PROJECT_NAME \
+      --member serviceAccount:$IAM_ACCOUNT \
+      --role roles/dataflow.admin   
+
+    # Add Storage Admin role to your service account.
+    gcloud projects add-iam-policy-binding $PROJECT_NAME \
+      --member serviceAccount:$IAM_ACCOUNT \
+      --role roles/storage.admin   
    
-   # Create a JSON file with the service account credentials.
-   gcloud iam service-accounts keys create path/to/your/credentials.json \
-     --iam-account=$IAM_ACCOUNT
-   ```
+    # Create a JSON file with the service account credentials.
+    gcloud iam service-accounts keys create path/to/your/credentials.json \
+      --iam-account=$IAM_ACCOUNT
+   
 
-   > *Note:* The **Role** field authorizes your service account to access resources.
-   > You can view and change this field later by using the
-   > [GCP Console IAM page].
-   > For more information, see
-   > [Granting roles to service accounts].
+The **Role** field authorizes your service account to access resources. You can view and change this field later on 
+the [Cloud Console IAM page](https://console.cloud.google.com/iam-admin/iam/). For more information, see
+[Granting roles to service accounts](https://cloud.google.com/iam/docs/granting-roles-to-service-accounts/) and
+[Creating and managing service accounts](https://cloud.google.com/iam/docs/creating-managing-service-accounts/).
 
-   For more information, see
-   [Creating and managing service accounts].
+### Set environment variables
 
-1. Set `GOOGLE_APPLICATION_CREDENTIALS` to your service account key file.
+1.  Set `GOOGLE_APPLICATION_CREDENTIALS` to your service account key file:
 
-   ```shell script
-   export GOOGLE_APPLICATION_CREDENTIALS=path/to/your/credentials.json
-   ```
-   If you have not done it, set your `PROJECT_NAME` environment variable to your GCP project.
-   ```shell script
-   export PROJECT_NAME=$(gcloud config get-value project)
-   ```
+        export GOOGLE_APPLICATION_CREDENTIALS=path/to/your/credentials.json
 
-1. Clone this repository and navigate to the sample code:
+1.  If you have not already done so, set your `PROJECT_NAME` environment variable to your Google Cloud project name:
 
-   ```shell script
-   git clone https://github.com.GoogleCloudPlatform/pubsub-spring-dedup-messages.git
-   cd community/tutorials/pubsub-spring-dedup-messages
-   ```
+        export PROJECT_NAME=$(gcloud config get-value project)
 
-## Bind Pub/Sub to Your Spring Cloud Stream Application
+### Get the sample code
+
+1.  Clone the sample code repository:
+
+        git clone https://github.com.GoogleCloudPlatform/pubsub-spring-dedup-messages.git
+        
+1.  Navigate to the sample code:
+
+        cd community/tutorials/pubsub-spring-dedup-messages
+
+## Bind Pub/Sub to Your Spring Cloud Stream application
 
 Spring Cloud Stream makes use of technology-specific binders to send data to and receive data from external sources. To send data to and receive data from Pub/Sub, you need to add the `spring-cloud-gcp-pubsub-stream-binder` dependency.
 
@@ -289,12 +299,7 @@ gcloud pubsub topics delete topicFromDataflow topicToDataflow
 [Dataflow]: https://cloud.google.com/dataflow/docs/
 [Cloud SDK]: https://cloud.google.com/sdk/docs/
 [Cloud Shell]: https://console.cloud.google.com/cloudshell/editor/
-[*New Project* page]: https://console.cloud.google.com/projectcreate
 [Enable billing]: https://cloud.google.com/billing/docs/how-to/modify-project/
-[*Create service account key* page]: https://console.cloud.google.com/apis/credentials/serviceaccountkey/
-[GCP Console IAM page]: https://console.cloud.google.com/iam-admin/iam/
-[Granting roles to service accounts]: https://cloud.google.com/iam/docs/granting-roles-to-service-accounts/
-[Creating and managing service accounts]: https://cloud.google.com/iam/docs/creating-managing-service-accounts/
 [Cloud Console for Pub/Sub Topic]: https://console.cloud.google.com/cloudpubsub/topic/
 [Cloud Console for Dataflow]: http://console.cloud.google.com/dataflow/
 [Cloud Console for Pub/Sub]: https://console.cloud.google.com/cloudpubsub/
