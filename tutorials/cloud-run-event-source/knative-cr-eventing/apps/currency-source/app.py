@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os
 import json
 import requests
@@ -10,10 +12,10 @@ from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.foreignexchange import ForeignExchange
 
 
-sink_url = os.environ['SINK']+'/curerncy'
+#sink_url = os.environ['SINK']+'/curerncy'
+sink_url = os.environ['SINK']
 
-
-PROJECT_ID = os.environ.get("PROJECTID")
+PROJECT_ID = os.environ['PROJECT_ID']
 
 ALPHAVANTAGE_KEY = secrets.access_secret_version("projects/"+PROJECT_ID+"/secrets/alpha-vantage-key/versions/1").payload.data.decode("utf-8")
 
