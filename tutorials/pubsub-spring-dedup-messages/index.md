@@ -10,18 +10,20 @@ Tianzi Cai | Developer Programs Engineer | Google Cloud
 
 This tutorial demonstrates how to use Pub/Sub and Dataflow to deduplicate messages in a Spring Cloud Stream application.
 
-Many enterprise-level Java applications with distributed systems on the backend are built with [Spring Boot] and
-[Spring Cloud]. [Spring Cloud GCP] provides libraries that enable Spring Boot and Spring Cloud Stream applications to use
-Google Cloud services such as [Pub/Sub] for added scalability and separation of concerns. 
+Many enterprise-level Java applications with distributed systems on the backend are built with
+[Spring Boot](https://spring.io/projects/spring-boot) and [Spring Cloud](https://spring.io/projects/spring-cloud).
+[Spring Cloud GCP](https://spring.io/projects/spring-cloud-gcp) provides libraries that enable Spring Boot and Spring Cloud 
+Stream applications to use Google Cloud services such as [Pub/Sub](https://cloud.google.com/pubsub/docs/overview) for added
+scalability and separation of concerns. 
 
-[Pub/Sub] and [Dataflow] together can meet many different stream processing needs. In this tutorial, you learn how to
+Pub/Sub and [Dataflow](https://cloud.google.com/dataflow/docs/) together can meet many different stream processing needs. In this tutorial, you learn how to
 set up a simple Dataflow pipeline to deduplicate data out of a Spring Cloud Stream application before sending it back with 
 Pub/Sub. The same setup also applies to more complex and demanding stream-processing needs.
 
 ## Objectives
 
-- Configure a Spring Cloud Stream application to use [Pub/Sub] as a message broker.
-- Use [Dataflow] to deduplicate messages.
+- Configure a Spring Cloud Stream application to use Pub/Sub as a message broker.
+- Use Dataflow to deduplicate messages.
 
 ## Architecture
 
@@ -31,7 +33,7 @@ Pub/Sub. The same setup also applies to more complex and demanding stream-proces
 
 ### Install the Cloud SDK and set up your project
 
-1.  Install the [Cloud SDK].
+1.  Install the [Cloud SDK](https://cloud.google.com/sdk/docs/).
 
 1.  Create a new Google Cloud project.
 
@@ -43,7 +45,7 @@ Pub/Sub. The same setup also applies to more complex and demanding stream-proces
             export PROJECT_NAME=your-google-cloud-project-id
             gcloud projects create $PROJECT_NAME
   
-1.  [Enable billing].
+1.  [Enable billing](https://cloud.google.com/billing/docs/how-to/modify-project/).
 
 1.  Initialize the `gcloud` command-line tool and other parts of the Cloud SDK with the settings for your Google Cloud
     project:
@@ -91,7 +93,7 @@ To create a service account JSON key with the `gcloud` command-line tool, run th
       --role roles/storage.admin   
    
     # Create a JSON file with the service account credentials.
-    gcloud iam service-accounts keys create path/to/your/credentials.json \
+    gcloud iam service-accounts keys create [PATH_TO_CREDENTIALS_FILE].json \
       --iam-account=$IAM_ACCOUNT
    
 
@@ -160,9 +162,14 @@ In [App.java](https://github.com/GoogleCloudPlatform/community/blob/master/tutor
 
 To specify a Pub/Sub topic to send data to, you need to provide a destination name to the output binding destination of your
 source in `application.properties`. Here, the destination name is `topicToDataflow`, which is also the Pub/Sub topic name.
+
 The output binding destination is indicated by `-out-` in the binding name `sendMessagesForDeduplication-out-0` and binding 
-property `destination`. Spring takes input to the function `sendMessagesForDeduplication` and sends it to the Pub/Sub topic
-`topicToDataflow`. Spring will create this topic if it does not exist. For more information, see 
+property `destination`. 
+
+Spring takes input to the function `sendMessagesForDeduplication` and sends it to the Pub/Sub topic `topicToDataflow`. 
+Spring will create this topic if it does not exist. 
+
+For more information, see 
 [Binding and Binding names](https://github.com/spring-cloud/spring-cloud-stream/blob/master/docs/src/main/asciidoc/spring-cloud-stream.adoc#binding-and-binding-names).
 
 In [application.properties](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/pubsub-spring-dedup-messages/pubsub-spring-cloud-stream/src/main/resources/application.properties):
@@ -200,12 +207,21 @@ In [App.java](https://github.com/GoogleCloudPlatform/community/blob/master/tutor
 
 To specify a Pub/Sub topic and subscription to receive data, you need to provide a destination name and an optional group
 name to the input binding destination and consumer group of your sink in `application.properties`. Here, the destination 
-name is `topicFromDataflow`, which is also the Pub/Sub topic name. The group name is `subscriptionFromDataflow`. Spring
-Cloud Stream concatenates the destination name with the group name to form the Pub/Sub subscription name 
-`topicFromDataflow.subscriptionFromDataflow`. The input binding destination and consumer group are indicated by `-in-` in 
-the binding name `receiveDedupedMessagesFromDataflow-in-0` and binding properties `destination` and `group` respectively. 
+name is `topicFromDataflow`, which is also the Pub/Sub topic name.
+
+The group name is `subscriptionFromDataflow`.
+
+Spring Cloud Stream concatenates the destination name with the group name to form the Pub/Sub subscription name 
+`topicFromDataflow.subscriptionFromDataflow`.
+
+The input binding destination and consumer group are indicated by `-in-` in the binding name `receiveDedupedMessagesFromDataflow-in-0` and binding properties `destination` and `group` respectively. 
+
 Spring receives messages from the Pub/Sub subscription and uses them as input to the function 
-`receiveDedupedMessagesFromDataflow`. Only input bindings have consumer groups. For more information, see 
+`receiveDedupedMessagesFromDataflow`.
+
+Only input bindings have consumer groups.
+
+For more information, see 
 [Common Binding Properties](https://github.com/spring-cloud/spring-cloud-stream/blob/master/docs/src/main/asciidoc/spring-cloud-stream.adoc#common-binding-properties).
 
 In [application.properties](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/pubsub-spring-dedup-messages/pubsub-spring-cloud-stream/src/main/resources/application.properties):
@@ -254,8 +270,11 @@ In [DataEntryController.java](https://github.com/GoogleCloudPlatform/community/b
 ## Create a Dataflow pipeline to deduplicate Pub/Sub messages
 
 To deduplicate Pub/Sub messages in a Dataflow pipeline using a custom key, you need to set an `idAttribute` for the input 
-stream. Here, the input stream is a Pub/Sub topic; its `idAttribute` can be a Pub/Sub message attribute. Dataflow will 
-achieve exactly-once processing on messages with the same attribute values. For more information about `PubSubIO`, see its 
+stream. Here, the input stream is a Pub/Sub topic; its `idAttribute` can be a Pub/Sub message attribute.
+
+Dataflow will achieve exactly-once processing on messages with the same attribute values. 
+
+For more information about `PubSubIO`, see its 
 [source code](https://github.com/apache/beam/blob/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/pubsub/PubsubIO.java).
 
 In [DedupPubSub.java](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/pubsub-spring-dedup-messages/pubsubio-dedup/src/main/java/com/google/example/DedupPubSub.java):
@@ -301,17 +320,22 @@ in your terminal.
 
 ![results](https://storage.googleapis.com/gcp-community/tutorials/pubsub-spring-dedup-messages/results.png)
 
-Here, "Message 2", "Message 3", and "Message 4" have the same key "456"; only the first of them, "Message 2", has passed all
+Here, Message 2, Message 3, and Message 4 have the same key, `456`; only the first of them, Message 2, has passed all
 the way through the pipeline and arrived in your application.
 
 ## Cleanup
 
 1.  Use `Ctrl+C` to stop the Spring Boot application and Dataflow.
-1.  In the [Cloud Console for Dataflow], select the Dataflow job and stop it. Cancel the pipeline instead of draining it.
+
+1.  On the [**Dataflow** page in the Cloud Console](http://console.cloud.google.com/dataflow/), select the Dataflow job and 
+    stop it. Cancel the pipeline instead of draining it.
+
     Dataflow will automatically delete the subscription to the topic `topicFromDataflow` during this process. Your 
     subscription name should look similar to `topicToDataflow.subscription-8732360904945383579` with a different 
     alphanumeric string at the end.
-1.  Delete the subscription followed by the topics in the [Cloud Console for Pub/Sub] or via the command line:
+    
+1.  Delete the subscription followed by the topics, using either the
+    [**Pub/Sub** page in the Cloud Console](https://console.cloud.google.com/cloudpubsub/) or the following commands:
 
         gcloud pubsub subscriptions delete topicFromDataflow.subscriptionFromDataflow
         gcloud pubsub topics delete topicFromDataflow topicToDataflow
@@ -320,20 +344,7 @@ the way through the pipeline and arrived in your application.
 
 Check out additional resources to learn about the following:
 
-- [Pub/Sub]
+- [Pub/Sub overview]
 - [Google Cloud Platform services that integrate with Spring](https://spring.io/projects/spring-cloud-gcp/).
-- Using [Dataflow templates] for stream processing
-- [Building streaming pipelines with Pub/Sub using Dataflow]
-
-[Spring Boot]: https://spring.io/projects/spring-boot
-[Spring Cloud]: https://spring.io/projects/spring-cloud
-[Spring Cloud GCP]: https://spring.io/projects/spring-cloud-gcp
-[Pub/Sub]: https://cloud.google.com/pubsub/docs/overview
-[Dataflow]: https://cloud.google.com/dataflow/docs/
-[Cloud SDK]: https://cloud.google.com/sdk/docs/
-[Cloud Shell]: https://console.cloud.google.com/cloudshell/editor/
-[Enable billing]: https://cloud.google.com/billing/docs/how-to/modify-project/
-[Cloud Console for Dataflow]: http://console.cloud.google.com/dataflow/
-[Cloud Console for Pub/Sub]: https://console.cloud.google.com/cloudpubsub/
-[Dataflow templates]: https://cloud.google.com/dataflow/docs/guides/templates/overview/
-[Building streaming pipelines with Pub/Sub using Dataflow]: https://cloud.google.com/dataflow/docs/concepts/streaming-with-cloud-pubsub
+- Using [Dataflow templates](https://cloud.google.com/dataflow/docs/guides/templates/overview/) for stream processing
+- [Building streaming pipelines with Pub/Sub using Dataflow](https://cloud.google.com/dataflow/docs/concepts/streaming-with-cloud-pubsub)
