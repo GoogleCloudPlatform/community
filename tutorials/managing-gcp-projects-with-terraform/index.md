@@ -40,8 +40,8 @@ This tutorial requires terraform v0.12.0+ and google_provider 3.0.0+. A previous
 google_provider 2.x.x is
 [here](https://github.com/GoogleCloudPlatform/community/tree/af5148120947b493d9a19531a763dac4b02b3e00/tutorials/managing-gcp-projects-with-terraform). The current tutorial has been tested with the following:
 
-    Terraform v0.12.18
-    + provider.google v3.3.0
+    Terraform v0.12.21
+    + provider.google v3.11.0
     + provider.random v2.2.1
 
 
