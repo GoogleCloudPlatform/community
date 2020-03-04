@@ -207,9 +207,7 @@ In [App.java](https://github.com/GoogleCloudPlatform/community/blob/master/tutor
 
 To specify a Pub/Sub topic and subscription to receive data, you need to provide a destination name and an optional group
 name to the input binding destination and consumer group of your sink in `application.properties`. Here, the destination 
-name is `topicFromDataflow`, which is also the Pub/Sub topic name.
-
-The group name is `subscriptionFromDataflow`.
+name is `topicFromDataflow`, which is also the Pub/Sub topic name. The group name is `subscriptionFromDataflow`.
 
 Spring Cloud Stream concatenates the destination name with the group name to form the Pub/Sub subscription name 
 `topicFromDataflow.subscriptionFromDataflow`.
@@ -274,7 +272,7 @@ stream. Here, the input stream is a Pub/Sub topic; its `idAttribute` can be a Pu
 
 Dataflow will achieve exactly-once processing on messages with the same attribute values. 
 
-For more information about `PubSubIO`, see its 
+For more information about `PubsubIO`, see its 
 [source code](https://github.com/apache/beam/blob/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/pubsub/PubsubIO.java).
 
 In [DedupPubSub.java](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/pubsub-spring-dedup-messages/pubsubio-dedup/src/main/java/com/google/example/DedupPubSub.java):
@@ -344,7 +342,7 @@ the way through the pipeline and arrived in your application.
 
 Check out additional resources to learn about the following:
 
-- [Pub/Sub overview]
+- [Pub/Sub overview](https://cloud.google.com/pubsub/docs/overview)
 - [Google Cloud Platform services that integrate with Spring](https://spring.io/projects/spring-cloud-gcp/).
 - Using [Dataflow templates](https://cloud.google.com/dataflow/docs/guides/templates/overview/) for stream processing
 - [Building streaming pipelines with Pub/Sub using Dataflow](https://cloud.google.com/dataflow/docs/concepts/streaming-with-cloud-pubsub)
