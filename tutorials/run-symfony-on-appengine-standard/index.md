@@ -260,9 +260,10 @@ the [Stackdriver Error Reporting UI][stackdriver-errorreporting-ui]! If you copi
 
 ## Send emails
 
-The recommended way to send emails is to use a third-party mail provider such as [Sendgrid][sendgrid], [Mailgun][mailgun] or [Mailjet][mailjet].
-Hosting your application on GAE, most of these providers will offer you up to 30,000 emails per month and you will be charged only if you send more.
-You will have the possibility to track your email delivery and benefit from all the feature of a real email broadcasting system.
+The recommended way to send emails is to use a third-party mail provider such as [SendGrid][sendgrid], [Mailgun][mailgun],
+or [Mailjet][mailjet]. Hosting your application on GAE, most of these providers will offer you up to 30,000 emails per month
+and you will be charged only if you send more. You will have the possibility to track your email delivery and benefit from 
+all the feature of a real email broadcasting system.
 
 ### Install
 
@@ -330,6 +331,7 @@ class ExampleController extends AbstractController
 [cloud-sql-apis]: https://console.cloud.google.com/apis/library/sqladmin.googleapis.com/?pro
 [create-project]: https://cloud.google.com/resource-manager/docs/creating-managing-projects
 [enable-billing]: https://support.google.com/cloud/answer/6293499?hl=en
+[sendgrid]: https://sendgrid.com/
 [symfony]: http://symfony.com
 [symfony-install]: http://symfony.com/doc/current/setup.html
 [symfony-demo]: https://github.com/symfony/demo
