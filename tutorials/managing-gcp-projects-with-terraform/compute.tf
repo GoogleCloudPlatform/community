@@ -17,7 +17,7 @@ data "google_compute_zones" "available" {
 }
 
 resource "google_compute_instance" "default" {
-  project      = [for instance in google_project_service.service : instance.project][0]
+  project      = google_project_service.service["compute.googleapis.com"].project
   zone         = data.google_compute_zones.available.names[0]
   name         = "tf-compute-1"
   machine_type = "f1-micro"
