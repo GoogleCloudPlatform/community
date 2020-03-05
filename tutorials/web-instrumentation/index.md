@@ -591,6 +591,8 @@ Notice how long the client latency is compared to the server latency. This indic
 
 ![Cloud Monitoring view of Frontend RTT as measured by the load balancer](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/gclb_rtt_spike.png)
 
+1. Click on the [Monitoring tab](https://console.cloud.google.com/monitoring).
+
 Our main suspect for the increase in latency is load on the CPU. We can see the CPU load from the GCE monitoring view
 
 ![Screenshot: Virtual machine CPU](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/gce_cpu_spike.png)
