@@ -1,6 +1,6 @@
 ---
 title: Instrumenting Web Applications End-to-End with Goole Cloud Monitoring and OpenTelemetry
-description: Instrument a web application end-to-end, from the browser to the backend application, including logging, monitoring, and tracing with OpenTelemetry and Google Cloud Monitoring
+description: Instrument a web application end-to-end, from the browser to the backend application, including logging, monitoring, and tracing with OpenTelemetry and Google Cloud Monitoring.
 author: alexamies
 tags: Cloud Monitoring, OpenTelemetry
 date_published: 2020-03-02
