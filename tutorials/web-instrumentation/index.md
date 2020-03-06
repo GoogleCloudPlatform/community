@@ -44,9 +44,8 @@ You can create a new one, or select a project you already created:
 [GO TO THE PROJECT SELECTOR PAGE](https://console.cloud.google.com/projectselector2/home/dashboard)
 1. Enable billing for your project.
 [ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
-1. Clone the repo
-git clone https://github.com/GoogleCloudPlatform/professional-services.git
-1. Install Node.js
+1. Clone the repo with the command `git clone https://github.com/GoogleCloudPlatform/professional-services.git`
+1. Install Node.js.
 1. Install Go
 1. Install Docker
 1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/install)
