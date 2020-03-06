@@ -40,8 +40,8 @@ This tutorial requires terraform v0.12.0+ and google_provider 3.0.0+. A previous
 google_provider 2.x.x is
 [here](https://github.com/GoogleCloudPlatform/community/tree/af5148120947b493d9a19531a763dac4b02b3e00/tutorials/managing-gcp-projects-with-terraform). The current tutorial has been tested with the following:
 
-    Terraform v0.12.18
-    + provider.google v3.3.0
+    Terraform v0.12.21
+    + provider.google v3.11.0
     + provider.random v2.2.1
 
 
@@ -210,7 +210,7 @@ resource "google_project_service" "service" {
 
   service = each.key
 
-  project = google_project.project.project_id
+  project            = google_project.project.project_id
   disable_on_destroy = false
 }
 
@@ -234,7 +234,9 @@ The `compute.tf` file:
 [embedmd]:# (compute.tf /data/ //)
 
 ```hcl
-data "google_compute_zones" "available" {}
+data "google_compute_zones" "available" {
+  project = google_project.project.project_id
+}
 
 resource "google_compute_instance" "default" {
   project      = google_project.project.project_id
@@ -249,9 +251,11 @@ resource "google_compute_instance" "default" {
   }
 
   network_interface {
-    network       = "default"
-    access_config = {}
+    network = "default"
+    access_config {}
   }
+
+  depends_on = [google_project_service.service]
 }
 
 output "instance_id" {
@@ -264,7 +268,7 @@ View the code [on GitHub](https://github.com/GoogleCloudPlatform/community/blob/
 Terraform resources used:
 
 - [`data "google_compute_zones"`](https://www.terraform.io/docs/providers/google/d/google_compute_zones.html): Data resource used to lookup available Compute Engine zones, bound to the desired region. Avoids hard-coding of zone names.
-- [`resource "google_compute_instance"`](https://www.terraform.io/docs/providers/google/r/compute_instance.html): The Compute Engine instance bound to the newly created project. Note that the project is referenced from the `google_project_services.project` resource. This is to tell Terraform to create it after the Compute Engine API has been enabled. Otherwise, Terraform would try to enable the Compute Engine API and create the instance at the same time, leading to an attempt to create the instance before the Compute Engine API is fully enabled.
+- [`resource "google_compute_instance"`](https://www.terraform.io/docs/providers/google/r/compute_instance.html): The Compute Engine instance bound to the newly created project. Note that the resource depends on `google_project_service.service` resource explicitly. This is to tell Terraform to create it after the Compute Engine API has been enabled. Otherwise, Terraform would try to enable the Compute Engine API and create the instance at the same time, leading to an attempt to create the instance before the Compute Engine API is fully enabled.
 - [`output "instance_id"`](https://www.terraform.io/intro/getting-started/outputs.html): The `self_link` is output to make it easier to ssh into the instance after Terraform completes.
 
 Set the name of the project you want to create and the region you want to create the resources in:
