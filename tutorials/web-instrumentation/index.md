@@ -286,7 +286,6 @@ The application can be run in a local development environment, on any of a numbe
 location
 ```shell
 cd professional-services/examples/web-instrumentation
-WI_HOME=`pwd`
 ```
 
 1. Install the JavaScript packages required by both the server and the browser
@@ -314,7 +313,7 @@ gcloud services enable bigquery.googleapis.com \
 
 ### OpenTelemetry collector
 
-The steps below show how to build and push the OpenTelemetry collector to the Google Container Registry (GCR).
+The steps below show how to build and push the OpenTelemetry collector to Google Container Registry (GCR).
 
 1. Open up a new shell command line. In a new directory, clone the OpenTelemetry collector
 contrib project, which contains the Cloud Monitoring (Stackdriver) exporter
@@ -441,7 +440,7 @@ deployed to the Kubernetes cluster.
 cd  ..
 ```
 
-1. Build the app Docker image and push it to the GCR:
+1. Build the app Docker image and push it to GCR:
 
 ```shell
 gcloud builds submit
@@ -615,7 +614,7 @@ We ran the load test, saw that the app seemed to do alright with some increase i
 
 We will answer the question of how the app scaled in terms of impact on end users by querying log data in BigQuery to find second-by-second client latency.
 
-To explore the client logs, enter a query like below in the BigQuery console. Use the current date (UTC time zone) in the table name.
+To explore the client logs, enter a query like below in the [BigQuery console](https://console.cloud.google.com/bigquery). Use the current date (UTC time zone) in the table name.
 
 ```sql
 SELECT
