@@ -95,15 +95,18 @@ First find the cloudbuild service account. Next add the editor role to it.
 
 You can create a trigger on the [build triggers page](https://console.cloud.google.com/cloud-build/triggers) of the GCP Console by following these steps:
 
-1. Click **"Create Trigger"**
-1. Select "Cloud Source Repository" and click "Continue".
-1. Select "helloworld-image-factory" and click "Continue".
-1. Enter "Hello world image factory" for "Name".
-1. Set the trigger for "Tag".
-1. Set the build type to "cloudbuild.yaml".
-1. Set the substitution, `_IMAGE_FAMILY` to centos-7.
-1. Set the substitution, `_IMAGE_ZONE` to the zone you want to use the value of `$ZONE`.
-1. Click "Create Trigger".
+1.  Click **Create Trigger**.
+1.  In the **Name** field, enter ```Hello world image factory```.
+1.  Under **Event**, select **Push to a tag**.
+1.  Under **Source**, select ```helloworld-image-factory``` as your
+    **Repository** and the tag to match as your **Tag**.
+1.  Under **Build Configuration**, select **Cloud Build configuration
+    file (yaml or json)**.
+1.  In the **Cloud Build configuration file location**, enter `cloudbuild.yaml`.
+1.  Under **Substitution variables**, click **+ Add variable**.
+1.  In the **Variable** field enter `_IMAGE_FAMILY` and in **Value** enter `centos-7`.
+1.  In the **Variable** field enter `_IMAGE_ZONE` and in **Value** enter `$ZONE`.
+1.  Click **Create** to save your build trigger.
 
 **Note: To see a list of image families:**
 

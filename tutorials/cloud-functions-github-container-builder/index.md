@@ -29,36 +29,35 @@ implemented in [Node.js][node].
 
 ## Set up automated builds
 
-You will use [Cloud Container Builder][gcb] and the [Build Triggers][bt]
+You will use [Cloud Build][gcb] and the [Build Triggers][https://cloud.google.com/cloud-build/docs/running-builds/create-manage-triggers]
 feature to upload your website automatically every time you push a new git
 commit to the source repository.
 
 > Note: If you do not have a repository on GitHub, you can fork [this sample
 > repository][sample-repo] for the purposes of this tutorial.
 
-Head over to the Container Registry &rarr; [Build Triggers][triggers]
-section on Google Cloud Platform Console and click **Add trigger**:
+To create a build trigger:
 
-![Add build trigger on Container Registry section](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/add-trigger-button.png)
+1. Go to the Cloud Build &rarr; [Build Triggers][p6n-triggers] page.
 
-Then select **GitHub** as the source of your repository. You may need to authorize
-access to your GitHub account so that Cloud Source Repositories can mirror and
-create commit hooks on your GitHub repositories.
+2. Click "Create trigger".
 
-![Select GitHub as the source](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/select-source.png)
+3. Enter a name for your trigger (i.e. publish-website).
 
-Then, pick your repository from the list. If you forked the sample repository
-above, pick it here:
+4. If you forked the [sample repository][sample-repo] for this tutorial,
+   select "Push to a branch" as your repository event.
 
-![Select the Git repository](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/select-repo.png)
+5. Select the repository that contains your source code and build
+   config file.
 
-For the **Trigger settings**:
+6. Specify the regex for the branch that will start your trigger (i.e. ^master$).
 
-- choose Trigger Type **Branch**
-- choose Build Configuration **cloudbuild.yaml**
-- Set the file location to `cloudbuild.yaml`
+7. Choose "Cloud build configuration (yaml or json)" as your Build configuration
+   file type.
 
-![Create build trigger](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/create-trigger.png)
+8. Set the file location to `cloudbuild.yaml`.
+
+9. Click **Create** to save your build trigger.
 
 Now, create a `cloudbuild.yaml` file with the following contents in your
 repository. Note that you can add files to your repository on GitHub’s website, or
@@ -83,7 +82,7 @@ After saving the file, commit and push the changes:
 [sample-repo]: https://github.com/GoogleCloudPlatform/web-docs-samples
 [triggers]: https://console.cloud.google.com/gcr/triggers
 
-### Trigger the first build
+### Start the first build
 
 Once you push the `cloudbuild.yaml` file to your repository and create the Build
 Trigger, you can kick off the first build manually. Head over to the Google
@@ -93,9 +92,7 @@ trigger** and choose the the branch (i.e. master) to build.
 ![Trigger the first build manually](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/trigger-build.png)
 
 Now click **Build history** on the left and watch the build job execute and
-succeed:
-
-![Build history shows the executing or completed builds](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/build-history.png)
+succeed.
 
 Remember that after now, every commit pushed to any branch of your GitHub
 repository will trigger a new build. If you need to change which git branches
