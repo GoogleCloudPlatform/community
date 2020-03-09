@@ -22,7 +22,7 @@ Before jumping into the specifics of establishing an identity root of trust for 
 
 **The key principle to remember is that the Admin Console is used to centrally manage identities in Google Cloud (i.e user identities and how they get authenticated) and that actual permissions are managed [in GCP, via IAM policies](https://cloud.google.com/resource-manager/docs/access-control-org#using_predefined_roles).**
 
-![alt_text](images/image7.png "image_tooltip")
+![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image7.png)
 
 _In this diagram, user@example.com authentication path is where Cloud Identity comes into play, while the access and authorization on GCP resources is governed by Cloud IAM policies._
 
@@ -136,21 +136,21 @@ Go to [Cloud Identity Free tier setup](https://gsuite.google.com/signup/gcpident
 
 Once this is done, you can setup your Cloud Identity account for this domain. Sign-in as the super admin user you just created. At this point no 2FA is used yet, so you will be asked to provide a phone number for this super admin user (use the received security code by SMS to log in).
 
-![alt_text](images/image2.png "image_tooltip")
+![Set up Cloud Identity](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image2.png)
 
 Agree to the [Google Terms of Service](https://accounts.google.com/TOS?hl=en) and the [Google Privacy Policy](https://www.google.com/policies/privacy/) to continue.
 
 To verify ownership of your domain, click start and add the DNS record in your public DNS zone for this domain and wait until the verification happens (this may take several minutes):
 
-![alt_text](images/image6.png "image_tooltip")
+![Verify domain ownership](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image6.png)
 
 Here is an example of this verification record in the cloudflyer.info DNS zone:
 
-![alt_text](images/image9.png "image_tooltip")
+![Custom resource records](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image9.png)
 
 Once your domain is verified you can log in the [Cloud Identity admin console](http://admin.google.com):
 
-![alt_text](images/image4.png "image_tooltip")
+![Admin Console](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image4.png)
 
 You can now start the creation of the other super admin users for this role and [associate the right second factor](https://support.google.com/accounts/answer/185839?co=GENIE.Platform%3DDesktop&hl=en) to each account specifically.
 
@@ -172,19 +172,19 @@ In this final step, we will  create your GCP Organization nod, define your Organ
 
 You have to be a super admin to execute this step. Follow your ceremony to log in as a super admin if not already logged in. Go to the [Google Cloud Console](https://console.cloud.google.com/). You should see a screen like this:
 
-![alt_text](images/image1.png "image_tooltip")
+![terms of service](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image1.png)
 
 Once you agree to the terms and conditions, the GCP organization is created.
 
-![alt_text](images/image3.png "image_tooltip")
+![project selector](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image3.png)
 
 You can now verify that your super admin users has the [Organization Administrator](https://console.cloud.google.com/iam-admin/roles/details/roles%3Cresourcemanager.organizationAdmin) role in the IAM section:
 
-![alt_text](images/image5.png "image_tooltip")
+![permissions](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image5.png)
 
 Finally, you need to delegate the GCP administration to a group of trusted individuals, to avoid having to use the super admin users for day-to-day operations. You will need to provision identities for these users (like a dedicated group in Cloud Identity) prior to assigning them the GCP Organization Administrator role in the GCP console:
 
-![alt_text](images/image10.png "image_tooltip")
+![IAM](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image10.png)
 
 Before completing this root of trust ceremony, it is recommended that you [export your admin console logs](https://support.google.com/a/answer/4579579?hl=en) to your existing SIEM solution. This can be achieved natively with solutions like [Splunk](https://splunkbase.splunk.com/app/3791/#/details), or can be achieved via some automation like using the [CFT G Suite exporter](https://github.com/terraform-google-modules/terraform-google-gsuite-export) module in GCP. If no existing solution is satisfying, admin logs can be exported using custom code and the [G Suite SDK](https://developers.google.com/admin-sdk).
 
