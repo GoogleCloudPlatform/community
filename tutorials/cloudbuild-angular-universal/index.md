@@ -220,15 +220,15 @@ You will create a repository called `tour-of-heroes-universal`
 You can create a trigger on the [build triggers page](https://console.cloud.google.com/cloud-build/triggers) of the GCP Console by following these steps:
 
 1.  Click **Create Trigger**.
-1.  In the **Name** field, enter ```angular-universal-tour```.
+1.  In the **Name** field, enter `angular-universal-tour`.
 1.  Under **Event**, select **Push to a tag**.
-1.  Under **Source**, select ```tour-of-heroes-universal``` as your
+1.  Under **Source**, select `tour-of-heroes-universal` as your
     **Repository** and the tag to match as your **Tag**.
-1.  Under **Build Configuration**, select **Cloud Build configuration
-    file (yaml or json)**.
+1.  Under **Build Configuration**, select **Cloud Build configuration file (yaml or json)**.
 1.  In the **Cloud Build configuration file location**, enter `cloudbuild.yaml`.
 1.  Under **Substitution variables**, click **+ Add variable**.
-1.  In the **Variable** field enter `_ANGULAR_APP_BUCKET_PATH` and in **Value** enter `gs://[PROJECT]-angular-app` where `[PROJECT]` is the name of your project.
+1.  In the **Variable** field enter `_ANGULAR_APP_BUCKET_PATH` and in **Value**
+    enter `gs://[PROJECT]-angular-app`, where `[PROJECT]` is the name of your project.
 1.  Click **Create** to save your build trigger.
 
 ### Add your tour-of-heroes Cloud Source repository as a remote repository with the name 'google'
