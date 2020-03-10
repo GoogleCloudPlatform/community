@@ -1,15 +1,15 @@
 ---
-title: Connect Container Builder to GitHub Through Cloud Functions
-description: Learn how to create GitHub Statuses from Container Builder events using Cloud Functions.
+title: Connect Container Builder to GitHub through Cloud Functions
+description: Learn how to create GitHub statuses from Container Builder events using Cloud Functions.
 author: cbuchacher
 tags: Cloud Functions, GitHub, Node.js
 date_published: 2018-05-14
 ---
 
-This tutorial demonstrates how to use [Cloud Container Builder][gcb] as
+This tutorial demonstrates how to use [Cloud Build][gcb] as
 a continuous integration service for GitHub repositories. You will implement a
-[Cloud Function][gcf] which listens to build events and updates the
-build status in GitHub using the [Statuses API][statuses]. The function is
+[Cloud Function][gcf] that listens to build events and updates the
+build status in GitHub using the [Status API][statuses]. The function is
 implemented in [Node.js][node].
 
 [gcb]: https://cloud.google.com/container-builder/docs/
@@ -19,7 +19,7 @@ implemented in [Node.js][node].
 
 ## Prerequisites
 
-1.  Create a project in the [Google Cloud Platform Console][console].
+1.  Create a project in the [Cloud Console][console].
 1.  [Enable billing][billing] for your project.
 1.  Install the [Cloud SDK][sdk].
 
@@ -27,41 +27,39 @@ implemented in [Node.js][node].
 [billing]: https://support.google.com/cloud/answer/6293499#enable-billing
 [sdk]: https://cloud.google.com/sdk/
 
-## Set up automated builds
+## Set up automated builds with a build trigger
 
-You will use [Cloud Container Builder][gcb] and the [Build Triggers][bt]
-feature to upload your website automatically every time you push a new git
+You will use [Cloud Build][gcb] and its
+[build triggers](https://cloud.google.com/cloud-build/docs/running-builds/create-manage-triggers)
+to upload your website automatically every time you push a new git
 commit to the source repository.
 
-> Note: If you do not have a repository on GitHub, you can fork [this sample
-> repository][sample-repo] for the purposes of this tutorial.
+If you do not have a repository on GitHub, you can fork
+[this sample repository][sample-repo] for this tutorial.
 
-Head over to the Container Registry &rarr; [Build Triggers][triggers]
-section on Google Cloud Platform Console and click **Add trigger**:
+1. Go to the Cloud Build &rarr; [**Triggers**][p6n-triggers] page.
 
-![Add build trigger on Container Registry section](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/add-trigger-button.png)
+2. Click **Create trigger**.
 
-Then select **GitHub** as the source of your repository. You may need to authorize
-access to your GitHub account so that Cloud Source Repositories can mirror and
-create commit hooks on your GitHub repositories.
+3. Enter a name for your trigger (e.g., `publish-website`).
 
-![Select GitHub as the source](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/select-source.png)
+4. If you forked the [sample repository][sample-repo] for this tutorial,
+   select **Push to a branch** as your repository event.
 
-Then, pick your repository from the list. If you forked the sample repository
-above, pick it here:
+5. Select the repository that contains your source code and build
+   configuration file.
 
-![Select the Git repository](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/select-repo.png)
+6. Specify the regular expression for the branch that will start your trigger (e.g., `^master$`).
 
-For the **Trigger settings**:
+7. Choose **Cloud build configuration (yaml or json)** as your build configuration
+   file type.
 
-- choose Trigger Type **Branch**
-- choose Build Configuration **cloudbuild.yaml**
-- Set the file location to `cloudbuild.yaml`
+8. Set the file location to `cloudbuild.yaml`.
 
-![Create build trigger](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/create-trigger.png)
+9. Click **Create** to save your build trigger.
 
 Now, create a `cloudbuild.yaml` file with the following contents in your
-repository. Note that you can add files to your repository on GitHub’s website, or
+repository. Note that you can add files to your repository on the GitHub website, or
 by cloning the repository on your development machine:
 
 ```yaml
@@ -71,7 +69,7 @@ steps:
 ```
 
 This YAML file declares a build step with the `git show` command. It prints
-the contents of README.md to the build logs.
+the contents of the `README.md` file to the build logs.
 
 After saving the file, commit and push the changes:
 
@@ -83,23 +81,21 @@ After saving the file, commit and push the changes:
 [sample-repo]: https://github.com/GoogleCloudPlatform/web-docs-samples
 [triggers]: https://console.cloud.google.com/gcr/triggers
 
-### Trigger the first build
+### Start the first build
 
-Once you push the `cloudbuild.yaml` file to your repository and create the Build
-Trigger, you can kick off the first build manually. Head over to the Google
-Cloud Platform Console [Build Triggers][triggers] section, click **Run
-trigger** and choose the the branch (i.e. master) to build.
+After you push the `cloudbuild.yaml` file to your repository and create the build
+trigger, you can start the first build manually. Go to the Cloud Console
+[**Triggers**][triggers] section, click **Run trigger**, and choose the the branch
+(e.g., master) to build.
 
 ![Trigger the first build manually](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/trigger-build.png)
 
 Now click **Build history** on the left and watch the build job execute and
-succeed:
-
-![Build history shows the executing or completed builds](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-github-container-builder/build-history.png)
+succeed.
 
 Remember that after now, every commit pushed to any branch of your GitHub
 repository will trigger a new build. If you need to change which git branches
-or tags you use for publishing, you can update the Build Trigger configuration.
+or tags you use for publishing, you can update the build trigger configuration.
 
 ## Preparing the Cloud Function
 
@@ -113,7 +109,7 @@ or tags you use for publishing, you can update the Build Trigger configuration.
 
         $ npm install --save --save-exact @octokit/rest@15.2.6
 
-### Writing the Function Code
+### Writing the Function code
 
 Create a file named `index.js` with the following contents:
 
@@ -191,7 +187,7 @@ function buildToGithubStatus(build) {
 ```
 
 The container builder publishes messages in the `cloud-builds`
-[Pub/Sub][pubsub] topic. Each message triggers our cloud function with the
+[Pub/Sub][pubsub] topic. Each message triggers the function with the
 message contents passed as input data. The message contains the [build][build]
 response. Here is an example of a build response, reduced to the most relevant
 fields:
@@ -224,14 +220,14 @@ build status (`WORKING`, `FAILURE`, `SUCCESS`) to a commit state (`pending`,
 [pubsub]: https://cloud.google.com/pubsub/docs/
 [build]: https://cloud.google.com/container-builder/docs/api/reference/rest/v1/projects.builds
 
-### Generating a GitHub Personal Access Token
+### Generating a GitHub personal access token
 
 1. Read about [Creating a personal access token for the command line][token].
 1. Select `repo:status` from the scopes.
 1. Substitute the generated token for `[TOKEN]` in `index.js`.
 
-> Note: To create statuses you must have write access to the target repository.
-> POST's to the Statuses API will return a `NOT FOUND` error otherwise.
+To create statuses, you must have write access to the target repository.
+`POST` calls to the Status API will return a `NOT FOUND` error otherwise.
 
 [token]: https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
 
@@ -242,8 +238,7 @@ build status (`WORKING`, `FAILURE`, `SUCCESS`) to a commit state (`pending`,
 
         $ gcloud beta functions deploy gcb_github --stage-bucket [YOUR_STAGE_BUCKET] --trigger-topic cloud-builds
 
-    Replace `[YOUR_STAGE_BUCKET]` with your Cloud Functions staging bucket,
-    e.g. gs://[PROJECT_ID]_cloudbuild.
+    Replace `[YOUR_STAGE_BUCKET]` with your Cloud Functions staging bucket (e.g., `gs://[PROJECT_ID]_cloudbuild`).
 
 [deploying]: https://cloud.google.com/functions/docs/deploying/filesystem
 
