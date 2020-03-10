@@ -64,7 +64,7 @@ resources that will be used in the project.
 ```HCL
 // Configure the Google Cloud provider
 provider "google" {
- credentials = "${file("CREDENTIALS_FILE.json")}"
+ credentials = file("CREDENTIALS_FILE.json")
  project     = "flask-app-211918"
  region      = "us-west1"
 }
@@ -227,7 +227,7 @@ the Terraform config:
 ```HCL
 // A variable for extracting the external ip of the instance
 output "ip" {
- value = "${google_compute_instance.default.network_interface.0.access_config.0.nat_ip}"
+ value = google_compute_instance.default.network_interface.0.access_config.0.nat_ip
 }
 ```
 
@@ -235,9 +235,9 @@ Run `terraform apply` followed by `terraform output ip` to return the instance's
 external IP address. Validate that everything is set up correctly at this point
 by connecting to that IP address with SSH.
 
-Note: This tutorial needs the `default` network's `default-allow-ssh` firewall rule to be in place before you can use SSH 
+Note: This tutorial needs the `default` network's `default-allow-ssh` firewall rule to be in place before you can use SSH
 to connect to the instance. If you are starting with a new project, this can take a few minutes. You can
-check the [firewall rules list](https://console.cloud.google.com/networking/firewalls/list) to make sure that the 
+check the [firewall rules list](https://console.cloud.google.com/networking/firewalls/list) to make sure that the
 firewall rule has been created.
 
 ```Shell
