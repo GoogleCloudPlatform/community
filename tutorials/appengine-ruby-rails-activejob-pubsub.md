@@ -193,9 +193,6 @@ of your web instances at the cost of potentially using more resources.
         env_variables:
           SECRET_KEY_BASE: [SECRET_KEY]
 
-        health_check:
-          enable_health_check: False
-
         # Optional scaling configuration
         manual_scaling:
           instances: 1
