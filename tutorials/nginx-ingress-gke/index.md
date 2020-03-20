@@ -249,7 +249,7 @@ Resource). The default backend exposes two URLs:
 
 ## Configure Ingress Resource to use NGINX Ingress Controller
 
-An Ingress Resource object is a collection of L7 rules for routing inbound traffic to Kubernetes Services.  Multiple rules can be defined in one Ingress Resource or they can be split up into multiple Ingress Resource manifests. The Ingress Resource also determines which controller to utilize to serve traffic.  This can be set with an annotation, `kubernetes.io/ingress.class`, in the metadata section of the Ingress Resource.  For the NGINX controller, use the value `nginx` as shown below:
+An Ingress Resource object is a collection of L7 rules for routing inbound traffic to Kubernetes Services. Multiple rules can be defined in one Ingress Resource or they can be split up into multiple Ingress Resource manifests. The Ingress Resource also determines which controller to utilize to serve traffic.  This can be set with an annotation, `kubernetes.io/ingress.class`, in the metadata section of the Ingress Resource.  For the NGINX controller, use the value `nginx` as shown below:
 
     annotations: kubernetes.io/ingress.class: nginx
 
@@ -259,7 +259,10 @@ method can also be forced by setting the annotation's value to `gce`as shown bel
 
     annotations: kubernetes.io/ingress.class: gce
 
-Deploying multiple Ingress controllers, of different types (e.g., ingress-nginx & gce), and not specifying a class annotation will result in both or all controllers fighting to satisfy the Ingress, and all of them racing to update Ingress status field in confusing ways.
+Deploying multiple Ingress controllers of different types (for example, both `nginx` and `gce`) and not specifying a class
+annotation will result in all controllers fighting to satisfy the Ingress, and all of them racing to update Ingress
+status field in confusing ways. For more information, see
+[Multipe Ingress controllers](https://kubernetes.github.io/ingress-nginx/user-guide/multiple-ingress/).
 
 Let's create a simple Ingress Resource YAML file which uses the NGINX Ingress Controller and has one path rule defined by typing the following commands:
 
