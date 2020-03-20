@@ -240,9 +240,6 @@ runtime_config:
     jdk: openjdk8
     server: jetty9
 
-health_check:
-    enable_health_check: False
-
 resources:
     cpu: 1
     memory_gb: 2.3
