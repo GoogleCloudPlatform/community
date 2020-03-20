@@ -49,7 +49,7 @@ machine.
 
     - Application type: `Web application`
     - Name: an appropriate, memorable name for your client
-    - Authorized JavaScript origins: `https://[YOUR_GCF_REGION]-[YOUR_GCP_PROJECT_ID].cloudfunctions.net/oauth2callback`
+    - Authorized redirect URIs: `https://[YOUR_GCF_REGION]-[YOUR_GCP_PROJECT_ID].cloudfunctions.net/oauth2callback`
 
 1.  Click _Create_, then close the resulting dialog box and click the
     **Download** icon next to your newly created client ID. The resulting file

@@ -18,7 +18,7 @@ sudo systemctl enable docker
 sudo curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 sudo usermod -a -G docker $USER
-git clone -b 1.5.0 https://github.com/mendersoftware/integration mender-server
+git clone https://github.com/Kcr19/integration.git mender-server
 cd mender-server
 git checkout -b my-production-setup
 cp -a template production
@@ -45,7 +45,7 @@ docker volume inspect --format '{{.Mountpoint}}' mender-artifacts
 git add prod.yml
 git commit -m 'production: final configuration'
 ./run up -d
-sudo ./run exec mender-useradm /usr/bin/useradm create-user --username=mender@example.com --password=mender_gcp_ota
+sudo ./run exec -T mender-useradm /usr/bin/useradm create-user --username=mender@example.com --password=mender_gcp_ota
 export FULL_PROJECT=$(gcloud config list project --format "value(core.project)")
 export PROJECT="$(echo $FULL_PROJECT | cut -f2 -d ':')"
 export REGION='us-central1'

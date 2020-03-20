@@ -60,23 +60,25 @@ projected usage.
 
 1.	Update the `config.js` file with your own values:
 
+    ```json
+    {
+      "secretToken" : "[YOUR_SECRET_TOKEN]",
+      "stageBucket" : "[YOUR_STAGING_BUCKET_NAME]",
+      "location" : "[YOUR_REGION]",
+      "deployments": [
         {
-          "secretToken" : "[YOUR_SECRET_TOKEN]",
-          "stageBucket" : "[YOUR_STAGING_BUCKET_NAME]",
-          "location" : "[YOUR_REGION]",
-          "deployments": [
-            {
-              "repository":"[YOUR_REPOSITORY_1]",
-              "path":"[YOUR_FUNCTION_PATH_1]",
-              "functionName":"[YOUR_FUNCTION_NAME_1]"
-            },
-            {
-              "repository":"[YOUR_REPOSITORY_2]",
-              "path":"[YOUR_FUNCTION_PATH_N]",
-              "functionName":"[YOUR_FUNCTION_NAME_N]"
-            }
-          ]
+          "repository":"[YOUR_REPOSITORY_1]",
+          "path":"[YOUR_FUNCTION_PATH_1]",
+          "functionName":"[YOUR_FUNCTION_NAME_1]"
+        },
+        {
+          "repository":"[YOUR_REPOSITORY_2]",
+          "path":"[YOUR_FUNCTION_PATH_N]",
+          "functionName":"[YOUR_FUNCTION_NAME_N]"
         }
+      ]
+    }
+    ```
 
     where
 

@@ -1,16 +1,14 @@
 ---
-title: Connect to Redis from Node.js on Google App Engine Flexible Environment
-description: Learn how to connect to Redis from a Node.js app running in Google App Engine flexible environment.
+title: Connect to Redis from Node.js on App Engine flexible environment
+description: Learn how to connect to Redis from a Node.js app running in the App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Node.js, Redis
 date_published: 2017-11-02
 ---
+
 ## Redis
 
-> [Redis][redis]  is an open source (BSD licensed), in-memory data structure
-> store, used as a database, cache and message broker.
->
-> – redis.io
+"[Redis][redis]  is an open source (BSD licensed), in-memory data structure store, used as a database, cache and message broker." – redis.io
 
 You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
 overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
@@ -97,11 +95,11 @@ Create a JSON file named `keys.json` that contains your Redis host name, port,
 and password. Do not check your credentials into source control. Create a
 `.gitignore` file if you don't have one, and add `keys.json` to it.
 
-    {
-      "redisHost": [YOUR_REDIS_HOSTNAME],
-      "redisPort": [YOUR_REDIS_PORT_NUMBER],
-      "redisKey": [YOUR_REDIS_PASSWORD]
-    }
+        {
+          "redisHost": [YOUR_REDIS_HOSTNAME],
+          "redisPort": [YOUR_REDIS_PORT_NUMBER],
+          "redisKey": [YOUR_REDIS_PASSWORD]
+        }
 
 Replace `[YOUR_REDIS_HOSTNAME]`, `[YOUR_REDIS_PORT_NUMBER]`, and
 `[YOUR_REDIS_PASSWORD]` with your Redis hostname, port number, and password
@@ -109,15 +107,15 @@ respectively.
 
 ### Prepare the application
 
-1. Initialize a `package.json` file with the following command:
+1.  Initialize a `package.json` file with the following command:
 
         npm init
 
-1. Install dependencies:
+1.  Install dependencies:
 
         npm install --save redis nconf
 
-1. Create a `server.js` file with the following contents:
+1.  Create a `server.js` file with the following contents:
 
         'use strict';
 
@@ -171,22 +169,22 @@ respectively.
 
 ### Run the app on your local computer
 
-1. Run the app with the following command:
+1.  Run the app with the following command:
 
         npm start
 
-1. Visit [http://localhost:8080](http://localhost:8080) to see the app.
+1.  Visit [http://localhost:8080](http://localhost:8080) to see the app.
 
 When you're ready to move forward, press Ctrl+C to stop the local web server.
 
 ## Deploy
 
-1. Create an `app.yaml` file with the following content:
+1.  Create an `app.yaml` file with the following content:
 
         runtime: nodejs
         env: flex
 
-1. Run the following command to deploy your app:
+1.  Run the following command to deploy your app:
 
         gcloud app deploy
 

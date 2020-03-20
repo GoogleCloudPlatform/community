@@ -1,0 +1,4 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '--build-arg', 'singularity_version=${_SINGULARITY_VERSION}', '-t', 'gcr.io/${PROJECT_ID}/singularity-${_SINGULARITY_VERSION}', '.']
+images: ['gcr.io/${PROJECT_ID}/singularity-${_SINGULARITY_VERSION}']

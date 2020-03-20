@@ -95,7 +95,7 @@ code:
 
 ### Start the Dataflow job 
 
-    mvn package exec:exec -DCsvImport -Dbigtable.projectID=YOUR_PROJECT_ID -Dbigtable.instanceID=YOUR_INSTANCE_ID
+    mvn package exec:exec -DCsvImport -Dbigtable.projectID=YOUR_PROJECT_ID -Dbigtable.instanceID=YOUR_INSTANCE_ID \
     -DinputFile="YOUR_FILE" -Dbigtable.table="YOUR_TABLE_ID" -Dheaders="YOUR_HEADERS"
 
 replacing `YOUR_PROJECT_ID`, `YOUR_INSTANCE_ID`, `YOUR_FILE`, `YOUR_TABLE_ID`, and `YOUR_HEADERS`
@@ -103,10 +103,15 @@ with appropriate values.
 
 Here is an example command:
     
-    mvn package exec:exec -DCsvImport -Dbigtable.projectID=YOUR_PROJECT_ID -Dbigtable.instanceID=YOUR_INSTANCE_ID 
+    mvn package exec:exec -DCsvImport -Dbigtable.projectID=YOUR_PROJECT_ID -Dbigtable.instanceID=YOUR_INSTANCE_ID \
     -DinputFile="gs://YOUR_BUCKET/sample.csv" -Dbigtable.table="my-table" -Dheaders="rowkey,a,b"
 
 Note: The first column will always be used as the row key. 
+
+**Note**: If you see an error saying "Unable to get application default credentials.", this means that you likely need to
+set up application credentials as outlined [here](https://cloud.google.com/docs/authentication/production). If you are
+setting up a custom service account, be sure to assign the necessary roles for this job. For testing purposes, you can use
+Bigtable Administrator, Dataflow Admin, and Storage Admin. 
 
 ### Monitor your job
 

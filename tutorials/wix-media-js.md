@@ -44,12 +44,14 @@ JavaScript SDK installed.
 The following example shows how to manipulate an image using Node.js and the Wix
 Media JavaScript SDK.
 
-    var BASE_URL = "media.wixapps.netggl-685734655894940532967/images/";
-    var imageId = "ae1d86b24054482f8477bfbf2d426936"
-    var image = WixMedia.WixImage(BASE_URL, imageId, “cats.jpg”);
-    var crop = image.crop().w(1000).h(1000).x(100).y(100);
-    // prints out the new URL for an image that has width of 1000px and height of 1000px, cropped from 100, 100
-    console.log(crop.toUrl());
+```js
+var BASE_URL = "media.wixapps.netggl-685734655894940532967/images/";
+var imageId = "ae1d86b24054482f8477bfbf2d426936"
+var image = WixMedia.WixImage(BASE_URL, imageId, “cats.jpg”);
+var crop = image.crop().w(1000).h(1000).x(100).y(100);
+// prints out the new URL for an image that has width of 1000px and height of 1000px, cropped from 100, 100
+console.log(crop.toUrl());
+```
 
 The [Wix Media JavaScript SDK][sdk] also
 provides native JavaScript support that you can use in other runtimes, such as

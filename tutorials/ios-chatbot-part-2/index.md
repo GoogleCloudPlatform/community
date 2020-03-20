@@ -2,11 +2,13 @@
 title: How to build a conversational app using Cloud Machine Learning APIs Part 2 of 3
 description: We'll discuss an advanced API.AI topic, namely webhook with Cloud Functions. We'll also show you how to use Cloud Machine Learning APIs (Vision, Speech and Translation) and how to support a second language.
 author: PokerChang
-tags: Cloud Functions, Dialogflow, API.AI, Webhooks, Localization, Chatbot, Machine Learning API, Transation, Vision, Speech
+tags: Cloud Functions, Dialogflow, API.AI, Webhooks, Localization, Chatbot, Machine Learning API, Translation, Vision, Speech
 date_published: 2018-06-19
 ---
 
-In [Part 1](../index.md) of this blog post, we gave you an overview of what a conversational tour guide iOS app might look like built on Cloud Machine Learning APIs and API.AI. We also demonstrated how to create API.AI intents and contexts. In part 2, we'll discuss an advanced API.AI topic — webhook with Cloud Functions. We'll also show you how to use Cloud Machine Learning APIs (Vision, Speech and Translation) and how to support a second language.
+Author: [Chang Luo](https://www.linkedin.com/in/changluo)
+
+In [Part 1](https://cloud.google.com/community/tutorials/ios-chatbot) of this series, we gave you an overview of what a conversational tour guide iOS app might look like built on Cloud Machine Learning APIs and API.AI. We also demonstrated how to create API.AI intents and contexts. In part 2, we'll discuss an advanced API.AI topic — webhook with Cloud Functions. We'll also show you how to use Cloud Machine Learning APIs (Vision, Speech, and Translation) and how to support a second language.
 
 
 # Webhooks via Cloud Functions
@@ -41,7 +43,7 @@ Now it's time to code our function! We'll need two files: the `index.js` file wi
 Here's our `package.json` file. This is dependent on the `actions-on-google` NPM module to ease the integration with API.AI and the Actions on Google platform that allows you to extend the Google Assistant with your own extensions (usable from Google Home):
 
 
-```
+```json
 {
   "name": "parades",
   "version": "0.0.1",
@@ -56,7 +58,7 @@ Here's our `package.json` file. This is dependent on the `actions-on-google` NPM
 In the `index.js` file, here's our code:
 
 
-```
+```js
 const ApiAiApp = require('actions-on-google').ApiAiApp;
 function parade(app) {
   app.ask(`Chinese New Year Parade in Chinatown from 6pm to 9pm.`);
@@ -79,7 +81,11 @@ In the code snippet above:
 1.  Then, we call the `handleRequest()` to handle the request.
 1.  Once done, don't forget to click the "create" function button. It will deploy the function in the cloud.
 
-There is a subtle difference between <code>[tell()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#tell)</code>and <code>[ask()](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#ask) </code>APIs. <code>tell()</code>will end the conversation and close the mic, while <code>ask()</code> will not. This difference doesn't matter for API.AI projects like the one we demonstrate here in [Part 1](https://cloudplatform.googleblog.com/2017/07/how-to-build-a-conversational-app-that-sees-listens-talks-and-translates-using-Cloud-Machine-Learning-APIs-part-1.html) and Part 2 of this blog post. When we integrate Actions on Google in Part 3, we'll explain this difference in more detail.
+There is a subtle difference between [`tell()`](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#tell) 
+and [`ask()`](https://developers.google.com/actions/reference/nodejs/ActionsSdkApp#ask) APIs. `tell()` will end the 
+conversation and close the mic, while `ask()` will not. This difference doesn't matter for API.AI projects like the one we 
+demonstrate here in [Part 1](https://cloud.google.com/community/tutorials/ios-chatbot) and Part 2 of this series. When we 
+integrate Actions on Google in Part 3, we'll explain this difference in more detail.
 
 As shown below, the **Testing** tab invokes your function, the **General** tab shows statistics, and the **Trigger** tab reveals the HTTP URL created for your function:
 
@@ -110,13 +116,13 @@ Follow this [example](https://github.com/GoogleCloudPlatform/cloud-vision/tree/m
 
 
 
-```
-  NSDictionary *paramsDictionary =
-  @{@"requests":@[
-        @{@"image":
-            @{@"content":binaryImageData},
-          @"features":@[
-              @{@"type":@"LANDMARK_DETECTION", @"maxResults":@1}]}]};
+```m
+NSDictionary *paramsDictionary =
+@{@"requests":@[
+      @{@"image":
+          @{@"content":binaryImageData},
+        @"features":@[
+            @{@"type":@"LANDMARK_DETECTION", @"maxResults":@1}]}]};
 ```
 
 
@@ -125,10 +131,10 @@ You can use the same API key you used for Cloud Speech API.
 
 ## Text to Speech
 
-iOS 7+ has a built-in text-to-speech SDK, <code>[AVSpeechSynthesizer](https://developer.apple.com/reference/avfoundation/avspeechsynthesizer?language=objc)</code>. The code below is all you need to convert text to speech.
+iOS 7+ has a built-in text-to-speech SDK, [`AVSpeechSynthesizer`](https://developer.apple.com/reference/avfoundation/avspeechsynthesizer?language=objc). The code below is all you need to convert text to speech.
 
 
-```
+```m
 #import <AVFoundation/AVFoundation.h>
 AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:message];
 AVSpeechSynthesizer *synthesizer = [[AVSpeechSynthesizer alloc] init];
@@ -146,7 +152,7 @@ AVSpeechSynthesizer *synthesizer = [[AVSpeechSynthesizer alloc] init];
 Supporting additional languages in Cloud Speech API is a one-line change on the iOS client side. (Currently, there is no support for mixed languages.) For [Chinese](https://youtu.be/Oy4oNNd1aGw), replace [this](https://github.com/google/ios-chatbot/blob/master/ChatBot/ChatBot/SpeechRecognitionService.m#L73) line in [SpeechRecognitionService.m](https://github.com/google/ios-chatbot/blob/master/ChatBot/ChatBot/SpeechRecognitionService.m):
 
 
-```
+```m
 recognitionConfig.languageCode = @"en-US";
 ```
 
@@ -154,7 +160,7 @@ recognitionConfig.languageCode = @"en-US";
 with
 
 
-```
+```m
 recognitionConfig.languageCode = @"zh-Hans";
 ```
 
@@ -162,7 +168,7 @@ recognitionConfig.languageCode = @"zh-Hans";
 To support additional text-to-speech languages, add this line to the code:
 
 
-```
+```m
 #import <AVFoundation/AVFoundation.h>
 AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:message];
 utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"zh-Hans"];
@@ -208,5 +214,3 @@ We hope this example has demonstrated how simple it is to build an app powered b
 You can download the [source code](https://github.com/google/ios-chatbot) from Github.
 
 In [Part 3](https://cloud.google.com/community/tutorials/ios-chatbot-part-3/), we'll cover how to build this app on the Google Assistant with Actions on Google integration.
-
-###### Author [Chang Luo](https://www.linkedin.com/in/changluo)

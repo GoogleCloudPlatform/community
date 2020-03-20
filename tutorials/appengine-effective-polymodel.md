@@ -32,31 +32,32 @@ A simple way to model the catalog using the basic App Engine Model would be to
 place all the fields needed for each product in a single class and have a field
 indicating its type in order to determine which fields are needed.
 
-    class CatalogItem(db.Model):
-        name = db.StringProperty()
-        brand = db.StringProperty()
-        price = db.FloatProperty(required=True)
-        category = db.StringProperty(
-            choices=['camera', 'video', 'computer'])
+```py
+class CatalogItem(db.Model):
+    name = db.StringProperty()
+    brand = db.StringProperty()
+    price = db.FloatProperty(required=True)
+    category = db.StringProperty(
+        choices=['camera', 'video', 'computer'])
 
-        # Camera Properties
-        ram = db.IntegerProperty()
-        megapixels = db.IntegerProperty()
-        memory_type = db.StringProperty(choices=['pocketmem',
-                                                 'datarod',
-                                                 'fastchip'])
+    # Camera Properties
+    ram = db.IntegerProperty()
+    megapixels = db.IntegerProperty()
+    memory_type = db.StringProperty(choices=['pocketmem',
+                                             'datarod',
+                                             'fastchip'])
 
+    # Video Player Properties
+    disk_trays = db.IntegerProperty()
+    output_hdmi = db.BooleanProperty()
+    output_component = db.BooleanProperty()
+    output_svideo = db.BooleanProperty()
 
-        # Video Player Properties
-        disk_trays = db.IntegerProperty()
-        output_hdmi = db.BooleanProperty()
-        output_component = db.BooleanProperty()
-        output_svideo = db.BooleanProperty()
-
-        # Computer Properties
-        ghz = db.FloatProperty()
-        # NOTE: The ram property is shared between camera and laptop.
-        hard_drive = db.IntegerProperty()</pre>
+    # Computer Properties
+    ghz = db.FloatProperty()
+    # NOTE: The ram property is shared between camera and laptop.
+    hard_drive = db.IntegerProperty()
+```
 
 With AJAX, it's not that hard for Andreas to write forms that are customized
 based on what the customer is looking for. GQL also makes it easy to do the
@@ -82,40 +83,42 @@ each category as its own class that fits naturally in to a product category
 hierarchy. To do this, create a subclass of PolyModel instead of Model. Let's
 see how Andreas redesigns the basic product model:
 
-    from google.appengine.ext import db
-    from google.appengine.ext.db import polymodel
+```py
+from google.appengine.ext import db
+from google.appengine.ext.db import polymodel
 
-    class CatalogItem(polymodel.PolyModel):
-        name = db.StringProperty()
-        brand = db.StringProperty()
-        price = db.FloatProperty(required=True)
+class CatalogItem(polymodel.PolyModel):
+    name = db.StringProperty()
+    brand = db.StringProperty()
+    price = db.FloatProperty(required=True)
 
-        @property
-        def category(self):
-            return self.class_name().lower()
-
-
-    class Camera(CatalogItem):
-        megapixels = db.IntegerProperty()
-        ram = db.IntegerProperty(
-            validator=lambda ram: ram >= 128 and ram <= 2048)
-        memory_type = db.StringProperty(choices=['pocketmem',
-                                                 'datarod',
-                                                 'fastchip'])
+    @property
+    def category(self):
+        return self.class_name().lower()
 
 
-    class Video(CatalogItem):
-        disk_trays = db.IntegerProperty()
-        output_hdmi = db.BooleanProperty()
-        output_component = db.BooleanProperty()
-        output_svideo = db.BooleanProperty()
+class Camera(CatalogItem):
+    megapixels = db.IntegerProperty()
+    ram = db.IntegerProperty(
+        validator=lambda ram: ram >= 128 and ram <= 2048)
+    memory_type = db.StringProperty(choices=['pocketmem',
+                                             'datarod',
+                                             'fastchip'])
 
 
-    class Computer(CatalogItem):
-        ghz = db.FloatProperty()
-        ram = db.FloatProperty(
-            validator=lambda ram: ram >= 1.0 and ram <= 8.0)
-        hard_drive = db.IntegerProperty()
+class Video(CatalogItem):
+    disk_trays = db.IntegerProperty()
+    output_hdmi = db.BooleanProperty()
+    output_component = db.BooleanProperty()
+    output_svideo = db.BooleanProperty()
+
+
+class Computer(CatalogItem):
+    ghz = db.FloatProperty()
+    ram = db.FloatProperty(
+        validator=lambda ram: ram >= 1.0 and ram <= 8.0)
+    hard_drive = db.IntegerProperty()
+```
 
 There are a few things to notice about the new class definitions. For one, there
 is no longer a need to explicitly set the products category. This can be
@@ -128,7 +131,9 @@ all of its sub-classes.  This feature of PolyModel is called
 "polymorphic queries". So for example, this queries all Computers that run at or
 over 2.0 GHz:
 
-    Computer.gql('WHERE ghz > 2.0')
+```py
+Computer.gql('WHERE ghz > 2.0')
+```
 
 Another thing to notice is that each category is independently responsible for
 maintaining its own properties. Recall that originally that the Computer
@@ -159,51 +164,53 @@ memory and storage capacity. "Fortunately", Andreas  thinks, "computer science
 has provided us with a special tool for just this kind of situation!" Andreas
 is of course thinking of the `if` statement:
 
-    class CatalogItem(db.Model):
-        # ...
+```py
+class CatalogItem(db.Model):
+    # ...
 
-        quality_rating = db.FloatProperty()
+    quality_rating = db.FloatProperty()
 
-        def set_quality_rating(self):
-            self.quality_rating = self.calculate_quality_rating()
+    def set_quality_rating(self):
+        self.quality_rating = self.calculate_quality_rating()
 
-        def calculate_quality_rating(self):
-            raise NotImplementedError(
-                'Need to define this for each category')
-
-
-    class Camera(CatalogItem):
-        # ...
-
-        def calculate_quality_rating(self):
-            memory_type_score = {
-              'pocketmem': 1.3,
-              'datarod': 1.0,
-              'fastchip': 0.9
-            }[self.memory_type]
-            return self.megapixels * memory_type_score + self.ram
+    def calculate_quality_rating(self):
+        raise NotImplementedError(
+            'Need to define this for each category')
 
 
-    class Video(CatalogItem):
-        # ...
+class Camera(CatalogItem):
+    # ...
 
-        def calculate_quality_rating(self):
-            output_hdmi_score = 0.0
-            output_component_score = 0.0
-            output_svideo_score = 0.0
-            if self.output_hdmi: output_hdmi_score = 3.0
-            if self.output_component: output_component_score = 2.0
-            if self.output_video: output_svideo_score = 1.0
-            features = (output_hdmi_score +
-                        output_component_score +
-                        output_svideo_score)
-            return self.disk_trays * features
+    def calculate_quality_rating(self):
+        memory_type_score = {
+            'pocketmem': 1.3,
+            'datarod': 1.0,
+            'fastchip': 0.9
+        }[self.memory_type]
+        return self.megapixels * memory_type_score + self.ram
 
-    class Computer(CatalogItem):
-        # ...
 
-        def calculate_quality_rating(self):
-            return self.ghz * self.ram + self.hard_drive
+class Video(CatalogItem):
+    # ...
+
+    def calculate_quality_rating(self):
+        output_hdmi_score = 0.0
+        output_component_score = 0.0
+        output_svideo_score = 0.0
+        if self.output_hdmi: output_hdmi_score = 3.0
+        if self.output_component: output_component_score = 2.0
+        if self.output_video: output_svideo_score = 1.0
+        features = (output_hdmi_score +
+                    output_component_score +
+                    output_svideo_score)
+        return self.disk_trays * features
+
+class Computer(CatalogItem):
+    # ...
+
+    def calculate_quality_rating(self):
+        return self.ghz * self.ram + self.hard_drive
+```
 
 And thus, Andreas goes out and builds his new website. But there's something
 worth noting here.
@@ -232,27 +239,29 @@ There is.
 Now that Andreas has created a class hierarchy for his online store, he can
 easily implement sub-categories for laptops and desktops:
 
-    class Desktop(Computer):
+```py
+class Desktop(Computer):
 
-        slots = db.IntegerProperty()
+    slots = db.IntegerProperty()
 
-        def calculate_quality_rating():
-            rating = super(Desktop, self).calculate_quality_rating()
-            return  rating * self.slots
+    def calculate_quality_rating():
+        rating = super(Desktop, self).calculate_quality_rating()
+        return  rating * self.slots
 
-    class Laptop(Computer):
+class Laptop(Computer):
 
-        weight = db.FloatProperty()
+    weight = db.FloatProperty()
 
-        def calculate_quality_rating():
-            rating = super(Laptop, self).calculate_quality_rating()
-            return rating / self.weight
+    def calculate_quality_rating():
+        rating = super(Laptop, self).calculate_quality_rating()
+        return rating / self.weight
 
-    # Let's create an example catalog of computers.
-    Laptop( name='The Superlight', weight=3.4, ram=1.0).put()
-    Laptop( name='Robusto',        weight=8.9, ram=2.0).put()
-    Desktop(name='Workstation D',  slots=2,    ram=2.0).put()
-    Desktop(name='Workhorse',      slots=8,    ram=8.0).put()
+# Let's create an example catalog of computers.
+Laptop( name='The Superlight', weight=3.4, ram=1.0).put()
+Laptop( name='Robusto',        weight=8.9, ram=2.0).put()
+Desktop(name='Workstation D',  slots=2,    ram=2.0).put()
+Desktop(name='Workhorse',      slots=8,    ram=8.0).put()
+```
 
 When the user wants to search for laptops that are a certain weight or less, all
 the application needs to do is:

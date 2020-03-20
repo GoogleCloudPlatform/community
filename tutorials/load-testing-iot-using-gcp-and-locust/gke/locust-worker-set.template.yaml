@@ -1,0 +1,46 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: locust-worker
+  labels:
+    app: locust-worker
+    component: worker
+spec:
+  serviceName: locust-worker
+  replicas: 2
+  selector:
+    matchLabels:
+      app: locust-worker
+  template:
+    metadata:
+      labels:
+        app: locust-worker
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - locust-worker
+                - locust
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: locust
+          image: gcr.io/project-id/ltk-worker:latest
+          env:
+            - name: LOCUST_MODE
+              value: worker
+            - name: LOCUST_MASTER
+              value: locust-master
+            - name: BLOCK_SIZE
+              value: "1"
+            - name: PROJECT_ID
+              value: project-id
+            - name: REGION
+              value: region
+            - name: REGISTRY_ID
+              value: registry-id
+

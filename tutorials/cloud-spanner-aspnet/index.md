@@ -91,16 +91,18 @@ on books in the **bookTable** database.
     1.  In the **Models** folder, add a class named **Book** with the following
         content:
 
-            namespace SpannerTest.Models
+        ```cs
+        namespace SpannerTest.Models
+        {
+            public class Book
             {
-                public class Book
-                {
-                    public string Id { get; set; }
-                    public string Author { get; set; }
-                    public string Title { get; set; }
-                    public DateTime PublishDate { get; set; }
-                }
+                public string Id { get; set; }
+                public string Author { get; set; }
+                public string Title { get; set; }
+                public DateTime PublishDate { get; set; }
             }
+        }
+        ```
 
 1.  To create a Controller class to handle the HTTP requests:
 

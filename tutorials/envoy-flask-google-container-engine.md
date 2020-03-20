@@ -10,7 +10,7 @@ One of the recurring problems with using microservices is managing communication
 
 A useful pattern is to enlist a proxy, like [Envoy](https://lyft.github.io/envoy/), to help [make your application more resilient and observable](https://www.datawire.io/guide/traffic/getting-started-lyft-envoy-microservices-resilience/). Envoy can be a bit daunting to set up, so this tutorial walks you through deploying a Python Flask webapp with Envoy on Google Kubernetes Engine.
 
-## The Application
+## The application
 
 The application is a simple REST-based user service. It can create, fetch, and delete users. Even such a trivial application involves several real-world concerns:
 
@@ -29,22 +29,27 @@ You need a Google Cloud Platform account to set up a Kubernetes Engine cluster. 
 
 ### Kubernetes
 
-You need `kubectl`, the Kubernetes CLI, to work with Kubernetes Engine. On a Mac you can use `brew install kubernetes-cli`. Otherwise, follow the [Kubernetes installation intructions](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+You need `kubectl`, the Kubernetes command-line interface, to work with Kubernetes Engine. On macOS you can use
+`brew install kubernetes-cli`. Otherwise, follow the
+[Kubernetes installation intructions](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
 
 ### Docker
 
-Kubernetes Engine runs code from Docker images, so you need the Docker CLI, `docker`, to build your own images. [Docker Community Edition](https://www.docker.com/community-edition) is fine if you're just getting started (again, on a Mac, the easy way is to run `brew install docker`).
+Kubernetes Engine runs code from Docker images, so you need the Docker command-line interface, `docker`, to build your own 
+images. [Docker Community Edition](https://www.docker.com/community-edition) is fine if you're just getting started.
+(Again, on macOS, the easy way is to run `brew install docker`.)
 
 ### The application
 
-Everything you use in this tutorial is in [Datawire's `envoy-steps` repo](https://github.com/datawire/envoy-steps).
+Everything you use in this tutorial is in [Datawire's `envoy-steps` repository](https://github.com/datawire/envoy-steps).
 
-1. Clone that repo and `cd` into your clone:
+1. Clone that repository and `cd` into your clone:
 
         git clone https://github.com/datawire/envoy-steps.git
         cd envoy-steps
 
-1. In your `envoy-steps` directory, you should see `README.md` and directories named `postgres`, `usersvc`, and so on. Each of those directories contains a service to be deployed, and each can be brought up or down independently with
+1. In your `envoy-steps` directory, you should see `README.md` and directories named `postgres`, `usersvc`, and so on. Each 
+of those directories contains a service to be deployed, and each can be brought up or down independently with
 
         sh up.sh $service
 
@@ -52,7 +57,8 @@ Everything you use in this tutorial is in [Datawire's `envoy-steps` repo](https:
 
         sh down.sh $service
 
-Between Python code, Kubernetes configs, docs, and so on, there’s too much to include everything in one document. This tutorial just covers the highlights, and you can look at all the details in your clone of the repo.
+Between Python code, Kubernetes configs, docs, and so on, there’s too much to include everything in one document. This
+tutorial just covers the highlights, and you can look at all the details in your clone of the repo.
 
 ## The Docker registry
 
@@ -84,20 +90,24 @@ The Flask app uses PostgreSQL for its storage. For now, it checks at every start
 
 All you need for PostgreSQL is to spin up the server in your Kubernetes cluster. Postgres publishes a prebuilt Docker image for Postgres 9.6 on DockerHub, which makes this very easy. The relevant config file is `postgres/deployment.yaml`, and its `spec` section declares the image to use:
 
-    spec:
-      containers:
-      - name: postgres
-        image: postgres:9.6
+```yaml
+spec:
+  containers:
+  - name: postgres
+    image: postgres:9.6
+```
 
 You also need to use a Kubernetes `service` to expose the PostgreSQL port within the cluster, so that the Flask app can talk to the database. That’s defined in `postgres/service.yaml` with highlights:
 
-    spec:
-      type: ClusterIP
-      ports:
-      - name: postgres
-        port: 5432
-      selector:
-        service: postgres
+```yaml
+spec:
+  type: ClusterIP
+  ports:
+  - name: postgres
+    port: 5432
+  selector:
+    service: postgres
+```
 
 Note that this service is type `ClusterIP`, so that it can be seen only within the cluster.
 
@@ -146,21 +156,25 @@ To get the Flask app going in Kubernetes, you need to:
 
 The deployment, in `usersvc/deployment.yaml`, looks almost the same as the one for `postgres`, just with a different image name:
 
-    spec:
-      containers:
-      - name: usersvc
-        image: usersvc:step1
+```yaml
+spec:
+  containers:
+  - name: usersvc
+    image: usersvc:step1
+```
 
 Likewise, `usersvc/service.yaml` is almost the same as its `postgres` sibling, but it uses type `LoadBalancer` to indicate that the service should be exposed to users outside the cluster:
 
-    spec:
-      type: LoadBalancer
-      ports:
-      - name: usersvc
-        port: 5000
-        targetPort: 5000
-      selector:
-        service: usersvc
+```yaml
+spec:
+  type: LoadBalancer
+  ports:
+  - name: usersvc
+    port: 5000
+    targetPort: 5000
+  selector:
+    service: usersvc
+```
 
 Starting with `LoadBalancer` may seem odd. After all, the goal is to use Envoy to do load balancing. It's good to walk before running, though, so the first test will be to talk to the Flask app without Envoy, and for that, the port needs to be open to the outside world.
 
@@ -284,34 +298,38 @@ Each route dictionary needs to include, at a minimum:
 
 The Flask app requires only a single `listener` for your edge Envoy:
 
-    "listeners": [
+```py
+"listeners": [
+  {
+    "address": "tcp://0.0.0.0:80",
+    "filters": [
       {
-        "address": "tcp://0.0.0.0:80",
-        "filters": [
-          {
-            "type": "read",
-            "name": "http_connection_manager",
-            "config": { . . . }
-          }
-        ]
+        "type": "read",
+        "name": "http_connection_manager",
+        "config": { . . . }
       }
     ]
+  }
+]
+```
 
 This tells Envoy to listen for any connection on TCP port 80, and use the `http_connection_manager` to handle incoming requests. You can see the whole filter configuration in `edge-envoy/envoy.json`, but here's how to set up its `virtual_hosts` to get the edge Envoy to proxy any URL starting with `/user` to the `usersvc`:
 
-    "virtual_hosts": [
+```py
+"virtual_hosts": [
+  {
+    "name": "service",
+    "domains": [ "*" ],
+    "routes": [
       {
-        "name": "service",
-        "domains": [ "*" ],
-        "routes": [
-          {
-            "timeout_ms": 0,
-            "prefix": "/user",
-            "cluster": “usersvc"
-          }
-        ]
+        "timeout_ms": 0,
+        "prefix": "/user",
+        "cluster": “usersvc"
       }
     ]
+  }
+]
+```
 
 Note `domains [“*”]` indicates that the host being requested doesn't matter. Also note that you can always add more routes if needed.
 
@@ -337,18 +355,20 @@ And the possible `lb_type` values are:
 
 Here's how to put it all together for the `usersvc` cluster:
 
-    "clusters": [
+```py
+"clusters": [
+  {
+    "name": “usersvc”,
+    "type": "strict_dns",
+    "lb_type": "round_robin",
+    "hosts": [
       {
-        "name": “usersvc”,
-        "type": "strict_dns",
-        "lb_type": "round_robin",
-        "hosts": [
-          {
-            "url": “tcp://usersvc:80”
-          }
-        ]
+        "url": “tcp://usersvc:80”
       }
     ]
+  }
+]
+```
 
 Note the `type: strict_dns` there -- for this to work, every instance of the `usersvc` must appear in the DNS. This clearly will require some testing!
 
@@ -373,18 +393,20 @@ This gives you a running Envoy, through which you can talk to the Flask app. Thi
 
 The service Envoy’s config is very similar to the edge Envoy’s. The `listeners` section is identical, and the `clusters` section nearly so:
 
-    "clusters": [
+```py
+"clusters": [
+  {
+    "name": “usersvc”,
+    "type": "static",
+    "lb_type": "round_robin",
+    "hosts": [
       {
-        "name": “usersvc”,
-        "type": "static",
-        "lb_type": "round_robin",
-        "hosts": [
-          {
-            "url": “tcp://127.0.0.1:80”
-          }
-        ]
+        "url": “tcp://127.0.0.1:80”
       }
     ]
+  }
+]
+```
 
 Because the edge Envoy proxies only to `localhost`, it's easiest to use a static, single-member cluster.
 
@@ -457,32 +479,34 @@ The most surprising bit might be the token that the SDS reads when it starts. Ku
 
 The edge Envoy's config needs to change slightly. Rather than using `strict_dns` mode, you need `sds` mode. That means defining an `sds` cluster. Here's the one for the `usersvc-sds`:
 
-    "cluster_manager": {
-      "sds": {
-        "cluster": {
-          "name": "usersvc-sds",
-          "connect_timeout_ms": 250,
-          "type": "strict_dns",
-          "lb_type": "round_robin",
-          "hosts": [
-            {
-              "url": "tcp://usersvc-sds:5000"
-            }
-          ]
-        },
-        "refresh_delay_ms": 15000
-      },
-      "clusters": [
+```py
+"cluster_manager": {
+  "sds": {
+    "cluster": {
+      "name": "usersvc-sds",
+      "connect_timeout_ms": 250,
+      "type": "strict_dns",
+      "lb_type": "round_robin",
+      "hosts": [
         {
-          "name": "usersvc",
-          "connect_timeout_ms": 250,
-          "type": "sds",
-          "service_name": "usersvc",
-          "lb_type": "round_robin",
-          "features": "http2"
+          "url": "tcp://usersvc-sds:5000"
         }
       ]
+    },
+    "refresh_delay_ms": 15000
+  },
+  "clusters": [
+    {
+      "name": "usersvc",
+      "connect_timeout_ms": 250,
+      "type": "sds",
+      "service_name": "usersvc",
+      "lb_type": "round_robin",
+      "features": "http2"
     }
+  ]
+}
+```
 
 Look carefully and you'll see that the `sds` cluster is not defined inside the `clusters` dictionary, but as a peer of `clusters`. Its value is a cluster definition. Also note that the `sds` cluster uses `strict_dns` and thus relies on the DNS being sane for the `usersvc-sds` itself. There are use cases where this won't be OK, but they're beyond the scope of this tutorial.
 

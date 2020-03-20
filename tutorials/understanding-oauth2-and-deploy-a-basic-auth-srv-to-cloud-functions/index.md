@@ -88,7 +88,7 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to g
 
 ### OAuth 2.0
 
-OAuth 2.0 ([RFC 6479](https://tools.ietf.org/html/rfc6479)) is a widely used authorization framework enabling applications to access resources in all kinds of services. More specifically, OAuth 2.0 allows arbitrary **clients** (for example, a highly trusted first-party mobile app or a less trusted third-party web app) to access user’s (**resource owner**’s) resources on **resource servers** via **authorization servers** in a secure, reliable, and efficient manner.
+OAuth 2.0 ([RFC 6749](https://tools.ietf.org/html/rfc6749)) is a widely used authorization framework enabling applications to access resources in all kinds of services. More specifically, OAuth 2.0 allows arbitrary **clients** (for example, a highly trusted first-party mobile app or a less trusted third-party web app) to access user’s (**resource owner**’s) resources on **resource servers** via **authorization servers** in a secure, reliable, and efficient manner.
 
 ### Authorization Flows
 
@@ -258,7 +258,7 @@ You can always view the details of deployed functions via [Cloud Console](https:
 
 1. Generate a code verifier and its code challenge. Open the node interactive shell (`node`) and run the following code:
 
-    ```
+    ```js
     // You might need to install package crypto with npm i -g crypto first
     const crypto = require('crypto');
     var code_verifier = crypto.randomBytes(64)
@@ -348,7 +348,7 @@ You can always view the details of deployed functions via [Cloud Console](https:
 
 The auth function is responsible for presenting a page where users can authorize clients to access their information:
 
-```
+```js
 exports.auth = (req, res) => {
   console.log(req.query)
   switch (req.query.response_type) {
@@ -382,7 +382,7 @@ exports.auth = (req, res) => {
 
 Requests with response_type set to `code` and have parameter `code_challenge` and `code_challenge_method` present initiate the Authorization Code (PKCE) flow and are processed by function `handleACPKCEAuthRequest`:
 
-```
+```js
 function handleACPKCEAuthRequest (req, res) {
   if (req.query.client_id      === undefined ||
       req.query.redirect_url   === undefined ||
@@ -432,7 +432,7 @@ This function first checks if all the required parameters (`client_id`, `redirec
 
 Requests with `response_type` set to `code` but do not have parameters `code_challenge` and `code_challenge_method` initiate the Authorization Code (PKCE) flow and are processed by function `handleACPKCEAuthRequest`; and requests with the `token` response_type are sent to function `handleImplicitAuthRequest`. The logic behind these two functions are largely the same as `handleACPKCEAuthRequest`:
 
-```
+```js
 function handleACAuthRequest (req, res) {
   if (req.query.client_id      === undefined ||
       req.query.redirect_url   === undefined) {
@@ -477,7 +477,7 @@ function handleACAuthRequest (req, res) {
 }
 ```
 
-```
+```js
 function handleImplicitAuthRequest (req, res) {
   if (req.query.client_id      === undefined ||
       req.query.redirect_url   === undefined) {
@@ -526,7 +526,7 @@ function handleImplicitAuthRequest (req, res) {
 
 The `signin` function receives user credentials and redirects user back to the client with an authorization code (or an access token, in the case of Implicit flow):
 
-```
+```js
 exports.signin = (req, res) => {
   switch (req.body.response_type) {
     case ('code'):
@@ -555,7 +555,7 @@ Similar to the `auth` function, `singin` uses functions `handleACPKCESigninReque
 
 The first two functions are similar to each other; both of them issue an authorization code after all the security checks are passed:
 
-```
+```js
 function handleACPKCESigninRequest (req, res) {
   if (req.body.username       === undefined ||
       req.body.password       === undefined ||
@@ -628,7 +628,7 @@ function handleACPKCESigninRequest (req, res) {
 }
 ```
 
-```
+```js
 function handleACSigninRequest (req, res) {
   if (req.body.username       === undefined ||
       req.body.password       === undefined ||
@@ -703,7 +703,7 @@ Note that the generated authorization code is stored in the database with `clien
 
 `handleImplictSigninRequest`, on the other hand, returns an access token if everything looks alright:
 
-```
+```js
 function handleImplictSigninRequest (req, res) {
   if (req.body.username       === undefined ||
       req.body.password       === undefined ||
@@ -762,7 +762,7 @@ This sample uses the [`jsonwebtoken`](https://www.npmjs.com/package/jsonwebtoken
 
 The `token` function, as its name implies, is responsible for issuing tokens:
 
-```
+```js
 exports.token = (req, res) => {
   switch (req.body.grant_type) {
     case 'password':
@@ -801,7 +801,7 @@ exports.token = (req, res) => {
 
 Parameter `grant_type` determines how the access token is granted. Requests with grant type `password` come from clients in the Resource Owner Password Credentials flow and are processed by function `handleROPCTokenRequest`:
 
-```
+```js
 function handleROPCTokenRequest (req, res) {
   if (req.body.username      === undefined ||
       req.body.password      === undefined ||
@@ -865,7 +865,7 @@ function handleROPCTokenRequest (req, res) {
 
 Grant type `client_credentials` are reserved for clients in the Client Credentials flow. Function `handleCCTokenRequest` handles these requests:
 
-```
+```js
 function handleCCTokenRequest (req, res) {
   if (req.body.client_id     === undefined ||
       req.body.client_secret === undefined) {
@@ -907,7 +907,7 @@ function handleCCTokenRequest (req, res) {
 
 Last but not least, both Authorization Code flow and Authorization Code with PKCE flow use the grant type `authorization_code`, with the former handled by `handleACTokenRequest` and the latter `handleACPKCETokenRequest`:
 
-```
+```js
 function handleACTokenRequest (req, res) {
   if (req.body.client_id          === undefined ||
       req.body.client_secret      === undefined ||
@@ -966,7 +966,7 @@ function handleACTokenRequest (req, res) {
 }
 ```
 
-```
+```js
 function handleACPKCETokenRequest (req, res) {
   if (req.body.client_id          === undefined ||
       req.body.authorization_code === undefined ||
@@ -1018,7 +1018,7 @@ function handleACPKCETokenRequest (req, res) {
 
 Authorization code is verified with `verifyAuthorizationCode`. Note that you do not have to decrypt the authorization code; verifying the values of  `client_id` and `redirect_url` from the request against the values on the record should suffice.
 
-```
+```js
 function verifyAuthorizationCode(authorizationCode, clientId, redirectUrl,
                                  codeVerifier = undefined) {
   const transaction = datastore.transaction();

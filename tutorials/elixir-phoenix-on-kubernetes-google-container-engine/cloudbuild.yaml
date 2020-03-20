@@ -1,0 +1,36 @@
+# Copyright 2018 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# This is a sample Cloud Build configuration file that builds a Docker image,
+# passing in the current project as the project_id build arg. Note that the
+# configuration uses Cloud Build's built-in $PROJECT_ID substitution for this.
+#
+# You may also optionally pass the Docker image tag via the _TAG substitution.
+
+
+# This build script has only one step, a docker build, using Cloud Build's
+# provided Docker build step. The arguments are passed to the docker CLI.
+steps:
+- name: "gcr.io/cloud-builders/docker"
+  args: ["build", "-t", "gcr.io/$PROJECT_ID/hello:$_TAG",
+         "--build-arg", "project_id=$PROJECT_ID", "."]
+
+# Upload the built image to Google Container Registry
+images:
+- "gcr.io/$PROJECT_ID/hello:$_TAG"
+
+# Specify a default value for the _TAG substitution.
+substitutions:
+- _TAG: latest

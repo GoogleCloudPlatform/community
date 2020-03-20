@@ -178,13 +178,15 @@ change in config and get both application and admin contexts to port `8080`.
 
 For that, you can add the following into your config.yml:
 
-    server:
-      type: simple
-      applicationContextPath: /api
-      adminContextPath: /admin
-      connector:
-        type: http
-        port: 8080
+```yaml
+server:
+  type: simple
+  applicationContextPath: /api
+  adminContextPath: /admin
+  connector:
+    type: http
+    port: 8080
+```
 
 Now you can access the application API endpoint as
 `http://[YOUR_PROJECT_ID].appspot.com/api` and admin API endpoint as

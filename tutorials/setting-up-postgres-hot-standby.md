@@ -1,12 +1,12 @@
 ---
-title: How to Set Up PostgreSQL for High Availability and Replication with Hot Standby
-description: Learn how to configure PostgreSQL to run in Hot Standby mode on Google Cloud Platform. You use two Compute Engine instances. One instance runs the primary PostgreSQL server and the other instance runs the standby server.
+title: How to set up PostgreSQL for high availability and replication with Hot Standby
+description: Learn how to configure PostgreSQL to run in Hot Standby mode on Google Cloud Platform.
 author: jimtravis
 tags: Compute Engine, PostgreSQL, HA
 date_published: 2017-02-18
 ---
 
-Learn how to configure PostgreSQL to run in Hot Standby mode on Google Compute
+Learn how to configure PostgreSQL to run in Hot Standby mode on Compute
 Engine. You'll use two Compute Engine instances. One instance will run the
 primary PostgreSQL server and the other instance will run the standby server.
 
@@ -83,14 +83,11 @@ optimize Postgres in standby scenarios, refer to the
 
 ## Before you begin
 
-[Select or create a Cloud Platform project](https://console.cloud.google.com/project).
+[Select or create a Google Cloud Platform project](https://console.cloud.google.com/project).
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform,
-including:
-
-+ Google Compute Engine
+This tutorial uses billable components of Google Cloud Platform (GCP), including Compute Engine.
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/)
 to generate a cost estimate based on your projected usage.
@@ -170,9 +167,7 @@ create the new user.
 configuration files.
 
 * `-P` prompts you for the new user's password.
-  <aside class="caution"><strong>Important</strong>:
-     For any system with an Internet connection, use a
-     strong password to help keep the system secure.</aside>
+     **Important**: For any system with an Internet connection, use a strong password to help keep the system secure.
 
 * `-c` sets a limit for the number of connections for the new user. The value
 `5` is sufficient for replication purposes.
@@ -204,10 +199,10 @@ must add an entry for the user `repuser` to enable replication.
         $ nano ../../etc/postgresql/9.3/main/pg_hba.conf
 
 1. After the example replication entries, add the following lines. Replace
-`<standby-IP>` with the external IP address of the standby server:
+`[standby-IP]` with the external IP address of the standby server:
 
         # Allow replication connections
-        host     replication     repuser         <standby-IP>/32        md5
+        host     replication     repuser         [standby-IP]/32        md5
 
 1. Save and close the file.
 
@@ -287,10 +282,10 @@ data directory on the standby server. Run the following command:
 
         $ mv ../../var/lib/postgresql/9.3/main ../../var/lib/postgresql/9.3/main_old
 
-1. Run the backup utility. Replace `<primary-IP>` with the external IP address
+1. Run the backup utility. Replace `[primary-IP]` with the external IP address
 of the primary server.
 
-        $ sudo -u postgres pg_basebackup -h <primary IP> -D /var/lib/postgresql/9.3/main -U repuser -v -P --xlog-method=stream
+        $ sudo -u postgres pg_basebackup -h [primary IP] -D /var/lib/postgresql/9.3/main -U repuser -v -P --xlog-method=stream
 
     The backup utility will prompt you for the password for the user named
     `repuser`.
@@ -343,10 +338,10 @@ standby server, enter the following command:
         standby_mode = on
 
 1. Set the connection string to the primary server. Replace
-`<primary-external-IP>` with the external IP address of the primary server.
-Replace `<password>` with  the password for the user named `repuser`.
+`[primary-external-IP]` with the external IP address of the primary server.
+Replace `[password]` with  the password for the user named `repuser`.
 
-        primary_conninfo = 'host=<primary-external-IP> port=5432 user=repuser password=<password>'
+        primary_conninfo = 'host=[primary-external-IP] port=5432 user=repuser password=[password]'
 
 1. (Optional) Set the trigger file location:
 
@@ -438,9 +433,9 @@ restart the server.
         $ mv ../../var/lib/postgresql/9.3/main ../../var/lib/postgresql/9.3/main_old_2
 
 1. On the standby server, run `pgbasebackup` again to synchronize the data.
-Substitute `<primary-IP>` with your primary server's external IP address:
+Substitute `[primary-IP]` with your primary server's external IP address:
 
-        $ sudo -u postgres pg_basebackup -h <primary-IP> -D /var/lib/postgresql/9.3/main -U repuser -v -P --xlog-method=stream
+        $ sudo -u postgres pg_basebackup -h [primary-IP] -D /var/lib/postgresql/9.3/main -U repuser -v -P --xlog-method=stream
 
 1. The `main` folder now needs a copy of `recovery.conf`. You can simply copy it
 from the folder that you renamed to `main_old_2`:

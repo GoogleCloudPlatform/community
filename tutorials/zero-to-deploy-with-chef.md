@@ -1,6 +1,6 @@
 ---
 title: Zero-to-Deploy with Chef on GCP
-description: Learn how to manage Google Compute Engine with Chef.
+description: Learn how to manage Compute Engine with Chef.
 author: djmailhot
 tags: Compute Engine, Chef
 date_published: 2018-06-14
@@ -32,7 +32,7 @@ GCP-specific Chef cookbooks.
 
 This tutorial uses billable components of Cloud Platform, including:
 
-+   Google Compute Engine
++   Compute Engine
 
 New Cloud Platform users might be eligible for a [free
 trial](https://cloud.google.com/free-trial).
@@ -104,7 +104,7 @@ new `chef-workstation` Compute Engine instance:
 
 ### Install Chef client
 
-1.  Ssh into your `chef-workstation` instance.
+1.  SSH into your `chef-workstation` instance.
 
         gcloud compute ssh chef-workstation --zone us-east1-b
 
@@ -255,7 +255,7 @@ On `chef-workstation`:
           project ENV['GCP_PROJECT']
           credential 'mycred'
         end
-
+    
     NOTE: This example code is pulled from the [Google Compute Engine Chef
     Cookbook](https://github.com/GoogleCloudPlatform/chef-google-compute).
 
@@ -266,7 +266,7 @@ On `chef-workstation`:
         # '~/credentials.json'. However, CRED_PATH requires an absolute path.
         export CRED_PATH='/home/USERNAME/credentials.json'
         export GCP_PROJECT='YOUR_PROJECT_NAME'
-
+   
     NOTE: Feel free to experiment with more example code from any of the other
     GCP cookbooks. (e.g. the [Google Cloud SQL Chef
     Cookbook](https://github.com/GoogleCloudPlatform/chef-google-sql#example)).

@@ -17,54 +17,64 @@ use cases include running databases, *e.g.*, [PostgreSQL](https://www.postgresql
 ## (OPTIONAL) Create a project with a billing account attached 
 **(you can also use an existing project and skip to the next step)**
 
-    ORG=[YOUR_ORG]
-    BILLING_ACCOUNT=[YOUR_BILLING_ACCOUNT_NAME]
-    PROJECT=[NAME FOR THE PROJECT YOU WILL CREATE]
-    ZONE=[COMPUTE ZONE YOU WANT TO USE]
-    gcloud projects create $PROJECT --organization=$ORG
-    gcloud beta billing projects link $PROJECT --billing-account=$(gcloud beta billing accounts list | grep $BILLING_ACCOUNT | awk '{print $1}')
-    gcloud config configurations create -- activate $PROJECT
-    gcloud config set compute/zone $ZONE
+```sh
+ORG=[YOUR_ORG]
+BILLING_ACCOUNT=[YOUR_BILLING_ACCOUNT_NAME]
+PROJECT=[NAME FOR THE PROJECT YOU WILL CREATE]
+ZONE=[COMPUTE ZONE YOU WANT TO USE]
+gcloud projects create $PROJECT --organization=$ORG
+gcloud beta billing projects link $PROJECT --billing-account=$(gcloud beta billing accounts list | grep $BILLING_ACCOUNT | awk '{print $1}')
+gcloud config configurations create -- activate $PROJECT
+gcloud config set compute/zone $ZONE
+```
 
 ## Enable the required Google APIs
 
-    gcloud services enable file.googleapis.com
-
+```sh
+gcloud services enable file.googleapis.com
+```
 
 ## Create a Cloud Filestore volume
 
 1. Create a Cloud Filestore instance with 1TB of storage capacity
 
-        FS=[NAME FOR THE FILESTORE YOU WILL CREATE]
-        gcloud beta filestore instances create ${FS} \
-            --project=${PROJECT} \
-            --location=${ZONE} \
-            --tier=STANDARD \
-            --file-share=name="volumes",capacity=1TB \
-            --network=name="default",reserved-ip-range="10.0.0.0/29"
+    ```sh
+    FS=[NAME FOR THE FILESTORE YOU WILL CREATE]
+    gcloud beta filestore instances create ${FS} \
+        --project=${PROJECT} \
+        --zone=${ZONE} \
+        --tier=STANDARD \
+        --file-share=name="volumes",capacity=1TB \
+        --network=name="default"
+    ```
 
 2. Retrieve the IP address of the Cloud Filestore instance
 
-        FSADDR=$(gcloud beta filestore instances describe ${FS} \
-             --project=${PROJECT} \
-             --location=${ZONE} \
-             --format="value(networks.ipAddresses[0])")
-
+    ```sh
+    FSADDR=$(gcloud beta filestore instances describe ${FS} \
+         --project=${PROJECT} \
+         --zone=${ZONE} \
+         --format="value(networks.ipAddresses[0])")
+    ```
 
 ## Create a Kubernetes Engine cluster
 
 1. Create the cluster and get its credentials
 
-        CLUSTER=[NAME OF THE KUBERNETES CLUSTER YOU WILL CREATE]
-        gcloud container clusters create ${CLUSTER}
-        gcloud container clusters get-credentials ${CLUSTER}
+    ```sh
+    CLUSTER=[NAME OF THE KUBERNETES CLUSTER YOU WILL CREATE]
+    gcloud container clusters create ${CLUSTER}
+    gcloud container clusters get-credentials ${CLUSTER}
+    ```
 
 2. Grant yourself cluster-admin privileges
 
-        ACCOUNT=$(gcloud config get-value core/account)
-        kubectl create clusterrolebinding core-cluster-admin-binding \
-            --user ${ACCOUNT} \
-            --clusterrole cluster-admin
+    ```sh
+    ACCOUNT=$(gcloud config get-value core/account)
+    kubectl create clusterrolebinding core-cluster-admin-binding \
+        --user ${ACCOUNT} \
+        --clusterrole cluster-admin
+    ```
 
 3. Install [Helm](https://github.com/helm/helm)
 
@@ -79,24 +89,26 @@ use cases include running databases, *e.g.*, [PostgreSQL](https://www.postgresql
 
     Create a file named `rbac-config.yaml` containing the following:
 
-        apiVersion: v1
-        kind: ServiceAccount
-        metadata:
-          name: tiller
-          namespace: kube-system
-        ---
-        apiVersion: rbac.authorization.k8s.io/v1beta1
-        kind: ClusterRoleBinding
-        metadata:
-          name: tiller
-        roleRef:
-          apiGroup: rbac.authorization.k8s.io
-          kind: ClusterRole
-          name: cluster-admin
-        subjects:
-          - kind: ServiceAccount
+    ```yaml
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
             name: tiller
             namespace: kube-system
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1beta1
+    kind: ClusterRoleBinding
+    metadata:
+            name: tiller
+    roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: cluster-admin
+    subjects:
+            - kind: ServiceAccount
+            name: tiller
+            namespace: kube-system
+    ```
 
     Create the `tiller` service account and `cluster-admin` role binding.
 

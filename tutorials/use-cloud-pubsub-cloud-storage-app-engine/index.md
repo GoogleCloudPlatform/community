@@ -1,6 +1,6 @@
 ---
-title: How to Use Cloud Pub/Sub Notifications and Cloud Storage with App Engine
-description: Create a shared photo album using Google Cloud Pub/Sub, Google Cloud Storage, Google Cloud Datastore, and Google App Engine.
+title: Use Cloud Pub/Sub notifications and Cloud Storage with App Engine
+description: Create a shared photo album using Cloud Pub/Sub, Cloud Storage, Cloud Datastore, and App Engine.
 author: ggchien
 tags: App Engine, Cloud PubSub, Cloud Storage, Cloud Datastore
 date_published: 2017-09-05
@@ -10,7 +10,7 @@ date_published: 2017-09-05
 
 This tutorial teaches you how to integrate several Google products to simulate a
 shared photo album, hosted on App Engine standard environment and managed
-through the Cloud Platform Console. The web application has three pages:
+through the Google Cloud Platform Console. The web application has three pages:
 
 *  Home/news feed, which displays notifications.
     ![Notifications Page](https://storage.googleapis.com/gcp-community/tutorials/use-cloud-pubsub-cloud-storage-app-engine/notifications-page.png)
@@ -190,9 +190,7 @@ users might be eligible for a [free trial](https://cloud.google.com/free-trial).
 If you do not feel like coding the entire application from scratch, feel free to
 copy the [code for the default application](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app) from GitHub by running:
 
-```sh
-svn export https://github.com/GoogleCloudPlatform/community/trunk/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app
-```
+    svn export https://github.com/GoogleCloudPlatform/community/trunk/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app
 
 Note that if you choose this option, you still need to make a `lib` directory
 and run the `install` command. These tasks are outlined in steps one and three
@@ -216,7 +214,7 @@ Engine application and importing the required libraries.
 1.  In your host directory, create the file `requirements.txt` and copy in the
     following text:
 
-        jinja2==2.9.6
+        jinja2>=2.10.1
         webapp2==3.0.0b1
         GoogleAppEngineCloudStorageClient==1.9.22.1
         google-api-python-client==1.6.2
@@ -304,7 +302,7 @@ Datastore, and rendering HTML templates.
     your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the
     maximum number of notifications displayed on the home/notifications page of
     your web application. `MAX_LABELS` regulates the maximum number of labels
-    associated with each photo using Google Cloud Vision API.
+    associated with each photo using Cloud Vision API.
 
         THUMBNAIL_BUCKET = '[YOUR_THUMBNAIL_BUCKET_NAME]'
         PHOTO_BUCKET = '[YOUR_PHOTO_BUCKET_NAME]'
@@ -324,7 +322,7 @@ Datastore, and rendering HTML templates.
     generation number, which is used to distinguish between similar
     `notifications` and prevent the display of repeated `notifications`. These
     properties are stored as NDB model properties using the
-    [Google Cloud Datastore NDB Client Library](https://cloud.google.com/appengine/docs/standard/python/ndb/),
+    [Cloud Datastore NDB Client Library](https://cloud.google.com/appengine/docs/standard/python/ndb/),
     which allows App Engine Python apps to connect to Cloud Datastore.
 
         class Notification(ndb.Model):
@@ -338,7 +336,7 @@ Datastore, and rendering HTML templates.
     (the name of the uploaded photo), a `thumbnail_key` (a concatenation of the
     name and generation number of an uploaded photo, used to distinguish
     similarly named photos), date of posting, a list of label descriptions
-    assigned to the corresponding photo using Google Cloud Vision API, and the
+    assigned to the corresponding photo using Cloud Vision API, and the
     url of the original photo that is stored in Cloud Storage.
 
         class ThumbnailReference(ndb.Model):
@@ -354,9 +352,9 @@ Datastore, and rendering HTML templates.
 
         class MainHandler(webapp2.RequestHandler):
             def get(self):
-              template_values = {}
-              template = jinja_environment.get_template('[NAME OF YOUR HOME PAGE HTML FILE]')
-              self.response.write(template.render(template_values))
+                template_values = {}
+                template = jinja_environment.get_template('[NAME OF YOUR HOME PAGE HTML FILE]')
+                self.response.write(template.render(template_values))
 
 1.  Create a `PhotosHandler` class with a `get` method for getting information
     from the server and writing it to the photos page HTML file. This should
@@ -574,10 +572,8 @@ Cloud Datastore.
 Because these actions only occur in the case of a photo upload, an `if` block
 should be used inside the `ReceiveMessage` class of `main.py`.
 
-```py
-if event_type == 'OBJECT_FINALIZE':
-    # Photo upload-specific code here.
-```
+    if event_type == 'OBJECT_FINALIZE':
+        # Photo upload-specific code here.
 
 ### Creating the thumbnail
 
@@ -793,10 +789,8 @@ Because these actions only occur in the case of a photo delete or archive, an
 where the initial `if` statement of the block is the one specifying the event
 type as `OBJECT_FINALIZE`.
 
-```py
-elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
-    # Photo delete/archive-specific code here.
-```
+    elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
+        # Photo delete/archive-specific code here.
 
 1.  Write the `delete_thumbnail` helper function to delete the specified
     thumbnail from the Cloud Storage thumbnail bucket and delete the
@@ -920,16 +914,16 @@ file and where to find it.
     `[DIRECTORY_NAME]` with whatever you named your directory in step 1.
 
         - url: /[DIRECTORY_NAME]
-          static_dir: [DIRECTORY_NAME]
+            static_dir: [DIRECTORY_NAME]
 
         - url: /static
-          static_dir: static
+            static_dir: static
 
     Note that this code should go in the `handlers` section of your `app.yaml`
     file and must be above
 
         - url: .*
-          script: main.app
+            script: main.app
 
 1.  Inside the directory you created, create a CSS file. Leave it blank for now;
     you'll add code to it in the following sections. Note that your file must
@@ -991,7 +985,7 @@ should run your app locally after each step to see the changes.
     bottom of your screen and follow the instructions to link it to your html
     and CSS files. The style of the font will be either `serif` or `sans-serif`.
 
-    The border-bottom property adds a dividing line between each link. To avoid
+    The `border-bottom` property adds a dividing line between each link. To avoid
     having an extra line at the bottom of the links box, add:
 
         ul.links li:last-child {
@@ -1141,7 +1135,7 @@ appear in a table format.
 
     1.  Use the thumbnail class to create a box to hold the thumbnail image and
         its caption:
-
+        
             div.thumbnail {
               margin: 5px;
               float: left;
@@ -1305,9 +1299,9 @@ into your HTML files.
         where `[COLOR]` is the color the caption text     will be.
 
             .caption-container {
-              text-align: center;
-              padding: 2px 16px;
-              color: [COLOR];
+                text-align: center;
+                padding: 2px 16px;
+                color: [COLOR];
             }
 
     1.  Format the `caption` to be centered in `caption-container` and have a
@@ -1334,7 +1328,7 @@ into your HTML files.
         class.
 
             function closeModal() {
-              document.getElementById('myModal').style.display = "none";
+                document.getElementById('myModal').style.display = "none";
             }
 
         This function is called whenever the close button is clicked on and
@@ -1354,8 +1348,8 @@ into your HTML files.
             var slideIndex;
 
             function currentSlide(n) {
-              slideIndex = n;
-              showSlides(slideIndex);
+                slideIndex = n;
+                showSlides(slideIndex);
             }
 
         Note that `currentSlide()` calls another function, `showSlides()`.
@@ -1364,15 +1358,15 @@ into your HTML files.
     1.  Implement `showSlides`:
 
             function showSlides(n) {
-              var i;
-              var slides = document.getElementsByClassName('mySlides');
-              var captionText = document.getElementById("caption");
-              var image = document.getElementById(slideIndex + "");
-              for (i = 0; i < slides.length; i++) {
+                var i;
+                var slides = document.getElementsByClassName('mySlides');
+                var captionText = document.getElementById("caption");
+                var image = document.getElementById(slideIndex + "");
+                for (i = 0; i < slides.length; i++) {
                 slides[i].style.display = "none";
-              }
-              slides[slideIndex-1].style.display = "block";
-              captionText.innerHTML = image.alt;
+                }
+                slides[slideIndex-1].style.display = "block";
+                captionText.innerHTML = image.alt;
             }
 
         This function sets every `mySlides` class to not be displayed except for

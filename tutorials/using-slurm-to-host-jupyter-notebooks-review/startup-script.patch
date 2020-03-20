@@ -1,0 +1,52 @@
+--- /tmp/slurm-gcp/scripts/startup-script.py    2018-12-10 10:41:30.255837647 -0500
++++ scripts/startup-script.py   2018-11-20 15:34:42.333781144 -0500
+@@ -212,21 +212,29 @@
+ 
+ #END install_packages()
+ 
+-def setup_munge():
++def setup_modules():
+ 
+-    f = open('/etc/fstab', 'a')
+-    if not NFS_APPS_SERVER:
+-        if ((INSTANCE_TYPE != "controller")):
+-            f.write("""
+-{1}:{0}    {0}     nfs      rw,sync,hard,intr  0     0
+-""".format(MUNGE_DIR, CONTROL_MACHINE))
+-    else:
++    appsmfs = '/apps/modulefiles'
++
++    if appsmfs not in open('/usr/share/Modules/init/.modulespath').read():
++        if INSTANCE_TYPE == 'controller' and not os.path.isdir(appsmfs):
++            subprocess.call(['mkdir', '-p', appsmfs])
++
++        with open('/usr/share/Modules/init/.modulespath', 'a') as dotmp:
++            dotmp.write(appsmfs)
++
++# END setup_modules
++
++
++def setup_munge():
++    
++    if (INSTANCE_TYPE != "controller"):
++        f = open('/etc/fstab', 'a')
+         f.write("""
+ {1}:{0}    {0}     nfs      rw,sync,hard,intr  0     0
+-""".format(MUNGE_DIR, NFS_APPS_SERVER))
+-    f.close()
++""".format(MUNGE_DIR, CONTROL_MACHINE))
++        f.close()
+ 
+-    if (INSTANCE_TYPE != "controller"):
+         munge_over_path = "/etc/systemd/system/munge.service.d"
+         if not os.path.exists(munge_over_path):
+             os.makedirs(munge_over_path)
+@@ -933,6 +941,8 @@
+     setup_nfs_sec_vols()
+     mount_nfs_vols()
+ 
++    setup_modules()
++
+     start_munge()
+ 
+     if INSTANCE_TYPE == "controller":

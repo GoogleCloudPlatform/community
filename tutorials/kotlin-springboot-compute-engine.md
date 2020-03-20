@@ -1,5 +1,5 @@
 ---
-title: Run a Spring Boot application on Google Compute Engine
+title: Run a Spring Boot application on Compute Engine
 description: Learn how to deploy a Kotlin Spring Boot application to Compute Engine.
 author: hhariri
 tags: Compute Engine, Spring Boot, Kotlin
@@ -8,14 +8,14 @@ date_published: 2017-11-01
 
 This tutorial demonstrates how to deploy a
 [Kotlin](https://kotlinlang.org/) app using the
-[Spring Boot](https://projects.spring.io/spring-boot/) Framework to
-[Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/), taking
+[Spring Boot](https://projects.spring.io/spring-boot/) framework to
+[Compute Engine](https://cloud.google.com/compute/docs/), taking
 advantage of Google's deep expertise with scalable infrastructure.
 
-In this tutorial, you create a new Spring Boot application, and then learn how to:
+In this tutorial, you create a new Spring Boot application, and then learn how to do the following:
 
-*   Deploy your app to Google Compute Engine instances
-*   Set up load balancing and autoscaling for your app
+*   Deploy your app to Compute Engine instances.
+*   Set up load balancing and autoscaling for your app.
 
 While the tutorial uses Kotlin 1.2 and Spring Boot 2 M7, other releases of
 Kotlin and Spring Boot should work without any modifications (other than version
@@ -23,19 +23,19 @@ numbers in Gradle files).
 
 This tutorial assumes that you are familiar with Spring Boot and with creating
 web applications. For simplicity, the tutorial responds with JSON to a specific
-HTTP request, but can be expanded to connect to other Google services and/or
+HTTP request, but can be expanded to connect to other Google services or
 databases.
 
 ## Before you begin
 
 Before running this tutorial, you must set up a Google Cloud Platform (GCP)
-project, install Docker, and install the Google Cloud SDK.
+project, install Docker, and install the Cloud SDK.
 
 You can create a GCP project for your Spring Boot application. You can also use
 an existing project.
 
 1.  Use the [GCP Console](https://console.cloud.google.com/) to create or choose
-    a Cloud Platform project. Remember the project ID, as you use it in this
+    a GCP project. Remember the project ID; you use it in this
     tutorial. Later commands in this tutorial use `${PROJECT_ID}` as
     a substitution, so you might consider setting the `PROJECT_ID` environment
     variable in your shell.
@@ -47,10 +47,10 @@ an existing project.
 
 Next, complete the following installations:
 
-1.  Install **Docker 17.05 or later** if you do not already have it. Find
+1.  Install Docker 17.05 or later if you do not already have it. Find
     instructions on the [Docker website](https://www.docker.com/).
 
-2.  Install the **[Google Cloud SDK](https://cloud.google.com/sdk/)** if you do
+2.  Install the [Cloud SDK](https://cloud.google.com/sdk/) if you do
     not already have it. Make sure you
     [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK. Use
     your project's ID to set the default project for the `gcloud` command-line tool.
@@ -62,9 +62,8 @@ Next, complete the following installations:
 In this section, you create a new Spring Boot app and make sure it runs. If
 you already have an app to deploy, you can use it instead.
 
-1.  Use [start.spring.io](https://start.spring.io) to generate a Spring Boot
-        application using the Kotlin language and the Gradle build system.
-        Alternatively, you can [download the sample application](https://github.com/jetbrains/gcp-samples).
+1.  Use [start.spring.io](https://start.spring.io) to generate a Spring Boot application using the Kotlin language and the 
+    Gradle build system.
 
 2.  Download the generated project and save it to a local folder.
 
@@ -92,15 +91,15 @@ you already have an app to deploy, you can use it instead.
 
         compile("org.springframework.boot:spring-boot-starter-web")
 
-5. Run the application from the command line using Gradle:
+5.  Run the application from the command line using Gradle:
 
-		gradle bootRun
+        gradle bootRun
 
-    **Note:** The `gradle bootRun` command is a quick way to build and run the
+    Note: The `gradle bootRun` command is a quick way to build and run the
     application. Later, when you create the Docker image, you need to first
     build the app using the Gradle `build` task and then run it.
 
-6.  Visit http://localhost:8080/message in your web browser. Ensure that the
+6.  Visit `http://localhost:8080/message` in your web browser. Ensure that the
     page returns a valid JSON response. The response should be as follows:
 
         {
@@ -113,14 +112,14 @@ you already have an app to deploy, you can use it instead.
 The following sections explain how to use Google Cloud Storage and
 Google Container Builder to build a relase for deployment.
 
-### Create a Google Cloud Storage bucket
+### Create a Cloud Storage bucket
 
 You use Cloud Storage to store your application's dependencies.
 
 Choose a bucket name (such as `demo-01`), then create the bucket by running
 the following command:
 
-	gsutil mb gs://demo-01
+    gsutil mb gs://demo-01
 
 ### Creating a build to upload to Cloud Storage
 
@@ -134,11 +133,11 @@ it to Cloud Storage:
 1.  Build the Spring Boot application by running the following command from the
     root of your application folder:
 
-		gradle build
+        gradle build
 
 2.  Upload the app to Cloud Storage:
 
-		gsutil cp build/libs/* gs://demo-01/demo.jar
+        gsutil cp build/libs/* gs://demo-01/demo.jar
 
 ## Deploying your application to a single instance
 
@@ -152,38 +151,33 @@ the instance is started or restarted. You use this to install and start your app
 Create a file called `instance-startup.sh` in your application's root directory
 and copy the following content to it:
 
-```bash
-#!/bin/sh
+    #!/bin/sh
 
-# Set the metadata server to the get projct id
-PROJECTID=$(curl -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" -H "Metadata-Flavor: Google")
-BUCKET=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/BUCKET" -H "Metadata-Flavor: Google")
+    # Set the metadata server to the get projct id
+    PROJECTID=$(curl -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" -H "Metadata-Flavor: Google")
+    BUCKET=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/BUCKET" -H "Metadata-Flavor: Google")
 
-echo "Project ID: ${PROJECTID} Bucket: ${BUCKET}"
+    echo "Project ID: ${PROJECTID} Bucket: ${BUCKET}"
 
-# Get the files we need
-gsutil cp gs://${BUCKET}/demo.jar .
+    # Get the files we need
+    gsutil cp gs://${BUCKET}/demo.jar .
 
-# Install dependencies
-apt-get update
-apt-get -y --force-yes install openjdk-8-jdk
+    # Install dependencies
+    apt-get update
+    apt-get -y --force-yes install openjdk-8-jdk
 
-# Make Java 8 default
-update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+    # Make Java 8 default
+    update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 
-# Start server
-java -jar demo.jar
-```
-
-Alternatively, you can [download](https://github.com/JetBrains/gcp-samples/blob/master/google-compute-sample/instance-startup.sh)
-a sample annotated script to study and customize.
+    # Start server
+    java -jar demo.jar
 
 The startup script does the following:
 
 1.  Downloads the JAR which is the Spring Boot application, previously built and
-    uploaded to Cloud Storage
-2.  Downloads and installs Java 8
-3.  Runs the Spring Boot Application
+    uploaded to Cloud Storage.
+2.  Downloads and installs Java 8.
+3.  Runs the Spring Boot application.
 
 The `BUCKET` attribute is set when you create the instance.
 
@@ -193,27 +187,26 @@ To create a Compute Engine instance, perform the following steps:
 
 1.  Create an instance by running the following command:
 
-		gcloud compute instances create demo-instance \
-		--image-family debian-9 \
-		--image-project debian-cloud \
-		--machine-type g1-small \
-		--scopes "userinfo-email,cloud-platform" \
-		--metadata-from-file startup-script=instance-startup.sh \
-		--metadata BUCKET=demo-01 \
-		--zone us-east1-b \
-		--tags http-server
+        gcloud compute instances create demo-instance \
+        --image-family debian-9 \
+        --image-project debian-cloud \
+        --machine-type g1-small \
+        --scopes "userinfo-email,cloud-platform" \
+        --metadata-from-file startup-script=instance-startup.sh \
+        --metadata BUCKET=demo-01 \
+        --zone us-east1-b \
+        --tags http-server
 
     This command creates a new instance named `demo-instance`, grants it
-    access to Cloud Platform services, and provides your startup script. It
-    also sets an instance attribute with the Bucket name.
+    access to GCP services, and provides your startup script. It
+    also sets an instance attribute with the bucket name.
 
 2.  Check the progress of instance creation:
 
         gcloud compute instances get-serial-port-output demo-instance \
             --zone us-east1-b
 
-    If the startup script has completed, this command returns `Finished
-    running startup scripts`.
+    If the startup script has completed, this command returns `Finished running startup scripts`.
 
 3.  Create a firewall rule to allow traffic to your instance:
 
@@ -309,7 +302,7 @@ to available instances in the group:
             --named-ports http:8080 \
             --zone us-east1-b
 
-3.  Create a backend service. The backend service is the "target" for
+3.  Create a backend service. The backend service is the target for
     load-balanced traffic. It defines the instance group to which traffic
     should be directed, and which health check to use:
 
@@ -326,7 +319,7 @@ to available instances in the group:
 
 5.  Create a URL map. This defines which URLs should be directed to which
     backend services. In this sample, all traffic is served by one backend
-    service. If you want to load balance requests between multiple regions or
+    service. If you want to load-balance requests between multiple regions or
     groups, you can create multiple backend services:
 
         gcloud compute url-maps create demo-service-map \
@@ -383,7 +376,7 @@ that additional instances have been added to the instance group.
 
 A wide variety of autoscaling policies are available to maintain target CPU
 utilization and request-per-second rates across your instance groups. For
-more information, refer to Compute Engine's
+more information, refer to the Compute Engine
 [autoscaler documentation](https://cloud.google.com/compute/docs/autoscaler/).
 
 ### Manage and monitor your deployment
@@ -395,7 +388,7 @@ In the [Compute Engine](https://console.cloud.google.com/compute/instances)
 menu, you can view individual running instances and connect using SSH.
 You can manage your instance group and autoscaling configuration using the
 [Instance groups](https://console.cloud.google.com/compute/instanceGroups)
-menu. You can manage load balancing configuration, including URL maps and
+menu. You can manage the load-balancing configuration, including URL maps and
 backend services, using the
 [HTTP load balancing](https://console.cloud.google.com/compute/httpLoadBalancing/list)
 menu.

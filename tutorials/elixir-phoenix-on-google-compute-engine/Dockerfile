@@ -1,4 +1,4 @@
-# Copyright 2017 Google Inc.
+# Copyright 2017 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,37 +14,81 @@
 
 
 # This is a sample Docker image providing an environment for using Distillery
-# to build an OTP release that will run on Debian 8. It is intended to build
-# releases that can be deployed to Debian 8 images on Google Cloud Platform.
+# to build an OTP release that will run on Debian 9. It is intended to build
+# releases that can be deployed to Debian 9 images on Google Cloud Platform.
 #
-# To use, build this image and give it a tag `$IMAGE_NAME`. Then from the mix
-# project directory, execute:
+# To use, build this image and give it a tag (for example, `my-image-name`).
 #
-#     docker run --rm -it -v $(pwd):/app $IMAGE_NAME
+#     docker build -t my-build-image .
 #
-# This process assumes that only `mix release` is required to build a release.
-# If any other steps are needed, for example digesting assets, those must be
-# executed first. Just remember that any steps involving compiling code or
-# packaging the release must be done in the Docker container.
+# Then copy the executable release file `/app/start_release` out of the image.
+#
+#     container_id=$(docker create my-build-image)
+#     docker cp ${container_id}:/app/start_release start_release
+#     docker rm ${container_id}
+#
+# To adapt this Dockerfile to your app, you may need to customize the app_name
+# and phoenix_subdir build arguments, as outlined below.
 
 
-# The elixir:slim base image is currently based on Debian 8 "Jessie" and can
-# be used to build OTP releases with a Jessie-compatible ERTS.
-FROM elixir:slim
+# The elixir base image is currently based on Debian 9 "Stretch" and can
+# be used to build OTP releases with a Stretch-compatible ERTS.
+FROM elixir:latest
 
-# Set the build directory. The `mix release` command will be run from here.
-# When running the container, you should mount the host project directory at
-# this location.
+
+##############################################################################
+## Build arguments. Modify these to adapt this Dockerfile to your app.      ##
+## Alternatively, you may specify --build-arg when running `docker build`.  ##
+
+## The name of your Phoenix application.                                    ##
+ARG app_name=hello
+
+## The subdirectory of the Phoenix application within the toplevel project. ##
+## If your project is an umbrella project, this should be the relative path ##
+## to the Phoenix application, e.g. "apps/hello_web". If this is a simple   ##
+## project, this should be "."                                              ##
+ARG phoenix_subdir=.
+
+## The build environment. This is usually prod, but you might change it if  ##
+## you have staging environments.                                           ##
+ARG build_env=prod
+
+## End build arguments.                                                     ##
+##############################################################################
+
+
+# Set up the build environment.
+ENV MIX_ENV=${build_env} \
+    TERM=xterm
 WORKDIR /app
 
-# Make sure rebar and hex are installed. If your build process has other
-# dependencies, install them here.
-RUN mix local.rebar --force && mix local.hex --force
+# Additional installations needed for building (hex, rebar, and nodejs).
+RUN apt-get update -y \
+    && curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+    && apt-get install -y -q --no-install-recommends nodejs \
+    && mix local.rebar --force \
+    && mix local.hex --force
 
-# Ensure MIX_ENV is set to "prod" when releasing, so compilation is properly
-# optimized.
-ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm
+# Copy the application in. Note that you should generally use a .dockerignore
+# file to omit build artifacts from your development environment (e.g. the
+# "_build" and "deps" directories, as well as "assets/node_modules" and
+# "priv/static" for assets).
+COPY . .
 
-# Set the default build command. You can change or override it to suit your
-# project's requirements.
-CMD ["mix", "release", "--env=prod", "--executable", "--verbose"]
+# Compile the Elixir app.
+RUN mix do deps.get, compile
+
+# Build and digest your assets. This example assumes you are using webpack. You
+# may need to modify this if you are using a different system.
+RUN cd ${phoenix_subdir}/assets \
+    && npm install \
+    && ./node_modules/webpack/bin/webpack.js --mode production \
+    && cd .. \
+    && mix phx.digest
+
+# Create the release using distillery.
+RUN mix distillery.release --env=${build_env} --executable --verbose
+
+# Move the standalone executable to a well-known location so it can be copied
+# out of the image.
+RUN mv _build/${build_env}/rel/${app_name}/bin/${app_name}.run /app/start_release

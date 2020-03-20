@@ -93,30 +93,32 @@ Before installing the chart, you must first extract the certificates generated b
 
         Add the init container spec below to your deployments:
 
-        initContainers:
-        - name: tproxy
-          image: docker.io/danisla/tproxy-sidecar:0.1.0
-          imagePullPolicy: IfNotPresent
-          securityContext:
-            privileged: true
-          env:
-          resources:
-            limits:
-              cpu: 500m
-              memory: 128Mi
-            requests:
-              cpu: 100m
-              memory: 64Mi
+    ```yaml
+    initContainers:
+    - name: tproxy
+        image: docker.io/danisla/tproxy-sidecar:0.1.0
+        imagePullPolicy: IfNotPresent
+        securityContext:
+        privileged: true
+        env:
+        resources:
+        limits:
+            cpu: 500m
+            memory: 128Mi
+        requests:
+            cpu: 100m
+            memory: 64Mi
 
-        Add the volumes below to your deployments to use the trusted https tproxy:
+    Add the volumes below to your deployments to use the trusted https tproxy:
 
-        volumes:
-        - name: ca-certs-debian
-          configMap:
-            name: tproxy-tproxy-root-certs
-            items:
-            - key: root-certs.crt
-              path: ca-certificates.crt
+    volumes:
+    - name: ca-certs-debian
+        configMap:
+        name: tproxy-tproxy-root-certs
+        items:
+        - key: root-certs.crt
+            path: ca-certificates.crt
+    ```
 
 3. Get the status of the DaemonSet pods:
 
@@ -137,9 +139,11 @@ Deploy the sample apps to demonstrate using and not using the init container to 
 
 1. Change directories back to the repository root  and deploy the example apps:
 
-        cd ../../
-        kubectl create -f examples/debian-app.yaml
-        kubectl create -f examples/debian-app-locked-manual.yaml
+    ```sh
+    cd ../../
+    kubectl create -f examples/debian-app.yaml
+    kubectl create -f examples/debian-app-locked-manual.yaml
+    ```
 
     Note that the second deployment is the one that contains the init container and trusted certificate volume mount described in the chart post-install notes.
 

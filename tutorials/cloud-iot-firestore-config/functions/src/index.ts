@@ -13,19 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 */
-
-
 'use strict';
 
 import cbor = require('cbor');
 
 import * as admin from "firebase-admin";
 import * as functions from 'firebase-functions';
-import { runInDebugContext } from 'vm';
-import { DeviceManager } from './devices';
-
-// create a device manager instance with a registry id, optionally pass a region
-const dm = new DeviceManager('config-demo');
+const iot = require('@google-cloud/iot');
+const client = new iot.v1.DeviceManagerClient();
 
 // start cloud function
 exports.configUpdate = functions.firestore
@@ -33,32 +28,38 @@ exports.configUpdate = functions.firestore
   .document('device-configs/{deviceId}')
   .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
     if (context) {
-      await dm.setAuth();
       console.log(context.params.deviceId);
-      // get the new config data
-      const configData = change.after.data();
-      return dm.updateConfig(context.params.deviceId, configData);
+      const request = generateRequest(context.params.deviceId, change.after.data(), false);
+      return client.modifyCloudToDeviceConfig(request);
     } else {
       throw(Error("no context from trigger"));
     }
+  });
 
-  })
-
-
-  exports.configUpdateBinary = functions.firestore
+exports.configUpdateBinary = functions.firestore
   // assumes a document whose ID is the same as the deviceid
   .document('device-configs-binary/{deviceId}')
   .onWrite(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context?: functions.EventContext) => {
     if (context) {
-      await dm.setAuth();
       console.log(context.params.deviceId);
-      // get the new config data
-      const configData = change.after.data();
-      const encoded = cbor.encode(configData);
-
-      return dm.updateConfigBinary(context.params.deviceId, encoded);
+      const request = generateRequest(context.params.deviceId, change.after.data(), true);
+      return client.modifyCloudToDeviceConfig(request);
     } else {
       throw(Error("no context from trigger"));
     }
+  });
 
-  })
+function generateRequest(deviceId:string, configData:any, isBinary:Boolean) {
+  const formattedName = client.devicePath(process.env.GCLOUD_PROJECT, functions.config().iot.core.region, functions.config().iot.core.registry, deviceId);
+  let dataValue;
+  if (isBinary) {
+    const encoded = cbor.encode(configData);
+    dataValue = encoded.toString("base64");
+  } else {
+    dataValue = Buffer.from(JSON.stringify(configData)).toString("base64");
+  }
+  return {
+    name: formattedName,
+    binaryData: dataValue
+  };
+}

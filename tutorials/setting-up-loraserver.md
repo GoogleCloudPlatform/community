@@ -35,7 +35,7 @@ Google Cloud Platform (GCP) services are used:
 * The example project ID used in this tutorial will be `lora-server-tutorial`. You should
   substitute this with your own project ID in the tutorial steps.
 * The LoRaWAN region used in this tutorial will be `eu868`. You should substitute
-  this with your own region in the examples.
+  this with your own region in the examples (e.g. `us915`, ...).
 
 ## Requirements
 
@@ -79,7 +79,7 @@ In order to authenticate the LoRa gateway with the Cloud IoT Core MQTT bridge,
 you need to generate a certificate. You can do this using the following
 commands:
 
-    ssh-keygen -t rsa -b 4096 -f private-key.pem
+    ssh-keygen -t rsa -m PEM -b 4096 -f private-key.pem
     openssl rsa -in private-key.pem -pubout -outform PEM -out public-key.pem
 
 Do **not** set a passphrase!
@@ -106,28 +106,24 @@ As there are different ways to install the
 on your gateway, only the configuration is covered here. For installation instructions,
 please refer to [LoRa Gateway Bridge gateway installation & configuration](https://www.loraserver.io/lora-gateway-bridge/install/gateway/).
 
-To configure a LoRa Gateway Bridge to forward its data to Cloud IoT, you need update the `lora-gateway-bridge.toml`
+To configure a LoRa Gateway Bridge to forward its data to Cloud IoT, you need to update the `lora-gateway-bridge.toml`
 [Configuration file](https://www.loraserver.io/lora-gateway-bridge/install/config/).
 
 A minimal configuration example:
 
-    [backend.mqtt]
-    marshaler="protobuf"
+    [integration.mqtt.auth]
+    type="gcp_cloud_iot_core"
 
-      [backend.mqtt.auth]
-      type="gcp_cloud_iot_core"
-
-        [backend.mqtt.auth.gcp_cloud_iot_core]
-        server="ssl://mqtt.googleapis.com:8883"
-        device_id="gw-0102030405060708"
-        project_id="lora-server-tutorial"
-        cloud_region="europe-west1"
-        registry_id="eu868-gateways"
-        jwt_key_file="/path/to/private-key.pem"
+      [integration.mqtt.auth.gcp_cloud_iot_core]
+      server="ssl://mqtt.googleapis.com:8883"
+      device_id="gw-0102030405060708"
+      project_id="lora-server-tutorial"
+      cloud_region="europe-west1"
+      registry_id="eu868-gateways"
+      jwt_key_file="/path/to/private-key.pem"
 
 In short:
 
-* This will configure the `protobuf` marshaler (either `protobuf` or `json` must be configured)
 * This will configure the Google Cloud IoT Core MQTT authentication
 * This will configure the GCP project ID, cloud-region and registry ID
 
@@ -139,11 +135,10 @@ After applying the above configuration changes on the gateway (using your own `d
 is able to connect with the Cloud IoT Core MQTT bridge. The log output should
 look like this when your gateway receives an uplink message from your LoRaWAN device:
 
-    INFO[0000] starting LoRa Gateway Bridge                  docs="https://www.loraserver.io/lora-gateway-bridge/" version=2.6.0
-    INFO[0000] gateway: starting gateway udp listener        addr="0.0.0.0:1700"
-    INFO[0000] mqtt: connected to mqtt broker
-    INFO[0007] mqtt: subscribing to topic                    qos=0 topic="/devices/gw-0102030405060708/commands/#"
-    INFO[0045] mqtt: publishing message                      qos=0 topic=/devices/gw-0102030405060708/events/up
+    INFO[0000] backend/semtechudp: starting gateway udp listener        addr="0.0.0.0:1700"
+    INFO[0000] integration/mqtt: connected to mqtt broker
+    INFO[0007] integration/mqtt: subscribing to topic                   qos=0 topic="/devices/gw-0102030405060708/commands/#"
+    INFO[0045] integration/mqtt: publishing message                     qos=0 topic=/devices/gw-0102030405060708/events/up
 
 Your gateway is now communicating succesfully with the Cloud IoT Core MQTT bridge!
 
@@ -174,96 +169,90 @@ does is calling a Cloud API, `128 MB` for **Memory allocated** should be fine.
 Select **Cloud Pub/Sub** as **trigger** and select `eu868-gateway-commands` as
 the **topic**.
 
-Select **Inline editor** for entering the source-code and select the **Node.js 8**
-runtime. The **Function to execute** is called `sendMessage`. Copy and paste
-the scripts below for the `index.js` and `package.json` files. Adjust the
-`index.js` configuration to match your `REGION`, `PROJECT_ID` and `REGISTRY_ID`.
+Select **Inline editor** for entering the source-code and select the **Go 1.11**
+runtime. The **Function to execute** is called `Send`. Copy and paste
+the scripts below for the `function.go` and `go.mod` files. Adjust the
+`function.go` configuration to match your `region`, `projectID` and `registryID`.
 **Note:** it is recommended to also click **More** and select your region
 from the dropdown list. Then click **Create**.
 
-#### `index.js`
+#### `function.go`
 
-    'use strict';
+```go
+package iotpubsub
 
-    const {google} = require('googleapis');
+import (
+	"context"
+	"errors"
+	"fmt"
+	"log"
 
-    // configuration options
-    const REGION = 'europe-west1';
-    const PROJECT_ID = 'lora-server-tutorial';
-    const REGISTRY_ID = 'eu868-gateways';
+	iot "cloud.google.com/go/iot/apiv1"
+	iotpb "google.golang.org/genproto/googleapis/cloud/iot/v1"
+)
 
+// Configuration options
+// You must update these values to match your environment!
+const (
+	region     = "europe-west1"
+	projectID  = "loraserver-devel"
+	registryID = "eu868-gateways"
+)
 
-    let client = null;
-    const API_VERSION = 'v1';
-    const DISCOVERY_API = 'https://cloudiot.googleapis.com/$discovery/rest';
+var client *iot.DeviceManagerClient
 
+func init() {
+	var err error
+	client, err = iot.NewDeviceManagerClient(context.Background())
+	if err != nil {
+		log.Fatalf("iot.NewDeviceManagerClient: %s", err)
+	}
+}
 
-    // getClient returns the GCP API client.
-    // Note: after the first initialization, the client will be cached.
-    function getClient (cb) {
-      if (client !== null) {
-        cb(client);
-        return;
-      }
+// PubSubMessage implements the Pub/Sub model.
+type PubSubMessage struct {
+	Data       []byte            `json:"data"`
+	Attributes map[string]string `json:"attributes"`
+}
 
-      google.auth.getClient({scopes: ['https://www.googleapis.com/auth/cloud-platform']}).then((authClient => {
-        google.options({
-          auth: authClient
-        });
+// Send sends the Pub/Sub message to the device.
+func Send(ctx context.Context, m PubSubMessage) error {
+	deviceID, ok := m.Attributes["deviceId"]
+	if !ok {
+		return errors.New("deviceId is missing in Attributes")
+	}
+	subFolder, ok := m.Attributes["subFolder"]
+	if !ok {
+		return errors.New("subFolder is missing in Attributes")
+	}
 
-        const discoveryUrl = `${DISCOVERY_API}?version=${API_VERSION}`;
-        google.discoverAPI(discoveryUrl).then((c, err) => {
-          if (err) {
-            console.log('Error during API discovery', err);
-            return undefined;
-          }
-          client = c;
-          cb(client);
-        });
-      }));
-    }
+	deviceName := fmt.Sprintf("projects/%s/locations/%s/registries/%s/devices/%s", projectID, region, registryID, deviceID)
 
+	_, err := client.SendCommandToDevice(ctx, &iotpb.SendCommandToDeviceRequest{
+		Name:       deviceName,
+		BinaryData: m.Data,
+		Subfolder:  subFolder,
+	})
+	if err != nil {
+		return fmt.Errorf("SendCommandToDevice: %s", err)
+	}
 
-    // sendMessage forwards the Pub/Sub message to the given device.
-    exports.sendMessage = (event, context, callback) => {
-      const deviceId = event.attributes.deviceId;
-      const subFolder = event.attributes.subFolder;
-      const data = event.data;
-  
-      getClient((client) => {
-        const parentName = `projects/${PROJECT_ID}/locations/${REGION}`;
-        const registryName = `${parentName}/registries/${REGISTRY_ID}`;
-        const request = {
-          name: `${registryName}/devices/${deviceId}`,
-          binaryData: data,
-          subfolder: subFolder
-        };
-    
-        console.log("start call sendCommandToDevice");
-        client.projects.locations.registries.devices.sendCommandToDevice(request, (err, data) => {
-          if (err) {
-            console.log("Could not send command:", request, "Message:", err);
-            callback(new Error(err));
-          } else {
-            callback();
-          }
-        });
-      });
-    };
+	return nil
+}
+```
 
+#### `go.mod`
 
-#### `package.json`
+```text
+module iotpubsub
 
+go 1.11
 
-    {
-      "name": "gateway-commands",
-      "version": "2.0.0",
-      "dependencies": {
-        "@google-cloud/pubsub": "0.20.1",
-        "googleapis": "34.0.0"
-      }
-    }
-
+require (
+	cloud.google.com/go v0.39.0
+	google.golang.org/genproto v0.0.0-20190605220351-eb0b1bdb6ae6
+)
+```
 
 ## Set up databases
 
@@ -304,7 +293,7 @@ Click the **Databases** tab. Create the following databases:
 * `loraserver_ns`
 * `loraserver_as`
 
-#### Enable trgm extension
+#### Enable trgm and hstore extensions
 
 In the PostgreSQL instance **Overview** tab, click **Connect using Cloud Shell**
 and when the `gcloud sql connect ...` command is shown in the console,
@@ -316,9 +305,13 @@ Then execute the following SQL commands:
     -- change to the LoRa App Server database
     \c loraserver_as
 
-    -- enable the pq_trgm extension
+    -- enable the pg_trgm extension
     -- (this is needed to facilitate the search feature)
     create extension pg_trgm;
+
+	-- enable the hstore extension
+	-- (this is needed for storing additional k/v meta-data)
+	create extension hstore;
 
     -- exit psql
     \q
@@ -392,7 +385,7 @@ Execute the following commands in the VM's shell to add the LoRa Server reposito
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1CE2AFD36DBCCA00
 
     # add the repository to apt configuration
-    sudo echo "deb https://artifacts.loraserver.io/packages/2.x/deb stable main" | sudo tee /etc/apt/sources.list.d/loraserver.list
+    sudo echo "deb https://artifacts.loraserver.io/packages/3.x/deb stable main" | sudo tee /etc/apt/sources.list.d/loraserver.list
 
     # update the package cache
     sudo apt update
@@ -440,10 +433,6 @@ You need to replace the following values:
       [network_server.network_settings]
       rx1_delay=3
 
-      [network_server.gateway.stats]
-      create_gateway_on_stats=true
-      timezone="UTC"
-
       [network_server.gateway.backend]
       type="gcp_pub_sub"
 
@@ -451,6 +440,9 @@ You need to replace the following values:
         project_id="lora-server-tutorial"
         uplink_topic_name="eu868-gateway-events"
         downlink_topic_name="eu868-gateway-commands"
+
+    [metrics]
+    timezone="Local"
 
 
 ##### US915 configuration example
@@ -471,17 +463,16 @@ You need to replace the following values:
       rx1_delay=3
       enabled_uplink_channels=[0, 1, 2, 3, 4, 5, 6, 7]
 
-      [network_server.gateway.stats]
-      create_gateway_on_stats=true
-      timezone="UTC"
-
       [network_server.gateway.backend]
       type="gcp_pub_sub"
 
         [network_server.gateway.backend.gcp_pub_sub]
         project_id="lora-server-tutorial"
-        uplink_topic_name="eu868-gateway-events"
-        downlink_topic_name="eu868-gateway-commands"
+        uplink_topic_name="us915-gateway-events"
+        downlink_topic_name="us915-gateway-commands"
+
+    [metrics]
+    timezone="Local"
 
 
 To test the configuration for errors, you can execute the following command:
@@ -505,7 +496,6 @@ This should output something like the following:
 If all is well, then you can start the service in the background using:
 
     sudo systemctl start loraserver
-    sudo systemctl enable loraserver
 
 
 ### Install LoRa App Server
@@ -553,7 +543,7 @@ You need to replace the following values:
     [application_server]
 
       [application_server.integration]
-      backend="gcp_pub_sub"
+      enabled=["gcp_pub_sub"]
 
       [application_server.integration.gcp_pub_sub]
       project_id="lora-server-tutorial"
@@ -561,8 +551,6 @@ You need to replace the following values:
 
       [application_server.external_api]
       bind="0.0.0.0:8080"
-      tls_cert="/etc/lora-app-server/certs/http.pem"
-      tls_key="/etc/lora-app-server/certs/http-key.pem"
       jwt_secret="[JWT_SECRET]"
 
 
@@ -587,7 +575,6 @@ This should output something like the following:
 If all is well, then you can start the service in the background using these commands:
 
     sudo systemctl start lora-app-server
-    sudo systemctl enable lora-app-server
 
 
 ## Using the LoRa (App) Server

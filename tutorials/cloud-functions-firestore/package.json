@@ -1,0 +1,8 @@
+{
+  "name": "cloud-functions-firestore",
+  "version": "0.0.1-alpha1",
+  "dependencies": {
+    "@google-cloud/firestore": "0.17.0",
+    "semver": "^5.5.1"
+  }
+}

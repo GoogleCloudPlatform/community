@@ -22,9 +22,23 @@ mkdir -p ${HOME}
 cd ${HOME}
 
 # Download the release specified in the instance metadata.
-RELEASE_URL=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/release-url" -H "Metadata-Flavor: Google")
+RELEASE_URL=$(curl \
+  -s "http://metadata.google.internal/computeMetadata/v1/instance/attributes/release-url" \
+  -H "Metadata-Flavor: Google")
 gsutil cp ${RELEASE_URL} hello-release
 chmod 755 hello-release
+
+# Download the Cloud SQL Proxy
+wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 \
+  -O cloud_sql_proxy
+chmod +x cloud_sql_proxy
+
+# Start the Cloud SQL Proxy, using the project obtained from project metadata.
+mkdir /tmp/cloudsql
+PROJECT_ID=$(curl \
+  -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" \
+  -H "Metadata-Flavor: Google")
+./cloud_sql_proxy -projects=${PROJECT_ID} -dir=/tmp/cloudsql &
 
 # Start the application as a daemon on port 8080.
 PORT=8080 ./hello-release start

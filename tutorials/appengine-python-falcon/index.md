@@ -1,10 +1,11 @@
 ---
-title: Falcon API on App Engine Standard Environment
-description: Learn how to build a Falcon API in the Google App Engine standard environment.
+title: Falcon API on App Engine standard environment
+description: Learn how to build a Falcon API in the App Engine standard environment.
 author: archelogos
 tags: App Engine, Python, Falcon, API
 date_published: 2017-04-27
 ---
+
 This tutorial shows how to build a Python API with [Falcon][falcon].
 
 Falcon is a high-performance Python framework for building cloud APIs. It follows the REST architectural style, and tries to do as little as possible while remaining highly effective.
@@ -32,70 +33,70 @@ you do not need to enable the billing for your project to complete this tutorial
 
 ## Preparing the app
 
-1. Create a [`requirements.txt`][requirements] file with the following contents:
+1.  Create a [`requirements.txt`][requirements] file with the following contents:
 
         falcon==1.1.0
 
-2. Create an [`appengine_config.py`][appengine_config] file with the following contents:
+2.  Create an [`appengine_config.py`][appengine_config] file with the following contents:
 
         from google.appengine.ext import vendor
         vendor.add('lib')
+ 
+3.  Create an [`app.yaml`][app] file with the following contents:
 
-3. Create an [`app.yaml`][app] file with the following contents:
+         runtime: python27
+         api_version: 1
+         threadsafe: true
 
-        runtime: python27
-        api_version: 1
-        threadsafe: true
-
-        handlers:
-          - url: /.*
-            script: api.app
-
-4. Copy the [`api`][api] module in your workspace
+         handlers:
+           - url: /.*
+             script: api.app
+  
+4.  Copy the [`api`][api] module in your workspace
 
     This module contains the following files:
 
-    1. [`__init__.py`][init]. This is where the api module is initialized and its routes are created.
-    You can see how the app variable is defined using the Falcon library.
+    1.  [`__init__.py`][init]. This is where the api module is initialized and its routes are created.
+        You can see how the app variable is defined using the Falcon library.
 
-                app = falcon.API(middleware=[
-                    AuthMiddleware()
-                ])
-
+            app = falcon.API(middleware=[
+                AuthMiddleware()
+            ])
+    
         You can add a route with the following method:
 
-                app.add_route('/', Resource())
+            app.add_route('/', Resource())
+        
+    2.  The resources can be defined in the [`resources.py`][resources] file. The `Resource` class
+        implements four different methods `on_get`, `on_post`, `on_patch` and `on_delete`
+        that define the endpoints for each HTTP method.
 
-    2. The resources can be defined in the [`resources.py`][resources] file. The `Resource` class
-    implements four different methods `on_get`, `on_post`, `on_patch` and `on_delete`
-    that define the endpoints for each HTTP method.
+            def on_get(self, req, resp):
+                ...
+    
+            def on_post(self, req, resp):
+                ...
+    
+            def on_patch(self, req, resp):
+                ...
+    
+            def on_delete(self, req, resp):
+                ...
+    
+    3.  In the [`middleware.py`][middleware] file you can find the `AuthMiddleware` class
+        which is used to ensure that all requests are authenticated.
+        Because this is just an example, it is not implemented with any kind
+        of validation.
 
-                def on_get(self, req, resp):
+            class AuthMiddleware(object):
+
+                def process_request(self, req, resp):
+                    token = req.get_header('Authorization')
                     ...
 
-                def on_post(self, req, resp):
-                    ...
-
-                def on_patch(self, req, resp):
-                    ...
-
-                def on_delete(self, req, resp):
-                    ...
-
-    3. In the [`middleware.py`][middleware] file you can find the `AuthMiddleware` class
-    which is used to ensure that all requests are authenticated.
-    Because this is just an example, it is not implemented with any kind
-    of validation.
-
-                class AuthMiddleware(object):
-
-                    def process_request(self, req, resp):
-                        token = req.get_header('Authorization')
-                        ...
-
-    4. The [`hooks.py`][hooks] file contains definitions of custom functions that can be called
-    before or after an endpoint function is executed. They can be used, for instance, to validate
-    the input data or serialize the API responses.
+    4.  The [`hooks.py`][hooks] file contains definitions of custom functions that can be called
+        before or after an endpoint function is executed. They can be used, for instance, to validate
+        the input data or serialize the API responses.
 
 ## Running the app
 

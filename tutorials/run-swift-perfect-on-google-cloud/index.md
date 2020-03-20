@@ -46,20 +46,22 @@ projected usage.
 
 We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
 
-1.  Create a `package.swift` file with the following contents:
+1.  Create a `Package.swift` file with the following contents:
 
-        import PackageDescription
+    ```swift
+    import PackageDescription
 
-        let package = Package(
-            name: "PerfectGAE",
-            targets: [
-                Target(name: "PerfectGAE", dependencies: [])
-            ],
-            dependencies: [
-                .Package(url: "https://github.com/PerfectlySoft/Perfect-HTTPServer.git",
-        majorVersion: 2, minor: 0)
-            ]
-        )
+    let package = Package(
+        name: "PerfectGAE",
+        targets: [
+            Target(name: "PerfectGAE", dependencies: [])
+        ],
+        dependencies: [
+            .Package(url: "https://github.com/PerfectlySoft/Perfect-HTTPServer.git",
+    majorVersion: 2, minor: 0)
+        ]
+    )
+    ```
 
 [spm]: https://github.com/apple/swift-package-manager
 
@@ -67,51 +69,57 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
 
 1.  Create a `main.swift` with the following contents:
 
-        import Foundation
-        import PerfectLib
-        import PerfectHTTP
-        import PerfectHTTPServer
+    ```swift
+    import Foundation
+    import PerfectLib
+    import PerfectHTTP
+    import PerfectHTTPServer
 
-        // Create HTTP server.
-        let server = HTTPServer()
-        var routes = Routes()
+    // Create HTTP server.
+    let server = HTTPServer()
+    var routes = Routes()
 
-        // Respond to App Engine health check requests
-        // TODO: see #2
+    // Respond to App Engine health check requests
+    // TODO: see #2
 
-        // Basic GET request
-        // TODO: see #3
+    // Basic GET request
+    // TODO: see #3
 
-        // Add the routes to the server.
-        server.addRoutes(routes)
+    // Add the routes to the server.
+    server.addRoutes(routes)
 
-        // Set a listen port of 8080
-        server.serverPort = 8080
+    // Set a listen port of 8080
+    server.serverPort = 8080
 
-        do {
-            // Launch the HTTP server.
-            try server.start()
-        } catch PerfectError.networkError(let err, let msg) {
-            print("Network error thrown: \(err) \(msg)")
-        }
+    do {
+        // Launch the HTTP server.
+        try server.start()
+    } catch PerfectError.networkError(let err, let msg) {
+        print("Network error thrown: \(err) \(msg)")
+    }
+    ```
 
 1.  Create a route to handle App Engine health-check requests" (per the [custom runtime docs][custom-runtime]):
 
-        // Respond to App Engine health check requests
-        routes.add(method: .get, uri: "/_ah/health", handler: { request, response in
-            print("GET - /_ah/health route handler...")
-            response.setBody(string: "OK")
-            response.completed()
-        })
+    ```swift
+    // Respond to App Engine health check requests
+    routes.add(method: .get, uri: "/_ah/health", handler: { request, response in
+        print("GET - /_ah/health route handler...")
+        response.setBody(string: "OK")
+        response.completed()
+    })
+    ```
 
 1.  Create a route to handle `GET` requests to `/hello`:
 
-        // Basic GET request
-        routes.add(method: .get, uri: "/hello", handler: { request, response in
-            print("GET - /hello route handler...")
-            response.setBody(string: "Hello from Swift on Google App Engine flexible environment!")
-            response.completed()
-        })
+    ```swift
+    // Basic GET request
+    routes.add(method: .get, uri: "/hello", handler: { request, response in
+        print("GET - /hello route handler...")
+        response.setBody(string: "Hello from Swift on Google App Engine flexible environment!")
+        response.completed()
+    })
+    ```
 
 [custom-runtime]: https://cloud.google.com/appengine/docs/flexible/custom-runtimes/build#lifecycle_events
 
@@ -122,29 +130,31 @@ create our own.
 
 1.  Create a `Dockerfile` with the following contents:
 
-        FROM ibmcom/swift-ubuntu:latest
-        LABEL Description="Docker image for Swift + Perfect on Google App Engine flexible environment."
+    ```Dockerfile
+    FROM ibmcom/swift-ubuntu:latest
+    LABEL Description="Docker image for Swift + Perfect on Google App Engine flexible environment."
 
-        # Get extra dependencies for Perfect
-        RUN apt-get update && apt-get install -y \
-        openssl \
-        libssl-dev \
-        uuid-dev
+    # Get extra dependencies for Perfect
+    RUN apt-get update && apt-get install -y \
+    openssl \
+    libssl-dev \
+    uuid-dev
 
-        # Expose default port for App Engine
-        EXPOSE 8080
+    # Expose default port for App Engine
+    EXPOSE 8080
 
-        # Copy sources
-        RUN mkdir /root/PerfectGAE
-        ADD main.swift /root/PerfectGAE
-        ADD Package.swift /root/PerfectGAE
+    # Copy sources
+    RUN mkdir /root/PerfectGAE
+    ADD main.swift /root/PerfectGAE
+    ADD Package.swift /root/PerfectGAE
 
-        # Build the app
-        RUN cd /root/PerfectGAE && swift build
+    # Build the app
+    RUN cd /root/PerfectGAE && swift build
 
-        # Run the app
-        USER root
-        CMD ["/root/PerfectGAE/.build/debug/PerfectGAE"]
+    # Run the app
+    USER root
+    CMD ["/root/PerfectGAE/.build/debug/PerfectGAE"]
+    ```
 
 ## Deploying the app
 

@@ -1,19 +1,20 @@
 ---
-title: Ruby on Rails Background Processing on Google App Engine with ActiveJob and Google Cloud Pub/Sub
-description: Learn how to run background jobs using Ruby on Rails' ActiveJob.
+title: Ruby on Rails background processing on App Engine with ActiveJob and Cloud Pub/Sub
+description: Learn how to run background jobs using Ruby on Rails ActiveJob.
 author: chingor13
 tags: App Engine, Ruby, Ruby on Rails, ActiveJob, PubSub
 date_published: 2017-06-08
 ---
+
 This tutorial shows how to create and configure a [Ruby on Rails](http://rubyonrails.org/) application to run
-background processing jobs on Google App Engine flexible environment using
+background processing jobs on App Engine flexible environment using
 [ActiveJob](http://guides.rubyonrails.org/active_job_basics.html) and
-[Google Cloud Pub/Sub](https://cloud.google.com/pubsub/).
+[Cloud Pub/Sub](https://cloud.google.com/pubsub/).
 
 ## Objectives
 
 * Create a background processing job
-* Deploy your application to Google App Engine flexible environment
+* Deploy your application to App Engine flexible environment
 * Verify background jobs are running
 
 ## Before you begin
@@ -30,8 +31,8 @@ You'll need the following:
 
 This tutorial uses billable components of Cloud Platform including:
 
-* Google App Engine flexible environment
-* Google Cloud Pub/Sub
+* App Engine flexible environment
+* Cloud Pub/Sub
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator/)
 to generate a cost estimate based on your projected usage. New GCP users might be eligible for a
@@ -48,18 +49,18 @@ controllers, and even background jobs.
 
 You will create a job named `HelloJob` that will accept a `name` argument and print "Hello #{name}" to standard output.
 
-1. Use the Rails generator feature to create `HelloJob`:
+1.  Use the Rails generator feature to create `HelloJob`:
 
         bin/rails generate job Hello
 
-   Rails creates stub files from templates:
+    Rails creates stub files from templates:
 
         invoke  test_unit
         create    test/jobs/hello_job_test.rb
         create  app/jobs/hello_job.rb
         create  app/jobs/application_job.rb
 
-1. Edit your `app/jobs/hello_job.rb` with the following:
+1.  Edit your `app/jobs/hello_job.rb` with the following:
 
         class HelloJob < ApplicationJob
           queue_as :default
@@ -75,11 +76,11 @@ You will create a job named `HelloJob` that will accept a `name` argument and pr
 You will create a controller named `HelloController` that will provide an action called `say` which will queue
 our `HelloJob` to execute in the background.
 
-1. Use the Rails generator feature to create `HelloController`:
+1.  Use the Rails generator feature to create `HelloController`:
 
         bin/rails generate controller Hello
 
-   Rails creates stub files from templates:
+    Rails creates stub files from templates:
 
         create  app/controllers/hello_controller.rb
         invoke  erb
@@ -95,7 +96,7 @@ our `HelloJob` to execute in the background.
         invoke    scss
         create      app/assets/stylesheets/hello.scss
 
-1. Add a `say` action to `HelloController`. Edit your `app/controllers/hello_controller.rb` with the following:
+1.  Add a `say` action to `HelloController`. Edit your `app/controllers/hello_controller.rb` with the following:
 
         class HelloController < ApplicationController
           def say
@@ -106,24 +107,24 @@ our `HelloJob` to execute in the background.
 
    This action will queue our `HelloJob` with the provided request parameter `name`.
 
-1. Create a route to this action. In `config/routes.rb`, add:
+1.  Create a route to this action. In `config/routes.rb`, add:
 
         get '/hello/:name', to: 'hello#say'
 
-   When you make an HTTP GET request to `/hello/Jeff`, the `HelloController` will handle the request using the `say`
-   action with parameter `:name` as "Jeff"
+    When you make an HTTP GET request to `/hello/Jeff`, the `HelloController` will handle the  request using the `say`
+    action with parameter `:name` as "Jeff"
 
 ## Configuring your background worker to use Cloud Pub/Sub
 
 ActiveJob can be configured with various different background job runners. This tutorial will cover
-[ActiveJob::GoogleCloudPubsub](https://github.com/ursm/activejob-google_cloud_pubsub) which uses Google Cloud Pub/Sub
+[ActiveJob::GoogleCloudPubsub](https://github.com/ursm/activejob-google_cloud_pubsub) which uses Cloud Pub/Sub
 to manage the job queue.
 
-1. Add `activejob-google_cloud_pubsub` gem to your `Gemfile`:
+1.  Add `activejob-google_cloud_pubsub` gem to your `Gemfile`:
 
         bundle add activejob-google_cloud_pubsub
 
-1. Configure ActiveJob to use GoogleCloudPubsub as its queue adapter. In `config/application.rb`:
+1.  Configure ActiveJob to use GoogleCloudPubsub as its queue adapter. In `config/application.rb`:
 
         class Application < Rails::Application
           # ...
@@ -138,16 +139,16 @@ For this option, the App Engine service will run both the web server and a worke
 [foreman](https://ddollar.github.io/foreman/). If you choose this method, App Engine will scale your web and worker
 instances together.
 
-1. Add `foreman` gem to your `Gemfile`:
+1.  Add `foreman` gem to your `Gemfile`:
 
         bundle add foreman
 
-1. Create a `Procfile` at the root of your application:
+1.  Create a `Procfile` at the root of your application:
 
         web: bundle exec rails server -p 8080
         worker: bundle exec activejob-google_cloud_pubsub-worker
 
-1. Create an `app.yaml` for deploying the application to Google App Engine:
+1.  Create an `app.yaml` for deploying the application to App Engine:
 
         runtime: ruby
         env: flex
@@ -157,9 +158,9 @@ instances together.
         env_variables:
           SECRET_KEY_BASE: [SECRET_KEY]
 
-   Be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
+    Be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
-1. Deploy to App Engine
+1.  Deploy to App Engine
 
         gcloud app deploy app.yaml
 
@@ -169,7 +170,7 @@ For this option, you are creating 2 App Engine services - one runs the web serve
 services use the same application code. This configuration allows you to scale background worker instances independently
 of your web instances at the cost of potentially using more resources.
 
-1. Create an `app.yaml` for deploying the web service to Google App Engine:
+1.  Create an `app.yaml` for deploying the web service to App Engine:
 
         runtime: ruby
         env: flex
@@ -179,9 +180,9 @@ of your web instances at the cost of potentially using more resources.
         env_variables:
           SECRET_KEY_BASE: [SECRET_KEY]
 
-   Be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
+    Be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
-1. Create a `worker.yaml` for deploying the worker service to Google App Engine:
+1.  Create a `worker.yaml` for deploying the worker service to App Engine:
 
         runtime: ruby
         env: flex
@@ -199,18 +200,18 @@ of your web instances at the cost of potentially using more resources.
         manual_scaling:
           instances: 1
 
-   Be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
+    Be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
-   Note that the health check is disabled here because the worker service is not running a web server and cannot
-   respond to the health check ping.
+    Note that the health check is disabled here because the worker service is not running a web server and cannot
+    respond to the health check ping.
 
-   As mentioned above, you can configure scaling for the worker service independently of the default (web) service.
-   In the `manual_scaling` section, you have configured the worker service to start with 1 worker instance. For
-   more information on scaling options, see [scaling configuration options in app.yaml](https://cloud.google.com/appengine/docs/flexible/ruby/configuring-your-app-with-app-yaml#services).
-   If you choose an `automatic_scaling` option, be aware that scaling for the background processing is based off
-   of CPU utilization, not queue size.
+    As mentioned above, you can configure scaling for the worker service independently of the default (web) service.
+    In the `manual_scaling` section, you have configured the worker service to start with 1 worker instance. For
+    more information on scaling options, see [scaling configuration options in app.yaml](https://cloud.google.com/appengine/docs/flexible/ruby/configuring-your-app-with-app-yaml#services).
+    If you choose an `automatic_scaling` option, be aware that scaling for the background processing is based off
+    of CPU utilization, not queue size.
 
-1. Deploy both services to App Engine
+1.  Deploy both services to App Engine
 
         gcloud app deploy app.yaml worker.yaml
 
@@ -232,11 +233,11 @@ of your web instances at the cost of potentially using more resources.
 
         13:13:52.000 worker.1 | Hello, Jeff
 
-   or if using a second service:
+    or if using a second service:
 
         13:13:52.000 Hello, Jeff
 
-Congratulations, you have successfully set up background job processing on Google App Engine with Google Cloud Pub/Sub.
+Congratulations, you have successfully set up background job processing on App Engine with Cloud Pub/Sub.
 
 ## Cleaning up
 

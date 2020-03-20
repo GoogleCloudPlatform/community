@@ -49,11 +49,13 @@ must be enabled.
 1.  In the BigQuery console click **Compose Query** and paste in the following SQL
     query:
 
-        SELECT
-          COUNT(*) AS num_files
-        FROM [bigquery-public-data:github_repos.files]
-          WHERE
-            RIGHT(path, 12) = "package.json"
+    ```sql
+    SELECT
+      COUNT(*) AS num_files
+    FROM [bigquery-public-data:github_repos.files]
+      WHERE
+        RIGHT(path, 12) = "package.json"
+    ```
 
 1.  Click **Run Query** to execute the query, which should only take a few
     seconds.
@@ -66,29 +68,31 @@ must be enabled.
 1.  In the BigQuery console click **Compose Query** and paste in the following SQL
     query:
 
-        SELECT
-          COUNT(*) as times_imported, package
-        FROM
-          JS(
-            (SELECT content FROM [bigquery-public-data:github_repos.contents] WHERE id IN (
-              SELECT id FROM [bigquery-public-data:github_repos.files] WHERE RIGHT(path, 12) = "package.json"
-            )),
-            content,
-            "[{ name: 'package', type: 'string'}]",
-            "function(row, emit) {
-              try {
-                x = JSON.parse(row.content);
-                if (x.dependencies) {
-                  Object.keys(x.dependencies).forEach(function(dep) {
-                    emit({ package: dep });
-                  });
-                }
-              } catch (e) {}
-            }"
-          )
-        GROUP BY package
-        ORDER BY times_imported DESC
-        LIMIT 1000
+    ```sql
+    SELECT
+      COUNT(*) as times_imported, package
+    FROM
+      JS(
+        (SELECT content FROM [bigquery-public-data:github_repos.contents] WHERE id IN (
+          SELECT id FROM [bigquery-public-data:github_repos.files] WHERE RIGHT(path, 12) = "package.json"
+        )),
+        content,
+        "[{ name: 'package', type: 'string'}]",
+        "function(row, emit) {
+          try {
+            x = JSON.parse(row.content);
+            if (x.dependencies) {
+              Object.keys(x.dependencies).forEach(function(dep) {
+                emit({ package: dep });
+              });
+            }
+          } catch (e) {}
+        }"
+      )
+    GROUP BY package
+    ORDER BY times_imported DESC
+    LIMIT 1000
+    ```
 
 1.  Click **Run Query** to execute the query, which should take 2-3 minutes and
     process several terabytes of data.

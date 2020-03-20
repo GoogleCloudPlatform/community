@@ -1,10 +1,11 @@
 ---
-title: Deploy a Grails app to Google App Engine
+title: Deploy a Grails app to App Engine flexible environment
 description: Deploy a Grails 3 app to App Engine flexible environment and learn how to use Cloud Storage and Cloud SQL.
 author: sdelamo
 tags: Cloud SQL, App Engine, Java, Grails, Cloud Storage
 date_published: 2017-08-08
 ---
+
 *Sergio del Amo (Object Computing, Inc.)*
 
 *August 2017*
@@ -59,29 +60,31 @@ To get started do the following:
 The `initial` project includes a Grails domain class to map `Book` instances to
 a MySQL table.
 
-> A domain class fulfills the M in the Model View Controller (MVC) pattern and
-> represents a persistent entity that is mapped onto an underlying database
-> table. In Grails a domain is a class that lives in the grails-app/domain
-> directory.
+A domain class fulfills the M in the Model View Controller (MVC) pattern and
+represents a persistent entity that is mapped onto an underlying database
+table. In Grails a domain is a class that lives in the grails-app/domain
+directory.
 
 _grails-app/domain/demo/Book.groovy_
 
-    package demo
+```groovy
+package demo
 
-    import grails.compiler.GrailsCompileStatic
+import grails.compiler.GrailsCompileStatic
 
-    @GrailsCompileStatic
-    class Book {
-        String name
-        String featuredImageUrl
-        String fileName
+@GrailsCompileStatic
+class Book {
+    String name
+    String featuredImageUrl
+    String fileName
 
-        static constraints = {
-            name unique: true
-            featuredImageUrl nullable: true
-            fileName nullable: true
-        }
+    static constraints = {
+        name unique: true
+        featuredImageUrl nullable: true
+        fileName nullable: true
     }
+}
+```
 
 ### Seed data
 
@@ -92,26 +95,27 @@ Modify `BootStrap.groovy`:
 
 _grails-app/init/demo/BootStrap.groovy_
 
-    package demo
+```groovy
+package demo
 
-    import groovy.transform.CompileStatic
+import groovy.transform.CompileStatic
 
-    @CompileStatic
-    class BootStrap {
-        def init = { servletContext ->
-            Book.saveAll(
-                new Book(name: 'Grails 3: A Practical Guide to Application Development'),
-                new Book(name: 'Falando de Grails',),
-                new Book(name: 'The Definitive Guide to Grails 2'),
-                new Book(name: 'Grails in Action'),
-                new Book(name: 'Grails 2: A Quick-Start Guide'),
-                new Book(name: 'Programming Grails')
-            )
-        }
-        def destroy = {
-        }
+@CompileStatic
+class BootStrap {
+    def init = { servletContext ->
+        Book.saveAll(
+            new Book(name: 'Grails 3: A Practical Guide to Application Development'),
+            new Book(name: 'Falando de Grails',),
+            new Book(name: 'The Definitive Guide to Grails 2'),
+            new Book(name: 'Grails in Action'),
+            new Book(name: 'Grails 2: A Quick-Start Guide'),
+            new Book(name: 'Programming Grails')
+        )
     }
-
+    def destroy = {
+    }
+}
+```
 
 ### Root URL
 
@@ -162,17 +166,17 @@ You can find the code: `BookController`, `BookGormService` and GSP views in the
     It prompts you to select the Google account and the project which you want
     to use.
 
-## Google App Engine
+## App Engine
 
 This guide deploys a Grails application to
-[Google App Engine flexible environment][flex].
+[App Engine flexible environment][flex].
 
-> App Engine allows developers to focus on doing what they do best: writing
-> code. Based on Google Compute Engine, the App Engine flexible environment
-> automatically scales your app up and down while balancing the load.
-> Microservices, authorization, SQL and NoSQL databases, traffic splitting,
-> logging, versioning, security scanning, and content delivery networks are all
-> supported natively.
+App Engine allows developers to focus on doing what they do best: writing
+code. Based on Compute Engine, the App Engine flexible environment
+automatically scales your app up and down while balancing the load.
+Microservices, authorization, SQL and NoSQL databases, traffic splitting,
+logging, versioning, security scanning, and content delivery networks are all
+supported natively.
 
 Run the command:
 
@@ -228,32 +232,34 @@ It describes the application’s deployment configuration:
 
 _src/main/appengine/app.yaml_
 
-    runtime: java
-    env: flex
+```yaml
+runtime: java
+env: flex
 
-    runtime_config:
-        jdk: openjdk8
-        server: jetty9
+runtime_config:
+    jdk: openjdk8
+    server: jetty9
 
-    health_check:
-        enable_health_check: False
+health_check:
+    enable_health_check: False
 
-    resources:
-        cpu: 1
-        memory_gb: 2.3
+resources:
+    cpu: 1
+    memory_gb: 2.3
 
-    manual_scaling:
-        instances: 1
+manual_scaling:
+    instances: 1
+```
 
 Here, `app.yaml` specifies the runtime used by the app, and sets `env: flex`,
 specifying that the app uses the [flexible environment][flex].
 
-> The minimal _app.yaml_ application configuration file shown above is
-> sufficient for a simple Grails application. Depending on the size, complexity,
-> and features that your application uses, you may need to change and extend
-> this basic configuration file. For more information on what can be configured
-> via _app.yaml_, please see the [Configuring Your App with app.yaml][configure]
-> guide.
+The minimal `app.yaml` application configuration file shown above is
+sufficient for a simple Grails application. Depending on the size, complexity,
+and features that your application uses, you may need to change and extend
+this basic configuration file. For more information on what can be configured
+via `app.yaml`, please see the [Configuring Your App with app.yaml][configure]
+guide.
 
 For more information on how the Java runtime works, see
 [Java 8 / Jetty 9.3 Runtime][jetty].
@@ -296,11 +302,11 @@ need to do the following changes to [deploy to Jetty instead of Tomcat][boot].
 This guide’s Grails application uses a MySQL database created with
 [Cloud SQL][cloud_sql].
 
-> Cloud SQL is a fully-managed database service that makes it easy to set up,
-> maintain, manage, and administer your relational PostgreSQL BETA and MySQL
-> databases in the cloud. Cloud SQL offers high performance, scalability, and
-> convenience. Hosted on Google Cloud Platform, Cloud SQL provides a database
-> infrastructure for applications running anywhere.
+Cloud SQL is a fully-managed database service that makes it easy to set up,
+maintain, manage, and administer your relational PostgreSQL BETA and MySQL
+databases in the cloud. Cloud SQL offers high performance, scalability, and
+convenience. Hosted on Google Cloud Platform, Cloud SQL provides a database
+infrastructure for applications running anywhere.
 
 ### Enable the Cloud SQL API
 
@@ -353,9 +359,9 @@ production URL to use the Cloud SQL MySQL database which you created before.
 1.  Add the MySQL dependencies JDBC library and Cloud SQL MySQL Socket Factory:
 
     _build.gradle_
-
-        runtime 'mysql:mysql-connector-java:6.0.5'
-        runtime 'com.google.cloud.sql:mysql-socket-factory-connector-j-6:1.0.3'
+    
+        runtime 'mysql:mysql-connector-java:8.0.16'
+        runtime 'com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.0.14'
 
 1.  Replace the `production` environment `datasource` configuration to point to the
     Cloud SQL MySQL database in `application.yml`:
@@ -375,7 +381,7 @@ The production datasource URL uses a custom URL which is built with several comp
 
     jdbc:mysql://google/[DATABASE_NAME]?socketFactory=com.google.cloud.sql.mysql.SocketFactory&cloudSqlInstance=[INSTANCE_NAME]&useSSL=true
 
-- For `[DATABASE_NAME], use the database name you used when you created the
+- For `[DATABASE_NAME]`, use the database name you used when you created the
   database.
 - For `[INSTANCE_NAME]`, use your instance name, which is visible in your Cloud
   SQL instance details:
@@ -393,11 +399,10 @@ URL and verify that connectivity can be established.
 
 ## Cloud Storage
 
-The app allows users to upload a book cover image. To store the images in the
-Cloud, use [Google Cloud Storage][storage].
+The app allows users to upload a book cover image. To store the images in GCP, use [Cloud Storage][storage].
 
-> Google Cloud Storage is unified object storage for developers and enterprises,
-> from live data serving to data analytics/ML to data archiving.
+Cloud Storage is unified object storage for developers and enterprises,
+from live data serving to data analytics/ML to data archiving.
 
 [Enable the Cloud Storage API](https://console.cloud.google.com/flows/enableapi?apiid=storage_api,logging,sqladmin.googleapis.com&redirect=https://console.cloud.google.com&_ga=1.20629880.1963584502.1488379440) for the project, if you have not enabled it already.
 
@@ -420,7 +425,7 @@ Cloud, use [Google Cloud Storage][storage].
 
     _build.gradle_
 
-        compile 'com.google.cloud:google-cloud-storage:1.2.3'
+        compile 'com.google.cloud:google-cloud-storage:1.84.0'
 
 1.  Exclude `com.google.guava:guava-jdk5` too:
 
@@ -464,7 +469,7 @@ Cloud, use [Google Cloud Storage][storage].
             static constraints = {
                 id nullable: false
                 version nullable: false
-              featuredImageFile  validator: { MultipartFile val, FeaturedImageCommand obj ->
+                featuredImageFile  validator: { MultipartFile val, FeaturedImageCommand obj ->
                     if ( val == null ) {
                         return false
                     }
@@ -595,7 +600,7 @@ Cloud, use [Google Cloud Storage][storage].
             }
 
             String storeInputStream(String fileName, InputStream inputStream) {
-                BlobInfo blobInfo = storage.create(readableBlobInfo(bucket, fileName), inputStream)
+               BlobInfo blobInfo = storage.create(readableBlobInfo(bucket, fileName), inputStream)
                 blobInfo.mediaLink
             }
 
@@ -609,12 +614,12 @@ Cloud, use [Google Cloud Storage][storage].
                         // Modify access list to allow all users with link to read file
                         .setAcl([Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER)])
                         .build()
-          }
+            }
 
-          boolean deleteFile(String fileName) {
-              BlobId blobId = BlobId.of(bucket, fileName)
-              storage.delete(blobId)
-          }
+            boolean deleteFile(String fileName) {
+                BlobId blobId = BlobId.of(bucket, fileName)
+                storage.delete(blobId)
+            }
         }
 
 1.  If the upload of an image to Google Cloud is successful, save the reference

@@ -149,12 +149,14 @@ will create the corresponding resources in later steps.
 1.  Open [Cloud Shell](https://cloud.google.com/shell/docs/quickstart)
 1.  Set the following  environment variables:
 
-        export PROJECT=[PROJECT_ID]
-        export REGION=[REGION_NAME]
-        export ZONE=[ZONE_NAME]
-        export BUCKET=[BUCKET_NAME]
-        export REGISTRY=[CLOUD_IOT_CORE_REGISTRY_ID]
-        export TOPIC=[CLOUD_PUBSUB_TOPIC_NAME]
+    ```sh
+    export PROJECT=[PROJECT_ID]
+    export REGION=[REGION_NAME]
+    export ZONE=[ZONE_NAME]
+    export BUCKET=[BUCKET_NAME]
+    export REGISTRY=[CLOUD_IOT_CORE_REGISTRY_ID]
+    export TOPIC=[CLOUD_PUBSUB_TOPIC_NAME]
+    ```
 
 ## Configure Cloud IoT Core
 
@@ -180,12 +182,16 @@ Core to receive data from MQTT clients.
 1.  In Cloud Shell, generate a new public/private key pair, which will override
     the checked in pair:
 
-        cd bin
-        ./create_cert.sh
+    ```sh
+    cd bin
+    ./create_cert.sh
+    ```
 
 10. In Cloud Shell, register devices in the device registry:
 
-        bin/register.sh
+    ```sh
+    bin/register.sh
+    ```
 
     Warning: This tutorial includes a public/private key pair for testing
     purposes. Do not use this pair in a production environment.
@@ -195,12 +201,14 @@ In this section, you insert threshold values for each of the devices, registered
 
 1. In Cloud Shell, run a Python script to insert the device objects into Cloud Datastore:
 
-        export GCLOUD_PROJECT=$PROJECT
-        virtualenv env && source env/bin/activate
-        pip install google-cloud-datastore
-        cd bin
-        python create_temp_alert_store.py
-        deactivate
+    ```sh
+    export GCLOUD_PROJECT=$PROJECT
+    virtualenv env && source env/bin/activate
+    pip install google-cloud-datastore
+    cd bin
+    python create_temp_alert_store.py
+    deactivate
+    ```
 
 1. Open the [Cloud Datastore console](https://console.developers.google.com/datastore).
 1. Confirm that the device entities have been created with the corresponding threshold temperature value:
@@ -216,8 +224,10 @@ exceeded, an error is logged.
 
 1.  In Cloud Shell, deploy a function to Cloud Functions:
 
-        cd function
-        gcloud beta functions deploy iot --stage-bucket $BUCKET --trigger-topic $TOPIC
+    ```sh
+    cd function
+    gcloud beta functions deploy iot --stage-bucket $BUCKET --trigger-topic $TOPIC
+    ```
 
     You see results similar to the following:
 
@@ -241,8 +251,10 @@ data that is retrieved from Cloud Pub/Sub and loads it into a BigQuery table.
 
 1.  In Cloud Shell, build and submit a streaming job:
 
-        cd bin
-        ./job.sh
+    ```sh
+    cd bin
+    ./job.sh
+    ```
 
     The results look similar to the following:
 
@@ -267,8 +279,10 @@ coordinates and then submits it to Cloud IoT Core.
 
 1.  In Cloud Shell, run an MQTT client to generate simulated data:
 
-        cd bin
-        ./run.sh
+    ```sh
+    cd bin
+    ./run.sh
+    ```
 
     You see results similar to the following:
 
@@ -302,7 +316,9 @@ coordinates and then submits it to Cloud IoT Core.
 1.  To confirm that the temperature data is stored in a BigQuery table, run the
     following query in the editor:
 
-        SELECT count(*) from [[PROJECT_ID]:iotds.temp_sensor]
+    ```sql
+    SELECT count(*) from [[PROJECT_ID]:iotds.temp_sensor]
+    ```
 
     ![bq_editor](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/bq_console.png)
 

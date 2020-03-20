@@ -1,16 +1,16 @@
 ---
-title: Run a Kotlin Ktor app on Google App Engine Standard
-description: Learn how to deploy a Kotlin Ktor app to Google App Engine Standard.
+title: Run a Kotlin Ktor app on App Engine standard environment
+description: Learn how to deploy a Kotlin Ktor app to App Engine standard environment.
 author: bshaffer
 tags: App Engine, Kotlin, Ktor, Java, App Engine Standard
 date_published: 2018-01-17
 ---
 
-[Google App Engine Standard](https://cloud.google.com/appengine/docs/standard/)
+[App Engine standard environment](https://cloud.google.com/appengine/docs/standard/)
 is an easy way to deploy your apps to the same infrastructure that powers
 Google's products. In this tutorial you'll see how to deploy your
 [Kotlin](https://kotlinlang.org/) and [Ktor](https://ktor.io) application to
-App Engine Standard.
+App Engine standard environment.
 
 You will create a new Ktor application, and then you will learn how to:
 
@@ -72,7 +72,7 @@ you already have an app to deploy, you can use it instead.
             ext.kotlin_version = '1.2.61'
             ext.ktor_version = '0.9.4'
             ext.appengine_version = '1.9.60'
-            ext.appengine_plugin_version = '1.3.4'
+            ext.appengine_plugin_version = '2.1.0'
 
             repositories {
                 jcenter()
@@ -86,6 +86,9 @@ you already have an app to deploy, you can use it instead.
         apply plugin: 'kotlin'
         apply plugin: 'war'
         apply plugin: 'com.google.cloud.tools.appengine'
+
+        appengine.deploy.projectId = 'GCLOUD_CONFIG'
+        appengine.deploy.version = 'GCLOUD_CONFIG'
 
         sourceSets {
             main.kotlin.srcDirs = [ 'src/main/kotlin' ]
@@ -133,11 +136,11 @@ you already have an app to deploy, you can use it instead.
                 get("/") {
                     call.respondHtml {
                         head {
-                            title { +"Ktor on Google App Engine Standard" }
+                            title { +"Ktor on Google App Engine standard environment" }
                         }
                         body {
                             p {
-                                +"Hello there! This is Ktor running on Google Appengine Standard"
+                                +"Hello there! This is Ktor running on App Engine standard environment"
                             }
                         }
                     }
@@ -156,7 +159,7 @@ you already have an app to deploy, you can use it instead.
 1.  Copy [this XML](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-ktor-app-engine-java8/web-example.xml) into `src/main/webapp/WEB-INF/web.xml`.
 
 Now you have a basic Ktor app set up. You can go ahead and run this locally,
-but  but let's add App Engine configuration and
+but let's add App Engine configuration and run it with the App Engine plugin.
 
 ## Running your application locally with the App Engine plugin
 
@@ -179,7 +182,7 @@ the [App Engine plugin for Gradle](https://cloud.google.com/appengine/docs/stand
 
 ## Deploy your application
 
-1.   Run the following command to deploy your app:
+1.  Run the following command to deploy your app:
 
         ./gradlew appengineDeploy
 
@@ -194,7 +197,7 @@ the [App Engine plugin for Gradle](https://cloud.google.com/appengine/docs/stand
     make sure the environment variable `GOOGLE_CLOUD_SDK_HOME` is set to the
     root directory of where you installed the Google Cloud SDK.
 
-1.   Once the deploy command has completed, you can run the following to see
+1.  Once the deploy command has completed, you can run the following to see
     your app running in production on App Engine in the browser:
 
         gcloud app browse
@@ -209,7 +212,7 @@ Make a simple change and redeploy.
         get("/demo") {
             call.respondHtml {
                 head {
-                    title { +"Ktor on Google App Engine Standard" }
+                    title { +"Ktor on App Engine standard environment" }
                 }
                 body {
                     p {
