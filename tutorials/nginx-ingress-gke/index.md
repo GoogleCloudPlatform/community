@@ -259,6 +259,8 @@ method can also be forced by setting the annotation's value to `gce`as shown bel
 
     annotations: kubernetes.io/ingress.class: gce
 
+Deploying multiple Ingress controllers, of different types (e.g., ingress-nginx & gce), and not specifying a class annotation will result in both or all controllers fighting to satisfy the Ingress, and all of them racing to update Ingress status field in confusing ways.
+
 Let's create a simple Ingress Resource YAML file which uses the NGINX Ingress Controller and has one path rule defined by typing the following commands:
 
     touch ingress-resource.yaml
