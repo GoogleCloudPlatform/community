@@ -551,7 +551,7 @@ exports.signin = (req, res) => {
 }
 ```
 
-Similar to the `auth` function, `singin` uses functions `handleACPKCESigninRequest`, `handleACSigninRequest` and `handleImplictSigninRequest` to process requests from the Authorization Code with PKCE flow, the Authorization Code flow and the Implicit flow respectively.
+Similar to the `auth` function, `signin` uses functions `handleACPKCESigninRequest`, `handleACSigninRequest` and `handleImplictSigninRequest` to process requests from the Authorization Code with PKCE flow, the Authorization Code flow and the Implicit flow respectively.
 
 The first two functions are similar to each other; both of them issue an authorization code after all the security checks are passed:
 
