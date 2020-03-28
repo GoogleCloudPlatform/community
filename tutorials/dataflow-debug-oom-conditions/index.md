@@ -74,8 +74,7 @@ To confirm that your job is failing because of memory issues, do the following:
 
 If you get any results back, then your job is running out of memory.
 
-The messages `"thrashing=true"` and `"OutOfMemoryError"` come from the JVM. They mean that the Java code is exhausting the 
-JVM's heap. Later sections of this document explain how to troubleshoot these errors.
+The messages `"thrashing=true"` and `"OutOfMemoryError"` come from the JVM. Gnerally, they mean that the Java code is exhausting the JVM's heap. Later sections of this document explain how to troubleshoot these errors. Note that some classes throws `OutOfMemoryError` even if it has enough heap memory. e.g., [ByteArrayOutputStream](https://github.com/openjdk/jdk/blob/jdk8-b120/jdk/src/share/classes/java/io/ByteArrayOutputStream.java#L110) cannot grow over 2GB. Check the stacktrace of `OutOfMemoryError` to see if your job hit this case.
 
 The message `"Out of memory: kill process [PID] ([PROCESS_NAME]) score [NUMBER] or sacrifice child"` means that some other
 process in the worker is causing the Compute Engine machine itself to run out of RAM. Dataflow workers don't have swap 
