@@ -52,7 +52,7 @@ The following diagram shows the architecture of the solution:
 
 1.  Create Big Query Tables with PII:
 
-    You may use this open source script [BigQuery Fake BII Creator](https://github.com/mesmacosta/bq-fake-pii-table-creator) 
+    You may use this open source script [BigQuery Fake PII Creator](https://github.com/mesmacosta/bq-fake-pii-table-creator) 
 
 1.  Create the Inspect Template:
 
