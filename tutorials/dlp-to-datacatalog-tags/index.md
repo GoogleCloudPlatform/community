@@ -1,7 +1,7 @@
 ---
 title: Inspecting BigQuery data with Cloud Data Loss Prevention and creating Cloud Data Catalog Tags based on results from inspection scans.
 description: Learn how to inspect BigQuery data using Cloud Data Loss Prevention and automatically create Cloud Data Catalog Tags with results from inspection scans.
-author: scellis, costamarcelo
+author: scellis,costamarcelo
 tags: BigQuery, Cloud Data Loss Prevention, Cloud Data Catalog
 date_published: 2020-04-20
 ---
