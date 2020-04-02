@@ -45,7 +45,7 @@ The following diagram shows the architecture of the solution:
 1.  Make sure that billing is enabled for your project.
     [Learn how to enable billing.](https://cloud.google.com/billing/docs/how-to/modify-project)
 
-1.  Enable Cloud Functions, Cloud Storage, and Cloud Data Loss Prevention API.
+1.  Enable Cloud Data Catalog, BigQuery, and Cloud Data Loss Prevention API.
     [Enable the APIs](https://console.cloud.google.com/flows/enableapi?apiid=datacatalog.googleapis.com,bigquery.googleapis.com,dlp.googleapis.com)
 
 ## Preparing the environment
