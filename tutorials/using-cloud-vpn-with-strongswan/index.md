@@ -117,14 +117,15 @@ To configure Cloud VPN:
 |Local IP ranges| `192.168.0.0/24`|The GCP IP ranges matching the selected subnet.|
 
 ## Configuration of strongSwan
-To install strongSwan on:
-Debian 9.6 or ubuntu 18.04 use below commands:
 
-$sudo apt update
-$sudo apt install strongswan strongswan-pki
+To install strongSwan on Debian 9.6 or Ubuntu 18.04, use the following commands:
 
-RHEL7 or centos7:
-$yum install strongswan
+    sudo apt update
+    sudo apt install strongswan strongswan-pki
+
+To install strongSwan on RHEL 7 or CentOS 7, use the following command:
+
+    yum install strongswan
 
 **Step 1**: Ensure that IP forwarding is enabled
 
