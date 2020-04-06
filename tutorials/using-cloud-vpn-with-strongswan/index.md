@@ -118,8 +118,14 @@ To configure Cloud VPN:
 
 ## Configuration of strongSwan
 
-This guide assumes that you have strongSwan already installed. It also assumes a default
-filesystem layout of Debian 9.6.
+To install strongSwan on Debian 9.6 or Ubuntu 18.04, use the following commands:
+
+    sudo apt update
+    sudo apt install strongswan strongswan-pki
+
+To install strongSwan on RHEL 7 or CentOS 7, use the following command:
+
+    yum install strongswan
 
 **Step 1**: Ensure that IP forwarding is enabled
 
