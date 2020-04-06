@@ -266,7 +266,7 @@ Click **Done** and then **Update metric**.
 With this regular expression, every distinct SQL statement in the slow query log will create a new label value and a 
 corresponding time series. The time series are sparse, meaning that you will be charged for non-zero values after you exceed 
 your free quota. In addition, having
-[too many time series for a single metric](https://cloud.google.com/logging/docs/logs-based-metrics/#too-many-time-series) 
+[too many time series for a single metric](https://cloud.google.com/logging/docs/logs-based-metrics/troubleshooting#too-many-time-series) 
 can cause throttling. You can adjust the MySQL `long_query_time` configuration setting or the content of the regular 
 expression to reduce the number of labels created.
 
