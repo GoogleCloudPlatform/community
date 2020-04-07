@@ -65,7 +65,9 @@ a new WordPress project or add the required configuration to an existing one.
         $ composer require google/cloud-tools
 
     **Note**: If you receive an error about extensions, install `phar` and `zip` PHP
-    extensions and retry.
+    extensions and retry:
+    
+        $ sudo apt-get install php7.2-zip php7.2-curl
 
 1.  Now you can run the `wp-gae` command which is included in that package:
 
@@ -156,6 +158,11 @@ and confirm the image is uploaded to the GCS bucket by visiting the
 To access this MySQL instance, use Cloud SQL Proxy. [Download][cloud-sql-proxy-download]
 it to your local computer and make it executable.
 
+To install in Cloud Shell:
+
+    $ wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+    $ chmod +x cloud_sql_proxy
+
 Go to the [the Credentials section][credentials-section] of your project in the
 Console. Click **Create credentials** and then click **Service account key**. For
 the Service account, select **App Engine app default service account**. Then
@@ -166,7 +173,11 @@ Run the proxy by the following command:
 
     $ ./cloud_sql_proxy \
         -instances=YOUR_PROJECT_ID:us-central1:wordpress=tcp:3306 \
-        -credential_file=/path/to/YOUR_SERVICE_ACCOUNT_JSON_FILE.json
+        -credential_file=/path/to/YOUR_SERVICE_ACCOUNT_JSON_FILE.json &
+        
+If running within Cloud Shell:
+
+    $ ./cloud_sql_proxy -instances <YOUR_PROJECT_ID>:us-central1:wordpress=tcp:3306 &
 
 **Note**: See [Connecting to Cloud SQL from External Applications][cloud-sql-external-apps]
 for more options when running the Cloud SQL proxy.
@@ -187,7 +198,7 @@ Because the `wp-content` directory on the server is read-only, you have
 to perform all code updates locally. Run WordPress locally and update the
 plugins and themes in the local Dashboard, deploy the code to production, then
 activate them in the production Dashboard. You can also use the `wp-cli` utility
-as follows (be sure to keep the Cloud SQL proxy running):
+as follows (**be sure to keep the Cloud SQL proxy running**):
 
     # Install the wp-cli utility
     $ composer require wp-cli/wp-cli-bundle
@@ -207,6 +218,16 @@ If you get this error, you can set a `WP_CLI_PHP_ARGS` environment variable to a
     $ export WP_CLI_PHP_ARGS='-d include_path=vendor/google/appengine-php-sdk'
 
 Then try the update commands again.
+
+Once everything is up to date, deploy the app again:
+
+    $ gcloud app deploy app.yaml cron.yaml
+    
+**Note**: This will deploy a new version of the app and set it as the default while keeping the previous versions available under versioned hostnames. Visit the App Engine, Versions area to see previous versions.
+
+Alternately, you may deploy the new version and stop previous ones so they stop incurring charges:
+
+    $ gcloud app deploy app.yaml cron.yaml --promote --stop-previous-versions
 
 ### Remove plugins and themes
 
