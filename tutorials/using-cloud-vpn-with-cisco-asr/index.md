@@ -101,7 +101,7 @@ The IPsec configuration used in this guide is specified below:
 
 | Cipher Role | Cipher |
 | ------------| -------|
-| Encryption | `esp-aes 256 esp-sha-hmac` |
+| Encryption | `aes-cbc-256 aes-cbc-192 aes-cbc-128` |
 | Integrity | `sha256` |
 | Diffie-Hellman (DH) | `group 16` |
 | Lifetime | `36,000 seconds (10 hours)` |
