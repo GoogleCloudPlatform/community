@@ -1,7 +1,7 @@
 ---
 title: Tutorial - Fresh and Accurate: Aggregating Streams in ELT
 description: In this blog, we discuss a few of the most common challenges that data engineers face when solving for these use cases. We outline some design ideas and architectural patterns for efficient aggregation of streaming data using BigQuery.
-author: slachterman, vincegonzalez
+author: slachterman,vincegonzalez
 tags: BigQuery, ELT, dataform, workflow, streaming
 date_published: 2020-04-01
 ---
