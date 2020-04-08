@@ -110,7 +110,7 @@ Run the following command to submit all of the code and have your container buil
 `[YOUR_PROJECT_ID]` with your
 [project ID](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects).
   
-    gcloud build submit --tag gcr.io/[YOUR_PROJECT_ID]/cra-cloud-run
+    gcloud builds submit --tag gcr.io/[YOUR_PROJECT_ID]/cra-cloud-run
      
 After a couple of minutes, a new image will be in the container registry in your Google Cloud project. To see it, go to the 
 [**Container Registry > Images**](http://console.cloud.google.com/gcr/images) page in the Cloud Console.
