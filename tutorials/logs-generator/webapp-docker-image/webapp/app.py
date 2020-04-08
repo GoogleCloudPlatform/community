@@ -16,7 +16,7 @@ PROJECT_ID = 'YOUR_PROJECT_ID'
 DEVICE_ID_VALUES = 50000000
 TIMESTAMP_RANGE_DAYS = 30
 
-# Number of fields of type string
+# Number of fields of type string.
 RANDOM_STR_FIELDS = 200
 
 # Set and subset size for calculating string permutations based on ascii
@@ -41,7 +41,7 @@ NESTED_INT_FIELDS = 3
 NESTED_INT_LEVELS = 2
 
 
-# Create Pub/Sub publisher client
+# Create Pub/Sub publisher client.
 batch_settings = pubsub_v1.types.BatchSettings(
     max_latency=1, max_messages=10
 )
@@ -51,11 +51,11 @@ topic_name = 'projects/{project_id}/topics/{topic}'.format(
     topic = PUBSUB_TOPIC_NAME
 )
 
-# Create Faker client
+# Create Faker client.
 fake = Faker()
 Faker.seed(0)
 
-# Auxiliary functions to generate random data
+# Auxiliary functions to generate random data.
 def generate_string(set_size, subset_size):
     string = ''
     for _ in range(subset_size):
@@ -104,7 +104,7 @@ def _generate_nested_str_field(field_number, level):
             _generate_nested_str_field(field_number, level+1)
         } 
 
-# Main function to create a record with random data
+# Main function to create a record with random data.
 def fake_record():
     unix_time = fake.unix_time(start_datetime='-30d', end_datetime='now')
     millis = fake.numerify(text='###')
@@ -133,18 +133,14 @@ def fake_record():
 
     return record
 
-# Publish a message to Pub/Sub
+# Publish a message to Pub/Sub.
 def publish(message):
     future = publisher.publish(topic_name, str.encode(str(message)))
     print('pubsub published')
     print(future.result())
 
-# Create Flask client
+# Create Flask client.
 app = Flask(__name__)
-
-@app.route('/')
-def root():
-    return 'hello world'
 
 @app.route('/publish', methods=['GET'])
 def publish_route():

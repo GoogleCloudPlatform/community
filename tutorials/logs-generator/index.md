@@ -7,7 +7,11 @@ date_published: 2020-04-05
 ---
 
 
-This tutorial describes how to create a GKE (Google Kubernetes Engine) cluster, deploy a Python application that generates logs using the "Faker" library, and simulates load with the Python library "Locust". By the end of the tutorial you will also be able to monitor the cluster utilization from the Kubernetes Engine dashboardin Stackdriver and the arrival of the messages to Pub/Sub in the Cloud Console.
+One of the challenges of building scalable data-intensive applications is the ability to create tests that are representative enough to simulate the scale of the system in production. To overcome this challenge, we need tools to generate custom test data at scale, and in this tutorial we aim to make that process easier with scripts and architure to simulate logs published to Cloud Pub/Sub. Cloud Pub/Sub allows ingestion of high volumes of ddata in real-time, that you can then plug into other data sinks and systems. 
+ 
+More specifically, this tutorial describes how to create a GKE (Google Kubernetes Engine) cluster, deploy a Python application that generates logs using the "Faker" library, and simulates load with the Python library "Locust". 
+
+By the end of the tutorial you will also be able to monitor the cluster utilization from the Kubernetes Engine dashboard in Stackdriver and the arrival of the messages to Pub/Sub in the Cloud Console.
 
 This tutorial assumes you already own a project in GCP and that you have the gcloud SDK already installed in your environment. To install gcloud SDK, see [Installing Google Cloud SDK](https://cloud.google.com/sdk/install)
 
