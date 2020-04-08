@@ -2,7 +2,7 @@
 title: Generating large volumes of logs with Python on GKE to Cloud Pub/Sub
 description: Learn to generate large volume of logs from GKE to Cloud Pub/Sub using Locust in Python.
 author: arieljassan
-tags: GKE, Cloud Pub/Sub, Locust, Python
+tags: GKE, Cloud PubSub, Locust, Python
 date_published: 2020-04-08
 ---
 
