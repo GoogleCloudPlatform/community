@@ -351,8 +351,8 @@ Run the commands below replacing variables surrounded by { } with your values:
     set bgp external remote-as { GCP-ASN } on
     set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } on
     set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } as-override on
-    set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } holdtime 30
-    set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } keepalive 10
+    set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } holdtime 60
+    set bgp external remote-as { GCP-ASN } peer { TUN-INSIDE- GCP } keepalive 20
     set inbound-route- filter bgp-policy 512 based-on- as as { GCP-ASN }  on
     set inbound-route- filter bgp-policy 512 accept-all- ipv4
     set route-redistribution to bgp-as { GCP-ASN }  from interface {Redistributed from specific interface } on
@@ -363,8 +363,8 @@ Example:
     set bgp external remote-as 65000 on
     set bgp external remote-as 65000 peer 169.254.0.1 on
     set bgp external remote-as 65000 peer 169.254.0.1 as-override on
-    set bgp external remote-as 65000 peer 169.254.0.1 holdtime 30
-    set bgp external remote-as 65000 peer 169.254.0.1 keepalive 10
+    set bgp external remote-as 65000 peer 169.254.0.1 holdtime 60
+    set bgp external remote-as 65000 peer 169.254.0.1 keepalive 20
     set inbound-route- filter bgp-policy 512 based-on- as as 65000 on
     set inbound-route- filter bgp-policy 512 accept-all- ipv4
     set route-redistribution to bgp-as 65000 from interface eth1 on

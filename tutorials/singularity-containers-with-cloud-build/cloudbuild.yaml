@@ -1,0 +1,10 @@
+# In this directory, run the following command to build this builder.
+# $ gcloud builds submit . --config=cloudbuild.yaml --substitutions=_SINGULARITY_VERSION=3.0.0."
+
+steps:
+- name: gcr.io/$PROJECT_ID/singularity-${_SINGULARITY_VERSION}
+  args: ['build', 'julia-centos.sif', 'julia.def']
+artifacts:
+  objects:
+    location: 'gs://${PROJECT_ID}-singularity'
+    paths: ['julia-centos.sif']

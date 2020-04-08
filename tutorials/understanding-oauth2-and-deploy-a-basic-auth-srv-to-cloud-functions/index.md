@@ -88,7 +88,7 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to g
 
 ### OAuth 2.0
 
-OAuth 2.0 ([RFC 6479](https://tools.ietf.org/html/rfc6479)) is a widely used authorization framework enabling applications to access resources in all kinds of services. More specifically, OAuth 2.0 allows arbitrary **clients** (for example, a highly trusted first-party mobile app or a less trusted third-party web app) to access user’s (**resource owner**’s) resources on **resource servers** via **authorization servers** in a secure, reliable, and efficient manner.
+OAuth 2.0 ([RFC 6749](https://tools.ietf.org/html/rfc6749)) is a widely used authorization framework enabling applications to access resources in all kinds of services. More specifically, OAuth 2.0 allows arbitrary **clients** (for example, a highly trusted first-party mobile app or a less trusted third-party web app) to access user’s (**resource owner**’s) resources on **resource servers** via **authorization servers** in a secure, reliable, and efficient manner.
 
 ### Authorization Flows
 
@@ -551,7 +551,7 @@ exports.signin = (req, res) => {
 }
 ```
 
-Similar to the `auth` function, `singin` uses functions `handleACPKCESigninRequest`, `handleACSigninRequest` and `handleImplictSigninRequest` to process requests from the Authorization Code with PKCE flow, the Authorization Code flow and the Implicit flow respectively.
+Similar to the `auth` function, `signin` uses functions `handleACPKCESigninRequest`, `handleACSigninRequest` and `handleImplictSigninRequest` to process requests from the Authorization Code with PKCE flow, the Authorization Code flow and the Implicit flow respectively.
 
 The first two functions are similar to each other; both of them issue an authorization code after all the security checks are passed:
 

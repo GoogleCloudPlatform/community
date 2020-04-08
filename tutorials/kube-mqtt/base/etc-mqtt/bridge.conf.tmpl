@@ -1,0 +1,42 @@
+# =================================================================
+# Template Bridge config to Google Cloud IoT 
+#
+# see https://mosquitto.org/man/mosquitto-conf-5.html for options
+# =================================================================
+connection google_cloud_iot
+address mqtt.googleapis.com:443
+
+# Specifying which topics are bridged
+topic "" out 1 gcp/events /devices/CONFIG_DEVICE_ID/events
+topic "" out 1 gcp/state /devices/CONFIG_DEVICE_ID/state
+topic # out 1 gcp/events/ /devices/CONFIG_DEVICE_ID/events/
+topic "" in 1 gcp/config /devices/CONFIG_DEVICE_ID/config
+topic "" in 1 gcp/commands /devices/CONFIG_DEVICE_ID/commands
+topic # in 1 gcp/commands/ /devices/CONFIG_DEVICE_ID/commands/
+
+# Setting protocol version explicitly
+bridge_protocol_version mqttv311
+bridge_insecure true
+
+pid_file /tmp/mosquitto.pid
+persistence true
+persistence_location /tmp/mosquitto/
+
+# Bridge connection name and MQTT client Id,
+# enabling the connection automatically when the broker starts.
+# cleansession true
+remote_clientid projects/CONFIG_PROJECT_ID/locations/CONFIG_LOCATION/registries/CONFIG_REGISTRY/devices/CONFIG_DEVICE_ID
+local_clientid projects/CONFIG_PROJECT_ID/locations/CONFIG_LOCATION/registries/CONFIG_REGISTRY/devices/CONFIG_DEVICE_ID
+
+start_type automatic
+notifications false
+log_type all
+require_certificate false
+try_private false
+log_dest stderr
+connection_messages true
+keepalive_interval 60
+remote_username unused
+remote_password GOOGLE_CLOUD_JWT
+
+bridge_cafile BASE_DIR/roots.pem

@@ -47,13 +47,16 @@ ARG app_name=hello
 ## project, this should be "."                                              ##
 ARG phoenix_subdir=.
 
+## The build environment. This is usually prod, but you might change it if  ##
+## you have staging environments.                                           ##
+ARG build_env=prod
+
 ## End build arguments.                                                     ##
 ##############################################################################
 
 
 # Set up build environment.
-ENV MIX_ENV=prod \
-    REPLACE_OS_VARS=true \
+ENV MIX_ENV=${build_env} \
     TERM=xterm
 
 # Set the build directory.
@@ -71,7 +74,7 @@ RUN apk update \
 COPY . .
 
 # Build the application.
-RUN mix do deps.get, deps.compile, compile
+RUN mix do deps.get, compile
 
 # Build assets by running a Webpack build and Phoenix digest.
 # If you are using a different mechanism for asset builds, you may need to
@@ -86,8 +89,8 @@ RUN cd ${phoenix_subdir}/assets \
 # runtime image doesn't need to know the app name. Specifically, the binary
 # is renamed to "start_server", and the entire release is moved into
 # /opt/release.
-RUN mix release --env=prod --verbose \
-    && mv _build/prod/rel/${app_name} /opt/release \
+RUN mix release ${app_name} \
+    && mv _build/${build_env}/rel/${app_name} /opt/release \
     && mv /opt/release/bin/${app_name} /opt/release/bin/start_server
 
 
@@ -102,7 +105,6 @@ FROM alpine:latest
 
 # The Google Cloud project ID must be provided via a --build-arg.
 ARG project_id
-ENV GCLOUD_PROJECT_ID=${project_id}
 
 # Install dependencies. Bash and OpenSSL are required for ERTS. Also install
 # certificates needed to communicate with Google Cloud APIs over HTTPS.
@@ -119,7 +121,7 @@ RUN mkdir -p /usr/local/bin \
 # This is the runtime environment for a Phoenix app.
 # It listens on port 8080, and runs in the prod environment.
 ENV PORT=8080 \
-    MIX_ENV=prod \
+    GCLOUD_PROJECT_ID=${project_id} \
     REPLACE_OS_VARS=true
 EXPOSE ${PORT}
 
@@ -135,4 +137,4 @@ COPY --from=0 /opt/release .
 # sidecar container.
 CMD (/usr/local/bin/cloud_sql_proxy \
       -projects=${GCLOUD_PROJECT_ID} -dir=/tmp/cloudsql &); \
-    exec /opt/app/bin/start_server foreground
+    exec /opt/app/bin/start_server start

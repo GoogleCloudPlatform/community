@@ -1,6 +1,6 @@
 ---
-title: Run a Kotlin Spring Boot app on the Google App Engine Flexible Environment
-description: Learn how to deploy a Kotlin Spring Boot app to the Google App Engine flexible environment.
+title: Run a Kotlin Spring Boot app on the App Engine flexible environment
+description: Learn how to deploy a Kotlin Spring Boot app to the App Engine flexible environment.
 author: hhariri
 tags: App Engine, Kotlin, Spring Boot
 date_published: 2018-01-17
@@ -10,7 +10,6 @@ The [Google App Engine flexible environment](https://cloud.google.com/appengine/
 is an easy way to deploy your apps to the same infrastructure that powers
 Google's products. Using [Kotlin](https://kotlinlang.org/) and [Spring Boot](https://projects.spring.io/spring-boot/), in this tutorial you'll
 see how to deploy your application to App Engine.
-
 
 You will create a new Spring Boot application, and then you will learn how to:
 
@@ -54,33 +53,34 @@ an existing project.
 In this section, you will create a new Spring Boot app and make sure it runs. If
 you already have an app to deploy, you can use it instead.
 
-1. Use [start.spring.io](https://start.spring.io) to generate a Spring Boot application using Kotlin as the language, Maven as the build system. Alternatively,
-you can [download](https://github.com/jetbrains/gcp-samples) the sample application.
+1.  Use [start.spring.io](https://start.spring.io) to generate a Spring Boot application using Kotlin as the language, 
+    Maven as the build system. Alternatively,
+    you can [download](https://github.com/jetbrains/gcp-samples) the sample application.
 
-2. Download the generated project and save it to a local folder.
+2.  Download the generated project and save it to a local folder.
 
-3. Open the resulting project in your favourite IDE or editor and create a new source file named `MessageController.kt` with the following contents:
+3.  Open the resulting project in your favourite IDE or editor and create a new source file
+    named `MessageController.kt` with the following contents:
 
-    ```kt
-    package com.jetbrains.demo
+        package com.jetbrains.demo
 
-    import org.springframework.web.bind.annotation.*
+        import org.springframework.web.bind.annotation.*
 
-    data class Message(val text: String, val priority: String)
+        data class Message(val text: String, val priority: String)
 
-    @RestController
-    class MessageController {
-        @RequestMapping("/message")
-        fun message(): Message {
-            return Message("Hello from Google Cloud", "High")
+        @RestController
+        class MessageController {
+            @RequestMapping("/message")
+            fun message(): Message {
+                return Message("Hello from Google Cloud", "High")
+            }
         }
-    }
-    ```
 
 The package should match that of your group and artifact name.
 
 4.  Make sure you have the right dependencies in your Maven file to import
-    `RestController` as seen [here](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine/pom-dependency-example.xml).
+    `RestController` as seen
+    [here](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine/pom-dependency-example.xml).
 
 5. Run the application from the command line using Maven:
 
@@ -88,12 +88,10 @@ The package should match that of your group and artifact name.
 
 6. Open the browser and make sure you get a valid JSON response when accessing http://localhost:8080/message. The result should be:
 
-    ```json
-    {
-        "text": "Hello from Google Cloud",
-        "priority": "High"
-    }
-    ```
+        {
+            "text": "Hello from Google Cloud",
+            "priority": "High"
+        }
 
 ## Deploy your application
 
@@ -103,12 +101,10 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
 
 1.  Create a file called `app.yaml` in a new folder `src/main/appengine` with the following contents:
 
-    ```yaml
-    runtime: java
-    env: flex
-    runtime_config:
-      jdk: openjdk8
-    ```
+        runtime: java
+        env: flex
+        runtime_config:
+          jdk: openjdk8
 
     By specifying `runtime: java`, the runtime image `gcr.io/google-appenine/openjdk:8` is automatically selected
     when you deploy a JAR (*.jar) file. The JDK version is also selected using the `jdk` field.
@@ -143,7 +139,7 @@ Make a simple change and redeploy.
 
 1.  Change the text returned from the `message()` function to
 
-    "Hello from Google App Engine"
+    "Hello from App Engine"
 
 2.  Run the deployment command again:
 

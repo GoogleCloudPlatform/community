@@ -1,6 +1,6 @@
 ---
-title: How to Use Cloud Pub/Sub Notifications and Cloud Storage with App Engine
-description: Create a shared photo album using Google Cloud Pub/Sub, Google Cloud Storage, Google Cloud Datastore, and Google App Engine.
+title: Use Cloud Pub/Sub notifications and Cloud Storage with App Engine
+description: Create a shared photo album using Cloud Pub/Sub, Cloud Storage, Cloud Datastore, and App Engine.
 author: ggchien
 tags: App Engine, Cloud PubSub, Cloud Storage, Cloud Datastore
 date_published: 2017-09-05
@@ -10,7 +10,7 @@ date_published: 2017-09-05
 
 This tutorial teaches you how to integrate several Google products to simulate a
 shared photo album, hosted on App Engine standard environment and managed
-through the Cloud Platform Console. The web application has three pages:
+through the Google Cloud Platform Console. The web application has three pages:
 
 *  Home/news feed, which displays notifications.
     ![Notifications Page](https://storage.googleapis.com/gcp-community/tutorials/use-cloud-pubsub-cloud-storage-app-engine/notifications-page.png)
@@ -190,9 +190,7 @@ users might be eligible for a [free trial](https://cloud.google.com/free-trial).
 If you do not feel like coding the entire application from scratch, feel free to
 copy the [code for the default application](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app) from GitHub by running:
 
-```sh
-svn export https://github.com/GoogleCloudPlatform/community/trunk/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app
-```
+    svn export https://github.com/GoogleCloudPlatform/community/trunk/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app
 
 Note that if you choose this option, you still need to make a `lib` directory
 and run the `install` command. These tasks are outlined in steps one and three
@@ -216,7 +214,7 @@ Engine application and importing the required libraries.
 1.  In your host directory, create the file `requirements.txt` and copy in the
     following text:
 
-        jinja2==2.9.6
+        jinja2>=2.10.1
         webapp2==3.0.0b1
         GoogleAppEngineCloudStorageClient==1.9.22.1
         google-api-python-client==1.6.2
@@ -236,19 +234,17 @@ Engine application and importing the required libraries.
 1.  In your host directory, create an `app.yaml` file and copy in the following
     code:
 
-    ```yaml
-    runtime: python27
-    api_version: 1
-    threadsafe: yes
+        runtime: python27
+        api_version: 1
+        threadsafe: yes
 
-    handlers:
-    - url: /_ah/push-handlers/.*
-      script: main.app
-      login: admin
+        handlers:
+        - url: /_ah/push-handlers/.*
+          script: main.app
+          login: admin
 
-    - url: .*
-      script: main.app
-    ```
+        - url: .*
+          script: main.app
 
 ### HTML files
 
@@ -285,21 +281,19 @@ Datastore, and rendering HTML templates.
 1.  Create a `main.py` file in your host directory.
 1.  Add the required imports to the top of the file:
 
-    ```py
-    import collections
-    import json
-    import logging
-    import os
-    import urllib
+        import collections
+        import json
+        import logging
+        import os
+        import urllib
 
-    import cloudstorage
-    import jinja2
-    import webapp2
-    from google.appengine.api import images
-    from google.appengine.ext import blobstore
-    from google.appengine.ext import ndb
-    import googleapiclient.discovery
-    ```
+        import cloudstorage
+        import jinja2
+        import webapp2
+        from google.appengine.api import images
+        from google.appengine.ext import blobstore
+        from google.appengine.ext import ndb
+        import googleapiclient.discovery
 
 1.  Add constants. `THUMBNAIL_BUCKET` is the name of the Cloud Storage bucket
     you created in Set up step #8 to store the thumbnails of photos uploaded to
@@ -308,23 +302,19 @@ Datastore, and rendering HTML templates.
     your shared photo album. `NUM_NOTIFICATIONS_TO_DISPLAY` regulates the
     maximum number of notifications displayed on the home/notifications page of
     your web application. `MAX_LABELS` regulates the maximum number of labels
-    associated with each photo using Google Cloud Vision API.
+    associated with each photo using Cloud Vision API.
 
-    ```py
-    THUMBNAIL_BUCKET = '[YOUR_THUMBNAIL_BUCKET_NAME]'
-    PHOTO_BUCKET = '[YOUR_PHOTO_BUCKET_NAME]'
-    NUM_NOTIFICATIONS_TO_DISPLAY = [SOME_NUMBER]  # e.g. 5
-    MAX_LABELS = [SOME_NUMBER]  # e.g. 10
-    ```
+        THUMBNAIL_BUCKET = '[YOUR_THUMBNAIL_BUCKET_NAME]'
+        PHOTO_BUCKET = '[YOUR_PHOTO_BUCKET_NAME]'
+        NUM_NOTIFICATIONS_TO_DISPLAY = [SOME_NUMBER]  # e.g. 5
+        MAX_LABELS = [SOME_NUMBER]  # e.g. 10
 
 1.  Set up [jinja2](http://jinja.pocoo.org/docs/2.9/templates/) for HTML
     templating.
 
-    ```py
-    template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-    jinja_environment = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(template_dir))
-    ```
+        template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+        jinja_environment = jinja2.Environment(
+            loader=jinja2.FileSystemLoader(template_dir))
 
 1.  Create the `Notification` class. `Notifications` are created from Cloud
     Pub/Sub messages and stored in Cloud Datastore, to be displayed on the home
@@ -332,15 +322,13 @@ Datastore, and rendering HTML templates.
     generation number, which is used to distinguish between similar
     `notifications` and prevent the display of repeated `notifications`. These
     properties are stored as NDB model properties using the
-    [Google Cloud Datastore NDB Client Library](https://cloud.google.com/appengine/docs/standard/python/ndb/),
+    [Cloud Datastore NDB Client Library](https://cloud.google.com/appengine/docs/standard/python/ndb/),
     which allows App Engine Python apps to connect to Cloud Datastore.
 
-    ```py
-    class Notification(ndb.Model):
-        message = ndb.StringProperty()
-        date = ndb.DateTimeProperty(auto_now_add=True)
-        generation = ndb.StringProperty()
-    ```
+        class Notification(ndb.Model):
+            message = ndb.StringProperty()
+            date = ndb.DateTimeProperty(auto_now_add=True)
+            generation = ndb.StringProperty()
 
 1.  Create the `ThumbnailReference` class. `ThumbnailReferences` are stored in
     Cloud Datastore and contain information about the thumbnails stored in your
@@ -348,29 +336,25 @@ Datastore, and rendering HTML templates.
     (the name of the uploaded photo), a `thumbnail_key` (a concatenation of the
     name and generation number of an uploaded photo, used to distinguish
     similarly named photos), date of posting, a list of label descriptions
-    assigned to the corresponding photo using Google Cloud Vision API, and the
+    assigned to the corresponding photo using Cloud Vision API, and the
     url of the original photo that is stored in Cloud Storage.
 
-    ```py
-    class ThumbnailReference(ndb.Model):
-        thumbnail_name = ndb.StringProperty()
-        thumbnail_key = ndb.StringProperty()
-        date = ndb.DateTimeProperty(auto_now_add=True)
-        labels = ndb.StringProperty(repeated=True)
-        original_photo = ndb.StringProperty()
-    ```
+        class ThumbnailReference(ndb.Model):
+            thumbnail_name = ndb.StringProperty()
+            thumbnail_key = ndb.StringProperty()
+            date = ndb.DateTimeProperty(auto_now_add=True)
+            labels = ndb.StringProperty(repeated=True)
+            original_photo = ndb.StringProperty()
 
 1.  Create a `MainHandler` with a `get` method for getting information from the
     server and writing it to the home/notification page HTML file. There are no
     values to pass into the template yet.
 
-    ```py
-    class MainHandler(webapp2.RequestHandler):
-        def get(self):
-            template_values = {}
-            template = jinja_environment.get_template('[NAME OF YOUR HOME PAGE HTML FILE]')
-            self.response.write(template.render(template_values))
-    ```
+        class MainHandler(webapp2.RequestHandler):
+            def get(self):
+                template_values = {}
+                template = jinja_environment.get_template('[NAME OF YOUR HOME PAGE HTML FILE]')
+                self.response.write(template.render(template_values))
 
 1.  Create a `PhotosHandler` class with a `get` method for getting information
     from the server and writing it to the photos page HTML file. This should
@@ -383,23 +367,19 @@ Datastore, and rendering HTML templates.
     perform necessary logic using the information. Further detail is in the next
     section.
 
-    ```py
-    class ReceiveMessage(webapp2.RequestHandler):
-        def post(self):
-            # This method will be filled out in the next section.
-    ```
+        class ReceiveMessage(webapp2.RequestHandler):
+            def post(self):
+                # This method will be filled out in the next section.
 
 1.  Add the following code at the end of your `main.py` file to connect the web
     page urls with their corresponding classes.
 
-    ```py
-    app = webapp2.WSGIApplication([
-        ('/', MainHandler),
-        ('/photos', PhotosHandler),
-        ('/search', SearchHandler),
-        ('/_ah/push-handlers/receive_message', ReceiveMessage)
-    ], debug=True)
-    ```
+        app = webapp2.WSGIApplication([
+            ('/', MainHandler),
+            ('/photos', PhotosHandler),
+            ('/search', SearchHandler),
+            ('/_ah/push-handlers/receive_message', ReceiveMessage)
+        ], debug=True)
 
 ### Checkpoint
 
@@ -444,44 +424,36 @@ information from it and acknowledge its reception.
     the `ReceiveMessage` class, in your `post` method. A logging statement can
     be used for easier debugging.
 
-    ```py
-    # Logging statement is optional.
-    logging.debug('Post body: {}'.format(self.request.body))
-    message = json.loads(urllib.unquote(self.request.body))
-    attributes = message['message']['attributes']
-    ```
+        # Logging statement is optional.
+        logging.debug('Post body: {}'.format(self.request.body))
+        message = json.loads(urllib.unquote(self.request.body))
+        attributes = message['message']['attributes']
 
     `attributes` is a key:value dictionary where the keys are the Cloud Pub/Sub
     attribute names and the values are the attribute values.
 
 1.  Acknowledge the reception of the Cloud Pub/Sub message.
 
-    ```py
-    self.response.status = 204
-    ```
+        self.response.status = 204
 
 1.  Save the relevant values from the `attributes` dictionary for later use.
 
-    ```py
-    event_type = attributes.get('eventType')
-    photo_name = attributes.get('objectId')
-    generation_number = str(attributes.get('objectGeneration'))
-    overwrote_generation = attributes.get('overwroteGeneration')
-    overwritten_by_generation = attributes.get('overwrittenByGeneration')
-    ```
+        event_type = attributes.get('eventType')
+        photo_name = attributes.get('objectId')
+        generation_number = str(attributes.get('objectGeneration'))
+        overwrote_generation = attributes.get('overwroteGeneration')
+        overwritten_by_generation = attributes.get('overwrittenByGeneration')
 
 1.  Create the `thumbnail_key` using the `photo_name` and `generation_number`.
     Note that using the following logic, only photos with the extensions `.jpg`
     can be uploaded effectively.
 
-    ```py
-    try:
-      index = photo_name.index('.jpg')
-    except:
-      return
-    thumbnail_key = '{}{}{}'.format(
-        photo_name[:index], generation_number, photo_name[index:])
-    ```
+        try:
+          index = photo_name.index('.jpg')
+        except:
+          return
+        thumbnail_key = '{}{}{}'.format(
+            photo_name[:index], generation_number, photo_name[index:])
 
 You now have all of the information needed to create the necessary notification
 and communicate with Cloud Storage.
@@ -492,47 +464,43 @@ and communicate with Cloud Storage.
     Note that if the `event_type` is `OBJECT_METADATA_UPDATE`, the `message`
     field is `None`.
 
-    ```py
-    def create_notification(photo_name,
-                        event_type,
-                        generation,
-                        overwrote_generation=None,
-                        overwritten_by_generation=None):
-        if event_type == 'OBJECT_FINALIZE':
-            if overwrote_generation is not None:
-                message = '{} was uploaded and overwrote an older' \
-                    ' version of itself.'.format(photo_name)
+        def create_notification(photo_name,
+                            event_type,
+                            generation,
+                            overwrote_generation=None,
+                            overwritten_by_generation=None):
+            if event_type == 'OBJECT_FINALIZE':
+                if overwrote_generation is not None:
+                    message = '{} was uploaded and overwrote an older' \
+                        ' version of itself.'.format(photo_name)
+                else:
+                    message = '{} was uploaded.'.format(photo_name)
+            elif event_type == 'OBJECT_ARCHIVE':
+                if overwritten_by_generation is not None:
+                    message = '{} was overwritten by a newer version.'.format(
+                        photo_name)
+                else:
+                    message = '{} was archived.'.format(photo_name)
+            elif event_type == 'OBJECT_DELETE':
+                if overwritten_by_generation is not None:
+                    message = '{} was overwritten by a newer version.'.format(
+                        photo_name)
+                else:
+                    message = '{} was deleted.'.format(photo_name)
             else:
-                message = '{} was uploaded.'.format(photo_name)
-        elif event_type == 'OBJECT_ARCHIVE':
-            if overwritten_by_generation is not None:
-                message = '{} was overwritten by a newer version.'.format(
-                    photo_name)
-            else:
-                message = '{} was archived.'.format(photo_name)
-        elif event_type == 'OBJECT_DELETE':
-            if overwritten_by_generation is not None:
-                message = '{} was overwritten by a newer version.'.format(
-                    photo_name)
-            else:
-                message = '{} was deleted.'.format(photo_name)
-        else:
-            message = None
+                message = None
 
-        return Notification(message=message, generation=generation)
-    ```
+            return Notification(message=message, generation=generation)
 
 1.  Call the `create_notification` helper function in the `post` method of the
     `ReceiveMessage` class.
 
-    ```py
-    new_notification = create_notification(
-        photo_name,
-        event_type,
-        generation_number,
-        overwrote_generation=overwrote_generation,
-        overwritten_by_generation=overwritten_by_generation)
-    ```
+        new_notification = create_notification(
+            photo_name,
+            event_type,
+            generation_number,
+            overwrote_generation=overwrote_generation,
+            overwritten_by_generation=overwritten_by_generation)
 
 1.  Check if the new notification has already been stored. Cloud Pub/Sub
     messaging guarantees at-least-once delivery, meaning a Cloud Pub/Sub notification
@@ -540,31 +508,25 @@ and communicate with Cloud Storage.
     has been no new change to the Cloud Storage photo bucket, and the Cloud Pub/Sub
     notification can be ignored.
 
-    ```py
-    exists_notification = Notification.query(
-        Notification.message == new_notification.message,
-        Notification.generation == new_notification.generation).get()
+        exists_notification = Notification.query(
+            Notification.message == new_notification.message,
+            Notification.generation == new_notification.generation).get()
 
-    if exists_notification:
-        return
-    ```
+        if exists_notification:
+            return
 
 1.  Do not act for `OBJECT_METADATA_UPDATE` events, as they signal no change to
     the Cloud Storage photo bucket images themselves.
 
-    ```py
-    if new_notification.message is None:
-        return
-    ```
+        if new_notification.message is None:
+            return
 
 1.  Store the new notification in Cloud Datastore. Because of the `if` statements
     added in the previous two steps, this, and all further code in the `ReceiveMessage`
     class, is only executed if the new notification is not a repeat and is not for an
     `OBJECT_METADATA_UPDATE` event.
 
-    ```py
-    new_notification.put()
-    ```
+        new_notification.put()
 
 ### Writing `Notifications` to the HTML file
 
@@ -573,11 +535,9 @@ and communicate with Cloud Storage.
     page HTML file. Do this in `main.py`, in the `MainHandler`, in the `get`
     method.
 
-    ```py
-    notifications = Notification.query().order(
-        -Notification.date).fetch(NUM_NOTIFICATIONS_TO_DISPLAY)
-    template_values = {'notifications': notifications}
-    ```
+        notifications = Notification.query().order(
+            -Notification.date).fetch(NUM_NOTIFICATIONS_TO_DISPLAY)
+        template_values = {'notifications': notifications}
 
 1.  In the [`templates/notifications.html`](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app/templates/notifications.html)
     file, you can see a loop that displays the list you rendered to the template
@@ -612,10 +572,8 @@ Cloud Datastore.
 Because these actions only occur in the case of a photo upload, an `if` block
 should be used inside the `ReceiveMessage` class of `main.py`.
 
-```py
-if event_type == 'OBJECT_FINALIZE':
-    # Photo upload-specific code here.
-```
+    if event_type == 'OBJECT_FINALIZE':
+        # Photo upload-specific code here.
 
 ### Creating the thumbnail
 
@@ -625,22 +583,18 @@ to perform the required transformations.
 
 1.  Write the `create_thumbnail` helper function.
 
-    ```py
-    def create_thumbnail(photo_name):
-        filename = '/gs/{}/{}'.format(PHOTO_BUCKET, photo_name)
-        image = images.Image(filename=filename)
-        image.resize(width=180, height=200)
-        return image.execute_transforms(output_encoding=images.JPEG)
-    ```
+        def create_thumbnail(photo_name):
+            filename = '/gs/{}/{}'.format(PHOTO_BUCKET, photo_name)
+            image = images.Image(filename=filename)
+            image.resize(width=180, height=200)
+            return image.execute_transforms(output_encoding=images.JPEG)
 
     This returns the thumbnail image data in a `string` format.
 
 1.  Call the `create_thumbnail` helper function in the `post` method of the
     `ReceiveMessage` class.
 
-    ```py
-    thumbnail = create_thumbnail(photo_name)
-    ```
+        thumbnail = create_thumbnail(photo_name)
 
 ### Storing the thumbnail in Cloud Storage
 
@@ -655,24 +609,20 @@ necessary.
 
 1.  Write the `store_thumbnail_in_gcs` helper function.
 
-    ```py
-    def store_thumbnail_in_gcs(thumbnail_key, thumbnail):
-        write_retry_params = cloudstorage.RetryParams(
-            backoff_factor=1.1,
-            max_retry_period=15)
-        filename = '/{}/{}'.format(THUMBNAIL_BUCKET, thumbnail_key)
-        with cloudstorage.open(
-                filename, 'w', content_type='image/jpeg',
-                retry_params=write_retry_params) as filehandle:
-            filehandle.write(thumbnail)
-    ```
+        def store_thumbnail_in_gcs(thumbnail_key, thumbnail):
+            write_retry_params = cloudstorage.RetryParams(
+                backoff_factor=1.1,
+                max_retry_period=15)
+            filename = '/{}/{}'.format(THUMBNAIL_BUCKET, thumbnail_key)
+            with cloudstorage.open(
+                    filename, 'w', content_type='image/jpeg',
+                    retry_params=write_retry_params) as filehandle:
+                filehandle.write(thumbnail)
 
 1.  Call the `store_thumbnail_in_gcs` helper function in the `post` method of
     the `ReceiveMessage` class.
 
-    ```py
-    store_thumbnail_in_gcs(thumbnail_key, thumbnail)
-    ```
+        store_thumbnail_in_gcs(thumbnail_key, thumbnail)
 
 ### Labeling the photo using Google Cloud Vision
 
@@ -684,62 +634,56 @@ later use these labels to search for specific photos.
 1.  Create the `uri` to reference the appropriate photo in the Cloud Storage
     photo bucket.
 
-    ```py
-    uri = 'gs://{}/{}'.format(PHOTO_BUCKET, photo_name)
-    ```
+        uri = 'gs://{}/{}'.format(PHOTO_BUCKET, photo_name)
 
 1.  Write the `get_labels` helper function.
 
-    ```py
-    def get_labels(uri, photo_name):
-        service = googleapiclient.discovery.build('vision', 'v1')
-        labels = set()
+        def get_labels(uri, photo_name):
+            service = googleapiclient.discovery.build('vision', 'v1')
+            labels = set()
 
-        # Label photo with its name, sans extension.
-        index = photo_name.index('.jpg')
-        photo_name_label = photo_name[:index]
-        labels.add(photo_name_label)
+            # Label photo with its name, sans extension.
+            index = photo_name.index('.jpg')
+            photo_name_label = photo_name[:index]
+            labels.add(photo_name_label)
 
-        service_request = service.images().annotate(body={
-            'requests': [{
-                'image': {
-                    'source': {
-                        'imageUri': uri
-                    }
-                },
-                'features': [{
-                    'type': 'LABEL_DETECTION',
-                    'maxResults': MAX_LABELS
+            service_request = service.images().annotate(body={
+                'requests': [{
+                    'image': {
+                        'source': {
+                            'imageUri': uri
+                        }
+                    },
+                    'features': [{
+                        'type': 'LABEL_DETECTION',
+                        'maxResults': MAX_LABELS
+                    }]
                 }]
-            }]
-        })
-        response = service_request.execute()
-        labels_full = response['responses'][0].get('labelAnnotations')
+            })
+            response = service_request.execute()
+            labels_full = response['responses'][0].get('labelAnnotations')
 
-        ignore = set(['of', 'like', 'the', 'and', 'a', 'an', 'with'])
+            ignore = set(['of', 'like', 'the', 'and', 'a', 'an', 'with'])
 
-        # Add labels to the labels list if they are not already in the list and are
-        # not in the ignore list.
-        if labels_full is not None:
-            for label in labels_full:
-                if label['description'] not in labels:
-                    labels.add(label['description'])
-                    # Split the label into individual words, also to be added to
-                    # labels list if not already.
-                    descriptors = label['description'].split()
-                    for descript in descriptors:
-                        if descript not in labels and descript not in ignore:
-                            labels.add(descript)
+            # Add labels to the labels list if they are not already in the list and are
+            # not in the ignore list.
+            if labels_full is not None:
+                for label in labels_full:
+                    if label['description'] not in labels:
+                        labels.add(label['description'])
+                        # Split the label into individual words, also to be added to
+                        # labels list if not already.
+                        descriptors = label['description'].split()
+                        for descript in descriptors:
+                            if descript not in labels and descript not in ignore:
+                                labels.add(descript)
 
-        return labels
-    ```
+            return labels
 
 1.  Call the `get_labels` helper function in the `post` method of the
     `ReceiveMessage` class.
 
-    ```py
-    labels = get_labels(uri, photo_name)
-    ```
+        labels = get_labels(uri, photo_name)
 
 The `labels` list has now been obtained and can be used to build the
 `ThumbnailReference`.
@@ -753,40 +697,32 @@ At this point, the only other thing you need to create the required
 1.  Write the `get_original_url` helper function to return the url of the
     original photo.
 
-    ```py
-    def get_original_url(photo_name, generation):
-        original_photo = 'https://storage.googleapis.com/' \
-            '{}/{}?generation={}'.format(
-                PHOTO_BUCKET,
-                photo_name,
-                generation)
-        return original_photo
-    ```
+        def get_original_url(photo_name, generation):
+            original_photo = 'https://storage.googleapis.com/' \
+                '{}/{}?generation={}'.format(
+                    PHOTO_BUCKET,
+                    photo_name,
+                    generation)
+            return original_photo
 
 1.  Call the `get_original_url` helper function in the `post` method of the
     `ReceiveMessage` class.
 
-    ```py
-    original_photo = get_original_url(photo_name, generation_number)
-    ```
+        original_photo = get_original_url(photo_name, generation_number)
 
 1.  Create the `ThumbnailReference` using the information gathered from the
     Cloud Pub/Sub message, `get_labels` function, and `get_original_url`
     function.
 
-    ```py
-    thumbnail_reference = ThumbnailReference(
-                thumbnail_name=photo_name,
-                thumbnail_key=thumbnail_key,
-                labels=list(labels),
-                original_photo=original_photo)
-    ```
+        thumbnail_reference = ThumbnailReference(
+                    thumbnail_name=photo_name,
+                    thumbnail_key=thumbnail_key,
+                    labels=list(labels),
+                    original_photo=original_photo)
 
 1.  Store the newly created `ThumbnailReference` in Cloud Datastore.
 
-    ```py
-    thumbnail_reference.put()
-    ```
+        thumbnail_reference.put()
 
 You have now completed all of the code necessary to store the information about
 an uploaded photo in Cloud Storage and Cloud Datastore.
@@ -797,12 +733,10 @@ an uploaded photo in Cloud Storage and Cloud Datastore.
     a [serving url](https://cloud.google.com/appengine/docs/standard/python/images/#get-serving-url)
     that accesses the thumbnail from the Cloud Storage thumbnail bucket.
 
-    ```py
-    def get_thumbnail_serving_url(photo_name):
-        filename = '/gs/{}/{}'.format(THUMBNAIL_BUCKET, photo_name)
-        blob_key = blobstore.create_gs_key(filename)
-        return images.get_serving_url(blob_key)
-    ```
+        def get_thumbnail_serving_url(photo_name):
+            filename = '/gs/{}/{}'.format(THUMBNAIL_BUCKET, photo_name)
+            blob_key = blobstore.create_gs_key(filename)
+            return images.get_serving_url(blob_key)
 
 1.  Fetch all `ThumbnailReferences` from Cloud Datastore in reverse date order.
     Create an ordered dictionary, calling upon the `get_thumbnail_serving_url`
@@ -811,15 +745,13 @@ an uploaded photo in Cloud Storage and Cloud Datastore.
     `template_values`, to be written to the appropriate HTML file. Do this in
     `main.py`, in the `PhotosHandler`, in the `get` method.
 
-    ```py
-    thumbnail_references = ThumbnailReference.query().order(
-        -ThumbnailReference.date).fetch()
-    thumbnails = collections.OrderedDict()
-    for thumbnail_reference in thumbnail_references:
-        img_url = get_thumbnail_serving_url(thumbnail_reference.thumbnail_key)
-        thumbnails[img_url] = thumbnail_reference
-    template_values = {'thumbnails': thumbnails}
-    ```
+        thumbnail_references = ThumbnailReference.query().order(
+            -ThumbnailReference.date).fetch()
+        thumbnails = collections.OrderedDict()
+        for thumbnail_reference in thumbnail_references:
+            img_url = get_thumbnail_serving_url(thumbnail_reference.thumbnail_key)
+            thumbnails[img_url] = thumbnail_reference
+        template_values = {'thumbnails': thumbnails}
 
 1.  In the [`templates/photos.html`](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app/templates/notifications.html) file,
     you can see that it loops through the thumbnails dictionary you rendered to
@@ -857,34 +789,28 @@ Because these actions only occur in the case of a photo delete or archive, an
 where the initial `if` statement of the block is the one specifying the event
 type as `OBJECT_FINALIZE`.
 
-```py
-elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
-    # Photo delete/archive-specific code here.
-```
+    elif event_type == 'OBJECT_DELETE' or event_type == 'OBJECT_ARCHIVE':
+        # Photo delete/archive-specific code here.
 
 1.  Write the `delete_thumbnail` helper function to delete the specified
     thumbnail from the Cloud Storage thumbnail bucket and delete the
     `ThumbnailReference` from Cloud Datastore.
 
-    ```py
-    def delete_thumbnail(thumbnail_key):
-        filename = '/gs/{}/{}'.format(THUMBNAIL_BUCKET, thumbnail_key)
-        blob_key = blobstore.create_gs_key(filename)
-        images.delete_serving_url(blob_key)
-        thumbnail_reference = ThumbnailReference.query(
-            ThumbnailReference.thumbnail_key == thumbnail_key).get()
-        thumbnail_reference.key.delete()
+        def delete_thumbnail(thumbnail_key):
+            filename = '/gs/{}/{}'.format(THUMBNAIL_BUCKET, thumbnail_key)
+            blob_key = blobstore.create_gs_key(filename)
+            images.delete_serving_url(blob_key)
+            thumbnail_reference = ThumbnailReference.query(
+                ThumbnailReference.thumbnail_key == thumbnail_key).get()
+            thumbnail_reference.key.delete()
 
-        filename = '/{}/{}'.format(THUMBNAIL_BUCKET, thumbnail_key)
-        cloudstorage.delete(filename)
-    ```
+            filename = '/{}/{}'.format(THUMBNAIL_BUCKET, thumbnail_key)
+            cloudstorage.delete(filename)
 
 1.  Call the `delete_thumbnail` helper function in the `post` method of the
     `ReceiveMessage` class.
 
-    ```py
-    delete_thumbnail(thumbnail_key)
-    ```
+        delete_thumbnail(thumbnail_key)
 
 ### Checkpoint
 
@@ -925,25 +851,21 @@ display the correct thumbnails in the search page.
         all `ThumbnailReferences` from Cloud Datastore, you should only add the
         thumbnails labeled with the `search-term` to the dictionary.
 
-        ```py
-        references = ThumbnailReference.query().order(
-            -ThumbnailReference.date).fetch()
-        # Build dictionary of img_url of thumbnails to
-        # thumbnail_references that have the given label.
-        thumbnails = collections.OrderedDict()
-        for reference in references:
-            labels = reference.labels
-            if search_term in labels:
-                img_url = get_thumbnail_serving_url(reference.thumbnail_key)
-                thumbnails[img_url] = reference
-        ```
+            references = ThumbnailReference.query().order(
+                -ThumbnailReference.date).fetch()
+            # Build dictionary of img_url of thumbnails to
+            # thumbnail_references that have the given label.
+            thumbnails = collections.OrderedDict()
+            for reference in references:
+                labels = reference.labels
+                if search_term in labels:
+                    img_url = get_thumbnail_serving_url(reference.thumbnail_key)
+                    thumbnails[img_url] = reference
 
     1.  Include the thumbnails dictionary in `template_values`, to be written to
         the search page HTML file.
 
-        ```py
-        template_values = {'thumbnails': thumbnails}
-        ```
+            template_values = {'thumbnails': thumbnails}
 
 1.  In the [`search.html`](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/use-cloud-pubsub-cloud-storage-app-engine/shared-photo-album-app/templates/notifications.html) file,
     you can see that it defines the HTML for a search bar. And like in the
@@ -991,21 +913,17 @@ file and where to find it.
 1.  Open your `app.yaml` file and include the following, replacing
     `[DIRECTORY_NAME]` with whatever you named your directory in step 1.
 
-    ```yaml
-    - url: /[DIRECTORY_NAME]
-        static_dir: [DIRECTORY_NAME]
+        - url: /[DIRECTORY_NAME]
+            static_dir: [DIRECTORY_NAME]
 
-    - url: /static
-        static_dir: static
-    ```
+        - url: /static
+            static_dir: static
 
     Note that this code should go in the `handlers` section of your `app.yaml`
     file and must be above
 
-    ```yaml
-    - url: .*
-        script: main.app
-    ```
+        - url: .*
+            script: main.app
 
 1.  Inside the directory you created, create a CSS file. Leave it blank for now;
     you'll add code to it in the following sections. Note that your file must
@@ -1022,11 +940,9 @@ should run your app locally after each step to see the changes.
 1.  Add the following code to your `CSS` file to set the background color.
     Replace [COLOR] with a color of your choice.
 
-    ```css
-    body {
-      background-color: [COLOR];
-    }
-    ```
+        body {
+          background-color: [COLOR];
+        }
 
     You can specify the color by typing in the name of it, such as `blue`, by
     specifying the rgb configuration, or by giving a hexadecimal representation.
@@ -1035,16 +951,14 @@ should run your app locally after each step to see the changes.
 1.  Next you'll create a box to hold the links to other pages. Add the following
     code to your `CSS` file.
 
-    ```css
-    ul.links {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      width: 10%;
-      background-color: [COLOR];
-      position: fixed;
-    }
-    ```
+        ul.links {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          width: 10%;
+          background-color: [COLOR];
+          position: fixed;
+        }
 
     Note that you should make the `background-color` here different from the color
     in step 1; otherwise it won't look any different than before. Setting the
@@ -1056,16 +970,14 @@ should run your app locally after each step to see the changes.
 1.  You can center the links within their box and change their color by adding
     the following code.
 
-    ```css
-    ul.links li a {
-      display: block;
-      color: [COLOR];
-      padding: 8px 8px;
-      text-align: center;
-      font-family: '[FONT]', [STYLE];
-      border-bottom: 1px solid [COLOR];
-    }
-    ```
+        ul.links li a {
+          display: block;
+          color: [COLOR];
+          padding: 8px 8px;
+          text-align: center;
+          font-family: '[FONT]', [STYLE];
+          border-bottom: 1px solid [COLOR];
+        }
 
     If `font-family` is not specified, the default font will be used. You can
     [choose a font](https://fonts.google.com/) by clicking on one that appeals
@@ -1073,42 +985,36 @@ should run your app locally after each step to see the changes.
     bottom of your screen and follow the instructions to link it to your html
     and CSS files. The style of the font will be either `serif` or `sans-serif`.
 
-    The border-bottom property adds a dividing line between each link. To avoid
+    The `border-bottom` property adds a dividing line between each link. To avoid
     having an extra line at the bottom of the links box, add:
 
-    ```css
-    ul.links li:last-child {
-      border-bottom: none;
-    }
-    ```
+        ul.links li:last-child {
+          border-bottom: none;
+        }
 
 1.  To change the color of each link and its background when it is hovered over
     with the cursor, add:
 
-    ```css
-    ul.links li a:hover {
-      background-color: [COLOR];
-      color: [COLOR];
-    }
-    ```
+        ul.links li a:hover {
+          background-color: [COLOR];
+          color: [COLOR];
+        }
 
 1.  The title of the page is contained in the `h1` HTML blocks. You can center
     it, set the color, font, and font size, and add an underline with the
     following block of code.
 
-    ```css
-    h1 {
-      color: [COLOR];
-      text-align: center;
-      font-family: '[FONT]', [STYLE];
-      font-size: [SIZE]px;
-      border-bottom: 3px solid [COLOR];
-      padding: 15px;
-      width: 60%;
-      margin: auto;
-      margin-bottom: 30px;
-    }
-    ```
+        h1 {
+          color: [COLOR];
+          text-align: center;
+          font-family: '[FONT]', [STYLE];
+          font-size: [SIZE]px;
+          border-bottom: 3px solid [COLOR];
+          padding: 15px;
+          width: 60%;
+          margin: auto;
+          margin-bottom: 30px;
+        }
 
    `text-align: center` centers the title in the middle of the page.
    `border-bottom` adds the underline. `padding` sets the space between the
@@ -1133,14 +1039,12 @@ focus on styling the elements unique to each page, starting with the home page.
 
 1.  Indent the notification messages. In your CSS file add:
 
-    ```css
-    ul.notification {
-      margin: 10px;
-      margin-left: 20%;
-      list-style-type: [STYLE];
-      font-family: '[FONT]', [STYLE];
-    }
-    ```
+        ul.notification {
+          margin: 10px;
+          margin-left: 20%;
+          list-style-type: [STYLE];
+          font-family: '[FONT]', [STYLE];
+        }
 
     `list-style-type` sets what kind of list the notifications appear in.
     [Pick a value](https://www.w3schools.com/cssref/pr_list-style-type.asp#propertyvalues)
@@ -1149,21 +1053,17 @@ focus on styling the elements unique to each page, starting with the home page.
 1.  You can set the color of your bullet points, roman numerals, or whatever
     `list-style-type` you chose above by adding:
 
-    ```css
-    ul.notification li {
-      color: [COLOR];
-    }
-    ```
+        ul.notification li {
+          color: [COLOR];
+        }
 
 1.  Set the font for the notification message:
 
-    ```css
-    ul.notification li p {
-      font-size: [SIZE]px;
-      font-family: '[FONT]', [STYLE];
-      color: [COLOR];
-    }
-    ```
+        ul.notification li p {
+          font-size: [SIZE]px;
+          font-family: '[FONT]', [STYLE];
+          color: [COLOR];
+        }
 
 ### Styling the search bar on the search page
 
@@ -1176,25 +1076,21 @@ file from getting too cluttered.
 1.  In the CSS file, add style for the `h2` tag that gets displayed when there
     are no search results.
 
-    ```css
-    h2 {
-      color: [COLOR];
-      text-align: center;
-      font-size: [SIZE]px;
-      font-family: '[FONT]', [STYLE];
-    }
-    ```
+        h2 {
+          color: [COLOR];
+          text-align: center;
+          font-size: [SIZE]px;
+          font-family: '[FONT]', [STYLE];
+        }
 
 1.  In the CSS file, add code to center the search bar and place it `50px` below
     the underlined title.
 
-    ```css
-    form.search {
-      text-align: center;
-      font-family: '[FONT]', [STYLE];
-      margin-top: 50px;
-    }
-    ```
+        form.search {
+          text-align: center;
+          font-family: '[FONT]', [STYLE];
+          margin-top: 50px;
+        }
 
 ### Checkpoint
 
@@ -1232,25 +1128,21 @@ appear in a table format.
         page scrolled down) and appear centered, i.e. not too far on the right
         of the page either.
 
-        ```css
-        div.gallery {
-          margin-left: 12%;
-          margin-right: 10%;
-        }
-        ```
+            div.gallery {
+              margin-left: 12%;
+              margin-right: 10%;
+            }
 
     1.  Use the thumbnail class to create a box to hold the thumbnail image and
         its caption:
         
-        ```css
-        div.thumbnail {
-          margin: 5px;
-          float: left;
-          width: 180px;
-          height: 240px;
-          border: 1px solid [COLOR];
-        }
-        ```
+            div.thumbnail {
+              margin: 5px;
+              float: left;
+              width: 180px;
+              height: 240px;
+              border: 1px solid [COLOR];
+            }
 
         `margin` sets the spacing between the thumbnails. The `width` and
         `height` properties match the width and height that thumbnails are
@@ -1259,22 +1151,18 @@ appear in a table format.
 
     1.  Further format the thumbnail class to display thumbnails in a table:
 
-        ```css
-        div.thumbnail:after {
-          content: "";
-          display: table;
-          clear: both;
-        }
-        ```
+            div.thumbnail:after {
+              content: "";
+              display: table;
+              clear: both;
+            }
 
     1.  Center the thumbnail image within the thumbnail box:
 
-        ```css
-        div.thumbnail img {
-          display: block;
-          margin: auto;
-        }
-        ```
+            div.thumbnail img {
+              display: block;
+              margin: auto;
+            }
 
         Note that while the width of the thumbnail box is 180 pixels, the same
         width that thumbnails are resized to in `main.py`, portrait oriented
@@ -1283,13 +1171,11 @@ appear in a table format.
     1.  Center the caption 10 pixels below the thumbnail image using the
         `descent` class:
 
-        ```css
-        div.descent {
-          padding: 10px;
-          text-align: center;
-          font-family: '[FONT]', [STYLE];
-        }
-        ```
+            div.descent {
+              padding: 10px;
+              text-align: center;
+              font-family: '[FONT]', [STYLE];
+            }
 
 ### Checkpoint
 
@@ -1327,30 +1213,26 @@ into your HTML files.
         them, they turn slightly transparent and the cursor changes to a pointer
         to indicate to the user that they can click on thumbnails.
 
-        ```css
-        div.thumbnail img:hover {
-          opacity: 0.7;
-          cursor: pointer;
-        }
-        ```
+            div.thumbnail img:hover {
+              opacity: 0.7;
+              cursor: pointer;
+            }
 
     1.  Format the `modal` that takes over the whole page when a thumbnail is
         clicked:
 
-        ```css
-        div.modal {
-          display: none;
-          position: fixed;
-          z-index: 1;
-          padding-top: 100px;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          overflow: auto;
-          background-color: rgba(0,0,0,0.95
-        }
-        ```
+            div.modal {
+              display: none;
+              position: fixed;
+              z-index: 1;
+              padding-top: 100px;
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
+              overflow: auto;
+              background-color: rgba(0,0,0,0.95
+            }
 
         `display` is initially set to none because the modal should only be
         displayed when a thumbnail is clicked. The logic for this will be added
@@ -1360,41 +1242,35 @@ into your HTML files.
 
     1.  Place the `close` button in the top right corner of the modal:
 
-        ```css
-        span.close {
-          position: absolute;
-          top: 15px;
-          right: 35px;
-          color: #f1f1f1;
-          font-size: 40px;
-          font-weight: bold;
-          transition: 0.3s;
-        }
-        ```
+            span.close {
+              position: absolute;
+              top: 15px;
+              right: 35px;
+              color: #f1f1f1;
+              font-size: 40px;
+              font-weight: bold;
+              transition: 0.3s;
+            }
 
     1.  Add hover and focus effects to the `close` button:
 
-        ```css
-        span.close:hover,
-        span.close:focus {
-          color: #bbb;
-          text-decoration: none;
-          cursor: pointer;
-        }
-        ```
+            span.close:hover,
+            span.close:focus {
+              color: #bbb;
+              text-decoration: none;
+              cursor: pointer;
+            }
 
     1.  Format `modal-content`, the box that will hold the original photo and
         caption.
 
-        ```css
-        div.modal-content {
-          position: relative;
-          margin: auto;
-          padding: 0;
-          width: 55%;
-          max-width: 700px;
-        }
-        ```
+            div.modal-content {
+              position: relative;
+              margin: auto;
+              padding: 0;
+              width: 55%;
+              max-width: 700px;
+            }
 
         This centers `modal-content` and sets it to take up 55% of the page,
         with a max width of 700 pixels. This means that even if 700 pixels is
@@ -1403,52 +1279,44 @@ into your HTML files.
 
     1.  Set the default display of `mySlides` to none:
 
-        ```css
-        div.mySlides {
-          display: none;
-        }
-        ```
+            div.mySlides {
+              display: none;
+            }
 
     1.  Format the image in `mySlides` to match the width of `modal-content`:
 
-        ```css
-        div.mySlides img {
-          display: block;
-          margin: auto;
-          width: 100%;
-          max-width: 700px;
-          height: auto;
-        }
-        ```
+            div.mySlides img {
+              display: block;
+              margin: auto;
+              width: 100%;
+              max-width: 700px;
+              height: auto;
+            }
 
         `height` is set to auto so the image will retain its original proportions.
 
     1.  Position `caption-container` below the image in the `modal-content` box,
         where `[COLOR]` is the color the caption text     will be.
 
-        ```css
-        .caption-container {
-            text-align: center;
-            padding: 2px 16px;
-            color: [COLOR];
-        }
-        ```
+            .caption-container {
+                text-align: center;
+                padding: 2px 16px;
+                color: [COLOR];
+            }
 
     1.  Format the `caption` to be centered in `caption-container` and have a
         height of 20 pixels:
 
-        ```css
-        #caption {
-          margin: auto;
-          display: block;
-          width: 80%;
-          max-width: 700px;
-          text-align: center;
-          font-family: '[FONT]', [STYLE];
-          padding: 10px 0;
-          height: 20px;
-        }
-        ```
+            #caption {
+              margin: auto;
+              display: block;
+              width: 80%;
+              max-width: 700px;
+              text-align: center;
+              font-family: '[FONT]', [STYLE];
+              padding: 10px 0;
+              height: 20px;
+            }
 
 1.  Add JavaScript embedded within the HTML. The instructions in this section
     will need to be implemented in both HTML files associated with the photos
@@ -1459,11 +1327,9 @@ into your HTML files.
     1.  Implement the function to close the modal after the end of the `gallery`
         class.
 
-        ```js
-        function closeModal() {
-            document.getElementById('myModal').style.display = "none";
-        }
-        ```
+            function closeModal() {
+                document.getElementById('myModal').style.display = "none";
+            }
 
         This function is called whenever the close button is clicked on and
         resets the `modal` class to not be displayed.
@@ -1479,33 +1345,29 @@ into your HTML files.
     1.  Add a variable and implement `currentSlide()` in the same script that
         contains `closeModal()`.
 
-        ```js
-        var slideIndex;
+            var slideIndex;
 
-        function currentSlide(n) {
-            slideIndex = n;
-            showSlides(slideIndex);
-        }
-        ```
+            function currentSlide(n) {
+                slideIndex = n;
+                showSlides(slideIndex);
+            }
 
         Note that `currentSlide()` calls another function, `showSlides()`.
         You'll implement this next.
 
     1.  Implement `showSlides`:
 
-        ```js
-        function showSlides(n) {
-            var i;
-            var slides = document.getElementsByClassName('mySlides');
-            var captionText = document.getElementById("caption");
-            var image = document.getElementById(slideIndex + "");
-            for (i = 0; i < slides.length; i++) {
-            slides[i].style.display = "none";
+            function showSlides(n) {
+                var i;
+                var slides = document.getElementsByClassName('mySlides');
+                var captionText = document.getElementById("caption");
+                var image = document.getElementById(slideIndex + "");
+                for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+                }
+                slides[slideIndex-1].style.display = "block";
+                captionText.innerHTML = image.alt;
             }
-            slides[slideIndex-1].style.display = "block";
-            captionText.innerHTML = image.alt;
-        }
-        ```
 
         This function sets every `mySlides` class to not be displayed except for
         the one that contains the original photo of the thumbnail that was
@@ -1553,56 +1415,48 @@ another thumbnail.
 
     1.  Place the `numbertext` class in the top left of the original photo:
 
-        ```css
-        .numbertext {
-          color: [COLOR];
-          font-size: 12px;
-          font-family: '[FONT]', [STYLE];
-          padding: 8px 12px;
-          position: absolute;
-          top: 0;
-        }
-        ```
+            .numbertext {
+              color: [COLOR];
+              font-size: 12px;
+              font-family: '[FONT]', [STYLE];
+              padding: 8px 12px;
+              position: absolute;
+              top: 0;
+            }
 
     1.  Place the next and previous arrows over the photo:
 
-        ```css
-        .prev,
-        .next {
-          cursor: pointer;
-          position: absolute;
-          top: 50%;
-          width: auto;
-          padding: 15px;
-          margin-top: -20px;
-          color: white;
-          font-weight: bold;
-          font-size: 20px;
-          font-family: '[FONT]', [STYLE];
-          transition: 0.6s ease;
-          border-radius: 0 3px 3px 0;
-          user-select: none;
-          -webkit-user-select: none;
-        }
-        ```
+            .prev,
+            .next {
+              cursor: pointer;
+              position: absolute;
+              top: 50%;
+              width: auto;
+              padding: 15px;
+              margin-top: -20px;
+              color: white;
+              font-weight: bold;
+              font-size: 20px;
+              font-family: '[FONT]', [STYLE];
+              transition: 0.6s ease;
+              border-radius: 0 3px 3px 0;
+              user-select: none;
+              -webkit-user-select: none;
+            }
 
     1.  Reposition the next arrow to be on the right side of the photo:
 
-        ```css
-        .next {
-          right: 0;
-          border-radius: 3px 0 0 3px;
-        }
-        ```
+            .next {
+              right: 0;
+              border-radius: 3px 0 0 3px;
+            }
 
     1.  Add hover effects to arrows:
 
-        ```css
-        .prev:hover,
-        .next:hover {
-          background-color: rgba(0, 0, 0, 0.8);
-        }
-        ```
+            .prev:hover,
+            .next:hover {
+              background-color: rgba(0, 0, 0, 0.8);
+            }
 
 1.  Add JavaScript embedded within the HTML. The instructions in this section
     will need to be implemented in both HTML files associated with the photos
@@ -1610,22 +1464,18 @@ another thumbnail.
 
     1.  Implement the plusSlides function:
 
-        ```js
-        function plusSlides(n) {
-          slideIndex +=n;
-          showSlides(slideIndex);
-        }
-        ```
+            function plusSlides(n) {
+              slideIndex +=n;
+              showSlides(slideIndex);
+            }
 
     1.  Additional logic needs to be added to `showSlides` to allow wrapping
         around from the last photo to the first photo and when the next arrow is
         clicked and vice versa. Add the following two lines of code above where
         `var image` is declared.
 
-        ```js
-        if (n > slides.length) {slideIndex = 1}
-        if (n < 1) {slideIndex = slides.length}
-        ```
+            if (n > slides.length) {slideIndex = 1}
+            if (n < 1) {slideIndex = slides.length}
 
 ### Checkpoint
 
@@ -1667,113 +1517,95 @@ terms they can use to search for the displayed photo.
 
     1.  First, position the `labels-container` below the `caption-container`:
 
-        ```css
-        div.labels-container {
-          text-align: center;
-          color: [COLOR];
-          margin: 0;
-        }
-        ```
+            div.labels-container {
+              text-align: center;
+              color: [COLOR];
+              margin: 0;
+            }
 
     1.  Next, format the `labels` id:
 
-        ```css
-        #labels {
-          margin: auto;
-          display: block;
-          width: 80%;
-          max-width: 700px;
-          text-align: center;
-          font-family: '[FONT]', [STYLE];
-          padding: 10px 0;
-          font-size: [SIZE]px;
-        }
-        ```
+            #labels {
+              margin: auto;
+              display: block;
+              width: 80%;
+              max-width: 700px;
+              text-align: center;
+              font-family: '[FONT]', [STYLE];
+              padding: 10px 0;
+              font-size: [SIZE]px;
+            }
 
     1.  You'll also want to format the list of labels held in `myLabels`:
 
-        ```css
-        div.myLabels {
-          display: none;
-          margin: 0;
-          text-align: center;
-          font-family: '[FONT]', [STYLE];
-          font-size: [SIZE]px;
-        }
-        ```
+            div.myLabels {
+              display: none;
+              margin: 0;
+              text-align: center;
+              font-family: '[FONT]', [STYLE];
+              font-size: [SIZE]px;
+            }
 
     1.  Finally, you'll need to reset `margin-top` for the prev and next arrows.
         In your
 
-        ```css
-        .prev,
-        .next {
-          ...
-        }
-        ```
+            .prev,
+            .next {
+              ...
+            }
 
         style block, add `prevPhotos` and `nextPhotos` to be formatted:
 
-        ```css
-        .prev,
-        .next,
-        .prevPhotos,
-        .nextPhotos {
-          ...
-        }
-        ```
+            .prev,
+            .next,
+            .prevPhotos,
+            .nextPhotos {
+              ...
+            }
 
         Add a new style block, to keep `prevPhotos` and `nextPhotos` centered on
         the photo after the addition of the `labels-container`:
 
-        ```css
-        .prevPhotos,
-        .nextPhotos {
-          margin-top: -90px;
-        }
-        ```
+            .prevPhotos,
+            .nextPhotos {
+              margin-top: -90px;
+            }
 
         Add `.nextPhotos` to the repositioning of the `next` arrow:
 
-        ```css
-        .next,
-        .nextPhotos {
-          right: 0;
-          border-radius: 3px 0 0 3px;
-        }
-        ```
+            .next,
+            .nextPhotos {
+              right: 0;
+              border-radius: 3px 0 0 3px;
+            }
 
         Add `.prevPhotos:hover` and `.nextPhotos:hover` effects:
 
-        ```css
-        .prev:hover,
-        .next:hover,
-        .prevPhotos:hover,
-        .nextPhotos:hover {
-          background-color: rgba(0, 0, 0, 0.8);
-        }
-        ```
+            .prev:hover,
+            .next:hover,
+            .prevPhotos:hover,
+            .nextPhotos:hover {
+              background-color: rgba(0, 0, 0, 0.8);
+            }
 
 1.  Add JavaScript. Modify the `showSlides(n)` function:
 
-    ```js
-    function showSlides(n) {
-      var i;
-      var slides = document.getElementsByClassName('mySlides');
-      var captionText = document.getElementById("caption");
-      var labels = document.getElementsByClassName('myLabels');
-      if (n > slides.length) {slideIndex = 1}
-      if (n < 1) {slideIndex = slides.length}
-      var image = document.getElementById(slideIndex + "");
-      for (i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";
-        labels[i].style.display = "none";
-      }
-      slides[slideIndex-1].style.display = "block";
-      captionText.innerHTML = image.alt;
-      labels[slideIndex-1].style.display = "block";
-    }
-    ```
+        function showSlides(n) {
+          var i;
+          var slides = document.getElementsByClassName('mySlides');
+          var captionText = document.getElementById("caption");
+          var labels = document.getElementsByClassName('myLabels');
+          if (n > slides.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = slides.length}
+          var image = document.getElementById(slideIndex + "");
+          for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+            labels[i].style.display = "none";
+          }
+          slides[slideIndex-1].style.display = "block";
+          captionText.innerHTML = image.alt;
+          labels[slideIndex-1].style.display = "block";
+        }
 
     This will show the correct `myLabels` the same way the correct `mySlides` is
     shown.

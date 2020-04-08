@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: basic-fim
+  namespace: kube-system
+  labels:
+    k8s-app: basic-fim-scanner
+spec:
+  selector:
+    matchLabels:
+      name: basic-fim
+  template:
+    metadata:
+      labels:
+        name: basic-fim
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+      - name: basic-fim-scanner
+        image: us.gcr.io/{your-project-id}/basic-fim:latest
+        resources:
+          limits:
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
+        volumeMounts:
+        - name: host-fs
+          mountPath: /host-fs
+          readOnly: true
+        - name: logs
+          mountPath: /logs
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: host-fs
+        hostPath:
+          path: /
+      - name: logs
+        hostPath:
+          path: /var/log/basic-fim

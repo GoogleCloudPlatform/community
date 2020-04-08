@@ -53,7 +53,7 @@ following:
     You can [read more](https://swagger.io/blog/getting-started-with-swagger-i-what-is-swagger/)
     to understand the idea behind OpenAPI.
 
-    We need it to deploy API specification to Google Endpoints later on. We have
+    We need it to deploy API specification to Cloud Endpoints later on. We have
     two options - either create OpenAPI specification manually, or
     [use Swashbuckle tool](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
     that will auto-generate the specifications for us based on API definition.
@@ -75,45 +75,41 @@ following:
 
     2.  In `ConfigureServices` method, add this:
 
-        ```cs
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddMvc();
-
-            // Register the Swagger generator
-            services.AddSwaggerGen(c =>
+            public void ConfigureServices(IServiceCollection services)
             {
-                c.SwaggerDoc(
-                    "v1",
-                    new Info { Title = "My API", Version = "v1" });
-            });
-        }
-        ```
+                services.AddMvc();
+
+                // Register the Swagger generator
+                services.AddSwaggerGen(c =>
+                {
+                    c.SwaggerDoc(
+                        "v1",
+                        new Info { Title = "My API", Version = "v1" });
+                });
+            }
 
     1.  In `"Configure"` method, add this:
 
-        ```cs
-        public void Configure(
-            IApplicationBuilder app,
-            IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
+            public void Configure(
+                IApplicationBuilder app,
+                IHostingEnvironment env)
             {
-                app.UseDeveloperExceptionPage();
+                if (env.IsDevelopment())
+                {
+                    app.UseDeveloperExceptionPage();
+                }
+
+                // Enable middleware to serve generated Swagger as a JSON endpoint.
+                app.UseSwagger();
+
+                // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                });
+
+                app.UseMvc();
             }
-
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            });
-
-            app.UseMvc();
-        }
-        ```
 
 ## Step 3 - Create OpenAPI specification for our API
 
@@ -172,7 +168,7 @@ following:
 
 Now it's time to deploy the API specification and API implementation.
 
-## Step 5 - Deploy API Specification to Google Endpoints
+## Step 5 - Deploy API Specification to Cloud Endpoints
 
 1.  Open `openapi.yaml` that was created in step 3.
 
@@ -180,21 +176,19 @@ Now it's time to deploy the API specification and API implementation.
     `YOUR-PROJECT-ID.appspot.com` (replace `YOUR-PROJECT-ID` with your Cloud
     project ID):
 
-    ```yaml
-    swagger: '2.0'
-    info:
-    version: v1
-    title: My API
-    host: YOUR-PROJECT-ID.appspot.com
-    paths:
-        /api/Values:
-    get:
-        tags:
-        - Values
-        operationId: ApiValuesGet
-    ```
+        swagger: '2.0'
+        info:
+        version: v1
+        title: My API
+        host: YOUR-PROJECT-ID.appspot.com
+        paths:
+            /api/Values:
+        get:
+            tags:
+            - Values
+            operationId: ApiValuesGet
 
-    When you will deploy API specification to Google Endpoints, it will create a
+    When you will deploy API specification to Endpoints, it will create a
     new Cloud Endpoints service configuration with the name equals to `host`
     value from our `OpenAPI yaml`. Each endpoints deployment assigns a unique
     `configuration_id` for versioning purposes. When we will deploy the service
@@ -242,13 +236,11 @@ latest version of Cloud Endpoints service (the one that was deployed last).
 1.  Create `app.yaml` file in VS Code at `ExploreApiWithEndpointsCore` directory.
     The content of the file should be:
 
-    ```yaml
-    Runtime: aspnetcore
-    env: flex
-    endpoints_api_service:
-        name: [SERVICE_NAME]
-        rollout_strategy: managed
-    ```
+        runtime: aspnetcore
+        env: flex
+        endpoints_api_service:
+            name: [SERVICE_NAME]
+            rollout_strategy: managed
 
     Replace `[SERVICE_NAME]` with corresponding value of previous command output.
 

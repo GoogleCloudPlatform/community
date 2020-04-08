@@ -1,0 +1,5 @@
+/var/log/coap-proxy/proxy.log {
+  copytruncate
+  weekly
+  rotate 10
+}

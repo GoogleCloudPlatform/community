@@ -1,16 +1,14 @@
 ---
-title: Run Symfony on Google App Engine Flexible Environment
-description: Learn how to deploy a Symfony app to Google App Engine flexible environment.
+title: Run Symfony on App Engine flexible environment
+description: Learn how to deploy a Symfony app to App Engine flexible environment.
 author: bshaffer
 tags: App Engine, Symfony, PHP
 date_published: 2017-03-15
 ---
+
 ## Symfony
 
-> [Symfony][symfony] is a set of PHP Components, a Web Application framework, a
-> Philosophy, and a Community — all working together in harmony.
->
-> – symfony.com
+"[Symfony][symfony] is a set of PHP Components, a Web Application framework, a Philosophy, and a Community — all working together in harmony." – symfony.com
 
 You can check out [PHP on Google Cloud Platform][php-gcp] to get an
 overview of PHP itself and learn ways to run PHP apps on Google Cloud
@@ -41,50 +39,43 @@ Welcome page.
 
 1.  Create an `app.yaml` file with the following contents depending on the version of Symfony that you are using:
 
-##### Symfony 2 & 3
+    **Symfony 2 and 3**
 
-    ```yaml
-    runtime: php
-    env: flex
+        runtime: php
+        env: flex
 
-    runtime_config:
-      document_root: web
-      front_controller_file: app.php
-    ```
+        runtime_config:
+          document_root: web
+          front_controller_file: app.php
  
-##### Symfony 4 and above
+    **Symfony 4 and above**
 
-    ```yaml
-    runtime: php
-    env: flex
+        runtime: php
+        env: flex
 
-    runtime_config:
-      document_root: public
-      front_controller_file: index.php
+        runtime_config:
+          document_root: public
+          front_controller_file: index.php
 
-    env_variables:
-        APP_ENV: "prod"
-    ```
+        env_variables:
+            APP_ENV: "prod"
      
 1.  Replace `post-install-cmd` in `composer.json` with the following script:
 
-    ```json
-    "post-install-cmd": [
-        "chmod -R ug+w $APP_DIR/var"
-    ],
-    ```
+        "post-install-cmd": [
+            "chmod -R ug+w $APP_DIR/var"
+        ],
 
     In the context of Symfony's `composer.json`, it will look like this:
 
     ![Add post-install-cmd scripts to composer.json][composer-json]
 
-1. Run the following command to deploy your app:
+1.  Run the following command to deploy your app:
 
         gcloud app deploy
 
-1. Visit `http://YOUR_PROJECT_ID.appspot.com` to see the Symfony welcome page!
+1.  Visit `http://YOUR_PROJECT_ID.appspot.com` to see the Symfony welcome page!
 
-    ![Symfony welcome page][symfony-welcome]
 
 ## Connect to CloudSQL with Doctrine
 
@@ -121,77 +112,69 @@ Welcome page.
     variables which are not needed for all environments. Notice we've added the
     parameter `database_socket`, as Cloud SQL uses sockets to connect:
 
-    ```yaml
-    parameters:
-        database_host: '%env(DB_HOST)%'
-        database_name: '%env(DB_DATABASE)%'
-        database_port: '%env(DB_PORT)%'
-        database_user: '%env(DB_USERNAME)%'
-        database_password: '%env(DB_PASSWORD)%'
-        database_socket: '%env(DB_SOCKET)%'
+        parameters:
+            database_host: '%env(DB_HOST)%'
+            database_name: '%env(DB_DATABASE)%'
+            database_port: '%env(DB_PORT)%'
+            database_user: '%env(DB_USERNAME)%'
+            database_password: '%env(DB_PASSWORD)%'
+            database_socket: '%env(DB_SOCKET)%'
 
-        # Set sane environment variable defaults.
-        env(DB_HOST): ""
-        env(DB_PORT): 3306
-        env(DB_SOCKET): ""
+            # Set sane environment variable defaults.
+            env(DB_HOST): ""
+            env(DB_PORT): 3306
+            env(DB_SOCKET): ""
 
-        # Mailer configuration
-        # ...
-    ```
+            # Mailer configuration
+            # ...
 
 1.  Modify your Doctrine configuration in `app/config/config.yml` and add a line
-    for "unix_socket" using the parameter we added:
+    for `unix_socket` using the parameter we added:
 
-    ```yaml
-    # Doctrine Configuration
-    doctrine:
-        dbal:
-            driver: pdo_mysql
-            host: '%database_host%'
-            port: '%database_port%'
-            dbname: '%database_name%'
-            user: '%database_user%'
-            password: '%database_password%'
-            charset: UTF8
-            # add this parameter
-            unix_socket: '%database_socket%'
+        # Doctrine Configuration
+        doctrine:
+            dbal:
+                driver: pdo_mysql
+                host: '%database_host%'
+                port: '%database_port%'
+                dbname: '%database_name%'
+                user: '%database_user%'
+                password: '%database_password%'
+                charset: UTF8
+                # add this parameter
+                unix_socket: '%database_socket%'
 
-        # ORM configuration
-        # ...
-    ```
+            # ORM configuration
+            # ...
 
 1.  Use the symfony CLI to connect to your instance and create a database for
     the application. Be sure to replace `YOUR_DB_PASSWORD` below with the root
     password you configured:
 
-    ```sh
-    # create the database using doctrine
-    DB_HOST="127.0.0.1" DB_DATABASE=symfony DB_USERNAME=root DB_PASSWORD=YOUR_DB_PASSWORD \
-        php bin/console doctrine:database:create
-    ```
+        # create the database using doctrine
+        DB_HOST="127.0.0.1" DB_DATABASE=symfony DB_USERNAME=root DB_PASSWORD=YOUR_DB_PASSWORD \
+            php bin/console doctrine:database:create
 
 1.  Modify your `app.yaml` file with the following contents:
 
-    ```yaml
-    runtime: php
-    env: flex
+        runtime: php
+        env: flex
 
-    runtime_config:
-        document_root: web
-        front_controller_file: app.php
+        runtime_config:
+            document_root: web
+            front_controller_file: app.php
 
-    env_variables:
-        ## Set these environment variables according to your CloudSQL configuration.
-        DB_DATABASE: symfony
-        DB_USERNAME: root
-        DB_PASSWORD: YOUR_DB_PASSWORD
-        DB_SOCKET: "/cloudsql/YOUR_CLOUDSQL_CONNECTION_NAME"
+        env_variables:
+            ## Set these environment variables according to your CloudSQL configuration.
+            DB_DATABASE: symfony
+            DB_USERNAME: root
+            DB_PASSWORD: YOUR_DB_PASSWORD
+            DB_SOCKET: "/cloudsql/YOUR_CLOUDSQL_CONNECTION_NAME"
 
-    beta_settings:
-        # for Cloud SQL, set this value to the Cloud SQL connection name,
-        # e.g. "project:region:cloudsql-instance"
-        cloud_sql_instances: "YOUR_CLOUDSQL_CONNECTION_NAME"
-    ```
+        beta_settings:
+            # for Cloud SQL, set this value to the Cloud SQL connection name,
+            # e.g. "project:region:cloudsql-instance"
+            cloud_sql_instances: "YOUR_CLOUDSQL_CONNECTION_NAME"
 
 1.  Replace each instance of `YOUR_DB_PASSWORD` and
     `YOUR_CLOUDSQL_CONNECTION_NAME` with the values you created for your Cloud
@@ -203,48 +186,44 @@ Welcome page.
     Controller in `src/AppBundle/Controller/DefaultController.php` so that it
     validates our Doctrine connection:
 
-    ```php
-    namespace AppBundle\Controller;
+        namespace AppBundle\Controller;
 
-    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-    use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-    use Symfony\Component\HttpFoundation\Request;
+        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+        use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+        use Symfony\Component\HttpFoundation\Request;
 
-    class DefaultController extends Controller
-    {
-        /**
-            * @Route("/", name="homepage")
-            */
-        public function indexAction(Request $request)
+        class DefaultController extends Controller
         {
-            $entityManager = $this->get('doctrine.orm.entity_manager');
-            if ($entityManager->getConnection()->connect()) {
-                echo 'DOCTRINE WORKS';
+            /**
+                * @Route("/", name="homepage")
+                */
+            public function indexAction(Request $request)
+            {
+                $entityManager = $this->get('doctrine.orm.entity_manager');
+                if ($entityManager->getConnection()->connect()) {
+                    echo 'DOCTRINE WORKS';
+                }
+                // replace this example code with whatever you need
+                return $this->render('default/index.html.twig', [
+                    'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+                ]);
             }
-            // replace this example code with whatever you need
-            return $this->render('default/index.html.twig', [
-                'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-            ]);
         }
-    }
-    ```
 
 1.  Now you can run locally and verify the connection works as expected.
 
-    ```sh
-    DB_HOST="127.0.0.1" DB_DATABASE=symfony DB_USERNAME=root DB_PASSWORD=YOUR_DB_PASSWORD \
-        php bin/console server:run
-    ```
+        DB_HOST="127.0.0.1" DB_DATABASE=symfony DB_USERNAME=root DB_PASSWORD=YOUR_DB_PASSWORD \
+            php bin/console server:run
 
 1.  Reward all your hard work by running the following command and deploying
     your application to App Engine:
 
         gcloud app deploy
 
-### What's Next
+### What's next
 
 1. Check out the [Databases and the Doctrine ORM][symfony-doctrine] documentation for Symfony.
-1. View a [Symfony Demo Application][symfony-sample-app] for App Engine Flex.
+1. View a [Symfony Demo Application][symfony-sample-app] for App Engine flexible environment.
 
 [php-gcp]: https://cloud.google.com/php
 [laravel]: http://laravel.com

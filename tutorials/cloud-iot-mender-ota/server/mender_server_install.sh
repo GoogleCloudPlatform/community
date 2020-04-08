@@ -45,7 +45,7 @@ docker volume inspect --format '{{.Mountpoint}}' mender-artifacts
 git add prod.yml
 git commit -m 'production: final configuration'
 ./run up -d
-sudo ./run exec mender-useradm /usr/bin/useradm create-user --username=mender@example.com --password=mender_gcp_ota
+sudo ./run exec -T mender-useradm /usr/bin/useradm create-user --username=mender@example.com --password=mender_gcp_ota
 export FULL_PROJECT=$(gcloud config list project --format "value(core.project)")
 export PROJECT="$(echo $FULL_PROJECT | cut -f2 -d ':')"
 export REGION='us-central1'

@@ -58,7 +58,7 @@ def list_callbacks(host, auth, id):
     exit(1)
   callbacks_unicode = json.loads(response.text)
   callbacks = []
-  for c in callbacks_unicode:
+  for c in callbacks_unicode['data']:
     c2 = {}
     for k in c.keys():
       c2[k.encode('utf-8')] = c[k]

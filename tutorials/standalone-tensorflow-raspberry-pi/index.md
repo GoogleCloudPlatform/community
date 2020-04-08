@@ -15,7 +15,7 @@ This tutorial assumes you have a Raspberry Pi with SD card and Raspbian installe
 
 ## Challenges solved
 
-TensorFlow models can be served via Cloud Machine Learning Engine, TensorFlow Serving API, or with the tf.contrib.predictor library in Python. Since we aim for local prediction without dependency of a connection to the internet, we have discarded the first option. Due to the ARM architecture of the chip in the Raspberry Pi, installing the TensorFlow Serving API requires us to first solve the challenges associated with compiling the solution in that architecture.
+TensorFlow models can be served via AI Platform Prediction, TensorFlow Serving API, or with the tf.contrib.predictor library in Python. Since we aim for local prediction without dependency of a connection to the internet, we have discarded the first option. Due to the ARM architecture of the chip in the Raspberry Pi, installing the TensorFlow Serving API requires us to first solve the challenges associated with compiling the solution in that architecture.
 The tf.contrib.predictor library in Python allows for serving the model in a straightforward fashion, and therefore we have chosen this method for the solution.
 
 This solution can be useful for applications in agricultural industries where there might be low connectivity to the internet or in other industries that cannot afford the roundtrip of an API call to the internet. 
@@ -162,7 +162,6 @@ To delete the project, follow the steps below:
  
 ## What's next
 
-- The flowers model is based on the [Image Classification using Flowers dataset tutorial](https://cloud.google.com/ml-engine/docs/tensorflow/flowers-tutorial).
 - Reference guide: Install Tensorflow for Raspberry Pi (guide from [this article](http://www.instructables.com/id/Google-Tensorflow-on-Rapsberry-Pi/))
 - Reference guide: Install fswebcam and fbi executables (as explained [here](https://www.raspberrypi.org/documentation/usage/webcams/) and [here](https://www.raspberrypi-spy.co.uk/2017/02/how-to-display-images-on-raspbian-command-line-with-fbi/))
 - Try out other Google Cloud Platform features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials). 

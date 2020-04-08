@@ -118,8 +118,14 @@ To configure Cloud VPN:
 
 ## Configuration of strongSwan
 
-This guide assumes that you have strongSwan already installed. It also assumes a default
-filesystem layout of Debian 9.6.
+To install strongSwan on Debian 9.6 or Ubuntu 18.04, use the following commands:
+
+    sudo apt update
+    sudo apt install strongswan strongswan-pki
+
+To install strongSwan on RHEL 7 or CentOS 7, use the following command:
+
+    yum install strongswan
 
 **Step 1**: Ensure that IP forwarding is enabled
 
@@ -184,7 +190,6 @@ Ensure that the following line present in file:
         # dpdaction=restart - means strongSwan will try to reconnect if Dead Peer Detection spots
         #                  a problem. Change to 'clear' if needed
         dpdaction=restart
-        closeaction=restart
 
 **Step 4**: Start strongSwan
 
@@ -312,7 +317,10 @@ This guide assumes that you have strongSwan already installed. It also assumes a
     protocol kernel {
            learn;
            merge paths on; # For ECMP
-           export all; # Sync all routes to kernel
+           export filter { 
+                  krt_prefsrc = 10.164.0.6; # Internal IP Address of the strongSwan VM. 
+                  accept; # Sync all routes to kernel
+           };
            import all; # Required due to /32 on GCE VMs for the static route below
     }
 
@@ -388,8 +396,7 @@ interface configuration, including MTU, etc.
     set -o errexit
 
     IP=$(which ip)
-    IPTABLES=$(which iptables)
-
+    
     PLUTO_MARK_OUT_ARR=(${PLUTO_MARK_OUT//// })
     PLUTO_MARK_IN_ARR=(${PLUTO_MARK_IN//// })
 
@@ -416,8 +423,6 @@ interface configuration, including MTU, etc.
             # Enable loosy source validation, if possible. Otherwise disable validation.
             sysctl -w net.ipv4.conf.${VTI_IF}.rp_filter=2 || sysctl -w net.ipv4.conf.${VTI_IF}.rp_filter=0
 
-            ${IPTABLES} -t mangle -I INPUT -p esp -s ${PLUTO_PEER} -d ${PLUTO_ME} -j MARK --set-xmark ${PLUTO_MARK_IN}
-
             # If you would like to use VTI for policy-based you shoud take care of routing by yourselv, e.x.
             #if [[ "${PLUTO_PEER_CLIENT}" != "0.0.0.0/0" ]]; then
             #    ${IP} r add "${PLUTO_PEER_CLIENT}" dev "${VTI_IF}"
@@ -425,7 +430,6 @@ interface configuration, including MTU, etc.
             ;;
         down-client)
             ${IP} tunnel del "${VTI_IF}"
-            ${IPTABLES} -t mangle -D INPUT -p esp -s ${PLUTO_PEER} -d ${PLUTO_ME} -j MARK --set-xmark ${PLUTO_MARK_IN}
             ;;
     esac
 
@@ -487,7 +491,6 @@ Ensure that the following line is in the file:
         # dpdaction=restart - means strongSwan will try to reconnect if Dead Peer Detection spots
         #                  a problem. Change to 'clear' if needed
         dpdaction=restart
-        closeaction=restart
         # mark=%unique - We use this to mark VPN-related packets with iptables
         #                %unique ensures that all tunnels will have a unique mark here
         mark=%unique

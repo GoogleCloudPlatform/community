@@ -1,17 +1,14 @@
 ---
-title: Run Hapi.js on Google App Engine Flexible Environment
+title: Run Hapi.js on App Engine flexible environment
 description: Learn how to deploy a Hapi.js app to Google App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Hapi.js, Node.js
 date_published: 2015-12-17
 ---
+
 ## Hapi.js
 
-> [Hapi][hapi] is a rich framework for building applications and
-> services. Hapi enables developers to focus on writing reusable application
-> logic instead of spending time building infrastructure.
->
-> – hapijs.com
+"[Hapi][hapi] is a rich framework for building applications and services. Hapi enables developers to focus on writing reusable application logic instead of spending time building infrastructure." – hapijs.com
 
 You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
 overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
@@ -31,54 +28,58 @@ Platform.
 
 1. Install Hapi.js:
 
-        npm install --save hapi
+        npm install --save @hapi/hapi
 
 ## Create
 
 Create a `server.js` file with the following contents:
 
-```js
- const Hapi = require('hapi');
+        "use strict";
 
- // Create a server with a host and port
- const server = new Hapi.Server();
- server.connection({
-   host: '0.0.0.0',
-   port: process.env.PORT || 8080
- });
+        const Hapi = require("@hapi/hapi");
 
- server.route({
-   method: 'GET',
-   path:'/',
-   handler: (request, reply) => {
-     reply('Hello World!');
-   }
- });
+        const init = async () => {
+          const server = Hapi.server({
+            port: process.env.PORT || 8080,
+            host: "0.0.0.0"
+          });
 
- server.start(() => {
-   console.log('Server running at:', server.info.uri);
- });
- ```
+          server.route({
+            method: "GET",
+            path: "/",
+            handler: (request, h) => {
+              return "Hello World!";
+            }
+          });
+
+          await server.start();
+          console.log("Server running on %s", server.info.uri);
+        };
+
+        process.on("unhandledRejection", err => {
+          console.log(err);
+          process.exit(1);
+        });
+
+        init();
+
 
 ## Run
 
-1. Run the app with the following command:
+1.  Run the app with the following command:
 
         npm start
 
-1. Visit [http://localhost:8080](http://localhost:8080) to see the `Hello World!`
-message.
+1.  Visit [http://localhost:8080](http://localhost:8080) to see the `Hello World!` message.
 
 ## Deploy
 
-1. Create an `app.yaml` file with the following contents:
+1.  Create an `app.yaml` file with the following contents:
 
-    ```yaml
-    runtime: nodejs
-    env: flex
-    ```
+        runtime: nodejs
+        env: flex
 
-1. Run the following command to deploy your app:
+1.  Deploy your app:
 
         gcloud app deploy
 

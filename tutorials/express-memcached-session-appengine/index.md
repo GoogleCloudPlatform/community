@@ -1,13 +1,14 @@
 ---
-title: Use Memcache for Sessions with Express.js on Google App Engine Flexible Environment
-description: Learn how to deploy an Express.js app to Google App Engine flexible environment that uses Memcache for user sessions.
+title: Use Memcache for sessions with Express.js on App Engine flexible environment
+description: Learn how to deploy an Express.js app to App Engine flexible environment that uses Memcache for user sessions.
 author: jmdobry
 tags: App Engine, Express.js, Node.js, Memcache
 date_published: 2017-02-08
 ---
+
 This tutorial shows a sample Node.js app built with Express.js that uses
 Memcache for user sessions. The end of the tutorial shows deploying the app to
-Google App Engine flexible environment.
+App Engine flexible environment.
 
 You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
 overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
@@ -59,23 +60,21 @@ Platform.
 
 ## Deploying the app
 
-1. Create an `app.yaml` file with the following contents:
+1.  Create an `app.yaml` file with the following contents:
 
-    ```yaml
-    runtime: nodejs
-    env: flex
+        runtime: nodejs
+        env: flex
 
-    env_variables:
-      # If you are using the App Engine Memcache service (currently in alpha),
-      # uncomment this section and comment out the other Memcache variables.
-      # USE_GAE_MEMCACHE: 1
+        env_variables:
+          # If you are using the App Engine Memcache service (currently in alpha),
+          # uncomment this section and comment out the other Memcache variables.
+          # USE_GAE_MEMCACHE: 1
 
-      MEMCACHE_URL: your-memcache-url
-      # If you are using a Memcached server with SASL authentication enabled,
-      # fill in these values with your username and password.
-      MEMCACHE_USERNAME: your-memcache-username
-      MEMCACHE_PASSWORD: your-memcache-password
-    ```
+          MEMCACHE_URL: your-memcache-url
+          # If you are using a Memcached server with SASL authentication enabled,
+          # fill in these values with your username and password.
+          MEMCACHE_USERNAME: your-memcache-username
+          MEMCACHE_PASSWORD: your-memcache-password
 
 1. Run the following command to deploy your app:
 

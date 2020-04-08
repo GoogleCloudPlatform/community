@@ -5,6 +5,7 @@ author: zeroasterisk
 tags: Cloud Functions, Cloud Datastore, Cloud Firestore
 date_published: 2018-12-29
 ---
+
 ## Introduction
 
 This tutorial demonstrates using
@@ -26,19 +27,19 @@ which you can simulate with `curl`.
 1.  Create a project in the [Google Cloud Platform Console][console].
 1.  Enable billing for your project.
 1.  [Enable the Google Cloud Functions API][enable_functions].
-1.  [Enable the Google Cloud Firestore API][enable_firestore] *(Datastore mode)*.
+1.  [Enable the Google Cloud Firestore API][enable_firestore] (with Cloud Firestore in [Native mode][native_mode]).
 1.  Install and initialize the [Google Cloud SDK][sdk].
+1.  Configure the `gcloud` command-line interface for your project, replacing `[PROJECT_ID]` with your project ID:
 
-    1.  After initializing the SDK, configure the gcloud CLI for your project_id.
-
-        gcloud config set project <projectid>
+        gcloud config set project [PROJECT_ID]
 
 [console]: https://console.cloud.google.com/
 [enable_functions]: https://console.cloud.google.com/apis/api/cloudfunctions.googleapis.com/overview
 [enable_firestore]: https://console.cloud.google.com/firestore/welcome
 [sdk]: https://cloud.google.com/sdk/
+[native_mode]: https://cloud.google.com/firestore/docs/firestore-or-datastore
 
-This guide uses `cloud-functions-firestore` as the project_id, as well as the firestore collection.
+This guide uses `cloud-functions-firestore` as the project ID, as well as the firestore collection.
 
 ## Preparing the Cloud Function
 
@@ -154,7 +155,7 @@ You can install a
     npm install -g @google-cloud/functions-emulator
     export GOOGLE_APPLICATION_CREDENTIALS=/Users/myname/.cred/myserviceaccount.json
     functions start
-    functions deploy main --trigger-http
+    functions deploy main --trigger-http --runtime=nodejs10
 
 In this case, `main` is the name of the function you want to trigger in your code, triggered by an HTTP request.
 
@@ -184,7 +185,7 @@ NOTE that our function code added `created`.
 
 This is very easy thanks to the gcloud CLI.
 
-    gcloud functions deploy main --trigger-http
+    gcloud functions deploy main --trigger-http --runtime=nodejs10
 
 In this case, `main` is the name of the function you want to trigger in your code, triggered by an HTTP request.
 
@@ -198,7 +199,7 @@ In this case, `main` is the name of the function you want to trigger in your cod
     labels:
       deployment-tool: cli-gcloud
     name: projects/cloud-functions-firestore/locations/us-central1/functions/main
-    runtime: nodejs6
+    runtime: nodejs10
     serviceAccountEmail: cloud-functions-firestore@appspot.gserviceaccount.com
     sourceUploadUrl: https://storage.googleapis.com/gcf-upload-us-central1-0000000000.zip?GoogleAccessId=service-...
     status: ACTIVE
