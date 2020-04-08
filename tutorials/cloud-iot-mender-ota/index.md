@@ -1,7 +1,7 @@
 ---
 title: Over-the-air software updates for embedded Linux with Mender on Google Cloud Platform
 description: Deploy and open source over the air system and integrate with Cloud IoT Core.
-author: kcrakam
+author: kcr19
 tags: IoT, Internet of Things, Raspberry Pi
 date_published: 2018-09-25
 ---

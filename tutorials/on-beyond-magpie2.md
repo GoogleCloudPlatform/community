@@ -1,11 +1,10 @@
 ---
-title: On Beyond Magpie 2 - Entity Analysis
+title: On Beyond Magpie 2 - entity analysis
 description: An introduction to the Cloud Natural Language API, aimed at Advanced Placement Computer Science classes who have worked on the Magpie lab, but suitable for most people starting with the Cloud Natural Language API. Demonstrates how to parse JSON results from the  Cloud Natural Language API.
 author: Annie29
 tags: Cloud Natural Language API, APCS, JSON, Magpie, education
 date_published: 2017-03-28
 ---
-
 
 The Advanced Placement Computer Science A program provides the [Magpie lab](http://media.collegeboard.com/digitalServices/pdf/ap/ap-compscia-magpie-lab-student-guide.pdf) for students to practice using basic control structures to parse user input as part of a chatbot. This tutorial is designed to be an additional enrichment exercise (typically used after the AP exam) to go beyond  basic parsing and instead use Google's [Cloud Natural Language API][nlp], a pretrained machine learning model that will do text analysis for the user. The lab demonstrates how to use the Cloud Natural Language API to extract entities from user input.
 
@@ -138,7 +137,7 @@ if (entities.size() > 0) {
 else if (statement.indexOf("cats") >= 0) { ...
 ```
 
-## Going Beyond the Basics
+## Going beyond the basics
 
 While this tutorial just finds the first entity, there is so much more your chatbot can do. Some things to try out:
 * Instead of selecting the first entity, select a random one.

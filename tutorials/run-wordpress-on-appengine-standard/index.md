@@ -32,7 +32,8 @@ name. We use `root` for the database user name.
 
         $ gcloud sql instances create wordpress \
             --activation-policy=ALWAYS \
-            --tier=db-n1-standard-1
+            --tier=db-n1-standard-1 \
+            --region=us-central1
 
     **Note**: you can choose `db-f1-micro` or `db-g1-small` instead of
     `db-n1-standard-1` for the Cloud SQL machine type, especially for
@@ -104,7 +105,7 @@ current directory.
 If you are migrating an existing project to Google Cloud, you can use the
 `update` command:
 
-    $ php vendor/bin/php update path/to/your-wordpress-site
+    $ php vendor/bin/wp-gae update path/to/your-wordpress-site
 
 The command asks you several questions. After you answer them, your existing
 project will contain the required files for deploying to App Engine, as well

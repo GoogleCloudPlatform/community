@@ -46,7 +46,7 @@ projected usage.
 
 We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
 
-1.  Create a `package.swift` file with the following contents:
+1.  Create a `Package.swift` file with the following contents:
 
     ```swift
     import PackageDescription

@@ -1,6 +1,6 @@
 ---
-title: Run Spring Pet Clinic with Cloud SQL on Google App Engine Flexible Environment
-description: Learn how to deploy Spring Boot Pet Clinic application to Google App Engine flexible environment and use Cloud SQL.
+title: Run Spring Pet Clinic with Cloud SQL on App Engine flexible environment
+description: Learn how to deploy Spring Boot Pet Clinic application to the App Engine flexible environment and use Cloud SQL.
 author: jabubake
 tags: App Engine, Cloud SQL, Spring Boot, Java
 date_published: 2017-05-12
@@ -99,7 +99,7 @@ Spring Integration for Cloud SQL. The following sections demonstrate both option
 
         database=mysql
         spring.datasource.driverClassName=com.mysql.jdbc.Driver
-        spring.datasource.url=jdbc:mysql://google/petclinic?cloudSqlInstance=INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.mysql.SocketFactory
+        spring.datasource.url=jdbc:mysql://google/petclinic?cloudSqlInstance=INSTANCE_CONNECTION_NAME&amp;socketFactory=com.google.cloud.sql.mysql.SocketFactory
         spring.datasource.username=root
         spring.datasource.password=my-smart-password
 
@@ -111,7 +111,7 @@ Spring Integration for Cloud SQL. The following sections demonstrate both option
 
 1.  Restart the Spring Boot application using the `mysql` [profile][profile]:
 
-        ./mvnw -Drun.profiles=mysql spring-boot:run
+        ./mvnw -Dspring-boot.run.profiles=mysql spring-boot:run
 
 #### Using Spring Cloud integration for Cloud SQL
 
@@ -167,17 +167,15 @@ https://YOUR_PROJECT_ID.appspot.com.
 1.  Create an `app.yaml` under `src/main/appengine` with the following contents.
     For more on configuring `app.yaml`, refer to [this resource][yaml]:
 
-    ```yaml
-    runtime: java
-    env: flex
+        runtime: java
+        env: flex
 
-    resources:
-      memory_gb: 2.3
+        resources:
+          memory_gb: 2.3
 
-    handlers:
-      - url: /.*
-        script: this field is required, but ignored
-    ```
+        handlers:
+          - url: /.*
+            script: this field is required, but ignored
 
     Optionally, you can use the sample [`app.yaml`][app-yaml].
 

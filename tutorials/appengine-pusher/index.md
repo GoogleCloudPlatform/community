@@ -246,7 +246,7 @@ public class SendMessageServlet extends HttpServlet {
 	String displayName = user.getNickname().replaceFirst("@.*", "");
 
 	// Create a message including the user email prefix to display in the chat window
-	String taggedMessage = "<strong>&lt;" + displayName + "&gt;</strong> " + message;
+	String taggedMessage = "<strong><" + displayName + "></strong> " + message;
 	Map<String, String> messageData = new HashMap<>();
 	messageData.put("message", taggedMessage);
 

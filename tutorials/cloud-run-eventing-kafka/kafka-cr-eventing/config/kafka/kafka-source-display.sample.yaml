@@ -1,0 +1,90 @@
+## https://knative.dev/docs/eventing/getting-started/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-display
+  namespace: kafka-eventing
+spec:
+  replicas: 1
+  selector:
+    matchLabels: &labels
+      app: hello-display
+  template:
+    metadata:
+      labels: *labels
+    spec:
+      containers:
+        - name: event-display
+          # Source code: https://github.com/knative/eventing-contrib/blob/release-0.6/cmd/event_display/main.go
+          image: gcr.io/knative-releases/github.com/knative/eventing-sources/cmd/event_display@sha256:37ace92b63fc516ad4c8331b6b3b2d84e4ab2d8ba898e387c0b6f68f0e3081c4
+
+---
+
+# Service pointing at the previous Deployment. This will be the target for event
+# consumption.
+  kind: Service
+  apiVersion: v1
+  metadata:
+    name: hello-display
+    namespace: kafka-eventing
+  spec:
+    selector:
+      app: hello-display
+    ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+
+---
+apiVersion: sources.eventing.knative.dev/v1alpha1
+kind: KafkaSource
+metadata:
+  name: kafka-source
+  namespace: kafka-eventing
+spec:
+  consumerGroup: knative-group
+  bootstrapServers:  CONFLUENT-SERVER
+  topics: cloudevents
+  net:
+    sasl:
+      enable: true
+      user:
+        secretKeyRef:
+          name: kafka-secret
+          key: user
+      password:
+        secretKeyRef:
+          name: kafka-secret
+          key: password
+    tls:
+      enable: true
+  sink:
+    apiVersion: eventing.knative.dev/v1alpha1
+    kind: Broker
+    name: hello-display-broker
+
+---
+apiVersion: eventing.knative.dev/v1alpha1
+kind: Broker
+metadata:
+  name: hello-display-broker
+  namespace: kafka-eventing
+spec:
+  channelTemplateSpec:
+    apiVersion: messaging.knative.dev/v1alpha1
+    kind: InMemoryChannel
+
+---
+#https://knative.dev/docs/eventing/broker-trigger/
+apiVersion: eventing.knative.dev/v1alpha1
+kind: Trigger
+metadata:
+  name: hello-display-trigger
+  namespace: kafka-eventing
+spec:
+  broker: hello-display-broker
+  subscriber:
+    ref:
+     apiVersion: serving.knative.dev/v1
+     kind: Service
+     name: hello-display

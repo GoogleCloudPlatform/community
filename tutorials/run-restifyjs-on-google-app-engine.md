@@ -44,9 +44,9 @@ Create a `server.js` file with the following contents:
    version: '1.0.0'
  });
 
- server.use(restify.acceptParser(server.acceptable));
- server.use(restify.queryParser());
- server.use(restify.bodyParser());
+ server.use(restify.plugins.acceptParser(server.acceptable));
+ server.use(restify.plugins.queryParser());
+ server.use(restify.plugins.bodyParser());
 
  server.get('/', (req, res) => {
    res.send('Hello World!');

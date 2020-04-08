@@ -1,0 +1,4 @@
+bases:
+- ./../k-base
+patchesStrategicMerge:
+- project-details.yaml

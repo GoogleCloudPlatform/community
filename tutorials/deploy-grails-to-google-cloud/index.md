@@ -1,10 +1,11 @@
 ---
-title: Deploy a Grails app to Google App Engine
+title: Deploy a Grails app to App Engine flexible environment
 description: Deploy a Grails 3 app to App Engine flexible environment and learn how to use Cloud Storage and Cloud SQL.
 author: sdelamo
 tags: Cloud SQL, App Engine, Java, Grails, Cloud Storage
 date_published: 2017-08-08
 ---
+
 *Sergio del Amo (Object Computing, Inc.)*
 
 *August 2017*
@@ -59,10 +60,10 @@ To get started do the following:
 The `initial` project includes a Grails domain class to map `Book` instances to
 a MySQL table.
 
-> A domain class fulfills the M in the Model View Controller (MVC) pattern and
-> represents a persistent entity that is mapped onto an underlying database
-> table. In Grails a domain is a class that lives in the grails-app/domain
-> directory.
+A domain class fulfills the M in the Model View Controller (MVC) pattern and
+represents a persistent entity that is mapped onto an underlying database
+table. In Grails a domain is a class that lives in the grails-app/domain
+directory.
 
 _grails-app/domain/demo/Book.groovy_
 
@@ -165,17 +166,17 @@ You can find the code: `BookController`, `BookGormService` and GSP views in the
     It prompts you to select the Google account and the project which you want
     to use.
 
-## Google App Engine
+## App Engine
 
 This guide deploys a Grails application to
-[Google App Engine flexible environment][flex].
+[App Engine flexible environment][flex].
 
-> App Engine allows developers to focus on doing what they do best: writing
-> code. Based on Google Compute Engine, the App Engine flexible environment
-> automatically scales your app up and down while balancing the load.
-> Microservices, authorization, SQL and NoSQL databases, traffic splitting,
-> logging, versioning, security scanning, and content delivery networks are all
-> supported natively.
+App Engine allows developers to focus on doing what they do best: writing
+code. Based on Compute Engine, the App Engine flexible environment
+automatically scales your app up and down while balancing the load.
+Microservices, authorization, SQL and NoSQL databases, traffic splitting,
+logging, versioning, security scanning, and content delivery networks are all
+supported natively.
 
 Run the command:
 
@@ -239,9 +240,6 @@ runtime_config:
     jdk: openjdk8
     server: jetty9
 
-health_check:
-    enable_health_check: False
-
 resources:
     cpu: 1
     memory_gb: 2.3
@@ -253,12 +251,12 @@ manual_scaling:
 Here, `app.yaml` specifies the runtime used by the app, and sets `env: flex`,
 specifying that the app uses the [flexible environment][flex].
 
-> The minimal _app.yaml_ application configuration file shown above is
-> sufficient for a simple Grails application. Depending on the size, complexity,
-> and features that your application uses, you may need to change and extend
-> this basic configuration file. For more information on what can be configured
-> via _app.yaml_, please see the [Configuring Your App with app.yaml][configure]
-> guide.
+The minimal `app.yaml` application configuration file shown above is
+sufficient for a simple Grails application. Depending on the size, complexity,
+and features that your application uses, you may need to change and extend
+this basic configuration file. For more information on what can be configured
+via `app.yaml`, please see the [Configuring Your App with app.yaml][configure]
+guide.
 
 For more information on how the Java runtime works, see
 [Java 8 / Jetty 9.3 Runtime][jetty].
@@ -301,11 +299,11 @@ need to do the following changes to [deploy to Jetty instead of Tomcat][boot].
 This guide’s Grails application uses a MySQL database created with
 [Cloud SQL][cloud_sql].
 
-> Cloud SQL is a fully-managed database service that makes it easy to set up,
-> maintain, manage, and administer your relational PostgreSQL BETA and MySQL
-> databases in the cloud. Cloud SQL offers high performance, scalability, and
-> convenience. Hosted on Google Cloud Platform, Cloud SQL provides a database
-> infrastructure for applications running anywhere.
+Cloud SQL is a fully-managed database service that makes it easy to set up,
+maintain, manage, and administer your relational PostgreSQL BETA and MySQL
+databases in the cloud. Cloud SQL offers high performance, scalability, and
+convenience. Hosted on Google Cloud Platform, Cloud SQL provides a database
+infrastructure for applications running anywhere.
 
 ### Enable the Cloud SQL API
 
@@ -358,31 +356,29 @@ production URL to use the Cloud SQL MySQL database which you created before.
 1.  Add the MySQL dependencies JDBC library and Cloud SQL MySQL Socket Factory:
 
     _build.gradle_
-
-        runtime 'mysql:mysql-connector-java:6.0.5'
-        runtime 'com.google.cloud.sql:mysql-socket-factory-connector-j-6:1.0.3'
+    
+        runtime 'mysql:mysql-connector-java:8.0.16'
+        runtime 'com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.0.14'
 
 1.  Replace the `production` environment `datasource` configuration to point to the
     Cloud SQL MySQL database in `application.yml`:
 
     _grails-app/conf/application.yml_
 
-    ```yaml
-    production:
-        dataSource:
-            dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-            driverClassName: com.mysql.cj.jdbc.Driver
-            dbCreate: update
-            url: jdbc:mysql://google/grailsgooglecloud?socketFactory=com.google.cloud.sql.mysql.SocketFactory&cloudSqlInstance=inner-topic-174815:us-central1:grailsgooglecloud&useSSL=true
-            username: root
-            password: grailsgooglecloud
-    ```
+        production:
+            dataSource:
+                dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+                driverClassName: com.mysql.cj.jdbc.Driver
+                dbCreate: update
+                url: jdbc:mysql://google/grailsgooglecloud?socketFactory=com.google.cloud.sql.mysql.SocketFactory&cloudSqlInstance=inner-topic-174815:us-central1:grailsgooglecloud&useSSL=true
+                username: root
+                password: grailsgooglecloud
 
 The production datasource URL uses a custom URL which is built with several components:
 
     jdbc:mysql://google/[DATABASE_NAME]?socketFactory=com.google.cloud.sql.mysql.SocketFactory&cloudSqlInstance=[INSTANCE_NAME]&useSSL=true
 
-- For `[DATABASE_NAME], use the database name you used when you created the
+- For `[DATABASE_NAME]`, use the database name you used when you created the
   database.
 - For `[INSTANCE_NAME]`, use your instance name, which is visible in your Cloud
   SQL instance details:
@@ -400,11 +396,10 @@ URL and verify that connectivity can be established.
 
 ## Cloud Storage
 
-The app allows users to upload a book cover image. To store the images in the
-Cloud, use [Google Cloud Storage][storage].
+The app allows users to upload a book cover image. To store the images in GCP, use [Cloud Storage][storage].
 
-> Google Cloud Storage is unified object storage for developers and enterprises,
-> from live data serving to data analytics/ML to data archiving.
+Cloud Storage is unified object storage for developers and enterprises,
+from live data serving to data analytics/ML to data archiving.
 
 [Enable the Cloud Storage API](https://console.cloud.google.com/flows/enableapi?apiid=storage_api,logging,sqladmin.googleapis.com&redirect=https://console.cloud.google.com&_ga=1.20629880.1963584502.1488379440) for the project, if you have not enabled it already.
 
@@ -427,7 +422,7 @@ Cloud, use [Google Cloud Storage][storage].
 
     _build.gradle_
 
-        compile 'com.google.cloud:google-cloud-storage:1.2.3'
+        compile 'com.google.cloud:google-cloud-storage:1.84.0'
 
 1.  Exclude `com.google.guava:guava-jdk5` too:
 
@@ -444,13 +439,11 @@ Cloud, use [Google Cloud Storage][storage].
 
     _grails-app/conf/application.yml_
 
-    ```yaml
-    ---
-    googlecloud:
-        projectid: grailsgooglecloud
-        cloudStorage:
-            bucket: grailsbucket
-    ```
+        ---
+        googlecloud:
+            projectid: grailsgooglecloud
+            cloudStorage:
+                bucket: grailsbucket
 
     These configuration parameters are used by the services described below.
 
@@ -458,181 +451,173 @@ Cloud, use [Google Cloud Storage][storage].
 
     _grails-app/controllers/demo/FeaturedImageCommand.groovy_
 
-    ```groovy
-    package demo
+        package demo
 
-    import grails.compiler.GrailsCompileStatic
-    import grails.validation.Validateable
-    import org.springframework.web.multipart.MultipartFile
+        import grails.compiler.GrailsCompileStatic
+        import grails.validation.Validateable
+        import org.springframework.web.multipart.MultipartFile
 
-    @GrailsCompileStatic
-    class FeaturedImageCommand implements Validateable {
-        MultipartFile featuredImageFile
-        Long id
-        Long version
+        @GrailsCompileStatic
+        class FeaturedImageCommand implements Validateable {
+            MultipartFile featuredImageFile
+            Long id
+            Long version
 
-        static constraints = {
-            id nullable: false
-            version nullable: false
-            featuredImageFile  validator: { MultipartFile val, FeaturedImageCommand obj ->
-                if ( val == null ) {
-                    return false
-                }
-                if ( val.empty ) {
-                    return false
-                }
+            static constraints = {
+                id nullable: false
+                version nullable: false
+                featuredImageFile  validator: { MultipartFile val, FeaturedImageCommand obj ->
+                    if ( val == null ) {
+                        return false
+                    }
+                    if ( val.empty ) {
+                        return false
+                    }
 
-                ['jpeg', 'jpg', 'png'].any { String extension ->
-                    val.originalFilename?.toLowerCase()?.endsWith(extension)
+                    ['jpeg', 'jpg', 'png'].any { String extension ->
+                        val.originalFilename?.toLowerCase()?.endsWith(extension)
+                    }
                 }
             }
         }
-    }
-    ```
 
 1.  Add two controller actions to `BookController`:
 
     _grails-app/controllers/demo/BookController.groovy_
 
-    ```groovy
-    UploadBookFeaturedImageService uploadBookFeaturedImageService
+        UploadBookFeaturedImageService uploadBookFeaturedImageService
 
-    @Transactional(readOnly = true)
-    def editFeaturedImage(Book book) {
-        respond book
-    }
-    @CompileDynamic
-    def uploadFeaturedImage(FeaturedImageCommand cmd) {
-
-        if (cmd.hasErrors()) {
-            respond(cmd.errors, model: [book: cmd], view: 'editFeaturedImage')
-            return
+        @Transactional(readOnly = true)
+        def editFeaturedImage(Book book) {
+            respond book
         }
+        @CompileDynamic
+        def uploadFeaturedImage(FeaturedImageCommand cmd) {
 
-        def book = uploadBookFeaturedImageService.uploadFeaturedImage(cmd)
-        if (book == null) {
-            notFound()
-            return
-        }
-
-        if (book.hasErrors()) {
-            respond(book.errors, model: [book: book], view: 'editFeaturedImage')
-            return
-        }
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'book.label', default: 'Book'), book.id])
-                redirect book
+            if (cmd.hasErrors()) {
+                respond(cmd.errors, model: [book: cmd], view: 'editFeaturedImage')
+                return
             }
-            '*' { respond book, [status: OK] }
+
+            def book = uploadBookFeaturedImageService.uploadFeaturedImage(cmd)
+            if (book == null) {
+                notFound()
+                return
+            }
+
+            if (book.hasErrors()) {
+                respond(book.errors, model: [book: book], view: 'editFeaturedImage')
+                return
+            }
+
+            request.withFormat {
+                form multipartForm {
+                    flash.message = message(code: 'default.updated.message', args: [message(code: 'book.label', default: 'Book'), book.id])
+                    redirect book
+                }
+                '*' { respond book, [status: OK] }
+            }
         }
-    }
-    ```
 
 1.  The previous controller actions use a service to manage the business logic.
     Create `UploadBookFeaturedImageService.groovy`:
 
     _grails-app/services/demo/UploadBookFeaturedImageService.groovy_
 
-    ```groovy
-    package demo
+        package demo
 
-    import groovy.util.logging.Slf4j
-    import groovy.transform.CompileStatic
+        import groovy.util.logging.Slf4j
+        import groovy.transform.CompileStatic
 
-    @Slf4j
-    @CompileStatic
-    class UploadBookFeaturedImageService {
+        @Slf4j
+        @CompileStatic
+        class UploadBookFeaturedImageService {
 
-        BookGormService bookGormService
+            BookGormService bookGormService
 
-        GoogleCloudStorageService googleCloudStorageService
+            GoogleCloudStorageService googleCloudStorageService
 
-        private static String fileSuffix() {
-            new Date().format('-YYYY-MM-dd-HHmmssSSS')
-        }
-
-        Book uploadFeaturedImage(FeaturedImageCommand cmd) {
-            String fileName = "${cmd.featuredImageFile.originalFilename}${fileSuffix()}"
-
-            log.info "cloud storage file name $fileName"
-
-            String fileUrl = googleCloudStorageService.storeMultipartFile(fileName, cmd.featuredImageFile)
-
-            log.info "cloud storage media url $fileUrl"
-
-            def book = bookGormService.updateFeaturedImageUrl(cmd.id, cmd.version, fileName, fileUrl)
-            if ( !book || book.hasErrors() ) {
-                googleCloudStorageService.deleteFile(fileName)
+            private static String fileSuffix() {
+                new Date().format('-YYYY-MM-dd-HHmmssSSS')
             }
-            book
+
+            Book uploadFeaturedImage(FeaturedImageCommand cmd) {
+                String fileName = "${cmd.featuredImageFile.originalFilename}${fileSuffix()}"
+
+                log.info "cloud storage file name $fileName"
+
+                String fileUrl = googleCloudStorageService.storeMultipartFile(fileName, cmd.featuredImageFile)
+
+                log.info "cloud storage media url $fileUrl"
+
+                def book = bookGormService.updateFeaturedImageUrl(cmd.id, cmd.version, fileName, fileUrl)
+                if ( !book || book.hasErrors() ) {
+                    googleCloudStorageService.deleteFile(fileName)
+                }
+                book
+            }
         }
-    }
-    ```
 
 1.  Encapsulate the code which interacts with Cloud Storage in a service:
 
     _grails-app/services/demo/GoogleCloudStorageService.groovy_
 
-    ```groovy
-    package demo
+        package demo
 
-    import com.google.cloud.storage.Acl
-    import com.google.cloud.storage.BlobId
-    import com.google.cloud.storage.BlobInfo
-    import com.google.cloud.storage.Storage
-    import com.google.cloud.storage.StorageOptions
-    import grails.config.Config
-    import grails.core.support.GrailsConfigurationAware
-    import org.springframework.web.multipart.MultipartFile
-    import groovy.transform.CompileStatic
+        import com.google.cloud.storage.Acl
+        import com.google.cloud.storage.BlobId
+        import com.google.cloud.storage.BlobInfo
+        import com.google.cloud.storage.Storage
+        import com.google.cloud.storage.StorageOptions
+        import grails.config.Config
+        import grails.core.support.GrailsConfigurationAware
+        import org.springframework.web.multipart.MultipartFile
+        import groovy.transform.CompileStatic
 
-    @SuppressWarnings('GrailsStatelessService')
-    @CompileStatic
-    class GoogleCloudStorageService implements GrailsConfigurationAware {
+        @SuppressWarnings('GrailsStatelessService')
+        @CompileStatic
+        class GoogleCloudStorageService implements GrailsConfigurationAware {
 
-        Storage storage = StorageOptions.defaultInstance.service
+            Storage storage = StorageOptions.defaultInstance.service
 
-        // Google Cloud Platform project ID.
-        String projectId
+            // Google Cloud Platform project ID.
+            String projectId
 
-        // Cloud Storage Bucket
-        String bucket
+            // Cloud Storage Bucket
+            String bucket
 
-        @Override
-        void setConfiguration(Config co) {
-            projectId = co.getRequiredProperty('googlecloud.projectid', String)
-            bucket = co.getProperty('googlecloud.cloudStorage.bucket', String, projectId)
+            @Override
+            void setConfiguration(Config co) {
+                projectId = co.getRequiredProperty('googlecloud.projectid', String)
+                bucket = co.getProperty('googlecloud.cloudStorage.bucket', String, projectId)
+            }
+
+            String storeMultipartFile(String fileName, MultipartFile multipartFile) {
+                storeInputStream(fileName, multipartFile.inputStream)
+            }
+
+            String storeInputStream(String fileName, InputStream inputStream) {
+               BlobInfo blobInfo = storage.create(readableBlobInfo(bucket, fileName), inputStream)
+                blobInfo.mediaLink
+            }
+
+            String storeBytes(String fileName, byte[] bytes) {
+                BlobInfo blobInfo = storage.create(readableBlobInfo(bucket, fileName), bytes)
+                blobInfo.mediaLink
+            }
+
+            private static BlobInfo readableBlobInfo(String bucket, String fileName) {
+                BlobInfo.newBuilder(bucket, fileName)
+                        // Modify access list to allow all users with link to read file
+                        .setAcl([Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER)])
+                        .build()
+            }
+
+            boolean deleteFile(String fileName) {
+                BlobId blobId = BlobId.of(bucket, fileName)
+                storage.delete(blobId)
+            }
         }
-
-        String storeMultipartFile(String fileName, MultipartFile multipartFile) {
-            storeInputStream(fileName, multipartFile.inputStream)
-        }
-
-        String storeInputStream(String fileName, InputStream inputStream) {
-            BlobInfo blobInfo = storage.create(readableBlobInfo(bucket, fileName), inputStream)
-            blobInfo.mediaLink
-        }
-
-        String storeBytes(String fileName, byte[] bytes) {
-            BlobInfo blobInfo = storage.create(readableBlobInfo(bucket, fileName), bytes)
-            blobInfo.mediaLink
-        }
-
-        private static BlobInfo readableBlobInfo(String bucket, String fileName) {
-            BlobInfo.newBuilder(bucket, fileName)
-                    // Modify access list to allow all users with link to read file
-                    .setAcl([Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER)])
-                    .build()
-        }
-
-        boolean deleteFile(String fileName) {
-            BlobId blobId = BlobId.of(bucket, fileName)
-            storage.delete(blobId)
-        }
-    }
-    ```
 
 1.  If the upload of an image to Google Cloud is successful, save the reference
     to the media URL in our domain class. Add this method to the
@@ -640,20 +625,18 @@ Cloud, use [Google Cloud Storage][storage].
 
     _grails-app/services/demo/BookGormService.groovy_
 
-    ```groovy
-    @SuppressWarnings('LineLength')
-    Book updateFeaturedImageUrl(Long id, Long version, String fileName, String featuredImageUrl, boolean flush = false) {
-        Book book = Book.get(id)
-        if ( !book ) {
-            return null
+        @SuppressWarnings('LineLength')
+        Book updateFeaturedImageUrl(Long id, Long version, String fileName, String featuredImageUrl, boolean flush = false) {
+            Book book = Book.get(id)
+            if ( !book ) {
+                return null
+            }
+            book.version = version
+            book.fileName = fileName
+            book.featuredImageUrl = featuredImageUrl
+            book.save(flush: flush)
+            book
         }
-        book.version = version
-        book.fileName = fileName
-        book.featuredImageUrl = featuredImageUrl
-        book.save(flush: flush)
-        book
-    }
-    ```
 
 1.  Create a file named `grails-app/views/book/editFeaturedImage.gsp` from the
     content found in [editFeaturedImage.gsp](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/deploy-grails-to-google-cloud/editFeaturedImage.gsp).
@@ -683,21 +666,19 @@ Application log messages written to stdout and stderr are automatically collecte
 
     _grails-app/controllers/demo/LegalController.groovy_
 
-    ```groovy
-    package demo
+        package demo
 
-    import groovy.transform.CompileStatic
-    import groovy.util.logging.Slf4j
+        import groovy.transform.CompileStatic
+        import groovy.util.logging.Slf4j
 
-    @CompileStatic
-    @Slf4j
-    class LegalController {
-        def index() {
-            log.info 'inside legal controller'
-            render 'Legal Terms'
+        @CompileStatic
+        @Slf4j
+        class LegalController {
+            def index() {
+                log.info 'inside legal controller'
+                render 'Legal Terms'
+            }
         }
-    }
-    ```
 
 1.  Add the next line to `grails-app/conf/logback.groovy`:
 

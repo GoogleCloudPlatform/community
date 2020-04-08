@@ -1,5 +1,5 @@
 ---
-title: Kubernetes 1.6.1 Authentication by using Google OpenID
+title: Kubernetes 1.6.1 authentication by using Google OpenID
 description: A sample process that shows how to use Google Accounts with Kubernetes cluster with role-based access control (RBAC) authorization mode.
 author: miry
 tags: Kubernetes
@@ -33,7 +33,7 @@ After initializing the master instance, you need to update the `kube api server`
 More information about the OIDC attributes can be found in the [Authenticating](https://kubernetes.io/docs/admin/authentication/#option-1---oidc-authenticator) reference documentation.
 
 
-    sed -i "/- kube-apiserver/a\    - --oidc-issuer-url=https://accounts.google.com\n    - --oidc-username-claim=email\n    - --oidc-client-id=<Your Google Client ID>" /etc/kubernetes/manifests/kube-apiserver.yaml
+    sed -i "/- kube-apiserver/a\    - --oidc-issuer-url=https://accounts.google.com\n    - --oidc-username-claim=email\n    - --oidc-client-id=[YOUR_GOOGLE_CLIENT_ID]" /etc/kubernetes/manifests/kube-apiserver.yaml
 
 
 Add any network CNI plugin and the cluster is ready. Copy `/etc/kubernetes/admin.conf` to local `~/.kube/config` and change the cluster ip.
@@ -48,34 +48,34 @@ Output appears as follows:
 
 ## Generating local user credentials
 
-1. Install the helper on the client machine. Run the following command:
+1.  Install the helper on the client machine. Run the following command:
 
         go get github.com/micahhausler/k8s-oidc-helper
 
 
-1. Generate a user's credentials for `kube config`. Run the following command:
+1.  Generate a user's credentials for `kube config`. Run the following command:
 
         k8s-oidc-helper -c path/to/client_secret_[CLIENT_ID].json
 
-    This command should open the browser and ask permissions. After that, it provides you a token in the browser. Copy it and   paste to the terminal for `k8s-oidc-helper`. The output of the command should look as follows:
+    This command should open the browser and ask permissions. After that, it provides you a token in the browser.
+    Copy it and paste to the terminal for `k8s-oidc-helper`. The output of the command should look as follows:
 
-    ```yaml
-    # Add the following to your ~/.kube/config
+        # Add the following to your ~/.kube/config
 
-    users:
-    - name: name@example.com
-        user:
-        auth-provider:
-            config:
-            client-id: 32934980234312-9ske1sskq89423480922scag3hutrv7.apps.googleusercontent.com
-            client-secret: ZdyKxYW-tCzuRWwB3l665cLY
-            id-token: eyJhbGciOiJSUzI19fvTKfPraZ7yzn.....HeLnf26MjA
-            idp-issuer-url: https://accounts.google.com
-            refresh-token: 18mxeZ5_AE.jkYklrMAf5.IMXnB_DsBY5up4WbYNF2PrY
-            name: oidc
-    ```
+        users:
+        - name: name@example.com
+            user:
+            auth-provider:
+                config:
+                client-id: 32934980234312-9ske1sskq89423480922scag3hutrv7.apps.googleusercontent.com
+                client-secret: ZdyKxYW-tCzuRWwB3l665cLY
+                id-token: eyJhbGciOiJSUzI19fvTKfPraZ7yzn.....HeLnf26MjA
+                idp-issuer-url: https://accounts.google.com
+                refresh-token: 18mxeZ5_AE.jkYklrMAf5.IMXnB_DsBY5up4WbYNF2PrY
+                name: oidc
 
-1. Copy everything after `users:` and append it to your existing user list in the `~/.kube/config`. Now you have 2 users: one from the new cluster configuration and one that you added.
+1.  Copy everything after `users:` and append it to your existing user list in the `~/.kube/config`.
+    Now you have 2 users: one from the new cluster configuration and one that you added.
 
 ### Verifying the token
 

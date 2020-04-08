@@ -5,9 +5,11 @@ author: bshaffer
 tags: App Engine, Laravel, PHP
 date_published: 2019-01-31
 ---
+
 ## Laravel
 
-[Laravel][laravel] is an open source web framework for PHP developers that encourages the use of the model-view-controller (MVC) pattern.
+[Laravel][laravel] is an open source web framework for PHP developers that encourages the use of the
+model-view-controller (MVC) pattern.
 
 You can check out [PHP on Google Cloud Platform][php-gcp] (GCP) to get an
 overview of PHP and learn ways to run PHP apps on GCP.
@@ -16,9 +18,9 @@ overview of PHP and learn ways to run PHP apps on GCP.
 
 1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/project).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK][cloud_sdk].
+1. Install and initialize the [Google Cloud SDK][cloud_sdk].
 
-> All code for this tutorial is available in the [PHP samples repository][laravel-framework-sample].
+All code for this tutorial is available in the [PHP samples repository][laravel-framework-sample].
 
 ## Prepare
 
@@ -53,6 +55,7 @@ from laravel.com.
           APP_KEY: YOUR_APP_KEY
           APP_STORAGE: /tmp
           VIEW_COMPILED_PATH: /tmp
+          SESSION_DRIVER: cookie
 
 1.  Replace `YOUR_APP_KEY` in `app.yaml` with an application key you generate
     with the following command:
@@ -64,10 +67,11 @@ from laravel.com.
 
         sed -i '' "s#YOUR_APP_KEY#$(php artisan key:generate --show --no-ansi)#" app.yaml
 
-1.  Modify [`bootstrap/app.php`][bootstrap-app-php] by adding the following block
-    of code before the return statement. This will allow you to set
-    the storage path to `/tmp` for caching in production.
+1.  Modify `bootstrap/app.php` by adding the following block of code before the
+    return statement. This will allow you to set the storage path to `/tmp` for
+    caching in production.
 
+        # [START] Add the following block to `bootstrap/app.php`
         /*
         |--------------------------------------------------------------------------
         | Set Storage Path
@@ -79,13 +83,20 @@ from laravel.com.
         |
         */
         $app->useStoragePath(env('APP_STORAGE', base_path() . '/storage'));
+        # [END]
+
+    If you've added the code correctly, your file [will look like this][bootstrap-app-php].
 
 1.  Finally, remove the `beyondcode/laravel-dump-server` composer dependency. This is a
     fix for an error which happens as a result of Laravel's caching in
     `bootstrap/cache/services.php`.
-    
+
         composer remove --dev beyondcode/laravel-dump-server
         
+    If you're using Laravel 6, remove `facade/ignition` instead:
+    
+        composer remove --dev facade/ignition
+
 1.  Run the following command to deploy your app:
 
         gcloud app deploy
@@ -110,6 +121,9 @@ Laravel, you need to manually add the `DB_SOCKET` value to
     [install the Cloud SQL proxy client on your local machine][cloudsql-install].
     The Cloud SQL proxy is used to connect to your Cloud SQL instance when running
     locally.
+
+    *   Enable the [Cloud SQL Admin API][cloudsql-admin-api] in order to use the
+        Cloud SQL Proxy Client.
 
     *   Use the [Google Cloud SDK][cloud_sdk] from the command line to run the
         following command. Copy the `connectionName` value for the next step. Replace
@@ -144,13 +158,17 @@ Laravel, you need to manually add the `DB_SOCKET` value to
           ## Put production environment variables here.
           APP_KEY: YOUR_APP_KEY
           APP_STORAGE: /tmp
+          VIEW_COMPILED_PATH: /tmp
           CACHE_DRIVER: database
           SESSION_DRIVER: database
           ## Set these environment variables according to your CloudSQL configuration.
           DB_DATABASE: YOUR_DB_DATABASE
           DB_USERNAME: YOUR_DB_USERNAME
           DB_PASSWORD: YOUR_DB_PASSWORD
+          ## for MYSQL, use DB_SOCKET:
           DB_SOCKET: "/cloudsql/YOUR_CONNECTION_NAME"
+          ## for PostgreSQL, use DB_HOST:
+          # DB_HOST: "/cloudsql/YOUR_CONNECTION_NAME"
 
 1.  Replace `YOUR_DB_DATABASE`, `YOUR_DB_USERNAME`, `YOUR_DB_PASSWORD`,
     and `YOUR_CONNECTION_NAME` with the values you created for your Cloud SQL
@@ -195,16 +213,18 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
         }
 
 1.  Next, you'll need to add our new custom logger to the `channels` array in
-    [`config/logging.php`][config-logging-php]:
+    `config/logging.php`:
 
         'channels' => [
 
             // Add the following lines to integrate with Stackdriver:
             'stackdriver' => [
                 'driver' => 'custom',
-                'via' => App\Logging\CreateCustomLogger::class,
+                'via' => App\Logging\CreateStackdriverLogger::class,
                 'level' => 'debug',
             ],
+
+    If you've added the code correctly, your file [will look like this][config-logging-php].
 
 1.  Modify your `app.yaml` file to set the `LOG_CHANNEL` environment variable to
     the value `stackdriver`:
@@ -219,7 +239,25 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
 1.  Now you can log to Stackdriver Logging anywhere in your application!
 
         Log::info("Hello Stackdriver! This will show up as log level INFO!");
-    
+
+    For example, add the following route to `routes/web.php` and browse to
+    `/exception/my-test-exception` to see an exception appear in Error Handling:
+
+        Route::get('/log/{message}', function ($message) {
+            Log::info("Hello my log, message: $message");
+            return view('welcome');
+        });
+
+    These entries appear in the log of the request they occurred under,
+    as well as in the individual log specified by their log name (`app`, in this
+    case).
+
+    **Note**: The first time you deploy, you may get the log message `This
+    request caused a new process to be started for your application, and thus
+    caused your application code to be loaded for the first time. This request
+    may thus take longer and use more CPU than a typical request for your
+    application.`. If you see this, ignore it and make a second request. On your
+    next request, your logged message should appear in the logs as expected.
 
 ### Stackdriver Error Reporting
 
@@ -248,6 +286,13 @@ You can send error reports to Stackdriver Error Reporting from PHP applications 
 
         throw new \Exception('PHEW! We will see this in Stackdriver Error Reporting!');
 
+    For example, add the following route to `routes/web.php` and browse to
+    `/exception/my-test-exception` to see an exception appear in Error Handling:
+
+        Route::get('/exception/{message}', function ($message) {
+            throw new Exception("Intentional exception, message: $message");
+        });
+
 [php-gcp]: https://cloud.google.com/php
 [laravel]: http://laravel.com
 [laravel-install]: https://laravel.com/docs/5.4/installation
@@ -256,6 +301,7 @@ You can send error reports to Stackdriver Error Reporting from PHP applications 
 [composer-json]: https://storage.googleapis.com/gcp-community/tutorials/run-laravel-on-appengine-flexible/composer-json.png
 [cloudsql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
 [cloudsql-install]: https://cloud.google.com/sql/docs/mysql/connect-external-app#install
+[cloudsql-admin-api]: https://console.cloud.google.com/flows/enableapi?apiid=sqladmin
 [laravel-framework-sample]: https://github.com/GoogleCloudPlatform/php-docs-samples/tree/master/appengine/php72/laravel-framework
 [bootstrap-app-php]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php72/laravel-framework/bootstrap/app.php
 [config-view-php]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php72/laravel-framework/config/view.php

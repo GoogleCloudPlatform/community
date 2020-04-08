@@ -1,0 +1,38 @@
+apiVersion: serving.knative.dev/v1alpha1 
+kind: Service
+metadata:
+  name: logevents
+  namespace: kafka-eventing
+spec:
+  template:
+    spec:
+      containers:
+      - image: gcr.io/matzew/event-display 
+
+---
+apiVersion: sources.eventing.knative.dev/v1alpha1
+kind: KafkaSource
+metadata:
+  name: kafka-source
+  namespace: kafka-eventing
+spec:
+  consumerGroup: "knative-group"
+  bootstrapServers:  CONFLUENT-SERVER
+  topics: "cloudevents"
+  net:
+    sasl:
+      enable: true
+      user:
+        secretKeyRef:
+          name: kafka-secret
+          key: user
+      password:
+        secretKeyRef:
+          name: kafka-secret
+          key: password
+    tls:
+      enable: true
+  sink:
+    apiVersion: serving.knative.dev/v1alpha1
+    kind: Service
+    name: logevents

@@ -1,10 +1,11 @@
 ---
-title: Firebase Auth on your App Engine Python Application
+title: Firebase Auth on your App Engine Python application
 description: Learn how to authenticate API requests using Firebase Auth on App Engine.
 author: archelogos
 tags: App Engine, Python, Falcon, API, Firebase, Auth, JWT
 date_published: 2017-05-05
 ---
+
 In this tutorial you will learn how to authenticate the requests that hit your API with JSON Web Tokens (JWT) using Firebase Auth.
 
 [Firebase][Firebase] is a platform that provides you tools and infrastructure to build your apps easily.
@@ -37,86 +38,78 @@ in case you need some information about how to do it, see: [https://firebase.goo
 
 ## Preparing the app
 
-1. Follow the steps described in the [previous tutorial](https://cloud.google.com/community/tutorials/appengine-python-falcon). Once the app is running locally, move on to the next steps.
+1.  Follow the steps described in the [previous tutorial](https://cloud.google.com/community/tutorials/appengine-python-falcon). Once the app is running locally, move on to the next steps.
 
-2. Add the following line to the [`requirements.txt`][requirements] file:
+2.  Add the following line to the [`requirements.txt`][requirements] file:
 
         firebase-admin==1.0.0
 
-3. Modify the [`app.yaml`][app] file adding the following contents:
+3.  Modify the [`app.yaml`][app] file adding the following contents:
 
-    ```yaml
-    env_variables:
-      GCLOUD_PROJECT: '[YOUR_PROJECT_ID]'
-    ```
+        env_variables:
+          GCLOUD_PROJECT: '[YOUR_PROJECT_ID]'
 
-4. Import the `firebase-admin` library to the [`__init__.py`][init] file and intialize the Firebase app.
+4.  Import the `firebase-admin` library to the [`__init__.py`][init] file and intialize the Firebase app.
 
-    ```py
-    import firebase_admin
+        import firebase_admin
     
-    ...
+        ...
     
-    default_app = firebase_admin.initialize_app()
-    ```
-
-5. Modify now the [`AuthMiddleware`][middleware] using the Firebase ID Token Validator.
-
-    ```py
-    ...
+        default_app = firebase_admin.initialize_app()
     
-    from firebase_admin import auth
+5.  Modify now the [`AuthMiddleware`][middleware] using the Firebase ID Token Validator.
+
+        ...
     
-    class AuthMiddleware(object):
-    """."""
+        from firebase_admin import auth
     
-    def process_request(self, req, resp):
-            auth_value = req.get_header('Authorization', None)
-            if auth_value is None or len(auth_value.split(' ')) != 2 or not self.token_is_valid(req, auth_value.split(' ')[1]):
-            raise falcon.HTTPUnauthorized(description='Unauthorized')
+        class AuthMiddleware(object):
+        """."""
     
-    def token_is_valid(self, req, token):
-            try:
-            decoded_token = auth.verify_id_token(token)
-            req.context['auth_user'] = decoded_token
-            except Exception as e:
-            return False
-            if not decoded_token:
-            return False
-            return True
-    ```
+            def process_request(self, req, resp):
+                auth_value = req.get_header('Authorization', None)
+                if auth_value is None or len(auth_value.split(' ')) != 2 or not self.token_is_valid(req, auth_value.split(' ')[1]):
+                    raise falcon.HTTPUnauthorized(description='Unauthorized')
+    
+            def token_is_valid(self, req, token):
+                try:
+                    decoded_token = auth.verify_id_token(token)
+                    req.context['auth_user'] = decoded_token
+                except Exception as e:
+                    return False
+                if not decoded_token:
+                   return False
+                return True
 
-    Because this middleware applies to all endpoints, from now you will need to send your requests with an 'Authorization' header which contains a valid JWT Token.
+    Because this middleware applies to all endpoints, from now you will need to send your requests
+    with an 'Authorization' header which contains a valid JWT Token.
 
-    ```py
-    Header['Authorization'] = 'Bearer [JWT_TOKEN]'
-    ```
+        Header['Authorization'] = 'Bearer [JWT_TOKEN]'
+    
+    You could also verify the user role in a separated Falcon hook to determine if the user has enough
+    permission to do the operation.
 
-    You could also verify the user role in a separated Falcon hook to determine if the user has enough permission to do the operation.
-
-    ```py
-    def is_admin(req, resp, resource, params):
+        def is_admin(req, resp, resource, params):
             # Good place to check the user role.
             logging.info(req.context['auth_user'])
     
-    ...
+        ...
     
-    @falcon.before(api_key)
-    @falcon.before(is_admin)
-    @falcon.after(say_bye_after_operation)
-    def on_post(self, req, resp):
+        @falcon.before(api_key)
+        @falcon.before(is_admin)
+        @falcon.after(say_bye_after_operation)
+        def on_post(self, req, resp):
     
-    ...
-    ```
-
+        ...
+    
     As you can see, we are using the `req.context` to pass variables from the middleware layer to the hooks.        
 
-6. To generate ID Tokens and because of Firebase does not provide an API to generate them,
-   we have to simulate a client sign in.
+6.  To generate ID Tokens and because of Firebase does not provide an API to generate them,
+    we have to simulate a client sign in.
 
-   To do that you can use several Firebase client libraries like [AngularFire](https://github.com/firebase/angularfire)
-   or [FirebaseUI](https://github.com/firebase/FirebaseUI).
-   You can find a sample in this repo [jwt][jwt]. Be sure that you set your Firebase Credentials before generate a token.
+    To do that you can use several Firebase client libraries like [AngularFire](https://github.com/firebase/angularfire)
+    or [FirebaseUI](https://github.com/firebase/FirebaseUI).
+    You can find a sample in this repo [jwt][jwt]. Be sure that you set your Firebase Credentials before generate a token.
 
 ## Running the app
 

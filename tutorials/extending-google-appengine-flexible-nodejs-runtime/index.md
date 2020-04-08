@@ -1,15 +1,16 @@
 ---
-title: Extending the Node.js Runtime of the Google App Engine Flexible Environment
-description: Learn how to extend the Node.js runtime of the Google App Engine flexible environment.
+title: Extending the Node.js runtime of App Engine flexible environment
+description: Learn how to extend the Node.js runtime of the App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Node.js, Docker
 date_published: 2017-01-23
 ---
-This tutorial shows how to extend the Node.js runtime of the Google App Engine
+
+This tutorial shows how to extend the Node.js runtime of the App Engine
 flexible environment.
 
 You will create a small Node.js web application that requires customizations to
-the default Node.js runtime of the [Google App Engine flexible environment][flex].
+the default Node.js runtime of the [App Engine flexible environment][flex].
 
 ## Prerequisites
 
@@ -34,41 +35,40 @@ the default Node.js runtime of the [Google App Engine flexible environment][flex
 
 ## Creating the app
 
-1. Create a file named `server.js` with the following contents:
+1.  Create a file named `server.js` with the following contents:
 
-[embedmd]:# (server.js)
-```js
-'use strict';
+    [embedmd]:# (server.js)
 
-const exec = require('child_process').exec;
-const express = require('express');
+        'use strict';
 
-const app = express();
+        const exec = require('child_process').exec;
+        const express = require('express');
 
-app.get('/', (req, res, next) => {
-  // Get the output from the "fortune" program. This is installed into the
-  // environment by the Dockerfile.
-  exec('/usr/games/fortune', (err, stdout) => {
-    if (err) {
-      next(err);
-      return;
-    }
+        const app = express();
 
-    res.set('Content-Type', 'text/plain');
-    res.status(200).send(stdout);
-  });
-});
+        app.get('/', (req, res, next) => {
+          // Get the output from the "fortune" program. This is installed into the
+          // environment by the Dockerfile.
+          exec('/usr/games/fortune', (err, stdout) => {
+            if (err) {
+              next(err);
+              return;
+            }
 
-if (module === require.main) {
-  const PORT = process.env.PORT || 8080;
-  app.listen(PORT, () => {
-    console.log(`App listening on port ${PORT}`);
-    console.log('Press Ctrl+C to quit.');
-  });
-}
+            res.set('Content-Type', 'text/plain');
+            res.status(200).send(stdout);
+          });
+        });
 
-module.exports = app;
-```
+        if (module === require.main) {
+          const PORT = process.env.PORT || 8080;
+          app.listen(PORT, () => {
+            console.log(`App listening on port ${PORT}`);
+            console.log('Press Ctrl+C to quit.');
+          });
+        }
+
+        module.exports = app;
 
 Notice how the app shells out to `/usr/games/fortune` in order to respond to the
 request. The `fortune` binary is not available in the default Node.js runtime,
@@ -77,46 +77,44 @@ app after it's deployed.
 
 ## Extending the runtime
 
-1. Run the following command to extend the runtime:
+1.  Run the following command to extend the runtime:
 
         gcloud beta app gen-config --custom
 
     This will generate `Dockerfile` and `.dockerignore` files, and modify the
     `app.yaml` file to include `runtime: custom` instead of `runtime: nodejs`.
 
-1. Modify the generated `Dockerfile` to look like the following:
+1.  Modify the generated `Dockerfile` to look like the following:
 
-    ```Dockerfile
-    # Dockerfile extending the generic Node image with application files for a
-    # single application.
-    FROM gcr.io/google_appengine/nodejs
+        # Dockerfile extending the generic Node image with application files for a
+        # single application.
+        FROM gcr.io/google_appengine/nodejs
 
-    # Install the fortunes game
-    RUN apt-get update && apt-get install -y fortunes
+        # Install the fortunes game
+        RUN apt-get update && apt-get install -y fortunes
 
-    # Check to see if the the version included in the base runtime satisfies
-    # '>=6.9.0', if not then do an npm install of the latest available
-    # version that satisfies it.
-    RUN /usr/local/bin/install_node '>=6.9.0'
+        # Check to see if the the version included in the base runtime satisfies
+        # '>=6.9.0', if not then do an npm install of the latest available
+        # version that satisfies it.
+        RUN /usr/local/bin/install_node '>=6.9.0'
 
-    # Copy application code.
-    COPY . /app/
+        # Copy application code.
+        COPY . /app/
 
-    # You have to specify "--unsafe-perm" with npm install
-    # when running as root.  Failing to do this can cause
-    # install to appear to succeed even if a preinstall
-    # script fails, and may have other adverse consequences
-    # as well.
-    # This command will also cat the npm-debug.log file after the
-    # build, if it exists.
-    RUN npm install --unsafe-perm || \
-      ((if [ -f npm-debug.log ]; then \
-          cat npm-debug.log; \
-        fi) && false)
+        # You have to specify "--unsafe-perm" with npm install
+        # when running as root.  Failing to do this can cause
+        # install to appear to succeed even if a preinstall
+        # script fails, and may have other adverse consequences
+        # as well.
+        # This command will also cat the npm-debug.log file after the
+        # build, if it exists.
+        RUN npm install --unsafe-perm || \
+          ((if [ -f npm-debug.log ]; then \
+              cat npm-debug.log; \
+            fi) && false)
 
-    # Run the app, default is "npm start"
-    CMD npm start
-    ```
+        # Run the app, default is "npm start"
+        CMD npm start
 
     When the app is deployed, the image will be built using the custom
     `Dockerfile`.

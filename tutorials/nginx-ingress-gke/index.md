@@ -64,8 +64,8 @@ balance traffic from external clients to the Deployment.  This tutorial explains
 
 This tutorial uses billable components of Cloud Platform, including:
 
--  Kubernetes Engine
--  Google Cloud Load Balancing
+-  Google Kubernetes Engine
+-  Cloud Load Balancing
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to
 generate a cost estimate based on your projected usage.
@@ -86,7 +86,7 @@ generate a cost estimate based on your projected usage.
 In this section you configure the infrastructure and identities required to
 complete the tutorial.
 
-### Create a Kubernetes Engine cluster using Cloud Shell
+### Create a Google Kubernetes Engine cluster using Cloud Shell
 
 1.  You can use Cloud Shell to complete this tutorial. To use Cloud Shell, perform the following steps:
 	  [OPEN A NEW CLOUD SHELL SESSION](https://console.cloud.google.com/?cloudshell=true)
@@ -101,14 +101,16 @@ complete the tutorial.
 
 If you already have Helm client and Tiller installed on your cluster, you can skip to the next section.
 
-__Helm__ is a tool that streamlines installing and managing Kubernetes applications and resources. Think of it like apt/yum/homebrew for Kubernetes. Use of helm charts is recommended since they are maintained and typically kept up-to-date by the Kubernetes community.
+Helm is a tool that streamlines installing and managing Kubernetes applications and resources. Think of it like 
+apt/yum/homebrew for Kubernetes. Use of Helm charts is recommended, because they are maintained and typically kept
+up to date by the Kubernetes community.
 
--  Helm has two parts: a client (`helm`) and a server (`tiller`)
--  `Tiller` runs inside of your Kubernetes cluster, and manages releases (installations) of your [helm charts](https://github.com/kubernetes/helm/blob/master/docs/charts.md).
--  `Helm` runs on your laptop, CI/CD, or in our case, the Cloud Shell.
+-   Helm has two parts: a client (`helm`) and a server (`tiller`)
+-   `tiller` runs inside of your Kubernetes cluster and manages releases (installations) of your
+    [helm charts](https://github.com/kubernetes/helm/blob/master/docs/charts.md).
+-   `helm` runs on your local computer, CI/CD, or in our case, the Cloud Shell.
 
 You can install the `helm` client in Cloud Shell using the following commands:
-
 
     curl -o get_helm.sh https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
     chmod +x get_helm.sh
@@ -170,7 +172,7 @@ The output should have a `tiller_deploy` Deployment as shown below:
     l7-default-backend      1         1         1            1           13m
     tiller-deploy           1         1         1            1           4m
 
-## Deploy an application in Kubernetes Engine
+## Deploy an application in Google Kubernetes Engine
 
 You can deploy a simple web based application from the Google Cloud
 Repository. You use this application as the backend for the Ingress.
@@ -198,13 +200,13 @@ Controllers instead of using the cloud provider's built-in offering.
 
 The NGINX controller, deployed as a Service, must be exposed for external
 access. This is done using Service `type: LoadBalancer` on the NGINX controller
-service. On Kubernetes Engine, this creates a Google Cloud Network (TCP/IP) Load Balancer with NGINX
+service. On Google Kubernetes Engine, this creates a Google Cloud Network (TCP/IP) Load Balancer with NGINX
 controller Service as a backend.  Google Cloud also creates the appropriate
 firewall rules within the Service's VPC to allow web HTTP(S) traffic to the load
 balancer frontend IP address. Here is a basic flow of the NGINX ingress
-solution on Kubernetes Engine.
+solution on Google Kubernetes Engine.
 
-### NGINX Ingress Controller on Kubernetes Engine
+### NGINX Ingress Controller on Google Kubernetes Engine
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/nginx-ingress-gke/Nginx%20Ingress%20on%20GCP%20-%20Fig%2002.png)
 
@@ -212,7 +214,7 @@ solution on Kubernetes Engine.
 
 If your Kubernetes cluster has RBAC enabled, from the Cloud Shell, deploy an NGINX controller Deployment and Service by running the following command:
 
-    helm install --name nginx-ingress stable/nginx-ingress --set rbac.create=true
+    helm install --name nginx-ingress stable/nginx-ingress --set rbac.create=true --set controller.publishService.enabled=true
 
 #### Deploy NGINX Ingress Controller with RBAC disabled
 
@@ -247,15 +249,20 @@ Resource). The default backend exposes two URLs:
 
 ## Configure Ingress Resource to use NGINX Ingress Controller
 
-An Ingress Resource object is a collection of L7 rules for routing inbound traffic to Kubernetes Services.  Multiple rules can be defined in one Ingress Resource or they can be split up into multiple Ingress Resource manifests. The Ingress Resource also determines which controller to utilize to serve traffic.  This can be set with an annotation, `kubernetes.io/ingress.class`, in the metadata section of the Ingress Resource.  For the NGINX controller, use the value `nginx` as shown below:
+An Ingress Resource object is a collection of L7 rules for routing inbound traffic to Kubernetes Services. Multiple rules can be defined in one Ingress Resource or they can be split up into multiple Ingress Resource manifests. The Ingress Resource also determines which controller to utilize to serve traffic.  This can be set with an annotation, `kubernetes.io/ingress.class`, in the metadata section of the Ingress Resource.  For the NGINX controller, use the value `nginx` as shown below:
 
     annotations: kubernetes.io/ingress.class: nginx
 
-On Kubernetes Engine, if no annotation is defined under the metadata section, the
+On Google Kubernetes Engine, if no annotation is defined under the metadata section, the
 Ingress Resource uses the GCP GCLB L7 load balancer to serve traffic. This
 method can also be forced by setting the annotation's value to `gce`as shown below:
 
     annotations: kubernetes.io/ingress.class: gce
+
+Deploying multiple Ingress controllers of different types (for example, both `nginx` and `gce`) and not specifying a class
+annotation will result in all controllers fighting to satisfy the Ingress, and all of them racing to update Ingress
+status field in confusing ways. For more information, see
+[Multipe Ingress controllers](https://kubernetes.github.io/ingress-nginx/user-guide/multiple-ingress/).
 
 Let's create a simple Ingress Resource YAML file which uses the NGINX Ingress Controller and has one path rule defined by typing the following commands:
 
@@ -332,7 +339,7 @@ From the Cloud Shell, run the following commands:
         service "hello-app" deleted
         deployment "hello-app" deleted
 
-4.  Delete the Kubernetes Engine cluster by running the following command:
+4.  Delete the Google Kubernetes Engine cluster by running the following command:
 
         gcloud container clusters delete nginx-tutorial
 

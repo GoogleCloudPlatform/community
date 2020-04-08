@@ -1,0 +1,5 @@
+# This script automates the build and publication of the docker image
+DOCKER_REPO=ianmaddox
+docker build -t basic-fim .
+docker tag basic-fim $DOCKER_REPO/basic-fim:latest
+docker push $DOCKER_REPO/basic-fim

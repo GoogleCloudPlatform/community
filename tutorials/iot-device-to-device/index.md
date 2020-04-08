@@ -1,8 +1,8 @@
 ---
-title: Google Cloud IoT Core Device to Device Communication
-description: Learn how to relay messages from one device to another using Google Cloud Functions.
+title: Cloud IoT Core device-to-device communication
+description: Learn how to relay messages from one device to another using Cloud Functions.
 author: gguuss
-tags: Google Cloud IoT Core, Cloud IoT, Google Cloud Functions, internet of things
+tags: Cloud IoT Core, Cloud IoT, Cloud Functions, internet of things
 date_published: 2017-12-05
 ---
 
@@ -12,28 +12,27 @@ second device (Device 2) to be "awake". In this scenario, you would want for a
 change on the first device (switch 1 set to "awake") to trigger a change on the
 second device (Device 2 set to "awake").
 
-One approach to triggering the configuration change is to:
+One approach to triggering the configuration change is to do the following:
 
-1. Send telemetry message from Device 1 to PubSub using Cloud IoT Core bridge
-1. Configure Google Cloud Function to receive message and send configuration change
+1. Send telemetry message from Device 1 to Cloud Pub/Sub using Cloud IoT Core bridge
+1. Configure Cloud Function to receive message and send configuration change
 1. Receive configuration change on Device 2
-
-as demonstrated in the following diagram:
 
 ![Overview of device to device communication](https://storage.googleapis.com/gcp-community/tutorials/iot-device-to-device/overview.png)
 
 This tutorial demonstrates how you can do each of these steps.
 
-## Create a Google Cloud IoT Core topic
+## Create a Cloud IoT Core topic
 
-From the [Google Cloud Console](https://console.cloud.google.com/iot), create
-a Google Cloud IoT Core Device Registry. When you create it, either set the
-event notification topic to an existing PubSub topic or create a new topic to
+From the [Google Cloud Platform Console](https://console.cloud.google.com/iot), create
+a Cloud IoT Core Device Registry. When you create it, either set the
+event notification topic to an existing Cloud Pub/Sub topic or create a new topic to
 be used for the demo.
 
-## Upload the Google Cloud Function
+## Upload the Cloud Function
+
 The [dev2dev/ folder](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/iot-device-to-device/dev2dev)
-of the tutorial contains an example Google Cloud Function that contains the
+of the tutorial contains an example Cloud Function that contains the
 `getClient` and `setDeviceConfig` functions from the
 [NodeJS manager sample](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/tree/master/iot/manager).
 
@@ -55,15 +54,14 @@ google.auth.getApplicationDefault(function (err, authClient, projectId) {
 }
 ```
 
-The Google Cloud Function exported by the script is titled `relayCloudIot` and
+The Cloud Function exported by the script is titled `relayCloudIot` and
 is specifed as:
 
 ```js
 exports.relayCloudIot = function (event, callback) {
 ```
 
-Within the fuction, the first thing that happens is the message sent to the
-PubSub queue is parsed:
+Within the fuction, the first thing that happens is the message sent to the Cloud Pub/Sub queue is parsed:
 
 ```js
 const record = JSON.parse(
@@ -100,7 +98,7 @@ const cb = function (client) {
 getClient(process.env.GOOGLE_APPLICATION_CREDENTIALS, cb);
 ```
 
-To setup the Google Cloud Function, deploy it to trigger on the topic
+To setup the Cloud Function, deploy it to trigger on the topic
 configured with your device registry.
 
     gcloud beta functions deploy relayCloudIot \
@@ -110,7 +108,7 @@ configured with your device registry.
 ## Register a Device
 
 Before you can connect a device, you must register its public key with the
-Google Cloud IoT Core device manager. There are a number of ways to do this,
+Cloud IoT Core device manager. There are a number of ways to do this,
 but for now, we'll use the terminal and `gcloud`.
 
 The following command will generate a RSA-256 keypair:
@@ -122,16 +120,16 @@ After you have generated the keypair, use the public key to register your
 device:
 
     gcloud beta iot devices create \
-        --registry=<your-registry-id> \
+        --registry=[YOUR_REGISTRY_ID] \
         --region "europe-west1" \
-        --public-key path=rsa_cert.pem,type=rs256 <deviceId>
+        --public-key path=rsa_cert.pem,type=rs256 [YOUR_DEVICE_ID]
 
 Now that you have registered a device, you can connect it using the virtual
 device provided in the sample.
 
 ##  Connect your virtual device
 
-The virtual device is based entirely on the [NodeJS MQTT device sample](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/tree/master/iot/mqtt_example)
+The virtual device is based on the [NodeJS MQTT device sample](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/tree/master/iot/mqtt_example)
 with two small differences: the telemetry message that is sent is updated and
 the handler for receieving messages is different.
 
@@ -166,22 +164,22 @@ client.on('message', (topic, message, packet) => {
 ```
 
 To run the demo after you have successfully setup your Device Registry and
-deployed your Google Cloud Function, run the following command from the
-virtualdevice folder:
+deployed your Cloud Function, run the following command from the
+`virtualdevice` folder:
 
     cd virtualdevice
     npm install
     node virtualdev.js --cloudRegion=<region-from-console> \
-        --projectId<your-project-id> \
-        --deviceId=<your-device-id>\
+        --projectId=[YOUR_PROJECT_ID] \
+        --deviceId=[YOUR_DEVICE_ID]\
         --privateKeyFile=../rsa_private.pem \
         --algorithm=RS256 \
         --numMessages=1 \
-        --registryId=<your-registry-id>
+        --registryId=[YOUR_REGISTRY_ID]
 
 When the virtual device connects, it transmits a telemetry message that is
-turned into a Google Cloud PubSub message that reaches the Google Cloud
-Function. The Google Cloud Function then generates a callback message based on
+turned into a Cloud Pub/Sub message that reaches the Cloud
+Function. The Cloud Function then generates a callback message based on
 the telemetry data, which contains the registry and device IDs, set to the
 connecting device ID.
 
@@ -209,7 +207,7 @@ First, running the virtual device demo:
     close
     Waited long enough then.
 
-Next, logs from Google Cloud Functions:
+Next, logs from Cloud Functions:
 
     D      relayCloudIot  42015704282425  2018-02-22 00:51:14.354  Function execution started
     I      relayCloudIot  42015704282425  2018-02-22 00:51:14.517  forthedocs europop 2

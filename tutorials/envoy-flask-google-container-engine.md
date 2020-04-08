@@ -10,7 +10,7 @@ One of the recurring problems with using microservices is managing communication
 
 A useful pattern is to enlist a proxy, like [Envoy](https://lyft.github.io/envoy/), to help [make your application more resilient and observable](https://www.datawire.io/guide/traffic/getting-started-lyft-envoy-microservices-resilience/). Envoy can be a bit daunting to set up, so this tutorial walks you through deploying a Python Flask webapp with Envoy on Google Kubernetes Engine.
 
-## The Application
+## The application
 
 The application is a simple REST-based user service. It can create, fetch, and delete users. Even such a trivial application involves several real-world concerns:
 
@@ -29,22 +29,27 @@ You need a Google Cloud Platform account to set up a Kubernetes Engine cluster. 
 
 ### Kubernetes
 
-You need `kubectl`, the Kubernetes CLI, to work with Kubernetes Engine. On a Mac you can use `brew install kubernetes-cli`. Otherwise, follow the [Kubernetes installation intructions](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+You need `kubectl`, the Kubernetes command-line interface, to work with Kubernetes Engine. On macOS you can use
+`brew install kubernetes-cli`. Otherwise, follow the
+[Kubernetes installation intructions](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
 
 ### Docker
 
-Kubernetes Engine runs code from Docker images, so you need the Docker CLI, `docker`, to build your own images. [Docker Community Edition](https://www.docker.com/community-edition) is fine if you're just getting started (again, on a Mac, the easy way is to run `brew install docker`).
+Kubernetes Engine runs code from Docker images, so you need the Docker command-line interface, `docker`, to build your own 
+images. [Docker Community Edition](https://www.docker.com/community-edition) is fine if you're just getting started.
+(Again, on macOS, the easy way is to run `brew install docker`.)
 
 ### The application
 
-Everything you use in this tutorial is in [Datawire's `envoy-steps` repo](https://github.com/datawire/envoy-steps).
+Everything you use in this tutorial is in [Datawire's `envoy-steps` repository](https://github.com/datawire/envoy-steps).
 
-1. Clone that repo and `cd` into your clone:
+1. Clone that repository and `cd` into your clone:
 
         git clone https://github.com/datawire/envoy-steps.git
         cd envoy-steps
 
-1. In your `envoy-steps` directory, you should see `README.md` and directories named `postgres`, `usersvc`, and so on. Each of those directories contains a service to be deployed, and each can be brought up or down independently with
+1. In your `envoy-steps` directory, you should see `README.md` and directories named `postgres`, `usersvc`, and so on. Each 
+of those directories contains a service to be deployed, and each can be brought up or down independently with
 
         sh up.sh $service
 
@@ -52,7 +57,8 @@ Everything you use in this tutorial is in [Datawire's `envoy-steps` repo](https:
 
         sh down.sh $service
 
-Between Python code, Kubernetes configs, docs, and so on, there’s too much to include everything in one document. This tutorial just covers the highlights, and you can look at all the details in your clone of the repo.
+Between Python code, Kubernetes configs, docs, and so on, there’s too much to include everything in one document. This
+tutorial just covers the highlights, and you can look at all the details in your clone of the repo.
 
 ## The Docker registry
 

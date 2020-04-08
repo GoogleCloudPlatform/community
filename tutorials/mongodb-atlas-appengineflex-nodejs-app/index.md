@@ -1,6 +1,6 @@
 ---
-title: Hello World App - MongoDB Atlas and App Engine Flex - NodeJS
-description: Learn how to build Node.js application with Google App Engine flexible environment and MongoDB Atlas.
+title: Hello World app - MongoDB Atlas and App Engine flexible environment with Node.js
+description: Learn how to build Node.js application with App Engine flexible environment and MongoDB Atlas.
 author: arajwade,smithkh
 tags: App Engine, Node.js, MongoDB Atlas
 date_published: 2018-06-25
@@ -9,10 +9,10 @@ date_published: 2018-06-25
 ## Overview
 
 In this tutorial, you will be building a "Hello World" application using Node.js
-with Google App Engine flexible environment for our frontend and a MongoDB Atlas
+with App Engine flexible environment for our frontend and a MongoDB Atlas
 multi-regional cluster on Google Cloud Platform as our primary database.
 
-### Technical Complecity
+### Technical Complexity
 
 Beginner
 
@@ -292,68 +292,66 @@ Beginner
     NOTE: See the highlighted section where you need to insert your own Atlas
     Connection string.
 
-    ```js
-    'use strict';
+        'use strict';
 
-    const mongodb = require('mongodb');
-    const http = require('http');
-    const nconf = require('nconf');
-    let uri = ` PASTE YOUR MONGODB ATLAS CONNECTION STRING HERE `;
-    if (nconf.get('mongoDatabase')) {
-      uri = `${uri}/${nconf.get('mongoDatabase')}`;
-    }
-    console.log(uri);
-
-    mongodb.MongoClient.connect(uri, (err, db) => {
-      if (err) {
-        throw err;
-      }
-
-      // Create a simple little server.
-      http.createServer((req, res) => {
-        if (req.url === '/_ah/health') {
-          res.writeHead(200, {
-            'Content-Type': 'text/plain'
-          });
-          res.write('OK');
-          res.end();
-          return;
+        const mongodb = require('mongodb');
+        const http = require('http');
+        const nconf = require('nconf');
+        let uri = ` PASTE YOUR MONGODB ATLAS CONNECTION STRING HERE `;
+        if (nconf.get('mongoDatabase')) {
+          uri = `${uri}/${nconf.get('mongoDatabase')}`;
         }
+        console.log(uri);
 
-
-        const collection = db.collection('Messages');
-        var datetime = new Date();
-        const msg = {
-          msgDescription: '\nHello World received on ' + datetime
-        };
-
-        collection.insert(msg, (err) => {
+        mongodb.MongoClient.connect(uri, (err, db) => {
           if (err) {
             throw err;
           }
 
-          // push out a range
-          let msglist = '';
-          collection.find().toArray((err, data) => {
-            if (err) {
-              throw err;
+          // Create a simple little server.
+          http.createServer((req, res) => {
+            if (req.url === '/_ah/health') {
+              res.writeHead(200, {
+                'Content-Type': 'text/plain'
+              });
+              res.write('OK');
+              res.end();
+              return;
             }
-            data.forEach((msg) => {
-              msglist += `${msg.msgDescription}; `;
-            });
 
-            res.writeHead(200, {
-              'Content-Type': 'text/plain'
+
+            const collection = db.collection('Messages');
+            var datetime = new Date();
+            const msg = {
+              msgDescription: '\nHello World received on ' + datetime
+            };
+
+            collection.insert(msg, (err) => {
+              if (err) {
+                throw err;
+              }
+
+              // push out a range
+              let msglist = '';
+              collection.find().toArray((err, data) => {
+                if (err) {
+                  throw err;
+                }
+                data.forEach((msg) => {
+                  msglist += `${msg.msgDescription}; `;
+                });
+
+                res.writeHead(200, {
+                  'Content-Type': 'text/plain'
+                });
+        res.write('Messages received so far:\n');
+                res.end(msglist);
+              });
             });
-    res.write('Messages received so far:\n');
-            res.end(msglist);
+          }).listen(process.env.PORT || 8080, () => {
+            console.log('started web process');
           });
         });
-      }).listen(process.env.PORT || 8080, () => {
-        console.log('started web process');
-      });
-    });
-    ```
 
     1.  Enter "Exit" to leave
     1.  On prompt to save, enter "Y"

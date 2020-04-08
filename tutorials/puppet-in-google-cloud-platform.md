@@ -1,6 +1,6 @@
 ---
-title: Set up a Puppet Master Agent Configuration in Compute Engine
-description: Learn how to configure Compute Engine instances as a Puppet master and agent, and use a manifest deploy an application from the master to the agent.
+title: Set up a Puppet master and agent configuration in Compute Engine
+description: Learn how to configure Compute Engine instances as a Puppet master and agent, and use a manifest to deploy an application from the master to the agent.
 author: ksakib
 tags: Puppet, Google Cloud, Compute Engine, Puppet Master, Puppet Agent
 date_published: 2018-06-11
@@ -9,8 +9,8 @@ date_published: 2018-06-11
 ## Objectives
 
 * Set up the virtual machines
-* Install and run Puppet Master
-* Install Puppet Agent and request a certificate from Master
+* Install and run Puppet master
+* Install Puppet agent and request a certificate from the master
 * Sign the certificate to establish communication between the Puppet master and Puppet agent
 * Write a manifest for a simple web app and deploy it to the Puppet agent
 
@@ -20,7 +20,7 @@ date_published: 2018-06-11
 
 2. Create another Compute Engine instance but this time a with 1 vCPU + 3.75 GB memory with the same OS (Ubuntu 16.04 xenial). Keep the default firewall option. No need to check http or https. Name the instance as puppet-master.
 
-## Install and run Puppet Master
+## Install and run Puppet master
 
 1. SSH into the puppet-master instance, then run the following commands to install the Puppet server:
 
@@ -77,26 +77,29 @@ You can also do a single sign by
 
 ## Write a simple webserver module and Manifest that will install Apache2 and write hello world page
 
-1. On the puppet-master instance, navigate to the folder /etc/puppetlabs/code/environments/production/manifests/, make a manifest file named site.pp, and copy the following code into it:
+1.  On the puppet-master instance, navigate to the folder /etc/puppetlabs/code/environments/production/manifests/, make a manifest file named site.pp, and copy the following code into it:
 
         node /agent/{
           include webserver
         }
 
-2. Navigate to the /etc/puppetlabs/code/environments/production/modules directory and make a new directory by running the following command:
+2.  Navigate to the /etc/puppetlabs/code/environments/production/modules directory and make a new directory by running the following command:
 
         sudo mkdir -p webserver/manifests
 
-3. In the new manifests directory, create a file named init.pp, and copy the following code into it:
+3.  In the new manifests directory, create a file named init.pp, and copy the following code into it:
+
         class webserver {
           package { 'apache2':
-          ensure => present
+           ensure => present
+          }
+          file {'/var/www/html/index.html': # resource type file and filename
+            ensure => present, # make sure it exists
+            content => "<h1>This page is installed from Puppet Master</h1>", # content of the file
+          }
         }
-        file {'/var/www/html/index.html': # resource type file and filename
-          ensure => present, # make sure it exists
-          content => "<h1>This page is installed from Puppet Master</h1>", # content of the file
-        }
-      }
+        
+        
 4. Run the following command on the puppet-agent instance to get the catalog from the Puppet master and apply the manifest:
 
         sudo /opt/puppetlabs/bin/puppet agent --test

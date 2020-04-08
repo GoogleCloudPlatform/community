@@ -1,16 +1,16 @@
 ---
-title: Run a Kotlin Ktor app on Google App Engine Standard
-description: Learn how to deploy a Kotlin Ktor app to Google App Engine Standard.
+title: Run a Kotlin Ktor app on App Engine standard environment
+description: Learn how to deploy a Kotlin Ktor app to App Engine standard environment.
 author: bshaffer
 tags: App Engine, Kotlin, Ktor, Java, App Engine Standard
 date_published: 2018-01-17
 ---
 
-[Google App Engine Standard](https://cloud.google.com/appengine/docs/standard/)
+[App Engine standard environment](https://cloud.google.com/appengine/docs/standard/)
 is an easy way to deploy your apps to the same infrastructure that powers
 Google's products. In this tutorial you'll see how to deploy your
 [Kotlin](https://kotlinlang.org/) and [Ktor](https://ktor.io) application to
-App Engine Standard.
+App Engine standard environment.
 
 You will create a new Ktor application, and then you will learn how to:
 
@@ -67,87 +67,86 @@ you already have an app to deploy, you can use it instead.
 
 1.  In `build.gradle`, copy the following contents:
 
-    ```gradle
-    buildscript {
-        // Consider moving these values to `gradle.properties`
-        ext.kotlin_version = '1.2.61'
-        ext.ktor_version = '0.9.4'
-        ext.appengine_version = '1.9.60'
-        ext.appengine_plugin_version = '1.3.4'
+        buildscript {
+            // Consider moving these values to `gradle.properties`
+            ext.kotlin_version = '1.2.61'
+            ext.ktor_version = '0.9.4'
+            ext.appengine_version = '1.9.60'
+            ext.appengine_plugin_version = '2.1.0'
+
+            repositories {
+                jcenter()
+            }
+            dependencies {
+                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+                classpath "com.google.cloud.tools:appengine-gradle-plugin:$appengine_plugin_version"
+            }
+        }
+
+        apply plugin: 'kotlin'
+        apply plugin: 'war'
+        apply plugin: 'com.google.cloud.tools.appengine'
+
+        appengine.deploy.projectId = 'GCLOUD_CONFIG'
+        appengine.deploy.version = 'GCLOUD_CONFIG'
+
+        sourceSets {
+            main.kotlin.srcDirs = [ 'src/main/kotlin' ]
+        }
 
         repositories {
             jcenter()
+            maven { url "https://kotlin.bintray.com/ktor" }
         }
+
         dependencies {
-            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-            classpath "com.google.cloud.tools:appengine-gradle-plugin:$appengine_plugin_version"
+            compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+            compile "io.ktor:ktor-server-servlet:$ktor_version"
+            compile "io.ktor:ktor-html-builder:$ktor_version"
+
+            providedCompile "com.google.appengine:appengine:$appengine_version"
         }
-    }
 
-    apply plugin: 'kotlin'
-    apply plugin: 'war'
-    apply plugin: 'com.google.cloud.tools.appengine'
+        kotlin.experimental.coroutines = 'enable'
 
-    sourceSets {
-        main.kotlin.srcDirs = [ 'src/main/kotlin' ]
-    }
-
-    repositories {
-        jcenter()
-        maven { url "https://kotlin.bintray.com/ktor" }
-    }
-
-    dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-        compile "io.ktor:ktor-server-servlet:$ktor_version"
-        compile "io.ktor:ktor-html-builder:$ktor_version"
-
-        providedCompile "com.google.appengine:appengine:$appengine_version"
-    }
-
-    kotlin.experimental.coroutines = 'enable'
-
-    task run(dependsOn: appengineRun)
-    ```
+        task run(dependsOn: appengineRun)
 
 1.  In `src/main/kotlin/HelloApplication.kt`, copy the following contents:
 
-    ```kt
-    package com.example.demo
+        package com.example.demo
 
-    import io.ktor.application.*
-    import io.ktor.features.*
-    import io.ktor.html.*
-    import io.ktor.routing.*
-    import kotlinx.html.*
+        import io.ktor.application.*
+        import io.ktor.features.*
+        import io.ktor.html.*
+        import io.ktor.routing.*
+        import kotlinx.html.*
 
-    // Entry Point of the application as defined in resources/application.conf.
-    // @see https://ktor.io/servers/configuration.html#hocon-file
-    fun Application.main() {
-        // This adds Date and Server headers to each response, and allows custom additional headers
-        install(DefaultHeaders)
-        // This uses use the logger to log every call (request/response)
-        install(CallLogging)
+        // Entry Point of the application as defined in resources/application.conf.
+        // @see https://ktor.io/servers/configuration.html#hocon-file
+        fun Application.main() {
+            // This adds Date and Server headers to each response, and allows custom additional headers
+            install(DefaultHeaders)
+            // This uses use the logger to log every call (request/response)
+            install(CallLogging)
 
-        // Registers routes
-        routing {
-            // Here we use a DSL for building HTML on the route "/"
-            // @see https://github.com/Kotlin/kotlinx.html
-            get("/") {
-                call.respondHtml {
-                    head {
-                        title { +"Ktor on Google App Engine Standard" }
-                    }
-                    body {
-                        p {
-                            +"Hello there! This is Ktor running on Google Appengine Standard"
+            // Registers routes
+            routing {
+                // Here we use a DSL for building HTML on the route "/"
+                // @see https://github.com/Kotlin/kotlinx.html
+                get("/") {
+                    call.respondHtml {
+                        head {
+                            title { +"Ktor on Google App Engine standard environment" }
+                        }
+                        body {
+                            p {
+                                +"Hello there! This is Ktor running on App Engine standard environment"
+                            }
                         }
                     }
                 }
             }
         }
-    }
-    ```
 
 1.  In `src/main/resources/application.conf`, copy the following contents:
 
@@ -160,7 +159,7 @@ you already have an app to deploy, you can use it instead.
 1.  Copy [this XML](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-ktor-app-engine-java8/web-example.xml) into `src/main/webapp/WEB-INF/web.xml`.
 
 Now you have a basic Ktor app set up. You can go ahead and run this locally,
-but  but let's add App Engine configuration and
+but let's add App Engine configuration and run it with the App Engine plugin.
 
 ## Running your application locally with the App Engine plugin
 
@@ -183,7 +182,7 @@ the [App Engine plugin for Gradle](https://cloud.google.com/appengine/docs/stand
 
 ## Deploy your application
 
-1.   Run the following command to deploy your app:
+1.  Run the following command to deploy your app:
 
         ./gradlew appengineDeploy
 
@@ -198,7 +197,7 @@ the [App Engine plugin for Gradle](https://cloud.google.com/appengine/docs/stand
     make sure the environment variable `GOOGLE_CLOUD_SDK_HOME` is set to the
     root directory of where you installed the Google Cloud SDK.
 
-1.   Once the deploy command has completed, you can run the following to see
+1.  Once the deploy command has completed, you can run the following to see
     your app running in production on App Engine in the browser:
 
         gcloud app browse
@@ -210,20 +209,18 @@ Make a simple change and redeploy.
 1.  Add the following after the `get("/") { ... }` function call in
     `HelloApplication.kt`:
 
-    ```kt
-    get("/demo") {
-        call.respondHtml {
-            head {
-                title { +"Ktor on Google App Engine Standard" }
-            }
-            body {
-                p {
-                    +"It's another route!"
+        get("/demo") {
+            call.respondHtml {
+                head {
+                    title { +"Ktor on App Engine standard environment" }
+                }
+                body {
+                    p {
+                        +"It's another route!"
+                    }
                 }
             }
         }
-    }
-    ```
 
 1.  Run the deployment command again:
 
