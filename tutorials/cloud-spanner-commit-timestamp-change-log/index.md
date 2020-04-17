@@ -247,5 +247,6 @@ tables from the [**Cloud Spanner**](https://console.cloud.google.com/spanner) pa
 
 ## Next steps
 
-* See [the runnable code sample](https://github.com/GoogleCloudPlatform/golang-samples/blob/master/spanner/spanner_snippets/snippet.go), which contains the code snippets included in this article.
+* Explore [the runnable code sample](https://github.com/GoogleCloudPlatform/golang-samples/blob/master/spanner/spanner_snippets/snippet.go) that contains the code snippets included in this document.
+* For a tutorial that shows how to use Java to create a change log, see [Creating a change log with JDBC using the commit timestamp feature of Cloud Spanner](https://cloud.google.com/solutions/using-spanner-commit-timestamp).
 * See [the Cloud Spanner commit timestamp documentation](https://cloud.google.com/spanner/docs/commit-timestamp).
