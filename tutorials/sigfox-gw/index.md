@@ -372,16 +372,17 @@ Verify the `callback_data` Cloud Function with the following steps:
 3.  (This step is dependent on the Sigfox device.) Send a data payload from your Sigfox device.
 4.  Verify that you can see the new message in the Sigfox backend **Device > Messages** page, as below:
 
-**Figure 7.** Sigfox messages example
+    **Figure 7.** Sigfox messages example
 
-[messages 2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/messages2.png
-![messages example][messages 2]
+    [messages 2]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/messages2.png
+    ![messages example][messages 2]
 
-Note: If your Sigfox backend can receive the message, the up arrow will first be grayed out.
-If the Cloud Function `callback_data` was triggered successfully, and the function replied
-as expected, the arrow will turn green.
+    If your Sigfox backend can receive the message, the up arrow will first be grayed out.
+    If the Cloud Function `callback_data` was triggered successfully, and the function replied
+    as expected, the arrow will turn green.
 
-5.  Verify that the message payload was forwarded to your Cloud Pub/Sub topic. On your development machine, execute the following command:
+5.  Verify that the message payload was forwarded to your Cloud Pub/Sub topic. On your development machine, execute the 
+    following command:
 
         (venv) $ gcloud pubsub subscriptions pull sigfox-data-sub --limit 100 --auto-ack
 
@@ -399,16 +400,16 @@ as expected, the arrow will turn green.
 
 7.  Find the entries for `Received Sigfox message` and any entries below that. Click the entries to expand their view. You should see something similar to the following:
 
-**Figure 8.** Cloud Logging
+    **Figure 8.** Cloud Logging
 
-[logging]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/logging.png
-![stackdriver logging][logging]
+    [logging]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/logging.png
+    ![stackdriver logging][logging]
 
-Note: The first time the Cloud Function executes, the platform creates its runtime environment and the
-execution time is longer. This is called a _cold start_ for Cloud Functions. Subsequent executions will
-be faster. Here, you can verify that the Cloud Function was triggered, received the device payload, and
-as seen in the next log entry, forwarded the payload to the Cloud Pub/Sub topic. The Pub/Sub topic is
-the integration point for consuming the Sigfox data in real time for your specific business solutions.
+    The first time the Cloud Function executes, the platform creates its runtime environment and the
+    execution time is longer. This is called a _cold start_ for Cloud Functions. Subsequent executions will
+    be faster. Here, you can verify that the Cloud Function was triggered, received the device payload, and
+    as seen in the next log entry, forwarded the payload to the Cloud Pub/Sub topic. The Pub/Sub topic is
+    the integration point for consuming the Sigfox data in real time for your specific business solutions.
 
 8.  Verify that your `DATA_ADVANCED` callback is also working, by finding a second function execution
     after the first one. The `DATA_ADVANCED` callback is a feature in the Sigfox backend to send
@@ -495,7 +496,9 @@ Execute the following steps to verify the downlink functionality:
 
 Verify that you can receive service messages from the Sigfox backend by executing the following steps.
 
-Note: You should execute these steps only after executing the downlink tests in the previous section. You may not have any service messages from Sigfox backend until you send a downlink response to your device. The downlink response will generate a subsequent `downlinkAck` service message.
+You should execute these steps only after executing the downlink tests in the previous section. You may not have any service
+messages from Sigfox backend until you send a downlink response to your device. The downlink response will generate a 
+subsequent `downlinkAck` service message.
 
 1.  In the Cloud Functions console, click the `callback_service` function.
 2.  Verify that you can see successful invocations, indicated by a blue line:
