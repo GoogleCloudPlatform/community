@@ -3,14 +3,14 @@ title: Using Sigfox Sens'it with GCP
 description: Set up the Sigfox Sens'it Discovery V3 device as a dev kit, and use it with Google Cloud Platform.
 author: lepistom
 tags: IoT, Internet of Things, Sigfox, LPWAN
-date_published: 2019-02-21
+date_published: 2020-04-22
 ---
 
 Markku Lepisto | Solutions Architect | Google Cloud
 
 ## Objectives
 
-This document describes how to start using your [Sigfox](https://www.sigfox.com/) [Sens'it Discovery V3](https://sensit.io) 
+This document describes how to start using your [Sigfox](https://www.sigfox.com/) [Sens'it Discovery V3](https://sensit.io)
 device and connect it to [Google Cloud Platform (GCP)](https://cloud.google.com), with step-by-step instructions on how to
 use GCP services for real-time sensor data ingestion, processing, and analytics, as well as device configuration management.
 
@@ -33,7 +33,7 @@ This tutorial uses billable components of GCP, including the following:
 
 - Cloud Functions
 - Cloud Pub/Sub
-- Cloud Datastore
+- Cloud Firestore
 - BigQuery
 
 This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/),
@@ -54,14 +54,14 @@ This tutorial assumes that you already have a [GCP account](https://console.clou
 1. Search for and activate the following APIs, or ensure that they are already active:
     * Cloud Functions API
     * Cloud Pub/Sub API
-    * Cloud Datastore API
+    * Cloud Firestore API
     * Cloud BigQuery API
 
 ## Activate your Sens'it device
 
 Sens'it devices come with a Sigfox subscription. You must first activate the device, create a Sigfox account, and associate
 the device in your account. You can activate the device using either a web portal or a mobile app. The next sections get you
-started with both options. 
+started with both options.
 
 **Note**: You must be located in a [Sigfox network coverage area](https://www.sigfox.com/en/coverage) when you activate the device.
 
@@ -133,10 +133,10 @@ need to register the device as a dev kit (development kit).
 
 Execute the following steps to register your Sens'it as a dev kit:
 
-1.  Follow all the steps in [this document](https://storage.sbg1.cloud.ovh.net/v1/AUTH_669d7dfced0b44518cb186841d7cbd75/dev_medias/build/4059ae1jm2231vw/sensit-3-devkit-activation.pdf).
+1.  Follow all the steps in [this document](https://storage.sbg.cloud.ovh.net/v1/AUTH_669d7dfced0b44518cb186841d7cbd75/dev_medias/build/4059ae1jm2231vw/sensit-3-devkit-activation.pdf).
 
     **Note**: Ensure that you enter a valid email address so that you can finalize the registration process.
-    
+
 1.  Wait for a few hours while Sigfox registers your new account in the Sigfox backend and communicates with the device
     to transfer it to your backend account. The delay is due to the Sigfox radio network periodically communicating
     with newly registered devices. You will receive an email after the process has finished.
@@ -219,11 +219,11 @@ Execute the following steps on your local development machine to create the BigQ
 
         $ deactivate
 
-1.  Create a new Python virtual environment in the `sigfox-sensit` directory:
+1.  Create a new Python 3 virtual environment in the `sigfox-sensit` directory:
 
-        $ virtualenv venv
-        
-    Python scripts that you execute locally require Python 2.7.
+        $ python3 -m venv venv
+
+    Python scripts that you execute locally require Python 3.
 
 1.  Activate the virtual environment:
 
@@ -231,7 +231,7 @@ Execute the following steps on your local development machine to create the BigQ
 
 1.  Install the required Python modules:
 
-        (venv) $ pip install -r requirements.txt
+        (venv) $ pip3 install -r requirements.txt
 
 1.  Create the BigQuery dataset:
 
@@ -290,15 +290,12 @@ Execute the following steps on your local development machine:
     this file. Additionally, ensure that the value for `DEVICE_TYPE` matches the device type for your Sens'it device in
     your Sigfox backend account.
 
-1.  Deploy the Cloud Function by executing the following command. Note: change the value of `region` to your preferred 
+1.  Deploy the Cloud Function by executing the following command. Note: change the value of `region` to your preferred
     region, and the value of `trigger-resource` to the name of your Pub/Sub topic that the Sigfox integration uses.
-    
-    **Note**: The function is implemented in Python 3 but its runtime environment is in the Google Cloud Functions service.
-    You do not need Python 3 on your local development environment for this tutorial.
 
-        (venv) $ gcloud beta functions deploy --region asia-northeast1 pubsub_bigquery --runtime python37 --env-vars-file .env.yaml --trigger-event=google.pubsub.topic.publish --trigger-resource=sigfox-data
+        (venv) $ gcloud functions deploy --region asia-northeast1 pubsub_bigquery --runtime python37 --env-vars-file .env.yaml --trigger-event=google.pubsub.topic.publish --trigger-resource=sigfox-data
 
-    The command should return an output similar to this:
+    You can select 'y' for the prompt `Allow unauthenticated invocations of new function [pubsub_bigquery]?`. The command should return an output similar to this:
 
         updateTime: [timestamp]
         versionId: [increment]
@@ -323,12 +320,12 @@ to a different color. The colors match the mode icons printed on the device fron
 | purple       | magnet      |
 
 
-To transmit sensor readings, double-press the button. The device transmits sensor readings matching the current mode. The 
-device blinks the light rapidly in three bursts to indicate that it's transmitting. The sensor data is transmitted three 
-times, with frequency hopping, to increase the likelihood of Sigfox base stations receiving the transmission. If the ring 
+To transmit sensor readings, double-press the button. The device transmits sensor readings matching the current mode. The
+device blinks the light rapidly in three bursts to indicate that it's transmitting. The sensor data is transmitted three
+times, with frequency hopping, to increase the likelihood of Sigfox base stations receiving the transmission. If the ring
 is red, the device radio cannot transmit data at the moment. In that case, wait a moment and try again.
 
-Note that in Sigfox, the maximum number of data uplink transmissions is 140 messages per device per day. The Sens'it 
+Note that in Sigfox, the maximum number of data uplink transmissions is 140 messages per device per day. The Sens'it
 device's built-in firmware has a configuration parameter `Message period` for specifying the transmission interval. See
 the [Sens'it Discovery Payload Structure](https://ask.sigfox.com/storage/attachments/585-sensit-3-discovery-payload.pdf)
 document and the "Updating Sens'it device configuration" section below for more information.
@@ -346,9 +343,9 @@ In the [Sigfox backend](https://backend.sigfox.com), verify that you can see the
 
 #### Step 2:
 
-In the [Cloud Functions console](http://console.cloud.google.com/functions), select the `callback_data` function and select 
+In the [Cloud Functions console](http://console.cloud.google.com/functions), select the `callback_data` function and select
 its Logs. This function was created when you followed the
-[Sigfox-GCP integration guide](https://cloud.google.com/community/tutorials/sigfox-gw) earlier. Verify that you can see the 
+[Sigfox-GCP integration guide](https://cloud.google.com/community/tutorials/sigfox-gw) earlier. Verify that you can see the
 new messages in Stackdriver Logging for the function. This function receives the messages from Sigfox backend and forwards
 them to Cloud Pub/Sub.
 
@@ -451,7 +448,7 @@ GCP project, `[sigfox]` with your dataset name, and `[sensit]` with your table n
 
 #### Step 2:
 
-Click **Run** to execute the query. 
+Click **Run** to execute the query.
 
 The query should return an output similar to this:
 
@@ -464,11 +461,11 @@ To learn more about using BigQuery for analytics, refer to the [BigQuery documen
 
 ## Using the Sens'it V3 payload parser utility
 
-The maximum payload sizes in Sigfox are 12 bytes for data uplink and 8 bytes for downlink messages. The Sens'it V3 device 
-has several sensors and user-configurable device settings. To send all of the relevant sensor data and receive configuration 
+The maximum payload sizes in Sigfox are 12 bytes for data uplink and 8 bytes for downlink messages. The Sens'it V3 device
+has several sensors and user-configurable device settings. To send all of the relevant sensor data and receive configuration
 updates, the device uses an efficient
 [binary encoding scheme](https://ask.sigfox.com/storage/attachments/585-sensit-3-discovery-payload.pdf). Using the scheme,
-the device can transmit the currently active sensor readings with just 4 bytes, and accept updated device configuration sets 
+the device can transmit the currently active sensor readings with just 4 bytes, and accept updated device configuration sets
 with 8 bytes. Furthermore, the sensor data payload is flexible, with a structure that depends on the currently active device
 mode. The payload contains a `Mode` flag, which indicates which structure the rest of the payload is encoded with.
 
@@ -497,12 +494,12 @@ To decode the hexadecimal data payloads sent by the device, execute the followin
     Example payload string: `ae098c7d`.
 1.  Run the parser utility with the `-h` flag to see its options:
 
-        (venv) $ python sensit-parser.py -h
+        (venv) $ python3 sensit-parser.py -h
 
 1.  Use the following command to parse your Sens'it payload string; replace the payload string in the command with your
     payload string:
 
-        (venv) $ python sensit-parser.py --parser-mode decode-data --hex-string ae098c7d
+        (venv) $ python3 sensit-parser.py --parser-mode decode-data --hex-string ae098c7d
 
     The command should return an output similar to this. Note that you can see how the parser decodes the 8 bits for each of
     the 4 bytes, and displays the values:
@@ -536,7 +533,7 @@ uses the Python [`construct` module](https://pypi.org/project/construct/) for im
 
 ### Decoding device configurations
 
-By default, the Sens'it V3 device transmits its current configuration once per day. You can identify those payload strings 
+By default, the Sens'it V3 device transmits its current configuration once per day. You can identify those payload strings
 by their greater length. The sensor telemetry data uplink payloads are 4 bytes, or 8 hexadecimal characters. The
 data + configuration payloads are 4 + 8 = 12 bytes, or 24 hexadecimal characters. Example payload: `9e09a58306003f0f8004223c`.
 
@@ -558,7 +555,7 @@ to the Sigfox backend during the 20 second sleep time, and Sigfox must transmit 
 the 25 second window.
 
 The device sets a flag `ack: True`, to mark the message as a "Downlink requested" message. The payload in this case
-is the 4-byte sensor readings structure, followed by the 8-byte device current configuration structure. For more 
+is the 4-byte sensor readings structure, followed by the 8-byte device current configuration structure. For more
 information, see the [downlink sequence diagram](https://cloud.google.com/community/tutorials/sigfox-gw#requesting-downlink-configurations-from-a-device) in the integration guide.
 
 #### Step 2:
@@ -579,7 +576,7 @@ Verify that the device has requested a downlink message, using the Sigfox Backen
 
 Copy the message string and use the parser to decode it. Replace the hexadecimal string value with your value:
 
-    (venv) $ python sensit-parser.py --parser-mode decode-data --hex-string b609867d06003f0f8004223c
+    (venv) $ python3 sensit-parser.py --parser-mode decode-data --hex-string b609867d06003f0f8004223c
 
 The command should return an output similar to this:
 
@@ -609,7 +606,7 @@ To edit the device configuration, execute the following commands:
 
 1.  Execute the parser with the same HEX value as above, and add the switch --out-file, as follows:
 
-        (venv) $ python sensit-parser.py --parser-mode decode-data --hex-string b609867d06003f0f8004223c --out-file config.ini
+        (venv) $ python3 sensit-parser.py --parser-mode decode-data --hex-string b609867d06003f0f8004223c --out-file config.ini
 
     The command should return an output similar to this:
 
@@ -624,7 +621,7 @@ To edit the device configuration, execute the following commands:
 
 1.  Run the parser in encoding mode, to get a hexadecimal string from your updated configuration file:
 
-        (venv) $ python sensit-parser.py --parser-mode encode-config --in-file config.ini
+        (venv) $ python3 sensit-parser.py --parser-mode encode-config --in-file config.ini
 
     The command should return your new Sens'it configuration string similar to this:
 
@@ -632,12 +629,12 @@ To edit the device configuration, execute the following commands:
 
         Config HEX: 46003f0f8004223c
 
-### Updating the configuration in Datastore and sending it with downlink
+### Updating the configuration in Firestore and sending it with downlink
 
 #### Step 1:
 
-Copy the new Config hexadecimal value and store it in [Cloud Datastore](https://console.cloud.google.com/datastore). The 
-string should be the new value for the property named: `config`, for the kind: `deviceType`. Device Type should match the 
+Copy the new Config hexadecimal value and store it in [Cloud Firestore](https://console.cloud.google.com/firestore). The
+string should be the new value for the property named: `config`, for the kind: `deviceType`. Device Type should match the
 one for Sens'it in your Sigfox backend.
 
 [ds]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-sensit/ds-update.png
@@ -649,7 +646,7 @@ Press Done, and then Save, to save the new value.
 
 #### Step 3:
 
-To send the updated configurations to the device, trigger a new downlink request message by pressing the short-short-long 
+To send the updated configurations to the device, trigger a new downlink request message by pressing the short-short-long
 button sequence on your Sens'it device. Monitor the messages in Sigfox Backend and Cloud Functions Logs for the function
 `callback_data`. You can use the filter box in Stackdriver Logging, to filter for the string `downlink`.
 
@@ -672,13 +669,13 @@ a script to delete them all:
 
 On your local development machine, execute the following:
 
-    (venv) $ python sigfox-api.py --callbacks delete-all
+    (venv) $ python3 sigfox-api.py --callbacks delete-all
 
 **Note**: this command deletes *all* callbacks registered for the device type, including any callbacks that you may
 have configured manually earlier.
 
 If you have other callbacks for other use cases configured for this device type, use
-the [Sigfox backend](https://backend.sigfox.com/) **Device Type > Callbacks** console to delete the 5 callbacks configured 
+the [Sigfox backend](https://backend.sigfox.com/) **Device Type > Callbacks** console to delete the 5 callbacks configured
 for this integration. You can identify the integration callbacks from the URLs that point to your Cloud Functions.
 
 ### Delete the GCP project
@@ -688,7 +685,7 @@ To avoid incurring charges to your GCP account for the resources used in this tu
 **Caution**: Deleting a project has the following consequences:
 
 - If you used an existing project, you'll also delete any other work you've done in the project.
-- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the 
+- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the
 future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as
 an `appspot.com` URL, remain available.
 
