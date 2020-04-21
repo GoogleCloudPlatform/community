@@ -47,7 +47,7 @@ This tutorial should not generate any usage that would not be covered by the [fr
 
 ## Before you begin
 
-This tutorial assumes you already have a [Google Cloud Platform](https://console.cloud.google.com/freetrial) account set up.
+This tutorial assumes you already have a [Google Cloud](https://console.cloud.google.com/freetrial) account set up.
 
 This tutorial assumes you already have a [Sigfox backend account](https://support.sigfox.com/docs/backend-user-helpbook) and that you have [activated device(s)](https://support.sigfox.com/docs/sigfox-activate:-when-and-how-to-use-it) within your account.
 
@@ -60,7 +60,7 @@ Ensure that you can see messages sent by your device in your [Sigfox backend](ht
 
 If you can see messages sent by your device, you can proceed to the next step.
 
-## Creating a Google Cloud Platform project
+## Creating a Google Cloud project
 
 1. Go to the [Cloud Console](https://console.cloud.google.com).
 1. Click the project selector in the upper-left corner and select **New Project**.
@@ -548,7 +548,7 @@ use a script to delete them all:
 
 If you have other callbacks for other use cases configured for this device type, use the [Sigfox backend](https://backend.sigfox.com/) **Device Type > Callbacks** console to delete the five callbacks configured for this integration. You can identify the integration callbacks from the URLs that point to your Cloud Functions.
 
-### Deleting the Google Cloud Platform project
+### Deleting the Google Cloud project
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
@@ -572,6 +572,6 @@ To delete a project, do the following:
 ## What's next
 
 - Stay tuned for an upcoming tutorial on using the Sigfox [Sens'it Discovery V3](https://www.sensit.io/) device with this integration and learning how to encode and decode its binary data and configuration payloads, as well as store the data in real-time in Cloud BigQuery.
-- Learn more about [IoT on Google Cloud Platform](https://cloud.google.com/solutions/iot/).
-- Learn more about [Big data analytics on Google Cloud Platform](https://cloud.google.com/solutions/big-data/), to turn your IoT data into actionable insights
-- Try out other Google Cloud Platform features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
+- Learn more about [IoT on Google Cloud](https://cloud.google.com/solutions/iot/).
+- Learn more about [Big data analytics on Google Cloud](https://cloud.google.com/solutions/big-data/), to turn your IoT data into actionable insights
+- Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
