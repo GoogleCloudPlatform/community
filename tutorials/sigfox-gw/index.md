@@ -1,8 +1,8 @@
 ---
-title: Integrating Sigfox IoT network with Google Cloud Platform
-description: Install and configure the integration between the Sigfox LPWAN IoT network service and GCP.
+title: Integrating Sigfox IoT network with Google Cloud
+description: Install and configure the integration between the Sigfox LPWAN IoT network service and Google Cloud.
 author: lepistom
-tags: IoT, Internet of Things, Sigfox, LPWAN
+tags: IoT, Internet of things, Sigfox, LPWAN
 date_published: 2020-04-20
 ---
 
@@ -10,16 +10,16 @@ Markku Lepisto | Solutions Architect | Google Cloud
 
 ## Objectives
 
-This document describes how to install and configure the integration between the [Sigfox](https://www.sigfox.com/) [LPWAN](https://en.wikipedia.org/wiki/LPWAN) IoT network service and [Google Cloud Platform (GCP)](https://cloud.google.com).
+This document describes how to install and configure the integration between the [Sigfox](https://www.sigfox.com/) [LPWAN](https://en.wikipedia.org/wiki/LPWAN) IoT network service and [Google Cloud](https://cloud.google.com).
 
 The main functionalities demonstrated are the following:
 
 - Ingest of data from Sigfox devices
-- Forwarding of data to [Cloud Pub/Sub](https://cloud.google.com/pubsub/) for processing with GCP services
+- Forwarding of data to [Cloud Pub/Sub](https://cloud.google.com/pubsub/) for processing with Google Cloud services
 - Sigfox device configuration management
 - Sigfox network service message logging
 
-The integration is implemented as a set of [Cloud Functions](https://cloud.google.com/functions/) that are registered as [callback functions](https://build.sigfox.com/backend-callbacks-and-api) in the Sigfox backend system. The Cloud Functions are called when devices send data or the Sigfox network sends service messages. Device configurations are stored in [Cloud Firestore](https://cloud.google.com/firestore/) and logs in [Stackdriver Logging](https://cloud.google.com/logging/).
+The integration is implemented as a set of [Cloud Functions](https://cloud.google.com/functions/) that are registered as [callback functions](https://build.sigfox.com/backend-callbacks-and-api) in the Sigfox backend system. The Cloud Functions are called when devices send data or the Sigfox network sends service messages. Device configurations are stored in [Cloud Firestore](https://cloud.google.com/firestore/) and logs in [Cloud Logging](https://cloud.google.com/logging/).
 
 The implementation is designed to be:
 
@@ -37,7 +37,7 @@ The implementation is designed to be:
 
 ## Costs
 
-This tutorial uses the following billable components of GCP:
+This tutorial uses the following billable components of Google Cloud:
 
 - Cloud Functions
 - Cloud Pub/Sub
@@ -62,7 +62,7 @@ If you can see messages sent by your device, you can proceed to the next step.
 
 ## Creating a Google Cloud Platform project
 
-1. Go to the [GCP Console](https://console.cloud.google.com).
+1. Go to the [Cloud Console](https://console.cloud.google.com).
 1. Click the project selector in the upper-left corner and select **New Project**.
 1. Give the project a name and click **Create**.
 1. Click the project selector again and select your new project.
@@ -84,7 +84,7 @@ If you can see messages sent by your device, you can proceed to the next step.
     * curl
     * docker
 
-1. Configure `gcloud` to use your new GCP project:
+1. Configure `gcloud` to use your new Google Cloud project:
 
         $ gcloud init
 
@@ -129,13 +129,13 @@ If you can see messages sent by your device, you can proceed to the next step.
     you have to re-deploy the Cloud Functions to activate the new configuration.
     See the next steps on how to deploy (or re-deploy) the Cloud Functions.
 
-1. Edit the file `.env.yaml` with your favorite text editor, for example:
+1. Edit the file `.env.yaml` with a text editor. For example:
 
         (venv) $ vi .env.yaml
 
 1. **Mandatory**: Change the value of `HTTP_USER` and `HTTP_PASSWORD` to your unique values. You will later use these values in the Sigfox backend Callback configurations. The Cloud Functions use Basic Authentication over HTTPS, to authenticate the Sigfox backend.
 
-1. Deploy the two integration Cloud Functions with the following commands. Set the value of `--region` to the Cloud Functions region where you wish to store and process your data. You can select 'y' if the tool asks you 'Allow unauthenticated invocations of new function?'. The functions use HTTP Basic authentication to authenticate Sigfox Backend when it calls the functions.
+1. Deploy the two integration Cloud Functions with the following commands. Set the value of `--region` to the Cloud Functions region where you wish to store and process your data. You can select 'y' if the tool asks you 'Allow unauthenticated invocations of new function?'. The functions use HTTP Basic authentication to authenticate Sigfox backend when it calls the functions.
 
         (venv) $ gcloud functions deploy --region asia-northeast1 --runtime python37 --env-vars-file .env.yaml --trigger-http callback_data
 
@@ -148,7 +148,7 @@ If you can see messages sent by your device, you can proceed to the next step.
 
     The `callback_service` Cloud Function implements receiving Sigfox network
     event, error, and other control plane information messages and logging them with
-    Stackdriver Logging. In the Sigfox backend, it will be used for the `STATUS`,
+    Cloud Logging. In the Sigfox backend, it will be used for the `STATUS`,
     `ACKNOWLEDGE`, and `ERROR` callbacks.
 
     After the deployment has finished, write down the URL for both of the deployed
@@ -187,29 +187,38 @@ The integration uses Sigfox backend API V2 to automate managing the callbacks' c
 
 ### Generating the Sigfox API V2 Python client
 
-The integration uses the Sigfox API V2 to automate configuring the callbacks. In order to generate the Python client library for the latest version of the API, execute the following commands:
+The integration uses the Sigfox API V2 to automate configuring the callbacks. In order to generate the Python client library
+for the latest version of the API, execute the following commands:
 
-1. On your local development machine, if you are still in the `cf` directory, change the directory back to the integration's main directory (`sigfox-gw`):
+1.  On your local development machine, if you are still in the `cf` directory, change the directory back to the
+    integration's main directory (`sigfox-gw`):
 
         (venv) $ cd ..
 
-1. Check that you have docker running, by executing for example the following command:
+1.  Check that you have docker running:
 
         (venv) $ docker ps
 
-      If docker is running you will see an output similar to the below output. However, if you get an error message, start the docker daemon on your local development machine.
+    If Docker is running, you see an output similar to the following:
 
         CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+        
+    If you get an error message, start the docker daemon on your local development machine.
 
-1. Next we will generate the Python client libraries from the [Sigfox API definition](https://support.sigfox.com/api/apidocs). To do this, we have to compile and use a specific version of [swagger-codegen](https://github.com/swagger-api/swagger-codegen). Execute the following command to setup an environment variable for the swagger-codegen version tag to be used:
+1.  Next, you generate the Python client libraries from the [Sigfox API definition](https://support.sigfox.com/api/apidocs).
+    To do this, you compile and use a specific version of
+    [swagger-codegen](https://github.com/swagger-api/swagger-codegen). Execute the following command to set up an 
+    environment variable for the swagger-codegen version tag to be used:
 
         (venv) $ generator_version=3.0.11
 
-1. The following command will use docker to first download the [swaggerapi/swagger-codegen-cli-v3](https://hub.docker.com/r/swaggerapi/swagger-codegen-cli-v3) image, and then use the code generator's specific version, to generate a Python client library from the Sigfox API definition:
+1.  The following command uses docker to download the
+    [swaggerapi/swagger-codegen-cli-v3](https://hub.docker.com/r/swaggerapi/swagger-codegen-cli-v3) image and then use the 
+    code generator's specific version to generate a Python client library from the Sigfox API definition:
 
         (venv) $  docker run --rm -v $(pwd):/local swaggerapi/swagger-codegen-cli-v3:$generator_version generate -i https://support.sigfox.com/api/apidocs -l python -o /local/out/python-$generator_version
 
-1. After the generation process completes, copy the generated swagger_client to the working directory:
+1.  After the generation process completes, copy the generated swagger_client to the working directory:
 
         (venv) $ cp -r out/python-3.0.11/swagger_client .
 
@@ -254,7 +263,7 @@ The integration has a Python script for managing the Sigfox backend callbacks' c
 
 ### Creating Sigfox backend callbacks
 
-1. Execute the following command to create the 5 callbacks for the GCP integration:
+1. Execute the following command to create the 5 callbacks for the Google Cloud integration:
 
         (venv) $ python3 sigfox-api.py --callbacks create
 
@@ -321,7 +330,7 @@ To configure Firestore for your integration, execute the following steps:
 ![Firestore options][ds-options]
 
 3.  Choose the Datastore mode option.
-4.  Select the geographic location where you wish to host Firestore and store your device configuration data. Choose the location nearest to the GCP region where you deployed your Cloud Functions, and click **Create Database**.
+4.  Select the geographic location where you wish to host Firestore and store your device configuration data. Choose the location nearest to the Google Cloud region where you deployed your Cloud Functions, and click **Create Database**.
 5.  In the Firestore Datastore mode console, click **Create Entity**.
 6.  Set the value of **Kind** to `deviceType`.
 7.  Set the value of **Key identifier** to **Custom name**.
@@ -369,7 +378,7 @@ Verify the `callback_data` Cloud Function with the following steps:
 ![messages example][messages 2]
 
 Note: If your Sigfox backend can receive the message, the up arrow will first be grayed out.
-If the GCP Cloud Function `callback_data` was triggered successfully, and the function replied
+If the Cloud Function `callback_data` was triggered successfully, and the function replied
 as expected, the arrow will turn green.
 
 5.  Verify that the message payload was forwarded to your Cloud Pub/Sub topic. On your development machine, execute the following command:
@@ -386,11 +395,11 @@ as expected, the arrow will turn green.
     The value of `data` should match the **Data / Decoding** output in your Sigfox
     backend **Device > Messages** history for this message.
 
-6.  Verify that you can see the integration logs in Stackdriver Logging. On the Cloud Function's details page, click the **View Logs** button to open Stackdriver Logging for the `callback_data` function.
+6.  Verify that you can see the integration logs in Cloud Logging. On the Cloud Function's details page, click the **View Logs** button to open Cloud Logging for the `callback_data` function.
 
 7.  Find the entries for `Received Sigfox message` and any entries below that. Click the entries to expand their view. You should see something similar to the following:
 
-**Figure 8.** Stackdriver Logging
+**Figure 8.** Cloud Logging
 
 [logging]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/logging.png
 ![stackdriver logging][logging]
@@ -409,7 +418,7 @@ the integration point for consuming the Sigfox data in real time for your specif
     and optionally the device location with the Sigfox Atlas positioning service. These are available
     as additional metadata in the second, `DATA_ADVANCED` payload. If your `DATA_ADVANCED` callback
     was triggered, you can see a second invocation for the `callback_data` Cloud Function, and
-    Stackdriver Logging entries similar to this:
+    Cloud Logging entries similar to this:
 
         2019-01-08 06:34:41.248 GMT callback_data
         Received Sigfox message:
@@ -421,8 +430,8 @@ the integration point for consuming the Sigfox data in real time for your specif
             'radius': 2447, 'source': 2, 'status': 1}
         }
 
-    Here we can see that with the `DATA_ADVANCED` callback, the device payload is the same as in the first
-    invocation, but we have more metadata such as the `lqi` radio link quality indicator and the computed
+    Here you can see that with the `DATA_ADVANCED` callback, the device payload is the same as in the first
+    invocation, but there is more metadata such as the `lqi` radio link quality indicator and the computed
     device location with Sigfox Atlas. If you do not need this additional metadata from your devices, you
     can disable the optional `DATA_ADVANCED` callback in your Sigfox backend. However, in many cases it's
     good to process and store the first payload immediately upon receipt, and update your data store later
@@ -430,7 +439,13 @@ the integration point for consuming the Sigfox data in real time for your specif
 
 ## Requesting downlink configurations from a device
 
-In Sigfox, devices must request downlink messages from the network. They do this by setting a specific flag when transmitting a payload. In this integration, the callback responsible for handling the downlink requests is the `callback_data` Cloud Function. The function checks if the incoming request has the downlink request flag `ack` set to `True`. If it is, the function will query the Firestore database, using the Device Type value as the query key, and fetches the value of the `config` attribute in Firestore. The function then checks that the value is a maximum of 8 bytes long, as in the Sigfox specifications; if it is, the function will return the `config` value to Sigfox backend in its response. The Sigfox backend will then send the configuration downlink to the device.
+In Sigfox, devices must request downlink messages from the network. They do this by setting a specific flag when 
+transmitting a payload. In this integration, the callback responsible for handling the downlink requests is the 
+`callback_data` Cloud Function. The function checks whether the incoming request has the downlink request flag `ack` set to 
+`True`. If it is, the function queries the Firestore database, using the Device Type value as the query key, and fetches 
+the value of the `config` attribute in Firestore. The function then checks that the value is a maximum of 8 bytes long, as 
+in the Sigfox specifications; if it is, the function returns the `config` value to Sigfox backend in its response. The 
+Sigfox backend then sends the configuration downlink to the device.
 
 **Figure 9.** Downlink sequence diagram
 
@@ -453,7 +468,7 @@ Execute the following steps to verify the downlink functionality:
 [downlink]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/downlink.png
 ![downlink request][downlink]
 
-4.  Verify that you can see a similar log entry in the Stackdriver Logging for the Cloud Function `callback_data`:
+4.  Verify that you can see a similar log entry in Cloud Logging for the Cloud Function `callback_data`:
 
         2019-01-08 06:34:16.422 GMT callback_data
         Sending downlink message: {"<device ID>": {"downlinkData": "3030303030303030"}}
@@ -513,13 +528,14 @@ Here you can see the following:
 - The log entry shows `Received Sigfox service message` for your device ID.
 - The value of `downlinkAck` is `true`, indicating that the device has received the configuration payload.
 
-Congratulations! You have now installed and verified the Sigfox-GCP integration.
+Congratulations! You have now installed and verified the integration of Sigfox with Google Cloud.
 
 ## Cleaning up
 
 ### Deleting Sigfox backend callback configurations
 
-If the GCP integration callbacks are the only ones configured in your Sigfox backend for this device type, you can use a script to delete them all:
+If the Google Cloud integration callbacks are the only ones configured in your Sigfox backend for this device type, you can
+use a script to delete them all:
 
 1. On your local development machine, execute the following:
 
@@ -531,7 +547,7 @@ If you have other callbacks for other use cases configured for this device type,
 
 ### Deleting the Google Cloud Platform project
 
-To avoid incurring charges to your GCP account for the resources used in this tutorial, you can delete the project.
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
 **Caution**: Deleting a project has the following consequences:
 
@@ -540,7 +556,7 @@ To avoid incurring charges to your GCP account for the resources used in this tu
 
 To delete a project, do the following:
 
-1. In the GCP Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
+1. In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1. In the project list, select the project you want to delete and click **Delete project**.
 1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
