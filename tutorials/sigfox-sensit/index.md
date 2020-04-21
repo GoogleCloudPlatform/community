@@ -63,7 +63,7 @@ Sens'it devices come with a Sigfox subscription. You must first activate the dev
 the device in your account. You can activate the device using either a web portal or a mobile app. The next sections get you
 started with both options.
 
-**Note**: You must be located in a [Sigfox network coverage area](https://www.sigfox.com/en/coverage) when you activate the device.
+You must be located in a [Sigfox network coverage area](https://www.sigfox.com/en/coverage) when you activate the device.
 
 ### Option 1: Activate Sens'it using the web interface
 
@@ -135,7 +135,7 @@ Execute the following steps to register your Sens'it as a dev kit:
 
 1.  Follow all the steps in [this document](https://storage.sbg.cloud.ovh.net/v1/AUTH_669d7dfced0b44518cb186841d7cbd75/dev_medias/build/4059ae1jm2231vw/sensit-3-devkit-activation.pdf).
 
-    **Note**: Ensure that you enter a valid email address so that you can finalize the registration process.
+    Ensure that you enter a valid email address so that you can finalize the registration process.
 
 1.  Wait for a few hours while Sigfox registers your new account in the Sigfox backend and communicates with the device
     to transfer it to your backend account. The delay is due to the Sigfox radio network periodically communicating
@@ -211,7 +211,7 @@ Execute the following steps on your local development machine to create the BigQ
 
         $ cd [your local path]/community/tutorials/sigfox-sensit
 
-    **Note**: If you do not have a copy of the repository, you can clone it on your machine with this command:
+    If you do not have a copy of the repository, you can clone it on your machine with this command:
 
         $ git clone https://github.com/GoogleCloudPlatform/community.git
 
@@ -237,7 +237,7 @@ Execute the following steps on your local development machine to create the BigQ
 
         (venv) $ bq --location=asia-northeast1 mk sigfox
 
-    **Note**: The default value of the dataset to host Sigfox Sens'it data in BigQuery is `sigfox`, but you can change
+    The default value of the dataset to host Sigfox Sens'it data in BigQuery is `sigfox`, but you can change
     it if necessary. Also, change the value of `--location` to the
     [BigQuery region](https://cloud.google.com/bigquery/docs/locations) where you want to store your Sens'it data.
 
@@ -251,7 +251,7 @@ Execute the following steps on your local development machine to create the BigQ
 
     The command uses the table schema JSON file in the same working directory.
 
-    **Note**: Change `your-region` to your Google Cloud region, and change `your-project` to the Google Cloud project where
+    Change `your-region` to your Google Cloud region, and change `your-project` to the Google Cloud project where
     you are hosting the Sigfox - Google Cloud integration. If necessary, you can also change the values of the BigQuery 
     dataset name (default value: `sigfox`) and table name (default value: `sensit`).
 
@@ -290,7 +290,7 @@ Execute the following steps on your local development machine:
     this file. Additionally, ensure that the value for `DEVICE_TYPE` matches the device type for your Sens'it device in
     your Sigfox backend account.
 
-1.  Deploy the Cloud Function by executing the following command. Note: change the value of `region` to your preferred
+1.  Deploy the Cloud Function by executing the following command. Change the value of `region` to your preferred
     region, and the value of `trigger-resource` to the name of your Pub/Sub topic that the Sigfox integration uses.
 
         (venv) $ gcloud functions deploy --region asia-northeast1 pubsub_bigquery --runtime python37 --env-vars-file .env.yaml --trigger-event=google.pubsub.topic.publish --trigger-resource=sigfox-data
@@ -409,7 +409,7 @@ Writing the parsed values to BigQuery:
     'Limit', '0.0', '0.0', 'SIGFOX_Singapore_Unabiz', '702', {'lat': 1.123,
     'lng': 103.123, 'radius': 4557, 'source': 2, 'status': 1})]
 
-**Note**: The binary hexadecimal value for `data` has been parsed to separate values.
+The binary hexadecimal value for `data` has been parsed to separate values.
 
 ## Querying sensor data in BigQuery
 
@@ -671,7 +671,7 @@ On your local development machine, execute the following:
 
     (venv) $ python3 sigfox-api.py --callbacks delete-all
 
-**Note**: this command deletes *all* callbacks registered for the device type, including any callbacks that you may
+**Important**: this command deletes *all* callbacks registered for the device type, including any callbacks that you may
 have configured manually earlier.
 
 If you have other callbacks for other use cases configured for this device type, use
