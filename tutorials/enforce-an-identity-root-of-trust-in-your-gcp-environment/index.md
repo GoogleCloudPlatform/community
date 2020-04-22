@@ -3,7 +3,7 @@ title: Enforcing an identity root of trust in your Google Cloud environment
 description: Shows how to establish a root of trust of identities in your Google Cloud environment, so that no individual acting alone can log in as a super admin and change any setting.
 author: awalko
 tags: Security, Google Cloud Platform, IAM
-date_published: 2020-04-20
+date_published: 2020-04-24
 ---
 
 This document shows how to establish a root of trust of your identities in your Google Cloud organization by controlling the
@@ -28,18 +28,18 @@ The end goal after completing this guide is having a
 [Google Cloud organization](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#organizations) node in which your domain is controlled using
 [Cloud Identity](https://support.google.com/cloudidentity/answer/7319251) in the [Admin console](admin.google.com).
 
-At the end of this process, you should have the following:
+This process includes the following objectives:
 
-* An account for your primary domain name in the Admin console.
-* Only privileged users called super admins have the possibility to manage your organization.
+* You have account for your primary domain name in the Admin console.
+* Only *super admins* can manage your organization.
 * Super admins have dedicated identities that require the use of a physical second-factor authenticator to log in. This 
   means that they will not use their day-to-day user as a super admin user, for security reasons. For example, they can use
   supadmin1@example.com for administrative tasks in the Admin console and john.doe@example.com for normal Google Cloud
   activities).
 * Super admins' physical tokens are out of the reach of your designated super admin users. This ensures that in order to log
   in as a super admin user, your trusted users need to request access to the physical vault. This lets you trust that your
-  identity setup is the way you expect it to be at any time, because you can track who logged in to make changes, and insert
-  your own process to determine why they logged in and what they changed.
+  identity setup is the way that you expect it to be at any time, because you can track who logged in to make changes, and
+  insert your own process to determine why they logged in and what they changed.
 * Your Google Cloud Organization node has been created.
 * Super admin users delegated their Google Cloud access to a special IAM admin group in Google Cloud. This enforces 
   separation of duty and makes it easier to manage Google Cloud permissions without the need to log in as a super admin 
@@ -58,10 +58,10 @@ identities and how they get authenticated) and that actual permissions are manag
 ![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image7.png)
 
 In this diagram, the user@example.com authentication path is where Cloud Identity is used, while the access and 
-authorization on Google Cloud resources is governed by Cloud IAM policies.
+authorization of Google Cloud resources is governed by Cloud IAM policies.
 
 You can provision users and groups in the [Admin console](https://admin.google.com), which lets you manage settings and 
-identities for Google Cloud products like Google Cloud Platform or G Suite. If your users only need access to Google Cloud
+identities for Google Cloud products like Google Cloud Platform and G Suite. If your users only need access to Google Cloud
 Platform, you can give them [Cloud Identity licences](https://support.google.com/cloudidentity/answer/7384684), which exist
 in the Free and Premium tiers. There is a default limit of 50 free users for each Cloud Identity account. To rasie this 
 limit, contact Google Cloud support.
@@ -94,14 +94,15 @@ Here are the constraints to keep in mind:
   [Limitations with multiple domains](https://support.google.com/a/answer/182081).
 * Users can only be created under one of the domain names tied to their account.
 * User permissions are managed in Google Cloud directly, with Cloud IAM policies, not in the Admin console.
-* Only users with the Organization Administrator role can grant other users IAM permissions at all levels in Google Cloud.
+* Only users with the Organization Administrator Cloud IAM role can grant other users IAM permissions at all levels in 
+  Google Cloud.
 
 It is recommended to establish a provisioning ceremony (similar to encryption key signing) for super admin accounts. The
 main reason is that these accounts have the ability to change any setting in your Admin console, which can affect
 Google Cloud users and G Suite users (if any). A compromised or rogue super admin could potentially create other super admin
 accounts and block or impersonate regular users to gain admin access to your Google Cloud organization.
 
-Super admins will use physical second-factors keys (FIDO U2F Security Keys, such
+Super admins will use physical second-factors keys (FIDO U2F Security Keys, such as
 [Titan Security Keys](https://cloud.google.com/titan-security-key)) to log in. These keys - including spare keys - will be 
 stored in one or two physical vaults. Each super admin activity is logged and retained in long-term immutable storage. Super 
 admin users should have no purpose in Google Cloud other than designating the Organization Administrators.
@@ -111,9 +112,9 @@ practice to integrate these regular cloud users with your existing SSO solution 
 security settings. Super admin users cannot authenticate via SSO, because Google needs to be able to authenticate them even 
 if the SSO setup is broken temporarily.
 
-## Values used throughout this document
+## Example values used throughout this document
 
-For simplicity, this document uses the following values from now on:
+This document uses the following example values:
 
 * New domain name to create: `cloudflyer.info`
 * Super admin email addresses:
@@ -125,21 +126,41 @@ For simplicity, this document uses the following values from now on:
 
 Here is a high-level summary of the necessary steps to create a new Google Cloud Organization:
 
-* Admin console account setup
-  * Acquire and gain administrative access to the domain name (either purchase or use an existing domain name or subdomain) that will become the Google Cloud Organization.
-  * Create super admin email addresses for this domain to receive key communication from Google on your Organization and reset access to the super admin users when necessary (see [reset administrator access](https://support.google.com/cloudidentity/answer/33561?hl=en&authuser=1)). They need to be separate dedicated accounts - not to be used for day-to-day activities (e.g example-admin@yourdomain.cloud).
-  * Claim ownership of your domain by [setting up your own domain in Cloud Identity](https://gsuite.google.com/signup/gcpidentity/welcome) and create the first super admin account in Cloud Identity using a secure password.
-* Secure Super Admin credentials
-  * Tie the dedicated physical tokens and its spare to this super admin account (second factor or 2FA). Titan Security Keys are the [recommended](https://support.google.com/accounts/answer/6103523) way of implementing your second factor for Google accounts. As a general rule, any FIDO U2F capable key should work as a second factor.
-  * Create the other two super admin accounts with separate passwords and second factor pairs.
-  * (optional) Setup the recovery options (phone + email) if allowed by your internal policy. Assuming the super admin account was created under a trust ceremony, to protect that trust  you should disable password reset  for all super admin accounts. Follow [this process](https://support.google.com/a/answer/33561?hl=en) to reset super admin credentials when no recovery options are available.
-* Set up your Google Cloud Organization
-  * Use a super admin user to log in to Google Cloud and create your Google Cloud Organization node.
-  * Delegate the Organization admin role in IAM to the desired identity (e.g a trusted admin group). Note: This role is also sensitive, on the Google Cloud side. It should also not be used as a daily driver account.
-* Finish your Admin Console account setup
-  * (optional) [setup SSO in Cloud Identity](https://support.google.com/cloudidentity/answer/6349809?hl=en).
-  * Export admin logs to a trusted SIEM system.
-  * Secure all the super admin accounts following the key ceremony logout procedure by locking the key into one or more safe(s) and logging out all super admin sessions from the trusted workstation.
+### Admin console account setup
+
+1.  Acquire administrative access to the domain name that will become the Google Cloud Organization. You can either purchase
+    a new domain name or use an existing domain name or subdomain.
+1.  Create super admin email addresses for this domain to receive key communication from Google on your Organization and
+    [reset access](https://support.google.com/cloudidentity/answer/33561) to the super admin users when necessary. The
+    super admin email addresses need to be separate dedicated accounts, not to be used for day-to-day activities.
+1.  Claim ownership of your domain by
+    [setting up your own domain in Cloud Identity](https://gsuite.google.com/signup/gcpidentity/welcome) and create the
+    first super admin account in Cloud Identity using a secure password.
+
+### Secure Super Admin credentials
+
+1.  Tie each dedicated physical token and its spare to this super admin account as a second factor for two-factor 
+    authentication. Titan Security Keys are the [recommended](https://support.google.com/accounts/answer/6103523) way of 
+    implementing your second factor for Google accounts. Any FIDO U2F-capable key should work as a second factor.
+1.  Create the other two super admin accounts with separate passwords and second factor pairs.
+1.  (Optional) Set up the recovery options (phone and email) if allowed by your internal policy. Assuming that the super 
+    admin account was created under a trust ceremony, to protect that trust, you should disable password reset for all super
+    admin accounts. Follow [this process](https://support.google.com/a/answer/33561) to reset super admin credentials when
+    no recovery options are available.
+
+### Set up your Google Cloud Organization
+
+1.  Use a super admin user to log in to Google Cloud and create your Google Cloud Organization node.
+1.  Delegate the Organization Administrator Cloud IAM role in IAM to the desired identity (for example, a trusted admin 
+    group). This role is also sensitive on the Google Cloud side. It should not be used as an account for day-to-day
+    activity.
+    
+### Finish Admin Console account setup
+
+1.  (Optional) [Set up SSO in Cloud Identity](https://support.google.com/cloudidentity/answer/6349809).
+1.  Export admin logs to a trusted SIEM (security information and event management) system.
+1.  Secure all of the super admin accounts following the key ceremony logout procedure by locking the key into one or more
+    safes and logging out all super admin sessions from the trusted workstation.
 
 ## Prerequisites
 
