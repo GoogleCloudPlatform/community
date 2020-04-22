@@ -219,15 +219,17 @@ You will create a repository called `tour-of-heroes-universal`
 
 You can create a trigger on the [build triggers page](https://console.cloud.google.com/cloud-build/triggers) of the GCP Console by following these steps:
 
-1.  Click **Create Trigger** OR **Add Trigger**.
-1.  Select **Cloud Source Repository** and click **Continue**.
-1.  Select ```tour-of-heroes-universal``` and click **Continue**.
-1.  Enter ```angular-universal-tour``` for **Name**.
-1.  Under **Trigger type** select "Tag".
-1.  Under **Build configuration** select `cloudbuild.yaml`.
-1.  Under **Substitution variables** press **+ Add item**.
-1.  In the **Variable** field enter `_ANGULAR_APP_BUCKET_PATH` and in **Value** enter `gs://[PROJECT]-angular-app` where `[PROJECT]` is the name of your project.
 1.  Click **Create Trigger**.
+1.  In the **Name** field, enter `angular-universal-tour`.
+1.  Under **Event**, select **Push to a tag**.
+1.  Under **Source**, select `tour-of-heroes-universal` as your
+    **Repository** and the tag to match as your **Tag**.
+1.  Under **Build Configuration**, select **Cloud Build configuration file (yaml or json)**.
+1.  In the **Cloud Build configuration file location**, enter `cloudbuild.yaml`.
+1.  Under **Substitution variables**, click **+ Add variable**.
+1.  In the **Variable** field enter `_ANGULAR_APP_BUCKET_PATH` and in **Value**
+    enter `gs://[PROJECT]-angular-app`, where `[PROJECT]` is the name of your project.
+1.  Click **Create** to save your build trigger.
 
 ### Add your tour-of-heroes Cloud Source repository as a remote repository with the name 'google'
 
@@ -282,7 +284,7 @@ You can create a trigger on the [build triggers page](https://console.cloud.goog
 3.  Delete the build trigger:
 
     1. Navigate to the [build triggers page](https://console.cloud.google.com/cloud-build/triggers) of the GCP Console 
-    1. On the line of the build trigger "tour-of-heroes-universal" select the menu ![trigger button](https://storage.googleapis.com/gcp-community/tutorials/cloudbuild-angular-universal/trigger-button.png)
+    1. On the line of the build trigger "tour-of-heroes-universal", select the menu ![trigger button](https://storage.googleapis.com/gcp-community/tutorials/cloudbuild-angular-universal/trigger-button.png)
     1. Select **Delete**
 
 4.  Delete the Cloud Source repository:

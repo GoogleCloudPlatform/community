@@ -10,7 +10,7 @@ Dan Isla | Google Cloud Solution Architect | Google
 
 Load balancing on Google Cloud Platform (GCP) is different from other cloud providers. The primary difference is that Google uses forwarding rules instead of routing instances. These forwarding rules are combined with backend services, target pools, URL maps and target proxies to construct a functional load balancer across multiple regions and instance groups.
 
-[Terraform](https://www.terraform.io) is an open source infrastructure management tool that can greatly simplify the provisioning of load balancers on GCP by using modules. 
+[Terraform](https://www.terraform.io) is an open source infrastructure management tool that can greatly simplify the provisioning of load balancers on GCP by using modules.
 
 This tutorial will demonstrate how to use the GCP Terraform modules for load balancing in a variety of scenarios that you can  build into your own projects.
 
@@ -50,10 +50,10 @@ Example usage snippet:
 
     module "gce-lb-fr" {
       source       = "github.com/GoogleCloudPlatform/terraform-google-lb"
-      region       = "${var.region}"
+      region       = var.region
       name         = "group1-lb"
-      service_port = "${module.mig1.service_port}"
-      target_tags  = ["${module.mig1.target_tags}"]
+      service_port = module.mig1.service_port
+      target_tags  = [module.mig1.target_tags]
     }
 
 ### `terraform-google-lb-internal` (regional internal forwarding rule)
@@ -68,15 +68,15 @@ Example usage snippet:
 
     module "gce-ilb" {
       source         = "github.com/GoogleCloudPlatform/terraform-google-lb-internal"
-      region         = "${var.region}"
+      region         = var.region
       name           = "group2-ilb"
-      ports          = ["${module.mig2.service_port}"]
-      health_port    = "${module.mig2.service_port}"
-      source_tags    = ["${module.mig1.target_tags}"]
-      target_tags    = ["${module.mig2.target_tags}","${module.mig3.target_tags}"]
+      ports          = [module.mig2.service_port]
+      health_port    = module.mig2.service_port
+      source_tags    = [module.mig1.target_tags]
+      target_tags    = [module.mig2.target_tags,module.mig3.target_tags]
       backends       = [
-        { group = "${module.mig2.instance_group}" },
-        { group = "${module.mig3.instance_group}" },
+        { group = module.mig2.instance_group },
+        { group = module.mig3.instance_group },
       ]
     }
 
@@ -93,11 +93,11 @@ Example usage snippet:
     module "gce-lb-http" {
       source            = "github.com/GoogleCloudPlatform/terraform-google-lb-http"
       name              = "group-http-lb"
-      target_tags       = ["${module.mig1.target_tags}", "${module.mig2.target_tags}"]
+      target_tags       = [module.mig1.target_tags, module.mig2.target_tags]
       backends          = {
         "0" = [
-          { group = "${module.mig1.instance_group}" },
-          { group = "${module.mig2.instance_group}" }
+          { group = module.mig1.instance_group },
+          { group = module.mig2.instance_group }
         ],
       }
       backend_params    = [
@@ -220,7 +220,7 @@ This example creates a global HTTP forwarding rule to forward traffic to instanc
         terraform plan
         terraform apply
 
-      The instances and load balancer are ready after a few minutes. 
+      The instances and load balancer are ready after a few minutes.
 
 3. Open the URL of the load balancer in a browser:
 
@@ -271,7 +271,7 @@ This example creates an HTTPS load balancer to forward traffic to a custom URL m
         terraform plan
         terraform apply
 
-      The instances and load balancer are ready after a few minutes. 
+      The instances and load balancer are ready after a few minutes.
 
 3. Open the URL of the load balancer in a browser:
 
