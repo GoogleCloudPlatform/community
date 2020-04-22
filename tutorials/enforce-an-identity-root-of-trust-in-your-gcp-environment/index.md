@@ -24,8 +24,9 @@ are aware when any privileged access is used to make changes.
 
 ## Objectives
 
-The end goal after completing this guide is having a
-[Google Cloud organization](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#organizations) node in which your domain is controlled using
+The result of completing the process in this document is having a
+[Google Cloud organization](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#organizations) 
+node in which your domain is controlled using
 [Cloud Identity](https://support.google.com/cloudidentity/answer/7319251) in the [Admin console](admin.google.com).
 
 This process includes the following objectives:
@@ -105,22 +106,13 @@ accounts and block or impersonate regular users to gain admin access to your Goo
 Super admins will use physical second-factors keys (FIDO U2F Security Keys, such as
 [Titan Security Keys](https://cloud.google.com/titan-security-key)) to log in. These keys - including spare keys - will be 
 stored in one or two physical vaults. Each super admin activity is logged and retained in long-term immutable storage. Super 
-admin users should have no purpose in Google Cloud other than designating the Organization Administrators.
+admin users should have no purpose in Google Cloud other than designating the Organization Administrators. You can
+[order Titan Security Keys online](https://store.google.com/product/titan_security_key).
 
 Most organizations provision regular cloud users via automation, from their on-premises user directory. It is also a good
 practice to integrate these regular cloud users with your existing SSO solution by configuring it in the Admin console 
 security settings. Super admin users cannot authenticate via SSO, because Google needs to be able to authenticate them even 
 if the SSO setup is broken temporarily.
-
-## Example values used throughout this document
-
-This document uses the following example values:
-
-* New domain name to create: `cloudflyer.info`
-* Super admin email addresses:
-  * `super-admin-1@cloudflyer.info`
-  * `super-admin-2@cloudflyer.info`
-  * `super-admin-3@cloudflyer.info`
 
 ## Summary of the process
 
@@ -162,26 +154,54 @@ Here is a high-level summary of the necessary steps to create a new Google Cloud
 1.  Secure all of the super admin accounts following the key ceremony logout procedure by locking the key into one or more
     safes and logging out all super admin sessions from the trusted workstation.
 
-## Prerequisites
+## Complete prerequisite steps
 
-These are the prerequisites to initiate the process:
+Before you begin the process of setting up Cloud Identity, complete the following prerequisite steps.
 
-* **Domain name**: Ownership of a domain name with a trusted DNS provider
-* **Domain admin**: The domain name administrator is available to create DNS TXT records for the selected domain
-* **Define Root ceremonies for events like:**
-  * **Initiate root of trust - create Cloud Identity for a domain**
-  * **Super Admin users Creation**
-  * **Super Admin users login/logout**
-  * **Cloud Identity updates**
-  * **Super Admin users account rotation or retirement**
-* **Identify trusted privileged users for the bootstrapping process:**
-  * Cloud Identity super admin: A designated trusted person to be initiated as the Cloud Identity super administrator. Note: it is important to remember that super admin users can update your GSuite configuration, if you have one.
-  * Google Cloud Organization Administrator: A designated trusted person or group to be initiated as the organization administrator role in Google Cloud.
-  * Trusted Witnesses: A list of trusted witnesses with the ability to randomly select one or more witnesses out of the list for a specific process like: titan key rotation, super admin life events (super admin creation,log in, super admin rotation / deletion etc.), safe opening etc.
-* Set of 2FA keys ready: at least two new and unused dedicated [2FA Titan Security Keys](https://cloud.google.com/titan-security-key/) per super admin, ready to be associated to the super admin accounts when appropriate (see super admin ceremonies section). These are the physical tokens recommended by Google to secure G Suite or Cloud Identity user accounts. You can [order them online](https://store.google.com/product/titan_security_key) and have them delivered quickly (one day shipping possible in some locations)
-* **Physical Vault**: One or more physical vault to store the hardware 2FA keys. Note: the designated super admin users should not have access to the vault(s) without permission, for safety reasons.
-* **Password Vault**: a trusted password retention system or tool to store the super admin password.
-* **Trusted workstation**: A trusted physical machine with internet connectivity capable of running a chrome browser and accepting a USB key. This workstation should be highly secured according to your own internal standards. Generally, this workstation is not used for day-to-day activity, and is locked down to only allow access to the Admin Console and Google Cloud. You can also control which internal user can log in the machine in the first place for additional security.
+### Acquire domain and verify ability to create DNS records
+
+1.  Acquire administrative access to the domain name that will become the Google Cloud Organization. You can either purchase
+    a new domain name or use an existing domain name or subdomain. Be sure to use a trusted DNS provider.
+2.  Ensure that the domain name administrator is available to create DNS TXT records for the selected domain. To set up your
+    Cloud Identity account for your domain, you need the ability to prove that you own the domain.
+
+### Create email addresses for the initial super admin user
+
+You need a new valid email address from your domain, created especially for the initial super admin in Cloud Identity. This
+requires that the domain name has been properly configured to handle email, with MX records pointing to valid mail servers.
+
+### Define root ceremonies
+
+Define root ceremonies for events like the following:
+
+  * Initiate root of trust: create Cloud Identity for a domain
+  * Super admin user creation
+  * Super admin user login/logout
+  * Cloud Identity update
+  * Super admin user account rotation or retirement
+
+### Identify trusted privileged users for the bootstrapping process
+
+  * **Cloud Identity super admin**: A designated trusted person to be initiated as the Cloud Identity super administrator.
+    Keep in mind that super admin users can update your G Suite configuration, if you have one.
+  * **Google Cloud Organization administrator**: A designated trusted person or group to be initiated as the Organization
+    Administrator role in Google Cloud.
+  * **Trusted witnesses**: A list of trusted witnesses with the ability to randomly select one or more witnesses out of the
+    list for a specific process, such as Titan key rotation, safe opening, and super admin life events (for example, super 
+    admin creation, login, super admin rotation).
+
+### Make hardware and supporting software available
+
+* **Second-factor authenticator keys**: Make at least two new and unused dedicated
+  [2FA Titan Security Keys](https://cloud.google.com/titan-security-key/) per super admin ready to be associated to the 
+  super admin accounts.
+* **Physical vault**: Prepare or more physical vaults to store the hardware 2FA keys. The designated super admin users 
+  should *not* have access to the vaults without permission.
+* **Password vault**: Prepare a trusted password retention system or tool to store the super admin password.
+* **Trusted workstation**: Prepare a trusted physical machine with internet connectivity capable of running a Chrome browser
+  and accepting a USB key. This workstation should be highly secured according to your own internal standards. Generally, 
+  this workstation is not used for day-to-day activity and is locked down to only allow access to the Admin console and 
+  Google Cloud. For additional security, you can also control which internal users can log in to the machine.
 
 ## Set up Cloud Identity
 
@@ -195,17 +215,16 @@ up your Google Cloud organization for the first time.
 At the end of this process, all keys should be clearly identified (with stickers, separate envelopes, or both) and placed in
 one or more safes. Witnesses should be present during the entire event.
 
-You need two things in order to setup your Cloud Identity account for this domain:
-
-* The ability to prove that you own the domain (hence the capacity to add DNS records publically to it).
-* A valid email address from this domain. This address is used to create the initial super admin in Cloud Identity to
-  manage this domain in Cloud Identity.
-
-This implies that the domain name has been properly configured to handle email (MX records pointing to valid mail servers 
-and a new email address created especially for this super admin user).
-
 The root of trust for your cloud organization starts here. You need to create three email accounts on this domain for the 
 super admins that you designated in the first section.
+
+This document uses the following example values:
+
+* New domain name to create: `cloudflyer.info`
+* Super admin email addresses:
+  * `super-admin-1@cloudflyer.info`
+  * `super-admin-2@cloudflyer.info`
+  * `super-admin-3@cloudflyer.info`
 
 Go to [Cloud Identity Free tier setup](https://gsuite.google.com/signup/gcpidentity/welcome) and fill out the form to get started. This is mainly gathering high-level information about your business and first super admin user. You will also need to agree to the [Cloud Identity agreement](https://admin.google.com/terms/cloud_identity/1/2/en/na_terms.html) to continue.
 
