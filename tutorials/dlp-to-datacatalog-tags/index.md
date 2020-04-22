@@ -61,11 +61,11 @@ The following diagram shows the architecture of the solution:
 
     Set up the InfoTypes. This is an example. You may choose any from the list available:
     
-    ![N|Solid]((https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/infoTypes.png)
+    ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/infoTypes.png)
 
     Finish creating the Inspect Template:
     
-    ![N|Solid]((https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/inspectTemplateCreated.png)
+    ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/inspectTemplateCreated.png)
 
 ## Install BQ JDBC Driver
 
@@ -141,11 +141,11 @@ java -cp target/dlp-datacatalog-tags-0.1-jar-with-dependencies.jar com.example.d
 After the script finishes, you can go to [Data Catalog](https://cloud.google.com/data-catalog) and search for the sensitive
 data:
 
-![N|Solid]((https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/searchUI.png)
+![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/searchUI.png)
 
 By clicking each table, you can see which columns were marked as sensitive:
 
-![N|Solid]((https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/taggedTable.png)
+![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/taggedTable.png)
 
 ## Cleaning up
 
