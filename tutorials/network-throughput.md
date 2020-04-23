@@ -31,7 +31,9 @@ When calculating network throughput, it's important to use well-tested, well-doc
 * [iPerf3](https://iperf.fr/): A commonly used network testing tool that can
   create TCP/UDP data streams (single-thread or multi-thread) and measure the
   throughput of the network that carries them.
+  
   **Note**: iPerf3 may only be appropriate for single-CPU machines.
+  
 * [Netperf](https://hewlettpackard.github.io/netperf/): Similar to iPerf3 but
   more appropriate for throughput testing on multi-CPU instances that are
   CPU-bound on a single CPU.
@@ -161,7 +163,7 @@ Modify this command to suit your use case; for example, the interface name isn't
 distributions, and you'll need to specifically choose the right interface for a
 [multiple network interface VM](https://cloud.google.com/vpc/docs/multiple-interfaces-concepts).
 
-### Measuring throughput with Netperf
+#### Limitations of using iPerf3
 
 CPU throttling is likely to be a bottleneck when testing with `iperf3`. The `-P` flag launches multiple client streams, but
 these all run in a single thread.
@@ -179,7 +181,11 @@ Also, any attempt to launch multiple clients will return the following complaint
 
 Allowing only a single process to run is [also by design choice](https://github.com/esnet/iperf/issues/140).
 
-To exercise multiple CPUs, install Netperf:
+To exercise multiple CPUs, use Netperf.
+
+### Measuring throughput with multiple CPUs with Netperf
+
+Install Netperf:
 
     sudo apt-get install git build-essential autoconf texinfo -y
     git clone https://github.com/HewlettPackard/netperf.git
@@ -223,7 +229,6 @@ them to the respective CPUs:
     do
     taskset -c $i src/netperf -D 2 -H [server_IP_address] -f G &
     done
-
 
 ### Measuring VPC network throughput with PerfKit Benchmarker
 
