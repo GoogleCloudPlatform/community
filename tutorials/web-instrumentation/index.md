@@ -1,46 +1,52 @@
 ---
-title: Instrumenting Web Applications End-to-End with Goole Cloud Monitoring and OpenTelemetry
-description: Instrument a web application end-to-end, from the browser to the backend application, including logging, monitoring, and tracing with OpenTelemetry and Google Cloud Monitoring.
+title: Instrumenting web apps end to end with Cloud Monitoring and OpenTelemetry
+description: Instrument a web application end to end, from the browser to the backend application, including logging, monitoring, and tracing with OpenTelemetry and Cloud Monitoring.
 author: alexamies
 tags: Cloud Monitoring, OpenTelemetry
-date_published: 2020-03-02
+date_published: 2020-04-24
 ---
 
-This tutorial demonstrates instrumenting a web application end-to-end, from the browser to the backend application, including logging, monitoring, and tracing with OpenTelemetry and Google Cloud Monitoring to understand app performance in a load test. The test app runs with Node.js on Google Kubernetes Engine with modern browser JavaScript packaged with Webpack. The tutorial is written for full stack developers interested in instrumenting their application for operational monitoring of end user experience. The instrumentation discussed is intended to be applicable permanently for the app, not just temporarily for the load test. 
+This tutorial demonstrates instrumenting a web application end to end, from the browser to the backend application, 
+including logging, monitoring, and tracing with OpenTelemetry and Cloud Monitoring to understand app performance in a load
+test. The test app runs with Node.js on Google Kubernetes Engine (GKE) with modern browser JavaScript packaged with Webpack.
+The tutorial is written for full-stack developers interested in instrumenting their apps for operational monitoring of 
+end-user experience. The instrumentation discussed is intended to be applicable permanently for the app, not just 
+temporarily for the load test. 
 
-The tutorial specifically addresses the question, “How will my app handle a load spike?”. In addition, the principles discussed apply to many other use cases as well, such as rolling out a new version of an app. Familiarity with JavaScript development of browser and Node.js applications, running Kubernetes, and basic use of Google Cloud will help. Running a similar scenario with languages other than JavaScript is possible with some adaptation.
+The tutorial specifically addresses the question, “How will my app handle a load spike?”. In addition, the principles 
+discussed apply to many other use cases as well, such as rolling out a new version of an app. Familiarity with JavaScript
+development of browser and Node.js apps, running Kubernetes, and basic use of Google Cloud will help. Running a similar 
+scenario with languages other than JavaScript is possible with some adaptation.
 
-The architecture of the app is shown in the schematic diagram below.
+The architecture of the app is shown in this schematic diagram:
 
 ![Schematic Diagram of the Test App](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/schematic_diagram.png)
 
 ## Objectives 
 
-* Learn to instrument a browser app with logging, monitoring stats, and trace using Google Cloud Monitoring
-* Learn how to collect the instrumentation data from the browser and the server, ship to Google Cloud Monitoring, export to BigQuery, and analyze the logs with SQL queries
-* Quickly and easily run a load test to understand how your app handles load spikes
-
-----
+* Learn to instrument a browser app with logging, monitoring stats, and trace using Cloud Monitoring.
+* Learn how to collect the instrumentation data from the browser and the server, ship to Cloud Monitoring, export to 
+  BigQuery, and analyze the logs with SQL queries.
+* Quickly and easily run a load test to understand how your app handles load spikes.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including:
-* Google Compute Engine
-* Google Container Registry
+This tutorial uses billable components of Google Cloud, including the following:
+* Compute Engine
+* Container Registry
 * Cloud Monitoring, Logging, and Tracing
 * BigQuery
 * Cloud Build
 
-Use the [Pricing Calculator](https://cloud.google.com/products/calculator)
-to generate a cost estimate based on your projected usage.
-
-----
+Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your 
+projected usage.
 
 ## Before you begin
 
-For this tutorial, you need a GCP [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects).
+For this tutorial, you need a Google Cloud
+[project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects).
 You can create a new one, or select a project you already created:
-1. Select or create a GCP project.
+1. Select or create a Google Cloud project.
 [GO TO THE PROJECT SELECTOR PAGE](https://console.cloud.google.com/projectselector2/home/dashboard)
 1. Enable billing for your project.
 [ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
@@ -639,7 +645,7 @@ LIMIT 10
 
 #### Visualizing the log data
 
-From BigQuery, we read data into Colab, where it can be plotted in charts. Colab is an iPython notebook service hosted by Google with many GCP services pre-configured for ease of use. Follow these steps to query the log tables in BigQuery and process the results in Python
+From BigQuery, we read data into Colab, where it can be plotted in charts. Colab is an iPython notebook service hosted by Google with many Google Cloud services pre-configured for ease of use. Follow these steps to query the log tables in BigQuery and process the results in Python
 
 1. Open the [Colab](https://colab.research.google.com/github/GoogleCloudPlatform/professional-services/blob/master/examples/web-instrumentation/load_test_analysis.ipynb) sheet in Chrome. 
 
@@ -700,26 +706,26 @@ If you prefer not to use client libraries to generate traces, you can generate t
 [W3C Trace Context](https://www.w3.org/TR/trace-context-1/)
 format. This may be preferable on mobile clients where it is important to minimize the size of the application binary. The trace id generated is very useful for correlating logs between front and back end even if you do not use tracing.
 
-If running in a serverless environment like Cloud Run or App Engine Flex you will need to package the OpenTelemetry service in the Docker container with a web server like NGINX to forward the trace collection requests to the collector.
+If running in a serverless environment like Cloud Run or App Engine flexible environment, you will need to package the 
+OpenTelemetry service in the Docker container with a web server like NGINX to forward the trace collection requests to the 
+collector.
 
 ## Troubleshooting
 
 See the 
-[README.md](https://github.com/GoogleCloudPlatform/professional-services/tree/master/examples/web-instrumentation#troubleshooting)
-file in GitHub for troubleshooting tips.
+[README.md](https://github.com/GoogleCloudPlatform/professional-services/tree/master/examples/web-instrumentation#troubleshooting) file in GitHub for troubleshooting tips.
 
 ## Cleaning up
 
-To avoid incurring charges to your Google Cloud Platform account for the resources used in this tutorial:
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial:
 
 ### Delete the project
 
-The easiest way to eliminate billing is to delete the project you created for the tutorial.
+The easiest way to eliminate billing is to delete the project that you created for the tutorial.
 
-To delete the project:
+To delete the project, do the following:
 
-1. In the Cloud Platform Console, go to the Projects page.
-[GO TO THE PROJECTS PAGE](https://console.cloud.google.com/iam-admin/projects)
+1. In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 
 1. In the project list, select the project you want to delete and click **Delete**.
 
@@ -727,17 +733,16 @@ To delete the project:
 
 ## What’s next
 
-Explore the following related resources
-* Explore the [Opentelemetry-js](https://github.com/open-telemetry/opentelemetry-js) 
-  GitHub project
-* Try [Distributed load testing using Google Kubernetes Engine](https://cloud.google.com/solutions/distributed-load-testing-using-gke)
-* Read [Patterns for scalable and resilient apps](https://cloud.google.com/solutions/scalable-and-resilient-apps)
-* Read about [Handling Overload](https://landing.google.com/sre/sre-book/chapters/handling-overload/)
-  in the SRE Book
-* Read about [Load Balancing in the Datacenter](https://landing.google.com/sre/sre-book/chapters/load-balancing-datacenter/)
-  in the SRE Book
-* Read about [Managing Load](https://landing.google.com/sre/workbook/chapters/managing-load/)
-  in the SRE Workbook
-* Adapt the app in this tutorial to a Java backend with [Identifying causes of app latency with Stackdriver and OpenCensus](https://cloud.google.com/solutions/identifying-causes-of-app-latency-with-stackdriver-and-opencensus)
-* Adapt the app in this tutorial to a Go backend with [Troubleshooting app latency with Cloud Spanner and OpenCensus](https://cloud.google.com/solutions/troubleshooting-app-latency-with-cloud-spanner-and-opencensus)
-* Try out other Google Cloud Platform features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
+Explore the following related resources:
+
+* Explore the [Opentelemetry-js](https://github.com/open-telemetry/opentelemetry-js) GitHub project.
+* Try
+  [distributed load testing using Google Kubernetes Engine](https://cloud.google.com/solutions/distributed-load-testing-using-gke).
+* Read about [patterns for scalable and resilient apps](https://cloud.google.com/solutions/scalable-and-resilient-apps).
+* Read about [handling overload](https://landing.google.com/sre/sre-book/chapters/handling-overload/) in the SRE Book.
+* Read about [load balancing in data centers](https://landing.google.com/sre/sre-book/chapters/load-balancing-datacenter/)
+  in the SRE Book.
+* Read about [managing load](https://landing.google.com/sre/workbook/chapters/managing-load/) in the SRE Workbook.
+* Adapt the app in this tutorial to a Java backend with [Identifying causes of app latency with Stackdriver and OpenCensus](https://cloud.google.com/solutions/identifying-causes-of-app-latency-with-stackdriver-and-opencensus).
+* Adapt the app in this tutorial to a Go backend with [Troubleshooting app latency with Cloud Spanner and OpenCensus](https://cloud.google.com/solutions/troubleshooting-app-latency-with-cloud-spanner-and-opencensus).
+* Try out other Google Cloud features. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
