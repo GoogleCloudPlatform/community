@@ -1,25 +1,26 @@
 ---
-title: Run WordPress on Google App Engine standard environment
-description: Learn how to deploy a WordPress app to Google App Engine standard environment.
+title: Run WordPress on App Engine standard environment
+description: Learn how to deploy a WordPress app to App Engine standard environment.
 author: bshaffer
 tags: App Engine, WordPress, PHP
 date_published: 2019-01-31
 ---
 
-[WordPress][wordpress] is an open source web framework for PHP developers that encourages the use of the model-view-controller (MVC) pattern.
+[WordPress][wordpress] is an open source web framework for PHP developers that encourages the use of the
+model-view-controller (MVC) pattern.
 
 This tutorial illustrates how to use a simple command-line tool for downloading
 and configuring WordPress on App Engine standard environment for PHP 7.2.
 
-You can check out [PHP on Google Cloud Platform (GCP)][php-gcp] to get an
-overview of PHP and learn ways to run PHP apps on GCP.
+You can check out [PHP on Google Cloud][php-gcp] to get an
+overview of PHP and learn ways to run PHP apps on Google Cloud.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console][cloud-console].
+1. Create a project in the [Cloud Console][cloud-console].
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK][cloud_sdk].
-1. [Enable Cloud SQL API][cloud-sql-api-enable].
+1. Install the [Cloud SDK][cloud_sdk].
+1. [Enable the Cloud SQL API][cloud-sql-api-enable].
 1. Install [Composer][composer].
 
 ### Create and configure a Cloud SQL for MySQL instance
@@ -65,7 +66,9 @@ a new WordPress project or add the required configuration to an existing one.
         $ composer require google/cloud-tools
 
     **Note**: If you receive an error about extensions, install `phar` and `zip` PHP
-    extensions and retry.
+    extensions and retry:
+    
+        $ sudo apt-get install php7.2-zip php7.2-curl
 
 1.  Now you can run the `wp-gae` command which is included in that package:
 
@@ -77,7 +80,7 @@ a new WordPress project or add the required configuration to an existing one.
 The `wp-gae` command will ask you several question in order to set up your Cloud SQL
 database connection, and then write the required configuration to your `wp-config.php`
 configuration file. It also copies the following files into your project directory
-to allow WordPress to run on Google App Engine:
+to allow WordPress to run on App Engine:
 
  - [`app.yaml`][app_yaml]: The App Engine configuration file that specifies the runtime and static asset handlers.
  - [`cron.yaml`][cron_yaml]: The App Engine configuration file that ensures `wp-cron.php` is run every 15 minutes.
@@ -100,7 +103,7 @@ current directory.
     $ gcloud sql instances describe wordpress | grep region
 
 
-### Update an existing WordPress Project
+### Update an existing WordPress project
 
 If you are migrating an existing project to Google Cloud, you can use the
 `update` command:
@@ -136,7 +139,7 @@ redeploy:
 To use the [Google Cloud Storage plugin][gcs-plugin] for media uploads, follow
 these steps:
 
-1.  Configure the App Engine default GCS bucket for later use. The default App
+1.  Configure the App Engine default Cloud Storage bucket for later use. The default App
     Engine bucket is named YOUR_PROJECT_ID.appspot.com. Change the default Access
     Control List (ACL) of that bucket as follows:
 
@@ -148,13 +151,18 @@ these steps:
     configured in Step 1.
 
 After activating the plugin, try uploading a media object in a new post
-and confirm the image is uploaded to the GCS bucket by visiting the
-[Google Cloud Console Storage page][cloud-storage-console].
+and confirm the image is uploaded to the Cloud Storage bucket by visiting the
+[Cloud Console Storage page][cloud-storage-console].
 
 ## Local development
 
 To access this MySQL instance, use Cloud SQL Proxy. [Download][cloud-sql-proxy-download]
 it to your local computer and make it executable.
+
+To install in Cloud Shell:
+
+    $ wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+    $ chmod +x cloud_sql_proxy
 
 Go to the [the Credentials section][credentials-section] of your project in the
 Console. Click **Create credentials** and then click **Service account key**. For
@@ -166,7 +174,11 @@ Run the proxy by the following command:
 
     $ ./cloud_sql_proxy \
         -instances=YOUR_PROJECT_ID:us-central1:wordpress=tcp:3306 \
-        -credential_file=/path/to/YOUR_SERVICE_ACCOUNT_JSON_FILE.json
+        -credential_file=/path/to/YOUR_SERVICE_ACCOUNT_JSON_FILE.json &
+        
+If running within Cloud Shell:
+
+    $ ./cloud_sql_proxy -instances <YOUR_PROJECT_ID>:us-central1:wordpress=tcp:3306 &
 
 **Note**: See [Connecting to Cloud SQL from External Applications][cloud-sql-external-apps]
 for more options when running the Cloud SQL proxy.
@@ -187,7 +199,7 @@ Because the `wp-content` directory on the server is read-only, you have
 to perform all code updates locally. Run WordPress locally and update the
 plugins and themes in the local Dashboard, deploy the code to production, then
 activate them in the production Dashboard. You can also use the `wp-cli` utility
-as follows (be sure to keep the Cloud SQL proxy running):
+as follows. Be sure to keep the Cloud SQL proxy running.
 
     # Install the wp-cli utility
     $ composer require wp-cli/wp-cli-bundle
@@ -207,6 +219,17 @@ If you get this error, you can set a `WP_CLI_PHP_ARGS` environment variable to a
     $ export WP_CLI_PHP_ARGS='-d include_path=vendor/google/appengine-php-sdk'
 
 Then try the update commands again.
+
+After everything is up to date, deploy the app again:
+
+    $ gcloud app deploy app.yaml cron.yaml
+    
+**Note**: This will deploy a new version of the app and set it as the default while keeping the previous versions available
+under versioned hostnames. Visit the App Engine, Versions area to see previous versions.
+
+Alternately, you may deploy the new version and stop previous ones so they stop incurring charges:
+
+    $ gcloud app deploy app.yaml cron.yaml --promote --stop-previous-versions
 
 ### Remove plugins and themes
 
