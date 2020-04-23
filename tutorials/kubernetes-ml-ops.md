@@ -8,7 +8,7 @@ date_published: 2020-04-25
 
 A common pattern for deploying machine learning (ML) models (such as models trained using the SciKit Learn or Keras packages
 for Python) into production environments is to expose these models as RESTful API microservices, hosted from within Docker 
-containers. These microservices can then deployed to a cloud environment for handling everything required for maintaining 
+containers. These microservices can then be deployed to a cloud environment for handling everything required for maintaining 
 continuous availability.
 
 Kubernetes is a container orchestration platform that provides a mechanism for defining entire microservice-based 
@@ -18,14 +18,14 @@ application deployment topologies and their service-level requirements for maint
 
 A default project is often set up by default for new accounts, but you
 will start by creating a new project to keep this separate and easy to
-delete later. After creating the project, be sure to copy down the project ID, which
+delete later. After creating the project, be sure to copy the project ID, which
 is usually different from the project name.
 
 ![How to find your project ID.](https://storage.googleapis.com/gcp-community/tutorials/getting-started-on-gcp-with-terraform/gcp_project_id.png)
 
 ### Open Cloud Shell and create a project directory
 
-Open Cloud Shell by clicking the [**Activate Cloud Shell**][spotlight-console-menu] button in the navigation bar in the 
+Open Cloud Shell by clicking the **Activate Cloud Shell** button in the navigation bar in the 
 upper-right corner of the Cloud Console.
 
 In Cloud Shell, use the following command to reate a project directory:
@@ -47,9 +47,8 @@ are as follows:
 This is a Python module that uses the Flask framework for defining a web service (app), with a function (score), that 
 executes in response to an HTTP request to a specific URL (or *route*).
 
-`api.py`:
+#### `api.py`
 
-    ```python
     from flask import Flask, jsonify, make_response, request
 
     app = Flask(__name__)
@@ -63,13 +62,12 @@ executes in response to an HTTP request to a specific URL (or *route*).
 
     if __name__ == '__main__':
         app.run(host='0.0.0.0', port=5000)
-    ```
+
 
 ### Defining the Docker image with the Dockerfile
 
-`Dockerfile`:
+#### `Dockerfile`
 
-    ```dockerfile
     FROM python:3.6-slim
     WORKDIR /usr/src/app
     COPY . .
@@ -77,21 +75,15 @@ executes in response to an HTTP request to a specific URL (or *route*).
 
     EXPOSE 5000
     CMD ["python", "api.py"]
-    ```
 
 Let's build the dockerfile. In Cloud Shell, run the following command to build the dockerfile:
 
-    ```docker
     $ docker build -t ml-k8s .
-    ```
 
 ### Pushing the Docker Image to Container Registry
 
-    ```docker
     $ docker tag ml-k8s [HOSTNAME]/[PROJECT-ID]/ml-k8s
     $ docker push [HOSTNAME]/[PROJECT-ID]/ml-k8s
-    ```
-
 
 For more about Container Registry, see
 [this quickstart](https://cloud.google.com/container-registry/docs/quickstart).
@@ -118,9 +110,8 @@ For more information, see
 
 ### Deploying the containerized ML model to Kubernetes
 
-*project structure*: 
+The structure of this project that you create is as follows: 
 
-    ```
     | api.py
     | base
       | namespace.yaml
@@ -128,7 +119,6 @@ For more information, see
       | service.yaml
       | kustomize.yaml
     | Dockerfile
-    ```
 
 Writing YAML files for Kubernetes can get repetitive and hard to manage, especially when there are multiple files and you
 need to execute them one by one. With the Kustomize utility, you can customize raw, template-free YAML files for multiple 
@@ -136,7 +126,6 @@ purposes, leaving the original YAML untouched and usable as is.
 
 #### Install Kustomize
 
-    ```bash
     curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases |\
     grep browser_download |\
     grep linux |\
@@ -146,24 +135,25 @@ purposes, leaving the original YAML untouched and usable as is.
     xargs curl -O -L && \
     tar xzf ./kustomize_v*_linux_amd64.tar.gz && \
     mv kustomize /usr/bin/
-    ```
-#### `namespace.yaml`
+
+#### Create `namespace.yaml`
 
 Namespaces provide a scope for Kubernetes resources, carving up your cluster in smaller units.
 
-    ```yaml
+File contents:
+
     apiVersion: v1
     kind: Namespace
     metadata:
       name: mlops
-    ```
 
-#### `deployment.yaml`
+#### Create `deployment.yaml`
 
 Deployments represent a set of multiple, identical Pods with no unique identities. A Deployment runs multiple replicas of 
 your application and automatically replaces any instances that fail or become unresponsive.
 
-    ```yaml
+File contents:
+
     apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -189,13 +179,13 @@ your application and automatically replaces any instances that fail or become un
             ports:
             - containerPort: 5000
               protocol: TCP
-    ```
     
-#### `service.yaml`
+#### Create `service.yaml`
 
 An abstract way to expose an application running on a set of Pods as a network service.
 
-    ```yaml
+File contents:
+
     apiVersion: v1
     kind: Service
     metadata:
@@ -210,18 +200,17 @@ An abstract way to expose an application running on a set of Pods as a network s
         targetPort: 5000
       selector:
         app: score-app
-    ```
 
-#### `kustomize.yaml`
+#### Create `kustomize.yaml`
 
-    ```yaml
+File contents:
+
     apiVersion: kustomize.config.k8s.io/v1beta1
     kind: Kustomization
     resources:
     - namespace.yaml
     - deployment.yaml
     - service.yaml
-    ```
     
 #### Deploy the app
 
@@ -263,18 +252,14 @@ The output should look something like the following:
 
 ### Test the deployed model
 
-    ```bash
     curl http://[EXTERNAL_IP_ADDRESS]:5000/score \
         --request POST \
         --header "Content-Type: application/json" \
         --data '{"X": [1, 2]}
-    ```
 
 The output should look something like the following:
 
-    ```bash
     {"score":[1,2]}
-    ```
 
 ## Cleanup
 
