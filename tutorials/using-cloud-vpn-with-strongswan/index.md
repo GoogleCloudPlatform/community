@@ -118,8 +118,14 @@ To configure Cloud VPN:
 
 ## Configuration of strongSwan
 
-This guide assumes that you have strongSwan already installed. It also assumes a default
-filesystem layout of Debian 9.6.
+To install strongSwan on Debian 9.6 or Ubuntu 18.04, use the following commands:
+
+    sudo apt update
+    sudo apt install strongswan strongswan-pki
+
+To install strongSwan on RHEL 7 or CentOS 7, use the following command:
+
+    yum install strongswan
 
 **Step 1**: Ensure that IP forwarding is enabled
 
@@ -184,7 +190,6 @@ Ensure that the following line present in file:
         # dpdaction=restart - means strongSwan will try to reconnect if Dead Peer Detection spots
         #                  a problem. Change to 'clear' if needed
         dpdaction=restart
-        closeaction=restart
 
 **Step 4**: Start strongSwan
 
@@ -312,7 +317,10 @@ This guide assumes that you have strongSwan already installed. It also assumes a
     protocol kernel {
            learn;
            merge paths on; # For ECMP
-           export all; # Sync all routes to kernel
+           export filter { 
+                  krt_prefsrc = 10.164.0.6; # Internal IP Address of the strongSwan VM. 
+                  accept; # Sync all routes to kernel
+           };
            import all; # Required due to /32 on GCE VMs for the static route below
     }
 
@@ -483,7 +491,6 @@ Ensure that the following line is in the file:
         # dpdaction=restart - means strongSwan will try to reconnect if Dead Peer Detection spots
         #                  a problem. Change to 'clear' if needed
         dpdaction=restart
-        closeaction=restart
         # mark=%unique - We use this to mark VPN-related packets with iptables
         #                %unique ensures that all tunnels will have a unique mark here
         mark=%unique
