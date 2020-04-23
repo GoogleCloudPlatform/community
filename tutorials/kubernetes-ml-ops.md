@@ -1,7 +1,7 @@
 ---
 title: Kubernetes ML ops
 description: An introduction to machine learning model deployment operations (MLOps) using Python and Kubernetes.
-author: Karan Sharma
+author: Karan
 tags: kubernetes-MLOps
 date_published: 2020-04-23
 ---
