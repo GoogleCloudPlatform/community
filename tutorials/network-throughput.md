@@ -287,4 +287,3 @@ To fix this issue, you may increase the TCP send and receive windows:
 
 - `SO_RCVBUF` is influenced by increasing `net.core.rmem_default` and `net.core.rmem_max`.
 - `SO_SNDBUF` is influenced by increasing `net.core.wmem_default` and `net.core.wmem_max`.
-
