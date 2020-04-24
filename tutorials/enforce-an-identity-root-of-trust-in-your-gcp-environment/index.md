@@ -31,18 +31,18 @@ node in which your domain is controlled using
 
 This process includes the following objectives:
 
-* You have account for your primary domain name in the Admin console.
+* You have an account for your primary domain name in the Admin console.
 * Only *super admins* can manage your organization.
 * Super admins have dedicated identities that require the use of a physical second-factor authenticator to log in. This 
   means that they will not use their day-to-day user as a super admin user, for security reasons. For example, they can use
   supadmin1@example.com for administrative tasks in the Admin console and john.doe@example.com for normal Google Cloud
-  activities).
+  activities.
 * Super admins' physical tokens are out of the reach of your designated super admin users. This ensures that in order to log
-  in as a super admin user, your trusted users need to request access to the physical vault. This lets you trust that your
+  in as a super admin user, your trusted users need to request access to a physical vault. This lets you trust that your
   identity setup is the way that you expect it to be at any time, because you can track who logged in to make changes, and
   insert your own process to determine why they logged in and what they changed.
 * Your Google Cloud Organization node has been created.
-* Super admin users delegated their Google Cloud access to a special IAM admin group in Google Cloud. This enforces 
+* Super admin users have delegated their Google Cloud access to a special IAM admin group in Google Cloud. This enforces 
   separation of duty and makes it easier to manage Google Cloud permissions without the need to log in as a super admin 
   user.
 
@@ -105,8 +105,8 @@ accounts and block or impersonate regular users to gain admin access to your Goo
 
 Super admins will use physical second-factors keys (FIDO U2F Security Keys, such as
 [Titan Security Keys](https://cloud.google.com/titan-security-key)) to log in. These keys - including spare keys - will be 
-stored in one or two physical vaults. Each super admin activity is logged and retained in long-term immutable storage. Super 
-admin users should have no purpose in Google Cloud other than designating the Organization Administrators. You can
+stored in one or more physical vaults. Each super admin activity is logged and retained in long-term immutable storage. 
+Super admin users should have no purpose in Google Cloud other than designating the Organization Administrators. You can
 [order Titan Security Keys online](https://store.google.com/product/titan_security_key).
 
 Most organizations provision regular cloud users via automation, from their on-premises user directory. It is also a good
