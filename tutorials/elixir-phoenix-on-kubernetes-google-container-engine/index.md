@@ -630,7 +630,7 @@ you've created the Kubernetes cluster as described above.
 
 1.  Expose the application by creating a load balancer pointing at your pod:
 
-        kubectl expose deployment hello-web \
+        kubectl expose pod hello-web \
             --type=LoadBalancer --port 80 --target-port 8080
 
     This creates a service resource pointing at your running pod. It listens
