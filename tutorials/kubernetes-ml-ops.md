@@ -26,17 +26,16 @@ is usually different from the project name.
 ### Open Cloud Shell and create a project directory
 
 Open Cloud Shell by clicking the **Activate Cloud Shell** button in the navigation bar in the 
-upper-right corner of the Cloud Console.
+upper-right corner of the [Cloud Console](https://console.cloud.google.com/).
 
-In Cloud Shell, use the following command to reate a project directory:
+In Cloud Shell, use the following command to create a project directory:
 
     mkdir py-flask-ml-rest-api
 
 ### Containerizing a simple ML model scoring service using Flask and Docker
 
-We start by demonstrating how to achieve this basic competence using the simple Python ML model scoring REST API contained 
-in the `api.py` module, together with the Dockerfile, both within the `py-flask-ml-rest-api` directory, whose core contents 
-are as follows:
+This tutorial uses the contents of the `py-flask-ml-rest-api` directory for demonstration purposes. This directory contains
+a simple Python ML model scoring REST API in the `api.py` module and a Dockerfile:
 
     py-flask-ml-rest-api/
      | Dockerfile
@@ -76,7 +75,7 @@ executes in response to an HTTP request to a specific URL (or *route*).
     EXPOSE 5000
     CMD ["python", "api.py"]
 
-Let's build the dockerfile. In Cloud Shell, run the following command to build the dockerfile:
+In Cloud Shell, run the following command to build the dockerfile:
 
     $ docker build -t ml-k8s .
 
@@ -88,7 +87,7 @@ Let's build the dockerfile. In Cloud Shell, run the following command to build t
 For more about Container Registry, see
 [this quickstart](https://cloud.google.com/container-registry/docs/quickstart).
 
-When your Docker file is built and pushed to Container Registry, you are done with containerising the ML model.
+When your Docker file is built and pushed to Container Registry, you are done with containerizing the ML model.
 
 ### Setting up and connecting to the Kubernetes cluster
 
@@ -122,7 +121,7 @@ The structure of this project that you create is as follows:
 
 Writing YAML files for Kubernetes can get repetitive and hard to manage, especially when there are multiple files and you
 need to execute them one by one. With the Kustomize utility, you can customize raw, template-free YAML files for multiple 
-purposes, leaving the original YAML untouched and usable as is.
+purposes, leaving the original YAML untouched.
 
 #### Install Kustomize
 
