@@ -326,7 +326,7 @@ Modify your Framework configuration in `config/packages/framework.yaml` and chan
         gc_maxlifetime: 36000
 ```
 
-You should then activate the service in `config/services.yaml.
+You should then activate the service in `config/services.yaml`.
 
 ```
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
