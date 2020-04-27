@@ -194,13 +194,13 @@ below.
   [Cloud Endpoints console][endpoints]. For more information on configuring the
   quota, see the [documentation][quota_docs].
 
-[modelserve]: https://github.com/GoogleCloudPlatform/ml-on-gcp/tree/master/sklearn/gae_serve
-[requirements]: https://github.com/GoogleCloudPlatform/ml-on-gcp/tree/master/sklearn/gae_serve#requirements
-[steps]: https://github.com/GoogleCloudPlatform/ml-on-gcp/tree/master/sklearn/gae_serve#steps
-[modelserve.yaml]: https://github.com/GoogleCloudPlatform/ml-on-gcp/blob/master/sklearn/gae_serve/modelserve.yaml
-[app.yaml]: https://github.com/GoogleCloudPlatform/ml-on-gcp/blob/master/sklearn/gae_serve/app.yaml
-[main.py]: https://github.com/GoogleCloudPlatform/ml-on-gcp/blob/master/sklearn/gae_serve/main.py
-[lr.pkl]: https://github.com/GoogleCloudPlatform/ml-on-gcp/blob/master/sklearn/gae_serve/lr.pkl
+[modelserve]: https://github.com/GoogleCloudPlatform/ml-on-gcp/tree/master/tutorials/sklearn/gae_serve
+[requirements]: https://github.com/GoogleCloudPlatform/ml-on-gcp/tree/master/tutorials/sklearn/gae_serve#requirements
+[steps]: https://github.com/GoogleCloudPlatform/ml-on-gcp/tree/master/tutorials/sklearn/gae_serve#steps
+[modelserve.yaml]: https://github.com/GoogleCloudPlatform/ml-on-gcp/blob/master/tutorials/sklearn/gae_serve/modelserve.yaml
+[app.yaml]: https://github.com/GoogleCloudPlatform/ml-on-gcp/blob/master/tutorials/sklearn/gae_serve/app.yaml
+[main.py]: https://github.com/GoogleCloudPlatform/ml-on-gcp/blob/master/tutorials/sklearn/gae_serve/main.py
+[lr.pkl]: https://github.com/GoogleCloudPlatform/ml-on-gcp/blob/master/tutorials/sklearn/gae_serve/lr.pkl
 
 [appengine]: https://cloud.google.com/appengine/
 [endpoints]: https://cloud.google.com/endpoints/
