@@ -1,9 +1,9 @@
 ---
 title: Create Data Catalog tags by inspecting BigQuery data with Cloud Data Loss Prevention
-description: Learn how to inspect BigQuery data using Cloud Data Loss Prevention and automatically create Cloud Data Catalog tags for sensitive elements with results from inspection scans.
+description: Learn how to inspect BigQuery data using Cloud Data Loss Prevention and automatically create Data Catalog tags for sensitive elements with results from inspection scans.
 author: scellis,costamarcelo
-tags: BigQuery, Cloud Data Loss Prevention, Cloud Data Catalog, Java
-date_published: 2020-04-24
+tags: database, Cloud DLP, Java, PII
+date_published: 2020-04-27
 ---
 
 Cloud Data Loss Prevention (Cloud DLP) can help you to discover, inspect, and classify sensitive elements in your data. The 
@@ -77,7 +77,7 @@ Create the inspection template in Cloud DLP:
 
 ## Install the BigQuery JDBC driver
 
-Run the following commands to download latest Simba BigQuery driver, extract it, install it with Maven, and delete the 
+Run the following commands to download the latest Simba BigQuery driver, extract it, install it with Maven, and delete the 
 temporary `lib` files:
 
     curl -o SimbaJDBCDriverforGoogleBigQuery.zip https://storage.googleapis.com/simba-bq-release/jdbc/SimbaJDBCDriverforGoogleBigQuery42_1.2.2.1004.zip && \
@@ -91,7 +91,7 @@ temporary `lib` files:
     -DgeneratePom=true && \
     rm -rf lib
 
-You may adapt the script to use different JDBC drivers, if you want to connect to other databases.
+If you want to connect to other databases, you may adapt the script to use different JDBC drivers.
 
 ## Configure service account credentials
 
