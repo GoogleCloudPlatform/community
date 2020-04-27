@@ -11,25 +11,29 @@ results of these inspections can be valuable as *tags* in Data Catalog. This tut
 using the Cloud Data Loss Prevention API and then use the Data Catalog API to create tags at the column level with the 
 sensitive elements found.
 
-This tutorial includes instructions to create a DLP `inspectTemplate` to define what data elements to inspect for, the JDBC driver used to connect to BigQuery, and the number of worker threads used to paralelize the work. Such implementation connecting to the data source with JDBC allows for changing the Data Source to others like MySQL, SQLServer, PostgreSQL, etc, and reusing other steps. Users can also customize or adjust this script to change the Tag fields to better fit their use case. 
+This tutorial includes instructions to create a Cloud DLP inspection template to define what data elements to inspect for, 
+the JDBC driver used to connect to BigQuery, and the number of worker threads used to parallelize the work. Such an 
+implementation, connecting to the data source with JDBC, allows for changing the data source to alternatives like MySQL, SQL 
+Server, or PostgreSQL. You can also customize or adjust this script to change the tag fields to better fit your use case. 
 
 ## Objectives
 
-- Enable Cloud Data Loss Prevention, BigQuery, Cloud Data Catalog APIs
-- Create a Cloud DLP inspectTemplate
-- Create an automated process that uses Cloud DLP findings to label/tag BigQuery table columns
-- Leverage these labels and tags in your code 
-- Use Cloud Data Catalog to quickly understand where sensitive data exist in your BigQuery table columns
+- Enable Cloud Data Loss Prevention, BigQuery, and Cloud Data Catalog APIs.
+- Create a Cloud DLP inspection template.
+- Create an automated process that uses Cloud DLP findings to label and tag BigQuery table columns.
+- Use these labels and tags in your code. 
+- Use Cloud Data Catalog to quickly understand where sensitive data exists in your BigQuery table columns.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including the following:
+This tutorial uses billable components of Google Cloud, including the following:
 
 - BigQuery
-- Cloud Data Loss Prevention (DLP)
+- Cloud Data Loss Prevention
 - Cloud Data Catalog
 
-Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
+Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your 
+projected usage.
 
 ## Reference architecture
 
@@ -41,50 +45,50 @@ The following diagram shows the architecture of the solution:
 ## Before you begin
 
 1.  Select or create a Google Cloud project.
+
     [Go to the Managed Resources page.](https://console.cloud.google.com/cloud-resource-manager)
 
 1.  Make sure that billing is enabled for your project.
+
     [Learn how to enable billing.](https://cloud.google.com/billing/docs/how-to/modify-project)
 
 1.  Enable the Data Catalog, BigQuery, and Cloud Data Loss Prevention APIs.
-    [Enable the APIs](https://console.cloud.google.com/flows/enableapi?apiid=datacatalog.googleapis.com,bigquery.googleapis.com,dlp.googleapis.com)
+
+    [Enable the APIs.](https://console.cloud.google.com/flows/enableapi?apiid=datacatalog.googleapis.com,bigquery.googleapis.com,dlp.googleapis.com)
 
 ## Preparing the environment
 
-1.  Create Big Query Tables with personally identifiable information (PII):
+1.  Create Big Query tables with personally identifiable information (PII).
 
     You can use the open source script [BigQuery Fake PII Creator](https://github.com/mesmacosta/bq-fake-pii-table-creator). 
 
-1.  Create the Inspect Template:
+1.  Create the inspection template.
 
-    Go to [DLP Create Inspect Template](https://console.cloud.google.com/security/dlp/create/template)
+    1.  Go to the Cloud DLP [**Create template** page](https://console.cloud.google.com/security/dlp/create/template).
 
-    Set up the InfoTypes. This is an example. You may choose any from the list available:
+    1.  Set up the InfoTypes. This is an example. You may choose any from the list available:
     
-    ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/infoTypes.png)
+        ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/infoTypes.png)
 
-    Finish creating the Inspect Template:
+    1.  Finish creating the inspection template:
     
-    ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/inspectTemplateCreated.png)
+        ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/inspectTemplateCreated.png)
 
-## Install BQ JDBC Driver
+## Install the BigQuery JDBC driver
 
-Install latest Simba BigQuery driver.
+Run the following commands to download latest Simba BigQuery driver, extract it, install it with Maven, and delete the 
+temporary `lib` files:
 
-Download latest version, extract it, install it with Maven, and delete the temporary `lib` files:
-
-```
-curl -o SimbaJDBCDriverforGoogleBigQuery.zip https://storage.googleapis.com/simba-bq-release/jdbc/SimbaJDBCDriverforGoogleBigQuery42_1.2.2.1004.zip && \
-unzip -qu SimbaJDBCDriverforGoogleBigQuery.zip -d lib && \
-mvn install:install-file  \
--Dfile=lib/GoogleBigQueryJDBC42.jar \
--DgroupId=com.simba \
--DartifactId=simba-jdbc \
--Dversion=1.0 \
--Dpackaging=jar \
--DgeneratePom=true && \
-rm -rf lib
-```
+    curl -o SimbaJDBCDriverforGoogleBigQuery.zip https://storage.googleapis.com/simba-bq-release/jdbc/SimbaJDBCDriverforGoogleBigQuery42_1.2.2.1004.zip && \
+    unzip -qu SimbaJDBCDriverforGoogleBigQuery.zip -d lib && \
+    mvn install:install-file  \
+    -Dfile=lib/GoogleBigQueryJDBC42.jar \
+    -DgroupId=com.simba \
+    -DartifactId=simba-jdbc \
+    -Dversion=1.0 \
+    -Dpackaging=jar \
+    -DgeneratePom=true && \
+    rm -rf lib
 
 You may adapt the script to use different JDBC drivers, if you want to connect to other databases.
 
@@ -96,7 +100,7 @@ Create a service account with the following:
 * DLP Administrator
 
 ```
-export GOOGLE_APPLICATION_CREDENTIALS="<path to your cred>.json"
+export GOOGLE_APPLICATION_CREDENTIALS="[PATH_TO_YOUR_CREDENTIALS].json"
 ```
 
 If you run this on Compute Engine, you can also use the virtual machine's default service account, but you need to assign
@@ -104,18 +108,18 @@ the permissions listed above.
 
 ## Running the script
 
-## Command line parameters
+### Command line parameters
 
 | parameter                  | desc                                                                                                                                                                                                                  | 
 |----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | dbType                     | database type "bigquery" is currently the only type supported                                                                                                                                                         |
-| dbName                     | the name of the dataset name that you want to scan.  Note, this is optional for BigQuery and if you don't provide it or leave it blank, then it will scan all datasets in the project.                                |
-| tableName                  | the name of the table name that you want to scan.  Note, this is optional for BigQuery and if you don't provide it or leave it blank, then it will scan all tables                                                    |         
-| threadPoolSize             | number of worker threads. _Note: This code uses 1 thread per table regardless of this setting. If you are scanning multiple tables, increasing this number means more than one table can be processed in parallel._   |
-| limitMax                   | max number of rows to scan per table                                                                                                                                                                                  |
-| minThreshold               | minimum number of findings per infoType in a given column before it will tag. For example, if this is set at 10 and only 9 items were found, the column won't be tagged.                                              |
-| inspectTemplate            | Cloud DLP inspection template that you want to use                                                                                                                                                                    |
-| projectId                  | your Cloud project ID/name                                                                                                                                                                                            |
+| dbName                     | The name of the dataset that you want to scan. This parameter is optional for BigQuery; if you don't use it, or if you leave it blank, then all datasets in the project are scanned. |
+| tableName                  | The name of the table that you want to scan. This parameter is optional for BigQuery; if you don't use it, or if you leave it blank, then all tables are scanned. |
+| threadPoolSize             | Number of worker threads. This code uses 1 thread per table, regardless of this setting. If you are scanning multiple tables, increasing this number means that more than one table can be processed in parallel. |
+| limitMax                   | Maximum number of rows to scan per table.  |
+| minThreshold               | Minimum number of findings per infoType in a given column before it will be tagged. For example, if this is set at 10 and only 9 items are found, the column won't be tagged. |
+| inspectTemplate            | Cloud DLP inspection template to use. |
+| projectId                  | Your Cloud project ID. |
 
 ### Compile
 
@@ -136,9 +140,9 @@ java -cp target/dlp-datacatalog-tags-0.1-jar-with-dependencies.jar com.example.d
 -minThreshold 100
 ```
 
-## Check Results
+## Check results
 
-After the script finishes, you can go to [Data Catalog](https://cloud.google.com/data-catalog) and search for the sensitive
+After the script finishes, you can go to [Data Catalog](https://cloud.google.com/data-catalog) and search for sensitive
 data:
 
 ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/searchUI.png)
@@ -156,7 +160,7 @@ To delete the project, follow the steps below:
 
 1.  In the Cloud Console, [go to the Projects page](https://console.cloud.google.com/iam-admin/projects).
 
-1.  In the project list, select the project you want to delete and click **Delete project**.
+1.  In the project list, select the project that you want to delete and click **Delete project**.
 
     ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/partial-redaction-with-dlp-and-gcf/img_delete_project.png)
     
