@@ -56,23 +56,24 @@ The following diagram shows the architecture of the solution:
 
     [Enable the APIs.](https://console.cloud.google.com/flows/enableapi?apiid=datacatalog.googleapis.com,bigquery.googleapis.com,dlp.googleapis.com)
 
-## Preparing the environment
+## Create BigQuery tables
 
-1.  Create Big Query tables with personally identifiable information (PII).
+You can use the open source script [BigQuery Fake PII Creator](https://github.com/mesmacosta/bq-fake-pii-table-creator) to 
+create BigQuery tables with example personally identifiable information (PII). 
 
-    You can use the open source script [BigQuery Fake PII Creator](https://github.com/mesmacosta/bq-fake-pii-table-creator). 
+## Create the inspection template
 
-1.  Create the inspection template.
+Create the inspection template in Cloud DLP:
 
-    1.  Go to the Cloud DLP [**Create template** page](https://console.cloud.google.com/security/dlp/create/template).
+1.  Go to the Cloud DLP [**Create template** page](https://console.cloud.google.com/security/dlp/create/template).
 
-    1.  Set up the InfoTypes. This is an example. You may choose any from the list available:
+1.  Set up the InfoTypes. This is an example. You may choose any from the list available:
     
-        ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/infoTypes.png)
+    ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/infoTypes.png)
 
-    1.  Finish creating the inspection template:
+1.  Finish creating the inspection template:
     
-        ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/inspectTemplateCreated.png)
+    ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/inspectTemplateCreated.png)
 
 ## Install the BigQuery JDBC driver
 
@@ -110,24 +111,24 @@ the permissions listed above.
 
 ### Command line parameters
 
-| parameter                  | desc                                                                                                                                                                                                                  | 
-|----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| dbType                     | database type "bigquery" is currently the only type supported                                                                                                                                                         |
-| dbName                     | The name of the dataset that you want to scan. This parameter is optional for BigQuery; if you don't use it, or if you leave it blank, then all datasets in the project are scanned. |
-| tableName                  | The name of the table that you want to scan. This parameter is optional for BigQuery; if you don't use it, or if you leave it blank, then all tables are scanned. |
-| threadPoolSize             | Number of worker threads. This code uses 1 thread per table, regardless of this setting. If you are scanning multiple tables, increasing this number means that more than one table can be processed in parallel. |
-| limitMax                   | Maximum number of rows to scan per table.  |
-| minThreshold               | Minimum number of findings per infoType in a given column before it will be tagged. For example, if this is set at 10 and only 9 items are found, the column won't be tagged. |
-| inspectTemplate            | Cloud DLP inspection template to use. |
-| projectId                  | Your Cloud project ID. |
+| Parameter                  | Description                                                           | 
+|----------------------------|-----------------------------------------------------------------------|
+| `dbType`                   | The database type. `"bigquery"` is currently the only type supported. |
+| `dbName`                   | The name of the dataset that you want to scan. This parameter is optional for BigQuery; if you don't use it, or if you leave it blank, then all datasets in the project are scanned. |
+| `tableName`                | The name of the table that you want to scan. This parameter is optional for BigQuery; if you don't use it, or if you leave it blank, then all tables are scanned. |
+| `threadPoolSize`           | Number of worker threads. This code uses 1 thread per table, regardless of this setting. If you are scanning multiple tables, increasing this number means that more than one table can be processed in parallel. |
+| `limitMax`                 | Maximum number of rows to scan per table.  |
+| `minThreshold`             | Minimum number of findings per infoType in a given column before it will be tagged. For example, if this is set at 10 and only 9 items are found, the column won't be tagged. |
+| `inspectTemplate`          | Cloud DLP inspection template to use. |
+| `projectId`                | Your Cloud project ID. |
 
-### Compile
+### Compile the script
 
 ```
 mvn clean package -DskipTests
 ```
 
-### Execute
+### Execute the script
 
 ```
 java -cp target/dlp-datacatalog-tags-0.1-jar-with-dependencies.jar com.example.dlp.DlpDataCatalogTagsTutorial \
@@ -140,7 +141,7 @@ java -cp target/dlp-datacatalog-tags-0.1-jar-with-dependencies.jar com.example.d
 -minThreshold 100
 ```
 
-## Check results
+## Check the results of the script
 
 After the script finishes, you can go to [Data Catalog](https://cloud.google.com/data-catalog) and search for sensitive
 data:
