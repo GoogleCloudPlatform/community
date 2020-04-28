@@ -155,7 +155,8 @@ called `mycap.pcap`.
     sudo /usr/sbin/tcpdump -s 100 -i eth0 dst port [PORT_NUMBER] -w mycap.pcap
 
 **Important**: If you use the `-s` (snapshot length) flag with a value of `0`, then `tcpdump` will capture entire packets. 
-Be aware that the packet captures could have sensitive information. Most `tcpdump` implementations interpret `-s 0` to be the same as `-s 262144`. See the [tcpdump man page](https://www.tcpdump.org/manpages/tcpdump.1.html) for details. To reduce 
+Be aware that the packet captures can contain sensitive information. Most `tcpdump` implementations interpret `-s 0` to be 
+the same as `-s 262144`. See the [tcpdump man page](https://www.tcpdump.org/manpages/tcpdump.1.html) for details. To reduce 
 the chances of capturing sensitive information, you can capture just packet headers by providing a lower snapshot length 
 value, such as `-s 100`.
 
@@ -172,9 +173,9 @@ From the `iperf3` man pages:
 
     > -P, --parallel n \
     > number of parallel client streams to run. Note that iperf3 is single threaded,
-    > so if you are CPU bound, this will not yield higher throughput.`
+    > so if you are CPU bound, this will not yield higher throughput.
 
-Also, any attempt to launch multiple clients will return the following complaint on the second attempt;
+Also, any attempt to launch multiple clients returns the following complaint on the second attempt:
 
     $ iperf3 -c 10.150.0.12 -t 3600 \
     iperf3: error - the server is busy running a test. try again later
