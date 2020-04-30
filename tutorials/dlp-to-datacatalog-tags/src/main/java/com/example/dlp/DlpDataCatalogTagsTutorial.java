@@ -635,7 +635,11 @@ public class DlpDataCatalogTagsTutorial {
             // same time. So we want to catch this.
             try {
               tagTemplate = dataCatalogClient.createTagTemplate(createTagTemplateRequest);
-              System.out.println(String.format("Created template: %s", tagTemplate.getName()));
+              if (VERBOSE_OUTPUT) {
+                System.out.println(String.format("Created template: %s", tagTemplate.getName()));
+              } else {
+                System.out.print("+");
+              }
             } catch (Exception e) {
               // this just means template is already there.
               // In the case other thread creates the template, we need to fill the template name
