@@ -75,6 +75,9 @@ Create the inspection template in Cloud DLP:
     
     ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/inspectTemplateCreated.png)
 
+## Get the script code
+[dlp-to-datacatalog-tags tutorial code](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/dlp-to-datacatalog-tags)
+
 ## Install the BigQuery JDBC driver
 
 Run the following commands to download the latest Simba BigQuery driver, extract it, install it with Maven, and delete the 
