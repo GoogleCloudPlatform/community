@@ -308,50 +308,44 @@ After following these steps, you can send email messages in `Controller` and `Se
         }
     }
 
-## Session Management
+## Session management
 
-To persist sessions across multiple App Engine instances, you'll need to use a database.
-Fortunately, Symfony provides a way to handle this using [PDO session storage][symfony-pdo-session-storage].
+To make sessions persist across multiple App Engine instances, you'll need to use a database.
+Symfony provides a way to handle this using [PDO session storage][symfony-pdo-session-storage].
 
 ### Configuration
 
-Modify your Framework configuration in `config/packages/framework.yaml` and change the parameters under session to be the following:
+1.  Modify your Framework configuration in `config/packages/framework.yaml` and change the parameters under `session`
+    to be the following:
 
-```
-    session:
-        handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
-        cookie_secure: auto
-        cookie_samesite: lax
-        # Adjust the max lifetime to your need
-        gc_maxlifetime: 36000
-```
+        session:
+            handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
+            cookie_secure: auto
+            cookie_samesite: lax
+            # Adjust the max lifetime to your need
+            gc_maxlifetime: 36000
 
-You should then activate the service in `config/services.yaml`.
+1.  Activate the service in `config/services.yaml`:
 
-```
-    Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
-        arguments:
-            - !service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] }
-            # If you get transaction issues (e.g. after login) uncomment the line below
-            # - { lock_mode: 1 }
-```
+        Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
+            arguments:
+                - !service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] }
+                # If you get transaction issues (e.g. after login) uncomment the line below
+                # - { lock_mode: 1 }
 
 ### Database update
 
-Next, add the `sessions` table to your database by connecting to your database and
-executing the following query:
+Add the `sessions` table to your database by connecting to your database and executing the following query:
 
-```
-# MySQL Query
-CREATE TABLE `sessions` (
-    `sess_id` VARCHAR(128) NOT NULL PRIMARY KEY,
-    `sess_data` BLOB NOT NULL,
-    `sess_time` INTEGER UNSIGNED NOT NULL,
-    `sess_lifetime` INTEGER UNSIGNED NOT NULL
-) COLLATE utf8mb4_bin, ENGINE = InnoDB;
-```
+    # MySQL Query
+    CREATE TABLE `sessions` (
+        `sess_id` VARCHAR(128) NOT NULL PRIMARY KEY,
+        `sess_data` BLOB NOT NULL,
+        `sess_time` INTEGER UNSIGNED NOT NULL,
+        `sess_lifetime` INTEGER UNSIGNED NOT NULL
+    ) COLLATE utf8mb4_bin, ENGINE = InnoDB;
 
-You are now all set, the session will be persisted in the database and your users will remain authenticated.
+You are now all set. The session will persist in the database and your users will remain authenticated.
 
 
 [php-gcp]: https://cloud.google.com/php
