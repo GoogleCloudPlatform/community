@@ -3,7 +3,7 @@ title: Instrumenting web apps end to end with Cloud Monitoring and OpenTelemetry
 description: Instrument a web application end to end, from the browser to the backend application, including logging, monitoring, and tracing with OpenTelemetry and Cloud Monitoring.
 author: alexamies
 tags: Cloud Monitoring, OpenTelemetry
-date_published: 2020-04-24
+date_published: 2020-05-01
 ---
 
 This tutorial demonstrates instrumenting a web application end to end, from the browser to the backend application, 
@@ -13,10 +13,10 @@ The tutorial is written for full-stack developers interested in instrumenting th
 end-user experience. The instrumentation discussed is intended to be applicable permanently for the app, not just 
 temporarily for the load test. 
 
-The tutorial specifically addresses the question, “How will my app handle a load spike?”. In addition, the principles 
-discussed apply to many other use cases as well, such as rolling out a new version of an app. Familiarity with JavaScript
-development of browser and Node.js apps, running Kubernetes, and basic use of Google Cloud will help. Running a similar 
-scenario with languages other than JavaScript is possible with some adaptation.
+The tutorial specifically addresses the question of how and app will handle a load spike. The principles discussed apply to 
+many other use cases, as well, such as rolling out a new version of an app. Familiarity with JavaScript development of 
+browser and Node.js apps, running Kubernetes, and basic use of Google Cloud will help. Running a similar scenario with 
+languages other than JavaScript is possible with some adaptation.
 
 The architecture of the app is shown in this schematic diagram:
 
@@ -24,17 +24,18 @@ The architecture of the app is shown in this schematic diagram:
 
 ## Objectives 
 
-* Learn to instrument a browser app with logging, monitoring stats, and trace using Cloud Monitoring.
-* Learn how to collect the instrumentation data from the browser and the server, ship to Cloud Monitoring, export to 
+* Learn to instrument a browser app with Cloud Logging, Monitoring, and Trace.
+* Learn how to collect instrumentation data from the browser and the server, send to Cloud Monitoring, export to 
   BigQuery, and analyze the logs with SQL queries.
 * Quickly and easily run a load test to understand how your app handles load spikes.
 
 ## Costs
 
 This tutorial uses billable components of Google Cloud, including the following:
+
 * Compute Engine
 * Container Registry
-* Cloud Monitoring, Logging, and Tracing
+* Cloud Monitoring, Logging, and Trace
 * BigQuery
 * Cloud Build
 
@@ -44,20 +45,27 @@ projected usage.
 ## Before you begin
 
 For this tutorial, you need a Google Cloud
-[project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects).
-You can create a new one, or select a project you already created:
-1. Select or create a Google Cloud project.
-[GO TO THE PROJECT SELECTOR PAGE](https://console.cloud.google.com/projectselector2/home/dashboard)
-1. Enable billing for your project.
-[ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
-1. Clone the repo with the command `git clone https://github.com/GoogleCloudPlatform/professional-services.git`
-1. Install Node.js.
-1. Install Go
-1. Install Docker
-1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/install)
+[project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a new one, or select a project you already created.
 
-When you finish this tutorial, you can avoid continued billing by deleting the resources you created. See [Cleaning up](#Cleaning-up)
-for more detail.
+1.  Select or create a Google Cloud project.
+
+    [Go to the project selector page.](https://console.cloud.google.com/projectselector2/home/dashboard)
+    
+1.  Enable billing for your project.
+
+    [Enable billing.](https://support.google.com/cloud/answer/6293499#enable-billing)
+    
+1.  Clone the repository:
+
+        git clone https://github.com/GoogleCloudPlatform/professional-services.git
+        
+1.  Install Node.js.
+1.  Install Go.
+1.  Install Docker
+1.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/install).
+
+When you finish this tutorial, you can avoid continued billing by deleting the resources you created. For details,
+see [Cleaning up](#Cleaning-up).
 
 ## Background
 
