@@ -43,7 +43,7 @@ The following diagram shows the architecture of the solution:
 
 ## Tutorial video
 
-You can check a video demo of this tutorial at:
+You can check a demo video of this tutorial at:
 [![Tutorial Demo](https://img.youtube.com/vi/jWAaen5-t7U/0.jpg)](http://www.youtube.com/watch?v=jWAaen5-t7U)
 
 ## Before you begin
