@@ -42,8 +42,6 @@ The following diagram shows the architecture of the solution:
 ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/flow.png)
 
 ## Tutorial video
-
-You can check a demo video of this tutorial at:
 [![Tutorial Demo](https://img.youtube.com/vi/jWAaen5-t7U/0.jpg)](http://www.youtube.com/watch?v=jWAaen5-t7U)
 
 ## Before you begin
