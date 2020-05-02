@@ -138,7 +138,7 @@ mvn clean package -DskipTests
 ### Execute the script
 
 ```
-java -cp target/dlp-to-datacatalog-tags-0.1-jar-with-dependencies com.example.dlp.DlpDataCatalogTagsTutorial \
+java -cp target/dlp-to-datacatalog-tags-0.1-jar-with-dependencies.jar com.example.dlp.DlpDataCatalogTagsTutorial \
 -dbType "bigquery" \
 -limitMax 1000 \
 -dbName research2 \
