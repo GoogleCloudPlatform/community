@@ -42,7 +42,10 @@ The following diagram shows the architecture of the solution:
 ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/flow.png)
 
 ## Tutorial video
-[![Tutorial Demo](https://img.youtube.com/vi/jWAaen5-t7U/0.jpg)](http://www.youtube.com/watch?v=jWAaen5-t7U)
+
+You can also watch a video demonstration of the running the script:
+
+[![Tutorial video](https://img.youtube.com/vi/jWAaen5-t7U/0.jpg)](http://www.youtube.com/watch?v=jWAaen5-t7U)
 
 ## Before you begin
 
@@ -78,7 +81,9 @@ Create the inspection template in Cloud DLP:
     ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/inspectTemplateCreated.png)
 
 ## Get the script code
-[dlp-to-datacatalog-tags tutorial code](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/dlp-to-datacatalog-tags)
+
+The script code is available from
+[this GitHub repository](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/dlp-to-datacatalog-tags).
 
 ## Install the BigQuery JDBC driver
 
