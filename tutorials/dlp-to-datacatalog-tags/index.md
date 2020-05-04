@@ -43,7 +43,7 @@ The following diagram shows the architecture of the solution:
 
 ## Tutorial video
 
-You can also watch a video demonstration of the running the script:
+You can also watch a video demonstration of running the script:
 
 [![Tutorial video](https://img.youtube.com/vi/jWAaen5-t7U/0.jpg)](http://www.youtube.com/watch?v=jWAaen5-t7U)
 
