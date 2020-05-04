@@ -329,6 +329,8 @@ gcloud services enable bigquery.googleapis.com \
 
 The steps below show how to build and push the OpenTelemetry collector to Google Container Registry (GCR).
 
+Note: At the time of this writing, the OpenTelemetry collector is in beta.
+
 1. Open up a new shell command line. In a new directory, clone the OpenTelemetry collector
 contrib project, which contains the Cloud Monitoring (Stackdriver) exporter
 
@@ -336,8 +338,6 @@ contrib project, which contains the Cloud Monitoring (Stackdriver) exporter
 git clone https://github.com/open-telemetry/opentelemetry-collector-contrib
 cd opentelemetry-collector-contrib
 ```
-
-Note that the OpenTelemetry collector is considered alpha at present.
 
 1. Build a Docker container with the binary executable
 
