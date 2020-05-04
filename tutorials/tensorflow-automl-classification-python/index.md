@@ -1,6 +1,6 @@
 ---
 title: Using Google Cloud AutoML Single-Label Classification Model in Python
-description: Learn how to use a TensorFlow model trained with Google Cloud AutoML to classify images into different labels
+description: Learn how to use a TensorFlow model trained with Google Cloud AutoML to classify images into different labels.
 author: harshithdwivedi
 tags: TensorFlow, AutoML, Python, Image Classification
 date_published: 2020-05-04
