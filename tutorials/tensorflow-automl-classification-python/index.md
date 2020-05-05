@@ -3,7 +3,7 @@ title: Using Google Cloud AutoML Single-Label Classification Model in Python
 description: Learn how to use a TensorFlow model trained with Google Cloud AutoML to classify images into different labels.
 author: harshithdwivedi
 tags: TensorFlow, AutoML, Python, Image Classification
-date_published: 2020-05-04
+date_published: 2020-05-06
 ---
 
 
@@ -62,8 +62,9 @@ Use the Pricing Calculator to generate a cost estimate based on your projected u
 
 1.  Download the model:
 
-    You can download the model by going to the corresponding dataset in the Vision Dashboard and exporting the model.  
-    ![](export_model.png)
+    You can download the model by going to the corresponding dataset in the Vision Dashboard and exporting the model. 
+    
+    ![](https://storage.googleapis.com/gcp-community/tutorials/tensorflow-automl-classification-python/export_model.png)
 
     Doing this should export the resulting `.pb` file in the specified Google Cloud Storage bucket that you can download for use locally.
 
@@ -136,7 +137,7 @@ The code might look complex, but it’s actually not! Let’s break down it to s
 
 Upon running the code above and printing the result, the output should look something as follows:
 
-![](result_probabilities.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/tensorflow-automl-classification-python/result_probabilities.png)
 
 While we can see that TensorFlow does spew out some numbers, which look like probabilities—it's a bit hard to make sense out of them at first glance.
 
@@ -146,7 +147,7 @@ And naturally, each one of them belongs to either of the two labels.
 
 To know which one is which, head over to the Dataset in the GCP console and navigate to the `Images` tab this time around.
 
-![](label.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/tensorflow-automl-classification-python/label.png)
 
 Overexposed is the first entry, followed by the underexposed entry; in our output array, the first entry is the probability that the given image is overexposed, and the second entry is the probability that the given image is underexposed.
 
@@ -194,7 +195,7 @@ for file in pathlib.Path(image_path).iterdir():
 
 Running the code snippet above again should provide the following result: 
 
-![](result_label.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/tensorflow-automl-classification-python/result_label.png)
 
 Notice how the output is now formatted to human-readable labels instead.
 
@@ -265,5 +266,5 @@ To delete the project, follow the steps below:
 1. In the Cloud Platform Console, [go to the Projects page](https://console.cloud.google.com/iam-admin/projects).
 
 1. In the project list, select the project you want to delete and click **Delete project**.
-![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/standalone-tensorflow-raspberry-pi/img_delete_project.png) 
+![](https://storage.googleapis.com/gcp-community/tutorials/standalone-tensorflow-raspberry-pi/img_delete_project.png) 
 1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
