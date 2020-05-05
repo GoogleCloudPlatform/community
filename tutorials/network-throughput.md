@@ -145,6 +145,11 @@ Use the `-P` (parallel threads) flag to specify a number of simultaneous threads
 the duration of the test, in seconds.
 
     iperf3 -c [VM_IP] -P [THREADS] -p [PORT_NUMBER] -t [DURATION] -R
+    
+Please note this command uses the "autotuning path", to make explicit setsockopt() calls, use this command instead:
+
+    iperf3 -c [VM_IP] -P [THREADS] -p [PORT_NUMBER] -t [DURATION] -R -w
+
 
 #### Capturing packets
 
@@ -283,7 +288,19 @@ windows. For an explanation of this behavior, see
 the [TCP throughput calculator](https://www.switch.ch/network/tools/tcp_throughput/) to understand the impact of window size
 on your connection bandwidth.
 
-To fix this issue, you may increase the TCP send and receive windows:
+There are two different sets of sysctls under Linux which affect TCP window sizes. One is the "net.core". It comes into play when
+applications (eg iperf3) make explicit setsockopt() calls to set SO_SNDBUF and/or SO_RCVBUF. 
+
+Making explicit setsockopt() calls for SO_SNDBUF and SO_RCVBUF disables Linux's "autotuning" of socket buffer and thus TCP window
+size.
+
+Here would be the tuning options for this case:
 
 - `SO_RCVBUF` is influenced by increasing `net.core.rmem_default` and `net.core.rmem_max`.
 - `SO_SNDBUF` is influenced by increasing `net.core.wmem_default` and `net.core.wmem_max`.
+
+The second set come into play when the application does not make explicit setsockopt() calls, and so when Linux's autotuning of
+socket buffer and thus TCP window size is still active:
+
+- `net.ipv4.tcp_rmem`
+- `net.ipv4.tcp_wmem`
