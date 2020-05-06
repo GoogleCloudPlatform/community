@@ -503,7 +503,7 @@ headless in command-line mode as follows (from the repository root):
     REGISTRY_ID=$LTK_TARGET_REGISTRY_ID
     locust --no-web -c 1 -r 1 --only-summary
 
-Python 2.7 is required for Locust 0.9.0
+Python 3 is required for latest Locust version 
 
 Locust 0.9.0 is required for support of the Locust API needed for assigning device IDs to simulated devices
 
