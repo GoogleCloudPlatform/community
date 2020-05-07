@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: locust
-          image: gcr.io/project-id/ltk-master:latest
+          image: gcr.io/${LTK_DRIVER_PROJECT_ID}/ltk-master:latest
           env:
             - name: LOCUST_MODE
               value: master
