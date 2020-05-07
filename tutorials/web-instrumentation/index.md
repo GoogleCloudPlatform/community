@@ -106,7 +106,7 @@ shown below for document loading.
 
     console.log(`App version: ${__VERSION__}`);
 
-    // Edit this to point to the app to the OpenTelemetry collector address:
+    // Edit this to point to the app to the OpenTelemetry Collector address:
     // If running locally use http://localhost:55678/v1/trace
     const collectorURL = 'http://localhost:55678/v1/trace';
     // const collectorURL = 'http://35.188.162.236/v1/trace';
@@ -129,7 +129,7 @@ The ES2015 style import statements used here are resolved by webpack in a client
 configured by the webpack configuration file `browser/webpack.config.js`. 
 
 The file `browser/src/LoadTest.js` drives the test. It imports the `XMLHttpRequestPlugin` module to trace XML HTTP requests 
-to the server and the `CollectorExporter` module to export the trace data to the OpenTelemetry collector.
+to the server and the `CollectorExporter` module to export the trace data to the OpenTelemetry Collector.
 
     import { CollectorExporter } from '@opentelemetry/exporter-collector';
     import { BatchSpanProcessor } from '@opentelemetry/tracing';
@@ -318,7 +318,7 @@ elsewhere. Here’s an example of how to run it in Google Kubernetes Engine, usi
 
 1.  Set the Cloud SDK to the current project:
 
-        GOOGLE_CLOUD_PROJECT=[Your project]
+        GOOGLE_CLOUD_PROJECT=[YOUR_PROJECT_ID]
         gcloud config set project $GOOGLE_CLOUD_PROJECT
 
 1.  Enable the APIs for the required services:
@@ -332,180 +332,145 @@ elsewhere. Here’s an example of how to run it in Google Kubernetes Engine, usi
           logging.googleapis.com \
           monitoring.googleapis.com
 
-### OpenTelemetry collector
+### OpenTelemetry Collector
 
-The steps below show how to build and push the OpenTelemetry collector to Google Container Registry (GCR).
+This section shows how to build and push the OpenTelemetry Collector to Container Registry.
 
-Note: At the time of this writing, the OpenTelemetry collector is in beta.
+**Note**: At the time of this writing, the OpenTelemetry Collector is in beta.
 
-1. Open up a new shell command line. In a new directory, clone the OpenTelemetry collector
-contrib project, which contains the Cloud Monitoring (Stackdriver) exporter
+1.  Open a new command shell. In a new directory, clone the OpenTelemetry Collector Contrib project, which contains the 
+    Cloud Monitoring (Stackdriver) exporter
 
-```shell
-git clone https://github.com/open-telemetry/opentelemetry-collector-contrib
-cd opentelemetry-collector-contrib
-```
+        git clone https://github.com/open-telemetry/opentelemetry-collector-contrib
+        cd opentelemetry-collector-contrib
 
-1. Build a Docker container with the binary executable
+1.  Build a Docker container with the binary executable:
 
-```shell
-make docker-otelcontribcol
-```
+        make docker-otelcontribcol
 
-1. Set Google Cloud SDK to the current project in the new terminal
+1.  Set the Cloud SDK to the current project in the new command shell:
 
-```shell
-GOOGLE_CLOUD_PROJECT=[Your project]
-```
+        GOOGLE_CLOUD_PROJECT=[YOUR_PROJECT_ID]
 
-1. Tag the image for GCR
+1.  Tag the image for Container Registry:
 
-```shell
-docker tag otelcontribcol gcr.io/$GOOGLE_CLOUD_PROJECT/otelcontribcol
-```
+        docker tag otelcontribcol gcr.io/$GOOGLE_CLOUD_PROJECT/otelcontribcol
 
-1. Configure gcloud as a Docker credential helper
+1.  Configure `gcloud` as a Docker credential helper:
 
-```shell
-gcloud auth configure-docker
-```
+        gcloud auth configure-docker
 
-1. Push to GCR
+1.  Push the container with the binary executable to Container Registry:
 
-```shell
-docker push gcr.io/$GOOGLE_CLOUD_PROJECT/otelcontribcol
-```
+        docker push gcr.io/$GOOGLE_CLOUD_PROJECT/otelcontribcol
 
 ### Deploying the app to Google Kubernetes Engine
 
-The application can be deployed locally or to Google Kubernetes Engine without any changes, except the URL address of the OpenCensus agent must be included in the web client. 
+The application can be deployed locally or to Google Kubernetes Engine without any changes, except that the URL of the
+OpenCensus agent must be included in the web client. 
 
 #### Create a cluster
 
-The steps below create the Kubernetes cluster and deploy the OpenTelemetry collector.
+The steps in this section create the Kubernetes cluster and deploy the OpenTelemetry Collector.
 
-1. Back in the first terminal, create a GKE cluster with 1 node and autoscaling enabled
+1.  Back in the first command shell, create a GKE cluster with 1 node and with autoscaling enabled:
 
-```shell
-ZONE=us-central1-a
-NAME=web-instrumentation
-CHANNEL=stable
-gcloud beta container clusters create $NAME \
-   --num-nodes 1 \
-   --enable-autoscaling --min-nodes 1 --max-nodes 4 \
-   --enable-basic-auth \
-   --issue-client-certificate \
-   --release-channel $CHANNEL \
-   --zone $ZONE \
-   --enable-stackdriver-kubernetes
-```
+        ZONE=us-central1-a
+        NAME=web-instrumentation
+        CHANNEL=stable
+        gcloud beta container clusters create $NAME \
+           --num-nodes 1 \
+           --enable-autoscaling --min-nodes 1 --max-nodes 4 \
+           --enable-basic-auth \
+           --issue-client-certificate \
+           --release-channel $CHANNEL \
+           --zone $ZONE \
+           --enable-stackdriver-kubernetes
 
-1. Change the project id in file `k8s/ot-service.yaml` with the sed command
+1.  Change the project ID in the file `k8s/ot-service.yaml` with the `sed` command:
 
-```shell
-sed -i.bak "s/{{PROJECT-ID}}/$GOOGLE_CLOUD_PROJECT/" k8s/ot-service.yaml
-```
+        sed -i.bak "s/{{PROJECT-ID}}/$GOOGLE_CLOUD_PROJECT/" k8s/ot-service.yaml
 
-1. Deploy the OpenTelemetry collector to the Kubernetes cluster
+1.  Deploy the OpenTelemetry Collector to the Kubernetes cluster:
 
-```shell
-kubectl apply -f k8s/ot-service.yaml
-```
+        kubectl apply -f k8s/ot-service.yaml
 
-1. Get the IP of the service with the command
+1.  Get the IP address of the service:
 
-```shell
-EXTERNAL_IP=$(kubectl get svc ot-service-service \
-    -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
-```
+        EXTERNAL_IP=$(kubectl get svc ot-service-service \
+            -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
 
-1. Edit the file `browser/src/index.js` changing the variable agentURL to the external IP and port of the agent with the following sed command
+1.  Edit the file `browser/src/index.js`, changing the variable `agentURL` to the external IP address and port of the agent 
+    with the following sed command:
 
-```shell
-sed -i.bak "s/localhost:55678/${EXTERNAL_IP}:80/" browser/src/index.js
-```
+        sed -i.bak "s/localhost:55678/${EXTERNAL_IP}:80/" browser/src/index.js
 
-#### Build the Client
+#### Build the client
 
 The browser code refers to ES2015 modules that need to be transpiled and bundled with the help of webpack. 
 
-1. In the first terminal, change to the browser code directory
+1.  In the first command shell, change to the browser code directory:
 
-```shell
-cd browser
-```
+        cd browser
 
-1. Install the dependencies with the command
+1.  Install the dependencies:
 
-```shell
-npm install
-```
+        npm install
 
-1. Compile and package the code
+1.  Compile and package the code:
 
-```shell
-npm run build
-```
+        npm run build
 
-The output will be written to `dist/main.js`.
-
+The output is written to the file `dist/main.js`.
 
 #### Build and deploy the app image
 
-The steps below use Cloud Build to build the test app and then the app is
-deployed to the Kubernetes cluster.
+This section uses Cloud Build to build the test app, and then the app is deployed to the Kubernetes cluster.
 
-1. Change up one directory
+1.  Go up one directory:
 
-```shell
-cd  ..
-```
+        cd  ..
 
-1. Build the app Docker image and push it to GCR:
+1.  Build the app's Docker image and push it to Container Registry:
 
-```shell
-gcloud builds submit
-```
+        gcloud builds submit
 
-1. Change the project id in file `k8s/deployment.yaml` with the sed command
+1.  Change the project ID in the file `k8s/deployment.yaml` with the `sed` command:
 
-```shell
-sed -i.bak "s/{{PROJECT-ID}}/$GOOGLE_CLOUD_PROJECT/" k8s/deployment.yaml
-```
+        sed -i.bak "s/{{PROJECT-ID}}/$GOOGLE_CLOUD_PROJECT/" k8s/deployment.yaml
 
-1. Add a deployment for the app to the cluster
+1.  Add a deployment for the app to the cluster:
 
-```shell
-kubectl apply -f k8s/deployment.yaml
-```
+        kubectl apply -f k8s/deployment.yaml
 
-1. Create a Kubernetes service
+1.  Create a Kubernetes service:
 
-```shell
-kubectl apply -f k8s/service.yaml
-```
+        kubectl apply -f k8s/service.yaml
 
-1. Expose the service through an ingress:
+1.  Expose the service with an Ingress:
 
-```shell
-kubectl apply -f k8s/ingress.yaml
-```
+        kubectl apply -f k8s/ingress.yaml
 
-1. It may take a few minutes for the service to be exposed through an external IP. Check for the status of the ingress and get external IP:
+1.  Check the status of the Ingress and get the external IP address:
 
-```shell
-kubectl get ingress
-```
+        kubectl get ingress
 
-1. The URL to navigate to is shown console output and also in the Google Cloud Console. At this point you should be able to navigate to the web interface and try it out.
+    It may take a few minutes for the service to be exposed through an external IP address.
+    
+    The URL to navigate to is shown in the command shell output and also in the Cloud Console.
+    
+1.  Use the URL to navigate to the web interface and try it out.
 
-![Screenshot: Web form for test app](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/webform_steady_state.png)
+    ![Screenshot: Web form for test app](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/webform_steady_state.png)
 
-1. Try it by entering a test name a small number of requests and, say 1000 ms between requests, and clicking **Start test**. You should see a test summary like shown above. Navigate to web instrumentation container deployment in the Google Cloud Console, as shown below
+1.  To try the app, enter a test name, a small number of requests, and 1000 ms between requests, and then click
+    **Start test**.
+    
+1.  Navigate to web instrumentation container deployment in the Cloud Console.
 
-![Screenshot: Kubernetes deployment detail](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/k8s_deployment.png)
+    ![Screenshot: Kubernetes deployment detail](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/k8s_deployment.png)
 
-Notice the link Container logs. Click this to navigate to the Log Viewer and check that your test generated some logs.
+1.  Click **Container logs** to navigate to the Log Viewer and check that your test generated some logs.
 
 #### Enable log export to BigQuery
 
