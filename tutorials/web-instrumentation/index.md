@@ -646,89 +646,100 @@ To explore the load balancer log data in BigQuery, enter a query like the follow
 
 #### Visualizing the log data
 
-From BigQuery, we read data into Colab, where it can be plotted in charts. Colab is an iPython notebook service hosted by Google with many Google Cloud services pre-configured for ease of use. Follow these steps to query the log tables in BigQuery and process the results in Python
+From BigQuery, read the data into Colab, where it can be plotted in charts. Colab is an iPython notebook service hosted by
+Google with many Google Cloud services pre-configured for ease of use. Follow these steps to query the log tables in BigQuery and process the results in Python.
 
-1. Open the [Colab](https://colab.research.google.com/github/GoogleCloudPlatform/professional-services/blob/master/examples/web-instrumentation/load_test_analysis.ipynb) sheet in Chrome. 
+1.  Open the
+    [Colab](https://colab.research.google.com/github/GoogleCloudPlatform/professional-services/blob/master/examples/web-instrumentation/load_test_analysis.ipynb)
+    sheet in Chrome. 
 
-1. Open the Initialization block if it is not open already. Change the project_id variable to your own project.
+1.  Open the **Initialization** block if it is not open already.
 
-1. Execute the code in the Initialization block by clicking the Run icon. You will need to approve access with your Google account
+1.  Change the `project_id` variable to your own project.
 
-1. Open the Logs Overview block.
+1.  To execute the code in the **Initialization** block, click the **Run** button. If prompted, approve access with your 
+    Google account.
 
-1. Execute the code in the Logs Overview block
+1.  Open the **Logs Overview** block.
 
-1. Open the Client Latency block. Change the hour in the WHERE clause to be the hour that you ran the test
+1. Execute the code in the **Logs Overview** block.
 
-1. Execute the code in the Client Latency block
+1. Open the **Client Latency** block.
 
-You should see a chart of median client latency similar to the chart below.
+1.  Change the hour in the `WHERE` clause to be the hour in which you ran the test.
 
-![Median Client Latency from Colab Sheet](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/client_latency_median.png)
+1.  Execute the code in the **Client Latency** block.
 
-The Colab sheet uses the Pandas library to hold and plot the BigQuery query results. Pandas wraps MatPlotLib library for plotting the chart. 
+    The resut is a chart of median client latency:
 
-To see the details of the client latency, still in the Colab sheet
+    ![Median client latency from Colab sheet](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/client_latency_median.png)
 
-1. Open the Scatter Plot code block
-1. Edit table name for the current date and the hour and minute range for the time of your text
-1. Execute the code block
+The Colab sheet uses the Pandas library to hold and plot the BigQuery query results. Pandas uses the MatPlotLib library for
+plotting the chart. 
 
-You should see a scatter plot similar to the chart below showing points for the client latency values.
+To see the details of the client latency, do the following:
 
-![Scatter Plot for Client latency](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/client_latency_scatterr.png)
+1.  In the Colab sheet, open the **Scatter Plot** code block.
+1.  Edit the table name for the date and hour and minute range for the time of your test.
+1.  Execute the code block.
 
-In this test you will probably not trigger autoscaling. To see autoscaling triggered you can repeat the test with an increased the number of requests sent and  test duration. 
+    The result is a chart that shows points for the client latency values:
 
-You may not be able to generate sufficient load from one browser to trigger autoscaling. If you increase the number of requests sent sufficiently you may see the Chrome error  net::ERR_INSUFFICIENT_RESOURCES. To drive a more substantial load, you can use 
-[Headless Chrome](https://developers.google.com/web/updates/2017/04/headless-chrome)
-or [Webdriver](https://selenium.dev/documentation/en/webdriver/)
-with multiple clients. Another approach is to use a simple load generator like 
-[Locust](https://locust.io/), 
-[Apache Bench](https://httpd.apache.org/docs/2.4/programs/ab.html), or 
-[JMeter](http://jmeter.apache.org/)
-and simultaneously observe the noisy neighbor impact on an instrumented browser app, as described in this tutorial.
+    ![Scatter plot for client latency](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/client_latency_scatterr.png)
+
+In this test, you will probably not trigger autoscaling. To see autoscaling, you can repeat the test with a greater 
+number of requests sent and a greater test duration. You may not be able to generate sufficient load from one browser to 
+trigger autoscaling. If you increase the number of requests sent to an excessive value, you may see the Chrome error  
+`net::ERR_INSUFFICIENT_RESOURCES`.
+
+To drive a more substantial load, you can use
+[headless Chrome](https://developers.google.com/web/updates/2017/04/headless-chrome) or
+[Webdriver](https://selenium.dev/documentation/en/webdriver/) with multiple clients. Another approach is to use a simple 
+load generator like [Locust](https://locust.io/), [Apache Bench](https://httpd.apache.org/docs/2.4/programs/ab.html), or 
+[JMeter](http://jmeter.apache.org/) and simultaneously observe the noisy neighbor impact on an instrumented browser app, as
+described in this tutorial.
 
 ## Other languages and environments
 
-You can run the backend or frontend in other languages and and use the same instrumentation with more scalable tools, such as Apache Bench or Locust. To see the format of the XML HTTP requests that you will need to use:
+You can run the backend or frontend in other languages and and use the same instrumentation with more scalable tools, such 
+as Apache Bench or Locust. To see the format of the XML HTTP requests that you will need to use, do the following:
 
-1. Start a test from Chrome. Say with 5 requests at 1,000 ms intervals.
-1. Open up Chrome Developer tools
-1. Go to the Network tab
-1. Right click a request and click Copy | Copy as cURL
+1. Start a test from Chrome (for example, with 5 requests at 1,000 ms intervals).
+1. Open Chrome Developer tools.
+1. Go to the **Network** tab.
+1. Right-click a request and click **Copy > Copy as cURL**.
 
-This will give the JSON format needed as well as the headers that can be used directly in cURL, which will be similar to other tools. 
+This procedure gives the JSON format needed, as well as the headers that can be used directly in cURL, which are similar to
+those required for other tools. 
 
-See the [OpenCensus](https://opencensus.io/)
-website to get started with other backend languages. For other front end languages, such as Java on Android or Objective C on iOS, you will need to use the OpenTelemetry service, as described above.
+See the [OpenCensus](https://opencensus.io/) website to get started with other backend languages. For other frontend 
+languages, such as Java on Android or Objective C on iOS, you need to use the OpenTelemetry service, as described above.
 
-If you prefer not to use client libraries to generate traces, you can generate them from your own code by sending HTTP headers following the
-[W3C Trace Context](https://www.w3.org/TR/trace-context-1/)
-format. This may be preferable on mobile clients where it is important to minimize the size of the application binary. The trace id generated is very useful for correlating logs between front and back end even if you do not use tracing.
+If you prefer not to use client libraries to generate traces, you can generate them from your own code by sending HTTP 
+headers following the [W3C Trace Context](https://www.w3.org/TR/trace-context-1/) format. This may be preferable on mobile
+clients, where it's important to minimize the size of the application binary. The trace ID generated is very useful for
+correlating logs between frontend and backend, even if you do not use tracing.
 
-If running in a serverless environment like Cloud Run or App Engine flexible environment, you will need to package the 
-OpenTelemetry service in the Docker container with a web server like NGINX to forward the trace collection requests to the 
+If running in a serverless environment like Cloud Run or App Engine flexible environment, you need to package the 
+OpenTelemetry service in the Docker container with a web server like Nginx to forward the trace collection requests to the 
 collector.
 
 ## Troubleshooting
 
-See the 
-[README.md](https://github.com/GoogleCloudPlatform/professional-services/tree/master/examples/web-instrumentation#troubleshooting) file in GitHub for troubleshooting tips.
+For troubleshooting tips, see the 
+[README document for this tutorial's code](https://github.com/GoogleCloudPlatform/professional-services/tree/master/examples/web-instrumentation#troubleshooting).
 
 ## Cleaning up
 
-To avoid incurring charges to your Google Cloud account for the resources used in this tutorial:
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
 ### Delete the project
-
-The easiest way to eliminate billing is to delete the project that you created for the tutorial.
 
 To delete the project, do the following:
 
 1. In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 
-1. In the project list, select the project you want to delete and click **Delete**.
+1. In the project list, select the project that you want to delete and click **Delete**.
 
 1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
