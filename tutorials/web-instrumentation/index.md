@@ -8,7 +8,7 @@ date_published: 2020-05-08
 
 This tutorial demonstrates instrumenting a web application end to end, from the browser to the backend application with 
 OpenTelemetry and Cloud Logging, Monitoring, and Trace to understand app performance in a load test. The test app runs with
-Node.js on Google Kubernetes Engine (GKE) with modern browser JavaScript packaged with Webpack. The tutorial is written for
+Node.js on Google Kubernetes Engine (GKE) with modern browser JavaScript packaged with webpack. The tutorial is written for
 full-stack developers interested in instrumenting their apps for operational monitoring of end-user experience. The 
 instrumentation discussed is intended to be applicable permanently for the app, not just temporarily for the load test. 
 
@@ -97,118 +97,120 @@ the app; skip this walkthrough section if you just want to run the tutorial.
 The file `browser/src/index.js` is the entry point for the web app. It imports and initializes the OpenTelemetry code as 
 shown below for document loading.
 
-```JavaScript
-import {CollectorExporter} from '@opentelemetry/exporter-collector';
-import { CollectorExporter } from '@opentelemetry/exporter-collector';
-import { SimpleSpanProcessor } from '@opentelemetry/tracing';
-import { DocumentLoad } from '@opentelemetry/plugin-document-load';
-import { WebTracerProvider } from '@opentelemetry/web';
-import { TestApp } from './TestApp';
+    import {CollectorExporter} from '@opentelemetry/exporter-collector';
+    import { CollectorExporter } from '@opentelemetry/exporter-collector';
+    import { SimpleSpanProcessor } from '@opentelemetry/tracing';
+    import { DocumentLoad } from '@opentelemetry/plugin-document-load';
+    import { WebTracerProvider } from '@opentelemetry/web';
+    import { TestApp } from './TestApp';
 
-console.log(`App version: ${__VERSION__}`);
+    console.log(`App version: ${__VERSION__}`);
 
-// Edit this to point to the app to the OpenTelemetry collector address:
-// If running locally use http://localhost:55678/v1/trace
-const collectorURL = 'http://localhost:55678/v1/trace';
-// const collectorURL = 'http://35.188.162.236/v1/trace';
+    // Edit this to point to the app to the OpenTelemetry collector address:
+    // If running locally use http://localhost:55678/v1/trace
+    const collectorURL = 'http://localhost:55678/v1/trace';
+    // const collectorURL = 'http://35.188.162.236/v1/trace';
 
-const webTracer = new WebTracerProvider({
-  plugins: [
-    new DocumentLoad(),
-  ],
-});
-const collectorOptions = {
-  url: collectorURL,
-};
-const exporter = new CollectorExporter(collectorOptions);
-webTracer.addSpanProcessor(new SimpleSpanProcessor(exporter));
-
-const testApp = new TestApp(collectorURL);
-testApp.setup();
-```
-
-The ES2015 style import statements used here will be resolved by webpack in a client code build process. This build process is configured by the webpack configuration file `browser/webpack.config.js`. 
-
-The file `browser/src/LoadTest.js` actually drives the test. It imports the XMLHttpRequestPlugin to trace XML HTTP requests to the server and the CollectorExporter to export the trace data to the OpenTelemetry collector.
-
-```JavaScript
-import { CollectorExporter } from '@opentelemetry/exporter-collector';
-import { BatchSpanProcessor } from '@opentelemetry/tracing';
-import { XMLHttpRequestPlugin } from '@opentelemetry/plugin-xml-http-request';
-import { ZoneScopeManager } from '@opentelemetry/scope-zone';
-import { WebTracerProvider } from '@opentelemetry/web';
-```
-
-The tracing initialization code is shown below
-
-```JavaScript
-const webTracerWithZone = new WebTracerProvider({
-  scopeManager: new ZoneScopeManager(),
-  plugins: [
-    new XMLHttpRequestPlugin({
-      ignoreUrls: ['/log', '/trace'],
-    }),
-  ],
-});
-const collectorOptions = {
-  url: collectorURL,
-};
-const exporter = new CollectorExporter(collectorOptions);
-webTracerWithZone.addSpanProcessor(new BatchSpanProcessor(exporter));
-```
-
-The app uses a HTML page to accept user input for test parameters and drives load to the server. `LoadTest.js` implements this and also tallies the total number of requests sent and received:
-
-```JavaScript
-  sendData(payload) {
-    const data = {
-      name: payload.name,
-      reqId: payload.reqId,
-      tSent: payload.tSent,
-    };
-    this.numSent += 1;
-    const urlStr = `/data/${payload.reqId}`;
-    const obs = ajax({
-      body: JSON.stringify({ data }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-      url: urlStr,
+    const webTracer = new WebTracerProvider({
+      plugins: [
+        new DocumentLoad(),
+      ],
     });
-    obs.subscribe(
-      (val) => {
-        const resp = val.response;
-        this.numSuccess += 1;
-        if (this.numSuccess % 100 === 0) {
-          this.logCollector.log(`Num success: ${this.numSuccess}`);
-        }
-        if (resp instanceof Object && 'tSent' in resp && 'name' in resp
-            && 'reqId' in resp) {
-          const latency = performance.now() - resp.tSent;
-          this.logCollector.log(`LoadTest: latency: ${latency}, `
-                                  + `${resp.name}, reqId: ${resp.reqId}`);
-        } else {
-          this.logCollector.log('LoadTest: Payload does not include '
-                                   + 'expected fields');
-        }
-      },
-      (err) => {
-        this.numFail += 1;
-        this.logCollector.error(`Error sending data ${err}`);
-        this.logCollector.log(`Num failures: ${this.numFail}`);
-      },
-    );
-  }
-```
+    const collectorOptions = {
+      url: collectorURL,
+    };
+    const exporter = new CollectorExporter(collectorOptions);
+    webTracer.addSpanProcessor(new SimpleSpanProcessor(exporter));
 
-The client inserts a unique id, a timestamp of when the request was sent and logs it. When the response is received the latency is computed and logged. The client latency is calculated using the W3C User Timing performance.now() API. See 
-[A Primer for Web Performance Timing APIs](https://w3c.github.io/perf-timing-primer/)
-for details on measuring browser performance. 
+    const testApp = new TestApp(collectorURL);
+    testApp.setup();
 
-The browser logs are collected and sent to the server using the `LogCollector` class, located in file `browser/src/lib/LogCollector.js`. That code stores and forwards the logs to the application running in Node.js, where the class `ConsoleLogger`, located in file `src/ConsoleLogger.js`, sends the logs to the server console. If Google Kubernetes Engine the server console logs are shipped to Cloud Logging. In future you may be able to reduce the code needed for this with the 
-[Reporting API](https://developer.mozilla.org/en-US/docs/Web/API/Reporting_API),
-an experimental initiative in the process of being standardized, currently only supported by Firefox and Chrome with a special flag  at present.
+The ES2015 style import statements used here are resolved by webpack in a client code build process. This build process is 
+configured by the webpack configuration file `browser/webpack.config.js`. 
+
+The file `browser/src/LoadTest.js` drives the test. It imports the `XMLHttpRequestPlugin` module to trace XML HTTP requests 
+to the server and the `CollectorExporter` module to export the trace data to the OpenTelemetry collector.
+
+    import { CollectorExporter } from '@opentelemetry/exporter-collector';
+    import { BatchSpanProcessor } from '@opentelemetry/tracing';
+    import { XMLHttpRequestPlugin } from '@opentelemetry/plugin-xml-http-request';
+    import { ZoneScopeManager } from '@opentelemetry/scope-zone';
+    import { WebTracerProvider } from '@opentelemetry/web';
+
+The tracing initialization code is shown below:
+
+    const webTracerWithZone = new WebTracerProvider({
+      scopeManager: new ZoneScopeManager(),
+      plugins: [
+        new XMLHttpRequestPlugin({
+          ignoreUrls: ['/log', '/trace'],
+        }),
+      ],
+    });
+    const collectorOptions = {
+      url: collectorURL,
+    };
+    const exporter = new CollectorExporter(collectorOptions);
+    webTracerWithZone.addSpanProcessor(new BatchSpanProcessor(exporter));
+
+The app uses an HTML page to accept user input for test parameters and drive load to the server. `LoadTest.js` implements
+this and also tallies the total number of requests sent and received:
+
+
+      sendData(payload) {
+        const data = {
+          name: payload.name,
+          reqId: payload.reqId,
+          tSent: payload.tSent,
+        };
+        this.numSent += 1;
+        const urlStr = `/data/${payload.reqId}`;
+        const obs = ajax({
+          body: JSON.stringify({ data }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+          url: urlStr,
+        });
+        obs.subscribe(
+          (val) => {
+            const resp = val.response;
+            this.numSuccess += 1;
+            if (this.numSuccess % 100 === 0) {
+              this.logCollector.log(`Num success: ${this.numSuccess}`);
+            }
+            if (resp instanceof Object && 'tSent' in resp && 'name' in resp
+                && 'reqId' in resp) {
+              const latency = performance.now() - resp.tSent;
+              this.logCollector.log(`LoadTest: latency: ${latency}, `
+                                      + `${resp.name}, reqId: ${resp.reqId}`);
+            } else {
+              this.logCollector.log('LoadTest: Payload does not include '
+                                       + 'expected fields');
+            }
+          },
+          (err) => {
+            this.numFail += 1;
+            this.logCollector.error(`Error sending data ${err}`);
+            this.logCollector.log(`Num failures: ${this.numFail}`);
+          },
+        );
+      }
+
+The client inserts a unique ID, a timestamp of when the request was sent, and logs it. When the response is received, the 
+latency is computed and logged. The client latency is calculated using the W3C User Timing API's `performance.now()` method.
+For details on measuring browser performance, see
+[A Primer for Web Performance Timing APIs](https://w3c.github.io/perf-timing-primer/). 
+
+The browser logs are collected and sent to the server using the `LogCollector` class, located in the file 
+`browser/src/lib/LogCollector.js`. That code stores and forwards the logs to the application running in Node.js, where the 
+class `ConsoleLogger` (located in the file `src/ConsoleLogger.js`) sends the logs to the server console. In Google 
+Kubernetes Engine, the server console logs are sent to Cloud Logging. 
+
+**Note**: In the future you may be able to reduce the code needed for this with the 
+[Reporting API](https://developer.mozilla.org/en-US/docs/Web/API/Reporting_API), an experimental initiative in the process 
+of being standardized, currently only available for Firefox and Chrome with a special flag.
 
 ### Server
 
