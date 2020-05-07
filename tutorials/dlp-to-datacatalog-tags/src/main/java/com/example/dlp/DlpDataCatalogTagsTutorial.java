@@ -67,6 +67,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 
 public class DlpDataCatalogTagsTutorial {
 
@@ -167,7 +168,7 @@ public class DlpDataCatalogTagsTutorial {
         // 1 - Get table names in the current project
         // ------------------------------------------
         ResultSet tablesResultSet =
-            databaseMetadata.getTables(conn.getCatalog(), null, "%", new String[] {"TABLE"});
+            databaseMetadata.getTables(conn.getCatalog(), null, "%", new String[]{"TABLE"});
 
         while (tablesResultSet.next()) {
           final String currentTable = tablesResultSet.getString(3);
@@ -187,9 +188,9 @@ public class DlpDataCatalogTagsTutorial {
               || tableName.equalsIgnoreCase("")
               || currentTable.equalsIgnoreCase(tableName)
               || (dbType.equalsIgnoreCase("bigquery")
-                  && dbName != null
-                  && !dbName.equalsIgnoreCase("")
-                  && dbName.equalsIgnoreCase(currentDatabaseName))) {
+              && dbName != null
+              && !dbName.equalsIgnoreCase("")
+              && dbName.equalsIgnoreCase(currentDatabaseName))) {
 
             countTablesScanned++;
 
@@ -558,12 +559,12 @@ public class DlpDataCatalogTagsTutorial {
 
           TagTemplate tagTemplate = null;
 
+          String tagTemplateName =
+              String.format("projects/%s/locations/us/tagTemplates/%s", projectId, tagTemplateID);
           // try to load the template
           try {
-            String tagTemplateId =
-                String.format("projects/%s/locations/us/tagTemplates/%s", projectId, tagTemplateID);
 
-            Object cachedTagTemplate = dataCatalogLocalCache.getIfPresent(tagTemplateId);
+            Object cachedTagTemplate = dataCatalogLocalCache.getIfPresent(tagTemplateName);
 
             if (cachedTagTemplate != null) {
               tagTemplate = (TagTemplate) cachedTagTemplate;
@@ -571,8 +572,8 @@ public class DlpDataCatalogTagsTutorial {
                 System.out.println("[CacheHit] - getTagTemplate");
               }
             } else {
-              tagTemplate = dataCatalogClient.getTagTemplate(tagTemplateId);
-              dataCatalogLocalCache.put(tagTemplateId, tagTemplate);
+              tagTemplate = dataCatalogClient.getTagTemplate(tagTemplateName);
+              dataCatalogLocalCache.put(tagTemplateName, tagTemplate);
               if (VERBOSE_OUTPUT) {
                 System.out.println("[CacheMiss] - getTagTemplate");
               }
@@ -634,9 +635,19 @@ public class DlpDataCatalogTagsTutorial {
             // same time. So we want to catch this.
             try {
               tagTemplate = dataCatalogClient.createTagTemplate(createTagTemplateRequest);
-              System.out.println(String.format("Created template: %s", tagTemplate.getName()));
+              if (VERBOSE_OUTPUT) {
+                System.out.println(String.format("Created template: %s", tagTemplate.getName()));
+              } else {
+                System.out.print("+");
+              }
             } catch (Exception e) {
               // this just means template is already there.
+              // In the case other thread creates the template, we need to fill the template name
+              // used by the Tags.
+              if (tagTemplate != null && StringUtils.isBlank(tagTemplate.getName())) {
+                tagTemplate = TagTemplate.newBuilder().mergeFrom(tagTemplate).
+                    setName(tagTemplateName).build();
+              }
             }
           }
 
