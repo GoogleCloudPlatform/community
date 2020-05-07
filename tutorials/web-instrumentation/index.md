@@ -461,167 +461,188 @@ This section uses Cloud Build to build the test app, and then the app is deploye
     
 1.  Use the URL to navigate to the web interface and try it out.
 
-    ![Screenshot: Web form for test app](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/webform_steady_state.png)
-
 1.  To try the app, enter a test name, a small number of requests, and 1000 ms between requests, and then click
     **Start test**.
     
-1.  Navigate to web instrumentation container deployment in the Cloud Console.
+    ![Screenshot: Web form for test app](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/webform_steady_state.png)
 
-    ![Screenshot: Kubernetes deployment detail](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/k8s_deployment.png)
+1.  Navigate to web instrumentation container deployment in the Cloud Console.
 
 1.  Click **Container logs** to navigate to the Log Viewer and check that your test generated some logs.
 
-#### Enable log export to BigQuery
+    ![Screenshot: Kubernetes deployment detail](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/k8s_deployment.png)
 
-To analyze the details of the load test, we will use a log and trace data This will enable analysis of data at per-request and second intervals. Create log exports for the Kubernetes container and load balancer logs with the commands below.
+#### Enable export of logs to BigQuery
 
-1. Create a BQ dataset for the container logs
+To analyze the details of the load test, you use logs and trace data, which enables analysis of data at per-request and 
+second intervals. Follow the steps in this section to create log exports for the Kubernetes container and load balancer 
+logs.
 
-```shell
-bq --location=US mk -d \
-  --description "Web instrumentation container log exports" \
-  --project_id $GOOGLE_CLOUD_PROJECT \
-  web_instr_container
-```
+1.  Create a BigQuery dataset for the container logs:
 
-1. Create a log export for the container logs
+        bq --location=US mk -d \
+          --description "Web instrumentation container log exports" \
+          --project_id $GOOGLE_CLOUD_PROJECT \
+          web_instr_container
 
-```shell
-LOG_SA=$(gcloud logging sinks create web-instr-container-logs \
-  bigquery.googleapis.com/projects/$GOOGLE_CLOUD_PROJECT/datasets/web_instr_container \
-  --log-filter='resource.type="k8s_container" AND labels.k8s-pod/app="web-instrumentation"' \
-  --format='value("writerIdentity")')
-```
+1.  Create a log export for the container logs:
 
-1. The identity of the logs writer service account is captured in the shell variable LOG_SA. Grant the logs service account write access to BigQuery
+        LOG_SA=$(gcloud logging sinks create web-instr-container-logs \
+          bigquery.googleapis.com/projects/$GOOGLE_CLOUD_PROJECT/datasets/web_instr_container \
+          --log-filter='resource.type="k8s_container" AND labels.k8s-pod/app="web-instrumentation"' \
+          --format='value("writerIdentity")')
 
-```shell
-gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-    --member $LOG_SA \
-    --role roles/bigquery.dataEditor
-```
+1.  Grant write access to BigQuery for the logs service account:
 
-1. Repeat for load balancer logs. Create a BQ dataset
+        gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+            --member $LOG_SA \
+            --role roles/bigquery.dataEditor
 
-```shell
-bq --location=US mk -d \
-  --description "Web instrumentation load balancer log exports" \
-  --project_id $GOOGLE_CLOUD_PROJECT \
-  web_instr_load_balancer
-```
+    The identity of the logs writer service account is captured in the shell variable `LOG_SA`. 
 
-1. Create a log export for the load balancer logs 
+Repeat these steps for the load balancer logs:
 
-```shell
-LOG_SA=$(gcloud logging sinks create web-instr-load-balancer-logs \
-  bigquery.googleapis.com/projects/$GOOGLE_CLOUD_PROJECT/datasets/web_instr_load_balancer \
-  --log-filter='resource.type="http_load_balancer"' \
-  --format='value("writerIdentity")')
-```
+1.  Create a BigQuery dataset:
 
-1. Note that a new service account id is created so that you need to repeat the step for granting write access BigQuery
+        bq --location=US mk -d \
+          --description "Web instrumentation load balancer log exports" \
+          --project_id $GOOGLE_CLOUD_PROJECT \
+          web_instr_load_balancer
 
-```shell
-gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
-  --member $LOG_SA \
-  --role roles/bigquery.dataEditor
-```
+1.  Create a log export for the load balancer logs: 
+
+        LOG_SA=$(gcloud logging sinks create web-instr-load-balancer-logs \
+          bigquery.googleapis.com/projects/$GOOGLE_CLOUD_PROJECT/datasets/web_instr_load_balancer \
+          --log-filter='resource.type="http_load_balancer"' \
+          --format='value("writerIdentity")')
+
+1.  Grant write access to BigQuery for the new service account ID: 
+
+        gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+          --member $LOG_SA \
+          --role roles/bigquery.dataEditor
 
 ## Running the load test
 
-The browser application will generate the load sent to the server and tally the results. As the browser generates load against the server, we expect to see the latency increase. With the instrumentation that we have put we can compare server and client side latency data.
+The browser application generates the load sent to the server and tallies the results. As the browser generates load against
+the server, the latency increases. With the instrumentation that you put in place, you can compare server and client side 
+latency data.
 
 ### Generate some load
 
-Navigate to the IP shown in the output of the `kubectl get ingress` command again. We will enter a steady state load followed by a load spike. The steady state load will give a reference level for latency that we can use to compare against the result of the load spike. Enter values for the steady state like 1,800 requests at an interval of 1000 ms. This will give 30 minutes of steady state load of 1 request per second.
+In this section, you enter a steady-state load followed by a load spike. The steady state load gives a reference level for
+latency that you can use to compare against the result of the load spike. 
+    
+1.  Navigate to the IP address shown in the output of the `kubectl get ingress` command.
 
-Check the load in the 
-[GCLB monitoring tab](https://console.cloud.google.com/net-services/loadbalancing/loadBalancers/list) for the L7 load balancer for the Kubernetes ingress, as shown below. It may take a few minutes for monitoring data to be generated and replicated so that it is visible in the chart.
+1.  Enter values for the steady state, such as 1,800 requests at an interval of 1000 ms, which gives 30 minutes of
+    steady-state load of 1 request per second.
 
-![Screenshot: Google Cloud Load Balancer Request Count](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/gclb_request_count.png)
+1.  Check the load in the 
+    [GCLB monitoring tab](https://console.cloud.google.com/net-services/loadbalancing/loadBalancers/list) for the L7 load 
+    balancer for the Kubernetes Ingress, as shown below.
 
-Check the latency in 
-[Cloud Monitoring](https://console.cloud.google.com/monitoring)
- under Dashboards | Google Cloud  Load Balancers as shown below.
+    ![Screenshot: Cloud Load Balancer request count](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/gclb_request_count.png)
+    
+     It may take a few minutes for monitoring data to be generated and replicated so that it is visible in the chart.
 
-![Screenshot: Cloud Monitoring GCLB Total Latency](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/gclb_latency.png)
+1.  Check the latency in [Cloud Monitoring](https://console.cloud.google.com/monitoring) under
+    **Dashboards** > **Load Balancing**.
 
-When the latency stabilizes, open another tab in your browser at the ingress IP. Enter values for the load spike, say 10,000 requests at intervals of 20ms. This will give a load spike of 50 requests per second for about 3 minute and 20 seconds.
+    ![Screenshot: Cloud Monitoring load balancing total latency](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/gclb_latency.png)
+
+1.  When the latency stabilizes, open another tab in your browser at the Ingress IP address.
+
+1.  Enter values for the load spike, such as 10,000 requests at intervals of 20ms, which gives a load spike of 50 requests
+    per second for 3 minute and 20 seconds.
+    
+    You should see the traffic volume and latency increase very quickly in the
+    [Trace](https://console.cloud.google.com/traces/traces) view, as shown below.
+
+    ![Trace scatter plot for the error spike](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/trace_scatter_plot_load_spike.png)
 
 ### Viewing the test results
 
-You should see the traffic volume and latency increase very quickly in the 
-[Trace](https://console.cloud.google.com/traces/traces)
-view, as shown below.
+1.  Click the points to see details. The web client spans should be shown as parents of the the server side spans, as shown
+    in the screenshot below.
 
-![Trace scatter plot for the error spike](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/trace_scatter_plot_load_spike.png)
+    ![Example Trace Timeline](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/web_trace_child_spans.png)
 
-Click on the points to see details. The web client spans should be shown as parents of the the server side spans, as shown in the screenshot below.
+    The spans generated by the web client can be differentiated from the server spans from the agent. For the web client,
+    the component field is `xml-http-request`.
+    
+1.  Click **Show events** in the timeline to see events for opening the XML-HTTP request and sending data from the web 
+    client. The server span should show an event for bytes received.
 
-![Example Trace Timeline](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/web_trace_child_spans.png)
+1.  Navigate the load balancing monitoring page in the Cloud Console.
 
-The spans generated by the web client can be differentiated from the server spans from the agent. For the web client, the component field will be ‘xml-http-request.’ After clicking on ‘Show events’ in the timeline you should be able to see events for opening the XML-HTTP request and sending data from the web client. The server span should show an event for bytes received.
+1.  Click **Show all Legends** to see the charts for responses by code class and expand the legend.
 
-Navigate the GCLB monitoring page in the Cloud Console. See the charts for responses by code class and expand the legend by clicking Show all Legends. You should see a spike with a few responses in 300 or 500 response class:
+    You should see a spike with a few responses in 300 or 500 response class:
 
-![Cloud Monitoring - GCLB response count by class](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/gclb_latency_spike.png)
+    ![Cloud Monitoring - load balancing response count by class](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/gclb_latency_spike.png)
 
-To see the effect on the browser client latency during the spike, click on one of the points in the Trace chart:
+1.  To see the effect on the browser client latency during the spike, click one of the points in the Trace chart:
 
-![Example Trace during spike showing latency experienced by the client](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/trace_timeline_spike.png)
+    ![Example Trace during spike showing latency experienced by the client](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/trace_timeline_spike.png)
 
-Notice how long the client latency is compared to the server latency. This indicates a lot of time spent before the request arrives at the Node.js server. You can also view the frontend RTT in Stackdriver Monitoring, as shown below.
+    Notice how long the client latency is compared to the server latency. This indicates a lot of time spent before the 
+    request arrives at the Node.js server. You can also view the frontend round-trip time (RTT) in Cloud Monitoring, as 
+    shown below:
 
-![Cloud Monitoring view of Frontend RTT as measured by the load balancer](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/gclb_rtt_spike.png)
+    ![Cloud Monitoring view of frontend RTT as measured by the load balancer](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/gclb_rtt_spike.png)
+    
+    The main suspect for the increase in latency is load on the CPU. You can see the CPU load from the Compute Engine
+    monitoring view.
 
-1. Click on the [Monitoring tab](https://console.cloud.google.com/monitoring).
+1.  Click the [Monitoring tab](https://console.cloud.google.com/monitoring).
 
-Our main suspect for the increase in latency is load on the CPU. We can see the CPU load from the GCE monitoring view
+    ![Screenshot: Virtual machine CPU](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/gce_cpu_spike.png)
 
-![Screenshot: Virtual machine CPU](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/gce_cpu_spike.png)
+    You can also view CPU load on the Kubernetes pod serving your app.
 
-We can also view CPU load on the Kubernetes pod serving our app.
-
-![Screenshot: CPU for the Kubernetes Pod](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/pod_cpu_spike.png)
+    ![Screenshot: CPU for the Kubernetes Pod](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/pod_cpu_spike.png)
 
 The request chart and browser summary showed errors. One convenient place to look for error summaries in the Error Reporting user interface:
 
 ![Screenshot: Error Reporting](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/error_reporting_spike.png)
 
-These errors are interesting. There are only four occurrences but they might indicate that our home made browser log shipper may have overloaded the server by sending a huge request. An alternative approach to collecting browser error logs is the 
+These errors are interesting. There are only four occurrences, but they might indicate that your home-made browser log 
+shipper may have overloaded the server by sending a huge request. An alternative approach to collecting browser error logs
+is the 
 [Client-side JavaScript library for Stackdriver Error Reporting](https://github.com/GoogleCloudPlatform/stackdriver-errors-js).
 
 ## Detailed analysis of the test data
 
-We ran the load test, saw that the app seemed to do alright with some increase in latency and errors, but let’s check in more detail. Let’s review the questions raised at the start of the tutorial.
+You ran the load test and saw that the app seemed to do alright with some increase in latency and errors, but it's a good
+idea to check in more detail. 
+
+Let’s review the questions raised at the start of the tutorial.
 
 ### How did the app scale?
 
-We will answer the question of how the app scaled in terms of impact on end users by querying log data in BigQuery to find second-by-second client latency.
+You can answer the question of how the app scaled in terms of impact on end users by querying log data in BigQuery to find
+second-by-second client latency.
 
-To explore the client logs, enter a query like below in the [BigQuery console](https://console.cloud.google.com/bigquery). Use the current date (UTC time zone) in the table name.
+To explore the client logs, enter a query like the one below in the
+[BigQuery console](https://console.cloud.google.com/bigquery). Use the current date (UTC time zone) in the table name.
 
-```sql
-SELECT
-  timestamp, textPayload
-FROM `web_instr_container.stdout_20200129`
-ORDER BY timestamp DESC
-LIMIT 10
-```
+    SELECT
+      timestamp, textPayload
+    FROM `web_instr_container.stdout_20200129`
+    ORDER BY timestamp DESC
+    LIMIT 10
 
-To explore the load balancer log data in BigQuery, enter a query like
+To explore the load balancer log data in BigQuery, enter a query like the following:
 
-```sql
-SELECT 
-  httpRequest.requestUrl,
-  httpRequest.status,
-  trace,
-  timestamp 
-FROM 
-  `web_instr_load_balancer.requests_20200129` 
-LIMIT 10
-```
+    SELECT 
+      httpRequest.requestUrl,
+      httpRequest.status,
+      trace,
+      timestamp 
+    FROM 
+      `web_instr_load_balancer.requests_20200129` 
+    LIMIT 10
 
 #### Visualizing the log data
 
