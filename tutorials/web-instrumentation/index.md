@@ -208,138 +208,129 @@ The browser logs are collected and sent to the server using the `LogCollector` c
 class `ConsoleLogger` (located in the file `src/ConsoleLogger.js`) sends the logs to the server console. In Google 
 Kubernetes Engine, the server console logs are sent to Cloud Logging. 
 
-**Note**: In the future you may be able to reduce the code needed for this with the 
+**Note**: In the future, you may be able to reduce the code needed for this with the 
 [Reporting API](https://developer.mozilla.org/en-US/docs/Web/API/Reporting_API), an experimental initiative in the process 
 of being standardized, currently only available for Firefox and Chrome with a special flag.
 
 ### Server
 
-The server runs in Node.js using Express. It accepts the HTTP requests, consumes some CPU to simulate a real app, and returns the same data to the client. The entry point is the `src/app.js` file:
+The server runs in Node.js using Express. The server accepts the HTTP requests, uses some CPU resources to simulate a real
+app, and returns the same data to the client. The entry point is the `src/app.js` file:
 
-```JavaScript
-const appTracing = require('./tracing');
-const tracer = appTracing.initTracing();
-const express = require('express');
+    const appTracing = require('./tracing');
+    const tracer = appTracing.initTracing();
+    const express = require('express');
 
-// Initialize Express
-const app = express();
-app.use(express.static('dist'));
-app.use(express.json());
-```
+    // Initialize Express
+    const app = express();
+    app.use(express.static('dist'));
+    app.use(express.json());
 
-Importing and initialize the OpenTelemetry code is done in `src/tracing.js`:
+Importing and initializing the OpenTelemetry code is done in the `src/tracing.js` file:
 
-```JavaScript
-const opentelemetry = require('@opentelemetry/api');
-const { StackdriverTraceExporter } = require('@opentelemetry/exporter-stackdriver-trace');
-const { LogLevel } = require('@opentelemetry/core');
-const { NodeTracerProvider } = require("@opentelemetry/node");
-const { BatchSpanProcessor } = require("@opentelemetry/tracing");
+    const opentelemetry = require('@opentelemetry/api');
+    const { StackdriverTraceExporter } = require('@opentelemetry/exporter-stackdriver-trace');
+    const { LogLevel } = require('@opentelemetry/core');
+    const { NodeTracerProvider } = require("@opentelemetry/node");
+    const { BatchSpanProcessor } = require("@opentelemetry/tracing");
 
-/**
- * Initialize tracing
- * @return {Tracer} tracer object
- */
-module.exports.initTracing = () => {
-  const provider = new NodeTracerProvider({
-    logLevel: LogLevel.ERROR
-  });
-  opentelemetry.trace.initGlobalTracerProvider(provider);
-  const tracer = opentelemetry.trace.getTracer('default');
-  provider.addSpanProcessor(new BatchSpanProcessor(getExporter()));
-  console.log("initTracing: done");
-  return tracer;
-};
-
-function getExporter() {
-  const keyFileName = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-  if (!keyFileName) {
-    console.log('Proceed without a keyFileName (will only work on GCP)');
-    return new StackdriverTraceExporter({});
-  }
-  console.log("Using GOOGLE_APPLICATION_CREDENTIALS");
-  return new StackdriverTraceExporter({
-    keyFileName: keyFileName});
-}
-```
-
-The server app also adds child spans to trace backend processing of data:
-
-```JavaScript
-app.post('/data*', (req, res) => {
-  if ('data' in req.body) {
-    const data = req.body['data'];
-    if (data) {
-      // Trace the request
-      const currentSpan = tracer.getCurrentSpan();
-      const span = tracer.startSpan('process-data', {
-        parent: currentSpan
+    /**
+     * Initialize tracing
+     * @return {Tracer} tracer object
+     */
+    module.exports.initTracing = () => {
+      const provider = new NodeTracerProvider({
+        logLevel: LogLevel.ERROR
       });
-      tracer.withSpan(span, () => {
-        // Use some CPU
-        for (let i = 0; i < 1000000; i += 1) {
-          // Do nothing useful
-          if (i % 1000000 === 0) {
-            console.log(`app.post ${i}`);
-          }
-        }
-        if ('name' in data && 'reqId' in data && 'tSent' in data) {
-          console.log(`tSent: ${data.tSent}, name: ${data.name}, `
-                      + `reqId: ${data.reqId}`);
-          res.status(200).send(data).end();
+      opentelemetry.trace.initGlobalTracerProvider(provider);
+      const tracer = opentelemetry.trace.getTracer('default');
+      provider.addSpanProcessor(new BatchSpanProcessor(getExporter()));
+      console.log("initTracing: done");
+      return tracer;
+    };
+
+    function getExporter() {
+      const keyFileName = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+      if (!keyFileName) {
+        console.log('Proceed without a keyFileName (will only work on GCP)');
+        return new StackdriverTraceExporter({});
+      }
+      console.log("Using GOOGLE_APPLICATION_CREDENTIALS");
+      return new StackdriverTraceExporter({
+        keyFileName: keyFileName});
+    }
+
+The server app also adds child spans to trace the backend processing of data:
+
+    app.post('/data*', (req, res) => {
+      if ('data' in req.body) {
+        const data = req.body['data'];
+        if (data) {
+          // Trace the request
+          const currentSpan = tracer.getCurrentSpan();
+          const span = tracer.startSpan('process-data', {
+            parent: currentSpan
+          });
+          tracer.withSpan(span, () => {
+            // Use some CPU resources
+            for (let i = 0; i < 1000000; i += 1) {
+              // Do nothing useful
+              if (i % 1000000 === 0) {
+                console.log(`app.post ${i}`);
+              }
+            }
+            if ('name' in data && 'reqId' in data && 'tSent' in data) {
+              console.log(`tSent: ${data.tSent}, name: ${data.name}, `
+                          + `reqId: ${data.reqId}`);
+              res.status(200).send(data).end();
+            } else {
+              const msg = 'Payload does not include expected fields';
+              console.log(msg);
+              sendError(msg, res);
+            }
+            span.end();
+          });
         } else {
-          const msg = 'Payload does not include expected fields';
+          const msg = 'Data is empty';
           console.log(msg);
           sendError(msg, res);
         }
-        span.end();
-      });
-    } else {
-      const msg = 'Data is empty';
-      console.log(msg);
-      sendError(msg, res);
-    }
-  } else {
-    const msg = 'Data is empty';
-    sendError(msg, res);
-  }
-});
-```
+      } else {
+        const msg = 'Data is empty';
+        sendError(msg, res);
+      }
+    });
 
-## Building and Deploying the Test App
+## Building and deploying the test app
 
-The application can be run in a local development environment, on any of a number of environments in Google Cloud or elsewhere. Here’s an example of how to run it in Google Kubernetes Engine and using Cloud Shell for the command line.
+The application can be run in a local development environment, on any of a number of environments in Google Cloud, or 
+elsewhere. Here’s an example of how to run it in Google Kubernetes Engine, using Cloud Shell for the command-line interface.
 
-### Project Setup
+### Project setup
 
-1. After cloning the repo, change to its directory and set an environment variable to remember the
-location
-```shell
-cd professional-services/examples/web-instrumentation
-```
+1.  After cloning the repository, change to its directory and set an environment variable to remember the location:
 
-1. Install the JavaScript packages required by both the server and the browser
-```shell
-npm install
-```
+        cd professional-services/examples/web-instrumentation
 
-1. Set Google Cloud SDK to the current project 
-```shell
-GOOGLE_CLOUD_PROJECT=[Your project]
-gcloud config set project $GOOGLE_CLOUD_PROJECT
-```
+1.  Install the JavaScript packages required by both the server and the browser:
 
-1. Enable the required services
-```shell
-gcloud services enable bigquery.googleapis.com \
-  cloudbuild.googleapis.com \
-  cloudtrace.googleapis.com \
-  compute.googleapis.com \
-  container.googleapis.com \
-  containerregistry.googleapis.com \
-  logging.googleapis.com \
-  monitoring.googleapis.com
-```
+        npm install
+
+1.  Set the Cloud SDK to the current project:
+
+        GOOGLE_CLOUD_PROJECT=[Your project]
+        gcloud config set project $GOOGLE_CLOUD_PROJECT
+
+1.  Enable the APIs for the required services:
+
+        gcloud services enable bigquery.googleapis.com \
+          cloudbuild.googleapis.com \
+          cloudtrace.googleapis.com \
+          compute.googleapis.com \
+          container.googleapis.com \
+          containerregistry.googleapis.com \
+          logging.googleapis.com \
+          monitoring.googleapis.com
 
 ### OpenTelemetry collector
 
