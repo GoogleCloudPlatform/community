@@ -3,24 +3,23 @@ title: Instrumenting web apps end to end with Cloud Monitoring and OpenTelemetry
 description: Instrument a web application end to end, from the browser to the backend application, including logging, monitoring, and tracing with OpenTelemetry and Cloud Monitoring.
 author: alexamies
 tags: Cloud Monitoring, OpenTelemetry
-date_published: 2020-05-01
+date_published: 2020-05-08
 ---
 
-This tutorial demonstrates instrumenting a web application end to end, from the browser to the backend application, 
-including logging, monitoring, and tracing with OpenTelemetry and Cloud Monitoring to understand app performance in a load
-test. The test app runs with Node.js on Google Kubernetes Engine (GKE) with modern browser JavaScript packaged with Webpack.
-The tutorial is written for full-stack developers interested in instrumenting their apps for operational monitoring of 
-end-user experience. The instrumentation discussed is intended to be applicable permanently for the app, not just 
-temporarily for the load test. 
+This tutorial demonstrates instrumenting a web application end to end, from the browser to the backend application with 
+OpenTelemetry and Cloud Logging, Monitoring, and Trace to understand app performance in a load test. The test app runs with
+Node.js on Google Kubernetes Engine (GKE) with modern browser JavaScript packaged with Webpack. The tutorial is written for
+full-stack developers interested in instrumenting their apps for operational monitoring of end-user experience. The 
+instrumentation discussed is intended to be applicable permanently for the app, not just temporarily for the load test. 
 
-The tutorial specifically addresses the question of how and app will handle a load spike. The principles discussed apply to 
+The tutorial specifically addresses the question of how an app will handle a load spike. The principles discussed apply to 
 many other use cases, as well, such as rolling out a new version of an app. Familiarity with JavaScript development of 
 browser and Node.js apps, running Kubernetes, and basic use of Google Cloud will help. Running a similar scenario with 
 languages other than JavaScript is possible with some adaptation.
 
 The architecture of the app is shown in this schematic diagram:
 
-![Schematic Diagram of the Test App](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/schematic_diagram.png)
+![Schematic diagram of the test app](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/schematic_diagram.png)
 
 ## Objectives 
 
@@ -35,7 +34,9 @@ This tutorial uses billable components of Google Cloud, including the following:
 
 * Compute Engine
 * Container Registry
-* Cloud Monitoring, Logging, and Trace
+* Cloud Monitoring
+* Cloud Logging
+* Cloud Trace
 * BigQuery
 * Cloud Build
 
@@ -45,7 +46,8 @@ projected usage.
 ## Before you begin
 
 For this tutorial, you need a Google Cloud
-[project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a new one, or select a project you already created.
+[project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a new 
+one, or select a project that you already created.
 
 1.  Select or create a Google Cloud project.
 
@@ -61,27 +63,39 @@ For this tutorial, you need a Google Cloud
         
 1.  Install Node.js.
 1.  Install Go.
-1.  Install Docker
+1.  Install Docker.
 1.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/install).
 
-When you finish this tutorial, you can avoid continued billing by deleting the resources you created. For details,
+When you finish this tutorial, you can avoid continued billing by deleting the resources that you created. For details,
 see [Cleaning up](#Cleaning-up).
 
 ## Background
 
-This tutorial is motivated by customer inquiries about preparing for season peaks that can be reduced to the seemingly simple question, How well will my app handle a load spike? As innocent as the question seems, it has many layers. From a client perspective, will end users experience degraded performance during the peak? From a backend perspective, how fast will the cluster serving the app scale up? Also, how long will it take the app to recover, if it fails?
+This tutorial is motivated by customer inquiries about preparing for season peaks that can be reduced to the seemingly 
+simple question "How well will my app handle a load spike?" As simple as the question seems, it has many layers. From a
+client perspective, will end users experience degraded performance during the peak? From a backend perspective, how fast
+will the cluster serving the app scale up? Also, how long will it take the app to recover if it fails?
 
-Firstly, we need a plan for collecting data to be able to observe how the app is performing. We will see that monitoring data, although useful, is not sufficient. Monitoring data is typically aggregated over time intervals of one minute and focuses on a single point of measurement. We will need richer second-by-second measurements because a lot can happen in a minute. For that we are going to collect distributed traces and metrics using the OpenTelemetry JavaScript library, which will send this data to Cloud Monitoring via the OpenTelemetry Collector. Logs will be captured with Cloud Logging. We will export the logs to BigQuery where sophisticated queries can be done.
+First, you need a plan for collecting data to be able to observe how the app is performing. Monitoring data, although 
+useful, is not sufficient. Monitoring data is typically aggregated over time intervals of one minute and focuses on a single 
+point of measurement. You need richer, second-by-second measurements because a lot can happen in a minute. For that, this 
+tutorial shows how to collect distributed traces and metrics using the OpenTelemetry JavaScript library, which sends this 
+data to Cloud Monitoring through the OpenTelemetry Collector. Logs are captured with Cloud Logging. You export the logs to
+BigQuery, where sophisticated queries can be done.
 
-Secondly, we want to know of any end-user impact. We will instrument both backend and client, for that purpose. We are especially interested in end-user observed errors and timeouts for requests that do not make it to the backend.
+Second, you need to know of any end-user impact. This tutorial shows how to instrument both the backend and the client for 
+this purpose. Of special interest are errors that affect end users and timeouts for requests that do not make it to the 
+backend.
 
-## Code Walkthrough
+## Code walkthrough
 
-This section explains the code used in the tutorial app. Read this if you want to know how to instrument the app and skip it if you just want to run the tutorial.
+This section explains the code used in the tutorial app. Read this walkthrough section if you want to know how to instrument
+the app; skip this walkthrough section if you just want to run the tutorial.
 
 ### Client
 
-The file `browser/src/index.js` is the entry point for the web app. It imports and initializes the OpenTelemetry code as shown below for document loading.
+The file `browser/src/index.js` is the entry point for the web app. It imports and initializes the OpenTelemetry code as 
+shown below for document loading.
 
 ```JavaScript
 import {CollectorExporter} from '@opentelemetry/exporter-collector';
