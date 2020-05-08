@@ -6,7 +6,7 @@ tags: Cloud Monitoring, OpenTelemetry
 date_published: 2020-05-08
 ---
 
-This tutorial demonstrates instrumenting a web application end to end, from the browser to the backend application with 
+This tutorial demonstrates instrumenting a web application end to end—from the browser to the backend application—with 
 OpenTelemetry and Cloud Logging, Monitoring, and Trace to understand app performance in a load test. The test app runs with
 Node.js on Google Kubernetes Engine (GKE) with modern browser JavaScript packaged with webpack. The tutorial is written for
 full-stack developers interested in instrumenting their apps for operational monitoring of end-user experience. The 
@@ -71,7 +71,7 @@ see [Cleaning up](#Cleaning-up).
 
 ## Background
 
-This tutorial is motivated by customer inquiries about preparing for season peaks that can be reduced to the seemingly 
+This tutorial is motivated by customer inquiries about preparing for seasonal peaks that can be reduced to the seemingly 
 simple question "How well will my app handle a load spike?" As simple as the question seems, it has many layers. From a
 client perspective, will end users experience degraded performance during the peak? From a backend perspective, how fast
 will the cluster serving the app scale up? Also, how long will it take the app to recover if it fails?
@@ -125,7 +125,7 @@ shown below for document loading.
     const testApp = new TestApp(collectorURL);
     testApp.setup();
 
-The ES2015 style import statements used here are resolved by webpack in a client code build process. This build process is 
+The ES2015-style import statements used here are resolved by webpack in a client code build process. This build process is 
 configured by the webpack configuration file `browser/webpack.config.js`. 
 
 The file `browser/src/LoadTest.js` drives the test. It imports the `XMLHttpRequestPlugin` module to trace XML HTTP requests 
@@ -198,7 +198,7 @@ this and also tallies the total number of requests sent and received:
         );
       }
 
-The client inserts a unique ID, a timestamp of when the request was sent, and logs it. When the response is received, the 
+The client inserts a unique ID (a timestamp of when the request was sent) and logs it. When the response is received, the 
 latency is computed and logged. The client latency is calculated using the W3C User Timing API's `performance.now()` method.
 For details on measuring browser performance, see
 [A Primer for Web Performance Timing APIs](https://w3c.github.io/perf-timing-primer/). 
@@ -308,7 +308,7 @@ elsewhere. Here’s an example of how to run it in Google Kubernetes Engine, usi
 
 ### Project setup
 
-1.  After cloning the repository, change to its directory and set an environment variable to remember the location:
+1.  After cloning the repository, change to its directory:
 
         cd professional-services/examples/web-instrumentation
 
@@ -459,14 +459,14 @@ This section uses Cloud Build to build the test app, and then the app is deploye
     
     The URL to navigate to is shown in the command shell output and also in the Cloud Console.
     
-1.  Use the URL to navigate to the web interface and try it out.
+1.  Use the URL to navigate to the web interface.
 
 1.  To try the app, enter a test name, a small number of requests, and 1000 ms between requests, and then click
     **Start test**.
     
     ![Screenshot: Web form for test app](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/webform_steady_state.png)
 
-1.  Navigate to web instrumentation container deployment in the Cloud Console.
+1.  Navigate to the web instrumentation container deployment in the Cloud Console.
 
 1.  Click **Container logs** to navigate to the Log Viewer and check that your test generated some logs.
 
@@ -539,12 +539,12 @@ latency that you can use to compare against the result of the load spike.
     steady-state load of 1 request per second.
 
 1.  Check the load in the 
-    [GCLB monitoring tab](https://console.cloud.google.com/net-services/loadbalancing/loadBalancers/list) for the L7 load 
+    [Monitoring tab](https://console.cloud.google.com/net-services/loadbalancing/loadBalancers/list) for the L7 load 
     balancer for the Kubernetes Ingress, as shown below.
 
     ![Screenshot: Cloud Load Balancer request count](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/gclb_request_count.png)
     
-     It may take a few minutes for monitoring data to be generated and replicated so that it is visible in the chart.
+     It may take a few minutes for monitoring data to be generated and replicated so that it's visible in the chart.
 
 1.  Check the latency in [Cloud Monitoring](https://console.cloud.google.com/monitoring) under
     **Dashboards** > **Load Balancing**.
@@ -574,7 +574,7 @@ latency that you can use to compare against the result of the load spike.
 1.  Click **Show events** in the timeline to see events for opening the XML-HTTP request and sending data from the web 
     client. The server span should show an event for bytes received.
 
-1.  Navigate the load balancing monitoring page in the Cloud Console.
+1.  Navigate to the load balancing monitoring page in the Cloud Console.
 
 1.  Click **Show all Legends** to see the charts for responses by code class and expand the legend.
 
@@ -653,7 +653,7 @@ Google with many Google Cloud services pre-configured for ease of use. Follow th
     [Colab](https://colab.research.google.com/github/GoogleCloudPlatform/professional-services/blob/master/examples/web-instrumentation/load_test_analysis.ipynb)
     sheet in Chrome. 
 
-1.  Open the **Initialization** block if it is not open already.
+1.  Open the **Initialization** block if it's not open already.
 
 1.  Change the `project_id` variable to your own project.
 
