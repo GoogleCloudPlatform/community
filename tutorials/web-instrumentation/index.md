@@ -563,7 +563,7 @@ latency that you can use to compare against the result of the load spike.
 
 ### Viewing the test results
 
-1.  Click the points to see details. The web client spans should be shown as parents of the the server side spans, as shown
+1.  Click the points to see details. The web client spans should be shown as parents of the server side spans, as shown
     in the screenshot below.
 
     ![Example Trace Timeline](https://storage.googleapis.com/gcp-community/tutorials/web-instrumentation/web_trace_child_spans.png)
@@ -701,7 +701,7 @@ described in this tutorial.
 
 ## Other languages and environments
 
-You can run the backend or frontend in other languages and and use the same instrumentation with more scalable tools, such 
+You can run the backend or frontend in other languages and use the same instrumentation with more scalable tools, such 
 as Apache Bench or Locust. To see the format of the XML HTTP requests that you will need to use, do the following:
 
 1. Start a test from Chrome (for example, with 5 requests at 1,000 ms intervals).
@@ -713,7 +713,7 @@ This procedure gives the JSON format needed, as well as the headers that can be 
 those required for other tools. 
 
 See the [OpenCensus](https://opencensus.io/) website to get started with other backend languages. For other frontend 
-languages, such as Java on Android or Objective C on iOS, you need to use the OpenTelemetry service, as described above.
+languages, such as Java on Android or Objective-C on iOS, you need to use the OpenTelemetry service, as described above.
 
 If you prefer not to use client libraries to generate traces, you can generate them from your own code by sending HTTP 
 headers following the [W3C Trace Context](https://www.w3.org/TR/trace-context-1/) format. This may be preferable on mobile
