@@ -1,10 +1,9 @@
 ---
 title: Create a Cloud Build image factory using Packer
 description: Learn how to create an image factory using Cloud Build and Packer.
-author: johnlabarge, ikwak
+author: johnlabarge
 tags: Cloud Build, Packer, Compute Engine, Image, Windows, Linux
 date_published: 2018-09-14
-date_updated: 2020-05-06
 ---
 
 This tutorial will show you how to create an image factory using Cloud Build and
@@ -13,6 +12,8 @@ create new images from a Cloud Source Repository every time a new tag is pushed
 to that repository as depicted in the diagram below.
 
 In this tutorial, there are instructions for creating packer image for both Linux and Windows. Follow the respective steps, depending which type of image you want to build.
+
+*This tutorial has been updated by ikwak@ in 2020-05 to include building Windows images using Packer*
 
 ![ push to repository triggers cloud build with packer which builds machine image](https://storage.googleapis.com/gcp-community/tutorials/create-cloud-build-image-factory-using-packer/packer-tutorial.png)
 
