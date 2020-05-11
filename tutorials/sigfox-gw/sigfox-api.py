@@ -19,7 +19,7 @@ import json
 import base64
 import requests
 import argparse
-import ConfigParser
+import configparser
 import swagger_client
 from swagger_client.rest import ApiException
 from pprint import pprint
@@ -74,7 +74,7 @@ def delete_callbacks(api_instance, configuration, id, name):
     exit(0)
   cids = []
   for c in callbacks_list:
-    cids.append(c['id'].encode('utf-8'))
+    cids.append(c[b'id'])
   print('Deleting callbacks: {}'.format(cids))
   for cid in cids:
     try:
@@ -87,7 +87,7 @@ def delete_callbacks(api_instance, configuration, id, name):
 
 
 def read_config_file(config_file):
-  config = ConfigParser.SafeConfigParser()
+  config = configparser.ConfigParser()
   config.read(config_file)
   configuration = swagger_client.Configuration()
   if config.has_option('default', 'host'):
@@ -157,12 +157,14 @@ def create_callbacks(api_instance, configuration, id, name, cf_data,
                      cf_service, cf_auth, callbacks_config_file):
   callbacks_dicts = read_callbacks_config_file(callbacks_config_file)
   callbacks = []
+
   for d in callbacks_dicts:
     callbacks.append(dict_to_callback(d, cf_data, cf_service, name, cf_auth))
   print('Creating {} callbacks.'.format(len(callbacks)))
+
   for c in callbacks:
     try:
-      api_instance.create_callback(id, c)
+      api_instance.create_callback(c, id)
     except ApiException as e:
       print("Exception when calling DeviceTypesApi->create_callback: %s\n" % e)
       exit(1)
@@ -171,11 +173,11 @@ def create_callbacks(api_instance, configuration, id, name, cf_data,
   callbacks_list = list_callbacks(configuration.host,
                                   configuration.get_basic_auth_token(), id)
   for d in callbacks_list:
-    if 'callbackSubtype' in d.keys():
-      if d['callbackSubtype'] == 3:
+    if b'callbackSubtype' in d.keys():
+      if d[b'callbackSubtype'] == 3:
         print('Enabling Downlink for BIDIR Callback')
         try:
-          api_instance.enable_downlink_callback(id, d['id'])
+          api_instance.enable_downlink_callback(id, d[b'id'])
         except ApiException as e:
           print("Exception when calling DeviceTypesApi->"
                 "enable_downlink_callback: %s\n" % e)
@@ -194,24 +196,24 @@ def dict_to_callback(d, cf_data, cf_service, name, cf_auth):
     print('Invalid value for: type in Callbacks configuration file.')
     exit(1)
 
-  headers = {'Authorization': 'Basic ' + cf_auth}
+  headers = {'Authorization': 'Basic ' + cf_auth.decode('utf-8')}
+
   d['bodyTemplate'] = d['bodyTemplate'].replace('{deviceTypeName}', name)
 
   subtype_value=d['callbackSubtype'] if 'callbackSubtype' in d.keys() else 7
 
-  callback = swagger_client.CallbackCreation(
-      channel=d['channel'].encode('utf-8'),
+  callback = swagger_client.CreateUrlCallback(
+      channel=d['channel'],
       callback_type=d['callbackType'],
       callback_subtype=subtype_value,
       enabled=d['enabled'],
       send_duplicate=d['sendDuplicate'],
-      dead=d['dead'],
       url=url,
-      http_method=d['httpMethod'].encode('utf-8'),
+      http_method=d['httpMethod'],
       headers=headers,
       send_sni=d['sendSni'],
-      body_template=d['bodyTemplate'].encode('utf-8'),
-      content_type=d['contentType'].encode('utf-8')
+      body_template=d['bodyTemplate'],
+      content_type=d['contentType']
   )
   return callback
 
@@ -223,13 +225,15 @@ def main(argv):
   api_instance = swagger_client.DeviceTypesApi(
       swagger_client.ApiClient(configuration))
   name = get_device_type_name(api_instance, id)
-  cf_auth = base64.b64encode(cf_username + ':' + cf_password)
+
+  cf_auth = base64.b64encode((cf_username + ':' + cf_password).encode("utf-8"))
 
   if args.callbacks == 'list':
     callbacks_list = list_callbacks(configuration.host,
                                     configuration.get_basic_auth_token(), id)
+
     for c in callbacks_list:
-      print('Callback: {}:'.format(c['id']))
+      print('Callback: {}:'.format(c[b'id']))
       pprint(c)
       print('')
     print('{} Callbacks configured'
