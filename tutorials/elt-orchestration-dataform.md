@@ -86,7 +86,7 @@ After the events are available in Pub/Sub, we use a template to create a Cloud D
 the raw data tier in our BigQuery data warehouse. The next step is to compute the aggregated statistics to support the live
 leaderboard. 
 
-![image](https://drive.google.com/a/google.com/file/d/1p0NDblJakwKwEKGffT98CLGJE-pQ0JYy/view?usp=drivesdk)
+![image](https://storage.googleapis.com/gcp-community/tutorials/elt-orchestration-dataform/streamingaggre--9g096jwjmg.png)
 
 ### Scheduling and orchestration
 
@@ -148,7 +148,7 @@ warehouse, we will need to
 See [these steps](https://docs.dataform.co/dataform-web/guides/set-up-warehouse) within the Dataform docs. Select the same
 project ID that you created above, and then upload the credentials and test the connection.
 
-![image](https://drive.google.com/a/google.com/file/d/1mBFIerceQNfLXQMzfBSIeZ2ec6hodeCj/view?usp=drivesdk)
+![image](https://storage.googleapis.com/gcp-community/tutorials/elt-orchestration-dataform/streamingaggre--apnmkrdirlp.png)
 
 After you've configured the BigQuery integration, you'll see Datasets available within the **Modeling** tab. In particular, 
 the raw table that we use to capture events from Dataflow will be present here.
@@ -206,15 +206,15 @@ After the recent change events have been published to the Pub/Sub topic, we can 
 
 If we had sophisticated needs while processing the stream—think joining disparate streams, building windowed aggregations, using lookups to enrich data—then we could implement them in our Apache Beam code.
 
-Since our needs are more straightforward for this use case, we can use the out-of-the-box Dataflow template and we won't have to make any customizations to it. We can do this directly from the GCP Console in Cloud Dataflow.
+Since our needs are more straightforward for this use case, we can use the out-of-the-box Dataflow template and we won't have to make any customizations to it. We can do this directly from the Cloud Console in Cloud Dataflow.
 
-![image](https://drive.google.com/a/google.com/file/d/1-i5_3TsHkmHGMsQvZAAz4U-Va29hRhOy/view?usp=drivesdk)
+![image](https://storage.googleapis.com/gcp-community/tutorials/elt-orchestration-dataform/streamingaggre--qemj5i9wrcj.png)
 
 We'll use the Pub/Sub Topic to BigQuery template, and then we just need to configure a few things: 
 
-![image](https://drive.google.com/a/google.com/file/d/118xfCsg3bw0ZH5FAqeXdPBGp9lbO1rqE/view?usp=drivesdk)
+![image](https://storage.googleapis.com/gcp-community/tutorials/elt-orchestration-dataform/streamingaggre--d34ofwu913f.png)
 
-## Implementation, Dataform Steps
+## Implementation, Dataform steps
 
 ### Model tables in Dataform
 
@@ -286,7 +286,7 @@ will execute the required SQL statements to refresh the incremental staging tabl
 This schedule can be invoked every hour—or even more frequently, up to roughly every 10 minutes—to keep the leaderboard 
 updated with the recent events that have streamed into the system. 
 
-![image](https://drive.google.com/a/google.com/file/d/1vVTcUHMqTpW7OkCrQMHd5k7R_qSGM5GO/view?usp=drivesdk)
+![image](https://storage.googleapis.com/gcp-community/tutorials/elt-orchestration-dataform/streamingaggre--jh2a3728hgo.png)
 
 ## Conclusion
 
@@ -295,7 +295,7 @@ Congratulations! You've successfully built a tiered data architecture for your s
 We started with a Wikimedia event stream and we've transformed this to a reporting table in BigQuery that is consistently 
 up to date.
 
-![image](https://drive.google.com/a/google.com/file/d/1VAuef1LeX_v7bOwugRHft7gEekl2p5-k/view?usp=drivesdk)
+![image](https://storage.googleapis.com/gcp-community/tutorials/elt-orchestration-dataform/streamingaggre--y154sp1nsco.png)
 
 ## What's next?
 
