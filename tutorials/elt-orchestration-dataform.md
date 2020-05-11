@@ -1,43 +1,11 @@
 ---
-title: Tutorial - Fresh and Accurate: Aggregating Streams in ELT
-description: In this blog, we discuss a few of the most common challenges that data engineers face when solving for these use cases. We outline some design ideas and architectural patterns for efficient aggregation of streaming data using BigQuery.
-author: slachterman,vincegonzalez
-tags: BigQuery, ELT, dataform, workflow, streaming
-date_published: 2020-04-01
+title: Freshness and accuracy - Aggregating streams in ELT
+description: Describes common challenges that data engineers face when solving for freshness and accuracy. Outlines design ideas and architectural patterns for efficient aggregation of streaming data using BigQuery.
+author: slachterman-g,vicenteg
+tags: BigQuery, ELT, Dataform, workflow, streaming
+date_published: 2020-05-12
 ---
 
-# Fresh and Accurate: Aggregating Streams in ELT
-
-- [Fresh and Accurate: Aggregating Streams in ELT](#fresh-and-accurate-aggregating-streams-in-elt)
-- [Introduction](#introduction)
-   - [Overview](#overview)
-   - [Data freshness and accuracy ](#data-freshness-and-accuracy-)
-   - [Scenario Description](#scenario-description)
-- [Design](#design)
-   - [Data Tiering](#data-tiering)
-   - [Partitioning](#partitioning)
-- [Architecture](#architecture)
-   - [What you'll build](#what-you'll-build)
-   - [Scheduling and Orchestration](#scheduling-and-orchestration)
-   - [What you'll need](#what-you'll-need)
-- [Getting set up](#getting-set-up)
-   - [Create BigQuery Dataset and Table for Raw Tier](#create-bigquery-dataset-and-table-for-raw-tier)
-   - [Create Pub/Sub Topic and Subscription](#create-pubsub-topic-and-subscription)
-   - [Create Dataform Account and Project](#create-dataform-account-and-project)
-- [Implementation](#implementation)
-   - [Create Python Service for reading and publishing Events to Pub/Sub](#create-python-service-for-reading-and-publishing-events-to-pubsub)
-- [Implementation, continued](#implementation-continued)
-   - [Create Dataflow Job from Template to read from Pub/Sub and write to BigQuery](#create-dataflow-job-from-template-to-read-from-pubsub-and-write-to-bigquery)
-- [Implementation, Dataform Steps](#implementation-dataform-steps)
-   - [Model Tables in Dataform](#model-tables-in-dataform)
-   - [Schedule Dataform Project](#schedule-dataform-project)
-- [Congratulations](#congratulations)
-   - [What's next?](#what's-next)
-      - [Further reading](#further-reading)
-
----
-
-# Introduction
 
 ## Overview
 
