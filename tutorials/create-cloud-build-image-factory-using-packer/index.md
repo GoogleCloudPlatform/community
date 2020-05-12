@@ -11,6 +11,8 @@ This tutorial will show you how to create an image factory using Cloud Build and
 create new images from a Cloud Source Repository every time a new tag is pushed
 to that repository as depicted in the diagram below.
 
+In a shared services operating model, using the [Trusted Image](https://cloud.google.com/compute/docs/images/restricting-image-access) feature with organization policy is a great way to centralize consumption of SOE images across multiple projects, to ensure that project members can meet security requirements through an immutable golden image.
+
 In this tutorial, there are instructions for creating packer image for both Linux and Windows. Follow the respective steps, depending which type of image you want to build.
 
 *This tutorial has been updated by ikwak@ in 2020-05 to include building Windows images using Packer*
