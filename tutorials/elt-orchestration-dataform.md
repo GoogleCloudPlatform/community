@@ -3,7 +3,7 @@ title: Freshness and accuracy - Aggregating data streams in ELT
 description: Describes common challenges that data engineers face when solving for freshness and accuracy. Outlines design ideas and architectural patterns for efficient aggregation of streaming data using BigQuery.
 author: slachterman-g,vicenteg
 tags: BigQuery, ELT, Dataform, workflow, streaming
-date_published: 2020-05-12
+date_published: 2020-05-14
 ---
 
 ## Overview
@@ -24,7 +24,7 @@ basic familiarity with BigQuery.
 By _fresh_, we mean that the data latency of the aggregate is less than some threshold, such as "up to date as of the last
 hour". Freshness is determined by the subset of raw data that is included in the aggregates.
 
-When dealing with streaming data, it is very common for events to arrive late within the data processing system, meaning
+When dealing with streaming data, it is very common for events to arrive late to the data processing system, meaning
 that the time at which the system processes an event is significantly later than the time at which the event occurs. When 
 the system processes the late-arriving facts, the values of the aggregated statistics will change, meaning that on an
 intra-day basis, the values that analysts see will change.
@@ -64,7 +64,7 @@ specifying a partition decorator.
 Field partitioning partitions data based on the date or timestamp value in a column. 
 
 For ingestion of events, you'll put data into an ingestion-time partitioned table. This is because ingestion time is 
-relevant for processing or re-processing of data received in the past. Backfills of historical data can be stored within
+relevant for processing or re-processing of data received in the past. Backfills of historical data can be stored in
 ingestion-time partitions, as well, based on when they would have arrived.
 
 This tutorial assumes that the system will not receive late-arriving facts from the Wikimedia event stream. This 
@@ -133,16 +133,16 @@ projected from the event stream of published changes consumed from Wikimedia.
 Navigate to [https://app.dataform.co](https://app.dataform.co) and create a new account. After you are logged in,
 create a new project.
 
-Within your project, you need to configure the integration with BigQuery. Because Dataform needs to connect to the 
+In your project, you need to configure the integration with BigQuery. Because Dataform needs to connect to the 
 warehouse, you need to 
 [provision service account credentials](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating_a_service_account).
 
-See [these steps](https://docs.dataform.co/dataform-web/guides/set-up-warehouse) within the Dataform docs. Select the same
-project ID that you created above, and then upload the credentials and test the connection.
+See [these steps](https://docs.dataform.co/dataform-web/guides/set-up-warehouse) in the Dataform documentation. Select the 
+same project ID that you created above, and then upload the credentials and test the connection.
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/elt-orchestration-dataform/streamingaggre--apnmkrdirlp.png)
 
-After you've configured the BigQuery integration, you'll see Datasets available in the **Modeling** tab, including 
+After you've configured the BigQuery integration, you'll see datasets in the **Modeling** tab, including 
 the raw table that you use to capture events from Dataflow.
 
 ## Implementation
@@ -219,33 +219,32 @@ records from `wiki_changes`. Let's take a look at the DDL for the staging table,
 [GitHub repository](https://github.com/slachterman-g/wikidev-dataform/blob/master/definitions/wiki_staged.sqlx) tied to the 
 Dataform project.
 
-Some important features of this table:
+    config {
+      type: "incremental",
+      schema: "wiki_push",
+      bigquery: {
+        partitionBy: "date(event_time)",
+        clusterBy: ["user"]
+      }
+    }
+
+    select
+      user,
+      title,
+      timestamp as event_time,
+      current_timestamp() as processed_time
+    from
+      wiki_push.wiki_changes
+
+    ${ when(incremental(), `WHERE timestamp > (SELECT MAX(timestamp) FROM ${self()})`) }
+
+Some important features of the staging table:
 
 - It is configured as an incremental type, so that when the scheduled ELT jobs run, only new records are added. As expressed
   by the `when()` code at the bottom, the logic for this is based on the timestamp field, which reflects the timestamp in 
   the event stream (the `event_time` of the change).
 - It is clustered using the `user` field, which means that the records within each partition are ordered by `user`, 
   reducing the shuffle required by the query that builds the leaderboard.
-
-      config {
-        type: "incremental",
-        schema: "wiki_push",
-        bigquery: {
-          partitionBy: "date(event_time)",
-          clusterBy: ["user"]
-        }
-      }
-
-      select
-        user,
-        title,
-        timestamp as event_time,
-        current_timestamp() as processed_time
-      from
-        wiki_push.wiki_changes
-
-      ${ when(incremental(), `WHERE timestamp > (SELECT MAX(timestamp) FROM ${self()})`) }
-
 
 The other table that you need to define in your project is the reporting tier table, which supports the leaderboard queries.
 Tables in the reporting tier are aggregated, because users are concerned with fresh and accurate counts of published 
