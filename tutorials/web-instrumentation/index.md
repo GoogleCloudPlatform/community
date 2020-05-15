@@ -97,7 +97,6 @@ the app; skip this walkthrough section if you just want to run the tutorial.
 The file `browser/src/index.js` is the entry point for the web app. It imports and initializes the OpenTelemetry code as 
 shown below for document loading.
 
-    import {CollectorExporter} from '@opentelemetry/exporter-collector';
     import { CollectorExporter } from '@opentelemetry/exporter-collector';
     import { SimpleSpanProcessor } from '@opentelemetry/tracing';
     import { DocumentLoad } from '@opentelemetry/plugin-document-load';
