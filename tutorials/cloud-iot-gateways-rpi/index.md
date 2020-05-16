@@ -52,7 +52,7 @@ This tutorial should not generate any usage that would not be covered by the fre
 
 ## Required hardware
 
-- Laptop or desktop with `git` and `python2`
+- Laptop or desktop with `git` and `python3`
 - [Raspberry Pi 3][rpi] Model B (Other models should work, but they have not been verified)
 - MicroSD card for [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) (8GB+ recommended)
 - MicroSD card reader
@@ -133,8 +133,7 @@ To set up your gateway:
 12. Use a [virtual environment](https://docs.python.org/3/tutorial/venv.html) to keep installations local to a
     workspace rather than installing libraries onto your system directly.
 
-        python3 -m venv tutorial-env
-        virtualenv env
+        python3 -m venv env
         source env/bin/activate
 
 13. Install the following packages by running the following command.
@@ -160,13 +159,13 @@ In this tutorial, you'll use a [Raspberry Pi\*][rpi] to manage the LED/temperatu
 4.  Connect your keyboard and mouse to the Raspberry Pi's USB ports.
 5.  Connect the Raspberry Pi to a monitor through the HDMI port.
 6.  Go through the default setup steps for Raspbian upon boot.
-7.  Open a terminal and make sure `git`, `python` (python2), and other required dependencies are installed. If not, install
+7.  Open a terminal and make sure `git`, `python3`, and other required dependencies are installed. If not, install
     them by running:
 
         sudo apt update && sudo apt upgrade
         sudo apt install git
-        sudo apt install python
-        sudo apt install build-essential libssl-dev libffi-dev python-dev
+        sudo apt install python3
+        sudo apt install build-essential libssl-dev libffi-dev python3-dev
 
 8.  Clone the following repository and change into the directory for this tutorial's code:
 
@@ -176,15 +175,14 @@ In this tutorial, you'll use a [Raspberry Pi\*][rpi] to manage the LED/temperatu
 9.  Create and activate your virtual environment. Make sure to run the last step whenever you open a new tab to activate the
     virtual environment.
 
-        pip install virtualenv
-        virtualenv env
+        python3 -m virtualenv venv
         source env/bin/activate
 
 10. Install Python dependencies by running the following:
 
         pip install -r requirements-pi.txt
 
-[udp-socket]: https://docs.python.org/2/library/socket.html
+[udp-socket]: https://docs.python.org/3/library/socket.html 
 [mqtt-bridge]: https://cloud.google.com/iot/docs/how-tos/mqtt-bridge
 [raspbian-download]: https://www.raspberrypi.org/downloads/raspbian
 [raspbian-installation]: https://www.raspberrypi.org/documentation/installation/installing-images/README.md
