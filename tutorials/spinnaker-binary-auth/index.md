@@ -9,21 +9,21 @@ Daniel Amadei | Customer Engineer | Google
 
 # Introduction
 
-This solution shows you how to use a continuous integration (CI) and continuous delivery (CD) pipeline to securely deploy to a Kubernetes cluster. It uses Cloud Build to build images, Spinnaker for continuous delivery and Binary Authorization for deploy-time, attestation-based security, and Cloud Key Management Service (Cloud KMS) to manage keys used by Binary Authorization.  Using these Google Cloud products, you can  manage the provenance of container images deployed to Kubernetes. 
+This solution exemplifies how to perform continuous integration and continuous delivery to a Kubernetes cluster using Cloud Build for building our images, Spinnaker for Continuous Deployment and Binary Authorization with keys hosted inside Cloud Key Management Service (Cloud KMS) for protecting and attesting the procedence of our images being deployed to Kubernetes. 
 
-We will start by setting up all our environment and then building the solution step by step. We hope you enjoy the journey.
+Start by setting up the environment and then building the solution step by step. We hope you enjoy the journey.
 
 ## Setup
 
-We will handle Binary Authorization using a separate project to hold the Attestor and the Keys, so you can keep controls and authorization separate.
+Binary Authorization will be handled by using a separate project to hold the Attestor and the Keys, so you can keep controls and authorization separate.
 
-We will create the projects and resources that are previously needed in this section.
+Create the projects and resources that are will be needed later.
 
 ### Deployer Project
 The deployer project is the project where your Kubernetes cluster will be created and also spinnaker will be installed.
 
 ### User Cluster Creation
-You should create a Kubernetes cluster to where you will deploy the application to. There are no special needs for the cluster creation and you can follow the instructions [here](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-regional-cluster).
+A Kubernetes cluster should also be created. This is the cluster where you will deploy the application to. There are no special needs for the cluster creation and you can follow the instructions [here](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-regional-cluster).
 
 ### Spinnaker Installation
 Install spinnaker on gcp using the marketplace offering available. Just access your **Marketplace** inside **Cloud Console** and search for Spinnaker. Install it on the same project as the user cluster created above but in a different Kubernetes cluster, dedicated to Spinnaker.
@@ -66,15 +66,15 @@ After creating the cluster and installing spinnaker, get the following variables
 
 
 ### Attestor Project
-We will base our setup in [this](https://cloud.google.com/binary-authorization/docs/multi-project-setup-cli) document but will use just one project to hold the attestor, attestations and keys in Cloud KMS so we will provide the instructions here that are a little bit different from the referred link. 
+Setup should be based in [this](https://cloud.google.com/binary-authorization/docs/multi-project-setup-cli) document but only one project will be used to hold the attestor, attestations and keys in Cloud KMS so instructions will be provided as they are a little bit different from the referred link. 
 
-So, let's do it, assuming your gcloud is already authenticated, create the following environment vars:
+Assuming `gcloud` is already authenticated, create the following environment vars:
 
     ATTESTOR_PROJECT_ID=<ATTESTOR PROJECT ID>
     ATTESTOR_PROJECT_NUMBER=$(gcloud projects describe "${ATTESTOR_PROJECT_ID}" --format="value(projectNumber)")
     ATTESTOR_SERVICE_ACCOUNT="service-${ATTESTOR_PROJECT_NUMBER}@gcp-sa-binaryauthorization.iam.gserviceaccount.com"
 
-Now run the following commands:
+Now, run the following commands:
 
     gcloud config set project ${ATTESTOR_PROJECT_ID}
     gcloud services --project=${ATTESTOR_PROJECT_ID} \
@@ -84,9 +84,9 @@ Now run the following commands:
 
 ### Creating the Container Analysis Note
 
-Let's create the container analysis note which is required by the attestor to create the attestations. 
+Create the container analysis note which is required by the attestor to create the attestations. 
 
-1. First export the variables.
+1. First, export the variables.
 
         ATTESTOR_NAME=container-attestor
         NOTE_ID=container-attestor-note
@@ -145,7 +145,7 @@ Now it's time to create the attestor in the respective project with the id repre
             --role=roles/binaryauthorization.attestorsVerifier
 
 ### Set permissions on the Container Analysis note
-We need to set the permission on the container analysis note to the attestor service account.
+Permission should be set on the container analysis note to the attestor service account.
 
 Set permission on the container analysis note:
 
@@ -166,9 +166,9 @@ Set permission on the container analysis note:
         EOM
 
 ### Creating KMS Keys
-Now let's create our KMS keys which will be used by the attestor to sign and then verify signature of the attestation.
+Create the KMS keys which will be used by the attestor to sign and then verify signature of the attestation.
 
-1. First create and export the variables we will use to create the key. These are sample names for the key ring and key name, feel free to change such samples to names that are better to your case:
+1. First create and export the variables that will be used to create the key. These are sample names for the key ring and key name, feel free to change such samples to names that are better to your case:
 
         KMS_KEY_PROJECT_ID=${ATTESTOR_PROJECT_ID}
         KMS_KEYRING_NAME=my-binauthz-keyring
@@ -208,7 +208,7 @@ Now let's create our KMS keys which will be used by the attestor to sign and the
 
 
 ### Configure the Policy
-We will now create a policy. This policy is the configuration in the `DEPLOYER` project to only allow images to be deployed to GKE clusters in this project that have been attested by the attestor from the `ATTESTOR` project.
+Now a policy should be created. This policy is the configuration in the `DEPLOYER` project to only allow images to be deployed to GKE clusters in this project that have been attested by the attestor from the `ATTESTOR` project.
 
 For that, do the following:
 
@@ -235,8 +235,8 @@ For that, do the following:
         gcloud --project=${DEPLOYER_PROJECT_ID} \
             beta container binauthz policy import /tmp/policy.yaml
 
-    ### Testing all the setup we've done so far
-We will now create an attestation to test the policy. For that, do the following:
+### Testing all the setup we've done so far
+Create an attestation to test the policy. For that, do the following:
 
 1. Export the variables to test the policy:
 
@@ -296,7 +296,7 @@ We will now create an attestation to test the policy. For that, do the following
 
         kubectl get pods
 
-8. If everything is fine, delete the deployment and let's move on. This was just to test all the setup as the attestation will not be manually created as we did here but will be created by Spinnaker as part of the continuous delivery process.
+8. If everything is fine, delete the deployment. This was just to test all the setup as the attestation will not be manually created as we did here but will be created by Spinnaker as part of the continuous delivery process.
 
         kubectl delete deployment hello-server
 
@@ -363,9 +363,9 @@ After the build is successful, check if the image is placed into the container r
 
 # Configuring Spinnaker
 
-When you install Spinnaker for GCP, Spinnaker comes pre-configured with a connection to Google Cloud Build's Pub/Sub topic in the same project it's installed on (and another one for the Google Container Registry topic). This is sufficient for our demonstration here. In real world scenarios you can add connection to different projects as Spinnaker will probably reside in a different project from your user cluster.
+When you install Spinnaker for GCP, Spinnaker comes pre-configured with a connection to Google Cloud Build's Pub/Sub topic in the same project it's installed in (and another one for the Google Container Registry topic). This is sufficient for the demonstration here. In real world scenarios you can add connection to different projects as Spinnaker will probably reside in a different project from your user cluster.
 
-For GKE we created the connection after installing Spinnaker in the beginning of this solution.
+For GKE, a connection was created after installing Spinnaker in the beginning of this solution.
 
 ## Creating the Application and the Pipeline
 
@@ -383,7 +383,7 @@ Now click on **Configure** to create a new pipeline:
 1. Name it **products-api-pipeline**
 2. Click **Create**
 
-Now we will create a trigger. Triggers are responsible to start the Continuous Delivery pipeline. 
+Now it's time to a trigger responsible to start the Continuous Delivery pipeline. 
 
 To create a trigger:
 
@@ -399,20 +399,20 @@ To create a trigger:
 
 ![Configuring Trigger](./images/05-new-trigger.png)
 
-Now let's test:
+Now, do the following to test:
 
 1. Go back to the GCP Console.
 2. Click on **Cloud Build**.
 3. Click on **Triggers**.
 4. Click on **Run trigger**.
 
-After the build is complete and successful, go back to Spinnaker and check if it has an execution of the pipeline. There should be an execution, showing our trigger is working fine:
+After the build is complete and successful, go back to Spinnaker and check if it has an execution of the pipeline. There should be an execution, showing the trigger is working fine:
 
 ![First execution](./images/06-first-run.png)
 
 ### Extract Details From The Built Image
 
-Now we will get details from the built image. We will need the image name and image digest. These details will later help with the creation of an image url with the name and digest that is going to be used for signature and attestation creation and also the deployment. 
+Get the image name and image digest fron the created image. These details will later help with the creation of an image url with the name and digest that is going to be used for signature and attestation creation and also the deployment. 
 
 For that, do the following:
 
@@ -449,11 +449,11 @@ Click on **Save Changes**.
 
 Now it's time to create the attestation. From the binary authorization docs on what the attestation is: _"An attestation is a digitally signed document, made by a signer, that certifies that a required process in your pipeline was completed and that the resulting container image is authorized for deployment in GKE. The attestation itself contains the full path to the version of the container image as stored in your container image registry, as well as a signature created by signing the globally unique digest that identifies a specific container image build"_.
 
-As Spinnaker can't run a script by itself, to create the attestation, we will rely on a Kubernetes Job running on top of the Spinnaker Kubernetes cluster. 
+As Spinnaker can't run a script by itself, to create the attestation, you should rely on a Kubernetes Job running on top of the Spinnaker Kubernetes cluster. 
 
 This job will have a script that will create the attestation along with the signature of the payload required by Binary Authorization.
 
-We will run the script with the Spinnaker Service Account and need to give permission for this service account in the project hosting the binary authorization artifacts. This ensures that the only party with permissions to access create the attestation is Spinnaker.
+Run the script with the Spinnaker Service Account. For it to work this service account needs permission in the project hosting the binary authorization artifacts. This ensures that the only party with permissions to access create the attestation is Spinnaker.
 
 ### Creating the Binary Authorization Job Docker Container Image
 
@@ -525,7 +525,7 @@ In a new directory containing the code for creating the attestation, create a sc
 
 ## Running the Job in Spinnaker
 
-Now, go back to Spinnaker and add a new stage. Select as type **Run Job (Manifest)** and name it as **Create Attestation**.
+Go back to Spinnaker and add a new stage. Select as type **Run Job (Manifest)** and name it as **Create Attestation**.
 
 ![Create Attestation Job](./images/11-create-attestation.png)
 
@@ -587,7 +587,7 @@ And if you look at the console output for the Create Attestation phase, you shou
     Attestation created
 
 ### Adding Permissions to Access Attestation Resources
-We need to add permissions to the Service Account used by Spinnaker to access the Attestor resources like Cloud KMS keys and to create the attestation. As they are in different projects we will have to add a service account from Spinnaker's project to the Attestor project.
+The Service Account used by Spinnaker needs permissions to access the Attestor resources like Cloud KMS keys and to create the attestation. As they are in different projects the service account from Spinnaker's project should be added to the Attestor project and given the proper roles.
 
 The first step is to get the name of the Spinnaker service account. For that, go to the Spinnaker GKE cluster in Cloud Console and click on **Permissions**.
 
@@ -595,7 +595,7 @@ The service account name will be shown in the following form:
 
     <account name>@<project id>.iam.gserviceaccount.com
 
-Take note of the service account name. We will now add permissions to the service account in the `Attestor` project, where we hold the Binary Authorization Attestor and also the Cloud KMS keys for signing the attestations.
+Take note of the service account name and add permissions to the service account in the `Attestor` project, where we hold the Binary Authorization Attestor and also the Cloud KMS keys for signing the attestations:
 
 * In Cloud Console, go to the **Attestor Project**.
 * In the navigation menu click on **IAM & Admin** > **IAM**.
@@ -613,7 +613,7 @@ This will allow the job deployed to the Spinnaker Kubernetes Cluster to access t
 
 
 # Deploying the Application
-Now that we have the attestation created, the last step is to deploy the application. Deploying the application will also be applying a Kubernetes manifest. 
+Now that the attestation is created, the last step is to deploy the application. Deploying the application will also be applying a Kubernetes manifest. 
 
 For that:
 
@@ -621,7 +621,7 @@ For that:
 
 ![Add stage for App Deployment](./images/14-deploy-app-stage.png)
 
-2. **Select the account** you want to deploy to, which will be the account that we connected to Spinnaker representing our deployment cluster.
+2. **Select the account** you want to deploy to, which will be the account that was connected to Spinnaker representing the deployment cluster.
 
 ![Stage Config](./images/15-manifest-config.png)
 
@@ -661,7 +661,7 @@ For that:
 
 ## Deploying a Service
 
-Last step in our journey will be to deploy a service capable of exposing our API and testing it.
+Last step in this journey will be to deploy a service capable of exposing a business API and testing it.
 
 For that:
 
@@ -674,15 +674,15 @@ For that:
         apiVersion: v1
         kind: Service
         metadata:
-        name: products-api
+          name: products-api
         spec:
-        ports:
-        - port: 80
-        protocol: TCP
-        targetPort: 8080
+          ports:
+          - port: 80
+            protocol: TCP
+            targetPort: 8080
         selector:
-        app: products-api
-        sessionAffinity: None
+          app: products-api
+          sessionAffinity: None
         type: LoadBalancer
 
 3. Retest the deployment by triggering it from Cloud Build.
@@ -697,6 +697,6 @@ For that:
 
 # Summary
 
-With this we finished a full cycle of CI/CD. From source code triggering automatically a build with a Cloud Build trigger building the docker image and starting a Spinnaker pipeline capable of providing an image attestation to be deployed to a cluster with a Binary Authorization policy enabled.
+With this you've finished a full cycle of CI/CD. From source code triggering automatically a build with a Cloud Build trigger building the docker image and starting a Spinnaker pipeline capable of providing an image attestation to be deployed to a cluster with a Binary Authorization policy enabled.
 
 Choosing if you are going to attest an image during build or deployment depends on your CI/CD architecture and the idea of this article was to give you the option of doing so during the deployment phase.
