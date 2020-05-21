@@ -85,7 +85,7 @@ class LtkDevice(TaskSet):
         self.connectStartTime = time.time()
         # Use the long-term support domain, mqtt.googleapis.com should be considered deprecated.
         # Use of mqtt.googleapis.com requires a different trust bundle, located at https://pki.goog/roots.pem.
-        self.mqtt_client.connect('mqtt.2030.ltsapis.goog', '443')
+        self.mqtt_client.connect('mqtt.2030.ltsapis.goog', 443)
         self.mqtt_client.loop_start()
         sys.stdout.write('*** clientId {} set up for deviceId {}'.format(self.get_clientId(), self.deviceId))
 
@@ -241,7 +241,7 @@ class LtkWorker(Locust):
         # events.request_success += self.hook_request_success
         if (deviceList == None):
             try:
-                with open('devicelist.csv', 'rb') as f:
+                with open('devicelist.csv', newline='') as f:
                     reader = csv.reader(f)
                     deviceList = list(reader)
                 # get this pod's devices
