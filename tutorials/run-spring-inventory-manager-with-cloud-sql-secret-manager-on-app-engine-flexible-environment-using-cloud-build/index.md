@@ -198,7 +198,7 @@ This tutorial will be using Spring, Cloud SQL for MySql, App Engine, Cloud Secre
 
 4. Install the Google Cloud Build App on Github. You can follow this instructions [**here**](https://cloud.google.com/cloud-build/docs/automating-builds/run-builds-on-github#installing_the_google_cloud_build_app).
 
-    **_Make sure you select the_** `**_kioie/InventoryManagement_**` **_repository fork as the repository you are connecting to, otherwise this build will not work._**
+    **_Make sure you select the_** **_`kioie/InventoryManagement`_** **_repository fork as the repository you are connecting to, otherwise this build will not work._**
 
 5. In the Google Cloud Console, open the Cloud Build [Build triggers](https://console.cloud.google.com/cloud-build/triggers?_ga=2.173763299.1749283848.1589680102-1322801348.1576371208&_gac=1.259777016.1587192241.CjwKCAjwp-X0BRAFEiwAheRui4GkVAiJEcD-d_dhMaMnTeAmRAMMUBXLV45atuLUiiLinEjPGLLbuhoCzD8QAvD_BwE) page.
 
@@ -215,12 +215,12 @@ This tutorial will be using Spring, Cloud SQL for MySql, App Engine, Cloud Secre
     -   Under **`Event`**, select **`Push to a branch`**
     -   In the **`Source`** drop-down list, select `kioie/InventoryManagement` repository  
     
-      **_Note: If this repository does not appear, click the_** **_`Connect New Repository_`** **_button and connect your repo on GitHub, then return to step5._**
+      **_Note: If this repository does not appear, click the_** **_`Connect New Repository`_** **_button and connect your repo on GitHub, then return to step5._**
       
     -   Under **`Branch`**, enter `^master$`
     -   Under **`Build Configuration`** select **`Cloud Build configuration file (YAML or JSON)`**  
     For the `Cloud Build configuration file location` enter `cloudbuild.yaml`  
-    **_Note: Do not add an extra_** **`_/_`**
+    **_Note: Do not add an extra_** **_`/`_**
     -   Click **`Create`**
 
 Under your active triggers, you should now be able to see your newly created trigger.
@@ -278,8 +278,7 @@ You will require app engine for our deployment. In the end, our application will
 1.  Add your remote GitHub fork repo as your upstream repo
 
     ````
-    git remote add upstream [https://github.com/YOUR_ACCOUNT_NAME/InventoryManagement](https://github.com/YOUR_ACCOUNT_NAME/InventoryManagement)  
-    
+    git remote add upstream [https://github.com/<YOUR_ACCOUNT_NAME>/InventoryManagement](https://github.com/YOUR_ACCOUNT_NAME/InventoryManagement)  
     git remote -vv
     ````
   
@@ -287,7 +286,6 @@ You will require app engine for our deployment. In the end, our application will
 
     ````
     git add .  
-    
     git commit
     ````
 
