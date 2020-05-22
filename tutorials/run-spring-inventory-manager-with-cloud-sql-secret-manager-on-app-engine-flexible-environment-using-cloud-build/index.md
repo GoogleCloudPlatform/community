@@ -265,7 +265,7 @@ You will require app engine for our deployment. In the end, our application will
         — Cloud SQL Admin  
         — Secret Manager Admin
         
-    -   When you’re finished adding roles, click `**Save**`.
+    -   Click **`Save`**.
 
       The final permission list should look something like this
       
