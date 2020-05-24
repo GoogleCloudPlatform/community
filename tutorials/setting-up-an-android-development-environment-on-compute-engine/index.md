@@ -1,7 +1,7 @@
 ---
 title: Setting up an Android Development environment on Compute Engine
 description: Learn how to set up an Android development environment running on the Compute Engine.
-author: Rishit Dagli
+author: Rishit-dagli
 tags: Compute Engine
 date_published: 2020-05-24
 ---
