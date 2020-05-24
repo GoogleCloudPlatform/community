@@ -201,7 +201,7 @@ to start a `vncserver` session. Use a VNC viewer like [RealVNC](https://www.real
 
 Your VNC Viewer might look something like this-
 
-![](vnc-viewer.png)
+![](vnc-client.png)
 
 Enter the external IP of your VM followed by `:5901` to tell it to view port `5901`. 
 And you are now done with connecting to a desktop environment.
