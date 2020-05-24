@@ -38,3 +38,4 @@ eligible for a [free trial](https://cloud.google.com/free-trial).
 Here is a prefilled Pricing calculator if you follow this tutorial:
 * If you follow along using Linux VMs - [Costs](https://cloud.google.com/products/calculator#id=ca135004-465c-4a43-bc5b-701af07df644)
 * If you follow along using Windows VMs - [Costs](https://cloud.google.com/products/calculator#id=eff1ebe1-1ed8-4475-a5f2-d07519fb5883)
+
