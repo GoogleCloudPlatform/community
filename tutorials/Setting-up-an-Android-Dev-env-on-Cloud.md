@@ -12,3 +12,10 @@ Android Studio development environment on an Ubuntu or Windows server virtual ma
 to use Android Emulators and accelerate your development.
 
 We will set up a full fledged environment which is fast enough to do Gradle Builds in a second!
+
+## Objectives
+
+* Understand why a straightforward approach does not work.
+* Understand nested virtualization in GCP.
+* Connecting to a GUI based instance
+* Using nested virtualization to test out your apps locally.
