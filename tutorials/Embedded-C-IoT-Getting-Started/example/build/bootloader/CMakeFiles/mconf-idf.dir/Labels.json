@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/Users/galzahavi/Desktop/GCP/Embedded/mqtt-example/build/bootloader/CMakeFiles/mconf-idf"
+		},
+		{
+			"file" : "/Users/galzahavi/Desktop/GCP/Embedded/mqtt-example/build/bootloader/CMakeFiles/mconf-idf.rule"
+		},
+		{
+			"file" : "/Users/galzahavi/Desktop/GCP/Embedded/mqtt-example/build/bootloader/CMakeFiles/mconf-idf-complete.rule"
+		},
+		{
+			"file" : "/Users/galzahavi/Desktop/GCP/Embedded/mqtt-example/build/bootloader/mconf-idf-prefix/src/mconf-idf-stamp/mconf-idf-install.rule"
+		},
+		{
+			"file" : "/Users/galzahavi/Desktop/GCP/Embedded/mqtt-example/build/bootloader/mconf-idf-prefix/src/mconf-idf-stamp/mconf-idf-mkdir.rule"
+		},
+		{
+			"file" : "/Users/galzahavi/Desktop/GCP/Embedded/mqtt-example/build/bootloader/mconf-idf-prefix/src/mconf-idf-stamp/mconf-idf-download.rule"
+		},
+		{
+			"file" : "/Users/galzahavi/Desktop/GCP/Embedded/mqtt-example/build/bootloader/mconf-idf-prefix/src/mconf-idf-stamp/mconf-idf-update.rule"
+		},
+		{
+			"file" : "/Users/galzahavi/Desktop/GCP/Embedded/mqtt-example/build/bootloader/mconf-idf-prefix/src/mconf-idf-stamp/mconf-idf-patch.rule"
+		},
+		{
+			"file" : "/Users/galzahavi/Desktop/GCP/Embedded/mqtt-example/build/bootloader/mconf-idf-prefix/src/mconf-idf-stamp/mconf-idf-configure.rule"
+		},
+		{
+			"file" : "/Users/galzahavi/Desktop/GCP/Embedded/mqtt-example/build/bootloader/mconf-idf-prefix/src/mconf-idf-stamp/mconf-idf-build.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"mconf-idf"
+		],
+		"name" : "mconf-idf"
+	}
+}

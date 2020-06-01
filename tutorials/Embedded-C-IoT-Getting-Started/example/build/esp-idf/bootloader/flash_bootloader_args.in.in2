@@ -1,0 +1,4 @@
+--flash_mode dio
+--flash_size detect
+--flash_freq 40m
+0x1000 bootloader/bootloader.bin
