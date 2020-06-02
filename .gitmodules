@@ -1,3 +1,6 @@
 [submodule "tutorials/tutorials/embedded-c-getting-started/iot-device-sdk-embedded-c"]
 	path = tutorials/tutorials/embedded-c-getting-started/iot-device-sdk-embedded-c
 	url = https://github.com/GoogleCloudPlatform/iot-device-sdk-embedded-c
+[submodule "tutorials/embedded-c-getting-started/iot-device-sdk-embedded-c"]
+	path = tutorials/embedded-c-getting-started/iot-device-sdk-embedded-c
+	url = https://github.com/GoogleCloudPlatform/iot-device-sdk-embedded-c
