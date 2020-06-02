@@ -230,11 +230,11 @@ ESP_LOGI(TAG, "Message Payload: %s \n", sub_message);
 1. Set up your menu configuration cd /examples/main/ make menuconfig
 1. Set up your WiFi and LED gpio pin , navigate to example configuration
 
-![Wifi Setup][https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/wifisetup.gif]
+![Wifi Setup](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/wifisetup.gif)
 
 1. Set up your Google Cloud Project information, navigate to component configuration and then to Google IoT Core Configuration
 
-![Cloud Project Setup][https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/CloudSetup.gif]
+![Cloud Project Setup](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/CloudSetup.gif)
 
 1. Locate your ec_private.pem file and copy its contents into the private.pem file in the certs folder located at examples/main/certs
 1. Run the following to build your program Idf.py build
@@ -249,7 +249,7 @@ If you want to exit the serial monitor use Ctrl + ]
 
 **To send commands :**
 
-![Send Command][https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/command.jpg]
+![Send Command](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/command.jpg)
 
 1. Navigate to your registry and then to the device
 1. Click on the send command button at the top
@@ -264,7 +264,7 @@ Note: if the board you're using has the GPIO pin set to pulldown, setting this v
 
 **To view telemetry data :**
 
-![Blinky][https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/device.jpg]
+![Blinky](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/device.jpg)
 
 1. Navigate to your registry
 1. Click on the PubSub topic
