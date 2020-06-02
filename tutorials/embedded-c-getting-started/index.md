@@ -237,7 +237,7 @@ ESP_LOGI(TAG, "Message Payload: %s \n", sub_message);
 ![Cloud Project Setup](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/CloudSetup.gif)
 
 1. Locate your ec_private.pem file and copy its contents into the private.pem file in the certs folder located at examples/main/certs
-1. Run the following to build your program Idf.py build
+1. Run the following to build your program Idf.py build inside the examples folder
 1. Run the following to flash the program onto your device, (port) is the port you’re using. Idf.py -p /dev/cu.usbserial1440 flash
 1. Run the following to monitor your device Idf.py -p /dev/cu.usbserial1440 monitor
 

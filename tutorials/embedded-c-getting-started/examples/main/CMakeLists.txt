@@ -1,4 +1,4 @@
-set(COMPONENT_SRCS "smart_outlet_example.c")
+set(COMPONENT_SRCS "getting-started.c")
 set(COMPONENT_ADD_INCLUDEDIRS ".")
 
 register_component()
