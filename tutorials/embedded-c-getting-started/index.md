@@ -1,12 +1,12 @@
 ---
-title: Getting Started with Google IoT Embedded C SDK
-description: Learn how to connect to Google IoT Core and send commands/telemetry from the device on the Embedded C SDK
+title: Getting Started with IoT Core Embedded C SDK
+description: Learn how to connect to IoT Core and send commands/telemetry from the device on the Embedded C SDK
 author: Gal Zahavi
 tags: IoT,Google Cloud, Internet of Things, ESP32, ESP-IDF, IoT Core
 date_published: 2020-08-02
 ---
 
-This tutorial shows how to use the Google IoT Core Embedded C library and will take you through the steps of creating a IoT Core project which will receive telemetry data from an ESP32 microcontroller and will be able to turn on and off an LED. Follow this tutorial to configure Cloud IoT Core and run the mqtt-example on your ESP32.
+This tutorial shows how to use the IoT Core Embedded C library and will take you through the steps of creating a IoT Core project which will receive telemetry data from an ESP32 microcontroller and will be able to turn on and off an LED. Follow this tutorial to configure Cloud IoT Core and run the mqtt-example on your ESP32.
 Objectives
 
  - Install ESP-IDF
@@ -82,7 +82,7 @@ uint8_t temprature_sens_read();
 
 ### Google Cloud IoT Core
 
-If you’ve never used Google IoT Core, don’t worry, the steps below will get you setup to transmit telemetry data to the cloud but before we can do that lets talk about Google IoT Core and its components. Google Cloud IoT Core is a complete set of tools to connect, process, store, and analyze data both at the edge and in the cloud. Google Cloud IoT consists of the device management API for creating and managing logical collections of devices and the protocol bridge which adapts device-friendly protocols (MQTT or HTTP) to scalable Google infrastructure.
+If you’ve never used IoT Core, don’t worry, the steps below will get you setup to transmit telemetry data to the cloud but before we can do that lets talk about IoT Core and its components. Google Cloud IoT Core is a complete set of tools to connect, process, store, and analyze data both at the edge and in the cloud. Google Cloud IoT consists of the device management API for creating and managing logical collections of devices and the protocol bridge which adapts device-friendly protocols (MQTT or HTTP) to scalable Google infrastructure.
 
 Now that we have a little bit of information about Google Cloud IoT Core lets set it up.
 
@@ -117,7 +117,7 @@ You will need to clone the repo to get the example code, in your terminal go to 
 
 ``git clone https://github.com/espressif/esp-google-iot --recurse-submodules``
 
-Recuse submodules is important because you will need the Google IoT Core Embedded C SDK which is included in the repository as a submodule.
+Recuse submodules is important because you will need the IoT Core Embedded C SDK which is included in the repository as a submodule.
 
 ## Connecting an ESP32 to Cloud IoT Core
 
@@ -131,7 +131,7 @@ iotc_connect_private_key_data.crypto_key_union_type = IOTC_CRYPTO_KEY_UNION_TYPE
 
 With the private key as data, you can initialize iotc by calling iotc_inilialize() and checking that there’s no error. If everything is working properly you're ready to create the jwt and finally connect to IoT Core.
 
-To connect our ESP32 to Cloud IoT Core use iotc_connect which is from the Google IoT Core Embedded C SDK. The function takes multiple parameters you need to provide the following:
+To connect our ESP32 to Cloud IoT Core use iotc_connect which is from the IoT Core Embedded C SDK. The function takes multiple parameters you need to provide the following:
 
  - Username (usually null)
  - Password ( jwt )
@@ -213,13 +213,36 @@ free(publish_topic); free(publish_message);
 The callback function is invoked when the device receives a message from the cloud. This is where the code turns the led on and off based on incoming messages.You can find this code in the mqtt-example.c file on line 50.
 
 ```
-void iotc_mqttlogic_subscribe_callback( iotc_context_handle_t in_context_handle, iotc_sub_call_type_t call_type, const iotc_sub_call_params_t *const params, iotc_state_t state, void *user_data) {
+void iotc_mqttlogic_subscribe_callback(iotc_context_handle_t in_context_handle, iotc_sub_call_type_t call_type, const iotc_sub_call_params_t *const params, iotc_state_t state, void *user_data) {
 
-memcpy(sub_message, params->message.temporary_payload_data, params->message.temporary_payload_data_length);
+    char *sub_message = (char *)malloc(params->message.temporary_payload_data_length + 1);
 
-sub_message[params->message.temporary_payload_data_length] = '\0';
+    memcpy(sub_message, params->message.temporary_payload_data, params->message.temporary_payload_data_length);
 
-ESP_LOGI(TAG, "Message Payload: %s \n", sub_message);
+    sub_message[params->message.temporary_payload_data_length] = '\0';
+
+    ESP_LOGI(TAG, "Delegate Message Payload: %s", sub_message);
+
+    if (strcmp(subscribe_topic_command, params->message.topic) == 0)
+    {
+        gpio_pad_select_gpio(BLINK_GPIO);
+        /* Set the GPIO as a push/pull output */
+        gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
+
+        int value;
+        sscanf(sub_message, "light: %d", &value);
+        ESP_LOGI(TAG, "value: %d\n", value);
+        if (value == 1)
+        {
+            ESP_LOGI(TAG, "ON");
+            gpio_set_level(BLINK_GPIO, 1);
+        }
+        else if (value == 0)
+        {
+            gpio_set_level(BLINK_GPIO, 0);
+        }
+    }
+    free(sub_message);
 }
 ```
 
@@ -232,7 +255,7 @@ ESP_LOGI(TAG, "Message Payload: %s \n", sub_message);
 
 ![Wifi Setup](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/wifisetup.gif)
 
-1. Set up your Google Cloud Project information, navigate to component configuration and then to Google IoT Core Configuration
+1. Set up your Google Cloud Project information, navigate to component configuration and then to IoT Core Configuration
 
 ![Cloud Project Setup](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/CloudSetup.gif)
 
@@ -243,7 +266,7 @@ ESP_LOGI(TAG, "Message Payload: %s \n", sub_message);
 
 Note: if you make changes to the code, you will need to rebuild the program again before calling flash
 
-You should now see your device connecting to your registry on Google IoT Core. After the device connects, you can send commands from Google Cloud IoT Core or view the data that is being submitted by the device.
+You should now see your device connecting to your registry on IoT Core. After the device connects, you can send commands from Google Cloud IoT Core or view the data that is being submitted by the device.
 
 If you want to exit the serial monitor use Ctrl + ]
 
@@ -271,4 +294,4 @@ Note: if the board you're using has the GPIO pin set to pulldown, setting this v
 
 ![Blinky](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/device.jpg)
 
-Now that you've got the basics down and you can connect to Google IoT Core, you can add your own spin on this project, try replacing the LED with a relay to control a power outlet or can connect a sensor to measure and analyze environmental data.
+Now that you've got the basics down and you can connect to IoT Core, you can add your own spin on this project, try replacing the LED with a relay to control a power outlet or can connect a sensor to measure and analyze environmental data.

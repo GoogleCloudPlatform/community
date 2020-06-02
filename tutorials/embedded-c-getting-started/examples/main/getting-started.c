@@ -1,23 +1,14 @@
-/* Smart Outlet Example
 
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
 #include "include.h"
 
-static void initialize_sntp(void)
-{
+static void initialize_sntp(void) {
     ESP_LOGI(TAG, "Initializing SNTP");
     sntp_setoperatingmode(SNTP_OPMODE_POLL);
     sntp_setservername(0, "time.google.com");
     sntp_init();
 }
 
-static void obtain_time(void)
-{
+static void obtain_time(void) {
     initialize_sntp();
     // wait for time to be set
     time_t now = 0;
@@ -31,8 +22,7 @@ static void obtain_time(void)
     ESP_LOGI(TAG, "Time is set...");
 }
 
-void publish_telemetry_event(iotc_context_handle_t context_handle, iotc_timed_task_handle_t timed_task, void *user_data)
-{
+void publish_telemetry_event(iotc_context_handle_t context_handle, iotc_timed_task_handle_t timed_task, void *user_data) {
     char *publish_topic = NULL;
     asprintf(&publish_topic, PUBLISH_TOPIC_EVENT, CONFIG_GIOT_DEVICE_ID);
 
@@ -46,8 +36,7 @@ void publish_telemetry_event(iotc_context_handle_t context_handle, iotc_timed_ta
     free(publish_message);
 }
 
-void iotc_mqttlogic_subscribe_callback(iotc_context_handle_t in_context_handle, iotc_sub_call_type_t call_type, const iotc_sub_call_params_t *const params, iotc_state_t state, void *user_data)
-{
+void iotc_mqttlogic_subscribe_callback(iotc_context_handle_t in_context_handle, iotc_sub_call_type_t call_type, const iotc_sub_call_params_t *const params, iotc_state_t state, void *user_data) {
     char *sub_message = (char *)malloc(params->message.temporary_payload_data_length + 1);
     memcpy(sub_message, params->message.temporary_payload_data, params->message.temporary_payload_data_length);
     sub_message[params->message.temporary_payload_data_length] = '\0';
@@ -71,13 +60,10 @@ void iotc_mqttlogic_subscribe_callback(iotc_context_handle_t in_context_handle, 
             gpio_set_level(BLINK_GPIO, 0);
         }
     }
-
     free(sub_message);
 }
 
-void on_connection_state_changed(iotc_context_handle_t in_context_handle,
-                                 void *data, iotc_state_t state)
-{
+void on_connection_state_changed(iotc_context_handle_t in_context_handle, void *data, iotc_state_t state) {
     iotc_connection_data_t *conn_data = (iotc_connection_data_t *)data;
 
     switch (conn_data->connection_state) {
@@ -116,8 +102,7 @@ void on_connection_state_changed(iotc_context_handle_t in_context_handle,
             iotc_events_stop();
         } else {
             printf("connection closed - reason %d!\n", state);
-            iotc_connect(
-                in_context_handle, conn_data->username, conn_data->password, conn_data->client_id, conn_data->connection_timeout, conn_data->keepalive_timeout, &on_connection_state_changed);
+            iotc_connect(in_context_handle, conn_data->username, conn_data->password, conn_data->client_id, conn_data->connection_timeout, conn_data->keepalive_timeout, &on_connection_state_changed);
         }
         break;
 
@@ -127,8 +112,7 @@ void on_connection_state_changed(iotc_context_handle_t in_context_handle,
     }
 }
 
-static esp_err_t wifi_event_handler(void *ctx, system_event_t *event)
-{
+static esp_err_t wifi_event_handler(void *ctx, system_event_t *event) {
     switch (event->event_id) {
     case SYSTEM_EVENT_STA_START:
         esp_wifi_connect();
@@ -146,8 +130,7 @@ static esp_err_t wifi_event_handler(void *ctx, system_event_t *event)
     return ESP_OK;
 }
 
-static void wifi_init(void)
-{
+static void wifi_init(void) {
     tcpip_adapter_init();
     wifi_event_group = xEventGroupCreate();
     ESP_ERROR_CHECK(esp_event_loop_init(wifi_event_handler, NULL));
@@ -168,8 +151,7 @@ static void wifi_init(void)
     xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, false, true, portMAX_DELAY);
 }
 
-static void mqtt_task(void *pvParameters)
-{
+static void mqtt_task(void *pvParameters) {
     iotc_crypto_key_data_t iotc_connect_private_key_data;
     iotc_connect_private_key_data.crypto_key_signature_algorithm = IOTC_CRYPTO_KEY_SIGNATURE_ALGORITHM_ES256;
     iotc_connect_private_key_data.crypto_key_union_type = IOTC_CRYPTO_KEY_UNION_TYPE_PEM;
@@ -216,8 +198,7 @@ static void mqtt_task(void *pvParameters)
     vTaskDelete(NULL);
 }
 
-void app_main()
-{
+void app_main() {
     //Initialize NVS
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
