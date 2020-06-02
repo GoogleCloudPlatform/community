@@ -19,7 +19,7 @@ Objectives
 
 ### ESP-IDF Setup
 
-Before we can setup Google Cloud IoT Core we must get ESP-IDF, which is the SDK for Espressif chips. If you can download the [ESP-IDF][https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension] extension for Visual Studio Code, make sure you have all dependencies because if you don’t you will get errors and will need to redownload ESP-IDF.
+Before we can setup Google Cloud IoT Core we must get ESP-IDF, which is the SDK for Espressif chips. If you can download the [ESP-IDF](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension) extension for Visual Studio Code, make sure you have all dependencies because if you don’t you will get errors and will need to redownload ESP-IDF.
 You’ll need to have the following for ESP-IDF to work properly:
 
  - Python 3.5 or higher
@@ -58,11 +58,11 @@ Once ESP-IDF is completely installed, try out the hello-world example to see if 
 `alias get_idf='. $HOME/esp/esp-idf/export.sh'`
 
 in your $HOME/.profile file so you can just call get_idf. If you don't have a profile dotfile, then put the code above in $HOME/.bash_profile.
-For more troubleshooting steps, see the [getting started][https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/] page of the ESP-IDF.
+For more troubleshooting steps, see the [getting started](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) page of the ESP-IDF.
 
 ### ESP32 Setup
 
-We will be using the Espressif Systems ESP32 (ESP32), which is an inexpensive and easy to source microcontroller with WiFi and Bluetooth capabilities. To run this example, you will need an LED and two wires to connect it to the board if the LED is tolerant of the same voltage as the board(typically 3.3v or 5v) if it can’t then you should use a resistor in series with the [LEDS][http://www.resistorguide.com/resistor-for-led/].
+We will be using the Espressif Systems ESP32 (ESP32), which is an inexpensive and easy to source microcontroller with WiFi and Bluetooth capabilities. To run this example, you will need an LED and two wires to connect it to the board if the LED is tolerant of the same voltage as the board(typically 3.3v or 5v) if it can’t then you should use a resistor in series with the [LEDS](http://www.resistorguide.com/resistor-for-led/).
 
 The ESP32 will communicate with Google Cloud IoT Core using Wifi and will send telemetry data using the MQTT protocol, we will also read the internal temperature sensor to send telemetry data to the device's subscription topic.
 
@@ -86,13 +86,13 @@ If you’ve never used Google IoT Core, don’t worry, the steps below will get 
 
 Now that we have a little bit of information about Google Cloud IoT Core lets set it up.
 
-To learn more about the protocols for [Google Cloud IoT Core][https://cloud.google.com/iot/docs/], read the [MQTT][https://cloud.google.com/iot/docs/how-tos/mqtt-bridge] and [HTTP][https://cloud.google.com/iot/docs/how-tos/http-bridge] documentation.
+To learn more about the protocols for [Google Cloud IoT Core](https://cloud.google.com/iot/docs/), read the [MQTT](https://cloud.google.com/iot/docs/how-tos/mqtt-bridge) and [HTTP](https://cloud.google.com/iot/docs/how-tos/http-bridge) documentation.
 
 ### Setting up your device registry
 
 Before connecting to Google Cloud you need to create device authorization credentials and a device registry to contain your devices.
 
-There are two ways you can set up your project on Google Cloud IoT, you can use the Cloud SDK (gcloud) or using the UI in the [Google Cloud Console][https://console.cloud.google.com/] This guide will go through setting the project up using gcloud. After you have downloaded the [Cloud SDK][https://cloud.google.com/sdk].
+There are two ways you can set up your project on Google Cloud IoT, you can use the Cloud SDK (gcloud) or using the UI in the [Google Cloud Console](https://console.cloud.google.com/) This guide will go through setting the project up using gcloud. After you have downloaded the [Cloud SDK](https://cloud.google.com/sdk).
 
 **To set up your device registry :**
 1. Generate Elliptic Curve (EC) device credentials for authenticating the device when it’s
@@ -179,7 +179,7 @@ vTaskDelete(NULL);
 }
 ```
 
-If you have any questions on what each function does the [IoT Device SDK][https://googlecloudplatform.github.io/iot-device-sdk-embedded-c/api/html/d9/d22/iotc_8h.html] docs is a great resource.
+If you have any questions on what each function does the [IoT Device SDK](https://googlecloudplatform.github.io/iot-device-sdk-embedded-c/api/html/d9/d22/iotc_8h.html) docs is a great resource.
 
 After successfully connecting to the cloud you will need to subscribe to configuration and command topic of the device, you do this by calling iotc_subscribe function, you must include :
 
@@ -249,8 +249,6 @@ If you want to exit the serial monitor use Ctrl + ]
 
 **To send commands :**
 
-![Send Command](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/command.jpg)
-
 1. Navigate to your registry and then to the device
 1. Click on the send command button at the top
 1. Send the following commands
@@ -262,13 +260,15 @@ light:0 for light off
 
 Note: if the board you're using has the GPIO pin set to pulldown, setting this value to 1 will turn the light off.
 
-**To view telemetry data :**
+![Send Command](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/command.jpg)
 
-![Blinky](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/device.jpg)
+**To view telemetry data :**
 
 1. Navigate to your registry
 1. Click on the PubSub topic
 1. Click on the PubSub subscription
 1. Click on view message at the top and pull your messages
+
+![Blinky](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/device.jpg)
 
 Now that you've got the basics down and you can connect to Google IoT Core, you can add your own spin on this project, try replacing the LED with a relay to control a power outlet or can connect a sensor to measure and analyze environmental data.
