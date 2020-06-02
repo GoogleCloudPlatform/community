@@ -1,25 +1,31 @@
 ---
+title: Getting Started with Google IoT Embedded C SDK
+description: Learn how to connect to Google IoT Core and send commands/telemetry from the device on the Embedded C SDK
+author: Gal Zahavi
+tags: IoT,Google Cloud, Internet of Things, ESP32, ESP-IDF, IoT Core
+date_published: 2020-08-02
 ---
+
 This tutorial shows how to use the Google IoT Core Embedded C library and will take you through the steps of creating a IoT Core project which will receive telemetry data from an ESP32 microcontroller and will be able to turn on and off an LED. Follow this tutorial to configure Cloud IoT Core and run the mqtt-example on your ESP32.
 Objectives
 
-● Install ESP-IDF
-● Create a project on Google Cloud IoT Core
-● Connect ESP32 to IoT Core
-● Publish Telemetry Data from device
-● Receive Commands on the device
+ - Install ESP-IDF
+ - Create a project on Google Cloud IoT Core
+ - Connect ESP32 to IoT Core
+ - Publish Telemetry Data from device
+ - Receive Commands on the device
 
-##Before you begin
+## Before you begin
 
-###ESP-IDF Setup
+### ESP-IDF Setup
 
 Before we can setup Google Cloud IoT Core we must get ESP-IDF, which is the SDK for Espressif chips. If you can download the [ESP-IDF][https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension] extension for Visual Studio Code, make sure you have all dependencies because if you don’t you will get errors and will need to redownload ESP-IDF.
 You’ll need to have the following for ESP-IDF to work properly:
 
-● Python 3.5 or higher
-● Git
-● Cmake
-● Ninja
+ - Python 3.5 or higher
+ - Git
+ - Cmake
+ - Ninja
 
 If you don't have these dependencies, you can install them using :
 
@@ -54,7 +60,7 @@ Once ESP-IDF is completely installed, try out the hello-world example to see if 
 in your $HOME/.profile file so you can just call get_idf. If you don't have a profile dotfile, then put the code above in $HOME/.bash_profile.
 For more troubleshooting steps, see the [getting started][https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/] page of the ESP-IDF.
 
-###ESP32 Setup
+### ESP32 Setup
 
 We will be using the Espressif Systems ESP32 (ESP32), which is an inexpensive and easy to source microcontroller with WiFi and Bluetooth capabilities. To run this example, you will need an LED and two wires to connect it to the board if the LED is tolerant of the same voltage as the board(typically 3.3v or 5v) if it can’t then you should use a resistor in series with the [LEDS][http://www.resistorguide.com/resistor-for-led/].
 
@@ -74,7 +80,7 @@ uint8_t temprature_sens_read();
 #endif
 ```
 
-###Google Cloud IoT Core
+### Google Cloud IoT Core
 
 If you’ve never used Google IoT Core, don’t worry, the steps below will get you setup to transmit telemetry data to the cloud but before we can do that lets talk about Google IoT Core and its components. Google Cloud IoT Core is a complete set of tools to connect, process, store, and analyze data both at the edge and in the cloud. Google Cloud IoT consists of the device management API for creating and managing logical collections of devices and the protocol bridge which adapts device-friendly protocols (MQTT or HTTP) to scalable Google infrastructure.
 
@@ -82,7 +88,7 @@ Now that we have a little bit of information about Google Cloud IoT Core lets se
 
 To learn more about the protocols for [Google Cloud IoT Core][https://cloud.google.com/iot/docs/], read the [MQTT][https://cloud.google.com/iot/docs/how-tos/mqtt-bridge] and [HTTP][https://cloud.google.com/iot/docs/how-tos/http-bridge] documentation.
 
-###Setting up your device registry
+### Setting up your device registry
 
 Before connecting to Google Cloud you need to create device authorization credentials and a device registry to contain your devices.
 
@@ -105,7 +111,7 @@ gcloud pubsub subscriptions create data --topic=temperature
 gcloud iot registries create esp-test --region=us-central1 --event-notification-config=topic=temperature gcloud iot devices create test-dev --region=us-central1 --registry=esp-test \ --public-key path=ec_public.pem,type=es256
 ```
 
-###Cloning mqtt example
+### Cloning mqtt example
 
 You will need to clone the repo to get the example code, in your terminal go to a location you want to store the cloned repo and run the following command:
 
@@ -113,7 +119,7 @@ You will need to clone the repo to get the example code, in your terminal go to 
 
 Recuse submodules is important because you will need the Google IoT Core Embedded C SDK which is included in the repository as a submodule.
 
-##Connecting an ESP32 to Cloud IoT Core
+## Connecting an ESP32 to Cloud IoT Core
 
 The mqtt_task function sets up the parameters needed to connect to the cloud. It uses the private key created earlier in iotc_connect_private_key_data. The data is applied to create the jwt to connect to IoT Core, as highlighted in the following code.
 
@@ -127,12 +133,12 @@ With the private key as data, you can initialize iotc by calling iotc_inilialize
 
 To connect our ESP32 to Cloud IoT Core use iotc_connect which is from the Google IoT Core Embedded C SDK. The function takes multiple parameters you need to provide the following:
 
-● Username (usually null)
-● Password ( jwt )
-● Client_id ( device path)
-● Connection_timeout
-● keepalive_timeout
-● Client_callback
+ - Username (usually null)
+ - Password ( jwt )
+ - Client_id ( device path)
+ - Connection_timeout
+ - keepalive_timeout
+ - Client_callback
 
 ```
 static void mqtt_task(void *pvParameters) {
@@ -177,11 +183,11 @@ If you have any questions on what each function does the [IoT Device SDK][https:
 
 After successfully connecting to the cloud you will need to subscribe to configuration and command topic of the device, you do this by calling iotc_subscribe function, you must include :
 
-● Topic command ( includes topic and device id )
-● QoS
-● Callback function
+ - Topic command ( includes topic and device id )
+ - QoS
+ - Callback function
 
-##Publish Telemetry Data from ESP32 to Cloud IoT Core
+## Publish Telemetry Data from ESP32 to Cloud IoT Core
 
 To publish telemetry to IoT Core we use iotc_publish which must include the topic name, message and QoS inorder to send the message.
 
@@ -191,8 +197,11 @@ You can find this code in the mqtt-example.c file on line 35.
 ```
 void publish_telemetry_event(iotc_context_handle_t context_handle, iotc_timed_task_handle_t timed_task, void *user_data) {
 char *publish_topic = NULL;
+
 asprintf(&publish_topic, PUBLISH_TOPIC_EVENT, CONFIG_GIOT_DEVICE_ID);
+
 char *publish_message = NULL; asprintf(&publish_message, TEMPERATURE_DATA, MIN_TEMP + rand() % 10);
+
 ESP_LOGI(TAG, "publishing msg \"%s\" to topic: \"%s\"\n", publish_message, publish_topic);
 
 iotc_publish(context_handle, publish_topic, publish_message, iotc_example_qos,NULL,NULL);
@@ -200,17 +209,21 @@ free(publish_topic); free(publish_message);
 }
 ```
 
-##Sending Commands from Cloud IoT Core to ESP32
+## Sending Commands from Cloud IoT Core to ESP32
 The callback function is invoked when the device receives a message from the cloud. This is where the code turns the led on and off based on incoming messages.You can find this code in the mqtt-example.c file on line 50.
 
 ```
 void iotc_mqttlogic_subscribe_callback( iotc_context_handle_t in_context_handle, iotc_sub_call_type_t call_type, const iotc_sub_call_params_t *const params, iotc_state_t state, void *user_data) {
+
 memcpy(sub_message, params->message.temporary_payload_data, params->message.temporary_payload_data_length);
+
 sub_message[params->message.temporary_payload_data_length] = '\0';
-ESP_LOGI(TAG, "Message Payload: %s \n", sub_message); }
+
+ESP_LOGI(TAG, "Message Payload: %s \n", sub_message);
+}
 ```
 
-##Running the Sample
+## Running the Sample
 
 **To Connect to Cloud :**
 
