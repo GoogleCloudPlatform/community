@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-python ./cloudiot_mqtt_gateway.py \
+python3 ./cloudiot_mqtt_gateway.py \
   --registry_id=my-registry \
   --gateway_id=my-gateway \
   --cloud_region=us-central1 \
-  --project_id=my-cloud-project \
+  --project_id=$GOOGLE_CLOUD_PROJECT \
   --private_key_file=rsa_private.pem \
   --algorithm=RS256 \
   --ca_certs=roots.pem \
