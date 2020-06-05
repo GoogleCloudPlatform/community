@@ -26,7 +26,7 @@ To submit a tutorial:
 
 1.  Accept the Contributor License Agreement (CLA):
 
-    [**View the CLA**](#contributor-license-agreements)
+    [**View the CLA**][contributor-license-agreements]
 
 1.  Read the style guide before preparing your submission:
 
@@ -81,3 +81,4 @@ accept your pull requests.
 [pr]: https://help.github.com/articles/using-pull-requests/
 [in_cla]: https://developers.google.com/open-source/cla/individual
 [corp_cla]: https://developers.google.com/open-source/cla/corporate
+[contributor-license-agreements]: https://cla.developers.google.com/about
