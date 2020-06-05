@@ -56,7 +56,7 @@ If the tool check verification succeeds, you’re ready to continue.
 
 Once ESP-IDF is completely installed, try out the hello-world example to see if everything is working properly, I suggest putting the command to initialize ESP-IDF into an alias:
 
-```c
+```bash
 alias get_idf='. $HOME/esp/esp-idf/export.sh'
 ```
 
@@ -124,7 +124,7 @@ gcloud iot registries create esp-test --region=us-central1 --event-notification-
 
 You will need to clone the repo to get the example code. In your terminal, go to a location you want to store the cloned repo and run the following command:
 
-```c
+```bash
 git clone https://github.com/espressif/esp-google-iot --recurse-submodules
 ```
 
@@ -261,7 +261,7 @@ void iotc_mqttlogic_subscribe_callback(iotc_context_handle_t in_context_handle, 
 
 **To Connect to Cloud:**
 
-1. Set up your menu configuration 
+1. Use menu configuration with `make`
 
 ```c
 cd /examples/main/ make menuconfig

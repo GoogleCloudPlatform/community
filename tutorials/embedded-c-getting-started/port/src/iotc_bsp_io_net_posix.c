@@ -32,8 +32,7 @@ extern "C" {
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 
-iotc_bsp_io_net_state_t iotc_bsp_io_net_create_socket(
-    iotc_bsp_socket_t* iotc_socket) {
+iotc_bsp_io_net_state_t iotc_bsp_io_net_create_socket( iotc_bsp_socket_t* iotc_socket) {
   *iotc_socket = socket(AF_INET, SOCK_STREAM, 0);
 
   if (-1 == *iotc_socket) {
@@ -50,9 +49,7 @@ iotc_bsp_io_net_state_t iotc_bsp_io_net_create_socket(
   return IOTC_BSP_IO_NET_STATE_OK;
 }
 
-iotc_bsp_io_net_state_t iotc_bsp_io_net_connect(iotc_bsp_socket_t* iotc_socket,
-                                                const char* host,
-                                                uint16_t port) {
+iotc_bsp_io_net_state_t iotc_bsp_io_net_connect(iotc_bsp_socket_t* iotc_socket, const char* host, uint16_t port) {
   struct hostent* hostinfo = gethostbyname(host);
 
   /* if null it means that the address has not been found */
@@ -79,8 +76,7 @@ iotc_bsp_io_net_state_t iotc_bsp_io_net_connect(iotc_bsp_socket_t* iotc_socket,
   return IOTC_BSP_IO_NET_STATE_ERROR;
 }
 
-iotc_bsp_io_net_state_t iotc_bsp_io_net_connection_check(
-    iotc_bsp_socket_t iotc_socket, const char* host, uint16_t port) {
+iotc_bsp_io_net_state_t iotc_bsp_io_net_connection_check( iotc_bsp_socket_t iotc_socket, const char* host, uint16_t port) {
   (void)host;
   (void)port;
 
@@ -99,10 +95,7 @@ iotc_bsp_io_net_state_t iotc_bsp_io_net_connection_check(
   return IOTC_BSP_IO_NET_STATE_OK;
 }
 
-iotc_bsp_io_net_state_t iotc_bsp_io_net_write(iotc_bsp_socket_t iotc_socket,
-                                              int* out_written_count,
-                                              const uint8_t* buf,
-                                              size_t count) {
+iotc_bsp_io_net_state_t iotc_bsp_io_net_write(iotc_bsp_socket_t iotc_socket, int* out_written_count, const uint8_t* buf, size_t count) {
   if (NULL == out_written_count || NULL == buf) {
     return IOTC_BSP_IO_NET_STATE_ERROR;
   }
@@ -143,9 +136,7 @@ iotc_bsp_io_net_state_t iotc_bsp_io_net_write(iotc_bsp_socket_t iotc_socket,
   return IOTC_BSP_IO_NET_STATE_OK;
 }
 
-iotc_bsp_io_net_state_t iotc_bsp_io_net_read(iotc_bsp_socket_t iotc_socket,
-                                             int* out_read_count, uint8_t* buf,
-                                             size_t count) {
+iotc_bsp_io_net_state_t iotc_bsp_io_net_read(iotc_bsp_socket_t iotc_socket, int* out_read_count, uint8_t* buf, size_t count) {
   if (NULL == out_read_count || NULL == buf) {
     return IOTC_BSP_IO_NET_STATE_ERROR;
   }
@@ -177,8 +168,7 @@ iotc_bsp_io_net_state_t iotc_bsp_io_net_read(iotc_bsp_socket_t iotc_socket,
   return IOTC_BSP_IO_NET_STATE_OK;
 }
 
-iotc_bsp_io_net_state_t iotc_bsp_io_net_close_socket(
-    iotc_bsp_socket_t* iotc_socket) {
+iotc_bsp_io_net_state_t iotc_bsp_io_net_close_socket( iotc_bsp_socket_t* iotc_socket) {
   if (NULL == iotc_socket) {
     return IOTC_BSP_IO_NET_STATE_ERROR;
   }
@@ -192,9 +182,7 @@ iotc_bsp_io_net_state_t iotc_bsp_io_net_close_socket(
   return IOTC_BSP_IO_NET_STATE_OK;
 }
 
-iotc_bsp_io_net_state_t iotc_bsp_io_net_select(
-    iotc_bsp_socket_events_t* socket_events_array,
-    size_t socket_events_array_size, long timeout_sec) {
+iotc_bsp_io_net_state_t iotc_bsp_io_net_select( iotc_bsp_socket_events_t* socket_events_array, size_t socket_events_array_size, long timeout_sec) {
   fd_set rfds;
   fd_set wfds;
   fd_set efds;

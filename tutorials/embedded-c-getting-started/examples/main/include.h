@@ -65,8 +65,7 @@ extern "C"
 char *subscribe_topic_command, *subscribe_topic_config;
 
 iotc_mqtt_qos_t iotc_example_qos = IOTC_MQTT_QOS_AT_LEAST_ONCE;
-static iotc_timed_task_handle_t delayed_publish_task =
-    IOTC_INVALID_TIMED_TASK_HANDLE;
+static iotc_timed_task_handle_t delayed_publish_task = IOTC_INVALID_TIMED_TASK_HANDLE;
 iotc_context_handle_t iotc_context = IOTC_INVALID_CONTEXT_HANDLE;
 
 uint8_t temprature_sens_read();
