@@ -223,10 +223,9 @@ select **Storage**, and then click **Browser**.
 
 In the list of buckets, select the bucket that you created earlier.
 
-The bucket contains output and temp folders. Dataflow saves the
-output in shards, so your bucket will contain several output files.
+Dataflow saves the output in shards, so your bucket will contain several output files.
 
-The temp folder is for staging binaries needed by the workers and for
+The `tmp` folder is for staging binaries needed by the workers and for
 temporary files needed by the job execution.
 
 ## Clean up
