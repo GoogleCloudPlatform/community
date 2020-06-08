@@ -1,26 +1,33 @@
 ---
-title: Generating large volumes of logs with Python on GKE to Cloud Pub/Sub
-description: Learn to generate large volume of logs from GKE to Cloud Pub/Sub using Locust in Python.
+title: Generate a large volume of logs with Python on GKE to Pub/Sub
+description: Learn to generate a large volume of logs from GKE to Pub/Sub using Locust in Python.
 author: arieljassan
-tags: GKE, Cloud PubSub, Locust, Python
-date_published: 2020-04-08
+tags: GKE, Locust, Python
+date_published: 2020-06-08
 ---
 
-One of the challenges of building scalable data-intensive applications is the ability to create tests that are representative enough to simulate the scale of the system in production. To overcome this challenge, we need tools to generate custom test data at scale, and in this tutorial we aim to make that process easier with scripts and architure to simulate logs published to Cloud Pub/Sub. Cloud Pub/Sub allows ingestion of high volumes of ddata in real-time, that you can then plug into other data sinks and systems. 
- 
-More specifically, this tutorial describes how to create a GKE (Google Kubernetes Engine) cluster, deploy a Python application that generates logs using the "Faker" library, and simulates load with the Python library "Locust". 
+One of the challenges of building scalable data-intensive applications is the ability to create tests that are 
+representative enough to simulate the scale of the system in production. To overcome this challenge, you need tools to 
+generate custom test data at scale. This tutorial makes that process easier with scripts and architecture to simulate logs 
+published to Pub/Sub. Pub/Sub allows ingestion of high volumes of data in real time, which you can then plug into other data
+sinks and systems. 
 
-By the end of the tutorial you will also be able to monitor the cluster utilization from the Kubernetes Engine dashboard in Stackdriver and the arrival of the messages to Pub/Sub in the Cloud Console.
+This tutorial describes how to create a GKE (Google Kubernetes Engine) cluster, deploy a Python application that generates 
+logs using the Faker library, and simulate load with the Python library Locust. 
 
-This tutorial assumes you already own a project in GCP and that you have the gcloud SDK already installed in your environment. To install gcloud SDK, see [Installing Google Cloud SDK](https://cloud.google.com/sdk/install)
+By the end of the tutorial, you'll be able to monitor the cluster utilization from the Kubernetes Engine dashboard in 
+Cloud Monitoring and the arrival of the messages to Pub/Sub in the Cloud Console.
+
+This tutorial assumes that you already have a project in Google Cloud and that you have the Cloud SDK installed in your
+environment. To install the Cloud SDK, see [Installing Google Cloud SDK](https://cloud.google.com/sdk/install).
 
 ## Objectives
 
-- Create a GKE cluster and a Cloud Pub/Sub topic.
+- Create a GKE cluster and a Pub/Sub topic.
 - Create Docker containers for the application logic and for the Locust master and workers.
-- Create Service Accounts with permissions to deploy Docker containers from Cloud Build in GKE and to publish to Cloud Pub/Sub.
+- Create Service Accounts with permissions to deploy Docker containers from Cloud Build in GKE and to publish to Pub/Sub.
 - Deploy the containers to GKE.
-- Monitor GKE cluster an Cloud Pub/Sub topic utilization.
+- Monitor GKE cluster an Pub/Sub topic utilization.
 
 ## Costs
 
@@ -30,7 +37,7 @@ You may incur costs in GKE, Compute Engine, Cloud Build, Cloud Storage, and Netw
 
 The following diagram shows the architecture components of the solution.
 
-![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/logs-generator/architecture.png)
+![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/generate-logs-scale/architecture.png)
 
 1. The Kubernetes deployment 'locust-master' is responsible for coordinating the Locust threads as defined by the end user.
 1. The Kubernetes deployment 'locust-worker' creates http requests to trigger the generation of logs by the 'webapp' containers.
@@ -44,12 +51,14 @@ In addition to the components above, there are two Kubernetes services deployed 
 - The Cluster IP service 'webapp-cip' servers as the interface between the Locust testing environment and the web application.
 
 ## Before you begin
-Clone the Google Cloud Community repository and cd into the directory.
+
+Clone the Google Cloud Community repository and go to the directory.
     
-        git clone https://github.com/GoogleCloudPlatform/community.git
-        cd community/tutorials/logs-generator    
+    git clone https://github.com/GoogleCloudPlatform/community.git
+    cd community/tutorials/generate-logs-scale    
 
 ## Enable relevant APIs
+
 Run the following gcloud commands in the console to enable APIs for GKE, Google Container Registry, Cloud Pub/Sub, Stackdriver, and Cloud Build. It may take a few minutes to enable them. 
     
         gcloud services enable \
@@ -60,6 +69,7 @@ Run the following gcloud commands in the console to enable APIs for GKE, Google 
             cloudbuild.googleapis.com 
     
 ## Set environment variables
+
 Run the following comands in the console to set environment variables. Make sure to replace the values for PROJECT_ID, TOPIC_NAME, and CLUSTER_NAME.
     
         REGION=us-central1
@@ -72,6 +82,7 @@ Run the following comands in the console to set environment variables. Make sure
         gcloud config set project $PROJECT_ID
 	
 ## Create a Service Account with permissions to access Container Registry
+
 Run the commands below to create a Service Account with permissions to read from Cloud Storage buckets, where Container Registry stores container images. This Service Account will be assigned to GKE nodes at the time of the creation of the cluster.
 
         # Create Service Account.
@@ -85,8 +96,10 @@ Run the commands below to create a Service Account with permissions to read from
             --member serviceAccount:$SA_FULL_NAME \
             --role "roles/storage.objectViewer" 
         
-## Create a GKE Cluster 
-Run the following command to create a GKE cluster with 5 nodes of the machine type n1-standard-4 with binding to the Service Account generated it the previous step. The command enables autoscaling up to 10 nodes and Horizontal Pod Autoscaling.
+## Create a GKE cluster
+
+Run the following command to create a GKE cluster with 5 nodes of the machine type n1-standard-4 with binding to the Service
+Account generated it the previous step. The command enables autoscaling up to 10 nodes and Horizontal Pod Autoscaling.
 
         gcloud beta container clusters create \
             --project=$PROJECT_ID \
@@ -103,33 +116,38 @@ Run the following command to create a GKE cluster with 5 nodes of the machine ty
             --addons "HorizontalPodAutoscaling"  \
              $CLUSTER_NAME
 
-## Create a Cloud Pub/Sub topic and subscription
+## Create a Pub/Sub topic and subscription
+
 Run the following commands to create a topic and a subscription with the names set in the environment variables:
     
         gcloud pubsub topics create $TOPIC_NAME
         gcloud pubsub subscriptions create $SUBSCRIPTION_NAME \
           --topic=$TOPIC_NAME 
 
-## Edit in the web application the project id and Pub/Sub topic name
+## Edit the project ID and Pub/Sub topic name in the web application
+
 Run the following commands to set PROJECT_ID and TOPIC_NAME in the web application file.
     
         sed -i -e "s/YOUR_PROJECT_ID/$PROJECT_ID/" webapp-docker-image/webapp/app.py
         sed -i -e "s/YOUR_TOPIC_NAME/$TOPIC_NAME/" webapp-docker-image/webapp/app.py
 
 ## Build the Locust and web application containers
+
 Run the following commands to create Docker container images in Cloud Build based on the code in the directories `locust-docker-image` and `webapp-docker-image`:
      
         gcloud builds submit --tag gcr.io/$PROJECT_ID/locust-tasks:latest locust-docker-image
         gcloud builds submit --tag gcr.io/$PROJECT_ID/webapp:latest webapp-docker-image
     
-## Edit in the Kubernetes files the project id
+## Edit in the Kubernetes files the project ID
+
 Run the commands below to set the values of PROJECT_ID in the Kubernetes deployment files:
     
         sed -i -e "s/YOUR_PROJECT_ID/$PROJECT_ID/" kubernetes-config/locust-master-controller.yaml
         sed -i -e "s/YOUR_PROJECT_ID/$PROJECT_ID/" kubernetes-config/locust-worker-controller.yaml 
         sed -i -e "s/YOUR_PROJECT_ID/$PROJECT_ID/" kubernetes-config/webapp-controller.yaml
 
-## Create a Service Account to be deployed in the Docker containers 
+## Create a Service Account to be deployed in the Docker containers
+
 Run the commands below to create a Service Account and upload the Service Account key as a Kubernetes secret.
 
         # Create Service Account.
@@ -154,6 +172,7 @@ Run the commands below to create a Service Account and upload the Service Accoun
 
 
 ## Create deployments and sevices
+
 Run the following commands to create the deployments for the web application, Locust master and workers, and the services:
     
         kubectl apply -f kubernetes-config/locust-master-controller.yaml
@@ -164,66 +183,78 @@ Run the following commands to create the deployments for the web application, Lo
     
     
 ## Do port-forward to get connect from port 8888
+
 Run the command below to do port-forwarding of the port 8089 to port 8888. If you are on Cloud Shell, click on 'web preview' button, and click on 'Preview on port 8888'. If you don't see port 8888, click on 'Change port' and find port '8888'.
-![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/logs-generator/images/cloud_shell_port_forwarding.png)
+![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/generate-logs-scale/cloud_shell_port_forwarding.png)
 
         kubectl port-forward -n default "$(kubectl get pods -l app=locust-master \
             -o jsonpath='{.items..metadata.name}')" 8888:8089
     
 
 ## Run a test from the Locust UI from your browser
+
 In the web browser showing the Locust interface, enter the value 100 in 'Number of users to simulate' and 100 in 'Hatch rate'. Keep the value in the field 'Host' as is and click on 'Start swarming'.
 
-![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/logs-generator/images/locust_ui_1.png)
+![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/generate-logs-scale/locust_ui_1.png)
 
 Once the test started, you can find some statistics in Locust as below.
-![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/logs-generator/images/locust_ui_2.png)
+![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/generate-logs-scale/locust_ui_2.png)
 
-## Monitor GKE Cluster Utilization
+## Monitor GKE cluster utilization
+
 You can check the utilization of you GKE cluster in the Kubenetes Monitoring dashboard following this path:
 Menu > Monitoring > Dashboards > Kubernetes Engine
 
 Or clicking on [this link ot the Kubernetes Engine dashboard](https://pantheon.corp.google.com/monitoring/dashboards/resourceList/kubernetes)
 
-![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/logs-generator/images/kubernetes_stackdriver.png)
+![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/generate-logs-scale/kubernetes_stackdriver.png)
 
 ## Monitor Pub/Sub API requests
+
 Validate that the number of requests from the Locust UI are similar to those in Pub/Sub API in Stackdriver. Follow the following path:
 Menu > Monitoring > Dashboards > Cloud Pub/Sub
 or clicking on [in this link](https://pantheon.corp.google.com/monitoring/dashboards/resourceList/pubsub_topic) and clicking on the topic.
 
-![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/logs-generator/images/pubsub_stackdriver.png)
+![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/generate-logs-scale/pubsub_stackdriver.png)
 
-## Extensions to this lab
+## Extensions to this tutorial
 
 ### Resize your deployments and GKE cluster
-One the most important benefits of GKE and containerized applications is that you can scale as needed. You can use this tutorial to generate a larger number of logs per second to simulate high loads. To ahieve that, you can adjust the number of pods of the deployments with the following commands:
 
-        kubectl scale deployment locust-worker --replicas 10
-        kubectl scale deployment webapp --replicas 10
+One the most important benefits of GKE and containerized applications is that you can scale as needed. You can generate a
+larger number of logs per second to simulate high loads by adjusting the number of pods of the deployments with the 
+following commands:
 
-Make sure to keep always the deployment of `locust-master` to one replica. 
+    kubectl scale deployment locust-worker --replicas 10
+    kubectl scale deployment webapp --replicas 10
 
-You can also resize your GKE cluster using the command below. 
+Make sure to always keep the deployment of `locust-master` to one replica. 
+
+You can also resize your GKE cluster using this command: 
     
-        gcloud container clusters resize $CLUSTER_NAME --node-pool default \
-            --num-nodes [NUMBER_OF_NODES]
+    gcloud container clusters resize $CLUSTER_NAME --node-pool default \
+        --num-nodes [NUMBER_OF_NODES]
 
 ### Try out Cloud Run
-You can also use Cloud Run to run the 'webapp' containers to allow for automatic resizing the number of containers. You read about Cloud Run [here](https://cloud.google.com/run).
 
+You can also use [Cloud Run](https://cloud.google.com/run) to run the 'webapp' containers to allow for automatic resizing of
+the number of containers.
 
 ## Cleaning up
 
-The easiest way to avoid incurring charges to your Google Cloud Platform account for the resources used in this tutorial is to delete the project you created.
+The easiest way to avoid incurring charges to your Google Cloud account for the resources used in this tutorial is to delete
+the project you created.
 
-To delete the project, follow the steps below:
-1. In the Cloud Platform Console, [go to the Projects page](https://console.cloud.google.com/iam-admin/projects).
+To delete the project, do the following:
 
-1. In the project list, select the project you want to delete and click **Delete project**.
-![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/logs-generator/images/img_delete_project.png) 
-1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
+1.  In the Cloud Console, [go to the Projects page](https://console.cloud.google.com/iam-admin/projects).
+
+1.  In the project list, select the project you want to delete and click **Delete project**.
+
+    ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/generate-logs-scale/img_delete_project.png) 
+    
+1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
  
 ## What's next
 
-- Try out other Google Cloud Platform features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials). 
+- Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials). 
