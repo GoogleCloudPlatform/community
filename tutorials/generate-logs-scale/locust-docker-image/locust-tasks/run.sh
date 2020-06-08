@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Copyright 2018 Google LLC
+# Copyright 2015 Google Inc. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     https://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,14 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-python3 ./cloudiot_mqtt_gateway.py \
-  --registry_id=my-registry \
-  --gateway_id=my-gateway \
-  --cloud_region=us-central1 \
-  --project_id=$GOOGLE_CLOUD_PROJECT \
-  --private_key_file=rsa_private.pem \
-  --algorithm=RS256 \
-  --ca_certs=roots.pem \
-  --mqtt_bridge_hostname=mqtt.googleapis.com \
-  --mqtt_bridge_port=8883 \
-  --jwt_expires_minutes=1200
+
+LOCUST="/usr/local/bin/locust"
+LOCUS_OPTS="-f /locust-tasks/tasks.py --host=$TARGET_HOST"
+LOCUST_MODE=${LOCUST_MODE:-standalone}
+
+if [[ "$LOCUST_MODE" = "master" ]]; then
+    LOCUS_OPTS="$LOCUS_OPTS --master"
+elif [[ "$LOCUST_MODE" = "worker" ]]; then
+    LOCUS_OPTS="$LOCUS_OPTS --slave --master-host=$LOCUST_MASTER"
+fi
+
+echo "$LOCUST $LOCUS_OPTS"
+
+$LOCUST $LOCUS_OPTS
