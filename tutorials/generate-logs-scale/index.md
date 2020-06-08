@@ -8,9 +8,9 @@ date_published: 2020-06-08
 
 One of the challenges of building scalable data-intensive applications is the ability to create tests that are 
 representative enough to simulate the scale of the system in production. To overcome this challenge, you need tools to 
-generate custom test data at scale. This tutorial makes that process easier with scripts and architecture to simulate logs 
-published to Pub/Sub. Pub/Sub allows ingestion of high volumes of data in real time, which you can then use in other data
-sinks and systems. 
+generate custom test data at a large scale. This tutorial makes that process easier with scripts and architecture to 
+simulate logs published to Pub/Sub. Pub/Sub allows ingestion of high volumes of data in real time, which you can then use in
+data sinks and other systems. 
 
 This tutorial describes how to create a GKE (Google Kubernetes Engine) cluster, deploy a Python application that generates 
 logs using the Faker library, and simulate load with the Python library Locust. 
@@ -111,8 +111,8 @@ Registry stores container images.
         
 ## Create a GKE cluster
 
-Run the following command to create a GKE cluster with 5 nodes of the machine type n1-standard-4 with binding to the Service
-Account. The command enables autoscaling up to 10 nodes and Horizontal Pod Autoscaling.
+Run the following command to create a GKE cluster with 5 nodes of the machine type `n1-standard-4` with binding to the
+Service Account. The command enables autoscaling up to 10 nodes and Horizontal Pod Autoscaling.
 
     gcloud beta container clusters create \
         --project=$PROJECT_ID \
@@ -196,7 +196,7 @@ Run the following commands to create the deployments for the web application, Lo
     
 ## Use port forwarding to connect from port 8888
 
-Run the command below to forward port 8089 to port 8888. 
+Run the following command to forward port 8089 to port 8888:
 
     kubectl port-forward -n default "$(kubectl get pods -l app=locust-master \
         -o jsonpath='{.items..metadata.name}')" 8888:8089
@@ -257,7 +257,7 @@ You can also resize your GKE cluster with this command:
 
 ### Try out Cloud Run
 
-You can also use [Cloud Run](https://cloud.google.com/run) to run the 'webapp' containers to allow for automatic resizing of
+You can also use [Cloud Run](https://cloud.google.com/run) to run the `webapp` containers to allow for automatic resizing of
 the number of containers.
 
 ## Cleaning up
