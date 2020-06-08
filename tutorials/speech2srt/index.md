@@ -1,9 +1,9 @@
 ---
 title: Creating translated subtitles with AI
-description: Use Google Cloud Speech-to-Text API and Translation API to transcribe dialog to SRT subtitles, and localize subtitles for different languages.
+description: Use the Speech-to-Text API and Translation API to transcribe dialog to SRT subtitles, and localize subtitles for different languages.
 author: lepistom
-tags: AI, ML, Artificial Intelligence, Machine Learning
-date_published: 2020-05-21
+tags: AI, ML, artificial intelligence, machine learning
+date_published: 2020-06-09
 ---
 
 Markku Lepisto | Solutions Architect | Google Cloud
@@ -20,7 +20,7 @@ The main functionalities demonstrated are the following:
 
 ## Architecture diagram
 
-![architecture diagram](img/architecture.svg)
+![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/speech2srt/architecture.svg)
 
 ## Costs
 
