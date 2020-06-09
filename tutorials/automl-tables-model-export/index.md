@@ -1,10 +1,9 @@
-
 ---
-title: Exporting a custom AutoML Tables model and serving it with Cloud Run
+title: Export a custom AutoML Tables model and serve it with Cloud Run
 description: Learn how to export an AutoML Tables custom model and serve it with Cloud Run, or any other environment where you can run a container.
 author: amygdala
 tags: AutoML, Cloud Run, ML, TensorBoard
-date_published: 2020-05-27
+date_published: 2020-06-10
 ---
 
 ## Introduction
