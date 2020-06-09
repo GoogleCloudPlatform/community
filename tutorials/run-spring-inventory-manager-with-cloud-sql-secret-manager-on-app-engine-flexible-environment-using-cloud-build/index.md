@@ -194,7 +194,7 @@ This tutorial will be using Spring, Cloud SQL for MySql, App Engine, Cloud Secre
     
     b. On the top-right corner of the page, click **`Fork`**.
     
-![](https://storage.cloud.google.com/gcp-community/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot%202020-05-19%20at%2020.04.46.png)
+![](https://storage.cloud.google.com/gcp-community/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot1.png)
 
 4. Install the Google Cloud Build App on Github. You can follow this instructions [**here**](https://cloud.google.com/cloud-build/docs/automating-builds/run-builds-on-github#installing_the_google_cloud_build_app).
 
@@ -269,7 +269,7 @@ You will require app engine for our deployment. In the end, our application will
 
       The final permission list should look something like this
       
-      ![](https://storage.cloud.google.com/gcp-community/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot%202020-05-19%20at%2023.00.07.png)
+      ![](https://storage.cloud.google.com/gcp-community/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot2.png)
       
       The final step that triggers a cloud build will require pushing your updated code-base to GitHub.
     
