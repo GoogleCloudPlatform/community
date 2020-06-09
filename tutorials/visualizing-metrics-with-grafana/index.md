@@ -76,6 +76,16 @@ terminal commands in this tutorial from Cloud Shell.
 
      These commands clone the sample application repository and make the repository folder your working directory. You
      perform all of the tutorial tasks in the working directory, which you can delete when finished.
+     
+5. Install Istio
+
+        curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.6.1 sh -
+        cd istio-1.6.1
+        export PATH=$PWD/bin:$PATH
+        istioctl install --set profile=demo
+
+     These commands install Istio, in the tutorial we were using version 1.6. This step is necessary in order to install all Istio custom resource definitions.
+
 
 ### Install tools
 
@@ -173,30 +183,34 @@ is an open-source package manager for Kubernetes.
 
 ### Install Grafana
 
-1.  Update the local Helm repository:
+1.  Initialize local Helm repository, you can skip this step if you have helm already set up:
+
+        helm init
+
+2.  Update the local Helm repository:
 
         helm repo update
 
-2.  Download Grafana:
+3.  Download Grafana:
 
         helm fetch stable/grafana --untar
 
-3.  Create a namespace dedicated to Grafana:
+4.  Create a namespace dedicated to Grafana:
 
         kubectl create ns $MONITORING_NS
 
-4.  Use the Helm chart to create the `.yaml` file:
+5.  Use the Helm chart to create the `.yaml` file:
 
         helm template grafana --namespace $MONITORING_NS --name grafana > $WORKDIR/grafana.yaml
 
-5.  Deploy Grafana using the file:
+6.  Deploy Grafana using the file:
 
         kubectl apply -f $WORKDIR/grafana.yaml -n $MONITORING_NS
 
-6.  Verify the installation:
+7.  Verify the installation:
 
         kubectl get pods -n $MONITORING_NS
-
+        
     The output should be similar to this:
     
         NAME                      READY   STATUS    RESTARTS   AGE
