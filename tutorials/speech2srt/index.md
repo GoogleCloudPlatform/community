@@ -11,10 +11,10 @@ Markku Lepisto | Solutions Architect | Google Cloud
 ## Objectives
 
 This tutorial shows you how to use the Google Cloud AI services
-[Speech-to-Text API](https://cloud.google.com/speech-to-text/) and [Translation API](https://cloud.google.com/translation/), 
-to add subtitles to videos, and to provide localized subtitles in other languages.
+[Speech-to-Text API](https://cloud.google.com/speech-to-text/) and [Translation API](https://cloud.google.com/translation/) 
+to add subtitles to videos and to provide localized subtitles in other languages.
 
-The main functions demonstrated are the following:
+This tutorial shows how to do the following:
 
 - Transcribe audio files with spoken dialog into text and [SRT subtitle](https://en.wikipedia.org/wiki/SubRip) files.
 - Get accurate timings of spoken sentences for subtitles.
@@ -64,11 +64,11 @@ This tutorial assumes that you already have a [Google Cloud account](https://con
 
         gcloud init
 
-1.  Export an environment variable with your current GCP project ID with:
+1.  Export an environment variable with your current Google Cloud project ID:
 
         PROJECT_ID=$(gcloud info --format='value(config.project)')
 
-1.  Enable the services used in this tutorial with the following command:
+1.  Enable the services used in this tutorial:
 
         gcloud services enable speech.googleapis.com texttospeech.googleapis.com translate.googleapis.com storage-component.googleapis.com
 
@@ -95,28 +95,28 @@ This tutorial assumes that you already have a [Google Cloud account](https://con
 1.  Create two Cloud Storage buckets: one for input, one for output. Because bucket names are a global namespace, you must
     use unique bucket names.
 
-    1.  Export the two bucket names into environment variables. Replace here `[YOUR_FIRST_BUCKET]` and
+    1.  Export the two bucket names into environment variables. Replace `[YOUR_FIRST_BUCKET]` and
         `[YOUR_SECOND_BUCKET]` with your custom bucket names:
 
             BUCKET_IN=[YOUR_FIRST_BUCKET]
             BUCKET_OUT=[YOUR_SECOND_BUCKET]
 
-    1.  Execute the following commands to create your two buckets:
+    1.  Create the buckets:
 
             gsutil mb gs://$BUCKET_IN
             gsutil mb gs://$BUCKET_OUT
 
 ## Create a Service Account and JSON key
 
-In this section, you create a Service Account in your Google Cloud project, and grant sufficient permissions to it, so that
-it can use the AI services. You also need to download a JSON key for the Service Account. The JSON key is used by the Python
+In this section, you create a Service Account in your Google Cloud project and grant sufficient permissions to it so that
+it can use the AI services. You also download a JSON key for the Service Account. The JSON key is used by the Python
 utilities to authenticate with the Cloud services.
 
 1.  Create a new Service Account:
 
         gcloud iam service-accounts create ml-dev --description="ML APIs developer access" --display-name="ML Developer Service Account"
 
-1.  Grant the `ML Developer` role to the Service Account:
+1.  Grant the ML Developer role to the Service Account:
 
         gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:ml-dev@$PROJECT_ID.iam.gserviceaccount.com --role roles/ml.developer
 
@@ -145,7 +145,7 @@ utilities to authenticate with the Cloud services.
 The goal of this tutorial is to generate [SRT subtitle files](https://en.wikipedia.org/wiki/SubRip) that you can use in your
 video player, or upload to platforms such as [YouTube](http://www.youtube.com).
 
-Example SRT subtitle file with two subtitle entries:
+**Example SRT subtitle file with two subtitle entries:**
 
     1
     00:00:00,000 --> 00:00:01,800
@@ -158,7 +158,7 @@ Example SRT subtitle file with two subtitle entries:
 Each entry contains the following items:
 
 - incrementing index number, starting from 1
-- start and stop times when to display the subtitle, in the format hh:mm:ss,ms
+- start and stop times for the subtitle, in the format hh:mm:ss,ms
 - subtitle body in one or more lines of text
 
 ## Preparing the dialog audio
@@ -179,19 +179,26 @@ Regardless of the source data type, you need to prepare an audio file for transc
 If possible, the file should not contain any other audio (such as music), or video tracks. The audio file should be in a 
 format that can be used by the [Cloud Speech-to-Text API](https://cloud.google.com/speech-to-text/). To prepare an optimized 
 audio file, follow the steps in
-[Optimizing audio files for Speech-to-Text](https://cloud.google.com/solutions/media-entertainment/optimizing-audio-files-for-speech-to-text). The quality of the audio input can greatly affect the quality of the AI transcribing output.
+[Optimizing audio files for Speech-to-Text](https://cloud.google.com/solutions/media-entertainment/optimizing-audio-files-for-speech-to-text). The quality of the audio input can greatly affect the quality of the transcribed output.
 
-This tutorial includes a pre-created audio file `example.wav` which the next steps use for demonstration.
+This tutorial includes a pre-created audio file `example.wav`, which the next steps use for demonstration.
 
 ## About the utility used to transcribe audio files
 
-To transcribe audio files, this tutorial uses the example utility `speech2srt.py`. The utility performs the following steps:
+To transcribe audio files, this tutorial uses the example utility `speech2srt.py`. 
+
+The utility performs the following steps:
 
 1.  Configures the API request and sets the following parameters:
-    - `"enable_word_time_offsets": True`
-      This gives millisecond-accurate start and stop times of each spoken word.
-    - `"enable_automatic_punctuation": True`
-      This adds punctuation marks, such as commas or periods.
+
+    -   `"enable_word_time_offsets": True`
+
+        This gives millisecond-accurate start and stop times of each spoken word.
+ 
+    -   `"enable_automatic_punctuation": True`
+
+        This adds punctuation marks, such as commas or periods.
+
 1.  Calls the [Cloud Speech-to-Text API](https://cloud.google.com/speech-to-text/) and passes input parameters to the 
     service:
     - URI of the source audio file in Cloud Storage (example: `gs://$BUCKET_IN/example.wav`)
