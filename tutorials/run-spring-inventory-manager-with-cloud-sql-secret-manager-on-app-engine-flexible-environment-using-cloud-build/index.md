@@ -1,9 +1,9 @@
 ---
 title: Run Spring Inventory Manager with Cloud SQL and Secret Manager on App Engine flexible environment using Cloud Build
-description: Learn how to deploy Spring Inventory Manager Demo application to the App Engine flexible environment and use Cloud SQL, Secret Manager and Cloud Build.
+description: Learn how to deploy the Spring Inventory Manager Demo application to App Engine flexible environment and use Cloud SQL, Secret Manager, and Cloud Build.
 author: kioie
 tags: App Engine, Secret Manager, Cloud SQL, Spring Boot, Java, Cloud Build
-date_published: 2020-05-22
+date_published: 2020-06-10
 ---
 
 This tutorial will walk you through getting a [Spring Inventory Manager][inventory-manager] app deployment through a CI/CD (continuous integration and continuous delivery) pipeline into production. Our goal is to build and deploy on a Google Compute Platform (GCP) App Engine flex environment.
@@ -194,7 +194,7 @@ This tutorial will be using Spring, Cloud SQL for MySql, App Engine, Cloud Secre
     
     b. On the top-right corner of the page, click **`Fork`**.
     
-![](https://github.com/kioie/community/blob/kioie-inventory-manager-tutorial/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot%202020-05-19%20at%2020.04.46.png)
+![](https://storage.cloud.google.com/gcp-community/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot%202020-05-19%20at%2020.04.46.png)
 
 4. Install the Google Cloud Build App on Github. You can follow this instructions [**here**](https://cloud.google.com/cloud-build/docs/automating-builds/run-builds-on-github#installing_the_google_cloud_build_app).
 
@@ -269,7 +269,7 @@ You will require app engine for our deployment. In the end, our application will
 
       The final permission list should look something like this
       
-      ![](https://github.com/kioie/community/blob/kioie-inventory-manager-tutorial/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot%202020-05-19%20at%2023.00.07.png)
+      ![](https://storage.cloud.google.com/gcp-community/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot%202020-05-19%20at%2023.00.07.png)
       
       The final step that triggers a cloud build will require pushing your updated code-base to GitHub.
     
