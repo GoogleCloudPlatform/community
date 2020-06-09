@@ -219,7 +219,7 @@ To transcribe the audio file, do the following:
 
         gsutil cp example.wav gs://$BUCKET_IN/
 
-1.  View the command line options for the transcribing utility:
+1.  View the command-line options for the transcribing utility:
 
         python3 speech2srt.py -h
 
