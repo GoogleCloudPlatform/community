@@ -5,7 +5,6 @@ author: Galz10
 tags: IoT,Google Cloud, Internet of Things, ESP32, ESP-IDF, IoT Core
 date_published: 2020-08-02
 ---
-
 This tutorial shows how to use the IoT Core Embedded C library and will take you through the steps of creating a IoT Core project which will receive telemetry data from an ESP32 microcontroller and will be able to turn on and off an LED. Follow this tutorial to configure Cloud IoT Core and run the mqtt-example on your ESP32.
 Objectives
 
@@ -31,7 +30,7 @@ If you don't have these dependencies, you can install them using :
 
 **For Mac :**
 
-```c
+```bash
 brew install python
 brew install git
 pip install ninja
@@ -69,7 +68,7 @@ We will be using the Espressif Systems ESP32 (ESP32), which is an inexpensive an
 
 The ESP32 will communicate with IoT Core using Wifi and will send telemetry data using the MQTT protocol, we will also read the internal temperature sensor to send telemetry data to the device's subscription topic.
 
-To get the internal temperature we will use the temprature_sens_read function. To correctly set the function you must give a forward declaration for the function:
+To get the internal temperature we will use the `temprature_sens_read function`. To correctly set the function you must give a forward declaration for the function:
 
 ```c
 #ifdef __cplusplus
@@ -102,7 +101,7 @@ There are two ways you can set up your project on Google Cloud IoT, you can use 
 1. Generate Elliptic Curve (EC) device credentials for authenticating the device when it’s
 trying to connect with the cloud, You will need to know where these files are later so make sure they’re saved somewhere you can access.
 
-```c
+```bash
 openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem openssl ec -in ec_private.pem -pubout -out ec_public.pem
 ```
 
@@ -132,7 +131,7 @@ Recurse submodules is important because you will need the IoT Core Embedded C SD
 
 ## Connecting an ESP32 to Cloud IoT Core
 
-The mqtt_task function sets up the parameters needed to connect to the cloud. It uses the private key created earlier in iotc_connect_private_key_data. The data is applied to create the jwt to connect to IoT Core, as highlighted in the following code.
+The mqtt_task function sets up the parameters needed to connect to the cloud. It uses the private key created earlier in `iotc_connect_private_key_data`. The data is applied to create the jwt to connect to IoT Core, as highlighted in the following code.
 
 ```c
 iotc_crypto_key_data_t iotc_connect_private_key_data;
@@ -140,9 +139,9 @@ iotc_connect_private_key_data.crypto_key_signature_algorithm = IOTC_CRYPTO_KEY_S
 iotc_connect_private_key_data.crypto_key_union_type = IOTC_CRYPTO_KEY_UNION_TYPE_PEM; iotc_connect_private_key_data.crypto_key_union.key_pem.key = (char *) ec_pv_key_start;
 ```
 
-With the private key as data, you can initialize iotc by calling iotc_inilialize() and checking that there’s no error. If everything is working properly you're ready to create the jwt and finally connect to IoT Core.
+With the private key as data, you can initialize iotc by calling `iotc_inilialize` and checking that there’s no error. If everything is working properly you're ready to create the jwt and finally connect to IoT Core.
 
-To connect our ESP32 to Cloud IoT Core use iotc_connect which is from the IoT Core Embedded C SDK. The function takes multiple parameters you need to provide the following:
+To connect our ESP32 to Cloud IoT Core use `iotc_connect` which is from the IoT Core Embedded C SDK. The function takes multiple parameters you need to provide the following:
 
  - Username (usually null)
  - Password ( jwt )
@@ -200,7 +199,7 @@ After successfully connecting to the cloud you will need to subscribe to configu
 
 ## Publish Telemetry Data from ESP32 to Cloud IoT Core
 
-To publish telemetry to IoT Core we use iotc_publish which must include the topic name, message and QoS inorder to send the message.
+To publish telemetry to IoT Core we use `iotc_publish` which must include the topic name, message and QoS inorder to send the message.
 
 The code below sets up the topic from the device id and event topic and then publishes the message.
 You can find this code in the mqtt-example.c file on line 35.
@@ -276,9 +275,9 @@ cd /examples/main/ make menuconfig
 ![Cloud Project Setup](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/CloudSetup.gif)
 
 1. Locate your ec_private.pem file and copy its contents into the private.pem file in the certs folder located at examples/main/certs
-1. Run the following to build your program Idf.py build inside the examples folder
-1. Run the following to flash the program onto your device, (port) is the port you’re using. Idf.py -p /dev/cu.usbserial1440 flash
-1. Run the following to monitor your device Idf.py -p /dev/cu.usbserial1440 monitor
+1. Run `idf.py build` to build sources into firmware
+1. Run `idf.py -p /dev/cu.usbserial-1440 flash` passing the path to your tty device to flash the firmware onto the device
+1. Run `idf.py -p /dev/cu.usbserial-1440 monitor` passing the path to your tty device to monitor the device output
 
 Note: if you make changes to the code, you will need to rebuild the program again before calling flash
 
@@ -309,5 +308,7 @@ Note: if the board you're using has the GPIO pin set to pulldown, setting this v
 1. Click on view message at the top and pull your messages
 
 ![Blinky](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/device.jpg)
+
+## Next Steps
 
 Now that you've got the basics down and you can connect to IoT Core, you can add your own spin on this project, try replacing the LED with a relay to control a power outlet or can connect a sensor to measure and analyze environmental data.

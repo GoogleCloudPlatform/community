@@ -80,65 +80,65 @@ void on_connection_state_changed(iotc_context_handle_t in_context_handle, void *
     iotc_connection_data_t *conn_data = (iotc_connection_data_t *)data;
 
     switch (conn_data->connection_state) {
-    case IOTC_CONNECTION_STATE_OPENED:
-        printf("connected!\n");
+        case IOTC_CONNECTION_STATE_OPENED:
+            printf("connected!\n");
 
-        asprintf(&subscribe_topic_command, SUBSCRIBE_TOPIC_COMMAND, CONFIG_GIOT_DEVICE_ID);
-        printf("subscribe to topic: \"%s\"\n", subscribe_topic_command);
-        iotc_subscribe(in_context_handle, subscribe_topic_command, IOTC_MQTT_QOS_AT_LEAST_ONCE, &iotc_mqttlogic_subscribe_callback, NULL);
+            asprintf(&subscribe_topic_command, SUBSCRIBE_TOPIC_COMMAND, CONFIG_GIOT_DEVICE_ID);
+            printf("subscribe to topic: \"%s\"\n", subscribe_topic_command);
+            iotc_subscribe(in_context_handle, subscribe_topic_command, IOTC_MQTT_QOS_AT_LEAST_ONCE, &iotc_mqttlogic_subscribe_callback, NULL);
 
-        asprintf(&subscribe_topic_config, SUBSCRIBE_TOPIC_CONFIG, CONFIG_GIOT_DEVICE_ID);
-        printf("subscribe to topic: \"%s\"\n", subscribe_topic_config);
-        iotc_subscribe(in_context_handle, subscribe_topic_config, IOTC_MQTT_QOS_AT_LEAST_ONCE, &iotc_mqttlogic_subscribe_callback, NULL);
+            asprintf(&subscribe_topic_config, SUBSCRIBE_TOPIC_CONFIG, CONFIG_GIOT_DEVICE_ID);
+            printf("subscribe to topic: \"%s\"\n", subscribe_topic_config);
+            iotc_subscribe(in_context_handle, subscribe_topic_config, IOTC_MQTT_QOS_AT_LEAST_ONCE, &iotc_mqttlogic_subscribe_callback, NULL);
 
-        /* Create a timed task to publish every 10 seconds. */
-        delayed_publish_task = iotc_schedule_timed_task(in_context_handle, publish_telemetry_event, 10, 15, NULL);
-        break;
+            /* Create a timed task to publish every 10 seconds. */
+            delayed_publish_task = iotc_schedule_timed_task(in_context_handle, publish_telemetry_event, 10, 15, NULL);
+            break;
 
-    case IOTC_CONNECTION_STATE_OPEN_FAILED:
-        printf("ERROR!\tConnection has failed reason %d\n\n", state);
+        case IOTC_CONNECTION_STATE_OPEN_FAILED:
+            printf("ERROR!\tConnection has failed reason %d\n\n", state);
 
-        /* exit it out of the application by stopping the event loop. */
-        iotc_events_stop();
-        break;
-
-    case IOTC_CONNECTION_STATE_CLOSED:
-        free(subscribe_topic_command);
-        free(subscribe_topic_config);
-
-        if (IOTC_INVALID_TIMED_TASK_HANDLE != delayed_publish_task) {
-            iotc_cancel_timed_task(delayed_publish_task);
-            delayed_publish_task = IOTC_INVALID_TIMED_TASK_HANDLE;
-        }
-
-        if (state == IOTC_STATE_OK) {
+            /* exit it out of the application by stopping the event loop. */
             iotc_events_stop();
-        } else {
-            printf("connection closed - reason %d!\n", state);
-            iotc_connect(in_context_handle, conn_data->username, conn_data->password, conn_data->client_id, conn_data->connection_timeout, conn_data->keepalive_timeout, &on_connection_state_changed);
-        }
-        break;
+            break;
 
-    default:
-        printf("wrong value\n");
-        break;
-    }
+        case IOTC_CONNECTION_STATE_CLOSED:
+            free(subscribe_topic_command);
+            free(subscribe_topic_config);
+
+            if (IOTC_INVALID_TIMED_TASK_HANDLE != delayed_publish_task) {
+                iotc_cancel_timed_task(delayed_publish_task);
+                delayed_publish_task = IOTC_INVALID_TIMED_TASK_HANDLE;
+            }
+
+            if (state == IOTC_STATE_OK) {
+                iotc_events_stop();
+            } else {
+                printf("connection closed - reason %d!\n", state);
+                iotc_connect(in_context_handle, conn_data->username, conn_data->password, conn_data->client_id, conn_data->connection_timeout, conn_data->keepalive_timeout, &on_connection_state_changed);
+            }
+            break;
+
+        default:
+            printf("wrong value\n");
+            break;
+        }
 }
 
 static esp_err_t wifi_event_handler(void *ctx, system_event_t *event) {
     switch (event->event_id) {
-    case SYSTEM_EVENT_STA_START:
-        esp_wifi_connect();
-        break;
-    case SYSTEM_EVENT_STA_GOT_IP:
-        xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
-        break;
-    case SYSTEM_EVENT_STA_DISCONNECTED:
-        esp_wifi_connect();
-        xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
-        break;
-    default:
-        break;
+        case SYSTEM_EVENT_STA_START:
+            esp_wifi_connect();
+            break;
+        case SYSTEM_EVENT_STA_GOT_IP:
+            xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
+            break;
+        case SYSTEM_EVENT_STA_DISCONNECTED:
+            esp_wifi_connect();
+            xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
+            break;
+        default:
+            break;
     }
     return ESP_OK;
 }
