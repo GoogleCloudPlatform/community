@@ -27,7 +27,7 @@ The architecture you deploy in this tutorial is as follows:
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including the following:
+This tutorial uses billable components of Google Cloud, including the following:
 
 -   Google Kubernetes Engine
 -   Stackdriver
@@ -37,7 +37,7 @@ projected usage.
 
 ## Before you begin
 
-1.  Select or create a GCP project on the
+1.  Select or create a Google Cloud project on the
     [**Manage resources** page](https://console.cloud.google.com/cloud-resource-manager).
 
 1.  If you didn't select a billing account during project creation, enable billing for your project.
@@ -54,11 +54,11 @@ terminal commands in this tutorial from Cloud Shell.
 
 1.  [Open Cloud Shell](https://console.cloud.google.com?cloudshell=true).
 
-2.  Set environment variables:
+1.  Set environment variables:
 
         export PROJECT_ID=$(gcloud config list --format 'value(core.project)' 2>/dev/null)
 
-3.  Enable the relevant APIs:
+1.  Enable the relevant APIs:
 
         gcloud services enable \
         cloudshell.googleapis.com \
@@ -67,7 +67,7 @@ terminal commands in this tutorial from Cloud Shell.
         container.googleapis.com \
         cloudtrace.googleapis.com
 
-4.  Run the following commands to download the files for this tutorial and set up your working directory:
+1.  Run the following commands to download the files for this tutorial and set up your working directory:
 
         cd $HOME
         git clone https://github.com/GoogleCloudPlatform/microservices-demo
@@ -76,6 +76,13 @@ terminal commands in this tutorial from Cloud Shell.
 
      These commands clone the sample application repository and make the repository folder your working directory. You
      perform all of the tutorial tasks in the working directory, which you can delete when finished.
+     
+1. Install Istio 1.6 and Istio custom resource definitions:
+
+        curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.6.1 sh -
+        cd istio-1.6.1
+        export PATH=$PWD/bin:$PATH
+        istioctl install --set profile=demo
 
 ### Install tools
 
@@ -173,30 +180,34 @@ is an open-source package manager for Kubernetes.
 
 ### Install Grafana
 
+1.  Initialize Helm repository. (You can skip this step if you have helm already set up.)
+
+        helm init
+
 1.  Update the local Helm repository:
 
         helm repo update
 
-2.  Download Grafana:
+1.  Download Grafana:
 
         helm fetch stable/grafana --untar
 
-3.  Create a namespace dedicated to Grafana:
+1.  Create a namespace dedicated to Grafana:
 
         kubectl create ns $MONITORING_NS
 
-4.  Use the Helm chart to create the `.yaml` file:
+1.  Use the Helm chart to create the `.yaml` file:
 
         helm template grafana --namespace $MONITORING_NS --name grafana > $WORKDIR/grafana.yaml
 
-5.  Deploy Grafana using the file:
+1.  Deploy Grafana using the file created in the previous step:
 
         kubectl apply -f $WORKDIR/grafana.yaml -n $MONITORING_NS
 
-6.  Verify the installation:
+1.  Verify the installation:
 
         kubectl get pods -n $MONITORING_NS
-
+    
     The output should be similar to this:
     
         NAME                      READY   STATUS    RESTARTS   AGE
@@ -337,10 +348,10 @@ as you like. Your final result looks like this:
 
 ## Cleaning up
 
-The easiest way to avoid incurring charges to your Google Cloud Platform account for the resources used in this tutorial is
+The easiest way to avoid incurring charges to your Google Cloud account for the resources used in this tutorial is
 to delete the project that you created for the tutorial:
 
-1.  In the GCP Console, go to the [**Projects** page](https://console.cloud.google.com/iam-admin/projects).
+1.  In the Cloud Console, go to the [**Projects** page](https://console.cloud.google.com/iam-admin/projects).
 
 2.  In the project list, select the project you want to delete, and click **Delete**.
 
@@ -350,4 +361,4 @@ to delete the project that you created for the tutorial:
 
 ## What's next
 
--   Try out other Google Cloud Platform features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
+-   Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
