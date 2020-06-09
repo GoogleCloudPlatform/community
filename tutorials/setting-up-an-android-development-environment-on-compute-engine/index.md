@@ -1,13 +1,13 @@
 ---
-title: Setting up an Android Development environment on Compute Engine
-description: Learn how to set up an Android development environment running on the Compute Engine.
+title: Set up an Android development environment on Compute Engine
+description: Learn how to set up an Android development environment running on Compute Engine.
 author: Rishit-dagli
 tags: Compute Engine
-date_published: 2020-05-24
+date_published: 2020-06-10
 ---
 
 This tutorial shows how to set up an [Android Studio](https://developer.android.com/studio) on
-Google Cloud Platform (GCP) in just a few minutes. Follow this tutorial to configure
+Google Cloud in just a few minutes. Follow this tutorial to configure
 Android Studio development environment on an Ubuntu or Windows server virtual machine instance on Compute Engine with the ability 
 to use Android Emulators and accelerate your development.
 
@@ -43,7 +43,7 @@ Here is a prefilled Pricing calculator if you follow this tutorial:
 
 If you go on and start trying Android Development environment you might face an error like this while creating the AVD and testing your project-
 
-![](error-with-simple-approach.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/setting-up-an-android-development-environment-on-compute-engine/error-with-simple-approach.png)
 
 **HAXM does not support nested virtual machines.**
 
@@ -60,7 +60,7 @@ nested VMs can also be referred to as host VMs.
 
 Here is a diagram which might help you get the hang of it-
 
-![](nested-virtualization-diagram.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/setting-up-an-android-development-environment-on-compute-engine/nested-virtualization-diagram.png)
 
 In GCP-
 
@@ -201,7 +201,7 @@ to start a `vncserver` session. Use a VNC viewer like [RealVNC](https://www.real
 
 Your VNC Viewer might look something like this-
 
-![](vnc-client.png)
+![](https://storage.googleapis.com/gcp-community/tutorials/setting-up-an-android-development-environment-on-compute-engine/vnc-client.png)
 
 Enter the external IP of your VM followed by `:5901` to tell it to view port `5901`. 
 And you are now done with connecting to a desktop environment.
@@ -242,7 +242,7 @@ Now that you have connected to your desktop GUI, let us go on and install Androi
 And now you are all ready to start building on your Android Studio, here's a visual proof of the first Gradle build happening in almost 
 just a second-
 
-![](1-second-build.jpeg)
+![](https://storage.googleapis.com/gcp-community/tutorials/setting-up-an-android-development-environment-on-compute-engine/1-second-build.jpeg)
 
 ## Troubleshooting
 
