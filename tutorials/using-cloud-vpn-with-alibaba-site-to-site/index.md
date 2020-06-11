@@ -121,7 +121,7 @@ For detailed topology information, see the following resources:
 -  For basic VPN topologies, see 
 [Cloud VPN Overview](https://cloud.google.com/vpn/docs/concepts/overview).
 -  For redundant topologies,  the
-[Cloud VPN documentation on redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns).
+[Cloud VPN documentation on redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/advanced).
 
 Disclaimer: At this time, site-to-site IPsec VPN tunnel configuration using dynamic routing
 between Cloud VPN and Alibaba Cloud VPN Gateway is not supported. 
@@ -152,7 +152,7 @@ To create a GCP network, a subnetwork, and other entities described in this
 guide, you must be able to sign in to GCP as a user who has
 [Network Admin](https://cloud.google.com/compute/docs/access/iam#network_admin_role)
 permissions. For details, see
-[Required Permissions](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes#required_permissions).
+[Required Permissions](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes#expandable-1).
 
 ### IP ranges
 
