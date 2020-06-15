@@ -1,0 +1,11 @@
+apiVersion: sources.eventing.knative.dev/v1alpha1
+kind: ContainerSource
+metadata:
+  name: currency-goog
+spec:
+  image: gcr.io/jaysmith-189200/currencysource:v1
+  sink:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: currency-sink

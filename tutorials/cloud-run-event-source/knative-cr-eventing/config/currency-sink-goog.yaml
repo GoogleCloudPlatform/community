@@ -1,0 +1,10 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: currency-sink-goog
+spec:
+  template:
+    spec:
+      containers:
+      - image: gcr.io/jaysmith-189200/currencysink
+        imagePullPolicy: Always
