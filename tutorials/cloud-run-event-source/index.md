@@ -11,7 +11,7 @@ Jason "Jay" Smith | Customer Engineer Specialist | Google Cloud
 ## Using Cloud Run with Knative Eventing and Confluent Cloud
 
 [Cloud Run](https://cloud.google.com/run/ "Cloud Run") is a Google Cloud offering built on the
-[Knative Serving](https://knative.dev/docs/serving/) APIs, which brings serverless practices to Kubernetes, allowing 
+[Knative Serving](https://knative.dev/docs/serving/) APIs that brings serverless practices to Kubernetes, allowing 
 developers to focus on code while operators focus on the infrastructure.
 
 Developers can containerize their applications and deploy them to the cloud without worrying about configuring networking,
@@ -22,13 +22,13 @@ One popular tool for handling event streaming in a scalable manner is [Apache Ka
 has a fully managed Kafka solution through our SaaS partner [Confluent](https://confluent.io).
 
 For this demonstration, we use [Confluent Cloud](https://www.confluent.io/confluent-cloud/) and
-[AlphaVantage](https://www.alphavantage.co/). Both offer a free-tier solution, so using them for this demonstration won't
+[Alpha Vantage](https://www.alphavantage.co/). Both offer a free-tier solution, so using them for this demonstration won't
 incur additional charges. We recommend deleting your cluster after you have finished with this tutorial, to prevent 
 incurring charges.
 
 ## Before you begin
 
-1. Set up an account with [AlphaVantage](https://www.alphavantage.co/support/#api-key) to get a free API key.
+1. Set up an account with [Alpha Vantage](https://www.alphavantage.co/support/#api-key) to get a free API key.
 1. Sign up for [Confluent Cloud](https://confluent.cloud/signup).
 
 ## Run the setup script
@@ -115,7 +115,7 @@ Wait for a couple of minutes for all of the steps in the script to finish.
 
     This is your exchange rate. Look at your ccloud tab in the terminal, to check that it matches the consumed message. 
     
-Congratulations, you have now created a simple streaming event serverless application.
+Congratulations! You have now created a simple streaming event serverless application.
 
 ## Cleaning up
 
