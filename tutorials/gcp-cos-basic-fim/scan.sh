@@ -114,7 +114,7 @@ if [ -f "$FINGERPRINTS" ];then
     #cat $FAILEDFILES | cut -d ":" -f 1 | tee -a $LOGFILE
     echo `date` "Updating fingerprint on failed files" | tee -a $LOGFILE
     UPDATEFAILED=
-    for FAILEDFILE in `echo $FAILEDFILES | cut -d ":" -f 1`; do
+    for FAILEDFILE in `cat $FAILEDFILES | cut -d ":" -f 1`; do
       UPDATEFAILED=$(echo "$UPDATEFAILED | grep -v \"$FAILEDFILE\"")
     done
     UPDATEFAILED="cat \$FINGERPRINTS $UPDATEFAILED"
@@ -122,6 +122,7 @@ if [ -f "$FINGERPRINTS" ];then
     cp $FINGERPRINTSTMP $FINGERPRINTS
     chmod 600 $FINGERPRINTS 2> /dev/null
     cat $FAILEDFILES \
+    | awk -F ":" '{ print $1 }' \
     | xargs sha256sum 2>$ERRFILE \
     | tee -a $FINGERPRINTS $LOGFILE
     rm $FAILEDFILES

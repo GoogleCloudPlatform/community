@@ -1,14 +1,14 @@
 ---
 title: Calculating network throughput
-description: How to measure and troubleshoot network throughput in GCP.
-author: dcavalheiro
+description: How to measure and troubleshoot network throughput in Google Cloud.
+author: dcavalheiro,bernieongewe
 tags: Cloud Networking
 date_published: 2019-08-07
 ---
 
-This document describes how to calculate network throughput, both within GCP and to your on-premises or third-party cloud
-locations. This document includes information on how to analyze results, explanations of variables that can affect network
-performance, and troubleshooting tips.
+This document describes how to calculate network throughput, both within Google Cloud and to your on-premises or third-party 
+cloud locations. This document includes information on how to analyze results, explanations of variables that can affect 
+network performance, and troubleshooting tips.
 
 ## Common use cases
 
@@ -21,14 +21,22 @@ Here are the common use cases for a network throughput assessment:
   zones.
 * VM to VM in different VPC networks using [VPC Network Peering](https://cloud.google.com/vpc/docs/vpc-peering)
   or [Cloud VPN](https://cloud.google.com/vpn/docs/concepts/overview).
-* VM to on-premises, using any of our [hybrid connectivity](https://cloud.google.com/hybrid-connectivity/) products.
+* VM to on-premises, using any of the Google Cloud [hybrid connectivity](https://cloud.google.com/hybrid-connectivity/) 
+  products.
 
 ## Know your tools
 
 When calculating network throughput, it's important to use well-tested, well-documented tools:
 
-* [iPerf3](https://iperf.fr/): A commonly used network testing tool that can create TCP/UDP data streams (single-thread or 
-  multi-thread) and measure the throughput of the network that carries them.
+* [iPerf3](https://iperf.fr/): A commonly used network testing tool that can
+  create TCP/UDP data streams (single-thread or multi-thread) and measure the
+  throughput of the network that carries them.
+  
+  **Note**: iPerf3 may only be appropriate for single-CPU machines.
+  
+* [Netperf](https://hewlettpackard.github.io/netperf/): Similar to iPerf3 but
+  more appropriate for throughput testing on multi-CPU instances that are
+  CPU-bound on a single CPU.
 * [`traceroute`](https://en.wikipedia.org/wiki/Traceroute): A computer network diagnostic tool that measures and displays 
   the routes that packets take across a network. The `traceroute` tool records the route's history as the round-trip times 
   of packets received from each successive host in a route. The sum of the mean times in each hop is an approximate measure 
@@ -41,8 +49,8 @@ When calculating network throughput, it's important to use well-tested, well-doc
   [TCP window](https://tools.ietf.org/html/rfc1323#page-8) and [RTT](https://en.wikipedia.org/wiki/Round-trip_delay_time).
 * [Perfkit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker): A tool that contains a set of benchmarks 
   to measure and compare cloud offerings. The benchmarks use defaults to reflect what most users will see.
-* [`gcping`](https://github.com/googlecloudplatform/gcping): A command-line tool that provides median latencies to GCP 
-  regions.  
+* [`gcping`](https://github.com/googlecloudplatform/gcping): A command-line tool that provides median latencies to Google 
+  Cloud regions.  
 
 ## Round-trip time, latency, and distances
 
@@ -63,11 +71,11 @@ Because of the [bandwidth-delay product](https://en.wikipedia.org/wiki/Bandwidth
 bandwidth capabilities will perform poorly when tested via TCP, since their
 [TCP window](https://en.wikipedia.org/wiki/TCP_tuning#Window_size) may not allow for full link utilization.
 
-Choosing the closest [GCP location](https://cloud.google.com/about/locations/) to your on-premises location is the best
-approach to reduce latency.
+Choosing the closest [Google Cloud location](https://cloud.google.com/about/locations/) to your on-premises location is the
+best approach to reduce latency.
 
 You can use the [`gcping`](https://github.com/googlecloudplatform/gcping) command-line tool to determine median latencies
-from any location to various GCP regions.
+from any location to various Google Cloud regions.
 
 ## Egress per virtual machine limit (all network interfaces)
 
@@ -85,15 +93,15 @@ For example, if you sequentially download a single file from start to end, you u
 many smaller files, or break a large file into small chunks and download them at the same time, each thread is responsible
 for each file or chunk.
 
-it is possible to achieve values close to the maximum egress data rate using multi-thread mode. However, because the maximum
+It is possible to achieve values close to the maximum egress data rate using multi-thread mode. However, because the maximum
 egress data rate is a *limit*, the data rate will not go over the maximum egress data rate, even under ideal conditions.
 
-Single connection mode is best for testing over a VPN (non HA) or simulating the download of a single file. Expect it to 
+Single-connection mode is best for testing over a VPN (non-HA) or simulating the download of a single file. Expect it to 
 have lower transfer speeds than multi-thread mode.
 
 ### Measuring throughput with iPerf3
 
-Follow this procedure to measure throughput from the perspective of a single VM.
+Follow this procedure to measure throughput from the perspective of a single virtual machine.
 
 #### Choose a large machine type
 
@@ -119,7 +127,7 @@ By default, the server listens on port 5201 for both TCP and UDP traffic. To cha
     
 The `-s` flag tells iPerf3 to run as a server. 
 
-#### Allow the server and client communication through the GCP firewall
+#### Allow the server and client communication through the Google Cloud firewall
 
 Create a firewall rule to the iPerf3 server to allow ingress TCP on the selected port, as described in 
 [Creating firewall rules](https://cloud.google.com/vpc/docs/using-firewalls#creating_firewall_rules).
@@ -130,7 +138,7 @@ Run iPerf3 with the `-c` (client) flag and specify the destination IP address of
 TCP, unless you specify the `-u` (UDP) flag for the client. No such flag is needed server-side for UDP; however, a firewall
 rule allowing incoming UDP traffic to the server is required.
 
-If you run the server on a custom port, you'll need to specify that same port using the `-p` (port) flag. If you omit the 
+If you run the server on a custom port, you need to specify that same port using the `-p` (port) flag. If you omit the 
 port flag, the client assumes that the destination port is 5201.
 
 Use the `-P` (parallel threads) flag to specify a number of simultaneous threads, and use the `-t` (time) flag to specify 
@@ -144,23 +152,90 @@ It's sometimes helpful to get packet captures on the iPerf3 client or server. Th
 capture full packets for a given destination port range from an `eth0` interface, saving a file in the working directory 
 called `mycap.pcap`.
 
-Important: If you use the `-s` (snapshot length) flag with a value of `0`, then `tcpdump` will capture entire packets. Be
-aware that the packet captures could have sensitive information. Most `tcpdump` implementations interpret `-s 0` to be the 
-same as `-s 262144`. See the [tcpdump man page](https://www.tcpdump.org/manpages/tcpdump.1.html) for details. To reduce the 
-chances of capturing sensitive information, you can capture just packet headers by providing a lower snapshot length value,
-such as `-s 100`.
-
     sudo /usr/sbin/tcpdump -s 100 -i eth0 dst port [PORT_NUMBER] -w mycap.pcap
 
-You'll have to modify this command to suit your use case; for example, the interface name isn't always `eth0` on all
+**Important**: If you use the `-s` (snapshot length) flag with a value of `0`, then `tcpdump` will capture entire packets. 
+Be aware that the packet captures can contain sensitive information. Most `tcpdump` implementations interpret `-s 0` to be 
+the same as `-s 262144`. See the [tcpdump man page](https://www.tcpdump.org/manpages/tcpdump.1.html) for details. To reduce 
+the chances of capturing sensitive information, you can capture just packet headers by providing a lower snapshot length 
+value, such as `-s 100`.
+
+Modify this command to suit your use case; for example, the interface name isn't always `eth0` on all
 distributions, and you'll need to specifically choose the right interface for a
 [multiple network interface VM](https://cloud.google.com/vpc/docs/multiple-interfaces-concepts).
 
+#### Limitations of using iPerf3
+
+CPU throttling is likely to be a bottleneck when testing with `iperf3`. The `-P` flag launches multiple client streams, but
+these all run in a single thread.
+
+From the `iperf3` man pages:
+
+    > -P, --parallel n \
+    > number of parallel client streams to run. Note that iperf3 is single threaded,
+    > so if you are CPU bound, this will not yield higher throughput.
+
+Also, any attempt to launch multiple clients returns the following complaint on the second attempt:
+
+    $ iperf3 -c 10.150.0.12 -t 3600 \
+    iperf3: error - the server is busy running a test. try again later
+
+Allowing only a single process to run is [also by design choice](https://github.com/esnet/iperf/issues/140).
+
+To exercise multiple CPUs, use Netperf.
+
+### Measuring throughput with multiple CPUs with Netperf
+
+Install Netperf:
+
+    sudo apt-get install git build-essential autoconf texinfo -y
+    git clone https://github.com/HewlettPackard/netperf.git
+    cd netperf
+    ./autogen.sh
+    ./configure --enable-histogram --enable-demo=yes
+    make
+
+Start the server:
+
+    src/netserver
+
+Start the client:
+
+    src/netperf -D $reporting_interval -H $server_ip -f $reporting_units
+
+The following is an example command to run the Netperf client:
+
+    src/netperf -D 2 -H 10.150.0.12 -f G
+
+The following is an example of output from Netperf:
+
+    MIGRATED TCP STREAM TEST from 0.0.0.0 (0.0.0.0) port 0 AF_INET to 10.150.0.12
+    \
+    () port 0 AF_INET : histogram : demo Interim result: 1.66 GBytes/s over 2.444
+    \
+    seconds ending at 1582948175.660 Interim result: 1.81 GBytes/s over 2.008 \
+    seconds ending at 1582948177.669 Interim result: 1.81 GBytes/s over 2.000 \
+    seconds ending at 1582948179.669 Interim result: 1.81 GBytes/s over 2.001 \
+    seconds ending at 1582948181.670 Interim result: 1.80 GBytes/s over 1.546 \
+    seconds ending at 1582948183.216 Recv Send Send Socket Socket Message Elapsed
+    \
+    Size Size Size Time Throughput bytes bytes bytes secs. GBytes/sec \
+    \
+    87380 16384 16384 10.00 1.77
+
+You can then start multiple clients, assigning them to different CPUs. The example below starts 10 processes and assigns
+them to the respective CPUs:
+
+    for i in {1..10}
+    do
+    taskset -c $i src/netperf -D 2 -H [server_IP_address] -f G &
+    done
+
 ### Measuring VPC network throughput with PerfKit Benchmarker
 
-To measure network throughput performance from a given machine type in a specific
-zone, use [PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker). This tool is very valuable because it creates an instance and measures its performance, without the need to install the 
-tools on an existing VM.
+To measure network throughput performance from a given machine type in a specific zone, use
+[PerfKit Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker). This tool is valuable because it creates 
+an instance and measures its performance, without the need to install the tools on an existing VM.
 
 Replace the placeholders in the commands below with the following:
 
@@ -168,7 +243,7 @@ Replace the placeholders in the commands below with the following:
 + `[ZONE]`: The zone to create the instance in.
 + `[NUMBER_OF_VCPUS]`: The number of vCPUs of the instance (for example, 32 for the n1-standard-32 machine type).
 
-Measure single thread performance:
+Measure single-thread performance:
 
     ./pkb.py --cloud=GCP --machine_type=[MACHINE_TYPE]
     --benchmarks=iperf --ip_addresses=INTERNAL --zones=[ZONE]

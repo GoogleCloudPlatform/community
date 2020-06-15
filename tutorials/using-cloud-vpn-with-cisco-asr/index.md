@@ -101,7 +101,7 @@ The IPsec configuration used in this guide is specified below:
 
 | Cipher Role | Cipher |
 | ------------| -------|
-| Encryption | `esp-aes 256 esp-sha-hmac` |
+| Encryption | `aes-cbc-256 aes-cbc-192 aes-cbc-128` |
 | Integrity | `sha256` |
 | Diffie-Hellman (DH) | `group 16` |
 | Lifetime | `36,000 seconds (10 hours)` |
@@ -135,7 +135,7 @@ to establish BGP sessions between the 2 peers.
 
 1.  Populate fields for at least one tunnel:
 
-    * **Peer IP address** — `204.237.220.4` Public IP address of the peer
+    * **Peer IP address** — `203.0.113.4` Public IP address of the peer
       gateway.
     * **IKE version** — IKEv2 is preferred, but IKEv1 is supported if that is
       all the peer gateway can manage.
@@ -239,7 +239,7 @@ to establish BGP sessions between the 2 peers.
     version to 2. After you run this command, resources are allocated for this
     VPN tunnel, but it is not yet passing traffic.
 
-        gcloud compute --project vpn-guide vpn-tunnels create tunnel1 --peer-address 204.237.220.4 \
+        gcloud compute --project vpn-guide vpn-tunnels create tunnel1 --peer-address 203.0.113.4 \
             --region us-east1 --ike-version 2 --shared-secret MySharedSecret --target-vpn-gateway \
             vpn-scale-test-cisco-gw-0 --router vpn-scale-test-cisco-rtr
 
@@ -307,7 +307,7 @@ command-line tool. The upcoming section provide details to both in detail below:
 1.  Populate fields for at least one tunnel:
 
     * **Peer IP address** — Enter your on-premises public IP address here, with the
-      above mentioned topology it is `204.237.220.4`
+      above mentioned topology it is `203.0.113.4`
     * **IKE version** — IKEv2 is preferred, but IKEv1 is supported if that is
       all the peer gateway can manage.
     * **Shared secret** — Used in establishing encryption for that tunnel. You
@@ -387,7 +387,7 @@ command-line tool. The upcoming section provide details to both in detail below:
     version to 2. After you run this command, resources are allocated for this
     VPN tunnel, but it is not yet passing traffic.
 
-        gcloud compute --project vpn-guide vpn-tunnels create tunnel1 --peer-address 204.237.220.4 \
+        gcloud compute --project vpn-guide vpn-tunnels create tunnel1 --peer-address 203.0.113.4 \
             --region us-east1 --ike-version 2 --shared-secret MySharedSecret --target-vpn-gateway \
             vpn-scale-test-cisco-gw-0 --local-traffic-selector=172.16.100.0/24
 
@@ -424,7 +424,7 @@ for reference:
     !External interface configuration
     interface TenGigabitEthernet0/0/0
     description external facing interface
-    ip address 204.237.220.4 255.255.255.224
+    ip address 203.0.113.4 255.255.255.224
 
 ### Base VPN configurations
 

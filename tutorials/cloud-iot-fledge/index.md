@@ -63,9 +63,8 @@ headless mode or on the Raspberry Pi hardware if you're using the desktop UI.
 ## Download the Fledge packages
 
 1.  Visit the
-    [download page on the Dianomic site](https://dianomic.com/download-packages/)
-    and fill out the form to get an email message with a link to the latest version
-    of the Fledge packages.
+    [installing Fledge section of the Fledge site](https://fledge-iot.readthedocs.io/en/latest/quick_start.html#installing-fledge)
+    and start from the pre-built packages linked in the instructions.
     
 1.  When you receive the email message containing the link to the Fledge packages,
     copy the link referencing v1.7 for ARM-based devices (Buster), the package
@@ -76,12 +75,12 @@ headless mode or on the Raspberry Pi hardware if you're using the desktop UI.
     user's home directory. Replace `[LINK_FROM_EMAIL]` with the link that you copied
     in the previous step.
 
-        mkdir $HOME/foglamp
-        cd $HOME/foglamp
+        mkdir $HOME/fledge
+        cd $HOME/fledge
         wget [LINK_FROM_EMAIL]
-        tar -xzvf foglamp-1.7.0_armv7l_buster.tgz
+        tar -xzvf fledge-1.8.0_armv7l_buster.tgz
 
-    The `foglamp` folder in your user's home directory contains all the resources
+    The `fledge` folder in your user's home directory contains all the resources
     required for getting your Raspberry Pi up and running.
 
 ## Install the Fledge service and Fledge GUI on your Raspberry Pi
@@ -92,15 +91,15 @@ control Fledge from your Raspberry Pi.
 1.  Browse to the folder that you downloaded the Fledge packages to, and install
     the Fledge and Fledge GUI packages:
 
-        cd $HOME/foglamp/foglamp/1.7.0/buster/armv7l/
-        sudo apt -y install ./foglamp-1.7.0-armv7l.deb
-        sudo apt -y install ./foglamp-gui-1.7.0.deb
+        cd $HOME/fledge/fledge/1.8.0/buster/armv7l 
+        sudo apt -y install ./fledge-1.8.0-armv7l.deb
+        sudo apt -y install ./fledge-gui-1.8.0.deb
 
 1.  Start the Fledge service and check its status:
 
-        export FOGLAMP_ROOT=/usr/local/foglamp
-        $FOGLAMP_ROOT/bin/foglamp start
-        $FOGLAMP_ROOT/bin/foglamp status
+        export FLEDGE_ROOT=/usr/local/fledge
+        $FLEDGE_ROOT/bin/fledge start
+        $FLEDGE_ROOT/bin/fledge status
 
 ## Open the Fledge GUI
 
@@ -140,10 +139,10 @@ a *North* plugin for publishing data to Google Cloud.
 
 One quick way to get some data is with the "randomwalk" plugin.
 
-1.  Install the `foglamp-south-randomwalk` plugin:
+1.  Install the `fledge-south-randomwalk` plugin:
 
-        cd $HOME/foglamp/foglamp/1.7.0/buster/armv7l
-        sudo apt install ./foglamp-south-randomwalk-1.7.0-armv7l.deb
+        cd $HOME/fledge/fledge/1.8.0/buster/armv7l
+        sudo apt install ./fledge-south-randomwalk-1.8.0-armv7l.deb
 
 1.  In the left pane of the Fledge GUI, click **South**, and then click the **Add +** button
     in the upper-right corner of the **South Services** window:
@@ -170,8 +169,8 @@ publish that data to Google Cloud through the IoT Core device bridge.
 
 1.  Install the Fledge North plugin for Google Cloud IoT Core (GCP North plugin):
 
-        cd $HOME/foglamp/foglamp/1.7.0/buster/armv7l
-        sudo apt install ./foglamp-north-gcp-1.7.0-armv7l.deb
+        cd $HOME/fledge/fledge/1.8.0/buster/armv7l
+        sudo apt install ./fledge-north-gcp-1.8.0-armv7l.deb
 
 1.  In the left pane of the Fledge GUI, click **North**, and then click the
     **Create North Instance +** button in the upper-right corner of the
@@ -191,11 +190,11 @@ For information on creating registries and devices, see the
 
 1.  At the top of the page, click **Create registry**.
 
-1.  Enter a registry ID (for example, `foglamp`).
+1.  Enter a registry ID (for example, `fledge`).
 
 1.  Choose a region (for example, `us-central1`).
 
-1.  Select an existing telemetry topic or create a new topic (for example, `projects/[YOUR_PROJECT_ID]/topics/foglamp`).
+1.  Select an existing telemetry topic or create a new topic (for example, `projects/[YOUR_PROJECT_ID]/topics/fledge`).
     
 1.  Click **Create**.
 
@@ -212,7 +211,7 @@ used to authenticate the device.
 
 1.  Create an RSA public/private key pair:
 
-        cd $HOME/foglamp
+        cd $HOME/fledge
         openssl genpkey -algorithm RSA -out rsa_private.pem -pkeyopt rsa_keygen_bits:2048
         openssl rsa -in rsa_private.pem -pubout -out rsa_public.pem
 
@@ -226,7 +225,7 @@ used to authenticate the device.
 
     ![Create device screen](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/foglamp-north-create-device.png)
 
-1.  Enter a device ID (for example, `foglamp`).
+1.  Enter a device ID (for example, `fledge`).
 
 1.  Make sure the public key format matches the type of key that you created in the
     first step of this section (for example, `RS256`).
@@ -243,12 +242,12 @@ used to authenticate the device.
     to the Fledge certificate store:
 
         wget https://pki.goog/roots.pem
-        cp roots.pem /usr/local/foglamp/data/etc/certs/
-        cp rsa_private.pem /usr/local/foglamp/data/etc/certs/
+        cp roots.pem /usr/local/fledge/data/etc/certs/
+        cp rsa_private.pem /usr/local/fledge/data/etc/certs/
 
 1.  In the Fledge GUI, on the **Review Configuration** page, enter your Google Cloud project ID,
-    the registry name that you used (`foglamp` in the examples used in this tutorial), the
-    device ID (`foglamp`), and the key name that was created (`rsa_private`).
+    the registry name that you used (`fledge` in the examples used in this tutorial), the
+    device ID (`fledge`), and the key name that was created (`rsa_private`).
     
 1.  Choose the JWT algorithm (**RS256**) and the data source (typically **readings**).
 
@@ -287,15 +286,15 @@ To see the telemetry messages, you can create a Pub/Sub subscription.
     ![Create Subscription page](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/cloud-iot-pubsub-create-subscription.png)
 
 1.  Enter the subscription details, such as the name for your subscription
-    (for example, `foglamp`), and click **Create**.
+    (for example, `fledge`), and click **Create**.
 
     ![Input Subscription details page](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-fledge/cloud-iot-pubsub-create-subscription-details.png)
 
 With the subscription created, you can see the messages published by Fledge
 using the [Google Cloud SDK](https://cloud.google.com/sdk). The following
-command lists the messages published to the `foglamp` subscription:
+command lists the messages published to the `fledge` subscription:
 
-    gcloud pubsub subscriptions pull --limit 500 foglamp
+    gcloud pubsub subscriptions pull --limit 500 fledge
 
 The output includes JSON data corresponding to the generated data, such as the following.
 
@@ -304,9 +303,9 @@ The output includes JSON data corresponding to the generated data, such as the f
 ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬─────────────────┬────────────────────────────────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    DATA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   │    MESSAGE_ID   │             ATTRIBUTES             │                                                                                           ACK_ID                                                                                           │
 ├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼─────────────────┼────────────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ {"randomwalk" : [ {"ts":"2020-01-08 22:22:23.126610","randomwalk" : 100},{"ts":"2020-01-08 22:22:24.126691","randomwalk" : 100},{"ts":"2020-01-08 22:22:25.126676","randomwalk" : 100},{"ts":"2020-01-08 22:22:26.126688","randomwalk" : 99},{"ts":"2020-01-08 22:22:27.126671","randomwalk" : 98}]} │ 928125343880036 │ deviceId=foglamp                   │ IT4wPkVTRFAGFixdRkhRNxkIaFEOT14jPzUgKEUXAQgUBXx9d0FPdV1ecGhRDRlyfWBzPFIRUgEUAnpYURgEYlxORAdzMhBwdWB3b1kXAgpNU35cXTPyztSQrLSyPANORcajjpomIZzZldlsZiQ9XxJLLD5-NSxFQV5AEkw-GURJUytDCypYEU4EIQ │
+│ {"randomwalk" : [ {"ts":"2020-01-08 22:22:23.126610","randomwalk" : 100},{"ts":"2020-01-08 22:22:24.126691","randomwalk" : 100},{"ts":"2020-01-08 22:22:25.126676","randomwalk" : 100},{"ts":"2020-01-08 22:22:26.126688","randomwalk" : 99},{"ts":"2020-01-08 22:22:27.126671","randomwalk" : 98}]} │ 928125343880036 │ deviceId=fledge                   │ IT4wPkVTRFAGFixdRkhRNxkIaFEOT14jPzUgKEUXAQgUBXx9d0FPdV1ecGhRDRlyfWBzPFIRUgEUAnpYURgEYlxORAdzMhBwdWB3b1kXAgpNU35cXTPyztSQrLSyPANORcajjpomIZzZldlsZiQ9XxJLLD5-NSxFQV5AEkw-GURJUytDCypYEU4EIQ │
 │                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           │                 │ deviceNumId=2550637435869530       │                                                                                                                                                                                            │
-│                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           │                 │ deviceRegistryId=foglamp           │                                                                                                                                                                                            │
+│                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           │                 │ deviceRegistryId=fledge           │                                                                                                                                                                                            │
 │                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           │                 │ deviceRegistryLocation=us-central1 │                                                                                                                                                                                            │
 │                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           │                 │ projectId=glassy-nectar-370        │                                                                                                                                                                                            │
 │                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           │                 │ subFolder=                         │                                                                                                                                                                                            │
@@ -334,7 +333,7 @@ the following:
 
 You can analyze the data using Google Cloud Analytics products.
 
-You can evaluate other South plugins such as the [SenseHat](https://github.com/foglamp/foglamp-south-sensehat)
+You can evaluate other South plugins such as the [SenseHat](https://github.com/fledge-iot/fledge-south-sensehat)
 plugin, which transmits gyroscope, accelerometer, magnetometer, temperature,
 humidity, and barometric pressure.
 
@@ -346,7 +345,6 @@ solutions. The following reference hardware solutions are available from Nexcom:
 * [NISE3800](http://www.nexcom.com/Products/industrial-computing-solutions/industrial-fanless-computer/core-i-performance/fanless-pc-fanless-computer-nise-3800e)
 
 You can look into advanced usage of the Fledge platform through features such as
-[filters](https://foglamp.readthedocs.io/en/master/foglamp_architecture.html#filters),
-[events](https://foglamp.readthedocs.io/en/master/foglamp_architecture.html#event-engine),
-and API access to device data with
-[applications](https://foglamp.readthedocs.io/en/master/foglamp_architecture.html#rest-api).
+[filters](https://fledge-iot.readthedocs.io/en/latest/fledge_architecture.html#filters),
+[notifications](https://fledge-iot.readthedocs.io/en/latest/notifications.html),
+and [API access to device data with](https://fledge-iot.readthedocs.io/en/latest/rest_api_guide/03_RESTuser.html#user-api-reference).
