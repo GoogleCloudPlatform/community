@@ -208,7 +208,7 @@ that you created for this tutorial.
 
 # Useful Links
 -  [Source code on GitHub](https://github.com/Timtech4u/flask-firestore) 
--  [Flask documenation](https://flask.palletsprojects.com/en/1.1.x/)
+-  [Flask documentation](https://flask.palletsprojects.com/en/1.1.x/)
 -  [Cloud Firestore documentation](https://firebase.google.com/docs/firestore) 
 -  [Cloud Run documentation](https://cloud.google.com/run/docs/) 
 -  [Cloud Build documentation](https://cloud.google.com/cloud-build/docs/)
