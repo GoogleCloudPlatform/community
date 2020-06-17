@@ -337,11 +337,8 @@ Use the following command to create the External VPN gateway resource. Replace t
     under **IPSec tunnel #2, #3 Tunnel Interface Configuration**, use the IP address under
     **Outside IP address, Virtual private gateway**.
 
-        gcloud compute external-vpn-gateways create [PEER_GW_NAME] \
-        --interfaces 0=[AWS_GW_IP_0],  \
-                     1=[AWS_GW_IP_1],  \
-                     2=[AWS_GW_IP_2],  \
-                     3=[AWS_GW_IP_3]
+        gcloud compute external-vpn-gateways create [PEER_GW_NAME] --interfaces \
+        0=[AWS_GW_IP_0],1=[AWS_GW_IP_1],2=[AWS_GW_IP_2],3=[AWS_GW_IP_3]
 
 The command should look similar to the following example:
 
