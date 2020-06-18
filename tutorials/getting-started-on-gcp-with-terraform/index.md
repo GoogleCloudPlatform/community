@@ -15,7 +15,7 @@ other APIs, or add a datastore. I'm able to iterate very quickly with feedback
 at each step of the process. To help get through those first set up steps I've
 written this tutorial to cover the following:
 
-* Using Terraform to create a VM in Google Cloud
+* Using [Terraform](https://cloud.google.com/docs/terraform) to create a VM in Google Cloud
 * Starting a basic Python Flask server
 
 ### Before you begin
