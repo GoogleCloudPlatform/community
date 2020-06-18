@@ -67,6 +67,6 @@ You can now expand the created ODBC data source in the **Database Navigator** pa
 
 Image below shows the results of executing a select statement against my sample **head_office** table that contains employee information.
 
-![Running query in DBeaver Community](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-dbeaver-odbc/select_statement.png)
+![Running query in DBeaver Community](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-dbeaver-odbc/select-statement.png)
 
 Similarly, you can run insert, update or delete statements against your dataset. The choice of data access tools is not limited to ODBC-compliant applications, you can run queries directly from code in programming languages like Python, PHP, etc.
