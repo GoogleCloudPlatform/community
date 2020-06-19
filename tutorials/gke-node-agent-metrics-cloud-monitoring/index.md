@@ -1,10 +1,9 @@
 ---
 title: Collecting additional GKE Node metrics using collectd to Cloud Monitoring
-description: Learn how to deploy the Cloud Monitoring agent on GKE nodes to expose additional VM metrics on GKE nodes
-author: 
- - aaronsutton
- - echiugoog
+description: Learn how to deploy the Cloud Monitoring agent on GKE nodes to expose additional VM metrics on GKE nodes.
+author: aaronsutton,echiugoog
 tags: Google Container Engine, GKE, Cloud Monitoring, collectd, host metrics, VM metrics
+date_published: 2020-06-19
 ---
 Today only a few metrics are avaialble by default on GKE Nodes.
 
