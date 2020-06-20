@@ -29,7 +29,7 @@ analog I/O. The devices act as a cloud-connected solar and wind power generator.
 
 In [part 2][part2] of the tutorial, you will learn how to process, store, and analyze the streaming data in real time.
 
-![architecture diagram][archdiag]
+![architecture diagram][archdiag] 
 
 [arduino]: https://www.arduino.cc/
 [pi]: https://www.raspberrypi.org/
