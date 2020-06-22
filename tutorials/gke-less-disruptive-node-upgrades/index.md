@@ -25,7 +25,7 @@ node pool with and without surge upgrades and measure the error rate on the clie
 ## Before you begin
 
 We recommend that you use 
-[Cloud Shell](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_a_use_google_cloud_shell) 
+[Cloud Shell](/kubernetes-engine/docs/tutorials/hello-app#option_a_use) 
 to run the commands in this tutorial. As an alternative, you can use your own workstation to run commands locally, in which
 case you would need to install the
 [required tools](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app#option_b_use_command-line_tools_locally).
