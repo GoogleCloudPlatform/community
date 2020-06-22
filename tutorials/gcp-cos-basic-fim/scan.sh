@@ -122,6 +122,7 @@ if [ -f "$FINGERPRINTS" ];then
     cp $FINGERPRINTSTMP $FINGERPRINTS
     chmod 600 $FINGERPRINTS 2> /dev/null
     cat $FAILEDFILES \
+    | awk -F ":" '{ print $1 }' \
     | xargs sha256sum 2>$ERRFILE \
     | tee -a $FINGERPRINTS $LOGFILE
     rm $FAILEDFILES
