@@ -617,7 +617,7 @@ through the VPN tunnel.
 
         execute ping 10.0.20.2
 
-## Troubleshooting IPSec on Foritgate
+## Troubleshooting IPSec on Fortigate
 
 For troubleshooting information, see
 the [Foritgate VPN troubleshooting guide](https://cookbook.fortinet.com/ipsec-vpn-troubleshooting).
@@ -637,7 +637,7 @@ To learn more about GCP networking, see the following documents:
 -  [Terraform template for HA VPN](https://www.terraform.io/docs/providers/google/r/compute_ha_vpn_gateway.html)
 -  [Troubleshooting Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/support/troubleshooting)
 
-### Foritgate documentation
+### Fortigate documentation
 
 For more Fortigate product information, see the following feature configuration guides:
 
