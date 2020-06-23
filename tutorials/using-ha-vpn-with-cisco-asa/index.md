@@ -625,7 +625,7 @@ To learn more about GCP networking, see the following documents:
 -  [VPC networks](https://cloud.google.com/vpc/docs)
 -  [Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview)
 -  [Advanced Cloud VPN configurations](https://cloud.google.com/network-connectivity/docs/vpn/concepts/advanced)
--  [Check VPN status](https://cloud.google.com/network-connectivity/docs/vpnhow-to/checking-vpn-status)
+-  [Check VPN status](https://cloud.google.com/network-connectivity/docs/vpn/how-to/checking-vpn-status)
 -  [Terraform template for HA VPN](https://www.terraform.io/docs/providers/google/r/compute_ha_vpn_gateway.html)
 -  [Troubleshooting Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/support/troubleshooting)
 -  [Create a virtual machine on GCP](https://cloud.google.com/compute/docs/quickstart)
