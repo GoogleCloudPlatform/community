@@ -6,7 +6,7 @@ tags: HA VPN, Cloud VPN, interop, Fortinet, FortiOS
 date_published: 2019-07-16
 ---
 
-Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
+Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/network-connectivity/docs/vpn/)
 on Google Cloud Platform (GCP) and Fortigate.
 
 Fortinet terminology and the Fortinet logo are trademarks of Fortinet or its affiliates in the
@@ -19,10 +19,10 @@ testing it._
 ## Introduction
 
 This guide walks you through the process of configuring a route-based VPN tunnel between
-Fortigate and the [HA VPN service](https://cloud.google.com/vpn/docs) on GCP.
+Fortigate and the [HA VPN service](https://cloud.google.com/network-connectivity/docs/vpn/) on GCP.
 
 For more information about HA or Classic VPN, see the
-[Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
+[Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview).
 
 ## Terminology
 
@@ -44,17 +44,17 @@ Note that HA VPN only supports dynamic routing.
 
 ## Topology
 
-HA VPN supports [multiple topologies](https://cloud.google.com/vpn/docs/concepts/topologies).
+HA VPN supports [multiple topologies](https://cloud.google.com/network-connectivity/docs/vpn/concepts/topologies).
 
 This interop guide is based on the
-[1-peer-2-address](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses) topology.
+[1-peer-2-address](https://cloud.google.com/network-connectivity/docs/vpn/concepts/topologies#1-peer-2-addresses) topology.
 
-The same HA VPN configuration also applies to the [2-peers](https://cloud.google.com/vpn/docs/concepts/topologies#2-peers)
+The same HA VPN configuration also applies to the [2-peers](https://cloud.google.com/network-connectivity/docs/vpn/concepts/topologies#2-peers)
 topology.
 
 ## Product environment
 
-The Foritgate equipment used in this guide is as follows:
+The Fortigate equipment used in this guide is as follows:
 
 -  **Vendor**: Fortinet
 -  **Model**: Fortigate
@@ -63,7 +63,7 @@ The Foritgate equipment used in this guide is as follows:
 ## Before you begin
 
 1.  Review information about how
-    [dynamic routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#dynamic-routing)
+    [dynamic routing](https://cloud.google.com/network/connectivity/docs/vpn/concepts/choosing-networks-routing#dynamic-routing)
     works in GCP.
 
 1.  Make sure that your peer VPN gateway supports BGP and is directly connected to the internet. Fortigate configurations
@@ -447,12 +447,12 @@ Follow the procedures in this section to create the base VPN configuration.
 #### GCP-compatible settings for IPSec and IKE
 
 Make sure to configure only 
-[ciphers supported by GCP](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike).
+[ciphers supported by GCP](https://cloud.google.com/network-connectivity/docs/vpn/how-to/configuring-peer-gateway#configuring_ike).
 
 #### Configure Phase 1 policy
 
 This configuration creates the Phase 1 proposal. Make sure to change the
-`local-gw`, `remote-gw`, and `psksecret` for your envrionment.
+`local-gw`, `remote-gw`, and `psksecret` for your environment.
 
     config vpn ipsec phase1-interface
         edit GCP-HA-VPN-INT0
@@ -631,11 +631,11 @@ See the following Foritgate documentation and Cloud VPN documentation for additi
 To learn more about GCP networking, see the following documents:
 
 -  [VPC networks](https://cloud.google.com/vpc/docs)
--  [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview)
--  [Advanced Cloud VPN configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
--  [Check VPN status](https://cloud.google.com/vpn/docs/how-to/checking-vpn-status)
+-  [Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview)
+-  [Advanced Cloud VPN configurations](https://cloud.google.com/network-connectivity/docs/vpn/concepts/advanced)
+-  [Check VPN status](https://cloud.google.com/network-connectivity/docs/vpn/how-to/checking-vpn-status)
 -  [Terraform template for HA VPN](https://www.terraform.io/docs/providers/google/r/compute_ha_vpn_gateway.html)
--  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
+-  [Troubleshooting Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/support/troubleshooting)
 
 ### Foritgate documentation
 
