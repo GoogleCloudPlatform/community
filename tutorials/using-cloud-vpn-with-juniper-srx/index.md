@@ -14,10 +14,10 @@ should verify this information by testing it._
 
 ## Introduction
 
-Learn how to build site-to-site IPsec VPNs between [Cloud VPN](https://cloud.google.com/vpn/docs/) on Google Cloud
+Learn how to build site-to-site IPsec VPNs between [Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/) on Google Cloud
 Platform (GCP) and Juniper SRX300.
 
-For more information about Cloud VPN, see the [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
+For more information about Cloud VPN, see the [Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview).
 
 Note: This guide assumes that you have basic knowledge of the [IPsec](https://wikipedia.org/wiki/IPsec) protocol.
 
@@ -40,15 +40,15 @@ Definitions of terms used throughout this guide:
 
 Cloud VPN supports the following topologies:
 
--   A site-to-site IPsec VPN tunnel configuration using [Cloud Router](https://cloud.google.com/router/docs/) and 
+-   A site-to-site IPsec VPN tunnel configuration using [Cloud Router](https://cloud.google.com/network-connectivity/docs/router/) and 
     providing dynamic routing with the [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
 -   A site-to-site IPsec VPN tunnel configuration using static routing.
 
 For detailed topology information, see the following resources:
 
--   For basic VPN topologies, see [Cloud VPN overview](https://cloud.google.com/vpn/docs/concepts/overview).
+-   For basic VPN topologies, see [Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/concepts/overview).
 -   For redundant topologies, the Cloud VPN documentation on 
-    [redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns). 
+    [redundant and high-throughput VPNs](https://cloud.google.com/network-connectivity/docs/vpn/concepts/redundant-vpns). 
 
 This tutorial uses the topology shown below as a guide to create the SRX300 configurations and GCP environment:
 
@@ -88,7 +88,7 @@ the VPN. For details, see
 To create a GCP network, a subnetwork, and other entities described in this guide, you must be able to sign in to GCP as a 
 user who has the [Network Admin](https://cloud.google.com/compute/docs/access/iam#network_admin_role) role. For details,
 see
-[Required permissions](https://cloud.google.com/vpn/docs/how-to/creating-vpn-dynamic-routes#required_permissions).
+[Required permissions](https://cloud.google.com/network-connectivity/docs/vpn/how-to/creating-vpn-dynamic-routes#required_permissions).
 
 ### Licenses and modules
 
@@ -152,14 +152,14 @@ The creation of the network and its subnet can take a minute or more.
 
 ### Configuring an IPsec VPN using dynamic routing
 
-For dynamic routing, you use [Cloud Router](https://cloud.google.com/router/docs/concepts/overview) to establish BGP
+For dynamic routing, you use [Cloud Router](https://cloud.google.com/network-connectivity/docs/router/concepts/overview) to establish BGP
 sessions between GCP and the on-premises Juniper SRX300 equipment. We recommend dynamic routing over static routing where 
-possible, as discussed in the [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview) and
-[Cloud VPN network and tunnel routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing) documents.
+possible, as discussed in the [Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview) and
+[Cloud VPN network and tunnel routing](https://cloud.google.com/network-connectivity/docs/vpn/concepts/choosing-networks-routing) documents.
 
 #### Configure the VPN gateway
 
-1.  In the GCP Console, go to the [**VPN** page](https://console.cloud.google.com/networking/vpn/list).
+1.  In the GCP Console, go to the [**VPN** page](https://console.cloud.google.com/hybrid/vpn/list).
 1.  Click **Create VPN connection**.
 1.  Choose **Claasic VPN** and click **Continue**.
 1.  Set the following values for the VPN gateway:
@@ -177,7 +177,7 @@ possible, as discussed in the [Cloud VPN overview](https://cloud.google.com/comp
         the on-premises gateway can use.
     -   **IKE pre-shared key**: A character string, also known as a *shared secret*, that is used in establishing encryption
         for the tunnel. You must enter the same shared secret into both VPN gateways. For more information, see
-        [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
+        [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/how-to/generating-pre-shared-key).
 1.  Under **Routing options**, select the **Dynamic (BGP)** tab.
 1.  In the **Cloud router** menu, select **Create cloud router** and set the following values in the
     **Create a cloud router** dialog:
@@ -202,7 +202,7 @@ possible, as discussed in the [Cloud VPN overview](https://cloud.google.com/comp
         described in [advanced VPN configurations](#advanced-vpn-configurations). Note that if you don't need advanced VPN 
         now, you will need to configure a new VPN tunnel later to support it. The advertised route priority is the base
         priority that Cloud Router uses when advertising the "to GCP" routes. For more information, see
-        [Route metrics](https://cloud.google.com/router/docs/concepts/overview#route_metrics).
+        [Route metrics](https://cloud.google.com/network-connectivity/docs/router/concepts/overview#route_metrics).
         Your on-premises VPN gateway imports these as MED values.
 1.  Click **Save and continue**.
 1.  Click **Create**.
@@ -300,8 +300,8 @@ Note: The Juniper SRX300 solution might have its own specifications for replay w
 | INITIAL_CONTACT (sometimes called *uniqueids*) | Recommended: `on` (sometimes called `restart`). The purpose is to detect restarts faster so that perceived downtime is reduced. |
 | TSi (Traffic Selector - Initiator) | **Subnet networks**: the ranges specified by the GCP local traffic selector. If no local traffic selector range was specified because the VPN is in an auto-mode VPC network and is announcing only the gateway's subnet, that subnet range is used. **Legacy networks**: the range of the network. |
 | TSr (Traffic Selector - Responder) | **IKEv2**: The destination ranges of all of the routes that have the next hop VPN tunnel set to this tunnel on the GCP side. **IKEv1**: Arbitrarily, the destination range of one of the routes that has the next hop VPN tunnel set to this tunnel on the GCP side. |
-| MTU | The MTU of the on-premises VPN device must be set to 1460 or lower. ESP packets leaving the device must not exceed 1460 bytes. You must enable prefragmentation on your device, which means that packets must be fragmented first, then encapsulated. For more information, see [MTU considerations](https://cloud.google.com/vpn/docs/concepts/mtu-considerations). |
-| IKE ciphers | For details about IKE ciphers for IKEv1 or IKEv2 supported by GCP, including the additional ciphers for PFS, see [Supported IKE ciphers](https://cloud.google.com/vpn/docs/concepts/supported-ike-ciphers). |
+| MTU | The MTU of the on-premises VPN device must be set to 1460 or lower. ESP packets leaving the device must not exceed 1460 bytes. You must enable prefragmentation on your device, which means that packets must be fragmented first, then encapsulated. For more information, see [MTU considerations](https://cloud.google.com/network-connectivity/docs/vpn/concepts/mtu-considerations). |
+| IKE ciphers | For details about IKE ciphers for IKEv1 or IKEv2 supported by GCP, including the additional ciphers for PFS, see [Supported IKE ciphers](https://cloud.google.com/network-connectivity/docs/vpn/concepts/supported-ike-ciphers). |
 
 ### Configure the IKE proposal and policy
 
@@ -526,7 +526,7 @@ interface `st0.0`.
     set routing-options static route 10.121.0.0/16 next-hop st0.0
 
 For more recommendations about on-premises routing configurations, see
-[GCP best practices](https://cloud.google.com/router/docs/resources/best-practices).
+[GCP best practices](https://cloud.google.com/network-connectivity/docs/router/resources/best-practices).
 
 ### Saving the configuration
 
@@ -631,7 +631,7 @@ tunnels.
 ### Configuring VPN redundancy
 
 Using redundant on-premises VPN gateways ensures continuous availability when a tunnel fails. The article
-[Redundancy and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns) in the Cloud VPN 
+[Redundancy and high-throughput VPNs](https://cloud.google.com/network-connectivity/docs/vpn/concepts/redundant-vpns) in the Cloud VPN 
 documentation provides configuration guidelines for both GCP and on-premises VPN gateways, including guidance on setting 
 route priorities for redundant gateways. Juniper SRX devices use chassis clustering to provide high availability. This 
 feature is not supported in the SRX300 series devices. See
@@ -697,7 +697,7 @@ This configuration sets static routes with metrics in the Juniper SRX300:
 #### Configuring GCP BGP route priority
 
 With GCP dynamic routing, you can configure advertised route priority. For details, see the
-[Cloud Router overview](https://cloud.google.com/router/docs/concepts/overview) and the
+[Cloud Router overview](https://cloud.google.com/network-connectivity/docs/router/concepts/overview) and the
 [Cloud Router API documentation](https://cloud.google.com/sdk/gcloud/reference/compute/routers/update-bgp-peer). If you have 
 a preferred route announced to the on-premises side of the network, BGP prefers the higher-priority on-premises route.
 
@@ -743,7 +743,7 @@ Note the following:
 
 Each Cloud VPN tunnel can support up to 3 Gbps when the tunnel traffic traverses a direct peering link, or 1.5 Gbps when 
 the tunnel traffic traverses the public internet. For more information, see
-[Redundant and high-throughput VPNs](https://cloud.google.com/vpn/docs/concepts/redundant-vpns).
+[Redundant and high-throughput VPNs](https://cloud.google.com/network-connectivity/docs/vpn/concepts/redundant-vpns).
 
 #### Configuring GCP for higher throughput
 
@@ -1016,11 +1016,11 @@ Refer to the following documentation for additional information.
 To learn more about GCP networking, see the following documents:
 
 -  [VPC networks](https://cloud.google.com/vpc/docs)
--  [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview)
--  [Creating route-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-route-based-vpns)
--  [Creating policy-based VPNs](https://cloud.google.com/vpn/docs/how-to/creating-policy-based-vpns)
--  [Advanced Cloud VPN configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
--  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
+-  [Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview)
+-  [Creating route-based VPNs](https://cloud.google.com/network-connectivity/docs/vpn/how-to/creating-route-based-vpns)
+-  [Creating policy-based VPNs](https://cloud.google.com/network-connectivity/docs/vpn/how-to/creating-policy-based-vpns)
+-  [Advanced Cloud VPN configurations](https://cloud.google.com/network-connectivity/docs/vpn/concepts/advanced)
+-  [Troubleshooting Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/support/troubleshooting)
 
 ### Juniper SRX documentation
 
@@ -1062,7 +1062,7 @@ variables to hold the values that you need for these parameters.
 | Parameter description | Placeholder          | Example value                             |
 |-----------------------|----------------------|-------------------------------------------|
 | GCP project name      | `[PROJECT_NAME]`     | `vpn-guide`                               |
-| Shared secret         | `[SHARED_SECRET]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key). |
+| Shared secret         | `[SHARED_SECRET]`    | See [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key). |
 | VPC network name      | `[VPC_NETWORK_NAME]` | `vpn-juniper-test-network` |
 | Subnet on the GCP VPC network (for example, `vpn-juniper-test-network`) | `[VPC_SUBNET_NAME]` | `vpn-subnet-1` |
 | GCP region. Can be any region, but should be geographically close to the on-premises gateway. | `[REGION]` | `us-east1` |
@@ -1198,7 +1198,7 @@ Note: Before you run the `gcloud` commands in this section, make sure that you'v
     -   Set the IKE version. The following command sets the IKE version to 2, which is the default, preferred IKE version. 
         If you need to set it to 1, use `--ike-version 1`.
     -   For `[SHARED_SECRET]`, supply the shared secret. For details, see
-        [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
+        [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key).
 
             gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
                 --project $PROJECT_NAME \
@@ -1291,7 +1291,7 @@ earlier in this guide.
 
 The procedure suggests creating a custom VPC network. This is preferred over using an auto-created network. For more 
 information, see
-[Networks and tunnel routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#network-types)
+[Networks and tunnel routing](https://cloud.google.com/network-connectivity/docs/vpn/concepts/choosing-networks-routing#network-types)
 in the Cloud VPN documentation.
 
 Note: Before you run the `gcloud` commands in this section, make sure that you've set the variables as described earlier in
@@ -1362,10 +1362,10 @@ Note: Before you run the `gcloud` commands in this section, make sure that you'v
     -   Set the IKE version. The following command sets the IKE version to 2, which is the default, preferred IKE version.
         If you need to set it to 1, use `--ike-version 1`.
     -   For `[SHARED_SECRET]`, supply the shared secret. For details, see
-        [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).
+        [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key).
     -   For `[LOCAL_TRAFFIC_SELECTOR_IP]`, supply an IP address range, like `172.16.100.0/24`, that will be accessed on the 
         GCP side of the  tunnel, as described in
-        [Traffic selectors](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#static-routing-networks)
+        [Traffic selectors](https://cloud.google.com/network-connectivity/docs/vpn/concepts/choosing-networks-routing#static-routing-networks)
         in the GCP VPN networking documentation.
 
             gcloud compute vpn-tunnels create $VPN_TUNNEL_1 \
