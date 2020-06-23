@@ -12,7 +12,7 @@ provided as an example only. Please note that this guide is not meant to be a
 comprehensive overview of IPsec and assumes basic familiarity with the IPsec
 protocol.
 
-[cloud_vpn]: https://cloud.google.com/compute/docs/vpn/overview
+[cloud_vpn]: https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview
 
 # Environment overview
 
@@ -44,7 +44,7 @@ To use a Check Point security gateway with Cloud VPN make sure the following pre
 
 The following parameters and values are used in the Gateway’s IPSec configuration for the
 purpose of this guide. Cloud VPN supports extensive
-[list](https://cloud.google.com/vpn/docs/concepts/supported-ike-ciphers)
+[list](https://cloud.google.com/network-connectivity/docs/vpn/concepts/supported-ike-ciphers)
 of ciphers that can be used per your security policies.
 
 |Parameter | Value|
@@ -92,7 +92,7 @@ to replace the IP addresses in the sample environment with your own IP addresses
 ### Configuring Cloud VPN
 
 To configure Cloud VPN:
-1. In the Google Cloud Platform Console, select **Networking** > **[Create VPN connection](https://console.cloud.google.com/interconnect/vpn)**.
+1. In the Google Cloud Platform Console, select **Networking** > **[Create VPN connection](https://console.cloud.google.com/hybrid/vpn/list)**.
 
 1. Click **CREATE VPN CONNECTION**.
 
@@ -200,12 +200,12 @@ to replace the IP addresses in the sample environment with your own IP addresses
 ## Configuration - GCP
 
 With route based VPN both static and dynamic routing can be used. This example will use
-dynamic routing. [Cloud Router](https://cloud.google.com/router/docs/) is used to establish
+dynamic routing. [Cloud Router](https://cloud.google.com/network-connectivity/docs/router/) is used to establish
 BGP sessions between the 2 peers.
 
 ### Configuring cloud router
 
-**Step 1**: In Google Cloud Platform Console, select **Networking** > **[Cloud Routers](https://console.cloud.google.com/interconnect/routers)** > **Create Router**.
+**Step 1**: In Google Cloud Platform Console, select **Networking** > **[Cloud Routers](https://console.cloud.google.com/hybrid/routers/list)** > **Create Router**.
 
 **Step 2**: Enter the parameters as shown in the following table and click **Create**.
 
@@ -221,7 +221,7 @@ BGP sessions between the 2 peers.
 
 ### Configuring Cloud VPN
 
-**Step 1**: In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[VPN](https://console.cloud.google.com/interconnect/vpn)** > **CREATE VPN CONNECTION**.
+**Step 1**: In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[VPN](https://console.cloud.google.com/hybrid/vpn/list)** > **CREATE VPN CONNECTION**.
 
 **Step 2**: Enter the parameters as shown in the following table for the Google Compute Engine VPN gateway:
 
