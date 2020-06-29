@@ -6,7 +6,7 @@ tags: HA VPN, Cloud VPN, interop, AWS
 date_published: 2019-07-16
 ---
 
-Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
+Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/network-connectivity/vpn/docs/)
 on Google Cloud Platform (GCP) and AWS.
 
 AWS terminology and the AWS logo are trademarks of Amazon Web Services or its affiliates
@@ -19,10 +19,10 @@ testing it._
 ## Introduction
 
 This guide walks you through the process of configuring route-based VPN tunnels between
-AWS and the [HA VPN service](https://cloud.google.com/vpn/docs) on GCP.
+AWS and the [HA VPN service](https://cloud.google.com/network-connectivity/vpn/docs) on GCP.
 
 For more information about HA or Classic VPN, see the
-[Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
+[Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview).
 
 ## Terminology
 
@@ -44,7 +44,7 @@ Note that HA VPN only supports dynamic routing.
 
 ## Topology
 
-HA VPN supports [multiple topologies](https://cloud.google.com/vpn/docs/concepts/topologies).
+HA VPN supports [multiple topologies](https://cloud.google.com/network-connectivity/docs/vpn/concepts/topologies).
 
 This interop guide is based on the
 [AWS-peer-gateways](https://cloud.google.com/vpn/docs/concepts/topologies#aws_peer_gateways) topology
@@ -67,7 +67,7 @@ The supported AWS configuration uses a total of four tunnels:
 ## Before you begin
 
 1.  Review information about how
-    [dynamic routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#dynamic-routing)
+    [dynamic routing](https://cloud.google.com/network-connectivity/docs/vpn/concepts/choosing-networks-routing#dynamic-routing)
     works in GCP.
 
 1.  Select or [create](https://console.cloud.google.com/cloud-resource-manager) a GCP project.
@@ -99,10 +99,10 @@ lists the parameters and gives examples of the values used in this guide.
 |-----------------------|----------------------|--------------------------------------------------------|
 | Vendor name           | `[VENDOR_NAME]`      | AWS                                                    |
 | GCP project name      | `[PROJECT_NAME]`     | `vpn-guide`                                            |
-| Shared secret         | `[SHARED_SECRET_0]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
-| Shared secret         | `[SHARED_SECRET_1]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
-| Shared secret         | `[SHARED_SECRET_2]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
-| Shared secret         | `[SHARED_SECRET_3]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
+| Shared secret         | `[SHARED_SECRET_0]`    | See [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key).                                   |
+| Shared secret         | `[SHARED_SECRET_1]`    | See [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key).                                   |
+| Shared secret         | `[SHARED_SECRET_2]`    | See [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key).                                   |
+| Shared secret         | `[SHARED_SECRET_3]`    | See [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key).                                   |
 | VPC network name      | `[NETWORK]`          | `network-a`                                            |
 | Subnet mode           | `[SUBNET_MODE]`      | `custom`                                               |
 | VPN BGP routing mode  | `[BGP_ROUTING_MODE]` | `global`                                               |
@@ -337,11 +337,8 @@ Use the following command to create the External VPN gateway resource. Replace t
     under **IPSec tunnel #2, #3 Tunnel Interface Configuration**, use the IP address under
     **Outside IP address, Virtual private gateway**.
 
-        gcloud compute external-vpn-gateways create [PEER_GW_NAME] \
-        --interfaces 0=[AWS_GW_IP_0],  \
-                     1=[AWS_GW_IP_1],  \
-                     2=[AWS_GW_IP_2],  \
-                     3=[AWS_GW_IP_3]
+        gcloud compute external-vpn-gateways create [PEER_GW_NAME] --interfaces \
+        0=[AWS_GW_IP_0],1=[AWS_GW_IP_1],2=[AWS_GW_IP_2],3=[AWS_GW_IP_3]
 
 The command should look similar to the following example:
 
@@ -363,7 +360,7 @@ In the following commands to create each tunnel, replace the options as noted in
     recommended. All four tunnels created in this example use IKEv2.
 -   Replace `[SHARED_SECRET_0]` through `[SHARED_SECRET_3]` with the shared secret, which must be the same as the
     shared secret used for the partner tunnel you create on your AWS virtual gateway. See
-    [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key)
+    [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key)
     for recommendations. You can also find the shared secrets in the AWS configuration files that you downloaded 
     earlier.
 -   Replace `[INT_NUM_0]` with the number `0` for the first interface on the HA VPN gateway you created earlier.

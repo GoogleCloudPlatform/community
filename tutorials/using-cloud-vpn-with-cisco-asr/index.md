@@ -12,7 +12,7 @@ provided as an example only. Please note that this guide is not meant to be a
 comprehensive overview of IPsec and assumes basic familiarity with the IPsec
 protocol.
 
-[cloud_vpn]: https://cloud.google.com/compute/docs/vpn/overview
+[cloud_vpn]: https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview
 
 ## Environment overview
 
@@ -110,7 +110,7 @@ The IPsec configuration used in this guide is specified below:
 
 ### IPsec VPN using dynamic routing
 
-For dynamic routing you use [Cloud Router](https://cloud.google.com/router/docs/concepts/overview)
+For dynamic routing you use [Cloud Router](https://cloud.google.com/network-connectivity/docs/router/concepts/overview)
 to establish BGP sessions between the 2 peers.
 
 #### Using the Cloud Platform Console
@@ -173,7 +173,7 @@ to establish BGP sessions between the 2 peers.
     This step automatically creates the necessary forwarding rules for the
     gateway and tunnels.
 
-1.  [Configure your firewall rules](https://cloud.google.com/compute/docs/vpn/creating-vpns#configuring_firewall_rules)
+1.  [Configure your firewall rules](https://cloud.google.com/network-connectivity/docs/vpn/how-to/configuring-firewall-rules)
     to allow inbound traffic from the peer network subnets, and you must
     configure the peer network firewall to allow inbound traffic from your
     Compute Engine prefixes.
@@ -226,7 +226,7 @@ to establish BGP sessions between the 2 peers.
         gcloud compute --project vpn-guide forwarding-rules create fr-udp4500 --region us-east1 \
             --ip-protocol UDP --ports 4500 --address 35.185.3.177 --target-vpn-gateway vpn-scale-test-cisco-gw-0
 
-1.  Create [Cloud Router](https://cloud.google.com/compute/docs/cloudrouter) as
+1.  Create [Cloud Router](https://cloud.google.com/network-connectivity/docs/router/) as
     shown below:
 
         gcloud compute --project vpn-guide routers create vpn-scale-test-cisco-rtr --region us-east1 \
@@ -282,7 +282,7 @@ This section provides the steps to create [Cloud VPN on GCP][compute_vpn]. There
 ways to create VPN on GCP, using Google Cloud Platform Console and the `gcloud`
 command-line tool. The upcoming section provide details to both in detail below:
 
-[compute_vpn]: https://cloud.google.com/compute/docs/vpn/overview
+[compute_vpn]: https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview
 
 #### Using the Google Cloud Platform Console
 
@@ -327,7 +327,7 @@ command-line tool. The upcoming section provide details to both in detail below:
     tunnels will not connect until you've completed the additional steps below.
     This step automatically creates a network-wide route and necessary
     forwarding rules for the tunnel.
-1.  [Configure your firewall rules](https://cloud.google.com/compute/docs/vpn/creating-vpns#configuring_firewall_rules)
+1.  [Configure your firewall rules](https://cloud.google.com/network-connectivity/docs/vpn/how-to/configuring-firewall-rules)
     to allow inbound traffic from the peer network subnets, and you must
     configure the peer network firewall to allow inbound traffic from your
     Compute Engine prefixes.
@@ -585,7 +585,7 @@ Statically route traffic toward the network in the GCP to the Tunnel interface.
 
     ip route 172.16.100.0 255.255.255.0 Tunnel 1
 
-Check [Best practices](https://cloud.google.com/router/docs/resources/best-practices) 
+Check [Best practices](https://cloud.google.com/network-connectivity/docs/router/resources/best-practices) 
 for further recommendations on peer configurations.
 
 ### Saving the configuration
@@ -759,9 +759,9 @@ define the route priority run the below command.
 
 #### Getting higher throughput
 
-As documented in the [GCP Advanced Configurations](https://cloud.google.com/compute/docs/vpn/advanced),
+As documented in the [GCP Advanced Configurations](https://cloud.google.com/network-connectivity/docs/vpn/concepts/advanced),
 each Cloud VPN tunnel can support up to 3 Gbps when the traffic is traversing a
-[direct peering](https://cloud.google.com/interconnect/direct-peering) link, or
+[direct peering](https://cloud.google.com/network-connectivity/docs/direct-peering/direct-peering) link, or
 1.5 Gbps when traversing the public Internet. To increase the VPN throughput the
 recommendation is to add multiple Cloud VPN gateway on the same region to load
 balance the traffic across the tunnels. The 2 VPN tunnels configuration example
@@ -889,6 +889,6 @@ Refer to the following documentation for common error messages and debug command
 To learn more about GCP networking, refer to below documents:
 
 * [GCP VPC Networks](https://cloud.google.com/compute/docs/vpc/)
-* [GCP Cloud VPN](https://cloud.google.com/compute/docs/vpn/overview)
-* [GCP advanced VPN](https://cloud.google.com/compute/docs/vpn/advanced)
-* [Troubleshooting VPN on GCP](https://cloud.google.com/compute/docs/vpn/troubleshooting)
+* [GCP Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview)
+* [GCP advanced VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/advanced)
+* [Troubleshooting VPN on GCP](https://cloud.google.com/network-connectivity/docs/vpn/support/troubleshooting)
