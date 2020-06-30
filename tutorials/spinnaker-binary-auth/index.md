@@ -356,11 +356,11 @@ This file instructs Cloud Build to build a docker image using the Dockerfile pre
 
 Now, as next step, do a test on pushing a change to the repository and check if the build is started automatically like seen below:
 
-![Build history](./images/01-build-history.png)
+![Build history](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/01-build-history.png)
 
 After the build is successful, check if the image is placed into the container registry:
 
-![GCR](./images/02-gcr.png)
+![GCR](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/02-gcr.png)
 
 # Configuring Spinnaker
 
@@ -377,7 +377,7 @@ The first step is to create an application in Spinnaker. For that, in Spinnaker 
 3. Name the application as **products-api**
 4. Inform your email as **Owner Email**
 
-![New Application](./images/03-new-app.png)
+![New Application](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/03-new-app.png)
 
 Now click on **Configure** to create a new pipeline:
 
@@ -390,7 +390,7 @@ To create a trigger:
 
 1. On **Automated Triggers**, click on **Add Trigger**.
 
-![New Trigger](./images/04-trigger.png)
+![New Trigger](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/04-trigger.png)
 
 2. Select type as **Pub/Sub**
 3. **Pub/Sub System Type** as **google**
@@ -398,7 +398,7 @@ To create a trigger:
 5. **Payload Constraints** add a **Key** as **status** and **value** as **SUCCESS**. This will filter messages to process builds only when they are finished and successful.
 6. Click on **Save Changes**.
 
-![Configuring Trigger](./images/05-new-trigger.png)
+![Configuring Trigger](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/05-new-trigger.png)
 
 Now, do the following to test:
 
@@ -409,7 +409,7 @@ Now, do the following to test:
 
 After the build is complete and successful, go back to Spinnaker and check if it has an execution of the pipeline. There should be an execution, showing the trigger is working fine:
 
-![First execution](./images/06-first-run.png)
+![First execution](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/06-first-run.png)
 
 ### Extract Details From The Built Image
 
@@ -421,18 +421,18 @@ For that, do the following:
 2. Change the type to **Evaluate Variables**.
 3. Name the stage as **Get Image Details**.
 
-![Get Image details](./images/07-get-img-details.png)
+![Get Image details](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/07-get-img-details.png)
 
 Create a variable named imageName and point it to `${trigger.payload.results.images[0].name}`
 
 Create a new one named imageDigest and point it to `${trigger.payload.results.images[0].digest}`
 
-![Variables](./images/08-vars.png)
+![Variables](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/08-vars.png)
 
 1. Save and retest the pipeline running the trigger on Cloud Build again. 
 2. Checking if variables were correctly extracted.
 
-![Variable extraction](./images/09-var-extract.png)
+![Variable extraction](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/09-var-extract.png)
 
 3. Now add a new variable named imageAndHash with the following content:
 
@@ -441,7 +441,7 @@ Create a new one named imageDigest and point it to `${trigger.payload.results.im
 
 4. The following result will be seen:
 
-![Image and Hash Variable](./images/10-image-and-hash.png)
+![Image and Hash Variable](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/10-image-and-hash.png)
 
 Click on **Save Changes**.
 
@@ -528,11 +528,11 @@ In a new directory containing the code for creating the attestation, create a sc
 
 Go back to Spinnaker and add a new stage. Select as type **Run Job (Manifest)** and name it as **Create Attestation**.
 
-![Create Attestation Job](./images/11-create-attestation.png)
+![Create Attestation Job](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/11-create-attestation.png)
 
 Select the **Account** as **spinnaker-install-account**. This is the kubernetes account for the **cluster where spinnaker is installed and comes pre-defined with Spinnaker for GCP**.
 
-![Run Job Configuration](./images/12-run-job.png)
+![Run Job Configuration](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/12-run-job.png)
 
 Add the following text as the **Manifest Text** making the necessary changes to point to your project and replacing the other environment variables.
 
@@ -578,7 +578,7 @@ Test the build by triggering the Cloud Build trigger manually in Cloud Console. 
 
 The build should succeed and we should see two green steps:
 
-![Success running job](./images/13-run-job-steps.png)
+![Success running job](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/13-run-job-steps.png)
 
 And if you look at the console output for the Create Attestation phase, you should see the following output:
 
@@ -620,11 +620,11 @@ For that:
 
 1. Add a new stage of type **Deploy (Manifest)** and name it **Deploy Application**.
 
-![Add stage for App Deployment](./images/14-deploy-app-stage.png)
+![Add stage for App Deployment](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/14-deploy-app-stage.png)
 
 2. **Select the account** you want to deploy to, which will be the account that was connected to Spinnaker representing the deployment cluster.
 
-![Stage Config](./images/15-manifest-config.png)
+![Stage Config](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/15-manifest-config.png)
 
 3. Enter the following as the deployment configuration **Manifest text** to deploy the application:
 
@@ -655,9 +655,9 @@ For that:
 
 4. Test the deployment and check if the deployment was created successfully in Kubernetes and if the PODs are running. This will indicate that the binary authorization is working properly. 
 
-![Deployment Success](./images/16-three-steps-success.png)
+![Deployment Success](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/16-three-steps-success.png)
 
-![Deployment Success](./images/17-deployment-ok.png)
+![Deployment Success](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/17-deployment-ok.png)
 
 
 ## Deploying a Service
@@ -668,7 +668,7 @@ For that:
 
 1. Add a parallel step to the **Deploy Application**, same type as the Deploy Application one, name it **Deploy Service**.
 
-![Service Deployment](./images/18-svc-deployment.png)
+![Service Deployment](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/18-svc-deployment.png)
 
 2. Configure the deployment text YAML as the following:
 
@@ -690,7 +690,7 @@ For that:
 
 4. Deployment should succeed with the deployment now of the service along with the application.
 
-![Service Deployment Success](./images/19-svc-deployment-ok.png)
+![Service Deployment Success](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/19-svc-deployment-ok.png)
 
 5. Execute a `kubectl get svc` in the user cluster to get the Load Balancer IP
 
