@@ -3,7 +3,7 @@ title: CI/CD with Spinnaker and Binary Authorization
 description: Creating attestations by integrating Cloud Build, Spinnaker, Cloud KMS, and Binary Authorization to securely deploy Kubernetes applications.
 author: damadei-google
 tags: Kubernetes, Spinnaker, CI/CD, DevOps, Binary Authorization, Cloud KMS, Cloud Build
-date_published: 2020-7-1
+date_published: 2020-07-01
 ---
 
 Daniel Amadei | Customer Engineer | Google
