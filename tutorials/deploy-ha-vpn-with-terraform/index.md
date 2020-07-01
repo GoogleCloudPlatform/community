@@ -16,7 +16,7 @@ configuration on Google Cloud Platform (GCP).
 
 ## Before you begin
 
-*   This guide assumes that you are familiar with [Terraform](https://www.terraform.io/). Instructions provided in this guide
+*   This guide assumes that you are familiar with [Terraform](https://cloud.google.com/docs/terraform). Instructions provided in this guide
     are based on the GCP envrionment depicted in the
     [HA VPN interop guides](https://cloud.google.com/vpn/docs/how-to/interop-guides) and are only for testing purposes.
 

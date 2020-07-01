@@ -95,7 +95,7 @@ Clone the repository associated with the community tutorials:
 ## Create the on-premises broker
 
 You will use the project private networking as a stand-in for a proper
-hybrid [Cloud Interconnect](https://cloud.google.com/interconnect/) setup.
+hybrid [Cloud Interconnect](https://cloud.google.com/network-connectivity/docs/interconnect/) setup.
 
 Start by creating a VM to represent the on-premises broker instance. This will be running a basic version of
 [RabbitMQ](https://www.rabbitmq.com/).
