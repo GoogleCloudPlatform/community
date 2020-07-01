@@ -206,8 +206,7 @@ The steps to add the Cloud Run Button to your repository are as follows:
 To prevent unnecessary charges, clean up the resources created for this tutorial. This includes deleting any projects 
 that you created for this tutorial.
 
-# Useful Links
--  [Source code on GitHub](https://github.com/Timtech4u/flask-firestore) 
+# Useful links
 -  [Flask documenation](https://flask.palletsprojects.com/en/1.1.x/)
 -  [Cloud Firestore documentation](https://firebase.google.com/docs/firestore) 
 -  [Cloud Run documentation](https://cloud.google.com/run/docs/) 
