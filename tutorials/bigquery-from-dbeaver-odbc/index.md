@@ -3,18 +3,18 @@ title: Connecting DBeaver to BigQuery through ODBC
 description: Learn how to use ODBC drivers to access and modify BigQuery data from DBeaver.
 author: julzsam
 tags: BigQuery, DBeaver, ODBC
-date_published: 2020-06-18
+date_published: 2020-07-06
 ---
 
 [BigQuery](https://cloud.google.com/bigquery/) is a managed, serverless data warehouse for storing and querying massive datasets. To access these datasets, you 
-need some kind of a tool that understands the BigQuery API, or you can use an ODBC driver that can work with a wide range of ODBC-compliant tools, as a data 
+need some kind of tool that understands the BigQuery API, or you can use an ODBC driver that can work with a wide range of ODBC-compliant tools, as a data 
 access layer.
 
 Open Database Connectivity (ODBC) is an API that allows external applications to access data in various database management systems. The ODBC driver acts as an 
 interface between an external database and an ODBC data source.
 
-This tutorial shows you how to use the [ODBC Driver for BigQuery](https://www.devart.com/odbc/bigquery/) to connect and access data in BigQuery data warehouse 
-from DBeaver Community, a free database administration tool.  
+This tutorial shows you how to use the [ODBC Driver for BigQuery](https://www.devart.com/odbc/bigquery/) to connect and access data in a BigQuery data warehouse 
+using DBeaver Community, a free database administration tool.  
 
 ## Objectives
 
@@ -43,8 +43,8 @@ See the [BigQuery pricing page](https://cloud.google.com/bigquery/pricing) for d
 1.  Download the latest version of [Devart ODBC Driver for BigQuery](https://www.devart.com/odbc/bigquery/download.html) for Windows.
 1.  Run the ODBC driver installer.
 
-    The installation wizard offers you to install the 32-bit and 64-bit versions of the driver. Confirm both versions if you are planning to use the driver with
-    older external applications. The driver offers a 30-day trial period, no credit card required.  
+    The installation wizard offers to install the 32-bit and 64-bit versions of the driver. Confirm both versions if you are planning to use the driver with
+    older external applications. The driver offers a 30-day trial period, with no credit card required.  
 
 ## Configure a DSN for the driver
 
