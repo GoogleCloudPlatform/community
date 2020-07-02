@@ -24,8 +24,8 @@ The deployer project is the project where your Kubernetes cluster will be create
 
 ### Create a Kubernetes cluster
 
-Create a Kubernetes cluster where you will deploy the application. There are no special needs for the cluster creation; you can follow the
-standard [instructions to create a cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-regional-cluster).
+Create a Kubernetes cluster where you will deploy the application, using the standard
+[instructions to create a cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-regional-cluster).
 
 ### Install Spinnaker
 
@@ -34,7 +34,7 @@ cluster that you created, but in a different Kubernetes cluster dedicated to Spi
 
 ### Connect the GKE cluster to Spinnaker
 
-After the user cluster is created, connect it to Spinnaker and push the configurations.
+After the user cluster is created, connect it to Spinnaker and push the configurations:
 
 1.  In Cloud Shell, run the following command to get the credentials of the user cluster and store it locally:
 
@@ -70,47 +70,47 @@ Export variables and enable APIs used throughout this procedure:
 
     DEPLOYER_SERVICE_ACCOUNT="service-${DEPLOYER_PROJECT_NUMBER}@gcp-sa-binaryauthorization.iam.gserviceaccount.com"
 
-### Attestor project
+### Set up the attestor project
 
-Setup should be based in [this](https://cloud.google.com/binary-authorization/docs/multi-project-setup-cli) document but only one project will be used to hold the attestor, attestations and keys in Cloud KMS so instructions will be provided as they are a little bit different from the referred link. 
+The setup for the attestor project is similar to the process described [here](https://cloud.google.com/binary-authorization/docs/multi-project-setup-cli), 
+except that only one project will be used to hold the attestor, attestations, and keys in Cloud KMS. 
 
-Assuming `gcloud` is already authenticated, create the following environment vars:
+1.  Create the following environment variables:
 
-    ATTESTOR_PROJECT_ID=<ATTESTOR PROJECT ID>
-    ATTESTOR_PROJECT_NUMBER=$(gcloud projects describe "${ATTESTOR_PROJECT_ID}" --format="value(projectNumber)")
-    ATTESTOR_SERVICE_ACCOUNT="service-${ATTESTOR_PROJECT_NUMBER}@gcp-sa-binaryauthorization.iam.gserviceaccount.com"
+        ATTESTOR_PROJECT_ID=<YOUR_ATTESTOR_PROJECT_ID>
+        ATTESTOR_PROJECT_NUMBER=$(gcloud projects describe "${ATTESTOR_PROJECT_ID}" --format="value(projectNumber)")
+        ATTESTOR_SERVICE_ACCOUNT="service-${ATTESTOR_PROJECT_NUMBER}@gcp-sa-binaryauthorization.iam.gserviceaccount.com"
 
-Now, run the following commands:
+1.  Run the following commands:
 
-    gcloud config set project ${ATTESTOR_PROJECT_ID}
-    gcloud services --project=${ATTESTOR_PROJECT_ID} \
-        enable containeranalysis.googleapis.com \
-        binaryauthorization.googleapis.com
+        gcloud config set project ${ATTESTOR_PROJECT_ID}
+        gcloud services --project=${ATTESTOR_PROJECT_ID} \
+            enable containeranalysis.googleapis.com \
+            binaryauthorization.googleapis.com
 
+### Create the Container Analysis note
 
-### Creating the Container Analysis Note
+Create the Container Analysis note, which is required by the attestor to create the attestations: 
 
-Create the container analysis note which is required by the attestor to create the attestations. 
-
-1. First, export the variables.
+1.  Export the variables.
 
         ATTESTOR_NAME=container-attestor
         NOTE_ID=container-attestor-note
 
-2. Create the note payload file:
+1.  Create the note payload file:
 
-        cat > /tmp/note_payload.json << EOM
-        {
-        "name": "projects/${ATTESTOR_PROJECT_ID}/notes/${NOTE_ID}",
-        "attestation": {
-            "hint": {
-            "human_readable_name": "Attestor Note"
+            cat > /tmp/note_payload.json << EOM
+            {
+            "name": "projects/${ATTESTOR_PROJECT_ID}/notes/${NOTE_ID}",
+            "attestation": {
+                "hint": {
+                "human_readable_name": "Attestor Note"
+                }
             }
-        }
-        }
-        EOM
+            }
+            EOM
 
-3. Create the note by sending an HTTP request to the Container Analysis REST API:
+1.  Create the note by sending an HTTP request to the Container Analysis REST API:
 
         curl -X POST \
             -H "Content-Type: application/json" \
@@ -118,63 +118,64 @@ Create the container analysis note which is required by the attestor to create t
             --data-binary @/tmp/note_payload.json  \
             "https://containeranalysis.googleapis.com/v1/projects/${ATTESTOR_PROJECT_ID}/notes/?noteId=${NOTE_ID}"
 
-4. Verify that the note was created:
+1.  Verify that the note was created:
 
         curl \
         -H "Authorization: Bearer $(gcloud auth print-access-token)" \
         "https://containeranalysis.googleapis.com/v1/projects/${ATTESTOR_PROJECT_ID}/notes/${NOTE_ID}"
 
-5. It should have been created successfully.
 
+### Create the attestor
 
-### Creating the Attestor
-Now it's time to create the attestor in the respective project with the id represented by the ATTESTOR_PROJECT_ID exported variable.
+Create the attestor in the respective project with the ID represented by the exported `ATTESTOR_PROJECT_ID` variable.
 
-1. Create the attestor by running the following command:
+1.  Create the attestor by running the following command:
 
         gcloud --project=${ATTESTOR_PROJECT_ID} \
             beta container binauthz attestors create ${ATTESTOR_NAME} \
             --attestation-authority-note=${NOTE_ID} \
             --attestation-authority-note-project=${ATTESTOR_PROJECT_ID}
 
-2. Verify the attestor was created:
+1.  Verify that the attestor was created:
 
         gcloud --project=${ATTESTOR_PROJECT_ID} \
             beta container binauthz attestors list
 
-3. Add permission for the deployer service account to access the attestor. This command gives access to the DEPLOYER project binary authorization service account to access the attestor in the ATTESTOR project:
+1.  Add permission for the deployer service account to access the attestor.
 
         gcloud --project ${ATTESTOR_PROJECT_ID} \
             beta container binauthz attestors add-iam-policy-binding \
             "projects/${ATTESTOR_PROJECT_ID}/attestors/${ATTESTOR_NAME}" \
             --member="serviceAccount:${DEPLOYER_SERVICE_ACCOUNT}" \
             --role=roles/binaryauthorization.attestorsVerifier
+	    
+     This command gives access to the deployer project Binary Authorization service account to access the attestor in the attestor project.
 
 ### Set permissions on the Container Analysis note
-Permission should be set on the container analysis note to the attestor service account.
 
-Set permission on the container analysis note:
+Set permission on the Container Analysis note for the attestor service account:
 
-        cat > /tmp/iam_request.json << EOM
-        {
-            'resource': 'projects/${ATTESTOR_PROJECT_ID}/notes/${NOTE_ID}',
-            'policy': {
-                'bindings': [
-                {
-                    'role': 'roles/containeranalysis.notes.occurrences.viewer',
-                    'members': [
-                    'serviceAccount:${ATTESTOR_SERVICE_ACCOUNT}'
-                    ]
-                }
+    cat > /tmp/iam_request.json << EOM
+    {
+        'resource': 'projects/${ATTESTOR_PROJECT_ID}/notes/${NOTE_ID}',
+        'policy': {
+            'bindings': [
+            {
+                'role': 'roles/containeranalysis.notes.occurrences.viewer',
+                'members': [
+                'serviceAccount:${ATTESTOR_SERVICE_ACCOUNT}'
                 ]
             }
+            ]
         }
-        EOM
+    }
+    EOM
 
-### Creating KMS Keys
-Create the KMS keys which will be used by the attestor to sign and then verify signature of the attestation.
+### Create KMS keys
 
-1. First create and export the variables that will be used to create the key. These are sample names for the key ring and key name, feel free to change such samples to names that are better to your case:
+In this section, you create the KMS keys that will be used by the attestor to sign and then verify the signature of the attestation.
+
+1.  Create and export the variables that will be used to create the key:
 
         KMS_KEY_PROJECT_ID=${ATTESTOR_PROJECT_ID}
         KMS_KEYRING_NAME=my-binauthz-keyring
@@ -185,13 +186,15 @@ Create the KMS keys which will be used by the attestor to sign and then verify s
         KMS_PROTECTION_LEVEL=software
         KMS_KEY_VERSION=1
 
-2. Create a key ring:
+     The values for the key ring name and key name are examples. You can change them to names that suit your needs.	
+
+1.  Create a key ring:
 
         gcloud kms keyrings create ${KMS_KEYRING_NAME} \
         --location ${KMS_KEY_LOCATION} \
         --project ${KMS_KEY_PROJECT_ID}
 
-3. Create a key inside the key ring:
+1.  Create a key inside the key ring:
 
         gcloud kms keys create ${KMS_KEY_NAME} \
         --location ${KMS_KEY_LOCATION} \
@@ -201,7 +204,7 @@ Create the KMS keys which will be used by the attestor to sign and then verify s
         --protection-level ${KMS_PROTECTION_LEVEL} \
         --project ${KMS_KEY_PROJECT_ID}
 
-4. Finally, add the key to the attestor as trusted keys to sign the payloads of trusted images
+4. Add the key to the attestor as a trusted key to sign the payloads of trusted images:
 
         gcloud --project="${ATTESTOR_PROJECT_ID}" \
             alpha container binauthz attestors public-keys add \
@@ -212,13 +215,12 @@ Create the KMS keys which will be used by the attestor to sign and then verify s
             --keyversion-key="${KMS_KEY_NAME}" \
             --keyversion="${KMS_KEY_VERSION}"
 
+### Create and configure the policy
 
-### Configure the Policy
-Now a policy should be created. This policy is the configuration in the `DEPLOYER` project to only allow images to be deployed to GKE clusters in this project that have been attested by the attestor from the `ATTESTOR` project.
+The policy is the configuration in the `DEPLOYER` project to only allow images to be deployed to GKE clusters in this project that have been attested by the
+attestor from the `ATTESTOR` project.
 
-For that, do the following:
-
-1. Configure the policy YAML file:
+1.  Configure the policy YAML file:
 
         cat > /tmp/policy.yaml << EOM
             globalPolicyEvaluationMode: true
@@ -236,39 +238,39 @@ For that, do the following:
             name: projects/${DEPLOYER_PROJECT_ID}/policy
         EOM
 
-2. Create the policy in the deployer project to allow just images attested by this attestor be deployed to GKE clusters in this project:
+1.  Create the policy in the deployer project to allow just images attested by this attestor be deployed to GKE clusters in this project:
 
         gcloud --project=${DEPLOYER_PROJECT_ID} \
             beta container binauthz policy import /tmp/policy.yaml
 
-### Testing all the setup we've done so far
-Create an attestation to test the policy. For that, do the following:
+### Testing the setup
 
-1. Export the variables to test the policy:
+To test the policy, create an attestation:
 
+1.  Export the variables to test the policy:
 
-       IMAGE_PATH="gcr.io/google-samples/hello-app"
+        IMAGE_PATH="gcr.io/google-samples/hello-app"
         IMAGE_DIGEST="sha256:c62ead5b8c15c231f9e786250b07909daf6c266d0fcddd93fea882eb722c3be4"
 
-2. Create the signature payload:
+1.  Create the signature payload:
 
         gcloud --project=${ATTESTOR_PROJECT_ID} \
             beta container binauthz create-signature-payload \
             --artifact-url=${IMAGE_PATH}@${IMAGE_DIGEST} > /tmp/generated_payload.json
 
-3. Sign the `generated_payload.json` file created in the previous step using the keys hosted in Cloud KMS:
+1.  Sign the `generated_payload.json` file created in the previous step using the keys hosted in Cloud KMS:
 
-            gcloud kms asymmetric-sign \
-                --location=${KMS_KEY_LOCATION} \
-                --keyring=${KMS_KEYRING_NAME} \
-                --key=${KMS_KEY_NAME} \
-                --version=${KMS_KEY_VERSION} \
-                --digest-algorithm=sha256 \
-                --input-file=/tmp/generated_payload.json \
-                --signature-file=/tmp/ec_signature \
-                --project ${KMS_KEY_PROJECT_ID}
+        gcloud kms asymmetric-sign \
+            --location=${KMS_KEY_LOCATION} \
+            --keyring=${KMS_KEYRING_NAME} \
+            --key=${KMS_KEY_NAME} \
+            --version=${KMS_KEY_VERSION} \
+            --digest-algorithm=sha256 \
+            --input-file=/tmp/generated_payload.json \
+            --signature-file=/tmp/ec_signature \
+            --project ${KMS_KEY_PROJECT_ID}
 
-4. Generate the attestation using the signed file created in the previous step:
+1.  Generate the attestation using the signed file created in the previous step:
 
         PUBLIC_KEY_ID=$(gcloud container binauthz attestors describe ${ATTESTOR_NAME} \
         --format='value(userOwnedGrafeasNote.publicKeys[0].id)' --project ${ATTESTOR_PROJECT})
@@ -287,27 +289,29 @@ Create an attestation to test the policy. For that, do the following:
             --attestor=$ATTESTOR_NAME \
             --attestor-project=$ATTESTOR_PROJECT_ID
 
-5. Now, check if the attestation was created successfully:
+1.  Check whether the attestation was created successfully:
 
         gcloud --project=${ATTESTOR_PROJECT_ID} \
             beta container binauthz attestations list \
             --attestor=$ATTESTOR_NAME \
             --attestor-project=$ATTESTOR_PROJECT_ID
 
-6. Try to run a POD based on an image that was attested:
+1.  Run a Pod based on an image that was attested:
 
         kubectl run hello-server --image ${IMAGE_PATH}@${IMAGE_DIGEST} --port 8080
 
-7. Check if PODs were created, they should have been created, meaning everything is working fine:
+1.  Check whether the Pod was created:
 
         kubectl get pods
 
-8. If everything is fine, delete the deployment. This was just to test all the setup as the attestation will not be manually created as we did here but will be created by Spinnaker as part of the continuous delivery process.
+1.  If the test succeeded, delete the deployment:
 
         kubectl delete deployment hello-server
 
+The manual steps in this testing section were only to test the setup. The attestation later in this procedure will not be manually created as you did here, but 
+will be created by Spinnaker as part of the continuous delivery process.
 
-## Building the Application
+## Building the application
 
 Now it's time to start working with the application. We will first host it in a Cloud Source Repository in the `DEPLOYER` project, the project that contains our clusters and also Spinnaker.
 
