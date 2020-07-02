@@ -8,54 +8,59 @@ date_published: 2020-07-01
 
 Daniel Amadei | Customer Engineer | Google
 
-# Introduction
-
-This solution exemplifies how to perform continuous integration and continuous delivery to a Kubernetes cluster using Cloud Build for building our images, Spinnaker for Continuous Deployment and Binary Authorization with keys hosted inside Cloud Key Management Service (Cloud KMS) for protecting and attesting the procedence of our images being deployed to Kubernetes. 
-
-Start by setting up the environment and then building the solution step by step. We hope you enjoy the journey.
+This document demonstrates how to perform continuous integration and continuous delivery to a Kubernetes cluster using Cloud Build for building images, 
+Spinnaker for continuous deployment, and Binary Authorization with keys hosted in Cloud Key Management Service (Cloud KMS) for protecting and attesting the
+provenance of images being deployed to Kubernetes.
 
 ## Setup
 
-Binary Authorization will be handled by using a separate project to hold the Attestor and the Keys, so you can keep controls and authorization separate.
+Binary Authorization is handled using separate projects to hold the attestor and the keys, so you can keep controls and authorization separate.
 
-Create the projects and resources that are will be needed later.
+In this section, you create the projects and resources used throughout this document.
 
-### Deployer Project
-The deployer project is the project where your Kubernetes cluster will be created and also spinnaker will be installed.
+### Create a deployer project
 
-### User Cluster Creation
-A Kubernetes cluster should also be created. This is the cluster where you will deploy the application to. There are no special needs for the cluster creation and you can follow the instructions [here](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-regional-cluster).
+The deployer project is the project where your Kubernetes cluster will be created and where Spinnaker will be installed.
 
-### Spinnaker Installation
-Install spinnaker on gcp using the marketplace offering available. Just access your **Marketplace** inside **Cloud Console** and search for Spinnaker. Install it on the same project as the user cluster created above but in a different Kubernetes cluster, dedicated to Spinnaker.
+### Create a Kubernetes cluster
 
-### Connecting GKE Cluster to Spinnaker
-After the user cluster is created, connect it to Spinnaker and push the configurations. For that, in Cloud Shell:
+Create a Kubernetes cluster where you will deploy the application. There are no special needs for the cluster creation; you can follow the
+standard [instructions to create a cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-regional-cluster).
 
-Run the following command to get the credentials of the user cluster and store it locally:
+### Install Spinnaker
 
-    gcloud container clusters get-credentials <CLUSTER NAME> [--zone <ZONE> or --region <REGION>] --project <PROJECT ID>
+Install [Spinnaker for Google Cloud](https://console.cloud.google.com/marketplace/details/google-cloud-platform/spinnaker) in the same project as the user 
+cluster that you created, but in a different Kubernetes cluster dedicated to Spinnaker.
 
-Go to the Spinnaker manage folder:
+### Connect the GKE cluster to Spinnaker
 
-    cd ~/cloudshell_open/spinnaker-for-gcp/scripts/manage
+After the user cluster is created, connect it to Spinnaker and push the configurations.
 
-Run the script to add a GKE account to spinnaker and provide the information requested by the script:
+1.  In Cloud Shell, run the following command to get the credentials of the user cluster and store it locally:
 
-    ./add_gke_account.sh
+        gcloud container clusters get-credentials <CLUSTER_NAME> [--zone <YOUR_ZONE> or --region <YOUR_REGION>] --project <PROJECT_ID>
 
-It will ask for the context of the user cluster and will gather the required information to create a connection from Spinnaker to the GKE cluster.
+1.  Go to the Spinnaker `manage` folder:
 
-After providing the information requested, execute the following script to push the configurations to Spinnaker:
+        cd ~/cloudshell_open/spinnaker-for-gcp/scripts/manage
 
-	./apply_config.sh
+1.  Run the script to add a GKE account to Spinnaker:
+
+        ./add_gke_account.sh
+
+    Provide the information requested by the script. It will ask for the context of the user cluster and will gather the required information to create a 
+    connection from Spinnaker to the GKE cluster.
+
+1.  Run the script to push the configurations to Spinnaker:
+
+        ./apply_config.sh
 
 
-### Variables Configuration and API Enablement
+### Configure variables and enable APIs
 
-After creating the cluster and installing spinnaker, get the following variables exported. They will be used along this solution. 
+Export variables and enable APIs used throughout this procedure: 
 
-    DEPLOYER_PROJECT_ID=<DEPLOYER PROJECT ID>
+    DEPLOYER_PROJECT_ID=<YOUR_DEPLOYER_PROJECT_ID>
     DEPLOYER_PROJECT_NUMBER=$(gcloud projects describe "${DEPLOYER_PROJECT_ID}" --format="value(projectNumber)")
 
     gcloud --project=${DEPLOYER_PROJECT_ID} \
@@ -65,8 +70,8 @@ After creating the cluster and installing spinnaker, get the following variables
 
     DEPLOYER_SERVICE_ACCOUNT="service-${DEPLOYER_PROJECT_NUMBER}@gcp-sa-binaryauthorization.iam.gserviceaccount.com"
 
+### Attestor project
 
-### Attestor Project
 Setup should be based in [this](https://cloud.google.com/binary-authorization/docs/multi-project-setup-cli) document but only one project will be used to hold the attestor, attestations and keys in Cloud KMS so instructions will be provided as they are a little bit different from the referred link. 
 
 Assuming `gcloud` is already authenticated, create the following environment vars:
