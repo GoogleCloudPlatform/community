@@ -139,7 +139,7 @@ Install MySQL and related PHP components:
 
 #### Debian/Ubuntu
 
-    sudo apt-get install mysql-server php5-mysql php-pear
+    sudo apt-get install mysql-server php-mysql php-pear
 
 #### Ubuntu 16
 
