@@ -45,14 +45,7 @@ tutorial shows how to solve this problem, using nested virtualization.
 For details of how nested virtualization works and what restrictions exist for nested virtualization, see 
 [Enabling nested virtualization for VM instances](https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances#how_nested_virtualization_works).
 
-This tutorial shows how to set up a Windows VM, because a Windows VM requires little additional setup to get started, whereas a Linux instance might take you 
-some time to get started.
-
-This document shows approaches using VNC and RDP for remote connection. Linux typically uses VNC, whereas RDP is typically limited to Windows. Generally, RDP 
-performs better than VNC, but VNC has the advantage of being universal. RDP clients exist for Linux and macOS. It can be complicated to have VNC and RDP running 
-on Linux at the same time.
-
-## Creating a Compute Engine instance
+## Create a Compute Engine instance
 
 1.  Make a boot disk:
 
@@ -89,50 +82,42 @@ on Linux at the same time.
     enough to run Android Studio.
 
 If you made a Windows instance, then you are done with this setup, and you should continue to the "Connecting to an instance" section below. This is because
-Google Cloud sets up a connection stream and desktop GUI needed for Android Studio for Windows instances.
+Google Cloud sets up a connection stream and desktop (graphical user interface) GUI needed for Android Studio for Windows instances.
 
 If you made a Linux instance, then you need to complete the steps in the next section.
 
-## Configuring the instance (Linux only)
+## Configure the instance (Linux only)
 
-You now need to do is create a desktop environment and make a connection channel so you can connect to your VM with that desktop 
-environment. You would need to do so as you need a GUI interface to use Android Studio.
+You need a graphical user interface to use Android Studio, which is not set up by default for Linux instances. In this section, you create a desktop environment 
+and make a connection channel so that you can connect to your VM with that desktop environment. You can use GNOME, Xfce, or any of a large number of options.
+This tutorial uses LXDE, because it takes little time to download. 
 
-1. Make a desktop environment
+1.  Connect to your instance using SSH.
 
-You can use `gnome`, `xfce` etc. There are so many options but for this tutorial we will use `xfce` which takes minimal time to
-download. SSH in your Instance and enter the following commands-
+1.  Install LXDE:
 
-```sh
-sudo apt-get install lxde
-```
+        sudo apt-get install lxde
 
-You will be asked with some options, select “Yes”.
+    Follow the instructions and agree to the questions to install the package.
 
-2. Setting Up Instance to connect to it
+1.  Install TightVNC Server, is used to establish a VNC connection:
 
-This command installs tight VNC server which will help us establish a VNC connection.
+        sudo apt-get install tightvncserver
 
-```sh
-sudo apt-get install tightvncserver
-```
+1.  Set up a firewall rule to allow the VNC server to access port 5901:
 
-3. Set up a firewall rule
+    1.  Navigate to **VNC network** > **Firewall rules**.
+    1.  Choose a name and target tag for the firewall rule, and set allowed protocols to `tcp:5901`.
+    1.  Navigate to **VM instances** > **Edit VM** > **Networking**.
+    1.  Add the target tag in the network tag textbox. You might need to stop the instance to do this.
 
-Navigate to `VNC network > Firewall rules`
-We need to do this as we want to allow `vnc server` to access port `5901`. Choose a name and target tag for it, set allowed protocols to
-`tcp:5901`.
+1.  Open `.vnc/xtsrtup` in a text editor and add `/usr/bin/startlxde` at the end of the file. This tells VNC to render the LXDE desktop at startup.
 
-Now navigate to `VM instances > edit VM > Networking`
+## Connect to an instance
 
-Add the target tag in the network tag textbox. You might need to stop the Instance to do this.
-
-4. One last step
-
-Navigate to `.vnc/xtsrtup` and open in this in your favourate text editor maybe `vim`, `nano` or some other. Add `/usr/bin/startlxde` at
-it’s end. This will tell VNC to render `lxde` desktop at startup.
-
-## Connecting to an instance
+This document shows approaches using VNC and RDP for remote connection. Linux typically uses VNC, whereas RDP is typically limited to Windows. Generally, RDP 
+performs better than VNC, but VNC has the advantage of being universal. RDP clients exist for Linux and macOS. It can be complicated to have VNC and RDP running 
+on Linux at the same time.
 
 1. Linux
 
