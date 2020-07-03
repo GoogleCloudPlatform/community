@@ -7,7 +7,7 @@ date_published: 2020-07-06
 ---
 
 This tutorial shows how to set up [Android Studio](https://developer.android.com/studio) on Google Cloud in just a few minutes. Follow this tutorial to configure
-an Android Studio development environment on an Ubuntu or Windows server virtual machine (VM) instance on Compute Engine with the ability to use the Android 
+an Android Studio development environment on an Ubuntu or Windows Server virtual machine (VM) instance on Compute Engine with the ability to use the Android 
 Emulator and accelerate your development. This setup creates a full-fledged environment that can do Gradle builds in as little as a second.
 
 ## Objectives
@@ -31,11 +31,6 @@ This tutorial uses billable components of Google Cloud, including Compute Engine
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected usage. New Google Cloud
 users might be eligible for a [free trial](https://cloud.google.com/free-trial).
-
-If you follow this tutorial, the costs are estimated as follows, depending on the operating system that you use:
-
-* [Linux VMs](https://cloud.google.com/products/calculator#id=ca135004-465c-4a43-bc5b-701af07df644)
-* [Windows VMs](https://cloud.google.com/products/calculator#id=eff1ebe1-1ed8-4475-a5f2-d07519fb5883)
 
 ## Why the simple approach doesn’t work
 
