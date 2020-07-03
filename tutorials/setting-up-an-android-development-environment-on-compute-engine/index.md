@@ -3,82 +3,74 @@ title: Set up an Android development environment on Compute Engine
 description: Learn how to set up an Android development environment running on Compute Engine.
 author: Rishit-dagli
 tags: Compute Engine
-date_published: 2020-06-10
+date_published: 2020-07-06
 ---
 
-This tutorial shows how to set up an [Android Studio](https://developer.android.com/studio) on
-Google Cloud in just a few minutes. Follow this tutorial to configure
-Android Studio development environment on an Ubuntu or Windows server virtual machine instance on Compute Engine with the ability 
-to use Android Emulators and accelerate your development.
-
-We will set up a full fledged environment which is fast enough to do Gradle Builds in a second!
+This tutorial shows how to set up [Android Studio](https://developer.android.com/studio) on Google Cloud in just a few minutes. Follow this tutorial to configure
+an Android Studio development environment on an Ubuntu or Windows server virtual machine (VM) instance on Compute Engine with the ability to use the Android 
+Emulator and accelerate your development. This setup creates a full-fledged environment that can do Gradle builds in as little as a second.
 
 ## Objectives
 
 * Understand why a straightforward approach does not work.
-* Understand nested virtualization in GCP.
-* Connecting to a GUI based instance
-* Using nested virtualization to test out your apps locally.
+* Understand nested virtualization in Google Cloud.
+* Connect to a GUI-based instance.
+* Use nested virtualization to test your apps.
 
 ## Before you begin
 
-You'll need a GCP project. You can use an existing project or
-click the button to create a new project:
-
-**[Create a project](https://console.cloud.google.com/project)**
+You'll need a Google Cloud project. You can use an existing project or [create a new project](https://console.cloud.google.com/project).
 
 ## Costs
 
-This tutorial uses billable components of GCP, including Compute Engine.
+This tutorial uses billable components of Google Cloud, including Compute Engine.
 
-Use the [pricing calculator](https://cloud.google.com/products/calculator/)
-to generate a cost estimate based on your projected usage. New Cloud Platform users might be
-eligible for a [free trial](https://cloud.google.com/free-trial).
+Use the [pricing calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected usage. New Google Cloud
+users might be eligible for a [free trial](https://cloud.google.com/free-trial).
 
-Here is a prefilled Pricing calculator if you follow this tutorial:
-* If you follow along using Linux VMs - [Costs](https://cloud.google.com/products/calculator#id=ca135004-465c-4a43-bc5b-701af07df644)
-* If you follow along using Windows VMs - [Costs](https://cloud.google.com/products/calculator#id=eff1ebe1-1ed8-4475-a5f2-d07519fb5883)
+If you follow this tutorial, the costs are estimated as follows, depending on the operating system that you use:
+
+* [Linux VMs](https://cloud.google.com/products/calculator#id=ca135004-465c-4a43-bc5b-701af07df644)
+* [Windows VMs](https://cloud.google.com/products/calculator#id=eff1ebe1-1ed8-4475-a5f2-d07519fb5883)
 
 ## Why the simple approach doesn’t work
 
-If you go on and start trying Android Development environment you might face an error like this while creating the AVD and testing your project-
+If you have tried to use the Android development environment without following the steps in this tutorial, you might have encountered an error like the following
+while creating the AVD and testing your project: "HAXM doesn't support nested virtual machines."
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/setting-up-an-android-development-environment-on-compute-engine/error-with-simple-approach.png)
 
-**HAXM does not support nested virtual machines.**
-
-So, GCP will not provide you the ability to create nested virtual machines. 
-It is blocked by default so the Android studio would work but you would not be able to run an AVD, that is not much useful so we will go
-on to solve this problem
+By default, Google Cloud blocks the ability to create nested virtual machines, so Android Studio functions, but you can't run an AVD using the emulator. This
+tutorial shows how to solve this problem.
 
 ## How nested virtualization works?
 
-Compute Engine VMs run on top of physical hardware (the host server) which is referred to as the `L0` environment. Within the host 
-server, a pre-installed hypervisor allows a single server to host multiple Compute Engine VMs, which are referenced to as `L1` or native 
-VMs on Compute Engine. When you use nested virtualization, you install another hypervisor on top of the `L1` guest OS and create nested VMs, referred to as `L2` VMs, using the `L1` hypervisor. `L1` or native Compute Engine VMs that are running a guest hypervisor and
-nested VMs can also be referred to as host VMs.
+Compute Engine VMs run on physical hardware (the host server), which is referred to as the *L0* environment. Within the host server, a pre-installed hypervisor
+allows a single server to host multiple Compute Engine VMs, which are referred to as *L1* or *native* VMs on Compute Engine. When you use nested virtualization, 
+you install another hypervisor on top of the L1 guest OS and create nested VMs, referred to as *L2* VMs, using the L1 hypervisor. L1 or native Compute Engine VMs
+that are running a guest hypervisor and nested VMs can also be referred to as *host* VMs.
 
-Here is a diagram which might help you get the hang of it-
+This diagram illustrates these various levels of VMs:
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/setting-up-an-android-development-environment-on-compute-engine/nested-virtualization-diagram.png)
 
-In GCP-
+Nested virtualization can only be enabled for L1 VMs running on Haswell processors or later. If the default processor for a zone is uses the Sandy Bridge or Ivy 
+Bridge architecture, then you can use the minimum CPU setting to choose Haswell or later for a particular instance.
 
-* Nested virtualization can only be enabled for `L1` VMs running on Haswell processors or later. If the default processor for a zone is
-Sandy Bridge or Ivy Bridge, you can use minimum CPU selection to choose Haswell or later for a particular instance.
-* Nested virtualization is supported only for KVM-based hypervisors running on Linux instances
-* Windows VMs do not support nested virtualization, only some Windows OSes support it.
+On Linux, nested virtualization is supported only for KVM-based hypervisors.
 
-We will also see how to set up a Windows VM as Windows VM require almost no additional setup to get started whereas in a linux instnace 
-it might take you some time to get started. Also Linux usually uses VNC whereas Windows has developed RDP for remote connection. Also 
-its complicated to have VNC and RDP running on Linux at the same time.
+Windows VMs do not support nested virtualization; only some Windows OSes support it.
+
+This tutorial shows how to set up a Windows VM, because a Windows VM requires almost no additional setup to get started, whereas a Linux instance might take you 
+some time to get started. Also, Linux usually uses VNC, whereas Windows has developed RDP for remote connection. It can be complicated to have VNC and RDP 
+running on Linux at the same time.
 
 And RDP is undoubtedly better than VNC in performance. But again RDP usually refers to Windows while VNC is universal. You have RDP 
 clients for Linux and MAC so there’s no need to worry. We will see both these approaches.
 
-## Creating a Compute Engine Instance
+## Creating a Compute Engine instance
 
-GCP allows nested virtualization on the following VMs but still some setup is required:
+Google Cloud allows nested virtualization on the following VMs but still some setup is required:
 
 * Debian 9 with kernel version 4.9 hosting the following nested VMs:
   + CentOS 6.5 with kernel version 2.6
@@ -96,7 +88,7 @@ If you have not installed `gcloud` you can follow the steps at [this link](https
 
 1. Make a boot disk
 
-To spin up a Compute Engine Instance you need to create a boot disk. So here's how you would do this in `gcloud`.
+To start up a Compute Engine instance, you need to create a boot disk. So here's how you would do this in `gcloud`.
 
 ```sh
 gcloud compute disks create disk1 --image-project debian-cloud --image-family debian-9 --size 100 --zone us-central1-b
@@ -146,7 +138,7 @@ This is because GCP sets up a connection stream and a good desktop GUI needed fo
 
 ## Configuring your Instance
 
-**Note: This step is ponly required for Linux Instances. For Windows Instances head on to [Connecting to Instance section](#connecting-to-instance).**
+**Note: This step is only required for Linux Instances. For Windows Instances head on to [Connecting to Instance section](#connecting-to-instance).**
 
 You now need to do is create a desktop environment and make a connection channel so you can connect to your VM with that desktop 
 environment. You would need to do so as you need a GUI interface to use Android Studio.
@@ -231,86 +223,78 @@ password generated by GCP somewhere you remember.
 
 Now enter your external IP of VM in your RDP client, it will ask you for `username` and `password` enter the credentials and you would have connected to your VM Instance. You should see a standard Windows GUI.
 
-## Downloading Android Studio
+## Download and install Android Studio
 
-Now that you have connected to your desktop GUI, let us go on and install Android Studio.
+1.  Go to the [Android Studio download page](https://developer.android.com/studio) from the browser inside your instance.
+1.  Follow the instructions to install Android Studio on your VM.
+1.  Follow [these instructions](https://developer.android.com/studio/run/managing-avds#createavd) to create a new AVD configured however you like.
 
-* Open the [official download URL](https://developer.android.com/studio) from the browser inside of your Instance
-* Once you install Android Studio on your VM, navigate to AVD Manager in Android Studio on the top bar
-* Create aa new AVD Device, with the configurations you like, the steps remain same!
+You're ready to start building with Android Studio. 
 
-And now you are all ready to start building on your Android Studio, here's a visual proof of the first Gradle build happening in almost 
-just a second-
+Here's an indication of the first Gradle build happening in just over a second when the author used this setup:
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/setting-up-an-android-development-environment-on-compute-engine/1-second-build.jpeg)
 
 ## Troubleshooting
 
-1. `dev\kvm permission denied` (Linux Instances only)
+### Permission denied message
 
-* Install `qemu-kvm`.
+If you get a `dev\kvm permission denied` message for a Linux instance, do the following:
 
-```sh
-sudo apt install qemu-kvm
-```
+1.  Install `qemu-kvm`:
+    
+        sudo apt install qemu-kvm
+                
+1.  Add your user to the `kvm` group:
 
-* Use the `adduser` command to add your user to the `kvm` group.
+        sudo adduser [USERNAME] kvm
 
-```sh
-sudo adduser <username> kvm
-```
+### AVD doesn't start
 
-2. AVD does not start
+If your AVD doesn't start, [edit your advanced AVD settings](https://developer.android.com/studio/run/managing-avds#workingavd) to increase the heap size to
+512 MB or more.
 
-* Edit Virtual Device
-* Advanced options
-* Heap size > Change to 512 MB or more
+### Graphics aren't rendered on AVD
 
-3. No Graphics rendered on AVD (GPU users only)
-
-* `edit AVD > Graphics rendering > Software`
-* Edit Virtual Device
-* Advanced options
-* Heap size > Change to 512 MB or more
+If graphics aren't rendered on the AVD when you are using the GPU,
+[edit your AVD settings](https://developer.android.com/studio/run/managing-avds#workingavd) to switch the **Emulated Performance** setting to **Software**.
 
 ## Cleaning up
 
-After you've finished the Settin Up Android Development Environment on Commpute Engine tutorial, you can clean up the resources you
-created on Google Cloud Platform so you won't be billed for them in the future. The following sections describe how to delete or turn 
-off these resources.
+After you've finished the tutorial, you can clean up the resources that you created on Google Cloud so that you won't be billed for them in the future. The 
+following sections describe how to delete or turn off these resources.
 
 ### Deleting the project
 
 The easiest way to eliminate billing is to delete the project you created for the tutorial.
 
+**Warning**: If you used an existing project, deleting a project also deletes any other work that you've done in the project.
+You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, you should
+delete the resources inside the project instead; this ensures that URLs that use the project ID, such as an `appspot.com` URL, remain
+available.
+
 To delete the project:
 
-1. In the Cloud Platform Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
+1. In the Cloud Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
 1. Click the trash can icon to the right of the project name.
-
-**Warning**: Deleting a project has the following consequences:
-
-If you used an existing project, you'll also delete any other work you've done in the project.
-You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, you should
-delete the resources inside the project instead. This ensures that URLs that use the project ID, such as an `appspot.com` URL, remain
-available.
 
 ### Deleting instances
 
-To delete a Compute Engine instance:
+To delete a Compute Engine instance, do the following:
 
-1. In the Cloud Platform Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
-1. Click the checkbox next to the instance you created.
-1. Click the Delete button at the top of the page to delete the instance.
+1. In the Cloud Console, go to the **[VM instances](https://console.cloud.google.com/compute/instances)** page.
+1. Click the checkbox next to the instance that you created.
+1. Click the **Delete** button at the top of the page to delete the instance.
 
 ### Deleting firewall rules for the default network
 
-To delete a firewall rule:
+To delete a firewall rule, do the following:
 
-1. In the Cloud Platform Console, go to the **[Firewall Rules](https://console.cloud.google.com/networking/firewalls)** page.
-1. Click the checkbox next to the firewall rule you want to delete.
-1. Click the Delete button at the top of the page to delete the firewall rule.
+1. In the Cloud Console, go to the **[Firewall rules](https://console.cloud.google.com/networking/firewalls)** page.
+1. Click the checkbox next to the firewall rule that you want to delete.
+1. Click the **Delete** button at the top of the page to delete the firewall rule.
 
-## Next Steps
+## Next steps
 
-To know mmore about nested virtualization you could read [Nested Virtualization Docs](https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances)
+To learn more about nested virtualization, read
+[Enabling nested virtualization for VM instances](https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances).
