@@ -22,6 +22,9 @@ Emulator and accelerate your development. This setup creates a full-fledged envi
 To follow the steps in this tutorial, you need a Google Cloud project. You can use an existing project or
 [create a new project](https://console.cloud.google.com/project).
 
+You run the commands in this tutorial using the `gcloud` command-line tool. To install the Google Cloud SDK, which includes the `gcloud` tool, follow 
+[these instructions](https://cloud.google.com/sdk/gcloud/#downloading_the_gcloud_command-line_tool).
+
 ## Costs
 
 This tutorial uses billable components of Google Cloud, including Compute Engine.
@@ -41,76 +44,61 @@ while creating the AVD and testing your project: "HAXM doesn't support nested vi
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/setting-up-an-android-development-environment-on-compute-engine/error-with-simple-approach.png)
 
-By default, Google Cloud blocks the ability to create nested virtual machines, so Android Studio functions, but you can't run an AVD using the emulator. This
-tutorial shows how to solve this problem.
+By default, Google Cloud blocks the ability to create nested virtual machines, so Android Studio runs, but you can't run an AVD using the emulator. This
+tutorial shows how to solve this problem, using nested virtualization.
 
 For details of how nested virtualization works and what restrictions exist for nested virtualization, see 
 [Enabling nested virtualization for VM instances](https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances#how_nested_virtualization_works).
 
-This tutorial shows how to set up a Windows VM, because a Windows VM requires almost no additional setup to get started, whereas a Linux instance might take you 
-some time to get started. Also, Linux usually uses VNC, whereas Windows has developed RDP for remote connection. It can be complicated to have VNC and RDP 
-running on Linux at the same time.
+This tutorial shows how to set up a Windows VM, because a Windows VM requires little additional setup to get started, whereas a Linux instance might take you 
+some time to get started.
 
-And RDP is undoubtedly better than VNC in performance. But again RDP usually refers to Windows while VNC is universal. You have RDP 
-clients for Linux and MAC so there’s no need to worry. We will see both these approaches.
+This document shows approaches using VNC and RDP for remote connection. Linux typically uses VNC, whereas RDP is typically limited to Windows. Generally, RDP 
+performs better than VNC, but VNC has the advantage of being universal. RDP clients exist for Linux and macOS. It can be complicated to have VNC and RDP running 
+on Linux at the same time.
 
 ## Creating a Compute Engine instance
-  
-If you have not installed `gcloud` you can follow the steps at [this link](https://cloud.google.com/sdk/gcloud/#downloading_the_gcloud_command-line_tool).
 
-1. Make a boot disk
+1.  Make a boot disk:
 
-To start up a Compute Engine instance, you need to create a boot disk. So here's how you would do this in `gcloud`.
+        gcloud compute disks create disk1 --image-project debian-cloud --image-family debian-9 --size 100 --zone us-central1-b
 
-```sh
-gcloud compute disks create disk1 --image-project debian-cloud --image-family debian-9 --size 100 --zone us-central1-b
-```
+    This command makes a boot disk called `disk1` with a Debian Linux image. If you want to make a Windows Server instance, for example, you can change the 
+    parameters as follows:
 
-You are here making a boot disk called `disk1` with image, change it to `Windows Server 2016` if you want to make a Windows Server
-instance. The size expects size of the disk in GBs. `100 GB` is good enough for starting out, you could change the value according to
-your requirement. So for Windows server use
+        gcloud compute disks create disk1 --image-family windows-2016 --image-project gce-uefi-images --size 100 --zone us-central1-b
 
-```sh
-gcloud compute disks create disk1 --image-family windows-2016 --image-project gce-uefi-images --size 100 --zone us-central1-b
-```
+    The VM image family must be from [this list](https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances#tested_os_versions).
 
-**Note: Your VM Image family should be from the [list](#creating-a-compute-engine-instance) mentioned above **
+1.  Create a custom image with the special license key required for virtualization, replacing `[NAME_OF_IMAGE]` with any name that you like:
 
-2. Using the boot disk that you created or a boot disk from an existing instance, create a custom image with the special license key
-required for virtualization.
+        gcloud compute images create [NAME_OF_IMAGE] 
+        --source-disk disk1 
+        --source-disk-zone us-central1-b 
+        --licenses "https://compute.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"
 
-```sh
-gcloud compute images create [name_of_image] 
---source-disk disk1 
---source-disk-zone us-central1-b 
---licenses "https://compute.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"
-```
+     This command creates an image from the boot disk and applies the license necessary to allow nested virtualization.
 
-replace [name_of_image] with a name you like. what you are doing is making a image from that boot disk and applying the license
-necessary to allow it to perform nested virtualization.
+1.  Delete the source disk if you no longer need it.
 
-3. After you create the image with the necessary license, you can delete the source disk if you no longer need it.
+1.  Create a VM instance using the new custom image with the license.
 
-4. Create a VM instance using the new custom image with the license. You must create the instance in a zone that supports the `Haswell CPU` Platform or newer.
+        gcloud compute instances create [NAME_OF_VM] 
+        --zone us-central1-b
+        --min-cpu-platform "Intel Haswell" 
+        --image [NAME_OF_IMAGE]
+        --custom-cpu = 4 
+        --custom-memory = 15
 
-```sh
-gcloud compute instances create [name_of_vm] 
---zone us-central1-b
---min-cpu-platform "Intel Haswell" 
---image [name_of_image]
---custom-cpu = 4 
---custom-memory = 15
-```
+    This command creates a VM instance with the image you just created. You can change the `custom-cpu` and `custom-memory` values, but the values given here are 
+    enough to run Android Studio.
 
-You are creating a VM instance with the image you just created.
-You can edit `custom cpu` and `custom_memory` this is the number of virtual CPUs and the RAM you need. This configuration is good enough
-to run Android Studio at a good enough speed.
-If you made a `Windows` instance you are done, you will now just have to test it out so head on to [Connecting to Instance section](#connecting-to-instance).
-This is because GCP sets up a connection stream and a good desktop GUI needed for Android Studio only for Windows instances.
+If you made a Windows instance, then you are done with this setup, and you should continue to the "Connecting to an instance" section below. This is because
+Google Cloud sets up a connection stream and desktop GUI needed for Android Studio for Windows instances.
 
-## Configuring your Instance
+If you made a Linux instance, then you need to complete the steps in the next section.
 
-**Note: This step is only required for Linux Instances. For Windows Instances head on to [Connecting to Instance section](#connecting-to-instance).**
+## Configuring the instance (Linux only)
 
 You now need to do is create a desktop environment and make a connection channel so you can connect to your VM with that desktop 
 environment. You would need to do so as you need a GUI interface to use Android Studio.
@@ -149,7 +137,7 @@ Add the target tag in the network tag textbox. You might need to stop the Instan
 Navigate to `.vnc/xtsrtup` and open in this in your favourate text editor maybe `vim`, `nano` or some other. Add `/usr/bin/startlxde` at
 it’s end. This will tell VNC to render `lxde` desktop at startup.
 
-## Connecting to Instance
+## Connecting to an instance
 
 1. Linux
 
