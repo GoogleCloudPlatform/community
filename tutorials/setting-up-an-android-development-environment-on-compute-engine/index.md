@@ -19,7 +19,8 @@ Emulator and accelerate your development. This setup creates a full-fledged envi
 
 ## Before you begin
 
-You'll need a Google Cloud project. You can use an existing project or [create a new project](https://console.cloud.google.com/project).
+To follow the steps in this tutorial, you need a Google Cloud project. You can use an existing project or
+[create a new project](https://console.cloud.google.com/project).
 
 ## Costs
 
@@ -43,23 +44,8 @@ while creating the AVD and testing your project: "HAXM doesn't support nested vi
 By default, Google Cloud blocks the ability to create nested virtual machines, so Android Studio functions, but you can't run an AVD using the emulator. This
 tutorial shows how to solve this problem.
 
-## How nested virtualization works?
-
-Compute Engine VMs run on physical hardware (the host server), which is referred to as the *L0* environment. Within the host server, a pre-installed hypervisor
-allows a single server to host multiple Compute Engine VMs, which are referred to as *L1* or *native* VMs on Compute Engine. When you use nested virtualization, 
-you install another hypervisor on top of the L1 guest OS and create nested VMs, referred to as *L2* VMs, using the L1 hypervisor. L1 or native Compute Engine VMs
-that are running a guest hypervisor and nested VMs can also be referred to as *host* VMs.
-
-This diagram illustrates these various levels of VMs:
-
-![](https://storage.googleapis.com/gcp-community/tutorials/setting-up-an-android-development-environment-on-compute-engine/nested-virtualization-diagram.png)
-
-Nested virtualization can only be enabled for L1 VMs running on Haswell processors or later. If the default processor for a zone is uses the Sandy Bridge or Ivy 
-Bridge architecture, then you can use the minimum CPU setting to choose Haswell or later for a particular instance.
-
-On Linux, nested virtualization is supported only for KVM-based hypervisors.
-
-Windows VMs do not support nested virtualization; only some Windows OSes support it.
+For details of how nested virtualization works and what restrictions exist for nested virtualization, see 
+[Enabling nested virtualization for VM instances](https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances#how_nested_virtualization_works).
 
 This tutorial shows how to set up a Windows VM, because a Windows VM requires almost no additional setup to get started, whereas a Linux instance might take you 
 some time to get started. Also, Linux usually uses VNC, whereas Windows has developed RDP for remote connection. It can be complicated to have VNC and RDP 
@@ -69,20 +55,6 @@ And RDP is undoubtedly better than VNC in performance. But again RDP usually ref
 clients for Linux and MAC so there’s no need to worry. We will see both these approaches.
 
 ## Creating a Compute Engine instance
-
-Google Cloud allows nested virtualization on the following VMs but still some setup is required:
-
-* Debian 9 with kernel version 4.9 hosting the following nested VMs:
-  + CentOS 6.5 with kernel version 2.6
-  + Debian 9 with kernel version 4.9
-  + RHEL 5.11 with kernel version 2.6
-  + SLES 12 SP3 with kernel version 4.4
-  + Ubuntu 16.04 LTS with kernel version 4.15
-  + Windows Server 2016 Datacenter Edition
-* SLES 12 SP3 with kernel version 4.4 hosting the following nested VMs:
-  + SLES 12 SP3 with kernel version 4.4
-* Ubuntu 16.04 LTS with kernel version 4.15 hosting the following nested VMs:
-  + Ubuntu 16.04 LTS with kernel version 4.15
   
 If you have not installed `gcloud` you can follow the steps at [this link](https://cloud.google.com/sdk/gcloud/#downloading_the_gcloud_command-line_tool).
 
