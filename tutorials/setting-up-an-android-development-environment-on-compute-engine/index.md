@@ -68,7 +68,7 @@ For details of how nested virtualization works and what restrictions exist for n
 
 1.  Delete the source disk if you no longer need it.
 
-1.  Create a VM instance using the new custom image with the license.
+1.  Create a VM instance using the new custom image with the license:
 
         gcloud compute instances create [NAME_OF_VM] 
         --zone us-central1-b
@@ -81,7 +81,7 @@ For details of how nested virtualization works and what restrictions exist for n
     enough to run Android Studio.
 
 If you made a Windows instance, then you are done with this setup, and you should continue to the "Connecting to an instance" section below. This is because
-Google Cloud sets up a connection stream and desktop (graphical user interface) GUI needed for Android Studio for Windows instances.
+Google Cloud sets up a connection stream and desktop GUI (graphical user interface) needed for Android Studio for Windows instances.
 
 If you made a Linux instance, then you need to complete the steps in the next section.
 
@@ -99,13 +99,13 @@ This tutorial uses LXDE, because it takes little time to download.
 
     Follow the instructions and agree to the questions to install the package.
 
-1.  Install TightVNC Server, is used to establish a VNC connection:
+1.  Install TightVNC Server, which is used to establish a VNC connection:
 
         sudo apt-get install tightvncserver
 
 1.  Set up a firewall rule to allow the VNC server to access port 5901:
 
-    1.  Navigate to **VNC networks** > **Firewall**.
+    1.  Navigate to **VPC networks** > **Firewall**.
     1.  Click **Create a firewall rule**.
     1.  Choose a name and target tag for the firewall rule, and set allowed protocols to `tcp:5901`.
     1.  Save the firewall rule.
@@ -133,12 +133,12 @@ This tutorial uses LXDE, because it takes little time to download.
 
 ###  Set up a firewall rule to allow RDP in your instance
 
-    1.  Navigate to **VNC networks** > **Firewall**.
-    1.  Click **Create a firewall rule**.
-    1.  Choose a name and target tag for the firewall rule, and set allowed protocols and ports to `tcp:3389`.
-    1.  Save the firewall rule.
-    1.  Navigate to **VM instances** > **Edit VM** > **Networking**.
-    1.  Add the target tag in the network tag textbox. You might need to stop the instance to do this.
+1.  Navigate to **VPC networks** > **Firewall**.
+1.  Click **Create a firewall rule**.
+1.  Choose a name and target tag for the firewall rule, and set allowed protocols and ports to `tcp:3389`.
+1.  Save the firewall rule.
+1.  Navigate to **VM instances** > **Edit VM** > **Networking**.
+1.  Add the target tag in the network tag textbox. You might need to stop the instance to do this.
 
 If your local OS is Windows, then you are ready to connect without any more setup.
 
