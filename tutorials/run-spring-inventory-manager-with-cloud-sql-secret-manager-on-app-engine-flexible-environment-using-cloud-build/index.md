@@ -37,7 +37,7 @@ This tutorial uses Spring Cloud, Cloud SQL for MySQL, App Engine, Secret Manager
 4. Install [Maven](https://maven.apache.org/install.html).
 5. Create or log in to a [GitHub account](https://github.com/).
 
-## Getting started
+## Set up the Cloud SDK
 
 1.  Initialize the Cloud SDK:
 
@@ -53,7 +53,7 @@ This tutorial uses Spring Cloud, Cloud SQL for MySQL, App Engine, Secret Manager
 
 ## Set up Cloud SQL
 
-1.  [Enable the Cloud SQL API](https://console.cloud.google.com/flows/enableapi?apiid=sqladmin).  
+1.  [Enable the Cloud SQL API.](https://console.cloud.google.com/flows/enableapi?apiid=sqladmin)
 
 1.  Create a Cloud SQL (MySQL) instance:
 
@@ -78,7 +78,7 @@ This tutorial uses Spring Cloud, Cloud SQL for MySQL, App Engine, Secret Manager
      
 1.  Clone the project locally:
 
-        git clone [https://github.com/kioie/InventoryManagement.git](https://github.com/kioie/InventoryManagement.git)  
+        git clone https://github.com/kioie/InventoryManagement.git
         
 1.  Change directory to the app directory:
 
@@ -110,68 +110,64 @@ This tutorial uses Spring Cloud, Cloud SQL for MySQL, App Engine, Secret Manager
     
 ## Set up Secret Manager
 
-1.  Enable the [Secret Manager API](https://console.cloud.google.com/flows/enableapi?apiid=secretmanager.googleapis.com&redirect=https://console.cloud.google.com&_ga=2.72503123.1749283848.1589680102-1322801348.1576371208&_gac=1.225110888.1587192241.CjwKCAjwp-X0BRAFEiwAheRui4GkVAiJEcD-d_dhMaMnTeAmRAMMUBXLV45atuLUiiLinEjPGLLbuhoCzD8QAvD_BwE)
+1.  [Enable the Secret Manager API.](https://console.cloud.google.com/flows/enableapi?apiid=secretmanager.googleapis.com)
 
-    **You will also need to grant the application access**  
-    - Go to [IAM & Admin page](https://console.cloud.google.com/iam-admin/iam?_ga=2.101936833.1749283848.1589680102-1322801348.1576371208&_gac=1.224978664.1587192241.CjwKCAjwp-X0BRAFEiwAheRui4GkVAiJEcD-d_dhMaMnTeAmRAMMUBXLV45atuLUiiLinEjPGLLbuhoCzD8QAvD_BwE)  
-    - Click the **`Project selector`** drop-down list at the top of the page.  
-    - On the **`Select from`** dialog that appears, select the organization for which you want to enable Secret Manager.  
-    - On the **`IAM`** page, next to the `app engine service account`, click **`Edit`**.  
-    - On the **`Edit permissions`** panel that appears, add the necessary roles.  
-    - Click **`Add another role`**. Select **`Secret Manager Admin`**.  
-    - Click **`Save`**
+1.  Grant the application access:
+
+    1.  Go to [IAM & Admin page](https://console.cloud.google.com/iam-admin/iam).
+    1.  Click the **Project selector** drop-down list at the top of the page.  
+    1.  In the **Select from** dialog that appears, select the organization for which you want to enable Secret Manager.  
+    1.  On the **IAM** page, next to the **App Engine service account**, click **Edit**.  
+    1.  In the **Edit permissions** panel that appears, add the necessary roles.  
+    1.  Click **Add another role**.
+    1.  Select **Secret Manager Admin**.  
+    1.  Click **Save**.
   
-2. Create new secrets for our datasource configuration file.
+1.  Create new secrets for your data source configuration file, using your own credentials for `spring_cloud_gcp_sql_instance_connection_name` and 
+    `spring_datasource_password`:
   
-    ````
-    echo -n “sample-gcp-project-277704:us-central1:test-instance-inventory-management” | gcloud secrets create spring_cloud_gcp_sql_instance_connection_name — replication-policy=”automatic” — data-file=-  
+        echo -n “sample-gcp-project-277704:us-central1:test-instance-inventory-management” | gcloud secrets create spring_cloud_gcp_sql_instance_connection_name — replication-policy=”automatic” — data-file=-  
    
-    echo -n “inventory” | gcloud secrets create spring_cloud_gcp_sql_database_name — replication-policy=”automatic” — data-file=-  
+        echo -n “inventory” | gcloud secrets create spring_cloud_gcp_sql_database_name — replication-policy=”automatic” — data-file=-  
    
-    echo -n “root” | gcloud secrets create spring_datasource_username — replication-policy=”automatic” — data-file=-  
+        echo -n “root” | gcloud secrets create spring_datasource_username — replication-policy=”automatic” — data-file=-  
    
-    echo -n “test123” | gcloud secrets create spring_datasource_password — replication-policy=”automatic” — data-file=-
-    ````
+        echo -n “test123” | gcloud secrets create spring_datasource_password — replication-policy=”automatic” — data-file=-
 
-      **_Note: Remember to use your own credentials here for_** **_`spring_cloud_gcp_sql_instance_connection_name`_** **_and_** **_`spring_datasource_password`_**
-  
-      Confirm your secrets have been created by running `gcloud secrets list` which should return a list of secrets.
+1.  Confirm that your secrets have been created:
+      
+        gcloud secrets list
+        
+    This command should return a list of secrets.
 
-3. Replace the values in the `application-mysql.properties` file with the secrets url. For this step, you will need the fully-qualified name of the secret as defined on GCP.
+1.  Replace the values in the `application-mysql.properties` file with the secrets URL. For this step, you need the fully-qualified name of the secret as defined
+    in Google Cloud.
 
-    ````
-    gcloud secrets describe spring_cloud_gcp_sql_instance_connection_name | grep name
-   
-    gcloud secrets describe spring_cloud_gcp_sql_database_name | grep name
+        gcloud secrets describe spring_cloud_gcp_sql_instance_connection_name | grep name
+        gcloud secrets describe spring_cloud_gcp_sql_database_name | grep name
+        gcloud secrets describe spring_datasource_username | grep name
+        gcloud secrets describe spring_datasource_password | grep name
+
+    You will now use these names to create a Secret Manager URL. The URL will use the format `${sm://FULLY-QUALIFIED-NAME}`, where `FULLY-QUALIFIED-NAME` is as
+    retrieved above.
+
+1.  Update `src/main/resources/application-mysql.properties`:
+
+        #CLOUD-SQL-CONFIGURATIONS  
+        spring.cloud.appId=sample-gcp-project  
+        spring.cloud.gcp.sql.instance-connection-name=${sm://projects/.../secrets/spring_cloud_gcp_sql_instance_connection_name}  
+        spring.cloud.gcp.sql.database-name=${sm://projects/.../secrets/spring_cloud_gcp_sql_database_name}  
+        ##SQL DB USERNAME/PASSWORD  
+        spring.datasource.username=${sm://projects/.../secrets/spring_datasource_username}  
+        spring.datasource.password=${sm://projects/.../secrets/spring_datasource_password}
+
+1.  Restart the Spring Boot application:
+
+        mvn spring-boot:run
     
-    gcloud secrets describe spring_datasource_username | grep name
-    
-    gcloud secrets describe spring_datasource_password | grep name
-    ````
+1.  Test your application again to confirm that everything went successfully:
 
-    **_You will now use this names to create a secret manager url. The url will use the format `${sm://FULLY-QUALIFIED-NAME}` where `FULLY-QUALIFIED-NAME` is as retrieved above._**
-
-4. Update `src/main/resources/application-mysql.properties:`
-
-    ````
-    #CLOUD-SQL-CONFIGURATIONS  
-    spring.cloud.appId=sample-gcp-project  
-    spring.cloud.gcp.sql.instance-connection-name=${sm://projects/.../secrets/spring_cloud_gcp_sql_instance_connection_name}  
-    spring.cloud.gcp.sql.database-name=${sm://projects/.../secrets/spring_cloud_gcp_sql_database_name}  
-    ##SQL DB USERNAME/PASSWORD  
-    spring.datasource.username=${sm://projects/.../secrets/spring_datasource_username}  
-    spring.datasource.password=${sm://projects/.../secrets/spring_datasource_password}
-    ````
-
-5. Restart the Spring Boot application:
-
-    ````
-    mvn spring-boot:run
-    ````
-
-6. Test your application once more to confirm that everything went successfully:
-
-    ````curl http://localhost:8080/inventory/1````
+        curl http://localhost:8080/inventory/1
 
 ## Set up GitHub repository with source files
 
