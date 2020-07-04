@@ -70,7 +70,7 @@ This tutorial uses Spring Cloud, Cloud SQL for MySQL, App Engine, Secret Manager
 
         gcloud sql databases create inventory --instance=test-instance-inventory-management
 
-1.  Get the connection name (`connectionName`) of the instance in the format `project-id:zone-id:instance-id`:
+1.  Get the connection name of the instance in the format `project-id:zone-id:instance-id`:
 
         gcloud sql instances describe test-instance-inventory-management | grep connectionName
 
@@ -104,7 +104,7 @@ This tutorial uses Spring Cloud, Cloud SQL for MySQL, App Engine, Secret Manager
 
         mvn spring-boot:run
 
-1.  Do a simple test of your application to confirm that everything went successfully:
+1.  Do a simple test of your application:
 
         curl http://localhost:8080/inventory/
     
@@ -114,7 +114,7 @@ This tutorial uses Spring Cloud, Cloud SQL for MySQL, App Engine, Secret Manager
 
 1.  Grant the application access:
 
-    1.  Go to [IAM & Admin page](https://console.cloud.google.com/iam-admin/iam).
+    1.  Go to the [**IAM & Admin** page](https://console.cloud.google.com/iam-admin/iam).
     1.  Click the **Project selector** drop-down list at the top of the page.  
     1.  In the **Select from** dialog that appears, select the organization for which you want to enable Secret Manager.  
     1.  On the **IAM** page, next to the **App Engine service account**, click **Edit**.  
@@ -165,7 +165,7 @@ This tutorial uses Spring Cloud, Cloud SQL for MySQL, App Engine, Secret Manager
 
         mvn spring-boot:run
     
-1.  Test your application again to confirm that everything went successfully:
+1.  Test your application again:
 
         curl http://localhost:8080/inventory/1
 
@@ -179,8 +179,6 @@ This tutorial uses Spring Cloud, Cloud SQL for MySQL, App Engine, Secret Manager
     
     1.  In the top-right corner of the page, click **Fork**.
     
-    ![](https://storage.cloud.google.com/gcp-community/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot1.png)
-
 1.  [Install the Google Cloud Build app](https://cloud.google.com/cloud-build/docs/automating-builds/run-builds-on-github#installing_the_google_cloud_build_app) on GitHub.
 
     Make sure that you select the `kioie/InventoryManagement` repository fork as the repository to connect to.
@@ -215,7 +213,7 @@ To configure your build for Cloud Build app, your repository must contain either
 [Dockerfile](https://docs.docker.com/get-started/part2/#define-a-container-with-dockerfile) or a
 [`cloudbuild.yaml` file](https://cloud.google.com/cloud-build/docs/build-config).
 
-A Dockerfile file is generally used for building Docker containers. If you're using Cloud Build for Docker Builds, you need a Dockerfile. This tutorial is for an
+A Dockerfile file is generally used for building Docker containers. If you're using Cloud Build for Docker builds, you need a Dockerfile. This tutorial is for an
 App Engine build, but the sample repository contains a Dockerfile; this is because Cloud Build performs a bonus step that creates a container artifact, 
 although this is not necessary for this tutorial.
 
@@ -241,32 +239,23 @@ Using App Engine, your application will be deployed and accessed at [https://YOU
     1.  Click the **Project selector** drop-down list at the top of the page and select the current project organization.
     1.  On the **IAM** page, next to the Cloud Build service account, (not to be confused with the Cloud Build service agent), click **Edit** (the pencil 
         button).
-    1.  On the **Edit permissions** panel that appears, click **Add another role** and add these three roles:
-    
-        — App Engine Admin  
-        — Cloud SQL Admin  
-        — Secret Manager Admin
-        
+    1.  On the **Edit permissions** panel that appears, click **Add another role** and add these three roles: App Engine Admin, Cloud SQL Admin,
+        Secret Manager Admin
     1.  Click **Save**.
-
-    The final permission list should look something like this:
-      
-    ![](https://storage.cloud.google.com/gcp-community/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot2.png)
     
 ## Push to GitHub and trigger a build
 
 Push your updated code to GitHub to trigger a build by Cloud Build:
 
-1.  Add your remote GitHub fork repo as your upstream repository:
+1.  Add your remote GitHub fork repository as your upstream repository:
 
-        git remote add upstream [https://github.com/<YOUR_ACCOUNT_NAME>/InventoryManagement](https://github.com/YOUR_ACCOUNT_NAME/InventoryManagement)  
+        git remote add upstream https://github.com/<YOUR_ACCOUNT_NAME>/InventoryManagement 
         git remote -vv
   
 1.  Commit your changes:
 
         git add .  
         git commit
-
 
 1.  Push upstream:
 
