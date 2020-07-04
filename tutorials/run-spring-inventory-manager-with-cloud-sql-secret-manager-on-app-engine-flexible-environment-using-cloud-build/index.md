@@ -140,7 +140,7 @@ This tutorial uses Spring Cloud, Cloud SQL for MySQL, App Engine, Secret Manager
         
     This command should return a list of secrets.
 
-1.  Replace the values in the `application-mysql.properties` file with the secrets URL. For this step, you need the fully-qualified name of the secret as defined
+1.  Replace the values in the `application-mysql.properties` file with the secrets URL. For this step, you need the fully qualified name of the secret as defined
     in Google Cloud.
 
         gcloud secrets describe spring_cloud_gcp_sql_instance_connection_name | grep name
@@ -169,138 +169,123 @@ This tutorial uses Spring Cloud, Cloud SQL for MySQL, App Engine, Secret Manager
 
         curl http://localhost:8080/inventory/1
 
-## Set up GitHub repository with source files
+## Set up your GitHub repository with source files
 
-1.  Create a [GitHub account](https://github.com/) if you don’t have one already.
+1.  Enable the [Cloud Build API](https://console.cloud.google.com/flows/enableapi?apiid=cloudbuild.googleapis.com) in the target Cloud project.
 
-2.  Enable the [Cloud Build API](https://console.cloud.google.com/flows/enableapi?apiid=cloudbuild.googleapis.com) in the target Cloud project.
+1.  Fork the demonstration repository, because you will be pushing your changes to this repository:
 
-3.  Fork our demo repository. This step is important as you will be pushing your changes to this repo  
-    a. Navigate to [https://github.com/kioie/InventoryManagement](https://github.com/kioie/InventoryManagement)  
+    1.  Navigate to [https://github.com/kioie/InventoryManagement](https://github.com/kioie/InventoryManagement)..
     
-    b. On the top-right corner of the page, click **`Fork`**.
+    1.  In the top-right corner of the page, click **Fork**.
     
-![](https://storage.cloud.google.com/gcp-community/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot1.png)
+    ![](https://storage.cloud.google.com/gcp-community/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot1.png)
 
-4. Install the Google Cloud Build App on Github. You can follow this instructions [**here**](https://cloud.google.com/cloud-build/docs/automating-builds/run-builds-on-github#installing_the_google_cloud_build_app).
+1.  [Install the Google Cloud Build app](https://cloud.google.com/cloud-build/docs/automating-builds/run-builds-on-github#installing_the_google_cloud_build_app) on GitHub.
 
-    **_Make sure you select the_** **_`kioie/InventoryManagement`_** **_repository fork as the repository you are connecting to, otherwise this build will not work._**
+    Make sure that you select the `kioie/InventoryManagement` repository fork as the repository to connect to.
 
-5. In the Google Cloud Console, open the Cloud Build [Build triggers](https://console.cloud.google.com/cloud-build/triggers?_ga=2.173763299.1749283848.1589680102-1322801348.1576371208&_gac=1.259777016.1587192241.CjwKCAjwp-X0BRAFEiwAheRui4GkVAiJEcD-d_dhMaMnTeAmRAMMUBXLV45atuLUiiLinEjPGLLbuhoCzD8QAvD_BwE) page.
+1.  In the Cloud Console, open the Cloud Build [Build triggers](https://console.cloud.google.com/cloud-build/triggers) page.
 
-    **_Make sure to delete all triggers created, that may be related to this project before moving to the next step. We are doing this to make sure that no other builds are running other than the single build we have configured._**
+1.  Delete all triggers created that may be related to this project before moving to the next step. This ensures that no other builds are running other than the
+    single build configured for this tutorial.
 
-6. Select your Google Cloud project and click **`Open`**.
+1.  Select your Cloud project and click **Open**.
 
-7. Click **`Create Trigger`**.
+1.  Click **Create Trigger**.
 
-8. Fill out the options
+1.  Fill out the options:
 
-    -   _Required_. In the **`Name`** field, enter a name
-    -   _Optional_. In the **`Description`** field, enter a brief description of how the trigger will work
-    -   Under **`Event`**, select **`Push to a branch`**
-    -   In the **`Source`** drop-down list, select `kioie/InventoryManagement` repository  
-    
-      **_Note: If this repository does not appear, click the_** **_`Connect New Repository`_** **_button and connect your repo on GitHub, then return to step5._**
-      
-    -   Under **`Branch`**, enter `^master$`
-    -   Under **`Build Configuration`** select **`Cloud Build configuration file (YAML or JSON)`**  
-    For the `Cloud Build configuration file location` enter `cloudbuild.yaml`  
-    **_Note: Do not add an extra_** **_`/`_**
-    -   Click **`Create`**
+    -   **Name**: Enter a name.
+    -   **Description** (optional): Enter a brief description of how the trigger will work.
+    -   **Event**: Select **Push to a branch**.
+    -   **Source**: Select the `kioie/InventoryManagement` repository. (If the repository does not appear, click the **Connect New Repository** button, 
+        connect your repository on GitHub, and return to step 5.)
+    -   **Branch**: Enter `^master$`.
+    -   **Build Configuration** Select **Cloud Build configuration file (YAML or JSON)**. For the Cloud Build configuration file location, enter 
+        `cloudbuild.yaml`. (Do not add an extra `/`.)
 
-Under your active triggers, you should now be able to see your newly created trigger.
+1.  Click **Create**.
 
-## Some brief information
+Under your active triggers, you should see your newly created trigger.
 
-As a requirement for the Google Cloud Build app, your repository must contain either a `[Dockerfile](https://docs.docker.com/get-started/part2/#define-a-container-with-dockerfile)` or a `[cloudbuild.yaml](https://cloud.google.com/cloud-build/docs/build-config)` file to be able successfully configure your build.
+## Files required for Cloud Build
 
-`Dockerfile` is generally used for building Docker containers. Incase you are using Cloud Build for Docker Builds, you will require a `Dockerfile`. This tutorial is for an App Engine build, but you will notice that the sample repo contains a `Dockerfile`. This is because the cloud build contains a bonus step that completes by creating a container artifact, although this is not necessary for this tutorial.
+To configure your build for Cloud Build app, your repository must contain either a
+[Dockerfile](https://docs.docker.com/get-started/part2/#define-a-container-with-dockerfile) or a
+[`cloudbuild.yaml` file](https://cloud.google.com/cloud-build/docs/build-config).
 
-`cloudbuild.yaml` is the config file for Cloud Build. You use a `cloudbuild.yaml` in the following scenarios:
+A Dockerfile file is generally used for building Docker containers. If you're using Cloud Build for Docker Builds, you need a Dockerfile. This tutorial is for an
+App Engine build, but the sample repository contains a Dockerfile; this is because Cloud Build performs a bonus step that creates a container artifact, 
+although this is not necessary for this tutorial.
 
-   -   When using Cloud Build app for non-Docker builds.
-   -   If you wish to fine-tune your Docker builds, you can provide a `cloudbuild.yaml` in addition to the `Dockerfile`. If your repository contains a `Dockerfile` and a `cloudbuild.yaml`, the Google Cloud Build app will use the `cloudbuild.yaml` to configure the builds.
+The `cloudbuild.yaml` file is the configuration file for Cloud Build. You use a `cloudbuild.yaml` file when using Cloud Build for non-Docker builds or when you 
+want to fine-tune your Docker builds. If your repository contains a `Dockerfile` file and a `cloudbuild.yaml` file, Cloud Build uses the `cloudbuild.yaml` file 
+to configure the builds. 
 
 ## Set up App Engine
 
-You will require app engine for our deployment. In the end, our application will be deployed and accessed on [https://YOUR_PROJECT_ID.appspot.com](https://YOUR_PROJECT_ID.appspot.com)
+Using App Engine, your application will be deployed and accessed at [https://YOUR_PROJECT_ID.uc.r.appspot.com](https://YOUR_PROJECT_ID.uc.r.appspot.com).
 
-1.  The `pom.xml` file already contains configuration for `projectId` and `version`. Change this to reflect the current project ID.  
+1.  Open the `pom.xml` file and change the `projectId` and `version` values to the appropriate values for your project ID and version.  
 
     `<deploy.projectId>sample-gcp-project-276208</deploy.projectId>`
     
-2.  Enable [App Engine Admin API](https://console.developers.google.com/apis/library/appengine.googleapis.com)
+1.  [Enable the App Engine Admin API.](https://console.developers.google.com/apis/library/appengine.googleapis.com)
 
-3.  Enable [App Engine Flexible API](https://console.developers.google.com/apis/library/appengineflex.googleapis.com)
+1.  [Enable the App Engine Flexible API.](https://console.developers.google.com/apis/library/appengineflex.googleapis.com)
 
-4.  Give more permission to the cloud build service account
+1.  Give the necessary permissions to the Cloud Build service account:
 
-    **Grant cloudbuild service account, admin access to Secret Manager, App Engine and Cloud Sql**.
-
-    -   Go to [IAM & Admin page](https://console.cloud.google.com/iam-admin/iam?_ga=2.101936833.1749283848.1589680102-1322801348.1576371208&_gac=1.224978664.1587192241.CjwKCAjwp-X0BRAFEiwAheRui4GkVAiJEcD-d_dhMaMnTeAmRAMMUBXLV45atuLUiiLinEjPGLLbuhoCzD8QAvD_BwE)
+    1.  Go to the [IAM & Admin page](https://console.cloud.google.com/iam-admin/iam).
+    1.  Click the **Project selector** drop-down list at the top of the page and select the current project organization.
+    1.  On the **IAM** page, next to the Cloud Build service account, (not to be confused with the Cloud Build service agent), click **Edit** (the pencil 
+        button).
+    1.  On the **Edit permissions** panel that appears, click **Add another role** and add these three roles:
     
-    -   Click the **`Project selector`** drop-down list at the top of the page and select the current project organization.
-    
-    -   On the **`IAM`** page, next to the `cloud build service account`, (not to be confused with the `cloud build service agent` )click **`Edit`** (or the pencil button).
-    
-    -   On the **`Edit permissions panel`** that appears, add the necessary roles.
-    
-    -   Click **`Add another role`** and add these three roles:  
         — App Engine Admin  
         — Cloud SQL Admin  
         — Secret Manager Admin
         
-    -   Click **`Save`**.
+    1.  Click **Save**.
 
-      The final permission list should look something like this
+    The final permission list should look something like this:
       
-      ![](https://storage.cloud.google.com/gcp-community/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot2.png)
-      
-      The final step that triggers a cloud build will require pushing your updated code-base to GitHub.
+    ![](https://storage.cloud.google.com/gcp-community/tutorials/run-spring-inventory-manager-with-cloud-sql-secret-manager-on-app-engine-flexible-environment-using-cloud-build/Screenshot2.png)
     
 ## Push to GitHub and trigger a build
 
-1.  Add your remote GitHub fork repo as your upstream repo
+Push your updated code to GitHub to trigger a build by Cloud Build:
 
-    ````
-    git remote add upstream [https://github.com/<YOUR_ACCOUNT_NAME>/InventoryManagement](https://github.com/YOUR_ACCOUNT_NAME/InventoryManagement)  
-    git remote -vv
-    ````
+1.  Add your remote GitHub fork repo as your upstream repository:
+
+        git remote add upstream [https://github.com/<YOUR_ACCOUNT_NAME>/InventoryManagement](https://github.com/YOUR_ACCOUNT_NAME/InventoryManagement)  
+        git remote -vv
   
-2. Commit your changes
+1.  Commit your changes:
 
-    ````
-    git add .  
-    git commit
-    ````
+        git add .  
+        git commit
 
-3. Push upstream
 
-    ````
-    git push upstream master
-    ````
+1.  Push upstream:
 
-4. This should automatically trigger your build on GCP cloud build. You can check the status of your build using the below command
+        git push upstream master
 
-    ````
-    gcloud builds list
-    ````
-
-5. You can fetch the url of the app with the command
-
-    ````
-    gcloud app browse
-    ````
-
-6. Now test out your endpoints
-
-    ````
-    curl [https://sample-gcp-project-277704.uc.r.appspot.com/inventory](https://sample-gcp-project-277704.uc.r.appspot.com/inventory)  
+    This should automatically trigger your build on Google Cloud.
     
-    curl [https://sample-gcp-project-277704.uc.r.appspot.com/inventory/1](https://sample-gcp-project-277704.uc.r.appspot.com/inventory/1)  
-    
-    curl [https://sample-gcp-project-277704.uc.r.appspot.com/inventory/2](https://sample-gcp-project-277704.uc.r.appspot.com/inventory/2)
-    ````
+1.  Check the status of your build:
 
-You now have an app running on GCP App Engine, deployed using Cloud Build, and hosted on GitHub, and using Secret Manager to maintain your secrets.
+        gcloud builds list
+
+1.  Fetch the URL of the app:
+
+        gcloud app browse
+    
+6. Test your endpoints:
+
+    curl https://sample-gcp-project-277704.uc.r.appspot.com/inventory
+    curl https://sample-gcp-project-277704.uc.r.appspot.com/inventory/1    
+    curl https://sample-gcp-project-277704.uc.r.appspot.com/inventory/2
+
+You now have an app running on App Engine, deployed using Cloud Build, hosted on GitHub, and using Secret Manager to maintain your secrets.
