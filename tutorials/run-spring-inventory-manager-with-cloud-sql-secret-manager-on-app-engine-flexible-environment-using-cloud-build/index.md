@@ -175,7 +175,7 @@ This tutorial uses Spring Cloud, Cloud SQL for MySQL, App Engine, Secret Manager
 
 1.  Fork the demonstration repository, because you will be pushing your changes to this repository:
 
-    1.  Navigate to [https://github.com/kioie/InventoryManagement](https://github.com/kioie/InventoryManagement)..
+    1.  Navigate to https://github.com/kioie/InventoryManagement.
     
     1.  In the top-right corner of the page, click **Fork**.
     
@@ -223,7 +223,7 @@ to configure the builds.
 
 ## Set up App Engine
 
-Using App Engine, your application will be deployed and accessed at [https://YOUR_PROJECT_ID.uc.r.appspot.com](https://YOUR_PROJECT_ID.uc.r.appspot.com).
+Using App Engine, your application will be deployed and accessed at `https://YOUR_PROJECT_ID.uc.r.appspot.com`.
 
 1.  Open the `pom.xml` file and change the `projectId` and `version` values to the appropriate values for your project ID and version.  
 
@@ -273,8 +273,8 @@ Push your updated code to GitHub to trigger a build by Cloud Build:
     
 6. Test your endpoints:
 
-    curl https://sample-gcp-project-277704.uc.r.appspot.com/inventory
-    curl https://sample-gcp-project-277704.uc.r.appspot.com/inventory/1    
-    curl https://sample-gcp-project-277704.uc.r.appspot.com/inventory/2
+        curl https://sample-gcp-project-277704.uc.r.appspot.com/inventory
+        curl https://sample-gcp-project-277704.uc.r.appspot.com/inventory/1    
+        curl https://sample-gcp-project-277704.uc.r.appspot.com/inventory/2
 
 You now have an app running on App Engine, deployed using Cloud Build, hosted on GitHub, and using Secret Manager to maintain your secrets.
