@@ -1,124 +1,114 @@
 ---
-title: Run Spring Inventory Manager with Cloud SQL and Secret Manager on App Engine flexible environment using Cloud Build
-description: Learn how to deploy the Spring Inventory Manager Demo application to App Engine flexible environment and use Cloud SQL, Secret Manager, and Cloud Build.
+title: Run a Spring inventory manager app with Cloud SQL and Secret Manager on App Engine flexible environment
+description: Learn how to deploy the Spring Inventory Management demonstration application to App Engine flexible environment with Cloud SQL, Secret Manager, and Cloud Build.
 author: kioie
 tags: App Engine, Secret Manager, Cloud SQL, Spring Boot, Java, Cloud Build
-date_published: 2020-06-10
+date_published: 2020-07-06
 ---
 
-This tutorial will walk you through getting a [Spring Inventory Manager][inventory-manager] app deployment through a CI/CD (continuous integration and continuous delivery) pipeline into production. Our goal is to build and deploy on a Google Compute Platform (GCP) App Engine flex environment.
+This tutorial demonstrates the deployment of a [Spring inventory management](https://github.com/kioie/InventoryManagement) app to production on App Engine 
+flexible environment through a CI/CD (continuous integration and continuous delivery) pipeline.
 
-This tutorial will be using Spring, Cloud SQL for MySql, App Engine, Cloud Secret Manager, Cloud Build and GitHub.
+This tutorial uses Spring Cloud, Cloud SQL for MySQL, App Engine, Secret Manager, Cloud Build, and GitHub:
 
-# Spring Cloud and Spring Inventory Manager Application
+- [Spring Cloud](https://spring.io/projects/spring-cloud) aims to shorten code length and provide you with the easiest way to develop a web application. With
+  annotation configuration and default code, Spring Cloud shortens the time involved in developing an application. It helps to create a standalone application 
+  with less configuration.
+- [Inventory Management](https://github.com/kioie/InventoryManagement) is a demonstration application that you'll use with this tutorial. The
+  Inventory Management application is built using Spring and creates REST endpoints that serve inventory items for a demonstration supplier.
+- [Cloud SQL](https://cloud.google.com/sql) is a fully managed relational database service for MySQL, PostgreSQL, and SQL Server that offers easy integration 
+  with existing apps and Google Cloud services.
+- [App Engine](https://cloud.google.com/appengine) is a platform-as-a-service for developing and hosting web applications at scale on Google-managed 
+  infrastructure. It allows you to choose from several popular languages, libraries, and frameworks to develop and deploy your apps, including Java with Spring.
+  Applications are sandboxed and deployed across Google infrastructure, taking away the need for environment configuration and management, across the application 
+  lifecycle.
+- [Secret Manager](https://cloud.google.com/secret-manager) is a secure and convenient storage system for API keys, passwords, certificates, and other sensitive
+  data. Secret Manager provides a central place and single source of truth to manage, access, and audit secrets across Google Cloud, or anywhere else for that 
+  matter.
+- [Cloud Build](https://cloud.google.com/cloud-build) is a service that executes your builds on Google Cloud infrastructure. Cloud Build can import source code 
+  from Cloud Storage, Cloud Source Repositories, GitHub, or Bitbucket and then execute a build to your specifications to produce artifacts such as Docker 
+  containers or Java archives.
 
-[Spring Cloud](https://spring.io/projects/spring-boot) aims to shorten the code length and provide you with the easiest way to develop a web application. With annotation configuration and default codes, Spring Cloud shortens the time involved in developing an application. It helps create a stand-alone application with less or almost zero-configuration.
+## Before you begin
 
-[Spring Inventory Manager Application][inventory-manager] is a demo application that you will be using with this tutorial. The Inventory Manager application is built using spring and creates Rest Endpoints that serves inventory items for a demo supplier.
-
-[inventory-manager]: https://github.com/kioie/InventoryManagement
-
-# Cloud SQL
-
-[Cloud SQL](https://cloud.google.com/sql) is a fully managed relational db service for MySQL, PostgreSQL, and SQL Server, that offers easy integration with existing apps and Google Cloud services.
-
-# App Engine
-
-[App Engine](https://cloud.google.com/appengine) is a platform-as-a-service for developing and hosting web applications at scale on Google-managed infrastructure. It allows you to choose from several popular languages, libraries, and frameworks to develop and deploy your apps, including Java with Spring. Applications are sandboxed and deployed across Google infrastructure, taking away the need for environment configuration and management, across the application lifecycle.
-
-# Cloud Secret Manager
-
-> [Secret Manager](https://cloud.google.com/secret-manager) is a secure and convenient storage system for API keys, passwords, certificates, and other sensitive data. Secret Manager provides a central place and single source of truth to manage, access, and audit secrets across Google Cloud, or anywhere else for that matter.
-
-# Cloud Build
-
-[Cloud Build](https://cloud.google.com/cloud-build) is a service that executes your builds on Google Cloud Platform infrastructure. Cloud Build can import source code from Cloud Storage, Cloud Source Repositories, GitHub, or Bitbucket, execute a build to your specifications, and produce artifacts such as Docker containers or Java archives.
-
-**Prerequisites**  
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).  
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/cloud-resource-manager).  
 2. Enable billing for your project.  
-3. Install the [Google Cloud SDK](https://github.com/GoogleCloudPlatform/community/blob/master/sdk).  
-4. Install [Maven](https://maven.apache.org/install.html) 
-5. Create a [GitHub account](https://github.com/)
+3. Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/downloads-interactive).  
+4. Install [Maven](https://maven.apache.org/install.html).
+5. Create or log in to a [GitHub account](https://github.com/).
 
-# Getting Started
+## Getting started
 
-1. Initialize the Cloud SDK, create an App Engine application, and authorize the Cloud SDK to use GCP APIs in your local environment:
+1.  Initialize the Cloud SDK:
 
-    ```
-    gcloud init  
-    gcloud app create  
-    gcloud auth application-default login
-    ```
+        gcloud init  
 
-# Set up Cloud SQL
+1.  Create an App Engine application:
 
-1. Enable the [Cloud SQL API](https://console.cloud.google.com/flows/enableapi?apiid=sqladmin&_ga=2.97716831.1749283848.1589680102-1322801348.1576371208&_gac=1.250162036.1587192241.CjwKCAjwp-X0BRAFEiwAheRui4GkVAiJEcD-d_dhMaMnTeAmRAMMUBXLV45atuLUiiLinEjPGLLbuhoCzD8QAvD_BwE).  
+        gcloud app create  
 
-2. Create a Cloud SQL (MySQL) instance and set the root user password following [these instructions](https://cloud.google.com/sql/docs/mysql/create-instance#create-2nd-gen).
+1.  Authorize the Cloud SDK to use Google Cloud APIs in your local environment:
 
-    ````
-    gcloud sql instances create test-instance-inventory-management --tier=db-n1-standard-1 --region=us-central1
-    ````
+        gcloud auth application-default login
 
-3. Set the password for the `root@%` MySQL user
+## Set up Cloud SQL
 
-    ````
-    gcloud sql users set-password root --host=% --instance test-instance-inventory-management --password [PASSWORD]
-    ````
+1.  [Enable the Cloud SQL API](https://console.cloud.google.com/flows/enableapi?apiid=sqladmin).  
 
-    **_Make sure you replace_** **`[PASSWORD]`** **_with your own password_**
+1.  Create a Cloud SQL (MySQL) instance:
 
-4. Setup `inventory` database.
-
-    ````
-    gcloud sql databases create inventory --instance=test-instance-inventory-management
-    ````
-
-5. Get the `connectionName` of the instance in the format `project-id:zone-id:instance-id`:
-
-    ````
-    gcloud sql instances describe test-instance-inventory-management | grep connectionName
-    ````
-
-     Now you can test out your Cloud Sql Database and see if you are able to use this database. 
-     
-6. Clone the project locally
-
-    ````
-    git clone [https://github.com/kioie/InventoryManagement.git](https://github.com/kioie/InventoryManagement.git)  
-    cd InventoryManagement/
-    ````
-
-7. Update your `application-mysql.properties` file by replacing the instance-connection-name, database-name, username and password.  
-  
-    **_Note: The values you will find when you first open this file have been designed for a secret manager connection which I will discuss about shortly_**
-
-8. Update `src/main/resources/application-mysql.properties`:
-
-    ````
-    #CLOUD-SQL-CONFIGURATIONS  
-    spring.cloud.appId=sample-gcp-project  
-    spring.cloud.gcp.sql.instance-connection-name=sample-gcp-project-277704:us-central1:test-instance-inventory-management  
-    spring.cloud.gcp.sql.database-name=inventory  
-    ##SQL DB USERNAME/PASSWORD  
-    spring.datasource.username=root  
-    spring.datasource.password=xxxxx
-    ````
-
-     **_Note: Replace `xxxxx` with your preconfigured database instance password_**  
-  
-9. You can now start the Spring Boot application
-
-    ````
-    mvn spring-boot:run
-    ````
-
-10. Do a simple Test of your application to confirm that everything went successfully:
-
-    ````curl http://localhost:8080/inventory/````
+        gcloud sql instances create test-instance-inventory-management --tier=db-n1-standard-1 --region=us-central1
     
-# Set up Secret Manager
+1.  Set the password for the `root@%` MySQL user following
+    [these instructions](https://cloud.google.com/sql/docs/mysql/create-instance#create-2nd-gen):
+
+        gcloud sql users set-password root --host=% --instance test-instance-inventory-management --password [PASSWORD]
+    
+    Replace `[PASSWORD]`with your own password.
+
+1.  Create the `inventory` database:
+
+        gcloud sql databases create inventory --instance=test-instance-inventory-management
+
+1.  Get the connection name (`connectionName`) of the instance in the format `project-id:zone-id:instance-id`:
+
+        gcloud sql instances describe test-instance-inventory-management | grep connectionName
+
+## Set up and test the application
+     
+1.  Clone the project locally:
+
+        git clone [https://github.com/kioie/InventoryManagement.git](https://github.com/kioie/InventoryManagement.git)  
+        
+1.  Change directory to the app directory:
+
+        cd InventoryManagement/
+
+1.  Update your `application-mysql.properties` file by replacing `instance-connection-name`, `database-name`, `username`, and `password`.  
+  
+    The values that you see when you first open this file have been designed for a Secret Manager connection, which is discussed in a later section.
+
+1.  Update `src/main/resources/application-mysql.properties`:
+
+        #CLOUD-SQL-CONFIGURATIONS  
+        spring.cloud.appId=sample-gcp-project  
+        spring.cloud.gcp.sql.instance-connection-name=sample-gcp-project-277704:us-central1:test-instance-inventory-management  
+        spring.cloud.gcp.sql.database-name=inventory  
+        ##SQL DB USERNAME/PASSWORD  
+        spring.datasource.username=root  
+        spring.datasource.password=xxxxx
+
+   Replace `xxxxx` with your preconfigured database instance password.  
+  
+1.  Start the Spring Boot application:
+
+        mvn spring-boot:run
+
+1.  Do a simple test of your application to confirm that everything went successfully:
+
+        curl http://localhost:8080/inventory/
+    
+## Set up Secret Manager
 
 1.  Enable the [Secret Manager API](https://console.cloud.google.com/flows/enableapi?apiid=secretmanager.googleapis.com&redirect=https://console.cloud.google.com&_ga=2.72503123.1749283848.1589680102-1322801348.1576371208&_gac=1.225110888.1587192241.CjwKCAjwp-X0BRAFEiwAheRui4GkVAiJEcD-d_dhMaMnTeAmRAMMUBXLV45atuLUiiLinEjPGLLbuhoCzD8QAvD_BwE)
 
@@ -183,7 +173,7 @@ This tutorial will be using Spring, Cloud SQL for MySql, App Engine, Cloud Secre
 
     ````curl http://localhost:8080/inventory/1````
 
-# Set up GitHub repository with source files
+## Set up GitHub repository with source files
 
 1.  Create a [GitHub account](https://github.com/) if you don’t have one already.
 
@@ -225,7 +215,7 @@ This tutorial will be using Spring, Cloud SQL for MySql, App Engine, Cloud Secre
 
 Under your active triggers, you should now be able to see your newly created trigger.
 
-# **Some brief information**
+## Some brief information
 
 As a requirement for the Google Cloud Build app, your repository must contain either a `[Dockerfile](https://docs.docker.com/get-started/part2/#define-a-container-with-dockerfile)` or a `[cloudbuild.yaml](https://cloud.google.com/cloud-build/docs/build-config)` file to be able successfully configure your build.
 
@@ -236,7 +226,7 @@ As a requirement for the Google Cloud Build app, your repository must contain ei
    -   When using Cloud Build app for non-Docker builds.
    -   If you wish to fine-tune your Docker builds, you can provide a `cloudbuild.yaml` in addition to the `Dockerfile`. If your repository contains a `Dockerfile` and a `cloudbuild.yaml`, the Google Cloud Build app will use the `cloudbuild.yaml` to configure the builds.
 
-# Set up App Engine
+## Set up App Engine
 
 You will require app engine for our deployment. In the end, our application will be deployed and accessed on [https://YOUR_PROJECT_ID.appspot.com](https://YOUR_PROJECT_ID.appspot.com)
 
@@ -273,7 +263,7 @@ You will require app engine for our deployment. In the end, our application will
       
       The final step that triggers a cloud build will require pushing your updated code-base to GitHub.
     
-# Push to GitHub and trigger a build
+## Push to GitHub and trigger a build
 
 1.  Add your remote GitHub fork repo as your upstream repo
 
