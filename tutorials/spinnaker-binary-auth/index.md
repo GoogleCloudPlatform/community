@@ -12,6 +12,9 @@ This document demonstrates how to perform continuous integration and continuous 
 Spinnaker for continuous deployment, and Binary Authorization with keys hosted in Cloud Key Management Service (Cloud KMS) for protecting and attesting the
 provenance of images being deployed to Kubernetes.
 
+Choosing whether to attest an image during build or deployment depends on your CI/CD architecture. The goal of this document is to show you how to 
+do so during the deployment phase.
+
 ## Setup
 
 Binary Authorization is handled using separate projects to hold the attestor and the keys, so you can keep controls and authorization separate.
@@ -54,7 +57,6 @@ After the user cluster is created, connect it to Spinnaker and push the configur
 1.  Run the script to push the configurations to Spinnaker:
 
         ./apply_config.sh
-
 
 ### Configure variables and enable APIs
 
@@ -313,47 +315,45 @@ is created by Spinnaker as part of the continuous delivery process.
 
 ## Building the application
 
-Now it's time to start working with the application. We will first host it in a Cloud Source Repository in the `DEPLOYER` project, the project that contains our clusters and also Spinnaker.
+You host your application in a Cloud Source Repository in the `DEPLOYER` project, the project that contains your clusters and Spinnaker.
 
-### Setting up a Cloud Source Repositories repository
+### Set up a Cloud Source Repositories repository
 
-First clone the sample application:
+1.  Clone the sample application:
 
-    git clone https://github.com/damadei-google/products-api
+        git clone https://github.com/damadei-google/products-api
 
-Now create a Cloud Source Repository which will hold the sources of this project that we will use for CI/CD exemplification.
+1.  Create a repository with Cloud Source Repositories that will hold the sources for this project:
 
-    gcloud source repos create products-api \
-    --project=${DEPLOYER_PROJECT_ID}
+        gcloud source repos create products-api \
+        --project=${DEPLOYER_PROJECT_ID}
 
-Configure Cloud Source Repositories authentication by following instructions here: https://cloud.google.com/source-repositories/docs/authentication. We assume you are going to use SSH authentication.
+1.  Configure Cloud Source Repositories authentication by following instructions in
+    [Authenticate by using SSH](https://cloud.google.com/source-repositories/docs/authentication#ssh).
 
-Change the remote origin of the local git repo and push source code to the new repo in CSR:
+1.  Change the remote origin of the local repository and push source code to the new repository in Cloud Source Repositories:
 
-	cd products-api
+        cd products-api
+        git remote remove origin
+        git remote add origin ssh://<YOUR USER'S EMAIL>@source.developers.google.com:2022/p/${DEPLOYER_PROJECT_ID}/r/products-api
+        git push --set-upstream origin master
 
-    git remote remove origin
+### Configuring automatic builds in Cloud Build
 
-    git remote add origin ssh://<YOUR USER'S EMAIL>@source.developers.google.com:2022/p/${DEPLOYER_PROJECT_ID}/r/products-api
+In this section, you configure Cloud Build to automatically trigger a build process when a new push is made to the master branch of your source repository. This
+allows you to automatically deploy the application whenever a change is made to the source code and pushed to the repository.
 
-    git push --set-upstream origin master
+1.  In Cloud Build, click **Triggers**, and then connect Cloud Source Repository to it and find the `products-api` repository.
+1.  At the right side of the entry for the repository, click the button with three dots stacked vertically, and select **Add Trigger**.
+1.  Configure the trigger:
+    1. Name the trigger as `products-api-trigger`.
+    1. Select **Push to a branch**. 
+    1. Enter `^master$` as the branch regular expression. 
+    1. In the **Build configuration** section, select **Cloud Build configuration file (yaml or json)** and leave the default filename `/cloudbuild.yaml`.
+    1. Click **Add Variable** and add a substitution variable named `_VERSION` with value `1.0` and keep it as **User-defined**.
+1.  Click **Create**.
 
-### Configuring Automatic Build in Cloud Build
-
-Now it's time to configure Cloud Build to automatically trigger a build process when a new push is made to the master branch of our source repository. This will allow you to automatically deploy the application whenever a change is made to the source code and pushed to the repo.
-
-In Cloud Build, click on **Triggers**, then connect Cloud Source Repository to it and find the **products-api** repository. Click on the **three dots** button on the right and select **Add Trigger**.
-
-Configure the trigger by following the steps below:
-
-1. Name the trigger as **products-api-trigger**.
-2. Keep the option **"Push to a branch"** selected. 
-3. In branch enter **^master$** as the branch regular expression. 
-4. On Build configuration select **Cloud Build configuration file (yaml or json)** and keep the file named as **/cloudbuild.yaml**.
-5. Click on **Add Variable** and add a substitution variable named **_VERSION** with value **1.0** and keep it as **User-defined**.
-6. Finally click on **Create**.
-
-It's important now to inspect what is done in **cloudbuild.yaml**. The following are the file contents for **cloudbuild.yaml**:
+The `cloudbuild.yaml` file contains the following:
 
     steps:
     - name: 'gcr.io/cloud-builders/docker'
@@ -361,23 +361,24 @@ It's important now to inspect what is done in **cloudbuild.yaml**. The following
     images:
     - 'gcr.io/$PROJECT_ID/products-api:${_VERSION}'
 
-This file instructs Cloud Build to build a docker image using the Dockerfile present in the repository and then to push the generated Docker image to the Google Container Registry when done. This will happen when a new push is made to the repository in the master branch.
+This file instructs Cloud Build to build a Docker image using the Dockerfile in the repository and then to push the generated Docker image to Container
+Registry when done. This happen when a new push is made to the repository in the master branch.
 
-Now, as next step, do a test on pushing a change to the repository and check if the build is started automatically like seen below:
+To test this part of the system, push a change to the repository and check whether the build is started automatically, as shown here:
 
 ![Build history](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/01-build-history.png)
 
-After the build is successful, check if the image is placed into the container registry:
+After the build is successful, check whether the image is placed in Container Registry:
 
 ![GCR](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/02-gcr.png)
 
-# Configuring Spinnaker
+## Configuring Spinnaker
 
 When you install Spinnaker for GCP, Spinnaker comes pre-configured with a connection to Google Cloud Build's Pub/Sub topic in the same project it's installed in (and another one for the Google Container Registry topic). This is sufficient for the demonstration here. In real world scenarios you can add connection to different projects as Spinnaker will probably reside in a different project from your user cluster.
 
 For GKE, a connection was created after installing Spinnaker in the beginning of this solution.
 
-## Creating the Application and the Pipeline
+### Creating the Application and the Pipeline
 
 The first step is to create an application in Spinnaker. For that, in Spinnaker console:
 
@@ -463,7 +464,7 @@ As Spinnaker can't run a script by itself, to create the attestation, you should
 
 This job will have a script that will create the attestation along with the signature of the payload required by Binary Authorization.
 
-Run the script with the Spinnaker Service Account. For it to work this service account needs permission in the project hosting the binary authorization artifacts. This ensures that the only party with permissions to access create the attestation is Spinnaker.
+Run the script with the Spinnaker service account. For it to work this service account needs permission in the project hosting the binary authorization artifacts. This ensures that the only party with permissions to access create the attestation is Spinnaker.
 
 ### Creating the Binary Authorization Job Docker Container Image
 
@@ -596,8 +597,9 @@ And if you look at the console output for the Create Attestation phase, you shou
     Attestation list: 
     Attestation created
 
-### Adding Permissions to Access Attestation Resources
-The Service Account used by Spinnaker needs permissions to access the Attestor resources like Cloud KMS keys and to create the attestation. As they are in different projects the service account from Spinnaker's project should be added to the Attestor project and given the proper roles.
+### Adding permissions to access attestation resources
+
+The service account used by Spinnaker needs permissions to access the Attestor resources like Cloud KMS keys and to create the attestation. As they are in different projects the service account from Spinnaker's project should be added to the Attestor project and given the proper roles.
 
 The first step is to get the name of the Spinnaker service account. For that, go to the Spinnaker GKE cluster in Cloud Console and click on **Permissions**.
 
@@ -610,7 +612,7 @@ Take note of the service account name and add permissions to the service account
 * In Cloud Console, go to the **Attestor Project**.
 * In the navigation menu click on **IAM & Admin** > **IAM**.
 * Click the **Add** button to add an IAM permission.
-* Enter the email of the Spinnaker Service account and add the following roles:
+* Enter the email of the Spinnaker service account and add the following roles:
     * **Binary Authorization Attestor Editor**
     * **Binary Authorization Attestor Viewer**
     * **Binary Authorization Service Agent**
@@ -621,8 +623,8 @@ Take note of the service account name and add permissions to the service account
 
 This will allow the job deployed to the Spinnaker Kubernetes Cluster to access the required resources and create the attestations in the Attestor project.
 
+## Deploying the application
 
-# Deploying the Application
 Now that the attestation is created, the last step is to deploy the application. Deploying the application will also be applying a Kubernetes manifest. 
 
 For that:
@@ -662,18 +664,16 @@ For that:
                 ports:
                     - containerPort: 8080
 
-4. Test the deployment and check if the deployment was created successfully in Kubernetes and if the PODs are running. This will indicate that the binary authorization is working properly. 
+4. Test the deployment and check whether the deployment was created successfully in Kubernetes and if the PODs are running. This will indicate that the binary authorization is working properly. 
 
 ![Deployment Success](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/16-three-steps-success.png)
 
 ![Deployment Success](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/17-deployment-ok.png)
 
 
-## Deploying a Service
+## Deploying a service
 
-Last step in this journey will be to deploy a service capable of exposing a business API and testing it.
-
-For that:
+The last step is to deploy a service capable of exposing a business API.
 
 1. Add a parallel step to the **Deploy Application**, same type as the Deploy Application one, name it **Deploy Service**.
 
@@ -695,7 +695,7 @@ For that:
           sessionAffinity: None
         type: LoadBalancer
 
-3. Retest the deployment by triggering it from Cloud Build.
+3. Test the deployment by triggering it from Cloud Build.
 
 4. Deployment should succeed with the deployment now of the service along with the application.
 
@@ -705,8 +705,8 @@ For that:
 
 6. Access using the browser the URL `http://<LB IP>/products` and you should get a list of dummy products, returned by our application.
 
-# Summary
+## Summary
 
-With this you've finished a full cycle of CI/CD. From source code triggering automatically a build with a Cloud Build trigger building the docker image and starting a Spinnaker pipeline capable of providing an image attestation to be deployed to a cluster with a Binary Authorization policy enabled.
-
-Choosing if you are going to attest an image during build or deployment depends on your CI/CD architecture and the idea of this article was to give you the option of doing so during the deployment phase.
+In this tutorial, you've followed a full cycle of continuous integration and continuous deployment: from source code triggering a build automatically with a 
+Cloud Build trigger, through building the Docker image, to starting a Spinnaker pipeline capable of providing an image attestation to be deployed to a cluster 
+with a Binary Authorization policy enabled.
