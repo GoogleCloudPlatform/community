@@ -596,7 +596,7 @@ The build should succeed and you should see two green steps:
 
 ![Success running job](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/13-run-job-steps.png)
 
-Look at the console output for the Create Attestation phase, for which you should see the following output:
+Look at the console output for the Create Attestation phase, for which you should see the following:
 
     Image to attest: gcr.io/<PROJECT ID>/products-api@<IMAGE HASH>
     Listed 0 items.
@@ -629,11 +629,11 @@ Binary Authorization attestor and also the Cloud KMS keys for signing the attest
     * **Container Analysis Occurrences Editor**
     * **Container Analysis Occurrences Viewer**
 
-This allows the job deployed to the Spinnaker Kubernetes cluster to access the required resources and create the attestations in the Attestor project.
+This allows the job deployed to the Spinnaker Kubernetes cluster to access the required resources and create the attestations in the attestor project.
 
 ## Deploying the application
 
-In this section, you cretae a deployment manifest and deploy the application.
+In this section, you create a deployment manifest and deploy the application.
 
 1.  Add a new stage of type **Deploy (Manifest)** and name it `Deploy Application`.
 
@@ -677,11 +677,11 @@ In this section, you cretae a deployment manifest and deploy the application.
 
     ![Deployment Success](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/17-deployment-ok.png)
 
-## Deploying a service
+## Deploy a service
 
 The last step is to deploy a service capable of exposing a business API.
 
-1.  Add a parallel step to the `Deploy Application` step, with same type as the `Deploy Application` step, name it `Deploy Service`.
+1.  Add a parallel step to the `Deploy Application` step, with same type as the `Deploy Application` step, and name it `Deploy Service`.
 
     ![Service Deployment](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/18-svc-deployment.png)
 
@@ -701,13 +701,11 @@ The last step is to deploy a service capable of exposing a business API.
           sessionAffinity: None
         type: LoadBalancer
 
-1. Test the deployment by triggering it from Cloud Build.
-
-1. Check whether the deployment of the service along with the application succeeded.
+1. Test the deployment by triggering it from Cloud Build, and check whether the deployment of the service along with the application succeeded.
 
     ![Service Deployment Success](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/19-svc-deployment-ok.png)
 
-1.  Get the load balancwe IP address by running the following in the user cluster:
+1.  Get the load balancer IP address by running the following in the user cluster:
 
         kubectl get svc
 
