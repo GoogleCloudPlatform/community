@@ -31,6 +31,10 @@ This tutorial uses billable components of Google Cloud, including Compute Engine
 Use the [pricing calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected usage. New Google Cloud
 users might be eligible for a [free trial](https://cloud.google.com/free-trial).
 
+Here is a prefilled Pricing calculator if you follow this tutorial:
+* If you follow along using Linux VMs - [Costs](https://cloud.google.com/products/calculator/#id=ffbaa70e-c57b-4b4d-bc58-292a1fce0e81)
+* If you follow along using Windows VMs - [Costs](https://cloud.google.com/products/calculator/#id=00156927-62d9-426f-879c-21877859c633)
+
 ## Why the simple approach doesn’t work
 
 If you have tried to use the Android development environment without following the steps in this tutorial, you might have encountered an error like the following
