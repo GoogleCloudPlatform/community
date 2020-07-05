@@ -141,7 +141,7 @@ Create the attestor in the respective project with the ID represented by the exp
         gcloud --project=${ATTESTOR_PROJECT_ID} \
             beta container binauthz attestors list
 
-1.  Add permission for the deployer service account to access the attestor.
+1.  Add permission for the deployer service account to access the attestor:
 
         gcloud --project ${ATTESTOR_PROJECT_ID} \
             beta container binauthz attestors add-iam-policy-binding \
@@ -153,7 +153,7 @@ Create the attestor in the respective project with the ID represented by the exp
 
 ### Set permissions on the Container Analysis note
 
-Set permission on the Container Analysis note for the attestor service account:
+Set permissions on the Container Analysis note for the attestor service account:
 
     cat > /tmp/iam_request.json << EOM
     {
@@ -217,8 +217,8 @@ In this section, you create the KMS keys that will be used by the attestor to si
 
 ### Create and configure the policy
 
-The policy is the configuration in the `DEPLOYER` project to only allow images to be deployed to GKE clusters in this project that have been attested by the
-attestor from the `ATTESTOR` project.
+The policy is the configuration in the deployer project to only allow images to be deployed to GKE clusters in this project that have been attested by the
+attestor from the attestor project.
 
 1.  Configure the policy YAML file:
 
@@ -308,8 +308,8 @@ To test the policy, create an attestation:
 
         kubectl delete deployment hello-server
 
-The manual steps in this testing section were only to test the setup. The attestation later in this procedure will not be manually created as you did here, but 
-will be created by Spinnaker as part of the continuous delivery process.
+The manual steps in this testing section are only to test the setup. The attestation later in this procedure is not manually created as you did here, but 
+is created by Spinnaker as part of the continuous delivery process.
 
 ## Building the application
 
