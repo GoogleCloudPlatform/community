@@ -323,7 +323,7 @@ You host your application in a Cloud Source Repository in the `DEPLOYER` project
 
         git clone https://github.com/damadei-google/products-api
 
-1.  Create a repository with Cloud Source Repositories that will hold the sources for this project:
+1.  Create a repository with Cloud Source Repositories that will hold the source for this project:
 
         gcloud source repos create products-api \
         --project=${DEPLOYER_PROJECT_ID}
@@ -346,10 +346,10 @@ allows you to automatically deploy the application whenever a change is made to 
 1.  In Cloud Build, click **Triggers**, and then connect Cloud Source Repository to it and find the `products-api` repository.
 1.  At the right side of the entry for the repository, click the button with three dots stacked vertically, and select **Add Trigger**.
 1.  Configure the trigger:
-    1. Name the trigger as `products-api-trigger`.
+    1. Name the trigger `products-api-trigger`.
     1. Select **Push to a branch**. 
     1. Enter `^master$` as the branch regular expression. 
-    1. In the **Build configuration** section, select **Cloud Build configuration file (yaml or json)** and leave the default filename `/cloudbuild.yaml`.
+    1. In the **Build configuration** section, select **Cloud Build configuration file (yaml or json)** and leave the default filename, `/cloudbuild.yaml`.
     1. Click **Add Variable** and add a substitution variable named `_VERSION` with value `1.0` and keep it as **User-defined**.
 1.  Click **Create**.
 
@@ -362,7 +362,7 @@ The `cloudbuild.yaml` file contains the following:
     - 'gcr.io/$PROJECT_ID/products-api:${_VERSION}'
 
 This file instructs Cloud Build to build a Docker image using the Dockerfile in the repository and then to push the generated Docker image to Container
-Registry when done. This happen when a new push is made to the repository in the master branch.
+Registry when done. This happens when a new push is made to the repository in the master branch.
 
 To test this part of the system, push a change to the repository and check whether the build is started automatically, as shown here:
 
@@ -374,11 +374,13 @@ After the build is successful, check whether the image is placed in Container Re
 
 ## Configuring Spinnaker
 
-When you install Spinnaker for GCP, Spinnaker comes pre-configured with a connection to Google Cloud Build's Pub/Sub topic in the same project it's installed in (and another one for the Google Container Registry topic). This is sufficient for the demonstration here. In real world scenarios you can add connection to different projects as Spinnaker will probably reside in a different project from your user cluster.
+When you install Spinnaker for Google Cloud, Spinnaker comes pre-configured with a connection to a Cloud Build Pub/Sub topic in the same project that it's
+installed in (and another one for the Google Container Registry topic). This is sufficient for the demonstration here. In real-world scenarios, you can add 
+connections to different projects, since Spinnaker will probably be in a different project from your user cluster.
 
-For GKE, a connection was created after installing Spinnaker in the beginning of this solution.
+For GKE, a connection was created after installing Spinnaker in the beginning of this document.
 
-### Creating the Application and the Pipeline
+### Creating the application and the pipeline
 
 The first step is to create an application in Spinnaker. For that, in Spinnaker console:
 
