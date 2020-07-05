@@ -245,7 +245,7 @@ attestor from the attestor project.
         gcloud --project=${DEPLOYER_PROJECT_ID} \
             beta container binauthz policy import /tmp/policy.yaml
 
-### Testing the setup
+### Test the setup
 
 To test the policy, create an attestation:
 
@@ -380,85 +380,84 @@ connections to different projects, since Spinnaker will probably be in a differe
 
 For GKE, a connection was created after installing Spinnaker in the beginning of this document.
 
-### Creating the application and the pipeline
+### Create an application in Spinnaker
 
-The first step is to create an application in Spinnaker. For that, in Spinnaker console:
+To cretae an application in Spinnaker, do the following in the Spinnaker console:
 
-1. Click on **Actions**
-2. Then on **Create Application**
-3. Name the application as **products-api**
-4. Inform your email as **Owner Email**
+1.  Click **Actions**.
+1.  Click **Create Application**.
+1.  Name the application `products-api`.
+1.  Enter your email address for **Owner Email**.
 
 ![New Application](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/03-new-app.png)
 
-Now click on **Configure** to create a new pipeline:
 
-1. Name it **products-api-pipeline**
-2. Click **Create**
+### Create a pipeline in Spinnaker
 
-Now it's time to a trigger responsible to start the Continuous Delivery pipeline. 
+1.  Click **Configure**.
+1.  Name the pipeline `products-api-pipeline`.
+1.  Click **Create**.
 
-To create a trigger:
+### Create a trigger
 
-1. On **Automated Triggers**, click on **Add Trigger**.
+In this section, you create a trigger that starts the continuous delivery pipeline. 
 
-![New Trigger](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/04-trigger.png)
+1.  In the **Automated Triggers** section, click **Add Trigger**.
 
-2. Select type as **Pub/Sub**
-3. **Pub/Sub System Type** as **google**
-4. **Subscription** name as **gcb-account**
-5. **Payload Constraints** add a **Key** as **status** and **value** as **SUCCESS**. This will filter messages to process builds only when they are finished and successful.
-6. Click on **Save Changes**.
+    ![New Trigger](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/04-trigger.png)
+
+1.  For **Type**, select **Pub/Sub**..
+1.  Set **Pub/Sub System Type** to `google`.
+1.  For **Subscription name**, enter `gcb-account`.
+1.  In the **Payload Constraints** section, enter `status` for **Key** and `success` for **Value** as **SUCCESS**. This will filter messages to process builds 
+    only when they are finished and successful.
+1.  Click **Save Changes**.
 
 ![Configuring Trigger](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/05-new-trigger.png)
 
-Now, do the following to test:
+### Test the trigger
 
-1. Go back to the GCP Console.
-2. Click on **Cloud Build**.
-3. Click on **Triggers**.
-4. Click on **Run trigger**.
+1. Go to the [Triggers page](https://console.cloud.google.com/cloud-build/triggers) in the Cloud Console.
+1. Click **Run trigger**.
 
-After the build is complete and successful, go back to Spinnaker and check if it has an execution of the pipeline. There should be an execution, showing the trigger is working fine:
+After the build is complete and successful, go back to Spinnaker and check whether it shows that the pipeline has exectuted. There should be an execution, 
+showing the trigger is working:
 
 ![First execution](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/06-first-run.png)
 
-### Extract Details From The Built Image
+### Extract details From The built image
 
-Get the image name and image digest fron the created image. These details will later help with the creation of an image url with the name and digest that is going to be used for signature and attestation creation and also the deployment. 
+In this section, you get the image name and image digest fron the created image. These details are used to create an image URL, which is used for signature and
+attestation creation and, as well as for deployment. 
 
-For that, do the following:
+1.  Add a new stage to the pipeline.
+1.  Change the type to **Evaluate Variables**.
+1.  Name the stage `Get Image Details`.
 
-1. Add a new stage to the pipeline.
-2. Change the type to **Evaluate Variables**.
-3. Name the stage as **Get Image Details**.
+    ![Get Image details](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/07-get-img-details.png)
 
-![Get Image details](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/07-get-img-details.png)
+1.  Create a variable named `imageName` and point it to `${trigger.payload.results.images[0].name}`.
+1.  Create a variable named `imageDigest` and point it to `${trigger.payload.results.images[0].digest}`.
 
-Create a variable named imageName and point it to `${trigger.payload.results.images[0].name}`
+    ![Variables](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/08-vars.png)
 
-Create a new one named imageDigest and point it to `${trigger.payload.results.images[0].digest}`
+1.  Save the changes.
+1.  Test the pipeline by running the trigger on Cloud Build. 
+1.  Check whether variables were correctly extracted.
 
-![Variables](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/08-vars.png)
+    ![Variable extraction](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/09-var-extract.png)
 
-1. Save and retest the pipeline running the trigger on Cloud Build again. 
-2. Checking if variables were correctly extracted.
+1.  Add a variable named `imageAndHash` with the following content:
 
-![Variable extraction](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/09-var-extract.png)
+        ${trigger.payload.results.images[0].name.substring(0, trigger.payload.results.images[0].name.indexOf(":")) + "@" + trigger.payload.results.images[0].digest}
 
-3. Now add a new variable named imageAndHash with the following content:
+    The result should look like this:
 
-    `${trigger.payload.results.images[0].name.substring(0, trigger.payload.results.images[0].name.indexOf(":")) + "@" +
-    trigger.payload.results.images[0].digest}`
+    ![Image and Hash Variable](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/10-image-and-hash.png)
 
-4. The following result will be seen:
+1.  Click **Save Changes**.
 
-![Image and Hash Variable](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/10-image-and-hash.png)
-
-Click on **Save Changes**.
-
-
-### Creating the Attestation
+### Creating the attestation
 
 Now it's time to create the attestation. From the binary authorization docs on what the attestation is: _"An attestation is a digitally signed document, made by a signer, that certifies that a required process in your pipeline was completed and that the resulting container image is authorized for deployment in GKE. The attestation itself contains the full path to the version of the container image as stored in your container image registry, as well as a signature created by signing the globally unique digest that identifies a specific container image build"_.
 
