@@ -382,7 +382,7 @@ For GKE, a connection was created after installing Spinnaker in the beginning of
 
 ### Create an application in Spinnaker
 
-To cretae an application in Spinnaker, do the following in the Spinnaker console:
+To create an application in Spinnaker, do the following in the Spinnaker console:
 
 1.  Click **Actions**.
 1.  Click **Create Application**.
@@ -406,10 +406,10 @@ In this section, you create a trigger that starts the continuous delivery pipeli
 
     ![New Trigger](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/04-trigger.png)
 
-1.  For **Type**, select **Pub/Sub**..
+1.  For **Type**, select **Pub/Sub**.
 1.  Set **Pub/Sub System Type** to `google`.
-1.  For **Subscription name**, enter `gcb-account`.
-1.  In the **Payload Constraints** section, enter `status` for **Key** and `success` for **Value** as **SUCCESS**. This will filter messages to process builds 
+1.  For **Subscription Name**, enter `gcb-account`.
+1.  In the **Payload Constraints** section, enter `status` for **Key** and `SUCCESS` for **Value**. This will filter messages to process builds 
     only when they are finished and successful.
 1.  Click **Save Changes**.
 
@@ -421,14 +421,14 @@ In this section, you create a trigger that starts the continuous delivery pipeli
 1. Click **Run trigger**.
 
 After the build is complete and successful, go back to Spinnaker and check whether it shows that the pipeline has exectuted. There should be an execution, 
-showing the trigger is working:
+showing that the trigger is working, as in the following screenshot:
 
 ![First execution](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/06-first-run.png)
 
-### Extract details From The built image
+### Extract details from the built image
 
 In this section, you get the image name and image digest fron the created image. These details are used to create an image URL, which is used for signature and
-attestation creation and, as well as for deployment. 
+attestation creation, as well as for deployment. 
 
 1.  Add a new stage to the pipeline.
 1.  Change the type to **Evaluate Variables**.
@@ -457,68 +457,72 @@ attestation creation and, as well as for deployment.
 
 1.  Click **Save Changes**.
 
-### Creating the attestation
+## Creating the attestation
 
-Now it's time to create the attestation. From the binary authorization docs on what the attestation is: _"An attestation is a digitally signed document, made by a signer, that certifies that a required process in your pipeline was completed and that the resulting container image is authorized for deployment in GKE. The attestation itself contains the full path to the version of the container image as stored in your container image registry, as well as a signature created by signing the globally unique digest that identifies a specific container image build"_.
+An [attestation](https://cloud.google.com/binary-authorization/docs/key-concepts#attestations) is a digitally signed document, made by a signer, that certifies 
+that a required process in your pipeline was completed and that the resulting container image is authorized for deployment in GKE. The attestation itself 
+contains the full path to the version of the container image as stored in your container image registry, as well as a signature created by signing the globally 
+unique digest that identifies a specific container image build.
 
-As Spinnaker can't run a script by itself, to create the attestation, you should rely on a Kubernetes Job running on top of the Spinnaker Kubernetes cluster. 
+Because Spinnaker can't run a script itself to create the attestation, you use a Kubernetes Job running on the Spinnaker Kubernetes cluster. This job has a 
+script that creates the attestation along with the signature of the payload required by Binary Authorization.
 
-This job will have a script that will create the attestation along with the signature of the payload required by Binary Authorization.
+Run the script with the Spinnaker service account. This service account needs permission in the project hosting the Binary Authorization artifacts. This ensures
+that Spinnaker is only party with permissions to create the attestation.
 
-Run the script with the Spinnaker service account. For it to work this service account needs permission in the project hosting the binary authorization artifacts. This ensures that the only party with permissions to access create the attestation is Spinnaker.
+### Creating the Binary Authorization Job Docker container image
 
-### Creating the Binary Authorization Job Docker Container Image
+In this section, you create a Docker container based on the Google Cloud SDK base image and place that on Google Cloud Registry to be accessed by the Spinnaker 
+Kubernetes cluster.
 
-For that, the first step is to create a docker container based on the Google Cloud SDK base image and place that on Google Cloud Registry to be accessed by the Spinnaker Kubernetes cluster.
+1.  In a new directory containing the code for creating the attestation, create a script named `attest_image.sh` with the following content:
 
-In a new directory containing the code for creating the attestation, create a script named `attest_image.sh` with the following content:
+        #!/bin/bash
+        echo "Image to attest: ${IMAGE_TO_ATTEST}"
 
-    #!/bin/bash
-    echo "Image to attest: ${IMAGE_TO_ATTEST}"
-
-    attestation_list_result=$(gcloud container binauthz attestations list \
-    --project="${ATTESTOR_PROJECT_ID}" \
-    --attestor="projects/${ATTESTOR_PROJECT_ID}/attestors/${ATTESTOR_NAME}" \
-    --artifact-url="${IMAGE_TO_ATTEST}")
-
-    echo "Attestation list: ${attestation_list_result}"
-
-    if [ -z "$attestation_list_result" ]
-    then
-    gcloud container binauthz create-signature-payload \
-        --project=${ATTESTOR_PROJECT_ID} \
-        --artifact-url="${IMAGE_TO_ATTEST}" > /tmp/generated_payload.json
-
-    gcloud kms asymmetric-sign \
-            --location=${KMS_KEY_LOCATION} \
-            --keyring=${KMS_KEYRING_NAME} \
-            --key=${KMS_KEY_NAME} \
-            --version=${KMS_KEY_VERSION} \
-            --digest-algorithm=sha256 \
-            --input-file=/tmp/generated_payload.json \
-            --signature-file=/tmp/ec_signature \
-            --project ${KMS_KEY_PROJECT_ID}
-
-    PUBLIC_KEY_ID=$(gcloud container binauthz attestors describe ${ATTESTOR_NAME} \
-                --format='value(userOwnedGrafeasNote.publicKeys[0].id)' \
-                --project ${ATTESTOR_PROJECT_ID})
-
-    gcloud container binauthz attestations create \
+        attestation_list_result=$(gcloud container binauthz attestations list \
         --project="${ATTESTOR_PROJECT_ID}" \
-        --artifact-url="${IMAGE_TO_ATTEST}" \
         --attestor="projects/${ATTESTOR_PROJECT_ID}/attestors/${ATTESTOR_NAME}" \
-        --signature-file=/tmp/ec_signature \
-        --public-key-id="${PUBLIC_KEY_ID}"
+        --artifact-url="${IMAGE_TO_ATTEST}")
 
-    echo "Attestation created"
+        echo "Attestation list: ${attestation_list_result}"
 
-    else
-        echo "Attestation already created for image ${IMAGE_TO_ATTEST}"
-    fi
+        if [ -z "$attestation_list_result" ]
+        then
+        gcloud container binauthz create-signature-payload \
+            --project=${ATTESTOR_PROJECT_ID} \
+            --artifact-url="${IMAGE_TO_ATTEST}" > /tmp/generated_payload.json
 
-    exit 0
+        gcloud kms asymmetric-sign \
+                --location=${KMS_KEY_LOCATION} \
+                --keyring=${KMS_KEYRING_NAME} \
+                --key=${KMS_KEY_NAME} \
+                --version=${KMS_KEY_VERSION} \
+                --digest-algorithm=sha256 \
+                --input-file=/tmp/generated_payload.json \
+                --signature-file=/tmp/ec_signature \
+                --project ${KMS_KEY_PROJECT_ID}
 
-1. In the same directory, create a Dockerfile with the following code:
+        PUBLIC_KEY_ID=$(gcloud container binauthz attestors describe ${ATTESTOR_NAME} \
+                    --format='value(userOwnedGrafeasNote.publicKeys[0].id)' \
+                    --project ${ATTESTOR_PROJECT_ID})
+
+        gcloud container binauthz attestations create \
+            --project="${ATTESTOR_PROJECT_ID}" \
+            --artifact-url="${IMAGE_TO_ATTEST}" \
+            --attestor="projects/${ATTESTOR_PROJECT_ID}/attestors/${ATTESTOR_NAME}" \
+            --signature-file=/tmp/ec_signature \
+            --public-key-id="${PUBLIC_KEY_ID}"
+
+        echo "Attestation created"
+
+        else
+            echo "Attestation already created for image ${IMAGE_TO_ATTEST}"
+        fi
+
+        exit 0
+
+1.  In the same directory, create a Dockerfile with the following code:
 
         FROM google/cloud-sdk:latest
 
@@ -526,16 +530,15 @@ In a new directory containing the code for creating the attestation, create a sc
 
         RUN chmod +x /opt/google/bin-authz/attest_image.sh
 
-2. Build the container image and push it to GCR by running these commands. The project id is the id of the project where Spinnaker is installed and where we will host this docker image:
+1.  Build the container image and push it to Container Registry by running these commands:
 
         cd [DIRECTORY WHERE YOU HOSTED THE FILES]
-
         docker build . -t gcr.io/<PROJECT ID>/bin-authz-job
-        
         docker push gcr.io/<PROJECT ID>/bin-authz-job
+	
+    The project ID is the ID of the project where Spinnaker is installed and where you will host this Docker image.
 
-
-## Running the Job in Spinnaker
+## Running the job in Spinnaker
 
 Go back to Spinnaker and add a new stage. Select as type **Run Job (Manifest)** and name it as **Create Attestation**.
 
