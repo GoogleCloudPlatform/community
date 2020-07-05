@@ -417,7 +417,7 @@ In this section, you create a trigger that starts the continuous delivery pipeli
 
 ### Test the trigger
 
-1. Go to the [Triggers page](https://console.cloud.google.com/cloud-build/triggers) in the Cloud Console.
+1. Go to the [**Triggers** page](https://console.cloud.google.com/cloud-build/triggers) in the Cloud Console.
 1. Click **Run trigger**.
 
 After the build is complete and successful, go back to Spinnaker and check whether it shows that the pipeline has exectuted. There should be an execution, 
@@ -427,7 +427,7 @@ showing that the trigger is working, as in the following screenshot:
 
 ### Extract details from the built image
 
-In this section, you get the image name and image digest fron the created image. These details are used to create an image URL, which is used for signature and
+In this section, you get the image name and image digest from the created image. These details are used to create an image URL, which is used for signature and
 attestation creation, as well as for deployment. 
 
 1.  Add a new stage to the pipeline.
@@ -470,7 +470,7 @@ script that creates the attestation along with the signature of the payload requ
 Run the script with the Spinnaker service account. This service account needs permission in the project hosting the Binary Authorization artifacts. This ensures
 that Spinnaker is only party with permissions to create the attestation.
 
-### Creating the Binary Authorization Job Docker container image
+### Create the Binary Authorization Job Docker container image
 
 In this section, you create a Docker container based on the Google Cloud SDK base image and place that on Google Cloud Registry to be accessed by the Spinnaker 
 Kubernetes cluster.
@@ -538,85 +538,89 @@ Kubernetes cluster.
 	
     The project ID is the ID of the project where Spinnaker is installed and where you will host this Docker image.
 
-## Running the job in Spinnaker
+## Run the job in Spinnaker
 
-Go back to Spinnaker and add a new stage. Select as type **Run Job (Manifest)** and name it as **Create Attestation**.
+1.  Go back to Spinnaker and add a new stage with type **Run Job (Manifest)**, and name it `Create Attestation`.
 
-![Create Attestation Job](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/11-create-attestation.png)
+    ![Create Attestation Job](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/11-create-attestation.png)
 
-Select the **Account** as **spinnaker-install-account**. This is the kubernetes account for the **cluster where spinnaker is installed and comes pre-defined with Spinnaker for GCP**.
+1.  For **Account**, enter `spinnaker-install-account`. This is the Kubernetes account for the cluster where Spinnaker is installed, which comes pre-defined with
+    Spinnaker for Google Cloud.
 
-![Run Job Configuration](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/12-run-job.png)
+    ![Run Job Configuration](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/12-run-job.png)
 
-Add the following text as the **Manifest Text** making the necessary changes to point to your project and replacing the other environment variables.
+1.  Add the following text as the manifest text, making the necessary changes to point to your project and replacing the other environment variables.
 
-    apiVersion: batch/v1
-    kind: Job
-    metadata:
-    name: attest-image
-    namespace: jobs
-    spec:
-    backoffLimit: 4
-    template:
+        apiVersion: batch/v1
+        kind: Job
+        metadata:
+        name: attest-image
+        namespace: jobs
         spec:
-        containers:
-            - command:
-                - /opt/google/bin-authz/attest_image.sh
-            env:
-                - name: IMAGE_TO_ATTEST
-                value: '${imageAndHash}'
-                - name: DEPLOYER_PROJECT_ID
-                value: <DEPLOYER PROJECT ID>
-                - name: ATTESTOR_PROJECT_ID
-                value: <ATTESTOR PROJECT ID>
-                - name: ATTESTOR_NAME
-                value: <ATTESTOR NAME>
-                - name: KMS_KEY_PROJECT_ID
-                value: <ATTESTOR PROJECT ID>
-                - name: KMS_KEY_LOCATION
-                Value: <KMS KEY LOCATION>
-                - name: KMS_KEYRING_NAME
-                value: <KMS KEYRING NAME>
-                - name: KMS_KEY_NAME
-                value: <KMS KEY NAME>
-                - name: KMS_KEY_VERSION
-                value: <KMS KEY VERSION>
-            image: 'gcr.io/<SPINNAKER PROJECT ID>/bin-authz-job:latest'
-            name: attest-image
-        restartPolicy: Never
+        backoffLimit: 4
+        template:
+            spec:
+            containers:
+                - command:
+                    - /opt/google/bin-authz/attest_image.sh
+                env:
+                    - name: IMAGE_TO_ATTEST
+                    value: '${imageAndHash}'
+                    - name: DEPLOYER_PROJECT_ID
+                    value: <DEPLOYER PROJECT ID>
+                    - name: ATTESTOR_PROJECT_ID
+                    value: <ATTESTOR PROJECT ID>
+                    - name: ATTESTOR_NAME
+                    value: <ATTESTOR NAME>
+                    - name: KMS_KEY_PROJECT_ID
+                    value: <ATTESTOR PROJECT ID>
+                    - name: KMS_KEY_LOCATION
+                    Value: <KMS KEY LOCATION>
+                    - name: KMS_KEYRING_NAME
+                    value: <KMS KEYRING NAME>
+                    - name: KMS_KEY_NAME
+                    value: <KMS KEY NAME>
+                    - name: KMS_KEY_VERSION
+                    value: <KMS KEY VERSION>
+                image: 'gcr.io/<SPINNAKER PROJECT ID>/bin-authz-job:latest'
+                name: attest-image
+            restartPolicy: Never
 
-**It's important to note that the jobs will be hosted in the jobs namespace. You should connect manually to the Spinnaker's Kubernetes cluster and create this namespace previously.**
+The jobs will be hosted in the jobs namespace. You should connect manually to the Spinnaker Kubernetes cluster and create this namespace previously.
 
-### Testing
-Test the build by triggering the Cloud Build trigger manually in Cloud Console. After that, check if the Spinnaker pipeline was triggered.
+### Test the build
 
-The build should succeed and we should see two green steps:
+Test the build by triggering the Cloud Build trigger manually in Cloud Console. After that, check whether the Spinnaker pipeline was triggered.
+
+The build should succeed and you should see two green steps:
 
 ![Success running job](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/13-run-job-steps.png)
 
-And if you look at the console output for the Create Attestation phase, you should see the following output:
+Look at the console output for the Create Attestation phase, for which you should see the following output:
 
     Image to attest: gcr.io/<PROJECT ID>/products-api@<IMAGE HASH>
     Listed 0 items.
     Attestation list: 
     Attestation created
 
-### Adding permissions to access attestation resources
+### Add permissions to access attestation resources
 
-The service account used by Spinnaker needs permissions to access the Attestor resources like Cloud KMS keys and to create the attestation. As they are in different projects the service account from Spinnaker's project should be added to the Attestor project and given the proper roles.
+The service account used by Spinnaker needs permissions to access the attestor resources like Cloud KMS keys and to create the attestation. Because they are in
+different projects, you must add the service account from Spinnaker's project to the attestor project and give it the proper roles.
 
-The first step is to get the name of the Spinnaker service account. For that, go to the Spinnaker GKE cluster in Cloud Console and click on **Permissions**.
+In this section, you get the name of the Spinnaker service account and then add permissions to the service account in the attestor project, which holds the 
+Binary Authorization attestor and also the Cloud KMS keys for signing the attestation
 
-The service account name will be shown in the following form:
+1.  Go to the Spinnaker GKE cluster in Cloud Console and click **Permissions**.
 
-    <account name>@<project id>.iam.gserviceaccount.com
+    The service account name is shown in the following form:
 
-Take note of the service account name and add permissions to the service account in the `Attestor` project, where we hold the Binary Authorization Attestor and also the Cloud KMS keys for signing the attestations:
+        <account name>@<project id>.iam.gserviceaccount.com
 
-* In Cloud Console, go to the **Attestor Project**.
-* In the navigation menu click on **IAM & Admin** > **IAM**.
-* Click the **Add** button to add an IAM permission.
-* Enter the email of the Spinnaker service account and add the following roles:
+1.  In the Cloud Console, go to the attestor project.
+1.  In the navigation menu click **IAM & Admin** > **IAM**.
+1.  Click the **Add** button to add an IAM permission.
+1.  Enter the email address of the Spinnaker service account and add the following roles:
     * **Binary Authorization Attestor Editor**
     * **Binary Authorization Attestor Viewer**
     * **Binary Authorization Service Agent**
@@ -625,23 +629,21 @@ Take note of the service account name and add permissions to the service account
     * **Container Analysis Occurrences Editor**
     * **Container Analysis Occurrences Viewer**
 
-This will allow the job deployed to the Spinnaker Kubernetes Cluster to access the required resources and create the attestations in the Attestor project.
+This allows the job deployed to the Spinnaker Kubernetes cluster to access the required resources and create the attestations in the Attestor project.
 
 ## Deploying the application
 
-Now that the attestation is created, the last step is to deploy the application. Deploying the application will also be applying a Kubernetes manifest. 
+In this section, you cretae a deployment manifest and deploy the application.
 
-For that:
+1.  Add a new stage of type **Deploy (Manifest)** and name it `Deploy Application`.
 
-1. Add a new stage of type **Deploy (Manifest)** and name it **Deploy Application**.
+    ![Add stage for App Deployment](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/14-deploy-app-stage.png)
 
-![Add stage for App Deployment](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/14-deploy-app-stage.png)
+1.  Select the account you want to deploy to, which is the account that was connected to Spinnaker representing the deployment cluster.
 
-2. **Select the account** you want to deploy to, which will be the account that was connected to Spinnaker representing the deployment cluster.
+    ![Stage Config](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/15-manifest-config.png)
 
-![Stage Config](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/15-manifest-config.png)
-
-3. Enter the following as the deployment configuration **Manifest text** to deploy the application:
+1.  Enter the following as the deployment configuration manifest text to deploy the application:
 
         apiVersion: apps/v1
         kind: Deployment
@@ -668,22 +670,22 @@ For that:
                 ports:
                     - containerPort: 8080
 
-4. Test the deployment and check whether the deployment was created successfully in Kubernetes and if the PODs are running. This will indicate that the binary authorization is working properly. 
+1.  Test the deployment and check whether the deployment was created successfully in Kubernetes and if the Pods are running, indicating that Binary 
+    Authorization is working properly. 
 
-![Deployment Success](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/16-three-steps-success.png)
+    ![Deployment Success](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/16-three-steps-success.png)
 
-![Deployment Success](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/17-deployment-ok.png)
-
+    ![Deployment Success](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/17-deployment-ok.png)
 
 ## Deploying a service
 
 The last step is to deploy a service capable of exposing a business API.
 
-1. Add a parallel step to the **Deploy Application**, same type as the Deploy Application one, name it **Deploy Service**.
+1.  Add a parallel step to the `Deploy Application` step, with same type as the `Deploy Application` step, name it `Deploy Service`.
 
-![Service Deployment](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/18-svc-deployment.png)
+    ![Service Deployment](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/18-svc-deployment.png)
 
-2. Configure the deployment text YAML as the following:
+1.  Configure the deployment text YAML as the following:
 
         apiVersion: v1
         kind: Service
@@ -699,15 +701,19 @@ The last step is to deploy a service capable of exposing a business API.
           sessionAffinity: None
         type: LoadBalancer
 
-3. Test the deployment by triggering it from Cloud Build.
+1. Test the deployment by triggering it from Cloud Build.
 
-4. Deployment should succeed with the deployment now of the service along with the application.
+1. Check whether the deployment of the service along with the application succeeded.
 
-![Service Deployment Success](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/19-svc-deployment-ok.png)
+    ![Service Deployment Success](https://storage.googleapis.com/gcp-community/tutorials/spinnaker-binary-auth/19-svc-deployment-ok.png)
 
-5. Execute a `kubectl get svc` in the user cluster to get the Load Balancer IP
+1.  Get the load balancwe IP address by running the following in the user cluster:
 
-6. Access using the browser the URL `http://<LB IP>/products` and you should get a list of dummy products, returned by our application.
+        kubectl get svc
+
+1.  In your browser, go to the following URL: `http://<LOAD_BALANCER_IP_ADDRESS>/products`
+
+    You should get a list of products, returned by your application.
 
 ## Summary
 
