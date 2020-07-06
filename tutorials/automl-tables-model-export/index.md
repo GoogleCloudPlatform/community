@@ -1,21 +1,26 @@
 ---
 title: Export a custom AutoML Tables model and serve it with Cloud Run
-description: Learn how to export an AutoML Tables custom model and serve it with Cloud Run, or any other environment where you can run a container.
+description: Learn how to export a custom AutoML Tables model and serve it with Cloud Run or any other environment where you can run a container.
 author: amygdala
 tags: AutoML, Cloud Run, ML, TensorBoard
-date_published: 2020-06-10
+date_published: 2020-07-08
 ---
 
 ## Introduction
 
-Google Cloud’s [AutoML Tables][1] lets you automatically build and deploy state-of-the-art machine learning models using your own structured data.  (See [this notebook][2] for a walkthrough.) 
-Recently, Tables launched a feature to let you [export][3] your full custom model, packaged such that you can serve it via a Docker container. This lets you serve your models anywhere that you can run a container.
+With [AutoML Tables](https://cloud.google.com/automl-tables/docs/), you can automatically build and deploy state-of-the-art machine-learning models using your
+own structured data. See [this notebook](https://cloud.google.com/blog/products/ai-machine-learning/use-automl-tables-from-a-jupyter-notebook) for a walkthrough.
 
-In this tutorial, we'll show how you can package an exported Tables model to serve on [Cloud Run][4]. With Cloud Run, your model serving automatically scales out with traffic, and scales to 0 when it’s not being used.  We’ll also show how you can examine your trained custom model in [TensorBoard][5].
+AutoML Tables includes a feature with which you can [export][3] your full custom model, packaged such that you can serve it with a Docker container. This lets 
+you serve your models anywhere that you can run a container.
 
-We'll use the [Cloud Console UI][6], but all of these steps could also be accomplished by accessing the API via the command line or using the [AutoML Tables client libraries][7].
+This tutorial shows you how to package an exported AutoML Tables model to serve on [Cloud Run][4]. With Cloud Run, your model serving automatically scales up 
+with traffic and scales down to 0 when it’s not being used. This tutorial also shows how you can examine your trained custom model in [TensorBoard][5].
 
-### About our dataset and scenario
+This tutorial uses the [Cloud Console][6], but all of the steps could also be accomplished through the APIs on the command line or using the
+[AutoML Tables client libraries][7].
+
+### About the dataset and scenario
 
 The [Cloud Public Datasets Program][8] makes available public datasets that are useful for experimenting with machine learning. Just as we did in our “[Explaining model predictions on structured data][9]” post, we’ll use data that is essentially a join of two public datasets stored in [BigQuery][10]: [London Bike rentals][11] and [NOAA weather data][12], with some additional processing to clean up outliers and derive additional GIS and day-of-week fields. 
 
@@ -260,8 +265,7 @@ If you’re curious about the details of your custom model, you can use Stackdri
 
 You may also be interested in exploring the updated [AutoML Tables client libraries][35], which make it easy for you to [train and use Tables programmatically][36], or reading about how to create a _contextual bandit_ model pipeline [using AutoML Tables, without needing a specialist for tuning or feature engineering][37].
 
-[1]:	https://cloud.google.com/automl-tables/docs/
-[2]:	https://cloud.google.com/blog/products/ai-machine-learning/use-automl-tables-from-a-jupyter-notebook
+
 [3]:	https://cloud.google.com/automl-tables/docs/model-export
 [4]:	https://cloud.google.com/run/docs/
 [5]:	https://www.tensorflow.org/tensorboard
