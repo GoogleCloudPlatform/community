@@ -1,5 +1,5 @@
 ---
-title: CI/CD with Spinnaker and Binary Authorization
+title: Set up CI/CD with Spinnaker and Binary Authorization
 description: Creating attestations by integrating Cloud Build, Spinnaker, Cloud KMS, and Binary Authorization to securely deploy Kubernetes applications.
 author: damadei-google
 tags: Kubernetes, Spinnaker, continuous integration, continuous delivery, DevOps, Binary Authorization, Cloud KMS, Cloud Build
