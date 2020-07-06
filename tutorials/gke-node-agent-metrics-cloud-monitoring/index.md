@@ -6,7 +6,7 @@ tags: Google Container Engine, host metrics
 date_published: 2020-07-06
 ---
 
-Today only a few metrics are avaialble by default on GKE Nodes. You can deploy a Cloud Monitoring agent to expose additional metrics for added visbiility into 
+Today only a few metrics are available by default on GKE Nodes. You can deploy a Cloud Monitoring agent to expose additional metrics for added visibility into 
 the health of your GKE nodes.
 
 ## Objectives
