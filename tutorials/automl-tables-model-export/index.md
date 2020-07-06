@@ -6,23 +6,21 @@ tags: AutoML, Cloud Run, ML, TensorBoard
 date_published: 2020-07-08
 ---
 
-## Introduction
-
 With [AutoML Tables](https://cloud.google.com/automl-tables/docs/), you can automatically build and deploy state-of-the-art machine-learning models using your
 own structured data. See [this notebook](https://cloud.google.com/blog/products/ai-machine-learning/use-automl-tables-from-a-jupyter-notebook) for a walkthrough.
 
-AutoML Tables includes a feature with which you can [export][3] your full custom model, packaged such that you can serve it with a Docker container. This lets 
+AutoML Tables includes a feature with which you can [export](https://cloud.google.com/automl-tables/docs/model-export) your full custom model, packaged such that you can serve it with a Docker container. This lets 
 you serve your models anywhere that you can run a container.
 
-This tutorial shows you how to package an exported AutoML Tables model to serve on [Cloud Run][4]. With Cloud Run, your model serving automatically scales up 
-with traffic and scales down to 0 when it’s not being used. This tutorial also shows how you can examine your trained custom model in [TensorBoard][5].
+This tutorial shows you how to package an exported AutoML Tables model to serve on [Cloud Run](https://cloud.google.com/run/docs/). With Cloud Run, your model serving automatically scales up 
+with traffic and scales down to 0 when it’s not being used. This tutorial also shows how you can examine your trained custom model in [TensorBoard](https://www.tensorflow.org/tensorboard).
 
-This tutorial uses the [Cloud Console][6], but all of the steps could also be accomplished through the APIs on the command line or using the
-[AutoML Tables client libraries][7].
+This tutorial uses the [Cloud Console](https://console.cloud.google.com/automl-tables/datasets), but all of the steps could also be accomplished through the APIs on the command line or using the
+[AutoML Tables client libraries](https://googleapis.dev/python/automl/latest/gapic/v1beta1/tables.html).
 
-### About the dataset and scenario
+## About the dataset and scenario
 
-The [Cloud Public Datasets Program][8] makes available public datasets that are useful for experimenting with machine learning. Just as we did in our “[Explaining model predictions on structured data][9]” post, we’ll use data that is essentially a join of two public datasets stored in [BigQuery][10]: [London Bike rentals][11] and [NOAA weather data][12], with some additional processing to clean up outliers and derive additional GIS and day-of-week fields. 
+The [Cloud Public Datasets Program](https://cloud.google.com/bigquery/public-data/) makes available public datasets that are useful for experimenting with machine learning. Just as we did in our [Explaining model predictions on structured data](https://cloud.google.com/blog/products/ai-machine-learning/explaining-model-predictions-structured-data) post, we’ll use data that is essentially a join of two public datasets stored in [BigQuery](https://cloud.google.com/bigquery/): [London bike rentals](https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=london_bicycles&page=dataset) and [NOAA weather data](https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=noaa_gsod&page=dataset), with some additional processing to clean up outliers and derive additional GIS and day-of-week fields. 
 
 We’ll use this dataset to build a _regression model_ to predict the duration of a bike rental based on information about the start and end stations, the day of the week, the weather on that day, and other data. If we were running a bike rental company, for example, these predictions—and their explanations—could help us anticipate demand and even plan how to stock each location.
 
@@ -245,7 +243,7 @@ It may take a second or two for the first request to return, but subsequent requ
 
 In this tutorial, we walked through how to export a custom AutoML Tables trained model, view model information in TensorBoard, and build a container image that lets you serve the model from any environment.  Then we showed how you can deploy that image to Cloud Run for scalable serving. See the [Cloud Run documentation][30] for more information on how you’d configure your prediction endpoint for end-user or service-to-service authentication.
 
-Once you’ve built a model-serving container image, it’s easy to deploy it to other environments as well.  For example, if you have installed [Knative serving][31] on a [Kubernetes][32] cluster, you can create a Knative *service* like this, using the same container image (again replacing `[PROJECT_ID]` with your project):
+Once you’ve built a model-serving container image, it’s easy to deploy it to other environments as well.  For example, if you have installed [Knative serving](https://github.com/knative/serving) on a [Kubernetes](https://kubernetes.io/) cluster, you can create a Knative *service* like this, using the same container image (again replacing `[PROJECT_ID]` with your project):
 
 ```yaml
 apiVersion: serving.knative.dev/v1
@@ -259,23 +257,14 @@ spec:
         - image: gcr.io/[PROJECT_ID]/bw-serve
 ```
 
-(While our example model fits on a 2GiB Cloud Run instance, it’s possible that other of your models may be too large for the managed Cloud Run service, and serving it via Kubernetes/[GKE][33] is a good alternative).
+Though the example model for this tutorial fits on a 2-GiB Cloud Run instance, you may have models that are too large for the managed Cloud Run service, and serving it with Kubernetes/GKE is a good alternative.
 
-If you’re curious about the details of your custom model, you can use Stackdriver Logging to [view information about your AutoML Tables model][34]. Using Logging, you can see the final model hyperparameters as well as the hyperparameters and object values used during model training and tuning.
+If you’re curious about the details of your custom model, you can use Cloud Logging to [view information about your AutoML Tables model](https://cloud.google.com/automl-tables/docs/logging). Using Logging, you can see the final model hyperparameters as well as the hyperparameters and object values used during model training and tuning.
 
-You may also be interested in exploring the updated [AutoML Tables client libraries][35], which make it easy for you to [train and use Tables programmatically][36], or reading about how to create a _contextual bandit_ model pipeline [using AutoML Tables, without needing a specialist for tuning or feature engineering][37].
+You may also be interested in exploring the updated [AutoML Tables client libraries](https://googleapis.dev/python/automl/latest/gapic/v1beta1/tables.html), which make it easy for you to [train and use Tables programmatically](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/tables/automl/notebooks), or reading about how to create a _contextual bandit_ model pipeline [using AutoML Tables, without needing a specialist for tuning or feature engineering](https://cloud.google.com/blog/products/ai-machine-learning/how-to-build-better-contextual-bandits-machine-learning-models).
 
 
-[3]:	https://cloud.google.com/automl-tables/docs/model-export
-[4]:	https://cloud.google.com/run/docs/
-[5]:	https://www.tensorflow.org/tensorboard
-[6]:	https://console.cloud.google.com/automl-tables/datasets
-[7]:	https://googleapis.dev/python/automl/latest/gapic/v1beta1/tables.html
-[8]:	https://cloud.google.com/bigquery/public-data/
-[9]:	https://cloud.google.com/blog/products/ai-machine-learning/explaining-model-predictions-structured-data
-[10]:	https://cloud.google.com/bigquery/
-[11]:	https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=london_bicycles&page=dataset
-[12]:	https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=noaa_gsod&page=dataset
+
 [13]:	https://console.cloud.google.com/automl-tables/datasets
 [14]:	https://cloud.google.com/automl-tables/docs/problem-types
 [15]:	https://cloud.google.com/automl-tables/docs/predict
@@ -294,12 +283,4 @@ You may also be interested in exploring the updated [AutoML Tables client librar
 [28]:	https://cloud.google.com/cloud-build/docs/quickstart-docker
 [29]:	https://console.cloud.google.com/marketplace/details/google-cloud-platform/cloud-run
 [30]:	https://cloud.google.com/run/docs/authenticating/overview
-[31]:	https://github.com/knative/serving
-[32]:	https://kubernetes.io/
-[33]:	https://cloud.google.com/kubernetes-engine/
-[34]:	https://cloud.google.com/automl-tables/docs/logging
-[35]:	https://googleapis.dev/python/automl/latest/gapic/v1beta1/tables.html
-[36]:	https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/tables/automl/notebooks
-[37]:	https://cloud.google.com/blog/products/ai-machine-learning/how-to-build-better-contextual-bandits-machine-learning-models
-
 
