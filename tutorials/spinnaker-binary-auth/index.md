@@ -338,7 +338,7 @@ You host your application in a Cloud Source Repository in the `DEPLOYER` project
         git remote add origin ssh://<YOUR USER'S EMAIL>@source.developers.google.com:2022/p/${DEPLOYER_PROJECT_ID}/r/products-api
         git push --set-upstream origin master
 
-### Configuring automatic builds in Cloud Build
+### Configure automatic builds in Cloud Build
 
 In this section, you configure Cloud Build to automatically trigger a build process when a new push is made to the master branch of your source repository. This
 allows you to automatically deploy the application whenever a change is made to the source code and pushed to the repository.
@@ -538,7 +538,7 @@ Kubernetes cluster.
 	
     The project ID is the ID of the project where Spinnaker is installed and where you will host this Docker image.
 
-## Run the job in Spinnaker
+### Run the job in Spinnaker
 
 1.  Go back to Spinnaker and add a new stage with type **Run Job (Manifest)**, and name it `Create Attestation`.
 
@@ -631,7 +631,7 @@ Binary Authorization attestor and also the Cloud KMS keys for signing the attest
 
 This allows the job deployed to the Spinnaker Kubernetes cluster to access the required resources and create the attestations in the attestor project.
 
-## Deploying the application
+## Deploy the application
 
 In this section, you create a deployment manifest and deploy the application.
 
