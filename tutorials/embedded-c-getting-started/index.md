@@ -1,10 +1,11 @@
 ---
-title: Getting Started with IoT Core Embedded C SDK.
+title: Getting started with IoT Core Embedded C SDK
 description: Learn how to connect to IoT Core and send commands/telemetry from the device on the Embedded C SDK.
-author: Galz10
-tags: IoT,Google Cloud, Internet of Things, ESP32, ESP-IDF, IoT Core
-date_published: 2020-08-02
+author: galz10
+tags: IoT, Google Cloud, Internet of Things, ESP32, ESP-IDF, IoT Core
+date_published: 2020-07-08
 ---
+
 This tutorial shows how to use the IoT Core Embedded C library and will take you through the steps of creating a IoT Core project which will receive telemetry data from an ESP32 microcontroller and will be able to turn on and off an LED. Follow this tutorial to configure Cloud IoT Core and run the mqtt-example on your ESP32.
 Objectives
 
