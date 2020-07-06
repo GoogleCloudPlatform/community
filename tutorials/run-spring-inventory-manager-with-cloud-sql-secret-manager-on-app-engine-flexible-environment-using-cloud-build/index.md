@@ -1,5 +1,5 @@
 ---
-title: Run a Spring inventory manager app with Cloud SQL and Secret Manager on App Engine flexible environment
+title: Run a Spring app with Cloud SQL and Secret Manager on App Engine flexible
 description: Learn how to deploy the Spring Inventory Management demonstration application to App Engine flexible environment with Cloud SQL, Secret Manager, and Cloud Build.
 author: kioie
 tags: App Engine, Secret Manager, Cloud SQL, Spring Boot, Java, Cloud Build
