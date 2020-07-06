@@ -31,6 +31,9 @@ Have the following tools locally:
 * [An existing SSH key](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/)
 * [Terraform](https://www.terraform.io/intro/getting-started/install.html)
 
+This tutorial is written using Terraform 0.12 syntax, if you are using a
+different version of Terraform some of the syntax will be slightly different.
+
 ## Create a Google Cloud project
 
 A default project is often set up by default for new accounts, but you
