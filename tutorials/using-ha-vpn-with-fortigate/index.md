@@ -63,7 +63,7 @@ The Fortigate equipment used in this guide is as follows:
 ## Before you begin
 
 1.  Review information about how
-    [dynamic routing](https://cloud.google.com/network/connectivity/docs/vpn/concepts/choosing-networks-routing#dynamic-routing)
+    [dynamic routing](https://cloud.google.com/network-connectivity/docs/vpn/concepts/choosing-networks-routing#dynamic-routing)
     works in GCP.
 
 1.  Make sure that your peer VPN gateway supports BGP and is directly connected to the internet. Fortigate configurations
