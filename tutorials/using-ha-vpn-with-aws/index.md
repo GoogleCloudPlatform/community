@@ -6,7 +6,7 @@ tags: HA VPN, Cloud VPN, interop, AWS
 date_published: 2019-07-16
 ---
 
-Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/network-connectivity/vpn/docs/)
+Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/network-connectivity/docs/vpn/)
 on Google Cloud Platform (GCP) and AWS.
 
 AWS terminology and the AWS logo are trademarks of Amazon Web Services or its affiliates
@@ -19,7 +19,7 @@ testing it._
 ## Introduction
 
 This guide walks you through the process of configuring route-based VPN tunnels between
-AWS and the [HA VPN service](https://cloud.google.com/network-connectivity/vpn/docs) on GCP.
+AWS and the [HA VPN service](https://cloud.google.com/network-connectivity/docs/vpn/) on GCP.
 
 For more information about HA or Classic VPN, see the
 [Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview).
