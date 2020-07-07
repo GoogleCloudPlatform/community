@@ -177,7 +177,7 @@ possible, as discussed in the [Cloud VPN overview](https://cloud.google.com/netw
         the on-premises gateway can use.
     -   **IKE pre-shared key**: A character string, also known as a *shared secret*, that is used in establishing encryption
         for the tunnel. You must enter the same shared secret into both VPN gateways. For more information, see
-        [Generating a strong pre-shared key](https://cloud.google.comnetwork-connectivity/docs/vpn/how-to/generating-pre-shared-key).
+        [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key).
 1.  Under **Routing options**, select the **Dynamic (BGP)** tab.
 1.  In the **Cloud router** menu, select **Create cloud router** and set the following values in the
     **Create a cloud router** dialog:
