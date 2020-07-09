@@ -241,7 +241,7 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
         Log::info("Hello Stackdriver! This will show up as log level INFO!");
 
     For example, add the following route to `routes/web.php` and browse to
-    `/exception/my-test-exception` to see an exception appear in Error Handling:
+    `/log/some-message-here` to see a log entry in Logging:
 
         Route::get('/log/{message}', function ($message) {
             Log::info("Hello my log, message: $message");
