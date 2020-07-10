@@ -50,27 +50,70 @@ to limit your costs](https://cloud.google.com/bigquery/cost-controls).
 ## Downloading the driver
 
 1. Check whether your version of Excel is [32-bit or
-  64-bit](https://liberty.service-now.com/kb_view.do?sys_kb_id=7e56d58e358829405af1cb6de5727f5a).
+  64-bit](https://www.digitalcitizen.life/3-ways-learn-whether-windows-program-64-bit-or-32-bit).
 1. Download the latest version  of the
   ODBC driver from the [Simba Drivers for BigQuery
   page](https://cloud.google.com/bigquery/partners/simba-drivers/) which
   matches your version of Excel.
 1. Run the ODBC driver installer.
 
+The installer writes a user guide to the installation directory (in
+my case: `C:/Program Files/Simba ODBC Driver for Google BigQuery`) which
+contains more detailed instructions about how to configure the driver. These
+instructions are also available online in the [Simba ODBC installation and
+configuration
+guide](https://www.simba.com/products/BigQuery/doc/v2/ODBC_InstallGuide/win/content/odbc/intro.htm).
+
 ## Configuring the driver
 
 1. Run the ODBC Data Sources Administrator program as the
   Windows administrator.
-1. Select the System DSN tab.
-1. Configure the BigQuery driver.
-1. Provide credentials with user authentication. Follow the prompts to log in
-  and authorize the driver to access the BigQuery API.
-1. Set the Project (Catalog) to your [Google Cloud project
-  ID](https://support.google.com/cloud/answer/6158840?hl=en).
+  ![Run ODBC data sources administrator program](run-as-administrator.png)
+1. Select the **System DSN** tab.
+1. Select the desired data source and click the **Configure** button to
+  configure the *BigQuery* driver.
+  ![Click configure](configure.png)
 
-Note that the installer writes a user guide to the installation directory (in
-my case: `C:/Program Files/Simba ODBC Driver for Google BigQuery`) which
-contains more detailed instructions about how to configure the driver.
+### Authenticating the driver
+
+1. Choose **User authentication** in the **OAuth mechanism** selection box.
+  ![Choose User authentication](user-authentication.png)
+1. Click the **Sign in** button.
+1. Grant the ODBC driver permissions to run queries on your behalf by
+  clicking the **Allow** button.
+  ![Click allow](allow.png)
+1. Copy the authorization code to your clipboard.
+  ![Copy the code](authorization-code.png)
+1. Paste the code into the **Confirmation code** text box.
+  ![Paste the code](confirmation-code.png)
+1. Click the "Refresh token" text box. The ODBC driver will automatically
+  fill in this text box by making an API request containing the confirmation
+  code you provided.
+  ![Get a refresh token](refresh-token.png)
+
+### Configuring advanced options
+
+1. Click the **Advanced options** button to configure the ODBC driver
+  further.
+1. If the [BigQuery Storage
+  API](https://cloud.google.com/bigquery/docs/reference/storage) is enabled
+  on the billing project used by the driver, check **High-throughput API**
+  box for better performance when downloading query results.
+1. Add a comma-separated list of projects in the **Additional projects** text
+  box to view datasets in projects outside of the billing account, such as the
+  Google Cloud public datasets hosted in the `bigquery-public-data` project.
+1. Click the **OK** button to finish configuring advanced options.
+
+![Advanced ODBC options](advanced-options.png)
+
+### Finish configuring the driver
+
+1. Choose the [Google Cloud project
+  ID](https://support.google.com/cloud/answer/6158840?hl=en) to use as the
+  billing project for queries by clicking the arrow on the **Catalog
+  (project)** selection box.
+  ![Choose a billing project](billing-project.png)
+1. Click the **OK** button to finish configuring the driver.
 
 ## Running a query
 
@@ -123,4 +166,5 @@ the ODBC API to Google BigQuery.
   datasets](https://cloud.google.com/bigquery/public-data/).
 * Learn how to [load your own data into
   BigQuery](https://cloud.google.com/bigquery/loading-data).
-
+* Reference the [Simba ODBC driver installation and configuration
+  guide](https://www.simba.com/products/BigQuery/doc/v2/ODBC_InstallGuide/win/content/odbc/intro.htm).
