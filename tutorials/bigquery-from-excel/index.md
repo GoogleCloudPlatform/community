@@ -62,7 +62,7 @@ instructions are also available in the
 
 1.  Run the ODBC Data Sources Administrator program as the Windows administrator.
 
-   ![Run ODBC data sources administrator program](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/run-as-administrator.png)
+    ![Run ODBC data sources administrator program](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/run-as-administrator.png)
 
 1.  Select the **System DSN** tab.
 
@@ -130,7 +130,7 @@ After the ODBC driver is configured, open Excel.
 1.  Go to the **Data** tab.
 1.  Select **New Query > From Other Sources > From ODBC**.
 
-   ![Query from ODBC in Excel screenshot](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/query-from-odbc.png)
+    ![Query from ODBC in Excel screenshot](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/query-from-odbc.png)
 
 1.  Choose **Google BigQuery** as the data source.
 1.  Don't supply a username or password. Instead, select the connection type tab
