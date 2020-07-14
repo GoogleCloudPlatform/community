@@ -29,7 +29,7 @@ const DLP_CUSTOM_INFO_TYPE = [{
 }];
 
 const KMS = require('@google-cloud/kms');
-const kms = new KMS.KeyManagementServiceClient();
+const kms = new KMS.v1.KeyManagementServiceClient();
 const KMS_LOCATION = config.get('kms.location'); // Location of the key ring, ex: global
 const KMS_KEY_RING = config.get('kms.key_ring'); // Name of the crypto key's key ring
 const KMS_KEY_NAME = config.get('kms.key_name'); // Name of the crypto key

@@ -4,9 +4,9 @@
   "description": "Simple credit card tokenization service",
   "repository": "github.com/GoogleCloudPlatform/community",
   "license": "Apache-2.0",
-  "main": "/tokenizer/src/server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node /tokenizer/src/server.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "@google-cloud/dlp": "^1.9",
