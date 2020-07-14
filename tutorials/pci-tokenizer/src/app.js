@@ -284,14 +284,14 @@ exports.kms_crypto_tokenize = async (req, res) => {
   }
 
   try {
-    let plaintext = Buffer.from(`c${cc}m${mm}y${yyyy}u${userid}`, 'utf8');
+    const plaintext = Buffer.from(`c${cc}m${mm}y${yyyy}u${userid}`, 'utf8');
 
     // Encrypts the file using the specified crypto key
     const [result] = await kms.encrypt({ name: KMS_KEY_DEF, plaintext });
     if (!result || result.ciphertext === '') {
       return res.status(500).send(result);
     } else {
-      let token = result.ciphertext.toString('base64');
+      const token = result.ciphertext.toString('base64');
       return res.status(200).send(token);
     }
   } catch (err) {
@@ -332,8 +332,8 @@ exports.kms_crypto_detokenize = async (req, res) => {
   }
 
   try {
-    let ciphertext = Buffer.from(ccToken, 'base64');
-    let name = KMS_KEY_DEF;
+    const ciphertext = Buffer.from(ccToken, 'base64');
+    const name = KMS_KEY_DEF;
 
     const [result] = await kms.decrypt({ name, ciphertext });
 
