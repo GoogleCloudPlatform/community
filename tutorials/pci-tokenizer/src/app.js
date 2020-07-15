@@ -29,7 +29,7 @@ const DLP_CUSTOM_INFO_TYPE = [{
 }];
 
 const KMS = require('@google-cloud/kms');
-const kms = new KMS.KeyManagementServiceClient();
+const kms = new KMS.v1.KeyManagementServiceClient();
 const KMS_LOCATION = config.get('kms.location'); // Location of the key ring, ex: global
 const KMS_KEY_RING = config.get('kms.key_ring'); // Name of the crypto key's key ring
 const KMS_KEY_NAME = config.get('kms.key_name'); // Name of the crypto key
@@ -284,14 +284,14 @@ exports.kms_crypto_tokenize = async (req, res) => {
   }
 
   try {
-    let plaintext = Buffer.from(`c${cc}m${mm}y${yyyy}u${userid}`, 'utf8');
+    const plaintext = Buffer.from(`c${cc}m${mm}y${yyyy}u${userid}`, 'utf8');
 
     // Encrypts the file using the specified crypto key
     const [result] = await kms.encrypt({ name: KMS_KEY_DEF, plaintext });
     if (!result || result.ciphertext === '') {
       return res.status(500).send(result);
     } else {
-      let token = result.ciphertext.toString('base64');
+      const token = result.ciphertext.toString('base64');
       return res.status(200).send(token);
     }
   } catch (err) {
@@ -332,8 +332,8 @@ exports.kms_crypto_detokenize = async (req, res) => {
   }
 
   try {
-    let ciphertext = Buffer.from(ccToken, 'base64');
-    let name = KMS_KEY_DEF;
+    const ciphertext = Buffer.from(ccToken, 'base64');
+    const name = KMS_KEY_DEF;
 
     const [result] = await kms.decrypt({ name, ciphertext });
 

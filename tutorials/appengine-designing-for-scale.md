@@ -158,7 +158,7 @@ performance settings will, in most cases, enable the lowest possible latency. A
 trade-off for low latency is usually higher costs due to having additional idle
 instances that can handle temporary spikes in load.
 
-[auto_scaling]: https://cloud.google.com/appengine/docs/python/an-overview-of-app-engine#Python_Instance_scaling_and_class
+[auto_scaling]: https://cloud.google.com/appengine/docs/standard/python/how-instances-are-managed#scaling_types
 
 You should set [min_idle_instances][idle] if you want to minimize latency,
 particularly if you expect sudden spikes in traffic. The number of idle
