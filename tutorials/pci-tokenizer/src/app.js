@@ -14,7 +14,7 @@ const config = require('config');
 
 /* Project variables */
 // See config/default.json for more information
-const PROJECT_ID = config.get('general.project_id');
+const PROJECT_ID = config.get('general.project_id') || process.env.GCP_PROJECT || process.env.GOOGLE_CLOUD_PROJECT;
 const DEBUG_LOGGING = config.get('logging.debug');
 const VERSION_LOGGING = config.get('logging.version');
 
