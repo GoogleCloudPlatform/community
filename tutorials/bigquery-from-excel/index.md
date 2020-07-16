@@ -26,7 +26,7 @@ This tutorial assumes that you're using the Microsoft Windows operating system.
 
 1.  Create a project in the [Cloud Console](https://console.cloud.google.com/).
 
-1.  See the 
+1.  See the
     [blog post on getting started with the BigQuery free tier](https://cloud.google.com/blog/big-data/2017/01/how-to-run-a-terabyte-of-google-bigquery-queries-each-month-without-a-credit-card)
     or [video](https://youtu.be/w4mzE--sprY?list=PLIivdWyY5sqI6Jd0SbqviEgoA853EvDsq) for more detailed instructions.
 1.  Install [Microsoft Excel 2016 for Windows](https://products.office.com/en-us/excel).
@@ -55,25 +55,34 @@ for details about on-demand and flat-rate pricing. BigQuery also offers
 The installer writes a user guide to the installation directory (for example,
 `C:/Program Files/Simba ODBC Driver for Google BigQuery`), which
 contains more detailed instructions about how to configure the driver. These
-instructions are also available in the 
+instructions are also available in the
 [Simba ODBC installation and configuration guide](https://www.simba.com/products/BigQuery/doc/v2/ODBC_InstallGuide/win/content/odbc/intro.htm).
 
 ## Configuring the driver
 
-1.  Run the ODBC Data Sources Administrator program as the Windows administrator.
+1.  Run the ODBC Data Sources Administrator program.
 
-    ![Run ODBC data sources administrator program](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/run-as-administrator.png)
+    ![Run ODBC data sources administrator program](odbc-data-source-admin.png)
 
-1.  Select the **System DSN** tab.
+1.  Select the **User DSN** tab.
 
-1.  Select the desired data source and click **Configure** to configure the BigQuery driver.
+1.  Click the **Add** button.
 
-    ![Click configure](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/configure.png)
+    ![Click add](add-odbc-source.png)
+
+1.  Select the **Simba ODBC driver for Google BigQuery** from the data source
+    dialog box and click the **Finish** button.
+
+    ![Select driver](select-odbc-driver.png)
+
+1.  Set a **Data source name (DSN)**, such as "BigQuery", "BigQuery64", or "BigQuery32".
+
+    ![Set a data source name](set-dsn.png)
 
 ### Authenticating the driver
 
 1.  Choose **User authentication** in the **OAuth mechanism** selection box.
-  
+
     ![Choose User authentication](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/user-authentication.png)
 
 1.  Click the **Sign in** button.
@@ -93,7 +102,7 @@ instructions are also available in the
 1.  Click the **Refresh token** text box. The ODBC driver will automatically
     fill in this text box by making an API request containing the confirmation
     code you provided.
-    
+
     ![Get a refresh token](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/refresh-token.png)
 
 ### Configuring advanced options
@@ -116,7 +125,7 @@ instructions are also available in the
 
 1.  Choose the [Google Cloud project ID](https://support.google.com/cloud/answer/6158840?hl=en) to use as the
     billing project for queries by clicking the arrow on the **Catalog (project)** selection box.
-    
+
     ![Choose a billing project](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/billing-project.png)
 
 1. Click **OK** to finish configuring the driver.
