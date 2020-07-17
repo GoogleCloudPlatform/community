@@ -2,7 +2,6 @@
 
 ## Configuration and Build
 Depend in on the database ou are conecting to, you may need to update the ```pom.xml``` file to include the proper JDBC client.
-_Note: if using BigQuery, please see instructions below for installing the BQ Simba Driver_
 
 __Compile everything__
 ```
@@ -39,24 +38,4 @@ java -cp target/dlp-hybrid-inspect-sql-0.5-jar-with-dependencies.jar com.example
 -databaseName "[DATABSE-NAME]" \
 -databaseUser "[DATABASE-USER]" \
 -secretManagerResourceName "[SECRET-MANAGER]"
-```
-
-Note __databaseName__ is optional for BigQuery.  If you leave it blank, then all Datasets in the project will be scanned.  If you provide a __databaseName__, then only the Dataset that matches this string will be inspected. 
-
-## BQ Setup
-
-### Install BQ JDBC Driver
-
-Get latest Simba BigQuery driver: https://www.simba.com/drivers/bigquery-odbc-jdbc/
-
-Example:
-```
-wget https://storage.googleapis.com/simba-bq-release/jdbc/SimbaJDBCDriverforGoogleBigQuery42_1.2.2.1004.zip
-```
-
-Then unzip this into a sub-folder like ```lib```
-
-Run Maven local repo install if installed in the ```lib/``` folder
-```
-mvn install:install-file    -Dfile=lib/GoogleBigQueryJDBC42.jar    -DgroupId=com.simba    -DartifactId=simba-jdbc    -Dversion=1.0    -Dpackaging=jar    -DgeneratePom=true
 ```
