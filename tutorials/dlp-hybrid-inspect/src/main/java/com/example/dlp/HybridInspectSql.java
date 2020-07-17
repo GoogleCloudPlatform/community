@@ -38,7 +38,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -51,16 +50,21 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import jdk.internal.joptsimple.internal.Strings;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 public class HybridInspectSql {
+
+  public static final String JDBC_URL_POSTGRESQL = "jdbc:postgresql://%s/%s";
+  public static final String JDBC_URL_MYSQL = "jdbc:mysql://%s/%s?useSSL=false&allowPublicKeyRetrieval=true";
+  public static final String JDBC_URL_CLOUDSQL = "jdbc:mysql://google/%s?cloudSqlInstance=%s&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false";
+
   // [START HybridInspectSql]
 
   public static boolean VERBOSE_OUTPUT = false; // flag that will increase output details
@@ -77,6 +81,66 @@ public class HybridInspectSql {
     }
   }
 
+  private static Option createAndAddOptWithArg(Options options, String name, boolean required) {
+    Option opt = Option.builder(name).required(required).hasArg(true).build();
+    options.addOption(opt);
+    return opt;
+  }
+
+  /**
+   * Command line application to inspect data using the Data Loss Prevention Hybrid
+   */
+  public static void main(String[] args) throws Exception {
+    System.out.println("Cloud DLP HybridInspect: SQL via JDBC V0.2");
+
+    Options opts = new Options();
+    Option sqlOption = createAndAddOptWithArg(opts, "sql", true);
+    Option databaseInstanceServer = createAndAddOptWithArg(opts, "databaseInstanceServer", false);
+    Option databaseInstanceServerDisplay = createAndAddOptWithArg(opts,
+        "databaseInstanceDescription", false);
+    Option databaseName = createAndAddOptWithArg(opts, "databaseName", false);
+    Option tableName = createAndAddOptWithArg(opts, "tableName", false);
+    Option databaseUser = createAndAddOptWithArg(opts, "databaseUser", false);
+    Option secretManagerResourceName = createAndAddOptWithArg(opts, "secretManagerResourceName",
+        false);
+    Option sampleRowLimit = createAndAddOptWithArg(opts, "sampleRowLimit", false);
+    Option hybridJobName = createAndAddOptWithArg(opts, "hybridJobName", false);
+    Option threadPoolSize = createAndAddOptWithArg(opts, "threadPoolSize", false);
+
+    CommandLineParser parser = new DefaultParser();
+    HelpFormatter formatter = new HelpFormatter();
+    CommandLine cmd;
+    try {
+      cmd = parser.parse(opts, args);
+    } catch (ParseException e) {
+      System.out.println(e.getMessage());
+      formatter.printHelp(HybridInspectSql.class.getName(), opts);
+      System.exit(1);
+      return;
+    }
+
+    String databasePassword = null;
+    if (cmd.hasOption(secretManagerResourceName.getOpt())) {
+      System.out.println(String.format(">> Retrieving password from Secret Manager (%s)",
+          cmd.getOptionValue(secretManagerResourceName.getOpt())));
+      databasePassword = accessSecretVersion(ServiceOptions.getDefaultProjectId(),
+          cmd.getOptionValue(secretManagerResourceName.getOpt()), "1");
+    }
+    String databaseType = cmd.getOptionValue(sqlOption.getOpt());
+
+    inspectSQLDb(
+        cmd.getOptionValue(databaseInstanceServer.getOpt()),
+        cmd.getOptionValue(databaseInstanceServerDisplay.getOpt()),
+        cmd.getOptionValue(databaseName.getOpt()),
+        cmd.getOptionValue(tableName.getOpt()),
+        cmd.getOptionValue(databaseUser.getOpt()),
+        databasePassword,
+        databaseType,
+        Integer.parseInt(cmd.getOptionValue(sampleRowLimit.getOpt())),
+        cmd.getOptionValue(hybridJobName.getOpt()),
+        Integer.parseInt(cmd.getOptionValue(threadPoolSize.getOpt())));
+  }
+
   // This method uses JDBC to read data from a SQL database, then chunks it and sends it to a Cloud
   // DLP Hybrid Job
   private static void inspectSQLDb(
@@ -87,7 +151,7 @@ public class HybridInspectSql {
       String databaseUser,
       String databasePassword,
       String databaseType,
-      String sampleRowLimit,
+      int sampleRowLimit,
       String hybridJobName,
       int threadPoolSize) {
     // generate a UUID as a tracking number for the scan job. This is sent as a label in the Hybrid
@@ -97,37 +161,15 @@ public class HybridInspectSql {
     try {
       String dataProjectId = ServiceOptions.getDefaultProjectId();
 
-      Connection conn;
-      String url;
+      String url = getJdbcUrl(databaseType, databaseInstanceServer, databaseName, databaseUser,
+          databasePassword);
 
-      // Based on the SQL database type, construct the JDBC URL.  Note the pom.xml must have a
-      // matching driver for these to work.
-      if (databaseType.equalsIgnoreCase("postgres")) {
-        url = String.format("jdbc:postgresql://%s/%s", databaseInstanceServer, databaseName);
-        conn = DriverManager.getConnection(url, databaseUser, databasePassword);
-      } else if (databaseType.equalsIgnoreCase("mysql")) {
-        url =
-            String.format(
-                "jdbc:mysql://%s/%s?useSSL=false&allowPublicKeyRetrieval=true",
-                databaseInstanceServer, databaseName);
-        conn = DriverManager.getConnection(url, databaseUser, databasePassword);
-      } else if (databaseType.equalsIgnoreCase(
-          "cloudsql")) { // Note, in theory you can just use mysql or postgres to access Cloud SQL.
-        url =
-            String.format(
-                "jdbc:mysql://google/%s?cloudSqlInstance=%s&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false",
-                databaseName, databaseInstanceServer);
-        conn = DriverManager.getConnection(url, databaseUser, databasePassword);
-      } else {
-        throw new Exception(
-            "Must specify valid database type of either 'postgres' or 'mysql' or 'cloudsql'");
-      }
       int countTablesScanned = 0;
 
-      try {
+      try (Connection conn = DriverManager.getConnection(url, databaseUser, databasePassword)) {
         DatabaseMetaData db_md = conn.getMetaData();
-        String dbVersion =
-            db_md.getDatabaseProductName() + "[" + db_md.getDatabaseProductVersion() + "]";
+        String dbVersion = String
+            .format("%s[%s]", db_md.getDatabaseProductName(), db_md.getDatabaseProductVersion());
 
         // this will list out all tables in the curent schama
         ResultSet ListTables_rs =
@@ -149,7 +191,6 @@ public class HybridInspectSql {
 
           final String theDBName = tempDBName;
           final String theTable = tempTable;
-          final String url_Inside = url;
           final String dbUsername_Inside = databaseUser;
           final String dbPassword_Inside = databasePassword;
 
@@ -169,177 +210,31 @@ public class HybridInspectSql {
                   .putLabels("run-id", runID)
                   .build();
 
-          if (tableName == null
-              || tableName.equalsIgnoreCase("")
-              || theTable.equalsIgnoreCase(tableName)) {
-            countTablesScanned++;
-            // This next entire block runs as a "thread"
-            Future<?> future =
-                executor.submit(
-                    () -> {
-                      try {
-                        System.out.print(
-                            "|"
-                                + System.lineSeparator()
-                                + "> DLP infoType Profile: ["
-                                + theDBName
-                                + "]["
-                                + theTable
-                                + "]");
-                        if (VERBOSE_OUTPUT) {
-                          System.out.print("..(Reading Data).");
-                        } else {
-                          System.out.print("..R.");
-                        }
-
-                        // Doing a simple select * with a limit with no strict order
-                        String sqlQuery = "SELECT * from " + theTable + " limit " + sampleRowLimit;
-
-                        Connection connInside =
-                            DriverManager.getConnection(
-                                url_Inside, dbUsername_Inside, dbPassword_Inside);
-
-                        Statement stmt = connInside.createStatement();
-                        ResultSet rs = stmt.executeQuery(sqlQuery);
-                        ResultSetMetaData rsmd = rs.getMetaData();
-                        int columnsNumber = rsmd.getColumnCount();
-                        String sHeader = "";
-
-                        // This next block converts data from ResultSet into CSV then into DLP
-                        // Table. This could likely be optimized but I did this in order to be
-                        // flexible and support other types like raw CSV reads.
-                        for (int i = 1; i <= columnsNumber; i++) {
-                          if (i > 1) {
-                            sHeader = sHeader + "," + rsmd.getColumnName(i);
-                          } else {
-                            sHeader = rsmd.getColumnName(i);
-                          }
-                        }
-                        List<FieldId> headers = Arrays.stream(sHeader.split(","))
-                            .map(header -> FieldId.newBuilder().setName(header).build())
-                            .collect(Collectors.toList());
-
-                        // Iterate through all the rows and add them to the csv
-                        List<Table.Row> rows = new ArrayList<>();
-                        while (rs.next()) {
-                          String rowS = "";
-                          for (int i = 1; i <= columnsNumber; i++) {
-                            String theValue = rs.getString(i);
-                            if (theValue == null) {
-                              theValue = "";
-                            }
-                            if (i > 1) {
-                              rowS = rowS + "," + theValue.replace(",", "-");
-                            } else {
-                              rowS = theValue.replace(",", "-");
-                            }
-                          }
-                          rows.add(convertCsvRowToTableRow(rowS));
-                        }
-
-                        if (VERBOSE_OUTPUT) {
-                          System.out.print("..(Inspecting Data).");
-                        } else {
-                          System.out.print("..I.");
-                        }
-                        int sentCount = 0;
-                        int prevSentCount = 0;
-                        int splitTotal = 0;
-
-                        // This loop will process every row but will attempt to split each request
-                        // so that it does not go above the DLP max request size and cell count
-                        while (sentCount < rows.size()) {
-                          try {
-                            splitTotal++;
-                            List<Table.Row> subRows = getMaxRows(rows, sentCount, headers.size());
-                            prevSentCount = sentCount;
-                            sentCount = sentCount + subRows.size();
-                            inspectRowsWithHybrid(
-                                hybridJobName, headers, subRows, hybridFindingDetails);
-                            if (VERBOSE_OUTPUT) {
-                              System.out.println("|");
-                              System.out.println(
-                                  "[ Request Size ("
-                                      + theDBName
-                                      + ":"
-                                      + theTable
-                                      + "): request#"
-                                      + splitTotal
-                                      + " | start-row="
-                                      + prevSentCount
-                                      + " | row-count="
-                                      + subRows.size()
-                                      + " | cell-count="
-                                      + subRows.size() * headers.size()
-                                      + "]");
-                            } else {
-                              if (splitTotal % 2 != 0) {
-                                System.out.print("/");
-                              } else {
-                                System.out.print("\\");
-                              }
-                            }
-                          } catch (Exception eTry) {
-                            if (eTry.getMessage().contains("exceeds limit")
-                                || eTry.getMessage()
-                                .contains("only 50,000 table values are allowed")) {
-                              // This message should not happen since we are measuring size before
-                              // sending. So if it happens, it is a hard fail as something is wrong.
-                              System.out.println("|");
-                              System.out.print("*** Fatal Error [START] ***");
-                              System.out.print(
-                                  ">> DLP request size too big. Split failed ["
-                                      + theDBName
-                                      + "]["
-                                      + theTable
-                                      + "]");
-                              eTry.printStackTrace();
-                              System.out.print("*** Fatal Error [END] ***");
-                              throw eTry;
-                            } else if (eTry.getMessage().contains("DEADLINE_EXCEEDED")) {
-                              // This could happen, but when it does the request should still
-                              // finish. So no need to retry or you will get duplicates.
-                              // There could be some risk that it fails upstream though?!
-                              if (VERBOSE_OUTPUT) {
-                                System.out.println("|");
-                                System.out.println("[deadline exceed / action: do-nothing]");
-                                eTry.printStackTrace();
-                              } else {
-                                System.out.print(".[DE].");
-                              }
-                            } else {
-                              System.out.println("|");
-                              System.out.println(
-                                  "*** Unknown Fatal Error when trying to inspect data for ["
-                                      + theDBName
-                                      + "]["
-                                      + theTable
-                                      + "] ***");
-                              throw eTry;
-                            }
-                          }
-                        }
-                        connInside.close();
-
-                      } catch (Exception ec) {
-                        ec.printStackTrace();
-                      }
-                    });
-            futures.add(future);
+          if (!Strings.isNullOrEmpty(tableName) && !tableName.equalsIgnoreCase(theTable)) {
+            continue;
           }
+
+          countTablesScanned++;
+
+          conn.getClientInfo();
+
+          Future<?> future =
+              executor.submit(
+                  () -> scanTable(sampleRowLimit, hybridJobName, theDBName, theTable, url,
+                      dbUsername_Inside, dbPassword_Inside, hybridFindingDetails));
+          futures.add(future);
         }
+
         try {
           for (Future<?> future : futures) {
             try {
               // 5 minute timeout. Again even if this hits, it should still finish since the request
               // has already been sent.
-              future.get(300, TimeUnit.SECONDS);
+              future.get(5, TimeUnit.MINUTES);
             } catch (InterruptedException | ExecutionException e) {
-              System.out.println("Runnabled aborted : " + e.getStackTrace());
+              System.out.println("Runnable aborted : " + e.getStackTrace());
             }
           }
-          executor.shutdown();
-
         } catch (Exception e) {
           System.out.println("*** Failure at Futures tracking ***");
           e.printStackTrace();
@@ -352,7 +247,6 @@ public class HybridInspectSql {
         System.out.println("*** Unknown Fatal Error when trying to inspect tables ***");
         e.printStackTrace();
       }
-      conn.close();
       System.out.println();
       System.out.println("-----------------------------------------");
       System.out.println(" " + countTablesScanned + " tables scanned");
@@ -363,6 +257,175 @@ public class HybridInspectSql {
       System.out.println("|");
       System.out.println("*** Unknown Fatal Error in HybridInspectSQLDb ***");
       e.printStackTrace();
+    }
+  }
+
+  // This next entire block runs as a "thread"
+  private static void scanTable(int sampleRowLimit, String hybridJobName, String theDBName,
+      String theTable, String url_Inside, String dbUsername_Inside, String dbPassword_Inside,
+      HybridFindingDetails hybridFindingDetails) {
+    try {
+      System.out.print(
+          "|"
+              + System.lineSeparator()
+              + "> DLP infoType Profile: ["
+              + theDBName
+              + "]["
+              + theTable
+              + "]");
+      if (VERBOSE_OUTPUT) {
+        System.out.print("..(Reading Data).");
+      } else {
+        System.out.print("..R.");
+      }
+
+      // Doing a simple select * with a limit with no strict order
+      String sqlQuery = "SELECT * from " + theTable + " limit " + sampleRowLimit;
+
+      Connection connInside =
+          DriverManager.getConnection(
+              url_Inside, dbUsername_Inside, dbPassword_Inside);
+
+      ResultSet rs = connInside.createStatement().executeQuery(sqlQuery);
+      ResultSetMetaData rsmd = rs.getMetaData();
+      int columnsNumber = rsmd.getColumnCount();
+      String sHeader = "";
+
+      // This next block converts data from ResultSet into CSV then into DLP
+      // Table. This could likely be optimized but I did this in order to be
+      // flexible and support other types like raw CSV reads.
+      for (int i = 1; i <= columnsNumber; i++) {
+        if (i > 1) {
+          sHeader = sHeader + "," + rsmd.getColumnName(i);
+        } else {
+          sHeader = rsmd.getColumnName(i);
+        }
+      }
+      List<FieldId> headers = Arrays.stream(sHeader.split(","))
+          .map(header -> FieldId.newBuilder().setName(header).build())
+          .collect(Collectors.toList());
+
+      // Iterate through all the rows and add them to the csv
+      List<Table.Row> rows = new ArrayList<>();
+      while (rs.next()) {
+        String rowS = "";
+        for (int i = 1; i <= columnsNumber; i++) {
+          String theValue = rs.getString(i);
+          if (theValue == null) {
+            theValue = "";
+          }
+          if (i > 1) {
+            rowS = rowS + "," + theValue.replace(",", "-");
+          } else {
+            rowS = theValue.replace(",", "-");
+          }
+        }
+        rows.add(convertCsvRowToTableRow(rowS));
+      }
+
+      if (VERBOSE_OUTPUT) {
+        System.out.print("..(Inspecting Data).");
+      } else {
+        System.out.print("..I.");
+      }
+      int sentCount = 0;
+      int prevSentCount = 0;
+      int splitTotal = 0;
+
+      // This loop will process every row but will attempt to split each request
+      // so that it does not go above the DLP max request size and cell count
+      while (sentCount < rows.size()) {
+        try {
+          splitTotal++;
+          List<Table.Row> subRows = getMaxRows(rows, sentCount, headers.size());
+          prevSentCount = sentCount;
+          sentCount = sentCount + subRows.size();
+          inspectRowsWithHybrid(
+              hybridJobName, headers, subRows, hybridFindingDetails);
+          if (VERBOSE_OUTPUT) {
+            System.out.println("|");
+            System.out.println(
+                "[ Request Size ("
+                    + theDBName
+                    + ":"
+                    + theTable
+                    + "): request#"
+                    + splitTotal
+                    + " | start-row="
+                    + prevSentCount
+                    + " | row-count="
+                    + subRows.size()
+                    + " | cell-count="
+                    + subRows.size() * headers.size()
+                    + "]");
+          } else {
+            if (splitTotal % 2 != 0) {
+              System.out.print("/");
+            } else {
+              System.out.print("\\");
+            }
+          }
+        } catch (Exception eTry) {
+          if (eTry.getMessage().contains("exceeds limit")
+              || eTry.getMessage()
+              .contains("only 50,000 table values are allowed")) {
+            // This message should not happen since we are measuring size before
+            // sending. So if it happens, it is a hard fail as something is wrong.
+            System.out.println("|");
+            System.out.print("*** Fatal Error [START] ***");
+            System.out.print(
+                ">> DLP request size too big. Split failed ["
+                    + theDBName
+                    + "]["
+                    + theTable
+                    + "]");
+            eTry.printStackTrace();
+            System.out.print("*** Fatal Error [END] ***");
+            throw eTry;
+          } else if (eTry.getMessage().contains("DEADLINE_EXCEEDED")) {
+            // This could happen, but when it does the request should still
+            // finish. So no need to retry or you will get duplicates.
+            // There could be some risk that it fails upstream though?!
+            if (VERBOSE_OUTPUT) {
+              System.out.println("|");
+              System.out.println("[deadline exceed / action: do-nothing]");
+              eTry.printStackTrace();
+            } else {
+              System.out.print(".[DE].");
+            }
+          } else {
+            System.out.println("|");
+            System.out.println(
+                "*** Unknown Fatal Error when trying to inspect data for ["
+                    + theDBName
+                    + "]["
+                    + theTable
+                    + "] ***");
+            throw eTry;
+          }
+        }
+      }
+      connInside.close();
+
+    } catch (Exception ec) {
+      ec.printStackTrace();
+    }
+  }
+
+  private static String getJdbcUrl(String databaseType, String databaseInstanceServer,
+      String databaseName, String databaseUser, String databasePassword) {
+    // Based on the SQL database type, construct the JDBC URL. Note the pom.xml must have a
+    // matching driver for these to work.
+    switch (databaseType.toLowerCase()) {
+      case "postgres":
+        return String.format(JDBC_URL_POSTGRESQL, databaseInstanceServer, databaseName);
+      case "mysql":
+        return String.format(JDBC_URL_MYSQL, databaseInstanceServer, databaseName);
+      case "cloudsql":
+        return String.format(JDBC_URL_CLOUDSQL, databaseName, databaseInstanceServer);
+      default:
+        throw new IllegalArgumentException(
+            "Must specify valid databaseType of either 'postgres' or 'mysql' or 'cloudsql'");
     }
   }
 
@@ -489,124 +552,6 @@ public class HybridInspectSql {
       String payload = response.getPayload().getData().toStringUtf8();
       return payload;
     }
-  }
-
-  /**
-   * Command line application to inspect data using the Data Loss Prevention Hybrid
-   */
-  public static void main(String[] args) throws Exception {
-    java.util.Date dStart = new java.util.Date();
-    System.out.println("[Start: " + dStart.toString() + "]");
-
-    OptionGroup optionsGroup = new OptionGroup();
-    optionsGroup.setRequired(true);
-
-    Option sqlOption = new Option("sql", "sql", true, "inspect sql");
-    optionsGroup.addOption(sqlOption);
-
-    Options commandLineOptions = new Options();
-    commandLineOptions.addOptionGroup(optionsGroup);
-
-    Option databaseInstanceServerOption = Option.builder("databaseInstanceServer").hasArg(true)
-        .required(false).build();
-    commandLineOptions.addOption(databaseInstanceServerOption);
-
-    Option databaseInstanceServerDisplayOption =
-        Option.builder("databaseInstanceDescription").hasArg(true).required(false).build();
-    commandLineOptions.addOption(databaseInstanceServerDisplayOption);
-
-    Option databaseNameOption = Option.builder("databaseName").hasArg(true).required(false).build();
-    commandLineOptions.addOption(databaseNameOption);
-
-    Option tableNameOption = Option.builder("tableName").hasArg(true).required(false).build();
-    commandLineOptions.addOption(tableNameOption);
-
-    Option databaseUserOption = Option.builder("databaseUser").hasArg(true).required(false).build();
-    commandLineOptions.addOption(databaseUserOption);
-
-    Option secretManagerResourceNameOption = Option.builder("secretManagerResourceName")
-        .hasArg(true).required(false).build();
-    commandLineOptions.addOption(secretManagerResourceNameOption);
-
-    Option sampleRowLimitOption = Option.builder("sampleRowLimit").hasArg(true).required(false)
-        .build();
-    commandLineOptions.addOption(sampleRowLimitOption);
-
-    Option hybridJobNameOption =
-        Option.builder("hybridJobName").hasArg(true).required(false).build();
-    commandLineOptions.addOption(hybridJobNameOption);
-
-    Option sThreadPoolSizeOption =
-        Option.builder("threadPoolSize").hasArg(true).required(false).build();
-    commandLineOptions.addOption(sThreadPoolSizeOption);
-
-    CommandLineParser parser = new DefaultParser();
-    HelpFormatter formatter = new HelpFormatter();
-    CommandLine cmd;
-
-    try {
-      cmd = parser.parse(commandLineOptions, args);
-    } catch (ParseException e) {
-      System.out.println(e.getMessage());
-      formatter.printHelp(HybridInspectSql.class.getName(), commandLineOptions);
-      System.exit(1);
-      return;
-    }
-
-    if (cmd.hasOption("sql")) {
-      System.out.println("Cloud DLP HybridInspect: SQL via JDBC V0.2");
-      String databaseInstanceServer = cmd.getOptionValue(databaseInstanceServerOption.getOpt());
-      String databaseInstanceDescription = cmd
-          .getOptionValue(databaseInstanceServerDisplayOption.getOpt());
-      String databaseName = cmd.getOptionValue(databaseNameOption.getOpt());
-      String tableName = cmd.getOptionValue(tableNameOption.getOpt());
-      String databaseUser = cmd.getOptionValue(databaseUserOption.getOpt());
-      String secretManagerResourceName = cmd
-          .getOptionValue(secretManagerResourceNameOption.getOpt());
-      String databasePassword = null;
-      if (secretManagerResourceName != null && !secretManagerResourceName.equalsIgnoreCase("")) {
-        System.out.println(
-            ">> Retrieving password from Secret Manager ("
-                + cmd.getOptionValue(secretManagerResourceNameOption.getOpt())
-                + ")");
-        databasePassword =
-            accessSecretVersion(ServiceOptions.getDefaultProjectId(),
-                cmd.getOptionValue(secretManagerResourceNameOption.getOpt()), "1");
-      }
-      String databaseType = cmd.getOptionValue(sqlOption.getOpt());
-      String sampleRowLimit = cmd.getOptionValue(sampleRowLimitOption.getOpt());
-      String hybridJobName = cmd.getOptionValue(hybridJobNameOption.getOpt());
-      int threadPoolSize = new Integer(cmd.getOptionValue(sThreadPoolSizeOption.getOpt()))
-          .intValue();
-      inspectSQLDb(
-          databaseInstanceServer,
-          databaseInstanceDescription,
-          databaseName,
-          tableName,
-          databaseUser,
-          databasePassword,
-          databaseType,
-          sampleRowLimit,
-          hybridJobName,
-          threadPoolSize);
-    }
-
-    java.util.Date dEnd = new java.util.Date();
-    System.out.println("[End: " + dEnd.toString() + "]");
-
-    long diff = dEnd.getTime() - dStart.getTime();
-
-    long diffSeconds = diff / 1000 % 60;
-    long diffMinutes = diff / (60 * 1000) % 60;
-    long diffHours = diff / (60 * 60 * 1000) % 24;
-    long diffDays = diff / (24 * 60 * 60 * 1000);
-
-    System.out.print("[Duration: ");
-    System.out.print("  " + diffDays + " days, ");
-    System.out.print("  " + diffHours + " hours, ");
-    System.out.print("  " + diffMinutes + " minutes, ");
-    System.out.print("  " + diffSeconds + " seconds.");
-    System.out.println("]");
   }
 }
 // [END HybridInspectSql]
