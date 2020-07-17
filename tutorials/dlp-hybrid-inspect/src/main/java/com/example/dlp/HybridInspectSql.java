@@ -340,8 +340,7 @@ public class HybridInspectSql {
           List<Table.Row> subRows = getMaxRows(rows, sentCount, headers.size());
           prevSentCount = sentCount;
           sentCount = sentCount + subRows.size();
-          inspectRowsWithHybrid(
-              hybridJobName, headers, subRows, hybridFindingDetails);
+          inspectRowsWithHybrid(hybridJobName, headers, subRows, hybridFindingDetails);
           if (VERBOSE_OUTPUT) {
             System.out.println("|");
             System.out.println(
