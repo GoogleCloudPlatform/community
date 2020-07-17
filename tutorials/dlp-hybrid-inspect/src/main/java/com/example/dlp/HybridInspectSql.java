@@ -29,11 +29,9 @@ import com.google.privacy.dlp.v2.HybridContentItem;
 import com.google.privacy.dlp.v2.HybridFindingDetails;
 import com.google.privacy.dlp.v2.HybridInspectDlpJobRequest;
 import com.google.privacy.dlp.v2.HybridInspectResponse;
-import com.google.privacy.dlp.v2.Likelihood;
 import com.google.privacy.dlp.v2.Table;
 import com.google.privacy.dlp.v2.Value;
 import com.google.type.Date;
-import com.simba.googlebigquery.jdbc42.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -62,8 +60,8 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public class HybridInspectSQL {
-  // [START HybridInspectSQL]
+public class HybridInspectSql {
+  // [START HybridInspectSql]
 
   public static boolean VERBOSE_OUTPUT = false; // flag that will increase output details
   public static int MAX_REQUEST_BYTES = 480000; // max request size in bytes
@@ -91,15 +89,12 @@ public class HybridInspectSQL {
       String databaseType,
       String sampleRowLimit,
       String hybridJobName,
-      int threadPoolSize)
-      throws Exception {
-
+      int threadPoolSize) {
     // generate a UUID as a tracking number for the scan job. This is sent as a label in the Hybrid
     // Inspect Request and used for tracking.
     String runID = UUID.randomUUID().toString();
 
     try {
-
       String dataProjectId = ServiceOptions.getDefaultProjectId();
 
       Connection conn;
@@ -113,7 +108,8 @@ public class HybridInspectSQL {
       } else if (databaseType.equalsIgnoreCase("mysql")) {
         url =
             String.format(
-                "jdbc:mysql://%s/%s?useSSL=false&allowPublicKeyRetrieval=true", databaseInstanceServer, databaseName);
+                "jdbc:mysql://%s/%s?useSSL=false&allowPublicKeyRetrieval=true",
+                databaseInstanceServer, databaseName);
         conn = DriverManager.getConnection(url, databaseUser, databasePassword);
       } else if (databaseType.equalsIgnoreCase(
           "cloudsql")) { // Note, in theory you can just use mysql or postgres to access Cloud SQL.
@@ -122,18 +118,9 @@ public class HybridInspectSQL {
                 "jdbc:mysql://google/%s?cloudSqlInstance=%s&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false",
                 databaseName, databaseInstanceServer);
         conn = DriverManager.getConnection(url, databaseUser, databasePassword);
-      } else if (databaseType.equalsIgnoreCase("bigquery")) {
-        url =
-            String.format(
-                "jdbc:bigquery://https://www.googleapis.com/bigquery/v2:443;OAuthType=3;ProjectId=%s;",
-                dataProjectId, databaseName);
-        DataSource ds = new com.simba.googlebigquery.jdbc42.DataSource();
-        ds.setURL(url);
-        conn = ds.getConnection();
       } else {
         throw new Exception(
-            "Must specify valid database type of either 'postgres' or 'mysql' or 'cloudsql' or"
-                + " 'bigquery'");
+            "Must specify valid database type of either 'postgres' or 'mysql' or 'cloudsql'");
       }
       int countTablesScanned = 0;
 
@@ -144,7 +131,7 @@ public class HybridInspectSQL {
 
         // this will list out all tables in the curent schama
         ResultSet ListTables_rs =
-            db_md.getTables(conn.getCatalog(), null, "%", new String[] {"TABLE"});
+            db_md.getTables(conn.getCatalog(), null, "%", new String[]{"TABLE"});
 
         final ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
         final List<Future<?>> futures = new ArrayList<>();
@@ -157,14 +144,8 @@ public class HybridInspectSQL {
           String tempTable = "";
           String tempDBName = "";
 
-          // bigquery JDBC handles "database name" and table name" a little differently
-          if (databaseType.equalsIgnoreCase("bigquery")) {
-            tempTable = ListTables_rs.getString(3);
-            tempDBName = ListTables_rs.getString(2);
-          } else {
-            tempTable = ListTables_rs.getString(3);
-            tempDBName = databaseName;
-          }
+          tempTable = ListTables_rs.getString(3);
+          tempDBName = databaseName;
 
           final String theDBName = tempDBName;
           final String theTable = tempTable;
@@ -188,13 +169,7 @@ public class HybridInspectSQL {
                   .putLabels("run-id", runID)
                   .build();
 
-          // This filters out tables that do not meet the command line parameters. Note that
-          // BigQuery is special here since it does support running all datasets at once.
-          if (databaseType.equalsIgnoreCase("bigquery")
-              && databaseName != null
-              && !databaseName.equalsIgnoreCase("")
-              && !databaseName.equalsIgnoreCase(theDBName)) {
-          } else if (tableName == null
+          if (tableName == null
               || tableName.equalsIgnoreCase("")
               || theTable.equalsIgnoreCase(tableName)) {
             countTablesScanned++;
@@ -203,10 +178,6 @@ public class HybridInspectSQL {
                 executor.submit(
                     () -> {
                       try {
-
-                        List<Table.Row> rows = new ArrayList<>();
-                        List<FieldId> headers = new ArrayList<>();
-
                         System.out.print(
                             "|"
                                 + System.lineSeparator()
@@ -221,23 +192,12 @@ public class HybridInspectSQL {
                           System.out.print("..R.");
                         }
 
-                        Connection connInside;
-
-                        // Doing a simple selet * with a limit with no strict order
+                        // Doing a simple select * with a limit with no strict order
                         String sqlQuery = "SELECT * from " + theTable + " limit " + sampleRowLimit;
 
-                        // Bigquery is a special on how it handles the "dataset" name
-                        if (databaseType.equalsIgnoreCase("bigquery")) {
-                          DataSource ds2 = new com.simba.googlebigquery.jdbc42.DataSource();
-                          ds2.setURL(url_Inside);
-                          connInside = ds2.getConnection();
-                          sqlQuery =
-                              "SELECT * from " + theDBName + "." + theTable + " limit " + sampleRowLimit;
-                        } else {
-                          connInside =
-                              DriverManager.getConnection(
-                                  url_Inside, dbUsername_Inside, dbPassword_Inside);
-                        }
+                        Connection connInside =
+                            DriverManager.getConnection(
+                                url_Inside, dbUsername_Inside, dbPassword_Inside);
 
                         Statement stmt = connInside.createStatement();
                         ResultSet rs = stmt.executeQuery(sqlQuery);
@@ -255,12 +215,12 @@ public class HybridInspectSQL {
                             sHeader = rsmd.getColumnName(i);
                           }
                         }
-                        headers =
-                            Arrays.stream(sHeader.split(","))
-                                .map(header -> FieldId.newBuilder().setName(header).build())
-                                .collect(Collectors.toList());
+                        List<FieldId> headers = Arrays.stream(sHeader.split(","))
+                            .map(header -> FieldId.newBuilder().setName(header).build())
+                            .collect(Collectors.toList());
 
                         // Iterate through all the rows and add them to the csv
+                        List<Table.Row> rows = new ArrayList<>();
                         while (rs.next()) {
                           String rowS = "";
                           for (int i = 1; i <= columnsNumber; i++) {
@@ -282,7 +242,6 @@ public class HybridInspectSQL {
                         } else {
                           System.out.print("..I.");
                         }
-                        boolean isSuccess = false;
                         int sentCount = 0;
                         int prevSentCount = 0;
                         int splitTotal = 0;
@@ -323,10 +282,9 @@ public class HybridInspectSQL {
                           } catch (Exception eTry) {
                             if (eTry.getMessage().contains("exceeds limit")
                                 || eTry.getMessage()
-                                    .contains("only 50,000 table values are allowed")) {
+                                .contains("only 50,000 table values are allowed")) {
                               // This message should not happen since we are measuring size before
-                              // sending.  So if it happens, it is a hard fail as something is
-                              // wrong.
+                              // sending. So if it happens, it is a hard fail as something is wrong.
                               System.out.println("|");
                               System.out.print("*** Fatal Error [START] ***");
                               System.out.print(
@@ -395,7 +353,7 @@ public class HybridInspectSQL {
         e.printStackTrace();
       }
       conn.close();
-      System.out.println("");
+      System.out.println();
       System.out.println("-----------------------------------------");
       System.out.println(" " + countTablesScanned + " tables scanned");
       System.out.println(" End Run ID: " + runID);
@@ -407,18 +365,16 @@ public class HybridInspectSQL {
       e.printStackTrace();
     }
   }
-  // [END dlp_inspect_sql]
 
   // this method returns rows that are under the max bytes and cell count for a DLP request.
   private static List getMaxRows(List rows, int startRow, int headerCount) throws Exception {
     ArrayList<Table.Row> subRows = null;
 
     // estimate the request size
-    int estimatedMaxRows_bytes =
-        MAX_REQUEST_BYTES
-            / (getBytesFromList(rows) / rows.size()); // average could be off if rows differ a lot
-    int estimatedMaxRows_cells =
-        MAX_REQUEST_CELLS / headerCount; // pretty close to the max since every rows has the same count
+    int estimatedMaxRows_bytes = MAX_REQUEST_BYTES
+        / (getBytesFromList(rows) / rows.size()); // average could be off if rows differ a lot
+    int estimatedMaxRows_cells = MAX_REQUEST_CELLS
+        / headerCount; // pretty close to the max since every rows has the same count
 
     // we want the smallest of the two
     int estimatedMaxRows = estimatedMaxRows_bytes;
@@ -432,7 +388,8 @@ public class HybridInspectSQL {
     subRows = new ArrayList<Table.Row>(rows.subList(startRow, estimatedEndRows));
 
     // in case something is too bill this will remove one row at a time until it's under the limits.
-    while (getBytesFromList(subRows) > MAX_REQUEST_BYTES || (subRows.size() * headerCount) > MAX_REQUEST_CELLS) {
+    while (getBytesFromList(subRows) > MAX_REQUEST_BYTES
+        || (subRows.size() * headerCount) > MAX_REQUEST_CELLS) {
       if (subRows.size() > 0) {
         subRows.remove(subRows.size() - 1);
       } else {
@@ -442,7 +399,7 @@ public class HybridInspectSQL {
     return subRows;
   }
 
-  // this methods calcualtes the total bytes of a list of rows.
+  // this methods calculates the total bytes of a list of rows.
   public static int getBytesFromList(List list) throws IOException {
     java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
     java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(baos);
@@ -451,23 +408,14 @@ public class HybridInspectSQL {
     return baos.toByteArray().length;
   }
 
-  private static String getProjectName(String inS) {
-    String pid = "projects/" + inS;
-    // System.out.println(pid);
-    return pid;
-  }
-
   // Takes rows/header and a findings details object and generates a DLP Hybrid Request
   private static HybridInspectResponse inspectRowsWithHybrid(
       String hybridJobName,
       List<FieldId> headers,
       List<Table.Row> rows,
-      HybridFindingDetails hybridFindingDetails)
-      throws Exception {
+      HybridFindingDetails hybridFindingDetails) {
     try {
-
       Table table = Table.newBuilder().addAllHeaders(headers).addAllRows(rows).build();
-
       ContentItem tableItem = ContentItem.newBuilder().setTable(table).build();
 
       HybridContentItem hybridContentItem =
@@ -482,13 +430,7 @@ public class HybridInspectSQL {
               .setHybridItem(hybridContentItem)
               .build();
 
-      HybridInspectResponse response = null;
-      try {
-        response = dlpServiceClient.hybridInspectDlpJob(request);
-        return response;
-      } catch (Exception e2) {
-        throw e2;
-      }
+      return dlpServiceClient.hybridInspectDlpJob(request);
     } catch (Exception e) {
       // System.out.println("Error in inspectSQLDb: " + e.getMessage());
       throw e;
@@ -549,9 +491,10 @@ public class HybridInspectSQL {
     }
   }
 
-  /** Command line application to inspect data using the Data Loss Prevention Hybrid */
+  /**
+   * Command line application to inspect data using the Data Loss Prevention Hybrid
+   */
   public static void main(String[] args) throws Exception {
-
     java.util.Date dStart = new java.util.Date();
     System.out.println("[Start: " + dStart.toString() + "]");
 
@@ -564,7 +507,8 @@ public class HybridInspectSQL {
     Options commandLineOptions = new Options();
     commandLineOptions.addOptionGroup(optionsGroup);
 
-    Option databaseInstanceServerOption = Option.builder("databaseInstanceServer").hasArg(true).required(false).build();
+    Option databaseInstanceServerOption = Option.builder("databaseInstanceServer").hasArg(true)
+        .required(false).build();
     commandLineOptions.addOption(databaseInstanceServerOption);
 
     Option databaseInstanceServerDisplayOption =
@@ -580,10 +524,12 @@ public class HybridInspectSQL {
     Option databaseUserOption = Option.builder("databaseUser").hasArg(true).required(false).build();
     commandLineOptions.addOption(databaseUserOption);
 
-    Option secretManagerResourceNameOption = Option.builder("secretManagerResourceName").hasArg(true).required(false).build();
+    Option secretManagerResourceNameOption = Option.builder("secretManagerResourceName")
+        .hasArg(true).required(false).build();
     commandLineOptions.addOption(secretManagerResourceNameOption);
 
-    Option sampleRowLimitOption = Option.builder("sampleRowLimit").hasArg(true).required(false).build();
+    Option sampleRowLimitOption = Option.builder("sampleRowLimit").hasArg(true).required(false)
+        .build();
     commandLineOptions.addOption(sampleRowLimitOption);
 
     Option hybridJobNameOption =
@@ -602,7 +548,7 @@ public class HybridInspectSQL {
       cmd = parser.parse(commandLineOptions, args);
     } catch (ParseException e) {
       System.out.println(e.getMessage());
-      formatter.printHelp(HybridInspectSQL.class.getName(), commandLineOptions);
+      formatter.printHelp(HybridInspectSql.class.getName(), commandLineOptions);
       System.exit(1);
       return;
     }
@@ -610,11 +556,13 @@ public class HybridInspectSQL {
     if (cmd.hasOption("sql")) {
       System.out.println("Cloud DLP HybridInspect: SQL via JDBC V0.2");
       String databaseInstanceServer = cmd.getOptionValue(databaseInstanceServerOption.getOpt());
-      String databaseInstanceDescription = cmd.getOptionValue(databaseInstanceServerDisplayOption.getOpt());
+      String databaseInstanceDescription = cmd
+          .getOptionValue(databaseInstanceServerDisplayOption.getOpt());
       String databaseName = cmd.getOptionValue(databaseNameOption.getOpt());
       String tableName = cmd.getOptionValue(tableNameOption.getOpt());
       String databaseUser = cmd.getOptionValue(databaseUserOption.getOpt());
-      String secretManagerResourceName = cmd.getOptionValue(secretManagerResourceNameOption.getOpt());
+      String secretManagerResourceName = cmd
+          .getOptionValue(secretManagerResourceNameOption.getOpt());
       String databasePassword = null;
       if (secretManagerResourceName != null && !secretManagerResourceName.equalsIgnoreCase("")) {
         System.out.println(
@@ -622,12 +570,14 @@ public class HybridInspectSQL {
                 + cmd.getOptionValue(secretManagerResourceNameOption.getOpt())
                 + ")");
         databasePassword =
-            accessSecretVersion(ServiceOptions.getDefaultProjectId(), cmd.getOptionValue(secretManagerResourceNameOption.getOpt()), "1");
+            accessSecretVersion(ServiceOptions.getDefaultProjectId(),
+                cmd.getOptionValue(secretManagerResourceNameOption.getOpt()), "1");
       }
       String databaseType = cmd.getOptionValue(sqlOption.getOpt());
       String sampleRowLimit = cmd.getOptionValue(sampleRowLimitOption.getOpt());
       String hybridJobName = cmd.getOptionValue(hybridJobNameOption.getOpt());
-      int threadPoolSize = new Integer(cmd.getOptionValue(sThreadPoolSizeOption.getOpt())).intValue();
+      int threadPoolSize = new Integer(cmd.getOptionValue(sThreadPoolSizeOption.getOpt()))
+          .intValue();
       inspectSQLDb(
           databaseInstanceServer,
           databaseInstanceDescription,
@@ -659,3 +609,4 @@ public class HybridInspectSQL {
     System.out.println("]");
   }
 }
+// [END HybridInspectSql]

@@ -38,9 +38,9 @@
     </dependency>
 
     <dependency>
-        <groupId>com.google.cloud</groupId>
-        <artifactId>google-cloud-bigquery</artifactId>
-        <version>1.102.0</version>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-bigquery</artifactId>
+      <version>1.102.0</version>
     </dependency>
 
     <dependency>
@@ -56,33 +56,27 @@
     </dependency>
 
     <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>8.0.18</version>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.18</version>
     </dependency>
 
     <dependency>
-        <groupId>org.apache.avro</groupId>
-        <artifactId>avro</artifactId>
-        <version>1.9.0</version>
+      <groupId>org.apache.avro</groupId>
+      <artifactId>avro</artifactId>
+      <version>1.9.0</version>
     </dependency>
 
     <dependency>
-        <groupId>org.postgresql</groupId>
-        <artifactId>postgresql</artifactId>
-        <version>42.2.5</version>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.2.5</version>
     </dependency>
 
     <dependency>
-        <groupId>joda-time</groupId>
-        <artifactId>joda-time</artifactId>
-        <version>2.9.4</version>
-    </dependency>
-
-    <dependency>
-        <groupId>com.simba</groupId>
-        <artifactId>simba-jdbc</artifactId>
-        <version>1.0</version>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>2.9.4</version>
     </dependency>
 
     <dependency>
@@ -116,4 +110,4 @@
     </plugins>
   </build>
 </project>
-<!-- [END dlp_pom] -->
+    <!-- [END dlp_pom] -->
