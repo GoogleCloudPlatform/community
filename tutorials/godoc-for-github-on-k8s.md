@@ -1,20 +1,20 @@
 ---
-title: Deploy a private Godoc server on Google Kubernetes Engine
-description: Learn how to set up a private Godoc server on Google Kubernetes Engine.
+title: Deploy a private GoDoc server on Google Kubernetes Engine
+description: Learn how to set up a private GoDoc server on Google Kubernetes Engine.
 author: richarddli
 tags: microservices, Golang, Ambassador
 date_published: 2020-07-20
 ---
 
 Go has emerged as an incredibly popular language in the cloud-native ecosystem. Go is a popular choice for both microservices and cloud-native infrastructure
-such as [Kubernetes](https://kubernetes.io). Go includes a documentation generator, Godoc, that generates HTML documentation from Go source code. Godoc powers
+such as [Kubernetes](https://kubernetes.io). Go includes a documentation generator, GoDoc, that generates HTML documentation from Go source code. GoDoc powers
 [pkg.go.dev](https://pkg.go.dev/), which hosts public documentation of Go source libraries, including
-[Godoc itself](https://pkg.go.dev/golang.org/x/tools/cmd/godoc?tab=doc). 
+[GoDoc itself](https://pkg.go.dev/golang.org/x/tools/cmd/godoc?tab=doc). 
 
 According to the [2019 Go Developer Survey](https://blog.golang.org/survey2019-results), 85% of Go developers don’t actually run their own internal documentation 
 server. We hope that this statistic doesn't actually indicate a lack of documentation!
 
-This tutorial shows you how to deploy a private [Godoc service](https://github.com/ambassadorlabs/godoc-service) on
+This tutorial shows you how to deploy a private [GoDoc service](https://github.com/ambassadorlabs/godoc-service) on
 [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/), using [Ambassador Edge Stack](https://www.getambassador.io).
 
 ## Set up your local environment
@@ -28,8 +28,8 @@ To set up your computer, you install the `gcloud` and `kubectl` command-line too
 
 ## Set up a Kubernetes cluster in Google Kubernetes Engine
 
-Setting up a production-ready Kubernetes cluster can be fairly complex, so we're going to use Google Kubernetes Engine in our example. If you already have a 
-Kubernetes cluster handy, you can skip this section.
+Setting up a production-ready Kubernetes cluster can be fairly complex, so this tutorial uses Google Kubernetes Engine. If you already have a Kubernetes cluster 
+available, you can skip this section.
 
 1.  Create a cluster using one of the following options:
 
@@ -40,17 +40,17 @@ Kubernetes cluster handy, you can skip this section.
 
 1.  Authenticate to your cluster:
 
-        % gcloud container clusters get-credentials CLUSTER_NAME
-        % gcloud auth application-default login
+        gcloud container clusters get-credentials CLUSTER_NAME
+        gcloud auth application-default login
 
-## Deploy the Godoc service
+## Deploy the GoDoc service
 
-In this section, you deploy the [Ambassador Edge Stack](https://www.getambassador.io) as your ingress controller. The Ambassador Edge Stack is an
+In this section, you deploy the [Ambassador Edge Stack](https://www.getambassador.io) as your ingress controller. Ambassador Edge Stack is an
 [ingress controller](https://www.getambassador.io/learn/kubernetes-glossary/ingress-controller/) and API Gateway built on Envoy Proxy. It includes a free OpenID
 Connect integration that can be integrated with Google for single sign-on. In this architecture, requests first arrive at Ambassador, which passes only 
-authenticated requests on to your Godoc service.
+authenticated requests on to your GoDoc service.
 
-The Godoc service consists of 150 lines of Go that integrates the Godoc binary with Kubernetes and GitHub. The source code for the service is available in the 
+The GoDoc service consists of 150 lines of Go that integrates the `godoc` binary with Kubernetes and GitHub. The source code for the service is available in the 
 [godoc-service repository on GitHub](https://github.com/ambassadorlabs/godoc-service). 
 
 ### Set up Ambassador Edge Stack
@@ -76,9 +76,9 @@ When the installation is complete, you should see the following:
 The installation process automatically provisions a certificate from Let’s Encrypt, and the management UI should appear in your browser. If it doesn’t, you
 can use the command `edgectl login $URL`. 
 
-### Set up Godoc service
+### Set up the GoDoc service
 
-In this section, you configure the Godoc service with a Kubernetes secret.
+In this section, you configure the GoDoc service with a Kubernetes secret.
 
 1.  Get a GitHub [personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) with 
     full control of your private repositories.
@@ -88,7 +88,7 @@ In this section, you configure the Godoc service with a Kubernetes secret.
 
         kubectl create secret generic godoc-service-config --from-literal=githubToken=YOUR_GITHUB_TOKEN --from-literal=githubRepos="ambassadorlabs/godoc-service;datawire/ambassador"
 
-### Deploy the Godoc service
+### Deploy the GoDoc service
 
 If you’re familiar with Kubernetes, you probably know that deploying source code into Kubernetes requires a bunch of steps: building the container, pushing to a 
 Docker registry, deploying the container with the right Kubernetes manifest onto Kubernetes, and then registering a route with your ingress to the Kubernetes 
@@ -99,9 +99,9 @@ Ambassador Edge Stack uses a special resource, the Project resource, that does t
 This micro-CD pipeline can thus deploy code from GitHub straight into Kubernetes so that you can get to
 [Version 0](http://getambassador.io/learn/kubernetes-glossary/version-0/) quickly. 
 
-In this section, you use this feature to deploy the Godoc service.
+In this section, you use this feature to deploy the GoDoc service.
 
-1.  Enable the Micro CD pipeline:
+1.  Enable the micro-CD pipeline:
 
         kubectl apply -f https://www.getambassador.io/yaml/projects.yaml
 
@@ -123,7 +123,7 @@ In this section, you use this feature to deploy the Godoc service.
 Ambassador clones the GitHub repository, builds the container for the service, and deploys the container into a Kubernetes pod. This process will take a few 
 minutes; you can follow the build process in the **Projects** tab of the Ambassador user interface.
 
-When the build is complete, visit https://YOUR_DOMAIN.edgestack.me/doc/ in your browser and see your Go documentation.
+When the build is complete, visit https://YOUR_DOMAIN.edgestack.me/doc/ in your browser to see your Go documentation.
 
 ## Next steps
 
@@ -131,7 +131,7 @@ Ambassador Edge Stack integrates with many different identity providers over Ope
 [Google's IDP](https://www.getambassador.io/docs/latest/howtos/sso/google/). Deploy an authentication `Filter` and `FilterPolicy` to ensure that only people in 
 your organization have access to your documentation server.
 
-Unless you want to stick with the `edgestack.me` domain, you’ll also want to create a new Host that maps to a hostname in your DNS. Edge Stack automatically 
+Unless you want to keep using the `edgestack.me` domain, you’ll also want to create a new Host that maps to a hostname in your DNS. Edge Stack automatically 
 provisions a certificate from Let’s Encrypt as soon as you set up the new Host. For more details, see the Host CRD documentation.
 
 Happy coding in Go!
