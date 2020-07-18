@@ -1,12 +1,10 @@
 ---
-title: Using Cloud Scheduler to invoke private Cloud Functions with OIDC
-description: Learn how to use OpenID Connect to invoke private Cloud Functions periodically with Cloud Scheduler. No Pub/Sub required!
+title: Use Cloud Scheduler to invoke private Cloud Functions with OIDC
+description: Learn how to use OpenID Connect to invoke private Cloud Functions periodically with Cloud Scheduler, with no Pub/Sub required.
 author: glasnt,dinagraves
-tags: Cloud Scheduler, Cloud Functions, Python 
-date_published: 2020-07-19 
+tags: Python 
+date_published: 2020-07-20 
 ---
-
-# Using Cloud Scheduler to invoke private Cloud Functions with OIDC
 
 This tutorial shows you how to use Cloud Scheduler to invoke a private Cloud Function using HTTP targets and triggers and OIDC authentication.
 
