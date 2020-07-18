@@ -46,7 +46,7 @@ Cloud VPN supports the following topologies:
 
 For detailed topology information, see the following resources:
 
--   For basic VPN topologies, see [Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/concepts/overview).
+-   For basic VPN topologies, see [Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview).
 -   For redundant topologies, the Cloud VPN documentation on 
     [redundant and high-throughput VPNs](https://cloud.google.com/network-connectivity/docs/vpn/concepts/redundant-vpns). 
 
@@ -88,7 +88,7 @@ the VPN. For details, see
 To create a GCP network, a subnetwork, and other entities described in this guide, you must be able to sign in to GCP as a 
 user who has the [Network Admin](https://cloud.google.com/compute/docs/access/iam#network_admin_role) role. For details,
 see
-[Required permissions](https://cloud.google.com/network-connectivity/docs/vpn/how-to/creating-vpn-dynamic-routes#required_permissions).
+[Required permissions](https://cloud.google.com/network-connectivity/docs/vpn/how-to/creating-vpn-dynamic-routes#required-permissions).
 
 ### Licenses and modules
 
@@ -177,7 +177,7 @@ possible, as discussed in the [Cloud VPN overview](https://cloud.google.com/netw
         the on-premises gateway can use.
     -   **IKE pre-shared key**: A character string, also known as a *shared secret*, that is used in establishing encryption
         for the tunnel. You must enter the same shared secret into both VPN gateways. For more information, see
-        [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/how-to/generating-pre-shared-key).
+        [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key).
 1.  Under **Routing options**, select the **Dynamic (BGP)** tab.
 1.  In the **Cloud router** menu, select **Create cloud router** and set the following values in the
     **Create a cloud router** dialog:
@@ -202,7 +202,7 @@ possible, as discussed in the [Cloud VPN overview](https://cloud.google.com/netw
         described in [advanced VPN configurations](#advanced-vpn-configurations). Note that if you don't need advanced VPN 
         now, you will need to configure a new VPN tunnel later to support it. The advertised route priority is the base
         priority that Cloud Router uses when advertising the "to GCP" routes. For more information, see
-        [Route metrics](https://cloud.google.com/network-connectivity/docs/router/concepts/overview#route_metrics).
+        [Route metrics](https://cloud.google.com/network-connectivity/docs/router/concepts/overview#route-metrics).
         Your on-premises VPN gateway imports these as MED values.
 1.  Click **Save and continue**.
 1.  Click **Create**.
