@@ -1,5 +1,5 @@
 ---
-title: Getting started with Terraform on Google Cloud Platform
+title: Getting started with Terraform on Google Cloud
 description: Learn how to get a simple web server running on Compute Engine using Terraform to do the provisioning of resources.
 author: chrisst
 tags: terraform
@@ -15,14 +15,14 @@ other APIs, or add a datastore. I'm able to iterate very quickly with feedback
 at each step of the process. To help get through those first set up steps I've
 written this tutorial to cover the following:
 
-* Using Terraform to create a VM in Google Cloud Platform (GCP)
+* Using [Terraform](https://cloud.google.com/docs/terraform) to create a VM in Google Cloud
 * Starting a basic Python Flask server
 
 ### Before you begin
 
-You will be spinning up a single Compute Engine VM instance, which can
+You will be starting a single Compute Engine VM instance, which can
 incur real, although usually minimal, costs. Pay attention to the pricing on the
-account. If you don't already have a GCP account, you can
+account. If you don't already have a Google Cloud account, you can
 [sign up for a free trial](https://cloud.google.com/free) and get $300 of free
 credit, which is more than you'll need for this tutorial.
 
@@ -31,21 +31,24 @@ Have the following tools locally:
 * [An existing SSH key](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/)
 * [Terraform](https://www.terraform.io/intro/getting-started/install.html)
 
-## Create a GCP project
+This tutorial is written using Terraform 0.12 syntax. If you're using a
+different version of Terraform, some of the syntax will be slightly different.
+
+## Create a Google Cloud project
 
 A default project is often set up by default for new accounts, but you
 will start by creating a new project to keep this separate and easy to
-tear down later. After creating it, be sure to copy down the `project id` as it
-is usually different then the `project name`.
+tear down later. After creating it, be sure to copy down the project ID as it
+is usually different then the project name.
 
-![How to find your project id.][image1]
+![How to find your project ID.][image1]
 
-[image1]: https://storage.googleapis.com/gcp-community/tutorials/getting-started-on-gcp-with-terraform/gcp_project_id.png "Project Id"
+[image1]: https://storage.googleapis.com/gcp-community/tutorials/getting-started-on-gcp-with-terraform/gcp_project_id.png "Project ID"
 
 ### Getting project credentials
 
 Next, set up a service account key, which Terraform will use to create and manage
-resources in your GCP project. Go to the
+resources in your Google Cloud project. Go to the
 [create service account key page](https://console.cloud.google.com/apis/credentials/serviceaccountkey).
 Select the default service account or create a new one, select JSON as the key
 type, and click **Create**.
@@ -58,7 +61,7 @@ the project directory.
 ### Setting up Terraform
 
 Create a new directory for the project to live and create a `main.tf` file for
-the Terraform config. The contents of this file describe all of the GCP
+the Terraform config. The contents of this file describe all of the Google Cloud
 resources that will be used in the project.
 
 ```HCL
@@ -102,7 +105,7 @@ Terraform has been successfully initialized!
 Next you will create a single Compute Engine instance running Debian. For
 this demo you can use the smallest instance possible (check out
 [all machine types here](https://cloud.google.com/compute/docs/machine-types))
-but Terraform/GCP makes it possible to upgrade to a larger
+but you can upgrade to a larger
 instance later. Add the `google_compute_instance` resource to the `main.tf`:
 
 ```HCL
@@ -111,7 +114,7 @@ resource "random_id" "instance_id" {
  byte_length = 8
 }
 
-// A single Google Cloud Engine instance
+// A single Compute Engine instance
 resource "google_compute_instance" "default" {
  name         = "flask-vm-${random_id.instance_id.hex}"
  machine_type = "f1-micro"
@@ -137,13 +140,13 @@ resource "google_compute_instance" "default" {
 ```
 
 The [`random_id` Terraform plugin](https://www.terraform.io/docs/providers/random/r/id.html)
-allows you to create a somewhat random instance name that still complies with GCP's instance
+allows you to create a somewhat random instance name that still complies with the Google Cloud instance
 naming requirements but requires an additional plugin.
 To download and install the extra plugin, run `terraform init` again.
 
 ### Validate the new Compute Engine instance
 
-You can now validate the work that has been done so far! Run `terraform plan`
+You can now validate the work that has been done so far. Run `terraform plan`
 which will:
 
 * Verify the syntax of `main.tf`is correct
@@ -173,12 +176,12 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 ```
 
 
-Now it's time to run `terraform apply` and Terraform will call GCP APIs to set up the new instance! Check the
+Now it's time to run `terraform apply` and Terraform will call Google Cloud APIs to set up the new instance. Check the
 [VM Instances page](https://console.cloud.google.com/compute/instances), and the new instance will be there.
 
-## Running a server on GCP
+## Running a server on Google Cloud
 
-There is now a new instance running in GCP, so your next steps
+There is now a new instance running in Google Cloud, so your next steps
 are getting a web application created, deploying it to the instance, and exposing an
 endpoint for consumption.
 
@@ -225,7 +228,7 @@ to act as a helper to expose the instance's ip address. Add the following to
 the Terraform config:
 
 ```HCL
-// A variable for extracting the external ip of the instance
+// A variable for extracting the external IP address of the instance
 output "ip" {
  value = google_compute_instance.default.network_interface.0.access_config.0.nat_ip
 }
@@ -235,7 +238,7 @@ Run `terraform apply` followed by `terraform output ip` to return the instance's
 external IP address. Validate that everything is set up correctly at this point
 by connecting to that IP address with SSH.
 
-Note: This tutorial needs the `default` network's `default-allow-ssh` firewall rule to be in place before you can use SSH
+This tutorial needs the `default` network's `default-allow-ssh` firewall rule to be in place before you can use SSH
 to connect to the instance. If you are starting with a new project, this can take a few minutes. You can
 check the [firewall rules list](https://console.cloud.google.com/networking/firewalls/list) to make sure that the
 firewall rule has been created.
@@ -282,7 +285,7 @@ The output from this command is `Hello Cloud`.
 
 ### Open port 5000 on the instance
 
-GCP allows for opening ports to traffic via firewall policies,
+Google Cloud allows for opening ports to traffic via firewall policies,
 which can also be managed in your Terraform configuration. Add the following to the
 config and proceed to run plan/apply to create the firewall rule.
 
@@ -303,7 +306,7 @@ port 5000 and see your server running.
 
 ## Cleaning up
 
-Now that you are finished with the tutorial, you will likely want to tear down
+Now that you are finished with the tutorial, you will likely want to delete
 everything that was created so that you don't incur any further costs.
 Thankfully, Terraform will let you remove all the resources defined in the
 configuration file with `terraform destroy`:

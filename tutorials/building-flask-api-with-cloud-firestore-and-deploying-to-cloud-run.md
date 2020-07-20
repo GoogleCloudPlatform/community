@@ -1,17 +1,17 @@
 ---
-title: Build and deploy a Flask CRUD API with Cloud Firestore and Cloud Run
-description: Build a CRUD (create, read, update, delete) API to manage to-do lists using Flask (a microframework for Python) and Cloud Firestore, and deploy with Cloud Run.
+title: Build and deploy a Flask CRUD API with Firestore and Cloud Run
+description: Build a CRUD (create, read, update, delete) API to manage to-do lists using Flask (a microframework for Python) and Firestore, and deploy with Cloud Run.
 author: timtech4u
-tags: Flask Framework, Python 3, REST API, Cloud Firestore, Cloud Run
+tags: Flask Framework, Python 3, REST API, Firestore, Cloud Run
 date_published: 2019-09-03
 ---
 
 In this tutorial, you build a CRUD (create, read, update, delete) API to manage to-do lists using Flask (a
-microframework for Python) and Cloud Firestore (a flexible, scalable database for mobile, web, and server development from
-Firebase), and you deploy the API to [Cloud Run](https://cloud.google.com/run/) (a serverless environment to run containers
-on Google Cloud Platform).
+microframework for Python) and Firestore (a flexible, scalable database for mobile, web, and server development), and you deploy the API to
+[Cloud Run](https://cloud.google.com/run/) (a serverless environment to run containers
+on Google Cloud).
 
-[Cloud Firestore](https://firebase.google.com/docs/firestore) stores data as collections of documents. It also features
+[Firestore](https://firebase.google.com/docs/firestore) stores data as collections of documents. It also features
 richer, faster queries and scales further than the [Firebase Realtime Database](https://firebase.google.com/docs/database).
 You can manage to-do list fields through the API.
 
@@ -36,8 +36,8 @@ You can manage to-do list fields through the API.
     1.  Select **Python** option for **Admin SDK configuration snippet**, click **Generate new private key**, and save it
         as `key.json`.  ![screenshot](https://storage.googleapis.com/gcp-community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run/e2TxYLV5d.png)
 
-1.  [Create a new GCP project](https://console.cloud.google.com/project?_ga=2.69989718.-735545701.1566156833), or use an 
-    existing one. You need the GCP project so that you can deploy to Cloud Run.
+1.  [Create a new Google Cloud project](https://console.cloud.google.com/project?_ga=2.69989718.-735545701.1566156833), or use an 
+    existing one. You need the Google Cloud project so that you can deploy to Cloud Run.
 1.  Open [Cloud Shell](https://cloud.google.com/shell/) or install the [Cloud SDK](https://cloud.google.com/sdk/docs/).
 1.  (Optional) To set up continuous deployment follow the instructions
     [here](https://fullstackgcp.com/simplified-continuous-deployment-on-google-cloud-platform-bc5b0a025c4e).
@@ -125,18 +125,17 @@ You can manage to-do list fields through the API.
     if __name__ == '__main__':
         app.run(threaded=True, host='0.0.0.0', port=port)
 
-
 There are individual methods and routes for each action that the API performs. You can improve upon the code snippet and
 add more functions to meet your needs.
 
-For each CRUD (create, read, update, delete) action, we define the route and its corresponding
+For each CRUD (create, read, update, delete) action, you define the route and its corresponding
 [HTTP method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods). The API implementaiton tries to perform that 
 action and returns a response with the `200` status code if successful. If there's a problem, the implementation returns the
 exception's error code.
 
 # Deploy to Cloud Run
 
-To build our API implemtation in a container and run it on Cloud Run, we need a `Dockerfile`:
+To build your API implemtation in a container and run it on Cloud Run, you need a `Dockerfile`:
 
     # Dockerfile
     FROM python:3.7-stretch
@@ -206,9 +205,8 @@ The steps to add the Cloud Run Button to your repository are as follows:
 To prevent unnecessary charges, clean up the resources created for this tutorial. This includes deleting any projects 
 that you created for this tutorial.
 
-# Useful Links
--  [Source code on GitHub](https://github.com/Timtech4u/flask-firestore) 
--  [Flask documenation](https://flask.palletsprojects.com/en/1.1.x/)
--  [Cloud Firestore documentation](https://firebase.google.com/docs/firestore) 
+# Useful links
+-  [Flask documentation](https://flask.palletsprojects.com/en/1.1.x/)
+-  [Firestore documentation](https://firebase.google.com/docs/firestore) 
 -  [Cloud Run documentation](https://cloud.google.com/run/docs/) 
 -  [Cloud Build documentation](https://cloud.google.com/cloud-build/docs/)

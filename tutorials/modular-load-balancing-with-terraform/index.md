@@ -10,7 +10,7 @@ Dan Isla | Google Cloud Solution Architect | Google
 
 Load balancing on Google Cloud Platform (GCP) is different from other cloud providers. The primary difference is that Google uses forwarding rules instead of routing instances. These forwarding rules are combined with backend services, target pools, URL maps and target proxies to construct a functional load balancer across multiple regions and instance groups.
 
-[Terraform](https://www.terraform.io) is an open source infrastructure management tool that can greatly simplify the provisioning of load balancers on GCP by using modules.
+[Terraform](https://cloud.google.com/docs/terraform) is an open source infrastructure management tool that can greatly simplify the provisioning of load balancers on GCP by using modules.
 
 This tutorial will demonstrate how to use the GCP Terraform modules for load balancing in a variety of scenarios that you can  build into your own projects.
 
