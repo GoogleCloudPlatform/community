@@ -3,7 +3,7 @@ title: Enforcing an identity root of trust in your Google Cloud environment
 description: Shows how to establish a root of trust of identities in your Google Cloud environment, so that no individual acting alone can log in as a super admin and change any setting.
 author: awalko
 tags: Security, Google Cloud Platform, IAM
-date_published: 2020-04-24
+date_published: 2020-07-24
 ---
 
 This document shows how to establish a root of trust of your identities in your Google Cloud organization by controlling the
@@ -299,7 +299,8 @@ After you agree to the terms and conditions, the Google Cloud organization is cr
 
 ![project selector](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image3.png)
 
-You can now verify that your super admin users have the [Organization Administrator](https://console.cloud.google.com/iam-admin/roles/details/roles%3Cresourcemanager.organizationAdmin) role in the IAM section:
+You can now verify that your super admin users have the
+[Organization Administrator](https://console.cloud.google.com/iam-admin/roles/details/roles%3Cresourcemanager.organizationAdmin) role in the IAM section:
 
 ![permissions](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image5.png)
 
@@ -314,15 +315,13 @@ Cloud Identity) prior to assigning them the Google Cloud Organization Administra
 ![IAM](https://storage.googleapis.com/gcp-community/tutorials/enforce-an-identity-root-of-trust-in-your-gcp-environment/image10.png)
 
 Before completing this root of trust ceremony, it is recommended that you
-[export your admin console logs](https://support.google.com/a/answer/4579579?hl=en) to a trusted SIEM (security information and event management) system. This can
-be achieved natively with solutions like [Splunk](https://splunkbase.splunk.com/app/3791/#/details), or it can be achieved
-through automation with tools like the
+[export your Admin console logs](https://support.google.com/a/answer/4579579?hl=en) to a trusted SIEM (security information and event management) system. You can
+do this with solutions like [Splunk](https://splunkbase.splunk.com/app/3791/#/details), or through automation with tools like the
 [CFT G Suite exporter](https://github.com/terraform-google-modules/terraform-google-gsuite-export) module in Google Cloud.
-If no existing solution is satisfying, you can export admin logs using custom code and the
-[G Suite SDK](https://developers.google.com/admin-sdk).
+If no existing solution is satisfying, you can export admin logs using custom code and the [G Suite SDK](https://developers.google.com/admin-sdk).
 
 Secure all of the super admin accounts following the key ceremony logout procedure by locking the key into one or more
-    vaults and logging out all super admin sessions from the trusted workstation.
+vaults and logging out all super admin sessions from the trusted workstation.
 
 ## Managing multiple Google Cloud organizations
 
@@ -330,12 +329,12 @@ You can allow users from one domain to access other Google Cloud organizations u
 provision separate identities for all of the Google Cloud organizations you own, unless you want to force your users to log
 in using different identities each time they access a Google Cloud organization.
 
-The only roles that cannot be granted across organizations are the
+The only roles that can't be granted across organizations are the
 [primitive roles](https://cloud.google.com/iam/docs/understanding-roles#role_types) (Owner, Editor, and Viewer), which are 
 not recommended for production use.
 
 You can restrict which domains are allowed in your Google Cloud Organization using the `iam.allowedPolicyMemberDomains`
-[Org policy constraint](https://cloud.google.com/resource-manager/docs/organization-policy/org-policy-constraints) after the
+[organization policy constraint](https://cloud.google.com/resource-manager/docs/organization-policy/org-policy-constraints) after the
 organization is created.
 
 ## Conclusion
