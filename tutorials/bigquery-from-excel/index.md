@@ -68,16 +68,16 @@ instructions are also available in the
 
 1.  Click the **Add** button.
 
-    ![Click add](add-odbc-source.png)
+    ![Click add](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/add-odbc-source.png)
 
 1.  Select the **Simba ODBC driver for Google BigQuery** from the data source
     dialog box and click the **Finish** button.
 
-    ![Select driver](select-odbc-driver.png)
+    ![Select driver](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/select-odbc-driver.png)
 
 1.  Set a **Data source name (DSN)**, such as "BigQuery", "BigQuery64", or "BigQuery32".
 
-    ![Set a data source name](set-dsn.png)
+    ![Set a data source name](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/set-dsn.png)
 
 ### Authenticating the driver
 
