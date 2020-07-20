@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.time.LocalDate;
@@ -239,18 +240,18 @@ public class HybridInspectSql {
   /**
    * Scans a specific db table and creates a hybrid inspect job for it
    */
-  private static void scanTable(int sampleRowLimit, String hybridJobName, String theDBName,
-      String theTable, String url, String databaseUser, String databasePassword,
+  private static void scanTable(int sampleRowLimit, String hybridJobName, String databaseName,
+      String table, String url, String databaseUser, String databasePassword,
       HybridFindingDetails hybridFindingDetails) {
-    try (Connection connInside = DriverManager.getConnection(url, databaseUser, databasePassword);
+    try (Connection conn = DriverManager.getConnection(url, databaseUser, databasePassword);
         DlpServiceClient dlpClient = DlpServiceClient.create()) {
       System.out.print(
           "|"
               + System.lineSeparator()
               + "> DLP infoType Profile: ["
-              + theDBName
+              + databaseName
               + "]["
-              + theTable
+              + table
               + "]");
       if (VERBOSE_OUTPUT) {
         System.out.print("..(Reading Data).");
@@ -259,10 +260,11 @@ public class HybridInspectSql {
       }
 
       // Doing a simple select * with a limit with no strict order
-      //TODO: Parameterize the query
-      String sqlQuery = "SELECT * from " + theTable + " limit " + sampleRowLimit;
+      PreparedStatement sqlQuery = conn.prepareStatement("SELECT * FROM ? LIMIT ?");
+      sqlQuery.setString(1, table);
+      sqlQuery.setInt(2, sampleRowLimit);
 
-      ResultSet rs = connInside.createStatement().executeQuery(sqlQuery);
+      ResultSet rs = sqlQuery.executeQuery();
       ResultSetMetaData rsmd = rs.getMetaData();
       int columnsNumber = rsmd.getColumnCount();
       String sHeader = "";
@@ -321,9 +323,9 @@ public class HybridInspectSql {
             System.out.println("|");
             System.out.println(
                 "[ Request Size ("
-                    + theDBName
+                    + databaseName
                     + ":"
-                    + theTable
+                    + table
                     + "): request#"
                     + splitTotal
                     + " | start-row="
