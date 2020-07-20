@@ -28,7 +28,7 @@ mvn clean package -DskipTests
 ### MySQL
 
 ```
-java -cp target/dlp-hybrid-inspect-sql-0.5-jar-with-dependencies.jar com.example.dlp.HybridInspectSQL \
+java -cp target/dlp-hybrid-inspect-sql-0.5-jar-with-dependencies.jar com.example.dlp.HybridInspectSql \
 -sql "mysql" \
 -threadPoolSize 1 \
 -sampleRowLimit 1000 \

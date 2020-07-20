@@ -304,7 +304,8 @@ public class HybridInspectSql {
             // This could happen, but when it does the request should still
             // finish. So no need to retry or you will get duplicates.
             // There could be some risk that it fails upstream though?!
-            LOG.log(Level.WARNING, String.format("Table %s: deadline exceeded, doing nothing", table));
+            LOG.log(Level.WARNING,
+                String.format("Table %s: deadline exceeded, doing nothing", table));
           } else {
             throw e;
           }
