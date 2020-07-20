@@ -16,6 +16,8 @@
 
 package com.example.dlp;
 
+// [START HybridInspectSql]
+
 import com.google.cloud.ServiceOptions;
 import com.google.cloud.dlp.v2.DlpServiceClient;
 import com.google.cloud.secretmanager.v1.AccessSecretVersionRequest;
@@ -52,6 +54,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import jdk.internal.joptsimple.internal.Strings;
 import org.apache.commons.cli.CommandLine;
@@ -64,30 +68,21 @@ import org.apache.commons.cli.ParseException;
 
 public class HybridInspectSql {
 
+  private static final Logger LOG = Logger.getLogger(HybridInspectSql.class.getName());
+  private static final Level LOG_LEVEL = Level.WARNING;
+
   public static final String JDBC_URL_POSTGRESQL = "jdbc:postgresql://%s/%s";
   public static final String JDBC_URL_MYSQL = "jdbc:mysql://%s/%s?useSSL=false&allowPublicKeyRetrieval=true";
   public static final String JDBC_URL_CLOUDSQL = "jdbc:mysql://google/%s?cloudSqlInstance=%s&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false";
-
-  // [START HybridInspectSql]
-
-  public static boolean VERBOSE_OUTPUT = false; // flag that will increase output details
-  public static int MAX_REQUEST_BYTES = 480000; // max request size in bytes
-  public static int MAX_REQUEST_CELLS = 50000; // max cell count per request
-
-  //TODO: error logging instead of println?
-  //TODO: Either get rid of multithreading, or change logging model
-
-  private static Option createAndAddOptWithArg(Options options, String name, boolean required) {
-    Option opt = Option.builder(name).required(required).hasArg(true).build();
-    options.addOption(opt);
-    return opt;
-  }
+  private static final int MAX_REQUEST_BYTES = 480000; // max request size in bytes
+  private static final int MAX_REQUEST_CELLS = 50000; // max cell count per request
 
   /**
    * Command line application to inspect data using the Data Loss Prevention Hybrid
    */
   public static void main(String[] args) throws Exception {
     System.out.println("Cloud DLP HybridInspect: SQL via JDBC V0.2");
+    LOG.setLevel(LOG_LEVEL);
 
     Options opts = new Options();
     Option sqlOption = createAndAddOptWithArg(opts, "sql", true);
@@ -110,7 +105,7 @@ public class HybridInspectSql {
     try {
       cmd = parser.parse(opts, args);
     } catch (ParseException e) {
-      System.out.println(e.getMessage());
+      LOG.log(Level.SEVERE, "Error parsing command options", e);
       formatter.printHelp(HybridInspectSql.class.getName(), opts);
       System.exit(1);
       return;
@@ -118,7 +113,7 @@ public class HybridInspectSql {
 
     String databasePassword = null;
     if (cmd.hasOption(secretManagerResourceName.getOpt())) {
-      System.out.println(String.format(">> Retrieving password from Secret Manager (%s)",
+      LOG.info(String.format(">> Retrieving password from Secret Manager (%s)",
           cmd.getOptionValue(secretManagerResourceName.getOpt())));
       databasePassword = accessSecretVersion(ServiceOptions.getDefaultProjectId(),
           cmd.getOptionValue(secretManagerResourceName.getOpt()),
@@ -216,25 +211,21 @@ public class HybridInspectSql {
           // not waiting for it to finish.
           futures.get(table).get(5, TimeUnit.MINUTES);
           countTablesScanned++;
+          System.out.println(String.format(" Scanned table %s", table));
         } catch (TimeoutException e) {
-          System.out.println(String
-              .format("Timed out scanning table %s, continuing: %s", table, e.getStackTrace()));
+          LOG.log(Level.WARNING, String.format("Timed out scanning table %s", table), e);
         } catch (Exception e) {
-          System.out.println(String
-              .format("Exception scanning table %s, continuing: %s", table, e.getStackTrace()));
+          LOG.log(Level.WARNING, String.format("Exception scanning table %s", table), e);
         }
       }
     } catch (Exception e) {
-      System.out.println("|");
-      System.out.println("*** Unknown Fatal Error when trying to inspect tables ***");
-      e.printStackTrace();
+      LOG.log(Level.SEVERE, "Fatal error trying to inspect tables", e);
     }
     System.out.println();
     System.out.println("-----------------------------------------");
-    System.out.println(" " + countTablesScanned + " tables scanned");
+    System.out.println(" " + countTablesScanned + " tables scanned successfully");
     System.out.println(" End Run ID: " + runId);
     System.out.println("-----------------------------------------");
-
   }
 
   /**
@@ -245,19 +236,7 @@ public class HybridInspectSql {
       HybridFindingDetails hybridFindingDetails) {
     try (Connection conn = DriverManager.getConnection(url, databaseUser, databasePassword);
         DlpServiceClient dlpClient = DlpServiceClient.create()) {
-      System.out.print(
-          "|"
-              + System.lineSeparator()
-              + "> DLP infoType Profile: ["
-              + databaseName
-              + "]["
-              + table
-              + "]");
-      if (VERBOSE_OUTPUT) {
-        System.out.print("..(Reading Data).");
-      } else {
-        System.out.print("..R.");
-      }
+      LOG.log(Level.INFO, String.format("Table %s: reading data", table));
 
       // Doing a simple select * with a limit with no strict order
       PreparedStatement sqlQuery = conn.prepareStatement("SELECT * FROM ? LIMIT ?");
@@ -301,11 +280,8 @@ public class HybridInspectSql {
         rows.add(convertCsvRowToTableRow(rowS));
       }
 
-      if (VERBOSE_OUTPUT) {
-        System.out.print("..(Inspecting Data).");
-      } else {
-        System.out.print("..I.");
-      }
+      LOG.log(Level.INFO, String.format("Table %s: inspecting data", table));
+
       int sentCount = 0;
       int prevSentCount = 0;
       int splitTotal = 0;
@@ -319,42 +295,16 @@ public class HybridInspectSql {
           prevSentCount = sentCount;
           sentCount = sentCount + subRows.size();
           inspectRowsWithHybrid(dlpClient, hybridJobName, headers, subRows, hybridFindingDetails);
-          if (VERBOSE_OUTPUT) {
-            System.out.println("|");
-            System.out.println(
-                "[ Request Size ("
-                    + databaseName
-                    + ":"
-                    + table
-                    + "): request#"
-                    + splitTotal
-                    + " | start-row="
-                    + prevSentCount
-                    + " | row-count="
-                    + subRows.size()
-                    + " | cell-count="
-                    + subRows.size() * headers.size()
-                    + "]");
-          } else {
-            if (splitTotal % 2 != 0) {
-              System.out.print("/");
-            } else {
-              System.out.print("\\");
-            }
-          }
-
+          LOG.log(Level.INFO, String
+              .format("Table %s: inspecting row: batch=%d,startRow=%d,rowCount=%d,cellCount=%d",
+                  table, splitTotal, prevSentCount, subRows.size(),
+                  subRows.size() * headers.size()));
         } catch (Exception e) {
           if (e.getMessage().contains("DEADLINE_EXCEEDED")) {
             // This could happen, but when it does the request should still
             // finish. So no need to retry or you will get duplicates.
             // There could be some risk that it fails upstream though?!
-            if (VERBOSE_OUTPUT) {
-              System.out.println("|");
-              System.out.println("[deadline exceed / action: do-nothing]");
-              e.printStackTrace();
-            } else {
-              System.out.print(".[DE].");
-            }
+            LOG.log(Level.WARNING, String.format("Table %s: deadline exceeded, doing nothing", table));
           } else {
             throw e;
           }
@@ -511,6 +461,15 @@ public class HybridInspectSql {
       String payload = response.getPayload().getData().toStringUtf8();
       return payload;
     }
+  }
+
+  /**
+   * Helper to create an Option and add it to the specified Options object
+   */
+  private static Option createAndAddOptWithArg(Options options, String name, boolean required) {
+    Option opt = Option.builder(name).required(required).hasArg(true).build();
+    options.addOption(opt);
+    return opt;
   }
 }
 // [END HybridInspectSql]
