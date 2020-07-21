@@ -1,0 +1,25 @@
+{
+  "name": "claims-routing-istio",
+  "description": "Modules required for client code unit tests",
+  "version": "0.0.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "author": "Google LLC",
+  "scripts": {
+    "lint": "semistandard",
+    "test": "tap"
+  },
+  "type": "module",
+  "tap": {
+    "check-coverage": false,
+    "coverage-report": "none",
+    "esm": false,
+    "reporter": "classic",
+    "test-ignore": "asserts|dom|events|fakes"
+  },
+  "devDependencies": {
+    "jsdom": "16.3.0",
+    "semistandard": "12.0.1",
+    "tap": "14.10.8"
+  }
+}

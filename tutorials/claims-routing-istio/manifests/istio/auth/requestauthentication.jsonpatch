@@ -1,0 +1,3 @@
+- op: replace
+  path: /spec/jwtRules/0/issuer
+  value: https://securetoken.google.com/$GOOGLE_CLOUD_PROJECT

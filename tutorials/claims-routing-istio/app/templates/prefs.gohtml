@@ -1,0 +1,22 @@
+{{ template "header" . }}
+  <div id="container" class="hidden">
+    <div id="updateNotice" class="notice hidden">
+      <p>Your preferences have been saved.</p>
+    </div>
+    <div id="updateError" class="error hidden">
+      <p>There was an error updating your preferences.</p>
+      <p>Please try again later.</p>
+    </div>
+    <p>Welcome <span id="userEmail"></span></p>
+    <form id="prefsForm" action="prefs" method="post" class="hidden">
+      <fieldset>
+        <legend>User Preferences</legend>
+        <input type="checkbox" id="version_beta" name="version" value="beta">
+        <label for="version_beta">Use the beta version</label>
+        <p><button id="updatePrefs" type="button">Save</button></p>
+      </fieldset>
+    </form>
+    <p>Go back to the <a id="home" href=".">home page</a>.</p>
+    <p><button id="signout" type="button">Sign out</button></p>
+  </div>
+{{ template "footer" . }}

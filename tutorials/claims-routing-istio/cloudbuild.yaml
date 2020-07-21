@@ -1,0 +1,52 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START claims_routing_identity_platform_cloudbuild]
+steps:
+- id: go
+  name: golang:1.14
+  dir: app
+  entrypoint: sh
+  args:
+  - -c
+  - |
+    go test -covermode=atomic -mod=readonly -race -v ./...
+    test -z "$(gofmt -d -e . | tee /dev/stderr)"
+  env:
+  - 'GO111MODULE=on'
+- id: node
+  name: node:12
+  dir: app
+  entrypoint: sh
+  args:
+  - -c
+  - |
+    npm install
+    npm test
+    npm run lint
+- id: lua
+  name: gcc:8
+  dir: manifests/istio/route
+  entrypoint: sh
+  args:
+  - -c
+  - |
+    apt-get update
+    apt-get install -y lua5.2
+    ./test.sh
+    apt-get install -y liblua5.2 luarocks
+    luarocks install luacheck
+    luacheck jwtparse.lua jwtparse_test.lua --globals envoy_on_request
+timeout: 600s
+# [END claims_routing_identity_platform_cloudbuild]

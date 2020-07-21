@@ -1,0 +1,18 @@
+{{ define "footer" }}
+  <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-auth.js"></script>
+  <script src="static/config.js"></script>
+  {{ if $.signin }}
+  <script src="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.js"></script>
+  <script src="static/signin.js"></script>
+  {{ else }}
+  <script src="static/app.js"></script>
+  {{ end }}
+  {{ if $.beta }}
+  <script src="static/beta.js"></script>
+  {{ end }}
+  {{ if $.prefs }}
+  <script src="static/prefs.js"></script>
+  {{ end }}
+</body>
+</html>{{ end }}

@@ -1,0 +1,6 @@
+- op: replace
+  path: /spec/rules/0/when/0/values/0
+  value: $GOOGLE_CLOUD_PROJECT
+- op: replace
+  path: /spec/rules/0/when/1/values/0
+  value: https://securetoken.google.com/$GOOGLE_CLOUD_PROJECT

@@ -1,0 +1,15 @@
+{{ template "header" . }}
+  <div id="container" class="hidden">
+    <p>Welcome <span id="userEmail"></span></p>
+    <p>This is the home page.</p>
+    <div id="beta" class="notice">
+      <p>Try out this new beta feature:</p>
+      <p>
+        Answer to the Ultimate Question of Life, The Universe, and Everything:
+        <span id="answer"><button id="getanswer">Get answer</button></span>
+      </p>
+    </div>
+    <p>Update your <a href="prefs">preferences</a>.</p>
+    <p><button id="signout">Sign out</button></p>
+  </div>
+{{ template "footer" . }}
