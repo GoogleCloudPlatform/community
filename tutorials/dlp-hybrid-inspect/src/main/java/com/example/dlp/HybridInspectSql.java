@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.time.LocalDate;
@@ -203,6 +202,7 @@ public class HybridInspectSql {
                     databasePassword, hybridFindingDetails));
         futures.put(table, future);
       }
+      executor.shutdown();
 
       for (String table : futures.keySet()) {
         try {
@@ -237,11 +237,10 @@ public class HybridInspectSql {
       LOG.log(Level.INFO, String.format("Table %s: reading data", table));
 
       // Doing a simple select * with a limit with no strict order
-      PreparedStatement sqlQuery = conn.prepareStatement("SELECT * FROM ? LIMIT ?");
-      sqlQuery.setString(1, table);
-      sqlQuery.setInt(2, sampleRowLimit);
 
-      ResultSet rs = sqlQuery.executeQuery();
+      String sqlQuery = String.format("SELECT * FROM %s LIMIT %d", table, sampleRowLimit);
+
+      ResultSet rs = conn.createStatement().executeQuery(sqlQuery);
       ResultSetMetaData rsmd = rs.getMetaData();
       int columnsNumber = rsmd.getColumnCount();
       String sHeader = "";
