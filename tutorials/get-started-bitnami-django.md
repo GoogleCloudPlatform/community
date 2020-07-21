@@ -48,27 +48,29 @@ Login to the deployed instance and create a simple Django application:
 
         sudo su - bitnami
 
-1. Navigate to the default Django projects folder:
+1. Create a folder for your Django application:
 
-        cd /opt/bitnami/apps/django/django_projects
+        sudo mkdir /opt/bitnami/projects
+        sudo chown $USER /opt/bitnami/projects
 
 1. Create a new project using the command below:
 
+        cd /opt/bitnami/projects/
         django-admin.py startproject myproject
 
 1. Create a new application skeleton within the project:
 
-        cd myproject
+        cd /opt/bitnami/projects/myproject
         python3 manage.py startapp helloworld
 
-1. Edit the `/opt/bitnami/apps/django/django_projects/myproject/helloworld/views.py` file and add this content:
+1. Edit the `/opt/bitnami/projects/myproject/helloworld/views.py` file and add this content:
 
         from django.http import HttpResponse
 
         def index(request):
           return HttpResponse("Hello world!")
 
-1. Create the `/opt/bitnami/apps/django/django_projects/myproject/helloworld/urls.py` file and add these lines to it:
+1. Create the `/opt/bitnami/projects/myproject/helloworld/urls.py` file and add these lines to it:
 
         from django.conf.urls import url
         from . import views
@@ -77,7 +79,7 @@ Login to the deployed instance and create a simple Django application:
             url(r'^$', views.index, name='index'),
         ]
 
-1. Edit the `/opt/bitnami/apps/django/django_projects/myproject/myproject/urls.py` file and modify it to look like this:
+1. Edit the `/opt/bitnami/projects/myproject/myproject/urls.py` file and modify it to look like this:
 
         from django.conf.urls import url
         from django.urls import include
@@ -90,12 +92,12 @@ Login to the deployed instance and create a simple Django application:
 
 Bitnami Django includes a pre-configured instance of the Apache Web server. Configure Apache to serve the application on the standard Web server port 80:
 
-1. Edit the WSGI application script file at `/opt/bitnami/apps/django/django_projects/myproject/myproject/wsgi.py` and modify it to look like this:
+1. Edit the WSGI application script file at `/opt/bitnami/projects/myproject/myproject/wsgi.py` and modify it to look like this:
 
     ```py
     import os
     import sys
-    sys.path.append('/opt/bitnami/apps/django/django_projects/myproject')
+    sys.path.append('/opt/bitnami/projects/myproject')
     os.environ.setdefault("PYTHON_EGG_CACHE", "/opt/bitnami/apps/django/django_projects/myproject/egg_cache")
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myproject.settings")
     from django.core.wsgi import get_wsgi_application
@@ -105,18 +107,18 @@ Bitnami Django includes a pre-configured instance of the Apache Web server. Conf
 1. Create a `conf/` subdirectory in the project directory and create an Apache configuration file:
 
     ```sh
-    mkdir /opt/bitnami/apps/django/django_projects/myproject/conf
-    touch /opt/bitnami/apps/django/django_projects/myproject/conf/httpd-app.conf
+    mkdir /opt/bitnami/projects/myproject/conf
+    touch /opt/bitnami/projects/myproject/conf/httpd-app.conf
     ```
 
-1. Add the following Apache directives in the `/opt/bitnami/apps/django/django_projects/myproject/conf/httpd-app.conf` file:
+1. Add the following Apache directives in the `/opt/bitnami/projects/myproject/conf/httpd-app.conf` file:
 
         <IfDefine !IS_DJANGOSTACK_LOADED>
           Define IS_DJANGOSTACK_LOADED
           WSGIDaemonProcess wsgi-djangostack   processes=2 threads=15    display-name=%{GROUP}
         </IfDefine>
 
-        <Directory "/opt/bitnami/apps/django/django_projects/myproject/myproject">
+        <Directory "/opt/bitnami/projects/myproject/myproject">
             Options +MultiViews
             AllowOverride All
             <IfVersion >= 2.3>
@@ -129,13 +131,13 @@ Bitnami Django includes a pre-configured instance of the Apache Web server. Conf
         </Directory>
 
         Alias /myproject/static "/opt/bitnami/apps/django/lib/python3.6/site-packages/Django-2.0.2-py3.6.egg/django/contrib/admin/static"
-        WSGIScriptAlias /myproject '/opt/bitnami/apps/django/django_projects/myproject/myproject/wsgi.py'
+        WSGIScriptAlias /myproject '/opt/bitnami/projects/myproject/myproject/wsgi.py'
 
-1. Add the line below to the `/opt/bitnami/apache2/conf/bitnami/bitnami-apps-prefix.conf` file:
+1. Add the line below to the `/opt/bitnami/apache/conf/bitnami/bitnami.conf` file:
 
-        Include "/opt/bitnami/apps/django/django_projects/myproject/conf/httpd-app.conf"
+        Include "/opt/bitnami/projects/myproject/conf/httpd-app.conf"
 
-1. Edit the `/opt/bitnami/apps/django/django_projects/myproject/myproject/settings.py` file and update the `ALLOWED_HOSTS` variable with the public IP address of your Google Compute Engine instance, as in the example below:
+1. Edit the `/opt/bitnami/projects/myproject/myproject/settings.py` file and update the `ALLOWED_HOSTS` variable with the public IP address of your Google Compute Engine instance, as in the example below:
 
         ALLOWED_HOSTS = ['XX.XX.XX.XX', 'localhost', '127.0.0.1']
 
@@ -149,7 +151,7 @@ If you see this output, your simple Django application is now deployed and opera
 
 ## Configure a database (optional)
 
-To configure a database for your application, modify the `/opt/bitnami/apps/django/django_projects/myproject/myproject/settings.py` file as shown below:
+To configure a database for your application, modify the `/opt/bitnami/projects/myproject/myproject/settings.py` file as shown below:
 
 ### MySQL
 
