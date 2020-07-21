@@ -57,7 +57,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import jdk.internal.joptsimple.internal.Strings;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -177,8 +176,8 @@ public class HybridInspectSql {
       while (ListTablesResults.next()) {
         // If we are filtering on table name, skip tables that don't match the filter
         final String table = ListTablesResults.getString(3);
-        ;
-        if (!Strings.isNullOrEmpty(tableName) && !tableName.equalsIgnoreCase(table)) {
+
+        if (tableName != null && !tableName.equalsIgnoreCase(table)) {
           continue;
         }
 
@@ -200,8 +199,8 @@ public class HybridInspectSql {
 
         Future<?> future =
             executor.submit(
-                () -> scanTable(sampleRowLimit, hybridJobName, databaseName, table, url,
-                    databaseUser, databasePassword, hybridFindingDetails));
+                () -> scanTable(sampleRowLimit, hybridJobName, table, url, databaseUser,
+                    databasePassword, hybridFindingDetails));
         futures.put(table, future);
       }
 
