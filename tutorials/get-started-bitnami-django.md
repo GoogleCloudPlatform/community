@@ -2,7 +2,7 @@
 title: Get started with Bitnami Django on Google Cloud
 description: Create and deploy a basic Django Web application on Google Cloud with Bitnami Django.
 author: vikram-bitnami
-tags: django, python, Google Cloud Platform, bitnami
+tags: django, python, bitnami
 date_published: 2017-03-15
 ---
 
@@ -22,29 +22,35 @@ Before starting this tutorial, ensure that you have set up a Google Cloud projec
 
 ## Cost
 
-The default configuration allows you to run a low-traffic web app powered by Django using an `f1-micro` instance with a standard 10 GB persistent disk. You can customize the configuration when deploying this solution or change it later, although the default configuration is fine for the purposes of this tutorial.
+The default configuration allows you to run a low-traffic web app powered by Django using an `f1-micro` instance with a standard 10 GB persistent disk. You can 
+customize the configuration when deploying this solution or change it later, although the default configuration is fine for the purposes of this tutorial.
 
-Estimated cost for the above default configuration is $4.28 per month, based on 30-day, 24 hours per day usage in the Central US region. Sustained use discount is included.
+Estimated cost for the above default configuration is $4.28 per month, based on 30-day, 24 hours per day usage in the Central US region. Sustained use discount
+is included.
 
-Use the [pricing calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected usage. New Google Cloud customers may be eligible for a [free trial](https://cloud.google.com/free-trial).
+Use the [pricing calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected usage. New Google Cloud customers
+may be eligible for a [free trial](https://cloud.google.com/free-trial).
 
 ## Deploy Bitnami Django on a Compute Engine instance
 
 Deploy Bitnami Django on a Compute Engine instance:
 
-1. From the Google Cloud Platform menu, select the [Cloud Launcher](https://console.cloud.google.com/launcher).
+1. From the Google Cloud menu, select the [Cloud Launcher](https://console.cloud.google.com/launcher).
 1. Search for "django certified by bitnami" and select the resulting `Django Certified by Bitnami` template.
 1. Review the information and cost. Click `Launch on Compute Engine` to proceed.
-1. Review the default zone, machine type, boot disk size and other parameters and modify as needed. Ensure that the `Allow HTTP traffic` and `Allow HTTPS traffic` boxes are checked in the firewall configuration. Click `Deploy` to proceed with the deployment.
+1. Review the default zone, machine type, boot disk size and other parameters and modify as needed. Ensure that the `Allow HTTP traffic` and
+   `Allow HTTPS traffic` boxes are checked in the firewall configuration. Click `Deploy` to proceed with the deployment.
 
-The Cloud Launcher deploys Bitnami Django on a new Google Compute Engine instance. You can monitor the progress of the deployment from the [Deployment Manager](https://console.cloud.google.com/dm/deployments). Once deployed, note the public IP address of the instance and the password for the MySQL and PostgreSQL databases.
+The Cloud Launcher deploys Bitnami Django on a new Compute Engine instance. You can monitor the progress of the deployment from the
+[Deployment Manager](https://console.cloud.google.com/dm/deployments). After deployment is complete, note the public IP address of the instance and the password
+for the MySQL and PostgreSQL databases.
 
 ## Create a "hello world" Django application
 
 Login to the deployed instance and create a simple Django application:
 
-1. From the [Deployment Manager](https://console.cloud.google.com/dm/deployments), click the `SSH` button to login to the instance over SSH.
-1. Once logged in, switch to the `bitnami` user account:
+1. From the [Deployment Manager](https://console.cloud.google.com/dm/deployments), click the `SSH` button to log in to the instance over SSH.
+1. Switch to the `bitnami` user account:
 
         sudo su - bitnami
 
@@ -53,7 +59,7 @@ Login to the deployed instance and create a simple Django application:
         sudo mkdir /opt/bitnami/projects
         sudo chown $USER /opt/bitnami/projects
 
-1. Create a new project using the command below:
+1. Create a new project:
 
         cd /opt/bitnami/projects/
         django-admin.py startproject myproject
@@ -137,7 +143,8 @@ Bitnami Django includes a pre-configured instance of the Apache Web server. Conf
 
         Include "/opt/bitnami/projects/myproject/conf/httpd-app.conf"
 
-1. Edit the `/opt/bitnami/projects/myproject/myproject/settings.py` file and update the `ALLOWED_HOSTS` variable with the public IP address of your Google Compute Engine instance, as in the example below:
+1. Edit the `/opt/bitnami/projects/myproject/myproject/settings.py` file and update the `ALLOWED_HOSTS` variable with the public IP address of your
+   Compute Engine instance, as in the example below:
 
         ALLOWED_HOSTS = ['XX.XX.XX.XX', 'localhost', '127.0.0.1']
 
@@ -190,11 +197,13 @@ To configure a database for your application, modify the `/opt/bitnami/projects/
 
 ## Cleaning up
 
-After you have finished this tutorial, you can remove the resources you created on Google Cloud Platform so you aren't billed for them any longer. You can delete the resources individually, or delete the entire project.
+After you have finished this tutorial, you can remove the resources you created on Google Cloud so you aren't billed for them any longer. You can delete the 
+resources individually, or delete the entire project.
 
 ### Deleting the project
 
-Visit the [Resource Manager](https://console.cloud.google.com/cloud-resource-manager). Select the project you used for this tutorial and click `Delete`. Once deleted, you cannot reuse the project ID.
+Visit the [Resource Manager](https://console.cloud.google.com/cloud-resource-manager). Select the project you used for this tutorial and click `Delete`. Once
+deleted, you cannot reuse the project ID.
 
 ### Deleting individual resources
 
