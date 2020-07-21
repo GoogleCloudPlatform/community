@@ -231,9 +231,8 @@ public class HybridInspectSql {
   /**
    * Scans a specific db table and creates a hybrid inspect job for it
    */
-  private static void scanTable(int sampleRowLimit, String hybridJobName, String databaseName,
-      String table, String url, String databaseUser, String databasePassword,
-      HybridFindingDetails hybridFindingDetails) {
+  private static void scanTable(int sampleRowLimit, String hybridJobName, String table, String url,
+      String databaseUser, String databasePassword, HybridFindingDetails hybridFindingDetails) {
     try (Connection conn = DriverManager.getConnection(url, databaseUser, databasePassword);
         DlpServiceClient dlpClient = DlpServiceClient.create()) {
       LOG.log(Level.INFO, String.format("Table %s: reading data", table));
