@@ -1,7 +1,13 @@
-# Cloud Data Loss Prevention (DLP) Hybrid Inspect Sample for SQL Databases using JDBC
+---
+title: Cloud Data Loss Prevention (DLP) Hybrid Inspect Demo for SQL Databases using JDBC
+description: Demonstrates how to inspect SQL table data using Cloud Data Loss Prevention with Hybrid Inspect.
+author: scellis,crwilson
+tags: database, Cloud DLP, Java, PII
+date_published: 2020-07-21
+---
 
 ## Configuration and Build
-Depend in on the database you are conecting to, you may need to update the ```pom.xml``` file to include the proper JDBC client.
+Depend in on the database you are connecting to, you may need to update the ```pom.xml``` file to include the proper JDBC client.
 
 __Compile everything__
 ```
