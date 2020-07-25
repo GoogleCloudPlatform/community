@@ -15,7 +15,7 @@ This tutorial demonstrates how to create a cloud function from [GCP Cloud Build]
 ## Objectives
 
 * Use [GCP Cloud Build](https://cloud.google.com/cloud-build) to deploy a cloud function.
-* Use GoLang to process incoming HTTP request
+* Use GoLang to process incoming HTTP requests.
 
 ## Set up your environment
 
