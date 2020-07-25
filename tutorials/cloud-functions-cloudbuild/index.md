@@ -2,7 +2,7 @@
 title: Cloud function with cloudbuild and continuous delivery
 description: Use cloudbuild to deploy to cloud functions.
 author: montao
-tags: Cloud Functions, Cloud Build, GoLang, CI/CD
+tags: Cloud Functions, Cloud Build, GitHub, GoLang, Continuous Integration, Continuous Delivery
 date_published: 2020-07-25
 ---
 
