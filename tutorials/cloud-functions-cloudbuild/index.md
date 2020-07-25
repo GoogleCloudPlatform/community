@@ -29,12 +29,12 @@ This tutorial demonstrates how to create a cloud function from cloudbuild
         cloudfunctions.googleapis.com \
 
     
-1.  Create the directory and file structure in the GitHub repository
-1.  Create the directory and file structure in the GitHub repository
-1.  Connect the repository with Cloud Build from the GCP project console
+1.  Add [Cloud Build GitHub App](https://github.com/marketplace/google-cloud-build) to your GitHub account and repository. 
+1.  Create the directory and file structure in the GitHub repository.
+1.  Connect the repository with Cloud Build from the GCP project console.
 
 ### Cloud Build 
 
-Now the cloud build will run, build and test your project every time you push to the repository
+Now the cloud build will run, build, test and deploy your cloud function every time you push to the repository.
 
 [console]: https://console.cloud.google.com/
