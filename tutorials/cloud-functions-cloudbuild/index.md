@@ -10,7 +10,7 @@ Niklas Rosencrantz | DevOps/SRE
 
 ## Introduction
 
-This tutorial demonstrates how to create a cloud function from cloudbuild
+This tutorial demonstrates how to create a cloud function from [GCP Cloud Build](https://cloud.google.com/cloud-build).
 
 ## Objectives
 
