@@ -186,11 +186,7 @@ public class DlpDataCatalogTagsTutorial {
             continue;
           } else if (tableName == null
               || tableName.equalsIgnoreCase("")
-              || currentTable.equalsIgnoreCase(tableName)
-              || (dbType.equalsIgnoreCase("bigquery")
-              && dbName != null
-              && !dbName.equalsIgnoreCase("")
-              && dbName.equalsIgnoreCase(currentDatabaseName))) {
+              || currentTable.equalsIgnoreCase(tableName)) {
 
             countTablesScanned++;
 
