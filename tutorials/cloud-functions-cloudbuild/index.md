@@ -3,7 +3,7 @@ title: Deploy a Cloud Function with Cloud Build
 description: Use Cloud Build to continuously deploy a Cloud Function.
 author: montao
 tags: Cloud Functions, GitHub, GoLang, continuous integration, continuous delivery, continuous deployment
-date_published: 2020-07-31
+date_published: 2020-07-29
 ---
 
 Niklas Rosencrantz | DevOps/SRE
