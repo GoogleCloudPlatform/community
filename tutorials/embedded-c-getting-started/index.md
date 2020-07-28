@@ -269,11 +269,11 @@ cd /examples/main/ make menuconfig
 
 1. Set up your WiFi and LED gpio pin , navigate to example configuration
 
-![Wifi Setup](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/wifisetup.gif)
+![Wifi Setup](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/wifisetup.gif)
 
 1. Set up your Google Cloud Project information, navigate to component configuration and then to IoT Core Configuration
 
-![Cloud Project Setup](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/CloudSetup.gif)
+![Cloud Project Setup](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/CloudSetup.gif)
 
 1. Locate your ec_private.pem file and copy its contents into the private.pem file in the certs folder located at examples/main/certs
 1. Run `idf.py build` to build sources into firmware
@@ -299,7 +299,7 @@ light:0 for light off
 
 Note: if the board you're using has the GPIO pin set to pulldown, setting this value to 1 will turn the light off.
 
-![Send Command](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/command.jpg)
+![Send Command](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/command.jpg)
 
 **To view telemetry data:**
 
@@ -308,7 +308,7 @@ Note: if the board you're using has the GPIO pin set to pulldown, setting this v
 1. Click on the PubSub subscription
 1. Click on view message at the top and pull your messages
 
-![Blinky](https://github.com/galz10/community/blob/gal/tutorials/embedded-c-getting-started/device.jpg)
+![Blinky](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/device.jpg)
 
 ## Next Steps
 
