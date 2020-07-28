@@ -403,7 +403,7 @@ VPC subnet prefixes.
 
 ### Creating the base network configuration
 
-For the [1-peer-2-address](https://cloud.google.com/docs/vpn/concepts/topologies#1-peer-2-addresses)
+For the [1-peer-2-address](https://cloud.google.com/network-connectivity/docs/vpn/concepts/topologies#1-peer-2-addresses)
 topology, configure a minimum of three interfaces, named `outside-0`, `outside-1`, and `inside`. Outside 
 interfaces are connected to the internet; the inside interface is connected to the private network.
 
@@ -431,7 +431,7 @@ replacing the IP addresses based on your envrionment:
 
 Follow the procedures in this section to create the base VPN configuration.
 
-Make sure to configure [Ciphers supported by GCP](https://cloud.google.com/docs/vpn/concepts/how-to/configuring-peer-gateway#configuring_ike) only.
+Make sure to configure [Ciphers supported by GCP](https://cloud.google.com/network-connectivity/docs/vpn/how-to/configuring-peer-gateway#configuring_ike) only.
 
 #### Configure the IKEv2 policy
 

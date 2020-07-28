@@ -92,7 +92,7 @@ to replace the IP addresses in the sample environment with your own IP addresses
 ### Configuring Cloud VPN
 
 To configure Cloud VPN:
-1. In the Google Cloud Platform Console, select **Networking** > **[Create VPN connection](https://console.cloud.google.com/hybrid/vpn/list)**.
+1. In the Google Cloud Platform Console, select **Networking** > [**Create VPN connection**](https://console.cloud.google.com/hybrid/vpn/list).
 
 1. Click **CREATE VPN CONNECTION**.
 
@@ -116,7 +116,7 @@ To configure Cloud VPN:
 
 ### Configuring a static route
 
-1. In Google Cloud Platform Console, go to **[Routes](https://console.cloud.google.com/networking/routes)** > **Create Route**.
+1. In Google Cloud Platform Console, go to [**Routes**](https://console.cloud.google.com/networking/routes) > **Create Route**.
 1. Enter the parameters as shown in the following table and click **Create**.
 
 |Parameter|Value|Description|
@@ -205,7 +205,7 @@ BGP sessions between the 2 peers.
 
 ### Configuring cloud router
 
-**Step 1**: In Google Cloud Platform Console, select **Networking** > **[Cloud Routers](https://console.cloud.google.com/hybrid/routers/list)** > **Create Router**.
+**Step 1**: In Google Cloud Platform Console, select **Networking** > [**Cloud Routers**](https://console.cloud.google.com/hybrid/routers/list) > **Create Router**.
 
 **Step 2**: Enter the parameters as shown in the following table and click **Create**.
 
@@ -221,7 +221,7 @@ BGP sessions between the 2 peers.
 
 ### Configuring Cloud VPN
 
-**Step 1**: In Google Cloud Platform Console, select **Networking** > **Interconnect** > **[VPN](https://console.cloud.google.com/hybrid/vpn/list)** > **CREATE VPN CONNECTION**.
+**Step 1**: In Google Cloud Platform Console, select **Networking** > **Interconnect** > [**VPN**](https://console.cloud.google.com/hybrid/vpn/list) > **CREATE VPN CONNECTION**.
 
 **Step 2**: Enter the parameters as shown in the following table for the Google Compute Engine VPN gateway:
 

@@ -11,6 +11,7 @@ spec:
   selector:
     matchLabels:
       app: locust-worker
+  podManagementPolicy: Parallel
   template:
     metadata:
       labels:
