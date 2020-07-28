@@ -15,7 +15,7 @@ This tutorial demonstrates how to create and deploy a Cloud Function with [Cloud
 ## Objectives
 
 * Use Cloud Build to deploy a Cloud Function.
-* Use GoLang to process incoming HTTP requests.
+* Use code written in the Go programming language to process incoming HTTP requests.
 
 ## Set up your environment
 
