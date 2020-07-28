@@ -10,7 +10,7 @@ Niklas Rosencrantz | DevOps/SRE
 
 ## Introduction
 
-This tutorial demonstrates how to create a Cloud Function with [Cloud Build](https://cloud.google.com/cloud-build).
+This tutorial demonstrates how to create and deploy a Cloud Function with [Cloud Build](https://cloud.google.com/cloud-build).
 
 ## Objectives
 
@@ -27,20 +27,25 @@ This tutorial demonstrates how to create a Cloud Function with [Cloud Build](htt
         gcloud services enable cloudfunctions.googleapis.com
 
 1.  Add the [Cloud Build GitHub app](https://github.com/marketplace/google-cloud-build) to your GitHub account and repository. 
-1.  Create the directory and file structure in the GitHub repository. You can copy the file tree from this tutorial or use your own names. It should be enough with a file named ´cloudbuild.yaml´ in the root directory and the code for the cloud function in a separate directory. In this case it will look similar to the following file tree:
+1.  Create the directory and file structure in the GitHub repository.
+
+    You can use the file tree from the
+    [source for this tutorial](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-functions-cloudbuild/) as a starting point. 
+    
+    Put a file named `cloudbuild.yaml` in the root directory and the code for the Cloud Function in a separate directory, as in the following file tree:
 
         │   .gitignore
         │   cloudbuild.yaml
         └───code
                 function.go
 
+## Connect the repository with Cloud Build
 
-1.  Connect the repository with Cloud Build from the Cloud Console. This is done by navigating to [Cloud Build](https://console.cloud.google.com/cloud-build), choose the meny item "triggers" and press the choice "Connect repository" (it also lets you choose a Bitbucket repository at this point as a beta feature). Then you can create a push trigger so that Cloud Build will run when you push to the master branch. 
+1.  In the Cloud Console, go to the [Cloud Build](https://console.cloud.google.com/cloud-build) page.
+1.  Choose **Triggers**.
+1.  Click **Connect repository**.
+1.  Create a push trigger so that Cloud Build will run when you push to the master branch. 
 
-### Cloud Build 
+After you have connected the repository with Cloud Build, Cloud Build will run, build, test, and deploy your Cloud Function each time you push to the repository.
 
-Now Cloud Build will run, build, test, and deploy your Cloud Function every time you push to the repository. You will be able to view a [list](https://console.cloud.google.com/cloud-build/builds) in Cloud Build of your builds. You can view the details of your deployment and see what is the url, for example:
-
-        entryPoint: HelloWorld
-        httpsTrigger:
-          url:   url: https://us-central1-myprojectname.cloudfunctions.net/cloudfunction01
+You can view a list of your builds on the [Cloud Builds page of the Cloud Console](https://console.cloud.google.com/cloud-build/builds).
