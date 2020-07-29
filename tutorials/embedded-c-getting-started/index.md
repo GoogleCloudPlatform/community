@@ -1,35 +1,39 @@
 ---
 title: Getting started with IoT Core Embedded C SDK
-description: Learn how to connect to IoT Core and send commands/telemetry from the device on the Embedded C SDK.
+description: Learn how to connect to IoT Core and send commands and telemetry from the device with the Embedded C SDK.
 author: galz10
-tags: IoT, Google Cloud, Internet of Things, ESP32, ESP-IDF, IoT Core
-date_published: 2020-07-08
+tags: Internet of Things, ESP32, ESP-IDF
+date_published: 2020-07-31
 ---
 
-This tutorial shows how to use the IoT Core Embedded C library and will take you through the steps of creating a IoT Core project which will receive telemetry data from an ESP32 microcontroller and will be able to turn on and off an LED. Follow this tutorial to configure Cloud IoT Core and run the mqtt-example on your ESP32.
-Objectives
+This tutorial shows how to use the IoT Core Embedded C library. In this tutorial, you create an IoT Core project that receives telemetry data from an ESP32 
+microcontroller and turns an LED on and off.
 
- - Install ESP-IDF
- - Create a project on IoT Core
- - Connect ESP32 to IoT Core
- - Publish Telemetry Data from device
- - Receive Commands on the device
+## Objectives
+
+ - Install the ESP-IDF (Espressif IoT Development Framework).
+ - Create a project on IoT Core.
+ - Connect an ESP32 device to IoT Core.
+ - Publish telemetry data from the device.
+ - Receive commands on the device.
 
 ## Before you begin
 
-### ESP-IDF Setup
+The ESP-IDF (IoT Development Framework) is the SDK for Espressif chips. In this section, you install dependencies for the ESP-IDF, install the ESP-IDF itself, 
+set up the ESP32 device, and connect it to IoT Core.
 
-Before we can setup IoT Core we must get ESP-IDF, which is the SDK for Espressif chips. If you can download the [ESP-IDF](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension) extension for Visual Studio Code, make sure you have all dependencies because if you don’t you will get errors and will need to redownload ESP-IDF.
-You’ll need to have the following for ESP-IDF to work properly:
+### Install dependencies for ESP-IDF
+
+You need to have the following for ESP-IDF to work properly:
 
  - Python 3.5 or higher
  - Git
- - Cmake
- - Ninja
+ - CMake
+ - ninja
 
-If you don't have these dependencies, you can install them using :
+If you don't have these dependencies, you can use the following to install them:
 
-**For Mac :**
+**macOS**
 
 ```bash
 brew install python
@@ -38,16 +42,20 @@ pip install ninja
 pip install cmake
 ```
 
-**For Windows :**
+**Windows**
 
-Python : https://www.python.org/downloads/windows/
-Git : https://git-scm.com/download/win
-ninja : https://github.com/ninja-build/ninja/releases
-cmake : https://cmake.org/download/
+- Python: https://www.python.org/downloads/windows/
+- Git: https://git-scm.com/download/win
+- ninja: https://github.com/ninja-build/ninja/releases
+- CMake: https://cmake.org/download/
 
-Once you have all dependencies installed, configure ESP-IDF.
 
-1. Select your git and python version
+### ESP-IDF setup
+
+When all of the dependencies are installed, download and configure ESP-IDF:
+
+1.  Download the [ESP-IDF](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension) extension for Visual Studio Code.
+1.  Select your git and python version
 1. Select the location you want to download ESP-IDF
 1. Click the download button to download the ESP-IDF tools
 1. Run the tool check to verify your installation
@@ -63,7 +71,7 @@ alias get_idf='. $HOME/esp/esp-idf/export.sh'
 in your $HOME/.profile file so you can just call get_idf. If you don't have a profile dotfile, then put the code above in $HOME/.bash_profile.
 For more troubleshooting steps, see the [getting started](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) page of the ESP-IDF.
 
-### ESP32 Setup
+### ESP32 device setup
 
 We will be using the Espressif Systems ESP32 (ESP32), which is an inexpensive and easy to source microcontroller with WiFi and Bluetooth capabilities. To run this example, you will need an LED and two wires to connect it to the board if the LED is tolerant of the same voltage as the board(typically 3.3v or 5v) if it can’t then you should use a resistor in series with the [LEDS](http://www.resistorguide.com/resistor-for-led/).
 
@@ -92,13 +100,12 @@ Now that we have a little bit of information about IoT Core lets set it up.
 
 To learn more about the protocols for [IoT Core](https://cloud.google.com/iot/docs/), read the [MQTT](https://cloud.google.com/iot/docs/how-tos/mqtt-bridge) and [HTTP](https://cloud.google.com/iot/docs/how-tos/http-bridge) documentation.
 
-### Setting up your device registry
+### Set up your device registry
 
 Before connecting to Google Cloud you need to create device authentication credentials and a device registry to contain your devices.
 
 There are two ways you can set up your project on Google Cloud IoT, you can use the Cloud SDK (gcloud) or using the UI in the [Google Cloud Console](https://console.cloud.google.com/) This guide will go through setting the project up using gcloud. After you have downloaded the [Cloud SDK](https://cloud.google.com/sdk).
 
-**To set up your device registry :**
 1. Generate Elliptic Curve (EC) device credentials for authenticating the device when it’s
 trying to connect with the cloud, You will need to know where these files are later so make sure they’re saved somewhere you can access.
 
@@ -120,9 +127,9 @@ gcloud pubsub subscriptions create data --topic=temperature
 gcloud iot registries create esp-test --region=us-central1 --event-notification-config=topic=temperature gcloud iot devices create test-dev --region=us-central1 --registry=esp-test \ --public-key path=ec_public.pem,type=es256
 ```
 
-### Cloning mqtt example
+### Clone the mqtt example
 
-You will need to clone the repo to get the example code. In your terminal, go to a location you want to store the cloned repo and run the following command:
+You will need to clone the repository to get the example code. In your terminal, go to a location you want to store the cloned repo and run the following command:
 
 ```bash
 git clone https://github.com/espressif/esp-google-iot --recurse-submodules
@@ -130,7 +137,7 @@ git clone https://github.com/espressif/esp-google-iot --recurse-submodules
 
 Recurse submodules is important because you will need the IoT Core Embedded C SDK which is included in the repository as a submodule.
 
-## Connecting an ESP32 to Cloud IoT Core
+## Connect an ESP32 device to IoT Core
 
 The mqtt_task function sets up the parameters needed to connect to the cloud. It uses the private key created earlier in `iotc_connect_private_key_data`. The data is applied to create the jwt to connect to IoT Core, as highlighted in the following code.
 
@@ -198,7 +205,7 @@ After successfully connecting to the cloud you will need to subscribe to configu
  - QoS
  - Callback function
 
-## Publish Telemetry Data from ESP32 to Cloud IoT Core
+## Publish telemetry data from the ESP32 device to IoT Core
 
 To publish telemetry to IoT Core we use `iotc_publish` which must include the topic name, message and QoS inorder to send the message.
 
@@ -220,7 +227,8 @@ free(publish_topic); free(publish_message);
 }
 ```
 
-## Sending Commands from Cloud IoT Core to ESP32
+## Send commands from IoT Core to the ESP32 device
+
 The callback function is invoked when the device receives a message from the cloud. This is where the code turns the led on and off based on incoming messages.You can find this code in the mqtt-example.c file on line 50.
 
 ```c
@@ -257,9 +265,9 @@ void iotc_mqttlogic_subscribe_callback(iotc_context_handle_t in_context_handle, 
 }
 ```
 
-## Running the Sample
+## Run the sample
 
-**To Connect to Cloud:**
+**To connect to Cloud:**
 
 1. Use menu configuration with `make`
 
@@ -271,7 +279,7 @@ cd /examples/main/ make menuconfig
 
 ![Wifi Setup](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/wifisetup.gif)
 
-1. Set up your Google Cloud Project information, navigate to component configuration and then to IoT Core Configuration
+1. Set up your Google Cloud project information, navigate to component configuration and then to IoT Core Configuration
 
 ![Cloud Project Setup](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/CloudSetup.gif)
 
@@ -280,7 +288,7 @@ cd /examples/main/ make menuconfig
 1. Run `idf.py -p /dev/cu.usbserial-1440 flash` passing the path to your tty device to flash the firmware onto the device
 1. Run `idf.py -p /dev/cu.usbserial-1440 monitor` passing the path to your tty device to monitor the device output
 
-Note: if you make changes to the code, you will need to rebuild the program again before calling flash
+If you make changes to the code, you will need to rebuild the program again before calling flash
 
 You should now see your device connecting to your registry on IoT Core. After the device connects, you can send commands from IoT Core or view the data that is being submitted by the device.
 
@@ -310,6 +318,7 @@ Note: if the board you're using has the GPIO pin set to pulldown, setting this v
 
 ![Blinky](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/device.jpg)
 
-## Next Steps
+## Next steps
 
-Now that you've got the basics down and you can connect to IoT Core, you can add your own spin on this project, try replacing the LED with a relay to control a power outlet or can connect a sensor to measure and analyze environmental data.
+Now that you've got the basics down and you can connect to IoT Core, you can add your own spin on this project. Try replacing the LED with a relay to control a 
+power outlet or connect a sensor to measure and analyze environmental data.
