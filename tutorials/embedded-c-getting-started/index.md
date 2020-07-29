@@ -6,8 +6,17 @@ tags: Internet of Things, ESP32, ESP-IDF
 date_published: 2020-07-31
 ---
 
-This tutorial shows how to use the IoT Core Embedded C library. In this tutorial, you create an IoT Core project that receives telemetry data from an ESP32 
-microcontroller and turns an LED on and off.
+This tutorial shows how to use the IoT Core Embedded C library. In this tutorial, you create an IoT Core project that receives telemetry data from a 
+microcontroller and turns an LED on and off. To follow this tutorial, you don't need previous experience with IoT Core.
+
+[IoT Core](https://cloud.google.com/iot/docs/concepts/overview) is a set of tools to connect, process, store, and analyze data both at the edge and in the cloud.
+Cloud IoT consists of the device management API for creating and managing logical collections of devices and the protocol bridge that adapts device-friendly 
+protocols ([MQTT](https://cloud.google.com/iot/docs/how-tos/mqtt-bridge) or [HTTP](https://cloud.google.com/iot/docs/how-tos/http-bridge)) to scalable Google 
+infrastructure.
+
+This tutorial uses the Espressif Systems ESP32, an inexpensive microcontroller with WiFi and Bluetooth capabilities. The ESP32 communicates with IoT Core 
+using Wifi and will send telemetry data using the MQTT protocol. The application will also read the internal temperature sensor to send telemetry data to the 
+device's subscription topic.
 
 ## Objectives
 
@@ -50,82 +59,64 @@ pip install cmake
 - CMake: https://cmake.org/download/
 
 
-### ESP-IDF setup
+### Install and configure ESP-IDF
 
 When all of the dependencies are installed, download and configure ESP-IDF:
 
 1.  Download the [ESP-IDF](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension) extension for Visual Studio Code.
-1.  Select your git and python version
-1. Select the location you want to download ESP-IDF
-1. Click the download button to download the ESP-IDF tools
-1. Run the tool check to verify your installation
+1.  Select your git and python version.
+1.  Select the location where you want to download ESP-IDF.
+1.  Click the download button to download the ESP-IDF tools.
+1.  Run the tool check to verify your installation.
 
-If the tool check verification succeeds, you’re ready to continue.
+    If the tool check verification succeeds, you’re ready to continue.
 
-Once ESP-IDF is completely installed, try out the hello-world example to see if everything is working properly, I suggest putting the command to initialize ESP-IDF into an alias:
+1.  When ESP-IDF is completely installed, try the `hello-world` example to see if everything is working properly. 
+1.  Put the command to initialize ESP-IDF into an alias in your `$HOME/.profile` file (or in `$HOME/.bash_profile` if you don't have a profile dotfile):
 
-```bash
-alias get_idf='. $HOME/esp/esp-idf/export.sh'
-```
+        ```bash
+        alias get_idf='. $HOME/esp/esp-idf/export.sh'
+        ```
 
-in your $HOME/.profile file so you can just call get_idf. If you don't have a profile dotfile, then put the code above in $HOME/.bash_profile.
-For more troubleshooting steps, see the [getting started](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) page of the ESP-IDF.
+    With this alias, you can just call `get_idf` to initialize ESP-IDF.
 
-### ESP32 device setup
+For troubleshooting information, see the [Get Started](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) page of the ESP-IDF 
+documentation.
 
-We will be using the Espressif Systems ESP32 (ESP32), which is an inexpensive and easy to source microcontroller with WiFi and Bluetooth capabilities. To run this example, you will need an LED and two wires to connect it to the board if the LED is tolerant of the same voltage as the board(typically 3.3v or 5v) if it can’t then you should use a resistor in series with the [LEDS](http://www.resistorguide.com/resistor-for-led/).
+### Set up the ESP32 device
 
-The ESP32 will communicate with IoT Core using Wifi and will send telemetry data using the MQTT protocol, we will also read the internal temperature sensor to send telemetry data to the device's subscription topic.
-
-To get the internal temperature we will use the `temprature_sens_read function`. To correctly set the function you must give a forward declaration for the function:
-
-```c
-#ifdef __cplusplus
-
-extern "C" {
-  #endif
-
-uint8_t temprature_sens_read();
-
-#ifdef __cplusplus
-}
-#endif
-```
-
-### IoT Core
-
-If you’ve never used IoT Core, don’t worry, the steps below will get you setup to transmit telemetry data to the cloud but before we can do that lets talk about IoT Core and its components. IoT Core is a complete set of tools to connect, process, store, and analyze data both at the edge and in the cloud. Google Cloud IoT consists of the device management API for creating and managing logical collections of devices and the protocol bridge which adapts device-friendly protocols (MQTT or HTTP) to scalable Google infrastructure.
-
-Now that we have a little bit of information about IoT Core lets set it up.
-
-To learn more about the protocols for [IoT Core](https://cloud.google.com/iot/docs/), read the [MQTT](https://cloud.google.com/iot/docs/how-tos/mqtt-bridge) and [HTTP](https://cloud.google.com/iot/docs/how-tos/http-bridge) documentation.
+To run this example, you need an LED and two wires to connect it to the ESP32 microcontroller board. If the LED is tolerant of the same voltage as the board 
+(typically 3.3V or 5V), then you can connect the LED directly to the board. If not, then use a
+[resistor in series with the LED](http://www.resistorguide.com/resistor-for-led/).
 
 ### Set up your device registry
 
-Before connecting to Google Cloud you need to create device authentication credentials and a device registry to contain your devices.
+Before connecting to Google Cloud, you need to create device authentication credentials and a device registry to contain your devices.
 
-There are two ways you can set up your project on Google Cloud IoT, you can use the Cloud SDK (gcloud) or using the UI in the [Google Cloud Console](https://console.cloud.google.com/) This guide will go through setting the project up using gcloud. After you have downloaded the [Cloud SDK](https://cloud.google.com/sdk).
+To set up your Google Cloud project, you can use the `gcloud` command-line interface, or you can use the graphical user interface in the
+[Cloud Console](https://console.cloud.google.com/). This tutorial uses `gcloud`.
 
-1. Generate Elliptic Curve (EC) device credentials for authenticating the device when it’s
-trying to connect with the cloud, You will need to know where these files are later so make sure they’re saved somewhere you can access.
+1.  Download and install the [Cloud SDK](https://cloud.google.com/sdk).  
+1.  Generate elliptic curve (EC) device credentials for authenticating the device when it’s trying to connect with the cloud:
 
-```bash
-openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem openssl ec -in ec_private.pem -pubout -out ec_public.pem
-```
+        ```bash
+        openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem openssl ec -in ec_private.pem -pubout -out ec_public.pem 
+        ```
+     You'll need to know where these files are later, so make sure that they’re saved somewhere you can access.
+     
+1.  Make sure that `gcloud` is up to date:
 
-1. Make sure your gcloud is up to date. gcloud components update
-1. Create a PubSub topic and subscription used for storing telemetry .
+        gcloud components update
+        
+1.  Create a Pub/Sub topic and subscription used for storing telemetry:
 
-```c
-gcloud pubsub topics create temperature
-gcloud pubsub subscriptions create data --topic=temperature
-```
+        gcloud pubsub topics create temperature
+        gcloud pubsub subscriptions create data --topic=temperature
 
-1. Create a device registry and add a device to the registry .
+1.  Create a device registry and add a device to the registry:
 
-```c
-gcloud iot registries create esp-test --region=us-central1 --event-notification-config=topic=temperature gcloud iot devices create test-dev --region=us-central1 --registry=esp-test \ --public-key path=ec_public.pem,type=es256
-```
+        gcloud iot registries create esp-test --region=us-central1 --event-notification-config=topic=temperature
+        gcloud iot devices create test-dev --region=us-central1 --registry=esp-test --public-key path=ec_public.pem,type=es256
 
 ### Clone the mqtt example
 
