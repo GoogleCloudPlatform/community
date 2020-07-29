@@ -93,7 +93,7 @@ this tutorial.
 9. Click **Create** to save your build trigger.
 
 Now, create a `cloudbuild.yaml` file with the following contents in your
-repository. Note that you can add files to your repository on thr GitHub website or
+repository. Note that you can add files to your repository on the GitHub website or
 by cloning the repository on your development machine:
 
 ```yaml
