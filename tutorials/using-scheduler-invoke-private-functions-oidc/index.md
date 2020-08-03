@@ -3,7 +3,7 @@ title: Use Cloud Scheduler to invoke private Cloud Functions with OIDC
 description: Learn how to use OpenID Connect to invoke private Cloud Functions periodically with Cloud Scheduler, with no Pub/Sub required.
 author: glasnt,dinagraves
 tags: Python 
-date_published: 2020-07-20
+date_published: 2020-08-07
 ---
 
 This tutorial shows you how to use Cloud Scheduler to invoke a private Cloud Function using HTTP targets and triggers and OIDC authentication.
@@ -180,7 +180,7 @@ In the "Triggering event" field, enter valid JSON that contains a name key and a
 
 Press the "Test the function" button. Confirm the result is "Hello testing event!".
 
-![Successfully triggered a Cloud Run function in the Testing tab](testing-cloud-functions.png)
+![Successfully triggered a Cloud Run function in the Testing tab](https://storage.googleapis.com/gcp-community/tutorials/using-scheduler-invoke-private-functions-oidc/testing-cloud-functions.png)
 
 ### Creating a scheduled job
 
