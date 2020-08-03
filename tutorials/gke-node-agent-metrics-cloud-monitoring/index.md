@@ -3,7 +3,7 @@ title: Collect additional GKE node metrics using collectd with Cloud Monitoring
 description: Learn how to deploy the Cloud Monitoring agent on GKE nodes to expose additional VM metrics on GKE nodes.
 author: aaronsutton,echiugoog
 tags: host metrics
-date_published: 2020-07-20
+date_published: 2020-08-07
 ---
 
 Only a few metrics are available by default on GKE nodes. You can deploy a Cloud Monitoring agent to expose additional metrics for added visibility into the health of your GKE nodes.
@@ -42,7 +42,8 @@ needs.
 
         git clone https://github.com/GoogleCloudPlatform/community.git
 
-    The files for this tutorial are in the `/tutorials/gke-node-agent-metrics-cloud-monitoring` directory.
+    The files for this tutorial are in the
+    [`/tutorials/gke-node-agent-metrics-cloud-monitoring`](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/gke-node-agent-metrics-cloud-monitoring) directory.
 
 ## Build the container iamge
 
@@ -72,27 +73,30 @@ needs.
 
         kubectl get ds
 
-    The output should be similar to:
+    The output should be similar to the following, where [IMAGE_NAME] is the name of your container image:
 
         NAME           DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
         [IMAGE_NAME]   1         1         1       1            1           <none>          29s
 
-    Where the name will be the name given to your container image.
-
 ## (optional) Customize the Cloud Monitoring agent
 
-* Edit `collectd.conf` to expose additional metrics.
-* Rebuild the container image and redeploy the daemonset. Add in any new dependencies that may be required for metric collection.
+1.  Edit `collectd.conf` to expose additional metrics.
+1.  Add any new dependencies required for metric collection.
+1.  Rebuild the container image and redeploy the daemonset. 
 
 ## Viewing the metrics
 
-After deploying the daemonset, the additional metrics should begin to flow to Cloud Monitoring automatically. Click on the "Monitoring" link from the Google Cloud Console menu found in the top left corner of the interface. If this is the first time you've used Cloud Monitoring, it may take a few seconds to setup the workspace.
+After deploying the daemonset, the additional metrics should begin to flow to Cloud Monitoring automatically. To view the metrics, go to the
+[**Monitoring**](https://console.cloud.google.com/monitoring) page in the Cloud Console.
 
-One way of examining metrics is using the Metrics Explorer, which is accessible from the side menu within Cloud Monitoring interface. Since the new metrics being collected are GKE node metrics, they will be visible for the GCE VM instance resource type with the metric names beginning with "agent.googleapis.com", as is shown in the image below from the Metrics Explorer.
+One way of examining metrics is using the [Metrics Explorer](https://console.cloud.google.com/monitoring/metrics-explorer). Because the new metrics being
+collected are GKE node metrics, they are visible for the Compute Engine VM instance resource type with the metric names beginning with `agent.googleapis.com`:
 
 ![Metrics explorer](https://storage.googleapis.com/gcp-community/tutorials/gke-node-agent-metrics-cloud-monitoring/sd-explorer.png)
 
-Taking a more detailed look at the node itself within Cloud Monitoring, you will be able to see the additional metrics graphed within the VM instance dashboard agent tab. This view is accessible by clicking on "Dashboards" from the side menu, followed by "GCE VM Instances", and finally clicking the instance you're interested in viewing metrics for.
+If you take a detailed look at the node itself within Cloud Monitoring, you can see the additional metrics graphed within the VM instance dashboard agent tab. 
+Go to the [**Dashboards**](https://console.cloud.google.com/monitoring/dashboards) page, and then click **VM Instances** and the instance you're interested in
+viewing metrics for.
 
 ![Monitoring agent metrics](https://storage.googleapis.com/gcp-community/tutorials/gke-node-agent-metrics-cloud-monitoring/sd-agent-metrics.png)
 
@@ -102,6 +106,6 @@ Taking a more detailed look at the node itself within Cloud Monitoring, you will
 
         kubectl delete ds [IMAGE_NAME]
 
-1. Delete the cluster you created from the *Before you begin* section:
+1. Delete the cluster you created in the **Before you begin** section:
 
         gcloud container clusters delete [CLUSTER_NAME]
