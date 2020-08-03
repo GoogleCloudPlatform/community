@@ -90,11 +90,11 @@ After deploying the daemonset, the additional metrics should begin to flow to Cl
 
 One way of examining metrics is using the Metrics Explorer, which is accessible from the side menu within Cloud Monitoring interface. Since the new metrics being collected are GKE node metrics, they will be visible for the GCE VM instance resource type with the metric names beginning with "agent.googleapis.com", as is shown in the image below from the Metrics Explorer.
 
-![Metrics explorer](./images/sd-explorer.png)
+![Metrics explorer](https://storage.googleapis.com/gcp-community/tutorials/gke-node-agent-metrics-cloud-monitoring/sd-explorer.png)
 
 Taking a more detailed look at the node itself within Cloud Monitoring, you will be able to see the additional metrics graphed within the VM instance dashboard agent tab. This view is accessible by clicking on "Dashboards" from the side menu, followed by "GCE VM Instances", and finally clicking the instance you're interested in viewing metrics for.
 
-![Monitoring agent metrics](./images/sd-agent-metrics.png)
+![Monitoring agent metrics](https://storage.googleapis.com/gcp-community/tutorials/gke-node-agent-metrics-cloud-monitoring/sd-agent-metrics.png)
 
 ## Cleanup
 
