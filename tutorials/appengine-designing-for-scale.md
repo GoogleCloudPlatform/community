@@ -54,10 +54,7 @@ This is known as contention.
 [errors]: https://cloud.google.com/appengine/articles/handling_datastore_errors
 
 Datastore write rates to a single entity group can exceed the one per second
-limit so load tests might not show this problem. Some suggestions for designing
-your application to reduce write rates on entity groups are in the [Datastore contention article][contention].
-
-[contention]: https://cloud.google.com/appengine/articles/scaling/contention
+limit so load tests might not show this problem.
 
 ## Avoid high write rates to Datastore keys that are lexicographically close
 
