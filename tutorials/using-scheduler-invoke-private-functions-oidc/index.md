@@ -17,7 +17,7 @@ To use Cloud Pub/Sub as an intermediary, see the [Using Pub/Sub to trigger a Clo
 
 In this tutorial, you do the following:
 
-*   Create a Service Account with limited access.
+*   Create a service account with limited access.
 *   Create a Cloud Function that triggers on HTTP.
 *   Create a Cloud Scheduler job that targets an HTTP endpoint.
 *   Run the Cloud Scheduler job. 
@@ -31,22 +31,18 @@ This tutorial uses billable components of Google Cloud, including the following:
 *   [Cloud Scheduler](https://cloud.google.com/scheduler)
 *   [App Engine](https://cloud.google.com/appengine/docs/flexible/python)
 
-Cloud Scheduler uses App Engine cron jobs, so Cloud Scheduler requires App Engine enablement and configuration.
-
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
-This tutorial can be completed using the Cloud Console, [Cloud Shell](https://cloud.google.com/shell/docs/launching-cloud-shell), or through a
+You can run the commands in this tutorial in [Cloud Shell](https://cloud.google.com/shell/docs/launching-cloud-shell) or with a
 [local installation of gcloud](https://cloud.google.com/sdk/docs). 
 
 We recommend that you create a new Google Cloud project for this tutorial, so that all created resources can be easily deleted when the tutorial is complete.
 
 1.  In the Cloud Console, on the project selector page, create a Cloud project. For details,
     see [Create a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
-1.  Make sure that billing is enabled for your project.
-
-    [Learn how to confirm billing is enabled for your project.](https://cloud.google.com/billing/docs/how-to/modify-project)
+1.  Make sure that billing is enabled for your project. For details, see [Confirm billing is enabled](https://cloud.google.com/billing/docs/how-to/modify-project#confirm_billing_is_enabled_on_a_project).
 
 1.  Enable the Cloud Scheduler and Cloud Functions APIs: 
 
@@ -55,6 +51,8 @@ We recommend that you create a new Google Cloud project for this tutorial, so th
 1.  Initialize an App Engine environment and choose its region by running the following command and following the prompts:
 
         gcloud app create --project=[YOUR_PROJECT_ID]
+        
+    Cloud Scheduler uses App Engine cron jobs, so Cloud Scheduler requires App Engine enablement and configuration.
 
 ## Get the source code
 
@@ -96,7 +94,7 @@ cases, such as the following:
 
 ## Test the function locally
 
-This function can be tested on your local machine by using [Functions Framework](https://github.com/GoogleCloudPlatform/functions-framework-python). 
+This function can be tested on your local machine by using the [Functions Framework](https://github.com/GoogleCloudPlatform/functions-framework-python). 
 
 1.  Install the Function Frameworks package on your machine:
 
@@ -116,7 +114,7 @@ This function can be tested on your local machine by using [Functions Framework]
 
         Hello, local function!
 
-    The terminal running functions-framework will show the logs for the invocation:
+    The terminal running the Functions Framework will show the logs for the invocation:
 
         [2020-00-00 00:00:00 +0000] [23541] [INFO] Starting gunicorn 20.0.4
         [2020-00-00 00:00:00 +0000] [23541] [INFO] Listening at: http://0.0.0.0:8080 (23451)
@@ -235,7 +233,7 @@ You should see something similar to the following:
 
     LEVEL  NAME         EXECUTION_ID  TIME_UTC                 LOG
     D      hello_world  rndmid64qasr  2020-00-00 00:00:00.000  Function execution started
-    I      hello_world  rndmid64qasr  2020-00-00 00:00:00.000  Hello Scheduler!
+    I      hello_world  rndmid64qasr  2020-00-00 00:00:00.000  Hello, Scheduler!
     D      hello_world  rndmid64qasr  2020-00-00 00:00:00.000  Function execution took 16 ms, finished with status code: 200
 
 Checking the logs again each hour should show that the scheduled event occurred and successfully ran. 
