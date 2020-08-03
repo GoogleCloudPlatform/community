@@ -6,7 +6,8 @@ tags: host metrics
 date_published: 2020-08-07
 ---
 
-Only a few metrics are available by default on GKE nodes. You can deploy a Cloud Monitoring agent to expose additional metrics for added visibility into the health of your GKE nodes.
+Only a few metrics are available by default on GKE nodes. You can deploy a Cloud Monitoring agent to expose additional metrics for added visibility into the 
+health of your GKE nodes.
 
 ## Objectives
 
