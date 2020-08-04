@@ -92,7 +92,7 @@ In this section, you create a project, download the tutorial files, and create a
 1.  Create the cluster:
 
         gcloud beta container clusters create $CLUSTER \
-            --identity-namespace=$PROJECT.svc.id.goog
+            --workload-pool=$PROJECT.svc.id.goog
 
     The `identity-namespace` flag is part of the enablement of the Workload Identity feature. Currently only the single,
     project-level namespace is supported.
@@ -371,7 +371,7 @@ For information, see
 
 1.  Delete the client:
 
-        kubectl delete -k client/
+        kubectl delete -k client/k-project/
 
 1.  Delete the cluster:
 
