@@ -3,7 +3,7 @@ title: Getting started with IoT Core Embedded C SDK
 description: Learn how to connect to IoT Core and send commands and telemetry from the device with the Embedded C SDK.
 author: galz10
 tags: Internet of Things, ESP32, ESP-IDF
-date_published: 2020-07-31
+date_published: 2020-08-07
 ---
 
 This tutorial shows how to use the IoT Core Embedded C library. In this tutorial, you create an IoT Core project that receives telemetry data from a 
@@ -64,7 +64,7 @@ pip install cmake
 When all of the dependencies are installed, download and configure ESP-IDF:
 
 1.  Download the [ESP-IDF](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension) extension for Visual Studio Code.
-1.  Select your git and python version.
+1.  Select your Git and Python version.
 1.  Select the location where you want to download ESP-IDF.
 1.  Click the download button to download the ESP-IDF tools.
 1.  Run the tool check to verify your installation.
@@ -74,9 +74,7 @@ When all of the dependencies are installed, download and configure ESP-IDF:
 1.  When ESP-IDF is completely installed, try the `hello-world` example to see if everything is working properly. 
 1.  Put the command to initialize ESP-IDF into an alias in your `$HOME/.profile` file (or in `$HOME/.bash_profile` if you don't have a profile dotfile):
 
-        ```bash
         alias get_idf='. $HOME/esp/esp-idf/export.sh'
-        ```
 
     With this alias, you can just call `get_idf` to initialize ESP-IDF.
 
@@ -99,9 +97,8 @@ To set up your Google Cloud project, you can use the `gcloud` command-line inter
 1.  Download and install the [Cloud SDK](https://cloud.google.com/sdk).  
 1.  Generate elliptic curve (EC) device credentials for authenticating the device when it’s trying to connect with the cloud:
 
-        ```bash
         openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem openssl ec -in ec_private.pem -pubout -out ec_public.pem 
-        ```
+
      You'll need to know where these files are later, so make sure that they’re saved somewhere you can access.
      
 1.  Make sure that `gcloud` is up to date:
@@ -118,36 +115,37 @@ To set up your Google Cloud project, you can use the `gcloud` command-line inter
         gcloud iot registries create esp-test --region=us-central1 --event-notification-config=topic=temperature
         gcloud iot devices create test-dev --region=us-central1 --registry=esp-test --public-key path=ec_public.pem,type=es256
 
-### Clone the mqtt example
+### Clone the MQTT example
 
-You will need to clone the repository to get the example code. In your terminal, go to a location you want to store the cloned repo and run the following command:
+To get the MQTT example code, you clone the repository that contains it. 
 
-```bash
-git clone https://github.com/espressif/esp-google-iot --recurse-submodules
-```
+In your terminal, go to a location where you want to store the cloned repository, and run the following command:
 
-Recurse submodules is important because you will need the IoT Core Embedded C SDK which is included in the repository as a submodule.
+    git clone https://github.com/espressif/esp-google-iot --recurse-submodules
+
+The `--recurse-submodules` is important because you need the IoT Core Embedded C SDK, which is included in the repository as a submodule.
 
 ## Connect an ESP32 device to IoT Core
 
-The mqtt_task function sets up the parameters needed to connect to the cloud. It uses the private key created earlier in `iotc_connect_private_key_data`. The data is applied to create the jwt to connect to IoT Core, as highlighted in the following code.
+The `mqtt_task` function sets up the parameters needed to connect to the cloud. It uses the private key created in `iotc_connect_private_key_data`. The data is
+applied to create the JWT (JSON web token) to connect to IoT Core, as shown in the following code:
 
-```c
-iotc_crypto_key_data_t iotc_connect_private_key_data;
-iotc_connect_private_key_data.crypto_key_signature_algorithm = IOTC_CRYPTO_KEY_SIGNATURE_ALGORITHM_ES256;
-iotc_connect_private_key_data.crypto_key_union_type = IOTC_CRYPTO_KEY_UNION_TYPE_PEM; iotc_connect_private_key_data.crypto_key_union.key_pem.key = (char *) ec_pv_key_start;
-```
+    iotc_crypto_key_data_t iotc_connect_private_key_data;
+    iotc_connect_private_key_data.crypto_key_signature_algorithm = IOTC_CRYPTO_KEY_SIGNATURE_ALGORITHM_ES256;
+    iotc_connect_private_key_data.crypto_key_union_type = IOTC_CRYPTO_KEY_UNION_TYPE_PEM; iotc_connect_private_key_data.crypto_key_union.key_pem.key = (char *) ec_pv_key_start;
 
-With the private key as data, you can initialize iotc by calling `iotc_inilialize` and checking that there’s no error. If everything is working properly you're ready to create the jwt and finally connect to IoT Core.
+With the private key as data, you can initialize IoT Core by calling `iotc_inilialize` and checking that there’s no error. If everything is working properly,
+you're ready to create the JWT and connect to IoT Core.
 
-To connect our ESP32 to Cloud IoT Core use `iotc_connect` which is from the IoT Core Embedded C SDK. The function takes multiple parameters you need to provide the following:
+To connect your ESP32 to Cloud IoT Core, use `iotc_connect`, which is from the IoT Core Embedded C SDK. You need to provide the following parameters to the 
+function:
 
- - Username (usually null)
- - Password ( jwt )
- - Client_id ( device path)
- - Connection_timeout
- - keepalive_timeout
- - Client_callback
+ - Username (usually `NULL`)
+ - Password (`jwt`)
+ - Client ID (`device path`)
+ - `connection_timeout`
+ - `keepalive_timeout`
+ - Client callback
 
 ```c
 static void mqtt_task(void *pvParameters) {
@@ -188,20 +186,22 @@ vTaskDelete(NULL);
 }
 ```
 
-If you have any questions on what each function does the [IoT Device SDK](https://googlecloudplatform.github.io/iot-device-sdk-embedded-c/api/html/d9/d22/iotc_8h.html) docs is a great resource.
+If you have any questions on what each function does, the 
+[Google Cloud IoT device SDK documentation](https://googlecloudplatform.github.io/iot-device-sdk-embedded-c/api/html/d9/d22/iotc_8h.html) is a great resource.
 
-After successfully connecting to the cloud you will need to subscribe to configuration and command topic of the device. You do this by calling `iotc_subscribe` function, and you must include :
+After successfully connecting to the cloud, you need to subscribe to the configuration and command topic of the device. You do this by calling the
+`iotc_subscribe` function, and you must include the following:
 
- - Topic command ( includes topic and device id )
+ - Topic command (includes topic and device ID)
  - QoS
  - Callback function
 
 ## Publish telemetry data from the ESP32 device to IoT Core
 
-To publish telemetry to IoT Core we use `iotc_publish` which must include the topic name, message and QoS inorder to send the message.
+To publish telemetry to IoT Core, you use `iotc_publish`, which must include the topic name, message, and QoS in order to send the message.
 
-The code below sets up the topic from the device id and event topic and then publishes the message.
-You can find this code in the mqtt-example.c file on line 35.
+The code below sets up the topic from the device ID and event topic and then publishes the message. You can find this code in the `mqtt-example.c` file on
+line 35.
 
 ```c
 void publish_telemetry_event(iotc_context_handle_t context_handle, iotc_timed_task_handle_t timed_task, void *user_data) {
@@ -220,7 +220,8 @@ free(publish_topic); free(publish_message);
 
 ## Send commands from IoT Core to the ESP32 device
 
-The callback function is invoked when the device receives a message from the cloud. This is where the code turns the led on and off based on incoming messages.You can find this code in the mqtt-example.c file on line 50.
+The callback function is invoked when the device receives a message from the cloud. This is where the code turns the LED on and off based on incoming 
+messages. You can find this code in the `mqtt-example.c` file on line 50.
 
 ```c
 void iotc_mqttlogic_subscribe_callback(iotc_context_handle_t in_context_handle, iotc_sub_call_type_t call_type, const iotc_sub_call_params_t *const params, iotc_state_t state, void *user_data) {
@@ -258,56 +259,62 @@ void iotc_mqttlogic_subscribe_callback(iotc_context_handle_t in_context_handle, 
 
 ## Run the sample
 
-**To connect to Cloud:**
+### Connect to cloud
 
-1. Use menu configuration with `make`
+1.  Use menu configuration with `make`:
 
-```c
-cd /examples/main/ make menuconfig
-```
+        cd /examples/main/
+        make menuconfig
 
-1. Set up your WiFi and LED gpio pin , navigate to example configuration
+1.  Set up your WiFi and LED GPIO pin by navigating to the example configuration as shown:
 
-![Wifi Setup](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/wifisetup.gif)
+    ![Wifi Setup](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/wifisetup.gif)
 
-1. Set up your Google Cloud project information, navigate to component configuration and then to IoT Core Configuration
+1.  Set up your Google Cloud project information by navigating to component configuration and then to the IoT Core configuration as shown:
 
-![Cloud Project Setup](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/CloudSetup.gif)
+    ![Cloud Project Setup](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/CloudSetup.gif)
 
-1. Locate your ec_private.pem file and copy its contents into the private.pem file in the certs folder located at examples/main/certs
-1. Run `idf.py build` to build sources into firmware
-1. Run `idf.py -p /dev/cu.usbserial-1440 flash` passing the path to your tty device to flash the firmware onto the device
-1. Run `idf.py -p /dev/cu.usbserial-1440 monitor` passing the path to your tty device to monitor the device output
+1.  Locate your `ec_private.pem` file and copy its contents into the `private.pem` file in the `examples/main/certs` folder.
+1.  Build sources into firmware:
 
-If you make changes to the code, you will need to rebuild the program again before calling flash
+        idf.py build
 
-You should now see your device connecting to your registry on IoT Core. After the device connects, you can send commands from IoT Core or view the data that is being submitted by the device.
+1.  Flash the firmware onto the device, passing the path to your TTY device:
 
-If you want to exit the serial monitor use Ctrl + ]
+        idf.py -p /dev/cu.usbserial-1440 flash
 
-**To send commands:**
+1.  Monitor the device output, passing the path to your TTY device:
 
-1. Navigate to your registry and then to the device
-1. Click on the send command button at the top
-1. Send the following commands
+        idf.py -p /dev/cu.usbserial-1440 monitor
 
-```c
-light:1 for light on
-light:0 for light off
-```
+You should see your device connecting to your registry on IoT Core. After the device connects, you can send commands from IoT Core or view the data that is
+submitted by the device.
 
-Note: if the board you're using has the GPIO pin set to pulldown, setting this value to 1 will turn the light off.
+To exit the serial monitor, press `Ctrl + ]`.
 
-![Send Command](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/command.jpg)
+If you make changes to the code, you will need to rebuild the program again before calling the `flash` command.
 
-**To view telemetry data:**
+### Send commands
 
-1. Navigate to your registry
-1. Click on the PubSub topic
-1. Click on the PubSub subscription
-1. Click on view message at the top and pull your messages
+1.  Navigate to your registry and then to the device.
+1.  Click the **Send command** button at the top.
+1.  Send the following commands:
 
-![Blinky](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/device.jpg)
+        light:1 for light on
+        light:0 for light off
+
+    If the board you're using has the GPIO pin set to pulldown, setting this value to `1` will turn the light off.
+
+    ![Send Command](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/command.jpg)
+
+### View telemetry data
+
+1.  Navigate to your registry.
+1.  Click the Pub/Sub topic.
+1.  Click the Pub/Sub subscription.
+1.  Click **View message** at the top and pull your messages.
+
+    ![Blinky](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/device.jpg)
 
 ## Next steps
 
