@@ -186,11 +186,7 @@ public class DlpDataCatalogTagsTutorial {
             continue;
           } else if (tableName == null
               || tableName.equalsIgnoreCase("")
-              || currentTable.equalsIgnoreCase(tableName)
-              || (dbType.equalsIgnoreCase("bigquery")
-              && dbName != null
-              && !dbName.equalsIgnoreCase("")
-              && dbName.equalsIgnoreCase(currentDatabaseName))) {
+              || currentTable.equalsIgnoreCase(tableName)) {
 
             countTablesScanned++;
 
@@ -546,8 +542,9 @@ public class DlpDataCatalogTagsTutorial {
       }
       java.util.Hashtable<String, Integer> tempCol = columnHash.get(columnName);
 
-      if (getTopInfoTypeMin(tempCol) >= minThreshold) {
+      int returnedThreshold = getTopInfoTypeMin(tempCol);
 
+      if (returnedThreshold >= minThreshold) {
         try {
           String topInfoType = getTopInfoType(tempCol);
           String tagTemplateID = "dlp_tag_template_v2_column";
@@ -773,10 +770,25 @@ public class DlpDataCatalogTagsTutorial {
           System.out.println("Error writing findings to DC ");
           err.printStackTrace();
         }
+      } else {
+        if (VERBOSE_OUTPUT) {
+          System.out.println(">> Findings for ["
+              + columnName + "] has threshold " + returnedThreshold
+              + " when minimum threshold is " + minThreshold
+          );
+        }
       }
     }
     try {
-      batchRequest.execute();
+      if (batchRequest.size() > 0) {
+        batchRequest.execute();
+      } else {
+        if (VERBOSE_OUTPUT) {
+          System.out.println(">> Not creating Data Catalog Tags for "
+              + "[" + dbName + "]" + "[" + theTable + "]"
+          );
+        }
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }

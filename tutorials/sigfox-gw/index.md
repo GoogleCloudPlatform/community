@@ -235,7 +235,7 @@ The integration has a Python script for managing the Sigfox backend callbacks' c
 1. Set the value of `api_password` to your Sigfox API user **Password** string.
 1. Set the value of `id` to your Sigfox device type **Id** string.
 1. Set the value of `cf_data` to your `callback_data` Cloud Function Trigger URL. Example: `https://region-project.cloudfunctions.net/callback_data`
-1. Set the value of `cf_data` to your `callback_service` Cloud Function Trigger URL. Example: `https://region-project.cloudfunctions.net/callback_service`
+1. Set the value of `cf_service` to your `callback_service` Cloud Function Trigger URL. Example: `https://region-project.cloudfunctions.net/callback_service`
 1. Set the value of `cf_username` to the value of the `HTTP_USER` parameter in `sigfox-gw/cf/.env.yaml`.
 1. Set the value of `cf_password` to the value of the `HTTP_PASSWORD` parameter in `sigfox-gw/cf/.env.yaml`.
 

@@ -1,5 +1,5 @@
 ---
-title: Connecting DBeaver to BigQuery through ODBC
+title: Connect DBeaver to BigQuery through ODBC
 description: Learn how to use ODBC drivers to access and modify BigQuery data from DBeaver.
 author: julzsam
 tags: BigQuery, DBeaver, ODBC
