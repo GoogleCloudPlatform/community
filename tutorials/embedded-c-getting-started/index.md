@@ -61,9 +61,8 @@ pip install cmake
 
 ### Install and configure ESP-IDF
 
-When all of the dependencies are installed, download and configure ESP-IDF.
-
-Follow the steps in [Get Started](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) to download ESP-IDF.
+When all of the dependencies are installed, follow the steps in [Get Started](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) to 
+download and configure ESP-IDF.
 
 ### Set up the ESP32 device
 
@@ -250,11 +249,13 @@ void iotc_mqttlogic_subscribe_callback(iotc_context_handle_t in_context_handle, 
         cd /examples/main/
         make menuconfig
 
-1.  Set up your WiFi and LED GPIO pin by navigating to the example configuration and fill the SSID, PASSWORD, and BLINK GPIO with your information:
+1.  Set up your WiFi and LED GPIO pin by navigating to the example configuration and filling in SSID, PASSWORD, and BLINK GPIO with your information, as shown
+    here:
 
     ![Wifi Setup](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/wifisetup.gif)
 
-1.  Set up your Google Cloud project information by navigating to component configuration -> Google IoT Core Configuration and fill the PROJECT ID, REGISTRY ID, LOCATION, DEVICE ID with your project information:
+1.  Set up your Google Cloud project information by navigating to **Component configuration** > **Google IoT Core Configuration** and filling in PROJECT ID,
+    REGISTRY ID, LOCATION, and DEVICE ID with your project information, as shown here:
 
     ![Cloud Project Setup](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/CloudSetup.gif)
 
