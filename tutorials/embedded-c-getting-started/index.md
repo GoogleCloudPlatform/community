@@ -61,25 +61,9 @@ pip install cmake
 
 ### Install and configure ESP-IDF
 
-When all of the dependencies are installed, download and configure ESP-IDF:
+When all of the dependencies are installed, download and configure ESP-IDF.
 
-1.  Download the [ESP-IDF](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension) extension for Visual Studio Code.
-1.  Select your Git and Python version.
-1.  Select the location where you want to download ESP-IDF.
-1.  Click the download button to download the ESP-IDF tools.
-1.  Run the tool check to verify your installation.
-
-    If the tool check verification succeeds, you’re ready to continue.
-
-1.  When ESP-IDF is completely installed, try the `hello-world` example to see if everything is working properly. 
-1.  Put the command to initialize ESP-IDF into an alias in your `$HOME/.profile` file (or in `$HOME/.bash_profile` if you don't have a profile dotfile):
-
-        alias get_idf='. $HOME/esp/esp-idf/export.sh'
-
-    With this alias, you can just call `get_idf` to initialize ESP-IDF.
-
-For troubleshooting information, see the [Get Started](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) page of the ESP-IDF 
-documentation.
+Follow the steps in [Get Started](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) to download ESP-IDF.
 
 ### Set up the ESP32 device
 
@@ -266,11 +250,11 @@ void iotc_mqttlogic_subscribe_callback(iotc_context_handle_t in_context_handle, 
         cd /examples/main/
         make menuconfig
 
-1.  Set up your WiFi and LED GPIO pin by navigating to the example configuration as shown:
+1.  Set up your WiFi and LED GPIO pin by navigating to the example configuration and fill the SSID, PASSWORD, and BLINK GPIO with your information:
 
     ![Wifi Setup](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/wifisetup.gif)
 
-1.  Set up your Google Cloud project information by navigating to component configuration and then to the IoT Core configuration as shown:
+1.  Set up your Google Cloud project information by navigating to component configuration -> Google IoT Core Configuration and fill the PROJECT ID, REGISTRY ID, LOCATION, DEVICE ID with your project information:
 
     ![Cloud Project Setup](https://storage.googleapis.com/gcp-community/tutorials/embedded-c-getting-started/CloudSetup.gif)
 
