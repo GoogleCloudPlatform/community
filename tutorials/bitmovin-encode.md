@@ -47,29 +47,27 @@ These are the basic firewall rules, without which starting an encoding will fail
     | Source filters | Contact Bitmovin for details.         | 
     | Protocols and ports | Contact Bitmovin for details.    | 
 
-Repeat the process for the next three firewall rules:
+1.  Repeat the process for the next three firewall rules:
 
-| Field        | Value to set           | 
-| ------------- |-------------| 
-| Name | session-manager-external               | 
-| Description | For communication with the service that manages the encoding instances               | 
-
-
-
-| Field        | Value to set           | 
-| ------------- |-------------| 
-| Name | default-allow           | 
-| Description | For incoming commands (for example, pulling and starting docker containers)             | 
+    | Field        | Value to set           | 
+    | ------------- |-------------| 
+    | Name | session-manager-external               | 
+    | Description | For communication with the service that manages the encoding instances               | 
 
 
+    | Field        | Value to set           | 
+    | ------------- |-------------| 
+    | Name | default-allow           | 
+    | Description | For incoming commands (for example, pulling and starting docker containers)             | 
 
-| Field        | Value to set           | 
-| ------------- |-------------| 
-| Name | default-allow-internal             | 
-| Description | For communication between the session manager VM instance and its instance manager VM instances    | 
+
+    | Field        | Value to set           | 
+    | ------------- |-------------| 
+    | Name | default-allow-internal             | 
+    | Description | For communication between the session manager VM instance and its instance manager VM instances    | 
 
 
-## Set Up firewall rules for live streams
+## Set up firewall rules for live streams
 
 Additional firewall rules are required for encoding RTMP, SRT, and Zixi live streams. 
 
@@ -143,8 +141,8 @@ service account details so that your account has access to these machine images.
 
 ## Run encoding jobs
 
-Just like using the Bitmovin managed encoding service, use Bitmovin API client SDKs to submit encoding jobs. The only difference is that you should specify
-the new infrastructure instead of public cloud regions. Here is a Python snippet demonstrating this:
+Just like using the Bitmovin managed encoding service, you can use the Bitmovin API client SDKs to submit encoding jobs. The only difference is that you should 
+specify the new infrastructure instead of public cloud regions. Here is a Python snippet demonstrating this:
 
     infra_id = ‘122c1111-9273-4d5f-a3fb-36100e90c709’ # Infrastructure object created
     infra_region = CloudRegion.GOOGLE_EUROPE_WEST_1# GCP region of the GPP-connect setup
@@ -162,8 +160,8 @@ increases for the following quotas in your regions:
 | Quota name        | Limit to request           | 
 | ------------- |-------------| 
 | In-use IP addresses | (maximum number of encodings) * (maximum number of instances per encoding)              | 
-| CPUs | (maximum number of encodings) * 8  ) |
-| Preemptible CPUs | (maximum number of encodings) * (maximum number of instances per encoding) * 8 ) |
+| CPUs | (maximum number of encodings) * 8 |
+| Preemptible CPUs | (maximum number of encodings) * (maximum number of instances per encoding) * 8 |
 | Persistent Disk SSD (GB) | (maximum number of encodings) * 0.5 + ((number of instances) * (number of encodings)) * 0.05  |
 
 The values above assume 8-core instances. If your use case requires instances with a different number of cores, contact Bitmovin.
