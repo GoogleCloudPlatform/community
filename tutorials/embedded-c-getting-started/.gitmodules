@@ -1,0 +1,3 @@
+[submodule "iot-device-sdk-embedded-c"]
+	path = iot-device-sdk-embedded-c
+	url = https://github.com/GoogleCloudPlatform/iot-device-sdk-embedded-c.git

@@ -48,7 +48,9 @@ def SendCommand(sock, message, log=True):
     # Receive response
     if log:
         print('waiting for response', file=sys.stderr)
-        response, _ = sock.recvfrom(4096)
+
+    response, _ = sock.recvfrom(4096)
+
     if log:
         print('received: "{}"'.format(response), file=sys.stderr)
 

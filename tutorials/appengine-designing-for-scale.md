@@ -54,10 +54,7 @@ This is known as contention.
 [errors]: https://cloud.google.com/appengine/articles/handling_datastore_errors
 
 Datastore write rates to a single entity group can exceed the one per second
-limit so load tests might not show this problem. Some suggestions for designing
-your application to reduce write rates on entity groups are in the [Datastore contention article][contention].
-
-[contention]: https://cloud.google.com/appengine/articles/scaling/contention
+limit so load tests might not show this problem.
 
 ## Avoid high write rates to Datastore keys that are lexicographically close
 
@@ -158,7 +155,7 @@ performance settings will, in most cases, enable the lowest possible latency. A
 trade-off for low latency is usually higher costs due to having additional idle
 instances that can handle temporary spikes in load.
 
-[auto_scaling]: https://cloud.google.com/appengine/docs/python/an-overview-of-app-engine#Python_Instance_scaling_and_class
+[auto_scaling]: https://cloud.google.com/appengine/docs/standard/python/how-instances-are-managed#scaling_types
 
 You should set [min_idle_instances][idle] if you want to minimize latency,
 particularly if you expect sudden spikes in traffic. The number of idle
