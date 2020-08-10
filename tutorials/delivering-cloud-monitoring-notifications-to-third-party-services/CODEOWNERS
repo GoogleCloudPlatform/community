@@ -1,0 +1,6 @@
+# See https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners
+
+# The default owner, unless a subsequent rule takes precedence.
+*       @stossmt @jarek-dudek
+
+# Add more specific rules here.
