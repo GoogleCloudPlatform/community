@@ -96,7 +96,7 @@ When your Docker file is built and pushed to Container Registry, you are done wi
 
 1.  Start a cluster:
 
-        $ gcloud container clusters create k8s-ml-cluster --num-nodes 3 --machine-type g1-small --zone us-west1b
+        $ gcloud container clusters create k8s-ml-cluster --num-nodes 3 --machine-type g1-small --zone us-west1-b
 
     You may need to wait a moment for the cluster to be created.
 
