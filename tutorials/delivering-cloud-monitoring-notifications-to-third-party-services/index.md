@@ -1,4 +1,10 @@
-# Delivering Cloud Monitoring Notifications to Third-Party Services using Pub/Sub, Cloud Run, Terraform, and GitHub
+---
+title: Delivering Cloud Monitoring Notifications to Third-Party Services using Pub/Sub, Cloud Run, Terraform, and GitHub
+description: Learn how to forward Cloud alerts to third-party applications.
+author: aprilxie, rhamb
+tags: Cloud Monitoring, Cloud alerting, Cloud Run, Pub/Sub
+date_published: 2020-08-10
+---
 
 This tutorial is for GCP customers who want to deliver [Cloud Monitoring alerts](https://cloud.google.com/monitoring/alerts) to third-party services that don’t have [supported notification channels](https://cloud.google.com/monitoring/support/notification-options).
 
