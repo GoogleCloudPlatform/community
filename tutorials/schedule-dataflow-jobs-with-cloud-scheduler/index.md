@@ -1,10 +1,18 @@
-# Schedule Your Dataflow Batch Jobs With Cloud Scheduler
+---
+title: Schedule Your Dataflow Batch Jobs With Cloud Scheduler
+description: Learn how to set up Cloud Scheduler to trigger your Dataflow batch jobs.
+author: zhongchen
+tags: Cloud Dataflow, Cloud Scheduler 
+date_published: 2020-08-11
+---
+
+ In this tutorial, you will learn how to set up a [Cloud Scheduler](https://cloud.google.com/scheduler/) job to trigger to your 
+ Dataflow batch jobs.
+ You can find all the code in this [repo](https://github.com/zhongchen/GCP-Demo/tree/master/demos/scheduler-dataflow-demo).
 
 [Cloud Dataflow](https://cloud.google.com/dataflow) is a managed service for handling 
 both streaming and batch jobs. For your streaming jobs, you just need to launch them once without worrying about operating them afterwards. 
 However, for your batch jobs, you probably need to trigger them based on certain conditions.
-
-In the post, I will show you how you can leverage [cloud scheduler](https://cloud.google.com/scheduler/) to schedule your Dataflow batch jobs. You can find all the code in this [repo](https://github.com/zhongchen/GCP-Demo/tree/master/demos/scheduler-dataflow-demo).
 
 First things first, to be able to run your Dataflow jobs on a regular basis, you need to build your Dataflow templates. 
 Follow the [instructions](https://cloud.google.com/dataflow/docs/guides/templates/creating-templates) to create your templates and save them in a GCS bucket.
