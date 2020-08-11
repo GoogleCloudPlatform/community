@@ -157,13 +157,13 @@ for more information.
     fail, do not proceed further until you have fixed your Pi's network
     configuration.
 1.  For Wi-fi connectivity only - check if your Wi-fi adapter has power saving
-    enabled. We have to disable Wi-fi power saving, or it will give you sporadic
+    enabled. You may wish to disable Wi-fi power saving, or it might give you sporadic
     network connectivity issues later on. Check the current state by executing:
 
         iwconfig
 
     Look for "Power Management" under the `wlan0` interface. If you see
-    `Power Management:on`, then we have to disable it.
+    `Power Management:on`, then you have to disable it.
 
 1.  On Pi 3 model B/B+, disable `wlan0` Wi-fi power management by configuring
     `/etc/network/interfaces`. Execute:
@@ -267,21 +267,21 @@ steps:
     2. Comment out the following lines with: **#** as shown here:
 
 
-        #pcm.front cards.pcm.front
-        #pcm.rear cards.pcm.rear
-        #pcm.center_lfe cards.pcm.center_lfe
-        #pcm.side cards.pcm.side
-        #pcm.surround21 cards.pcm.surround21
-        #pcm.surround40 cards.pcm.surround40
-        #pcm.surround41 cards.pcm.surround41
-        #pcm.surround50 cards.pcm.surround50
-        #pcm.surround51 cards.pcm.surround51
-        #pcm.surround71 cards.pcm.surround71
-        #pcm.iec958 cards.pcm.iec958
-        #pcm.spdif iec958
-        #pcm.hdmi cards.pcm.hdmi
-        #pcm.modem cards.pcm.modem
-        #pcm.phoneline cards.pcm.phoneline
+          #pcm.front cards.pcm.front
+          #pcm.rear cards.pcm.rear
+          #pcm.center_lfe cards.pcm.center_lfe
+          #pcm.side cards.pcm.side
+          #pcm.surround21 cards.pcm.surround21
+          #pcm.surround40 cards.pcm.surround40
+          #pcm.surround41 cards.pcm.surround41
+          #pcm.surround50 cards.pcm.surround50
+          #pcm.surround51 cards.pcm.surround51
+          #pcm.surround71 cards.pcm.surround71
+          #pcm.iec958 cards.pcm.iec958
+          #pcm.spdif iec958
+          #pcm.hdmi cards.pcm.hdmi
+          #pcm.modem cards.pcm.modem
+          #pcm.phoneline cards.pcm.phoneline
 
 
 ### Connect and configure a microphone
@@ -387,9 +387,6 @@ associated with the Google Cloud community tutorials:
 
         git clone https://github.com/GoogleCloudPlatform/community.git
 
-        NOTE! Googlers, use this during the review stage:
-        gcloud source repos clone ar-subs --project=solution-demo
-
 1.  Change to the tutorial directory:
 
         community/tutorials/ar-subs
@@ -414,7 +411,7 @@ associated with the Google Cloud community tutorials:
 ### Create a Service Account and JSON key
 
 Next we will create a Service Account in your GCP project, and grant sufficient
-permissions to it, so that it can use the AI services. We will also need to
+permissions to it, so that it can use the AI services. You will also need to
 download a JSON key for the Service Account. The JSON key will be used by the
 Python utilities to authenticate with the Cloud services.
 
@@ -439,7 +436,7 @@ Python utilities to authenticate with the Cloud services.
 
 Next we need to identify the device number of your USB microphone visible to
 Python. Note that the device numbering for OS sound libraries may not match
-the device numbering visible to Python apps. For this reason we need to find
+the device numbering visible to Python apps. For this reason you need to find
 the microphone device again, this time with a Python utility.
 
 1. Within the python virtual environment, execute the following command:
@@ -490,7 +487,7 @@ Headphones)`.
 
 ### Test the Media Translation API example Python client
 
-Now that your USB microphone works with Python, we can try to call the Media
+Now that your USB microphone works with Python, you can try to call the Media
 Translation API. This step will test calling the API in streaming mode, piping
 microphone audio to the service and displaying the translated live responses in
  the command line shell.
@@ -513,7 +510,7 @@ specific fonts, to correctly display output in for example Hindi and Japanese.
 
 ### Test Pygame with an HDMI display
 
-Now that the microphone is ready and the Media Translation API works,  make sure that pygame can control the connected HDMI display or projector. We can test this by running an example game included in the pygame package.
+Now that the microphone is ready and the Media Translation API works,  make sure that pygame can control the connected HDMI display or projector. You can test this by running an example game included in the pygame package.
 
 1. If you have been connected with SSH, you must now switch to the Pi's HDMI
 output console. I.e a monitor or a projector connected to the Pi's HDMI port
