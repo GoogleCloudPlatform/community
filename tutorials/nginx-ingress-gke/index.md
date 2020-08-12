@@ -179,19 +179,19 @@ Repository. You use this application as the backend for the Ingress.
 
 From the Cloud Shell, run the following command:
 
-    kubectl run hello-app --image=gcr.io/google-samples/hello-app:1.0 --port=8080
+    kubectl create deployment hello-app --image=gcr.io/google-samples/hello-app:1.0
 
 This gives the following output:
 
-    deployment "hello-app" created
+    deployment.apps/hello-app created
 
 Expose the `hello-app` Deployment as a Service by running the following command:
 
-    kubectl expose deployment hello-app
+    kubectl expose deployment hello-app --port=8080 --target-port=8080
 
 This gives the following output:
 
-    service "hello-app" exposed
+    service/hello-app exposed
 
 ## Deploying the NGINX Ingress Controller with Helm
 
@@ -286,8 +286,9 @@ for the Ingress Resource will not be defined right away (wait a few moments for 
 
 You should see the following:
 
-    NAME               HOSTS     ADDRESS   PORTS     AGE
-    ingress-resource   *                   80        `
+    NAME               HOSTS   ADDRESS   PORTS   AGE
+    ingress-resource   *                 80      20s
+
     
 
 ### Test Ingress and default backend
@@ -319,7 +320,7 @@ From the Cloud Shell, run the following commands:
 
     You should see the following:
 
-        ingress "demo-ingress" deleted
+        ingress.extensions "ingress-resource" deleted
 
 2.  Delete the _NGINX Ingress_ helm chart:
 
@@ -337,7 +338,7 @@ From the Cloud Shell, run the following commands:
     You should see the following:
 
         service "hello-app" deleted
-        deployment "hello-app" deleted
+        deployment.extensions "hello-app" deleted
 
 4.  Delete the Google Kubernetes Engine cluster by running the following command:
 
