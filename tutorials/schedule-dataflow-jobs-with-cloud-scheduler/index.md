@@ -6,9 +6,17 @@ tags: Cloud Dataflow, Cloud Scheduler
 date_published: 2020-08-11
 ---
 
- In this tutorial, you will learn how to set up a [Cloud Scheduler](https://cloud.google.com/scheduler/) job to trigger to your 
- Dataflow batch jobs.
- You can find all the code in this [repo](https://github.com/zhongchen/GCP-Demo/tree/master/demos/scheduler-dataflow-demo).
+## Notes
+- It is feasible to trigger a Dataflow batch job directly from the cloud scheduler directly. It is easy and fast. There is no need to use cloud function for that.
+- Cloud schedulers need to be created in the same region of App engine. In your [Terraform script](https://www.terraform.io/docs/providers/google/r/cloud_scheduler_job.html#region), 
+make sure assigning the right value for the region field. You need to use **us-central1** if your app engine lives in **us-central**.
+- Use the [regional endpoint](https://cloud.google.com/dataflow/docs/reference/rest/v1b3/projects.locations.jobs/create) to specify the region of Dataflow job. 
+If you don't explicitly set the location in the request, the jobs will be created in the default region (US-central).
+
+
+In this tutorial, you will learn how to set up a [Cloud Scheduler](https://cloud.google.com/scheduler/) job to trigger to your 
+Dataflow batch jobs.
+You can find all the code [here](./scheduler-dataflow-demo).
 
 [Cloud Dataflow](https://cloud.google.com/dataflow) is a managed service for handling 
 both streaming and batch jobs. For your streaming jobs, you just need to launch them once without worrying about operating them afterwards. 
@@ -20,16 +28,11 @@ Follow the [instructions](https://cloud.google.com/dataflow/docs/guides/template
 ![Upload Dataflow templates in a GCS bucket](store_a_template_in_gcs.png)
 
 
-Once you have your templates ready, you can set up cloud schedulers to trigger Dataflow templates.
+Once you have your templates ready, you can set up cloud schedulers to trigger Dataflow templates. 
+Here is one example to define a scheduler using Terraform.
 
-![Set up your cloud scheduler](set_up_the_cloud_scheduler.png)
-
-
-If you use Terraform, here is one example to define a scheduler.
 
 ```hcl-terraform
-data "google_project" "project" {}
-
 resource "google_cloud_scheduler_job" "scheduler" {
   name = "scheduler-demo"
   schedule = "0 0 * * *"
@@ -66,16 +69,14 @@ EOT
 
 Afterwards you are all set up! 
 
-Run the scheduler and watch it trigger your Dataflow job. 
-You can check the status of jobs on the UI.
+The job will run based on the schedule you defined in the terraform script. 
+In addition, you can manually run the scheduler through UI and watch it trigger your Dataflow batch job. 
+You can check the status of jobs through the UI.
 
 ![See the status of your jobs](check_scheduler_status.png)
 
-## Recap
-- It is feasible to trigger a Dataflow batch job directly from the cloud scheduler directly. It is easy and fast. There is no need to use cloud function for that.
-- Cloud schedulers need to be created in the same region of App engine. In your [Terraform script](https://www.terraform.io/docs/providers/google/r/cloud_scheduler_job.html#region), 
-make sure assigning the right value for the region field. You need to use **us-central1** if your app engine lives in **us-central**.
-- Use the [regional endpoint](https://cloud.google.com/dataflow/docs/reference/rest/v1b3/projects.locations.jobs/create) to specify the region of Dataflow job. 
-If you don't explicitly set the location in the request, the jobs will be created in the default region (US-central).
 
-## 
+
+## Cleaning up
+
+Since this tutorial uses multiple GCP components, please be sure to delete the associated resources once you are done.

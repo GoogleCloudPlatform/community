@@ -1,0 +1,32 @@
+# The PROJECT_ID is a cloud build env variable
+steps:
+- id: 'Terraform init'
+  name: 'hashicorp/terraform:0.12.20'
+  dir: 'terraform'
+  entrypoint: 'sh'
+  args:
+    - '-c'
+    - |
+      terraform init -input=false
+      terraform workspace select scheduler-dataflow-demo || terraform workspace new scheduler-dataflow-demo
+      terraform apply -input=false \
+        -auto-approve
+  waitFor: ['-']
+
+- id: "Build dataflow template"
+  name: maven:3.6.0-jdk-11-slim
+  dir: 'dataflow'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      mvn compile exec:java \
+           -Dexec.mainClass=DataflowDemoPipeline \
+           -Dexec.args="--runner=DataflowRunner \
+                        --project=zhong-gcp \
+                        --stagingLocation=gs://zhong-gcp/staging \
+                        --gcpTempLocation=gs://zhong-gcp/temp \
+                        --region=us-west1 \
+                        --templateLocation=gs://zhong-gcp/templates/dataflow-demo-template"
+  waitFor: ['Terraform init']
+
