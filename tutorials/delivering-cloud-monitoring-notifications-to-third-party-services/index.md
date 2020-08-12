@@ -1,12 +1,13 @@
 ---
-title: Delivering Cloud Monitoring Notifications to Third-Party Services
-description: Learn how to forward Cloud alerts to third-party applications.
-author: aprilxie,rhamb
-tags: Cloud Monitoring, Cloud alerting, Cloud Run, Pub/Sub, Terraform, GitHub
-date_published: 2020-08-10
+title: Deliver Cloud Monitoring notifications to third-party services
+description: Learn how to forward Cloud Monitoring alerts to third-party applications.
+author: aprill1,rubenh00
+tags: alerting, Cloud Run, Pub/Sub, Terraform, GitHub
+date_published: 2020-08-14
 ---
 
-This tutorial is for GCP customers who want to deliver [Cloud Monitoring alerts](https://cloud.google.com/monitoring/alerts) to third-party services that don’t have [supported notification channels](https://cloud.google.com/monitoring/support/notification-options).
+This tutorial is for Google Cloud customers who want to deliver [Cloud Monitoring alerts](https://cloud.google.com/monitoring/alerts) to third-party services
+that don’t have [supported notification channels](https://cloud.google.com/monitoring/support/notification-options).
 
 Follow this tutorial to write, deploy, and call a Cloud Run service from [Pub/Sub](https://cloud.google.com/pubsub/docs/overview) to pass monitoring notifications to any third-party service. The tutorial provides two working examples ([Philips Hue smart bulbs](https://developers.meethue.com/) and [self-hosted Jira](https://www.atlassian.com/software/jira/core)) of an integration, and explains how these examples might be deployed to Google Cloud. Additionally, it explains steps for continuous integration using [Cloud Build](https://cloud.google.com/cloud-build), [Terraform](https://cloud.google.com/docs/terraform), and GitHub.
 
