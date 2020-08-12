@@ -1,12 +1,13 @@
 ---
-title: Delivering Cloud Monitoring Notifications to Third-Party Services
-description: Learn how to forward Cloud alerts to third-party applications.
-author: aprilxie,rhamb
-tags: Cloud Monitoring, Cloud alerting, Cloud Run, Pub/Sub, Terraform, GitHub
-date_published: 2020-08-10
+title: Deliver Cloud Monitoring notifications to third-party services
+description: Learn how to forward Cloud Monitoring alerts to third-party applications.
+author: aprill1,rubenh00
+tags: alerting, Cloud Run, Pub/Sub, Terraform, GitHub
+date_published: 2020-08-14
 ---
 
-This tutorial is for GCP customers who want to deliver [Cloud Monitoring alerts](https://cloud.google.com/monitoring/alerts) to third-party services that don’t have [supported notification channels](https://cloud.google.com/monitoring/support/notification-options).
+This tutorial is for Google Cloud customers who want to deliver [Cloud Monitoring alerts](https://cloud.google.com/monitoring/alerts) to third-party services
+that don’t have [supported notification channels](https://cloud.google.com/monitoring/support/notification-options).
 
 Follow this tutorial to write, deploy, and call a Cloud Run service from [Pub/Sub](https://cloud.google.com/pubsub/docs/overview) to pass monitoring notifications to any third-party service. The tutorial provides two working examples ([Philips Hue smart bulbs](https://developers.meethue.com/) and [self-hosted Jira](https://www.atlassian.com/software/jira/core)) of an integration, and explains how these examples might be deployed to Google Cloud. Additionally, it explains steps for continuous integration using [Cloud Build](https://cloud.google.com/cloud-build), [Terraform](https://cloud.google.com/docs/terraform), and GitHub.
 
@@ -59,79 +60,23 @@ In both examples, there is a server that handles incoming Pub/Sub messages. The 
 
 Note: Pub/Sub pull subscriptions are also an option, but push was chosen for more timely delivery of notifications. More information on pull vs. push subscriptions can be found [here](https://cloud.google.com/pubsub/docs/subscriber).
 
-[embedmd]:# (philips_hue_integration_example/main.py)
-```python
+[embedmd]:# (https://github.com/googleinterns/cloud-monitoring-notification-delivery-integration-sample-code/blob/121850ca31a7f1703e9bae63fa56fa818d78d339/philips_hue_integration_example/main.py /.*app_config = config.load\(\).*/ /.*app.config.from_object\(app_config\).*/)
 
-app_config = config.load()
-logging.basicConfig(level=app_config.LOGGING_LEVEL)
-
-# logger inherits the logging level and handlers of the root logger
-logger = logging.getLogger(__name__)
-
-app = Flask(__name__)
-app.config.from_object(app_config)
-```
 Flask configuration variables are loaded in the `config.py` module. The exact implementation isn’t important, but this is done to centralize configuration loading and enhance modularity (the code is available for study in the repository). It is important to note that configuration variables are either loaded from environment variables or from Google Secret Manager. Never check credentials or API keys directly into repository code.
 
 Finally, a Python logger is created and the Flask app is started.
 
 Below is a handler that processes the Pub/Sub message:
 
-[embedmd]:# (philips_hue_integration_example/main.py)
-```python
-@app.route('/', methods=['POST'])
-def handle_pubsub_message():
-    pubsub_received_message = request.get_json()
+[embedmd]:# (https://github.com/googleinterns/cloud-monitoring-notification-delivery-integration-sample-code/blob/121850ca31a7f1703e9bae63fa56fa818d78d339/philips_hue_integration_example/main.py /@app.route/ /.*return send_monitoring_notification_to_third_party.*/)
 
-    # parse the Pub/Sub data
-    try:
-        pubsub_data_string = pubsub.parse_data_from_message(pubsub_received_message)
-    except pubsub.DataParseError as e:
-        logger.error(e)
-        return (str(e), 400)
-
-    # load the notification from the data
-    try:
-       monitoring_notification_dict = json.loads(pubsub_data_string)
-    except json.JSONDecodeError as e:
-       logger.error(e)
-       return (f'Notification could not be decoded due to the following exception: {e}', 400)
-
-return send_monitoring_notification_to_third_party(monitoring_notification_dict)
-```
 The handler calls the `parse_data_from_message()` function in `utilities/pubsub.py` to parse the relevant notification data from the Pub/Sub message, then loads the notification data into a dictionary. This notification dictionary is then passed to `send_monitoring_notification_to_third_party()` which appropriately notifies the third-party service about the alert with an API client. You can modify this dispatch function to forward alerts to any third-party service, but outlined in sections below are two examples to give you an idea how.
 
 Note: On success, remember to acknowledge the PubSub message by returning a success HTTP status code (200 or 204). See [Receiving messages using Push guide](https://cloud.google.com/pubsub/docs/push).
 
 Finally, there is a Dockerfile containing instructions to build an image that hosts the Flask server when deployed to Cloud Run:
 
-```docker
-# Use the official Python image.
-# https://hub.docker.com/_/python
-FROM python:3.8
-
-# Allow statements and log messages to immediately appear in the Cloud Run logs
-ENV PYTHONUNBUFFERED True
-
-# Copy application dependency manifests to the container image.
-# Copying this separately prevents re-running pip install on every code change.
-COPY requirements.txt ./
-
-# Install production dependencies.
-RUN pip install -r requirements.txt
-
-# Copy local code to the container image.
-ENV APP_HOME /app
-WORKDIR $APP_HOME
-COPY . ./
-
-# Run the web service on container startup.
-# Use gunicorn webserver with one worker process and 8 threads.
-# For environments with multiple CPU cores, increase the number of workers
-# to be equal to the cores available.
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
-```
-
+[embedmd]:# (https://github.com/googleinterns/cloud-monitoring-notification-delivery-integration-sample-code/blob/dev/philips_hue_integration_example/Dockerfile /# [START/ /.*# [END.*/)
 
 
 ### Philips Hue
@@ -140,40 +85,15 @@ For this Philips Hue integration, whenever a cloud monitoring notification occur
 
 Let’s take a closer let at the dispatch function for Philips Hue in `philips_hue_integration_example/main.py`:
 
-[embedmd]:# (philips_hue_integration_example/main.py)
-```python
-def send_monitoring_notification_to_third_party(notification):
-
-    philips_hue_client = philips_hue.PhilipsHueClient(app.config['BRIDGE_IP_ADDRESS'], app.config['USERNAME'])
-
-    try:
-        hue_value = philips_hue.get_target_hue_from_monitoring_notification(
-            notification, app.config["POLICY_HUE_MAPPING"])
-            philips_hue_client.set_color(app.config['LIGHT_ID'], hue_value)
-    except philips_hue.Error as e:
-        logger.error(e)
-        return (str(e), 400)
-
-    return (repr(hue_value), 200)
-```
+[embedmd]:# (https://github.com/googleinterns/cloud-monitoring-notification-delivery-integration-sample-code/blob/dev/philips_hue_integration_example/main.py /def send_monitoring/ /.*return \(repr\(hue_value\).*/)
 
 
 The dispatch function for Philips Hue instantiates a Philips Hue client and sets the color of a Philips Hue bulb via the client based on the details of the monitoring notification it was passed, then returns the appropriate response message and status code.
 
 The Philips Hue client is defined in `philips_hue_integration_example/utilities/philips_hue.py`:
 
-[embedmd]:# (philips_hue_integration_example/utilities/philips_hue.py)
-```python
-class PhilipsHueClient():
-    """Client for interacting with different Philips Hue APIs.
+[embedmd]:# (https://github.com/googleinterns/cloud-monitoring-notification-delivery-integration-sample-code/blob/dev/philips_hue_integration_example/utilities/philips_hue.py /class PhilipsHueClient/ /return response/)
 
-    Provides interface to access Philips Hue lights, groups, schedules, etc.
-
-    Attributes:
-        bridge_ip_address: IP address of the Hue bridge system to connect to.
-        username: Authorized user string to make API calls.
-    """
-```
 It includes necessary properties and functions to interact with the Philips Hue REST API, and also contains the logic for determining the correct hue value to change a light to based on the monitoring notification received in the app request handler. In particular, the mapping between policy names and Philips Hue colors is stored in `philips_hue_integration_example/config.py` and can be changed as desired to modify the behavior of the application. 
 
 ### Jira
@@ -182,27 +102,8 @@ For this Jira integration, whenever a cloud monitoring notification occurs, a Ji
 
 Let’s take a closer let at the dispatch function for Jira in `jira_integration_example/main.py`:
 
-[embedmd]:# (jira_integration_example/main.py)
-```python
-def send_monitoring_notification_to_third_party(notification):
-    try:
-        oauth_dict = {'access_token': app.config['JIRA_ACCESS_TOKEN'],
-                      'Access_token_secret': app.config['JIRA_ACCESS_TOKEN_SECRET'],
-                      'consumer_key': app.config['JIRA_CONSUMER_KEY'],
-                      'key_cert': app.config['JIRA_KEY_CERT']}
-        jira_client = JIRA(app.config['JIRA_URL'], oauth=oauth_dict)
-        jira_integration.update_jira_based_on_monitoring_notification(
-            jira_client,
-            app.config['JIRA_PROJECT'],
-            app.config['CLOSED_JIRA_ISSUE_STATUS'],
-            notification)
+[embedmd]:# (https://github.com/googleinterns/cloud-monitoring-notification-delivery-integration-sample-code/blob/dev/jira_integration_example/main.py /def send_monitoring_notification/ /return \('', 200\)/)
 
-    except (jira_integration.Error, JIRAError) as e:
-        logger.error(e)
-        return (str(e), 400)
-
-    return ('', 200)
-```
 Note: The Jira client comes from the [jira-python API](https://jira.readthedocs.io/en/master/api.html), and it provides functions to interact with a Jira server. In this example, it is authenticated using OAuth.
 
 The function instantiates a Jira client connected to a particular Jira server, and updates a project on the Jira server via the client based on the monitoring notification. In particular, `update_jira_based_on_monitoring_notification()` is responsible for updating a Jira server by either opening or closing issues in a specified project via a Jira client based on the status of the incident from the monitoring notification. Note that the Jira status that represents closed issues in the Jira project is loaded from the app configurations since this is not universal for all Jira projects.
