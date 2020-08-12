@@ -459,7 +459,7 @@ Let’s try to record audio with the identified USB microphone device,
 using `pyaudio`.
 
 1. Execute the following command. The command should record a 3 second WAV
-audio file (mono, 16bits, 44.1KHz). In this example we use the device `0` as
+audio file (mono, 16bits, 44.1KHz). This example uses the device `0` as
 identified with the previous command:
 
         python3 mic_test.py --dev 0
@@ -494,7 +494,7 @@ microphone audio to the service and displaying the translated live responses in
 
 
 1. Execute the utility with the following command. You can specify the [target language code](https://cloud.google.com/translate/media/docs/languages). The default target language is `de-DE` for German. For example to test with Italian, execute the below command.
-In this example we use device number `0`. Replace that with your device number if
+The following example uses device number `0`. Replace that with your device number if
 necessary:
 
         python3 translate-microphone.py --lang it-IT --dev 0
@@ -536,7 +536,7 @@ and log in there.
 
 6. You can control your car with the arrow keys and shoot with the space bar.
 7. The game will exit when you are hit.
-8. If you can see the game, pygame is working with your display and we can
+8. If you can see the game, pygame is working with your display and you can
 proceed to the next steps.
 
 
