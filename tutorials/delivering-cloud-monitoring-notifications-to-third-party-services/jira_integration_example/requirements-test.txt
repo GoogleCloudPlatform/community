@@ -1,3 +1,0 @@
-pytest==5.3.2
-pytest-mock==3.2.0
-python-dotenv==0.13.0
