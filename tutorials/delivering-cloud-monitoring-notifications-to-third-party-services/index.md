@@ -9,20 +9,23 @@ date_published: 2020-08-14
 This tutorial is for Google Cloud customers who want to deliver [Cloud Monitoring alerts](https://cloud.google.com/monitoring/alerts) to third-party services
 that don’t have [supported notification channels](https://cloud.google.com/monitoring/support/notification-options).
 
-Follow this tutorial to write, deploy, and call a Cloud Run service from [Pub/Sub](https://cloud.google.com/pubsub/docs/overview) to pass monitoring notifications to any third-party service. The tutorial provides two working examples ([Philips Hue smart bulbs](https://developers.meethue.com/) and [self-hosted Jira](https://www.atlassian.com/software/jira/core)) of an integration, and explains how these examples might be deployed to Google Cloud. Additionally, it explains steps for continuous integration using [Cloud Build](https://cloud.google.com/cloud-build), [Terraform](https://cloud.google.com/docs/terraform), and GitHub. All of the source code for this project can be found in this [GitHub repository](https://github.com/googleinterns/cloud-monitoring-notification-delivery-integration-sample-code).
+Follow this tutorial to write, deploy, and call a Cloud Run service from [Pub/Sub](https://cloud.google.com/pubsub/docs/overview) to pass monitoring 
+notifications to any third-party service. The tutorial provides two working examples of integrations ([Philips Hue smart bulbs](https://developers.meethue.com/)
+and [self-hosted Jira](https://www.atlassian.com/software/jira/core)) and explains how these examples can be deployed to Google Cloud. Additionally, it explains
+steps for continuous integration using [Cloud Build](https://cloud.google.com/cloud-build), [Terraform](https://cloud.google.com/docs/terraform), and GitHub. All 
+of the source code for this project can be found in this
+[GitHub repository](https://github.com/googleinterns/cloud-monitoring-notification-delivery-integration-sample-code).
 
-This tutorial assumes you are familiar with Cloud Monitoring alerting and already have alerting policies in place.
-
+This tutorial assumes that you are familiar with Cloud Monitoring alerting and already have alerting policies in place.
 
 ## Objectives
 
 *   Write a service to handle Pub/Sub monitoring notifications and deliver them to a third-party service.
 *   Build and deploy the service to Cloud Run using Cloud Build, Terraform, and GitHub.
 
-
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including:
+This tutorial uses billable components of Google Cloud:
 
 *   Cloud Build
 *   Cloud Storage
@@ -30,27 +33,27 @@ This tutorial uses billable components of Google Cloud Platform, including:
 *   Pub/Sub
 *   Secret Manager
 
-Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
-
+Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
-For this reference guide, you need a GCP [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a new one, or select a project you already created:
+For this tutorial, you need a Google Cloud [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a
+new one or select a project you already created:
 
-1. Select or create a GCP project.
+1.  Select or create a Google Cloud project.
 
-	[Go to the project selector page](https://pantheon.corp.google.com/projectselector2/home/dashboard)
+    [Go to the project selector page](https://pantheon.corp.google.com/projectselector2/home/dashboard)
 
-2. Enable billing for your project.
+1.  Enable billing for your project.
 
-	[Enable billing](https://support.google.com/cloud/answer/6293499#enable-billing)
+    [Enable billing](https://support.google.com/cloud/answer/6293499#enable-billing)
 
-3. Enable the Cloud Build, Cloud Run, Resource Manager, Identity and Access Manager (IAM), Container Registry, and Secret Manager API. 
+1.  Enable the Cloud Build, Cloud Run, Resource Manager, Identity and Access Manager (IAM), Container Registry, and Secret Manager API. 
 
-	[Enable the apis](https://console.cloud.google.com/flows/enableapi?apiid=cloud_build,cloud_run,resource_manager,container_registry,secret_manager)
+    [Enable the APIs](https://console.cloud.google.com/flows/enableapi?apiid=cloud_build,cloud_run,resource_manager,container_registry,secret_manager)
 
-When you finish this tutorial, you can avoid continued billing by deleting the resources you created. See [Cleaning up](#bookmark=id.fds9ck8afve4) for more detail.
-
+When you finish this tutorial, you can avoid continued billing by deleting the resources you created. For details, see the "Cleaning up" section at the end of 
+this tutorial.
 
 ## Looking at the code
 
