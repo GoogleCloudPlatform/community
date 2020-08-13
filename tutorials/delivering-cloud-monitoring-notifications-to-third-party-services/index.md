@@ -1,8 +1,8 @@
 ---
 title: Deliver Cloud Monitoring notifications to third-party services
-description: Learn how to forward Cloud Monitoring alerts to third-party applications.
+description: Learn how to use Cloud Run and Pub/Sub to forward Cloud Monitoring alerts to third-party applications.
 author: aprill1,rubenh00
-tags: alerting, Cloud Run, Pub/Sub, Terraform, GitHub
+tags: alerting, Terraform, GitHub
 date_published: 2020-08-14
 ---
 
