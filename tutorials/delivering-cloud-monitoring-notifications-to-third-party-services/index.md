@@ -13,10 +13,10 @@ Follow this tutorial to write, deploy, and call a Cloud Run service from [Pub/Su
 notifications to any third-party service. The tutorial provides two working examples of integrations ([Philips Hue smart bulbs](https://developers.meethue.com/)
 and [self-hosted Jira](https://www.atlassian.com/software/jira/core)) and explains how these examples can be deployed to Google Cloud. Additionally, it explains
 steps for continuous integration using [Cloud Build](https://cloud.google.com/cloud-build), [Terraform](https://cloud.google.com/docs/terraform), and GitHub. All 
-of the source code for this project can be found in this
-[GitHub repository](https://github.com/googleinterns/cloud-monitoring-notification-delivery-integration-sample-code).
+of the source code for this project can be found in
+[this GitHub repository](https://github.com/googleinterns/cloud-monitoring-notification-delivery-integration-sample-code).
 
-This tutorial assumes that you are familiar with Cloud Monitoring alerting and already have alerting policies in place.
+This tutorial assumes that you're familiar with Cloud Monitoring alerting and already have alerting policies in place.
 
 ## Objectives
 
@@ -317,7 +317,7 @@ To get all the code and understand the repository structure needed to deploy you
 Terraform is a [HashiCorp](https://www.hashicorp.com/) open source tool that enables you to predictably create, change, and improve your cloud infrastructure
 using code. In this tutorial, Terraform is used to automatically create and manage necessary resources in Google Cloud.
 
-Terraform will create the following resources in your cloud project:
+Terraform creates the following resources in your cloud project:
 
 *   A Cloud Run service called `cloud-run-pubsub-service` to deploy the Flask application
 *   A Pub/Sub topic called `tf-topic`
@@ -340,28 +340,13 @@ Terraform usage difficult for teams, especially when many users run Terraform at
 infrastructure.
 
 To help you avoid such issues, this section configures a [remote state](https://www.terraform.io/docs/state/remote.html) that points to a Cloud Storage bucket. Remote state is a feature of [backends](https://www.terraform.io/docs/backends) and, in this tutorial, is configured in the `backend.tf` files—for example:
-```
-# Copyright 2020 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
-terraform {
-  backend "gcs" {
-    bucket = "${var.tf_state_bucket}"
-    prefix = "env/dev"
-  }
-}
-```
+    terraform {
+      backend "gcs" {
+        bucket = "${var.tf_state_bucket}"
+        prefix = "env/dev"
+      }
+    }
 
 In the following steps, you create a Cloud Storage bucket and change a few files to point to your new bucket and your Google Cloud project.
 
@@ -383,7 +368,7 @@ To allow the [Cloud Build service account](https://cloud.google.com/cloud-build/
 with the goal of managing Google Cloud resources, you need to grant it appropriate access to your project. The service account needs to be able to modify Cloud 
 Run, Cloud Storage, and IAM policies.
 
-1.  In Cloud Shell, retrieve the email for your project's Cloud Build service account:
+1.  In Cloud Shell, retrieve the email address for your project's Cloud Build service account:
 
         CLOUDBUILD_SA="$(gcloud projects describe $PROJECT_ID --format 'value(projectNumber)')@cloudbuild.gserviceaccount.com"
 
@@ -396,7 +381,7 @@ Run, Cloud Storage, and IAM policies.
    
 ### Directly connect Cloud Build to your GitHub repository
 
-To sync source changes in the GitHub repository to deployed Cloud Build instances, follow
+To synchronize source changes in the GitHub repository to deployed Cloud Build instances, follow
 [these instructions](https://cloud.google.com/solutions/managing-infrastructure-as-code#directly_connecting_cloud_build_to_your_github_repository) to connect 
 Cloud Build to your GitHub repository. Make sure to replace `solutions-terraform-cloudbuild-gitops` with
 `cloud-monitoring-notification-delivery-integration-sample-code`.
@@ -456,7 +441,7 @@ The Cloud Run service should be up and running.
 
         args: ['build', '--build-arg', 'PROJECT_ID=$PROJECT_ID', '--tag', 'gcr.io/$PROJECT_ID/${_IMAGE_NAME}', './jira_integration_example']
 
-1.  Trigger a build
+1.  Trigger a build:
 
     If there are any uncommitted changes for your branch, commit and push the changes to build and deploy the service.
     
@@ -485,7 +470,7 @@ Philips Hue light or Jira server.
 
 If you created a new project for this tutorial, delete the project. If you used an existing project and wish to keep it without the changes added in this tutorial, delete resources created for the tutorial.
 
-### Deleting the project
+### Delete the project
 
 The easiest way to eliminate billing is to delete the project you created for the tutorial.
 
@@ -507,7 +492,7 @@ To delete a project, do the following:
 1.  In the project list, select the project that you want to delete and then click **Delete**.
 1.  In the dialog, type the project ID and then click **Shut down** to delete the project.
 
-### Deleting tutorial resources
+### Delete tutorial resources
 
 1.  Delete the Cloud resources provisioned by Terraform:
 
