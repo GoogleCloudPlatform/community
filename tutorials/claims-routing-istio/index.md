@@ -1,14 +1,12 @@
 ---
-title: Routing traffic by JSON Web Token claims with Istio
-description: Using claims in JSON Web Tokens to route requests with Istio.
+title: Route traffic by JSON Web Token claims with Istio
+description: Learn how to use claims in JSON Web Tokens to route requests with Istio.
 author: halvards
-tags: Google Kubernetes Engine, GKE, Istio, JWT, Identity Platform
-date_published: 2020-08-03
+tags: Google Kubernetes Engine, GKE, JWT, Identity Platform
+date_published: 2020-08-21
 ---
 
 Halvard Skogsrud | Solutions Architect | Google
-
-# Routing traffic by JSON Web Token claims with Istio
 
 This tutorial and sample code shows how Istio can route end user traffic based
 on claims in JSON Web Tokens (JWTs). The tutorial uses Identity Platform, but
@@ -80,7 +78,7 @@ map. The pods of the `istio-ingressgateway` deployment execute the Envoy filter
 source code. The `app-vs` virtual service routes requests based on the header
 added by the Envoy filter.
 
-![Architecture diagram](https://raw.githubusercontent.com/GoogleCloudPlatform/community/claims-routing-istio/tutorials/claims-routing-istio/architecture.svg "Architecture diagram")
+![Architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/claims-routing-istio/architecture.svg)
 
 In this diagram, blue heptagons represent Kubernetes resources, and round gray
 icons represent Istio
