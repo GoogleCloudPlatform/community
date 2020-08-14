@@ -1,12 +1,12 @@
 ---
-title: Creating Real-time Translation Overlays
-description: Learn how to use the Media Translation API with streaming dialog audio, and create translated text overlays.
+title: Create real-time translation overlays
+description: Learn how to use the Media Translation API with streaming dialog audio and create translated text overlays.
 author: lepistom
-tags: AI, Artificial Intelligence, ML, Machine Learning, IoT, Internet of Things, Raspberry Pi, Video
+tags: AI, artificial intelligence, ML, machine learning, IoT, Internet of Things, Raspberry Pi, Video
 date_published: 2020-08-12
 ---
 
-Markku Lepisto | Solutions Architect | Google Cloud Platform
+Markku Lepisto | Solutions Architect | Google Cloud
 
 This tutorial demonstrates the real-time speech-to-text transcribing and
 translation functionality of the
@@ -29,7 +29,7 @@ video conference systems.
 
 ![architecture diagram][archdiag]
 
-[archdiag]: img/arch-diag.svg
+[archdiag]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/arch-diag.svg
 
 
 ## Objectives
@@ -532,7 +532,7 @@ and log in there.
 
 ![Pygame image][pygame]
 
-[pygame]: img/aliens.png
+[pygame]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/aliens.png
 
 6. You can control your car with the arrow keys and shoot with the space bar.
 7. The game will exit when you are hit.
@@ -632,11 +632,11 @@ for example join a video conference with subtitles.
 
   ![Sub4 image][sub4]
 
-[sub0]: img/sub0.png
-[sub1]: img/sub1.png
-[sub2]: img/sub2.png
-[sub3]: img/sub3.png
-[sub4]: img/sub4.png
+[sub0]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub0.png
+[sub1]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub1.png
+[sub2]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub2.png
+[sub3]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub3.png
+[sub4]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub4.png
 
 
 ### Augmented Reality mode with a projector
@@ -682,7 +682,7 @@ where you project the text.
 
     ![Ar1 image][ar1]
 
-  [ar1]: img/ar1.png
+  [ar1]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/ar1.png
 
 
 ### Test mode, translating lines in a text file
@@ -712,7 +712,7 @@ file. The app quits after it has displayed the last line, or if you press `q`.
 
   ![Test1 image][test1]
 
-[test1]: img/test1.png
+[test1]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/test1.png
 
 
 ### Example font sizes and line lengths
