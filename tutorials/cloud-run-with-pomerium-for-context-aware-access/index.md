@@ -1,5 +1,5 @@
 ---
-title: Context-aware access with Cloud Run and Pomerium
+title: Cloud Run with Pomerium for context-aware access
 description: >-
   This guide covers how to deploy Pomerium to Cloud Run and use it to protect
   other endpoints via Authorization Headers.
