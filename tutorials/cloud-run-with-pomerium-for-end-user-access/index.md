@@ -1,14 +1,14 @@
 ---
-title: Cloud Run with Pomerium for context-aware access
+title: Cloud Run with Pomerium for end-user access
 description: This guide covers how to deploy Pomerium to Cloud Run and use it to protect other endpoints via Authorization Headers.
 author: desimone
 tags: Cloud Run, Pomerium
 date_published: 2020-08-13
 ---
 
-# Cloud Run with Pomerium for context-aware access
+# Cloud Run with Pomerium for end-user access
 
-This guide covers how to deploy Pomerium to Cloud Run to provide identity-aware access to protect other endpoints. 
+This guide covers how to deploy Pomerium to Cloud Run to provide end-user auth to other endpoints. 
 
 [Pomerium](https://www.pomerium.com) is an open source identity-aware proxy that enables secure access to internal applications. Pomerium provides a standardized interface to add access control to applications regardless of whether the application itself has authorization or authentication baked-in. Pomerium gateways  requests and can be used in situations where you'd typically reach for a VPN.
 
