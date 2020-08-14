@@ -174,4 +174,4 @@ You should see your identity header set:
 
 ![Hello](./headers.png)
 
-See [getting user's identity](../docs/topics/getting-users-identity.md) for more details on using this header.
+See [getting user's identity](https://www.pomerium.com/docs/topics/getting-users-identity.html) for more details on using this header.
