@@ -3,7 +3,7 @@ title: Enforcing an identity root of trust in your Google Cloud environment
 description: Shows how to establish a root of trust of identities in your Google Cloud environment, so that no individual acting alone can log in as a super admin and change any setting.
 author: awalko
 tags: Security, IAM
-date_published: 2020-08-21
+date_published: 2020-08-17
 ---
 
 This document shows how to establish a root of trust of your identities in your Google Cloud organization by controlling the
