@@ -62,7 +62,7 @@ instructions are also available in the
 
 1.  Run the ODBC Data Sources Administrator program.
 
-    ![Run ODBC data sources administrator program](odbc-data-source-admin.png)
+    ![Run ODBC data sources administrator program](https://storage.googleapis.com/gcp-community/tutorials/bigquery-from-excel/odbc-data-source-admin.png)
 
 1.  Select the **User DSN** tab.
 
