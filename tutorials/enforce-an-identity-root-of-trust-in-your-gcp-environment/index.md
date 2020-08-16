@@ -18,7 +18,7 @@ need to enforce in order to protect your Google Cloud organization itself.
 
 Identities (Google Cloud users or groups) are separate from everything else in Google Cloud. You can manage identities in 
 the Google Admin console (`admin.google.com`) and grant access to Google Cloud resources (for example, projects and Cloud
-Storage buckets) in the Cloud Console (console.cloud.google.com), as long as you have the right level of access in each
+Storage buckets) in the Cloud Console (`console.cloud.google.com`), as long as you have the right level of access in each
 console. To trust that your cloud environment is secure, you need to secure access to both consoles and make sure that you
 are aware when any privileged access is used to make changes.
 
@@ -285,7 +285,7 @@ The root of trust for your Google Cloud Organization starts here.
     for this. 
 
     To learn more about synchronizing identities for Google Cloud, see
-    [Using your existing identity management system with Google Cloud Platform](https://cloud.google.com/blog/products/identity-security/using-your-existing-identity-management-system-with-google-cloud-platform) .
+    [Using your existing identity management system with Google Cloud Platform](https://cloud.google.com/blog/products/identity-security/using-your-existing-identity-management-system-with-google-cloud-platform).
 
 ## Set up your Google Cloud Organization
 
@@ -328,7 +328,7 @@ do this with solutions like [Splunk](https://splunkbase.splunk.com/app/3791/#/de
 [CFT G Suite exporter](https://github.com/terraform-google-modules/terraform-google-gsuite-export) module in Google Cloud.
 If no existing solution is satisfying, you can export admin logs using custom code and the [G Suite SDK](https://developers.google.com/admin-sdk).
 
-Secure all of the super admin accounts following the key ceremony logout procedure by locking the key into one or more
+Secure all of the super admin accounts following the key ceremony logout procedure by locking the keys into one or more
 vaults and logging out all super admin sessions from the trusted workstation.
 
 ## Managing multiple Google Cloud organizations
