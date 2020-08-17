@@ -7,7 +7,7 @@ date_published: 2020-08-07
 ---
 
 This document explains how to set up Bitmovin Encoding on Google Cloud infrastructure so that the Bitmovin platform can run encoders using the Compute Engine 
-API.
+API. Note that these directions for the [Bitmovin Encoding Service](https://bitmovin.com/encoding-service/) address encoding for both live encoding and file-based encoding. A more complete list of formats and input types can be viewed [here](https://bitmovin.com/docs/encoding/articles/supported-input-and-output-formats).
 
 ## Prerequisites
 
