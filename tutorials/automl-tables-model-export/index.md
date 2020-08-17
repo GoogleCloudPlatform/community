@@ -25,11 +25,11 @@ The [Cloud Public Datasets Program](https://cloud.google.com/bigquery/public-dat
 machine learning. Just as in
 [Explaining model predictions on structured data](https://cloud.google.com/blog/products/ai-machine-learning/explaining-model-predictions-structured-data),
 this tutorial uses data that is essentially a join of two public datasets stored in
-[BigQuery](https://cloud.google.com/bigquery/)--[London bike rentals](https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=london_bicycles&page=dataset) and
-[NOAA weather data](https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=noaa_gsod&page=dataset)--with some additional processing to clean up 
+[BigQuery](https://cloud.google.com/bigquery/)—[London bike rentals](https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=london_bicycles&page=dataset) and
+[NOAA weather data](https://console.cloud.google.com/bigquery?p=bigquery-public-data&d=noaa_gsod&page=dataset)—with some additional processing to clean up 
 outliers and derive additional GIS and day-of-week fields. 
 
-You’ll use this dataset to build a _regression model_ to predict the duration of a bike rental based on information about the start and end stations, the day of 
+You use this dataset to build a _regression model_ to predict the duration of a bike rental based on information about the start and end stations, the day of 
 the week, the weather on that day, and other data. If you were running a bike rental company, for example, these predictions and their explanations could help 
 you to anticipate demand and plan how to stock each location.
 
@@ -39,9 +39,9 @@ layouts in stores.
 ## Create a dataset
 
 The first step in training a Tables model is to create a *dataset* using your data. This tutorial uses the bike rentals and weather dataset described above. You
-can also follow along with your own tabular dataset, but in that case you’ll need to construct your own prediction instances, too. 
+can also follow along with your own tabular dataset, but in that case you need to construct your own prediction instances, too. 
 
-1.  Visit the [**Tables** page](https://console.cloud.google.com/automl-tables/datasets) in the Cloud Console, and enable the API as necessary.
+1.  Go to the [**Tables** page](https://console.cloud.google.com/automl-tables/datasets) in the Cloud Console, and enable the API.
 
     ![Enable the AutoML Tables API](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/enable_api.png)
 
@@ -49,10 +49,11 @@ can also follow along with your own tabular dataset, but in that case you’ll n
 
     ![Create a new Tables dataset](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/create_dataset.png)
 
-1.  Import your data into the dataset.
+1.  Import your data into the dataset:
 
-    To ingest the example data, select **Import data from BigQuery** and enter `aju-dev-demos` as the BigQuery Project ID, `london_bikes_weather` as the
-    dataset ID, and `bikes_weather` as the table name.
+    1.  On the **Import** tab, select **Import data from BigQuery**.
+    1.  Enter `aju-dev-demos` as the BigQuery project ID, `london_bikes_weather` as the dataset ID, and `bikes_weather` as the table name.
+    1.  Click **Import**.
 
     ![Import the data](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/import_data.png)
     
@@ -60,10 +61,10 @@ can also follow along with your own tabular dataset, but in that case you’ll n
 
 After the import is complete, you edit the dataset schema. You'll need to change a few of the inferred types.
 
-Make sure that your schema reflects what’s in the figure below:
+On the **Train** tab, make sure that your schema matches the figure below:
 
 1.  Change `bike_id`, `end_station_id`, `start_station_id`, and `loc_cross` to be of type **Categorical**.
-1.  Select `duration` as in the **Target column** section. 
+1.  Select `duration` in the **Target column** section. 
 
 ![Adjust the dataset schema](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/schema.png)
 
@@ -74,7 +75,7 @@ to use as model inputs.
 
 Now you're ready to train a model on the dataset.  
 
-You'll train a model to predict ride duration given all the other dataset inputs, so you'll train a
+For this example, you train a model to predict ride duration given all the other dataset inputs, so you train a
 [regression](https://cloud.google.com/automl-tables/docs/problem-types) model. 
 
 For this example, enter a training budget of 1 hour, and include all available feature columns.
@@ -86,32 +87,42 @@ For this example, enter a training budget of 1 hour, and include all available f
 After the model is trained, you export the result, so that it can be served from any environment in which you can run a container. Alternatively, you could
 [deploy](https://cloud.google.com/automl-tables/docs/predict) your model to AI Platform for online prediction.
 
-You'll find the export option under **TEST & USE**. (See the [documentation](https://cloud.google.com/automl-tables/docs/model-export) for detail on the export process). Click the "**Container**" card to export your trained model to be run from a Docker container.  You'll need to use a *regional* GCS bucket, in the same region as your model. 
+For details about the export process, see [Exporting models](https://cloud.google.com/automl-tables/docs/model-export).
 
-You also might want to create a sub-folder for the model export in the GCS bucket, so that if you have multiple exports, you can keep track of .  An easy way to create the folder is via the web UI, as we’ve done here with the `model_export_1` sub-folder.
+Steps in this procedure use `gsutil`. To run these commands, you need [`gcloud`](https://cloud.google.com/sdk/install) installed. You can run these commands from
+the [Cloud Shell](https://cloud.google.com/shell/) instead of your local machine if you don't want to install the SDK locally.
 
-![Export trained model to be run from Docker container](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/export1.png)
+1.  On the **Test & Use** tab, under the **Use your model** heading, click the **Container** card to export your trained model to be run from a Docker container. 
 
-Click the "Container" card to export your trained model to be run from a Docker container.
+    ![Export trained model to be run from Docker container](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/export1.png)
 
-Then, browse to select the Google Cloud Storage folder into which you want to export your model and click the **EXPORT** button.
+1.  Browse to select the Google Cloud Storage folder into which you want to export your model, and click the **Export** button.
 
-![Browse to Cloud Storage folder to export model](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/export2.png)
+    You need to use a *regional* Cloud Storage bucket, in the same region as your model. 
 
-When the export is finished, create a local directory, like `bikes_weather`, to hold your model.
+    Consider creating a sub-folder for the model export in the Cloud Storage bucket, so that if you have multiple exports, you can keep track of them.
 
-Copy the download command provided in the cloud console, which will look something like the following:
-`gsutil cp -r gs://<your-bucket>/model_export_1//* ./download_dir`
+    ![Browse to Cloud Storage folder to export model](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/export2.png)
 
-Then, edit this command: add quotes around the `gs` URI, and remove one of the end slashes.  Then edit `download_dir` to point to the directory you created.  The result should look something like the following. Run it from the parent directory of your `bikes_weather` directory:
+1.  When the export is finished, create a local directory (for examplpe, `bikes_weather`) to hold your model.
 
-```sh
-gsutil cp -r 'gs://<your-bucket>/model_export_1/*' ./bikes_weather
-```
+1.  Copy the download command provided in the Cloud Console, which will look something like the following:
 
-The exported model will be copied to `./bikes_weather`.
+    `gsutil cp -r gs://[YOUR_STORAGE_BUCKET]/model_export_1//* ./download_dir`
 
-**Note**: to run `gsutil`, you will need [`gcloud`](https://cloud.google.com/sdk/install) installed. You can run these commands from the [Cloud Shell](https://cloud.google.com/shell/) instead of your local machine if you don't want to install the SDK locally.
+1.  Edit this command as follows:
+
+    1.  Add quotation marks around the `gs` URI.
+    1.  Remove one of the end slashes.
+    1.  Edit `download_dir` to point to the directory that you created.
+    
+    The result should look something like the following:
+    
+        gsutil cp -r 'gs://[YOUR_STORAGE_BUCKET/model_export_1/*' ./bikes_weather
+
+1.  Run the command from the parent directory of your `bikes_weather` directory:
+    
+    The exported model is copied to `./bikes_weather`.
 
 ## Test your exported model locally
 
