@@ -59,7 +59,7 @@ can also follow along with your own tabular dataset, but in that case you need t
     
 ## Edit the dataset’s schema
 
-After the import is complete, you edit the dataset schema. You'll need to change a few of the inferred types.
+After the import is complete, you edit the dataset schema to change a few of the inferred types.
 
 On the **Train** tab, make sure that your schema matches the screenshot below:
 
@@ -104,7 +104,7 @@ the [Cloud Shell](https://cloud.google.com/shell/) instead of your local machine
 
     ![Browse to Cloud Storage folder to export model](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/export2.png)
 
-1.  When the export is finished, create a local directory (for examplpe, `bikes_weather`) to hold your model.
+1.  When the export is finished, create a local directory (for example, `bikes_weather`) to hold your model.
 
 1.  Copy the download command provided in the Cloud Console, which will look something like the following:
 
@@ -192,7 +192,7 @@ Viewing your exported model in TensorBoard requires a conversion step. You need 
 
 At this point, you have a trained model that you've exported and tested locally. You are almost ready to deploy it to
 [Cloud Run](https://cloud.google.com/run/docs/). As the last step of preparation, you create a container image that uses 
-`gcr.io/cloud-automl-tables-public/model_server` as a base image and adds the model directory, and push that image to the
+`gcr.io/cloud-automl-tables-public/model_server` as a base image and adds the model directory, and you push that image to the
 [Google Container Registry](https://cloud.google.com/container-registry/), so that Cloud Run can access it.
 
 ### Build a container to use for Cloud Run
@@ -236,9 +236,9 @@ Now you're ready to deploy the container to Cloud Run, where you can scalably se
 
 1.  For the container URL, enter the name of the container that you just built above.
 
-1.  Select the **Cloud Run (fully managed)**.
+1.  Select **Cloud Run (fully managed)**.
 
-1.  Create a service name, which can be anything you like.
+1.  Enter a service name, which can be anything you like.
 
 1.  Select **Require Authentication**. 
 
@@ -248,7 +248,7 @@ Now you're ready to deploy the container to Cloud Run, where you can scalably se
 
     ![Set service instances to use 2GiB of memory](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/cloud_run2.png)
 
-1.  Leave the rest of the defaults as they are, and click **Create**.
+1.  Leave the rest of the settings at their default values, and click **Create**.
 
 ### Send prediction requests to the Cloud Run service
 
@@ -277,7 +277,7 @@ end-user or service-to-service authentication.
 
 Once you’ve built a model-serving container image, you can deploy it to other environments as well. For example, if you have installed
 [Knative serving](https://github.com/knative/serving) on a [Kubernetes](https://kubernetes.io/) cluster, you can create a Knative *service* like this, using the 
-same container image (replacing `[PROJECT_ID]` with your project):
+same container image (replacing `[YOUR_PROJECT_ID]` with your project ID):
 
 ```yaml
 apiVersion: serving.knative.dev/v1
@@ -288,7 +288,7 @@ spec:
   template:
     spec:
       containers:
-        - image: gcr.io/[PROJECT_ID]/bw-serve
+        - image: gcr.io/[YOUR_PROJECT_ID]/bw-serve
 ```
 
 Though the example model for this tutorial fits on a 2-GiB Cloud Run instance, you might have models that are too large for the managed Cloud Run service, and 
