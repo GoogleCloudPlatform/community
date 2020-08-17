@@ -2,8 +2,8 @@
 title: Export a custom AutoML Tables model and serve it with Cloud Run
 description: Learn how to export a custom AutoML Tables model and serve it with Cloud Run or any other environment where you can run a container.
 author: amygdala
-tags: AutoML, Cloud Run, ML, TensorBoard
-date_published: 2020-07-08
+tags: ML, machine learning, TensorBoard
+date_published: 2020-08-18
 ---
 
 With [AutoML Tables](https://cloud.google.com/automl-tables/docs/), you can automatically build and deploy state-of-the-art machine-learning models using your
@@ -16,8 +16,8 @@ This tutorial shows you how to package an exported AutoML Tables model to serve 
 serving automatically scales up with traffic and scales down to 0 when it’s not being used. This tutorial also shows how you can examine your trained custom 
 model in [TensorBoard](https://www.tensorflow.org/tensorboard).
 
-This tutorial uses the [Cloud Console](https://console.cloud.google.com/automl-tables/datasets), but you could also accomplish the same steps through command
-line or using the [AutoML Tables client libraries](https://googleapis.dev/python/automl/latest/gapic/v1beta1/tables.html).
+This tutorial uses the [Cloud Console](https://console.cloud.google.com/automl-tables/datasets), but you could also accomplish the same steps through the 
+command-line interface or using the [AutoML Tables client libraries](https://googleapis.dev/python/automl/latest/gapic/v1beta1/tables.html).
 
 ## About the dataset and scenario
 
@@ -31,81 +31,72 @@ outliers and derive additional GIS and day-of-week fields.
 
 You’ll use this dataset to build a _regression model_ to predict the duration of a bike rental based on information about the start and end stations, the day of 
 the week, the weather on that day, and other data. If you were running a bike rental company, for example, these predictions and their explanations could help 
-you to anticipate demand and even plan how to stock each location.
+you to anticipate demand and plan how to stock each location.
 
 You can use AutoML Tables for tasks as varied as asset valuations, fraud detection, credit risk analysis, customer retention prediction, and analyzing item 
 layouts in stores.
 
-## Create a dataset and edit its schema
+## Create a dataset
 
 The first step in training a Tables model is to create a *dataset* using your data. This tutorial uses the bike rentals and weather dataset described above. You
-can also follow along with your own tabular dataset, but you’ll need to construct your own prediction instances, as well. 
+can also follow along with your own tabular dataset, but in that case you’ll need to construct your own prediction instances, too. 
 
-Visit the [**Tables** page](https://console.cloud.google.com/automl-tables/datasets) in the Cloud Console, and enable the API as necessary.
+1.  Visit the [**Tables** page](https://console.cloud.google.com/automl-tables/datasets) in the Cloud Console, and enable the API as necessary.
 
-<figure>
-<a href="https://storage.googleapis.com/amy-jo/images/automl/tables_export/enable_api.png" target="_blank"><img src="https://storage.googleapis.com/amy-jo/images/automl/tables_export/enable_api.png" width="40%"/></a>
-<figcaption><br/><i>Enable the AutoML Tables API.</i></figcaption>
-</figure>
+    ![Enable the AutoML Tables API](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/enable_api.png)
 
-Then, create a new Tables *dataset*.
+1.  Create a new Tables dataset.
 
-<figure>
-<a href="https://storage.googleapis.com/amy-jo/images/automl/tables_export/create_dataset.png" target="_blank"><img src="https://storage.googleapis.com/amy-jo/images/automl/tables_export/create_dataset.png" width="50%"/></a>
-<figcaption><br/><i>Create a new Tables dataset.</i></figcaption>
-</figure>
+    ![Create a new Tables dataset](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/create_dataset.png)
 
-Next, import your data into the dataset. To ingest the example data, select "**Import data from BigQuery**".  Then, as shown in the figure below, use `aju-dev-demos` as the BigQuery Project ID, `london_bikes_weather` as the dataset ID, and `bikes_weather` as the table name.
+1.  Import your data into the dataset.
 
-<figure>
-<a href="https://storage.googleapis.com/amy-jo/images/automl/tables_export/import_data.png" target="_blank"><img src="https://storage.googleapis.com/amy-jo/images/automl/tables_export/import_data.png" width="60%"/></a>
-<figcaption><br/><i>Import the <code>bikes_weather</code> BigQuery table into the dataset.</i></figcaption>
-</figure>
+    To ingest the example data, select **Import data from BigQuery** and enter `aju-dev-demos` as the BigQuery Project ID, `london_bikes_weather` as the
+    dataset ID, and `bikes_weather` as the table name.
 
-### Edit the dataset’s schema
+    ![Import the data](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/import_data.png)
+    
+## Edit the dataset’s schema
 
-Once the import is complete, you can edit the dataset schema. We'll need to change a few of the inferred types. Make sure your schema reflects what’s in the figure below. In particular, change `bike_id`, `end_station_id`, `start_station_id`, and `loc_cross` to be of type *Categorical*.  (Note that useful stats are generated for the columns, including correlation statistics with the target column, which can help you determine which columns you want to use as model inputs.)
+After the import is complete, you edit the dataset schema. You'll need to change a few of the inferred types.
 
-Then, we'll set `duration` as the _target_ column. 
+Make sure that your schema reflects what’s in the figure below:
 
-<figure>
-<a href="https://storage.googleapis.com/amy-jo/images/automl/tables_export/schema.png" target="_blank"><img src="https://storage.googleapis.com/amy-jo/images/automl/tables_export/schema.png" width="90%"/></a>
-<figcaption><br/><i>Adjust the dataset schema.</i></figcaption>
-</figure>
+1.  Change `bike_id`, `end_station_id`, `start_station_id`, and `loc_cross` to be of type **Categorical**.
+1.  Select `duration` as in the **Target column** section. 
 
+![Adjust the dataset schema](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/schema.png)
 
-## Train and export your Tables model
+Useful statistics are generated for the columns, including correlation statistics with the target column, which can help you determine which columns you want
+to use as model inputs.
+
+## Train the Tables model
 
 Now you're ready to train a model on the dataset.  
 
-We'll train a model to predict ride  `duration` given all the other dataset inputs.  So, we'll be training a [regression](https://cloud.google.com/automl-tables/docs/problem-types) model. 
-For this example, enter a training budget of 1 hours, and include all available feature columns.
+You'll train a model to predict ride duration given all the other dataset inputs, so you'll train a
+[regression](https://cloud.google.com/automl-tables/docs/problem-types) model. 
 
-<figure>
-<a href="https://storage.googleapis.com/amy-jo/images/automl/tables_export/train.png" target="_blank"><img src="https://storage.googleapis.com/amy-jo/images/automl/tables_export/train.png" width="50%"/></a>
-<figcaption><br/><i>Train a model to predict ride <code>duration</code>.</i></figcaption>
-</figure>
+For this example, enter a training budget of 1 hour, and include all available feature columns.
 
-### Export the trained model
+![Train a model to predict ride](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/train.png)
 
-Once the model is trained, we'll export the result, so that it can be served from any environment in which you can run a container.  (Note that you could also [deploy](https://cloud.google.com/automl-tables/docs/predict) your model to the Cloud AI Platform for online prediction).
+## Export the trained model
 
-You'll find the export option under **TEST & USE**.  (See the [documentation](https://cloud.google.com/automl-tables/docs/model-export) for detail on the export process). Click the "**Container**" card to export your trained model to be run from a Docker container.  You'll need to use a *regional* GCS bucket, in the same region as your model. 
+After the model is trained, you export the result, so that it can be served from any environment in which you can run a container. Alternatively, you could
+[deploy](https://cloud.google.com/automl-tables/docs/predict) your model to AI Platform for online prediction.
+
+You'll find the export option under **TEST & USE**. (See the [documentation](https://cloud.google.com/automl-tables/docs/model-export) for detail on the export process). Click the "**Container**" card to export your trained model to be run from a Docker container.  You'll need to use a *regional* GCS bucket, in the same region as your model. 
 
 You also might want to create a sub-folder for the model export in the GCS bucket, so that if you have multiple exports, you can keep track of .  An easy way to create the folder is via the web UI, as we’ve done here with the `model_export_1` sub-folder.
 
+![Export trained model to be run from Docker container](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/export1.png)
 
-<figure>
-<a href="https://storage.googleapis.com/amy-jo/images/automl/tables_export/export1.png" target="_blank"><img src="https://storage.googleapis.com/amy-jo/images/automl/tables_export/export1.png" width="60%"/></a>
-<figcaption><br/><i>Click the "Container" card to export your trained model to be run from a Docker container.</i></figcaption>
-</figure>
+Click the "Container" card to export your trained model to be run from a Docker container.
 
-Then, browse to select the GCS folder into which you want to export your model and click the **EXPORT** button.
+Then, browse to select the Google Cloud Storage folder into which you want to export your model and click the **EXPORT** button.
 
-<figure>
-<a href="https://storage.googleapis.com/amy-jo/images/automl/tables_export/export2-2.png" target="_blank"><img src="https://storage.googleapis.com/amy-jo/images/automl/tables_export/export2-2.png" width="60%"/></a>
-<figcaption><br/><i>Browse to the GCS folder into which you want to export your model.</i></figcaption>
-</figure>
+![Browse to Cloud Storage folder to export model](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/export2.png)
 
 When the export is finished, create a local directory, like `bikes_weather`, to hold your model.
 
@@ -165,24 +156,17 @@ python ./convert_oss.py --saved_model ./model-export/tbl/<your_renamed_directory
 ```sh
 tensorboard --logdir=converted_export
 ```
+You can view an exported custom Tables model in Tensorboard.
 
 You will see a rendering of the model graph, and can pan and zoom to view model sub-graphs in more detail.
 
-<figure>
-<a href="https://storage.googleapis.com/amy-jo/images/automl/tables_export/tb1.png" target="_blank"><img src="https://storage.googleapis.com/amy-jo/images/automl/tables_export/tb1.png" /></a>
-<figcaption><br/><i>You can view an exported custom Tables model in Tensorboard.</i></figcaption>
-</figure>
+![View exported custom Tables model in Tensorboard](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/tb1.png)
 
-<figure>
-<a href="https://storage.googleapis.com/amy-jo/images/automl/tables_export/tb2.png" target="_blank"><img src="https://storage.googleapis.com/amy-jo/images/automl/tables_export/tb2.png" /></a>
-<figcaption><br/><i></i></figcaption>
-</figure>
+![](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/tb2.png)
 
-<figure>
-<a href="https://storage.googleapis.com/amy-jo/images/automl/tables_export/tb3.png" target="_blank"><img src="https://storage.googleapis.com/amy-jo/images/automl/tables_export/tb3.png" /></a>
-<figcaption><br/><i>Zooming in to see part of the model graph in more detail.</i></figcaption>
-</figure>
+Zooming in to see part of the model graph in more detail.
 
+![Zooming in to see part of the model graph in more detail](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/tb3.png)
 
 ## Create a Google Cloud Run service based on your exported model
 
@@ -223,37 +207,40 @@ gcloud builds submit --tag gcr.io/[PROJECT_ID]/bw-serve .
 
 Now we're ready to deploy the container we built to Cloud Run, where we can scalably serve it for predictions.  Visit the [Cloud Run page in the console](https://console.cloud.google.com/marketplace/details/google-cloud-platform/cloud-run). (Click the “START USING..” button if necessary).  Then click the **CREATE SERVICE** button.
 
-<figure>
-<a href="https://storage.googleapis.com/amy-jo/images/automl/cloud_run1%202.png" target="_blank"><img src="https://storage.googleapis.com/amy-jo/images/automl/cloud_run1%202.png" width="40%"/></a>
-<figcaption><br/><i>Creating a Cloud Run Service</i></figcaption>
-</figure>
+![Creating a Cloud Run Service](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/cloud_run1.png)
 
 For the container URL, enter the name of the container that you just built above. Select the “Cloud Run (fully managed)” option.  Create a service name (it can be anything you like). Select the **Require Authentication** option. Then, click on **SHOW OPTIONAL REVISION SETTINGS**.  Change the **Memory allocated** option to **2GiB**. Leave the rest of the defaults as they are, and click **CREATE**.
 
-<figure>
-<a href="https://storage.googleapis.com/amy-jo/images/automl/cloud_run2.png" target="_blank"><img src="https://storage.googleapis.com/amy-jo/images/automl/cloud_run2.png" width="50%"/></a>
-<figcaption><br/><i>Set your service instances to use 2GiB of memory</i></figcaption>
-</figure>
+![Set service instances to use 2GiB of memory](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/cloud_run2.png)
 
 ### Send prediction requests to the Cloud Run service
 
-Once your Cloud Run service is deployed, you can send prediction requests to it.  Your new service will have a URL that starts with your service name (and ends with `run.app`). You can send JSON predictions to the Cloud Run service just as with the local server you tested earlier; but with Cloud Run, the service will scale up and down based on demand. 
+After your Cloud Run service is deployed, you can send prediction requests to it. Your new service has a URL that starts with your service name and ends
+with `run.app`. You can send JSON predictions to the Cloud Run service just as with the local server you tested earlier; but with Cloud Run, the service will
+scale up and down based on demand. 
 
-Assuming you selected the **Require Authentication** option, you can make prediction requests like this:
+Assuming that you selected the **Require Authentication** option, you can make prediction requests like this:
 
 ```bash
 curl -X POST -H \
 "Authorization: Bearer $(gcloud auth print-identity-token)" --data @./instances.json \
-https://<your-service-url>/predict
+https:/[YOUR_SERVICE_URL]/predict
 ```
 
-It may take a second or two for the first request to return, but subsequent requests will be faster. (If you set up your Cloud Run service endpoint so that it does not require authentication, you don’t need to include the authorization header in your `curl` request).
+It may take a second or two for the first request to return, but subsequent requests will be faster.
+
+If you set up your Cloud Run service endpoint so that it does not require authentication, you don’t need to include the authorization header in your `curl` 
+request.
 
 ## What’s next?
 
-In this tutorial, we walked through how to export a custom AutoML Tables trained model, view model information in TensorBoard, and build a container image that lets you serve the model from any environment.  Then we showed how you can deploy that image to Cloud Run for scalable serving. See the [Cloud Run documentation](https://cloud.google.com/run/docs/authenticating/overview) for more information on how you’d configure your prediction endpoint for end-user or service-to-service authentication.
+In this tutorial, you saw how to export a custom AutoML Tables trained model, view model information in TensorBoard, and build a container image that lets you serve the model from any environment. Then you saw how you can deploy that image to Cloud Run for scalable serving. See the
+[Cloud Run documentation](https://cloud.google.com/run/docs/authenticating/overview) for more information on how to configure your prediction endpoint for
+end-user or service-to-service authentication.
 
-Once you’ve built a model-serving container image, it’s easy to deploy it to other environments as well.  For example, if you have installed [Knative serving](https://github.com/knative/serving) on a [Kubernetes](https://kubernetes.io/) cluster, you can create a Knative *service* like this, using the same container image (again replacing `[PROJECT_ID]` with your project):
+Once you’ve built a model-serving container image, you can deploy it to other environments as well. For example, if you have installed
+[Knative serving](https://github.com/knative/serving) on a [Kubernetes](https://kubernetes.io/) cluster, you can create a Knative *service* like this, using the 
+same container image (replacing `[PROJECT_ID]` with your project):
 
 ```yaml
 apiVersion: serving.knative.dev/v1
@@ -267,8 +254,14 @@ spec:
         - image: gcr.io/[PROJECT_ID]/bw-serve
 ```
 
-Though the example model for this tutorial fits on a 2-GiB Cloud Run instance, you may have models that are too large for the managed Cloud Run service, and serving it with Kubernetes/GKE is a good alternative.
+Though the example model for this tutorial fits on a 2-GiB Cloud Run instance, you might have models that are too large for the managed Cloud Run service, and 
+serving it with Kubernetes/GKE is a good alternative.
 
-If you’re curious about the details of your custom model, you can use Cloud Logging to [view information about your AutoML Tables model](https://cloud.google.com/automl-tables/docs/logging). Using Logging, you can see the final model hyperparameters as well as the hyperparameters and object values used during model training and tuning.
+If you’re curious about the details of your custom model, you can use Cloud Logging to
+[view information about your AutoML Tables model](https://cloud.google.com/automl-tables/docs/logging). Using Cloud Logging, you can see the final model 
+hyperparameters and the hyperparameters and object values used during model training and tuning.
 
-You may also be interested in exploring the updated [AutoML Tables client libraries](https://googleapis.dev/python/automl/latest/gapic/v1beta1/tables.html), which make it easy for you to [train and use Tables programmatically](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/tables/automl/notebooks), or reading about how to create a _contextual bandit_ model pipeline [using AutoML Tables, without needing a specialist for tuning or feature engineering](https://cloud.google.com/blog/products/ai-machine-learning/how-to-build-better-contextual-bandits-machine-learning-models).
+You may also be interested in exploring the updated [AutoML Tables client libraries](https://googleapis.dev/python/automl/latest/gapic/v1beta1/tables.html), 
+which make it easy for you to
+[train and use Tables programmatically](https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/tables/automl/notebooks), or reading about how to create a _contextual bandit_ model pipeline
+[using AutoML Tables, without needing a specialist for tuning or feature engineering](https://cloud.google.com/blog/products/ai-machine-learning/how-to-build-better-contextual-bandits-machine-learning-models).
