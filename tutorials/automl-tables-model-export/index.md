@@ -61,7 +61,7 @@ can also follow along with your own tabular dataset, but in that case you need t
 
 After the import is complete, you edit the dataset schema. You'll need to change a few of the inferred types.
 
-On the **Train** tab, make sure that your schema matches the figure below:
+On the **Train** tab, make sure that your schema matches the screenshot below:
 
 1.  Change `bike_id`, `end_station_id`, `start_station_id`, and `loc_cross` to be of type **Categorical**.
 1.  Select `duration` in the **Target column** section. 
@@ -78,7 +78,7 @@ Now you're ready to train a model on the dataset.
 For this example, you train a model to predict ride duration given all the other dataset inputs, so you train a
 [regression](https://cloud.google.com/automl-tables/docs/problem-types) model. 
 
-For this example, enter a training budget of 1 hour, and include all available feature columns.
+Enter a training budget of 1 hour, and include all available feature columns, as shown in the following screenshot.
 
 ![Train a model to predict ride](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/train.png)
 
@@ -120,7 +120,7 @@ the [Cloud Shell](https://cloud.google.com/shell/) instead of your local machine
     
         gsutil cp -r 'gs://[YOUR_STORAGE_BUCKET/model_export_1/*' ./bikes_weather
 
-1.  Run the command from the parent directory of your `bikes_weather` directory:
+1.  Run the command from the parent directory of your `bikes_weather` directory.
     
     The exported model is copied to `./bikes_weather`.
 
@@ -129,100 +129,126 @@ the [Cloud Shell](https://cloud.google.com/shell/) instead of your local machine
 After you've downloaded your model, you can run and test it locally. This provides a good check before deploying to Cloud Run.
 The process is described in detail in the [AutoML Tables documentation](https://cloud.google.com/automl-tables/docs/model-export).
 
-- change to the `bikes_weather` directory. You should see a `model_export` subdirectory, which is the result of your download.
-- rename the `model_export/tbl/tf_saved_model*` subdirectory to remove the timestamp suffix.
+1.  Change to the `bikes_weather` directory.
 
-Then, create and run a container to serve your new trained model.  Edit the following to point to your renamed directory path:
+    You should see a `model_export` subdirectory, which is the result of your download.
+    
+1.  Rename the `model_export/tbl/tf_saved_model*` subdirectory to remove the timestamp suffix.
 
-```sh
-docker run -v `pwd`/model-export/tbl/<your_renamed_directory>:/models/default/0000001 -p 8080:8080 -it gcr.io/cloud-automl-tables-public/model_server
-```
+1.  Create and run a container to serve your new trained model:
 
-This starts up a model server to which you can send requests.  Note that we're using the `gcr.io/cloud-automl-tables-public/model_server` container image and mounting our local directory.
+        docker run -v `pwd`/model-export/tbl/[YOUR_RENAMED_DIRECTORY]:/models/default/0000001 -p 8080:8080 -it gcr.io/cloud-automl-tables-public/model_server
+    
+    This starts up a model server to which you can send requests. This command uses the `gcr.io/cloud-automl-tables-public/model_server` container image and
+    mounts your local directory.
 
-Next, download or navigate to the `instances.json` file, which holds data for three prediction instances for the “bikes & weather” model.
-From the directory where you placed `instances.json`, run:
+1.  Download or navigate to the [`instances.json`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/automl-tables-model-export/instances.json)
+    file, which holds data for three prediction instances for the bikes and weather model.
 
-```sh
-curl -X POST --data @instances.json http://localhost:8080/predict
-```
+1.  From the directory where you placed `instances.json`, run the following command:
 
-You’ll get back predictions for all of the instances in the `json` file.   
-The actual duration for the third instance is 1200.
+        curl -X POST --data @instances.json http://localhost:8080/predict
+
+    You’ll get back predictions for all of the instances in the JSON file.
+
+    The actual duration for the third instance is 1200.
 
 ## View information about your exported model in TensorBoard
 
-You can view your exported custom model in [TensorBoard](https://www.tensorflow.org/tensorboard).  This requires a conversion step. 
-You will need to have TensorFlow 1.14 or 1.15 [installed](https://www.tensorflow.org/install/pip#2.-create-a-virtual-environment-recommended) to run the the conversion script.
+In this section, you view your exported custom model in [TensorBoard](https://www.tensorflow.org/tensorboard). 
 
-Then, download or navigate to the `convert_oss.py` script.  Copy it to the parent directory of `model_export`.  Create a directory for the output (e.g. `converted_export`), then run the script as follows:
+Viewing your exported model in TensorBoard requires a conversion step. You need to have TensorFlow 1.14 or 1.15
+[installed](https://www.tensorflow.org/install/pip#2.-create-a-virtual-environment-recommended) to run the the conversion script.
 
-```sh
-mkdir converted_export
-python ./convert_oss.py --saved_model ./model-export/tbl/<your_renamed_directory>/saved_model.pb --output_dir converted_export
-```
+1.  Download or navigate to the
+    [`convert_oss.py`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/automl-tables-model-export/convert_oss.py) script, and copy it to 
+    the parent directory of `model_export`.
 
-**The script requires TensorFlow 1.x**.  Then, point TensorBoard to the converted model:
+1.  Create a directory for the output (for example, `converted_export`):
 
-```sh
-tensorboard --logdir=converted_export
-```
-You can view an exported custom Tables model in Tensorboard.
+        mkdir converted_export
 
-You will see a rendering of the model graph, and can pan and zoom to view model sub-graphs in more detail.
+1.  Run the script:
 
-![View exported custom Tables model in Tensorboard](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/tb1.png)
+        python ./convert_oss.py --saved_model ./model-export/tbl/<your_renamed_directory>/saved_model.pb --output_dir converted_export
 
-![](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/tb2.png)
+1.  Point TensorBoard to the converted model:
 
-Zooming in to see part of the model graph in more detail.
+        tensorboard --logdir=converted_export
 
-![Zooming in to see part of the model graph in more detail](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/tb3.png)
+1.  View the exported custom Tables model in Tensorboard.
 
-## Create a Google Cloud Run service based on your exported model
+    You will see a rendering of the model graph, and you can pan and zoom to view model sub-graphs in more detail.
 
-At this point, we have a trained model that we've exported and tested locally.  Now we are almost ready to deploy it to [Cloud Run](https://cloud.google.com/run/docs/). As the last step of prep, we'll create a container image that uses `gcr.io/cloud-automl-tables-public/model_server` as a base image and `ADD`s the model directory, and push that image to the [Google Container Registry](https://cloud.google.com/container-registry/), so that Cloud Run can access it.
+    ![View exported custom Tables model in Tensorboard](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/tb1.png)
+
+    ![](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/tb2.png)
+
+    Zoom in to see part of the model graph in more detail.
+
+    ![Zooming in to see part of the model graph in more detail](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/tb3.png)
+
+## Create a Cloud Run service based on your exported model
+
+At this point, you have a trained model that you've exported and tested locally. You are almost ready to deploy it to
+[Cloud Run](https://cloud.google.com/run/docs/). As the last step of preparation, you create a container image that uses 
+`gcr.io/cloud-automl-tables-public/model_server` as a base image and adds the model directory, and push that image to the
+[Google Container Registry](https://cloud.google.com/container-registry/), so that Cloud Run can access it.
 
 ### Build a container to use for Cloud Run
 
-In the same `bikes_weather` directory that holds the `model_export` subdir, create a file called `Dockerfile` that contains the following two lines.  The template is in `./Dockerfile.template` as well. **Edit the second line to use your correct path to the exported model, the same path that you used above when running locally**.
+1.  In the same `bikes_weather` directory that holds the `model_export` subdirectory, create a file called `Dockerfile` that contains the following two lines,
+    replacing `[YOUR_RENAMED_DIRECTORY]` with the path to your exported model, the same path that you used in a previous step when running locally:
 
-```
-FROM gcr.io/cloud-automl-tables-public/model_server
+        FROM gcr.io/cloud-automl-tables-public/model_server
 
-ADD model-export/tbl/YOUR_RENAMED_DIRECTORY/models/default/0000001
-```
+        ADD model-export/tbl/[YOUR_RENAMED_DIRECTORY]/models/default/0000001
 
-Then, build a container from the `Dockerfile`.  In this example we'll call it `bw-serve`.
-You can do this as follows (**replace `[PROJECT_ID]` with the id of your project**):
+    The template is in
+    [`Dockerfile.template`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/automl-tables-model-export/Dockerfile.template), too.
 
-```bash
-docker build . -t gcr.io/[PROJECT_ID]/bw-serve
-```
+1.  Build a container from the `Dockerfile` (in this example called `bw-serve`):
 
-Next, push it to the Google Container Registry (again replacing `[PROJECT_ID]` with the id of your project):
+        docker build . -t gcr.io/[YOUR_PROJECT_ID]/bw-serve
 
-```bash
-docker push gcr.io/[PROJECT_ID]/bw-serve
-```
+1.  Push the container to the Google Container Registry:
 
-If you get an error, you may need to configure Docker to use `gcloud` to [authenticate requests to Container Registry](https://cloud.google.com/container-registry/docs/quickstart#add_the_image_to).
+        docker push gcr.io/[YOUR_PROJECT_ID]/bw-serve
+
+If you get an error, you may need to configure Docker to use `gcloud` to
+[authenticate requests to Container Registry](https://cloud.google.com/container-registry/docs/quickstart#add_the_image_to).
 
 Alternately, you can use [Cloud Build](https://cloud.google.com/cloud-build/docs/quickstart-docker) to build the container instead, as follows:
 
-```bash
-gcloud builds submit --tag gcr.io/[PROJECT_ID]/bw-serve .
-```
+    gcloud builds submit --tag gcr.io/[YOUR_PROJECT_ID]/bw-serve .
 
 ### Create your Cloud Run service
 
-Now we're ready to deploy the container we built to Cloud Run, where we can scalably serve it for predictions.  Visit the [Cloud Run page in the console](https://console.cloud.google.com/marketplace/details/google-cloud-platform/cloud-run). (Click the “START USING..” button if necessary).  Then click the **CREATE SERVICE** button.
+Now you're ready to deploy the container to Cloud Run, where you can scalably serve it for predictions.
 
-![Creating a Cloud Run Service](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/cloud_run1.png)
+1.  Go to the [Cloud Run page in the Cloud Console](https://console.cloud.google.com/marketplace/details/google-cloud-platform/cloud-run).
 
-For the container URL, enter the name of the container that you just built above. Select the “Cloud Run (fully managed)” option.  Create a service name (it can be anything you like). Select the **Require Authentication** option. Then, click on **SHOW OPTIONAL REVISION SETTINGS**.  Change the **Memory allocated** option to **2GiB**. Leave the rest of the defaults as they are, and click **CREATE**.
+1.  Click **Start using** if necessary.
 
-![Set service instances to use 2GiB of memory](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/cloud_run2.png)
+1.  Click **Create service**.
+
+    ![Creating a Cloud Run Service](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/cloud_run1.png)
+
+1.  For the container URL, enter the name of the container that you just built above.
+
+1.  Select the **Cloud Run (fully managed)**.
+
+1.  Create a service name, which can be anything you like.
+
+1.  Select **Require Authentication**. 
+
+1.  Click **Show optional revision settings**.
+
+1.  Change **Memory allocated** to **2GiB**.
+
+    ![Set service instances to use 2GiB of memory](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/cloud_run2.png)
+
+1.  Leave the rest of the defaults as they are, and click **Create**.
 
 ### Send prediction requests to the Cloud Run service
 
