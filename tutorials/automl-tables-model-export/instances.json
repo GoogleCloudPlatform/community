@@ -1,0 +1,58 @@
+{
+  "instances": [
+    {
+      "bike_id": "6179",
+      "day_of_week": "6",
+      "end_latitude": 51.50379168,
+      "end_longitude": -0.11282408,
+      "end_station_id": "154",
+      "euclidean": 2513.254047872678,
+      "loc_cross": "POINT(-0.08 51.52)POINT(-0.11 51.5)",
+      "max": 56.8,
+      "min": 50.9,
+      "prcp": 0,
+      "ts": 1445624280,
+      "start_latitude": 51.51615461,
+      "start_longitude": -0.082422399,
+      "start_station_id": "217",
+      "temp": 54,
+      "dewp": 44
+    },
+    {
+      "bike_id": "5373",
+      "day_of_week": "3",
+      "end_latitude": 51.52059681,
+      "end_longitude": -0.116688468,
+      "end_station_id": "68",
+      "euclidean": 1181.215448450556,
+      "loc_cross": "POINT(-0.13 51.53)POINT(-0.12 51.52)",
+      "max": 56.7,
+      "min": 45.9,
+      "prcp": 0,
+      "ts": 1494317220,
+      "start_latitude": 51.52683806,
+      "start_longitude": -0.130504336,
+      "start_station_id": "214",
+      "temp": 50.5,
+      "dewp": 37.1
+    },
+    {
+      "bike_id": "5373",
+      "day_of_week": "3",
+      "end_latitude": 51.52059681,
+      "end_longitude": -0.116688468,
+      "end_station_id": "68",
+      "euclidean": 3589.5146210024977,
+      "loc_cross": "POINT(-0.07 51.52)POINT(-0.12 51.52)",
+      "max": 44.6,
+      "min": 34.0,
+      "prcp": 0,
+      "ts": 1480407420,
+      "start_latitude": 51.52388,
+      "start_longitude": -0.065076,
+      "start_station_id": "445",
+      "temp": 38.2,
+      "dewp": 28.6
+    }
+  ]
+}
