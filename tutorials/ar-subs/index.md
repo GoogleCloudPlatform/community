@@ -2,63 +2,44 @@
 title: Create real-time translation overlays
 description: Learn how to use the Media Translation API with streaming dialog audio and create translated text overlays.
 author: lepistom
-tags: AI, artificial intelligence, ML, machine learning, IoT, Internet of Things, Raspberry Pi, Video
-date_published: 2020-08-12
+tags: AI, artificial intelligence, ML, machine learning, IoT, Internet of Things, Raspberry Pi, video
+date_published: 2020-08-19
 ---
 
 Markku Lepisto | Solutions Architect | Google Cloud
 
-This tutorial demonstrates the real-time speech-to-text transcribing and
-translation functionality of the
+This tutorial demonstrates the real-time speech-to-text transcribing and translation features of the
 [Cloud Media Translation API](https://cloud.google.com/media-translation).
-The display method demonstrated is to overlay the translations as subtitles on
-top of a live video feed, using a
-[video mixer](https://en.wikipedia.org/wiki/Vision_mixer) and a
-[luminance](https://en.wikipedia.org/wiki/Luma_(video)), or
-[luma keyer](https://www.webopedia.com/TERM/L/luminance_keying.html).
-Additionally, as a fun example, the translated dialog can be projected onto
-surfaces as live subtitles, using a  projector. In effect,
-creating [Augmented Reality](https://en.wikipedia.org/wiki/Augmented_reality)
-(AR) translations.
 
-The solution uses the [pygame](https://www.pygame.org/news) library to control
-the HDMI output of a [Raspberry Pi](https://www.raspberrypi.org/) computer. The
-HDMI output is then directed either to a projector, or a video mixer for luma
-key overlays. The overlay can then be used as live subtitles with for example
-video conference systems.
+In this tutorial, you see how to overlay translations as subtitles over a live video feed, using a video mixer and a luma keyer. The translated dialog can be
+projected onto surfaces as live subtitles using a  projector, in effect creating [augmented reality (AR)](https://en.wikipedia.org/wiki/Augmented_reality) 
+translations.
 
-![architecture diagram][archdiag]
+This tutorial uses the [pygame](https://www.pygame.org/news) library to control the HDMI output of a [Raspberry Pi](https://www.raspberrypi.org/)
+computer. The HDMI output is then directed either to a projector or to a video mixer for luma key overlays. The overlay can then be used as live subtitles with, 
+for example, video conference systems.
 
-[archdiag]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/arch-diag.svg
-
+![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/arch-diag.svg)
 
 ## Objectives
 
 - Create a Python client for the Media Translation API.
-- Stream microphone or line-level audio to the service and receive real-time
-translations.
-- Use pygame to output the translations via the Raspberry Pi HDMI port.
-- Use a video mixer with a luma keyer, to overlay translated subtitles on top
-of a video feed.
+- Stream microphone or line-level audio to the service and receive real-time translations.
+- Use pygame to output the translations through the Raspberry Pi HDMI port.
+- Use a video mixer with a luma keyer to overlay translated subtitles on a video feed.
 - Use a projector to display AR subtitles.
-
 
 ## Watch the companion video
 
-If you wish to see this tutorial in action, you can watch the
-[GCP Level Up episode](https://youtu.be/DvZRm-cqE7s) first, and then follow the
- steps below yourself.
-
+To see this tutorial in action, you can watch the [GCP Level Up episode](https://youtu.be/DvZRm-cqE7s) first, and then follow the steps below yourself.
 
 ## Before you begin
 
-This tutorial assumes you already have a [Google Cloud Platform (GCP)](https://console.cloud.google.com/freetrial)
-account set up.
-
+This tutorial assumes that you already have a [Google Cloud](https://console.cloud.google.com/freetrial) account.
 
 ## Costs
 
-This tutorial uses billable components of GCP, including the following:
+This tutorial uses billable components of Google Cloud, including the following:
 
 - Media Translation API
 
