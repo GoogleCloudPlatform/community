@@ -1,7 +1,7 @@
 ---
 title: Authorizing end-users in Cloud Run with Pomerium
 description: This guide covers how to deploy Pomerium to Cloud Run and use it to protect other endpoints via Authorization Headers.
-author: desimone
+author: travisgroth
 tags: Cloud Run, Pomerium
 date_published: 2020-08-13
 ---
