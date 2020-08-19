@@ -37,7 +37,9 @@ To deploy Pomerium to Cloud Run, a special [image](https://console.cloud.google.
 
 [Dockerfile](https://github.com/pomerium/pomerium/blob/master/.github/Dockerfile-cloudrun) Based on [vals-entrypoint](https://github.com/pomerium/vals-entrypoint)
 
-The image expects a config file at `/pomerium/config.yaml`. Set `VALS_FILES=[secretref]:/pomerium/config.yaml` and any other [Pomerium Environment Variables](https://www.pomerium.io/reference/#configuration-settings) directly or with secret refs such as `ref+gcpsecrets://PROJECT/SECRET(#/key])`.
+This image expects a configuration file present at `/pomerium/config.yaml`, and can source it from Google Cloud Secret Manager. To do so, set `VALS_FILES=[secretref]:/pomerium/config.yaml` and set any other [Pomerium Environment Variables](https://www.pomerium.io/reference/#configuration-settings) directly or with an additional `secretref`.
+
+`secretref` format for Google Cloud Secret Manager is `ref+gcpsecrets://PROJECT/SECRET(#/key])`.
 
 ## Config
 
