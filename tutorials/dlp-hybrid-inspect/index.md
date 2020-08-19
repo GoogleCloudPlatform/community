@@ -6,8 +6,12 @@ tags: Cloud DLP, Java, PII
 date_published: 2020-08-21
 ---
 
+Cloud Data Loss Prevention (Cloud DLP) can help you to discover, inspect, and classify sensitive elements in your data. This tutorial shows how to use Cloud DLP's [_hybrid inspection method_](https://cloud.google.com/dlp/docs/reference/rest/v2/HybridInspectDlpJobRequest) along with a JDBC driver to inspect samples of table in a SQL databas like MySQL, SQL Server, or PostgreSQL. You can configure several parameters including the database host, username, password, desired number of rows to sample, as well as what Cloud DLP hybrid job id to use. Note: passwords are sent using Cloud Secret Manager to avoid exposing them via the command line. 
+
 ## Configuration and Build
-Depend in on the database you are connecting to, you may need to update the ```pom.xml``` file to include the proper JDBC client.
+To run this script you will need to configure [authenticated access](https://cloud.google.com/dlp/docs/auth#using_a_service_account) with permission to call Cloud DLP and Secret Manager. You can use it to inspect a database running virtually anywhere. It does not need to be located in the same place as where you run the script but the script must have network access to the database host.  Depend in on the database you are connecting to, you may need to update the ```pom.xml``` file to include the proper JDBC client.
+
+When configuring your [Hybrid Job](https://cloud.google.com/dlp/docs/reference/rest/v2/InspectJobConfig#HybridOptions), it is recommended that you turn on the action for [SaveFindings to BigQuery](https://cloud.google.com/dlp/docs/reference/rest/v2/InspectJobConfig#savefindings) if you want to see detailed finidngs or run analysis on findings. 
 
 __Compile everything__
 ```
@@ -23,7 +27,7 @@ mvn clean package -DskipTests
 | sampleRowLimit              | max number of rows to scan per table                                                                                                                                                                                  |
 | hybridJobName               | Cloud DLP Hybrid job resource ID/name                                                                                                                                                                                 |
 | databaseInstanceDescription | Give this run an instance name for tracking - this gets written to Hybrid and must follow label contraints.                                                                                                           |
-| databaseInstanceServer      | The hostname where your database is running (e.g. localhsot or 127.0.0.1 for local).                                                                                                                                  |
+| databaseInstanceServer      | The hostname where your database is running (e.g. localhost or 127.0.0.1 for local).                                                                                                                                  |
 | databaseName                | The name of the database or dataset name that you want to scan.                                                                                                                                                       |
 | tableName                   | (Optional) The name of the table you want to scan. If blank, then all tables will be scanned.                                                                                                                         |
 | databaseUser                | The username for your database instance.                                                                                                                                                                              |
