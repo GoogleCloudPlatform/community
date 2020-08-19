@@ -1,5 +1,5 @@
 ---
-title: Cloud Run with Pomerium for end-user access
+title: Authorizing end-users in Cloud Run with Pomerium
 description: This guide covers how to deploy Pomerium to Cloud Run and use it to protect other endpoints via Authorization Headers.
 author: desimone
 tags: Cloud Run, Pomerium
@@ -8,15 +8,17 @@ date_published: 2020-08-13
 
 # Cloud Run with Pomerium for end-user access
 
-This guide covers how to deploy Pomerium to Cloud Run to provide end-user auth to other endpoints. 
+This guide covers how to deploy Pomerium to Cloud Run, providing end-user authentication and authorization to other endpoints.  The resulting configuration will permit users with `@gmail.com` addresses to access an instance of `httpbin.org` hosted on Cloud Run.
 
 [Pomerium](https://www.pomerium.com) is an open source identity-aware proxy that enables secure access to internal applications. Pomerium provides a standardized interface to add access control to applications regardless of whether the application itself has authorization or authentication baked-in. Pomerium gateways  requests and can be used in situations where you'd typically reach for a VPN.
 
+Unlike [Cloud IAP](https://cloud.google.com/iap), Pomerium supports non-Google identity providers. You can also run Pomerium outside GCP (such as other cloud providers and on-premises), and still use it to route or authorize traffic to Google Cloud targets such as Cloud Run or Cloud Functions.
+
 ## How it works
 
-Services on [Cloud Run](https://cloud.google.com/run) and other Google Cloud serverless products can be restricted to only permit access with a properly signed [bearer token](https://cloud.google.com/run/docs/authenticating/service-to-service). This allows requests from other services running in GCP or elsewhere to be securely authorized despite the endpoints being public.
+Services on [Cloud Run](https://cloud.google.com/run) and [Cloud Functions](https://cloud.google.com/functions) can be restricted to only permit access with a properly signed [identity token](https://cloud.google.com/run/docs/authenticating/service-to-service). This allows requests from other services running in GCP or elsewhere to be securely authorized despite the endpoints being public.
 
-These bearer tokens are not easily set in a browser session and must be refreshed on a regular basis, preventing them from being useful for end user authorization. Pomerium, however, can generate compatible tokens on behalf of end users and proxy the request to these services.
+These identity tokens are not easily set in a browser session and must be refreshed on a regular basis, preventing them from being useful for end user authorization. Pomerium, however, can generate compatible tokens on behalf of end users and proxy the request to these services.
 
 - Add an IAM policy delegating `roles/run.invoker` permissions to a service account
 - Run Pomerium with access to a key for the corresponding service account
@@ -154,7 +156,7 @@ You should see a 403 error because you do not have the proper credentials.
 
 Now let's access via <https://hello.cloudrun.pomerium.com>
 
-We should get an auth flow through your IdP:
+We should get an auth flow through your Identity Provider:
 
 ![Hello Sign In](./hello-signin.png)
 
