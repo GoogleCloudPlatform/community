@@ -12,7 +12,7 @@ resource "google_cloud_scheduler_job" "scheduler" {
   schedule = "0 0 * * *"
   # This needs to be us-central1 even if the app engine is in us-central.
   # You will get a resource not found error if just using us-central.
-  region = "us-central1"
+  region = var.region
 
   http_target {
     http_method = "POST"
@@ -32,7 +32,7 @@ resource "google_cloud_scheduler_job" "scheduler" {
       "environment": {
         "maxWorkers": "10",
         "tempLocation": "gs://${var.bucket}/temp",
-        "zone": "us-west1-a"
+        "zone": "${var.region}-a"
       }
     }
 EOT

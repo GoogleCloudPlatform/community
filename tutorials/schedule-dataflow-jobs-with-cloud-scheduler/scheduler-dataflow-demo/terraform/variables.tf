@@ -4,7 +4,7 @@ variable "project_id" {
 
 variable "region" {
   type = string
-  default = "us-west1"
+  default = "us-central1"
 }
 
 variable "bucket" {

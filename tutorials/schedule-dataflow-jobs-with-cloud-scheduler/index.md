@@ -78,6 +78,14 @@ git clone https://github.com/GoogleCloudPlatform/community
 cd community/tutorials/schedule-dataflow-jobs-with-cloud-scheduler/
 ```
 
+Enable the services that will be used by Terraform.
+
+```
+gcloud services enable cloudscheduler.googleapis.com
+gcloud services enable dataflow.googleapis.com
+gcloud services enable iam.googleapis.com
+```
+
 Set up Terraform's environment variables and a service account.
 
 ```
@@ -103,7 +111,7 @@ Create a bucket on Google Cloud Stoeage, copy the Dataflow templates there and s
 
 ```
 gsutil mb -p ${GOOGLE_CLOUD_PROJECT} gs://${TF_ADMIN}
-gsutil cp -R scheduler-dataflow-demo/dataflow/ gs://${TF_ADMIN}/templates/dataflow-demo-template/
+gsutil cp -R scheduler-dataflow-demo/dataflow gs://${TF_ADMIN}/templates/dataflow-demo-template
 cat > backend.tf << EOF
 terraform {
  backend "gcs" {
@@ -121,6 +129,8 @@ cd scheduler-dataflow-demo/terraform
 terraform init
 terraform apply
 ```
+
+Note: You may be prompted to open the Cloud Console to create an App Engine app.  Be sure to create it in the same region as specified in your Terraform variables.
 
 The job will run based on the schedule you defined in the terraform script. 
 In addition, you can manually run the scheduler through UI and watch it trigger your Dataflow batch job. 
