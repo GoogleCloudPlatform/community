@@ -1,13 +1,6 @@
-terraform {
-  backend "gcs" {
-    bucket = "zhong-gcp"
-    prefix = "terraform/state"
-  }
-}
-
 provider "google" {
   version = "~> 2.20"
-  project = "zhong-gcp"
+  project = var.project_id
 }
 
 # Use this data source to get project details. For more information see API.
@@ -23,7 +16,7 @@ resource "google_cloud_scheduler_job" "scheduler" {
 
   http_target {
     http_method = "POST"
-    uri = "https://dataflow.googleapis.com/v1b3/projects/${var.project_id}/locations/${var.region}/templates:launch?gcsPath=gs://zhong-gcp/templates/dataflow-demo-template"
+    uri = "https://dataflow.googleapis.com/v1b3/projects/${var.project_id}/locations/${var.region}/templates:launch?gcsPath=gs://${var.bucket}/templates/dataflow-demo-template"
     oauth_token {
       service_account_email = google_service_account.cloud-scheduler-demo.email
     }
@@ -38,7 +31,7 @@ resource "google_cloud_scheduler_job" "scheduler" {
       },
       "environment": {
         "maxWorkers": "10",
-        "tempLocation": "gs://zhong-gcp/temp",
+        "tempLocation": "gs://${var.bucket}/temp",
         "zone": "us-west1-a"
       }
     }
