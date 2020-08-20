@@ -107,11 +107,10 @@ gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT} --member serviceA
   --role roles/storage.admin
 ```
 
-Create a bucket on Google Cloud Stoeage, copy the Dataflow templates there and set up the Terraform backend.
+Create a bucket on Google Cloud Stoeage and set up the Terraform backend.
 
 ```
 gsutil mb -p ${GOOGLE_CLOUD_PROJECT} gs://${TF_ADMIN}
-gsutil cp -R scheduler-dataflow-demo/dataflow gs://${TF_ADMIN}/templates/dataflow-demo-template
 cat > backend.tf << EOF
 terraform {
  backend "gcs" {
@@ -122,7 +121,14 @@ terraform {
 EOF
 ```
 
-You are now ready to initialize and run Terraform.
+Compile and upload the Dataflow template.
+
+```
+cd ../dataflow
+. maven.sh
+```
+
+You are now ready to initialize and apply Terraform.
 
 ```
 cd scheduler-dataflow-demo/terraform
