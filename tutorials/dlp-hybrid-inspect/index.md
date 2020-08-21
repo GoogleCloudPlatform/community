@@ -7,9 +7,8 @@ date_published: 2020-08-24
 ---
 
 Cloud Data Loss Prevention (Cloud DLP) can help you to discover, inspect, and classify sensitive elements in your data. This document shows how to use the Cloud 
-DLP [_hybrid inspection method_](https://cloud.google.com/dlp/docs/reference/rest/v2/HybridInspectDlpJobRequest) along with a JDBC driver to inspect samples of 
-tables in a SQL database like MySQL, SQL Server, or PostgreSQL. You can configure several parameters, including the database host, username, password, 
-number of rows to sample, and what Cloud DLP hybrid job ID to use. Passwords are sent using Cloud Secret Manager to avoid exposing them through the command line. 
+DLP [_hybrid inspection method_](https://cloud.google.com/dlp/docs/reference/rest/v2/HybridInspectDlpJobRequest) with a JDBC driver to inspect samples of 
+tables in a SQL database like MySQL, SQL Server, or PostgreSQL. 
 
 ## Configuration and build
 
@@ -33,7 +32,12 @@ Run the following command to compile the script:
 mvn clean package -DskipTests
 ```
 
+
 ## Command line parameters
+
+You can configure several parameters, including the database host, username, password, number of rows to sample, and what Cloud DLP hybrid job ID to use. 
+Passwords are sent using Cloud Secret Manager to avoid exposing them through the command line. 
+
 
 | parameter            | description                                         | 
 |----------------------|-----------------------------------------------------|
