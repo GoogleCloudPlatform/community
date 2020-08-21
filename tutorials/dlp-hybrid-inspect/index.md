@@ -1,6 +1,6 @@
 ---
-title: Cloud Data Loss Prevention (DLP) Hybrid Inspect demonstration for SQL databases using JDBC
-description: Demonstrates how to inspect SQL table data using Cloud Data Loss Prevention with Hybrid Inspect.
+title: Cloud Data Loss Prevention (DLP) hybrid inspection demonstration for SQL databases using JDBC
+description: Demonstrates how to inspect SQL table data using Cloud Data Loss Prevention with hybrid inspection.
 author: scellis,crwilson
 tags: Cloud DLP, Java, PII
 date_published: 2020-08-24
@@ -8,19 +8,23 @@ date_published: 2020-08-24
 
 Cloud Data Loss Prevention (Cloud DLP) can help you to discover, inspect, and classify sensitive elements in your data. This document shows how to use the Cloud 
 DLP [_hybrid inspection method_](https://cloud.google.com/dlp/docs/reference/rest/v2/HybridInspectDlpJobRequest) along with a JDBC driver to inspect samples of 
-tables in a SQL database like MySQL, SQL Server, or PostgreSQL. You can configure several parameters including the database host, username, password, desired 
+tables in a SQL database like MySQL, SQL Server, or PostgreSQL. You can configure several parameters, including the database host, username, password, 
 number of rows to sample, and what Cloud DLP hybrid job ID to use. Passwords are sent using Cloud Secret Manager to avoid exposing them through the command line. 
 
 ## Configuration and build
 
-To run the demonstration script, you need to configure [authenticated access](https://cloud.google.com/dlp/docs/auth#using_a_service_account) with permission to 
+To run the
+[demonstration script](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/dlp-hybrid-inspect/src/main/java/com/example/dlp/HybridInspectSql.java),
+you need to configure [authenticated access](https://cloud.google.com/dlp/docs/auth#using_a_service_account) with permission to 
 call Cloud DLP and Secret Manager. 
 
 You can use this script to inspect a database running virtually anywhere. The database does not need to be located in the same place as where you run the script,
-but the script must have network access to the database host. You may need to update the `pom.xml` file to include the appropriate JDBC client.
+but the script must have network access to the database host. You may need to update the
+[`pom.xml` file](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/dlp-hybrid-inspect/pom.xml)
+to include the appropriate JDBC client.
 
-If you want to see detailed finidngs or run analysis on findings, we recommend that you turn on the action for
-[SaveFindings to BigQuery](https://cloud.google.com/dlp/docs/reference/rest/v2/InspectJobConfig#savefindings) when configuring your
+If you want to see detailed findings or run analysis on findings, we recommend that you turn on the
+[`SaveFindings` action](https://cloud.google.com/dlp/docs/reference/rest/v2/InspectJobConfig#savefindings) to BigQuery when configuring your
 [hybrid job](https://cloud.google.com/dlp/docs/reference/rest/v2/InspectJobConfig#HybridOptions). 
 
 Run the following command to compile the script:
