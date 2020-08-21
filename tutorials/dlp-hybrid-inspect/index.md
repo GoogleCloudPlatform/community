@@ -1,5 +1,5 @@
 ---
-title: Cloud Data Loss Prevention (DLP) hybrid inspection demonstration for SQL databases using JDBC
+title: Cloud Data Loss Prevention (DLP) hybrid inspection for SQL databases using JDBC
 description: Demonstrates how to inspect SQL table data using Cloud Data Loss Prevention with hybrid inspection.
 author: scellis,crwilson
 tags: Cloud DLP, Java, PII
@@ -32,7 +32,6 @@ Run the following command to compile the script:
 mvn clean package -DskipTests
 ```
 
-
 ## Command line parameters
 
 You can configure several parameters, including the database host, username, password, number of rows to sample, and what Cloud DLP hybrid job ID to use. 
@@ -41,7 +40,7 @@ Passwords are sent using Cloud Secret Manager to avoid exposing them through the
 
 | parameter            | description                                         | 
 |----------------------|-----------------------------------------------------|
-| `sql`                | Database type: `"mysql"`, `"postgres"`, or `"cloudsql"`. There must be an appropriate JDBC driver configured in your `pom.xml` file.|
+| `sql`                | Database type: `"mysql"`, `"postgres"`, or `"cloudsql"`. There must be an appropriate JDBC driver configured in your `pom.xml` file. |
 | `threadPoolSize`     | Number of worker threads. This code uses 1 thread per table regardless of this setting. If you are scanning multiple tables, increasing this number means that more than one table can be processed in parallel. |
 | `sampleRowLimit`     | Maximum number of rows to scan per table.   |
 | `hybridJobName`      | Cloud DLP Hybrid job resource ID/name.      |
