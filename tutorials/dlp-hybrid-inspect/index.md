@@ -1,7 +1,7 @@
 ---
 title: Cloud Data Loss Prevention (DLP) hybrid inspection for SQL databases using JDBC
 description: Demonstrates how to inspect SQL table data using Cloud Data Loss Prevention with hybrid inspection.
-author: scellis, crwilson
+author: scellis,crwilson
 tags: Cloud DLP, Java, PII
 date_published: 2020-08-24
 ---
