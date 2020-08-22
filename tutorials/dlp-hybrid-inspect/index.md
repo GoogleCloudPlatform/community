@@ -1,7 +1,7 @@
 ---
 title: Cloud Data Loss Prevention (DLP) hybrid inspection for SQL databases using JDBC
 description: Demonstrates how to inspect SQL table data using Cloud Data Loss Prevention with hybrid inspection.
-author: scellis,crwilson
+author: scellis, crwilson
 tags: Cloud DLP, Java, PII
 date_published: 2020-08-24
 ---
@@ -10,6 +10,48 @@ Cloud Data Loss Prevention (Cloud DLP) can help you to discover, inspect, and cl
 DLP [_hybrid inspection method_](https://cloud.google.com/dlp/docs/reference/rest/v2/HybridInspectDlpJobRequest) with a JDBC driver to inspect samples of 
 tables in a SQL database like MySQL, SQL Server, or PostgreSQL. 
 
+## Objectives
+* Enable Cloud Data Loss Prevention
+* Create a Cloud DLP hybrid job
+* Create a secret in Secret Manger
+* Create an automated process that uses Cloud DLP to inspect data in a database using JDBC
+
+## Costs
+This tutorial uses billable components of Google Cloud, including the following:
+* Cloud Data Loss Prevention
+* BigQuery (if you choose to write findings to BigQuery)
+
+Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
+
+## Before you begin
+* Select or create a Google Cloud project. [Go to the Managed Resources page.](https://console.cloud.google.com/cloud-resource-manager)
+* Make sure that billing is enabled for your project. [Learn how to enable billing.](https://cloud.google.com/billing/docs/how-to/modify-project)
+* Enable the Cloud Data Loss Prevention API. [Enable the API.](https://console.cloud.google.com/flows/enableapi?apiid=dlp.googleapis.com)
+
+## Create a Database
+For this tutorial you will need to have data running in a database that has a JDBC driver available.  You can use this script to inspect a database running virtually anywhere. The database does not need to be located in the same place as where you run the script,
+but the script must have network access to the database host. You may need to update the
+[`pom.xml` file](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/dlp-hybrid-inspect/pom.xml)
+to include the appropriate JDBC client.
+
+If you do not have a database created, [here is a tutorial on how to install MySQL on Google Compute Engine](https://cloud.google.com/solutions/setup-mysql).
+
+## Create a secret with your database user password
+To securely pass your database password to the script below, this tutorial will use [Secret Manager](https://cloud.google.com/secret-manager). [Click here to learn about how to create a secret](https://cloud.google.com/secret-manager/docs/creating-and-accessing-secrets).  You will need to create a secret that contains your database password and then pass the “secret” resource id as a parameter into the script. 
+
+## Create a hybrid job using Cloud Console
+* Create the inspection template in Cloud DLP:
+* Go to the Cloud [DLP Create job page](https://console.cloud.google.com/security/dlp/create/job).
+* Select “Hybrid”  as the location type
+* Configure detection to determine what you want to inspect for. 
+* Select “Actions” that you want.  If you want to analyze detailed findings, you should turn on Save to BigQuery. 
+* Finish creating the DLP job.
+
+Note the resource name that is created is used as a parameter for the script below and will be in a format similar to:
+```
+projects/<your-project-id>/locations/global/dlpJobs/i-<your-job-name>
+```
+
 ## Configuration and build
 
 To run the
@@ -17,12 +59,13 @@ To run the
 you need to configure [authenticated access](https://cloud.google.com/dlp/docs/auth#using_a_service_account) with permission to 
 call Cloud DLP and Secret Manager. 
 
-You can use this script to inspect a database running virtually anywhere. The database does not need to be located in the same place as where you run the script,
-but the script must have network access to the database host. You may need to update the
-[`pom.xml` file](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/dlp-hybrid-inspect/pom.xml)
-to include the appropriate JDBC client.
+Configure service account credentials
+```
+export GOOGLE_APPLICATION_CREDENTIALS="[PATH_TO_YOUR_CREDENTIALS].json"
+```
+If you run this on Compute Engine, you can also use the virtual machine's default service account, but you need to assign the permissions for Cloud DLP and Secret Manger
 
-If you want to see detailed findings or run analysis on findings, we recommend that you turn on the
+Reminder: If you want to see detailed findings or run analysis on findings, we recommend that you turn on the
 [`SaveFindings` action](https://cloud.google.com/dlp/docs/reference/rest/v2/InspectJobConfig#savefindings) to BigQuery when configuring your
 [hybrid job](https://cloud.google.com/dlp/docs/reference/rest/v2/InspectJobConfig#HybridOptions). 
 
@@ -65,3 +108,16 @@ java -cp target/dlp-hybrid-inspect-sql-0.5-jar-with-dependencies.jar com.example
 -databaseUser "[DATABASE_USER]" \
 -secretManagerResourceName "[SECRET_MANAGER]"
 ```
+
+## Cleaning up
+The easiest way to avoid incurring charges to your Google Cloud account for the resources used in this tutorial is to delete the project you created.
+
+To delete the project, follow the steps below:
+* In the Cloud Console, [go to the Projects page](https://console.cloud.google.com/iam-admin/projects).
+* In the project list, select the project that you want to delete and click Delete project.
+* In the dialog, type the project ID, and then click Shut down to delete the project.
+
+## What's next
+* Learn about [Cloud Data Loss Prevention](https://cloud.google.com/dlp).
+* Try out other Google Cloud features. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
+
