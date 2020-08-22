@@ -8,7 +8,10 @@ date_published: 2020-08-24
 
 Cloud Data Loss Prevention (Cloud DLP) can help you to discover, inspect, and classify sensitive elements in your data. This document shows how to use the Cloud 
 DLP [_hybrid inspection method_](https://cloud.google.com/dlp/docs/reference/rest/v2/HybridInspectDlpJobRequest) with a JDBC driver to inspect samples of 
-tables in a SQL database like MySQL, SQL Server, or PostgreSQL. 
+tables in a SQL database like MySQL, SQL Server, or PostgreSQL.
+
+For a video demonstration of this script, see
+[Managing sensitive data in hybrid environments](https://www.youtube.com/watch?v=ApUEuhqeEno&feature=youtu.be&t=688).
 
 ## Objectives
 
@@ -137,4 +140,6 @@ To delete the project, do the following:
 ## What's next
 
 * Learn about [Cloud Data Loss Prevention](https://cloud.google.com/dlp).
+* For a video demonstration of this script, see
+  [Managing sensitive data in hybrid environments](https://www.youtube.com/watch?v=ApUEuhqeEno&feature=youtu.be&t=688).
 * Try out other Google Cloud features. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
