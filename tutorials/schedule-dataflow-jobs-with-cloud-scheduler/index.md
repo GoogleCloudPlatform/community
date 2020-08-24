@@ -82,13 +82,12 @@ cd community/tutorials/schedule-dataflow-jobs-with-cloud-scheduler/scheduler-dat
 ```
 
 Create a bucket on Google Cloud Storage, which will be used to store terraform states and Dataflow templates.
-Replace BUCKET_NAME and PROJECT_ID with your own choice.
+Replace BUCKET with your own choice. ${GOOGLE_CLOUD_PROJECT} is predefined in Cloud Shell for the project ID.
 You can skip this step if you already have one GCS bucket created.
 
 ```
-export BUCKET_NAME=[BUCKET_NAME]
-export BUCKET=gs://${BUCKET_NAME}
-gsutil mb -p [PROJECT_ID] ${BUCKET}
+export BUCKET=[BUCKET]
+gsutil mb -p ${GOOGLE_CLOUD_PROJECT} gs://${BUCKET}
 ```
 
 The next step is to create a backend for Terraform to store the states of 
@@ -98,7 +97,7 @@ cd terraform
 cat > backend.tf << EOF
 terraform {
  backend "gcs" {
-   bucket  = "${BUCKET_NAME}"
+   bucket  = "${BUCKET}"
    prefix  = "terraform/state"
  }
 }
@@ -109,14 +108,22 @@ Follow the [instruction](https://cloud.google.com/scheduler/docs/quickstart) to 
 set up Cloud Scheduler jobs.
 
 Note: Cloud Scheduler jobs need to be created in the same region as the App engine. 
+In addition, you need to set the region to be *us-central1* even when the region shows as
+*us-central* on the UI.
+
+![app engine location](app_engine_location.png)
+
+```
+export REGION=us-central1
+```
 
 Afterwards, you can submit a Cloudbuild job to create all the resources.
-Replace the *REGION* and *PROJECT_ID* with your own values.
+
 
 ```
 cd ..
 gcloud builds submit --config=cloudbuild.yaml \
-  --substitutions=_BUCKET=${BUCKET},_REGION=[REGION],_PROJECT_ID=[PROJECT_ID] .
+  --substitutions=_BUCKET=${BUCKET},_REGION=${REGION},_PROJECT_ID=${GOOGLE_CLOUD_PROJECT} .
 ```
 
 The job will run based on the schedule you defined in the terraform script. 

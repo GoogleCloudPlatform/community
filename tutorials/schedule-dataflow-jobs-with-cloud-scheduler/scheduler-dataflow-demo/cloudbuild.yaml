@@ -19,6 +19,7 @@ steps:
   env:
     - "PROJECT=${_PROJECT_ID}"
     - "BUCKET=${_BUCKET}"
+    - "REGION=${_REGION}"
   entrypoint: 'bash'
   args:
     - '-c'
