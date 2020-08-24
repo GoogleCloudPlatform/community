@@ -3,7 +3,7 @@ title: Create real-time translation overlays
 description: Learn how to use the Media Translation API with streaming dialog audio and create translated text overlays.
 author: lepistom
 tags: AI, artificial intelligence, ML, machine learning, IoT, Internet of Things, Raspberry Pi, video
-date_published: 2020-08-19
+date_published: 2020-08-26
 ---
 
 Markku Lepisto | Solutions Architect | Google Cloud
@@ -15,7 +15,7 @@ In this tutorial, you see how to overlay translations as subtitles over a live v
 projected onto surfaces as live subtitles using a  projector, in effect creating [augmented reality (AR)](https://en.wikipedia.org/wiki/Augmented_reality) 
 translations.
 
-This tutorial uses the [pygame](https://www.pygame.org/news) library to control the HDMI output of a [Raspberry Pi](https://www.raspberrypi.org/)
+This tutorial uses the [pygame](https://www.pygame.org/wiki/about) library to control the HDMI output of a [Raspberry Pi](https://www.raspberrypi.org/)
 computer. The HDMI output is then directed either to a projector or to a video mixer for luma key overlays. The overlay can then be used as live subtitles with, 
 for example, video conference systems.
 
@@ -31,45 +31,37 @@ for example, video conference systems.
 
 ## Watch the companion video
 
-To see this tutorial in action, you can watch the [GCP Level Up episode](https://youtu.be/DvZRm-cqE7s) first, and then follow the steps below yourself.
+To see this tutorial in action, you can watch the [Google Cloud Level Up episode](https://youtu.be/DvZRm-cqE7s). You can watch the video first, and then follow
+the steps below yourself.
+
+## Costs
+
+This tutorial uses billable components of Google Cloud, including the Media Translation API.
+
+This tutorial should not generate any usage that would not be covered by the
+[free tier](https://cloud.google.com/free/), but you can use the
+[pricing calculator](https://cloud.google.com/products/calculator/) to generate
+a cost estimate based on your projected production usage. For details, see
+[Media Translation pricing and free tier](https://cloud.google.com/translate/media/pricing).
 
 ## Before you begin
 
 This tutorial assumes that you already have a [Google Cloud](https://console.cloud.google.com/freetrial) account.
 
-## Costs
-
-This tutorial uses billable components of Google Cloud, including the following:
-
-- Media Translation API
-
-This tutorial should not generate any usage that would not be covered by the
-[free tier](https://cloud.google.com/free/), but you can use the
-[Pricing Calculator](https://cloud.google.com/products/calculator/) to generate
-a cost estimate based on your projected production usage. Refer to
-[Media Translation pricing and free tier](https://cloud.google.com/translate/media/pricing)
-for more information.
-
-
-## Enable the Media Translation API
-
 [Set up your Google Cloud projects](https://cloud.google.com/translate/media/docs/streaming#set_up_your_project) to enable the Media Translation API.
-
 
 ## Required hardware
 
-- Raspberry Pi. Models 3 B / B+ or 4 B recommended, but other models should
- work as well
-- Display device
- - Small projector for displaying AR translations, or
- - Video mixer hardware or software, with luma keyer capabilities, or
- - Monitor to test this tutorial, instead of a projector
-- Microphone to capture dialog audio, either
- - USB microphone or
+- Raspberry Pi (Models 3 B / B+ or 4 B recommended, but other models should also work.)
+- Display device; any of the following:
+  - Small projector for displaying AR translations
+  - Video mixer hardware or software, with luma keyer capabilities
+  - Monitor to test this tutorial, instead of a projector
+- Microphone to capture dialog audio; either of the following:
+ - USB microphone
  - USB sound card and an analog microphone or line level audio source
 - USB keyboard for the Raspberry Pi
-- 8GB or larger microSD card for the Raspberry Pi operating system (OS)
-
+- 8 GB or larger microSD card for the Raspberry Pi operating system (OS)
 
 ## Raspberry Pi installation and configuration
 
@@ -436,26 +428,25 @@ microphone being the first entry listed here:
 
 ### Test recording with the USB microphone in Python
 
-Let’s try to record audio with the identified USB microphone device,
+In this section, you record audio with the identified USB microphone device,
 using `pyaudio`.
 
-1. Execute the following command. The command should record a 3 second WAV
-audio file (mono, 16bits, 44.1KHz). This example uses the device `0` as
-identified with the previous command:
+1.  Execute the following command. The command should record a 3 second WAV
+    audio file (mono, 16bits, 44.1KHz). This example uses the device `0` as
+    identified with the previous command:
 
         python3 mic_test.py --dev 0
 
-The command should output something similar to:
+    The command should output something similar to the following:
 
+        *** Recording 3 seconds with USB device 0 ***
+        *** Finished recording. Wrote output: test1.wav ***
 
-    *** Recording 3 seconds with USB device 0 ***
-    *** Finished recording. Wrote output: test1.wav ***
+    You may get ALSA errors but you can ignore them, if the recording was
+    successful.
 
-Note - you may get ALSA errors but you can ignore them, if the recording was
-successful.
-
-2. Listen to the test recording to make sure it worked and that the dialog
-sound quality is ok. Execute:
+1.  Listen to the test recording to make sure it worked and that the dialog
+    sound quality is ok. Execute:
 
         aplay test1.wav
 
@@ -471,17 +462,18 @@ Headphones)`.
 Now that your USB microphone works with Python, you can try to call the Media
 Translation API. This step will test calling the API in streaming mode, piping
 microphone audio to the service and displaying the translated live responses in
- the command line shell.
+the command-line shell.
 
 
-1. Execute the utility with the following command. You can specify the [target language code](https://cloud.google.com/translate/media/docs/languages). The default target language is `de-DE` for German. For example to test with Italian, execute the below command.
-The following example uses device number `0`. Replace that with your device number if
-necessary:
+1.  Execute the utility with the following command. You can specify the [target language code](https://cloud.google.com/translate/media/docs/languages). The 
+    default target language is `de-DE` for German. For example to test with Italian, execute the below command.
+
+    The following example uses device number `0`. Replace that with your device number if
+    necessary:
 
         python3 translate-microphone.py --lang it-IT --dev 0
 
-Note: some of the target languages require a
-[Unicode](https://home.unicode.org/) font to be displayed correctly. By default
+some of the target languages require a [Unicode](https://home.unicode.org/) font to be displayed correctly. By default
 the Raspberry Pi console font cannot display Unicode characters. For this
 reason, use a Latin-based language such as German or Italian in this step, to
 test the Media Translation API with your microphone. The next chapters will
@@ -491,34 +483,33 @@ specific fonts, to correctly display output in for example Hindi and Japanese.
 
 ### Test Pygame with an HDMI display
 
-Now that the microphone is ready and the Media Translation API works,  make sure that pygame can control the connected HDMI display or projector. You can test this by running an example game included in the pygame package.
+Now that the microphone is ready and the Media Translation API works,  make sure that pygame can control the connected HDMI display or projector. You can test 
+this by running an example game included in the pygame package.
 
-1. If you have been connected with SSH, you must now switch to the Pi's HDMI
-output console. I.e a monitor or a projector connected to the Pi's HDMI port
-and log in there.
+1.  If you have been connected with SSH, you must now switch to the Pi's HDMI
+    output console. I.e a monitor or a projector connected to the Pi's HDMI port
+    and log in there.
 
-1. Change to the solution app directory:
+1.  Change to the solution app directory:
 
         cd community/tutorials/ar-subs
 
-1. Activate the python virtual environment:
+1.  Activate the python virtual environment:
 
         source venv/bin/activate
 
-1. Execute the pygame test game with:
+1.  Execute the pygame test game with:
 
         python3 -m pygame.examples.aliens
 
-1. You should see a game on the console display:
+1.  You should see a game on the console display:
 
-![Pygame image][pygame]
+    ![Pygame image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/aliens.png)
 
-[pygame]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/aliens.png
-
-6. You can control your car with the arrow keys and shoot with the space bar.
-7. The game will exit when you are hit.
-8. If you can see the game, pygame is working with your display and you can
-proceed to the next steps.
+1.  You can control your car with the arrow keys and shoot with the space bar.
+1.  The game will exit when you are hit.
+1.  If you can see the game, pygame is working with your display and you can
+    proceed to the next steps.
 
 
 ## Execute the AR Subtitles application
@@ -577,7 +568,7 @@ values with your desired options. Such as:
 
         python3 ar-subs.py --dev 0 --lang hi-IN --maxchars 85 --fontsize 46 --position bottom
 
-  ![Sub0 image][sub0]
+  ![Sub0 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub0.png)
 
 1. Once the app starts, you are presented with keys that you can press. The
 key presses are registered and handled by the pygame library. But while the
@@ -591,12 +582,12 @@ or disable interim results by pressing the key `i`.
 
 1. To quit, press `q` and speak a bit more to register the key press.
 
-  ![Sub1 image][sub1]
+  ![Sub1 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub1.png)
 
 1. Now that you have live translations displayed through the Pi's HDMI port,
 you can use your video mixer's luma keyer to key out the black background.
 
-  ![Sub2 image][sub2]
+  ![Sub2 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub2.png)
 
 1. The luma keyer settings are video mixer specific. But the general principle
 is the same: the keyer's input should be set to the Raspberry Pi HDMI
@@ -605,22 +596,15 @@ background is keyed out (removed), and the text with the blue background should
 remain as a transparent overlay. In this picture you can see the Downstream
 Luma Keyer set to **On Air** with the example Blackmagic ATEM Mini Pro video mixer:
 
-  ![Sub3 image][sub3]
+  ![Sub3 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub3.png)
 
 1. Now you can switch the mixer to the primary video feed, and have real-time
 translated subtitles. You can then use the video mixer output as a 'webcam' and
 for example join a video conference with subtitles.
 
-  ![Sub4 image][sub4]
+  ![Sub4 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub4.png)
 
-[sub0]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub0.png
-[sub1]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub1.png
-[sub2]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub2.png
-[sub3]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub3.png
-[sub4]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub4.png
-
-
-### Augmented Reality mode with a projector
+### Augmented reality mode with a projector
 
 **--position top**
 
@@ -629,41 +613,39 @@ physical surfaces, using a projector. In effect creating an Augmented Reality
 display of the AI translation output. To make the text easily legible, this
 mode uses very large font sizes.
 
-**Note !** Projectors use very bright lamps that can be damaging to your eyes.
+**Note!** Projectors use very bright lamps that can be damaging to your eyes.
 Never look directly into a projector lens, and never point the projector at a
 person's head. If you test this solution with a projector, point it away from
-people at surfaces such as a wall.
+people at a surface, such as a wall.
 
-1. See the command line options, by executing:
+1.  See the command line options, by executing:
 
         python3 ar-subs.py --help
 
-1. To start the app in AR mode, execute the following, replacing the
-values with your desired options. Such as:
+1.  To start the app in AR mode, execute the following, replacing the
+    values with your desired options. Such as:
 
         python3 ar-subs.py --dev 0 --lang de-DE -maxchars 42 --fontsize 120 --position top
 
-1. Once the app starts, you are presented with keys that you can press. The
-key presses are registered and handled by the pygame library. But while the
-Media Translation API client is streaming an ongoing sentence, the execution is
-blocked. Thus the key presses will be acted on after the current sentence
-finishes. To finish a sentence, simply stop talking.
+1.  Once the app starts, you are presented with keys that you can press. The
+    key presses are registered and handled by the pygame library. But while the
+    Media Translation API client is streaming an ongoing sentence, the execution is
+    blocked. Thus the key presses will be acted on after the current sentence
+    finishes. To finish a sentence, simply stop talking.
 
-1. To start translating, press any key. The screen will turn black and as you
-speak, the translations should start being displayed. Note that you can
-enable or disable interim results by pressing the key `i`.
+1.  To start translating, press any key. The screen will turn black and as you
+    speak, the translations should start being displayed. Note that you can
+    enable or disable interim results by pressing the key `i`.
 
-1. To quit, press `q` and speak a bit more to register the key press.
+1.  To quit, press `q` and speak a bit more to register the key press.
 
-1. Once the solution starts, point the projector at a surface where you want to
-display the subtitles.
+1.  Once the solution starts, point the projector at a surface where you want to
+    display the subtitles.
 
-1. Experiment with different font sizes. Larger may be better, depending on
-where you project the text.
+1.  Experiment with different font sizes. Larger may be better, depending on
+    where you project the text.
 
-    ![Ar1 image][ar1]
-
-  [ar1]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/ar1.png
+    ![Ar1 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/ar1.png)
 
 
 ### Test mode, translating lines in a text file
@@ -676,25 +658,22 @@ configured font and display mode, line by line. You can use this mode to test
 different font sizes and to simulate the app offline. In this mode, the app
 displays each line in the file after a key press.
 
-1. Prepare an input text file. Note - in order to display non-latin languages,
-you have to store the text in the file in Unicode format. A handy way is to use
-[Google Translate](https://translate.google.com) to create translated text in
-the target language, and then simply copy & paste the Translation output into a
-text file. Here let's assume you have the following line in a file `test.txt`:
+1.  Prepare an input text file. Note - in order to display non-latin languages,
+    you have to store the text in the file in Unicode format. A handy way is to use
+    [Google Translate](https://translate.google.com) to create translated text in
+    the target language, and then simply copy & paste the Translation output into a
+    text file. Here let's assume you have the following line in a file `test.txt`:
 
         日本語テキストテスト
 
-1. To start the app in test mode, execute for example:
+1.  To start the app in test mode, execute for example:
 
         python3 ar-subs.py --lang ja-JP --maxchars 40 --fontsize --46 --position bottom --testfile test.txt
 
-1. After the app starts, press any key to display the next line in the input
-file. The app quits after it has displayed the last line, or if you press `q`.
+1.  After the app starts, press any key to display the next line in the input
+    file. The app quits after it has displayed the last line, or if you press `q`.
 
-  ![Test1 image][test1]
-
-[test1]: https://storage.googleapis.com/gcp-community/tutorials/ar-subs/test1.png
-
+    ![Test1 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/test1.png)
 
 ### Example font sizes and line lengths
 
@@ -742,32 +721,28 @@ file. The app quits after it has displayed the last line, or if you press `q`.
 
 Fonts published by Google. Licensed under APACHE 2.0. Available at [fonts.google.com](http://fonts.google.com).
 
-
 ## Cleaning up
-
-### Delete the GCP project
 
 To avoid incurring charges to your GCP account for the resources used in this tutorial, you can delete the project.
 
-**Caution**: Deleting a project has the following consequences:
+Deleting a project has the following consequences:
 
-- If you used an existing project, you'll also delete any other work you've done in the project.
+- If you used an existing project, you'll also delete any other work that you've done in the project.
 - You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the
-future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as
-an `appspot.com` URL, remain available.
+  future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as
+  an `appspot.com` URL, remain available.
 
 To delete a project, do the following:
 
-1. In the GCP Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
+1. In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1. In the project list, select the project you want to delete and click **Delete project**.
 1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
-[delete-project]: https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/delete-project.png
-![deleting the project][delete-project]
+![deleting the project](https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/delete-project.png)
 
 ## What's next
 
-- Watch this tutorial's [GCP Level Up episode on YouTube](https://youtu.be/uBzp5xGSZ6o)
-- Learn more about [AI on GCP](https://cloud.google.com/solutions/ai/)
-- Learn more about [Cloud developer tools](https://cloud.google.com/products/tools)
-- Try out other GCP features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
+- Watch this tutorial's [Google Cloud Level Up episode on YouTube](https://youtu.be/uBzp5xGSZ6o).
+- Learn more about [AI on Google Cloud](https://cloud.google.com/solutions/ai/).
+- Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
+- Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
