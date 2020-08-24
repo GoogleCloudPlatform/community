@@ -16,7 +16,10 @@ If you don't explicitly set the location in the request, the jobs will be create
 
 In this tutorial, you will learn how to set up a [Cloud Scheduler](https://cloud.google.com/scheduler/) job to trigger to your 
 Dataflow batch jobs.
-You can find all the code [here](./scheduler-dataflow-demo).
+
+
+Here is a high level architecture diagram, and you can find all the code [here](./scheduler-dataflow-demo)..
+![diagram](scheduler-dataflow-diagram.png) 
 
 [Cloud Dataflow](https://cloud.google.com/dataflow) is a managed service for handling 
 both streaming and batch jobs. For your streaming jobs, you just need to launch them once without worrying about operating them afterwards. 
@@ -69,74 +72,50 @@ EOT
 
 ## Instructions
 
-The following step-by-step instructions can be used to create a sample Dataflow pipeline with Terraform.
+The following step-by-step instructions can be used to create a sample Dataflow pipeline with Cloudbuild.
 
 First, open Cloud Shell and clone the repository.
 
 ```
 git clone https://github.com/GoogleCloudPlatform/community
-cd community/tutorials/schedule-dataflow-jobs-with-cloud-scheduler/
+cd community/tutorials/schedule-dataflow-jobs-with-cloud-scheduler/scheduler-dataflow-demo/
 ```
 
-Enable the services that will be used by Terraform.
+Create a bucket on Google Cloud Storage, which will be used to store terraform states and Dataflow templates.
+Replace BUCKET_NAME and PROJECT_ID with your own choice.
+You can skip this step if you already have one GCS bucket created.
 
 ```
-gcloud services enable cloudscheduler.googleapis.com
-gcloud services enable dataflow.googleapis.com
-gcloud services enable iam.googleapis.com
+export BUCKET=gs://[BUCKET_NAME]
+gsutil mb -p [PROJECT_ID] ${BUCKET}
 ```
 
-Set up Terraform's environment variables and a service account.
-
+The next step is to create a backend for Terraform to store the states of 
+GCP resources. Run the below command to create a remote backend service using GCS as the storage.
 ```
-export TF_ADMIN=${USER}-terraform-admin
-export TF_CREDS=~/.config/gcloud/${USER}-terraform-admin.json
-export TF_VAR_bucket=${TF_ADMIN}
-export TF_VAR_project_id=${GOOGLE_CLOUD_PROJECT}
-gcloud iam service-accounts create terraform --display-name "Terraform admin account"
-gcloud iam service-accounts keys create ${TF_CREDS} --iam-account terraform@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com
-export GOOGLE_APPLICATION_CREDENTIALS=${TF_CREDS}
-```
-
-Grant the service account access to your project.
-
-```
-gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT} --member serviceAccount:terraform@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com \
-  --role roles/viewer
-gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT} --member serviceAccount:terraform@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com \
-  --role roles/storage.admin
-```
-
-Create a bucket on Google Cloud Stoeage and set up the Terraform backend.
-
-```
-gsutil mb -p ${GOOGLE_CLOUD_PROJECT} gs://${TF_ADMIN}
+cd terraform
 cat > backend.tf << EOF
 terraform {
  backend "gcs" {
-   bucket  = "${TF_ADMIN}"
+   bucket  = "${BUCKET}"
    prefix  = "terraform/state"
  }
 }
-EOF
 ```
 
-Compile and upload the Dataflow template.
+Follow the [instruction](https://cloud.google.com/scheduler/docs/quickstart) to create a App Engine, which is needed to
+set up Cloud Scheduler jobs.
+
+Note: Cloud Scheduler jobs need to be created in the same region as the App engine. 
+
+Afterwards, you can submit a Cloudbuild job to create all the resources.
+Replace the *REGION* and *PROJECT_ID* with your own values.
 
 ```
-cd ../dataflow
-. maven.sh
+cd ../dataflow/
+gcloud builds submit --config=cloudbuild.yaml \
+  --substitutions=_BUCKET=${BUCKET},_REGION=[REGION],_PROJECT_ID=[PROJECT_ID] .
 ```
-
-You are now ready to initialize and apply Terraform.
-
-```
-cd scheduler-dataflow-demo/terraform
-terraform init
-terraform apply
-```
-
-Note: You may be prompted to open the Cloud Console to create an App Engine app.  Be sure to create it in the same region as specified in your Terraform variables.
 
 The job will run based on the schedule you defined in the terraform script. 
 In addition, you can manually run the scheduler through UI and watch it trigger your Dataflow batch job. 
