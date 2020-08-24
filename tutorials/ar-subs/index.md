@@ -1,6 +1,6 @@
 ---
 title: Create real-time translation overlays
-description: Learn how to use the Media Translation API with streaming dialog audio and create translated text overlays.
+description: Learn how to use the Media Translation API with streaming dialogue audio and create translated text overlays.
 author: lepistom
 tags: AI, artificial intelligence, ML, machine learning, IoT, Internet of Things, Raspberry Pi, video
 date_published: 2020-08-26
@@ -11,8 +11,8 @@ Markku Lepisto | Solutions Architect | Google Cloud
 This tutorial demonstrates the real-time speech-to-text transcribing and translation features of the
 [Cloud Media Translation API](https://cloud.google.com/media-translation).
 
-In this tutorial, you see how to overlay translations as subtitles over a live video feed, using a video mixer and a luma keyer. The translated dialog can be
-projected onto surfaces as live subtitles using a  projector, in effect creating [augmented reality (AR)](https://en.wikipedia.org/wiki/Augmented_reality) 
+In this tutorial, you learn how to overlay translations as subtitles over a live video feed, using a video mixer and a luma keyer. The translated dialogue can be
+projected onto surfaces as live subtitles using a projector, in effect creating [augmented reality (AR)](https://en.wikipedia.org/wiki/Augmented_reality) 
 translations.
 
 This tutorial uses the [pygame](https://www.pygame.org/wiki/about) library to control the HDMI output of a [Raspberry Pi](https://www.raspberrypi.org/)
@@ -48,7 +48,8 @@ a cost estimate based on your projected production usage. For details, see
 
 This tutorial assumes that you already have a [Google Cloud](https://console.cloud.google.com/freetrial) account.
 
-[Set up your Google Cloud projects](https://cloud.google.com/translate/media/docs/streaming#set_up_your_project) to enable the Media Translation API.
+Follow the instructions in the Media Translation documentation to
+[set up your Google Cloud projects](https://cloud.google.com/translate/media/docs/streaming#set_up_your_project) to enable the Media Translation API.
 
 ## Required hardware
 
@@ -67,21 +68,21 @@ This tutorial assumes that you already have a [Google Cloud](https://console.clo
 
 ###  Raspbian Lite OS installation and configuration
 
-1.  Follow the instructions [here][raspbian] to download the latest
-    [Raspbian Lite OS image][raspbianimg], and write it on your MicroSD card.
-1.  Insert the MicroSD card into the Pi card slot.
-1.  Connect the USB keyboard into the Pi.
-1.  Connect the Raspberry Pi to a monitor or a projector using a HDMI cable.
-1.  Optionally, if you use Ethernet connectivity, connect your ethernet cable to
-    the Pi.
-1.  Connect the Pi power supply to the wall socket and to the Pi, to boot up
+1.  Follow the [instructions to download the latest Raspbian Lite OS image](https://www.raspberrypi.org/documentation/installation/installing-images/README.md),
+    and write it to your MicroSD card.
+1.  Insert the MicroSD card into the Raspberry Pi card slot.
+1.  Connect the USB keyboard into the Raspberry Pi.
+1.  Connect the Raspberry Pi to a monitor or a projector using an HDMI cable.
+1.  (Optional) If you use Ethernet connectivity, connect your ethernet cable to
+    the Raspberry Pi.
+1.  Connect the Raspberry Pi power supply to the wall socket and to the Raspberry Pi, to start
     Raspbian OS.
-1.  Login to the Pi with the initial username: `pi` and password: `raspberry`
-1.  Execute raspi-config as the superuser with:
+1.  Log in to the Raspberry Pi with the initial username (`pi`) and password (`raspberry`).
+1.  Start the Raspberry Pi configuration as the superuser:
 
         sudo raspi-config
 
-1.  Change the pi user's password by selecting: **1 Change User Password**
+1.  Select **1 Change User Password** to change the Raspberry Pi password.
 1.  The recommended network connection method is an ethernet cable which
     provides a DHCP client IP to the Raspberry Pi. If you are using Wi-fi,
     select: **2 Network Options** then **N2 Wi-fi** to
@@ -173,19 +174,16 @@ This tutorial assumes that you already have a [Google Cloud](https://console.clo
 
         sudo apt-get update && sudo apt-get upgrade -y
 
-[raspbian]: https://www.raspberrypi.org/documentation/installation/installing-images/README.md
-[raspbianimg]: https://www.raspberrypi.org/downloads/raspbian/
-
 
 ### Install Cloud SDK
 
-1.  Login to the Pi with an SSH connection from your host computer. This way
+1.  Log in to the Pi with an SSH connection from your host computer. This way
 you can easily copy & paste commands from this tutorial and linked pages, to
 the Pi. Execute:
 
         ssh pi@<your-Pi-IP>
 
-1.  On the Pi, follow all the steps [here][cloudsdk] to install and initialize
+1.  On the Pi, follow all the steps [here](https://cloud.google.com/sdk/docs/#deb) to install and initialize
     Cloud SDK for Debian systems.
 1.  Check that Cloud SDK is installed and initialized with:
 
@@ -193,15 +191,11 @@ the Pi. Execute:
 
     Ensure that the `Account` and `Project` properties are set correctly.
 
-[cloudsdk]: https://cloud.google.com/sdk/docs/#deb
-
-
 ### Install additional OS packages
 
 1.  Execute the following command to install the required OS package dependencies:
 
         sudo apt-get update && sudo apt-get install -y git python3-dev python3-pygame python3-venv libatlas-base-dev libasound2-dev python3-pyaudio
-
 
 ### Increase console font size
 
@@ -223,7 +217,6 @@ select `OK` and press ENTER.
 select `OK` and press ENTER. The console will be refreshed and you will be
 returned to the command prompt with the larger console font.
 
-
 ### Suppress some of the ALSA errors
 
 On Raspberry Pi the ALSA sound libraries may output errors when using
@@ -231,31 +224,29 @@ On Raspberry Pi the ALSA sound libraries may output errors when using
 To suppress some of the ALSA errors when pyaudio starts, execute the following
 steps:
 
-1. Backup the original ALSA config file with:
+1.  Back up the original ALSA configuration file with:
 
         sudo cp /usr/share/alsa/alsa.conf /usr/share/alsa/alsa.conf.orig
 
-2. Edit the ALSA config file:
-    1. Search the segment `#  PCM interface`
-    2. Comment out the following lines with: **#** as shown here:
+1.  Edit the ALSA configuration file:
+    1.  Search the segment `#  PCM interface`
+    1.  Comment out the following lines with: **#** as shown here:
 
-
-          #pcm.front cards.pcm.front
-          #pcm.rear cards.pcm.rear
-          #pcm.center_lfe cards.pcm.center_lfe
-          #pcm.side cards.pcm.side
-          #pcm.surround21 cards.pcm.surround21
-          #pcm.surround40 cards.pcm.surround40
-          #pcm.surround41 cards.pcm.surround41
-          #pcm.surround50 cards.pcm.surround50
-          #pcm.surround51 cards.pcm.surround51
-          #pcm.surround71 cards.pcm.surround71
-          #pcm.iec958 cards.pcm.iec958
-          #pcm.spdif iec958
-          #pcm.hdmi cards.pcm.hdmi
-          #pcm.modem cards.pcm.modem
-          #pcm.phoneline cards.pcm.phoneline
-
+            #pcm.front cards.pcm.front
+            #pcm.rear cards.pcm.rear
+            #pcm.center_lfe cards.pcm.center_lfe
+            #pcm.side cards.pcm.side
+            #pcm.surround21 cards.pcm.surround21
+            #pcm.surround40 cards.pcm.surround40
+            #pcm.surround41 cards.pcm.surround41
+            #pcm.surround50 cards.pcm.surround50
+            #pcm.surround51 cards.pcm.surround51
+            #pcm.surround71 cards.pcm.surround71
+            #pcm.iec958 cards.pcm.iec958
+            #pcm.spdif iec958
+            #pcm.hdmi cards.pcm.hdmi
+            #pcm.modem cards.pcm.modem
+            #pcm.phoneline cards.pcm.phoneline
 
 ### Connect and configure a microphone
 
@@ -275,17 +266,17 @@ Raspberry Pi:
     Pi, and an analog microphone to the sound card.
 
 1.  Execute `lsusb` to list connected USB devices. The command should display
-something similar to the below example. The output shows that the second line
-is the connected USB microphone:
+    something similar to the below example. The output shows that the second line
+    is the connected USB microphone:
 
         Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
         Bus 001 Device 005: ID 17a0:0310 Samson Technologies Corp. Meteor condenser microphone
         Bus 001 Device 002: ID 2109:3431 VIA Labs, Inc. Hub
         Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 
-1. To identify the card and device numbers for the **sound output** options, execute
-`aplay -l`. In this example, the Raspberry Pi built-in headphone output is
-card: `0`, device: `0`:
+1.  To identify the card and device numbers for the **sound output** options, execute
+    `aplay -l`. In this example, the Raspberry Pi built-in headphone output is
+    card: `0`, device: `0`:
 
         card 0: Headphones [bcm2835 Headphones], device 0: bcm2835 Headphones [bcm2835 Headphones]
           Subdevices: 8/8
@@ -301,23 +292,23 @@ card: `0`, device: `0`:
           Subdevices: 1/1
           Subdevice #0: subdevice #0
 
-1. To identify the **sound input** options, execute `arecord -l`. In this example
-the USB microphone is card: `1`, device: `0`:
+1.  To identify the **sound input** options, execute `arecord -l`. In this example
+    the USB microphone is card: `1`, device: `0`:
 
         **** List of CAPTURE Hardware Devices ****
         card 1: Mic [Samson Meteor Mic], device 0: USB Audio [USB Audio]
           Subdevices: 1/1
           Subdevice #0: subdevice #0
 
-1. To configure the OS to use the correct sound playback and microphone devices,
-edit or create the configuration file: `/home/pi/.asoundrc` (Note the dot in the
-  file name `.asoundrc`. It is a so-called hidden configuration file.). Add
-  the following content to the file and set the "mic" and "speaker" device
-  numbers to be the same as your `aplay -l` and `arecord -l` output findings.
-  In the following example, the microphone is set to "hw:1,0" which means
-  card: 1 and device: 0 which maps to the USB microphone. And the "speaker" is
-  set to card: 0 and device: 0 which maps to the Raspberry Pi built-in sound
-  card's 3.5mm audio output.
+1.  To configure the OS to use the correct sound playback and microphone devices,
+    edit or create the configuration file: `/home/pi/.asoundrc` (Note the dot in the
+    file name `.asoundrc`. It is a so-called hidden configuration file.). Add
+    the following content to the file and set the "mic" and "speaker" device
+    numbers to be the same as your `aplay -l` and `arecord -l` output findings.
+    In the following example, the microphone is set to "hw:1,0" which means
+    card: 1 and device: 0 which maps to the USB microphone. And the "speaker" is
+    set to card: 0 and device: 0 which maps to the Raspberry Pi built-in sound
+    card's 3.5mm audio output.
 
         pcm.!default {
           type asym
@@ -337,26 +328,22 @@ edit or create the configuration file: `/home/pi/.asoundrc` (Note the dot in the
           }
         }
 
-
 ### Test recording with the microphone
 
-1.  To test your microphone configuration, you can use the following command to
-record a 5 second clip in 16KHz raw format:
+1.  Record a 5-second clip in 16KHz raw format:
 
         arecord --format=S16_LE --duration=5 --rate=16000 --file-type=raw out.raw
 
-1.  To check the audio playback device and the recorded audio file, execute:
+1.  Connect speakers or headphones to the configured sound output device, such as the Raspberry Pi 3.5mm audio output.
+
+1.  Play the audio clip:
 
         aplay --format=S16_LE --rate=16000 out.raw
-
-**Note:** you have to connect speakers or headphones to the configured sound
-output device, such as the Raspberry Pi 3.5mm audio output.
-
 
 ## Clone the example app and install its dependencies
 
 1.  Using the SSH or console connection to the Pi, clone the repository
-associated with the Google Cloud community tutorials:
+    associated with the Google Cloud community tutorials:
 
         git clone https://github.com/GoogleCloudPlatform/community.git
 
@@ -380,50 +367,50 @@ associated with the Google Cloud community tutorials:
 
         pip3 install -r requirements.txt
 
+### Create a service account and JSON key
 
-### Create a Service Account and JSON key
-
-Next we will create a Service Account in your GCP project, and grant sufficient
-permissions to it, so that it can use the AI services. You will also need to
-download a JSON key for the Service Account. The JSON key will be used by the
+In this section, you create a service account in your Google Cloud project and grant sufficient
+permissions to it so that it can use the AI services. You also need download a JSON key for the service account. The JSON key will be used by the
 Python utilities to authenticate with the Cloud services.
 
-1. Create a new Service Account with the following command:
+1.  Create a new service account:
 
         gcloud iam service-accounts create ml-dev --description="ML APIs developer access" --display-name="ML Developer Service Account"
 
-1. Grant the `ML Developer` role to the Service Account:
+1.  Grant the `ML Developer` role to the service account:
 
         gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:ml-dev@$PROJECT_ID.iam.gserviceaccount.com --role roles/ml.developer
 
-1. Grant also the Project Viewer role to the Service Account:
+1.  Grant the Project Viewer role to the service account:
 
         gcloud projects add-iam-policy-binding $PROJECT_ID --member serviceAccount:ml-dev@$PROJECT_ID.iam.gserviceaccount.com --role roles/viewer
 
-1. Create a JSON key for the Service Account. The key file will be downloaded to the current working directory:
+1. Create a JSON key for the service account:
 
         gcloud iam service-accounts keys create ./credentials.json --iam-account ml-dev@$PROJECT_ID.iam.gserviceaccount.com
+        
+     The key file is downloaded to the current working directory.
 
 
-### Identify your USB Microphone device number in python
+### Identify your USB microphone device number in python
 
-Next we need to identify the device number of your USB microphone visible to
+In this section, you identify the device number of your USB microphone visible to
 Python. Note that the device numbering for OS sound libraries may not match
-the device numbering visible to Python apps. For this reason you need to find
+the device numbering visible to Python apps. For this reason, you need to find
 the microphone device again, this time with a Python utility.
 
-1. Within the python virtual environment, execute the following command:
+1.  Within the python virtual environment, execute the following command:
 
         python3 mic_identify.py
 
-The command should output something similar to this - with the example USB
-microphone being the first entry listed here:
+    The command should output something similar to this - with the example USB
+    microphone being the first entry listed here:
 
 
-    (0, 'Samson Meteor Mic: USB Audio (hw:2,0)', 2)
-    (1, 'dmix', 0)
+        (0, 'Samson Meteor Mic: USB Audio (hw:2,0)', 2)
+        (1, 'dmix', 0)
 
-2. Note down the device number - in the above example it is: `0`
+1.  Record the device number. In the example above, it is `0`.
 
 
 ### Test recording with the USB microphone in Python
@@ -473,7 +460,7 @@ the command-line shell.
 
         python3 translate-microphone.py --lang it-IT --dev 0
 
-some of the target languages require a [Unicode](https://home.unicode.org/) font to be displayed correctly. By default
+Some of the target languages require a [Unicode](https://home.unicode.org/) font to be displayed correctly. By default
 the Raspberry Pi console font cannot display Unicode characters. For this
 reason, use a Latin-based language such as German or Italian in this step, to
 test the Media Translation API with your microphone. The next chapters will
