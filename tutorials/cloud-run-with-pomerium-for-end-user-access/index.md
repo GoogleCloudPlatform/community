@@ -1,5 +1,5 @@
 ---
-title: Authorizing end-users in Cloud Run with Pomerium
+title: Authorizing end users in Cloud Run with Pomerium
 description: Learn how to deploy Pomerium to Cloud Run and use it to protect other endpoints with authorization headers.
 author: travisgroth,desimone
 tags: Cloud Run, Pomerium
@@ -16,6 +16,9 @@ gateway for requests and can be used in situations where you'd typically conside
 Unlike [Cloud IAP](https://cloud.google.com/iap), Pomerium supports non-Google identity providers. You can also run Pomerium outside Google Cloud (such as on 
 other cloud providers and on-premises), and still use it to route or authorize traffic to Google Cloud targets such as Cloud Run or Cloud Functions.
 
+This guide assumes that you have editor access to a Google Cloud project that can be used for isolated testing and a DNS zone that you are able to control.
+DNS does not need to be inside Google Cloud for the example to work.
+
 ## How it works
 
 Services on [Cloud Run](https://cloud.google.com/run) and [Cloud Functions](https://cloud.google.com/functions) can be restricted to only permit access with a 
@@ -25,7 +28,7 @@ Google Cloud or elsewhere to be securely authorized despite the endpoints being 
 Browsers are not able to add these identity tokens to the `Authorization` header, so a proxy is required to authenticate end users to your Cloud Run service.
 Pomerium can perform this role by generating compatible tokens on behalf of end users and then acting as a proxy for their requests.
 
-## Objectives
+You perform the following steps:
 
 - Add an IAM policy delegating `roles/run.invoker` permissions to a service account.
 - Run Pomerium with access to a key for the corresponding service account.
@@ -35,11 +38,6 @@ Pomerium can perform this role by generating compatible tokens on behalf of end 
 The protected application delegates trust to a Google Cloud service account, which Pomerium runs as, and Pomerium performs user-based authorization for each
 route. This turns Pomerium into a bridge between a user-centric and a service-centric authorization model.
 
-## Before you begin
-
-This guide assumes that you have editor access to a Google Cloud project that can be used for isolated testing and a DNS zone that you are able to control.
-DNS does not need to be inside Google Cloud for the example to work.
-
 ## Setup
 
 To deploy Pomerium to Cloud Run, a [special image](https://console.cloud.google.com/gcr/images/pomerium-io/GLOBAL/pomerium) is available at
@@ -48,10 +46,10 @@ keep configuration minimal. This example uses it to store identity provider cred
 [authorization policy](https://www.pomerium.com/reference/#policy) contains no secrets, so you can place it directly in an
 [environment variable](https://www.pomerium.io/reference/#configuration-settings).
 
-The [Dockerfile](https://github.com/pomerium/pomerium/blob/master/.github/Dockerfile-cloudrun) for this setup for Cloud Run is based on the Dockerfile in
+The [Dockerfile for this setup for Cloud Run](https://github.com/pomerium/pomerium/blob/master/.github/Dockerfile-cloudrun) is based on the Dockerfile in
 [vals-entrypoint](https://github.com/pomerium/vals-entrypoint).
 
-This image expects a configuration file present at `/pomerium/config.yaml`, and can source it from Google Cloud Secret Manager. To do so, set
+This image depends on a configuration file present at `/pomerium/config.yaml`, and can source it from Google Cloud Secret Manager. To do so, set
 `VALS_FILES=[secretref]:/pomerium/config.yaml` and set any other [Pomerium environment variables](https://www.pomerium.io/reference/#configuration-settings) 
 directly or with an additional `secretref`.
 
@@ -59,45 +57,39 @@ The `secretref` format for Google Cloud Secret Manager is `ref+gcpsecrets://PROJ
 
 ### Identity provider credentials and secrets in `config.yaml`
 
-Set up Pomerium's [`config.yaml`](https://www.pomerium.com/reference/#shared-settings) to contain your identity provider credentials and secrets (`config.yaml`):
+Set up Pomerium's [`config.yaml`](https://www.pomerium.com/reference/#shared-settings) to contain your identity provider credentials and secrets:
 
-```yaml
-# config.yaml
-authenticate_service_url: https://authn.cloudrun.pomerium.com
-shared_secret: XXXXXX
-cookie_secret: XXXXXX
-idp_provider: "google"
-idp_client_id: XXXXXX
-idp_client_secret: "XXXXXX"
-```
+    # config.yaml
+    authenticate_service_url: https://authn.cloudrun.pomerium.com
+    shared_secret: XXXXXX
+    cookie_secret: XXXXXX
+    idp_provider: "google"
+    idp_client_id: XXXXXX
+    idp_client_secret: "XXXXXX"
 
 ### Subdomain and e-mail domain in `policy.template.yaml`
 
 Substitute `cloudrun.pomerium.com` for your own subdomain and your e-mail domain if appropriate:
 
-```yaml
-# policy.template.yaml
-# see https://www.pomerium.com/reference/#policy
-- from: https://hello.cloudrun.pomerium.com
-  to: ${HELLO_URL}
-  allowed_domains:
-    - gmail.com
-  enable_google_cloud_serverless_authentication: true
-- from: https://httpbin.cloudrun.pomerium.com
-  to: https://httpbin.org
-  pass_identity_headers: true
-  allowed_domains:
-    - gmail.com
-```
+    # policy.template.yaml
+    # see https://www.pomerium.com/reference/#policy
+    - from: https://hello.cloudrun.pomerium.com
+      to: ${HELLO_URL}
+      allowed_domains:
+        - gmail.com
+      enable_google_cloud_serverless_authentication: true
+    - from: https://httpbin.cloudrun.pomerium.com
+      to: https://httpbin.org
+      pass_identity_headers: true
+      allowed_domains:
+        - gmail.com
 
 ### DNS in `zonefile.txt`
 
 Substitute `cloudrun.pomerium.com` for your own subdomain (`zonefile.txt`):
 
-```txt
-; zonefile.txt
-*.cloudrun.pomerium.com. 18000 IN CNAME ghs.googlehosted.com.
-```
+    ; zonefile.txt
+    *.cloudrun.pomerium.com. 18000 IN CNAME ghs.googlehosted.com.
 
 Alternatively, you can set an equivalent CNAME in your DNS provider.
 
@@ -105,50 +97,48 @@ Alternatively, you can set an equivalent CNAME in your DNS provider.
 
 Ensure that you have set a default project:
 
-```shell
-glcoud config set default-project MYTESTPROJECT
-```
+    gcloud config set default-project MYTESTPROJECT
 
-```yaml
-#!/bin/bash
+Run the following commands to configure and deploy Pomerium:
 
-# Install gcloud beta
-gcloud components install beta
+    #!/bin/bash
 
-# Capture current project number
-PROJECT=$(gcloud projects describe $(gcloud config get-value project) --format='get(projectNumber)')
+    # Install gcloud beta
+    gcloud components install beta
 
-# Point a wildcard domain of *.cloudrun.pomerium.com to the Cloud Run front end
-gcloud dns record-sets import --zone pomerium-io zonefile --zone-file-format
+    # Capture current project number
+    PROJECT=$(gcloud projects describe $(gcloud config get-value project) --format='get(projectNumber)')
 
-# Deploy your protected application and associate a DNS name
-gcloud run deploy hello --image=gcr.io/cloudrun/hello --region us-central1 --platform managed --no-allow-unauthenticated
-gcloud run services add-iam-policy-binding hello --platform managed --region us-central1 \
-    --member=serviceAccount:${PROJECT}-compute@developer.gserviceaccount.com \
-    --role=roles/run.invoker
-gcloud beta run domain-mappings --platform managed --region us-central1 create --service=hello --domain hello-direct.cloudrun.pomerium.com
+    # Point a wildcard domain of *.cloudrun.pomerium.com to the Cloud Run front end
+    gcloud dns record-sets import --zone pomerium-io zonefile --zone-file-format
 
-# Rewrite policy file with unique 'hello' service URL
-HELLO_URL=$(gcloud run services describe hello --platform managed --region us-central1 --format 'value(status.address.url)') envsubst <policy.template.yaml >policy.yaml
+    # Deploy your protected application and associate a DNS name
+    gcloud run deploy hello --image=gcr.io/cloudrun/hello --region us-central1 --platform managed --no-allow-unauthenticated
+    gcloud run services add-iam-policy-binding hello --platform managed --region us-central1 \
+        --member=serviceAccount:${PROJECT}-compute@developer.gserviceaccount.com \
+        --role=roles/run.invoker
+    gcloud beta run domain-mappings --platform managed --region us-central1 create --service=hello --domain hello-direct.cloudrun.pomerium.com
 
-# Install your base configuration in a Google Cloud secret
-gcloud secrets create --data-file config.yaml pomerium-config --replication-policy automatic
+    # Rewrite policy file with unique 'hello' service URL
+    HELLO_URL=$(gcloud run services describe hello --platform managed --region us-central1 --format 'value(status.address.url)') envsubst <policy.template.yaml >policy.yaml
 
-# Grant the default compute account access to the secret
-gcloud secrets add-iam-policy-binding pomerium-config \
-    --member=serviceAccount:${PROJECT}-compute@developer.gserviceaccount.com \
-    --role=roles/secretmanager.secretAccessor
+    # Install your base configuration in a Google Cloud secret
+    gcloud secrets create --data-file config.yaml pomerium-config --replication-policy automatic
 
-# Deploy Pomerium with policy and configuration references
-gcloud run deploy pomerium --region us-central1 --platform managed --allow-unauthenticated --max-instances 1 \
-    --image=gcr.io/pomerium-io/pomerium:v0.10.0-rc2-cloudrun \
-    --set-env-vars VALS_FILES="/pomerium/config.yaml:ref+gcpsecrets://${PROJECT}/pomerium-config",POLICY=$(base64 policy.yaml)
+    # Grant the default compute account access to the secret
+    gcloud secrets add-iam-policy-binding pomerium-config \
+        --member=serviceAccount:${PROJECT}-compute@developer.gserviceaccount.com \
+        --role=roles/secretmanager.secretAccessor
 
-# Set domain mappings for the protected routes and authenticate
-gcloud beta run domain-mappings --platform managed --region us-central1 create --service=pomerium --domain hello.cloudrun.pomerium.com
-gcloud beta run domain-mappings --platform managed --region us-central1 create --service=pomerium --domain authn.cloudrun.pomerium.com
-gcloud beta run domain-mappings --platform managed --region us-central1 create --service=pomerium --domain httpbin.cloudrun.pomerium.com
-```
+    # Deploy Pomerium with policy and configuration references
+    gcloud run deploy pomerium --region us-central1 --platform managed --allow-unauthenticated --max-instances 1 \
+        --image=gcr.io/pomerium-io/pomerium:v0.10.0-rc2-cloudrun \
+        --set-env-vars VALS_FILES="/pomerium/config.yaml:ref+gcpsecrets://${PROJECT}/pomerium-config",POLICY=$(base64 policy.yaml)
+
+    # Set domain mappings for the protected routes and authenticate
+    gcloud beta run domain-mappings --platform managed --region us-central1 create --service=pomerium --domain hello.cloudrun.pomerium.com
+    gcloud beta run domain-mappings --platform managed --region us-central1 create --service=pomerium --domain authn.cloudrun.pomerium.com
+    gcloud beta run domain-mappings --platform managed --region us-central1 create --service=pomerium --domain httpbin.cloudrun.pomerium.com
 
 ## Results
 
