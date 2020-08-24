@@ -61,7 +61,7 @@ resource "google_cloud_scheduler_job" "scheduler" {
       "environment": {
         "maxWorkers": "10",
         "tempLocation": "gs://${var.bucket}/temp",
-        "zone": "us-west1-a"
+        "zone": "${var.region}-a"
       }
     }
 EOT
@@ -117,7 +117,20 @@ In addition, you need to set the region to be *us-central1* even when the region
 export REGION=us-central1
 ```
 
-Afterwards, you can submit a Cloudbuild job to create all the resources.
+Since we will be using Cloudbuild to execute GCP resource creation steps, it is
+important to make sure the Cloudbuild service account has all the proper roles.
+Follow the [link](https://cloud.google.com/cloud-build/docs/securing-builds/configure-access-for-cloud-build-service-account#granting_a_role_using_the_iam_page) 
+to enable all the roles needed.
+
+- Cloud Scheduler Admin
+- Dataflow Admin
+- Service Account User
+
+Verify that all the roles are enabled in the UI.
+
+![cloudbuild_sa_status](cloudbuild_sa_setup.png)
+
+Now you can submit a Cloudbuild job to create all the resources.
 
 
 ```
