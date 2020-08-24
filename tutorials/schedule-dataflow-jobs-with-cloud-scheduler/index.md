@@ -86,7 +86,8 @@ Replace BUCKET_NAME and PROJECT_ID with your own choice.
 You can skip this step if you already have one GCS bucket created.
 
 ```
-export BUCKET=gs://[BUCKET_NAME]
+export BUCKET_NAME=[BUCKET_NAME]
+export BUCKET=gs://${BUCKET_NAME}
 gsutil mb -p [PROJECT_ID] ${BUCKET}
 ```
 
@@ -97,10 +98,11 @@ cd terraform
 cat > backend.tf << EOF
 terraform {
  backend "gcs" {
-   bucket  = "${BUCKET}"
+   bucket  = "${BUCKET_NAME}"
    prefix  = "terraform/state"
  }
 }
+EOF
 ```
 
 Follow the [instruction](https://cloud.google.com/scheduler/docs/quickstart) to create a App Engine, which is needed to
@@ -112,7 +114,7 @@ Afterwards, you can submit a Cloudbuild job to create all the resources.
 Replace the *REGION* and *PROJECT_ID* with your own values.
 
 ```
-cd ../dataflow/
+cd ..
 gcloud builds submit --config=cloudbuild.yaml \
   --substitutions=_BUCKET=${BUCKET},_REGION=[REGION],_PROJECT_ID=[PROJECT_ID] .
 ```
