@@ -23,6 +23,7 @@ For a video demonstration, see
 ## Costs
 
 This tutorial uses billable components of Google Cloud, including the following:
+
 * Cloud Data Loss Prevention
 * BigQuery (if you choose to write findings to BigQuery)
 
@@ -33,7 +34,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 1.  Select or create a Google Cloud project.
 
     [Go to the Managed Resources page.](https://console.cloud.google.com/cloud-resource-manager)
-  
+
 1.  Make sure that billing is enabled for your project.
 
     [Learn how to enable billing.](https://cloud.google.com/billing/docs/how-to/modify-project)
@@ -123,7 +124,7 @@ Passwords are sent using Cloud Secret Manager to avoid exposing them through the
     -hybridJobName "projects/[PROJECT_ID]/dlpJobs/[HYBRID_JOB_NAME]" \
     -databaseInstanceDescription "Hybrid Inspect Test" \
     -databaseInstanceServer "127.0.0.1" \
-    -databaseName "[DATABSE_NAME]" \
+    -databaseName "[DATABASE_NAME]" \
     -databaseUser "[DATABASE_USER]" \
     -secretManagerResourceName "[SECRET_MANAGER]"
 
