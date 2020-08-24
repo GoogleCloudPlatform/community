@@ -125,6 +125,7 @@ to enable all the roles needed.
 - Cloud Scheduler Admin
 - Dataflow Admin
 - Service Account User
+- Project IAM Admin
 
 Verify that all the roles are enabled in the UI.
 
