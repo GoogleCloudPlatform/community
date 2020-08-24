@@ -22,8 +22,8 @@ Services on [Cloud Run](https://cloud.google.com/run) and [Cloud Functions](http
 properly signed [identity token](https://cloud.google.com/run/docs/authenticating/service-to-service). This allows requests from other services running on
 Google Cloud or elsewhere to be securely authorized despite the endpoints being public.
 
-These identity tokens are not easily set in a browser session and must be refreshed on a regular basis, preventing them from being useful for end-user 
-authorization. Pomerium, however, can generate compatible tokens on behalf of end users be a proxy for the requests to these services.
+Browsers are not able to add these identity tokens to the `Authorization` header, so a proxy is required to authenticate end users to your Cloud Run service.
+Pomerium can perform this role by generating compatible tokens on behalf of end users and then acting as a proxy for their requests.
 
 ## Objectives
 
@@ -43,12 +43,13 @@ DNS does not need to be inside Google Cloud for the example to work.
 ## Setup
 
 To deploy Pomerium to Cloud Run, a [special image](https://console.cloud.google.com/gcr/images/pomerium-io/GLOBAL/pomerium) is available at
-`gcr.io/pomerium-io/pomerium-[VERSION]-cloudrun`. It allows sourcing configuration from Google Cloud Secret Manager, and sets some defaults for Cloud Run to 
+`gcr.io/pomerium-io/pomerium-[VERSION]-cloudrun`. It allows sourcing configuration from Google Cloud Secret Manager, and it sets some defaults for Cloud Run to 
 keep configuration minimal. This example uses it to store identity provider credentials. Pomerium's
 [authorization policy](https://www.pomerium.com/reference/#policy) contains no secrets, so you can place it directly in an
 [environment variable](https://www.pomerium.io/reference/#configuration-settings).
 
-[Dockerfile](https://github.com/pomerium/pomerium/blob/master/.github/Dockerfile-cloudrun) Based on [vals-entrypoint](https://github.com/pomerium/vals-entrypoint)
+The [Dockerfile](https://github.com/pomerium/pomerium/blob/master/.github/Dockerfile-cloudrun) for this setup for Cloud Run is based on the Dockerfile in
+[vals-entrypoint](https://github.com/pomerium/vals-entrypoint).
 
 This image expects a configuration file present at `/pomerium/config.yaml`, and can source it from Google Cloud Secret Manager. To do so, set
 `VALS_FILES=[secretref]:/pomerium/config.yaml` and set any other [Pomerium environment variables](https://www.pomerium.io/reference/#configuration-settings) 
@@ -56,7 +57,7 @@ directly or with an additional `secretref`.
 
 The `secretref` format for Google Cloud Secret Manager is `ref+gcpsecrets://PROJECT/SECRET(#/key])`.
 
-## Configuration
+### Identity provider credentials and secrets in `config.yaml`
 
 Set up Pomerium's [`config.yaml`](https://www.pomerium.com/reference/#shared-settings) to contain your identity provider credentials and secrets (`config.yaml`):
 
@@ -70,7 +71,9 @@ idp_client_id: XXXXXX
 idp_client_secret: "XXXXXX"
 ```
 
-Substitute `cloudrun.pomerium.com` for your own subdomain and your e-mail domain if appropriate (`policy.template.yaml`):
+### Subdomain and e-mail domain in `policy.template.yaml`
+
+Substitute `cloudrun.pomerium.com` for your own subdomain and your e-mail domain if appropriate:
 
 ```yaml
 # policy.template.yaml
@@ -87,7 +90,7 @@ Substitute `cloudrun.pomerium.com` for your own subdomain and your e-mail domain
     - gmail.com
 ```
 
-## DNS
+### DNS in `zonefile.txt`
 
 Substitute `cloudrun.pomerium.com` for your own subdomain (`zonefile.txt`):
 
@@ -96,9 +99,9 @@ Substitute `cloudrun.pomerium.com` for your own subdomain (`zonefile.txt`):
 *.cloudrun.pomerium.com. 18000 IN CNAME ghs.googlehosted.com.
 ```
 
-Or set an equivalent CNAME in your DNS provider.
+Alternatively, you can set an equivalent CNAME in your DNS provider.
 
-# Deploy
+## Deployment
 
 Ensure that you have set a default project:
 
@@ -115,10 +118,10 @@ gcloud components install beta
 # Capture current project number
 PROJECT=$(gcloud projects describe $(gcloud config get-value project) --format='get(projectNumber)')
 
-# Point a wildcard domain of *.cloudrun.pomerium.com to the cloudrun front end
+# Point a wildcard domain of *.cloudrun.pomerium.com to the Cloud Run front end
 gcloud dns record-sets import --zone pomerium-io zonefile --zone-file-format
 
-# Deploy our protected application and associate a DNS name
+# Deploy your protected application and associate a DNS name
 gcloud run deploy hello --image=gcr.io/cloudrun/hello --region us-central1 --platform managed --no-allow-unauthenticated
 gcloud run services add-iam-policy-binding hello --platform managed --region us-central1 \
     --member=serviceAccount:${PROJECT}-compute@developer.gserviceaccount.com \
@@ -128,7 +131,7 @@ gcloud beta run domain-mappings --platform managed --region us-central1 create -
 # Rewrite policy file with unique 'hello' service URL
 HELLO_URL=$(gcloud run services describe hello --platform managed --region us-central1 --format 'value(status.address.url)') envsubst <policy.template.yaml >policy.yaml
 
-# Install our base configuration in a GCP secret
+# Install your base configuration in a Google Cloud secret
 gcloud secrets create --data-file config.yaml pomerium-config --replication-policy automatic
 
 # Grant the default compute account access to the secret
@@ -136,7 +139,7 @@ gcloud secrets add-iam-policy-binding pomerium-config \
     --member=serviceAccount:${PROJECT}-compute@developer.gserviceaccount.com \
     --role=roles/secretmanager.secretAccessor
 
-# Deploy pomerium with policy and configuration references
+# Deploy Pomerium with policy and configuration references
 gcloud run deploy pomerium --region us-central1 --platform managed --allow-unauthenticated --max-instances 1 \
     --image=gcr.io/pomerium-io/pomerium:v0.10.0-rc2-cloudrun \
     --set-env-vars VALS_FILES="/pomerium/config.yaml:ref+gcpsecrets://${PROJECT}/pomerium-config",POLICY=$(base64 policy.yaml)
@@ -151,7 +154,7 @@ gcloud beta run domain-mappings --platform managed --region us-central1 create -
 
 ### Overview
 
-You should see two applications deployed. The `hello` app is your protected app, and pomerium is... Pomerium!
+You should see two applications deployed: The `hello` app is your protected app, and pomerium is... Pomerium!
 
 ![Cloud Run overview](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-with-pomerium-for-end-user-access/cloudrun-overview.png)
 
