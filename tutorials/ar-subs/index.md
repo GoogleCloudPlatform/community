@@ -59,10 +59,10 @@ Follow the instructions in the Media Translation documentation to
   - Video mixer hardware or software, with luma keyer capabilities
   - Monitor to test this tutorial, instead of a projector
 - Microphone to capture dialogue audio; either of the following:
- - USB microphone
- - USB sound card and an analog microphone or line level audio source
+  - USB microphone
+  - USB sound card and an analog microphone or line level audio source
 - USB keyboard for the Raspberry Pi
-- 8 GB or larger microSD card for the Raspberry Pi operating system (OS)
+- 8 GB or larger microSD card for the Raspberry Pi operating system
 
 ## Raspberry Pi installation and configuration
 
@@ -159,35 +159,35 @@ Follow the instructions in the Media Translation documentation to
     `Power Management` under the `wlan0` interface. If you see
     `Power Management:on`, then we recommend that you disable it for this tutorial.
 
-1.  On Raspberry Pi 3 model B/B+, disable `wlan0` Wi-Fi power management by configuring
-    `/etc/network/interfaces`:
+    1.  On Raspberry Pi 3 model B/B+, disable `wlan0` Wi-Fi power management by configuring
+        `/etc/network/interfaces`:
 
-        sudo vi /etc/network/interfaces
+            sudo vi /etc/network/interfaces
 
-    (This command uses `vi`. You can use `nano` if you prefer.)
+        (This command uses `vi`. You can use `nano` if you prefer.)
     
-    Add these lines to the end of the file:
+        Add these lines to the end of the file:
 
-        allow-hotplug wlan0
-        iface wlan0 inet manual
-            # disable wlan0 power saving
-            post-up iw dev $IFACE set power_save off
+            allow-hotplug wlan0
+            iface wlan0 inet manual
+                # disable wlan0 power saving
+                post-up iw dev $IFACE set power_save off
 
-1.  Apply the changes by rebooting the Raspberry Pi:
+    1.  Apply the changes by rebooting the Raspberry Pi:
 
-        sudo reboot
+            sudo reboot
 
-1.  Log in again as the `pi` user.
+    1.  Log in again as the `pi` user.
 
-1.  Ensure that Wi-fi power management is now off:
+    1.  Ensure that Wi-fi power management is now off:
 
-        iwconfig
+            iwconfig
 
-    You should see `Power Management:off` for `wlan0`.
+        You should see `Power Management:off` for `wlan0`.
 
-1.  Check your internet connectivity:
+    1.  Check your internet connectivity:
 
-        ping www.google.com
+            ping www.google.com
 
 1.  Upgrade the Raspbian packages to latest versions:
 
@@ -203,7 +203,7 @@ Follow the instructions in the Media Translation documentation to
     the Raspberry Pi.
 
 1.  On the Raspberry Pi, follow all of the steps to [install and initialize the Cloud SDK for Debian systems](https://cloud.google.com/sdk/docs/#deb).
-1.  Check that Cloud SDK is installed and initialized:
+1.  Check that the Cloud SDK is installed and initialized:
 
         gcloud info
 
@@ -211,7 +211,7 @@ Follow the instructions in the Media Translation documentation to
 
 ### Install additional operating system packages
 
-1.  Install the required operating system packages:
+-   Install the required operating system packages:
 
         sudo apt-get update && sudo apt-get install -y git python3-dev python3-pygame python3-venv libatlas-base-dev libasound2-dev python3-pyaudio
 
@@ -286,8 +286,11 @@ Connect and test a microphone with your Raspberry Pi:
 1.  Connect the USB microphone to the Raspberry Pi or a USB soundcard to the
     Raspberry Pi, and an analog microphone to the sound card.
 
-1.  Execute `lsusb` to list connected USB devices. The command should display
-    something similar to the following example, which shows that the second line
+1.  List connected USB devices:
+
+        lsusb
+        
+    The command should display something like the following example, which shows that the second line
     is the connected USB microphone:
 
         Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
@@ -295,9 +298,11 @@ Connect and test a microphone with your Raspberry Pi:
         Bus 001 Device 002: ID 2109:3431 VIA Labs, Inc. Hub
         Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 
-1.  To identify the card and device numbers for the sound output options, execute
-    `aplay -l`. In this example, the Raspberry Pi built-in headphone output is
-    card `0`, device `0`:
+1.  Identify the card and device numbers for the sound output options:
+
+        aplay -l
+
+    In this example, the Raspberry Pi built-in headphone output is card `0`, device `0`:
 
         card 0: Headphones [bcm2835 Headphones], device 0: bcm2835 Headphones [bcm2835 Headphones]
           Subdevices: 8/8
@@ -313,8 +318,11 @@ Connect and test a microphone with your Raspberry Pi:
           Subdevices: 1/1
           Subdevice #0: subdevice #0
 
-1.  To identify the sound input options, execute `arecord -l`. In this example
-    the USB microphone is card `1`, device `0`:
+1.  Identify the sound input options:
+
+        arecord -l
+        
+    In this example, the USB microphone is card `1`, device `0`:
 
         **** List of CAPTURE Hardware Devices ****
         card 1: Mic [Samson Meteor Mic], device 0: USB Audio [USB Audio]
@@ -325,12 +333,7 @@ Connect and test a microphone with your Raspberry Pi:
     edit or create the configuration file `/home/pi/.asoundrc`. (Note the dot in the
     file name `.asoundrc`. It is a so-called *hidden* configuration file.) Add
     the following content to the file and set the `mic` and `speaker` device
-    numbers to be the same as your `aplay -l` and `arecord -l` output findings.
-
-    In the following example, the microphone is set to `"hw:1,0"`, which means
-    card 1 and device 0, which maps to the USB microphone. The "speaker" is
-    set to card 0 and device 0, which maps to the Raspberry Pi built-in sound
-    card's 3.5mm audio output.
+    numbers to be the same as your `aplay -l` and `arecord -l` output findings:
 
         pcm.!default {
           type asym
@@ -349,6 +352,11 @@ Connect and test a microphone with your Raspberry Pi:
             pcm "hw:0,0"
           }
         }
+
+    In the preceding example, the microphone is set to `"hw:1,0"`, which means
+    card 1 and device 0, which maps to the USB microphone. The speaker is
+    set to card 0 and device 0, which maps to the Raspberry Pi built-in sound
+    card's 3.5mm audio output.
 
 ### Test recording with the microphone
 
@@ -414,7 +422,7 @@ Python utilities to authenticate with the Cloud services.
      The key file is downloaded to the current working directory.
 
 
-### Identify your USB microphone device number in python
+### Identify your USB microphone in python
 
 In this section, you identify the USB microphone by its device number to make it visible to
 Python. The device numbering for OS sound libraries may not match
@@ -493,18 +501,18 @@ In this section, you make sure that `pygame` can control the connected HDMI disp
 Test this by running an example game included in the `pygame` package:
 
 1.  If you have been connected with SSH, you must now switch to the Raspberry Pi's HDMI
-    output console--such as a monitor or a projector connected to the Raspberry Pi's HDMI port--
-    and log in there.
+    output console—such as a monitor or a projector connected to the Raspberry Pi's HDMI
+    port—and log in there.
 
 1.  Change to the directory containing the example application:
 
         cd community/tutorials/ar-subs
 
-1.  Activate the python virtual environment:
+1.  Activate the Python virtual environment:
 
         source venv/bin/activate
 
-1.  Execute the pygame test game with:
+1.  Execute the `pygame` test game:
 
         python3 -m pygame.examples.aliens
 
@@ -513,79 +521,78 @@ Test this by running an example game included in the `pygame` package:
     ![Pygame image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/aliens.png)
 
 1.  You can control your car with the arrow keys and shoot with the space bar.
+
 1.  The game will exit when you are hit.
-1.  If you can see the game, pygame is working with your display and you can
+
+1.  If you can see the game, `pygame` is working with your display and you can
     proceed to the next steps.
 
+## Run the AR Subtitles application
 
-## Execute the AR Subtitles application
+In this section, you run the AR Subtitles application.
 
-Now you are ready to try the AR Subtitles application. The app has two operating
-modes:
+The app has two operating modes:
 
-- Subtitles mode
-  - in this mode, the subtitles are a luma effects video feed via the Raspberry
-  Pi HDMI output. It can be overlaid on top of the primary video feed using a
-  video mixer with a luma keyer
-  - white text with a dark blue background behind the letters
-  - rest of the screen black, intended to be keyed out
-- Augmented Reality mode
-  - in this mode, the translations are intended to be projected onto a surface
-in the real world, using for example a pico projector
-  - white text with a large font size to make it easily legible
-  - rest of the screen black, which is not projected due to the pixel values
-  being (0,0,0)
-
+- Subtitles mode:
+  - Subtitles are a luma effects video feed through the Raspberry Pi HDMI output,
+    which can be overlaid on the primary video feed with a video mixer with a luma keyer.
+  - Text is white, with a dark blue background behind the letters.
+  - The rest of the screen is black, intended to be keyed out.
+- Augmented Reality mode:
+  - Translations are intended to be projected onto a surface in the real world using, for
+    example, a pico projector.
+  - Text is white, with a large font size to make it easily legible.
+  - The rest of the screen black, which is not projected due to the pixel values being (0,0,0).
 
 ### Subtitles mode with a video mixer and luma keyer
 
 **--position bottom**
 
-In this mode, the Raspberry Pi's HDMI output has to be connected to a video
-mixer unit which has luma keyer capabilities. The app displays a black
-background which is then keyed out. The luma keyer needs to be tuned so that it
+In this mode, the Raspberry Pi's HDMI output must be connected to a video
+mixer unit with luma keyer capabilities. The app displays a black
+background, which is then keyed out. The luma keyer needs to be tuned so that it
 keys out the background and leaves the translation output text as an overlay
-on top of a video. With this mode, you can add translated subtitles on top of
-any video feed - including presentations and online video conference
+on top of a video. With this mode, you can overlay translated subtitles on
+any video feed, such as presentations and online video conference
 applications.
 
-To make the translated subtitles more legible, on top of e.g white background
+To make the translated subtitles more legible on top of light-colored backgrounds
 such as slides, the app adds a dark blue background behind the translated white
-fonts. Otherwise white-on-white would not be seen. In this example, the app
+fonts. Otherwise white on white would not be seen. In this example, the app
 adds a dark blue (RGB: 0,0,139) background behind the text, which can still be
 visible after applying the luma keyer.
 
 To make the translations work, connect the video source’s audio to the
 Raspberry Pi’s audio input. This requires a USB sound card that has an audio
-mic or line-in connector. Then connect the Raspberry Pi HDMI output as a camera
-source to the video mixer. Now the video mixer has 2 video sources:
+microphone or line-in connector. Then connect the Raspberry Pi HDMI output as a camera
+source to the video mixer. With this setup, the video mixer has 2 video sources:
 
-- the original video feed, and
+- the original video feed
 - the Raspberry Pi translated subtitles output
 
 Using the luma keyer in the mixer, key out the black background, and overlay
-the remaining translated subtitles on top of the original video feed.
+the remaining translated subtitles on the original video feed.
 
-1. See the command line options, by executing:
+1.  View the command-line options:
 
         python3 ar-subs.py --help
 
-1.  To start the app in subtitles mode, execute the following, replacing the
-    values with your desired options. Such as:
+1.  To start the app in subtitles mode, run the following, replacing the
+    values with your desired options:
 
         python3 ar-subs.py --dev 0 --lang hi-IN --maxchars 85 --fontsize 46 --position bottom
 
     ![Sub0 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub0.png)
 
-1.  Once the app starts, you are presented with keys that you can press. The
-    key presses are registered and handled by the pygame library. But while the
-    Media Translation API client is streaming an ongoing sentence, the execution is
-    blocked. Thus the key presses will be acted on after the current sentence
+1.  After the app starts, you are presented with keys that you can press. The
+    key presses are registered and handled by the `pygame` library. While the
+    Media Translation API client is streaming an ongoing sentence, execution is
+    blocked; key presses are acted on after the current sentence
     finishes. To finish a sentence, simply stop talking.
 
-1.  To start translating, press any key. The screen will turn black and as you
-    speak, the translations should start being displayed. Note that you can enable
-    or disable interim results by pressing the key `i`.
+1.  To start translating, press any key. The screen will turn black. As you
+    speak, the translations should start being displayed. You can enable
+    or disable interim results by pressing the `i` key.
 
 1.  To quit, press `q` and speak a bit more to register the key press.
 
@@ -596,18 +603,18 @@ the remaining translated subtitles on top of the original video feed.
 
     ![Sub2 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub2.png)
 
-1.  The luma keyer settings are video mixer specific. But the general principle
-    is the same: the keyer's input should be set to the Raspberry Pi HDMI
-    output. And the keyer's luminance threshold should be set so that the black
+1.  The luma keyer settings are specific to each video mixer, but the general principle
+    is the same: The keyer's input should be set to the Raspberry Pi HDMI
+    output, and the keyer's luminance threshold should be set so that the black
     background is keyed out (removed), and the text with the blue background should
-    remain as a transparent overlay. In this picture you can see the Downstream
+    remain as a transparent overlay. In this picture, you can see the Downstream
     Luma Keyer set to **On Air** with the example Blackmagic ATEM Mini Pro video mixer:
 
     ![Sub3 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub3.png)
 
 1.  Now you can switch the mixer to the primary video feed, and have real-time
-    translated subtitles. You can then use the video mixer output as a 'webcam' and
-    for example join a video conference with subtitles.
+    translated subtitles. You can then use the video mixer output as a *webcam* and, for
+    example, join a video conference with subtitles.
 
     ![Sub4 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub4.png)
 
@@ -615,38 +622,38 @@ the remaining translated subtitles on top of the original video feed.
 
 **--position top**
 
-In this mode, the translated text is intended to be projected onto real world
-physical surfaces, using a projector. In effect creating an Augmented Reality
-display of the AI translation output. To make the text easily legible, this
+In this mode, the translated text is intended to be projected onto real-world
+physical surfaces, using a projector, in effect creating an augmented reality
+display of the translation output. To make the text easily legible, this
 mode uses very large font sizes.
 
 **Note!** Projectors use very bright lamps that can be damaging to your eyes.
 Never look directly into a projector lens, and never point the projector at a
 person's head. If you test this solution with a projector, point it away from
-people at a surface, such as a wall.
+people, at a surface, such as a wall.
 
-1.  See the command line options, by executing:
+1.  View the command-line options:
 
         python3 ar-subs.py --help
 
-1.  To start the app in AR mode, execute the following, replacing the
-    values with your desired options. Such as:
+1.  To start the app in AR mode, run the following, replacing the
+    values with your desired options:
 
         python3 ar-subs.py --dev 0 --lang de-DE -maxchars 42 --fontsize 120 --position top
 
-1.  Once the app starts, you are presented with keys that you can press. The
-    key presses are registered and handled by the pygame library. But while the
-    Media Translation API client is streaming an ongoing sentence, the execution is
-    blocked. Thus the key presses will be acted on after the current sentence
+1.  After the app starts, you are presented with keys that you can press. The
+    key presses are registered and handled by the `pygame` library. While the
+    Media Translation API client is streaming an ongoing sentence, execution is
+    blocked; key presses are acted on after the current sentence
     finishes. To finish a sentence, simply stop talking.
 
-1.  To start translating, press any key. The screen will turn black and as you
-    speak, the translations should start being displayed. Note that you can
-    enable or disable interim results by pressing the key `i`.
+1.  To start translating, press any key. The screen will turn black. As you
+    speak, the translations should start being displayed. You can enable
+    or disable interim results by pressing the `i` key.
 
 1.  To quit, press `q` and speak a bit more to register the key press.
 
-1.  Once the solution starts, point the projector at a surface where you want to
+1.  After the app starts, point the projector at a surface where you want to
     display the subtitles.
 
 1.  Experiment with different font sizes. Larger may be better, depending on
@@ -659,21 +666,23 @@ people at a surface, such as a wall.
 
 **--testfile**
 
-The app has a testing mode, with the command line switch --testmode. In this
+The app has a testing mode, with the command line switch `--testmode`. In this
 mode, the app reads the input text file and displays each line with the
 configured font and display mode, line by line. You can use this mode to test
 different font sizes and to simulate the app offline. In this mode, the app
 displays each line in the file after a key press.
 
-1.  Prepare an input text file. Note - in order to display non-latin languages,
+1.  Prepare an input text file. In order to display non-latin characters,
     you have to store the text in the file in Unicode format. A handy way is to use
     [Google Translate](https://translate.google.com) to create translated text in
-    the target language, and then simply copy & paste the Translation output into a
-    text file. Here let's assume you have the following line in a file `test.txt`:
+    the target language, and then simply copy and paste the translated output into a
+    text file.
+    
+    Assume you have the following line in a file `test.txt`:
 
         日本語テキストテスト
 
-1.  To start the app in test mode, execute for example:
+1.  Start the app in test mode:
 
         python3 ar-subs.py --lang ja-JP --maxchars 40 --fontsize --46 --position bottom --testfile test.txt
 
