@@ -84,15 +84,6 @@ Substitute `cloudrun.pomerium.com` for your own subdomain and your e-mail domain
       allowed_domains:
         - gmail.com
 
-### DNS in `zonefile.txt`
-
-Substitute `cloudrun.pomerium.com` for your own subdomain (`zonefile.txt`):
-
-    ; zonefile.txt
-    *.cloudrun.pomerium.com. 18000 IN CNAME ghs.googlehosted.com.
-
-Alternatively, you can set an equivalent CNAME in your DNS provider.
-
 ## Deployment
 
 Ensure that you have set a default project:
@@ -101,24 +92,29 @@ Ensure that you have set a default project:
 
 Run the following commands to configure and deploy Pomerium:
 
-    #!/bin/bash
 
+Set up your environment:
+```bash
     # Install gcloud beta
     gcloud components install beta
 
     # Capture current project number
     PROJECT=$(gcloud projects describe $(gcloud config get-value project) --format='get(projectNumber)')
+```
 
-    # Point a wildcard domain of *.cloudrun.pomerium.com to the Cloud Run front end
-    gcloud dns record-sets import --zone pomerium-io zonefile --zone-file-format
-
-    # Deploy your protected application and associate a DNS name
+Deploy your protected application:
+```bash
+    # Deploy Application
     gcloud run deploy hello --image=gcr.io/cloudrun/hello --region us-central1 --platform managed --no-allow-unauthenticated
+    
+    # Set IAM policy
     gcloud run services add-iam-policy-binding hello --platform managed --region us-central1 \
         --member=serviceAccount:${PROJECT}-compute@developer.gserviceaccount.com \
         --role=roles/run.invoker
-    gcloud beta run domain-mappings --platform managed --region us-central1 create --service=hello --domain hello-direct.cloudrun.pomerium.com
+```
 
+Configuration:
+```bash
     # Rewrite policy file with unique 'hello' service URL
     HELLO_URL=$(gcloud run services describe hello --platform managed --region us-central1 --format 'value(status.address.url)') envsubst <policy.template.yaml >policy.yaml
 
@@ -129,16 +125,46 @@ Run the following commands to configure and deploy Pomerium:
     gcloud secrets add-iam-policy-binding pomerium-config \
         --member=serviceAccount:${PROJECT}-compute@developer.gserviceaccount.com \
         --role=roles/secretmanager.secretAccessor
+```
 
+Deploy Pomerium:
+```bash
     # Deploy Pomerium with policy and configuration references
     gcloud run deploy pomerium --region us-central1 --platform managed --allow-unauthenticated --max-instances 1 \
         --image=gcr.io/pomerium-io/pomerium:v0.10.0-rc2-cloudrun \
-        --set-env-vars VALS_FILES="/pomerium/config.yaml:ref+gcpsecrets://${PROJECT}/pomerium-config",POLICY=$(base64 policy.yaml)
+        --set-env-vars VALS_FILES="/pomerium/config.yaml:ref+gcpsecrets://${PROJECT}/pomerium-config" \
+        --set-env-vars POLICY=$(base64 policy.yaml)
+```
 
+## DNS
+
+Pomerium and end-users need known hostnames to interact with.  To provide this, you must set up [Custom Domain Mappings](https://cloud.google.com/run/docs/mapping-custom-domains) for each service.
+
+### Service Names
+List of names to map to each Cloud Run Service.  Substitute `cloudrun.pomerium.com` as appropriate.
+
+| Cloud Run Service | DNS Name                           |
+| ----------------- | ---------------------------------- |
+| hello             | hello-direct.cloudrun.pomerium.com |
+| pomerium          | hello.cloudrun.pomerium.com        |
+| pomerium          | authn.cloudrun.pomerium.com        |
+| pomerium          | httpbin.cloudrun.pomerium.com      |
+
+### Example Commands
+
+```bash
     # Set domain mappings for the protected routes and authenticate
+    gcloud beta run domain-mappings --platform managed --region us-central1 create --service=hello --domain hello-direct.cloudrun.pomerium.com
     gcloud beta run domain-mappings --platform managed --region us-central1 create --service=pomerium --domain hello.cloudrun.pomerium.com
     gcloud beta run domain-mappings --platform managed --region us-central1 create --service=pomerium --domain authn.cloudrun.pomerium.com
     gcloud beta run domain-mappings --platform managed --region us-central1 create --service=pomerium --domain httpbin.cloudrun.pomerium.com
+
+    # Retrieve the records for configuration in your DNS provider
+    gcloud beta run domain-mappings describe --domain hello-direct.cloudrun.pomerium.com --platform managed --region us-central1 --format='get (status.resourceRecords)'
+    gcloud beta run domain-mappings describe --domain hello.cloudrun.pomerium.com --platform managed --region us-central1 --format='get (status.resourceRecords)'
+    gcloud beta run domain-mappings describe --domain authn.cloudrun.pomerium.com --platform managed --region us-central1 --format='get (status.resourceRecords)'
+    gcloud beta run domain-mappings describe --domain httpbin.cloudrun.pomerium.io --platform managed --region us-central1 --format='get (status.resourceRecords)'
+```
 
 ## Results
 
