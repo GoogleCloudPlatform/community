@@ -40,25 +40,25 @@ This tutorial uses billable components of Google Cloud, including the Media Tran
 
 This tutorial should not generate any usage that would not be covered by the
 [free tier](https://cloud.google.com/free/), but you can use the
-[pricing calculator](https://cloud.google.com/products/calculator/) to generate
+[pricing calculator](https://cloud.google.com/products/calculator/) to create
 a cost estimate based on your projected production usage. For details, see
 [Media Translation pricing and free tier](https://cloud.google.com/translate/media/pricing).
 
 ## Before you begin
 
-This tutorial assumes that you already have a [Google Cloud](https://console.cloud.google.com/freetrial) account.
+This tutorial assumes that you already have a [Google Cloud account](https://console.cloud.google.com/freetrial).
 
 Follow the instructions in the Media Translation documentation to
 [set up your Google Cloud projects](https://cloud.google.com/translate/media/docs/streaming#set_up_your_project) to enable the Media Translation API.
 
 ## Required hardware
 
-- Raspberry Pi (Models 3 B / B+ or 4 B recommended, but other models should also work.)
-- Display device; any of the following:
+- Raspberry Pi (Model 3 B / B+ or 4 B recommended, but other models should also work.)
+- Display device:
   - Small projector for displaying AR translations
   - Video mixer hardware or software, with luma keyer capabilities
   - Monitor to test this tutorial, instead of a projector
-- Microphone to capture dialog audio; either of the following:
+- Microphone to capture dialogue audio; either of the following:
  - USB microphone
  - USB sound card and an analog microphone or line level audio source
 - USB keyboard for the Raspberry Pi
@@ -70,130 +70,148 @@ Follow the instructions in the Media Translation documentation to
 
 1.  Follow the [instructions to download the latest Raspbian Lite OS image](https://www.raspberrypi.org/documentation/installation/installing-images/README.md),
     and write it to your MicroSD card.
+
 1.  Insert the MicroSD card into the Raspberry Pi card slot.
-1.  Connect the USB keyboard into the Raspberry Pi.
+
+1.  Connect the USB keyboard to the Raspberry Pi.
+
 1.  Connect the Raspberry Pi to a monitor or a projector using an HDMI cable.
+
 1.  (Optional) If you use Ethernet connectivity, connect your ethernet cable to
     the Raspberry Pi.
-1.  Connect the Raspberry Pi power supply to the wall socket and to the Raspberry Pi, to start
+
+1.  Connect the Raspberry Pi power supply to the wall socket and to the Raspberry Pi, which starts
     Raspbian OS.
+
 1.  Log in to the Raspberry Pi with the initial username (`pi`) and password (`raspberry`).
+
 1.  Start the Raspberry Pi configuration as the superuser:
 
         sudo raspi-config
 
 1.  Select **1 Change User Password** to change the Raspberry Pi password.
-1.  The recommended network connection method is an ethernet cable which
+
+1.  The recommended network connection method is an ethernet cable that
     provides a DHCP client IP to the Raspberry Pi. If you are using Wi-fi,
-    select: **2 Network Options** then **N2 Wi-fi** to
-    configure your Wi-fi country settings, SSID and passphrase.
-1.  To get most console apps to display text correctly, select:
-    **4 Localisation options** then **I1 Change Locale**. Scroll down with the
-    down arrow key, and deselect the default option (`en_GB.UTF-8 UTF-8`) using
-    the space bar.
+    select **2 Network Options** and then **N2 Wi-fi** to
+    configure your Wi-fi country settings, SSID, and passphrase.
+
+1.  Select **4 Localisation options** and then **I1 Change Locale**.
+
+1.  Scroll down with the down arrow key, and deselect the default option
+    (`en_GB.UTF-8 UTF-8`) using the space bar.
+
 1.  Scroll down to `en_US.UTF-8 UTF-8` and select that option with the space
     bar.
-1.  Press Tabulator and select: **Ok**
+
+1.  Press **Tabulator** and select **Ok**.
+
 1.  Use the arrow keys in the **Configuring locales** window to select
     `en_US.UTF-8` from the list of choices as the default locale. Press
-    Tabulator and select: **Ok**
-1.  To set your system timezone, select: **4 Localisation options** then
-    **I2 Change Timezone** and use the menu options to find your geographic
-    region and country. Setting the timezone is important because some Google
+    **Tabulator** and select **Ok**.
+
+1.  Select **4 Localisation options** and then **I2 Change Timezone**, and use
+    the menu options to find your geographic region and country.
+    
+    Setting the timezone is important because some Google
     Cloud services require client devices' system clocks to be within 10
     minutes of real time. Raspbian uses global NTP time servers to synchronize
     the clock.
-1.  Optionally, select: **4 Localisation options** then
-    **I3 Change Keyboard Layout** to match your layout. If you are not sure,
-    select: **Generic 105-key (Intl) PC**, then **English (US)**, then **The
-    default for the keyboard layout**, then **No compose key**.
-1.  Select: **Interfacing Options**, then **P2 SSH**, then **Yes** to enable the
-    SSH server on your Pi.
-1.  Select: **Finish**, to exit the raspi-config tool and accept to restart the
-    Pi. If you are not prompted to reboot when you exit raspi-config, reboot the
-    Pi by executing:
+
+1.  (Optional) Select **4 Localisation options** and then **I3 Change Keyboard Layout**
+    to match your layout.
+    
+    If you are not sure, select **Generic 105-key (Intl) PC**, **English (US)**,
+    **The default for the keyboard layout**, and **No compose key**.
+
+1.  Select **Interfacing Options**, **P2 SSH**, and then **Yes** to enable the
+    SSH server on your Raspberry Pi.
+
+1.  Select **Finish** to exit the `raspi-config` tool, and accept to restart the
+    Raspberry Pi. If you are not prompted to reboot when you exit `raspi-config`, reboot the
+    Raspberry Pi:
 
         sudo reboot
 
 1.  Log in as the `pi` user with your new custom password.
-1.  Verify that you have an IP address on your Pi by executing:
+
+1.  Verify that you have an IP address on your Raspberry Pi:
 
         ifconfig -a
 
-    You should see a client IP from your local network segment in either the
+    You should see a client IP address from your local network segment in either the
     `wlan0` or `eth0` interface.
 
-1.  Verify that your DNS resolution and internet connection work, by executing:
+1.  Verify that your DNS resolution and internet connection work:
 
         ping www.google.com
 
 1.  If you do not have an IP address, or DNS resolution or internet connectivity
-    fail, do not proceed further until you have fixed your Pi's network
+    fail, do not proceed further until you have fixed your Raspberry Pi's network
     configuration.
-1.  For Wi-fi connectivity only - check if your Wi-fi adapter has power saving
-    enabled. You may wish to disable Wi-fi power saving, or it might give you sporadic
-    network connectivity issues later on. Check the current state by executing:
+    
+1.  If you are using Wi-Fi, check whether your Wi-Fi adapter has power saving
+    enabled:
 
         iwconfig
 
-    Look for "Power Management" under the `wlan0` interface. If you see
-    `Power Management:on`, then you have to disable it.
+    Power saving might give you sporadic network connectivity issues. Look for
+    `Power Management` under the `wlan0` interface. If you see
+    `Power Management:on`, then we recommend that you disable it for this tutorial.
 
-1.  On Pi 3 model B/B+, disable `wlan0` Wi-fi power management by configuring
-    `/etc/network/interfaces`. Execute:
+1.  On Raspberry Pi 3 model B/B+, disable `wlan0` Wi-Fi power management by configuring
+    `/etc/network/interfaces`:
 
         sudo vi /etc/network/interfaces
 
-    or use the nano editor if you prefer. Add these lines to the end of the file:
+    (This command uses `vi`. You can use `nano` if you prefer.)
+    
+    Add these lines to the end of the file:
 
         allow-hotplug wlan0
         iface wlan0 inet manual
             # disable wlan0 power saving
             post-up iw dev $IFACE set power_save off
 
-1.  Reboot the Pi with:
+1.  Apply the changes by rebooting the Raspberry Pi:
 
         sudo reboot
 
-    to apply the changes. Then log in again as the `pi` user.
+1.  Log in again as the `pi` user.
 
-1.  Execute:
+1.  Ensure that Wi-fi power management is now off:
 
         iwconfig
 
-    to ensure that Wi-fi power management is now: `Power Management:off` for
-    `wlan0`.
+    You should see `Power Management:off` for `wlan0`.
 
-1.  Execute:
+1.  Check your internet connectivity:
 
         ping www.google.com
 
-    to check your internet connectivity.
-
-1.  Upgrade the Raspbian packages to latest versions with:
+1.  Upgrade the Raspbian packages to latest versions:
 
         sudo apt-get update && sudo apt-get upgrade -y
 
+### Install the Cloud SDK
 
-### Install Cloud SDK
+1.  Log in to the Raspberry Pi with an SSH connection from your host computer:
 
-1.  Log in to the Pi with an SSH connection from your host computer. This way
-you can easily copy & paste commands from this tutorial and linked pages, to
-the Pi. Execute:
+        ssh pi@[YOUR_RASPBERRY_PI_IP_ADDRESS]
+        
+    With an SSH connection, you can copy and paste commands from this tutorial and linked pages to
+    the Raspberry Pi.
 
-        ssh pi@<your-Pi-IP>
-
-1.  On the Pi, follow all the steps [here](https://cloud.google.com/sdk/docs/#deb) to install and initialize
-    Cloud SDK for Debian systems.
-1.  Check that Cloud SDK is installed and initialized with:
+1.  On the Raspberry Pi, follow all of the steps to [install and initialize the Cloud SDK for Debian systems](https://cloud.google.com/sdk/docs/#deb).
+1.  Check that Cloud SDK is installed and initialized:
 
         gcloud info
 
     Ensure that the `Account` and `Project` properties are set correctly.
 
-### Install additional OS packages
+### Install additional operating system packages
 
-1.  Execute the following command to install the required OS package dependencies:
+1.  Install the required operating system packages:
 
         sudo apt-get update && sudo apt-get install -y git python3-dev python3-pygame python3-venv libatlas-base-dev libasound2-dev python3-pyaudio
 
@@ -203,26 +221,26 @@ This tutorial uses the HDMI console output of the Raspberry Pi as the main
 display. If the default console font size is too small, you can execute the
 following steps to increase the font size and set it to Terminus 16x32.
 
-1. Execute the following command to run the `dpkg-reconfigure` utility:
+1.  Execute the following command to run the `dpkg-reconfigure` utility:
 
         sudo dpkg-reconfigure console-setup
 
-1. Using the up/down arrow keys select `UTF-8`. Then using the right arrow key
-select `OK` and press ENTER.
-1. Using the up/down arrow keys select `Guess optimal character set`. Then
-using the right arrow key select “OK” and press ENTER.
-1. Using the up/down arrow keys select `Terminus`. Using the right arrow key
-select `OK` and press ENTER.
-1. Using the up/down arrow keys select `16×32`. Using the right arrow key
-select `OK` and press ENTER. The console will be refreshed and you will be
-returned to the command prompt with the larger console font.
+1.  Using the up/down arrow keys select `UTF-8`. Then using the right arrow key
+    select `OK` and press ENTER.
+1.  Using the up/down arrow keys select `Guess optimal character set`. Then
+    using the right arrow key select “OK” and press ENTER.
+1.  Using the up/down arrow keys select `Terminus`. Using the right arrow key
+    select `OK` and press ENTER.
+1.  Using the up/down arrow keys select `16×32`. Using the right arrow key
+    select `OK` and press ENTER. The console will be refreshed and you will be
+    returned to the command prompt with the larger console font.
 
 ### Suppress some of the ALSA errors
 
-On Raspberry Pi the ALSA sound libraries may output errors when using
+On Raspberry Pi, the ALSA sound libraries may give errors when using
 [Pyaudio](https://pypi.org/project/PyAudio/) and the pygame library.
-To suppress some of the ALSA errors when pyaudio starts, execute the following
-steps:
+
+To suppress some of the ALSA errors when pyaudio starts, do the following:
 
 1.  Back up the original ALSA configuration file with:
 
@@ -251,19 +269,18 @@ steps:
 ### Connect and configure a microphone
 
 The solution uses a microphone connected to the Raspberry Pi for recording the
-dialog. Raspberry Pi does not have analog microphone or line level inputs.
-There are several options to get spoken dialog audio into the Raspberry Pi:
+dialogue. Raspberry Pi does not have analog microphone or line level inputs.
 
-- Using a USB microphone.
-- Using a USB sound card with an analog microphone connected to the card’s 3.5mm input. Alternatively you can connect any line-level audio feed to the sound card.
-- Using a Bluetooth microphone. This can be more complex to set up, and is out
-of scope for this tutorial.
+There are several options to get spoken dialogue audio into the Raspberry Pi:
 
-Execute the following steps to connect and test a microphone with your
-Raspberry Pi:
+- USB microphone.
+- USB sound card with an analog microphone or any line-level audio feed connected to the sound card’s 3.5mm input
+- Bluetooth microphone (This can be more complex to set up, and is out of scope for this tutorial.)
+
+Connect and test a microphone with your Raspberry Pi:
 
 1.  Connect the USB microphone to the Raspberry Pi or a USB soundcard to the
-    Pi, and an analog microphone to the sound card.
+    Raspberry Pi, and an analog microphone to the sound card.
 
 1.  Execute `lsusb` to list connected USB devices. The command should display
     something similar to the below example. The output shows that the second line
@@ -342,7 +359,7 @@ Raspberry Pi:
 
 ## Clone the example app and install its dependencies
 
-1.  Using the SSH or console connection to the Pi, clone the repository
+1.  Using the SSH or console connection to the Raspberry Pi, clone the repository
     associated with the Google Cloud community tutorials:
 
         git clone https://github.com/GoogleCloudPlatform/community.git
@@ -437,7 +454,7 @@ using `pyaudio`.
 
         aplay test1.wav
 
-You may need to configure which interface the Pi uses for sound playback
+You may need to configure which interface the Raspberry Pi uses for sound playback
 output. You can choose between the HDMI output and the 3.5mm line out /
 headphone jack, by executing: `sudo raspi-config`, and configuring the setting
 under `7: Advanced Options → A4 Audio → Choose the audio output (HDMI |
@@ -473,11 +490,11 @@ specific fonts, to correctly display output in for example Hindi and Japanese.
 Now that the microphone is ready and the Media Translation API works,  make sure that pygame can control the connected HDMI display or projector. You can test 
 this by running an example game included in the pygame package.
 
-1.  If you have been connected with SSH, you must now switch to the Pi's HDMI
-    output console. I.e a monitor or a projector connected to the Pi's HDMI port
+1.  If you have been connected with SSH, you must now switch to the Raspberry Pi's HDMI
+    output console--such as a monitor or a projector connected to the Raspberry Pi's HDMI port--
     and log in there.
 
-1.  Change to the solution app directory:
+1.  Change to the directory containing the example application:
 
         cd community/tutorials/ar-subs
 
@@ -571,7 +588,7 @@ or disable interim results by pressing the key `i`.
 
   ![Sub1 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub1.png)
 
-1. Now that you have live translations displayed through the Pi's HDMI port,
+1. Now that you have live translations displayed through the Raspberry Pi's HDMI port,
 you can use your video mixer's luma keyer to key out the black background.
 
   ![Sub2 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub2.png)
@@ -664,41 +681,11 @@ displays each line in the file after a key press.
 
 ### Example font sizes and line lengths
 
-
-<table>
-  <tr>
-   <td>
-   </td>
-   <td><strong>Top - AR projector mode</strong>
-   </td>
-   <td><strong>Bottom - subtitles overlay mode</strong>
-   </td>
-  </tr>
-  <tr>
-   <td>Generic latin languages --lang de-DE | it-IT
-   </td>
-   <td>--maxchars 42 --fontsize 120 --position top
-   </td>
-   <td>--maxchars 74 --fontsize 72 --position bottom
-   </td>
-  </tr>
-  <tr>
-   <td>Japanese --lang ja-JP
-   </td>
-   <td>--maxchars 20 --fontsize 92 --position top
-   </td>
-   <td>--maxchars 40 --fontsize 46 --position bottom
-   </td>
-  </tr>
-  <tr>
-   <td>Hindi --lang hi-IN
-   </td>
-   <td>--maxchars 42 --fontsize 92 --position top
-   </td>
-   <td>--maxchars 85 --fontsize 46 --position bottom
-   </td>
-  </tr>
-</table>
+|      | Top: AR projector mode | Bottom: subtitles overlay mode |
+|------|------------------------|--------------------------------|
+| Latin languages (`--lang de-DE`) | `--maxchars 42 --fontsize 120 --position top` | `--maxchars 74 --fontsize 72 --position bottom` |
+| Japanese (`--lang ja-JP`) | `--maxchars 20 --fontsize 92 --position top` | `--maxchars 40 --fontsize 46 --position bottom` |
+| Hindi (`--lang hi-IN`) | `--maxchars 42 --fontsize 92 --position top` | `--maxchars 85 --fontsize 46 --position bottom` |
 
 
 ### Fonts used in the example
@@ -710,7 +697,7 @@ Fonts published by Google. Licensed under APACHE 2.0. Available at [fonts.google
 
 ## Cleaning up
 
-To avoid incurring charges to your GCP account for the resources used in this tutorial, you can delete the project.
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
 Deleting a project has the following consequences:
 
