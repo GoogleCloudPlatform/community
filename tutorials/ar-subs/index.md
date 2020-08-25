@@ -66,7 +66,7 @@ Follow the instructions in the Media Translation documentation to
 
 ## Raspberry Pi installation and configuration
 
-###  Raspbian Lite OS installation and configuration
+###  Install Raspbian Lite OS
 
 1.  Follow the [instructions to download the latest Raspbian Lite OS image](https://www.raspberrypi.org/documentation/installation/installing-images/README.md),
     and write it to your MicroSD card.
@@ -82,6 +82,8 @@ Follow the instructions in the Media Translation documentation to
 
 1.  Connect the Raspberry Pi power supply to the wall socket and to the Raspberry Pi, which starts
     Raspbian OS.
+
+### Configure Raspbian Lite OS
 
 1.  Log in to the Raspberry Pi with the initial username (`pi`) and password (`raspberry`).
 
@@ -239,10 +241,10 @@ following steps to increase the font size and set it to Terminus 16x32.
 
     The console is refreshed, and you are returned to the command prompt with the larger console font.
 
-### Suppress some of the ALSA errors
+### Suppress ALSA errors
 
 On Raspberry Pi, the ALSA sound libraries may give errors when using
-[PyAudio](https://pypi.org/project/PyAudio/) and the `pygame` library.
+[PyAudio](https://pypi.org/project/PyAudio/) and the pygame library.
 
 To suppress some of the ALSA errors when PyAudio starts, do the following:
 
@@ -491,16 +493,16 @@ Some of the target languages require a [Unicode](https://home.unicode.org/) font
 the Raspberry Pi console font cannot display Unicode characters. For this
 reason, use a Latin-based language such as German or Italian in this step, to
 test the Media Translation API with your microphone. The next sections
-show how to use the `ar-subs.py` app, which uses the `pygame` library and
+show how to use the `ar-subs.py` app, which uses the pygame library and
 specific fonts to display output in Hindi and Japanese.
 
 ### Test pygame with an HDMI display
 
-In this section, you make sure that `pygame` can control the connected HDMI display or projector.
+In this section, you make sure that pygame can control the connected HDMI display or projector.
 
-Test this by running an example game included in the `pygame` package:
+Test this by running an example game included in the pygame package:
 
-1.  If you have been connected with SSH, you must now switch to the Raspberry Pi's HDMI
+1.  If you have been connected with SSH, switch to the Raspberry Pi's HDMI
     output console—such as a monitor or a projector connected to the Raspberry Pi's HDMI
     port—and log in there.
 
@@ -512,7 +514,7 @@ Test this by running an example game included in the `pygame` package:
 
         source venv/bin/activate
 
-1.  Execute the `pygame` test game:
+1.  Execute the pygame test game:
 
         python3 -m pygame.examples.aliens
 
@@ -524,7 +526,7 @@ Test this by running an example game included in the `pygame` package:
 
 1.  The game will exit when you are hit.
 
-1.  If you can see the game, `pygame` is working with your display and you can
+1.  If you can see the game, pygame is working with your display and you can
     proceed to the next steps.
 
 ## Run the AR Subtitles application
@@ -544,9 +546,7 @@ The app has two operating modes:
   - Text is white, with a large font size to make it easily legible.
   - The rest of the screen black, which is not projected due to the pixel values being (0,0,0).
 
-### Subtitles mode with a video mixer and luma keyer
-
-**--position bottom**
+### Subtitles mode with a video mixer and luma keyer (`--position bottom`)
 
 In this mode, the Raspberry Pi's HDMI output must be connected to a video
 mixer unit with luma keyer capabilities. The app displays a black
@@ -585,7 +585,7 @@ the remaining translated subtitles on the original video feed.
     ![Sub0 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub0.png)
 
 1.  After the app starts, you are presented with keys that you can press. The
-    key presses are registered and handled by the `pygame` library. While the
+    key presses are registered and handled by the pygame library. While the
     Media Translation API client is streaming an ongoing sentence, execution is
     blocked; key presses are acted on after the current sentence
     finishes. To finish a sentence, simply stop talking.
@@ -618,9 +618,7 @@ the remaining translated subtitles on the original video feed.
 
     ![Sub4 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub4.png)
 
-### Augmented reality mode with a projector
-
-**--position top**
+### Augmented reality mode with a projector (`--position top`)
 
 In this mode, the translated text is intended to be projected onto real-world
 physical surfaces, using a projector, in effect creating an augmented reality
@@ -642,7 +640,7 @@ people, at a surface, such as a wall.
         python3 ar-subs.py --dev 0 --lang de-DE -maxchars 42 --fontsize 120 --position top
 
 1.  After the app starts, you are presented with keys that you can press. The
-    key presses are registered and handled by the `pygame` library. While the
+    key presses are registered and handled by the pygame library. While the
     Media Translation API client is streaming an ongoing sentence, execution is
     blocked; key presses are acted on after the current sentence
     finishes. To finish a sentence, simply stop talking.
@@ -662,9 +660,7 @@ people, at a surface, such as a wall.
     ![Ar1 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/ar1.png)
 
 
-### Test mode, translating lines in a text file
-
-**--testfile**
+### Test mode, translating lines in a text file (`--testfile`)
 
 The app has a testing mode, with the command line switch `--testmode`. In this
 mode, the app reads the input text file and displays each line with the
