@@ -218,37 +218,41 @@ Follow the instructions in the Media Translation documentation to
 ### Increase console font size
 
 This tutorial uses the HDMI console output of the Raspberry Pi as the main
-display. If the default console font size is too small, you can execute the
+display. If the default console font size is too small, you can use the
 following steps to increase the font size and set it to Terminus 16x32.
 
-1.  Execute the following command to run the `dpkg-reconfigure` utility:
+1.  Start the `dpkg-reconfigure` utility:
 
         sudo dpkg-reconfigure console-setup
 
-1.  Using the up/down arrow keys select `UTF-8`. Then using the right arrow key
-    select `OK` and press ENTER.
-1.  Using the up/down arrow keys select `Guess optimal character set`. Then
-    using the right arrow key select “OK” and press ENTER.
-1.  Using the up/down arrow keys select `Terminus`. Using the right arrow key
-    select `OK` and press ENTER.
-1.  Using the up/down arrow keys select `16×32`. Using the right arrow key
-    select `OK` and press ENTER. The console will be refreshed and you will be
-    returned to the command prompt with the larger console font.
+1.  Using the up and down arrow keys, select `UTF-8`. Using the right arrow key,
+    select `OK`. Press Enter.
+
+1.  Using the up and down arrow keys, select `Guess optimal character set`.
+    Using the right arrow key, select `OK`. Press Enter.
+
+1.  Using the up and down arrow keys, select `Terminus`. Using the right arrow key,
+    select `OK`. Press Enter.
+
+1.  Using the up and down arrow keys, select `16×32`. Using the right arrow key,
+    select `OK`. Press Enter.
+
+    The console is refreshed, and you are returned to the command prompt with the larger console font.
 
 ### Suppress some of the ALSA errors
 
 On Raspberry Pi, the ALSA sound libraries may give errors when using
-[Pyaudio](https://pypi.org/project/PyAudio/) and the pygame library.
+[PyAudio](https://pypi.org/project/PyAudio/) and the `pygame` library.
 
-To suppress some of the ALSA errors when pyaudio starts, do the following:
+To suppress some of the ALSA errors when PyAudio starts, do the following:
 
-1.  Back up the original ALSA configuration file with:
+1.  Back up the original ALSA configuration file:
 
         sudo cp /usr/share/alsa/alsa.conf /usr/share/alsa/alsa.conf.orig
 
 1.  Edit the ALSA configuration file:
-    1.  Search the segment `#  PCM interface`
-    1.  Comment out the following lines with: **#** as shown here:
+    1.  Search for the segment `#  PCM interface`.
+    1.  Comment out the following lines with `#` as shown here:
 
             #pcm.front cards.pcm.front
             #pcm.rear cards.pcm.rear
@@ -269,11 +273,11 @@ To suppress some of the ALSA errors when pyaudio starts, do the following:
 ### Connect and configure a microphone
 
 The solution uses a microphone connected to the Raspberry Pi for recording the
-dialogue. Raspberry Pi does not have analog microphone or line level inputs.
+dialogue. Raspberry Pi does not have analog microphone or line-level inputs.
 
 There are several options to get spoken dialogue audio into the Raspberry Pi:
 
-- USB microphone.
+- USB microphone
 - USB sound card with an analog microphone or any line-level audio feed connected to the sound card’s 3.5mm input
 - Bluetooth microphone (This can be more complex to set up, and is out of scope for this tutorial.)
 
@@ -283,7 +287,7 @@ Connect and test a microphone with your Raspberry Pi:
     Raspberry Pi, and an analog microphone to the sound card.
 
 1.  Execute `lsusb` to list connected USB devices. The command should display
-    something similar to the below example. The output shows that the second line
+    something similar to the following example, which shows that the second line
     is the connected USB microphone:
 
         Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
@@ -291,9 +295,9 @@ Connect and test a microphone with your Raspberry Pi:
         Bus 001 Device 002: ID 2109:3431 VIA Labs, Inc. Hub
         Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 
-1.  To identify the card and device numbers for the **sound output** options, execute
+1.  To identify the card and device numbers for the sound output options, execute
     `aplay -l`. In this example, the Raspberry Pi built-in headphone output is
-    card: `0`, device: `0`:
+    card `0`, device `0`:
 
         card 0: Headphones [bcm2835 Headphones], device 0: bcm2835 Headphones [bcm2835 Headphones]
           Subdevices: 8/8
@@ -309,22 +313,23 @@ Connect and test a microphone with your Raspberry Pi:
           Subdevices: 1/1
           Subdevice #0: subdevice #0
 
-1.  To identify the **sound input** options, execute `arecord -l`. In this example
-    the USB microphone is card: `1`, device: `0`:
+1.  To identify the sound input options, execute `arecord -l`. In this example
+    the USB microphone is card `1`, device `0`:
 
         **** List of CAPTURE Hardware Devices ****
         card 1: Mic [Samson Meteor Mic], device 0: USB Audio [USB Audio]
           Subdevices: 1/1
           Subdevice #0: subdevice #0
 
-1.  To configure the OS to use the correct sound playback and microphone devices,
-    edit or create the configuration file: `/home/pi/.asoundrc` (Note the dot in the
-    file name `.asoundrc`. It is a so-called hidden configuration file.). Add
-    the following content to the file and set the "mic" and "speaker" device
+1.  To configure the operating system to use the correct sound playback and microphone devices,
+    edit or create the configuration file `/home/pi/.asoundrc`. (Note the dot in the
+    file name `.asoundrc`. It is a so-called *hidden* configuration file.) Add
+    the following content to the file and set the `mic` and `speaker` device
     numbers to be the same as your `aplay -l` and `arecord -l` output findings.
-    In the following example, the microphone is set to "hw:1,0" which means
-    card: 1 and device: 0 which maps to the USB microphone. And the "speaker" is
-    set to card: 0 and device: 0 which maps to the Raspberry Pi built-in sound
+
+    In the following example, the microphone is set to `"hw:1,0"`, which means
+    card 1 and device 0, which maps to the USB microphone. The "speaker" is
+    set to card 0 and device 0, which maps to the Raspberry Pi built-in sound
     card's 3.5mm audio output.
 
         pcm.!default {
@@ -372,11 +377,11 @@ Connect and test a microphone with your Raspberry Pi:
 
         python3 -m venv venv
 
-1.  Activate the virtualenv:
+1.  Activate the virtual environment:
 
         source venv/bin/activate
 
-1.  Upgrade pip and setuptools:
+1.  Upgrade `pip` and `setuptools`:
 
         pip3 install -U pip setuptools
 
@@ -411,18 +416,17 @@ Python utilities to authenticate with the Cloud services.
 
 ### Identify your USB microphone device number in python
 
-In this section, you identify the device number of your USB microphone visible to
-Python. Note that the device numbering for OS sound libraries may not match
-the device numbering visible to Python apps. For this reason, you need to find
+In this section, you identify the USB microphone by its device number to make it visible to
+Python. The device numbering for OS sound libraries may not match
+the device numbering visible to Python apps, which is why you need to find
 the microphone device again, this time with a Python utility.
 
-1.  Within the python virtual environment, execute the following command:
+1.  Within the Python virtual environment, execute the following command:
 
         python3 mic_identify.py
 
-    The command should output something similar to this - with the example USB
-    microphone being the first entry listed here:
-
+    The command should output something similar to the following, 
+    which lists the example USB microphone in the first entry:
 
         (0, 'Samson Meteor Mic: USB Audio (hw:2,0)', 2)
         (1, 'dmix', 0)
@@ -433,62 +437,60 @@ the microphone device again, this time with a Python utility.
 ### Test recording with the USB microphone in Python
 
 In this section, you record audio with the identified USB microphone device,
-using `pyaudio`.
+using PyAudio.
 
-1.  Execute the following command. The command should record a 3 second WAV
-    audio file (mono, 16bits, 44.1KHz). This example uses the device `0` as
-    identified with the previous command:
+1.  The following command records a 3-second WAV audio file (mono, 16bits, 44.1KHz):
 
         python3 mic_test.py --dev 0
+        
+    This example uses the device `0` as identified with the previous command.
 
     The command should output something similar to the following:
 
         *** Recording 3 seconds with USB device 0 ***
         *** Finished recording. Wrote output: test1.wav ***
 
-    You may get ALSA errors but you can ignore them, if the recording was
+    You may get ALSA errors, but you can ignore them if the recording was
     successful.
 
-1.  Listen to the test recording to make sure it worked and that the dialog
-    sound quality is ok. Execute:
+1.  Listen to the test recording to make sure that it worked and that the dialogue
+    sound quality is OK:
 
         aplay test1.wav
 
 You may need to configure which interface the Raspberry Pi uses for sound playback
-output. You can choose between the HDMI output and the 3.5mm line out /
-headphone jack, by executing: `sudo raspi-config`, and configuring the setting
-under `7: Advanced Options → A4 Audio → Choose the audio output (HDMI |
-Headphones)`.
-
+output. You can choose between the HDMI output and the 3.5mm line out / headphone jack,
+by executing: `sudo raspi-config`, and configuring the setting
+under
+`7: Advanced Options → A4 Audio → Choose the audio output (HDMI | Headphones)`.
 
 ### Test the Media Translation API example Python client
 
-Now that your USB microphone works with Python, you can try to call the Media
-Translation API. This step will test calling the API in streaming mode, piping
-microphone audio to the service and displaying the translated live responses in
+Now that your USB microphone works with Python, you can call the Media
+Translation API. This step tests calling the API in streaming mode, piping
+microphone audio to the service, and displaying the translated live responses in
 the command-line shell.
 
+You can specify the [target language code](https://cloud.google.com/translate/media/docs/languages).
+The default target language is `de-DE` for German.
+    
+To test with Italian, execute the following command, replacing the device number `0` with
+your device number if necessary:
 
-1.  Execute the utility with the following command. You can specify the [target language code](https://cloud.google.com/translate/media/docs/languages). The 
-    default target language is `de-DE` for German. For example to test with Italian, execute the below command.
+    python3 translate-microphone.py --lang it-IT --dev 0
 
-    The following example uses device number `0`. Replace that with your device number if
-    necessary:
-
-        python3 translate-microphone.py --lang it-IT --dev 0
-
-Some of the target languages require a [Unicode](https://home.unicode.org/) font to be displayed correctly. By default
+Some of the target languages require a [Unicode](https://home.unicode.org/) font. By default,
 the Raspberry Pi console font cannot display Unicode characters. For this
 reason, use a Latin-based language such as German or Italian in this step, to
-test the Media Translation API with your microphone. The next chapters will
-show how to use the `ar-subs.py` app which uses the pygame library and
-specific fonts, to correctly display output in for example Hindi and Japanese.
+test the Media Translation API with your microphone. The next sections
+show how to use the `ar-subs.py` app, which uses the `pygame` library and
+specific fonts to display output in Hindi and Japanese.
 
+### Test pygame with an HDMI display
 
-### Test Pygame with an HDMI display
+In this section, you make sure that `pygame` can control the connected HDMI display or projector.
 
-Now that the microphone is ready and the Media Translation API works,  make sure that pygame can control the connected HDMI display or projector. You can test 
-this by running an example game included in the pygame package.
+Test this by running an example game included in the `pygame` package:
 
 1.  If you have been connected with SSH, you must now switch to the Raspberry Pi's HDMI
     output console--such as a monitor or a projector connected to the Raspberry Pi's HDMI port--
@@ -557,6 +559,7 @@ To make the translations work, connect the video source’s audio to the
 Raspberry Pi’s audio input. This requires a USB sound card that has an audio
 mic or line-in connector. Then connect the Raspberry Pi HDMI output as a camera
 source to the video mixer. Now the video mixer has 2 video sources:
+
 - the original video feed, and
 - the Raspberry Pi translated subtitles output
 
@@ -567,46 +570,46 @@ the remaining translated subtitles on top of the original video feed.
 
         python3 ar-subs.py --help
 
-1. To start the app in subtitles mode, execute the following, replacing the
-values with your desired options. Such as:
+1.  To start the app in subtitles mode, execute the following, replacing the
+    values with your desired options. Such as:
 
         python3 ar-subs.py --dev 0 --lang hi-IN --maxchars 85 --fontsize 46 --position bottom
 
-  ![Sub0 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub0.png)
+    ![Sub0 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub0.png)
 
-1. Once the app starts, you are presented with keys that you can press. The
-key presses are registered and handled by the pygame library. But while the
-Media Translation API client is streaming an ongoing sentence, the execution is
-blocked. Thus the key presses will be acted on after the current sentence
-finishes. To finish a sentence, simply stop talking.
+1.  Once the app starts, you are presented with keys that you can press. The
+    key presses are registered and handled by the pygame library. But while the
+    Media Translation API client is streaming an ongoing sentence, the execution is
+    blocked. Thus the key presses will be acted on after the current sentence
+    finishes. To finish a sentence, simply stop talking.
 
-1. To start translating, press any key. The screen will turn black and as you
-speak, the translations should start being displayed. Note that you can enable
-or disable interim results by pressing the key `i`.
+1.  To start translating, press any key. The screen will turn black and as you
+    speak, the translations should start being displayed. Note that you can enable
+    or disable interim results by pressing the key `i`.
 
-1. To quit, press `q` and speak a bit more to register the key press.
+1.  To quit, press `q` and speak a bit more to register the key press.
 
-  ![Sub1 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub1.png)
+    ![Sub1 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub1.png)
 
-1. Now that you have live translations displayed through the Raspberry Pi's HDMI port,
-you can use your video mixer's luma keyer to key out the black background.
+1.  Now that you have live translations displayed through the Raspberry Pi's HDMI port,
+    you can use your video mixer's luma keyer to key out the black background.
 
-  ![Sub2 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub2.png)
+    ![Sub2 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub2.png)
 
-1. The luma keyer settings are video mixer specific. But the general principle
-is the same: the keyer's input should be set to the Raspberry Pi HDMI
-output. And the keyer's luminance threshold should be set so that the black
-background is keyed out (removed), and the text with the blue background should
-remain as a transparent overlay. In this picture you can see the Downstream
-Luma Keyer set to **On Air** with the example Blackmagic ATEM Mini Pro video mixer:
+1.  The luma keyer settings are video mixer specific. But the general principle
+    is the same: the keyer's input should be set to the Raspberry Pi HDMI
+    output. And the keyer's luminance threshold should be set so that the black
+    background is keyed out (removed), and the text with the blue background should
+    remain as a transparent overlay. In this picture you can see the Downstream
+    Luma Keyer set to **On Air** with the example Blackmagic ATEM Mini Pro video mixer:
 
-  ![Sub3 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub3.png)
+    ![Sub3 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub3.png)
 
-1. Now you can switch the mixer to the primary video feed, and have real-time
-translated subtitles. You can then use the video mixer output as a 'webcam' and
-for example join a video conference with subtitles.
+1.  Now you can switch the mixer to the primary video feed, and have real-time
+    translated subtitles. You can then use the video mixer output as a 'webcam' and
+    for example join a video conference with subtitles.
 
-  ![Sub4 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub4.png)
+    ![Sub4 image](https://storage.googleapis.com/gcp-community/tutorials/ar-subs/sub4.png)
 
 ### Augmented reality mode with a projector
 
@@ -708,11 +711,11 @@ Deleting a project has the following consequences:
 
 To delete a project, do the following:
 
-1. In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-1. In the project list, select the project you want to delete and click **Delete project**.
-1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
+1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
+1.  In the project list, select the project you want to delete and click **Delete project**.
+1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
-![deleting the project](https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/delete-project.png)
+    ![deleting the project](https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/delete-project.png)
 
 ## What's next
 
