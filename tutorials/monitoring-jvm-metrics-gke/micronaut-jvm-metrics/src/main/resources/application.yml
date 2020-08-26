@@ -1,0 +1,14 @@
+micronaut:
+  application:
+    name: micronautJvmMetrics
+  metrics:
+    export:
+      stackdriver:
+        enabled: true
+        projectId: [PROJECT_ID]
+        step: PT1M
+    enabled: true
+endpoints:
+  health:
+    enabled: true
+    sensitive: false
