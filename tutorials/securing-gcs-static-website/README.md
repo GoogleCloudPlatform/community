@@ -76,10 +76,10 @@ This tutorial uses tools such as [gcloud](https://cloud.google.com/sdk/gcloud), 
 To get the sample code, clone the repository:
 
 ```bash
-git clone [https://github.com/GoogleCloudPlatform/community.git](https://github.com/GoogleCloudPlatform/community.git)
+git clone https://github.com/GoogleCloudPlatform/community.git
 ```
 
-You can find the code under the directory [community/tutorials/securing-gcs-static-website](https://github.com/xiangshen-dk/community/tree/master/tutorials/securing-gcs-static-website).
+You can find the code under the directory [community/tutorials/securing-gcs-static-website](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/securing-gcs-static-website).
 
 Let's set some variables that we use later. Please change the values as needed.
 
@@ -255,7 +255,9 @@ export MANAGED_ZONE=<your managed zone>
 1. Deploy Cloud Run service. For demo purposes, we pass the user credential through environment variables. In reality, you probably want to use a user database or an identity provider for the login service
 
     ```bash
-    gcloud run deploy $LOGIN_BACKEND_SVC_NAME --image=gcr.io/$PROJECT_ID/flask_login --platform=managed --region=$REGION --allow-unauthenticated \
+    gcloud run deploy $LOGIN_BACKEND_SVC_NAME \
+    --image=gcr.io/$PROJECT_ID/flask_login --platform=managed \
+    --region=$REGION --allow-unauthenticated \
     --set-env-vars=WEB_URL=https://$DNS_NAME,PROJECT_ID=$PROJECT_ID,CDN_SIGN_KEY=$CDN_SIGN_KEY,USER_NAME=admin,USER_PASSWORD=password
     ```
 
