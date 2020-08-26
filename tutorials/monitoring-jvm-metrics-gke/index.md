@@ -256,7 +256,21 @@ Visit [Metrics Explorer](https://console.cloud.google.com/monitoring/metrics-exp
 Add the charts to a new dashboard, for instance name it `JVM`.
 
 After letting your application running for a while your dashboard should look like this:
-![JVM Metrics](https://)
+
+![JVM Metrics](https://github.com/viniciusccarvalho/community/raw/monitoring-jvm-metrics-gke/tutorials/monitoring-jvm-metrics-gke/cloud_monitoring_jvm_dashboard.png)
+
+You can now check different heap spaces on the `Heap Memory usage` such as Eden, Tenured and Survivor spaces. And see that our chart follow the nice sawtooth pattern expected from GC collection.
+
+
+## _Optional_ Add some load to simulate memory pressure
+
+You can simulate some traffic to see some memory pressure on your charts using the [ab](https://httpd.apache.org/docs/2.4/programs/ab.html) tool:
+
+```
+export APPLICATION_URL=$(kubectl get service micronaut-jvm-metrics-svc -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+ab -n 50000 -c 100  $APPLICATION_URL/health
+```
 
 ## Clean up
 

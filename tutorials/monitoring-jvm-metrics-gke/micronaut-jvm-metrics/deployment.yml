@@ -14,7 +14,7 @@ spec:
       serviceAccount: micronaut-application
       containers:
         - name: "micronaut-jvm-metrics"
-          image: "gcr.io/[PROJECT_ID]]/micronaut-jvm-metrics"
+          image: "gcr.io/[PROJECT_ID]/micronaut-jvm-metrics"
           ports:
             - name: http
               containerPort: 8080
@@ -43,5 +43,5 @@ spec:
   type: LoadBalancer
   ports:
     - protocol: "TCP"
-      port: 8080
+      port: 80
       targetPort: 8080
