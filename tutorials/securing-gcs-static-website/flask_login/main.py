@@ -47,10 +47,10 @@ def home():
 @bp.route('/login', methods=['POST'])
 def do_admin_login():
     session.pop('_flashes', None)
-    # As an example, we get the credential from secret manager.
+    # As an example, we get the credential from the env vars.
     # You can use a database or any other identity provider as a backend for authentication.
-    username = get_secret("USER_NAME")
-    password = get_secret("USER_PASSWORD")
+    username = os.environ.get("USER_NAME")
+    password = os.environ.get("USER_PASSWORD")
     if request.form['password'] == password and request.form['username'] == username:
         session['logged_in'] = True
         # Expire in a week
