@@ -14,7 +14,7 @@ Below is the high-level architecture of this solution:
 
 The architecture above incorporates the following key features:
 
-1. Create a load balancer to use a custom domain with a managed SSL certificate. When a request is received, we use [routing rules](https://cloud.google.com/load-balancing/docs/https/setting-up-query-and-header-routing#http-header-based-routing) to check whether [a signed cookie for Cloud CDN](https://cloud.google.com/cdn/docs/private-content#signed_cookies) is in the request header. If the cookie doesn't exist, redirect the request to a login app hosted on Cloud Run. If there is a signed cookie, send the request to the Cloud CDN of the backend bucket.
+1. A load balancer to use a custom domain with a managed SSL certificate. When a request is received, we use [routing rules](https://cloud.google.com/load-balancing/docs/https/setting-up-query-and-header-routing#http-header-based-routing) to check whether [a signed cookie for Cloud CDN](https://cloud.google.com/cdn/docs/private-content#signed_cookies) is in the request header. If the cookie doesn't exist, redirect the request to a login app hosted on Cloud Run. If there is a signed cookie, send the request to the Cloud CDN of the backend bucket.
 
 1. The login app performs authentication. If the authentication is successful, the login app [generates a signed cookie ](https://cloud.google.com/cdn/docs/using-signed-cookies)and sends it back to the client with an HTTP redirect. The cookie works because the login app and the bucket backends are behind the same load balancer. Therefore, they are considered as **the [same origin](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy) (Important!)**. Even if a user can access the default Cloud Run endpoint directly and log in from there, she still doesn't have access to the CDN since the cookie is not from the same origin.
 
@@ -24,12 +24,12 @@ The architecture above incorporates the following key features:
 
 ## Objectives 
 
--  Learn to build and deploy a static website to a Cloud Storage bucket.
--  Learn to create a Cloud load balancer with a Google-managed SSL certificate.
--  Learn to set up Cloud CDN with a backend bucket.
--  Learn to deploy a login service to Cloud Run.
--  Learn to create serverless network endpoint groups for GCLB.
--  Learn to create URL maps and route authenticated and unauthenticated traffic.
+-  Build and deploy a static website to a Cloud Storage bucket.
+-  Create a Cloud load balancer with a Google-managed SSL certificate.
+-  Set up Cloud CDN with a backend bucket.
+-  Deploy a login service to Cloud Run.
+-  Create serverless network endpoint groups for GCLB.
+-  Create URL maps and route authenticated and unauthenticated traffic.
 
 ## Costs
 
@@ -306,7 +306,7 @@ export MANAGED_ZONE=<your managed zone>
     gcloud compute url-maps import web-map-http --source web-map-http.yaml --global
     ```
 
-    In this step, we updated the values in the template URL map file and imported it. An example of the final configuration looks like the following:
+    In this step, we updated the values in the template URL map file and imported it. A final configuration looks like the following:
 
     ```yaml
     defaultService: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendBuckets/private-web
