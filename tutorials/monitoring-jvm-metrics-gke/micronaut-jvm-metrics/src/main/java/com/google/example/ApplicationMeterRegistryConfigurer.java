@@ -13,7 +13,6 @@ public class ApplicationMeterRegistryConfigurer implements MeterRegistryConfigur
 
     private final Logger logger = LoggerFactory.getLogger(ApplicationMeterRegistryConfigurer.class);
 
-
     @Override
     public void configure(MeterRegistry meterRegistry) {
         String instanceId = Optional.ofNullable(System.getenv("HOSTNAME")).orElse("localhost");
