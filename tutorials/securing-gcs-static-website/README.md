@@ -50,11 +50,11 @@ For this reference guide, you need a Google Cloud [project](https://cloud.google
 
 1. Select or create a Google Cloud project.
 
-[GO TO THE PROJECT SELECTOR PAGE](https://pantheon.corp.google.com/projectselector2/home/dashboard)
+    [GO TO THE PROJECT SELECTOR PAGE](https://pantheon.corp.google.com/projectselector2/home/dashboard)
 
 1. Enable billing for your project.
 
-[ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
+    [ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
 
 1. Enable the Compute Engine, Cloud Run, Cloud Secret Manager, and Cloud DNS APIs.  
 [ENABLE THE APIS](https://console.cloud.google.com/flows/enableapi?apiid=dataproc,storage_component)
@@ -75,7 +75,9 @@ When you finish this tutorial, you can avoid continued billing by deleting the r
 This tutorial uses tools such as [gcloud](https://cloud.google.com/sdk/gcloud), [gsutil](https://cloud.google.com/storage/docs/gsutil), [npm](https://www.npmjs.com/get-npm), and [docker](https://docs.docker.com/get-docker/). It's recommended to use [Cloud Shell](https://cloud.google.com/shell) if you haven't had the tools installed locally.  
 To get the sample code, clone the repository:
 
+```bash
 git clone [https://github.com/GoogleCloudPlatform/community.git](https://github.com/GoogleCloudPlatform/community.git)
+```
 
 You can find the code under the directory [community/tutorials/securing-gcs-static-website](https://github.com/xiangshen-dk/community/tree/master/tutorials/securing-gcs-static-website).
 
@@ -110,247 +112,239 @@ export MANAGED_ZONE=<your managed zone>
 
 1. Build the demo Single Page Application(SPA). 
 
-```bash
-cd community/tutorials/securing-gcs-static-website/static-website
-npm install
-npm run build
-```
+    ```bash
+    cd community/tutorials/securing-gcs-static-website/static-website
+    npm install
+    npm run build
+    ```
 
-> Note: This is a demo app using vue.js. It's only for demo purposes, you can ignore any warnings from npm.
+    __Note__: This is a demo app using vue.js. It's only for demo purposes, you can ignore any warnings from npm.
 
-1. Use the `[gsutil mb](https://cloud.google.com/storage/docs/gsutil/commands/mb)` command to create a bucket.
+1. Use the [gsutil mb](https://cloud.google.com/storage/docs/gsutil/commands/mb) command to create a bucket.
 
-```bash
-gsutil mb -b on gs://$BUCKET_NAME
-```
+    ```bash
+    gsutil mb -b on gs://$BUCKET_NAME
+    ```
 
-1. Use the `[gsutil rsync](https://cloud.google.com/storage/docs/gsutil/commands/rsync)` command to upload the build artifacts. They are all static files.
+1. Use the [gsutil rsync](https://cloud.google.com/storage/docs/gsutil/commands/rsync) command to upload the build artifacts. They are all static files.
 
-```bash
-gsutil rsync -R dist/ gs://$BUCKET_NAME
-```
+    ```bash
+    gsutil rsync -R dist/ gs://$BUCKET_NAME
+    ```
 
-1. Use the `[gsutil web set](https://cloud.google.com/storage/docs/gsutil/commands/web#set)` command to set the `MainPageSuffix` property with the `-m` flag and the `NotFoundPage` with the `-e` flag.
+1. Use the [gsutil web set](https://cloud.google.com/storage/docs/gsutil/commands/web#set) command to set the `MainPageSuffix` property with the `-m` flag and the `NotFoundPage` with the `-e` flag.
 
-```bash
-gsutil web set -m index.html -e index.html gs://$BUCKET_NAME
-```
+    ```bash
+    gsutil web set -m index.html -e index.html gs://$BUCKET_NAME
+    ```
 
 ### Create a load balancer 
 
 1. Reserving an external IP address. This IP will be used by the load balancer.
 
-```bash
-gcloud compute addresses create $STATIC_IP_NAME \
-    --network-tier=PREMIUM \
-    --ip-version=IPV4 \
-    --global
-```
+    ```bash
+    gcloud compute addresses create $STATIC_IP_NAME \
+        --network-tier=PREMIUM \
+        --ip-version=IPV4 \
+        --global
+    ```
 
 1. Export the IP address to be used later.
 
-```bash
-export SVC_IP_ADDR=$(gcloud compute addresses list --filter="name=${STATIC_IP_NAME}" \
---format="value(address)" --global --project ${PROJECT_ID})
-```
+    ```bash
+    export SVC_IP_ADDR=$(gcloud compute addresses list --filter="name=${STATIC_IP_NAME}" \
+    --format="value(address)" --global --project ${PROJECT_ID})
+    ```
 
 1. Confirm you have an IP address.
 
-```bash
-echo ${SVC_IP_ADDR}
-```
+    ```bash
+    echo ${SVC_IP_ADDR}
+    ```
 
-Example output:
+    Example output:
 
-34.120.180.189
+    `34.120.180.189`
 
 
 1. Add the DNS record to your DNS zone. 
 
    If you are using the managed DNS zone in the same project, you can use the following commands:
 
-```bash
-gcloud dns record-sets transaction start --zone=$MANAGED_ZONE
+    ```bash
+    gcloud dns record-sets transaction start --zone=$MANAGED_ZONE
 
-gcloud dns record-sets transaction add ${SVC_IP_ADDR} --name=$DNS_NAME --ttl=60 --type=A --zone=$MANAGED_ZONE
+    gcloud dns record-sets transaction add ${SVC_IP_ADDR} --name=$DNS_NAME --ttl=60 --type=A --zone=$MANAGED_ZONE
 
-gcloud dns record-sets transaction execute --zone=$MANAGED_ZONE
-```
+    gcloud dns record-sets transaction execute --zone=$MANAGED_ZONE
+    ```
 
-> Otherwise, follow the steps provided by your DNS service provider to add an A record. The A record needs to use the IP address you just provisioned and the DNS_NAME you set choose earlier. 
+    Otherwise, follow the steps provided by your DNS service provider to add an A record. The A record needs to use the IP address you just provisioned and the DNS_NAME you set choose earlier. 
 
 1. Create an HTTPS load balancer and configure the bucket as a backend. We also enable Cloud CDN for the load balancer.
 
-```bash
-gcloud compute backend-buckets create web-backend-bucket \
-    --gcs-bucket-name=$BUCKET_NAME \
-    --enable-cdn
-```
+    ```bash
+    gcloud compute backend-buckets create web-backend-bucket \
+        --gcs-bucket-name=$BUCKET_NAME \
+        --enable-cdn
+    ```
 
 1. Create a Google-managed SSL certificate.
 
-```bash
-gcloud compute ssl-certificates create www-ssl-cert \
-  --domains $DNS_NAME
-```
+    ```bash
+    gcloud compute ssl-certificates create www-ssl-cert \
+    --domains $DNS_NAME
+    ```
 
-Note the status is PROVISIONING (initially).  
-You can check the status of your SSL cert by running the following command.  The status will eventually change to ACTIVE.  Until it is ACTIVE, you won't be able to access your service.  It can take 30–60 minutes.
+    __Note__: The status is PROVISIONING (initially).  
+    You can check the status of your SSL cert by running the following command.  The status will eventually change to ACTIVE.  Until it is ACTIVE, you won't be able to access your service.  It can take 30–60 minutes.
 
-```bash
-gcloud compute ssl-certificates list | grep ${DNS_NAME}
+    ```bash
+    gcloud compute ssl-certificates list | grep ${DNS_NAME}
 
-Example output:
-private-web.democloud.info: PROVISIONING
-```
+    Example output:
+    private-web.democloud.info: PROVISIONING
+    ```
 
 ### Configure Cloud CDN
 
 1. Add a signing key to CDN.
 
-```bash
-head -c 16 /dev/urandom | base64 | tr +/ -_ > key_file.txt
+    ```bash
+    head -c 16 /dev/urandom | base64 | tr +/ -_ > key_file.txt
 
-gcloud compute backend-buckets \
-   add-signed-url-key web-backend-bucket \
-   --key-name $CDN_SIGN_KEY \
-   --key-file key_file.txt
-```
+    gcloud compute backend-buckets \
+    add-signed-url-key web-backend-bucket \
+    --key-name $CDN_SIGN_KEY \
+    --key-file key_file.txt
+    ```
 
 1. Adding the key to the secret manager.
 
-```bash
-gcloud secrets create $CDN_SIGN_KEY --data-file="./key_file.txt"
-```
+    ```bash
+    gcloud secrets create $CDN_SIGN_KEY --data-file="./key_file.txt"
+    ```
 
 1. (Optional) To be safe, let's remove the data file we created
 
-```bash
-rm key_file.txt
-```
+    ```bash
+    rm key_file.txt
+    ```
 
 1. Configure IAM to allow the CDN service account to read the objects in the bucket.
 
-```bash
-gsutil iam ch \
-serviceAccount:service-${PROJECT_NUM}@cloud-cdn-fill.iam.gserviceaccount.com:objectViewer gs://$BUCKET_NAME
-```
+    ```bash
+    gsutil iam ch \
+    serviceAccount:service-${PROJECT_NUM}@cloud-cdn-fill.iam.gserviceaccount.com:objectViewer gs://$BUCKET_NAME
+    ```
 
-Note: For the Cloud CDN service account `[service-PROJECT_NUM@cloud-cdn-fill.iam.gserviceaccount.com](mailto:service-PROJECT_NUM@cloud-cdn-fill.iam.gserviceaccount.com)`, it doesn't appear in the list of service accounts in your project. This is because the Cloud CDN service account is owned by Cloud CDN, not your project.
+    __Note__: For the Cloud CDN service account `[service-PROJECT_NUM@cloud-cdn-fill.iam.gserviceaccount.com]`, it doesn't appear in the list of service accounts in your project. This is because the Cloud CDN service account is owned by Cloud CDN, not your project.
+
 ### Deploy login service to Cloud Run
 
 1. Build the Docker container for the login page and push it to Container Registry.
 
-```bash
-cd ../flask_login
+    ```bash
+    cd ../flask_login
 
-docker build -t flask_login .
-docker tag flask_login gcr.io/$PROJECT_ID/flask_login
-docker push gcr.io/$PROJECT_ID/flask_login
-```
+    docker build -t flask_login .
+    docker tag flask_login gcr.io/$PROJECT_ID/flask_login
+    docker push gcr.io/$PROJECT_ID/flask_login
+    ```
 
 1. Deploy Cloud Run service. For demo purposes, we pass the user credential through environment variables. In reality, you probably want to use a user database or an identity provider for the login service
 
-```bash
-gcloud run deploy $LOGIN_BACKEND_SVC_NAME --image=gcr.io/$PROJECT_ID/flask_login --platform=managed --region=$REGION --allow-unauthenticated \
---set-env-vars=WEB_URL=https://$DNS_NAME,PROJECT_ID=$PROJECT_ID,CDN_SIGN_KEY=$CDN_SIGN_KEY,USER_NAME=admin,USER_PASSWORD=password
-```
+    ```bash
+    gcloud run deploy $LOGIN_BACKEND_SVC_NAME --image=gcr.io/$PROJECT_ID/flask_login --platform=managed --region=$REGION --allow-unauthenticated \
+    --set-env-vars=WEB_URL=https://$DNS_NAME,PROJECT_ID=$PROJECT_ID,CDN_SIGN_KEY=$CDN_SIGN_KEY,USER_NAME=admin,USER_PASSWORD=password
+    ```
 
 1. Since our Cloud Run service needs to access the secrets saved in the secret manager, we grant the permission here. 
 
-```bash
-gcloud projects add-iam-policy-binding \
---member=serviceAccount:${PROJECT_NUM}-compute@developer.gserviceaccount.com \
---role=roles/secretmanager.secretAccessor $PROJECT_ID
-```
+    ```bash
+    gcloud projects add-iam-policy-binding \
+    --member=serviceAccount:${PROJECT_NUM}-compute@developer.gserviceaccount.com \
+    --role=roles/secretmanager.secretAccessor $PROJECT_ID
+    ```
 
-Note: we provide the secretAccessor permission to the default compute service account. In a production environment, you probably want to use a custom service account and only allow access to the needed secrets. 
+    __Note__: we provide the secretAccessor permission to the default compute service account. In a production environment, you probably want to use a custom service account and only allow access to the needed secrets.
+
 ### Configure serverless network endpoints group
 
 1. Create a network endpoint group(NEG) for the Cloud Run service.
 
-```bash
-gcloud beta compute network-endpoint-groups create $SERVERLESS_NEG_NAME \
-    --region=$REGION \
-    --network-endpoint-type=SERVERLESS  \
-    --cloud-run-service=$LOGIN_BACKEND_SVC_NAME
-```
+    ```bash
+    gcloud beta compute network-endpoint-groups create $SERVERLESS_NEG_NAME \
+        --region=$REGION \
+        --network-endpoint-type=SERVERLESS  \
+        --cloud-run-service=$LOGIN_BACKEND_SVC_NAME
+    ```
 
 1. Create a backend service and add the serverless NEG as a backend to the Cloud Run service. A serverless NEG is needed here because that's how Cloud Run services can be associated with a load balancer.
 
-```bash
-gcloud compute backend-services create $LOGIN_BACKEND_SVC_NAME \
-    --global
+    ```bash
+    gcloud compute backend-services create $LOGIN_BACKEND_SVC_NAME \
+        --global
 
-gcloud beta compute backend-services add-backend $LOGIN_BACKEND_SVC_NAME \
-    --global \
-    --network-endpoint-group=$SERVERLESS_NEG_NAME \
-    --network-endpoint-group-region=$REGION
-```
+    gcloud beta compute backend-services add-backend $LOGIN_BACKEND_SVC_NAME \
+        --global \
+        --network-endpoint-group=$SERVERLESS_NEG_NAME \
+        --network-endpoint-group-region=$REGION
+    ```
 
 ### Create URL map and configure forwarding rules
 
 1. Update the URL mapping file and create the URL map.
 
-```bash
-sed -i -e "s/<DNS_NAME>/$DNS_NAME/" web-map-http.yaml
-sed -i -e "s/<PROJECT_ID>/$PROJECT_ID/" web-map-http.yaml
-sed -i -e "s/<LOGIN_BACKEND_SVC_NAME>/$LOGIN_BACKEND_SVC_NAME/" web-map-http.yaml
+    ```bash
+    sed -i -e "s/<DNS_NAME>/$DNS_NAME/" web-map-http.yaml
+    sed -i -e "s/<PROJECT_ID>/$PROJECT_ID/" web-map-http.yaml
+    sed -i -e "s/<LOGIN_BACKEND_SVC_NAME>/$LOGIN_BACKEND_SVC_NAME/" web-map-http.yaml
 
-gcloud compute url-maps import web-map-http --source web-map-http.yaml --global
-```
+    gcloud compute url-maps import web-map-http --source web-map-http.yaml --global
+    ```
 
-In this step, we updated the values in the template URL map file and imported it. An example of the final configuration looks like the following:
+    In this step, we updated the values in the template URL map file and imported it. An example of the final configuration looks like the following:
 
-<table>
-<thead>
-<tr>
-<th><p><pre>
-defaultService: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendBuckets/private-web
-kind: compute#urlMap
-name: web-map-http
-hostRules:
-- hosts:
-  - 'web.democloud.info'
-  pathMatcher: matcher1
-pathMatchers:
-- defaultService: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendBuckets/private-web
-  name: matcher1
-  routeRules:
-    - matchRules:
-        - prefixMatch: /
-          headerMatches:
-            - headerName: cookie
-              prefixMatch: 'Cloud-CDN-Cookie'
-      priority: 0
-      service: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendBuckets/private-web
-    - matchRules:
-        - prefixMatch: /
-      priority: 1
-      service: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendServices/flasklogin-backend-service
-</pre></p>
+    ```yaml
+    defaultService: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendBuckets/private-web
+    kind: compute#urlMap
+    name: web-map-http
+    hostRules:
+    - hosts:
+    - 'web.democloud.info'
+    pathMatcher: matcher1
+    pathMatchers:
+    - defaultService: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendBuckets/private-web
+    name: matcher1
+    routeRules:
+        - matchRules:
+            - prefixMatch: /
+            headerMatches:
+                - headerName: cookie
+                prefixMatch: 'Cloud-CDN-Cookie'
+        priority: 0
+        service: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendBuckets/private-web
+        - matchRules:
+            - prefixMatch: /
+        priority: 1
+        service: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendServices/flasklogin-backend-service
+    ```
 
-</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-
-In this configuration, we configured a route rule to match a cookie starting with "Cloud-CDN-Cookie" in the request header. If it's matched, the request is forwarded to the backend bucket service. Otherwise, it is forwarded to the login backend service.   
-The cookie "Cloud-CDN-Cookie" is the signed cookie we mentioned earlier. It is set by the login service after successful authentication.
+    In this configuration, we configured a route rule to match a cookie starting with "Cloud-CDN-Cookie" in the request header. If it's matched, the request is forwarded to the backend bucket service. Otherwise, it is forwarded to the login backend service.   
+    The cookie "Cloud-CDN-Cookie" is the signed cookie we mentioned earlier. It is set by the login service after successful authentication.
 
 1. Create a target HTTPS proxy with the URL map.
 
-```bash
-gcloud compute target-https-proxies create https-lb-proxy --url-map web-map-http --ssl-certificates=www-ssl-cert
-```
+    ```bash
+    gcloud compute target-https-proxies create https-lb-proxy --url-map web-map-http --ssl-certificates=www-ssl-cert
+    ```
 
 1. Create the forwarding rule with the reserved IP address.
 
-```bash
-gcloud compute forwarding-rules create private-web-https-rule --address=$STATIC_IP_NAME --global --target-https-proxy=https-lb-proxy --ports=443
-```
+    ```bash
+    gcloud compute forwarding-rules create private-web-https-rule --address=$STATIC_IP_NAME --global --target-https-proxy=https-lb-proxy --ports=443
+    ```
 
 ## Testing the website
 
@@ -358,10 +352,11 @@ First, let's make sure the managed SSL certificate has been successfully provisi
 
 ```bash
 gcloud compute ssl-certificates list | grep ${DNS_NAME}
+```
 
 Example output:
-private-web.democloud.info: ACTIVE
-```
+
+    private-web.democloud.info: ACTIVE
 
 Once the ssl certificate is provisioned, you can try to open the URL in your browser. To get the URL:
 
@@ -371,7 +366,7 @@ echo https://$DNS_NAME
 
 Example output:
 
-https://private-web.democloud.info
+    https://private-web.democloud.info
 
 
 __Note__: Both the SSL certificate and the DNS name propagation need some time. Please wait at least a few minutes if the page is not accessible.
