@@ -52,7 +52,7 @@ Create a file named `server.js` with the following contents:
 
 Let's test it to make sure it works:
 
-    node app.js
+    node server.js
 
 Point your browser to [http://localhost:8080](http://localhost:8080) to see a
 `Hello World!` message. Press CTRL+C to stop the app.
@@ -100,9 +100,15 @@ traffic. You can view any other deployed version at the following url:
 
 Since we've only deployed once you probably only see one version. Let's deploy
 again to see another version, but before we deploy let's introduce a bug into
-our app. Edit the first line of `server.js` to say the following:
+our app. Edit the these lines of `server.js` 
 
-    const httpTypo = require('http');
+     res.writeHead(200, { 'Content-Type': 'text/plain' });
+     res.end('Hello World!\n');
+
+to say the following:
+
+    res.writeHead(500, { 'Content-Type': 'text/plain' });
+    res.end('Error page\n');
 
 This will cause the app to fail to start. Now deploy:
 
