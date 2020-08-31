@@ -2,8 +2,8 @@
 title: Monitor a Micronaut JVM application on GKE using Micrometer.
 description: Learn how to use Micrometer to send JVM metrics to cloud monitoring via stackdriver agent.
 author: vinnyc
-tags: App Engine, Kotlin, Spring Boot
-date_published:
+tags: GKE, Java, Micronaut 
+date_published: 2020-09-01
 ---
 
 GKE offers built-in capabilities to monitor containers, it provides insights into memory, cpu and IO resources. JVM applications however have
