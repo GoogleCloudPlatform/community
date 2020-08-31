@@ -3,7 +3,7 @@ title: Authorizing end users in Cloud Run with Pomerium
 description: Learn how to deploy Pomerium to Cloud Run and use it to protect other endpoints with authorization headers.
 author: travisgroth,desimone
 tags: Cloud Run, Pomerium
-date_published: 2020-08-31
+date_published: 2020-09-01
 ---
 
 This guide covers how to deploy Pomerium to Cloud Run, providing end-user authentication and authorization to other endpoints. The resulting configuration
@@ -14,7 +14,7 @@ interface to add access control to applications regardless of whether the applic
 gateway for requests and can be used in situations where you'd typically consider using a VPN.
 
 Unlike [Cloud IAP](https://cloud.google.com/iap), Pomerium supports non-Google identity providers. You can also run Pomerium outside Google Cloud (such as on 
-other cloud providers and on-premises), and still use it to route or authorize traffic to Google Cloud targets such as Cloud Run or Cloud Functions.
+other cloud providers and on-premises) and still use it to route or authorize traffic to Google Cloud targets such as Cloud Run or Cloud Functions.
 
 This guide assumes that you have editor access to a Google Cloud project that can be used for isolated testing and a DNS zone that you are able to control.
 DNS does not need to be inside Google Cloud for the example to work.
@@ -133,7 +133,7 @@ This section includes the commands to configure and deploy Pomerium.
 
 ## DNS
 
-Pomerium and end-users need known hostnames to interact with. To provide this, set up
+Pomerium and end users need known hostnames to interact with. To provide this, set up
 [Custom Domain Mappings](https://cloud.google.com/run/docs/mapping-custom-domains) for each service.
 
 ### Service names
