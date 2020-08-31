@@ -1,13 +1,13 @@
 ---
 title: Monitor a Micronaut JVM application on GKE using Micrometer.
-description: Learn how to use Micrometer to send JVM metrics to cloud monitoring via stackdriver agent.
+description: Learn how to use Micrometer to send JVM metrics to Cloud Monitoring through the Stackdriver agent.
 author: vinnyc
 tags: GKE, Java, Micronaut 
 date_published: 2020-09-01
 ---
 
-GKE offers built-in capabilities to monitor containers, it provides insights into memory, cpu and IO resources. JVM applications however have
-different memory configurations (heap vs non-heap) and each memory space can be split in several other parts (Eden, Tenured, Survivor). More often than not, java developers face issues with memory configurations and having the capability to inspect an application memory utilization is essential for java developers.
+GKE offers built-in capabilities to monitor containers, it provides insights into memory, CPU, and I/O resources. JVM applications however have
+different memory configurations (heap versus non-heap) and each memory space can be split in several other parts (Eden, Tenured, Survivor). Often, Java developers face issues with memory configurations, and having the capability to inspect an application memory utilization is essential for Java developers.
 
 Traditional APM tools make use of a [java agent](https://docs.oracle.com/javase/7/docs/api/java/lang/instrument/package-summary.html) that is added to the classpath of the application. In certain environments such as Kubernetes and App Engine, configuring a java agent is not always possible, this is where metrics frameworks such as
 [Micrometer](https://micrometer.io) comes in hand.
@@ -16,12 +16,12 @@ In this tutorial we will explain how you can use Micrometer integration with sta
 
 ## Before you begin
 
-Before running this tutorial, you must set up a Google Cloud Platform project,
-and you need to have Docker and the Google Cloud SDK installed.
+Before running this tutorial, you must set up a Google Cloud project,
+and you need to have Docker and the Cloud SDK installed.
 
 Create a project that will host your [Micronaut](https://micronaut.io) application. You can also reuse an existing project.
 
-1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
+1.  Use the [Cloud Console](https://console.cloud.google.com/)
     to create a new Cloud Platform project. Remember the project ID; you will
     need it later. Later commands in this tutorial will use `[PROJECT_ID]` as
     a substitution, so you might consider setting the `PROJECT_ID` environment
@@ -257,7 +257,7 @@ Add the charts to a new dashboard, for instance name it `JVM`.
 
 After letting your application running for a while your dashboard should look like this:
 
-![JVM Metrics](https://github.com/viniciusccarvalho/community/raw/monitoring-jvm-metrics-gke/tutorials/monitoring-jvm-metrics-gke/cloud_monitoring_jvm_dashboard.png)
+![JVM Metrics](https://storage.googleapis.com/gcp-community/tutorials/monitoring-jvm-metrics-gke/cloud_monitoring_jvm_dashboard.png)
 
 You can now check different heap spaces on the `Heap Memory usage` such as Eden, Tenured and Survivor spaces. And see that our chart follow the nice sawtooth pattern expected from GC collection.
 
