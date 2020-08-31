@@ -3,7 +3,7 @@ title: Authorizing end users in Cloud Run with Pomerium
 description: Learn how to deploy Pomerium to Cloud Run and use it to protect other endpoints with authorization headers.
 author: travisgroth,desimone
 tags: Cloud Run, Pomerium
-date_published: 2020-08-25
+date_published: 2020-08-31
 ---
 
 This guide covers how to deploy Pomerium to Cloud Run, providing end-user authentication and authorization to other endpoints. The resulting configuration
@@ -33,7 +33,7 @@ You perform the following steps:
 - Add an IAM policy delegating `roles/run.invoker` permissions to a service account.
 - Run Pomerium with access to a key for the corresponding service account.
 - Publish DNS records for each protected application pointing to Pomerium.
-- Configure Pomerium with appropriate policy and `enable_google_cloud_serverless_authentication`.
+- Configure Pomerium with an appropriate policy and `enable_google_cloud_serverless_authentication`.
 
 The protected application delegates trust to a Google Cloud service account, which Pomerium runs as, and Pomerium performs user-based authorization for each
 route. This turns Pomerium into a bridge between a user-centric and a service-centric authorization model.
@@ -86,71 +86,70 @@ Substitute `cloudrun.pomerium.com` for your own subdomain and your e-mail domain
 
 ## Deployment
 
-Ensure that you have set a default project:
+This section includes the commands to configure and deploy Pomerium.
 
-    gcloud config set default-project MYTESTPROJECT
+1.  Ensure that you have set a default project:
 
-Run the following commands to configure and deploy Pomerium:
+        gcloud config set default-project MYTESTPROJECT
 
+1.  Set up your environment:
 
-Set up your environment:
-```bash
-    # Install gcloud beta
-    gcloud components install beta
+        # Install gcloud beta
+        gcloud components install beta
 
-    # Capture current project number
-    PROJECT=$(gcloud projects describe $(gcloud config get-value project) --format='get(projectNumber)')
-```
+        # Capture current project number
+        PROJECT=$(gcloud projects describe $(gcloud config get-value project) --format='get(projectNumber)')
 
-Deploy your protected application:
-```bash
-    # Deploy Application
-    gcloud run deploy hello --image=gcr.io/cloudrun/hello --region us-central1 --platform managed --no-allow-unauthenticated
+1.  Deploy your protected application:
 
-    # Set IAM policy
-    gcloud run services add-iam-policy-binding hello --platform managed --region us-central1 \
-        --member=serviceAccount:${PROJECT}-compute@developer.gserviceaccount.com \
-        --role=roles/run.invoker
-```
+        gcloud run deploy hello --image=gcr.io/cloudrun/hello --region us-central1 --platform managed --no-allow-unauthenticated
 
-Configuration:
-```bash
-    # Rewrite policy file with unique 'hello' service URL
-    HELLO_URL=$(gcloud run services describe hello --platform managed --region us-central1 --format 'value(status.address.url)') envsubst <policy.template.yaml >policy.yaml
+1.  Set the IAM policy:
 
-    # Install your base configuration in a Google Cloud secret
-    gcloud secrets create --data-file config.yaml pomerium-config --replication-policy automatic
+        gcloud run services add-iam-policy-binding hello --platform managed --region us-central1 \
+            --member=serviceAccount:${PROJECT}-compute@developer.gserviceaccount.com \
+            --role=roles/run.invoker
 
-    # Grant the default compute account access to the secret
-    gcloud secrets add-iam-policy-binding pomerium-config \
-        --member=serviceAccount:${PROJECT}-compute@developer.gserviceaccount.com \
-        --role=roles/secretmanager.secretAccessor
-```
+1.  Rewrite the policy file with a unique `hello` service URL:
 
-Deploy Pomerium:
-```bash
-    # Deploy Pomerium with policy and configuration references
-    gcloud run deploy pomerium --region us-central1 --platform managed --allow-unauthenticated --max-instances 1 \
-        --image=gcr.io/pomerium-io/pomerium:v0.10.0-rc2-cloudrun \
-        --set-env-vars VALS_FILES="/pomerium/config.yaml:ref+gcpsecrets://${PROJECT}/pomerium-config" \
-        --set-env-vars POLICY=$(base64 policy.yaml)
-```
+        HELLO_URL=$(gcloud run services describe hello --platform managed --region us-central1 --format 'value(status.address.url)') envsubst <policy.template.yaml >policy.yaml
+
+1.  Install your base configuration in a Google Cloud secret:
+
+        gcloud secrets create --data-file config.yaml pomerium-config --replication-policy automatic
+
+1.  Grant the default compute account access to the secret:
+
+        gcloud secrets add-iam-policy-binding pomerium-config \
+            --member=serviceAccount:${PROJECT}-compute@developer.gserviceaccount.com \
+            --role=roles/secretmanager.secretAccessor
+
+1.  Deploy Pomerium with policy and configuration references:
+
+        gcloud run deploy pomerium --region us-central1 --platform managed --allow-unauthenticated --max-instances 1 \
+            --image=gcr.io/pomerium-io/pomerium:v0.10.0-rc2-cloudrun \
+            --set-env-vars VALS_FILES="/pomerium/config.yaml:ref+gcpsecrets://${PROJECT}/pomerium-config" \
+            --set-env-vars POLICY=$(base64 policy.yaml)
 
 ## DNS
 
-Pomerium and end-users need known hostnames to interact with.  To provide this, you must set up [Custom Domain Mappings](https://cloud.google.com/run/docs/mapping-custom-domains) for each service.
+Pomerium and end-users need known hostnames to interact with. To provide this, set up
+[Custom Domain Mappings](https://cloud.google.com/run/docs/mapping-custom-domains) for each service.
 
-### Service Names
-List of names to map to each Cloud Run Service.  Substitute `cloudrun.pomerium.com` as appropriate.
+### Service names
 
-| Cloud Run Service | DNS Name                           |
-| ----------------- | ---------------------------------- |
-| hello             | hello-direct.cloudrun.pomerium.com |
-| pomerium          | hello.cloudrun.pomerium.com        |
-| pomerium          | authn.cloudrun.pomerium.com        |
-| pomerium          | httpbin.cloudrun.pomerium.com      |
+Names to map to each Cloud Run service:
 
-### Example Commands
+| Cloud Run service   | DNS name                             |
+| ------------------- | ------------------------------------ |
+| `hello`             | `hello-direct.cloudrun.pomerium.com` |
+| `pomerium`          | `hello.cloudrun.pomerium.com`        |
+| `pomerium`          | `authn.cloudrun.pomerium.com`        |
+| `pomerium`          | `httpbin.cloudrun.pomerium.com`      |
+
+ Substitute `cloudrun.pomerium.com` as appropriate.
+
+### Example commands
 
 ```bash
     # Set domain mappings for the protected routes and authenticate
@@ -170,7 +169,7 @@ List of names to map to each Cloud Run Service.  Substitute `cloudrun.pomerium.c
 
 ### Overview
 
-You should see two applications deployed: The `hello` app is your protected app, and pomerium is... Pomerium!
+You should see two applications deployed: The `hello` app is your protected app, and `pomerium` is... Pomerium!
 
 ![Cloud Run overview](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-with-pomerium-for-end-user-access/cloudrun-overview.png)
 
@@ -180,7 +179,7 @@ Here are the domain mappings set up:
 
 ![Cloud Run domains](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-with-pomerium-for-end-user-access/cloudrun-domains.png)
 
-### Direct Access
+### Direct access
 
 Verify that you can't access the main application directly by visiting
 [`https://hello-direct.cloudrun.pomerium.com`](https://hello-direct.cloudrun.pomerium.com).
@@ -189,7 +188,7 @@ Verify that you can't access the main application directly by visiting
 
 You should see a 403 error, because you don't have the proper credentials.
 
-### Authenticated Access
+### Authenticated access
 
 1.  Go to [`https://hello.cloudrun.pomerium.com`](https://hello.cloudrun.pomerium.com).
 
@@ -207,22 +206,22 @@ You should see a 403 error, because you don't have the proper credentials.
 
 If your target application is not running on Google Cloud, you can also perform your own header validation.
 
-Go to [https://httpbin.cloudrun.pomerium.com](https://httpbin.cloudrun.pomerium.com/headers).
+1.  Go to [`https://httpbin.cloudrun.pomerium.com`](https://httpbin.cloudrun.pomerium.com/headers).
 
-You should see your identity header set:
+    You should see your identity header set:
 
-![Hello](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-with-pomerium-for-end-user-access/headers.png)
+    ![Hello](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-with-pomerium-for-end-user-access/headers.png)
 
 See [getting user's identity](https://www.pomerium.com/docs/topics/getting-users-identity.html) for details on using this header.
 
-## What's Next
+## What's next
 
 Learn more about Pomerium:
 
-[Pomerium Home](https://www.pomerium.com)
+  - [Pomerium home](https://www.pomerium.com)
 
-[Pomerium Documentation](https://www.pomerium.com/docs/)
+  - [Pomerium documentation](https://www.pomerium.com/docs/)
 
-[Pomerium Solution Guides](https://www.pomerium.com/guides/)
+  - [Pomerium solution guides](https://www.pomerium.com/guides/)
 
-[Pomerium Cloud Run Guide](https://www.pomerium.com/guides/cloud-run.html)
+  - [Pomerium Cloud Run guide](https://www.pomerium.com/guides/cloud-run.html)
