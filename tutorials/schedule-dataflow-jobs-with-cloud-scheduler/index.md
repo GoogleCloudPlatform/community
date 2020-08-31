@@ -1,39 +1,40 @@
 ---
-title: Schedule Your Dataflow Batch Jobs With Cloud Scheduler
+title: Schedule Dataflow batch jobs with Cloud Scheduler
 description: Learn how to set up Cloud Scheduler to trigger your Dataflow batch jobs.
 author: zhongchen
 tags: Cloud Dataflow, Cloud Scheduler 
-date_published: 2020-08-11
+date_published: 2020-08-31
 ---
 
-## Notes
-- It is feasible to trigger a Dataflow batch job directly from the cloud scheduler directly. It is easy and fast. There is no need to use cloud function for that.
-- Cloud schedulers need to be created in the same region of App engine. In your [Terraform script](https://www.terraform.io/docs/providers/google/r/cloud_scheduler_job.html#region), 
-make sure assigning the right value for the region field. You need to use **us-central1** if your app engine lives in **us-central**.
-- Use the [regional endpoint](https://cloud.google.com/dataflow/docs/reference/rest/v1b3/projects.locations.jobs/create) to specify the region of Dataflow job. 
-If you don't explicitly set the location in the request, the jobs will be created in the default region (US-central).
-
-
-In this tutorial, you will learn how to set up a [Cloud Scheduler](https://cloud.google.com/scheduler/) job to trigger to your 
+In this tutorial, you learn how to set up a [Cloud Scheduler](https://cloud.google.com/scheduler/) job to trigger to your 
 Dataflow batch jobs.
 
+Here is a high-level architecture diagram:
 
-Here is a high level architecture diagram, and you can find all the code [here](./scheduler-dataflow-demo)..
-![diagram](scheduler-dataflow-diagram.png) 
+![diagram](https://storage.googleapis.com/gcp-community/tutorials/schedule-dataflow-jobs-with-cloud-scheduler/scheduler-dataflow-diagram.png) 
+
+You can find the code for this tutorial
+[here](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/schedule-dataflow-jobs-with-cloud-scheduler/scheduler-dataflow-demo).
+
+- It's feasible to trigger a Dataflow batch job directly from Cloud Scheduler. It's easy and fast. There's no need to use Cloud Functions for that.
+- Cloud Scheduler jobs need to be created in the same region of App engine. In your [Terraform script](https://www.terraform.io/docs/providers/google/r/cloud_scheduler_job.html#region), 
+be sure to assign the right value for the region field. You need to use **us-central1** if your App Engine lives in **us-central**.
+- Use the [regional endpoint](https://cloud.google.com/dataflow/docs/reference/rest/v1b3/projects.locations.jobs/create) to specify the region of the Dataflow 
+job. If you don't explicitly set the location in the request, the jobs will be created in the default region (US-central).
 
 [Cloud Dataflow](https://cloud.google.com/dataflow) is a managed service for handling 
-both streaming and batch jobs. For your streaming jobs, you just need to launch them once without worrying about operating them afterwards. 
+both streaming and batch jobs. For your streaming jobs, you just need to launch them once, and you don't need to worry about operating them afterwards. 
 However, for your batch jobs, you probably need to trigger them based on certain conditions.
 
-First things first, to be able to run your Dataflow jobs on a regular basis, you need to build your Dataflow templates. 
-Follow the [instructions](https://cloud.google.com/dataflow/docs/guides/templates/creating-templates) to create your templates and save them in a GCS bucket.
+First, to be able to run your Dataflow jobs on a regular basis, you need to build your Dataflow templates. 
+Follow the [instructions](https://cloud.google.com/dataflow/docs/guides/templates/creating-templates) to create your templates and save them in a 
+Cloud Storage bucket.
 
-![Upload Dataflow templates in a GCS bucket](store_a_template_in_gcs.png)
+![Upload Dataflow templates in a Cloud Storage bucket](https://storage.googleapis.com/gcp-community/tutorials/schedule-dataflow-jobs-with-cloud-scheduler/store_a_template_in_gcs.png)
 
+When you have your templates ready, you can set up Cloud Schedulers to trigger Dataflow templates. 
 
-Once you have your templates ready, you can set up cloud schedulers to trigger Dataflow templates. 
-Here is one example to define a scheduler using Terraform.
-
+Here is one example to define a Cloud Scheduler job using Terraform:
 
 ```hcl-terraform
 resource "google_cloud_scheduler_job" "scheduler" {
@@ -72,82 +73,73 @@ EOT
 
 ## Instructions
 
-The following step-by-step instructions can be used to create a sample Dataflow pipeline with Cloudbuild.
+You can use these step-by-step instructions to create a sample Dataflow pipeline with Cloud Build.
 
-First, open Cloud Shell and clone the repository.
+1.  Open Cloud Shell and clone the repository.
 
-```
-git clone https://github.com/GoogleCloudPlatform/community
-cd community/tutorials/schedule-dataflow-jobs-with-cloud-scheduler/scheduler-dataflow-demo/
-```
+        git clone https://github.com/GoogleCloudPlatform/community
+        cd community/tutorials/schedule-dataflow-jobs-with-cloud-scheduler/scheduler-dataflow-demo/
 
-Create a bucket on Google Cloud Storage, which will be used to store terraform states and Dataflow templates.
-Replace BUCKET with your own choice. ${GOOGLE_CLOUD_PROJECT} is predefined in Cloud Shell for the project ID.
-You can skip this step if you already have one GCS bucket created.
+1.  Create a bucket in Cloud Storage, which will be used to store terraform states and Dataflow templates.
+    Replace BUCKET with your own choice. ${GOOGLE_CLOUD_PROJECT} is predefined in Cloud Shell for the project ID.
+    You can skip this step if you already have one GCS bucket created.
 
-```
-export BUCKET=[BUCKET]
-gsutil mb -p ${GOOGLE_CLOUD_PROJECT} gs://${BUCKET}
-```
+        export BUCKET=[BUCKET]
+        gsutil mb -p ${GOOGLE_CLOUD_PROJECT} gs://${BUCKET}
 
-The next step is to create a backend for Terraform to store the states of 
-GCP resources. Run the below command to create a remote backend service using GCS as the storage.
-```
-cd terraform
-cat > backend.tf << EOF
-terraform {
- backend "gcs" {
-   bucket  = "${BUCKET}"
-   prefix  = "terraform/state"
- }
-}
-EOF
-```
+1.  Create a backend for Terraform to store the states of Google Cloud resources.
 
-Follow the [instruction](https://cloud.google.com/scheduler/docs/quickstart) to create a App Engine, which is needed to
-set up Cloud Scheduler jobs.
+        cd terraform
+        cat > backend.tf << EOF
+        terraform {
+         backend "gcs" {
+           bucket  = "${BUCKET}"
+           prefix  = "terraform/state"
+         }
+        }
+        EOF
 
-Note: Cloud Scheduler jobs need to be created in the same region as the App engine. 
-In addition, you need to set the region to be *us-central1* even when the region shows as
-*us-central* on the UI.
+1.  Follow the [instructions](https://cloud.google.com/scheduler/docs/quickstart) to create an App Engine app, which is needed to
+    set up Cloud Scheduler jobs.
 
-![app engine location](app_engine_location.png)
+    Cloud Scheduler jobs need to be created in the same region as the App engine app. 
+    
+1.  Set the region:
 
-```
-export REGION=us-central1
-```
+        export REGION=us-central1
 
-Since we will be using Cloudbuild to execute GCP resource creation steps, it is
-important to make sure the Cloudbuild service account has all the proper roles.
-Follow the [link](https://cloud.google.com/cloud-build/docs/securing-builds/configure-access-for-cloud-build-service-account#granting_a_role_using_the_iam_page) 
-to enable all the roles needed.
+    You need to set the region to be *us-central1* even when the region shows as
+    *us-central* on the UI.
 
-- Cloud Scheduler Admin
-- Service Account Admin 
-- Service Account User
-- Project IAM Admin
-
-Verify that all the roles are enabled in the UI.
-
-![cloudbuild_sa_status](cloudbuild_sa_setup.png)
-
-Now you can submit a Cloudbuild job to create all the resources.
+    ![App Engine location](https://storage.googleapis.com/gcp-community/tutorials/schedule-dataflow-jobs-with-cloud-scheduler/app_engine_location.png)
 
 
-```
-cd ..
-gcloud builds submit --config=cloudbuild.yaml \
-  --substitutions=_BUCKET=${BUCKET},_REGION=${REGION},_PROJECT_ID=${GOOGLE_CLOUD_PROJECT} .
-```
+1.  Follow the [instructions](https://cloud.google.com/cloud-build/docs/securing-builds/configure-access-for-cloud-build-service-account#granting_a_role_using_the_iam_page) 
+    to give the Cloud Build service account the following roles:
 
-The job will run based on the schedule you defined in the terraform script. 
-In addition, you can manually run the scheduler through UI and watch it trigger your Dataflow batch job. 
-You can check the status of jobs through the UI.
+    - Cloud Scheduler Admin
+    - Service Account Admin 
+    - Service Account User
+    - Project IAM Admin
 
-![See the status of your jobs](check_scheduler_status.png)
+     Verify that all the roles are enabled in the UI.
 
+    ![Cloud Build_status](https://storage.googleapis.com/gcp-community/tutorials/schedule-dataflow-jobs-with-cloud-scheduler/cloudbuild_sa_setup.png)
 
+1.  Submit a Cloud Build job to create the resources:
+
+        cd ..
+        gcloud builds submit --config=cloudbuild.yaml \
+          --substitutions=_BUCKET=${BUCKET},_REGION=${REGION},_PROJECT_ID=${GOOGLE_CLOUD_PROJECT} .
+
+    The job will run based on the schedule you defined in the Terraform script. 
+
+You can manually run the Cloud Schedule job by using the Cloud Console interface and watch it trigger your Dataflow batch job. 
+
+You can check the status of jobs in the Cloud Console.
+
+![See the status of your jobs](https://storage.googleapis.com/gcp-community/tutorials/schedule-dataflow-jobs-with-cloud-scheduler/check_scheduler_status.png)
 
 ## Cleaning up
 
-Since this tutorial uses multiple GCP components, please be sure to delete the associated resources once you are done.
+Since this tutorial uses multiple Google Cloud components, please be sure to delete the associated resources once you are done.
