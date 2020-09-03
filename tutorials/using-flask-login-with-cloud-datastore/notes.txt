@@ -1,0 +1,19 @@
+https://cloud.google.com/community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run
+
+Using Flask-Login Extension With Cloud Datastore
+Prerequisites:
+    Familiarity with Flask (link to flask tutorial)
+    Familiarity with Cloud Datastore (link to datastore tutorial)
+    Familiarity with Flask-Login Extension (link to flask login tutorial)
+
+Datastore-Entity Tutorial with Flask Login
+Flask Login requires a User class 
+Most Flask usage requires the use of models(with sql-alchemy)
+Datastore Entity library helps you represent your datastore entity using Python classes(just like a relational database model)
+
+To easily represent your user entity as a class, we'll use a 
+library called datastore-entity(disclaimer: I authored this library. No Google affiliation)
+
+pip install flask-login 
+pip install datastore-entity 
+
