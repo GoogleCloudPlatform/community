@@ -8,51 +8,44 @@ date_published:
 
 In this tutorial, you implement user authentication using the popular Flask extension [Flask-Login](https://flask-login.readthedocs.io) and [**Firestore in Datastore mode**](https://cloud.google.com/datastore/docs/datastore-api-tutorial) as the database backend.
 
-User authentication and user session management is a crucial component of most web applications.  
-Flask-Login is a Flask extension that helps the developer to handle authentication and user session management.  
-Flask-Login **requires** the user(ie application user) to be represented using a Python class with specific properties and methods provided.  
-
-The above requirement of Flask-Login is straightforward when using a relational database like MySQL or Postgres. 
-Using an ORM toolkit like SQL-Alchemy, you can easily create a user model/class to represent a user in a relational database and then add the methods and properties required by Flask-Login.  
-
-However, for a NoSQL database like Firestore in Datastore mode, the Flask-Login requirement poses a challenge since the use of models/classes do not directly apply.  
-
-This tutorial will demonstrate how to use Flask-Login with Firestore in Datastore mode with the help of a little library; Datastore-Entity.  
-This tutorial will demonstrate how to model your Firestore in Datastore mode entity as a Python class in order to conveniently use popular Python libraries like Flask-Login, WTForms etc.
-
-To represent our Datastore entity with a Python class, we will use a library called Datastore-Entity. Think of Datastore-Entity as an ORM-like library for Firestore in Datastore mode.  
-_Disclaimer: I'm the author of datastore-entity library. No Google affiliation._  
-
-# Requirements
-
--  [Python3.7](https://www.python.org/downloads/) 
--  [Flask](https://github.com/pallets/flask) 
--  [Flask-Login](https://flask-login.readthedocs.io) 
--  [Datastore-Entity](https://datastore-entity.readthedocs.io) 
-
 
 ## Prerequisites
 This tutorial is not to teach the fundamentals of Flask-Login or Firestore in Datastore mode. It is to demonstrate the use of Firestore in Datastore mode(as opposed to any relational database) as the database backend for user authentication with Flask-Login.
 The use of Flask-Login should not force you to abandon the power of Firestore in Datastore mode.
 
-So familiarity with the following is assumed:
-- Basic familiarity with Flask and Flask-Login.
-- Basic familiarity with App Engine and Firestore in Datastore mode.
+Familiarity with the following is assumed:
+- Flask and Flask-Login.
+- App Engine and Firestore in Datastore mode.
 
-This short tutorial does not show a full Flask application or the basic use of Firestore in Datastore mode.  
-It is assumed the reader has basic familiarity with these.
+## Introduction
+Flask-Login is a Flask extension that helps the developer to handle authentication and user session management.  
+Flask-Login **requires** the user(ie application user) to be represented using a Python class with specific properties and methods provided.  
 
+The above requirement of Flask-Login is straightforward when using a relational database such as MySQL or Postgres. 
+Using an ORM toolkit like SQL-Alchemy, you can easily create a user model/class to represent a user in a relational database.  
+Methods and properties required by Flask-Login can then be added to the model class.
 
+However, for a NoSQL database like Firestore in Datastore mode, the Flask-Login requirement poses a challenge.
+This is because the use of a model/class does not directly apply.  
+ 
+This tutorial will demonstrate how to model your Firestore in Datastore mode entity as a Python class.  
+This will let you conveniently use popular Python libraries like **Flask-Login**, **WTForms** etc.
+These libraries often use patterns that rely on a database record being represented as a Python class.
 
-## Step to
-Setting up your local environment
-Install required libraries
-Map your user class(using UserMixin)
-Implement Flask /login view endpoint
+To model our Datastore entity, we will use **Datastore-Entity** library.  
+Think of Datastore-Entity as an _ORM-like_ library for Firestore in Datastore mode.  
+_Disclaimer: I'm the author of datastore-entity. No Google affiliation._  
+
+## Requirements
+
+-  [Python3.7](https://www.python.org/downloads/) 
+-  [Flask](https://github.com/pallets/flask) 
+-  [Flask-Login](https://flask-login.readthedocs.io) 
+-  [Datastore-Entity](https://datastore-entity.readthedocs.io)  
 
 
 ### Set Up Your Local Environment
-Note: Projects that use the Datastore mode API require an active App Engine application.
+NOTE: Projects that use the Datastore mode API require an active App Engine application.
 So you should already have App Engine and Datastore mode API enabled in your GCP project.  
 
 As usual, to connect to your Google Cloud service from your local machine you need the appropriate credentials(service account key).  
@@ -82,7 +75,7 @@ You are now ready to connect to your Firestore in Datastore mode.
 ```bash
 pip install flask flask-login datastore-entity
 ```
-**NOTE:** Installing datastore-entity installs the required client libraries for **Firestore in Datastore mode**
+NOTE: Installing datastore-entity installs the required client libraries for **Firestore in Datastore mode.**
 
 
 ### Create your Flask user model
@@ -102,25 +95,14 @@ class User(DatastoreEntity, UserMixin):
 
     # other fields or method go here...
     #def authenticated(self, password):
-        # authenticate
+        # ...
 
 
 ```
 
-
-```python
-from flask import Flask
-
-app = Flask(__main__)
-app.secret_key = "development_key"  #not secure
-
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
-```
-
-
-Your flask login and logout views
+### Fetch user with your model 
+Once the entity is modelled, you can fetch your user entity using familiar ORM pattern.
+An example flask login view.
 ```python
 from flask_login import login_required, logout_user, login_user
 
@@ -131,9 +113,11 @@ def login():
     if form.validate_on_submit():
         identity = request.form.get('username')
         password = request.form.get('password')
-        user = User().get_object(identity)  #fetch user using the username
 
-        if user and user.authenticated(password):  # authenticate user here
+        # fetch user using the 'username' property
+        user = User().get_object('username',identity)
+
+        if user and user.authenticated(password):
 
             if login_user(user, remember=True):
 
@@ -142,26 +126,18 @@ def login():
                 if next_url:
                     return redirect(safe_next_url(next_url))
                 
-                return redirect(url_for('page.dashboard'))
+                return redirect(url_for('page/dashboard.html'))
             else:
                 flash('This account is not active','error')
 
-        else: #authentication failed
+        else: 
             flash('Login or password is incorrect','error')
 
     return render_template("page/login.html", form=form)
 
-
-@page.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    flash("You have successfully logged out", "success")
-    return redirect(url_for('page.login'))
 ```
 
-## Next Steps
-The same approach can be used with popular libraries like WTForms where a database model is populated with the form values using ```form.populate_obj(model)
+The same approach can be used to persist/update entity data using the entity model.
 
 
 ## Useful links
