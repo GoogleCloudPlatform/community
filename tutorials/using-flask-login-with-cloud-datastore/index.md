@@ -29,7 +29,7 @@ However, for a NoSQL database like Firestore in Datastore mode, the Flask-Login 
 This is because the use of a model/class does not directly apply.  
  
 This tutorial will demonstrate how to model your Firestore in Datastore mode entity as a Python class.  
-This will let you conveniently use popular Python libraries like **Flask-Login**, **WTForms** etc.
+This will let you conveniently use popular Python libraries like **Flask-Login**, **WTForms** etc.  
 These libraries often use patterns that rely on a database record being represented as a Python class.
 
 To model our Datastore entity, we will use **Datastore-Entity** library.  
@@ -58,16 +58,21 @@ _Create and download service account key_
 - Click **CREATE**. This automatically downloads the service account JSON key to your local machine. Take note of the file name on the popup screen.
 
 
-_Configure your service account on your local machine_
-Point the environment variable **GOOGLE_APPLICATION_CREDENTIALS** to the location of the service account key you downloaded.
+_Configure your service account on your local machine_  
+Point the environment variable **GOOGLE_APPLICATION_CREDENTIALS** to the location of the service account key you downloaded.  
 **Linux/maxOS**  
+```bash
 export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"  
-**Windows**
-_With Powershell_
+```
+**Windows**  
+_With Powershell_  
+```
 $env:GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"  
-_With Command Prompt_
+```
+_With Command Prompt_  
+```
 set GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"  
-
+```
 You are now ready to connect to your Firestore in Datastore mode.
 
 
@@ -93,10 +98,9 @@ class User(DatastoreEntity, UserMixin):
     status = EntityValue(1)
     date_created = EntityValue(datetime.datetime.utcnow())
 
-    # other fields or method go here...
+    # other fields or methods go here...
     #def authenticated(self, password):
         # ...
-
 
 ```
 
@@ -120,6 +124,7 @@ def login():
         if user and user.authenticated(password):
 
             if login_user(user, remember=True):
+                user.update_activity()
 
                 #handle optionally redirecting to the next URL safely
                 next_url = form.next.data
