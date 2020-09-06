@@ -142,7 +142,8 @@ def login():
 
 ```
 
-The same approach can be used to persist/update entity data using the entity model.
+The same approach can be used to persist/update entity data using the entity class/model.
+This technique can let Firestore in Datastore mode be a drop-in replacement for your relational database with little to no code changes.
 
 
 ## Useful links
