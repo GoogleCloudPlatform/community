@@ -66,7 +66,9 @@ Create a file in the root of the project named `nginx.conf` and add the followin
          
     }
     
-By creating this file, you provide the `$PORT` environment variable that Cloud Run expects your application to listen on. 
+By creating this file, you provide the `$PORT` environment variable that Cloud Run expects your application to listen on. The $PORT
+environment variable will be provided via the `docker run` command, so the NGINX server config template needs to have its environment
+variables substituted at runtime, (not build-time.)
   
 This file customizes Nginx so that `react-router-dom` always responds with the proper route. This configuarion enables gzip
 compression, which makes the web application lightweight and fast. 
@@ -85,12 +87,14 @@ Create a file named `Dockerfile` in the root folder of the project and paste the
     # server environment
     FROM nginx:alpine
     COPY nginx.conf /etc/nginx/conf.d/configfile.template
+    
+    COPY --from=react-build /app/build /usr/share/nginx/html
+    
     ENV PORT 8080
     ENV HOST 0.0.0.0
-    RUN sh -c "envsubst '\$PORT'  < /etc/nginx/conf.d/configfile.template > /etc/nginx/conf.d/default.conf"
-    COPY --from=react-build /app/build /usr/share/nginx/html
     EXPOSE 8080
-    CMD ["nginx", "-g", "daemon off;"]
+    CMD sh -c "envsubst '\$PORT' < /etc/nginx/conf.d/configfile.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+
     
 This configuration defines two environments: one where the web application is built and one where the web application 
 will run.
