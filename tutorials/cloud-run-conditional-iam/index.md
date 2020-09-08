@@ -16,7 +16,7 @@ Authentication is often tied to a series of conditional parameters such as time-
 
 This tutorial will demonstrate how to setup Service Accounts with conditional IAM role bindings on Cloud Run using a Cloud Storage bucket.
 
-[![Architectural Overview](diagrams/cloud-run-conditional-iam-architecture.svg)]
+![Architectural Overview](diagrams/cloud-run-conditional-iam.png)
 
 ## Objectives
 
@@ -57,24 +57,27 @@ The following details are intended for helping to setup up the development envir
 
 ```bash
 # Generate random lower-case alphanumeric suffix
-SUFFIX=$(head -3 /dev/urandom | tr -cd '[:alnum:]' | cut -c -5 | awk '{print tolower($0)}')
+export SUFFIX=$(head -3 /dev/urandom | tr -cd '[:alnum:]' | cut -c -5 | awk '{print tolower($0)}')
 # Create bucket
 gsutil mb gs://cloud-run-tutorial-bucket-${SUFFIX}
 # Add text documents to bucket
-echo "item 1" > item-1.txt
+for i in {1..5}; do echo "task $i" > item-$i.txt; done
 gsutil cp *.txt gs://cloud-run-tutorial-bucket-${SUFFIX}
 # Verify contents
 gsutil ls gs://cloud-run-tutorial-bucket-${SUFFIX}
 ```
 ### Sample Output
-```
-~: gsutil ls gs://cloud-run-tutorial-bucket-${SUFFIX}
-
-gs://cloud-run-tutorial-bucket-xxxxx/google-cloud-run.png
+```text
+$ gsutil ls gs://cloud-run-tutorial-bucket-${SUFFIX}
+gs://cloud-run-tutorial-bucket-*****/item-1.txt
+gs://cloud-run-tutorial-bucket-*****/item-2.txt
+gs://cloud-run-tutorial-bucket-*****/item-3.txt
+gs://cloud-run-tutorial-bucket-*****/item-4.txt
+gs://cloud-run-tutorial-bucket-*****/item-5.txt
 ```
 
 ## 2. Create Application Container
-
+git clone https://github.com/GoogleCloudPlatform/python-docs-samples.git
 
 ## 3. Create Google Service Account (GSA)
 
