@@ -69,7 +69,13 @@ The following details are intended for helping to setup up the development envir
 The following variables will be used in some or all of the below workflow steps. All variables are required unless noted.
 
 * `PROJECT_ID` - Google project ID where the managed Cloud Run instance is to be deployed to
-    * If authenticated, run: `gcloud config list account --format "value(core.account)"`
+    * `export PROJECT_ID=$(gcloud config list account --format "value(core.account)")`
+* `REGION` - Region to deploy managed Cloud Run instance application into
+    * >NOTE: Check list of regions in Always Free tier to ensure costs are included
+    * `export REGION=us-west1`
+* `GSA_NAME` - Name of Google Service Account to be created and used for the Cloud Run instance
+    * Alphanumeric and dashed name consisting of 5-20 characters.
+    * `export GSA_NAME=bucket-list-gsa`
 
 ### 1. Creating Cloud Storage Bucket
 
@@ -77,18 +83,18 @@ The following variables will be used in some or all of the below workflow steps.
 # Generate random lower-case alphanumeric suffix
 export SUFFIX=$(head -3 /dev/urandom | tr -cd '[:alnum:]' | cut -c -5 | awk '{print tolower($0)}')
 # BUCKET variable
-export BUCKET="gs://cloud-run-tutorial-bucket-${SUFFIX}"
+export BUCKET="cloud-run-tutorial-bucket-${SUFFIX}"
 # Create bucket
-gsutil mb gs://cloud-run-tutorial-bucket-${SUFFIX}
+gsutil mb gs://${BUCKET}
 # Add text documents to bucket
 for i in {1..5}; do echo "task $i" > item-$i.txt; done
-gsutil cp *.txt gs://cloud-run-tutorial-bucket-${SUFFIX}
+gsutil cp *.txt gs://${BUCKET}
 # Verify contents
-gsutil ls gs://cloud-run-tutorial-bucket-${SUFFIX}
+gsutil ls gs://${BUCKET}
 ```
 #### Sample Output
 ```text
-$ gsutil ls gs://cloud-run-tutorial-bucket-${SUFFIX}
+$ gsutil ls gs://${BUCKET}
 gs://cloud-run-tutorial-bucket-*****/item-1.txt
 gs://cloud-run-tutorial-bucket-*****/item-2.txt
 gs://cloud-run-tutorial-bucket-*****/item-3.txt
@@ -107,41 +113,61 @@ git clone git@gitlab.com:mike-ensor/cloud-run-bucket-app.git
 
 # Build & Push image
 gcloud builds submit --substitutions=_PROJECT_ID=${PROJECT_ID}
+
+# Verify image was pushed (if "Listed 0 items", build was not successful)
+gcloud container images list --filter="name:(*cloud-run-bucket-app)" --repository=gcr.io/${PROJECT_ID}
+```
+
+### 3. Create & Setup Google Service Account (GSA)
+
+Creating a [Google Service Account](https://cloud.google.com/iam/docs/service-accounts) (also known as GSA) for an application allows granular and specific access to Google managed resources thus reducing the security threat.
+
+```bash
+export GSA_NAME="bucket-list-gsa"
+
+gcloud iam service-accounts create ${GSA_NAME} \
+    --description="Service account for Cloud Storage Bucket Listing App" \
+    --display-name="${GSA_NAME}"
 ```
 
 #### Sample Output
 ```text
-...
-...
-PUSH
-Pushing gcr.io/XXXXX/cloud-run-bucket-app
-The push refers to repository [gcr.io/XXXXX/cloud-run-bucket-app]
-5f9ef59aace9: Preparing
-236f427c513a: Preparing
-79d541cda6cb: Preparing
-79d541cda6cb: Layer already exists
-236f427c513a: Layer already exists
-5f9ef59aace9: Pushed
-latest: digest: sha256:0b7f0c0333454d3b34512df171b5ab45cbba6436e4ee07197f2e79575affa166 size: 949
-DONE
--------------------------------------------------------------------------------------------------------
-
-ID                                    CREATE_TIME                DURATION  SOURCE                                                                                    IMAGES                                            STATUS
-b2b46222-561d-42c4-ac51-dac844c10b30  2020-09-06T19:48:02+00:00  1M16S     gs://XXXXXXX_cloudbuild/source/2594421119.346188-4631b45f042bc32ca6ffd2771d172077.tgz  gcr.io/XXXXX/cloud-run-bucket-app (+1 more)  SUCCESS
-```
-
-### 3. Create Google Service Account (GSA)
-
-Creating a [Google Service Account](https://cloud.google.com/iam/docs/service-accounts) (also known as GSA) for an applicaiton allows granular and specific access to Google managed resources thus reducing the security threat.
-
-```bash
-
+$ gcloud iam service-accounts create ${GSA_NAME} \
+>     --description="Service account for Cloud Storage Bucket Listing App" \
+>     --display-name="${GSA_NAME}"
+Created service account [bucket-list-gsa].
 ```
 
 ### 4. Create managed Cloud Run service w/ GSA
 
+```bash
+export SERVICE=bucket-list-app # Or choose a new name for the app
+export REGION=us-west1 # Region to deploy
+export IMAGE_NAME=$(gcloud container images list --filter="name:(*cloud-run-bucket-app)" --repository=gcr.io/${PROJECT_ID} --format="value(name)")
+
+gcloud run deploy ${SERVICE} \
+    --platform managed \
+    --region ${REGION} \
+    --allow-unauthenticated \
+    --image ${IMAGE_NAME} \
+    --service-account ${GSA_NAME}
+```
+
+#### Verify App Deployed
+
+1. After deploy, open a browser given the URL in the output.
+
+    ```bash
+    # Get the previously setup bucket name
+    echo $BUCKET
+    ```
+
+1. Add the following query parameter (ie, to the end of the URL): `https://${PROJECT_ID}...run.app/?bucket=<bucket name>`
+    > NOTE: This SHOULD display an error indicating a `403` error (access forbidden)
 
 ### 5. Setup Conditional IAM Role Bindings
+
+The last step is to add permissions to view the bucket contents to the GSA created in step 3.
 
 gcloud projects get-iam-policy ${PROJECT_ID} --format=json
 
