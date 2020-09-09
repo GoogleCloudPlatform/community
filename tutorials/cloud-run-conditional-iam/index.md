@@ -72,7 +72,7 @@ The following details are intended for helping to setup up the development envir
 The following variables will be used in some or all of the below workflow steps. All variables are required unless noted.
 
 * `PROJECT_ID` - Google project ID where the managed Cloud Run instance is to be deployed to
-    * `export PROJECT_ID=$(gcloud config list account --format "value(core.account)")`
+    * `export PROJECT_ID=$(gcloud config get-value core/project)`
 * `REGION` - Region to deploy managed Cloud Run instance application into
     * >NOTE: Check list of regions in Always Free tier to ensure costs are included
     * `export REGION=us-west1`
