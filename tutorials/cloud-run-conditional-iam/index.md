@@ -54,6 +54,7 @@ The following details are intended for helping to setup up the development envir
         gcloud services enable \
             cloudbuild.googleapis.com \
             storage-component.googleapis.com \
+            run.googleapis.com \
             containerregistry.googleapis.com
     ```
 
@@ -226,7 +227,17 @@ gcloud run services delete ${SERVICE}
 gsutil rm -r gs://${BUCKET}
 ```
 
+### Remove App Service Account
 
+```bash
+gcloud iam service-accounts delete ${GSA_NAME}
+```
+
+### Remove App Images
+
+```bash
+gcloud container images delete ${IMAGE_NAME} --force-delete-tags --quiet
+```
 
 [gsa]: https://cloud.google.com/iam/docs/service-accounts
 [gcs]: https://cloud.google.com/storage
