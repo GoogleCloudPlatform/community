@@ -31,8 +31,9 @@ The following details are intended for helping to setup up the development envir
 * Costs
     * The Cloud Run portion of this tutorial fits into the [Always Free](https://cloud.google.com/free) tier of Google Cloud if implemented using the selected regions & suggested application and the application usage is exclusively used for the tutorial. See [Cloud Run pricing criteria](https://cloud.google.com/run/pricing) for more information around Cloud Run pricing. [Review the pre-filled pricing calculator](https://cloud.google.com/products/calculator/#id=638ffec4-1903-47c2-8616-1cc37a83a1f5).
     * Cloud Storage bucket costs are up to you, but can easily be constrained into the [Always Free](https://cloud.google.com/free) tier (below 5GB of regional storage). Storing small text files is a simple method to eliminate Cloud Storage costs and still show a sufficient amount of files in a Cloud Storage bucket.
-* Google Cloud Tools
+* Google Cloud Configuration
     * This tutorial requires a [Google Project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) and an associated billing account. While the costs are within the [Always Free](https://cloud.google.com/free) tier, a billing account is required.
+    * >Note: Using a test project specifically for this tutorial is recommended (optional)
 * Executing commands on either Local Machine or Cloud Shell
     * [Cloud Shell](https://cloud.google.com/shell) (preferred)
         * No extra installation required
@@ -172,25 +173,28 @@ gcloud run deploy ${SERVICE} \
 The last step is to add permissions to view the bucket contents to the GSA created in step 3. Following the [official conditional IAM documentation](https://cloud.google.com/iam/docs/managing-conditional-role-bindings#iam-conditions-add-binding-gcloud):
 
 ```bash
-# Europe/Zurich, America/Los_Angeles, GMT/UTC, etc
+# Best practices use UTC for date calculations
 export TIME_ZONE=GMT/UTC
 export MINUTES_IN_FUTURE=$((60*5)) # 5 minutes
 
+# Condition Description and Title (human readable, required fields)
 export DESCRIPTION="Example conditional that is true until ${MINUTES_IN_FUTURE} minutes from the time of execution"
 export TITLE="Expire In ${MINUTES_IN_FUTURE} minutes"
 
+# Create a timestamp of NOW
 export TIMESTAMP=$(TZ=${TIME_ZONE} date +"%FT%T.00Z")
+# Build Condition Expression: if (time.now < TIMESTAMP+5 minutes)
 export EXPRESSION="request.time < timestamp(\"${TIMESTAMP}\") + duration(\"${MINUTES_IN_FUTURE}s\")"
 
-# Validate condition
+# Lint/Validate condition
 gcloud alpha iam policies lint-condition --expression="${EXPRESSION}" --title="${TITLE}" --description="${DESCRIPTION}"
 
+# Bind role and condition to GSA
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member="serviceAccount:${GSA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
     --role="roles/storage.objectViewer" \
     --condition="expression=${EXPRESSION},description=${DESCRIPTION},title=${TITLE}"
 ```
-
 
 ### 6. Verify
 
@@ -206,10 +210,19 @@ This tutorial has shown that creating a Cloud Run application, specifying a Goog
 
 ## Clean up
 
+The following will remove any of the "cost" attributing resources.
+
 ### Removing the Cloud Run service
+
+```bash
+gcloud run services delete ${SERVICE}
+```
 
 ### Removing the GCS bucket
 
+```bash
+gsutil rm -r gs://${BUCKET}
+```
 
 
 
