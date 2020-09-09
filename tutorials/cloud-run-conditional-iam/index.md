@@ -112,7 +112,7 @@ A simple Golang app used to list-display the contents of a GCS bucket can be bui
 ### Create & Deploy Container
 ```bash
 # Clone Repository
-git clone git@gitlab.com:mike-ensor/cloud-run-bucket-app.git
+git clone https://gitlab.com/mike-ensor/cloud-run-bucket-app
 
 # Build & Push image
 gcloud builds submit --substitutions=_PROJECT_ID=${PROJECT_ID}
