@@ -1,16 +1,16 @@
 ---
-title: Conditional IAM Roles with Cloud Run
-description: Tutorial on setting up conditional IAM Roles for Cloud Run applications
+title: Conditional IAM roles with Cloud Run
+description: Learn how to set up conditional IAM roles for Cloud Run applications.
 author: mike-ensor
 tags: cloud-run, iam, GCP, conditional iam
-date_published: 2020-09-06
+date_published: 2020-09-14
 ---
 
 This tutorial takes a deeper look at running a managed Google Cloud Run application with a Google Service Account using Conditional IAM Roles.
 
 # Overview
 
-Applications that use Google Cloud services such as Google PubSub, Cloud Storage and CloudSQL require authentication. Authentication and Authorization are provided using Cloud Identity Access Management (IAM) via a combination of Roles and Accounts. Google Service Accounts are often used to provide an authentication and authorization mechanism for Google Cloud resources. More information can be found in the [official documentation](https://cloud.google.com/docs/authentication).
+Applications that use Google Cloud services such as Google Pub/Sub, Cloud Storage and CloudSQL require authentication. Authentication and Authorization are provided using Cloud Identity Access Management (IAM) via a combination of Roles and Accounts. Google Service Accounts are often used to provide an authentication and authorization mechanism for Google Cloud resources. More information can be found in the [official documentation](https://cloud.google.com/docs/authentication).
 
 Authentication is often tied to a series of conditional parameters such as time-of-day or day-of-the-week to enhance security measures preventing applications from access resources outside of compliance or governance rules. Within Google Cloud, this concept is implemented as IAM [Conditional Role Bindings](https://cloud.google.com/iam/docs/managing-conditional-role-bindings). Managed Cloud Run has an advanced option allowing a Google Service Account to act as the "user" authenticating with other Google Cloud resources such as Cloud Storage.
 
