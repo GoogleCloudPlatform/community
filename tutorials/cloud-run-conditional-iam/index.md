@@ -165,12 +165,44 @@ gcloud run deploy ${SERVICE} \
 1. Add the following query parameter (ie, to the end of the URL): `https://${PROJECT_ID}...run.app/?bucket=<bucket name>`
     > NOTE: This SHOULD display an error indicating a `403` error (access forbidden)
 
+1. Keep this browser open (Step #6 below will refresh the page)
+
 ### 5. Setup Conditional IAM Role Bindings
 
-The last step is to add permissions to view the bucket contents to the GSA created in step 3.
+The last step is to add permissions to view the bucket contents to the GSA created in step 3. Following the [official conditional IAM documentation](https://cloud.google.com/iam/docs/managing-conditional-role-bindings#iam-conditions-add-binding-gcloud):
 
-gcloud projects get-iam-policy ${PROJECT_ID} --format=json
+```bash
+# Europe/Zurich, America/Los_Angeles, GMT/UTC, etc
+export TIME_ZONE=GMT/UTC
+export MINUTES_IN_FUTURE=$((60*5)) # 5 minutes
 
+export DESCRIPTION="Example conditional that is true until ${MINUTES_IN_FUTURE} minutes from the time of execution"
+export TITLE="Expire In ${MINUTES_IN_FUTURE} minutes"
+
+export TIMESTAMP=$(TZ=${TIME_ZONE} date +"%FT%T.00Z")
+export EXPRESSION="request.time < timestamp(\"${TIMESTAMP}\") + duration(\"${MINUTES_IN_FUTURE}s\")"
+
+# Validate condition
+gcloud alpha iam policies lint-condition --expression="${EXPRESSION}" --title="${TITLE}" --description="${DESCRIPTION}"
+
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${GSA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+    --role="roles/storage.objectViewer" \
+    --condition="expression=${EXPRESSION},description=${DESCRIPTION},title=${TITLE}"
+```
+
+
+### 6. Verify
+
+>Note: IAM conditional conditions CAN take 1-2 minutes to go "live". If permission isn't granted immediately wait a minute and try again.
+
+1. Using the same browser window as in step 4-1. Simply refresh the browser to see the contents.
+
+1. Wait for 5 minutes and refresh page to see the "403" error code returned.
+
+## Conclusion
+
+This tutorial has shown that creating a Cloud Run application, specifying a Google Service Account to control access to resources using Conditional IAM can be a part of a comprehensive security layer.
 
 ## Clean up
 
