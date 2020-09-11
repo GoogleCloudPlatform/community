@@ -66,9 +66,9 @@ Create a file in the root of the project named `nginx.conf` and add the followin
          
     }
     
-By creating this file, you provide the `$PORT` environment variable that Cloud Run expects your application to listen on. The $PORT
-environment variable will be provided via the `docker run` command, so the NGINX server config template needs to have its environment
-variables substituted at runtime, (not build-time.)
+By creating this file, you provide the `$PORT` environment variable that Cloud Run expects your application to listen on. The `$PORT`
+environment variable will be provided by the `docker run` command, so the Nginx server configuration template needs to have its environment
+variables substituted at run time, not at build time.
   
 This file customizes Nginx so that `react-router-dom` always responds with the proper route. This configuarion enables gzip
 compression, which makes the web application lightweight and fast. 
