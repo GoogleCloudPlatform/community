@@ -2,33 +2,37 @@
 title: Conditional IAM roles with Cloud Run
 description: Learn how to set up conditional IAM roles for Cloud Run applications.
 author: mike-ensor
-tags: cloud-run, iam, GCP, conditional iam
+tags: cloud-run
 date_published: 2020-09-14
 ---
 
-This tutorial takes a deeper look at running a managed Google Cloud Run application with a Google Service Account using Conditional IAM Roles.
+## Overview
 
-# Overview
+This tutorial shows you how to run a managed Cloud Run application with a Google Service Account using conditional IAM roles using a Cloud Storage bucket.
 
-Applications that use Google Cloud services such as Google Pub/Sub, Cloud Storage and CloudSQL require authentication. Authentication and Authorization are provided using Cloud Identity Access Management (IAM) via a combination of Roles and Accounts. Google Service Accounts are often used to provide an authentication and authorization mechanism for Google Cloud resources. More information can be found in the [official documentation](https://cloud.google.com/docs/authentication).
+Applications that use Google Cloud services such as Pub/Sub, Cloud Storage, and Cloud SQL require authentication. Authentication and authorization are provided 
+using Cloud Identity Access Management (IAM) through a combination of roles and accounts. Google Service Accounts are often used to provide an authentication and
+authorization mechanism for Google Cloud resources. More information can be found in the [official documentation](https://cloud.google.com/docs/authentication).
 
-Authentication is often tied to a series of conditional parameters such as time-of-day or day-of-the-week to enhance security measures preventing applications from access resources outside of compliance or governance rules. Within Google Cloud, this concept is implemented as IAM [Conditional Role Bindings](https://cloud.google.com/iam/docs/managing-conditional-role-bindings). Managed Cloud Run has an advanced option allowing a Google Service Account to act as the "user" authenticating with other Google Cloud resources such as Cloud Storage.
+Authentication is often tied to a series of conditional parameters such as the time of day or day of the week to enhance security measures preventing 
+applications from accessing resources outside of compliance or governance rules. Within Google Cloud, this concept is implemented as
+IAM [conditional role bindings](https://cloud.google.com/iam/docs/managing-conditional-role-bindings). Managed Cloud Run has an advanced option allowing a Google
+Service Account to act as the user authenticating with other Google Cloud resources such as Cloud Storage.
 
-This tutorial will demonstrate how to setup Service Accounts with conditional IAM role bindings on Cloud Run using a Cloud Storage bucket.
+This tutorial demonstrates how to set up Service Accounts with conditional IAM role bindings on Cloud Run using a Cloud Storage bucket, as illustrated in the 
+following diagram.
 
-![Architectural Overview](diagrams/cloud-run-conditional-iam.png)
+![Architectural overview](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-conditional-iam/cloud-run-conditional-iam.png)
 
-# Objectives
+## Objectives
 
-1.  Create a simple application that lists contents of a [Google Cloud Storage][gcs] bucket.
-1.  Create a [Google Service Account (GSA)][gsa] to manage the application's Google Service interaction
-1.  Bind the Google Service Account with a [Conditional IAM Role][conditional-iam] `storage.objectViewer`
+1.  Create a simple application that lists contents of a [Cloud Storage][gcs] bucket.
+1.  Create a [Google Service Account][gsa] to manage the application's Google Service interaction.
+1.  Bind the Google Service Account with a [conditional IAM role][conditional-iam] `storage.objectViewer`.
 
-# Setup / Prerequisites
+## Prerequisites and setup
 
-## Before you begin
-
-The following details are intended for helping to setup up the development environment and understanding the costs associated with the tutorial.
+The following details are intended for helping to set up the development environment and understanding the costs associated with the tutorial.
 
 * Costs
     * The Cloud Run portion of this tutorial fits into the [Always Free](https://cloud.google.com/free) tier of Google Cloud if implemented using the selected regions & suggested application and the application usage is exclusively used for the tutorial. See [Cloud Run pricing criteria](https://cloud.google.com/run/pricing) for more information around Cloud Run pricing. [Review the pre-filled pricing calculator](https://cloud.google.com/products/calculator/#id=638ffec4-1903-47c2-8616-1cc37a83a1f5).
@@ -58,9 +62,9 @@ The following details are intended for helping to setup up the development envir
             containerregistry.googleapis.com
     ```
 
-# Solution
+## Solution
 
-## Overview of the workflow
+### Overview of the workflow
 
 1. Create a protected Cloud Storage bucket
 1. Create an application container to access Cloud Storage bucket
@@ -68,7 +72,7 @@ The following details are intended for helping to setup up the development envir
 1. Create managed Cloud Run instance using the GSA
 1. Setup conditional IAM permissions
 
-## Workflow Variables
+### Workflow Variables
 
 The following variables will be used in some or all of the below workflow steps. All variables are required unless noted.
 
@@ -81,7 +85,7 @@ The following variables will be used in some or all of the below workflow steps.
     * Alphanumeric and dashed name consisting of 5-20 characters.
     * `export GSA_NAME=bucket-list-gsa`
 
-## 1. Creating Cloud Storage Bucket
+### 1. Creating Cloud Storage Bucket
 
 ```bash
 # Generate random lower-case alphanumeric suffix
@@ -96,7 +100,7 @@ gsutil cp *.txt gs://${BUCKET}
 # Verify contents
 gsutil ls gs://${BUCKET}
 ```
-### Sample Output
+#### Sample Output
 ```text
 $ gsutil ls gs://${BUCKET}
 gs://cloud-run-tutorial-bucket-*****/item-1.txt
@@ -106,11 +110,11 @@ gs://cloud-run-tutorial-bucket-*****/item-4.txt
 gs://cloud-run-tutorial-bucket-*****/item-5.txt
 ```
 
-## 2. Create Application Container
+### 2. Create Application Container
 
 A simple Golang app used to list-display the contents of a GCS bucket can be built and pushed to the project's private [Google Container Registry](https://cloud.google.com/container-registry). The recommended application to deploy is [Cloud Run Bucket App](https://gitlab.com/mike-ensor/cloud-run-bucket-app/). More details on how to modify and deploy the app can be found within the README file.  This tutorial will deploy an opinionated and summarized version of this app.
 
-### Create & Deploy Container
+#### Create & Deploy Container
 ```bash
 # Clone Repository
 git clone https://gitlab.com/mike-ensor/cloud-run-bucket-app
@@ -122,7 +126,7 @@ gcloud builds submit --substitutions=_PROJECT_ID=${PROJECT_ID}
 gcloud container images list --filter="name:(*cloud-run-bucket-app)" --repository=gcr.io/${PROJECT_ID}
 ```
 
-## 3. Create & Setup Google Service Account (GSA)
+### 3. Create & Setup Google Service Account (GSA)
 
 Creating a [Google Service Account](https://cloud.google.com/iam/docs/service-accounts) (also known as GSA) for an application allows granular and specific access to Google managed resources thus reducing the security threat.
 
@@ -134,7 +138,7 @@ gcloud iam service-accounts create ${GSA_NAME} \
     --display-name="${GSA_NAME}"
 ```
 
-### Sample Output
+#### Sample Output
 ```text
 $ gcloud iam service-accounts create ${GSA_NAME} \
 >     --description="Service account for Cloud Storage Bucket Listing App" \
@@ -142,7 +146,7 @@ $ gcloud iam service-accounts create ${GSA_NAME} \
 Created service account [bucket-list-gsa].
 ```
 
-## 4. Create managed Cloud Run service w/ GSA
+### 4. Create managed Cloud Run service w/ GSA
 
 ```bash
 export SERVICE=bucket-list-app # Or choose a new name for the app
@@ -157,7 +161,7 @@ gcloud run deploy ${SERVICE} \
     --service-account ${GSA_NAME}
 ```
 
-### Verify App Deployed
+#### Verify App Deployed
 
 1. After deploy, open a browser given the URL in the output.
 
@@ -171,7 +175,7 @@ gcloud run deploy ${SERVICE} \
 
 1. **Keep this browser open** (Browser used later in this tutorial)
 
-## 5. Setup Conditional IAM Role Bindings
+### 5. Setup Conditional IAM Role Bindings
 
 The last step is to add permissions to view the bucket contents to the GSA created in step 3. Following the [official conditional IAM documentation](https://cloud.google.com/iam/docs/managing-conditional-role-bindings#iam-conditions-add-binding-gcloud):
 
@@ -199,7 +203,7 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --condition="expression=${EXPRESSION},description=${DESCRIPTION},title=${TITLE}"
 ```
 
-## 6. Verify
+### 6. Verify
 
 >Note: IAM conditional conditions CAN take 1-2 minutes to go "live". If permission isn't granted immediately wait a minute and try again.
 
@@ -207,11 +211,11 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 
 1. Wait for 5 minutes and refresh page to see the "403" error code returned.
 
-# Conclusion
+## Conclusion
 
 This tutorial has shown that creating a Cloud Run application, specifying a Google Service Account to control access to resources using Conditional IAM can be a part of a comprehensive security layer.
 
-# Clean up
+## Clean up
 
 The following will remove any of the "cost" attributing resources.
 
