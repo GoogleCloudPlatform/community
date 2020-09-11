@@ -1,5 +1,5 @@
 ---
-title: Manage a Cloud Run application with conditional IAM roles
+title: Control access for a Cloud Run application with conditional IAM roles
 description: Learn how to set up conditional IAM roles for Cloud Run applications.
 author: mike-ensor
 tags: cloud-run
@@ -8,15 +8,13 @@ date_published: 2020-09-14
 
 ## Overview
 
-This tutorial shows you how to run a managed Cloud Run application with a Google service account using conditional IAM roles using a Cloud Storage bucket. This 
-tutorial shows that creating a Cloud Run application and specifying a Google service account to control access to resources using conditional IAM roles can be 
-part of a comprehensive security layer.
+This tutorial shows you how to control access to resources for a Cloud Run application using a Google service account and conditional IAM roles.
 
 Applications that use Google Cloud services such as Pub/Sub, Cloud Storage, and Cloud SQL require authentication. Authentication and authorization are provided 
 using Cloud Identity and Access Management (IAM) through a combination of roles and accounts. Google service accounts are often used to provide an authentication
 and authorization mechanism for Google Cloud resources. For more information, see the [official documentation](https://cloud.google.com/docs/authentication).
 
-Authentication is often tied to a series of conditional parameters such as the time of day or day of the week to enhance security measures preventing 
+Authentication is often tied to a series of conditional parameters such as time of day or day of the week to enhance security measures, preventing 
 applications from accessing resources outside of compliance or governance rules. Within Google Cloud, this concept is implemented as
 IAM [conditional role bindings](https://cloud.google.com/iam/docs/managing-conditional-role-bindings). Managed Cloud Run has an advanced option allowing a Google
 service account to act as the user authenticating with other Google Cloud resources such as Cloud Storage.
@@ -29,7 +27,7 @@ following diagram.
 ## Objectives
 
 1.  Create a simple application that lists contents of a [Cloud Storage](https://cloud.google.com/storage) bucket.
-1.  Create a [service account](https://cloud.google.com/iam/docs/service-accounts) to manage the application's Google Service interaction.
+1.  Create a [service account](https://cloud.google.com/iam/docs/service-accounts) to manage the application's Google service interactions.
 1.  Bind the service account with a [conditional IAM role](https://cloud.google.com/iam/docs/managing-conditional-role-bindings), `storage.objectViewer`.
 
 ## Prerequisites and setup
@@ -68,13 +66,13 @@ The following details are intended for helping to set up the development environ
 
 ### Overview of the workflow
 
-1. Create a protected Cloud Storage bucket
-1. Create an application container to access Cloud Storage bucket
+1. Create a protected Cloud Storage bucket.
+1. Create an application container to access the Cloud Storage bucket.
 1. Create a Google service account.
-1. Create managed Cloud Run instance using the service account.
-1. Setup conditional IAM permissions
+1. Create a managed Cloud Run instance using the service account.
+1. Setup conditional IAM permissions.
 
-### Workflow Variables
+### Workflow variables
 
 The following variables will be used in some or all of the below workflow steps. All variables are required unless noted.
 
