@@ -41,7 +41,7 @@ route. This turns Pomerium into a bridge between a user-centric and a service-ce
 ## Setup
 
 To deploy Pomerium to Cloud Run, a [special image](https://console.cloud.google.com/gcr/images/pomerium-io/GLOBAL/pomerium) is available at
-`gcr.io/pomerium-io/pomerium-[VERSION]-cloudrun`. It allows sourcing configuration from Google Cloud Secret Manager, and it sets some defaults for Cloud Run to 
+`gcr.io/pomerium-io/pomerium:[VERSION]-cloudrun`. It allows sourcing configuration from Google Cloud Secret Manager, and it sets some defaults for Cloud Run to 
 keep configuration minimal. This example uses it to store identity provider credentials. Pomerium's
 [authorization policy](https://www.pomerium.com/reference/#policy) contains no secrets, so you can place it directly in an
 [environment variable](https://www.pomerium.io/reference/#configuration-settings).
@@ -127,7 +127,7 @@ This section includes the commands to configure and deploy Pomerium.
 1.  Deploy Pomerium with policy and configuration references:
 
         gcloud run deploy pomerium --region us-central1 --platform managed --allow-unauthenticated --max-instances 1 \
-            --image=gcr.io/pomerium-io/pomerium:v0.10.0-rc2-cloudrun \
+            --image=gcr.io/pomerium-io/pomerium:latest-cloudrun \
             --set-env-vars VALS_FILES="/pomerium/config.yaml:ref+gcpsecrets://${PROJECT}/pomerium-config" \
             --set-env-vars POLICY=$(base64 policy.yaml)
 
@@ -140,12 +140,12 @@ Pomerium and end users need known hostnames to interact with. To provide this, s
 
 Names to map to each Cloud Run service:
 
-| Cloud Run service   | DNS name                             |
-| ------------------- | ------------------------------------ |
-| `hello`             | `hello-direct.cloudrun.pomerium.com` |
-| `pomerium`          | `hello.cloudrun.pomerium.com`        |
-| `pomerium`          | `authn.cloudrun.pomerium.com`        |
-| `pomerium`          | `httpbin.cloudrun.pomerium.com`      |
+| Cloud Run service | DNS name                             |
+| ----------------- | ------------------------------------ |
+| `hello`           | `hello-direct.cloudrun.pomerium.com` |
+| `pomerium`        | `hello.cloudrun.pomerium.com`        |
+| `pomerium`        | `authn.cloudrun.pomerium.com`        |
+| `pomerium`        | `httpbin.cloudrun.pomerium.com`      |
 
  Substitute `cloudrun.pomerium.com` as appropriate.
 
