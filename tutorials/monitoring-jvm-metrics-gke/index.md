@@ -40,7 +40,7 @@ Cloud SDK installed. We recommend that you create a new project for this tutoria
 
 You need a new GKE cluster with [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) enabled. 
 
-Run the following commands to setup your environment:
+Run the following commands to set up your environment:
 
 ```
 export CLUSTER_NAME=metrics-demo
@@ -229,58 +229,56 @@ Wait a few minutes before creating the dashboard in the next section, so that yo
 
 ## Create the dashboard
 
-Navigate to [Cloud Monitoring](http://console.cloud.google.com/monitoring) and create a workspace if needed.
+1.  Go to [Cloud Monitoring](http://console.cloud.google.com/monitoring) and create a workspace.
 
-Visit [Metrics Explorer](https://console.cloud.google.com/monitoring/metrics-explorer) and add a few charts:
+1.  Go to the [Metrics Explorer](https://console.cloud.google.com/monitoring/metrics-explorer) and add a few charts:
 
-1. Heap memory chart
+    1.  Heap memory chart
 
-* Chart title: Heap memory
-* On Metric use `custom/jvm/memory/used`
-* On resource use `Global`
-* On filter use `area` `=` `heap` and `instance_id` `=` `starts_with("micronaut")`
-* Group by: `id` and `instance_id`
+      * Chart title: Heap memory
+      * On Metric use `custom/jvm/memory/used`
+      * On resource use `Global`
+      * On filter use `area` `=` `heap` and `instance_id` `=` `starts_with("micronaut")`
+      * Group by: `id` and `instance_id`
 
-2. JVM memory chart
+    2.  JVM memory chart
 
-* Chart title: Heap memory
-* On Metric use `custom/jvm/memory/used`
-* On resource use `Global`
-* On filter use `instance_id` `=` `starts_with("micronaut")`
-* Group by: `instance_id`
-* Aggregator: `sum`
+      * Chart title: Heap memory
+      * On Metric use `custom/jvm/memory/used`
+      * On resource use `Global`
+      * On filter use `instance_id` `=` `starts_with("micronaut")`
+      * Group by: `instance_id`
+      * Aggregator: `sum`
 
-3. Container memory chart
+    3.  Container memory chart
 
-* Chart title: Container memory
-* On Metric use `Memory usage`
-* On resource use `k8s_container`
-* On filter use `container_name` `=` `micronaut-jvm-metrics)`
-* Group by: `pod_name`
-* Aggregator: `sum`
+      * Chart title: Container memory
+      * On Metric use `Memory usage`
+      * On resource use `k8s_container`
+      * On filter use `container_name` `=` `micronaut-jvm-metrics)`
+      * Group by: `pod_name`
+      * Aggregator: `sum`
 
-Add the charts to a new dashboard, for instance name it `JVM`.
+1.  Add the charts to a new dashboard.
 
-After letting your application running for a while your dashboard should look like this:
+After letting your application running for a while, your dashboard should look like this:
 
-![JVM Metrics](https://storage.googleapis.com/gcp-community/tutorials/monitoring-jvm-metrics-gke/cloud_monitoring_jvm_dashboard.png)
+![JVM metrics](https://storage.googleapis.com/gcp-community/tutorials/monitoring-jvm-metrics-gke/cloud_monitoring_jvm_dashboard.png)
 
-You can now check different heap spaces on the `Heap Memory usage` such as Eden, Tenured and Survivor spaces. And see that our chart follow the nice sawtooth pattern expected from GC collection.
+Check various heap spaces on the **Heap memory usage** chart, such as eden, tenured, and survivor spaces. You should see that the chart follows the sawtooth 
+pattern expected from garbage collection.
 
-
-## _Optional_ Add some load to simulate memory pressure
+## (Optional) Add some load to simulate memory pressure
 
 You can simulate some traffic to see some memory pressure on your charts using the [ab](https://httpd.apache.org/docs/2.4/programs/ab.html) tool:
 
-```
-export APPLICATION_URL=$(kubectl get service micronaut-jvm-metrics-svc -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    export APPLICATION_URL=$(kubectl get service micronaut-jvm-metrics-svc -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
-ab -n 50000 -c 100  $APPLICATION_URL/health
-```
+    ab -n 50000 -c 100  $APPLICATION_URL/health
 
 ## Clean up
 
-Once you are a done, remove the project to avoid extra costs.
+When you're done with this tutorial, you can delete the project to avoid incurring additional costs for the resources that you created for the tutorial.
 
 To delete a project, do the following:
 
