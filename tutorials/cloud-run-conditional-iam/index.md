@@ -26,32 +26,28 @@ following diagram.
 
 ## Objectives
 
-1.  Create a simple application that lists contents of a [Cloud Storage](https://cloud.google.com/storage) bucket.
+1.  Create a simple application that lists the contents of a [Cloud Storage](https://cloud.google.com/storage) bucket.
 1.  Create a [service account](https://cloud.google.com/iam/docs/service-accounts) to manage the application's Google service interactions.
 1.  Bind the service account with a [conditional IAM role](https://cloud.google.com/iam/docs/managing-conditional-role-bindings), `storage.objectViewer`.
 
-## Prerequisites and setup
-
-### Costs
-
+## Costs
 
 The Cloud Run portion of this tutorial fits into the [always free](https://cloud.google.com/free) tier of Google Cloud if implemented using the selected regions
-with the suggested application.
-
-See [Cloud Run pricing criteria](https://cloud.google.com/run/pricing) for more information about Cloud Run pricing.
+with the suggested application. For more information, see [Cloud Run pricing criteria](https://cloud.google.com/run/pricing).
 
 You can use the [pricing calculator](https://cloud.google.com/products/calculator/#id=638ffec4-1903-47c2-8616-1cc37a83a1f5) to estimate your costs.
 
-You can limit Cloud Storage bucket usage to fit within the [always free](https://cloud.google.com/free) limits (below 5GB of regional storage). You can keep 
-Cloud Storage usage and costs low while still using a large enough number of files for this tutorial by storing small text files.
+Cloud Storage usage for this tutorial fits within the [always free](https://cloud.google.com/free) limits (below 5GB of regional storage) by storing 
+small text files.
 
-### Google Cloud configuration
+## Prerequisites and setup
 
 This tutorial requires a [Google Cloud project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) and an associated billing account. 
 Though the costs are within the [always free](https://cloud.google.com/free) tier, a billing account is required. We recommend that you create a new project for 
 this tutorial, so that cleaning up the tutorial's resources at the end is easiest.
 
-You execute commands in this tutorial in [Cloud Shell](https://cloud.google.com/shell) (recommended).
+You execute commands in this tutorial in [Cloud Shell](https://cloud.google.com/shell). If you prefer to execute the commands on your local machine, you must
+[install the Cloud SDK and gsutil](https://cloud.google.com/storage/docs/gsutil_install#sdk-install).
 
 The `gcloud` user must have the following permissions for this tutorial:
 
@@ -62,9 +58,9 @@ The `gcloud` user must have the following permissions for this tutorial:
 
 ## Solution
 
-### Overview of the workflow
+### Summary of the workflow
 
-1. Set up variables and enable APIs and services
+1. Set variables and enable APIs and services
 1. Create a protected Cloud Storage bucket and add files to it.
 1. Create an application container to access the Cloud Storage bucket.
 1. Create a Google service account.
