@@ -19,27 +19,28 @@ You create a [Micronaut](https://micronaut.io) microservice application, deploy 
 
 ## Before you begin
 
-Before running this tutorial, you must set up a Google Cloud project, and you need to have Docker and the Cloud SDK installed.
-
-Create a project that will host your [Micronaut](https://micronaut.io) application. You can also reuse an existing project.
+For this tutorial, you must set up a Google Cloud project to host your [Micronaut](https://micronaut.io) application, and you must have Docker and the
+Cloud SDK installed. We recommend that you create a new project for this tutorial, whcih makes the cleanup at the end easier.
 
 1.  Use the [Cloud Console](https://console.cloud.google.com/)
-    to create a new Cloud Platform project. Remember the project ID; you will
-    need it later. Later commands in this tutorial will use `[PROJECT_ID]` as
-    a substitution, so you might consider setting the `PROJECT_ID` environment
+    to create a new Google Cloud project. Remember the project ID; you will
+    need it later. Later commands in this tutorial use `[PROJECT_ID]` as
+    a placeholder, so you might consider setting the `PROJECT_ID` environment
     variable in your shell.
 
 2.  Enable billing for your project.
 
-3.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/). Make sure
+3.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/). Make sure that
     you [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK
-    and set the default project to the new project you created.
+    and set the default project to the new project that you created.
 
 3.  Install [JDK 11 or higher](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) if you do not already have it.
 
-## Prepare your environments
+## Prepare your environment
 
-You will need a new GKE cluster with [workload identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) enabled. Run the following commands to setup your environment
+You need a new GKE cluster with [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) enabled. 
+
+Run the following commands to setup your environment:
 
 ```
 export CLUSTER_NAME=metrics-demo
@@ -82,146 +83,149 @@ kubectl annotate serviceaccount \
 
 ## Create a new application
 
-Go to https://launch.micronaut.io and create a new application.
+1.  Go to the [Micronaut Launch page](https://launch.micronaut.io).
+1.  Add features:
+    1.  Click **Features**. 
+    1.  In the **Search Features** field, search for `jib` and then click to add the Jib component. 
+    1.  In the **Search Features** field, search for `micrometer-stackdriver` and then click to add the Micrometer component.
+    1.  Click **Done**.
+1.  In the **Base package** section, enter `com.google.example`.
+1.  In the **Name** section, enter `micronaut-jvm-metrics`.
+1.  Click `Generate Project`.
+1.  Download and extract the ZIP file and use it as your base directory for the rest of this tutorial.
 
-* On Features search for `jib` and `micrometer-stackdriver`
-* Base package: use `com.google.example`
-* Name: `micronaut-jvm-metrics`
-* Click `Generate Project`
-* Extract the zip file and use it as your base directory for the rest of this tutorial
+## Set up the application
 
-### Set up the applications
+In this section, you set up the artifacts and necessary classes to get the application running.
 
-Now you need to setup the artifacts and necessary classes to get the application running.
+1.  Open your `build.gradle` file and locate the line containing `jib.to.image = 'gcr.io/micronaut-jvm-metrics/jib-image'`. Replace that line with the following:
 
-Open your `build.gradle` and locate the line containing `jib.to.image = 'gcr.io/micronaut-jvm-metrics/jib-image'`, replace it with the following:
+        jib{
+            from {
+                image= "gcr.io/distroless/java:11"
+            }
+            to{
+                image = "gcr.io/[PROJECT_ID]/micronaut-jvm-metrics"
+            }
 
-```
-jib{
-    from {
-        image= "gcr.io/distroless/java:11"
-    }
-    to{
-        image = "gcr.io/[PROJECT_ID]/micronaut-jvm-metrics"
-    }
+        }
 
-}
-```
+    Replace `[PROJECT_ID]` with the project ID for the project that you created at the beginning of this tutorial.
 
-NOTE: Make sure you use the `[PROJECT_ID]` created on the first step of this tutorial
+    The application uses [Jib](https://github.com/GoogleContainerTools/jib) to build and push your images to `gcr.io`. This code forces a `JDK 11` base image 
+    and sets the target image that is used in the `deployment.yml` file.
 
-The application uses [jib](https://github.com/GoogleContainerTools/jib) to build and push our images to `gcr.io`, this snippet forces a `JDK 11` base image and sets the target image that will be used in the `deployment.yml` file.
+1.  Replace your `application.yml` file with the following command:
 
-Replace your `application.yml` file via the following command:
+        cat << EOL > src/main/resources/application.yml
+        micronaut:
+          application:
+            name: micronautJvmMetrics
+          metrics:
+            export:
+              stackdriver:
+                enabled: true
+                projectId: $PROJECT_ID
+                step: PT1M
+            enabled: true
+        endpoints:
+          health:
+            enabled: true
+            sensitive: false
+        EOL
 
-```
-cat << EOL > src/main/resources/application.yml
-micronaut:
-  application:
-    name: micronautJvmMetrics
-  metrics:
-    export:
-      stackdriver:
-        enabled: true
-        projectId: $PROJECT_ID
-        step: PT1M
-    enabled: true
-endpoints:
-  health:
-    enabled: true
-    sensitive: false
-EOL    
-```
+1.  Add the following class to your `src/main/java/com/google/example` directory:
 
-Add the following class to your `src/main/java/com/google/example` directory :
+        package com.google.example;
 
-```java
-package com.google.example;
+        import io.micrometer.core.instrument.MeterRegistry;
+        import io.micronaut.configuration.metrics.aggregator.MeterRegistryConfigurer;
+        import org.slf4j.Logger;
+        import org.slf4j.LoggerFactory;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micronaut.configuration.metrics.aggregator.MeterRegistryConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+        import javax.inject.Singleton;
+        import java.util.Optional;
 
-import javax.inject.Singleton;
-import java.util.Optional;
+        @Singleton
+        public class ApplicationMeterRegistryConfigurer implements MeterRegistryConfigurer {
 
-@Singleton
-public class ApplicationMeterRegistryConfigurer implements MeterRegistryConfigurer {
+            private final Logger logger = LoggerFactory.getLogger(ApplicationMeterRegistryConfigurer.class);
 
-    private final Logger logger = LoggerFactory.getLogger(ApplicationMeterRegistryConfigurer.class);
+            @Override
+            public void configure(MeterRegistry meterRegistry) {
+                String instanceId = Optional.ofNullable(System.getenv("HOSTNAME")).orElse("localhost");
+                logger.info("Publishing metrics for pod " + instanceId);
+                meterRegistry.config().commonTags("instance_id", instanceId);
+            }
 
-    @Override
-    public void configure(MeterRegistry meterRegistry) {
-        String instanceId = Optional.ofNullable(System.getenv("HOSTNAME")).orElse("localhost");
-        logger.info("Publishing metrics for pod " + instanceId);
-        meterRegistry.config().commonTags("instance_id", instanceId);
-    }
+            @Override
+            public boolean supports(MeterRegistry meterRegistry) {
+                return true;
+            }
+        }
 
-    @Override
-    public boolean supports(MeterRegistry meterRegistry) {
-        return true;
-    }
-}
-```
-This class adds proper labels that will make the metrics unique for each application. Each container inside Kubernetes gets a hostname that is the same as the unique pod_name. If you don't add an unique label and have multiple replicas of your application running you run into concurrency issues with stackdriver as multiple agents will report the same metrics with a window shorter than what was configured. Also note that by not having an unique identifier you won't be able to filter/group metrics on the dashboard per instance.
+    This class adds labels that make the metrics unique for each application. Each container inside Kubernetes gets a hostname that is the same as the unique
+    pod name. If you don't add a unique label and have multiple replicas of your application running, you can run into concurrency issues with Cloud Monitoring
+    because multiple agents will report the same metrics with a window shorter than what was configured. Also, without a unique identifier, you wouldn't
+    be able to filter or group metrics on the dashboard for each instance.
 
-Create a `deployment.yml` file:
+1.  Create a `deployment.yml` file:
 
-```
-cat << EOL > deployment.yml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: "micronaut-jvm-metrics"
-spec:
-  selector:
-    matchLabels:
-      app: "micronaut-jvm-metrics"
-  template:
-    metadata:
-      labels:
-        app: "micronaut-jvm-metrics"
-    spec:
-      serviceAccount: micronaut-application
-      containers:
-        - name: "micronaut-jvm-metrics"
-          image: "gcr.io/[PROJECT_ID]/micronaut-jvm-metrics"
+        cat << EOL > deployment.yml
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: "micronaut-jvm-metrics"
+        spec:
+          selector:
+            matchLabels:
+              app: "micronaut-jvm-metrics"
+          template:
+            metadata:
+              labels:
+                app: "micronaut-jvm-metrics"
+            spec:
+              serviceAccount: micronaut-application
+              containers:
+                - name: "micronaut-jvm-metrics"
+                  image: "gcr.io/[PROJECT_ID]/micronaut-jvm-metrics"
+                  ports:
+                    - name: http
+                      containerPort: 8080
+                  readinessProbe:
+                    httpGet:
+                      path: /health
+                      port: 8080
+                    initialDelaySeconds: 5
+                    timeoutSeconds: 3
+                  livenessProbe:
+                    httpGet:
+                      path: /health
+                      port: 8080
+                    initialDelaySeconds: 5
+                    timeoutSeconds: 3
+                    failureThreshold: 10
+          replicas: 2
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: "micronaut-jvm-metrics-svc"
+        spec:
+          selector:
+            app: "micronaut-jvm-metrics"
+          type: LoadBalancer
           ports:
-            - name: http
-              containerPort: 8080
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 8080
-            initialDelaySeconds: 5
-            timeoutSeconds: 3
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8080
-            initialDelaySeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 10
-  replicas: 2
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: "micronaut-jvm-metrics-svc"
-spec:
-  selector:
-    app: "micronaut-jvm-metrics"
-  type: LoadBalancer
-  ports:
-    - protocol: "TCP"
-      port: 80
-      targetPort: 8080
-EOL
-```
-Deploy the application using `kubectl apply -f deployment.yml`.
+            - protocol: "TCP"
+              port: 80
+              targetPort: 8080
+        EOL
 
-NOTE: You should wait a few minutes before creating the dashboard on the next section to be able to see the metrics.
+1.  Deploy the application:
+
+        kubectl apply -f deployment.yml
+
+Wait a few minutes before creating the dashboard in the next section, so that you can see the metrics.
 
 ## Create the dashboard
 
