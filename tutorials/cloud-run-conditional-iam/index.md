@@ -2,7 +2,7 @@
 title: Control access for a Cloud Run application with conditional IAM roles
 description: Learn how to set up conditional IAM roles for Cloud Run applications.
 author: mike-ensor
-tags: cloud-run
+tags: authentication
 date_published: 2020-09-14
 ---
 
@@ -79,7 +79,7 @@ The `gcloud` user must have the following permissions for this tutorial:
 
     Check the list of regions in the [always free](https://cloud.google.com/free/docs/gcp-free-tier) tier to ensure that costs are included.
 
-1.  Set the name of of the Google service account to be created and used for the Cloud Run instance:
+1.  Set the name of the Google service account to be created and used for the Cloud Run instance:
 
         export GSA_NAME=bucket-list-gsa
 
