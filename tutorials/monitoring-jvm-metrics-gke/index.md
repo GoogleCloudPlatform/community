@@ -17,6 +17,8 @@ frameworks such as [Micrometer](https://micrometer.io) are useful.
 In this tutorial, you learn how to use Micrometer integration with Cloud Monitoring to publish metrics without having to use a `javaagent` on your class path. 
 You create a [Micronaut](https://micronaut.io) microservice application, deploy it to GKE, and create a dashboard to monitor the Java memory heap.
 
+The [GitHub repository for this tutorial](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/monitoring-jvm-metrics-gke/micronaut-jvm-metrics) includes the complete working source code for the tutorial, which you can use as a reference as you go through the steps in the tutorial.
+
 ## Before you begin
 
 For this tutorial, you must set up a Google Cloud project to host your [Micronaut](https://micronaut.io) application, and you must have Docker and the
@@ -40,44 +42,41 @@ You need a new GKE cluster with [Workload Identity](https://cloud.google.com/kub
 
 Run the following commands to set up your environment:
 
-```
-export CLUSTER_NAME=metrics-demo
-export PROJECT_ID=[PROJECT_ID]
-export GSA=micronaut-application
-export KSA=$GSA
-export NAMESPACE=default
+    export CLUSTER_NAME=metrics-demo
+    export PROJECT_ID=[PROJECT_ID]
+    export GSA=micronaut-application
+    export KSA=$GSA
+    export NAMESPACE=default
 
-gcloud config set project $PROJECT_ID
+    gcloud config set project $PROJECT_ID
 
-gcloud services enable container.googleapis.com \
-containerregistry.googleapis.com
+    gcloud services enable container.googleapis.com \
+    containerregistry.googleapis.com
 
-gcloud iam service-accounts create ${GSA} --project=${PROJECT_ID}
+    gcloud iam service-accounts create ${GSA} --project=${PROJECT_ID}
 
-gcloud container clusters create ${CLUSTER_NAME} \
-  --release-channel regular \
-  --zone "us-central1-c" \
-  --workload-pool=${PROJECT_ID}.svc.id.goog
+    gcloud container clusters create ${CLUSTER_NAME} \
+      --release-channel regular \
+      --zone "us-central1-c" \
+      --workload-pool=${PROJECT_ID}.svc.id.goog
 
-gcloud container clusters --zone "us-central1-c" get-credentials ${CLUSTER_NAME}
+    gcloud container clusters --zone "us-central1-c" get-credentials ${CLUSTER_NAME}
 
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
---member="serviceAccount:${GSA}@${PROJECT_ID}.iam.gserviceaccount.com" \
---role="roles/monitoring.metricWriter"
+    gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${GSA}@${PROJECT_ID}.iam.gserviceaccount.com" \
+    --role="roles/monitoring.metricWriter"
 
-gcloud iam service-accounts add-iam-policy-binding \
-  --role roles/iam.workloadIdentityUser \
-  --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${NAMESPACE}/${KSA}]" \
-  ${GSA}@${PROJECT_ID}.iam.gserviceaccount.com
+    gcloud iam service-accounts add-iam-policy-binding \
+      --role roles/iam.workloadIdentityUser \
+      --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${NAMESPACE}/${KSA}]" \
+      ${GSA}@${PROJECT_ID}.iam.gserviceaccount.com
 
-kubectl create serviceaccount --namespace $NAMESPACE $KSA
+    kubectl create serviceaccount --namespace $NAMESPACE $KSA
 
-kubectl annotate serviceaccount \
-  --namespace ${NAMESPACE} \
-  ${KSA} \
-  iam.gke.io/gcp-service-account=${GSA}@${PROJECT_ID}.iam.gserviceaccount.com    
-
-```
+    kubectl annotate serviceaccount \
+      --namespace ${NAMESPACE} \
+      ${KSA} \
+      iam.gke.io/gcp-service-account=${GSA}@${PROJECT_ID}.iam.gserviceaccount.com
 
 ## Create a new application
 
