@@ -1,23 +1,25 @@
 ---
 title: Monitor a Micronaut JVM application on GKE using Micrometer.
 description: Learn how to use Micrometer to send JVM metrics to Cloud Monitoring through the Stackdriver agent.
-author: vinnyc
-tags: GKE, Java, Micronaut 
-date_published: 2020-09-01
+author: viniciusccarvalho
+tags: Google Kubernetes Engine, Java 
+date_published: 2020-09-15
 ---
 
-GKE offers built-in capabilities to monitor containers, it provides insights into memory, CPU, and I/O resources. JVM applications however have
-different memory configurations (heap versus non-heap) and each memory space can be split in several other parts (Eden, Tenured, Survivor). Often, Java developers face issues with memory configurations, and having the capability to inspect an application memory utilization is essential for Java developers.
+GKE offers built-in capabilities to monitor containers, providing insights into memory, CPU, and I/O resources. JVM applications, however, have
+different memory configurations (heap versus non-heap), and each memory space can be split in several other parts (such as eden, tenured, and survivor). Often, 
+Java developers face issues with memory configurations, and having the capability to inspect an application's memory utilization is essential.
 
-Traditional APM tools make use of a [java agent](https://docs.oracle.com/javase/7/docs/api/java/lang/instrument/package-summary.html) that is added to the classpath of the application. In certain environments such as Kubernetes and App Engine, configuring a java agent is not always possible, this is where metrics frameworks such as
-[Micrometer](https://micrometer.io) comes in hand.
+Conventional APM tools make use of a [Java agent](https://docs.oracle.com/javase/7/docs/api/java/lang/instrument/package-summary.html) that's added to the 
+class path of the application. In certain environments, such as Kubernetes and App Engine, configuring a Java agent is not always possible; this is where metrics
+frameworks such as [Micrometer](https://micrometer.io) are useful.
 
-In this tutorial we will explain how you can use Micrometer integration with stackdriver, to publish metrics without having to use a `javaagent` on your classpath. We will create a [Micronaut](https://micronaut.io) microservice application, deploy it to GKE and create a dashboard to monitor the java memory heap space.
+In this tutorial, you learn how to use Micrometer integration with Cloud Monitoring to publish metrics without having to use a `javaagent` on your class path. 
+You create a [Micronaut](https://micronaut.io) microservice application, deploy it to GKE, and create a dashboard to monitor the Java memory heap.
 
 ## Before you begin
 
-Before running this tutorial, you must set up a Google Cloud project,
-and you need to have Docker and the Cloud SDK installed.
+Before running this tutorial, you must set up a Google Cloud project, and you need to have Docker and the Cloud SDK installed.
 
 Create a project that will host your [Micronaut](https://micronaut.io) application. You can also reuse an existing project.
 
