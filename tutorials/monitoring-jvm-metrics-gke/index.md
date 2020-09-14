@@ -7,7 +7,7 @@ date_published: 2020-09-15
 ---
 
 GKE offers built-in capabilities to monitor containers, providing insights into memory, CPU, and I/O resources. JVM applications, however, have
-different memory configurations (heap versus non-heap), and each memory space can be split in several other parts (such as eden, tenured, and survivor). Often, 
+different memory configurations (heap versus non-heap), and each memory space is split in several parts (such as eden, tenured, and survivor). Often, 
 Java developers face issues with memory configurations, and having the capability to inspect an application's memory utilization is essential.
 
 Conventional APM tools make use of a [Java agent](https://docs.oracle.com/javase/7/docs/api/java/lang/instrument/package-summary.html) that's added to the 
@@ -20,13 +20,11 @@ You create a [Micronaut](https://micronaut.io) microservice application, deploy 
 ## Before you begin
 
 For this tutorial, you must set up a Google Cloud project to host your [Micronaut](https://micronaut.io) application, and you must have Docker and the
-Cloud SDK installed. We recommend that you create a new project for this tutorial, whcih makes the cleanup at the end easier.
+Cloud SDK installed. We recommend that you create a new project for this tutorial, which makes the cleanup at the end easier.
 
 1.  Use the [Cloud Console](https://console.cloud.google.com/)
     to create a new Google Cloud project. Remember the project ID; you will
-    need it later. Later commands in this tutorial use `[PROJECT_ID]` as
-    a placeholder, so you might consider setting the `PROJECT_ID` environment
-    variable in your shell.
+    need it later.
 
 2.  Enable billing for your project.
 
@@ -233,15 +231,15 @@ Wait a few minutes before creating the dashboard in the next section, so that yo
 
 1.  Go to the [Metrics Explorer](https://console.cloud.google.com/monitoring/metrics-explorer) and add a few charts:
 
-    1.  Heap memory chart
-
+    * Heap memory chart
+    
       * Chart title: Heap memory
       * On Metric use `custom/jvm/memory/used`
       * On resource use `Global`
       * On filter use `area` `=` `heap` and `instance_id` `=` `starts_with("micronaut")`
       * Group by: `id` and `instance_id`
 
-    2.  JVM memory chart
+    * JVM memory chart
 
       * Chart title: Heap memory
       * On Metric use `custom/jvm/memory/used`
@@ -250,7 +248,7 @@ Wait a few minutes before creating the dashboard in the next section, so that yo
       * Group by: `instance_id`
       * Aggregator: `sum`
 
-    3.  Container memory chart
+    * Container memory chart
 
       * Chart title: Container memory
       * On Metric use `Memory usage`
@@ -261,7 +259,7 @@ Wait a few minutes before creating the dashboard in the next section, so that yo
 
 1.  Add the charts to a new dashboard.
 
-After letting your application running for a while, your dashboard should look like this:
+After letting your application running for a while, your dashboard should look similar to this:
 
 ![JVM metrics](https://storage.googleapis.com/gcp-community/tutorials/monitoring-jvm-metrics-gke/cloud_monitoring_jvm_dashboard.png)
 
