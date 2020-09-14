@@ -32,74 +32,96 @@ following diagram.
 
 ## Prerequisites and setup
 
-The following details are intended for helping to set up the development environment and understanding the costs associated with the tutorial.
+### Costs
 
-* Costs
-    * The Cloud Run portion of this tutorial fits into the [Always Free](https://cloud.google.com/free) tier of Google Cloud if implemented using the selected regions & suggested application and the application usage is exclusively used for the tutorial. See [Cloud Run pricing criteria](https://cloud.google.com/run/pricing) for more information around Cloud Run pricing. [Review the pre-filled pricing calculator](https://cloud.google.com/products/calculator/#id=638ffec4-1903-47c2-8616-1cc37a83a1f5).
-    * Cloud Storage bucket costs are up to you, but can easily be constrained into the [Always Free](https://cloud.google.com/free) tier (below 5GB of regional storage). Storing small text files is a simple method to eliminate Cloud Storage costs and still show a sufficient amount of files in a Cloud Storage bucket.
-* Google Cloud Configuration
-    * This tutorial requires a [Google Project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) and an associated billing account. While the costs are within the [Always Free](https://cloud.google.com/free) tier, a billing account is required.
-    * >Note: Using a test project specifically for this tutorial is recommended (optional)
-* Executing commands on either Local Machine or Cloud Shell
-    * [Cloud Shell](https://cloud.google.com/shell) (preferred)
-        * No extra installation required
-    * On a local machine
-        * Requires a BASH or ZSH shell
-        * Installation and authentication of [Google Cloud SDK](https://cloud.google.com/sdk/install) `gcloud` is required
-            * Once the binary is installed, run `gcloud init` and follow the prompts to authenticate `gcloud`
-        * Install `gsutil` using `gcloud` by running: `gcloud components install gsutil`
-* Tutorial gcloud user must have the following permissions
-    * roles/editor or roles/owner
-    * roles/iam.serviceAccountAdmin - Enables the user to create & manage the lifecycle of Google service accounts
-    * roles/storage.admin - Enables the user to create & manage lifecycle of Cloud Storage Buckets
-    * roles/cloudbuild.builds.editor - Enables the user to create & manage lifecycle of Cloud Build instances
-* Enabled API & Services
-    ```bash
-        gcloud services enable \
-            cloudbuild.googleapis.com \
-            storage-component.googleapis.com \
-            run.googleapis.com \
-            containerregistry.googleapis.com
-    ```
+
+The Cloud Run portion of this tutorial fits into the [always free](https://cloud.google.com/free) tier of Google Cloud if implemented using the selected regions
+with the suggested application.
+
+See [Cloud Run pricing criteria](https://cloud.google.com/run/pricing) for more information about Cloud Run pricing.
+
+You can use the [pricing calculator](https://cloud.google.com/products/calculator/#id=638ffec4-1903-47c2-8616-1cc37a83a1f5) to estimate your costs.
+
+You can limit Cloud Storage bucket usage to fit within the [always free](https://cloud.google.com/free) limits (below 5GB of regional storage). You can keep 
+Cloud Storage usage and costs low while still using a large enough number of files for this tutorial by storing small text files.
+
+### Google Cloud configuration
+
+This tutorial requires a [Google Cloud project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) and an associated billing account. 
+Though the costs are within the [always free](https://cloud.google.com/free) tier, a billing account is required. We recommend that you create a new project for 
+this tutorial, so that cleaning up the tutorial's resources at the end is easiest.
+
+You execute commands in this tutorial in [Cloud Shell](https://cloud.google.com/shell) (recommended).
+
+The `gcloud` user must have the following permissions for this tutorial:
+
+  * `roles/editor` or `roles/owner`
+  * `roles/iam.serviceAccountAdmin` (enables the user to create and manage the life cycle of Google service accounts)
+  * `roles/storage.admin` (enables the user to create and manage the lifecycle of Cloud Storage buckets)
+  * `roles/cloudbuild.builds.editor` (enables the user to create and manage the life cycle of Cloud Build instances)
 
 ## Solution
 
 ### Overview of the workflow
 
-1. Create a protected Cloud Storage bucket.
+1. Set up variables and enable APIs and services
+1. Create a protected Cloud Storage bucket and add files to it.
 1. Create an application container to access the Cloud Storage bucket.
 1. Create a Google service account.
 1. Create a managed Cloud Run instance using the service account.
-1. Setup conditional IAM permissions.
+1. Set up conditional IAM permissions.
 
-### Workflow variables
+### Set environment variables
 
-The following variables will be used in some or all of the below workflow steps. All variables are required unless noted.
+1.  Set the project ID of the Google Cloud project where the managed Cloud Run instance is to be deployed to:
 
-* `PROJECT_ID` - Google project ID where the managed Cloud Run instance is to be deployed to
-    * `export PROJECT_ID=$(gcloud config get-value core/project)`
-* `REGION` - Region to deploy managed Cloud Run instance application into
-    * >NOTE: Check list of regions in Always Free tier to ensure costs are included
-    * `export REGION=us-west1`
-* `GSA_NAME` - Name of Google service account to be created and used for the Cloud Run instance
-    * Alphanumeric and dashed name consisting of 5-20 characters.
-    * `export GSA_NAME=bucket-list-gsa`
+        export PROJECT_ID=$(gcloud config get-value core/project)
 
-### Create a Cloud Storage bucket
+1.  Set the region to deploy the managed Cloud Run application into:
 
-```bash
-# Generate random lower-case alphanumeric suffix
-export SUFFIX=$(head -3 /dev/urandom | tr -cd '[:alnum:]' | cut -c -5 | awk '{print tolower($0)}')
-# BUCKET variable
-export BUCKET="cloud-run-tutorial-bucket-${SUFFIX}"
-# Create bucket
-gsutil mb gs://${BUCKET}
-# Add text documents to bucket
-for i in {1..5}; do echo "task $i" > item-$i.txt; done
-gsutil cp *.txt gs://${BUCKET}
-# Verify contents
-gsutil ls gs://${BUCKET}
-```
+        export REGION=us-west1
+
+    Check the list of regions in the [always free](https://cloud.google.com/free/docs/gcp-free-tier) tier to ensure that costs are included.
+
+1.  Set the name of of the Google service account to be created and used for the Cloud Run instance:
+
+        export GSA_NAME=bucket-list-gsa
+
+    Use alphanumeric characters and dashes, for a name between 5 and 20 characters.
+
+### Enable APIs and services
+
+Run the following command to enable the necessary APIs and services:
+
+    gcloud services enable \
+        cloudbuild.googleapis.com \
+        storage-component.googleapis.com \
+        run.googleapis.com \
+        containerregistry.googleapis.com
+
+### Create a Cloud Storage bucket and add files to it
+
+1.  Generate a random lowercase alphanumeric suffix:
+
+        export SUFFIX=$(head -3 /dev/urandom | tr -cd '[:alnum:]' | cut -c -5 | awk '{print tolower($0)}')
+
+1.  Set a variable to contain the name of the bucket:
+   
+        export BUCKET="cloud-run-tutorial-bucket-${SUFFIX}"
+        
+1.  Create the bucket:
+
+        gsutil mb gs://${BUCKET}
+
+1.  Add text documents to the bucket:
+
+        for i in {1..5}; do echo "task $i" > item-$i.txt; done
+        gsutil cp *.txt gs://${BUCKET}
+
+1.  List the bucket contents to verify that they were created:
+
+        gsutil ls gs://${BUCKET}
+
 The output should look similar to the following:
 
 ```text
@@ -110,12 +132,11 @@ gs://cloud-run-tutorial-bucket-*****/item-4.txt
 gs://cloud-run-tutorial-bucket-*****/item-5.txt
 ```
 
-### Create and deply an application container
+### Create and deploy an application container
 
-A simple app written in the Go programming language used to list the contents of a Cloud Storage bucket can be built and pushed to the project's private
-[Google Container Registry](https://cloud.google.com/container-registry). The recommended application to deploy is
-[Cloud Run Bucket App](https://gitlab.com/mike-ensor/cloud-run-bucket-app/). More details on how to modify and deploy the app can be found in the
-README file. In this tutorial, you deploy a summarized version of this app.
+In this section, you build and push a simple app written in the Go programming language to the project's private
+[Google Container Registry](https://cloud.google.com/container-registry). The app used for this tutorial
+([Cloud Run Bucket App](https://gitlab.com/mike-ensor/cloud-run-bucket-app/)) lists the contents of a Cloud Storage bucket.
 
 1.  Clone the repository:
 
@@ -136,8 +157,6 @@ README file. In this tutorial, you deploy a summarized version of this app.
 Creating a [Google service account](https://cloud.google.com/iam/docs/service-accounts) for an application allows granular and specific access to Google-managed
 resources, thus reducing the security threat.
 
-    export GSA_NAME="bucket-list-gsa"
-
     gcloud iam service-accounts create ${GSA_NAME} \
         --description="Service account for Cloud Storage bucket listing app" \
         --display-name="${GSA_NAME}"
@@ -150,14 +169,6 @@ The output should be similar to the following:
 
 Run the following commands to create a Cloud Run service with a Google service account:
 
-1.  Set the name of the app:
-
-        export SERVICE=bucket-list-app
-
-1.  Set the region to which to deploy the app:
-
-        export REGION=us-west1
-        
 1.  Set the image name:
 
         export IMAGE_NAME=$(gcloud container images list --filter="name:(*cloud-run-bucket-app)" --repository=gcr.io/${PROJECT_ID} --format="value(name)")
@@ -187,24 +198,23 @@ Run the following commands to create a Cloud Run service with a Google service a
 
 ### Set up conditional IAM role bindings
 
-In this section, you give the Google service account permission to view the bucket contents. Following the
-[official conditional IAM documentation](https://cloud.google.com/iam/docs/managing-conditional-role-bindings#iam-conditions-add-binding-gcloud):
+In this section, you give the Google service account permission to view the bucket contents.
 
 ```bash
 # Best practices use UTC for date calculations
 export TIME_ZONE=GMT/UTC
 export MINUTES_IN_FUTURE=$((60*5)) # 5 minutes
 
-# Condition Description and Title (human readable, required fields)
+# Condition description and title (human-readable, required fields)
 export DESCRIPTION="Example conditional that is true until ${MINUTES_IN_FUTURE} minutes from the time of execution"
 export TITLE="Expire In ${MINUTES_IN_FUTURE} minutes"
 
-# Create a timestamp of NOW
+# Create a timestamp of the current time
 export TIMESTAMP=$(TZ=${TIME_ZONE} date +"%FT%T.00Z")
 # Build Condition Expression: if (time.now < TIMESTAMP+5 minutes)
 export EXPRESSION="request.time < timestamp(\"${TIMESTAMP}\") + duration(\"${MINUTES_IN_FUTURE}s\")"
 
-# Lint/Validate condition
+# Lint/validate condition
 gcloud alpha iam policies lint-condition --expression="${EXPRESSION}" --title="${TITLE}" --description="${DESCRIPTION}"
 
 # Bind role and condition to Google service account
@@ -214,13 +224,16 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --condition="expression=${EXPRESSION},description=${DESCRIPTION},title=${TITLE}"
 ```
 
+For more information, see
+[Managing conditional role bindings](https://cloud.google.com/iam/docs/managing-conditional-role-bindings#iam-conditions-add-binding-gcloud)
+
 ### Verify
 
 IAM conditions can take a few minutes to take effect. If permission isn't granted immediately, wait a minute and try again.
 
-1. Using the same browser window as in step 4-1. Simply refresh the browser to see the contents.
+1. Using the same browser window that you used to verify that the app was deployed, refresh the page to see the contents.
 
-1. Wait for 5 minutes and refresh page to see the "403" error code returned.
+1. Wait for 5 minutes and refresh page to see the `403` error code returned.
 
 ## Clean up
 
