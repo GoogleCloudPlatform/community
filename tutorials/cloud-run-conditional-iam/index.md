@@ -60,7 +60,7 @@ The `gcloud` user must have the following permissions for this tutorial:
 
 ### Summary of the workflow
 
-1. Set variables and enable APIs and services
+1. Set variables and enable APIs and services.
 1. Create a protected Cloud Storage bucket and add files to it.
 1. Create an application container to access the Cloud Storage bucket.
 1. Create a Google service account.
@@ -196,29 +196,37 @@ Run the following commands to create a Cloud Run service with a Google service a
 
 In this section, you give the Google service account permission to view the bucket contents.
 
-```bash
-# Best practices use UTC for date calculations
-export TIME_ZONE=GMT/UTC
-export MINUTES_IN_FUTURE=$((60*5)) # 5 minutes
+1.  Set time zone to UTC for date calculations:
 
-# Condition description and title (human-readable, required fields)
-export DESCRIPTION="Example conditional that is true until ${MINUTES_IN_FUTURE} minutes from the time of execution"
-export TITLE="Expire In ${MINUTES_IN_FUTURE} minutes"
+        export TIME_ZONE=GMT/UTC
+        
+1.  Set a time interval in seconds equal to 5 minutes:
 
-# Create a timestamp of the current time
-export TIMESTAMP=$(TZ=${TIME_ZONE} date +"%FT%T.00Z")
-# Build Condition Expression: if (time.now < TIMESTAMP+5 minutes)
-export EXPRESSION="request.time < timestamp(\"${TIMESTAMP}\") + duration(\"${MINUTES_IN_FUTURE}s\")"
+        export MINUTES_IN_FUTURE=$((60*5))
 
-# Lint/validate condition
-gcloud alpha iam policies lint-condition --expression="${EXPRESSION}" --title="${TITLE}" --description="${DESCRIPTION}"
+1.  Create a human-readable description and title for the condition:
 
-# Bind role and condition to Google service account
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-    --member="serviceAccount:${GSA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
-    --role="roles/storage.objectViewer" \
-    --condition="expression=${EXPRESSION},description=${DESCRIPTION},title=${TITLE}"
-```
+        export DESCRIPTION="Example conditional that is true until ${MINUTES_IN_FUTURE} minutes from the time of execution"
+        export TITLE="Expire In ${MINUTES_IN_FUTURE} minutes"
+
+1.  Create a timestamp of the current time:
+
+        export TIMESTAMP=$(TZ=${TIME_ZONE} date +"%FT%T.00Z")
+        
+1.  Build a condition expression that tests whether `(time.now < TIMESTAMP+5 minutes)`:
+
+        export EXPRESSION="request.time < timestamp(\"${TIMESTAMP}\") + duration(\"${MINUTES_IN_FUTURE}s\")"
+
+1.  Validate the condition:
+
+        gcloud alpha iam policies lint-condition --expression="${EXPRESSION}" --title="${TITLE}" --description="${DESCRIPTION}"
+
+1.  Bind the role and condition to the Google service account:
+
+        gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+            --member="serviceAccount:${GSA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+            --role="roles/storage.objectViewer" \
+            --condition="expression=${EXPRESSION},description=${DESCRIPTION},title=${TITLE}"
 
 For more information, see
 [Managing conditional role bindings](https://cloud.google.com/iam/docs/managing-conditional-role-bindings#iam-conditions-add-binding-gcloud)
