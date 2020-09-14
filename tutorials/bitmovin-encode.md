@@ -165,7 +165,7 @@ increases for the following quotas in your regions:
 | In-use IP addresses | (maximum number of encodings) * (maximum number of instances per encoding)              | 
 | CPUs | (maximum number of encodings) * 8 |
 | Preemptible CPUs | (maximum number of encodings) * (maximum number of instances per encoding) * 8 |
-| Persistent Disk SSD (GB) | (maximum number of encodings) * 0.5 + ((number of instances) * (number of encodings)) * 0.05  |
+| Persistent Disk SSD (TB) | (maximum number of encodings) * 0.5 + ((number of instances) * (number of encodings)) * 0.05  |
 
 The values above assume 8-core instances. If your use case requires instances with a different number of cores, contact Bitmovin.
 
