@@ -1,5 +1,5 @@
 ---
-title: Monitor a Micronaut JVM application on GKE using Micrometer.
+title: Monitor a Micronaut JVM application on GKE using Micrometer
 description: Learn how to use Micrometer to send JVM metrics to Cloud Monitoring through the Stackdriver agent.
 author: viniciusccarvalho
 tags: Google Kubernetes Engine, Java 
