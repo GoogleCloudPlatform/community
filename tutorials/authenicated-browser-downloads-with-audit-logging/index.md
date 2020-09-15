@@ -33,8 +33,7 @@ This is a basic review of the steps required to launch this code. For more infor
 1. Download this directory to your workspace
 1. Modify app.yaml to identify the GCS bucket that holds the assets
 1. Set up and configure Google Cloud SDK and [gcloud tool](https://cloud.google.com/sdk/docs/install)
-1. Deploy the application with this command:
-> `gcloud app deploy`
+1. Deploy the application with this command: `gcloud app deploy`
 1. Enable IAP for the App Engine app you created
 1. [Lock down the permissions](https://cloud.google.com/appengine/docs/standard/go/service-account) of the App Engine service account
 
