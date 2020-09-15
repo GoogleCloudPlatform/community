@@ -1,6 +1,6 @@
 ---
 title: Authenticated Browser Downloads with Audit Logging
-description: Deploy an authenticating proxy in front of a Google Cloud file server, with audit logging
+description: Deploy an authenticating proxy in front of a Google Cloud file server with audit logging
 author: ianmaddox
 tags: IAP, GCS, GAE, serverless
 date_published: 2020-10-01
