@@ -16,7 +16,7 @@ app.listen(PORT, () => {
 
 app.get('*', (req, res) => {
   const fileName = req.originalUrl.substring(1);
-  const fileExt = fileName.match(/\.([^\.]+)$/);
+  const fileExt = fileName.match(/\.([^.]+)$/);
   if (!fileExt || !fileExt[1] || !fileName) {
     res.status(400).send('<h1>400 Bad request.</h1>').end();
     return;
