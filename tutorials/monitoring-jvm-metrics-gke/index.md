@@ -6,9 +6,9 @@ tags: Google Kubernetes Engine, Java
 date_published: 2020-09-15
 ---
 
-GKE offers built-in capabilities to monitor containers, providing insights into memory, CPU, and I/O resources. JVM applications, however, have
-different memory configurations (heap versus non-heap), and each memory space is split in several parts (such as eden, tenured, and survivor). Often, 
-Java developers face issues with memory configurations, and having the capability to inspect an application's memory utilization is essential.
+Google Kubernetes Engine (GKE) offers built-in capabilities to monitor containers, providing insights into memory, CPU, and I/O resources. JVM applications, 
+however, have different memory configurations (heap versus non-heap), and each memory space is split in several parts (such as eden, tenured, and survivor). 
+Often, Java developers face issues with memory configurations, and having the capability to inspect an application's memory utilization is essential.
 
 Conventional APM tools make use of a [Java agent](https://docs.oracle.com/javase/7/docs/api/java/lang/instrument/package-summary.html) that's added to the 
 class path of the application. In certain environments, such as Kubernetes and App Engine, configuring a Java agent is not always possible; this is where metrics
