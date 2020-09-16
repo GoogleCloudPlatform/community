@@ -1,7 +1,8 @@
 ---
 title: What is Corporate Engineering at Google?
 author: maxsaltonstall@
-date_published: 2020-09-
+date_published: 2020-09-21
+---
 
 ## What is Corporate Engineering at Google?
 
