@@ -10,7 +10,7 @@ Anant Damle | Solutions Architect | Google Cloud
 
 Historical metadata of your data-warehouse is a treasure trove to discover not just insights about changing data patterns, but also quality and user behavior. The challenge is Data Catalog keeps a single version of metadata for fast searchability.
 
-This solution is intended for technical people with responsibility for metadata management, data governance and related analytics.
+This solution is intended for data engineers, analysts and other technical people with responsibility for metadata management, data governance and related analytics.
 
 This tutorial suggests a solution to create a historical record of metadata Data Catalog tags by creating change records in real-time through capture and parsing of the [Audit Logs](https://cloud.google.com/data-catalog/docs/how-to/audit-logging) from [Cloud Logging](https://cloud.google.com/logging) and processing them in real-time by using [Pub/Sub](https://cloud.google.com/pubsub) and [Dataflow](https://cloud.google.com/dataflow) to append into a [BigQuery](https://cloud.google.com/bigquery) table for historical analysis.
 
