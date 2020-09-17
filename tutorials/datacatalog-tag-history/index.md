@@ -3,6 +3,7 @@ title: Create Data Catalog Tag history in BigQuery using Cloud Logging, Pub/Sub 
 description: Historical metadata of your data warehouse is a treasure trove to discover not just insights about changing data patterns, but also quality and user behaviour. This solution creates Data Catalog Tags history in BigQuery since Data Catalog keeps only the latest version of metadata for fast searchability.
 author: anantdamle
 tags: Data Catalog, BigQuery, PubSub, Dataflow
+date_published: 2020-09-30
 ---
 
 Anant Damle | Solutions Architect | Google Cloud
