@@ -10,7 +10,7 @@ It's easy to create and maintain an[ HTTPS-based static website on Google Cloud 
 However, it's still challenging to provide authentication and authorization for a static website on GCP **in a serverless fashion**.  This tutorial describes a solution to protect static assets on GCS based on the GCLB [Serverless Network Endpoint Groups](https://cloud.google.com/load-balancing/docs/negs/setting-up-serverless-negs) (NEGs).  
 Below is the high-level architecture of this solution:
 
-![gcs-static-arch](static-website/src/assets/arch-gcs-site.png)
+![gcs-static-arch](https://storage.googleapis.com/gcp-community/tutorials/securing-gcs-static-website/arch-gcs-site.png)
 
 The architecture above incorporates the following key features:
 
@@ -375,7 +375,7 @@ __Note__: Both the SSL certificate and the DNS name propagation need some time. 
 
 After the certificate is active, we can try to open a file hosted in the bucket. For the first time, we will be redirected to the login page. For example:
 
-![login](images/login-page.png)
+![login](https://storage.googleapis.com/gcp-community/tutorials/securing-gcs-static-website/login-page.png)
 
 Type in the username and password. The default one is:
 
@@ -383,11 +383,11 @@ Username; admin
 Password: password  
 We should be able to open the file now. For example:
 
-![static-file](images/static-file.png)
+![static-file](https://storage.googleapis.com/gcp-community/tutorials/securing-gcs-static-website/static-file.png)
 
 If you change the URL to the root, you can open the app like following:
 
-![home-page](images/home.png)
+![home-page](https://storage.googleapis.com/gcp-community/tutorials/securing-gcs-static-website/home.png)
 
 
 ## Cleaning up
