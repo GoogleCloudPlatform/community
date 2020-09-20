@@ -13,7 +13,8 @@ various scenarios and with various tools and resources. To make it easier for yo
 we provide some basic guidelines that documents on this site must follow.
 
 Much of the material in this style guide is derived from the more comprehensive 
-[Google style guide for developer documentation](https://developers.google.com/style/).
+[Google developer documentation style guide](https://developers.google.com/style/). For general style matters—such as capitalization, tone, voice, and 
+punctuation—see the main developer documentation style guide.
 
 ## Caveats
 
@@ -34,7 +35,6 @@ Before getting into the details of how to write and structure a document, here a
 Google Cloud offers a set of logos and architectural diagram assets for your use:
 
 [https://cloud.google.com/icons/](https://cloud.google.com/icons/)
-
 
 ## Template for writing a tutorial
 
