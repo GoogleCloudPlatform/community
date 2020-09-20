@@ -1,5 +1,5 @@
 ---
-title: How to contribute a tutorial for the Google Cloud Community site
+title: Contribute a tutorial for the Google Cloud Community site
 description: Learn how to submit a tutorial for the Google Cloud community site.
 author: kopriva
 tags: template, submit
@@ -13,11 +13,10 @@ Each tutorial may be accompanied by example source code and other assets alongsi
 
 ## Accept the Contributor License Agreement
 
-For us to accept your contributions, we need you to fill out either the individual or corporate
-[Contributor License Agreement (CLA)](https://cla.developers.google.com/about):
+For us to accept your contributions, we need you to sign the [Contributor License Agreement (CLA)](https://cla.developers.google.com/about):
 
   * If you are an individual writing original content and you own the intellectual property, then you sign an
-    [individual CLA][https://developers.google.com/open-source/cla/individual].
+    [individual CLA](https://developers.google.com/open-source/cla/individual).
   * If you work for a company that wants to allow you to contribute your work,
     then you sign a [corporate CLA](https://developers.google.com/open-source/cla/corporate).
 
@@ -34,8 +33,8 @@ For us to accept your contributions, we need you to fill out either the individu
         
 1.  Commit your changes and open a [pull request](https://help.github.com/articles/using-pull-requests/).
 
-    After you create a pull request, a reviewer will review your submission. The reviewer will make editorial and production changes to the tutorial
-    to ensure that it follows the style guide and 
+    After you create a pull request, a reviewer reviews your submission. The reviewer will make some editorial and production changes to the tutorial
+    directly to ensure that it follows the style guide. The reviewer may also leave comments asking for changes or clarifications. 
     
 1.  Work with the reviewer to resolve any issues found during the review.
 
