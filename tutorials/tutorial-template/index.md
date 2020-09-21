@@ -1,7 +1,7 @@
 ---
 title: Tutorial template
 description: Replace with a description of your tutorial, focusing on what the reader will learn.
-author: github_username_for_author,github_username_for_other_author
+author: github-username-for-author,github-username-for-other-author
 tags: replace, with, tags, not, in, title, or, description
 date_published: 2020-04-28
 ---
