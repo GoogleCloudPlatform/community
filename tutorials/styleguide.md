@@ -38,39 +38,9 @@ Google Cloud offers a set of logos and architectural diagram assets for your use
 
 ## Template for writing a tutorial
 
-A tutorial has these major sections. Items in bold below are literal heading names.
-
-* Title
-* Overview
-    * First sentence tells what the page is about
-    * Tell the user what they're going to learn and provide any concise background information that's helpful.
-    * Don't use the heading "Overview." Just get right to it.
-
-* **Objectives**
-    * A short, bulleted list of what the tutorial teaches the reader.
-
-* **Before you begin**
-    * A numbered list of steps required to set up for the tutorial.
-    * Any general prerequisites.
-    * Don't assume anything about the user's environment. Assume that the user has only basic operating system installed. If doing the tutorial requires the user to have a specific environment, state what is required. For easy-to-install environment bits, just give them the instructions, such as "Run apt-get install…". For more complex setups, link to official documentation.
-
-* **Costs** (optional)
-    * Tell the reader which technologies will be used and what it costs to use them.
-    * Link to the [Pricing Calculator](https://cloud.google.com/products/calculator/), preconfigured, if possible.
-    * If there are no costs to be incurred, state that.
-
-* Body
-    * Use as many headings and subheadings as needed.
-    * Use numbered steps in each section.
-    * Start each step with the action: "Click," "Run," "Enter," and so on.
-    * Keep numbered step lists to around 7 or less, if possible. If you need more steps, break it up into subheadings.
-    * Provide context and explain what's going on.
-    * Use screenshots when they help the reader. Don't provide a screenshot for every step.
-    * Show what success looks like along the way. For example, showing console output or describing what happens helps the reader to feel like they're doing it right and help them know things are working so far.
-
-* **Cleaning up**
-    * Omit this section if you stated there are no costs in the Costs section.
-    * Tell the user how to shut down what they built to avoid incurring further costs.
+When you create a tutorial, beging by copying the contents of the 
+[tutorial template](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/tutorial-template/index.md) file into your new Markdown
+file. Replace the explanations and examples in the template with your tutorial content.
 
 ## File organization in GitHub
 
