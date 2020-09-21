@@ -29,17 +29,17 @@ For us to accept your contributions, we need you to sign the [Contributor Licens
 1.  Add the new tutorial file by doing one of the following:
     
     * Create a uniquely named `.md` file at the top level of the `tutorials` folder.
-    * Create a new folder for your tutorial in the `tutorials` folder and create a `.md` file at the top level of that subfolder.
+    * Create a new folder for your tutorial in the `tutorials` folder and create an `index.md` file at the top level of that subfolder.
     
 1.  Copy the contents of the [tutorial template](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/tutorial-template/index.md)
     into your new Markdown file.
     
-1.  Replace the template content with your own tutorial content, following the instructions in the template.
+1.  Replace the template content with your own tutorial content, following the instructions in the template and style guide.
         
 1.  Commit your changes and open a [pull request](https://help.github.com/articles/using-pull-requests/).
 
-    After you create a pull request, a reviewer reviews your submission. The reviewer will make some editorial and production changes to the tutorial
-    directly to ensure that it follows the style guide. The reviewer may also leave comments asking for changes or clarifications. 
+    After you create a pull request, a reviewer reviews your submission. The reviewer will directly make some editorial and production changes to the tutorial
+    to ensure that it follows the guidelines. The reviewer may also leave comments asking for changes or clarifications. 
     
 1.  Work with the reviewer to resolve any issues found during the review.
 
