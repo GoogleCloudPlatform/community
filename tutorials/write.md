@@ -30,6 +30,11 @@ For us to accept your contributions, we need you to sign the [Contributor Licens
     
     * Create a uniquely named `.md` file at the top level of the `tutorials` folder.
     * Create a new folder for your tutorial in the `tutorials` folder and create a `.md` file at the top level of that subfolder.
+    
+1.  Copy the contents of the [tutorial template](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/tutorial-template/index.md)
+    into your new Markdown file.
+    
+1.  Replace the template content with your own tutorial content, following the instructions in the template.
         
 1.  Commit your changes and open a [pull request](https://help.github.com/articles/using-pull-requests/).
 
