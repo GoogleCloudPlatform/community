@@ -12,11 +12,11 @@ The first paragraph or two should tell the reader the following:
   * Who the tutorial is for
   * What prerequisite knowledge the reader needs in order to understand the tutorial
 
-Don't use the heading **Overview**. Just get right to it.
+Don't use a heading like **Overview** or **Introduction**. Just get right to it.
 
 ## Objectives
 
-Give the reader a high-level summary idea of what steps they take during the tutorial. This information is often most effective as a short bulleted list.
+Give the reader a high-level summary of what steps they take during the tutorial. This information is often most effective as a short bulleted list.
 
 ### Example: Objectives
 
