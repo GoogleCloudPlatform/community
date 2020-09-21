@@ -13,11 +13,11 @@ your own tutorial content. Not all tutorials will use all of the sections descri
 Replace the placeholders in the metadata at the top of the Markdown file with your own values. Follow the guidance provided by the placeholder values for spacing
 and punctuation.
 
-The first paragraph or two should tell the reader the following:
+The first paragraph or two of the tutorial should tell the reader the following:
 
-  * What they will learn from the tutorial
   * Who the tutorial is for
-  * What prerequisite knowledge the reader needs in order to understand the tutorial
+  * What they will learn from the tutorial
+  * What prerequisite knowledge they need for the tutorial
 
 Don't use a heading like **Overview** or **Introduction**. Just get right to it.
 
