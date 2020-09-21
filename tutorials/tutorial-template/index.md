@@ -8,9 +8,9 @@ date_published: 2020-04-28
 
 The first paragraph or two should tell the reader the following:
 
-    * What they will learn from the tutorial
-    * Who the tutorial is for
-    * What prerequisite knowledge the reader needs in order to understand the tutorial
+  * What they will learn from the tutorial
+  * Who the tutorial is for
+  * What prerequisite knowledge the reader needs in order to understand the tutorial
 
 Don't use the heading **Overview**. Just get right to it.
 
