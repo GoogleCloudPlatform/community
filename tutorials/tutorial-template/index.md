@@ -66,10 +66,10 @@ This tutorial assumes that you're using the Microsoft Windows operating system.
 
 Break the tutorial body into as many sections and subsections as needed, with concise headings.
 
-### Use somewhat short numbered lists of steps for procedures
+### Use short numbered lists for procedures
 
-Use numbered steps for procedures. Each action that the reader must take should be its own step. Start each step with the action, such as *Click*, *Run*,
-or *Enter*.
+Use numbered lists of steps for procedures. Each action that the reader must take should be its own step. Start each step with the action, such as *Click*, 
+*Run*, or *Enter*.
 
 Keep procedures to 7 steps or less, if possible. If a procedure is longer than 7 steps, consider how it might be separated into sub-procedures, each in its
 own subsection.
