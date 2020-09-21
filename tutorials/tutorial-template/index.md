@@ -1,10 +1,12 @@
 ---
-title: Replace with your title
+title: Tutorial template
 description: Replace with a description of your tutorial, focusing on what the reader will learn.
 author: github_username_for_author,github_username_for_other_author
 tags: replace, with, tags, not, in, title, or, description
 date_published: 2020-04-28
 ---
+
+Begin by putting appropriate values in the metadata above. Follow the guidance provided by the placeholder values for spacing and punctuation.
 
 The first paragraph or two should tell the reader the following:
 
