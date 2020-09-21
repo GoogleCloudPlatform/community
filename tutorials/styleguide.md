@@ -35,7 +35,7 @@ Google Cloud offers a [library of logos, icons, and architectural diagram assets
 ## File organization in GitHub
 
 How you name and organize your files in GitHub depends on whether you are submitting
-a singles standalone tutorial file or a set of supporting files, such as images and
+a single standalone tutorial file or a set of supporting files, such as images and
 source code.
 
 ### Contribute supporting files with the tutorial
@@ -50,7 +50,7 @@ do the following in GitHub:
     For example, if you submit a tutorial named "Using Cloud SQL to conquer
     the world", name your folder `using-cloud-sql-conquer-world`.
 
-1.  Name your new document `index.md`.
+1.  Name your new document file `index.md`.
 1.  Store images and source code in the same folder.
 1.  (Optional) Use [EmbedMd](https://github.com/campoy/embedmd) to include
     snippets from the source code files in the `index.md` Markdown file.
@@ -68,7 +68,11 @@ following in GitHub:
     For example, if you submit a tutorial named "Using Cloud SQL to conquer
     the world", name your file `using-cloud-sql-conquer-world.md`.
 
-## Tutorial template
+## Follow the tutorial template
 
-Copy the contents of the [tutorial template](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/tutorial-template/index.md) file into your 
-new Markdown file. Replace the explanations and examples in the template with your tutorial content.
+We provide a tutorial template that explains and demonstrates each part of a tutorial document.
+
+1.  Copy the contents of the [tutorial template](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/tutorial-template/index.md) file into
+    your new Markdown file.
+
+1.  Replace the explanations and examples in the template with your tutorial content.
