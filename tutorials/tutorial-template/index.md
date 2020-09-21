@@ -6,7 +6,12 @@ tags: replace, with, tags, not, in, title, or, description
 date_published: 2020-04-28
 ---
 
-Begin by putting appropriate values in the metadata above. Follow the guidance provided by the placeholder values for spacing and punctuation.
+To begin creating a tutorial, copy the Markdown source for this tutorial template into your blank Mardown file. Replace the explanatory text and examples with 
+your own tutorial content. Not all tutorials will use all of the sections described in this template. For more information, see the 
+[style guide](https://cloud.google.com/community/tutorials/styleguide) and [contribution guide](https://cloud.google.com/community/tutorials/write).
+
+Replace the placeholders in the metadata at the top of the Markdown file with your own values. Follow the guidance provided by the placeholder values for spacing
+and punctuation.
 
 The first paragraph or two should tell the reader the following:
 
