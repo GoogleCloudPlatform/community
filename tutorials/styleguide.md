@@ -21,7 +21,7 @@ punctuation—see the main developer documentation style guide.
 Here are some general guidelines to keep in mind:
 
 * Instruct the reader. Don't sell, market, or editorialize.
-* Tell the reader at the beginning what assumptions you are making in the tutorial.
+* Tell the reader at the beginning what assumptions you're making in the tutorial.
 * Don't use absolutes and superlatives (such as _instantaneously_, _perfectly_, _100%_, or _the best_) unless you can back up what you're saying with
   documentation.
 * Only make performance claims that you can back up with current data.
@@ -30,17 +30,21 @@ Here are some general guidelines to keep in mind:
 
 ## Visual assets
 
-Google Cloud offers a set of logos and architectural diagram assets for your use:
-
-[https://cloud.google.com/icons/](https://cloud.google.com/icons/)
+Google Cloud offers a [library of logos, icons, and architectural diagram assets](https://cloud.google.com/icons/) for your use.
 
 ## File organization in GitHub
 
+How you name and organize your files in GitHub depends on whether you are submitting
+a singles standalone tutorial file or a set of supporting files, such as images and
+source code.
+
+### Contribute supporting files with the tutorial
+
 If you have additional image or source code files that go along with your tutorial,
-do the following:
+do the following in GitHub:
 
 1.  Create a new folder for your document.
-1.  Name the folder by omitting words like *and* and *the* from your document's
+1.  Name the folder by omitting words like *and* and *the* from your tutorial's
     title.
 
     For example, if you submit a tutorial named "Using Cloud SQL to conquer
@@ -51,19 +55,18 @@ do the following:
 1.  (Optional) Use [EmbedMd](https://github.com/campoy/embedmd) to include
     snippets from the source code files in the `index.md` Markdown file.
 
+### Contribute a single standalone tutorial file
+
 If you don't have additional files that go along with your tutorial, do the
-following:
+following in GitHub:
 
 1.  Make a single Markdown file at the top level of the `tutorials/` folder.
 
-1.  Name the file by omitting words like *and* and *the* from your document's
+1.  Name the file by omitting words like *and* and *the* from your tutorial's
     title.
 
     For example, if you submit a tutorial named "Using Cloud SQL to conquer
-    the world", name your file `using-cloud-sql-conquer-world`.
-
-    For example, `tutorials/using-cloud-sql-conquer-world.md` instead of
-    `tutorials/using-cloud-sql-conquer-world/index.md`.
+    the world", name your file `using-cloud-sql-conquer-world.md`.
 
 ## Tutorial template
 
