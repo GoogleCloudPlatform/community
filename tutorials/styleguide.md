@@ -36,7 +36,7 @@ Google Cloud offers a set of logos and architectural diagram assets for your use
 
 [https://cloud.google.com/icons/](https://cloud.google.com/icons/)
 
-## Template for writing a tutorial
+## Tutorial template
 
 When you create a tutorial, beging by copying the contents of the 
 [tutorial template](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/tutorial-template/index.md) file into your new Markdown
