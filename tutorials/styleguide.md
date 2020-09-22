@@ -44,8 +44,8 @@ If you have additional image or source code files that go along with your tutori
 do the following in GitHub:
 
 1.  Create a new folder for your document.
-1.  Name the folder by omitting words like *and* and *the* from your tutorial's
-    title.
+1.  Name the folder with key words from your title, separated by hyphens,
+    omitting words like *and* and *the*.
 
     For example, if you submit a tutorial named "Using Cloud SQL to conquer
     the world", name your folder `using-cloud-sql-conquer-world`.
@@ -62,8 +62,8 @@ following in GitHub:
 
 1.  Make a single Markdown file at the top level of the `tutorials/` folder.
 
-1.  Name the file by omitting words like *and* and *the* from your tutorial's
-    title.
+1.  Name the file with key words from your title, separated by hyphens,
+    omitting words like *and* and *the*.
 
     For example, if you submit a tutorial named "Using Cloud SQL to conquer
     the world", name your file `using-cloud-sql-conquer-world.md`.

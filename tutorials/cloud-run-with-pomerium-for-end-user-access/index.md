@@ -21,6 +21,8 @@ DNS does not need to be inside Google Cloud for the example to work.
 
 ## How it works
 
+![Architecture](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-with-pomerium-for-end-user-access/architecture.png)
+
 Services on [Cloud Run](https://cloud.google.com/run) and [Cloud Functions](https://cloud.google.com/functions) can be restricted to only permit access with a 
 properly signed [identity token](https://cloud.google.com/run/docs/authenticating/service-to-service). This allows requests from other services running on
 Google Cloud or elsewhere to be securely authorized despite the endpoints being public.
