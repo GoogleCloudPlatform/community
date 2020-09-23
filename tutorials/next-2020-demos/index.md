@@ -1,7 +1,7 @@
 ---
 title: Launching code you didn't write: shipping Next 2020 demos at scale
 description: Cloud code management and deployment tools for scalable, stress-minimizing development of demos with outside collaborators.
-author: @maxsaltonstall, @tpryan
+author: maxsaltonstall,tpryan
 tags: Cloud Build, App Engine, GitHub, CICD
 date_published: 2020-09-28
 ---
