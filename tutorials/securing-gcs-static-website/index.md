@@ -121,6 +121,7 @@ Set environment variables that you use throughout the tutorial:
 
     # Replace [YOUR_PROJECT_ID] with your project ID.
     export PROJECT_ID=[YOUR_PROJECT_ID]
+    
     export PROJECT_NUM=$(gcloud projects describe ${PROJECT_ID} --format="value(projectNumber)")
     export REGION=us-central1
     export BUCKET_NAME=${PROJECT_ID}-example-com
