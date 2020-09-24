@@ -227,245 +227,226 @@ Set environment variables that you use throughout the tutorial:
 
 ### Configure Cloud CDN
 
-1. Add a signing key to CDN.
+1.  Add a signing key to CDN:
 
-    ```bash
-    head -c 16 /dev/urandom | base64 | tr +/ -_ > key_file.txt
+        head -c 16 /dev/urandom | base64 | tr +/ -_ > key_file.txt
 
-    gcloud compute backend-buckets \
-    add-signed-url-key web-backend-bucket \
-    --key-name $CDN_SIGN_KEY \
-    --key-file key_file.txt
-    ```
+        gcloud compute backend-buckets \
+        add-signed-url-key web-backend-bucket \
+        --key-name $CDN_SIGN_KEY \
+        --key-file key_file.txt
 
-1. Adding the key to the secret manager.
+1.  Add the key to Secret Manager:
 
-    ```bash
-    gcloud secrets create $CDN_SIGN_KEY --data-file="./key_file.txt"
-    ```
+        gcloud secrets create $CDN_SIGN_KEY --data-file="./key_file.txt"
 
-1. (Optional) To be safe, let's remove the data file we created
+1.  To be safe, remove the data file:
 
-    ```bash
-    rm key_file.txt
-    ```
+        rm key_file.txt
 
-1. Configure IAM to allow the CDN service account to read the objects in the bucket.
+1.  Configure IAM to allow the CDN service account to read the objects in the bucket:
 
-    ```bash
-    gsutil iam ch \
-    serviceAccount:service-${PROJECT_NUM}@cloud-cdn-fill.iam.gserviceaccount.com:objectViewer gs://$BUCKET_NAME
-    ```
+        gsutil iam ch \
+        serviceAccount:service-${PROJECT_NUM}@cloud-cdn-fill.iam.gserviceaccount.com:objectViewer gs://$BUCKET_NAME
 
-    __Note__: For the Cloud CDN service account `[service-PROJECT_NUM@cloud-cdn-fill.iam.gserviceaccount.com]`, it doesn't appear in the list of service accounts in your project. This is because the Cloud CDN service account is owned by Cloud CDN, not your project.
+    The Cloud CDN service account `[service-PROJECT_NUM@cloud-cdn-fill.iam.gserviceaccount.com]` doesn't appear in the list of service accounts in your project
+    because the Cloud CDN service account is owned by Cloud CDN, not your project.
 
-### Deploy login service to Cloud Run
+### Deploy the login service to Cloud Run
 
-1. Build the Docker container for the login page and push it to Container Registry.
+1. Build the Docker container for the login page and push it to Container Registry:
 
-    ```bash
-    cd ../flask_login
+        cd ../flask_login
 
-    docker build -t flask_login .
-    docker tag flask_login gcr.io/$PROJECT_ID/flask_login
-    docker push gcr.io/$PROJECT_ID/flask_login
-    ```
+        docker build -t flask_login .
+        docker tag flask_login gcr.io/$PROJECT_ID/flask_login
+        docker push gcr.io/$PROJECT_ID/flask_login
 
-1. Deploy Cloud Run service. For demo purposes, we pass the user credential through environment variables. In reality, you probably want to use a user database or an identity provider for the login service
+1.  Deploy the Cloud Run service:
 
-    ```bash
-    gcloud run deploy $LOGIN_BACKEND_SVC_NAME \
-    --image=gcr.io/$PROJECT_ID/flask_login --platform=managed \
-    --region=$REGION --allow-unauthenticated \
-    --set-env-vars=WEB_URL=https://$DNS_NAME,PROJECT_ID=$PROJECT_ID,CDN_SIGN_KEY=$CDN_SIGN_KEY,USER_NAME=admin,USER_PASSWORD=password
-    ```
+        gcloud run deploy $LOGIN_BACKEND_SVC_NAME \
+        --image=gcr.io/$PROJECT_ID/flask_login --platform=managed \
+        --region=$REGION --allow-unauthenticated \
+        --set-env-vars=WEB_URL=https://$DNS_NAME,PROJECT_ID=$PROJECT_ID,CDN_SIGN_KEY=$CDN_SIGN_KEY,USER_NAME=admin,USER_PASSWORD=password
+    
+     For demonstration purposes, this tutorial passes the user credential through environment variables. In reality, you probably want to use a user database or
+     an identity provider for the login service.
 
-1. Since our Cloud Run service needs to access the secrets saved in the secret manager, we grant the permission here. 
+1.  Because the Cloud Run service needs to access the secrets saved in Secret Manager, grant the permission here:
 
-    ```bash
-    gcloud projects add-iam-policy-binding \
-    --member=serviceAccount:${PROJECT_NUM}-compute@developer.gserviceaccount.com \
-    --role=roles/secretmanager.secretAccessor $PROJECT_ID
-    ```
+        gcloud projects add-iam-policy-binding \
+        --member=serviceAccount:${PROJECT_NUM}-compute@developer.gserviceaccount.com \
+        --role=roles/secretmanager.secretAccessor $PROJECT_ID
 
-    __Note__: we provide the secretAccessor permission to the default compute service account. In a production environment, you probably want to use a custom service account and only allow access to the needed secrets.
+    This demonstration provides the `secretAccessor` permission to the default compute service account. In a production environment, you probably want to use a 
+    custom service account and only allow access to the needed secrets.
 
-### Configure serverless network endpoints group
+### Configure a serverless network endpoint group
 
-1. Create a network endpoint group(NEG) for the Cloud Run service.
+1.  Create a network endpoint group (NEG) for the Cloud Run service:
 
-    ```bash
-    gcloud beta compute network-endpoint-groups create $SERVERLESS_NEG_NAME \
-        --region=$REGION \
-        --network-endpoint-type=SERVERLESS  \
-        --cloud-run-service=$LOGIN_BACKEND_SVC_NAME
-    ```
+        gcloud beta compute network-endpoint-groups create $SERVERLESS_NEG_NAME \
+            --region=$REGION \
+            --network-endpoint-type=SERVERLESS  \
+            --cloud-run-service=$LOGIN_BACKEND_SVC_NAME
 
-1. Create a backend service and add the serverless NEG as a backend to the Cloud Run service. A serverless NEG is needed here because that's how Cloud Run services can be associated with a load balancer.
+1.  Create a backend service and add the serverless NEG as a backend to the Cloud Run service.
 
-    ```bash
-    gcloud compute backend-services create $LOGIN_BACKEND_SVC_NAME \
-        --global
+        gcloud compute backend-services create $LOGIN_BACKEND_SVC_NAME \
+            --global
 
-    gcloud beta compute backend-services add-backend $LOGIN_BACKEND_SVC_NAME \
-        --global \
-        --network-endpoint-group=$SERVERLESS_NEG_NAME \
-        --network-endpoint-group-region=$REGION
-    ```
+        gcloud beta compute backend-services add-backend $LOGIN_BACKEND_SVC_NAME \
+            --global \
+            --network-endpoint-group=$SERVERLESS_NEG_NAME \
+            --network-endpoint-group-region=$REGION
 
-### Create URL map and configure forwarding rules
+    A serverless NEG is needed here because that's how Cloud Run services can be associated with a load balancer.
 
-1. Update the URL mapping file and create the URL map.
+### Create the URL map and configure forwarding rules
 
-    ```bash
-    sed -i -e "s/<DNS_NAME>/$DNS_NAME/" web-map-http.yaml
-    sed -i -e "s/<PROJECT_ID>/$PROJECT_ID/" web-map-http.yaml
-    sed -i -e "s/<LOGIN_BACKEND_SVC_NAME>/$LOGIN_BACKEND_SVC_NAME/" web-map-http.yaml
+1.  Update the URL mapping file and create the URL map.
 
-    gcloud compute url-maps import web-map-http --source web-map-http.yaml --global
-    ```
+        sed -i -e "s/<DNS_NAME>/$DNS_NAME/" web-map-http.yaml
+        sed -i -e "s/<PROJECT_ID>/$PROJECT_ID/" web-map-http.yaml
+        sed -i -e "s/<LOGIN_BACKEND_SVC_NAME>/$LOGIN_BACKEND_SVC_NAME/" web-map-http.yaml
 
-    In this step, we updated the values in the template URL map file and imported it. A final configuration looks like the following:
+        gcloud compute url-maps import web-map-http --source web-map-http.yaml --global
 
-    ```yaml
-    defaultService: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendBuckets/private-web
-    kind: compute#urlMap
-    name: web-map-http
-    hostRules:
-    - hosts:
-    - 'web.democloud.info'
-    pathMatcher: matcher1
-    pathMatchers:
-    - defaultService: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendBuckets/private-web
-    name: matcher1
-    routeRules:
-        - matchRules:
-            - prefixMatch: /
-            headerMatches:
-                - headerName: cookie
-                prefixMatch: 'Cloud-CDN-Cookie'
-        priority: 0
-        service: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendBuckets/private-web
-        - matchRules:
-            - prefixMatch: /
-        priority: 1
-        service: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendServices/flasklogin-backend-service
-    ```
+    This step updates the values in the template URL map file and imports it. A final configuration looks like the following:
 
-    In this configuration, we configured a route rule to match a cookie starting with "Cloud-CDN-Cookie" in the request header. If it's matched, the request is forwarded to the backend bucket service. Otherwise, it is forwarded to the login backend service.   
-    The cookie "Cloud-CDN-Cookie" is the signed cookie we mentioned earlier. It is set by the login service after successful authentication.
+        defaultService: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendBuckets/private-web
+        kind: compute#urlMap
+        name: web-map-http
+        hostRules:
+        - hosts:
+        - 'web.democloud.info'
+        pathMatcher: matcher1
+        pathMatchers:
+        - defaultService: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendBuckets/private-web
+        name: matcher1
+        routeRules:
+            - matchRules:
+                - prefixMatch: /
+                headerMatches:
+                    - headerName: cookie
+                    prefixMatch: 'Cloud-CDN-Cookie'
+            priority: 0
+            service: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendBuckets/private-web
+            - matchRules:
+                - prefixMatch: /
+            priority: 1
+            service: https://www.googleapis.com/compute/v1/projects/democlound-test/global/backendServices/flasklogin-backend-service
 
-1. Create a target HTTPS proxy with the URL map.
+    In this configuration, a route rule is configured to match a cookie starting with `Cloud-CDN-Cookie` in the request header. If it's matched, the request is 
+    forwarded to the backend bucket service. Otherwise, it is forwarded to the login backend service. The cookie `Cloud-CDN-Cookie` is the signed cookie
+    mentioned earlier. It is set by the login service after successful authentication.
 
-    ```bash
-    gcloud compute target-https-proxies create https-lb-proxy --url-map web-map-http --ssl-certificates=www-ssl-cert
-    ```
+1.  Create a target HTTPS proxy with the URL map:
 
-1. Create the forwarding rule with the reserved IP address.
+        gcloud compute target-https-proxies create https-lb-proxy --url-map web-map-http --ssl-certificates=www-ssl-cert
 
-    ```bash
-    gcloud compute forwarding-rules create private-web-https-rule --address=$STATIC_IP_NAME --global --target-https-proxy=https-lb-proxy --ports=443
-    ```
+1.  Create the forwarding rule with the reserved IP address:
 
-## Testing the website
+        gcloud compute forwarding-rules create private-web-https-rule --address=$STATIC_IP_NAME --global --target-https-proxy=https-lb-proxy --ports=443
 
-First, let's make sure the managed SSL certificate has been successfully provisioned. Run the following command and you should see the status is ACTIVE. 
+## Test the website
 
-```bash
-gcloud compute ssl-certificates list | grep ${DNS_NAME}
-```
+1.  To make sure that the managed SSL certificate has been successfully provisioned, run the following command: 
 
-Example output:
+        gcloud compute ssl-certificates list | grep ${DNS_NAME}
+    
+    The status should be `ACTIVE`:
 
-    private-web.democloud.info: ACTIVE
+        private-web.democloud.info: ACTIVE
 
-Once the ssl certificate is provisioned, you can try to open the URL in your browser. To get the URL:
+1.  Get the URL:
 
-```bash
-echo https://$DNS_NAME
-```
+        echo https://$DNS_NAME
 
-Example output:
+    Example output:
 
-    https://private-web.democloud.info
+        https://private-web.democloud.info
 
 
-__Note__: Both the SSL certificate and the DNS name propagation need some time. Please wait at least a few minutes if the page is not accessible.
+    Both the SSL certificate and the DNS name propagation need some time. Wait a few minutes if the page is not accessible.
 
-After the certificate is active, we can try to open a file hosted in the bucket. For the first time, we will be redirected to the login page. For example:
+1.  Try to open a file hosted in the bucket.
 
-![login](https://storage.googleapis.com/gcp-community/tutorials/securing-gcs-static-website/login-page.png)
+    The first time, you'll be redirected to the login page. For example:
 
-Type in the username and password. The default one is:
+    ![login](https://storage.googleapis.com/gcp-community/tutorials/securing-gcs-static-website/login-page.png)
 
-Username; admin  
-Password: password  
-We should be able to open the file now. For example:
+1.  Enter the username and password. 
 
-![static-file](https://storage.googleapis.com/gcp-community/tutorials/securing-gcs-static-website/static-file.png)
+    The default values are the following:
 
-If you change the URL to the root, you can open the app like following:
+    Username: `admin`  
+    Password: `password`
+    
+1.  Try again to open a file hostead in the bucket:
 
-![home-page](https://storage.googleapis.com/gcp-community/tutorials/securing-gcs-static-website/home.png)
+    ![static-file](https://storage.googleapis.com/gcp-community/tutorials/securing-gcs-static-website/static-file.png)
 
+    If you change the URL to the root, you can open the app like following:
+
+    ![home-page](https://storage.googleapis.com/gcp-community/tutorials/securing-gcs-static-website/home.png)
 
 ## Cleaning up
 
-To avoid incurring charges to your Google Cloud account for the resources used in this tutorial:
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the resources that you created. You can either 
+delete the entire project or delete individual resources.
+
+Deleting a project has the following effects:
+
+* Everything in the project is deleted. If you used an existing project for this tutorial, when you delete it, you also delete any other work you've done in the
+  project.
+* Custom project IDs are lost. When you created this project, you might have created a custom project ID that you want to use in the future. To preserve the URLs
+  that use the project ID, delete selected resources inside the project instead of deleting the whole project.
+
+If you plan to explore multiple tutorials, reusing projects can help you to avoid exceeding project quota limits.
 
 ### Delete the project
 
-The easiest way to eliminate billing is to delete the project you created for the tutorial.  
-**Caution**: Deleting a project has the following effects:
+The easiest way to eliminate billing is to delete the project you created for the tutorial. 
 
-   -  **Everything in the project is deleted.** If you used an existing project for this tutorial, when you delete it, you also delete any other work you've done in the project.
-   -  **Custom project IDs are lost.** When you created this project, you might have created a custom project ID that you want to use in the future. To preserve the URLs that use the project ID, such as an **`appspot.com`** URL, delete selected resources inside the project instead of deleting the whole project.
-
-   If you plan to explore multiple tutorials and quickstarts, reusing projects can help you avoid exceeding project quota limits.
-
-1. In the Cloud Console, go to the **Manage resources** page.  
-[Go to the Manage resources page](https://console.cloud.google.com/iam-admin/projects)
-1. In the project list, select the project that you want to delete and then click **DELETE**
-
-.
-1. In the dialog, type the project ID and then click **Shut down** to delete the project.
+1.  In the Cloud Console, go to the [**Manage resources** page](https://console.cloud.google.com/iam-admin/projects).  
+1.  In the project list, select the project that you want to delete and then click **Delete**.
+1.  In the dialog, type the project ID and then click **Shut down** to delete the project.
 
 ### Delete the resources
 
-If you don't want to delete the project, alternatively you can delete the provisioned resources. For example, you can do it using the following steps:
+If you don't want to delete the project, you can delete the provisioned resources:
 
-```bash
-gcloud compute forwarding-rules delete private-web-https-rule --global
+    gcloud compute forwarding-rules delete private-web-https-rule --global
 
-gcloud compute target-https-proxies delete https-lb-proxy
+    gcloud compute target-https-proxies delete https-lb-proxy
 
-gcloud compute url-maps delete web-map-http
+    gcloud compute url-maps delete web-map-http
 
-gcloud compute backend-services delete $LOGIN_BACKEND_SVC_NAME --global
+    gcloud compute backend-services delete $LOGIN_BACKEND_SVC_NAME --global
 
-gcloud beta compute network-endpoint-groups delete $SERVERLESS_NEG_NAME --region $REGION
+    gcloud beta compute network-endpoint-groups delete $SERVERLESS_NEG_NAME --region $REGION
 
-gcloud projects remove-iam-policy-binding $PROJECT_ID \
-    --member=serviceAccount:${PROJECT_NUM}-compute@developer.gserviceaccount.com \
-    --role=roles/secretmanager.secretAccessor
+    gcloud projects remove-iam-policy-binding $PROJECT_ID \
+        --member=serviceAccount:${PROJECT_NUM}-compute@developer.gserviceaccount.com \
+        --role=roles/secretmanager.secretAccessor
 
-gcloud run services delete $LOGIN_BACKEND_SVC_NAME \
-    --platform=managed --region=$REGION 
+    gcloud run services delete $LOGIN_BACKEND_SVC_NAME \
+        --platform=managed --region=$REGION 
 
-gcloud container images delete gcr.io/$PROJECT_ID/flask_login
+    gcloud container images delete gcr.io/$PROJECT_ID/flask_login
 
-gcloud secrets delete $CDN_SIGN_KEY
+    gcloud secrets delete $CDN_SIGN_KEY
 
-gcloud compute ssl-certificates delete www-ssl-cert
+    gcloud compute ssl-certificates delete www-ssl-cert
 
-gcloud compute backend-buckets delete web-backend-bucket
+    gcloud compute backend-buckets delete web-backend-bucket
 
-gcloud compute addresses delete $STATIC_IP_NAME --global
+    gcloud compute addresses delete $STATIC_IP_NAME --global
 
-gsutil rm -r gs://$BUCKET_NAME
-```
+    gsutil rm -r gs://$BUCKET_NAME
 
-Finally remove the DNS record in your DNS registry.
+Finally, remove the DNS record in your DNS registry.
 
 ## What's next
 
