@@ -62,37 +62,56 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 ## Before you begin
 
 For this tutorial, you need a Google Cloud [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a 
-new one, or select a project you already created.
+new project or select a project that you already created. When you finish this tutorial, you can avoid continued billing by deleting the resources you created. 
+To make cleanup easiest, you may want to create a new project for this tutorial, so that you can delete the project when you're done. For details, see the 
+"Cleaning up" section at the end of the tutorial.
+
+To complete this tutorial, you need a domain that you own or manage. If you don't yet have a domain, there are many services through which you can register a
+domain, such as [Google Domains](https://domains.google.com/). This tutorial uses the domain `democloud.info`.
 
 1.  [Select or create a Google Cloud project.](https://cloud.console.google.com/projectselector2/home/dashboard)
 
 1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
 
+1.  [Enable the Compute Engine, Cloud Run, Cloud Secret Manager, and Cloud DNS APIs.](https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,run.googleapis.com,secretmanager.googleapis.com,dns.googleapis.com)  
 
-1.  [Enable the Compute Engine, Cloud Run, Cloud Secret Manager, and Cloud DNS APIs.](https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,run.googleapis.com,secretmanager.googleapis.com,dns.googleapis.com)
+1.  Make sure that you have either a project [owner or editor role](https://cloud.google.com/iam/docs/understanding-roles#primitive_roles), or sufficient 
+    permissions to use the services listed in the previous section.
 
-1. Have a domain that you own or manage. If you don't have an existing domain, there are many services through which you can register a new domain, such as [Google Domains](https://domains.google.com/).  
-This tutorial uses the domain democloud.info.
-1. [Verify that you own or manage the domain that you will be using](https://cloud.google.com/storage/docs/domain-name-verification#verification). Make sure you are verifying the top-level domain, such as example.com, and not a subdomain, such as www.example.com.  
-**Note:** If you own the domain you are associating to a bucket, you might have already performed this step in the past. If you purchased your domain through Google Domains, verification is automatic.
-1. Make sure you have either a project [owner or editor role](https://cloud.google.com/iam/docs/understanding-roles#primitive_roles), or sufficient permissions to use the services listed in the previous section.
+1.  [Verify that you own or manage the domain that you will be using](https://cloud.google.com/storage/docs/domain-name-verification#verification).
 
-   **Note:** For information about using Cloud DNS to set up your domain, see [Set up your domain using Cloud DNS](https://cloud.google.com/dns/docs/tutorials/create-domain-tutorial#set-up-domain).
+    Make sure that you are verifying the top-level domain, such as `example.com`, and not a subdomain, such as `www.example.com`.
+    
+    **Note:** If you own the domain that you are associating with a bucket, you might have already performed this step in the past. If you purchased your domain 
+    through Google Domains, verification is automatic.
 
-Most of the steps listed in this tutorial can be completed either using the web console or CLI. For simplicity, only the CLI commands are listed. 
+For information about using Cloud DNS to set up your domain, see
+[Set up your domain using Cloud DNS](https://cloud.google.com/dns/docs/tutorials/create-domain-tutorial#set-up-domain).
 
-When you finish this tutorial, you can avoid continued billing by deleting the resources you created. See [Cleaning up](#heading=h.mlrdlgcohh7k) for more detail.
+## Using Cloud Shell
+
+This tutorial uses the following tool packages:
+
+* [`gcloud`](https://cloud.google.com/sdk/gcloud)
+* [`gsutil`](https://cloud.google.com/storage/docs/gsutil)
+* [`npm`](https://www.npmjs.com/get-npm)
+* [`docker`](https://docs.docker.com/get-docker/)
+
+Because [Cloud Shell](https://cloud.google.com/shell) automatically includes these packages, we recommend that you run the commands in this tutorial in Cloud
+Shell, so that you don't need to install these packages locally.
 
 ## Preparing your environment
 
-This tutorial uses tools such as [gcloud](https://cloud.google.com/sdk/gcloud), [gsutil](https://cloud.google.com/storage/docs/gsutil), [npm](https://www.npmjs.com/get-npm), and [docker](https://docs.docker.com/get-docker/). It's recommended to use [Cloud Shell](https://cloud.google.com/shell) if you haven't had the tools installed locally.  
-To get the sample code, clone the repository:
+### Get the sample code
 
-```bash
-git clone https://github.com/GoogleCloudPlatform/community.git
-```
+The sample code for this tutorial is in the
+[Google Cloud Community GitHub repository](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/securing-gcs-static-website).
 
-You can find the code under the directory [community/tutorials/securing-gcs-static-website](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/securing-gcs-static-website).
+1.  Clone the repository:
+
+        git clone https://github.com/GoogleCloudPlatform/community.git
+
+1.  Go to the tutorial directory, `community/tutorials/securing-gcs-static-website`.
 
 Let's set some variables that we use later. Please change the values as needed.
 
@@ -424,7 +443,7 @@ The easiest way to eliminate billing is to delete the project you created for th
 .
 1. In the dialog, type the project ID and then click **Shut down** to delete the project.
 
-## Delete the resources
+### Delete the resources
 
 If you don't want to delete the project, alternatively you can delete the provisioned resources. For example, you can do it using the following steps:
 
@@ -463,6 +482,6 @@ Finally remove the DNS record in your DNS registry.
 
 ## What's next
 
--  Learn more about [securing Cloud Run services](https://cloud.google.com/run/docs/tutorials/secure-services) 
--  Learn more about to improve reliability of Cloud Run service by [serving traffic from multiple regions](https://cloud.google.com/run/docs/multiple-regions)
+-  Learn more about [securing Cloud Run services](https://cloud.google.com/run/docs/tutorials/secure-services).
+-  Learn more about to improve reliability of Cloud Run services by [serving traffic from multiple regions](https://cloud.google.com/run/docs/multiple-regions).
 -  Try out other Google Cloud features for yourself. Have a look at those [tutorials](https://cloud.google.com/docs/tutorials).
