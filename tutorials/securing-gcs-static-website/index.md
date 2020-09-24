@@ -1,9 +1,9 @@
 ---
-title: Securing a static website hosted on Google Cloud Storage 
-description: This tutorial describes a solution to protect static assets on Cloud Storage based on the GCLB Serverless Network Endpoint Groups (NEGs).
-author: shenxiang
-tags: Serverless, Cloud Storage, GCLB, Network Endpoint Groups
-date_published: 2020-08-26
+title: Protecting static website assets hosted on Cloud Storage 
+description: Learn how to protect static website assets on Cloud Storage with Cloud Load Balancing serverless network endpoint groups (NEGs).
+author: xiangshen-dk
+tags: authentication, authorization, security
+date_published: 2020-09-25
 ---
 
 It's easy to create and maintain an[ HTTPS-based static website on Google Cloud Storage](https://cloud.google.com/storage/docs/hosting-static-website)(GCS) with Cloud CDN, Google Cloud Load Balancer(GCLB), managed SSL certificates, and custom domains. This serverless approach becomes popular due to the flexibility, scalability, and low cost.   
