@@ -111,132 +111,119 @@ The sample code for this tutorial is in the
 
         git clone https://github.com/GoogleCloudPlatform/community.git
 
-1.  Go to the tutorial directory, `community/tutorials/securing-gcs-static-website`.
+1.  Go to the tutorial directory:
 
-Let's set some variables that we use later. Please change the values as needed.
+        cd community/tutorials/securing-gcs-static-website/static-website
 
-```bash
-# Change the project id to your project Id
-export PROJECT_ID=<your project id>
-export PROJECT_NUM=$(gcloud projects describe ${PROJECT_ID} --format="value(projectNumber)")
-export REGION=us-central1
-export BUCKET_NAME=${PROJECT_ID}-example-com
-export SERVERLESS_NEG_NAME=login-web-serverless-neg
-export LOGIN_BACKEND_SVC_NAME=login-backend-service
-export STATIC_IP_NAME=private-static-web-external-ip
-export CDN_SIGN_KEY=private-static-web-cdn-key
+### Set environment variables
 
-# Change the DNS name to your own name, for example:
-# export DNS_NAME=private-web.democloud.info
-export DNS_NAME=<your dns name>
+Set environment variables that you use throughout the tutorial:
 
-# If you have the managed DNS zone configured in the project set the value here.
-# For example:
-# export MANAGED_ZONE=demo-cloud-info
-# Otherwise, you need to update the DNS record 
-# in your DNS registry manually. 
-export MANAGED_ZONE=<your managed zone>
-```
+    # Replace [YOUR_PROJECT_ID] with your project ID.
+    export PROJECT_ID=[YOUR_PROJECT_ID]
+    export PROJECT_NUM=$(gcloud projects describe ${PROJECT_ID} --format="value(projectNumber)")
+    export REGION=us-central1
+    export BUCKET_NAME=${PROJECT_ID}-example-com
+    export SERVERLESS_NEG_NAME=login-web-serverless-neg
+    export LOGIN_BACKEND_SVC_NAME=login-backend-service
+    export STATIC_IP_NAME=private-static-web-external-ip
+    export CDN_SIGN_KEY=private-static-web-cdn-key
+
+    # Replace [YOUR_DNS_NAME] with your own name. For example:
+    # export DNS_NAME=private-web.democloud.info
+    export DNS_NAME=YOUR_DNS_NAME]
+
+    # If you have the managed DNS zone configured in the project, set the value here.
+    # For example:
+    # export MANAGED_ZONE=demo-cloud-info
+    # Otherwise, you need to update the DNS record in your DNS registry manually. 
+    export MANAGED_ZONE=[YOUR_MANAGED_ZONE]
 
 ## Implementation steps
 
-### Build and deploy a static website to Cloud Storage
+### Build a static website and deploy it to Cloud Storage
 
-1. Build the demo Single Page Application(SPA). 
+1.  Build the demonstration single-page application (SPA):
 
-    ```bash
-    cd community/tutorials/securing-gcs-static-website/static-website
-    npm install
-    npm run build
-    ```
+        npm install
+        npm run build
 
-    __Note__: This is a demo app using vue.js. It's only for demo purposes, you can ignore any warnings from npm.
+    This is a demonstration app using Vue.js. You can ignore any warnings from `npm`.
 
-1. Use the [gsutil mb](https://cloud.google.com/storage/docs/gsutil/commands/mb) command to create a bucket.
+1.  Create a bucket:
 
-    ```bash
-    gsutil mb -b on gs://$BUCKET_NAME
-    ```
+        gsutil mb -b on gs://$BUCKET_NAME
+        
+    For infomation on the `gsutil mb` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/mb).   
 
-1. Use the [gsutil rsync](https://cloud.google.com/storage/docs/gsutil/commands/rsync) command to upload the build artifacts. They are all static files.
+1.  Upload the build artifacts, which are all static files:
 
-    ```bash
-    gsutil rsync -R dist/ gs://$BUCKET_NAME
-    ```
+        gsutil rsync -R dist/ gs://$BUCKET_NAME
 
-1. Use the [gsutil web set](https://cloud.google.com/storage/docs/gsutil/commands/web#set) command to set the `MainPageSuffix` property with the `-m` flag and the `NotFoundPage` with the `-e` flag.
+    For infomation on the `gsutil rsync` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/rsync).
 
-    ```bash
-    gsutil web set -m index.html -e index.html gs://$BUCKET_NAME
-    ```
+1.  Set the `MainPageSuffix` property with the `-m` flag and the `NotFoundPage` with the `-e` flag:
+
+        gsutil web set -m index.html -e index.html gs://$BUCKET_NAME
+    
+    For infomation on the `gsutil web set` command, see [the documentation](https://cloud.google.com/storage/docs/gsutil/commands/web#set).
 
 ### Create a load balancer 
 
-1. Reserving an external IP address. This IP will be used by the load balancer.
+1.  Reserve an external IP address, which will be used by the load balancer:
 
-    ```bash
-    gcloud compute addresses create $STATIC_IP_NAME \
-        --network-tier=PREMIUM \
-        --ip-version=IPV4 \
-        --global
-    ```
+        gcloud compute addresses create $STATIC_IP_NAME \
+            --network-tier=PREMIUM \
+            --ip-version=IPV4 \
+            --global
 
-1. Export the IP address to be used later.
+1.  Export the IP address:
 
-    ```bash
-    export SVC_IP_ADDR=$(gcloud compute addresses list --filter="name=${STATIC_IP_NAME}" \
-    --format="value(address)" --global --project ${PROJECT_ID})
-    ```
+        export SVC_IP_ADDR=$(gcloud compute addresses list --filter="name=${STATIC_IP_NAME}" \
+        --format="value(address)" --global --project ${PROJECT_ID})
 
-1. Confirm you have an IP address.
+1.  Confirm that you have an IP address available in the `SVC_IP_ADDR` environment variable:
 
-    ```bash
-    echo ${SVC_IP_ADDR}
-    ```
+        echo ${SVC_IP_ADDR}
 
     Example output:
 
-    `34.120.180.189`
+        34.120.180.189
 
+1. Add the DNS record to your DNS zone.
 
-1. Add the DNS record to your DNS zone. 
+    * If you are using the managed DNS zone in the same project, you can use the following commands:
 
-   If you are using the managed DNS zone in the same project, you can use the following commands:
+          gcloud dns record-sets transaction start --zone=$MANAGED_ZONE
 
-    ```bash
-    gcloud dns record-sets transaction start --zone=$MANAGED_ZONE
+          gcloud dns record-sets transaction add ${SVC_IP_ADDR} --name=$DNS_NAME --ttl=60 --type=A --zone=$MANAGED_ZONE
 
-    gcloud dns record-sets transaction add ${SVC_IP_ADDR} --name=$DNS_NAME --ttl=60 --type=A --zone=$MANAGED_ZONE
+          gcloud dns record-sets transaction execute --zone=$MANAGED_ZONE
 
-    gcloud dns record-sets transaction execute --zone=$MANAGED_ZONE
-    ```
+    * Otherwise, follow the steps provided by your DNS service provider to add an A record. The A record needs to use the IP address that you just provisioned
+    and the DNS name that you set earlier.
 
-    Otherwise, follow the steps provided by your DNS service provider to add an A record. The A record needs to use the IP address you just provisioned and the DNS_NAME you set choose earlier. 
+1.  Create an HTTPS load balancer, configure the bucket as a backend, and enable Cloud CDN for the load balancer:
 
-1. Create an HTTPS load balancer and configure the bucket as a backend. We also enable Cloud CDN for the load balancer.
+        gcloud compute backend-buckets create web-backend-bucket \
+            --gcs-bucket-name=$BUCKET_NAME \
+            --enable-cdn
 
-    ```bash
-    gcloud compute backend-buckets create web-backend-bucket \
-        --gcs-bucket-name=$BUCKET_NAME \
-        --enable-cdn
-    ```
+1.  Create a Google-managed SSL certificate.
 
-1. Create a Google-managed SSL certificate.
+        gcloud compute ssl-certificates create www-ssl-cert \
+        --domains $DNS_NAME
+    
+1.  Check the status of your SSL certificate:
 
-    ```bash
-    gcloud compute ssl-certificates create www-ssl-cert \
-    --domains $DNS_NAME
-    ```
-
-    __Note__: The status is PROVISIONING (initially).  
-    You can check the status of your SSL cert by running the following command.  The status will eventually change to ACTIVE.  Until it is ACTIVE, you won't be able to access your service.  It can take 30–60 minutes.
-
-    ```bash
-    gcloud compute ssl-certificates list | grep ${DNS_NAME}
+        gcloud compute ssl-certificates list | grep ${DNS_NAME}
 
     Example output:
-    private-web.democloud.info: PROVISIONING
-    ```
+    
+        private-web.democloud.info: PROVISIONING
+
+    Initially, the status is `PROVISIONING`. The status will eventually (typically in 30-60 minutes) change to `ACTIVE`. Until it is `ACTIVE`, you won't be able
+    to access your service.
 
 ### Configure Cloud CDN
 
