@@ -3,16 +3,16 @@ title: Using Flask-Login with Cloud Firestore in Datastore mode
 description: Represent your Cloud Datastore entity with a Python class and use this for Flask-Login user management.
 author: komlasapaty
 tags: Flask Framework, Python 3
-date_published: 2020-09-25
+date_published: 2020-09-24
 ---
 
 In this tutorial, you implement user authentication using the popular Flask extension [Flask-Login](https://flask-login.readthedocs.io) with
-[Firestore in Datastore mode](https://cloud.google.com/datastore/docs/datastore-api-tutorial) as the database backend.
-
-This tutorial is not meant to teach the fundamentals of Flask-Login or Firestore in Datastore mode. This tutorial demonstrates the use of Firestore in Datastore
-mode (as opposed to any relational database) as the database backend for user authentication with Flask-Login.
+[Firestore in Datastore mode](https://cloud.google.com/datastore/docs/datastore-api-tutorial) as the database backend. This tutorial demonstrates the use of 
+Firestore in Datastore mode (as opposed to any relational database) as the database backend for user authentication with Flask-Login.
 
 The use of Flask-Login should not force you to abandon the power of Firestore in Datastore mode in favor of a relational database.
+
+This tutorial doesn't teach the fundamentals of Flask-Login or Firestore in Datastore mode.
 
 Basic familiarity with the following is assumed:
 
@@ -43,19 +43,21 @@ Flask-Login and WTForms.
 To model a Datastore entity as a Python class, this tutorial uses the [Datastore Entity library](https://datastore-entity.readthedocs.io). Think of Datastore 
 Entity as an ORM-like library for Firestore in Datastore mode. 
 
-_Disclaimer: The author of this tutorial is also the author of Datastore Entity._  
-
+The author of this tutorial is also the author of the Datastore Entity library.  
 
 ## Set up your local environment
 
-NOTE: Projects that use the Datastore mode API require an active App Engine application.
-So you should already have App Engine and Datastore mode API enabled in your GCP project.  
+Projects that use the Datastore mode API require an active App Engine application, so you should already have the App Engine and Datastore mode APIs enabled in
+your Google Cloud project.  
 
-As usual, to connect to your Google Cloud service from your local machine you need the appropriate credentials(service account key).  
-_Create and download service account key_
-- On the GCP console, go to **Main menu** -> **IAM & Admin** -> click **Service Account** on the left pane -> click **CREATE SERVICE ACCOUNT** at the top. 
-- Give the service account an appropriate name (eg. datastore-service-account). Enter an optional description below and click **CREATE**
-- Under **Select a role** dropdown menu, type **Cloud Datastore owner** in the filter field, select it and click **CONTINUE** and click **DONE** on the next page.
+### Create and download service account key
+
+To connect to your Google Cloud service from your local machine, you need the appropriate credentials (service account key).
+
+1.  In the Cloud Console, go to the [**Service accounts** page](https://console.cloud.google.com/iam-admin/serviceaccounts).
+1.  Click **Create service account**.
+1.  Give the service account an appropriate name, such as `datastore-service-account`, enter a description, and click **Create**.
+1.  Under **Select a role**, type `Cloud Datastore Owner` in the filter field, select **Cloud Datastore Owner**, click **Continue**, and click **Done**.
 - On the **Service Account** page, look for the service account you just created and click the overflow icon (vertical ellipsis) at the far right end.
 - Click **Create Key**  from the dropdown menu and make sure **JSON** is selected as the **Key type**.
 - Click **CREATE**. This automatically downloads the service account JSON key to your local machine. Take note of the file name on the popup screen.
@@ -80,13 +82,16 @@ You are now ready to connect to your Firestore in Datastore mode.
 
 
 ### Install required libraries
-```bash
-pip install flask flask-login datastore-entity
-```
-NOTE: Installing datastore-entity installs the required/official client library for **Firestore in Datastore mode.**
 
-### Create your Flask user model
-Model your ```user``` entity.
+Run the following command to install the required libraries:
+
+    pip install flask flask-login datastore-entity
+
+Installing `datastore-entity` installs the required official client library for Firestore in Datastore mode.
+
+## Create your Flask user model
+
+Model your `user` entity.
 
 ```python
 from flask_login import UserMixin
@@ -103,14 +108,16 @@ class User(DatastoreEntity, UserMixin):
     # other fields or methods go here...
     #def authenticated(self, password):
     #    ...
-
 ```
 
-### Implement the Flask 'login' view
-Once the entity is modelled, you can fetch your user entity using familiar ORM pattern.  
-Use the methods provided on your model to fetch the user record.  
+## Implement the Flask login view
 
-An example flask login view.  
+After the entity is modeled, you can fetch your user entity using familiar ORM patterns.
+
+Use the methods provided on your model to fetch the user record.
+
+An example Flask-Login view:
+
 ```python
 from flask_login import login_user
 from models import User
@@ -145,16 +152,19 @@ def login():
             flash('Login or password is incorrect','error')
 
     return render_template("page/login.html", form=form)
-
 ```
-### Conclusion
-You can employ same approach to model any other Firestore in Datastore mode entity to persist/update data.
-This technique can let Firestore in Datastore mode be a drop-in replacement for your relational database with little to no code changes.
+
+## Conclusion
+
+You can employ the same approach to model any other Firestore in Datastore mode entity to persist and update data.
+
+This technique can let Firestore in Datastore mode be a drop-in replacement for your relational database with little to no code change.
 
 
-## Useful links
--  [Firestore in Datastore mode Documentation](https://cloud.google.com/datastore)
+## What's next
+
+-  [Firestore in Datastore mode documentation](https://cloud.google.com/datastore)
 -  [Flask documentation](https://flask.palletsprojects.com/en/1.1.x/)
--  [Flask-Login Documentation](https://flask-login.readthedocs.io) 
--  [Datastore-Entity Documentation](https://datastore-entity.readthedocs.io)
--  [Flask-Login Tutorial Using Postgres](https://hackersandslackers.com/flask-login-user-authentication)
+-  [Flask-Login documentation](https://flask-login.readthedocs.io) 
+-  [Datastore Entity documentation](https://datastore-entity.readthedocs.io)
+-  [Flask-Login tutorial using Postgres](https://hackersandslackers.com/flask-login-user-authentication)
