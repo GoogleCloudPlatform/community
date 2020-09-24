@@ -6,13 +6,17 @@ tags: authentication, authorization, security
 date_published: 2020-09-25
 ---
 
-It's easy to create and maintain an[ HTTPS-based static website on Google Cloud Storage](https://cloud.google.com/storage/docs/hosting-static-website)(GCS) with Cloud CDN, Google Cloud Load Balancer(GCLB), managed SSL certificates, and custom domains. This serverless approach becomes popular due to the flexibility, scalability, and low cost.   
-However, it's still challenging to provide authentication and authorization for a static website on GCP **in a serverless fashion**.  This tutorial describes a solution to protect static assets on GCS based on the GCLB [Serverless Network Endpoint Groups](https://cloud.google.com/load-balancing/docs/negs/setting-up-serverless-negs) (NEGs).  
-Below is the high-level architecture of this solution:
+It's easy to create and maintain an [HTTPS-based static website on Cloud Storage](https://cloud.google.com/storage/docs/hosting-static-website) with Cloud CDN,
+Cloud Load Balancing, managed SSL certificates, and custom domains. This serverless approach is popular because of its flexibility, scalability, and low cost.   
+However, it can still be challenging to provide authentication and authorization for a static website on Google Cloud *in a serverless fashion*. This tutorial
+describes a solution to protect static assets on Cloud Storage using Cloud Load Balancing
+[serverless network endpoint groups (NEGs)](https://cloud.google.com/load-balancing/docs/negs/setting-up-serverless-negs).
+
+The following diagram shows the high-level architecture of this solution:
 
 ![gcs-static-arch](https://storage.googleapis.com/gcp-community/tutorials/securing-gcs-static-website/arch-gcs-site.png)
 
-The architecture above incorporates the following key features:
+The architecture incorporates the following key features:
 
 1. A load balancer to use a custom domain with a managed SSL certificate. When a request is received, we use [routing rules](https://cloud.google.com/load-balancing/docs/https/setting-up-query-and-header-routing#http-header-based-routing) to check whether [a signed cookie for Cloud CDN](https://cloud.google.com/cdn/docs/private-content#signed_cookies) is in the request header. If the cookie doesn't exist, redirect the request to a login app hosted on Cloud Run. If there is a signed cookie, send the request to the Cloud CDN of the backend bucket.
 
