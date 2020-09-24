@@ -18,26 +18,37 @@ The following diagram shows the high-level architecture of this solution:
 
 The architecture incorporates the following key features:
 
-1. A load balancer to use a custom domain with a managed SSL certificate. When a request is received, we use [routing rules](https://cloud.google.com/load-balancing/docs/https/setting-up-query-and-header-routing#http-header-based-routing) to check whether [a signed cookie for Cloud CDN](https://cloud.google.com/cdn/docs/private-content#signed_cookies) is in the request header. If the cookie doesn't exist, redirect the request to a login app hosted on Cloud Run. If there is a signed cookie, send the request to the Cloud CDN of the backend bucket.
+1.  A load balancer to use a custom domain with a managed SSL certificate. When a request is received, the solution uses
+    [routing rules](https://cloud.google.com/load-balancing/docs/https/setting-up-query-and-header-routing#http-header-based-routing) to check whether a
+    [signed cookie for Cloud CDN](https://cloud.google.com/cdn/docs/private-content#signed_cookies) is in the request header. If the cookie doesn't exist, 
+    the request is redirected to a login app hosted on Cloud Run. If there is a signed cookie, the request is sent to the Cloud CDN of the backend bucket.
 
-1. The login app performs authentication. If the authentication is successful, the login app [generates a signed cookie ](https://cloud.google.com/cdn/docs/using-signed-cookies)and sends it back to the client with an HTTP redirect. The cookie works because the login app and the bucket backends are behind the same load balancer. Therefore, they are considered as **the [same origin](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy) (Important!)**. Even if a user can access the default Cloud Run endpoint directly and log in from there, she still doesn't have access to the CDN since the cookie is not from the same origin.
+1.  The login app performs authentication. If the authentication is successful, the login app
+    [generates a signed cookie](https://cloud.google.com/cdn/docs/using-signed-cookies) and sends it back to the client with an HTTP redirect. The cookie works
+    because the login app and the bucket backends are behind the same load balancer. Therefore, they are considered as the 
+    [same origin](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy).
+    
+    **Important:** Even if a user can access the default Cloud Run endpoint directly and log in from there, they still don't have access to the CDN because the 
+    cookie is not from the same origin.
 
-1. The CDN [signed cookie is verified by Cloud CDN](https://cloud.google.com/cdn/docs/using-signed-cookies), providing access to the static assets. We can specify an expiration time for the cookie. Once it's expired, modern browsers either delete the cookie or stop sending it. Cloud CDN will also reject expired cookies.
+1.  The CDN [signed cookie is verified by Cloud CDN](https://cloud.google.com/cdn/docs/using-signed-cookies), providing access to the static assets. You can
+    specify an expiration time for the cookie. When the cookie has expired, modern browsers either delete the cookie or stop sending it. Cloud CDN also rejects
+    expired cookies.
 
-1. Permit Cloud CDN to read the objects in our private bucket by adding the Cloud CDN service account to Cloud Storage's ACLs.
+1.  Permit Cloud CDN to read the objects in the private bucket by adding the Cloud CDN service account to Cloud Storage access control lists (ACLs).
 
 ## Objectives 
 
--  Build and deploy a static website to a Cloud Storage bucket.
--  Create a Cloud load balancer with a Google-managed SSL certificate.
+-  Build a static website and deploy it to a Cloud Storage bucket.
+-  Create a Cloud Load Balancing load balancer with a Google-managed SSL certificate.
 -  Set up Cloud CDN with a backend bucket.
 -  Deploy a login service to Cloud Run.
--  Create serverless network endpoint groups for GCLB.
+-  Create serverless network endpoint groups for Cloud Load Balancing.
 -  Create URL maps and route authenticated and unauthenticated traffic.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud, including:
+This tutorial uses billable components of Google Cloud, including the following:
 
 -  [Cloud Storage](https://cloud.google.com/storage/pricing)
 -  [Cloud Load Balancing](https://cloud.google.com/vpc/network-pricing#lb)
@@ -46,22 +57,20 @@ This tutorial uses billable components of Google Cloud, including:
 -  [Cloud Secret Manager](https://cloud.google.com/secret-manager#pricing)
 -  [Cloud DNS](https://cloud.google.com/dns/pricing)
 
-Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
+Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
-For this reference guide, you need a Google Cloud [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a new one, or select a project you already created:
+For this tutorial, you need a Google Cloud [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a 
+new one, or select a project you already created.
 
-1. Select or create a Google Cloud project.
+1.  [Select or create a Google Cloud project.](https://cloud.console.google.com/projectselector2/home/dashboard)
 
-    [GO TO THE PROJECT SELECTOR PAGE](https://pantheon.corp.google.com/projectselector2/home/dashboard)
+1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
 
-1. Enable billing for your project.
 
-    [ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
+1.  [Enable the Compute Engine, Cloud Run, Cloud Secret Manager, and Cloud DNS APIs.](https://console.cloud.google.com/flows/enableapi?apiid=dataproc,storage_component)
 
-1. Enable the Compute Engine, Cloud Run, Cloud Secret Manager, and Cloud DNS APIs.  
-[ENABLE THE APIS](https://console.cloud.google.com/flows/enableapi?apiid=dataproc,storage_component)
 1. Have a domain that you own or manage. If you don't have an existing domain, there are many services through which you can register a new domain, such as [Google Domains](https://domains.google.com/).  
 This tutorial uses the domain democloud.info.
 1. [Verify that you own or manage the domain that you will be using](https://cloud.google.com/storage/docs/domain-name-verification#verification). Make sure you are verifying the top-level domain, such as example.com, and not a subdomain, such as www.example.com.  
