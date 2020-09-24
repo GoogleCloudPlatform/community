@@ -3,49 +3,51 @@ title: Using Flask-Login with Cloud Firestore in Datastore mode
 description: Represent your Cloud Datastore entity with a Python class and use this for Flask-Login user management.
 author: komlasapaty
 tags: Flask Framework, Python 3
-date_published: 2020-09-15
+date_published: 2020-09-25
 ---
 
-In this tutorial, you will implement user authentication using the popular Flask extension [Flask-Login](https://flask-login.readthedocs.io) with [**Firestore in Datastore mode**](https://cloud.google.com/datastore/docs/datastore-api-tutorial) as the database backend.
+In this tutorial, you implement user authentication using the popular Flask extension [Flask-Login](https://flask-login.readthedocs.io) with
+[Firestore in Datastore mode](https://cloud.google.com/datastore/docs/datastore-api-tutorial) as the database backend.
 
+This tutorial is not meant to teach the fundamentals of Flask-Login or Firestore in Datastore mode. This tutorial demonstrates the use of Firestore in Datastore
+mode (as opposed to any relational database) as the database backend for user authentication with Flask-Login.
 
-## Prerequisites
-This tutorial is not to teach the fundamentals of Flask-Login or Firestore in Datastore mode. It is to demonstrate the use of Firestore in Datastore mode(as opposed to any relational database) as the database backend for user authentication with Flask-Login.  
-The use of Flask-Login should not force you to abandon the power of Firestore in Datastore mode in favour of a relational database.
+The use of Flask-Login should not force you to abandon the power of Firestore in Datastore mode in favor of a relational database.
 
 Basic familiarity with the following is assumed:
-- Flask and Flask-Login.
-- App Engine and Firestore in Datastore mode.
+
+- Flask
+- Flask-Login
+- App Engine
+- Firestore in Datastore mode
 
 ## Requirements
 
 -  [Python3.7](https://www.python.org/downloads/) 
 -  [Flask](https://github.com/pallets/flask) 
 -  [Flask-Login](https://flask-login.readthedocs.io) 
--  [Datastore-Entity](https://datastore-entity.readthedocs.io)  
-
+-  [Datastore Entity](https://datastore-entity.readthedocs.io)  
 
 ## Introduction
-Flask-Login **requires** the user(ie application user) to be represented using a Python class with specific properties and methods provided.  
 
-The above requirement of Flask-Login is straightforward when using a relational database such as MySQL or Postgres.  
-Using an ORM toolkit like SQL-Alchemy, you can easily create a user model/class to represent a user in a relational database.  
-Methods and properties required by Flask-Login can then be added to the user model.
+Flask-Login requires the user (that is, the application user) to be represented using a Python class with specific properties and methods provided. This 
+requirement of Flask-Login is straightforward when using a relational database such as MySQL or Postgres. Using an ORM toolkit like SQL-Alchemy, you can easily 
+create a user model/class to represent a user in a relational database. Methods and properties required by Flask-Login can then be added to the user model.
 
-However, for a NoSQL database like Firestore in Datastore mode, this Flask-Login requirement poses a challenge.  
-This is because the pattern of using a model/class to represent a database record does not directly apply.  
+However, for a NoSQL database like Firestore in Datastore mode, this Flask-Login requirement poses a challenge, because the pattern of using a model/class to 
+represent a database record does not directly apply.  
 
+This tutorial demonstrates how to model your Firestore in Datastore mode entity as a Python class, which lets you use popular Python libraries like 
+Flask-Login and WTForms.  
 
+To model a Datastore entity as a Python class, this tutorial uses the [Datastore Entity library](https://datastore-entity.readthedocs.io). Think of Datastore 
+Entity as an ORM-like library for Firestore in Datastore mode. 
 
-This tutorial will demonstrate how to model your Firestore in Datastore mode entity as a Python class.  
-This will let you conveniently use popular Python libraries like **Flask-Login**, **WTForms** etc.  
-
-To model our Datastore entity as a Python class, we will use **Datastore-Entity** library.  
-Think of Datastore-Entity as an _ORM-like_ library for Firestore in Datastore mode.  
-_Disclaimer: I'm the author of datastore-entity. No Google affiliation._  
+_Disclaimer: The author of this tutorial is also the author of Datastore Entity._  
 
 
-### Set up your local environment
+## Set up your local environment
+
 NOTE: Projects that use the Datastore mode API require an active App Engine application.
 So you should already have App Engine and Datastore mode API enabled in your GCP project.  
 
