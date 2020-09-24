@@ -69,7 +69,7 @@ new one, or select a project you already created.
 1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
 
 
-1.  [Enable the Compute Engine, Cloud Run, Cloud Secret Manager, and Cloud DNS APIs.](https://console.cloud.google.com/flows/enableapi?apiid=dataproc,storage_component)
+1.  [Enable the Compute Engine, Cloud Run, Cloud Secret Manager, and Cloud DNS APIs.](https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,run.googleapis.com,secretmanager.googleapis.com,dns.googleapis.com)
 
 1. Have a domain that you own or manage. If you don't have an existing domain, there are many services through which you can register a new domain, such as [Google Domains](https://domains.google.com/).  
 This tutorial uses the domain democloud.info.
