@@ -1,7 +1,7 @@
 <template>
   <div id="app" >
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Demo Website Hosted on GCS"/>
+    <HelloWorld msg="Demo website hosted on Cloud Storage"/>
   </div>
 </template>
 
