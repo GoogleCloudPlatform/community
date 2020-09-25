@@ -3,7 +3,7 @@ title: Using Flask-Login with Cloud Firestore in Datastore mode
 description: Represent your Cloud Datastore entity with a Python class and use this for Flask-Login user management.
 author: komlasapaty
 tags: Flask Framework, Python 3
-date_published: 2020-09-24
+date_published: 2020-09-25
 ---
 
 In this tutorial, you implement user authentication using the popular Flask extension [Flask-Login](https://flask-login.readthedocs.io) with
@@ -68,17 +68,17 @@ To connect to your Google Cloud service from your local machine, you need the ap
 
 Point the environment variable `GOOGLE_APPLICATION_CREDENTIALS` to the location of the service account key you downloaded:
 
-* Linux or macOS:
+*   Linux or macOS:
 
-      export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"
- 
-* Windows, with Powershell:
+        export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"
 
-      $env:GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"
+*   Windows, with Powershell:
 
-* Windows, with Command Prompt:
-    
-      set GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"  
+        $env:GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"
+
+*   Windows, with Command Prompt:
+
+        set GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"  
 
 You are now ready to connect to your Firestore in Datastore mode.
 
