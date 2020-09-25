@@ -191,18 +191,18 @@ Set environment variables that you use throughout the tutorial:
 
         34.120.180.189
 
-1. Add the DNS record to your DNS zone.
+1.  Add the DNS record to your DNS zone.
 
     * If you are using the managed DNS zone in the same project, you can use the following commands:
 
-          gcloud dns record-sets transaction start --zone=$MANAGED_ZONE
+            gcloud dns record-sets transaction start --zone=$MANAGED_ZONE
 
-          gcloud dns record-sets transaction add ${SVC_IP_ADDR} --name=$DNS_NAME --ttl=60 --type=A --zone=$MANAGED_ZONE
+            gcloud dns record-sets transaction add ${SVC_IP_ADDR} --name=$DNS_NAME --ttl=60 --type=A --zone=$MANAGED_ZONE
 
-          gcloud dns record-sets transaction execute --zone=$MANAGED_ZONE
+            gcloud dns record-sets transaction execute --zone=$MANAGED_ZONE
 
     * Otherwise, follow the steps provided by your DNS service provider to add an A record. The A record needs to use the IP address that you just provisioned
-    and the DNS name that you set earlier.
+      and the DNS name that you set earlier.
 
 1.  Create an HTTPS load balancer, configure the bucket as a backend, and enable Cloud CDN for the load balancer:
 
