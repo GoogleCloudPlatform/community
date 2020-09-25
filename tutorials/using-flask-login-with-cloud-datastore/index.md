@@ -58,28 +58,29 @@ To connect to your Google Cloud service from your local machine, you need the ap
 1.  Click **Create service account**.
 1.  Give the service account an appropriate name, such as `datastore-service-account`, enter a description, and click **Create**.
 1.  Under **Select a role**, type `Cloud Datastore Owner` in the filter field, select **Cloud Datastore Owner**, click **Continue**, and click **Done**.
-- On the **Service Account** page, look for the service account you just created and click the overflow icon (vertical ellipsis) at the far right end.
-- Click **Create Key**  from the dropdown menu and make sure **JSON** is selected as the **Key type**.
-- Click **CREATE**. This automatically downloads the service account JSON key to your local machine. Take note of the file name on the popup screen.
+1.  On the **Service accounts** page, look for the service account that you just created, click the button at the far right end of the row in the
+    **Actions** column, and select **Create key** in the dropdown menu. 
+1.  Make sure that **JSON** is selected as the **Key type**, and click **Create**.
 
+    This automatically downloads the service account JSON key to your local machine. Take note of the filename.
 
-_Configure your service account on your local machine_  
-Point the environment variable **GOOGLE_APPLICATION_CREDENTIALS** to the location of the service account key you downloaded.  
-**Linux/maxOS**  
-```bash
-export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"  
-```
-**Windows**  
-_With Powershell_  
-```
-$env:GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"  
-```
-_With Command Prompt_  
-```
-set GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"  
-```
+### Configure your service account on your local machine
+
+Point the environment variable `GOOGLE_APPLICATION_CREDENTIALS` to the location of the service account key you downloaded:
+
+* Linux or macOS:
+
+      export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"
+ 
+* Windows, with Powershell:
+
+      $env:GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"
+
+* Windows, with Command Prompt:
+    
+      set GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-acount-key.json"  
+
 You are now ready to connect to your Firestore in Datastore mode.
-
 
 ### Install required libraries
 
