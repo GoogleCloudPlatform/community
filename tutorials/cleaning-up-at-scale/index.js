@@ -37,14 +37,12 @@ exports.cleanUnusedInstances = (event, context, callback) => {
     const payload = _validatePayload(
       JSON.parse(Buffer.from(event.data, 'base64').toString()) 
     );
-    console.log("-------- Payload----");
-    console.log(payload);
+    console.log("Checking instances matching payload: " + payload);
     const options = {filter: `labels.${payload.label}`};
 
     compute.getVMs(options).then(vms => {
       vms[0].forEach(instance => {
         
-
         // Extracts GCE instance metadata
         var ttl  = instance.metadata.labels.ttl; // TTL in minutes
         var zone = instance.zone.id;
@@ -57,11 +55,10 @@ exports.cleanUnusedInstances = (event, context, callback) => {
         var creationDate = new Date(instance.metadata.creationTimestamp);
         const creationTime = Math.round(creationDate.getTime() / 1000) // in seconds
         
-
         var diff = (now - creationTime)/60; // in minutes.
         if (diff>ttl) {
           compute
-          .zone(payload.zone)
+          .zone(zone)
           .vm(instance.name)
           .delete()
           .then(data => {
@@ -96,11 +93,6 @@ exports.cleanUnusedInstances = (event, context, callback) => {
  * @return {!object} the payload object.
  */
 function _validatePayload(payload) {
-  /*
-    if (!payload.zone) {
-      throw new Error(`Attribute 'zone' missing from payload`);
-    } else 
-  */
   if (!payload.label) {
     throw new Error(`Attribute 'label' missing from payload`);
   }

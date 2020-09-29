@@ -1,5 +1,5 @@
 {
-  "name": "delete-unsed-instances",
+  "name": "clean-unused-instances",
   "version": "0.1.0",
   "private": true,
   "license": "Apache-2.0",

@@ -3,7 +3,7 @@
 
 ## Summary
 
-This tutorial offers a simple, serverless and scalable mechanism to automatically delete, or "[garbage collect][https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)]", Compute Engine instances after a fixed time period.  Some use cases where this may be prove useful:
+This tutorial offers a simple, serverless and scalable mechanism to automatically delete, or "[garbage collect](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science))", Compute Engine instances after a fixed time period.  Some use cases where this may be prove useful:
 
 * Developers or testers create one-off instances for testing features, but may not always remember to manually delete them.
 * Workflows that require dynamically spinning up a large number of GCE worker instances to perform a certain task.  While best practice is to have instances delete themselves after the task is complete, but ensuring that this always happens can be difficult if the task is distributed or some workers abort due to errors.
@@ -15,13 +15,13 @@ This solution leverages the following GCP components:
 *   **Pub/Sub** 
 *   **Cloud Functions**
 
-![High-level overview of the solution](/images/overview.svg "High-level overview of the solution")
+![High-level overview of the solution](images/overview.svg "High-level overview of the solution")
 
-**Figure 1: **High-level overview of the solution**
+*Figure 1: High-level overview of the solution*
 
-### **How does it work**? 
+### How does it work? 
 
-Each GCE instance in scope is assigned two labels: 
+Each Compute Engine instance in scope is assigned two labels: 
 
 *   **TTL** (Time to Live): which indicates (in minutes) after how much time this VM will not be needed and can be deleted.
 *   **ENV** : it indicates that the instance is part of the pool of VMs that can be checked regularly and can be deleted if TTL is reached. 
@@ -51,26 +51,26 @@ The overall flow is the following:
 * If you don’t already have one, create a
     [Google Account](https://accounts.google.com/SignUp).
 
-* Create a Developers Console project.
+* Create and configure a Google Cloud project.
     1. In the [Google Developers Console](https://console.developers.google.com/project), select
       **Create Project**.
     2. [Enable the Pub/Sub API](https://console.cloud.google.com/flows/enableapi?apiid=pubsub&redirect=https://console.cloud.google.com)
     3. [Enable the App Engine Admin API](https://console.cloud.google.com/flows/enableapi?apiid=appengine&redirect=https://console.cloud.google.com).  This is required by Cloud Scheduler.
     4. Visit the [Compute Engine instances](https://console.cloud.google.com/compute/instances) page, this will activate the API.
     5. [Enable Project Billing](https://support.google.com/cloud/answer/6293499#enable-billing)
-    6. Using [Cloud Shell][https://cloud.google.com/shell/docs/using-cloud-shell], create an App Engine app. This is required by Cloud Scheduler:
+    6. Open [Cloud Shell][https://cloud.google.com/shell/docs/using-cloud-shell] and create an App Engine app. This is required by Cloud Scheduler:
 
            $ gcloud app create --region=us-central
     
-    7. Enable the Cloud Scheduler API:
-    
-           $ gcloud services enable cloudscheduler.googleapis.com
+    7. Enable the APIs used by this tutorial:
 
+           $ gcloud services enable appengine.googleapis.com cloudbuild.googleapis.com cloudfunctions.googleapis.com cloudscheduler.googleapis.com compute.googleapis.com pubsub.googleapis.com
+    
 Important: This tutorial uses several billable components of Google Cloud
 Platform. To estimate the cost of running this sample:
 
-* Assume you run a single `f1-micro` Google Compute Instance for
-  15 minutes of one day while you test the sample. After which, you delete
+* Assume you run a single `f1-micro` Google Compute Instance for a total of
+  15 minutes on one day while you test the sample. After which, you delete
   the project, releasing all resources.  That's **0.25 hours per month**.
 * Cloud Scheduler is free for up to **3 jobs per month**.
 
@@ -82,23 +82,15 @@ users may be eligible for a [free trial](http://cloud.google.com/free-trial).
 
 To clone the GitHub repository, run the following command in Cloud Shell:
 
-    git clone https://github.com/GoogleCloudPlatform/cleaning-up-at-scale
+    git clone https://github.com/GoogleCloudPlatform/community
 
 Change directories to the `cleaning-up-at-scale` directory. The exact path
 depends on where you placed the directory when you cloned the sample files from
 GitHub.
 
-    cd cleaning-up-at-scale
+    cd community/tutorials/cleaning-up-at-scale
 
 ### Create Pub/Sub topic
-
-1. Configure the `gcloud` command-line tool to use the project you created in
-    Prerequisites.
-
-    gcloud config set project <your-project-id>
-
-    Where you replace `<your-project-id>`  with the identifier of your cloud
-    project.
 
 1.  Create the Pub/Sub topic that you will push messages to.
 
@@ -113,41 +105,45 @@ Big Data > Pub/Sub
 
 Deploy the Cloud Function that will monitor the Pub/Sub topic and clean up instances.
 
-    gcloud functions deploy clean-gce-instances --trigger-topic=unused-instances --runtime=nodejs12
+    gcloud functions deploy clean-unused-instances --trigger-topic=unused-instances --runtime=nodejs12 --entry-point=cleanUnusedInstances
 
 ### Create Cloud Scheduler job
 
 Next, we configure Cloud Scheduler to push a message containing target label every
-minute to the Pub/Sub topic `test` that we just created.
+minute to the Pub/Sub topic `unused-instances` that we just created.
 
-    gcloud scheduler jobs create pubsub clean-gce-instances-job --schedule="* * * * *" \
-      --topic=test --message-body='{"label":"env=test"}'
+    gcloud scheduler jobs create pubsub clean-unused-instances-job --schedule="* * * * *" \
+      --topic=unused-instances --message-body='{"label":"env=test"}'
 
 The `schedule` is specified in [unix-cron format](https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules).
 A `*` in every field means the job runs every minute, every hour, every day of the month,
 every month, every day of the week.  More simply put, it runs once per minute.
+
+Note: If scanning large amounts of VMs, running less often (say, once an hour) is likely sufficient.
 
 The job is now visible in `gcloud scheduler jobs list`.  You can also see the jobs 
 in the console:
 
 Tools > Cloud Scheduler 
 
-Execution logs for the job are visible via the Logs link for each job.
+Scheduler execution logs for the job are visible via the Logs link for each job.
 
 ### Create a test instance to clean up
 
-Create a test instance with a two-minute TTL.
+Create a test instance labeled `env=test` with a two-minute TTL.
 
     gcloud compute instances create cleanup-test --zone=us-central1-a --machine-type=f1-micro \
-      --metadata=env=test,ttl=2
+      --labels=env=test,ttl=2
 
-Check that the new instance has started.
+Check that the new instance has started successfully.
 
     gcloud compute instances list
 
 Wait two minutes and rerun the command.  The instance should be automatically deleted.
 
     gcloud compute instances list
+
+You can also see the Cloud Function execution results, including the name of the deleted instance, under Cloud Function Logs in the console.
 
 ### Clean up
 
