@@ -3,7 +3,7 @@ title: Cleaning up Compute Engine instances at scale
 description: A simple, serverless and scalable mechanism to automatically delete Compute Engine instances after a fixed time period.
 author: hbougdal,jpatokal
 tags: garbage collection
-date_published: 10-01-2020
+date_published: 2020-10-01
 ---
 
 # Cleaning up Compute Engine instances at scale
