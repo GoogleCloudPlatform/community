@@ -99,16 +99,24 @@ To deploy your application, you will use an App Engine plugin for Maven which si
 is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/java/tools/gradle).
 
 
-1.  Create a file called `app.yaml` in a new folder `src/main/appengine` with the following contents:
+1.
+   _When running on JDK 8:_ 
+   
+   Create a file called app.yaml in a new folder src/main/appengine with the following contents:
 
-        runtime: java
-        env: flex
-        runtime_config:
-          jdk: openjdk8
+      runtime: java
+      env: flex
+      runtime_config:
+      jdk: openjdk8
+   By specifying runtime: java, the runtime image gcr.io/google-appengine/openjdk:8 is automatically selected when you deploy a JAR (*.jar) file. The JDK version is also selected using the jdk field.
 
-    By specifying `runtime: java`, the runtime image `gcr.io/google-appenine/openjdk:8` is automatically selected
-    when you deploy a JAR (*.jar) file. The JDK version is also selected using the `jdk` field.
+   _When running on JDK 11:_
+   
+   Create a file called app.yaml in the root directory (or any other directory configured in the `appengine-maven-plugin`) with the following contents:
 
+       runtime: java11
+   Note: the flex environment is not available (yet) for Java 11.
+   
 2.  Add [the following](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine/pom-plugin-example.xml) plugin entry to the `pom.xml` file to configure the Maven
     plugin.
 
