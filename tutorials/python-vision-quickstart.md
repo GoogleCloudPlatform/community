@@ -76,13 +76,13 @@ rm -rf python-docs-samples
 Clone the sample repository:
 
 ```bash
-git clone https://github.com/GoogleCloudPlatform/python-docs-samples.git
+git clone https://github.com/googleapis/python-vision.git
 ```
 
 Change directory to the tutorial directory:
 
 ```bash
-cd python-docs-samples/vision/cloud-client/quickstart
+cd python-vision/samples/snippets/quickstart
 ```
 
 You are now in the main directory for the sample code.
