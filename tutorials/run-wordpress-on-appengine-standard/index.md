@@ -229,7 +229,7 @@ under versioned hostnames. Visit the App Engine, Versions area to see previous v
 
 Alternately, you may deploy the new version and stop previous ones so they stop incurring charges:
 
-    $ gcloud app deploy app.yaml cron.yaml --promote --stop-previous-versions
+    $ gcloud app deploy app.yaml cron.yaml --promote --stop-previous-version
 
 ### Remove plugins and themes
 
