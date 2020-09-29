@@ -54,17 +54,16 @@ The overall flow is the following:
 * Create and configure a Google Cloud project.
     1. In the [Google Developers Console](https://console.developers.google.com/project), select
       **Create Project**.
-    2. [Enable the Pub/Sub API](https://console.cloud.google.com/flows/enableapi?apiid=pubsub&redirect=https://console.cloud.google.com)
-    3. [Enable the App Engine Admin API](https://console.cloud.google.com/flows/enableapi?apiid=appengine&redirect=https://console.cloud.google.com).  This is required by Cloud Scheduler.
-    4. Visit the [Compute Engine instances](https://console.cloud.google.com/compute/instances) page, this will activate the API.
-    5. [Enable Project Billing](https://support.google.com/cloud/answer/6293499#enable-billing)
-    6. Open [Cloud Shell][https://cloud.google.com/shell/docs/using-cloud-shell] and create an App Engine app. This is required by Cloud Scheduler:
+    2. [Enable Project Billing](https://support.google.com/cloud/answer/6293499#enable-billing)
+    3. Open [Cloud Shell][https://cloud.google.com/shell/docs/using-cloud-shell] and create an App Engine app. This is required by Cloud Scheduler:
 
-           $ gcloud app create --region=us-central
+           gcloud app create --region=us-central
     
-    7. Enable the APIs used by this tutorial:
+    4. Enable the APIs used by this tutorial:
 
-           $ gcloud services enable appengine.googleapis.com cloudbuild.googleapis.com cloudfunctions.googleapis.com cloudscheduler.googleapis.com compute.googleapis.com pubsub.googleapis.com
+           gcloud services enable appengine.googleapis.com cloudbuild.googleapis.com \
+             cloudfunctions.googleapis.com cloudscheduler.googleapis.com compute.googleapis.com \
+             pubsub.googleapis.com
     
 Important: This tutorial uses several billable components of Google Cloud
 Platform. To estimate the cost of running this sample:
