@@ -1,5 +1,12 @@
-## Cleaning up Compute Engine instances at scale
+---
+title: Cleaning up Compute Engine instances at scale
+description: A simple, serverless and scalable mechanism to automatically delete Compute Engine instances after a fixed time period
+author: Hicham Bougdal and Jani Patokallio
+tags:
+date_published: TBD
+---
 
+# Cleaning up Compute Engine instances at scale
 
 ## Summary
 
