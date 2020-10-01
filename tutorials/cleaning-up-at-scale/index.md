@@ -36,18 +36,17 @@ Each Compute Engine instance in scope is assigned two labels:
 The overall flow is the following: 
 
 
-1. We create a Cloud Scheduler cron job which will be triggered regularly (e.g each 5 minutes). The config of the Cloud scheduler contains the values of the label of the pool of VMs to target (e.g ENV= test). Optionally, it can also contain the name of the zone where the VMs to target are deployed. The format is the following: 
+1. We create a Cloud Scheduler cron job which will be triggered regularly (e.g each 5 minutes). The config of the Cloud scheduler contains the values of the label of the pool of VMs to target (e.g ENV= test). The format is the following: 
 
-		'{"zone":"us-west1-b", "label":"env=test"}'
+		'{"label":"env=test"}'
 
 
 
 2. Once the cron job is triggered, Cloud Scheduler will push a message with the payload above to a Pub/Sub topic. 
 3. A Cloud Function is subscribed to the Pub/Sub topic. Each time triggered, it will perform the following: 
-    1.  Read the payload of the Pub/Sub message
-    2. Extract the **label** and the **zone**
-    3. Filter all the GCE instances which have the label in question ( the zone could also be used to as a filter)
-    4. Iterate through instance and perform the following: 
+    1. Read the payload of the Pub/Sub message and extract the **label**
+    2. Filter all the GCE instances which have the label in question
+    3. Iterate through instance and perform the following: 
         1. Read the value of label **TTL** of each instance 
         2. Calculate **Delta** = the difference between the current time and the creation time of each instance 
         3. If **Delta> TTL** , the instance will be deleted. If not, nothing will be done.
