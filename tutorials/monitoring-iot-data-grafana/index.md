@@ -47,7 +47,7 @@ I made a [Github repository](https://github.com/leozz37/iot-monitoring-gcp-grafa
 
 So let’s get our hands dirty!
 
-## Getting started with Google Cloud Platform
+### Getting started with Google Cloud Platform
 
 On Google Cloud, we’ll be using Core IoT to manage our devices, pub/sub as messaging system and Google Run to host our containers.
 
@@ -124,7 +124,7 @@ You can check your [registries](https://console.cloud.google.com/iot/registries)
 
 ![registries](images/img2.png)
 
-## Setting up ESP32
+### Setting up ESP32
 
 We’ll be using the Espressif micro-controller ESP32 for its WiFi and a built-in temperature sensor. Also, I’m using the Arduino IDE, so make sure you have it installed and set up for ESP32 usage, if you need some help you can follow this [tutorial](https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/).
 
@@ -181,46 +181,174 @@ You’ll need to set up your root_cert as well. Do the same steps as previously:
 $ openssl s_client -showcerts -connect mqtt.googleapis.com:8883
 ```
 
+It should look something like this:
 
+![root-cert](images/img6.png)
 
+On Esp32-lwmqtt.ino file, let's do some changes to get the ESP32 temperature. This is how our code looks like:
 
+```cpp
+#include "esp32-mqtt.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+  uint8_t temprature_sens_read();
+#ifdef __cplusplus
+}
+#endif
 
+uint8_t temprature_sens_read();
 
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_BUILTIN, OUTPUT);
+  setupCloudIoT();
+}
 
+unsigned long lastMillis = 0;
+void loop() {
+  mqtt->loop();
+  delay(10);
 
+  if (!mqttClient->connected()) {
+    connect();
+  }
 
+  
+  if (millis() - lastMillis > 5000) {
+    lastMillis = millis();
 
+    const float temperature = (temprature_sens_read() - 32) / 1.8;
 
+    String payload =
+      String("{\"temperature\":") + String(temperature) + String("}");
+    publishTelemetry(payload);
+  }
+}
+```
 
+And a Dockerfile for it:
 
+```docker
+FROM golang
 
+COPY . /app
+WORKDIR /app
 
+ENV GOOGLE_APPLICATION_CREDENTIALS=/app/resources/service-account-key.json
 
-Break the tutorial body into as many sections and subsections as needed, with concise headings.
+RUN go mod download
 
-### Use short numbered lists for procedures
+CMD ["go", "run", "pubsub.go"]
+```
 
-Use numbered lists of steps for procedures. Each action that the reader must take should be its own step. Start each step with the action, such as *Click*, 
-*Run*, or *Enter*.
+### Google Cloud Run
 
-Keep procedures to 7 steps or less, if possible. If a procedure is longer than 7 steps, consider how it might be separated into sub-procedures, each in its
-own subsection.
+First, we need to enable Cloud Build, Cloud Run, and Container Registry in our project:
 
-### Provide context, but don't overdo the screenshots
+```bash
+$ gcloud services enable cloudbuild.googleapis.com run.googleapis.com containerregistry.googleapis.com
+```
 
-Provide context and explain what's going on.
+Now let’s build and push our Golang service Docker image to the Cloud Build:
 
-Use screenshots only when they help the reader. Don't provide a screenshot for every step.
+```bash
+$ gcloud builds submit --tag gcr.io/$PROJECT_ID/$IMAGE_NAME
 
-Help the reader to recognize what success looks like along the way. For example, describing the result of a step helps the reader to feel like they're doing
-it right and helps them know things are working so far.
+$ gcloud run deploy $SERVICE_NAME --image gcr.io/$PROJECT_ID/ $IMAGE_NAME \
+    --region us-central1 \
+    --platform managed \
+    --allow-authenticated \
+    --port 2112
+```
 
-## Cleaning up
+GCP will generate an URL for your container, copy it. You can get it on your terminal or accessing your project on your project [Cloud Run page](https://console.cloud.google.com/run)
 
-Tell the reader how to shut down what they built to avoid incurring further costs.
+![console-link](images/img9.png)
 
-### Example: Cleaning up
+Now paste it on your prometheus.yml file, on your targets (remove the https://):
+
+```yml
+global:
+  scrape_interval:     10s
+  evaluation_interval: 10s
+  external_labels:
+    monitor: 'codelab-monitor'
+
+scrape_configs:
+  - job_name: 'temperature'
+    scrape_interval: 5s
+    static_configs:
+    - targets:
+      - 'temperature-grafana-utsma6q3sq-uc.a.run.app' # Your project URL
+```
+
+Since we can't deploy existing images from Docker Hub to Cloud Run, we need to make a custom Docker image for Prometheus and Grafana, then deploy them. Let's deploy a Prometheus container:
+
+```docker
+FROM prom/prometheus
+ADD ./prometheus.yml /etc/prometheus/prometheus.yml
+EXPOSE 9090
+```
+
+Building and submitting to production:
+
+```bash
+$ gcloud builds submit --tag gcr.io/$PROJECT_ID/prometheus .
+
+$ gcloud run deploy prometheus --image gcr.io/$PROJECT_ID/prometheus \
+    --region $REGION \
+    --platform managed \
+    --allow-unauthenticated \
+    --port 9090
+```
+
+Make sure to save the URL generated. Do the same thing for Grafana:
+
+```bash
+FROM grafana/grafana
+EXPOSE 3000
+ENTRYPOINT [ "/run.sh" ]
+````
+
+Building and submitting to production:
+
+```bash
+$ gcloud builds submit --tag gcr.io/$PROJECT_ID/grafana .
+
+$ gcloud run deploy grafana --image gcr.io/$PROJECT_ID/grafana \
+    --region $REGION \
+    --platform managed \
+    --allow-unauthenticated \
+    --port 3000
+```
+
+Now you can access your Grafana board through the generated URL. You can log in with the admin login (default user: admin, pass: admin, make sure to change that).
+
+Now we have to set up Grafana to listen to our Prometheus. After logging in, go to "Data Source" on the right menu bar, click on "Add data source" and select Prometheus.
+
+![grafana-data-source](images/img10.png)
+
+On the Prometheus data source page, paste the URL to your Prometheus instance on the HTTP > URL and hit "save & test".
+
+![grafana-data-source](images/img11.png)
+
+On my [Github repository](https://github.com/leozz37/iot-monitoring-gcp-grafana/blob/master/grafana/grafana.json), there’s a JSON file that will import a Grafana Dashboard. Feel free to use it or create your own. If you looking into creating your dashboards, Grafana uses PromQL for querying metrics data, take a look into its [documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/) for more information.
+
+To import my dashboard, go to the right menu bar, then to Create and Import. Paste the JSON content into the text box and hit load.
+
+Select Prometheus as your data source and boom, you should a dashboard like this one:
+
+![grafana-dashboard](images/img12.png)
+
+Now plug your ESP32 on the USB and you should see the graph going up and down!
+
+![final-gif](images/gif1.gif)
+
+And that’s it. You can monitor data from IoT devices anywhere in the world.
+
+### Cleaning up
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
@@ -239,13 +367,9 @@ To delete a project, do the following:
 
     ![deleting the project](https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/delete-project.png)
 
-## What's next
-
-Tell the reader what they should read or watch next if they're interested in learning more.
-
 ### Example: What's next
 
-- Watch this tutorial's [Google Cloud Level Up episode on YouTube](https://youtu.be/uBzp5xGSZ6o).
-- Learn more about [AI on Google Cloud](https://cloud.google.com/solutions/ai/).
+- Learn [PromQL](https://prometheus.io/docs/prometheus/latest/querying/basics/).
+- Create your own [Grafana](https://grafana.com/) Dashboars.
 - Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
