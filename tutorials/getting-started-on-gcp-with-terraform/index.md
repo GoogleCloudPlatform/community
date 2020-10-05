@@ -50,10 +50,10 @@ is usually different then the project name.
 Next, set up a service account key, which Terraform will use to create and manage
 resources in your Google Cloud project. Go to the
 [create service account key page](https://console.cloud.google.com/apis/credentials/serviceaccountkey).
-Select the default service account or create a new one. If creating a new
-service account for this tutorial the Project Owner role can be used but
-you will want to remove or de-scope the service account later. Select JSON as
-the key type and click **Create**.
+Select the default service account or create a new one. If you're creating a new
+service account for this tutorial, you can use the Project Owner role, but
+we recommend that you remove the service account or restrict its scope after you
+have completed the tutorial. Select JSON as the key type and click **Create**.
 
 This downloads a JSON file with all the credentials that will be needed for
 Terraform to manage the resources. This file should be located in a secure place
