@@ -10,20 +10,20 @@ The
 [code that accompanies this document](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/authenicated-browser-downloads-with-audit-logging/) 
 provides an example means of serving images, documents, and other files stored in Cloud Storage while requiring the user to be authenticated with Google. This 
 solution is useful because the Cloud Storage 
-[authenticated browser downloads feature](https://cloud.google.com/storage/docs/access-control/cookie-based-authentication) does not currently provide internal 
+[authenticated browser downloads feature](https://cloud.google.com/storage/docs/access-control/cookie-based-authentication) does not currently work with internal 
 logging.
 
 This example uses [Identity-Aware Proxy](https://cloud.google.com/iap/docs), [App Engine standard environment](https://cloud.google.com/appengine/docs/standard),
 and [Cloud Storage](https://cloud.google.com/storage/docs):
 
 1. A web user makes a request to your file server.
-1. If the user is unauthenticated, they are redirected to a Google login page by Identity-Aware Proxy.
+1. If the user is not authenticated, they are redirected to a Google login page by Identity-Aware Proxy.
 1. After authentication, the user's request is forwarded to App Engine.
 1. App Engine validates the request and retrieves the file from Cloud Storage.
 1. If a watermark or other transformation is required, it is processed.
 1. The file is then returned to the web user.
 
-Users who don't authenticate or who are not authorized to access the files will not reach App Engine. Authenticated requests that do not match an object in 
+Requests from users who are not authenticated or who are not authorized to access the files do not reach App Engine. Requests that do not match an object in 
 Cloud Storage return a `404 Not Found` error. Requests with no filename or with a missing filename extension receive a `400 Bad Request` error.
 
 ## Deploying the code
@@ -41,26 +41,25 @@ Cloud Storage return a `404 Not Found` error. Requests with no filename or with 
 
 ## Request format
 
-When your service is deployed deployed, it is available at a URL similar to the following: `https://my-authenticated-fileserver.appspot.com/`
+When your service is deployed, it is available at a URL similar to the following: `https://my-authenticated-fileserver.appspot.com/`
 
-Any filename and path requested from this host directly maps to an object in Cloud Storage. For example
+Any filename and path requested from this host directly maps to an object in Cloud Storage. 
 
-A request to
-> `https://my-authenticated-fileserver.appspot.com/assets/heroimage.png`
+For example, a request to `https://my-authenticated-fileserver.appspot.com/assets/heroimage.png` maps to this object:
+`gs://my-asset-bucket/assets/heroimage.png`
 
-will try to find the object
-> `gs://my-asset-bucket/assets/heroimage.png`
+A request for a missing file returns a `404 Not Found` error.
 
-Missing files will result in a 404 File Not Found error.
-
-The application deduces the [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types) based on file extension. Therefore, requests without a file extension return a 400 Request Error. Ensure all the files you wish to serve have an accurate extension.
+The application deduces the [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types) based on the filename extension. Therefore,
+requests without a filename extension return a `400 Bad Request` erros. Ensure that all of the files that you want to serve have an accurate filename extension.
 
 ## Opportunities for customization
 
-This code provide a plain authenticated file server. Often, you might have requirements for transforming files before delivering them to the user. Here are a few ways this code can be modified to fit more specific needs:
+This code provide a plain authenticated file server. Often, you might have requirements for transforming files before delivering them to the user. Here are a few
+ways that this code can be modified to fit more specific needs:
 
 * Image or document watermarking
 * Image resizing and other alterations
-* DLP redaction to hide sensitive information from users not authorized to view those parts
-* PubSub event trigger
-* Object request tallying and object deletion (for objects that can only be downloaded N times)
+* Data loss prevention (DLP) redaction to hide sensitive information from users not authorized to view those parts
+* Pub/Sub event triggers
+* Object request tallying and object deletion, for objects that can only be downloaded a specific number of times
