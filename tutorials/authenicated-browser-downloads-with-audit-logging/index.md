@@ -23,8 +23,8 @@ and [Cloud Storage](https://cloud.google.com/storage/docs):
 1. If a watermark or other transformation is required, it is processed.
 1. The file is then returned to the web user.
 
-Requests from users who are not authenticated or who are not authorized to access the files do not reach App Engine. Requests that do not match an object in 
-Cloud Storage return a `404 Not Found` error. Requests with no filename or with a missing filename extension receive a `400 Bad Request` error.
+Requests from users who aren't authenticated or who aren't authorized to access the files don't reach App Engine. Requests that don't match an object in 
+Cloud Storage return a `404 File not found` error. Requests with no filename or with a missing filename extension receive a `400 Bad request` error.
 
 ## Deploying the code
 
@@ -41,17 +41,19 @@ Cloud Storage return a `404 Not Found` error. Requests with no filename or with 
 
 ## Request format
 
-When your service is deployed, it is available at a URL similar to the following: `https://my-authenticated-fileserver.appspot.com/`
+When your service is deployed, it is available at a URL similar to the following:
 
-Any filename and path requested from this host directly maps to an object in Cloud Storage. 
+`https://my-authenticated-fileserver.appspot.com/`
 
-For example, a request to `https://my-authenticated-fileserver.appspot.com/assets/heroimage.png` maps to this object:
+Filenames and paths requested from this host map to object addresses in Cloud Storage. For example, a request to
+`https://my-authenticated-fileserver.appspot.com/assets/heroimage.png` maps to this object:
 `gs://my-asset-bucket/assets/heroimage.png`
 
-A request for a missing file returns a `404 Not Found` error.
+A request for a missing file returns a `404 File not found` error.
 
 The application deduces the [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types) based on the filename extension. Therefore,
-requests without a filename extension return a `400 Bad Request` erros. Ensure that all of the files that you want to serve have an accurate filename extension.
+requests without a filename extension return a `400 Bad Request` error. Ensure that all of the files that you want to serve have an appropriate filename 
+extension.
 
 ## Opportunities for customization
 
