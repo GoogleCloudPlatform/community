@@ -24,14 +24,20 @@ For us to accept your contributions, we need you to sign the [Contributor Licens
 
 1.  Read the [style guide](https://cloud.google.com/community/tutorials/styleguide) before preparing your submission.
 
-1.  Fork the [`github.com/GoogleCloudPlatform/community`](https://github.com/GoogleCloudPlatform/community) repository.
+1.  [Fork](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo) the
+    [`github.com/GoogleCloudPlatform/community`](https://github.com/GoogleCloudPlatform/community) repository.
 
-1.  Add the new tutorial file by doing one of the following:
+1.  Do one of the following to add the new tutorial file:
     
-    * Create a uniquely named `.md` file at the top level of the `tutorials` folder.
-    * Create a new folder for your tutorial in the `tutorials` folder and create an `index.md` file at the top level of that subfolder.
+    * If you are contributing a single tutorial file with no supporting code or image files, then create a uniquely named `.md` file at the top level of the
+      `tutorials` folder.
+    * If you are contributing a tutorial with supporting code or image files, then create a new folder for your tutorial in the `tutorials` folder and create an
+      `index.md` file at the top level of that subfolder.
+      
+    For details, see [File organization and naming in GitHub](https://cloud.google.com/community/tutorials/styleguide#file_organization_in_github).
     
-1.  Copy the contents of the [tutorial template](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/tutorial-template/index.md)
+1.  Copy the [Mardown source contents](https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/tutorial-template/index.md) of the
+    [tutorial template](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/tutorial-template/index.md)
     into your new Markdown file.
     
 1.  Replace the template content with your own tutorial content, following the instructions in the template and style guide.

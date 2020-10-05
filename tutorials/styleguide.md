@@ -32,11 +32,11 @@ Here are some general guidelines to keep in mind:
 
 Google Cloud offers a [library of logos, icons, and architectural diagram assets](https://cloud.google.com/icons/) for your use.
 
-## File organization in GitHub
+## File organization and naming in GitHub
 
 How you name and organize your files in GitHub depends on whether you are submitting
-a single standalone tutorial file or a set of supporting files, such as images and
-source code.
+a single standalone tutorial file or submitting a tutorial file with a set of supporting
+files, such as images and source code.
 
 ### Contribute supporting files with the tutorial
 
@@ -62,8 +62,8 @@ following in GitHub:
 
 1.  Make a single Markdown file at the top level of the `tutorials/` folder.
 
-1.  Name the file with key words from your title, separated by hyphens,
-    omitting words like *and* and *the*.
+1.  Name your new document file with key words from your title, separated by
+    hyphens, omitting words like *and* and *the*.
 
     For example, if you submit a tutorial named "Using Cloud SQL to conquer
     the world", name your file `using-cloud-sql-conquer-world.md`.
@@ -72,7 +72,8 @@ following in GitHub:
 
 We provide a tutorial template that explains and demonstrates each part of a tutorial document.
 
-1.  Copy the contents of the [tutorial template](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/tutorial-template/index.md) file into
+1.  Copy the [Markdown source contents](https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/tutorial-template/index.md)
+    of the [tutorial template](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/tutorial-template/index.md) file into
     your new Markdown file.
 
 1.  Replace the explanations and examples in the template with your tutorial content.

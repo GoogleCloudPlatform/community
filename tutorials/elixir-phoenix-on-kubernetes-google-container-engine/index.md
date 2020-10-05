@@ -328,7 +328,7 @@ choose to use Distillery, be sure to adjust these steps accordingly.
         mix release.init
 
     This will create a `rel` directory containing several configuration files
-    and templates. You can examine and edit these if if you wish, but the
+    and templates. You can examine and edit these if you wish, but the
     defaults should be sufficient for this tutorial.
 
     If you are using Distillery 2.1 or later, the corresponding command is

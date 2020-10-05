@@ -32,7 +32,8 @@ resource "google_cloud_scheduler_job" "scheduler" {
       "environment": {
         "maxWorkers": "10",
         "tempLocation": "gs://${var.bucket}/temp",
-        "zone": "${var.region}-a"
+        "zone": "${var.region}-a",
+        "serviceAccountEmail": "${google_service_account.cloud-scheduler-demo.email}"
       }
     }
 EOT
@@ -45,15 +46,15 @@ resource "google_service_account" "cloud-scheduler-demo" {
   display_name = "A service account for running dataflow from cloud scheduler"
 }
 
-resource "google_project_iam_member" "cloud-scheduler-dataflow" {
+resource "google_project_iam_member" "cloud-scheduler-dataflow-admin" {
   project = var.project_id
   role = "roles/dataflow.admin"
   member = "serviceAccount:${google_service_account.cloud-scheduler-demo.email}"
 }
 
-resource "google_project_iam_member" "cloud-scheduler-gcs" {
+resource "google_project_iam_member" "cloud-scheduler-dataflow-worker" {
   project = var.project_id
-  role = "roles/compute.storageAdmin"
+  role = "roles/dataflow.worker"
   member = "serviceAccount:${google_service_account.cloud-scheduler-demo.email}"
 }
 
