@@ -3,7 +3,7 @@ title: Create a Data Catalog tag history in BigQuery using Cloud Logging and Dat
 description: Learn how to create a historical record of metadata in real time by capturing logs and processing them with Pub/Sub and Dataflow.
 author: anantdamle
 tags: Data Catalog, BigQuery, PubSub, Dataflow
-date_published: 2020-10-7
+date_published: 2020-10-07
 ---
 
 Anant Damle | Solutions Architect | Google Cloud
@@ -23,7 +23,7 @@ real time by using [Pub/Sub](https://cloud.google.com/pubsub) and [Dataflow](htt
 
 ## Concepts
 
-*   [Cloud Data Catalog](https://cloud.google.com/data-catalog) provides a single interface for searching and managing both
+*   [Data Catalog](https://cloud.google.com/data-catalog) provides a single interface for searching and managing both
     [technical and business metadata](https://cloud.google.com/data-catalog/docs/concepts/overview#glossary) of your data warehouse or data lake in Google Cloud
     and beyond. Data Catalog uses [tags](https://cloud.google.com/data-catalog/docs/concepts/overview#tags) to organize metadata and make it discoverable.
 *   [BigQuery](https://cloud.google.com/bigquery) is Google Cloud’s serverless, highly scalable, and cost-effective multi-cloud data warehouse designed for 
@@ -94,7 +94,7 @@ easiest at the end of the tutorial, we recommend that you create a new project f
         # The Google Cloud project to use for this tutorial
         export PROJECT_ID="your-project-id"
 
-        # The BigQuery region to use for tags table
+        # The BigQuery region to use for the tags table
         export BIGQUERY_REGION=""
 
         # The name of the BigQuery Dataset to create the tag records table
@@ -269,9 +269,9 @@ that the tool captures all of the tags attached to the modified entry in the Big
     *   `CreateTag`
     *   `UpdateTag`
     *   `DeleteTag`
-*   Single Data Catalog operation creates multiple tag record entries due to multiple `AuditLog` events.
+*   A single Data Catalog operation creates multiple tag record entries due to multiple `AuditLog` events.
 *   The tool polls the Data Catalog service for entry/tag information, because the audit logs don't contain change information. This can result in some changes
-    to an entries or tags being missed.
+    to entries or tags being missed.
 
 ## Cleaning up
 
