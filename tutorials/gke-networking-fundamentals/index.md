@@ -559,10 +559,34 @@ kubectl get nodes
 ```
 
 Run a deployment called `hello-server` on this cluster. We'll use a demo web server image from the registry and
-launch this on container port `8080`:
+launch this on container port `8080`. Create a file named hello-server-deployment.yaml and copy the following into it.
 
 ```
-kubectl run hello-server --image gcr.io/google-samples/hello-app:1.0 --port 8080
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-server
+  template:
+    metadata:
+      labels:
+        app: hello-server
+    spec:
+      containers:
+      - name: hello-server
+        image: gcr.io/google-samples/hello-app:1.0
+        ports:
+        - containerPort: 8080
+```
+
+Apply the file to the cluster.
+
+```
+kubectl apply -f hello-server-deployment.yaml
 ```
 
 Recall that a namespace is created for these pods. Use SSH to connect to the node hosting the pod to see how these look:
