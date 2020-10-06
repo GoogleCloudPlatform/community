@@ -1,0 +1,22 @@
+defaultService: https://www.googleapis.com/compute/v1/projects/<PROJECT_ID>/global/backendBuckets/web-backend-bucket
+kind: compute#urlMap
+name: web-map-http
+hostRules:
+- hosts:
+  - '<DNS_NAME>'
+  pathMatcher: matcher1
+pathMatchers:
+- defaultService: https://www.googleapis.com/compute/v1/projects/<PROJECT_ID>/global/backendBuckets/web-backend-bucket
+  name: matcher1
+  routeRules:
+    - matchRules:
+        - prefixMatch: /
+          headerMatches:
+            - headerName: cookie
+              prefixMatch: 'Cloud-CDN-Cookie'
+      priority: 0
+      service: https://www.googleapis.com/compute/v1/projects/<PROJECT_ID>/global/backendBuckets/web-backend-bucket
+    - matchRules:
+        - prefixMatch: /
+      priority: 1
+      service: https://www.googleapis.com/compute/v1/projects/<PROJECT_ID>/global/backendServices/<LOGIN_BACKEND_SVC_NAME>

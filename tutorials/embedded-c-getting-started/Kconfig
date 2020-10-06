@@ -1,0 +1,32 @@
+menu "Google IoT Core Configuration"
+
+config GIOT_PROJECT_ID
+    string "Google Cloud Project ID"
+    default "project_id"
+    help
+        Google Cloud project ID
+
+config GIOT_LOCATION
+    string "Google Cloud location"
+    default "us-central1-a"
+    help
+        Google Cloud region
+
+config GIOT_REGISTRY_ID
+    string "Google IoT Core Registry ID"
+    default "registry_id"
+    help
+        Google IoT Core registry id
+
+config GIOT_DEVICE_ID
+    string "Google IoT Core Device ID"
+    default "device_id"
+    help
+        Google IoT Core device id
+
+config GIOT_DEBUG_OUTPUT
+    bool "Enable debugging"
+    help
+        Select this option to enable debugging support
+
+endmenu

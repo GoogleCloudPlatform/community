@@ -6,7 +6,7 @@ tags: HA VPN, Cloud VPN, interop, Cisco, ASA 5506H
 date_published: 2019-07-12
 ---
 
-Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
+Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/network-connectivity/docs/vpn/)
 on Google Cloud Platform (GCP) and Cisco ASA 5506H.
 
 Cisco terminology and the Cisco logo are trademarks of Cisco or its affiliates in the United States
@@ -19,11 +19,11 @@ testing it._
 ## Introduction
 
 This guide walks you through the process of configuring a route-based VPN tunnel
-between Cisco ASA 5506H and the [HA VPN service](https://cloud.google.com/vpn/docs)
+between Cisco ASA 5506H and the [HA VPN service](https://cloud.google.com/network-connectivity/docs/vpn/)
 on GCP.
 
 For more information about HA and Classic VPN, see the
-[Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
+[Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview).
 
 ## Terminology
 
@@ -47,9 +47,9 @@ Below are definitions of terms used throughout this guide.
 
 ## Topology
 
-HA VPN supports [multiple topologies](https://cloud.google.com/vpn/docs/concepts/topologies).
+HA VPN supports [multiple topologies](https://cloud.google.com/network-connectivity/docs/vpn/concepts/topologies).
 
-This interop guide is based on the [1-peer-2-address](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses) topology.
+This interop guide is based on the [1-peer-2-address](https://cloud.google.com/network-connectivity/docs/vpn/concepts/topologies#1-peer-2-addresses) topology.
 
 ## Product environment
 
@@ -62,7 +62,7 @@ The Cisco ASA 5506H equipment used in this guide is as follows:
 ## Before you begin
 
 1.  Review information about how
-    [dynamic routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#dynamic-routing)
+    [dynamic routing](https://cloud.google.com/network-connectivity/docs/vpn/concepts/choosing-networks-routing#dynamic-routing)
     works in GCP.
 
 1.  Make sure that your peer VPN gateway supports BGP.
@@ -403,7 +403,7 @@ VPC subnet prefixes.
 
 ### Creating the base network configuration
 
-For the [1-peer-2-address](https://cloud.google.com/vpn/docs/concepts/topologies#1-peer-2-addresses)
+For the [1-peer-2-address](https://cloud.google.com/network-connectivity/docs/vpn/concepts/topologies#1-peer-2-addresses)
 topology, configure a minimum of three interfaces, named `outside-0`, `outside-1`, and `inside`. Outside 
 interfaces are connected to the internet; the inside interface is connected to the private network.
 
@@ -431,7 +431,7 @@ replacing the IP addresses based on your envrionment:
 
 Follow the procedures in this section to create the base VPN configuration.
 
-Make sure to configure [Ciphers supported by GCP](https://cloud.google.com/vpn/docs/how-to/configuring-peer-gateway#configuring_ike) only.
+Make sure to configure [Ciphers supported by GCP](https://cloud.google.com/network-connectivity/docs/vpn/how-to/configuring-peer-gateway#configuring_ike) only.
 
 #### Configure the IKEv2 policy
 
@@ -623,11 +623,11 @@ about both products.
 To learn more about GCP networking, see the following documents:
 
 -  [VPC networks](https://cloud.google.com/vpc/docs)
--  [Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview)
--  [Advanced Cloud VPN configurations](https://cloud.google.com/vpn/docs/concepts/advanced)
--  [Check VPN status](https://cloud.google.com/vpn/docs/how-to/checking-vpn-status)
+-  [Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview)
+-  [Advanced Cloud VPN configurations](https://cloud.google.com/network-connectivity/docs/vpn/concepts/advanced)
+-  [Check VPN status](https://cloud.google.com/network-connectivity/docs/vpn/how-to/checking-vpn-status)
 -  [Terraform template for HA VPN](https://www.terraform.io/docs/providers/google/r/compute_ha_vpn_gateway.html)
--  [Troubleshooting Cloud VPN](https://cloud.google.com/compute/docs/vpn/troubleshooting)
+-  [Troubleshooting Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/support/troubleshooting)
 -  [Create a virtual machine on GCP](https://cloud.google.com/compute/docs/quickstart)
 
 ### Cisco ASA 5506H documentation
