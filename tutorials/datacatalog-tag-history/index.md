@@ -1,36 +1,38 @@
 ---
-title: Create a Data Catalog Tag history in BigQuery using Cloud Logging and Dataflow
+title: Create a Data Catalog tag history in BigQuery using Cloud Logging and Dataflow
 description: Learn how to create a historical record of metadata in real time by capturing logs and processing them with Pub/Sub and Dataflow.
 author: anantdamle
 tags: Data Catalog, BigQuery, PubSub, Dataflow
-date_published: 2020-09-21
+date_published: 2020-10-7
 ---
 
 Anant Damle | Solutions Architect | Google Cloud
 
-This solution is intended for a technical audience, such as data engineers and analysts, who are responsibile for metadata management, data governance and related analytics.
+This solution is intended for technical practitioners—such as data engineers and analysts—who are responsibile for metadata management, data governance, and 
+related analytics.
 
 Historical metadata about your data warehouse is a treasure trove for discovering insights about changing data patterns, data quality, and user behavior. The
 challenge is that Data Catalog keeps a single version of metadata for fast searchability.
 
 This tutorial suggests a solution to create a historical record of metadata Data Catalog tags by creating change records in real time by capturing and parsing
-the [Audit Logs](https://cloud.google.com/data-catalog/docs/how-to/audit-logging) from [Cloud Logging](https://cloud.google.com/logging) and processing them in 
+the [audit logs](https://cloud.google.com/data-catalog/docs/how-to/audit-logging) from [Cloud Logging](https://cloud.google.com/logging) and processing them in 
 real time by using [Pub/Sub](https://cloud.google.com/pubsub) and [Dataflow](https://cloud.google.com/dataflow) to append into a 
 [BigQuery](https://cloud.google.com/bigquery) table for historical analysis.
 
-![Data Catalog Tag history recording solution architecture](https://storage.googleapis.com/gcp-community/tutorials/datacatalog-tag-history/data_catalog_tag_recorder_arch.svg)
+![Data Catalog tag history recording solution architecture](https://storage.googleapis.com/gcp-community/tutorials/datacatalog-tag-history/data_catalog_tag_recorder_arch.svg)
 
 ## Concepts
 
-*   [Cloud Data Catalog](https://cloud.google.com/data-catalog) provides a single plane for searching and managing both
+*   [Cloud Data Catalog](https://cloud.google.com/data-catalog) provides a single interface for searching and managing both
     [technical and business metadata](https://cloud.google.com/data-catalog/docs/concepts/overview#glossary) of your data warehouse or data lake in Google Cloud
-    and beyond. Data Catalog uses [Tags](https://cloud.google.com/data-catalog/docs/concepts/overview#tags) to organize metadata and makes it discoverable.
+    and beyond. Data Catalog uses [tags](https://cloud.google.com/data-catalog/docs/concepts/overview#tags) to organize metadata and make it discoverable.
 *   [BigQuery](https://cloud.google.com/bigquery) is Google Cloud’s serverless, highly scalable, and cost-effective multi-cloud data warehouse designed for 
-    business agility that you can use to run petabyte-sized queries. BigQuery also provides APIs for reading Table schemas.
-*   [Dataflow](https://cloud.google.com/dataflow) is Google Cloud’s serverless data-processing service by both stream and batch.
+    business agility that you can use to run petabyte-sized queries. BigQuery also provides APIs for reading table schemas.
+*   [Dataflow](https://cloud.google.com/dataflow) is Google Cloud’s serverless service for processing data in streams or batches.
 *   [Pub/Sub](https://cloud.google.com/pubsub) is Google Cloud’s flexible, reliable, real-time messaging service for independent applications to publish and 
     subscribe to asynchronous events.
-*   [Cloud Logging](https://cloud.google.com/logging) is Google Cloud's powerful log management service that allows you to search and route logs from services in GCP as well as applications.
+*   [Cloud Logging](https://cloud.google.com/logging) is Google Cloud's powerful log management service that allows you to search and route logs from
+    applications and Google Cloud services.
 
 ## Prerequisites
 
@@ -38,14 +40,14 @@ This tutorial assumes some familiarity with shell scripts and basic knowledge of
 
 ## Objectives
 
-1. Set up Log sink to export Data Catalog Audit logs to Pub/Sub.
+1. Set up a log sink to export Data Catalog audit logs to Pub/Sub.
 2. Deploy a streaming Dataflow pipeline to parse the logs.
-3. Enrich the logs with Entry Tag information from Data Catalog.
-4. Store the metadata tags attached to the modified Entry in a BigQuery table for historical reference.
+3. Enrich the logs with entry tag information from Data Catalog.
+4. Store the metadata tags attached to the modified entry in a BigQuery table for historical reference.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud, including the following
+This tutorial uses billable components of Google Cloud, including the following:
 
 *   [Data Catalog](https://cloud.google.com/data-catalog/pricing)
 *   [Dataflow](https://cloud.google.com/dataflow/pricing)
@@ -92,13 +94,13 @@ easiest at the end of the tutorial, we recommend that you create a new project f
         # The Google Cloud project to use for this tutorial
         export PROJECT_ID="your-project-id"
 
-        # The BigQuery region to use for Tags table
+        # The BigQuery region to use for tags table
         export BIGQUERY_REGION=""
 
-        # The name of the BigQuery Dataset to create the Tag records table
+        # The name of the BigQuery Dataset to create the tag records table
         export DATASET_ID=""
 
-        # The name of the BigQuery table for Tag records
+        # The name of the BigQuery table for tag records
         export TABLE_ID="EntityTagOperationRecords"
 
         # The Compute Engine region to use for running Dataflow jobs and create a temporary storage bucket
@@ -120,21 +122,22 @@ easiest at the end of the tutorial, we recommend that you create a new project f
         export TAG_HISTORY_SERVICE_ACCOUNT="tag-history-collector"
         export TAG_HISTORY_SERVICE_ACCOUNT_EMAIL="${TAG_HISTORY_SERVICE_ACCOUNT}@$(echo $PROJECT_ID | awk -F':' '{print $2"."$1}' | sed 's/^\.//').iam.gserviceaccount.com"
 
-1.  Run the script to set the environment variables
+1.  Run the script to set the environment variables:
 
         source env.sh
 
 ## Creating resources
 
-### Create BigQuery table
+### Create the BigQuery table
 
-1.  Set up a BigQuery dataset in the [region](https://cloud.google.com/bigquery/docs/locations) of your choice to store Data Catalog Entry's tags when a change event occurs:
+1.  Set up a BigQuery dataset in the [region](https://cloud.google.com/bigquery/docs/locations) of your choice to store Data Catalog entry tags when a change
+    event occurs:
 
         bq --location ${BIGQUERY_REGION} \
         --project_id=${PROJECT_ID} \
         mk --dataset ${DATASET_ID}
 
-1.  Create a BigQuery table for storing Tags using the provided schema:
+1.  Create a BigQuery table for storing tags using the provided schema:
 
         bq mk --table \
         --project_id=${PROJECT_ID} \
@@ -150,18 +153,14 @@ easiest at the end of the tutorial, we recommend that you create a new project f
         --time_partitioning_field "reconcile_time" \
         "${DATASET_ID}.${TABLE_ID}" snakeEntityTagOperationRecords.schema
 
-> **Warning**: 
->
-> Apply restrictive access controls to the Tag history BigQuery table. <br>Data Catalog results are ACLed based on requestors' permissions
+**Warning**: Apply restrictive access controls to the tag history BigQuery table. Access to Data Catalog results is based on requestors' permissions.
 
-### Configure Pub/Sub topic and subscription<a name="configure-pubsub"></a>
+### Configure a Pub/Sub topic and subscription
 
-1.  Create a Pub/Sub topic to receive Audit log events:
+1.  Create a Pub/Sub topic to receive audit log events:
 
-    ```shell script
-    gcloud pubsub topics create ${LOGS_SINK_TOPIC_ID} \
-    --project ${PROJECT_ID}
-    ```
+        gcloud pubsub topics create ${LOGS_SINK_TOPIC_ID} \
+        --project ${PROJECT_ID}
 
 1.  Create a new Pub/Sub subscription:
 
@@ -172,24 +171,24 @@ easiest at the end of the tutorial, we recommend that you create a new project f
     Using a subscription with a Dataflow pipeline ensures that all messages are processed even when the pipeline may be temporarily 
     down for updates or maintenance.
 
+### Configure a log sink
 
-### Configure Log sink
-
-1.  Create a Log sink to send DataCatalog audit events to the Pub/Sub topic:
+1.  Create a log sink to send Data Catalog audit events to the Pub/Sub topic:
 
         gcloud logging sinks create ${LOGS_SINK_NAME} \
         pubsub.googleapis.com/projects/${PROJECT_ID}/topics/${LOGS_SINK_TOPIC_ID} \
         --log-filter="protoPayload.serviceName=\"datacatalog.googleapis.com\" \
         AND protoPayload.\"@type\"=\"type.googleapis.com/google.cloud.audit.AuditLog\""
 
-    Cloud Logging will push new [Data Catalog audit logs](https://cloud.google.com/data-catalog/docs/how-to/audit-logging) to the Pub/Sub topic for processing in real time.
+    Cloud Logging pushes new [Data Catalog audit logs](https://cloud.google.com/data-catalog/docs/how-to/audit-logging) to the Pub/Sub topic for processing in 
+    real time.
 
-1.  Give Pub/Sub "Publisher" permission to the logging service account to enable pushing log entries into the configured Pub/Sub topic:
+1.  Give the Pub/Sub `publisher` role to the logging service account to enable the pushing of log entries into the configured Pub/Sub topic:
 
-        # Identify the Logs writer service account  
+        # Identify the log writer service account  
         export LOGGING_WRITER_IDENTITY="$(gcloud logging sinks describe ${LOGS_SINK_NAME} --format="get(writerIdentity)" --project ${PROJECT_ID})"
 
-        # Grant Publish permission to the Logging writer
+        # Grant publisher role to the Logging writer
         gcloud pubsub topics add-iam-policy-binding ${LOGS_SINK_TOPIC_ID} \
         --member=${LOGGING_WRITER_IDENTITY} \
         --role='roles/pubsub.publisher' \
@@ -200,7 +199,7 @@ easiest at the end of the tutorial, we recommend that you create a new project f
 We recommend that you run pipelines with fine-grained access control to improve access partitioning. If your project does not have a user-created service 
 account, create one using following instructions.
 
-You can use your browser by going to **[Service accounts](https://console.cloud.google.com/projectselector/iam-admin/serviceaccounts?supportedpurview=project)**
+You can use your browser by going to [**Service accounts**](https://console.cloud.google.com/projectselector/iam-admin/serviceaccounts?supportedpurview=project)
 in the Cloud Console.
 
 1. Create a service account to use as the user-managed controller service account for Dataflow:
@@ -209,7 +208,7 @@ in the Cloud Console.
         --description="Service Account to run the DataCatalog tag history collection and recording pipeline." \
         --display-name="Data Catalog History collection account"
 
-1.  Create a custom role with required permissions for accessing BigQuery, Pub/Sub, Dataflow and Data Catalog:    
+1.  Create a custom role with required permissions for accessing BigQuery, Pub/Sub, Dataflow, and Data Catalog:    
 
         export TAG_HISTORY_COLLECTOR_ROLE="tag_history_collector"
 
@@ -221,13 +220,13 @@ in the Cloud Console.
         --member="serviceAccount:${TAG_HISTORY_SERVICE_ACCOUNT_EMAIL}" \
         --role=projects/${PROJECT_ID}/roles/${TAG_HISTORY_COLLECTOR_ROLE}
 
-1.  Assign `dataflow.worker` role to allow the service account to run as dataflow worker:
+1.  Assign the `dataflow.worker` role to allow the service account to run as a Dataflow worker:
 
         gcloud projects add-iam-policy-binding ${PROJECT_ID} \
         --member="serviceAccount:${TAG_HISTORY_SERVICE_ACCOUNT_EMAIL}" \
         --role=roles/dataflow.worker
 
-## Deploy the Tag history recording pipeline
+## Deploy the tag history recording pipeline
 
 1.  Create a Cloud Storage bucket as a temporary and staging bucket for Dataflow:
 
@@ -261,9 +260,8 @@ in the Cloud Console.
 
 ## Manual test 
 
-Follow the guide to [Attach Tag](https://cloud.google.com/data-catalog/docs/quickstart-tagging#data-catalog-quickstart-console) to a Data Catalog Entry to verify 
-that the tool captures all the Tags attached to modified Entry in the BigQuery table.
-
+Follow the guide to [attach a tag](https://cloud.google.com/data-catalog/docs/quickstart-tagging) to a Data Catalog entry to verify 
+that the tool captures all of the tags attached to the modified entry in the BigQuery table.
 
 ## Limitations
 
@@ -271,9 +269,9 @@ that the tool captures all the Tags attached to modified Entry in the BigQuery t
     *   `CreateTag`
     *   `UpdateTag`
     *   `DeleteTag`
-*   Single Data Catalog operation creates multiple tag record entries due to multiple AuditLog events.
-*   The tool polls the Data Catalog service for Entry/Tag information, because the audit logs don't contain change information. This can result in some changes
-    to an Entry/Tags getting missed.
+*   Single Data Catalog operation creates multiple tag record entries due to multiple `AuditLog` events.
+*   The tool polls the Data Catalog service for entry/tag information, because the audit logs don't contain change information. This can result in some changes
+    to an entries or tags being missed.
 
 ## Cleaning up
 
@@ -282,9 +280,9 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 1.  In the Cloud Console, go to the [**Manage resources** page](https://console.cloud.google.com/iam-admin/projects).
 1.  In the project list, select the project that you want to delete and then click **Delete**.    
 1.  In the dialog, type the project ID and then click **Shut down** to delete the project.
-![Delete Project](images/delete-project.png)
 
 ## What's next
+
 * Learn more about [Data Catalog](https://cloud.google.com/datacatalog)
 * Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
 * Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
