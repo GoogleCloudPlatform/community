@@ -559,7 +559,9 @@ kubectl get nodes
 ```
 
 Run a deployment called `hello-server` on this cluster. We'll use a demo web server image from the registry and
-launch this on container port `8080`. Create a file named hello-server-deployment.yaml and copy the following into it.
+launch this on container port `8080`. 
+
+Create a file named `hello-server-deployment.yaml` and copy the following into it:
 
 ```
 apiVersion: apps/v1
@@ -583,7 +585,7 @@ spec:
         - containerPort: 8080
 ```
 
-Apply the file to the cluster.
+Apply the file to the cluster:
 
 ```
 kubectl apply -f hello-server-deployment.yaml
