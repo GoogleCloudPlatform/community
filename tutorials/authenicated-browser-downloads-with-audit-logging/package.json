@@ -1,0 +1,17 @@
+{
+  "name": "the-workaround-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/storage": "^5.3.0",
+    "express": "^4.17.1",
+    "mime": "^2.4.6"
+  }
+}
