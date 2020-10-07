@@ -57,7 +57,7 @@ extension.
 
 ## Opportunities for customization
 
-This code provide a plain authenticated file server. Often, you might have requirements for transforming files before delivering them to the user. Here are a few
+This code provides a plain authenticated file server. Often, you might have requirements for transforming files before delivering them to the user. Here are a few
 ways that this code can be modified to fit more specific needs:
 
 * Image or document watermarking
