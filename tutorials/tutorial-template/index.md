@@ -6,12 +6,21 @@ tags: replace, with, tags, not, in, title, or, description
 date_published: 2020-04-28
 ---
 
+Todd Kopriva | Community Editor | Google LLC
+
+<p style="background-color:#AFEEEE;"><i>Contributed by the Google Cloud community (not official Google documentation).</i></p>
+<p style="background-color:#CCFFCC;"><i>Contributed by Google employees.</i></p>
+
 To begin creating a tutorial, copy the Markdown source for this tutorial template into your blank Mardown file. Replace the explanatory text and examples with 
 your own tutorial content. Not all tutorials will use all of the sections described in this template. For more information, see the 
 [style guide](https://cloud.google.com/community/tutorials/styleguide) and [contribution guide](https://cloud.google.com/community/tutorials/write).
 
 Replace the placeholders in the metadata at the top of the Markdown file with your own values. Follow the guidance provided by the placeholder values for spacing
 and punctuation.
+
+The first line after the metadata should be your name and an optional job description and organization affiliation.
+
+After that is one of two banners that indicates whether the document was contributed by a Google employee. Just leave one banner and delete the other one.
 
 The first paragraph or two of the tutorial should tell the reader the following:
 
