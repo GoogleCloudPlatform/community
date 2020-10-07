@@ -11,7 +11,7 @@ Todd Kopriva | Community Editor | Google LLC
 <p style="background-color:#AFEEEE;"><i>Contributed by the Google Cloud community (not official Google documentation).</i></p>
 <p style="background-color:#CCFFCC;"><i>Contributed by Google employees.</i></p>
 
-To begin creating a tutorial, copy the Markdown source for this tutorial template into your blank Mardown file. Replace the explanatory text and examples with 
+To begin creating a tutorial, copy the Markdown source for this tutorial template into your blank Markdown file. Replace the explanatory text and examples with 
 your own tutorial content. Not all tutorials will use all of the sections described in this template. For more information, see the 
 [style guide](https://cloud.google.com/community/tutorials/styleguide) and [contribution guide](https://cloud.google.com/community/tutorials/write).
 
@@ -115,10 +115,8 @@ Deleting a project has the following consequences:
 To delete a project, do the following:
 
 1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-1.  In the project list, select the project you want to delete and click **Delete project**.
+1.  In the project list, select the project you want to delete and click **Delete**.
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
-
-    ![deleting the project](https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/delete-project.png)
 
 ## What's next
 
