@@ -14,8 +14,7 @@
  */
 
 const Compute = require('@google-cloud/compute');
-const Buffer  = require('safe-buffer').Buffer;
-var isodate   = require("isodate");
+const Buffer = require('safe-buffer').Buffer;
 
 const compute = new Compute();
 
@@ -29,53 +28,54 @@ const compute = new Compute();
  *  label - the label of instances to start.
  *
  * @param {!object} event Cloud Function PubSub message event.
+ * @param {object} context The event metadata.
  * @param {!object} callback Cloud Function PubSub callback indicating
  *  completion.
  */
 exports.cleanUnusedInstances = (event, context, callback) => {
   try {
     const payload = _validatePayload(
-      JSON.parse(Buffer.from(event.data, 'base64').toString()) 
+        JSON.parse(Buffer.from(event.data, 'base64').toString()),
     );
-    console.log("Checking instances matching payload: " + payload);
+    console.log('Checking instances matching payload: ' + payload);
     const options = {filter: `labels.${payload.label}`};
 
-    compute.getVMs(options).then(vms => {
-      vms[0].forEach(instance => {
-        
+    compute.getVMs(options).then((vms) => {
+      vms[0].forEach((instance) => {
         // Extracts GCE instance metadata
-        var ttl  = instance.metadata.labels.ttl; // TTL in minutes
-        var zone = instance.zone.id;
+        const ttl = instance.metadata.labels.ttl; // TTL in minutes
+        const zone = instance.zone.id;
 
-        // Current Datetime 
-        const date = new Date()  
-        const now = Math.round(date.getTime() / 1000)  // epoch in seconds
+        // Current Datetime
+        const date = new Date();
+        const now = Math.round(date.getTime() / 1000); // epoch in seconds
 
         // Calcultes GCE instance creation time
-        var creationDate = new Date(instance.metadata.creationTimestamp);
-        const creationTime = Math.round(creationDate.getTime() / 1000) // in seconds
-        
-        var diff = (now - creationTime)/60; // in minutes.
+        const creationDate = new Date(instance.metadata.creationTimestamp);
+        const creationTime = Math.round(creationDate.getTime() / 1000);
+
+        const diff = (now - creationTime)/60; // in minutes.
         if (diff>ttl) {
           compute
-          .zone(zone)
-          .vm(instance.name)
-          .delete()
-          .then(data => {
-            // Operation pending.
-            const operation = data[0];
-            return operation.promise();
-          })
-          .then(() => {
-            // Operation complete. Instance successfully started.
-            const message = 'Successfully deleted instance ' + instance.name;
-            console.log(message);
-            callback(null, message);
-          })
-          .catch(err => {
-            console.log(err);
-            callback(err);
-          });
+              .zone(zone)
+              .vm(instance.name)
+              .delete()
+              .then((data) => {
+                // Operation pending.
+                const operation = data[0];
+                return operation.promise();
+              })
+              .then(() => {
+                // Operation complete. Instance successfully started.
+                const message = 'Successfully deleted instance ' +
+                  instance.name;
+                console.log(message);
+                callback(null, message);
+              })
+              .catch((err) => {
+                console.log(err);
+                callback(err);
+              });
         }
       });
     });
