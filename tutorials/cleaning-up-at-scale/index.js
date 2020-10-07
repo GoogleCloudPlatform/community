@@ -18,7 +18,6 @@ const Buffer = require('safe-buffer').Buffer;
 
 const compute = new Compute();
 
-
 /**
  * Deletes unused Compute Engine instances.
  *
@@ -35,10 +34,10 @@ const compute = new Compute();
 exports.cleanUnusedInstances = (event, context, callback) => {
   try {
     const payload = _validatePayload(
-        JSON.parse(Buffer.from(event.data, 'base64').toString()),
+      JSON.parse(Buffer.from(event.data, 'base64').toString())
     );
     console.log('Checking instances matching payload: ' + payload);
-    const options = {filter: `labels.${payload.label}`};
+    const options = { filter: `labels.${payload.label}` };
 
     compute.getVMs(options).then((vms) => {
       vms[0].forEach((instance) => {
@@ -54,28 +53,28 @@ exports.cleanUnusedInstances = (event, context, callback) => {
         const creationDate = new Date(instance.metadata.creationTimestamp);
         const creationTime = Math.round(creationDate.getTime() / 1000);
 
-        const diff = (now - creationTime)/60; // in minutes.
-        if (diff>ttl) {
+        const diff = (now - creationTime) / 60; // in minutes.
+        if (diff > ttl) {
           compute
-              .zone(zone)
-              .vm(instance.name)
-              .delete()
-              .then((data) => {
-                // Operation pending.
-                const operation = data[0];
-                return operation.promise();
-              })
-              .then(() => {
-                // Operation complete. Instance successfully started.
-                const message = 'Successfully deleted instance ' +
+            .zone(zone)
+            .vm(instance.name)
+            .delete()
+            .then((data) => {
+              // Operation pending.
+              const operation = data[0];
+              return operation.promise();
+            })
+            .then(() => {
+              // Operation complete. Instance successfully started.
+              const message = 'Successfully deleted instance ' +
                   instance.name;
-                console.log(message);
-                callback(null, message);
-              })
-              .catch((err) => {
-                console.log(err);
-                callback(err);
-              });
+              console.log(message);
+              callback(null, message);
+            })
+            .catch((err) => {
+              console.log(err);
+              callback(err);
+            });
         }
       });
     });
@@ -85,17 +84,15 @@ exports.cleanUnusedInstances = (event, context, callback) => {
   }
 };
 
-
 /**
  * Validates that a request payload contains the expected fields.
  *
  * @param {!object} payload the request payload to validate.
  * @return {!object} the payload object.
  */
-function _validatePayload(payload) {
+function _validatePayload (payload) {
   if (!payload.label) {
-    throw new Error(`Attribute 'label' missing from payload`);
+    throw new Error('Attribute \'label\' missing from payload');
   }
   return payload;
 }
-
