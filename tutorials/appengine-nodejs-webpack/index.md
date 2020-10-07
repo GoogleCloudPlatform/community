@@ -1,12 +1,13 @@
 ---
-title: Webpack on App Engine Flexible Environment
+title: Webpack on App Engine flexible environment
 description: Learn how to bundle frontend assets for an Express.js app in the Google App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Express.js, Node.js, Webpack
 date_published: 2017-02-16
 ---
+
 This tutorial shows a sample Node.js app built with [Express.js][express] that
-uses Webpack to bundle frontend assets on deployment to the Google App Engine
+uses Webpack to bundle frontend assets on deployment to the App Engine
 flexible environment.
 
 [Webpack][webpack] is a module bundler. Webpack takes modules with dependencies
@@ -16,9 +17,8 @@ This tutorial gets you going fast by deploying a simple Webpack.js app. This
 tutorial assumes that you are familiar with Node.js programming and that you
 have installed Node.js.
 
-You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
-overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
-Platform.
+You can check out [Node.js and Google Cloud][nodejs-gcp] to get an
+overview of Node.js itself and learn ways to run Node.js apps on Google Cloud.
 
 [express]: http://expressjs.com
 [webpack]: https://webpack.github.io/
@@ -28,49 +28,41 @@ Platform.
 
 1. Create a Node.js app that uses Webpack to bundle the app's frontend assets.
 1. Run the Node.js app locally.
-1. Deploy the Node.js app to Google App Engine flexible environment.
+1. Deploy the Node.js app to App Engine flexible environment.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including:
+This tutorial uses billable components of Google Cloud, including the following:
 
-- Google App Engine flexible environment
+- App Engine flexible environment
 
-Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
+Use the [pricing calculator][pricing] to generate a cost estimate based on your
 projected usage.
 
 [pricing]: https://cloud.google.com/products/calculator
 
 ## Before you begin
 
-1.  Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1.  Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1.  Enable billing for your project.
-1.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1.  Install the [Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Preparing the app
 
 1.  Download the sample [`server.js`][server] file.
 1.  Prepare the `package.json` file:
 
-    1.  Create a `package.json` file with `npm` or `yarn`:
+    1.  Create a `package.json` file with `npm`:
 
             npm init
 
-        or
-
-            yarn init
-
-    1.  Install dependencies with `npm` or `yarn`:
+    1.  Install dependencies with `npm`:
 
             npm install --save webpack express pug
 
-        or
-
-            yarn add webpack express pug
-
-        **Note**: Webpack must be listed in the `dependencies` of the `package.json`
-        file, as by default `devDependencies` are not installed when the app is
-        deployed to Google App Engine.
+        Webpack must be listed in the `dependencies` of the `package.json`
+        file because by default `devDependencies` are not installed when the app is
+        deployed to App Engine.
 
     1.  Add the following `scripts` section to the `package.json` file:
 
@@ -79,10 +71,9 @@ projected usage.
               "prestart": "npm run bundle"
             }
 
-        * The `bundle` script will run Webpack and bundle the app's frontend
-          assets.
-        * The `prestart` script is automatically executed before the `start` script.
-          Note that the default `start` script is `node server.js`.
+        The `bundle` script will run Webpack and bundle the app's frontend
+        assets. The `prestart` script is automatically executed before the `start`
+        script. Note that the default `start` script is `node server.js`.
 
         Make sure that your `package.json` file is valid JSON.
 
@@ -97,7 +88,7 @@ projected usage.
           }
         };
 
-    The bundled assets will be places in a directory named `dist`.
+    The bundled assets will be placed in a directory named `dist`.
 
 1.  Prepare the frontend assets:
 
@@ -147,13 +138,9 @@ At this point your directory structure should look like this:
 
 ## Running the app
 
-1.  Start the app with `npm` or `yarn`:
+1.  Start the app with `npm`:
 
         npm start
-
-    or
-
-        yarn start
 
     The `prestart` and `bundle` scripts will be executed automatically, bundling
     the frontend assets before the app starts.
@@ -175,7 +162,7 @@ At this point your directory structure should look like this:
 
 1.  Visit `http://[YOUR_PROJECT_ID].appspot.com` to see the deployed app.
 
-    Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
+    Replace `[YOUR_PROJECT_ID]` with your Google Cloud project ID.
 
 [server]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-nodejs-webpack/server.js
 [index]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-nodejs-webpack/views/index.pug

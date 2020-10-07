@@ -44,7 +44,7 @@ the Google Cloud Platform Console:
 1. In the Cloud Platform Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
 1. Click the Create instance button.
 1. Set **Name** to **lamp-tutorial**.
-1. Set **Machine type** to **f1-micro**.
+1. Set **Machine type** to **e2-micro**.
 1. In the **Boot disk** section, click **Change** to begin configuring your boot disk.
 1. In the **OS images** tab, choose a **Debian 7.x**, **Ubuntu 14.04**, **CentOS 6.x**, or **CentOS 7.x** version.
 1. Click **Select**.
@@ -139,7 +139,7 @@ Install MySQL and related PHP components:
 
 #### Debian/Ubuntu
 
-    sudo apt-get install mysql-server php5-mysql php-pear
+    sudo apt-get install mysql-server php-mysql php-pear
 
 #### Ubuntu 16
 

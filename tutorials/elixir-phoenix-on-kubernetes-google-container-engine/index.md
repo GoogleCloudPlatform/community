@@ -328,7 +328,7 @@ choose to use Distillery, be sure to adjust these steps accordingly.
         mix release.init
 
     This will create a `rel` directory containing several configuration files
-    and templates. You can examine and edit these if if you wish, but the
+    and templates. You can examine and edit these if you wish, but the
     defaults should be sufficient for this tutorial.
 
     If you are using Distillery 2.1 or later, the corresponding command is
@@ -630,7 +630,7 @@ you've created the Kubernetes cluster as described above.
 
 1.  Expose the application by creating a load balancer pointing at your pod:
 
-        kubectl expose deployment hello-web \
+        kubectl expose pod hello-web \
             --type=LoadBalancer --port 80 --target-port 8080
 
     This creates a service resource pointing at your running pod. It listens

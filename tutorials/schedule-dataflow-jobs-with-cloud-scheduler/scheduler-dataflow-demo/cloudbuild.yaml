@@ -1,0 +1,29 @@
+# The PROJECT_ID is a cloud build env variable
+steps:
+- id: 'Terraform init'
+  name: 'hashicorp/terraform:0.12.20'
+  dir: 'terraform'
+  entrypoint: 'sh'
+  args:
+    - '-c'
+    - |
+      terraform init -input=false
+      terraform workspace select scheduler-dataflow-demo || terraform workspace new scheduler-dataflow-demo
+      terraform apply -input=false -var=project_id=${_PROJECT_ID} -var=region=${_REGION}\
+        -var=bucket=${_BUCKET} -auto-approve
+  waitFor: ['-']
+
+- id: "Build dataflow template"
+  name: maven:3.6.0-jdk-11-slim
+  dir: 'dataflow'
+  env:
+    - "PROJECT=${_PROJECT_ID}"
+    - "BUCKET=${_BUCKET}"
+    - "REGION=${_REGION}"
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      ./build.sh
+  waitFor: ['Terraform init']
+

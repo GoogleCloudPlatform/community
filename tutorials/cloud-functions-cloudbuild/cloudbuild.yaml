@@ -1,0 +1,11 @@
+steps:
+  - name: 'mirror.gcr.io/library/golang'
+    args: ['go', 'version']
+  - name: 'mirror.gcr.io/library/golang'
+    args: ['go', 'test']
+    dir: 'code'
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['functions', 'deploy', 'cloudfunction01', '--trigger-http', '--runtime', 'go113', '--entry-point', 'HelloWorld']
+    dir: 'code'
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['functions', 'add-iam-policy-binding', 'cloudfunction01', '--member', 'allUsers', '--role', 'roles/cloudfunctions.invoker']
