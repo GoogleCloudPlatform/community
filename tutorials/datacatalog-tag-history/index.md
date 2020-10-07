@@ -2,7 +2,7 @@
 title: Create a Data Catalog tag history in BigQuery using Cloud Logging and Dataflow
 description: Learn how to create a historical record of metadata in real time by capturing logs and processing them with Pub/Sub and Dataflow.
 author: anantdamle
-tags: Data Catalog, BigQuery, PubSub, Dataflow
+tags: Data Catalog, BigQuery, Dataflow
 date_published: 2020-10-07
 ---
 
