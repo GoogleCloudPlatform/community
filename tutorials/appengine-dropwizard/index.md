@@ -1,25 +1,28 @@
 ---
 title: Deploying Dropwizard applications on Google App Engine
-description: Learn how to deploy Dropwizard applications on Google App Engine Flexible environment using a custom runtime.
+description: Learn how to deploy Dropwizard applications on Google App Engine flexible environment using a custom runtime.
 author: agentmilindu
 tags: App Engine, Dropwizard
 date_published: 2017-10-29
 ---
+
+Milindu Sanoj Kumarage
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community (not official Google documentation).</i></p>
+
 This tutorial shows how to deploy an [Dropwizard][dropwizard] application
 on Google App Engine flexible environment.
 
-## Overview
-
 [Dropwizard][dropwizard] is a Java framework for developing RESTful
-web services which support for configuration management, application metrics,
-logging, operational tools, etc out of the box.
+web services with support for configuration management, application metrics,
+logging, operational tools, and more out of the box.
 
-Deploying Dropwizard applications on Google App Engine Flexible Environment can
+Deploying Dropwizard applications on Google App Engine flexible environment can
 be tricky because it requires you to pass arguments to the JAR, like
 `java -jar app.jar server config.yaml` in order to  get the Dropwizard
 application running.
 
-This tutorial shows how to make use of Google App Engine Flexible Environment's
+This tutorial shows how to make use of Google App Engine flexible environment's
 [custom runtime][flexible-custom-runtimes] to deploy a Dropwizard
 application using Docker. This tutorial assumes that you are familiar with Dropwizard and that you have installed Docker.
 
@@ -39,7 +42,7 @@ application.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including:
+This tutorial uses billable components of Google Cloud, including:
 
 - Google App Engine flexible environment
 
@@ -50,13 +53,13 @@ projected usage.
 
 ## Before you begin
 
-1.  Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1.  Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1.  Enable billing for your project.
-1.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1.  Install the [Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Preparing the app
 
-1.  Build your application and generate your JAR artefacts.
+1.  Build your application and generate your JAR artifacts.
 1.  If you don't have a fat JAR (a JAR file with all the dependencies bundled
     together), generate one using a fat JAR plugin.
 
@@ -71,7 +74,7 @@ projected usage.
         This will create a JAR file with all the dependencies of your
         application bundled together as one fat file.
 
-        **Note**: Apache Shader renames your original package JAR
+        **Note**: Apache Shade renames your original package JAR
         `sample-app-1.0-SNAPSHOT.jar` into
         `original-sample-app-1.0-SNAPSHOT.jar` and creates the fat JAR
         with the name `sample-app-1.0-SNAPSHOT.jar`.
