@@ -3,7 +3,7 @@ title: Cloud TPU with Shared VPC
 description: How to use Cloud TPUs with Shared VPC
 author: bernieongewe
 tags: Cloud TPU Shared VPC XPN
-date_published: 2020-10-03
+date_published: 2020-10-07
 ---
 
 This tutorial is an adaptation of the [Cloud TPU Quickstart](https://cloud.google.com/tpu/docs/quickstart).
