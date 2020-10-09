@@ -8,7 +8,7 @@ date_published: 2011-03-01
 
 Jason A. Collins and Shawn Rusaw | VendAsta Technologies, Inc.
 
-<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community (not official Google documentation).</i></p>
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 *Python SDK: 1.4.0*
 
