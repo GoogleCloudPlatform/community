@@ -8,7 +8,7 @@ date_published: 2017-11-01
 
 Hadi Hariri | VP of Developer Advocacy | JetBrains
 
-<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community (not official Google documentation).</i></p>
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 This tutorial demonstrates how to deploy a
 [Kotlin](https://kotlinlang.org/) app using the
