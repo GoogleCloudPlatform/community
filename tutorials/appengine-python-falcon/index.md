@@ -8,7 +8,7 @@ date_published: 2017-04-27
 
 Sergio Gordillo
 
-<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community (not official Google documentation).</i></p>
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 This tutorial shows how to build a Python API with [Falcon][falcon].
 
