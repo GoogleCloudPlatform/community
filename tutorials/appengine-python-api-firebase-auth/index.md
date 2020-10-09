@@ -8,7 +8,7 @@ date_published: 2017-05-05
 
 Sergio Gordillo
 
-<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community (not official Google documentation).</i></p>
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 In this tutorial you will learn how to authenticate the requests that hit your API with JSON Web Tokens (JWT) using Firebase Auth.
 
