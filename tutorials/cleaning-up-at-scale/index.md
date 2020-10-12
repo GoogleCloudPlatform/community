@@ -55,7 +55,7 @@ This tutorial uses the following Google Cloud components:
 To estimate the cost of running this sample, assume that you run a single `f1-micro`  Compute Engine instance for a total of 15 minutes on one day while you test
 the sample, after which you delete the project, releasing all resources. 
 
-Use the [Google Cloud Platform Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on this projected usage. 
+Use the [pricing calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on this projected usage. 
 
 Cloud Scheduler is free for up to 3 jobs per month.
 
@@ -111,7 +111,7 @@ You run the commands in this section in Cloud Shell.
         gcloud scheduler jobs create pubsub clean-unused-instances-job --schedule="* * * * *" \
           --topic=unused-instances --message-body='{"label":"env=test"}'
 
-    The `schedule` is specified in [unix-cron format](https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules).
+    The schedule is specified in [unix-cron format](https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules).
     A `*` in every field means that the job runs every minute, every hour, every day of the month, every month, and every day of the week.
     More simply put, the job runs once per minute.
 
@@ -146,8 +146,9 @@ You can also see the Cloud Function execution results, including the name of the
 
 ## Clean up
 
-Now that you have tested the automated cleanup, you can either delete the entire project or delete the individual resources that you created to prevent further 
-billing for them on your account.
+Now that you have tested the automated cleanup, you can either
+[delete the entire project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#shutting_down_projects) or delete the individual resources
+that you created to prevent further billing for them on your account.
 
 - You can delete the Cloud Scheduler job on the [**Cloud Scheduler** page](https://console.cloud.google.com/cloudscheduler) in the Cloud Console.
 
