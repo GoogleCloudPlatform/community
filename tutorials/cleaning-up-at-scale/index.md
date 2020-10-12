@@ -1,30 +1,30 @@
 ---
 title: Cleaning up Compute Engine instances at scale
-description: A simple, serverless and scalable mechanism to automatically delete Compute Engine instances after a fixed time period.
+description: Use a simple, serverless and scalable mechanism to automatically delete Compute Engine instances after a fixed time period.
 author: hbougdal,jpatokal
 tags: garbage collection
-date_published: 2020-10-01
+date_published: 2020-10-14
 ---
 
-# Cleaning up Compute Engine instances at scale
+This tutorial offers a simple, serverless, and scalable mechanism to automatically delete ([*garbage-collect*](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)), Compute Engine instances after a fixed time period.
 
-## Summary
-
-This tutorial offers a simple, serverless and scalable mechanism to automatically delete, or "[garbage collect](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science))", Compute Engine instances after a fixed time period.  Some use cases where this may be prove useful:
+Some use cases where this may be be useful:
 
 * Developers or testers create one-off instances for testing features, but may not always remember to manually delete them.
-* Workflows that require dynamically spinning up a large number of GCE worker instances to perform a certain task.  While best practice is to have instances delete themselves after the task is complete, but ensuring that this always happens can be difficult if the task is distributed or some workers abort due to errors.
+* Workflows that require dynamically starting a large number of Compute Engine worker instances to perform a certain task. A best practice is to have instances 
+  delete themselves after the task is complete, but ensuring that this always happens can be difficult if the task is distributed or some workers stop because
+  of errors.
 
-This solution leverages the following GCP components: 
+This tutorial leverages the following Google Cloud components: 
 
-*   **Compute Engine**
-*   **Cloud Scheduler**
-*   **Pub/Sub** 
-*   **Cloud Functions**
+*   Compute Engine
+*   Cloud Scheduler
+*   Pub/Sub
+*   Cloud Functions
 
-![High-level overview of the solution](images/overview.svg "High-level overview of the solution")
+The following diagram shows a high-level overview of the solution:
 
-*Figure 1: High-level overview of the solution*
+![High-level overview of the solution](https://storage.googleapis.com/gcp-community/tutorials/cleaning-up-at-scale/overview.svg)
 
 ### How does it work? 
 
@@ -163,22 +163,3 @@ prevent further billing for them on your account.
 * Delete the Cloud Pub/Sub topic.
     You can delete the topic and associated subscriptions from the Cloud Pub/Sub
     section of the [Developers Console](https://console.developers.google.com).
-
-
-## License
-
-Copyright 2020 Google Inc. All Rights Reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-
