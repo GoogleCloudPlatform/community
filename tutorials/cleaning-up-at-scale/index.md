@@ -12,7 +12,7 @@ This tutorial offers a simple and scalable serverless mechanism to automatically
 ([*garbage-collect*](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science))) Compute Engine vitual machine (VM) instances after a specified amount
 of time.
 
-Some use cases where this may be be useful:
+Some cases in which this may be be useful:
 
 * Developers or testers create one-off VM instances for testing a feature, but they might not always remember to manually delete the instances.
 * Workflows can require dynamically starting a large number of Compute Engine worker instances to perform a certain task. A best practice is to have instances 
@@ -144,9 +144,9 @@ You run the commands in this section in Cloud Shell.
 You can also see the Cloud Function execution results, including the name of the deleted instance, by viewing the Cloud Function logs from the
 [**Cloud Functions** page](https://pantheon.corp.google.com/functions/list) in the Cloud Console.
 
-## Clean up
+## Shut down resources used in the tutorial
 
-Now that you have tested the automated cleanup, you can either
+Now that you have tested the automated cleanup of VM instances, you can either
 [delete the entire project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#shutting_down_projects) or delete the individual resources
 that you created to prevent further billing for them on your account.
 
