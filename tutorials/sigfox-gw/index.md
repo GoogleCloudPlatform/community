@@ -3,7 +3,7 @@ title: Integrating Sigfox IoT network with Google Cloud
 description: Install and configure the integration between the Sigfox LPWAN IoT network service and Google Cloud.
 author: lepistom
 tags: IoT, Internet of things, Sigfox, LPWAN
-date_published: 2020-04-20
+date_published: 2020-10-08
 ---
 
 Markku Lepisto | Solutions Architect | Google Cloud
@@ -202,25 +202,25 @@ for the latest version of the API, execute the following commands:
     If Docker is running, you see an output similar to the following:
 
         CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
-        
+
     If you get an error message, start the docker daemon on your local development machine.
 
 1.  Next, you generate the Python client libraries from the [Sigfox API definition](https://support.sigfox.com/api/apidocs).
     To do this, you compile and use a specific version of
-    [swagger-codegen](https://github.com/swagger-api/swagger-codegen). Execute the following command to set up an 
+    [swagger-codegen](https://github.com/swagger-api/swagger-codegen). Execute the following command to set up an
     environment variable for the swagger-codegen version tag to be used:
 
-        (venv) $ generator_version=3.0.11
+        (venv) $ generator_version=3.0.22
 
 1.  The following command uses docker to download the
-    [swaggerapi/swagger-codegen-cli-v3](https://hub.docker.com/r/swaggerapi/swagger-codegen-cli-v3) image and then use the 
+    [swaggerapi/swagger-codegen-cli-v3](https://hub.docker.com/r/swaggerapi/swagger-codegen-cli-v3) image and then use the
     code generator's specific version to generate a Python client library from the Sigfox API definition:
 
         (venv) $  docker run --rm -v $(pwd):/local swaggerapi/swagger-codegen-cli-v3:$generator_version generate -i https://support.sigfox.com/api/apidocs -l python -o /local/out/python-$generator_version
 
 1.  After the generation process completes, copy the generated swagger_client to the working directory:
 
-        (venv) $ cp -r out/python-3.0.11/swagger_client .
+        (venv) $ cp -r out/python-3.0.22/swagger_client .
 
 
 ### Configuring the callback management script
@@ -381,7 +381,7 @@ Verify the `callback_data` Cloud Function with the following steps:
     If the Cloud Function `callback_data` was triggered successfully, and the function replied
     as expected, the arrow will turn green.
 
-5.  Verify that the message payload was forwarded to your Cloud Pub/Sub topic. On your development machine, execute the 
+5.  Verify that the message payload was forwarded to your Cloud Pub/Sub topic. On your development machine, execute the
     following command:
 
         (venv) $ gcloud pubsub subscriptions pull sigfox-data-sub --limit 100 --auto-ack
@@ -440,12 +440,12 @@ Verify the `callback_data` Cloud Function with the following steps:
 
 ## Requesting downlink configurations from a device
 
-In Sigfox, devices must request downlink messages from the network. They do this by setting a specific flag when 
-transmitting a payload. In this integration, the callback responsible for handling the downlink requests is the 
-`callback_data` Cloud Function. The function checks whether the incoming request has the downlink request flag `ack` set to 
-`True`. If it is, the function queries the Firestore database, using the Device Type value as the query key, and fetches 
-the value of the `config` attribute in Firestore. The function then checks that the value is a maximum of 8 bytes long, as 
-in the Sigfox specifications; if it is, the function returns the `config` value to Sigfox backend in its response. The 
+In Sigfox, devices must request downlink messages from the network. They do this by setting a specific flag when
+transmitting a payload. In this integration, the callback responsible for handling the downlink requests is the
+`callback_data` Cloud Function. The function checks whether the incoming request has the downlink request flag `ack` set to
+`True`. If it is, the function queries the Firestore database, using the Device Type value as the query key, and fetches
+the value of the `config` attribute in Firestore. The function then checks that the value is a maximum of 8 bytes long, as
+in the Sigfox specifications; if it is, the function returns the `config` value to Sigfox backend in its response. The
 Sigfox backend then sends the configuration downlink to the device.
 
 **Figure 9.** Downlink sequence diagram
@@ -497,7 +497,7 @@ Execute the following steps to verify the downlink functionality:
 Verify that you can receive service messages from the Sigfox backend by executing the following steps.
 
 You should execute these steps only after executing the downlink tests in the previous section. You may not have any service
-messages from Sigfox backend until you send a downlink response to your device. The downlink response will generate a 
+messages from Sigfox backend until you send a downlink response to your device. The downlink response will generate a
 subsequent `downlinkAck` service message.
 
 1.  In the Cloud Functions console, click the `callback_service` function.
