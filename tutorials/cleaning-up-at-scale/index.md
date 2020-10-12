@@ -2,9 +2,11 @@
 title: Cleaning up Compute Engine instances at scale
 description: Use a simple and scalable serverless mechanism to automatically delete Compute Engine instances after a specified amount of time.
 author: hbougdal,jpatokal
-tags: garbage collection
+tags: garbage collection, Cloud Scheduler, Cloud Functions
 date_published: 2020-10-14
 ---
+
+Hicham Bougdal and Jani Patokallio | Google
 
 This tutorial offers a simple and scalable serverless mechanism to automatically delete
 ([*garbage-collect*](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science))) Compute Engine vitual machine (VM) instances after a specified amount
@@ -32,7 +34,7 @@ The following diagram shows a high-level overview of the solution:
 
 Each Compute Engine instance in scope is assigned two labels:
 
-*   **TTL** (time to live): Indicates (in minutes) after how much time this VM will not be needed and can be deleted.
+*   **TTL** (time to live): Indicates (in minutes) after how much time the VM will not be needed and can be deleted.
 *   **ENV**: Indicates that the instance is part of the pool of VMs that can be checked regularly and can be deleted if the TTL is reached. 
 
 The overall flow is the following:
@@ -55,11 +57,9 @@ The overall flow is the following:
 1.  Create and configure a Google Cloud project:
     1.  In the [Cloud Console](https://console.cloud.google.com/project), select **Create Project**.
     1.  [Enable billing for the project](https://support.google.com/cloud/answer/6293499#enable-billing).
-    1.  Open [Cloud Shell][https://cloud.google.com/shell/docs/using-cloud-shell] and create an App Engine app:
+    1.  Open [Cloud Shell](https://cloud.google.com/shell/docs/using-cloud-shell) and create an App Engine app, which is required by Cloud Scheduler:
 
             gcloud app create --region=us-central
-	    
-	The App Engine app is required by Cloud Scheduler.
     
     1.  Enable the APIs used by this tutorial:
 
@@ -76,9 +76,11 @@ Cloud Scheduler is free for up to 3 jobs per month.
 
 New Google Cloud users may be eligible for a [free trial](http://cloud.google.com/free-trial).
 
-## Set up the sample
+## Set up the automated cleanup code
 
-1.  To clone the GitHub repository, run the following command in Cloud Shell:
+You run the commands in this section in Cloud Shell.
+
+1.  Clone the GitHub repository:
 
         git clone https://github.com/GoogleCloudPlatform/community
 
@@ -92,8 +94,11 @@ New Google Cloud users may be eligible for a [free trial](http://cloud.google.co
 
         gcloud pubsub topics create unused-instances
 
-    The topic is now listed under `gcloud pubsub topics list`.  You can also see the topic
-    in the console: Big Data > Pub/Sub
+    You can verify that the Pub/Sub topic has been created with the following command:
+    
+        gcloud pubsub topics list
+	
+    Topics also appear on the [Pub/Sub **Topics** page](https://console.cloud.google.com/cloudpubsub/topic/list) in the Cloud Console.
 
 1.  Deploy the Cloud Function that will monitor the Pub/Sub topic and clean up instances:
 
@@ -105,17 +110,19 @@ New Google Cloud users may be eligible for a [free trial](http://cloud.google.co
           --topic=unused-instances --message-body='{"label":"env=test"}'
 
     The `schedule` is specified in [unix-cron format](https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules).
-    A `*` in every field means the job runs every minute, every hour, every day of the month, every month, every day of the week.
-    More simply put, it runs once per minute.
+    A `*` in every field means that the job runs every minute, every hour, every day of the month, every month, and every day of the week.
+    More simply put, the job runs once per minute.
 
-    If scanning large numbers of VMs, running less often (such as once an hour) is likely sufficient.
+    If scanning large numbers of VMs, running less often (such as once per hour) is likely sufficient.
 
-The job is now visible in `gcloud scheduler jobs list`.  You can also see the jobs 
-in the console: Tools > Cloud Scheduler 
+    You can verify that the job has been created with the following command:
 
-Scheduler execution logs for the job are visible via the Logs link for each job.
+        gcloud scheduler jobs list
 
-## Test the automated clean-up
+    Jobs also appear on the [**Cloud Scheduler** page](https://console.cloud.google.com/cloudscheduler) in the Cloud Console. On that page, you can view
+    execution logs for each job by clicking **View** in the **Logs** column.
+
+## Test the automated cleanup
 
 1.  Create a test instance labeled `env=test` with a two-minute TTL:
 
@@ -132,16 +139,14 @@ Scheduler execution logs for the job are visible via the Logs link for each job.
 
     The instance should have been automatically deleted.
 
-You can also see the Cloud Function execution results, including the name of the deleted instance, under Cloud Function Logs in the console.
+You can also see the Cloud Function execution results, including the name of the deleted instance, by viewing the Cloud Function logs from the
+[**Cloud Functions** page](https://pantheon.corp.google.com/functions/list) in the Cloud Console.
 
-### Clean up
+## Clean up
 
-Now that you have tested the sample, delete the resources that you created to prevent further billing for them on your account.
+Now that you have tested the automated cleanup, delete the resources that you created to prevent further billing for them on your account.
 
-1.  Delete the Cloud Scheduler job.
+1.  Delete the Cloud Scheduler job on the [**Cloud Scheduler** page](https://console.cloud.google.com/cloudscheduler) in the Cloud Console.
 
-    You can delete the job from the Cloud Scheduler section of the [Cloud Console](https://console.cloud.google.com).
-
-1.  Delete the Cloud Pub/Sub topic.
-
-    You can delete the topic and associated subscriptions from the Cloud Pub/Sub section of the [Cloud Console](https://console.cloud.google.com).
+1.  Delete the Cloud Pub/Sub topic and associated subscriptions on the [**Pub/Sub** page](https://console.cloud.google.com/cloudpubsub/topic/list) of the Cloud 
+    Console.
