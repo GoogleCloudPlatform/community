@@ -21,14 +21,14 @@ const compute = new Compute();
 /**
  * Deletes unused Compute Engine instances.
  *
- * Expects a PubSub message with JSON-formatted event data containing the
+ * Expects a Pub/Sub message with JSON-formatted event data containing the
  * following attributes:
- *  zone (OPTIONAL) - the GCP zone the instances are located in.
+ *  zone (OPTIONAL) - the Google Cloud zone the instances are located in.
  *  label - the label of instances to start.
  *
- * @param {!object} event Cloud Function PubSub message event.
+ * @param {!object} event Cloud Function Pub/Sub message event.
  * @param {object} context The event metadata.
- * @param {!object} callback Cloud Function PubSub callback indicating
+ * @param {!object} callback Cloud Function Pub/Sub callback indicating
  *  completion.
  */
 exports.cleanUnusedInstances = (event, context, callback) => {
@@ -41,7 +41,7 @@ exports.cleanUnusedInstances = (event, context, callback) => {
 
     compute.getVMs(options).then((vms) => {
       vms[0].forEach((instance) => {
-        // Extracts GCE instance metadata
+        // Extracts Compute Engine instance metadata
         const ttl = instance.metadata.labels.ttl; // TTL in minutes
         const zone = instance.zone.id;
 
@@ -49,7 +49,7 @@ exports.cleanUnusedInstances = (event, context, callback) => {
         const date = new Date();
         const now = Math.round(date.getTime() / 1000); // epoch in seconds
 
-        // Calcultes GCE instance creation time
+        // Calculates Compute Engine instance creation time
         const creationDate = new Date(instance.metadata.creationTimestamp);
         const creationTime = Math.round(creationDate.getTime() / 1000);
 
