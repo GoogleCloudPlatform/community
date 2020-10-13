@@ -6,6 +6,8 @@ tags: Cloud Functions, Datastore, Firestore
 date_published: 2018-12-29
 ---
 
+Alan Blount | Product Solutions Engineer | Google
+
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial demonstrates using
