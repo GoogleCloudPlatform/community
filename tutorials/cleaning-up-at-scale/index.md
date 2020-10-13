@@ -9,10 +9,10 @@ date_published: 2020-10-14
 Hicham Bougdal and Jani Patokallio | Google
 
 This tutorial offers a simple and scalable serverless mechanism to automatically delete
-([*garbage-collect*](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science))) Compute Engine vitual machine (VM) instances after a specified amount
+([*garbage-collect*](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science))) Compute Engine virtual machine (VM) instances after a specified amount
 of time.
 
-Some cases in which this may be be useful:
+Some cases in which this may be useful:
 
 * Developers or testers create one-off VM instances for testing a feature, but they might not always remember to manually delete the instances.
 * Workflows can require dynamically starting a large number of Compute Engine worker instances to perform a certain task. A best practice is to have instances 
