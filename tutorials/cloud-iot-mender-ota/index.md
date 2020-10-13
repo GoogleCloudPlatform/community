@@ -6,10 +6,10 @@ tags: IoT, Internet of Things, Raspberry Pi
 date_published: 2018-09-25
 ---
 
-KC Rakam | Customer Engineer Specialist | Google
-Preston Holmes | Solution Architect | Google
-Drew Moseley | Solution Architect | Mender
-Eystein Stenberg | Product Manager | Mender
+* KC Rakam | Customer Engineer Specialist | Google
+* Preston Holmes | Solution Architect | Google
+* Drew Moseley | Solution Architect | Mender
+* Eystein Stenberg | Product Manager | Mender
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
