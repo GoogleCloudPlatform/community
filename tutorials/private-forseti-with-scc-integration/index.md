@@ -292,7 +292,7 @@ In this section, you perform the base configuration to get Forseti up and runnin
 
 #### Enable domain-wide delegation
 
-Important: You must be logged in with the super admin account for the steps in this section.
+You must be logged in with the super admin account for the steps in this section.
 
 For details of domain-wide delegation, see
 [Enable domain-wide delegation in G Suite](https://forsetisecurity.org/docs/latest/configure/inventory/gsuite.html) in
