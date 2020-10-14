@@ -134,7 +134,8 @@ following contents:
 
         gcloud app deploy
 
-1.  Visit `http://YOUR_PROJECT_ID.appspot.com` to try sending email. `YOUR_PROJECT_ID` is the project ID you created earlier in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1.  Visit `http://YOUR_PROJECT_ID.appspot.com` to try sending email. `YOUR_PROJECT_ID` is the project ID you created earlier in the
+    [Cloud Console](https://console.cloud.google.com/).
 
 [sparkpost]: https://www.sparkpost.com/
 [nodejs-gcp]: https://cloud.google.com/nodejs/
