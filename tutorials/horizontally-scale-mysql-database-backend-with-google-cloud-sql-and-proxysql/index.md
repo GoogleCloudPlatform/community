@@ -8,6 +8,8 @@ date_published: 2018-01-12
 
 Chen Yu | Developer Programs Engineer | Google
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial explains how to horizontally scale the MySQL database backend of
 your application using [Cloud SQL](https://cloud.google.com/sql) and
 [ProxySQL](http://proxysql.com).
