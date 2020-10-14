@@ -1,11 +1,15 @@
 ---
-title: Real time Data Processing With Cloud IoT Core
-description: Demonstrate how to build data processing backend for Google Cloud IoT.
+title: Real-time data processing with IoT Core
+description: Learn how to build a data processing backend for Cloud IoT.
 author: teppeiy
-tags: Cloud IoT Core, Cloud Dataflow, Cloud Functions, Java, Node.js, internet of things
+tags: IoT Core, Dataflow, Cloud Functions, Java, Node.js, internet of things
 date_published: 2018-04-10
 ---
-## Application Background
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
+## Application background
+
 The setup described in this tutorial addresses following scenario: At industrial facilities, sensors are installed to monitor the equipment on site. Sensor data is continuously streamed to the cloud. There it is handled by different components for various purposes, such as real-time monitoring and alerts, long-term data storage for analysis, performance improvement, and model training.
 
 Feasible scenarios are:
@@ -17,31 +21,31 @@ In this tutorial, the sensors are simulated by a Java application script that co
 
 This tutorial focuses on two aspect of the monitoring application setup:
 
-- Using [Cloud IoT Core](https://cloud.google.com/iot-core/docs/), a cloud managed service for IoT, to enforce structured handling of sensor devices' security keys and metadata, and secured delivery of measurement data between sensors and cloud.
+- Using [IoT Core](https://cloud.google.com/iot-core/docs/), a cloud managed service for IoT, to enforce structured handling of sensor devices' security keys and metadata, and secured delivery of measurement data between sensors and cloud.
 - In-stream data handling in the cloud, where two parallel processing pipelines separate real-time monitoring and alerting from the less critical need for data storage and analysis.
 
-## Technical Overview
+## Technical overview
 
 This tutorial demonstrates how to push updates from Message Queueing Telemetry
-Transport (MQTT) devices to Google Cloud Platform (GCP) and process them in real
+Transport (MQTT) devices to Google Cloud and process them in real
 time.
 
 The tutorial includes sample code to show two kinds of data processing
-approaches that use GCP products:
+approaches that use Google Cloud products:
 
 1.  A function deployed in [Cloud Functions](https://cloud.google.com/functions/docs/) transforms data and logs it to
-    [Stackdriver Logging](https://cloud.google.com/logging/).
-1.  A streaming application deployed in [Cloud Dataflow](https://cloud.google.com/dataflow/docs) transforms data and
+    [Cloud Logging](https://cloud.google.com/logging/).
+1.  A streaming application deployed in [Dataflow](https://cloud.google.com/dataflow/docs) transforms data and
     inserts it into [BigQuery](https://cloud.google.com/bigquery/docs/).
 
 In both cases, sample temperature data is collected that is generated from
 simulated devices. This data is transformed into other data formats, and is passed to
-another GCP product for further data processing and analysis. Cloud Functions is
+another Google Cloud product for further data processing and analysis. Cloud Functions is
 suitable for simple Extract/Transform/Load (ETL) processing, while Cloud
 Dataflow can handle more sophisticated data pipelines that involve multiple
 transformations, joins, windowing, and so on.
 
-Cloud IoT Core can not only receive data from MQTT clients, but also can send
+IoT Core can not only receive data from MQTT clients, but also can send
 configuration data to clients. It can be used to control behavior of devices or
 the surrounding environment.
 
@@ -57,13 +61,12 @@ following attributes:
 
 ## Architecture
 
-The sample MQTT client simulates a device and sends sample data to Cloud IoT
-Core, which transforms and redirects requests to a [Cloud Pub/Sub](https://cloud.google.com/pubsub/docs) topic. After
-the data is stored in Cloud Pub/Sub, it is retrieved by two subscribers: a function
-in Cloud Functions and a streaming job running in Cloud Dataflow.
+The sample MQTT client simulates a device and sends sample data to IoT
+Core, which transforms and redirects requests to a [Pub/Sub](https://cloud.google.com/pubsub/docs) topic. After
+the data is stored in Pub/Sub, it is retrieved by two subscribers: a function
+in Cloud Functions and a streaming job running in Dataflow.
 
-This tutorial shows how data is transformed and processed in Cloud Functions and
-Cloud Dataflow.
+This tutorial shows how data is transformed and processed in Cloud Functions and Dataflow.
 
 ![Architecture](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/arch.png)
 
@@ -73,23 +76,23 @@ This tutorial demonstrates how to:
 
 - Deploy a function to Cloud Functions that transforms temperature data into
   JSON format and logs it to Stackdriver Logging.
-- Deploy a streaming application to Cloud Dataflow that transforms temperature
+- Deploy a streaming application to Dataflow that transforms temperature
   data into BigQuery row format and inserts it into BigQuery.
 - Run an MQTT client that generates simulated temperature and coordinates, and
-  then submits the data to Cloud IoT Core.
+  then submits the data to IoT Core.
 
 ## Cost
 
-This tutorial uses billable components of GCP, including:
+This tutorial uses billable components of Google Cloud, including:
 
 - BigQuery
-- Cloud Dataflow
+- Dataflow
 - Cloud Functions
-- Cloud IoT Core
-- Cloud Pub/Sub
+- IoT Core
+- Pub/Sub
 - [Cloud Storage](https://cloud.google.com/storage/docs/)
 - [Compute Engine](https://cloud.google.com/compute/docs/)
-- [Cloud Datastore](https://cloud.google.com/datastore/docs/)
+- [Datastore](https://cloud.google.com/datastore/docs/)
 
 You can use the [Pricing Calculator](https://cloud.google.com/products/calculator/)
 to generate a cost estimate that is based on your projected usage.
@@ -116,15 +119,15 @@ code:
 - `function/`: JavaScript file
 - `streaming/`: Java streaming application
 
-### Configure a GCP project and enable APIs
+### Configure a Google Cloud project and enable APIs
 
-1.  Create or select a GCP project.
+1.  Create or select a Google Cloud project.
 1.  Enable billing for your project.
 1.  Enable the following APIs:
 
-    1. Cloud IoT Core
+    1. IoT Core
     1. Cloud Functions
-    1. Cloud Dataflow
+    1. Dataflow
 
 ### Create a Cloud Storage bucket
 
@@ -158,21 +161,21 @@ will create the corresponding resources in later steps.
     export TOPIC=[CLOUD_PUBSUB_TOPIC_NAME]
     ```
 
-## Configure Cloud IoT Core
+## Configure IoT Core
 
-In this section, you create a topic in Cloud Pub/Sub and configure Cloud IoT
+In this section, you create a topic in Pub/Sub and configure IoT
 Core to receive data from MQTT clients.
 
-1.  Open the [Cloud Pub/Sub console](https://console.developers.google.com/cloudpubsub)
+1.  Open the [Pub/Sub console](https://console.developers.google.com/cloudpubsub)
 1.  In the left navigation menu, click the **Topics** menu.
 1.  Click **Create a topic**. In the **Name** box, enter the topic name that you
     assigned earlier to the environment variable, and then click **Create**.
 
     ![topic](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/create_topic.png)
 
-1.  Open the [Cloud IoT Core console](https://console.developers.google.com/iot).
+1.  Open the [IoT Core console](https://console.developers.google.com/iot).
 1.  Click **Create device registry**.
-1.  In the **Registry ID** box, type **myregistry**. Select a GCP region close
+1.  In the **Registry ID** box, type **myregistry**. Select a Google Cloud region close
     to you, and select the Pub/Sub topic that you just created.
 
     ![registry](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/create_registry.png)
@@ -196,10 +199,11 @@ Core to receive data from MQTT clients.
     Warning: This tutorial includes a public/private key pair for testing
     purposes. Do not use this pair in a production environment.
 
-## Create threshold values in Cloud Datastore
-In this section, you insert threshold values for each of the devices, registered in the IoT Core Device Manager, in Cloud Datastore.
+## Create threshold values in Datastore
 
-1. In Cloud Shell, run a Python script to insert the device objects into Cloud Datastore:
+In this section, you insert threshold values for each of the devices, registered in the IoT Core Device Manager, in Datastore.
+
+1. In Cloud Shell, run a Python script to insert the device objects into Datastore:
 
     ```sh
     export GCLOUD_PROJECT=$PROJECT
@@ -210,16 +214,16 @@ In this section, you insert threshold values for each of the devices, registered
     deactivate
     ```
 
-1. Open the [Cloud Datastore console](https://console.developers.google.com/datastore).
+1. Open the [Datastore console](https://console.developers.google.com/datastore).
 1. Confirm that the device entities have been created with the corresponding threshold temperature value:
 
     ![data_store_confirm](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/view_ds.png)
 
 ## Deploy a Cloud Function
 
-In this section, you set up a function that logs data that is sent to Cloud IoT
-Core and is retrieved through Cloud Pub/Sub. It also compares the temperature
-received against the threshold value in Cloud Datastore. If the threshold is
+In this section, you set up a function that logs data that is sent to IoT
+Core and is retrieved through Pub/Sub. It also compares the temperature
+received against the threshold value in Datastore. If the threshold is
 exceeded, an error is logged.
 
 1.  In Cloud Shell, deploy a function to Cloud Functions:
@@ -244,10 +248,10 @@ exceeded, an error is logged.
 
     ![function_confirm](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/create_cf.png)
 
-## Deploy a streaming application to Cloud Dataflow
+## Deploy a streaming application to Dataflow
 
 In this section, you deploy a Java-based streaming application that transforms
-data that is retrieved from Cloud Pub/Sub and loads it into a BigQuery table.
+data that is retrieved from Pub/Sub and loads it into a BigQuery table.
 
 1.  In Cloud Shell, build and submit a streaming job:
 
@@ -267,7 +271,7 @@ data that is retrieved from Cloud Pub/Sub and loads it into a BigQuery table.
         [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ cloud-iot-rtdp ---
         ...
 
-1.  Open the [Cloud Dataflow console](https://console.developer.google.com/dataflow).
+1.  Open the [Dataflow console](https://console.developer.google.com/dataflow).
 1.  Confirm that a streaming job is running:
 
     ![stream_confirm](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/create_df.png)
@@ -275,7 +279,7 @@ data that is retrieved from Cloud Pub/Sub and loads it into a BigQuery table.
 ## Generate simulated temperature and coordinates data
 
 Now you can run an MQTT client that generates simulated data on temperature and
-coordinates and then submits it to Cloud IoT Core.
+coordinates and then submits it to IoT Core.
 
 1.  In Cloud Shell, run an MQTT client to generate simulated data:
 
@@ -305,8 +309,8 @@ coordinates and then submits it to Cloud IoT Core.
 
     ![logs](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/view_logs.png)
 
-1.  Open the [Cloud Dataflow console](https://console.developers.google.com/dataflow).
-1.  To confirm that a streaming Cloud Dataflow job is processing data, click the
+1.  Open the [Dataflow console](https://console.developers.google.com/dataflow).
+1.  To confirm that a streaming Dataflow job is processing data, click the
     job ID:
 
     ![view_df](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-rtdp/view_df.png)
@@ -340,7 +344,7 @@ To active the error notifications, follow the documentation on [Error reporting 
 You can learn more about IoT, data processing, and visualization from
 the following links:
 
-- [Overview of IoT Solutions](https://cloud.google.com/solutions/iot/)
-- [BigQuery for Data Warehouse Practitioners](https://cloud.google.com/solutions/bigquery-data-warehouse)
-- [Visualizing BigQuery Data Using Google Data Studio](https://cloud.google.com/bigquery/docs/visualize-data-studio)
-- [Visualizing BigQuery Data Using Google Cloud Datalab](https://cloud.google.com/bigquery/docs/visualize-datalab)
+- [Overview of IoT solutions](https://cloud.google.com/solutions/iot/)
+- [BigQuery for data warehouse practitioners](https://cloud.google.com/solutions/bigquery-data-warehouse)
+- [Visualizing BigQuery data using Data Studio](https://cloud.google.com/bigquery/docs/visualize-data-studio)
+- [Visualizing BigQuery data using Datalab](https://cloud.google.com/bigquery/docs/visualize-datalab)
