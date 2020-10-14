@@ -1,7 +1,7 @@
 ---
 title: Deploying machine learning models on Kubernetes
 description: An introduction to machine learning model deployment operations using Python and Kubernetes.
-author: Karan
+author: karan6190
 tags: kubernetes,MLOps
 date_published: 2020-04-25
 ---
