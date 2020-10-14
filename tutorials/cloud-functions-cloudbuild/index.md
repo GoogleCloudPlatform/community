@@ -8,7 +8,7 @@ date_published: 2020-07-29
 
 Niklas Rosencrantz | DevOps/SRE
 
-## Introduction
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 This tutorial demonstrates how to create and deploy a Cloud Function with [Cloud Build](https://cloud.google.com/cloud-build).
 
