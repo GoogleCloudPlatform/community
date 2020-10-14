@@ -6,7 +6,9 @@ tags: App Engine, Ruby, Ruby on Rails, Discourse, Redis, Postgres
 date_published: 2017-06-30
 ---
 
-<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+Heng Xiong | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial shows how to create and configure a [Ruby Discourse](http://www.discourse.org/) application
 to run on Google Cloud using the App Engine flexible environment.
