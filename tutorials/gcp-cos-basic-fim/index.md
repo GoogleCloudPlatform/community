@@ -8,7 +8,7 @@ date_published: 2019-03-21
 
 Ian Maddox | Solutions Architect | Google
 
-#<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 [This example](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/gcp-cos-basic-fim) provides a basic FIM Docker image with regularly scheduled scans.
 
