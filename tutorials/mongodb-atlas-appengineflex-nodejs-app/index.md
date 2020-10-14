@@ -6,26 +6,20 @@ tags: App Engine, Node.js, MongoDB Atlas
 date_published: 2018-06-25
 ---
 
-## Overview
+Abhijeet Rajwade and Kent Smith | Customer Engineers | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 In this tutorial, you will be building a "Hello World" application using Node.js
 with App Engine flexible environment for our frontend and a MongoDB Atlas
-multi-regional cluster on Google Cloud Platform as our primary database.
+multi-regional cluster on Google Cloud as our primary database.
 
-### Technical Complexity
+## Objectives
 
-Beginner
-
-### Duration
-
-45 Minutes
-
-### Objectives
-
-1.  Create and configure MongoDB Atlas multi-regional cluster on GCP.
-2.  Configuring our Google Cloud Platform Account.
-3.  Configure a Node.js application on a GCE Debian VM on GCP.
-4.  Push your application to App Engine Flex on GCP.
+1.  Create and configure MongoDB Atlas multi-regional cluster on Google Cloud.
+2.  Configuring our Google Cloud account.
+3.  Configure a Node.js application on a Compute Engine Debian VM on Google Cloud.
+4.  Push your application to App Engine flexible environment on Google Cloud.
 5.  Visit our new application from any web-enabled client terminal, including
     mobile devices.
 
@@ -50,7 +44,7 @@ Beginner
 
     ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-appengineflex-nodejs-app/image15.png)
 
-5.  Create New Cluster by selecting Google Cloud Platform as a "Cloud Provider".
+5.  Create New Cluster by selecting Google Cloud as a "Cloud Provider".
     Next select the region where you want to place your Atlas cluster. Ideally,
     your cluster will be located close to your end user for lower latency. Note
     that we can select a free tier region in your area of choice, as noted by
@@ -122,7 +116,7 @@ Beginner
     ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-appengineflex-nodejs-app/image26.png)
 
 15. Select "Allow Access from Anywhere" for the purpose of this demo and click
-    on "Confirm".  Note:  When actually putting something into production, you
+    on "Confirm". When actually putting something into production, you
     will want to narrow the scope of where your database can be accessed and
     specify a specific IP address/CIDR block.
 
@@ -145,7 +139,7 @@ Beginner
 
     ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-appengineflex-nodejs-app/image41.png)
 
-## Part 2: Configuring our Google Cloud Platform Account
+## Part 2: Configuring our Google Cloud account
 
 1.  Go to cloud.google.com and login with your Google account. If you don't have
     a Google account, please create a free trial account by following
@@ -221,9 +215,9 @@ Beginner
 
 ## Part 3: Configuring and deploying our Node.js application
 
-1. Create a Debian Linux GCE VM instance using the instructions given [here](https://cloud.google.com/compute/docs/quickstart-linux).
+1. Create a Debian Linux Compute Engine VM instance using the instructions given [here](https://cloud.google.com/compute/docs/quickstart-linux).
 
-    NOTE: When creating your instance, please be sure to enable "Allow full
+    When creating your instance, please be sure to enable "Allow full
     access to all Cloud APIs" under "Identity and API access":
 
     ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-appengineflex-nodejs-app/image33.png)
@@ -289,7 +283,7 @@ Beginner
         nano server.js
 
     Copy the given code into the Nano editor and save the file using Ctrl + X. 
-    NOTE: See the highlighted section where you need to insert your own Atlas
+    See the highlighted section where you need to insert your own Atlas
     Connection string.
 
         'use strict';
@@ -370,9 +364,9 @@ Beginner
 
     ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-appengineflex-nodejs-app/image9.png)
 
-## Part 4: Push our application to App Engine Flex on GCP
+## Part 4: Push our application to App Engine flexible environment on Google Cloud
 
-Deploying the app to App Engine Flex
+Deploying the app to App Engine flexible environment:
 
 1.  Create an app.yaml file by running the following command:
 
