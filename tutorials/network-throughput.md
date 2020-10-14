@@ -6,6 +6,10 @@ tags: Cloud Networking
 date_published: 2019-08-07
 ---
 
+Daniel Cavalheiro and Bernie Ongewe | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This document describes how to calculate network throughput, both within Google Cloud and to your on-premises or third-party 
 cloud locations. This document includes information on how to analyze results, explanations of variables that can affect 
 network performance, and troubleshooting tips.
