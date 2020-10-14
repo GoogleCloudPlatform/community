@@ -1,12 +1,16 @@
 ---
-title: Using Google Cloud Storage with a JFrog Artifactory filestore
+title: Using Cloud Storage with a JFrog Artifactory filestore
 description: Learn how to use Cloud Storage for a filestore managed by a JFrog Artifactory universal repository manager.
 author: jfrogtw
 tags: Cloud Storage
 date_published: 2018-09-24
 ---
 
-This tutorial describes how to use Google Cloud Storage for a filestore managed
+Gianni Truzzi | JFrog
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
+This tutorial describes how to use Cloud Storage for a filestore managed
 by the JFrog [Artifactory universal repository manager](https://jfrog.com/artifactory/).
 When the procedure is complete, all artifacts pushed to Artifactory will be
 stored in Cloud Storage, and all artifacts retrieved through Artifactory will be
@@ -21,31 +25,29 @@ recovery from a local disaster.
 To move your Artifactory filestore to Cloud Storage, execute the following
 steps:
 
-* Ready Google Cloud Storage
+* Ready Cloud Storage
 * Ready Artifactory
 * Configure Artifactory to use Cloud Storage
 * Migrate your filestore to Cloud Storage
 
-## Before You Begin
+## Before you begin
 
-This tutorial assumes you already have a Google Cloud Platform (GCP) account and
-have completed the Google Cloud Storage [quickstart documentation](https://cloud.google.com/storage/docs/quickstarts).
+This tutorial assumes you already have a Google Cloud account and
+have completed the Cloud Storage [quickstart documentation](https://cloud.google.com/storage/docs/quickstarts).
 
 You also need to have a licensed copy of JFrog Artifactory Enterprise Edition.
 v4.6 or later, and have completed the Artifactory [installation procedure](https://www.jfrog.com/confluence/display/RTF/Installing+Artifactory).
 
 ## Costs
 
-This tutorial uses billable components of GCP, including:
-
-- Google Cloud Storage
+This tutorial uses billable components of Google Cloud, including Cloud Storage.
 
 You can use the [Pricing Calculator](https://cloud.google.com/products/calculator/)
 to generate a cost estimate based on your projected production usage.
 
-## Setting up Artifactory to Use Cloud Storage
+## Setting up Artifactory to use Cloud Storage
 
-### Step 1: Ready Google Cloud Storage
+### Step 1: Ready Cloud Storage
 
 Acquire the keys necessary for Cloud Storage and Artifactory interoperability,
 and create a Cloud Storage [Bucket](https://cloud.google.com/storage/docs/key-terms#buckets)
@@ -53,11 +55,11 @@ to hold your binary repository data.
 
 #### Acquire interoperable storage access keys
 
-The API for [Google Cloud Storage Interoperability](https://cloud.google.com/storage/docs/interoperability)
+The API for [Cloud Storage interoperability](https://cloud.google.com/storage/docs/interoperability)
 uses HMAC authentication and lets Cloud Storage interoperate with tools written
 for cloud storage systems.
 
-To use Cloud Storage with Artifactory, [turn on the Google Cloud Storage Interoperability API](https://support.google.com/cloud/answer/6158841).
+To use Cloud Storage with Artifactory, [turn on the Cloud Storage Interoperability API](https://support.google.com/cloud/answer/6158841).
 This API is enabled per project member, not per project. Each member can set a
 default project and maintain their own access keys.
 
