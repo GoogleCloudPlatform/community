@@ -1,36 +1,38 @@
 ---
-title: Running a Slack Slash Command on App Engine Using Java
-description: Run a "hello world" Slack slash command on App Engine using Java.
+title: Running a Slack Slash command on App Engine using Java
+description: Run a "hello, world" Slack slash command on App Engine using Java.
 author: tswast
 tags: App Engine, Slack
 date_published: 2017-05-26
 ---
 
-This tutorial demonstrates how to build and deploy a [slash command for
-Slack](https://api.slack.com/slash-commands) on [Google Cloud Platform](https://cloud.google.com/).
+Tim Swast | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This tutorial demonstrates how to build and deploy a 
+[slash command for Slack](https://api.slack.com/slash-commands) on [Google Cloud](https://cloud.google.com/).
 
 Slash commands provide a way to call external web services from a [Slack](https://slack.com/)
-conversation. For example, the [Giphy
-app](https://get.slack.help/hc/en-us/articles/204714258-Add-Giphy-search-to-Slack) can be run by
-**/giphy** in a conversation.
+conversation. For example, the 
+[Giphy app](https://get.slack.help/hc/en-us/articles/204714258-Add-Giphy-search-to-Slack) can be run by
+`/giphy` in a conversation.
 
 ## Objectives
 
 - Deploy a Java application to the [App Engine flexible environment][flexible].
 - Create a [slash command for Slack](https://api.slack.com/slash-commands).
-- Load tokens from the [Google Cloud Runtime Config
-  API](https://cloud.google.com/deployment-manager/runtime-configurator/)
+- Load tokens from the [Google Cloud Runtime Config API](https://cloud.google.com/deployment-manager/runtime-configurator/)
 
 [flexible]: https://cloud.google.com/appengine/docs/flexible/java/
 
 ## Before you begin
 
-1.  Follow the [Quickstart for Java in the App Engine Flexible
-    Environment](https://cloud.google.com/appengine/docs/flexible/java/quickstart) to
+1.  Follow the [Quickstart for Java in the App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/java/quickstart) to
     set up your environment to deploy the sample applications App Engine.
-    1.  Download and install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/).
+    1.  Download and install the [Cloud SDK](https://cloud.google.com/sdk/docs/).
     1.  [Install and configure Apache Maven](http://maven.apache.org/index.html).
-    1.  [Create a new Google Cloud Platform project, or use an existing
+    1.  [Create a new Google Cloud project, or use an existing
         one](https://console.cloud.google.com/project).
     1.  [Enable billing for your
         project](https://support.google.com/cloud/answer/6293499#enable-billing).
@@ -43,9 +45,7 @@ app](https://get.slack.help/hc/en-us/articles/204714258-Add-Giphy-search-to-Slac
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform, including:
-
-- Google App Engine flexible environment
+This tutorial uses billable components of Google Cloud, including App Engine flexible environment.
 
 Use the [Pricing Calculator][cloud-pricing] to generate a cost estimate based on
 your projected usage.
@@ -63,7 +63,7 @@ Get the latest sample code from GitHub using Git or download the repository as a
 
     git clone https://github.com/GoogleCloudPlatform/slack-samples.git
 
-The `java/command/1-start` directory contains a simple Hello World application, which you will
+The `java/command/1-start` directory contains a simple application, which you will
 modify to support Slack slash commands.
 
     cd java/command/1-start
@@ -97,7 +97,7 @@ values, such as secret tokens.
 
 ### Create a configuration
 
-Using the command-line [Google Cloud SDK](https://cloud.google.com/sdk/), create a new runtime
+Using the command-line [Cloud SDK](https://cloud.google.com/sdk/), create a new runtime
 configuration:
 
     gcloud beta runtime-config configs create slack-samples-java
@@ -145,9 +145,9 @@ To deploy the app to App Engine, run the following command:
 After the deploy finishes (can take up to 10 minutes), you can view your
 application at https://YOUR_PROJECT.appspot.com, where YOUR_PROJECT is your
 Google Cloud project ID. You can see the new version deployed on the App Engine
-section of the Google Cloud Console.
+section of the Cloud Console.
 
-For a more detailed walkthrough, see the [Quickstart for Java in the App Engine Flexible Environment](https://cloud.google.com/appengine/docs/flexible/java/quickstart).
+For a more detailed walkthrough, see the [Quickstart for Java in the App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/java/quickstart).
 
 ## Trying the slash command
 
@@ -168,5 +168,4 @@ tutorial.
 ## Next steps
 
 - Explore the other [Slack APIs](https://api.slack.com/).
-- Check out the [other Slack samples for Google Cloud
-  Platform](https://github.com/GoogleCloudPlatform/slack-samples)
+- Check out the [other Slack samples for Google Cloud](https://github.com/GoogleCloudPlatform/slack-samples)
