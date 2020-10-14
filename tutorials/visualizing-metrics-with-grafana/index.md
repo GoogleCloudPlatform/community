@@ -1,21 +1,23 @@
 ---
 title: Visualize Google Kubernetes Engine and Istio metrics with Grafana
-description: Deploy a sample application and Grafana on a GKE cluster and configure Stackdriver as a backend for Grafana to create dashboards displaying key observability details about the cluster and application running on it.
+description: Deploy a sample application and Grafana on a GKE cluster and configure Cloud Monitoring as a backend for Grafana to create dashboards displaying key observability details about the cluster and application running on it.
 author: yuriatgoogle
 tags: stackdriver, gke, monitoring, charts, dashboards
 date_published: 2019-09-27
 ---
 
-## Introduction
+Yuri Grinshteyn | Site Reliability Engineer | Google
 
-Stackdriver is a full-featured operations and observability toolkit that includes capabilities specifically targeted at 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+Cloud Monitoring is a full-featured operations and observability toolkit that includes capabilities specifically targeted at 
 Kubernetes operators, including a rich set of [features](https://cloud.google.com/monitoring/kubernetes-engine/) for 
 Kubernetes observability. However, users with experience in this area tend to have familiarity with the open-source 
 observability toolkit that includes the [ELK stack](https://www.elastic.co/what-is/elk-stack) and
 [Prometheus](https://prometheus.io) and often prefer to use [Grafana](https://grafana.com) as their visualization layer.
 
 In this tutorial, you learn how to how to install Grafana using Helm templates, deploy a sample application on a GKE 
-cluster, and configure Stackdriver as a backend for Grafana to create dashboards displaying key observability details about
+cluster, and configure Cloud Monitoring as a backend for Grafana to create dashboards displaying key observability details about
 the cluster and application running on it. At the end of the tutorial, you will have a fully functional monitoring system 
 that will scale with your needs and can be further customized to evolve with your monitoring requirements.
 
@@ -30,7 +32,7 @@ The architecture you deploy in this tutorial is as follows:
 This tutorial uses billable components of Google Cloud, including the following:
 
 -   Google Kubernetes Engine
--   Stackdriver
+-   Cloud Monitoring
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your 
 projected usage.
@@ -94,7 +96,7 @@ clusters, contexts, and namespaces:
 
 ## Deploy application on GKE cluster
 
-In this section, you create a GKE cluster with the Istio on GKE add-on and Stackdriver, and you deploy the sample 
+In this section, you create a GKE cluster with the Istio on GKE add-on and Cloud Monitoring, and you deploy the sample 
 application on the cluster.
 
 1.  In Cloud Shell, set the environment variables to be used for cluster creation:
@@ -121,7 +123,7 @@ application on the cluster.
         --addons=Istio \
         --istio-config=auth=MTLS_PERMISSIVE
 
-    Note: You are using the `PERMISSIVE` setting for MTLS configuration for the sake of simplicity. Review the
+    You are using the `PERMISSIVE` setting for MTLS configuration for the sake of simplicity. Review the
     [Istio documentation](https://istio.io/docs/concepts/security/#mutual-tls-authentication) to choose the appropriate 
     policy for your deployment.
 
@@ -239,10 +241,10 @@ is an open-source package manager for Kubernetes.
 
 ## Configure data source and create dashboards
 
-In this section, you configure Grafana to use Stackdriver as the data source and create dashboards that will be used to 
+In this section, you configure Grafana to use Cloud Monitoring as the data source and create dashboards that will be used to 
 visualize the health and status of your application.
 
-### Configure Stackdriver data source
+### Configure Cloud Monitoring data source
 
 1.  In the Grafana UI, click **Add data source**.
 
@@ -314,7 +316,7 @@ service mesh.
 
 7.  Select **!=** as the operator and **200** as the value to only count failed requests.
 
-    Note: In this example, you're including 4xx errors in your count. Often, people choose to exclude these, because they 
+    In this example, you're including 4xx errors in your count. Often, people choose to exclude these, because they 
     may be caused by issues on the client.
 
 8.  From the **Aggregation** menu, select **Sum**.
