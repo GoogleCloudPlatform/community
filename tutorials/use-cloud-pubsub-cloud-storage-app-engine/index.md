@@ -162,7 +162,7 @@ users might be eligible for a [free trial](https://cloud.google.com/free-trial).
     as [`Storage Object Admins`](https://cloud.google.com/storage/docs/access-control/iam-roles)
     for your Cloud Storage photo bucket.
 
-    **Note:** Collaborators must also have Google Cloud accounts.
+    **Note**: Collaborators must also have Google Cloud accounts.
 
 1.  Change the Cloud Storage photo bucket permissions to make it publicly readable so that
     the photos may be viewed on your website. To do this, you'll need to
@@ -886,7 +886,7 @@ display the correct thumbnails in the search page.
     manner as the photos page, or else the text `No Search Results` should be
     displayed.
 
-**Note:** Examining the `labels` lists of the `ThumbnailReferences` in Cloud
+**Note**: Examining the `labels` lists of the `ThumbnailReferences` in Cloud
 Datastore can help you determine whether or not the search is functioning as it
 is meant to.
 
@@ -894,7 +894,7 @@ If you encounter errors, use the `Logging` messages to debug your application.
 
 #### Congratulations! You now have a functioning shared photo album.
 
-**Note:** Other users you listed as collaborators during the `Set up` section should
+**Note**: Other users you listed as collaborators during the `Set up` section should
 also be able to modify the images in your Cloud Storage photo bucket and see their
 changes take effect on the website. However, this must be done through the command
 line using [gsutil](https://cloud.google.com/storage/docs/gsutil), as your project
@@ -1627,4 +1627,4 @@ Congratulations! You've completed this tutorial and now have a functioning, user
 1.  If necessary, [close your billing account](https://support.google.com/cloud/answer/6288653?hl=en).
 1.  [Delete your project](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
 
-    **Note:** you won't be able to use this project ID again.
+    **Note**: You won't be able to use this project ID again.
