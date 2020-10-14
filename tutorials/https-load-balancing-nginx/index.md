@@ -96,7 +96,7 @@ command.
 
 [self_signed]: https://wikipedia.org/wiki/Self-signed_certificate
 
-Caution:  Self-signed certificates are not suitable for public sites. While
+**Caution**: Self-signed certificates are not suitable for public sites. While
           a self-signed certificate implements full encryption, it causes
           most browsers to present a warning or error when visitors try to
           access your site.
