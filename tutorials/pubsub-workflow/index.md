@@ -53,7 +53,7 @@ gcloud services enable storage-api.googleapis.com
 
 ### Clone this repo and change into this directory
 ```
-git clone https://github.com/dwatrous/community
+git clone https://github.com/GoogleCloudPlatform/community
 cd community/tutorials/pubsub-workflow/
 
 ```
