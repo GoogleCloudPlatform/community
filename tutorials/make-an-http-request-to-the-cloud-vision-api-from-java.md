@@ -6,7 +6,7 @@ tags: Cloud Vision API, Java, education
 date_published: 2016-11-03
 ---
 
-Laurie White | Developer Programs Engineer
+Laurie White | Developer Programs Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
