@@ -1,25 +1,22 @@
 ---
 title: Send email with SparkPost and Node.js on App Engine flexible environment
-description: Learn how to send email via SparkPost from a Node.js app to App Engine flexible environment.
+description: Learn how to send email with SparkPost from a Node.js app to App Engine flexible environment.
 author: ewandennis
 tags: App Engine, SparkPost, Express.js, Node.js
 date_published: 2017-03-22
 ---
 
-## SparkPost
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-"[SparkPost][sparkpost]—Email delivery services built for developers, by developers." – sparkpost.com
-
-You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
-overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
-Platform.
+You can check out [Node.js and Google Cloud][nodejs-gcp] to get an
+overview of Node.js itself and learn ways to run Node.js apps on Google Cloud.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/).
     Remember to take note of your project ID; you'll need it later to access your app at http://YOUR_PROJECT_ID.appspot.com
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1. Install the [Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Prepare
 
