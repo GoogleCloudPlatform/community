@@ -6,6 +6,8 @@ tags: GKE, upgrade, node, surge upgrade
 date_published: 2020-02-12
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This tutorial demonstrates how Google Kubernetes Engine (GKE) helps with reducing disruption of the workloads during node
 upgrades with [surge upgrades](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades#surge). In this 
 tutorial, you build a demonstration application that uses a resource pool with a limited number of resources per node. You 
@@ -419,7 +421,7 @@ To ensure that requests are routed to replicas that have capacity available, use
         # Readiness probe config END
 ```
 
-Note: For this sample application, the addition of the readiness probe does not improve the availability noticeably, since 
+For this sample application, the addition of the readiness probe does not improve the availability noticeably, since 
 both the generated load and processing of each request are fairly deterministic and close enough to being evenly distributed
 among nodes. In a different situation, the role of the readiness probe could be more significant. Also, the right number of 
 replicas and the signal when a pod would be considered healthy would require careful optimization to match the incoming 
