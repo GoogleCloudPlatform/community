@@ -51,11 +51,19 @@ gcloud services enable pubsub.googleapis.com
 gcloud services enable storage-api.googleapis.com
 ```
 
+### Clone this repo and change into this directory
+```
+git clone https://github.com/dwatrous/community
+cd community/tutorials/pubsub-workflow/
+
+```
+
 ### Docker images used
  * Python 3: https://hub.docker.com/_/python
  * gcloud: https://hub.docker.com/r/google/cloud-sdk (you can also install gcloud locally)
 
 ### Set environment variables
+Update the values below to match your environment
 
 ```
 export PROJECT_ID=project-name
@@ -65,7 +73,7 @@ export PROCESSEDBUCKET=processedbucket01_$PROJECT_ID
 export SERVICE_ACCOUNT=pubsub-access
 export KEYFILE=$SERVICE_ACCOUNT-key.json
 export GOOGLE_APPLICATION_CREDENTIALS=$KEYFILE
-export DEMOSOURCE=~/path/to/this/repo
+export DEMOSOURCE=/path/to/community/tutorials/pubsub-workflow/
 ```
 
 ### Where to run this tutorial
@@ -84,8 +92,6 @@ gcloud compute instances create pubsub-tutorial \
    --image-project=cos-cloud \
    --boot-disk-size=15GB
 ```
-
-## Tutorial body
 
 ## Create three pubsub topics
 ```
@@ -136,7 +142,10 @@ The following commands will create a folder and fill it with 99 work files. Each
 mkdir workfiles
 for n in {1..9}; do touch workfiles/work00$n ; done
 for n in {10..99}; do touch workfiles/work0$n ; done
-# Fill those work files with content
+```
+
+### Fill those work files with content
+```
 for f in workfiles/*; do base64 /dev/urandom | head -c 1024000 | grep -i svn | sed  's/svn/---SVN---/gI' | head -c 2048 > $f; done
 ```
 
@@ -176,7 +185,9 @@ The `config` file needs to be updated and looks like this
 }
 ```
 
-In the above, the `redis_` values depend on whether the Local or Cloud option was chosen above. The `processed_bucket` was set in an environment variable at the beginning of this tutorial and needs to be updated in the config file.
+In the above, the `redis_` values depend on whether the Local or Cloud option was chosen above. When running Redis as a container, you will need to be aware of the container networking to get the correct IP address to access Redis from the python container created later in the tutorial. You can run `docker inspect 553c2826f9c6` with the ID for the Redis container to get details about the network bridge.
+
+The `processed_bucket` was set in an environment variable at the beginning of this tutorial and needs to be updated in the config file.
 
 ## Start a python container (local development)
 ```
@@ -199,8 +210,8 @@ rm -fR workfiles
 
 Clean up Pub/Sub topics and subscriptions
 ```
-gcloud pubsub topics delete available processing complete
 gcloud pubsub subscriptions delete worker auditor
+gcloud pubsub topics delete available processing complete
 ```
 
 Remove roles/permissions
