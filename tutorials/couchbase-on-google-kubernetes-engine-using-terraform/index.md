@@ -6,23 +6,23 @@ tags: Google Kubernetes Engine, Couchbase Autonomous Operator, Couchbase cluster
 date_published: 2019-09-04
 ---
 
-## Introduction
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 This tutorial helps you learn how to provision a Couchbase Autonomous Operator and cluster inside a Google Kubernetes Engine 
-cluster on Google Cloud Platform (GCP) using Terraform scripts.
+cluster on Google Cloud using Terraform scripts.
 
 ## Prerequisites
 
--   **GCP account**: If you don’t have a GCP account, [create one now][gcpcreateaccount]. This tutorial can be
-    completed using only the services included in [GCP  Free Tier][gcpfree].
--   **GCP project**: GCP organizes resources into projects. You can [create one][gcpcreateproject] in the GCP Console.
+-   **Google Cloud account**: If you don’t have a Google Cloud account, [create one now][gcpcreateaccount]. This tutorial can be
+    completed using only the services included in [Free Tier][gcpfree].
+-   **Google Cloud project**: Google Cloud organizes resources into projects. You can [create one][gcpcreateproject] in the Cloud Console.
     You need the project ID later in this tutorial.
--   **GCP service account key**: Terraform will access your GCP account by using a service account key. You
-    can [create one][gcpcreatesvcacc] in the GCP Console. While creating the key, assign the role as **Project > Editor**.
+-   **Google Cloud service account key**: Terraform will access your Google Cloud account by using a service account key. You
+    can [create one][gcpcreatesvcacc] in the Cloud Console. While creating the key, assign the role as **Project > Editor**.
 -   **Cloud SDK**: You can install the Cloud SDK with [these instructions][googlesdk]. This SDK installs `kubectl`, which
     is required for this tutorial. Go ahead and log in to your project using `gcloud`.
 -   **Google Kubernetes Engine API**: You can enable the Google Kubernetes Engine API for your project in
-    the [GCP Console][gcpk8api].
+    the [Cloud Console][gcpk8api].
 -   **Terraform**: You can install Terraform with [these instructions][terraform].
 -   **Helm**: You can install Helm with [these instructions][helm].
 
@@ -47,7 +47,7 @@ Create a directory for the examples in this tutorial, create a file named `main.
     }
 
 Be sure to replace the `[SERVICE_ACCOUNT]` and `[PROJECT_ID]` with the file name and the ID you got while setting up your
-GCP project.
+Google Cloud project.
 
 The provider block is used to configure the named provider, in this case `google`. A provider is responsible for creating 
 and managing the resources. Multiple provider blocks can exist in the Terraform file if you need to manage resources from 
@@ -78,7 +78,7 @@ Now you can run `terraform plan` in same directory. The output of this command i
 is going to create for you. This command does not create the resources. To create the resources, you need to run the 
 `terraform apply` command.
 
-After the cluster is created, you need the credentials to connect to the cluster and view the workloads running. The GCP 
+After the cluster is created, you need the credentials to connect to the cluster and view the workloads running. The Cloud 
 Console displays the SDK command that needs to be executed to get the credentials and save into your local kube config file.
 Terraform provides a way for you to run this command within the script as part of provisioning scripts, which can be 
 executed during cluster bootstrapping. There are multiple providers for running provisioning scripts, but for this tutorial 
@@ -92,7 +92,7 @@ For information about other provisioners available in Terraform, see the [Terraf
 
 Now run the `terraform apply` command. This command outputs the same details as the `terraform plan` command, and it also
 asks for confirmation from you to proceed further. After you enter `yes`, Terraform creates the cluster. The cluster 
-creation takes a few minutes. You can verify the creation of the cluster in the GCP Console.
+creation takes a few minutes. You can verify the creation of the cluster in the Cloud Console.
 
 To verify that the cluster credentials are saved in your kube config, run `kubectl config view`. The output should look 
 something like this:
@@ -125,7 +125,7 @@ something like this:
             token-key: '{.credential.access_token}'
           name: gcp
 
-You can view the cluster created and running in the GCP Console. You can directly view the workloads in the web UI or, since
+You can view the cluster created and running in the Cloud Console. You can directly view the workloads in the web UI or, since
 the cluster configurations are now available in your kube config, you can also run the command
 `kubectl get pods --all-namespaces` to display the pods running. The output from that command should look something like 
 this:
@@ -252,7 +252,7 @@ To add the resources for installing the Couchbase operator and cluster, copy the
 
 Run the `terraform apply` command to install the Couchbase operator and cluster into your Kubernetes cluster.
 
-You can verify the workloads in the GCP Console, or you can run the `kubectl get pods` command to view the pods: 
+You can verify the workloads in the Cloud Console, or you can run the `kubectl get pods` command to view the pods: 
 
     D:\Program Files\Google\Cloud SDK>kubectl get pods --all-namespaces
     NAMESPACE     NAME                                                          READY   STATUS    RESTARTS   AGE
