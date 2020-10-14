@@ -6,12 +6,16 @@ tags: Cloud Spanner, Go
 date_published: 2018-06-06
 ---
 
+Jonathan Simon | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 When was that record changed? Use Cloud Spanner to know.
 
 If you have a large database with lots of transactions that change records, it can be a challenge to know
-which records changed most recently. Cloud Spanner commit timestamps make this easy.
+which records changed most recently. Spanner commit timestamps make this easy.
 
-This tutorial describes how to use Cloud Spanner commit timestamps to track the dates and times of when changes are made to
+This tutorial describes how to use Spanner commit timestamps to track the dates and times of when changes are made to
 your database records.
 
 This tutorial includes two approaches to using commit timestamps:
