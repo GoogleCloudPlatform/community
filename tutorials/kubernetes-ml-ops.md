@@ -6,6 +6,8 @@ tags: kubernetes,MLOps
 date_published: 2020-04-25
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 A common pattern for deploying machine learning (ML) models (such as models trained using the SciKit Learn or Keras packages
 for Python) into production environments is to expose these models as RESTful API microservices, hosted from within Docker 
 containers. These microservices can then be deployed to a cloud environment for handling everything required for maintaining 
