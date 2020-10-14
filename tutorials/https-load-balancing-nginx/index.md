@@ -1,10 +1,13 @@
 ---
-title: HTTPS Load Balancing using NGINX and Google Compute Engine
+title: HTTPS load balancing using NGINX and Compute Engine
 description: Learn about HTTPS Load Balancing using NGINX and Google Compute Engine.
 author: tzero
 tags: Compute Engine, Nginx
 date_published: 2015-08-14
 ---
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 HTTP(S) load balancing is an invaluable tool for scaling your website or web
 application, allowing you to route your traffic through a single IP and
 distribute it across multiple backends. In addition, HTTP(S) load balancing
@@ -59,8 +62,8 @@ The following diagram illustrates the load balancer architecture:
 
 Figure 1: Architecture of NGINX-based HTTPS load balancer
 
-Important:  This tutorial uses Google Compute Engine virtual machine instances,
-            a billable component of Google Cloud Platform. The cost of running
+**Important**:  This tutorial uses Compute Engine virtual machine instances,
+            a billable component of Google Cloud. The cost of running
             this tutorial varies depending on run time, number of instances,
             and machine type. Use the [pricing calculator][pricing] to generate
             a cost estimate based on your projected usage. New Google Cloud
@@ -73,7 +76,7 @@ Important:  This tutorial uses Google Compute Engine virtual machine instances,
 
 This tutorial assumes that you've already performed the following setup tasks:
 
-* [Created a Google Cloud Platform project and enabled the Compute Engine API](https://console.cloud.google.com/flows/enableapi?apiid=compute&_ga=1.122528201.332687869.1476592937)
+* [Created a Google Cloud project and enabled the Compute Engine API](https://console.cloud.google.com/flows/enableapi?apiid=compute&_ga=1.122528201.332687869.1476592937)
 * [Installed the Cloud SDK](https://cloud.google.com/sdk/docs/)
 
 ## Obtain an SSL/TLS certificate
@@ -168,10 +171,10 @@ HTTPS traffic:
 
         curl -k https://IP_ADDRESS_HERE
 
-Note: The **-k** flag allows you to bypass the `curl` command's standard SSL/TLS
-      certificate verification. This flag is necessary because, although the
-      startup script configured Apache to receive HTTPS traffic on each
-      instance, the instances do not yet have SSL certificates installed.
+    The **-k** flag allows you to bypass the `curl` command's standard SSL/TLS
+    certificate verification. This flag is necessary because, although the
+    startup script configured Apache to receive HTTPS traffic on each
+    instance, the instances do not yet have SSL certificates installed.
 
 ### Install your SSL certificates
 
@@ -337,7 +340,7 @@ balancer:
     traffic to one of the three servers specified in your `upstream` directive
     (`lb`).
 
-    Important:  If you have a certificate chain file from a certificate
+    **Important**:  If you have a certificate chain file from a certificate
                 authority, add it to your `server` block using the
                 `ssl_trusted_certificate` directive. Place this directive after
                 the `ssl_certificate_key` directive:
@@ -387,7 +390,7 @@ To remove potential vulnerabilities caused by older ciphers or encryption
 protocols, you should customize your SSL/TLS configuration to reflect current
 best practices.
 
-Important:  The following directives should be positioned after the certificate
+**Important**:  The following directives should be positioned after the certificate
             and key directives in the SSL/TLS `server` block of your virtual
             host file. If you've defined a certificate authority PEM file,
             position these directives after the `ssl_trusted_certificate`
@@ -510,7 +513,7 @@ unavailable:
 ## Clean up
 
 After you've finished the NGINX load balancer tutorial, you can clean up the
-resources you created on Google Cloud Platform so you won't be billed for them
+resources you created on Google Cloud so you won't be billed for them
 in the future. The following sections describe how to delete or turn off these
 resources.
 
@@ -535,7 +538,7 @@ Warning:  Deleting a project has the following consequences:
           projects instead of deleting them prevents you from exceeding project
           quota limits.
 
-1.  In the Cloud Platform Console, go to the Projects page:
+1.  In the Cloud Console, go to the Projects page:
 
     [Go to the project page](https://console.cloud.google.com/iam-admin/projects)
 
@@ -551,7 +554,7 @@ Warning:  Deleting a project has the following consequences:
 
 To delete a Compute Engine instance:
 
-1.  In the Cloud Platform Console, go to the VM Instances page:
+1.  In the Cloud Console, go to the VM Instances page:
 
     [Go to the VM instances page](https://console.cloud.google.com/compute/instances)
 
@@ -563,7 +566,7 @@ To delete a Compute Engine instance:
 
 To delete a Compute Engine disk:
 
-1.  In the Cloud Platform Console, go to the Disks page:
+1.  In the Cloud Console, go to the Disks page:
 
     [Go to the disks page](https://console.cloud.google.com/compute/disks)
 
@@ -575,7 +578,7 @@ To delete a Compute Engine disk:
 
 ### Check out other possible load balancing solutions
 
-Read about other load balancing solutions available on Google Cloud Platform:
+Read about other load balancing solutions available on Google Cloud:
 
 * [Network Load Balancing](https://cloud.google.com/compute/docs/load-balancing/network)
 * [HTTP(S) Load Balancing](https://cloud.google.com/compute/docs/load-balancing/http)
