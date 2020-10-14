@@ -128,7 +128,7 @@ following contents:
         env_variables:
           SPARKPOST_API_KEY: your-sparkpost-api-key
 
-`app.yaml` describes how to deploy your app to App Engine. Read more about that [here](https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml).
+    `app.yaml` describes how to deploy your app to App Engine. Read more about that [here](https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml).
 
 1.  Run the following command to deploy your app:
 
