@@ -81,8 +81,8 @@ def process_work(project_id, subscription_id, workdir):
             with open(workfile, 'r+') as workfilelocal:
                 contents = workfilelocal.read()
                 workfilelocal.seek(0)
-                workfilelocal.write(contents.replace('AWS', 'GCP'))
-                logging.info("Replaced {} instances of AWS with GCP for file {}".format(contents.count("AWS"), message.attributes['objectId']))
+                workfilelocal.write(contents.replace('SVN', 'GIT'))
+                logging.info("Replaced {} instances of SVN with GIT for file {}".format(contents.count("SVN"), message.attributes['objectId']))
 
             # save the modified file
             processedbucket = gcs.bucket(config['processed_bucket'])
