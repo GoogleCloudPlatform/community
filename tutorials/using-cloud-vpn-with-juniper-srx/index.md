@@ -78,7 +78,7 @@ Although the steps in this guide use Juniper SRX300, this guide also applies to 
 
 Follow the steps in this section to prepare for VPN configuration.
 
-Important: Throughout these procedures, you assign names to entities such as the VPC network, subnet, and IP address. Each 
+**Important**: Throughout these procedures, you assign names to entities such as the VPC network, subnet, and IP address. Each 
 time you assign a name, make a note of it, because you often need to use those names in later procedures.
 
 ### Google Cloud account and project
