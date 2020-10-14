@@ -8,8 +8,6 @@ date_published: 2018-04-10
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-## Application background
-
 The setup described in this tutorial addresses following scenario: At industrial facilities, sensors are installed to monitor the equipment on site. Sensor data is continuously streamed to the cloud. There it is handled by different components for various purposes, such as real-time monitoring and alerts, long-term data storage for analysis, performance improvement, and model training.
 
 Feasible scenarios are:
