@@ -6,9 +6,9 @@ tags: Cloud IoT Core, gateways, Raspberry Pi, Python, MQTT, internet of things
 date_published: 2018-12-10
 ---
 
-Alex Hong | Developer Programs Engineer | Google Cloud IoT Core
+Alex Hong | Developer Programs Engineer | Google
 
-Fengrui Gu | Software Engineer | Google Cloud IoT Core
+Fengrui Gu | Software Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
