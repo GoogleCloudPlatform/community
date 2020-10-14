@@ -6,9 +6,9 @@ tags: Serverless, Eventing, Cloud Run, Kafka, Knative
 date_published: 2019-11-27
 ---
 
-Jason "Jay" Smith | Customer Engineer Specialist | Google Cloud
+Jason "Jay" Smith | Customer Engineer Specialist | Google
 
-## Using Cloud Run with Knative Eventing and Confluent Cloud
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 [Cloud Run](https://cloud.google.com/run/ "Cloud Run") is a Google Cloud offering built on the
 [Knative Serving](https://knative.dev/docs/serving/) APIs, which brings serverless practices to Kubernetes, allowing 
@@ -62,7 +62,7 @@ Wait for a couple of minutes for all of the steps in the script to finish.
 
         ccloud kafka topic consume cloudevents
         
-    Note:  You may need to log in with `ccloud login`.
+    **Note**: You may need to log in with `ccloud login`.
 
     You will leave this running, and it will show you events being written to your Kafka topic.
     
