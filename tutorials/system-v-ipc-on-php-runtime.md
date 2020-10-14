@@ -1,14 +1,17 @@
 ---
-title: Using System V Shared Memory on the Google App Engine Flexible PHP Runtime
+title: Using System V shared memory on the App Engine flexible environment PHP runtime
 description: Learn how to use System V shared memory in a PHP App Engine flexible environment app.
 author: tmatsuo
 tags: App Engine, PHP
 date_published: 2017-01-23
 ---
-## System V IPC family
 
-PHP has a wrapper for System V IPC family of functions including
-semaphores, shared memory and inter-process messaging. For more
+Takashi Matsuo | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+PHP has a wrapper for the System V IPC family of functions including
+semaphores, shared memory, and inter-process messaging. For more
 details, visit
 [the official documentation](http://php.net/manual/en/intro.sem.php).
 
@@ -19,9 +22,9 @@ We'll walk through a small demo app to learn how to use them.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1. Install the [Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Simple counter with the shared memory
 
@@ -68,16 +71,15 @@ sem_release($semid);
 echo sprintf("%d visits so far", $count);
 ```
 
-1. Deploy the app
+1. Deploy the app:
 
         gcloud app deploy app.yaml
-
 
 1. Access the app and see the counts. For example, you can use `ab`:
 
         ab -n100 -c10 http://your-project-id.appspot-preview.com/
 
-   and access the same URL with a browser to see the counter.
+   Access the same URL with a browser to see the counter.
 
 ## Caveats
 
