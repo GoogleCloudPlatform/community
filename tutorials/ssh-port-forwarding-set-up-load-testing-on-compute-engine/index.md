@@ -6,6 +6,10 @@ tags: Compute Engine, SSH, port forwarding
 date_published: 2017-05-08
 ---
 
+Deb Saunders | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 Compute Engine provides virtual machines on demand. With Compute Engine, you can do large-scale computational work and achieve high performance. It is useful to be able to communicate bidirectionally between virtual machines on Compute Engine and remote machines, such as a local personal computer.
 
 This document uses JMeter as an example of this scenario and explains how to configure SSH port forwarding to enable the bidirectional connections. With this technique, you can set up a JMeter server cluster on Compute Engine for load testing and control the cluster from a JMeter client, running on your local personal computer.

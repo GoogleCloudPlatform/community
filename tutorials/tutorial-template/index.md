@@ -6,7 +6,7 @@ tags: replace, with, tags, not, in, title, or, description
 date_published: 2020-04-28
 ---
 
-Todd Kopriva | Community Editor | Google LLC
+Todd Kopriva | Community Editor | Google
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community (not official Google documentation).</i></p>
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>

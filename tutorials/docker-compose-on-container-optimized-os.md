@@ -6,6 +6,10 @@ tags: Docker,Docker Compose,Container-Optimized OS,Compute Engine
 date_published: 2017-05-03
 ---
 
+Tim Swast | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial guides you through running [Docker
 Compose](https://docs.docker.com/compose/) in a container on a
 [Container-Optimized OS](/container-optimized-os/) instance.
@@ -17,17 +21,13 @@ Compose](https://docs.docker.com/compose/) in a container on a
 
 ## Before you begin
 
-1.  Create or select a Cloud Platform project from the [Google Cloud Platform
-    console's projects page](https://console.cloud.google.com/project).
-1.  [Enable
-    billing](https://support.google.com/cloud/answer/6293499#enable-billing)
+1.  Create or select a Google Cloud project from the [Cloud Console projects page](https://console.cloud.google.com/project).
+1.  [Enable billing](https://support.google.com/cloud/answer/6293499#enable-billing)
     for your project.
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform including
-
-- [Google Compute Engine](/compute/pricing)
+This tutorial uses billable components of Google Cloud, including [Compute Engine](/compute/pricing).
 
 Use the [Pricing Calculator](/products/calculator/) to estimate the costs for
 your usage.
@@ -37,7 +37,7 @@ your usage.
 Create a new Compute Engine instance using the [Container-Optimized
 OS](/container-optimized-os/) stable image.
 
-1.  Open the [Google Cloud Platform console](https://console.cloud.google.com).
+1.  Open the [Cloud Console](https://console.cloud.google.com).
 1.  [Create a new Compute Engine instance](https://console.cloud.google.com/compute/instancesAdd).
 1.  Select the desired **Zone**, such as "us-central1-f".
 1.  Select the desired **Machine type**, such as "micro" (f1-micro).
@@ -99,9 +99,7 @@ image](https://hub.docker.com/r/docker/compose/).
             -w="$PWD" \
             docker/compose:1.24.0 up
 
-1.  With the `docker run` command still running, open the [Google Cloud
-    Platform Console instances
-    page](https://console.cloud.google.com/compute/instances). Click the link
+1.  With the `docker run` command still running, open the [Cloud Console instances page](https://console.cloud.google.com/compute/instances). Click the link
     to your instance's **External IP** address.
 
     You should see a "Hello World" message appear.

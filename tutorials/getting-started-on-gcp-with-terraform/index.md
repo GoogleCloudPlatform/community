@@ -6,6 +6,10 @@ tags: terraform
 date_published: 2018-08-17
 ---
 
+Chris Stephens | Software Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 One of the things I find most time consuming when starting on a new stack or
 technology is moving from reading documentation to a working prototype serving
 HTTP requests. This can be especially frustrating when trying to tweak
@@ -18,7 +22,7 @@ written this tutorial to cover the following:
 * Using [Terraform](https://cloud.google.com/docs/terraform) to create a VM in Google Cloud
 * Starting a basic Python Flask server
 
-### Before you begin
+## Before you begin
 
 You will be starting a single Compute Engine VM instance, which can
 incur real, although usually minimal, costs. Pay attention to the pricing on the

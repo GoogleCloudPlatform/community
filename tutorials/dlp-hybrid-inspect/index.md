@@ -6,6 +6,10 @@ tags: Cloud DLP, Java, PII
 date_published: 2020-08-24
 ---
 
+Scott Ellis and Chris Wilson | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 Cloud Data Loss Prevention (Cloud DLP) can help you to discover, inspect, and classify sensitive elements in your data. This document shows how to use the Cloud 
 DLP [_hybrid inspection method_](https://cloud.google.com/dlp/docs/reference/rest/v2/HybridInspectDlpJobRequest) with a JDBC driver to inspect samples of 
 tables in a SQL database like MySQL, SQL Server, or PostgreSQL.

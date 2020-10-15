@@ -1,12 +1,17 @@
 ---
-title: Using Yarn on Google App Engine
-description: Learn how to use Yarn to manage dependencies for Node.js applications on Google App Engine flexible environment.
+title: Using Yarn on App Engine
+description: Learn how to use Yarn to manage dependencies for Node.js applications on App Engine flexible environment.
 author: justinbeckwith
 tags: App Engine, Yarn, Node.js, npm
 date_published: 2017-03-16
 ---
 
-[Yarn](https://yarnpkg.com/) is a package management tool that makes it easy and fast to install [npm](https://www.npmjs.com/) modules for [Node.js](https://nodejs.org).
+Justin Beckwith | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+[Yarn](https://yarnpkg.com/) is a package management tool that makes it easy and fast to install [npm](https://www.npmjs.com/) modules for
+[Node.js](https://nodejs.org).
 
 You can use Yarn to manage your Node.js dependencies on App Engine flexible environment. This tutorials provides a quick demonstration.
 
@@ -14,13 +19,13 @@ You can use Yarn to manage your Node.js dependencies on App Engine flexible envi
 
 1.  Install Yarn.
 1.  Manage Node.js dependencies with Yarn.
-1.  Using Yarn to install dependencies during deployment to App Engine.
+1.  Usie Yarn to install dependencies during deployment to App Engine.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including:
+This tutorial uses billable components of Google Cloud, including:
 
-- Google App Engine flexible environment
+- App Engine flexible environment
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
 projected usage.
@@ -29,9 +34,9 @@ projected usage.
 
 ## Before you begin
 
-1.  Create a project in the [Google Cloud Platform Console][console].
+1.  Create a project in the [Cloud Console][console].
 1.  Enable billing for your project.
-1.  Install the [Google Cloud SDK][cloud-sdk].
+1.  Install the [Cloud SDK][cloud-sdk].
 
 [console]: https://console.cloud.google.com/
 [cloud-sdk]: https://cloud.google.com/sdk/
@@ -67,4 +72,4 @@ used to perform the npm installation. Learn more about the [Node.js runtime for 
 
 ![gcloud app deploy](https://storage.googleapis.com/gcp-community/tutorials/appengine-yarn/appDeploy.gif)
 
-And that's it! If you have any other questions about Node.js on Google Cloud Platform, be sure to [join us](https://gcp-slack.appspot.com) on our [Slack channel](https://googlecloud-community.slack.com/messages/nodejs/).
+And that's it! If you have any other questions about Node.js on Google Cloud, be sure to [join us](https://gcp-slack.appspot.com) on our [Slack channel](https://googlecloud-community.slack.com/messages/nodejs/).

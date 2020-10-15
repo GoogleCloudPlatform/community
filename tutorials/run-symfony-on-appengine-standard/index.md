@@ -6,6 +6,10 @@ tags: App Engine, Symfony, PHP
 date_published: 2019-02-01
 ---
 
+Brent Shaffer | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 In this tutorial, you learn how to deploy an app to the App Engine standard
 environment, using [Symfony](https://symfony.com) PHP components.
 
@@ -213,7 +217,7 @@ For your Symfony application to integrate with Logging and Error Handling,
 you will need to copy over the `monolog.yaml` config file and the `ExceptionSubscriber.php`
 Exception Subscriber:
 
-    # clone the Google Cloud Platform PHP samples repo somewhere
+    # clone the Google Cloud PHP samples repo somewhere
     cd /path/to/php-samples
     git clone https://github.com/GoogleCloudPlatform/php-docs-samples
 

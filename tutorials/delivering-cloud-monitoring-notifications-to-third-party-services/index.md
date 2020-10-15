@@ -6,6 +6,8 @@ tags: alerting, Terraform, GitHub
 date_published: 2020-08-14
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This tutorial is for Google Cloud customers who want to deliver [Cloud Monitoring alerts](https://cloud.google.com/monitoring/alerts) to third-party services
 that don’t have [supported notification channels](https://cloud.google.com/monitoring/support/notification-options).
 

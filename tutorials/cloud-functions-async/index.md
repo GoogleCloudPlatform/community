@@ -8,9 +8,7 @@ date_published: 2019-03-08
 
 Preston Holmes | Solution Architect | Google
 
-<!-- diagram sources: https://docs.google.com/presentation/d/1s01eqo3YUKiskJwSESW-T17IeUQf3DLCT_lvuAV7CwM/edit#slide=id.g4fb0d7b3af_0_0 -->
-
-## Introduction
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial demonstrates how to use [Cloud Functions](https://cloud.google.com/functions/) to extend the synchronous
 web-hook-style request/response to longer-running jobs, with a focus on trackable and stateful long-running operations.
@@ -19,6 +17,7 @@ When a caller makes a request of a service, the caller is asking the service to 
 integration patterns that can be applied, depending on the use-case:
 
 ### Synchronous request/response
+
 ![sync](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-async/sync-request.png)
 
 The caller will wait until the work is done, expecting a result. This pattern can be directly and simply handled
@@ -26,15 +25,17 @@ by [Cloud Functions](https://cloud.google.com/functions/) with
 an [HTTP trigger](https://cloud.google.com/functions/docs/calling/http).
 
 ### Asynchronous work queue
+
 ![work-queue](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-async/work-queue.png)
 
 The caller does not need to wait for the work to be done, and does not need to follow up on the completion status.
 
-There are a couple ways this can be solved on Google Cloud Platform in a serverless way. You can use Cloud Pub/Sub
+There are a couple ways this can be solved on Google Cloud in a serverless way. You can use Pub/Sub
 patterns for [long-running tasks](https://cloud.google.com/solutions/using-cloud-pub-sub-long-running-tasks) or you
 can use a dedicated service with [Cloud Tasks](https://cloud.google.com/tasks/).
 
 ### Asynchronous stateful jobs
+
 ![](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-async/stateful-job.png)
 
 The caller does not need to wait for the work to be done, but it does need the ability to inquire about the completion
@@ -48,7 +49,7 @@ This tutorial goes deeper into this pattern.
 ## Serverless stateful jobs
 
 This tutorial uses several managed services to implement the asynchronous stateful jobs pattern,
-including [Cloud Pub/Sub](https://cloud.google.com/pubsub/) and [Cloud Firestore](https://cloud.google.com/firestore/).
+including [Pub/Sub](https://cloud.google.com/pubsub/) and [Firestore](https://cloud.google.com/firestore/).
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-async/arch.png)
 
@@ -82,16 +83,16 @@ A simple custom job definition is defined as follows:
 
 
 When a job request is received, it is given an ID, and the details of the work are included in a task field.
-This task is sent into the work queue as a Cloud Pub/Sub payload, with the job ID as a
+This task is sent into the work queue as a Pub/Sub payload, with the job ID as a
 [Cloud Pub/Sub attribute](https://cloud.google.com/pubsub/docs/publisher#custom-attributes). When a worker picks up
 the task, it moves the job from `Created` to `Running`. When the task is complete, it moves from `Running` to `Completed`
 (success) or `Failed` and writes any result back into the Cloud Firestore document.
 
 ## Setup
 
-1.  Create a project in the [GCP Console][console].
+1.  Create a project in the [Cloud Console][console].
 1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
-1.  Use [Cloud Shell][shell] or install the [Google Cloud SDK][sdk].
+1.  Use [Cloud Shell][shell] or install the [Cloud SDK][sdk].
 1.  Enable Cloud Functions, Firestore, and Pub/Sub APIs:
 
         gcloud services enable cloudfunctions.googleapis.com firestore.googleapis.com pubsub.googleapis.com

@@ -1,10 +1,12 @@
 ---
-title: Vapor on App Engine tutorial
+title: Vapor on App Engine
 description: Learn how to build an app with Swift and Vapor in the App Engine flexible environment.
-author: mcdonamp
+author: asciimike
 tags: App Engine, Swift, Vapor
 date_published: 2017-03-21
 ---
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 This tutorial shows a sample [Swift][swift] app built with [Vapor][vapor]
 deployed to App Engine.
@@ -21,13 +23,11 @@ This tutorial assumes basic familiarity with Swift programming.
 ## Objectives
 
 + Create a Swift "Hello, world" app that uses the Vapor framework.
-+ Deploy the app to the Google App Engine flexible environment.
++ Deploy the app to the App Engine flexible environment.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including:
-
-+ App Engine flexible environment
+This tutorial uses billable components of Google Cloud, including App Engine flexible environment.
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
 projected usage.
@@ -36,9 +36,9 @@ projected usage.
 
 ## Before you begin
 
-1.  Create a project in the [Google Cloud Platform Console][console].
+1.  Create a project in the [Cloud Console][console].
 1.  Enable billing for your project.
-1.  Install the [Google Cloud SDK][cloud-sdk].
+1.  Install the [Cloud SDK][cloud-sdk].
 
 [console]: https://console.cloud.google.com/
 [cloud-sdk]: https://cloud.google.com/sdk/
@@ -94,7 +94,7 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
         // Basic GET request
         drop.get("/hello") { request in
             print("GET - /hello route handler...")
-            return "Hello from Vapor on Google App Engine flexible environment!"
+            return "Hello from Vapor on App Engine flexible environment!"
         }
     
 [custom-runtime]: https://cloud.google.com/appengine/docs/flexible/custom-runtimes/build#lifecycle_events
@@ -107,7 +107,7 @@ create our own.
 1.  Create a `Dockerfile` with the following contents:
 
         FROM ibmcom/swift-ubuntu:latest
-        LABEL Description="Docker image for Swift + Vapor on Google App Engine flexible environment."
+        LABEL Description="Docker image for Swift + Vapor on App Engine flexible environment."
 
         # Expose default port for App Engine
         EXPOSE 8080
@@ -137,4 +137,4 @@ create our own.
 
         gcloud app browse
 
-If all goes well, you should see "Hello from Swift on Google App Engine flexible environment!".
+If all goes well, you should see "Hello from Swift on App Engine flexible environment!".

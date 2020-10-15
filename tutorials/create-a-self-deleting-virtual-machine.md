@@ -6,7 +6,11 @@ tags: Compute Engine, self-deleting, education, cost control
 date_published: 2019-05-15
 ---
 
-Learning to use Google Cloud Platform (GCP) is best done hands-on, by actually
+Charlie Engelke and Laurie White | Developer Program Engineers | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+Learning to use Google Cloud is best done hands-on, by actually
 creating, using, and removing resources. However, a common problem with doing
 this is that learners may forget to clean up their resources when finished
 trying something, resulting in continuing running resources, often at a cost.
@@ -29,14 +33,14 @@ settings.
 Learn how to create Compute Engine instances that will delete themselves after
 a set period of time. You will see two ways to do this:
 
-* Using the GCP Console
+* Using the Cloud Console
 * Using the `gcloud` command-line tool
 
 ## Before you begin
 
-Create a GCP project in a web browser:
+Create a Google Cloud project in a web browser:
 
-1.  Open your web browser to the [GCP Console](https://console.cloud.google.com/).
+1.  Open your web browser to the [Cloud Console](https://console.cloud.google.com/).
 1.  Sign in with a Google or G Suite account. If you don't have an account, you can
     create one by clicking **Create account**.
 1.  Click **Select a project** at the top of the page, and then click **New Project**.
@@ -47,7 +51,7 @@ Create a GCP project in a web browser:
 
     A notification appears, saying that the project is being created.
     
-    Note: If you are prompted to enter billing information, follow the instructions
+    If you are prompted to enter billing information, follow the instructions
     for doing so.
    
 1.  When the notification says that the project is ready, click the notification
@@ -116,7 +120,7 @@ Every Linux OS image available by default in Compute Engine is configured to run
 a program when the operating system starts, if you specify such a program. The
 `startup.sh` file created in the previous section is such a program.
 
-Note: Default Windows instances have a similar capability, but there are some
+**Note**: Default Windows instances have a similar capability, but there are some
 important differences in exactly how it works. The ideas in this tutorial can be
 adapted to work with Windows instances.
 
@@ -160,7 +164,7 @@ web requests and output the responses to the requests.
 Compute Engine instances have access to a *metadata service* that looks like a
 web site. Any web request made to that apparent site
 (http://metadata.google.internal) will fetch some information about the
-instance itself. There is no actual network traffic involved, though; the GCP
+instance itself. There is no actual network traffic involved, though; the Google Cloud
 infrastructure handles the requests and responses internally. That's one of the
 reasons that it is safe for the URL to start with `http` instead of `https`: 
 because there is no actual network activity, there is no need for a secure network
@@ -184,10 +188,10 @@ restarted later.
 ## Using the console to create a self-deleting instance
 
 This section gives the steps to create a self-deleting instance by using the
-GCP Console in your web browser. If you prefer to use the command line
+Cloud Console in your web browser. If you prefer to use the command line
 instead, see the next section.
 
-1.  Open the [GCP Console](https://console.cloud.google.com/) and select your
+1.  Open the [Cloud Console](https://console.cloud.google.com/) and select your
     project, if it is not already selected.
 
 1.  Click the **Navigation menu** in the upper-left corner of the console, and 
@@ -231,7 +235,7 @@ instead, see the previous section, "Using the console".
 
 1.  Install the [Cloud SDK](https://cloud.google.com/sdk/).
 
-1.  Log in to your GCP account:
+1.  Log in to your Google Cloud account:
 
         gcloud auth login
 

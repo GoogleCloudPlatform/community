@@ -14,9 +14,9 @@ date_published: 2019-07-31
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=python_vision_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=python_vision_quickstart)
 
 </walkthrough-alt>
 
@@ -33,7 +33,7 @@ Python Software Foundation.](walkthrough://footnote)
 
 ## Project setup
 
-GCP organizes resources into projects. This allows you to
+Google Cloud organizes resources into projects. This allows you to
 collect all of the related resources for a single application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
@@ -58,7 +58,7 @@ https://console.cloud.google.com/flows/enableapi?apiid=vision.googleapis.com
 
 ## Open Cloud Shell
 
-In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
+In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the Cloud Console.
 
 Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
@@ -67,7 +67,7 @@ Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-clo
 Use Cloud Shell to clone and navigate to the sample code. The sample code
 is cloned from your project repository to the Cloud Shell.
 
-Note: If the directory already exists, remove the previous files before cloning:
+If the directory already exists, remove the previous files before cloning:
 
 ```bash
 rm -rf python-docs-samples
@@ -119,7 +119,7 @@ already have the service account created, it will be reused.
 gcloud iam service-accounts create vision-quickstart --project {{project_id}}
 ```
 
-`{{project_id}}` is your GCP project ID.
+`{{project_id}}` is your Google Cloud project ID.
 
 ### Create credentials
 
@@ -158,7 +158,7 @@ Here's what you can do next:
 *   Work through the [face detection][face-tutorial] tutorial.
 *   Try the [document text][document-text-tutorial] tutorial.
 *   See the [sample applications][vision-samples].
-*   Download the [Google Cloud SDK][get-cloud-sdk] to run on your local machine.
+*   Download the [Cloud SDK][get-cloud-sdk] to run on your local machine.
 
 [auth-doc]: https://cloud.google.com/vision/docs/auth
 [cat-picture]: https://raw.githubusercontent.com/GoogleCloudPlatform/python-docs-samples/master/vision/cloud-client/quickstart/resources/wakeupcat.jpg

@@ -6,9 +6,14 @@ tags: App Engine, Python, Falcon, API
 date_published: 2017-04-27
 ---
 
+Sergio Gordillo
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This tutorial shows how to build a Python API with [Falcon][falcon].
 
-Falcon is a high-performance Python framework for building cloud APIs. It follows the REST architectural style, and tries to do as little as possible while remaining highly effective.
+Falcon is a high-performance Python framework for building cloud APIs. It follows the REST architectural style, and tries to do as little as possible while
+remaining highly effective.
 
 In order to follow this guide, you will need to install Python in your local machine.
 
@@ -28,8 +33,8 @@ you do not need to enable the billing for your project to complete this tutorial
 
 ## Before you begin
 
-1.  Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/) and make note of the project ID.
-2.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/)
+1.  Create a project in the [Cloud Console](https://console.cloud.google.com/) and make note of the project ID.
+2.  Install the [Cloud SDK](https://cloud.google.com/sdk/)
 
 ## Preparing the app
 
@@ -125,7 +130,7 @@ you do not need to enable the billing for your project to complete this tutorial
 
 2. Visit `http://[YOUR_PROJECT_ID].appspot.com` to see the deployed app.
 
-    Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
+    Replace `[YOUR_PROJECT_ID]` with your Google Cloud project ID.
 
 3. Run the following command to view your app:
 

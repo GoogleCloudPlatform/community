@@ -8,6 +8,8 @@ date_published: 2020-07-01
 
 Daniel Amadei | Customer Engineer | Google
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This document demonstrates how to perform continuous integration and continuous delivery to a Kubernetes cluster using Cloud Build for building images, 
 Spinnaker for continuous deployment, and Binary Authorization with keys hosted in Cloud Key Management Service (Cloud KMS) for protecting and attesting the
 provenance of images being deployed to Kubernetes.

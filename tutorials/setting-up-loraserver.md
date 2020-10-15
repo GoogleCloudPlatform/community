@@ -1,25 +1,27 @@
 ---
-title: Setting up LoRa Server on Google Cloud Platform
-description: This tutorial describes how to setup LoRa Server, an open-source LoRaWAN network-server, on Google Cloud Platform.
+title: Setting up LoRa Server on Google Cloud
+description: This tutorial describes how to setup LoRa Server, an open-source LoRaWAN network-server, on Google Cloud.
 author: brocaar
-tags: LoRa Server, LoRaWAN, IoT, Cloud IoT Core
+tags: LoRa Server, LoRaWAN, IoT, IoT Core
 date_published: 2018-12-20
 ---
 
-This tutorial describes the steps needed to set up the [LoRa Server project](https://www.loraserver.io/)
-on [Google Cloud Platform](https://cloud.google.com/). The following
-Google Cloud Platform (GCP) services are used:
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-* [Cloud IoT Core](https://cloud.google.com/iot-core/) is used to connect
-  your LoRa gateways with GCP.
-* [Cloud Pub/Sub](https://cloud.google.com/pubsub/) is used for messaging
-  between GCP components and LoRa Server services.
+This tutorial describes the steps needed to set up the [LoRa Server project](https://www.loraserver.io/)
+on [Google Cloud](https://cloud.google.com/). The following
+Google Cloud services are used:
+
+* [IoT Core](https://cloud.google.com/iot-core/) is used to connect
+  your LoRa gateways with Google Cloud.
+* [Pub/Sub](https://cloud.google.com/pubsub/) is used for messaging
+  between Google Cloud components and LoRa Server services.
 * [Cloud Functions](https://cloud.google.com/functions/) is used to handle
-  downlink LoRa gateway communication (calling the Cloud IoT Core API on
+  downlink LoRa gateway communication (calling the IoT Core API on
   downlink Pub/Sub messages).
 * [Cloud SQL](https://cloud.google.com/sql/) is used as hosted PostgreSQL
   database solution.
-* [Cloud Memorystore](https://cloud.google.com/memorystore/) is used as
+* [Memorystore](https://cloud.google.com/memorystore/) is used as
   hosted Redis solution.
 * [Compute Engine](https://cloud.google.com/compute/) is used for running
   a VM instance.
@@ -39,13 +41,13 @@ Google Cloud Platform (GCP) services are used:
 
 ## Requirements
 
-* Google Cloud Platform account. You can create one [here](https://cloud.google.com/).
+* Google Cloud account. You can create one [here](https://cloud.google.com/).
 * LoRa gateway.
 * LoRaWAN device.
 
-## Create GCP project
+## Create a Google Cloud project
 
-After logging in to the GCP Console, create a new project. For this tutorial
+After logging in to the Cloud Console, create a new project. For this tutorial
 we will name the project `LoRa Server tutorial` with an example ID of
 `lora-server-tutorial`. After creating the project, make sure it is selected
 before continuing with the next steps.
@@ -53,13 +55,13 @@ before continuing with the next steps.
 ## Gateway connectivity
 
 The [LoRa Gateway Bridge](https://www.loraserver.io/lora-gateway-bridge/)(referred to as simply Gateway in this tutorial) will use the
-[Cloud IoT Core](https://cloud.google.com/iot-core/) MQTT broker to ingest
-LoRa gateway events into GCP. This removes the requirement
+[IoT Core](https://cloud.google.com/iot-core/) MQTT broker to ingest
+LoRa gateway events into Google Cloud. This removes the requirement
 to host your own MQTT broker and increases the reliability and scalability of the system.
 
 ### Create device registry
 
-In order to connect your LoRa gateway with [Cloud IoT Core](https://cloud.google.com/iot-core/), go to the **IoT Core** service in the GCP
+In order to connect your LoRa gateway with [IoT Core](https://cloud.google.com/iot-core/), go to the **IoT Core** service in the Cloud
 Console and **create a new device registry** in the **Device registries** box.
 
 This registry will contain all your gateways for a given region. When you
@@ -75,7 +77,7 @@ Under **Default telemetry topic** create a new topic. We will call this
 
 ### Create LoRa gateway certificate
 
-In order to authenticate the LoRa gateway with the Cloud IoT Core MQTT bridge,
+In order to authenticate the LoRa gateway with the IoT Core MQTT bridge,
 you need to generate a certificate. You can do this using the following
 commands:
 
@@ -91,10 +93,10 @@ the **Create device** button.
 
 As **Device ID**, enter your Gateway ID prefixed with `gw-`. For example, if your
 Gateway ID equals to `0102030405060708`, then enter `gw-0102030405060708`.
-The `gw-` prefix is needed because a Cloud IoT Core ID must start with a letter, which is not
+The `gw-` prefix is needed because an IoT Core ID must start with a letter, which is not
 always the case for a LoRa gateway ID.
 
-Each Cloud IoT Core device (LoRa gateway) will authenticate using its own certificate.
+Each IoT Core device (LoRa gateway) will authenticate using its own certificate.
 Select **RS256** as **Public key format** and paste the public-key content in the box.
 This is the content of `public-key.pem` which was created in the previous step.
 Click **Create**.
@@ -106,7 +108,7 @@ As there are different ways to install the
 on your gateway, only the configuration is covered here. For installation instructions,
 please refer to [LoRa Gateway Bridge gateway installation & configuration](https://www.loraserver.io/lora-gateway-bridge/install/gateway/).
 
-To configure a LoRa Gateway Bridge to forward its data to Cloud IoT, you need to update the `lora-gateway-bridge.toml`
+To configure a LoRa Gateway Bridge to forward its data to IoT Core, you need to update the `lora-gateway-bridge.toml`
 [Configuration file](https://www.loraserver.io/lora-gateway-bridge/install/config/).
 
 A minimal configuration example:
@@ -124,15 +126,15 @@ A minimal configuration example:
 
 In short:
 
-* This will configure the Google Cloud IoT Core MQTT authentication
-* This will configure the GCP project ID, cloud-region and registry ID
+* This will configure the IoT Core MQTT authentication
+* This will configure the Google Cloud project ID, cloud-region and registry ID
 
 Note that `jwt_key_file` must point to the private-key file generated in the
 previous step.
 
 After applying the above configuration changes on the gateway (using your own `device_id`,
 `project_id`, `cloud_region` and `jwt_key_file`), validate that LoRa Gateway Bridge
-is able to connect with the Cloud IoT Core MQTT bridge. The log output should
+is able to connect with the IoT Core MQTT bridge. The log output should
 look like this when your gateway receives an uplink message from your LoRaWAN device:
 
     INFO[0000] backend/semtechudp: starting gateway udp listener        addr="0.0.0.0:1700"
@@ -140,15 +142,15 @@ look like this when your gateway receives an uplink message from your LoRaWAN de
     INFO[0007] integration/mqtt: subscribing to topic                   qos=0 topic="/devices/gw-0102030405060708/commands/#"
     INFO[0045] integration/mqtt: publishing message                     qos=0 topic=/devices/gw-0102030405060708/events/up
 
-Your gateway is now communicating succesfully with the Cloud IoT Core MQTT bridge!
+Your gateway is now communicating succesfully with the IoT Core MQTT bridge!
 
 ### Create downlink Pub/Sub topic
 
 Instead of using MQTT directly, the [LoRa Server](https://www.loraserver.io/loraserver/) will use
-[Cloud Pub/Sub](https://cloud.google.com/pubsub/)
+[Pub/Sub](https://cloud.google.com/pubsub/)
 for receiving data from and sending data to your gateways.
 
-In the GCP Console, navigate to **Pub/Sub > Topics**. You will see the topic
+In the Cloud Console, navigate to **Pub/Sub > Topics**. You will see the topic
 that was created when you created the device registry. LoRa Server will
 subscribe to this topic to receive data (events) from your gateway.
 
@@ -157,16 +159,15 @@ For sending data back to your gateways, we will create a new topic. Click **Crea
 ### Create downlink Cloud Function
 
 In the previous step, you created a topic for sending downlink commands
-to your gateways. In order to connect this Pub/Sub topic with your
-Cloud IoT Core device-registry, you must create a [Cloud Function](https://cloud.google.com/functions/)
+to your gateways. In order to connect this Pub/Sub topic with your IoT Core device-registry, you must create a [Cloud Function](https://cloud.google.com/functions/)
 which will subscribe to the downlink Pub/Sub topic and will forward these
 commands to your LoRa gateway.
 
-In the GCP Console, navigate to **Cloud Functions**. Then click **Create function**.
+In the Cloud Console, navigate to **Cloud Functions**. Then click **Create function**.
 As **Name** we will use `eu868-gateway-commands`. Because the only thing this function
 does is calling a Cloud API, `128 MB` for **Memory allocated** should be fine.
 
-Select **Cloud Pub/Sub** as **trigger** and select `eu868-gateway-commands` as
+Select **Pub/Sub** as **trigger** and select `eu868-gateway-commands` as
 the **topic**.
 
 Select **Inline editor** for entering the source-code and select the **Go 1.11**
@@ -258,7 +259,7 @@ require (
 
 ### Create Redis datastore
 
-In the GCP Console, navigate to **Memorystore** (which provides a managed
+In the Cloud Console, navigate to **Memorystore** (which provides a managed
 Redis datastore) and click **Create instance**.
 
 You can assign any name to this instance. Make sure that you also select your
@@ -266,7 +267,7 @@ You can assign any name to this instance. Make sure that you also select your
 
 ### Create PostgreSQL databases
 
-In the GCP Console, navigate to **SQL** (which provides managed PostgreSQL
+In the Cloud Console, navigate to **SQL** (which provides managed PostgreSQL
 database instances) and click **Create instance**.
 
 Select **PostgreSQL** and click **Next**. You can assign any name to this
@@ -322,13 +323,13 @@ You can close the Cloud Shell.
 ## Install LoRa Server
 
 When you have succesfully completed the previous steps, then your gateway is
-connected to the Cloud IoT Core MQTT bridge, all the LoRa (App) Server 
+connected to the IoT Core MQTT bridge, all the LoRa (App) Server 
 requirements are set up and is it time to install [LoRa Server](https://www.loraserver.io/loraserver/) and
 [LoRa App Server](https://www.loraserver.io/lora-app-server/).
 
 ### Create a VM instance
 
-In the GCP Console, navigate to **Compute Engine > VM instances** and click
+In the Cloud Console, navigate to **Compute Engine > VM instances** and click
 on **Create**.
 
 Again, the name of the instance doesn't matter but make sure you select the
@@ -363,7 +364,7 @@ As the Compute Engine instance (created in the previous step) needs to
 be able to subscribe to the Pub/Sub data, we must give the
 **Compute Engine default service account** the required role.
 
-In the GCP Console, navigate to **IAM & admin**. Then edit the **Compute Engine
+In the Cloud Console, navigate to **IAM & admin**. Then edit the **Compute Engine
 default service account**. Click **Add another role** and add the following roles:
 
 * `Pub/Sub Publisher`
@@ -372,7 +373,7 @@ default service account**. Click **Add another role** and add the following role
 ### Log in to VM instance
 
 You will find the public IP address of the created VM instance under
-**Compute Engine > VM instances**. Use the SSH web-client provided by the GCP Console, or the gcloud ssh command to connect to the VM.
+**Compute Engine > VM instances**. Use the SSH web-client provided by the Cloud Console, or the gcloud ssh command to connect to the VM.
 
 ### Configure the LoRa Server repository
 
@@ -507,7 +508,7 @@ will publish application data to a Pub/Sub topic.
 
 #### Create Pub/Sub topic
 
-In the GCP Console, navigate to **Pub/Sub > Topics**. Then click
+In the Cloud Console, navigate to **Pub/Sub > Topics**. Then click
 **Create topic** to create a topic named `lora-app-server`.
 
 #### Install LoRa App Server
@@ -576,7 +577,6 @@ If all is well, then you can start the service in the background using these com
 
     sudo systemctl start lora-app-server
 
-
 ## Using the LoRa (App) Server
 
 ### Set up your first gateway and device
@@ -593,9 +593,9 @@ In the LoRa App Server step, you have created a Pub/Sub topic named
 device events and to which your application(s) need to subscribe in order to
 receive LoRaWAN device data.
 
-For more information about Cloud Pub/Sub, please refer to the following pages:
+For more information about Pub/Sub, please refer to the following pages:
 
-* [Cloud Pub/Sub product page](https://cloud.google.com/pubsub/)
-* [Cloud Pub/Sub documentation](https://cloud.google.com/pubsub/docs/)
-* [Cloud Pub/Sub Quickstarts](https://cloud.google.com/pubsub/docs/quickstarts)
+* [Pub/Sub product page](https://cloud.google.com/pubsub/)
+* [Pub/Sub documentation](https://cloud.google.com/pubsub/docs/)
+* [Pub/Sub quickstarts](https://cloud.google.com/pubsub/docs/quickstarts)
 

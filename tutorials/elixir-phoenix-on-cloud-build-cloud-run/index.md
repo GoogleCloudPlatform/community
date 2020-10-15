@@ -1,21 +1,21 @@
 ---
 title: Run an Elixir Phoenix app with Cloud Run
-description: Learn how to create a CI/CD pipeline for an Elixir Phoenix app with Google Cloud Run and Google Cloud Build.
+description: Learn how to create a CI/CD pipeline for an Elixir Phoenix app with Cloud Run and Cloud Build.
 author: marciola
 tags: Cloud Run, Cloud Build, Elixir, Phoenix
 date_published: 2019-06-06
 ---
 
-At the time of this document's publication, [Cloud Run](https://cloud.google.com/run/) is in beta. Google Cloud Platform
-products in beta are not covered under any SLAs.
+Michael Arciola | Customer Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 [Cloud Run](https://cloud.google.com/run/) is an easy way to deploy your apps to the same infrastructure that powers
 Google's products. Using Cloud Build, Cloud Run, and GitHub, you can create a CI/CD pipeline for your
 app written in [Elixir](http://elixir-lang.org/) with the [Phoenix Framework](http://phoenixframework.org/) and have it up
 and running in minutes. 
 
-**Note:** Due to processes being managed and throttled by Cloud Run, some features (such as websockets, presence, and
-Cloud Pub/Sub) may not work.
+**Note:** Due to processes being managed and throttled by Cloud Run, some features (such as websockets, presence, and Pub/Sub) may not work.
 
 This tutorial will help you to get started deploying a Phoenix app (without Ecto) to Cloud Run using Cloud Build. You will
 create a new Phoenix application and learn how to configure, build, deploy, and update it. 
@@ -27,7 +27,7 @@ development.
 
 Before running this tutorial, take the following steps:
 
-1.  Use the [Google Cloud Platform (GCP) Console](https://console.cloud.google.com/) to create a new GCP project.
+1.  Use the [Cloud Console](https://console.cloud.google.com/) to create a new Google Cloud project.
 
 1.  Enable billing for your project.
 
@@ -90,12 +90,12 @@ may use it instead.
 ## Enable source control with Github
 
 [GitHub](https://github.com/) is a web-based hosting service for version control using Git. It is free and connects to
-GCP through GitHub Apps.
+Google Cloud through GitHub Apps.
 
 1.  Create or log in to your GitHub account and install the
     [Google Cloud Build app](https://github.com/marketplace/google-cloud-build).
     
-    This app gives your GCP account access to your repository.
+    This app gives your Google Cloud account access to your repository.
 
 1.  [Create the new repository](https://help.github.com/en/articles/creating-a-new-repository). We suggest
     that you create a private repository, with no Readme file, because Phoenix creates one for you. 
@@ -115,7 +115,7 @@ You should now see your code in the GitHub repository.
 
 Now you set up Cloud Build to build on every code change in your GitHub repository.
 
-1.  Go to the Cloud Build [**Triggers** page](https://console.cloud.google.com/cloud-build/triggers) in the GCP Console.
+1.  Go to the Cloud Build [**Triggers** page](https://console.cloud.google.com/cloud-build/triggers) in the Cloud Console.
 
 1.  Create a new trigger for your Phoenix app, following the on-screen prompts. On the **Trigger settings** page, 
     set the **Build configuration** to **Cloud Build configuration file**; everything else can stay at the default values. 
@@ -183,7 +183,7 @@ Let's make a simple change and redeploy.
 ## Cleaning up
 
 After you've finished this tutorial, you can clean up the resources you created
-on GCP so you won't be billed for them in the future. To clean
+on Google Cloud so you won't be billed for them in the future. To clean
 up the resources, you can delete the project or stop the individual services.
 
 ### Deleting the project
@@ -193,7 +193,7 @@ the tutorial. To do so using `gcloud`, run the following command:
 
     gcloud projects delete [YOUR_PROJECT_ID]
 
-where `[YOUR_PROJECT_ID]` is your GCP project ID.
+where `[YOUR_PROJECT_ID]` is your Google Cloud project ID.
 
 **Warning**: Deleting a project has the following consequences: If you used an existing project, you'll also delete any 
 other work you've done in the project. You can't reuse the project ID of a deleted project. If you created a custom project 
