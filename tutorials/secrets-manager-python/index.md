@@ -6,9 +6,9 @@ tags: Secret Manager, KMS, Security, Python
 date_published: 2020-01-17
 ---
 
-Jason "Jay" Smith | Customer Engineer Specialist | Google Cloud
+Jason "Jay" Smith | Customer Engineer Specialist | Google
 
-## Overview of using Secret Manager with Python
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 [Secret Manager](https://cloud.google.com/secret-manager/docs/) on Google Cloud stores API keys, passwords,
 certificates, and other sensitive data. Secret Manager provides convenience while improving security.
