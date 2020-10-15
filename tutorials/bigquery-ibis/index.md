@@ -1,5 +1,5 @@
 ---
-title: Query BigQuery With Python using Ibis
+title: Query BigQuery with Python using Ibis
 description: Learn how to use the Ibis Python library to query BigQuery tables without writing SQL code.
 author: tswast
 tags: BigQuery, Ibis, Python, Data Science
