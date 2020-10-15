@@ -6,6 +6,10 @@ tags: Google Kubernetes Engine, Kubernetes, Ingress, NGINX, NGINX Ingress Contro
 date_published: 2018-02-12
 ---
 
+Ameer Abbas | Solutions Architect | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This guide explains how to deploy the [NGINX Ingress
 Controller](https://github.com/kubernetes/ingress-nginx) on Google Kubernetes
 Engine.
@@ -62,7 +66,7 @@ balance traffic from external clients to the Deployment.  This tutorial explains
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform, including:
+This tutorial uses billable components of Google Cloud, including:
 
 -  Google Kubernetes Engine
 -  Cloud Load Balancing
@@ -72,7 +76,7 @@ generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
-1.  Create or select a GCP project.
+1.  Create or select a Google Cloud project.
     [GO TO THE PROJECTS PAGE](https://console.cloud.google.com/project)
 
 1.  Enable billing for your project.
@@ -229,7 +233,7 @@ In the ouput under `RESOURCES`, you should see the following:
     nginx-ingress-controller       LoadBalancer  10.7.248.226  pending      80:30890/TCP,443:30258/TCP  1s
     nginx-ingress-default-backend  ClusterIP     10.7.245.75   none         80/TCP                      1s
 
-Wait a few moments while the GCP L4 Load Balancer gets deployed.  Confirm that the `nginx-ingress-controller` Service has been deployed and that you have an external IP address associated with the service.  Run the following command:
+Wait a few moments while the Google Cloud L4 Load Balancer gets deployed. Confirm that the `nginx-ingress-controller` Service has been deployed and that you have an external IP address associated with the service.  Run the following command:
 
     kubectl get service nginx-ingress-controller
 
@@ -254,7 +258,7 @@ An Ingress Resource object is a collection of L7 rules for routing inbound traff
     annotations: kubernetes.io/ingress.class: nginx
 
 On Google Kubernetes Engine, if no annotation is defined under the metadata section, the
-Ingress Resource uses the GCP GCLB L7 load balancer to serve traffic. This
+Ingress Resource uses the Google Cloud GCLB L7 load balancer to serve traffic. This
 method can also be forced by setting the annotation's value to `gce`as shown below:
 
     annotations: kubernetes.io/ingress.class: gce
