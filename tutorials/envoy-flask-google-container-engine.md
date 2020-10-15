@@ -1,10 +1,12 @@
 ---
-title: Deploying Envoy with a Python Flask webapp and Google Kubernetes Engine
+title: Deploying Envoy with a Python Flask web app and Google Kubernetes Engine
 description: Learn how to use Envoy in Google Kubernetes Engine as a foundation for adding resilience and observability to a microservices-based application.
 author: flynn
 tags: microservices, Kubernetes Engine, Envoy, Flask, Python
 date_published: 2017-06-28
 ---
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 One of the recurring problems with using microservices is managing communications. Your clients must be able to speak to your services, and in most cases services need to speak among themselves. When things go wrong, the system as a whole needs to be resilient, so it degrades gracefully instead of catastrophically. It also must be observable so you can figure out what's wrong.
 
@@ -25,7 +27,7 @@ Envoy runs as a sidecar, so it's language-agnostic. For this tutorial, the REST 
 
 ### Kubernetes Engine
 
-You need a Google Cloud Platform account to set up a Kubernetes Engine cluster. Visit the [Google Cloud Platform Console](https://console.cloud.google.com/kubernetes) and use the UI to create a new cluster. Picking the defaults should be fine for this tutorial.
+You need a Google Cloud account to set up a Kubernetes Engine cluster. Visit the [Cloud Console](https://console.cloud.google.com/kubernetes) and use the UI to create a new cluster. Picking the defaults should be fine for this tutorial.
 
 ### Kubernetes
 
