@@ -2,7 +2,7 @@
 title: Pub/Sub Workflow
 description: This tutorial demonstrates how to use Pub/Sub, Memory Store and Storage to implement a workflow that completes each unit of work one time.
 author: dwatrous
-tags: Pub/Sub, gcp, gcs, workflow, memorystore
+tags: pubsub, gcp, gcs, workflow, memorystore
 date_published: 2020-10-11
 ---
 
