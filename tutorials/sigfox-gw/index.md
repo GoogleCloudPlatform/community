@@ -6,7 +6,9 @@ tags: IoT, Internet of things, Sigfox, LPWAN
 date_published: 2020-10-08
 ---
 
-Markku Lepisto | Solutions Architect | Google Cloud
+Markku Lepisto | Solutions Architect | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 ## Objectives
 
