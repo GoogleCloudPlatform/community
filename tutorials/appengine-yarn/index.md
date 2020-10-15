@@ -19,7 +19,7 @@ You can use Yarn to manage your Node.js dependencies on App Engine flexible envi
 
 1.  Install Yarn.
 1.  Manage Node.js dependencies with Yarn.
-1.  Usie Yarn to install dependencies during deployment to App Engine.
+1.  Use Yarn to install dependencies during deployment to App Engine.
 
 ## Costs
 
