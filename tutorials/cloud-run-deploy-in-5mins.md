@@ -6,6 +6,8 @@ tags: Cloud Run, Container Registry, Cloud Build
 date_published: 2019-11-20
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 **[Cloud Run](https://cloud.google.com/run/) is now generally available.**
 
 Learn more about Cloud Run on the
