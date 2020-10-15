@@ -6,6 +6,8 @@ tags: machine learning, image classification
 date_published: 2020-05-06
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This tutorial describes how to use a TensorFlow model trained with AutoML to classify images with different labels.
 
 The ability to load and run models in a Python environment is extremely useful, considering that most machine learning 

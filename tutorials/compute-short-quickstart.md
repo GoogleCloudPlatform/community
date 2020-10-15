@@ -13,18 +13,18 @@ date_published: 2019-07-31
 <walkthrough-tutorial-duration duration="10"></walkthrough-tutorial-duration>
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=compute_short_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=compute_short_quickstart)
 
 </walkthrough-alt>
 
 This tutorial explains how to create a virtual machine instance in Compute
-Engine using the GCP Console.
+Engine using the Cloud Console.
 
 ## Project setup
 
-GCP organizes resources into projects. This allows you to
+Google Cloud organizes resources into projects. This allows you to
 collect all of the related resources for a single application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
@@ -61,7 +61,7 @@ The instances need to finish being created before the tutorial can proceed. To t
 activity and others, click the [**Notifications**][spotlight-notification-menu] button in the navigation
 bar in the upper-right corner of the console.
 
-Note: After the instance is created, your billing account will start being charged
+**Note**: After the instance is created, your billing account will start being charged
 according to the Compute Engine pricing. You will remove the instance later to avoid extra
 charges.
 
@@ -133,7 +133,7 @@ You're done!
 
 Here are some suggestions for what you can do next:
 
-*   Find Google Cloud Platform
+*   Find Google Cloud
     [samples on GitHub](http://googlecloudplatform.github.io/).
 
 *   Learn how to set up

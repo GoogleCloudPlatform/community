@@ -6,6 +6,10 @@ tags: Compute Engine, Spring Boot, Kotlin
 date_published: 2017-11-01
 ---
 
+Hadi Hariri | VP of Developer Advocacy | JetBrains
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This tutorial demonstrates how to deploy a
 [Kotlin](https://kotlinlang.org/) app using the
 [Spring Boot](https://projects.spring.io/spring-boot/) framework to
@@ -28,14 +32,14 @@ databases.
 
 ## Before you begin
 
-Before running this tutorial, you must set up a Google Cloud Platform (GCP)
+Before running this tutorial, you must set up a Google Cloud
 project, install Docker, and install the Cloud SDK.
 
-You can create a GCP project for your Spring Boot application. You can also use
+You can create a project for your Spring Boot application. You can also use
 an existing project.
 
-1.  Use the [GCP Console](https://console.cloud.google.com/) to create or choose
-    a GCP project. Remember the project ID; you use it in this
+1.  Use the [Cloud Console](https://console.cloud.google.com/) to create or choose
+    a project. Remember the project ID; you use it in this
     tutorial. Later commands in this tutorial use `${PROJECT_ID}` as
     a substitution, so you might consider setting the `PROJECT_ID` environment
     variable in your shell.
@@ -43,7 +47,7 @@ an existing project.
 2.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 
 3.  Visit the [API Library](https://console.cloud.google.com/apis/library) menu
-    and enable the Google Compute Engine API.
+    and enable the Compute Engine API.
 
 Next, complete the following installations:
 
@@ -95,7 +99,7 @@ you already have an app to deploy, you can use it instead.
 
         gradle bootRun
 
-    Note: The `gradle bootRun` command is a quick way to build and run the
+    **Note:** The `gradle bootRun` command is a quick way to build and run the
     application. Later, when you create the Docker image, you need to first
     build the app using the Gradle `build` task and then run it.
 
@@ -109,8 +113,7 @@ you already have an app to deploy, you can use it instead.
 
 ## Building a release for deployment
 
-The following sections explain how to use Google Cloud Storage and
-Google Container Builder to build a relase for deployment.
+The following sections explain how to use Google Cloud Storage and Container Builder to build a release for deployment.
 
 ### Create a Cloud Storage bucket
 
@@ -124,8 +127,8 @@ the following command:
 ### Creating a build to upload to Cloud Storage
 
 You can create a build for deployment using [Container Builder](https://cloud.google.com/container-builder/)
-or any [other number of continuous delivery tools](https://cloud.google.com/container-registry/docs/continuous-delivery). The release build can then be uploaded to Cloud Storage bucket, where a Compute
-Engine instance can access it.
+or any [other number of continuous delivery tools](https://cloud.google.com/container-registry/docs/continuous-delivery). The release build can then be uploaded
+to Cloud Storage bucket, where a Compute Engine instance can access it.
 
 For the purposes of this tutorial, you can build the release locally and upload
 it to Cloud Storage:
@@ -198,7 +201,7 @@ To create a Compute Engine instance, perform the following steps:
         --tags http-server
 
     This command creates a new instance named `demo-instance`, grants it
-    access to GCP services, and provides your startup script. It
+    access to Google Cloud services, and provides your startup script. It
     also sets an instance attribute with the bucket name.
 
 2.  Check the progress of instance creation:
@@ -381,7 +384,7 @@ more information, refer to the Compute Engine
 
 ### Manage and monitor your deployment
 
-You can use the GCP Console to monitor load balancing, autoscaling,
+You can use the Cloud Console to monitor load balancing, autoscaling,
 and your managed instance group.
 
 In the [Compute Engine](https://console.cloud.google.com/compute/instances)
@@ -396,19 +399,19 @@ menu.
 ## Cleaning up
 
 After you have finished this tutorial, you can clean up the resources you created
-on GCP so you aren't be billed for them going forward. You can delete the resources
+on Google Cloud so you aren't be billed for them going forward. You can delete the resources
 individually, or delete the entire project.
 
 ### Delete individual resources
 
-1. Delete the load balancer from the GCP Console
+1. Delete the load balancer from the Cloud Console
 [network services](https://console.cloud.google.com/net-services) menu. Also
 delete the related resources when prompted.
 
-1. Delete the Compute Engine instance group from the GCP Console
+1. Delete the Compute Engine instance group from the Cloud Console
 [instance groups](https://console.cloud.google.com/compute/instanceGroups) menu.
 
-1. Delete the remaining single instance from the GCP Console
+1. Delete the remaining single instance from the Cloud Console
 [instances page](https://console.cloud.google.com/compute/instances).
 
 1. Delete the Cloud Storage bucket hosting your OTP release from the
@@ -421,7 +424,7 @@ the following command:
 
     gcloud projects delete ${PROJECT_ID}
 
-where `${PROJECT_ID}` is your GCP project ID.
+where `${PROJECT_ID}` is your Google Cloud project ID.
 
 **Warning**: If you used an existing project, deleting the project also deletes
 any other work you have in the project. You can't reuse the project ID of a deleted

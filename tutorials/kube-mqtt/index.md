@@ -1,6 +1,6 @@
 ---
 title: Running a Cloud MQTT bridge in Kubernetes
-description: Bridge MQTT messages between a cluster and Cloud IoT Core with Mosquitto.
+description: Bridge MQTT messages between a cluster and IoT Core with Mosquitto.
 author: ptone
 tags: Kubernetes, iot, Internet of Things, cloud iot core
 date_published: 2019-07-12
@@ -8,11 +8,11 @@ date_published: 2019-07-12
 
 Preston Holmes | Solution Architect | Google
 
-## Introduction
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial demonstrates how to deploy the [Mosquitto](https://mosquitto.org/) MQTT broker to
 [Kubernetes](https://kubernetes.io/) using the broker's bridge feature to map a specific [MQTT](http://mqtt.org/)
-topic namespace to [Cloud IoT Core](https://cloud.google.com/iot-core/).
+topic namespace to [IoT Core](https://cloud.google.com/iot-core/).
 
 ## Setup
 
@@ -36,7 +36,7 @@ communicate with your cluster.
 
 ### Setting up the cloud environment
 
-1.  Create a project in the [GCP Console](https://console.cloud.google.com).
+1.  Create a project in the [Cloud Console](https://console.cloud.google.com).
 1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 
 In this tutorial, you can run commands from [Cloud Shell](https://cloud.google.com/shell) or locally. If you choose to run 
@@ -67,7 +67,7 @@ In this tutorial, you may open multiple shell tabs or sessions. Set these enviro
 ## Build the bridge manager container
 
 For Mosquitto, you will use the default published container from Docker. Note that you will need another container in the
-deployment that manages the credentials that allow the bridge to connect to Google Cloud Platform (GCP).
+deployment that manages the credentials that allow the bridge to connect to Google Cloud.
 
     cd refresher-container
     gcloud builds submit --tag gcr.io/$PROJECT/refresher .
@@ -113,7 +113,7 @@ Get the specific address for the bridge manager container:
 
 In the repository file `bridge/project-image.yaml`, add the output from the previous command as `image`.
 
-If running the Kubernetes cluster outside the GCP project, make the images public:
+If running the Kubernetes cluster outside the Google Cloud project, make the images public:
 
     gsutil iam ch allUsers:objectViewer gs://artifacts.$PROJECT.appspot.com
 

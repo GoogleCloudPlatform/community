@@ -1,22 +1,24 @@
 ---
 title: Using IoT Core as scalable ingest for hybrid projects
-description: Use the scale and security of Google Cloud Platform for ingest with on-premises IoT applications.
+description: Use the scale and security of Google Cloud for ingest with on-premises IoT applications.
 author: ptone
-tags: Cloud IoT Core, Hybrid, Networking
+tags: IoT Core, Hybrid, Networking
 date_published: 2018-05-30
 ---
 
 Preston Holmes | Solution Architect | Google
 
-This tutorial demonstrates how to use [Cloud IoT Core](https://cloud.google.com/iot) and
-[Cloud Pub/Sub](https://cloud.google.com/pubsub/) to provide a secure and scalable ingest layer, combined with a small relay 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This tutorial demonstrates how to use [IoT Core](https://cloud.google.com/iot) and
+[Pub/Sub](https://cloud.google.com/pubsub/) to provide a secure and scalable ingest layer, combined with a small relay 
 service over private networking to an on-premises IoT solution.
 
 ## Objectives
 
-- Configure IoT Core and Cloud Pub/Sub as a fully managed ingest system
+- Configure IoT Core and Pub/Sub as a fully managed ingest system
 - Configure a stand-in for on-premises MQTT service on Compute Engine
-- Create a small, scalable relay service that pulls messages from Cloud Pub/Sub
+- Create a small, scalable relay service that pulls messages from Pub/Sub
 
 **Figure 1.** *Architecture diagram for tutorial components*
 ![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-hybrid/architecture.png)
@@ -30,10 +32,10 @@ This tutorial assumes you already have a Google Cloud Platform account set up an
 
 ## Costs
 
-This tutorial uses billable components of GCP, including the following:
+This tutorial uses billable components of Google Cloud, including the following:
 
-- Cloud IoT Core
-- Cloud Pub/Sub
+- IoT Core
+- Pub/Sub
 - Compute Engine
 
 This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), 
@@ -76,7 +78,7 @@ some of these concerns while allowing the primary application to still be develo
 If you do not already have a development environment set up with [gcloud](https://cloud.google.com/sdk/downloads), it is
 recommended that you use [Cloud Shell](https://cloud.google.com/shell/docs/) for any command line instructions.
 
-Set the name of the Cloud IoT Core settings you are using to environment variables:
+Set the name of the IoT Core settings you are using to environment variables:
 
     export CLOUD_REGION=us-central1
     export CLOUD_ZONE=us-central1-c
@@ -121,7 +123,7 @@ To allow you to connect to this broker to verify traffic flow, allow connections
 
 ## Set up the relay
 
-For the relay to receive messages from IoT Core and Cloud Pub/Sub, it will need a dedicated subscription:
+For the relay to receive messages from IoT Core and Pub/Sub, it will need a dedicated subscription:
 
     gcloud pubsub subscriptions create relay --topic $IOT_TOPIC
 
@@ -217,7 +219,7 @@ To build the relay:
     cd community/tutorials/cloud-iot-hybrid/go-relay
     bash install.sh
 
-Note: If you have not used SSH from Cloud Shell, you may be prompted to create a local SSH key.
+If you have not used SSH from Cloud Shell, you may be prompted to create a local SSH key.
 
 This script builds the binary, installs it on the relay VM, and starts it as a relay service.
 
@@ -247,24 +249,25 @@ refresher of the data flow.)
 
 This relay service could be adapted in a number of ways:
 
-- Scaled out to consume more messages in parallel from Cloud Pub/Sub, perhaps deployed to
+- Scaled out to consume more messages in parallel from Pub/Sub, perhaps deployed to
   [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/).
 - Use rate limiting to protect the on-premises broker from overload, using the Cloud Pub/Sub subscription as a _surge tank_.
 
-You might also consider having the relay pulling from Cloud Pub/Sub and writing more directly to alternate services
+You might also consider having the relay pulling from Pub/Sub and writing more directly to alternate services
 on-premises, instead of through an on-premises MQTT broker. However, by relaying MQTT, it lets the on-premises development 
 proceed if MQTT was already built into the solution, or if a looser coupling is wanted.
 
 
 ## Cleaning up
 
-    # Remove the relay subscription - this will not destroy the topic
-    gcloud pubsub subscriptions delete relay
+1.  Remove the relay subscription (this will not destroy the topic):
 
-    # Delete the on-prem broker stand-in
-    gcloud compute instances delete --zone $CLOUD_ZONE on-prem-rabbit
+        gcloud pubsub subscriptions delete relay
 
-    # Delete the relay VM
-    gcloud compute instances delete --zone $CLOUD_ZONE telemetry-relay
+1.  Delete the on-premises broker stand-in:
 
+        gcloud compute instances delete --zone $CLOUD_ZONE on-prem-rabbit
 
+1.  Delete the relay VM:
+
+        gcloud compute instances delete --zone $CLOUD_ZONE telemetry-relay

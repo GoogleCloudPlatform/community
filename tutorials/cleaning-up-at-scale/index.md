@@ -8,6 +8,8 @@ date_published: 2020-10-14
 
 Hicham Bougdal and Jani Patokallio | Google
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial offers a simple and scalable serverless mechanism to automatically delete
 ([*garbage-collect*](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science))) Compute Engine virtual machine (VM) instances after a specified amount
 of time.

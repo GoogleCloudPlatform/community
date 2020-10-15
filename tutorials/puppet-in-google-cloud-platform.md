@@ -6,6 +6,9 @@ tags: Puppet, Google Cloud, Compute Engine, Puppet Master, Puppet Agent
 date_published: 2018-06-11
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
+
 ## Objectives
 
 * Set up the virtual machines
@@ -55,7 +58,7 @@ You should see a see a line that says "active (running)" in the result.
 2. Before starting Puppet agent, edit the /etc/hosts file to identify the Puppet master to use to request the certificate. At the end of the file, specify the internal IP address of the puppet-master Compute Engine instance, as shown following:
 
         [PUPPET_MASTER_COMPUTE_ENGINE_INSTANCE_INTERNAL_IP_ADDRESS]      Puppet
-You can get the internal IP address of the puppet-master Compute Engine instance from the VM instances page in the GCP console.
+You can get the internal IP address of the puppet-master Compute Engine instance from the VM instances page in the Cloud Console.
 3. Run the following commands to run the Puppet agent:
 
         sudo systemctl start puppet
@@ -104,4 +107,4 @@ You can also do a single sign by
 
         sudo /opt/puppetlabs/bin/puppet agent --test
 
-5. Copy the external IP address of the puppet-agent instance (you can get this from the VM instances page in the GCP console) and paste it into your browser. You should see a web page with the message "This page is installed from Puppet Master". 
+5. Copy the external IP address of the puppet-agent instance (you can get this from the VM instances page in the Cloud Console) and paste it into your browser. You should see a web page with the message "This page is installed from Puppet Master". 

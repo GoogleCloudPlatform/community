@@ -6,6 +6,10 @@ tags: App Engine, WordPress, PHP
 date_published: 2019-01-31
 ---
 
+Brent Shaffer | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 [WordPress][wordpress] is an open source web framework for PHP developers that encourages the use of the
 model-view-controller (MVC) pattern.
 

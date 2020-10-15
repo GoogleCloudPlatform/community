@@ -6,7 +6,9 @@ tags: Cloud IoT Core, Gateways, Raspberry Pi, Python, MQTT, internet of things, 
 date_published: 2020-01-31
 ---
 
-Gus Class | Developer Programs Engineer | Google Cloud IoT Core
+Gus Class | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 Fledge (previously known as *FogLAMP*) is an open-source framework contributed by Dianomic
 for getting data from sensors into data stores. Fledge provides a bridge between sensors

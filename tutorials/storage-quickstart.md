@@ -9,9 +9,9 @@ date_published: 2019-07-31
 # Cloud Storage quickstart: Create a bucket and upload files
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=storage_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=storage_quickstart)
 
 </walkthrough-alt>
 
@@ -31,7 +31,7 @@ Here's what you'll do:
 
 ## Project setup
 
-GCP organizes resources into projects. This allows you to
+Google Cloud organizes resources into projects. This allows you to
 collect all of the related resources for a single application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
@@ -75,7 +75,7 @@ Now that you have a bucket, you can start uploading objects. You can upload any 
 * At the top of the **Bucket details** page, click [**Upload files**][spotlight-upload-file]
   and select a file to upload.
 * Drag and drop a file onto the space below the bucket name.
-* If you're using the interactive version of this tutorial in the GCP Console, you can
+* If you're using the interactive version of this tutorial in the Cloud Console, you can
   [click this link to create a sample text file][create-sample-file], and then click
   [**Refresh Bucket**][spotlight-refresh-bucket] at the top of the page to see it in your bucket.
   
@@ -103,7 +103,7 @@ that you can do next:
 *   Put Cloud Storage to real-world use by
     [hosting a static website](https://cloud.google.com/storage/docs/hosting-static-website).
 *   Learn to use Cloud Storage with [the gsutil command-line tool](https://cloud.google.com/storage/docs/quickstart-gsutil).
-*   Learn how you can start using Cloud Storage and other GCP services for [free](https://cloud.google.com/free).
+*   Learn how you can start using Cloud Storage and other Google Cloud services for [free](https://cloud.google.com/free).
 
 [create-sample-file]: walkthrough://create-sample-storage-file
 [spotlight-buckets-link]: walkthrough://spotlight-pointer?cssSelector=.p6n-cloudstorage-path-link

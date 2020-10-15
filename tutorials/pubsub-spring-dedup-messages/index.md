@@ -8,6 +8,8 @@ date_published: 2020-03-03
 
 Tianzi Cai | Developer Programs Engineer | Google Cloud
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial demonstrates how to use Pub/Sub and Dataflow to deduplicate messages in a Spring Cloud Stream application.
 
 Many enterprise-level Java applications with distributed systems on the backend are built with

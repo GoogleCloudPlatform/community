@@ -1,16 +1,21 @@
 ---
-title: Dynamically provision GKE storage from Cloud Filestore using the NFS-Client provisioner
-description: Learn how to deploy the NFS-Client provisioner in a GKE cluster to dynamically provision storage from Cloud Filestore.
+title: Dynamically provision GKE storage from Filestore using the NFS-Client provisioner
+description: Learn how to deploy the NFS-Client provisioner in a GKE cluster to dynamically provision storage from Filestore.
 author: wardharold
 tags: GKE, Filestore, Storage, NFS
 date_published: 2018-09-26
 ---
+
+Ward Harold | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows you how to [dynamically provision](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning) 
 Kubernetes storage volumes in Google Kubernetes Engine 
-from [Cloud Filestore](https://cloud.google.com/filestore/) using the 
+from [Filestore](https://cloud.google.com/filestore/) using the 
 [Kubernetes NFS-Client Provisioner](https://github.com/kubernetes-incubator/external-storage/tree/master/nfs-client). Dynamic 
-provisioning allows storage volumes to be created on demand in the NFS volume managed by a Cloud Filestore instance. Typical
-use cases include running databases, *e.g.*, [PostgreSQL](https://www.postgresql.org/), or a content management system like [WordPress](https://wordpress.com/) in a Kubernetes cluster.
+provisioning allows storage volumes to be created on demand in the NFS volume managed by a Filestore instance. Typical
+use cases include running databases, such as [PostgreSQL](https://www.postgresql.org/), or a content management system like [WordPress](https://wordpress.com/) in a Kubernetes cluster.
 
 [![button](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/community&page=editor&tutorial=tutorials/gke-filestore-dynamic-provisioning/index.md)
 
@@ -34,9 +39,9 @@ gcloud config set compute/zone $ZONE
 gcloud services enable file.googleapis.com
 ```
 
-## Create a Cloud Filestore volume
+## Create a Filestore volume
 
-1. Create a Cloud Filestore instance with 1TB of storage capacity
+1. Create a Filestore instance with 1TB of storage capacity
 
     ```sh
     FS=[NAME FOR THE FILESTORE YOU WILL CREATE]
@@ -48,7 +53,7 @@ gcloud services enable file.googleapis.com
         --network=name="default"
     ```
 
-2. Retrieve the IP address of the Cloud Filestore instance
+2. Retrieve the IP address of the Filestore instance
 
     ```sh
     FSADDR=$(gcloud beta filestore instances describe ${FS} \
@@ -120,10 +125,10 @@ gcloud services enable file.googleapis.com
 
 ## Deploy the NFS-Client Provisioner
 
-Create an instance of NFS-Client Provisioner connected to the Cloud Filestore instance you created earlier 
+Create an instance of NFS-Client Provisioner connected to the Filestore instance you created earlier 
 via its IP address (`${FSADDR}`). The NFS-Client Provisioner creates a new storage class: `nfs-client`. Persistent
 volume claims against that storage class will be fulfilled by creating persistent volumes backed by directories
-under the `/volumes` directory on the Cloud Filestore instance's managed storage.
+under the `/volumes` directory on the Filestore instance's managed storage.
 
     helm install stable/nfs-client-provisioner --name nfs-cp --set nfs.server=${FSADDR} --set nfs.path=/volumes
     watch kubectl get po -l app=nfs-client-provisioner
@@ -141,13 +146,13 @@ the configuration.
 
 Press Ctrl-C when the database pod's status changes to Running.
 
-The PostgreSQL Helm chart creates an 8GB persistent volume claim on Cloud Filestore and mounts it at
+The PostgreSQL Helm chart creates an 8GB persistent volume claim on Filestore and mounts it at
 `/var/lib/postgresql/data/pgdata` in the database pod.
 
-## Verify Cloud Filestore volume directory creation
+## Verify Filestore volume directory creation
 
-To verify that the PostgreSQL database files were actually created on the Cloud Filestore managed storage you will
-create a small Compute Engine instance, mount the Cloud Filestore volume on that instance, and inspect the directory
+To verify that the PostgreSQL database files were actually created on the Filestore managed storage you will
+create a small Compute Engine instance, mount the Filestore volume on that instance, and inspect the directory
 structure to see that the database files are present.
 
 1. Create an `f1-micro` Compute Engine instance
@@ -166,7 +171,7 @@ structure to see that the database files are present.
 
         gcloud compute ssh check-nfs-provisioner --command "sudo apt update -y && sudo apt install nfs-common -y"
 
-3. Mount the Cloud Filestore volume on check-nfs-provisioner
+3. Mount the Filestore volume on check-nfs-provisioner
 
         gcloud compute ssh check-nfs-provisioner --command "sudo mkdir /mnt/gke-volumes && sudo mount ${FSADDR}:/volumes /mnt/gke-volumes"
 
@@ -218,7 +223,7 @@ structure to see that the database files are present.
         helm destroy nfs-cp
         gcloud container clusters delete ${CLUSTER}
 
-3. Delete the Cloud Filestore instance
+3. Delete the Filestore instance
 
         gcloud beta filestore instances delete ${FS} --location ${ZONE}
 

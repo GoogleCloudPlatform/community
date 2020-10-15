@@ -1,11 +1,14 @@
 ---
-title: Setting up a standalone TensorFlow prediction device with Raspberry Pi and Google Cloud Platform
+title: Setting up a standalone TensorFlow prediction device with Raspberry Pi and Google Cloud
 description: Learn how to set up a standalone TensorFlow server in Raspberry Pi with a model trained in Cloud ML Engine.
 author: arieljassan
 tags: TensorFlow, Raspberry Pi, MLEngine
 date_published: 2018-12-27
 ---
 
+Ariel Jassan | Data Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial describes how to set up a TensorFlow server in a Raspberry Pi 3B and deploy on it a TensorFlow saved model. 
 
@@ -94,8 +97,6 @@ The following diagram shows the architecture of the solution
 1.  Open the Python file that does the serving and customize the model directory if needed:
 
         nano /standalone-tensorflow-raspberry-pi/tf_server.py
-	
-
 
     The variable *`model_dir`* in line 16 of the python file `tf_server.py` identifies the directory where the model is saved. You can edit this if you download a model in a different location.
     
@@ -143,18 +144,18 @@ You can test the solution by capturing the images below with the camera attached
 
 ## Extensions to this lab
 
-This lab can be extended to a more comprehensive solution that can learn fast by incorporating new input data from hundreds of devices and processing it by leveraging the power of the cloud. Other components of GCP can allow for analytics and team collaboration.
+This lab can be extended to a more comprehensive solution that can learn fast by incorporating new input data from hundreds of devices and processing it by leveraging the power of the cloud. Other components of Google Cloud can allow for analytics and team collaboration.
 
-In the architecture diagram below, we have incorporated Cloud IoT Core and Cloud Pub/Sub that allow you to connect and manage hundreds of IoT devices and ingest millions of messages per second. In addition, Cloud Dataflow, Google BigQuery, Cloud Dataproc, and Google Data Studio enable building powerful analytics solutions based on managed services and collaborating with team members. 
+In the architecture diagram below, we have incorporated IoT Core and Pub/Sub that allow you to connect and manage hundreds of IoT devices and ingest millions of messages per second. In addition, Dataflow, BigQuery, Dataproc, and Data Studio enable building powerful analytics solutions based on managed services and collaborating with team members. 
 
 ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/standalone-tensorflow-raspberry-pi/standalone_tensorflow_img2.png)
 
 ## Cleaning up
 
-The easiest way to avoid incurring charges to your Google Cloud Platform account for the resources used in this tutorial is to delete the project you created.
+The easiest way to avoid incurring charges to your Google Cloud account for the resources used in this tutorial is to delete the project you created.
 
 To delete the project, follow the steps below:
-1. In the Cloud Platform Console, [go to the Projects page](https://console.cloud.google.com/iam-admin/projects).
+1. In the Cloud Console, [go to the Projects page](https://console.cloud.google.com/iam-admin/projects).
 
 1. In the project list, select the project you want to delete and click **Delete project**.
 ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/standalone-tensorflow-raspberry-pi/img_delete_project.png) 

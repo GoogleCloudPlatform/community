@@ -6,7 +6,9 @@ tags: Cloud Build, Testing, PHP
 date_published: 2017-02-01
 ---
 
-## Cloud Build
+Takashi Matsuo | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 [Cloud Build][builder] lets you create [Docker][docker]
 container images from your source code. The [Cloud SDK][cloudsdk] provides the

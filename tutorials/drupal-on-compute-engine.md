@@ -1,11 +1,14 @@
 ---
-title: Setting up Drupal on Google Compute Engine
-description: Learn how to get Drupal running on a virtual machine instance on Google Compute Engine easily in just a few minutes.
+title: Setting up Drupal on Compute Engine
+description: Learn how to get Drupal running on a virtual machine instance on Compute Engine easily in just a few minutes.
 author: jimtravis
 tags: Compute Engine, SendGrid, Drupal
 date_published: 2017-01-17
 ---
-Get Drupal running on a virtual machine instance on Google Compute Engine
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+Get Drupal running on a virtual machine instance on Compute Engine
 easily in just a few minutes. You can use automated tools or follow the detailed
 tutorial to configure Drupal on a Debian virtual machine instance with the LAMP
 stack installed and root access.
@@ -28,8 +31,8 @@ You can also automatically deploy Drupal on your virtual machine by using the
 [Cloud Launcher][launcher_drupal] or you can use the remaining steps to install
 Drupal yourself.
 
-After your virtual machine instance is up and running, use the Google Cloud
-Platform Console to connect over SSH.
+After your virtual machine instance is up and running, use the Cloud
+Console to connect over SSH.
 
 ## Installing Drush
 
@@ -216,7 +219,7 @@ your email was blocked for some reason.
 
 * [Set up a host name for your website][dns]
 * Read the [Drupal documentation][drupal_docs]
-* Try out other Google Cloud Platform features. Have a look at the [tutorials][tutorials].
+* Try out other Google Cloud features. Have a look at the [tutorials][tutorials].
 
 [launcher]: https://cloud.google.com/launcher/?q=lamp
 [lamp]: https://cloud.google.com/compute/docs/tutorials/setting-up-lamp

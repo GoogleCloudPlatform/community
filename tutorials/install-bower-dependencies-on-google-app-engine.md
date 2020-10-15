@@ -5,20 +5,19 @@ author: jmdobry
 tags: App Engine, Bower, Node.js
 date_published: 2016-05-20
 ---
-## Bower
 
-"[Bower][bower]: A package manager for the web." – bower.io
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-If you're using Bower to install web dependencies for your app and you're
+If you're using [Bower](http://bower.io/) to install web dependencies for your app and you're
 deploying your app to App Engine flexible environment, then there are
 several ways to make sure the dependencies are available to your deployed app.
 This tutorial discusses three different methods.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1. Install the [Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Prepare
 
@@ -138,4 +137,3 @@ Docker image. Add the following to `app.yaml`:
 
     As the Docker image is built it will run `bower install`.
 
-[bower]: http://bower.io/

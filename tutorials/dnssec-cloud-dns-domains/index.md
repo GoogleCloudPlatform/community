@@ -8,6 +8,8 @@ date_published: 2017-10-11
 
 Alexander Dupuy | Software Engineer | Google
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 [DNSSEC][1] (DNS Security Extensions) authenticates DNS answers to block
 forgeries and is the basis for [DANE e‑mail security][2]. Google Cloud DNS can
 use DNSSEC to sign the managed zones for your domains. But until you add a DS
