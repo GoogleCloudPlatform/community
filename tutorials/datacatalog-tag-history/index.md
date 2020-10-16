@@ -6,7 +6,9 @@ tags: Data Catalog, BigQuery, Dataflow
 date_published: 2020-10-07
 ---
 
-Anant Damle | Solutions Architect | Google Cloud
+Anant Damle | Solutions Architect | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This solution is intended for technical practitioners—such as data engineers and analysts—who are responsibile for metadata management, data governance, and 
 related analytics.

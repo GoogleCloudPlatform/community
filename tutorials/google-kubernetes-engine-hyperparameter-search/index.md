@@ -6,6 +6,10 @@ tags: Kubernetes Engine, Machine Learning, Scikit-Learn
 date_published: 2018-06-13
 ---
 
+Yu-Han Liu | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial takes a deeper look at the [sample notebook][gke_randomized_search].
 It illustrates how to run parallelized hyperparameter search for Scikit-Learn models on [Google Kubernetes Engine][gke].
 

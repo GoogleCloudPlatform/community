@@ -1,10 +1,12 @@
 ---
-title: Load-testing an IoT application using GCP and Locust
-description: Simulate the load from a population of devices to understand performance, scalability, and costs of GCP services.
+title: Load-testing an IoT application using Google Cloud and Locust
+description: Simulate the load from a population of devices to understand performance, scalability, and costs of Google Cloud services.
 author: csgcp
 tags: iot, functions, internet of things
 date_published: 2019-02-06
 ---
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 This tutorial describes load-testing an Internet of Things (IoT) application using Google Cloud and Locust.
 
@@ -157,7 +159,7 @@ The GitHub repository includes a `.sample.env` file in the repository root direc
 |---|---|---|
 |`LTK_ROOT`|The full path name of the LTK root directory on your workstation.|`/Users/user1/repos/community/tutorials/load-testing-iot-using-gcp-and-locust`|
 |`LTK_NUM_LOCUST_WORKERS`|The number of Kubernetes pods to use for the Locust workers. The device population (defined in `devicelist.csv`) will be sharded automatically between the worker pods. Generally, you want to make sure each worker does not simulate too many devices. This can cause CPU/memory pressure and thread-switching issues. For the tutorial, set this to 2. It can be increased/decreased later.|`2`|
-|`LTK_DRIVER_PROJECT_ID`|The GCP project ID for the driver. The GKE cluster will be created under this project.|`my-ltk-driver-123456`|
+|`LTK_DRIVER_PROJECT_ID`|The Google Cloud project ID for the driver. The GKE cluster will be created under this project.|`my-ltk-driver-123456`|
 |`LTK_DRIVER_ZONE`|The Google Cloud zone for the driver. The GKE cluster's nodes will be created in this zone. You can get a list of available zones with the command `gcloud compute zones list`.|`us-west1-a`|
 |`LTK_TARGET_PROJECT_ID`|The Google Cloud project ID for the target (the IoT application and devices).|`my-ltk-target-123456`|
 |`LTK_TARGET_REGION`|The Google Cloud region where the device registry is located.|`us-central1`|

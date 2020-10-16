@@ -6,12 +6,14 @@ tags: Compute Engine, LAMP
 date_published: 2017-02-15
 ---
 
-This page shows you how to get a LAMP stack running on a Google Compute Engine
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This page shows you how to get a LAMP stack running on a Compute Engine
 virtual machine instance. Follow the steps in this tutorial to configure LAMP
 on a Debian, Ubuntu, or CentOS instance.
 
 Alternatively, you can use the
-[Google Cloud Launcher](https://cloud.google.com/launcher) to deploy a LAMP stack automatically.
+[Cloud Launcher](https://cloud.google.com/launcher) to deploy a LAMP stack automatically.
 
 ## Objectives
 
@@ -23,15 +25,13 @@ Alternatively, you can use the
 
 ## Prerequisites
 
-+ Select or create a Google Cloud Platform project.
++ Select or create a Google Cloud project.
 + Enable billing for your project.
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform,
-including:
-
-+ Google Compute Engine
+This tutorial uses billable components of Google Cloud,
+including Compute Engine.
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/)
 to generate a cost estimate based on your projected usage.
@@ -39,9 +39,9 @@ to generate a cost estimate based on your projected usage.
 ## Creating a virtual machine instance
 
 You can use these steps to deploy the LAMP stack using
-the Google Cloud Platform Console:
+the Cloud Console:
 
-1. In the Cloud Platform Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
+1. In the Cloud Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
 1. Click the Create instance button.
 1. Set **Name** to **lamp-tutorial**.
 1. Set **Machine type** to **e2-micro**.
@@ -60,11 +60,11 @@ Now that your virtual machine instance is running, configure the LAMP stack.
 ### Connect to your instance
 
 You can connect directly to your instance using SSH from
-Cloud Platform Console or using the `gcloud compute ssh` command, which is
+Cloud Console or using the `gcloud compute ssh` command, which is
 part of the [Cloud SDK](https://cloud.google.com/sdk).
-This tutorial demonstrates the steps in the Cloud Platform Console.
+This tutorial demonstrates the steps in the Cloud Console.
 
-1. In the [Cloud Platform Console](https://console.cloud.google.com/compute/instances),
+1. In the [Cloud Console](https://console.cloud.google.com/compute/instances),
 go to the **VM Instances** page.
 1. In the list of virtual machine instances, click the *SSH* button in the row of the instance
 to which you want to connect.
@@ -106,7 +106,7 @@ LAMP. Next, install Apache and PHP.
 
 1. For this step, you need the external IP address of your instance. You can
 look up the address in the
-**VM Instances** page in the Cloud Platform Console.
+**VM Instances** page in the Cloud Console.
 
     In a browser, enter your external IP address to verify that Apache is running:
 
@@ -129,7 +129,7 @@ look up the address in the
 
 If the page failed to load (`HTTP 404`), verify:
 
-+ In the Cloud Platform Console, HTTP traffic is allowed for your instance.
++ In the Cloud Console, HTTP traffic is allowed for your instance.
 + The URL uses the correct IP address and file name.
 
 
@@ -201,12 +201,14 @@ You can use phpMyAdmin to administer your database through a UI.
 #### Configure phpMyAdmin
 
 ##### Debian/Ubuntu
+
   + Select **apache2**.
   + Select **yes** to use `dbconfig-common` for database setup.
   + Enter the database administrator's password that you chose during MySQL configuration.
   + Enter a password for the phpMyAdmin application.
 
 ##### CentOS 6 and 7
+
 By default, phpMyAdmin allows connections from only localhost. To access the
 database from a workstation, modify the Allow directive in the Apache
 configuration file for phpMyAdmin.
@@ -287,7 +289,7 @@ to an IP address. The `CNAME` record creates an alias for the `A` record. This l
 `example.com` and `www.example.com` to map to the same IP address.
 
 1. Get your external IP address for your instance. You can look up the IP address from the [*VM instances* page
-in the Cloud Platform Console](https://console.cloud.google.com/compute/instances).
+in the Cloud Console](https://console.cloud.google.com/compute/instances).
 1. Sign in to your provider's DNS management interface and find the domain that you want to manage.
 Refer to your DNS provider's documentation for specific steps.
 1. Create an `A` record and set the value to your external IP address. The name or host field can be set to `@`,
@@ -315,7 +317,7 @@ to get the necessary information to route requests.
 ## Cleaning up
 
 After you've finished the LAMP tutorial, you can clean up the resources you created on
-Google Cloud Platform so you won't be billed for them in the future. The following sections
+Google Cloud so you won't be billed for them in the future. The following sections
 describe how to delete or turn off these resources.
 
 ### Deleting the project
@@ -335,7 +337,7 @@ them prevents you from exceeding project quota limits.
 
 To delete the project:
 
-1. In the Cloud Platform Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
+1. In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1. In the project list, select the project you want to delete and click **Delete project**.
 After selecting the checkbox next to the project name, click **Delete project**.
 1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
@@ -344,7 +346,7 @@ After selecting the checkbox next to the project name, click **Delete project**.
 
 To delete a Compute Engine instance:
 
-1. In the Cloud Platform Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
+1. In the Cloud Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
 1. Click the checkbox next to your `lamp-tutorial` instance.
 1. Click the **Delete** button at the top of the page to delete the instance.
 
@@ -360,4 +362,4 @@ the directory location in the Apache configuration file.
   * **CentOS**: The web server document root is at `/var/www/html` and the Apache
   configuration file is at `/etc/httpd/conf/httpd.conf`.
 
-+ [Learn more about serving websites on Cloud Platform.](https://cloud.google.com/solutions/web-serving-overview)
++ [Learn more about serving websites on Google Cloud.](https://cloud.google.com/solutions/web-serving-overview)

@@ -6,6 +6,10 @@ tags: Cloud Natural Language API, APCS, REST, Magpie, education
 date_published: 2017-03-28
 ---
 
+Laurie White | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 The Advanced Placement Computer Science A program provides
 the [Magpie lab](http://media.collegeboard.com/digitalServices/pdf/ap/ap-compscia-magpie-lab-student-guide.pdf) for students to practice using basic control structures to parse user input as part of a chatbot. This tutorial is designed to be an additional enrichment exercise (typically used after the AP exam) to go beyond  basic parsing and instead use [Google's Cloud Natural Language API][nlp], a pretrained machine learning model that will do text analysis for the user. The lab demonstrates how to use the Cloud Natural Language API to extend the Magpie lab.
 
@@ -22,10 +26,10 @@ This exercise shows you how to prepare to use the Cloud Natural Language API for
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console][console].
+1. Create a project in the [Cloud Console][console].
 1. Enable billing for your project.
 1. Ensure the Cloud Natural Language API is enabled by going to the [API manager][manager] from
-the main GCP menu.
+the main Google Cloud menu.
 
 ## Authentication
 
@@ -77,7 +81,7 @@ The `Response` data will appear below the call in JSON format.
 
 * If you want to use the Cloud Natural Language API in a program, you will need to:
 
-  * Create a GCP project.
+  * Create a Google Cloud project.
   * Enable the API
   * Arrange for authentication (in this case using an API key).
 
@@ -85,12 +89,10 @@ The `Response` data will appear below the call in JSON format.
 * You can also call the Cloud Natural Language API from the API Explorer.
 
 ## Next steps
+
 To use the different features of the Cloud Natural Language, see the following Community articles:
 * [On Beyond Magpie: Part 1, Sentiment Analysis][magpie1]
 * [On Beyond Magpie: Part 2, Entity Analysis][magpie2]
-
-
-
 
 
 [alice]:https://www.gutenberg.org/files/11/11-h/11-h.htm

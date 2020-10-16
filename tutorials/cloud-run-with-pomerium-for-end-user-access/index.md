@@ -6,6 +6,10 @@ tags: Cloud Run, Pomerium
 date_published: 2020-09-01
 ---
 
+Travis Groth and Bobby DeSimone | Pomerium
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This guide covers how to deploy Pomerium to Cloud Run, providing end-user authentication and authorization to other endpoints. The resulting configuration
 permits users with `@gmail.com` addresses to access an instance of `httpbin.org` hosted on Cloud Run.
 

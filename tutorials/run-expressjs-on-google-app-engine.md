@@ -1,27 +1,21 @@
 ---
-title: Run Express.js on Google App Engine Flexible Environment
-description: Learn how to deploy a Express.js app to Google App Engine flexible environment.
+title: Run Express.js on App Engine flexible environment
+description: Learn how to deploy an Express.js app to App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Express.js, Node.js
 date_published: 2016-01-07
 ---
-## Express.js
 
-> [Express][express] is a minimal and flexible Node.js web
-> application framework that provides a robust set of features for web and
-> mobile applications.
->
-> – expressjs.com
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
-overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
-Platform.
+You can check out [Node.js and Google Cloud][nodejs-gcp] to get an
+overview of Node.js itself and learn ways to run Node.js apps on Google Cloud.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1. Install the [Cloud SDK](https://cloud.google.com/sdk/).
 1. Install [Node.js](https://nodejs.org/en/download/) on your local machine. 
 
 ## Prepare

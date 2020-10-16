@@ -1,10 +1,14 @@
 ---
-title: Query BigQuery With Python Using Ibis
+title: Query BigQuery with Python using Ibis
 description: Learn how to use the Ibis Python library to query BigQuery tables without writing SQL code.
 author: tswast
 tags: BigQuery, Ibis, Python, Data Science
 date_published: 2018-08-13
 ---
+
+Tim Swast | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 [Ibis](http://ibis-project.org/) is a Python library for doing data
 analysis. It offers a Pandas-like environment for executing data analysis in
@@ -23,17 +27,16 @@ in BigQuery](https://cloud.google.com/bigquery/public-data/stackoverflow).
 ## Before you begin
 
 Follow the instructions in the following guides to set up your environment to
-develop Python code that connects to Google Cloud Platform:
+develop Python code that connects to Google Cloud:
 
 1.  [Set up a Python development environment](https://cloud.google.com/python/setup).
-1.  [Authenticate to Google Cloud Platform with a service
+1.  [Authenticate to Google Cloud with a service
     account](https://cloud.google.com/docs/authentication/getting-started).
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform including
-BigQuery. Use the [Pricing
-Calculator](https://cloud.google.com/products/calculator/#id=d343aa2d-457b-4778-b4cb-ef0ea35605ea)
+This tutorial uses billable components of Google Cloud including
+BigQuery. Use the [Pricing Calculator](https://cloud.google.com/products/calculator/#id=d343aa2d-457b-4778-b4cb-ef0ea35605ea)
 to estimate the costs for your usage.
 
 The first 1 TB per month of BigQuery queries are free. See [the BigQuery

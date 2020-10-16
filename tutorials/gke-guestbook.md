@@ -9,9 +9,9 @@ date_published: 2019-07-31
 # Google Kubernetes Engine quickstart: Create a guestbook with Redis and PHP
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=gke_guestbook)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=gke_guestbook)
 
 </walkthrough-alt>
 
@@ -24,7 +24,7 @@ balancer and how to run a [Redis][redis] cluster with a single master and multip
 
 ## Project setup
 
-GCP organizes resources into projects. This allows you to
+Google Cloud organizes resources into projects. This allows you to
 collect all of the related resources for a single application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
@@ -273,7 +273,7 @@ Google Kubernetes Engine.
 
 Here are some suggestions for what you can do next:
 
-*   Find Google Cloud Platform
+*   Find Google Cloud
     [samples on GitHub](http://googlecloudplatform.github.io/).
 
 *   Learn how to store persistent data in your application through the

@@ -6,7 +6,11 @@ tags: Cloud Build, Packer, Compute Engine, Image
 date_published: 2018-09-14
 ---
 
-This tutorial will show you how to create an image factory using Cloud Build and
+John LaBarge | Solutions Architect | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This tutorial shows you how to create an image factory using Cloud Build and
 [Packer by HashiCorp](https://packer.io). The image factory will automatically
 create new images from a Cloud Source Repository every time a new tag is pushed
 to that repository as depicted in the diagram below.

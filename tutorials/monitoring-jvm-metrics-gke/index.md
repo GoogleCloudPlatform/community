@@ -6,6 +6,10 @@ tags: Google Kubernetes Engine, Java
 date_published: 2020-09-15
 ---
 
+Vinicius Carvalho | Customer Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 Google Kubernetes Engine (GKE) offers built-in capabilities to monitor containers, providing insights into memory, CPU, and I/O resources. JVM applications, 
 however, have different memory configurations (heap versus non-heap), and each memory space is split in several parts (such as eden, tenured, and survivor). 
 Often, Java developers face issues with memory configurations, and having the capability to inspect an application's memory utilization is essential.

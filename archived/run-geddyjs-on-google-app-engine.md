@@ -1,25 +1,23 @@
 ---
-title: Run Geddy.js on Google App Engine Flexible Environment
+title: Run Geddy.js on Google App Engine flexible environment
 description: Learn how to deploy a Sails.js app to Google App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Geddy.js, Sails.js
 date_published: 2017-01-10
 ---
+
 ## Geddy.js
 
-> [Geddy][geddy] is a simple, structured web framework for Node.js
->
-> – geddyjs.org
+[Geddy][geddy] is a simple, structured web framework for Node.js
 
-You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
-overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
-Platform.
+You can check out [Node.js and Google Cloud][nodejs-gcp] to get an
+overview of Node.js itself and learn ways to run Node.js apps on Google Cloud.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1. Install the [Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Prepare
 

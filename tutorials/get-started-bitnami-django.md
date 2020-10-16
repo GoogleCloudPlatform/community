@@ -6,6 +6,8 @@ tags: django, python, bitnami
 date_published: 2017-03-15
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This tutorial demonstrates how to create and deploy a basic "hello world" Django web app on Google Cloud in just a few 
 minutes using Bitnami Django.
 

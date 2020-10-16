@@ -1,6 +1,6 @@
 ---
-title: Using Stackdriver Logging with IoT Core devices
-description: Learn how to use Stackdriver Logging for application logs from devices.
+title: Using Cloud Logging with IoT Core devices
+description: Learn how to use Cloud Logging for application logs from devices.
 author: ptone
 tags: iot, logging, internet of things
 date_published: 2018-05-23
@@ -8,13 +8,16 @@ date_published: 2018-05-23
 
 Preston Holmes | Solution Architect | Google
 
-This tutorial demonstrates how to configure Cloud Functions for Firebase to relay device application logs from [Cloud IoT Core](https://cloud.google.com/iot) to [Stackdriver Logging](https://cloud.google.com/logging/).
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This tutorial demonstrates how to configure Cloud Functions for Firebase to relay device application logs from [IoT Core](https://cloud.google.com/iot) to
+[Cloud Logging](https://cloud.google.com/logging/).
 
 ## Objectives
 
 - Send application logs from device software over [MQTT](https://www.mqtt.com/) and IoT Core
-- View device logs in Stackdriver Logging
-- Use sorting and searching features of Stackdriver Logging to find logs of interest
+- View device logs in Cloud Logging
+- Use sorting and searching features of Cloud Logging to find logs of interest
 - Use the monitored resource type for IoT devices to see multiple log entries from different sources for a given device
 
 ![Architecture diagram for tutorial components](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/architecture.png)
@@ -30,10 +33,10 @@ You need to associate Firebase to your GCP project. Visit the [Firebase Console]
 
 This tutorial uses billable components of GCP, including the following:
 
-- Cloud IoT Core
-- Cloud Pub/Sub
+- IoT Core
+- Pub/Sub
 - Cloud Functions for Firebase
-- Stackdriver Logging
+- Cloud Logging
 
 This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), but you can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected production usage.
 
@@ -64,13 +67,13 @@ Assuming you have a registry already created from the required quickstart pre-re
 gcloud iot registries update $REGISTRY_ID --region $CLOUD_REGION --event-notification-config subfolder=log,topic=device-logs
 ```
 
-This configures IoT Core to send any messages written to the MQTT topic of `/devices/{device-id}/events/log` to be published to a specific Cloud Pub/Sub topic created above.
+This configures IoT Core to send any messages written to the MQTT topic of `/devices/{device-id}/events/log` to be published to a specific Pub/Sub topic created above.
 
 ## Deploy the relay function
 
 You can use either Google Cloud Functions or Cloud Functions for Firebase to run the relay (they use the same underlying systems). Here you are using Cloud Functions for Firebase as the tools are a little more straightforward and there are nice [Typescript starting samples](https://firebase.google.com/docs/functions/typescript).
 
-The main part of the function handles a Cloud Pub/Sub message from IoT Core, extracts the log payload and device information, and then writes a structured log entry to Stackdriver Logging:
+The main part of the function handles a Pub/Sub message from IoT Core, extracts the log payload and device information, and then writes a structured log entry to Cloud Logging:
 
 [embedmd]:# (functions/src/index.ts /import/ $)
 ```ts
@@ -79,7 +82,7 @@ const loggingClient = require('@google-cloud/logging');
 
 import { runInDebugContext } from 'vm';
 
-// create the Stackdriver Logging client
+// create the Cloud Logging client
 const logging = new loggingClient({
   projectId: process.env.GCLOUD_PROJECT,
 });
@@ -121,7 +124,7 @@ exports.deviceLog =
       delete (logData.severity);
 
 
-      // write the log entryto Stackdriver Logging
+      // write the log entryto Cloud Logging
       const entry = log.entry(metadata, logData);
       return log.write(entry);
     }
@@ -150,11 +153,11 @@ gcloud iot devices create log-tester --region $CLOUD_REGION --registry $REGISTRY
 node build/index.js &
 ```
 
-Note: do not use this device for any real workloads, as the keypair is included in this sample and should not be considered secret.
+**Important:** Do not use this device for any real workloads, because the keypair is included in this sample and should not be considered secret.
 
 ## Explore the logs that are written
 
-If you open up the [Stackdriver Logging console](https://console.cloud.google.com/logs/viewer).
+If you open up the [Cloud Logging console](https://console.cloud.google.com/logs/viewer).
 
 ![console image](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-logging/c1.png)
 
@@ -174,7 +177,7 @@ Now you will exercise a part of our sample device code that responds to config c
 gcloud iot devices configs update --device log-tester --registry $REGISTRY_ID --region $CLOUD_REGION --config-data '{"bounce": 2}'
 ```
 
-Now in just a few moments, you will see two new entries in Stackdriver Logging. One is from IoT Core system noting that a devices config was updated (the `ModifyCloudToDeviceConfig` call).
+Now in just a few moments, you will see two new entries in Cloud Logging. One is from IoT Core system noting that a devices config was updated (the `ModifyCloudToDeviceConfig` call).
 
 This is then followed by a device application log reporting the imaginary "spring back" value. This shows how we can view both system logs from IoT Core and device application logs in one place.
 
@@ -228,5 +231,5 @@ Because the test device uses a non-secret key, you should delete it:
 gcloud iot devices delete log-tester --registry $REGISTRY_ID --region $CLOUD_REGION
 ```
 
-All of the resource in this tutorial cost nothing at rest, or scale to zero. You can delete [Cloud Functions](https://console.cloud.google.com/functions/list), [Device Registry](https://console.cloud.google.com/iot/registries/), and [Cloud Pub/Sub topics](https://console.cloud.google.com/cloudpubsub/topicList) from GCP.
+All of the resource in this tutorial cost nothing at rest, or scale to zero. You can delete [Cloud Functions](https://console.cloud.google.com/functions/list), [Device Registry](https://console.cloud.google.com/iot/registries/), and [Pub/Sub topics](https://console.cloud.google.com/cloudpubsub/topicList) from Google Cloud.
 

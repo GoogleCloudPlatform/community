@@ -6,6 +6,10 @@ tags: App Engine, Kotlin, Spring Boot, Java, App Engine Standard
 date_published: 2018-09-21
 ---
 
+Brent Shaffer | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 [App Engine standard environment](https://cloud.google.com/appengine/docs/standard/)
 deploys your apps to the same infrastructure that powers Google's products. In
 this tutorial you'll see how to deploy your [Kotlin](https://kotlinlang.org/)
@@ -32,15 +36,15 @@ and you need to have the Google Cloud SDK installed.
 Create a project that will host your Spring Boot application. You can also reuse
 an existing project.
 
-1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
-    to create a new Cloud Platform project. Remember the project ID; you will
+1.  Use the [Cloud Console](https://console.cloud.google.com/)
+    to create a new Google Cloud project. Remember the project ID; you will
     need it later. Later commands in this tutorial will use `[PROJECT_ID]` as
     a substitution, so you might consider setting the `PROJECT_ID` environment
     variable in your shell.
 
 2.  Enable billing for your project.
 
-3.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/). Make sure
+3.  Install the [Cloud SDK](https://cloud.google.com/sdk/). Make sure
     you [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK
     and set the default project to the new project you created.
 
@@ -55,8 +59,7 @@ an existing project.
 In this section, you will create a new Spring Boot app and make sure it runs. If
 you already have an app to deploy, you can use it instead.
 
-Note: Alternatively, you can [download][springboot-sample-code] the sample
-application.
+Alternatively, you can [download][springboot-sample-code] the sample application.
 
 [springboot-sample-code]: https://github.com/GoogleCloudPlatform/kotlin-samples/tree/master/appengine/springboot/
 
@@ -91,7 +94,7 @@ application.
             }
         }
 
-    Note: The package should match that of the `groupId` and `artifactId`
+    The package should match that of the `groupId` and `artifactId`
     specified in `pom.xml`.
 
 1.  Edit the file named `DemoApplication.kt` in `src/main/kotlin` and replace
@@ -138,15 +141,15 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
 
     **Note**: If the command fails with `Google Cloud SDK could not be found`,
     make sure the environment variable `GOOGLE_CLOUD_SDK_HOME` is set to the
-    root directory of where you installed the Google Cloud SDK.
+    root directory of where you installed the Cloud SDK.
 
 1. Once the deploy command has completed, you can run the following to see your
-app running in production on App Engine in the browser:
+   app running in production on App Engine in the browser:
 
         gcloud app browse
 
-    **Note** This application does not respond to the root endpoint. Once the
-    browser is open with the correct URL, you need to append `/message` to it.
+   This application does not respond to the root endpoint. Once the
+   browser is open with the correct URL, you need to append `/message` to it.
 
 ## Update your application
 
@@ -169,7 +172,7 @@ Make a simple change and redeploy.
 ## Clean up
 
 After you've finished this tutorial, you can clean up the resources you created
-on Google Cloud Platform so you won't be billed for them in the future. To clean
+on Google Cloud so you won't be billed for them in the future. To clean
 up the resources, you can delete the project or stop the App Engine service.
 
 ### Deleting the project
@@ -179,7 +182,7 @@ the tutorial. To do so using `gcloud`, run:
 
     gcloud projects delete [PROJECT_ID]
 
-where `[PROJECT_ID]` is your Google Cloud Platform project ID.
+where `[PROJECT_ID]` is your Google Cloud project ID.
 
 **Warning**: Deleting a project has the following consequences:
 
@@ -193,7 +196,7 @@ use the project ID, such as an appspot.com URL, remain available.
 
 To disable an App Engine service:
 
-1.  In the Cloud Platform Console, go to the
+1.  In the Cloud Console, go to the
     [App Engine Versions page](https://console.cloud.google.com/appengine/versions).
 2.  Make sure your project is selected. If necessary, pull down the project
     selection dropdown at the top, and choose the project you created for this
