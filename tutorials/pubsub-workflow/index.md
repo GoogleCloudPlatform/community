@@ -80,7 +80,7 @@ export DEMOSOURCE=/path/to/community/tutorials/pubsub-workflow/
 This tutorial can be executed in any environment that provides gcloud and Docker. Some options include:
 
  * [Cloud Shell](https://cloud.google.com/shell) includes Docker and has gcloud built in and ready to go.
- * If you prefer to develop on your own host, install [Docker](https://www.docker.com/) and run the commands locally
+ * If you prefer to develop on your own host, install [Docker](https://www.docker.com/) and run the commands locally.
  * You can also create a small instance to follow this tutorial with the following command.
 
 ```
@@ -137,7 +137,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID --member=serviceAccount:$SERV
 ```
 
 ## Create some work files
-The following commands will create a folder and fill it with 99 work files. Each file will containe up to 2048 bytes and will include specific tokens that we want to replace as part of our workflow.
+The following commands will create a folder and fill it with 99 work files. Each file will contain up to 2048 bytes and will include specific tokens that we want to replace as part of our workflow.
 ```
 mkdir workfiles
 for n in {1..9}; do touch workfiles/work00$n ; done
