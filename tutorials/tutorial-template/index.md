@@ -8,7 +8,7 @@ date_published: 2020-04-28
 
 Todd Kopriva | Community Editor | Google
 
-<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community (not official Google documentation).</i></p>
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 To begin creating a tutorial, copy the Markdown source for this tutorial template into your blank Markdown file. Replace the explanatory text and examples with 
