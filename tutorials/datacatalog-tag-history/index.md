@@ -79,7 +79,7 @@ easiest at the end of the tutorial, we recommend that you create a new project f
 
         gcloud services enable \
         bigquery.googleapis.com \
-        storage_component.googleapis.com \
+        storage_component \
         datacatalog.googleapis.com \
         dataflow.googleapis.com \
         pubsub.googleapis.com  
@@ -245,13 +245,13 @@ in the Cloud Console.
           -Dexec.args=" \
         --streaming=true \
         --project=${PROJECT_ID} \
-        --serviceAccount=${TAG_HISTORY_SERVICE_ACCOUNT_EMAIL}
+        --serviceAccount=${TAG_HISTORY_SERVICE_ACCOUNT_EMAIL} \
         --runner=DataflowRunner \
         --gcpTempLocation=gs://${TEMP_GCS_BUCKET}/temp/ \
         --stagingLocation=gs://${TEMP_GCS_BUCKET}/staging/ \
         --workerMachineType=n1-standard-1 \
         --region=${REGION_ID} \
-        --tagsBigqueryTable=${PROJECT_ID}:${DATASET_ID}.${TABLE_ID} \    
+        --tagsBigqueryTable=${PROJECT_ID}:${DATASET_ID}.${TABLE_ID} \
         --catalogAuditLogsSubscription=projects/${PROJECT_ID}/subscriptions/${LOGS_SUBSCRIPTION_ID}"
 
     If you are using `snake_case` for column names, add the `--snakeCaseColumnNames` flag.
