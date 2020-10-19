@@ -79,7 +79,7 @@ easiest at the end of the tutorial, we recommend that you create a new project f
 
         gcloud services enable \
         bigquery.googleapis.com \
-        storage_component.googleapis.com \
+        storage_component \
         datacatalog.googleapis.com \
         dataflow.googleapis.com \
         pubsub.googleapis.com  
