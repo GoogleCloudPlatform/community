@@ -42,13 +42,9 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 ## Configure the Shared VPC
 
-Before we get started let's get familiar with some basic understanding about Shared VPC (check the [Shared VPC Overview](https://cloud.google.com/vpc/docs/shared-vpc) documentation page for more details):
+We are going to refer to the host project using the environment variable `SHARED_VPC_PROJECT` and to the two service projects using the `SERVICE_PROJECT` and `GKE_CLUSTER_PROJECT` environment variables.
 
-> Shared VPC allows an organization to connect resources from multiple projects to a common Virtual Private Cloud (VPC) network, so that they can communicate with each other securely and efficiently using internal IPs from that network. When you use Shared VPC, you designate a project as a host project and attach one or more other service projects to it. The VPC networks in the host project are called Shared VPC networks. Eligible resources from service projects can use subnets in the Shared VPC network.
-
-For this tutorial we are going to refer to the host project using the environment variable `SHARED_VPC_PROJECT` and to the two service projects, as defined in the Shared VPC context, using the `SERVICE_PROJECT` and `GKE_CLUSTER_PROJECT` environment variables
-
-1. That being said, let's start by defining the environment variables for our projects.
+1. Let's start defining the environment variables for our projects and GCP region.
 
     ```bash
     export SHARED_VPC_PROJECT=your-project-name-1
@@ -207,7 +203,7 @@ Now we are going to configure an IAM member from a service project to access onl
       --role roles/container.hostServiceAgentUser
     ```
 
-1. Let's check the GKE cluster subnet.
+1. Let's check the GKE cluster usable subnets and validate the configuration we have done.
 
     ```bash
     gcloud container subnets list-usable \
