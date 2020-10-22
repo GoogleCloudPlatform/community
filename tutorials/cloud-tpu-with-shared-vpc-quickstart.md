@@ -1,23 +1,26 @@
 ---
 title: Cloud TPU with Shared VPC
-description: How to use Cloud TPUs with Shared VPC
+description: Learn how to use Cloud TPU with Shared VPC.
 author: bernieongewe
 tags: Cloud TPU Shared VPC XPN
-date_published: 2020-10-07
+date_published: 2020-10-26
 ---
 
-This tutorial is an adaptation of the [Cloud TPU Quickstart](https://cloud.google.com/tpu/docs/quickstart).
+This tutorial is an adaptation of the [Cloud TPU quickstart](https://cloud.google.com/tpu/docs/quickstart).
 
-As with the original quickstart this document introduces you to using Cloud TPU to run [MNIST](https://developers.google.com/machine-learning/glossary/#MNIST), a canonical dataset of hand-written digits that is often used to test new machine learning approaches.
+As with the original quickstart, this tutorial introduces you to using Cloud TPU to run [MNIST](https://developers.google.com/machine-learning/glossary/#MNIST),
+a canonical dataset of hand-written digits that is often used to test new machine-learning approaches.
 
-This adaptation is intended for users new  deploying under common networking constraints. The intent is to familiarize the audience with the workflow for using AI Platform notebooks to train models using Cloud TPUs in a [Shared VPC](https://cloud.google.com/vpc/docs/shared-vpc) environment with [VPC Service Controls](https://cloud.google.com/vpc-service-controls). 
+This adaptation is intended for users deploying under common networking constraints. The intent is to familiarize the audience with the workflow for using AI
+Platform Notebooks to train models using Cloud TPU in a [Shared VPC](https://cloud.google.com/vpc/docs/shared-vpc) environment with 
+[VPC Service Controls](https://cloud.google.com/vpc-service-controls). 
 
-For a more detailed exploration of Cloud TPU, try running one of the [colabs](https://cloud.google.com/tpu/docs/colabs). You can also view one of the many examples in the [Tutorials](https://cloud.google.com/tpu/docs/tutorials) section.
+For a more detailed exploration of Cloud TPU, work through the [colabs](https://cloud.google.com/tpu/docs/colabs) and
+[tutorials](https://cloud.google.com/tpu/docs/tutorials).
 
+## Motivation and updates
 
-## Motivation and Updates
-
-* The `ctpu up` command referenced in [Cloud TPU Quickstart](https://cloud.google.com/tpu/docs/quickstart) does not allow you to create a TPU in subnet shared from a host project. Instead we discuss some common production network considerations and use `gcloud beta compute tpus create` referenced in [Connecting TPUs with Shared VPC Networks](https://cloud.google.com/tpu/docs/shared-vpc-networks) to prepare the TPU
+* The `ctpu up` command referenced in [Cloud TPU quickstart](https://cloud.google.com/tpu/docs/quickstart) doesn't allow you to create a TPU in subnet shared from a host project. Instead we discuss some common production network considerations and use `gcloud beta compute tpus create` referenced in [Connecting TPUs with Shared VPC Networks](https://cloud.google.com/tpu/docs/shared-vpc-networks) to prepare the TPU
 * This document also encourages the reader to use [AI Platform Notebooks](https://cloud.google.com/ai-platform/notebooks/docs/introduction) to launch the training job
 * We also  briefly discuss  VPC-SC changes needed to access the `gs://tfds-data/` storage bucket from within a service perimeter
 
