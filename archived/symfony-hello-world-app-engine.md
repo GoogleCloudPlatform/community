@@ -1,6 +1,6 @@
 ---
 title: Run Symfony Hello World on App Engine standard environment for PHP 5.5
-description: Run Symfony Standard on Google App Engine standard environment for PHP 5.5. Symfony is a popular set of reusable PHP components and a PHP framework for websites and web applications.
+description: Run Symfony Standard on App Engine standard environment for PHP 5.5.
 author: jimtravis
 tags: App Engine, Symfony, PHP
 date_published: 2017-02-08
@@ -84,7 +84,7 @@ the script `dev_appserver.py`, which was installed with the Google Cloud SDK.
 1. When the page loads, you see a simple text message that says
 **Homepage.**, which is Symfony's "hello world" text.
 
-Note: If the page fails to load, select **Logs** in the Google App Engine
+If the page fails to load, select **Logs** in the Google App Engine
 Launcher to see what error conditions caused the failure.
 
 ### Deploy the app to the cloud
@@ -105,7 +105,7 @@ Launcher to see what error conditions caused the failure.
 
 1. When the page loads, you will see the message: **Homepage**.
 
-Note: If the page fails to load,
+If the page fails to load,
 [check the logs](https://console.cloud.google.com/project/_/logs).
 
 ### Building the Cache

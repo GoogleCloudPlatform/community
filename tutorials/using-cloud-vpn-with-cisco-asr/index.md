@@ -6,6 +6,10 @@ tags: Compute Engine, Cloud VPN, Cisco ASR
 date_published: 2017-08-25
 ---
 
+Ashish Verma | Technical Program Manager | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This guide walks you through the process to configure the Cisco ASR 1000 for
 integration with the [Google Cloud VPN Services][cloud_vpn]. This information is
 provided as an example only. Please note that this guide is not meant to be a
@@ -50,7 +54,7 @@ guide.
 
 This guide is not meant to be a comprehensive setup overview for the device
 referenced, but rather is only intended to assist in the creation of IPsec
-connectivity to Google Cloud Platform (GCP) VPC networks. The following is a
+connectivity to Google Cloud VPC networks. The following is a
 high-level overview of the configuration process which will be covered:
 
 * Configure the base network configurations to establish L3 connectivity
@@ -106,7 +110,7 @@ The IPsec configuration used in this guide is specified below:
 | Diffie-Hellman (DH) | `group 16` |
 | Lifetime | `36,000 seconds (10 hours)` |
 
-## Configuration – GCP
+## Configuration – Google Cloud
 
 ### IPsec VPN using dynamic routing
 
@@ -261,7 +265,7 @@ to establish BGP sessions between the 2 peers.
     (64512 - 65534, 4200000000 - 4294967294) that you are not already using in
     the peer network. The BGP peer interface IP address must be a *link-local*
     IP address belonging to the IP address range `169.254.0.0/16`. It must
-    belong to same subnet as the GCP-side interface. Make sure each tunnel has a
+    belong to same subnet as the Google Cloud interface. Make sure each tunnel has a
     unique pair of IPs.
 
         gcloud compute --project vpn-guide routers add-bgp-peer vpn-scale-test-cisco-rtr --peer-name \
@@ -271,20 +275,20 @@ to establish BGP sessions between the 2 peers.
 
         gcloud compute --project vpn-guide routers describe vpn-scale-test-cisco-rtr --region us-east1
 
-1.  Create firewall rules to allow traffic between on-prem network and GCP VPC networks.
+1.  Create firewall rules to allow traffic between the on-premises network and Google Cloud VPC networks.
 
         gcloud  compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-scale-test-cisco \
             --allow tcp,udp,icmp --source-ranges 10.0.0.0/8
             
 ### IPsec VPN using static routing
 
-This section provides the steps to create [Cloud VPN on GCP][compute_vpn]. There are two
-ways to create VPN on GCP, using Google Cloud Platform Console and the `gcloud`
+This section provides the steps to create [Cloud VPN on Google Cloud][compute_vpn]. There are two
+ways to create VPN on Google Cloud, using Cloud Console and the `gcloud`
 command-line tool. The upcoming section provide details to both in detail below:
 
 [compute_vpn]: https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview
 
-#### Using the Google Cloud Platform Console
+#### Using the Cloud Console
 
 1.  [Go to the VPN page](https://console.cloud.google.com/networking/vpn/list)
     in the Google Cloud Platform Console.
@@ -400,7 +404,7 @@ command-line tool. The upcoming section provide details to both in detail below:
         gcloud compute --project vpn-guide routes create route1 --network [NETWORK] --next-hop-vpn-tunnel \
             tunnel1 --next-hop-vpn-tunnel-region us-east1 --destination-range 10.0.0.0/8
 
-1.  Create firewall rules to allow traffic between on-premises network and GCP
+1.  Create firewall rules to allow traffic between on-premises network and Google Cloud
     VPC networks.
 
         gcloud compute --project vpn-guide firewall-rules create vpnrule1 --network vpn-scale-test-cisco \
@@ -413,7 +417,7 @@ command-line tool. The upcoming section provide details to both in detail below:
 This section provides the base network configuration of Cisco ASR 1000 to
 establish network connectivity. At least one internal facing interface is
 required to connect to your own network, and one external facing interface is
-required to connect to GCP. A sample interface configuration is provided below
+required to connect to Google Cloud. A sample interface configuration is provided below
 for reference:
 
     ! Internal interface configuration
@@ -535,7 +539,7 @@ parameters are set
 
 A tunnel interface is configured to be the logical interface associated with the
 tunnel. All traffic routed to the tunnel interface will be encrypted and
-transmitted to the GCP. Similarly, traffic from the GCP will be logically
+transmitted to Google Cloud. Similarly, traffic from Google Cloud will be logically
 received on this interface.
 
 Association with the IPsec security association is done through the
@@ -559,12 +563,12 @@ router. The recommended value is 1360 when the number of IP MTU bytes is set to
 
 #### Configure static or dynamic routing protocol to route traffic into the IPsec tunnel
 
-BGP is used within the tunnel to exchange prefixes between the GCP and the ASR
-1000 router. The GCP will announce the prefix corresponding to your Cloud.
+BGP is used within the tunnel to exchange prefixes between Google Cloud and the ASR
+1000 router. Google Cloud will announce the prefix corresponding to your Cloud.
 
 BGP timers are adjusted to provide more rapid detection of outages.
 
-To advertise additional prefixes to GCP, copy the "network" statement and
+To advertise additional prefixes to Google Cloud, copy the "network" statement and
 identify the prefix you wish to advertise. Make sure the prefix is present in
 the routing table of the ASR 1000 with a valid next-hop.
 
@@ -581,7 +585,7 @@ the routing table of the ASR 1000 with a valid next-hop.
 
 or
 
-Statically route traffic toward the network in the GCP to the Tunnel interface.
+Statically route traffic toward the network in Google Cloud to the Tunnel interface.
 
     ip route 172.16.100.0 255.255.255.0 Tunnel 1
 
@@ -617,7 +621,7 @@ device fails, Cloud VPN automatically instantiates a new one with the same
 configuration, so you don't need to build two Cloud VPN gateways. The new
 gateway and tunnel connect automatically. For hardware appliances such as Cisco
 ASR it is recommended that you deploy atleast 2 ASRs and create VPN tunnels to
-GCP from each for redundancy purposes.
+Google Cloud from each for redundancy purposes.
 
 The VPN redundancy configuration example is built based on the IPsec tunnel and
 BGP configuration illustrated above.
@@ -627,7 +631,7 @@ BGP configuration illustrated above.
 Cisco IOS BGP prefer the path with the highest `LOCAL-PREF`, the BGP routes are
 set with a value of 100 by default, by setting the `LOCAL-PREF` to 200 for the
 routes received from Tunnel1, BGP will choose Tunnel1 as the preferred VPN
-tunnel to the GCP, in the event of Tunnel 1 failure, BGP will reroute the
+tunnel to Google Cloud, in the event of Tunnel 1 failure, BGP will reroute the
 traffic to Tunnel2.
 
     crypto ikev2 keyring VPN_SCALE_TEST_KEY
@@ -681,7 +685,7 @@ traffic to Tunnel2.
      set local-preference 200
 
 To ensure symmetry in your traffic flow, you can configure MED to influence the
-inbound traffic from GCP for the same tunnel you are sending outbound traffic
+inbound traffic from Google Cloud for the same tunnel you are sending outbound traffic
 to. Note that lower the MED, higher the preference.
 
     router bgp 65001
@@ -702,7 +706,7 @@ your static route as shown below:
 
       cisco-asr#ip route 172.16.100.0 255.255.255.0 Tunnel2 10
 
-##### Configuring route priority – GCP
+##### Configuring route priority – Google Cloud
 
 ###### Dynamic Routing (Optional)
 
@@ -718,7 +722,7 @@ mentioned above, BGP will prefer the higher `local_preference` first.
 
 ###### Static Routing (Optional)
 
-When using static routing GCP provides you an option to customize the priority
+When using static routing, Google Cloud provides you an option to customize the priority
 in case there are multiple routes with the same prefix length. In order to have
 symmetric traffic flow make sure that you set the priority of your secondary
 tunnel to higher value than the primary tunnel (default priority is 1000). To
@@ -759,7 +763,7 @@ define the route priority run the below command.
 
 #### Getting higher throughput
 
-As documented in the [GCP Advanced Configurations](https://cloud.google.com/network-connectivity/docs/vpn/concepts/advanced),
+As documented in the [advanced configurations](https://cloud.google.com/network-connectivity/docs/vpn/concepts/advanced),
 each Cloud VPN tunnel can support up to 3 Gbps when the traffic is traversing a
 [direct peering](https://cloud.google.com/network-connectivity/docs/direct-peering/direct-peering) link, or
 1.5 Gbps when traversing the public Internet. To increase the VPN throughput the
@@ -822,14 +826,14 @@ it can support up to 16 equal cost paths load balancing.
      exit-address-family
     !
 
-##### GCP Configuration
+##### Google Cloud Configuration
 
-GCP does ECMP by default so there is no additional configuration required apart
+Google Cloud does ECMP by default so there is no additional configuration required apart
 from creating x number of tunnels where x depends on your throughput
 requirements. You can either use a single VPN gateway to create multiple tunnels
 or create separate VPN gateway for each tunnel.
 
-Note: Actual performance vary depending on the following factors:
+Actual performance vary depending on the following factors:
 
 * Network capacity between the two VPN peers.
 * The capabilities of the peer device. See your device's documentation for more
@@ -842,7 +846,7 @@ Note: Actual performance vary depending on the following factors:
 ## Testing the IPsec connection
 
 The IPsec tunnel can be tested from the router by using ICMP to ping a host on
-GCP. Be sure to use the `inside interface` on the ASR 1000.
+Google Cloud. Be sure to use the `inside interface` on the ASR 1000.
 
     cisco-asr#ping 172.16.100.2 source 10.0.200.1
     Type escape sequence to abort.
@@ -886,9 +890,9 @@ Refer to the following documentation for common error messages and debug command
 * [IKEv2 Selection Rules for Keyrings and Profiles](http://www.cisco.com/c/en/us/support/docs/security-vpn/ipsec-negotiation-ike-protocols/117259-trouble-ios-ike-00.html)
 * [Embedded Packet Capture for IOS-XE ](http://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-embedded-packet-capture/116045-productconfig-epc-00.html)
 
-To learn more about GCP networking, refer to below documents:
+To learn more about Google Cloud networking, refer to below documents:
 
-* [GCP VPC Networks](https://cloud.google.com/compute/docs/vpc/)
-* [GCP Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview)
-* [GCP advanced VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/advanced)
-* [Troubleshooting VPN on GCP](https://cloud.google.com/network-connectivity/docs/vpn/support/troubleshooting)
+* [Cloud VPC networks](https://cloud.google.com/compute/docs/vpc/)
+* [Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview)
+* [Advanced Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/advanced)
+* [Troubleshooting VPN on Google Cloud](https://cloud.google.com/network-connectivity/docs/vpn/support/troubleshooting)

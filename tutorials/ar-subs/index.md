@@ -6,7 +6,9 @@ tags: AI, artificial intelligence, ML, machine learning, IoT, Internet of Things
 date_published: 2020-08-26
 ---
 
-Markku Lepisto | Solutions Architect | Google Cloud
+Markku Lepisto | Solutions Architect | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial demonstrates the real-time speech-to-text transcribing and translation features of the
 [Cloud Media Translation API](https://cloud.google.com/media-translation).

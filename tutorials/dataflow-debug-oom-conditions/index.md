@@ -6,7 +6,9 @@ tags: Dataflow, Java, OutOfMemoryError
 date_published: 2020-02-28
 ---
 
-Nahuel Lofeudo, Google LLC
+Nahuel Lofeudo | Supportability Tech Lead | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 One of the most common causes of failures and slowdowns in Dataflow pipelines is workers' Java virtual machines running out
 of memory. This document is a summary of the information that you need in order to detect and troubleshoot out-of-memory 

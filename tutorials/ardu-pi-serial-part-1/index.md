@@ -1,16 +1,18 @@
 ---
 title: Locally connected microcontrollers and real-time analytics (part 1 of 2)
-description: Learn how to integrate an Arduino with a Raspberry Pi, and connect them as one device to Cloud IoT Core.
+description: Learn how to integrate an Arduino with a Raspberry Pi, and connect them as one device to IoT Core.
 author: lepistom
 tags: IoT, Internet of Things, Arduino, Raspberry Pi, MCU
 date_published: 2018-08-31
 ---
 
-Markku Lepisto | Solutions Architect | Google Cloud Platform
+Markku Lepisto | Solutions Architect | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This two-part tutorial demonstrates how to use an [Arduino Microcontroller][arduino]
 to provide analog sensor readings to a [Raspberry Pi][pi], connect the devices
-to [Cloud IoT Core][iotcore], post telemetry data from the devices, and
+to [IoT Core][iotcore], post telemetry data from the devices, and
 analyze the data in real time. Part 1 of the tutorial creates a 'hybrid' device,
 combining the strengths of a Linux-based microprocessor with internet
 connectivity and TLS stack, together with a constrained microcontroller for
@@ -24,7 +26,7 @@ analog I/O. The devices act as a cloud-connected solar and wind power generator.
 - Read analog sensor values.
 - Transmit the data over a serial connection to the Raspberry Pi.
 - Program the Pi in [Python][python] to read digital sensor values.
-- Post the combined analog and digital sensor data to Cloud IoT Core over
+- Post the combined analog and digital sensor data to IoT Core over
   a secure [MQTT][mqtt] connection.
 
 In [part 2][part2] of the tutorial, you will learn how to process, store, and analyze the streaming data in real time.
@@ -43,7 +45,7 @@ In [part 2][part2] of the tutorial, you will learn how to process, store, and an
 
 ## Before you begin
 
-This tutorial assumes you already have a [Google Cloud Platform (GCP)][gcp] account set up.
+This tutorial assumes you already have a [Google Cloud][gcp] account set up.
 You will also need to download and install the [Arduino IDE][ide] on your local
 development environment.
 
@@ -52,10 +54,10 @@ development environment.
 
 ## Costs
 
-This tutorial uses billable components of GCP, including the following:
+This tutorial uses billable components of Google Cloud, including the following:
 
-- Cloud IoT Core
-- Cloud Pub/Sub
+- IoT Core
+- Pub/Sub
 
 This tutorial should not generate any usage that would not be covered by the
 [free tier](https://cloud.google.com/free/), but you can use the
@@ -64,7 +66,7 @@ a cost estimate based on your projected production usage.
 
 ## Required hardware
 
-- Raspberry Pi 3 Model [B][3b] or [B+][3b+]. **Note:** the instructions should
+- Raspberry Pi 3 Model [B][3b] or [B+][3b+]. The instructions should
   work on other Pi models as well, but this has not been verified.
 - Raspberry Pi case (optional but recommended)
 - Raspberry Pi power supply, rated at 2.5A or more
@@ -281,9 +283,9 @@ on the Pi.
 
 1.  Connect 2 analog sensors to the Arduino. See the board diagram above to see
     how to wire the 2 sensors to the Arduino. In this example, we will read the
-    analog voltage values of a DC motor, and a solar panel. *Note: you can
+    analog voltage values of a DC motor, and a solar panel. You can
     replace the DC motor and solar panel with other analog sensors—but you
-    **have to ensure that the sensor output does not exceed 5V** or it can
+    *have to ensure that the sensor output does not exceed 5V* or it can
     damage the Arduino pin.*
 1.  Connect the first sensor (small DC motor) to the Arduino. Connect the black
     ground wire of the motor to a `GND` port, and the red (voltage input/output)
@@ -454,7 +456,7 @@ The Pi Python client has the following functionality:
 
         gcloud pubsub subscriptions create my-device-events-sub --topic=my-device-events
 
-1.  Verify that your telemetry data is streaming to Cloud Pub/Sub, by executing: 
+1.  Verify that your telemetry data is streaming to Pub/Sub, by executing: 
 
         gcloud pubsub subscriptions pull my-device-events-sub --limit 100 --auto-ack
 
@@ -462,14 +464,14 @@ The Pi Python client has the following functionality:
 
         {"temperature": 36.62, "timestamp": "2018-07-25T08:42:10+08:00", "clientid": "raspberrypi", "humidity": 38.44, "pressure": 1017.05, "windgen": 0.1, "solargen": 1.2}   │ 151338809303544 │ deviceId=my-device
 
-Now your Arduino and Pi are streaming telemetry data through Cloud IoT Core to
+Now your Arduino and Pi are streaming telemetry data through IoT Core to
 Pub/Sub. You should see the sensor readings change if you expose the solar panel
 to more, or less light. The wind generator (DC motor) will start generating
 power, as you turn the rotor.
 
 ## Next
 
-In [part 2][part2] of this tutorial, you will use Cloud Dataflow with a
+In [part 2][part2] of this tutorial, you will use Dataflow with a
 Python streaming pipeline to process this data stream, store it in Google
-BigQuery, explore the data with a Cloud Datalab Jupyter Notebook, and visualize
+BigQuery, explore the data with a Datalab Jupyter Notebook, and visualize
 it using Google Data Studio.

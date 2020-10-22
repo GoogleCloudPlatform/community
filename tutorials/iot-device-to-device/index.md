@@ -1,10 +1,14 @@
 ---
-title: Cloud IoT Core device-to-device communication
+title: IoT Core device-to-device communication
 description: Learn how to relay messages from one device to another using Cloud Functions.
 author: gguuss
 tags: Cloud IoT Core, Cloud IoT, Cloud Functions, internet of things
 date_published: 2017-12-05
 ---
+
+Gus Class | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 Sometimes you want to have one device control another device. For example, let's
 say that you have a device (Device 1) that is a switch that reconfigures a
@@ -14,7 +18,7 @@ second device (Device 2 set to "awake").
 
 One approach to triggering the configuration change is to do the following:
 
-1. Send telemetry message from Device 1 to Cloud Pub/Sub using Cloud IoT Core bridge
+1. Send telemetry message from Device 1 to Pub/Sub using IoT Core bridge
 1. Configure Cloud Function to receive message and send configuration change
 1. Receive configuration change on Device 2
 
@@ -22,11 +26,11 @@ One approach to triggering the configuration change is to do the following:
 
 This tutorial demonstrates how you can do each of these steps.
 
-## Create a Cloud IoT Core topic
+## Create an IoT Core topic
 
-From the [Google Cloud Platform Console](https://console.cloud.google.com/iot), create
-a Cloud IoT Core Device Registry. When you create it, either set the
-event notification topic to an existing Cloud Pub/Sub topic or create a new topic to
+From the [Cloud Console](https://console.cloud.google.com/iot), create
+an IoT Core Device Registry. When you create it, either set the
+event notification topic to an existing Pub/Sub topic or create a new topic to
 be used for the demo.
 
 ## Upload the Cloud Function
@@ -36,7 +40,7 @@ of the tutorial contains an example Cloud Function that contains the
 `getClient` and `setDeviceConfig` functions from the
 [NodeJS manager sample](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/tree/master/iot/manager).
 
-Note that Application default credentials are used to authorize the client:
+Note that application default credentials are used to authorize the client:
 
 ```js
 google.auth.getApplicationDefault(function (err, authClient, projectId) {
@@ -61,7 +65,7 @@ is specifed as:
 exports.relayCloudIot = function (event, callback) {
 ```
 
-Within the fuction, the first thing that happens is the message sent to the Cloud Pub/Sub queue is parsed:
+Within the fuction, the first thing that happens is the message sent to the Pub/Sub queue is parsed:
 
 ```js
 const record = JSON.parse(
@@ -105,10 +109,9 @@ configured with your device registry.
         --stage-bucket=gs://your-gcs-bucket \
         --trigger-topic=your-topic-id
 
-## Register a Device
+## Register a device
 
-Before you can connect a device, you must register its public key with the
-Cloud IoT Core device manager. There are a number of ways to do this,
+Before you can connect a device, you must register its public key with the IoT Core device manager. There are a number of ways to do this,
 but for now, we'll use the terminal and `gcloud`.
 
 The following command will generate a RSA-256 keypair:
@@ -178,7 +181,7 @@ deployed your Cloud Function, run the following command from the
         --registryId=[YOUR_REGISTRY_ID]
 
 When the virtual device connects, it transmits a telemetry message that is
-turned into a Cloud Pub/Sub message that reaches the Cloud
+turned into a Pub/Sub message that reaches the Cloud
 Function. The Cloud Function then generates a callback message based on
 the telemetry data, which contains the registry and device IDs, set to the
 connecting device ID.
@@ -237,5 +240,5 @@ sample again will pick up that configuration message when the demo begins:
     Waited long enough then.
     Closing connection to MQTT. Goodbye!
 
-At this point, the demo is pinging the Google Cloud Function and looping back
+At this point, the demo is pinging the Cloud Function and looping back
 configuration updates to the device, demonstrating device to device communication.

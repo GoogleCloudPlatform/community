@@ -5,8 +5,13 @@ author: wardharold
 tags: GCE, Jupyter, Julia, DNS
 date_published: 2018-10-01
 ---
+
+Ward Harold | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows you how to run a secure [Jupyter Notebook server](https://jupyter-notebook.readthedocs.io/en/stable/public_server.html) with a
-[Julia](https://julialang.org/) kernel installed on the Google Cloud Platform.
+[Julia](https://julialang.org/) kernel installed on the Google Cloud.
 It uses HashiCorp's [Terraform](https://www.terraform.io/) to acquire a
 [Let's Encrypt certificate](https://letsencrypt.org/), create a Google Compute
 Engine instance, and configure the necessary firewall rules and Cloud DNS
@@ -67,7 +72,7 @@ resulting message boxes will help you debug the issue as will the
 
 ## Costs
 
-This tutorial uses billable components of GCP, including:
+This tutorial uses billable components of Google Cloud, including:
 
 - Compute Engine
 - Cloud DNS
@@ -89,7 +94,7 @@ when creating a notebook server.
 | disk_size | 16 (Gigabytes) | Size of the notebook server boot disk |
 | jupyter_server_port | 8089 | Port the notebook server will listen on |
 | machine_type | n1-standard-2 | Notebook server machine type |
-| network | default | The Google Cloud Platform network the notebook server will be attached to |
+| network | default | The Google Cloud network the notebook server will be attached to |
 | region | us-central1 | The compute region the notebook server will run in |
 | use_acme_cert | true | Acquire a Let's Encrypt issued certificate and install it on the notebook server |
 | zone | us-central1-b | The compute zone the notebook server will run in |
@@ -139,6 +144,7 @@ Update `jupyter-config.sh` with the hashed version of your password.
     sed -i 's/HASHED_PASSWD/'"${HASHED_PASSWD}"'/' jupyter-config.sh
 
 ## Verify your configuration
+
 Generate a Terraform plan:
 
     terraform plan -out tf.plan -auto-approve

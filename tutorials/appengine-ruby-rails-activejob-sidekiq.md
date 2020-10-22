@@ -6,8 +6,12 @@ tags: App Engine, Ruby, Ruby on Rails, ActiveJob, Sidekiq
 date_published: 2017-06-08
 ---
 
+Jeff Ching | Software Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows how to create and configure a [Ruby on Rails](http://rubyonrails.org/) application to run
-background processing jobs on Google App Engine Flexible Environment using
+background processing jobs on App Engine flexible environment using
 [ActiveJob](http://guides.rubyonrails.org/active_job_basics.html) and [Sidekiq](http://sidekiq.org/).
 
 ## Objectives
@@ -20,23 +24,21 @@ background processing jobs on Google App Engine Flexible Environment using
 
 You'll need the following:
 
-* A Google Cloud Platform (GCP) project. You can use an existing project or click the button to create a new project
+* A Google Cloud project. You can use an existing project or click the button to create a new project
 * [Ruby 2.2.2+ installed](https://www.ruby-lang.org/en/documentation/installation/)
 * A Rails 4.2+ application. Follow the
   [official "Getting Started with Rails" guide](http://guides.rubyonrails.org/getting_started.html) to get started.
-* [Google Cloud SDK installed](https://cloud.google.com/sdk/downloads)
+* [Cloud SDK installed](https://cloud.google.com/sdk/downloads)
 * A Redis instance running in your project. Follow [this guide](https://cloud.google.com/community/tutorials/setting-up-redis)
-  to set up Redis on Google Compute Engine. This tutorial assumes the Redis instance is running in the *default*
+  to set up Redis on Compute Engine. This tutorial assumes the Redis instance is running in the *default*
   network so that the App Engine services can access it without restriction.
 
 ## Costs
 
-This tutorial uses billable components of GCP including:
-
-* Google App Engine flexible environment
+This tutorial uses billable components of Google Cloud including App Engine flexible environment.
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator/)
-to generate a cost estimate based on your projected usage. GCP users might be eligible for a
+to generate a cost estimate based on your projected usage. Google Cloud users might be eligible for a
 [free trial](https://cloud.google.com/free-trial).
 
 ## Creating your background job
@@ -134,7 +136,7 @@ requires a Redis instance to manage the job queue.
 ## Deploying to App Engine flexible environment
 
 For Sidekiq, the Redis connection configuration can be provided as an environment variable at runtime. You will
-need to obtain the internal address of your redis instance. In the Cloud Platform Console, go to the
+need to obtain the internal address of your redis instance. In the Cloud Console, go to the
 **[VM Instances](https://console.cloud.google.com/compute/instances)** page and find the internal IP address of
 your Compute Engine instance with Redis installed. This IP address will be provided via environment variables
 at deploy time to configure Sidekiq.
@@ -232,7 +234,7 @@ of your web instances at the cost of potentially using more resources.
 
 ## Verify your background queuing works
 
-1.  In the Cloud Platform Console, go to the
+1.  In the Cloud Console, go to the
     **[App Engine Services](https://console.cloud.google.com/appengine/services)** page. Locate the service that is
     running your background workers (if option A, it should be the *default* service, if option B, it should be
     the *worker* service). Click Tools -> Logs for that service.
@@ -241,7 +243,7 @@ of your web instances at the cost of potentially using more resources.
 
         https://[YOUR_PROJECT_ID].appspot.com/hello/Jeff
 
-    Be sure to replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
+    Be sure to replace `[YOUR_PROJECT_ID]` with your Google Cloud project ID.
 
 1.  Navigate back to the Logs dashboard. In the **Filter by label or text search** field, add `"Hello, Jeff"`
     and you should see a logging statement like the following if using foreman:
@@ -256,7 +258,7 @@ Congratulations! You have successfully set up background job processing on Googl
 
 ## Cleaning up
 
-After you've finished this tutorial, you can clean up the resources you created on Google Cloud Platform
+After you've finished this tutorial, you can clean up the resources you created on Google Cloud 
 so you won't be billed for them in the future. The following sections describe how to delete or turn off these
 resources.
 
@@ -266,7 +268,7 @@ The easiest way to eliminate billing is to delete the project you created for th
 
 To delete the project:
 
-1. In the Cloud Platform Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
+1. In the Cloud Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
 1. Click the trash can icon to the right of the project name.
 
 **Warning**: Deleting a project has the following consequences:
@@ -278,7 +280,7 @@ You can't reuse the project ID of a deleted project. If you created a custom pro
 
 To delete an App Engine service:
 
-1. In the Cloud Platform Console, go to the **[App Engine Services](https://console.cloud.google.com/appengine/services)** page.
+1. In the Cloud Console, go to the **[App Engine Services](https://console.cloud.google.com/appengine/services)** page.
 1. Click the checkbox next to the service you wish to delete.
 1. Click **Delete** at the top of the page to delete the service.
 

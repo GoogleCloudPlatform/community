@@ -1,15 +1,16 @@
 ---
 title: IoT Core CoAP proxy demonstration
-description: Deploy a CoAP proxy to GCP that bridges IoT Core devices to the HTTP data broker of IoT Core.
+description: Deploy a CoAP proxy to Google Cloud that bridges IoT Core devices to the HTTP data broker of IoT Core.
 author: ptone
 tags: IoT, Internet of Things, CoAP, prometheus
 date_published: 2018-02-04
 ---
 
+Preston Holmes | Solution Architect | Google
 
-Preston Holmes | Solution Architect | Google Cloud
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-[CoAP](http://coap.technology/) is a specialized transfer protocol over UDP for use with constrained devices. This tutorial demonstrates how to deploy a server that will proxy requests from the CoAP protocol to [Google IoT Core](https://cloud.google.com/iot-core/).
+[CoAP](http://coap.technology/) is a specialized transfer protocol over UDP for use with constrained devices. This tutorial demonstrates how to deploy a server that will proxy requests from the CoAP protocol to [IoT Core](https://cloud.google.com/iot-core/).
 
 ## Objectives
 
@@ -45,7 +46,7 @@ Responses from the IoT core HTTP Bridge will be returned to the client with an a
 
 You might want to create a new project to try this tutorial. This tutorial makes use of APIs that require billing being enabled on the project.
 
-This tutorial assumes that all command-line steps are performed inside [Google Cloud Shell](https://cloud.google.com/shell/docs/quickstart), where all of the tools needed are pre-installed. If you want to use another environment, you will need to install tools like [gcloud](https://cloud.google.com/sdk/) and [mvn](https://maven.apache.org/install.html), and set the `GOOGLE_CLOUD_PROJECT` environment variable.
+This tutorial assumes that all command-line steps are performed inside [Cloud Shell](https://cloud.google.com/shell/docs/quickstart), where all of the tools needed are pre-installed. If you want to use another environment, you will need to install tools like [gcloud](https://cloud.google.com/sdk/) and [mvn](https://maven.apache.org/install.html), and set the `GOOGLE_CLOUD_PROJECT` environment variable.
 
 1.  Clone this tutorial repository:
 
@@ -131,7 +132,7 @@ Retrieve it with CoAP:
 
     java -jar ./target/coap-dtls-client-1.0-SNAPSHOT.jar demo-device config $COAPS_URI
 
-You can also see these state and config values in the GCP Console.
+You can also see these state and config values in the Cloud Console.
 
 
 ## Cleaning up and next steps

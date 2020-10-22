@@ -1,22 +1,23 @@
 ---
-title: How to Set Up MySQL on Google Compute Engine
-description: This document provides guidance on MySQL options on Cloud Platform and walks through the manual installation of a MySQL database on Compute Engine.
+title: How to set up MySQL on Compute Engine
+description: This document provides guidance on MySQL options on Google Cloud and walks through the manual installation of a MySQL database on Compute Engine.
 author: jimtravis
 tags: Compute Engine, MySQL
 date_published: 2015-08-25
 ---
 
-This page shows you several options for deploying MySQL as part of your Google Cloud
-Platform project. You can use Google Cloud SQL, Google Cloud Launcher, or
-manually install MySQL on Google Compute Engine.
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-[Google Cloud SQL](https://cloud.google.com/sql/docs/introduction)
-offers MySQL as a web service. You can use Google Cloud SQL to host
-your MySQL database in Google's cloud, and let Google Cloud Platform handle
+This page shows you several options for deploying MySQL as part of your Google Cloud project.
+You can use Cloud SQL, use Cloud Launcher, or manually install MySQL on Compute Engine.
+
+[Cloud SQL](https://cloud.google.com/sql/docs/introduction)
+offers MySQL as a web service. You can use Cloud SQL to host
+your MySQL database and let Google Cloud handle
 administrative duties like replication, patch management, and database
 management.
 
-[Google Cloud Launcher](https://console.cloud.google.com/launcher/search?q=mysql)
+[Cloud Launcher](https://console.cloud.google.com/launcher/search?q=mysql)
 provides a simple, click-to-deploy interface that makes it easy to install
 MySQL onto a Compute Engine instance. Cloud Launcher includes not only a standalone MySQL
 installation, but also several web development stacks that use
@@ -67,38 +68,37 @@ Compute Engine instance.
 
 ## Costs
 
-This tutorial uses Google Compute Engine, which is a billable component of Cloud Platform.
+This tutorial uses Compute Engine, which is a billable component of Google Cloud.
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost
-estimate based on your projected usage. New Cloud Platform users may be eligible
+estimate based on your projected usage. New Google Cloud users may be eligible
 for a [free trial](https://cloud.google.com/free-trial).
 
 
 ## Before you begin
 
-1. Create a new project in the [Google Cloud Platform Console](https://console.cloud.google.com/project).
+1. Create a new project in the [Cloud Console](https://console.cloud.google.com/project).
    You can use an existing project, but creating a new project makes cleanup easier.
 
-    You can complete all of the steps in this document using the Cloud Platform
+    You can complete all of the steps in this document using the Cloud
     Console, but if you prefer to use the
-    [`gcloud` command line tool](https://cloud.google.com/sdk/gcloud/), follow the
-    rest of these steps to enable the Compute Engine API and install the Google
+    [`gcloud` command-line tool](https://cloud.google.com/sdk/gcloud/), follow the
+    rest of these steps to enable the Compute Engine API and install the
     Cloud SDK.
 
-1. Use the Cloud Platform console to
-   [enable the Compute Engine API](
-   https://console.cloud.google.com/flows/enableapi?apiid=compute_component).
+1. Use the Cloud Console to
+   [enable the Compute Engine API](https://console.cloud.google.com/flows/enableapi?apiid=compute_component).
 
-1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/).
+1. Install the [Cloud SDK](https://cloud.google.com/sdk/docs/).
 
 1. Configure your workspace to make commands less verbose.
    Substitute your project's values for `[PROJECT_ID]` and `[MY_ZONE]` in
    the following commands. For the full list of zones, see
-   [Available regions & zones](https://cloud.google.com/compute/docs/regions-zones/regions-zones#available).
+   [Available regions and zones](https://cloud.google.com/compute/docs/regions-zones/regions-zones#available).
 
         me@local:~$ gcloud config set project [PROJECT_ID]
         me@local:~$ gcloud config set compute/zone [MY_ZONE]
 
-## Create a Compute Engine Instance
+## Create a Compute Engine instance
 
 The following steps describe how to create a Compute Engine instance for MySQL
 and establish an SSH connection to the newly created instance. The default
@@ -107,11 +107,11 @@ system for this tutorial, you can choose from the options described on the
 [Images](https://cloud.google.com/compute/docs/images/) page in the Compute
 Engine documentation.
 
-### Using the Cloud Platform Console
+### Using the Cloud Console
 
-To create a Compute Engine instance in the Cloud Platform console:
+To create a Compute Engine instance in the Cloud Console:
 
-1. Open the [Cloud Platform console](https://console.cloud.google.com/compute/instances).
+1. Open the [Cloud Console](https://console.cloud.google.com/compute/instances).
 
 1. Select your newly created project and click **Continue**.
 
@@ -187,7 +187,7 @@ the package manager.
         $ sudo /usr/bin/systemctl start mysqld
 
 
-## Improve MySQL Installation Security
+## Improve MySQL installation security
 
 To improve the security of your MySQL installation, run the
 `mysql_secure_installation` command. If you didn't set a password during
@@ -246,7 +246,7 @@ instance.
 
 ## Cleaning up
 
-After you've finished the PostgreSQL tutorial, you can clean up the resources you created on Google Cloud Platform so you won't be billed for them in the future. The following sections describe how to delete or turn off these resources.
+After you've finished the PostgreSQL tutorial, you can clean up the resources you created on Google Cloud so you won't be billed for them in the future. The following sections describe how to delete or turn off these resources.
 
 ### Deleting the project
 
@@ -259,19 +259,19 @@ You can't reuse the project ID of a deleted project. If you created a custom pro
 
 To delete the project:
 
-1. In the Cloud Platform Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
+1. In the Cloud Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
 1. Click the trash can icon to the right of the project name.
 
 ### Deleting instances
 
 To delete a Compute Engine instance:
 
-1. In the Cloud Platform Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
+1. In the Cloud Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
 1. Click the checkbox next to your postgres-tutorial instance.
 1. Click the Delete button at the top of the page to delete the instance.
 
 
-## Next Steps
+## Next steps
 
 You've now seen how to install MySQL server on Compute Engine. To see more
 complex applications that use MySQL, browse the
