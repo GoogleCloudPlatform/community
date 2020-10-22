@@ -1,5 +1,5 @@
 ---
-title: Adding a cache layer to Google Cloud databases (Memcached + Bigtable)
+title: Adding a cache layer to Google Cloud databases (Bigtable with Memcached)
 description: Improve your application's performance by using Memcached for frequently queried data.
 author: billyjacobson
 tags: bigtable, memcached, database, memorystore, firestore, datastore, spanner, cache, caching, big table
