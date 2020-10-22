@@ -1,3 +1,16 @@
+---
+title: Adding a cache layer to Google Cloud databases (Memcached + Bigtable)
+description: Improve your application's performance by using Memcached for frequently queried data.
+author: billyjacobson
+tags: bigtable, memcached, database, memorystore, firestore, datastore, spanner, cache, caching, big table
+date_published: 2020-10-22
+---
+
+Billy Jacobson | Developer Relations Engineer | Google
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 # Adding a cache layer to Google Cloud databases (Memcached + Bigtable)
 
 TLDR: Improve your application's performance by using Memcached for frequently queried data like this:
@@ -22,7 +35,7 @@ In this post we'll look at the horizontally scalable Google Cloud Bigtable, whic
 
 Memcached is an in-memory key-value store for small chunks of arbitrary data, and I'm going to use the scalable, fully managed [Memorystore for Memcached](https://cloud.google.com/memorystore/docs/memcached) (Beta), since it is well integrated with the Google Cloud ecosystem.
 
-## Setup
+## Before you begin
 
 1.  [Create a new](https://cloud.google.com/resource-manager/docs/creating-managing-projects) Google Cloud project or use an existing project and database of your choice. The examples here will show Cloud [Bigtable](https://cloud.google.com/bigtable/docs), but Spanner or Firestore would be good options too.
 1.  I'll provide [gcloud commands](https://cloud.google.com/sdk/gcloud) for most of the steps, but you can do most of this in the Google [Cloud Console](https://console.cloud.google.com/) if you prefer.
@@ -90,10 +103,10 @@ try {
 
 I chose to make the cache key be `row_key:column_family:column_qualifier` to easily access column values. Here are some potential cache key/value pairs you could use:
 
-+   `rowkey: encoded row`
-+   `start_row_key-end_row_key: array of encoded rows`
-+   `SQL queries: results`
-+   `row prefix: array of encoded rows`
+- `rowkey: encoded row`
+- `start_row_key-end_row_key: array of encoded rows`
+- `SQL queries: results`
+- `row prefix: array of encoded rows`
 
 When creating your cache, determine the setup based on your use case.
 
@@ -182,7 +195,7 @@ Now we are ready to put our code on the machine.
         -DmemcachedDiscoveryEndpoint=$MEMCACHED_DISCOVERY_ENDPOINT
     ```
 
-## Next steps and cleanup
+## Cleaning up
 
 Now you should understand the core concepts for putting a cache layer in front of your database and can integrate it into your existing application. If you followed along with this blog post, delete your VM, Cloud Bigtable Instance, and Memcached instance with these commands to prevent getting billed for resources:
 
@@ -191,3 +204,8 @@ cbt deleteinstance bt-cache
 gcloud beta memcache instances delete bigtable-cache --region=us-central1 
 gcloud compute instances delete bigtable-memcached-vm --zone=us-central1-a
 ```
+
+## What's next
+
+- Learn more about [Cloud Bigtable](https://cloud.google.com/bigtable/docs/).
+- Learn more about [Memorystore for Memcached](https://cloud.google.com/memorystore/docs/memcached).
