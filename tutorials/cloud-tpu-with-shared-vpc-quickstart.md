@@ -2,8 +2,8 @@
 title: Cloud TPUs with Shared VPC
 description: Learn how to use Cloud TPUs with Shared VPC.
 author: bernieongewe
-tags: Cloud TPU Shared VPC XPN
-date_published: 2020-10-26
+tags: Cloud TPU, Shared VPC, XPN
+date_published: 2020-10-23
 ---
 
 This tutorial is an adaptation of the [Cloud TPU quickstart](https://cloud.google.com/tpu/docs/quickstart).
@@ -11,7 +11,7 @@ This tutorial is an adaptation of the [Cloud TPU quickstart](https://cloud.googl
 As with the original quickstart, this tutorial introduces you to using Cloud TPUs to run [MNIST](https://developers.google.com/machine-learning/glossary/#MNIST),
 a canonical dataset of hand-written digits that is often used to test new machine-learning approaches.
 
-This adaptation is intended for users deploying under common networking constraints. The intent is to familiarize the audience with the workflow for using AI
+This adaptation is intended for users deploying under common networking constraints. This tutorial demonstrates the workflow for using AI
 Platform Notebooks to train models using Cloud TPUs in a [Shared VPC](https://cloud.google.com/vpc/docs/shared-vpc) environment with 
 [VPC Service Controls](https://cloud.google.com/vpc-service-controls). 
 
@@ -20,13 +20,13 @@ For a more detailed exploration of Cloud TPUs, work through the [colabs](https:/
 
 ## Differences from the original Cloud TPU quickstart
 
-The `ctpu up` command used in the original [Cloud TPU quickstart](https://cloud.google.com/tpu/docs/quickstart) doesn't allow you to create a TPU in a subnet 
-shared from a host project. This tutorial discusses some common production network considerations and uses the `gcloud beta compute tpus create` command to 
-prepare the TPU. For more information, see [Connecting TPUs with Shared VPC Networks](https://cloud.google.com/tpu/docs/shared-vpc-networks).
+* The `ctpu up` command used in the original [Cloud TPU quickstart](https://cloud.google.com/tpu/docs/quickstart) doesn't allow you to create a TPU in a subnet 
+  shared from a host project. This tutorial discusses some common production network considerations and uses the `gcloud beta compute tpus create` command to 
+  prepare the TPU. For more information, see [Connecting TPUs with Shared VPC Networks](https://cloud.google.com/tpu/docs/shared-vpc-networks).
 
-This tutorial uses [AI Platform Notebooks](https://cloud.google.com/ai-platform/notebooks/docs/introduction) to launch the training job.
+* This tutorial uses [AI Platform Notebooks](https://cloud.google.com/ai-platform/notebooks/docs/introduction) to launch the training job.
 
-This tutorial discusses VPC-SC changes needed to access the `gs://tfds-data/` storage bucket from within a service perimeter.
+* This tutorial discusses VPC-SC changes needed to access the `gs://tfds-data/` storage bucket from within a service perimeter.
 
 ## Before you begin
 
@@ -35,7 +35,7 @@ Before starting this tutorial, check that your Google Cloud project is set up ac
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud, including:
+This tutorial uses billable components of Google Cloud, including the following:
 
 * Compute Engine
 * Cloud TPU
@@ -115,7 +115,7 @@ network costs.
 
 ## Set up VPC Peering
 
-Review [Connecting TPUs with Shared VPC networks](https://cloud.google.com/tpu/docs/shared-vpc-networks)
+Review [Connecting TPUs with Shared VPC networks](https://cloud.google.com/tpu/docs/shared-vpc-networks).
 
 ### Configure private service access
 
@@ -125,7 +125,7 @@ you need to [establish a private service access connection for the network](http
 
 1.  Get the project ID for your Shared VPC host project, and then configure `gcloud` with your project ID:
 
-        gcloud config set project <your-network-host-project-id>
+        gcloud config set project [YOUR_NETWORK_HOST_PROJECT_ID]
 
     You can get the project ID from the [Cloud Console](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects).
 
