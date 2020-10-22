@@ -1,6 +1,6 @@
 ---
-title: Using Cloud Firestore with Cloud IoT Core for device configuration
-description: Learn how to use Cloud Firestore to manage fine-grained configuration updates for devices managed by Cloud IoT Core.
+title: Using Firestore with IoT Core for device configuration
+description: Learn how to use Firestore to manage fine-grained configuration updates for devices managed by IoT Core.
 author: ptone
 tags: iot, firestore, functions, internet of things
 date_published: 2018-05-14
@@ -8,13 +8,15 @@ date_published: 2018-05-14
 
 Preston Holmes | Solution Architect | Google
 
-This tutorial demonstrates how to configure Cloud Functions for Firebase to relay document changes in [Cloud Firestore](https://firebase.google.com/docs/firestore/) as configuration updates for [Cloud IoT Core](https://cloud.google.com/iot) Devices.
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-Cloud IoT Core provides a way to send configuration to devices over MQTT or HTTP. The structure of this payload is unspecified and delivered as raw bytes. This means that if you have different parts of your IoT system wanting to write parts of the configuration, each has to parse, patch, then re-write the configuration value in IoT Core.
+This tutorial demonstrates how to configure Cloud Functions for Firebase to relay document changes in [Firestore](https://firebase.google.com/docs/firestore/) as configuration updates for [IoT Core](https://cloud.google.com/iot) Devices.
+
+IoT Core provides a way to send configuration to devices over MQTT or HTTP. The structure of this payload is unspecified and delivered as raw bytes. This means that if you have different parts of your IoT system wanting to write parts of the configuration, each has to parse, patch, then re-write the configuration value in IoT Core.
 
 If you want to payload delivered to a device as a binary format, such as [CBOR](http://cbor.io/), that means each of these participating components of your system also need to deserialize and re-serialize the structured data.
 
-By using Cloud Firestore to serve as a layer in between the systems that update a device's configuration and IoT Core, you can take advantage of Firestore's structured [data types](https://firebase.google.com/docs/firestore/manage-data/data-types) and partial document updates.
+By using Firestore to serve as a layer in between the systems that update a device's configuration and IoT Core, you can take advantage of Firestore's structured [data types](https://firebase.google.com/docs/firestore/manage-data/data-types) and partial document updates.
 
 ## Objectives
 
@@ -29,16 +31,16 @@ By using Cloud Firestore to serve as a layer in between the systems that update 
 
 ## Before you begin
 
-This tutorial assumes you already have a GCP account and have completed the IoT Core [quickstart documentation](https://cloud.google.com/iot/docs/quickstart).
+This tutorial assumes you already have a Google Cloud account and have completed the IoT Core [quickstart documentation](https://cloud.google.com/iot/docs/quickstart).
 
-You need to associate Firebase to your GCP project. Visit the [Firebase Console](https://console.firebase.google.com/?authuser=0) and choose to add a project. You can then choose to add Firebase to an existing GCP project.
+You need to associate Firebase to your Google Cloud project. Visit the [Firebase Console](https://console.firebase.google.com/?authuser=0) and choose to add a project. You can then choose to add Firebase to an existing Google Cloud project.
 
 ## Costs
 
-This tutorial uses billable components of GCP, including:
+This tutorial uses billable components of Google Cloud, including:
 
-- Cloud IoT Core
-- Cloud Firestore
+- IoT Core
+- Firestore
 - Cloud Functions for Firebase
 
 This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), but you can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected production usage.
@@ -47,7 +49,7 @@ This tutorial should not generate any usage that would not be covered by the [fr
 
 If you do not already have a development environment set up with the [gcloud](https://cloud.google.com/sdk/downloads) tool and [Firebase](https://firebase.google.com/docs/cli/) tools, you can use [Cloud Shell](https://cloud.google.com/shell/docs/) for any command line instructions.
 
-Set the name of the Cloud IoT Core settings you are using as environment variables:
+Set the name of the IoT Core settings you are using as environment variables:
 
 
 	export REGISTRY_ID=config-demo
@@ -55,9 +57,9 @@ Set the name of the Cloud IoT Core settings you are using as environment variabl
 	export GCLOUD_PROJECT=$(gcloud config list project --format "value(core.project)")
 
 
-## Create a Cloud IoT Core registry for this tutorial
+## Create an IoT Core registry for this tutorial
 
-Create a Cloud Pub/Sub topic to use for device logs:
+Create a Pub/Sub topic to use for device logs:
 
     gcloud pubsub topics create device-events
 
@@ -114,7 +116,7 @@ Create a dummy sample device:
     cd ../sample-device
     gcloud iot devices create sample-device --region $CLOUD_REGION --registry $REGISTRY_ID --public-key path=./ec_public.pem,type=ES256
 
-Note: Do not use this device for any real workloads, as the key-pair is included in this sample and therefore is not secret.
+**Important**: Do not use this device for any real workloads, as the key-pair is included in this sample and therefore is not secret.
 
 
 ### Establish a device configuration in Firestore
@@ -130,7 +132,7 @@ Open the [Firebase Console](https://console.firebase.google.com/).
 
 Note that the different fields in the config can have different data types.  Save this document.
 
-Now open the [Cloud IoT Core console](https://console.cloud.google.com/iot/locations/us-central1/registries/config-demo/devices/sample-device), choose the device and look at the `Configuration & state history` pane:
+Now open the [IoT Core console](https://console.cloud.google.com/iot/locations/us-central1/registries/config-demo/devices/sample-device), choose the device and look at the `Configuration & state history` pane:
 
 ![config-choose](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-firestore-config/choose-config.png)
 
@@ -257,7 +259,7 @@ Now start the device with the `-b` flag to indicate we want to use the binary ve
 
 You can update the device config settings in Firestore, and you will see the decoded config printed on the screen. However the payload of the config is transmitted encoded as CBOR.
 
-Note: When data is encoded as CBOR - you will not be able to see or edit this in the IoT-Core console, as it is in a compact encoded format that the console does not parse for display.
+When data is encoded as CBOR - you will not be able to see or edit this in the IoT-Core console, as it is in a compact encoded format that the console does not parse for display.
 
 ![field update](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-firestore-config/cbor.png)
 

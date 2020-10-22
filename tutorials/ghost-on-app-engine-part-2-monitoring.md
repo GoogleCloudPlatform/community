@@ -6,51 +6,52 @@ tags: App Engine, Ghost, Node.js, Stackdriver
 date_published: 2016-05-26
 ---
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial explains how to monitor a [Ghost blog][ghost] deployed on
 [App Engine flexible environment][flex].
 
 ## Objectives
 
-* Understand Stackdriver Monitoring with Ghost.
-* Understand Stackdriver Logging with Ghost.
-* Activate Stackdriver Trace.
+* Understand Cloud Monitoring with Ghost.
+* Understand Cloud Logging with Ghost.
+* Activate Cloud Trace.
 
 ## Before you begin
 
 Complete the tutorial [Ghost on App Engine Part 1 - Deploying][deploying].
 
-## Understanding Stackdriver Monitoring
+## Understanding Cloud Monitoring
 
-Monitoring is powered by [Stackdriver Monitoring][monitoring].
+Monitoring is powered by [Cloud Monitoring][monitoring].
 
 You don't have to install the monitoring agent on App Engine flexible
-environment because Stackdriver monitoring support is built-in.
+environment because Cloud Monitoring support is built-in.
 
 You can [view the monitoring dashboard][mon_dash] for your Ghost blog in the
-Google Stackdriver Console.
+Cloud Console.
 
 [monitoring]: https://cloud.google.com/monitoring/
 [mon_dash]: https://app.google.stackdriver.com/services/app-engine/
 
-## Understanding Stackdriver Logging
+## Understanding Cloud Logging
 
-Logging is powered by [Stackdriver Logging][logging].
+Logging is powered by [Cloud Logging][logging].
 
 You don't have to install the logging agent on Google App Engine Flexible
-Environment because Stackdriver Logging support is built-in. See
-[Stackdriver Logging in App Engine Apps for more information][logging].
+Environment because Cloud Logging support is built-in. See
+[Cloud Logging in App Engine Apps for more information][logging].
 
-You can [view the logs][logs] for your Ghost blog in the Google Cloud Platform
-Console.
+You can [view the logs][logs] for your Ghost blog in the Cloud Console.
 
 [logging]: https://cloud.google.com/logging/
 [gae_logging]: https://cloud.google.com/appengine/articles/logging
 [logs]: https://console.cloud.google.com/logs?service=appengine.googleapis.com
 
-## Using Stackdriver Trace
+## Using Cloud Trace
 
 Tracing of HTTP requests and RPC calls in your Ghost blog is powered by
-[Stackdriver Trace][trace].
+[Cloud Trace][trace].
 
 To begin tracing what goes on in your Ghost blog you must import the
 [Node.js trace agent][trace_agent] into the application.
@@ -80,13 +81,13 @@ To begin tracing what goes on in your Ghost blog you must import the
           });
         }
  
-1.  To start Stackdriver Trace when the deployed application starts, the `@google-cloud/trace-agent` module
+1.  To start Cloud Trace when the deployed application starts, the `@google-cloud/trace-agent` module
     must be imported as the very first thing the application does. Add the following to
     the _very first line_ of `index.js`:
 
         require('./trace');
 
-    The application will now use Stackdriver Trace when it is deployed to App
+    The application will now use Cloud Trace when it is deployed to App
     Engine.
 
 1.  Re-deploy the application:
@@ -100,7 +101,7 @@ To begin tracing what goes on in your Ghost blog you must import the
 
 ## Error Reporting
 
-Error reporting in your Ghost blog is powered by [Stackdriver Error Reporting][errorreporting].
+Error reporting in your Ghost blog is powered by [Cloud Error Reporting][errorreporting].
 
 Error reporting works by capturing logs written to a certain location. We will
 use the [winston][winston] library to write the logs to the right location.
@@ -180,12 +181,12 @@ use the [winston][winston] library to write the logs to the right location.
 
 ## Debugging
 
-Debugging your Ghost blog is powered by [Stackdriver Debugger][debugger].
+Debugging your Ghost blog is powered by [Cloud Debugger][debugger].
 
-To make Stackdriver Debugger available to your Ghost blog you must import the
+To make Cloud Debugger available to your Ghost blog you must import the
 [Node.js debugger agent][debugger_agent] into the application.
 
-### Enable Stackdriver Debugger
+### Enable Cloud Debugger
 
 1.  To install the `@google-cloud/debug-agent` module during deployment, edit the
     `package.json` file and add `@google-cloud/debug-agent` to the `postinstall` script
@@ -204,21 +205,21 @@ To make Stackdriver Debugger available to your Ghost blog you must import the
           require('@google-cloud/debug-agent').start();
         }
 
-1.  To make Stackdriver Debugger available to the deployed application, the
+1.  To make Cloud Debugger available to the deployed application, the
     `@google-cloud/debug-agent` module must be imported as the second thing the
     application does (right after where Trace is imported). Add the following to the
     top of `index.js` after `require('./trace');`:
 
         require('./debug');
  
-    The application will now be able to use Stackdriver Debugger when it is
+    The application will now be able to use Cloud Debugger when it is
     deployed to App Engine.
 
 1.  Re-deploy the application:
 
         gcloud app deploy
 
-1.  You can debug the application using the [Stackdriver Debugger Dashboard][debugger_dashboard].
+1.  You can debug the application using the [Cloud Debugger dashboard][debugger_dashboard].
 
 [debugger]: https://cloud.google.com/debugger/
 [debugger_agent]: https://github.com/GoogleCloudPlatform/cloud-debug-nodejs

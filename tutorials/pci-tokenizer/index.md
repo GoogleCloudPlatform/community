@@ -6,7 +6,9 @@ tags: serverless, cloud run, DLP, javascript, iam, PCI, DSS, credit, card
 date_published: 2019-12-26
 ---
 
-## Overview
+Ian Maddox | Solutions Architect | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This code provides a PCI-DSS-ready credit card tokenization service built for containers running on Google Cloud. This code
 is based on Google's
@@ -19,7 +21,7 @@ This code uses [Cloud DLP](https://cloud.google.com/dlp/) to
 data in a manner consistent with the PCI Data Security Standard (DSS). This code is applicable to SAQ A-EP and SAQ D type 
 merchants of any compliance level.
 
-Warning: Confirm that your environment and installation are PCI-DSS-compliant before processing actual credit card data.
+**Warning**: Confirm that your environment and installation are PCI-DSS-compliant before processing actual credit card data.
 Google cannot guarantee PCI DSS compliance of customer applications.
 
 For more information on PCI DSS compliance on Google Cloud, see
@@ -99,7 +101,7 @@ administrator.
 1.  In the Cloud Console, on the project selector page,
     [select or create a Google Cloud project](https://console.cloud.google.com/projectselector2/home/dashboard).
 
-    Note: If you don't plan to keep the resources that you create in this procedure, create a project instead of selecting
+    **Note**: If you don't plan to keep the resources that you create in this procedure, create a project instead of selecting
     an existing project. After you finish these steps, you can delete the project, removing all resources associated with 
     the project.
 

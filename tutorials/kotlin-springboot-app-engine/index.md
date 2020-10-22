@@ -6,7 +6,11 @@ tags: App Engine, Kotlin, Spring Boot
 date_published: 2018-01-17
 ---
 
-The [Google App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/)
+Hadi Hariri | JetBrains
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
+The [App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/)
 is an easy way to deploy your apps to the same infrastructure that powers
 Google's products. Using [Kotlin](https://kotlinlang.org/) and [Spring Boot](https://projects.spring.io/spring-boot/), in this tutorial you'll
 see how to deploy your application to App Engine.
@@ -23,14 +27,14 @@ be built-on to connect to other Google services and/or databases.
 
 ## Before you begin
 
-Before running this tutorial, you must set up a Google Cloud Platform project,
-and you need to have Docker and the Google Cloud SDK installed.
+Before running this tutorial, you must set up a Google Cloud project,
+and you need to have Docker and the Cloud SDK installed.
 
 Create a project that will host your Spring Boot application. You can also reuse
 an existing project.
 
-1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
-    to create a new Cloud Platform project. Remember the project ID; you will
+1.  Use the [Cloud Console](https://console.cloud.google.com/)
+    to create a new Google Cloud project. Remember the project ID; you will
     need it later. Later commands in this tutorial will use `[PROJECT_ID]` as
     a substitution, so you might consider setting the `PROJECT_ID` environment
     variable in your shell.
@@ -154,7 +158,7 @@ Make a simple change and redeploy.
 ## Clean up
 
 After you've finished this tutorial, you can clean up the resources you created
-on Google Cloud Platform so you won't be billed for them in the future. To clean
+on Google Cloud so you won't be billed for them in the future. To clean
 up the resources, you can delete the project or stop the App Engine service.
 
 ### Deleting the project
@@ -164,7 +168,7 @@ the tutorial. To do so using `gcloud`, run:
 
     gcloud projects delete [PROJECT_ID]
 
-where `[PROJECT_ID]` is your Google Cloud Platform project ID.
+where `[PROJECT_ID]` is your Google Cloud project ID.
 
 **Warning**: Deleting a project has the following consequences:
 
@@ -178,7 +182,7 @@ use the project ID, such as an appspot.com URL, remain available.
 
 To disable an App Engine service:
 
-1.  In the Cloud Platform Console, go to the
+1.  In the Cloud Console, go to the
     [App Engine Versions page](https://console.cloud.google.com/appengine/versions).
 2.  Make sure your project is selected. If necessary, pull down the project
     selection dropdown at the top, and choose the project you created for this

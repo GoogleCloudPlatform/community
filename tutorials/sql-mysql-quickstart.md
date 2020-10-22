@@ -1,6 +1,6 @@
 ---
 title: Set up a MySQL database with Cloud SQL
-description: Set up a MySQL database with Cloud SQL on GCP.
+description: Set up a MySQL database with Cloud SQL on Google Cloud.
 author: jscud
 tags: Cloud SQL
 date_published: 2019-07-31
@@ -11,9 +11,9 @@ date_published: 2019-07-31
 <walkthrough-tutorial-duration duration="10"></walkthrough-tutorial-duration>
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=sql_mysql_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=sql_mysql_quickstart)
 
 </walkthrough-alt>
 
@@ -27,7 +27,7 @@ In this tutorial, you will do the following:
 
 ## Project setup
 
-GCP organizes resources into projects. This allows you to
+Google Cloud organizes resources into projects. This allows you to
 collect all of the related resources for a single application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
@@ -62,7 +62,7 @@ For details, see
 
 ## Connect to the SQL instance
 
-In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
+In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the Cloud Console.
 
 Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
@@ -119,7 +119,7 @@ You've successfully set up a MySQL database!
 
 Here are some next steps that you can take:
 
-*   Download the [Google Cloud SDK](https://cloud.google.com/sdk/downloads#interactive) on your local machine so that
+*   Download the [Cloud SDK](https://cloud.google.com/sdk/downloads#interactive) on your local machine so that
     you can connect to SQL locally.
 *   Explore Cloud SQL features in the [Cloud SQL documentation](https://cloud.google.com/sql/docs/features)
 

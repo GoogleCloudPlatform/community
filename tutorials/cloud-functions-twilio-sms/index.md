@@ -1,13 +1,14 @@
 ---
-title: Respond to SMS Messages with Twilio and Google Cloud Functions
-description: Learn how to receive and respond to SMS messages with Twilio and Google Cloud Functions.
+title: Respond to SMS messages with Twilio and Cloud Functions
+description: Learn how to receive and respond to SMS messages with Twilio and Cloud Functions.
 author: jmdobry
 tags: Cloud Functions, Twilio, Node.js
 date_published: 2017-02-17
 ---
-## Introduction
 
-This tutorial demonstrates using [Google Cloud Functions][functions] to
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This tutorial demonstrates using [Cloud Functions][functions] to
 reply to an SMS message using [Twilio][twilio]. The Cloud Function is
 implemented in [Node.js][node].
 
@@ -15,20 +16,20 @@ implemented in [Node.js][node].
 [twilio]: https://www.twilio.com/
 [node]: https://nodejs.org/en/
 
-The sample Cloud Function is triggered by a webhook request from Twilio when a
+The sample Cloud Function is triggered by a webhook request from Twilio when an
 SMS message is sent to your Twilio phone number. The webhook validates that the
 request came from Twilio and then sends a simple reply.
 
 ## Prerequisites
 
-1.  Create a project in the [Google Cloud Platform Console][console].
+1.  Create a project in the [Cloud Console][console].
 1.  Enable billing for your project.
-1.  Install the [Google Cloud SDK][sdk].
+1.  Install the [Cloud SDK][sdk].
 
 [console]: https://console.cloud.google.com/
 [sdk]: https://cloud.google.com/sdk/
 
-## Getting Started with Twilio
+## Getting started with Twilio
 
 1.  [Create a Twilio account][try].
 1.  In your Twilio console, [create a phone number][number].
@@ -84,7 +85,7 @@ request came from Twilio and then sends a simple reply.
     Replace `[YOUR_TWILIO_AUTH_TOKEN]` with your Twilio Auth Token from step 5
     of the **Getting Started with Twilio** section.
 
-### Writing the Function Code
+### Writing the Function code
 
 Create a file named `index.js` with the following contents:
 
@@ -143,7 +144,7 @@ The `reply` function does the following:
 1.  Validates that the request came from Twilio.
 1.  Sends a reply to the SMS message.
 
-## Deploying and Testing the Cloud Function
+## Deploying and testing the Cloud Function
 
 1.  Run the following to deploy the function:
 

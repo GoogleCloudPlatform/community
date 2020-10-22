@@ -6,6 +6,8 @@ tags: Node.js, Compute Engine, Kubernetes Engine, App Engine, Cloud Functions
 date_published: 2016-12-14
 ---
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 ## Objectives
 
 * Get an overview of Node.js.

@@ -3,10 +3,12 @@ title: Integrating Sigfox IoT network with Google Cloud
 description: Install and configure the integration between the Sigfox LPWAN IoT network service and Google Cloud.
 author: lepistom
 tags: IoT, Internet of things, Sigfox, LPWAN
-date_published: 2020-04-20
+date_published: 2020-10-08
 ---
 
-Markku Lepisto | Solutions Architect | Google Cloud
+Markku Lepisto | Solutions Architect | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 ## Objectives
 
@@ -15,11 +17,11 @@ This document describes how to install and configure the integration between the
 The main functionalities demonstrated are the following:
 
 - Ingest of data from Sigfox devices
-- Forwarding of data to [Cloud Pub/Sub](https://cloud.google.com/pubsub/) for processing with Google Cloud services
+- Forwarding of data to [Pub/Sub](https://cloud.google.com/pubsub/) for processing with Google Cloud services
 - Sigfox device configuration management
 - Sigfox network service message logging
 
-The integration is implemented as a set of [Cloud Functions](https://cloud.google.com/functions/) that are registered as [callback functions](https://build.sigfox.com/backend-callbacks-and-api) in the Sigfox backend system. The Cloud Functions are called when devices send data or the Sigfox network sends service messages. Device configurations are stored in [Cloud Firestore](https://cloud.google.com/firestore/) and logs in [Cloud Logging](https://cloud.google.com/logging/).
+The integration is implemented as a set of [Cloud Functions](https://cloud.google.com/functions/) that are registered as [callback functions](https://build.sigfox.com/backend-callbacks-and-api) in the Sigfox backend system. The Cloud Functions are called when devices send data or the Sigfox network sends service messages. Device configurations are stored in [Firestore](https://cloud.google.com/firestore/) and logs in [Cloud Logging](https://cloud.google.com/logging/).
 
 The implementation is designed to be:
 
@@ -40,8 +42,8 @@ The implementation is designed to be:
 This tutorial uses the following billable components of Google Cloud:
 
 - Cloud Functions
-- Cloud Pub/Sub
-- Cloud Firestore
+- Pub/Sub
+- Firestore
 
 This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), but you can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected production usage.
 
@@ -69,15 +71,15 @@ If you can see messages sent by your device, you can proceed to the next step.
 1. Open the menu **APIs & Services > Library**.
 1. Search for and activate the following APIs, or ensure that they are already active:
     * Cloud Functions API
-    * Cloud Pub/Sub API
-    * Cloud Firestore API
+    * Pub/Sub API
+    * Firestore API
 
 ## Deploying the callback Cloud Functions
 
 ### Prerequisites
 
 1. On your local development machine, install the following tools:
-    * [Google Cloud SDK](https://cloud.google.com/sdk/install) (gcloud command line tool)
+    * [Cloud SDK](https://cloud.google.com/sdk/install) (gcloud command line tool)
     * git
     * python3
     * pip
@@ -93,7 +95,7 @@ If you can see messages sent by your device, you can proceed to the next step.
         $ gcloud pubsub topics create sigfox-data
 
     In this case, the integration will forward the messages sent by your devices through the
-    Sigfox backend to the Cloud Pub/Sub topic `sigfox-data`.
+    Sigfox backend to the Pub/Sub topic `sigfox-data`.
 
 1. Optionally, create a Pub/Sub subscription for monitoring messages in the above topic:
 
@@ -202,25 +204,25 @@ for the latest version of the API, execute the following commands:
     If Docker is running, you see an output similar to the following:
 
         CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
-        
+
     If you get an error message, start the docker daemon on your local development machine.
 
 1.  Next, you generate the Python client libraries from the [Sigfox API definition](https://support.sigfox.com/api/apidocs).
     To do this, you compile and use a specific version of
-    [swagger-codegen](https://github.com/swagger-api/swagger-codegen). Execute the following command to set up an 
+    [swagger-codegen](https://github.com/swagger-api/swagger-codegen). Execute the following command to set up an
     environment variable for the swagger-codegen version tag to be used:
 
-        (venv) $ generator_version=3.0.11
+        (venv) $ generator_version=3.0.22
 
 1.  The following command uses docker to download the
-    [swaggerapi/swagger-codegen-cli-v3](https://hub.docker.com/r/swaggerapi/swagger-codegen-cli-v3) image and then use the 
+    [swaggerapi/swagger-codegen-cli-v3](https://hub.docker.com/r/swaggerapi/swagger-codegen-cli-v3) image and then use the
     code generator's specific version to generate a Python client library from the Sigfox API definition:
 
         (venv) $  docker run --rm -v $(pwd):/local swaggerapi/swagger-codegen-cli-v3:$generator_version generate -i https://support.sigfox.com/api/apidocs -l python -o /local/out/python-$generator_version
 
 1.  After the generation process completes, copy the generated swagger_client to the working directory:
 
-        (venv) $ cp -r out/python-3.0.11/swagger_client .
+        (venv) $ cp -r out/python-3.0.22/swagger_client .
 
 
 ### Configuring the callback management script
@@ -317,11 +319,11 @@ The integration has a Python script for managing the Sigfox backend callbacks' c
 
 ## Configuring Firestore for device configuration management
 
-The integration uses the Cloud Firestore database service for storing Sigfox device configurations. In Sigfox, individual devices are grouped under device types. All devices in the same device type are expected to have the same behavior, and the same configuration. For this reason, the default behavior of the integration is to have one, shared device configuration per device type.
+The integration uses the Firestore database service for storing Sigfox device configurations. In Sigfox, individual devices are grouped under device types. All devices in the same device type are expected to have the same behavior, and the same configuration. For this reason, the default behavior of the integration is to have one, shared device configuration per device type.
 
 To configure Firestore for your integration, execute the following steps:
 
-1.  Navigate to the Google Cloud Firestore console at [https://console.cloud.google.com/firestore](https://console.cloud.google.com/firestore)
+1.  Navigate to the Firestore console at [https://console.cloud.google.com/firestore](https://console.cloud.google.com/firestore)
 2.  If this is the first time using Firestore in this project, you will see the following options:
 
 **Figure 5.** Firestore options
@@ -351,11 +353,11 @@ To configure Firestore for your integration, execute the following steps:
 
 ## Sending data from a Sigfox device
 
-The integration should now be configured in both Google Cloud Functions and the Sigfox backend.
+The integration should now be configured in both Cloud Functions and the Sigfox backend.
 
 Verify the `callback_data` Cloud Function with the following steps:
 
-1.  On your development machine console, check that you have a Cloud Pub/Sub subscription, subscribed to the Pub/Sub Topic that your Cloud Functions use. Execute the following command:
+1.  On your development machine console, check that you have a Pub/Sub subscription, subscribed to the Pub/Sub Topic that your Cloud Functions use. Execute the following command:
 
         $ gcloud pubsub subscriptions list
 
@@ -381,7 +383,7 @@ Verify the `callback_data` Cloud Function with the following steps:
     If the Cloud Function `callback_data` was triggered successfully, and the function replied
     as expected, the arrow will turn green.
 
-5.  Verify that the message payload was forwarded to your Cloud Pub/Sub topic. On your development machine, execute the 
+5.  Verify that the message payload was forwarded to your Pub/Sub topic. On your development machine, execute the
     following command:
 
         (venv) $ gcloud pubsub subscriptions pull sigfox-data-sub --limit 100 --auto-ack
@@ -408,7 +410,7 @@ Verify the `callback_data` Cloud Function with the following steps:
     The first time the Cloud Function executes, the platform creates its runtime environment and the
     execution time is longer. This is called a _cold start_ for Cloud Functions. Subsequent executions will
     be faster. Here, you can verify that the Cloud Function was triggered, received the device payload, and
-    as seen in the next log entry, forwarded the payload to the Cloud Pub/Sub topic. The Pub/Sub topic is
+    as seen in the next log entry, forwarded the payload to the Pub/Sub topic. The Pub/Sub topic is
     the integration point for consuming the Sigfox data in real time for your specific business solutions.
 
 8.  Verify that your `DATA_ADVANCED` callback is also working, by finding a second function execution
@@ -440,12 +442,12 @@ Verify the `callback_data` Cloud Function with the following steps:
 
 ## Requesting downlink configurations from a device
 
-In Sigfox, devices must request downlink messages from the network. They do this by setting a specific flag when 
-transmitting a payload. In this integration, the callback responsible for handling the downlink requests is the 
-`callback_data` Cloud Function. The function checks whether the incoming request has the downlink request flag `ack` set to 
-`True`. If it is, the function queries the Firestore database, using the Device Type value as the query key, and fetches 
-the value of the `config` attribute in Firestore. The function then checks that the value is a maximum of 8 bytes long, as 
-in the Sigfox specifications; if it is, the function returns the `config` value to Sigfox backend in its response. The 
+In Sigfox, devices must request downlink messages from the network. They do this by setting a specific flag when
+transmitting a payload. In this integration, the callback responsible for handling the downlink requests is the
+`callback_data` Cloud Function. The function checks whether the incoming request has the downlink request flag `ack` set to
+`True`. If it is, the function queries the Firestore database, using the Device Type value as the query key, and fetches
+the value of the `config` attribute in Firestore. The function then checks that the value is a maximum of 8 bytes long, as
+in the Sigfox specifications; if it is, the function returns the `config` value to Sigfox backend in its response. The
 Sigfox backend then sends the configuration downlink to the device.
 
 **Figure 9.** Downlink sequence diagram
@@ -497,7 +499,7 @@ Execute the following steps to verify the downlink functionality:
 Verify that you can receive service messages from the Sigfox backend by executing the following steps.
 
 You should execute these steps only after executing the downlink tests in the previous section. You may not have any service
-messages from Sigfox backend until you send a downlink response to your device. The downlink response will generate a 
+messages from Sigfox backend until you send a downlink response to your device. The downlink response will generate a
 subsequent `downlinkAck` service message.
 
 1.  In the Cloud Functions console, click the `callback_service` function.
@@ -571,7 +573,7 @@ To delete a project, do the following:
 
 ## What's next
 
-- Stay tuned for an upcoming tutorial on using the Sigfox [Sens'it Discovery V3](https://www.sensit.io/) device with this integration and learning how to encode and decode its binary data and configuration payloads, as well as store the data in real-time in Cloud BigQuery.
+- Stay tuned for an upcoming tutorial on using the Sigfox [Sens'it Discovery V3](https://www.sensit.io/) device with this integration and learning how to encode and decode its binary data and configuration payloads, as well as store the data in real-time in BigQuery.
 - Learn more about [IoT on Google Cloud](https://cloud.google.com/solutions/iot/).
 - Learn more about [Big data analytics on Google Cloud](https://cloud.google.com/solutions/big-data/), to turn your IoT data into actionable insights
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).

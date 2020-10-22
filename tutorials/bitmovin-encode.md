@@ -6,8 +6,15 @@ tags: bitmovin, video, encoding, scale
 date_published: 2020-08-07
 ---
 
+Adrian Britton | Bitmovin
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This document explains how to set up Bitmovin Encoding on Google Cloud infrastructure so that the Bitmovin platform can run encoders using the Compute Engine 
-API.
+API. 
+
+The instructions in this document for the [Bitmovin Encoding Service](https://bitmovin.com/encoding-service/) apply to live encoding and file-based encoding. For
+a complete list of formats and input types, see the [Bitmovin website](https://bitmovin.com/docs/encoding/articles/supported-input-and-output-formats).
 
 ## Prerequisites
 
@@ -162,7 +169,7 @@ increases for the following quotas in your regions:
 | In-use IP addresses | (maximum number of encodings) * (maximum number of instances per encoding)              | 
 | CPUs | (maximum number of encodings) * 8 |
 | Preemptible CPUs | (maximum number of encodings) * (maximum number of instances per encoding) * 8 |
-| Persistent Disk SSD (GB) | (maximum number of encodings) * 0.5 + ((number of instances) * (number of encodings)) * 0.05  |
+| Persistent Disk SSD (TB) | (maximum number of encodings) * 0.5 + ((number of instances) * (number of encodings)) * 0.05  |
 
 The values above assume 8-core instances. If your use case requires instances with a different number of cores, contact Bitmovin.
 

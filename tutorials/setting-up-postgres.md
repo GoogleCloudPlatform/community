@@ -6,12 +6,14 @@ tags: Compute Engine, PostgreSQL
 date_published: 2016-06-03
 ---
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows how to set up [PostgreSQL](https://www.postgresql.org) on
-Google Cloud Platform (GCP) in just a few minutes. Follow this tutorial to configure
+Google Cloud in just a few minutes. Follow this tutorial to configure
 PostgreSQL on an Ubuntu virtual machine instance on Compute Engine.
 
 If you don't want to install and manage your own PostgreSQL database,
-[Google Cloud SQL](https://cloud.google.com/sql/docs/postgres/) provides managed PostgreSQL.
+[Cloud SQL](https://cloud.google.com/sql/docs/postgres/) provides managed PostgreSQL.
 
 You can also use [Cloud Launcher](https://cloud.google.com/launcher/?q=postgres)
 to set up PostgreSQL on Compute Engine with just a few clicks.
@@ -21,22 +23,22 @@ to set up PostgreSQL on Compute Engine with just a few clicks.
 
 * Install PostgreSQL on a Compute Engine instance.
 * Configure PostgreSQL for remote access.
-* Configure a Cloud Platform firewall to open a port.
+* Configure a Google Cloud firewall to open a port.
 * Connect to PostgreSQL from a remote computer.
 
 ## Before you begin
 
-You'll need a GCP project. You can use an existing project or
+You'll need a Google Cloud project. You can use an existing project or
 click the button to create a new project:
 
 **[Create a project](https://console.cloud.google.com/project)**
 
 ## Costs
 
-This tutorial uses billable components of GCP, including Compute Engine.
+This tutorial uses billable components of Google Cloud, including Compute Engine.
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=411d8ca1-210f-4f2c-babd-34c6af2b5538)
-to generate a cost estimate based on your projected usage. New Cloud Platform users might be
+to generate a cost estimate based on your projected usage. New Google Cloud users might be
 eligible for a [free trial](https://cloud.google.com/free-trial).
 
 
@@ -53,7 +55,7 @@ their package managers. For this tutorial, you use Ubuntu Trusty because
 it includes PostgreSQL 9.3, which has some helpful tools that aren't
 available in earlier versions.
 
-1. In the GCP Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
+1. In the Cloud Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
 1. Click the **Create instance** button.
 1. Set Name to `postgres-tutorial`.
 1. In the **Boot disk** section, click **Change** to begin configuring your boot disk.
@@ -111,9 +113,8 @@ user doesn't yet have a password, so you'll need to set one.
 
 1. When prompted, enter and confirm the password you've chosen.
 
-    **Important**:
-     For any system with an Internet connection, use a
-     strong password to help keep the system secure.
+    **Important**: For any system with an Internet connection, use a strong
+    password to help keep the system secure.
 
 1. Install the `adminpack` extension to enable the server instrumentation that
 you installed earlier. The console prints `CREATE EXTENSION` when successful.
@@ -128,7 +129,7 @@ you installed earlier. The console prints `CREATE EXTENSION` when successful.
 ## Connecting remotely
 
 To connect to your Postgres database, you'll need to change a configuration
-file and open a port in the firewall on Cloud Platform.
+file and open a port in the firewall on Google Cloud.
 
 ### Configure PostgreSQL remote access
 
@@ -137,8 +138,8 @@ you can change the file named
 [`pg_hba.conf`](http://www.postgresql.org/docs/9.3/static/auth-pg-hba-conf.html).
 Follow these steps.
 
-Caution: On production systems, or any
-system that has an Internet connection, use strong
+**Caution**: On production systems, or any
+system that has an internet connection, use strong
 authentication methods and restrict traffic to only those users and IP addresses
 that you want to connect to each database.
 
@@ -239,9 +240,8 @@ on your local computer.
 
 1. Run pgAdmin.
 
-    Note: On Mac OS X, you must open the program
-from Finder by choosing **Open** from the context menu. Otherwise, Mac OS X
-will display a security warning and fail to run the program.
+    On macOS, you must open the program from Finder by choosing **Open** from the context menu. Otherwise, macOS
+    will display a security warning and fail to run the program.
 
 1. Add the server. In pgAdmin3, you can click the first icon on the left
 side of the toolbar. Alternatively, click **File** > **Add server**.
@@ -253,13 +253,13 @@ side of the toolbar. Alternatively, click **File** > **Add server**.
 1. Navigate to the **VM instances** page and find the external IP address of
 your Compute Engine instance in the **External IP** column.
 
-    **[Open VM instances](https://console.cloud.google.com/compute/instances)**
+   **[Open VM instances](https://console.cloud.google.com/compute/instances)**
 
 1. In the **Host** field, enter the external IP address of your Compute Engine
 instance.
 
-    Note: Enter only the address as it appears in the Cloud Console;
-    don't add any protocol specifiers, such as `http://` or other characters.
+   **Note**: Enter only the address as it appears in the Cloud Console;
+   don't add any protocol specifiers, such as `http://` or other characters.
 
 1. In the **Port** field, enter:
 
@@ -296,7 +296,7 @@ limit access only to trusted IP ranges.
 
 ## Cleaning up
 
-After you've finished the PostgreSQL tutorial, you can clean up the resources you created on Google Cloud Platform so you won't be billed for them in the future. The following sections describe how to delete or turn off these resources.
+After you've finished the PostgreSQL tutorial, you can clean up the resources you created on Google Cloud so you won't be billed for them in the future. The following sections describe how to delete or turn off these resources.
 
 ### Deleting the project
 
@@ -304,7 +304,7 @@ The easiest way to eliminate billing is to delete the project you created for th
 
 To delete the project:
 
-1. In the Cloud Platform Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
+1. In the Cloud Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
 1. Click the trash can icon to the right of the project name.
 
 **Warning**: Deleting a project has the following consequences:
@@ -317,7 +317,7 @@ You can't reuse the project ID of a deleted project. If you created a custom pro
 
 To delete a Compute Engine instance:
 
-1. In the Cloud Platform Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
+1. In the Cloud Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
 1. Click the checkbox next to your postgres-tutorial instance.
 1. Click the Delete button at the top of the page to delete the instance.
 
@@ -326,7 +326,7 @@ To delete a Compute Engine instance:
 
 To delete a firewall rule:
 
-1. In the Cloud Platform Console, go to the **[Firewall Rules](https://console.cloud.google.com/networking/firewalls)** page.
+1. In the Cloud Console, go to the **[Firewall Rules](https://console.cloud.google.com/networking/firewalls)** page.
 1. Click the checkbox next to the firewall rule you want to delete.
 1. Click the Delete button at the top of the page to delete the firewall rule.
 

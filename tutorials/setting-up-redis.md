@@ -6,13 +6,16 @@ tags: Compute Engine, Redis
 date_published: 2017-06-08
 ---
 
+Jeff Ching | Software Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows how to set up [Redis](https://redis.io/) on
 Google Cloud in just a few minutes. Follow this tutorial to configure a standalone
 Redis instance on a Debian 8 (jessie) virtual machine instance on Compute Engine.
 
 You can also use [Cloud Launcher](https://console.cloud.google.com/launcher/details/click-to-deploy-images/redis)
-to set up Redis cluster on Compute Engine with just a few clicks.
-
+to set up a Redis cluster on Compute Engine with just a few clicks.
 
 ## Objectives
 
@@ -30,14 +33,11 @@ click the following link to create a new project:
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud, including the following:
-
-+ Compute Engine
+This tutorial uses billable components of Google Cloud, including Compute Engine.
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=88a62458-4ab4-42fa-a7f3-e6b1d66bd307)
-to generate a cost estimate based on your projected usage. New Cloud Platform users might be
+to generate a cost estimate based on your projected usage. New Google Cloud users might be
 eligible for a [free trial](https://cloud.google.com/free-trial).
-
 
 ## Creating a Compute Engine instance
 
@@ -63,7 +63,6 @@ their package managers. For this tutorial, you use Debian 8 (jessie) which inclu
 It will take a few moments to create your new instance.
 
 Stay on the **VM instances** page for the next step.
-
 
 ## Install Redis
 
@@ -209,7 +208,6 @@ persistent disk.
 
 For machines that have an internet connection, limit access only to trusted IP ranges.
 
-
 ## Cleaning up
 
 After you've finished the Redis tutorial, you can clean up the resources you created on
@@ -229,7 +227,6 @@ To delete the project:
 
 If you used an existing project, you'll also delete any other work you've done in the project.
 You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the future, you should delete the resources inside the project instead. This ensures that URLs that use the project ID, such as an appspot.com URL, remain available.
-
 
 ### Deleting instances
 

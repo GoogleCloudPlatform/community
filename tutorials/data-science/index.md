@@ -1,18 +1,21 @@
 ---
-title: Data Science on Google Cloud Platform
-description: Use Google Cloud Platform tools to automate, share, and scale Data Science workflows.
+title: Data science on Google Cloud
+description: Use Google Cloud tools to automate, share, and scale data science workflows.
 author: jerjou
 tags: Data Science
 date_published: 2017-05-23
 ---
-Data Science - gleaning insight from data to perform and inform action -
-comprises a number of steps, any (or all) of which can aided by tools provided
-by the Google Cloud Platform.
 
-[Google Cloud Platform](https://cloud.google.com) provides a set of tools to
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+Data science - gleaning insight from data to perform and inform action -
+comprises a number of steps, any (or all) of which can aided by tools provided
+by the Google Cloud.
+
+[Google Cloud](https://cloud.google.com) provides a set of tools to
 enable you to glean actionable insight from arbitrarily large sets of data. To
 explore these tools in the Data Science context, it's helpful to enumerate the
-steps of which Data Science is commonly comprised. To wit:
+steps of which data science is commonly comprised. To wit:
 
 * **Data collection**
   [![Pub/Sub](https://storage.googleapis.com/gcp-community/resources/gcp_icons/products_and_services/big_data/Cloud-PubSub_25.png "Pub/Sub")][pubsub]
@@ -60,7 +63,7 @@ steps of which Data Science is commonly comprised. To wit:
 [comment]:# (* Serving infrastructure)
 [comment]:# (* Training and serving machine-learning models on Cloud ML Engine)
 
-This document (like Data Science) is a work in progress, and as such is not
+This document (like data science) is a work in progress, and as such is not
 comprehensive in its mapping of Data Science steps to available tools. Please
 contribute where there are gaps.
 

@@ -6,6 +6,8 @@ tags: CD, Kubernetes Engine, Codeship, Pipeline
 date_published: 2017-08-28
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This tutorial explains how to create a continuous deployment
 pipeline to Google Kubernetes Engine using Codeship. You will
 learn how to deploy a containerized application when new code is merged into the
@@ -123,7 +125,7 @@ Codeship Jet command-line interface.
     app:
       build:
         dockerfile: Dockerfile
-        image: gcr.io/YOUR_PROJECT_IDE/hello-express # update this line using your Google Cloud Platform project ID
+        image: gcr.io/YOUR_PROJECT_IDE/hello-express # update this line using your Google Cloud project ID
     ...
     ```
 

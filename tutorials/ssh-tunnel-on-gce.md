@@ -1,13 +1,16 @@
 ---
-title: Set up SSH tunnel for private browsing using GCE
+title: Set up an SSH tunnel for private browsing using Compute Engine
 description: Learn how to create a homemade VPN to increase your browsing privacy through SSH tunneling.
 author: ahmetb
 tags: Compute Engine, SSH
 date_published: 2017-04-13
 ---
 
+Ahmet Alp Balkan | Developer Advocate | Google
 
-In this tutorial, you will explore how you can use [Google Compute Engine][gce]
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+In this tutorial, you will explore how you can use [Compute Engine][gce]
 Linux instances to route all your local network traffic with an encrypted SSH
 tunnel.
 
@@ -24,45 +27,31 @@ see [Connecting Securely to VM instances](https://cloud.google.com/solutions/con
 
 Without any VPN or SSH tunneling, all your internet traffic goes through your
 ISP (internet service provider) or any intermediate firewalls your company
-network might be enforcing:
-
-```
-+--------+       inspection      +----------+
-| Laptop |---------------------->| Internet |
-+--------+       firewalls       +----------+
-```
+network might be enforcing.
 
 Not only your ISP, other parties who can get in the middle can block your
 access to websites. They can also inspect and modify the contents of your
 requests and responses if your connection is not encrypted. For websites, TLS
-(HTTPs) provides end-to-end encryption. However not all websites use TLS and
-not all applications use the HTTP/HTTPs protocols.
+(HTTPS) provides end-to-end encryption. However not all websites use TLS and
+not all applications use the HTTP/HTTPS protocols.
 
-However, you can host an instance on Google Compute Engine (GCE) and use SSH to
+However, you can host an instance on Compute Engine and use SSH to
 create a SOCKS proxy on your machine to make all your traffic go through the
-instance:
-
-```
-                          +----------+
-+--------+      ssh       |   GCE    |        +----------+
-| Laptop |--------------->| instance |------->| Internet |
-+--------+     secure     +----------+        +----------+
-               private
-```
+instance.
 
 This way, anyone inspecting your traffic will only see that you are connecting
-to the GCE instance and GCE instance will forward all your traffic to its actual
+to the Compute Engine instance, and the Compute Engine instance will forward all of your traffic to its actual
 destination smoothly.
 
 This SOCKS proxy provided from the SSH tunnel can later be configured in your
 operating system as the default proxy and on other applications which have a
 proxy setting.
 
-### Set up the SSH tunnel
+## Set up the SSH tunnel
 
 First of all, you need a compute instance to route all your traffic through it.
 If you have an existing instance, you can use it, or create a new a compute
-instance named `tunnel` from Google Cloud Platform Console or from `gcloud`:
+instance named `tunnel` from Cloud Console or from `gcloud`:
 
     gcloud compute instances create --zone us-west1-a tunnel
 
@@ -71,12 +60,12 @@ connects to a GCE instance on its SSH port 22:
 
     gcloud compute ssh --zone us-west1-a tunnel -- -N -p 22 -D localhost:5000
 
-This command works out of the box on macOS, Windows and Linux, and starts an
+This command works out of the box on macOS, Windows, and Linux, and starts an
 SSH tunnel which can be used as a SOCKS proxy. This command will keep running
 until it is terminated, which will shut down the tunnel. If you do wish to run
 it in the background, pass an additional `-f` flag to the command.
 
-### Set up the proxy
+## Set up the proxy
 
 Many operating systems have a system-wide proxy setting. However some
 applications, such as browsers, might have their own separate proxy settings.
@@ -95,12 +84,12 @@ Here are some useful links to configure the proxy in various platforms:
   environment variables or arguments you can set the proxy. Consult the help or
   the manpage of the program.
 
-> **Privacy Note:** Even though you use this solution, the DNS queries your
-> machine will make can still reveal the websites you visit to someone
-> intercepting your traffic. Consider using [DNSCrypt] to encrypt your DNS
-> traffic.
+**Privacy note:** Even though you use this solution, the DNS queries your
+machine will make can still reveal the websites you visit to someone
+intercepting your traffic. Consider using [DNSCrypt] to encrypt your DNS
+traffic.
 
-### Validate
+## Validate
 
 You can visit [whatismyip.net](https://www.whatismyip.net/) with the proxy
 enabled and disabled to see if your IP address (and resolved location) is
@@ -116,7 +105,7 @@ $ curl --proxy socks5://localhost:5000 https://api.ip2geo.pl/json/
 {"db":"MaxMind","country":"US","city":"Mountain View","lat":"37.4192","lon":"-122.0574"}
 ```
 
-### Clean up
+## Clean up
 
 Once you are done using the SSH proxy, you can terminate `gcloud compute ssh`
 command with Ctrl+C.

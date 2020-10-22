@@ -1,19 +1,23 @@
 ---
-title: Horizontally Scaling MySQL Database Backend with Cloud SQL and ProxySQL
-description: Learn how to horizontally scale a MySQL Database Backend with Cloud SQL and ProxySQL.
+title: Horizontally scaling a MySQL database backend with Cloud SQL and ProxySQL
+description: Learn how to horizontally scale a MySQL database backend with Cloud SQL and ProxySQL.
 author: michaelawyu
 tags: MySQL, Cloud SQL, Database, ProxySQL
 date_published: 2018-01-12
 ---
 
+Chen Yu | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial explains how to horizontally scale the MySQL database backend of
-your application using [Google Cloud SQL](https://cloud.google.com/sql) and
+your application using [Cloud SQL](https://cloud.google.com/sql) and
 [ProxySQL](http://proxysql.com).
 
-Google Cloud SQL is a fully-managed database service that makes it easy to set
+Cloud SQL is a fully managed database service that makes it easy to set
 up, maintain, manage, and administer your relational PostgreSQL and MySQL
 databases in the cloud. Cloud SQL offers high performance, scalability, and
-convenience. Hosted on Google Cloud Platform, Cloud SQL provides a database
+convenience. Hosted on Google Cloud, Cloud SQL provides a database
 infrastructure for applications running anywhere.
 
 ProxySQL is an open-source, high-performance MySQL proxy capable of routing
@@ -21,12 +25,12 @@ database queries in a MySQL database cluster. ProxySQL, with proper
 configuration, allows you to dynamically scale MySQL database backend without
 modifying application logic.
 
-Note: This tutorial assumes that you have set up an application, such as a
+This tutorial assumes that you have set up an application, such as a
 Django/flask app or a WordPress blog, using a MySQL database as database
-backend. The application itself does not need to run on Google Cloud Platform,
+backend. The application itself does not need to run on Google Cloud,
 though deploying both your application and the database backend in the same
-region of Google Cloud Platform may greatly improve performance. For options of
-running your application on Google Cloud Platform, see
+region of Google Cloud may greatly improve performance. For options of
+running your application on Google Cloud, see
 [Cloud Compute Products](https://cloud.google.com/products/compute/).
 
 ## Objectives
@@ -40,24 +44,22 @@ running your application on Google Cloud Platform, see
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including
-
-* Google Cloud SQL
+This tutorial uses billable components of Google Cloud, including Cloud SQL.
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to
 generate a cost estimate based on your projected usage.
 
-## Before You Begin
+## Before you begin
 
 1.  Select a project from [Google Cloud Console](https://console.cloud.google.com/).
-		If you have never used Google Cloud Platform before, sign up or log in with your existing Google account, then follow the on-screen instructions to start using Google Cloud Platform.
+		If you have never used Google Cloud before, sign up or log in with your existing Google account, then follow the on-screen instructions to start using Google Cloud.
 1.  [Enable billing](https://cloud.google.com/billing/docs/how-to/modify-project)
 		for your account.
 1.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/) (Optional).
 
 ## Concepts
 
-### Horizontal Scaling of Database Backend
+### Horizontal scaling of database backend
 
 For a small scale application, it is usually fine to deploy its database backend
 on a single server, sometimes even the same server running the application
@@ -91,9 +93,9 @@ router.
 
 ![Sharding](https://storage.googleapis.com/gcp-community/tutorials/horizontally-scale-mysql-database-backend-with-google-cloud-sql-and-proxysql/sharding.png)
 
-### Master/Slave Replication
+### Master/slave replication
 
-Master/Slave Replication is another common approach for scaling horizontally. In
+Master/slave replication is another common approach for scaling horizontally. In
 this scheme, a database server cluster consists of one master instance and a
 group of slave instances. Both types store the same set of data and accept read
 requests, however, only the master instance is capable of handling write
@@ -102,7 +104,7 @@ propagated to the slave instances under the supervision of the master instance.
 
 ![MS_replication](https://storage.googleapis.com/gcp-community/tutorials/horizontally-scale-mysql-database-backend-with-google-cloud-sql-and-proxysql/ms_replication.png)
 
-## Understanding the Architecture
+## Understanding the architecture
 
 This tutorial uses Cloud SQL and ProxySQL to build a scalable database backend
 with master/slave replication. Properly configured, this architecture should
@@ -124,7 +126,7 @@ results are returned to the application via ProxySQL. All the updates are
 applied on the master instance and replicated to the read replicas
 automatically.
 
-Note: In this tutorial ProxySQL runs in the same server as the application; for
+In this tutorial ProxySQL runs in the same server as the application; for
 best performance, you may want to run ProxySQL on a separate machine.
 
 ### Limitations
@@ -136,9 +138,9 @@ application writes data much more frequently than it reads data, or it is
 critical that every user of your application should be able to see the latest
 changes as soon as they are available, this architecture may not be optimal.
 
-## Setting up a Cloud SQL for MySQL Instance
+## Setting up a Cloud SQL for MySQL instance
 
-Note: The following steps use [Cloud Console](https://console.cloud.google.com/sql)
+The following steps use [Cloud Console](https://console.cloud.google.com/sql)
 to create a Cloud SQL for MySQL instance. You can also create an instance
 [via Cloud SDK](https://cloud.google.com/sdk/gcloud/reference/sql/instances/create)
 or using the [Cloud SQL API](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/).
@@ -152,7 +154,7 @@ or using the [Cloud SQL API](https://cloud.google.com/sql/docs/mysql/admin-api/v
 		The values set here determine where your data is stored. Though you may
 		deploy the instance at any location you like, generally speaking it is best
 		to pick a location as close as possible to where your application runs. For
-		example, if your application is also running on Google Cloud Platform, it is
+		example, if your application is also running on Google Cloud, it is
 		recommended that you deploy the Cloud SQL instance in the same region and
 		zone as your application.
 
@@ -164,7 +166,7 @@ or using the [Cloud SQL API](https://cloud.google.com/sql/docs/mysql/admin-api/v
 
 1.  Click **Create**.
 
-### Data Migration
+### Data migration
 
 See [Importing Data into Cloud SQL](https://cloud.google.com/sql/docs/mysql/import-export/importing)
 for instructions on migrating data from external sources to Cloud SQL.
@@ -201,7 +203,7 @@ follow the steps below:
 
 ## Configuring ProxySQL to connect to Cloud SQL
 
-### Network Authorization
+### Network authorization
 
 Before using ProxySQL to connect to the Cloud SQL instance you just created, you
 have to authorize the network your application resides in with Cloud SQL:
@@ -209,7 +211,7 @@ have to authorize the network your application resides in with Cloud SQL:
 1.  Find the IP address of the system running your application. If you are using
 		Compute Engine, the external IP address of your instance is listed in the
 		[VM Instances page](https://console.cloud.google.com/compute/instances) of
-		Cloud Console. For applications running on other Cloud platforms, refer to
+		Cloud Console. For applications running on other cloud platforms, refer to
 		their documentation for instructions. Alternatively, you can use third-party
 		websites, such as [ifconfig.me](http://ifconfig.me/), to get the IP address
 		of your application server:
@@ -270,7 +272,7 @@ in ProxySQL:
 				LOAD MYSQL USERS TO RUNTIME;
 				SAVE MYSQL USERS TO DISK;
 
-## Setting up Monitoring
+## Setting up monitoring
 
 ProxySQL periodically checks all the configured MySQL servers. To set up
 monitoring, [create a new user in your Cloud SQL instance](https://cloud.google.com/sql/docs/mysql/create-manage-users)
@@ -294,7 +296,7 @@ After making changes, save the settings with:
 See [ProxySQL documentation](https://github.com/sysown/proxysql/wiki/Monitor-Module)
 for more information on monitoring.
 
-## Configuring Your Application to Use ProxySQL
+## Configuring your application to use ProxySQL
 
 In this tutorial, ProxySQL is installed in the same server as your application
 and accepts connection at `127.0.0.1`, port `6033`. Update the database
@@ -302,9 +304,9 @@ configuration of your application accordingly to start using ProxySQL as a query
 router. Currently, since there is only one database server listed in ProxySQL,
 all the queries are routed there.
 
-## Creating Read Replicas
+## Creating read replicas
 
-Note: The following steps use [Cloud Console](https://console.cloud.google.com/sql)
+The following steps use [Cloud Console](https://console.cloud.google.com/sql)
 to create a Cloud SQL read replica. You can also create a read replica
 [via Cloud SDK](https://cloud.google.com/sdk/gcloud/reference/sql/instances/create)
 or [using the Cloud SQL API](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/).
@@ -330,9 +332,9 @@ See [Creating Read Replicas](https://cloud.google.com/sql/docs/mysql/replication
 and [Requirements and Tips for Configuring Replication](https://cloud.google.com/sql/docs/mysql/replication/tips#read-replica)
 for more information about Cloud SQL read replicas.
 
-## Configuring ProxySQL to Distribute Database Queries
+## Configuring ProxySQL to distribute database queries
 
-### Adding Read Replicas
+### Adding read replicas
 
 In the ProxySQL admin interface, run the following SQL queries:
 
@@ -344,9 +346,9 @@ Replace `[IP_ADDRESS_#1]` and `[IP_ADDRESS_#2]` with the IPv4 addresses of the
 two read replicas you just created. Note that the replicas are assigned to a
 different group (`1`) from the master instance (`0`).
 
-### Updating Rules for Distribution
+### Updating rules for distribution
 
-Note: The steps below set a simple list of rules that distribute all write
+The steps below set a simple list of rules that distribute all write
 traffic and 20% read traffic to the master instance, 40% read traffic to the
 first read replica and another 40% read traffic to the second read replica. It
 is based on [the sample rules in ProxySQL wiki](https://github.com/sysown/proxysql/wiki/ProxySQL-Read-Write-Split-(HOWTO)#basic-readwrite-split-using-regex).
@@ -397,7 +399,7 @@ distribution.
 		40/100 = 0.4 (40%). Similarly, read replica #2 has a chance of 40% and the
 		master instance 20%.
 
-### Scaling Dynamically
+### Scaling dynamically
 
 You can add or remove read replicas any time you want. When you are adding a
 read replica, create it in Cloud SQL as instructed above, add it to the
@@ -448,14 +450,14 @@ later) in Cloud SQL. If you plan to add a read replica after deletion, create a
 new one and update the ProxySQL settings. The master instance cannot be stopped
 or deleted until all the read replicas are deleted.
 
-## Cleaning Up
+## Cleaning up
 
 After finishing this tutorial, you can clean up the resources you created on
-Google Cloud Platform so that you are not billed for them in the future. To
+Google Cloud so that you are not billed for them in the future. To
 clean up, you can delete the whole project or delete the master instance in
 Cloud SQL.
 
-### Deleting the Project
+### Deleting the project
 
 Visit the [Manage resources menu](https://console.cloud.google.com/cloud-resource-manager).
 Select the project you used for this tutorial and click **Delete**. Note that
@@ -463,7 +465,7 @@ once the project is deleted, the project ID cannot be reused.
 
 If you have Cloud SDK installed in the system, you can also [use the `gcloud` command-line to delete a project](https://cloud.google.com/sdk/gcloud/reference/projects/delete).
 
-### Deleting the Master Instance
+### Deleting the master instance
 
 Go to the [Cloud SQL Instances page](https://console.cloud.google.com/sql/instances).
 If there are still read replicas, remove them one by one. For each one, click
