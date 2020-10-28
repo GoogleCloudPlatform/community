@@ -108,7 +108,7 @@ I chose to make the cache key be `row_key:column_family:column_qualifier` to eas
 - `SQL queries: results`
 - `row prefix: array of encoded rows`
 
-When creating your cache, determine the setup based on your use case.
+When creating your cache, determine the setup based on your use case. Note that Bigtable rowkeys have a size limit of 4KB, whereas Memcached keys have a size limit of 250 bytes, so your rowkey could potentially be too large.
 
 ## Create Memcached instance
 
