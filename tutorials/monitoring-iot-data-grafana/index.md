@@ -12,7 +12,7 @@ In this tutorial, you set up a monitoring environment for IoT devices with an Ar
 
 *   Send temperature data from an ESP32 built-in sensor to a temperature topic.
 *   Create a Pub/Sub queue to receive that data.
-*   Host a service written in Go, Prometheus, and and a Grafana container on Cloud Run.
+*   Host a service written in Go, Prometheus, and a Grafana container on Cloud Run.
 *   Collect that temperature data, send it to Prometheus, and show it on Grafana.
 *   Create a Grafana dashboard.
 
@@ -27,7 +27,7 @@ This tutorial uses billable components of Google Cloud, including the following:
 This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), but you can use the
 [pricing calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected production usage.
 
-## Before you begin
+## Prerequisites
 
 This tutorial assumes that you're using an Unix operating system.
 
@@ -47,86 +47,103 @@ by a Go service and sent to Prometheus, and you use Grafana to visualize the dat
 
 Grafana is a visualization tool. Prometheus is a data source for Grafana that collects the data in time series and displays it in a way that Grafana understands.
 
-Because Prometheus can’t collect data directly from Pub/sub, a service is used to send the data to Prometheus.
+Because Prometheus can’t collect data directly from Pub/Sub, a service is used to send the data to Prometheus.
 
-The author of this tutorial made a [GitHub repository](https://github.com/leozz37/iot-monitoring-gcp-grafana) with all of the code used in this article.
+The author of this tutorial made a [GitHub repository](https://github.com/leozz37/iot-monitoring-gcp-grafana) with all of the code used in this article, which
+you are welcome to use.
 
 So, it’s time to get your hands dirty!
 
 ## Set up Google Cloud
 
-On Google Cloud, you’ll be using IoT Core to manage your devices, Pub/Sub as a messaging system, and Cloud Run to host your containers.
+On Google Cloud, you use IoT Core to manage your devices, Pub/Sub as a messaging system, and Cloud Run to host your containers.
 
-First, let’s set up our project. You’ll need a Google account and a credit card, but don’t worry you won’t be charged for anything (if you don’t do some heavy work), your free trial lasts for 3 months and you have US$300 to spend in any Google Cloud service. But you can always keep an eye on your billing board to not have any surprises on your credit card.
+### Google account
 
-To make things easier, you can export this environment variables and just paste the commands from this tutorial (choose your own names):
+First, you need to set up your project. You need a Google account and a credit card, but don’t worry—you won’t be charged for anything (if you don’t do some 
+heavy work); your free trial lasts for 3 months and you have US$300 to spend on any Google Cloud service. But you can always keep an eye on your billing report
+to make sure that you don't have any surprises on your credit card.
 
-```bash
-export PROJECT_ID=
-export REGION=
-export TOPIC_ID=
-export SUBSCRIPTION=
-export REGISTRY=
-export DEVICE_ID=
-export USER_NAME=
-export IMAGE_NAME=
-export SERVICE_NAME=
-```
+### Environment variables
 
-> The export command should look like this:
->
-> `export PROJECT_ID=temperature-grafana`
+To make things easier, you can export these environment variables with your own names filled in and just paste the commands from this tutorial:
 
-To start, log in with your Google account on CLI, create a project, and select the project created. Open a terminal and type the following commands:
+    export PROJECT_ID=
+    export REGION=
+    export TOPIC_ID=
+    export SUBSCRIPTION=
+    export REGISTRY=
+    export DEVICE_ID=
+    export USER_NAME=
+    export IMAGE_NAME=
+    export SERVICE_NAME=
 
-```bash
-$ gcloud auth login
+For example, the first export command—which sets the environment variable for your project ID—should look something like this:
 
-$ gcloud projects create $PROJECT_ID
+    export PROJECT_ID=temperature-grafana
 
-$ gcloud config set project $PROJECT_ID
-```
+### Create a project
+
+Log in with your Google account, create a project, and select the project created:
+
+    gcloud auth login
+
+    gcloud projects create $PROJECT_ID
+
+    gcloud config set project $PROJECT_ID
 
 You can check your project dashboard, and if everything goes well, you should see your project there.
 
 ![Select Project](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img1.png)
 
-Now let's enable pub/sub and IoT Core services in our project. But before that, you'll need to enable the billing into your project. To do that, run the following command and continue to the browser and link a profile:
+### Enable billing
 
-```bash
-$ open "https://console.cloud.google.com/billing/linkedaccount?project=$PROJECT_ID"
+Enable billing in your project:
 
-$ gcloud services enable cloudiot.googleapis.com pubsub.googleapis.com
-```
+    open "https://console.cloud.google.com/billing/linkedaccount?project=$PROJECT_ID"
 
-We also need to permit IoT Core to publish into pub/sub service. Since IoT Core is responsible for our devices, and they don’t need to subscribe to any topic, we’re giving them just the publishing role.
+### Enable services
 
-```bash
-$ gcloud projects add-iam-policy-binding $PROJECT_ID \
-    --member=serviceAccount:cloud-iot@system.gserviceaccount.com \
-    --role=roles/pubsub.publisher
-```
+Enable Pub/Sub and IoT Core services in your project: 
 
-Choose a region [here](https://cloud.google.com/compute/docs/regions-zones/). I’m using us-central1, but pick the one that better suits you. We also need a pub/sub topic, a subscription, and a registry.
+    gcloud services enable cloudiot.googleapis.com pubsub.googleapis.com
 
-On MQTT, pub/sub works like an Instagram/Twitter hashtag, where you can publish a post using a hashtag and who is following (or subscribed) to that hashtag, we'll see your post. The same works for MQTT, but the hashtag is the topic, the photo is the message and the people following that topic is the subscription.
+### Grant publishing role for Pub/Sub
 
-A registry is like a bucket for our IoT devices. It allows us to group devices and set properties that they all share, such as connection protocol, data storage location, and Cloud pub/sub topics.
+You need to permit IoT Core to publish to the Pub/Sub service. Because IoT Core is responsible for your devices, and they don’t need to subscribe to any topics,
+you give them just the publishing role:
 
-Follow these commands:
+    gcloud projects add-iam-policy-binding $PROJECT_ID \
+        --member=serviceAccount:cloud-iot@system.gserviceaccount.com \
+        --role=roles/pubsub.publisher
 
-```bash
-$ gcloud pubsub topics create $TOPIC_ID
+### Choose a region
 
-$ gcloud pubsub subscriptions create --topic $TOPIC_ID $SUBSCRIPTION
+Choose a region [here](https://cloud.google.com/compute/docs/regions-zones/).
 
-$ gcloud iot registries create $REGISTRY \
-    --region=$REGION \
-    --event-notification-config=topic=temperature-topic \
-    --enable-mqtt-config --enable-http-config
-```
+This tutorial uses `us-central1`, but you can pick one that better suits you.
 
-You can check your [registries](https://console.cloud.google.com/iot/registries), and if everything goes well, you should see your registry with your topic and subscription there.
+### Set up a Pub/Sub topic, subscription, and registry
+
+On MQTT, Pub/Sub works like an Instagram or Twitter hashtag, where you can publish a post using a hashtag and who is following (or subscribed) to that hashtag
+will see your post. The same works for MQTT, but the hashtag is the topic, the photo is the message, and the people following that topic is the subscription.
+
+A registry is like a bucket for your IoT devices. It allows you to group devices and set properties that they all share, such as connection protocol, data 
+storage location, and Pub/Sub topics.
+
+The following commands create a topic, subscription, and registry:
+
+    gcloud pubsub topics create $TOPIC_ID
+
+    gcloud pubsub subscriptions create --topic $TOPIC_ID $SUBSCRIPTION
+
+    gcloud iot registries create $REGISTRY \
+        --region=$REGION \
+        --event-notification-config=topic=temperature-topic \
+        --enable-mqtt-config --enable-http-config
+
+You can check your [registries](https://console.cloud.google.com/iot/registries) and, if everything goes well, you should see your registry with your topic and 
+subscription there.
 
 ![registries](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img2.png)
 
