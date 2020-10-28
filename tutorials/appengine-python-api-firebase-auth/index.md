@@ -6,6 +6,10 @@ tags: App Engine, Python, Falcon, API, Firebase, Auth, JWT
 date_published: 2017-05-05
 ---
 
+Sergio Gordillo
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 In this tutorial you will learn how to authenticate the requests that hit your API with JSON Web Tokens (JWT) using Firebase Auth.
 
 [Firebase][Firebase] is a platform that provides you tools and infrastructure to build your apps easily.
@@ -30,11 +34,11 @@ you do not need to enable the billing for your project to complete this tutorial
 
 ## Before you begin
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/) and make note of the project ID.
-2. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
-3. Import the Google Cloud Project in the [Firebase Console](https://console.firebase.google.com/).
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/) and make note of the project ID.
+2. Install the [Cloud SDK](https://cloud.google.com/sdk/).
+3. Import the Google Cloud project in the [Firebase Console](https://console.firebase.google.com/).
 4. Go to the Authentication section in the Firebase Console and enable at least one Sign-in provider. Follow this link
-in case you need some information about how to do it, see: [https://firebase.google.com/docs/auth/](https://firebase.google.com/docs/auth/).
+   in case you need some information about how to do it, see: [https://firebase.google.com/docs/auth/](https://firebase.google.com/docs/auth/).
 
 ## Preparing the app
 
@@ -153,7 +157,7 @@ in case you need some information about how to do it, see: [https://firebase.goo
 
 2. Visit `http://[YOUR_PROJECT_ID].appspot.com` to see the deployed app.
 
-    Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
+    Replace `[YOUR_PROJECT_ID]` with your Google Cloud project ID.
 
 3. Run the following command to view your app:
 

@@ -6,26 +6,27 @@ tags: App Engine, Node.js, Parse-server
 date_published: 2017-11-02
 ---
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 Tutorial for deploying a [Parse Server](https://github.com/ParsePlatform/parse-server/wiki/Parse-Server-Guide)
 to the App Engine flexible environment.
 
-You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
-overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
-Platform.
+You can check out [Node.js and Google Cloud][nodejs-gcp] to get an
+overview of Node.js itself and learn ways to run Node.js apps on Google Cloud.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](/sdk/).
+1. Install the [Cloud SDK](/sdk/).
 1. [Prepare your environment for Node.js development][nodejs]
 
 ### Create a MongoDB database
 
 There are multiple options for creating a new MongoDB database. For example:
 
-- Create a Google Compute Engine virtual machine with [MongoDB pre-installed](/launcher/?q=mongodb).
-- Use [mLab](https://mlab.com/google/) to create a free MongoDB deployment on Google Cloud Platform.
+- Create a Compute Engine virtual machine with [MongoDB pre-installed](/launcher/?q=mongodb).
+- Use [mLab](https://mlab.com/google/) to create a free MongoDB deployment on Google Cloud.
 
 ## Download and run the app
 

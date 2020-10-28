@@ -6,6 +6,10 @@ tags: Python
 date_published: 2020-08-07
 ---
 
+Katie McLaughlin | Developer Advocate | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows you how to use Cloud Scheduler to invoke a private Cloud Function using HTTP targets and triggers and OIDC authentication.
 
 Invoking a Cloud Function with authenticated HTTP that then performs an action is a common use case for Cloud Functions. Using Cloud Scheduler to schedule these 

@@ -1,24 +1,21 @@
 ---
 title: Send email with SendGrid and Node.js on App Engine flexible environment
-description: Learn how to send email via SendGrid from a Node.js app to App Engine flexible environment.
+description: Learn how to send email with SendGrid from a Node.js app to App Engine flexible environment.
 author: jmdobry
 tags: App Engine, SendGrid, Express.js, Node.js
 date_published: 2016-12-13
 ---
 
-## SendGrid
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-"[SendGrid][sendgrid]: Delivering your transactional and marketing email through one reliable platform." – sendgrid.com
-
-You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
-overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
-Platform.
+You can check out [Node.js and Google Cloud][nodejs-gcp] to get an
+overview of Node.js itself and learn ways to run Node.js apps on Google Cloud.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1. Install the [Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Prepare
 

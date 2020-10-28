@@ -1,13 +1,14 @@
 ---
 title: Google Cloud HA VPN interoperability guide for Fortigate
-description: Describes how to build site-to-site IPSec VPNs between HA VPN on Google Cloud Platform (GCP) and Fortigate.
+description: Describes how to build site-to-site IPSec VPNs between HA VPN on Google Cloud and Fortigate.
 author: ashishverm
 tags: HA VPN, Cloud VPN, interop, Fortinet, FortiOS
 date_published: 2019-07-16
 ---
 
-Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/network-connectivity/docs/vpn/)
-on Google Cloud Platform (GCP) and Fortigate.
+Ashish Verma | Technical Program Manager | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 Fortinet terminology and the Fortinet logo are trademarks of Fortinet or its affiliates in the
 United States and/or other countries.
@@ -16,10 +17,8 @@ _Disclaimer: This interoperability guide is intended to be informational in
 nature and shows examples only. Customers should verify this information by
 testing it._
 
-## Introduction
-
 This guide walks you through the process of configuring a route-based VPN tunnel between
-Fortigate and the [HA VPN service](https://cloud.google.com/network-connectivity/docs/vpn/) on GCP.
+Fortigate and the [HA VPN service](https://cloud.google.com/network-connectivity/docs/vpn/) on Google Cloud.
 
 For more information about HA or Classic VPN, see the
 [Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview).
@@ -28,17 +27,17 @@ For more information about HA or Classic VPN, see the
 
 Below are definitions of terms used throughout this guide.
 
--  **GCP VPC network**: A single virtual network within a single GCP project.
--  **On-premises gateway**: The VPN device on the non-GCP side of the
+-  **Google Cloud VPC network**: A single virtual network within a single Google Cloud project.
+-  **On-premises gateway**: The VPN device on the non- Google Cloud side of the
 connection, which is usually a device in a physical data center or in
-another cloud provider's network. GCP instructions are written from the
-point of view of the GCP VPC network, so *on-premises gateway* refers to the
-gateway that's connecting _to_ GCP.
--  **External IP address** or **GCP peer address**: External IP
-addresses used by peer VPN devices to establish HA VPN with GCP.
+another cloud provider's network. Google Cloud instructions are written from the
+point of view of the Google Cloud VPC network, so *on-premises gateway* refers to the
+gateway that's connecting _to_ Google Cloud.
+-  **External IP address** or **Google Cloud peer address**: External IP
+addresses used by peer VPN devices to establish HA VPN with Google Cloud.
 External IP addresses are allocated automatically, one for each gateway interface within a
-GCP project.
--  **Dynamic routing**: GCP dynamic routing for VPN using the
+Google Cloud project.
+-  **Dynamic routing**: Google Cloud dynamic routing for VPN using the
 [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
 Note that HA VPN only supports dynamic routing.
 
@@ -64,15 +63,15 @@ The Fortigate equipment used in this guide is as follows:
 
 1.  Review information about how
     [dynamic routing](https://cloud.google.com/network-connectivity/docs/vpn/concepts/choosing-networks-routing#dynamic-routing)
-    works in GCP.
+    works in Google Cloud.
 
 1.  Make sure that your peer VPN gateway supports BGP and is directly connected to the internet. Fortigate configurations
     are not tested with a device behind 1:1 NAT.
 
-1.  Select or [create](https://console.cloud.google.com/cloud-resource-manager) a GCP project.
+1.  Select or [create](https://console.cloud.google.com/cloud-resource-manager) a Google Cloud project.
 
 1.  Make sure that [billing](https://cloud.google.com/billing/docs/how-to/modify-project) is
-    enabled for your GCP project.
+    enabled for your Google Cloud project.
 
 1.  [Install and initialize the Cloud SDK](https://cloud.google.com/sdk/docs/).
 
@@ -91,25 +90,25 @@ The Fortigate equipment used in this guide is as follows:
 ### Configuration parameters and values
 
 The `gcloud` commands in this guide include parameters whose values you must
-provide. For example, a command might include a GCP project name or a region or
+provide. For example, a command might include a Google Cloud project name or a region or
 other parameters whose values are unique to your context. The following table
 lists the parameters and gives examples of the values used in this guide.
 
 | Parameter description | Placeholder          | Example value                                          |
 |-----------------------|----------------------|--------------------------------------------------------|
 | Vendor name           | `[VENDOR_NAME]`      | Fortinet                                               |
-| GCP project name      | `[PROJECT_NAME]`     | `vpn-guide`                                            |
+| Google Cloud project name      | `[PROJECT_NAME]`     | `vpn-guide`                                            |
 | Shared secret         | `[SHARED_SECRET]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
 | VPC network name      | `[NETWORK]`          | `network-a`                                            |
 | Subnet mode           | `[SUBNET_MODE]`      | `custom`                                               |
 | VPN BGP routing mode  | `[BGP_ROUTING_MODE]` | `global`                                               |
-| Subnet on the GCP VPC network (for example, `vpn-vendor-test-network`) | `[SUBNET_NAME_1]` | `subnet-a-central` |
-| Subnet on the GCP VPC network (for example, `vpn-vendor-test-network`) | `[SUBNET_NAME_2]` | `subnet-a-west` |
-| GCP region. Can be any region, but should be geographically close to on-premises gateway. | `[REGION1]` | `us-central1` |
-| GCP region. Can be any region, but should be geographically close to on-premises gateway. | `[REGION2]` | `us-west1` |
-| IP address range for the GCP VPC subnet (`vpn-subnet-1`) | `[RANGE_1]` | `10.0.1.0/24` |
-| IP address range for the GCP VPC subnet (`vpn-subnet-2`) | `[RANGE_2]` | `10.0.2.0/24` |
-| IP address range for the on-premises subnet. You will use this range when creating rules for inbound traffic to GCP. | `[IP_ON_PREM_SUBNET]` | `192.168.1.0/24` |
+| Subnet on the Google Cloud VPC network (for example, `vpn-vendor-test-network`) | `[SUBNET_NAME_1]` | `subnet-a-central` |
+| Subnet on the Google Cloud VPC network (for example, `vpn-vendor-test-network`) | `[SUBNET_NAME_2]` | `subnet-a-west` |
+| Google Cloud region. Can be any region, but should be geographically close to on-premises gateway. | `[REGION1]` | `us-central1` |
+| Google Cloud region. Can be any region, but should be geographically close to on-premises gateway. | `[REGION2]` | `us-west1` |
+| IP address range for the Google Cloud VPC subnet (`vpn-subnet-1`) | `[RANGE_1]` | `10.0.1.0/24` |
+| IP address range for the Google Cloud VPC subnet (`vpn-subnet-2`) | `[RANGE_2]` | `10.0.2.0/24` |
+| IP address range for the on-premises subnet. You will use this range when creating rules for inbound traffic to Google Cloud. | `[IP_ON_PREM_SUBNET]` | `192.168.1.0/24` |
 | External static IP address for the first internet interface of Foritgate  | `[ON_PREM_GW_IP_0]` | `209.119.81.228` |
 | External static IP address for the second internet interface of Foritgate | `[ON_PREM_GW_IP_1]` | `209.119.82.228` |
 | HA VPN gateway                          | `[GW_NAME]`                 | `ha-vpn-gw-a`                       |
@@ -123,19 +122,19 @@ lists the parameters and gives examples of the values used in this guide.
 | Second BGP peer interface               | `[ROUTER_INTERFACE_NAME_1]` | `bgp-peer-tunnel-a-to-on-prem-if-1` |
 | BGP interface netmask length            | `[MASK_LENGTH]`             | `/30`                               |
 
-## Configure the GCP side
+## Configure the Google Cloud side
 
 This section covers how to configure HA VPN. See
 [deply-ha-vpn-with-terraform](https://cloud.google.com/community/tutorials/deploy-ha-vpn-with-terraform)
 for a quick deployment.
 
-There are two ways to create HA VPN gateways on GCP: using the GCP Console and using
+There are two ways to create HA VPN gateways on Google Cloud: using the Cloud Console and using
 [`gcloud` commands](https://cloud.google.com/sdk/gcloud/). This section describes how to perform the tasks
 using `gcloud` commands.
 
 ### Initial tasks
 
-Complete the following procedures before configuring a GCP HA VPN gateway and tunnel.
+Complete the following procedures before configuring a Google Cloud HA VPN gateway and tunnel.
 
 These instructions create a [custom mode](https://cloud.google.com/vpc/docs/vpc#subnet-ranges)
 VPC network with one subnet in one region and another subnet in another region.
@@ -214,7 +213,7 @@ Create a Cloud Router:
 
 Replace the placeholders as follows:
 
-- `[ROUTER_NAME]`: The name of the new Cloud Router, which you must create in the same GCP
+- `[ROUTER_NAME]`: The name of the new Cloud Router, which you must create in the same Google Cloud
   region as the Cloud HA VPN gateway.
 - `[GOOGLE_ASN]`: Any private ASN (64512-65534, 4200000000-4294967294) that you are not
   already using in the peer network. The Google ASN is used for all BGP sessions on the
@@ -229,7 +228,7 @@ The command should look similar to the following example:
 
 ### Create an external VPN gateway resource
 
-Create an external VPN gateway resource that provides information to GCP about your peer VPN gateway or gateways.
+Create an external VPN gateway resource that provides information to Google Cloud about your peer VPN gateway or gateways.
 Depending on the HA recommendations for your peer VPN gateway, you can create external VPN gateway resources for the
 following different types of on-premises VPN gateways:
 
@@ -409,7 +408,7 @@ the base Layer 3 network configuration of Fortigate.
 
 At least one internal-facing network interface is required to
 connect to your on-premises network, and one external-facing interface is
-required to connect to GCP.
+required to connect to Google Cloud.
 
 For the 1-peer-2-address topology, configure a minimum of three interfaces:
 two outside interfaces that are connected to the internet and one inside interface
@@ -444,10 +443,10 @@ Make sure to replace the IP addresses based on your envrionment:
 
 Follow the procedures in this section to create the base VPN configuration.
 
-#### GCP-compatible settings for IPSec and IKE
+#### Google Cloud-compatible settings for IPSec and IKE
 
 Make sure to configure only 
-[ciphers supported by GCP](https://cloud.google.com/network-connectivity/docs/vpn/how-to/configuring-peer-gateway#configuring_ike).
+[ciphers supported by Google Cloud](https://cloud.google.com/network-connectivity/docs/vpn/how-to/configuring-peer-gateway#configuring_ike).
 
 #### Configure Phase 1 policy
 
@@ -545,7 +544,7 @@ for advanced BGP configurations.
 
 ### Configure firewall policies
 
-Create firewall policies to allow traffic between on-premises and GCP private networks.
+Create firewall policies to allow traffic between on-premises and Google Cloud private networks.
 
 These policies allow traffic from all source and destination addresses, make required changes to the policy to allow
 specific services and IP ranges.
@@ -582,7 +581,7 @@ specific services and IP ranges.
 
         get router bgp
 
-1.  Verify that routes are being exchanged with GCP:
+1.  Verify that routes are being exchanged with Google Cloud:
 
         get router info bgp neighbors 169.254.142.153 advertised-routes
 
@@ -600,18 +599,18 @@ through the VPN tunnel.
     Instructions for creating virtual machines in Compute Engine are in the
     [Getting started guide](https://cloud.google.com/compute/docs/quickstart).
     
-1.  After you have deployed VMs on both GCP and on-premises, you can use
+1.  After you have deployed VMs on both Google Cloud and on-premises, you can use
     an ICMP echo (ping) test to test network connectivity through the VPN tunnel.
 
-    On the GCP side, use the following instructions to test the connection to a
+    On the Google Cloud side, use the following instructions to test the connection to a
     machine that's behind the on-premises gateway:
 
-    1.  In the GCP Console, [go to the VM Instances page](https://console.cloud.google.com/compute).
-    1.  Find the GCP virtual machine you created.
+    1.  In the Cloud Console, [go to the VM Instances page](https://console.cloud.google.com/compute).
+    1.  Find the Google Cloud virtual machine you created.
     1.  In the **Connect** column, click **SSH**. A Cloud Shell window opens at the VM command line.
     1.  Ping a machine that's behind the on-premises gateway.
 
-    You can also check connectivity from Fortigate to the VM deployed in GCP.
+    You can also check connectivity from Fortigate to the VM deployed in Google Cloud.
 
         execute ping-options source 192.168.1.10
 
@@ -626,9 +625,9 @@ the [Foritgate VPN troubleshooting guide](https://cookbook.fortinet.com/ipsec-vp
 
 See the following Foritgate documentation and Cloud VPN documentation for additional information.
 
-### GCP documentation
+### Google Cloud documentation
 
-To learn more about GCP networking, see the following documents:
+To learn more about Google Cloud networking, see the following documents:
 
 -  [VPC networks](https://cloud.google.com/vpc/docs)
 -  [Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview)

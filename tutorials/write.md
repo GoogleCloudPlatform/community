@@ -36,7 +36,7 @@ For us to accept your contributions, we need you to sign the [Contributor Licens
       
     For details, see [File organization and naming in GitHub](https://cloud.google.com/community/tutorials/styleguide#file_organization_in_github).
     
-1.  Copy the [Mardown source contents](https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/tutorial-template/index.md) of the
+1.  Copy the [Markdown source contents](https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/tutorial-template/index.md) of the
     [tutorial template](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/tutorial-template/index.md)
     into your new Markdown file.
     

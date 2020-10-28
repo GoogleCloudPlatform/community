@@ -5,12 +5,15 @@ author: jerjou
 tags: Data Science
 date_published: 2017-05-23
 ---
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 Oftentimes, the raw data you've gathered is not in a form that is directly
 explorable using the data exploration tools at your disposal. Making it usable
 may require converting the format, extracting the information type you're
 seeking, or adding metadata to further structure the data.
 
-Google Cloud Platform makes it easy to write specialized functions to transform
+Google Cloud makes it easy to write specialized functions to transform
 your data and chain them into a
 [pipeline](/community/tutorials/data-science-preprocessing/), and provides a
 number of Machine Learning APIs that enable you to [transcribe audio][speech];
@@ -64,7 +67,7 @@ steps:
 For this tutorial, we'll extract data from readings of Aesop's Fables from
 [LibriVox](//librivox.org/author/181) for demonstration purposes. For
 convenience, we've cached a copy of the zip files in a
-[Google Cloud Storage][storage] bucket:
+[Cloud Storage][storage] bucket:
 
 * [Download][aesop1.zip] the first audio file, to use while writing and testing
   your preprocessing functions.
@@ -181,7 +184,7 @@ To extract text data from our prepared audio file, we issue an asynchronous
 request to the [Google Cloud Speech API][speech], then poll the API until it
 finishes transcribing the file.
 
-### Upload the audio file to Google Cloud Storage
+### Upload the audio file to Cloud Storage
 
 Because the audio we're transcribing is longer than a minute in length, we must
 first upload the raw audio files to [Cloud Storage][storage], so the Speech API
@@ -288,7 +291,7 @@ call:
 [embedmd]:# (sentence_structure.py /def extract_syntax/ /return.*/)
 ```py
 def extract_syntax(transcriptions, metadata):
-    """Extracts tokens in transcriptions using the GCP Natural Language API."""
+    """Extracts tokens in transcriptions using the Natural Language API."""
     client = language.Client()
 
     document = client.document_from_text(
@@ -353,7 +356,7 @@ But first, it's imperative that we go from manually transforming this data with
 a series of scripts, to
 [automating this process](/community/tutorials/data-science-preprocessing/).
 
-## API Documentation & other resources
+## API Documentation and other resources
 
 We've only touched on a couple of the capabilities of the APIs we've used here.
 Take a look at the API documentation, and experiment with the other features.
@@ -385,7 +388,7 @@ the results into a database for later querying.
 
 In fact, the [next step](/community/tutorials/data-science-preprocessing/)
 describes how to tie functions like these together into a preprocessing
-pipeline, using the [Google Cloud Dataflow][dataflow] service.
+pipeline, using the [Dataflow][dataflow] service.
 
 [dataflow]: /dataflow
 

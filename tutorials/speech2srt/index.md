@@ -6,9 +6,9 @@ tags: AI, ML, artificial intelligence, machine learning
 date_published: 2020-06-09
 ---
 
-Markku Lepisto | Solutions Architect | Google Cloud
+Markku Lepisto | Solutions Architect | Google
 
-## Objectives
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial shows you how to use the Google Cloud AI services
 [Speech-to-Text API](https://cloud.google.com/speech-to-text/) and [Translation API](https://cloud.google.com/translation/) 

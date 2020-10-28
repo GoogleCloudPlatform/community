@@ -6,7 +6,11 @@ tags: App Engine, Elixir, Phoenix
 date_published: 2019-07-22
 ---
 
-The [Google App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/)
+Daniel Azuma | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+The [App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/)
 is an easy way to deploy your apps to the same infrastructure that powers
 Google's products. Using the open source
 [Elixir Runtime](https://github.com/GoogleCloudPlatform/elixir-runtime), your
@@ -31,14 +35,14 @@ cover changes in Elixir 1.9 and Distillery 2.1.
 
 Before running this tutorial, take the following steps:
 
-1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
-    to create a new GCP project.
+1.  Use the [Cloud Console](https://console.cloud.google.com/)
+    to create a new Google Cloud project.
 
 2.  Enable billing for your project.
 
-3.  [Enable the Google Cloud SQL Admin API in the Cloud Console](https://console.cloud.google.com/apis/library/sqladmin.googleapis.com/).
+3.  [Enable the Cloud SQL Admin API in the Cloud Console](https://console.cloud.google.com/apis/library/sqladmin.googleapis.com/).
 
-4.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/). Make sure
+4.  Install the [Cloud SDK](https://cloud.google.com/sdk/). Make sure
     you [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK
     and set the default project to the new project you created.
 
@@ -218,7 +222,7 @@ To set up Cloud SQL Proxy, perform the following steps:
 
         cloud_sql_proxy -dir=/tmp/cloudsql
 
-    Note: This runs the proxy in the foreground, so subsequent commands
+    This runs the proxy in the foreground, so subsequent commands
     need to be run in a separate shell. If you prefer, feel free to
     background the process instead.
 
@@ -298,7 +302,7 @@ Releases are the Elixir community's preferred way to package Elixir (and
 Erlang) applications for deployment. You will configure your app to create
 deployable releases.
 
-**Note:** You can also use the [Distillery](https://github.com/bitwalker/distillery)
+You can also use the [Distillery](https://github.com/bitwalker/distillery)
 tool to create releases for your app. Distillery's configuration mechanism is
 somewhat different from that provided by Elixir's built-in releases, so if you
 choose to use Distillery, be sure to adjust these steps accordingly.
@@ -428,7 +432,7 @@ Let's make a simple change and redeploy.
 ## Cleaning up
 
 After you've finished this tutorial, you can clean up the resources you created
-on Google Cloud Platform so you won't be billed for them in the future. To clean
+on Google Cloud so you won't be billed for them in the future. To clean
 up the resources, you can delete the project or stop the individual services.
 
 ### Deleting the project
@@ -438,7 +442,7 @@ the tutorial. To do so using `gcloud`, run:
 
     gcloud projects delete [YOUR_PROJECT_ID]
 
-where `[YOUR_PROJECT_ID]` is your Google Cloud Platform project ID.
+where `[YOUR_PROJECT_ID]` is your Google Cloud project ID.
 
 **Warning**: Deleting a project has the following consequences:
 
@@ -460,7 +464,7 @@ To delete the Cloud SQL instance, including all databases it hosts, run:
 You generally cannot completely delete an App Engine service. However, you can
 disable it so that it does not consume resources.
 
-1.  In the Cloud Platform Console, go to the
+1.  In the Cloud Console, go to the
     [App Engine Versions page](https://console.cloud.google.com/appengine/versions).
 2.  Make sure your project is selected. If necessary, pull down the project
     selection dropdown at the top, and choose the project you created for this

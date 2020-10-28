@@ -6,6 +6,10 @@ tags: bitmovin, video, encoding, scale
 date_published: 2020-08-07
 ---
 
+Adrian Britton | Bitmovin
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This document explains how to set up Bitmovin Encoding on Google Cloud infrastructure so that the Bitmovin platform can run encoders using the Compute Engine 
 API. 
 

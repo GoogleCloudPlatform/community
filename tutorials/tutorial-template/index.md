@@ -6,12 +6,21 @@ tags: replace, with, tags, not, in, title, or, description
 date_published: 2020-04-28
 ---
 
-To begin creating a tutorial, copy the Markdown source for this tutorial template into your blank Mardown file. Replace the explanatory text and examples with 
+Todd Kopriva | Community Editor | Google
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+To begin creating a tutorial, copy the Markdown source for this tutorial template into your blank Markdown file. Replace the explanatory text and examples with 
 your own tutorial content. Not all tutorials will use all of the sections described in this template. For more information, see the 
 [style guide](https://cloud.google.com/community/tutorials/styleguide) and [contribution guide](https://cloud.google.com/community/tutorials/write).
 
 Replace the placeholders in the metadata at the top of the Markdown file with your own values. Follow the guidance provided by the placeholder values for spacing
 and punctuation.
+
+The first line after the metadata should be your name and an optional job description and organization affiliation.
+
+After that is one of two banners that indicates whether the document was contributed by a Google employee. Just leave one banner and delete the other one.
 
 The first paragraph or two of the tutorial should tell the reader the following:
 
@@ -106,10 +115,8 @@ Deleting a project has the following consequences:
 To delete a project, do the following:
 
 1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-1.  In the project list, select the project you want to delete and click **Delete project**.
+1.  In the project list, select the project you want to delete and click **Delete**.
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
-
-    ![deleting the project](https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/delete-project.png)
 
 ## What's next
 

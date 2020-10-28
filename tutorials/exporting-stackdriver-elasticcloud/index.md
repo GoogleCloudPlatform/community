@@ -1,14 +1,14 @@
 ---
-title: Exporting Stackdriver logs to Elastic Cloud
-description: Learn how to send Stackdriver events to Elastic Cloud for analysis.
+title: Exporting Cloud Logging logs to Elastic Cloud
+description: Learn how to send Cloud Logging events to Elastic Cloud for analysis.
 author: twenny
 tags: Stackdriver, logging, security, compliance
 date_published: 2019-03-20
 ---
 
-## Overview
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-This tutorial explains how to export Stackdriver logs to the Elastic Cloud Elasticsearch SaaS platform to perform log 
+This tutorial explains how to export Cloud Logging logs to the Elastic Cloud Elasticsearch SaaS platform to perform log 
 analytics. Elastic Cloud is a SaaS offering, which saves time by not needing to build and manage the Elasticsearch 
 infrastructure.
 
@@ -16,50 +16,50 @@ infrastructure.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform (GCP), including Compute Engine.
+This tutorial uses billable components of Google Cloud, including Compute Engine.
 
-New GCP users might be eligible for a [free trial](https://cloud.google.com/free-trial).
+New Google Cloud users might be eligible for a [free trial](https://cloud.google.com/free-trial).
 
-## Configure GCP resources
+## Configure Google Cloud resources
 
 The high-level steps in this section:
 
 1. Create a user-managed service account
 1. Create a VM for Logstash
 1. Create a Cloud Pub/Sub topic
-1. Create a Stackdriver log sink and subscribe it to the Cloud Pub/Sub topic
+1. Create a log sink and subscribe it to the Pub/Sub topic
 
 ## Enable APIs
 
-Log in or sign up for [Google Cloud Platform](https://cloud.google.com), then open
+Log in or sign up for [Google Cloud](https://cloud.google.com), then open
 the [Cloud Console](https://console.cloud.google.com).
 
-The examples in this document use the `gcloud` command-line inteface. GCP APIs must be enabled via the
+The examples in this document use the `gcloud` command-line inteface. Google Cloud APIs must be enabled through the
 [Services and APIs page](https://console.cloud.google.com/apis/dashboard) in the console before they can be used
 with `gcloud`. To perform the steps in this tutorial, enable the following APIs: 
 
 * Compute Engine
-* Cloud Pub/Sub
+* Pub/Sub
 * Identity and Access Management (IAM)
-* Stackdriver
+* Cloud Logging
 
 ![Enable Cloud APIs](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/enable_apis.png)
 
-## Activate Google Cloud Shell
+## Activate Cloud Shell
 
-The GCP Console provides an interactive shell that includes the `gcloud` command-line interface. At the top right corner of
-the page, click the **Activate Google Cloud Shell** button.
+The Cloud Console provides an interactive shell that includes the `gcloud` command-line interface. At the top right corner of
+the page, click the **Activate Cloud Shell** button.
 
 ![alt text](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/cloud_shell_icon.png)
 
 ## Create a service account
 
-GCP [best practices](https://cloud.google.com/vpc/docs/firewalls#service-accounts-vs-tags) suggest using a 
-service account to configure security controls to a VM. A service account is useful for a VM to determine which other GCP 
+Google Cloud [best practices](https://cloud.google.com/vpc/docs/firewalls#service-accounts-vs-tags) suggest using a 
+service account to configure security controls to a VM. A service account is useful for a VM to determine which other Google Cloud 
 resources can be accessed by the VM and its applications, and which firewall rules should be applied to the VM.
 
 While credentials can be created to be used by a service account, this step is not necessary when the service account is
-attached to a VM running on Google Compute Engine. Google manages the keys, and applications can
+attached to a VM running on Compute Engine. Google manages the keys, and applications can
 [retrieve the credentials securely](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances#authenticating_applications_using_service_account_credentials)
 with the metadata service.
 
@@ -72,7 +72,7 @@ with the metadata service.
 
         Created service account [logstash].
     
-2.  Provide IAM permissions allowing the new service account to access Cloud Pub/Sub using the `pubsub.subscriber` role.
+2.  Provide IAM permissions allowing the new service account to access Pub/Sub using the `pubsub.subscriber` role.
 
         gcloud projects add-iam-policy-binding scalesec-dev \
         --member serviceAccount:logstash@scalesec-dev.iam.gserviceaccount.com \
@@ -90,9 +90,9 @@ with the metadata service.
         version: 1
 
 
-## Create a Cloud Pub/Sub topic and subscription
+## Create a Pub/Sub topic and subscription
 
-1.  Create a Cloud Pub/Sub topic where Stackdriver will send events to be picked up by Logstash:
+1.  Create a Pub/Sub topic where Cloud Logging will send events to be picked up by Logstash:
 
         gcloud pubsub topics create stackdriver-topic
 
@@ -108,9 +108,9 @@ with the metadata service.
 
         Created subscription [projects/scalesec-dev/subscriptions/logstash-sub].
 
-## Create a Stackdriver log sink
+## Create a log sink
 
-1.  Create a log sink to be used to export Stackdriver logs to the new Cloud Pub/Sub topic.
+1.  Create a log sink to be used to export logs to the new Pub/Sub topic.
 
         gcloud logging sinks create logstash-sink pubsub.googleapis.com/projects/scalesec-dev/topics/stackdriver-topic \
         --log-filter='resource.type="project"'
@@ -123,12 +123,11 @@ with the metadata service.
         More information about sinks can be found at https://cloud.google.com/logging/docs/export/ 
 
     The filter specified above will produce events associated with changes to IAM, which is a typical area to be monitored
-    closely. Stackdriver supports monitoring activities for vpn_gateway and other resource types. See the
+    closely. Cloud Logging supports monitoring activities for vpn_gateway and other resource types. See the
     [documentation](https://cloud.google.com/logging/docs/view/overview) for more filter ideas.
 
-    The second part of the output is a reminder to verify that the service account used by Stackdriver has permissions 
-    to publish events to the Cloud Pub/Sub topic. The beta version of `gcloud` CLI supports permissions management for 
-    Cloud Pub/Sub. 
+    The second part of the output is a reminder to verify that the service account used by Cloud Logging has permissions 
+    to publish events to the Pub/Sub topic. The beta version of `gcloud` CLI supports permissions management for Pub/Sub. 
 
         gcloud beta pubsub topics add-iam-policy-binding stackdriver-topic \
         --member serviceAccount:p352005273005-776084@gcp-sa-logging.iam.gserviceaccount.com \
@@ -148,7 +147,7 @@ with the metadata service.
 
 **Note:** Some system responses are omitted in this section for brevity.
 
-1.  Create a VM to run `logstash` to pull logs from the Cloud Pub/Sub logging 
+1.  Create a VM to run `logstash` to pull logs from the Pub/Sub logging 
     sink and send them to ElasticSearch:
 
         gcloud compute --project=scalesec-dev instances create logstash \
@@ -175,7 +174,7 @@ with the metadata service.
 
     ![Sign up for Elastic Cloud](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/es_trial.png)
 
-2.  Create an Elasticsearch deployment. This example is deployed on GCP in us-west1. 
+2.  Create an Elasticsearch deployment. This example is deployed on Google Cloud in us-west1. 
 
     ![Create an Elastic Cloud deployment](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/create_es_deployment.png)
 
@@ -224,7 +223,7 @@ with the metadata service.
         sudo apt-get update
         sudo apt-get install logstash
 
-1.  Install the Logstash Plugin for Cloud Pub/Sub. 
+1.  Install the Logstash Plugin for Pub/Sub. 
 
         cd /usr/share/logstash
         sudo -u root sudo -u logstash bin/logstash-plugin install logstash-input-google_pubsub
@@ -350,6 +349,6 @@ monitor and triage security events and perform searches and investigations.
 ## Verify log flow
 
 Return to the main Kibana dashboard (shown as **Discover** in the navigation menu). The Kibana dashboard should display
-Stackdriver events similar to those shown below:
+Cloud Logging events similar to those shown below:
 
 ![log flow](https://storage.googleapis.com/gcp-community/tutorials/exporting-stackdriver-elasticcloud/kibana_log_flow.png)
