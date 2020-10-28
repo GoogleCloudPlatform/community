@@ -53,7 +53,7 @@ The author of this tutorial made a [GitHub repository](https://github.com/leozz3
 
 So, it’s time to get your hands dirty!
 
-### Getting started with Google Cloud
+## Set up Google Cloud
 
 On Google Cloud, you’ll be using IoT Core to manage your devices, Pub/Sub as a messaging system, and Cloud Run to host your containers.
 
@@ -130,7 +130,7 @@ You can check your [registries](https://console.cloud.google.com/iot/registries)
 
 ![registries](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img2.png)
 
-### Setting up ESP32
+## Set up the ESP32 device
 
 We’ll be using the Espressif micro-controller ESP32 for its WiFi and a built-in temperature sensor. Also, I’m using the Arduino IDE, so make sure you have it installed and set up for ESP32 usage, if you need some help you can follow this [tutorial](https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/).
 
@@ -249,7 +249,7 @@ RUN go mod download
 CMD ["go", "run", "pubsub.go"]
 ```
 
-### Google Cloud Run
+## Build and deploy with Cloud Build, Cloud Run, and Container Registry
 
 First, we need to enable Cloud Build, Cloud Run, and Container Registry in our project:
 
@@ -330,7 +330,9 @@ $ gcloud run deploy grafana --image gcr.io/$PROJECT_ID/grafana \
     --port 3000
 ```
 
-Now you can access your Grafana board through the generated URL. You can log in with the admin login (default user: admin, pass: admin, make sure to change that).
+## Use the dashboard to view data
+
+Now you can access your Grafana dashboard through the generated URL. You can log in with the admin login (default user: admin, pass: admin, make sure to change that).
 
 Now we have to set up Grafana to listen to our Prometheus. After logging in, go to "Data Source" on the right menu bar, click on "Add data source" and select Prometheus.
 
@@ -354,7 +356,7 @@ Now plug your ESP32 on the USB and you should see the graph going up and down!
 
 And that’s it. You can monitor data from IoT devices anywhere in the world.
 
-### Cleaning up
+## Cleaning up
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
@@ -373,9 +375,9 @@ To delete a project, do the following:
 
     ![deleting the project](https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/delete-project.png)
 
-### Example: What's next
+## What's next
 
 - Learn [PromQL](https://prometheus.io/docs/prometheus/latest/querying/basics/).
-- Create your own [Grafana](https://grafana.com/) Dashboars.
-- Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
+- Create your own [Grafana](https://grafana.com/) dashboards.
+- Learn more about [Google Cloud developer tools](https://cloud.google.com/products/tools).
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
