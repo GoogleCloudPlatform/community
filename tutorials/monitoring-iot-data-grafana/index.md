@@ -3,7 +3,7 @@ title: Monitoring data from IoT devices with Go and Grafana
 description: Learn how to set up a serveless monitoring environment on Google Cloud for IoT devices.
 author: leozz37
 tags: Cloud Run, Golang, Prometheus, Grafana, IoT, data, metrics
-date_published: 2020-10-03
+date_published: 2020-10-30
 ---
 
 In this tutorial, you set up a monitoring environment for IoT devices with an Arduino-based board (ESP32), Grafana, and Google Cloud.
@@ -11,9 +11,9 @@ In this tutorial, you set up a monitoring environment for IoT devices with an Ar
 ## Objectives
 
 *   Send temperature data from an ESP32 built-in sensor to a temperature topic.
-*   Create a Pub/Sub queue to receive that data.
-*   Host a service written in Go, Prometheus, and a Grafana container on Cloud Run.
-*   Collect that temperature data, send it to Prometheus, and show it on Grafana.
+*   Create a Pub/Sub queue to receive data.
+*   Host a Go service, Prometheus, and a Grafana container on Cloud Run.
+*   Collect temperature data, send it to Prometheus, and show it on Grafana.
 *   Create a Grafana dashboard.
 
 ## Costs
@@ -33,7 +33,10 @@ This tutorial assumes that you're using an Unix operating system.
 
 This tutorial also requires an [ESP32 board](https://www.espressif.com/en/products/socs/esp32).
 
-The instructions in this tutorial use the [Google Cloud SDK command-line interface](https://cloud.google.com/sdk/install) to set up the environment, but you
+This tutorial requires the Arduino IDE, so make sure that you have it installed and set up for ESP32 usage. If you need help, you can follow 
+[this tutorial](https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/).
+
+The instructions in this tutorial use the [Cloud SDK command-line interface](https://cloud.google.com/sdk/install) to set up the environment, but you
 can use [Cloud Console](https://console.cloud.google.com/).
 
 ## Getting started
@@ -149,26 +152,27 @@ subscription there.
 
 ## Set up the ESP32 device
 
-We’ll be using the Espressif micro-controller ESP32 for its WiFi and a built-in temperature sensor. Also, I’m using the Arduino IDE, so make sure you have it installed and set up for ESP32 usage, if you need some help you can follow this [tutorial](https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/).
+This tutorial uses the Espressif micro-controller ESP32 for its WiFi and built-in temperature sensor. 
 
-We need to generate an Elliptic Curve (EC) ES256 private/public key pair for our device authentication. Make sure to generate them into a “safe place”:
+### Generate key pair for device authentication
 
-```bash
-$ openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem
+You need to generate an elliptic curve (EC) ES256 private/public key pair for your device authentication. Make sure to generate them into a safe place.
 
-$ openssl ec -in ec_private.pem -pubout -out ec_public.pem
-```
+    openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem
 
-Now we have to register our device into Core IoT, so run the following commands:
+    openssl ec -in ec_private.pem -pubout -out ec_public.pem
+    
+### Register the device with IoT Core
 
-```bash
-$ gcloud iot devices create $DEVICE_ID \
-    --region=$REGION \
-    --registry=$REGISTRY \
-    --public-key="path=./ec_public.pem,type=es256"
-```
+    gcloud iot devices create $DEVICE_ID \
+        --region=$REGION \
+        --registry=$REGISTRY \
+        --public-key="path=./ec_public.pem,type=es256"
 
-Install “Google Cloud IoT Core JWT” and lwmMQTT from Joel Garhwller libraries on your Arduino IDE. They’re responsible for connecting, authenticating, and sending messages to GCP.
+### Install Arduino libraries
+
+Install the “Google Cloud IoT Core JWT” and lwmMQTT from Joel Garhwller libraries on your Arduino IDE. These libraries are responsible for connecting, 
+authenticating, and sending messages to Google Cloud.
 
 ![arduino libs](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img3.png)
 
@@ -176,95 +180,89 @@ Now let's use the library code example for ESP32-lwmqtt:
 
 ![arduino example](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img4.png)
 
-On ciotc_config.h, set your WiFi network and credentials:
+### Set up credentials and keys
 
-```cpp
-// Wifi network details
-const char *ssid = "SSID";
-const char *password = "PASSWORD";// Cloud iot details
-const char *project_id = "project-id";
-const char *location = "us-central1";
-const char *registry_id = "my-registry";
-const char *device_id = "my-esp32-device";
-```
+In `ciotc_config.h`, set your WiFi network and credentials:
 
-To get your private_key_str, run the following command at the same directory where you saved your public/private keys and paste the "priv" it into the code:
+    // Wifi network details
+    const char *ssid = "SSID";
+    const char *password = "PASSWORD";// Cloud iot details
+    const char *project_id = "project-id";
+    const char *location = "us-central1";
+    const char *registry_id = "my-registry";
+    const char *device_id = "my-esp32-device";
 
-```bash
-$ openssl ec -in ec_private.pem -noout -text
-````
+To get your `private_key_str`, run the following command in the same directory where you saved your public/private keys and paste the "priv" it into the code:
 
-PS: The key length should be 32 pairs of hex digits. If your private key is bigger, remove the “00:” and if its smaller add “00:”. It should look like this:
+    openssl ec -in ec_private.pem -noout -text
+
+The key length should be 32 pairs of hexadecimal digits. If your private key is bigger, remove the `00:` and if it's smaller add `00:`. It should look like this:
 
 ![private-key](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img5.png)
 
-You’ll need to set up your root_cert as well. Do the same steps as previously:
+You’ll need to set up your `root_cert` as well. Do the same steps as previously:
 
-```bash
-$ openssl s_client -showcerts -connect mqtt.googleapis.com:8883
-```
+    openssl s_client -showcerts -connect mqtt.googleapis.com:8883
 
 It should look something like this:
 
 ![root-cert](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img6.png)
 
-On Esp32-lwmqtt.ino file, let's do some changes to get the ESP32 temperature. This is how our code looks like:
+### Set up temperature data collection
 
-```cpp
-#include "esp32-mqtt.h"
+In the `Esp32-lwmqtt.ino` file, make some changes to get the ESP32 temperature. This is how what the code looks like:
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  uint8_t temprature_sens_read();
-#ifdef __cplusplus
-}
-#endif
+    #include "esp32-mqtt.h"
 
-uint8_t temprature_sens_read();
+    #ifdef __cplusplus
+    extern "C" {
+    #endif
+        uint8_t temprature_sens_read();
+    #ifdef __cplusplus
+    }
+    #endif
 
-void setup() {
-  Serial.begin(115200);
-  pinMode(LED_BUILTIN, OUTPUT);
-  setupCloudIoT();
-}
+    uint8_t temprature_sens_read();
 
-unsigned long lastMillis = 0;
-void loop() {
-  mqtt->loop();
-  delay(10);
+    void setup() {
+      Serial.begin(115200);
+      pinMode(LED_BUILTIN, OUTPUT);
+      setupCloudIoT();
+    }
 
-  if (!mqttClient->connected()) {
-    connect();
-  }
+    unsigned long lastMillis = 0;
+    void loop() {
+      mqtt->loop();
+      delay(10);
+
+      if (!mqttClient->connected()) {
+        connect();
+      }
 
   
-  if (millis() - lastMillis > 5000) {
-    lastMillis = millis();
+      if (millis() - lastMillis > 5000) {
+        lastMillis = millis();
 
-    const float temperature = (temprature_sens_read() - 32) / 1.8;
+        const float temperature = (temprature_sens_read() - 32) / 1.8;
 
-    String payload =
-      String("{\"temperature\":") + String(temperature) + String("}");
-    publishTelemetry(payload);
-  }
-}
-```
+        String payload =
+          String("{\"temperature\":") + String(temperature) + String("}");
+        publishTelemetry(payload);
+      }
+    }
 
-And a Dockerfile for it:
+Set up a Dockerfile:
 
-```docker
-FROM golang
+    FROM golang
 
-COPY . /app
-WORKDIR /app
+    COPY . /app
+    WORKDIR /app
 
-ENV GOOGLE_APPLICATION_CREDENTIALS=/app/resources/service-account-key.json
+    ENV GOOGLE_APPLICATION_CREDENTIALS=/app/resources/service-account-key.json
 
-RUN go mod download
+    RUN go mod download
 
-CMD ["go", "run", "pubsub.go"]
-```
+    CMD ["go", "run", "pubsub.go"]
 
 ## Build and deploy with Cloud Build, Cloud Run, and Container Registry
 
