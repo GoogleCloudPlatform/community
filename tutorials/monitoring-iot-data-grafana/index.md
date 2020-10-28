@@ -1,19 +1,19 @@
 ---
-title: Monitoring Data from IoT Devices with Golang Google Cloud Platform and Grafana
-description: How to set up a serveless monitoring environment on Google Cloud Platform for IoT devices.
+title: Monitoring data from IoT devices with Go and Grafana
+description: Learn how to set up a serveless monitoring environment on Google Cloud for IoT devices.
 author: leozz37
-tags: Cloud Run, Golang, Prometheus, Grafana, IoT, Data, Metrics
+tags: Cloud Run, Golang, Prometheus, Grafana, IoT, data, metrics
 date_published: 2020-10-03
 ---
 
-In this tutorial, we’ll be setting up a monitoring environment for IoT devices with an Arduino based board (ESP32), Grafana, and Google Cloud Platform tools.
+In this tutorial, you set up a monitoring environment for IoT devices with an Arduino-based board (ESP32), Grafana, and Google Cloud.
 
 ## Objectives
 
-*   Send temperature data from ESP32 built-in sensor to a temperature topic.
-*   Create a Cloud Pub/Sub queue to receive that data.
-*   Host a Golang service, Prometheus and Grafana container on Cloud Run.
-*   Collect that temperature data, send to Prometheus and show on Grafana.
+*   Send temperature data from an ESP32 built-in sensor to a temperature topic.
+*   Create a Pub/Sub queue to receive that data.
+*   Host a service written in Go, Prometheus, and and a Grafana container on Cloud Run.
+*   Collect that temperature data, send it to Prometheus, and show it on Grafana.
 *   Create a Grafana dashboard.
 
 ## Costs
@@ -21,35 +21,41 @@ In this tutorial, we’ll be setting up a monitoring environment for IoT devices
 This tutorial uses billable components of Google Cloud, including the following:
 
 *   [Cloud Run](https://cloud.google.com/run)
-*   [Pub/Sub Queue](https://cloud.google.com/pubsub)
+*   [Pub/Sub](https://cloud.google.com/pubsub)
 *   [IoT Core](https://cloud.google.com/solutions/iot)
-*   [ESP32 Board](https://www.espressif.com/en/products/socs/esp32)
 
-This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), but you can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected production usage.
+This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), but you can use the
+[pricing calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected production usage.
 
 ## Before you begin
 
 This tutorial assumes that you're using an Unix operating system.
 
-I’ll use the [Google Cloud CLI](https://cloud.google.com/sdk/install) to set up our environment but feel free to use the web console.
+This tutorial also requires an [ESP32 board](https://www.espressif.com/en/products/socs/esp32).
+
+The instructions in this tutorial use the [Google Cloud SDK command-line interface](https://cloud.google.com/sdk/install) to set up the environment, but you
+can use [Cloud Console](https://console.cloud.google.com/).
 
 ## Getting started
 
-First, let’s take a look into our infrastructure:
+First, take a look at the infrastructure used in this tutorial:
 
-![architecture](images/architecture.png)
+![architecture](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/architecture.png)
 
-We’re using the built-in temperature sensor from ESP32 to sent data every 5 seconds to a pub/sub service in GCP. This data will be processed by a Go service and sent to Prometheus, and we’re using Grafana to visualize this data.
+This tutorial uses the built-in temperature sensor from the ESP32 to send data every 5 seconds to a Pub/Sub service in Google Cloud. This data is processed
+by a Go service and sent to Prometheus, and you use Grafana to visualize the data.
 
-Grafana is a visualization tool. Prometheus is a data source for Grafana that collects the data in time series and displays in a way that Grafana understands. Since Prometheus can’t collect data directly to pub/sub, we need a third service to send it to Prometheus.
+Grafana is a visualization tool. Prometheus is a data source for Grafana that collects the data in time series and displays it in a way that Grafana understands.
 
-I made a [Github repository](https://github.com/leozz37/iot-monitoring-gcp-grafana) with all the codes used and instructions in this article, fell free to check it out.
+Because Prometheus can’t collect data directly from Pub/sub, a service is used to send the data to Prometheus.
 
-So let’s get our hands dirty!
+The author of this tutorial made a [GitHub repository](https://github.com/leozz37/iot-monitoring-gcp-grafana) with all of the code used in this article.
 
-### Getting started with Google Cloud Platform
+So, it’s time to get your hands dirty!
 
-On Google Cloud, we’ll be using Core IoT to manage our devices, pub/sub as messaging system and Google Run to host our containers.
+### Getting started with Google Cloud
+
+On Google Cloud, you’ll be using IoT Core to manage your devices, Pub/Sub as a messaging system, and Cloud Run to host your containers.
 
 First, let’s set up our project. You’ll need a Google account and a credit card, but don’t worry you won’t be charged for anything (if you don’t do some heavy work), your free trial lasts for 3 months and you have US$300 to spend in any Google Cloud service. But you can always keep an eye on your billing board to not have any surprises on your credit card.
 
@@ -83,7 +89,7 @@ $ gcloud config set project $PROJECT_ID
 
 You can check your project dashboard, and if everything goes well, you should see your project there.
 
-![Select Project](images/img1.png)
+![Select Project](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img1.png)
 
 Now let's enable pub/sub and IoT Core services in our project. But before that, you'll need to enable the billing into your project. To do that, run the following command and continue to the browser and link a profile:
 
@@ -122,7 +128,7 @@ $ gcloud iot registries create $REGISTRY \
 
 You can check your [registries](https://console.cloud.google.com/iot/registries), and if everything goes well, you should see your registry with your topic and subscription there.
 
-![registries](images/img2.png)
+![registries](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img2.png)
 
 ### Setting up ESP32
 
@@ -147,11 +153,11 @@ $ gcloud iot devices create $DEVICE_ID \
 
 Install “Google Cloud IoT Core JWT” and lwmMQTT from Joel Garhwller libraries on your Arduino IDE. They’re responsible for connecting, authenticating, and sending messages to GCP.
 
-![arduino libs](images/img3.png)
+![arduino libs](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img3.png)
 
 Now let's use the library code example for ESP32-lwmqtt:
 
-![arduino example](images/img4.png)
+![arduino example](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img4.png)
 
 On ciotc_config.h, set your WiFi network and credentials:
 
@@ -173,7 +179,7 @@ $ openssl ec -in ec_private.pem -noout -text
 
 PS: The key length should be 32 pairs of hex digits. If your private key is bigger, remove the “00:” and if its smaller add “00:”. It should look like this:
 
-![private-key](images/img5.png)
+![private-key](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img5.png)
 
 You’ll need to set up your root_cert as well. Do the same steps as previously:
 
@@ -183,7 +189,7 @@ $ openssl s_client -showcerts -connect mqtt.googleapis.com:8883
 
 It should look something like this:
 
-![root-cert](images/img6.png)
+![root-cert](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img6.png)
 
 On Esp32-lwmqtt.ino file, let's do some changes to get the ESP32 temperature. This is how our code looks like:
 
@@ -265,7 +271,7 @@ $ gcloud run deploy $SERVICE_NAME --image gcr.io/$PROJECT_ID/ $IMAGE_NAME \
 
 GCP will generate an URL for your container, copy it. You can get it on your terminal or accessing your project on your project [Cloud Run page](https://console.cloud.google.com/run)
 
-![console-link](images/img9.png)
+![console-link](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img9.png)
 
 Now paste it on your prometheus.yml file, on your targets (remove the https://):
 
@@ -328,11 +334,11 @@ Now you can access your Grafana board through the generated URL. You can log in 
 
 Now we have to set up Grafana to listen to our Prometheus. After logging in, go to "Data Source" on the right menu bar, click on "Add data source" and select Prometheus.
 
-![grafana-data-source](images/img10.png)
+![grafana-data-source](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img10.png)
 
 On the Prometheus data source page, paste the URL to your Prometheus instance on the HTTP > URL and hit "save & test".
 
-![grafana-data-source](images/img11.png)
+![grafana-data-source](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img11.png)
 
 On my [Github repository](https://github.com/leozz37/iot-monitoring-gcp-grafana/blob/master/grafana/grafana.json), there’s a JSON file that will import a Grafana Dashboard. Feel free to use it or create your own. If you looking into creating your dashboards, Grafana uses PromQL for querying metrics data, take a look into its [documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/) for more information.
 
@@ -340,11 +346,11 @@ To import my dashboard, go to the right menu bar, then to Create and Import. Pas
 
 Select Prometheus as your data source and boom, you should a dashboard like this one:
 
-![grafana-dashboard](images/img12.png)
+![grafana-dashboard](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img12.png)
 
 Now plug your ESP32 on the USB and you should see the graph going up and down!
 
-![final-gif](images/gif1.gif)
+![final-gif](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/gif1.gif)
 
 And that’s it. You can monitor data from IoT devices anywhere in the world.
 
