@@ -1,26 +1,23 @@
 ---
-title: Run Sails.js on Google App Engine Flexible Environment
-description: Learn how to deploy a Sails.js app to Google App Engine flexible environment.
+title: Run Sails.js on App Engine flexible environment
+description: Learn how to deploy a Sails.js app to App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Node.js, Sails.js
 date_published: 2016-05-20
 ---
-## Sails.js
 
-> [Sails][sails] makes it easy to build custom, enterprise-grade
-> Node.js apps.
->
-> – sailsjs.org
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
-overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
-Platform.
+[Sails][sails] makes it easy to build custom, enterprise-grade Node.js apps.
+
+You can check out [Node.js and Google Cloud][nodejs-gcp] to get an
+overview of Node.js itself and learn ways to run Node.js apps on Google Cloud.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1. Install the [Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Prepare
 
@@ -42,8 +39,7 @@ Platform.
 
         sails lift
 
-1. Visit [http://localhost:1337](http://localhost:1337) to see the new project's
-home page.
+1. Visit [http://localhost:1337](http://localhost:1337) to see the new project's home page.
 
 ## Deploy
 
@@ -60,7 +56,7 @@ home page.
 
 1. Visit `http://YOUR_PROJECT_ID.appspot.com` to see the `Hello World!` message.
 
-Note: When the the Sails.js app is deployed it will automatically switch to
+When the the Sails.js app is deployed it will automatically switch to
 production mode and listen on the correct port.
 
 [sails]: http://sailsjs.org/

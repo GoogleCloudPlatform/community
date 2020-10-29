@@ -6,9 +6,11 @@ tags: Cloud IoT Core, gateways, Raspberry Pi, Python, MQTT, internet of things
 date_published: 2018-12-10
 ---
 
-Alex Hong | Developer Programs Engineer | Google Cloud IoT Core
+Alex Hong | Developer Programs Engineer | Google
 
-Fengrui Gu | Software Engineer | Google Cloud IoT Core
+Fengrui Gu | Software Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial shows you how to set up and use gateways on IoT Core. From the [documentation][gateways-overview], a
 "gateway is a device that connects less capable devices to IoT Core and performs several tasks on the device's behalf,

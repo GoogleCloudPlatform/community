@@ -6,7 +6,7 @@ tags: microservices, Kubernetes Engine, telepresence, PHP, Redis
 date_published: 2017-04-05
 ---
 
-# Locally developing microservices with Google Kubernetes Engine
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 The [guestbook](https://cloud.google.com/kubernetes-engine/docs/tutorials/guestbook) tutorial for Kubernetes shows how to get a simple PHP and Redis application running in Kubernetes, but doesn't explain how you can actually *change* the code. We'll show you how to set up a fast, productive development environment for coding on Kubernetes. In particular, we'll show how you can make changes locally on your laptop, and see those changes reflected instantly on your externally exposed IP.
 

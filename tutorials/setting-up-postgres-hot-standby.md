@@ -1,16 +1,18 @@
 ---
 title: How to set up PostgreSQL for high availability and replication with Hot Standby
-description: Learn how to configure PostgreSQL to run in Hot Standby mode on Google Cloud Platform.
+description: Learn how to configure PostgreSQL to run in Hot Standby mode on Google Cloud.
 author: jimtravis
 tags: Compute Engine, PostgreSQL, HA
 date_published: 2017-02-18
 ---
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 Learn how to configure PostgreSQL to run in Hot Standby mode on Compute
 Engine. You'll use two Compute Engine instances. One instance will run the
 primary PostgreSQL server and the other instance will run the standby server.
 
-Alternatively, you can use Postgres as a service through [Google Cloud SQL](https://cloud.google.com/sql/docs/postgres/).
+Alternatively, you can use Postgres as a service through [Cloud SQL](https://cloud.google.com/sql/docs/postgres/).
 
 For most applications, data is a critical commodity. Storing data in one place
 is a risky proposition, so [you need to have a strategy and a plan in
@@ -83,11 +85,11 @@ optimize Postgres in standby scenarios, refer to the
 
 ## Before you begin
 
-[Select or create a Google Cloud Platform project](https://console.cloud.google.com/project).
+[Select or create a Google Cloud project](https://console.cloud.google.com/project).
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform (GCP), including Compute Engine.
+This tutorial uses billable components of Google Cloud, including Compute Engine.
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/)
 to generate a cost estimate based on your projected usage.
@@ -212,7 +214,7 @@ must add an entry for the user `repuser` to enable replication.
 This configuration file contains the main settings for Postgres. Here, you
 will modify the file to enable archiving and replication.
 
-Important: Don't forget to uncomment any lines
+**Important**: Don't forget to uncomment any lines
 you edit in the configuration files, or your changes won't take effect.
 
 1. Edit the file. In the terminal for the primary server, enter the following
@@ -259,7 +261,7 @@ terminal for the standby server, run the following command:
 
     $ sudo service postgresql stop
 
-Important: Don't start the service again until all configuration and backup
+**Important**: Don't start the service again until all configuration and backup
 steps are complete. You must bring up the standby server in a state where it
 is ready to be a backup server. This means that all configuration settings
 must be in place and the databases must be already synchronized. Otherwise,
@@ -450,7 +452,7 @@ from the folder that you renamed to `main_old_2`:
 ## Cleaning up
 
 After you've finished the tutorial, you can clean up the resources you created on
-Google Cloud Platform so you won't be billed for them in the future. The following sections
+Google Cloud so you won't be billed for them in the future. The following sections
 describe how to delete or turn off these resources.
 
 ### Deleting the project
@@ -470,7 +472,7 @@ them prevents you from exceeding project quota limits.
 
 To delete the project:
 
-1. In the Cloud Platform Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
+1. In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1. In the project list, select the project you want to delete and click **Delete project**.
 After selecting the checkbox next to the project name, click **Delete project**.
 1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
@@ -479,7 +481,7 @@ After selecting the checkbox next to the project name, click **Delete project**.
 
 To delete a Compute Engine instance:
 
-1. In the Cloud Platform Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
+1. In the Cloud Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
 1. Click the checkbox next to your `lamp-tutorial` instance.
 1. Click the **Delete** button at the top of the page to delete the instance.
 
@@ -489,7 +491,7 @@ Deleting firewall rules for the default network
 
 To delete a firewall rule:
 
-1. In the Cloud Platform Console, go to the [**Firewall Rules** page](https://console.cloud.google.com/networking/firewalls/list).
+1. In the Cloud Console, go to the [**Firewall Rules** page](https://console.cloud.google.com/networking/firewalls/list).
 1. Click the checkbox next to the firewall rule you want to delete.
 1. Click the **Delete** button at the top of the page to delete the firewall rule.
 

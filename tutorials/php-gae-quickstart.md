@@ -14,9 +14,9 @@ date_published: 2019-03-22
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=php_gae_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=php_gae_quickstart)
 
 </walkthrough-alt>
 
@@ -25,7 +25,7 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 This tutorial shows you how to deploy a sample application to App Engine
 using the `gcloud` command.
 
-Here are the steps you will be taking.
+Here are the steps you'll be taking.
 
 *   **Create a project**
 
@@ -34,7 +34,7 @@ Here are the steps you will be taking.
 
 *   **Build and run your "Hello, world!" app**
 
-    You will learn how to run your app using Cloud Shell, right in your
+    You'll learn how to run your app using Cloud Shell, right in your
     browser. At the end, you'll deploy your app to the web using the `gcloud`
     command.
 
@@ -45,7 +45,7 @@ Here are the steps you will be taking.
 
 ## Project setup
 
-GCP organizes resources into projects, which collect all of the related resources for a single
+Google Cloud organizes resources into projects, which collect all of the related resources for a single
 application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
@@ -71,7 +71,7 @@ Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-clo
 Use Cloud Shell to clone and navigate to the "Hello World" code. The sample code is cloned from your 
 project repository to the Cloud Shell.
 
-Note: If the directory already exists, remove the previous files before cloning.
+If the directory already exists, remove the previous files before cloning.
 
 ```bash
 git clone -b phase0-helloworld https://github.com/GoogleCloudPlatform/appengine-php-guestbook
@@ -140,13 +140,13 @@ Shell.
 
 ### Create an application
 
+If you already created an app, you can skip this step.
+
 To deploy your app, you need to create an app in a region:
 
 ```bash
 gcloud app create
 ```
-
-Note: If you already created an app, you can skip this step.
 
 ### Deploying with Cloud Shell
 
@@ -188,13 +188,13 @@ You have successfully deployed an App Engine application!
 
 Here are some next steps:
 
-**Download the Google Cloud SDK and develop locally**
+**Download the Cloud SDK and develop locally**
 
-Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
+Install the [Cloud SDK][cloud-sdk-installer] on your local machine.
 
 **Build your next application**
 
-Learn how to use App Engine with other GCP products:
+Learn how to use App Engine with other Google Cloud products:
 
 <walkthrough-tutorial-card url=https://cloud.google.com/appengine/docs/php/cloud-sql/ icon="SQL_SECTION" label="cloudSql">
 **Learn to use Cloud SQL.** Cloud SQL is a fully-managed, relational MySQL

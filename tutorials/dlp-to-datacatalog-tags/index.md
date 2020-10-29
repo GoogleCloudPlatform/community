@@ -6,6 +6,10 @@ tags: database, Cloud DLP, Java, PII
 date_published: 2020-04-27
 ---
 
+Marcelo Costa and Scott Ellis | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 Cloud Data Loss Prevention (Cloud DLP) can help you to discover, inspect, and classify sensitive elements in your data. The 
 results of these inspections can be valuable as *tags* in Data Catalog. This tutorial shows how to inspect BigQuery data 
 using the Cloud Data Loss Prevention API and then use the Data Catalog API to create tags at the column level with the 
@@ -30,7 +34,7 @@ This tutorial uses billable components of Google Cloud, including the following:
 
 - BigQuery
 - Cloud Data Loss Prevention
-- Cloud Data Catalog
+- Data Catalog
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your 
 projected usage.

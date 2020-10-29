@@ -6,7 +6,9 @@ tags: BigQuery, ELT, Dataform, workflow, streaming
 date_published: 2020-05-14
 ---
 
-## Overview
+Sam Lachterman and Vince Gonzalez | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 Frameworks for streaming analytics have become increasingly important in contemporary data warehousing, as business users' 
 demand for real-time analytics continues unabated. Big strides have been made to improve data freshness inside warehouses 

@@ -6,7 +6,11 @@ tags: Cloud Dataflow, Cloud Scheduler
 date_published: 2020-08-31
 ---
 
-[Cloud Dataflow](https://cloud.google.com/dataflow) is a managed service for handling 
+Zhong Chen | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+[Dataflow](https://cloud.google.com/dataflow) is a managed service for handling 
 streaming jobs and batch jobs. You can typically launch a streaming job and not worry about operating it afterwards. 
 However, for your batch jobs, you often need to trigger them based on certain conditions.
 
@@ -27,7 +31,7 @@ save them in a Cloud Storage bucket.
 
 ![Upload Dataflow templates in a Cloud Storage bucket](https://storage.googleapis.com/gcp-community/tutorials/schedule-dataflow-jobs-with-cloud-scheduler/store_a_template_in_gcs.png)
 
-## Cloud Schedule jobs
+## Cloud Scheduler jobs
 
 When you have your templates ready, you can set up Cloud Scheduler jobs to trigger Dataflow templates. 
 

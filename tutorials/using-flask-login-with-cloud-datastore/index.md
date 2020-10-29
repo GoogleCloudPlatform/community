@@ -1,10 +1,12 @@
 ---
-title: Using Flask-Login with Cloud Firestore in Datastore mode
-description: Represent your Cloud Datastore entity with a Python class and use this for Flask-Login user management.
+title: Using Flask-Login with Firestore in Datastore mode
+description: Represent your Datastore entity with a Python class and use this for Flask-Login user management.
 author: komlasapaty
 tags: Flask Framework, Python 3
 date_published: 2020-09-25
 ---
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 In this tutorial, you implement user authentication using the popular Flask extension [Flask-Login](https://flask-login.readthedocs.io) with
 [Firestore in Datastore mode](https://cloud.google.com/datastore/docs/datastore-api-tutorial) as the database backend. This tutorial demonstrates the use of 

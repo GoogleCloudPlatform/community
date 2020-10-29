@@ -2,16 +2,16 @@
 title: Locally connected microcontrollers and real-time analytics (part 2 of 2)
 description: Learn how to process, store, and analyze streaming sensor data in real time.
 author: markku,varundhussa
-tags: IoT, Internet of Things, Dataflow, BigQuery, Data Studio, PubSub, Cloud Datalab
+tags: IoT, Internet of Things, Dataflow, BigQuery, Data Studio, PubSub, Datalab
 date_published: 2019-03-20
 ---
 
-Varun Dhussa | Solutions Architect | Google Cloud Platform
+Varun Dhussa and Markku Lepisto | Solutions Architect | Google
 
-Markku Lepisto | Solutions Architect | Google Cloud Platform
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This two-part tutorial demonstrates how to control an [Arduino Microcontroller](https://www.arduino.cc/) with a
-[Raspberry Pi](https://www.raspberrypi.org/), connect the devices to [Cloud IoT Core](https://cloud.google.com/iot-core/),
+[Raspberry Pi](https://www.raspberrypi.org/), connect the devices to [IoT Core](https://cloud.google.com/iot-core/),
 post sensor data from the devices, and analyze the data in real time.
 [Part 1](https://cloud.google.com/community/tutorials/ardu-pi-serial-part-1) of the tutorial created a *hybrid*
 device, combining the strengths of a Linux-based microprocessor with internet connectivity and TLS stack, together with a 
@@ -19,37 +19,37 @@ constrained microcontroller for analog I/O.
 
 ## Part 2 objectives
 
-- Process sensor data from Cloud Pub/Sub using Cloud Dataflow.
+- Process sensor data from Pub/Sub using Dataflow.
 - Store processed sensor data in BigQuery.
 - Create a report dashboard using Google Data Studio.
-- Create a notebook on Cloud Datalab.
+- Create a notebook on Datalab.
 
 ![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/architecture.png)
 
 ## Before you begin
 
-This tutorial assumes that you already have a [Google Cloud Platform (GCP)](https://console.cloud.google.com/freetrial) 
+This tutorial assumes that you already have a [Google Cloud](https://console.cloud.google.com/freetrial) 
 account set up and have [Part 1](https://cloud.google.com/community/tutorials/ardu-pi-serial-part-1) of the tutorial 
 working.
 
 ## Costs
 
-This tutorial uses billable components of GCP, including the following:
+This tutorial uses billable components of Google Cloud, including the following:
 
-- Cloud IoT Core
-- Cloud Pub/Sub
-- Cloud Dataflow
+- IoT Core
+- Pub/Sub
+- Dataflow
 - BigQuery
-- Cloud Datalab
+- Datalab
 
 This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/), 
 but you can use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on
 your projected production usage.
 
-## Enable Cloud Dataflow for your project
+## Enable Dataflow for your project
 
 Perform all of the steps in the "Before you begin" section of the
-[Cloud Dataflow Quickstart](https://cloud.google.com/dataflow/docs/quickstarts/quickstart-python)—through creating a Cloud 
+[Dataflow Quickstart](https://cloud.google.com/dataflow/docs/quickstarts/quickstart-python)—through creating a Cloud 
 Storage bucket—on your local development environment (e.g., laptop).
 
 ## Enable BigQuery for your project
@@ -57,7 +57,7 @@ Storage bucket—on your local development environment (e.g., laptop).
 Perform all of the steps in the "Before you begin" section of the
 [BigQuery Quickstart](https://cloud.google.com/bigquery/docs/quickstarts/quickstart-web-ui).
 
-## Install environment dependencies and the Google Cloud SDK
+## Install environment dependencies and the Cloud SDK
 
 1.  Clone the source repository:
 
@@ -86,15 +86,15 @@ region or a geography containing multiple regions. Follow the
 can only be specified while creating it. More details are available
 [here](https://cloud.google.com/bigquery/docs/locations).
 
-## Start the Cloud Dataflow job
+## Start the Dataflow job
 
-[Cloud Dataflow](https://cloud.google.com/dataflow/) is a fully managed service for transforming and enriching data in
+[Dataflow](https://cloud.google.com/dataflow/) is a fully managed service for transforming and enriching data in
 stream (real-time) and batch (historical) modes with equal reliability and expressiveness using the
 [Apache Beam SDK](https://beam.apache.org/). 
 
-Select your preferred Cloud Dataflow [service region](https://cloud.google.com/dataflow/docs/concepts/regional-endpoints).
+Select your preferred Dataflow [service region](https://cloud.google.com/dataflow/docs/concepts/regional-endpoints).
 
-Run the command below to start the Apache Beam pipeline on the Cloud Dataflow runner.
+Run the command below to start the Apache Beam pipeline on the Dataflow runner.
 
     $ python -m beam-solarwind --project [project_name] \
     --topic [pub_sub_topic_name (e.g., projects/my-project/topics/my-topic)] \
@@ -105,14 +105,14 @@ Run the command below to start the Apache Beam pipeline on the Cloud Dataflow ru
     --output "[bigquery_table_dataset].[table_name]" \
     --output_avg "[bigquery_average_table_dataset].[table_avg]" 
 
-Go to the [Cloud Dataflow](https://console.cloud.google.com/dataflow) interface in the GCP Console and select your 
-newly created Cloud Dataflow job to see your pipeline.
+Go to the [Dataflow](https://console.cloud.google.com/dataflow) interface in the GCP Console and select your 
+newly created Dataflow job to see your pipeline.
 
-The following diagram shows an example Cloud Dataflow pipeline:
+The following diagram shows an example Dataflow pipeline:
 
 ![DF job](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/df-job.png)
 
-The first part of the Cloud Dataflow job sets up the pipeline options with the required parameters passed through the 
+The first part of the Dataflow job sets up the pipeline options with the required parameters passed through the 
 command-line parameters, as shown above. The `streaming mode` option is also enabled. To allow access to the modules 
 available in the main session, the `save_main_session` flag is set. After this, the beam pipeline object is created.
 
@@ -122,7 +122,7 @@ available in the main session, the `save_main_session` flag is set. After this, 
     options.view_as(StandardOptions).streaming = True
     p = beam.Pipeline(options=options)
 
-The first two steps of the Cloud Dataflow pipeline read incoming events from Cloud Pub/Sub and then parse the JSON text:
+The first two steps of the Dataflow pipeline read incoming events from Pub/Sub and then parse the JSON text:
 
     records = (p | 'Read from PubSub' >> beam.io.ReadFromPubSub(
         topic=args.topic) | 'Parse JSON to Dict' >> beam.Map(
@@ -169,7 +169,7 @@ The one on the left aggregates the events and writes them to the BigQuery averag
 ## View results in BigQuery
 
 1.  Ensure that the client from [Part 1](https://cloud.google.com/community/tutorials/ardu-pi-serial-part-1) is running and 
-    posting data to Cloud Pub/Sub through Cloud IoT Core.
+    posting data to Pub/Sub through IoT Core.
 2.  Go to the [BigQuery UI](https://console.cloud.google.com/bigquery) in the GCP Console.
 3.  In the BigQuery menu, select your project `my_project_id`.
 4.  Select the dataset `my_dataset`.
@@ -226,16 +226,16 @@ Data Studio is a managed tool that allows creation and sharing of dashboards and
 **Data Studio report:**
 ![dsreport](https://storage.googleapis.com/gcp-community/tutorials/ardu-pi-serial-part-2/ds-report.jpg)
 
-## Create a Cloud Datalab notebook
+## Create a Datalab notebook
 
-Cloud Datalab is an interactive tool for data exploration that is built on [Jupyter](https://jupyter.org/).
+Datalab is an interactive tool for data exploration that is built on [Jupyter](https://jupyter.org/).
 The Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code,
 equations, visualizations, and narrative text.
 
-1.  Go to the [Cloud Datalab quickstart](https://cloud.google.com/datalab/docs/quickstart) and perform all of the steps in
+1.  Go to the [Datalab quickstart](https://cloud.google.com/datalab/docs/quickstart) and perform all of the steps in
     the "Before you begin" section.
 2.  Go to the [notebooks page](http://localhost:8081/notebooks/datalab/notebooks/).
-3.  Click the **Upload** button to add `community/tutorials/ardu-pi-serial-part2/solarwindreport.ipynb` to Cloud Datalab.
+3.  Click the **Upload** button to add `community/tutorials/ardu-pi-serial-part2/solarwindreport.ipynb` to Datalab.
 4.  Click the notebook to open and edit it.
     1.  Set the project ID (e.g., `my_project_id`).
     2.  Set the dataset name (e.g., `my_dataset`).
@@ -250,12 +250,12 @@ equations, visualizations, and narrative text.
 
 ## Clean up
 
-1.  [Clean up](https://cloud.google.com/datalab/docs/quickstart#clean-up) the Cloud Datalab environment.
+1.  [Clean up](https://cloud.google.com/datalab/docs/quickstart#clean-up) the Datalab environment.
 2.  Delete the Data Studio report:
     1.  Go to the [Data Studio interface](https://datastudio.google.com).
     2.  In the menu section, click the three-dot menu next to the report name.
     3.  Select **Remove**.
-3.  Stop the [Cloud Dataflow](https://cloud.google.com/dataflow/docs/guides/stopping-a-pipeline) job.
+3.  Stop the [Dataflow](https://cloud.google.com/dataflow/docs/guides/stopping-a-pipeline) job.
 4.  Delete the Cloud Storage bucket:
 
         $ gsutil rm -r gs://[cloud_storage_bucket]
@@ -277,7 +277,7 @@ equations, visualizations, and narrative text.
 * Check out the new [tutorial](https://cloud.google.com/community/tutorials/sigfox-gw) on using the
   Sigfox [Sens'it Discovery V3](https://www.sensit.io/) device with this integration and learning how to encode and decode 
   its binary data and configuration payloads, as well as store the data in real time in BigQuery.
-* Learn more about [IoT on GCP](https://cloud.google.com/solutions/iot/).
-* Learn more about [Big data analytics on GCP](https://cloud.google.com/solutions/big-data/), to turn your
+* Learn more about [IoT on Google Cloud](https://cloud.google.com/solutions/iot/).
+* Learn more about [Big data analytics on Google Cloud](https://cloud.google.com/solutions/big-data/), to turn your
   IoT data into actionable insights.
 * Try out other GCP features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).

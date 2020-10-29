@@ -1,16 +1,18 @@
 ---
-title: Transparent Proxy and Filtering on Kubernetes
+title: Transparent proxy and filtering on Kubernetes
 description: Learn how to run a transparent proxy on Kubernetes to filter and intercept traffic out of your deployments.
 author: danisla
 tags: Kubernetes, mitmproxy, proxy
 date_published: 2017-09-23
 ---
 
-Dan Isla | Google Cloud Solution Architect | Google
+Dan Isla | Solution Architect | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 There are many application environments and scenarios where you may want to filter and intercept all HTTP/S traffic out of a pod. Example use cases include isolating external access to specific HTTP or HTTPS paths, methods and in-flight altering of requests.
 
-An example of HTTPS interception would be filtering access to Google Cloud Storage buckets. Most proxy solutions do not support HTTPS inspection so the filtering that can be done is limited at the IP/DNS level. For the case of a Cloud Storage bucket, the bucket name is embedded under the https://storage.googleapis.com/BUCKET_NAME/object URL so filtering is limited to all buckets under the storage.googleapis.com domain, not any specific bucket.
+An example of HTTPS interception would be filtering access to Cloud Storage buckets. Most proxy solutions do not support HTTPS inspection so the filtering that can be done is limited at the IP/DNS level. For the case of a Cloud Storage bucket, the bucket name is embedded under the https://storage.googleapis.com/BUCKET_NAME/object URL so filtering is limited to all buckets under the storage.googleapis.com domain, not any specific bucket.
 
 If you wanted to transparently add request/response headers to requests between services for tracing purposes, you can do that without the services having to explicitly set them.
 
@@ -30,11 +32,11 @@ This tutorial uses the [tproxy-sidecar](https://github.com/danisla/kubernetes-tp
 
 ## Before you begin
 
-This tutorial assumes you already have a Google Cloud Platform (GCP) account and are familiar with the high level concepts of Kubernetes Pods and Deployments.
+This tutorial assumes you already have a Google Cloud account and are familiar with the high level concepts of Kubernetes Pods and Deployments.
 
 ## Costs
 
-This tutorial uses billable components of GCP, including:
+This tutorial uses billable components of Google Cloud, including:
 
 - [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/pricing)
 

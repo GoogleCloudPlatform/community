@@ -6,6 +6,8 @@ tags: Cloud Run, React, Front-end, NGinx
 date_published: 2020-01-01
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 In this tutorial, you'll learn how to run a Create React App (CRA) with Nginx and deploy it to Cloud Run. Although other 
 services in Google Cloud can easily serve similar web applications, Cloud Run is a good option in cases where some
 customization is needed to the underlying runtime.
@@ -16,7 +18,7 @@ Before you begin this tutorial, you'll need the following:
 
 * A Google Cloud project with billing enabled. You can use an existing project or
   [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) for this tutorial. 
-* The [Google Cloud SDK](https://cloud.google.com/sdk/install) installed on your computer.
+* The [Cloud SDK](https://cloud.google.com/sdk/install) installed on your computer.
 * [Git](https://git-scm.com/downloads) installed on your computer.
 * A code editor installed on your computer.
 
@@ -101,7 +103,7 @@ will run.
  
 ## Upload and deploy
 
-Open the Google Cloud SDK and change the working directory to the root of your project. For example:
+Open the Cloud SDK and change the working directory to the root of your project. For example:
   
     cd C:\tutorials\react-cloud-run\
   

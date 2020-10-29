@@ -1,15 +1,19 @@
 ---
-title: Run an Elixir Phoenix app on Google Compute Engine
-description: Learn how to deploy a Phoenix app to Google Compute Engine.
+title: Run an Elixir Phoenix app on Compute Engine
+description: Learn how to deploy a Phoenix app to Compute Engine.
 author: dazuma
 tags: Compute Engine, Elixir, Phoenix
 date_published: 2019-07-22
 ---
 
+Daniel Azuma | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial helps you get started deploying your
 [Elixir](http://elixir-lang.org/) app using the
 [Phoenix](http://phoenixframework.org/) Framework to
-[Google Compute Engine](https://cloud.google.com/compute/), taking
+[Compute Engine](https://cloud.google.com/compute/), taking
 advantage of Google's deep expertise with scalable infrastructure.
 
 In this tutorial, you will:
@@ -19,7 +23,7 @@ In this tutorial, you will:
     [Cloud SQL](https://cloud.google.com/sql)
 *   Create an OTP release for your app using
     [Distillery](https://github.com/bitwalker/distillery)
-*   Deploy your app to Google Compute Engine instances
+*   Deploy your app to Compute Engine instances
 *   Set up load balancing and autoscaling for your app
 
 This tutorial requires Elixir 1.5 and Phoenix 1.4 or later. It assumes you are
@@ -32,19 +36,19 @@ improve the build procedure and cover changes in Distillery 2.1.
 
 ## Before you begin
 
-Before running this tutorial, you must set up a Google Cloud Platform project.
-You also need to have Docker, PostgreSQL, and the Google Cloud SDK installed on
+Before running this tutorial, you must set up a Google Cloud project.
+You also need to have Docker, PostgreSQL, and the Cloud SDK installed on
 your workstation.
 
-### Create a Google Cloud Platform project
+### Create a Google Cloud project
 
 Create a project to host your Phoenix application. You can also reuse
 an existing project.
 
 To create a new project:
 
-1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
-    to create a new GCP project. Remember the project ID; you will
+1.  Use the [Cloud Console](https://console.cloud.google.com/)
+    to create a new Google Cloud project. Remember the project ID; you will
     need it later. Later commands in this tutorial will use `${PROJECT_ID}` as
     a substitution, so you might consider setting the `PROJECT_ID` environment
     variable in your shell.
@@ -57,13 +61,13 @@ To create a new project:
 
 ### Install required applications and services
 
-After you have set up a Google Cloud Platform project, perform the following
+After you have set up a Google Cloud project, perform the following
 tasks on your workstation:
 
 1.  Install **Docker** if you do not already have it. Find instructions on the
     [Docker website](https://www.docker.com/).
 
-2.  Install the **[Google Cloud SDK](https://cloud.google.com/sdk/)** if you do
+2.  Install the **[Cloud SDK](https://cloud.google.com/sdk/)** if you do
     not already have it. Make sure you
     [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK
     and set the default project to the new project you created.
@@ -261,7 +265,7 @@ To set up Cloud SQL Proxy, perform the following steps:
 
         cloud_sql_proxy -dir=/tmp/cloudsql
 
-    Note: This runs the proxy in the foreground, so subsequent commands
+    This runs the proxy in the foreground, so subsequent commands
     need to be run in a separate shell. If you prefer, feel free to
     background the process instead.
 
@@ -318,11 +322,11 @@ deployment. You will configure the
 [Distillery](https://github.com/bitwalker/distillery) tool to create releases
 for your app.
 
-**Note:** Elixir 1.9 or later can build basic releases by itself, but this
+Elixir 1.9 or later can build basic releases by itself, but this
 tutorial requires additional capabilities provided by Distillery, specifically
 the ability to create a self-extracting executable.
 
-**Note:** If you already have Distillery set up for your application, you can
+If you already have Distillery set up for your application, you can
 skip this section. But make sure `include_erts: true` is set in your `:prod`
 release configuration. This tutorial assumes ERTS is included in releases.
 
@@ -423,7 +427,7 @@ Created a Cloud Storage bucket for your releases:
 
 Now we'll create a Dockerfile script to build your app.
 
-**Note:** This is *not* an image that can be deployed or run directly. We are
+This is *not* an image that can be deployed or run directly. We are
 simply using Docker to cross-compile your application for Debian. If you are
 interested in building a Docker image that can be deployed to a container-based
 environment such as Kubernetes, see the sister tutorial on
@@ -468,7 +472,7 @@ environment such as Kubernetes, see the sister tutorial on
         /test/
         /tmp/
 
-    **Note:** if your app is an umbrella app, you might need to adjust the
+    If your app is an umbrella app, you might need to adjust the
     paths to include the build, deps, and node_modules directories of the
     constituent apps. In general, you want Docker to ignore artifacts that come
     from your development environment, so it can perform clean builds.
@@ -498,7 +502,7 @@ upload it to Cloud Storage.
     release directly from your workstation, because it has been cross-compiled
     for Debian.)
 
-2.  Push the release to Google Cloud Storage:
+2.  Push the release to Cloud Storage:
 
         gsutil cp start_release gs://${BUCKET_NAME}/hello-release
 
@@ -508,7 +512,7 @@ to modify the Dockerfile.
 
 ## Deploying your application to a single instance
 
-You can now deploy your application to Google Compute Engine.
+You can now deploy your application to Compute Engine.
 
 Compute Engine instances may provide a startup script that is executed whenever
 the instance is started or restarted. You will use this to install and start
@@ -567,7 +571,7 @@ Now you will start a Compute Engine instance.
             --tags http-server
 
     This command creates a new instance named `hello-instance`, grants it
-    access to Cloud Platform services, and provides your startup script. It
+    access to Google Cloud services, and provides your startup script. It
     also sets an instance attribute with the Cloud Storage URL of your release.
 
 2.  Check the progress of instance creation:
@@ -754,7 +758,7 @@ more information, see the
 
 ### Manage and monitor your deployment
 
-You can use the Cloud Platform Console to monitor load balancing, autoscaling,
+You can use the Cloud Console to monitor load balancing, autoscaling,
 and your managed instance group.
 
 In the [Compute > Compute Engine](https://console.cloud.google.com/compute/instances)
@@ -769,19 +773,19 @@ section.
 ## Cleaning up
 
 After you've finished this tutorial, you can clean up the resources you created
-on Google Cloud Platform so you won't be billed for them in the future. You
+on Google Cloud so you won't be billed for them in the future. You
 can delete the resources individually, or delete the entire project.
 
 ### Delete individual resources
 
-Delete the load balancer on the Cloud Platform Console
+Delete the load balancer on the Cloud Console
 [network services page](https://console.cloud.google.com/net-services). Also
 delete the related resources when it asks.
 
-Delete the compute engine instance group on the Cloud Platform Console
+Delete the compute engine instance group on the Cloud Console
 [instance groups page](https://console.cloud.google.com/compute/instanceGroups).
 
-Delete the remaining single instance on the Cloud Platform Console
+Delete the remaining single instance on the Cloud Console
 [instances page](https://console.cloud.google.com/compute/instances).
 
 Delete the Cloud Storage bucket hosting your OTP release from the
@@ -799,7 +803,7 @@ the gcloud command line tool, run:
 
     gcloud projects delete ${PROJECT_ID}
 
-where `${PROJECT_ID}` is your Google Cloud Platform project ID.
+where `${PROJECT_ID}` is your Google Cloud project ID.
 
 **Warning**: Deleting a project has the following consequences:
 

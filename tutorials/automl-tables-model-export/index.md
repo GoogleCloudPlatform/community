@@ -6,6 +6,10 @@ tags: ML, machine learning, TensorBoard
 date_published: 2020-08-18
 ---
 
+Amy Unruh | Developer Advocate | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 With [AutoML Tables](https://cloud.google.com/automl-tables/docs/), you can automatically build and deploy state-of-the-art machine-learning models using your
 own structured data. See [this notebook](https://cloud.google.com/blog/products/ai-machine-learning/use-automl-tables-from-a-jupyter-notebook) for a walkthrough.
 

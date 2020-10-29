@@ -6,6 +6,10 @@ tags: Cloud Natural Language API, APCS, REST, Magpie, education
 date_published: 2017-03-28
 ---
 
+Laurie White | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 The Advanced Placement Computer Science A program provides the [Magpie lab](http://media.collegeboard.com/digitalServices/pdf/ap/ap-compscia-magpie-lab-student-guide.pdf) for students to practice using basic control structures to parse user input as part of a chatbot. This tutorial is designed to be an additional enrichment exercise (typically used after the AP exam) to go beyond  basic parsing and instead use Google's [Cloud Natural Language API][nlp], a pretrained machine learning model that will do text analysis for the user. The lab demonstrates how to use the Cloud Natural Language API to determine the user sentiment.
 
 The major new skill covered in this lab is how to make HTTP POST requests from Java.
@@ -16,9 +20,9 @@ This tutorial is written for an audience of CS teachers who are exposing their s
 
 If you've completed [On Beyond Magpie, Part 0][magpie0], you should have all of the prerequisites completed. Otherwise,
 
-1. Create a project in the [Google Cloud Platform Console][console].
+1. Create a project in the [Cloud Console][console].
 1. Enable billing for your project.
-1. Ensure the Cloud Natural Language API is enabled by going to the [API manager][manager] from the main GCP menu.
+1. Ensure the Cloud Natural Language API is enabled by going to the [API manager][manager] from the main Google Cloud menu.
 1. Generate an API key for your project.
 
 ## A simple chatbot
@@ -205,9 +209,6 @@ else if (statement.indexOf("cats") >= 0) {...
 To use the different features of the Cloud Natural Language API, see the following Community articles:
 
 * [On Beyond Magpie: Part 2, Entity Analysis][magpie2]
-
-
-
 
 
 [annotate]:https://apis-explorer.appspot.com/apis-explorer/#search/natural/language/v1/language.documents.annotateText

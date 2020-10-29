@@ -6,6 +6,10 @@ tags: Identity-Aware Proxy, Cloud Storage, App Engine, serverless
 date_published: 2020-10-06
 ---
 
+Ian Maddox | Solutions Architect | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 The
 [code that accompanies this document](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/authenicated-browser-downloads-with-audit-logging/) 
 provides an example means of serving images, documents, and other files stored in Cloud Storage while requiring the user to be authenticated with Google. This 
@@ -57,7 +61,7 @@ extension.
 
 ## Opportunities for customization
 
-This code provide a plain authenticated file server. Often, you might have requirements for transforming files before delivering them to the user. Here are a few
+This code provides a plain authenticated file server. Often, you might have requirements for transforming files before delivering them to the user. Here are a few
 ways that this code can be modified to fit more specific needs:
 
 * Image or document watermarking

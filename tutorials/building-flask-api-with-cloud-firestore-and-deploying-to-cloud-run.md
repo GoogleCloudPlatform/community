@@ -6,6 +6,8 @@ tags: Flask Framework, Python 3, REST API, Firestore, Cloud Run
 date_published: 2019-09-03
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 In this tutorial, you build a CRUD (create, read, update, delete) API to manage to-do lists using Flask (a
 microframework for Python) and Firestore (a flexible, scalable database for mobile, web, and server development), and you deploy the API to
 [Cloud Run](https://cloud.google.com/run/) (a serverless environment to run containers
@@ -182,7 +184,7 @@ Run the following command to build your Docker container and push to Container R
 Recently, Google announced
 [Cloud Run Button](https://cloud.google.com/blog/products/serverless/introducing-cloud-run-button-click-to-deploy-your-git-repos-to-google-cloud),
 an image and link that you can add to the `README` file for your source code repositories to allow others to deploy your 
-application to GCP using Cloud Run.
+application to Google Cloud using Cloud Run.
 
 The steps to add the Cloud Run Button to your repository are as follows:
 
