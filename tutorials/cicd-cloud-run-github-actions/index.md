@@ -1,9 +1,9 @@
 ---
-title: Creating a CI/CD Environment for Serverless Containers on Google Cloud Run with GitHub Actions
-description: Using GitHub Actions to test and deploy Docker containers on Google Cloud Run.
+title: Creating a CI/CD environment for serverless containers on Cloud Run with GitHub Actions
+description: Learn hoe to use GitHub Actions to test and deploy Docker containers on Cloud Run.
 author: leozz37
 tags: Cloud Run, Golang, GitHub, Docker, cicd, devops
-date_published: 2020-10-03
+date_published: 2020-10-30
 ---
 
 In this article, we will be setting up step by step an environment for automated building, testing, and deployment, using Docker and Google Cloud Run.
@@ -33,13 +33,13 @@ I’ll use the [Google Cloud CLI](https://cloud.google.com/sdk/install) to set u
 
 ## Getting started
 
-![cover](images/cover.png)
+![cover](https://storage.googleapis.com/gcp-community/tutorials/cicd-cloud-run-github-actions/cover.png)
 
 Since we are talking Docker, the language you are using it's not important, but in this tutorial, I will be using Golang. Furthermore, I won’t go into deep explanation of the sample code and its Dockerfile, since it’s the same idea for any technology.
 
 First, let’s take a look into our infrastructure:
 
-![architecture](images/architecture.png)
+![architecture](https://storage.googleapis.com/gcp-community/tutorials/cicd-cloud-run-github-actions/architecture.png)
 
 Every time we push to our GitHub repository, it will trigger a GitHub Actions Workflow, that will build and test our code. If it builds and every test passes, our container will be deployed to Cloud Run, making it accessible to everyone.
 
@@ -233,11 +233,11 @@ On GitHub, we need to set up some secrets environment in our repository. They ar
 
 Cat the key.json content and paste it on GCP_CREDENTIALS secret.
 
-![secret-json](images/img1.png)
+![secret-json](https://storage.googleapis.com/gcp-community/tutorials/cicd-cloud-run-github-actions/img1.png)
 
 Your secrets should look like this:
 
-![secrets](images/img2.png)
+![secrets](https://storage.googleapis.com/gcp-community/tutorials/cicd-cloud-run-github-actions/img2.png)
 
 Now we just need to create a yml file telling which commands our workflow should runs. In you project directory, create a folder called ".github" and create another one inside it called "workflows".
 
@@ -298,11 +298,11 @@ jobs:
 
 Now commit all your changes and push it to GitHub, then go to your repository home page. While your building is running, you should see a yellow ball over your file list:
 
-![files](images/img3.png)
+![files](https://storage.googleapis.com/gcp-community/tutorials/cicd-cloud-run-github-actions/img3.png)
 
 And if you go into your Actions (click the yellow ball), you can see in real time your steps being executed:
 
-![build](images/img4.png)
+![build](https://storage.googleapis.com/gcp-community/tutorials/cicd-cloud-run-github-actions/img4.png)
 
 You can list your services and get its link, and access it on your browser:
 
@@ -310,7 +310,7 @@ You can list your services and get its link, and access it on your browser:
 $ gcloud run services list
 ```
 
-![result](images/img5.png)
+![result](https://storage.googleapis.com/gcp-community/tutorials/cicd-cloud-run-github-actions/img5.png)
 
 And that’s it! Now every change you made into your project and push it into the master branch, GitHub will build, test, and deploy it automatically.
 
@@ -328,12 +328,10 @@ Deleting a project has the following consequences:
 To delete a project, do the following:
 
 1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-1.  In the project list, select the project you want to delete and click **Delete project**.
+1.  In the project list, select the project you want to delete and click **Delete**.
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
-    ![deleting the project](https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/delete-project.png)
+### What's next
 
-### Example: What's next
-
-- Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
+- Learn more about [Google Cloud developer tools](https://cloud.google.com/products/tools).
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
