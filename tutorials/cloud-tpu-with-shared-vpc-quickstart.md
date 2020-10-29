@@ -6,6 +6,11 @@ tags: Cloud TPU, Shared VPC, XPN
 date_published: 2020-10-30
 ---
 
+Bernie Ongewe | Technical Solutions Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+
 This tutorial is an adaptation of the [Cloud TPU quickstart](https://cloud.google.com/tpu/docs/quickstart).
 
 As with the original quickstart, this tutorial introduces you to using Cloud TPUs to run [MNIST](https://developers.google.com/machine-learning/glossary/#MNIST),
