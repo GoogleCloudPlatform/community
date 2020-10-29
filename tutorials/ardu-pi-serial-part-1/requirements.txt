@@ -1,4 +1,4 @@
-cryptography==2.3
+cryptography==3.2
 PyJWT==1.6.4
 pyOpenSSL==18.0.0
 rfc3339==6.0
