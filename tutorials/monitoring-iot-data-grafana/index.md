@@ -176,8 +176,9 @@ You need to generate an elliptic curve (EC) ES256 private/public key pair for yo
 
 ### Install Arduino libraries
 
-Install the “Google Cloud IoT Core JWT” and lwmMQTT from Joel Gaehwiler libraries on your Arduino IDE. These libraries are responsible for connecting, 
-authenticating, and sending messages to Google Cloud.
+Install the [Google Cloud IoT Core JWT library](https://github.com/GoogleCloudPlatform/google-cloud-iot-arduino) and the 
+[Light Weight MQTT (lwmqtt) library by Joël Gähwiler](https://github.com/256dpi/arduino-mqtt) in your Arduino IDE. These libraries are responsible for 
+connecting, authenticating, and sending messages to Google Cloud.
 
 ![arduino libs](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img3.png)
 
