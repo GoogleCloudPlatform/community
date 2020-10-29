@@ -6,6 +6,10 @@ tags: Cloud Run, Golang, Prometheus, Grafana, IoT, data, metrics
 date_published: 2020-10-30
 ---
 
+Leonardo Lima
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 In this tutorial, you set up a monitoring environment for IoT devices with an Arduino-based board (ESP32), Grafana, and Google Cloud.
 
 ## Objectives
@@ -101,7 +105,7 @@ You can check your project dashboard, and if everything goes well, you should se
 
 ### Enable billing
 
-Enable billing in your project:
+Enable billing in your project by running the following command and confirming in the browser that billing is enabled:
 
     open "https://console.cloud.google.com/billing/linkedaccount?project=$PROJECT_ID"
 
@@ -122,14 +126,15 @@ you give them just the publishing role:
 
 ### Choose a region
 
-Choose a region [here](https://cloud.google.com/compute/docs/regions-zones/).
+Choose a region as described [here](https://cloud.google.com/compute/docs/regions-zones/).
 
 This tutorial uses `us-central1`, but you can pick one that better suits you.
 
 ### Set up a Pub/Sub topic, subscription, and registry
 
-On MQTT, Pub/Sub works like an Instagram or Twitter hashtag, where you can publish a post using a hashtag and who is following (or subscribed) to that hashtag
-will see your post. The same works for MQTT, but the hashtag is the topic, the photo is the message, and the people following that topic is the subscription.
+On MQTT, Pub/Sub works like an Instagram or Twitter hashtag, where you can publish a post using a hashtag and whoever is following (or subscribed to)
+that hashtag sees your post. MQTT works in a similar way, but the hashtag is the topic, the photo is the message, and the people following that topic is the 
+subscription.
 
 A registry is like a bucket for your IoT devices. It allows you to group devices and set properties that they all share, such as connection protocol, data 
 storage location, and Pub/Sub topics.
@@ -154,9 +159,9 @@ subscription there.
 
 This tutorial uses the Espressif micro-controller ESP32 for its WiFi and built-in temperature sensor. 
 
-### Generate key pair for device authentication
+### Generate a key pair for device authentication
 
-You need to generate an elliptic curve (EC) ES256 private/public key pair for your device authentication. Make sure to generate them into a safe place.
+You need to generate an elliptic curve (EC) ES256 private/public key pair for your device authentication. Make sure to store them in a safe place.
 
     openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem
 
@@ -171,7 +176,7 @@ You need to generate an elliptic curve (EC) ES256 private/public key pair for yo
 
 ### Install Arduino libraries
 
-Install the “Google Cloud IoT Core JWT” and lwmMQTT from Joel Garhwller libraries on your Arduino IDE. These libraries are responsible for connecting, 
+Install the “Google Cloud IoT Core JWT” and lwmMQTT from Joel Gaehwiler libraries on your Arduino IDE. These libraries are responsible for connecting, 
 authenticating, and sending messages to Google Cloud.
 
 ![arduino libs](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img3.png)
