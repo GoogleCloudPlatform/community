@@ -33,9 +33,9 @@ This tutorial should not generate any usage that would not be covered by the [fr
 
 ## Prerequisites
 
-This tutorial assumes that you're using an Unix operating system.
+This tutorial assumes that you're using a Unix-like operating system.
 
-This tutorial also requires an [ESP32 board](https://www.espressif.com/en/products/socs/esp32).
+This tutorial requires an [ESP32 board](https://www.espressif.com/en/products/socs/esp32).
 
 This tutorial requires the Arduino IDE, so make sure that you have it installed and set up for ESP32 usage. If you need help, you can follow 
 [this tutorial](https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/).
@@ -49,7 +49,7 @@ First, take a look at the infrastructure used in this tutorial:
 
 ![architecture](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/architecture.png)
 
-This tutorial uses the built-in temperature sensor from the ESP32 to send data every 5 seconds to a Pub/Sub service in Google Cloud. This data is processed
+This tutorial uses the built-in temperature sensor of the ESP32 to send data every 5 seconds to a Pub/Sub service in Google Cloud. This data is processed
 by a Go service and sent to Prometheus, and you use Grafana to visualize the data.
 
 Grafana is a visualization tool. Prometheus is a data source for Grafana that collects the data in time series and displays it in a way that Grafana understands.
@@ -133,7 +133,7 @@ This tutorial uses `us-central1`, but you can pick one that better suits you.
 ### Set up a Pub/Sub topic, subscription, and registry
 
 On MQTT, Pub/Sub works like an Instagram or Twitter hashtag, where you can publish a post using a hashtag and whoever is following (or subscribed to)
-that hashtag sees your post. MQTT works in a similar way, but the hashtag is the topic, the photo is the message, and the people following that topic is the 
+that hashtag sees your post. MQTT works in a similar way, but the hashtag is the topic, the photo is the message, and the person following that topic is the 
 subscription.
 
 A registry is like a bucket for your IoT devices. It allows you to group devices and set properties that they all share, such as connection protocol, data 
@@ -182,7 +182,7 @@ connecting, authenticating, and sending messages to Google Cloud.
 
 ![arduino libs](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img3.png)
 
-Now let's use the library code example for ESP32-lwmqtt:
+Use the library code example for ESP32-lwmqtt:
 
 ![arduino example](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img4.png)
 
@@ -198,7 +198,7 @@ In `ciotc_config.h`, set your WiFi network and credentials:
     const char *registry_id = "my-registry";
     const char *device_id = "my-esp32-device";
 
-To get your `private_key_str`, run the following command in the same directory where you saved your public/private keys and paste the "priv" it into the code:
+To get your `private_key_str`, run the following command in the same directory where you saved your public/private keys and paste the private key into the code:
 
     openssl ec -in ec_private.pem -noout -text
 
@@ -344,8 +344,8 @@ Build and submit to production:
 
 ## Use the dashboard to view data
 
-Now you can access your Grafana dashboard through the generated URL. You can log in with the admin login. The default user is `admin`, and the default password 
-is `admin`. Be sure to change that.
+Now you can access your Grafana dashboard through the generated URL. You can log in with the admin credentials. The default user is `admin`, and the default 
+password is `admin`. Be sure to change that.
 
 Now you have to set up Grafana to listen to Prometheus. After logging in, go to **Data Source** on the right menu bar, click **Add data source**, and select
 **Prometheus**.
@@ -381,10 +381,8 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 To delete a project, do the following:
 
 1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-1.  In the project list, select the project you want to delete and click **Delete project**.
+1.  In the project list, select the project you want to delete and click **Delete**.
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
-
-    ![deleting the project](https://storage.googleapis.com/gcp-community/tutorials/sigfox-gw/delete-project.png)
 
 ## What's next
 
