@@ -215,7 +215,7 @@ It should look something like this:
 
 ### Set up temperature data collection
 
-In the `Esp32-lwmqtt.ino` file, make some changes to get the ESP32 temperature. This is how what the code looks like:
+In the `Esp32-lwmqtt.ino` file, make some changes to get the ESP32 temperature. This is what the code looks like:
 
     #include "esp32-mqtt.h"
 
@@ -271,121 +271,111 @@ Set up a Dockerfile:
 
 ## Build and deploy with Cloud Build, Cloud Run, and Container Registry
 
-First, we need to enable Cloud Build, Cloud Run, and Container Registry in our project:
+Enable Cloud Build, Cloud Run, and Container Registry in your project:
 
-```bash
-$ gcloud services enable cloudbuild.googleapis.com run.googleapis.com containerregistry.googleapis.com
-```
+    gcloud services enable cloudbuild.googleapis.com run.googleapis.com containerregistry.googleapis.com
 
-Now let’s build and push our Golang service Docker image to the Cloud Build:
+Build and push your Go service Docker image to Cloud Build:
 
-```bash
-$ gcloud builds submit --tag gcr.io/$PROJECT_ID/$IMAGE_NAME
+    gcloud builds submit --tag gcr.io/$PROJECT_ID/$IMAGE_NAME
 
-$ gcloud run deploy $SERVICE_NAME --image gcr.io/$PROJECT_ID/ $IMAGE_NAME \
-    --region us-central1 \
-    --platform managed \
-    --allow-authenticated \
-    --port 2112
-```
+    gcloud run deploy $SERVICE_NAME --image gcr.io/$PROJECT_ID/ $IMAGE_NAME \
+        --region us-central1 \
+        --platform managed \
+        --allow-authenticated \
+        --port 2112
 
-GCP will generate an URL for your container, copy it. You can get it on your terminal or accessing your project on your project [Cloud Run page](https://console.cloud.google.com/run)
+Google Cloud generates a URL for your container. Copy the URL. You can get it on your terminal or by accessing your project on the
+[**Cloud Run** page](https://console.cloud.google.com/run).
 
 ![console-link](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img9.png)
 
-Now paste it on your prometheus.yml file, on your targets (remove the https://):
+Paste the URL (without the `https://`) in your `prometheus.yml` file, in the `targets` section:
 
-```yml
-global:
-  scrape_interval:     10s
-  evaluation_interval: 10s
-  external_labels:
-    monitor: 'codelab-monitor'
+    global:
+      scrape_interval:     10s
+      evaluation_interval: 10s
+      external_labels:
+        monitor: 'codelab-monitor'
 
-scrape_configs:
-  - job_name: 'temperature'
-    scrape_interval: 5s
-    static_configs:
-    - targets:
-      - 'temperature-grafana-utsma6q3sq-uc.a.run.app' # Your project URL
-```
+    scrape_configs:
+      - job_name: 'temperature'
+        scrape_interval: 5s
+        static_configs:
+        - targets:
+          - 'temperature-grafana-utsma6q3sq-uc.a.run.app' # Your project URL
 
-Since we can't deploy existing images from Docker Hub to Cloud Run, we need to make a custom Docker image for Prometheus and Grafana, then deploy them. Let's deploy a Prometheus container:
+Because you can't deploy existing images from Docker Hub to Cloud Run, you need to make a custom Docker image for Prometheus and Grafana and then deploy them.
 
-```docker
-FROM prom/prometheus
-ADD ./prometheus.yml /etc/prometheus/prometheus.yml
-EXPOSE 9090
-```
+Deploy a Prometheus container:
 
-Building and submitting to production:
+    FROM prom/prometheus
+    ADD ./prometheus.yml /etc/prometheus/prometheus.yml
+    EXPOSE 9090
 
-```bash
-$ gcloud builds submit --tag gcr.io/$PROJECT_ID/prometheus .
+Build and submit to production:
 
-$ gcloud run deploy prometheus --image gcr.io/$PROJECT_ID/prometheus \
-    --region $REGION \
-    --platform managed \
-    --allow-unauthenticated \
-    --port 9090
-```
+    gcloud builds submit --tag gcr.io/$PROJECT_ID/prometheus .
 
-Make sure to save the URL generated. Do the same thing for Grafana:
+    gcloud run deploy prometheus --image gcr.io/$PROJECT_ID/prometheus \
+        --region $REGION \
+        --platform managed \
+        --allow-unauthenticated \
+        --port 9090
 
-```bash
-FROM grafana/grafana
-EXPOSE 3000
-ENTRYPOINT [ "/run.sh" ]
-````
+Make sure to save the URL generated. 
 
-Building and submitting to production:
+Do the same thing for Grafana:
 
-```bash
-$ gcloud builds submit --tag gcr.io/$PROJECT_ID/grafana .
+    FROM grafana/grafana
+    EXPOSE 3000
+    ENTRYPOINT [ "/run.sh" ]
 
-$ gcloud run deploy grafana --image gcr.io/$PROJECT_ID/grafana \
-    --region $REGION \
-    --platform managed \
-    --allow-unauthenticated \
-    --port 3000
-```
+Build and submit to production:
+
+    gcloud builds submit --tag gcr.io/$PROJECT_ID/grafana .
+
+    gcloud run deploy grafana --image gcr.io/$PROJECT_ID/grafana \
+        --region $REGION \
+        --platform managed \
+        --allow-unauthenticated \
+        --port 3000
 
 ## Use the dashboard to view data
 
-Now you can access your Grafana dashboard through the generated URL. You can log in with the admin login (default user: admin, pass: admin, make sure to change that).
+Now you can access your Grafana dashboard through the generated URL. You can log in with the admin login. The default user is `admin`, and the default password 
+is `admin`. Be sure to change that.
 
-Now we have to set up Grafana to listen to our Prometheus. After logging in, go to "Data Source" on the right menu bar, click on "Add data source" and select Prometheus.
+Now you have to set up Grafana to listen to Prometheus. After logging in, go to **Data Source** on the right menu bar, click **Add data source**, and select
+**Prometheus**.
 
 ![grafana-data-source](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img10.png)
 
-On the Prometheus data source page, paste the URL to your Prometheus instance on the HTTP > URL and hit "save & test".
+On the Prometheus data source page, paste the URL to your Prometheus instance in the **URL** field and click **Save and test**.
 
 ![grafana-data-source](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img11.png)
 
-On my [Github repository](https://github.com/leozz37/iot-monitoring-gcp-grafana/blob/master/grafana/grafana.json), there’s a JSON file that will import a Grafana Dashboard. Feel free to use it or create your own. If you looking into creating your dashboards, Grafana uses PromQL for querying metrics data, take a look into its [documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/) for more information.
+In the [GitHub repository accompanying this tutorial](https://github.com/leozz37/iot-monitoring-gcp-grafana/blob/master/grafana/grafana.json), there’s a JSON 
+file that will import a Grafana dashboard. You can use it or create your own. If you're looking into creating your own dashboards, see the
+[Prometheus documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/) for information about PromQL, the language used for querying metrics
+data.
 
-To import my dashboard, go to the right menu bar, then to Create and Import. Paste the JSON content into the text box and hit load.
+To import the dashboard in the sample repository, go to the right menu bar, then to **Create and Import**. Paste the JSON content into the text box and click 
+**Load**.
 
-Select Prometheus as your data source and boom, you should a dashboard like this one:
+Select **Prometheus** as your data source, and you should have a dashboard like this one:
 
 ![grafana-dashboard](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/img12.png)
 
-Now plug your ESP32 on the USB and you should see the graph going up and down!
+Now plug your ESP32 into USB, and you should see the graph going up and down!
 
 ![final-gif](https://storage.googleapis.com/gcp-community/tutorials/monitoring-iot-data-grafana/gif1.gif)
 
-And that’s it. You can monitor data from IoT devices anywhere in the world.
+That’s it. You can monitor data from IoT devices anywhere in the world.
 
 ## Cleaning up
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
-
-Deleting a project has the following consequences:
-
-- If you used an existing project, you'll also delete any other work that you've done in the project.
-- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the
-  future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as
-  an `appspot.com` URL, remain available.
 
 To delete a project, do the following:
 
