@@ -1,5 +1,8 @@
 ---
-title: Event Driven Serverless Scheduling Architecture with Cloud Data Loss Prevention
+title: Event-driven serverless scheduling architecture with Cloud Data Loss Prevention
+description: Learn how to use a simple, effective, and scalable event-driven serverless scheduling architecture with Google Cloud services.
+author: codingphun
+tags: DLP, serverless, schedule jobs, Cloud Function, Cloud Scheduler, BigQuery
 date_published: 2020-04-28
 ---
 
@@ -10,6 +13,7 @@ Tristan Li and Wayne Davis | Google
 This tutorial shows a simple yet effective and scalable event driven serverless scheduling architecture with Google Cloud services. Example included demonstrates how to work with Google Cloud Data Loss Prevention (Cloud DLP) API to inspect BigQuery data. Cloud Data Loss Prevention (Cloud DLP) can help you to discover, inspect, and classify sensitive elements in your data. The architecture is also extensible and can be easily replaced with any type of job/api with SDK support.
 
 ## Objectives
+
 *   Enable Cloud Data Loss Prevention and BigQuery APIs
 *   Create two Cloud Pub/Sub topics to handle events
 *   Create two Cloud Functions to process events
@@ -23,17 +27,19 @@ This tutorial uses billable components of Google Cloud, including the following:
 
 *   BigQuery
 *   Cloud Data Loss Prevention
-*   Cloud Pub/Sub
+*   Pub/Sub
 *   Cloud Function
 *   Cloud Scheduler
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
 ## Reference architecture
+
 The following diagram shows the architecture of the solution:
 ![Example Architecture](arch.png)
 
-### Before you begin
+## Before you begin
+
 1.  Select or create a Google Cloud project
     - [Go to the Managed Resources page](https://console.cloud.google.com/cloud-resource-manager)
 1.  Make sure that billing is enabled for your project 
@@ -41,7 +47,7 @@ The following diagram shows the architecture of the solution:
 1.  Enable the BigQuery and Cloud Data Loss Prevention APIs
     - [Enable the APIs](https://console.cloud.google.com/flows/enableapi?apiid=bigquery.googleapis.com,dlp.googleapis.com)
 
-### Setup Instructions
+## Setup instructions
 
 1. Create two Pub/Sub topics by following instructions on [Pub/Sub quickstart guide](https://cloud.google.com/scheduler/docs/quickstart) 
     - First topic would be used by Cloud Scheduler to kick off a scheduled job
@@ -58,7 +64,7 @@ The following diagram shows the architecture of the solution:
 
 1. Cloud Scheduler job can be kick off by click on the "Run now" button in the console, and it will publish a message to the first Cloud Pub/Sub topic which triggers the first Cloud Function to submit a Cloud DLP scanning job. After CloudDLP scanning job completes, it will publish a message to the second Cloud Pub/Sub topic which triggers the second Cloud Function for further processing. 
 
-### Example: Cleaning up
+## Cleaning up
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
