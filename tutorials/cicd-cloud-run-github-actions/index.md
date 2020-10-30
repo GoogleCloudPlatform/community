@@ -6,10 +6,16 @@ tags: Cloud Run, Golang, GitHub, Docker, cicd, devops
 date_published: 2020-10-30
 ---
 
+Leonardo Lima
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 In this article, you set up an environment for automated building, testing, and deployment, using Docker and Cloud Run.
 
 For Docker, the language that you're using isn't important, but this tutorial uses the Go programming language. This tutorial doesn't go into a deep explanation
-of the sample code and its Dockerfile, because it’s the same idea for any technology.
+of the sample code and its Dockerfile.
+
+![cover](https://storage.googleapis.com/gcp-community/tutorials/cicd-cloud-run-github-actions/cover.png)
 
 ## Objectives
 
@@ -31,14 +37,12 @@ This tutorial should not generate any usage that would not be covered by the [fr
 
 ## Prerequisites
 
-This tutorial assumes that you're using an Unix-like operating system.
+This tutorial assumes that you're using a Unix-like operating system.
 
 This tutorial uses the [Cloud SDK command-line interface](https://cloud.google.com/sdk/install) to set up the environment, but you can also use the
 [Cloud Console](https://console.cloud.google.com).
 
 ## Architecture overview
-
-![cover](https://storage.googleapis.com/gcp-community/tutorials/cicd-cloud-run-github-actions/cover.png)
 
 First, take a look at the infrastructure used in this tutorial:
 
@@ -64,8 +68,8 @@ It's time to get your hands dirty!
 
 ## Go code
 
-Begin with a simple Go program and test. Since the application's functionality doesn’t matter for this tutorial, this tutorial uses a simple example that returns
-a JSON response with "Hello, world".
+Begin with a simple Go program and test. Because the application's functionality doesn’t matter for this tutorial, this tutorial uses a simple example that 
+returns a JSON response with "Hello, world".
 
     package main
 
@@ -85,7 +89,7 @@ a JSON response with "Hello, world".
     func HelloWorld() Phrase {
         return Phrase{
                 Text: "Hello, world",
-    }
+        }
     }
 
     func GetPhrase(w http.ResponseWriter, r *http.Request) {
