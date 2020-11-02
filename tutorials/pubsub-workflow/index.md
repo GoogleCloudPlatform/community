@@ -203,17 +203,20 @@ Run `docker inspect 553c2826f9c6` with the ID for the Redis container to get det
 
 The `processed_bucket` was set in an environment variable at the beginning of this tutorial. Update that value in the `config` file.
 
-## Start a Python container (local development)
+## Start a Python container and install required libraries (local development)
 
-Run this command to start a Python container:
+1.  Start a Python container:
 
-    docker run --rm -it --entrypoint /bin/bash -v $DEMOSOURCE:/pubsub -e PROJECT_ID -e GOOGLE_APPLICATION_CREDENTIALS=/pubsub/$KEYFILE -w /pubsub python:3
+        docker run --rm -it --entrypoint /bin/bash -v $DEMOSOURCE:/pubsub -e PROJECT_ID -e GOOGLE_APPLICATION_CREDENTIALS=/pubsub/$KEYFILE -w /pubsub python:3
+
+1.  Install required libraries and run the `worker.py` script:
+
+        pip install -r /pubsub/requirements.txt
 
 ## Run the Python script
 
-Run the following commands, which install required libraries and run the `worker.py` script:
+Run the `worker.py` script:
 
-    pip install -r /pubsub/requirements.txt
     python worker.py $PROJECT_ID worker
     exit
         
