@@ -12,9 +12,9 @@ date_published: 2019-03-22
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=dotnet_mvms_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=dotnet_mvms_quickstart)
 
 </walkthrough-alt>
 
@@ -31,7 +31,7 @@ Here are the steps you will be taking.
 
 *   **Build and run your "Hello, world!" app**
 
-    You will learn how to run your app using Cloud Shell, right in your
+    You'll learn how to run your app using Cloud Shell, right in your
     browser. At the end, you'll deploy your app to the web using the `gcloud`
     command.
 
@@ -42,7 +42,7 @@ Here are the steps you will be taking.
 
 ## Project setup
 
-GCP organizes resources into projects, which collect all of the related resources for a single
+Google Cloud organizes resources into projects, which collect all of the related resources for a single
 application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
@@ -67,7 +67,7 @@ Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-clo
 Use Cloud Shell to clone and navigate to the "Hello World" code. The sample code
 is cloned from your project repository to the Cloud Shell.
 
-Note: If the directory already exists, remove the previous files before cloning.
+If the directory already exists, remove the previous files before cloning.
 
 ```bash
 git clone https://github.com/GoogleCloudPlatform/dotnet-docs-samples
@@ -137,13 +137,13 @@ Terminate the instance of the application by pressing `Ctrl+C` in the Cloud Shel
 
 ### Create an application
 
+If you already created an app, you can skip this step.
+
 To deploy your app, you need to create an app in a region:
 
 ```bash
 gcloud app create
 ```
-
-Note: If you already created an app, you can skip this step.
 
 ### Deploying with Cloud Shell
 
@@ -186,15 +186,15 @@ Then, select the **App Engine** section.
 
 You have successfully deployed an App Engine application!
 
-Here are some next steps for building your next application and learning to use App Engine with other GCP products:
+Here are some next steps for building your next application and learning to use App Engine with other Google Cloud products:
 
-**Download the Google Cloud SDK and develop locally**
+**Download the Cloud SDK and develop locally**
 
-Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
+Install the [Cloud SDK][cloud-sdk-installer] on your local machine.
 
 **Build your next application**
 
-Learn how to use App Engine with other Google Cloud Platform products:
+Learn how to use App Engine with other Google Cloud products:
 
 <walkthrough-tutorial-card url=https://cloud.google.com/appengine/docs/flexible/dotnet/using-cloud-sql icon="SQL_SECTION" label="cloudSql">
 **Learn to use Cloud SQL.** Cloud SQL is a fully-managed, relational MySQL database for your applications. </walkthrough-tutorial-card><walkthrough-alt>Learn more in the [Cloud SQL documentation](https://cloud.google.com/appengine/docs/flexible/dotnet/using-cloud-sql).</walkthrough-alt>

@@ -1,25 +1,30 @@
 ---
-title: Serve Machine Learning Model on App Engine Flexible Environment
+title: Serve a machine learning model on App Engine flexible environment
 description: Learn how to serve a trained machine learning model with App Engine flexible environment.
 author: dizcology
 tags: App Engine, Cloud Endpoints, Machine Learning
 date_published: 2017-12-18
 ---
+
+Yu-Han Liu | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial takes a deeper look at the sample app [Model serve][modelserve].
 It helps you build your own service serving a trained machine learning model for
 online prediction.
 
 ## Objectives
 
-1.  Deploy a service with [Google Cloud Endpoints][endpoints].
-1.  Deploy a Python app on [Google App Engine][appengine] which loads a trained
+1.  Deploy a service with [Cloud Endpoints][endpoints].
+1.  Deploy a Python app on [App Engine][appengine] which loads a trained
     machine learning model.
 1.  Send requests to the service and get responses.
 
 ## Before you begin
 
-Follow the links in the [Requirements section][requirements] to install Google
-Cloud Platform SDK and enable the APIs for App Engine, Cloud Endpoints, and
+Follow the links in the [requirements section][requirements] to install Google
+Cloud SDK and enable the APIs for App Engine, Cloud Endpoints, and
 Cloud Storage.
 
 ## Overview
@@ -146,7 +151,7 @@ below.
 
   This is optional, but allows you to grant service consumer permissions on the
   [Cloud Endpoints console][endpoints]. The API key must be associated with a
-  Google Cloud Platform project. You can create API keys on the
+  Google Cloud project. You can create API keys on the
   [credentials][credentials] page.
 
 - Additionally, you can configure quota for each consumer at the project level.

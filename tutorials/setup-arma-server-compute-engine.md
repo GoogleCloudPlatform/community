@@ -6,6 +6,8 @@ tags: Compute Engine, Gaming
 date_published: 2020-01-14
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This tutorial shows how to quickly set up an [Arma 3](https://arma3.com/) server on Compute Engine.
 
 ## Before you begin

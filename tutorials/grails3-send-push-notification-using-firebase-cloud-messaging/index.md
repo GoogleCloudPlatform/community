@@ -1,27 +1,29 @@
 ---
-title: Grails 3 Sending Push Notification using Google Firebase Cloud Messaging
-description: Step by step tutorial on how to send push notification using Grails 3 and Google Firebase Cloud Messaging.
+title: Grails 3 sending push notification using Firebase Cloud Messaging
+description: Step by step tutorial on how to send push notification using Grails 3 and Firebase Cloud Messaging.
 author: didinj
 tags: Firebase, Firebase Cloud Messaging, FCM, Grails, Grails 3, Push Notification
 date_published: 2017-08-23
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This tutorial shows how to send push notification using
 [Firebase Cloud Messaging (FCM)](https://firebase.google.com/docs/cloud-messaging)
-and [Grails 3 Framework](https://grails.org/) Web Application.
+and [Grails 3 Framework](https://grails.org/) web application.
 
 ## Objectives
 
-- Configure Firebase to send push notification via Web Application
-- Create a new Grails 3.3.0 Web Application
+- Configure Firebase to send push notifications with a web application
+- Create a new Grails 3.3.0 web application
 - Create function for sending push notification on Grails 3.3.0
 
-## Before You Begin
+## Before you begin
 
 The following is required for this tutorial:
 
-- Terminal or Command Line
-- Text Editor or IDE ([Atom](https://atom.io/), [Netbeans](https://netbeans.org/))
+- Terminal or command line
+- Text editor or IDE ([Atom](https://atom.io/), [Netbeans](https://netbeans.org/))
 - [Java Development Kit 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 - Grails 3.3.0 SDK (https://grails.org/download.html)
 - Google or Gmail account for accessing Firebase dashboard
@@ -44,7 +46,7 @@ This tutorial uses Firebase Cloud Messaging service which is free for limited fe
     [Android](https://firebase.google.com/docs/cloud-messaging/android/client)
     or [iOS](https://firebase.google.com/docs/cloud-messaging/ios/client).
 
-## Create New Grails 3.3.0 Web Application
+## Create new Grails 3.3.0 web application
 
 After installing JDK 8 and Grails 3.3.0 and updating your environment path, you
 can create the new Grails 3.3.0 application.
@@ -76,7 +78,7 @@ can create the new Grails 3.3.0 application.
 
         run-app
 
-## Add Grails Datastore Rest Client Dependency
+## Add Grails datastore REST client dependency
 
 To access Firebase using REST API, add the Grails Datastore Client Rest
 dependency to the Grails 3 application.
@@ -103,7 +105,7 @@ dependency to the Grails 3 application.
 
         compile
 
-## Create Grails Controller and View for Sending Push Notification
+## Create Grails controller and view for sending push notifications
 
 Run the following steps:
 
@@ -164,7 +166,7 @@ Run the following steps:
 
 1.  Run and test push notification from the browser.
 
-## Cleaning Up
+## Cleaning up
 
 After you have finished this tutorial, clean up your Firebase project because
 you can only have 3 projects in the free tier. Just do the following:
@@ -174,7 +176,7 @@ you can only have 3 projects in the free tier. Just do the following:
 1.  Click gear icon on the left menu then click Project Settings menu.
 1.  Scroll down the you will find delete project button.
 
-## Learn More
+## Learn more
 
 Visit [Grails Guides](http://guides.grails.org/) to learn more on official
 Grails guides or if you want different tutorial style you can find

@@ -1,0 +1,23 @@
+{
+  "name": "clean-unused-instances",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "author": "Google Inc.",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "scripts": {
+    "test": ""
+  },
+  "dependencies": {
+    "@google-cloud/compute": "^1.0.0",
+    "safe-buffer": "5.1.2",
+    "isodate":"*"
+  }
+}
+

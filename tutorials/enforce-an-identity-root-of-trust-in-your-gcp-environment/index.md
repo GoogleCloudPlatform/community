@@ -6,6 +6,10 @@ tags: Security, IAM
 date_published: 2020-08-17
 ---
 
+Adrien Walkowiak | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This document shows how to establish a root of trust of your identities in your Google Cloud organization by controlling the
 most powerful users of the Admin console, the *super admin* users. This helps to ensure that no single individual can log in
 as a super admin and change any setting, intentionally or not, without the knowledge and participation of another trusted 

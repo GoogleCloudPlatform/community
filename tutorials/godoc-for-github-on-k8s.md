@@ -6,6 +6,8 @@ tags: microservices, Golang, Ambassador
 date_published: 2020-07-20
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 Go has emerged as an incredibly popular language in the cloud-native ecosystem. Go is a popular choice for both microservices and cloud-native infrastructure
 such as [Kubernetes](https://kubernetes.io). Go includes a documentation generator, GoDoc, that generates HTML documentation from Go source code. GoDoc powers
 [pkg.go.dev](https://pkg.go.dev/), which hosts public documentation of Go source libraries, including

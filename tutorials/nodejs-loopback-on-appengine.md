@@ -1,37 +1,31 @@
 ---
-title: Run a Loopback Node.js on Google App Engine Flexible Environment
-description: Learn how to run a Loopback Node.js app on Google App Engine flexible environment.
+title: Run a LoopBack Node.js app on App Engine flexible environment
+description: Learn how to run a LoopBack Node.js app on App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Node.js, Loopback
 date_published: 2017-11-02
 ---
-## Loopback
 
-> [LoopBack][loopback] is a highly-extensible, open-source Node.js framework
-> that enables you to create dynamic end-to-end REST APIs with little or no
-> coding.
->
-> – loopback.io
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
-overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
-Platform.
+You can check out [Node.js and Google Cloud][nodejs-gcp] to get an
+overview of Node.js itself and learn ways to run Node.js apps on Google Cloud.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](/sdk/).
+1. Install the [Cloud SDK](/sdk/).
 1. [Prepare your environment for Node.js development][nodejs]
 
 ## Prepare the app
 
-1. Install the Loopback CLI:
+1. Install the LoopBack coomand-line interface:
 
         npm install -g loopback-cli
 
-1.  Follow the [Loopback Getting Started guide](https://loopback.io/doc/en/lb3/Getting-started-with-LoopBack.html)
-    to create a Loopback app.
+1.  Follow the [LoopBack Getting Started guide](https://loopback.io/doc/en/lb3/Getting-started-with-LoopBack.html)
+    to create a LoopBack app.
 
 ## Deploy the app
 

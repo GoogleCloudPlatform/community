@@ -1,10 +1,12 @@
 ---
 title: Deploying machine learning models on Kubernetes
 description: An introduction to machine learning model deployment operations using Python and Kubernetes.
-author: Karan
+author: karan6190
 tags: kubernetes,MLOps
 date_published: 2020-04-25
 ---
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 A common pattern for deploying machine learning (ML) models (such as models trained using the SciKit Learn or Keras packages
 for Python) into production environments is to expose these models as RESTful API microservices, hosted from within Docker 

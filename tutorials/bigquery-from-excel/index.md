@@ -6,6 +6,10 @@ tags: BigQuery, Excel, ODBC
 date_published: 2017-01-26
 ---
 
+Tim Swast | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 [BigQuery](https://cloud.google.com/bigquery/) enables
 [standard SQL queries](https://cloud.google.com/bigquery/docs/reference/standard-sql/) to
 [petabytes of data](https://youtu.be/6Nv18xmJirs). But what if software that you depend on doesn't

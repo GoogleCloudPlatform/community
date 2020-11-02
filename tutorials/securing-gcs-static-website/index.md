@@ -6,6 +6,10 @@ tags: authentication, authorization, security
 date_published: 2020-09-25
 ---
 
+Xiang Shen | Solutions Architect | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 It's easy to create and maintain an [HTTPS-based static website on Cloud Storage](https://cloud.google.com/storage/docs/hosting-static-website) with Cloud CDN,
 Cloud Load Balancing, managed SSL certificates, and custom domains. This serverless approach is popular because of its flexibility, scalability, and low cost.   
 However, it can still be challenging to provide authentication and authorization for a static website on Google Cloud *in a serverless fashion*. This tutorial
@@ -191,18 +195,18 @@ Set environment variables that you use throughout the tutorial:
 
         34.120.180.189
 
-1. Add the DNS record to your DNS zone.
+1.  Add the DNS record to your DNS zone.
 
     * If you are using the managed DNS zone in the same project, you can use the following commands:
 
-          gcloud dns record-sets transaction start --zone=$MANAGED_ZONE
+            gcloud dns record-sets transaction start --zone=$MANAGED_ZONE
 
-          gcloud dns record-sets transaction add ${SVC_IP_ADDR} --name=$DNS_NAME --ttl=60 --type=A --zone=$MANAGED_ZONE
+            gcloud dns record-sets transaction add ${SVC_IP_ADDR} --name=$DNS_NAME --ttl=60 --type=A --zone=$MANAGED_ZONE
 
-          gcloud dns record-sets transaction execute --zone=$MANAGED_ZONE
+            gcloud dns record-sets transaction execute --zone=$MANAGED_ZONE
 
     * Otherwise, follow the steps provided by your DNS service provider to add an A record. The A record needs to use the IP address that you just provisioned
-    and the DNS name that you set earlier.
+      and the DNS name that you set earlier.
 
 1.  Create an HTTPS load balancer, configure the bucket as a backend, and enable Cloud CDN for the load balancer:
 

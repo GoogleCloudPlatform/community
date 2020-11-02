@@ -1,14 +1,16 @@
 ---
-title: Transparent Proxy and Filtering on Kubernetes with Initializers
+title: Transparent proxy and filtering on Kubernetes with initializers
 description: Learn how to run a transparent proxy on Kubernetes to filter and intercept traffic out of your deployments using custom deployment initializers.
 author: danisla
 tags: Kubernetes, mitmproxy, proxy
 date_published: 2017-09-23
 ---
 
-Dan Isla | Google Cloud Solution Architect | Google
+Dan Isla | Solution Architect | Google
 
-This is a follow-on tutorial to the [Transparent Proxy and Filtering on Kubernetes](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s) tutorial. It shows how to simplify the application of a transparent proxy for existing deployments using a Deployment Initializer. Initializers are one of the [Dynamic Admission Control](https://kubernetes.io/docs/admin/extensible-admission-controllers/) features of Kubernetes, and are available as an alpha feature in Kubernetes 1.7.
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This is a follow-on tutorial to the [Transparent proxy and filtering on Kubernetes](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s) tutorial. It shows how to simplify the application of a transparent proxy for existing deployments using a deployment initializer. Initializers are one of the [Dynamic Admission Control](https://kubernetes.io/docs/admin/extensible-admission-controllers/) features of Kubernetes, and are available as an alpha feature in Kubernetes 1.7.
 
 This tutorial uses the [tproxy-initializer](https://github.com/danisla/kubernetes-tproxy/tree/master/cmd/tproxy-initializer) Kubernetes Initializer to inject the sidecar InitContainer, ConfigMap and environment variables into a deployment when the annotation `"initializer.kubernetes.io/tproxy": "true"` is present. This tutorial also demonstrates how to deploy the [tproxy Helm chart](https://github.com/danisla/kubernetes-tproxy/tree/master/charts/tproxy) with the optional [Role Based Access Control](https://kubernetes.io/docs/admin/authorization/rbac/) support.
 
@@ -26,11 +28,11 @@ Just like in the previous tutorial, the purpose of the [tproxy-sidecar](https://
 
 ## Before you begin
 
-This tutorial assumes you already have a Google Cloud Platform (GCP) account and are familiar with the high level concepts of Kubernetes Pods and Deployments.
+This tutorial assumes you already have a Google Cloud account and are familiar with the high level concepts of Kubernetes Pods and Deployments.
 
 ## Costs
 
-This tutorial uses billable components of GCP, including:
+This tutorial uses billable components of Google Cloud, including:
 
 - [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/pricing)
 
@@ -204,7 +206,7 @@ Deploy the sample apps to demonstrate using and not using the annotation to trig
 
 ## What's next?
 
-- [Transparent Proxy and Filtering on Kubernetes](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s) - Original tutorial that works without the initializer alpha feature. Also contains some of the additional chart configuration examples.
+- [Transparent proxy and filtering on Kubernetes](https://cloud.google.com/community/tutorials/transparent-proxy-and-filtering-on-k8s) - Original tutorial that works without the initializer alpha feature. Also contains some of the additional chart configuration examples.
 - [tproxy helm chart](https://github.com/danisla/kubernetes-tproxy/blob/master/charts/tproxy/README.md) - See all configuration options and deployment methods.
 - [Istio](https://isio.io/) - A more broad approach to traffic filtering and network policy.
 - [Calico Egress NetworkPolicy](https://docs.projectcalico.org/v2.0/getting-started/kubernetes/tutorials/advanced-policy) - Another way to filter egress traffic at the pod level.

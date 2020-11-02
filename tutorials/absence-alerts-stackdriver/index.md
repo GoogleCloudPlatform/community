@@ -1,18 +1,22 @@
 ---
-title: Scaling time series absence alerts with Stackdriver
-description: Create alerts for missing monitoring data with Stackdriver, avoiding duplicate alerts so that you aren't overwhelmed with notifications.
+title: Scaling time series absence alerts with Cloud Monitoring
+description: Create alerts for missing monitoring data with Cloud Monitoring, avoiding duplicate alerts so that you aren't overwhelmed with notifications.
 author: alexamies
 tags: Stackdriver, monitoring
 date_published: 2019-11-27
 ---
 
-This tutorial describes creating alerts for missing monitoring data with Stackdriver alerts, avoiding duplicate alerts so
+Alex Amies | Site Reliability Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This tutorial describes creating alerts for missing monitoring data with Cloud Monitoring alerts, avoiding duplicate alerts so
 that you are not overwhelmed with notifications. For example, suppose that you have 100 time series and you want to find out 
 when any one of them is missing. If one or two time series are missing, you want exactly one alert. When there is a total
 outage, you still want to get one alert, not 100 alerts. 
 
 The diagram below shows the general flow: The test app divides task processing into multiple partitions, each of 
-which generates a time series, which are sent to Stackdriver. When there is a missing time series, Stackdriver sends an 
+which generates a time series, which are sent to Cloud Monitoring. When there is a missing time series, Cloud Monitoring sends an 
 alert to a user.
 
 ![schematic diagram](https://storage.googleapis.com/gcp-community/tutorials/absence-alerts-stackdriver/schematic.png)
@@ -21,7 +25,7 @@ The instructions are provided for a Linux development environment, such as [Clou
 However, you can also run the application on Google Compute Engine, Kubernetes, a serverless environment, or outside of
 Google Cloud.
 
-The tutorial assumes that you're familiar with Google Cloud, including Stackdriver Monitoring and Alerting. This tutorial
+The tutorial assumes that you're familiar with Google Cloud, including Cloud Monitoring and Alerting. This tutorial
 builds on the discussion in [Alerting policies in depth](https://cloud.google.com/monitoring/alerts/concepts-indepth).
 
 ## Objectives
@@ -31,20 +35,20 @@ builds on the discussion in [Alerting policies in depth](https://cloud.google.co
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud, including Stackdriver Monitoring.
+This tutorial uses billable components of Google Cloud, including Cloud Monitoring.
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your 
-projected usage. This tutorial only generates a small amount of Stackdriver Monitoring data, which may fall within the free
+projected usage. This tutorial only generates a small amount of Cloud Monitoring data, which may fall within the free
 allotment.
 
 ## Before you begin
 
-For this tutorial, you need a GCP
+For this tutorial, you need a Google Cloud
 [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects).
-You can create a new one, or you can select a project that you have already created if it is not an existing Stackdriver
+You can create a new one, or you can select a project that you have already created if it is not an existing Cloud Monitoring
 workspace:
 
-1.  Select or create a GCP project.
+1.  Select or create a Google Cloud project.
 
     [GO TO THE MANAGE RESOURCES PAGE](https://console.cloud.google.com/cloud-resource-manager)
 
@@ -52,7 +56,7 @@ workspace:
 
     [ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
 
-1.  In the Google Cloud Console, go to [Monitoring](https://console.cloud.google.com/monitoring).
+1.  In the Cloud Console, go to [Monitoring](https://console.cloud.google.com/monitoring).
 
 1.  Click **New workspace**, and then click **Add**.
 
@@ -69,13 +73,13 @@ workspace:
         git clone https://github.com/GoogleCloudPlatform/professional-services.git
         cd professional-services/examples/alert-absence-dedup
 
-1.  Enable the Stackdriver Monitoring API:
+1.  Enable the Cloud Monitoring API:
 
         gcloud services enable monitoring.googleapis.com
 
-Note that if the project is a monitored project in a Stackdriver workspace corresponding to another project, then any 
+Note that if the project is a monitored project in a Cloud Monitoring workspace corresponding to another project, then any 
 alerting policy definitions will need to be written against the associated workspace project rather than the project in 
-which these virtual machines are being created. The instructions in this tutorial assume that the Stackdriver workspace 
+which these virtual machines are being created. The instructions in this tutorial assume that the Cloud Monitoring workspace 
 corresponds to the selected project.
 
 When you finish this tutorial, you can avoid continued billing by deleting the resources you created. See
@@ -85,7 +89,7 @@ When you finish this tutorial, you can avoid continued billing by deleting the r
 
 The alert will be created with the
 [`gcloud alpha monitoring policies create`](https://cloud.google.com/sdk/gcloud/reference/alpha/monitoring/policies/create)
-command, which uses the Stackdriver Monitoring API. The specific REST resource used in that API is
+command, which uses the Cloud Monitoring API. The specific REST resource used in that API is
 [AlertPolicy](https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.alertPolicies#AlertPolicy).
 
 This alert policy has two conditions:
@@ -140,7 +144,7 @@ Run this command to build the test app:
 
 ### Set up authentication
 
-Set up authentication for the Stackdriver client library.
+Set up authentication for the Cloud Monitoring client library.
 
 1.  Set the project ID in a shell variable:
 
@@ -173,7 +177,7 @@ Run the program with three partitions, labeled `1`, `2`, and `3`:
     ./alert-absence-demo --labels "1,2,3"
 
 This writes three time series, with the given labels. A few minutes after starting the app, you should be able to see
-the time series data in the Stackdriver Metric explorer, as in the screenshot below.
+the time series data in the Metrics explorer, as in the screenshot below.
 
 ![schematic diagram](https://storage.googleapis.com/gcp-community/tutorials/absence-alerts-stackdriver/metrics_explorer.png)
 
@@ -218,7 +222,7 @@ on-call person who responds to the alert. The documentation includes
 [template variables](https://cloud.google.com/monitoring/alerts/doc-variables)
 to make the content as relevant as possible.
 
-At this point, no alerts should be firing. You can check that in the Stackdriver Monitoring console alert policy detail.
+At this point, no alerts should be firing. You can check that in the Cloud Monitoring console alert policy detail.
 
 ### Test the policy
 

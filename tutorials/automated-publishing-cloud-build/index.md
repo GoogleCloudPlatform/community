@@ -6,6 +6,10 @@ tags: Cloud Build, Hosting, Cloud Storage
 date_published: 2017-03-13
 ---
 
+Ahmet Alp Balkan | Developer Advocate | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows how to automate publishing a static HTML website using a
 custom domain name to Cloud Storage using [Cloud Build][gcb].
 

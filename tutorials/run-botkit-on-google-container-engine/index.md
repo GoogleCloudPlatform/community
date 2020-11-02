@@ -6,11 +6,15 @@ tags: Kubernetes Engine, Node.js, Botkit, Slack
 date_published: 2017-02-03
 ---
 
+Tim Swast | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows how to build a [Slack bot](https://api.slack.com/bot-users)
 using the [Botkit toolkit](https://howdy.ai/botkit/) and run it on [Google
 Kubernetes Engine](https://cloud.google.com/kubernetes-engine/).
 
-You will build a "Hello World" Slack bot that responds with a greeting in
+You will build a "Hello, World" Slack bot that responds with a greeting in
 response to messages.
 
 ## Objectives
@@ -22,7 +26,7 @@ response to messages.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including the following:
+This tutorial uses billable components of Google Cloud, including the following:
 
 - Google Kubernetes Engine
 - Compute Engine (with Google Kubernetes Engine)
@@ -36,11 +40,11 @@ projected usage.
 ## Before you begin
 
 1.  Set up your development environment.
-    1.  Select or create a [Google Cloud Platform][console] project.
+    1.  Select or create a [Google Cloud][console] project.
         [Go to the projects page][projects].
     1.  Enable billing for your project. [Enable billing][billing].
-    1.  Install the [Google Cloud SDK][sdk].
-    1.  Authenticate `gcloud` with Google Cloud Platform.
+    1.  Install the [Cloud SDK][sdk].
+    1.  Authenticate `gcloud` with Google Cloud.
 
             gcloud init
 
@@ -317,7 +321,7 @@ pending](https://kubernetes.io/docs/user-guide/debugging-pods-and-replication-co
 
 ## Cleaning up
 
-Congratulations, you now have a Slack bot running on Google Kubernetes Engine.
+Congratulations. You now have a Slack bot running on Google Kubernetes Engine.
 
 You can follow these steps to clean up resources and save on costs.
 
@@ -354,7 +358,6 @@ deleting a project will only happen after the current billing cycle ends.
 
 - Learn more about Kubernetes with the [Kubernetes interactive
   tutorials](https://kubernetes.io/docs/tutorials/kubernetes-basics/).
-- Try out other [Slack samples for Google Cloud
-  Platform](https://github.com/GoogleCloudPlatform/slack-samples).
+- Try out other [Slack samples for Google Cloud](https://github.com/GoogleCloudPlatform/slack-samples).
 - Read the [Slack API reference](https://api.slack.com/) for other ways to
   integrate your app with Slack.

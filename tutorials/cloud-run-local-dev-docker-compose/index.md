@@ -6,12 +6,16 @@ tags: Cloud Run, docker-compose, local development
 date_published: 2019-05-21
 ---
 
+Adam Ross | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows how to use [Docker Compose](https://docs.docker.com/compose/overview/) to streamline your local development environment for [Cloud Run](https://cloud.google.com/run).
 
 ## Overview
 
 Services running on Cloud Run are running in containers, so you probably want to identify how to use or build a local 
-container toolchain that can work with Cloud Run and integrate with other Google Cloud Platform (GCP) products.
+container toolchain that can work with Cloud Run and integrate with other Google Cloud products.
 
 The first thing to know: you do not have to use Docker locally. Cloud Build can build your container images remotely, and 
 your services can be built to work outside a container. Deciding whether the practice of containerizing services for local
@@ -77,15 +81,15 @@ services:
 
 For more, check out the [Docker Compose CLI documentation](https://docs.docker.com/compose/reference/overview/).
 
-## Using GCP APIs from your local container
+## Using Google Cloud APIs from your local container
 
-When using the official GCP client libraries on Cloud Run, authentication to other GCP services is automatically handled 
+When using the official Google Cloud client libraries on Cloud Run, authentication to other Google Cloud services is automatically handled 
 through the service account provisioned into your Cloud Run service. No further steps are required.
 
 When running your containerized services locally, you can take advantage of this same library capability by injecting 
 service account credentials into your container at runtime.
 
-To authenticate your local service with GCP, do the following:
+To authenticate your local service with Google Cloud, do the following:
 
 1.  Follow the steps in the [authentication documentation](https://cloud.google.com/docs/authentication/getting-started) to 
     create a service account and download service account keys to your local machine.
@@ -182,7 +186,7 @@ If you want to explore your published container image, such as getting a closer 
 production service is currently running, you may pull the image down from Container Registry. This also requires Docker CLI 
 authentication. 
 
-Note: Your services will not be updated to this pulled image automatically; you may need to restart or remove the existing 
+**Note**: Your services will not be updated to this pulled image automatically; you may need to restart or remove the existing 
 containers.
 
 ```
@@ -249,7 +253,7 @@ volumes:
 The service account used by the Cloud SQL Proxy must include the Project Viewer, Cloud SQL Viewer, and Cloud SQL Client roles. Do not whitelist your IP address with the MySQL instance.
 
 Similar to the `docker-compose.access.yml` example, this file layers on top of your `docker-compose.yml`. You can stack all
-three together to start your service with full GCP access:
+three together to start your service with full Google Cloud access:
 
 ```
 docker-compose \

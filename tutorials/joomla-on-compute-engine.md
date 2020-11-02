@@ -1,11 +1,14 @@
 ---
-title: Setting up Joomla! on Google Compute Engine
-description: Learn how to get Joomla! running on a virtual machine instance on Google Compute Engine easily in just a few minutes.
+title: Setting up Joomla! on Compute Engine
+description: Learn how to get Joomla! running on a virtual machine instance on Compute Engine easily in just a few minutes.
 author: jimtravis
 tags: Compute Engine, SendGrid, Joomla
 date_published: 2017-01-17
 ---
-Get Joomla! running on a virtual machine instance on Google Compute Engine easily
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+Get Joomla! running on a virtual machine instance on Compute Engine easily
 in just a few minutes. Follow the detailed tutorial to configure Joomla! on a
 Debian virtual machine instance with the LAMP stack installed and root access.
 
@@ -24,7 +27,7 @@ First, automatically deploy the LAMP development stack by using
 [Cloud Launcher][launcher].
 
 When done, make a note of the **MySQL administrator password**. You can always
-return to the **Click to Deploy** page in the Google Cloud Platform Console to
+return to the **Click to Deploy** page in the Cloud Console to
 see the password or any other deployment information at any time.
 
 Next, open port 80 to allow HTTP traffic to your server. Follow these steps:
@@ -41,7 +44,7 @@ name.
 Download the Joomla! package file to your virtual machine instance, unpack the
 files, and change the required ownership and permissions settings.
 
-1. Use the Google Cloud Platform Console to connect to your virtual machine
+1. Use the Cloud Console to connect to your virtual machine
 instance over SSH.
 
 1. In the SSH console window, change directory to the web root.
@@ -112,7 +115,7 @@ You can complete the Joomla! setup in your browser.
 
 1. Browse to the Joomla! setup page by entering the external IP address for your
 site. Alternatively, you can click the IP address link for your virtual machine
-instance in the [virtual machine instance in the Cloud Platform Console][console_instance].
+instance in the [virtual machine instance in the Cloud Console][console_instance].
 1. Enter the required information on the **Configuration** tab and then click
 **Next**.
 1. On the **Database** tab, enter the information about the MySQL account that
@@ -131,7 +134,7 @@ setup files.
 
 You can browse to your Joomla! site by entering the IP address for your site.
 Alternatively, you can click the external IP address link for your
-[virtual machine instance in the Cloud Platform Console][console_instance].
+[virtual machine instance in the Cloud Console][console_instance].
 
 ## Sending email from Joomla!
 
@@ -190,7 +193,7 @@ email was blocked for some reason.
 
 * [Set up a host name for your website][dns].
 * Read the [Joomla documentation][joomla_docs].
-* Try out other Google Cloud Platform features. Have a look at the [tutorials][tutorials].
+* Try out other Google Cloud features. Have a look at the [tutorials][tutorials].
 
 *The Joomla! name, logo and related trademarks are the property of Open Source Matters, Inc. and have been used with permission.*
 

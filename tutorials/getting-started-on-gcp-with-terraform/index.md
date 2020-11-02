@@ -6,6 +6,10 @@ tags: terraform
 date_published: 2018-08-17
 ---
 
+Chris Stephens | Software Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 One of the things I find most time consuming when starting on a new stack or
 technology is moving from reading documentation to a working prototype serving
 HTTP requests. This can be especially frustrating when trying to tweak
@@ -18,7 +22,7 @@ written this tutorial to cover the following:
 * Using [Terraform](https://cloud.google.com/docs/terraform) to create a VM in Google Cloud
 * Starting a basic Python Flask server
 
-### Before you begin
+## Before you begin
 
 You will be starting a single Compute Engine VM instance, which can
 incur real, although usually minimal, costs. Pay attention to the pricing on the
@@ -50,8 +54,10 @@ is usually different then the project name.
 Next, set up a service account key, which Terraform will use to create and manage
 resources in your Google Cloud project. Go to the
 [create service account key page](https://console.cloud.google.com/apis/credentials/serviceaccountkey).
-Select the default service account or create a new one, select JSON as the key
-type, and click **Create**.
+Select the default service account or create a new one. If you're creating a new
+service account for this tutorial, you can use the Project Owner role, but
+we recommend that you remove the service account or restrict its scope after you
+have completed the tutorial. Select JSON as the key type and click **Create**.
 
 This downloads a JSON file with all the credentials that will be needed for
 Terraform to manage the resources. This file should be located in a secure place

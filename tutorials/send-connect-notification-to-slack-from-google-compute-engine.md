@@ -1,15 +1,19 @@
 ---
-title: Sending Connection Notifications to Slack from Google Compute Engine
-description: Learn how to send notifications to Slack with incoming webhooks from Google Compute Engine.
+title: Sending connection notifications to Slack from Compute Engine
+description: Learn how to send notifications to Slack with incoming webhooks from Compute Engine.
 author: tswast
 tags: Compute Engine, Slack
 date_published: 2016-09-22
 ---
-This tutorial demonstrates how to send a [Slack](https://slack.com)
-notification when someone SSHs into a [Google Compute
-Engine](https://cloud.google.com/compute/) instance.
 
-Google Compute Engine provides virtual machine instances with support for Linux
+Tim Swast | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This tutorial demonstrates how to send a [Slack](https://slack.com)
+notification when someone connects to a [Compute Engine](https://cloud.google.com/compute/) instance with SSH.
+
+Compute Engine provides virtual machine instances with support for Linux
 and Windows operating systems, billed at minute-level increments.
 
 Slack is a messaging application for working with teams, and it provides a
@@ -25,12 +29,11 @@ Slack is a messaging application for working with teams, and it provides a
 
 ## Before you begin
 
-1.  Create a Linux Google Compute Engine instance. You can follow [the Compute
-    Engine Linux quickstart
-    guide](https://cloud.google.com/compute/docs/quickstart-linux) to create
+1.  Create a Linux Compute Engine instance. You can follow 
+    [the Compute Engine Linux quickstart guide](https://cloud.google.com/compute/docs/quickstart-linux) to create
     one.
 
-    When choosing a machine size, note that the [Google Cloud Platform free
+    When choosing a machine size, note that the [Google Cloud free
     tier](https://cloud.google.com/free/) includes 1
     [f1-micro](https://cloud.google.com/compute/docs/machine-types#sharedcore)
     instance per month. This tutorial requires very little CPU or memory
@@ -40,7 +43,7 @@ Slack is a messaging application for working with teams, and it provides a
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform including Google
+This tutorial uses billable components of Google Cloud including
 Compute Engine. Use the [Pricing
 Calculator](https://cloud.google.com/products/calculator/#id=6d866c0e-b928-4786-b2ab-bed5c380a2fd)
 to estimate the costs for your usage.
@@ -50,10 +53,8 @@ page](https://slack.com/pricing) for details.
 
 ## Connect to your instance
 
-[Connect to your Google Compute Engine
-instance](https://cloud.google.com/compute/docs/instances/connecting-to-instance).
-The easiest way to do this is to use the [SSH button from Google Cloud
-Console](https://console.cloud.google.com/compute/instances).
+[Connect to your Compute Engine instance](https://cloud.google.com/compute/docs/instances/connecting-to-instance).
+The easiest way to do this is to use the [SSH button from Cloud Console](https://console.cloud.google.com/compute/instances).
 
 ## Get the sample code
 
@@ -79,8 +80,7 @@ configured channel or direct message.
 1.  Create a [new Slack app](https://api.slack.com/apps).
     1.  Give the app a name, such as "SSH Notifier".
     1.  Choose the Slack team where you want it installed.
-1.  Select the [Slack incoming
-    webhook](https://api.slack.com/incoming-webhooks) feature in the **Add
+1.  Select the [Slack incoming webhook](https://api.slack.com/incoming-webhooks) feature in the **Add
     features and functionality** section.
     1.  Click the **Off** switch in the upper right-hand corner to activate the
         incoming webhooks feature. The switch will turn green to indicate the
@@ -188,5 +188,4 @@ tutorial.
 ## Next steps
 
 - Explore the other [Slack APIs](https://api.slack.com/).
-- Check out the [other Slack samples for Google Cloud
-  Platform](https://github.com/GoogleCloudPlatform/slack-samples)
+- Check out the [other Slack samples for Google Cloud](https://github.com/GoogleCloudPlatform/slack-samples)

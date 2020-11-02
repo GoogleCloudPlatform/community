@@ -6,6 +6,8 @@ tags: App Engine, Secret Manager, Cloud SQL, Spring Boot, Java, Cloud Build
 date_published: 2020-07-06
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This tutorial demonstrates the deployment of a [Spring inventory management](https://github.com/kioie/InventoryManagement) app to production on App Engine 
 flexible environment through a CI/CD (continuous integration and continuous delivery) pipeline.
 
