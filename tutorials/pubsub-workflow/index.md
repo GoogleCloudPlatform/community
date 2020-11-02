@@ -33,7 +33,7 @@ Some important design considerations when building a workflow include the follow
  * Create new topics in Pub/Sub.
  * Create new subscriptions in Pub/Sub.
  * Generate units of work along with corresponding messages.
- * Start a new Python container and run an app to subscribe and publish messages.
+ * Start a new Python container and run an app to subscribe to and publish messages.
 
 ## Costs
 
@@ -205,17 +205,19 @@ The `processed_bucket` was set in an environment variable at the beginning of th
 
 ## Start a Python container (local development)
 
-1.  Run this command to start a Python container:
+Run this command to start a Python container:
 
-        docker run --rm -it --entrypoint /bin/bash -v $DEMOSOURCE:/pubsub -e PROJECT_ID -e GOOGLE_APPLICATION_CREDENTIALS=/pubsub/$KEYFILE -w /pubsub python:3
+    docker run --rm -it --entrypoint /bin/bash -v $DEMOSOURCE:/pubsub -e PROJECT_ID -e GOOGLE_APPLICATION_CREDENTIALS=/pubsub/$KEYFILE -w /pubsub python:3
 
-1.  Inside the container, run the following commands, which install required libraries and run the `worker.py` script:
+## Run the Python script
 
-        pip install -r /pubsub/requirements.txt
-        python worker.py $PROJECT_ID worker
-        exit
+Run the following commands, which install required libraries and run the `worker.py` script:
+
+    pip install -r /pubsub/requirements.txt
+    python worker.py $PROJECT_ID worker
+    exit
         
-    When the script is done, press `CTRL+C` to exit the script. The `temp` directory is cleaned up on exit.
+When the script is done, press `CTRL+C` to exit the script. The `temp` directory is cleaned up on exit.
 
 ## Cleaning up
 
