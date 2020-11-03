@@ -120,8 +120,7 @@ limit of 250 bytes, so your rowkey could potentially be too large.
 ## Create a Memcached instance
 
 This tutorial creates a Memorystore for Memcached instance, but you can install and run a
-[local Memcached instance](https://github.com/memcached/memcached/wiki/Install) to try this out or for testing. These steps can be done with the
-[Memorystore Cloud Console](https://console.cloud.google.com/memorystore/memcached/instances) if you prefer.
+[local Memcached instance](https://github.com/memcached/memcached/wiki/Install) to try this out or for testing. 
 
 1.  Enable the Memorystore for Memcached API:
 
