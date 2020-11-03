@@ -1,12 +1,12 @@
 ---
 title: Building a distributed workflow with Pub/Sub and Cloud Storage
-description: This tutorial demonstrates how to use Pub/Sub, Memorystore, and Cloud Storage to implement a workflow that completes each unit of work one time.
+description: Learn how to use Pub/Sub, Memorystore, and Cloud Storage to implement a workflow that completes each unit of work one time.
 author: dwatrous
 tags: pubsub, gcp, gcs, workflow, memorystore
 date_published: 2020-11-03
 ---
 
-Daniel Watrous | Customer Engineer | Google LLC
+Daniel Watrous | Customer Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
