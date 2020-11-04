@@ -28,11 +28,12 @@ For details, see the "Cleaning up" section at the end of the tutorial.
 1.  Make sure that you have the [required administrative roles](https://cloud.google.com/vpc/docs/shared-vpc#iam_roles_required_for_shared_vpc) to configure 
     Shared VPC: 
 
-    * **Organization Admin** (`resourcemanager.organizationAdmin`)
-    * **Shared VPC Admin** (`compute.xpnAdmin and resourcemanager.projectIamAdmin`)
-    * **Service Project Admin** (`compute.networkUser`)
+    * **Organization Admin**: `resourcemanager.organizationAdmin`
+    * **Shared VPC Admin**: `compute.xpnAdmin` and `resourcemanager.projectIamAdmin`
+    * **Service Project Admin**: `compute.networkUser`
 
-    Check the [Shared VPC IAM section](https://cloud.google.com/vpc/docs/shared-vpc#iam_in_shared_vpc) for more details about the purpose of these roles.
+    For more information about the purposes of these roles, see the
+    [Shared VPC IAM documentation](https://cloud.google.com/vpc/docs/shared-vpc#iam_in_shared_vpc).
 
 1.  For the commands in this tutorial, you use the `gcloud` command-line interface. To install the Cloud SDK, which includes the `gcloud` tool, follow
     [these instructions](https://cloud.google.com/sdk/gcloud/#downloading_the_gcloud_command-line_tool).
@@ -112,9 +113,11 @@ This tutorial refers to the host project using the environment variable `SHARED_
 In this section, you configure an IAM member from a service project to access only specific subnets in the host project. This provides a granular way to define 
 service project admins by granting them the `compute.networkUser` role for only the subnets that they really need access to.
 
-1. Review the members of the service projects and get the names of the service accounts you'll use in the next steps:
+1.  Review the members of the `GKE_CLUSTER_PROJECT` project and get the name of the service account that you'll use in later steps:
 
         gcloud projects get-iam-policy $GKE_CLUSTER_PROJECT
+        
+    The output should look something like this:
 
         bindings:
         - members:
@@ -128,8 +131,12 @@ service project admins by granting them the `compute.networkUser` role for only 
           - serviceAccount:48977974920@cloudservices.gserviceaccount.com
           - serviceAccount:service-48977974920@containerregistry.iam.gserviceaccount.com
           role: roles/editor
-
+          
+1.  Review the members of the `SERVICE_PROJECT` project and get the name of the service account that you'll use in later steps:
+      
         gcloud projects get-iam-policy $SERVICE_PROJECT
+
+    The output should look something like this:
 
         bindings:
         - members:
@@ -328,10 +335,10 @@ In this section, you access a service running inside a Compute Engine VM instanc
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, perform the following actions in the Cloud Console:
 
-1. In the GKE cluster project, delete the [GKE cluster](https://console.cloud.google.com/kubernetes/list).
-1. In the service project, delete the [Compute Engine instance](https://console.cloud.google.com/compute/instances).
+1. In the `GKE_CLUSTER_PROJECT` project, delete the [GKE cluster](https://console.cloud.google.com/kubernetes/list).
+1. In the `SERVICE_PROJECT` project, delete the [Compute Engine instance](https://console.cloud.google.com/compute/instances).
 1. Detach the two service projects on the [Shared VPC page](https://console.cloud.google.com/networking/xpn/details) of the Shared VPC project.
-1. Disable the Shared VPC on the [Shared VPC page](https://console.cloud.google.com/networking/xpn/details) of the Shared VPC project.
+1. Disable the Shared VPC network on the [Shared VPC page](https://console.cloud.google.com/networking/xpn/details) of the Shared VPC project.
 1. Shut down the three projects using the [Resource Manager](https://console.cloud.google.com/cloud-resource-manager).
 
 ## What next
