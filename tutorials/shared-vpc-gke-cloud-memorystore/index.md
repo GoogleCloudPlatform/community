@@ -10,8 +10,8 @@ Romulo Santos
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-In this tutorial, you configure Shared VPC and connect two service projects. One service project contains a GKE cluster, and the other project contains managed
-services that are accessible from applications deployed to the GKE cluster.
+In this tutorial, you configure Shared VPC and connect two service projects. One service project contains a GKE cluster, and the other service project contains 
+managed services that are accessible from applications deployed to the GKE cluster.
 
 The following image provides an overview:
 
@@ -20,7 +20,7 @@ The following image provides an overview:
 ## Before you begin
 
 For this tutorial, you need three [Google Cloud projects](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects) to configure
-the Shared VPC netowrk and the service projects. To make cleanup easiest, create new projects for this tutorial, so you can delete the projects when you're done.
+the Shared VPC network and the service projects. To make cleanup easiest, create new projects for this tutorial, so you can delete the projects when you're done.
 For details, see the "Cleaning up" section at the end of the tutorial.
 
 1.  Create three [Google Cloud projects](https://console.cloud.google.com/cloud-resource-manager).
