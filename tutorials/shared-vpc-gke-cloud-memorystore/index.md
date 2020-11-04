@@ -1,20 +1,25 @@
 ---
-title: Connecting GKE workloads to services in different GCP Projects using Shared VPC
-description: Learn how to configure a Shared VPC to connect your applications deployed in GKE to resources managed in different GCP Projects.
+title: Connecting GKE workloads to services in different Google Cloud projects using Shared VPC
+description: Learn how to configure Shared VPC to connect your applications deployed in GKE to resources managed in different Google Cloud projects.
 author: soeirosantos
 tags: networking, gcp, compute engine, vm, cloud memorystore, google kubernetes engine, private service access
-date_published: 2020-10-18
+date_published: 2020-11-05
 ---
+
+Romulo Santos
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-In this tutorial we are going to configure a Shared VPC and connect two service projects. One service project will contain a GKE cluster and the other one will contain managed services that would be accessible from applications deployed to the GKE cluster, see the image below for an overview.
+In this tutorial, you configure Shared VPC and connect two service projects. One service project contains a GKE cluster, and the other project contains managed
+services that are accessible from applications deployed to the GKE cluster.
 
-![](./gke_shared_vpc.png)
+The following image provides an overview:
+
+![](https://storage.googleapis.com/gcp-community/tutorials/shared-vpc-gke-cloud-memorystore/gke_shared_vpc.png)
 
 ## Before you begin
 
-* For this tutorial you'll need three [Google Cloud Projects](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects) to configure the Shared VPC and the service projects. To make cleanup easiest, create new projects for this tutorial, so you can delete the projects when you're done. For details, see the "Cleaning up" section at the end of the tutorial.
+* For this tutorial you'll need three [Google Cloud projects](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects) to configure the Shared VPC and the service projects. To make cleanup easiest, create new projects for this tutorial, so you can delete the projects when you're done. For details, see the "Cleaning up" section at the end of the tutorial.
 
     * Create three [GCP Projects](https://console.cloud.google.com/cloud-resource-manager)
     * [Enable billing](https://support.google.com/cloud/answer/6293499#enable-billing) for your projects
