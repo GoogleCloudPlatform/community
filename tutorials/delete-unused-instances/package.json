@@ -1,0 +1,16 @@
+{
+  "name": "delete-unused-instances",
+  "private": true,
+  "license": "Apache-2.0",
+  "author": "Google LLC",
+  "engines": {
+    "node": ">=10"
+  },
+  "files": [
+    "*.js"
+  ],
+  "dependencies": {
+    "@google-cloud/compute": "^2.3.0",
+    "@google-cloud/recommender": "^3.2.0"
+  }
+}
