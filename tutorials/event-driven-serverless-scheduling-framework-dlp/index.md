@@ -3,7 +3,7 @@ title: Event-driven serverless scheduling architecture with Cloud Data Loss Prev
 description: Learn how to use a simple, effective, and scalable event-driven serverless scheduling architecture with Google Cloud services.
 author: codingphun
 tags: DLP, serverless, schedule jobs, Cloud Function, Cloud Scheduler, BigQuery
-date_published: 2020-04-28
+date_published: 2020-11-05
 ---
 
 Tristan Li and Wayne Davis | Google
@@ -36,7 +36,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 ## Reference architecture
 
 The following diagram shows the architecture of the solution:
-![Example Architecture](arch.png)
+![Example Architecture](https://storage.googleapis.com/gcp-community/tutorials/event-driven-serverless-scheduling-framework-dlp/arch.png)
 
 ## Before you begin
 
@@ -60,7 +60,8 @@ The following diagram shows the architecture of the solution:
 1. Follow instructions on [Cloud Scheduler quickstart guide](https://cloud.google.com/scheduler/docs/quickstart). When creating a Cloud Scheduler Job, note the following
     - Use the first Pub/Sub topic created in step ealier
     - In the payload section, use the [payload.json](payload.json) file. The payload.json is a convenient way to pass parameters to the Cloud Function for processing. Feel free to add/remove InfoTypes you want to detect in the dataset.  **In this example, be sure to replace the place holders values such as ProjectID, PubSubTopic and etc in payload.json with yours.** 
-![Cloud Scheduler](cloud-scheduler.png)
+    
+    ![Cloud Scheduler](https://storage.googleapis.com/gcp-community/tutorials/event-driven-serverless-scheduling-framework-dlp/cloud-scheduler.png)
 
 1. Cloud Scheduler job can be kick off by click on the "Run now" button in the console, and it will publish a message to the first Cloud Pub/Sub topic which triggers the first Cloud Function to submit a Cloud DLP scanning job. After CloudDLP scanning job completes, it will publish a message to the second Cloud Pub/Sub topic which triggers the second Cloud Function for further processing. 
 
