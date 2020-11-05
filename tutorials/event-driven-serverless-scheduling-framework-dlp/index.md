@@ -44,13 +44,13 @@ The following diagram shows the architecture of the solution:
 
 ## Before you begin
 
-1.  Select or create a Google Cloud project.
+1.  Select or create a Google Cloud project:
 
     [Go to the Resource Manager page.](https://console.cloud.google.com/cloud-resource-manager)
     
 1.  Make sure that [billing is enabled for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
 
-1.  Enable the BigQuery and Cloud Data Loss Prevention APIs.
+1.  Enable the BigQuery and Cloud Data Loss Prevention APIs:
 
     [Enable the APIs.](https://console.cloud.google.com/flows/enableapi?apiid=bigquery.googleapis.com,dlp.googleapis.com)
 
@@ -88,12 +88,12 @@ The following diagram shows the architecture of the solution:
 
 ## Run the example
 
-1.  Start Cloud Scheduler by clicking the **Run now** button in the Cloud Console.
+Start Cloud Scheduler by clicking the **Run now** button in the Cloud Console.
 
-    This publishes a message to the first Pub/Sub topic, which triggers the first Cloud Function to submit a Cloud DLP scanning job.
+This publishes a message to the first Pub/Sub topic, which triggers the first Cloud Function to submit a Cloud DLP scanning job.
     
-    After the Cloud DLP scanning job completes, it will publish a message to the second Pub/Sub topic, which triggers the second Cloud Function for further 
-    processing. 
+After the Cloud DLP scanning job completes, it will publish a message to the second Pub/Sub topic, which triggers the second Cloud Function for further 
+processing. 
 
 ## Cleaning up
 
