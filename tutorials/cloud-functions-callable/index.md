@@ -108,7 +108,7 @@ Configure the `gcloud` tool to use your Google Cloud project for all future comm
 
 ### Write the function
 
-In a new file called `index.js`, add the following code and change the `PROJECT_ID` variable at the top to your real project ID:
+In a new file called `index.js`, add the following code and change the `PROJECT_ID` value at the top to your real project ID:
 
     const functions = require('firebase-functions');
     const admin = require('firebase-admin');
