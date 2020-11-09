@@ -236,6 +236,8 @@ another one inside it called `workflows`.
 
 Create a `GCP-Deploy.yml` file and copy this content into it:
 
+{% verbatim %}
+
     name: Docker
 
     on:
@@ -278,6 +280,8 @@ Create a `GCP-Deploy.yml` file and copy this content into it:
 
             - name: Deploy Docker image
               run: gcloud run deploy ${{ secrets.GCP_PROJECT_ID }} --image $IMAGE_NAME --region us-central1 --platform managed
+
+{% endverbatim %}
 
 You work tree should look like this:
 

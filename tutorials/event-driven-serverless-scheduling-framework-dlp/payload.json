@@ -1,0 +1,17 @@
+{
+   "InfoTypes":[
+      {
+         "name":"CREDIT_CARD_NUMBER"
+      },
+      {
+         "name":"PHONE_NUMBER"
+      },
+      {
+         "name":"US_SOCIAL_SECURITY_NUMBER"
+      }
+   ],
+   "ProjectID":"Your Project ID",
+   "PubSubTopic":"PubSub Topic (second topic) When Job Completes",
+   "DataSetID":"Your BigQuery DataSet ID",
+   "TableID":"Your BigQuery Table ID"
+}
