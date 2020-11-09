@@ -1,143 +1,148 @@
 ---
 title: Calling Google Cloud APIs from your mobile app
-description: This tutorial will show you how to use Cloud Functions and Firebase Authentication to safely call Cloud APIs from your Android or iOS app.
+description: Learn how to use Cloud Functions and Firebase Authentication to call Cloud APIs from your Android or iOS app.
 author: samtstern
 tags: firebase, functions, callable
-date_published: 2020-10-22
+date_published: 2020-11-10
 ---
 
-Sam Stern | Developer Relations | Google
+Sam Stern | Developer Programs Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-Many Google Cloud APIs, such as [Translation](https://cloud.google.com/translate) or [Vision AI](https://cloud.google.com/vision) provide useful functionality for mobile apps but no simple way to access them directly. To call these apps directly from your Android or iOS app you generally need to create an intermediate REST API which will handle authorization and protect secret values such as API keys. You then need to write code in your mobile app to authenticate to and communicate with this intermediate service.
+Many Google Cloud APIs—such as the [Translation](https://cloud.google.com/translate) and [Vision AI](https://cloud.google.com/vision) APIs—provide useful 
+features for mobile apps but no simple way to access them directly. To call these APIs from your Android or iOS app, you generally need to create an intermediate 
+REST API that handles authorization and protects secret values such as API keys. You then need to write code in your mobile app to authenticate to and 
+communicate with this intermediate service.
 
-By using Google Cloud Functions with Firebase Authentication you can create managed, serverless gateways to Google Cloud APIs that seamlessly handle authentication and can be called from your mobile app with pre-built SDKs.
+By using Cloud Functions with Firebase Authentication, you can create managed, serverless gateways to Google Cloud APIs that handle authentication and can be
+called from your mobile app with pre-built SDKs.
 
-This tutorial will use the Cloud Translation API as an example, but this technique is valid with any Google Cloud API that you want to call from your mobile app.
+This tutorial uses the Cloud Translation API as an example, but this technique is valid with any Google Cloud API that you want to call from your mobile app.
 
 ## Objectives
 
-*   Create a Cloud Function to authenticate your users with Firebase Auth.
+*   Create a Cloud Function to authenticate your users with Firebase Authentication.
 *   Create a Cloud Function to call the Translation API.
-*   Sign in with Firebase Auth in your mobile app.
+*   Sign in with Firebase Authentication in your mobile app.
 *   Use the Cloud Functions for Firebase SDK to call your function securely from your app.
 
 ## Costs
 
 This tutorial uses billable components of Google Cloud and Firebase, including the following:
 
-  * Cloud Functions - [no fixed cost, usage-based pricing](https://cloud.google.com/functions).
-  * Firebase Authentication - [free for unlimited use](https://firebase.google.com/pricing).
-  * Cloud Translation - [no fixed cost, usage-based pricing](https://cloud.google.com/translate). This API is used for the purposes of this example but is not essential to the technique presented.
+  * Cloud Functions: [no fixed cost, usage-based pricing](https://cloud.google.com/functions)
+  * Firebase Authentication: [free for unlimited use](https://firebase.google.com/pricing)
+  * Cloud Translation: [no fixed cost, usage-based pricing](https://cloud.google.com/translate)
+  
+    The Cloud Translation API is used for the purposes of this example but is not essential to the technique presented.
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
-Give a numbered sequence of procedural steps that the reader must take to set up their environment before getting into the main tutorial.
-
-Don't assume anything about the reader's environment. You can include simple installation instructions of only a few steps, but provide links to installation
-instructions for anything more complex.
-
-### Before you begin
-
-To follow this tutorial you will need to have a few things set up:
+To follow this tutorial, you will need to have a few things set up:
 
 1.  Create a Google Cloud project in the [Cloud Console](https://console.cloud.google.com/).
-    1. Link your project to [Firebase](https://console.firebase.google.com/)
-    1. Upgrade your Firebase project to the [Blaze billing plan](https://firebase.google.com/support/faq#pricing-right-plan).
-1.  Enable the required APIs on your project:
+1.  Link your project to [Firebase](https://console.firebase.google.com/).
+1.  Upgrade your Firebase project to the [Blaze billing plan](https://firebase.google.com/support/faq#pricing-right-plan).
+1.  Enable the required APIs in your project:
     1. [IAM Service Account Credentials API](https://console.developers.google.com/apis/api/iamcredentials.googleapis.com/)
     1. [Cloud Build API](https://console.developers.google.com/apis/api/cloudbuild.googleapis.com/)
     1. [Cloud Translation API](https://console.developers.google.com/apis/api/translate.googleapis.com/overview)
 1.  Install [Node.js](https://nodejs.org/en/download/) version 10 or higher.
-1.  Install the [`gcloud` command line tool](https://cloud.google.com/sdk/docs/install).
-1.  Install either [Android Studio](https://developer.android.com/studio/install) or [XCode](https://developer.android.com/studio/install) and open an existing app or create a new one.
+1.  Install the [`gcloud` command-line tool](https://cloud.google.com/sdk/docs/install).
+1.  Install either [Android Studio](https://developer.android.com/studio/install) or [XCode](https://developer.android.com/studio/install), and open an existing
+    app or create a new one.
 
 ## Create your first Cloud Function
 
-First write a Cloud Function which will issue Firebase Authentication tokens to users of your mobile app.
+In this section, you write a Cloud Function that issues Firebase Authentication tokens to users of your mobile app.
 
-### Set up source directory
+### Set up a source directory
 
 To begin, create a new directory and then run `npm init` to create a basic `package.json` file:
 
-```bash
-mkdir cloud-functions-callable
-cd cloud-functions-callable
-npm init
-```
+1.  Create a new directory:
 
-For the purposes of this tutorial you can give any answer to the prompts resulting from `npm` init.
+        mkdir cloud-functions-callable
 
-### Set Google Cloud project
+1.  Go to the new directory:
+
+        cd cloud-functions-callable
+
+1.  Create a basic `package.json` file:
+
+        npm init
+
+    For the purposes of this tutorial, you can give any answer to the prompts from `npm init`.
+
+### Set the Google Cloud project
 
 Configure the `gcloud` tool to use your Google Cloud project for all future commands:
 
-```bash
-gcloud config set project "YOUR-PROJECT-ID"
-```
+    gcloud config set project "YOUR_PROJECT_ID"
 
-### Authorize Service Account
+### Authorize the service account
 
-In the [IAM & Admin](https://console.cloud.google.com/iam-admin/iam) section of the Cloud Console find the `YOUR-PROJECT-ID@appspot.gserviceaccount.com` service account.
+1.  In the [IAM & Admin](https://console.cloud.google.com/iam-admin/iam) section of the Cloud Console, find the `YOUR_PROJECT_ID@appspot.gserviceaccount.com`
+    service account.
+1.  Edit that service account to grant it the following roles:
 
-Edit that service account and grant it the following roles:
+    *  Service Account Token Creator
+    *  Cloud Translation API User
 
-*  Service Account Token Creator
-*  Cloud Translation API User
+### Install dependencies for the Cloud Function
 
-### Install dependencies
+1.  Install the [Node.js client library](https://cloud.google.com/translate/docs/reference/libraries/v3/nodejs) for the Google Cloud Translation API:
 
-You will use three dependencies in our Cloud Functions:
+        npm install --save @google-cloud/translate
 
-1. The [Node.js client library](https://cloud.google.com/translate/docs/reference/libraries/v3/nodejs) for the Google Cloud Translation API.
-1. The [Firebase Functions SDK](https://firebase.google.com/docs/reference/functions)
-1. The [Firebase Node.js Admin SDK](https://firebase.google.com/docs/admin/setup)
+1.  Install the [Firebase Functions SDK](https://firebase.google.com/docs/reference/functions):
 
-To install these dependencies, use `npm install`:
+        npm install --save firebase-functions
+        
+1.  Install the [Firebase Node.js Admin SDK](https://firebase.google.com/docs/admin/setup):
 
-```bash
-npm install --save @google-cloud/translate
-npm install --save firebase-functions
-npm install --save firebase-admin
-```
+        npm install --save firebase-admin
 
 ### Write the function
 
-In a new file called `index.js` add the following code. This function will respond to HTTP requests with create Firebase [Custom Authentication](https://firebase.google.com/docs/auth/admin/create-custom-tokens) tokens which you will use later in your mobile app.
+In a new file called `index.js`, add the following code and change the `PROJECT_ID` variable at the top to your real project ID:
 
-Make sure to change the `PROJECT_ID` variable at the top to your real project ID:
+    const functions = require('firebase-functions');
+    const admin = require('firebase-admin');
 
-```js
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
+    const PROJECT_ID = 'YOUR_PROJECT_ID';
 
-const PROJECT_ID = 'YOUR_PROJECT_ID';
+    // Initialize the Firebase Admin SDK using Application Default credentials
+    
+    admin.initializeApp({
+      projectId: PROJECT_ID,
+      credential: admin.credential.applicationDefault()
+    });
 
-// Initialize the Firebase Admin SDK using Application Default credentials
-admin.initializeApp({
-  projectId: PROJECT_ID,
-  credential: admin.credential.applicationDefault()
-});
+    exports.getAuthToken = functions.https.onCall(async (data, context) => {
+    
+      // For the purposes of this example, you have the user specify their
+      // own UID as part of the request. This is obviously insecure, and in
+      // a real app you should get the user's identity from your own backend.
+      
+      const uid = data.uid;
 
-exports.getAuthToken = functions.https.onCall(async (data, context) => {
-  // For the purposes of this example we'll have the user specify their
-  // own uid as part of the request. This is obviously insecure, and in
-  // a real app you should get the user's identity from your own backend.
-  const uid = data.uid;
+      // Create a custom auth token with the UID and some claims. Claims
+      // can be used to add any user-specific information to the token;
+      // they have no fixed schema.
+      
+      const token = await admin.auth().createCustomToken(uid, {
+        allowTranslationAPI: true
+      });
 
-  // Create a custom auth token with the UID and some claims. Claims
-  // can be used to add any user-specific information to the token,
-  // they have no fixed schema.
-  const token = await admin.auth().createCustomToken(uid, {
-    allowTranslationAPI: true
-  });
-
-  return { token };
-});
-```
+      return { token };
+    });
+    
+This function responds to HTTP requests with Firebase [Custom Authentication](https://firebase.google.com/docs/auth/admin/create-custom-tokens) tokens, which you
+use later in your mobile app.
 
 ## Create a secure Cloud Function to make API calls
 
