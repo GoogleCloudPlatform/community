@@ -11,9 +11,9 @@ Sam Stern | Developer Programs Engineer | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 Many Google Cloud APIs—such as the [Translation](https://cloud.google.com/translate) and [Vision AI](https://cloud.google.com/vision) APIs—provide useful 
-features for mobile apps but no simple way to access them directly. To call these APIs from your Android or iOS app, you generally need to create an intermediate 
-REST API that handles authorization and protects secret values such as API keys. You then need to write code in your mobile app to authenticate to and 
-communicate with this intermediate service.
+features for mobile apps but no simple way to access these features directly. To call these APIs from your Android or iOS app, you generally need to create an 
+intermediate REST API that handles authorization and protects secret values such as API keys. You then need to write code in your mobile app to authenticate to 
+and communicate with this intermediate service.
 
 By using Cloud Functions with Firebase Authentication, you can create managed, serverless gateways to Google Cloud APIs that handle authentication and can be
 called from your mobile app with pre-built SDKs.
@@ -41,15 +41,17 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 ## Before you begin
 
-To follow this tutorial, you will need to have a few things set up:
+To follow this tutorial, you need to have a few things set up:
 
 1.  Create a Google Cloud project in the [Cloud Console](https://console.cloud.google.com/).
 1.  Link your project to [Firebase](https://console.firebase.google.com/).
 1.  Upgrade your Firebase project to the [Blaze billing plan](https://firebase.google.com/support/faq#pricing-right-plan).
 1.  Enable the required APIs in your project:
-    1. [IAM Service Account Credentials API](https://console.developers.google.com/apis/api/iamcredentials.googleapis.com/)
-    1. [Cloud Build API](https://console.developers.google.com/apis/api/cloudbuild.googleapis.com/)
-    1. [Cloud Translation API](https://console.developers.google.com/apis/api/translate.googleapis.com/overview)
+
+    * [IAM Service Account Credentials API](https://console.developers.google.com/apis/api/iamcredentials.googleapis.com/)
+    * [Cloud Build API](https://console.developers.google.com/apis/api/cloudbuild.googleapis.com/)
+    * [Cloud Translation API](https://console.developers.google.com/apis/api/translate.googleapis.com/overview)
+
 1.  Install [Node.js](https://nodejs.org/en/download/) version 10 or higher.
 1.  Install the [`gcloud` command-line tool](https://cloud.google.com/sdk/docs/install).
 1.  Install either [Android Studio](https://developer.android.com/studio/install) or [XCode](https://developer.android.com/studio/install), and open an existing
@@ -60,8 +62,6 @@ To follow this tutorial, you will need to have a few things set up:
 In this section, you write a Cloud Function that issues Firebase Authentication tokens to users of your mobile app.
 
 ### Set up a source directory
-
-To begin, create a new directory and then run `npm init` to create a basic `package.json` file:
 
 1.  Create a new directory:
 
@@ -146,94 +146,94 @@ use later in your mobile app.
 
 ## Create a secure Cloud Function to make API calls
 
-Now write a Cloud Function that calls the Translation API and is protected by Firebase Authentication.
+In this section, you write a Cloud Function that calls the Translation API and is protected by Firebase Authentication.
 
 ### Initialize the Translation client library
 
-At the top of your `index.js` file add the following lines to import and initialize thr Translation client library:
+At the top of your `index.js` file, add the following lines to import and initialize the Translation client library:
 
-```js
-const { TranslationServiceClient } = require('@google-cloud/translate');
+    const { TranslationServiceClient } = require('@google-cloud/translate');
 
-const translationClient = new TranslationServiceClient();
-```
+    const translationClient = new TranslationServiceClient();
 
 ### Add a new Cloud Function to call the API
 
-At the end of your `index.js` file add the following new Cloud Function:
+At the end of your `index.js` file, add the following new Cloud Function:
 
-```js
-exports.translateText = functions.https.onCall(async (data, context) => {
-  // Ensure that the user is authenticated and that they have the
-  // custom claim we made in the previous step
-  if (!context.auth || !context.auth.token.allowTranslationAPI) {
-    throw new functions.https.HttpsError(
-      "permission-denied", 
-      "The calling user does not have permission to use this function"
-    );
-  }
+    exports.translateText = functions.https.onCall(async (data, context) => {
+    
+      // Ensure that the user is authenticated and that they have the
+      // custom claim made in the previous step
+      
+      if (!context.auth || !context.auth.token.allowTranslationAPI) {
+        throw new functions.https.HttpsError(
+          "permission-denied", 
+          "The calling user does not have permission to use this function"
+        );
+      }
 
-  // Get the text to translate from the request
-  const text = data.text;
+      // Get the text to translate from the request
+      
+      const text = data.text;
 
-  // Translate from English to Spanish
-  const request = {
-    parent: `projects/${PROJECT_ID}/locations/global`,
-    contents: [text],
-    mimeType: 'text/plain',
-    sourceLanguageCode: 'en',
-    targetLanguageCode: 'es'
-  };
-  const [response] = await translationClient.translateText(request);
+      // Translate from English to Spanish
+      
+      const request = {
+        parent: `projects/${PROJECT_ID}/locations/global`,
+        contents: [text],
+        mimeType: 'text/plain',
+        sourceLanguageCode: 'en',
+        targetLanguageCode: 'es'
+      };
+      const [response] = await translationClient.translateText(request);
 
-  // Get the top translation
-  const translation = response.translations[0].translatedText;
+      // Get the top translation
+      
+      const translation = response.translations[0].translatedText;
 
-  // Return translations to the caller
-  return { translation };
-});
-```
+      // Return translations to the caller
+      
+      return { translation };
+    });
 
 ## Deploy Cloud Functions
 
-Now deploy the Cloud Functions so that they are available to call from your mobile app.
+In this section, you deploy the Cloud Functions so that they are available to call from your mobile app.
 
-### Deploy using gcloud
+### Deploy using `gcloud`
 
-Run the following commands to deploy each Cloud Function:
+1.  Deploy the Cloud Function that gets the authentication token:
 
-```bash
-gcloud functions deploy getAuthToken --runtime nodejs10 --trigger-http --allow-unauthenticated
-```
+        gcloud functions deploy getAuthToken --runtime nodejs10 --trigger-http --allow-unauthenticated
 
-```bash
-gcloud functions deploy translateText --runtime nodejs10 --trigger-http --allow-unauthenticated
-```
+1.  Deploy the Cloud Function that translates the text:
 
-To confirm that the functions have been deployed you can use `gcloud functions describe`:
+        gcloud functions deploy translateText --runtime nodejs10 --trigger-http --allow-unauthenticated
 
-```bash
-gcloud functions describe getAuthToken
-gcloud functions describe translateText
-```
+1.  Confirm that the functions have been deployed:
 
-The `httpsTrigger.url` in the result will give you the URL. You can then validate that the function behaves as described using `curl`, for example:
+        gcloud functions describe getAuthToken
+        gcloud functions describe translateText
 
-```bash
-$ curl \
-  --header "Content-Type: application/json" \
-  --request POST \
-  --data '{ "data": {"uid": "uid1234" } }'
-  https://us-central1-YOUR-PROJECT-ID.cloudfunctions.net/getAuthToken
+    The `httpsTrigger.url` in the result gives you the URL. 
 
-{"result":{"token":"eyJhbGciOiJSUzI [...] 2rA"}}
-```
+1.  Validate that the function behaves as described using `curl`. For example:
+
+        curl \
+        --header "Content-Type: application/json" \
+        --request POST \
+        --data '{ "data": {"uid": "uid1234" } }'
+        https://us-central1-YOUR-PROJECT-ID.cloudfunctions.net/getAuthToken
+
+    The result should be something like the following:
+
+        {"result":{"token":"eyJhbGciOiJSUzI [...] 2rA"}}
 
 ## Add Firebase to your app
 
-Now that the functions are in place, you need to add the Firebase Authentication and Firebase Functions SDKs to your mobile app in order to call them.
+In this section, you add the Firebase Authentication and Firebase Functions SDKs to your mobile app in order to call them.
 
-### Add your app to your Firebase Project
+### Add your app to your Firebase project
 
 Follow one of these guides to add Firebase to your app:
 
@@ -242,177 +242,170 @@ Follow one of these guides to add Firebase to your app:
 
 ### Add the Firebase SDK to your app
 
-Next add the Firebase Authentication and Firebase Functions SDKs to your app:
+Add the Firebase Authentication and Firebase Functions SDKs to your app using the following instructions for Android or iOS.
 
 #### Android
 
-In your `app/build.gradle` file add these dependencies:
+In your `app/build.gradle`, file add these dependencies:
 
-```gradle
-dependencies {
-  // Import the Firebase BoM, see the release notes for the latest version:
-  // https://firebase.google.com/support/release-notes/android
-  implementation platform('com.google.firebase:firebase-bom:25.12.0')
+    dependencies {
+      // Import the Firebase BoM. See the release notes for the latest version:
+      // https://firebase.google.com/support/release-notes/android
+      implementation platform('com.google.firebase:firebase-bom:25.12.0')
 
-  // Add specific Firebase dependencies
-  implementation 'com.google.firebase:firebase-auth'
-  implementation 'com.google.firebase:firebase-functions'
-}
-```
+      // Add specific Firebase dependencies
+      implementation 'com.google.firebase:firebase-auth'
+      implementation 'com.google.firebase:firebase-functions'
+    }
 
 
 #### iOS
 
-In your `Podfile` add these dependencies:
+In your `Podfile`, add these dependencies:
 
-```ruby
-pod 'Firebase/Auth'
-pod 'Firebase/Functions'
-```
+    pod 'Firebase/Auth'
+    pod 'Firebase/Functions'
 
 ## Sign in using Firebase Authentication
 
-Next use the `getAuthToken` Cloud Function to retrieve an auth token and use Firebase Authentication to sign in.
-
-### Call the Function
-
-Use the Firebase Functions SDK to call the function. The Firebase Functions SDK makes it simple for us to call functions by name without having to write any HTTP request code at all or parse results ourselves.
-
-#### Android
-
-```kotlin
-val functions = FirebaseFunctions.getInstance()
-val auth = FirebaseAuth.getInstance()
-
-// This should be replaced, see note in the function source code
-val uid = "uid1234"
-val data = hashMapOf(
-    "uid" to uid
-)
-
-functions
-  .getHttpsCallable("getAuthToken")
-  .call(data)
-  .continueWith { task ->
-      val result = task.result?.data as Map<String,String>
-      val token = result["token"]!!
-
-      // Retrieve the custom auth token and sign in, see:
-      // https://firebase.google.com/docs/auth/android/custom-auth
-      auth.signInWithCustomToken(token)
-        .addOnCompleteListener{ task ->
-            if (!task.isSuccessful) {
-              // Handle error if necessary
-              // ...
-            }
-
-            // You are now signed in with Firebase Authentication!
-            // ...
-        }
-  }
-```
-
-#### iOS
-
-```swift
-lazy var functions = Functions.functions()
-lazy var auth = Auth.auth()
-
-// This should be replaced, see note in the function source code
-var uid = "uid1234";
-
-functions.httpsCallable("getAuthToken").call(["uid": uid]) { (result, error) in
-  if let error = error as NSError? {
-    if error.domain == FunctionsErrorDomain {
-      let code = FunctionsErrorCode(rawValue: error.code)
-      let message = error.localizedDescription
-      let details = error.userInfo[FunctionsErrorDetailsKey]
-    }
-    // Handle error in your app 
-    // ...
-  }
-
-  // Retrieve the custom auth token and sign in, see:
-  // https://firebase.google.com/docs/auth/ios/custom-auth
-  if let token = (result?.data as? [String: Any])?["token"] as? String {
-    auth.signIn(withCustomToken: token) { (user, error) in
-      // Handle error if necessary, otherwise you are now signed in with
-      // Firebase Authentication!
-      // ...
-    }
-  }
-}
-```
-
-## Call the Translation API through Cloud Functions
-
-Now that you are signed in with Firebase Authentication, all future API calls using the Firebase Functions SDK will automatically provide auth context, which will be available inside the Cloud Function as `context.auth`.
+In this section, you use the `getAuthToken` Cloud Function to retrieve an authentication token and use Firebase Authentication to sign in.
 
 ### Call the function
 
-Just like in the previous step, we will use the Firebase Functions SDK to call the `translateText` function by name:
+Use the Firebase Functions SDK to call the function. The Firebase Functions SDK makes it simple for you to call functions by name without having to write any 
+HTTP request code or parse results yourself.
 
-#### Android
+#### Android (Kotlin)
 
-```kotlin
-val functions = FirebaseFunctions.getInstance()
+    val functions = FirebaseFunctions.getInstance()
+    val auth = FirebaseAuth.getInstance()
 
-val text = "Hello, World!"
-val data = hashMapOf(
-    "text" to text
-)
+    // You should replace the UID. See the note in the function source code.
+    
+    val uid = "uid1234"
+    val data = hashMapOf(
+        "uid" to uid
+    )
 
-functions
-  .getHttpsCallable("translateText")
-  .call(data)
-  .continueWith { task ->
-      val result = task.result?.data as Map<String,Object>
-      val translation = result["translation"]!!
+    functions
+      .getHttpsCallable("getAuthToken")
+      .call(data)
+      .continueWith { task ->
+          val result = task.result?.data as Map<String,String>
+          val token = result["token"]!!
 
-      // Display the translation in your app
-      // ...
-  }
-```
+          // Retrieve the custom authentication token and sign in. See
+          // https://firebase.google.com/docs/auth/android/custom-auth
+          
+          auth.signInWithCustomToken(token)
+            .addOnCompleteListener{ task ->
+                if (!task.isSuccessful) {
+                  // Handle error if necessary
+                  // ...
+                }
 
-#### iOS
+                // You are now signed in with Firebase Authentication!
+                // ...
+            }
+      }
 
-```swift
-lazy var functions = Functions.functions()
+#### iOS (Swift)
 
-var text = "Hello, World!";
+    lazy var functions = Functions.functions()
+    lazy var auth = Auth.auth()
 
-functions.httpsCallable("translateText").call(["text": text]) { (result, error) in
-  if let error = error as NSError? {
-    if error.domain == FunctionsErrorDomain {
-      let code = FunctionsErrorCode(rawValue: error.code)
-      let message = error.localizedDescription
-      let details = error.userInfo[FunctionsErrorDetailsKey]
+    // You should replace the UID. See the note in the function source code.
+    
+    var uid = "uid1234";
+
+    functions.httpsCallable("getAuthToken").call(["uid": uid]) { (result, error) in
+      if let error = error as NSError? {
+        if error.domain == FunctionsErrorDomain {
+          let code = FunctionsErrorCode(rawValue: error.code)
+          let message = error.localizedDescription
+          let details = error.userInfo[FunctionsErrorDetailsKey]
+        }
+        // Handle error in your app 
+        // ...
+      }
+
+      // Retrieve the custom authentication token and sign in. See
+      // https://firebase.google.com/docs/auth/ios/custom-auth
+      
+      if let token = (result?.data as? [String: Any])?["token"] as? String {
+        auth.signIn(withCustomToken: token) { (user, error) in
+          // Handle error if necessary, otherwise you are now signed in with
+          // Firebase Authentication!
+          // ...
+        }
+      }
     }
-    // Handle error in your app
-    // ...
-  }
 
-  if let translation = (result?.data as? [String: Any])?["translation"] as? String {
-    // Display the translation in your app
-    // ...
-  }
-}
-```
+## Call the Translation API through Cloud Functions
+
+When you are signed in with Firebase Authentication, all future API calls using the Firebase Functions SDK automatically provide authentication context, which 
+is available inside the Cloud Function as `context.auth`.
+
+### Call the function
+
+In this section, as in the previous section, you use the Firebase Functions SDK to call the `translateText` function by name.
+
+#### Android (Kotlin)
+
+    val functions = FirebaseFunctions.getInstance()
+
+    val text = "Hello, World!"
+    val data = hashMapOf(
+        "text" to text
+    )
+
+    functions
+      .getHttpsCallable("translateText")
+      .call(data)
+      .continueWith { task ->
+          val result = task.result?.data as Map<String,Object>
+          val translation = result["translation"]!!
+
+          // Display the translation in your app
+          // ...
+      }
+
+#### iOS (Swift)
+
+    lazy var functions = Functions.functions()
+
+    var text = "Hello, World!";
+
+    functions.httpsCallable("translateText").call(["text": text]) { (result, error) in
+      if let error = error as NSError? {
+        if error.domain == FunctionsErrorDomain {
+          let code = FunctionsErrorCode(rawValue: error.code)
+          let message = error.localizedDescription
+          let details = error.userInfo[FunctionsErrorDetailsKey]
+        }
+        // Handle error in your app
+        // ...
+      }
+
+      if let translation = (result?.data as? [String: Any])?["translation"] as? String {
+        // Display the translation in your app
+        // ...
+      }
+    }
 
 ## Cleaning up
 
-### Option 1 - Delete Cloud Functions
+### Option 1: Delete Cloud Functions
 
-None of the products used in this tutorial have any ongoing fixed costs, however it's best practice to clean up these unused Cloud Functions which are currently exposed on the internet.
+None of the products used in this tutorial have any ongoing fixed costs. However, it's a good practice to clean up these unused Cloud Functions, which are 
+currently exposed on the internet.
 
-To delete the functions, use the `gcloud` tool:
+To delete the functions, use these `gcloud` commands:
 
-```bash
-gcloud functions delete getAuthToken
-gcloud functions delete translateText
-```
+    gcloud functions delete getAuthToken
+    gcloud functions delete translateText
 
-### Option 2 - Delete the project
+### Option 2: Delete the project
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
@@ -431,6 +424,6 @@ To delete a project, do the following:
 
 ## What's next
 
-- Learn more about [Callable Cloud Functions](https://firebase.google.com/docs/functions/callable).
+- Learn more about [callable Cloud Functions](https://firebase.google.com/docs/functions/callable).
 - Learn more about [Firebase Authentication](https://firebase.google.com/docs/auth).
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
