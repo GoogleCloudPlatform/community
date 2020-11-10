@@ -1,6 +1,6 @@
 ---
 title: Export Cloud Monitoring metrics using Monitoring Query Language (MQL) 
-description: Learn how to export Cloud Monitoring Metrics using Monitoring Query Language(MQL).
+description: Learn how to export Cloud Monitoring Metrics using Monitoring Query Language (MQL).
 author: xiangshen-dk
 tags: monitoring, stackdriver, mql, functions
 date_published: 2020-11-11
@@ -107,7 +107,7 @@ The sample code for this tutorial is in the
 
         export EXPORT_METRIC_SERVICE_ACCOUNT=mql-export-metrics@$PROJECT_ID.iam.gserviceaccount.com 
 
-1.  Assign IAM permissions to the service account:
+1.  Assign IAM roles to the service account:
 
         gcloud projects add-iam-policy-binding  $PROJECT_ID --member="serviceAccount:$EXPORT_METRIC_SERVICE_ACCOUNT" --role="roles/compute.viewer"
         gcloud projects add-iam-policy-binding  $PROJECT_ID --member="serviceAccount:$EXPORT_METRIC_SERVICE_ACCOUNT" --role="roles/monitoring.viewer"
@@ -150,7 +150,7 @@ The sample code for this tutorial is in the
         LIMIT 10
         "
         
-    If you have the metric data in Cloud Monitoring, they should be exported, and you will have some query results.
+    If you have metrics data in Cloud Monitoring, they should be exported, and you will receive some query results.
 
     Here is an example if you export the metric `compute.googleapis.com/instance/cpu/utilization`:
 
