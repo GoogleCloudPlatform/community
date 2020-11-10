@@ -1,6 +1,6 @@
 ---
 title: Export Cloud Monitoring metrics using Monitoring Query Language (MQL) 
-description: Learn how to export Cloud Monitoring Metrics using Monitoring Query Language (MQL).
+description: Learn how to export Cloud Monitoring metrics using Monitoring Query Language (MQL).
 author: xiangshen-dk
 tags: monitoring, stackdriver, mql, functions
 date_published: 2020-11-11
