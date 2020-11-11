@@ -10,7 +10,11 @@
     "*.js"
   ],
   "dependencies": {
-    "@google-cloud/compute": "^2.3.0",
+    "@google-cloud/compute": "^2.4.0",
+    "@google-cloud/functions-framework": "^1.7.1",
     "@google-cloud/recommender": "^3.2.0"
+  },
+  "scripts": {
+    "start": "functions-framework --target=deleteUnusedInstances"
   }
 }
