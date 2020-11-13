@@ -62,7 +62,6 @@ pip install cmake
 - ninja: https://github.com/ninja-build/ninja/releases
 - CMake: https://cmake.org/download/
 
-
 ### Install and configure ESP-IDF
 
 When all of the dependencies are installed, follow the steps in [Get Started](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) to 
