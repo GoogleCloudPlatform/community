@@ -16,7 +16,6 @@ This tutorial describes how to customize [Fluent Bit](https://fluentbit.io/) log
 
 +   Deploy your own Fluent Bit daemonset on a Google Kubernetes Engine cluster, configured to log data to [Cloud Logging](https://cloud.google.com/logging). We assume that you are already familiar with [Kubernetes](https://kubernetes.io/docs/home/).
 +   Customize GKE logging to remove sensitive data from the Cloud Logging logs.
-+   Customize Fluent Bit to send logs to different locations
 
 ## Costs
 
