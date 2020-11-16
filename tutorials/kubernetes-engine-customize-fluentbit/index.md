@@ -86,12 +86,12 @@ By default, the sample application that you deploy continuously emits random log
 
 1.  Repeat this command until the output looks like the following, with all three `test-logger` pods running:
 
-<pre>
+    <pre>
     NAME                           READY   STATUS    RESTARTS   AGE
     test-logger-58f7bfdb89-4d2b5   1/1     Running   0          28s
     test-logger-58f7bfdb89-qrlbl   1/1     Running   0          28s
     test-logger-58f7bfdb89-xfrkx   1/1     Running   0          28s
-</pre>
+    </pre>
 
 ## Deploying the Fluent Bit daemonset to your cluster
 
@@ -116,10 +116,10 @@ Next you will configure and deploy your Fluent Bit daemonset.
 
 1.  If they're running, you see output like the following:
     <pre>
-        NAME               READY   STATUS    RESTARTS   AGE
-        fluent-bit-246wz   1/1     Running   0          26s
-        fluent-bit-6h6ww   1/1     Running   0          26s
-        fluent-bit-zpp8q   1/1     Running   0          26s
+    NAME               READY   STATUS    RESTARTS   AGE
+    fluent-bit-246wz   1/1     Running   0          26s
+    fluent-bit-6h6ww   1/1     Running   0          26s
+    fluent-bit-zpp8q   1/1     Running   0          26s
     </pre>
 
     Additional details to configure Fluent Bit for Kubernetes can be found in the [Fluent Bit manual]( https://docs.fluentbit.io/manual/installation/kubernetes).  
@@ -146,10 +146,11 @@ Now you change `kubernetes/fluentbit-daemonset.yaml` to mount the ConfigMap `flu
 1.  Open the `kubernetes/fluentbit-daemonset.yaml` file in an editor.
 1.  Change the name of the ConfigMap from `fluent-bit-config` to `fluent-bit-config-filtered` by editing the `configMap.name` field:  
 [kubernetes/fluentd-daemonset.yaml  
-](https://github.com/GoogleCloudPlatform/kubernetes-engine-customize-fluentd/blob/master/kubernetes/fluentd-daemonset.yaml)`- name: fluent-bit-etc`
+](https://github.com/GoogleCloudPlatform/kubernetes-engine-customize-fluentd/blob/master/kubernetes/fluentd-daemonset.yaml)
     <pre>
-        configMap:
-            name: fluent-bit-config
+    - name: fluent-bit-etc`
+    configMap:
+        name: fluent-bit-config
     </pre>
 1.  Deploy the new version of the ConfigMap to your cluster:
 
@@ -164,7 +165,7 @@ Now you change `kubernetes/fluentbit-daemonset.yaml` to mount the ConfigMap `flu
         kubectl rollout status ds/fluent-bit --namespace=logging
 
     <pre>
-        daemon set "fluent-bit" successfully rolled out
+    daemon set "fluent-bit" successfully rolled out
     </pre>
 
 1.  When the rollout is complete, refresh the Logging logs and make sure that the Social Security number, credit card number, and email address data has been filtered out.
