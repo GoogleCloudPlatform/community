@@ -148,7 +148,7 @@ Now you change `kubernetes/fluentbit-daemonset.yaml` to mount the ConfigMap `flu
 [kubernetes/fluentd-daemonset.yaml  
 ](https://github.com/GoogleCloudPlatform/kubernetes-engine-customize-fluentd/blob/master/kubernetes/fluentd-daemonset.yaml)
     <pre>
-    - name: fluent-bit-etc`
+    - name: fluent-bit-etc
     configMap:
         name: fluent-bit-config
     </pre>
@@ -164,11 +164,12 @@ Now you change `kubernetes/fluentbit-daemonset.yaml` to mount the ConfigMap `flu
 
         kubectl rollout status ds/fluent-bit --namespace=logging
 
+    When it completes, you should see the follwoing message:
     <pre>
     daemon set "fluent-bit" successfully rolled out
     </pre>
 
-1.  When the rollout is complete, refresh the Logging logs and make sure that the Social Security number, credit card number, and email address data has been filtered out.
+1.  When the rollout is complete, refresh the Logging logs and make sure that the Social Security Number, credit card number, and email address data has been filtered out.
 
 ![fluentbit-filter-after](./fluentbit-filter-after.png)
 

@@ -63,14 +63,14 @@ data:
         Merge_Log_Key       log_processed
         K8S-Logging.Parser  On
         K8S-Logging.Exclude Off
-    # ### sample log scrubbing filters    
-    # [FILTER]
-    #     Name                lua
-    #     Match               kube.*
-    #     # lua script to redact sensitive data in log messages
-    #     script              replace_info.lua
-    #     call                replace_sensitive_info
-    # ### end sample log scrubbing
+    #    ### sample log scrubbing filters    
+    #[FILTER]
+    #    Name                lua
+    #    Match               kube.*
+    #    # lua script to redact sensitive data in log messages
+    #    script              replace_info.lua
+    #    call                replace_sensitive_info
+    #    ### end sample log scrubbing
 
   output-stackdriver.conf: |
 
