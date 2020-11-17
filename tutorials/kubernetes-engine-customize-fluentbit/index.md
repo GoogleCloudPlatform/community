@@ -133,7 +133,7 @@ Next you will configure and deploy your Fluent Bit daemonset.
 
 The next step is to specify that Fluent Bit should filter certain data so that it is not logged. For this tutorial, you filter out the Social Security numbers, credit card numbers, and email addresses. To make this update, you change the daemonset to use a different ConfigMap that contains these filters. You use Kubernetes rolling updates feature and preserve the old version of the ConfigMap.
 
-1.  Open the `kubernetes/fluentbit-configmap.yaml` file in an editor.
+1.  Open the [kubernetes/fluentbit-configmap.yaml](./kubernetes/fluentbit-configmap.yaml) file in an editor.
 1.  Uncomment the lines between and not including the lines `### sample log scrubbing filters` and `### end sample log scrubbing filters`.
 1.  Change the name of the ConfigMap from `fluent-bit-config` to `fluent-bit-config-filtered` by editing the `metadata.name` field.
 1.  Save and close the file.
@@ -144,8 +144,7 @@ Now you change `kubernetes/fluentbit-daemonset.yaml` to mount the ConfigMap `flu
 
 1.  Open the `kubernetes/fluentbit-daemonset.yaml` file in an editor.
 1.  Change the name of the ConfigMap from `fluent-bit-config` to `fluent-bit-config-filtered` by editing the `configMap.name` field:  
-[kubernetes/fluentd-daemonset.yaml  
-](https://github.com/GoogleCloudPlatform/kubernetes-engine-customize-fluentd/blob/master/kubernetes/fluentd-daemonset.yaml)
+[kubernetes/fluentbit-daemonset.yaml](./kubernetes/fluentbit-daemonset.yaml)
     <pre>
     - name: fluent-bit-etc
     configMap:
