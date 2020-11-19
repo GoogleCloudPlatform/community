@@ -1,9 +1,9 @@
 ---
-title: Customizing Fluent Bit for Google Kubernetes Engine Logs 
-description: Learn how to customize Fluent Bit for Google Kubernetes Engine Logs.
+title: Customizing Fluent Bit for Google Kubernetes Engine logs 
+description: Learn how to customize Fluent Bit for Google Kubernetes Engine logs.
 author: xiangshen-dk
 tags: logging, stackdriver, gke, fluent-bit
-date_published: 2020-11-15
+date_published: 2020-11-19
 ---
 
 Xiang Shen | Solutions Architect | Google
@@ -127,7 +127,7 @@ Next you will configure and deploy your Fluent Bit daemonset.
 1.  Click **Run Query**.
 1.  In the **Logs field explorer**, select **test-logger** for **CONTAINER_NAME**. After add the `log` field to the summary line, you can logs similar to the following:
 
-![fluentbit-filter-before](./fluentbit-filter-before.png)
+![fluentbit-filter-before](https://storage.googleapis.com/gcp-community/tutorials/kubernetes-engine-customize-fluentbit/fluentbit-filter-before.png)
 
 ## Filtering information from the logfile
 
@@ -169,7 +169,7 @@ Now you change `kubernetes/fluentbit-daemonset.yaml` to mount the ConfigMap `flu
 
 1.  When the rollout is complete, refresh the Logging logs and make sure that the Social Security Number, credit card number, and email address data has been filtered out.
 
-![fluentbit-filter-after](./fluentbit-filter-after.png)
+![fluentbit-filter-after](https://storage.googleapis.com/gcp-community/tutorials/kubernetes-engine-customize-fluentbit/fluentbit-filter-after.png)
 
 ### Deleting the GKE cluster
 
