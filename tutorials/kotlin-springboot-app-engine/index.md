@@ -103,31 +103,29 @@ To deploy your application, you will use an App Engine plugin for Maven which si
 is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/java/tools/gradle).
 
 
-1. _When running on JDK 8:_ 
-   
-   Create a file called `app.yaml` in a new folder `src/main/appengine` with the following contents:
-    ```
-      runtime: java
-      env: flex
-      runtime_config:
-      jdk: openjdk8
-    ```
+1.  Specify the runtime.
+
+    -   If you are using JDK 8, create a file called `app.yaml` in a new folder `src/main/appengine` with the following contents:
+    
+            runtime: java
+            env: flex
+            runtime_config:
+              jdk: openjdk8
       
-   By specifying runtime: java, the runtime image gcr.io/google-appengine/openjdk:8 is automatically selected when you deploy a JAR (*.jar) file. The JDK version is also selected using the jdk field.
-
-   _When running on JDK 11:_
+        By specifying `runtime: java`, the runtime image `gcr.io/google-appengine/openjdk:8` is automatically selected when you deploy a JAR file. The JDK 
+        version is also selected using the `jdk` field.
+        
+    -   If you are using JDK 11, create a file called `app.yaml` in the root directory (or any other directory configured in the `appengine-maven-plugin`)
+        with the following contents:
    
-   Create a file called `app.yaml` in the root directory (or any other directory configured in the `appengine-maven-plugin`) with the following contents:
-   ``` 
-       runtime: java11
-   ```
+            runtime: java11
        
-   Note: the flex environment is not available (yet) for Java 11.
+        **Note**: The `flex` environment is not currently available for Java 11.
    
-2.  Add [the following](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine/pom-plugin-example.xml) plugin entry to the `pom.xml` file to configure the Maven
-    plugin.
+1.  Add [the following](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine/pom-plugin-example.xml) plugin entry 
+    to the `pom.xml` file to configure the Maven plugin.
 
-3.  Run the following command to deploy your app:
+1.  Run the following command to deploy your app:
 
         mvn appengine:deploy
 
@@ -141,12 +139,12 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
     **Note**: If the command fails with `Google Cloud SDK could not be found`, make sure the environment
     variable `GOOGLE_CLOUD_SDK_HOME` is set to the root directory of where you installed the Google Cloud SDK.
 
-4.  Once the deploy command has completed, you can run
+1.  Once the deploy command has completed, you can run the following command to see your app running in production on App Engine in the browser:
 
         gcloud app browse
 
-    to see your app running in production on App Engine in the browser. Not however that this application does not
-    respond to the root endpoint. Once the browser is open with the correct URL, you need to append `/message` to it.
+    Note, however, that this application does not respond to the root endpoint. When the browser is open with the correct URL, you need to append
+    `/message` to it.
 
 ## Update your application
 
