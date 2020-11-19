@@ -106,19 +106,21 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
 1. _When running on JDK 8:_ 
    
    Create a file called `app.yaml` in a new folder `src/main/appengine` with the following contents:
-
+    ```
       runtime: java
       env: flex
       runtime_config:
       jdk: openjdk8
+    ```
       
    By specifying runtime: java, the runtime image gcr.io/google-appengine/openjdk:8 is automatically selected when you deploy a JAR (*.jar) file. The JDK version is also selected using the jdk field.
 
    _When running on JDK 11:_
    
    Create a file called `app.yaml` in the root directory (or any other directory configured in the `appengine-maven-plugin`) with the following contents:
-
+   ``` 
        runtime: java11
+   ```
        
    Note: the flex environment is not available (yet) for Java 11.
    
