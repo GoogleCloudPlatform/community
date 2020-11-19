@@ -139,7 +139,7 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
     **Note**: If the command fails with `Google Cloud SDK could not be found`, make sure the environment
     variable `GOOGLE_CLOUD_SDK_HOME` is set to the root directory of where you installed the Google Cloud SDK.
 
-1.  Once the deploy command has completed, you can run the following command to see your app running in production on App Engine in the browser:
+1.  After the `deploy` command has completed, you can run the following command to see your app running in production on App Engine in the browser:
 
         gcloud app browse
 
