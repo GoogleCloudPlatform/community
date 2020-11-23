@@ -4,7 +4,6 @@ description: Learn how to set up a LAMP stack on a virtual machine.
 author: jimtravis
 tags: Compute Engine, LAMP
 date_published: 2017-02-15
-updated: 2020-11-23
 ---
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
