@@ -10,15 +10,10 @@ Shashank Agarwal | Database(s) Cloud Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-# Deploying highly-available PostgreSQL with GKE 
-
 This document describes the deployment of the database engine PostgreSQL in a GKE cluster. In addition, it discusses the consideration in comparison to a conventional deployment of PostgreSQL on a virtual machine or in Cloud SQL.
 
 
 ## Objectives
-
-
-
 *   Learn to install a PostgreSQL instance in GKE using a standard Docker image
 *   Enable access from your laptop as well as public access to the database instance
 *   Understand the architectural considerations of installing PostgreSQL in GKE compared to a virtual machine installation
