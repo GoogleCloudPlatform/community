@@ -51,7 +51,7 @@ The following instructions will enable you to install a [regional GKE cluster](h
 
 1. Check if kubectl is installed by running
 
-    ```
+    ```sh
     kubectl version
     ```
 
@@ -61,14 +61,14 @@ The following instructions will enable you to install a [regional GKE cluster](h
 
 2. Install kubectl it into your local environment if it is not present
 
-    ```
+    ```sh
     gcloud components install kubectl
     ```
 
 
 3. Create a regional GKE Cluster in us-central1 with one node each in 2 different zones.
 
-    ```
+    ```sh
     gcloud container clusters create "postgres-gke-regional" \
     --region "us-central1" \
     --machine-type "e2-standard-2" --image-type "COS" --disk-type "pd-standard" --disk-size "100" \
@@ -78,7 +78,7 @@ The following instructions will enable you to install a [regional GKE cluster](h
 
 4. Get the GKE cluster credentials
 
-    ```
+    ```sh
     gcloud container clusters get-credentials postgres-gke-regional --region us-central1
 
     ```
@@ -99,7 +99,7 @@ Create the Volume and Persistent Volume Claim (PVC). This will be a blank region
 1. Optionally, create a subdirectory that will hold all configuration files in one location.
 2. Create file postgres-pv.yaml and apply it to the GKE cluster. This creates the required persistent volume claim based on a [regional persistent disk](https://cloud.google.com/compute/docs/disks#repds).
 
-    ```
+    ```sh
     cat > postgres-pv.yaml << EOF
     kind: StorageClass
     apiVersion: storage.k8s.io/v1
@@ -135,7 +135,7 @@ Create the Volume and Persistent Volume Claim (PVC). This will be a blank region
 
 3. Create The PostgreSQL deployment with the following deployment file:
 
-    ```
+    ```sh
     cat > postgres-deployment.yaml << EOF
     apiVersion: apps/v1
     kind: Deployment
@@ -191,7 +191,7 @@ Create the Volume and Persistent Volume Claim (PVC). This will be a blank region
 
 4. Create the PostgreSQL service with the following yaml file.
 
-    ```
+    ```sh
     cat > postgres-service.yaml << EOF
     apiVersion: v1
     kind: Service
@@ -226,7 +226,7 @@ The following steps create a database, a table and insert a few rows as a test d
 
 1. Connect to PostgreSQL instance
 
-    ```
+    ```sh
     POD=`kubectl get pods -l app=postgres -o wide | grep -v NAME | awk '{print $1}'`
 
     kubectl exec -it $POD -- psql -U postgres
@@ -236,7 +236,7 @@ The following steps create a database, a table and insert a few rows as a test d
 2. Create database, table and insert few rows
 
 
-```
+```sh
 create database gke_test_regional;
 
 \c gke_test_regional;
@@ -256,7 +256,7 @@ create database gke_test_regional;
 3. Select all rows to ensure that the insert was successful 
 
 
-```
+```sh
 select * from test;
 
 ```
@@ -265,7 +265,7 @@ select * from test;
 
 4. Exit out of the PostgreSQL shell
 
-    ```
+    ```sh
     \q
 
     ```
@@ -282,7 +282,7 @@ To simulate failover, we will take out the node which is hosting PostgreSQL pod.
 
 1. Identify the node currently hosting PostgreSQL
 
-    ```
+    ```sh
     CORDONED_NODE=`kubectl get pods -l app=postgres -o wide | grep -v NAME | awk '{print $7}'`
 
     echo ${CORDONED_NODE}
@@ -297,7 +297,7 @@ To simulate failover, we will take out the node which is hosting PostgreSQL pod.
 
 2. Disable scheduling of any new pods on this node.
 
-    ```
+    ```sh
     kubectl cordon ${CORDONED_NODE}
 
     kubectl get nodes
@@ -309,7 +309,7 @@ To simulate failover, we will take out the node which is hosting PostgreSQL pod.
 
 3. Delete the existing PostgreSQL pod.
 
-    ```
+    ```sh
     POD=`kubectl get pods -l app=postgres -o wide | grep -v NAME | awk '{print $1}'`
 
     kubectl delete pod ${POD}
@@ -318,14 +318,14 @@ To simulate failover, we will take out the node which is hosting PostgreSQL pod.
 
 4. Verify that a new pod has been created on the other node. It might take a while for it to be ready (usually around 30 seconds).
 
-    ```
+    ```sh
     kubectl get pods -l app=postgres -o wide
     ```
 
 
 5. Verify the node’s zone. Notice that now it is deployed in the other zone (different zone that step 1 determined).
 
-    ```
+    ```sh
     NODE=`kubectl get pods -l app=postgres -o wide | grep -v NAME | awk '{print $7}'`
 
     echo ${NODE}
@@ -343,7 +343,7 @@ To simulate failover, we will take out the node which is hosting PostgreSQL pod.
 
 6. Verify data consistency next. Connect to the database instance.
 
-    ```
+    ```sh
     POD=`kubectl get pods -l app=postgres -o wide | grep -v NAME | awk '{print $1}'`
 
     kubectl exec -it $POD -- psql -U postgres
@@ -352,7 +352,7 @@ To simulate failover, we will take out the node which is hosting PostgreSQL pod.
 
 7. Execute the following commands to verify that the test data set exists and is the same as created.
 
-    ```
+    ```sh
     \c gke_test_regional;
 
     select * from test;
@@ -370,7 +370,7 @@ In order to make the cordoned node schedulable again, execute the following comm
 
 1. Uncordon the node for which scheduling was disabled
 
-    ```
+    ```sh
     kubectl uncordon $CORDONED_NODE
     ```
 
@@ -378,7 +378,7 @@ In order to make the cordoned node schedulable again, execute the following comm
 2. Check that the node is ready again
 
 
-```
+```sh
 kubectl get nodes
 ```
 
@@ -391,7 +391,7 @@ At this point the regional cluster is fully functional again.
 At this point the database is not accessible over a public IP address. Execute the following command to see that no public IP address is available:
 
 
-```
+```sh
 kubectl get services postgres
 ```
 
@@ -402,14 +402,14 @@ Make the service publicly accessible by executing the following commands.
 
 1. Remove the current non-public service
 
-    ```
+    ```sh
     kubectl delete -f postgres-service.yaml
     ```
 
 
 2. Create a new service configuration file that will create a public IP address and deploy it.
 
-    ```
+    ```sh
     cat > postgres-service.yaml << EOF
     apiVersion: v1
     kind: Service
@@ -430,7 +430,7 @@ Make the service publicly accessible by executing the following commands.
 3. Run the following command to see that a public IP (`EXTERNAL-IP`) address will be assigned (it might be pending for a while):
 
 
-```
+```sh
 kubectl get services postgres
 ```
 
@@ -448,7 +448,7 @@ Instead of opening up the database service and provide a public IP address, you 
 
 1. Reset the service so that no public IP address is created
 
-    ```
+    ```sh
     kubectl delete -f postgres-service.yaml
 
     cat > postgres-service.yaml << EOF
@@ -471,7 +471,7 @@ Instead of opening up the database service and provide a public IP address, you 
 2. Verify that `EXTERNAL-IP` has the value `&lt;none>`
 
 
-```
+```sh
 kubectl get services postgres
 
 ```
@@ -489,7 +489,7 @@ kubectl get services postgres
 6. Copy the command and change the port 8080 to 5432 resulting in
 
 
-```
+```sh
 gcloud container clusters get-credentials postgres-gke-regional \
 --region us-central1 --project pg-on-gke \
 && kubectl port-forward $(kubectl get pod --selector="app=postgres" \ 
@@ -505,7 +505,7 @@ gcloud container clusters get-credentials postgres-gke-regional \
 7. Open a terminal window on your laptop and run the port forwarding command that you modified above
 
 
-```
+```sh
 gcloud container clusters get-credentials postgres-gke-regional \
 --region us-central1 --project pg-on-gke \
 && kubectl port-forward $(kubectl get pod --selector="app=postgres" \ 
@@ -518,7 +518,7 @@ gcloud container clusters get-credentials postgres-gke-regional \
 8. If you are not already logged in you might be asked for authentication
 
 
-```
+```sh
 gcloud auth login
 ```
 
@@ -530,7 +530,7 @@ In this case run the port forwarding command again after the authentication succ
 9. Start the PostgreSQL client (or use your favorite IDE) and verify that you can access the database
 
 
-```
+```sh
 psql --host 127.0.0.1 -U postgres -p 5432
 
     \c gke_test_regional;
