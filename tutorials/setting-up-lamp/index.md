@@ -287,8 +287,7 @@ To delete a Compute Engine instance:
 
 ## What's next
 
-+ By default, the web server document root is owned by the `root` user. You might
++   By default, the web server document root is owned by the `root` user. You might
 want to configure your document root for another user or want to change
-the directory location in the Apache configuration file.
-**Debian/Ubuntu**: The web server document root is at `/var/www/html` and the Apache configuration file is at `/etc/apache2/sites-available/default`.
-+ [Learn more about serving websites on Google Cloud.](https://cloud.google.com/solutions/web-serving-overview)
+the directory location in the Apache configuration file. **Debian/Ubuntu**: The web server document root is at `/var/www/html` and the Apache configuration file is at `/etc/apache2/sites-available/default`.
++   Learn more about [serving websites on Google Cloud](https://cloud.google.com/solutions/web-serving-overview).
