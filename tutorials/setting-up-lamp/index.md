@@ -285,7 +285,7 @@ To delete a Compute Engine instance:
 1. Click the checkbox next to your `lamp-tutorial` instance.
 1. Click the **Delete** button at the top of the page to delete the instance.
 
-## Next steps
+## What's next
 
 + By default, the web server document root is owned by the `root` user. You might
 want to configure your document root for another user or want to change
