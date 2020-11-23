@@ -236,7 +236,7 @@ The following steps create a database, a table and insert a few rows as a test d
 2. Create database, table and insert few rows
 
 
-```sh
+```sql
 create database gke_test_regional;
 
 \c gke_test_regional;
@@ -256,7 +256,7 @@ create database gke_test_regional;
 3. Select all rows to ensure that the insert was successful 
 
 
-```sh
+```sql
 select * from test;
 
 ```
@@ -265,7 +265,7 @@ select * from test;
 
 4. Exit out of the PostgreSQL shell
 
-    ```sh
+    ```sql
     \q
 
     ```
@@ -352,7 +352,7 @@ To simulate failover, we will take out the node which is hosting PostgreSQL pod.
 
 7. Execute the following commands to verify that the test data set exists and is the same as created.
 
-    ```sh
+    ```sql
     \c gke_test_regional;
 
     select * from test;
@@ -532,6 +532,9 @@ In this case run the port forwarding command again after the authentication succ
 
 ```sh
 psql --host 127.0.0.1 -U postgres -p 5432
+```
+
+```sql
 
     \c gke_test_regional;
 
