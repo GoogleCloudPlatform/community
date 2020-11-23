@@ -1,7 +1,7 @@
 ---
 title: Deploying highly-available PostgreSQL with GKE
 description: Learn how to deploy a Postgresql HA with GKE.
-author: shashank-google, chbussler
+author: shashank-google,chbussler
 tags: Kubernetes, GKE, Postgresql
 date_published: 2020-12-01
 ---
