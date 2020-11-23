@@ -130,15 +130,15 @@ Install [MariaDB](https://mariadb.org/) and related PHP components:
 
 You can run the following command to check if the MariaDB database server is running:
 
-        sudo systemctl status mariadb
+    sudo systemctl status mariadb
 
 If in any case, `mariadb` service is not running, then start the service with the following command:
 
-        sudo systemctl start mariadb
+    sudo systemctl start mariadb
 
 You can also use the `mysql` client connect to the database server, for example:
 
-        sudo mysql
+    sudo mysql
 
 ### Configure MariaDB
 
@@ -291,7 +291,5 @@ To delete a Compute Engine instance:
 want to configure your document root for another user or want to change
 the directory location in the Apache configuration file.
 
-  * **Debian/Ubuntu**: The web server document root is at `/var/www/html` and the Apache configuration
-  file is at `/etc/apache2/sites-available/default`.
-
+  **Debian/Ubuntu**: The web server document root is at `/var/www/html` and the Apache configuration file is at `/etc/apache2/sites-available/default`.
 + [Learn more about serving websites on Google Cloud.](https://cloud.google.com/solutions/web-serving-overview)
