@@ -4,6 +4,7 @@ description: Learn how to set up a LAMP stack on a virtual machine.
 author: jimtravis
 tags: Compute Engine, LAMP
 date_published: 2017-02-15
+updated: 2020-11-23
 ---
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
@@ -13,7 +14,7 @@ virtual machine instance. Follow the steps in this tutorial to configure LAMP
 on a Debian, Ubuntu, or CentOS instance.
 
 Alternatively, you can use the
-[Cloud Launcher](https://cloud.google.com/launcher) to deploy a LAMP stack automatically.
+[Cloud Marketplace](https://cloud.google.com/marketplace) to deploy a LAMP stack automatically.
 
 ## Objectives
 
@@ -25,13 +26,14 @@ Alternatively, you can use the
 
 ## Prerequisites
 
-+ Select or create a Google Cloud project.
-+ Enable billing for your project.
+1.  [Select or create a Google Cloud project.](https://cloud.console.google.com/projectselector2/home/dashboard)
+
+1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
 
 ## Costs
 
 This tutorial uses billable components of Google Cloud,
-including Compute Engine.
+including [Compute Engine](https://cloud.google.com/compute/all-pricing).
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/)
 to generate a cost estimate based on your projected usage.
@@ -45,11 +47,14 @@ the Cloud Console:
 1. Click the Create instance button.
 1. Set **Name** to **lamp-tutorial**.
 1. Set **Machine type** to **e2-micro**.
-1. In the **Boot disk** section, click **Change** to begin configuring your boot disk.
-1. In the **OS images** tab, choose a **Debian 7.x**, **Ubuntu 14.04**, **CentOS 6.x**, or **CentOS 7.x** version.
-1. Click **Select**.
+1. We use **Debina GNU/Linux 10(buster)** for **Boot disk**
 1. In the **Firewall** section, select **Allow HTTP traffic** and **Allow HTTPS traffic**.
 1. Click the **Create** button to create the instance.
+
+__Note:__ If you want to use a different operating system, click the **Change** button for the **Boot disk**,
+select the OS and the version you want. For this tutorial, we assume you are using Debian 10
+or Ubuntu 20.04 LTS. For other Linux distributions they probably have different steps to install the stack.
+You can search on the internet for the latest install procedures.
 
 Give the instance a few seconds to start up.
 
@@ -76,31 +81,8 @@ Make a note of the IP address of your VM instance. You can see this address in t
 By creating an instance, you already have the "Linux" part of
 LAMP. Next, install Apache and PHP.
 
-#### Debian 8 and Ubuntu 14
-
-    sudo apt-get update
-    sudo apt-get install apache2 php5 libapache2-mod-php5
-
-#### Debian 9 and Ubuntu 16/17
-
     sudo apt-get update
     sudo apt-get install apache2 php libapache2-mod-php
-
-#### CentOS 6 and 7
-
-1. Install Apache and PHP:
-
-        sudo yum check-update
-        sudo yum -y install httpd php
-
-1. Start the Apache service:
-
-        sudo service httpd start
-
-1. Optional: Set the Apache service to start automatically:
-
-        sudo chkconfig httpd on
-
 
 ### Test Apache and PHP
 
@@ -112,13 +94,17 @@ look up the address in the
 
         http://[YOUR_EXTERNAL_IP_ADDRESS]
 
-    You should see the Apache test page.
+    You should see the Apache test page. Make sure you are not using `https` because it's not configured.
 
 1. Create a test file in the default web server root at `/var/www/html/`. You can follow the instructions in the [php documentation](http://php.net/manual/en/tutorial.firstpage.php). Example number 2 is the simplest example.
 
     You can write the code to the file from the command line by using a statement like the following. Replace `[YOUR_PHP_CODE]` with the code you want to write out:
 
         sudo sh -c 'echo "[YOUR_PHP_CODE]" > /var/www/html/phpinfo.php'
+    
+    For example:
+
+        sudo sh -c 'echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php'
 
 1. Browse to the test file to verify that Apache and PHP are working together:
 
@@ -130,54 +116,34 @@ look up the address in the
 If the page failed to load (`HTTP 404`), verify:
 
 + In the Cloud Console, HTTP traffic is allowed for your instance.
-+ The URL uses the correct IP address and file name.
++ The URL uses `http` with the correct IP address and file name.
 
 
-### Install MySQL on your instance
+### Install MariaDB on your instance
 
-Install MySQL and related PHP components:
+Install [MariaDB](https://mariadb.org/) and related PHP components:
 
-#### Debian/Ubuntu
+    sudo apt-get update
+    sudo apt-get install mariadb-server php php-mysql
 
-    sudo apt-get install mysql-server php-mysql php-pear
+### Check MariaDB server statuses
 
-#### Ubuntu 16
+You can run the following command to check if the MariaDB database server is running:
 
-    sudo apt-get install mysql-server php7.0-mysql php-pear
+        sudo systemctl status mariadb
 
-#### CentOS 6
-
-1. Install MySQL and related components:
-
-        sudo yum -y install httpd mysql-server php php-mysql
-
-1. Start the MySQL service:
-
-        sudo service mysqld start
-
-1. Optional: Set the MySQL service to start automatically:
-
-        sudo chkconfig mysqld on
-
-#### CentOS 7
-
-1. Install MariaDB and related components:
-
-        sudo yum -y install httpd mariadb-server php php-mysql
-
-1. Start the MariaDB service:
+If in any case, `mariadb` service is not running, then start the service with the following command:
 
         sudo systemctl start mariadb
 
-1. Optional: Set the MariaDB service to start automatically:
+You can also use the `mysql` client connect to the database server, for example:
 
-        sudo systemctl enable mariadb
+        sudo mysql
 
+### Configure MariaDB
 
-### Configure MySQL
-
-Now that you have MySQL installed, you should run the
-`mysql_secure_installation` command to improve the security of your
+Now that you have MariaDB installed, you should run the
+[mysql_secure_installation](https://mariadb.com/kb/en/mysql_secure_installation/) command to improve the security of your
 installation. This performs steps such as setting the root user password if
 it is not yet set, removing the anonymous user, restricting root user access to
 the local machine, and removing the test database.
@@ -188,48 +154,18 @@ the local machine, and removing the test database.
 
 You can use phpMyAdmin to administer your database through a UI.
 
-#### Install phpMyAdmin
+    sudo apt-get install php-bz2 php-gd php-curl
 
-##### Debian/Ubuntu
+    # this command is only needed for Debian 10
+    sudo apt-get install -t buster-backports php-twig
 
     sudo apt-get install phpmyadmin
 
-##### CentOS 6 and 7
+During the installation, configure phpMyAdmin as following:
 
-    sudo yum install phpMyAdmin
-
-#### Configure phpMyAdmin
-
-##### Debian/Ubuntu
-
-  + Select **apache2**.
-  + Select **yes** to use `dbconfig-common` for database setup.
-  + Enter the database administrator's password that you chose during MySQL configuration.
-  + Enter a password for the phpMyAdmin application.
-
-##### CentOS 6 and 7
-
-By default, phpMyAdmin allows connections from only localhost. To access the
-database from a workstation, modify the Allow directive in the Apache
-configuration file for phpMyAdmin.
-
-1. In your text editor, open `phpMyAdmin.conf`.
-
-       sudo nano /etc/httpd/conf.d/phpMyAdmin.conf
-
-1.  To allow hosts on your network to access phpMyAdmin,
-    [modify the Allow directive](https://httpd.apache.org/docs/current/mod/mod_access_compat.html#allow)
-    for Apache 2.2, adding your workstation's IP address. [See an example](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/setting-up-lamp/code-phpmyadmin.txt).
-
-1. Restart the Apache service:
-
-##### CentOS 6
-
-     sudo service httpd restart
-
-##### CentOS 7
-
-     sudo systemctl restart httpd
+  + Use the `SPACE Bar` to select **apache2** and the `TAB` key to move the cursor.
+  + Select **Yes** to use `dbconfig-common` for database setup.
+  + Enter a password for the phpMyAdmin application and make a note of it.
 
 #### Test phpMyAdmin
 
@@ -239,8 +175,7 @@ configuration file for phpMyAdmin.
 
       You should see the phpMyAdmin login page.
 
-1. Log in by using the `root` username and the administrative password
-that you chose during MySQL configuration.
+1. Log in by using the `phpmyadmin` username and the password you created when you install phpMyAdmin.
 
 #### Secure phpMyAdmin
 
@@ -257,7 +192,7 @@ This tutorial uses the `gcloud` command, which is part of the Cloud SDK.
 Copy files to your instance using the `copy-files` command.
 The following example copies a file from your workstation to the home directory on the instance.
 
-    gcloud compute scp [LOCAL_FILE_PATH] lamp-tutorial:/var/www/html
+    gcloud compute scp [LOCAL_FILE_PATH] root@lamp-tutorial:/var/www/html
 
 Replace [LOCAL_FILE_PATH] with the path to the file on your workstation.
 
@@ -284,7 +219,7 @@ with that provider. This lesson assumes that you are mapping `example.com` and `
 to point to your website hosted on Compute Engine.
 
 For the `example.com` domain name, create an `A` record with your DNS provider. For the `www.example.com` sub-domain,
-create a `CNAME` record for `www` to point it to the `example.com` domain. The `A` record maps a host name
+create a `CNAME` record for `www` to point it to the `example.com` domain. The `A` record maps a hostname
 to an IP address. The `CNAME` record creates an alias for the `A` record. This lesson assumes you want
 `example.com` and `www.example.com` to map to the same IP address.
 
@@ -327,7 +262,7 @@ to delete the project, delete the individual instances, as described in the next
 
 **Warning**: Deleting a project has the following consequences:
 
-+ If you used an existing project, you'll also delete any other work you've done in the project.
++ If you used an existing project, you'd also delete any other work you've done in the project.
 + You can't reuse the project ID of a deleted project. If you created a custom project ID that you
 plan to use in the future, you should delete the resources inside the project instead. This ensures
 that URLs that use the project ID, such as an appspot.com URL, remain available.
@@ -358,8 +293,5 @@ the directory location in the Apache configuration file.
 
   * **Debian/Ubuntu**: The web server document root is at `/var/www/html` and the Apache configuration
   file is at `/etc/apache2/sites-available/default`.
-
-  * **CentOS**: The web server document root is at `/var/www/html` and the Apache
-  configuration file is at `/etc/httpd/conf/httpd.conf`.
 
 + [Learn more about serving websites on Google Cloud.](https://cloud.google.com/solutions/web-serving-overview)
