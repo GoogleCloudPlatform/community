@@ -18,6 +18,37 @@ This document describes the deployment of the database engine PostgreSQL in a GK
 *   Enable access from your laptop as well as public access to the database instance
 *   Understand the architectural considerations of installing PostgreSQL in GKE compared to a virtual machine installation
 
+## Costs
+
+This tutorial uses billable components of Google Cloud Platform, including:
+
+
+
+*   Compute Engine
+*   GKE
+
+Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
+
+
+## Before you begin
+
+For this reference guide, you need a GCP [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a new one, or select a project you already created:
+
+
+
+1. Select or create a GCP project.
+
+[GO TO THE PROJECT SELECTOR PAGE](https://console.cloud.google.com/projectselector2/home/dashboard)
+
+
+
+2. Enable billing for your project.
+
+[ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
+
+When you finish this tutorial, you can avoid continued billing by deleting the resources you created. See [Cleaning up](https://docs.google.com/document/d/1G8k6nHTmnrSyxrxqKWQleTzldETAQ02Di_pLW4OXYJ8/edit#heading=h.2fjojvpg205m) for more detail.
+
+
 ## Stateful Kubernetes database applications
 
 ### Stateful application
@@ -662,3 +693,29 @@ In the above example a regional GKE cluster with one node each in two zones was 
 From a database instance perspective PostgreSQL runs in one zone only at any given point in time. From an application perspective this might be different. If an application runs (as containers) in two zones at the same time, it assumes the capacity of nodes in two zones. A zone failure would cut the capacity available for the application in half.
 
 From an application perspective it might make sense to create a cluster across three zones with planning the outage of one zone from a capacity perspective so that a zone failure does not impact the application performance.
+
+## Cleaning up
+
+To avoid incurring charges to your Google Cloud Platform account for the resources used in this tutorial:
+
+
+### Deleting the project
+
+The easiest way to eliminate billing is to delete the project you created for
+the tutorial. To do so using `gcloud`, run:
+
+    gcloud projects delete [PROJECT_ID]
+
+where `[PROJECT_ID]` is your Google Cloud project ID.
+
+**Warning**: Deleting a project has the following consequences:
+
+If you used an existing project, you'll also delete any other work you've done
+in the project. You can't reuse the project ID of a deleted project. If you
+created a custom project ID that you plan to use in the future, you should
+delete the resources inside the project instead. This ensures that URLs that
+use the project ID, such as an appspot.com URL, remain available.
+
+## What's next   
+*   Creating a primary database with replicas is described in this page: [Run a Replicated Stateful Application](https://kubernetes.io/docs/tasks/run-application/run-replicated-stateful-application/) (based on MySQL)
+*   Try out other Google Cloud Platform features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
