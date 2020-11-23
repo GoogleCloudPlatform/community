@@ -13,40 +13,7 @@ This document describes the deployment of the database engine PostgreSQL in a GK
 *   Enable access from your laptop as well as public access to the database instance
 *   Understand the architectural considerations of installing PostgreSQL in GKE compared to a virtual machine installation
 
-
-## Costs
-
-This tutorial uses billable components of Google Cloud Platform, including:
-
-
-
-*   Compute Engine
-*   GKE
-
-Use the [Pricing Calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
-
-
-## Before you begin
-
-For this reference guide, you need a GCP [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a new one, or select a project you already created:
-
-
-
-1. Select or create a GCP project.
-
-[GO TO THE PROJECT SELECTOR PAGE](https://pantheon.corp.google.com/projectselector2/home/dashboard)
-
-
-
-2. Enable billing for your project.
-
-[ENABLE BILLING](https://support.google.com/cloud/answer/6293499#enable-billing)
-
-When you finish this tutorial, you can avoid continued billing by deleting the resources you created. See [Cleaning up](https://docs.google.com/document/d/1G8k6nHTmnrSyxrxqKWQleTzldETAQ02Di_pLW4OXYJ8/edit#heading=h.2fjojvpg205m) for more detail.
-
-
 ## Stateful Kubernetes database applications
-
 
 ### Stateful application
 
@@ -119,12 +86,7 @@ The following instructions will enable you to install a [regional GKE cluster](h
 
 At this point you have a regional cluster installed and available for installing PostgreSQL into the cluster. Below screenshot shows the regional cluster.
 
-
-
-<p id="gdcalert1" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image1.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert2">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image1.png "image_tooltip")
+![Image of GKE Cluster](./gke-deploy.png)
 
 
 
@@ -250,12 +212,7 @@ Create the Volume and Persistent Volume Claim (PVC). This will be a blank region
 
 After you applied this configuration file the PostgreSQL database instance is running in GKE as a service.
 
-
-
-<p id="gdcalert2" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image2.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert3">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image2.png "image_tooltip")
+![Postgresql in GKE](./gke-setup-1.png)
 
 
 Next you will create a sample data set and execute a simulated failover to test the high availability setup of the PostgreSQL service.
@@ -332,21 +289,10 @@ To simulate failover, we will take out the node which is hosting PostgreSQL pod.
 
     gcloud compute instances list --filter="name=${CORDONED_NODE}"
     ```
-
-
-
     Notice the zone where this node has been created.
-
-
     Also note that this node has two disks attached (see the VM Instance Details in the Compute Engine cloud console):
 
-
-    
-
-<p id="gdcalert1" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image1.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert2">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image1.png "image_tooltip")
+![pd-disks](./gke-disks.png)
 
 
 2. Disable scheduling of any new pods on this node.
@@ -392,12 +338,7 @@ To simulate failover, we will take out the node which is hosting PostgreSQL pod.
     Verify that the regional persistent disk is now attached to this VM instance (go to  Compute Engine and then VM Instance Details):
 
 
-    
-
-<p id="gdcalert2" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image2.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert3">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image2.png "image_tooltip")
+![pd-disks-2](./gke-disks-2.png)
 
 
 6. Verify data consistency next. Connect to the database instance.
@@ -542,13 +483,7 @@ kubectl get services postgres
 5. Scroll down and click on the button “PORT FORWARDING”. You should see the following dialog
 
 
-
-<p id="gdcalert3" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image3.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert4">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image3.png "image_tooltip")
-
-
+![port forward](./port-forward-dialouge.png)
 
 
 6. Copy the command and change the port 8080 to 5432 resulting in
@@ -719,42 +654,3 @@ In the above example a regional GKE cluster with one node each in two zones was 
 From a database instance perspective PostgreSQL runs in one zone only at any given point in time. From an application perspective this might be different. If an application runs (as containers) in two zones at the same time, it assumes the capacity of nodes in two zones. A zone failure would cut the capacity available for the application in half.
 
 From an application perspective it might make sense to create a cluster across three zones with planning the outage of one zone from a capacity perspective so that a zone failure does not impact the application performance.
-
-
-## Cleaning up
-
-To avoid incurring charges to your Google Cloud Platform account for the resources used in this tutorial:
-
-
-### Delete the project
-
-The easiest way to eliminate billing is to delete the project you created for the tutorial.
-
-
-    **Caution**: Deleting a project has the following effects:
-
-
-
-    *   **Everything in the project is deleted.** If you used an existing project for this tutorial, when you delete it, you also delete any other work you've done in the project.
-    *   **Custom project IDs are lost.** When you created this project, you might have created a custom project ID that you want to use in the future. To preserve the URLs that use the project ID, such as an **<code>appspot.com</code></strong> URL, delete selected resources inside the project instead of deleting the whole project.
-
-    If you plan to explore multiple tutorials and quickstarts, reusing projects can help you avoid exceeding project quota limits.
-
-1. In the Cloud Console, go to the **Manage resources** page. \
-[Go to the Manage resources page](https://console.cloud.google.com/iam-admin/projects)
-2. In the project list, select the project that you want to delete and then click **Delete **
-
-<p id="gdcalert4" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image4.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert5">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image4.png "image_tooltip")
-.
-3. In the dialog, type the project ID and then click **Shut down** to delete the project.
-
-
-## What's next
-
-
-
-*   Creating a primary database with replicas is described in this page: [Run a Replicated Stateful Application](https://kubernetes.io/docs/tasks/run-application/run-replicated-stateful-application/) (based on MySQL)
-*   Try out other Google Cloud Platform features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
