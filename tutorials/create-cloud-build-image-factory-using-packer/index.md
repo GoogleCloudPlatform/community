@@ -625,90 +625,16 @@ If you don't want to keep the resources after this tutorial, you can delete them
 
 # Windows-packer-scripts
 
-#### cloudbuild.yaml
-```
-# Perform a Packer build based on the `packer.json` configuration. This Packer
-# build creates a GCE image.
-#
-# See README.md for invocation instructions.
-steps:
-- name: 'gcr.io/$PROJECT_ID/packer'
-  args:
-  - build
-  - -debug
-  - -var
-  - project_id=$PROJECT_ID
-  - packer.json
-tags: ['windows-golden-image']
-timeout: '3600s'
-```
+### windows/cloudbuild.yaml
+[Link to cloudbuild.yaml](windows/cloudbuild.yaml)
+
 This file contains the [build configuration](https://cloud.google.com/cloud-build/docs/build-config) for the Cloud Build service, which uses packer to build a new image using instructions within the packer.json file.
 <br />
 <br />
 
-#### packer.json
-```
-{
-	"variables": {
-		"project_id": "_PROJECT_ID",
-		"source_image_family": "_IMAGE_FAMILY",
-		"image_name": "_IMAGE_NAME",
-		"machine_type": "_MACHINE_TYPE",
-		"region": "_REGION",
-		"zone": "_ZONE",
-		"network_id": "_NETWORK",
-		"network-tags": "_TAGS"
-	},
-	"builders": [{
-		"type": "googlecompute",
-		"project_id": "{{  user `project_id`  }}",
-		"machine_type": "{{  user `machine_type`  }}",
-		"source_image_family": "{{  user `source_image_family`  }}",
-		"region": "{{  user `region`  }}",
-		"zone": "{{  user `zone`  }}",
-		"network": "{{  user `network_id`  }}", 
-		"image_description": "{{  user `source_image_family`  }}-{{  isotime \"2006-01-02-14-04\"  }}",
-		"image_name": "{{  user `image_name`  }}-{{  isotime \"2006-01-02-14-04\"  }}",
-		"disk_size": 100,
-		"disk_type": "pd-ssd",
-		"on_host_maintenance": "TERMINATE",
-		"tags": "{{  user `network-tags`  }}",
-		"communicator": "winrm",
-		"winrm_insecure": true,
-		"winrm_use_ssl": true,
-		"winrm_username": "packer_user",
-		"metadata": {
-			"windows-startup-script-cmd": "winrm quickconfig -quiet & net user /add packer_user & net localgroup administrators packer_user /add & winrm set winrm/config/service/auth @{Basic=\"true\"}",
-			"windows-shutdown-script-ps1": "C:/cleanup-packer.ps1"
-		}
-	}],
-	"provisioners": [{
-			"type": "file",
-			"source": "./scripts/packages.config",
-			"destination": "C:/packages.config"
-		},
-		{
-			"type": "file",
-			"source": "./scripts/cleanup-packer.ps1",
-			"destination": "C:/cleanup-packer.ps1"
-		},
-		{
-			"type": "powershell",
-			"scripts": [
-				"./scripts/disable-uac.ps1",
-				"./scripts/install-chocolatey.ps1",
-				"./scripts/run-chocolatey.ps1"
-			]
-		},
-		{
-			"type": "powershell",
-			"inline": [
-				"GCESysprep -NoShutdown"
-			]
-		}
-	]
-}
-```
+## windows/packer.json
+[Link to packer.json](windows/packer.json)
+
 This file contains the [googlecompute builder template](https://www.packer.io/docs/builders/googlecompute/) for creating a new image for use with Google Compute Engine.
 
 Because of the way Packer uses winrm as the communicator to connect and configurate windows, this template achieves the following.
@@ -723,228 +649,41 @@ Because of the way Packer uses winrm as the communicator to connect and configur
 <br />
 <br />
 
-#### scripts/bootstrap-packer.ps1
+## windows/scripts/bootstrap-packer.ps1
+[Link to bootstrap-packer.ps1](windows/scripts/bootstrap-packer.ps1)
 
-```powershell
-# https://docs.microsoft.com/en-us/windows/win32/winrm/winrm-powershell-commandlets
 
-Write-Output "+++ Running Bootstrap Script for setting up packer +++"
-
-Set-ExecutionPolicy Unrestricted -Scope LocalMachine -Force -ErrorAction Ignore
-
-# Don't set this before Set-ExecutionPolicy as it throws an error
-$ErrorActionPreference = "stop"
-
-# Remove HTTP listener and creating a new self-signed cert for packer winrm connection
-Remove-Item -Path WSMan:\Localhost\listener\listener* -Recurse
-
-# Creating new selfsigned cert for HTTPS connection
-$certName = "packer"
-$Cert = New-SelfSignedCertificate -CertstoreLocation Cert:\LocalMachine\My -DnsName $certName -FriendlyName $certName
-New-Item -Path WSMan:\LocalHost\Listener -Transport HTTPS -Address * -CertificateThumbPrint $Cert.Thumbprint -Force
-
-# WinRM stuff
-Write-Output "+++ Setting up WinRM+++ "
-
-#cmd.exe /c winrm quickconfig -q
-$firewallRuleName = "WinRM"
-cmd.exe /c winrm set "winrm/config" '@{MaxTimeoutms="1800000"}'
-cmd.exe /c winrm set "winrm/config/winrs" '@{MaxMemoryPerShellMB="1024"}'
-cmd.exe /c winrm set "winrm/config/service" '@{AllowUnencrypted="true"}'
-cmd.exe /c winrm set "winrm/config/client" '@{AllowUnencrypted="true"}'
-cmd.exe /c winrm set "winrm/config/service/auth" '@{Basic="true"}'
-cmd.exe /c winrm set "winrm/config/client/auth" '@{Basic="true"}'
-cmd.exe /c winrm set "winrm/config/service/auth" '@{CredSSP="true"}'
-cmd.exe /c winrm set "winrm/config/listener?Address=*+Transport=HTTPS" "@{Port=`"5986`";Hostname=`"packer`";CertificateThumbprint=`"$($Cert.Thumbprint)`"}"
-cmd.exe /c netsh advfirewall firewall set rule group="remote administration" new enable=yes
-cmd.exe /c netsh advfirewall firewall add rule name=$firewallRuleName dir=in protocol=tcp localport=5986 action=allow
-Stop-Service -Name winrm
-Set-Service -Name winrm -StartupType Auto
-Start-Service -Name winrm
-```
 This file configures Packer to use a HTTPS connection for WinRM to secure communication between the staging VM and Packer host. The config made during this script such as a local certificate, listener and firewall are deleted during the `cleanup-packer.ps1`.
 
 <br />
 <br />
 
-#### scripts/cleanup-packer.ps1
-```powershell
-function Remove-Chocolatey{
-    <#
-        .SYNOPSIS
-            This function removes chocolatey binaries and local configs such as env var.
-            Also removes local copy of packages.config file that was used to bootstrap machine    
-    #>
-Write-Output "+++ Deleting Chocolatey package config file +++"
-Remove-Item -Path C:\packages.config
+## windows/scripts/cleanup-packer.ps1
+[Link to cleanup-packer.ps1](windows/scripts/cleanup-packer.ps1)
 
-if (!$env:ChocolateyInstall) {
-    Write-Warning "The ChocolateyInstall environment variable was not found. `n Chocolatey is not detected as installed. Nothing to do"
-    return
-    }
-if (!(Test-Path "$env:ChocolateyInstall")) {
-Write-Warning "Chocolatey installation not detected at '$env:ChocolateyInstall'. `n Nothing to do."
-return
-}
-
-$userPath = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment').GetValue('PATH', '', [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames).ToString()
-$machinePath = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Control\Session Manager\Environment\').GetValue('PATH', '', [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames).ToString()
-    
-@"
-    User PATH:
-    $userPath
-    
-    Machine PATH:
-    $machinePath
-    
-"@ | Out-File "C:\PATH_backups_ChocolateyUninstall.txt" -Encoding UTF8 -Force
-    
-    if ($userPath -like "*$env:ChocolateyInstall*") {
-    Write-Output "Chocolatey Install location found in User Path. Removing..."
-    # WARNING: This could cause issues after reboot where nothing is
-    # found if something goes wrong. In that case, look at the backed up
-    # files for PATH.
-    [System.Text.RegularExpressions.Regex]::Replace($userPath, [System.Text.RegularExpressions.Regex]::Escape("$env:ChocolateyInstall\bin") + '(?>;)?', '', [System.Text.RegularExpressions.RegexOptions]::IgnoreCase) | %{[System.Environment]::SetEnvironmentVariable('PATH', $_.Replace(";;",";"), 'User')}
-    }
-    
-    if ($machinePath -like "*$env:ChocolateyInstall*") {
-    Write-Output "Chocolatey Install location found in Machine Path. Removing..."
-    # WARNING: This could cause issues after reboot where nothing is
-    # found if something goes wrong. In that case, look at the backed up
-    # files for PATH.
-    [System.Text.RegularExpressions.Regex]::Replace($machinePath, [System.Text.RegularExpressions.Regex]::Escape("$env:ChocolateyInstall\bin") + '(?>;)?', '', [System.Text.RegularExpressions.RegexOptions]::IgnoreCase) | %{[System.Environment]::SetEnvironmentVariable('PATH', $_.Replace(";;",";"), 'Machine')}
-    }
-    
-    # Adapt for any services running in subfolders of ChocolateyInstall
-    $agentService = Get-Service -Name chocolatey-agent -ErrorAction SilentlyContinue
-    if ($agentService -and $agentService.Status -eq 'Running') { $agentService.Stop() }
-    # TODO: add other services here
-    
-    # delete the contents (remove -WhatIf to actually remove)
-    Remove-Item -Recurse -Force "$env:ChocolateyInstall" -WhatIf
-    
-    [System.Environment]::SetEnvironmentVariable("ChocolateyInstall", $null, 'User')
-    [System.Environment]::SetEnvironmentVariable("ChocolateyInstall", $null, 'Machine')
-    [System.Environment]::SetEnvironmentVariable("ChocolateyLastPathUpdate", $null, 'User')
-    [System.Environment]::SetEnvironmentVariable("ChocolateyLastPathUpdate", $null, 'Machine')
-}
-
-function Remove-PackerUser{
-    <#
-        .SYNOPSIS
-            This removes the local packer_user account used for packer winRM connection
-    #>
-    param(
-        [String] $userAccount # default, packer_user
-    )
-    Write-Output "+++ Removing local user account for packer +++"
-    Remove-LocalUser -Name $userAccount
-}
-
-function Remove-WinRMConfig {
-    <#
-        .SYNOPSIS
-            This undos the winrm config set up for packer. Removes local cert, listener, firewall rules and disables windows service from starting
-    #>
-
-    Write-Output "+++ Removing Packer WinRM and required configs +++"
-    # Remove HTTP listener and deleting the self-signed cert for packer winrm connection
-    Remove-Item -Path WSMan:\Localhost\listener\listener* -Recurse
-    # Deleting selfsigned cert used for HTTPS connection
-    $certName = "packer"
-    Get-ChildItem -Path Cert:\LocalMachine\My | Where-Object {  $_.FriendlyName -like $certName  } | Remove-Item
-    # Closing WinRM HTTPS firewall
-    $firewallRuleName = "WinRM"
-    Remove-NetFirewallRule -DisplayName $firewallRuleName
-    Write-Output "+++ Disabling WinRM +++"
-    Disable-PSRemoting
-    # Disabling local winrm service from auto starting 
-    Stop-Service -Name winrm
-    Set-Service -Name winrm -StartupType Manual
-}
-
-# Kick off clean up script
-
-Remove-Chocolatey
-Remove-PackerUser -userAccount "packer_user"
-Remove-WinRMConfig
-# Finally, delete the cleanup script itself
-Remove-Item -Path $MyInvocation.MyCommand.Source -Force
-
-```
 This file is invoked as a shutdown script to remove the Chocolatey powershell binaries, the local user account for packer, undo WinRM configurations and then the shutdown script itself. 
 
 <br />
 <br />
 
-#### scripts/disable-uac.ps1
-```powershell
-Write-Output "+++ Disabling UAC… +++"
+## windows/scripts/disable-uac.ps1
+[Link to disable-uac.ps1](windows/scripts/disable-uac.ps1)
 
-New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\Policies\System -Name EnableLUA -PropertyType DWord -Value 0 -Force
-New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -PropertyType DWord -Value 0 -Force
-```
-This file disables the User Account Control (UAC) to allow silent installations of packages for Chocolatey.
-
-<br />
-<br />
-
-#### scripts/install-chocolatey.ps1
-```powershell
-# ./scripts/chocolatey.ps1
-# Install Chocolatey
-Write-Output "+++ Installing Chocolatey… +++"
-iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-```
 This file installs the latest version of Chocolatey, a package management binary for powershell.
 
 <br />
 <br />
 
-#### scripts/packages.config
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<packages>
-    <package id="python" version="3.8.2" />
-    <package id="git" version="2.26.1" />
-    <package id="7zip" version="19.0" />
-</packages>
-```
+## windows/scripts/packages.config
+[Link to packages.config](windows/scripts/packages.config)
+
 This file contains a list of packages in an xml manifest for Chocolatey to install. This is where you can define [any supported packages](https://chocolatey.org/packages) to install, as well as versioning, options and switches. [See here](https://chocolatey.org/docs/commandsinstall#packagesconfig) for more details. 
 <br />
 <br />
 
-#### scripts/run-chocolatey.ps1
-```powershell
-Write-Output "+++ Running Chocolatey… +++"
+## windows/scripts/run-chocolatey.ps1
+[Link to run-chocolatey.ps1](windows/scripts/run-chocolatey.ps1)
 
-# clean exit or reboot pending: https://chocolatey.org/docs/commandsinstall#exit-codes
-$validExitCodes = 0, 3010
-
-# Globally Auto confirm every action
-$commandAutoConfirm = 'choco feature enable -n allowGlobalConfirmation'
-$commandInstall = 'choco install C:\packages.config -y --no-progress'
-
-try
-{
-    Invoke-Expression -Command $commandAutoConfirm
-    Invoke-Expression -Command $commandInstall
-    
-    if ($LASTEXITCODE -notin $validExitCodes)
-    {
-        throw "Error encountered during package installation with status: $($LASTEXITCODE)"
-    }
-    else
-    {
-        Write-Output ""
-        Write-Output "Chocolatey packages has been installed successfully!"
-    }
-}
-catch
-{
-    throw "Error encountered during chocolatey operation: $($Error[0].Exception)"
-}
-```
 This file is invokes chocolatey to install the packages defined in our xml manifest including error handling. As some Windows software requires a reboot to complete the installation, this script allows it (exit code 3010) as Packer will shutdown and sysprep the image as the final step.
 
 <br />
