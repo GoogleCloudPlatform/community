@@ -43,7 +43,7 @@ to generate a cost estimate based on your projected usage.
 1.  Click **Create**.
 1.  In the **Name** field, enter `lamp-tutorial`.
 1.  Set **Machine type** to **e2-micro**.
-1.  Set **Boot disk** to **Debian GNU/Linux 10 (buster).
+1.  Set **Boot disk** to **Debian GNU/Linux 10 (buster)**.
 1.  In the **Firewall** section, select **Allow HTTP traffic** and **Allow HTTPS traffic**.
 1.  Click **Create**.
 
@@ -66,15 +66,18 @@ This tutorial demonstrates the steps in the Cloud Console.
 
 1.  In the [Cloud Console](https://console.cloud.google.com/compute/instances),
     go to the **VM instances** page.
+    
 1.  In the list of virtual machine instances, click the **SSH** button in the row of the instance
     to which you want to connect.
+    
+1.  Make a note of the IP address of your VM instance.
 
-Make a note of the IP address of your VM instance. You can see this address in the **External IP** column.
+    You can see this address in the **External IP** column.
 
 ### Install Apache and PHP on your instance
 
-By creating an instance, you already have the "Linux" part of
-"LAMP". In this section, you install Apache and PHP.
+By creating an instance, you already have the *Linux* part of
+*LAMP*. In this section, you install Apache and PHP.
 
     sudo apt-get update
     sudo apt-get install apache2 php libapache2-mod-php
@@ -88,7 +91,7 @@ By creating an instance, you already have the "Linux" part of
 
         http://[YOUR_EXTERNAL_IP_ADDRESS]
 
-    You should see the Apache test page. Make sure that don't use the `https` protocol specifier, because HTTPS is not configured.
+    You should see the Apache test page. Make sure that you don't use the `https` protocol specifier, because HTTPS is not configured.
 
 1.  Create a test file in the default web server root at `/var/www/html/`.
 
@@ -112,10 +115,10 @@ By creating an instance, you already have the "Linux" part of
     You should see the standard PHP page that provides information about
     your current Apache environment.
 
-If the page failed to load (`HTTP 404`), verify the following:
+    If the page failed to load (`HTTP 404`), verify the following:
 
-+ In the Cloud Console, HTTP traffic is allowed for your instance.
-+ The URL uses `http` with the correct IP address and filename.
+    + In the Cloud Console, HTTP traffic is allowed for your instance.
+    + The URL uses `http` with the correct IP address and filename.
 
 ### Install MariaDB on your instance
 
@@ -176,7 +179,7 @@ During the installation, configure phpMyAdmin as follows:
 
 #### Secure phpMyAdmin
 
-To prevent unauthorized access to your instance, you take steps
+To prevent unauthorized access to your instance, take steps
 to [secure your phpMyAdmin installation](https://docs.phpmyadmin.net/en/latest/setup.html#securing-your-phpmyadmin-installation), such as by serving phpMyAdmin 
 only over HTTPS or using an authentication proxy.
 
@@ -186,7 +189,6 @@ There are several ways to transfer files to your VM instance that runs your web 
 including FTP and the `gcloud` command. For full details, see
 [Transferring files to Linux instances](https://cloud.google.com/compute/docs/instances/transfer-files).
 This tutorial uses the `gcloud` command, which is part of the Cloud SDK.
-Copy files to your instance using the `copy-files` command.
 
 The following example copies a file from your workstation to the home directory on the instance:
 
