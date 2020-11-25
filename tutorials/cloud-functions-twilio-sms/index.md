@@ -155,6 +155,6 @@ The `reply` function does the following:
 
 To view the logs for the Cloud Function, run the following:
 
-    gcloud functions logs view reply
+    gcloud functions logs read reply
 
 [deploying]: https://cloud.google.com/functions/docs/deploying/filesystem
