@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-logger
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: test-logger
+  template:
+    metadata:
+      labels:
+        component: test-logger
+    spec:
+      containers:
+        - name: test-logger
+          image: gcr.io/cloud-solutions-images/test-logger
