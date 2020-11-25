@@ -3,7 +3,7 @@ title: Customizing Fluent Bit for Google Kubernetes Engine logs
 description: Learn how to customize Fluent Bit for Google Kubernetes Engine logs.
 author: xiangshen-dk
 tags: logging, stackdriver, gke, fluent-bit
-date_published: 2020-11-19
+date_published: 2020-11-25
 ---
 
 Xiang Shen | Solutions Architect | Google
