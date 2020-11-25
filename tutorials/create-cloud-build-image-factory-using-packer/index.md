@@ -3,8 +3,7 @@ title: Create a Cloud Build image factory using Packer
 description: Learn how to create an image factory using Cloud Build and Packer.
 author: johnlabarge, ikwak
 tags: Cloud Build, Packer, Compute Engine, Image, Windows, Linux
-date_published: 2018-09-14
-date_updated: 2020-05-06
+date_published: 2020-11-25
 ---
 
 This tutorial will show you how to create an image factory using Cloud Build and
