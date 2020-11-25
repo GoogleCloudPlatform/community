@@ -6,8 +6,8 @@ metadata:
   labels:
     k8s-app: fluent-bit
 data:
-  # Configuration files: server, input, filters and output
-  # ======================================================
+  # Configuration files: server, input, filters, and output
+  # =======================================================
   fluent-bit.conf: |
     [SERVICE]
         Flush         1
@@ -75,10 +75,10 @@ data:
   output-stackdriver.conf: |
 
     [OUTPUT]
-        # write the log records still have the 'kube.*' tags to Cloud Logging
+        # write the log records that still have the 'kube.*' tags to Cloud Logging
         Name    stackdriver
         Match   kube.*
-        # The following fields are necessary. They allow filtering in Cloud Logging loging
+        # The following fields are necessary. They allow filtering in Cloud Logging
         # based on resource types. Change them accordingly based on your setup.
         resource  k8s_container
         k8s_cluster_name  custom-fluentbit
