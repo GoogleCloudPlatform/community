@@ -4,29 +4,23 @@ function Remove-Chocolatey{
             This function removes chocolatey binaries and local configs such as env var.
             Also removes local copy of packages.config file that was used to bootstrap machine    
     #>
-Write-Output "+++ Deleting Chocolatey package config file +++"
-Remove-Item -Path C:\packages.config
+    Write-Output "+++ Deleting Chocolatey package config file +++"
+    Remove-Item -Path C:\packages.config
 
-if (!$env:ChocolateyInstall) {
-    Write-Warning "The ChocolateyInstall environment variable was not found. `n Chocolatey is not detected as installed. Nothing to do"
+    if (!$env:ChocolateyInstall) {
+        Write-Warning "The ChocolateyInstall environment variable was not found. `n Chocolatey is not detected as installed. Nothing to do"
+        return
+        }
+    if (!(Test-Path "$env:ChocolateyInstall")) {
+    Write-Warning "Chocolatey installation not detected at '$env:ChocolateyInstall'. `n Nothing to do."
     return
     }
-if (!(Test-Path "$env:ChocolateyInstall")) {
-Write-Warning "Chocolatey installation not detected at '$env:ChocolateyInstall'. `n Nothing to do."
-return
-}
 
-$userPath = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment').GetValue('PATH', '', [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames).ToString()
-$machinePath = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Control\Session Manager\Environment\').GetValue('PATH', '', [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames).ToString()
+    $userPath = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment').GetValue('PATH', '', [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames).ToString()
+    $machinePath = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SYSTEM\CurrentControlSet\Control\Session Manager\Environment\').GetValue('PATH', '', [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames).ToString()
     
-@"
-    User PATH:
-    $userPath
-    
-    Machine PATH:
-    $machinePath
-    
-"@ | Out-File "C:\PATH_backups_ChocolateyUninstall.txt" -Encoding UTF8 -Force
+    Write-Output "User PATH: " + $userPath | Out-File "C:\PATH_backups_ChocolateyUninstall.txt" -Encoding UTF8 -Force
+    Write-Output "Machine PATH: " + $machinePath | Out-File "C:\PATH_backups_ChocolateyUninstall.txt" -Encoding UTF8 -Force
     
     if ($userPath -like "*$env:ChocolateyInstall*") {
     Write-Output "Chocolatey Install location found in User Path. Removing..."

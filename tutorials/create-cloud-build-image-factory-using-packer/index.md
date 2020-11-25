@@ -1,25 +1,18 @@
 ---
 title: Create a Cloud Build image factory using Packer
 description: Learn how to create an image factory using Cloud Build and Packer.
-author: johnlabarge
+author: johnlabarge, ikwak
 tags: Cloud Build, Packer, Compute Engine, Image, Windows, Linux
 date_published: 2018-09-14
+date_updated: 2020-05-06
 ---
 
-John LaBarge | Solutions Architect | Google
-
-<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
-
-This tutorial shows you how to create an image factory using Cloud Build and
+This tutorial will show you how to create an image factory using Cloud Build and
 [Packer by HashiCorp](https://packer.io). The image factory will automatically
 create new images from a Cloud Source Repository every time a new tag is pushed
 to that repository as depicted in the diagram below.
 
-In a shared services operating model, using the [Trusted Image](https://cloud.google.com/compute/docs/images/restricting-image-access) feature with organization policy is a great way to centralize consumption of SOE images across multiple projects, to ensure that project members can meet security requirements through an immutable golden image.
-
 In this tutorial, there are instructions for creating packer image for both Linux and Windows. Follow the respective steps, depending which type of image you want to build.
-
-*This tutorial has been updated by ikwak@ in 2020-05 to include building Windows images using Packer*
 
 ![ push to repository triggers cloud build with packer which builds machine image](https://storage.googleapis.com/gcp-community/tutorials/create-cloud-build-image-factory-using-packer/packer-tutorial.png)
 
@@ -71,7 +64,7 @@ gcloud config set account $ACCOUNT
 <summary>Click to reveal commands</summary>
 
 ```powershell
-$env:PROJECT="NEW PROJECT NAME"
+$env:PROJECT="NEW PROJECT ID"
 $env:ORG="YOUR ORGANIZATION NAME"
 $env:BILLING_ACCOUNT="YOUR_BILLING_ACCOUNT_NAME"
 $env:ZONE="COMPUTE ZONE YOU WANT TO USE"
@@ -223,12 +216,7 @@ Enable the Google Cloud APIs necessary for the tutorial
 <summary>Click to reveal commands</summary>
 
 ```sh
-gcloud services enable sourcerepo.googleapis.com
-gcloud services enable cloudapis.googleapis.com
-gcloud services enable compute.googleapis.com
-gcloud services enable servicemanagement.googleapis.com
-gcloud services enable storage-api.googleapis.com
-gcloud services enable cloudbuild.googleapis.com
+gcloud services enable sourcerepo.googleapis.com cloudapis.googleapis.com compute.googleapis.com servicemanagement.googleapis.com storage-api.googleapis.com cloudbuild.googleapis.com
 ```
 </details>
 
@@ -238,13 +226,7 @@ gcloud services enable cloudbuild.googleapis.com
 <summary>Click to reveal commands</summary>
 
 ```sh
-gcloud services enable sourcerepo.googleapis.com
-gcloud services enable cloudapis.googleapis.com
-gcloud services enable compute.googleapis.com
-gcloud services enable servicemanagement.googleapis.com
-gcloud services enable storage-api.googleapis.com
-gcloud services enable cloudbuild.googleapis.com
-gcloud services enable secretmanager.googleapis.com
+gcloud services enable sourcerepo.googleapis.com cloudapis.googleapis.com compute.googleapis.com servicemanagement.googleapis.com storage-api.googleapis.com cloudbuild.googleapis.com secretmanager.googleapis.com
 ```
 </details>
 
@@ -263,25 +245,25 @@ echo -n "golden-windows" | gcloud secrets create image_factory-image_name --repl
 
 echo -n "n1-standard-1" | gcloud secrets create image_factory-machine_type --replication-policy="automatic" --data-file=-
 
-echo -n "australia-southeast1" | gcloud secrets create image_factory-region --replication-policy="automatic" --data-file=-
+echo -n "us-central1" | gcloud secrets create image_factory-region --replication-policy="automatic" --data-file=-
 
-echo -n "australia-southeast1-b" | gcloud secrets create image_factory-zone --replication-policy="automatic" --data-file=-
+echo -n "us-central1-b" | gcloud secrets create image_factory-zone --replication-policy="automatic" --data-file=-
 
 echo -n "default" | gcloud secrets create image_factory-network --replication-policy="automatic" --data-file=-
 
-echo -n "packer-win" | gcloud secrets create image_factory-tags --replication-policy="automatic" --data-file=-
+echo -n "allow-winrm-ingress-to-packer" | gcloud secrets create image_factory-tags --replication-policy="automatic" --data-file=-
 ```
 
 </details>
 
 # Task 3b: Create a new VPC firewall to allow winrm for packer (Windows Image Only)
-Before you can provision using the winrm communicator, you need to allow traffic through google's firewall on the winrm port (tcp:5986). This creates a new firewall called `packer-win` that is stored in Secrets Manager (Task 3a) and used by Cloud Build in the cloudbuild.yaml config file. 
+Before you can provision using the winrm communicator, you need to allow traffic through google's firewall on the winrm port (tcp:5986). This creates a new firewall called `allow-winrm-ingress-to-packer` that is stored in Secrets Manager (Task 3a) and used by Cloud Build in the cloudbuild.yaml config file. 
 
 <details>
 <summary>Click to reveal commands</summary>
 
 ```sh
-gcloud compute firewall-rules create packer-win --allow tcp:5986
+gcloud compute firewall-rules create allow-winrm-ingress-to-packer --allow tcp:5986
 ```
 
 </details>
@@ -457,6 +439,15 @@ gcloud init && git config --global credential.https://source.developers.google.c
 git remote add google https://source.developers.google.com/p/$PROJECT/r/helloworld-image-factory
 ```
 
+3. Add your files to the repository, tagged with a version number and push to your repo:
+
+```sh
+git add .
+git commit -m "first image"
+git tag v0.1
+git push google master --tags
+```
+
 </details>
 
 ## Building a Windows Image
@@ -464,7 +455,7 @@ git remote add google https://source.developers.google.com/p/$PROJECT/r/hellowor
 <details>
 <summary>Click to reveal commands</summary>
 
-1. (Only if not running in Cloud Shell) Set up your Google credentials for git:
+1. (Only if not running in Cloud Shell) Set up your Google credentials for git in powershell:
 
 ```powershell
 git config --global "credential.https://source.developers.google.com.helper" gcloud.cmd
@@ -476,36 +467,18 @@ git config --global "credential.https://source.developers.google.com.helper" gcl
 git remote add google "https://source.developers.google.com/p/$env:PROJECT/r/windows-image-factory"
 ```
 
-</details>
+3. Add your files to the repository, tagged with a version number and push to your repo:
 
-# Task 9: Push the repository and tags to google
-In this task, we add and commit the local files to staging and push it to our cloud source repo to trigger a build. 
-
-<details>
-<summary>Click to reveal commands</summary>
-
-1. Add your files to the repository:
- 
-    ```sh
-    git add .
-    git commit -m "first image" 
-    ```
-
-1. Tag the repository with a version number:
-
-    ```sh
-    git tag v0.1
-    ```
-
-1. Push the branch and the tags to your `google` repository:
-
-    ```sh
-    git push google master --tags
-    ```
+```powershell
+git add .
+git commit -m "first image"
+git tag v0.1
+git push google master --tags
+```
 
 </details>
 
-# Task 10: View build progress
+# Task 9: View build progress
 You can view the stdout from both the staging VM and packer to check on the build progress. Once the packer build completes successfully, it outputs the newly created image:
 
 ```sh
@@ -519,7 +492,7 @@ Step #1: --> googlecompute: A disk image was created: golden-windows-2020-05-05-
     to show the build progress.
 1. Find the build that is in progress and click the link to view its progress.
 
-# Task 11: Create a compute instance for the image in your gcp project
+# Task 10: Create a compute instance for the image in your gcp project
 Now that packer has created a new GCE image, we can test it by launching a new instance.
 
 ## Building a Linux Image
@@ -556,7 +529,7 @@ navigate to **Images** to see the Packer generated instance image.
 
 </details>
 
-# Task 12: Verifying the results of our efforts 
+# Task 11: Verifying the results of our efforts 
 Now that we've successfully used packer to generate a new golden image and create a new instance, follow the instructions to verify that our deployment has worked correctly.
 
 ## Building a Linux Image
@@ -583,7 +556,7 @@ Now that we've successfully used packer to generate a new golden image and creat
 
 1. Wait a few minutes until the Windows VM has completed the boot up process.
 
-1. Using the [Chrome RDP plugin](https://cloud.google.com/compute/docs/instances/›connecting-to-instance#chrome-remote-desktop) or your preferred [Remote Desktop client](https://cloud.google.com/compute/docs/instances/connecting-to-instance#windows), RDP into your Windows instance.
+1. RDP into your instance using [these methods](https://cloud.google.com/compute/docs/instances/connecting-to-instance)
 
 1. If you need to generate a Windows password, follow [these instructions](https://cloud.google.com/compute/docs/instances/windows/creating-passwords-for-windows-instances#generating_a_password).
 
@@ -593,7 +566,7 @@ Now that we've successfully used packer to generate a new golden image and creat
 
 </details>
 
-# Task 13: Cleaning up
+# Task 12: Cleaning up
 If you don't want to keep the resources after this tutorial, you can delete them by following these instructions.
 
 ## Building a Linux Image
@@ -649,9 +622,6 @@ If you don't want to keep the resources after this tutorial, you can delete them
     again for up to seven days.
 
 </details>
-
-<br />
-<br />
 
 # Windows-packer-scripts
 
