@@ -11,8 +11,8 @@ Xiang Shen | Solutions Architect | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial describes how to customize [Fluent Bit](https://fluentbit.io/) logging for a [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine)
-cluster. You'll learn how to host your own configurable Fluent Bit daemonset to send logs to Cloud Logging, instead of selecting the Cloud Logging option when 
-creating the Google Kubernetes Engine (GKE) cluster, which does not allow configuration of the Fluent Bit daemon.
+cluster. In this tutorial, you learn how to host your own configurable Fluent Bit daemonset to send logs to Cloud Logging, instead of selecting the Cloud Logging
+option when creating the Google Kubernetes Engine (GKE) cluster, which does not allow configuration of the Fluent Bit daemon.
 
 This tutorial assumes that you're familiar with [Kubernetes](https://kubernetes.io/docs/home/).
 
@@ -52,26 +52,28 @@ In this section, you define variables that control where elements of the infrast
 
 1.  [Open Cloud Shell](https://console.cloud.google.com/?cloudshell=true).
 
-1.  Set the variables used by this tutorial. The tutorial sets the region to `us-east-1`. If you want to change the region, make sure that the zone values 
-    reference the region you specify.
+1.  Set the variables used by this tutorial:
 
         region=us-east1
         zone=${region}-b
         project_id=[YOUR_PROJECT_ID]
+        
+    This tutorial uses the region `us-east-1`. If you change the region, make sure that the zone values reference your region.
 
-1.  Run the following commands to set the default zone and project ID so that you don't have to specify these values in every subsequent command:
+1.  Set the default zone and project ID so that you don't have to specify these values in every subsequent command:
 
         gcloud config set compute/zone ${zone}
         gcloud config set project ${project_id}
 
 ## Creating the GKE cluster
 
-1.  Clone the sample repository. The sample repository includes the Kubernetes manifests for the Fluent Bit daemonset and a test logging program that you
-    deploy:
+1.  Clone the sample repository:
 
         git clone https://github.com/GoogleCloudPlatform/community.git
 
-1.  Change your working directory to the cloned repository:
+    The sample repository includes the Kubernetes manifests for the Fluent Bit daemonset and a test logging program that you deploy.
+
+1.  Go to the directory for this tutorial in the cloned repository:
 
         cd community/tutorials/kubernetes-engine-customize-fluentbit
 
@@ -154,9 +156,8 @@ card numbers, and email addresses. To make this update, you change the daemonset
 rolling updates feature and preserve the old version of the ConfigMap.
 
 1.  Open the
-    [`kubernetes/fluentbit-configmap.yaml`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/
-kubernetes-engine-customize-fluentbit/kubernetes/fluentbit-configmap.yaml) file in an editor.
-1.  Uncomment the lines between and not including the lines `### sample log scrubbing filters` and `### end sample log scrubbing filters`.
+    [`kubernetes/fluentbit-configmap.yaml`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/kubernetes-engine-customize-fluentbit/kubernetes/fluentbit-configmap.yaml) file in an editor.
+1.  Uncomment the lines after `### sample log scrubbing filters` and before `### end sample log scrubbing filters`.
 1.  Change the name of the ConfigMap from `fluent-bit-config` to `fluent-bit-config-filtered` by editing the `metadata.name` field.
 1.  Save and close the file.
 
@@ -166,8 +167,7 @@ In this section, you change `kubernetes/fluentbit-daemonset.yaml` to mount the `
 `fluent-bit-config` ConfigMap.
 
 1.  Open the
-    [`kubernetes/fluentbit-daemonset.yaml`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/
-kubernetes-engine-customize-fluentbit/kubernetes/fluentbit-daemonset.yaml) file in an editor.
+    [`kubernetes/fluentbit-daemonset.yaml`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/kubernetes-engine-customize-fluentbit/kubernetes/fluentbit-daemonset.yaml) file in an editor.
 1.  Change the name of the ConfigMap from `fluent-bit-config` to `fluent-bit-config-filtered` by editing the `configMap.name` field:
 
         - name: fluent-bit-etc
