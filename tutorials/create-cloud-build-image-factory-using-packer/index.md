@@ -36,6 +36,8 @@ This task will help you setup a new Google Cloud project in which to run your Pa
 build factory. You can also use an existing project and skip to the next
 step.
 
+Alternatively, you can use [Cloud Shell](https://cloud.google.com/shell) from the GCP Console if you don't have gcloud installed on your local machine.
+
 ## Building a Linux Image
 
 <details>
@@ -176,22 +178,19 @@ New-Item -Name scripts -ItemType Directory
 <summary>Click to reveal commands</summary>
 
 ```powershell
-# Downloading the Cloud Build config file
-Invoke-WebRequest -Uri "https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/windows/cloudbuild.yaml" -OutFile "cloudbuild.yaml"
+$baseURL = "https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/windows/"
 
-# Downloading the packer config file
-Invoke-WebRequest -Uri "https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/windows/packer.json" -OutFile "packer.json"
+$cloudbuildFiles = ("cloudbuild.yaml", "packer.json")
+$packerFiles = ("bootstrap-packer.ps1", "cleanup-packer.ps1", "disable-uac.ps1", "install-chocolatey.ps1", "run-chocolatey.ps1")
 
-# Downloading the powershell scripts for packer windows tutorial 
-Invoke-WebRequest -Uri "https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/bootstrap-packer.ps1" -OutFile "./scripts/bootstrap-packer.ps1"
+# Downloading the remote files
+foreach ($file in $cloudbuildFiles){
+    Invoke-WebRequest -Uri "$baseURL+$file" -OutFile $file
+}
 
-Invoke-WebRequest -Uri "https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/cleanup-packer.ps1" -OutFile "./scripts/cleanup-packer.ps1"
-
-Invoke-WebRequest -Uri "https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/disable-uac.ps1" -OutFile "./scripts/disable-uac.ps1"
-
-Invoke-WebRequest -Uri "https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/install-chocolatey.ps1" -OutFile "./scripts/install-chocolatey.ps1"
-
-Invoke-WebRequest -Uri "https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/run-chocolatey.ps1" -OutFile "./scripts/run-chocolatey.ps1"
+foreach ($file in $packerFiles){
+    Invoke-WebRequest -Uri "$baseURL+'scripts/'+$file" -OutFile $file
+}
 ```
 
 </details>
@@ -216,7 +215,10 @@ Enable the Google Cloud APIs necessary for the tutorial
 <summary>Click to reveal commands</summary>
 
 ```sh
-gcloud services enable sourcerepo.googleapis.com cloudapis.googleapis.com compute.googleapis.com servicemanagement.googleapis.com storage-api.googleapis.com cloudbuild.googleapis.com
+gcloud services enable sourcerepo.googleapis.com `
+cloudapis.googleapis.com compute.googleapis.com `
+servicemanagement.googleapis.com storage-api.googleapis.com `
+cloudbuild.googleapis.com secretmanager.googleapis.com
 ```
 </details>
 
@@ -226,7 +228,10 @@ gcloud services enable sourcerepo.googleapis.com cloudapis.googleapis.com comput
 <summary>Click to reveal commands</summary>
 
 ```sh
-gcloud services enable sourcerepo.googleapis.com cloudapis.googleapis.com compute.googleapis.com servicemanagement.googleapis.com storage-api.googleapis.com cloudbuild.googleapis.com secretmanager.googleapis.com
+gcloud services enable sourcerepo.googleapis.com `
+cloudapis.googleapis.com compute.googleapis.com `
+servicemanagement.googleapis.com storage-api.googleapis.com `
+cloudbuild.googleapis.com secretmanager.googleapis.com
 ```
 </details>
 
@@ -263,7 +268,8 @@ Before you can provision using the winrm communicator, you need to allow traffic
 <summary>Click to reveal commands</summary>
 
 ```sh
-gcloud compute firewall-rules create allow-winrm-ingress-to-packer --allow tcp:5986
+gcloud compute firewall-rules create allow-winrm-ingress-to-packer `
+--allow tcp:5986 --target-tags allow-winrm-ingress-to-packer
 ```
 
 </details>
