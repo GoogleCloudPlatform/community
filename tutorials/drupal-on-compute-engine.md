@@ -8,7 +8,7 @@ date_published: 2017-01-17
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-Get Drupal running on an Debian virtual machine instance on Compute Engine with the LAMP stack installed.
+Get Drupal running on a Debian virtual machine instance on Compute Engine with the LAMP stack installed.
 
 Alternatively, you can use options from the
 [Cloud Marketplace][marketplace_drupal] to deploy a Drupal stack automatically.
@@ -135,7 +135,7 @@ account that Drupal can use to access the database. If you are using a Marketpla
 solution, you can see the MySQL administrator password on the Deployment Manager
 deploy page after your LAMP stack is deployed.
 
-1.  Create the new database:
+1.  Create a new database:
 
         mysqladmin -u root -p create drupal
         
@@ -232,7 +232,7 @@ You can install the SMTP Authentication Support module to enable Drupal to
 send email.
 
 
-1. First, install PHP Mailer that it depends on. In you ssh shell run:
+1. First, install PHP Mailer that it depends on. In your ssh shell run:
 
         cd /var/www/html
         sudo -uwww-data composer require drupal/phpmailer_smtp
@@ -284,8 +284,8 @@ your email was blocked for some reason.
 
 ## Next steps
 
-* [Set up a host name for your website][dns]
-* Read the [Drupal documentation][drupal_docs]
+* [Set up a hostname for your website][dns].
+* Read the [Drupal documentation][drupal_docs].
 * Try out other Google Cloud features. Have a look at the [tutorials][tutorials].
 
 [marketplace_lamp]: https://console.cloud.google.com/marketplace/browse?q=lamp
