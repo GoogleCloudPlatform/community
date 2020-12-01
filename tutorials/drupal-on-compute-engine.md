@@ -259,8 +259,8 @@ settings that connect it to your SendGrid account.
 1. In **SMTP server settings**, enter the following settings:
     * **SMTP server**: `smtp.sendgrid.net`
     * **SMTP port**: `2525`
-1. In **SMTP authentication**, enter the username and password that you provided
-   when you set up your SendGrid account.
+1. In **SMTP authentication**, enter `apikey` and the API key value that you created
+   in your SendGrid account.
 1. In **E-mail options**, enter the address and name that you want email to come
    from. Note that if you don't provide these values, your e-mail will use
    your Drupal site name and have an address similar to `admin@example.com`.
