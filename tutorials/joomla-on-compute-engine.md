@@ -8,9 +8,7 @@ date_published: 2017-01-17
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-Get Joomla! running on a virtual machine instance on Compute Engine easily
-in just a few minutes. Follow the detailed tutorial to configure Joomla! on a
-Ubuntu virtual machine instance with the LAMP stack installed and root access.
+Get Joomla! running on an Ubuntu virtual machine instance on Compute Engine with the LAMP stack installed.
 
 Alternatively, you can use options from the
 [Cloud Marketplace](https://console.cloud.google.com/marketplace/browse?q=joomla) to deploy a Joomla! stack automatically.
@@ -40,12 +38,11 @@ to generate a cost estimate based on your projected usage.
 
 ## Setting up the virtual machine
 
-First, automatically deploy the LAMP development stack by using
+First, deploy the LAMP development stack by using
 [Cloud Marketplace](http://console.cloud.google.com/marketplace/browse?q=lamp).
 Select Ubuntu and use the default options.
 
-
-When done, make a note of the **MySQL root password**. You can always
+Make a note of the **MySQL root password**. You can
 return to the **Deployment Manager** page in the Cloud Console to
 see the password or any other deployment information at any time.
 
@@ -53,8 +50,7 @@ see the password or any other deployment information at any time.
 
 1.  Get the external IP address of your instance from the
     [VM instances][instances] page in the Cloud Console.
-1. In the **External IP** column, copy the external IP address for your LAMP server
-name.
+1.  In the **External IP** column, copy the external IP address for your LAMP server name.
 1.  In a browser, enter your external IP address to verify that Apache is running:
 
         http://[YOUR_EXTERNAL_IP_ADDRESS]
@@ -79,67 +75,68 @@ This tutorial demonstrates the steps in the Cloud Console.
 Download the Joomla! package file to your virtual machine instance, unpack the
 files, and change the required ownership and permissions settings.
 
-1. In the SSH console window, change directory to the web root.
+1.  In the SSH console window, change directory to the web root:
 
         cd /var/www/html
 
-1. Remove the default index.html file.
+1.  Remove the default `index.html` file:
 
         sudo rm index.html
 
-1. Enter the following command to download the package for Joomla! version 3.9.23.
+1.  Download the package for Joomla! version 3.9.23:
 
         sudo wget https://downloads.joomla.org/us/cms/joomla3/3-9-23/Joomla_3-9-23-Stable-Full_Package.tar.bz2
 
     If you want to use a different version, you can find the links to available
     versions on the [Joomla! Downloads](https://downloads.joomla.org/us/cms) page.
 
-1. Extract the files from the archive that you downloaded.
+1.  Extract the files from the archive that you downloaded:
 
         sudo tar -xvjf Joomla_3-9-23-Stable-Full_Package.tar.bz2
 
-1. Change the ownership of the web server root directory so that Apache can
-access files.
+1.  Change the ownership of the web server root directory so that Apache can access files:
 
         sudo chown -R www-data:www-data /var/www/
 
-1. Change the permissions on the files and directories. These settings enable
-owners to read and write files and to read, write, and execute in the
-directories. Non-owners can read files and and read and execute in the
-directories.
+1.  Change the permissions on the files and directories:
 
         sudo find . -type f -exec chmod 644 {} \;
         sudo find . -type d -exec chmod 755 {} \;
 
-1. Install `sendmail` in case it's not installed on your Linux distribution.
+    These settings enable owners to read and write files and to read, write, and execute in the
+    directories. Non-owners can read files and read and execute in the directories.
+    
+1.  Install `sendmail` if it's not installed on your Linux distribution:
 
         sudo apt install sendmail -y
 
 ## Setting up the database
 
 Create a MySQL database for Joomla! and then grant permissions to a non-root user
-account that Joomla! can use to access the database. You can see MySQL
+account that Joomla! can use to access the database. You can see the MySQL
 administrator password on the Deployment Manager deploy page after your LAMP stack
 is deployed.
 
-1. Create the new database. For example, you can name the database "joomla".
+1.  Create the new database:
 
         mysqladmin -u root -p create joomla
+        
+     In this example, the database is named `joomla`.
 
-1. Log in to the MySQL console. Enter the MySQL administrator password, when
-prompted.
+1.  Log in to the MySQL console:
 
         mysql -u root -p
 
-1. Set the permissions on the database for the MySQL user account used by
-Joomla!.
+    Enter the MySQL administrator password, when prompted.
+    
+1.  Set the permissions on the database for the MySQL user account used by Joomla!:
 
         CREATE USER 'YOUR_USERNAME'@'localhost' IDENTIFIED BY 'YOUR_PASSWORD';
         GRANT ALL ON joomla.* TO 'YOUR_USERNAME'@'localhost';
 
-    replacing `YOUR_USERNAME`, and `YOUR_PASSWORD` with your values.
+    Replace `YOUR_USERNAME` and `YOUR_PASSWORD` in the commands above with your values.
 
-1. Exit the MySQL console.
+1.  Exit the MySQL console.
 
         exit
 
@@ -169,9 +166,9 @@ You can browse to your Joomla! site by entering the IP address for your site.
 
 ## Sending email from Joomla!
 
-Google Compute Engine doesn't allow outbound connections on ports 25, 465, and
+Compute Engine doesn't allow outbound connections on ports 25, 465, and
 587. To send email from your instances, you must use a partner service, such as
-[SendGrid][sendgrid]. SendGrid offers customers of Google Compute Engine free or
+[SendGrid][sendgrid]. SendGrid offers customers of Compute Engine free or
 paid packages with costs that vary by monthly email volume.
 
 ### Getting a SendGrid account
@@ -180,11 +177,11 @@ Use SendGrid's [Google partner page][sendgrid_partner] to create an account.
 Note that Google will be compensated for customers who sign up for a paid
 package.
 
-For more details about sending email, see [Sending Email from an Instance][sending].
+For more details about sending email, see [Sending email from an instance][sending].
 
 ### Configuring Joomla! to use SendGrid
 
-Use the Joomla! control panel to configure email settings in Joomla!.
+Use the Joomla! control panel to configure email settings in Joomla!:
 
 1. To browse to the control panel, enter your site's external IP address and
 append `/administrator` to the URL. You might need to log in.
@@ -198,9 +195,9 @@ append `/administrator` to the URL. You might need to log in.
 1. In **SMTP Host** enter `smtp.sendgrid.net`.
 1. Click **Save & Close**.
 
-### Sending a test email
+### Sending a test email message
 
-You can send an email from Joomla! to test your SendGrid integration. You must
+You can send an email message from Joomla! to test your SendGrid integration. You must
 create a user and then send a private message to the user.
 
 1. In the Joomla! control panel main page, in the left-side navigation, click
@@ -215,10 +212,10 @@ different from the one you used for your administrator account.
 added previously.
 1. Enter a subject and a message and then click **Send**.
 
-If sending the email fails, log in to SendGrid website and verify that your
+If sending the email message fails, log in to SendGrid website and verify that your
 SendGrid account is active. It's possible that activating the account can take
 some time. You can also check SendGrid's email activity page to see whether your
-email was blocked for some reason.
+email message was blocked for some reason.
 
 ## Next steps
 
