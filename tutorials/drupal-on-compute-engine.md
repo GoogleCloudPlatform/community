@@ -8,10 +8,10 @@ date_published: 2017-01-17
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-Get Drupal running on a virtual machine instance on Compute Engine
-easily in just a few minutes. You can use automated tools or follow the detailed
-tutorial to configure Drupal on a Debian virtual machine instance with the LAMP
-stack installed and root access.
+Get Drupal running on an Debian virtual machine instance on Compute Engine with the LAMP stack installed.
+
+Alternatively, you can use options from the
+[Cloud Marketplace][marketplace_drupal] to deploy a Drupal stack automatically.
 
 ## Objectives
 
@@ -22,26 +22,69 @@ stack installed and root access.
 * Viewing your Drupal site
 * Sending email from Drupal
 
+## Prerequisites
+
+1.  [Select or create a Google Cloud project.](https://cloud.console.google.com/projectselector2/home/dashboard)
+
+1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
+
+## Costs
+
+This tutorial uses billable components of Google Cloud,
+including [Compute Engine](https://cloud.google.com/compute/all-pricing).
+
+Use the [pricing calculator](https://cloud.google.com/products/calculator/)
+to generate a cost estimate based on your projected usage.
+
 ## Setting up the virtual machine
 
-First, automatically deploy the LAMP development stack. You can use the
-[Cloud Launcher][launcher], or you can [set up a LAMP stack][lamp] yourself.
+First, you need to deploy the LAMP development stack. You can
+[set up a LAMP stack][lamp] yourself or you can use the
+[Cloud Marketplace][marketplace_lamp]. If you use a marketplace solution,
+make sure you select the PHP and MySQL versions that supported by Drupal. You
+also need to read the provider's documentation because the defaults such as
+`/var/www/html` might be changed by the provider.
 
-You can also automatically deploy Drupal on your virtual machine by using the
-[Cloud Launcher][launcher_drupal] or you can use the remaining steps to install
-Drupal yourself.
+### Test Apache and PHP
 
-After your virtual machine instance is up and running, use the Cloud
-Console to connect over SSH.
+1.  After your virtual machine instance is up and running,
+    get the external IP address of your instance from the
+    [VM instances][instances] page in the Cloud Console.
+1.  In the **External IP** column, copy the external IP address for your LAMP server name.
+1.  In a browser, enter your external IP address to verify that Apache is running:
 
-## Installing Drush
+        http://[YOUR_EXTERNAL_IP_ADDRESS]
+
+    You should see the Apache test page. Make sure that you don't use the `https` protocol specifier, because HTTPS is not configured.
+
+### Connect to your instance
+
+You can connect directly to your instance using SSH from
+Cloud Console or using the `gcloud compute ssh` command, which is
+part of the [Cloud SDK](https://cloud.google.com/sdk).
+This tutorial demonstrates the steps in the Cloud Console.
+
+*  In the [Cloud Console](https://console.cloud.google.com/compute/instances),
+    go to the **VM instances** page.
+    
+*  In the list of virtual machine instances, click the **SSH** button in the row of the instance
+    to which you want to connect.    
+
+## Installing Drush and needed Packages
+
+Install `wget` and PHP `composer`:
+
+        sudo apt-get install wget composer
 
 [Drush][drush], the Drupal shell utility, simplifies installation and
 administration of Drupal. Use the following steps to install Drush:
 
 1. Download Drush:
 
-        wget https://github.com/drush-ops/drush/releases/download/8.0.0-rc4/drush.phar
+        wget -O drush.phar https://github.com/drush-ops/drush/releases/download/8.4.5/drush.phar
+   
+   If you want to use a different version, you can find the links to available
+   versions on the [Drush releases](https://github.com/drush-ops/drush/releases) page.
 
 1. Move the file:
 
@@ -77,40 +120,61 @@ Drush puts the Drupal files in a subdirectory that uses the format
 `drupal-VERSION`, where `VERSION` represents the Drupal version number. You
 probably don't want that directory name in your website path.
 
-1. Move the files up one level in the directory structure. Note that the version
-   number appears twice.
+1. Move the files up one level in the directory structure. For examle:
 
-        sudo mv drupal-/* drupal-/.htaccess ./
-
-    For Drupal 7, add:
-
-        sudo mv drupal-/.gitignore ./
+        sudo mv drupal-8.9.10/{.[!.],}* ./
 
 1. Remove the now-empty directory:
 
-        sudo rm -rf drupal-/
+        sudo rmdir drupal-8.9.10/
+
+## Setting up the database
+
+Create a MySQL database for Drupal and then grant permissions to a non-root user
+account that Drupal can use to access the database. If you are using a Marketplace
+solution, you can see the MySQL administrator password on the Deployment Manager
+deploy page after your LAMP stack is deployed.
+
+1.  Create the new database:
+
+        mysqladmin -u root -p create drupal
+        
+     In this example, the database is named `drupal`.
+
+1.  Log in to the MySQL console:
+
+        mysql -u root -p
+
+    Enter the MySQL administrator password, when prompted.
+    
+1.  Set the permissions on the database for the MySQL user account used by Drupal:
+
+        CREATE USER 'MYSQL_USERNAME'@'localhost' IDENTIFIED BY 'MYSQL_PASSWORD';
+        GRANT ALL ON drupal.* TO 'MYSQL_USERNAME'@'localhost';
+
+    Replace `MYSQL_USERNAME` and `MYSQL_PASSWORD` in the commands above with your values.
+
+1.  Exit the MySQL console.
+
+        exit
 
 ## Running the installer
 
 Drush runs the installer for you. You must provide the following information:
 
-* The password of the MySQL administrator that you provided before deploying the
-  LAMP stack.
-* An account name and password for the first Drupal user (the administrator).
-* A name and user account information for the MySQL database.
+* An account name and password you choose for the first Drupal user (the administrator).
+* The MySQL user account and password your created in the previous step.
 
 Use the following command:
 
-    sudo drush site-install \
-      --db-su=root \
-      --db-su-pw=MYSQL_ADMIN_PASSWORD \
-      --account-name=NAME \
-      --account-pass=PASSWORD \
-      --site-name="Drupal on Google Compute Engine" \
-      --db-url=mysql://MYSQL_USERNAME:MYSQL_PASSWORD@localhost/DATABASE_NAME
+        sudo drush site-install \
+        --account-name=NAME \
+        --account-pass=PASSWORD \
+        --site-name="Drupal on Google Compute Engine" \
+        --db-url=mysql://MYSQL_USERNAME:MYSQL_PASSWORD@localhost/drupal
 
-replacing `MYSQL_ADMIN_PASSWORD`, `NAME`, `PASSWORD`, `MYSQL_USERNAME`,
-`MYSQL_PASSWORD`, and `DATABASE_NAME` with the appropriate values.
+replacing `NAME`, `PASSWORD`, `MYSQL_USERNAME`, and
+`MYSQL_PASSWORD` with the appropriate values.
 
 ### Updating directory settings
 
@@ -132,22 +196,20 @@ server by updating its permissions and ownership.
 
 ## Viewing your Drupal site
 
-To view your Drupal site in a browser, first open port 80 to allow
-HTTP traffic to your server. Follow these steps:
-
-1. View your virtual machine instances in the
-   [Compute Engine instances page][console_instances].
-1. In the **External IP** column, click the external IP address for your Drupal
-   server name.
-1. In the dialog box that opens, select the **Allow HTTP** traffic check box.
-1. Click **Apply** to close the dialog box.
-
-After completing these steps, you can click the external IP address link or
-enter it in the address bar to open your Drupal site's home page in your
-browser.
+You can browse to your Drupal site by entering the IP address for your site.
 
 To log in to your site, use the Drupal administrator user name and the Drupal
 administrator password that you provided in the Drush installation command.
+
+If you get 'Page not found' error when you click the login link, verify
+your apache configuration has `AllowOverride` set to `All`. For example, in
+`/etc/apache2/apache2.conf`, you should have:
+
+        <Directory /var/www/>
+                Options Indexes FollowSymLinks
+                AllowOverride All
+                Require all granted
+        </Directory>
 
 ## Sending email from Drupal
 
@@ -166,28 +228,33 @@ For more details about sending email, see [Sending Email from an Instance][sendi
 
 ### Installing the SMTP Authentication Support module on Drupal
 
-You must install the SMTP Authentication Support module to enable Drupal to
+You can install the SMTP Authentication Support module to enable Drupal to
 send email.
 
+
+1. First, install PHP Mailer that it depends on. In you ssh shell run:
+
+        cd /var/www/html
+        sudo -uwww-data composer require drupal/phpmailer_smtp
+
 1. From the **Downloads** section of the [SMTP Authentication Support page][smtp],
-   copy the link address for the module. For example, in the **Recommended releases**
-   table, right-click the link to **tar.gz** for the latest release and then copy
+   copy the link address for the module. For example, in the **Recommended by the project's maintainer** block, right-click the link to **tar.gz** for the latest release and then copy
    its address.
 1. Log in to Drupal as the administrator.
-1. In Drupal, on the **Modules** page, click **Install new module**.
+1. In Drupal, on the **Extend** page, click **Install new module**.
 1. In the **Install from a URL** text box, paste the URL that you copied.
 1. Click **Install**.
-1. After the installation completes, browse to the **Modules** page.
-1. Scroll to the bottom of the page. In the **Mail** section, select **Enabled**.
-1. Click **Save configuration**.
+1. After the installation completes, browse to the **Extend** page.
+1. Scroll to the bottom of the page. In the **Mail** section, mark the checkbox.
+1. Click **Install**.
 
 ### Configuring the module to use SendGrid
 
 Now that the SMTP Authentication Support module is installed, provide the
 settings that connect it to your SendGrid account.
 
-1. In Drupal, on the **Modules** page, locate the **SMTP Authentication Module**
-   row and then click **Configure**. The **Configuration** page opens.
+1. In Drupal, on the **Extend** page, locate the **SMTP Authentication Support**
+   row, expand it and then click **Configure**. The **Configuration** page opens.
 1. In **Install options**, turn the module on.
 1. In **SMTP server settings**, enter the following settings:
     * **SMTP server**: `smtp.sendgrid.net`
@@ -203,7 +270,7 @@ settings that connect it to your SendGrid account.
 
 You can send an email from Drupal to test your SendGrid integration.
 
-1. On the **Configuration** page for the SMTP Authentication Module, select
+1. On the same **Configuration** page for the SMTP Authentication Module, select
    **Enable debugging**. This setting lets you see all of the messages about
    activity as your email is being sent.
 1. In **Send test e-mail**, enter the email address that you want to send the
@@ -221,15 +288,15 @@ your email was blocked for some reason.
 * Read the [Drupal documentation][drupal_docs]
 * Try out other Google Cloud features. Have a look at the [tutorials][tutorials].
 
-[launcher]: https://cloud.google.com/launcher/?q=lamp
+[marketplace_lamp]: https://console.cloud.google.com/marketplace/browse?q=lamp
 [lamp]: https://cloud.google.com/compute/docs/tutorials/setting-up-lamp
-[launcher_drupal]: https://cloud.google.com/launcher/?q=drupal
-[drush]: http://docs.drush.org/en/master/
+[marketplace_drupal]: https://console.cloud.google.com/marketplace/browse?q=drupal
+[drush]: https://www.drush.org/
 [console_instances]: https://console.cloud.google.com/compute/instances
 [sendgrid]: https://sendgrid.com/
 [sendgrid_partner]: http://sendgrid.com/partner/google?mbsy=gHNj
 [sending]: https://cloud.google.com/compute/docs/sending-mail
 [smtp]: https://www.drupal.org/project/smtp
-[dns]: https://cloud.google.com/compute/docs/tutorials/lamp/setting-up-dns
+[dns]: https://cloud.google.com/community/tutorials/setting-up-lamp#setting_up_dns
 [drupal_docs]: https://www.drupal.org/documentation
 [tutorials]: https://cloud.google.com/docs/tutorials
