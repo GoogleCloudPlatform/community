@@ -1,6 +1,6 @@
 ---
 title: Setting up Drupal on Compute Engine
-description: Learn how to get Drupal running on a virtual machine instance on Compute Engine in just a few minutes.
+description: Learn how to get Drupal running on a virtual machine instance on Compute Engine.
 author: jimtravis
 tags: Compute Engine, SendGrid, Drupal
 date_published: 2017-01-17
