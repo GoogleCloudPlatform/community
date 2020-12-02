@@ -1,6 +1,6 @@
 ---
 title: Setting up Joomla! on Compute Engine
-description: Learn how to get Joomla! running on a virtual machine instance on Compute Engine easily in just a few minutes.
+description: Learn how to get Joomla! running on a virtual machine instance on Compute Engine.
 author: jimtravis
 tags: Compute Engine, SendGrid, Joomla
 date_published: 2017-01-17
@@ -15,12 +15,12 @@ Alternatively, you can use options from the
 
 ## Objectives
 
-* Setting up the virtual machine
-* Downloading Joomla!
-* Setting up the database
-* Running the web-based setup
-* Viewing your Joomla! site
-* Sending email from Joomla!
+* Set up the virtual machine
+* Download Joomla!
+* Set up the database
+* Run the web-based setup
+* View your Joomla! site
+* Send email from Joomla!
 
 ## Prerequisites
 
@@ -220,7 +220,7 @@ email message was blocked for some reason.
 ## Next steps
 
 * [Set up a host name for your website][dns].
-* Read the [Joomla documentation][joomla_docs].
+* Read the [Joomla! documentation][joomla_docs].
 * Try out other Google Cloud features. Have a look at the [tutorials][tutorials].
 
 *The Joomla! name, logo and related trademarks are the property of Open Source Matters, Inc. and have been used with permission.*
