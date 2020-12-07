@@ -147,7 +147,7 @@ In a production environment, you would create it elsewhere.
 
 1. Using RDP, connect to the domain controller VM, ```dc-windows```, with the gontoso.com\Administrator account.  
 *If you are using Chrome RDP for Google Cloud, in the Options menu, under the Certificates list, 
-delete the existing RDP certificates for these addresses.*. 
+delete the existing RDP certificates for these addresses.* 
 2. Open PowerShell as administrator
 3. Create the witness folder.
 ```powershell
