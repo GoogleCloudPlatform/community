@@ -3,7 +3,7 @@ title: Microsoft SQL Server Always On in single subnet
 description: Learn how to deploy MS-SQL AO AG in single subnet
 author: shashank-google
 tags: Databases, MSSQL, SQL Server, AOAG, Always On, Availability Groups
-date_published: 2020-12-20
+date_published: 2020-12-07
 ---
 
 Shashank Agarwal | Database(s) Cloud Engineer | Google
