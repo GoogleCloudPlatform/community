@@ -397,7 +397,7 @@ gcloud compute forwarding-rules create wsfc-forwarding-rule \
 ```
 
 **NOTE** ILB will show only instance group healthy at any given point in time. This is ok and by design.
------<screenshot>--------
+![ILB Created](./ILB-Image.png)
 
 ## Simulating Failover
 
@@ -408,7 +408,7 @@ osql -S node-2 -E -Q "ALTER AVAILABILITY GROUP [sql-ag] FORCE_FAILOVER_ALLOW_DAT
 
 You will observe that autoamtically ILB will also start pointing to this node automatically.
 
-![ILB Updated](./ILB Moved.png)
+![ILB Updated](./ILB-Moved.png)
 
 ## Cleaning up
 To avoid incurring charges to your Google Cloud Platform account for the resources used in this tutorial.
