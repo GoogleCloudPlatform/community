@@ -10,12 +10,15 @@ Shashank Agarwal | Database(s) Cloud Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This document describes the deployment of the database engine PostgreSQL in a GKE cluster. In addition, it discusses the consideration in comparison to a conventional deployment of PostgreSQL on a virtual machine or in Cloud SQL.
+This document describes the deployment of the database engine SQL Server always on in single subnet.
 
 
 ## Objectives
-*   Learn to install a Microsoft SQL Server in AO AG configuration using only one subnet
-*   Understand the architectural considerations of single subnet and multi subnet deployments
+*   Learn to install a Microsoft SQL Server in AO AG configuration using single subnet.
+*   Set up a VPC network with a Windows domain controller.
+*   Create two Windows SQL Server VM instances to act as cluster nodes.
+*   Set up an internal load balancer to direct traffic to the active node.
+*   Test the failover operation to verify that the cluster is working.
 
 ## Costs
 
@@ -47,8 +50,6 @@ Whatever might be reason for a single subnet, this solution can be used in that 
 
 This solution in based on combination of [SQL Server FCI Setup](https://cloud.google.com/compute/docs/instances/sql-server/configure-failover-cluster-instance) 
 and [SQL Server multi subnet AO](https://cloud.google.com/solutions/deploy-multi-subnet-sql-server) in GCP.
-
-...............<diagram here>.................
 
 ## Setting up the VPC network
 We are going to use exisiting **default** network.
@@ -402,6 +403,7 @@ gcloud compute forwarding-rules create wsfc-forwarding-rule \
 ## Simulating Failover
 
 In-order to simulate failure execute below SQL Query on the scondary node (to make it primary).
+Other than this, you can also shutdown/reset primary node to trigger failure.
 ```powershell
 osql -S node-2 -E -Q "ALTER AVAILABILITY GROUP [sql-ag] FORCE_FAILOVER_ALLOW_DATA_LOSS;”
 ```
