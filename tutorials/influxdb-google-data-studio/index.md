@@ -20,11 +20,14 @@ InfluxDB instance to build these Data Studio dashboards. In this tutorial, you u
 
 ![Data Studio dashboard showing COVID-19 data](https://storage.googleapis.com/gcp-community/tutorials/influxdb-google-data-studio/COVID-19-Data-Studio-Dashboard-powered-by-InfluxDB.png)
 
+The same general steps in this tutorial can be used for other InfluxDB measurement data being collected. Simply replace the references to `diskio-usage` and 
+`diskio` with the bucket name and measurement name to connect to Data Studio.
+
 ## Objectives
 
-* Connect Google Data Studio to your InfluxDB Cloud instance.
-* Configure a downsampling Task to aggregate metric data.
-* Create comprehensive dashboards using GDS and your time series data.
+* Connect Data Studio to your InfluxDB Cloud instance.
+* Configure a downsampling task to aggregate metric data.
+* Create comprehensive dashboards using Data Studio and your time series data.
 
 ## Costs
 
@@ -34,17 +37,16 @@ This tutorial explains how to monitor existing Google Cloud resources but does n
 
 ## Before you begin
 
-This tutorial assumes you have Google Data Studio, an existing InfluxDB Cloud account, and Telegraf enabled to collect disk usage data.
-
-We recommend following the tutorial on [Monitoring Google Cloud with InfluxDB templates](https://cloud.google.com/community/tutorials/influxdb-google-cloud-monitoring-templates) to set up an InfluxDB Cloud account and configure it to monitor your Google Cloud resources.
-
-The same general steps can be used for other InfluxDB measurement data being collected. Simply replace the references to `diskio-usage` and `diskio` with the desired bucket and measurement name to connect to Google Data Studio.
-
-Complete the following setups before proceeding if you do not already have access to these any of these tools.
+This tutorial assumes that you have Data Studio, an existing InfluxDB Cloud account, and Telegraf enabled to collect disk usage data.
 
 * Get free access to [Google Data Studio](https://datastudio.google.com/overview).
 * Create a [new InfluxDB Cloud account for free](https://cloud2.influxdata.com/signup).
-* Install and configure the [Telegraf metrics collection agent](https://docs.influxdata.com/influxdb/v2.0/write-data/no-code/use-telegraf/) to collect monitoring metrics from a local system.
+* Install and configure the [Telegraf metrics collection agent](https://docs.influxdata.com/influxdb/v2.0/write-data/no-code/use-telegraf/) to collect monitoring
+  metrics from a local system.
+
+We recommend following the tutorial on
+[Monitoring Google Cloud with InfluxDB templates](https://cloud.google.com/community/tutorials/influxdb-google-cloud-monitoring-templates) to set up an InfluxDB 
+Cloud account and configure it to monitor your Google Cloud resources.
 
 ## Tutorial body
 
