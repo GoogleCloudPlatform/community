@@ -15,8 +15,7 @@
 # limitations under the License.
 import srt
 import time
-from google.cloud import speech_v1
-from google.cloud.speech_v1 import enums
+from google.cloud import speech
 
 
 def long_running_recognize(args):
@@ -29,10 +28,10 @@ def long_running_recognize(args):
     """
 
     print("Transcribing {} ...".format(args.storage_uri))
-    client = speech_v1.SpeechClient()
+    client = speech.SpeechClient()
 
     # Encoding of audio data sent.
-    encoding = enums.RecognitionConfig.AudioEncoding.LINEAR16
+    encoding = speech.RecognitionConfig.AudioEncoding.LINEAR16
     config = {
         "enable_word_time_offsets": True,
         "enable_automatic_punctuation": True,
@@ -42,7 +41,12 @@ def long_running_recognize(args):
     }
     audio = {"uri": args.storage_uri}
 
-    operation = client.long_running_recognize(config, audio)
+    operation = client.long_running_recognize(
+        request={
+            "config": config,
+            "audio": audio,
+            }
+    )
     response = operation.result()
 
     subs = []
@@ -66,7 +70,7 @@ def break_sentences(args, subs, alternative):
             # first word in sentence, record start time
             start_hhmmss = time.strftime('%H:%M:%S', time.gmtime(
                 w.start_time.seconds))
-            start_ms = int(w.start_time.nanos / 1000000)
+            start_ms = int(w.start_time.microseconds / 1000)
             start = start_hhmmss + "," + str(start_ms)
 
         charcount += len(w.word)
@@ -79,7 +83,7 @@ def break_sentences(args, subs, alternative):
             # also break if , and not first word
             end_hhmmss = time.strftime('%H:%M:%S', time.gmtime(
                 w.end_time.seconds))
-            end_ms = int(w.end_time.nanos / 1000000)
+            end_ms = int(w.end_time.microseconds / 1000)
             end = end_hhmmss + "," + str(end_ms)
             subs.append(srt.Subtitle(index=idx,
                         start=srt.srt_timestamp_to_timedelta(start),
