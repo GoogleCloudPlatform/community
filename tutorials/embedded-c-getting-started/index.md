@@ -62,7 +62,6 @@ pip install cmake
 - ninja: https://github.com/ninja-build/ninja/releases
 - CMake: https://cmake.org/download/
 
-
 ### Install and configure ESP-IDF
 
 When all of the dependencies are installed, follow the steps in [Get Started](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/) to 
@@ -84,7 +83,8 @@ To set up your Google Cloud project, you can use the `gcloud` command-line inter
 1.  Download and install the [Cloud SDK](https://cloud.google.com/sdk).  
 1.  Generate elliptic curve (EC) device credentials for authenticating the device when it’s trying to connect with the cloud:
 
-        openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem openssl ec -in ec_private.pem -pubout -out ec_public.pem 
+        openssl ecparam -genkey -name prime256v1 -noout -out ec_private.pem
+        openssl ec -in ec_private.pem -pubout -out ec_public.pem 
 
      You'll need to know where these files are later, so make sure that they’re saved somewhere you can access.
      

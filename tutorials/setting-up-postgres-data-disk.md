@@ -1,6 +1,6 @@
 ---
-title: How to set up a new persistent disk for PostgreSQL data
-description: Learn how to add a separate persistent disk for your PostgreSQL database on Google Cloud in just a few minutes.
+title: Setting up a new persistent disk for PostgreSQL data
+description: Learn how to add a separate persistent disk for your PostgreSQL database on Google Cloud.
 author: jimtravis
 tags: Compute Engine, PostgreSQL, persistent disk
 date_published: 2017-02-16
@@ -22,11 +22,11 @@ Note that you can also use Postgres as a service through [Cloud SQL](https://clo
 
 ## Objectives
 
-* Inserting test data
-* Creating and attaching a new persistent disk
-* Preparing the disk
-* Moving the data to the new disk
-* Testing the database
+* Insert test data
+* Create and attach a new persistent disk
+* Prepare the disk
+* Move the data to the new disk
+* Test the database
 
 ## Prerequisites
 
