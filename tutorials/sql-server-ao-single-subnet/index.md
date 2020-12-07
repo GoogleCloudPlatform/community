@@ -408,7 +408,7 @@ osql -S node-2 -E -Q "ALTER AVAILABILITY GROUP [sql-ag] FORCE_FAILOVER_ALLOW_DAT
 
 You will observe that autoamtically ILB will also start pointing to this node automatically.
 
---------<screenshot>----------
+![ILB Updated](./ILB Moved.png)
 
 ## Cleaning up
 To avoid incurring charges to your Google Cloud Platform account for the resources used in this tutorial.
