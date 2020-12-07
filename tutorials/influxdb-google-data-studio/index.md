@@ -3,7 +3,7 @@ title: Access time series data in InfluxDB Cloud with Google Data Studio
 description: Quickly deploy a comprehensive dashboard using Data Studio and your time series data.
 author: gunnaraasen
 tags: time series, data, visualization, monitoring, Google Cloud, Data Studio
-date_published: 2020-12-8
+date_published: 2020-12-08
 ---
 
 Gunnar Aasen | Product Manager | InfluxData
