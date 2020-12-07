@@ -1,20 +1,24 @@
-﻿---
+---
 title: Access time series data in InfluxDB Cloud with Google Data Studio
-description: Quickly deploy a comprehensive dashboard using Google Data Studio and your time series data.
+description: Quickly deploy a comprehensive dashboard using Data Studio and your time series data.
 author: gunnaraasen 
-tags: time series, data, visualization, monitoring, Google Cloud
-date_published: 2020-10-20
+tags: time series, data, visualization, monitoring, Google Cloud, Data Studio
+date_published: 2020-12-8
 ---
 
 Gunnar Aasen | Product Manager | InfluxData
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-Google Data Studio is an interactive dashboard tool that turns any internet accessible data source into informative dashboards that are easy-to-build, share, and derive powerful insights from your data.
+Google Data Studio is an interactive dashboard tool that turns any internet-accessible data source into informative dashboards that are easy to build and share, 
+which help you to derive powerful insights from your data.
 
-The easy-to-use point-and-click UI makes it possible for anyone with the curiosity to drill down into their live datasets and build dashboard and reports with interactive controls such as data selectors, column sorts, and page-level filters. It also has support for calculated metrics and calculated fields. The [InfluxData platform](https://docs.influxdata.com/influxdb/v2.0/) comes with a Google Data Studio connector that allows users to query time series data from their InfluxDB instance to build these Data Studio dashboards. In this tutorial, you use Google Data Studio to visualize monitoring metrics stored in InfluxDB Cloud.
+The easy-to-use point-and-click user interface makes it possible for anyone with the curiosity to drill down into their live datasets and build dashboard and
+reports with interactive controls such as data selectors, column sorts, and page-level filters. It also has support for calculated metrics and calculated fields.
+The [InfluxData platform](https://docs.influxdata.com/influxdb/v2.0/) comes with a Data Studio connector that allows users to query time series data from their 
+InfluxDB instance to build these Data Studio dashboards. In this tutorial, you use Data Studio to visualize monitoring metrics stored in InfluxDB Cloud.
 
-![Google Data Studio dashboard showing COVID-19 Data](https://storage.googleapis.com/gcp-community/tutorials/COVID-19-Data-Studio-Dashboard-powered-by-InfluxDB.png)
+![Data Studio dashboard showing COVID-19 data](https://storage.googleapis.com/gcp-community/tutorials/influxdb-google-data-studio/COVID-19-Data-Studio-Dashboard-powered-by-InfluxDB.png)
 
 ## Objectives
 
@@ -87,7 +91,7 @@ Complete the following setups before proceeding if you do not already have acces
 
 3. Click "CONNECT" to continue. After completing the authorization, you will see a list of fields available from your Measurement, including all tags, fields, and timestamps.
 
-    ![InfluxDB Field List](https://storage.googleapis.com/gcp-community/tutorials/Google-Data-Studio_InfluxDB-Field-List.png)
+    ![InfluxDB Field List](https://storage.googleapis.com/gcp-community/tutorials/influxdb-google-data-studio/Google-Data-Studio_InfluxDB-Field-List.png)
 
 4. You can now click on CREATE REPORT in the GDS canvas and start building your charts.
 
