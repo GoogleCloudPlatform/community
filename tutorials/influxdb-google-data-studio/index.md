@@ -13,7 +13,7 @@ Gunnar Aasen | Product Manager | InfluxData
 Google Data Studio is an interactive dashboard tool that turns any internet-accessible data source into informative dashboards that are easy to build and share, 
 which help you to derive powerful insights from your data.
 
-The easy-to-use point-and-click user interface makes it possible for anyone with the curiosity to drill down into their live datasets and build dashboard and
+The easy-to-use user interface makes it possible for anyone with the curiosity to drill down into their live datasets and build dashboard and
 reports with interactive controls such as data selectors, column sorts, and page-level filters. It also has support for calculated metrics and calculated fields.
 The [InfluxData platform](https://docs.influxdata.com/influxdb/v2.0/) comes with a Data Studio connector that allows users to query time series data from their 
 InfluxDB instance to build these Data Studio dashboards. In this tutorial, you use Data Studio to visualize monitoring metrics stored in InfluxDB Cloud.
@@ -63,9 +63,9 @@ Cloud account and configure it to monitor your Google Cloud resources.
 
 ## Configure an InfluxDB task to downsample source data
 
-The following steps show how to define a new task to downsample the disk usage metrics into a new bucket.
-
 We recommend using aggregated source data to avoid performance issues in the Data Studio UI.
+
+The steps in this section show how to define a new task to downsample the disk usage metrics into a new bucket.
 
 InfluxDB uses the [Flux functional data scripting language](https://docs.influxdata.com/influxdb/v2.0/process-data/common-tasks/downsample-data/) to create data
 aggregation tasks.
@@ -95,13 +95,12 @@ When the aggregated time series data is available, you can use it in your Data S
 
 ## Connect InfluxDB Cloud to Data Studio
 
-1.  Authorize the Data Studio
-    [InfluxDB Community Connector](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs) data source to enable a direct connection from Data Studio to InfluxDB 
+1.  [Authorize the Data Studio InfluxDB Community Connector](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs) data source to enable a direct connection from Data Studio to InfluxDB 
     Cloud.
 
 1.  After authorizing the connector, enter the following connection details in the Data Studio data source wizard to connect with InfluxDB Cloud:
 
-    * InfluxDB Cloud URL for your region, such as `https://us-west-2-1.aws.cloud2.influxdata.com`
+    * InfluxDB Cloud URL for your region, such as `https://us-central1-1.gcp.cloud2.influxdata.com`
     * Token created in the "Configure InfluxDB Cloud" section
     * [Organization name](https://docs.influxdata.com/influxdb/v2.0/organizations/view-orgs/)
     * Bucket name: `diskio-usage` or `diskio-usage-1h` depending on whether downsampling was configured
@@ -111,7 +110,7 @@ When the aggregated time series data is available, you can use it in your Data S
 
     After you complete the authorization, you see a list of fields available from your measurement, including all tags, fields, and timestamps.
 
-    ![InfluxDB Field List](https://storage.googleapis.com/gcp-community/tutorials/influxdb-google-data-studio/Google-Data-Studio_InfluxDB-Field-List.png)
+    ![InfluxDB field list](https://storage.googleapis.com/gcp-community/tutorials/influxdb-google-data-studio/Google-Data-Studio_InfluxDB-Field-List.png)
 
 1.  Click **Create report** in Data Studio to start building your charts.
 
