@@ -1,16 +1,16 @@
 ---
-title: Microsoft SQL Server Always On in a single subnet
-description: Learn how to deploy microsoft sql server with Always On in a single subnet.
+title: Deply Microsoft SQL Server Always On in a single subnet
+description: Learn how to deploy Microsoft SQL Server with Always On in a single subnet.
 author: shashank-google
-tags: Databases, MSSQL, SQL Server, AOAG, Always On, Availability Groups
-date_published: 2020-12-07
+tags: databases, MSSQL, SQL Server, AOAG, Availability Group
+date_published: 2020-12-10
 ---
 
 Shashank Agarwal | Database(s) Cloud Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This document describes the deployment of the database engine SQL Server always on in single subnet.
+This document describes the deployment of the database engine SQL Server Always On in single subnet.
 
 
 ## Objectives
@@ -397,7 +397,7 @@ gcloud compute forwarding-rules create wsfc-forwarding-rule \
 ```
 
 **NOTE** ILB will show only one instance group healthy at any given point in time. This is ok and by design.
-![ILB Created](./ILB-Image.png)
+![ILB Created](https://storage.googleapis.com/gcp-community/tutorials/sql-server-ao-single-subnet/ILB-Image.png)
 
 ## Simulating Failover
 
@@ -409,7 +409,7 @@ osql -S node-2 -E -Q "ALTER AVAILABILITY GROUP [sql-ag] FAILOVER;"
 
 You will observe that autoamtically ILB will also start pointing to this node automatically.
 
-![ILB Updated](./ILB-Moved.png)
+![ILB Updated](https://storage.googleapis.com/gcp-community/tutorials/sql-server-ao-single-subnet/ILB-Moved.png)
 
 ## Cleaning up
 To avoid incurring charges to your Google Cloud Platform account for the resources used in this tutorial.
