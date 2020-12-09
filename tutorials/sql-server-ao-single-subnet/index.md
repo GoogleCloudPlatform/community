@@ -1,5 +1,5 @@
 ---
-title: Deply Microsoft SQL Server Always On in a single subnet
+title: Deploy Microsoft SQL Server Always On in a single subnet
 description: Learn how to deploy Microsoft SQL Server with Always On in a single subnet.
 author: shashank-google
 tags: databases, MSSQL, SQL Server, AOAG, Availability Group
