@@ -107,8 +107,6 @@ net user Administrator /active:yes
 Install-ADDSForest -CreateDnsDelegation:$false -DatabasePath $DatabasePath -LogPath $LogPath -SysvolPath $SysvolPath -DomainName $DomainName -DomainMode $DomainMode -ForestMode $ForestMode -InstallDNS:$true -NoRebootOnCompletion:$false -SafeModeAdministratorPassword ((Get-Credential Administrator).Password) -Force:$true;
 ```
 
-7. After the VM restarts, reconnect to the it using RDP. Use your local account credentials, which match your original credentials.
-
 ## Creating the Always On cluster's VMs 
 
 1. From Cloud Shell, create two SQL Server VMs.
