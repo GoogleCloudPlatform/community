@@ -256,16 +256,12 @@ the number of threads to use. The lower the number of threads, the larger the am
 ## Takeaways
 
 * Just because your Dataflow workers have a certain amount of RAM installed, that doesn't mean that your code can use all 
-  of that memory. There are many other things going on in the worker machines.
-
-  * If your pipeline *doesn't* use Dataflow Shuffle (batch) or Streaming Engine (streaming), then the heap available to your 
-    code is roughly 40% of the total memory.
-  * If your pipeline *does* use Dataflow Shuffle or Streaming Engine, then the heap available to your code is roughly 80% of 
-    the total memory.
+  of that memory. There are many other things going on in the worker machines, so the heap available to your code is roughly 
+  70% of the total memory in the worker.
 
 * The Java heap is shared across all Java threads and all instances of your DoFns.
 
-* Make sure that each DoFn never uses more than a fraction of the total memory. 
+* Make sure that each DoFn never uses more than a fraction of the total memory.
 
 * Don't cache or buffer data. Dataflow takes care of that for you. Keep as little state in RAM as possible.
 
