@@ -69,7 +69,7 @@ Before beginning the composition code, note that there's an input we need: a lis
 Once you have the list of objects, you need a function that iterates through the list and emits chunks of 31 at a time. This is pretty simple:
 
 
-```
+```python
 def generate_composition_chunks(slices: List,
                                 chunk_size: int = 31) -> Iterable[List]:
     """Given an indefinitely long list of blobs, return the list in 31 item chunks.
@@ -107,7 +107,7 @@ Now, you simply need to:
 The following example uses a bit of concurrency to perform the cleanup, as deletes are trivially parallelized and would take a long time otherwise. 
 
 
-```
+```python
 def compose(object_path: str, slices: List[storage.Blob],
             client: storage.Client, executor: Executor) -> storage.Blob:
     """Compose an object from an indefinite number of slices. Composition will
@@ -138,8 +138,11 @@ def compose(object_path: str, slices: List[storage.Blob],
     delete_objects_concurrent(slices, executor, client)
 
     return final_blob
+```
+
 This is our main function for composition. It handles creating the accumulator, reading the list in 31-object chunks, and then performing the cleanup with concurrent deletes. Note that the accumulator (final_blob) is inserted at the head of each chunk before compose is called.
 
+```python
 def delete_objects_concurrent(blobs, executor, client) -> None:
     """Delete GCS objects concurrently.
 
@@ -185,7 +188,7 @@ This has some disadvantages, though they can be mitigated:
 That said, for many cases this will work just fine, and will be much quicker than a single accumulator. It's a little more advanced, but having seen the simpler approach in action, it should be a straightforward evolution.
 
 
-```
+```python
 def compose(object_path: str, slices: List[storage.Blob],
             client: storage.Client, executor: Executor) -> storage.Blob:
     """Compose an object from an indefinite number of slices. Composition will
@@ -231,8 +234,11 @@ def compose(object_path: str, slices: List[storage.Blob],
     LOG.info("Composition complete")
 
     return final_blob
+```
+
 As before, this primary function handles reading the list chunks, composing, and cleanup, but it does things quite differently. Now, we have to create intermediate accumulators, and schedule our work in an Executor, collecting Futures as we go.
 
+```python
 def compose_and_cleanup(blob: storage.Blob, chunk: List[storage.Blob],
                         client: storage.Client, executor: Executor):
     """Compose a blob and clean up its components. Cleanup tasks will be
@@ -254,9 +260,11 @@ def compose_and_cleanup(blob: storage.Blob, chunk: List[storage.Blob],
     # cleanup components, no longer need them
     delete_objects_concurrent(chunk, executor, client)
     return blob
+```
 
 This is the work we want to parallelize, so we need to move it into its own callable for the Executor. This function gets the results of all its assigned chunks (they have to be written in order to be composed), performs the compose, and then schedules the cleanup. The reason for scheduling the cleanup tasks separately is so that we can return the composed blob as soon as possible, rather than waiting on the cleanup before we do so.
 
+```python
 def ensure_results(maybe_futures: List[Any]) -> List[Any]:
     """Pass in a list that may contain a Future(s), and if so, wait for
     the result of the Future and append it; for all other types in the list,
@@ -275,9 +283,11 @@ def ensure_results(maybe_futures: List[Any]) -> List[Any]:
         else:
             results.append(mf)
     return results
+```
 
 Something of a stylistic choice, this function serves to let us accept either a list of storage.Blob (which we have from our initial list) or a list of Future[storage.Blob] (which we have from intermediate steps) using the same code. This is what makes our compose_and_cleanup function block until its components are all complete.
 
+```python
 def delete_objects_concurrent(blobs, executor, client) -> None:
 [...]
 
