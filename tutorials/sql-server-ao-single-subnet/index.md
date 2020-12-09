@@ -187,7 +187,7 @@ New-SmbShare -Name "QWitness" -Path "C:\QWitness" -Description "SQL File Share W
   You will be prompted for credentials. Use the Administrator username and password that you set when you configured 
   the domain controller VM in a previous step.  
   The machine will reboot.  
-  h. Use RDP to connect to the SQL Server instance by using the credentials for the gontoso.com\Administrator account.
+  h. Use RDP to connect to the SQL Server instance by using the credentials for the gontoso.com\Administrator account.  
   i. Create a new folder for database backups and share it.
   ```
   New-Item -ItemType directory -Path C:\SQLBackup
@@ -311,7 +311,8 @@ osql -S node-1 -E -Q “USE [master] ALTER AVAILABILITY GROUP [sql-ag]
 ADD LISTENER N'sql-listner' (WITH IP ((N'10.128.0.20', N'255.255.252.0')) , PORT=1433);”
 ```
 
-**NOTE** Listner must be created with an unused IP. Later same IP shall be allocated to ILB as you will read below.
+**NOTE:** `Listener must be created with an unused IP (before creating ILB). Later same IP shall be allocated to ILB. 
+If SQL Server detects that IP already in use, then above command shall fail.`
 
 7. Create wsfc cluster health check. It will make primary node to accept connections on port ```59997``` which would be used by ILB for health check.
 Execute below powershell.   
@@ -397,7 +398,7 @@ gcloud compute forwarding-rules create wsfc-forwarding-rule \
     --address 10.128.0.20
 ```
 
-**NOTE** ILB will show only instance group healthy at any given point in time. This is ok and by design.
+**NOTE** ILB will show only one instance group healthy at any given point in time. This is ok and by design.
 ![ILB Created](./ILB-Image.png)
 
 ## Simulating Failover
@@ -405,7 +406,7 @@ gcloud compute forwarding-rules create wsfc-forwarding-rule \
 In-order to simulate failure execute below SQL Query on the scondary node (to make it primary).
 Other than this, you can also shutdown/reset primary node to trigger failure.
 ```powershell
-osql -S node-2 -E -Q "ALTER AVAILABILITY GROUP [sql-ag] FORCE_FAILOVER_ALLOW_DATA_LOSS;”
+osql -S node-2 -E -Q "ALTER AVAILABILITY GROUP [sql-ag] FAILOVER;"
 ```
 
 You will observe that autoamtically ILB will also start pointing to this node automatically.
