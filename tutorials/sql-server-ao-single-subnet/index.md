@@ -141,7 +141,9 @@ gcloud compute instances create "node-2" \
 ## Creating a file share witness
 To provide a tie-breaking vote and achieve a [quorum](https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/jj612870(v=ws.11))
 for the failover scenario, create a file share that will act as a witness. For the purposes of this tutorial, you will create the file share witness on the domain controller VM. 
-In a production environment, you would create it elsewhere.
+In a production environment, you should create witness file share on a either:
+    a. Separate single node in the third zone (like us-central-b in this scenario). 
+    b. Highly available file share, if sql server node's zone(s) is used.
 
 1. Using RDP, connect to the domain controller VM, ```dc-windows```, with the gontoso.com\Administrator account.  
 *If you are using Chrome RDP for Google Cloud, in the Options menu, under the Certificates list, 
