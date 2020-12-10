@@ -12,7 +12,8 @@ Todd Kopriva | Community Editor | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 To begin creating a tutorial, copy the Markdown source for this tutorial template into your blank Markdown file. Replace the explanatory text and examples with 
-your own tutorial content. Not all tutorials will use all of the sections described in this template. For more information, see the 
+your own tutorial content. Not all documents will use all of the sections described in this template. For example, a conceptual document or code walkthrough
+might not include the "Costs" or "Cleaning up" sections. For more information, see the 
 [style guide](https://cloud.google.com/community/tutorials/styleguide) and [contribution guide](https://cloud.google.com/community/tutorials/write).
 
 Replace the placeholders in the metadata at the top of the Markdown file with your own values. Follow the guidance provided by the placeholder values for spacing
