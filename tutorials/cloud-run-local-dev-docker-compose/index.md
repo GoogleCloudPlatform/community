@@ -104,14 +104,14 @@ To authenticate your local service with Google Cloud, do the following:
         #   export GCP_KEY_PATH=~/keys/project-key.json 
         #   docker-compose -f docker-compose.yml -f docker-compose.access.yml
         version: '3'
-          services:
-            app:
-              environment:
-                # https://cloud.google.com/docs/authentication/production
-                GOOGLE_APPLICATION_CREDENTIALS: /root/keys/keyfile.json
-              volumes:
-                # Inject your specific service account keyfile into the container at runtime.
-                - ${GCP_KEY_PATH}:/root/keys/keyfile.json:ro
+        services:
+          app:
+            environment:
+              # https://cloud.google.com/docs/authentication/production
+              GOOGLE_APPLICATION_CREDENTIALS: /tmp/keys/keyfile.json
+            volumes:
+              # Inject your specific service account keyfile into the container at runtime.
+              - ${GCP_KEY_PATH}:/tmp/keys/keyfile.json:ro
 
     The `$GCP_KEY_PATH` environment variable is set in your local machine—outside the container—to pass the 
     contents of your key file into the container.
@@ -235,14 +235,16 @@ services:
     - sql_proxy
 
  sql_proxy:
-   image: gcr.io/cloudsql-docker/gce-proxy:1.14
+   image: gcr.io/cloudsql-docker/gce-proxy:1.19.1
    command:
      - "/cloud_sql_proxy"
      - "-dir=/cloudsql"
      - "-instances=${CLOUDSQL_CONNECTION_NAME}"
-     - "-credential_file=/root/keys/keyfile.json"
+     - "-credential_file=/tmp/keys/keyfile.json"
+   # Allow the container to bind to the unix socket.
+   user: root
    volumes:
-     - ${GCP_KEY_PATH}:/root/keys/keyfile.json:ro
+     - ${GCP_KEY_PATH}:/tmp/keys/keyfile.json:ro
      - cloudsql:/cloudsql
 
 volumes:
