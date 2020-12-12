@@ -62,7 +62,7 @@ available in earlier versions.
 1. In the **Version** dropdown list, choose **Ubuntu 20.04 LTS**.
 1. In the **Boot disk type** section, select **Standard persistent disk**.
 1. Click **Select**.
-1. In the **Firewall** section, select **Allow HTTP traffic** and **Allow HTTPS traffic**.
+1. Under the **Firewall** section, expand **Management, security, disks, networking, sole tenancy**, select the **Networking** tab, and enter `postgres-tutorial` for the **Network tags** field.
 1. Click the **Create** button to create the instance.
 
 It will take a few moments to create your new instance.
@@ -203,9 +203,7 @@ page.
 
     **[Create a firewall rule](https://console.cloud.google.com/networking/firewalls/add)**
 
-1. In the **Name** field, enter:
-
-        postgres_tutorial
+1. In the **Name** field, enter `postgres-tutorial`
 
 1. In the **Network** field, leave the network as **default**.
 
@@ -213,13 +211,13 @@ page.
 
 1. In the **Action on match** field, select **Allow**.
 
-1. In the **Target tags** field, enter the network tag(**postgres-tutorial**) we used for the instance.
+1. In the **Target tags** field, enter the network tag(`postgres-tutorial`) we used for the instance.
 
 1. In **Source IP Ranges**, enter the same IP address you used in `hba.conf`.
    This is the IP address of your local computer. Remember to include the `/32`
    suffix, for example: `1.2.3.4/32`.
 
-1. In **Specified protocols and ports**, check **tcp**, and enter **5432** for the value:
+1. In **Specified protocols and ports**, check **tcp**, and enter `5432` for the value:
 
 1. Click **Create**.
 
