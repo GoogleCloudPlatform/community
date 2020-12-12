@@ -281,7 +281,7 @@ After you've finished the PostgreSQL tutorial, you can clean up the resources yo
 
 The easiest way to eliminate billing is to delete the project you created for the tutorial.
 
-1.  In the Cloud Console, go to the [**Projects** page](https://console.cloud.google.com/iam-admin/projects)**.
+1.  In the Cloud Console, go to the [**Projects** page](https://console.cloud.google.com/iam-admin/projects).
 1.  Click the trash can icon to the right of the project name.
 
 **Warning**: Deleting a project has the following consequences:
