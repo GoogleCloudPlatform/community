@@ -15,9 +15,8 @@ PostgreSQL on an Ubuntu virtual machine instance on Compute Engine.
 If you don't want to install and manage your own PostgreSQL database,
 [Cloud SQL](https://cloud.google.com/sql/docs/postgres/) provides managed PostgreSQL.
 
-You can also use [Cloud Launcher](https://cloud.google.com/launcher/?q=postgres)
-to set up PostgreSQL on Compute Engine with just a few clicks.
-
+Alternatively, you can use options from the
+[Cloud Marketplace](https://console.cloud.google.com/marketplace/browse?q=postgre) to deploy a PostgreSQL stack automatically.
 
 ## Objectives
 
@@ -35,9 +34,10 @@ click the button to create a new project:
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud, including Compute Engine.
+This tutorial uses billable components of Google Cloud,
+including [Compute Engine](https://cloud.google.com/compute/all-pricing).
 
-Use the [pricing calculator](https://cloud.google.com/products/calculator/#id=411d8ca1-210f-4f2c-babd-34c6af2b5538)
+Use the [pricing calculator](https://cloud.google.com/products/calculator/)
 to generate a cost estimate based on your projected usage. New Google Cloud users might be
 eligible for a [free trial](https://cloud.google.com/free-trial).
 
@@ -51,15 +51,15 @@ for your application. In general, database systems tend to be more
 constrained by I/O bottlenecks and hard disk speed than by CPU capabilities.
 
 Most Linux distributions have some version of PostgreSQL integrated with
-their package managers. For this tutorial, you use Ubuntu Trusty because
-it includes PostgreSQL 9.3, which has some helpful tools that aren't
+their package managers. For this tutorial, you use Ubuntu 20.04 LTS(Focal Fossa) because
+it includes PostgreSQL 12.5, which has some helpful tools that aren't
 available in earlier versions.
 
 1. In the Cloud Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
-1. Click the **Create instance** button.
+1. Click the **Create** button.
 1. Set Name to `postgres-tutorial`.
-1. In the **Boot disk** section, click **Change** to begin configuring your boot disk.
-1. In the **Preconfigured image** tab, choose **Ubuntu 14.04 LTS**.
+1. In the **Public images** tab, choose **Ubuntu** for **Operating system**.
+1. In the **Version** dropdown list, choose **Ubuntu 20.04 LTS**.
 1. In the **Boot disk type** section, select **Standard persistent disk**.
 1. Click **Select**.
 1. In the **Firewall** section, select **Allow HTTP traffic** and **Allow HTTPS traffic**.
@@ -82,11 +82,11 @@ Follow these steps to install PostgreSQL on your Compute Engine instance.
 1. In the list of virtual machine instances, click the **SSH** button in the row of the instance to which you want to connect.
 1. Update the packages. In the SSH terminal, enter the following command:
 
-        sudo apt-get update
+        sudo apt update
 
 1. Install PostgreSQL, including the PSQL client and server instrumentation:
 
-        sudo apt-get -y install postgresql postgresql-client postgresql-contrib
+        sudo apt -y install postgresql postgresql-client postgresql-contrib
 
 
 ### Use PSQL to complete the setup
@@ -94,11 +94,7 @@ Follow these steps to install PostgreSQL on your Compute Engine instance.
 PostgreSQL created a default user, named "postgres", during installation. This
 user doesn't yet have a password, so you'll need to set one.
 
-1. In your SSH terminal, run the root shell:
-
-        sudo -s
-
-1. Run [PSQL](https://www.postgresql.org/docs/9.3/static/app-psql.html)
+1. Run [PSQL](https://www.postgresql.org/docs/12/app-psql.html)
  as user `postgres`, instead of `root`, accessing the database
  named `postgres`:
 
@@ -135,7 +131,7 @@ file and open a port in the firewall on Google Cloud.
 
 By default, Postgres doesn't allow remote connections. To change this setting,
 you can change the file named
-[`pg_hba.conf`](http://www.postgresql.org/docs/9.3/static/auth-pg-hba-conf.html).
+[`pg_hba.conf`](https://www.postgresql.org/docs/12/auth-pg-hba-conf.html).
 Follow these steps.
 
 **Caution**: On production systems, or any
@@ -149,7 +145,7 @@ that you want to connect to each database.
 `nano` editor, but you can substitute your favorite editor. For PostgreSQL
 version 9.3, you can enter:
 
-        sudo nano ../../etc/postgresql/9.3/main/pg_hba.conf
+        sudo nano /etc/postgresql/12/main/pg_hba.conf
 
 1. Navigate to [ip4.me](http://ip4.me) to get the IPv4
 address of your local computer.
@@ -177,7 +173,7 @@ text in the console after closing `nano`, enter `clear` to clear the screen.
 
 1. Open [`postgresql.conf`](https://www.postgresql.org/docs/9.3/static/config-setting.html) for editing. For example, enter the following command:
 
-        sudo nano ../../etc/postgresql/9.3/main/postgresql.conf
+        sudo nano /etc/postgresql/12/main/postgresql.conf
 
 1. Scroll down to the line that begins with `#listen_addresses = 'localhost'`.
 
@@ -207,21 +203,23 @@ page.
 
     **[Create a firewall rule](https://console.cloud.google.com/networking/firewalls/add)**
 
-1. In the **Network** field, leave the network as **default**.
-
 1. In the **Name** field, enter:
 
-        postgres-tutorial
+        postgres_tutorial
 
-1. In the **Direction of traffic** field, create a rule as **Ingress** and another rule as **Egress**.
+1. In the **Network** field, leave the network as **default**.
+
+1. In the **Direction of traffic** field, select **Ingress**.
+
+1. In the **Action on match** field, select **Allow**.
+
+1. In the **Target tags** field, enter the network tag(**postgres-tutorial**) we used for the instance.
 
 1. In **Source IP Ranges**, enter the same IP address you used in `hba.conf`.
    This is the IP address of your local computer. Remember to include the `/32`
    suffix, for example: `1.2.3.4/32`.
 
-1. In **Allowed protocols and ports**, enter:
-
-        tcp:5432
+1. In **Specified protocols and ports**, check **tcp**, and enter **5432** for the value:
 
 1. Click **Create**.
 
@@ -235,15 +233,15 @@ tutorial uses [pgAdmin](http://www.pgadmin.org/), which is a
 popular client application for working
 with Postgres databases. Follow these steps.
 
-1. Install [pgAdmin](http://www.pgadmin.org/download/index.php)
+1. Install [pgAdmin](https://www.pgadmin.org/download/)
 on your local computer.
 
 1. Run pgAdmin.
 
-    On macOS, you must open the program from Finder by choosing **Open** from the context menu. Otherwise, macOS
-    will display a security warning and fail to run the program.
+    On macOS, after the installation, right-click on the icon of pgAdmin and copy it.
+Then open the Application folder of macOs to paste into this folder. Now you can start pgAdmin by clicking its icon in Application.
 
-1. Add the server. In pgAdmin3, you can click the first icon on the left
+1. Add the server. In pgAdmin4, you can click the first icon on the left
 side of the toolbar. Alternatively, click **File** > **Add server**.
 
 1. In the **New Server Registration** window, in the **Name** field, enter:
@@ -255,7 +253,7 @@ your Compute Engine instance in the **External IP** column.
 
    **[Open VM instances](https://console.cloud.google.com/compute/instances)**
 
-1. In the **Host** field, enter the external IP address of your Compute Engine
+1. Select the **Connection** tab of pgAdmin, in the **Hostname/address** field, enter the external IP address of your Compute Engine
 instance.
 
    **Note**: Enter only the address as it appears in the Cloud Console;
@@ -268,7 +266,7 @@ instance.
 1. In the **Password** field, enter the password that you set previously for
 the user named `postgres`.
 
-1. Click **OK** to close the window.
+1. Click **Save** to close the window.
 
 You should now be connected to your PostgreSQL database that is hosted on your
 Compute Engine instance. You can use pgAdmin to browse and modify the database
