@@ -118,7 +118,7 @@ the [Cloud Console IAM page](https://console.cloud.google.com/iam-admin/iam/). F
 
 1.  Clone the sample code repository:
 
-        git clone https://github.com.GoogleCloudPlatform/pubsub-spring-dedup-messages.git
+        git clone https://github.com/GoogleCloudPlatform/community.git
         
 1.  Navigate to the sample code:
 
