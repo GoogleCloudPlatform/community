@@ -2,19 +2,20 @@
 title: Deploy a Microsoft SQL Server Always On availability group in a single subnet
 description: Learn how to deploy a Microsoft SQL Server Always On availabilty group in a single subnet.
 author: shashank-google
-tags: databases, MSSQL, SQL Server, availability group
+tags: databases, MSSQL, AOAG, AG
 date_published: 2020-12-10
 ---
 
-Shashank Agarwal | Database(s) Cloud Engineer | Google
+Shashank Agarwal | Database Cloud Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-In this tutorial, you learn how to deploy the Microsoft SQL Server database engine in an Always On availability group configuration in a single subnet.
+In this tutorial, you learn how to deploy the Microsoft SQL Server database engine in an
+[Always On availability group](https://docs.microsoft.com/en-us/sql/database-engine/availability-groups/windows/always-on-availability-groups-sql-server) configuration in a single subnet.
 
 ## Objectives
 
-*   Learn to install Microsoft SQL Server in Always On availability group configuration using single subnet.
+*   Install Microsoft SQL Server in Always On availability group configuration using a single subnet.
 *   Set up a VPC network with a Windows domain controller.
 *   Create two Windows SQL Server VM instances to act as cluster nodes.
 *   Set up an internal load balancer to direct traffic to the active node.
@@ -32,38 +33,38 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 ## Before you begin
 
 For this tutorial, you need a Google Cloud [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a
-new one, or select a project that you already created.
+new one, or you can select a project that you already created.
 
 1.  [Select or create a Google Cloud project.](https://console.cloud.google.com/projectselector2/home/dashboard)
 
 1.  [Enable billing for your project.](https://support.google.com/cloud/answer/6293499#enable-billing)
 
-When you finish this tutorial, you can avoid continued billing by deleting the resources you created. For details, see the "Cleaning up" 
+When you finish this tutorial, you can avoid continued billing by deleting the resources that you created. For details, see the "Cleaning up" 
 section at the end of this tutorial.
 
 ## Overview
 
-SQL Server Always On availability groups allow users to deploy highly available and automated failover with SQL Server databases. Always On availability groups 
-are commonly deployed using multiple network subnets in Google Cloud. However, sometimes it you need to deploy in a single subnet configuration. For example,
+SQL Server Always On availability groups allow users to deploy highly available SQL Server databases with automated failover. Always On availability groups 
+are commonly deployed using multiple network subnets in Google Cloud. However, sometimes you need to deploy in a single subnet configuration. For example,
 your network design may have been planned to only have one subnet per region, and adding new subnets might be difficult. 
 
 This tutorial is based in part on
 [SQL Server failover cluster instance setup](https://cloud.google.com/compute/docs/instances/sql-server/configure-failover-cluster-instance) 
 and [SQL Server multi-subnet Always On availability groups](https://cloud.google.com/solutions/deploy-multi-subnet-sql-server).
 
-In this tutorial, you use an exisiting default VPC network.
-
 ## Create and configure a Windows domain controller
+
+In this tutorial, you use an exisiting default VPC network.
 
 An Active Directory domain is used for domain name services and Windows Failover Clustering, which is used by Always On availabilty groups. 
 
 Having the AD domain controller in the same VPC network is not a requirement, but is a simplification for the purpose of this tutorial.
 
-It is possible to us [Managed Service for Microsoft Active Director](https://cloud.google.com/managed-microsoft-ad), but it takes an hour to initialize, so this 
-tutorial uses a virtual machine (VM) for AD.   
+It is possible to use [Managed Service for Microsoft Active Directory](https://cloud.google.com/managed-microsoft-ad), but it takes an hour to initialize, so 
+this tutorial uses a virtual machine (VM) for AD.   
 
 In this tutorial, the domain is `gontoso.com`. The domain controller VM name is `dc-windows`. By default, the Windows computer name matches the VM name, 
-`dc-windows`. The VM is created in the `us-central1` default subnet, with IP address `10.128.0.3`.
+`dc-windows`. The VM is created in the `us-central1` default subnet, with the IP address `10.128.0.3`.
 
 1.  In Cloud Shell, create a VM to use as the domain controller:
 
@@ -143,7 +144,7 @@ domain controller VM.
 In a production environment, you should create the witness file share on one of the following:
 
   - Separate single node in the third zone (`us-central-b` in this scenario)
-  - Highly available file share, if SQL Server node's zone is used.
+  - Highly available file share, if the SQL Server node's zone is used
 
 1.  Using RDP, connect to the domain controller VM, `dc-windows`, with the `gontoso.com\Administrator` account.
 
@@ -166,7 +167,7 @@ In a production environment, you should create the witness file share on one of 
 1.  Generate a password for `node-1`. Note the username and password for future use.   
 1.  Connect to `node-1` using RDP.   
 1.  Open PowerShell as administrator.   
-1.  Add a firewall rule to open a port for the health check service.
+1.  Add a firewall rule to open a port for the health check service:
         
         netsh advfirewall firewall add rule name="Open port for Health Check" dir=in action=allow protocol=TCP localport=59997
         
@@ -186,10 +187,10 @@ In a production environment, you should create the witness file share on one of 
     
         Add-Computer -DomainName gontoso.com -Restart -Force -Credential gontoso.com\Administrator
             
-    You will be prompted for credentials. Use the administrator username and password that you set when you configured the domain controller VM in a previous 
+    When you are prompted for credentials, use the administrator username and password that you set when you configured the domain controller VM in a previous 
     step.
 
-    The machine will reboot.  
+    The machine will restart.  
     
 1.  Use RDP to connect to the SQL Server instance by using the credentials for the `gontoso.com\Administrator` account.
 1.  Create a new folder for database backups and share it:
@@ -219,10 +220,10 @@ In a production environment, you should create the witness file share on one of 
 
         Add-Computer -DomainName gontoso.com -Restart -Force -Credential gontoso.com\Administrator
   
-    You will be prompted for credentials. Use the Administrator username and password that you set when you configured 
+    When you are prompted for credentials, use the Administrator username and password that you set when you configured 
     the domain controller VM in a previous step. 
   
-    The machine will reboot.  
+    The machine will restart.  
 
 ## Configure the Failover Cluster Manager
 
@@ -261,7 +262,7 @@ an existing database for the availability group.
         osql -E -Q "ALTER DATABASE [TestDB] SET RECOVERY FULL"
         osql -E -Q "BACKUP DATABASE [TestDB] to disk = 'C:\SQLBackup\TestDB.bak' with INIT"
 
-1.  Create a database mirrioring endpoint (required for Always On availability groups) in each SQL Server nodes:   
+1.  Create a database mirrioring endpoint (required for Always On availability groups) in each SQL Server node:   
 
         osql -S node-1 -E -Q "CREATE ENDPOINT [aodns-hadr] 
             STATE=STARTED
@@ -308,10 +309,10 @@ an existing database for the availability group.
         osql -S node-1 -E -Q “USE [master] ALTER AVAILABILITY GROUP [sql-ag] 
         ADD LISTENER N'sql-listner' (WITH IP ((N'10.128.0.20', N'255.255.252.0')) , PORT=1433);”
 
-    The listener must be created with an unused IP address (before creating the internal load balancer). Later, the same IP address will be allocated to the 
-    internal load balancer. If SQL Server detects that the IP address is already in use, then this command to create the listener will fail.
+    The listener must be created with an unused IP address before creating the internal load balancer. Later, the same IP address is allocated to the 
+    internal load balancer. If SQL Server detects that the IP address is already in use, then this command to create the listener fails.
 
-1.  Create the Windows Server Failover Cluster health check.
+1.  Create the Windows Server Failover Cluster health check:
 
         $cluster_network_name = 'Cluster Network 1'
         $ip_resource_name = 'sql-ag_10.128.0.20'
@@ -327,15 +328,15 @@ an existing database for the availability group.
         Stop-ClusterGroup 'sql-ag'
         Start-ClusterGroup 'sql-ag'
 
-     It will make primary node to accept connections on port `59997` which would be used by internal load balancer for health check.
+     This makes the primary node accept connections on port `59997`, which is used by the internal load balancer for health checks.
 
 ## Create an internal load balancer
 
 An [internal load balancer](https://cloud.google.com/compute/docs/load-balancing/internal#deploying_internal_load_balancing) 
 provides a single IP address for SQL Server. The load balancer listens for requests and routes network 
-traffic to the active cluster node. It knows which is the active node because a health checker is running against each node. 
+traffic to the active cluster node. It knows which node is the active node because a health check runs for each node. 
 Only the active node responds as healthy. If the active node goes down, then the other Always On availability group node activates. The health checker 
-receives the signal, and traffic is redirected there.
+receives the signal, and traffic is redirected to the other node.
 
 1.  Create two instance groups, and add one SQL Server node to each group:
 
@@ -381,7 +382,7 @@ receives the signal, and traffic is redirected there.
             --instance-group-zone us-central1-f \
             --region us-central1    
 
-1.  Create an internal load balancer to forward requests to the active node in the Always On availability group's listener's IP address: 
+1.  Create an internal load balancer to forward requests to the IP address of the listener for the active node in the Always On availability group: 
 
         gcloud compute forwarding-rules create wsfc-forwarding-rule \
             --load-balancing-scheme internal \
@@ -394,7 +395,7 @@ receives the signal, and traffic is redirected there.
     
     ![ILB Created](https://storage.googleapis.com/gcp-community/tutorials/sql-server-ao-single-subnet/ILB-Image.png)
 
-## Simulate failover
+## Simulate failure to test failover
 
 To simulate failure, execute this SQL query on the secondary node to make it primary:
 
