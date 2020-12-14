@@ -3,347 +3,228 @@ title: Create a Cloud Build image factory using Packer
 description: Learn how to create an image factory using Cloud Build and Packer.
 author: johnlabarge,ikwak
 tags: Cloud Build, Packer, Compute Engine, Image, Windows, Linux
-date_published: 2020-11-25
+date_published: 2020-12-15
 ---
 
-This tutorial will show you how to create an image factory using Cloud Build and
-[Packer by HashiCorp](https://packer.io). The image factory will automatically
-create new images from a Cloud Source Repository every time a new tag is pushed
-to that repository as depicted in the diagram below.
+Injae Kwak | Customer Engineer Specialist | Google
 
-In this tutorial, there are instructions for creating packer image for both Linux and Windows. Follow the respective steps, depending which type of image you want to build.
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-![ push to repository triggers cloud build with packer which builds machine image](https://storage.googleapis.com/gcp-community/tutorials/create-cloud-build-image-factory-using-packer/packer-tutorial.png)
+This tutorial show you how to create an image factory using Cloud Build and
+[Packer by HashiCorp](https://packer.io). The image factory automatically
+creates new images from Cloud Source Repositories each time a new tag is pushed
+to the repository, as shown in the diagram below.
 
-# Building a Windows Image (Updated)
 ![packer win workflow diagram](windows/packer-win-tutorial.png)
 
-# Overview
-- For Building a Linux Image, this tutorial uses packer to create a new image from a CentOS 7 VM with nginx
-- For Building a Windows Image, this tutorial uses packer to create a new image from a Windows Server 2019 VM with python 3, git and 7zip using chocolatey for package manager
+This tutorial includes instructions for creating Packer images for Linux and Windows.
 
-# Prerequisites
+- For building a Linux image, this tutorial uses Packer to create a new image from a CentOS 7 VM with Nginx.
+- For building a Windows image, this tutorial uses Packer to create a new image from a Windows Server 2019 VM with Python 3, Git, and 7-Zip,
+  using Chocolatey as a package manager.
+
+## Prerequisites
 
 - A Google Cloud account
 - One of the following:
-    - At least project editor access to an existing project
-    - Organization permissions to create a new project in an existing organization
+  - At least project editor access to an existing project
+  - Organization permissions to create a new project in an existing organization
 
-# Task 1a: (Optional) Create a project with a billing account attached
+You can run commands in this tutorial using [Cloud Shell](https://cloud.google.com/shell) in the Cloud Console, or you use `gcloud` on your local computer if
+you have installed the Cloud SDK.
 
-This task will help you setup a new Google Cloud project in which to run your Packer
-build factory. You can also use an existing project and skip to the next
-step.
+## (Optional) Create a project with a billing account attached
 
-Alternatively, you can use [Cloud Shell](https://cloud.google.com/shell) from the GCP Console if you don't have gcloud installed on your local machine.
+This section helps you to set up a new Google Cloud project in which to run your Packer
+build factory. If you use an existing project for this tutorial, you can skip this section and go to the "Set the project variable" section.
 
-## Building a Linux Image
+### Linux
 
-<details>
-<summary>Click to reveal commands</summary>
+    PROJECT=[NEW PROJECT NAME]
+    ORG=[YOUR ORGANIZATION NAME]
+    BILLING_ACCOUNT=[YOUR_BILLING_ACCOUNT_NAME]
+    ZONE=[COMPUTE ZONE YOU WANT TO USE]
+    ACCOUNT=[GOOGLE ACCOUNT YOU WANT TO USE] or $(gcloud config get-value account)
 
-```sh
-PROJECT=[NEW PROJECT NAME]
-ORG=[YOUR ORGANIZATION NAME]
-BILLING_ACCOUNT=[YOUR_BILLING_ACCOUNT_NAME]
-ZONE=[COMPUTE ZONE YOU WANT TO USE]
-ACCOUNT=[GOOGLE ACCOUNT YOU WANT TO USE] or $(gcloud config get-value account)
+    gcloud projects create "$PROJECT" --organization=$(gcloud organizations list --format="value(name)" --filter="(displayName='$ORG')")
+    gcloud beta billing projects link $PROJECT --billing-account=$(gcloud alpha billing accounts list --format='value(name)' --filter="(displayName='$BILLING_ACCOUNT')")
+    gcloud config configurations create --activate $PROJECT
+    gcloud config set project $PROJECT
+    gcloud config set compute/zone $ZONE
+    gcloud config set account $ACCOUNT
 
-gcloud projects create "$PROJECT" --organization=$(gcloud organizations list --format="value(name)" --filter="(displayName='$ORG')")
-gcloud beta billing projects link $PROJECT --billing-account=$(gcloud alpha billing accounts list --format='value(name)' --filter="(displayName='$BILLING_ACCOUNT')")
-gcloud config configurations create --activate $PROJECT
-gcloud config set project $PROJECT
-gcloud config set compute/zone $ZONE
-gcloud config set account $ACCOUNT
-```
+### Windows
 
-</details>
+    $env:PROJECT="NEW PROJECT ID"
+    $env:ORG="YOUR ORGANIZATION NAME"
+    $env:BILLING_ACCOUNT="YOUR_BILLING_ACCOUNT_NAME"
+    $env:ZONE="COMPUTE ZONE YOU WANT TO USE"
+    $env:ACCOUNT="GOOGLE ACCOUNT YOU WANT TO USE" or $(gcloud config get-value account)
 
-## Building a Windows Image
+    gcloud projects create "$env:PROJECT" --organization=$(gcloud organizations list --format="value(name)" --filter="(displayName='$env:ORG')")
+    gcloud beta billing projects link $env:PROJECT --billing-account=$(gcloud alpha billing accounts list --format='value(name)' --filter="(displayName='$env:BILLING_ACCOUNT')")
+    gcloud config configurations create --activate $env:PROJECT
+    gcloud config set project $env:PROJECT
+    gcloud config set compute/zone $env:ZONE
+    gcloud config set account $env:ACCOUNT
 
-<details>
-<summary>Click to reveal commands</summary>
+## (Optional) Set the project variable
 
-```powershell
-$env:PROJECT="NEW PROJECT ID"
-$env:ORG="YOUR ORGANIZATION NAME"
-$env:BILLING_ACCOUNT="YOUR_BILLING_ACCOUNT_NAME"
-$env:ZONE="COMPUTE ZONE YOU WANT TO USE"
-$env:ACCOUNT="GOOGLE ACCOUNT YOU WANT TO USE" or $(gcloud config get-value account)
+Skip this section if you created a new project. 
 
-gcloud projects create "$env:PROJECT" --organization=$(gcloud organizations list --format="value(name)" --filter="(displayName='$env:ORG')")
-gcloud beta billing projects link $env:PROJECT --billing-account=$(gcloud alpha billing accounts list --format='value(name)' --filter="(displayName='$env:BILLING_ACCOUNT')")
-gcloud config configurations create --activate $env:PROJECT
-gcloud config set project $env:PROJECT
-gcloud config set compute/zone $env:ZONE
-gcloud config set account $env:ACCOUNT
-```
+If you are using an existing project, set the project variable to indicate which project to use for `gcloud` commands.
 
-</details>
-
-# Task 1b: Set the project variable
-
-Skip this step if you created a new project in the previous section.
-
-Ensure that you're working with the project that you want to use with `gcloud`.
 For more information on configurations see [configurations](https://cloud.google.com/sdk/gcloud/reference/config/configurations/).
 Fill in `[CONFIGURATION NAME]` with the name of the configuration you want to use.
 
-## Building a Linux Image
+### Linux
 
-<details>
-<summary>Click to reveal commands</summary>
+    gcloud config configurations activate [CONFIGURATION NAME] #The configuration for the project you want to use
+    PROJECT=$(gcloud config get-value project)
 
-```sh
-gcloud config configurations activate [CONFIGURATION NAME] #The configuration for the project you want to use
-PROJECT=$(gcloud config get-value project)
-```
+### Windows
 
-</details>
+    gcloud config configurations activate [CONFIGURATION NAME] #The configuration for the project you want to use
+    $env:PROJECT=$(gcloud config get-value project)
 
-## Building a Windows Image
+## Copy the files for this tutorial to a new working directory and Git repository
 
-<details>
-<summary>Click to reveal commands</summary>
+In this section, you download the files to your local environment and initialize the Git the working directory.
 
-```powershell
-gcloud config configurations activate [CONFIGURATION NAME] #The configuration for the project you want to use
-$env:PROJECT=$(gcloud config get-value project)
-```
+### Linux
 
-</details>
+1.  Create and go to a new working directory:
 
-# Task 2: Copy the files for this tutorial to a new working directory and git repository
+    mkdir helloworld-image-factory
+    cd helloworld-image-factory
 
-In this step, you'll be downloading the files to your local environment and initialize git the working directory to use in later steps.
+1.  Download the tutorial scripts:
 
-## Building a Linux Image
+        curl -L https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/cloudbuild.yaml >cloudbuild.yaml
 
-1. Create a new working directory:
+        curl -L https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/install-website.sh >install-website.sh 
 
-<details>
-<summary>Click to reveal commands</summary>
+1.  Initialize a Git repository in the working directory:
 
-```sh
-mkdir helloworld-image-factory
-cd helloworld-image-factory
-```
+        git init
 
-</details>
+### Windows
 
-2. Download the tutorial scripts:
-
-<details>
-<summary>Click to reveal commands</summary>
-
-```sh
-curl -L https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/cloudbuild.yaml >cloudbuild.yaml
-
-curl -L https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/install-website.sh >install-website.sh 
-```
-
-</details>
-
-3.  Initialize a git repository in the working directory:
-
-<details>
-<summary>Click to reveal commands</summary>
-
-```sh
-git init
-```
-
-</details>
-
-## Building a Windows Image
 1.  Create new working directories using Powershell:
 
-<details>
-<summary>Click to reveal commands</summary>
+        New-Item -Name windows-image-factory -ItemType Directory
 
-```powershell
-New-Item -Name windows-image-factory -ItemType Directory
+        Set-Location -Path ./windows-image-factory
 
-Set-Location -Path ./windows-image-factory
+        New-Item -Name scripts -ItemType Directory
 
-New-Item -Name scripts -ItemType Directory
-```
+1.  Download the tutorial scripts to your local environment:
 
-</details>
+        $baseURL = "https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/windows/"
 
-2.  Download the tutorial scripts to your local environment. To understand what's happening within the script files, scroll down to this [section](#windows-packer-scripts).
+        $cloudbuildFiles = ("cloudbuild.yaml", "packer.json")
+        $packerFiles = ("bootstrap-packer.ps1", "cleanup-packer.ps1", "disable-uac.ps1", "install-chocolatey.ps1", "run-chocolatey.ps1")
 
-<details>
-<summary>Click to reveal commands</summary>
+        # Downloading the remote files
+        foreach ($file in $cloudbuildFiles){
+            Invoke-WebRequest -Uri "$baseURL+$file" -OutFile $file
+        }
 
-```powershell
-$baseURL = "https://github.com/GoogleCloudPlatform/community/raw/master/tutorials/create-cloud-build-image-factory-using-packer/windows/"
+        foreach ($file in $packerFiles){
+            Invoke-WebRequest -Uri "$baseURL+'scripts/'+$file" -OutFile $file
+        }
 
-$cloudbuildFiles = ("cloudbuild.yaml", "packer.json")
-$packerFiles = ("bootstrap-packer.ps1", "cleanup-packer.ps1", "disable-uac.ps1", "install-chocolatey.ps1", "run-chocolatey.ps1")
+1.  Initialize a Git repository in the working directory:
 
-# Downloading the remote files
-foreach ($file in $cloudbuildFiles){
-    Invoke-WebRequest -Uri "$baseURL+$file" -OutFile $file
-}
+        git init
 
-foreach ($file in $packerFiles){
-    Invoke-WebRequest -Uri "$baseURL+'scripts/'+$file" -OutFile $file
-}
-```
+## Enable the required services
 
-</details>
+In this section, you enable the Google Cloud APIs necessary for the tutorial. The required services are the same for Windows and Linux images.
 
-3.  Initialize a git repository in the working directory:
+    gcloud services enable sourcerepo.googleapis.com `
+    cloudapis.googleapis.com compute.googleapis.com `
+    servicemanagement.googleapis.com storage-api.googleapis.com `
+    cloudbuild.googleapis.com secretmanager.googleapis.com
 
-<details>
-<summary>Click to reveal commands</summary>
+## (Windows image only) Managing secrets for parameters using Secret Manager
 
-```sh
-git init
-```
+In this section, you use [Secret Manager](https://cloud.google.com/secret-manager) to store your input values for Packer in a secure and modular way. Although 
+it's easier to simply hard-code parameters into the Packer template file, using a central source of truth like a secret manager increases manageability and 
+reuseability among teams.
 
-</details>
+Create your secrets using the following commands. Optionally, you can customize the values using the
+[documentation](https://cloud.google.com/secret-manager/docs/creating-and-accessing-secrets)
 
-# Task 3: Enable the required services
-Enable the Google Cloud APIs necessary for the tutorial
+    echo -n "windows-2019" | gcloud secrets create image_factory-image_family --replication-policy="automatic" --data-file=-
 
-## Building a Linux Image
+    echo -n "golden-windows" | gcloud secrets create image_factory-image_name --replication-policy="automatic" --data-file=-
 
-<details>
-<summary>Click to reveal commands</summary>
+    echo -n "n1-standard-1" | gcloud secrets create image_factory-machine_type --replication-policy="automatic" --data-file=-
 
-```sh
-gcloud services enable sourcerepo.googleapis.com `
-cloudapis.googleapis.com compute.googleapis.com `
-servicemanagement.googleapis.com storage-api.googleapis.com `
-cloudbuild.googleapis.com secretmanager.googleapis.com
-```
-</details>
+    echo -n "us-central1" | gcloud secrets create image_factory-region --replication-policy="automatic" --data-file=-
 
-## Building a Windows Image
+    echo -n "us-central1-b" | gcloud secrets create image_factory-zone --replication-policy="automatic" --data-file=-
 
-<details>
-<summary>Click to reveal commands</summary>
+    echo -n "default" | gcloud secrets create image_factory-network --replication-policy="automatic" --data-file=-
 
-```sh
-gcloud services enable sourcerepo.googleapis.com `
-cloudapis.googleapis.com compute.googleapis.com `
-servicemanagement.googleapis.com storage-api.googleapis.com `
-cloudbuild.googleapis.com secretmanager.googleapis.com
-```
-</details>
+    echo -n "allow-winrm-ingress-to-packer" | gcloud secrets create image_factory-tags --replication-policy="automatic" --data-file=-
 
-# Task 3a: Managing secrets for params using the Google Secrets Manager (Windows Image Only)
-In this section, we will be using the [Google Secrets Manager](https://cloud.google.com/secret-manager) to store our input values for packer in a secure and modular way. Although it's easier to simply hard code parameters into the packer template file (eg. network tags, source GCE image), using a central source of truth like a secrets manager increases manageability and reuseability amongst teams.
+## (Windows image only) Create a new VPC firewall to allow WinRM for Packer
 
-Create your secrets using the following commands. Optionally, you can customize the values using the [documentation](https://cloud.google.com/secret-manager/docs/creating-and-accessing-secrets)
+Before you can provision using the WinRM (Windows Remote Management) communicator, you need to allow traffic through Google's firewall on the WinRM port
+(`tcp:5986`). This creates a new firewall called `allow-winrm-ingress-to-packer` that is stored Secret Manager and used by Cloud Build in the `cloudbuild.yaml`
+configuration file. 
 
-<details>
-<summary>Click to reveal commands</summary>
+    gcloud compute firewall-rules create allow-winrm-ingress-to-packer `
+    --allow tcp:5986 --target-tags allow-winrm-ingress-to-packer
 
-```sh
-echo -n "windows-2019" | gcloud secrets create image_factory-image_family --replication-policy="automatic" --data-file=-
+## Give the Cloud Build user permissions through an IAM role
 
-echo -n "golden-windows" | gcloud secrets create image_factory-image_name --replication-policy="automatic" --data-file=-
+Find the Cloud Build service account and add the editor role to it (in practice, use least privilege roles). For the Windows image, you also grant the 
+`secretmanager.secretAccessor` role for [Secret Manager](https://cloud.google.com/secret-manager/docs/access-control).
 
-echo -n "n1-standard-1" | gcloud secrets create image_factory-machine_type --replication-policy="automatic" --data-file=-
+### Linux
 
-echo -n "us-central1" | gcloud secrets create image_factory-region --replication-policy="automatic" --data-file=-
+    CLOUD_BUILD_ACCOUNT=$(gcloud projects get-iam-policy $PROJECT --filter="(bindings.role:roles/cloudbuild.builds.builder)"  --flatten="bindings[].members" --format="value(bindings.members[])")
 
-echo -n "us-central1-b" | gcloud secrets create image_factory-zone --replication-policy="automatic" --data-file=-
+    gcloud projects add-iam-policy-binding $PROJECT \
+    --member $CLOUD_BUILD_ACCOUNT \
+    --role roles/editor
 
-echo -n "default" | gcloud secrets create image_factory-network --replication-policy="automatic" --data-file=-
+### Windows
 
-echo -n "allow-winrm-ingress-to-packer" | gcloud secrets create image_factory-tags --replication-policy="automatic" --data-file=-
-```
+    $env:CLOUD_BUILD_ACCOUNT=$(gcloud projects get-iam-policy $env:PROJECT --filter="(bindings.role:roles/cloudbuild.builds.builder)"  --flatten="bindings[].members" --format="value(bindings.members[])")
 
-</details>
+    gcloud projects add-iam-policy-binding $env:PROJECT `
+    --member $env:CLOUD_BUILD_ACCOUNT `
+    --role roles/editor
 
-# Task 3b: Create a new VPC firewall to allow winrm for packer (Windows Image Only)
-Before you can provision using the winrm communicator, you need to allow traffic through google's firewall on the winrm port (tcp:5986). This creates a new firewall called `allow-winrm-ingress-to-packer` that is stored in Secrets Manager (Task 3a) and used by Cloud Build in the cloudbuild.yaml config file. 
+    gcloud projects add-iam-policy-binding $env:PROJECT `
+    --member $env:CLOUD_BUILD_ACCOUNT `
+    --role roles/secretsmanager.secretAccessor
 
-<details>
-<summary>Click to reveal commands</summary>
+## Create the repository in Cloud Source Repositories for your image creator
 
-```sh
-gcloud compute firewall-rules create allow-winrm-ingress-to-packer `
---allow tcp:5986 --target-tags allow-winrm-ingress-to-packer
-```
+In this section, you commit your Cloud Build configuration file, Packer template, and bootstrap scripts to a repository in Google Cloud to start the Packer 
+build.
 
-</details>
+### Linux
 
-# Task 4: Give the Cloud Build user IAM Role permissions
+    gcloud source repos create helloworld-image-factory
 
-Find the Cloud Build service account and add the editor role to it (in practice, use least privilege roles). For Windows Image, we will also grant the `secretmanager.secretAccessor` role for [Secret Manager](https://cloud.google.com/secret-manager/docs/access-control).
+### Windows
 
-## Building a Linux Image
+    gcloud source repos create windows-image-factory
 
-<details>
-<summary>Click to reveal commands</summary>
+## Create the build trigger for the image creator source repository
 
-```sh
-CLOUD_BUILD_ACCOUNT=$(gcloud projects get-iam-policy $PROJECT --filter="(bindings.role:roles/cloudbuild.builds.builder)"  --flatten="bindings[].members" --format="value(bindings.members[])")
+By configuring a build trigger to the source repository you created in the previous step, you can define a webhook to tell Cloud Build to pull down your
+committed files and start the build process automatically.
 
-gcloud projects add-iam-policy-binding $PROJECT \
---member $CLOUD_BUILD_ACCOUNT \
---role roles/editor
-```
-</details>
+### Linux
 
-## Building a Windows Image
-
-<details>
-<summary>Click to reveal commands</summary>
-
-```powershell
-$env:CLOUD_BUILD_ACCOUNT=$(gcloud projects get-iam-policy $env:PROJECT --filter="(bindings.role:roles/cloudbuild.builds.builder)"  --flatten="bindings[].members" --format="value(bindings.members[])")
-
-gcloud projects add-iam-policy-binding $env:PROJECT `
---member $env:CLOUD_BUILD_ACCOUNT `
---role roles/editor
-
-gcloud projects add-iam-policy-binding $env:PROJECT `
---member $env:CLOUD_BUILD_ACCOUNT `
---role roles/secretsmanager.secretAccessor
-```
-</details>
-
-# Task 5: Create the Cloud Source Repository for your image creator
-This is where we will be committing our cloudbuild config file, packer template and bootstrap scripts to a repo in Google Cloud to kick off the packer build.
-
-## Building a Linux Image
-
-<details>
-<summary>Click to reveal commands</summary>
-
-```sh
-gcloud source repos create helloworld-image-factory
-```
-
-</details>
-
-## Building a Windows Image
-
-<details>
-<summary>Click to reveal commands</summary>
-
-```sh
-gcloud source repos create windows-image-factory
-```
-
-</details>
-
-# Task 6: Create the build trigger for the image creator source repository
-By configuring a build trigger to the source repo we created in the previous step, we can define a webhook to kickoff Cloud Build to pull down our committed files and start the build process automatically.
-
-## Building a Linux Image
-
-<details>
-<summary>Click to reveal commands</summary>
-
-You can create a trigger on the [build triggers page](https://console.cloud.google.com/cloud-build/triggers)
-of the Cloud Console by following these steps:
+Create a trigger on the [build triggers page](https://console.cloud.google.com/cloud-build/triggers) in Cloud Console:
 
 1.  Click **Create Trigger**.
 1.  In the **Name** field, enter `Hello world image factory`.
@@ -361,335 +242,255 @@ To see a list of image families:
 
     gcloud compute images list | awk '{print $3}'  | awk '!a[$0]++'
 
-</details>
+### Windows
 
-## Building a Windows Image
-
-<details>
-<summary>Click to reveal commands</summary>
-
-You can create a trigger on the [build triggers page](https://console.cloud.google.com/cloud-build/triggers)
-of the Cloud Console by following these steps:
+Create a trigger on the [build triggers page](https://console.cloud.google.com/cloud-build/triggers) in Cloud Console:
 
 1.  Click **Create Trigger**.
 1.  In the **Name** field, enter `Windows image factory`.
 1.  Under **Event**, select **Push new tag**.
 1.  Under **Source**, select `windows-image-factory` as your
-    **Repository** and the tag to match or .* (any tag) as your **Tag**.
+    **Repository** and the tag to match or `.*` (any tag) as your **Tag**.
 1.  Under **Build Configuration**, select **Cloud Build configuration file (yaml or json)**.
 1.  In the **Cloud Build configuration file location**, enter `cloudbuild.yaml`.
 1.  Click **Create** to save your build trigger.
 
-</details>
+## Add the Packer Cloud Build image to your project
 
-# Task 7: Add the packer Cloud Build image to your project
+Get the builder from the community repository and submit it to your project. This allows Cloud Build to use a Docker container that contains the Packer binaries.
 
-Get the builder from the community repository and submit it to your project. This will allow Cloud Build to use a docker container that contains the packer binaries.
+### Linux
 
-## Building a Linux Image
+    project_dir=$(pwd)
+    cd /tmp
+    git clone https://github.com/GoogleCloudPlatform/cloud-builders-community.git
+    cd cloud-builders-community/packer
+    gcloud builds submit --config cloudbuild.yaml
+    rm -rf /tmp/cloud-builders-community
+    cd $project_dir
 
-<details>
-<summary>Click to reveal commands</summary>
+### Windows
 
-```sh
-project_dir=$(pwd)
-cd /tmp
-git clone https://github.com/GoogleCloudPlatform/cloud-builders-community.git
-cd cloud-builders-community/packer
-gcloud builds submit --config cloudbuild.yaml
-rm -rf /tmp/cloud-builders-community
-cd $project_dir
-```
+    $env:PROJECT_DIR=$(Get-Location)
+    New-Item -Path "C:\" -Name "temp" -ItemType Directory
+    Set-Location -Path "C:\temp"
 
-</details>
+    git clone https://github.com/GoogleCloudPlatform/cloud-builders-community.git
+    Set-Location -Path "./cloud-builders-community/packer"
+    gcloud builds submit --config cloudbuild.yaml
 
-## Building a Windows Image
+    Remove-Item -Path "C:\temp\cloud-builders-community" -Recurse -Force
+    Set-Location -Path $env:PROJECT_DIR
 
-<details>
-<summary>Click to reveal commands</summary>
+## Add your repository as a remote repository and push
 
-```powershell
-$env:PROJECT_DIR=$(Get-Location)
-New-Item -Path "C:\" -Name "temp" -ItemType Directory
-Set-Location -Path "C:\temp"
+In this section, you configure the local Git instance to use the repository that you created.
 
-git clone https://github.com/GoogleCloudPlatform/cloud-builders-community.git
-Set-Location -Path "./cloud-builders-community/packer"
-gcloud builds submit --config cloudbuild.yaml
+### Linux
 
-Remove-Item -Path "C:\temp\cloud-builders-community" -Recurse -Force
-Set-Location -Path $env:PROJECT_DIR
-```
+1.  (If running locally, not in Cloud Shell) Set up your Google credentials for Git:
 
-</details>
+        gcloud init && git config --global credential.https://source.developers.google.com.helper gcloud.sh
 
-# Task 8: Add your repository as a remote repository and push
-This will configure the local git to use the cloud source repo we created previously.
+1.  Add the `google` repository as a remote:
 
-## Building a Linux Image
+        git remote add google https://source.developers.google.com/p/$PROJECT/r/helloworld-image-factory
 
-<details>
-<summary>Click to reveal commands</summary>
+1.  Add your files to the repository, tagged with a version number and push to your repository:
 
-1. (Only if not running in Cloud Shell) Set up your Google credentials for git:
+        git add .
+        git commit -m "first image"
+        git tag v0.1
+        git push google master --tags
 
-```sh
-gcloud init && git config --global credential.https://source.developers.google.com.helper gcloud.sh
-```
+### Windows
 
-2. Add the `google` repository as a remote:
+1.  (If running locally, not in Cloud Shell) Set up your Google credentials for Git in PowerShell:
 
+        git config --global "credential.https://source.developers.google.com.helper" gcloud.cmd
 
-```sh
-git remote add google https://source.developers.google.com/p/$PROJECT/r/helloworld-image-factory
-```
+1.  Add the `google` repository as a remote:
 
-3. Add your files to the repository, tagged with a version number and push to your repo:
+        git remote add google "https://source.developers.google.com/p/$env:PROJECT/r/windows-image-factory"
 
-```sh
-git add .
-git commit -m "first image"
-git tag v0.1
-git push google master --tags
-```
+1.  Add your files to the repository, tagged with a version number and push to your repo:
 
-</details>
+        git add .
+        git commit -m "first image"
+        git tag v0.1
+        git push google master --tags
 
-## Building a Windows Image
+## View build progress
 
-<details>
-<summary>Click to reveal commands</summary>
+You can view the standard output from both the staging VM and Packer to check on the build progress. After the Packer build completes successfully, it outputs
+the newly created image:
 
-1. (Only if not running in Cloud Shell) Set up your Google credentials for git in powershell:
+    Step #1: Build 'googlecompute' finished.
+    Step #1: 
+    Step #1: ==> Builds finished. The artifacts of successful builds are:
+    Step #1: --> googlecompute: A disk image was created: golden-windows-2020-05-05-554-54
 
-```powershell
-git config --global "credential.https://source.developers.google.com.helper" gcloud.cmd
-```
+Open the [**Cloud Build** page](https://console.cloud.google.com/cloud-build), find the build that is in progress, and click the link to view its progress.
 
-2. Add the `google` repository as a remote:
+## Create a Compute Engine instance for the image in your Google Cloud project
 
-```powershell
-git remote add google "https://source.developers.google.com/p/$env:PROJECT/r/windows-image-factory"
-```
+In this section, you test the Compute Engine image that Packer created by creating a new instance.
 
-3. Add your files to the repository, tagged with a version number and push to your repo:
+### Linux
 
-```powershell
-git add .
-git commit -m "first image"
-git tag v0.1
-git push google master --tags
-```
+1.  Create a firewall rule to allow port 80 to test your new instance:
 
-</details>
+        gcloud compute firewall-rules create http --allow=tcp:80 \
+        --target-tags=http-server --source-ranges=0.0.0.0/0
 
-# Task 9: View build progress
-You can view the stdout from both the staging VM and packer to check on the build progress. Once the packer build completes successfully, it outputs the newly created image:
+1.  Create an instance using the new Linux image:
 
-```sh
-Step #1: Build 'googlecompute' finished.
-Step #1: 
-Step #1: ==> Builds finished. The artifacts of successful builds are:
-Step #1: --> googlecompute: A disk image was created: golden-windows-2020-05-05-554-54
-```
+        gcloud compute instances create helloworld-from-factory \
+        --image https://www.googleapis.com/compute/v1/projects/$PROJECT/global/images/helloworld-v01 \
+        --tags=http-server --zone=$ZONE
 
-1. Open the [**Cloud Build** page](https://console.cloud.google.com/cloud-build) in the Cloud Console
-    to show the build progress.
-1. Find the build that is in progress and click the link to view its progress.
+### Windows
 
-# Task 10: Create a compute instance for the image in your gcp project
-Now that packer has created a new GCE image, we can test it by launching a new instance.
+1.  Open the [**Compute Engine** page](https://console.cloud.google.com/compute) in Cloud Console and navigate to **Images** to see the new image.
 
-## Building a Linux Image
+1.  Select the image and click **Create instance**.
 
-<details>
-<summary>Click to reveal commands</summary>
+1.  Complete the wizard to start the instance, ensuring that **Boot disk** is set to use the new custom image.
 
-1. Create a new firewall rule to allow port 80 to test our new instance
 
-    ```sh
-    gcloud compute firewall-rules create http --allow=tcp:80 \
-    --target-tags=http-server --source-ranges=0.0.0.0/0
-    ```
+## Verifying the results
 
-2. Create an instance using the newly created Linux image
+In this section, you verify that your deployment has worked correctly.
 
-    ```sh
-    gcloud compute instances create helloworld-from-factory \
-    --image https://www.googleapis.com/compute/v1/projects/$PROJECT/global/images/helloworld-v01 \
-    --tags=http-server --zone=$ZONE
-    ```
+### Linux
 
-</details>
+1.  Wait a few minutes and open the browser to the IP address of the instance to see the special message.
 
-## Building a Windows Image
+1.  Retrieve the instace IP address:
 
-<details>
-<summary>Click to reveal commands</summary>
+        gcloud compute instances list --filter="name:helloworld*" --format="value(networkInterfaces[0].accessConfigs[0].natIP)"
 
-1. Open the [**Compute Engine** page](https://console.cloud.google.com/compute) in the Cloud Console and 
-navigate to **Images** to see the Packer generated instance image.
+1.  Go to the IP address in the browser and make sure that you see the `"Hello from the image factory!"` message.
 
-2. Select the image and click on **CREATE INSTANCE**. Complete the launch wizard to launch the instance, whilst ensuring that the **Boot disk** is set to use our custom Image.
 
-</details>
+### Windows
 
-# Task 11: Verifying the results of our efforts 
-Now that we've successfully used packer to generate a new golden image and create a new instance, follow the instructions to verify that our deployment has worked correctly.
+1.  Wait a few minutes until the Windows VM has completed the boot up process.
 
-## Building a Linux Image
+1.  [Connect to your instance using RDP.](https://cloud.google.com/compute/docs/instances/connecting-to-instance)
 
-<details>
-<summary>Click to reveal commands</summary>
+1.  If you need to generate a Windows password, follow
+    [these instructions](https://cloud.google.com/compute/docs/instances/windows/creating-passwords-for-windows-instances#generating_a_password).
 
-1. Wait a minute or two and open the browser to the IP address of the instance to see the special message.
+1.  Verify that Git, Python, and 7-Zip have been installed successfully, matching the versions defined in the `packages.config` XML manifest.
 
-1. Retrieve the instace IP address:
+    ![verifying packer windows build in cmd](windows/task12-windows-verify.png)
 
-    ```sh
-    gcloud compute instances list --filter="name:helloworld*" --format="value(networkInterfaces[0].accessConfigs[0].natIP)"
-    ```
+## Cleaning up
 
-1. Go to the IP address in the browser and make sure that you see the "Hello from the image factory!" message.
+If you don't want to keep the resources after this tutorial, you can delete them.
 
-</details>
-
-## Building a Windows Image
-
-<details>
-<summary>Click to reveal commands</summary>
-
-1. Wait a few minutes until the Windows VM has completed the boot up process.
-
-1. RDP into your instance using [these methods](https://cloud.google.com/compute/docs/instances/connecting-to-instance)
-
-1. If you need to generate a Windows password, follow [these instructions](https://cloud.google.com/compute/docs/instances/windows/creating-passwords-for-windows-instances#generating_a_password).
-
-1. Once you've connected to the instance, verify that **git**, **python** and **7zip** has been installed successfully (matching versions we defined in `packages.config` XML manifest).
-
-![verifying packer windows build in cmd](windows/task12-windows-verify.png)
-
-</details>
-
-# Task 12: Cleaning up
-If you don't want to keep the resources after this tutorial, you can delete them by following these instructions.
-
-## Building a Linux Image
-
-<details>
-<summary>Click to reveal commands</summary>
+### Linux
 
 1.  Delete the firewall rule, the instance, and the image:
 
-    ```sh
-    gcloud compute firewall-rules delete --quiet http
-    gcloud compute instances delete --quiet helloworld-from-factory
-    gcloud compute images delete --quiet helloworld-v01
-    ```
+        gcloud compute firewall-rules delete --quiet http
+        gcloud compute instances delete --quiet helloworld-from-factory
+        gcloud compute images delete --quiet helloworld-v01
 
-2.  Delete the packer Cloud Build image:
+1.  Delete the Packer Cloud Build image:
 
-    ```sh
-    gcloud container images delete --quiet gcr.io/$PROJECT/packer  --force-delete-tags
-    ```
+        gcloud container images delete --quiet gcr.io/$PROJECT/packer  --force-delete-tags
 
-3.  Delete the source repository:
+1.  Delete the repository:
 
-    ```sh
-    gcloud source repos delete --quiet helloworld-image-factory
-    ```
+        gcloud source repos delete --quiet helloworld-image-factory
 
     Only do this if you don't want to perform the tutorial in this project again. The repository name won't be usable
-    again for up to seven days.
+    again for up to 7 days.
 
-</details>
+### Windows
 
-## Building a Windows Image
+1.  Delete the firewall rule, the instance, and the image:
 
-<details>
-<summary>Click to reveal commands</summary>
+        gcloud compute firewall-rules delete --quiet http
+        gcloud compute instances delete --quiet helloworld-from-factory
+        gcloud compute images delete --quiet helloworld-v01
 
-1.  Delete the firewall rule, the instance, and the image.
+1.  Delete the Packer Cloud Build image:
 
-2.  Delete the packer Cloud Build image:
+        gcloud container images delete --quiet gcr.io/$PROJECT/packer  --force-delete-tags
 
-    ```sh
-    cloud container images delete --quiet gcr.io/$PROJECT/packer  --force-delete-tags
-    ```
+1.  Delete the repository:
 
-3.  Delete the source repository:
-
-    ```sh
-    gcloud source repos delete --quiet windows-image-factory
-    ```
-
+        gcloud source repos delete --quiet windows-image-factory
+ 
     Only do this if you don't want to perform the tutorial in this project again. The repository name won't be usable
-    again for up to seven days.
+    again for up to 7 days.
 
-</details>
+## Reference: Windows-packer-scripts
 
-# Windows-packer-scripts
+### `windows/cloudbuild.yaml`
 
-### windows/cloudbuild.yaml
-[Link to cloudbuild.yaml](windows/cloudbuild.yaml)
+[Link to `cloudbuild.yaml`](windows/cloudbuild.yaml)
 
-This file contains the [build configuration](https://cloud.google.com/cloud-build/docs/build-config) for the Cloud Build service, which uses packer to build a new image using instructions within the packer.json file.
-<br />
-<br />
+This file contains the [build configuration](https://cloud.google.com/cloud-build/docs/build-config) for the Cloud Build service, which uses Packer to build a
+new image using instructions within the `packer.json` file.
 
-## windows/packer.json
-[Link to packer.json](windows/packer.json)
+### `windows/packer.json`
 
-This file contains the [googlecompute builder template](https://www.packer.io/docs/builders/googlecompute/) for creating a new image for use with Google Compute Engine.
+[Link to `packer.json`](windows/packer.json)
 
-Because of the way Packer uses winrm as the communicator to connect and configurate windows, this template achieves the following.
-- `"variables"` contains placeholder values such as _PROJECT_ID that are dynamically changed by Cloud Build sourced from both inbuilt variables (project) and custom user variables (secrets manager). Of note, by using `"source_image_family"`, packer will automatically retrieve the latest version available for the Machine Image
-- Configures winrm to use HTTPS for connecting Packer and the staging Windows VM (creates a temporary, local self-signed certificate)
-- Using [GCE metadata](https://cloud.google.com/compute/docs/startupscript#providing_a_startup_script_for_windows_instances) `"windows-startup-script-cmd"`, temporarily create a new local account **packer_user** on the Windows VM and add it to local administrator group to provide permissions for winrm and install the desired packages
-- Within the `"provisioners"` section, create a local copy of *packages.config* and *cleanup-packer.ps1* files into the staging Windows VM, to be used by [chocolatey](https://chocolatey.org/) and the `"windows-shutdown-script-ps1"` GCE metadata to clean up once finished
-- Still within the `"provisioners"` section, run the powershell scripts for bootstrapping our Windows environment using chocolatey (see below for more details)
-- [Optional] Instead of chocolatey, you can replace the chocolatey powershell scripts with your own custom bootstrap script, or pull/push configuration management tools such as Ansible, Puppet, Chef or Powershell DSC. 
-- Finally, we call `GCESysprep -NoShutdown` as a way to seal the image with using the optional -NoShutDown parameter to prevent the Windows environment from shutting down and create a false positive, unhealthy signal back to Packer (lifecycle needs to be managed by Packer to complete the image workflow)
+This file contains the [googlecompute builder template](https://www.packer.io/docs/builders/googlecompute/) for creating a new image for use with Compute Engine.
 
-<br />
-<br />
+Because of the way Packer uses WinRM as the communicator to connect and configure Windows, this template achieves the following:
 
-## windows/scripts/bootstrap-packer.ps1
-[Link to bootstrap-packer.ps1](windows/scripts/bootstrap-packer.ps1)
+-   `"variables"` contains placeholder values such as `_PROJECT_ID` that are dynamically changed by Cloud Build sourced from both built-in variables (project)
+    and custom user variables (secret manager). By using `"source_image_family"`, Packer will automatically retrieve the latest version available for 
+    the machine image
+-   Configures WinRM to use HTTPS for connecting Packer and the staging Windows VM (creates a temporary, local self-signed certificate).
+-   Using [Compute Engine metadata](https://cloud.google.com/compute/docs/startupscript#providing_a_startup_script_for_windows_instances)
+    `"windows-startup-script-cmd"`, temporarily create a new local account `packer_user` on the Windows VM and add it to local administrator group to provide 
+    permissions for WinRM and install the desired packages.
+-   Within the `"provisioners"` section, create a local copy of `packages.config` and `cleanup-packer.ps1` files in the staging Windows VM, to be used by 
+    [Chocolatey](https://chocolatey.org/) and the `"windows-shutdown-script-ps1"` Compute Engine metadata to clean up when finished.
+-   Still within the `"provisioners"` section, run the PowerShell scripts for bootstrapping your Windows environment using Chocolatey.
+-   (Optional) You can replace the Chocolatey PowerShell scripts with your own custom bootstrap script, or pull/push configuration management tools such as 
+    Ansible, Puppet, Chef, or PowerShell DSC. 
+-   `GCESysprep -NoShutdown` is called as a way to seal the image using the optional `-NoShutDown` parameter to prevent the Windows environment from shutting 
+    down and create a false positive, unhealthy signal back to Packer. Lifecycle needs to be managed by Packer to complete the image workflow.
 
+### `windows/scripts/bootstrap-packer.ps1`
 
-This file configures Packer to use a HTTPS connection for WinRM to secure communication between the staging VM and Packer host. The config made during this script such as a local certificate, listener and firewall are deleted during the `cleanup-packer.ps1`.
+[Link to `bootstrap-packer.ps1`](windows/scripts/bootstrap-packer.ps1)
 
-<br />
-<br />
+This file configures Packer to use an HTTPS connection for WinRM to secure communication between the staging VM and Packer host. The configuration made during
+this script such as a local certificate, listener, and firewall are deleted by `cleanup-packer.ps1`.
 
-## windows/scripts/cleanup-packer.ps1
-[Link to cleanup-packer.ps1](windows/scripts/cleanup-packer.ps1)
+### `windows/scripts/cleanup-packer.ps1`
 
-This file is invoked as a shutdown script to remove the Chocolatey powershell binaries, the local user account for packer, undo WinRM configurations and then the shutdown script itself. 
+[Link to `cleanup-packer.ps1`](windows/scripts/cleanup-packer.ps1)
 
-<br />
-<br />
+This file is invoked as a shutdown script to remove the Chocolatey PowerShell binaries and the local user account for Packer, undo WinRM configurations, and
+then remove the shutdown script itself. 
 
-## windows/scripts/disable-uac.ps1
-[Link to disable-uac.ps1](windows/scripts/disable-uac.ps1)
+### `windows/scripts/disable-uac.ps1`
 
-This file installs the latest version of Chocolatey, a package management binary for powershell.
+[Link to `disable-uac.ps1`](windows/scripts/disable-uac.ps1)
 
-<br />
-<br />
+This file installs the latest version of Chocolatey, a package management binary for PowerShell.
 
-## windows/scripts/packages.config
-[Link to packages.config](windows/scripts/packages.config)
+### `windows/scripts/packages.config`
 
-This file contains a list of packages in an xml manifest for Chocolatey to install. This is where you can define [any supported packages](https://chocolatey.org/packages) to install, as well as versioning, options and switches. [See here](https://chocolatey.org/docs/commandsinstall#packagesconfig) for more details. 
-<br />
-<br />
+[Link to `packages.config`](windows/scripts/packages.config)
 
-## windows/scripts/run-chocolatey.ps1
-[Link to run-chocolatey.ps1](windows/scripts/run-chocolatey.ps1)
+This file contains a list of packages in an XML manifest for Chocolatey to install. This is where you can define
+[any supported packages](https://chocolatey.org/packages) to install, as well as versioning, options and switches. For details, see the 
+[Chocolatey documentation](https://chocolatey.org/docs/commandsinstall#packagesconfig). 
 
-This file is invokes chocolatey to install the packages defined in our xml manifest including error handling. As some Windows software requires a reboot to complete the installation, this script allows it (exit code 3010) as Packer will shutdown and sysprep the image as the final step.
+### `windows/scripts/run-chocolatey.ps1`
 
-<br />
-<br />
+[Link to `run-chocolatey.ps1`](windows/scripts/run-chocolatey.ps1)
+
+This file invokes Chocolatey to install the packages defined in the XML manifest, including error handling. Because some Windows software requires a restart to 
+complete the installation, this script allows it (exit code 3010) as Packer will shutdown and sysprep the image as the final step.
