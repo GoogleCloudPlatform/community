@@ -1,8 +1,0 @@
-<IfModule !mod_authz_core.c>
-     # Apache 2.2
-     Order Deny,Allow
-     Deny from All
-     Allow from [YOUR_WORKSTATION_IP_ADDRESS]
-     Allow from 127.0.0.1
-     Allow from ::1
-</IfModule>
