@@ -234,7 +234,8 @@ WAL level:
 1. Change the value for the archive command. This setting tells Postgres to
 write the archive files to the directory that you created in a previous step:
 
-        archive_command = 'test ! -f mnt/server/archivedir/%f && cp %p mnt/server/archivedir/%f'
+        archive_command = 'test ! -f /mnt/server/archivedir/%f && cp %p /mnt/server/archivedir/%f'  # Unix
+        archive_command = 'copy "%p" "C:\\server\\archivedir\\%f"'  # Windows
 
 1. In the **REPLICATION** section, in the **Sending Server(s)** section,
 change the value for the maximum number of WAL sender processes:
