@@ -43,11 +43,12 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to g
 1.  Create a project in the [Cloud Console](https://console.cloud.google.com/).
 2.  Enable billing for your project.
 3.  Open the Cloud Shell terminal.
-4.  Set your project ID and GitHub repository URL in the environment variable. Replace `[your project id]` with your project ID.
+4.  Set your project ID, the GitHub repository URL and the directory path to the ML model in the environment variable. Replace `[your project id]` with your project ID.
 
     ```bash
     PROJECT_ID="[your project id]"
     GIT_REPO="https://github.com/enakai00/community"
+    MODEL_PATH='tutorials/ml-pipeline-with-workflows/babyweight_model'
     ```
 
 5. Set the project ID for cloud SDK.
@@ -105,7 +106,7 @@ gcloud run deploy train-service \
   --platform=managed --region=us-central1 \
   --no-allow-unauthenticated \
   --memory 512Mi \
-  --set-env-vars "PROJECT_ID=$PROJECT_ID,GIT_REPO=$GIT_REPO"
+  --set-env-vars "PROJECT_ID=$PROJECT_ID,GIT_REPO=$GIT_REPO,BRANCH='master',MODEL_PATH=$MODEL_PATH"
 ```
 
 3. Set service URLs in the environment variable.
