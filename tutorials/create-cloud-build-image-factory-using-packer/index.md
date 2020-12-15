@@ -428,20 +428,14 @@ If you don't want to keep the resources after this tutorial, you can delete them
     Only do this if you don't want to perform the tutorial in this project again. The repository name won't be usable
     again for up to 7 days.
 
-## Reference: Windows-packer-scripts
+## Reference: Windows Packer scripts
 
-### `windows/cloudbuild.yaml`
-
-[Link to `cloudbuild.yaml`](windows/cloudbuild.yaml)
-
-This file contains the [build configuration](https://cloud.google.com/cloud-build/docs/build-config) for the Cloud Build service, which uses Packer to build a
+[**`cloudbuild.yaml`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/cloudbuild.yaml)
+contains the [build configuration](https://cloud.google.com/cloud-build/docs/build-config) for the Cloud Build service, which uses Packer to build a
 new image using instructions within the `packer.json` file.
 
-### `windows/packer.json`
-
-[Link to `packer.json`](windows/packer.json)
-
-This file contains the [googlecompute builder template](https://www.packer.io/docs/builders/googlecompute/) for creating a new image for use with Compute Engine.
+[**`windows/packer.json`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/packer.json)
+contains the [googlecompute builder template](https://www.packer.io/docs/builders/googlecompute/) for creating a new image for use with Compute Engine.
 
 Because of the way Packer uses WinRM as the communicator to connect and configure Windows, this template achieves the following:
 
@@ -460,37 +454,18 @@ Because of the way Packer uses WinRM as the communicator to connect and configur
 -   `GCESysprep -NoShutdown` is called as a way to seal the image using the optional `-NoShutDown` parameter to prevent the Windows environment from shutting 
     down and create a false positive, unhealthy signal back to Packer. Lifecycle needs to be managed by Packer to complete the image workflow.
 
-### `windows/scripts/bootstrap-packer.ps1`
-
-[Link to `bootstrap-packer.ps1`](windows/scripts/bootstrap-packer.ps1)
-
-This file configures Packer to use an HTTPS connection for WinRM to secure communication between the staging VM and Packer host. The configuration made during
+[**`windows/scripts/bootstrap-packer.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/bootstrap-packer.ps1)
+configures Packer to use an HTTPS connection for WinRM to secure communication between the staging VM and Packer host. The configuration made during
 this script such as a local certificate, listener, and firewall are deleted by `cleanup-packer.ps1`.
 
-### `windows/scripts/cleanup-packer.ps1`
+[**`windows/scripts/cleanup-packer.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/cleanup-packer.ps1) is invoked as a shutdown script to remove the Chocolatey PowerShell binaries and the local user account for Packer, 
+undo WinRM configurations, and then remove the shutdown script itself. 
 
-[Link to `cleanup-packer.ps1`](windows/scripts/cleanup-packer.ps1)
+[**`windows/scripts/disable-uac.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/disable-uac.ps1) installs the latest version of Chocolatey, a package management binary for PowerShell.
 
-This file is invoked as a shutdown script to remove the Chocolatey PowerShell binaries and the local user account for Packer, undo WinRM configurations, and
-then remove the shutdown script itself. 
-
-### `windows/scripts/disable-uac.ps1`
-
-[Link to `disable-uac.ps1`](windows/scripts/disable-uac.ps1)
-
-This file installs the latest version of Chocolatey, a package management binary for PowerShell.
-
-### `windows/scripts/packages.config`
-
-[Link to `packages.config`](windows/scripts/packages.config)
-
-This file contains a list of packages in an XML manifest for Chocolatey to install. This is where you can define
+[**`windows/scripts/packages.config`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/packages.config) contains a list of packages in an XML manifest for Chocolatey to install. This is where you can define
 [any supported packages](https://chocolatey.org/packages) to install, as well as versioning, options and switches. For details, see the 
 [Chocolatey documentation](https://chocolatey.org/docs/commandsinstall#packagesconfig). 
 
-### `windows/scripts/run-chocolatey.ps1`
-
-[Link to `run-chocolatey.ps1`](windows/scripts/run-chocolatey.ps1)
-
-This file invokes Chocolatey to install the packages defined in the XML manifest, including error handling. Because some Windows software requires a restart to 
-complete the installation, this script allows it (exit code 3010) as Packer will shutdown and sysprep the image as the final step.
+[**`windows/scripts/run-chocolatey.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/run-chocolatey.ps1) invokes Chocolatey to install the packages defined in the XML manifest, including error handling. Because some Windows 
+software requires a restart to complete the installation, this script allows it (exit code 3010) as Packer will shutdown and sysprep the image as the final step.
