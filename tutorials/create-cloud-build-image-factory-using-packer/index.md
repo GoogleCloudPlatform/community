@@ -22,15 +22,17 @@ This tutorial includes instructions for creating Packer images for Linux and Win
 - For building a Linux image, this tutorial uses Packer to create a new image from a CentOS 7 VM with Nginx.
 - For building a Windows image, this tutorial uses Packer to create a new image from a Windows Server 2019 VM with Python 3, Git, and 7-Zip,
   using Chocolatey as a package manager.
+  
+Secret Manager is only used for the Windows option.
 
 ## Prerequisites
 
 - A Google Cloud account
 - One of the following:
-  - At least project editor access to an existing project
+  - Project editor access to an existing project
   - Organization permissions to create a new project in an existing organization
 
-You can run commands in this tutorial using [Cloud Shell](https://cloud.google.com/shell) in the Cloud Console, or you use `gcloud` on your local computer if
+You can run commands in this tutorial using [Cloud Shell](https://cloud.google.com/shell) in the Cloud Console, or you can use `gcloud` on your local computer if
 you have installed the Cloud SDK.
 
 ## (Optional) Create a project with a billing account attached
@@ -75,7 +77,7 @@ Skip this section if you created a new project.
 If you are using an existing project, set the project variable to indicate which project to use for `gcloud` commands.
 
 For more information on configurations see [configurations](https://cloud.google.com/sdk/gcloud/reference/config/configurations/).
-Fill in `[CONFIGURATION NAME]` with the name of the configuration you want to use.
+Replace `[CONFIGURATION NAME]` with the name of the configuration you want to use.
 
 ### Linux
 
@@ -89,14 +91,14 @@ Fill in `[CONFIGURATION NAME]` with the name of the configuration you want to us
 
 ## Copy the files for this tutorial to a new working directory and Git repository
 
-In this section, you download the files to your local environment and initialize the Git the working directory.
+In this section, you download the files to your local environment and initialize Git in the working directory.
 
 ### Linux
 
 1.  Create and go to a new working directory:
 
-    mkdir helloworld-image-factory
-    cd helloworld-image-factory
+        mkdir helloworld-image-factory
+        cd helloworld-image-factory
 
 1.  Download the tutorial scripts:
 
@@ -142,9 +144,9 @@ In this section, you download the files to your local environment and initialize
 
 In this section, you enable the Google Cloud APIs necessary for the tutorial. The required services are the same for Windows and Linux images.
 
-    gcloud services enable sourcerepo.googleapis.com `
-    cloudapis.googleapis.com compute.googleapis.com `
-    servicemanagement.googleapis.com storage-api.googleapis.com `
+    gcloud services enable sourcerepo.googleapis.com \
+    cloudapis.googleapis.com compute.googleapis.com \
+    servicemanagement.googleapis.com storage-api.googleapis.com \
     cloudbuild.googleapis.com secretmanager.googleapis.com
 
 ## (Windows image only) Managing secrets for parameters using Secret Manager
@@ -173,10 +175,10 @@ Create your secrets using the following commands. Optionally, you can customize 
 ## (Windows image only) Create a new VPC firewall to allow WinRM for Packer
 
 Before you can provision using the WinRM (Windows Remote Management) communicator, you need to allow traffic through Google's firewall on the WinRM port
-(`tcp:5986`). This creates a new firewall called `allow-winrm-ingress-to-packer` that is stored Secret Manager and used by Cloud Build in the `cloudbuild.yaml`
-configuration file. 
+(`tcp:5986`). This creates a new firewall called `allow-winrm-ingress-to-packer` that is stored with Secret Manager and used by Cloud Build in the 
+`cloudbuild.yaml` configuration file. 
 
-    gcloud compute firewall-rules create allow-winrm-ingress-to-packer `
+    gcloud compute firewall-rules create allow-winrm-ingress-to-packer \
     --allow tcp:5986 --target-tags allow-winrm-ingress-to-packer
 
 ## Give the Cloud Build user permissions through an IAM role
@@ -196,12 +198,12 @@ Find the Cloud Build service account and add the editor role to it (in practice,
 
     $env:CLOUD_BUILD_ACCOUNT=$(gcloud projects get-iam-policy $env:PROJECT --filter="(bindings.role:roles/cloudbuild.builds.builder)"  --flatten="bindings[].members" --format="value(bindings.members[])")
 
-    gcloud projects add-iam-policy-binding $env:PROJECT `
-    --member $env:CLOUD_BUILD_ACCOUNT `
+    gcloud projects add-iam-policy-binding $env:PROJECT \
+    --member $env:CLOUD_BUILD_ACCOUNT \
     --role roles/editor
 
-    gcloud projects add-iam-policy-binding $env:PROJECT `
-    --member $env:CLOUD_BUILD_ACCOUNT `
+    gcloud projects add-iam-policy-binding $env:PROJECT \
+    --member $env:CLOUD_BUILD_ACCOUNT \
     --role roles/secretsmanager.secretAccessor
 
 ## Create the repository in Cloud Source Repositories for your image creator
