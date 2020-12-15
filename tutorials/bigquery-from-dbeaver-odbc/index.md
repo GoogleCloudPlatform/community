@@ -6,6 +6,8 @@ tags: BigQuery, DBeaver, ODBC
 date_published: 2020-07-06
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 [BigQuery](https://cloud.google.com/bigquery/) is a managed, serverless data warehouse for storing and querying massive datasets. To access these datasets, you 
 need some kind of tool that understands the BigQuery API, or you can use an ODBC driver that can work with a wide range of ODBC-compliant tools, as a data 
 access layer.

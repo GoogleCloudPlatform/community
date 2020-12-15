@@ -6,12 +6,16 @@ tags: Cloud Run, docker-compose, local development
 date_published: 2019-05-21
 ---
 
+Adam Ross | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows how to use [Docker Compose](https://docs.docker.com/compose/overview/) to streamline your local development environment for [Cloud Run](https://cloud.google.com/run).
 
 ## Overview
 
 Services running on Cloud Run are running in containers, so you probably want to identify how to use or build a local 
-container toolchain that can work with Cloud Run and integrate with other Google Cloud Platform (GCP) products.
+container toolchain that can work with Cloud Run and integrate with other Google Cloud products.
 
 The first thing to know: you do not have to use Docker locally. Cloud Build can build your container images remotely, and 
 your services can be built to work outside a container. Deciding whether the practice of containerizing services for local
@@ -77,15 +81,15 @@ services:
 
 For more, check out the [Docker Compose CLI documentation](https://docs.docker.com/compose/reference/overview/).
 
-## Using GCP APIs from your local container
+## Using Google Cloud APIs from your local container
 
-When using the official GCP client libraries on Cloud Run, authentication to other GCP services is automatically handled 
+When using the official Google Cloud client libraries on Cloud Run, authentication to other Google Cloud services is automatically handled 
 through the service account provisioned into your Cloud Run service. No further steps are required.
 
 When running your containerized services locally, you can take advantage of this same library capability by injecting 
 service account credentials into your container at runtime.
 
-To authenticate your local service with GCP, do the following:
+To authenticate your local service with Google Cloud, do the following:
 
 1.  Follow the steps in the [authentication documentation](https://cloud.google.com/docs/authentication/getting-started) to 
     create a service account and download service account keys to your local machine.
@@ -100,14 +104,14 @@ To authenticate your local service with GCP, do the following:
         #   export GCP_KEY_PATH=~/keys/project-key.json 
         #   docker-compose -f docker-compose.yml -f docker-compose.access.yml
         version: '3'
-          services:
-            app:
-              environment:
-                # https://cloud.google.com/docs/authentication/production
-                GOOGLE_APPLICATION_CREDENTIALS: /root/keys/keyfile.json
-              volumes:
-                # Inject your specific service account keyfile into the container at runtime.
-                - ${GCP_KEY_PATH}:/root/keys/keyfile.json:ro
+        services:
+          app:
+            environment:
+              # https://cloud.google.com/docs/authentication/production
+              GOOGLE_APPLICATION_CREDENTIALS: /tmp/keys/keyfile.json
+            volumes:
+              # Inject your specific service account keyfile into the container at runtime.
+              - ${GCP_KEY_PATH}:/tmp/keys/keyfile.json:ro
 
     The `$GCP_KEY_PATH` environment variable is set in your local machine—outside the container—to pass the 
     contents of your key file into the container.
@@ -182,7 +186,7 @@ If you want to explore your published container image, such as getting a closer 
 production service is currently running, you may pull the image down from Container Registry. This also requires Docker CLI 
 authentication. 
 
-Note: Your services will not be updated to this pulled image automatically; you may need to restart or remove the existing 
+**Note**: Your services will not be updated to this pulled image automatically; you may need to restart or remove the existing 
 containers.
 
 ```
@@ -231,14 +235,16 @@ services:
     - sql_proxy
 
  sql_proxy:
-   image: gcr.io/cloudsql-docker/gce-proxy:1.14
+   image: gcr.io/cloudsql-docker/gce-proxy:1.19.1
    command:
      - "/cloud_sql_proxy"
      - "-dir=/cloudsql"
      - "-instances=${CLOUDSQL_CONNECTION_NAME}"
-     - "-credential_file=/root/keys/keyfile.json"
+     - "-credential_file=/tmp/keys/keyfile.json"
+   # Allow the container to bind to the unix socket.
+   user: root
    volumes:
-     - ${GCP_KEY_PATH}:/root/keys/keyfile.json:ro
+     - ${GCP_KEY_PATH}:/tmp/keys/keyfile.json:ro
      - cloudsql:/cloudsql
 
 volumes:
@@ -249,7 +255,7 @@ volumes:
 The service account used by the Cloud SQL Proxy must include the Project Viewer, Cloud SQL Viewer, and Cloud SQL Client roles. Do not whitelist your IP address with the MySQL instance.
 
 Similar to the `docker-compose.access.yml` example, this file layers on top of your `docker-compose.yml`. You can stack all
-three together to start your service with full GCP access:
+three together to start your service with full Google Cloud access:
 
 ```
 docker-compose \

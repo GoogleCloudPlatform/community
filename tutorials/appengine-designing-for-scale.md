@@ -1,10 +1,12 @@
 ---
 title: Designing for scale on App Engine standard environment
 description: Learn some best practices to ensure that your app will scale to high load on App Engine standard environment.
-author: alexium
+author: jmdobry
 tags: App Engine
 date_published: 2017-01-27
 ---
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 App Engine is a scalable system which will automatically add more capacity as
 workloads increase.

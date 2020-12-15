@@ -1,0 +1,5 @@
+venv
+__pycache__
+*.md
+*.json
+config-template.py

@@ -1,46 +1,44 @@
 ---
-title: How to Set Up a New Persistent Disk for PostgreSQL Data
-description: Learn how to add a separate persistent disk for your PostgreSQL database on Google Cloud Platform in just a few minutes.
+title: Setting up a new persistent disk for PostgreSQL data
+description: Learn how to add a separate persistent disk for your PostgreSQL database on Google Cloud.
 author: jimtravis
 tags: Compute Engine, PostgreSQL, persistent disk
 date_published: 2017-02-16
 ---
 
-This tutorial shows how to add a separate persistent disk for your PostgreSQL database on
-Google Compute Engine.
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-The tutorial [How to Set Up PostgreSQL on Compute Engine](setting-up-postgres)
+This tutorial shows how to add a separate persistent disk for your PostgreSQL database on Compute Engine.
+
+The tutorial [How to set up PostgreSQL on Compute Engine](setting-up-postgres)
 shows how to set up a basic installation of PostgreSQL, or Postgres, on a
 single disk, which is also the boot disk. For better performance and data
 safety, you can install the PostgreSQL database engine on the boot disk and then
 set up the data storage on a separate persistent disk. This tutorial shows you
-how to move your existing database to a new persistent disk on
-Cloud Platform.
+how to move your existing database to a new persistent disk on Google
+Cloud.
 
-Note that you can also use Postgres as a service through [Google Cloud SQL](https://cloud.google.com/sql/docs/postgres/).
-
+Note that you can also use Postgres as a service through [Cloud SQL](https://cloud.google.com/sql/docs/postgres/).
 
 ## Objectives
 
-* Inserting test data
-* Creating and attaching a new persistent disk
-* Preparing the disk
-* Moving the data to the new disk
-* Testing the database
+* Insert test data
+* Create and attach a new persistent disk
+* Prepare the disk
+* Move the data to the new disk
+* Test the database
 
 ## Prerequisites
 
 A running instance of PostgreSQL on Compute Engine.
 
-Important: This tutorial uses billable components of Cloud Platform,
-including:
+This tutorial uses billable components of Google Cloud including:
 
-+ Google Compute Engine
++ Compute Engine
 + Persistent disk storage
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to
 generate a cost estimate based on your projected usage.
-
 
 ## Inserting test data
 
@@ -111,7 +109,7 @@ Now, attach the disk to the Compute Engine instance that hosts your Postgres
 database. Follow these steps:
 
 1. Open the [**VM instances** page in the
-Cloud Platform Console](https://console.cloud.google.com/project/_/compute/instances).
+Cloud Console](https://console.cloud.google.com/project/_/compute/instances).
 
 1. Click your instance name to open the details page.
 
@@ -218,11 +216,10 @@ Follow these steps to verify that the database works:
 
         $ exit
 
-
 ## Cleaning up
 
 After you've finished the tutorial, you can clean up the resources you
-created on Google Cloud Platform so you won't be billed for them in the future.
+created on Google Cloud so you won't be billed for them in the future.
 The following sections describe how to delete or turn off these resources.
 
 ### Deleting the project
@@ -245,7 +242,7 @@ instead of deleting them prevents you from exceeding project quota limits.
 
 To delete the project:
 
-1. In the Cloud Platform Console, go to the [Projects
+1. In the Cloud Console, go to the [Projects
    page](https://console.cloud.google.com/iam-admin/projects).
 1. In the project list, select the project you want to delete and click **Delete
    project**. After selecting the checkbox next to the project name, click
@@ -257,21 +254,18 @@ To delete the project:
 
 To delete a Compute Engine instance:
 
-1. In the Cloud Platform Console, go to the [**VM Instances**
+1. In the Cloud Console, go to the [**VM Instances**
    page](https://console.cloud.google.com/compute/instances).
 1. Click the checkbox next to your `lemp-tutorial` instance.
 1. Click the **Delete** button at the top of the page to delete the instance.
 
 ### Deleting disks
 
-
 To delete a Compute Engine disk:
 
-1. In the Cloud Platform Console, go to the [**Disks** page](https://console.cloud.google.com/compute/disks).
+1. In the Cloud Console, go to the [**Disks** page](https://console.cloud.google.com/compute/disks).
 1. Click the checkbox next to the disk you want to delete.
 1. Click the **Delete** button at the top of the page to delete the disk.
-
-
 
 ## Next steps
 

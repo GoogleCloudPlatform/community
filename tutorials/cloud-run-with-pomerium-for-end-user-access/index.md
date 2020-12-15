@@ -6,6 +6,10 @@ tags: Cloud Run, Pomerium
 date_published: 2020-09-01
 ---
 
+Travis Groth and Bobby DeSimone | Pomerium
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This guide covers how to deploy Pomerium to Cloud Run, providing end-user authentication and authorization to other endpoints. The resulting configuration
 permits users with `@gmail.com` addresses to access an instance of `httpbin.org` hosted on Cloud Run.
 
@@ -20,6 +24,8 @@ This guide assumes that you have editor access to a Google Cloud project that ca
 DNS does not need to be inside Google Cloud for the example to work.
 
 ## How it works
+
+![Architecture](https://storage.googleapis.com/gcp-community/tutorials/cloud-run-with-pomerium-for-end-user-access/architecture.png)
 
 Services on [Cloud Run](https://cloud.google.com/run) and [Cloud Functions](https://cloud.google.com/functions) can be restricted to only permit access with a 
 properly signed [identity token](https://cloud.google.com/run/docs/authenticating/service-to-service). This allows requests from other services running on

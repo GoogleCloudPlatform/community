@@ -13,9 +13,9 @@ date_published: 2019-07-31
 <walkthrough-tutorial-duration duration="15"></walkthrough-tutorial-duration>
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=compute_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=compute_quickstart)
 
 </walkthrough-alt>
 
@@ -30,7 +30,7 @@ This tutorial guides you through the following:
 
 ## Project setup
 
-GCP organizes resources into projects. This allows you to
+Google Cloud organizes resources into projects. This allows you to
 collect all of the related resources for a single application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
@@ -72,7 +72,7 @@ First, create the backend instance, which runs MongoDB and stores the to-do item
 
 1.  Click [**Create**][spotlight-submit-create] to create the instance.
 
-Note: After the instance is created, your billing account will start being charged
+After the instance is created, your billing account will start being charged
 according to the Compute Engine pricing. You will remove the instance later to avoid extra
 charges.
 
@@ -249,7 +249,7 @@ You're done!
 
 Here are some suggestions for what you can do next:
 
-*   Find Google Cloud Platform
+*   Find Google Cloud
     [samples on GitHub](http://googlecloudplatform.github.io/).
 
 *   Learn how to set up

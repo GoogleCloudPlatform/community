@@ -6,6 +6,10 @@ tags: Cloud Monitoring, OpenTelemetry
 date_published: 2020-05-08
 ---
 
+Alex Amies | Site Reliability Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial demonstrates instrumenting a web application end to end—from the browser to the backend application—with 
 OpenTelemetry and Cloud Logging, Monitoring, and Trace to understand app performance in a load test. The test app runs with
 Node.js on Google Kubernetes Engine (GKE) with modern browser JavaScript packaged with webpack. The tutorial is written for

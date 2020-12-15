@@ -6,19 +6,21 @@ tags: App Engine, Laravel, PHP
 date_published: 2019-01-31
 ---
 
-## Laravel
+Brent Shaffer | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 [Laravel][laravel] is an open source web framework for PHP developers that encourages the use of the
 model-view-controller (MVC) pattern.
 
-You can check out [PHP on Google Cloud Platform][php-gcp] (GCP) to get an
-overview of PHP and learn ways to run PHP apps on GCP.
+You can check out [PHP on Google Cloud][php-gcp] to get an
+overview of PHP and learn ways to run PHP apps on Google Cloud.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/project).
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/project).
 1. Enable billing for your project.
-1. Install and initialize the [Google Cloud SDK][cloud_sdk].
+1. Install and initialize the [Cloud SDK][cloud_sdk].
 
 All code for this tutorial is available in the [PHP samples repository][laravel-framework-sample].
 
@@ -102,7 +104,7 @@ from laravel.com.
         gcloud app deploy
 
 1.  Visit `http://YOUR_PROJECT_ID.appspot.com` to see the Laravel welcome page.
-    Replace `YOUR_PROJECT_ID` with the ID of your GCP project.
+    Replace `YOUR_PROJECT_ID` with the ID of your Google Cloud project.
 
     ![Laravel welcome page][laravel-welcome]
 

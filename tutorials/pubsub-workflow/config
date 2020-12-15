@@ -1,0 +1,7 @@
+{
+    "redis_host": "172.17.0.1",
+    "redis_port": "6379",
+    "processed_bucket": "PROCESSEDBUCKET",
+    "processing_topic": "processing",
+    "complete_topic": "complete"
+}

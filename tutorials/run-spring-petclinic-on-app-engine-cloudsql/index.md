@@ -6,10 +6,15 @@ tags: App Engine, Cloud SQL, Spring Boot, Java
 date_published: 2017-05-12
 ---
 
+Jisha Abubaker | Developer Relations Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial will walk you through getting the Spring Pet Clinic application up
 and running on App Engine flexible environment with Cloud SQL.
 
-### Spring Boot and Spring Pet Clinic
+## Spring Boot and Spring Pet Clinic
+
 [Spring Boot][boot] provides Java developers a quick, annotation driven way to
 deploy services using minimal code.
 
@@ -19,7 +24,7 @@ demonstrate the power of Spring Boot.
 [boot]: https://projects.spring.io/spring-boot/
 [clinic]: https://github.com/spring-projects/spring-petclinic
 
-### App Engine flexible environment for Java
+## App Engine flexible environment for Java
 
 [App Engine flexible environment][flexible] provides the ability to run your
 Java applications in Docker containers on Google Compute Engine machines, with
@@ -29,14 +34,14 @@ the [Java 8 runtime environment][runtime] for this tutorial.
 [flexible]: /appengine/docs/flexible/java/
 [runtime]: /appengine/docs/flexible/java/dev-java-only
 
-### Cloud SQL
+## Cloud SQL
 
 [Cloud SQL for MySQL][mysql] is a fully managed MySQL database service on Google
-Cloud Platform (GCP).
+Cloud.
 
 [mysql]: /sql/docs/mysql/
 
-### Prerequisites
+## Prerequisites
 
 1.  Create a project in the [Google Cloud Platform Console][console].
 1.  Enable billing for your project.
@@ -45,10 +50,10 @@ Cloud Platform (GCP).
 [console]: https://console.cloud.google.com/
 [sdk]: /sdk
 
-### Prepare
+## Prepare
 
 1.  Initialize the Cloud SDK, create an App Engine application, and authorize
-    the Cloud SDK for using GCP APIs in your local environment:
+    the Cloud SDK for using Google Cloud APIs in your local environment:
 
         gcloud init
         gcloud app create
@@ -65,12 +70,12 @@ Cloud Platform (GCP).
     [HyperSQL database][hyper]. You will now switch from HyperSQL to using Cloud
     SQL as your database.
 
-1. Note: [spring-petclinic][source-path] provides a copy of the source code
+1. [spring-petclinic][source-path] provides a copy of the source code
  with the required changes already completed to run Spring PetClinic using Cloud SQL.
 
 [hyper]: http://hsqldb.org/
 
-### Set up Cloud SQL
+## Set up Cloud SQL
 
 1.  Enable the [Cloud SQL API][api].
 
@@ -86,13 +91,13 @@ Cloud Platform (GCP).
 
         gcloud beta sql instances describe INSTANCE_NAME
 
-### Using Cloud SQL as your database
+## Using Cloud SQL as your database
 
 Once Cloud SQL is setup and initialized, you can configure your application to use Cloud SQL
 as the primary database either using Spring Datasource or the snapshot version of
 Spring Integration for Cloud SQL. The following sections demonstrate both options.
 
-#### Using Spring Datasource
+### Using Spring Datasource
 
 1.  Update `src/main/resources/application-mysql.properties`, replacing
     INSTANCE_CONNECTION_NAME with the `connectionName` from the previous step:
@@ -113,12 +118,12 @@ Spring Integration for Cloud SQL. The following sections demonstrate both option
 
         ./mvnw -Dspring-boot.run.profiles=mysql spring-boot:run
 
-#### Using Spring Cloud integration for Cloud SQL
+### Using Spring Cloud integration for Cloud SQL
 
 You can also now use the [Spring Cloud SQL starter](https://github.com/spring-cloud/spring-cloud-gcp/tree/master/spring-cloud-gcp-starters/spring-cloud-gcp-starter-sql)
 to configure Cloud SQL in your application.
 
-Note: This is currently a SNAPSHOT release, add the dependency from [Spring SNAPSHOT repository](http://maven.springframework.org/snapshot/).
+This is currently a SNAPSHOT release, add the dependency from [Spring SNAPSHOT repository](http://maven.springframework.org/snapshot/).
 
 You also need to add the [Spring Boot JDBC](https://mvnrepository.com/artifact/org.springframework/spring-jdbc/4.3.10.RELEASE)
 to your `pom.xml` as shown [here][pom-spring-cloud-xml].
@@ -139,7 +144,8 @@ This dependency enables your application to use the JDBC API to connect to the d
         ./mvnw -Drun.profiles=mysql spring-boot:run
 
 
-### Testing PetClinic locally
+## Testing PetClinic locally
+
 1.  Access the application homepage http://localhost:8080 via your web browser
     and add some data.
 
@@ -152,7 +158,7 @@ This dependency enables your application to use the JDBC API to connect to the d
 [profile]: http://docs.spring.io/spring-boot/docs/current/maven-plugin/examples/run-profiles.html
 [shell]: /sql/docs/mysql/quickstart#connect_to_your_instance_using_the_db_client_client_in_the_cloud_shell
 
-### Deploying to App Engine flexible environment on GCP
+## Deploying to App Engine flexible environment on Google Cloud
 
 Now that you've tested the application locally, you can deploy the application
 to the App Engine flexible environment. Once deployed, it will be accessible at
@@ -180,7 +186,7 @@ https://YOUR_PROJECT_ID.appspot.com.
     Optionally, you can use the sample [`app.yaml`][app-yaml].
 
 1.  App Engine flexible environment monitors the health of your application
-    using the `/_ah/health` endpoint. (Note: A `200` or`404` status is
+    using the `/_ah/health` endpoint. (A `200` or`404` status is
     interpreted as the application being healthy.) Because Spring Boot
     automatically provides a [health check endpoint][health], we can hook that
     up as our health check endpoint. Update the following fields in
@@ -196,14 +202,14 @@ https://YOUR_PROJECT_ID.appspot.com.
         ./mvnw -DskipTests=true appengine:deploy
 
 1.  Visit `https://YOUR_PROJECT_ID.appspot.com` to access the Pet Clinic
-    application, now running on GCP. View the application logs using the
-    [Cloud Platform Console][logs].
+    application, now running on Google Cloud. View the application logs using the
+    [Cloud Console][logs].
 
-### Next steps
+## Next steps
 
 - [Build][build] your own Spring application.
 - Deploy the application to [Google Kubernetes Engine][gke].
-- Try out [other Java samples][samples] on GCP.
+- Try out [other Java samples][samples] on Google Cloud.
 
 [source-path]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic
 [application-mysql-datasource]: https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/run-spring-petclinic-on-app-engine-cloudsql/spring-petclinic/src/main/resources/application-mysql-datasource.properties

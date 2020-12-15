@@ -6,6 +6,8 @@ tags: Fastly, Cloud Storage, CDN
 date_published: 2015-09-09
 ---
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 A [content delivery network](https://wikipedia.org/wiki/Content_delivery_network),
 or CDN, offers an efficient, cost-effective way of reducing both network
 I/O costs and content delivery latency for regularly accessed website
@@ -21,9 +23,9 @@ content from an origin server, they have to compete with other network
 traffic for bandwidth. To mitigate this issue, the CDN provider
 [Fastly](https://www.fastly.com/) has
 [partnered with Google](https://www.fastly.com/partner/gcp)
-to provide a direct connection to Google Cloud Platform's network edge at
+to provide a direct connection to Google Cloud's network edge at
 several North American locations. This edge connection allows Fastly users
-on Cloud Platform to bypass the public Internet during origin pulls,
+on Google Cloud to bypass the public internet during origin pulls,
 resulting in significant increases in pull speed.
 
 This tutorial walks you through the process of setting up Fastly to pull
@@ -34,8 +36,9 @@ feature to take advantage of Fastly's direct connection to Google's
 network edge.
 
 ## Costs
+
 This tutorial uses Cloud Storage, a billable component of
-Cloud Platform, and Fastly, which charges bandwidth and request fees.
+Google Cloud, and Fastly, which charges bandwidth and request fees.
 
 You can use the [pricing calculator](https://cloud.google.com/products/calculator)
 to generate a cost estimate based on your projected usage.
@@ -54,7 +57,7 @@ for further pricing details.
 
 This tutorial assumes that you have the following:
 
-+  A Google Cloud Platform project with the Cloud Storage and Cloud Storage
++  A Google Cloud project with the Cloud Storage and Cloud Storage
     JSON APIs enabled. These APIs are enabled by default.
 +  A [Fastly account](https://www.fastly.com/signup).
 +  A domain name you plan to use for CDN purposes.
@@ -69,7 +72,7 @@ you need to create a Cloud Storage bucket and populate it with assets.
 To create a Cloud Storage bucket:
 
 1. In the Cloud Storage Browser in the
-   [Cloud Platform Console](https://console.cloud.google.com/storage/browser),
+   [Cloud Console](https://console.cloud.google.com/storage/browser),
    click **Create Bucket**.
 1. In the **Create Bucket** dialog, fill out the form as follows:
 
@@ -91,7 +94,7 @@ Next, you need to add assets that Fastly can pull from your bucket:
     to your bucket.
 1. Upload the image to your bucket by dragging it from your local file
     browser and dropping it into your bucket page in the
-    Cloud Platform Console. After the image has finished uploading, it
+    Cloud Console. After the image has finished uploading, it
     will appear in the bucket's list of stored objects.
 1. On your bucket page, go to your image's list item and click
     **Shared Publicly** to make the image externally accessible.
@@ -109,7 +112,7 @@ configure it to use the bucket as a point of origin:
     +  **Server address**: storage.googleapis.com:80
     +  **Domain name**: `[YOUR_DOMAIN_NAME]`
 
-        Note: Fastly recommends against using an
+        **Note**: Fastly recommends against using an
         [apex domain](https://docs.fastly.com/guides/basic-configuration/using-fastly-with-apex-domains).
 
 **Important**: To complete the process of creating your first service, you
@@ -182,11 +185,11 @@ using an origin, it is instead recommended to use a regional or dual-regional
 location. This ensures the data is always close to the origin, improving
 performance, and reducing latency on cache fills.
 
-For example, the "[us-east4](https://cloud.google.com/storage/docs/locations)"
+For example, the [`us-east4`](https://cloud.google.com/storage/docs/locations)
 region in Ashburn, Northern Virginia, is near to one of [Fastly's interconnects](https://docs.fastly.com/guides/integrations/google-cloud-storage#interconnect-locations), and can be selected as a
 **shielding** location.
 
-To configure an origin shield and connect it to Cloud Platform:
+To configure an origin shield and connect it to Google Cloud:
 
 1. In the [Fastly application](https://app.fastly.com/),
     click **Hosts** in the sidebar.
@@ -199,7 +202,7 @@ To configure an origin shield and connect it to Cloud Platform:
 ## Cleaning up
 
 After you've finished the Fastly tutorial, you can clean up the resources you
-created on Google Cloud Platform so you won't be billed for them in the future.
+created on Google Cloud so you won't be billed for them in the future.
 The following sections describe how to delete or turn off these resources.
 
 ### Deleting the project
@@ -220,7 +223,7 @@ them prevents you from exceeding project quota limits.
 
 To delete the project:
 
-1. In the Cloud Platform Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
+1. In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1. In the project list, select the project you want to delete and click **Delete project**.
 After selecting the checkbox next to the project name, click **Delete project**.
 1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
@@ -241,9 +244,7 @@ To delete your Fastly service:
 
 ## Next steps
 
-### Visit the Fastly docs
-
-New to Fastly? Explore Fastly's feature set and configuration options by
+Explore Fastly's feature set and configuration options by
 reviewing the [Fastly documentation](https://docs.fastly.com/guides/). Fastly also
 provides their [own tutorial on using Cloud Storage](https://docs.fastly.com/guides/integrations/google-cloud-storage),
 as well information on [serving private buckets](https://docs.fastly.com/guides/integrations/google-cloud-storage#using-gcs-with-private-objects).

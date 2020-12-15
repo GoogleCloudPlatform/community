@@ -6,10 +6,9 @@ tags: Forseti Security, Cloud Security Command Center
 date_published: 2019-05-31
 ---
 
-Note: This guide has been updated for the new installation process using Terraform. The Python installation script
-used in the previous version of this tutorial is no longer supported. However, you can still find the old installation 
-procedure
-[here](https://github.com/GoogleCloudPlatform/community/blob/987cff06da9c17ff34765a9ce5aa48b3623d64d6/tutorials/private-forseti-with-scc-integration/index.md).
+Fatima Silveira and Valavan Rajakumar | Cloud Infrastructure Consultants | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This guide walks you through a private Forseti Security installation on Compute Engine, following enterprise best practices.
 
@@ -35,7 +34,7 @@ To perform the steps in this tutorial, you need the following:
 
 - Access to a G Suite or Cloud Identity super admin account.
 - Access to the  **Security** page in the [Google Admin console](https://admin.google.com).
-- Access to the [Google Cloud Platform (GCP) Console](https://console.cloud.google.com).
+- Access to the [Cloud Console](https://console.cloud.google.com).
 - Rights to modify IAM permissions at the Organization level.
 - A project where you will deploy Forseti. In this tutorial, we use the project name `forseti`.
 - Editor or owner permissions for the `forseti` project.
@@ -65,7 +64,7 @@ You have two options when following this tutorial:
 Regardless of which option you choose for the working environment, the steps below are the same. When the steps below
 refer to your *shell session*, this refers to whichever choice of environment you made above.
 
-#### Preparing the GCP environment
+#### Preparing the Google Cloud environment
 
 If you do not have a dedicated `forseti` project yet, then create one. Navigate to the project
 [**Home** page](https://console.cloud.google.com/home/dashboard) and take note of the Project ID information displayed in
@@ -166,7 +165,7 @@ has a helper script that uses `gcloud` for this purpose.
         example it's `forseti`, `forseti-subnet1` and `us-east4` respectively.
 
     If your organization is set up to use shared networks, you can instead use a network in your host project and
-    populate the `network_project` accordingly. Typically, because the Forseti toolset should be contained to GCP, an
+    populate the `network_project` accordingly. Typically, because the Forseti toolset should be contained to Google Cloud, an
     isolated project/network combination is appropriate. Also note that in this case you would need to pass the `-f` flag
     to the helper script in the previous section.
 
@@ -203,7 +202,7 @@ has a helper script that uses `gcloud` for this purpose.
 
     Take note of the bucket name for subsequent use.
 
-    Note: If your organization already uses Terraform, you can use the same backend as your other Terraform scripts,
+    If your organization already uses Terraform, you can use the same backend as your other Terraform scripts,
     with a separate folder for the Forseti installation.
 
 1.  Open the `backend.tf` file with a text editor. The default contents should look like the following:
@@ -271,7 +270,7 @@ In the Cloud Console, ensure that you have the `forseti` project selected, and t
 
 1.  Add the private IP address, remove the public IP address, and save the changes. ![](https://storage.googleapis.com/gcp-community/tutorials/private-forseti-with-scc-integration/fed98394.png)
 
-    Note: This is also a good time to ensure that the database is in the same zone as the server VM (optional).
+    **Note**: This is also a good time to ensure that the database is in the same zone as the server VM (optional).
 
 1.  Go to the [**Firewall rules** page](https://console.cloud.google.com/networking/firewalls/list) and edit the rules of
     both `forseti-client-allow-ssh-external` and `forseti-server-allow-ssh-external` to restrict the source IP ranges to
@@ -293,7 +292,7 @@ In this section, you perform the base configuration to get Forseti up and runnin
 
 #### Enable domain-wide delegation
 
-Important: You must be logged in with the super admin account for the steps in this section.
+You must be logged in with the super admin account for the steps in this section.
 
 For details of domain-wide delegation, see
 [Enable domain-wide delegation in G Suite](https://forsetisecurity.org/docs/latest/configure/inventory/gsuite.html) in
@@ -345,7 +344,7 @@ the Forseti documentaton.
 1.  Navigate to the Organization IAM page and ensure that the service account has
     the **Security Center Findings Editor** role.
 
-    Note: If you did not re-use the Forseti Server service account and created a new service account for Cloud SCC, you
+    If you did not re-use the Forseti Server service account and created a new service account for Cloud SCC, you
     need to grant **Security Center Findings Editor** role for both the Foresti Server service acconut and the newly created
     service account for Cloud SCC.
 
