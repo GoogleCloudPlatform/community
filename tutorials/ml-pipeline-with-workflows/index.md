@@ -305,7 +305,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 Run the following commands to deploy the workflow template. You associate the service account that you created in the previous step using the `--service-account` option.
 
 ```
-cd cd $HOME/community/tutorials/ml-pipeline-with-workflows/workflows
+cd $HOME/community/tutorials/ml-pipeline-with-workflows/workflows
 cp ml_workflow.yaml.template ml_workflow.yaml
 sed -i "s#PREPROCESS-SERVICE-URL#${PREPROCESS_SERVICE_URL}#" ml_workflow.yaml
 sed -i "s#TRAIN-SERVICE-URL#${TRAIN_SERVICE_URL}#" ml_workflow.yaml
