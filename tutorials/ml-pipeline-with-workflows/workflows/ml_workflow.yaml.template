@@ -1,0 +1,85 @@
+main:
+  params: [args]
+  steps:
+    - assignLimit:
+        steps:
+          - assignDefault:
+              assign:
+                - limit: null
+          - assignArgVal:
+              switch:
+                - condition: ${"limit" in args}
+                  assign:
+                    - limit: ${args.limit}
+    - preprocessData:
+        call: http.post
+        args:
+          url: PREPROCESS-SERVICE-URL/api/v1/preprocess
+          body:
+            "limit": ${limit}
+            "outputDir": ${args.bucket + "/preproc"}
+          auth:
+            type: OIDC
+        result: preprocess
+    - sleepPreprocess:
+        call: sys.sleep
+        args:
+            seconds: 60
+    - getPreprocessStatus:
+        call: http.get
+        args:
+          url: ${"PREPROCESS-SERVICE-URL/api/v1/job/" + preprocess.body.jobId}
+          auth:
+            type: OIDC
+        result: preprocessStatus
+    - waitPreprocess:
+        switch:
+          - condition: ${preprocessStatus.body.currentState == "JOB_STATE_DONE"}
+            next: trainModel
+          - condition: ${preprocessStatus.body.currentState == "JOB_STATE_FAILED"}
+            return: ${preprocessStatus.body}
+        next: sleepPreprocess
+    - trainModel:
+        call: http.post
+        args:
+          url: TRAIN-SERVICE-URL/api/v1/train
+          body:
+            "jobDir": ${args.bucket + "/trained_model"}
+            "dataDir": ${preprocess.body.outputDir}
+            "numTrainExamples": ${args.numTrainExamples}
+            "numEvalExamples": ${args.numEvalExamples}
+            "numEvals": ${args.numEvals}
+          auth:
+            type: OIDC
+        result: train
+    - sleepTrain:
+        call: sys.sleep
+        args:
+            seconds: 60
+    - getTrainStatus:
+        call: http.get
+        args:
+          url: ${"TRAIN-SERVICE-URL/api/v1/job/" + train.body.jobId}
+          auth:
+            type: OIDC
+        result: trainStatus
+    - waitTrain:
+        switch:
+          - condition: ${trainStatus.body.state == "SUCCEEDED"}
+            next: deployModel
+          - condition: ${trainStatus.body.state == "FAILED"}
+            return: ${trainStatus.body}
+        next: sleepTrain
+    - deployModel:
+        call: http.post
+        args:
+          url: TRAIN-SERVICE-URL/api/v1/deploy
+          body:
+            "modelName": ${args.modelName}
+            "versionName": ${args.versionName}
+            "deploymentUri": ${train.body.trainingInput.jobDir + "/export"}
+          auth:
+            type: OIDC
+        result: deploy
+    - finish:
+        return: ${deploy.body}
