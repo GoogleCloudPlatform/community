@@ -76,6 +76,7 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to g
 8. Clone the repository.
 
     ```bash
+    cd $HOME
     git clone $GIT_REPO
     ```
 
@@ -134,9 +135,9 @@ curl -X POST -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
   -s $PREPROCESS_SERVICE_URL/api/v1/preprocess | jq .
 ```
 
-The output looks like the following:
+The output looks like:
 
-```bash
+```
 {
   "jobId": "2020-12-13_23_57_52-4099585880410245609",
   "jobName": "preprocess-babyweight-054aeefe-16d2-4a26-a5c2-611a5ece1583",
@@ -146,7 +147,7 @@ The output looks like the following:
 
 The `jobId` shows the Job ID of the dataflow pipeline job, and the preprocessed data will be stored under `outputDir`. Copy the Job ID in `jobID` and the storage path in `outputDir` to set them in the environment variable.
 
-```
+```bash
 OUTPUT_DIR="gs://workflows-ml-pipeline-pipeline/preproc/054aeefe-16d2-4a26-a5c2-611a5ece1583"
 JOB_ID="2020-12-13_23_57_52-4099585880410245609"
 ```
@@ -158,9 +159,9 @@ curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
   -s $PREPROCESS_SERVICE_URL/api/v1/job/$JOB_ID | jq .
 ```
 
-The output looks like the following:
+The output looks like:
 
-```bash
+```
 {
   "createTime": "2020-12-14T07:57:54.086857Z",
   "currentState": "JOB_STATE_RUNNING",
@@ -182,9 +183,9 @@ curl -X POST -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
   -s $TRAIN_SERVICE_URL/api/v1/train | jq .
 ```
 
-The output looks like the following:
+The output looks like:
 
-```bash
+```
 {
   "createTime": "2020-12-14T08:24:12Z",
   "etag": "zKM8N6bPpVk=",
@@ -212,13 +213,16 @@ JOB_ID="train_babyweight_e281aab4_5b4f_40cd_8fe3_f8290037b5fc"
 JOB_DIR="gs://workflows-ml-pipeline-pipeline/trained_model/e281aab4-5b4f-40cd-8fe3-f8290037b5fc"
 ```
 
+The following command sends an API request to show the job status.
 
-Check the job status.
-
+```bash
 curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
   -s $TRAIN_SERVICE_URL/api/v1/job/$JOB_ID | jq .
-[OUTPUT]
+```
 
+The output looks like:
+
+```
 {
   "createTime": "2020-12-14T08:24:12Z",
   "etag": "rW+uQQbA6bM=",
@@ -226,14 +230,24 @@ curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
   "state": "PREPARING",
 ...
 }
-Wait until state becomes SUCCEEDED. Then execute the model deployment job.
+```
 
+Wait about 10 minutes until the `state` becomes `SUCCEEDED`. You can also check the job status from the [Cloud Console](https://console.cloud.google.com/ai-platform/jobs).
+
+### Deploy the trained model
+
+The following command sends an API request to launch an AI Platform job to train the ML model. The option `modelName` and `versionName` specify the model name and the version name respectively.
+
+```bash
 curl -X POST -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
   -H "Content-Type: application/json" \
   -d "{\"modelName\": \"babyweight_model\", \"versionName\": \"v1\", \"deploymentUri\": \"$JOB_DIR/export\"}" \
  -s $TRAIN_SERVICE_URL/api/v1/deploy | jq .
-[OUTPUT]
+```
 
+The output looks like:
+
+```
 {
   "metadata": {
     "@type": "type.googleapis.com/google.cloud.ml.v1.OperationMetadata",
@@ -253,9 +267,29 @@ curl -X POST -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
   },
   "name": "projects/workflows-ml-pipeline/operations/create_babyweight_model_v1-1607934875576"
 }
-Automate the pipeline with Cloud Workflows
+```
+
+The following command shows the deployed model.
+
+```bash
+gcloud ai-platform models list --region global
+```
+
+The output looks like:
+
+```
+Using endpoint [https://ml.googleapis.com/]
+NAME              DEFAULT_VERSION_NAME
+babyweight_model  v1
+```
+
+## Automate the whole process with Cloud Workflows
+
+## Deploy the Cloud Workflows template
+
 Create a service account to invoke services on Cloud Run.
 
+```bash
 SERVICE_ACCOUNT_NAME="cloud-run-invoker"
 SERVICE_ACCOUNT_EMAIL=${SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME \
@@ -263,21 +297,36 @@ gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME \
 gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member=serviceAccount:$SERVICE_ACCOUNT_EMAIL \
   --role=roles/run.invoker
+```
+
 Deploy the workflow.
 
-cd $HOME/workflows-ml-pipeline-example/workflows
+```
+cd cd $HOME/community/tutorials/ml-pipeline-with-workflows/workflows
 cp ml_workflow.yaml.template ml_workflow.yaml
 sed -i "s#PREPROCESS-SERVICE-URL#${PREPROCESS_SERVICE_URL}#" ml_workflow.yaml
 sed -i "s#TRAIN-SERVICE-URL#${TRAIN_SERVICE_URL}#" ml_workflow.yaml
 gcloud beta workflows deploy ml_workflow \
   --source=ml_workflow.yaml \
   --service-account=$SERVICE_ACCOUNT_EMAIL
+```
+
 Execute a workflow job.
 
+```bash
 gcloud beta workflows execute ml_workflow \
   --data="{\"limit\": 1000, \"bucket\": \"$BUCKET\", \"numTrainExamples\": 5000, \"numEvals\": 2, \"numEvalExamples\": 1000, \"modelName\": \"babyweight_model\", \"versionName\": \"v2\"}"
-  
-  
+```
+
+```bash
+gcloud ai-platform versions list --model babyweight_model --region global
+```
+
+```
+Using endpoint [https://ml.googleapis.com/]
+NAME  DEPLOYMENT_URI                                                                                 STATE
+v1    gs://workflows-ml-pipeline-pipeline/trained_model/e281aab4-5b4f-40cd-8fe3-f8290037b5fc/export  READY
+```
 
 
 ## Cleaning up
