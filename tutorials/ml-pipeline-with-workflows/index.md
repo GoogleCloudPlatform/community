@@ -333,6 +333,7 @@ The output looks like:
 Using endpoint [https://ml.googleapis.com/]
 NAME  DEPLOYMENT_URI                                                                                 STATE
 v1    gs://workflows-ml-pipeline-pipeline/trained_model/e281aab4-5b4f-40cd-8fe3-f8290037b5fc/export  READY
+v2    gs://workflows-ml-pipeline-pipeline/trained_model/9550e422-a3ee-437b-83db-f321610344f3/export  READY
 ```
 
 ## Cleaning up
