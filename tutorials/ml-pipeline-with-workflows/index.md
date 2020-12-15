@@ -1,27 +1,23 @@
 ---
-title: Tutorial template
-description: Replace with a description of your tutorial, focusing on what the reader will learn.
-author: github-username-for-author,github-username-for-other-author
-tags: replace, with, tags, not, in, title, or, description
-date_published: 2020-04-28
+title: Creating a custom ML pipeline with Cloud Workflows and serverless services on GCP
+description: Learn about using Cloud Workflows to create a custom ML pipeline.
+author: enakai00
+tags: Cloud Workflows, Cloud Run, Dataflow, AI Platform
+date_published: 2021-xx-xx
 ---
 
-Todd Kopriva | Community Editor | Google
+Etsuji Nakai | Solutions Architect | Google
 
-<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-To begin creating a tutorial, copy the Markdown source for this tutorial template into your blank Markdown file. Replace the explanatory text and examples with 
-your own tutorial content. Not all documents will use all of the sections described in this template. For example, a conceptual document or code walkthrough
-might not include the "Costs" or "Cleaning up" sections. For more information, see the 
-[style guide](https://cloud.google.com/community/tutorials/styleguide) and [contribution guide](https://cloud.google.com/community/tutorials/write).
+This tutorial explains how you can use [Cloud Workflows](https://cloud.google.com/workflows) and other serverless services, such as [Cloud Run](https://cloud.google.com/run), to create a custom ML pipeline. The ML usecase is based on the [babyweight model example](https://github.com/GoogleCloudPlatform/training-data-analyst/blob/master/blogs/babyweight_keras/babyweight.ipynb). The following diagram shows the overall architecture of what you build in this tutorial.
 
-Replace the placeholders in the metadata at the top of the Markdown file with your own values. Follow the guidance provided by the placeholder values for spacing
-and punctuation.
+<img src="https://github.com/enakai00/workflows-ml-pipeline-example/blob/main/docs/img/architecture.png" width="640px">
 
-The first line after the metadata should be your name and an optional job description and organization affiliation.
+* You deploy two microservices on Cloud Run. One is to launch a Dataflow pipeline to preprocess the training data. The orignal data stored in BigQuery are coverted to CSV files and stored in Cloud Storage bucket. The other is to launch a ML training job on Cloud AI Platform, and deploy the trained model for predctions. The ML model files are cloned from the GitHub repository.
 
-After that is one of two banners that indicates whether the document was contributed by a Google employee. Just leave one banner and delete the other one.
+* You deploy a Cloud Workflows template to automate the whole process.
+
 
 The first paragraph or two of the tutorial should tell the reader the following:
 
@@ -33,33 +29,23 @@ Don't use a heading like **Overview** or **Introduction**. Just get right to it.
 
 ## Objectives
 
-Give the reader a high-level summary of what steps they take during the tutorial. This information is often most effective as a short bulleted list.
-
-### Example: Objectives
-
-*   Create a service account with limited access.
-*   Create a Cloud Function that triggers on HTTP.
-*   Create a Cloud Scheduler job that targets an HTTP endpoint.
-*   Run the Cloud Scheduler job. 
-*   Verify success of the job.
+*   Deploy a microservice that launchs a Dataflow pipeline.
+*   Deploy a microservice that launchs a ML training job on Cloud AI Platform and deploy the trained model for predictions.
+*   Deploy a Cloud Workflow template to automate the whole process.
+*   Execute a Cloud Workflow job.
 
 ## Costs
 
-Tell the reader which technologies the tutorial uses and what it costs to use them.
+This tutorial uses billable components of Google Cloud, including:
 
-For Google Cloud services, link to the preconfigured [pricing calculator](https://cloud.google.com/products/calculator/) if possible.
+* [Cloud Workflows](https://cloud.google.com/workflows)
+* [Cloud Run](https://cloud.google.com/run)
+* [Dataflow](https://cloud.google.com/dataflow)
+* [AI Platform](https://cloud.google.com/ai-platform)
+* [Cloud Build](https://cloud.google.com/cloud-build)
+* [Cloud Storage](https://cloud.google.com/storage)
 
-If there are no costs to be incurred, state that.
-
-### Example: Costs 
-
-This tutorial uses billable components of Google Cloud, including the following:
-
-*   [Cloud Functions](https://cloud.google.com/functions)
-*   [Cloud Scheduler](https://cloud.google.com/scheduler)
-*   [App Engine](https://cloud.google.com/appengine/docs/flexible/python)
-
-Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
+Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
