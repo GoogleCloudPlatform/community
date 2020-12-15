@@ -22,6 +22,7 @@ This tutorial explains how you can use [Cloud Workflows](https://cloud.google.co
 
 *   Deploy a microservice that launchs a Dataflow pipeline.
 *   Deploy a microservice that launchs a ML training job on Cloud AI Platform and deploy the trained model for predictions.
+*   Test the deployed microservices using the `curl` command.
 *   Deploy a Cloud Workflows template to automate the whole process.
 *   Execute a Cloud Workflows job.
 
