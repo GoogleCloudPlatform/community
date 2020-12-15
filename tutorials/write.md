@@ -1,6 +1,6 @@
 ---
-title: Contribute a tutorial for the Google Cloud Community site
-description: Learn how to submit a tutorial for the Google Cloud community site.
+title: Contribute a document for the Google Cloud Community site
+description: Learn how to submit a tutorial or other document for the Google Cloud community site.
 author: kopriva
 tags: template, submit
 date_published: 2020-09-21
