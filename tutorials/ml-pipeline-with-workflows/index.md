@@ -12,7 +12,7 @@ Etsuji Nakai | Solutions Architect | Google
 
 This tutorial explains how you can use [Cloud Workflows](https://cloud.google.com/workflows) and other serverless services, such as [Cloud Run](https://cloud.google.com/run), to create a custom ML pipeline. The ML usecase is based on the [babyweight model example](https://github.com/GoogleCloudPlatform/training-data-analyst/blob/master/blogs/babyweight_keras/babyweight.ipynb). The following diagram shows the overall architecture of what you build in this tutorial.
 
-<img src="https://github.com/enakai00/workflows-ml-pipeline-example/blob/main/docs/img/architecture.png" width="640px">
+<img src="https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/ml-pipeline-with-workflows/img/architecture.png?raw=true" width="640px">
 
 * You deploy two microservices on Cloud Run. One is to launch a Dataflow pipeline to preprocess the training data. The orignal data stored in BigQuery are coverted to CSV files and stored in Cloud Storage bucket. The other is to launch a ML training job on Cloud AI Platform, and deploy the trained model for predctions. The ML model files are cloned from the GitHub repository.
 
@@ -48,8 +48,8 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to g
 
     ```bash
     PROJECT_ID="[your project id]"
-    GIT_REPO="https://github.com/enakai00/community"
-    MODEL_PATH='tutorials/ml-pipeline-with-workflows/babyweight_model'
+    GIT_REPO="https://github.com/GoogleCloudPlatform/community"
+    MODEL_PATH="tutorials/ml-pipeline-with-workflows/babyweight_model"
     ```
 
 5. Set the project ID for cloud SDK.
@@ -244,7 +244,7 @@ The following command sends an API request to launch an AI Platform job to train
 curl -X POST -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
   -H "Content-Type: application/json" \
   -d "{\"modelName\": \"babyweight_model\", \"versionName\": \"v1\", \"deploymentUri\": \"$JOB_DIR/export\"}" \
- -s $TRAIN_SERVICE_URL/api/v1/deploy | jq .
+  -s $TRAIN_SERVICE_URL/api/v1/deploy | jq .
 ```
 
 The output looks like:
@@ -289,7 +289,7 @@ babyweight_model  v1
 
 You use Cloud Workflows to automate the steps you have done in the previous section.
 
-## Deploy the Cloud Workflows template
+### Deploy the Cloud Workflows template
 
 Run the following commands to create a service account and assing the role to invoke services on Cloud Run.
 
@@ -315,7 +315,9 @@ gcloud beta workflows deploy ml_workflow \
   --service-account=$SERVICE_ACCOUNT_EMAIL
 ```
 
-Run the following command to execute a workflow job.
+### Execute a Workflows job
+
+Run the following command to execute a Workflows job.
 
 ```bash
 gcloud beta workflows execute ml_workflow \
