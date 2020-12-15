@@ -1,0 +1,60 @@
+{
+	"variables": {
+		"project_id": "_PROJECT_ID",
+		"source_image_family": "_IMAGE_FAMILY",
+		"image_name": "_IMAGE_NAME",
+		"machine_type": "_MACHINE_TYPE",
+		"region": "_REGION",
+		"zone": "_ZONE",
+		"network_id": "_NETWORK",
+		"network-tags": "_TAGS"
+	},
+	"builders": [{
+		"type": "googlecompute",
+		"project_id": "{{  user `project_id`  }}",
+		"machine_type": "{{  user `machine_type`  }}",
+		"source_image_family": "{{  user `source_image_family`  }}",
+		"region": "{{  user `region`  }}",
+		"zone": "{{  user `zone`  }}",
+		"network": "{{  user `network_id`  }}", 
+		"image_description": "{{  user `source_image_family`  }}-{{  isotime \"2006-01-02-14-04\"  }}",
+		"image_name": "{{  user `image_name`  }}-{{  isotime \"2006-01-02-14-04\"  }}",
+		"disk_size": 100,
+		"disk_type": "pd-ssd",
+		"on_host_maintenance": "TERMINATE",
+		"tags": "{{  user `network-tags`  }}",
+		"communicator": "winrm",
+		"winrm_insecure": true,
+		"winrm_use_ssl": true,
+		"winrm_username": "packer_user",
+		"metadata": {
+			"windows-startup-script-cmd": "winrm quickconfig -quiet & net user /add packer_user & net localgroup administrators packer_user /add & winrm set winrm/config/service/auth @{Basic=\"true\"}",
+			"windows-shutdown-script-ps1": "C:/cleanup-packer.ps1"
+		}
+	}],
+	"provisioners": [{
+			"type": "file",
+			"source": "./scripts/packages.config",
+			"destination": "C:/packages.config"
+		},
+		{
+			"type": "file",
+			"source": "./scripts/cleanup-packer.ps1",
+			"destination": "C:/cleanup-packer.ps1"
+		},
+		{
+			"type": "powershell",
+			"scripts": [
+				"./scripts/disable-uac.ps1",
+				"./scripts/install-chocolatey.ps1",
+				"./scripts/run-chocolatey.ps1"
+			]
+		},
+		{
+			"type": "powershell",
+			"inline": [
+				"GCESysprep -NoShutdown"
+			]
+		}
+	]
+}
