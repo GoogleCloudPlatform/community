@@ -49,46 +49,39 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to g
 
 ## Before you begin
 
-Give a numbered sequence of procedural steps that the reader must take to set up their environment before getting into the main tutorial.
+1.  Create a project in the [Cloud Console](https://console.cloud.google.com/).
+2.  Enable billing for your project.
+3.  Open the Cloud Shell terminal.
+4.  Set your project ID and GitHub repository URL in the environment variable. Replace `[your project id]` with your project ID.
 
-Don't assume anything about the reader's environment. You can include simple installation instructions of only a few steps, but provide links to installation
-instructions for anything more complex.
+    ```bash
+    PROJECT_ID="[your project id]"
+    GIT_REPO="https://github.com/enakai00/community"
+    ```
 
-### Example: Before you begin
+5. Set the project ID for cloud SDK.
 
-This tutorial assumes that you're using the Microsoft Windows operating system.
+    ```bash
+    gcloud config set project $PROJECT_ID
+    ```
 
-1.  Create an account with the BigQuery free tier. See
-    [this video from Google](https://www.youtube.com/watch?v=w4mzE--sprY&list=PLIivdWyY5sqI6Jd0SbqviEgoA853EvDsq&index=2) for detailed instructions.
-1.  Create a Google Cloud project in the [Cloud Console](https://console.cloud.google.com/).
-1.  Install [DBeaver Community for Windows](https://dbeaver.io/download/).
+6. Set the storage bucket name in the environment variable, and create the bucket.
 
-## Tutorial body
+    ```bash
+    BUCKET=gs://$PROJECT_ID-pipeline
+    gsutil mb $BUCKET
+    ```
+7. Enable APIs.
 
-Break the tutorial body into as many sections and subsections as needed, with concise headings.
-
-### Use short numbered lists for procedures
-
-Use numbered lists of steps for procedures. Each action that the reader must take should be its own step. Start each step with the action, such as *Click*, 
-*Run*, or *Enter*.
-
-Keep procedures to 7 steps or less, if possible. If a procedure is longer than 7 steps, consider how it might be separated into sub-procedures, each in its
-own subsection.
-
-### Provide context, but don't overdo the screenshots
-
-Provide context and explain what's going on.
-
-Use screenshots only when they help the reader. Don't provide a screenshot for every step.
-
-Help the reader to recognize what success looks like along the way. For example, describing the result of a step helps the reader to feel like they're doing
-it right and helps them know things are working so far.
+    ```bash
+    gcloud services enable run.googleapis.com
+    gcloud services enable workflows.googleapis.com
+    gcloud services enable cloudbuild.googleapis.com
+    gcloud services enable dataflow.googleapis.com
+    gcloud services enable ml.googleapis.com
+    ```
 
 ## Cleaning up
-
-Tell the reader how to shut down what they built to avoid incurring further costs.
-
-### Example: Cleaning up
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
 
