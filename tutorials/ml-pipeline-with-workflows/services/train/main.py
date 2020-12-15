@@ -1,8 +1,21 @@
+# Copyright 2020 Google Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 import subprocess
 import tempfile
 import uuid
-import git
 import googleapiclient
 
 from google.api_core.client_options import ClientOptions
@@ -13,9 +26,10 @@ from flask import Flask, request
 app = Flask(__name__)
 
 
-REPO = os.getenv('GIT_REPO')
 PROJECT_ID = os.getenv('PROJECT_ID')
-
+GIT_REPO = os.getenv('GIT_REPO')
+BRANCH = os.getenv('BRANCH') or 'master'
+MODEL_PATH = os.getenv('MODEL_PATH')
 
 @app.route('/')
 def index():
@@ -85,9 +99,14 @@ def train():
         job_id = 'train-babyweight-{}'.format(id_string).replace('-', '_')
         job_dir = os.path.join(job_dir, id_string)
 
-        repo_dir = os.path.join(tmpdir, 'repo')
-        git.Repo.clone_from(REPO, repo_dir, branch='main')
-        train_dir = os.path.join(repo_dir, 'babyweight_model')
+        clone_cmd = 'cd {}; git init; git config core.sparsecheckout true;'\
+                    'git remote add origin {};'\
+                    'echo {} > .git/info/sparse-checkout;'\
+                    'git pull origin {}'
+        clone_cmd = clone_cmd.format(tmpdir, GIT_REPO, MODEL_PATH, BRANCH)
+        subprocess.run(clone_cmd, shell=True, stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
+        train_dir = os.path.join(tmpdir, MODEL_PATH)
         subprocess.run('cd {};python3 setup.py sdist'.format(train_dir),
                        shell=True, stdout=subprocess.DEVNULL,
                        stderr=subprocess.DEVNULL)

@@ -1,5 +1,4 @@
 Flask
-GitPython
 google_apitools
 google-api-python-client
 gunicorn
