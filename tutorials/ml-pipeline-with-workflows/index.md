@@ -3,7 +3,7 @@ title: Creating a custom ML pipeline with Cloud Workflows and serverless service
 description: Learn about using Cloud Workflows to create a custom ML pipeline.
 author: enakai00
 tags: Cloud Workflows, Cloud Run, Dataflow, AI Platform
-date_published: 2021-xx-xx
+date_published: 2021-01-01
 ---
 
 Etsuji Nakai | Solutions Architect | Google
