@@ -269,7 +269,7 @@ The output looks like:
 }
 ```
 
-The following command shows the deployed model.
+Run the following command to confirm that the model has been deployed.
 
 ```bash
 gcloud ai-platform models list --region global
@@ -285,9 +285,11 @@ babyweight_model  v1
 
 ## Automate the whole process with Cloud Workflows
 
+You use Cloud Workflows to automate the steps you have done in the previous section.
+
 ## Deploy the Cloud Workflows template
 
-Create a service account to invoke services on Cloud Run.
+Run the following commands to create a service account and assing the role to invoke services on Cloud Run.
 
 ```bash
 SERVICE_ACCOUNT_NAME="cloud-run-invoker"
@@ -299,7 +301,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
   --role=roles/run.invoker
 ```
 
-Deploy the workflow.
+Run the following commands to deploy the workflow template. You associate the service account that you created in the previous step using the `--service-account` option.
 
 ```
 cd cd $HOME/community/tutorials/ml-pipeline-with-workflows/workflows
@@ -311,23 +313,26 @@ gcloud beta workflows deploy ml_workflow \
   --service-account=$SERVICE_ACCOUNT_EMAIL
 ```
 
-Execute a workflow job.
+Run the following command to execute a workflow job.
 
 ```bash
 gcloud beta workflows execute ml_workflow \
   --data="{\"limit\": 1000, \"bucket\": \"$BUCKET\", \"numTrainExamples\": 5000, \"numEvals\": 2, \"numEvalExamples\": 1000, \"modelName\": \"babyweight_model\", \"versionName\": \"v2\"}"
 ```
 
+You can monitor the status of the job from the [Cloud Console](https://pantheon.corp.google.com/workflows). When the job successfully completed, run the following command to confirm that the model has been deployed.
+
 ```bash
 gcloud ai-platform versions list --model babyweight_model --region global
 ```
+
+The output looks like:
 
 ```
 Using endpoint [https://ml.googleapis.com/]
 NAME  DEPLOYMENT_URI                                                                                 STATE
 v1    gs://workflows-ml-pipeline-pipeline/trained_model/e281aab4-5b4f-40cd-8fe3-f8290037b5fc/export  READY
 ```
-
 
 ## Cleaning up
 
@@ -348,11 +353,6 @@ To delete a project, do the following:
 
 ## What's next
 
-Tell the reader what they should read or watch next if they're interested in learning more.
-
-### Example: What's next
-
-- Watch this tutorial's [Google Cloud Level Up episode on YouTube](https://youtu.be/uBzp5xGSZ6o).
+- Read the tutorial [Structured data prediction using Cloud AI Platform](https://github.com/GoogleCloudPlatform/training-data-analyst/tree/master/blogs/babyweight_keras) to learn the machine learning model you use in this example.
 - Learn more about [AI on Google Cloud](https://cloud.google.com/solutions/ai/).
-- Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
 - Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
