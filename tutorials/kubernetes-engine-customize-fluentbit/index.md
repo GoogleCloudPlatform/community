@@ -40,7 +40,7 @@ $1.14 for 8 hours.
 
 1.  Make sure that billing is enabled for your Google Cloud project.
 
-    [Learn how to confirm whether billing is enabled for your project.](https://cloud.google.com/billing/docs/how-to/modify-project).
+    [Learn how to confirm whether billing is enabled for your project.](https://cloud.google.com/billing/docs/how-to/modify-project)
     
 1.  Enable the Google Kubernetes Engine and Compute Engine APIs.
 
