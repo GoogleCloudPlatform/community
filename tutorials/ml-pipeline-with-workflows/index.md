@@ -271,7 +271,7 @@ The output looks like:
 }
 ```
 
-Run the following command to confirm that the model has been deployed.
+Wait a few minitues, and run the following command to confirm that the model has been deployed. (Note: it may take a few minutes until the deployed version becomes ready.)
 
 ```bash
 gcloud ai-platform models list --region global
@@ -284,6 +284,8 @@ Using endpoint [https://ml.googleapis.com/]
 NAME              DEFAULT_VERSION_NAME
 babyweight_model  v1
 ```
+
+You can also check the deployed model from the [Cloud Console](https://console.cloud.google.com/ai-platform/models).
 
 ## Automate the whole process with Cloud Workflows
 
@@ -303,7 +305,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
   --role=roles/run.invoker
 ```
 
-Run the following commands to deploy the workflow template. You associate the service account that you created in the previous step using the `--service-account` option.
+Run the following commands to deploy the workflow template. You associate it with the service account that you created in the previous step using the `--service-account` option.
 
 ```
 cd $HOME/community/tutorials/ml-pipeline-with-workflows/workflows
@@ -314,6 +316,8 @@ gcloud beta workflows deploy ml_workflow \
   --source=ml_workflow.yaml \
   --service-account=$SERVICE_ACCOUNT_EMAIL
 ```
+
+Wait a few minutes, and proceed to the next step. (Note: it may take a few minutes until the service account becomes ready.)
 
 ### Execute a Workflows job
 
