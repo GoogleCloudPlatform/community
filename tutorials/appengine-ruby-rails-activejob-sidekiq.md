@@ -1,7 +1,7 @@
 ---
 title: Ruby on Rails background processing on App Engine with ActiveJob and Sidekiq
 description: Learn how to run background jobs using Ruby on Rails ActiveJob.
-author: chingor13, mohayat
+author: chingor13,mohayat
 tags: App Engine, Ruby, Ruby on Rails, ActiveJob, Sidekiq
 date_published: 2017-06-08
 ---
