@@ -243,7 +243,7 @@ of your web instances at the cost of potentially using more resources. In order 
 
     Be sure to replace the `[REDIS_IP_ADDRESS]` and `[PASSWORD]` with the internal IP address of your Redis  instance and its required password that you gave it, respectively. Also be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
-    Note that the `path` attribute for both the `liveness_check` and `readiness_check` has been set to the value of `config.path` in your `sidekiq_alive.rb` initializer.
+    Note that the `path` attribute for both the `liveness_check` and `readiness_check` sections has been set to the value of `config.path` in your `sidekiq_alive.rb` initializer.
 
     As mentioned above, you can configure scaling for the worker service independently of the default (web) service.
     In the `manual_scaling` section, you have configured the worker service to start with 1 worker instance. For
