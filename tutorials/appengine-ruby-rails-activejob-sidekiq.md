@@ -11,27 +11,28 @@ Jeff Ching | Software Engineer | Google
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial shows how to create and configure a [Ruby on Rails](http://rubyonrails.org/) application to run
-background processing jobs on App Engine flexible environment using
+background processing jobs on the App Engine flexible environment using
 [ActiveJob](http://guides.rubyonrails.org/active_job_basics.html) and [Sidekiq](http://sidekiq.org/).
 
 ## Objectives
 
-* Create a background processing job
-* Deploy your application to Google App Engine flexible environment
-* Verify background jobs are running
+* Create a background processing job.
+* Deploy your application to the App Engine flexible environment.
+* Verify that background jobs are running.
 
 ## Before you begin
 
 You'll need the following:
 
-* A Google Cloud project. You can use an existing project or click the button to create a new project
-* [Ruby 2.2.2+ installed](https://www.ruby-lang.org/en/documentation/installation/)
+* A Google Cloud project. You can use an existing project or create a new project.
+* [Ruby 2.2.2+ installed](https://www.ruby-lang.org/en/documentation/installation/).
 * A Rails 4.2+ application. Follow the
-  [official "Getting Started with Rails" guide](http://guides.rubyonrails.org/getting_started.html) to get started.
-* [Cloud SDK installed](https://cloud.google.com/sdk/downloads)
+  ["Getting started with Rails" guide](http://guides.rubyonrails.org/getting_started.html) to get started.
+* [Cloud SDK installed](https://cloud.google.com/sdk/downloads).
 * A Redis instance running in your project. Follow [this guide](https://cloud.google.com/community/tutorials/setting-up-redis)
   to set up Redis on Compute Engine. This tutorial assumes the Redis instance is running in the *default*
-  network so that the App Engine services can access it without restriction. Make sure you save or copy the password that you set for the Redis instance, it will be used later in this tutorial.
+  network so that the App Engine services can access it without restriction. Save or copy the password that you set for the Redis instance,
+  which is used later in this tutorial.
 
 ## Costs
 
@@ -50,20 +51,20 @@ and execution logic independently of queue and job runner implementations.
 Ruby on Rails provides command-line tools for generating templated skeletons for things such as database migrations,
 controllers, and even background jobs.
 
-You will create a job named `HelloJob` that will accept a `name` argument and print "Hello #{name}" to standard output.
+You create a job named `HelloJob` that accepts a `name` argument and prints `"Hello #{name}"` to standard output.
 
-1.  Use the Rails generator feature to create `HelloJob`:
+1.  Use the Rails generator feature to create the `HelloJob` job:
 
         bin/rails generate job Hello
 
-   Rails creates stub files from templates:
+    Rails creates stub files from templates:
 
         invoke  test_unit
         create    test/jobs/hello_job_test.rb
         create  app/jobs/hello_job.rb
         create  app/jobs/application_job.rb
 
-1.  Edit your `app/jobs/hello_job.rb` with the following:
+1.  Edit `app/jobs/hello_job.rb` with the following:
 
         class HelloJob < ApplicationJob
           queue_as :default
@@ -76,8 +77,8 @@ You will create a job named `HelloJob` that will accept a `name` argument and pr
    
 ## Create a test URL to queue the job
 
-You will create a controller named `HelloController` that will provide an action called `say` which will queue
-our `HelloJob` to execute in the background.
+You create a controller named `HelloController` that provides an action called `say` that queues
+the `HelloJob` job to run in the background.
 
 1.  Use the Rails generator feature to create `HelloController`:
 
@@ -99,7 +100,7 @@ our `HelloJob` to execute in the background.
         invoke    scss
         create      app/assets/stylesheets/hello.scss
 
-1.  Add a `say` action to `HelloController`. Edit your `app/controllers/hello_controller.rb` with the following:
+1.  Add a `say` action to `HelloController` by adding the following to your `app/controllers/hello_controller.rb` file:
 
         class HelloController < ApplicationController
           def say
@@ -110,16 +111,16 @@ our `HelloJob` to execute in the background.
 
     This action will queue our `HelloJob` with the provided request parameter `name`.
 
-1.  Create a route to this action. In `config/routes.rb`, add:
+1.  Create a route to this action by adding the following to your `config/routes.rb` file:
 
         get '/hello/:name', to: 'hello#say'
 
     When you make an HTTP GET request to `/hello/Jeff`, the `HelloController` will handle the request using the `say`
-    action with parameter `:name` as "Jeff"
+    action with parameter `:name` as `"Jeff"`.
 
 ## Configuring your background worker to use Sidekiq
 
-ActiveJob can be configured with various different background job runners. This tutorial will cover Sidekiq which
+ActiveJob can be configured with various different background job runners. This tutorial uses Sidekiq, which
 requires a Redis instance to manage the job queue.
 
 1.  Add `sidekiq` gem to your `Gemfile`:
@@ -135,16 +136,16 @@ requires a Redis instance to manage the job queue.
 
 ## Deploying to App Engine flexible environment
 
-For Sidekiq, the Redis connection configuration can be provided as an environment variable at runtime. You will
-need to obtain the internal address and password of your redis instance. In the Cloud Console, go to the
-**[VM Instances](https://console.cloud.google.com/compute/instances)** page and find the internal IP address of
-your Compute Engine instance with Redis installed. This IP address along with the password you saved will be provided via environment variables
-at deploy time to configure Sidekiq.
+For Sidekiq, the Redis connection configuration can be provided as an environment variable at run time. You
+need to obtain the internal address and password of your Redis instance. In the Cloud Console, go to the
+**[VM instances](https://console.cloud.google.com/compute/instances)** page and find the internal IP address of
+your Compute Engine instance with Redis installed. This IP address and the password that you saved are be provided through environment variables
+at deployment time to configure Sidekiq.
 
 ### Option A: Shared worker and web application
 
-For this option, the App Engine service will run both the web server and a worker process via a process manager called
-[foreman](https://ddollar.github.io/foreman/). If you choose this method, App Engine will scale your web and worker
+For this option, the App Engine service runs both the web server and a worker process through a process manager called
+[foreman](https://ddollar.github.io/foreman/). If you choose this method, App Engine scales your web and worker
 instances together.
 
 1.  Add `foreman` gem to your `Gemfile`:
@@ -169,7 +170,8 @@ instances together.
           REDIS_PASSWORD: [PASSWORD]
           SECRET_KEY_BASE: [SECRET_KEY]
 
-    Be sure to replace the `[REDIS_IP_ADDRESS]` and `[PASSWORD]` with the internal IP address of your Redis  instance and its required password that you gave it, respectively. Also be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
+    Replace `[REDIS_IP_ADDRESS]` and `[PASSWORD]` with the internal IP address of your Redis instance and its required password that you gave it,
+    respectively. Replace `[SECRET_KEY]` with a secret key for Rails sessions.
 
 1.  Deploy to App Engine
 
@@ -177,11 +179,13 @@ instances together.
 
 ### Option B: Separate worker and web application
 
-For this option, you are creating 2 App Engine services - one runs the web server and one runs worker processes. Both
+For this option, you create two App Engine services: one runs the web server and one runs worker processes. Both
 services use the same application code. This configuration allows you to scale background worker instances independently
-of your web instances at the cost of potentially using more resources. In order to pass the App Engine health checks and keep your background worker instance alive, you will use the [sidekiq_alive](https://github.com/arturictus/sidekiq_alive) gem to enable the sidekiq server to respond to each liveness and readiness request with a `200` HTTP status code.
+of your web instances at the cost of potentially using more resources. To pass the App Engine health checks and keep your background worker instance 
+alive, you use the [sidekiq_alive](https://github.com/arturictus/sidekiq_alive) gem to enable the Sidekiq server to respond to each liveness and readiness 
+request with a `200` HTTP status code.
 
-1. Add `sidekiq_alive` to your `Gemfile`:
+1.  Add `sidekiq_alive` to your `Gemfile`:
 
         bundle add sidekiq_alive
 
@@ -201,8 +205,7 @@ of your web instances at the cost of potentially using more resources. In order 
           config.server = 'puma'
         end
 
-
-1.  Create an `app.yaml` for deploying the web service to Google App Engine:
+1.  Create an `app.yaml` file for deploying the web service to App Engine:
 
         runtime: ruby
         env: flex
@@ -215,9 +218,10 @@ of your web instances at the cost of potentially using more resources. In order 
           REDIS_PASSWORD: [PASSWORD]
           SECRET_KEY_BASE: [SECRET_KEY]
 
-    Be sure to replace the `[REDIS_IP_ADDRESS]` and `[PASSWORD]` with the internal IP address of your Redis  instance and its required password that you gave it, respectively. Also be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
+    Replace `[REDIS_IP_ADDRESS]` and `[PASSWORD]` with the internal IP address of your Redis instance and its required password that you gave it,
+    respectively. Replace `[SECRET_KEY]` with a secret key for Rails sessions.
 
-1.  Create a `worker.yaml` for deploying the worker service to Google App Engine:
+1.  Create a `worker.yaml` file for deploying the worker service to App Engine:
 
         runtime: ruby
         env: flex
@@ -241,13 +245,16 @@ of your web instances at the cost of potentially using more resources. In order 
         manual_scaling:
           instances: 1
 
-    Be sure to replace the `[REDIS_IP_ADDRESS]` and `[PASSWORD]` with the internal IP address of your Redis  instance and its required password that you gave it, respectively. Also be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
+    Replace `[REDIS_IP_ADDRESS]` and `[PASSWORD]` with the internal IP address of your Redis instance and its required password that you gave it, respectively.
+    Replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
-    Note that the `path` attribute for both the `liveness_check` and `readiness_check` sections has been set to the value of `config.path` in your `sidekiq_alive.rb` initializer.
+    The `path` attribute for both the `liveness_check` and `readiness_check` sections has been set to the value of `config.path` in your `sidekiq_alive.rb` 
+    initializer.
 
-    As mentioned above, you can configure scaling for the worker service independently of the default (web) service.
-    In the `manual_scaling` section, you have configured the worker service to start with 1 worker instance. For
-    more information on scaling options, see [scaling configuration options in app.yaml](https://cloud.google.com/appengine/docs/flexible/ruby/configuring-your-app-with-app-yaml#services).
+    As mentioned above, you can configure scaling for the worker service independent of the default (web) service.
+    In the `manual_scaling` section, you have configured the worker service to start with one worker instance. For
+    more information on scaling options, see
+    [scaling configuration options in app.yaml](https://cloud.google.com/appengine/docs/flexible/ruby/configuring-your-app-with-app-yaml#services).
     If you choose an `automatic_scaling` option, be aware that scaling for the background processing is based off
     of CPU utilization, not queue size.
 
@@ -255,29 +262,29 @@ of your web instances at the cost of potentially using more resources. In order 
 
         gcloud app deploy app.yaml worker.yaml
 
-## Verify your background queuing works
+## Verify that background queuing works
 
 1.  In the Cloud Console, go to the
-    **[App Engine Services](https://console.cloud.google.com/appengine/services)** page. Locate the service that is
+    **[App Engine services](https://console.cloud.google.com/appengine/services)** page. Locate the service that is
     running your background workers (if option A, it should be the *default* service, if option B, it should be
-    the *worker* service). Click Tools -> Logs for that service.
+    the *worker* service). Click **Tools** > **Logs** for that service.
 
-1.  In a separate window, navigate to your deployed Rails application at:
+1.  In a separate window, navigate to your deployed Rails application:
 
         https://[YOUR_PROJECT_ID].appspot.com/hello/Jeff
 
-    Be sure to replace `[YOUR_PROJECT_ID]` with your Google Cloud project ID.
+    Replace `[YOUR_PROJECT_ID]` with your Google Cloud project ID.
 
 1.  Navigate back to the Logs dashboard. In the **Filter by label or text search** field, add `"Hello, Jeff"`
     and you should see a logging statement like the following if using foreman:
 
         13:13:52.000 worker.1 | Hello, Jeff
 
-    or if using a second service:
+    Or, if using a second service:
 
         13:13:52.000 Hello, Jeff
 
-Congratulations! You have successfully set up background job processing on Google App Engine with Sidekiq.
+Congratulations! You have successfully set up background job processing on App Engine with Sidekiq.
 
 ## Cleaning up
 
@@ -288,8 +295,6 @@ resources.
 ### Deleting the project
 
 The easiest way to eliminate billing is to delete the project you created for the tutorial.
-
-To delete the project:
 
 1. In the Cloud Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
 1. Click the trash can icon to the right of the project name.
@@ -307,7 +312,7 @@ To delete an App Engine service:
 1. Click the checkbox next to the service you wish to delete.
 1. Click **Delete** at the top of the page to delete the service.
 
-If you are trying to delete the *default* service, you cannot. Instead:
+If you are trying to delete the *default* service, you cannot. Instead, do the following:
 
 1. Click on the number of versions which will navigate you to App Engine Versions page.
 1. Select all the versions you wish to disable and click **Stop** at the top of the page. This will free
