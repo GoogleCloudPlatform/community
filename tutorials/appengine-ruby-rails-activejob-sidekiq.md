@@ -31,7 +31,7 @@ You'll need the following:
 * [Cloud SDK installed](https://cloud.google.com/sdk/downloads)
 * A Redis instance running in your project. Follow [this guide](https://cloud.google.com/community/tutorials/setting-up-redis)
   to set up Redis on Compute Engine. This tutorial assumes the Redis instance is running in the *default*
-  network so that the App Engine services can access it without restriction. Make sure you save or copy the password that you set for the instance, it will be used later in this tutorial.
+  network so that the App Engine services can access it without restriction. Make sure you save or copy the password that you set for the Redis instance, it will be used later in this tutorial.
 
 ## Costs
 
@@ -179,13 +179,13 @@ instances together.
 
 For this option, you are creating 2 App Engine services - one runs the web server and one runs worker processes. Both
 services use the same application code. This configuration allows you to scale background worker instances independently
-of your web instances at the cost of potentially using more resources. In order to pass the App Engine health checks and keep your background worker instance alive, you will need to use the [sidekiq_alive](https://github.com/arturictus/sidekiq_alive) gem to enable the sidekiq server to respond to each liveness and readiness request with a `200` HTTP status code.
+of your web instances at the cost of potentially using more resources. In order to pass the App Engine health checks and keep your background worker instance alive, you will use the [sidekiq_alive](https://github.com/arturictus/sidekiq_alive) gem to enable the sidekiq server to respond to each liveness and readiness request with a `200` HTTP status code.
 
 1. Add `sidekiq_alive` to your `Gemfile`:
 
         bundle add sidekiq_alive
 
-1.  Create a `sidekiq_alive.rb` initializer in your application's `config/initializers` directory: 
+1.  Create a `sidekiq_alive.rb` initializer. In `config/initializers`: 
 
         SidekiqAlive.setup do |config|
           # ==> Server port
@@ -221,6 +221,7 @@ of your web instances at the cost of potentially using more resources. In order 
 
         runtime: ruby
         env: flex
+        service: worker
 
         entrypoint: bundle exec sidekiq
 
