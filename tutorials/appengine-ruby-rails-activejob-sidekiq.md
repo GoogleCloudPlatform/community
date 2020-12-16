@@ -1,7 +1,7 @@
 ---
 title: Ruby on Rails background processing on App Engine with ActiveJob and Sidekiq
 description: Learn how to run background jobs using Ruby on Rails ActiveJob.
-author: chingor13
+author: chingor13, mohayat
 tags: App Engine, Ruby, Ruby on Rails, ActiveJob, Sidekiq
 date_published: 2017-06-08
 ---
@@ -31,7 +31,7 @@ You'll need the following:
 * [Cloud SDK installed](https://cloud.google.com/sdk/downloads)
 * A Redis instance running in your project. Follow [this guide](https://cloud.google.com/community/tutorials/setting-up-redis)
   to set up Redis on Compute Engine. This tutorial assumes the Redis instance is running in the *default*
-  network so that the App Engine services can access it without restriction.
+  network so that the App Engine services can access it without restriction. Make sure you save or copy the password that you set for the instance, it will be used later in this tutorial.
 
 ## Costs
 
@@ -136,9 +136,9 @@ requires a Redis instance to manage the job queue.
 ## Deploying to App Engine flexible environment
 
 For Sidekiq, the Redis connection configuration can be provided as an environment variable at runtime. You will
-need to obtain the internal address of your redis instance. In the Cloud Console, go to the
+need to obtain the internal address and password of your redis instance. In the Cloud Console, go to the
 **[VM Instances](https://console.cloud.google.com/compute/instances)** page and find the internal IP address of
-your Compute Engine instance with Redis installed. This IP address will be provided via environment variables
+your Compute Engine instance with Redis installed. This IP address along with the password you saved will be provided via environment variables
 at deploy time to configure Sidekiq.
 
 ### Option A: Shared worker and web application
@@ -166,10 +166,10 @@ instances together.
         env_variables:
           REDIS_PROVIDER: REDIS_URL
           REDIS_URL: redis://[REDIS_IP_ADDRESS]:6379
+          REDIS_PASSWORD: [PASSWORD]
           SECRET_KEY_BASE: [SECRET_KEY]
 
-    Be sure to replace the `[REDIS_IP_ADDRESS]` with the internal IP address of your Redis   instance. Also be sure to
-    replace the `[SECRET_KEY]` with a secret key for Rails sessions.
+    Be sure to replace the `[REDIS_IP_ADDRESS]` and `[PASSWORD]` with the internal IP address of your Redis  instance and its required password that you gave it, respectively. Also be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
 1.  Deploy to App Engine
 
@@ -179,7 +179,28 @@ instances together.
 
 For this option, you are creating 2 App Engine services - one runs the web server and one runs worker processes. Both
 services use the same application code. This configuration allows you to scale background worker instances independently
-of your web instances at the cost of potentially using more resources.
+of your web instances at the cost of potentially using more resources. In order to pass the App Engine health checks and keep your background worker instance alive, you will need to use the [sidekiq_alive](https://github.com/arturictus/sidekiq_alive) gem to enable the sidekiq server to respond to each liveness and readiness request with a `200` HTTP status code.
+
+1. Add `sidekiq_alive` to your `Gemfile`:
+
+        bundle add sidekiq_alive
+
+1.  Create a `sidekiq_alive.rb` initializer in your application's `config/initializers` directory: 
+
+        SidekiqAlive.setup do |config|
+          # ==> Server port
+          # Port to bind the server.
+          config.port = 8080
+
+          # ==> Server path
+          # HTTP path to respond to.
+          config.path = '/health_check'
+
+          # ==> Rack server
+          # Web server used to serve an HTTP response.
+          config.server = 'puma'
+        end
+    
 
 1.  Create an `app.yaml` for deploying the web service to Google App Engine:
 
@@ -191,36 +212,37 @@ of your web instances at the cost of potentially using more resources.
         env_variables:
           REDIS_PROVIDER: REDIS_URL
           REDIS_URL: redis://[REDIS_IP_ADDRESS]:6379
+          REDIS_PASSWORD: [PASSWORD]
           SECRET_KEY_BASE: [SECRET_KEY]
 
-    Be sure to replace the `[REDIS_IP_ADDRESS]` with the internal IP address of your Redis  instance. Also be sure to
-    replace the `[SECRET_KEY]` with a secret key for Rails sessions.
+    Be sure to replace the `[REDIS_IP_ADDRESS]` and `[PASSWORD]` with the internal IP address of your Redis  instance and its required password that you gave it, respectively. Also be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
 1.  Create a `worker.yaml` for deploying the worker service to Google App Engine:
 
         runtime: ruby
         env: flex
-        service: worker
 
         entrypoint: bundle exec sidekiq
 
         env_variables:
           REDIS_PROVIDER: REDIS_URL
           REDIS_URL: redis://[REDIS_IP_ADDRESS]:6379
+          REDIS_PASSWORD: [PASSWORD]
           SECRET_KEY_BASE: [SECRET_KEY]
 
-        health_check:
-          enable_health_check: False
+        liveness_check: 
+          path: '/health_check'
+
+        readiness_check:
+          path: '/health_check'
 
         # Optional scaling configuration
         manual_scaling:
           instances: 1
 
-    Be sure to replace the `[REDIS_IP_ADDRESS]` with the internal IP address of your Redis instance. Also be sure to
-    replace the `[SECRET_KEY]` with a secret key for Rails sessions.
+    Be sure to replace the `[REDIS_IP_ADDRESS]` and `[PASSWORD]` with the internal IP address of your Redis  instance and its required password that you gave it, respectively. Also be sure to replace the `[SECRET_KEY]` with a secret key for Rails sessions.
 
-    Note that the health check is disabled here because the worker service is not running a web server and cannot
-    respond to the health check ping.
+    Note that the `path` attributes for both the `liveness_check` and `readiness_check` has been set to the value of `config.path` in your `sidekiq_alive.rb` initializer.
 
     As mentioned above, you can configure scaling for the worker service independently of the default (web) service.
     In the `manual_scaling` section, you have configured the worker service to start with 1 worker instance. For
