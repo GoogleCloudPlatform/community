@@ -200,7 +200,7 @@ of your web instances at the cost of potentially using more resources. In order 
           # Web server used to serve an HTTP response.
           config.server = 'puma'
         end
-    
+
 
 1.  Create an `app.yaml` for deploying the web service to Google App Engine:
 
