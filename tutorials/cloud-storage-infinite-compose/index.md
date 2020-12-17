@@ -123,7 +123,7 @@ def compose(object_path: str, slices: List[storage.Blob],
     for chunk in generate_composition_chunks(slices):
         chunk.insert(0, final_blob)
         final_blob.compose(chunk, client=client)
-        delete_objects_concurrent(slices[1:], executor, client)
+        delete_objects_concurrent(chunk[1:], executor, client)
         sleep(1)  # can only modify object once per second  
 
     return final_blob
