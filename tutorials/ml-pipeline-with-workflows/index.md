@@ -1,9 +1,9 @@
 ---
-title: Creating a custom ML pipeline with Cloud Workflows and serverless services on GCP
-description: Learn about using Cloud Workflows to create a custom ML pipeline.
+title: Create a custom machine learning pipeline with Cloud Workflows and serverless services
+description: Learn about using Cloud Workflows to create a custom machine learning pipeline.
 author: enakai00
-tags: Cloud Workflows, Cloud Run, Dataflow, AI Platform
-date_published: 2021-01-01
+tags: Cloud Workflows, Cloud Run, Dataflow, AI Platform, ML
+date_published: 2020-12-21
 ---
 
 Etsuji Nakai | Solutions Architect | Google
@@ -12,7 +12,7 @@ Etsuji Nakai | Solutions Architect | Google
 
 This tutorial explains how you can use [Cloud Workflows](https://cloud.google.com/workflows) and other serverless services, such as [Cloud Run](https://cloud.google.com/run), to create a custom ML pipeline. The ML usecase is based on the [babyweight model example](https://github.com/GoogleCloudPlatform/training-data-analyst/blob/master/blogs/babyweight_keras/babyweight.ipynb). The following diagram shows the overall architecture of what you build in this tutorial.
 
-<img src="https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/ml-pipeline-with-workflows/img/architecture.png?raw=true" width="640px">
+<img src="https://storage.googleapis.com/gcp-community/tutorials/ml-pipeline-with-workflows/architecture.png">
 
 * You deploy two microservices on Cloud Run. One is to launch a Dataflow pipeline to preprocess the training data. The orignal data stored in BigQuery are coverted to CSV files and stored in Cloud Storage bucket. The other is to launch a ML training job on Cloud AI Platform, and deploy the trained model for predctions. The ML model files are cloned from the GitHub repository.
 
