@@ -1,12 +1,10 @@
 ---
-title: How to compose an infinite number of objects into one in Cloud Storage
-description: Overview of the APIs and appropriate programming techniques for being a power-user of the Cloud Storage compose feature.
+title: Composing an infinite number of objects into one object in Cloud Storage
+description: Overview of the APIs and programming techniques for being a power user of the Cloud Storage compose feature.
 author: domZippilli
 tags: object storage, compose, concatenate, 
-date_published: 2020-12-09
+date_published: 2020-12-21
 ---
-
-# How to compose an infinite number of objects into one in Cloud Storage
 
 Dom Zippilli | Solutions Architect | Google Cloud
 
@@ -45,7 +43,7 @@ The problem we have here can fit nicely into an [accumulator](https://runestone.
 
 If we think of compose as a function, it accepts a list up to 32 objects and "accumulates" them, through concatenation, into the return value. Since the return value is just another object, and composed objects are composable, we can put the new object in a list along with 31 more, and compose again, ad infinitum.
 
-![drawing](./figure1.svg)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/cloud-storage-infinite-compose/figure1.svg)
 
 In the above diagram, this concept is illustrated using the final object as the accumulator. Initially, it's created as a 0-byte object, and then the component objects are accumulated into it 31 at a time until completion.
 
@@ -158,7 +156,7 @@ The implementation above has one big advantage, which is that it's pretty simple
 
 We could remove both of these disadvantages by using multiple accumulators across the composite objects, then accumulating the accumulators, until we get down to one. This would form a tree-like structure of accumulators:
 
-![drawing](./figure2.svg)
+![drawing](https://storage.googleapis.com/gcp-community/tutorials/cloud-storage-infinite-compose/figure2.svg)
 
 This has some disadvantages, though they can be mitigated:
 
