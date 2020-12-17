@@ -123,15 +123,11 @@ def compose(object_path: str, slices: List[storage.Blob],
     for chunk in generate_composition_chunks(slices):
         chunk.insert(0, final_blob)
         final_blob.compose(chunk, client=client)
-        sleep(1)  # can only modify object once per second
-
-    LOG.info("Cleanup")
-    delete_objects_concurrent(slices, executor, client)
+        delete_objects_concurrent(slices[1:], executor, client)
+        sleep(1)  # can only modify object once per second  
 
     return final_blob
 ```
-
-A nice optimization to the above might be to copy the 31 item list on each iteration, and dispatch them to be deleted after each compose step completes.
 
 The `delete_objects_concurrent` function is pretty trivial, using fire-and-forget delete tasks in an Executor. A more robust implementation might check the Futures from the submitted tasks. The short sleep helps to avoid a [thundering herd](https://en.wikipedia.org/wiki/Thundering_herd_problem) and ensure that we don't get our deletes throttled.
 
