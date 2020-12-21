@@ -6,7 +6,9 @@ tags: Dataflow, Java, OutOfMemoryError
 date_published: 2020-02-28
 ---
 
-Nahuel Lofeudo, Google LLC
+Nahuel Lofeudo | Supportability Tech Lead | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 One of the most common causes of failures and slowdowns in Dataflow pipelines is workers' Java virtual machines running out
 of memory. This document is a summary of the information that you need in order to detect and troubleshoot out-of-memory 
@@ -74,8 +76,11 @@ To confirm that your job is failing because of memory issues, do the following:
 
 If you get any results back, then your job is running out of memory.
 
-The messages `"thrashing=true"` and `"OutOfMemoryError"` come from the JVM. They mean that the Java code is exhausting the 
-JVM's heap. Later sections of this document explain how to troubleshoot these errors.
+The messages `"thrashing=true"` and `"OutOfMemoryError"` come from the JVM. Generally, these messages mean that the Java
+code is exhausting the JVM's heap. Later sections of this document explain how to troubleshoot these errors. Note that some 
+classes throw `OutOfMemoryError` even if they have enough heap memory. For example,
+[ByteArrayOutputStream](https://github.com/openjdk/jdk/blob/jdk8-b120/jdk/src/share/classes/java/io/ByteArrayOutputStream.java#L110) cannot grow over 2GB. Check the stacktrace of 
+`OutOfMemoryError` to see if your job has hit this case.
 
 The message `"Out of memory: kill process [PID] ([PROCESS_NAME]) score [NUMBER] or sacrifice child"` means that some other
 process in the worker is causing the Compute Engine machine itself to run out of RAM. Dataflow workers don't have swap 
@@ -251,16 +256,12 @@ the number of threads to use. The lower the number of threads, the larger the am
 ## Takeaways
 
 * Just because your Dataflow workers have a certain amount of RAM installed, that doesn't mean that your code can use all 
-  of that memory. There are many other things going on in the worker machines.
-
-  * If your pipeline *doesn't* use Dataflow Shuffle (batch) or Streaming Engine (streaming), then the heap available to your 
-    code is roughly 40% of the total memory.
-  * If your pipeline *does* use Dataflow Shuffle or Streaming Engine, then the heap available to your code is roughly 80% of 
-    the total memory.
+  of that memory. There are many other things going on in the worker machines, so the heap available to your code is roughly 
+  70% of the total memory in the worker.
 
 * The Java heap is shared across all Java threads and all instances of your DoFns.
 
-* Make sure that each DoFn never uses more than a fraction of the total memory. 
+* Make sure that each DoFn never uses more than a fraction of the total memory.
 
 * Don't cache or buffer data. Dataflow takes care of that for you. Keep as little state in RAM as possible.
 

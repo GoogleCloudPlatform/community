@@ -1,14 +1,14 @@
 ---
-title: Modeling Entity Relationships on Google App Engine Standard Environment
-description: Learn how model entity relationships on Google App Engine standard environment.
+title: Modeling entity relationships on App Engine standard environment
+description: Learn how to model entity relationships on App Engine standard environment.
 author: devlance
 tags: App Engine, Datastore
 date_published: 2008-06-01
 ---
 
-*Rafe Kaplan*
+Rafe Kaplan | Google
 
-*June 2008*
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 Sure, the Getting Started Guide tells you what you need to know in order to fill
 properties for a simple App Engine model, but it's going to take more than that

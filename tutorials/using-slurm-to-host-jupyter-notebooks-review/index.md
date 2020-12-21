@@ -6,6 +6,10 @@ tags: GCE, Slurm, Jupyter
 date_published: 2019-01-11
 ---
 
+Ward Harold | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows you how to run a [Jupyter Notebook](https://jupyter.org) as a job managed by the [Slurm Resource Manager](https://slurm.schedmd.com).
 
 Slurm is a popular resource manager used in many high-performance computing centers. Jupyter notebooks are a
@@ -27,7 +31,7 @@ Edit [env.sh](https://github.com/GoogleCloudPlatform/community/blob/master/tutor
 - **`[YOUR_ORG]`**: the name of the [organization](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#cloud_platform_resource_hierarchy_and_iam_policy_hierarchy) that will own your project
 - **`[YOUR_BILLING_ACCOUNT_NAME]`**: the name of the account responsible for any costs incurred by your project
 - **`[NAME FOR THE PROJECT YOU WILL CREATE]`**: the name of your project
-- **`[COMPUTE ZONE YOU WANT TO USE]`**: the name of the Google Cloud Platform (GCP) compute zone that will contain your project
+- **`[COMPUTE ZONE YOU WANT TO USE]`**: the name of the Google Cloud compute zone that will contain your project
 
 ```bash
 source ./env.sh
@@ -53,7 +57,7 @@ gcloud services enable compute.googleapis.com
 
 ## Create a Slurm cluster
 
-1. Clone the Slurm for GCP Git repository
+1. Clone the Slurm for Google Cloud Git repository
 ```bash
 git clone https://github.com/schedmd/slurm-gcp.git
 ```
@@ -162,7 +166,7 @@ google1-compute1
 google1-compute2
 ```
 
-## Setup an Anaconda environment module
+## Set up an Anaconda environment module
 
 Environment modules update your environment variables, such as `PATH`, `MANPATH`, and `LD_LIBRARY_LOAD` to include 
 information necessary to access specific software components. In this step, you install the
@@ -304,7 +308,7 @@ gcloud compute ssh google1-compute2 -- -A -t -l wkh_google_com -L 8080:10.10.0.4
 [I 18:50:41.854 NotebookApp] 302 GET /?authuser=0 (10.10.0.4) 0.63ms
 ```
 
-## Setup an SSH tunnel to your Notebook
+## Set up an SSH tunnel to your Notebook
 
 You can access your notebook from the Cloud Shell using the Web Preview tool.
 

@@ -1,17 +1,18 @@
 ---
-title: Record and Analyze Voice Calls with Twilio and the Google Machine Learning APIs on Google Cloud Functions
-description: Learn how to record, transcribe, and analyze voice calls with Twilio and the Google Machine Learning APIs on Google Cloud Functions.
+title: Record and analyze voice calls with Twilio and the Google machine learning APIs on Cloud Functions
+description: Learn how to record, transcribe, and analyze voice calls with Twilio and the Google machine learning APIs on Cloud Functions.
 author: jmdobry
 tags: Cloud Functions, Twilio, Cloud Speech API, Cloud Natural Language API, Node.js
 date_published: 2017-02-20
 ---
-## Introduction
 
-This tutorial demonstrates using [Google Cloud Functions][functions] to
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This tutorial demonstrates using [Cloud Functions][functions] to
 record incoming voice calls using [Twilio][twilio]. The recordings are then
-transcribed by the [Google Cloud Speech API][speech] and analyzed by the
-[Google Cloud Natural Language API][nl]. The final results are stored in a
-[Google Cloud Storage][storage] bucket. The Cloud Function is implemented in
+transcribed by the [Cloud Speech API][speech] and analyzed by the
+[Cloud Natural Language API][nl]. The final results are stored in a
+[Cloud Storage][storage] bucket. The Cloud Function is implemented in
 [Node.js][node].
 
 [functions]: https://cloud.google.com/functions
@@ -42,12 +43,12 @@ in a Cloud Storage bucket.
 Twilio has a free trial, but you need to upgrade to disable the default message
 that is played for anyone who calls your Twilio phone number.
 
-This tutorial uses billable components of Google Cloud Platform, including:
+This tutorial uses billable components of Google Cloud, including:
 
-- Google Cloud Functions
-- Google Cloud Natural Language API
-- Google Cloud Speech API
-- Google Cloud Storage
+- Cloud Functions
+- Cloud Natural Language API
+- Cloud Speech API
+- Cloud Storage
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
 projected usage.
@@ -56,25 +57,25 @@ projected usage.
 
 ## Prerequisites
 
-1.  Create a project in the [Google Cloud Platform Console][console].
+1.  Create a project in the [Cloud Console][console].
 1.  Enable billing for your project.
-1.  [Enable the Google Cloud Functions API][enable_functions].
-1.  [Enable the Google Cloud Speech API][enable_speech].
-1.  [Enable the Google Cloud Natural Language API][enable_nl].
+1.  [Enable the Cloud Functions API][enable_functions].
+1.  [Enable the Cloud Speech API][enable_speech].
+1.  [Enable the Cloud Natural Language API][enable_nl].
 1.  Create a Cloud Storage bucket in which to store voice recordings and the
     results of your analysis:
 
         gsutil mb -p [YOUR_PROJECT_ID] gs://[RESULTS_BUCKET]
 
-    * Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
+    * Replace `[YOUR_PROJECT_ID]` with your Google Cloud project ID.
     * Replace `[RESULTS_BUCKET]` with the name you want for your new bucket.
       You'll need the name of this bucket later in this tutorial.
 
-    You can also create a bucket in the [Google Cloud Console][make_bucket].
+    You can also create a bucket in the [Cloud Console][make_bucket].
 
-1.  Install and initialize the [Google Cloud SDK][sdk].
+1.  Install and initialize the [Cloud SDK][sdk].
 
-    1. After initializing the SDK, install the Beta components:
+    1. After initializing the SDK, install the beta components:
 
             gcloud components install beta
 
@@ -100,7 +101,7 @@ projected usage.
 
             https://us-central1-[YOUR_PROJECT_ID].cloudfunctions.net/handleCall
 
-        Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
+        Replace `[YOUR_PROJECT_ID]` with your Google Cloud project ID.
 
     1.  Click **Save**.
 
@@ -432,8 +433,3 @@ deleting a project will only happen after the current billing cycle ends.
 ## Next steps
 
 - Learn more about [Twilio and Programmable Voice](https://www.twilio.com/docs/guides/voice).
-- View other [Cloud Functions community tutorials](https://cloud.google.com/community/tutorials/search?q=cloud%20functions).
-- View other [Twilio community tutorials](https://cloud.google.com/community/tutorials/search?q=twilio).
-- View other [Cloud Speech API community tutorials](https://cloud.google.com/community/tutorials/search?q=cloud%20speech%20api).
-- View other [Cloud Natural Language API community tutorials](https://cloud.google.com/community/tutorials/search?q=cloud%20natural%20language%20api).
-- View other [Node.js community tutorials](https://cloud.google.com/community/tutorials/search?q=node).

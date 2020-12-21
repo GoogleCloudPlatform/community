@@ -6,6 +6,8 @@ tags: Cloud Functions, GitHub, Node.js
 date_published: 2018-05-14
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This tutorial demonstrates how to use [Cloud Build][gcb] as
 a continuous integration service for GitHub repositories. You will implement a
 [Cloud Function][gcf] that listens to build events and updates the

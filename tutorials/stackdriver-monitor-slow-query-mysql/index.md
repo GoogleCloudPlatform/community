@@ -1,18 +1,22 @@
 ---
-title: Monitoring slow queries in MySQL with Stackdriver
-description: Learn how to monitor slow queries with SQL statements in MySQL with Stackdriver Logging and Monitoring.
+title: Monitoring slow queries in MySQL with Cloud Logging and Monitoring
+description: Learn how to monitor slow queries with SQL statements in MySQL with Cloud Logging and Monitoring.
 author: jwlee98,jpatokal
 tags: Stackdriver, logging, monitoring, slow queries, MySQL
 date_published: 2019-07-10
 ---
 
+Jungwoon Lee and Jani Patokallio | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial describes how to log and monitor [Cloud SQL for MySQL](https://cloud.google.com/sql/) slow queries
-using [Stackdriver](https://cloud.google.com/monitoring/). This tutorial is intended for database administrators and
+using [Cloud Logging and Monitoring](https://cloud.google.com/monitoring/). This tutorial is intended for database administrators and
 DevOps personnel responsible for monitoring and maintaining MySQL databases.
 
 The slow query log feature in [MySQL](http://mysql.com) enables you to log queries that exceed a predefined time limit.
 This greatly simplifies the task of finding inefficient or time-consuming queries. By integrating these logs with 
-Stackdriver, you can keep an eye on database performance, allowing you to identify which queries need optimization and,
+Cloud Logging and Monitoring, you can keep an eye on database performance, allowing you to identify which queries need optimization and,
 optionally, be alerted when there are too many slow queries.
 
 ![architecture diagram](https://storage.googleapis.com/gcp-community/tutorials/stackdriver-monitor-slow-query-mysql/stackdriver-monitor-slow-query-mysql-0.jpg)
@@ -20,21 +24,21 @@ optionally, be alerted when there are too many slow queries.
 This tutorial can also be used with self-managed MySQL instances running on Compute Engine. 
 
 See the appendix at the end of this document for instructions on how to configure a self-managed instance to send slow
-query logs to Stackdriver.
+query logs to Cloud Logging.
 
 ## Objectives
 
 *   Learn how to enable slow query logs in Cloud SQL.
-*   Learn how to access slow query logs in Stackdriver Logging.
+*   Learn how to access slow query logs in Cloud Logging.
 *   Learn how to create log-based metrics for alerting and troubleshooting.
 
 ## Costs
 
-This tutorial uses the following billable components of Google Cloud Platform (GCP): 
+This tutorial uses the following billable components of Google Cloud: 
 
 *   Cloud SQL for MySQL
-*   Stackdriver Logging
-*   Stackdriver Monitoring
+*   Cloud Logging
+*   Cloud Monitoring
 
 You can use the [pricing calculator](https://cloud.google.com/products/calculator/#id=817ac158-90f0-4e79-90f6-3e52c7b28a9c)
 to generate a cost estimate based on your projected usage. For example, if your slow query log contains 10 distinct SQL 
@@ -45,8 +49,8 @@ statements every minute, so they generate 0.033 MB of metrics per month, your to
 ## Turn on slow query logs for Cloud SQL for MySQL 
 
 Cloud SQL for MySQL is a fully managed database service that makes it easy to set up, maintain, manage, and administer
-your MySQL databases on GCP. Cloud SQL comes with
-[built-in Stackdriver Logging integration](https://cloud.google.com/sql/docs/mysql/diagnose-issues), so MySQL logs are
+your MySQL databases on Google Cloud. Cloud SQL comes with
+[built-in Cloud Logging integration](https://cloud.google.com/sql/docs/mysql/diagnose-issues), so MySQL logs are
 available in the Logs Viewer.
 
 1.  [Open Cloud Shell](https://console.cloud.google.com/home/dashboard?cloudshell=true) and set a
@@ -76,7 +80,7 @@ slow queries enabled, you can use `gcloud sql instances patch` to set the flags:
 
 ## View the slow query log
 
-To view the slow query log is in the Stackdriver Logging viewer, do the following:
+To view the slow query logs in the Logging viewer, do the following:
 
 1.  Go to the [**Logs Viewer** page](https://console.cloud.google.com/logs/viewer).
 1.  From the leftmost dropdown, select **Cloud SQL** and the cloudsql001 database.
@@ -89,7 +93,7 @@ To view the slow query log is in the Stackdriver Logging viewer, do the followin
 You now have slow query logs enabled, but your new database does not have any slow logs yet. In this section, you run a load 
 test to create a test database and some slow queries to monitor. 
 
-Note: If you are using an existing database that already has slow queries visible in the Logs Viewer, you can skip this 
+If you are using an existing database that already has slow queries visible in the Logs Viewer, you can skip this 
 section and proceed directly to the next section.
 
 MySQL comes with a diagnostic tool called [`mysqlslap`](https://dev.mysql.com/doc/refman/8.0/en/mysqlslap.html). This
@@ -170,23 +174,23 @@ simulating simultaneous connections to the database server.
 
     The test may take several minutes. 
     
-1.  After the test has completed, return to the Stackdriver Logging
+1.  After the test has completed, return to the Cloud Logging
     [**Logs Viewer** page](https://console.cloud.google.com/logs/viewer). 
 
     ![logviewer02](https://storage.googleapis.com/gcp-community/tutorials/stackdriver-monitor-slow-query-mysql/stackdriver-monitor-slow-query-mysql-2.png)
 
 Slow queries from the load test starting with `SELECT` should now be visible.
 
-## Create log-based metrics with Stackdriver Monitoring
+## Create log-based metrics with Cloud Monitoring
 
-[Logs-based metrics](https://cloud.google.com/logging/docs/logs-based-metrics/) are Stackdriver Monitoring metrics that are 
+[Logs-based metrics](https://cloud.google.com/logging/docs/logs-based-metrics/) are Cloud Monitoring metrics that are 
 based on the content of log entries. For example, metrics can record the number of log entries containing particular 
 messages, or they can extract latency information reported in log entries. In this section, you create a metric that 
 measures the number of MySQL slow queries.
 
-### Filter the Stackdriver Logging view
+### Filter the Cloud Logging view
 
-To create a logs-based metric, start by filtering your Stackdriver Logging view to match the logs you want to measure:
+To create a logs-based metric, start by filtering your Cloud Logging view to match the logs you want to measure:
 
 1.  Click the small triangle at the far right side of the **Filter by label or text search** search box and
     choose **Convert to advanced filter**.
@@ -220,11 +224,11 @@ Metrics only start recording data after they have been created.
     The new metric is now visible under [User-defined metrics](https://console.cloud.google.com/logs/metrics).
     
 1.  Click the three dots icon to the left of the `user/sql_slow` metric to open the menu, and then
-    click **View in Metrics Explorer** to see the new metric in Stackdriver Monitoring.
+    click **View in Metrics Explorer** to see the new metric in Cloud Monitoring.
 
     ![userdefinedmetric](https://storage.googleapis.com/gcp-community/tutorials/stackdriver-monitor-slow-query-mysql/stackdriver-monitor-slow-query-mysql-4.png)
 
-    It may take several minutes for the resulting data to appear in Stackdriver. 
+    It may take several minutes for the resulting data to appear in Cloud Monitoring. 
 
     ![metricexplorer](https://storage.googleapis.com/gcp-community/tutorials/stackdriver-monitor-slow-query-mysql/stackdriver-monitor-slow-query-mysql-5.png)
 
@@ -232,15 +236,15 @@ You now have a metric that measures the number of slow query logs. You can use t
 [trigger an alert](https://cloud.google.com/monitoring/alerts) if the number of slow queries exceeds a given threshold.
 
 The y-axis of the chart measures the number of slow queries, not how long the slow queries took. To check the execution time
-of a single slow query, see the `Query_time` parameter in the slow log via Stackdriver Logging. You can also create a
+of a single slow query, see the `Query_time` parameter in the slow log with Cloud Logging. You can also create a
 [distribution metric](https://cloud.google.com/logging/docs/logs-based-metrics/distribution-metrics) on the regular expression `Query_time: ([0-9]+\.[0-9])`, which can
 be [visualized as a heatmap](https://cloud.google.com/logging/docs/logs-based-metrics/charts-and-alerts#create-chart).
 
-## Visualize slow query logs with Stackdriver monitoring
+## Visualize slow query logs with Cloud Monitoring
 
 The previously created metric measures the number of slow queries, but it does not show their content. You can make this metric more useful by parsing the slow SQL statements to
 be [metric labels](https://cloud.google.com/logging/docs/logs-based-metrics/labels), which are visible in the dashboard 
-legend in Stackdriver.
+legend in Cloud Monitoring.
 
 Return to the **User-Defined Metrics** view. Click the three dots icon to the left to open the menu, then select **Edit metric**. Choose **Add item** under **Labels** and enter the following values:
 
@@ -251,7 +255,7 @@ Return to the **User-Defined Metrics** view. Click the three dots icon to the le
 
 ![metriceditor](https://storage.googleapis.com/gcp-community/tutorials/stackdriver-monitor-slow-query-mysql/stackdriver-monitor-slow-query-mysql-6.png)
 
-This [regular expression](https://github.com/google/re2/wiki/Syntax) instructs Stackdriver to find strings beginning with 
+This [regular expression](https://github.com/google/re2/wiki/Syntax) instructs Cloud Monitoring to find strings beginning with 
 the common SQL operations `SELECT`, `INSERT`, `UPDATE`, `CREATE`, or `DELETE`. For `CREATE` and `DELETE`, text is extracted
 until the end of the line. For `SELECT`, `INSERT`, and `UPDATE`, text is extracted until a keyword (`WHERE` or `VALUES`)
 that is typically followed by values that are likely to change in every execution. This groups together similar queries.
@@ -266,12 +270,12 @@ Click **Done** and then **Update metric**.
 With this regular expression, every distinct SQL statement in the slow query log will create a new label value and a 
 corresponding time series. The time series are sparse, meaning that you will be charged for non-zero values after you exceed 
 your free quota. In addition, having
-[too many time series for a single metric](https://cloud.google.com/logging/docs/logs-based-metrics/#too-many-time-series) 
+[too many time series for a single metric](https://cloud.google.com/logging/docs/logs-based-metrics/troubleshooting#too-many-time-series) 
 can cause throttling. You can adjust the MySQL `long_query_time` configuration setting or the content of the regular 
 expression to reduce the number of labels created.
 
 Click the three dots icon to the left to open the menu, and then click **View in Metrics Explorer** to see the updated 
-metric in Stackdriver Monitoring.
+metric in Cloud Monitoring.
 
 Click **Show Advanced Options** and add `sql` in **Legend Template**:
 
@@ -289,17 +293,17 @@ slowness.
 
 ## Cleaning up
 
-To avoid incurring charges to your GCP accounts for the resources used in this tutorial, run the following commands in
+To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, run the following commands in
 Cloud Shell to delete the test database instance, the log-based metrics, and the test repository when you are finished:
 
     gcloud sql instances delete cloudsql001
     gcloud logging metrics delete slow_sql
     rm -r ~/test_db
 
-## Appendix: Configuring self-managed MySQL on Compute Engine to send slow query logs to Stackdriver
+## Appendix: Configuring self-managed MySQL on Compute Engine to send slow query logs to Cloud Logging
 
 The following instructions let you send slow query logs from a previously deployed self-managed MySQL instance running on 
-Compute Engine to Stackdriver Logging.
+Compute Engine to Cloud Logging.
 
 The commands below assume that you already have a VM containing a self-managed MySQL database, and that the VM is 
 running Debian/Ubuntu. Commands and file locations may vary in other Linux distributions. You can quickly deploy a new VM 
@@ -307,10 +311,10 @@ for test purposes by launching a
 [MySQL Google Click to Deploy instance](https://console.cloud.google.com/marketplace/details/click-to-deploy-images/mysql) 
 from Marketplace.
 
-### Enable Stackdriver Logging
+### Enable Cloud Logging
 
-Capturing MySQL slow query logs in Stackdriver requires
-[installing the Stackdriver logging agent](https://cloud.google.com/logging/docs/agent/installation). Log into the VM 
+Capturing MySQL slow query logs in Cloud Logging requires
+[installing the logging agent](https://cloud.google.com/logging/docs/agent/installation). Log into the VM 
 running MySQL and check if the agent is already installed:
 
     sudo service google-fluentd status
@@ -330,7 +334,7 @@ Confirm that the `google-fluentd` process is active:
 
     sudo service google-fluentd status
 
-The Stackdriver log collection agent, which is based on Fluentd, comes with a collection of predefined configuration files
+The log collection agent, which is based on Fluentd, comes with a collection of predefined configuration files
 for collecting the logs of various third-party applications, including MySQL. To start collecting MySQL logs, move the 
 configuration into the `/etc/google-fluentd folder`:
 
@@ -375,5 +379,5 @@ These settings are temporary and will be lost if MySQL is restarted. To persist 
     slow_query_log_file = /var/log/mysql/mysql-slow.log
     long_query_time = 2
 
-You have now configured MySQL and Stackdriver Logging for slow query logs. Proceed to the "Generate sample data with a
+You have now configured MySQL and Cloud Logging for slow query logs. Proceed to the "Generate sample data with a
 load test" section above.

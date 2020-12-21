@@ -6,16 +6,16 @@ tags: Compute Engine, Cloud VPN, strongSwan, firewall
 date_published: 2019-01-29
 ---
 
-Vladimir Smirnov | Technical Solutions Engineer | Google Cloud Platform
+Vladimir Smirnov and Bronislav Robenek | Technical Solutions Engineers | Google
 
-Bronislav Robenek | Technical Solutions Engineer | Google Cloud Platform
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This guide walks you through how to configure [strongSwan](https://www.strongswan.org/)
 for integration with [Google Cloud VPN][cloud_vpn]. This information is
 provided as an example only. This guide is not meant to be a comprehensive
 overview of IPsec and assumes basic familiarity with the IPsec protocol.
 
-[cloud_vpn]: https://cloud.google.com/compute/docs/vpn/overview
+[cloud_vpn]: https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview
 
 # Environment overview
 
@@ -47,7 +47,7 @@ To use a strongSwan with Cloud VPN make sure the following prerequisites have be
 ## IPsec parameters
 
 Cloud VPN supports an extensive
-[list](https://cloud.google.com/vpn/docs/concepts/supported-ike-ciphers)
+[list](https://cloud.google.com/network-connectivity/docs/vpn/concepts/supported-ike-ciphers)
 of ciphers that can be used per your security policies. The following parameters and
 values are used in the Gateway’s IPsec configuration for the purpose of this guide.
 
@@ -92,11 +92,11 @@ to replace the IP addresses in the sample environment with your own IP addresses
 |External IP|`35.204.200.153`|
 |CIDR Behind strongSwan|`10.164.0.0/20`|
 
-## Configuration of GCP
+## Configuration of Google Cloud
 
 To configure Cloud VPN:
 
-1.  In the Google Cloud Platform (GCP) Console, select **Networking** > [**Create VPN connection**](https://console.cloud.google.com/interconnect/vpn).
+1.  In the Cloud Console, select **Networking** > [**Create VPN connection**](https://console.cloud.google.com/interconnect/vpn).
 
 1. Click **CREATE VPN CONNECTION**.
 
@@ -106,20 +106,26 @@ To configure Cloud VPN:
 |---------|-----------|-----|
 |Name|`gcp-to-strongswan-1`|Name of the VPN gateway.|
 |Description|`VPN tunnel connection between GCP and strongSwan`|Description of the VPN connection.|
-|Network|`to-sw`| The GCP network the VPN gateway attaches to. Note: This network will get VPN connectivity.|
-|Region|`europe-west4`|The home region of the VPN gateway. Note: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
+|Network|`to-sw`| The Google Cloud network the VPN gateway attaches to. This network will get VPN connectivity.|
+|Region|`europe-west4`|The home region of the VPN gateway. Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
 |IP address|`gcp-to-strangswan(35.204.151.163)`|The VPN gateway uses the static public IP address. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
 |Remote peer IP address| `35.204.200.153`|Public IP address of the on-premises VPN appliance used to connect to the Cloud VPN.|
 |IKE version|`IKEv2`|The IKE protocol version. You can select IKEv1 or IKEv2.|
 |Shared secret|`secret`|A shared secret used for authentication by the VPN gateways. Configure the on-premises VPN gateway tunnel entry with the same shared secret.|
 |Routing options|`Policy-based`|Multiple routing options for the exchange of route information between the VPN gateways. This example uses static routing.|
-|Remote network IP ranges| `10.164.0.0/20`|The on-premises CIDR blocks connecting to GCP from the VPN gateway.|
-|Local IP ranges| `192.168.0.0/24`|The GCP IP ranges matching the selected subnet.|
+|Remote network IP ranges| `10.164.0.0/20`|The on-premises CIDR blocks connecting to Google Cloud from the VPN gateway.|
+|Local IP ranges| `192.168.0.0/24`|The Google Cloud IP ranges matching the selected subnet.|
 
 ## Configuration of strongSwan
 
-This guide assumes that you have strongSwan already installed. It also assumes a default
-filesystem layout of Debian 9.6.
+To install strongSwan on Debian 9.6 or Ubuntu 18.04, use the following commands:
+
+    sudo apt update
+    sudo apt install strongswan strongswan-pki
+
+To install strongSwan on RHEL 7 or CentOS 7, use the following command:
+
+    yum install strongswan
 
 **Step 1**: Ensure that IP forwarding is enabled
 
@@ -179,7 +185,7 @@ Ensure that the following line present in file:
         type=tunnel
         # auto=add - means strongSwan won't try to initiate it
         # auto=start - means strongSwan will try to establish connection as well
-        # Note that GCP will also try to initiate the connection
+        # Note that Google Cloud will also try to initiate the connection
         auto=start
         # dpdaction=restart - means strongSwan will try to reconnect if Dead Peer Detection spots
         #                  a problem. Change to 'clear' if needed
@@ -223,15 +229,15 @@ This guide assumes that you have [BIRD](https://bird.network.cz/) 1.6.3 installe
 |TUN-INSIDE- SW|`169.254.2.2`|
 |strongSwan ASN|`65002`|
 
-## Configuration of GCP
+## Configuration of Google Cloud
 
 With a route-based VPN, you can use both static and dynamic routing. This example uses
-dynamic (BGP) routing. [Cloud Router](https://cloud.google.com/router/docs/) is used to establish
+dynamic (BGP) routing. [Cloud Router](https://cloud.google.com/network-connectivity/docs/router/) is used to establish
 BGP sessions between the two peers.
 
 ### Configuring a cloud router
 
-**Step 1**: In the GCP Console, select **Networking** > [**Cloud Routers**](https://console.cloud.google.com/interconnect/routers) > **Create Router**.
+**Step 1**: In the Cloud Console, select **Networking** > [**Cloud Routers**](https://console.cloud.google.com/hybrid/routers/list) > **Create Router**.
 
 **Step 2**: Enter the following parameters, and click **Create**.
 
@@ -239,13 +245,13 @@ BGP sessions between the two peers.
 |---------|-----------|-----|
 |Name|`gcp-to-strongswan-router-1`|Name of the cloud router.|
 |Description|           |Description of the cloud router.|
-|Network|`to-sw`|The GCP network the cloud router attaches to. Note: This is the network that manages route information.|
-|Region|`europe-west4`|The home region of the cloud router. Note: Make sure the cloud router is in the same region as the subnetworks it is connecting to.|
+|Network|`to-sw`|The Google Cloud network the cloud router attaches to. This is the network that manages route information.|
+|Region|`europe-west4`|The home region of the cloud router. Make sure the cloud router is in the same region as the subnetworks it is connecting to.|
 |Google ASN|`65000`|The Autonomous System Number assigned to the cloud router. Use any unused private ASN (64512 - 65534, 4200000000 – 4294967294).|
 
 ### Configuring Cloud VPN
 
-**Step 1**: In the GCP Console, select **Networking** > **Interconnect** > [**VPN**](https://console.cloud.google.com/interconnect/vpn) > **CREATE VPN CONNECTION**.
+**Step 1**: In the Cloud Console, select **Networking** > **Interconnect** > [**VPN**](https://console.cloud.google.com/hybrid/vpn/list) > **CREATE VPN CONNECTION**.
 
 **Step 2**: Enter the following parameters for the Compute Engine VPN gateway:
 
@@ -253,8 +259,8 @@ BGP sessions between the two peers.
 |---------|-----------|-----|
 |Name|`gcp-to-strongswan-1`|Name of the VPN gateway.|
 |Description|`VPN tunnel connection between GCP and strongSwan`|Description of the VPN connection.|
-|Network|`to-sw`| The GCP network the VPN gateway attaches to. Note: This network will get VPN connectivity.|
-|Region|`europe-west4`|The home region of the VPN gateway. Note: Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
+|Network|`to-sw`| The Google Cloud network the VPN gateway attaches to. This network will get VPN connectivity.|
+|Region|`europe-west4`|The home region of the VPN gateway. Make sure the VPN gateway is in the same region as the subnetworks it is connecting to.|
 |IP address|`gcp-to-strangswan(35.204.151.163)`|The VPN gateway uses the static public IP address. An existing, unused, static public IP address within the project can be assigned, or a new one created.|
 
 **Step 3**: Enter the following parameters for the tunnel:
@@ -281,7 +287,7 @@ BGP sessions between the two peers.
 
 Click **Save and Continue** to complete.
 
-**Note:** – Add ingress firewall rules to allow inbound network traffic as per your security policy.
+**Note**: Add ingress firewall rules to allow inbound network traffic as per your security policy.
 
 ## Configuration of strongSwan
 
@@ -480,7 +486,7 @@ Ensure that the following line is in the file:
         type=tunnel
         # auto=add - means strongSwan won't try to initiate it
         # auto=start - means strongSwan will try to establish connection as well
-        # Note that GCP will also try to initiate the connection
+        # Note that Google Cloud will also try to initiate the connection
         auto=start
         # dpdaction=restart - means strongSwan will try to reconnect if Dead Peer Detection spots
         #                  a problem. Change to 'clear' if needed

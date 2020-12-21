@@ -1,12 +1,12 @@
 ---
-title: App Engine Quickstart using Go
+title: App Engine quickstart using Go
 description: Learn how to deploy a Go sample app to App Engine.
 author: jscud
 tags: App Engine
 date_published: 2019-01-19
 ---
 
-# App Engine Quickstart
+# App Engine quickstart
 
 <walkthrough-tutorial-url url="https://cloud.google.com/appengine/docs/go/quickstart"></walkthrough-tutorial-url>
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/golang-samples" %} -->
@@ -14,9 +14,9 @@ date_published: 2019-01-19
 <!-- {% setvar project_gae_url "<your-project>.appspot.com" %} -->
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=go_gae_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=go_gae_quickstart)
 
 </walkthrough-alt>
 
@@ -44,7 +44,7 @@ Here are the steps you will be taking.
 
 ## Project setup
 
-GCP organizes resources into projects, which collect all of the related resources for a single
+Google Cloud organizes resources into projects, which collect all of the related resources for a single
 application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
@@ -143,7 +143,7 @@ To deploy your app, you need to create an app in a region:
 gcloud app create
 ```
 
-Note: If you already created an app, you can skip this step.
+**Note:** If you already created an app, you can skip this step.
 
 ### Deploying with Cloud Shell
 
@@ -185,13 +185,13 @@ You have successfully deployed an App Engine application!
 
 Here are some next steps for building your next application and learning to use App Engine with other GCP products:
 
-**Download the Google Cloud SDK and develop locally.**
+**Download the Cloud SDK and develop locally.**
 
-Install the [Google Cloud SDK][cloud-sdk-installer] on your local machine.
+Install the [Cloud SDK][cloud-sdk-installer] on your local machine.
 
 <walkthrough-tutorial-card url="appengine/docs/go/datastore/" icon="DATASTORE_SECTION" label="datastore">
-**Learn to use Cloud Datastore.** Cloud Datastore is a highly-scalable NoSQL database for your applications.</walkthrough-tutorial-card>
-<walkthrough-alt>Learn more in the [Cloud Datastore documentation](https://cloud.google.com/appengine/docs/standard/java/datastore/).</walkthrough-alt>
+**Learn to use Datastore.** Datastore is a highly-scalable NoSQL database for your applications.</walkthrough-tutorial-card>
+<walkthrough-alt>Learn more in the [Datastore documentation](https://cloud.google.com/appengine/docs/standard/java/datastore/).</walkthrough-alt>
 
 <walkthrough-tutorial-card url="appengine/docs/go/googlecloudstorageclient/setting-up-cloud-storage" icon="STORAGE_SECTION" label="cloudStorage">
 **Learn to use Cloud Storage.** Cloud Storage is a powerful and simple object storage service.

@@ -1,12 +1,15 @@
 ---
-title: Exploratory queries with Google BigQuery
+title: Exploratory queries with BigQuery
 description: Use BigQuery to investigate arbitrarily large datasets.
 author: jerjou
 tags: Data Science, BigQuery
 date_published: 2017-05-23
 ---
-Google Cloud Platform includes a variety of data services. When you're
-encountering new data you'd like to explore, [Google BigQuery](/bigquery) allows
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+Google Cloud includes a variety of data services. When you're
+encountering new data you'd like to explore, [BigQuery](/bigquery) allows
 you to do so easily and scalably. It is a fully-managed service for data
 exploration on arbitrarily-large datasets using an SQL syntax. Once data
 has been loaded into the service, it can be queried at interactive speeds,
@@ -185,8 +188,8 @@ gives us an idea of the distribution:
     | 3046 |
     +------+
 
-This tells us that the median number of metoers found per year is 10, the
-most metoers found in a year is 3046, with 90% of years recording less than 344
+This tells us that the median number of meteors found per year is 10, the
+most meteors found in a year is 3046, with 90% of years recording less than 344
 meteors. The `quantile` function provides approximate figures, but can give us a
 decent impression of the overall shape of the data. We can compute a more
 precise figure manually:
@@ -251,8 +254,6 @@ seems to have fairly regular reporting.
 Quantiles are useful for getting a quick feel for the distribution of your data
 - try using it to find the different masses of meteors found.
 
-[TODO]:# (At times, though, it's helpful to create visualizations of the data, which we'll explore in the [notebooks] and [dashboards] tutorials.)
-
 Finally, one might be concerned, when researching a new place to live or
 establish a business, the rate you might expect meteors to land in your area.
 Fortunately, BigQuery provides some functions to help compute distances between
@@ -285,10 +286,8 @@ Kirkland is relatively safe from meteor landings.
 
 The natural next step in making this information useful and presentable might be
 to create a visualization of this on a map, since this is inherently geographic
-data. For more on this, check out [Cloud Datalab](/datalab) and
+data. For more on this, check out [Datalab](/datalab) and
 [Datastudio](//www.google.com/analytics/data-studio/).
-
-[TODO]:# (Head over to the [notebooks] or [dashboards] tutorials for more on this.)
 
 ## API Documentation
 
@@ -301,10 +300,10 @@ BigQuery is not just a command-line sql querying tool -
 * There's also has an extensive
   [REST API with client libraries](/bigquery/docs/reference/) for programmatic
   management and querying of data within BigQuery.
-* Other Google Cloud Platform tools integrate with BigQuery, such as
+* Other Google Cloud tools integrate with BigQuery, such as
     * using BigQuery as a data source and/or sink in a
-      [Cloud Dataflow](/dataflow) pipeline, as demonstrated in the
+      [Dataflow](/dataflow) pipeline, as demonstrated in the
       [preprocessing](/community/tutorials/data-science-preprocessing/) tutorial.
     * performing BigQuery queries directly from a
-      [Cloud Datalab notebook](//cloud.google.com/bigquery/docs/visualize-datalab)
+      [Datalab notebook](//cloud.google.com/bigquery/docs/visualize-datalab)
     * creating graphs in [Data Studio](/bigquery/docs/visualize-data-studio).

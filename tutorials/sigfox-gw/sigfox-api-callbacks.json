@@ -6,7 +6,6 @@
         "payloadConfig": "",
         "callbackSubtype": 3,
         "enabled": true,
-        "sendDuplicate": false,
         "dead": false,
         "url": "",
         "contentType": "application/json",
@@ -16,8 +15,8 @@
         "headers": {
             "Authorization": ""
         },
-        "sendSni": false,
-        "bodyTemplate": "{\r\n \"deviceType\" : \"{deviceTypeName}\",\r\n \"device\" : \"{device}\",\r\n \"time\" : \"{time}\",\r\n \"data\" : \"{data}\",\r\n \"seqNumber\" : \"{seqNumber}\",\r\n \"ack\" : \"{ack}\"\r\n}"
+        "sendSni": true,
+        "bodyTemplate": "{\r\n \"deviceType\" : \"{deviceTypeId}\",\r\n \"device\" : \"{device}\",\r\n \"time\" : \"{time}\",\r\n \"data\" : \"{data}\",\r\n \"seqNumber\" : \"{seqNumber}\",\r\n \"ack\" : \"{ack}\"\r\n}"
     },
     {
         "type": "service",
@@ -25,7 +24,6 @@
         "callbackType": 1,
         "callbackSubtype": 0,
         "enabled": true,
-        "sendDuplicate": false,
         "dead": false,
         "url": "",
         "contentType": "application/json",
@@ -35,8 +33,8 @@
         "headers": {
             "Authorization": ""
         },
-        "sendSni": false,
-        "bodyTemplate": "{\r\n\"device\" : \"{device}\",\r\n\"time\" : \"{time}\",\r\n\"temp\" : \"{temp}\",\r\n\"batt\" : \"{batt}\",\r\n\"duplicate\" : \"{duplicate}\",\r\n\"seqNumber\" : \"{seqNumber}\",\r\n\"snr\" : \"{snr}\",\r\n\"rssi\" : \"{rssi}\",\r\n\"lat\" : \"{lat}\",\r\n\"lng\" : \"{lng}\",\r\n\"station\" : \"{station}\",\r\n\"avgSnr\" : \"{avgSnr}\"\r\n}"
+        "sendSni": true,
+        "bodyTemplate": "{\r\n\"device\" : \"{device}\",\r\n\"time\" : \"{time}\",\r\n\"temp\" : \"{temp}\",\r\n\"batt\" : \"{batt}\",\r\n\"seqNumber\" : \"{seqNumber}\"\r\n}"
     },
     {
         "type": "data",
@@ -44,7 +42,6 @@
         "callbackType": 1,
         "callbackSubtype": 6,
         "enabled": true,
-        "sendDuplicate": false,
         "dead": false,
         "url": "",
         "contentType": "application/json",
@@ -54,7 +51,7 @@
         "headers": {
             "Authorization": ""
         },
-        "sendSni": false,
+        "sendSni": true,
         "bodyTemplate": "{\r\n\"deviceType\" : \"{deviceTypeName}\",\r\n\"device\" : \"{device}\",\r\n\"time\" : \"{time}\",\r\n\"data\" : \"{data}\",\r\n\"seqNumber\" : \"{seqNumber}\",\r\n\"lqi\" : \"{lqi}\",\r\n\"fixedLat\" : \"{fixedLat}\",\r\n\"fixedLng\" : \"{fixedLng}\",\r\n\"operatorName\" : \"{operatorName}\",\r\n\"countryCode\" : \"{countryCode}\",\r\n\"computedLocation\" : {computedLocation}\r\n}\r\n"
     },
     {
@@ -63,7 +60,6 @@
         "callbackType": 1,
         "callbackSubtype": 4,
         "enabled": true,
-        "sendDuplicate": false,
         "dead": false,
         "url": "",
         "contentType": "application/json",
@@ -73,7 +69,7 @@
         "headers": {
             "Authorization": ""
         },
-        "sendSni": false,
+        "sendSni": true,
         "bodyTemplate": "{\r\n \"device\" : \"{device}\",\r\n \"infoCode\" : \"{infoCode}\",\r\n \"infoMessage\" : \"{infoMessage}\",\r\n \"downlinkAck\" : \"{downlinkAck}\",\r\n \"downlinkOverusage\" : \"{downlinkOverusage}\"\r\n}"
     },
     {
@@ -81,7 +77,6 @@
         "channel": "URL",
         "callbackType": 2,
         "enabled": true,
-        "sendDuplicate": false,
         "dead": false,
         "url": "",
         "contentType": "application/json",
@@ -91,7 +86,7 @@
         "headers": {
             "Authorization": ""
         },
-        "sendSni": false,
+        "sendSni": true,
         "bodyTemplate": "{\r\n\"device\" : \"{device}\",\r\n\"time\" : \"{time}\",\r\n\"info\" : \"{info}\",\r\n\"severity\" : \"{severity}\"\r\n}"
     }
 ]

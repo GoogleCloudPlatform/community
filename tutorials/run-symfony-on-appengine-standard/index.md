@@ -6,6 +6,10 @@ tags: App Engine, Symfony, PHP
 date_published: 2019-02-01
 ---
 
+Brent Shaffer | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 In this tutorial, you learn how to deploy an app to the App Engine standard
 environment, using [Symfony](https://symfony.com) PHP components.
 
@@ -213,7 +217,7 @@ For your Symfony application to integrate with Logging and Error Handling,
 you will need to copy over the `monolog.yaml` config file and the `ExceptionSubscriber.php`
 Exception Subscriber:
 
-    # clone the Google Cloud Platform PHP samples repo somewhere
+    # clone the Google Cloud PHP samples repo somewhere
     cd /path/to/php-samples
     git clone https://github.com/GoogleCloudPlatform/php-docs-samples
 
@@ -308,6 +312,45 @@ After following these steps, you can send email messages in `Controller` and `Se
         }
     }
 
+## Session management
+
+To make sessions persist across multiple App Engine instances, you'll need to use a database.
+Symfony provides a way to handle this using [PDO session storage][symfony-pdo-session-storage].
+
+### Configuration
+
+1.  Modify your Framework configuration in `config/packages/framework.yaml` and change the parameters under `session`
+    to be the following:
+
+        session:
+            handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
+            cookie_secure: auto
+            cookie_samesite: lax
+            # Adjust the max lifetime to your need
+            gc_maxlifetime: 36000
+
+1.  Activate the service in `config/services.yaml`:
+
+        Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
+            arguments:
+                - !service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] }
+                # If you get transaction issues (e.g. after login) uncomment the line below
+                # - { lock_mode: 1 }
+
+### Database update
+
+Add the `sessions` table to your database by connecting to your database and executing the following query:
+
+    # MySQL Query
+    CREATE TABLE `sessions` (
+        `sess_id` VARCHAR(128) NOT NULL PRIMARY KEY,
+        `sess_data` BLOB NOT NULL,
+        `sess_time` INTEGER UNSIGNED NOT NULL,
+        `sess_lifetime` INTEGER UNSIGNED NOT NULL
+    ) COLLATE utf8mb4_bin, ENGINE = InnoDB;
+
+You are now all set. The session will persist in the database and your users will remain authenticated.
+
 
 [php-gcp]: https://cloud.google.com/php
 [cloud-sdk]: https://cloud.google.com/sdk/
@@ -325,6 +368,7 @@ After following these steps, you can send email messages in `Controller` and `Se
 [symfony-override-cache]: https://symfony.com/doc/current/configuration/override_dir_structure.html#override-the-cache-directory
 [symfony-mailer]: https://symfony.com/doc/current/mailer.html
 [symfony-welcome]: https://storage.googleapis.com/gcp-community/tutorials/run-symfony-on-appengine-standard/welcome-page.png
+[symfony-pdo-session-storage]: https://symfony.com/doc/current/doctrine/pdo_session_storage.html
 [mailgun]: https://www.mailgun.com/
 [mailjet]: https://www.mailjet.com/
 [mailgun-add-domain]: https://help.mailgun.com/hc/en-us/articles/203637190-How-Do-I-Add-or-Delete-a-Domain-

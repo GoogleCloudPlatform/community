@@ -1,32 +1,32 @@
 ---
-title: Use Cloud Pub/Sub to send and receive real-time messages
-description: Learn to use Cloud Pub/Sub to send and receive real-time messages.
+title: Use Pub/Sub to send and receive real-time messages
+description: Learn to use Pub/Sub to send and receive real-time messages.
 author: jscud
 tags: PubSub
 date_published: 2019-07-31
 ---
 
-# Use Cloud Pub/Sub to send and receive real-time messages
+# Use Pub/Sub to send and receive real-time messages
 
 <walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=pubsub_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=pubsub_quickstart)
 
 </walkthrough-alt>
 
 ## Introduction
 
-Cloud Pub/Sub is a fully-managed real-time messaging service that allows you to
+Pub/Sub is a fully-managed real-time messaging service that allows you to
 send and receive messages between independent applications. This tutorial gives a brief
-introduction to the command-line interface for Cloud Pub/Sub, using the `gcloud`
+introduction to the command-line interface for Pub/Sub, using the `gcloud`
 command-line tool.
 
 ## Project setup
 
-GCP organizes resources into projects. This allows you to
+Google Cloud organizes resources into projects. This allows you to
 collect all of the related resources for a single application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
@@ -38,7 +38,7 @@ For details, see
 
 ## Open Cloud Shell
 
-In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
+In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the Cloud Console.
 
 Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
@@ -115,18 +115,18 @@ This should return the two messages that you have just published. The messages h
 the data, `hello` and `goodbye`, as well as `MESSAGE_ID`. The `MESSAGE_ID` is a
 unique ID of the message that the server assigned.
 
-Note: Cloud Pub/Sub doesn't guarantee the order of the messages. It is also
+Pub/Sub doesn't guarantee the order of the messages. It is also
 possible that only one message was returned; in that case, run the same
 command again until you see the other message.
 
 ### Acknowledging messages
 
-After you pull a message and process it, you must notify Cloud Pub/Sub
+After you pull a message and process it, you must notify Pub/Sub
 that you successfully received the message. This action is called
 *acknowledgement*.
 
 If you do not acknowledge the message before the acknowledgement deadline has
-passed, Cloud Pub/Sub will re-send the message.
+passed, Pub/Sub will re-send the message.
 
 The `--auto-ack` flag passed with the `pull` command automatically acknowledges
 a message when it is pulled.
@@ -169,7 +169,7 @@ gcloud pubsub subscriptions ack \
 ## See the topic and the subscription in the GCP Console
 
 This concludes the `gcloud` command-line tutorial, but let's look at the web
-interface for the GCP Console before finishing the tutorial.
+interface for the Cloud Console before finishing the tutorial.
 
 Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console,
 and select **Pub/Sub**.
@@ -192,10 +192,10 @@ Congratulations!
 
 <walkthrough-conclusion-trophy></walkthrough-conclusion-trophy>
 
-You have just walked through the basic concepts of Cloud Pub/Sub.
+You have just walked through the basic concepts of Pub/Sub.
 The next step is to create your awesome applications!
 
-For more information, see the [Cloud Pub/Sub documentation][pubsub-docs]
+For more information, see the [Pub/Sub documentation][pubsub-docs]
 and [explore our code samples](https://cloud.google.com/pubsub/docs/quickstart-client-libraries).
 
 [pubsub-docs]: https://cloud.google.com/pubsub/docs/

@@ -6,6 +6,10 @@ tags: Google Kubernetes Engine, Kubernetes
 date_published: 2019-05-31
 ---
 
+Bernie Ongewe | Technical Solutions Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 The goal of the exercises below is to develop hands-on familiarity with how the container networks are connected in
 [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/). With this knowledge, you will be better able
 to troubleshoot networking issues.
@@ -29,8 +33,8 @@ projected usage.
 
 ## Before you begin
 
-1.  Create or select a GCP project on the [Manage resources page](https://console.cloud.google.com/project)
-    of the GCP Console.
+1.  Create or select a Google Cloud project on the [Manage resources page](https://console.cloud.google.com/project)
+    of the Cloud Console.
 
 1.  Enable billing for your project.
 
@@ -39,7 +43,7 @@ projected usage.
 1.  Enable the GKE and Resource Manager APIs.
 
     Click [this link](https://console.cloud.google.com/flows/enableapi?apiid=container,cloudresourcemanager.googleapis.com)
-    to go to the GCP Console and enable the APIs.
+    to go to the Cloud Console and enable the APIs.
 
 ## Contents
 
@@ -559,10 +563,36 @@ kubectl get nodes
 ```
 
 Run a deployment called `hello-server` on this cluster. We'll use a demo web server image from the registry and
-launch this on container port `8080`:
+launch this on container port `8080`. 
+
+Create a file named `hello-server-deployment.yaml` and copy the following into it:
 
 ```
-kubectl run hello-server --image gcr.io/google-samples/hello-app:1.0 --port 8080
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-server
+  template:
+    metadata:
+      labels:
+        app: hello-server
+    spec:
+      containers:
+      - name: hello-server
+        image: gcr.io/google-samples/hello-app:1.0
+        ports:
+        - containerPort: 8080
+```
+
+Apply the file to the cluster:
+
+```
+kubectl apply -f hello-server-deployment.yaml
 ```
 
 Recall that a namespace is created for these pods. Use SSH to connect to the node hosting the pod to see how these look:
@@ -635,7 +665,7 @@ sudo toolbox -h
 
 The first time you invoke this, the container image will be downloaded from the repository.
 
-Note: Take note of the advice to "Press ^] three times within 1s to kill container."
+**Note:** Take note of the advice to "Press ^] three times within 1s to kill container."
 
 Confirm that this container is running in the default network namespace:
 
@@ -932,7 +962,7 @@ listening on cbr0, link-type EN10MB (Ethernet), capture size 262144 bytes
 
 How does this translation happen? Let's look at `iptables` packet processing for the packets on this node. 
 
-Note: After the `OUTPUT` and `KUBE-SERVICES` chains below, the rest of the chains will be named differently on your system.
+**Note:** After the `OUTPUT` and `KUBE-SERVICES` chains below, the rest of the chains will be named differently on your system.
 
 ```
 iptables -L | less
@@ -1244,7 +1274,7 @@ This is a good place to stop and watch
 [The ins and outs of networking in Google Container Engine and Kubernetes (Google Cloud Next '17)](https://www.youtube.com/watch?v=y2bhV81MfKQ&feature=youtu.be)
 as a refresher on the work you've done.
 
-## Exercise 3: GCP load balancing and GKE
+## Exercise 3: Cloud load balancing and GKE
 
 In Exercise 2, we already configured a service with type `LoadBalancer`. This section introduces you to the ingress
 controller as implemented by GKE.
@@ -1256,7 +1286,7 @@ kubectl expose deployment hello-server --type LoadBalancer \
   --port 80 --target-port 8080
 ```
 
-Observe that a `kubectl` command was used to build a GCP object. How is this?
+Observe that a `kubectl` command was used to build a Google Cloud object. How is this?
 
 Here we introduce the concept of an _ingress._ An ingress is a logical layer 7 traffic path rather than the layer
 4 _service_. At present, it’s HTTP(S) only, but could include other layer 7 protocols in the future.

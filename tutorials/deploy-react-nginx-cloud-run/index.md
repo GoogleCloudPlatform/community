@@ -6,6 +6,8 @@ tags: Cloud Run, React, Front-end, NGinx
 date_published: 2020-01-01
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 In this tutorial, you'll learn how to run a Create React App (CRA) with Nginx and deploy it to Cloud Run. Although other 
 services in Google Cloud can easily serve similar web applications, Cloud Run is a good option in cases where some
 customization is needed to the underlying runtime.
@@ -16,7 +18,7 @@ Before you begin this tutorial, you'll need the following:
 
 * A Google Cloud project with billing enabled. You can use an existing project or
   [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) for this tutorial. 
-* The [Google Cloud SDK](https://cloud.google.com/sdk/install) installed on your computer.
+* The [Cloud SDK](https://cloud.google.com/sdk/install) installed on your computer.
 * [Git](https://git-scm.com/downloads) installed on your computer.
 * A code editor installed on your computer.
 
@@ -66,7 +68,9 @@ Create a file in the root of the project named `nginx.conf` and add the followin
          
     }
     
-By creating this file, you provide the `$PORT` environment variable that Cloud Run expects your application to listen on. 
+By creating this file, you provide the `$PORT` environment variable that Cloud Run expects your application to listen on. The `$PORT`
+environment variable will be provided by the `docker run` command, so the Nginx server configuration template needs to have its environment
+variables substituted at run time, not at build time.
   
 This file customizes Nginx so that `react-router-dom` always responds with the proper route. This configuarion enables gzip
 compression, which makes the web application lightweight and fast. 
@@ -85,19 +89,21 @@ Create a file named `Dockerfile` in the root folder of the project and paste the
     # server environment
     FROM nginx:alpine
     COPY nginx.conf /etc/nginx/conf.d/configfile.template
+    
+    COPY --from=react-build /app/build /usr/share/nginx/html
+    
     ENV PORT 8080
     ENV HOST 0.0.0.0
-    RUN sh -c "envsubst '\$PORT'  < /etc/nginx/conf.d/configfile.template > /etc/nginx/conf.d/default.conf"
-    COPY --from=react-build /app/build /usr/share/nginx/html
     EXPOSE 8080
-    CMD ["nginx", "-g", "daemon off;"]
+    CMD sh -c "envsubst '\$PORT' < /etc/nginx/conf.d/configfile.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+
     
 This configuration defines two environments: one where the web application is built and one where the web application 
 will run.
  
 ## Upload and deploy
 
-Open the Google Cloud SDK and change the working directory to the root of your project. For example:
+Open the Cloud SDK and change the working directory to the root of your project. For example:
   
     cd C:\tutorials\react-cloud-run\
   
@@ -110,7 +116,7 @@ Run the following command to submit all of the code and have your container buil
 `[YOUR_PROJECT_ID]` with your
 [project ID](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects).
   
-    gcloud build submit --tag gcr.io/[YOUR_PROJECT_ID]/cra-cloud-run
+    gcloud builds submit --tag gcr.io/[YOUR_PROJECT_ID]/cra-cloud-run
      
 After a couple of minutes, a new image will be in the container registry in your Google Cloud project. To see it, go to the 
 [**Container Registry > Images**](http://console.cloud.google.com/gcr/images) page in the Cloud Console.

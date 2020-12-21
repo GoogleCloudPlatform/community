@@ -6,9 +6,13 @@ tags: App Engine, Pusher, Channels API, Java
 date_published: 2017-08-09
 ---
 
+Jisha Abubaker | Developer Relations Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial demonstrates how to use [Pusher](https://pusher.com) on [Google App Engine](/appengine/docs/standard/java/).
-Pusher is a hosted API for sending real-time, bi-directional messages via WebSockets to apps and
-other Internet-connected devices.
+Pusher is a hosted API for sending real-time, bi-directional messages through WebSockets to apps and
+other internet-connected devices.
 
 Pusher's real-time functionality replicates the deprecated [Channel API](/appengine/docs/java/channel/)
 and is useful for applications that send information in real time,
@@ -35,8 +39,8 @@ You'll also learn how to complete the following tasks in the web browser:
 
 ## Before you begin
 
-1.  Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
-1.  Install the [Google Cloud SDK](/sdk/) and run:
+1.  Create a project in the [Cloud Console](https://console.cloud.google.com/).
+1.  Install the [Cloud SDK](/sdk/) and run:
 
 		    gcloud init
 
@@ -92,6 +96,7 @@ In case of Pusher-triggered events on a channel, the event name is
 prefixed with `pusher:`, such as `pusher:subscription-succeeded`.
 
 ## Chat application
+
 The sample application demonstrates presence channels in Pusher for a chat application.
 View complete source code [here](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/appengine-pusher/java).
 
@@ -103,10 +108,12 @@ subscribe to the events.
 All users subscribed to the channel receive updates when users connect or disconnect from the channel.
 
 ## Using Pusher on your server
+
 The server-side REST SDK is used to initialize a Pusher instance,
 authorize secure presence channels, and provide clients an endpoint to trigger events.
 
 ### Connecting to Pusher
+
 The following code provides examples of initializing and connecting to Pusher.
 Use the credentials from the application you created to initialize and connect to Pusher,
 as shown in this example.
@@ -441,7 +448,8 @@ You should now be able to view both the users within the chat application window
 
 - Access `https://YOUR_PROJECT_ID.appspot.com`
 
-### Additional Resources
-- [Java on Google Cloud App Engine](/appengine/docs/java/)
+### Additional resources
+
+- [Java on Google App Engine](/appengine/docs/java/)
 - [Channels API deprecation](/appengine/docs/deprecations/channel)
 - [Pusher tutorials](https://pusher.com/tutorials)

@@ -1,14 +1,18 @@
 ---
-title: Understanding OAuth2 and Deploying a Basic Authorization Service to Cloud Functions
+title: Understanding OAuth2 and deploying a basic authorization service to Cloud Functions
 description: Learn how to deploy a basic OAuth2 authorization serivce to Cloud Functions.
 author: michaelawyu
 tags: OAuth 2.0, Node.js, Cloud Functions, Cloud Datastore
 date_published: 2018-06-15
 ---
 
+Chen Yu | | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial explains the basics of OAuth 2.0 and how to deploy an OAuth2 authorization service in [Node.js](https://nodejs.org/en/) to [Google Cloud Functions](https://cloud.google.com/functions/). For a general overview of OAuth 2.0, see [Understanding OAuth2 and Building a Basic Authorization Server of Your Own: A Beginner’s Guide](https://medium.com/@ratrosy/understanding-oauth2-and-building-a-basic-authorization-server-of-your-own-a-beginners-guide-cf7451a16f66).
 
-Google Cloud Functions is an event-driven serverless compute platform. It offers one of the simplest ways to run code in the cloud and provides developers with automatic scaling, high availability and fault tolerance. As a part of the computing solutions on Google Cloud Platform, your Cloud Functions can easily integrate with other Google Cloud services.
+Cloud Functions is an event-driven serverless compute platform. It offers one of the simplest ways to run code in the cloud and provides developers with automatic scaling, high availability and fault tolerance. As a part of the computing solutions on Google Cloud, your Cloud Functions can easily integrate with other Google Cloud services.
 
 ## Objectives
 
@@ -17,30 +21,30 @@ Google Cloud Functions is an event-driven serverless compute platform. It offers
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including
+This tutorial uses billable components of Google Cloud, including
 
-* Google Cloud Functions
-* Google Cloud Datastore
+* Cloud Functions
+* Datastore
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on your projected usage. Depending on the actual usage, you might be eligible for [Google Cloud Free Tier](https://cloud.google.com/free/).
 
-## Before You Begin
+## Before you begin
 
-1. Select a project from [Google Cloud Console](https://console.cloud.google.com/). If you have never used Google Cloud Platform before, sign up or log in with your existing Google account, then follow the on-screen instructions to start using Google Cloud Platform.
+1. Select a project from [Cloud Console](https://console.cloud.google.com/). If you have never used Google Cloud before, sign up or log in with your existing Google account, then follow the on-screen instructions to start using Google Cloud.
 
 1. [Enable billing](https://cloud.google.com/billing/docs/how-to/modify-project#enable_billing_for_a_project) for your account.
 
 1. [Enable the Cloud Functions API](https://console.cloud.google.com/flows/enableapi?apiid=cloudfunctions&redirect=https://cloud.google.com/functions/quickstart).
 
-1. [Install the Google Cloud SDK](https://cloud.google.com/sdk/).
+1. [Install the Cloud SDK](https://cloud.google.com/sdk/).
 
 1. Windows Developers Only: Install [cURL](https://curl.haxx.se/download.html).
 
-1. Create the following entities in Cloud Datastore:
+1. Create the following entities in Datastore:
 
-    a. Go to [Cloud Datastore Entities Page](https://console.cloud.google.com/datastore) in Google Cloud Console.
+    a. Go to the [Cloud Datastore Entities Page](https://console.cloud.google.com/datastore) in the Cloud Console.
 
-    b. Click **Create Entity**. Cloud Datastore may ask you to pick a location to store your data; select one of the locations and click **Next**.
+    b. Click **Create Entity**. Datastore may ask you to pick a location to store your data; select one of the locations and click **Next**.
 
     c. Type `user` for **Kind**.
 
@@ -90,7 +94,7 @@ Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to g
 
 OAuth 2.0 ([RFC 6749](https://tools.ietf.org/html/rfc6749)) is a widely used authorization framework enabling applications to access resources in all kinds of services. More specifically, OAuth 2.0 allows arbitrary **clients** (for example, a highly trusted first-party mobile app or a less trusted third-party web app) to access user’s (**resource owner**’s) resources on **resource servers** via **authorization servers** in a secure, reliable, and efficient manner.
 
-### Authorization Flows
+### Authorization flows
 
 OAuth 2.0 specification defines 4 types of authorization flows:
 
@@ -116,7 +120,7 @@ As for other clients, depending on their trustworthiness, they can use the follo
 
 This tutorial deploys a basic authorization server supporting all of the four flows; you can, however, tailor the code and drop the support for some of them based on your use case.
 
-#### Authorization Code
+#### Authorization code
 
 ![AC](https://storage.googleapis.com/gcp-community/tutorials/understanding-oauth2-and-deploy-a-basic-auth-srv-to-cloud-functions/ac.png)
 
@@ -175,11 +179,11 @@ You can use many hashing algorithms with JWT and the payload offers a variety of
 
 Every time a JWT arrives at a server, the system first parses the JWT, and verifies if the algorithm specified in the header is supported; then it checks the signature to make sure that the JWT is valid, and at last, confirms that registered claims (if exist) are valid. In the case of this guide, it means making sure that the JWT hasn’t expired (`exp`), and comes from an expected origin (`iss`). Custom claims, such as scopes, can be extracted from the token and manually validated.
 
-### Client Registration
+### Client registration
 
 OAuth 2.0 requires that clients register with the authorization server beforehand. The registration process is not considered as a part of the authorization flow and developers can implement it as they see fit. Additionally, your OAuth 2.0 authorization service must be able to verify the identity of clients. This tutorial uses client IDs and client secrets for client authentication.
 
-## Understanding the Architecture
+## Understanding the architecture
 
 ![Architecture](https://storage.googleapis.com/gcp-community/tutorials/understanding-oauth2-and-deploy-a-basic-auth-srv-to-cloud-functions/oauth_cf.png)
 
@@ -190,7 +194,7 @@ This tutorial deploys 3 Cloud Functions. The `token` function is responsible for
 * Clients in the Implicit flow directly request access token from function `auth` and `signin`
 * Clients in the Client Credentials flow exchange client credentials for access token with the `token` function
 
-## Downloading the Code
+## Downloading the code
 
 Download the code [here](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/understanding-oauth2-and-deploy-a-basic-auth-srv-to-cloud-functions/code).
 
@@ -204,7 +208,7 @@ The sample includes the following files:
 | private.pem  | A private key for generating access tokens. **You should replace this key file with one of your own**. |
 | public.pem   | A public key for verifying access tokens. **You should replace this key file with one of your own**.   |
 
-## Deploying the Code
+## Deploying the code
 
 Deploy the functions using the following commands. It may take a few minutes to finish.
 
@@ -224,11 +228,11 @@ https://[GCP_REGION]-[PROJECT_ID].cloudfunctions.net/signin
 
 Replace `[GCP_REGION]` and `[PROJECT_ID]` with values of your own. Your function addresses are also available in the output of the `gcloud beta functions deploy` command.
 
-You can always view the details of deployed functions via [Cloud Console](https://console.cloud.google.com/functions).
+You can always view the details of deployed functions with the [Cloud Console](https://console.cloud.google.com/functions).
 
-## Testing the Code
+## Testing the code
 
-### Authorization Code
+### Authorization code
 
 1. Open your browser and visit
 
@@ -254,7 +258,7 @@ You can always view the details of deployed functions via [Cloud Console](https:
 
     The `access_token` attribute in the returned JSON file is the issued access token. 
 
-### Authorization Code (PKCE)
+### Authorization code (PKCE)
 
 1. Generate a code verifier and its code challenge. Open the node interactive shell (`node`) and run the following code:
 
@@ -342,9 +346,9 @@ You can always view the details of deployed functions via [Cloud Console](https:
     The `access_token` attribute in the returned JSON file is the issued access token. 
 
 
-## Understanding the Code
+## Understanding the code
 
-### `auth` Function
+### `auth` function
 
 The auth function is responsible for presenting a page where users can authorize clients to access their information:
 
@@ -522,7 +526,7 @@ function handleImplicitAuthRequest (req, res) {
 }
 ```
 
-### `signin` Function
+### `signin` function
 
 The `signin` function receives user credentials and redirects user back to the client with an authorization code (or an access token, in the case of Implicit flow):
 
@@ -551,7 +555,7 @@ exports.signin = (req, res) => {
 }
 ```
 
-Similar to the `auth` function, `singin` uses functions `handleACPKCESigninRequest`, `handleACSigninRequest` and `handleImplictSigninRequest` to process requests from the Authorization Code with PKCE flow, the Authorization Code flow and the Implicit flow respectively.
+Similar to the `auth` function, `signin` uses functions `handleACPKCESigninRequest`, `handleACSigninRequest` and `handleImplictSigninRequest` to process requests from the Authorization Code with PKCE flow, the Authorization Code flow and the Implicit flow respectively.
 
 The first two functions are similar to each other; both of them issue an authorization code after all the security checks are passed:
 
@@ -758,7 +762,7 @@ function handleImplictSigninRequest (req, res) {
 
 This sample uses the [`jsonwebtoken`](https://www.npmjs.com/package/jsonwebtoken) library to prepare JWTs. The JWT is built using the RS256 algorithm, which involves a private/public key pair. The token itself is protected by the private key; as long as the private key is safe, no one else can issue access tokens on your behalf. However, anyone can use the public key to decrypt the JWT and verify its validity, without having to request your authorization server for help.
 
-### `token` Function
+### `token` function
 
 The `token` function, as its name implies, is responsible for issuing tokens:
 
@@ -1080,7 +1084,7 @@ function verifyAuthorizationCode(authorizationCode, clientId, redirectUrl,
 
 ## Sidenotes
 
-* This tutorial uses Cloud Datastore, a highly scalable NoSQL database, to store user credentials, client information and authorization codes. It is also possible to use other data storage solutions, such as [memcached](https://memcached.org/), [Redis](https://redis.io/), [Cloud SQL](https://cloud.google.com/sql/docs/), etc; however, you should not store any important information in-memory with Cloud Functions.
+* This tutorial uses Datastore, a highly scalable NoSQL database, to store user credentials, client information and authorization codes. It is also possible to use other data storage solutions, such as [memcached](https://memcached.org/), [Redis](https://redis.io/), [Cloud SQL](https://cloud.google.com/sql/docs/), etc; however, you should not store any important information in-memory with Cloud Functions.
 
 * This tutorial assumes that client has registered with your service and provided its redirect URL. Additionally, the authorization service requires a full match between the redirect URL in the request and the redirect URL on the record. In reality, however, it is common for developers to add additional values in the redirect URL to keep states during transition; if your use case requires variable redirect URLs, you should drop the full match restriction.
 
@@ -1088,16 +1092,16 @@ function verifyAuthorizationCode(authorizationCode, clientId, redirectUrl,
 
 * You can also use the `jsonwebtoken` library to verify JWTs. See their documentation for more information.
 
-## Cleaning Up
+## Cleaning up
 
-After you have finished this tutorial, you can clean up the resources you created on Google Cloud Platform so that you will not be billed for them in the future. To clean up, you can delete the whole project or delete the Cloud Functions you deployed. 
+After you have finished this tutorial, you can clean up the resources you created on Google Cloud so that you will not be billed for them in the future. To clean up, you can delete the whole project or delete the Cloud Functions you deployed. 
 
-### Deleting the Project
+### Deleting the project
 
 Visit the [Manage resources](https://console.cloud.google.com/cloud-resource-manager) menu. Select the project you used for this tutorial and click Delete. Note that once the project is deleted, the project ID cannot be reused.
 
 If you have Cloud SDK installed in the system, you can also [use the gcloud command-line to delete a project](https://cloud.google.com/sdk/gcloud/reference/projects/delete).
 
-### Deleting the Functions
+### Deleting the functions
 
-Go to the [Cloud Functions Overview](https://console.cloud.google.com/functions) page. Select the functions you would like to remove and click **Delete**.
+Go to the [Cloud Functions overview](https://console.cloud.google.com/functions) page. Select the functions you would like to remove and click **Delete**.

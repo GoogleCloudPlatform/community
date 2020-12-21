@@ -1,29 +1,32 @@
 ---
-title: Make an HTTP Request to the Google Cloud Vision API from Java
-description: Learn how to make an HTTP request to the Google Cloud Vision API from a Java program.
-author: lauriewhite
+title: Make an HTTP request to the Cloud Vision API from Java
+description: Learn how to make an HTTP request to the Cloud Vision API from a Java program.
+author: annie29
 tags: Cloud Vision API, Java, education
 date_published: 2016-11-03
 ---
-## The Cloud Vision API
 
-The [Google Cloud Vision API][vision] is a powerful and potentially fun
-pre-trained Machine Learning model that can analyze images. You can use it
+Laurie White | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+The [Cloud Vision API][vision] is a powerful and potentially fun
+pre-trained machine learning model that can analyze images. You can use it
 directly from the overview page or adjust parameters using the API Explorer in
-the [Quickstart][quickstart]. This tutorial shows how to make an HTTP request to
+the [quickstart][quickstart]. This tutorial shows how to make an HTTP request to
 the Cloud Vision API from a Java program.
 
-The two major considerations you need to make are:
+The two major considerations you need to make:
 
 - How will you authenticate the request?
 - How will you access the API?
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console][console].
+1. Create a project in the [Cloud Console][console].
 1. Enable billing for your project.
-1. Ensure the Vision API is enabled by going to the [API manager][manager] from
-the main GCP menu.
+1. Ensure that the Vision API is enabled by going to the [API manager][manager] from
+the main Google Cloud menu.
 
 ## Authentication
 
@@ -45,7 +48,7 @@ simple and as general as possible, it will make its own HTTP requests.
 You can find details on how to use the client libraries in the
 [label detection][label-tutorial] and [face detection][face-tutorial] tutorials.
 
-## Providing the Image
+## Providing the image
 
 You can either send the actual image to be analyzed to the API or you can send
 the source url of the image. Again, rather than deal with the complexities of
@@ -62,7 +65,7 @@ from the main Console menu and then clicking Create Bucket.
 Upload an image to the bucket. First, open the bucket and then select Upload
 Files. Check the box to share the image publicly.
 
-## Making the HTTP Request with cURL
+## Making the HTTP request with cURL
 
 Once you've done the preliminaries, you can check your work by running the
 following `curl` command:
@@ -145,7 +148,7 @@ Read more about the [response format][response]. The "mid" field is an opaque
 entity ID, which will be ignored for the rest of this tutorial. The "score" is a
 value in the range [0, 1] and reflects the likelihood the response is correct.
 
-## Making the HTTP Request with Java
+## Making the HTTP request with Java
 
 For simplicity, this example shows how to make an HTTP request using just the
 core Java libraries.
@@ -221,12 +224,12 @@ httpResponseScanner.close();
 
 ## Summary
 
-*  You need a Google Cloud Platform project to use the Cloud Vision API.
+*  You need a Google Cloud project to use the Cloud Vision API.
 *  You need an API key and a storage bucket with an image in that project.
 *  A HTTP POST request can be made using just the core Java libraries.
 *  The response to the request will be returned as an input stream.
 
-## Next Steps
+## Next steps
 
 There's a lot more that can be done after doing this tutorial. Some future
 directions include:

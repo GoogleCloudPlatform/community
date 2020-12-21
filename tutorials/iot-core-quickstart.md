@@ -1,19 +1,19 @@
 ---
-title: Introduction to Cloud IoT Core
-description: Create a Cloud IoT Core device registry, add a device, and connect.
+title: Introduction to IoT Core
+description: Create an IoT Core device registry, add a device, and connect.
 author: jscud
 tags: Cloud IoT
 date_published: 2019-07-31
 ---
 
-# Introduction to Cloud IoT Core
+# Introduction to IoT Core
 
 <walkthrough-test-start-page url="/start?tutorial=iot_core_quickstart"/>
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=iot_core_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=iot_core_quickstart)
 
 </walkthrough-alt>
 
@@ -21,14 +21,14 @@ Take the interactive version of this tutorial, which runs in the Google Cloud Pl
 
 ## Introduction
 
-[Cloud IoT Core](https://cloud.google.com/iot/docs/) is a fully managed service for connecting
-and managing IoT devices. This tutorial uses the `gcloud` command-line tool to create a
-Cloud IoT Core device registry, add a device, and run an MQTT sample to connect a device and
+[IoT Core](https://cloud.google.com/iot/docs/) is a fully managed service for connecting
+and managing IoT devices. This tutorial uses the `gcloud` command-line tool to create an
+IoT Core device registry, add a device, and run an MQTT sample to connect a device and
 publish device telemetry events.
 
 ## Project setup
 
-GCP organizes resources into projects. This allows you to
+Google Cloud organizes resources into projects. This allows you to
 collect all of the related resources for a single application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
@@ -40,13 +40,13 @@ For details, see
 
 ## Using Cloud Shell
 
-In this tutorial, you do all of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
+In this tutorial, you do all of your work in Cloud Shell, which is a built-in command-line tool for the Cloud Console.
 
 Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
-## Enable the Cloud IoT Core API
+## Enable the IoT Core API
 
-To use the Cloud IoT Core API, you must first enable it.
+To use the IoT Core API, you must first enable it.
 
 Use the following to enable the API:
 
@@ -56,9 +56,9 @@ Use the following to enable the API:
 https://console.cloud.google.com/flows/enableapi?apiid=cloudiot.googleapis.com
 </walkthrough-alt>
 
-## Create your first Cloud Pub/Sub topic
+## Create your first Pub/Sub topic
 
-A Cloud Pub/Sub topic is a named resource to which devices send messages. Create your first
+A Pub/Sub topic is a named resource to which devices send messages. Create your first
 topic with the following command:
 
 ```bash
@@ -80,9 +80,9 @@ gcloud pubsub subscriptions create \
 
 <walkthrough-test-code-output text="Created subscription|Failed to create subscription" />
 
-## Clone the Cloud IoT Core Node.js sample files from GitHub
+## Clone the IoT Core Node.js sample files from GitHub
 
-You use the MQTT sample to send messages to Cloud IoT Core.
+You use the MQTT sample to send messages to IoT Core.
 
 Clone the sample program with the following command:
 
@@ -90,10 +90,10 @@ Clone the sample program with the following command:
 git clone https://github.com/GoogleCloudPlatform/nodejs-docs-samples.git
 ```
 
-## Grant permission to the Cloud IoT Core service account
+## Grant permission to the IoT Core service account
 
 In this section, you use a helper script to add the
-`cloud-iot@system.gserviceaccount.com` service account to the Cloud Pub/Sub
+`cloud-iot@system.gserviceaccount.com` service account to the Pub/Sub
 topic with the Publisher role.
 
 ### Navigate to the iot/ directory:
@@ -116,7 +116,7 @@ npm --prefix ./scripts install
 node scripts/iam.js my-topic
 ```
 
-The script grants permission to the Cloud IoT Core service account on the
+The script grants permission to the IoT Core service account on the
 `my-topic` topic.
 
 ## Create a device registry
@@ -135,7 +135,7 @@ gcloud iot registries create my-registry \
 
 ## Generate your signing keys
 
-To authenticate to Cloud IoT Core, a device needs a private key and a public
+To authenticate to IoT Core, a device needs a private key and a public
 key. Generate your signing keys by running the following command:
 
 ```bash
@@ -164,7 +164,7 @@ gcloud iot devices create my-node-device \
 
 ## Connect your device and publish messages
 
-In this section, you send messages from a virtual device to Cloud Pub/Sub.
+In this section, you send messages from a virtual device to Pub/Sub.
 
 ### Navigate to the MQTT sample directory
 
@@ -210,13 +210,13 @@ have the following data, `my-registry/my-node-device-payload-[INTEGER]`, a
 `MESSAGE_ID`, and an `ATTRIBUTES` list of information about the device. The
 `MESSAGE_ID` is a unique ID assigned by the server.
 
-Note: Cloud Pub/Sub doesn't guarantee the order of the messages. It is also
+**Note:** Pub/Sub doesn't guarantee the order of the messages. It is also
 possible that you'll see only one message in Cloud Shell. In that case, run
 the same command multiple times to see the other messages.
 
-## View resources in the GCP Console
+## View resources in the Cloud Console
 
-This concludes the `gcloud` command-line tutorial, but you can also use the GCP
+This concludes the `gcloud` command-line tutorial, but you can also use the Cloud
 Console to view the resources you just created.
 
 Open the [**Navigation menu**][spotlight-console-menu] in the upper-left corner of the console, and 
@@ -231,13 +231,13 @@ You can also use this graphical user interface to create and manage device regis
 <walkthrough-conclusion-trophy/>
 
 Congratulations! You just walked through the basic concepts of Cloud IoT Core
-using the `gcloud` command-line tool, and you used the GCP Console to view Cloud
+using the `gcloud` command-line tool, and you used the Cloud Console to view
 IoT Core resources. The next step is to create awesome applications! For more
 information, see the [IoT Core documentation](https://cloud.google.com/iot/docs/).
 
 ### Here's what you can do next
 
-View more Cloud IoT Core samples on GitHub in any of several programming languages:
+View more IoT Core samples on GitHub in any of several programming languages:
 
 -   [C](https://github.com/GoogleCloudPlatform/cpp-docs-samples/tree/master/iot/mqtt-ciotc)
 -   [Java](https://github.com/GoogleCloudPlatform/java-docs-samples/tree/master/iot/api-client)

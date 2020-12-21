@@ -6,6 +6,10 @@ tags: Kubernetes, Kubernetes Engine, Elixir, Phoenix, Docker
 date_published: 2019-07-22
 ---
 
+Daniel Azuma | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial helps you get started deploying your
 [Elixir](http://elixir-lang.org/) app using the
 [Phoenix](http://phoenixframework.org/) Framework to
@@ -34,14 +38,14 @@ cover changes in Elixir 1.9 and Distillery 2.1.
 
 ## Before you begin
 
-Before running this tutorial, you must set up a Google Cloud Platform project,
-and you need to have Docker, PostgreSQL, and the Google Cloud SDK installed.
+Before running this tutorial, you must set up a Google Cloud project,
+and you need to have Docker, PostgreSQL, and the Cloud SDK installed.
 
 Create a project that will host your Phoenix application. You can also reuse
 an existing project.
 
-1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
-    to create a new GCP project. Remember the project ID; you will
+1.  Use the [Cloud Console](https://console.cloud.google.com/)
+    to create a new Google Cloud project. Remember the project ID; you will
     need it later. Later commands in this tutorial will use `${PROJECT_ID}` as
     a substitution, so you might consider setting the `PROJECT_ID` environment
     variable in your shell.
@@ -55,10 +59,10 @@ an existing project.
 
 Perform the installations:
 
-1.  Install **Docker 17.05 or later** if you do not already have it. Find
+1.  Install Docker 17.05 or later if you do not already have it. Find
     instructions on the [Docker website](https://www.docker.com/).
 
-1.  Install the **[Google Cloud SDK](https://cloud.google.com/sdk/)** if you do
+1.  Install the [Cloud SDK](https://cloud.google.com/sdk/) if you do
     not already have it. Make sure you
     [initialize](https://cloud.google.com/sdk/docs/initializing) the SDK and
     set the default project to the new project you created.
@@ -68,7 +72,7 @@ Perform the installations:
 
         gcloud components update
 
-1.  Install the Kubernetes component of the Google Cloud SDK:
+1.  Install the Kubernetes component of the Cloud SDK:
 
         gcloud components install kubectl
 
@@ -91,7 +95,7 @@ Perform the installations:
 
         brew install node
 
-    Otherwise consult the [Node download](https://nodejs.org/en/download/)
+    Otherwise consult the [Node.js download](https://nodejs.org/en/download/)
     guide for your operating system.
 
 1.  Install PostgreSQL if you do not already have it. Consult the
@@ -209,7 +213,7 @@ First you will create a new database in the cloud.
     You may choose a region other than `us-central1` if there is one closer to
     your location.
 
-1.  Get the _connection name_ for your Cloud SQL instance by running the
+1.  Get the connection name for your Cloud SQL instance by running the
     following command:
 
         gcloud sql instances describe hellodb
@@ -220,7 +224,7 @@ First you will create a new database in the cloud.
     tutorial.
 
 1.  Secure your new database instance by setting a password on the default
-    postgres user:
+    `postgres` user:
 
         gcloud sql users set-password postgres \
             --instance=hellodb --prompt-for-password
@@ -260,7 +264,7 @@ To set up Cloud SQL Proxy, perform the following steps:
 
         cloud_sql_proxy -dir=/tmp/cloudsql
 
-    Note: This runs the proxy in the foreground, so subsequent commands
+    **Note**: This runs the proxy in the foreground, so subsequent commands
     need to be run in a separate shell. If you prefer, feel free to
     background the process instead.
 
@@ -328,7 +332,7 @@ choose to use Distillery, be sure to adjust these steps accordingly.
         mix release.init
 
     This will create a `rel` directory containing several configuration files
-    and templates. You can examine and edit these if if you wish, but the
+    and templates. You can examine and edit these if you wish, but the
     defaults should be sufficient for this tutorial.
 
     If you are using Distillery 2.1 or later, the corresponding command is
@@ -512,9 +516,9 @@ Now you're ready to deploy your application to Google Kubernetes Engine!
 ### Build the production image
 
 To deploy the app, you will use the
-[Google Cloud Build](https://cloud.google.com/cloud-build/) service to build
+[Cloud Build](https://cloud.google.com/cloud-build/) service to build
 your Docker image in the cloud and store the resulting Docker image in the
-[Google Cloud Container Registry](https://cloud.google.com/container-registry/).
+[Container Registry](https://cloud.google.com/container-registry/).
 
 1.  Create a file called `cloudbuild.yaml` in your `hello` directory. Copy the
     following content into it. Alternately, you can
@@ -580,7 +584,7 @@ These are clusters of VMs in the cloud, managed by a Kubernetes server.
     `sql-admin` scope so that VMs in your cluster can talk to Cloud SQL.
 
     It might take several minutes for the cluster to be created. You can check
-    the cloud console at http://cloud.google.com/console, under the Kubernetes
+    the Cloud Console at http://console.cloud.google.com/, under the Kubernetes
     Engine section, to see that your cluster is running. You will also be able
     to see the individual running VMs under the Compute Engine section.
 
@@ -630,7 +634,7 @@ you've created the Kubernetes cluster as described above.
 
 1.  Expose the application by creating a load balancer pointing at your pod:
 
-        kubectl expose deployment hello-web \
+        kubectl expose pod hello-web \
             --type=LoadBalancer --port 80 --target-port 8080
 
     This creates a service resource pointing at your running pod. It listens
@@ -744,7 +748,7 @@ Alternately, you can delete the project in its entirety. To do so using the
 
     gcloud projects delete ${PROJECT_ID}
 
-where `${PROJECT_ID}` is your Google Cloud Platform project ID.
+where `${PROJECT_ID}` is your Google Cloud project ID.
 
 **Warning**: Deleting a project has the following consequences:
 

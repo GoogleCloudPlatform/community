@@ -1,35 +1,39 @@
 ---
-title: Using the Google Cloud Logging Driver for Docker
-description: Learn to use the gcplogs logging driver to save your Docker logs to Stackdriver Logging.
+title: Using the Google Cloud logging driver for Docker
+description: Learn to use the gcplogs logging driver to save your Docker logs to Cloud Logging.
 author: tswast
 tags: Docker, Logging, devops
 date_published: 2017-04-24
 ---
+
+Tim Swast | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows you how to use the [Google Cloud logging
 driver](https://docs.docker.com/engine/admin/logging/gcplogs/) to [upload logs
 from your Docker
 containers](https://docs.docker.com/engine/admin/logging/overview/) to
-[Stackdriver Logging](https://cloud.google.com/logging/).
+[Cloud Logging](https://cloud.google.com/logging/).
 
 ## Objectives
 
 - Run a Docker container configured with the Google Cloud logging driver.
-- View logs in the Google Cloud Platform console.
+- View logs in the Cloud Console.
 
 ## Before you begin
 
-1.  Create or select a Cloud Platform project from the [Google Cloud Platform
-    console's projects page](https://console.cloud.google.com/project).
+1.  Create or select a Google Cloud project from the [Cloud Console projects page](https://console.cloud.google.com/project).
 1.  [Enable
     billing](https://support.google.com/cloud/answer/6293499#enable-billing)
     for your project.
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform including
+This tutorial uses billable components of Google Cloud, including
 
-- [Google Compute Engine](https://cloud.google.com/compute/all-pricing)
-- [Stackdriver Logging](https://cloud.google.com/stackdriver/pricing)
+- [Compute Engine](https://cloud.google.com/compute/all-pricing)
+- [Cloud Logging](https://cloud.google.com/stackdriver/pricing)
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to estimate the costs for
 your usage.
@@ -41,7 +45,7 @@ OS](https://cloud.google.com/container-optimized-os/) stable image. Container-Op
 with [Docker](https://www.docker.com/why-docker) pre-installed and supports
 automatic system updates.
 
-1.  Open the [Google Cloud Platform console](https://console.cloud.google.com).
+1.  Open the [Cloud Console](https://console.cloud.google.com).
 1.  [Create a new Compute Engine instance](https://console.cloud.google.com/compute/instancesAdd).
 1.  Select the desired **Zone**, such as "us-central1-f".
 1.  Select the desired **Machine series**, such as "N1".
@@ -58,7 +62,7 @@ automatic system updates.
     `--log-driver=gcplogs` command-line argument to the `docker run` command.
 
     Run the following command to start an NGINX container which writes logs to
-    Stackdriver Logging.
+    Cloud Logging.
 
         docker run -d \
             --name mysite \
@@ -67,7 +71,7 @@ automatic system updates.
             nginx
 
 1.  Make a request to your container, which will generate logs and push them
-    to Stackdriver.
+    to Cloud Logging.
 
         curl 127.0.0.1:80
 
@@ -90,12 +94,10 @@ service in the `docker-compose.yml` configuration file. For example:
 
 ## Viewing your logs
 
-Now that you are uploading logs to Stackdriver Logging, you can view them in
-the [Google Cloud Platform Console Logs
-Viewer](https://console.cloud.google.com/logs/viewer).
+Now that you are uploading logs to Cloud Logging, you can view them in
+the [Cloud Console Logs Viewer](https://console.cloud.google.com/logs/viewer).
 
-1.  Open the [Google Cloud Platform Console Logs
-    Viewer](https://console.cloud.google.com/logs/viewer) via that link or by
+1.  Open the [Cloud Console Logs Viewer](https://console.cloud.google.com/logs/viewer) via that link or by
     opening **Logging** from the left menu.
 
     ![logging menu](https://storage.googleapis.com/gcp-community/tutorials/docker-gcplogs-driver/logging-menu.png)
@@ -160,10 +162,10 @@ metadata](https://cloud.google.com/compute/docs/storing-retrieving-metadata#upda
 by writing a configuration to the `user-data` key.
 
 You can write the configuration to the instance metadata from the command line
-or from the Cloud Platform Console. Both methods are described in the following
+or from the Cloud Console. Both methods are described in the following
 sections.
 
-### Writing metadata from the Cloud Platform Console
+### Writing metadata from the Cloud Console
 
 1.  Go to the [VM instances page](https://console.cloud.google.com/compute/instances).
 1.  Edit the instance.
@@ -184,13 +186,13 @@ sections.
 
         sudo ls /etc/docker
 
-### Writing metadata from the command-line
+### Writing metadata from the command line
 
-*If you have already written the metadata using the Cloud Platform Console,
+*If you have already written the metadata using the Cloud Console,
 you can skip this section.*
 
-From [Google Cloud Shell](https://cloud.google.com/shell/docs/quickstart) or a development machine
-where you have [installed and initialized the Google Cloud SDK](https://cloud.google.com/sdk/docs/),
+From [Cloud Shell](https://cloud.google.com/shell/docs/quickstart) or a development machine
+where you have [installed and initialized the Cloud SDK](https://cloud.google.com/sdk/docs/),
 use the [gcloud compute intances
 add-metadata](https://cloud.google.com/sdk/gcloud/reference/compute/instances/add-metadata)
 command to add the `user-data` key to your instance.
@@ -220,7 +222,7 @@ command to add the `user-data` key to your instance.
 
 ## Next steps
 
-- [Install the Stackdriver Logging agent to stream system logs to Stackdriver
+- [Install the Cloud Logging agent to stream system logs to Cloud
   Logging](https://cloud.google.com/logging/docs/agent/installation).
 - [Try out some other DevOps tutorials](https://cloud.google.com/docs/tutorials/#devops).
 

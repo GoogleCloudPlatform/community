@@ -1,12 +1,12 @@
 ---
-title: Count words with Cloud Dataflow and Java
-description: Learn to use the Cloud Dataflow service by running a word count example in Java.
+title: Count words with Dataflow and Java
+description: Learn to use the Dataflow service by running a word count example in Java.
 author: jscud
 tags: Dataflow
 date_published: 2019-07-31
 ---
 
-# Count words with Cloud Dataflow and Java
+# Count words with Dataflow and Java
 
 <!-- {% setvar directory "dataflow-intro" %} -->
 <!-- {% setvar job_name "dataflow-intro" %} -->
@@ -14,28 +14,28 @@ date_published: 2019-07-31
 <!-- {% setvar project_id "<your-project>" %} -->
 
 <walkthrough-alt>
-Take the interactive version of this tutorial, which runs in the Google Cloud Platform (GCP) Console:
+Take the interactive version of this tutorial, which runs in the Cloud Console:
 
-[![Open in GCP Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=java_dataflow_quickstart)
+[![Open in Cloud Console](https://walkthroughs.googleusercontent.com/tutorial/resources/open-in-console-button.svg)](https://console.cloud.google.com/getting-started?walkthrough_tutorial_id=java_dataflow_quickstart)
 
 </walkthrough-alt>
 
 ## Introduction
 
-In this tutorial, you'll learn the basics of the Cloud Dataflow service by
+In this tutorial, you'll learn the basics of the Dataflow service by
 running a simple example pipeline using Java.
 
-Cloud Dataflow pipelines are either *batch* (processing bounded input like a file or
+Dataflow pipelines are either *batch* (processing bounded input like a file or
 database table) or *streaming* (processing unbounded input from a source like
-Cloud Pub/Sub). The example in this tutorial is a batch pipeline that counts
+Pub/Sub). The example in this tutorial is a batch pipeline that counts
 words in a collection of Shakespeare's works.
 
-Before you start, you'll need to check for prerequisites in your GCP
+Before you start, you'll need to check for prerequisites in your Google Cloud
 project and perform initial setup.
 
 ## Project setup
 
-GCP organizes resources into projects. This allows you to
+Google Cloud organizes resources into projects. This allows you to
 collect all of the related resources for a single application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
@@ -45,14 +45,14 @@ Begin by creating a new project or selecting an existing project for this tutori
 For details, see
 [Creating a project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project).
 
-## Set up Cloud Dataflow
+## Set up Dataflow
 
-To use Cloud Dataflow, enable the Cloud Dataflow APIs and open Cloud Shell.
+To use Dataflow, enable the Dataflow APIs and open Cloud Shell.
 
 ### Enable Cloud APIs
 
-Cloud Dataflow processes data in many GCP data stores and messaging services,
-including BigQuery, Cloud Storage, and Cloud Pub/Sub. To use these services,
+Dataflow processes data in many Google Cloud data stores and messaging services,
+including BigQuery, Cloud Storage, and Pub/Sub. To use these services,
 you must first enable their APIs.
 
 Use the following to enable the APIs:
@@ -67,23 +67,23 @@ https://console.cloud.google.com/flows/enableapi?apiid=compute.googleapis.com,da
 
 ### Open Cloud Shell
 
-In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the GCP Console.
+In this tutorial, you do much of your work in Cloud Shell, which is a built-in command-line tool for the Cloud Console.
 
 Open Cloud Shell by clicking the <walkthrough-cloud-shell-icon></walkthrough-cloud-shell-icon>[**Activate Cloud Shell**][spotlight-open-devshell] button in the navigation bar in the upper-right corner of the console.
 
-## Install Cloud Dataflow samples
+## Install Dataflow samples
 
-Cloud Dataflow runs jobs written using the Apache Beam SDK. To submit jobs to the
-Cloud Dataflow service using Java, your development environment requires Java, the
-Google Cloud SDK, the Apache Beam SDK for Java, and Apache Maven for managing
-SDK dependencies. This tutorial uses a Cloud Shell environment that has Java, the Google
+Dataflow runs jobs written using the Apache Beam SDK. To submit jobs to the
+Dataflow service using Java, your development environment requires Java, the
+Cloud SDK, the Apache Beam SDK for Java, and Apache Maven for managing
+SDK dependencies. This tutorial uses a Cloud Shell environment that has Java, the
 Cloud SDK, and Maven installed.
 
 Alternatively, you can do this tutorial [on your local machine][dataflow-java-tutorial].
 
 ### Download the samples and the Apache Beam SDK for Java using the Maven command
 
-To write a Cloud Dataflow job with Java, you first need to download the SDK
+To write a Dataflow job with Java, you first need to download the SDK
 from the Maven repository.
 
 When you run this command in Cloud Shell, Maven creates a project structure and config file
@@ -120,7 +120,7 @@ subdirectory in the `dataflow-intro` directory.
 
 ## Set up a Cloud Storage bucket
 
-Cloud Dataflow uses Cloud Storage buckets to store output data and cache your
+Dataflow uses Cloud Storage buckets to store output data and cache your
 pipeline code.
 
 ### Run gsutil mb
@@ -131,13 +131,13 @@ In Cloud Shell, use the command `gsutil mb` to create a Cloud Storage bucket.
 gsutil mb gs://{{project_id_no_domain}}
 ```
 
-`{{project_id_no_domain}}` is your GCP project ID.
+`{{project_id_no_domain}}` is your Google Cloud project ID.
 
 For more information about the `gsutil` tool, see the [documentation][gsutil-docs].
 
 ## Create and launch a pipeline
 
-In Cloud Dataflow, data processing work is represented by a *pipeline*. A
+In Dataflow, data processing work is represented by a *pipeline*. A
 pipeline reads input data, performs transformations on that data, and then
 produces output data. A pipeline's transformations might include filtering,
 grouping, comparing, or joining data.
@@ -145,7 +145,7 @@ grouping, comparing, or joining data.
 If you'd like to see the code for this example, you can find it in the `src`
 subdirectory in the `dataflow-intro` directory.
 
-### Launch your pipeline on the Dataflow Service
+### Launch your pipeline on the Dataflow service
 
 Use Apache Maven's `mvn exec` command to launch your pipeline on the service.
 The running pipeline is referred to as a *job.*
@@ -161,8 +161,8 @@ mvn compile exec:java \
   -Pdataflow-runner
 ```
 
-*   `{{project_id}}` is your GCP project ID.
-*   `gcpTempLocation` is the storage bucket that Cloud Dataflow will use for the
+*   `{{project_id}}` is your Google Cloud project ID.
+*   `gcpTempLocation` is the storage bucket that Dataflow will use for the
     binaries and other data for running your pipeline. This location can be
     shared across multiple jobs.
 *   `output` is the bucket used by the WordCount example to store the job
@@ -183,7 +183,7 @@ Cloud Shell to delete the directory:
 ## Monitor your job
 
 In this section, you check the progress of your pipeline on the **Dataflow** page
-in the GCP Console.
+in the Cloud Console.
 
 ### Go to the Dataflow page
 
@@ -223,10 +223,9 @@ select **Storage**, and then click **Browser**.
 
 In the list of buckets, select the bucket that you created earlier.
 
-The bucket contains output and temp folders. Dataflow saves the
-output in shards, so your bucket will contain several output files.
+Dataflow saves the output in shards, so your bucket will contain several output files.
 
-The temp folder is for staging binaries needed by the workers and for
+The `tmp` folder is for staging binaries needed by the workers and for
 temporary files needed by the job execution.
 
 ## Clean up
@@ -238,7 +237,7 @@ created.
 
 1.  Check the box next to the bucket that you created.
 
-1.  Click the [**Delete**][spotlight-delete-bucket] button at the top of the GCP Console, and
+1.  Click the [**Delete**][spotlight-delete-bucket] button at the top of the Cloud Console, and
     confirm the deletion.
 
 ## Conclusion
@@ -248,13 +247,13 @@ created.
 Here's what you can do next:
 
 *   [Read more about the WordCount example][wordcount]
-*   [Learn about the Cloud Dataflow programming model][df-model]
+*   [Learn about the Dataflow programming model][df-model]
 *   [Explore the Apache Beam SDK on GitHub][df-sdk]
 
 Set up your local environment:
 
-*   [Use Eclipse to run Cloud Dataflow][df-eclipse]
-*   [Use Python to run Cloud Dataflow][df-python]
+*   [Use Eclipse to run Dataflow][df-eclipse]
+*   [Use Python to run Dataflow][df-python]
 
 [dataflow-java-tutorial]: https://cloud.google.com/dataflow/docs/quickstarts/quickstart-java-maven
 [df-eclipse]: https://cloud.google.com/dataflow/docs/quickstarts/quickstart-java-eclipse

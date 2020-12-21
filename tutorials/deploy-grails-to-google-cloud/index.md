@@ -6,21 +6,20 @@ tags: Cloud SQL, App Engine, Java, Grails, Cloud Storage
 date_published: 2017-08-08
 ---
 
-*Sergio del Amo (Object Computing, Inc.)*
+Sergio del Amo | Object Computing, Inc.
 
-*August 2017*
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-*Grails Version: 3.3.0*
+## Getting started
 
-## Getting Started
 In this guide, you deploy a Grails 3 application to
-[Google App Engine flexible environment][flex], upload images to
-[Google Cloud Storage][storage] and use a MySQL database provided by
-[Google Cloud SQL][cloud_sql].
+[App Engine flexible environment][flex], upload images to
+[Cloud Storage][storage] and use a MySQL database provided by
+[Cloud SQL][cloud_sql].
 
 ## Costs
 
-This guide uses paid services. You may need to enable Billing in Google Cloud to
+This guide uses paid services. You may need to enable billing in Google Cloud to
 complete some steps in this guide.
 
 ### What you will need
@@ -145,9 +144,9 @@ You can find the code: `BookController`, `BookGormService` and GSP views in the
 \§ 21`
 `initial` project.
 
-## Google Cloud SDK
+## Cloud SDK
 
-1.  Signup for [Google Cloud Platform](https://console.cloud.google.com/) and
+1.  Signup for [Google Cloud](https://console.cloud.google.com/) and
     create a new project:
 
     ![Create Project](https://storage.googleapis.com/gcp-community/tutorials/deploy-grails-to-google-cloud/create-project.png)
@@ -184,7 +183,7 @@ Run the command:
 
 to initialize an App Engine application within the current Google Cloud project.
 
-NOTE: You need to choose the region where you want your App Engine application
+You need to choose the region where you want your App Engine application
 located.
 
 ### Google App Engine Gradle plugin
@@ -239,9 +238,6 @@ env: flex
 runtime_config:
     jdk: openjdk8
     server: jetty9
-
-health_check:
-    enable_health_check: False
 
 resources:
     cpu: 1
@@ -305,7 +301,7 @@ This guide’s Grails application uses a MySQL database created with
 Cloud SQL is a fully-managed database service that makes it easy to set up,
 maintain, manage, and administer your relational PostgreSQL BETA and MySQL
 databases in the cloud. Cloud SQL offers high performance, scalability, and
-convenience. Hosted on Google Cloud Platform, Cloud SQL provides a database
+convenience. Hosted on Google Cloud, Cloud SQL provides a database
 infrastructure for applications running anywhere.
 
 ### Enable the Cloud SQL API
@@ -399,7 +395,7 @@ URL and verify that connectivity can be established.
 
 ## Cloud Storage
 
-The app allows users to upload a book cover image. To store the images in GCP, use [Cloud Storage][storage].
+The app allows users to upload a book cover image. To store the images in Google Cloud, use [Cloud Storage][storage].
 
 Cloud Storage is unified object storage for developers and enterprises,
 from live data serving to data analytics/ML to data archiving.
@@ -583,7 +579,7 @@ from live data serving to data analytics/ML to data archiving.
 
             Storage storage = StorageOptions.defaultInstance.service
 
-            // Google Cloud Platform project ID.
+            // Google Cloud project ID.
             String projectId
 
             // Cloud Storage Bucket
@@ -644,7 +640,7 @@ from live data serving to data analytics/ML to data archiving.
 1.  Create a file named `grails-app/views/book/editFeaturedImage.gsp` from the
     content found in [editFeaturedImage.gsp](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/deploy-grails-to-google-cloud/editFeaturedImage.gsp).
 
-## Deploying the App
+## Deploying the app
 
 To deploy the app to Google App Engine run:
 
@@ -724,7 +720,7 @@ Deleting a project has the following consequences:
 - If you are exploring multiple tutorials and quickstarts, reusing projects
   instead of deleting them prevents you from exceeding project quota limits.
 
-1.  In the Cloud Platform Console, go to the Projects page.
+1.  In the Cloud Console, go to the Projects page.
 
     [GO TO THE PROJECTS PAGE](https://console.cloud.google.com/iam-admin/projects)
 
@@ -744,15 +740,15 @@ during the tutorial.
 
 To delete an app version:
 
-1.  In the Cloud Platform Console, go to the App Engine Versions page.
+1.  In the Cloud Console, go to the App Engine Versions page.
 
     [GO TO THE VERSIONS PAGE](https://console.cloud.google.com/appengine/versions)
 
 1.  Click the checkbox next to the non-default app version you want to delete.
 
-    Note: The only way you can delete the default version of your App Engine app
+    The only way that you can delete the default version of your App Engine app
     is by deleting your project. However, you can stop the default version in
-    the Cloud Platform Console. This action shuts down all instances associated
+    the Cloud Console. This action shuts down all instances associated
     with the version. You can restart these instances later if needed.
 
     In the App Engine standard environment, you can stop the default version
@@ -764,7 +760,7 @@ To delete an app version:
 
 To delete a Cloud SQL instance:
 
-1.  In the Cloud Platform Console, go to the SQL Instances page.
+1.  In the Cloud Console, go to the SQL Instances page.
 
     [GO TO THE SQL INSTANCES PAGE](https://console.cloud.google.com/sql/instances)
 
@@ -775,7 +771,7 @@ To delete a Cloud SQL instance:
 
 To delete a Cloud Storage bucket:
 
-1.  In the Cloud Platform Console, go to the Cloud Storage browser.
+1.  In the Cloud Console, go to the Cloud Storage browser.
 
     [GO TO THE CLOUD STORAGE BROWSER](https://console.cloud.google.com/storage/browser)
 
@@ -790,7 +786,7 @@ Moreover, if you want to learn more about Google Cloud and Grails integration,
 checkout a more complete sample app.
 
 The [Google Cloud Bookshelf with Grails](https://grails-samples.github.io/google-bookshelf/)
-application shows how to use a variety of Google Cloud Platform products,
+application shows how to use a variety of Google Cloud products,
 including some of the services described in this guides and other services such
 as:
 

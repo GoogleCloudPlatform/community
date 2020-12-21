@@ -1,22 +1,26 @@
 ---
-title: Deploying XenForo to Google Compute Engine
-description: Learn how to deploy a XenForo application to Google Compute Engine.
+title: Deploying XenForo to Compute Engine
+description: Learn how to deploy a XenForo application to Compute Engine.
 author: michaelawyu
 tags: Compute Engine, PHP, XenForo, Cloud Storage, Cloud SQL
 date_published: 2017-12-04
 ---
 
+Chen Yu | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial explains how to deploy [XenForo](https://xenforo.com/) on
-[Google Cloud Compute Engine](https://cloud.google.com/compute/).
+[Compute Engine](https://cloud.google.com/compute/).
 
 XenForo is an extensible and flexible community forum software written in PHP.
 With proper configurations, you can transform XenForo into a simple message
 board of your own or an online forum serving thousands of users.
 
-Google Cloud Compute Engine delivers virtual machines (VMs) running in Google’s
-innovative data centers and worldwide fiber network. Compute Engine allows you
-to easily host your own XenForo website, while giving you all the benefits of
-Google Cloud Platform, such as fast and efficient networking, high flexibility,
+Compute Engine delivers virtual machines (VMs) running in Google’s
+data centers and worldwide fiber network. Compute Engine allows you
+to host your own XenForo website, while giving you all the benefits of
+Google Cloud, such as fast and efficient networking, high flexibility,
 great performance, and access to a variety of Google Cloud services.
 
 ## Objectives
@@ -27,32 +31,32 @@ great performance, and access to a variety of Google Cloud services.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including
+This tutorial uses billable components of Google Cloud, including
 
-* Google Compute Engine
-* Google Cloud Storage
+* Compute Engine
+* Cloud Storage
 * Google Compute Network Bandwidth
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to
 generate a cost estimate based on your projected usage. Depending on the scale
 of your XenForo website, you might be eligible for
-[Google Cloud Platform Free Tier](https://cloud.google.com/free/). Costs listed
-above DO NOT include the license fee for purchasing XenForo.
+[Google Cloud Free Tier](https://cloud.google.com/free/). Costs listed
+above do not include the license fee for purchasing XenForo.
 
 ## Before you begin
 
-1.  Create or select a project from [Google Cloud Console](https://console.cloud.google.com/).
-		If you have never used Google Cloud Platform before, sign up or log in with
+1.  Create or select a project from [Cloud Console](https://console.cloud.google.com/).
+		If you have never used Google Cloud before, sign up or log in with
 		your existing Google account, then follow the on-screen instructions to
-		start using Google Cloud Platform.
+		start using Google Cloud.
 1.  [Enable billing](https://cloud.google.com/billing/docs/how-to/modify-project)
 		for your account.
-1.  Install the [Google Cloud SDK](https://cloud.google.com/sdk/) (Optional).
+1.  Install the [Cloud SDK](https://cloud.google.com/sdk/) (Optional).
 1.  Create a Compute Engine instance. You can do this from the
 		[VM Instances](https://console.cloud.google.com/compute/instances) page of
 		Cloud Console, via Cloud SDK, or using the Compute Engine API.
 
-	If you decide to use Cloud Platform Console, perform the following steps:
+	If you decide to use Cloud Console, perform the following steps:
 
 	* Enter the name of your instance and choose a
 		[compute zone](https://cloud.google.com/compute/docs/regions-zones/) for it.
@@ -79,7 +83,7 @@ above DO NOT include the license fee for purchasing XenForo.
 5. Download your copy of XenForo from XenForo’s website. For this tutorial you
 need to use XenForo 1.5.
 
-## Understanding the Architecture
+## Understanding the architecture
 
 To serve requests from the Internet, XenForo needs to work with a web server
 frontend and a MySQL database backend. In this tutorial you will use
@@ -89,10 +93,10 @@ architecture of the project looks as follows:
 
 ![Understanding the Architecture](https://storage.googleapis.com/gcp-community/tutorials/deploy-xenforo-to-compute-engine/architecture_overview.png)
 
-## Installing the Prerequisites
+## Installing the prerequisites
 
 To complete the following steps, you need to connect to your Compute Engine
-instance. To connect to your instance using Cloud Platform Console, visit the
+instance. To connect to your instance using Cloud Console, visit the
 [VM Instances](https://console.cloud.google.com/compute/instances) menu and
 click **SSH** in the row of the instance that you want to connect to. For other
 ways of connecting to instances, refer to the
@@ -161,7 +165,7 @@ page of Compute Engine documentation.
 
 		Now the instance is ready to run XenForo.
 
-## Uploading and Configuring XenForo
+## Uploading and configuring XenForo
 
 1.  Copy the XenForo installation file to your Compute Engine instance:
 
@@ -215,12 +219,12 @@ page of Compute Engine documentation.
 
 Your XenForo website is now up and running.
 
-## Setting Up a Mailing Service
+## Setting up a mailing service
 
 XenForo by default uses a mail transfer agent (MTA), such as postfix, to send
 emails. The agent then utilizes an outgoing connection to common SMTP ports
 (25, 587, etc.) to transfer information (mails). However, many cloud service
-providers, including Google Cloud Platform, block such connections for security
+providers, including Google Cloud, block such connections for security
 reasons; additionally, emails sent this way are often considered spam by many
 email service providers, and are dropped before getting into the inboxes of
 recipients. For these reasons, you should use a third-party service for sending
@@ -301,14 +305,14 @@ tutorial:
 				sudo chmod 600 sasl_password.db
 				sudo rm sasl_password
 
-1.  Lastly, restart the postfix service:
+1.  Restart the postfix service:
 
 				sudo service postfix restart
 
 		Now your XenForo website can use the third-party service to send emails more
 		securely and efficiently.
 
-## Update Your Domain (Optional)
+## Update your domain (optional)
 
 Anyone can now use the external IP of your Compute Engine instance to access
 your XenForo website. To assign a domain name to this IP address, perform the
@@ -332,14 +336,14 @@ following steps:
 		domain. Your website should be accessible with the domain name in a short
 		while.
 
-## Cleaning Up
+## Cleaning up
 
 After you have finished this tutorial, you can clean up the resources you
-created on Google Cloud Platform so that you will not be billed for them in the
+created on Google Cloud so that you will not be billed for them in the
 future. To clean up, you can delete the whole project or stop the Compute Engine
 instance.
 
-### Deleting the Project
+### Deleting the project
 
 Visit the [Manage resources](https://console.cloud.google.com/cloud-resource-manager)
 menu. Select the project you used for this tutorial and click **Delete**. Note
@@ -348,7 +352,7 @@ that once the project is deleted, the project ID cannot be reused.
 If you have Cloud SDK installed in the system, you can also
 [use the `gcloud` command-line to delete a project](https://cloud.google.com/sdk/gcloud/reference/projects/delete).
 
-### Stopping the Compute Engine Instance
+### Stopping the Compute Engine instance
 
 Visit the [VM Instances](https://console.cloud.google.com/compute/instances)
 menu. Select the instance you used for this tutorial and click **Stop**. If you

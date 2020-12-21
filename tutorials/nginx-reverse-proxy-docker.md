@@ -1,13 +1,17 @@
 ---
-title: Running an NGINX Reverse Proxy with Docker and Let's Encrypt on Compute Engine
+title: Running an NGINX reverse proxy with Docker and Let's Encrypt on Compute Engine
 description: Learn to serve multiple websites simultaneously in a single Compute Engine instance with Docker and NGINX. Also, learn how to secure the sites with Let's Encrypt.
 author: tswast
 tags: Compute Engine, NGINX, Docker, Let's Encrypt
 date_published: 2017-04-19
 ---
 
-This tutorial will guide you through running multiple websites on a Google Compute
-Engine instance using Docker. You will secure the websites using free SSL/TLS
+Tim Swast | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This tutorial guides you through running multiple websites on a Compute
+Engine instance using Docker. You secure the websites using free SSL/TLS
 certificates from [Let's Encrypt](https://letsencrypt.org/).
 
 ## Objectives
@@ -19,17 +23,13 @@ certificates from [Let's Encrypt](https://letsencrypt.org/).
 
 ## Before you begin
 
-1.  Create or select a Cloud Platform project from the [Google Cloud Platform
-    console's projects page](https://console.cloud.google.com/project).
-1.  [Enable
-    billing](https://support.google.com/cloud/answer/6293499#enable-billing)
+1.  Create or select a Google Cloud project from the [Cloud Console projects page](https://console.cloud.google.com/project).
+1.  [Enable billing](https://support.google.com/cloud/answer/6293499#enable-billing)
     for your project.
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform including
-
-- [Google Compute Engine](https://cloud.google.com/compute/pricing)
+This tutorial uses billable components of Google Cloud including [Compute Engine](https://cloud.google.com/compute/pricing).
 
 Use the [Pricing
 Calculator](https://cloud.google.com/products/calculator/#id=bb109d69-241c-4262-afdf-a6604401e053)
@@ -41,7 +41,7 @@ Create a new Compute Engine instance using the [CoreOS](https://coreos.com/why)
 stable image. CoreOS comes with [Docker](https://www.docker.com/what-docker)
 pre-installed and supports automatic system updates.
 
-1.  Open the [Google Cloud Platform console](https://console.cloud.google.com).
+1.  Open the [Cloud Console](https://console.cloud.google.com).
 1.  [Create a new Compute Engine instance](https://console.cloud.google.com/compute/instancesAdd).
 1.  Select the desired **Zone**, such as "us-central1-f".
 1.  Select the desired **Machine type**, such as "micro" (f1-micro).
@@ -66,20 +66,20 @@ records](https://support.google.com/domains/answer/3251147) and add an **A**
 type record. The name "@" corresponds to the root of your domain or you can
 change it to a subdomain, such as "a" and "b".
 
-This tutorial will assume you have two subdomains with A records:
+This tutorial assumes that you have two subdomains with A records:
 
 - a.example.com
 - b.example.com
 
 ## Setting up the reverse proxy
 
-To have the separate websites respond only to their respective hosts, you'll
+To have the separate websites respond only to their respective hosts, you
 use a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy). This
 tutorial uses the [nginx-proxy Docker
 container](https://github.com/jwilder/nginx-proxy) to automatically configure
 NGINX to forward requests to the corresponding website.
 
-As an example, this tutorial will show a plain NGINX server running as
+As an example, this tutorial shows a plain NGINX server running as
 site A and a [plain Apache server](https://hub.docker.com/_/httpd/) running as site B.
 
 1.  Run the reverse proxy.
@@ -104,7 +104,7 @@ site A and a [plain Apache server](https://hub.docker.com/_/httpd/) running as s
 Congratulations, you are running multiple apps on the same host using
 Docker and an [nginx reverse proxy](https://github.com/jwilder/nginx-proxy).
 
-**Note:** If you do not wish to set up HTTPS for your websites using [Let's Encrypt](https://letsencrypt.org/), you can skip reading the rest of this tutorial.
+**Note**: If you do not wish to set up HTTPS for your websites using [Let's Encrypt](https://letsencrypt.org/), you can skip reading the rest of this tutorial.
 
 ## Setting up HTTPS with Let's Encrypt
 
