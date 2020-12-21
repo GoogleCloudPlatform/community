@@ -22,7 +22,7 @@ This tutorial includes instructions for creating Packer images for Linux and Win
 - For building a Linux image, this tutorial uses Packer to create a new image from a CentOS 7 VM with Nginx.
 - For building a Windows image, this tutorial uses Packer to create a new image from a Windows Server 2019 VM with Python 3, Git, and 7-Zip,
   using Chocolatey as a package manager.
-  
+
 Secret Manager is only used for the Windows option.
 
 ## Prerequisites
@@ -369,7 +369,7 @@ In this section, you verify that your deployment has worked correctly.
 
 1.  Wait a few minutes and open the browser to the IP address of the instance to see the special message.
 
-1.  Retrieve the instace IP address:
+1.  Retrieve the instance IP address:
 
         gcloud compute instances list --filter="name:helloworld*" --format="value(networkInterfaces[0].accessConfigs[0].natIP)"
 
@@ -427,7 +427,7 @@ If you don't want to keep the resources after this tutorial, you can delete them
 1.  Delete the repository:
 
         gcloud source repos delete --quiet windows-image-factory
- 
+
     Only do this if you don't want to perform the tutorial in this project again. The repository name won't be usable
     again for up to 7 days.
 
@@ -470,5 +470,6 @@ undo WinRM configurations, and then remove the shutdown script itself.
 [any supported packages](https://chocolatey.org/packages) to install, as well as versioning, options, and switches. For details, see the 
 [Chocolatey documentation](https://chocolatey.org/docs/commandsinstall#packagesconfig). 
 
-[**`windows/scripts/run-chocolatey.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/run-chocolatey.ps1) invokes Chocolatey to install the packages defined in the XML manifest, including error handling. Because some Windows 
-software requires a restart to complete the installation, this script allows it (exit code `3010`) as Packer will shut down and sysprep the image as the final step.
+[**`windows/scripts/run-chocolatey.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/run-chocolatey.ps1) invokes Chocolatey to install the packages defined in the XML manifest, including error handling. Because some Windows
+software requires a restart to complete the installation, this script allows it (exit code `3010`) as Packer will shut down and sysprep the image as the final
+step.
