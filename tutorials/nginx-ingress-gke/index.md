@@ -184,7 +184,7 @@ Verify the `nginx-ingress-controller` Deployment and Service is deployed to the 
     NAME                          TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)                      AGE
     nginx-ingress-nginx-ingress   LoadBalancer   10.7.250.75   <pending>     80:31875/TCP,443:30172/TCP   132m 
 
-Wait a few moments while the Google Cloud L4 Load Balancer gets deployed. Confirm that the `nginx-ingress-nginx-ingress` Service has been deployed and that you have an external IP address associated with the service.  Run the following command:
+Wait a few moments while the Google Cloud L4 Load Balancer gets deployed. Confirm that the `nginx-ingress-nginx-ingress` Service has been deployed and that you have an external IP address associated with the service.  Run the following command (note that you may have to run this command a few times until an `EXTERNAL-IP` value is present):
 
     kubectl get service nginx-ingress-nginx-ingress
 
@@ -225,7 +225,7 @@ status field in confusing ways. For more information, see
 
 Let's create a simple Ingress Resource YAML file which uses the NGINX Ingress Controller and has one path rule defined by typing the following commands:
 
-    cat <<EOF > ingress-resource.yaml_test
+    cat <<EOF > ingress-resource.yaml
     apiVersion: networking.k8s.io/v1beta1
     kind: Ingress
     metadata:
