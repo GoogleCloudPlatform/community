@@ -27,7 +27,7 @@ traffic from an outside client to a Kubernetes Service.
 
 NGINX is a popular choice for an Ingress Controller for a variety of features:
 
-- [Websocket](https://github.com/nginxinc/kubernetes-ingress/blob/master/examples/websocket),
+- [WebSocket](https://github.com/nginxinc/kubernetes-ingress/blob/master/examples/websocket),
   which allows you to load balance Websocket applications.
 - [SSL Services](https://github.com/nginxinc/kubernetes-ingress/blob/master/examples/ssl-services),
   which allows you to load balance HTTPS applications.
