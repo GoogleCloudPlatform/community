@@ -229,20 +229,21 @@ Let's create a simple Ingress Resource YAML file which uses the NGINX Ingress Co
     apiVersion: networking.k8s.io/v1beta1
     kind: Ingress
     metadata:
-    name: ingress-resource
-    annotations:
+      name: ingress-resource
+      annotations:
         kubernetes.io/ingress.class: "nginx"
         nginx.ingress.kubernetes.io/ssl-redirect: "false"
     spec:
-    rules:
-    - host: ${NGINX_INGRESS_IP}.xip.io
+      rules:
+      - host: ${NGINX_INGRESS_IP}.xip.io
         http:
-        paths:
-        - backend:
-            serviceName: hello-app
-            servicePort: 8080
+          paths:
+          - backend:
+              serviceName: hello-app
+              servicePort: 8080
             path: /hello
     EOF
+
 
 The `kind: Ingress` dictates it is an Ingress Resource object.  This Ingress Resource defines an inbound L7 rule for path `/hello` to service `hello-app` on port 8080.
 
