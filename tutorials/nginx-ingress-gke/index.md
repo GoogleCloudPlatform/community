@@ -53,7 +53,7 @@ with an Ingress Resource using NGINX as the Ingress Controller to route/load
 balance traffic from external clients to the Deployment.  This tutorial explains how to accomplish the following:
 
 -  Create a Kubernetes Deployment
--  Deploy NGINX Ingress Controller via [Helm](https://github.com/kubernetes/helm/blob/master/docs/install.md)
+-  Deploy NGINX Ingress Controller via [Helm](https://helm.sh/)
 -  Set up an Ingress Resource object for the Deployment
 
 ## Objectives
@@ -93,6 +93,7 @@ complete the tutorial.
 ### Create a Google Kubernetes Engine cluster using Cloud Shell
 
 1.  You can use Cloud Shell to complete this tutorial. To use Cloud Shell, perform the following steps:
+
 	  [OPEN A NEW CLOUD SHELL SESSION](https://console.cloud.google.com/?cloudshell=true)
 
 1.  Set your project's default compute zone and create a cluster by running the following commands:
@@ -101,80 +102,24 @@ complete the tutorial.
         gcloud container clusters create nginx-tutorial --num-nodes=2
 
 
-## Install Helm in Cloud Shell
-
-If you already have Helm client and Tiller installed on your cluster, you can skip to the next section.
+## Verify Helm in Cloud Shell
 
 Helm is a tool that streamlines installing and managing Kubernetes applications and resources. Think of it like 
 apt/yum/homebrew for Kubernetes. Use of Helm charts is recommended, because they are maintained and typically kept
 up to date by the Kubernetes community.
 
--   Helm has two parts: a client (`helm`) and a server (`tiller`)
--   `tiller` runs inside of your Kubernetes cluster and manages releases (installations) of your
-    [helm charts](https://github.com/kubernetes/helm/blob/master/docs/charts.md).
--   `helm` runs on your local computer, CI/CD, or in our case, the Cloud Shell.
+Helm v3 comes pre-installed in Cloud Shell.
 
-You can install the `helm` client in Cloud Shell using the following commands:
+1. Verify the version of Helm client in Cloud Shell by running the following command:
 
-    curl -o get_helm.sh https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
-    chmod +x get_helm.sh
-    ./get_helm.sh
+        helm version
 
-The script above fetches the latest version of `helm` client and installs it locally in Cloud Shell.
+        _Output (Do not copy)_
+        version.BuildInfo{Version:"v3.2.1", GitCommit:"fe51cd1e31e6a202cba7dead9552a6d418ded79a", GitTreeState:"clean", GoVersion:"go1.13.10"}
 
-    Downloading https://kubernetes-helm.storage.googleapis.com/helm-v2.8.1-linux-amd64.tar.gz
-    Preparing to install into /usr/local/bin
-    helm installed into /usr/local/bin/helm
-    Run 'helm init' to configure helm.
+Ensure that the version is `v3.x.y`. 
 
-### Installing Tiller with RBAC enabled
-
-Starting with Kubernetes v1.8+, RBAC is enabled by default. Prior to installing `tiller` we need to ensure we have the correct _ServiceAccount_ and _ClusterRoleBinding_ configured for the `tiller` service. This allows `tiller` to be able to install services in the `default` namespace.
-
-Run the following commands to install the server side `tiller` to the Kubernetes cluster with RBAC enabled:
-
-    kubectl create serviceaccount --namespace kube-system tiller
-    kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-    helm init --service-account tiller
-
-
-### Installing Tiller with RBAC disabled
-
-If you do not have RBAC enabled on your Kubernetes installation, you can simply run the following command to install `tiller` on your cluster.
-
-    helm init
-
-The output below confirms that Tiller is running.
-
-    Creating /home/ameer00/.helm
-    Creating /home/ameer00/.helm/repository
-    Creating /home/ameer00/.helm/repository/cache
-    Creating /home/ameer00/.helm/repository/local
-    Creating /home/ameer00/.helm/plugins
-    Creating /home/ameer00/.helm/starters
-    Creating /home/ameer00/.helm/cache/archive
-    Creating /home/ameer00/.helm/repository/repositories.yaml
-    Adding stable repo with URL: https://kubernetes-charts.storage.googleapis.com
-    Adding local repo with URL: http://127.0.0.1:8879/charts
-    $HELM_HOME has been configured at /home/ameer00/.helm.
-
-    Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.
-    Happy Helming!
-
-You can also confirm that `tiller` is running by checking for the `tiller_deploy` Deployment in the `kube-system` namespace.  Run the following command:
-
-    kubectl get deployments -n kube-system
-
-The output should have a `tiller_deploy` Deployment as shown below:
-
-    NAME                    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-    event-exporter-v0.1.7   1         1         1            1           13m
-    heapster-v1.4.3         1         1         1            1           13m
-    kube-dns                2         2         2            2           13m
-    kube-dns-autoscaler     1         1         1            1           13m
-    kubernetes-dashboard    1         1         1            1           13m
-    l7-default-backend      1         1         1            1           13m
-    tiller-deploy           1         1         1            1           4m
+You can install the `helm` client in Cloud Shell by following the instructions [here](https://helm.sh/docs/intro/install/).
 
 ## Deploy an application in Google Kubernetes Engine
 
@@ -214,42 +159,52 @@ solution on Google Kubernetes Engine.
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/nginx-ingress-gke/Nginx%20Ingress%20on%20GCP%20-%20Fig%2002.png)
 
-#### Deploy NGINX Ingress Controller with RBAC enabled
+#### Deploy NGINX Ingress Controller
 
-If your Kubernetes cluster has RBAC enabled, from the Cloud Shell, deploy an NGINX controller Deployment and Service by running the following command:
+Before you deploy the NGINX Ingress helm chart to the GKE cluster, add the `nginx-stable` helm repository in Cloud Shell by running the following commands.
 
-    helm install --name nginx-ingress stable/nginx-ingress --set rbac.create=true --set controller.publishService.enabled=true
+        helm repo add nginx-stable https://helm.nginx.com/stable
+        helm repo update
 
-#### Deploy NGINX Ingress Controller with RBAC disabled
+Deploy an NGINX controller Deployment and Service by running the following command:
 
-If your Kubernetes cluster has RBAC disabled, from the Cloud Shell, deploy an NGINX controller Deployment and Service by running the following command:
+    helm install nginx-ingress nginx-stable/nginx-ingress
 
-    helm install --name nginx-ingress stable/nginx-ingress
+Verify the `nginx-ingress-controller` Deployment and Service is deployed to the GKE cluster.
 
-In the ouput under `RESOURCES`, you should see the following:
+    kubectl get deployment nginx-ingress-nginx-ingress
+    kubectl get service nginx-ingress-nginx-ingress
 
-    ==> v1/Service
-    NAME                           TYPE          CLUSTER-IP    EXTERNAL-IP  PORT(S)                     AGE
-    nginx-ingress-controller       LoadBalancer  10.7.248.226  pending      80:30890/TCP,443:30258/TCP  1s
-    nginx-ingress-default-backend  ClusterIP     10.7.245.75   none         80/TCP                      1s
+    _Output (Do not copy)_
+    # Deployment
+    NAME                          READY   UP-TO-DATE   AVAILABLE   AGE
+    nginx-ingress-nginx-ingress   1/1     1            1           131m
 
-Wait a few moments while the Google Cloud L4 Load Balancer gets deployed. Confirm that the `nginx-ingress-controller` Service has been deployed and that you have an external IP address associated with the service.  Run the following command:
+    # Service
+    NAME                          TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)                      AGE
+    nginx-ingress-nginx-ingress   LoadBalancer   10.7.250.75   <pending>     80:31875/TCP,443:30172/TCP   132m 
 
-    kubectl get service nginx-ingress-controller
+Wait a few moments while the Google Cloud L4 Load Balancer gets deployed. Confirm that the `nginx-ingress-nginx-ingress` Service has been deployed and that you have an external IP address associated with the service.  Run the following command:
+
+    kubectl get service nginx-ingress-nginx-ingress
 
 You should see the following:
 
-    NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                      AGE
-    nginx-ingress-controller   LoadBalancer   10.7.248.226   35.226.162.176   80:30890/TCP,443:30258/TCP   3m
+    NAME                          TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)                      AGE
+    nginx-ingress-nginx-ingress   LoadBalancer   10.7.250.75   34.70.255.61  80:31875/TCP,443:30172/TCP   132m
 
-Notice the second service, _nginx-ingress-default-backend_. The default
-backend is a Service which handles all URL paths and hosts the NGINX controller
-doesn't understand (that is, all the requests that are not mapped with an Ingress
-Resource). The default backend exposes two URLs:
+Export the `EXTERNAL-IP` of the NGINX ingress controller in a variable to be used later.
 
--  `/healthz` that returns 200
--  `/` that returns 404
+    export NGINX_INGRESS_IP=$(kubectl get service nginx-ingress-nginx-ingress -ojson | jq -r '.status.loadBalancer.ingress[].ip')
 
+Ensure you have the correct IP Address value stored in the `$NGINX_INGRESS_IP` variable.
+
+    echo $NGINX_INGRESS_IP
+
+    _Output (Do not copy)_
+    34.70.255.61
+
+> Note that your IP Address may be different than the one shown above.
 
 ## Configure Ingress Resource to use NGINX Ingress Controller
 
@@ -270,12 +225,24 @@ status field in confusing ways. For more information, see
 
 Let's create a simple Ingress Resource YAML file which uses the NGINX Ingress Controller and has one path rule defined by typing the following commands:
 
-    touch ingress-resource.yaml
-    nano ingress-resource.yaml
-
-Copy the contents of [ingress-resource.yaml](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/nginx-ingress-gke/ingress-resource.yaml)
-into the editor, then press `Ctrl-X`, then press `y`, then press `Enter` to save
-the file.
+    cat <<EOF > ingress-resource.yaml_test
+    apiVersion: networking.k8s.io/v1beta1
+    kind: Ingress
+    metadata:
+    name: ingress-resource
+    annotations:
+        kubernetes.io/ingress.class: "nginx"
+        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    spec:
+    rules:
+    - host: ${NGINX_INGRESS_IP}.xip.io
+        http:
+        paths:
+        - backend:
+            serviceName: hello-app
+            servicePort: 8080
+            path: /hello
+    EOF
 
 The `kind: Ingress` dictates it is an Ingress Resource object.  This Ingress Resource defines an inbound L7 rule for path `/hello` to service `hello-app` on port 8080.
 
@@ -290,29 +257,29 @@ for the Ingress Resource will not be defined right away (wait a few moments for 
 
 You should see the following:
 
-    NAME               HOSTS   ADDRESS   PORTS   AGE
-    ingress-resource   *                 80      20s
+    NAME               HOSTS                ADDRESS       PORTS   AGE
+    ingress-resource   34.70.255.61.xip.io  34.70.255.61  80      111m
 
-    
+Note the `HOSTS` value in the output is set to a FQDN using xip.io domain. This host resolves the hostname with the form of `<IP ADDRESS>.xio.io` to `<IP ADDRESS>`. NGINX Ingress controller requires you to use a DNS name in the `host` spec in the `Ingress` resource. For the purpose of this tutorial, you use the xip.io service. In production, you can replace the `host` spec in the `Ingress` resource with you real FQDN for the Service.
 
-### Test Ingress and default backend
+### Test Ingress
 
 You should now be able to access the web application by going to the __EXTERNAL-IP/hello__
-address of the NGINX ingress controller (from the output of the `kubectl get service nginx-ingress-controller` above).
+address of the NGINX ingress controller (from the output of the `kubectl get service nginx-ingress-nginx-ingress` above).
 
 	  http://external-ip-of-ingress-controller/hello
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/nginx-ingress-gke/hello-app.png)
 
-To check if the _default-backend_ service is working properly, access any path (other than
-the path `/hello` defined in the Ingress Resource) and ensure you receive a 404
-message.  For example:
+You can also access the `hello-app` using the curl command in Cloud Shell.
 
-	  http://external-ip-of-ingress-controller/test
+    curl http://$NGINX_INGRESS_IP.xip.io/hello
 
-You should get the following message:
+The output should look like the following.
 
-![image](https://storage.googleapis.com/gcp-community/tutorials/nginx-ingress-gke/default-backend.png)
+    Hello, world!
+    Version: 1.0.0
+    Hostname: hello-app-5f85f64f6c-rfzkn    
 
 ## Clean up
 
@@ -328,11 +295,11 @@ From the Cloud Shell, run the following commands:
 
 2.  Delete the _NGINX Ingress_ helm chart:
 
-        helm del --purge nginx-ingress
+        helm del nginx-ingress
 
     You should see the following:
 
-        release "nginx-ingress" deleted
+        release "nginx-ingress" uninstalled
 
 3.  Delete the app:
 
