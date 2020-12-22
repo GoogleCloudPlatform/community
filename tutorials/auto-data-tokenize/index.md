@@ -40,6 +40,11 @@ The __tokenize pipeline__ uses the schema information from the _identifying pipe
   reduces common crypto pitfalls with user-centered design, careful implementation and code reviews, and extensive
   testing. At Google, Tink is one of the standard crypto libraries, and has been deployed in hundreds of products and
   systems. Tink natively integrates with Cloud KMS for use with envelope encryption technique.
+* [Deterministic AEAD encryption](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data) is used by to serve following purposes:
+  1. Permits use of the cipher-text as join keys. The deterministic property of the cipher ensures that cipher-text for the same plain-text is always the same. Using this property one can safely use the encrypted data for performing statistical analysis like cardinality analysis, frequency analysis etc.
+  1. store signed plain-text within the cipher to assert authenticity.
+  1. reversability, use of 2-way encyrption algorithm permits reversing the algorithmn to obtain original plain-text. Hashing does not permit such operations.
+
 * [Cloud Data Loss Prevention](https://cloud.google.com/dlp) is a Google Cloud service that provides data classification, de-identification and re-identification features, allowing you to easily manage sensitive data in your enterprise.
 
 * __Record Flattening__ is the process of converting nested/repeated records as flat table. Each leaf-node of the record gets a unique identifier. This flattening process enables sending data to DLP for identification purposes as the DLP API supports a simple [data-table](https://cloud.google.com/dlp/docs/examples-deid-tables).
