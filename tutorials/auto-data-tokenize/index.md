@@ -425,11 +425,7 @@ Load the output files into BigQuery to verify that `tokenizeColumns` have been e
    --project_id="${PROJECT_ID}" \
    "SELECT first_name, encrypted_email, encrypted_cc FROM tokenized_data.TokenizedUserdata LIMIT 10"
    ```
-      
-> Colocate your Cloud Storage buckets for loading data.<br> 
-> Cloud Storage bucket and BigQuery dataset location should be in the same regional or multi-regional location.<br>
-> Read more on [location considerations](https://cloud.google.com/bigquery/docs/batch-loading-data#data-locations) when loading data.
-   
+
 ## Cleaning up
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project:
