@@ -49,47 +49,45 @@ The __tokenize pipeline__ uses the schema information from the _identifying pipe
 
 * __Record Flattening__ is the process of converting nested/repeated records as flat table. Each leaf-node of the record gets a unique identifier. This flattening process enables sending data to DLP for identification purposes as the DLP API supports a simple [data-table](https://cloud.google.com/dlp/docs/examples-deid-tables).
 
-Consider a contact record, for **Jane Doe**, it has a nested and repeated field `contacts`.
-```json
-{
-   "name": "Jane Doe",
-   "contacts": [
+   Consider a contact record, for **Jane Doe**, it has a nested and repeated field `contacts`.
+   ```json
    {
-      "type": "WORK",
-      "number": 2124567890  
-   },
+      "name": "Jane Doe",
+      "contacts": [
+      {
+         "type": "WORK",
+         "number": 2124567890  
+      },
+      {
+         "type": "HOME",
+         "number": 5304321234
+      }
+      ]
+   }
+   ```
+   
+   Flattening this record yields a [FlatRecord]() with following data. Notice the `values` map, which demonstrates that each leaf node of the contact record is mapped using a [JsonPath](https://goessner.net/articles/JsonPath/) notation.
+   The `keySchema` shows a mapping between the leaf value's key's to a schema key to demonstrate that leaf-nodes of same type share the same key-schema, for example: `$.contacts[0].contact.number` is logically same as `$.contacts[1].contact.number` as both of them have the same key-schema `$.contacts.contact.number`.
+   
+   ```json
    {
-      "type": "HOME",
-      "number": 5304321234
+      "values": {
+       "$.name": "Jane Doe",
+       "$.contacts[0].contact.type": "WORK",
+       "$.contacts[0].contact.number": 2124567890,
+       "$.contacts[1].contact.type": "WORK",
+       "$.contacts[1].contact.number": 5304321234   
+      },
+   
+      "keySchema": {
+       "$.name": "$.name",
+       "$.contacts[0].contact.type": "$.contacts.contact.type",
+       "$.contacts[0].contact.number": "$.contacts.contact.number",
+       "$.contacts[1].contact.type": "$.contacts.contact.type",
+       "$.contacts[1].contact.number": "$.contacts.contact.number"   
+      }
    }
-   ]
-}
-```
-
-Flattening this record yields a [FlatRecord]() with following data. Notice the `values` map, which demonstrates that each leaf node of the contact record is mapped using a [JsonPath](https://goessner.net/articles/JsonPath/) notation.
-The `keySchema` shows a mapping between the leaf value's key's to a schema key to demonstrate that leaf-nodes of same type share the same key-schema, for example: `$.contacts[0].contact.number` is logically same as `$.contacts[1].contact.number` as both of them have the same key-schema `$.contacts.contact.number`.
-
-
-```json
-{
-   "values": {
-    "$.name": "Jane Doe",
-    "$.contacts[0].contact.type": "WORK",
-    "$.contacts[0].contact.number": 2124567890,
-    "$.contacts[1].contact.type": "WORK",
-    "$.contacts[1].contact.number": 5304321234   
-   },
-
-   "keySchema": {
-    "$.name": "$.name",
-    "$.contacts[0].contact.type": "$.contacts.contact.type",
-    "$.contacts[0].contact.number": "$.contacts.contact.number",
-    "$.contacts[1].contact.type": "$.contacts.contact.type",
-    "$.contacts[1].contact.number": "$.contacts.contact.number"   
-   }
-}
-```
-
+   ```
 
 ## Prerequisites
 
