@@ -125,16 +125,15 @@ cleanup easiest at the end of the tutorial, we recommend that you create a new p
    the [gcloud](https://cloud.google.com/sdk/gcloud/) command-line tool, and with values already set for your current
    project. It can take a few seconds for the session to initialize.
 
-1. Enable APIs for Data Catalog, BigQuery, Pub/Sub, Dataflow, and Cloud Storage services with the following command:
+1. Enable APIs for Cloud DLP, Cloud KMS, Compute Engine, Cloud Storage, Dataflow and BigQuery services with the following command:
    ```shell script
    gcloud services enable \
-   bigquery.googleapis.com \
-   storage.googleapis.com \
-   compute.googleapis.com \
-   dataproc.googleapis.com \
-   dataflow.googleapis.com \
    dlp.googleapis.com \
-   kms.googleapis.com
+   cloudkms.googleapis.com \
+   compute.googleapis.com \
+   storage.googleapis.com \
+   dataflow.googleapis.com \
+   bigquery.googleapis.com
    ```
 
 ## Setting up your environment
@@ -151,9 +150,6 @@ cleanup easiest at the end of the tutorial, we recommend that you create a new p
 
 1. Use a text editor to modify the `set_variables.sh` file to set required environment variables.
    ```shell script
-   # The GCP KMS resource URI
-   export MAIN_KMS_KEY_URI="gcp-kms://projects/auto-dlp/locations/asia-southeast1/keyRings/sym-wrapper-key/cryptoKeys/sym-1"
-
    # The JSON file containing the TINK Wrapped data-key to use for encryption
    export WRAPPED_KEY_FILE="dek.json"
    # The Google Cloud project to use for this tutorial
@@ -407,7 +403,7 @@ INFO: JobLink: https://console.cloud.google.com/dataflow/jobs/<your-dataflow-job
 Load the output files into BigQuery to verify that `tokenizeColumns` have been encrypted.
 
 1. Create a BigQuery dataset for tokenized data
-   Replace <i><bigquery-region></i> with a region of your choice.
+   Replace <i><bigquery-region></i> with a region of your choice. Ensure that BigQuery dataset region/multi-region is in the same region as the Cloud Storage bucket's. You can read about [considerations for batch loading data](https://cloud.google.com/bigquery/docs/batch-loading-data).
 
    ```shell script
    bq --location=<bigquery-region> \
@@ -424,11 +420,16 @@ Load the output files into BigQuery to verify that `tokenizeColumns` have been e
    "gs://${TEMP_GCS_BUCKET}/encrypted/*"
    ```
 1. Check some records to confirm that `email` and `cc` fields have been encrypted.
-  ```shell script
-  bq query \
-  --project_id="${PROJECT_ID}" \
-  "SELECT first_name, encrypted_email, encrypted_cc FROM tokenized_data.TokenizedUserdata LIMIT 10"
-  ```
+   ```shell script
+   bq query \
+   --project_id="${PROJECT_ID}" \
+   "SELECT first_name, encrypted_email, encrypted_cc FROM tokenized_data.TokenizedUserdata LIMIT 10"
+   ```
+      
+> Colocate your Cloud Storage buckets for loading data.<br> 
+> Cloud Storage bucket and BigQuery dataset location should be in the same regional or multi-regional location.<br>
+> Read more on [location considerations](https://cloud.google.com/bigquery/docs/batch-loading-data#data-locations) when loading data.
+   
 ## Cleaning up
 
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project:
