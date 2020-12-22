@@ -12,7 +12,11 @@ This document discusses how to identify and tokenize data with an automated data
 
 To minimize the risk of handling large volumes of sensitive data, you can use an automated data transformation pipeline to create de-identified datasets that can be used for migrating from on-premise to cloud or keep a de-identified replica for Analytics. Cloud DLP can inspect the data for sensitive information when the dataset has not been characterized, by using [more than 100 built-in classifiers](https://cloud.google.com/dlp/docs/infotypes-reference). 
 
-During enterprise migration to cloud, one of the most haunting challenge is to migrate sensitive data. Most of the times the data is from structured systems/source like Avro or Parquet files. Using Cloud DLP to classify and de-identify each record of such a file is not typically required. Using symmetric encryption to tokenize data in columns already classified as sensitive can save time and cost to de-identify such data.
+One of the daunting challenges during data migration to cloud is to manage sensitive data. The sensitive data can be in structured forms like analytics tables or unstructured like chat history or transcruiption recrods. One needs to use Cloud DLP to identify sensitive data from both of these kinds of sources, followed by tokenizing the sensitive parts.
+
+Tokenizing structured data can be optimnized for cost and speed by using representative samples for each of the columns to categorize the kind of information, followed by bulk encryption of sensitive columns. This approach recuces cost of using Cloud DLP, by limiting the use to classification of a small representative sample, instead of all the records. The throughput and cost of tokenization can be optimized by using envelope encryption for columns classified as sensitive. 
+
+This document demonstrates a reference implementation of tokenizing structured data through the approach of spliting into two tasks: _sample and identify_, followed by _bulk tokenization_ using encryption.
 
 This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This guide assumes that you're familiar with data processing and data privacy, without the need to be an expert.
 
@@ -20,21 +24,23 @@ This document is intended for a technical audience whose responsibilities includ
 
 ![Auto tokenizing pipelines](Auto_Tokenizing_Pipelines_Arch.svg)
 
-The solution is comprised of two pipelines.
+The solution is comprised of two pipelines (one for each of the tasks):
   1. Sample + Identify
   1. Tokenize
 
-The __sample & identify pipeline__ extracts a small number of sample records from the source files. The identify pipeline then decomposes each sample into columns to identify info-type information using Cloud DLP. The sample & identifying pipeline outputs the schema of the file and each column's detected info-types into Cloud Storage.
+The __sample & identify pipeline__ extracts a small number of sample records from the source files. The identify part of pipeline then decomposes each sample record into columns to categorize them into one of the [in-built infotypes](https://cloud.google.com/dlp/docs/infotypes-reference) or [custom infotypes](https://cloud.google.com/dlp/docs/creating-custom-infotypes) using Cloud DLP. The sample & identify pipeline outputs following files to Cloud Storage:
+  * Avro schema of the file
+  * Detected info-types for each of the input columns.
 
-The __tokenize pipeline__ uses the schema information from the _identifying pipeline_ along with user specified tokenizing columns and enveloped data encryption key. The tokenizing pipeline performs following of transforms on each of the records in the source file:
+The __tokenize pipeline__ then encrypts the user-specified source columns using the schema information from the _sample & identify pipeline_ and user provided enveloped data encryption key. The tokenizing pipeline performs following of transforms on each of the records in the source file:
   1. Unwrap data-encryption key using Cloud KMS
-  1. convert each record into flat record
+  1. un-nest each record into a flat record.
   1. tokenize required values using [deterministic AEAD](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data) encryption.
-  1. Nest the flat record into Avro record
+  1. re-nest the flat record into Avro record
   1. Write Avro file with encrypted fields
 
 ### Concepts
-* [Envelope Encryption](https://cloud.google.com/kms/docs/envelope-encryption) is a form of multiple layers of keys for encrypting data, which is the process of encrypting a key with another key.
+* [Envelope Encryption](https://cloud.google.com/kms/docs/envelope-encryption) is a form of multi-layer encryption, where multiple layers of keys are used for encrypting data. It is the process of encrypting the actual data encryption key with another key to secure the data-encryption key.
 * [Cloud KMS](https://cloud.google.com/kms) provides easy management of encyrption keys at scale.
 * [Tink](https://github.com/google/tink) is an open-source library that provides easy and secure APIs for handling encryption/decryption. It
   reduces common crypto pitfalls with user-centered design, careful implementation and code reviews, and extensive
@@ -66,7 +72,7 @@ The __tokenize pipeline__ uses the schema information from the _identifying pipe
    }
    ```
    
-   Flattening this record yields a [FlatRecord]() with following data. Notice the `values` map, which demonstrates that each leaf node of the contact record is mapped using a [JsonPath](https://goessner.net/articles/JsonPath/) notation.
+   Flattening this record yields a [FlatRecord](https://github.com/GoogleCloudPlatform/auto-data-tokenize/blob/master/proto-messages/src/main/resources/proto/google/cloud/autodlp/auto_tokenize_messages.proto#L103) with following data. Notice the `values` map, which demonstrates that each leaf node of the contact record is mapped using a [JsonPath](https://goessner.net/articles/JsonPath/) notation.
    The `keySchema` shows a mapping between the leaf value's key's to a schema key to demonstrate that leaf-nodes of same type share the same key-schema, for example: `$.contacts[0].contact.number` is logically same as `$.contacts[1].contact.number` as both of them have the same key-schema `$.contacts.contact.number`.
    
    ```json
@@ -143,15 +149,9 @@ cleanup easiest at the end of the tutorial, we recommend that you create a new p
    git clone https://github.com/GoogleCloudPlatform/auto-data-tokenize.git
    cd auto-data-tokenize/
    ```
-   > Use the following till this repo is open-sourced.
-   > ```shell script
-   > gcloud source repos clone automatic-dlp --project=google.com:anantd
-   > ```
 
-1. Use a text editor to modify the `set_variables.sh` file to set required environment variables.
-   ```shell script
-   # The JSON file containing the TINK Wrapped data-key to use for encryption
-   export WRAPPED_KEY_FILE="dek.json"
+1. Use a text editor of your choice to modify the `set_variables.sh` file to set required environment variables.
+   ```shell script   
    # The Google Cloud project to use for this tutorial
    export PROJECT_ID="<your-project-id>"
 
@@ -172,6 +172,9 @@ cleanup easiest at the end of the tutorial, we recommend that you create a new p
 
    # The JSON file containing the TINK Wrapped data-key to use for encryption
    export WRAPPED_KEY_FILE="<path-to-the-data-encryption-key-file>"
+   
+   # The JSON file containing the TINK Wrapped data-key to use for encryption
+   export WRAPPED_KEY_FILE="dek.json"   
    ````
 
 1. Run the script to set the environment variables:
@@ -188,7 +191,7 @@ The tutorial uses following resources
 
 ### Create service accounts
 
-We recommend that you run pipelines and samplper with fine-grained access control to improve access partitioning. If
+We recommend that you run pipelines with fine-grained access control to improve access partitioning. If
 your project does not have a user-created service account, create one using following instructions.
 
 You can use your browser by going to [**Service
@@ -199,14 +202,14 @@ in the Cloud Console.
    ```shell script
    gcloud iam service-accounts create  ${DLP_RUNNER_SERVICE_ACCOUNT_NAME} \
    --project="${PROJECT_ID}" \
-   --description="Service Account for Tokenizing sampler and pipeline." \
-   --display-name="Tokenizing Sampler & pipeline"
+   --description="Service Account for Tokenizing pipelines." \
+   --display-name="Tokenizing pipelines"
    ```
 1. Create a custom role with required permissions for accessing DLP, Dataflow and KMS:
    ```shell script
-   export TOKENIZING_ROLE="tokenizing_runner"
+   export TOKENIZING_ROLE_NAME="tokenizing_runner"
 
-   gcloud iam roles create ${TOKENIZING_ROLE} \
+   gcloud iam roles create ${TOKENIZING_ROLE_NAME} \
    --project=${PROJECT_ID} \
    --file=tokenizing_runner_permissions.yaml
    ```
@@ -215,7 +218,7 @@ in the Cloud Console.
    ```shell script
    gcloud projects add-iam-policy-binding ${PROJECT_ID} \
    --member="serviceAccount:${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL}" \
-   --role=projects/${PROJECT_ID}/roles/${TOKENIZING_ROLE}
+   --role=projects/${PROJECT_ID}/roles/${TOKENIZING_ROLE_NAME}
    ```
 1. Assign the `dataflow.worker` role to allow the service account to allow it to run as a Dataflow worker:
    ```shell script
@@ -283,7 +286,7 @@ gsutil cp userdata.avro gs://${TEMP_GCS_BUCKET}
 
 ## Compile modules
 
-You need to compile all the modules to build executables for deploying the sampler and tokenize pipelines.
+You need to compile all the modules to build executables for deploying the _sample & identify_ and _bulk tokenize_ pipelines.
 
 ```shell script
 mvn clean generate-sources compile package
@@ -291,19 +294,19 @@ mvn clean generate-sources compile package
 
 > Add `-Dmaven.test.skip=true` flag to skip running tests.
 
-## Run Sampler pipeline
+## Run Sample and Identify pipeline
 
-Run the sampling pipeline to identify sensitive components/columns in the data you need to tokenize.
+Run the sample & identify pipeline to identify sensitive columns in the data you need to tokenize.
 
 The pipeline extracts `sampleSize` number of records, flattens the record and identifies sensitive columns
 using [Data Loss Prevention (DLP)](https://cloud.google.com/dlp). Cloud DLP provides functionality
 to [identify](https://cloud.google.com/dlp/docs/inspecting-text) sensitive information-types. The DLP identify methods
-supports only flat tables, Avro/Parquet files contain nested and/or repeated fields that need to be flattened.
+supports only flat tables, hence the pipeline flattens the Avro/Parquet records as they can contain nested and/or repeated fields.
 
-### Launch sampler pipeline
+### Launch sample & identify pipeline
 
 ```shell script
-sampler_pipeline --project="${PROJECT_ID}" \
+sample_and_identify_pipeline --project="${PROJECT_ID}" \
 --region="${REGION_ID}" \
 --runner="DataflowRunner" \
 --serviceAccount=${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL} \
@@ -316,17 +319,18 @@ sampler_pipeline --project="${PROJECT_ID}" \
 --reportLocation="gs://${TEMP_GCS_BUCKET}/dlp_report/"
 ```
 
-The pipeline detects for all the standard information types supported by DLP.
-Use `--observableInfoTypes` to provide custom info-types you need to detect.
+The pipeline detects all the standard infotypes supported by DLP.
+Use `--observableInfoTypes` to provide additional custom info-types that you need.
 
-### Pipeline DAG
+### Sample & Identify pipeline DAG
 
-![Sampler Pipeline DAG](sampler_pipeline_dag.png)
+The Dataflow execution DAG would look like following:
+
+![Sample and Identify Pipeline DAG](sample_and_identify_pipeline_dag.png)
 
 ### Retrieve report
 
-The sampling pipeline outputs the Avro schema (or converted for Parquet) of the files and columnn report with sensitive
-information types.
+The sample & identify pipeline outputs the Avro schema (or converted for Parquet) of the files and one file for each of the columnns detected to contain sensitive information. Retrieve the report to your local machine to have a look.
 
 ```shell script
 mkdir -p dlp_report/ && rm dlp_report/*.json
@@ -355,7 +359,7 @@ You can view the details of the identified column by issuing `cat` command for t
 cat dlp_report/col-kylosample-cc-00000-of-00001.json
 ```
 
-Following is a snippet of one such column.
+Following is a snippet of the `cc` column.
 ```json
 {
   "columnName": "$.kylosample.cc",
@@ -368,12 +372,12 @@ Following is a snippet of one such column.
 }
 ```
 
-> The `"count"` value will vary based on the randomly selected samples.
+> The `"count"` value will vary based on the randomly selected samples during execution.
 
-## Launch tokenizing pipeline
+## Launch bulk tokenize pipeline
 
-The sampling pipeline used a small number of samples from the original dataset to identify sensitive informaiton using
-DLP. The tokenizing pipeline would process the entire dataset and encrypt the desired columns using the provided Data
+The sample & identify pipeline used a small number of samples from the original dataset to identify sensitive informaiton using
+DLP. The bulk tokenize pipeline will process the entire dataset and encrypt the desired columns using the provided Data
 Encryption Key (DEK).
 
 ```shell script
@@ -392,18 +396,21 @@ tokenize_pipeline --project="${PROJECT_ID}" \
 --tokenizeColumns="$.kylosample.email"
 ```
 
-The pipeline executes asynchronously on Dataflow. You can check the progress by following the JobLink printed
+The pipeline executes asynchronously on Dataflow. You can check the progress by following the JobLink printed in the following format:
 ```
 INFO: JobLink: https://console.cloud.google.com/dataflow/jobs/<your-dataflow-jobid>?project=<your-project-id>
 ```
+
+The tokenize pipeline's DAG will look like following:
 ![Encrypting Pipeline DAG](encryption_pipeline_dag.png)
+
 
 ### Verify encrypted result
 
-Load the output files into BigQuery to verify that `tokenizeColumns` have been encrypted.
+Load the bulk tokenize pipeline's output file(s) into BigQuery to verify that all the columns specified using `tokenizeColumns` flag have been encrypted.
 
 1. Create a BigQuery dataset for tokenized data
-   Replace <i><bigquery-region></i> with a region of your choice. Ensure that BigQuery dataset region/multi-region is in the same region as the Cloud Storage bucket's. You can read about [considerations for batch loading data](https://cloud.google.com/bigquery/docs/batch-loading-data).
+   Replace <i><bigquery-region></i> with a region of your choice. Ensure that BigQuery dataset region/multi-region is in the same region as the Cloud Storage bucket. You can read about [considerations for batch loading data](https://cloud.google.com/bigquery/docs/batch-loading-data) for more information.
 
    ```shell script
    bq --location=<bigquery-region> \
@@ -431,7 +438,7 @@ Load the output files into BigQuery to verify that `tokenizeColumns` have been e
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project:
 
 1.  In the Cloud Console, go to the [**Manage resources** page](https://console.cloud.google.com/iam-admin/projects).
-1.  In the project list, select the project that you want to delete and then click **Delete**.
+1.  In the project list, select the project that you want to delete and then click **Delete** ![delete](images/bin_icon.png).
 1.  In the dialog, type the project ID and then click **Shut down** to delete the project.
 
 
