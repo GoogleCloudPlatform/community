@@ -140,7 +140,7 @@ The NGINX controller, deployed as a Service, must be exposed for external
 access. This is done using Service `type: LoadBalancer` on the NGINX controller
 service. On Google Kubernetes Engine, this creates a Google Cloud Network (TCP/IP) load balancer with NGINX
 controller Service as a backend.  Google Cloud also creates the appropriate
-firewall rules within the Service's VPC netowrk to allow web HTTP(S) traffic to the load
+firewall rules within the Service's VPC network to allow web HTTP(S) traffic to the load
 balancer frontend IP address. 
 
 Here is a basic flow of the NGINX ingress solution on Google Kubernetes Engine.
