@@ -438,7 +438,7 @@ Load the bulk tokenize pipeline's output file(s) into BigQuery to verify that al
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project:
 
 1.  In the Cloud Console, go to the [**Manage resources** page](https://console.cloud.google.com/iam-admin/projects).
-1.  In the project list, select the project that you want to delete and then click **Delete** ![delete](images/bin_icon.png).
+1.  In the project list, select the project that you want to delete and then click **Delete** ![delete](bin_icon.png).
 1.  In the dialog, type the project ID and then click **Shut down** to delete the project.
 
 
