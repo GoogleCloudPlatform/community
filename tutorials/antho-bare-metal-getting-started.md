@@ -272,7 +272,7 @@ The next step is to update the config file with the appropriate values and then 
 The output looks something like this: 
  
     ```
-    NAME     STATUS   ROLES    AGE     VERSION \
+    NAME     STATUS   ROLES    AGE     VERSION 
     node-1   Ready    master   5m27s   v1.17.8-gke.16`
     node-2   Ready    <none>   4m57s   v1.17.8-gke.1
     ```
