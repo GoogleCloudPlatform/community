@@ -159,7 +159,7 @@ For example: \
 As the output shows, the `bmctl` command creates a configuration file under the `baremetal` directory at: `bmctl-workspace/demo-cluster/demo-cluster.yaml ` 
 
 ## Edit the Cluster Configuration File and Create the Cluster
-The next step is to edit the config file supplying the appropriate values and then use this configuration file to deplooy the actual cluster
+The next step is to update the config file with the appropriate values and then use this configuration file to deplooy the actual cluster
 
 1. Open the configuration file in your favorite text editor and make the following changes:
 
