@@ -62,12 +62,11 @@ To complete this tutorial you’ll need the following:
     *   `roles/stackdriver.resourceMetadata.writer`
     *   `roles/monitoring.dashboardEditor`
 *   If you wish for Anthos on bare metal to automatically provision some Google Cloud Operations dashboards you will need to create a Cloud Monitoring Workspace.
-*   Two Linux-based machines. One of these will serve as the Kubernetes controle plane, the other will be a Kubernetes worker node.  \
- \
- I used Intel Next Unit of Computing (NUC) devices in my home lab.
-    *   These machines need to be running a supported operating system and be equipped with at least 32GB or RAM, a 4 core processor, and 128GB of free storage. \
- \
-Anthos on bare metal supports the following distributions and versions:
+*   Two Linux-based machines. One of these will serve as the Kubernetes controle plane, the other will be a Kubernetes worker node. I used Intel Next Unit of Computing (NUC) devices in my home lab.
+    *   These machines need to be running a supported operating system and be equipped with at least 32GB or RAM, a 4 core processor, and 128GB of free storage. 
+    
+    Anthos on bare metal supports the following distributions and versions:
+    
         *   [Ubuntu 18.04/20.04 LTS](https://cloud.google.com/anthos/gke/docs/bare-metal/1.6/installing/configure-os/ubuntu)
         *   [Red Hat Enterprise Linux 8.1](https://cloud.google.com/anthos/gke/docs/bare-metal/1.6/installing/configure-os/rhel)
         *   [CentOS 8.1](https://cloud.google.com/anthos/gke/docs/bare-metal/1.6/installing/configure-os/centos)
