@@ -263,7 +263,7 @@ The next step is to update the config file with the appropriate values and then 
 
 1. To avoid having to specify it in each kubectl command after this point, export an environment variable for the kubeconfig (be sure to edit this to reflect your cluster name). \
  \
-`export KUBECONFIG=$(pwd)/bmctl-workspace/demo-cluster/demo-cluster-kubeconfig \
+`export KUBECONFIG=$(pwd)/bmctl-workspace/demo-cluster/demo-cluster-kubeconfig 
 `
 1. List the nodes in the cluster \
  \
