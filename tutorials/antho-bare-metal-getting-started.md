@@ -150,9 +150,9 @@ For example: \
 
     ```
     Enabling APIs for GCP project mikegcoleman-anthos-bm
-        Creating service accounts with keys for GCP project mikegcoleman-anthos-bm
-        Service account keys stored at folder bmctl-workspace/.sa-keys
-        Created config: bmctl-workspace/demo-cluster/demo-cluster.yaml
+    Creating service accounts with keys for GCP project mikegcoleman-anthos-bm
+    Service account keys stored at folder bmctl-workspace/.sa-keys
+    Created config: bmctl-workspace/demo-cluster/demo-cluster.yaml
     ```
 
 
