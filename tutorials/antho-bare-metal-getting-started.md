@@ -10,7 +10,7 @@ Mike Coleman | Developer Advocate | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This is aimed at developers and opeartors who want to learn about Anthos for bare metal. It walks through installing an Anthos cluster on your own server hardware using Anthos for Bare Metal. It covers the benefits of deploying Anthos on bare metal, necessary prerequisites, the installation process, and using Google Cloud operations capabilities to inspect the health of the deployed cluster. It assumes that you have a base understanding of both Google Cloud Platform and Kubernetes, as well as familiarity operating from the command line in Gooogle Cloud Shell.
+This tutorial is aimed at developers and opeartors who want to learn about Anthos for bare metal. It walks through installing an Anthos cluster on your own server hardware using Anthos for Bare Metal. It covers the benefits of deploying Anthos on bare metal, necessary prerequisites, the installation process, and using Google Cloud operations capabilities to inspect the health of the deployed cluster. It assumes that you have a base understanding of both Google Cloud Platform and Kubernetes, as well as familiarity operating from the command line in Gooogle Cloud Shell.
 
 
 ## Objectives
