@@ -43,13 +43,13 @@ To complete this tutorial you’ll need the following:
 
 *   A Google Cloud account with sufficient permissions to create the necessary resources and service accounts, as well as access to a Google Cloud project for which you have the `owner` and `editor` roles.
 *   Anthos on bare metal needs the following three Google Cloud service account (SA) (note: these service accounts can be automatically created with `bmctl`).
-*   The first service account is used to access the Anthos on bare metal software, this is referenced as the GCR SA. It doesn’t require any specific IAM roles. 
-*   The second service account is used to register your cluster and view it in the cloud console. This is referenced as GKE connect SA and requires the `roles/gkehub.connect` and `roles/gkehub.admin `IAM roles
-*   The third service account is used to send system logs and metrics to your project. This is referenced as cloud operations SA and requires the following IAM Roles:
-    *   `roles/logging.logWriter`
-    *   `roles/monitoring.metricWriter`
-    *   `roles/stackdriver.resourceMetadata.writer`
-    *   `roles/monitoring.dashboardEditor`
+    *   The first service account is used to access the Anthos on bare metal software, this is referenced as the GCR SA. It doesn’t require any specific IAM roles. 
+    *   The second service account is used to register your cluster and view it in the cloud console. This is referenced as GKE connect SA and requires the `roles/gkehub.connect` and `roles/gkehub.admin `IAM roles
+    *   The third service account is used to send system logs and metrics to your project. This is referenced as cloud operations SA and requires the following IAM Roles:
+        *   `roles/logging.logWriter`
+        *   `roles/monitoring.metricWriter`
+        *   `roles/stackdriver.resourceMetadata.writer`
+        *   `roles/monitoring.dashboardEditor`
 *   If you wish for Anthos on bare metal to automatically provision some Google Cloud Operations dashboards you will need to create a Cloud Monitoring Workspace.
 *   Two Linux-based machines. One of these will serve as the Kubernetes controle plane, the other will be a Kubernetes worker node. I used Intel Next Unit of Computing (NUC) devices in my home lab.
     *   These machines need to be running a supported operating system and be equipped with at least 32GB or RAM, a 4 core processor, and 128GB of free storage. \
