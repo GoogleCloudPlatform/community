@@ -156,7 +156,7 @@ For example: \
     ```
 
 
-As the output shows, the `bmctl` command creates a configuration file under the `baremetal` directory at: `bmctl-workspace/demo-cluster/demo-cluster.yaml ` \
+As the output shows, the `bmctl` command creates a configuration file under the `baremetal` directory at: `bmctl-workspace/demo-cluster/demo-cluster.yaml ` 
 
 ## Edit the Cluster Configuration File and Create the Cluster
 The next step is to edit the config file supplying the appropriate values and then use this configuration file to deplooy the actual cluster
