@@ -32,17 +32,6 @@ This tutorial uses billable components of Google Cloud, including the following:
 
 Use the [Anthos pricing documentation](https://cloud.google.com/anthos/pricing) to get a cost estimate based on your projected usage.
 
-## What is Anthos and Why Run it on Bare metal?
-
-We recently announced that [Anthos on bare metal](https://cloud.google.com/blog/topics/hybrid-cloud/anthos-on-bare-metal-is-now-ga) is generally available. I don’t want to rehash the entirety of that post, but I do want to recap some key benefits of running Anthos on your own systems, in particular: 
-
-
-
-*   Removing the dependency on a hypervisor can lower both the cost and complexity of running your applications. 
-*   In many use cases, there are performance advantages to running workloads directly on the server. 
-*   Having the flexibility to deploy workloads closer to the customer can open up new use cases by lowering latency and increasing application responsiveness. 
-
-
 ## What You Will Deploy
 
 For this tutorial you’ll deploy a two-node Kubernetes cluster that is registered with the Google Cloud console. You’ll also take a quick look at some automatically created Google Cloud Operations dashboards.
