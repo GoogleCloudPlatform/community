@@ -8,7 +8,7 @@ date_published: 2019-07-31
 
 Preston Holmes | Solution Architect | Google
 
-## Introduction
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial demonstrates several rate limiting techniques that can be used with Serverless runtimes. Specifically, you
 will learn how to use private networking and [Redis](https://redis.io/) to perform synchronized global rate-limiting state 
@@ -21,18 +21,18 @@ to otherwise stateless serverless functions.
 * Use a Node.js and [Redis](https://redis.io/) rate-limiting library in a Cloud Function to limit function invocations.
 * Use these technique to limit function invocations by the IP address of the caller.
 * Combine rate limiting with a [Redis](https://redis.io/)-based counter to provide a high-speed counter implementation for
-[Cloud Firestore](https://cloud.google.com/firestore/).
+[Firestore](https://cloud.google.com/firestore/).
 
 ## Set up your environment
 
-1.  Create a project in the [GCP Console][console].
+1.  Create a project in the [Cloud Console][console].
 
-    Important: This tutorial uses Cloud Firestore, which can't be removed from a project or combined with Cloud Datastore
+    **Important**: This tutorial uses Firestore, which can't be removed from a project or combined with Datastore
     after it has been configured for the project. Keep this in mind when deciding whether to use an existing project for 
     this tutorial. 
     
 1.  [Enable billing for your project](https://cloud.google.com/billing/docs/how-to/modify-project).
-1.  Open [Cloud Shell][shell], which is a command-line interface built into the GCP Console that handles many
+1.  Open [Cloud Shell][shell], which is a command-line interface built into the Cloud Console that handles many
     environment setup tasks for you.
 
     If you prefer to use the Cloud SDK instead of Cloud Shell, you can install the [Cloud SDK][sdk] and run commands
@@ -99,7 +99,7 @@ VPC Access connector. You only need to grant these permissions once per project.
 [Redis](https://redis.io/) provides very low latency KV storage, along with a number of basic data structures and operations
 that make it one of the more preferred backing stores for rate-limiting implementations.
 
-GCP offers a fully managed Redis service in the form of [Cloud Memorystore](https://cloud.google.com/memorystore/), which 
+Google Cloud offers a fully managed Redis service in the form of [Memorystore](https://cloud.google.com/memorystore/), which 
 allows for large and highly available memory pools. This tutorial uses a small container-based instance as an alternative,
 to quickly set up a demo-capable Redis Service.
 
@@ -112,7 +112,7 @@ to quickly set up a demo-capable Redis Service.
     --subnet=${NETWORK} \
     --scopes=https://www.googleapis.com/auth/devstorage.read_only
 
-Note: Container VMs are configured to use a Google Docker Hub mirror, so this instance does not need any public internet 
+Container VMs are configured to use a Google Docker Hub mirror, so this instance does not need any public internet 
 access.
 
 ## Get the IP address of the Redis service
@@ -242,7 +242,7 @@ rate-limiting key:
     }); 
 
 To prove that this is working as intended, you will need to install Bombardier into a second location
-(e.g., if you are using Cloud Shell, either create a temporary VM, or use your developer workstation).
+(for example, if you are using Cloud Shell, either create a temporary VM, or use your developer workstation).
 
 From each of these locations, run this command at the same time:
 
@@ -253,18 +253,17 @@ From each of these locations, run this command at the same time:
 You should see that each location should get nearly all 2xx responses back, even though the total request load to the 
 function would be 2 x 8 = 16 QPS which is > 10.
 
-## Set up a counter with Cloud Firestore
+## Set up a counter with Firestore
 
-In this section, you combine a rate limiter with a Redis-backed counter to provide a high-speed counter persisted with
-Cloud Firestore.
+In this section, you combine a rate limiter with a Redis-backed counter to provide a high-speed counter persisted with Firestore.
 
-In Cloud Firestore, you can only update a single document about once per second, which might be too low for some
+In Firestore, you can only update a single document about once per second, which might be too low for some
 high-traffic applications. One solution to this problem is to
 [distribute the counter](https://firebase.google.com/docs/firestore/solutions/counters) update load to different document 
 shards and sum them when a total is needed.
 
 In this section, you use a high-speed Redis counter to increment a value at a very high rate and combine this with a rate
-limiter that controls how often that value is written to Cloud Firestore for application visibility.
+limiter that controls how often that value is written to Firestore for application visibility.
 
 ![](https://storage.googleapis.com/gcp-community/tutorials/cloud-functions-rate-limiting/counter.png)
 
@@ -280,20 +279,20 @@ Deploy the function:
       --vpc-connector projects/${GOOGLE_CLOUD_PROJECT}/locations/${REGION}/connectors/functions-connector \
       --region ${REGION}
 
-Open the [Cloud Firestore page in the GCP Console](https://console.cloud.google.com/firestore/data) and create a database
-in Cloud Firestore native mode. Choose the same region as where you are deploying your functions (North America by default).
+Open the [Firestore page in the Cloud Console](https://console.cloud.google.com/firestore/data) and create a database
+in Firestore native mode. Choose the same region as where you are deploying your functions (North America by default).
 
     export URL=$(gcloud functions describe counterLimit --format='value(httpsTrigger.url)')
     bombardier -r 500 -d 20s $URL
 
-You may need to reload the Cloud Firestore page to see the counter document, but while the `counter` document is
+You may need to reload the Firestore page to see the counter document, but while the `counter` document is
 visible in the `demo` collection, you should see the value increase in large increments every several seconds.
 
 ## Clean up
 
 The simplest way to clean up the resources used in the tutorial is to delete the project that you created just for this 
 tutorial. Alternatively, the  following compound command will delete resources created in this tutorial, with the exception 
-of Cloud Firestore, which can't be deleted from a project.
+of Firestore, which can't be deleted from a project.
 
     gcloud functions delete basicRateDemo --quiet && \
     gcloud functions delete IPRateDemo --quiet && \

@@ -6,6 +6,8 @@ tags: Android, automation, Gradle, Cloud Build
 date_published: 2019-07-30
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 In this tutorial, you set up a Cloud Build trigger that builds your Android application and uploads it to a Cloud Storage
 bucket. The builds of new APK bundles are automatically triggered after code is pushed to your repository.
 
@@ -17,7 +19,7 @@ bucket. The builds of new APK bundles are automatically triggered after code is 
 
 ## Before you begin
 
-1.  [Create a new Google Cloud Platform (GCP) project](https://console.cloud.google.com/project), or use an existing one.
+1.  [Create a new Google Cloud project](https://console.cloud.google.com/project), or use an existing one.
 2.  [Enable billing for your project](https://support.google.com/cloud/answer/6293499#enable-billing).
 3.  [Enable the Cloud Build API](https://console.cloud.google.com/cloud-build/builds).
 

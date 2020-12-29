@@ -6,6 +6,8 @@ tags: Cloud Storage
 date_published: 2019-09-03
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 Changing the storage class of older, less frequently accessed data can significantly reduce storage costs.
 In this tutorial, you configure a bucket lifecycle to do this automatically.
 
@@ -26,7 +28,7 @@ If your data is frequently accessed, it may be cheaper to keep it in the Standar
 
 ## Add a lifecyle rule to automatically change the storage class
 
-1.  Navigate to the [**Storage > Browser** page](https://console.cloud.google.com/storage/browser) in the GCP Console.
+1.  Navigate to the [**Storage > Browser** page](https://console.cloud.google.com/storage/browser) in the Cloud Console.
 
 2.  Click **None** in the **Lifecycle** column for the bucket that you are setting the lifecycle rule for.
 
@@ -53,7 +55,7 @@ you added.
 
 To remove the rule, do the following:
 
-1.  Navigate to the [**Storage > Browser** page](https://console.cloud.google.com/storage/browser) in the GCP Console.
+1.  Navigate to the [**Storage > Browser** page](https://console.cloud.google.com/storage/browser) in the Cloud Console.
 
 2.  Click **Enabled** in the **Lifecycle** column on the bucket that you set the lifecycle rule for.
 

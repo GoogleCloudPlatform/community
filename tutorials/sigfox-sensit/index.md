@@ -6,9 +6,9 @@ tags: IoT, Internet of Things, Sigfox, LPWAN
 date_published: 2020-04-22
 ---
 
-Markku Lepisto | Solutions Architect | Google Cloud
+Markku Lepisto | Solutions Architect | Google
 
-## Objectives
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This document describes how to start using your [Sigfox](https://www.sigfox.com/) [Sens'it Discovery V3](https://sensit.io)
 device and connect it to [Google Cloud](https://cloud.google.com), with step-by-step instructions on how to
@@ -32,8 +32,8 @@ The main functionalities demonstrated are the following:
 This tutorial uses billable components of Google Cloud, including the following:
 
 - Cloud Functions
-- Cloud Pub/Sub
-- Cloud Firestore
+- Pub/Sub
+- Firestore
 - BigQuery
 
 This tutorial should not generate any usage that would not be covered by the [free tier](https://cloud.google.com/free/),
@@ -44,7 +44,7 @@ on your projected production usage.
 
 This tutorial assumes that you already have a [Google Cloud account](https://console.cloud.google.com/freetrial) set up.
 
-## Create a GCP project
+## Create a Google Cloud project
 
 1. Go to the [Cloud Console](https://console.cloud.google.com).
 1. Click the project selector in the upper-left corner and select **New Project**.
@@ -657,7 +657,7 @@ If successful, you should see a log entry similar to this:
 
     Sending downlink message: {"[device ID]": {"downlinkData": "[your new configuration string]"}}
 
-Congratulations! You are now able to use all of the functionality of your Sens'it it device with GCP, and start
+Congratulations! You are now able to use all of the functionality of your Sens'it it device with Google Cloud, and start
 analyzing its sensor data with BigQuery.
 
 ## Cleaning up
@@ -691,7 +691,7 @@ an `appspot.com` URL, remain available.
 
 To delete a project, do the following:
 
-1. In the GCP Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
+1. In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1. In the project list, select the project you want to delete and click **Delete project**.
 1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
 

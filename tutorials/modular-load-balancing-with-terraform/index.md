@@ -1,18 +1,20 @@
 ---
-title: Modular Load Balancing with Terraform
-description: Learn how to use Terraform Modules to create modular architectures with load balancing.
+title: Modular load balancing with Terraform
+description: Learn how to use Terraform modules to create modular architectures with load balancing.
 author: danisla
 tags: Terraform
 date_published: 2017-09-12
 ---
 
-Dan Isla | Google Cloud Solution Architect | Google
+Dan Isla | Solution Architect | Google
 
-Load balancing on Google Cloud Platform (GCP) is different from other cloud providers. The primary difference is that Google uses forwarding rules instead of routing instances. These forwarding rules are combined with backend services, target pools, URL maps and target proxies to construct a functional load balancer across multiple regions and instance groups.
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-[Terraform](https://www.terraform.io) is an open source infrastructure management tool that can greatly simplify the provisioning of load balancers on GCP by using modules.
+Load balancing on Google Cloud is different from other cloud providers. The primary difference is that Google uses forwarding rules instead of routing instances. These forwarding rules are combined with backend services, target pools, URL maps and target proxies to construct a functional load balancer across multiple regions and instance groups.
 
-This tutorial will demonstrate how to use the GCP Terraform modules for load balancing in a variety of scenarios that you can  build into your own projects.
+[Terraform](https://cloud.google.com/docs/terraform) is an open source infrastructure management tool that can greatly simplify the provisioning of load balancers on Google Cloud by using modules.
+
+This tutorial will demonstrate how to use the Google Cloud Terraform modules for load balancing in a variety of scenarios that you can  build into your own projects.
 
 ## Objectives
 
@@ -24,13 +26,13 @@ This tutorial will demonstrate how to use the GCP Terraform modules for load bal
 
 ## Before you begin
 
-This tutorial assumes you already have a GCP account and are familiar with the high level concepts of [Terraform](https://terraform.io) and [Load Balancing](https://cloud.google.com/compute/docs/load-balancing/) on GCP.
+This tutorial assumes you already have a Google Cloud account and are familiar with the high level concepts of [Terraform](https://terraform.io) and [Load Balancing](https://cloud.google.com/compute/docs/load-balancing/) on Google Cloud.
 
 ## Costs
 
-This tutorial uses billable components of GCP, including:
+This tutorial uses billable components of Google Cloud, including:
 
-- [Google Compute Engine](https://cloud.google.com/compute/pricing)
+- [Compute Engine](https://cloud.google.com/compute/pricing)
 - [Cloud Storage](https://cloud.google.com/storage/pricing)
 - [Forwarding Rules](https://cloud.google.com/compute/pricing#lb)
 
@@ -110,7 +112,7 @@ Example usage snippet:
 
 All of the examples in this tutorial have sample code available in the [terraform-google-examples](https://github.com/GoogleCloudPlatform/terraform-google-examples) GitHub repository.
 
-In this tutorial, you run all commands by using the [Google Cloud Shell](https://cloud.google.com/shell/). You can also run the commands from your local environment.
+In this tutorial, you run all commands by using the [Cloud Shell](https://cloud.google.com/shell/). You can also run the commands from your local environment.
 
 1. Open [Cloud Shell](https://console.cloud.google.com/cloudshell)
 2. Clone the `terraform-google-examples` repository:
@@ -128,7 +130,7 @@ In this tutorial, you run all commands by using the [Google Cloud Shell](https:/
 
 This script creates a bash function for the `terraform` command that runs the latest version of Terraform using a Docker container. You can also [install it locally](https://www.terraform.io/downloads.html) if don't want to use Docker.
 
-2. If you aren't using Cloud Shell, this tutorial uses the [default application credentials](https://developers.google.com/identity/protocols/application-default-credentials) for Terraform authentication to GCP. Run the following command first to obtain the default credentials for your project.
+2. If you aren't using Cloud Shell, this tutorial uses the [default application credentials](https://developers.google.com/identity/protocols/application-default-credentials) for Terraform authentication to Google Cloud. Run the following command first to obtain the default credentials for your project.
 
         gcloud auth application-default login
 
@@ -283,7 +285,7 @@ This example creates an HTTPS load balancer to forward traffic to a custom URL m
 
       It can take several minutes for the forwarding rule to be provisioned. While it's being created, you might see 404 and 500 errors in the browser.
 
-5. You should see the GCP logo and instance details from the group closest to your geographical region.
+5. You should see the Google Cloud logo and instance details from the group closest to your geographical region.
 6. You can access the per-region routes directly through the URLs below:
 
         # us-west1
@@ -306,7 +308,7 @@ Each example includes its own cleanup and can be explicitly cleaned from within 
 
         terraform destroy
 
-## Next Steps
+## Next steps
 
 - [Additional examples in the terraform-google-examples repository](https://github.com/GoogleCloudPlatform/terraform-google-examples).
-- [Learn more about load balancing on GCP](https://cloud.google.com/compute/docs/load-balancing/).
+- [Learn more about load balancing on Google Cloud](https://cloud.google.com/compute/docs/load-balancing/).

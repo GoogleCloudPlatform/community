@@ -1,17 +1,17 @@
 ---
 title: Using Prometheus and Grafana for IoT monitoring
-description: This tutorial walks you through setting up a running stack for IoT monitoring using Prometheus and Grafana with integrations with Cloud IoT Core.
+description: This tutorial walks you through setting up a running stack for IoT monitoring using Prometheus and Grafana with integrations with IoT Core.
 author: ptone
 tags: IoT, Internet of Things, monitoring, prometheus
 date_published: 2019-03-09
 ---
 
-Preston Holmes | Solution Architect | Google Cloud
+Preston Holmes | Solution Architect | Google
 
-# Using Prometheus and Grafana for IoT monitoring
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial walks you through setting up a running stack for IoT monitoring using Prometheus and Grafana with integrations
-with Cloud IoT Core. For a more thorough discussion of the background and concepts, see
+with IoT Core. For a more thorough discussion of the background and concepts, see
 [Remote monitoring and alerting for IoT](https://cloud.google.com/solutions/remote-monitoring-and-alerting-for-iot).
 
 ## Objectives
@@ -464,7 +464,7 @@ collection. Given that IoT devices will be remote from the Prometheus server, an
 we get data from a device into Prometheus? Prometheus supports
 a [push gateway](https://prometheus.io/docs/instrumenting/pushing/), but it is more intended for ephemeral jobs, not
 long-running operational information like that which might be coming from devices. Instead, we want to tunnel metrics over 
-the Cloud IoT Core MQTT telemetry channels. We will cover a couple of ways to do this, both of them using a client library 
+the IoT Core MQTT telemetry channels. We will cover a couple of ways to do this, both of them using a client library 
 approach to building metrics.
 
 ### Extracting metrics from payloads
@@ -492,8 +492,7 @@ pattern is needed.
 libraries directly on the device. It does this by locally scraping the metrics, then sending a serialized version of the
 metrics over MQTT, where a receiver unserializes and exposes them to the Prometheus server, without needing to know anything
 about the contents or how to convert them. This has the benefit that integrating the Prometheus client libraries with
-sensor reading is intuitive, and the firmware author can focus on instrumentation, as Promiot handles all communication with
-Cloud IoT Core.
+sensor reading is intuitive, and the firmware author can focus on instrumentation, as Promiot handles all communication with IoT Core.
 
 ![Using Promiot library](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-prometheus-monitoring/promiot.png)
 

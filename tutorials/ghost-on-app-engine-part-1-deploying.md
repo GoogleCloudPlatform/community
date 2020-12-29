@@ -1,24 +1,27 @@
 ---
-title: Deploying Ghost on App Engine Flexible Environment
+title: Deploying Ghost on App Engine flexible environment
 description: Learn how to deploy a Ghost blog to Google App Engine flexible environment.
-author: jmdobry,hnipps,amensah
+author: jmdobry
 tags: App Engine, Ghost, Node.js
 date_published: 2018-07-15
 ---
-This tutorial explains how to deploy and scale a [Ghost blog][ghost] on
-[Google App Engine Flexible Environment][flex].
 
-Ghost is a simple blogging platform that can be self hosted. It's built with
-Node.js, and can be customized or transformed into a bigger site. It serves as a
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This tutorial explains how to deploy and scale a [Ghost blog][ghost] on
+[App Engine Flexible Environment][flex].
+
+Ghost is a simple blogging platform that can be self-hosted. It's built with
+Node.js, and it can be customized or transformed into a bigger site. It serves as a
 template for a larger application.
 
-Google App Engine makes it easy to run web applications that must scale to meet
+App Engine makes it easy to run web applications that must scale to meet
 worldwide demand. It lets you focus on your code without having to worry about
 operations, load balancing, servers, or scaling to satisfy incoming traffic.
 
 App Engine can take a Ghost web application and scale it to handle your growing
-global demand, while giving you all the benefits of Google Cloud Platform,
-including Cloud SQL, Cloud Source Repositories, Stackdriver Debugger, Error
+global demand, while giving you all the benefits of Google Cloud,
+including Cloud SQL, Cloud Source Repositories, Cloud Debugger, Error
 Reporting, Logging, Monitoring, Trace, and more.
 
 ## Objectives
@@ -31,10 +34,10 @@ Reporting, Logging, Monitoring, Trace, and more.
 
 ## Costs
 
-This tutorial uses billable components of Cloud Platform, including:
+This tutorial uses billable components of Google Cloud, including:
 
 * Google Cloud SQL
-* Google App Engine Flexible Environment
+* Google App Engine flexible environment
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
 projected usage.
@@ -43,16 +46,17 @@ projected usage.
 
 ## Before you begin
 
-1. Select or create a [Google Cloud Platform Console][console] project.
+1. Select or create a [Google Cloud][console] project.
 [Go to the projects page][projects].
 1. Enable billing for your project. [Enable billing][billing].
-1. Install the [Google Cloud SDK][sdk].
-1. Authenticate `gcloud` with Google Cloud Platform.
+1. Install the [Cloud SDK][sdk].
+1. Authenticate `gcloud` with Google Cloud.
 
         gcloud init
 
-1. Create a new [Second Generation Cloud SQL instance][sql]. You can do this
-from the [Cloud Console][console] or via the [Cloud SDK][sdk].
+1.  Create a new [Second Generation Cloud SQL instance][sql]. You can do this
+    from the [Cloud Console][console] or via the [Cloud SDK][sdk].
+
     1. In order for some of the commands below to work, you need to enable the
     [Cloud SQL Admin API](https://console.cloud.google.com/apis/api/sqladmin-json.googleapis.com/overview).
     1. Create it via the following SDK command:
@@ -78,25 +82,25 @@ from the [Cloud Console][console] or via the [Cloud SDK][sdk].
     1. Download and install the [Cloud SQL Proxy][proxy].
 
     1. [Start the proxy][start] to allow connecting to your instance from your
-    local machine:
+       local machine:
 
             ./cloud_sql_proxy \
                 -instances=YOUR_INSTANCE_CONNECTION_NAME=tcp:3306 \
                 -credential_file=PATH_TO_YOUR_SERVICE_ACCOUNT_JSON_FILE &
 
         where `YOUR_INSTANCE_CONNECTION_NAME` is the connection name of your
-        instance on its Overview page in the Google Cloud Platform Console, or
+        instance on its Overview page in the Cloud Console, or
         use `YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME`.
 
     1. Use the MySQL command line tools (or a management tool of your choice) to
-    create a [new user][user] and [database][database] for your application:
+       create a [new user][user] and [database][database] for your application:
 
             mysql -u root -p -h 127.0.0.1
               mysql> create database `YOUR_DATABASE`;
               mysql> create user 'YOUR_USER'@'%' identified by 'PASSWORD';
               mysql> grant all on YOUR_DATABASE.* to 'YOUR_USER'@'%';
 
-        Note: you will be asked to enter the root password you chose earlier.
+        You will be asked to enter the root password you chose earlier.
 
     1. Set the `MYSQL_USER`, `MYSQL_PASSWORD`, and `MYSQL_DATABASE` environment
     variables (see below). This allows your local Ghost app to connect to your
@@ -121,7 +125,7 @@ from the [Cloud Console][console] or via the [Cloud SDK][sdk].
 [database]: https://cloud.google.com/sql/docs/create-database
 [sql]:  https://cloud.google.com/sql/docs/quickstart
 
-## Install Ghost as an NPM Module
+## Install Ghost as an NPM module
 
 Follow the instructions on the Ghost website to [install Ghost as an NPM Module][ghost_npm].
 
@@ -176,7 +180,7 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
     }
     ```
 
-1. Install Dependencies:
+1. Install dependencies:
 
         npm install --production
 
@@ -229,8 +233,8 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
 
     Here's some information about each setting:
 
-    * `url` - The url at which the blog will be deployed. This is the url users will use to access the blog.
-    * `fileStorage` - Setting this value to `false` forces image uploads to use an image url because App Engine doesn't have persistent disks.  Without this setting, any photos uploaded to the blog will eventually disappear.
+    * `url` - The URL at which the blog will be deployed. This is the URL users will use to access the blog.
+    * `fileStorage` - Setting this value to `false` forces image uploads to use an image URL because App Engine doesn't have persistent disks. Without this setting, any photos uploaded to the blog will eventually disappear.
     * `mail` - Configure this setting according to the instructions at http://support.ghost.org/mail/.
     * `database` - Tells Ghost how to connect to the Cloud SQL instance.
     * `server` - Tells Ghost how to listen for web traffic.
@@ -249,8 +253,8 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
       # e.g. my-awesome-project:us-central1:my-cloud-sql-instance-name
       INSTANCE_CONNECTION_NAME: YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME
     beta_settings:
-      # The connection name of your instance on its Overview page in the Google
-      # Cloud Platform Console, or use `YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME`
+      # The connection name of your instance on its Overview page in the
+      # Cloud Console, or use `YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME`
       cloud_sql_instances: YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME
     skip_files:
       - ^(.*/)?#.*#$
@@ -309,7 +313,7 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
     }
     ```
 
-It's very important that you only do this step after migrating the database. The ```socketPath``` property is required to deploy on Google App Engine, but it causes ```knex-migrator``` to throw an error.
+It's very important that you only do this step after migrating the database. The `socketPath` property is required to deploy on Google App Engine, but it causes `knex-migrator` to throw an error.
 
 1. Run the following command to deploy the app:
 
@@ -323,11 +327,11 @@ It's very important that you only do this step after migrating the database. The
 
         https://YOUR_PROJECT_ID.appspot.com
 
-    Where `YOUR_PROJECT_ID` is your Google Cloud Platform project ID.
+    Where `YOUR_PROJECT_ID` is your Google Cloud project ID.
 
 ## What's next
 
-[Monitoring Ghost on App Engine Flexible Environment - Part 2][monitoring]
+[Monitoring Ghost on App Engine flexible environment - Part 2][monitoring]
 
 [monitoring]: https://cloud.google.com/community/tutorials/ghost-on-app-engine-part-2-monitoring
 [ghost]: https://ghost.org/

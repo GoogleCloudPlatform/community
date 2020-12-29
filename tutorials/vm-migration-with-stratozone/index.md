@@ -1,20 +1,24 @@
 ---
 title: Migrate on-premises virtual machines with StratoZone and Migrate for Compute Engine
-description: Learn how to use StratoZone and Migrate for Compute Engine to migrate on-premises VMs to Google Cloud Platform.
+description: Learn how to use StratoZone and Migrate for Compute Engine to migrate on-premises VMs to Google Cloud.
 author: laidig
 tags: VM migration, Migrate for Compute Engine, StratoZone, Velostrata
 date_published: 2019-06-21
 ---
 
-This article walks you through the migration of an on-premises virtual machine (VM) to Google Cloud Platform (GCP), using
+Tony Laidig | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This article walks you through the migration of an on-premises virtual machine (VM) to Google Cloud, using
 StratoZone and Migrate for Compute Engine (formerly Velostrata).
 
 In the planning phase, you prioritize the workloads (applications and assets) for an efficient migration to the cloud. 
 
-Integrations between GCP, StratoZone, and Migrate for Compute Engine enable you to export your plans to Migrate for Compute
+Integrations between Google Cloud, StratoZone, and Migrate for Compute Engine enable you to export your plans to Migrate for Compute
 Engine.
 
-Migrate for Compute Engine then handles migrating your VMs to GCP.
+Migrate for Compute Engine then handles migrating your VMs to Google Cloud.
 
 ## Before you begin
 
@@ -35,7 +39,7 @@ After you have registered, sign in to the [StratoZone portal](https://portal.str
 
 ### Discovery
 
-Follow these steps to discover your environment's assets for migration to GCP:
+Follow these steps to discover your environment's assets for migration to Google Cloud:
 
 1.  Download the StratoProbe data collector to a machine that has
     [SSH or WMI access](https://portal.stratozone.com/Documentation/StratoProbe_Guide.html#4) to the assets to be collected.
@@ -112,13 +116,13 @@ The StratoZone Migrate module allows you to do the following:
 -   Group workload servers into waves.
 -   Assign migration date and time.
 -   Track tasks associated with each migration.
--   Migrate the servers to GCP using Migrate for Compute Engine.
+-   Migrate the servers to Google Cloud using Migrate for Compute Engine.
 
 On the StratoZone portal, select the **Migrate** module and click the **Setup** tab.
 
 ![Where to set up Migrate for Compute Engine configuration in StratoZone](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-stratozone/seamlessmigrat--qg4mkjg2r3q.png)
 
-Provide your **GCP account credentials**, **Migrate for Compute Engine Manager IP**, and **Password** StratoZone groups 
+Provide your **Google Cloud account credentials**, **Migrate for Compute Engine Manager IP**, and **Password** StratoZone groups 
 workloads into move groups. Click the **Move Groups** tab to create groups and assign a migration date to them.
 
 ![Move Groups in StratoZone Migrate for Compute Engine integration](https://storage.googleapis.com/gcp-community/tutorials/vm-migration-with-stratozone/seamlessmigrat--9x3h33xbz4c.png)

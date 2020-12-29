@@ -116,7 +116,7 @@ def on_connect(client, unused_userdata, unused_flags, rc):
 
     # Subscribe to the config and error topics.
     client.subscribe(gateway_state.mqtt_config_topic, qos=1)
-    client.subscribe(gateway_state.error_topic, qos=0)
+    client.subscribe(gateway_state.mqtt_error_topic, qos=0)
 
 
 def on_disconnect(client, unused_userdata, rc):

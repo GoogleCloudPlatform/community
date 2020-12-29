@@ -8,6 +8,8 @@ date_published: 2020-03-03
 
 Tianzi Cai | Developer Programs Engineer | Google Cloud
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial demonstrates how to use Pub/Sub and Dataflow to deduplicate messages in a Spring Cloud Stream application.
 
 Many enterprise-level Java applications with distributed systems on the backend are built with
@@ -116,11 +118,11 @@ the [Cloud Console IAM page](https://console.cloud.google.com/iam-admin/iam/). F
 
 1.  Clone the sample code repository:
 
-        git clone https://github.com.GoogleCloudPlatform/pubsub-spring-dedup-messages.git
+        git clone https://github.com/GoogleCloudPlatform/community.git
         
 1.  Navigate to the sample code:
 
-        cd community/tutorials/pubsub-spring-dedup-messages
+        cd tutorials/pubsub-spring-dedup-messages
 
 ## Bind Pub/Sub to your Spring Cloud Stream application
 

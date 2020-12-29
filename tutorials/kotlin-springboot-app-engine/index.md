@@ -6,7 +6,11 @@ tags: App Engine, Kotlin, Spring Boot
 date_published: 2018-01-17
 ---
 
-The [Google App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/)
+Hadi Hariri | JetBrains
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
+The [App Engine flexible environment](https://cloud.google.com/appengine/docs/flexible/)
 is an easy way to deploy your apps to the same infrastructure that powers
 Google's products. Using [Kotlin](https://kotlinlang.org/) and [Spring Boot](https://projects.spring.io/spring-boot/), in this tutorial you'll
 see how to deploy your application to App Engine.
@@ -23,14 +27,14 @@ be built-on to connect to other Google services and/or databases.
 
 ## Before you begin
 
-Before running this tutorial, you must set up a Google Cloud Platform project,
-and you need to have Docker and the Google Cloud SDK installed.
+Before running this tutorial, you must set up a Google Cloud project,
+and you need to have Docker and the Cloud SDK installed.
 
 Create a project that will host your Spring Boot application. You can also reuse
 an existing project.
 
-1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
-    to create a new Cloud Platform project. Remember the project ID; you will
+1.  Use the [Cloud Console](https://console.cloud.google.com/)
+    to create a new Google Cloud project. Remember the project ID; you will
     need it later. Later commands in this tutorial will use `[PROJECT_ID]` as
     a substitution, so you might consider setting the `PROJECT_ID` environment
     variable in your shell.
@@ -99,20 +103,29 @@ To deploy your application, you will use an App Engine plugin for Maven which si
 is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/java/tools/gradle).
 
 
-1.  Create a file called `app.yaml` in a new folder `src/main/appengine` with the following contents:
+1.  Specify the runtime.
 
-        runtime: java
-        env: flex
-        runtime_config:
-          jdk: openjdk8
+    -   If you are using JDK 8, create a file called `app.yaml` in a new folder `src/main/appengine` with the following contents:
+    
+            runtime: java
+            env: flex
+            runtime_config:
+              jdk: openjdk8
+      
+        By specifying `runtime: java`, the runtime image `gcr.io/google-appengine/openjdk:8` is automatically selected when you deploy a JAR file. The JDK 
+        version is also selected using the `jdk` field.
+        
+    -   If you are using JDK 11, create a file called `app.yaml` in the root directory (or any other directory configured in the `appengine-maven-plugin`)
+        with the following contents:
+   
+            runtime: java11
+       
+        **Note**: The `flex` environment is not currently available for Java 11.
+   
+1.  Add [the following](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine/pom-plugin-example.xml) plugin entry 
+    to the `pom.xml` file to configure the Maven plugin.
 
-    By specifying `runtime: java`, the runtime image `gcr.io/google-appenine/openjdk:8` is automatically selected
-    when you deploy a JAR (*.jar) file. The JDK version is also selected using the `jdk` field.
-
-2.  Add [the following](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/kotlin-springboot-app-engine/pom-plugin-example.xml) plugin entry to the `pom.xml` file to configure the Maven
-    plugin.
-
-3.  Run the following command to deploy your app:
+1.  Run the following command to deploy your app:
 
         mvn appengine:deploy
 
@@ -126,12 +139,12 @@ is also [available for Gradle](https://cloud.google.com/appengine/docs/standard/
     **Note**: If the command fails with `Google Cloud SDK could not be found`, make sure the environment
     variable `GOOGLE_CLOUD_SDK_HOME` is set to the root directory of where you installed the Google Cloud SDK.
 
-4.  Once the deploy command has completed, you can run
+1.  After the `deploy` command has completed, you can run the following command to see your app running in production on App Engine in the browser:
 
         gcloud app browse
 
-    to see your app running in production on App Engine in the browser. Not however that this application does not
-    respond to the root endpoint. Once the browser is open with the correct URL, you need to append `/message` to it.
+    Note, however, that this application does not respond to the root endpoint. When the browser is open with the correct URL, you need to append
+    `/message` to it.
 
 ## Update your application
 
@@ -154,7 +167,7 @@ Make a simple change and redeploy.
 ## Clean up
 
 After you've finished this tutorial, you can clean up the resources you created
-on Google Cloud Platform so you won't be billed for them in the future. To clean
+on Google Cloud so you won't be billed for them in the future. To clean
 up the resources, you can delete the project or stop the App Engine service.
 
 ### Deleting the project
@@ -164,7 +177,7 @@ the tutorial. To do so using `gcloud`, run:
 
     gcloud projects delete [PROJECT_ID]
 
-where `[PROJECT_ID]` is your Google Cloud Platform project ID.
+where `[PROJECT_ID]` is your Google Cloud project ID.
 
 **Warning**: Deleting a project has the following consequences:
 
@@ -178,7 +191,7 @@ use the project ID, such as an appspot.com URL, remain available.
 
 To disable an App Engine service:
 
-1.  In the Cloud Platform Console, go to the
+1.  In the Cloud Console, go to the
     [App Engine Versions page](https://console.cloud.google.com/appengine/versions).
 2.  Make sure your project is selected. If necessary, pull down the project
     selection dropdown at the top, and choose the project you created for this

@@ -6,6 +6,10 @@ tags: Kubernetes, Container Engine, Kotlin, Spring Boot, Docker
 date_published: 2018-01-05
 ---
 
+Hadi Hariri | JetBrains
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This tutorial helps you get started deploying your
 [Kotlin](https://kotlinlang.org/) app using the
 [Spring Boot](https://projects.spring.io/spring-boot/) Framework to
@@ -28,14 +32,14 @@ be built-on to connect to other Google services and/or databases.
 
 ## Before you begin
 
-Before running this tutorial, you must set up a Google Cloud Platform project,
+Before running this tutorial, you must set up a Google Cloud project,
 and you need to have Docker and the Google Cloud SDK installed.
 
 Create a project that will host your Spring Boot application. You can also reuse
 an existing project.
 
-1.  Use the [Google Cloud Platform Console](https://console.cloud.google.com/)
-    to create a new Cloud Platform project. Remember the project ID; you will
+1.  Use the [Cloud Console](https://console.cloud.google.com/)
+    to create a new Google Cloud project. Remember the project ID; you will
     need it later. Later commands in this tutorial will use `${PROJECT_ID}` as
     a substitution, so you might consider setting the `PROJECT_ID` environment
     variable in your shell.
@@ -188,7 +192,7 @@ Execute the following command to run the build:
 
     gcloud container builds submit --tag=gcr.io/${PROJECT_ID}/demo:v1 .
 
-Replace `${PROJECT_ID}` with the ID of your Google Cloud Platform project.
+Replace `${PROJECT_ID}` with the ID of your Google Cloud project.
 The period at the end is required.
 
 After the build finishes, the image `gcr.io/${PROJECT_ID}/demo:v1` is
@@ -324,7 +328,7 @@ for more info.
 ## Clean up
 
 After you've finished this tutorial, clean up the resources you created
-on Google Cloud Platform so you won't be billed for them going forward. To
+on Google Cloud so you won't be billed for them going forward. To
 clean, either delete your Google Kubernetes Engine resources, or
 delete the entire project.
 
@@ -356,7 +360,7 @@ Alternately, you can delete the project in its entirety. To do so using the
 
     gcloud projects delete ${PROJECT_ID}
 
-where `${PROJECT_ID}` is your Google Cloud Platform project ID.
+where `${PROJECT_ID}` is your Google Cloud project ID.
 
 **Warning**: Deleting a project has the following consequences:
 

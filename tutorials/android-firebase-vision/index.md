@@ -1,13 +1,18 @@
 ---
-title: Adding Computer Vision to your Android App
-description: Learn how to use Firebase storage with Cloud functions to access the Vision API from Android apps.
+title: Adding computer vision to your Android app
+description: Learn how to use Firebase storage with Cloud Functions to access the Vision API from Android apps.
 author: gguuss
 tags: Android, Vision, Firebase, Storage, Firebase Datastore
 date_published: 2017-12-05
 ---
 
+Gus Class | Developer Advocate | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 Sara Robinson has authored an excellent post explaining one approach
-to [Adding Computer Vision to your App](https://medium.com/@srobtweets/adding-computer-vision-to-your-ios-app-66d6f540cdd2).
+to [Adding computer vision to your app](https://medium.com/@srobtweets/adding-computer-vision-to-your-ios-app-66d6f540cdd2).
+
 In the post, she introduces the following pattern:
 
 * Use Firebase Auth native client to upload to Firebase Storage.
@@ -66,6 +71,7 @@ files:
 
 
 ## Step 2: Analyze the image and publish label data to Firestore
+
 Now that the files are successfully uploading to Firebase Storage, it's time
 to process the file using a Cloud Functions call. This operation is virtually
 identical to the Cloud Functions API call made by Sara in her post, but retrieves
@@ -87,6 +93,7 @@ console.
 
 
 ## Step 3: Manually retrieve the label data from Firestore
+
 This tutorial reuses and relabels the **Download** button from the Firebase Storage sample
 app to manually trigger the retrieval of the `Label` data from Firestore. To do
 this, the button name is changed to `button_detections` in the app resources
@@ -119,6 +126,7 @@ you could employ a similar approach but by storing text data instead of photo
 data.
 
 ## Next steps
+
 If you want to prepare this app for production, think about the following items:
 
 * Fix all the UI - Create label bubbles instead of just formatted text.

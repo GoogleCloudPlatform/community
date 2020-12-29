@@ -1,30 +1,27 @@
 ---
 title: Send email with Mailgun and Node.js on App Engine flexible environment
-description: Learn how to send email via Mailgun from a Node.js app to App Engine flexible environment.
+description: Learn how to send email with Mailgun from a Node.js app to App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Mailgun, Express.js, Node.js
 date_published: 2017-01-10
 ---
-## Mailgun
 
-"[Mailgun][mailgun]—The Email Service For Developers" – mailgun.com
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
-overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
-Platform.
+You can check out [Node.js and Google Cloud][nodejs-gcp] to get an
+overview of Node.js itself and learn ways to run Node.js apps on Google Cloud.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](https://cloud.google.com/sdk/).
+1. Install the [Cloud SDK](https://cloud.google.com/sdk/).
 
 ## Prepare
 
 1. Sign up for a [Mailgun account](https://mailgun.com/signup).
 
-1. Add a [new domain](https://mailgun.com/app/domains). Find your API key in
-your new domain's settings.
+1. Add a [new domain](https://mailgun.com/app/domains). Find your API key in your new domain's settings.
 
 1. Initialize a `package.json` file with the following command:
 
@@ -132,7 +129,7 @@ your new domain's settings.
 
 1.  Run the following command to deploy your app:
 
-       gcloud app deploy
+        gcloud app deploy
 
 1.  Visit `http://YOUR_PROJECT_ID.appspot.com` to try sending an email.
 

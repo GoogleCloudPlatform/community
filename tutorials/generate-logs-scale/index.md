@@ -6,6 +6,10 @@ tags: GKE, Locust, Python
 date_published: 2020-06-08
 ---
 
+Ariel Jassan | Data Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 One of the challenges of building scalable data-intensive applications is the ability to create tests that are 
 representative enough to simulate the scale of the system in production. To overcome this challenge, you need tools to 
 generate custom test data at a large scale. This tutorial makes that process easier with scripts and architecture to 
@@ -19,7 +23,7 @@ By the end of the tutorial, you'll be able to monitor the cluster utilization fr
 Cloud Monitoring and the arrival of the messages to Pub/Sub in the Cloud Console.
 
 This tutorial assumes that you already have a project in Google Cloud and that you have the Cloud SDK installed in your
-environment. To install the Cloud SDK, see [Installing Google Cloud SDK](https://cloud.google.com/sdk/install).
+environment. To install the Cloud SDK, see [Installing the Cloud SDK](https://cloud.google.com/sdk/install).
 
 ## Objectives
 

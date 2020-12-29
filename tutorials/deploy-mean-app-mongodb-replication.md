@@ -1,12 +1,14 @@
 ---
-title: Deploy a Production-Ready MEAN Application using Bitnami MongoDB with Replication on Google Cloud Platform
-description: Deploy a MEAN application with a multi-node MongoDB replica set on Google Cloud Platform using Bitnami MEAN and Bitnami MongoDB with Replication.
+title: Deploy a production-ready MEAN application using Bitnami MongoDB with Replication on Google Cloud
+description: Deploy a MEAN application with a multi-node MongoDB replica set on Google Cloud using Bitnami MEAN and Bitnami MongoDB with Replication.
 author: vikram-bitnami
-tags: mean, mongodb, replication, scalability, Google Cloud Platform, bitnami
+tags: mean, mongodb, replication, scalability, bitnami
 date_published: 2017-07-06
 ---
 
-This tutorial demonstrates how to deploy a MEAN (MongoDB, Express, Angular and Node) Web application with a multi-node MongoDB replica set on Google Cloud Platform using Bitnami MEAN and Bitnami MongoDB with Replication. This approach produces a more scalable and resilient deployment that could be used for production or mission-critical scenarios. This tutorial assumes that you're familiar with MongoDB and MEAN applications.
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
+This tutorial demonstrates how to deploy a MEAN (MongoDB, Express, Angular and Node) Web application with a multi-node MongoDB replica set on Google Cloud using Bitnami MEAN and Bitnami MongoDB with Replication. This approach produces a more scalable and resilient deployment that could be used for production or mission-critical scenarios. This tutorial assumes that you're familiar with MongoDB and MEAN applications.
 
 ## Objectives
 
@@ -19,7 +21,7 @@ This tutorial demonstrates how to deploy a MEAN (MongoDB, Express, Angular and N
 
 ## Before you begin
 
-Before starting this tutorial, ensure that you have set up a Google Cloud Platform project. You can use an existing project or [create a new project](https://console.cloud.google.com/project).
+Before starting this tutorial, ensure that you have set up a Google Cloud project. You can use an existing project or [create a new project](https://console.cloud.google.com/project).
 
 ## Cost
 
@@ -186,7 +188,7 @@ If you are able to perform the above tasks, your MEAN application is now operati
 
 ## Cleaning up
 
-After you have finished this tutorial, you can remove the resources you created on Google Cloud Platform so you aren't billed for them any longer. You can delete the resources individually, or delete the entire project.
+After you have finished this tutorial, you can remove the resources you created on Google Cloud so you aren't billed for them any longer. You can delete the resources individually, or delete the entire project.
 
 ### Deleting the project
 

@@ -1,27 +1,29 @@
 ---
-title: Use Cloud Vision API with MongoDB Atlas
-description: Learn how to use the Google Cloud Vision API and MongoDB Atlas to build a metadata database with Express server and Node.js.
+title: Use the Vision API with MongoDB Atlas
+description: Learn how to use the Cloud Vision API and MongoDB Atlas to build a metadata database with Express server and Node.js.
 author: ksmith,arajwade
 tags: Vision API, Node.js, Express, MongoDB Atlas
 date_published: 2019-06-24
 ---
 
-## Overview
+Kent Smith and Abhijeet Rajwade | Customer Engineers | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial demonstrates how easy it is to use machine learning to gain additional insights from a batch of 
 photos that have no prior metadata attached. By using this workflow, you will be able to quickly build a descriptive 
 metadata MongoDB database on Atlas that can be used for a variety of business use cases.
 
-### Objectives
+## Objectives
 
-* Create and configure a MongoDB Atlas free tier cluster on Google Cloud Platform (GCP).
-* Configure a GCP account.
+* Create and configure a MongoDB Atlas free tier cluster on Google Cloud.
+* Configure a Google Cloud account.
 * Configure a Node.js application on a Compute Engine Debian virtual machine to use the Vision API (labels, landmarks,
   and safe search).
 * Start a batch process from a web-enabled client terminal.
-* Verify new metadata in the GCP Console and in the MongoDB Atlas database.
+* Verify new metadata in the Cloud Console and in the MongoDB Atlas database.
 
-## Part 1: Create and configure a MongoDB Atlas free tier cluster on GCP
+## Part 1: Create and configure a MongoDB Atlas free tier cluster on Google Cloud
 
 **Step 1**: Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) and either sign in to your existing account or 
 click **Try Free** to create a new account.
@@ -78,7 +80,7 @@ in a safe location for reference later.
 
 **Step 13**: Select **Allow Access from Anywhere** and click **Confirm**.
 
-Note: When actually putting something into production, you should narrow the scope of where your database
+When actually putting something into production, you should narrow the scope of where your database
 can be accessed by specifying an IP address or CIDR block.
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image4.png)
@@ -104,13 +106,13 @@ will use this connection string in a Node.js application to connect to MongoDB A
 
 **Step 20**: Click **Close**.
 
-## Part 2: Configure your Google Cloud Platform Account
+## Part 2: Configure your Google Cloud account
 
-**Step 1**: If you have a Google Account, go to the [GCP Console](https://console.cloud.google.com/) and log in.
+**Step 1**: If you have a Google Account, go to the [Cloud Console](https://console.cloud.google.com/) and log in.
 
 If you don't have a Google Account, [create a free trial account](https://console.cloud.google.com/freetrial).
 
-**Step 2**: In the [GCP Console](https://console.cloud.google.com/), click the project selector in the top left.
+**Step 2**: In the [Cloud Console](https://console.cloud.google.com/), click the project selector in the top left.
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image30.png)
 
@@ -122,11 +124,11 @@ If you don't have a Google Account, [create a free trial account](https://consol
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image28.png)
 
-**Step 5**: The active project is shown in the project selector in the top left of the GCP Console.
+**Step 5**: The active project is shown in the project selector in the top left of the Cloud Console.
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image5.png)
 
-**Step 6**: If the new project name isn't shown in the project selector in the top left of the GCP Console, click the project
+**Step 6**: If the new project name isn't shown in the project selector in the top left of the Cloud Console, click the project
 selector and select the new project in the dialog box that opens.
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image22.png)
@@ -143,7 +145,7 @@ to create a Debian Linux virtual machine instance on Compute Engine. When creati
 
 Creation of the instance might take more than a minute.
 
-**Step 2**: Go to the [**Firewall rules** page](https://console.cloud.google.com/networking/firewalls/list) in the GCP Console.
+**Step 2**: Go to the [**Firewall rules** page](https://console.cloud.google.com/networking/firewalls/list) in the Cloud Console.
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image18.png)  
 
@@ -190,7 +192,7 @@ This opens a Cloud Shell window for the connection.
 
     npm install --save @google-cloud/storage
 
-**Step 10**: Enable the Cloud Vision API:
+**Step 10**: Enable the Vision API:
 
     gcloud services enable vision.googleapis.com
 
@@ -198,7 +200,7 @@ This opens a Cloud Shell window for the connection.
 
     gsutil mb gs://[BUCKET_NAME]
  
-Note: A bucket must have a globally unique name to be accepted.
+A bucket must have a globally unique name to be accepted.
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image26.png)
 
@@ -498,7 +500,7 @@ From the `nodejs-express-mongodb` directory, run `server.js`:
 
 ## Part 4: Start the batch process from a web-enabled client terminal
 
-**Step 1**: Go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances) in the GCP Console. Your external
+**Step 1**: Go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances) in the Cloud Console. Your external
 IP address is listed next to your instance.
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image37.png)
@@ -508,7 +510,7 @@ port 8080. You should see a webpage similar to this:
 
 ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-visionapi-nodejs/image25.png)
 
-## Part 5: Verify your new metadata in both the GCP Console and the MongoDB Atlas database
+## Part 5: Verify your new metadata in both the Cloud Console and the MongoDB Atlas database
 
 Click the **Trigger batch Vision API job** button to start the job. You should see a flurry of results in the Cloud 
 Shell SSH window as the job processes your Cloud Storage bucket for images. Here is an example when done:

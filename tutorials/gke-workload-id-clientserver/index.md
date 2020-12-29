@@ -8,6 +8,8 @@ date_published: 2020-02-14
 
 Preston Holmes | Solution Architect | Google
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 Kubernetes service accounts have been the primary mechanism of identity in Kubernetes clusters. They have been usable with
 Kubernetes (role-based access control) RBAC to control authorization to the Kubernetes API server. Historically, these have
 been globally scoped credentials, and subject to relatively high replay risk and not usable outside the context of the
@@ -27,7 +29,7 @@ corresponding public keys are published at a URL that can be derived from the is
 In GKE, the Workload Identity feature allows these identities to also be associated with
 [IAM service accounts](https://cloud.google.com/iam/docs/service-accounts). This allows a pod running as a Kubernetes
 service account to act as the associated service account for authorized access to Google APIs and to services that verify
-identity based on GCP-specific OIDC.
+identity based on Google Cloud-specific OIDC.
 
 To make the use of this identity system easier for application developers, the mechanism can be made more transparent to
 both the client and the server. On the client side, a derived authorized HTTP client can be used that automatically injects
@@ -92,7 +94,7 @@ In this section, you create a project, download the tutorial files, and create a
 1.  Create the cluster:
 
         gcloud beta container clusters create $CLUSTER \
-            --identity-namespace=$PROJECT.svc.id.goog
+            --workload-pool=$PROJECT.svc.id.goog
 
     The `identity-namespace` flag is part of the enablement of the Workload Identity feature. Currently only the single,
     project-level namespace is supported.
@@ -371,7 +373,7 @@ For information, see
 
 1.  Delete the client:
 
-        kubectl delete -k client/
+        kubectl delete -k client/k-project/
 
 1.  Delete the cluster:
 

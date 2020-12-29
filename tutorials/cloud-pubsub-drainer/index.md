@@ -1,35 +1,37 @@
 ---
-title: Alert-based event archiver with Stackdriver and Cloud Pub/Sub
-description: Use Stackdriver alerting to trigger a serverless event archive task in Cloud Pub/Sub.
+title: Alert-based event archiver with Cloud Monitoring and Pub/Sub
+description: Use Cloud Monitoring alerts to trigger a serverless event archive task in Pub/Sub.
 author: ptone
-tags: IoT, Cloud Pubsub, Stackdriver, Cloud Functions, Serverless
+tags: IoT, Stackdriver, Cloud Functions, Serverless
 date_published: 2019-03-15
 ---
 
-Preston Holmes | Solution Architect | Google Cloud
+Preston Holmes | Solution Architect | Google
 
-Cloud Pub/Sub is often used for large data flows and is capable of handling large throughput, but it is also often used
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+Pub/Sub is often used for large data flows and is capable of handling large throughput, but it is also often used
 for high-value event streams that have lower volumes or are more irregular in their arrival rates.
 
-[Cloud Dataflow templates](https://cloud.google.com/dataflow/docs/guides/templates/provided-templates#cloudpubsubtogcstext)
-allow you to easily deploy a Cloud Dataflow job to move events from Cloud Pub/Sub to Cloud Storage. This will run a 
+[Dataflow templates](https://cloud.google.com/dataflow/docs/guides/templates/provided-templates#cloudpubsubtogcstext)
+allow you to easily deploy a Dataflow job to move events from Pub/Sub to Cloud Storage. This will run a 
 streaming Dataflow job continuously and may be expensive to run when the event volume is low, or if you have multiple
 medium-volume topics to archive.
 
-Cloud Pub/Sub retains messages for 7 days in a subscription resource before they are deleted. This means that
+Pub/Sub retains messages for 7 days in a subscription resource before they are deleted. This means that
 lower-volume topics can be periodically archived as batches into Cloud Storage objects without running a continuous 
-streaming job. Cloud Function Pub/Sub triggers can't be used for this directly, since they are invoked for each Cloud
+streaming job. Cloud Function Pub/Sub triggers can't be used for this directly, since they are invoked for each
 Pub/Sub message individually and you generally want to archive in batches.
 
-This solution uses the built-in metrics for subscription resources in Cloud Pub/Sub subscriptions to trigger an archiving 
+This solution uses the built-in metrics for subscription resources in Pub/Sub subscriptions to trigger an archiving 
 task based on a combination of backlog size and age.
 
 ## Objectives
 
-* Create a Stackdriver notification webhook.
-* Create a Stackdriver alerting policy with Cloud Pub/Sub conditions.
-* Create a pair of Cloud Functions that respond to the Stackdriver alert.
-* Verify that data gets archived from Cloud Pub/Sub to Cloud Storage.
+* Create a notification webhook.
+* Create a Cloud Monitoring alerting policy with Pub/Sub conditions.
+* Create a pair of Cloud Functions that respond to the alert.
+* Verify that data gets archived from Pub/Sub to Cloud Storage.
 
 ## Architecture
 
@@ -37,19 +39,19 @@ task based on a combination of backlog size and age.
 
 There are several components to the architecture:
 
-* Data ingest Cloud Pub/Sub topic: This is where events of interest are received.
-* Stackdriver alert, which consists of the following:
+* Data ingest Pub/Sub topic: This is where events of interest are received.
+* Cloud Monitoring alert, which consists of the following:
     * Alerting policy watching metrics related to a subscription associated with the data ingest topic
     * Webhook notification channel that points to a Cloud Function
-* Cloud Pub/Sub topic, which durably records the alert incident relaying it to the Archiver function
-* Archiver function, which uses streaming pull with Cloud Pub/Sub and streaming write to Cloud Storage to
-  efficiently batch and move event data from Cloud Pub/Sub to Cloud Storage.
+* Pub/Sub topic, which durably records the alert incident relaying it to the Archiver function
+* Archiver function, which uses streaming pull with Pub/Sub and streaming write to Cloud Storage to
+  efficiently batch and move event data from Pub/Sub to Cloud Storage.
 
 ## Before you begin
 
-1.  Create a GCP project for this tutorial to allow for easier cleanup.
-1.  Create a new [Stackdriver workspace](https://cloud.google.com/monitoring/workspaces/guide) in the
-    GCP project that you created above.
+1.  Create a Google Cloud project for this tutorial to allow for easier cleanup.
+1.  Create a new [workspace](https://cloud.google.com/monitoring/workspaces/guide) in the
+    Google Cloud project that you created above.
 1.  Enable Cloud Functions:
 
         gcloud services enable cloudfunctions.googleapis.com
@@ -63,7 +65,7 @@ Commands in this tutorial assume that you are running from the tutorial folder:
 
 ### Install components
 
-You will use the new command-line interface for Stackdriver resources, which is provided by the `gcloud` `alpha` component:
+You will use the command-line interface for Cloud Monitoring resources, which is provided by the `gcloud` `alpha` component:
 
     gcloud components install alpha
 
@@ -76,27 +78,27 @@ These environment variables are used throughout the project:
 
 ### Create a data archive bucket
 
-This is the bucket into which we archive data from Cloud Pub/Sub:
+This is the bucket into which we archive data from Pub/Sub:
 
     gsutil mb gs://$PROJECT_ID-data-archive
 
-### Create Cloud Pub/Sub resources
+### Create Pub/Sub resources
 
     gcloud pubsub topics create demo-data
     gcloud pubsub subscriptions create bulk-drainer --topic demo-data
     gcloud pubsub topics create drain-tasks
 
 The `demo-data` topic is the main topic where data is sent that we want to archive. It may have several subscriptions to
-it that react to events or process streaming data. In Cloud Pub/Sub, each subscription gets its own durable copy of the 
+it that react to events or process streaming data. In Pub/Sub, each subscription gets its own durable copy of the 
 data.
 
 The `bulk-drainer` subscription is created to act as the storage buffer dedicated to the archiver task.
 
-The `drain-tasks` topic serves as a durable relay of the Stackdriver alert occurrence.
+The `drain-tasks` topic serves as a durable relay of the alert occurrence.
 
 ### Deploy the archiving function
 
-The `Archiver` function is awakened by a Stackdriver condition-based alert and drains any outstanding events in
+The `Archiver` function is awakened by a condition-based alert and drains any outstanding events in
 the `bulk-drainer` subscription into chunked objects in the `data-archive` bucket.
 
     cd drainer-func
@@ -109,26 +111,26 @@ How much is consolidated per object is configured in the code; it can be set to 
 
 ### Deploy webhook relay
 
-Stackdriver does not currently have a native Cloud Pub/Sub alert notification channel. We use a small HTTP Cloud Function
-to act as a simple relay. The `AUTH_TOKEN` environment variable sets an expected shared secret between the Stackdriver 
-Notification Channel and the webhook.
+Cloud Monitoring does not currently have a native Pub/Sub alert notification channel. We use a small HTTP Cloud Function
+to act as a simple relay. The `AUTH_TOKEN` environment variable sets an expected shared secret between the Cloud Monitoring 
+notification channel and the webhook.
 
     gcloud functions deploy StackDriverRelay --runtime go111 --trigger-http --update-env-vars AUTH_TOKEN=abcd
 
-### Allow Stackdriver to call the webhook
+### Allow Cloud Monitoring to call the webhook
 
 *[Cloud Function IAM Alpha](http://bit.ly/gcf-iam-alpha) Users Only* 
 
-Stackdriver can only reach publicly accesible webhooks. If you are using a project with function authorization enabled,
+Cloud Monitoring can only reach publicly accesible webhooks. If you are using a project with function authorization enabled,
 you need to make it reachable:
 
     gcloud alpha functions add-iam-policy-binding StackDriverRelay --member "allUsers" --role "roles/cloudfunctions.invoker"
 
-### Create Stackdriver notification channel
+### Create a Cloud Monitoring notification channel
 
-In Stackdriver, a notification channel is a resource that can be used with one or more alerting policies. These can be 
-created in the GCP Console or through an API. Using the URL from our deployed function, you create a new channel and then
-get the Stackdriver-assigned channel identifier as an environment variable:
+In Cloud Monitoring, a notification channel is a resource that can be used with one or more alerting policies. These can be 
+created in the Cloud Console or through an API. Using the URL from our deployed function, you create a new channel and then
+get the channel identifier as an environment variable:
 
     cd ..
     export URL=$(gcloud functions describe StackDriverRelay --format='value(httpsTrigger.url)')
@@ -137,10 +139,10 @@ get the Stackdriver-assigned channel identifier as an environment variable:
 
     export CHANNEL=$(gcloud alpha monitoring channels list --filter='displayName="Archiver"' --format='value("name")')
 
-### Create a Stackdriver alerting policy
+### Create a Cloud Monitoring alerting policy
 
 Alerting policies describe conditions that result in the alert firing as true. This is where we want to create an alert 
-condition if messages in our `bulk-drainer` Cloud Pub/Sub subscription get either too numerous or too old. See the 
+condition if messages in our `bulk-drainer` Pub/Sub subscription get either too numerous or too old. See the 
 contents of `policy.json` in the tutorial repository for details. The duration and size thresholds are set low so that the 
 solution can be tested and demonstrated quickly.
 
@@ -153,8 +155,8 @@ earlier.
 
     gcloud alpha monitoring policies update $POLICY --add-notification-channels=$CHANNEL
 
-At this point, the solution is fully deployed. You can see and review the policy in the alerting section of Stackdriver 
-Console. You can see notification channels in the workspace settings area of the Stackdriver console.
+At this point, the solution is fully deployed. You can see and review the policy in the alerting section of the 
+console. You can see notification channels in the workspace settings area of the console.
 
 ## Testing the solution
 
@@ -185,26 +187,26 @@ You should see output that looks like:
 To test the age-based condition in the policy, let the loader run just for a moment, cancel by pressing Ctrl-C, and then
 wait a few minutes until the condition is triggered.
 
-![Stackdriver alerting policy](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/stackdriver_alerting_policy.png)
+![alerting policy](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/stackdriver_alerting_policy.png)
 
-For a trigger based on backlog size, let the loader tool run for several minutes before canceling. (Note: Do not let this
+For a trigger based on backlog size, let the loader tool run for several minutes before canceling. (Do not let this
 script run indefinitely, since it will continue to generate billable volumes of data.)
 
-Note that Stackdriver metrics do not appear instantaneously; it takes some time for them to show in the alert policy charts. 
+Note that Cloud Monitoring metrics do not appear instantaneously; it takes some time for them to show in the alert policy charts. 
 Also note that for the condition to fire, it has to be true for 1 minute (this is a configurable part of policy).
 
 While you wait for an alert to fire, you can to check out
-the [Stackdriver alerting policy overview](https://cloud.google.com/monitoring/alerts/).
+the [alerting policy overview](https://cloud.google.com/monitoring/alerts/).
 
 ### Check the function logs
 
 The `Relay` function logs should show that the function was called.
 
-![Stackdriver relay function logs](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/stackdriver_relay_function_logs.png)
+![relay function logs](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/stackdriver_relay_function_logs.png)
 
 The `Archiver` function logs should show the archiving activity, including how many messages were archived.
 
-![Stackdriver archiver function logs](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/stackdriver_archiver_function_logs.png)
+![archiver function logs](https://storage.googleapis.com/gcp-community/tutorials/cloud-pubsub-drainer/stackdriver_archiver_function_logs.png)
 
 ### Check the archive bucket
 
@@ -220,7 +222,7 @@ The size archive size is set to 1MB in this tutorial, though that is adjustable 
 This pattern is not appropriate for all cases. Notably, function invocations are limited to 10 minutes. This means that the
 alert policy should trigger often enough that the archive task completes within this timeframe.
 
-If the data volume into Cloud Pub/Sub is too much to be archived by such a periodic task, it is better handled by a proper [streaming Dataflow job](https://cloud.google.com/dataflow/docs/guides/templates/provided-templates#cloudpubsubtogcstext).
+If the data volume into Pub/Sub is too much to be archived by such a periodic task, it is better handled by a proper [streaming Dataflow job](https://cloud.google.com/dataflow/docs/guides/templates/provided-templates#cloudpubsubtogcstext).
 
 ## Cleaning up and next steps
 
@@ -230,7 +232,7 @@ If the data volume into Cloud Pub/Sub is too much to be archived by such a perio
     gcloud pubsub topics delete drain-tasks
     gcloud pubsub topics delete demo-data
 
-You can choose to delete the Stackdriver notifications and alert policy in the Stackdriver console.
+You can choose to delete the notifications and alert policy in the console.
 
 ### Next steps
 

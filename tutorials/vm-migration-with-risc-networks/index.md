@@ -1,25 +1,29 @@
 ---
 title: Migrate virtual machines with RISC Networks and Migrate for Compute Engine
-description: Learn how to migrate virtual machines (VMs) from VMware to GCP using RISC Networks and Migrate for Compute Engine.
+description: Learn how to migrate virtual machines (VMs) from VMware to Google Cloud using RISC Networks and Migrate for Compute Engine.
 author: laidig
 tags: Migrate for Compute Engine, RISC Networks
 date_published: 2019-09-03
 ---
 
-This article walks you through a VM migration from VMware to Google Cloud Platform (GCP), from planning to completion.
-Integrations between GCP, RISC Networks (now
+Tony Laidig | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This article walks you through a VM migration from VMware to Google Cloud, from planning to completion.
+Integrations between Google Cloud, RISC Networks (now
 [Flexera](https://www.flexera.com/about-us/press-center/flexera-acquires-risc-networks.html)),
 and Migrate for Compute Engine (formerly Velostrata) enable you to export your plans into Migrate for Compute 
 Engine.
 
 ## Prerequisites
 
-This tutorial assumes that you have a Migrate for Compute Engine environment set up on GCP.
+This tutorial assumes that you have a Migrate for Compute Engine environment set up on Google Cloud.
 
 For more information, see
 [Getting started with Migrate for Compute Engine](https://cloud.google.com/velostrata/docs/getting-started)
 and
-[Overview of on-premises to GCP migrations](https://cloud.google.com/velostrata/docs/how-to/migrate-on-premises-to-gcp/overview).
+[Overview of on-premises to Google Cloud migrations](https://cloud.google.com/velostrata/docs/how-to/migrate-on-premises-to-gcp/overview).
 
 ## Creating a RISC Networks assessment
 

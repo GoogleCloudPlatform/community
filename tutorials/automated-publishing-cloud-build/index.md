@@ -6,6 +6,10 @@ tags: Cloud Build, Hosting, Cloud Storage
 date_published: 2017-03-13
 ---
 
+Ahmet Alp Balkan | Developer Advocate | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows how to automate publishing a static HTML website using a
 custom domain name to Cloud Storage using [Cloud Build][gcb].
 
@@ -93,7 +97,7 @@ this tutorial.
 9. Click **Create** to save your build trigger.
 
 Now, create a `cloudbuild.yaml` file with the following contents in your
-repository. Note that you can add files to your repository on thr GitHub website or
+repository. Note that you can add files to your repository on the GitHub website or
 by cloning the repository on your development machine:
 
 ```yaml

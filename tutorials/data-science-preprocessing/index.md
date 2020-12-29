@@ -1,20 +1,23 @@
 ---
 title: Cleaning data in a data processing pipeline
-description: Automate the cleaning of data using Cloud Dataflow.
+description: Automate the cleaning of data using Dataflow.
 author: jerjou
 tags: Data Science, Cloud Dataflow
 date_published: 2017-05-23
 ---
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 When gathering information from the real world, the data will often contain
 errors, omissions, or inconsistencies that should be corrected before you can
 analyze it effectively. Instead of doing it by hand, or performing a separate
-cleansing step, [Google Cloud Dataflow][dataflow] allows you to define simple
+cleansing step, [Dataflow][dataflow] allows you to define simple
 functions that can cleanse your data in a pipeline, which you can plug into your
 data ingestion pipeline for automatic cleansing.
 
 In this tutorial, you'll write functions to perform various data cleansing
 tasks, which you'll then string together into a pipeline to be run in series on
-[Cloud Dataflow][dataflow]. Note that you could also plug arbitrary functions -
+[Dataflow][dataflow]. Note that you could also plug arbitrary functions -
 such as those from the
 [data extraction](/community/tutorials/data-science-extraction/) tutorial - into
 this pipeline as well. We leave as an exercise for the reader.
@@ -31,7 +34,7 @@ filters on the raw json data:
 
 You'll then tie all the filters together in a pipeline that can be run both
 locally (for ease of experimentation, and for small datasets), and on the
-[Google Cloud Dataflow][dataflow] service, for large datasets and streaming
+[Dataflow][dataflow] service, for large datasets and streaming
 datasets that are continuously being updated. To accomplish this, you'll add a
 function for sourcing the data, and one for saving it:
 
@@ -49,7 +52,7 @@ function for sourcing the data, and one for saving it:
 * You've installed the [Google Cloud SDK](/sdk).
 * You've enabled the [BigQuery API][bq-api]
 * For running the pipeline in the cloud, you also must enable the
-  [Cloud Dataflow, Compute Engine, Cloud Logging, Cloud Storage, and Cloud Storage JSON APIs][dataflow-apis].
+  [Dataflow, Compute Engine, Cloud Logging, Cloud Storage, and Cloud Storage JSON APIs][dataflow-apis].
 
 [setup]: /getting-started#set_up_a_project
 [python]: https://www.python.org/
@@ -157,10 +160,10 @@ def massage_rec(record):
 
 ## Define a Dataflow pipeline
 
-[Google Cloud Dataflow](/dataflow) uses the [Apache Beam SDK][beam]
+[Dataflow](/dataflow) uses the [Apache Beam SDK][beam]
 to define a processing pipeline for the data to go through. In this case, the
 data needs to be processed by each of these functions in succession and then
-inserted into [Google BigQuery](/bigquery), after being read from its
+inserted into [BigQuery](/bigquery), after being read from its
 original raw format.
 
 ### Create a `Source` for JSON objects
@@ -312,10 +315,9 @@ to output the result into BigQuery, for later analysis.
 
 ## Run the data cleansing pipeline
 
-A great thing about Apache Beam and Cloud Dataflow is that you can run it
+A great thing about Apache Beam and Dataflow is that you can run it
 locally for sample datasets, or datasets that are otherwise relatively small.
-But then you can take the same code, add a couple extra flags, and run it using
-Cloud Dataflow which can handle orders of magnitude more data at a time.
+But then you can take the same code, add a couple extra flags, and run it using Dataflow which can handle orders of magnitude more data at a time.
 
 You can find the complete pipeline file [here][clean.py], along with its
 [requirements.txt][requirements.txt].
@@ -362,17 +364,17 @@ so:
 
     python clean.py meteors.json your-project-id:meteor_dataset.cleansed
 
-### Running on Cloud Dataflow
+### Running on Dataflow
 
-To run the script on Cloud Dataflow, you'll have to specify your project, and a
-bucket in Google Cloud Storage:
+To run the script on Dataflow, you'll have to specify your project, and a
+bucket in Cloud Storage:
 
     PROJECT=your-project-id
     # The $PROJECT.appspot.com bucket is created automatically with your project
     BUCKET=gs://$PROJECT.appspot.com
 
 Now upload the json data file to Cloud Storage using the `gsutil` tool included
-in the Google Cloud SDK:
+in the Cloud SDK:
 
     gsutil cp meteors.json gs://$BUCKET/
 
@@ -421,7 +423,7 @@ landings per year:
 
 ## API Documentation
 
-We've only touched on a couple of the capabilities of Apache Beam and Cloud
+We've only touched on a couple of the capabilities of Apache Beam and
 Dataflow. Take a look at the API documentation, and experiment with the other
 features.
 
@@ -444,7 +446,7 @@ To avoid recurring charges for resources created in this tutorial:
         $ bq rm -r meteor_dataset
         rm: remove dataset 'your-project-id:meteor_dataset'? (y/N) y
 
-* Delete the objects created in Cloud Storage when running the script on Cloud
+* Delete the objects created in Cloud Storage when running the script on
   Dataflow:
 
         gsutil rm -r gs://$BUCKET/staging gs://$BUCKET/temp gs://$BUCKET/output \
