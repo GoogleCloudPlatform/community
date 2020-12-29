@@ -2,8 +2,7 @@
 # https://hub.docker.com/_/python
 FROM python:3.7-slim
 
-ARG PROJECTID
-ENV PROJECT_ID=$PROJECTID
+ENV PROJECTID = $PROJECT_ID
 
 # Copy local code to the container image.
 ENV APP_HOME /app
@@ -20,4 +19,4 @@ RUN pip install -r requirements.txt
 
 #CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 app:app
 
-ENTRYPOINT ["python", "-u", "app.py"]
+ENTRYPOINT ["python", "-u", "/app.py"]

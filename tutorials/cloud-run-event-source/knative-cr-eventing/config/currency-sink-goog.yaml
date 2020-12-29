@@ -6,5 +6,5 @@ spec:
   template:
     spec:
       containers:
-      - image: gcr.io/jaysmith-189200/currencysink
+      - image: gcr.io/yokicloud/currency-sink
         imagePullPolicy: Always
