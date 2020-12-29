@@ -10,22 +10,22 @@ exec > >(tee -i logfile.txt)
 #### Declare MYROOT directory for cloned repo
 export MYROOT=$(pwd)
 clear 
-### install golang v1.13.1
+### install golang v1.14
 
 mkdir ~/.golang
 cd ~/.golang
 if ! [ -x "$(command -v go)" ]; then
-    echo "***** Installing GoLang v1.13.1 *****"
+    echo "***** Installing GoLang v1.14 *****"
     if [[ "$OSTYPE"  == "linux-gnu" ]]; then
-        curl https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz -o go1.13.1.linux-amd64.tar.gz
-        sudo tar -C /usr/local -xzf go1.13.1.linux-amd64.tar.gz
+        curl https://dl.google.com/go/go1.14.linux-amd64.tar.gz -o go1.14.linux-amd64.tar.gz
+        sudo tar -C /usr/local -xzf go1.14.linux-amd64.tar.gz
         echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.profile
         #source ~/.profile
         export PATH=$PATH:/usr/local/go/bin
 
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-        curl https://dl.google.com/go/go1.13.1.darwin-amd64.tar.gz -o go1.13.1.darwin-amd64.tar.gz
-        sudo tar -C /usr/local -xzf go1.13.1.darwin-amd64.tar.gz
+        curl https://dl.google.com/go/go1.14.darwin-amd64.tar.gz -o go1.14.darwin-amd64.tar.gz
+        sudo tar -C /usr/local -xzf go1.14.darwin-amd64.tar.gz
         echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.bash_profile
         #source ~/.bash_profile
         export PATH=$PATH:/usr/local/go/bin
@@ -70,35 +70,6 @@ else
     echo "Google Cloud SDK is already installed. Let's move on"
 fi
 
-#### Installing Confluent Cloud SDK
-if ! [ -x "$(command -v ccloud)" ]; then
-    echo "***** Installing Confluent Cloud CLI *****"
-    curl -L https://cnfl.io/ccloud-cli | sudo sh -s -- -b /usr/local/bin
-else 
-    echo "Confluent Cloud CLI is already installed. Let's move on"
-fi   
-
-echo "***** Log into Confluent Cloud *****"
-ccloud login --url https://confluent.cloud
-
-echo "***** Create a Kafka Cluster called 'cloudrun' *****"
-export CONFLUENT_ID=$(ccloud kafka cluster create cloudrun --cloud gcp --region us-central1 | grep 'Id' | sed 's/^.* | //' | cut -f3-4 -d"/" | tr -d '|')
-export CONFLUENT_ENV=$(ccloud environment list | grep "*" | cut -c4-9)
-ccloud environment use $CONFLUENT_ENV
-ccloud kafka cluster use $CONFLUENT_ID
-ccloud kafka cluster list
-sleep 60
-
-#### Get Confluent 
-export CONFLUENT_HOST=$(ccloud kafka cluster describe `ccloud kafka cluster list | grep "*" | cut -c4-14` | grep 'SASL_SSL'  | sed 's/^.* | //' | cut -f3-4 -d"/" | tr -d '|')
-#### Setting API Keys for Confluent
-ccloud api-key create > secrets.txt
-export CONFLUENT_KEY=$(grep 'API Key |' secrets.txt | sed 's/^.* | //' | cut -d' ' -f1)
-export CONFLUENT_SECRET=$(grep 'Secret  |' secrets.txt | sed 's/^.* | //' | cut -d' ' -f1)
-rm -rf secrets.txt
-clear
-
-ccloud api-key use $CONFLUENT_KEY
 
 
 #### BoilerPlate Code for
@@ -138,7 +109,7 @@ clear
 echo "******Now we shall create your cluster******"
 gcloud beta container clusters create $CLUSTER_NAME \
   --addons=HorizontalPodAutoscaling,HttpLoadBalancing,Istio,CloudRun \
-  --machine-type=n1-standard-2 \
+  --machine-type=n1-standard-4 \
   --cluster-version=latest \
   --zone=$ZONE \
   --enable-stackdriver-kubernetes \
@@ -148,8 +119,6 @@ gcloud beta container clusters create $CLUSTER_NAME \
 echo "***** Waiting for 90 second for cluster to complete *****"
 sleep 90
 
-echo "***** Create a Kafka Topic called 'cloudevents' *****"
-ccloud kafka topic create cloudevents
 
 ### Configuring your cluster for Run
 echo "******Now we ensure that your cluster has Cloud Run******"
@@ -165,7 +134,7 @@ gcloud config set run/namespace kafka-eventing
 
 ##### Get istio-gateway external IP
 echo "****** We are going to grab the external IP ******"
-export EXTERNAL_IP=$(kubectl get service istio-ingressgateway --namespace istio-system | awk 'FNR == 2 {print $4}')
+export EXTERNAL_IP=$(kubectl get service istio-ingress --namespace gke-system | awk 'FNR == 2 {print $4}')
 
 echo "***** We will now patch configmap for domain ******"
 kubectl patch configmap config-domain --namespace knative-serving --patch \
@@ -176,39 +145,36 @@ clear
 echo "***** Installing Knative Eventing ******"
 
 kubectl apply --selector knative.dev/crd-install=true \
---filename https://github.com/knative/eventing/releases/download/v0.10.0/release.yaml \
---filename https://github.com/knative/serving/releases/download/v0.10.0/monitoring.yaml
+--filename https://github.com/knative/eventing/releases/download/v0.11.0/eventing.yaml \
+--filename https://github.com/knative/serving/releases/download/v0.11.0/monitoring.yaml
 
-kubectl apply --filename https://github.com/knative/eventing/releases/download/v0.10.0/release.yaml \
---filename https://github.com/knative/serving/releases/download/v0.10.0/monitoring.yaml
+kubectl apply --filename https://github.com/knative/eventing/releases/download/v0.11.0/eventing.yaml \
+--filename https://github.com/knative/serving/releases/download/v0.11.0/monitoring.yaml
+
+
+
+kubectl apply --selector knative.dev/crd-install=true \
+--filename https://github.com/knative/eventing/releases/download/v0.12.0/eventing.yaml \
+--filename https://github.com/knative/serving/releases/download/v0.12.0/monitoring.yaml
+
+
+kubectl apply --filename https://github.com/knative/eventing/releases/download/v0.12.0/eventing.yaml \
+--filename https://github.com/knative/serving/releases/download/v0.12.0/monitoring.yaml
+
 
 #ElasticSearch Monitoring
-kubectl apply --filename https://github.com/knative/serving/releases/download/v0.10.0/monitoring-logs-elasticsearch.yaml
+#kubectl apply --filename https://github.com/knative/serving/releases/download/v0.10.0/monitoring-logs-elasticsearch.yaml
 
 kubectl get pods --namespace knative-eventing
 kubectl get pods --namespace knative-monitoring
 
-# Setup namespace
-kubectl create namespace kafka-eventing
 
-kubectl label namespace kafka-eventing knative-eventing-injection=enabled
+# Permissions
+echo "Setting up cluster permissions"
+kubectl create clusterrolebinding cluster-admin-binding \
+--clusterrole=cluster-admin \
+--user=$(gcloud config get-value core/account)
 
-
-
-#### Prepaing YAML
-clear
-echo "***** Let's deploy Knative Eventing for Kafka *****"
-cd $MYROOT && cd config/kafka
-kubectl apply -f kafka-source-release-0.10.yaml
-sed 's|KAFKA-KEY|'"$CONFLUENT_KEY"'|g; s|KAFKA-SECRET|'"$CONFLUENT_SECRET"'|g' kafka-secrets.sample.yaml > kafka-secrets.yaml
-kubectl apply -f kafka-secrets.yaml
-sed 's|CONFLUENT-SERVER|'"$CONFLUENT_HOST"'|g' kafka-source-deploy.sample.yaml > kafka-source-deploy.yaml
-kubectl apply -f kafka-source-deploy.yaml
-sed 's|CONFLUENT-SERVER|'"$CONFLUENT_HOST"'|g' kafka-source-display.sample.yaml > kafka-source-display.yaml
-kubectl apply -f kafka-source-display.yaml
-clear
-echo "***** DEPLOYED! *****"
-kubectl label namespace default knative-eventing-injection=enabled
 
 
 #### app
