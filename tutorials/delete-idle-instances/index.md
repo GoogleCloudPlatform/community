@@ -1,18 +1,21 @@
+$ echo '{"project": "jani-gce-test", "label": "env=dev"}' | base64
+eyJwcm9qZWN0IjogImphbmktZ2NlLXRlc3QiLCAibGFiZWwiOiAiZW52PWRldiJ9Cg==
+
+
 ---
-title: Cleaning up Compute Engine instances at scale
-description: Use a simple and scalable serverless mechanism to automatically delete Compute Engine instances after a specified amount of time.
-author: hbougdal,jpatokal
+title: Delete idle Compute Engine instances automatically
+description: Use a simple and scalable serverless mechanism to automatically delete Compute Engine instances that are not in active use.
+author: jpatokal
 tags: garbage collection, Cloud Scheduler, Cloud Functions
-date_published: 2020-10-14
+date_published: TBD
 ---
 
-Hicham Bougdal and Jani Patokallio | Google
+Jani Patokallio | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial offers a simple and scalable serverless mechanism to automatically delete
-([*garbage-collect*](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science))) Compute Engine virtual machine (VM) instances after a specified amount
-of time.
+([*garbage-collect*](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science))) Compute Engine virtual machine (VM) instances that are marked as idle.
 
 Some cases in which this may be useful:
 
@@ -25,25 +28,21 @@ Some cases in which this may be useful:
 
 The following diagram shows a high-level overview of the solution:
 
-![High-level overview of the solution](https://storage.googleapis.com/gcp-community/tutorials/cleaning-up-at-scale/overview.svg)
-
-Each Compute Engine instance in scope is assigned two labels:
-
-*   **TTL** (time to live): Indicates (in minutes) after how much time the VM will not be needed and can be deleted.
-*   **ENV**: Indicates that the instance is part of the pool of VMs that can be checked regularly and can be deleted if the TTL is reached. 
+![High-level overview of the solution](overview.svg)
 
 The overall flow is the following:
 
-1.  A Cloud Scheduler cron job is triggered regularly (for example, every 5 minutes). The Cloud Scheduler configuration specifies the label of the 
-    pool of VMs to target, using the following format: `'{"label":"env=test"}'`
+1.  A Cloud Scheduler cron job is triggered regularly (for example, once a day). The Cloud Scheduler configuration specifies the label of the 
+    pool of VMs to target and whether or not they should be deleted, using the following format: `'{"label":"env=test,delete=false"}'`
 1.  When the cron job is triggered, Cloud Scheduler pushes a message with the label payload to a Pub/Sub topic.
 1.  A Cloud Function is subscribed to the Pub/Sub topic. Each time the function is triggered, it does the following: 
-    1.  Reads the payload of the Pub/Sub message and extracts the label.
-    1.  Filters all of the Compute Engine instances that have the label.
+    1.  The Idle VM Recommender is queried for a list of idle Compute Engine instances.
+    1.  The list is filtered for instances that have the target label.
     1.  Iterates through the instances and does the following: 
-        1.  Reads the value of the TTL label for each instance.
-        1.  Calculates the difference between the current time and the creation time of each instance. 
-        1.  If the difference is greater than the TTL, then the instance is deleted. If not, nothing is done.
+        1.  If the Cloud Scheduler configuration included the label `delete=true`, the target is immediately deleted and the recommendation status is set to `SUCCEEDED`.
+        1.  Otherwise, the label `delete=true` is applied to the instance and the recommendation status is set to `CLAIMED`.
+
+Note: By default, this solution only tags potential idle instances instead of deleting them.  The list of tagged instances can be obtained by checking recommendation status or searching for instances with the label.
 
 ## Costs
 
@@ -53,9 +52,7 @@ This tutorial uses the following Google Cloud components:
 *   Cloud Scheduler
 *   Pub/Sub
 *   Cloud Functions
-
-To estimate the cost of running this sample, assume that you run a single `f1-micro`  Compute Engine instance for a total of 15 minutes on one day while you test
-the sample, after which you delete the project, releasing all resources. 
+*   Recommender API
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator/) to generate a cost estimate based on this projected usage. 
 
@@ -64,6 +61,8 @@ Cloud Scheduler is free for up to 3 jobs per month.
 New Google Cloud users may be eligible for a [free trial](http://cloud.google.com/free-trial).
 
 ## Before you begin
+
+Note: The following steps create a new project and new VMs, so idle VM recommendations may not be generated until 14 days of system metrics are available.  For immediate results, you can deploy this in an existing project with idle instances instead.
 
 1.  If you don’t already have one, create a [Google Account](https://accounts.google.com/SignUp).
 
@@ -78,25 +77,25 @@ New Google Cloud users may be eligible for a [free trial](http://cloud.google.co
 
             gcloud services enable appengine.googleapis.com cloudbuild.googleapis.com \
               cloudfunctions.googleapis.com cloudscheduler.googleapis.com compute.googleapis.com \
-              pubsub.googleapis.com
+              pubsub.googleapis.com recommender.googleapis.com
     
 ## Set up the automated cleanup code
 
-You run the commands in this section in Cloud Shell.
+Run the commands in this section in Cloud Shell.
 
 1.  Clone the GitHub repository:
 
         git clone https://github.com/GoogleCloudPlatform/community
 
-1.  Change directories to the `cleaning-up-at-scale` directory:
+1.  Change directories to the `delete-idle-instances` directory:
 
-        cd community/tutorials/cleaning-up-at-scale
+        cd community/tutorials/delete-idle-instances
 	
     The exact path depends on where you placed the directory when you cloned the sample files from GitHub.
 
 1.  Create the Pub/Sub topic that you will push messages to:
 
-        gcloud pubsub topics create unused-instances
+        gcloud pubsub topics create idle-instances
 
     You can verify that the Pub/Sub topic has been created with the following command:
     
@@ -106,18 +105,15 @@ You run the commands in this section in Cloud Shell.
 
 1.  Deploy the Cloud Function that will monitor the Pub/Sub topic and clean up instances:
 
-        gcloud functions deploy clean-unused-instances --trigger-topic=unused-instances --runtime=nodejs12 --entry-point=cleanUnusedInstances
+        gcloud functions deploy mark-idle-instances --trigger-topic=idle-instances --runtime=nodejs12 --entry-point=cleanIdleInstances
 
-1.  Configure Cloud Scheduler to push a message containing the target label every minute to the Pub/Sub topic `unused-instances`:
+1.  Configure Cloud Scheduler to push a message containing the target label every day to the Pub/Sub topic `idle-instances`:
 
-        gcloud scheduler jobs create pubsub clean-unused-instances-job --schedule="* * * * *" \
-          --topic=unused-instances --message-body='{"label":"env=test"}'
+        gcloud scheduler jobs create pubsub mark-idle-instances-job --schedule="0 0 * * *" \
+          --topic=idle-instances --message-body='{"label":"env=test"}'
 
     The schedule is specified in [unix-cron format](https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules).
-    A `*` in every field means that the job runs every minute, every hour, every day of the month, every month, and every day of the week.
-    More simply put, the job runs once per minute.
-
-    If scanning large numbers of VMs, running less often (such as once per hour) is likely sufficient.
+    `0 0 * * *` means that the jobs runs at 0:00 (midnight) every day of the month, every month, and every day of the week.  More simply put, the job runs once per day.
 
     You can verify that the job has been created with the following command:
 
@@ -126,22 +122,34 @@ You run the commands in this section in Cloud Shell.
     Jobs also appear on the [**Cloud Scheduler** page](https://console.cloud.google.com/cloudscheduler) in the Cloud Console. On that page, you can view
     execution logs for each job by clicking **View** in the **Logs** column.
 
-## Test the automated cleanup
+## Test the automated tagging
 
-1.  Create a test instance labeled `env=test` with a two-minute TTL:
+1.  Create a test instance labeled `env=test`:
 
-        gcloud compute instances create cleanup-test --zone=us-central1-a --machine-type=f1-micro \
-          --labels=env=test,ttl=2
+        gcloud compute instances create idle-test --zone=us-central1-a --machine-type=f1-micro \
+          --labels=env=test
 
-1.  Check that the new instance has started successfully.
+1.  Create a second test instance labeled `env=test` with deletion enabled:
 
-        gcloud compute instances list
+        gcloud compute instances create deletion-test --zone=us-central1-a --machine-type=f1-micro \
+          --labels=env=test,delete=true
 
-1.  Wait two minutes and run the same command again:
+1.  Check that the new instances have started successfully.
 
-        gcloud compute instances list
+        gcloud compute instances list --format='table(name,status,labels.list())'
 
-    The instance should have been automatically deleted.
+1.  Wait 14 days and run the same command again:
+
+        gcloud compute instances list --format='table(name,status,labels.list())'
+
+    The `idle-test` instance should be shown as `RUNNING` with the label `delete=true` now applied.
+    The `deletion-test` instance should have been automatically deleted.  (It may still be listed
+    with `STATUS` of `TERMINATED`.)
+
+1.  Delete marked instance by passing a list of them to the `delete` command:
+
+        gcloud compute instances delete |\
+        $(gcloud compute instances list --filter='labels.delete=true' --format='value(name)')
 
 You can also see the Cloud Function execution results, including the name of the deleted instance, by viewing the Cloud Function logs from the
 [**Cloud Functions** page](https://pantheon.corp.google.com/functions/list) in the Cloud Console.
