@@ -21,15 +21,15 @@ This blog is part 1 of two part series
 1.  Building CI/CD pipelines for Data Lake - Part 1 (For serveless data services GCS, Dataflow and BigQuery)
 1.  Building CI/CD pipelines for Data Lake - Part 2 (For Apache Spark applications on Dataproc)
 
-You will use the following Google Cloud services and open source tools through out the blog:
+You will use the following Google Cloud services and open source tools throughout the blog:
 
 [Cloud Storage](https://cloud.google.com/storage/) is a highly available, durable object store to store any amount of data.  We will use it to store raw / unprocessed sample data.
 
-[Dataflow](https://cloud.google.com/dataflow) is a serverles unified batch and streaming data processing service. We are using Google provided open-source Dataflow template to build a [Cloud Storage Text to BigQuery](https://cloud.google.com/dataflow/docs/guides/templates/provided-batch#gcstexttobigquery) data processing pipeline.
+[Dataflow](https://cloud.google.com/dataflow) is a serverless unified batch and streaming data processing service. We are using Google provided open-source Dataflow template to build a [Cloud Storage Text to BigQuery](https://cloud.google.com/dataflow/docs/guides/templates/provided-batch#gcstexttobigquery) data processing pipeline.
 
 [BigQuery](https://cloud.google.com/bigquery) is a serverless, highly scalable, and cost-effective multi-cloud data warehouse designed for business agility. We are using BigQuery to store processed data for analytics use.
 
-[Cloud Build](https://cloud.google.com/cloud-build) to create a CI/CD pipeline for building, deploying, and testing a data-processing workflow, and the data processing itself. 
+[Cloud Build](https://cloud.google.com/cloud-build) is used to create a CI/CD pipeline for building, deploying, and testing a data-processing workflow, and the data processing itself. 
 
 [Github](https://github.com/) is a distributed version-control system for tracking changes in source code during software development. We are using git to store and version control data processing pipelines and terraform infrastructure-as-code models.
 
@@ -147,7 +147,7 @@ You use a single Git repository to define your cloud infrastructure and orchestr
 
 *   The *prod* branch contains the latest changes that are applied to the production environment.
 
-With this infrastructure, you can always reference the repository to know what configuration is expected in each environment and to propose new changes by first merging them into the *dev* environment. You then promote the changes by merging the *dev* branch into the subsequent *prod* branch.
+With this infrastructure, you can always reference the repository to know what configuration is expected in each environment and to propose new changes by first merging them into the *dev* environment. You can then promote the changes by merging the *dev* branch into the subsequent *prod* branch.
 
 ### To get started, clone the [GoogleCloudPlatform community](https://github.com/GoogleCloudPlatform/community) repository
 
@@ -246,15 +246,15 @@ The following steps provide instructions for installing the app only for the **[
 
 1.  Click **Done**
 
-The Cloud Build GitHub app is now configured, and your GitHub repository is linked to your Google Cloud project. From now on, any changes to the GitHub repository will trigger Cloud Build executions, which report the results back to GitHub by using [GitHub Checks](https://developer.github.com/v3/checks/).
+The Cloud Build GitHub app is now configured and your GitHub repository linked to your Google Cloud project. From now on, any changes to the GitHub repository will trigger Cloud Build executions, which report the results back to GitHub by using [GitHub Checks](https://developer.github.com/v3/checks/).
 
 ## 5. Configure a build trigger to respond to changes in your GitHub repository
 
-From the previous steps, you have a configuration to establish connectivity between Code Build and your GitHub repositories. Now create a trigger in the Cloud build to respond to changes in the GitHub repository to test and run your infrastructure for data processing pipelines.
+Following the previous steps, you should have a configuration to establish connectivity between Code Build and your GitHub repositories. Now create a trigger in the Cloud build to respond to changes in the GitHub repository to test and run your infrastructure for data processing pipelines.
 
 1.  Navigate to the Cloud Build in the Cloud console and Click on **CREATE TRIGGER** in the Triggers navigation plane.
 
-1.  Provide **Name** and **Description** for your trigger
+1.  Provide the **Name** and **Description** of your trigger
 
 1.  In the Event section, select **Push to a branch**
 
@@ -264,7 +264,8 @@ From the previous steps, you have a configuration to establish connectivity betw
 
 1.  In the Build Configuration section, select **Cloud Build configuration file**
 
-1.  In the Advanced section, Click the Add Variable button and Add your environment variables like ProjectID, ServiceAccountEmail,Region,SourceDatabucket. Naming standard like below. (You have created these variable as part of **Setting up your environment** and **Setting up your GCS Bucket** section)
+1.  In the Advanced section, Click the Add Variable button and Add your environment variables like ProjectID, ServiceAccountEmail,Region,SourceDatabucket. 
+    See naming standard below. (You have created these variable as part of **Setting up your environment** and **Setting up your GCS Bucket** section)
 
         _PROJECT_ID= YourProjectID (solutions-295116)
 	    _REGION=You region where you are testing this CI/CD Pipeline (ex:us-west1)
@@ -273,11 +274,11 @@ From the previous steps, you have a configuration to establish connectivity betw
 
       ![Image4](./images/image4.png)
 
-1.  Click Create
+1.  Click **Create**
 
 ## 6. Make changes in a new feature branch
 
-By now, you have most of your environment configured. So it's time to make some code changes in your development environment and test the Build trigger.
+By now, you have most of your environment configured. So now it's time to make some code changes in your development environment and test the Build trigger.
 
 1.  On GitHub, navigate to the main page of your repository (cicd-datalake-part-1).
 
@@ -287,7 +288,7 @@ By now, you have most of your environment configured. So it's time to make some 
 
 1.  To open the file for editing, go to the **environments/dev/main.tf** file and click the pencil icon.
 
-1.  Add some comments like  **“#cicd-datalake-part-1”**  to main.tf.
+1.  Add comments such as **“#cicd-datalake-part-1”**  to main.tf.
 
 1.  Add a commit message at the bottom of the page, such as **cicd-datalake-part-1**, and select **Create a new branch for this commit**.
  
@@ -303,7 +304,7 @@ By now, you have most of your environment configured. So it's time to make some 
 
 1.  In the Cloud Console, go to the **Cloud Build History** page and see build details.
 
-1.  Now you made sure you don’t have any build exceptions and ready to promote changes to *DEV* branch
+1.  Make sure you don’t have any build exceptions and are ready to promote changes to *DEV* branch
 
 ## 7. Promoting changes to the development environment
 
@@ -313,7 +314,7 @@ You have a pull request waiting to be merged. It's time to apply the state you w
 
 1.  Under your repository name, click **Pull requests**.
 
-1.  Click the **pull request you just created**.
+1.  Click the **pull request** you just created.
 
 1.  Click **Merge pull request**, and then click **Confirm merge**.
 
@@ -323,11 +324,11 @@ You have a pull request waiting to be merged. It's time to apply the state you w
 
     ![Image18](./images/image18.png)
 
-1.  Once the Cloud Build successful run. It will create a data processing pipeline in the *Dev* environment with the following actions.
+1.  Once the Cloud Build has successfully run, it will create a data processing pipeline in the *Dev* environment with the following actions.
 
       1.  Create Dataflow Job
 
-      1.  Create Dataset and Table in BigQuery (I have used dev_datalake_demo,prod_datalake_demo as a dataset name, sample_userdata as a table name, you can change that in main.tf if needed)
+      1.  Create Dataset and Table in BigQuery (I have used dev_datalake_demo,prod_datalake_demo as a dataset names, sample_userdata as a table name, you can change that in main.tf if needed)
 
       1.  Load data from GCS bucket to BigQuery Table           	
 
