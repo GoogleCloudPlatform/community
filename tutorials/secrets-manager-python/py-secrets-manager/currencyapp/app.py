@@ -14,7 +14,9 @@ app = Flask(__name__)
 PROJECT_ID = os.environ.get("PROJECTID")
 
 secrets = secretmanager.SecretManagerServiceClient()
-ALPHA_VANTAGE_KEY = secrets.access_secret_version("projects/"+PROJECT_ID+"/secrets/alpha-vantage-key/versions/1").payload.data.decode("utf-8")
+
+ALPHA_VANTAGE_KEY = secrets.access_secret_version(request={"name": "projects/"+PROJECT_ID+"/secrets/alpha-vantage-key/versions/1"}).payload.data.decode("utf-8")
+
 
 ts = TimeSeries(key=ALPHA_VANTAGE_KEY)
 

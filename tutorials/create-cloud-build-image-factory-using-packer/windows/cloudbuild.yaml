@@ -1,0 +1,41 @@
+# Perform a Packer build based on the `packer.json` configuration. This Packer
+# build creates a GCE image.
+#
+# See README.md for invocation instructions.
+steps:
+  # Retrieving secrets and placing into temporary file to reuse in later steps
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+    - '-c'
+    - |
+      echo "Retrieving secrets and placing into temporary file to reuse in later steps.." \
+      && gcloud secrets versions access latest --secret=image_factory-image_family > image_factory-image_family.txt \
+      && gcloud secrets versions access latest --secret=image_factory-image_name > image_factory-image_name.txt \
+      && gcloud secrets versions access latest --secret=image_factory-machine_type > image_factory-machine_type.txt \
+      && gcloud secrets versions access latest --secret=image_factory-region > image_factory-region.txt \
+      && gcloud secrets versions access latest --secret=image_factory-zone > image_factory-zone.txt \
+      && gcloud secrets versions access latest --secret=image_factory-network > image_factory-network.txt \
+      && gcloud secrets versions access latest --secret=image_factory-tags > image_factory-tags.txt
+
+  # Inject secret into packer template file and invoke packer build
+  - name: 'gcr.io/$PROJECT_ID/packer'
+    entrypoint: 'bash'
+    args:
+    - '-c'
+    - |
+      echo "Injecting secrets into packer template file.." \
+      && sed -i "s/_PROJECT_ID/$PROJECT_ID/g" packer.json \
+      && sed -i "s/_IMAGE_FAMILY/$(cat image_factory-image_family.txt)/g" packer.json \
+      && sed -i "s/_IMAGE_NAME/$(cat image_factory-image_name.txt)/g" packer.json \
+      && sed -i "s/_MACHINE_TYPE/$(cat image_factory-machine_type.txt)/g" packer.json \
+      && sed -i "s/_REGION/$(cat image_factory-region.txt)/g" packer.json \
+      && sed -i "s/_ZONE/$(cat image_factory-zone.txt)/g" packer.json \
+      && sed -i "s/_NETWORK/$(cat image_factory-network.txt)/g" packer.json \
+      && sed -i "s/_TAGS/$(cat image_factory-tags.txt)/g" packer.json \
+      && echo "Invoking packer build.." \
+      && packer build -debug -var project_id=$PROJECT_ID packer.json
+
+tags: ['windows-golden-image']
+timeout: '3600s'
+
