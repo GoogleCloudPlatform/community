@@ -201,17 +201,17 @@ Create a GCS bucket to store raw unprocessed  sample data files and mapping file
 
 1.  Setup GCS Bucket (region of the gcs bucket is based on your region)
 
-      gsutil mb -c standard -l us-west1 gs://$BUCKET_NAME
+        gsutil mb -c standard -l us-west1 gs://$BUCKET_NAME
 
 1.  Upload the contents from *testdata* folder into gcs bucket, created in previous step
 
-      cd ~/community/tutorials/cicd-datalake-part-1/testdata
+        cd ~/community/tutorials/cicd-datalake-part-1/testdata
 
     Copy the downloaded test data (raw, unprocessed data) and schema files from github repository to your gcp bucket
 
-      gsutil cp *.* gs://$BUCKET_NAME
+        gsutil cp *.* gs://$BUCKET_NAME
 
-      gsutil ls gs://$BUCKET_NAME
+        gsutil ls gs://$BUCKET_NAME
 
 ## 4. Connecting Cloud Build to your GitHub repository
 
