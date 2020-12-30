@@ -149,24 +149,33 @@ You use a single Git repository to define your cloud infrastructure and orchestr
 
 With this infrastructure, you can always reference the repository to know what configuration is expected in each environment and to propose new changes by first merging them into the *dev* environment. You then promote the changes by merging the *dev* branch into the subsequent *prod* branch.
 
-### To get started, you fork the [GoogleCloudPlatform community](https://github.com/GoogleCloudPlatform/community) repository
+### To get started, clone the [GoogleCloudPlatform community](https://github.com/GoogleCloudPlatform/community) repository
 
-1.  On GitHub, navigate to 
-    [https://github.com/GoogleCloudPlatform/community.git](https://github.com/GoogleCloudPlatform/community.git)
-
-1.  In the top-right corner of the page, click **Fork**
-        
-    ![Image1](./images/image1.png)
-
-    Now you have a copy of the GoogleCloudPlatform community repository.        
-
-1.  In Cloud Shell, clone this forked repository
+1.  In Cloud Shell, clone this GoogleCloudPlatform community repository
 
         cd ~
 
-        git clone https://github.com/$GITHUB_USERNAME/community.git
+        git clone https://github.com/GoogleCloudPlatform/community.git
+
+1.  Ceate a new git repo (ex:cicd-datalake-part-1) in your github account
+
+    [Ceate a new git repo](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/create-a-repo)
+
+1.  Add existing project to your new repository
 
         cd ~/community/tutorials/cicd-datalake-part-1/
+
+        echo "# cicd-datalake-part-1" >> README.md
+        git init
+        git add .
+        git commit -m "commit CICD data lake project"
+        git branch -M dev
+        git branch -M prod
+
+        git remote add origin https://github.com/$GITHUB_USERNAME/cicd-datalake-part-1.git
+
+        git push -u origin dev
+        git push -u origin prod
 
 ### The code in this repository is structured as follows:
 
@@ -196,9 +205,9 @@ Create a GCS bucket to store raw unprocessed  sample data files and mapping file
 
 1.  Upload the contents from *testdata* folder into gcs bucket, created in previous step
 
-      cd testdata
+      cd ~/community/tutorials/cicd-datalake-part-1/testdata
 
-    Copy the downloaded test data (raw, unprocessed data) and schema files from github forked repository to your gcp bucket
+    Copy the downloaded test data (raw, unprocessed data) and schema files from github repository to your gcp bucket
 
       gsutil cp *.* gs://$BUCKET_NAME
 
@@ -208,7 +217,7 @@ Create a GCS bucket to store raw unprocessed  sample data files and mapping file
 
 This section shows how to install the [Cloud Build GitHub app](https://github.com/marketplace/google-cloud-build). This installation allows one to connect a GitHub repository to a Google Cloud project so that Cloud Build can automatically apply Terraform manifests each time a new branch is created or code is pushed to GitHub.
 
-The following steps provide instructions for installing the app only for the **[Your Forked Repository]** repository, but you can choose to install the app for more or all your repositories
+The following steps provide instructions for installing the app only for the **[Your new repository created for CICD]**, but you can choose to install the app for more or all your repositories
 
 1.  Go to the GitHub Marketplace page for the Cloud Build app:
       [https://github.com/marketplace/google-cloud-build](https://github.com/marketplace/google-cloud-build)
@@ -217,12 +226,13 @@ The following steps provide instructions for installing the app only for the **[
 
     ![Image2](./images/image2.png)
 
-1.  In the **Install Google Cloud Build** page, select **Only select repositories** and enter **Your-github-username**/community to connect to your forked repository.
+1.  In the **Install Google Cloud Build** page, select **Only select repositories** and enter **Your-github-username**/cicd-datalake-part-1 to connect to your repository.
 
 1.  Click **Install**.
 
 1.  Sign in to Google Cloud.
     The **Authorization** page is displayed. You are asked to authorize the Cloud Build GitHub app to connect to Google Cloud.
+    
     ![Image3](./images/image3.png)
 
 1.  Click **Authorize Google Cloud Build by GoogleCloudBuild**.
@@ -230,7 +240,7 @@ The following steps provide instructions for installing the app only for the **[
 
 1.  Select the Google Cloud project you are working on and if you agree to the terms and conditions, select the checkbox, and then click **Next**.
 
-1.  In the **Repository selection** step, select **Your-github-username**/community  to connect to your Google Cloud project, and then click **Connect repository**.
+1.  In the **Repository selection** step, select **Your-github-username**/cicd-datalake-part-1 to connect to your Google Cloud project, and then click **Connect repository**.
 
 1.  Click **Skip for now** in the next screen
 
@@ -269,7 +279,7 @@ From the previous steps, you have a configuration to establish connectivity betw
 
 By now, you have most of your environment configured. So it's time to make some code changes in your development environment and test the Build trigger.
 
-1.  On GitHub, navigate to the main page of your forked repository.
+1.  On GitHub, navigate to the main page of your repository (cicd-datalake-part-1).
 
 1.  Make sure you are in the *dev* branch.
 
@@ -277,9 +287,9 @@ By now, you have most of your environment configured. So it's time to make some 
 
 1.  To open the file for editing, go to the **environments/dev/main.tf** file and click the pencil icon.
 
-1.  Add some comments like  **“#Serverless Data Lake CI/CD”**  to main.tf.
+1.  Add some comments like  **“#cicd-datalake-part-1”**  to main.tf.
 
-1.  Add a commit message at the bottom of the page, such as **Serverless Data Lake CI/CD**, and select **Create a new branch for this commit**.
+1.  Add a commit message at the bottom of the page, such as **cicd-datalake-part-1**, and select **Create a new branch for this commit**.
  
 1.  Click the **Propose change**.
 
@@ -299,7 +309,7 @@ By now, you have most of your environment configured. So it's time to make some 
 
 You have a pull request waiting to be merged. It's time to apply the state you want to your *dev* environment.
 
-1.  On GitHub, navigate to the main page of your forked repository.
+1.  On GitHub, navigate to the main page of your repository (cicd-datalake-part-1).
 
 1.  Under your repository name, click **Pull requests**.
 
@@ -311,7 +321,9 @@ You have a pull request waiting to be merged. It's time to apply the state you w
 
 1.  Check that a new Cloud Build has been triggered in the Cloud Console **Cloud Build History** Page, Make sure it is successful.
 
-1.  Once the Cloud Build successful run. It will create a data processing pipeline in the *Dev* environment.
+    ![Image18](./images/image18.png)
+
+1.  Once the Cloud Build successful run. It will create a data processing pipeline in the *Dev* environment with the following actions.
 
       1.  Create Dataflow Job
 
@@ -331,13 +343,9 @@ You have a pull request waiting to be merged. It's time to apply the state you w
 
 Now that you have your development environment fully tested, you can promote your data processing pipeline code to production.
 
-1.  On GitHub, navigate to the main page of your forked repository.
+1.  On GitHub, navigate to the main page of your repository (cicd-datalake-part-1).
 
 1.  Click **New pull request**.
-
-1.  Select base repository as your forked repository from the dropdown box.
-
-    ![Image10](./images/image10.png)
 
 1.  For **base**, select prod and for **compare**, select *dev*.
     
@@ -355,7 +363,7 @@ Now that you have your development environment fully tested, you can promote you
 
     ![Image13](./images/image13.png)
  
-1.  In the Cloud Console, open the **Build History** page to see your   changes being applied to the production environment.
+1.  In the Cloud Console, open the **Build History** page to see your changes being applied to the production environment.
 
     ![Image14](./images/image14.png)
 
