@@ -84,7 +84,7 @@ async function _scanRecommendations (zones, options) {
       parent: recommender.recommenderPath(projectId, zone, recommenderId)
     });
     console.log('listReco complete');
-    for (const recommendation of recommendations) {
+    for (const recommendation of zoneRecs) {
       console.info(`Recommendations from ${recommenderId} in zone ${zone}:`);
       for (const operationGroup of recommendation.content.operationGroups) {
         for (const operation of operationGroup.operations) {
