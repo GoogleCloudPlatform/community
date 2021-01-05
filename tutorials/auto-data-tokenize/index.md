@@ -12,11 +12,11 @@ This document discusses how to identify and tokenize data with an automated data
 
 To minimize the risk of handling large volumes of sensitive data, you can use an automated data transformation pipeline to create de-identified datasets that can be used for migrating from on-premise to cloud or keep a de-identified replica for Analytics. Cloud DLP can inspect the data for sensitive information when the dataset has not been characterized, by using [more than 100 built-in classifiers](https://cloud.google.com/dlp/docs/infotypes-reference). 
 
-One of the daunting challenges during data migration to cloud is to manage sensitive data. The sensitive data can be in structured forms like analytics tables or unstructured like chat history or transcruiption records. One needs to use Cloud DLP to identify sensitive data from both of these kinds of sources, followed by tokenizing the sensitive parts.
+One of the daunting challenges during data migration to cloud is to manage sensitive data. The sensitive data can be in structured forms like analytics tables or unstructured like chat history or transcription records. One needs to use Cloud DLP to identify sensitive data from both of these kinds of sources, followed by tokenizing the sensitive parts.
 
-Tokenizing structured data can be optimnized for cost and speed by using representative samples for each of the columns to categorize the kind of information, followed by bulk encryption of sensitive columns. This approach recuces cost of using Cloud DLP, by limiting the use to classification of a small representative sample, instead of all the records. The throughput and cost of tokenization can be optimized by using envelope encryption for columns classified as sensitive. 
+Tokenizing structured data can be optimized for cost and speed by using representative samples for each of the columns to categorize the kind of information, followed by bulk encryption of sensitive columns. This approach reduces cost of using Cloud DLP, by limiting the use to classification of a small representative sample, instead of all the records. The throughput and cost of tokenization can be optimized by using envelope encryption for columns classified as sensitive. 
 
-This document demonstrates a reference implementation of tokenizing structured data through the approach of spliting into two tasks: _sample and identify_, followed by _bulk tokenization_ using encryption.
+This document demonstrates a reference implementation of tokenizing structured data through two tasks: _sample and identify_, followed by _bulk tokenization_ using encryption.
 
 This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This guide assumes that you're familiar with data processing and data privacy, without the need to be an expert.
 
@@ -24,11 +24,11 @@ This document is intended for a technical audience whose responsibilities includ
 
 ![Auto tokenizing pipelines](Auto_Tokenizing_Pipelines_Arch.svg)
 
-The solution is comprised of two pipelines (one for each of the tasks):
+The solution comprises two pipelines (one for each of the tasks):
   1. Sample + Identify
   1. Tokenize
 
-The __sample & identify pipeline__ extracts a small number of sample records from the source files. The identify part of pipeline then decomposes each sample record into columns to categorize them into one of the [in-built infotypes](https://cloud.google.com/dlp/docs/infotypes-reference) or [custom infotypes](https://cloud.google.com/dlp/docs/creating-custom-infotypes) using Cloud DLP. The sample & identify pipeline outputs following files to Cloud Storage:
+The __sample & identify pipeline__ extracts a few sample records from the source files. The *identify* part of pipeline then decomposes each sample record into columns to categorize them into one of the [in-built infotypes](https://cloud.google.com/dlp/docs/infotypes-reference) or [custom infotypes](https://cloud.google.com/dlp/docs/creating-custom-infotypes) using Cloud DLP. The sample & identify pipeline outputs following files to Cloud Storage:
   * Avro schema of the file
   * Detected info-types for each of the input columns.
 
@@ -40,8 +40,8 @@ The __tokenize pipeline__ then encrypts the user-specified source columns using 
   1. Write Avro file with encrypted fields
 
 ### Concepts
-* [Envelope Encryption](https://cloud.google.com/kms/docs/envelope-encryption) is a form of multi-layer encryption, where multiple layers of keys are used for encrypting data. It is the process of encrypting the actual data encryption key with another key to secure the data-encryption key.
-* [Cloud KMS](https://cloud.google.com/kms) provides easy management of encyrption keys at scale.
+* [Envelope Encryption](https://cloud.google.com/kms/docs/envelope-encryption) is a form of multi-layer encryption, involving use of multiple layers of keys for encrypting data. It is the process of encrypting the actual data encryption key with another key to secure the data-encryption key.
+* [Cloud KMS](https://cloud.google.com/kms) provides easy management of encryption keys at scale.
 * [Tink](https://github.com/google/tink) is an open-source library that provides easy and secure APIs for handling encryption/decryption. It
   reduces common crypto pitfalls with user-centered design, careful implementation and code reviews, and extensive
   testing. At Google, Tink is one of the standard crypto libraries, and has been deployed in hundreds of products and
@@ -49,9 +49,9 @@ The __tokenize pipeline__ then encrypts the user-specified source columns using 
 * [Deterministic AEAD encryption](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data) is used by to serve following purposes:
   1. Permits use of the cipher-text as join keys. The deterministic property of the cipher ensures that cipher-text for the same plain-text is always the same. Using this property one can safely use the encrypted data for performing statistical analysis like cardinality analysis, frequency analysis etc.
   1. store signed plain-text within the cipher to assert authenticity.
-  1. reversability, use of 2-way encyrption algorithm permits reversing the algorithmn to obtain original plain-text. Hashing does not permit such operations.
+  1. reversibility, use of 2-way encryption algorithm permits reversing the algorithm to obtain original plain-text. Hashing does not permit such operations.
 
-* [Cloud Data Loss Prevention](https://cloud.google.com/dlp) is a Google Cloud service that provides data classification, de-identification and re-identification features, allowing you to easily manage sensitive data in your enterprise.
+* [Cloud Data Loss Prevention](https://cloud.google.com/dlp) is a Google Cloud service providing data classification, de-identification and re-identification features, allowing you to easily manage sensitive data in your enterprise.
 
 * __Record Flattening__ is the process of converting nested/repeated records as flat table. Each leaf-node of the record gets a unique identifier. This flattening process enables sending data to DLP for identification purposes as the DLP API supports a simple [data-table](https://cloud.google.com/dlp/docs/examples-deid-tables).
 
@@ -155,7 +155,8 @@ cleanup easiest at the end of the tutorial, we recommend that you create a new p
    # The Google Cloud project to use for this tutorial
    export PROJECT_ID="<your-project-id>"
 
-   # The Compute Engine region to use for running Dataflow jobs and create a temporary storage bucket
+   # The Compute Engine region to use for running Dataflow jobs and create a 
+   # temporary storage bucket
    export REGION_ID="<compute-engine-region>"
 
    # define the GCS bucket to use as temporary bucket for Dataflow
@@ -167,14 +168,11 @@ cleanup easiest at the end of the tutorial, we recommend that you create a new p
    # Name of the GCP KMS key ring name
    export KMS_KEYRING_ID="<key-ring-name>"
 
-   # name of the symmetric kms-key-id
+   # name of the symmetric Key encryption kms-key-id
    export KMS_KEY_ID="<key-id>"
 
    # The JSON file containing the TINK Wrapped data-key to use for encryption
-   export WRAPPED_KEY_FILE="<path-to-the-data-encryption-key-file>"
-   
-   # The JSON file containing the TINK Wrapped data-key to use for encryption
-   export WRAPPED_KEY_FILE="dek.json"   
+   export WRAPPED_KEY_FILE="<path-to-the-data-encryption-key-file>"   
    ````
 
 1. Run the script to set the environment variables:
@@ -251,7 +249,7 @@ it.
    gcloud kms keys create --project ${PROJECT_ID} --keyring=${KMS_KEYRING_ID} --location=${REGION_ID} --purpose="encryption" ${KMS_KEY_ID}
    ```
 1. Download and unpack the latest version of [Tinkey](https://github.com/google/tink/blob/master/docs/TINKEY.md). Tinkey
-   is an opensource utility to create wrapped encryption keys.
+   is an open source utility to create wrapped encryption keys.
    ```shell script
    mkdir tinkey/
    tar zxf tinkey-<version>.tar.gz -C tinkey/
@@ -330,7 +328,7 @@ The Dataflow execution DAG would look like following:
 
 ### Retrieve report
 
-The sample & identify pipeline outputs the Avro schema (or converted for Parquet) of the files and one file for each of the columnns detected to contain sensitive information. Retrieve the report to your local machine to have a look.
+The sample & identify pipeline outputs the Avro schema (or converted for Parquet) of the files and one file for each of the columns detected to contain sensitive information. Retrieve the report to your local machine to have a look.
 
 ```shell script
 mkdir -p dlp_report/ && rm dlp_report/*.json
@@ -376,8 +374,8 @@ Following is a snippet of the `cc` column.
 
 ## Launch bulk tokenize pipeline
 
-The sample & identify pipeline used a small number of samples from the original dataset to identify sensitive informaiton using
-DLP. The bulk tokenize pipeline will process the entire dataset and encrypt the desired columns using the provided Data
+The sample & identify pipeline used few samples from the original dataset to identify sensitive information using
+DLP. The bulk tokenize pipeline processes the entire dataset and encrypts the desired columns using the provided Data
 Encryption Key (DEK).
 
 ```shell script
@@ -446,5 +444,5 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 
 * Learn more about [Cloud DLP](https://cloud.google.com/dlp)
 * Learn more about [Cloud KMS](https://cloud.google.com/kms)
-* Learn about [Inspecting storageand databases for sensitive data](https://cloud.google.com/dlp/docs/inspecting-storage)
+* Learn about [Inspecting storage and databases for sensitive data](https://cloud.google.com/dlp/docs/inspecting-storage)
 * Handling [De-identification and re-identification of PII in large-scale datasets using DLP](https://cloud.google.com/solutions/de-identification-re-identification-pii-using-cloud-dlp)
