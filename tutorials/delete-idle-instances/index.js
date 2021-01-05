@@ -21,17 +21,17 @@ const compute = new Compute();
  * @param {string} project
  * @param {string} recommenderName
  */
-exports.deleteUnusedInstances = async (event, context, callback) => {
+exports.deleteIdleInstances = async (event, context, callback) => {
   const options = _validateOptions(
     JSON.parse(Buffer.from(event.data, 'base64').toString())
   );
   const zones = await _getZonesWithVMs(compute, options.label);
-  if(zones.length == 0) {
-    console.error(`No VMs matching label ${options.label} found.`);
-    return;
+  if (zones.length === 0) {
+    return Promise.reject(new Error(`No VMs matching label ${options.label} found.`));
   }
   await _scanRecommendations(zones, options);
-}
+  return Promise.resolve();
+};
 
 /**
  * Validates that a request options contains the expected fields.
@@ -39,78 +39,78 @@ exports.deleteUnusedInstances = async (event, context, callback) => {
  * @param {!object} options the request options to validate.
  * @return {!object} the options object.
  */
-function _validateOptions(options) {
+function _validateOptions (options) {
   if (options.label) {
     let key, value = options.label.split('=');
     options.label.key = value;
   }
-  options.delete = (options.delete == 'true');
+  options.delete = (options.delete === 'true');
   return options;
 }
 
 // operation.resource format:
 // compute.googleapis.com/projects/PROJECT/zones/ZONE/instances/NAME
-function _extractZoneAndName(operation) {
-  return /\/zones\/(.*)\/instances\/(.*)$/.exec(operation.resource).slice(1,3);
+function _extractZoneAndName (operation) {
+  return /\/zones\/(.*)\/instances\/(.*)$/.exec(operation.resource).slice(1, 3);
 }
 
-async function _getZonesWithVMs(compute, label) {
+async function _getZonesWithVMs (compute, label) {
   const options = {};
-  if(label) {
-    options['filter'] = `labels.${label}`;
+  if (label) {
+    options.filter = `labels.${label}`;
   }
+  console.log('getVMs start');
   const vms = await compute.getVMs(options);
+  console.log('getVMs end');
   const zoneSet = new Set();
-  for(const vm of vms[0]) {
+  for (const vm of vms[0]) {
     zoneSet.add(vm.zone.id);
   }
   return Array.from(zoneSet);
 }
 
-async function _scanRecommendations(zones, options) {
+async function _scanRecommendations (zones, options) {
   // Determine the current project used by Compute library
   const project = await compute.project().get();
   const projectId = project[1].name;
 
-  const {RecommenderClient} = require('@google-cloud/recommender');
+  const { RecommenderClient } = require('@google-cloud/recommender');
   const recommender = new RecommenderClient();
   const recommenderId = 'google.compute.instance.MachineTypeRecommender';
-  const recommendations = new Array();
-  for(const zone of zones) {
+  const recommendations = [];
+  for (const zone of zones) {
+    console.log('listReco', zone);
     const [zoneRecs] = await recommender.listRecommendations({
-      parent: recommender.recommenderPath(projectId, zone, recommenderId),
+      parent: recommender.recommenderPath(projectId, zone, recommenderId)
     });
+    console.log('listReco complete');
     for (const recommendation of recommendations) {
       console.info(`Recommendations from ${recommenderId} in zone ${zone}:`);
       for (const operationGroup of recommendation.content.operationGroups) {
         for (const operation of operationGroup.operations) {
-          if(operation.action == 'replace') {
-            const [zone, name] = _extractZoneAndName(operation)
+          if (operation.action === 'replace') {
+            const [zone, name] = _extractZoneAndName(operation);
             const [labels, fingerprint] = await compute.zone(zone).vm(name).getLabels();
-            if(!options.label || options.label.key in labels) {
-              if(options.delete) {
+            if (!options.label || options.label.key in labels) {
+              if (options.delete) {
                 await compute.zone(zone).vm(name).get();
                 await recommender.markRecommendationSucceeded(recommendation);
                 console.info(`Deleted instance ${name} in zone ${zone}`);
               } else {
-                await compute.zone(zone).vm(name).setLabels({delete: 'true'}, fingerprint);
+                await compute.zone(zone).vm(name).setLabels({ delete: 'true' }, fingerprint);
                 await recommender.markRecommendationClaimed(recommendation);
                 console.info(`Unused instance ${name} in zone ${zone} marked for deletion`);
               }
             } else {
               console.info(`Unused instance ${name} in zone ${zone} recommended for deletion but does not match label ${options.label}`);
             }
-         }
+          }
         }
       }
     }
     recommendations.push(...zoneRecs);
   }
+  console.log('done');
   return recommendations;
 }
 
-// Stub to allow local execution with node index.js '{"key": "value"}'
-function main(args) {
-  exports.deleteUnusedInstances({data: Buffer.from(args, 'utf-8').toString('base64')});
-}
-main(...process.argv.slice(2));
