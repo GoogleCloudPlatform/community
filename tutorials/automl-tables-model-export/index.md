@@ -206,7 +206,7 @@ At this point, you have a trained model that you've exported and tested locally.
 
         FROM gcr.io/cloud-automl-tables-public/model_server
 
-        ADD model-export/tbl/[YOUR_RENAMED_DIRECTORY]/models/default/0000001
+        ADD model-export/tbl/[YOUR_RENAMED_DIRECTORY] /models/default/0000001
 
     The template is in
     [`Dockerfile.template`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/automl-tables-model-export/Dockerfile.template), too.
