@@ -45,7 +45,7 @@ public class DLP2DatacatalogTagsBigQueryPipeline {
       Properties prop,
       ValueProvider<String> bigQueryTableProvider) {
 
-    // Create the msin pipeline
+    // Create the main pipeline
     Pipeline mainPipeline = Pipeline.create(options);
 
     PCollection<List<String>> setupFlow =
@@ -55,7 +55,7 @@ public class DLP2DatacatalogTagsBigQueryPipeline {
                 "Get Info Types", ParDo.of(new DLPGetInfoTypes(options.getInspectTemplateName())))
             .apply(
                 "Init Tag Templates",
-                // 7) Create Data Catalog Tag Templates used by Tags.
+                // Create Data Catalog Tag Templates used by Tags.
                 ParDo.of(
                     new DataCatalogInitTemplatesDoFn(
                         options.getDlpProjectId(),
@@ -96,7 +96,7 @@ public class DLP2DatacatalogTagsBigQueryPipeline {
         .apply("Wait Setup Flow", Wait.on(setupFlow))
         .apply(
             "Data Catalog Tag Ingestion",
-            // 8) Create Data Catalog Tags based on findings.
+            // Create Data Catalog Tags based on findings.
             ParDo.of(
                 new DataCatalogTagIngestionDoFn(
                     options.getDlpProjectId(),
