@@ -1,13 +1,14 @@
 ---
-title: Using Google Cloud Functions to Auto-Assign Reviewers to GitHub Pull Requests
-description: Learn how to use Google Cloud Functions to automatically assign reviewers to new GitHub pull requests.
+title: Using Cloud Functions to auto-assign reviewers to GitHub pull requests
+description: Learn how to use Cloud Functions to automatically assign reviewers to new GitHub pull requests.
 author: jmdobry
 tags: Node.js, Cloud Functions, GitHub
 date_published: 2017-02-03
 ---
-## Introduction
 
-This tutorial demonstrates using [Google Cloud Functions][functions] to
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This tutorial demonstrates using [Cloud Functions][functions] to
 automatically assign a reviewer to [GitHub pull requests][pr] as they are
 opened. The Cloud Function is implemented in [Node.js][node].
 
@@ -25,9 +26,9 @@ the repository.
 ## Prerequisites
 
 1. Create a GitHub account and acquire administrative rights to a repository.
-1. Create a project in the [Google Cloud Platform Console][console].
+1. Create a project in the [Cloud Console][console].
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK][sdk].
+1. Install the [Cloud SDK][sdk].
 
 [console]: https://console.cloud.google.com/
 [sdk]: https://cloud.google.com/sdk/
@@ -66,8 +67,8 @@ has access to the repository.
 1.  Enter a description of your choosing in the **Token description** field.
 1.  Check the box for the **repo** scope.
 1.  Click **Generate token**.
-1.  IMPORTANT: Take note of the generated token value, as you won't be able to
-    see the token's value again once you leave the page. You need the token's
+1.  Take note of the generated token value, because you won't be able to
+    see the token's value again after you leave the page. You need the token's
     value later in this tutorial.
 
 ## Writing the function
@@ -100,7 +101,7 @@ Set the `reviewers` array to a list of GitHub usernames representing the
 reviewers that should be eligible for assignment to new pull requests on your
 repository.
 
-Warning: Avoid committing your `settings.json` to source control.
+**Warning**: Avoid committing your `settings.json` to source control.
 
 ### Preparing the module
 

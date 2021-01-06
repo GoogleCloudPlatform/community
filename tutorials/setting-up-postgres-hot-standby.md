@@ -1,16 +1,18 @@
 ---
 title: How to set up PostgreSQL for high availability and replication with Hot Standby
-description: Learn how to configure PostgreSQL to run in Hot Standby mode on Google Cloud Platform.
+description: Learn how to configure PostgreSQL to run in Hot Standby mode on Google Cloud.
 author: jimtravis
 tags: Compute Engine, PostgreSQL, HA
 date_published: 2017-02-18
 ---
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 Learn how to configure PostgreSQL to run in Hot Standby mode on Compute
 Engine. You'll use two Compute Engine instances. One instance will run the
 primary PostgreSQL server and the other instance will run the standby server.
 
-Alternatively, you can use Postgres as a service through [Google Cloud SQL](https://cloud.google.com/sql/docs/postgres/).
+Alternatively, you can use Postgres as a service through [Cloud SQL](https://cloud.google.com/sql/docs/postgres/).
 
 For most applications, data is a critical commodity. Storing data in one place
 is a risky proposition, so [you need to have a strategy and a plan in
@@ -83,11 +85,11 @@ optimize Postgres in standby scenarios, refer to the
 
 ## Before you begin
 
-[Select or create a Google Cloud Platform project](https://console.cloud.google.com/project).
+[Select or create a Google Cloud project](https://console.cloud.google.com/project).
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform (GCP), including Compute Engine.
+This tutorial uses billable components of Google Cloud, including Compute Engine.
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/)
 to generate a cost estimate based on your projected usage.
@@ -167,7 +169,8 @@ create the new user.
 configuration files.
 
 * `-P` prompts you for the new user's password.
-     **Important**: For any system with an Internet connection, use a strong password to help keep the system secure.
+
+  **Important**: For any system with an Internet connection, use a strong password to help keep the system secure.
 
 * `-c` sets a limit for the number of connections for the new user. The value
 `5` is sufficient for replication purposes.
@@ -212,37 +215,37 @@ must add an entry for the user `repuser` to enable replication.
 This configuration file contains the main settings for Postgres. Here, you
 will modify the file to enable archiving and replication.
 
-Important: Don't forget to uncomment any lines
-you edit in the configuration files, or your changes won't take effect.
+**Important**: Don't forget to uncomment any lines you edit in the configuration files, or your changes won't take effect.
 
-1. Edit the file. In the terminal for the primary server, enter the following
-command:
+1.  Edit the file. In the terminal for the primary server, enter the following command:
 
         $ nano ../../etc/postgresql/9.3/main/postgresql.conf
 
-1. In the **WRITE AHEAD LOG** section, in the **Settings** section, change the
-WAL level:
+1.  In the **WRITE AHEAD LOG** section, in the **Settings** section, change the WAL level:
 
         wal_level = hot_standby
 
-1. In the **Archiving** section, change the archive mode:
+1.  In the **Archiving** section, change the archive mode:
 
         archive_mode = on
 
-1. Change the value for the archive command. This setting tells Postgres to
-write the archive files to the directory that you created in a previous step:
+1.  Change the value for the archive command. This setting tells Postgres to write the archive files to the directory that you created in a previous step:
 
-        archive_command = 'test ! -f mnt/server/archivedir/%f && cp %p mnt/server/archivedir/%f'
+    *   Windows:
+    
+            archive_command = 'copy "%p" "C:\\server\\archivedir\\%f"'
+            
+    *   Linux and Unix-like operating systems:
+    
+            archive_command = 'test ! -f /mnt/server/archivedir/%f && cp %p /mnt/server/archivedir/%f'
 
-1. In the **REPLICATION** section, in the **Sending Server(s)** section,
-change the value for the maximum number of WAL sender processes:
+1.  In the **REPLICATION** section, in the **Sending Server(s)** section, change the value for the maximum number of WAL sender processes:
 
         max_wal_senders = 3
 
-    For this tutorial, the value of `3` is sufficient to enable backup and
-    replication.
+    For this tutorial, the value of `3` is sufficient to enable backup and replication.
 
-1. Save and close the file.
+1.  Save and close the file.
 
 ### Restart the primary server
 
@@ -259,7 +262,7 @@ terminal for the standby server, run the following command:
 
     $ sudo service postgresql stop
 
-Important: Don't start the service again until all configuration and backup
+**Important**: Don't start the service again until all configuration and backup
 steps are complete. You must bring up the standby server in a state where it
 is ready to be a backup server. This means that all configuration settings
 must be in place and the databases must be already synchronized. Otherwise,
@@ -270,20 +273,17 @@ streaming replication will fail to start.
 The backup utility, named `pg_basebackup`, will copy files from the data
 directory on the primary server to the same directory on the standby server.
 
-1. Make sure you're running commands in the root shell. In the SSH terminal
-for the standby server, enter the following command:
+1.  Make sure you're running commands in the root shell. In the SSH terminal for the standby server, enter the following command:
 
         $ sudo -s
 
     Continue to use the root shell for the remainder of this tutorial.
 
-1. The backup utility won't overwrite existing files, so you must rename the
-data directory on the standby server. Run the following command:
+1.  The backup utility won't overwrite existing files, so you must rename the data directory on the standby server. Run the following command:
 
         $ mv ../../var/lib/postgresql/9.3/main ../../var/lib/postgresql/9.3/main_old
 
-1. Run the backup utility. Replace `[primary-IP]` with the external IP address
-of the primary server.
+1.  Run the backup utility. Replace `[primary-IP]` with the external IP address of the primary server.
 
         $ sudo -u postgres pg_basebackup -h [primary IP] -D /var/lib/postgresql/9.3/main -U repuser -v -P --xlog-method=stream
 
@@ -292,7 +292,6 @@ of the primary server.
 
 The backup process should take just a few moments. When it's done, you can move
 on to configuring the standby server.
-
 
 ## Configuring the standby server
 
@@ -304,8 +303,7 @@ configuration file named `recovery.conf`.
 For the standby server, you only need to change one setting in this file. Follow
 these steps:
 
-1. Edit the file. In the terminal for the standby server, enter the following
-command:
+1. Edit the file. In the terminal for the standby server, enter the following command:
 
         $ nano ../../etc/postgresql/9.3/main/postgresql.conf
 
@@ -450,7 +448,7 @@ from the folder that you renamed to `main_old_2`:
 ## Cleaning up
 
 After you've finished the tutorial, you can clean up the resources you created on
-Google Cloud Platform so you won't be billed for them in the future. The following sections
+Google Cloud so you won't be billed for them in the future. The following sections
 describe how to delete or turn off these resources.
 
 ### Deleting the project
@@ -470,7 +468,7 @@ them prevents you from exceeding project quota limits.
 
 To delete the project:
 
-1. In the Cloud Platform Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
+1. In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
 1. In the project list, select the project you want to delete and click **Delete project**.
 After selecting the checkbox next to the project name, click **Delete project**.
 1. In the dialog, type the project ID, and then click **Shut down** to delete the project.
@@ -479,7 +477,7 @@ After selecting the checkbox next to the project name, click **Delete project**.
 
 To delete a Compute Engine instance:
 
-1. In the Cloud Platform Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
+1. In the Cloud Console, go to the [**VM Instances** page](https://console.cloud.google.com/compute/instances).
 1. Click the checkbox next to your `lamp-tutorial` instance.
 1. Click the **Delete** button at the top of the page to delete the instance.
 
@@ -489,12 +487,10 @@ Deleting firewall rules for the default network
 
 To delete a firewall rule:
 
-1. In the Cloud Platform Console, go to the [**Firewall Rules** page](https://console.cloud.google.com/networking/firewalls/list).
+1. In the Cloud Console, go to the [**Firewall Rules** page](https://console.cloud.google.com/networking/firewalls/list).
 1. Click the checkbox next to the firewall rule you want to delete.
 1. Click the **Delete** button at the top of the page to delete the firewall rule.
-
 
 ## Next steps
 
 * Explore the [PostgreSQL documentation](https://www.postgresql.org/docs/).
-

@@ -6,6 +6,8 @@ tags: CD, Kubernetes Engine, Codeship, Pipeline
 date_published: 2017-08-28
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 This tutorial explains how to create a continuous deployment
 pipeline to Google Kubernetes Engine using Codeship. You will
 learn how to deploy a containerized application when new code is merged into the
@@ -21,7 +23,7 @@ regulatory constraints.
 Take the following steps to enable the Google Kubernetes Engine API:
 
 1.  Visit the [Kubernetes Engine](https://console.cloud.google.com/projectselector/kubernetes)
-    page in the Google Cloud Platform Console.
+    page in the Cloud Console.
 1.  Create or select a project.
 1.  Wait for the API and related services to be enabled, which can take several
     minutes.
@@ -42,35 +44,35 @@ Make sure you have the following:
 
 ### Step 1: Create service account
 
-The interactions with the Google Cloud Platform API from Codeship require a service
+The interactions with the Google Cloud API from Codeship require a service
 account with permissions to the Cloud Storage and Google Kubernetes Engine services.
 
 Follow these steps to create a service account:
 
 1.  Visit the [Service accounts](https://console.cloud.google.com/projectselector/iam-admin/serviceaccounts)
-    page in the Google Cloud Platform Console.
+    page in the Cloud Console.
 1.  Select your project.
-1.  Click `Create Service Account`.
+1.  Click **Create Service Account**.
 1.  Enter a name.
-1.  Click `Select a Role` and choose the following permissions:
+1.  Click **Select a Role** and choose the following permissions:
 
     * Project &rarr; Service Account Actor
     * Container &rarr; Kubernetes Engine Developer
     * Storage &rarr; Storage Admin
 
-1.  Select `Furnish a new private key` and leave the option on `JSON`.
-1.  Click Create, and then close the dialog once it is created.
+1.  Select **Furnish a new private key** and leave the option on **JSON**.
+1.  Click **Create**, and then close the dialog after it is created.
 
-After the service account is created, a `JSON` file with your credentials
+After the service account is created, a JSON file with your credentials
 automatically downloads to your computer. This file will be used in the next
 step.
 
-### Step 2: Setup environment variables
+### Step 2: Set up environment variables
 
 The `hello-express` source code includes the file `example.env`.  Rename this file
 to `.env`.
 
-Inside the file, you will replace the `...` with your Google Cloud Platform
+Inside the file, replace the `...` with your Google Cloud
 project details as follows:
 
 1.  `DEFAULT_ZONE`: Select a default [compute zone](https://cloud.google.com/compute/docs/regions-zones/regions-zones#available)
@@ -78,14 +80,14 @@ project details as follows:
 1.  `APP_NAME`: Give your application a name; in this case use `hello-express`
 1.  `CONTAINER_CLUSTER`: Give your container cluster a name; in this case use
     `hello-express-cluster`
-1.  `GOOGLE_PROJECT_ID`: The `Project ID` is found in the [Google Cloud Engine dashboard](https://console.cloud.google.com/home/dashboard)
+1.  `GOOGLE_PROJECT_ID`: The `Project ID` is found in the [Cloud Console](https://console.cloud.google.com/home/dashboard)
 1.  `GOOGLE_AUTH_EMAIL`: Use the `Service Account ID` for the [service account](https://console.cloud.google.com/iam-admin/serviceaccounts)
     created in the last step.
 1.  `GOOGLE_AUTH_JSON`: Add the credentials downloaded in the previous step
     here. You must replace the newlines with spaces by running
     `tr '\n' ' ' < your_file_name`.
 
-Save the `.env` file once these items are finished.
+Save the `.env` file when these items are finished.
 
 ### Step 3: Run initial deployment
 
@@ -96,11 +98,12 @@ Create your container clusters using the Google Cloud SDK by running the followi
 
     gcloud container clusters create hello-express-cluster --zone=us-central1-b --project=google-project-id
 
-This step takes a few minutes to complete. Once completed, you can verify the clusters are available by running the following command:
+This step takes a few minutes to complete. You can verify that the clusters are available by running the 
+following command:
 
     gcloud compute instances list --project=google-project-id
 
-which should output something like the following:
+The output should be something like the following:
 
     NAME                                                 ZONE           MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP      STATUS
     gke-hello-express-cluste-default-pool-8f1e33a1-2t09  us-central1-a  n1-standard-1               10.128.0.2   130.211.202.173  RUNNING
@@ -108,7 +111,7 @@ which should output something like the following:
     gke-hello-express-cluste-default-pool-8f1e33a1-xcd6  us-central1-a  n1-standard-1               10.128.0.3   130.211.196.247  RUNNING
 
 The `hello-express` source code includes a `bin` folder with `bash` scripts that perform these tasks using the
-Codeship Jet CLI.
+Codeship Jet command-line interface.
 
 1.  Make sure the scripts in the `bin` folder are executable. In a terminal
     window, navigate to the project folder and run the following command:
@@ -116,18 +119,18 @@ Codeship Jet CLI.
         chmod -R +x ./bin
 
 1.  Update the `image` line in the `codeship-service.yml` file with your Google
-    Cloud Platform project ID.
+    Cloud project ID.
 
     ```yaml
     app:
       build:
         dockerfile: Dockerfile
-        image: gcr.io/YOUR_PROJECT_IDE/hello-express # update this line using your Google Cloud Platform project ID
+        image: gcr.io/YOUR_PROJECT_IDE/hello-express # update this line using your Google Cloud project ID
     ...
     ```
 
 1.  Update the `image_name` line in the `codeship_steps.yml` file with your
-    Google Cloud Platform project ID.
+    Google Cloud project ID.
 
     ```yaml
     - name: build-image
@@ -136,7 +139,7 @@ Codeship Jet CLI.
     - name: push-image-with-sha
       service: app
       type: push
-      image_name: "gcr.io/YOUR_PROJECT_ID/hello-express" #update this line using your Google Cloud Platform project ID
+      image_name: "gcr.io/YOUR_PROJECT_ID/hello-express" #update this line using your Google Cloud project ID
       image_tag: "{% verbatim %}{{printf \"%.8s\" .CommitID}}{% endverbatim %}"
       registry: https://gcr.io
       dockercfg_service: codeship_gcr_dockercfg
@@ -144,7 +147,7 @@ Codeship Jet CLI.
       service: app
       type: push
       tag: master
-      image_name: "gcr.io/YOUR_PROJECT_ID/hello-express" #update this line using your Google Cloud Platform project ID
+      image_name: "gcr.io/YOUR_PROJECT_ID/hello-express" #update this line using your Google Cloud project ID
       image_tag: "master"
       registry: https://gcr.io
       dockercfg_service: codeship_gcr_dockercfg
@@ -155,18 +158,31 @@ Codeship Jet CLI.
     ...
     ```
 
-This pipeline runs each step in series. The `build-image` step instructs Codeship to build the `hello-express` Docker image on the CI server. After Codeship builds the Docker image, the `push-image-with-sha` step will push the image to Google Container Registry using the name `gcr.io/YOUR_PROJECT_ID/hello-express`, adding a tag using the first 8 characters of the commit SHA for every commit to the repository.
+This pipeline runs each step in series. The `build-image` step instructs Codeship to build the `hello-express` Docker image 
+on the CI server. After Codeship builds the Docker image, the `push-image-with-sha` step will push the image to
+Container Registry using the name `gcr.io/YOUR_PROJECT_ID/hello-express`, adding a tag using the first 8 characters of the
+commit SHA for every commit to the repository.
 
-The third and fourth step will run only if the branch is tagged as `master`. The `tag-as-master` step will add the `master` tag to the image pushed to Google Container Registry. This indicates the image in Google Container Registry that is currently deployed. The following step, `gke-initial-deployment`, builds the Google Kubernetes Engine cluster and deploys the `gcr.io/YOUR_PROJECT_ID/hello-express` Docker image.
+The third and fourth step will run only if the branch is tagged as `master`. The `tag-as-master` step will add the `master` 
+tag to the image pushed to Container Registry. This indicates the image in Container Registry that is currently 
+deployed. The following step, `gke-initial-deployment`, builds the Google Kubernetes Engine cluster and deploys the 
+`gcr.io/YOUR_PROJECT_ID/hello-express` Docker image.
 
-You will run this pipeline locally using the [Codeship Jet CLI](https://documentation.codeship.com/pro/builds-and-configuration/cli/). Since there is no git commit or branch to reference, use the `ci-commit-id` and `tag` flags with the Codeship Jet CLI to pass in test strings at runtime, (for example, `1234ABCD` and `master`). The build on the Codeship CI server populates `ci-commit-id` with the git commit SHA, and `tag` with the branch or tag name. Finally, the `--push` flag instructs the Codeship Jet CLI to run the push steps in the `codeship-steps.yml` file.  
+You will run this pipeline locally using the
+[Codeship Jet CLI](https://documentation.codeship.com/pro/builds-and-configuration/cli/). Since there is no git commit or 
+branch to reference, use the `ci-commit-id` and `tag` flags with the Codeship Jet command-line interface to pass in test 
+strings at runtime, (for example, `1234ABCD` and `master`). The build on the Codeship CI server populates `ci-commit-id` 
+with the git commit SHA, and `tag` with the branch or tag name. Finally, the `--push` flag instructs the Codeship Jet 
+command-line interface to run the push steps in the `codeship-steps.yml` file.  
 
     jet steps --ci-commit-id 1234ABCD --tag master --push
 
-This command creates your initial deployment and exposes the application. Once completed, navigate to the
-[Discovery](https://console.cloud.google.com/kubernetes/discovery) page in the
-Google Cloud Platform Console to verify the status is `ok`. Click the endpoint
-to open the application in the browser. You should see `Hello Express!`.
+This command creates your initial deployment and exposes the application.
+
+Navigate to the [Discovery](https://console.cloud.google.com/kubernetes/discovery) page in the
+Cloud Console to verify the status is `ok`. 
+
+Click the endpoint to open the application in the browser. You should see `Hello Express!`.
 
 ### Step 4: Create a Codeship project
 
@@ -198,9 +214,9 @@ project.
 
 Follow these steps to create an encrypted environment file:
 
-1.  Navigate to the new project's `General` page.
-1.  Scroll down to find the `AES Key` header.
-1.  Click `Download Key`.
+1.  Navigate to the new project's **General** page.
+1.  Scroll down to find the **AES Key** heading.
+1.  Click **Download Key**.
 1.  Move the downloaded file to the `hello-express` source code root folder.
 1.  Rename this file to `codeship.aes`.
 
@@ -233,14 +249,14 @@ codeship_gce_service:
 ### Step 6: Commit code to run Codeship build
 
 Codeship will trigger a new build when you push a commit to the remote
-repository. Before you commit the changes, ensure the following files are
+repository. Before you commit the changes, ensure that the following files are
 listed in `.gitignore`:
 
     codeship.aes
     .env
     /path/to/your/service-account.json
 
-These three files should not be included in your remote repository, as they
+These three files should not be included in your remote repository, because they
 contain sensitive data. Be sure to exclude them from any commits.
 
 You also need to update your `codeship-steps.yml` file to use the
@@ -274,7 +290,8 @@ endpoint to verify your changes have taken effect.
 
 ## Cleaning up
 
-After completing the tutorial, follow these steps to remove the resources from your Google Cloud Platform account to prevent any charges:
+After completing the tutorial, follow these steps to remove the resources from your Google Cloud account to prevent any 
+charges:
 
 1. Delete the Service: This step will deallocate the Cloud Load Balancer created for your Service:
 

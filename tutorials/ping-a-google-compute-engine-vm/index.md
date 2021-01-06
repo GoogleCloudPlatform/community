@@ -6,7 +6,9 @@ tags: Compute Engine, Cloud DNS
 date_published: 2019-04-24
 ---
 
-## Introduction
+Geoffrey Priester | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 [Pinging](https://en.wikipedia.org/wiki/Ping_(networking_utility)) is a common method of testing the reachability of a
 host (like a virtual machine) from an external network.
@@ -21,7 +23,7 @@ Pinging is also a handy utility to check the DNS resolution of a domain name you
 ### Locate the domain name
 
 1. To locate a domain name (or hostname) that you've configured, open
-[Cloud DNS](https://console.cloud.google.com/net-services/dns/zones) in the Google Cloud Platform (GCP) Console.
+[Cloud DNS](https://console.cloud.google.com/net-services/dns/zones) in the Cloud Console.
 
 2. Select a zone that you have previously configured. The zone's DNS name (e.g., `examplepetstore.com`) can be used for
 pinging/DNS resolution.
@@ -29,7 +31,7 @@ pinging/DNS resolution.
 ### Locate the IP address
 
 1. To locate the external IP address of a virtual machine, open the
-[Compute Engine instances page](https://console.cloud.google.com/compute/instances) in the GCP Console.
+[Compute Engine instances page](https://console.cloud.google.com/compute/instances) in the Cloud Console.
 
 2. Identify the virtual machine that you want to ping. Copy the IP address listed under the **External IP** column in the
 table.

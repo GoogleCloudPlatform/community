@@ -1,10 +1,12 @@
 ---
-title: Kitura on Google App Engine
+title: Kitura on App Engine
 description: Learn how to build an app with Swift and Kitura in the App Engine flexible environment.
-author: mpmcdonald
+author: asciimike
 tags: App Engine, Swift, Kitura
 date_published: 2017-03-21
 ---
+
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
 This tutorial shows a sample [Swift][swift] app built with [Kitura][kitura]
 deployed to the App Engine flexible environment.
@@ -25,9 +27,7 @@ This tutorial assumes basic familiarity with Swift programming.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including:
-
-+ Google App Engine flexible environment
+This tutorial uses billable components of Google Cloud, including App Engine flexible environment.
 
 Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
 projected usage.
@@ -36,9 +36,9 @@ projected usage.
 
 ## Before you begin
 
-1.  Create a project in the [Google Cloud Platform Console][console].
+1.  Create a project in the [Cloud Console][console].
 1.  Enable billing for your project.
-1.  Install the [Google Cloud SDK][cloud-sdk].
+1.  Install the [Cloud SDK][cloud-sdk].
 
 [console]: https://console.cloud.google.com/project
 [cloud-sdk]: https://cloud.google.com/sdk/
@@ -96,7 +96,7 @@ We'll use the [Swift Package Manager][spm] to manage our app's dependencies.
          // Basic GET request
          router.get("/hello") { request, response, _ in
             print("GET - /hello route handler...")
-            try response.status(.OK).send("Hello from Swift on Google App Engine flexible environment!").end()
+            try response.status(.OK).send("Hello from Swift on App Engine flexible environment!").end()
          }
 
 [custom-runtime]: https://cloud.google.com/appengine/docs/flexible/custom-runtimes/build#lifecycle_events
@@ -109,7 +109,7 @@ own.
 1.  Create a `Dockerfile` with the following contents:
 
          FROM ibmcom/swift-ubuntu:latest
-         LABEL Description="Docker image for Swift + Kitura on Google App Engine flexible environment."
+         LABEL Description="Docker image for Swift + Kitura on App Engine flexible environment."
      
          # Expose default port for App Engine
          EXPOSE 8080
@@ -139,6 +139,6 @@ own.
 
 1.  Visit `http://[YOUR_PROJECT_ID].appspot.com/hello` to see the deployed app.
 
-            Replace `[YOUR_PROJECT_ID]` with your Google Cloud Platform project ID.
+    Replace `[YOUR_PROJECT_ID]` with your Google Cloud project ID.
 
-If all goes well, you should see "Hello from Swift on Google App Engine flexible environment!".
+If all goes well, you should see "Hello from Swift on App Engine flexible environment!".

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: [IMAGE_NAME]
+  labels:
+    k8s-app: [IMAGE_NAME]
+spec:
+  selector:
+    matchLabels:
+      name: [IMAGE_NAME]
+  template:
+    metadata:
+      labels:
+        name: [IMAGE_NAME]
+    spec:
+      containers:
+      - name: [IMAGE_NAME]
+        image: gcr.io/[PROJECT_ID]/[IMAGE_NAME]
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: host
+          mountPath: /mnt/host
+          readOnly: true
+      volumes:
+      - name: host
+        hostPath:
+          path: /

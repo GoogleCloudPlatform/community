@@ -6,6 +6,8 @@ tags: Cloud Scheduler, Cron, Automation
 date_published: 2019-12-03
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 Automating tasks that re-occur is definitely at the heart of every software developer. Google Cloud provides Cloud Scheduler,
 a tool that allows users to schedule jobs with the conventional unix-cron format.  
 

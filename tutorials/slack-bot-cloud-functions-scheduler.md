@@ -6,6 +6,8 @@ tags: Cloud Function, Cloud Scheduler, Slack
 date_published: 2019-07-13
 ---
 
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+
 In this tutorial, you build and deploy a serverless application that sends messages to Slack using a Cloud Function.
 You also use Cloud Scheduler to periodically run your application at an interval of 3 hours.
 
@@ -19,13 +21,13 @@ You also use Cloud Scheduler to periodically run your application at an interval
 
 ## Before you begin
 
-1.  [Create a new Google Cloud Platform (GCP) project](https://console.cloud.google.com/project), or use an existing one.
+1.  [Create a new Google Cloud project](https://console.cloud.google.com/project), or use an existing one.
 2.  [Enable billing for your project](https://support.google.com/cloud/answer/6293499#enable-billing).
 3.  Create a [new Slack team](https://slack.com/create), or use a team for which you have permissions to add integrations.
 
 ## Costs
 
-This tutorial uses billable components of GCP including Compute Engine. Use the
+This tutorial uses billable components of Google Cloud including Compute Engine. Use the
 [Pricing Calculator](https://cloud.google.com/products/calculator/#id=6d866c0e-b928-4786-b2ab-bed5c380a2fd)
 to estimate the costs for your usage.
 
@@ -51,7 +53,7 @@ Get the sample code from GitHub Gist, [here](https://gist.github.com/Timtech4u/2
 
 ## Set up the Cloud Function
 
-1.  Go to the [**Cloud Functions** page of the GCP Console](https://console.cloud.google.com/functions).
+1.  Go to the [**Cloud Functions** page of the Cloud Console](https://console.cloud.google.com/functions).
 1.  Click **Create Function**.
 1.  Enter your function's name in the **Name** field.
 1.  Set **Memory allocated** to **256MB**.
@@ -67,7 +69,7 @@ After these steps are done, you can visit the URL on your Cloud Function URL to 
 
 ## Set up Cloud Scheduler
 
-1.  Go to the [**Cloud Scheduler** page of the GCP Console](https://console.cloud.google.com/cloudscheduler).
+1.  Go to the [**Cloud Scheduler** page of the Cloud Console](https://console.cloud.google.com/cloudscheduler).
 1.  Click **Create Job**.
 1.  Enter a job name in the **Name** field.
 2.  In the **Frequency** field, enter `0 */3 * * *`, which indicates every 3 hours in unix-cron format.

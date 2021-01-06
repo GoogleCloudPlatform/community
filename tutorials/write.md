@@ -1,83 +1,53 @@
 ---
-title: How to Write a Tutorial for the Google Cloud Platform Community
-description: Learn how to write a tutorial for the Google Cloud Platform community.
-author: jmdobry
-tags: Tutorial, Write
-date_published: 2017-03-03
+title: Contribute a document for the Google Cloud Community site
+description: Learn how to submit a tutorial or other document for the Google Cloud community site.
+author: kopriva
+tags: template, submit
+date_published: 2020-09-21
 ---
 
-## Introduction
+We welcome the contribution of any tutorial or other document that shares knowledge about how to use Google Cloud.
 
-Beyond the official documentation there are endless possibilities for combining
-tools, platforms, languages and products. Ultimately, everything you build is
-unique, but very often projects share a lot in common. By submitting a tutorial
-you can share your experience and help others who are solving similar problems.
+The source for each document is a Markdown file in the [Google Cloud Community GitHub repository](https://github.com/GoogleCloudPlatform/community).
+Each document may be accompanied by example source code and other assets alongside the document in the repository.
 
-Tutorials can be short or long, but in every case they provide context for
-using Google Cloud Platform in the real world and show how to solve a particular
-problem that may not have been discussed in the official documentation.
+## Accept the Contributor License Agreement
 
-## Submitting a tutorial
+For us to accept your contributions, we need you to sign the [Contributor License Agreement (CLA)](https://cla.developers.google.com/about):
 
-Community tutorials are stored in Markdown files [on GitHub][repo] where they
-can be reviewed and edited by the community.
-
-To submit a tutorial:
-
-1.  Accept the Contributor License Agreement (CLA):
-
-    [**View the CLA**](#contributor-license-agreements)
-
-1.  Read the style guide before preparing your submission:
-
-    [**View the style guide**][styleguide]
-
-1.  You can fork GitHub repository and add a new tutorial in one step. Simply
-    click the following link to add your Markdown tutorial via the in-browser
-    GitHub editor:
-
-    [**Fork and start writing**][fork_quick]
-
-    Below the GitHub editor interface you can find a form and buttons for
-    committing your changes and then opening a Pull Request.
-
-    Alternatively, you can manually fork and clone the repo, make and commit
-    your changes, and then open a pull request:
-
-    1.  [Fork][fork_btn] the community repository: [github.com/GoogleCloudPlatform/community][repo].
-    1.  Clone your fork to your local machine.
-    1.  Add a new `.md` file to the `tutorials/` folder.
-    1.  Commit your changes and open a [Pull Request][pr].
-
-1.  Once you've opened a Pull Request a reviewer will be assigned to review your
-    submission. They'll work with you to ensure your submission meets the
-    [style guide][styleguide], but it helps if you follow it as you write your
-    tutorial.
-
-1.  Once your Pull Request is approved and merged your submission will be
-    published.
-
-## Contributor license agreements
-
-We'd love to accept your contributions! Before we can take them, we have to jump
-over a few legal hurdles.
-
-Please fill out either the individual or corporate Contributor License Agreement
-(CLA).
-
-  * If you are an individual writing original source code and you're sure you
-    own the intellectual property, then you'll need to sign an [individual CLA][in_cla].
+  * If you are an individual writing original content and you own the intellectual property, then you sign an
+    [individual CLA](https://developers.google.com/open-source/cla/individual).
   * If you work for a company that wants to allow you to contribute your work,
-    then you'll need to sign a [corporate CLA][corp_cla].
+    then you sign a [corporate CLA](https://developers.google.com/open-source/cla/corporate).
 
-Follow either of the two links above to access the appropriate CLA and
-instructions for how to sign and return it. Once we receive it, we'll be able to
-accept your pull requests.
+## Contribute a document
 
-[repo]: https://github.com/GoogleCloudPlatform/community
-[styleguide]: styleguide
-[fork_quick]: https://github.com/GoogleCloudPlatform/community/new/master/tutorials
-[fork_btn]: https://github.com/GoogleCloudPlatform/community
-[pr]: https://help.github.com/articles/using-pull-requests/
-[in_cla]: https://developers.google.com/open-source/cla/individual
-[corp_cla]: https://developers.google.com/open-source/cla/corporate
+1.  Read the [style guide](https://cloud.google.com/community/tutorials/styleguide) before preparing your submission.
+
+1.  [Fork](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo) the
+    [`github.com/GoogleCloudPlatform/community`](https://github.com/GoogleCloudPlatform/community) repository.
+
+1.  Do one of the following to add the new document file:
+    
+    * If you are contributing a single document file with no supporting code or image files, then create a uniquely named `.md` file at the top level of the
+      `tutorials` folder.
+    * If you are contributing a document with supporting code or image files, then create a new folder for your document in the `tutorials` folder and create an
+      `index.md` file at the top level of that subfolder.
+      
+    For details, see [File organization and naming in GitHub](https://cloud.google.com/community/tutorials/styleguide#file_organization_in_github).
+    
+1.  Copy the [Markdown source contents](https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/tutorial-template/index.md) of the
+    [tutorial template](https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/tutorial-template/index.md)
+    into your new Markdown file.
+    
+1.  Replace the template content with your own document content, following the instructions in the template and style guide.
+        
+1.  Commit your changes and open a [pull request](https://help.github.com/articles/using-pull-requests/).
+
+    After you create a pull request, a reviewer reviews your submission. The reviewer will directly make some editorial and production changes to the document
+    to ensure that it follows the guidelines. The reviewer may also leave comments asking for changes or clarifications. 
+    
+1.  Work with the reviewer to resolve any issues found during the review.
+
+After your pull request is approved, the reviewer will merge the pull request. New documents and fixes are typically published to the
+[Google Cloud Community site](https://cloud.google.com/community/tutorials) within a few days of pull requests being merged.

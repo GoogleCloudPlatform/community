@@ -1,43 +1,43 @@
 ---
-title: Monitor Compute Engine Managed Instance Groups Using Simple MIG Dashboard
-description: Learn how to monitor state of a Managed Instance Group and visualize it in a JavaScript application.
+title: Monitor Compute Engine managed instance groups with Simple MIG Dashboard
+description: Learn how to monitor state of a managed instance group and visualize it in a JavaScript application.
 author: lopekpl
 tags: Compute Engine, Cloud Endpoints, OAuth
 date_published: 2018-02-06
 ---
 
-## Introduction
+<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
 
-Simple MIG dashboard is a tool for monitoring the state of instances of
-a Managed Instance Group. For each instance it visualizes its current
-action (e.g. *CREATING*, *RESTARTING*) and its Instance Template. It can be
+Simple MIG Dashboard is a tool for monitoring the state of instances of
+a managed instance group (MIG). For each instance it visualizes its current
+action (e.g. `CREATING`, `RESTARTING`) and its instance template. It can be
 especially useful to monitor progress of a rolling update: it shows how
 the state (including health) of each instance is changing over time.
 
-This tutorial explains how to set up and use Simple MIG dashboard on
-your local machine with your Google Cloud Platform project. It walks you
-through the process of setting up a GCP web application and granting it
+This tutorial explains how to set up and use Simple MIG Dashboard on
+your local machine with your Google Cloud project. It walks you
+through the process of setting up a Google Cloud web application and granting it
 all necessary permissions to access your project data.
 
-Simple MIG dashboard is implemented in JavaScript using Angular
+Simple MIG Dashboard is implemented in JavaScript using Angular
 framework. It uses Google Charts library for visualization purposes and
 Google API Client Library for JavaScript to communicate with Google
-Cloud Platform.
+Cloud.
 
 ## Before you begin
 
-In this tutorial, we assume that you have a Google Cloud Platform
-project with an existing Managed Instance Group that you want to monitor.
+In this tutorial, we assume that you have a Google Cloud
+project with an existing managed instance group that you want to monitor.
 
 ## Running the dashboard
 
-To run the dashboard locally, you need to set up a new GCP application.
-[Set up OAuth](https://support.google.com/cloud/answer/6158849?hl=en&ref_topic=6262490) to obtain the Client ID that will be used to identify your application when
-making API calls. Choose *Web application* as application type, and add
+To run the dashboard locally, you need to set up a new Google Cloud application.
+[Set up OAuth](https://support.google.com/cloud/answer/6158849?hl=en&ref_topic=6262490) to obtain the client ID that will be used to identify your application when
+making API calls. Choose **Web application** as application type, and add
 [http://localhost:8080](http://localhost:8000) to the list
-of Authorized JavaScript origins for your app.
+of authorized JavaScript origins for your app.
 
-Once you obtained Client ID for your application, you are ready to run
+After you have obtained the client ID for your application, you are ready to run
 the dashboard locally:
 
 1.  `git clone https://github.com/GoogleCloudPlatform/community`
@@ -51,9 +51,9 @@ the dashboard locally:
 Now go to [http://localhost:8080](http://localhost:8080)
 in your browser, and you'll be greeted with a window which allows you to
 log in to your Google account. Choose the account which has the access
-to your GCP project. The next window asks for your
+to your Google Cloud project. The next window asks for your
 permission to allow the Dashboard to view and manage your data across
-GCP services.
+Google Cloud services.
 
 Once you grant the necessary permissions, you'll see an error stating
 that Google Cloud Resource Manager API has not been used in your project
@@ -70,7 +70,7 @@ MIG:
 
 ![Picking project](https://storage.googleapis.com/gcp-community/tutorials/compute-managed-instance-groups-dashboard/step1.png)
 
-**Step 2.** From the list of Managed Instance Groups in this project, select
+**Step 2.** From the list of managed instance groups in this project, select
 the one you want to monitor.
 
 ![Picking instance group](https://storage.googleapis.com/gcp-community/tutorials/compute-managed-instance-groups-dashboard/step2.png)
@@ -141,15 +141,15 @@ $scope.initialize = function() {
 The component responsible for project choice is defined in
 [*components/mig-picker.js*][mig-picker]. Once the user chooses the project ID, function
 `loadInstanceGroups()` is called. It makes several calls to Google Cloud
-Compute API to fetch data about Managed Instance Groups belonging to the
+Compute API to fetch data about managed instance groups belonging to the
 project. Progress is reported to the user with calls to `messageFunction`,
 which is injected into the [`mig-picker` component in *index.html*][index].
 
-Next, the user chooses the Managed Instance Group to monitor. New object
+Next, the user chooses the managed instance group to monitor. New object
 of `MigHistory` class, defined in [*mig-history.js*][mig-history], is created. `MigHistory`
 stores state and health status changes for all instances that belong to
-the Managed Instance Group. Every second `MigHistory` is updated by
-`fetchInstancesInfo()` method that fetches current state of all the
+the managed instance group. Every second, `MigHistory` is updated by
+`fetchInstancesInfo()` method that fetches the current state of all the
 machines calling the Google Compute API.
 
 `MigHistory` object is injected into
@@ -158,9 +158,9 @@ periodically redraw the status charts.
 
 ### Calls to Google Compute API
 
-[*gapi.js*][gapi] contains all the API requests used by Simple MIG Dashboard. Once the user chooses the project, the Dashboard fetches the list of Managed Instance Groups that belong to this project using [*compute.instanceGroupManagers.aggregatedList*][igms-list]. The call returns both zonal and regional Managed Instance Groups. Next, the user chooses the Managed Instance Group they want to monitor. The dashboard fetches the list of instances in the selected Managed Instance Group. Depending on the type of the Managed Instance Group, it either makes a call to [*compute.regionInstanceGroupManagers.listManagedInstances*][rmig-list] for Regional Managed Instance Group or [*compute.instanceGroupManagers.listManagedInstances*][mig-list] for Zonal Managed Instance Group. Both methods return a single *managedInstances* object that lists all the instances from the Managed Instance Group together with their  *currentAction* (e.g. CREATING, RUNNING) and *version*. *version* defines which Instance Template was used to create the instance.
+[*gapi.js*][gapi] contains all the API requests used by Simple MIG Dashboard. Once the user chooses the project, the Dashboard fetches the list of managed instance groups that belong to this project using [*compute.instanceGroupManagers.aggregatedList*][igms-list]. The call returns both zonal and regional managed instance groups. Next, the user chooses the managed instance group they want to monitor. The dashboard fetches the list of instances in the selected managed instance group. Depending on the type of the managed instance group, it either makes a call to [*compute.regionInstanceGroupManagers.listManagedInstances*][rmig-list] for regional managed instance group or [*compute.instanceGroupManagers.listManagedInstances*][mig-list] for zonal managed instance group. Both methods return a single `managedInstances` object that lists all the instances from the managed instance group together with their  `currentAction` (e.g. CREATING, RUNNING) and `version`, which defines which instance template was used to create the instance.
 
-To display health of instances, the Dashboard first fetches all Backend Services defined in the project using [*compute.backendServices.list*][bs-list]. Then it finds the particular Backend Service connected to the selected Managed Instance Group by looking at *group* field of Backend Service resources. It gets health statuses of Managed Instance Group instances by calling [*comupute.backendServices.getHealth*][get-health]. The request returns a list of *healthStatus* objects that map instances from the Managed Instance Group to their *healthState*.
+To display health of instances, the Dashboard first fetches all Backend Services defined in the project using [*compute.backendServices.list*][bs-list]. Then it finds the particular Backend Service connected to the selected managed instance group by looking at *group* field of Backend Service resources. It gets health statuses of managed instance group instances by calling [*compute.backendServices.getHealth*][get-health]. The request returns a list of *healthStatus* objects that map instances from the managed instance group to their *healthState*.
 
 
 [index]: https://github.com/GoogleCloudPlatform/community/blob/master/tutorials/compute-managed-instance-groups-dashboard/webapp/index.html

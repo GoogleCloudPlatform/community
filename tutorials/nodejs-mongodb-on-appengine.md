@@ -6,28 +6,25 @@ tags: App Engine, Node.js, MongoDB
 date_published: 2017-11-02
 ---
 
-## MongoDB
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-"[MongoDB][mongo] is a document database with the scalability and flexibility that you want with the querying and indexing that you need" – mongodb.com
-
-You can check out [Node.js and Google Cloud Platform][nodejs-gcp] to get an
-overview of Node.js itself and learn ways to run Node.js apps on Google Cloud
-Platform.
+You can check out [Node.js and Google Cloud][nodejs-gcp] to get an
+overview of Node.js itself and learn ways to run Node.js apps on Google Cloud.
 
 ## Prerequisites
 
-1. Create a project in the [Google Cloud Platform Console](https://console.cloud.google.com/).
+1. Create a project in the [Cloud Console](https://console.cloud.google.com/).
 1. Enable billing for your project.
-1. Install the [Google Cloud SDK](/sdk/).
+1. Install the [Cloud SDK](/sdk/).
 1. [Prepare your environment for Node.js development][nodejs]
 
 ### Create a MongoDB database
 
 There are multiple options for creating a new MongoDB database. For example:
 
-- Create a Google Compute Engine virtual machine with [MongoDB pre-installed](/launcher/?q=mongodb).
-- Create a MongoDB instance with [MongoDB Atlas on GCP](https://www.mongodb.com/cloud/atlas/mongodb-google-cloud).
-- Use [mLab](https://mlab.com/google/) to create a free MongoDB deployment on Google Cloud Platform.
+- Create a Compute Engine virtual machine with [MongoDB pre-installed](/launcher/?q=mongodb).
+- Create a MongoDB instance with [MongoDB Atlas on Google Cloud](https://www.mongodb.com/cloud/atlas/mongodb-google-cloud).
+- Use [mLab](https://mlab.com/google/) to create a free MongoDB deployment on Google Cloud.
 
 ## Prepare the app
 

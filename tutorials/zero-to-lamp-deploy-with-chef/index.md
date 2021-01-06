@@ -1,22 +1,26 @@
 ---
-title: Zero to LAMP deployment on GCP with Chef
-description: Learn how to deploy a LAMP stack on GCP with Chef cookbooks.
+title: Zero to LAMP deployment on Google Cloud with Chef
+description: Learn how to deploy a LAMP stack on Google Cloud with Chef cookbooks.
 author: slevenick
 tags: Compute Engine, Cloud SQL, Chef
 date_published: 2018-12-17
 ---
 
+Sam Levenick | Software Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 ## Objectives
 
-* Create a Chef Workstation on Google Cloud Platform.
-* Use the Workstation to create a Google Compute Engine VM, Cloud SQL instance, firewall rules, and a database via Chef.
+* Create a Chef Workstation on Google Cloud.
+* Use the Workstation to create a Compute Engine VM, Cloud SQL instance, firewall rules, and a database with Chef.
 * Deploy Apache and PHP on the VM to serve a simple page backed by the database instance.
 
 ## Costs
 
-This tutorial uses billable components of Google Cloud Platform, including:
+This tutorial uses billable components of Google Cloud, including:
 
-* [Google Compute Engine][gce]
+* [Compute Engine][gce]
 * [Cloud SQL][csql]
 
 [gce]: https://cloud.google.com/compute/
@@ -29,11 +33,11 @@ projected usage.
 
 ## Before you begin
 
-1. Select or create a [Google Cloud Platform Console][console] project.
+1. Select or create a [Google Cloud][console] project.
 [Go to the projects page][projects].
 1. Enable billing for your project. [Enable billing][billing].
-1. Install the [Google Cloud SDK][sdk].
-1. Authenticate `gcloud` with Google Cloud Platform.
+1. Install the [Cloud SDK][sdk].
+1. Authenticate `gcloud` with Google Cloud.
 
         gcloud init
 
@@ -42,7 +46,7 @@ projected usage.
 [billing]: https://support.google.com/cloud/answer/6293499#enable-billing
 [sdk]: https://cloud.google.com/sdk/
 
-You will be executing commands on both a local machine (assuming Mac or Linux-based) and a Google Compute Engine VM. Command blocks will be prefixed with the bash comment (#) to indicate the correct machine.
+You will be executing commands on both a local machine (assuming Mac or Linux-based) and a Compute Engine VM. Command blocks will be prefixed with the bash comment (#) to indicate the correct machine.
 
 ## Create a Chef Workstation on a Compute Engine VM
 
@@ -135,7 +139,7 @@ From the original machine:
         # gce: chef-workstation
         echo "depends 'google-cloud', '~> 0.4.0'" >> infrastructure/metadata.rb
     
-1.  Install GCP cookbooks from the [supermarket][supermarket] using the knife tool
+1.  Install Google Cloud cookbooks from the [supermarket][supermarket] using the knife tool
    
         # gce: chef-workstation
         knife cookbook site install google-cloud -o .
@@ -149,7 +153,7 @@ From the original machine:
 
 ## Create Compute Engine cookbook
 
-Use the Chef GCP cookbooks to define your Compute Engine infrastructure. More information on these cookbooks can be found at the [Chef Supermarket.][supermarket]
+Use the Chef Google Cloud cookbooks to define your Compute Engine infrastructure. More information on these cookbooks can be found at the [Chef Supermarket.][supermarket]
 
 1.  Create a new recipe within the infrastructure cookbook.
 
@@ -241,7 +245,7 @@ Use the Chef GCP cookbooks to define your Compute Engine infrastructure. More in
     
 ## Create Cloud SQL cookbook
 
-Use the `google-gsql` GCP cookbook to define a Cloud SQL instance.
+Use the `google-gsql` Google Cloud cookbook to define a Cloud SQL instance.
 
 1.  Create a new recipe within the infrastructure cookbook.
 
@@ -368,7 +372,7 @@ Or visit `$WEB_SERVER_IP` in your browser. If everything is working it will disp
 
 ## Cleaning up
 
-After you've finished the tutorial, you can clean up the resources you created on Google Cloud Platform so you won't be billed for them in the future. The following sections describe how to delete or turn off these resources.
+After you've finished the tutorial, you can clean up the resources you created on Google Cloud so you won't be billed for them in the future. The following sections describe how to delete or turn off these resources.
 
 ### Deleting the project
 
@@ -376,7 +380,7 @@ The easiest way to eliminate billing is to delete the project you created for th
 
 To delete the project:
 
-1. In the Cloud Platform Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
+1. In the Cloud Console, go to the **[Projects](https://console.cloud.google.com/iam-admin/projects)** page.
 1. Click the trash can icon to the right of the project name.
 
 **Warning**: Deleting a project has the following consequences:
@@ -388,7 +392,7 @@ You can't reuse the project ID of a deleted project. If you created a custom pro
 
 To delete a Compute Engine instance:
 
-1. In the Cloud Platform Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
+1. In the Cloud Console, go to the **[VM Instances](https://console.cloud.google.com/compute/instances)** page.
 1. Click the checkbox next to your chef-workstation and web-server instances.
 1. Click the Delete button at the top of the page to delete the instances.
 
@@ -396,21 +400,21 @@ To delete a Compute Engine instance:
 
 To delete the VPC network you must first delete firewall rules that depend on it:
 
-1. In the Cloud Platform Console, go to the **[Firewall Rules](https://console.cloud.google.com/networking/firewalls)** page.
+1. In the Cloud Console, go to the **[Firewall Rules](https://console.cloud.google.com/networking/firewalls)** page.
 1. Click the checkbox next to the firewall rules for the `web-server-network` network.
 1. Click the Delete button at the top of the page to delete the firewall rules.
-1. In the Cloud Platform Console, go to the **[VPC Networks](https://console.cloud.google.com/networking/networks)** page.
+1. In the Cloud Console, go to the **[VPC Networks](https://console.cloud.google.com/networking/networks)** page.
 1. Click on `web-server-network`.
 1. Click the Delete VPC Network button at the top of the page.
 
 ### Delete Cloud SQL instance
 
-1. In the Cloud Platform Console, go to the **[Cloud SQL Instances](https://console.cloud.google.com/sql/instances)** page.
+1. In the Cloud Console, go to the **[Cloud SQL Instances](https://console.cloud.google.com/sql/instances)** page.
 1. Click the checkbox next to the SQL instance.
 1. Click the Delete button at the top of the page to delete the instance.
 
 ### Delete service accounts
 
-1. In the Cloud Platform Console, go to the **[Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)** page.
+1. In the Cloud Console, go to the **[Service accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)** page.
 1. Click the checkbox next to the `sql` and `compute` accounts.
 1. Click the Delete button at the top of the page to delete the service accounts.

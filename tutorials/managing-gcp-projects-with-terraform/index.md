@@ -6,10 +6,12 @@ tags: Terraform
 date_published: 2017-06-19
 ---
 
-Dan Isla | Google Cloud Solution Architect | Google
+Dan Isla | Solution Architect | Google
 
-This tutorial demonstrates how to create and manage projects on Google Cloud with Terraform. With Terraform, many of your 
-resources such as projects, IAM policies, networks, Compute Engine instances, and Kubernetes Engine clusters can be managed,
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This tutorial demonstrates how to create and manage projects on [Google Cloud with Terraform](https://cloud.google.com/docs/terraform).
+With Terraform, many of your resources such as projects, IAM policies, networks, Compute Engine instances, and Kubernetes Engine clusters can be managed,
 versioned, and easily recreated for your organization or teams. The state that Terraform generates is saved to Cloud Storage
 for persistence.
 

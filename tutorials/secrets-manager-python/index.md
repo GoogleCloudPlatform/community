@@ -6,17 +6,17 @@ tags: Secret Manager, KMS, Security, Python
 date_published: 2020-01-17
 ---
 
-Jason "Jay" Smith | Customer Engineer Specialist | Google Cloud
+Jason "Jay" Smith | Customer Engineer Specialist | Google
 
-## Overview of using Secret Manager with Python
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-[Secret Manager](https://cloud.google.com/secret-manager/docs/) on Google Cloud stores API keys, passwords, 
+[Secret Manager](https://cloud.google.com/secret-manager/docs/) on Google Cloud stores API keys, passwords,
 certificates, and other sensitive data. Secret Manager provides convenience while improving security.
 
 This tutorial shows a simple example of storing and accessing a secret with a Python app. In this tutorial, you create a
 simple containerized application running on [Cloud Run](https://cloud.google.com/run/) that can pull financial data.
 
-This tutorial uses the [Alpha Vantage](https://www.alphavantage.co/) financial APIs. Alpha Vantage offers a free tier that 
+This tutorial uses the [Alpha Vantage Stock API](https://www.alphavantage.co/). Alpha Vantage offers a free tier that 
 allows you to make 500 calls per 24-hour period, so it's well suited for testing API features.
 
 The code used in this tutorial is in the
@@ -28,7 +28,7 @@ directory on GitHub.
 1.  This tutorial requires a Google Cloud project.
     [Create a new Google Cloud project](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
     or open an exisitng project in the [Cloud Console](https://console.cloud.google.com/cloud-resource-manager).
-    
+
 1.  You use the Cloud Shell command-line interface in the Cloud Console to run commands in this tutorial. Open Cloud Shell
     by clicking the **Activate Cloud Shell** button in the navigation bar in the upper-right corner of the Cloud Console.
 
@@ -37,7 +37,7 @@ directory on GitHub.
         # Set environment variables for project
         export PROJECT_ID=$(gcloud config get-value project)
         export PROJ_NUMBER=$(gcloud projects list --filter="${PROJECT_ID}" --format="value(PROJECT_NUMBER)")
-        
+
         # Enable API services
         gcloud services enable container.googleapis.com \
         containerregistry.googleapis.com \
@@ -48,7 +48,7 @@ directory on GitHub.
         cloudscheduler.googleapis.com \
         run.googleapis.com \
         secretmanager.googleapis.com
-        
+
         # Enable gcloud beta components
         sudo gcloud components update
         gcloud components install beta
@@ -89,9 +89,9 @@ Review the code in
 which is a simple Flask app that takes an input (a stock symbol) and returns stock information in 15-minute intervals.
 
 The following excerpt from the app creates a `secrets` object using the
-[Python Client for Secret Manager API](https://github.com/googleapis/python-secret-manager). Then it creates a variable, 
+[Python Client for Secret Manager API](https://github.com/googleapis/python-secret-manager). Then it creates a variable,
 `ALPHA_VANTAGE_KEY`, which is assigned the name of the key. The standard format of the name is
-`projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION_NUMBER`. The key is pulled from from `payload.data` attributes, 
+`projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION_NUMBER`. The key is pulled from from `payload.data` attributes,
 and the response is decoded, giving the key in plain text.
 
     secrets = secretmanager.SecretManagerServiceClient()
@@ -111,14 +111,14 @@ information in 15 minute intervals:
         return jsonify(data=data)
 
 ## Containerize the application
- 
+
 1.  In the `py-secrets-manager/currencyapp` directory, run the following command, replacing `[PROJECT-ID]` with your
     actual project ID:
 
         gcloud builds submit --tag gcr.io/[PROJECT-ID]/currency-secret .
 
     This command creates a container called `currency-secret`, which has your `app.py` application and is ready to deploy
-    to Google Cloud. 
+    to Google Cloud.
 
 ## Deploy and test the application
 
@@ -128,27 +128,27 @@ information in 15 minute intervals:
 
     This command does the following:
 
-    - Creates a service called `currency-secret`, using the image that was created using `gcloud builds submit` in the 
+    - Creates a service called `currency-secret`, using the image that was created using `gcloud builds submit` in the
       previous step.
     - Deploys on the Fully Managed version of Cloud Run. You can learn more about the differences between
       Fully Managed and Anthos version [here](https://cloud.google.com/run/choosing-a-platform).
     - Makes the service publicly accessible on the internet, with the `--allow-unauthenticated` option.
-    - Sets an environment variable for the project ID. 
+    - Sets an environment variable for the project ID.
 
 1.  Wait for a few minutes for the service to deploy and start.
 1.  Run the following command, which assigns your service's URL to the variable `SVCURL`:
 
         export SVCURL="$(gcloud run services list --platform managed --format=json | grep "currency-secret" | grep "url" | head -1 | cut -d: -f2- | tr -d '"')/api/v1/symbol?symbol=GOOG"
-    
+
 1.  Run the following command:
 
         echo $SVCURL
- 
+
     You will see a URL such as this:
     `https://currency-secret-xxxxxxxxxx.a.run.app/api/v1/symbol?symbol=GOOG`
 
-    The first part is the service name followed by a random string and then the URL base of `run.app`. In our Flask app, we 
-    have a route called `/api/v1/symbol` that only accepts POST commands. It looks for a key named `symbol` and the 
+    The first part is the service name followed by a random string and then the URL base of `run.app`. In our Flask app, we
+    have a route called `/api/v1/symbol` that only accepts POST commands. It looks for a key named `symbol` and the
     corresponding value should be an NYSE stock symbol. For our example, we used `GOOG` but you can use whatever you prefer.
 
 1.  Use `curl` to query the service URL:
@@ -175,6 +175,6 @@ information in 15 minute intervals:
                 },
 
     These are 15-minute snapshots of the stock price associated with the symbol passed as a parameter in the service URL.
-    
-Congratulations! You ran an application that used a third-party API with a key and didn't need to include the key in the 
+
+Congratulations! You ran an application that used a third-party API with a key and didn't need to include the key in the
 code. This is great when you want to execute code with Google Cloud but worry about sharing and storing keys.

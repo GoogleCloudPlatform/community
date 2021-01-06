@@ -207,7 +207,6 @@ def dict_to_callback(d, cf_data, cf_service, name, cf_auth):
       callback_type=d['callbackType'],
       callback_subtype=subtype_value,
       enabled=d['enabled'],
-      send_duplicate=d['sendDuplicate'],
       url=url,
       http_method=d['httpMethod'],
       headers=headers,

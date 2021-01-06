@@ -1,16 +1,20 @@
 ---
 title: Exposing ASP.NET Web API using .NET Core with Cloud Endpoints
-description: Learn how to create a sample ASP.NET Web API service, deploy it to Google Cloud Platform (GCP) App Engine flexible environment, and use Cloud Endpoints for API management.
+description: Learn how to create a sample ASP.NET Web API service, deploy it to App Engine flexible environment, and use Cloud Endpoints for API management.
 author: simonz130
 tags: App Engine, Cloud Endpoints, .NET Core, ASP.NET, API Gateway, Web API, WebAPI, Deploy, API Management
 date_published: 2018-04-10
 ---
 
+Simon Zeltser  | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 This tutorial shows how to create a simple API using ASP.NET Core Web API,
 deploy that API to the App Engine flexible environment, then use Cloud Endpoints
 to expose and monitor the API.
 
-## Step 1 - Setup your development environment
+## Step 1 - Set up your development environment
 
 You will write code using Visual Studio Code. Therefore, you should install the
 following:
@@ -131,18 +135,18 @@ following:
     `ExposeApiWithEndpointsCore`. Name it `openapi.yaml` and paste the content
     of the generated YAML from https://editor.swagger.io.
 
-    Now we are ready to deploy the API to Google Cloud Platform!
+    Now we are ready to deploy the API to Google Cloud!
 
-## Step 4 - Create a new GCP Project
+## Step 4 - Create a new Google Cloud project
 
 1.  [Create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project)
     at https://console.cloud.google.com
 
-    We will create App Engine Flexible Environment and deploy our API to it from
-    the command line. So now we need to make sure that Google Cloud SDK is
+    We will create App Engine flexible environment and deploy our API to it from
+    the command line. So now we need to make sure that the Cloud SDK is
     preconfigured to work with the project we just created.
 
-1.  Open Google Cloud SDK command line in elevated mode (Administrator), and
+1.  Open the Cloud SDK command line in elevated mode (Administrator), and
     type the following:
 
     1.  Update SDK components to the latest
@@ -168,7 +172,7 @@ following:
 
 Now it's time to deploy the API specification and API implementation.
 
-## Step 5 - Deploy API Specification to Cloud Endpoints
+## Step 5 - Deploy API specification to Cloud Endpoints
 
 1.  Open `openapi.yaml` that was created in step 3.
 
@@ -196,7 +200,7 @@ Now it's time to deploy the API specification and API implementation.
     create a DNS entry in the format of `YOUR-PROJECT_ID.appspot.com`. We should
     use that FQDN to make incoming requests to our API.
 
-1.  In Google SDK command prompt, make sure you are in the folder that contains
+1.  In the Cloud SDK command prompt, make sure you are in the folder that contains
     `openapi.yaml` that was created in step 3. Execute:
 
         gcloud endpoints services deploy openapi.yaml
@@ -227,7 +231,7 @@ instance is identified by service name and configuration id. By setting
 `rollout_strategy=managed` in `app.yaml`, we instruct the service to always use
 latest version of Cloud Endpoints service (the one that was deployed last).
 
-1.  In Google Cloud SDK shell type:
+1.  In the Cloud SDK shell type:
 
         gcloud endpoints configs list --service=`YOUR-PROJECT-ID`.appspot.com
 
@@ -282,7 +286,7 @@ configurations of your endpoints deployments.
 ## Summary
 
 You created a basic ASP.NET Core Web API, deployed it to App Engine flexible
-environment on Google Cloud Platform and configured Cloud Endpoints in front of
+environment on Google Cloud and configured Cloud Endpoints in front of
 the API, so all the incoming requests will be sent to Cloud Endpoints which in
 turn will route them to API implementation. You haven’t implemented all the
 non functional requirements of exposing the API like security, throttling and
@@ -291,5 +295,5 @@ authentication.
 
 ## What's next
 
-* Learn how to [setup authentication for API access](https://cloud.google.com/endpoints/docs/openapi/authenticating-users)
+* Learn how to [set up authentication for API access](https://cloud.google.com/endpoints/docs/openapi/authenticating-users)
 * Learn about API [security](https://cloud.google.com/endpoints/docs/openapi/when-why-api-key), [throttling](https://cloud.google.com/endpoints/docs/openapi/quotas-configure), or [monitoring](https://cloud.google.com/endpoints/docs/openapi/monitoring-your-api)

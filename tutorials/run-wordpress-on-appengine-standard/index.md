@@ -6,6 +6,10 @@ tags: App Engine, WordPress, PHP
 date_published: 2019-01-31
 ---
 
+Brent Shaffer | Developer Programs Engineer | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
 [WordPress][wordpress] is an open source web framework for PHP developers that encourages the use of the
 model-view-controller (MVC) pattern.
 
@@ -229,7 +233,7 @@ under versioned hostnames. Visit the App Engine, Versions area to see previous v
 
 Alternately, you may deploy the new version and stop previous ones so they stop incurring charges:
 
-    $ gcloud app deploy app.yaml cron.yaml --promote --stop-previous-versions
+    $ gcloud app deploy app.yaml cron.yaml --promote --stop-previous-version
 
 ### Remove plugins and themes
 

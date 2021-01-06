@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: com.google.example
+testFramework: junit
+sourceLanguage: java
+buildTool: gradle
+features: [annotation-api, app-name, docker, file-watch, gradle, http-client, java, java-application, jib, junit, logback, management, micrometer, micrometer-stackdriver, netty-server, readme, yaml]

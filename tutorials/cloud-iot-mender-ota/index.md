@@ -1,17 +1,19 @@
 ---
-title: Over-the-air software updates for embedded Linux with Mender on Google Cloud Platform
-description: Deploy and open source over the air system and integrate with Cloud IoT Core.
+title: Over-the-air software updates for embedded Linux with Mender on Google Cloud
+description: Deploy and open source over the air system and integrate with IoT Core.
 author: kcr19
 tags: IoT, Internet of Things, Raspberry Pi
 date_published: 2018-09-25
 ---
 
-* KC Rakam | Customer Engineer Specialist | Google Cloud
-* Preston Holmes | Solution Architect | Google Cloud
+* KC Rakam | Customer Engineer Specialist | Google
+* Preston Holmes | Solution Architect | Google
 * Drew Moseley | Solution Architect | Mender
 * Eystein Stenberg | Product Manager | Mender
 
-This tutorial demonstrates how to successfully deploy an over-the-air (OTA) software update solution for embedded Linux devices using Mender on Google Cloud Platform.
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+This tutorial demonstrates how to successfully deploy an over-the-air (OTA) software update solution for embedded Linux devices using Mender on Google Cloud.
 
 ## Objectives
 
@@ -22,22 +24,22 @@ This tutorial demonstrates how to successfully deploy an over-the-air (OTA) soft
 
 ## Before you begin
 
-This tutorial assumes that you already have a Cloud Platform account set up and have completed the [getting started guide](https://cloud.google.com/iot/docs/how-tos/getting-started), including enabling the Cloud IoT Core API. You need to associate Firebase with your GCP project. To add Firebase to your GCP project, use the [Firebase Console](https://console.firebase.google.com) and choose **Add project**. Select your GCP project and click **Add Firebase**.
+This tutorial assumes that you already have a Google Cloud account set up and have completed the [getting started guide](https://cloud.google.com/iot/docs/how-tos/getting-started), including enabling the IoT Core API. You need to associate Firebase with your Google Cloud project. To add Firebase to your Google Cloud project, use the [Firebase Console](https://console.firebase.google.com) and choose **Add project**. Select your Google Cloud project and click **Add Firebase**.
 
- - For most commands, we recommend that you use [Google Cloud Shell](https://cloud.google.com/shell/docs/quickstart). If you want to use your local command line, you need the [Google Cloud SDK ](https://cloud.google.com/sdk/downloads) and [Firebase tools](https://firebase.google.com/docs/cli/).
+ - For most commands, we recommend that you use [Cloud Shell](https://cloud.google.com/shell/docs/quickstart). If you want to use your local command line, you need the [Cloud SDK ](https://cloud.google.com/sdk/downloads) and [Firebase tools](https://firebase.google.com/docs/cli/).
  - You need to ensure that the required environment variables are set in each shell environment. Use the variables shown below for every new session.
  - To work with the part of the tutorial that images a real device, you need to have a Raspberry Pi 3 device, SD Card, and the ability to plug the Raspberry Pi in to Ethernet on your LAN (Wi-FiCloud configurations are not supported in this tutorial).
 
 ## Costs
 
-This tutorial uses billable components of GCP, including the following:
+This tutorial uses billable components of Google Cloud, including the following:
 
-* Cloud IoT Core
-* Cloud Pub/Sub
+* IoT Core
+* Pub/Sub
 * Compute Engine
 * Cloud Storage
 * Cloud Functions for Firebase
-* Stackdriver Logging
+* Cloud Logging
 
 Use the [Pricing Calculator](https://cloud.google.com/products/calculator/) to generate
 a cost estimate based on your projected production usage.
@@ -69,7 +71,7 @@ More information on Mender can be found [here](https://mender.io/what-is-mender)
 
 ### Mender on GCP: high-level architecture diagram
 
-The following architecture diagram provides a high-level overview of the various components on GCP to enable OTA updates with Mender and Google Cloud IOT Core:
+The following architecture diagram provides a high-level overview of the various components on Google Cloud to enable OTA updates with Mender and Google Cloud IOT Core:
 
 ![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on0.png)
 
@@ -77,7 +79,7 @@ The following architecture diagram provides a high-level overview of the various
 
 ### Mender Management Server deployment options
 
-There are several options for successfully setting up Mender services with Google Cloud Platform (GCP). This tutorial will use a minimally configured Mender Management Production Server to test the end-to-end workflow:
+There are several options for successfully setting up Mender services with Google Cloud. This tutorial will use a minimally configured Mender Management Production Server to test the end-to-end workflow:
 
 * [Mender Management Demo Server](https://docs.mender.io/getting-started/create-a-test-environment): For quickly testing the Mender server, Mender provides a  pre-built demo version that does not take into account production-grade issues like security and scalability.
 
@@ -87,11 +89,11 @@ There are several options for successfully setting up Mender services with Googl
 
 ### Preparing the project and shell environment
 
-Mender Management server requirements from Mender are outlined [here](https://docs.mender.io/getting-started/requirements). We will be using the base instructions as documented for setting up a production environment and deploying on Google Cloud Platform. However, this is minimally configured and not suited for actual production use.
+Mender Management server requirements from Mender are outlined [here](https://docs.mender.io/getting-started/requirements). We will be using the base instructions as documented for setting up a production environment and deploying on Google Cloud. However, this is minimally configured and not suited for actual production use.
 
 1.  Set up the [Google Cloud Shell](https://cloud.google.com/shell/docs/quickstart) environment. (You will use several different shell environments.)
 
-    Note: If you are *not* using Cloud Shell you must first run these commands in your local environment:
+    If you are *not* using Cloud Shell you must first run these commands in your local environment:
 
         gcloud auth login
 
@@ -128,10 +130,10 @@ Mender Management server requirements from Mender are outlined [here](https://do
         gcloud beta compute --project $PROJECT instances create "mender-ota-demo" --zone "us-central1-c" --machine-type "n1-standard-2" --subnet "default" --maintenance-policy "MIGRATE" --scopes "https://www.googleapis.com/auth/cloud-platform" --metadata=startup-script-url=https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/cloud-iot-mender-ota/server/mender_server_install.sh --min-cpu-platform "Automatic" --tags "https-server" --image "ubuntu-1604-xenial-v20180814" --image-project "ubuntu-os-cloud" --boot-disk-size "10" --boot-disk-type "pd-standard" --boot-disk-device-name "mender-ota-demo"
 
 
-    Note: The startup script will take roughly 3-5 minutes to completely install all the prerequisites including Docker CE,     Docker compose and Mender Server.
+    The startup script will take roughly 3-5 minutes to completely install all the prerequisites including Docker CE, Docker compose and Mender Server.
 
 1.  Navigate to the Mender UI by clicking on the external IP address of **mender-ota-demo**, which can be found
-    on the [GCP console → Compute Engine](https://console.cloud.google.com/compute) page. In most browsers you will get a       certificate warning and you will need to click **advanced** and **proceed** or similar. In an actual production
+    on the Cloud Console [Compute Engine](https://console.cloud.google.com/compute) page. In most browsers you will get a certificate warning and you will need to click **advanced** and **proceed** or similar. In an actual production
     environment, you would provision this server with a trusted certificate.
 
     ![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on1.png)
@@ -144,11 +146,11 @@ Mender Management server requirements from Mender are outlined [here](https://do
 
     ![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on2.png)
 
-Congratulations! You just finished creating the Mender Server on Google Cloud Platform.
+Congratulations! You just finished creating the Mender Server on Google Cloud.
 
 ### Hosted Mender Service
 
-The above steps are for self-managed Open Source Mender Management Server on GCP. Mender also provides fully managed [Hosted Mender service](https://mender.io/signup).
+The above steps are for self-managed Open Source Mender Management Server on Google Cloud. Mender also provides fully managed [Hosted Mender service](https://mender.io/signup).
 
 The next section describes how to use a Yocto Project image for a raspberry Pi3 device.
 
@@ -176,7 +178,7 @@ You can use `gsutil` on your machine as suggested by the update script's output,
 
 ### Provisioning a new device (writing the image to the Raspberry Pi3 device)
 
-Note: You may also want to use the [Etcher](https://etcher.io/) GUI tool instead of the `dd`command line tool outlined below.
+**Note**: You may also want to use the [Etcher](https://etcher.io/) GUI tool instead of the `dd`command line tool outlined below.
 
 1.  Insert the SD card into the SD card slot of your local PC where you have the `updated-demo-image-raspberrypi3.img`
     image downloaded.
@@ -201,23 +203,23 @@ Note: You may also want to use the [Etcher](https://etcher.io/) GUI tool instead
     Depending on the image size, it may take roughly 20 minutes, so please be patient until the image is completely
     written to the SD card.
 
-Next, you will configure the device to connect to Mender Management Server and Cloud IOT Core with the same private/public key pair.
+Next, you will configure the device to connect to Mender Management Server and IoT Core with the same private/public key pair.
 
-## Mender Client integration: Cloud IoT Core and Mender Management Server
+## Mender Client integration: IoT Core and Mender Management Server
 
-This section outlines the steps to connect the Mender Client (running on a Raspberry Pi3 device) to Cloud IoT Core as well as Mender Server using the same public/private key. Additionally the steps will deploy an OTA update to the device remotely as depicted in the diagram below.
+This section outlines the steps to connect the Mender Client (running on a Raspberry Pi3 device) to IoT Core as well as Mender Server using the same public/private key. Additionally the steps will deploy an OTA update to the device remotely as depicted in the diagram below.
 
 ![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on11.png).
 
 Key components you will use in this section:
 
-* Cloud IoT Core
+* IoT Core
 * Cloud Functions/Firebase Functions
-* Stackdriver Logging
+* Cloud Logging
 * Mender Server on Google Cloud
 * Raspberry Pi3 (device/client)
 
-Using the Cloud Shell environment, create a Cloud IoT Core registry and Cloud Pub/Sub topic for this tutorial that will be used for the device to authenticate and send telemetry data.
+Using the Cloud Shell environment, create an IoT Core registry and Pub/Sub topic for this tutorial that will be used for the device to authenticate and send telemetry data.
 
     export REGISTRY_ID=mender-demo
     gcloud pubsub topics create iot-telemetry
@@ -226,7 +228,7 @@ Using the Cloud Shell environment, create a Cloud IoT Core registry and Cloud Pu
 
 ### Integrate IoT Core device lifecycle events and Mender Preauthorization
 
-Using the Cloud Shell environment, you will configure Cloud IoT Core audit logs to route to a Cloud Pub/Sub topic.
+Using the Cloud Shell environment, you will configure IoT Core audit logs to route to a Pub/Sub topic.
 
 1.  Create a log export for IoT Core device creation events to Pub/Sub:
 
@@ -242,11 +244,11 @@ Using the Cloud Shell environment, you will configure Cloud IoT Core audit logs 
 
 ### Deploy Firebase Functions to call Mender Preauthorization API
 
-This will link device creation in Cloud IoT Core to Device preauthorization in Mender.
+This will link device creation in IoT Core to Device preauthorization in Mender.
 
-Note: Be sure you associated Firebase with your Cloud project as noted in **Before you begin**.
+Be sure you associated Firebase with your Cloud project as noted in **Before you begin**.
 
-Deploy Firebase Functions to subscribe to the `registration-events` Pub/Sub topic that you created in the last step to [preauthorize](https://docs.mender.io/server-integration/preauthorizing-devices) IoT Core Devices with the Mender Server every time a new device is created in Cloud IoT Core.
+Deploy Firebase Functions to subscribe to the `registration-events` Pub/Sub topic that you created in the last step to [preauthorize](https://docs.mender.io/server-integration/preauthorizing-devices) IoT Core Devices with the Mender Server every time a new device is created in IoT Core.
 
 Using the repo you cloned into Cloud Shell earlier, switch to the `functions` directory:
 
@@ -256,7 +258,7 @@ Using the repo you cloned into Cloud Shell earlier, switch to the `functions` di
 
 Let's set the environment variables for the functions. Replace the IP address for `mender.url` with the external IP address of your Mender server.
 
-Note: You may be prompted to verify your compute instance zone, the default may be incorrect, so answer `n`.
+You may be prompted to verify your compute instance zone, the default may be incorrect, so answer `n`.
 
     export GCP_IOT_MENDER_DEMO_HOST_IP_ADDRESS=$(gcloud compute instances describe mender-ota-demo --project $PROJECT --format="value(networkInterfaces.accessConfigs[0].natIP)")
     firebase functions:config:set mender.url=https://$GCP_IOT_MENDER_DEMO_HOST_IP_ADDRESS
@@ -269,9 +271,9 @@ Note: You may be prompted to verify your compute instance zone, the default may 
 
     firebase deploy --only functions
 
-## Create the device in Cloud IoT Core
+## Create the device in IoT Core
 
-Let's bring up the Raspberry Pi device and extract the public key, so you can create a device in the Cloud IoT Core registry. The same private/public key pair will be used to authorize the device in Mender Server as well.
+Let's bring up the Raspberry Pi device and extract the public key, so you can create a device in the IoT Core registry. The same private/public key pair will be used to authorize the device in Mender Server as well.
 
 On your local PC, open terminal or console to perform the following commands. This needs to be a shell that has access to the Raspberry Pi on your local network, so it cannot be Cloud Shell. Find and add the IP address of your Raspberry Pi device below. To locate the IP address of your Raspberry Pi device, you can invoke the `nmap` command for host discovery, as shown below, by replacing the subnet range with one that matches your own local network.
 
@@ -279,17 +281,17 @@ On your local PC, open terminal or console to perform the following commands. Th
 
     export DEVICE_IP=YOUR_RASPBERRY_PI_IP_ADDRESS
 
-We use a random ID generated by the OS on first boot as our device ID in Cloud IoT Core. This can be adapted to any potential HW based identifier such as a board serial number, MAC address, or crypto key id:
+We use a random ID generated by the OS on first boot as our device ID in IoT Core. This can be adapted to any potential HW based identifier such as a board serial number, MAC address, or crypto key id:
 
     export DEVICE_ID=$(ssh root@$DEVICE_IP /usr/share/mender/identity/mender-device-identity| head -n 1 | cut -d '=' -f 2)
 
-Note: You will be prompted several times for the root password, which is `mender_gcp_ota`.
+You will be prompted several times for the root password, which is `mender_gcp_ota`.
 
 Extract the public key from the device:
 
     scp root@$DEVICE_IP:/var/lib/mender/rsa_public.pem ./rsa_public.pem
 
-Now create a Cloud IoT Core Device with the public key (`rsa_public.pem`), which you extracted in the last step (please make sure you are in the same directory where you have extracted the `rsa_public.pem` file). Run the following command from the same local console or terminal where you have ssh access to the device. You may need to set your project in `gcloud` first.
+Now create an IoT Core Device with the public key (`rsa_public.pem`), which you extracted in the last step (please make sure you are in the same directory where you have extracted the `rsa_public.pem` file). Run the following command from the same local console or terminal where you have ssh access to the device. You may need to set your project in `gcloud` first.
 
     gcloud config set project YOUR_PROJECT_ID
     export REGISTRY_ID=mender-demo
@@ -299,15 +301,15 @@ Now create a Cloud IoT Core Device with the public key (`rsa_public.pem`), which
 
     gcloud iot devices create $DEVICE_ID --region=$CLOUD_REGION --project $PROJECT --registry=$REGISTRY_ID --public-key path=rsa_public.pem,type=RSA_PEM
 
-Note: If you do not have `gcloud` installed locally, you can create this device in the [GCP Console](https://console.cloud.google.com/iot/).
+If you do not have `gcloud` installed locally, you can create this device in the [Cloud Console](https://console.cloud.google.com/iot/).
 
-After the device is created in Cloud IoT Core, the Firebase function deployed earlier will make REST API call to the Mender Server to preauthorize the device with the same public key credentials used to create the device in Cloud IoT Core. After the preauthorization and device activation steps are complete, the function will push a config update to Cloud IoT Core, which will configure the Mender client on the device with the specific IP address of the Mender server.
+After the device is created in IoT Core, the Firebase function deployed earlier will make REST API call to the Mender Server to preauthorize the device with the same public key credentials used to create the device in IoT Core. After the preauthorization and device activation steps are complete, the function will push a config update to IoT Core, which will configure the Mender client on the device with the specific IP address of the Mender server.
 
-This may take a couple minutes, because the client on the device has backed off from constantly trying to reconnect to Cloud IoT Core. You can monitor the Cloud IoT Core console **Configuration & state history** pane to see when the config has been pushed and acknowledged by the device.
+This may take a couple minutes, because the client on the device has backed off from constantly trying to reconnect to IoT Core. You can monitor the IoT Core console **Configuration & state history** pane to see when the config has been pushed and acknowledged by the device.
 
-### Verify the device heartbeat in Mender Server and Cloud IoT Core
+### Verify the device heartbeat in Mender Server and IoT Core
 
-You can confirm the same from the GCP Console as shown below under device details.
+You can confirm the same from the Cloud Console as shown below under device details.
 
 ![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on6.png)
 
@@ -317,11 +319,11 @@ Sign in to the Mender Server that you created part of the earlier steps: **Mende
 
 ![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on7.png)
 
-This confirms that the device has successfully connected to Cloud IoT Core and Mender Server with the same private/public key.
+This confirms that the device has successfully connected to IoT Core and Mender Server with the same private/public key.
 
 ## Push an OTA software update
 
-As part of the last step, let's perform an over-the-air (OTA) update by deploying a Mender artifact from Mender Server to the client. The Mender artifact includes a software update of [MQTT for Google Cloud IoT Core example](https://github.com/GoogleCloudPlatform/python-docs-samples/blob/master/iot/api-client/mqtt_example/cloudiot_mqtt_example.py), which will be deployed and executed on device boot.
+As part of the last step, let's perform an over-the-air (OTA) update by deploying a Mender artifact from Mender Server to the client. The Mender artifact includes a software update of [MQTT for IoT Core example](https://github.com/GoogleCloudPlatform/python-docs-samples/blob/master/iot/api-client/mqtt_example/cloudiot_mqtt_example.py), which will be deployed and executed on device boot.
 
 Create a subscription that we can use to verify this sample gets deployed:
 
@@ -349,11 +351,11 @@ After the deployment is finished, you should be able to see that the deployment 
 
 ![image alt text](https://storage.googleapis.com/gcp-community/tutorials/cloud-iot-mender-ota/Mender-on12.png)
 
-This completes the tutorial where you have successfully deployed a Mender OTA solution on Google Cloud Platform, including building a Mender Yocto custom embedded OS image for a Raspberry Pi device, and integrated with a Cloud IoT Core solution.
+This completes the tutorial where you have successfully deployed a Mender OTA solution on Google Cloud, including building a Mender Yocto custom embedded OS image for a Raspberry Pi device, and integrated with an IoT Core solution.
 
 ## Cleanup
 
-Since this tutorial uses multiple GCP components, please be sure to delete the GCP resources after you are done with the tutorial. Ideally, you have done this tutorial in an ephemeral project created just for this tutorial, which allows you to clean up resources simply by deleting the project.
+Since this tutorial uses multiple Google Cloud components, please be sure to delete the Google Cloud resources after you are done with the tutorial. Ideally, you have done this tutorial in an ephemeral project created just for this tutorial, which allows you to clean up resources simply by deleting the project.
 
 ## Next steps
 

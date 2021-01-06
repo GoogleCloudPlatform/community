@@ -1,50 +1,54 @@
 ---
 title: Google Cloud HA VPN interoperability guide for AWS
-description: Describes how to build site-to-site IPSec VPNs between HA VPN on Google Cloud Platform (GCP) and AWS.
-author: ashishverm,
+description: Describes how to build site-to-site IPSec VPNs between HA VPN on Google Cloud and AWS.
+author: ashishverm
 tags: HA VPN, Cloud VPN, interop, AWS
 date_published: 2019-07-16
 ---
 
-Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/vpn/docs/)
-on Google Cloud Platform (GCP) and AWS.
+Ashish Verma | Technical Program Manager | Google
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+
+Learn how to build site-to-site IPSec VPNs between [HA VPN](https://cloud.google.com/network-connectivity/docs/vpn/)
+on Google Cloud and AWS.
 
 AWS terminology and the AWS logo are trademarks of Amazon Web Services or its affiliates
 in the United States and/or other countries.
 
-_Disclaimer: This interoperability guide is intended to be informational in
+**Disclaimer**: This interoperability guide is intended to be informational in
 nature and shows examples only. Customers should verify this information by
-testing it._
+testing it.
 
 ## Introduction
 
 This guide walks you through the process of configuring route-based VPN tunnels between
-AWS and the [HA VPN service](https://cloud.google.com/vpn/docs) on GCP.
+AWS and the [HA VPN service](https://cloud.google.com/network-connectivity/docs/vpn/) on Google Cloud.
 
 For more information about HA or Classic VPN, see the
-[Cloud VPN overview](https://cloud.google.com/compute/docs/vpn/overview).
+[Cloud VPN overview](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview).
 
 ## Terminology
 
 Below are definitions of terms used throughout this guide.
 
--  **GCP VPC network**: A single virtual network within a single GCP project.
--  **On-premises gateway**: The VPN device on the non-GCP side of the
+-  **Google Cloud VPC network**: A single virtual network within a single Google Cloud project.
+-  **On-premises gateway**: The VPN device on the non-Google Cloud side of the
 connection, which is usually a device in a physical data center or in
-another cloud provider's network. GCP instructions are written from the
-point of view of the GCP VPC network, so *on-premises gateway* refers to the
-gateway that's connecting *to* GCP.
--  **External IP address** or **GCP peer address**: External IP
-addresses used by peer VPN devices to establish HA VPN with GCP.
+another cloud provider's network. Google Cloud instructions are written from the
+point of view of the Google Cloud VPC network, so *on-premises gateway* refers to the
+gateway that's connecting *to* Google Cloud.
+-  **External IP address** or **Google Cloud peer address**: External IP
+addresses used by peer VPN devices to establish HA VPN with Google Cloud.
 External IP addresses are allocated automatically, one for each gateway interface within a
-GCP project.
--  **Dynamic routing**: GCP dynamic routing for VPN using the
+Google Cloud project.
+-  **Dynamic routing**: Google Cloud dynamic routing for VPN using the
 [Border Gateway Protocol (BGP)](https://wikipedia.org/wiki/Border_Gateway_Protocol).
 Note that HA VPN only supports dynamic routing.
 
 ## Topology
 
-HA VPN supports [multiple topologies](https://cloud.google.com/vpn/docs/concepts/topologies).
+HA VPN supports [multiple topologies](https://cloud.google.com/network-connectivity/docs/vpn/concepts/topologies).
 
 This interop guide is based on the
 [AWS-peer-gateways](https://cloud.google.com/vpn/docs/concepts/topologies#aws_peer_gateways) topology
@@ -52,10 +56,10 @@ using with `REDUNDANCY_TYPE` of `FOUR_IPS_REDUNDANCY`.
 
 There are three major gateway components to set up for this configuration, as shown in the following topology diagram:
 
--  An HA VPN gateway in GCP with two interfaces.
+-  An HA VPN gateway in Google Cloud with two interfaces.
 -  Two AWS virtual private gateways, which connect to your HA VPN gateway.
--  An external VPN gateway resource in GCP that represents your AWS virtual private gateway. This resource provides 
-   information to GCP about your AWS gateway.
+-  An external VPN gateway resource in Google Cloud that represents your AWS virtual private gateway. This resource provides 
+   information to Google Cloud about your AWS gateway.
 
 ![Topology diagram](https://storage.googleapis.com/gcp-community/tutorials/using-ha-vpn-with-aws/gcp-aws-ha-vpn-topology.png)
 
@@ -67,13 +71,13 @@ The supported AWS configuration uses a total of four tunnels:
 ## Before you begin
 
 1.  Review information about how
-    [dynamic routing](https://cloud.google.com/vpn/docs/concepts/choosing-networks-routing#dynamic-routing)
-    works in GCP.
+    [dynamic routing](https://cloud.google.com/network-connectivity/docs/vpn/concepts/choosing-networks-routing#dynamic-routing)
+    works in Google Cloud.
 
-1.  Select or [create](https://console.cloud.google.com/cloud-resource-manager) a GCP project.
+1.  Select or [create](https://console.cloud.google.com/cloud-resource-manager) a Google Cloud project.
 
 1.  Make sure that [billing](https://cloud.google.com/billing/docs/how-to/modify-project) is
-    enabled for your GCP project.
+    enabled for your Google Cloud project.
 
 1.  [Install and initialize the Cloud SDK](https://cloud.google.com/sdk/docs/).
 
@@ -91,28 +95,28 @@ The supported AWS configuration uses a total of four tunnels:
 ### Configuration parameters and values
 
 The `gcloud` commands in this guide include parameters whose value you must
-provide. For example, a command might include a GCP project name or a region or
+provide. For example, a command might include a Google Cloud project name or a region or
 other parameters whose values are unique to your context. The following table
 lists the parameters and gives examples of the values used in this guide.
 
 | Parameter description | Placeholder          | Example value                                          |
 |-----------------------|----------------------|--------------------------------------------------------|
 | Vendor name           | `[VENDOR_NAME]`      | AWS                                                    |
-| GCP project name      | `[PROJECT_NAME]`     | `vpn-guide`                                            |
-| Shared secret         | `[SHARED_SECRET_0]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
-| Shared secret         | `[SHARED_SECRET_1]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
-| Shared secret         | `[SHARED_SECRET_2]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
-| Shared secret         | `[SHARED_SECRET_3]`    | See [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key).                                   |
+| Google Cloud project name      | `[PROJECT_NAME]`     | `vpn-guide`                                            |
+| Shared secret         | `[SHARED_SECRET_0]`    | See [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key).                                   |
+| Shared secret         | `[SHARED_SECRET_1]`    | See [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key).                                   |
+| Shared secret         | `[SHARED_SECRET_2]`    | See [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key).                                   |
+| Shared secret         | `[SHARED_SECRET_3]`    | See [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key).                                   |
 | VPC network name      | `[NETWORK]`          | `network-a`                                            |
 | Subnet mode           | `[SUBNET_MODE]`      | `custom`                                               |
 | VPN BGP routing mode  | `[BGP_ROUTING_MODE]` | `global`                                               |
-| Subnet on the GCP VPC network | `[SUBNET_NAME_1]` | `subnet-a-central` |
-| Subnet on the GCP VPC network | `[SUBNET_NAME_2]` | `subnet-a-west` |
-| GCP region. Can be any region, but should be geographically close to on-premises gateway. | `[REGION1]` | `us-central1` |
-| GCP region. Can be any region, but should be geographically close to on-premises gateway. | `[REGION2]` | `us-west1` |
-| IP address range for the GCP VPC subnet | `[RANGE_1]` | `10.0.1.0/24` |
-| IP address range for the GCP VPC subnet | `[RANGE_2]` | `10.0.2.0/24` |
-| IP address range for the AWS subnet. You will use this range when creating rules for inbound traffic to GCP. | `[IP_ON_PREM_SUBNET]` | `192.168.1.0/24` |
+| Subnet on the Google Cloud VPC network | `[SUBNET_NAME_1]` | `subnet-a-central` |
+| Subnet on the Google Cloud VPC network | `[SUBNET_NAME_2]` | `subnet-a-west` |
+| Google Cloud region. Can be any region, but should be geographically close to on-premises gateway. | `[REGION1]` | `us-central1` |
+| Google Cloud region. Can be any region, but should be geographically close to on-premises gateway. | `[REGION2]` | `us-west1` |
+| IP address range for the Google Cloud VPC subnet | `[RANGE_1]` | `10.0.1.0/24` |
+| IP address range for the Google Cloud VPC subnet | `[RANGE_2]` | `10.0.2.0/24` |
+| IP address range for the AWS subnet. You will use this range when creating rules for inbound traffic to Google Cloud. | `[IP_ON_PREM_SUBNET]` | `192.168.1.0/24` |
 | First external IP address for the first AWS VPN connection  | `[AWS_GW_IP_0]` | `52.52.128.71` |
 | Second external IP address for the first AWS VPN connection  | `[AWS_GW_IP_1]` | `184.169.223.3` |
 | First external IP address for the second AWS VPN connection  | `[AWS_GW_IP_2]` | `13.52.115.71` |
@@ -142,17 +146,17 @@ Because HA VPN is dependent on BGP IP settings generated by AWS, you must config
 1.  Create four VPN tunnels on the HA VPN gateway.
 1.  Configure BGP sessions on the Cloud Router using the BGP IP addresses from the downloaded AWS configuration files.
 
-## Configure the GCP side
+## Configure the Google Cloud side
 
 This section covers how to configure HA VPN.
 
-There are two ways to create HA VPN gateways on GCP: using the GCP Console and using
+There are two ways to create HA VPN gateways on Google Cloud: using the Cloud Console and using
 [`gcloud` commands](https://cloud.google.com/sdk/gcloud). This section describes how to perform the tasks
 using `gcloud` commands.
 
 ### Initial tasks
 
-Complete the following procedures before configuring a GCP HA VPN gateway and tunnel.
+Complete the following procedures before configuring a Google Cloud HA VPN gateway and tunnel.
 
 These instructions create a [custom mode](https://cloud.google.com/vpc/docs/vpc#subnet-ranges)
 VPC network with one subnet in one region and another subnet in another region.
@@ -231,7 +235,7 @@ Create a Cloud Router:
 
 Replace the placeholders as follows:
 
-- `[ROUTER_NAME]`: The name of the new Cloud Router, which you must create in the same GCP
+- `[ROUTER_NAME]`: The name of the new Cloud Router, which you must create in the same Google Cloud
   region as the Cloud HA VPN gateway.
 - `[GOOGLE_ASN]`: Any private ASN (64512-65534, 4200000000-4294967294) that you are not
   already using in the peer network. The Google ASN is used for all BGP sessions on the
@@ -290,7 +294,7 @@ results in IP fragmentation of IKE packets on the AWS side, which Cloud VPN does
      1. For **Tunnel 1** and **Tunnel 2**, specify the **Inside IP CIDR** for your AWS VPC network, 
         which is a BGP IP address from a /30 CIDR in the `169.254.0.0/16` range. 
         For example, `169.254.1.4/30`. This address must not overlap with the BGP IP address 
-        for the GCP side. When you specify the pre-shared key, you must use the same pre-shared
+        for the Google Cloud side. When you specify the pre-shared key, you must use the same pre-shared
         key for the tunnel from the HA VPN gateway side. If you specify a key, AWS doesn't autogenerate it.
      1. Click **Create VPN connection**.
      
@@ -314,10 +318,10 @@ but use the IP address generated for HA VPN gateway interface 1 instead. Use the
 
 ## Create an external VPN gateway resource
 
-When you create a GCP external VPN gateway resource for an AWS virtual private gateway, 
+When you create a Google Cloud external VPN gateway resource for an AWS virtual private gateway, 
 you must create it with four interfaces, as as shown in the AWS topology diagram.
 
-Note: For successful configuration, you must use the public IP addresses for the AWS 
+For successful configuration, you must use the public IP addresses for the AWS 
 interfaces as referenced in the two AWS configuration files you downloaded earlier.
 You must also match each AWS public IP address exactly with a specific HA VPN interface. 
 The instructions below describe this task in detail.
@@ -337,11 +341,8 @@ Use the following command to create the External VPN gateway resource. Replace t
     under **IPSec tunnel #2, #3 Tunnel Interface Configuration**, use the IP address under
     **Outside IP address, Virtual private gateway**.
 
-        gcloud compute external-vpn-gateways create [PEER_GW_NAME] \
-        --interfaces 0=[AWS_GW_IP_0],  \
-                     1=[AWS_GW_IP_1],  \
-                     2=[AWS_GW_IP_2],  \
-                     3=[AWS_GW_IP_3]
+        gcloud compute external-vpn-gateways create [PEER_GW_NAME] --interfaces \
+        0=[AWS_GW_IP_0],1=[AWS_GW_IP_1],2=[AWS_GW_IP_2],3=[AWS_GW_IP_3]
 
 The command should look similar to the following example:
 
@@ -363,7 +364,7 @@ In the following commands to create each tunnel, replace the options as noted in
     recommended. All four tunnels created in this example use IKEv2.
 -   Replace `[SHARED_SECRET_0]` through `[SHARED_SECRET_3]` with the shared secret, which must be the same as the
     shared secret used for the partner tunnel you create on your AWS virtual gateway. See
-    [Generating a strong pre-shared key](https://cloud.google.com/vpn/docs/how-to/generating-pre-shared-key)
+    [Generating a strong pre-shared key](https://cloud.google.com/network-connectivity/docs/vpn/how-to/generating-pre-shared-key)
     for recommendations. You can also find the shared secrets in the AWS configuration files that you downloaded 
     earlier.
 -   Replace `[INT_NUM_0]` with the number `0` for the first interface on the HA VPN gateway you created earlier.
@@ -452,8 +453,8 @@ The command output should look similar to the following example:
 This section covers configuring a BGP interface and peer on Cloud Router for each of the four VPN tunnels configured 
 on the HA VPN gateway as described in the previous section.
 
-**Caution:** Because you must use the BGP IP addresses for both GCP and AWS from the AWS configuration files you downloaded
-earlier, you must specify GCP BGP IP addresses manually. For both the console and `gcloud` commands, if you don't specify 
+**Caution:** Because you must use the BGP IP addresses for both Google Cloud and AWS from the AWS configuration files you downloaded
+earlier, you must specify Google Cloud BGP IP addresses manually. For both the console and `gcloud` commands, if you don't specify 
 the BGP peer IP address, it is created automatically and won't match the addresses in the file downloaded from AWS.
 
 Create a Cloud Router BGP interface and BGP peer for each tunnel you previously configured on the HA VPN gateway interfaces.
@@ -474,10 +475,10 @@ Each BGP session on the same Cloud Router must use a unique /30 CIDR from the 16
 
 Follow the instructions below to assign BGP IP addresses to Cloud Router interfaces and to BGP peer interfaces.
 
-For each VPN tunnel, get the BGP IP addresses and ASNs for both AWS and GCP from the AWS configuration files you downloaded 
+For each VPN tunnel, get the BGP IP addresses and ASNs for both AWS and Google Cloud from the AWS configuration files you downloaded 
 earlier.
 
-Replace the options for the GCP side as noted below:
+Replace the options for the Google Cloud side as noted below:
 
 -   For `[GOOGLE_BGP_IP_0]`, in the configuration file you downloaded for AWS Connection 0, under
     **IPSec tunnel #1, #3 Tunnel Interface Configuration**, use the IP address under
@@ -651,7 +652,7 @@ Replace the options for the AWS side as noted below:
 There are two methods you can use to verify the Cloud Router configuration; one produces a short report and the other 
 produces a long report.
 
-The short report method lists only the GCP BGP interface name, the four BGP IP addresses (`[GOOGLE_BGP_IP_0]` through 
+The short report method lists only the Google Cloud BGP interface name, the four BGP IP addresses (`[GOOGLE_BGP_IP_0]` through 
 `[GOOGLE_BGP_IP_3]`) and the four AWS BGP IP addresses (`[AWS_GW_IP_0]` through `[AWS_GW_IP_3]`). The BGP IP addresses for 
 the interfaces most recently added to Cloud Router are listed with the highest index number. Use the AWS BGP IP addresses to 
 configure the connections on your AWS virtual gateway.
@@ -688,11 +689,11 @@ The command output should look similar to the following example:
     See [Launch a virtual machine](https://aws.amazon.com/getting-started/tutorials/launch-a-virtual-machine/)
     for AWS instructions.
 
-1.  After you have deployed VMs on both GCP and on-premises, you can use an ICMP echo (ping) test to test network 
+1.  After you have deployed VMs both on Google Cloud and on premises, you can use an ICMP echo (ping) test to test network 
     connectivity through the VPN tunnel.
 
-    1.  In the GCP Console, go to the **VM Instances** page.
-    1.  Find the GCP virtual machine you created.
+    1.  In the Cloud Console, go to the **VM Instances** page.
+    1.  Find the Google Cloud virtual machine you created.
     1.  In the **Connect** column, click **SSH**. A Cloud Shell window opens at the VM command line.
     1.  Ping a machine that's behind the on-premises gateway:
 
