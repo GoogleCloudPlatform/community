@@ -281,7 +281,9 @@ public class DlpDataCatalogTagsTutorial {
           ds2.setURL(currentUrl);
           connInside = ds2.getConnection();
           sqlQuery =
-              "SELECT * from " + currentDatabaseName + "." + currentTable + " limit " + limitMax;
+              // ADD ` to escape reserved keywords.
+              "SELECT * from " + "`" + currentDatabaseName + "`" + "." + "`" + currentTable +
+                  "`" + " limit " + limitMax;
         }
 
         Statement stmt = connInside.createStatement();
