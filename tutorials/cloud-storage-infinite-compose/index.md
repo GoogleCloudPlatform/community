@@ -18,12 +18,13 @@ documentation closely, you can see that there's more to the story:
   <tr>
    <td><code>sourceObjects[]</code>
    </td>
-   <td><i>The list of source objects that will be concatenated into a single object. There is a limit of 32 components that can be composed <strong>in a single operation</strong></i>.
+   <td>The list of source objects that will be concatenated into a single object. There is a limit of 32 components that can be composed <em>in a single operation</em>.
    </td>
   </tr>
 </table>
 
-The key here is the phrase *in a single operation*. This implies that you can do more in multiple operations. So, how many objects can be composed into one? 
+The important details here is the phrase *in a single operation*. This implies that you can do more in multiple operations. So, how many objects can be composed 
+into one? 
 
 The answer: It's effectively unlimited. Because you can append 0-byte objects, composition can go on forever—even after it saturates the
 [`componentCount`](https://cloud.google.com/storage/quotas#objects) 32-bit integer, which has a maximum value of 2,147,483,647. In practice, the number of 
@@ -179,14 +180,14 @@ This has some disadvantages, though they can be mitigated:
 *   A straightforward implementation would try to store the intermediate accumulator references in memory. If you have 5 billion items to compose, that means
     approximately 156 million objects in the first iteration. Dumping the object names to disk is a good workaround, and there are certainly even better ways to
     handle it.
-*   You'll be creating a lot of intermediate objects. 
+*   This approach creates a lot of intermediate objects. 
     *   As discussed, this would be _seriously expensive_ to do in a storage class with a minimum retention period. Each iteration of accumulators would have the
-        entire file size stored. Therefore, you can only use this approach economically in the Standard storage class. Note that while you can mix and match 
+        entire file size stored. Therefore, you can only use this approach economically in the Standard storage class. Though you can mix and match 
         storage classes in a bucket, you *cannot* compose across storage classes (for example, Nearline components to a Standard composed object).
-    *   Each accumulator will need a unique name. Appending a unique ID is easy enough, but for larger object names with larger component counts,
+    *   Each accumulator needs a unique name. You can append a unique ID, but for larger object names with larger component counts,
         [you might run out of characters](https://cloud.google.com/storage/docs/naming-objects).
 
-That said, for many cases this will work just fine, and it is much quicker than a single accumulator. It's a little more advanced, but having seen the simpler 
+That said, for many cases this approach works fine, and it is much quicker than a single accumulator. It's a little more advanced, but having seen the simpler 
 approach in action, it should be a straightforward evolution.
 
 As before, the primary function handles reading the list chunks, composing, and cleanup, but it does things quite differently. Now, you have to create 
@@ -244,7 +245,7 @@ def compose(object_path: str, slices: List[storage.Blob],
 
 Composing and deleting is the work that you want to parallelize, so you need to move it into its own callable for the executor, `compose_and_cleanup`. This 
 function gets the results of all of its assigned chunks (which have to be written in order to be composed), performs the composition, and then schedules the
-cleanup. The reason for scheduling the cleanup tasks separately is so that the composed blob can be returned as soon as possible, rather than waiting on the 
+cleanup. The reason for scheduling the cleanup tasks separately is so that the composed blob can be returned as soon as possible, rather than waiting for the 
 cleanup.
 
 ```python
@@ -271,9 +272,9 @@ def compose_and_cleanup(blob: storage.Blob, chunk: List[storage.Blob],
     return blob
 ```
 
-As something of a stylistic choice, the `ensure_results` function accepts a list of `storage.Blob` (which you have from the initial list), a list of
-`Future[storage.Blob]` (which you have from intermediate steps), or a mix of both, using the same code. This is what makes the `compose_and_cleanup` function
-block until its components are all complete.
+As something of a stylistic choice, the `ensure_results` function accepts a list of `storage.Blob` items (which you have from the initial list), a list of
+`Future[storage.Blob]` items (which you have from intermediate steps), or a mix of both, using the same code. This is what makes the `compose_and_cleanup` 
+function block until its components are all complete.
 
 ```python
 def ensure_results(maybe_futures: List[Any]) -> List[Any]:
