@@ -24,7 +24,7 @@ This tutorial uses billable components of Google Cloud, including the following:
 -  [Cloud Functions](https://cloud.google.com/functions/pricing)
 -  [Pub/Sub](https://cloud.google.com/pubsub/pricing)
 -  [Cloud Scheduler](https://cloud.google.com/scheduler/pricing)
--  [Google BigQuery](https://cloud.google.com/bigquery/pricing)
+-  [BigQuery](https://cloud.google.com/bigquery/pricing)
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 

@@ -169,7 +169,8 @@ create the new user.
 configuration files.
 
 * `-P` prompts you for the new user's password.
-     **Important**: For any system with an Internet connection, use a strong password to help keep the system secure.
+
+  **Important**: For any system with an Internet connection, use a strong password to help keep the system secure.
 
 * `-c` sets a limit for the number of connections for the new user. The value
 `5` is sufficient for replication purposes.
@@ -214,37 +215,37 @@ must add an entry for the user `repuser` to enable replication.
 This configuration file contains the main settings for Postgres. Here, you
 will modify the file to enable archiving and replication.
 
-**Important**: Don't forget to uncomment any lines
-you edit in the configuration files, or your changes won't take effect.
+**Important**: Don't forget to uncomment any lines you edit in the configuration files, or your changes won't take effect.
 
-1. Edit the file. In the terminal for the primary server, enter the following
-command:
+1.  Edit the file. In the terminal for the primary server, enter the following command:
 
         $ nano ../../etc/postgresql/9.3/main/postgresql.conf
 
-1. In the **WRITE AHEAD LOG** section, in the **Settings** section, change the
-WAL level:
+1.  In the **WRITE AHEAD LOG** section, in the **Settings** section, change the WAL level:
 
         wal_level = hot_standby
 
-1. In the **Archiving** section, change the archive mode:
+1.  In the **Archiving** section, change the archive mode:
 
         archive_mode = on
 
-1. Change the value for the archive command. This setting tells Postgres to
-write the archive files to the directory that you created in a previous step:
+1.  Change the value for the archive command. This setting tells Postgres to write the archive files to the directory that you created in a previous step:
 
-        archive_command = 'test ! -f mnt/server/archivedir/%f && cp %p mnt/server/archivedir/%f'
+    *   Windows:
+    
+            archive_command = 'copy "%p" "C:\\server\\archivedir\\%f"'
+            
+    *   Linux and Unix-like operating systems:
+    
+            archive_command = 'test ! -f /mnt/server/archivedir/%f && cp %p /mnt/server/archivedir/%f'
 
-1. In the **REPLICATION** section, in the **Sending Server(s)** section,
-change the value for the maximum number of WAL sender processes:
+1.  In the **REPLICATION** section, in the **Sending Server(s)** section, change the value for the maximum number of WAL sender processes:
 
         max_wal_senders = 3
 
-    For this tutorial, the value of `3` is sufficient to enable backup and
-    replication.
+    For this tutorial, the value of `3` is sufficient to enable backup and replication.
 
-1. Save and close the file.
+1.  Save and close the file.
 
 ### Restart the primary server
 
@@ -272,20 +273,17 @@ streaming replication will fail to start.
 The backup utility, named `pg_basebackup`, will copy files from the data
 directory on the primary server to the same directory on the standby server.
 
-1. Make sure you're running commands in the root shell. In the SSH terminal
-for the standby server, enter the following command:
+1.  Make sure you're running commands in the root shell. In the SSH terminal for the standby server, enter the following command:
 
         $ sudo -s
 
     Continue to use the root shell for the remainder of this tutorial.
 
-1. The backup utility won't overwrite existing files, so you must rename the
-data directory on the standby server. Run the following command:
+1.  The backup utility won't overwrite existing files, so you must rename the data directory on the standby server. Run the following command:
 
         $ mv ../../var/lib/postgresql/9.3/main ../../var/lib/postgresql/9.3/main_old
 
-1. Run the backup utility. Replace `[primary-IP]` with the external IP address
-of the primary server.
+1.  Run the backup utility. Replace `[primary-IP]` with the external IP address of the primary server.
 
         $ sudo -u postgres pg_basebackup -h [primary IP] -D /var/lib/postgresql/9.3/main -U repuser -v -P --xlog-method=stream
 
@@ -294,7 +292,6 @@ of the primary server.
 
 The backup process should take just a few moments. When it's done, you can move
 on to configuring the standby server.
-
 
 ## Configuring the standby server
 
@@ -306,8 +303,7 @@ configuration file named `recovery.conf`.
 For the standby server, you only need to change one setting in this file. Follow
 these steps:
 
-1. Edit the file. In the terminal for the standby server, enter the following
-command:
+1. Edit the file. In the terminal for the standby server, enter the following command:
 
         $ nano ../../etc/postgresql/9.3/main/postgresql.conf
 
@@ -495,8 +491,6 @@ To delete a firewall rule:
 1. Click the checkbox next to the firewall rule you want to delete.
 1. Click the **Delete** button at the top of the page to delete the firewall rule.
 
-
 ## Next steps
 
 * Explore the [PostgreSQL documentation](https://www.postgresql.org/docs/).
-

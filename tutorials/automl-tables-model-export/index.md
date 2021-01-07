@@ -23,6 +23,10 @@ model in [TensorBoard](https://www.tensorflow.org/tensorboard).
 This tutorial uses the [Cloud Console](https://console.cloud.google.com/automl-tables/datasets), but you could also accomplish the same steps through the 
 command-line interface or using the [AutoML Tables client libraries](https://googleapis.dev/python/automl/latest/gapic/v1beta1/tables.html).
 
+> **Note**: This tutorial applies to the AutoML Tables service as accessed here: https://console.cloud.google.com/automl-tables/. Export of the
+([Preview) AutoML Tabular models](https://console.cloud.google.com/ai/platform/models) requires a slightly different process. We intend to update this tutorial
+soon to include both.
+
 ## About the dataset and scenario
 
 The [Cloud Public Datasets Program](https://cloud.google.com/bigquery/public-data/) makes available public datasets that are useful for experimenting with 
@@ -194,6 +198,9 @@ Viewing your exported model in TensorBoard requires a conversion step. You need 
 
 ## Create a Cloud Run service based on your exported model
 
+> **Note**: Currently, this part of the tutorial doesn't work properly because of a change in the `model_server` base image, though you can still use your
+created container image locally. We intend to update this tutorial soon with a fix.
+
 At this point, you have a trained model that you've exported and tested locally. You are almost ready to deploy it to
 [Cloud Run](https://cloud.google.com/run/docs/). As the last step of preparation, you create a container image that uses 
 `gcr.io/cloud-automl-tables-public/model_server` as a base image and adds the model directory, and you push that image to the
@@ -206,7 +213,7 @@ At this point, you have a trained model that you've exported and tested locally.
 
         FROM gcr.io/cloud-automl-tables-public/model_server
 
-        ADD model-export/tbl/[YOUR_RENAMED_DIRECTORY]/models/default/0000001
+        ADD model-export/tbl/[YOUR_RENAMED_DIRECTORY] /models/default/0000001
 
     The template is in
     [`Dockerfile.template`](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/automl-tables-model-export/Dockerfile.template), too.
