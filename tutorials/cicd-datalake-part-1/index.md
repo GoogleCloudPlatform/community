@@ -18,9 +18,9 @@ maintainability, and adaptability of the data lake data processing pipelines.
 
 This document show you how to do the following:
 
-*  Set up continuous integration and continuous delivery (CI/CD) for a data lake’s data processing pipelines by implementing CI/CD methods with Terraform,    
-   GitHub, and Cloud Build using the popular GitOps methodology.
-*  Build serverless data processing and CI/CD pipelines.
+* Set up continuous integration and continuous delivery (CI/CD) for a data lake’s data processing pipelines by implementing CI/CD methods with Terraform,
+  GitHub, and Cloud Build using the popular GitOps methodology.
+* Build serverless data processing and CI/CD pipelines.
 
 This document covers building CI/CD pipelines for data lakes for serveless data services Cloud Storage, Dataflow, and BigQuery. A future document in this series
 will cover building CI/CD pipelines for data lakes for Apache Spark applications on Dataproc.
@@ -52,33 +52,35 @@ In this solution, you build a serverless data processing pipeline as shown in th
 
 ![Deployment architecture](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/architecture1.png)
 
+The general outline of the process is as follows:
+
 1.  Create a Cloud Storage bucket. 
 1.  Load sample data and define schema and mapping files.
 1.  Create a Dataflow pipeline.
 1.  Create a dataset and table in BigQuery. 
 1.  Load data into the BigQuery table.
 
-![DataLake-CICD-Part1](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/architecture2.png)
-
 In addition to a serverless data processing pipeline, you also build a CI/CD pipeline for data processing that enables version control, allowing you to build,
 test, and deploy this code into various environments.
+
+![DataLake-CICD-Part1](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/architecture2.png)
 
 While implementing this architecture in your production environment, make sure to consider factors like security, monitoring, failure handling, and any 
 operational issues.
 
 ## Prerequisites
 
-* Google Cloud account: If you don’t already have one, you can [sign up for a new account](https://accounts.google.com/SignUp).
+* **Google Cloud account**: If you don’t already have one, you can [sign up for a new account](https://accounts.google.com/SignUp).
 
-* Google Cloud project: You can create a new project or select an existing project in the [Cloud Console](https://console.cloud.google.com/project).
+* **Google Cloud project**: You can create a new project or select an existing project in the [Cloud Console](https://console.cloud.google.com/project).
 
   If you don't plan to keep the resources that you create in this document, create a project instead of selecting an existing project. After you finish these
   steps, you can delete the project, removing all resources associated with the project.
 
-* GitHub account: If you don’t already have one, you can [sign up for a new account](https://github.com/join)).
+* **GitHub account**: If you don’t already have one, you can [sign up for a new account](https://github.com/join)).
 
-* Cloud Shell: In this document, you run commands in [Cloud Shell](https://cloud.google.com/shell/docs). Cloud Shell is a shell environment with the Cloud SDK 
-  already installed, including the `gcloud` command-line tool, and with values already set for your current project.
+* **Cloud Shell**: In this document, you run commands in [Cloud Shell](https://cloud.google.com/shell/docs). Cloud Shell is a shell environment with the Cloud 
+  SDK already installed, including the `gcloud` command-line tool, and with values already set for your current project.
 
 ## Costs
 
@@ -165,11 +167,11 @@ In this section, you go through the following steps:
 You use a single GitHub repository to define your cloud infrastructure and orchestrate this infrastructure by having different branches corresponding to 
 different environments:
 
-*   The *dev* branch contains the latest changes that are applied to the development environment.
-*   The *prod* branch contains the latest changes that are applied to the production environment.
+*   The `dev` branch contains the latest changes that are applied to the development environment.
+*   The `prod` branch contains the latest changes that are applied to the production environment.
 
 With this infrastructure, you can always reference the repository to know what configuration is expected in each environment and to propose new changes by first
-merging them into the *dev* environment. You can then promote the changes by merging the *dev* branch into the subsequent *prod* branch.
+merging them into the `dev` environment. You can then promote the changes by merging the `dev` branch into the subsequent `prod` branch.
 
 1.  In Cloud Shell, clone the [Google Cloud Community](https://github.com/GoogleCloudPlatform/community) repository:
 
@@ -211,7 +213,7 @@ The code in this repository is structured as follows:
    * `terraform plan`
    * `terraform apply`
 
- * For dev and prod branches, the following steps are executed:
+  For dev and prod branches, the following steps are executed:
    * `terraform init` for all environments' subfolders
    * `terraform plan` for all environments' subfolders
 
