@@ -36,7 +36,7 @@ You will use the following Google Cloud services and open source tools throughou
 [Terraform](https://www.terraform.io/) is an open source tool that uses “Infrastructure as Code” to provision and manage any [Google Cloud resources](https://cloud.google.com/docs/terraform). We use terraform to create a data processing pipeline using  “Infrastructure as code”.
 
 ## Deployment Architecture
-![Deployment Architecture](./images/architecture1.png)
+![Deployment Architecture](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/architecture1.png)
 
 In this solution, you will build a serverless data processing pipeline  as shown in the architecture above:
 
@@ -46,7 +46,7 @@ In this solution, you will build a serverless data processing pipeline  as shown
 1.  Create Dataset and Table in BigQuery 
 1.  Load data into the BigQuery Table.
 
-![DataLake-CICD-Part1](./images/architecture2.png)
+![DataLake-CICD-Part1](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/architecture2.png)
 
 In addition to a serverless data processing pipeline, you will build a CI/CD pipeline for data processing (shown in architecture diagram 1) that enables version control - allowing you to  build, test and deploy this code into various environments.
 
@@ -224,7 +224,7 @@ The following steps provide instructions for installing the app only for the **[
 
 1.  If this is your first time configuring an app in GitHub, click **Setup with Google Cloud Build**. Otherwise, click **Edit your plan**, select your billing information and, in the **Edit your plan** page, click **grant this app access**.
 
-    ![Image2](./images/image2.png)
+    ![Image2](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image2.png)
 
 1.  In the **Install Google Cloud Build** page, select **Only select repositories** and enter **Your-github-username**/cicd-datalake-part-1 to connect to your repository.
 
@@ -233,7 +233,7 @@ The following steps provide instructions for installing the app only for the **[
 1.  Sign in to Google Cloud.
     The **Authorization** page is displayed. You are asked to authorize the Cloud Build GitHub app to connect to Google Cloud.
     
-    ![Image3](./images/image3.png)
+    ![Image3](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image3.png)
 
 1.  Click **Authorize Google Cloud Build by GoogleCloudBuild**.
     You are redirected to the Cloud Console.
@@ -272,7 +272,7 @@ Following the previous steps, you should have a configuration to establish conne
 	    _SERVICE_ACCOUNT_EMAIL=Your service account email created in the environment setup section (ex:datalake-deployer@solutions-295116.iam.gserviceaccount.com or use echo $SA_EMAIL on the cloud cli to find out yours)
         _SOURCE_GCS_BUCKET= Your source files GCS bucket, Created in the bucket creation section (ex:solutions-295116 (you have used same name as project name)
 
-      ![Image4](./images/image4.png)
+      ![Image4](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image4.png)
 
 1.  Click **Create**
 
@@ -284,7 +284,7 @@ By now, you have most of your environment configured. So now it's time to make s
 
 1.  Make sure you are in the *dev* branch.
 
-    ![Image5](./images/image5.png)
+    ![Image5](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image5.png)
 
 1.  To open the file for editing, go to the **environments/dev/main.tf** file and click the pencil icon.
 
@@ -300,7 +300,7 @@ By now, you have most of your environment configured. So now it's time to make s
 
 1.  Click **Show all checks** and wait for the check to become green.
 
-    ![Image6](./images/image6.png)
+    ![Image6](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image6.png)
 
 1.  In the Cloud Console, go to the **Cloud Build History** page and see build details.
 
@@ -318,11 +318,11 @@ You have a pull request waiting to be merged. It's time to apply the state you w
 
 1.  Click **Merge pull request**, and then click **Confirm merge**.
 
-    ![Image7](./images/image7.png)
+    ![Image7](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image7.png)
 
 1.  Check that a new Cloud Build has been triggered in the Cloud Console **Cloud Build History** Page, Make sure it is successful.
 
-    ![Image18](./images/image18.png)
+    ![Image18](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image18.png)
 
 1.  Once the Cloud Build has successfully run, it will create a data processing pipeline in the *Dev* environment with the following actions.
 
@@ -334,11 +334,11 @@ You have a pull request waiting to be merged. It's time to apply the state you w
 
 1.  Open Data flow window in the Cloud Console to check the job status
 
-    ![Image8](./images/image8.png)
+    ![Image8](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image8.png)
 
 1.  After successful completion of the Dataflow job, a BigQuery Dataset and table will be created and have loaded the data csv file in GCS bucket to BigQuery Table.
 
-    ![Image9](./images/image9.png)
+    ![Image9](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image9.png)
 
 ## 8. Promoting changes to the production environment
 
@@ -350,7 +350,7 @@ Now that you have your development environment fully tested, you can promote you
 
 1.  For **base**, select prod and for **compare**, select *dev*.
     
-    ![Image11](./images/image11.png)
+    ![Image11](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image11.png)
 
 1.  Click **Create pull request**
 
@@ -360,23 +360,23 @@ Now that you have your development environment fully tested, you can promote you
 
 1.  Click **Confirm merge**.
 	
-    ![Image12](./images/image12.png)
+    ![Image12](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image12.png)
 
-    ![Image13](./images/image13.png)
+    ![Image13](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image13.png)
  
 1.  In the Cloud Console, open the **Build History** page to see your changes being applied to the production environment.
 
-    ![Image14](./images/image14.png)
+    ![Image14](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image14.png)
 
 1.  Open Data flow window to see the job status
 
-    ![Image15](./images/image15.png)
+    ![Image15](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image15.png)
    
 1.  Wait for the Dataflow to finish, and then check BigQuery to make sure the job created the production dataset and tables.
     
-    ![Image16](./images/image16.png)
+    ![Image16](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image16.png)
 
-    ![Image17](./images/image17.png)
+    ![Image17](https://storage.googleapis.com/gcp-community/tutorials/cicd-datalake-part-1/image17.png)
 
 ## Conclusion
 
