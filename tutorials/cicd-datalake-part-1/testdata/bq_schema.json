@@ -1,0 +1,67 @@
+    {"BigQuery Schema":[{
+		"description": "card_type_full_name",
+		"mode": "NULLABLE",
+		"name": "card_type_full_name",
+		"type": "STRING"
+	},
+	{
+		"description": "issuing_bank",
+		"mode": "NULLABLE",
+		"name": "issuing_bank",
+		"type": "STRING"
+	},
+	{
+		"description": "card_number",
+		"mode": "NULLABLE",
+		"name": "card_number",
+		"type": "STRING"
+	},
+	{
+		"description": "card_holders_name ",
+		"mode": "NULLABLE",
+		"name": "card_holders_name",
+		"type": "STRING"
+	},
+	{
+		"description": "cvvcvv2 ",
+		"mode": "NULLABLE",
+		"name": "cvvcvv2",
+		"type": "STRING"
+	},
+	{
+		"description": "issue_date",
+		"mode": "NULLABLE",
+		"name": "issue_date",
+		"type": "STRING"
+	},
+	{
+		"description": "expiry_date",
+		"mode": "NULLABLE",
+		"name": "expiry_date",
+		"type": "STRING"
+	},
+	{
+		"description": "billing_date",
+		"mode": "NULLABLE",
+		"name": "billing_date",
+		"type": "STRING"
+	},
+	{
+		"description": "card_pin",
+		"mode": "NULLABLE",
+		"name": "card_pin",
+		"type": "STRING"
+	},
+	{
+		"description": "credit_limit",
+		"mode": "NULLABLE",
+		"name": "credit_limit",
+		"type": "STRING"
+	},
+	{
+		"description": "card_type_code",
+		"mode": "NULLABLE",
+		"name": "card_type_code",
+		"type": "STRING"
+	}
+]}
