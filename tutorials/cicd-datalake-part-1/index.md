@@ -1,6 +1,6 @@
 ---
 title: Building CI/CD pipelines for a data lake for serverless data processing services
-description: Learn how to set up continuous integration and continuous delivery for a data lake’s data processing pipelines with Terraform, GitHub, and Cloud Build using the popular GitOps methodology.
+description: Learn how to set up continuous integration and continuous delivery for a data lake's data processing pipelines with Terraform, GitHub, and Cloud Build using the popular GitOps methodology.
 author: prasadalle
 tags: datalake, analytics, cicd, Cloud Build, Big Query, Dataflow, GCS, GitHub, devops, GitOps, continuous integration, continuous deployment
 date_published: 2021-01-08
