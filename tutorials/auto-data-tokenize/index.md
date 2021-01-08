@@ -1,7 +1,7 @@
 ---
 title: Automatically tokenize sensitive data using Cloud DLP, Cloud KMS and Dataflow
 description: A tool to tokenize Avro/Parquet files at bulk.
-author: anantdamle 
+author: anantdamle
 tags: data governance, DLP, encryption, tokenization, de-identification, data migration, Dataflow
 date_published: 2021-01-08
 ---
