@@ -19,7 +19,7 @@ variable "project_id" {
 
 variable "region" {
   type        = string
-  description = "The region in which the bucket and the dataflow job will be deployed"
+  description = "The region in which the bucket and the Dataflow job will be deployed"
   default     = "us-west1"
 }
 
@@ -30,5 +30,5 @@ variable "service_account_email" {
 
 variable "source_gcs_bucket" {
   type        = string
-  description = "The Source GCS Bucket."
+  description = "The source Cloud Storage bucket."
 }
