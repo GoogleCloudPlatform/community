@@ -2,8 +2,8 @@
 title: Composing an infinite number of objects into one object in Cloud Storage
 description: Overview of the APIs and programming techniques for being a power user of the Cloud Storage compose feature.
 author: domZippilli
-tags: object storage, compose, concatenate, 
-date_published: 2021-01-08
+tags: object storage, compose, concatenate
+date_published: 2021-01-06
 ---
 
 Dom Zippilli | Solutions Architect | Google Cloud
