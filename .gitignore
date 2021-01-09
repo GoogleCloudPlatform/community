@@ -25,6 +25,7 @@ package-lock.json
 
 tutorials/cloud-iot-coap-proxy/coap-dtls-client/target/
 tutorials/cloud-iot-coap-proxy/proxy/target/
+tutorials/cicd-datalake-part-1/testdata/
 
 target/
 *.iml
