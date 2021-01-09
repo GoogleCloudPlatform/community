@@ -1,13 +1,14 @@
 ---
 title: Building CI/CD pipelines for a data lake for serverless data processing services
-description: Learn how to set up continuous integration and continuous delivery for data lakes' data processing pipelines with Terraform, GitHub, and Cloud Build using the popular GitOps methodology.
+description: Learn how to set up continuous integration and continuous delivery for a data lake's data processing pipeline with Terraform, GitHub, and Cloud Build using the popular GitOps methodology.
 author: prasadalle
 tags: datalake, analytics, cicd, Cloud Build, Big Query, Dataflow, GCS, GitHub, devops, GitOps, continuous integration, continuous deployment
 date_published: 2021-01-08
 ---
 
 Prasad Alle | Customer Engineer, Data and Analytics Specialist | Google
-<p style="background-color:Blue;"><i>Contributed by Google employees.</i></p>
+
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 Many enterprise customers build data processing pipelines for a [data lake](https://en.wikipedia.org/wiki/Data_lake) on Google Cloud. They often have
 [hybrid and multi-cloud architecture patterns](https://cloud.google.com/solutions/hybrid-and-multi-cloud-architecture-patterns) and use CI/CD tools, yet see 
@@ -207,13 +208,15 @@ The code in this repository is structured as follows:
 
 * The `cloudbuild.yaml` file is a build configuration file that contains instructions for Cloud Build, such as how to perform tasks based on a set of steps.
   This file specifies conditional execution depending on the branch that Cloud Build is fetching the code from.
-  
-  For *dev* and *prod* branches, the following steps are executed:
+
+  For `dev` and `prod` branches, the following steps are executed:
+
    * `terraform init`
    * `terraform plan`
    * `terraform apply`
 
-  For dev and prod branches, the following steps are executed:
+  For `dev` and `prod` branches, the following steps are executed:
+
    * `terraform init` for all environments' subfolders
    * `terraform plan` for all environments' subfolders
 
