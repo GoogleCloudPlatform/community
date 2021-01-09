@@ -18,7 +18,7 @@ The following diagram shows the overall architecture of what you build in this t
 
 <img src="https://storage.googleapis.com/gcp-community/tutorials/ml-pipeline-with-workflows/architecture.png">
 
-In this tutorial, you deploy two microservices on Cloud Run: One microservice is to launch a Dataflow pipeline to preprocess the training data. The orignal data 
+In this tutorial, you deploy two microservices on Cloud Run: One microservice is to launch a Dataflow pipeline to preprocess the training data. The original data 
 stored in BigQuery is converted to CSV files and stored in a Cloud Storage bucket. The other microservice is to launch a machine learning training job on
 AI Platform and deploy the trained model for predictions. The machine learning model files are cloned from the GitHub repository.
 
