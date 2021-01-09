@@ -296,7 +296,7 @@ Run the following command to execute a Workflows job:
     gcloud beta workflows execute ml_workflow \
       --data="{\"limit\": 1000, \"bucket\": \"$BUCKET\", \"numTrainExamples\": 5000, \"numEvals\": 2, \"numEvalExamples\": 1000, \"modelName\": \"babyweight_model\", \"versionName\": \"v2\"}"
 
-You can monitor the status of the job in the [Cloud Console](https://pantheon.corp.google.com/workflows).
+You can monitor the status of the job in the [Cloud Console](https://console.cloud.google.com/workflows).
 
 When the job has successfully completed, run the following command to confirm that the model has been deployed:
 
