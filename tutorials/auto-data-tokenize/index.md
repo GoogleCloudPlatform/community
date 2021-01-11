@@ -16,8 +16,8 @@ information (PII), using [Cloud Data Loss Prevention (Cloud DLP)](https://cloud.
 for joining or analytics while reducing the risk of handling the data by obfuscating the raw sensitive identifiers.
 
 To minimize the risk of handling large volumes of sensitive data, you can use an automated data transformation pipeline to create de-identified datasets that can
-be used for migrating from on-premises to cloud or keep a de-identified replica for analytics. Cloud DLP can inspect the data for sensitive information when the 
-dataset has not been characterized, by using [more than 100 built-in classifiers](https://cloud.google.com/dlp/docs/infotypes-reference). 
+be used for migrating from on-premises to the cloud or keep a de-identified replica for analytics. When the dataset has not been characterized, Cloud DLP can 
+inspect the data for sensitive information using [more than 100 built-in classifiers](https://cloud.google.com/dlp/docs/infotypes-reference). 
 
 One of the daunting challenges during data migration to the cloud is how to manage sensitive data. The sensitive data can be in structured forms like analytics 
 tables or unstructured like chat history or transcription records. You can use Cloud DLP to identify sensitive data from both of these kinds of sources
@@ -28,8 +28,8 @@ followed by bulk encryption of sensitive columns. This approach reduces the cost
 representative sample, instead of all of the records. The throughput and cost of tokenization can be optimized by using envelope encryption for columns 
 classified as sensitive. 
 
-This document demonstrates a reference implementation of tokenizing structured data through two tasks: _sample and identify_, followed by _bulk tokenization_ 
-using symmetric encryption to tokenize data using envelope encryption.
+This document demonstrates a reference implementation of tokenizing structured data through two tasks: _sampling and identification_, followed by
+_bulk tokenization_ using symmetric encryption to tokenize data using envelope encryption.
 
 This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This guide assumes that 
 you're familiar with data processing and data privacy, without the need to be an expert. This document assumes some familiarity with shell scripts and basic 
@@ -67,25 +67,25 @@ Cloud Storage:
 The *tokenize* pipeline then encrypts the user-specified source columns using the schema information from the sample-and-identify pipeline and user-provided
 enveloped data encryption key. The tokenizing pipeline performs the following transforms on each of the records in the source file:
 
-  1. Unwrap data-encryption key using Cloud KMS.
+  1. Unwrap the data encryption key using Cloud KMS.
   1. Un-nest each record into a flat record.
   1. Tokenize required values using
      [deterministic AEAD](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data) encryption.
   1. Re-nest the flat record into an Avro record.
-  1. Write Avro file with encrypted fields.
+  1. Write an Avro file with encrypted fields.
 
 ### Concepts
 
-* [Envelope encryption](https://cloud.google.com/kms/docs/envelope-encryption) is a form of multi-layer encryption, involving the use of multiple layers of keys 
-  for encrypting data. It is the process of encrypting the actual data encryption key with another key to secure the data-encryption key.
+* [Envelope encryption](https://cloud.google.com/kms/docs/envelope-encryption) is a form of multi-layer encryption that uses multiple layers of keys 
+  for encrypting data. Envelope encryption is the process of encrypting the actual data encryption key with another key to secure the data encryption key.
 * [Cloud Key Management Service (Cloud KMS)](https://cloud.google.com/kms) provides management of encryption keys at scale.
 * [Tink](https://github.com/google/tink) is an open source library that provides APIs for handling encryption and decryption. Tink integrates with Cloud KMS for 
   use with envelope encryption.
-* [Deterministic Authenticated Encryption with Associated Data (AEAD)](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data) is used to serve following purposes:
+* [Deterministic Authenticated Encryption with Associated Data (AEAD)](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data) is used for the following purposes:
 
   * Permits use of the ciphertext as join keys. The deterministic property of the cipher ensures that ciphertext for the same plaintext is always the same.
     Using this property, you can use the encrypted data for performing statistical analysis like cardinality analysis and frequency analysis.
-  * Store signed plain-text within the cipher to assert authenticity.
+  * Store signed plaintext within the cipher to assert authenticity.
   * Reversibility. The use of a 2-way encryption algorithm permits reversing the algorithm to obtain the original plaintext. Hashing doesn't permit such 
     operations.
 
@@ -135,8 +135,8 @@ enveloped data encryption key. The tokenizing pipeline performs the following tr
       }
    
   In the `values` map, each leaf node of the contact record is mapped using a [JsonPath](https://goessner.net/articles/JsonPath/) notation.
-  The `keySchema` block shows a mapping between the leaf value's key's to a schema key to demonstrate that leaf-nodes of same type share the same key-schema.
-  For example, `$.contacts[0].contact.number` is logically the same as `$.contacts[1].contact.number`, because both of them have the same key-schema
+  The `keySchema` block shows a mapping between the leaf value's key to a schema key to demonstrate that leaf nodes of same type share the same key schema.
+  For example, `$.contacts[0].contact.number` is logically the same as `$.contacts[1].contact.number`, because both of them have the same key schema
   `$.contacts.contact.number`.
 
 ## Before you begin
@@ -144,71 +144,69 @@ enveloped data encryption key. The tokenizing pipeline performs the following tr
 For this tutorial, you need a Google Cloud [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). To make
 cleanup easiest at the end of the tutorial, we recommend that you create a new project for this tutorial.
 
-1. [Create a Google Cloud project](https://console.cloud.google.com/projectselector2/home/dashboard).
-1. Make sure that [billing is enabled](https://support.google.com/cloud/answer/6293499#enable-billing) for your Google
-   Cloud project.
-1. [Open Cloud Shell](https://console.cloud.google.com/?cloudshell=true).
+1.  [Create a Google Cloud project](https://console.cloud.google.com/projectselector2/home/dashboard).
+1.  Make sure that [billing is enabled](https://support.google.com/cloud/answer/6293499#enable-billing) for your Google
+    Cloud project.
+1.  [Open Cloud Shell](https://console.cloud.google.com/?cloudshell=true).
 
-   At the bottom of the Cloud Console, a [Cloud Shell](https://cloud.google.com/shell/docs/features) session opens and
-   displays a command-line prompt. Cloud Shell is a shell environment with the Cloud SDK already installed, including
-   the [gcloud](https://cloud.google.com/sdk/gcloud/) command-line tool, and with values already set for your current
-   project. It can take a few seconds for the session to initialize.
+    At the bottom of the Cloud Console, a [Cloud Shell](https://cloud.google.com/shell/docs/features) session opens and
+    displays a command-line prompt. Cloud Shell is a shell environment with the Cloud SDK already installed, including
+    the [gcloud](https://cloud.google.com/sdk/gcloud/) command-line tool, and with values already set for your current
+    project. It can take a few seconds for the session to initialize.
 
-1. Enable APIs for Cloud DLP, Cloud KMS, Compute Engine, Cloud Storage, Dataflow and BigQuery services with the following command:
-   ```shell script
-   gcloud services enable \
-   dlp.googleapis.com \
-   cloudkms.googleapis.com \
-   compute.googleapis.com \
-   storage.googleapis.com \
-   dataflow.googleapis.com \
-   bigquery.googleapis.com
-   ```
+1.  Enable APIs for Cloud DLP, Cloud KMS, Compute Engine, Cloud Storage, Dataflow, and BigQuery services:
+
+        gcloud services enable \
+        dlp.googleapis.com \
+        cloudkms.googleapis.com \
+        compute.googleapis.com \
+        storage.googleapis.com \
+        dataflow.googleapis.com \
+        bigquery.googleapis.com
 
 ## Setting up your environment
 
-1. In Cloud Shell, clone the source repository and go to the directory for this tutorial:
-   ```shell script
-   git clone https://github.com/GoogleCloudPlatform/auto-data-tokenize.git
-   cd auto-data-tokenize/
-   ```
+1.  In Cloud Shell, clone the source repository and go to the directory for this tutorial:
 
-1. Use a text editor of your choice to modify the `set_variables.sh` file to set required environment variables.
-   ```shell script   
-   # The Google Cloud project to use for this tutorial
-   export PROJECT_ID="<your-project-id>"
+        git clone https://github.com/GoogleCloudPlatform/auto-data-tokenize.git
+        cd auto-data-tokenize/
 
-   # The Compute Engine region to use for running Dataflow jobs and create a 
-   # temporary storage bucket
-   export REGION_ID="<compute-engine-region>"
+1.  Use a text editor to modify the `set_variables.sh` file to set the required environment variables:
 
-   # define the GCS bucket to use as temporary bucket for Dataflow
-   export TEMP_GCS_BUCKET="<name-of-the-bucket>"
+        # The Google Cloud project to use for this tutorial
+        export PROJECT_ID="[YOUR_PROJECT_ID]"
 
-   # Name of the service account to use (not the email address)
-   export DLP_RUNNER_SERVICE_ACCOUNT_NAME="<service-account-name-for-runner>"
+        # The Compute Engine region to use for running Dataflow jobs and create a 
+        # temporary storage bucket
+        export REGION_ID="[YOUR_COMPUTE_ENGINE_REGION]"
 
-   # Name of the GCP KMS key ring name
-   export KMS_KEYRING_ID="<key-ring-name>"
+        # The Cloud Storage bucket to use as a temporary bucket for Dataflow
+        export TEMP_GCS_BUCKET="[CLOUD_STORAGE_BUCKET_NAME]"
 
-   # name of the symmetric Key encryption kms-key-id
-   export KMS_KEY_ID="<key-id>"
+        # Name of the service account to use (not the email address)
+        export DLP_RUNNER_SERVICE_ACCOUNT_NAME="[SERVICE_ACCOUNT_NAME_FOR_RUNNER]"
 
-   # The JSON file containing the TINK Wrapped data-key to use for encryption
-   export WRAPPED_KEY_FILE="<path-to-the-data-encryption-key-file>"   
-   ````
+        # Name of the Cloud KMS key ring name
+        export KMS_KEYRING_ID="[KEY_RING_NAME]"
 
-1. Run the script to set the environment variables:
-   ```shell script
-   source set_variables.sh
-   ```
+        # name of the symmetric key encryption kms-key-id
+        export KMS_KEY_ID="[KEY_ID]"
+
+        # The JSON file containing the Tink wrapped data key to use for encryption
+        export WRAPPED_KEY_FILE="[PATH_TO_THE_DATA_ENCRYPTION_KEY_FILE]"   
+
+1.  Run the script to set the environment variables:
+
+        source set_variables.sh
 
 ## Creating resources
 
-The tutorial uses following resources
- * _Service account_ to run data flow pipelines enabling fine-grain access control
- * A symmetric Cloud KMS managed _Key Encryption key_, this is used to wrap the actual data encryption key
- * _Cloud Storage bucket_ for temporary data storage and test data
+The tutorial uses following resources:
+
+ * A service account to run Dataflow pipelines, enabling fine-grained access control
+ * A symmetric Cloud KMS managed [key encryption key (KEK)](https://cloud.google.com/kms/docs/envelope-encryption#key_encryption_keys), which is used to wrap the
+   actual data encryption key
+ * A Cloud Storage bucket for temporary data storage and test data
 
 ### Create service accounts
 
