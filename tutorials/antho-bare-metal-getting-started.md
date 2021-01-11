@@ -3,7 +3,7 @@ title: Getting started with Anthos for Bare Metal
 description: This tutorial covers deploying a sample Anthos on Bare Metal cluster.
 author: mikegcoleman
 tags: Kubernetes, Cluster
-date_published: 2020-1-13
+date_published: 2020-01-13
 ---
 
 Mike Coleman | Developer Advocate | Google
