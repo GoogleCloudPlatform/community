@@ -70,13 +70,13 @@ enveloped data encryption key. The tokenizing pipeline performs the following tr
   1. Unwrap the data encryption key using Cloud KMS.
   1. Un-nest each record into a flat record.
   1. Tokenize required values using
-     [deterministic AEAD](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data) encryption.
+     [deterministic AEAD](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data).
   1. Re-nest the flat record into an Avro record.
   1. Write an Avro file with encrypted fields.
 
 ### Concepts
 
-[Envelope encryption](https://cloud.google.com/kms/docs/envelope-encryption) is a form of multi-layer encryption that uses multiple layers of keys 
+[Envelope encryption](https://cloud.google.com/kms/docs/envelope-encryption) is a form of encryption that uses multiple layers of keys 
 for encrypting data. Envelope encryption is the process of encrypting the actual data encryption key with another key to secure the data encryption key.
 
 [Cloud Key Management Service (Cloud KMS)](https://cloud.google.com/kms) provides management of encryption keys at scale.
@@ -262,12 +262,12 @@ the DEK using a key encryption key (KEK) in [Cloud KMS](https://cloud.google.com
 
         gcloud kms keyrings create --project ${PROJECT_ID} --location ${REGION_ID} ${KMS_KEYRING_ID}
 
-1.  Create KMS symmetric key to use for encrypting your data encryption key:
+1.  Create a Cloud KMS symmetric key to use for encrypting your data encryption key:
 
         gcloud kms keys create --project ${PROJECT_ID} --keyring=${KMS_KEYRING_ID} --location=${REGION_ID} --purpose="encryption" ${KMS_KEY_ID}
 
-1.  Download and extract the latest version of [Tinkey](https://github.com/google/tink/blob/master/docs/TINKEY.md). Tinkey is an open source utility to create 
-    wrapped encryption keys.
+1.  Download and extract the latest version of [Tinkey](https://github.com/google/tink/blob/master/docs/TINKEY.md), is an open source utility to create 
+    wrapped encryption keys:
 
         mkdir tinkey/
         tar zxf tinkey-[VERSION].tar.gz -C tinkey/
@@ -307,7 +307,7 @@ You need to compile all of the modules to build executables for deploying the sa
 Run the sample-and-identify pipeline to identify sensitive columns in the data that you need to tokenize.
 
 The pipeline extracts `sampleSize` number of records, flattens the record and identifies sensitive columns
-using [Cloud DLP)](https://cloud.google.com/dlp). Cloud DLP provides functionality
+using [Cloud DLP](https://cloud.google.com/dlp). Cloud DLP provides functionality
 to [identify](https://cloud.google.com/dlp/docs/inspecting-text) sensitive information types. The Cloud DLP identify methods
 supports only flat tables, so the pipeline flattens the Avro or Parquet records, since they can contain nested or repeated fields.
 
