@@ -1,0 +1,32 @@
+[
+    {
+      "threadPoolSize": 2,
+      "sampleRowLimit": 1000,
+      "databaseType": "postgres",
+      "databaseInstanceDescription": "scanning-postgres-demo",
+      "databaseInstanceServer": "10.0.0.20",
+      "databaseName": "database1",
+      "databaseUser": "postgres",
+      "secretManagerResourceName": "demo_postgres_password"
+    },
+    {
+      "threadPoolSize": 2,
+      "sampleRowLimit": 1000,
+      "databaseType": "mysql",
+      "databaseInstanceDescription": "scanning-mysql-demo",
+      "databaseInstanceServer": "10.0.0.30",
+      "databaseName": "database1",
+      "databaseUser": "mysql",
+      "secretManagerResourceName": "demo_mysql_password"
+    },
+    {
+      "threadPoolSize": 2,
+      "sampleRowLimit": 1000,
+      "databaseType": "sqlserver",
+      "databaseInstanceDescription": "scanning-sqlserver-demo",
+      "databaseInstanceServer": "10.0.0.40",
+      "databaseName": "database1",
+      "databaseUser": "admin",
+      "secretManagerResourceName": "demo_sqlserver_password"
+    }
+]
