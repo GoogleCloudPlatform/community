@@ -310,10 +310,11 @@ sample_and_identify_pipeline --project="${PROJECT_ID}" \
 --serviceAccount=${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL} \
 --gcpTempLocation="gs://${TEMP_GCS_BUCKET}/temp" \
 --stagingLocation="gs://${TEMP_GCS_BUCKET}/staging" \
+--tempLocation="gs://${TEMP_GCS_BUCKET}/bqtemp" \
 --workerMachineType="n1-standard-1" \
 --sampleSize=500 \
---fileType="AVRO" \
---inputFilePattern="gs://${TEMP_GCS_BUCKET}/userdata.avro" \
+--sourceType="AVRO" \
+--inputPattern="gs://${TEMP_GCS_BUCKET}/userdata.avro" \
 --reportLocation="gs://${TEMP_GCS_BUCKET}/dlp_report/"
 ```
 
@@ -382,13 +383,14 @@ Encryption Key (DEK).
 tokenize_pipeline --project="${PROJECT_ID}" \
 --region="${REGION_ID}" \
 --runner="DataflowRunner" \
+--tempLocation="gs://${TEMP_GCS_BUCKET}/bqtemp" \
 --serviceAccount=${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL} \
 --workerMachineType="n1-standard-1" \
 --schema="$(<dlp_report/schema.json)" \
 --tinkEncryptionKeySetJson="$(<${WRAPPED_KEY_FILE})" \
 --mainKmsKeyUri="${MAIN_KMS_KEY_URI}" \
---fileType="AVRO" \
---inputFilePattern="gs://${TEMP_GCS_BUCKET}/userdata.avro" \
+--sourceType="AVRO" \
+--inputPattern="gs://${TEMP_GCS_BUCKET}/userdata.avro" \
 --outputDirectory="gs://${TEMP_GCS_BUCKET}/encrypted/" \
 --tokenizeColumns="$.kylosample.cc" \
 --tokenizeColumns="$.kylosample.email"
