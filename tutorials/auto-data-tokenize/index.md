@@ -302,146 +302,138 @@ You need to compile all of the modules to build executables for deploying the sa
 
 **Tip**: To skip running the tests, you can add the `-Dmaven.test.skip=true` flag.
 
-## Run Sample and Identify pipeline
+## Using the sample-and-identify pipeline
 
-Run the sample & identify pipeline to identify sensitive columns in the data you need to tokenize.
+Run the sample-and-identify pipeline to identify sensitive columns in the data that you need to tokenize.
 
 The pipeline extracts `sampleSize` number of records, flattens the record and identifies sensitive columns
-using [Data Loss Prevention (DLP)](https://cloud.google.com/dlp). Cloud DLP provides functionality
-to [identify](https://cloud.google.com/dlp/docs/inspecting-text) sensitive information-types. The DLP identify methods
-supports only flat tables, hence the pipeline flattens the Avro/Parquet records as they can contain nested and/or repeated fields.
+using [Cloud DLP)](https://cloud.google.com/dlp). Cloud DLP provides functionality
+to [identify](https://cloud.google.com/dlp/docs/inspecting-text) sensitive information types. The Cloud DLP identify methods
+supports only flat tables, so the pipeline flattens the Avro or Parquet records, since they can contain nested or repeated fields.
 
-### Launch sample & identify pipeline
+### Run the sample-and-identify pipeline
 
-```shell script
-sample_and_identify_pipeline --project="${PROJECT_ID}" \
---region="${REGION_ID}" \
---runner="DataflowRunner" \
---serviceAccount=${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL} \
---gcpTempLocation="gs://${TEMP_GCS_BUCKET}/temp" \
---stagingLocation="gs://${TEMP_GCS_BUCKET}/staging" \
---tempLocation="gs://${TEMP_GCS_BUCKET}/bqtemp" \
---workerMachineType="n1-standard-1" \
---sampleSize=500 \
---sourceType="AVRO" \
---inputPattern="gs://${TEMP_GCS_BUCKET}/userdata.avro" \
---reportLocation="gs://${TEMP_GCS_BUCKET}/dlp_report/"
-```
+    sample_and_identify_pipeline --project="${PROJECT_ID}" \
+    --region="${REGION_ID}" \
+    --runner="DataflowRunner" \
+    --serviceAccount=${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL} \
+    --gcpTempLocation="gs://${TEMP_GCS_BUCKET}/temp" \
+    --stagingLocation="gs://${TEMP_GCS_BUCKET}/staging" \
+    --tempLocation="gs://${TEMP_GCS_BUCKET}/bqtemp" \
+    --workerMachineType="n1-standard-1" \
+    --sampleSize=500 \
+    --sourceType="AVRO" \
+    --inputPattern="gs://${TEMP_GCS_BUCKET}/userdata.avro" \
+    --reportLocation="gs://${TEMP_GCS_BUCKET}/dlp_report/"
 
-The pipeline detects all the standard infotypes supported by DLP.
-Use `--observableInfoTypes` to provide additional custom info-types that you need.
+The pipeline detects all of the standard infoTypes supported by Cloud DLP.
 
-### Sample & Identify pipeline DAG
+To provide additional custom infoTypes that you need, use `--observableInfoTypes`.
 
-The Dataflow execution DAG would look like following:
+### Sample-and-identify pipeline DAG
 
-![Sample and Identify Pipeline DAG](https://storage.googleapis.com/gcp-community/tutorials/auto-data-tokenize/sample_and_identify_pipeline_dag.png)
+The Dataflow execution DAG (directed acyclic graph) looks like the following:
 
-### Retrieve report
+![Sample-and-identify pipeline DAG](https://storage.googleapis.com/gcp-community/tutorials/auto-data-tokenize/sample_and_identify_pipeline_dag.png)
 
-The sample & identify pipeline outputs the Avro schema (or converted for Parquet) of the files and one file for each of the columns detected to contain sensitive information. Retrieve the report to your local machine to have a look.
+### Retrieve the report
 
-```shell script
-mkdir -p dlp_report/ && rm dlp_report/*.json
-gsutil -m cp "gs://${TEMP_GCS_BUCKET}/dlp_report/*.json" dlp_report/
-```
+The sample-and-identify pipeline outputs the Avro schema (or converted for Parquet) of the files and one file for each of the columns determined to contain 
+sensitive information. 
 
-List all the column names that have been identified.
+1.  Retrieve the report to your local machine:
 
-```shell script
-cat dlp_report/col-*.json | jq .columnName
-```
-The output will match the following list.
+        mkdir -p dlp_report/ && rm dlp_report/*.json
+        gsutil -m cp "gs://${TEMP_GCS_BUCKET}/dlp_report/*.json" dlp_report/
 
-```text
-"$.kylosample.birthdate"
-"$.kylosample.cc"
-"$.kylosample.email"
-"$.kylosample.first_name"
-"$.kylosample.ip_address"
-"$.kylosample.last_name"
-```
+1.  List all of the column names that have been identified:
 
-You can view the details of the identified column by issuing `cat` command for the file.
+        cat dlp_report/col-*.json | jq .columnName
 
-```shell script
-cat dlp_report/col-kylosample-cc-00000-of-00001.json
-```
+    The output matches the following list:
 
-Following is a snippet of the `cc` column.
-```json
-{
-  "columnName": "$.kylosample.cc",
-  "infoTypes": [
-    {
-      "infoType": "CREDIT_CARD_NUMBER",
-      "count": "394"
-    }
-  ]
-}
-```
+        "$.kylosample.birthdate"
+        "$.kylosample.cc"
+        "$.kylosample.email"
+        "$.kylosample.first_name"
+        "$.kylosample.ip_address"
+        "$.kylosample.last_name"
 
-> The `"count"` value will vary based on the randomly selected samples during execution.
+1.  View the details of an identified column with the `cat` command for the file:
 
-## Launch bulk tokenize pipeline
+        cat dlp_report/col-kylosample-cc-00000-of-00001.json
 
-The sample & identify pipeline used few samples from the original dataset to identify sensitive information using
-DLP. The bulk tokenize pipeline processes the entire dataset and encrypts the desired columns using the provided Data
-Encryption Key (DEK).
+    The following is a snippet of the `cc` column:
 
-```shell script
-tokenize_pipeline --project="${PROJECT_ID}" \
---region="${REGION_ID}" \
---runner="DataflowRunner" \
---tempLocation="gs://${TEMP_GCS_BUCKET}/bqtemp" \
---serviceAccount=${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL} \
---workerMachineType="n1-standard-1" \
---schema="$(<dlp_report/schema.json)" \
---tinkEncryptionKeySetJson="$(<${WRAPPED_KEY_FILE})" \
---mainKmsKeyUri="${MAIN_KMS_KEY_URI}" \
---sourceType="AVRO" \
---inputPattern="gs://${TEMP_GCS_BUCKET}/userdata.avro" \
---outputDirectory="gs://${TEMP_GCS_BUCKET}/encrypted/" \
---tokenizeColumns="$.kylosample.cc" \
---tokenizeColumns="$.kylosample.email"
-```
+        {
+          "columnName": "$.kylosample.cc",
+          "infoTypes": [
+            {
+              "infoType": "CREDIT_CARD_NUMBER",
+              "count": "394"
+            }
+          ]
+        }
 
-The pipeline executes asynchronously on Dataflow. You can check the progress by following the JobLink printed in the following format:
-```
-INFO: JobLink: https://console.cloud.google.com/dataflow/jobs/<your-dataflow-jobid>?project=<your-project-id>
-```
+    The `"count"` value varies based on the randomly selected samples during execution.
 
-The tokenize pipeline's DAG will look like following:
-![Encrypting Pipeline DAG](https://storage.googleapis.com/gcp-community/tutorials/auto-data-tokenize/encryption_pipeline_dag.png)
+## Use the tokenize pipeline
 
+The sample-and-identify pipeline used few samples from the original dataset to identify sensitive information using
+Cloud DLP. The tokenize pipeline processes the entire dataset and encrypts the desired columns using the provided data
+encryption key (DEK).
 
-### Verify encrypted result
+### Run the tokenize pipeline
 
-Load the bulk tokenize pipeline's output file(s) into BigQuery to verify that all the columns specified using `tokenizeColumns` flag have been encrypted.
+    tokenize_pipeline --project="${PROJECT_ID}" \
+    --region="${REGION_ID}" \
+    --runner="DataflowRunner" \
+    --tempLocation="gs://${TEMP_GCS_BUCKET}/bqtemp" \
+    --serviceAccount=${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL} \
+    --workerMachineType="n1-standard-1" \
+    --schema="$(<dlp_report/schema.json)" \
+    --tinkEncryptionKeySetJson="$(<${WRAPPED_KEY_FILE})" \
+    --mainKmsKeyUri="${MAIN_KMS_KEY_URI}" \
+    --sourceType="AVRO" \
+    --inputPattern="gs://${TEMP_GCS_BUCKET}/userdata.avro" \
+    --outputDirectory="gs://${TEMP_GCS_BUCKET}/encrypted/" \
+    --tokenizeColumns="$.kylosample.cc" \
+    --tokenizeColumns="$.kylosample.email"
 
-1. Create a BigQuery dataset for tokenized data
-   Replace <i><bigquery-region></i> with a region of your choice. Ensure that BigQuery dataset region/multi-region is in the same region as the Cloud Storage bucket. You can read about [considerations for batch loading data](https://cloud.google.com/bigquery/docs/batch-loading-data) for more information.
+The pipeline executes asynchronously on Dataflow. You can check the progress by following the job link printed in the following format:
 
-   ```shell script
-   bq --location=<bigquery-region> \
-   --project_id="${PROJECT_ID}" \
-   mk --dataset tokenized_data
-   ```
+    INFO: JobLink: https://console.cloud.google.com/dataflow/jobs/[YOUR_DATAFLOW_JOB_ID]>?project=[YOUR_PROJECT_ID]
 
-1. Load tokenized data to a BigQuery table.
-   ```shell script
-   bq load \
-   --source_format=AVRO \
-   --project_id="${PROJECT_ID}" \
-   "tokenized_data.TokenizedUserdata" \
-   "gs://${TEMP_GCS_BUCKET}/encrypted/*"
-   ```
-1. Check some records to confirm that `email` and `cc` fields have been encrypted.
-   ```shell script
-   bq query \
-   --project_id="${PROJECT_ID}" \
-   "SELECT first_name, encrypted_email, encrypted_cc FROM tokenized_data.TokenizedUserdata LIMIT 10"
-   ```
+The tokenize pipeline's DAG looks like the following:
+
+![Encryption pipeline DAG](https://storage.googleapis.com/gcp-community/tutorials/auto-data-tokenize/encryption_pipeline_dag.png)
+
+### Verify encrypted results
+
+Load the tokenize pipeline's output files into BigQuery to verify that all of the columns specified using the `tokenizeColumns` flag have been encrypted.
+
+1.  Create a BigQuery dataset for tokenized data:
+
+        bq --location=[BIGQUERY_REGION] \
+        --project_id="${PROJECT_ID}" \
+        mk --dataset tokenized_data
+
+Replace `[BIGQUERY_REGION]` with a region of your choice. Ensure that the BigQuery dataset region or multi-region is in the same region as the Cloud Storage 
+bucket. For more information, read about [considerations for batch loading data](https://cloud.google.com/bigquery/docs/batch-loading-data).
+
+1.  Load tokenized data into a BigQuery table:
+
+        bq load \
+        --source_format=AVRO \
+        --project_id="${PROJECT_ID}" \
+        "tokenized_data.TokenizedUserdata" \
+        "gs://${TEMP_GCS_BUCKET}/encrypted/*"
+
+1.  Check some records to confirm that the `email` and `cc` fields have been encrypted:
+
+        bq query \
+        --project_id="${PROJECT_ID}" \
+        "SELECT first_name, encrypted_email, encrypted_cc FROM tokenized_data.TokenizedUserdata LIMIT 10"
 
 ## Cleaning up
 
@@ -451,10 +443,10 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 1.  In the project list, select the project that you want to delete and then click **Delete**.
 1.  In the dialog, type the project ID and then click **Shut down** to delete the project.
 
-
 ## What's next
 
-* Learn more about [Cloud DLP](https://cloud.google.com/dlp)
-* Learn more about [Cloud KMS](https://cloud.google.com/kms)
-* Learn about [Inspecting storage and databases for sensitive data](https://cloud.google.com/dlp/docs/inspecting-storage)
-* Handling [De-identification and re-identification of PII in large-scale datasets using DLP](https://cloud.google.com/solutions/de-identification-re-identification-pii-using-cloud-dlp)
+* Learn more about [Cloud DLP](https://cloud.google.com/dlp).
+* Learn more about [Cloud KMS](https://cloud.google.com/kms).
+* Learn about [inspecting storage and databases for sensitive data](https://cloud.google.com/dlp/docs/inspecting-storage).
+* Learn about handling
+  [de-identification and re-identification of PII in large-scale datasets using Cloud DLP](https://cloud.google.com/solutions/de-identification-re-identification-pii-using-cloud-dlp).
