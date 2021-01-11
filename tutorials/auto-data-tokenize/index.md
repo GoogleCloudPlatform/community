@@ -10,101 +10,30 @@ Anant Damle | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This document discusses how to identify and tokenize data with an automated data transformation pipeline to detect sensitive data like personally identifiable information (PII), using Cloud Data Loss Prevention [(Cloud DLP)](https://cloud.google.com/dlp) and [Cloud KMS](https://cloud.google.com/kms). De-identification techniques like encryption lets you preserve the utility of your data for joining or analytics while reducing the risk of handling the data by obfuscating the raw sensitive identifiers.
+This document discusses how to identify and tokenize data with an automated data transformation pipeline to detect sensitive data like personally identifiable
+information (PII), using [Cloud Data Loss Prevention (Cloud DLP)](https://cloud.google.com/dlp) and
+[Cloud Key Management Service (Cloud KMS)](https://cloud.google.com/kms). De-identification techniques like encryption let you preserve the utility of your data
+for joining or analytics while reducing the risk of handling the data by obfuscating the raw sensitive identifiers.
 
-To minimize the risk of handling large volumes of sensitive data, you can use an automated data transformation pipeline to create de-identified datasets that can be used for migrating from on-premise to cloud or keep a de-identified replica for Analytics. Cloud DLP can inspect the data for sensitive information when the dataset has not been characterized, by using [more than 100 built-in classifiers](https://cloud.google.com/dlp/docs/infotypes-reference). 
+To minimize the risk of handling large volumes of sensitive data, you can use an automated data transformation pipeline to create de-identified datasets that can
+be used for migrating from on-premises to cloud or keep a de-identified replica for analytics. Cloud DLP can inspect the data for sensitive information when the 
+dataset has not been characterized, by using [more than 100 built-in classifiers](https://cloud.google.com/dlp/docs/infotypes-reference). 
 
-One of the daunting challenges during data migration to cloud is to manage sensitive data. The sensitive data can be in structured forms like analytics tables or unstructured like chat history or transcription records. One needs to use Cloud DLP to identify sensitive data from both of these kinds of sources, followed by tokenizing the sensitive parts.
+One of the daunting challenges during data migration to the cloud is how to manage sensitive data. The sensitive data can be in structured forms like analytics 
+tables or unstructured like chat history or transcription records. You can use Cloud DLP to identify sensitive data from both of these kinds of sources
+and then tokenize the sensitive parts.
 
-Tokenizing structured data can be optimized for cost and speed by using representative samples for each of the columns to categorize the kind of information, followed by bulk encryption of sensitive columns. This approach reduces cost of using Cloud DLP, by limiting the use to classification of a small representative sample, instead of all the records. The throughput and cost of tokenization can be optimized by using envelope encryption for columns classified as sensitive. 
+Tokenizing structured data can be optimized for cost and speed by using representative samples for each of the columns to categorize the kind of information,
+followed by bulk encryption of sensitive columns. This approach reduces the cost of using Cloud DLP by limiting the use to classification of a small 
+representative sample, instead of all of the records. The throughput and cost of tokenization can be optimized by using envelope encryption for columns 
+classified as sensitive. 
 
-This document demonstrates a reference implementation of tokenizing structured data through two tasks: _sample and identify_, followed by _bulk tokenization_ using encryption.
+This document demonstrates a reference implementation of tokenizing structured data through two tasks: _sample and identify_, followed by _bulk tokenization_ 
+using symmetric encryption to tokenize data using envelope encryption.
 
-This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This guide assumes that you're familiar with data processing and data privacy, without the need to be an expert.
-
-## Architecture
-
-![Auto tokenizing pipelines](https://storage.googleapis.com/gcp-community/tutorials/auto-data-tokenize/Auto_Tokenizing_Pipelines_Arch.svg)
-
-The solution comprises two pipelines (one for each of the tasks):
-  1. Sample + Identify
-  1. Tokenize
-
-The __sample & identify pipeline__ extracts a few sample records from the source files. The *identify* part of pipeline then decomposes each sample record into columns to categorize them into one of the [in-built infotypes](https://cloud.google.com/dlp/docs/infotypes-reference) or [custom infotypes](https://cloud.google.com/dlp/docs/creating-custom-infotypes) using Cloud DLP. The sample & identify pipeline outputs following files to Cloud Storage:
-  * Avro schema of the file
-  * Detected info-types for each of the input columns.
-
-The __tokenize pipeline__ then encrypts the user-specified source columns using the schema information from the _sample & identify pipeline_ and user provided enveloped data encryption key. The tokenizing pipeline performs following of transforms on each of the records in the source file:
-  1. Unwrap data-encryption key using Cloud KMS
-  1. un-nest each record into a flat record.
-  1. tokenize required values using [deterministic AEAD](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data) encryption.
-  1. re-nest the flat record into Avro record
-  1. Write Avro file with encrypted fields
-
-### Concepts
-* [Envelope Encryption](https://cloud.google.com/kms/docs/envelope-encryption) is a form of multi-layer encryption, involving use of multiple layers of keys for encrypting data. It is the process of encrypting the actual data encryption key with another key to secure the data-encryption key.
-* [Cloud KMS](https://cloud.google.com/kms) provides easy management of encryption keys at scale.
-* [Tink](https://github.com/google/tink) is an open-source library that provides easy and secure APIs for handling encryption/decryption. It
-  reduces common crypto pitfalls with user-centered design, careful implementation and code reviews, and extensive
-  testing. At Google, Tink is one of the standard crypto libraries, and has been deployed in hundreds of products and
-  systems. Tink natively integrates with Cloud KMS for use with envelope encryption technique.
-* [Deterministic AEAD encryption](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data) is used by to serve following purposes:
-  1. Permits use of the cipher-text as join keys. The deterministic property of the cipher ensures that cipher-text for the same plain-text is always the same. Using this property one can safely use the encrypted data for performing statistical analysis like cardinality analysis, frequency analysis etc.
-  1. store signed plain-text within the cipher to assert authenticity.
-  1. reversibility, use of 2-way encryption algorithm permits reversing the algorithm to obtain original plain-text. Hashing does not permit such operations.
-
-* [Cloud Data Loss Prevention](https://cloud.google.com/dlp) is a Google Cloud service providing data classification, de-identification and re-identification features, allowing you to easily manage sensitive data in your enterprise.
-
-* __Record Flattening__ is the process of converting nested/repeated records as flat table. Each leaf-node of the record gets a unique identifier. This flattening process enables sending data to DLP for identification purposes as the DLP API supports a simple [data-table](https://cloud.google.com/dlp/docs/examples-deid-tables).
-
-   Consider a contact record, for **Jane Doe**, it has a nested and repeated field `contacts`.
-   ```json
-   {
-      "name": "Jane Doe",
-      "contacts": [
-      {
-         "type": "WORK",
-         "number": 2124567890  
-      },
-      {
-         "type": "HOME",
-         "number": 5304321234
-      }
-      ]
-   }
-   ```
-   
-   Flattening this record yields a [FlatRecord](https://github.com/GoogleCloudPlatform/auto-data-tokenize/blob/master/proto-messages/src/main/resources/proto/google/cloud/autodlp/auto_tokenize_messages.proto#L103) with following data. Notice the `values` map, which demonstrates that each leaf node of the contact record is mapped using a [JsonPath](https://goessner.net/articles/JsonPath/) notation.
-   The `keySchema` shows a mapping between the leaf value's key's to a schema key to demonstrate that leaf-nodes of same type share the same key-schema, for example: `$.contacts[0].contact.number` is logically same as `$.contacts[1].contact.number` as both of them have the same key-schema `$.contacts.contact.number`.
-   
-   ```json
-   {
-      "values": {
-       "$.name": "Jane Doe",
-       "$.contacts[0].contact.type": "WORK",
-       "$.contacts[0].contact.number": 2124567890,
-       "$.contacts[1].contact.type": "WORK",
-       "$.contacts[1].contact.number": 5304321234   
-      },
-   
-      "keySchema": {
-       "$.name": "$.name",
-       "$.contacts[0].contact.type": "$.contacts.contact.type",
-       "$.contacts[0].contact.number": "$.contacts.contact.number",
-       "$.contacts[1].contact.type": "$.contacts.contact.type",
-       "$.contacts[1].contact.number": "$.contacts.contact.number"   
-      }
-   }
-   ```
-
-## Prerequisites
-
-This tutorial assumes some familiarity with shell scripts and basic knowledge of Google Cloud.
-
-## Objectives
-
-1. Understand record sampling and identify sensitive columns using DLP.
-1. Use of symmetric encryption to tokenize data using KMS wrapped data-encryption key.
+This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This guide assumes that 
+you're familiar with data processing and data privacy, without the need to be an expert. This document assumes some familiarity with shell scripts and basic 
+knowledge of Google Cloud.
 
 ## Costs
 
@@ -113,10 +42,102 @@ This tutorial uses billable components of Google Cloud, including the following:
 * [Dataflow](https://cloud.google.com/dataflow/pricing)
 * [Cloud Storage](https://cloud.google.com/storage/pricing)
 * [Cloud Data Loss Prevention](https://cloud.google.com/dlp/pricing)
-* [Cloud KMS](https://cloud.google.com/kms/pricing)
+* [Cloud Key Management Service](https://cloud.google.com/kms/pricing)
 
 Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your
 projected usage.
+
+## Architecture
+
+The solution described in this document comprises two pipelines, one for each of the tasks:
+
+  * Sample and identify
+  * Tokenize
+
+![Auto tokenizing pipelines](https://storage.googleapis.com/gcp-community/tutorials/auto-data-tokenize/Auto_Tokenizing_Pipelines_Arch.svg)
+
+The *sample-and-identify* pipeline extracts a few sample records from the source files. The *identify* part of pipeline then decomposes each sample record into
+columns to categorize them into one of the [built-in infoTypes](https://cloud.google.com/dlp/docs/infotypes-reference) or
+[custom infoTypes](https://cloud.google.com/dlp/docs/creating-custom-infotypes) using Cloud DLP. The sample-and-identify pipeline outputs following files to
+Cloud Storage:
+
+  * Avro schema of the file
+  * Detected infoTypes for each of the input columns
+
+The *tokenize* pipeline then encrypts the user-specified source columns using the schema information from the sample-and-identify pipeline and user-provided
+enveloped data encryption key. The tokenizing pipeline performs the following transforms on each of the records in the source file:
+
+  1. Unwrap data-encryption key using Cloud KMS.
+  1. Un-nest each record into a flat record.
+  1. Tokenize required values using
+     [deterministic AEAD](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data) encryption.
+  1. Re-nest the flat record into an Avro record.
+  1. Write Avro file with encrypted fields.
+
+### Concepts
+
+* [Envelope encryption](https://cloud.google.com/kms/docs/envelope-encryption) is a form of multi-layer encryption, involving the use of multiple layers of keys 
+  for encrypting data. It is the process of encrypting the actual data encryption key with another key to secure the data-encryption key.
+* [Cloud Key Management Service (Cloud KMS)](https://cloud.google.com/kms) provides management of encryption keys at scale.
+* [Tink](https://github.com/google/tink) is an open source library that provides APIs for handling encryption and decryption. Tink integrates with Cloud KMS for 
+  use with envelope encryption.
+* [Deterministic Authenticated Encryption with Associated Data (AEAD)](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data) is used to serve following purposes:
+
+  * Permits use of the ciphertext as join keys. The deterministic property of the cipher ensures that ciphertext for the same plaintext is always the same.
+    Using this property, you can use the encrypted data for performing statistical analysis like cardinality analysis and frequency analysis.
+  * Store signed plain-text within the cipher to assert authenticity.
+  * Reversibility. The use of a 2-way encryption algorithm permits reversing the algorithm to obtain the original plaintext. Hashing doesn't permit such 
+    operations.
+
+* [Cloud Data Loss Prevention (DLP)](https://cloud.google.com/dlp) is a Google Cloud service that provides data classification, de-identification, and
+  re-identification features, allowing you to manage sensitive data in your enterprise.
+
+* Record flattening is the process of converting nested and repeated records as a flat table. Each leaf node of the record gets a unique identifier. This 
+  flattening process enables sending data to DLP for identification purposes, since the DLP API supports simple
+  [data tables](https://cloud.google.com/dlp/docs/examples-deid-tables).
+
+  Consider a contact record for Jane Doe, which has a nested and repeated field `contacts`:
+   
+      {
+          "name": "Jane Doe",
+          "contacts": [
+          {
+             "type": "WORK",
+             "number": 2124567890  
+          },
+          {
+             "type": "HOME",
+             "number": 5304321234
+          }
+          ]
+       }
+   
+   Flattening this record yields a
+   [`FlatRecord`](https://github.com/GoogleCloudPlatform/auto-data-tokenize/blob/master/proto-messages/src/main/resources/proto/google/cloud/autodlp/auto_tokenize_messages.proto#L103)
+   with the following data:
+   
+      {
+         "values": {
+          "$.name": "Jane Doe",
+          "$.contacts[0].contact.type": "WORK",
+          "$.contacts[0].contact.number": 2124567890,
+          "$.contacts[1].contact.type": "WORK",
+          "$.contacts[1].contact.number": 5304321234   
+         },
+   
+         "keySchema": {
+          "$.name": "$.name",
+          "$.contacts[0].contact.type": "$.contacts.contact.type",
+          "$.contacts[0].contact.number": "$.contacts.contact.number",
+          "$.contacts[1].contact.type": "$.contacts.contact.type",
+          "$.contacts[1].contact.number": "$.contacts.contact.number"   
+         }
+      }
+   
+  In the `values` map, each leaf node of the contact record is mapped using a [JsonPath](https://goessner.net/articles/JsonPath/) notation.
+  The `keySchema` block shows a mapping between the leaf value's key's to a schema key to demonstrate that leaf-nodes of same type share the same key-schema.
+  For example, `$.contacts[0].contact.number` is logically the same as `$.contacts[1].contact.number`, because both of them have the same key-schema
+  `$.contacts.contact.number`.
 
 ## Before you begin
 
