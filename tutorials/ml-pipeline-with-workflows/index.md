@@ -18,7 +18,7 @@ The following diagram shows the overall architecture of what you build in this t
 
 <img src="https://storage.googleapis.com/gcp-community/tutorials/ml-pipeline-with-workflows/architecture.png">
 
-In this tutorial, you deploy two microservices on Cloud Run: One microservice is to launch a Dataflow pipeline to preprocess the training data. The orignal data 
+In this tutorial, you deploy two microservices on Cloud Run: One microservice is to launch a Dataflow pipeline to preprocess the training data. The original data 
 stored in BigQuery is converted to CSV files and stored in a Cloud Storage bucket. The other microservice is to launch a machine learning training job on
 AI Platform and deploy the trained model for predictions. The machine learning model files are cloned from the GitHub repository.
 
@@ -296,7 +296,7 @@ Run the following command to execute a Workflows job:
     gcloud beta workflows execute ml_workflow \
       --data="{\"limit\": 1000, \"bucket\": \"$BUCKET\", \"numTrainExamples\": 5000, \"numEvals\": 2, \"numEvalExamples\": 1000, \"modelName\": \"babyweight_model\", \"versionName\": \"v2\"}"
 
-You can monitor the status of the job in the [Cloud Console](https://pantheon.corp.google.com/workflows).
+You can monitor the status of the job in the [Cloud Console](https://console.cloud.google.com/workflows).
 
 When the job has successfully completed, run the following command to confirm that the model has been deployed:
 
