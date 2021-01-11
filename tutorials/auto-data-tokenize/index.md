@@ -76,68 +76,71 @@ enveloped data encryption key. The tokenizing pipeline performs the following tr
 
 ### Concepts
 
-* [Envelope encryption](https://cloud.google.com/kms/docs/envelope-encryption) is a form of multi-layer encryption that uses multiple layers of keys 
-  for encrypting data. Envelope encryption is the process of encrypting the actual data encryption key with another key to secure the data encryption key.
-* [Cloud Key Management Service (Cloud KMS)](https://cloud.google.com/kms) provides management of encryption keys at scale.
-* [Tink](https://github.com/google/tink) is an open source library that provides APIs for handling encryption and decryption. Tink integrates with Cloud KMS for 
-  use with envelope encryption.
-* [Deterministic Authenticated Encryption with Associated Data (AEAD)](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data) is used for the following purposes:
+[Envelope encryption](https://cloud.google.com/kms/docs/envelope-encryption) is a form of multi-layer encryption that uses multiple layers of keys 
+for encrypting data. Envelope encryption is the process of encrypting the actual data encryption key with another key to secure the data encryption key.
 
-  * Permits use of the ciphertext as join keys. The deterministic property of the cipher ensures that ciphertext for the same plaintext is always the same.
-    Using this property, you can use the encrypted data for performing statistical analysis like cardinality analysis and frequency analysis.
-  * Store signed plaintext within the cipher to assert authenticity.
-  * Reversibility. The use of a 2-way encryption algorithm permits reversing the algorithm to obtain the original plaintext. Hashing doesn't permit such 
-    operations.
+[Cloud Key Management Service (Cloud KMS)](https://cloud.google.com/kms) provides management of encryption keys at scale.
 
-* [Cloud Data Loss Prevention (DLP)](https://cloud.google.com/dlp) is a Google Cloud service that provides data classification, de-identification, and
-  re-identification features, allowing you to manage sensitive data in your enterprise.
+[Tink](https://github.com/google/tink) is an open source library that provides APIs for handling encryption and decryption. Tink integrates with Cloud KMS for 
+use with envelope encryption.
 
-* Record flattening is the process of converting nested and repeated records as a flat table. Each leaf node of the record gets a unique identifier. This 
-  flattening process enables sending data to DLP for identification purposes, since the DLP API supports simple
-  [data tables](https://cloud.google.com/dlp/docs/examples-deid-tables).
+[Deterministic Authenticated Encryption with Associated Data (AEAD)](https://github.com/google/tink/blob/master/docs/PRIMITIVES.md#deterministic-authenticated-encryption-with-associated-data) is used for the following purposes:
 
-  Consider a contact record for Jane Doe, which has a nested and repeated field `contacts`:
+* Permits use of the ciphertext as join keys. The deterministic property of the cipher ensures that ciphertext for the same plaintext is always the same.
+  Using this property, you can use the encrypted data for performing statistical analysis like cardinality analysis and frequency analysis.
+* Store signed plaintext within the cipher to assert authenticity.
+* Reversibility. The use of a 2-way encryption algorithm permits reversing the algorithm to obtain the original plaintext. Hashing doesn't permit such 
+  operations.
+
+[Cloud Data Loss Prevention (DLP)](https://cloud.google.com/dlp) is a Google Cloud service that provides data classification, de-identification, and
+re-identification features, allowing you to manage sensitive data in your enterprise.
+
+Record flattening is the process of converting nested and repeated records as a flat table. Each leaf node of the record gets a unique identifier. This 
+flattening process enables sending data to DLP for identification purposes, since the DLP API supports simple
+[data tables](https://cloud.google.com/dlp/docs/examples-deid-tables).
+
+Consider a contact record for Jane Doe, which has a nested and repeated field `contacts`:
    
-      {
-          "name": "Jane Doe",
-          "contacts": [
-          {
-             "type": "WORK",
-             "number": 2124567890  
-          },
-          {
-             "type": "HOME",
-             "number": 5304321234
-          }
-          ]
+    {
+        "name": "Jane Doe",
+        "contacts": [
+        {
+           "type": "WORK",
+           "number": 2124567890  
+        },
+        {
+           "type": "HOME",
+           "number": 5304321234
+        }
+        ]
+     }
+ 
+Flattening this record yields a
+[`FlatRecord`](https://github.com/GoogleCloudPlatform/auto-data-tokenize/blob/master/proto-messages/src/main/resources/proto/google/cloud/autodlp/auto_tokenize_messages.proto#L103)
+with the following data:
+   
+    {
+       "values": {
+        "$.name": "Jane Doe",
+        "$.contacts[0].contact.type": "WORK",
+        "$.contacts[0].contact.number": 2124567890,
+        "$.contacts[1].contact.type": "WORK",
+        "$.contacts[1].contact.number": 5304321234   
+       },
+ 
+       "keySchema": {
+        "$.name": "$.name",
+        "$.contacts[0].contact.type": "$.contacts.contact.type",
+        "$.contacts[0].contact.number": "$.contacts.contact.number",
+        "$.contacts[1].contact.type": "$.contacts.contact.type",
+        "$.contacts[1].contact.number": "$.contacts.contact.number"   
        }
-   
-   Flattening this record yields a
-   [`FlatRecord`](https://github.com/GoogleCloudPlatform/auto-data-tokenize/blob/master/proto-messages/src/main/resources/proto/google/cloud/autodlp/auto_tokenize_messages.proto#L103)
-   with the following data:
-   
-      {
-         "values": {
-          "$.name": "Jane Doe",
-          "$.contacts[0].contact.type": "WORK",
-          "$.contacts[0].contact.number": 2124567890,
-          "$.contacts[1].contact.type": "WORK",
-          "$.contacts[1].contact.number": 5304321234   
-         },
-   
-         "keySchema": {
-          "$.name": "$.name",
-          "$.contacts[0].contact.type": "$.contacts.contact.type",
-          "$.contacts[0].contact.number": "$.contacts.contact.number",
-          "$.contacts[1].contact.type": "$.contacts.contact.type",
-          "$.contacts[1].contact.number": "$.contacts.contact.number"   
-         }
-      }
-   
-  In the `values` map, each leaf node of the contact record is mapped using a [JsonPath](https://goessner.net/articles/JsonPath/) notation.
-  The `keySchema` block shows a mapping between the leaf value's key to a schema key to demonstrate that leaf nodes of same type share the same key schema.
-  For example, `$.contacts[0].contact.number` is logically the same as `$.contacts[1].contact.number`, because both of them have the same key schema
-  `$.contacts.contact.number`.
+    }
+ 
+In the `values` map, each leaf node of the contact record is mapped using a [JsonPath](https://goessner.net/articles/JsonPath/) notation.
+The `keySchema` block shows a mapping between the leaf value's key to a schema key to demonstrate that leaf nodes of same type share the same key schema.
+For example, `$.contacts[0].contact.number` is logically the same as `$.contacts[1].contact.number`, because both of them have the same key schema
+`$.contacts.contact.number`.
 
 ## Before you begin
 
@@ -210,108 +213,94 @@ The tutorial uses following resources:
 
 ### Create service accounts
 
-We recommend that you run pipelines with fine-grained access control to improve access partitioning. If
-your project does not have a user-created service account, create one using following instructions.
+We recommend that you run pipelines with fine-grained access control to improve access partitioning. If your project doesn't have a user-created service account,
+create one using following instructions.
 
-You can use your browser by going to [**Service
-accounts**](https://console.cloud.google.com/projectselector/iam-admin/serviceaccounts?supportedpurview=project)
-in the Cloud Console.
+You can use your browser by going to [**Service accounts**](https://console.cloud.google.com/projectselector/iam-admin/serviceaccounts?supportedpurview=project)
+page in the Cloud Console.
 
-1. Create a service account to use as the user-managed controller service account for Dataflow:
-   ```shell script
-   gcloud iam service-accounts create  ${DLP_RUNNER_SERVICE_ACCOUNT_NAME} \
-   --project="${PROJECT_ID}" \
-   --description="Service Account for Tokenizing pipelines." \
-   --display-name="Tokenizing pipelines"
-   ```
-1. Create a custom role with required permissions for accessing DLP, Dataflow and KMS:
-   ```shell script
-   export TOKENIZING_ROLE_NAME="tokenizing_runner"
+1.  Create a service account to use as the user-managed controller service account for Dataflow:
 
-   gcloud iam roles create ${TOKENIZING_ROLE_NAME} \
-   --project=${PROJECT_ID} \
-   --file=tokenizing_runner_permissions.yaml
-   ```
+        gcloud iam service-accounts create  ${DLP_RUNNER_SERVICE_ACCOUNT_NAME} \
+        --project="${PROJECT_ID}" \
+        --description="Service Account for Tokenizing pipelines." \
+        --display-name="Tokenizing pipelines"
 
-1. Apply the custom role to the service account:
-   ```shell script
-   gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-   --member="serviceAccount:${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL}" \
-   --role=projects/${PROJECT_ID}/roles/${TOKENIZING_ROLE_NAME}
-   ```
-1. Assign the `dataflow.worker` role to allow the service account to allow it to run as a Dataflow worker:
-   ```shell script
-   gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-   --member="serviceAccount:${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL}" \
-   --role=roles/dataflow.worker
-   ```
+1.  Create a custom role with required permissions for accessing Cloud DLP, Dataflow, and Cloud KMS:
 
-1. Create and download the credential file of the service account to allow calling Google Cloud services with this
-   service-account's credentials.
-   ```shell script
-   gcloud iam service-accounts keys create \
-   service-account-key.json \
-   --iam-account="${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL}"
-   ```
+        export TOKENIZING_ROLE_NAME="tokenizing_runner"
 
-### Create Key encryption key
+        gcloud iam roles create ${TOKENIZING_ROLE_NAME} \
+        --project=${PROJECT_ID} \
+        --file=tokenizing_runner_permissions.yaml
 
-The data would be encrypted using a Data Encryption Key (DEK). You will
-use [envelope encryption](https://cloud.google.com/kms/docs/envelope-encryption) technique to encrypt the DEK using a
-Key in [Cloud KMS](https://cloud.google.com/kms), this ensures that the DEK can be safely stored without compromising
-it.
+1.  Apply the custom role to the service account:
 
-1. Create KMS Key-ring
-   ```shell script
-   gcloud kms keyrings create --project ${PROJECT_ID} --location ${REGION_ID} ${KMS_KEYRING_ID}
-   ```
-1. Create KMS symmetric key to use for encrypting your data encryption key.
-   ```shell script
-   gcloud kms keys create --project ${PROJECT_ID} --keyring=${KMS_KEYRING_ID} --location=${REGION_ID} --purpose="encryption" ${KMS_KEY_ID}
-   ```
-1. Download and unpack the latest version of [Tinkey](https://github.com/google/tink/blob/master/docs/TINKEY.md). Tinkey
-   is an open source utility to create wrapped encryption keys.
-   ```shell script
-   mkdir tinkey/
-   tar zxf tinkey-<version>.tar.gz -C tinkey/
-   alias tinkey='${PWD}/tinkey/tinkey'
-   ```
+        gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+        --member="serviceAccount:${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL}" \
+        --role=projects/${PROJECT_ID}/roles/${TOKENIZING_ROLE_NAME}
 
-1. Create a new wrapped data encryption key.
-   ```shell script
-   tinkey create-keyset \
-   --master-key-uri="${MAIN_KMS_KEY_URI}" \
-   --key-template=AES256_SIV \
-   --credential="service-account-key.json" \
-   --out="${WRAPPED_KEY_FILE}" \
-   --out-format=json
-   ```
+1.  Assign the `dataflow.worker` role to allow the service account to allow it to run as a Dataflow worker:
 
-### Create Cloud Storage bucket
+        gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+        --member="serviceAccount:${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL}" \
+        --role=roles/dataflow.worker
 
-Create a Cloud Storage bucket for storing test data and Dataflow staging location.
+1.  Create and download the credential file of the service account to allow calling Google Cloud services with this
+    service account's credentials:
 
-```shell script
-gsutil mb -p ${PROJECT_ID} -l ${REGION_ID} "gs://${TEMP_GCS_BUCKET}"
-```
+        gcloud iam service-accounts keys create \
+        service-account-key.json \
+        --iam-account="${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL}"
+
+### Create the key encryption key (KEK)
+
+The data is encrypted using a data encryption key (DEK). You use [envelope encryption](https://cloud.google.com/kms/docs/envelope-encryption) to encrypt 
+the DEK using a key encryption key (KEK) in [Cloud KMS](https://cloud.google.com/kms). This helps to ensure that the DEK can be stored without compromising it.
+
+1.  Create a Cloud KMS key ring:
+
+        gcloud kms keyrings create --project ${PROJECT_ID} --location ${REGION_ID} ${KMS_KEYRING_ID}
+
+1.  Create KMS symmetric key to use for encrypting your data encryption key:
+
+        gcloud kms keys create --project ${PROJECT_ID} --keyring=${KMS_KEYRING_ID} --location=${REGION_ID} --purpose="encryption" ${KMS_KEY_ID}
+
+1.  Download and extract the latest version of [Tinkey](https://github.com/google/tink/blob/master/docs/TINKEY.md). Tinkey is an open source utility to create 
+    wrapped encryption keys.
+
+        mkdir tinkey/
+        tar zxf tinkey-[VERSION].tar.gz -C tinkey/
+        alias tinkey='${PWD}/tinkey/tinkey'
+
+1.  Create a new wrapped data encryption key:
+
+        tinkey create-keyset \
+        --master-key-uri="${MAIN_KMS_KEY_URI}" \
+        --key-template=AES256_SIV \
+        --credential="service-account-key.json" \
+        --out="${WRAPPED_KEY_FILE}" \
+        --out-format=json
+
+### Create the Cloud Storage bucket
+
+Create a Cloud Storage bucket for storing test data and Dataflow staging location:
+
+    gsutil mb -p ${PROJECT_ID} -l ${REGION_ID} "gs://${TEMP_GCS_BUCKET}"
 
 ### Copy test data to Cloud Storage
 
-You can use your own file datasets or copy the included demo dataset (`userdata.avro` or `userdata.parquet`).
+You can use your own file datasets or copy the included demonstration dataset (`userdata.avro` or `userdata.parquet`).
 
-```shell script
-gsutil cp userdata.avro gs://${TEMP_GCS_BUCKET}
-```
+     gsutil cp userdata.avro gs://${TEMP_GCS_BUCKET}
 
 ## Compile modules
 
-You need to compile all the modules to build executables for deploying the _sample & identify_ and _bulk tokenize_ pipelines.
+You need to compile all of the modules to build executables for deploying the sample-and-identify and tokenize pipelines.
 
-```shell script
-mvn clean generate-sources compile package
-```
+     mvn clean generate-sources compile package
 
-> Add `-Dmaven.test.skip=true` flag to skip running tests.
+**Tip**: To skip running the tests, you can add the `-Dmaven.test.skip=true` flag.
 
 ## Run Sample and Identify pipeline
 
