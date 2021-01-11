@@ -1,12 +1,14 @@
 ---
-title: Automatically tokenize sensitive data using Cloud DLP, Cloud KMS and Dataflow
-description: A tool to tokenize Avro/Parquet files at bulk.
+title: Automatically tokenize sensitive data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow
+description: A tool to tokenize Avro or Parquet files in bulk.
 author: anantdamle
-tags: data governance, DLP, encryption, tokenization, de-identification, data migration, Dataflow
-date_published: 2021-01-08
+tags: data governance, DLP, encryption, tokenization, de-identification, data migration, KMS
+date_published: 2021-01-11
 ---
+
 Anant Damle | Solutions Architect | Google
 
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This document discusses how to identify and tokenize data with an automated data transformation pipeline to detect sensitive data like personally identifiable information (PII), using Cloud Data Loss Prevention [(Cloud DLP)](https://cloud.google.com/dlp) and [Cloud KMS](https://cloud.google.com/kms). De-identification techniques like encryption lets you preserve the utility of your data for joining or analytics while reducing the risk of handling the data by obfuscating the raw sensitive identifiers.
 
@@ -22,7 +24,7 @@ This document is intended for a technical audience whose responsibilities includ
 
 ## Architecture
 
-![Auto tokenizing pipelines](Auto_Tokenizing_Pipelines_Arch.svg)
+![Auto tokenizing pipelines](https://storage.googleapis.com/gcp-community/tutorials/auto-data-tokenize/Auto_Tokenizing_Pipelines_Arch.svg)
 
 The solution comprises two pipelines (one for each of the tasks):
   1. Sample + Identify
@@ -325,7 +327,7 @@ Use `--observableInfoTypes` to provide additional custom info-types that you nee
 
 The Dataflow execution DAG would look like following:
 
-![Sample and Identify Pipeline DAG](sample_and_identify_pipeline_dag.png)
+![Sample and Identify Pipeline DAG](https://storage.googleapis.com/gcp-community/tutorials/auto-data-tokenize/sample_and_identify_pipeline_dag.png)
 
 ### Retrieve report
 
@@ -402,7 +404,7 @@ INFO: JobLink: https://console.cloud.google.com/dataflow/jobs/<your-dataflow-job
 ```
 
 The tokenize pipeline's DAG will look like following:
-![Encrypting Pipeline DAG](encryption_pipeline_dag.png)
+![Encrypting Pipeline DAG](https://storage.googleapis.com/gcp-community/tutorials/auto-data-tokenize/encryption_pipeline_dag.png)
 
 
 ### Verify encrypted result
@@ -438,7 +440,7 @@ Load the bulk tokenize pipeline's output file(s) into BigQuery to verify that al
 To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project:
 
 1.  In the Cloud Console, go to the [**Manage resources** page](https://console.cloud.google.com/iam-admin/projects).
-1.  In the project list, select the project that you want to delete and then click **Delete** ![delete](bin_icon.png).
+1.  In the project list, select the project that you want to delete and then click **Delete**.
 1.  In the dialog, type the project ID and then click **Shut down** to delete the project.
 
 
