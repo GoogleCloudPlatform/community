@@ -215,8 +215,8 @@ The [Notebook](notebooks/decorator_example.ipynb) explains the whole procedure t
 2. Launch a new notebook instance by choosing "TensorFlow Enterprise 2.3 without GPUs" for the instance type.
 3. Open JupyterLab and execute the following commond from the JupyterLab terminal.
 
-        curl -OL https://.../functional_API_example.ipynb
-        curl -OL https://.../decorator_example.ipynb
+        curl -OL https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/ai-platform-batch-prediction-keras/notebooks/functional_API_example.ipynb
+        curl -OL https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/ai-platform-batch-prediction-keras/notebooks/decorator_example.ipynb
 
 4. Open the following notebooks and follow the instruction.
 
