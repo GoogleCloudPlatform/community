@@ -418,8 +418,8 @@ Load the tokenize pipeline's output files into BigQuery to verify that all of th
         --project_id="${PROJECT_ID}" \
         mk --dataset tokenized_data
 
-Replace `[BIGQUERY_REGION]` with a region of your choice. Ensure that the BigQuery dataset region or multi-region is in the same region as the Cloud Storage 
-bucket. For more information, read about [considerations for batch loading data](https://cloud.google.com/bigquery/docs/batch-loading-data).
+    Replace `[BIGQUERY_REGION]` with a region of your choice. Ensure that the BigQuery dataset region or multi-region is in the same region as the Cloud Storage 
+    bucket. For more information, read about [considerations for batch loading data](https://cloud.google.com/bigquery/docs/batch-loading-data).
 
 1.  Load tokenized data into a BigQuery table:
 
