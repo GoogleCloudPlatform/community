@@ -182,7 +182,7 @@ This ensures that the function `add_key` is used to make predictions once you de
           ]
         }
         
-        parent = 'projects/%s/models/%s/versions/%s' % (PROJECT, 'housing_price1', 'v1')
+        parent = 'projects/%s/models/%s/versions/%s' % (PROJECT, 'housing_price2', 'v1')
         response = api.projects().predict(body=request_data, name=parent).execute()
         print(json.dumps(response, sort_keys = True, indent = 4))
 
