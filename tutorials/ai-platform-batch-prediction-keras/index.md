@@ -47,19 +47,16 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator/) to g
 
 When using the batch prediction, you need to consider the fact that the order of prediction results in the output files can be different from the order of instances in the prediction input files. It is because the batch prediction is conducted with multiple workers in a distributed manner. Hence you need to modify your ML model so that it accepts a unique identifier as a part of the input features, and outputs the same identifier as a part of the prediction result. Conceptually, this can be illustrated as in the following diagram:
 
-```
-                ML Model
-              ------------
-             |            |
-     key ----|------------|---- key
-             |            |
-         ----|            |
-features ----|            |---- prediction
-         ----|            |
-             |            |
-              ------------
-
-```
+                        ML Model
+                      ------------
+                     |            |
+             key ----|------------|---- key
+                     |            |
+                 ----|            |
+        features ----|            |---- prediction
+                 ----|            |
+                     |            |
+                      ------------
 
 The followings are examples of an input and the corresponding output.
 
@@ -148,7 +145,7 @@ The output contains the predicion and key values as below:
             ]
         }
 
-The [Notebook](batch_prediction_with_Keras.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Use JupyterLab Notebooks](README.md#use-jupyterlab-notebooks) to run the notebook.
+The [Notebook](notebooks/functional_API_example.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Go thorugh example notebooks using AI Platform Notebooks](index.md#go-thorugh-example-notebooks-using-ai-platform-notebooks) to run the notebook.
 
 ### Using the `@tf.function` decorator
 
@@ -160,9 +157,9 @@ Suppose that you defined and trained a Keras model. The model object is stored i
             pred = model(features, training=False)
             return {'prediction': pred, 'key': key}
 
-The `input_signature` option specifies the parameter types of the function `add_key`. In this case, the parameter `features` corresponds to a list of seven float values that is an input feature of the original model, and the parameter `key` corresponds to an interger key. In other words, the function `add_key` accepts features of the original model and an interger key. It returns the dictionary containing prediction and key values.
+The `input_signature` option specifies the parameter types of the function `add_key`. In this case, the parameter `features` corresponds to a list of 13 float values that is an input feature of the original model, and the parameter `key` corresponds to an interger key. In other words, the function `add_key` accepts features of the original model and an interger key. It returns the dictionary containing prediction and key values.
 
->Note: `@tf.function` decorator builds a tensorfolow graph containing the specified function.
+**Note**: `@tf.function` decorator builds a tensorfolow graph containing the specified function.
 
 You export the model in the saved_model format using the wrapper function as `serving_default` as below:
 
@@ -208,9 +205,9 @@ The output contains the predicion and key values as below:
             ]
         }
 
-Note that the output format is different from the previous method of using the functional API.
+**Note**: The output format is different from the previous method of using the functional API.
 
-The [Notebook](batch_prediction_with_Keras2.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Use JupyterLab Notebooks](README.md#use-jupyterlab-notebooks) to run the notebook.
+The [Notebook](notebooks/decorator_example.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Go thorugh example notebooks using AI Platform Notebooks](index.md#go-thorugh-example-notebooks-using-ai-platform-notebooks) to run the notebook.
 
 ## Go thorugh example notebooks using AI Platform Notebooks.
 
@@ -218,8 +215,8 @@ The [Notebook](batch_prediction_with_Keras2.ipynb) explains the whole procedure 
 2. Launch a new notebook instance by choosing "TensorFlow Enterprise 2.3 without GPUs" for the instance type.
 3. Open JupyterLab and execute the following commond from the JupyterLab terminal.
 
-        curl -OL https://.../functional_API_example.ipynb
-        curl -OL https://.../decorator_example.ipynb
+        curl -OL https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/ai-platform-batch-prediction-keras/notebooks/functional_API_example.ipynb
+        curl -OL https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/ai-platform-batch-prediction-keras/notebooks/decorator_example.ipynb
 
 4. Open the following notebooks and follow the instruction.
 
