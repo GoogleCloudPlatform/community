@@ -88,7 +88,7 @@ Output file:
 
 In this example, integer keys are used as a unique identifier and both input and output are sorted by the key. You can match the input and output using the key value even if the output is randomly ordered.
 
-## Learn how to modfy Keras models for batch predictions
+## Learn how to modify Keras models for batch predictions
 
 There are multiple ways to add a unique key to the model. If you use Keras to define a model, you can use one of the following methods.
 
@@ -159,7 +159,7 @@ Suppose that you defined and trained a Keras model. The model object is stored i
 
 The `input_signature` option specifies the parameter types of the function `add_key`. In this case, the parameter `features` corresponds to a list of 13 float values that is an input feature of the original model, and the parameter `key` corresponds to an interger key. In other words, the function `add_key` accepts features of the original model and an interger key. It returns the dictionary containing prediction and key values.
 
-**Note**: `@tf.function` decorator builds a tensorfolow graph containing the specified function.
+**Note**: `@tf.function` decorator builds a tensorflow graph containing the specified function.
 
 You export the model in the saved_model format using the wrapper function as `serving_default` as below:
 
@@ -207,13 +207,13 @@ The output contains the predicion and key values as below:
 
 **Note**: The output format is different from the previous method of using the functional API.
 
-The [Notebook](notebooks/decorator_example.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Go thorugh example notebooks using AI Platform Notebooks](index.md#go-thorugh-example-notebooks-using-ai-platform-notebooks) to run the notebook.
+The [Notebook](notebooks/decorator_example.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Go through example notebooks using AI Platform Notebooks](index.md#go-thorugh-example-notebooks-using-ai-platform-notebooks) to run the notebook.
 
-## Go thorugh example notebooks using AI Platform Notebooks.
+## Go through example notebooks using AI Platform Notebooks.
 
 1. Open [AI Platform - Notebooks menu](https://console.cloud.google.com/ai-platform/notebooks/) from [Cloud Console](https://console.cloud.google.com).
 2. Launch a new notebook instance by choosing "TensorFlow Enterprise 2.3 without GPUs" for the instance type.
-3. Open JupyterLab and execute the following commond from the JupyterLab terminal.
+3. Open JupyterLab and execute the following command from the JupyterLab terminal.
 
         curl -OL https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/ai-platform-batch-prediction-keras/notebooks/functional_API_example.ipynb
         curl -OL https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/ai-platform-batch-prediction-keras/notebooks/decorator_example.ipynb
@@ -223,4 +223,4 @@ The [Notebook](notebooks/decorator_example.ipynb) explains the whole procedure t
 - `functional_API_example.ipynb`: Using the functional API.
 - `decorator_example.ipynb`: Using the `@tf.function` decorator.
 
-In these notebooks, you define a model to predict average housing prices using the [Bouston Housing price regression dataset](https://keras.io/api/datasets/boston_housing/#load_data-function) as an example.
+In these notebooks, you define a model to predict average housing prices using the [Boston Housing price regression dataset](https://keras.io/api/datasets/boston_housing/#load_data-function) as an example.
