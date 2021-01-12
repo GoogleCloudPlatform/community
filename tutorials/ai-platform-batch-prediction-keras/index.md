@@ -145,7 +145,7 @@ The output contains the predicion and key values as below:
             ]
         }
 
-The [Notebook](batch_prediction_with_Keras.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Use JupyterLab Notebooks](README.md#use-jupyterlab-notebooks) to run the notebook.
+The [Notebook](notebooks/functional_API_example.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Go thorugh example notebooks using AI Platform Notebooks](index.md#go-thorugh-example-notebooks-using-ai-platform-notebooks) to run the notebook.
 
 ### Using the `@tf.function` decorator
 
@@ -207,7 +207,7 @@ The output contains the predicion and key values as below:
 
 **Note**: The output format is different from the previous method of using the functional API.
 
-The [Notebook](batch_prediction_with_Keras2.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Use JupyterLab Notebooks](README.md#use-jupyterlab-notebooks) to run the notebook.
+The [Notebook](notebooks/decorator_example.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Go thorugh example notebooks using AI Platform Notebooks](index.md#go-thorugh-example-notebooks-using-ai-platform-notebooks) to run the notebook.
 
 ## Go thorugh example notebooks using AI Platform Notebooks.
 
