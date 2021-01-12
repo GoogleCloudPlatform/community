@@ -39,7 +39,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator/) to g
 
 5.  Enable APIs:
 
-        gcloud services enable ml.googleapis.com notebookapi
+        gcloud services enable ml.googleapis.com notebooks.googleapis.com
 
 ## Understand how batch predictions works on AI Platform.
 
