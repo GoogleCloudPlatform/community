@@ -39,7 +39,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator/) to g
 
 5.  Enable APIs:
 
-        gcloud services enable ml.googleapis.com notebookapi
+        gcloud services enable ml.googleapis.com notebooks.googleapis.com
 
 ## Understand how batch predictions works on AI Platform.
 
@@ -211,7 +211,7 @@ The [Notebook](notebooks/decorator_example.ipynb) explains the whole procedure t
 
 ## Go thorugh example notebooks using AI Platform Notebooks.
 
-1. Open AI Platform / Notebooks menu from Cloud Console.
+1. Open [AI Platform - Notebooks menu](https://console.cloud.google.com/ai-platform/notebooks/) from [Cloud Console](https://console.cloud.google.com).
 2. Launch a new notebook instance by choosing "TensorFlow Enterprise 2.3 without GPUs" for the instance type.
 3. Open JupyterLab and execute the following commond from the JupyterLab terminal.
 
