@@ -157,7 +157,7 @@ Suppose that you defined and trained a Keras model. The model object is stored i
             pred = model(features, training=False)
             return {'prediction': pred, 'key': key}
 
-The `input_signature` option specifies the parameter types of the function `add_key`. In this case, the parameter `features` corresponds to a list of seven float values that is an input feature of the original model, and the parameter `key` corresponds to an interger key. In other words, the function `add_key` accepts features of the original model and an interger key. It returns the dictionary containing prediction and key values.
+The `input_signature` option specifies the parameter types of the function `add_key`. In this case, the parameter `features` corresponds to a list of 13 float values that is an input feature of the original model, and the parameter `key` corresponds to an interger key. In other words, the function `add_key` accepts features of the original model and an interger key. It returns the dictionary containing prediction and key values.
 
 **Note**: `@tf.function` decorator builds a tensorfolow graph containing the specified function.
 
