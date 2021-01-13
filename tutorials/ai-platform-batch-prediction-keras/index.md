@@ -1,6 +1,6 @@
 ---
 title: Use Keras models for batch predictions on AI Platform
-description: Learn about using Keras models for batch predictions on AI Platform
+description: Learn about using Keras models for batch predictions on AI Platform.
 author: enakai00
 tags: AI Platform, TensorFlow, Keras, ML
 date_published: 2020-02-01
