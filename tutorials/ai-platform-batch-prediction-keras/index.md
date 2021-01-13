@@ -105,7 +105,7 @@ Suppose that you defined and trained a Keras model. The model object is stored i
         wrapper_model = models.Model(inputs=[model.input, key], outputs=pred)
         wrapper_model.compile()
 
-The following diagram shows the architecture of the wrapper model. The upper part is the original model that accepts features and outputs a prediction. The lower part simply passes through a unique key. The are concatenated to generate a combined result.
+The following diagram shows the architecture of the wrapper model. The upper part is the original model that accepts features and outputs a prediction. The lower part simply passes through a unique key. They are concatenated to generate a combined result.
 
 ![wrapper model](img/wrapper_model.png)
 
