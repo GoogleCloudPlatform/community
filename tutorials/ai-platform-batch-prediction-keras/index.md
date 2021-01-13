@@ -97,7 +97,7 @@ There are multiple ways to add a unique key to the model. If you use Keras to de
 
 ### Using the functional API
 
-Suppose that you defined and trained a Keras model. The model object is stored in the variable `model`. You can define and compile a wrapper model `wrapper_model` as below:
+Suppose that you defined and trained a Keras model. The model object is stored in the variable `model`. You can define and compile a wrapper model `wrapper_model` unsing the Kearas's functional API as below:
 
         key = layers.Input(shape=(), name='key', dtype='int32')
         pred = layers.Concatenate(name='prediction_with_key')(
@@ -105,6 +105,9 @@ Suppose that you defined and trained a Keras model. The model object is stored i
         wrapper_model = models.Model(inputs=[model.input, key], outputs=pred)
         wrapper_model.compile()
 
+The following diagram shows the architecture of the wrapper model. The upper part is the original model that accepts features and outputs a prediction. The lower part simply passes through a unique key. The are concatenated to generate a combined result.
+
+![wrapper model](/img/wrapper_model.png)
 
 You export `wrapper_model` in the saved_model format and deploy it to the AI Platform. The following code snippet shows how you use the deployed model to make an online prediction. The model accepts the `key` field in addition to `features`.
 
