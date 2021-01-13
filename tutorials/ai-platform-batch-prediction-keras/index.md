@@ -148,7 +148,7 @@ The output contains the prediction and key values as below:
             ]
         }
 
-The [Notebook](notebooks/functional_API_example.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Go through example notebooks using AI Platform Notebooks](index.md#go-thorugh-example-notebooks-using-ai-platform-notebooks) to run the notebook.
+The [Notebook](notebooks/functional_API_example.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Go through example notebooks using AI Platform Notebooks](index.md#go-through-example-notebooks-using-ai-platform-notebooks) to run the notebook.
 
 ### Using the `@tf.function` decorator
 
@@ -210,7 +210,7 @@ The output contains the prediction and key values as below:
 
 **Note**: The output format is different from the previous method of using the functional API.
 
-The [Notebook](notebooks/decorator_example.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Go through example notebooks using AI Platform Notebooks](index.md#go-thorugh-example-notebooks-using-ai-platform-notebooks) to run the notebook.
+The [Notebook](notebooks/decorator_example.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Go through example notebooks using AI Platform Notebooks](index.md#go-through-example-notebooks-using-ai-platform-notebooks) to run the notebook.
 
 ## Go through example notebooks using AI Platform Notebooks.
 
