@@ -14,9 +14,9 @@ This tutorial explains how you can modify machine learning models defined with K
 
 ## Objectives
 
-* Understand how batch predictions works on AI Platform.
+* Understand how batch predictions work on AI Platform.
 * Learn how to modify Keras models for batch predictions.
-* Go thorugh example notebooks using AI Platform Notebooks.
+* Go through example notebooks using AI Platform Notebooks.
 
 ## Costs
 
@@ -41,7 +41,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator/) to g
 
         gcloud services enable ml.googleapis.com notebooks.googleapis.com
 
-## Understand how batch predictions works on AI Platform.
+## Understand how batch predictions work on AI Platform.
 
 [Cloud AI Platform](https://cloud.google.com/ai-platform) (CAIP) provides a serverless platform for training and serving machine learning (ML) models. You can use [the batch prediction](https://cloud.google.com/ai-platform/prediction/docs/batch-predict) when you have a large number of instances to get predictions. You store prediction input files in the storage bucket and submit a batch prediction job. The prediction results are recorded in text files and stored in the storage bucket.
 
@@ -58,7 +58,7 @@ When using the batch prediction, you need to consider the fact that the order of
                      |            |
                       ------------
 
-The followings are examples of an input and the corresponding output.
+The following are examples of an input and the corresponding output.
 
 Input file:
 
@@ -97,7 +97,7 @@ There are multiple ways to add a unique key to the model. If you use Keras to de
 
 ### Using the functional API
 
-Suppose that you defined and trained a Keras model. The model object is stored in the variable `model`. You can define and compile a wrapper model `wrapper_model` unsing the Kearas's functional API as below:
+Suppose that you defined and trained a Keras model. The model object is stored in the variable `model`. You can define and compile a wrapper model `wrapper_model` using the Kearas's functional API as below:
 
         key = layers.Input(shape=(), name='key', dtype='int32')
         pred = layers.Concatenate(name='prediction_with_key')(
@@ -129,7 +129,7 @@ You export `wrapper_model` in the saved_model format and deploy it to the AI Pla
         response = api.projects().predict(body=request_data, name=parent).execute()
         print(json.dumps(response, sort_keys = True, indent = 4))
 
-The output contains the predicion and key values as below:
+The output contains the prediction and key values as below:
 
         {
             "predictions": [
@@ -148,7 +148,7 @@ The output contains the predicion and key values as below:
             ]
         }
 
-The [Notebook](notebooks/functional_API_example.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Go thorugh example notebooks using AI Platform Notebooks](index.md#go-thorugh-example-notebooks-using-ai-platform-notebooks) to run the notebook.
+The [Notebook](notebooks/functional_API_example.ipynb) explains the whole procedure to use this method for the batch prediction. Follow [Go through example notebooks using AI Platform Notebooks](index.md#go-thorugh-example-notebooks-using-ai-platform-notebooks) to run the notebook.
 
 ### Using the `@tf.function` decorator
 
@@ -160,7 +160,7 @@ Suppose that you defined and trained a Keras model. The model object is stored i
             pred = model(features, training=False)
             return {'prediction': pred, 'key': key}
 
-The `input_signature` option specifies the parameter types of the function `add_key`. In this case, the parameter `features` corresponds to a list of 13 float values that is an input feature of the original model, and the parameter `key` corresponds to an interger key. In other words, the function `add_key` accepts features of the original model and an interger key. It returns the dictionary containing prediction and key values.
+The `input_signature` option specifies the parameter types of the function `add_key`. In this case, the parameter `features` corresponds to a list of 13 float values that is an input feature of the original model, and the parameter `key` corresponds to an integer key. In other words, the function `add_key` accepts features of the original model and an integer key. It returns the dictionary containing prediction and key values.
 
 **Note**: `@tf.function` decorator builds a tensorflow graph containing the specified function.
 
@@ -189,7 +189,7 @@ This ensures that the function `add_key` is used to make predictions once you de
         response = api.projects().predict(body=request_data, name=parent).execute()
         print(json.dumps(response, sort_keys = True, indent = 4))
 
-The output contains the predicion and key values as below:
+The output contains the prediction and key values as below:
 
         {
             "predictions": [
@@ -221,7 +221,7 @@ The [Notebook](notebooks/decorator_example.ipynb) explains the whole procedure t
         curl -OL https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/ai-platform-batch-prediction-keras/notebooks/functional_API_example.ipynb
         curl -OL https://raw.githubusercontent.com/GoogleCloudPlatform/community/master/tutorials/ai-platform-batch-prediction-keras/notebooks/decorator_example.ipynb
 
-4. Open the following notebooks and follow the instruction.
+4. Open the following notebooks and follow the instructions.
 
 - `functional_API_example.ipynb`: Using the functional API.
 - `decorator_example.ipynb`: Using the `@tf.function` decorator.
