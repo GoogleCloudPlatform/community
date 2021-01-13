@@ -23,6 +23,10 @@ model in [TensorBoard](https://www.tensorflow.org/tensorboard).
 This tutorial uses the [Cloud Console](https://console.cloud.google.com/automl-tables/datasets), but you could also accomplish the same steps through the 
 command-line interface or using the [AutoML Tables client libraries](https://googleapis.dev/python/automl/latest/gapic/v1beta1/tables.html).
 
+> **Note**: This tutorial applies to the AutoML Tables service as accessed here: https://console.cloud.google.com/automl-tables/. Export of the
+([Preview) AutoML Tabular models](https://console.cloud.google.com/ai/platform/models) requires a slightly different process. We intend to update this tutorial
+soon to include both.
+
 ## About the dataset and scenario
 
 The [Cloud Public Datasets Program](https://cloud.google.com/bigquery/public-data/) makes available public datasets that are useful for experimenting with 
@@ -193,6 +197,9 @@ Viewing your exported model in TensorBoard requires a conversion step. You need 
     ![Zooming in to see part of the model graph in more detail](https://storage.googleapis.com/gcp-community/tutorials/automl-tables-model-export/tb3.png)
 
 ## Create a Cloud Run service based on your exported model
+
+> **Note**: Currently, this part of the tutorial doesn't work properly because of a change in the `model_server` base image, though you can still use your
+created container image locally. We intend to update this tutorial soon with a fix.
 
 At this point, you have a trained model that you've exported and tested locally. You are almost ready to deploy it to
 [Cloud Run](https://cloud.google.com/run/docs/). As the last step of preparation, you create a container image that uses 

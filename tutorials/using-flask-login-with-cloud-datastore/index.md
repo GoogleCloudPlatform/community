@@ -135,7 +135,7 @@ def login():
 
         # fetch user using the 'username' property
         # refer to the datastore-entity documentation for more
-        user = User().get_object('username',identity)
+        user = User().get_obj('username',identity)
 
         if user and user.authenticated(password):
 

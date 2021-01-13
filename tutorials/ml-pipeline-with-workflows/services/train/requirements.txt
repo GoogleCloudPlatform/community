@@ -1,0 +1,5 @@
+Flask
+google_apitools
+google-api-python-client
+gunicorn
+six>=1.13.0,<2dev

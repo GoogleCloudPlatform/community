@@ -170,7 +170,7 @@ Create your secrets using the following commands:
     echo -n "default" | gcloud secrets create image_factory-network --replication-policy="automatic" --data-file=-
 
     echo -n "allow-winrm-ingress-to-packer" | gcloud secrets create image_factory-tags --replication-policy="automatic" --data-file=-
-    
+
 Optionally, you can customize the values using the [documentation](https://cloud.google.com/secret-manager/docs/creating-and-accessing-secrets).
 
 ## (Windows image only) Create a new VPC firewall to allow WinRM for Packer
@@ -443,7 +443,7 @@ contains the [googlecompute builder template](https://www.packer.io/docs/builder
 Because of the way Packer uses WinRM as the communicator to connect and configure Windows, this template achieves the following:
 
 -   `"variables"` contains placeholder values such as `_PROJECT_ID` that are dynamically changed by Cloud Build sourced from both built-in variables (project)
-    and custom user variables (Secret Manager). By using `"source_image_family"`, Packer automatically retrieves the latest version available for 
+    and custom user variables (Secret Manager). By using `"source_image_family"`, Packer automatically retrieves the latest version available for
     the machine image.
 -   Configures WinRM to use HTTPS for connecting Packer and the staging Windows VM (creates a temporary, local self-signed certificate).
 -   Using [Compute Engine metadata](https://cloud.google.com/compute/docs/startupscript#providing_a_startup_script_for_windows_instances)
@@ -467,7 +467,7 @@ undo WinRM configurations, and then remove the shutdown script itself.
 [**`windows/scripts/disable-uac.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/disable-uac.ps1) installs the latest version of Chocolatey, a package management binary for PowerShell.
 
 [**`windows/scripts/packages.config`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/packages.config) contains a list of packages in an XML manifest for Chocolatey to install. This is where you can define
-[any supported packages](https://chocolatey.org/packages) to install, as well as versioning, options, and switches. For details, see the 
+[any supported packages](https://chocolatey.org/packages) to install, as well as versioning, options, and switches. For details, see the
 [Chocolatey documentation](https://chocolatey.org/docs/commandsinstall#packagesconfig). 
 
 [**`windows/scripts/run-chocolatey.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/run-chocolatey.ps1) invokes Chocolatey to install the packages defined in the XML manifest, including error handling. Because some Windows
