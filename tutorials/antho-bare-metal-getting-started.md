@@ -2,7 +2,7 @@
 title: Getting started with Anthos on bare metal
 description: Learn how to deploy a sample Anthos on bare metal cluster.
 author: mikegcoleman
-tags: Kubernetes, Cluster
+tags: Kubernetes, cluster
 date_published: 2020-01-15
 ---
 
@@ -15,7 +15,7 @@ server hardware using Anthos on bare metal. It covers the benefits of deploying 
 using Google Cloud operations capabilities to inspect the health of the deployed cluster. This tutorial assumes that you have a base understanding of both Google
 Cloud and Kubernetes, as well as familiarity operating from the command line in Cloud Shell.
 
-In this tutorial you deploy a two-node Kubernetes cluster that is registered with the Google Cloud Console. You use the `bmctl` commnd-line utility to create a 
+In this tutorial you deploy a two-node Kubernetes cluster that is registered with the Google Cloud Console. You use the `bmctl` command-line utility to create a 
 skeleton configuration file that you customize, and then you deploy the cluster using `bmctl` and your customized configuration file. You then take a look at 
 some automatically created Google Cloud Operations dashboards.
 
@@ -68,7 +68,8 @@ To complete this tutorial you need the resources described in this section.
 You need two computers that meet the following requirements:
 
 * At least 32GB of RAM, a 4-core CPU, and 128GB of free storage.
-* Linux operating system from the list that are supported for Anthos on bare metal:
+* Linux operating system supported for Anthos on bare metal:
+
   * [Ubuntu 18.04/20.04 LTS](https://cloud.google.com/anthos/gke/docs/bare-metal/1.6/installing/configure-os/ubuntu)
   * [Red Hat Enterprise Linux 8.1](https://cloud.google.com/anthos/gke/docs/bare-metal/1.6/installing/configure-os/rhel)
   * [CentOS 8.1](https://cloud.google.com/anthos/gke/docs/bare-metal/1.6/installing/configure-os/centos)
@@ -127,16 +128,16 @@ node (which in the case of this tutorial is the same as the control plane node).
 then a range for the load balancers to draw from to expose your services outside the cluster. The ingress virtual IP address must be within the range that you 
 specify for the load balancers, but the load balancer IP address should not be in the given range. 
 
-The CIDR block that the author of this tutorial used for his local network is 192.168.86.0/24. The author's Intel NUCs are all on the same switch, so they are 
-all on the same L2 network. The default pod network (192.168.0.0/16) overlaps with this home network. To avoid any conflicts, the author set his pod network to 
-use 172.16.0.0/16. Because there is no conflict, the services network is using the default (10.96.0.0/12). Ensure that your chosen local network doesn’t conflict
-with the defaults chosen by `bmctl`. 
+The CIDR block that the author of this tutorial used for his local network is `192.168.86.0/24`. The author's Intel NUCs are all on the same switch, so they are 
+all on the same L2 network. The default pod network (`192.168.0.0/16`) overlaps with this home network. To avoid any conflicts, the author set his pod network to 
+use `172.16.0.0/16`. Because there is no conflict, the services network is using the default (`10.96.0.0/12`). Ensure that your chosen local network doesn’t 
+conflict with the defaults chosen by `bmctl`. 
 
-Given this configuration, the control plane virtual IP address is set to 192.168.86.99. The ingress virtual IP address, which needs to be part of the range that 
-you specify for your load balancer pool, is 192.168.86.100. The pool of addresses for the load balancers is set to 192.168.86.100-192.168.86.150.  
+Given this configuration, the control plane virtual IP address is set to `192.168.86.99`. The ingress virtual IP address, which needs to be part of the range
+that you specify for your load balancer pool, is `192.168.86.100`. The pool of addresses for the load balancers is set to `192.168.86.100`-`192.168.86.150`.  
 
 In addition to the IP ranges, you also need to specify the IP address of the control plane node and the worker node. In the case of the author's setup, the
-control plane is 192.168.86.51 and the worker node IP address is 192.168.86.52.
+control plane is `192.168.86.51` and the worker node IP address is `192.168.86.52`.
 
 ## Creating the cluster configuration File
 
@@ -172,7 +173,7 @@ In this tutorial you deploy a standalone cluster.
         --create-service-accounts \
         --project-id=$PROJECT_ID
     
-    This command creates a configuration file, that creates a cluster with the name `demo-cluster`. If you want to use a different cluster name, change
+    This command creates a configuration file that creates a cluster with the name `demo-cluster`. If you want to use a different cluster name, change
     `demo-cluster` here. The `--enable-apis` and `--create-service-accounts` flags automatically enable the
     [correct APIs and service accounts](https://cloud.google.com/anthos/gke/docs/bare-metal/1.6/quickstart#configuring-sa).
     
@@ -192,7 +193,7 @@ In this section, you update the configuration file with the appropriate values.
 Open the configuration file in a text editor and make the following changes, being careful of indentation:
 
 * In the list of access keys at the top of the file, after `sshPrivateKeyPath`, specify the path to your SSH private key.
-* In the cluster definition:
+* In the cluster definition, do the following:
     *   Change the type (`Cluster:spec:type`) to `standalone`.
     *   Set the IP address of the control plane node (`Cluster:controlPlane:nodePoolSpec:nodes:addresses`).
     *   Ensure that the networks for the pods and services do not conflict with your home network
@@ -200,12 +201,12 @@ Open the configuration file in a text editor and make the following changes, bei
     *   Specify the control plane virtual IP address (`Cluster:loadBalancer:vips:controlPlaneVIP`).
     *   Uncomment and specify the ingress virtual IP address (`Cluster:loadBalancer:vips:controlPlaneVIP`).
     *   Uncomment the `addressPools` section (excluding actual comments) and specify the load balancer address pool 
-        (`Cluster:loadBalancer:addressPools:addresses`) 
+        (`Cluster:loadBalancer:addressPools:addresses`).
 * In the `NodePool` definition, specify the IP address of the worker node (`NodePool:spec:nodes:addresses`).
 
-For reference, below is a complete example cluster definition YAML file (with the comments removed for brevity). As described in the previous section
-about netowrking, this example shows changes to the pod and services networks; you may not need to do this depending on the IP address range of your local 
-network.  
+For reference, below is a complete example cluster definition YAML file, with the comments removed for brevity. As described in the previous section
+about networking, this example shows changes to the pod and services networks; you may not need to make such changes, depending on the IP address range of your
+local network.  
 
     sshPrivateKeyPath: /home/mikegcoleman/.ssh/id_rsa
     gkeConnectAgentServiceAccountKeyPath: /home/mikegcoleman/baremetal/bmctl-workspace/.sa-keys/mikegcoleman-anthos-bm-anthos-baremetal-connect.json
@@ -277,7 +278,7 @@ In this section, you create the cluster based on the configuration file that you
 
 1.  Create the cluster:
 
-        ./`bmctl create cluster -c demo-cluster
+        ./bmctl create cluster -c demo-cluster
 
     `bmctl` runs a series of preflight checks before creating your cluster. If any of the checks fail, check the log files specified in the output.
 
@@ -289,7 +290,7 @@ In this section, you create the cluster based on the configuration file that you
         
     You may need to modify the command above for your cluster name.
 
-1.  List the nodes in the cluster
+1.  List the nodes in the cluster:
 
         kubectl get nodes
 
@@ -305,11 +306,11 @@ In this section, you view your deployed cluster in the Cloud Console.
 
 1.  Go to the [Cloud Console](https://console.cloud.google.com). 
 
-1.  If the navigation menu is not open, click the ** Navigation menu** icon in the upper-left corner of the Cloud Console.
+1.  If the navigation menu is not open, click the **Navigation menu** icon in the upper-left corner of the Cloud Console.
 
 1.  In the navigation menu, scroll down to **Anthos** and choose **Clusters**.
 
-1.  Your cluster is displayed in the right-hand pane. You’ll notice, however, that there is an error. That’s because you need to create a Kubernetes service 
+    Your cluster is displayed in the right-hand pane. You’ll notice, however, that there is an error. That’s because you need to create a Kubernetes service 
     account (KSA) with the appropriate roles to view cluster details.  
  
     The KSA needs the built-in `view` role as a custom role (`cloud-console-reader`), which you create next. You also need the `cluster-admin` role to allow
@@ -363,7 +364,7 @@ In this section, you view your deployed cluster in the Cloud Console.
         kubectl create clusterrolebinding \
         cloud-console-cluster-admin-binding \
         --clusterrole cluster-admin \
-        --serviceaccount default:$KSA_NAME
+        --serviceaccount default:${KSA_NAME}
 
     If the role bindings are created successfully, the output looks like the following:
 
@@ -380,9 +381,9 @@ In this section, you view your deployed cluster in the Cloud Console.
 
     The output from the `kubectl` command is a long string.
 
-1.  Copy the toekn string output from the previous step.
+1.  Copy the token string output from the previous step.
 
-    In some cases the token string might not be copied in a format that can be pasted correctly in the next step. We recommend that you paste the token string 
+    In some cases the token string might not be copied in a format that can be pasted correctly in the next step.You can paste the token string 
     into a text editor and ensure there are no line breaks. The token string must be continuous for the next step to work.  
 
 1.  In the Cloud Console, click the name of your cluster. 
