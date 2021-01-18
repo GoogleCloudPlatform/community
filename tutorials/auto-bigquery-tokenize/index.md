@@ -267,13 +267,18 @@ supports only flat tables, so the pipeline flattens the Avro or Parquet records,
     --sourceType="BIGQUERY_TABLE" \
     --inputPattern="${PROJECT_ID}:data.RawContacts" \
     --reportLocation="gs://${TEMP_GCS_BUCKET}/dlp_report/"
+    
+The pipeline supports multiple **Source Types**, use the following table to use the right combination of `sourceType` and `inputPattern` arguments.
 
-The pipeline detects all of the standard infoTypes supported by Cloud DLP.
+| Data source | sourceType | inputPattern |
+| --- | --- | --- |
+| **Avro** file in Cloud Storage  | `AVRO` | `gs://<location of the file(s)` |
+| **Parquet** file in Cloud Storage  | `PARQUET` | `gs://<location of the file(s)` |
+| BigQuery table   | `BIGQUERY_TABLE` | `<project-id>:<dataset>.<table>` |
+| Query results in BigQuery | `BIGQUERY_QUERY` | BigQuery SQL statement in StandardSQL dialect. |
 
-To provide additional custom infoTypes that you need, use `--observableInfoTypes`.
-
-You need to use `<project-id>`**`:`**`<dataset-id>`**`.`**`<table-id>`format to describe the table as `--inputPattern` 
-parameter. 
+The pipeline detects all of the [standard infotypes](https://cloud.google.com/dlp/docs/infotypes-reference) supported by Cloud DLP.
+You can provide additional custom infoTypes that you need by using `--observableInfoTypes` parameter.
 
 The solution also supports using  **query** as source of data. You can use `--sourceType="BIGQUERY_QUERY"` and provide 
 the query in `--inputPattern`, like `--inputPattern="SELECT * FROM ``${PROJECT_ID}.data.RawContacts`` LIMIT 100"`. 
@@ -344,6 +349,13 @@ encryption key (DEK).
     --inputPattern="${PROJECT_ID}:data.RawContacts" \
     --outputDirectory="gs://${TEMP_GCS_BUCKET}/encrypted/" \ 
     --tokenizeColumns="$.__root__.contact.__s_0.nums.__s_1.number"
+
+The pipeline supports following destinations for storing the tokenized output.
+You can use one or both of them simultaneously.
+| Destination | Description | Pipeline parameter |
+| --- | --- | --- |
+| File in Cloud Storage  | Stores as an AVRO file | `--outputDirectory=gs://<location of the directory/` |
+| BigQuery table | uses `WRITE_TRUNCATE` mode to write results to a BigQuery Table. | `--outputBigQueryTable=<project-id>:<dataset>.<table>` |
 
 The pipeline executes asynchronously on Dataflow. You can check the progress by following the job link printed in the following format:
 
