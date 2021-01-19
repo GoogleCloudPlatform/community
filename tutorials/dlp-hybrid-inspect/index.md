@@ -67,13 +67,13 @@ database password and then pass the secret resource ID as a parameter into the s
 
 ## Create a hybrid job or trigger using Cloud Console
 
-1.  To create the inspection template in Cloud DLP, go to the Cloud [DLP Create job page](https://console.cloud.google.com/security/dlp/create/job).
+1.  To create the inspection template in Cloud DLP, go to the Cloud DLP [Create job page](https://console.cloud.google.com/security/dlp/create/job).
 1.  Select **Hybrid** as the location type.
 1.  Configure detection to determine what you want to inspect for. 
 1.  Select the actions that you want. If you want to analyze detailed findings, turn on **Save to BigQuery**. 
 1.  Finish creating the DLP job.
 
-The resource name that is created is used as a parameter for the script below and will be in a format similar to the following:
+The resource name that is created is used as a parameter for the script below and is in a format similar to the following:
 
     projects/[YOUR_PROJECT_ID]/locations/global/dlpJobs/i-[YOUR_JOB_NAME]
 
@@ -106,14 +106,14 @@ Run the following command to compile the script:
 
     mvn clean package -DskipTests
 
-## Command line parameters
+## Command-line parameters
 
 There are two ways that you can configure parameters on what to scan:
 
-* Scan a single data source.
-* Scan a list of data sources provided in a JSON file.
+* Scan a single data source with parameters in the command.
+* Scan a list of data sources with parameters provided in a JSON file.
 
-### Option 1: Scan a single data source
+### Option 1: Scan a single data source with parameters in the command
 
 You can configure several parameters, including the database host, username, password, number of rows to sample, and what Cloud DLP hybrid job ID to use. 
 Passwords are sent using Cloud Secret Manager to avoid exposing them through the command line. 
@@ -144,7 +144,7 @@ Passwords are sent using Cloud Secret Manager to avoid exposing them through the
     -databaseUser "[DATABASE_USER]" \
     -secretManagerResourceName "[SECRET_MANAGER]"
 
-### Option 2: Scan a list of data sources provided in a JSON file
+### Option 2: Scan a list of data sources with parameters provided in a JSON file
 
 You can configure parameters including JSON file specifying a list of data sources to scan and what Cloud DLP hybrid job ID to use.
 Passwords are sent using Cloud Secret Manager to avoid exposing them through the command line.
@@ -158,7 +158,7 @@ Passwords are sent using Cloud Secret Manager to avoid exposing them through the
 When using a list of data sources, you can configure two `threadPoolSize` parameters. One indicates the number of threads to use to scan multiple data sources in
 parallel; the other indicates how many threads to use for each data source. In the JSON file, you can specify a different `threadPoolSize` to use a different
 number of threads for each data source. Consider how many connections you want to make for each data source and the total multiplication of threads with regard 
-to your Cloud DLP quota.  For example, if you set this `threadPoolSize` to 5 and you set each data source to have a `threadPoolSize` of 2, then you could have 
+to your Cloud DLP quota. For example, if you set this `threadPoolSize` to 5 and you set each data source to have a `threadPoolSize` of 2, then you could have 
 10 threads running at once, where each thread is making requests against your Cloud DLP quota. 
 
 #### Example command for using a list of data sources
