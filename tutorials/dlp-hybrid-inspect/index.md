@@ -1,6 +1,6 @@
 ---
 title: Cloud Data Loss Prevention (DLP) hybrid inspection for SQL databases using JDBC
-description: Demonstrates how to inspect SQL databases (like MySQL, SQL Server, or PostgreSQL) using Cloud Data Loss Prevention's hybrid inspection.
+description: Demonstrates how to inspect SQL databases (like MySQL, SQL Server, or PostgreSQL) using Cloud Data Loss Prevention hybrid inspection.
 author: scellis,crwilson
 tags: Cloud DLP, Java, PII
 date_published: 2020-08-24
@@ -10,8 +10,8 @@ Scott Ellis and Chris Wilson | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-Cloud Data Loss Prevention (Cloud DLP) can help you to discover, inspect, and classify sensitive elements in your data. This document shows how to use the Cloud 
-DLP [_hybrid inspection jobs_](https://cloud.google.com/dlp/docs/concepts-hybrid-jobs) with a JDBC driver to inspect samples of tables in a SQL database 
+Cloud Data Loss Prevention (Cloud DLP) can help you to discover, inspect, and classify sensitive elements in your data. This document shows how to use Cloud 
+DLP [hybrid inspection jobs](https://cloud.google.com/dlp/docs/concepts-hybrid-jobs) with a JDBC driver to inspect samples of tables in a SQL database 
 like MySQL, SQL Server, or PostgreSQL.
 
 For a video demonstration, see
@@ -49,9 +49,9 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 ## Create a database
 
-For this demonstration, you need to have data running in one or more databases that have a JDBC driver available. You can use this script to inspect a database running 
-virtually anywhere (on or off cloud). The database does not need to be located in the same place as where you run the script, but the script must have network access to the 
-database host. This script has drivers and examples for MySQL, PostgreSQL, and MS SQL Server. You may need to update the
+For this demonstration, you need to have data running in one or more databases that have a JDBC driver available. You can use this script to inspect a database 
+running almost anywhere (in the cloud or not). The database does not need to be located in the same place as where you run the script, but the script must have
+network access to the database host. This script has drivers and examples for MySQL, PostgreSQL, and Microsoft SQL Server. You might need to update the
 [`pom.xml` file](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/dlp-hybrid-inspect/pom.xml)
 to include the appropriate JDBC client if you are scanning different data sources.
 
@@ -77,7 +77,7 @@ The resource name that is created is used as a parameter for the script below an
 
     projects/[YOUR_PROJECT_ID]/locations/global/dlpJobs/i-[YOUR_JOB_NAME]
 
-or for a JobTrigger:
+For a job trigger, the format is similar to the following:
 
     projects/[YOUR_PROJECT_ID]/locations/global/jobTriggers/d-[YOUR_JOB_TRIGGER_NAME]
 
@@ -108,7 +108,10 @@ Run the following command to compile the script:
 
 ## Command line parameters
 
-There are two ways that you can configure parameters on what to scan. 
+There are two ways that you can configure parameters on what to scan:
+
+* Scan a single data source.
+* Scan a list of data sources provided in a JSON file.
 
 ### Option 1: Scan a single data source
 
@@ -128,7 +131,7 @@ Passwords are sent using Cloud Secret Manager to avoid exposing them through the
 | `databaseUser`              | The username for your database instance.  |
 | `secretManagerResourceName` | The Secret Manager resource ID/name that has your database password. Currently this is just the _name_ and the secret must be in the same project. |
 
-#### Example command line for MySQL
+#### Example command for MySQL
 
     java -cp target/dlp-hybrid-inspect-sql-0.5-jar-with-dependencies.jar com.example.dlp.HybridInspectSql \
     -sql "postgres" \
@@ -146,72 +149,63 @@ Passwords are sent using Cloud Secret Manager to avoid exposing them through the
 You can configure parameters including JSON file specifying a list of data sources to scan and what Cloud DLP hybrid job ID to use.
 Passwords are sent using Cloud Secret Manager to avoid exposing them through the command line.
 
-| parameter            | description                                         |
-|----------------------|-----------------------------------------------------|
-| `databases`                | A JSON formatted file that includes a list of data sources to scan.  See example JSON format below or the `example_database_list.json` file in the repo. |
-| `threadPoolSize`     | Number of worker threads across data sources. |
-| `hybridJobName`  | Cloud DLP Hybrid job or trigger resource ID/name.   |
+| parameter        | description                                         |
+|------------------|-----------------------------------------------------|
+| `databases`      | A JSON file that includes a list of data sources to scan (See the example below or the `example_database_list.json` file in the [repository for this tutorial](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/dlp-hybrid-inspect).) |
+| `threadPoolSize` | Number of worker threads across data sources |
+| `hybridJobName`  | Cloud DLP hybrid job or trigger resource ID or name   |
 
-#### A note on *threads* 
+When using a list of data sources, you can configure two `threadPoolSize` parameters. One indicates the number of threads to use to scan multiple data sources in
+parallel; the other indicates how many threads to use for each data source. In the JSON file, you can specify a different `threadPoolSize` to use a different
+number of threads for each data source. Consider how many connections you want to make for each data source and the total multiplication of threads with regard 
+to your Cloud DLP quota.  For example, if you set this `threadPoolSize` to 5 and you set each data source to have a `threadPoolSize` of 2, then you could have 
+10 threads running at once, where each thread is making requests against your Cloud DLP quota. 
 
-When using a list of datasources you can configure two `threadPoolSize` parameters. 
-One indicates the number of threads to be used to scan multiple data sources in parallel and the second indicates how many threads per each data source. 
-In the JSON file you can specify a different per data source `threadPoolSize` for each datasource. Please take into consideration how many connections you 
-want to make per data sources and the total multiplication of threads with regards to your Cloud DLP quota.  For example, if you set this `threadPoolSize` 
-to 5 and you set each data source to have a `threadPoolSize` of 2, that means you could have 10 threads running at once where each thread is making requests 
-against your Cloud DLP quota. 
-
-#### Example command line for using a list of data sources
-
-java -cp target/dlp-hybrid-inspect-sql-0.5-jar-with-dependencies.jar com.example.dlp.HybridInspectSql -databases ingest.json -hybridJobName "projects/deid-demo-lock1/locations/global/jobTriggers/ste-hybrid-test-prod-t1" -threadPoolSize 3
-
+#### Example command for using a list of data sources
 
     java -cp target/dlp-hybrid-inspect-sql-0.5-jar-with-dependencies.jar com.example.dlp.HybridInspectSql \
     -databases list1.json \
     -threadPoolSize 1 \
     -hybridJobName "projects/[PROJECT_ID]/jobTriggers/[HYBRID_JOB_TRIGGER_NAME]" 
 
-
 #### Example JSON file for list of data sources
 
-The JSON file is a list of data sources where each entry includes the parameters needed to scan a data source. 
+The JSON file is a list of data sources in which each entry includes the parameters needed to scan a data source. 
 
-In the example below, two databases are provided, one for Postgres and another for SQL Server
+In this example, two databases are provided, one for Postgres and another for SQL Server:
 
-```
-[
-    {
-      "threadPoolSize": 2,
-      "sampleRowLimit": 1000,
-      "databaseType": "postgres",
-      "databaseInstanceDescription": "scanning-postgres-demo",
-      "databaseInstanceServer": "10.0.0.20",
-      "databaseName": "database1",
-      "databaseUser": "postgres",
-      "secretManagerResourceName": "demo_postgres_password"
-    },
-    {
-      "threadPoolSize": 2,
-      "sampleRowLimit": 1000,
-      "databaseType": "mysql",
-      "databaseInstanceDescription": "scanning-mysql-demo",
-      "databaseInstanceServer": "10.0.0.30",
-      "databaseName": "database1",
-      "databaseUser": "mysql",
-      "secretManagerResourceName": "demo_mysql_password"
-    },
-    {
-      "threadPoolSize": 2,
-      "sampleRowLimit": 1000,
-      "databaseType": "sqlserver",
-      "databaseInstanceDescription": "scanning-sqlserver-demo",
-      "databaseInstanceServer": "10.0.0.40",
-      "databaseName": "database1",
-      "databaseUser": "admin",
-      "secretManagerResourceName": "demo_sqlserver_password"
-    }
-]
-```
+    [
+        {
+          "threadPoolSize": 2,
+          "sampleRowLimit": 1000,
+          "databaseType": "postgres",
+          "databaseInstanceDescription": "scanning-postgres-demo",
+          "databaseInstanceServer": "10.0.0.20",
+          "databaseName": "database1",
+          "databaseUser": "postgres",
+          "secretManagerResourceName": "demo_postgres_password"
+        },
+        {
+          "threadPoolSize": 2,
+          "sampleRowLimit": 1000,
+          "databaseType": "mysql",
+          "databaseInstanceDescription": "scanning-mysql-demo",
+          "databaseInstanceServer": "10.0.0.30",
+          "databaseName": "database1",
+          "databaseUser": "mysql",
+          "secretManagerResourceName": "demo_mysql_password"
+        },
+        {
+          "threadPoolSize": 2,
+          "sampleRowLimit": 1000,
+          "databaseType": "sqlserver",
+          "databaseInstanceDescription": "scanning-sqlserver-demo",
+          "databaseInstanceServer": "10.0.0.40",
+          "databaseName": "database1",
+          "databaseUser": "admin",
+          "secretManagerResourceName": "demo_sqlserver_password"
+        }
+    ]
 
 ## Cleaning up
 
