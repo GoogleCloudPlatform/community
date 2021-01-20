@@ -3,7 +3,7 @@ title: Create Data Catalog tags by inspecting BigQuery data with Cloud Data Loss
 description: Learn how to inspect BigQuery data using Cloud Data Loss Prevention and automatically create Data Catalog tags for sensitive elements with results from inspection scans at scale using Dataflow.
 author: mesmacosta
 tags: database, Cloud DLP, Java, PII, Cloud Dataflow
-date_published: 2021-01-05
+date_published: 2021-01-20
 ---
 
 Cloud Data Loss Prevention (Cloud DLP) can help you to discover, inspect, and classify sensitive elements in your data. The 
@@ -45,7 +45,7 @@ projected usage.
 
 The following diagram shows the architecture of the solution:
 
-![N|Solid](images/architecture.png)
+![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dataflow-dlp-to-datacatalog-tags/architecture.png)
 
 ## Before you begin
 
@@ -122,11 +122,11 @@ Create the inspection template in Cloud DLP:
 
 1.  Set up the InfoTypes. This is an example. You may choose any from the list available:
     
-    ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/infoTypes.png)
+    ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dataflow-dlp-to-datacatalog-tags/infoTypes.png)
 
 1.  Finish creating the inspection template:
     
-    ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/inspectTemplateCreated.png)
+    ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dataflow-dlp-to-datacatalog-tags/inspectTemplateCreated.png)
 
 ### Create service account
 
@@ -207,18 +207,18 @@ It's best to leave the default values, but you may change and tune them to fit y
 
 ### Pipeline DAG
 
-![Pipeline DAG](images/pipeline.png)
+![Pipeline DAG](https://storage.googleapis.com/gcp-community/tutorials/dataflow-dlp-to-datacatalog-tags/pipeline.png)
 
 ### Check the results of the script
 
 After the script finishes, you can go to [Data Catalog](https://cloud.google.com/data-catalog) and search for sensitive
 data:
 
-![N|Solid](images/searchUI.png)
+![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dataflow-dlp-to-datacatalog-tags/searchUI.png)
 
 By clicking each table, you can see which columns were marked as sensitive:
 
-![N|Solid](images/taggedTable.png)
+![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dataflow-dlp-to-datacatalog-tags/taggedTable.png)
 
 ## Cleaning up
 
@@ -230,8 +230,6 @@ To delete the project, follow the steps below:
 1.  In the Cloud Console, [go to the Projects page](https://console.cloud.google.com/iam-admin/projects).
 
 1.  In the project list, select the project that you want to delete and click **Delete project**.
-
-    ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/partial-redaction-with-dlp-and-gcf/img_delete_project.png)
     
 1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
