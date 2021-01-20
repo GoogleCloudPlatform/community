@@ -15,6 +15,9 @@ the sensitive elements found.
 This tutorial includes instructions to create a Cloud DLP inspection template to define what data elements to inspect for and samples commands that demonstrate 
 how to run a Dataflow job using the command-line interface.
 
+For a related tutorial that uses a JDBC driver to connect to BigQuery and doesn't use Dataflow, see
+[Create Data Catalog tags by inspecting BigQuery data with Cloud Data Loss Prevention](https://cloud.google.com/community/tutorials/dlp-to-datacatalog-tags).
+
 ## Objectives
 
 - Enable Cloud Data Loss Prevention, BigQuery, Data Catalog, and Dataflow APIs.
@@ -234,4 +237,6 @@ To delete the project, follow the steps below:
 - Learn about [Cloud Data Loss Prevention](https://cloud.google.com/dlp).
 - Learn about [Data Catalog](https://cloud.google.com/data-catalog).
 - Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
+- For a related tutorial that uses a JDBC driver to connect to BigQuery and doesn't use Dataflow, see
+[Create Data Catalog tags by inspecting BigQuery data with Cloud Data Loss Prevention](https://cloud.google.com/community/tutorials/dlp-to-datacatalog-tags).
 - Try out other Google Cloud features. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
