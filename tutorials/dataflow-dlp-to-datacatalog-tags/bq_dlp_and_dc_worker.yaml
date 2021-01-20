@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-title: "Big Query DLP and Data Catalog Worker"
-description: "Allow the service account to read from Big Query call DLP and create DataCatalog tags."
+title: "BigQuery, DLP, and Data Catalog Worker"
+description: "Allow the service account to read from BigQuery, call DLP, and create Data Catalog tags."
 stage: "BETA"
 includedPermissions:
 # Generic
