@@ -6,27 +6,21 @@ tags: database, Cloud DLP, Java, PII, Cloud Dataflow
 date_published: 2021-01-20
 ---
 
-Cloud Data Loss Prevention (Cloud DLP) can help you to discover, inspect, and classify sensitive elements in your data. The 
-results of these inspections can be valuable as *tags* in Data Catalog. This tutorial shows how to inspect BigQuery data at scale with Dataflow using the Cloud Data Loss Prevention API and then the Data Catalog API to create tags at the column level with the sensitive elements found.
+[Cloud Data Loss Prevention (Cloud DLP)](https://cloud.google.com/dlp) can help you to discover, inspect, and classify sensitive elements in your data. The 
+results of these inspections can be valuable as [tags](https://cloud.google.com/data-catalog/docs/concepts/overview#tags) in
+[Data Catalog](https://cloud.google.com/data-catalog). This tutorial shows you how to inspect [BigQuery](https://cloud.google.com/bigquery) data at scale with 
+[Dataflow](https://cloud.google.com/dataflow) using the Cloud Data Loss Prevention API and then use the Data Catalog API to create tags at the column level with
+the sensitive elements found.
 
-This tutorial includes instructions to create a Cloud DLP inspection template to define what data elements to inspect for and samples on how to run a Dataflow job using the CLI.
-
-## Concepts
-
-*   [Data Catalog](https://cloud.google.com/data-catalog) provides a single interface for searching and managing both
-    [technical and business metadata](https://cloud.google.com/data-catalog/docs/concepts/overview#glossary) of your data warehouse or data lake in Google Cloud
-    and beyond. Data Catalog uses [tags](https://cloud.google.com/data-catalog/docs/concepts/overview#tags) to organize metadata and make it discoverable.
-*   [BigQuery](https://cloud.google.com/bigquery) is Google Cloud’s serverless, highly scalable, and cost-effective multi-cloud data warehouse designed for 
-    business agility that you can use to run petabyte-sized queries. BigQuery also provides APIs for reading table schemas.
-*   [Dataflow](https://cloud.google.com/dataflow) is Google Cloud’s serverless service for processing data in streams or batches.
-*   [Cloud DLP](https://cloud.google.com/dlp) is Google Cloud’s fully managed service designed to help you discover, classify, and protect your most sensitive data.
+This tutorial includes instructions to create a Cloud DLP inspection template to define what data elements to inspect for and samples commands that demonstrate 
+how to run a Dataflow job using the command-line interface.
 
 ## Objectives
 
-- Enable Cloud Data Loss Prevention, BigQuery, Cloud Data Catalog and Dataflow APIs.
+- Enable Cloud Data Loss Prevention, BigQuery, Data Catalog, and Dataflow APIs.
 - Create a Cloud DLP inspection template.
-- Deploy a Dataflow pipeline that uses Cloud DLP findings to tag BigQuery table columns with Cloud Data Catalog.
-- Use Cloud Data Catalog to quickly understand where sensitive data exists in your BigQuery table columns.
+- Deploy a Dataflow pipeline that uses Cloud DLP findings to tag BigQuery table columns with Data Catalog.
+- Use Data Catalog to quickly understand where sensitive data exists in your BigQuery table columns.
 
 ## Costs
 
@@ -57,7 +51,7 @@ The following diagram shows the architecture of the solution:
 
     [Learn how to enable billing.](https://cloud.google.com/billing/docs/how-to/modify-project)
 
-1.  Enable the Data Catalog, BigQuery, Cloud Data Loss Prevention and Dataflow APIs.
+1.  Enable the Data Catalog, BigQuery, Cloud Data Loss Prevention, and Dataflow APIs.
 
     [Enable the APIs.](https://console.cloud.google.com/flows/enableapi?apiid=datacatalog.googleapis.com,bigquery.googleapis.com,dlp.googleapis.com,dataflow.googleapis.com)
 
@@ -109,18 +103,19 @@ The following diagram shows the architecture of the solution:
 
 ### Create BigQuery tables
 
-If you don't have any BigQuery resources in your project, you can use the open source script [BigQuery Fake PII Creator](https://github.com/mesmacosta/bq-fake-pii-table-creator) to 
+If you don't have any BigQuery resources in your project, you can use the open source script
+[BigQuery Fake PII Creator](https://github.com/mesmacosta/bq-fake-pii-table-creator) to 
 create BigQuery tables with example personally identifiable information (PII). 
 
-### Create the inspection template
+### Create the inspection template in Cloud DLP
 
-Create the inspection template in Cloud DLP:
-
-> Make sure you use the value informed in the env variable `INSPECT_TEMPLATE_SUFFIX` as the template ID.
+**Note**: Use the value specified in the environment variable `INSPECT_TEMPLATE_SUFFIX` as the template ID.
 
 1.  Go to the Cloud DLP [**Create template** page](https://console.cloud.google.com/security/dlp/create/template).
 
-1.  Set up the InfoTypes. This is an example. You may choose any from the list available:
+1.  Set up the infoTypes.
+
+    The following image shows an example selection of infoTypes. You can choose whichever infoTypes you like.
     
     ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dataflow-dlp-to-datacatalog-tags/infoTypes.png)
 
@@ -128,7 +123,7 @@ Create the inspection template in Cloud DLP:
     
     ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dataflow-dlp-to-datacatalog-tags/inspectTemplateCreated.png)
 
-### Create service account
+### Create the service account
 
 We recommend that you run pipelines with fine-grained access control to improve access partitioning. If your project does not have a user-created service 
 account, create one using following instructions.
@@ -136,7 +131,7 @@ account, create one using following instructions.
 You can use your browser by going to [**Service accounts**](https://console.cloud.google.com/projectselector/iam-admin/serviceaccounts?supportedpurview=project)
 in the Cloud Console.
 
-1. Create a service account to use as the user-managed controller service account for Dataflow:
+1.  Create a service account to use as the user-managed controller service account for Dataflow:
 
         gcloud iam service-accounts create ${ALL_BQ_DLP_DATAFLOW_SERVICE_ACCOUNT} \
         --description="Service Account to run the DataCatalog bq dlp inspection pipeline." \
@@ -160,25 +155,26 @@ in the Cloud Console.
         --member="serviceAccount:${ALL_BQ_DLP_DATAFLOW_SERVICE_ACCOUNT_EMAIL}" \
         --role=roles/dataflow.worker        
 
-## Deploy the dlp and dc tagging pipeline
+## Deploy and run the Cloud DLP and Data Catalog tagging pipeline
 
-### Config parameters
-The config file at `src/main/resources/config.properties`, manages how Dataflow will
-parallelize the BigQuery rows, logging, what BigQuery resources will be considered and
-if you want to wait for the execution to finish.
+### Configure parameters
 
-It's best to leave the default values, but you may change and tune them to fit your use case:
+The configuration file at `src/main/resources/config.properties` manages how Dataflow
+parallelizes the BigQuery rows, logging, what BigQuery resources are considered, and
+whether you want to wait for the execution to finish.
 
-| Parameter                  | Description                                                           | 
-|----------------------------|-----------------------------------------------------------------------|
-| `bigquery.tables` | Use this if you want to limit the pipeline to run only on those tables, must be full table name split by comma. Default value is empty, which means run on all BigQuery tables.|
-| `rows.batch.size`                   | The number of rows batched on each DLP API call, if this value is too high you may receive request maximum payload errors. |
-| `rows.shard.size`                   | Numbers of shards used to bucket and then group the BigQuery rows in the batch size. |
-| `rows.sample.size`                | Number of BigQuery rows which will be sampled from each table, this value is important to keep the costs low. |
-| `verbose.logging`           | Flag to enable verbose logging. |
-| `pipeline.serial.execution`                 | Flag to make the pipeline have a serial execution, so you can wait for it to finish in the CLI.  |
+In general, we recommend that you leave the values at their defaults, but you can change and tune them to fit your use case.
 
-### Execution
+| Parameter           | Description                                                           | 
+|---------------------|-----------------------------------------------------------------------|
+| `bigquery.tables`   | A comma-separated list of table names, specifying which tables to run the pipeline on. The default value is empty, which causes the pipeline to run on all BigQuery tables.|
+| `rows.batch.size`   | The number of rows to process in a batch with each Cloud DLP API call. If this value is too high, you may receive errors indicating that the request has exceeded the maximum payload size. |
+| `rows.shard.size`   | Number of shards used to bucket and group the BigQuery rows into batches. |
+| `rows.sample.size`  | Number of BigQuery rows that are sampled from each table. A smaller value keeps costs lower. |
+| `verbose.logging`   | Flag to enable verbose logging. |
+| `pipeline.serial.execution` | Flag to make the pipeline have a serial execution, so you can wait for it to finish in the command-line interface. |
+
+### Run the pipeline
 
 1.  Create a Cloud Storage bucket as a temporary and staging bucket for Dataflow:
 
