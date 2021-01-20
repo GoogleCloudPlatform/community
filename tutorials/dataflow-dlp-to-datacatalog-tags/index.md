@@ -8,12 +8,12 @@ date_published: 2021-01-20
 
 [Cloud Data Loss Prevention (Cloud DLP)](https://cloud.google.com/dlp) can help you to discover, inspect, and classify sensitive elements in your data. The 
 results of these inspections can be valuable as [tags](https://cloud.google.com/data-catalog/docs/concepts/overview#tags) in
-[Data Catalog](https://cloud.google.com/data-catalog). This tutorial shows you how to inspect [BigQuery](https://cloud.google.com/bigquery) data at scale with 
-[Dataflow](https://cloud.google.com/dataflow) using the Cloud Data Loss Prevention API and then use the Data Catalog API to create tags at the column level with
-the sensitive elements found.
+[Data Catalog](https://cloud.google.com/data-catalog). This tutorial shows you how to inspect [BigQuery](https://cloud.google.com/bigquery) data on a large
+scale with [Dataflow](https://cloud.google.com/dataflow) using the Cloud Data Loss Prevention API and then use the Data Catalog API to create tags at the column
+level with the sensitive elements found.
 
-This tutorial includes instructions to create a Cloud DLP inspection template to define what data elements to inspect for and samples commands that demonstrate 
-how to run a Dataflow job using the command-line interface. 
+This tutorial includes instructions to create a Cloud DLP inspection template to define what data elements to inspect for and sample code and commands that 
+demonstrate how to run a Dataflow job using the command-line interface. 
 
 For a related tutorial that uses a JDBC driver to connect to BigQuery and doesn't use Dataflow, see
 [Create Data Catalog tags by inspecting BigQuery data with Cloud Data Loss Prevention](https://cloud.google.com/community/tutorials/dlp-to-datacatalog-tags). The
@@ -49,7 +49,7 @@ The following diagram shows the architecture of the solution:
 
 1.  Select or create a Google Cloud project.
 
-    [Go to the Managed Resources page.](https://console.cloud.google.com/cloud-resource-manager)
+    [Go to the **Manage resources** page.](https://console.cloud.google.com/cloud-resource-manager)
 
 1.  Make sure that billing is enabled for your project.
 
@@ -113,9 +113,8 @@ create BigQuery tables with example personally identifiable information (PII).
 
 ### Create the inspection template in Cloud DLP
 
-**Note**: Use the value specified in the environment variable `INSPECT_TEMPLATE_SUFFIX` as the template ID.
-
-1.  Go to the Cloud DLP [**Create template** page](https://console.cloud.google.com/security/dlp/create/template).
+1.  Go to the Cloud DLP [**Create template** page](https://console.cloud.google.com/security/dlp/create/template) and create
+    the inspection template. Use the same value specified in the environment variable `INSPECT_TEMPLATE_SUFFIX` as the template ID.
 
 1.  Set up the infoTypes.
 
@@ -129,7 +128,7 @@ create BigQuery tables with example personally identifiable information (PII).
 
 ### Create the service account
 
-We recommend that you run pipelines with fine-grained access control to improve access partitioning. If your project does not have a user-created service 
+We recommend that you run pipelines with fine-grained access control to improve access partitioning. If your project doesn't have a user-created service 
 account, create one using following instructions.
 
 You can use your browser by going to [**Service accounts**](https://console.cloud.google.com/projectselector/iam-admin/serviceaccounts?supportedpurview=project)
