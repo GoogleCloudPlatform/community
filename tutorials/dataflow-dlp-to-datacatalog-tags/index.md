@@ -1,6 +1,6 @@
 ---
-title: Create Data Catalog tags by inspecting BigQuery data with Cloud Data Loss Prevention using Dataflow
-description: Learn how to inspect BigQuery data using Cloud Data Loss Prevention and automatically create Data Catalog tags for sensitive elements with results from inspection scans at scale using Dataflow.
+title: Create Data Catalog tags on a large scale by inspecting BigQuery data with Cloud DLP using Dataflow
+description: Learn how to inspect BigQuery data using Cloud Data Loss Prevention and automatically create Data Catalog tags for sensitive elements with results from inspection scans at a large scale using Dataflow.
 author: mesmacosta
 tags: database, Cloud DLP, Java, PII, Cloud Dataflow
 date_published: 2021-01-20
@@ -13,10 +13,11 @@ results of these inspections can be valuable as [tags](https://cloud.google.com/
 the sensitive elements found.
 
 This tutorial includes instructions to create a Cloud DLP inspection template to define what data elements to inspect for and samples commands that demonstrate 
-how to run a Dataflow job using the command-line interface.
+how to run a Dataflow job using the command-line interface. 
 
 For a related tutorial that uses a JDBC driver to connect to BigQuery and doesn't use Dataflow, see
-[Create Data Catalog tags by inspecting BigQuery data with Cloud Data Loss Prevention](https://cloud.google.com/community/tutorials/dlp-to-datacatalog-tags).
+[Create Data Catalog tags by inspecting BigQuery data with Cloud Data Loss Prevention](https://cloud.google.com/community/tutorials/dlp-to-datacatalog-tags). The
+solution described in the current document is more appropriate for situations when you need to inspect data on a larger scale.
 
 ## Objectives
 
