@@ -1,8 +1,8 @@
 ---
 title: Automatically tokenize sensitive BigQuery data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow
-description: A method to identify sensitive information in BigQuery table and tokenize it automatically.
+description: A method to identify sensitive information in BigQuery tables and tokenize it automatically.
 author: anantdamle
-tags: data governance, DLP, encryption, tokenization, de-identification, data migration, KMS, BigQuery
+tags: data governance, DLP, encryption, tokenization, de-identification, data migration, KMS
 date_published: 2021-01-21
 ---
 
@@ -10,13 +10,17 @@ Anant Damle | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This document discusses how to identify and tokenize data your data in [BigQuery](https://cloud.google.com/bigquery) 
-with [automated data transformation pipeline](https://cloud.google.com/community/tutorials/auto-data-tokenize) to detect 
-sensitive data like personally identifiable information (PII), using 
-[Cloud Data Loss Prevention (Cloud DLP)](https://cloud.google.com/dlp) and encrypt using 
-[Cloud Key Management Service (Cloud KMS)](https://cloud.google.com/kms).
+This document discusses how to identify and tokenize data in [BigQuery](https://cloud.google.com/bigquery) with an automated data transformation pipeline.
 
-This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This guide assumes that 
+This pipeline uses [Cloud Data Loss Prevention (Cloud DLP)](https://cloud.google.com/dlp) to detect sensitive data like personally identifiable information 
+(PII), and it uses [Cloud Key Management Service (Cloud KMS)](https://cloud.google.com/kms) for encryption.
+
+The solution described in this document builds on the architecture of the file-based tokenizing solution described in
+the companion document,
+[Automatically tokenize sensitive file-based data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow] (https://cloud.google.com/community/tutorials/auto-data-tokenize). The primary difference is that the current document describes a solution
+that uses a BigQuery table or a query as source of data, instead of using files as input.
+
+This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This document assumes that 
 you're familiar with data processing and data privacy, without the need to be an expert. This document assumes some familiarity with shell scripts and basic 
 knowledge of Google Cloud.
 
@@ -35,19 +39,18 @@ projected usage.
 
 ## Architecture
 
-The solution described in this document builds on the [architecture](https://cloud.google.com/community/tutorials/auto-data-tokenize#architecture) of the file based tokenizing solution.
-It has two pipelines for each of the tasks:
+The solution described in this document comprises two pipelines, one for each of the tasks:
 
   * Sample and identify
   * Tokenize
 
 ![Auto tokenizing pipelines](https://storage.googleapis.com/gcp-community/tutorials/auto-bigquery-tokenize/auto_tokenize_bq_arch.svg)
 
-The solution is designed to use BigQuery table, or a query as source of data, which is a key difference compared to [Automatic tokenizing pipelines](https://cloud.google.com/community/tutorials/auto-data-tokenize) which used files as input.
+When using BigQuery table as source, the solution uses the [BigQuery Storage API](https://cloud.google.com/bigquery/docs/reference/storage) to improve load 
+times.
 
-When using BigQuery table as source, the solution uses [Storage API](https://cloud.google.com/bigquery/docs/reference/storage) to improve load times.
+The *sample-and-identify* pipeline outputs the following files to Cloud Storage:
 
-The Sample and identify pipeline outputs following files to Cloud Storage:
   * Avro schema of the file
   * Detected infoTypes for each of the input columns
 
@@ -61,9 +64,8 @@ enveloped data encryption key. The tokenizing pipeline performs the following tr
   1. Re-nest the flat record into an Avro record.
   1. Write an Avro file with encrypted fields.
 
-### Concepts
-
-This solution uses the [concept](https://cloud.google.com/community/tutorials/auto-data-tokenize#concepts) of record flattening to handle nested and repeated fields in BigQuery records. 
+This solution uses [record flattening](https://cloud.google.com/community/tutorials/auto-data-tokenize#concepts) to handle nested and repeated fields in BigQuery
+records. 
 
 ## Before you begin
 
@@ -215,7 +217,7 @@ Create a Cloud Storage bucket for storing test data and Dataflow staging locatio
 
 You can use your own file datasets or copy the included demonstration dataset (`contacts5k.avro`).
 
-1.  Copy the sample dataset to Cloud Storage for staging into BigQuery      
+1.  Copy the sample dataset to Cloud Storage for staging into BigQuery:
 
         gsutil cp contacts5k.avro gs://${TEMP_GCS_BUCKET}
 
@@ -250,7 +252,7 @@ Run the sample-and-identify pipeline to identify sensitive columns in the data t
 
 The pipeline extracts `sampleSize` number of records, flattens the record and identifies sensitive columns
 using [Cloud DLP](https://cloud.google.com/dlp). Cloud DLP provides functionality
-to [identify](https://cloud.google.com/dlp/docs/inspecting-text) sensitive information types. The Cloud DLP identify methods
+to [identify](https://cloud.google.com/dlp/docs/inspecting-text) sensitive information types. The Cloud DLP identify method
 supports only flat tables, so the pipeline flattens the Avro or Parquet records, since they can contain nested or repeated fields.
 
 ### Run the sample-and-identify pipeline
@@ -268,21 +270,22 @@ supports only flat tables, so the pipeline flattens the Avro or Parquet records,
     --inputPattern="${PROJECT_ID}:data.RawContacts" \
     --reportLocation="gs://${TEMP_GCS_BUCKET}/dlp_report/"
     
-The pipeline supports multiple **Source Types**, use the following table to use the right combination of `sourceType` and `inputPattern` arguments.
+The pipeline supports multiple source types. Use the following table to determine the right combination of `sourceType` and `inputPattern` arguments.
 
-| Data source | sourceType | inputPattern |
-| --- | --- | --- |
-| **Avro** file in Cloud Storage  | `AVRO` | `gs://<location of the file(s)` |
-| **Parquet** file in Cloud Storage  | `PARQUET` | `gs://<location of the file(s)` |
-| BigQuery table   | `BIGQUERY_TABLE` | `<project-id>:<dataset>.<table>` |
-| Query results in BigQuery | `BIGQUERY_QUERY` | BigQuery SQL statement in StandardSQL dialect. |
+| Data source                   | sourceType       | inputPattern                                    |
+| ----------------------------- | ---------------- | ----------------------------------------------- |
+| Avro file in Cloud Storage    | `AVRO`           | `gs://[LOCATION_OF_FILES]`                      |
+| Parquet file in Cloud Storage | `PARQUET`        | `gs://[LOCATION_OF_FILES]`                      |
+| BigQuery table                | `BIGQUERY_TABLE` | `[PROJECT_ID]:[DATASET].[TABLE]`                |
+| Query results in BigQuery     | `BIGQUERY_QUERY` | BigQuery SQL statement in Standard SQL dialect  |
 
-The pipeline detects all of the [standard infotypes](https://cloud.google.com/dlp/docs/infotypes-reference) supported by Cloud DLP.
-You can provide additional custom infoTypes that you need by using `--observableInfoTypes` parameter.
+The pipeline detects all of the [standard infoTypes](https://cloud.google.com/dlp/docs/infotypes-reference) supported by Cloud DLP.
+You can provide additional custom infoTypes that you need by using the `--observableInfoTypes` parameter.
 
-The solution also supports using  **query** as source of data. You can use `--sourceType="BIGQUERY_QUERY"` and provide 
-the query in `--inputPattern`, like `--inputPattern="SELECT * FROM ``${PROJECT_ID}.data.RawContacts`` LIMIT 100"`. 
-The solution only supports [standardSQL](https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax) dialect.
+The solution also supports using a query in the [Standard SQL](https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax) dialect as source of 
+data. You can use `--sourceType="BIGQUERY_QUERY"` and provide the query in `--inputPattern`. For example:
+
+    --inputPattern="SELECT * FROM ``${PROJECT_ID}.data.RawContacts`` LIMIT 100"
 
 ### Sample-and-identify pipeline DAG
 
@@ -325,8 +328,9 @@ sensitive information.
           ]
         }
 
-    Don't be alarmed by the wierd looking columnName, that's just BigQuery using unique identifiers for `Record` 
-    data-type, also the `"count"` value varies based on the randomly selected samples during execution.
+    Don't be alarmed by the unusual `columnName` value. That's just BigQuery using unique identifiers for the record data-type.
+    
+    The `"count"` value varies based on the randomly selected samples during execution.
 
 ## Use the tokenize pipeline
 
@@ -350,14 +354,14 @@ encryption key (DEK).
     --outputDirectory="gs://${TEMP_GCS_BUCKET}/encrypted/" \ 
     --tokenizeColumns="$.__root__.contact.__s_0.nums.__s_1.number"
 
-The pipeline supports following destinations for storing the tokenized output.
-You can use one or both of them simultaneously.
-| Destination | Description | Pipeline parameter |
-| --- | --- | --- |
-| File in Cloud Storage  | Stores as an AVRO file | `--outputDirectory=gs://<location of the directory/` |
-| BigQuery table | uses `WRITE_TRUNCATE` mode to write results to a BigQuery Table. | `--outputBigQueryTable=<project-id>:<dataset>.<table>` |
+You can use either or both of the following destinations for storing the tokenized output:
 
-The pipeline executes asynchronously on Dataflow. You can check the progress by following the job link printed in the following format:
+| Destination            | Description                                                      | Pipeline parameter                                     |
+| ---------------------- | ---------------------------------------------------------------- | ------------------------------------------------------ |
+| File in Cloud Storage  | Stores as an AVRO file.                                          | `--outputDirectory=gs://[LOCATION_OF_THE_DIRECTORY]`   |
+| BigQuery table         | Uses `WRITE_TRUNCATE` mode to write results to a BigQuery table. | `--outputBigQueryTable=[PROJECT_ID]:[DATASET].[TABLE]` |
+
+The pipeline executes asynchronously on Dataflow. You can check the progress by following the job link given in the following format:
 
     INFO: JobLink: https://console.cloud.google.com/dataflow/jobs/[YOUR_DATAFLOW_JOB_ID]>?project=[YOUR_PROJECT_ID]
 
@@ -402,7 +406,8 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 
 ## What's next
 
-* Learn more about [Automatic data tokenizing pipelines](https://cloud.google.com/community/tutorials/auto-data-tokenize)
+* Read the companion document about a similar solution that uses files as input:
+[Automatically tokenize sensitive file-based data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow] (https://cloud.google.com/community/tutorials/auto-data-tokenize).
 * Learn about [inspecting storage and databases for sensitive data](https://cloud.google.com/dlp/docs/inspecting-storage).
 * Learn about handling
   [de-identification and re-identification of PII in large-scale datasets using Cloud DLP](https://cloud.google.com/solutions/de-identification-re-identification-pii-using-cloud-dlp).
