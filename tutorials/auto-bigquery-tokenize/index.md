@@ -16,9 +16,8 @@ This pipeline uses [Cloud Data Loss Prevention (Cloud DLP)](https://cloud.google
 (PII), and it uses [Cloud Key Management Service (Cloud KMS)](https://cloud.google.com/kms) for encryption.
 
 The solution described in this document builds on the architecture of the file-based tokenizing solution described in
-the companion document,
-[Automatically tokenize sensitive file-based data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow](https://cloud.google.com/community/tutorials/auto-data-tokenize). The primary difference is that the current document describes a solution
-that uses a BigQuery table or a query as source of data, instead of using files as input.
+the [companion document](https://cloud.google.com/community/tutorials/auto-data-tokenize). The primary difference is that the current document describes a 
+solution that uses a BigQuery table or a query as source of data, instead of using files as input.
 
 This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This document assumes that 
 you're familiar with data processing and data privacy, without the need to be an expert. This document assumes some familiarity with shell scripts and basic 
@@ -191,7 +190,7 @@ the DEK using a key encryption key (KEK) in [Cloud KMS](https://cloud.google.com
 
         gcloud kms keys create --project ${PROJECT_ID} --keyring=${KMS_KEYRING_ID} --location=${REGION_ID} --purpose="encryption" ${KMS_KEY_ID}
 
-1.  Download and extract the latest version of [Tinkey](https://github.com/google/tink/blob/master/docs/TINKEY.md), is an open source utility to create 
+1.  Download and extract the latest version of [Tinkey](https://github.com/google/tink/blob/master/docs/TINKEY.md), which is an open source utility to create 
     wrapped encryption keys:
 
         mkdir tinkey/
