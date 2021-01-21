@@ -230,8 +230,8 @@ multi-regional cluster on Google Cloud as our primary database.
 
     ![image](https://storage.googleapis.com/gcp-community/tutorials/mongodb-atlas-appengineflex-nodejs-app/image6.png)
 
-4.  Configure your instance for Node.js and MongoDB client by executing
-    following comments.
+4.  Configure your instance for Node.js and MongoDB client by executing the
+    following commands.
 
         sudo apt-get update
 
