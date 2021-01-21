@@ -1,9 +1,9 @@
 ---
-title: Automatically tokenize sensitive BigQuery data with Cloud Data Loss Prevention, Cloud Key Management Service and Dataflow
+title: Automatically tokenize sensitive BigQuery data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow
 description: A method to identify sensitive information in BigQuery table and tokenize it automatically.
 author: anantdamle
 tags: data governance, DLP, encryption, tokenization, de-identification, data migration, KMS, BigQuery
-date_published: 2021-01-11
+date_published: 2021-01-21
 ---
 
 Anant Damle | Solutions Architect | Google
@@ -41,7 +41,7 @@ It has two pipelines for each of the tasks:
   * Sample and identify
   * Tokenize
 
-![Auto tokenizing pipelines](auto_tokenize_bq_arch.svg)
+![Auto tokenizing pipelines](https://storage.googleapis.com/gcp-community/tutorials/auto-bigquery-tokenize/auto_tokenize_bq_arch.svg)
 
 The solution is designed to use BigQuery table, or a query as source of data, which is a key difference compared to [Automatic tokenizing pipelines](https://cloud.google.com/community/tutorials/auto-data-tokenize) which used files as input.
 
@@ -288,7 +288,7 @@ The solution only supports [standardSQL](https://cloud.google.com/bigquery/docs/
 
 The Dataflow execution DAG (directed acyclic graph) looks like the following:
 
-![Sample-and-identify pipeline DAG](bq_sampling_dag.png)
+![Sample-and-identify pipeline DAG](https://storage.googleapis.com/gcp-community/tutorials/auto-bigquery-tokenize/bq_sampling_dag.png)
 
 ### Retrieve the report
 
@@ -363,7 +363,7 @@ The pipeline executes asynchronously on Dataflow. You can check the progress by 
 
 The tokenize pipeline's DAG looks like the following:
 
-![Encryption pipeline DAG](bq_encrypting_dag.png)
+![Encryption pipeline DAG](https://storage.googleapis.com/gcp-community/tutorials/auto-bigquery-tokenize/bq_encrypting_dag.png)
 
 ### Verify encrypted results
 
