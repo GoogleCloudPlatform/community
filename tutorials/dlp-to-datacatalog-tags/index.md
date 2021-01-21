@@ -18,7 +18,10 @@ sensitive elements found.
 This tutorial includes instructions to create a Cloud DLP inspection template to define what data elements to inspect for, 
 the JDBC driver used to connect to BigQuery, and the number of worker threads used to parallelize the work. Such an 
 implementation, connecting to the data source with JDBC, allows for changing the data source to alternatives like MySQL, SQL 
-Server, or PostgreSQL. You can also customize or adjust this script to change the tag fields to better fit your use case. 
+Server, or PostgreSQL. You can also customize or adjust this script to change the tag fields to better fit your use case.
+
+For a related solution that uses Dataflow to inspect data on a larger scale, see
+[Create Data Catalog tags on a large scale by inspecting BigQuery data with Cloud DLP using Dataflow](https://cloud.google.com/community/tutorials/dataflow-dlp-to-datacatalog-tags).
 
 ## Objectives
 
@@ -55,7 +58,7 @@ You can also watch a video demonstration of running the script:
 
 1.  Select or create a Google Cloud project.
 
-    [Go to the Managed Resources page.](https://console.cloud.google.com/cloud-resource-manager)
+    [Go to the **Manage resources** page.](https://console.cloud.google.com/cloud-resource-manager)
 
 1.  Make sure that billing is enabled for your project.
 
@@ -76,7 +79,7 @@ Create the inspection template in Cloud DLP:
 
 1.  Go to the Cloud DLP [**Create template** page](https://console.cloud.google.com/security/dlp/create/template).
 
-1.  Set up the InfoTypes. This is an example. You may choose any from the list available:
+1.  Set up the infoTypes. This is an example. You may choose any from the list available:
     
     ![N|Solid](https://storage.googleapis.com/gcp-community/tutorials/dlp-to-datacatalog-tags/infoTypes.png)
 
@@ -185,4 +188,6 @@ To delete the project, follow the steps below:
 
 - Learn about [Cloud Data Loss Prevention](https://cloud.google.com/dlp).
 - Learn about [Data Catalog](https://cloud.google.com/data-catalog).
+- For a related solution that uses Dataflow to inspect data on a larger scale, see
+[Create Data Catalog tags on a large scale by inspecting BigQuery data with Cloud DLP using Dataflow](https://cloud.google.com/community/tutorials/dataflow-dlp-to-datacatalog-tags).
 - Try out other Google Cloud features. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
