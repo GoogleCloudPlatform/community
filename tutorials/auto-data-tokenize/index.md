@@ -33,8 +33,8 @@ classified as sensitive.
 This document demonstrates a reference implementation of tokenizing structured data through two tasks: _sampling and identification_, followed by
 _bulk tokenization_ using symmetric encryption to tokenize data using envelope encryption.
 
-In the companion document [Automatically tokenize sensitive BigQuery data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow] (https://cloud.google.com/community/tutorials/auto-data-tokenize), the solution described in the current document is extended to use BigQuery tables as a data 
-source, instead of using files as input.
+In a [companion document](https://cloud.google.com/community/tutorials/auto-data-tokenize), the solution described in the current document is extended to use 
+BigQuery tables as a data source, instead of using files as input.
 
 This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This document assumes that 
 you're familiar with data processing and data privacy, without the need to be an expert. This document assumes some familiarity with shell scripts and basic 
@@ -272,7 +272,7 @@ the DEK using a key encryption key (KEK) in [Cloud KMS](https://cloud.google.com
 
         gcloud kms keys create --project ${PROJECT_ID} --keyring=${KMS_KEYRING_ID} --location=${REGION_ID} --purpose="encryption" ${KMS_KEY_ID}
 
-1.  Download and extract the latest version of [Tinkey](https://github.com/google/tink/blob/master/docs/TINKEY.md), is an open source utility to create 
+1.  Download and extract the latest version of [Tinkey](https://github.com/google/tink/blob/master/docs/TINKEY.md), which is an open source utility to create 
     wrapped encryption keys:
 
         mkdir tinkey/
