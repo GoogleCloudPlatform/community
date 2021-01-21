@@ -17,7 +17,7 @@ This pipeline uses [Cloud Data Loss Prevention (Cloud DLP)](https://cloud.google
 
 The solution described in this document builds on the architecture of the file-based tokenizing solution described in
 the companion document,
-[Automatically tokenize sensitive file-based data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow] (https://cloud.google.com/community/tutorials/auto-data-tokenize). The primary difference is that the current document describes a solution
+[Automatically tokenize sensitive file-based data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow](https://cloud.google.com/community/tutorials/auto-data-tokenize). The primary difference is that the current document describes a solution
 that uses a BigQuery table or a query as source of data, instead of using files as input.
 
 This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This document assumes that 
@@ -46,8 +46,8 @@ The solution described in this document comprises two pipelines, one for each of
 
 ![Auto tokenizing pipelines](https://storage.googleapis.com/gcp-community/tutorials/auto-bigquery-tokenize/auto_tokenize_bq_arch.svg)
 
-When using BigQuery table as source, the solution uses the [BigQuery Storage API](https://cloud.google.com/bigquery/docs/reference/storage) to improve load 
-times.
+When using BigQuery tables as a data source, the solution uses the [BigQuery Storage API](https://cloud.google.com/bigquery/docs/reference/storage) to improve 
+load times.
 
 The *sample-and-identify* pipeline outputs the following files to Cloud Storage:
 
@@ -407,7 +407,7 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 ## What's next
 
 * Read the companion document about a similar solution that uses files as input:
-[Automatically tokenize sensitive file-based data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow] (https://cloud.google.com/community/tutorials/auto-data-tokenize).
+[Automatically tokenize sensitive file-based data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow](https://cloud.google.com/community/tutorials/auto-data-tokenize).
 * Learn about [inspecting storage and databases for sensitive data](https://cloud.google.com/dlp/docs/inspecting-storage).
 * Learn about handling
   [de-identification and re-identification of PII in large-scale datasets using Cloud DLP](https://cloud.google.com/solutions/de-identification-re-identification-pii-using-cloud-dlp).
