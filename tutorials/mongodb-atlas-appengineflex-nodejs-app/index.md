@@ -240,6 +240,8 @@ multi-regional cluster on Google Cloud as our primary database.
         sudo apt-get install -y nodejs
 
         sudo apt-get install -y build-essential
+        
+        sudo apt-get install npm
 
         npm install nconf
 
