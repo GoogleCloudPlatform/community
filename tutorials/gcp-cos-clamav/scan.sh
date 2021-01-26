@@ -8,7 +8,7 @@ if [ -f "$LOCK" ];then
 else
   touch $LOCK
   echo `date` Starting scan |tee -a /logs/clamscan.log
-  clamscan \
+  clamdscan \
     --verbose \
     --stdout \
     --log=/logs/clamscan.log \
