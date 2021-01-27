@@ -24,3 +24,21 @@ ClamAV is an open source antivirus engine for detecting trojans, viruses, malwar
 1. Ensure scan-required paths within other pods are mounted as named volumes so they will be included in the scan of the node.
 
 For more information, see [Installing antivirus and file integrity monitoring on Container-Optimized OS](https://cloud.google.com/solutions/installing-antivirus-and-file-integrity-monitoring-on-container-optimized-os).
+
+Use the following to create the container:
+```
+IMAGE=clamav
+CONTAINER=clamav
+APP=clamav
+BASEDIR=/[[DOCKER_APP_CONFIG_PATH]]/$APP
+
+docker create --name=$APP \
+   -v /share:/host-fs:ro \
+   -v $BASEDIR/logs:/logs \
+   -v $BASEDIR/conf:/etc/clamav \
+   --health-cmd "/health.sh" \
+   $IMAGE
+```
+Be sure to define DOCKER_APP_CONFIG_PATH.
+The first time you launch the container, default config files will be deployed into the conf/ subfolder. You can customize the config files and they will be deployed next launch.
+Be sure to tune the `clamd.conf` MaxThreads value to work well with the other workloads.

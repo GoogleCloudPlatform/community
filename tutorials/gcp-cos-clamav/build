@@ -1,5 +1,5 @@
 # This script automates the build and publication of the docker image
-DOCKER_REPO=ianmaddox
+DOCKER_REPO=YOUR_REPO_HERE
 HOSTNAME=docker.io
 docker build -t clamav .
 docker tag clamav $HOSTNAME/$DOCKER_REPO/clamav:latest
