@@ -1,6 +1,7 @@
 on:
   push:
-    branches: [$default-branch]
+    branches:
+      - master
   pull_request:
   schedule:
     - cron:  '0 7 * * *'
