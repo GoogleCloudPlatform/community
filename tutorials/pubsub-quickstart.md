@@ -8,8 +8,6 @@ date_published: 2019-07-31
 
 # Use Pub/Sub to send and receive real-time messages
 
-<walkthrough-devshell-precreate></walkthrough-devshell-precreate>
-
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Cloud Console:
 
