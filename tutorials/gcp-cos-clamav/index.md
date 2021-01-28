@@ -26,7 +26,7 @@ ClamAV is an open source antivirus engine for detecting trojans, viruses, malwar
 For more information, see
 [Installing antivirus and file integrity monitoring on Container-Optimized OS](https://cloud.google.com/solutions/installing-antivirus-and-file-integrity-monitoring-on-container-optimized-os).
 
-Use the following to create the container, replacing `[DOCKER_APP_CONFIG_PATH]` with the value for you environment:
+Use the following to create the container, replacing `[DOCKER_APP_CONFIG_PATH]` with the value for your environment:
 
     IMAGE=clamav
     CONTAINER=clamav
