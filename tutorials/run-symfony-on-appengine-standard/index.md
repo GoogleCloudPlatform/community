@@ -222,7 +222,7 @@ Exception Subscriber:
     git clone https://github.com/GoogleCloudPlatform/php-docs-samples
 
     # enter the directory for the symfony framework sample
-    cd appengine/php72/symfony-framework/
+    cd appengine/php/symfony-framework/
 
     # copy monolog.yaml into your Symfony project
     cp config/packages/prod/monolog.yaml \
@@ -234,9 +234,9 @@ Exception Subscriber:
 
 The files needed are as follows:
 
-[`config/packages/prod/monolog.yaml`](https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php72/symfony-framework/config/packages/prod/monolog.yaml): Adds Stackdriver Logging to your Monolog configuration.
+[`config/packages/prod/monolog.yaml`](https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php/symfony-framework/config/packages/prod/monolog.yaml): Adds Stackdriver Logging to your Monolog configuration.
 
-[`src/EventSubscriber/ExceptionSubscriber.php`](https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php72/symfony-framework/src/EventSubscriber/ExceptionSubscriber.php): Event subscriber that sends exceptions to Stackdriver Error Reporting.
+[`src/EventSubscriber/ExceptionSubscriber.php`](https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php/symfony-framework/src/EventSubscriber/ExceptionSubscriber.php): Event subscriber that sends exceptions to Stackdriver Error Reporting.
 
 If you'd like to test the logging and error reporting, you can also copy over `LoggingController.php`, which
 exposes the routes `/en/logging/notice` and `/en/logging/exception` for ensuring your logs are being sent:
@@ -245,7 +245,7 @@ exposes the routes `/en/logging/notice` and `/en/logging/exception` for ensuring
     cp src/Controller/LoggingController.php \
         $SYMFONY_PROJECT_PATH/src/Controller
 
-[`src/Controller/LoggingController.php`](https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php72/symfony-framework/src/Controller/LoggingController.php): Controller for testing logging and exceptions.
+[`src/Controller/LoggingController.php`](https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php/symfony-framework/src/Controller/LoggingController.php): Controller for testing logging and exceptions.
 
 ### View application logs and errors
 
@@ -354,7 +354,7 @@ You are now all set. The session will persist in the database and your users wil
 
 [php-gcp]: https://cloud.google.com/php
 [cloud-sdk]: https://cloud.google.com/sdk/
-[app_yaml]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php72/symfony-framework/app.yaml
+[app_yaml]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/php/symfony-framework/app.yaml
 [cloud-build]: https://cloud.google.com/cloud-build/
 [cloud-sql]: https://cloud.google.com/sql/docs/
 [cloud-sql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
