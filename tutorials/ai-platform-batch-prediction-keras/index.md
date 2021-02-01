@@ -2,7 +2,7 @@
 title: Use Keras models for batch predictions on AI Platform
 description: Learn about using Keras models for batch predictions on AI Platform.
 author: enakai00
-tags: AI Platform, TensorFlow, Keras, ML
+tags: TensorFlow, ML, machine learning
 date_published: 2020-02-01
 ---
 
@@ -107,7 +107,7 @@ Suppose that you defined and trained a Keras model. The model object is stored i
 
 The following diagram shows the architecture of the wrapper model. The upper part is the original model that accepts features and outputs a prediction. The lower part simply passes through a unique key. They are concatenated to generate a combined result.
 
-![wrapper model](img/wrapper_model.png)
+![wrapper model](https://storage.googleapis.com/gcp-community/tutorials/ai-platform-batch-prediction-keras/wrapper_model.png)
 
 You export `wrapper_model` in the saved_model format and deploy it to the AI Platform. The following code snippet shows how you use the deployed model to make an online prediction. The model accepts the `key` field in addition to `features`.
 
