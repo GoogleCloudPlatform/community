@@ -47,8 +47,6 @@ application in one place.
 
 Begin by creating a new project or selecting an existing project for this tutorial.
 
-<walkthrough-devshell-precreate></walkthrough-devshell-precreate>
-
 <walkthrough-project-setup></walkthrough-project-setup>
 
 For details, see

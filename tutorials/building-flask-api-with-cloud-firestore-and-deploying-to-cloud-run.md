@@ -131,13 +131,13 @@ There are individual methods and routes for each action that the API performs. Y
 add more functions to meet your needs.
 
 For each CRUD (create, read, update, delete) action, you define the route and its corresponding
-[HTTP method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods). The API implementaiton tries to perform that 
+[HTTP method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods). The API implementation tries to perform that 
 action and returns a response with the `200` status code if successful. If there's a problem, the implementation returns the
 exception's error code.
 
 # Deploy to Cloud Run
 
-To build your API implemtation in a container and run it on Cloud Run, you need a `Dockerfile`:
+To build your API implementation in a container and run it on Cloud Run, you need a `Dockerfile`:
 
     # Dockerfile
     FROM python:3.7-stretch

@@ -1,5 +1,5 @@
 ---
-title: Automatically tokenize sensitive data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow
+title: Automatically tokenize sensitive file-based data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow
 description: A tool to tokenize Avro or Parquet files in bulk.
 author: anantdamle
 tags: data governance, DLP, encryption, tokenization, de-identification, data migration, KMS
@@ -10,14 +10,16 @@ Anant Damle | Solutions Architect | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This document discusses how to identify and tokenize data with an automated data transformation pipeline to detect sensitive data like personally identifiable
-information (PII), using [Cloud Data Loss Prevention (Cloud DLP)](https://cloud.google.com/dlp) and
-[Cloud Key Management Service (Cloud KMS)](https://cloud.google.com/kms). De-identification techniques like encryption let you preserve the utility of your data
-for joining or analytics while reducing the risk of handling the data by obfuscating the raw sensitive identifiers.
+This document discusses how to identify and tokenize data with an automated data transformation pipeline.
 
-To minimize the risk of handling large volumes of sensitive data, you can use an automated data transformation pipeline to create de-identified datasets that can
-be used for migrating from on-premises to the cloud or keep a de-identified replica for analytics. When the dataset has not been characterized, Cloud DLP can 
-inspect the data for sensitive information using [more than 100 built-in classifiers](https://cloud.google.com/dlp/docs/infotypes-reference). 
+This pipeline uses [Cloud Data Loss Prevention (Cloud DLP)](https://cloud.google.com/dlp) to detect sensitive data like personally identifiable information 
+(PII), and it uses [Cloud Key Management Service (Cloud KMS)](https://cloud.google.com/kms) for encryption.
+
+De-identification techniques like encryption let you preserve the utility of your data for joining or analytics while reducing the risk of handling the data by
+obfuscating the raw sensitive identifiers. To minimize the risk of handling large volumes of sensitive data, you can use an automated data transformation
+pipeline to create de-identified datasets that can be used for migrating from on-premises to the cloud or keep a de-identified replica for analytics. When the
+dataset has not been characterized, Cloud DLP can inspect the data for sensitive information using
+[more than 100 built-in classifiers](https://cloud.google.com/dlp/docs/infotypes-reference). 
 
 One of the daunting challenges during data migration to the cloud is how to manage sensitive data. The sensitive data can be in structured forms like analytics 
 tables or unstructured like chat history or transcription records. You can use Cloud DLP to identify sensitive data from both of these kinds of sources
@@ -31,7 +33,10 @@ classified as sensitive.
 This document demonstrates a reference implementation of tokenizing structured data through two tasks: _sampling and identification_, followed by
 _bulk tokenization_ using symmetric encryption to tokenize data using envelope encryption.
 
-This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This guide assumes that 
+In a [companion document](https://cloud.google.com/community/tutorials/auto-data-tokenize), the solution described in the current document is extended to use 
+BigQuery tables as a data source, instead of using files as input.
+
+This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This document assumes that 
 you're familiar with data processing and data privacy, without the need to be an expert. This document assumes some familiarity with shell scripts and basic 
 knowledge of Google Cloud.
 
@@ -58,8 +63,9 @@ The solution described in this document comprises two pipelines, one for each of
 
 The *sample-and-identify* pipeline extracts a few sample records from the source files. The *identify* part of pipeline then decomposes each sample record into
 columns to categorize them into one of the [built-in infoTypes](https://cloud.google.com/dlp/docs/infotypes-reference) or
-[custom infoTypes](https://cloud.google.com/dlp/docs/creating-custom-infotypes) using Cloud DLP. The sample-and-identify pipeline outputs following files to
-Cloud Storage:
+[custom infoTypes](https://cloud.google.com/dlp/docs/creating-custom-infotypes) using Cloud DLP. 
+
+The sample-and-identify pipeline outputs the following files to Cloud Storage:
 
   * Avro schema of the file
   * Detected infoTypes for each of the input columns
@@ -266,7 +272,7 @@ the DEK using a key encryption key (KEK) in [Cloud KMS](https://cloud.google.com
 
         gcloud kms keys create --project ${PROJECT_ID} --keyring=${KMS_KEYRING_ID} --location=${REGION_ID} --purpose="encryption" ${KMS_KEY_ID}
 
-1.  Download and extract the latest version of [Tinkey](https://github.com/google/tink/blob/master/docs/TINKEY.md), is an open source utility to create 
+1.  Download and extract the latest version of [Tinkey](https://github.com/google/tink/blob/master/docs/TINKEY.md), which is an open source utility to create 
     wrapped encryption keys:
 
         mkdir tinkey/
@@ -308,7 +314,7 @@ Run the sample-and-identify pipeline to identify sensitive columns in the data t
 
 The pipeline extracts `sampleSize` number of records, flattens the record and identifies sensitive columns
 using [Cloud DLP](https://cloud.google.com/dlp). Cloud DLP provides functionality
-to [identify](https://cloud.google.com/dlp/docs/inspecting-text) sensitive information types. The Cloud DLP identify methods
+to [identify](https://cloud.google.com/dlp/docs/inspecting-text) sensitive information types. The Cloud DLP identify method
 supports only flat tables, so the pipeline flattens the Avro or Parquet records, since they can contain nested or repeated fields.
 
 ### Run the sample-and-identify pipeline
@@ -445,6 +451,8 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 
 ## What's next
 
+* Read the companion document about a similar solution that uses BigQuery tables or queries as input:
+[Automatically tokenize sensitive BigQuery data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow] (https://cloud.google.com/community/tutorials/auto-bigquery-tokenize).
 * Learn more about [Cloud DLP](https://cloud.google.com/dlp).
 * Learn more about [Cloud KMS](https://cloud.google.com/kms).
 * Learn about [inspecting storage and databases for sensitive data](https://cloud.google.com/dlp/docs/inspecting-storage).
