@@ -251,13 +251,13 @@ as there are CPU cores in the worker. Therefore, on average, a DoFn should never
 For example, for n1-standard workers, your code should always use less than 3.75GB of memory, leaving some memory for
 other pieces of the worker. If your code needs more than one core's worth of RAM, tell Dataflow to use fewer threads by running
 your job with the parameter `--numberOfWorkerHarnessThreads=[NUMBER_OF_THREADS_TO_USE]`. The lower the number of threads, the
-larger the amount of RAM each one will be able to use.
+larger the amount of RAM each one is able to use.
 
 **In streaming pipelines**, Dataflow starts a much larger number of threads to process the stream of records (300 by default),
 so it's important that in streaming pipelines DoFns use as little memory as possible. You can still use
-`--numberOfWorkerHarnessThreads=[NUMBER_OF_THREADS_TO_USE]`, but because these threads are used to process data asynchronously,
-for example to write data to Cloud Storage and do other types of I/O, bringing down their number to what a batch pipeline would
-use (one per core or less) will negatively impact the pipeline's performance. If you need to decrease the number of threads in
+`--numberOfWorkerHarnessThreads=[NUMBER_OF_THREADS_TO_USE]`, but because these threads are used to process data asynchronously—
+for example to write data to Cloud Storage and do other types of I/O—bringing down their number to what a batch pipeline would
+use (one per core or less) would negatively impact the pipeline's performance. If you need to decrease the number of threads in
 a streaming pipeline, it's best to do it in fractions of the default number (300) until you reach the point where memory is not
 exhausted but the pipeline still has good performance.
 
