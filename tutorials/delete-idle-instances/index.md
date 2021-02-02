@@ -1,7 +1,3 @@
-$ echo '{"project": "jani-gce-test", "label": "env=dev"}' | base64
-eyJwcm9qZWN0IjogImphbmktZ2NlLXRlc3QiLCAibGFiZWwiOiAiZW52PWRldiJ9Cg==
-
-
 ---
 title: Delete idle Compute Engine instances automatically
 description: Use a simple and scalable serverless mechanism to automatically delete Compute Engine instances that are not in active use.
