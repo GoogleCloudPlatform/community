@@ -276,15 +276,10 @@ The pipeline supports multiple source types. Use the following table to determin
 | Avro file in Cloud Storage    | `AVRO`           | `gs://[LOCATION_OF_FILES]`                      |
 | Parquet file in Cloud Storage | `PARQUET`        | `gs://[LOCATION_OF_FILES]`                      |
 | BigQuery table                | `BIGQUERY_TABLE` | `[PROJECT_ID]:[DATASET].[TABLE]`                |
-| Query results in BigQuery     | `BIGQUERY_QUERY` | BigQuery SQL statement in Standard SQL dialect  |
+| Query results in BigQuery     | `BIGQUERY_QUERY` | BigQuery SQL statement in [Standard SQL](https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax) dialect. For example:<br>`"SELECT * FROM ``${PROJECT_ID}.data.RawContacts`` LIMIT 100"` |
 
 The pipeline detects all of the [standard infoTypes](https://cloud.google.com/dlp/docs/infotypes-reference) supported by Cloud DLP.
 You can provide additional custom infoTypes that you need by using the `--observableInfoTypes` parameter.
-
-The solution also supports using a query in the [Standard SQL](https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax) dialect as source of 
-data. You can use `--sourceType="BIGQUERY_QUERY"` and provide the query in `--inputPattern`. For example:
-
-    --inputPattern="SELECT * FROM ``${PROJECT_ID}.data.RawContacts`` LIMIT 100"
 
 ### Sample-and-identify pipeline DAG
 
