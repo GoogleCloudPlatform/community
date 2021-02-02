@@ -10,7 +10,7 @@ RUN mkdir -p /logs /data
 RUN echo `date`: File created >> /logs/clamscan.log
 RUN chmod +r /etc/fcron/*
 
-COPY conf /etc/clamav
+COPY conf /etc/clamav-custom
 COPY start.py /start.py
 COPY health.sh /health.sh
 COPY scan.sh /scan.sh

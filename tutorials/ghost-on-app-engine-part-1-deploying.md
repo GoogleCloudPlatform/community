@@ -1,6 +1,6 @@
 ---
 title: Deploying Ghost on App Engine flexible environment
-description: Learn how to deploy a Ghost blog to Google App Engine flexible environment.
+description: Learn how to deploy a Ghost blog to App Engine flexible environment.
 author: jmdobry
 tags: App Engine, Ghost, Node.js
 date_published: 2018-07-15
@@ -8,8 +8,8 @@ date_published: 2018-07-15
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial explains how to deploy and scale a [Ghost blog][ghost] on
-[App Engine Flexible Environment][flex].
+This tutorial explains how to deploy and scale a [Ghost blog][ghost] on the
+[App Engine flexible environment][flex].
 
 Ghost is a simple blogging platform that can be self-hosted. It's built with
 Node.js, and it can be customized or transformed into a bigger site. It serves as a
@@ -37,63 +37,63 @@ Reporting, Logging, Monitoring, Trace, and more.
 This tutorial uses billable components of Google Cloud, including:
 
 * Google Cloud SQL
-* Google App Engine flexible environment
+* App Engine flexible environment
 
-Use the [Pricing Calculator][pricing] to generate a cost estimate based on your
+Use the [pricing calculator][pricing] to generate a cost estimate based on your
 projected usage.
 
 [pricing]: https://cloud.google.com/products/calculator
 
 ## Before you begin
 
-1. Select or create a [Google Cloud][console] project.
-[Go to the projects page][projects].
-1. Enable billing for your project. [Enable billing][billing].
-1. Install the [Cloud SDK][sdk].
-1. Authenticate `gcloud` with Google Cloud.
+1.  Select or create a [Google Cloud][console] project.
+    [Go to the projects page][projects].
+1.  Enable billing for your project. [Enable billing][billing].
+1.  Install the [Cloud SDK][sdk].
+1.  Authenticate `gcloud` with Google Cloud:
 
         gcloud init
 
 1.  Create a new [Second Generation Cloud SQL instance][sql]. You can do this
     from the [Cloud Console][console] or via the [Cloud SDK][sdk].
 
-    1. In order for some of the commands below to work, you need to enable the
-    [Cloud SQL Admin API](https://console.cloud.google.com/apis/api/sqladmin-json.googleapis.com/overview).
-    1. Create it via the following SDK command:
+    1.  In order for some of the commands below to work, you need to enable the
+        [Cloud SQL Admin API](https://console.cloud.google.com/apis/api/sqladmin-json.googleapis.com/overview).
+    1.  Create it via the following SDK command:
 
             gcloud sql instances create YOUR_INSTANCE_NAME \
                 --activation-policy=ALWAYS \
                 --tier=db-f1-micro
 
-        where `YOUR_INSTANCE_NAME` is a name of your choice.
-        *You may want to set your region --region=YOUR_REGION_NAME
+        `YOUR_INSTANCE_NAME` is a name of your choice.
+        You may want to set your region: `--region=YOUR_REGION_NAME`
         
-    1. Set the root password on your Cloud SQL instance:
+    1.  Set the root password on your Cloud SQL instance:
 
             gcloud sql instances set-root-password root% YOUR_INSTANCE_NAME --password YOUR_INSTANCE_ROOT_PASSWORD
 
-        where `YOUR_INSTANCE_NAME` is the name you chose in step 1 and
+        `YOUR_INSTANCE_NAME` is the name you chose in step 1.
         `YOUR_INSTANCE_ROOT_PASSWORD` is a password of your choice.
 
-    1. Create and download a [Service Account key file][service] for your
-    project. You will use this service account to connect to your Cloud SQL
-    instance locally.
+    1.  Create and download a [service account key file][service] for your
+        project. You will use this service account to connect to your Cloud SQL
+        instance locally.
 
-    1. Download and install the [Cloud SQL Proxy][proxy].
+    1.  Download and install the [Cloud SQL Proxy][proxy].
 
-    1. [Start the proxy][start] to allow connecting to your instance from your
-       local machine:
+    1.  [Start the proxy][start] to allow connecting to your instance from your
+        local machine:
 
             ./cloud_sql_proxy \
                 -instances=YOUR_INSTANCE_CONNECTION_NAME=tcp:3306 \
                 -credential_file=PATH_TO_YOUR_SERVICE_ACCOUNT_JSON_FILE &
 
-        where `YOUR_INSTANCE_CONNECTION_NAME` is the connection name of your
-        instance on its Overview page in the Cloud Console, or
+        `YOUR_INSTANCE_CONNECTION_NAME` is the connection name of your
+        instance on its overview page in the Cloud Console, or
         use `YOUR_PROJECT_ID:YOUR_REGION:YOUR_INSTANCE_NAME`.
 
-    1. Use the MySQL command line tools (or a management tool of your choice) to
-       create a [new user][user] and [database][database] for your application:
+    1.  Use the MySQL command-line tools (or a management tool of your choice) to
+        create a [new user][user] and [database][database] for your application:
 
             mysql -u root -p -h 127.0.0.1
               mysql> create database `YOUR_DATABASE`;
@@ -102,11 +102,11 @@ projected usage.
 
         You will be asked to enter the root password you chose earlier.
 
-    1. Set the `MYSQL_USER`, `MYSQL_PASSWORD`, and `MYSQL_DATABASE` environment
-    variables (see below). This allows your local Ghost app to connect to your
-    Cloud SQL instance through the proxy.
+    1.  Set the `MYSQL_USER`, `MYSQL_PASSWORD`, and `MYSQL_DATABASE` environment
+        variables (see below). This allows your local Ghost app to connect to your
+        Cloud SQL instance through the proxy.
     
-    1. In adding Cloud SQL, dependencies need to be added in `package.json` for Google Cloud Node.
+    1.  In adding Cloud SQL, dependencies need to be added in `package.json` for Google Cloud Node.
 
             "dependencies": {
               "express": "^4.16.3",
@@ -127,13 +127,11 @@ projected usage.
 
 ## Install Ghost as an NPM module
 
-Follow the instructions on the Ghost website to [install Ghost as an NPM Module][ghost_npm].
-
-[ghost_npm]: https://docs.ghost.org/docs/using-ghost-as-an-npm-module
+Follow the instructions on the Ghost website to [install Ghost](https://ghost.org/docs/install/local/).
 
 ## Configure
 
-1. Create a `config.development.json` file from the default config file:
+1. Create a `config.development.json` file from the default configuration file:
 
         cp node_modules/ghost/core/server/config/env/config.development.json config.development.json
 
@@ -233,11 +231,11 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
 
     Here's some information about each setting:
 
-    * `url` - The URL at which the blog will be deployed. This is the URL users will use to access the blog.
-    * `fileStorage` - Setting this value to `false` forces image uploads to use an image URL because App Engine doesn't have persistent disks. Without this setting, any photos uploaded to the blog will eventually disappear.
-    * `mail` - Configure this setting according to the instructions at http://support.ghost.org/mail/.
-    * `database` - Tells Ghost how to connect to the Cloud SQL instance.
-    * `server` - Tells Ghost how to listen for web traffic.
+    * `url`: The URL at which the blog will be deployed. This is the URL users will use to access the blog.
+    * `fileStorage`: Setting this value to `false` forces image uploads to use an image URL because App Engine doesn't have persistent disks. Without this setting, any photos uploaded to the blog will eventually disappear.
+    * `mail`: Configure this setting according to the instructions at http://support.ghost.org/mail/.
+    * `database`: Tells Ghost how to connect to the Cloud SQL instance.
+    * `server`: Tells Ghost how to listen for web traffic.
 
 1. Prepare for deployment. Create an `app.yaml` file with the following contents:
 
@@ -268,17 +266,17 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
 
     Here's some information about each setting:
 
-    * `runtime` - Tells App Engine to use the Node.js runtime.
-    * `manual_scaling` - Forces App Engine to run one and only one instance. To automatically scale, remove this setting or change to `automatic_scaling` and configure according to [the documentation][scaling].
-    * `resources` - You didn't change this setting, but the default instance size corresponds to a `g1.small` virtual machine. You can configure smaller or larger instances sizes as required. See the [documentation][resources].
+    * `runtime`: Tells App Engine to use the Node.js runtime.
+    * `manual_scaling`: Forces App Engine to run one and only one instance. To automatically scale, remove this setting or change to `automatic_scaling` and configure according to [the documentation][scaling].
+    * `resources`: You didn't change this setting, but the default instance size corresponds to a `g1.small` virtual machine. You can configure smaller or larger instances sizes as required. See the [documentation][resources].
 
     Read more about [using `app.yaml`][appyaml].
 
-1. Migrate the database to allow use in production, with:
+1. Migrate the database to allow use in production:
 
         NODE_ENV=production knex-migrator init --mgpath node_modules/ghost
 
-1. Add `"socketPath": "/cloudsql/YOUR_INSTANCE_NAME"` in the connection properties section of your `config.production.json`, so you end up with:
+1. Add `"socketPath": "/cloudsql/YOUR_INSTANCE_NAME"` in the connection properties section of your `config.production.json`, so you end up with the following:
 
     ```json
     {
@@ -313,9 +311,9 @@ Follow the instructions on the Ghost website to [install Ghost as an NPM Module]
     }
     ```
 
-It's very important that you only do this step after migrating the database. The `socketPath` property is required to deploy on Google App Engine, but it causes `knex-migrator` to throw an error.
+It's very important that you only do this step after migrating the database. The `socketPath` property is required to deploy on App Engine, but it causes `knex-migrator` to throw an error.
 
-1. Run the following command to deploy the app:
+1. Deploy the app:
 
         gcloud app deploy
 
@@ -323,11 +321,7 @@ It's very important that you only do this step after migrating the database. The
 [resources]: https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml#resource-settings
 [appyaml]: https://cloud.google.com/appengine/docs/flexible/nodejs/configuring-your-app-with-app-yaml
 
-1. After deployment completes, view your deployed app at:
-
-        https://YOUR_PROJECT_ID.appspot.com
-
-    Where `YOUR_PROJECT_ID` is your Google Cloud project ID.
+1. After deployment completes, view your deployed app at `https://YOUR_PROJECT_ID.appspot.com` (in which `YOUR_PROJECT_ID` is your Google Cloud project ID).
 
 ## What's next
 

@@ -2,8 +2,8 @@
 
 # Google Cloud Community [![Build][build_badge]][build_link]
 
-[build_badge]: https://img.shields.io/circleci/project/github/GoogleCloudPlatform/community/master.svg?style=flat
-[build_link]: https://circleci.com/gh/GoogleCloudPlatform/community
+[build_badge]: https://github.com/GoogleCloudPlatform/community/actions?query=branch%3Amaster+workflow%3Aci
+[build_link]: https://img.shields.io/github/workflow/status/GoogleCloudPlatform/community/ci/master
 
 This repository holds the content submitted to the
 [Google Cloud Community site](https://cloud.google.com/community/).

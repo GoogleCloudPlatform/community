@@ -10,19 +10,19 @@ Injae Kwak | Customer Engineer Specialist | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-This tutorial show you how to create an image factory using Cloud Build and
+This tutorial shows you how to create an image factory using Cloud Build and
 [Packer by HashiCorp](https://packer.io). The image factory automatically
 creates new images from Cloud Source Repositories each time a new tag is pushed
-to the repository, as shown in the diagram below.
+to the repository, as shown in the following diagram.
 
-![packer win workflow diagram](windows/packer-win-tutorial.png)
+![packer win workflow diagram](https://storage.googleapis.com/gcp-community/tutorials/create-cloud-build-image-factory-using-packer/packer-win-tutorial.png)
 
 This tutorial includes instructions for creating Packer images for Linux and Windows.
 
 - For building a Linux image, this tutorial uses Packer to create a new image from a CentOS 7 VM with Nginx.
 - For building a Windows image, this tutorial uses Packer to create a new image from a Windows Server 2019 VM with Python 3, Git, and 7-Zip,
   using Chocolatey as a package manager.
-  
+
 Secret Manager is only used for the Windows option.
 
 ## Prerequisites
@@ -112,7 +112,7 @@ In this section, you download the files to your local environment and initialize
 
 ### Windows
 
-1.  Create new working directories using Powershell:
+1.  Create new working directories using PowerShell:
 
         New-Item -Name windows-image-factory -ItemType Directory
 
@@ -155,8 +155,7 @@ In this section, you use [Secret Manager](https://cloud.google.com/secret-manage
 it's easier to simply hard-code parameters into the Packer template file, using a central source of truth like a secret manager increases manageability and 
 reuseability among teams.
 
-Create your secrets using the following commands. Optionally, you can customize the values using the
-[documentation](https://cloud.google.com/secret-manager/docs/creating-and-accessing-secrets)
+Create your secrets using the following commands:
 
     echo -n "windows-2019" | gcloud secrets create image_factory-image_family --replication-policy="automatic" --data-file=-
 
@@ -172,6 +171,8 @@ Create your secrets using the following commands. Optionally, you can customize 
 
     echo -n "allow-winrm-ingress-to-packer" | gcloud secrets create image_factory-tags --replication-policy="automatic" --data-file=-
 
+Optionally, you can customize the values using the [documentation](https://cloud.google.com/secret-manager/docs/creating-and-accessing-secrets).
+
 ## (Windows image only) Create a new VPC firewall to allow WinRM for Packer
 
 Before you can provision using the WinRM (Windows Remote Management) communicator, you need to allow traffic through Google's firewall on the WinRM port
@@ -181,7 +182,7 @@ Before you can provision using the WinRM (Windows Remote Management) communicato
     gcloud compute firewall-rules create allow-winrm-ingress-to-packer \
     --allow tcp:5986 --target-tags allow-winrm-ingress-to-packer
 
-## Give the Cloud Build user permissions through an IAM role
+## Give the Cloud Build service account permissions through an IAM role
 
 Find the Cloud Build service account and add the editor role to it (in practice, use least privilege roles). For the Windows image, you also grant the 
 `secretmanager.secretAccessor` role for [Secret Manager](https://cloud.google.com/secret-manager/docs/access-control).
@@ -232,7 +233,7 @@ Create a trigger on the [build triggers page](https://console.cloud.google.com/c
 1.  In the **Name** field, enter `Hello world image factory`.
 1.  Under **Event**, select **Push to a tag**.
 1.  Under **Source**, select `helloworld-image-factory` as your
-    **Repository** and the tag to match as your **Tag**.
+    **Repository** and the tag to match as your tag.
 1.  Under **Build Configuration**, select **Cloud Build configuration file (yaml or json)**.
 1.  In the **Cloud Build configuration file location**, enter `cloudbuild.yaml`.
 1.  Under **Substitution variables**, click **+ Add variable**.
@@ -252,7 +253,7 @@ Create a trigger on the [build triggers page](https://console.cloud.google.com/c
 1.  In the **Name** field, enter `Windows image factory`.
 1.  Under **Event**, select **Push new tag**.
 1.  Under **Source**, select `windows-image-factory` as your
-    **Repository** and the tag to match or `.*` (any tag) as your **Tag**.
+    **Repository** and the tag to match or `.*` (any tag) as your tag.
 1.  Under **Build Configuration**, select **Cloud Build configuration file (yaml or json)**.
 1.  In the **Cloud Build configuration file location**, enter `cloudbuild.yaml`.
 1.  Click **Create** to save your build trigger.
@@ -298,7 +299,7 @@ In this section, you configure the local Git instance to use the repository that
 
         git remote add google https://source.developers.google.com/p/$PROJECT/r/helloworld-image-factory
 
-1.  Add your files to the repository, tagged with a version number and push to your repository:
+1.  Add your files, tag them with a version number, and push them to your repository:
 
         git add .
         git commit -m "first image"
@@ -315,7 +316,7 @@ In this section, you configure the local Git instance to use the repository that
 
         git remote add google "https://source.developers.google.com/p/$env:PROJECT/r/windows-image-factory"
 
-1.  Add your files to the repository, tagged with a version number and push to your repo:
+1.  Add your files, tag them with a version number, and push them to your repository:
 
         git add .
         git commit -m "first image"
@@ -368,7 +369,7 @@ In this section, you verify that your deployment has worked correctly.
 
 1.  Wait a few minutes and open the browser to the IP address of the instance to see the special message.
 
-1.  Retrieve the instace IP address:
+1.  Retrieve the instance IP address:
 
         gcloud compute instances list --filter="name:helloworld*" --format="value(networkInterfaces[0].accessConfigs[0].natIP)"
 
@@ -386,7 +387,7 @@ In this section, you verify that your deployment has worked correctly.
 
 1.  Verify that Git, Python, and 7-Zip have been installed successfully, matching the versions defined in the `packages.config` XML manifest.
 
-    ![verifying packer windows build in cmd](windows/task12-windows-verify.png)
+    ![verifying packer windows build in cmd](https://storage.googleapis.com/gcp-community/tutorials/create-cloud-build-image-factory-using-packer/task12-windows-verify.png)
 
 ## Cleaning up
 
@@ -426,7 +427,7 @@ If you don't want to keep the resources after this tutorial, you can delete them
 1.  Delete the repository:
 
         gcloud source repos delete --quiet windows-image-factory
- 
+
     Only do this if you don't want to perform the tutorial in this project again. The repository name won't be usable
     again for up to 7 days.
 
@@ -442,12 +443,12 @@ contains the [googlecompute builder template](https://www.packer.io/docs/builder
 Because of the way Packer uses WinRM as the communicator to connect and configure Windows, this template achieves the following:
 
 -   `"variables"` contains placeholder values such as `_PROJECT_ID` that are dynamically changed by Cloud Build sourced from both built-in variables (project)
-    and custom user variables (secret manager). By using `"source_image_family"`, Packer will automatically retrieve the latest version available for 
-    the machine image
+    and custom user variables (Secret Manager). By using `"source_image_family"`, Packer automatically retrieves the latest version available for
+    the machine image.
 -   Configures WinRM to use HTTPS for connecting Packer and the staging Windows VM (creates a temporary, local self-signed certificate).
 -   Using [Compute Engine metadata](https://cloud.google.com/compute/docs/startupscript#providing_a_startup_script_for_windows_instances)
-    `"windows-startup-script-cmd"`, temporarily create a new local account `packer_user` on the Windows VM and add it to local administrator group to provide 
-    permissions for WinRM and install the desired packages.
+    `"windows-startup-script-cmd"`, temporarily creates a new local account `packer_user` on the Windows VM and adds it to local administrator group to provide 
+    permissions for WinRM and installs the desired packages.
 -   Within the `"provisioners"` section, create a local copy of `packages.config` and `cleanup-packer.ps1` files in the staging Windows VM, to be used by 
     [Chocolatey](https://chocolatey.org/) and the `"windows-shutdown-script-ps1"` Compute Engine metadata to clean up when finished.
 -   Still within the `"provisioners"` section, run the PowerShell scripts for bootstrapping your Windows environment using Chocolatey.
@@ -466,8 +467,9 @@ undo WinRM configurations, and then remove the shutdown script itself.
 [**`windows/scripts/disable-uac.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/disable-uac.ps1) installs the latest version of Chocolatey, a package management binary for PowerShell.
 
 [**`windows/scripts/packages.config`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/packages.config) contains a list of packages in an XML manifest for Chocolatey to install. This is where you can define
-[any supported packages](https://chocolatey.org/packages) to install, as well as versioning, options and switches. For details, see the 
+[any supported packages](https://chocolatey.org/packages) to install, as well as versioning, options, and switches. For details, see the
 [Chocolatey documentation](https://chocolatey.org/docs/commandsinstall#packagesconfig). 
 
-[**`windows/scripts/run-chocolatey.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/run-chocolatey.ps1) invokes Chocolatey to install the packages defined in the XML manifest, including error handling. Because some Windows 
-software requires a restart to complete the installation, this script allows it (exit code 3010) as Packer will shutdown and sysprep the image as the final step.
+[**`windows/scripts/run-chocolatey.ps1`**](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/create-cloud-build-image-factory-using-packer/windows/scripts/run-chocolatey.ps1) invokes Chocolatey to install the packages defined in the XML manifest, including error handling. Because some Windows
+software requires a restart to complete the installation, this script allows it (exit code `3010`) as Packer will shut down and sysprep the image as the final
+step.

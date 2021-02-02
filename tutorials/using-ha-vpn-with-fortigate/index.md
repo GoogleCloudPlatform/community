@@ -505,7 +505,7 @@ Edit tunnel interfaces for each VPN tunnel. Change `ip` and `remote-ip` values a
             set remote-ip 169.254.142.153 255.255.255.252
         next
         edit GCP-HA-VPN-INT1
-            set ip 169.254.92.230 255.255.255.252
+            set ip 169.254.92.230 255.255.255.255
             set remote-ip 169.254.92.229 255.255.255.252
         next
     end
