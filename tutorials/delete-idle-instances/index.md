@@ -24,6 +24,11 @@ Some cases in which this may be useful:
   delete themselves after the task is complete, but ensuring that this always happens can be difficult if the task is distributed or some workers stop because
   of errors.
 
+[Idle VM recommendations](https://cloud.google.com/compute/docs/instances/viewing-and-applying-idle-vm-recommendations) are generated automatically based
+on system utilization over the past 14 days.  They are not available for some types of instances, including VMs belonging to managed instance groups,
+managed services like Dataflow or Kubernetes Engine, or instances with local resources like local SSDs, GPUs or TPUS.  See the
+[documentation](https://cloud.google.com/compute/docs/instances/viewing-and-applying-idle-vm-recommendations) for the full list of exclusions.
+
 ## How it works 
 
 The following diagram shows a high-level overview of the solution:
@@ -91,8 +96,6 @@ Run the commands in this section in Cloud Shell.
 
         cd community/tutorials/delete-idle-instances
 	
-    The exact path depends on where you placed the directory when you cloned the sample files from GitHub.
-
 1.  Create the Pub/Sub topic that you will push messages to:
 
         gcloud pubsub topics create idle-instances
@@ -105,7 +108,7 @@ Run the commands in this section in Cloud Shell.
 
 1.  Deploy the Cloud Function that will monitor the Pub/Sub topic and clean up instances:
 
-        gcloud functions deploy mark-idle-instances --trigger-topic=idle-instances --runtime=nodejs12 --entry-point=cleanIdleInstances
+        gcloud functions deploy mark-idle-instances --trigger-topic=idle-instances --runtime=nodejs12 --entry-point=deleteIdleInstances
 
 1.  Configure Cloud Scheduler to push a message containing the target label every day to the Pub/Sub topic `idle-instances`:
 
@@ -126,13 +129,13 @@ Run the commands in this section in Cloud Shell.
 
 1.  Create a test instance labeled `env=test`:
 
-        gcloud compute instances create idle-test --zone=us-central1-a --machine-type=f1-micro \
-          --labels=env=test
+        gcloud compute instances create idle-test --zone=us-central1-a \
+          --machine-type=n1-standard-1 --labels=env=test
 
 1.  Create a second test instance labeled `env=test` with deletion enabled:
 
-        gcloud compute instances create deletion-test --zone=us-central1-a --machine-type=f1-micro \
-          --labels=env=test,delete=true
+        gcloud compute instances create deletion-test --zone=us-central1-a \
+          --machine-type=n1-standard-1 --labels=env=test,delete=true
 
 1.  Check that the new instances have started successfully.
 
@@ -146,12 +149,16 @@ Run the commands in this section in Cloud Shell.
     The `deletion-test` instance should have been automatically deleted.  (It may still be listed
     with `STATUS` of `TERMINATED`.)
 
-1.  Delete marked instance by passing a list of them to the `delete` command:
+1.  List instances marked for deletion.
+
+    gcloud compute instances list --filter='labels.delete=true' --format='value(name)'
+
+1.  Review the instances marked for deletion, and optionally run the following command to delete them:
 
         gcloud compute instances delete |\
         $(gcloud compute instances list --filter='labels.delete=true' --format='value(name)')
 
-You can also see the Cloud Function execution results, including the name of the deleted instance, by viewing the Cloud Function logs from the
+You can also see the Cloud Function execution results, including the names of the marked instances, by viewing the Cloud Function logs from the
 [**Cloud Functions** page](https://pantheon.corp.google.com/functions/list) in the Cloud Console.
 
 ## Shut down resources used in the tutorial
