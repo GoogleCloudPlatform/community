@@ -222,7 +222,7 @@ follow the instructions in the next section of this document.
 
 ## Go through example notebooks using AI Platform Notebooks
 
-1.  Go to the [AI Platform Notebooks](https://console.cloud.google.com/ai-platform/notebooks/) page in the Cloud Console].
+1.  Go to the [AI Platform Notebooks](https://console.cloud.google.com/ai-platform/notebooks/) page in the Cloud Console.
 1.  Start a new notebook instance by choosing **TensorFlow Enterprise 2.3 without GPUs** for the instance type.
 1.  Open JupyterLab and execute the following command from the JupyterLab terminal:
 
