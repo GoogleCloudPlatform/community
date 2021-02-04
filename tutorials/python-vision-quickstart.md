@@ -11,7 +11,6 @@ date_published: 2019-07-31
 <!-- {% setvar repo_url "https://github.com/GoogleCloudPlatform/python-docs-samples.git" %} -->
 <!-- {% setvar repo_name "python-docs-samples" %} -->
 <!-- {% setvar project_id "<your-project>" %} -->
-<walkthrough-devshell-precreate></walkthrough-devshell-precreate>
 
 <walkthrough-alt>
 Take the interactive version of this tutorial, which runs in the Cloud Console:
