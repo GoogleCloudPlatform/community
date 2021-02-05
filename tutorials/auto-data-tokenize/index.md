@@ -252,13 +252,6 @@ page in the Cloud Console.
         --member="serviceAccount:${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL}" \
         --role=roles/dataflow.worker
 
-1.  Create and download the credential file of the service account to allow calling Google Cloud services with this
-    service account's credentials:
-
-        gcloud iam service-accounts keys create \
-        service-account-key.json \
-        --iam-account="${DLP_RUNNER_SERVICE_ACCOUNT_EMAIL}"
-
 ### Create the key encryption key (KEK)
 
 The data is encrypted using a data encryption key (DEK). You use [envelope encryption](https://cloud.google.com/kms/docs/envelope-encryption) to encrypt 
@@ -284,7 +277,6 @@ the DEK using a key encryption key (KEK) in [Cloud KMS](https://cloud.google.com
         tinkey create-keyset \
         --master-key-uri="${MAIN_KMS_KEY_URI}" \
         --key-template=AES256_SIV \
-        --credential="service-account-key.json" \
         --out="${WRAPPED_KEY_FILE}" \
         --out-format=json
 
@@ -304,9 +296,9 @@ You can use your own file datasets or copy the included demonstration dataset (`
 
 You need to compile all of the modules to build executables for deploying the sample-and-identify and tokenize pipelines.
 
-     mvn clean generate-sources compile package
+     gradle buildNeeded shadowJar
 
-**Tip**: To skip running the tests, you can add the `-Dmaven.test.skip=true` flag.
+**Tip**: To skip running the tests, you can add the `-x test` flag.
 
 ## Using the sample-and-identify pipeline
 
