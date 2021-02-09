@@ -59,7 +59,7 @@ from laravel.com.
     This tutorial makes minimal use of environment variables.
     Instead, we will be caching our configuration.
 
-1.  Create an `.env.gcp` file with the following contents:
+1.  Create an `.env.gae` file with the following contents:
 
         APP_KEY=%%APP_KEY%%
         APP_ENV=production
@@ -67,15 +67,15 @@ from laravel.com.
     
     This file is where you should keep all production configuration.
 
-1.  Replace `%%APP_KEY%%` in `app.yaml` with an application key you generate
+1.  Replace `%%APP_KEY%%` in `.env.gae` with an application key you generate
     with the following command:
 
         php artisan key:generate --show
 
     If you're on Linux or macOS, the following command will automatically
-    update your `.env.gcp`:
+    update your `.env.gae`:
 
-        sed -i '' "s#%%APP_KEY%%#$(php artisan key:generate --show --no-ansi)#" .env.gcp
+        sed -i '' "s#%%APP_KEY%%#$(php artisan key:generate --show --no-ansi)#" .env.gae
 
 1.  Modify `bootstrap/app.php` by adding the following block of code before the
     return statement. This will allow you to set the storage path to `/tmp` for
@@ -158,7 +158,7 @@ from laravel.com.
             "post-create-project-cmd": [
                 "@php artisan key:generate --ansi"
             ],
-            "gcp-build": "sed -i -e \"s|env('APP_STORAGE', base_path() . '/storage')|'/tmp'|g\" bootstrap/app.php && mkdir -p /tmp/framework/views && mv .env.gcp .env && php artisan config:cache && rm -f .env && php artisan route:cache"
+            "gcp-build": "sed -i -e \"s|env('APP_STORAGE', base_path() . '/storage')|'/tmp'|g\" bootstrap/app.php && mkdir -p /tmp/framework/views && mv .env.gae .env && php artisan config:cache && rm -f .env && php artisan route:cache"
         }
     
     In `"scripts"` -> `"post-autoload-dump"` add the following script right 
@@ -174,7 +174,7 @@ from laravel.com.
     undocumented) way of running custom logic during deployment to App Engine.
 
         ...
-        "gcp-build": "sed -i -e \"s|env('APP_STORAGE', base_path() . '/storage')|'/tmp'|g\" bootstrap/app.php && mkdir -p /tmp/framework/views && mv .env.gcp .env && php artisan config:cache && rm -f .env && php artisan route:cache"
+        "gcp-build": "sed -i -e \"s|env('APP_STORAGE', base_path() . '/storage')|'/tmp'|g\" bootstrap/app.php && mkdir -p /tmp/framework/views && mv .env.gae .env && php artisan config:cache && rm -f .env && php artisan route:cache"
         ...
     
     There is a lot to unpack here:
@@ -193,7 +193,7 @@ from laravel.com.
         calculated by calling `realpath()` which returns empty string unless 
         the directory exists at the time of calling.
     
-    -   `mv .env.gcp .env`
+    -   `mv .env.gae .env`
 
         Moving our GCP configuration into place so that it is cached.
     
