@@ -437,11 +437,11 @@ You can send error reports to Stackdriver Error Reporting from PHP applications 
 ## Secrets
 
 The `.env.gae` file will likely end up containing production credentials and 
-secrets, that are best kept out of version control. We can achieve this by 
+secrets, which are best kept out of version control. We can achieve this by 
 using [Cloud Build][cloud-build] in combination with [Cloud Secret Manager][cloud-secret-manager].
 
 Creating and versioning secrets is outside of the scope of this tutorial, but 
-is very easy and fully documented.
+can be easily done [in the UI][cloud-secret-manager-ui].
 
 To give an example, we will go back to our original version of `.env.gae`:
 
@@ -475,8 +475,8 @@ permission to access secrets, as detailed in [documentation][cloud-build-with-se
 
 **Note**: The secrets in unencrypted form **will** be visible in the source 
 code of deployed App Engine application. Be mindful about who has the 
-`appengine.versions.getFileContents` permission or `roles/appengine.codeViewer` 
-role.
+`appengine.versions.getFileContents` permission or the 
+`roles/appengine.codeViewer` role.
 
 In this set-up, deploy your App Engine Laravel application using:
 
@@ -505,3 +505,4 @@ to App Engine, e.g., on commit to the `main` branch.
 [cloud-secret-manager]: https://cloud.google.com/secret-manager
 [cloud-build-with-secrets]: https://cloud.google.com/cloud-build/docs/securing-builds/use-secrets
 [cloud-build-triggers]: https://cloud.google.com/cloud-build/docs/automating-builds/create-manage-triggers
+[cloud-secret-manager-ui]: https://console.cloud.google.com/security/secret-manager
