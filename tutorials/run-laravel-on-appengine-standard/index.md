@@ -23,7 +23,8 @@ overview of PHP and learn ways to run PHP apps on Google Cloud.
 1. Enable billing for your project.
 1. Install and initialize the [Cloud SDK][cloud_sdk].
 
-All code for this tutorial is available in the [PHP samples repository][laravel-framework-sample].
+All code for the original version of this tutorial is available in the 
+[PHP samples repository][laravel-framework-sample].
 
 ## Prepare
 
@@ -72,14 +73,18 @@ from laravel.com.
 
         php artisan key:generate --show
 
-    If you're on Linux or macOS, the following command will automatically
-    update your `.env.gae`:
+    On macOS, the following command will automatically update your `.env.gae`:
 
         sed -i '' "s#%%APP_KEY%%#$(php artisan key:generate --show --no-ansi)#" .env.gae
+    
+    On Linux, use this command instead:
+    
+        sed -i "s#%%APP_KEY%%#$(php artisan key:generate --show --no-ansi)#" .env.gae
 
 1.  Modify `bootstrap/app.php` by adding the following block of code before the
-    return statement. This will allow you to set the storage path to `/tmp` for
-    caching in production.
+    return statement. This will allow you to change storage path using an 
+    environment variable. We will redirect all runtime storage into the `/tmp` 
+    directory, which is the only writable directory for App Engine applications.
 
         # [START] Add the following block to `bootstrap/app.php`
         /*
@@ -99,14 +104,18 @@ from laravel.com.
 
     In this tutorial we will actually be hard-coding storage path in later 
     step, so the `APP_STORAGE` configuration remains only for testing locally. 
+    This is because `env()` function should not be called after caching Laravel 
+    configuration, which we will be doing later.
+    
     Still, don't skip this step, and don't modify the characters within 
-    `useStoragePath(...)`, as they will be substituted using `sed`.
+    `useStoragePath(...)`, as they will be matched and substituted by `sed` 
+    later on.
 
 1.  Modify `public/index.php` by adding the following block of code after the 
     definition of `'LARAVEL_START'`. This helps to avoid the error when Laravel 
     tries to write into storage directory that does not exist.
 
-    We have to do this in runtime because each instance in App Engine gets its 
+    We have to do this at runtime because each instance in App Engine gets its 
     own writable in-memory `/tmp` directory. Creating these directories during 
     deployment would be a waste of time, because the runtime version of `/tmp` 
     is not yet mounted at that time.
@@ -143,6 +152,9 @@ from laravel.com.
     `app.yaml` comes into play. This avoids running this code in local 
     development environment.
 
+    If your code writes into any storage directory, you should make sure to 
+    create the necessary directory structure here.
+
 1.  Modify `composer.json` file by adding a few scripts scripts. Here is an 
     example result, with the additions detailed below:
 
@@ -163,8 +175,7 @@ from laravel.com.
     
     In `"scripts"` -> `"post-autoload-dump"` add the following script right 
     before `package:discover` command to ensure that the command has the 
-    directory to write into (which might not be the case due to them being 
-    empty and ignored):
+    directory to write into:
 
         ...
         "mkdir -p bootstrap/cache",
@@ -177,7 +188,8 @@ from laravel.com.
         "gcp-build": "sed -i -e \"s|env('APP_STORAGE', base_path() . '/storage')|'/tmp'|g\" bootstrap/app.php && mkdir -p /tmp/framework/views && mv .env.gae .env && php artisan config:cache && rm -f .env && php artisan route:cache"
         ...
     
-    There is a lot to unpack here:
+    Unfortunately at this time App Engine does not support an array of commands 
+    under `"gcp-build"`. Here are the details on the chained commands:
 
     -   `sed -i -e \"s|env('APP_STORAGE', base_path() . '/storage')|'/tmp'|g\" bootstrap/app.php`
 
@@ -190,18 +202,17 @@ from laravel.com.
         As stated above, manipulating `/tmp` directory during deployment is a 
         waste of time, but we do it anyway, in order for Laravel config to be 
         cached properly. In `config/view.php` the path to compiled views is 
-        calculated by calling `realpath()` which returns empty string unless 
-        the directory exists at the time of calling.
+        calculated by calling `realpath()` which returns an empty string if the 
+        directory does not exist at the time of calling.
     
     -   `mv .env.gae .env`
 
-        Moving our GCP configuration into place so that it is cached.
+        Moving our GCP configuration into place, from where it will be cached.
     
     -   `php artisan config:cache`
 
-        Caching Laravel configuration into `bootstrap/cache/config.php`. The 
-        filesystem becomes read-only only at runtime, so we can still play with 
-        it for now.
+        Caching Laravel configuration into `bootstrap/cache/config.php`. We can 
+        do that because the filesystem becomes read-only only at runtime.
 
     -   `rm -f .env`
 
@@ -219,13 +230,13 @@ from laravel.com.
             since they must remain writable in runtime. For example, 
             Laravel will create cached versions of its custom error views 
             only at runtime.
-        -   The version of `/tmp` at App Engine deployment is not the same 
-            as the one that is mounted at runtime.
-        -   In runtime, Laravel will gradually generate cached versions of 
-            views as they are called.
+        -   The version of `/tmp` during deployment is not the same as the one 
+            that is mounted at runtime.
+        -   Instead of pre-caching, Laravel will gradually generate cached 
+            versions of views as they are first served.
     
     -   We don't optimize autoloader because it's already done. Laravel's 
-        `composer.json` includes configuration `"optimize-autoloader": true` 
+        `composer.json` includes configuration `"optimize-autoloader": true`, 
         which forces Composer to run this optimization after every `install` 
         command. App Engine automatically calls this on every deployment:
         
@@ -284,25 +295,24 @@ Laravel, you need to manually add the `DB_SOCKET` value to
         export DB_DATABASE=laravel DB_USERNAME=root DB_PASSWORD=YOUR_DB_PASSWORD
         php artisan migrate --force
 
-1.  Modify your `app.yaml` file with [the following contents][app-dbsessions-yaml]:
+1.  Modify your `.env.gae` file with the following contents:
 
-        runtime: php72
+        APP_KEY=%%APP_KEY%%
+        APP_ENV=production
+        APP_DEBUG=false
 
-        env_variables:
-          ## Put production environment variables here.
-          APP_KEY: YOUR_APP_KEY
-          APP_STORAGE: /tmp
-          VIEW_COMPILED_PATH: /tmp
-          CACHE_DRIVER: database
-          SESSION_DRIVER: database
-          ## Set these environment variables according to your CloudSQL configuration.
-          DB_DATABASE: YOUR_DB_DATABASE
-          DB_USERNAME: YOUR_DB_USERNAME
-          DB_PASSWORD: YOUR_DB_PASSWORD
-          ## for MYSQL, use DB_SOCKET:
-          DB_SOCKET: "/cloudsql/YOUR_CONNECTION_NAME"
-          ## for PostgreSQL, use DB_HOST:
-          # DB_HOST: "/cloudsql/YOUR_CONNECTION_NAME"
+        CACHE_DRIVER: database
+        SESSION_DRIVER: database
+
+        ## Set these environment variables according to your CloudSQL configuration.
+        DB_DATABASE: YOUR_DB_DATABASE
+        DB_USERNAME: YOUR_DB_USERNAME
+        DB_PASSWORD: YOUR_DB_PASSWORD
+
+        ## for MYSQL, use DB_SOCKET:
+        DB_SOCKET: "/cloudsql/YOUR_CONNECTION_NAME"
+        ## for PostgreSQL, use DB_HOST:
+        # DB_HOST: "/cloudsql/YOUR_CONNECTION_NAME"
 
 1.  Replace `YOUR_DB_DATABASE`, `YOUR_DB_USERNAME`, `YOUR_DB_PASSWORD`,
     and `YOUR_CONNECTION_NAME` with the values you created for your Cloud SQL
@@ -360,15 +370,12 @@ You can write logs to Stackdriver Logging from PHP applications by using the Sta
 
     If you've added the code correctly, your file [will look like this][config-logging-php].
 
-1.  Modify your `app.yaml` file to set the `LOG_CHANNEL` environment variable to
+1.  Modify your `.env.gae` file to set the `LOG_CHANNEL` environment variable to
     the value `stackdriver`:
 
-        runtime: php72
-
-        env_variables:
-          LOG_CHANNEL: stackdriver
-          # The rest of your environment variables remain unchanged below
-          # ...
+        LOG_CHANNEL=stackdriver
+        # The rest of your environment variables remain unchanged below
+        # ...
 
 1.  Now you can log to Stackdriver Logging anywhere in your application!
 
@@ -429,16 +436,14 @@ You can send error reports to Stackdriver Error Reporting from PHP applications 
 
 [php-gcp]: https://cloud.google.com/php
 [laravel]: http://laravel.com
-[laravel-install]: https://laravel.com/docs/5.4/installation
+[laravel-install]: https://laravel.com/docs/8.x/installation
 [laravel-welcome]: welcome-page.png
 [cloud_sdk]: https://cloud.google.com/sdk/
-[composer-json]: https://storage.googleapis.com/gcp-community/tutorials/run-laravel-on-appengine-flexible/composer-json.png
 [cloudsql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
 [cloudsql-install]: https://cloud.google.com/sql/docs/mysql/connect-external-app#install
 [cloudsql-admin-api]: https://console.cloud.google.com/flows/enableapi?apiid=sqladmin
 [laravel-framework-sample]: https://github.com/GoogleCloudPlatform/php-docs-samples/tree/master/appengine/standard/laravel-framework
 [bootstrap-app-php]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/standard/laravel-framework/bootstrap/app.php
-[config-view-php]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/standard/laravel-framework/config/view.php
 [app-dbsessions-yaml]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/standard/laravel-framework/app-dbsessions.yaml
 [app-logging-createstackdriverlogger-php]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/standard/laravel-framework/app/Logging/CreateStackdriverLogger.php
 [config-logging-php]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/standard/laravel-framework/config/logging.php
