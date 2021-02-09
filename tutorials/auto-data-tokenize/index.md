@@ -33,7 +33,7 @@ classified as sensitive.
 This document demonstrates a reference implementation of tokenizing structured data through two tasks: _sampling and identification_, followed by
 _bulk tokenization_ using symmetric encryption to tokenize data using envelope encryption.
 
-In a [companion document](https://cloud.google.com/community/tutorials/auto-data-tokenize), the solution described in the current document is extended to use 
+In a [companion document](https://cloud.google.com/community/tutorials/auto-bigquery-tokenize), the solution described in the current document is extended to use 
 BigQuery tables as a data source, instead of using files as input.
 
 This document is intended for a technical audience whose responsibilities include data security, data processing, or data analytics. This document assumes that 
