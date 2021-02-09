@@ -12,6 +12,7 @@ Brent Shaffer | Developer Programs Engineer | Google
 
 [Laravel][laravel] is an open source web framework for PHP developers that encourages the use of the
 model-view-controller (MVC) pattern.
+At the time of this writing, current version is Laravel 8.
 
 You can check out [PHP on Google Cloud][php-gcp] to get an
 overview of PHP and learn ways to run PHP apps on Google Cloud.
@@ -50,24 +51,31 @@ from laravel.com.
 
 1.  Create an `app.yaml` file with the following contents:
 
-        runtime: php72
+        runtime: php74
 
         env_variables:
-          ## Put production environment variables here.
-          APP_KEY: YOUR_APP_KEY
-          APP_STORAGE: /tmp
-          VIEW_COMPILED_PATH: /tmp
-          SESSION_DRIVER: cookie
+          GCP_APP_ENGINE_LARAVEL: true
+    
+    This tutorial makes minimal use of environment variables.
+    Instead, we will be caching our configuration.
 
-1.  Replace `YOUR_APP_KEY` in `app.yaml` with an application key you generate
+1.  Create an `.env.gcp` file with the following contents:
+
+        APP_KEY=%%APP_KEY%%
+        APP_ENV=production
+        APP_DEBUG=false
+    
+    This file is where you should keep all production configuration.
+
+1.  Replace `%%APP_KEY%%` in `app.yaml` with an application key you generate
     with the following command:
 
         php artisan key:generate --show
 
     If you're on Linux or macOS, the following command will automatically
-    update your `app.yaml`:
+    update your `.env.gcp`:
 
-        sed -i '' "s#YOUR_APP_KEY#$(php artisan key:generate --show --no-ansi)#" app.yaml
+        sed -i '' "s#%%APP_KEY%%#$(php artisan key:generate --show --no-ansi)#" .env.gcp
 
 1.  Modify `bootstrap/app.php` by adding the following block of code before the
     return statement. This will allow you to set the storage path to `/tmp` for
@@ -89,19 +97,143 @@ from laravel.com.
 
     If you've added the code correctly, your file [will look like this][bootstrap-app-php].
 
-1.  Finally, remove the `beyondcode/laravel-dump-server` composer dependency. This is a
-    fix for an error which happens as a result of Laravel's caching in
-    `bootstrap/cache/services.php`.
+    In this tutorial we will actually be hard-coding storage path in later 
+    step, so the `APP_STORAGE` configuration remains only for testing locally. 
+    Still, don't skip this step, and don't modify the characters within 
+    `useStoragePath(...)`, as they will be substituted using `sed`.
 
-        composer remove --dev beyondcode/laravel-dump-server
-        
-    If you're using Laravel 6, remove `facade/ignition` instead:
+1.  Modify `public/index.php` by adding the following block of code after the 
+    definition of `'LARAVEL_START'`. This helps to avoid the error when Laravel 
+    tries to write into storage directory that does not exist.
+
+    We have to do this in runtime because each instance in App Engine gets its 
+    own writable in-memory `/tmp` directory. Creating these directories during 
+    deployment would be a waste of time, because the runtime version of `/tmp` 
+    is not yet mounted at that time.
+
+        # [START] Add the following block to `public/index.php`
+        /*
+        |--------------------------------------------------------------------------
+        | GCP App Engine Writable Directories
+        |--------------------------------------------------------------------------
+        |
+        | Before we start up Laravel, let's check if we are running in GCP App Engine,
+        | and, if so, make sure that the Laravel's storage directory structure is
+        | present.
+        |
+        */
+
+        if (getenv('GCP_APP_ENGINE_LARAVEL')
+            && !file_exists('/tmp/.dirs_created')) {
+            foreach (['/tmp/app/public',
+                        '/tmp/framework/cache/data',
+                        '/tmp/framework/sessions',
+                        '/tmp/framework/testing',
+                        '/tmp/framework/views',
+                        '/tmp/logs'] as $tmpdir) {
+                if (!file_exists($tmpdir)) {
+                    mkdir($tmpdir, 0755, true);
+                }
+            }
+            touch('/tmp/.dirs_created');
+        }
+        # [END]
     
-        composer remove --dev facade/ignition
+    This code is where the `GCP_APP_ENGINE_LARAVEL` environment variable from 
+    `app.yaml` comes into play. This avoids running this code in local 
+    development environment.
+
+1.  Modify `composer.json` file by adding a few scripts scripts. Here is an 
+    example result, with the additions detailed below:
+
+        "scripts": {
+            "post-autoload-dump": [
+                "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+                "mkdir -p bootstrap/cache",
+                "@php artisan package:discover --ansi"
+            ],
+            "post-root-package-install": [
+                "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+            ],
+            "post-create-project-cmd": [
+                "@php artisan key:generate --ansi"
+            ],
+            "gcp-build": "sed -i -e \"s|env('APP_STORAGE', base_path() . '/storage')|'/tmp'|g\" bootstrap/app.php && mkdir -p /tmp/framework/views && mv .env.gcp .env && php artisan config:cache && rm -f .env && php artisan route:cache"
+        }
+    
+    In `"scripts"` -> `"post-autoload-dump"` add the following script right 
+    before `package:discover` command to ensure that the command has the 
+    directory to write into (which might not be the case due to them being 
+    empty and ignored):
+
+        ...
+        "mkdir -p bootstrap/cache",
+        ...
+    
+    In `"scripts"` add the `"gcp-build"` field, which is a (currently 
+    undocumented) way of running custom logic during deployment to App Engine.
+
+        ...
+        "gcp-build": "sed -i -e \"s|env('APP_STORAGE', base_path() . '/storage')|'/tmp'|g\" bootstrap/app.php && mkdir -p /tmp/framework/views && mv .env.gcp .env && php artisan config:cache && rm -f .env && php artisan route:cache"
+        ...
+    
+    There is a lot to unpack here:
+
+    -   `sed -i -e \"s|env('APP_STORAGE', base_path() . '/storage')|'/tmp'|g\" bootstrap/app.php`
+
+        This will remove a call to `env()` function and hard-code the storage 
+        directory path. This is required because we will be caching Laravel 
+        configuration, after which calls to `env()` will only return `null`.
+
+    -   `mkdir -p /tmp/framework/views`
+
+        As stated above, manipulating `/tmp` directory during deployment is a 
+        waste of time, but we do it anyway, in order for Laravel config to be 
+        cached properly. In `config/view.php` the path to compiled views is 
+        calculated by calling `realpath()` which returns empty string unless 
+        the directory exists at the time of calling.
+    
+    -   `mv .env.gcp .env`
+
+        Moving our GCP configuration into place so that it is cached.
+    
+    -   `php artisan config:cache`
+
+        Caching Laravel configuration into `bootstrap/cache/config.php`. The 
+        filesystem becomes read-only only at runtime, so we can still play with 
+        it for now.
+
+    -   `rm -f .env`
+
+        Removing now-useless configuration. This is mostly a symbolic gesture, 
+        as the values will still be visible to persons browsing the deployed 
+        source code, under `bootstrap/cache/config.php`.
+    
+    -   `php artisan route:cache`
+
+        Caching Laravel routes into `bootstrap/cache/route-v7.php`.
+
+    -   We don't pre-cache views because:
+    
+        -   It would only make sense to cache them into `/tmp` directory, 
+            since they must remain writable in runtime. For example, 
+            Laravel will create cached versions of its custom error views 
+            only at runtime.
+        -   The version of `/tmp` at App Engine deployment is not the same 
+            as the one that is mounted at runtime.
+        -   In runtime, Laravel will gradually generate cached versions of 
+            views as they are called.
+    
+    -   We don't optimize autoloader because it's already done. Laravel's 
+        `composer.json` includes configuration `"optimize-autoloader": true` 
+        which forces Composer to run this optimization after every `install` 
+        command. App Engine automatically calls this on every deployment:
+        
+            composer install --no-dev --no-progress --no-suggest --no-interaction
 
 1.  Run the following command to deploy your app:
 
-        gcloud app deploy
+        gcloud app deploy --no-cache
 
 1.  Visit `http://YOUR_PROJECT_ID.appspot.com` to see the Laravel welcome page.
     Replace `YOUR_PROJECT_ID` with the ID of your Google Cloud project.
