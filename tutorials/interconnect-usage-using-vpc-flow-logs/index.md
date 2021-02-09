@@ -3,7 +3,7 @@ title: Identifying Interconnect usage by project using VPC Flow Logs
 description: analyzing VPC Flow Logs to estimate the amount of Interconnect attachment usage by different projects.
 author: manokhina
 tags: VPC Flow Logs, Cloud Interconnect, VLAN attachments
-date_published: 2021-02-01
+date_published: 2021-02-11
 ---
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
@@ -12,7 +12,7 @@ This tutorial describes the mechanism of analyzing VPC Flow Logs to estimate the
 
 VPC Flow Logs capture different flows from/to VMs, but we will focus only on those which involve Egress traffic through Interconnect (the flow is shown by red arrows on the diagram). Only Egress traffic from VPC towards Interconnect is chargeable, unless there is a resource that is processing ingress traffic, such as a load balancer.
 
-![image](diagram.png)
+![image](https://storage.googleapis.com/gcp-community/tutorials/interconnect-usage-using-vpc-flow-logs/diagram.png)
 
 This tutorial assumes you are familiar with VPC networks, Cloud Logging and BigQuery.
 
