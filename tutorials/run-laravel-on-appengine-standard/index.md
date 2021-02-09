@@ -430,7 +430,7 @@ You can send error reports to Stackdriver Error Reporting from PHP applications 
 [php-gcp]: https://cloud.google.com/php
 [laravel]: http://laravel.com
 [laravel-install]: https://laravel.com/docs/5.4/installation
-[laravel-welcome]: https://storage.googleapis.com/gcp-community/tutorials/run-laravel-on-appengine-flexible/welcome-page.png
+[laravel-welcome]: welcome-page.png
 [cloud_sdk]: https://cloud.google.com/sdk/
 [composer-json]: https://storage.googleapis.com/gcp-community/tutorials/run-laravel-on-appengine-flexible/composer-json.png
 [cloudsql-create]: https://cloud.google.com/sql/docs/mysql/create-instance
