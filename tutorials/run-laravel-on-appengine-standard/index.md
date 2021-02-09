@@ -434,6 +434,58 @@ You can send error reports to Stackdriver Error Reporting from PHP applications 
             throw new Exception("Intentional exception, message: $message");
         });
 
+## Secrets
+
+The `.env.gae` file will likely end up containing production credentials and 
+secrets, that are best kept out of version control. We can achieve this by 
+using [Cloud Build][cloud-build] in combination with [Cloud Secret Manager][cloud-secret-manager].
+
+Creating and versioning secrets is outside of the scope of this tutorial, but 
+is very easy and fully documented.
+
+To give an example, we will go back to our original version of `.env.gae`:
+
+    APP_KEY=%%APP_KEY%%
+    APP_ENV=production
+    APP_DEBUG=false
+
+Now, instead of manually substituting the `%%APP_KEY%%` value, we will keep our 
+secret in Secret Manager and paste it in securely during deployment.
+
+Create a file `cloudbuild.yaml` with the following content:
+
+    steps:
+        - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+            entrypoint: bash
+            args:
+            - -c
+            - sed -i -e "s#%%APP_KEY%%#$$APP_KEY#g" .env.gae && gcloud app deploy --no-cache
+            secretEnv:
+            - APP_KEY
+    timeout: 1600s
+    availableSecrets:
+        secretManager:
+            - versionName: projects/<PROJECT-ID>/secrets/<SECRET-NAME>/versions/<SECRET-VERSION>
+            env: APP_KEY
+
+We use `sed` to paste the secrets. The secret values do not show up in the 
+Cloud Build log. Substitute `<PROJECT-ID>`, `<SECRET-NAME>`, and 
+`<SECRET-VERSION>` with appropriate values. You also need to give Cloud Build 
+permission to access secrets, as detailed in [documentation][cloud-build-with-secrets].
+
+**Note**: The secrets in unencrypted form **will** be visible in the source 
+code of deployed App Engine application. Be mindful about who has the 
+`appengine.versions.getFileContents` permission or `roles/appengine.codeViewer` 
+role.
+
+In this set-up, deploy your App Engine Laravel application using:
+
+    gcloud builds submit
+
+You can even set up a [trigger][cloud-build-triggers] to automatically deploy 
+to App Engine, e.g., on commit to the `main` branch.
+
+
 [php-gcp]: https://cloud.google.com/php
 [laravel]: http://laravel.com
 [laravel-install]: https://laravel.com/docs/8.x/installation
@@ -449,3 +501,7 @@ You can send error reports to Stackdriver Error Reporting from PHP applications 
 [config-logging-php]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/standard/laravel-framework/config/logging.php
 [stackdriver-error-reporting-php]:http://googleapis.github.io/google-cloud-php/#/docs/cloud-error-reporting/v0.12.3/errorreporting/readme
 [app-exceptions-handler-php]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/standard/laravel-framework/app/Exceptions/Handler.php
+[cloud-build]: https://cloud.google.com/cloud-build
+[cloud-secret-manager]: https://cloud.google.com/secret-manager
+[cloud-build-with-secrets]: https://cloud.google.com/cloud-build/docs/securing-builds/use-secrets
+[cloud-build-triggers]: https://cloud.google.com/cloud-build/docs/automating-builds/create-manage-triggers
