@@ -1,12 +1,12 @@
 ---
-title: Identifying Interconnect usage by project using VPC Flow Logs
-description: analyzing VPC Flow Logs to estimate the amount of Interconnect attachment usage by different projects.
+title: Use VPC FLow Logs to monitor Cloud Interconnect usage
+description: Learn how to analyze information from VPC Flow Logs to estimate the amount of Cloud Interconnect usage by different projects.
 author: manokhina
-tags: VPC Flow Logs, Cloud Interconnect, VLAN attachments
+tags: VLAN attachments
 date_published: 2021-02-11
 ---
 
-<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
+<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
  
 This tutorial describes the mechanism of analyzing VPC Flow Logs to estimate the amount of Interconnect attachment usage by different projects. It can be used by the Network Administrator who administers the Landing Zone (an environment that's been provisioned and prepared to host workloads in cloud).  
 
