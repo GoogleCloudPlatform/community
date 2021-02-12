@@ -57,8 +57,27 @@ from laravel.com.
         env_variables:
           GCP_APP_ENGINE_LARAVEL: true
     
+        handlers:
+          - url: /css
+            static_dir: public/css
+          - url: /js
+            static_dir: public/js
+          - url: /(.+\.(ico|json|txt))$
+            static_files: public/\1
+            upload: public/.+\.(ico|json|txt)$
+          - url: /.*
+            script: auto
+    
     This tutorial makes minimal use of environment variables.
     Instead, we will be caching our configuration.
+
+    The `handlers` section ensures that we properly serve:
+
+    - Compiled assets from `public/css` and `public/js` directories.
+    - Files in the `public` directory, such as `favicon.ico` and `robots.txt`.
+    
+    The last handler is required by App Engine to serve the entrypoint to our 
+    Laravel application, `public/index.php`.
 
 1.  Create an `.env.gae` file with the following contents:
 
