@@ -421,16 +421,16 @@ You can send error reports to Stackdriver Error Reporting from PHP applications 
         public function report(Throwable $e)
         {
             if (isset($_SERVER['GAE_SERVICE'])) {
-                $this->reportToGCP($e);
+                $this->reportToStackdriver($e);
             } else {
                 parent::report($e);
             }
         }
     
 1.  Below in the same file `app/Exceptions/Handler.php`, implement the function 
-    `reportToGCP()` like so:
+    `reportToStackdriver()` like so:
 
-        private function reportToGCP(Throwable $e)
+        private function reportToStackdriver(Throwable $e)
         {
             $e = $this->mapException($e);
 
@@ -456,12 +456,12 @@ You can send error reports to Stackdriver Error Reporting from PHP applications 
             Bootstrap::exceptionHandler($e);
         }
     
-    Most of the code in `reportToGCP()` function is lifted directly from the 
-    `parent::report()` function. We resort to this to retain the benefit of 
-    Laravel's built-in Exception handling. For example, with this copy-pasted 
-    code, thanks to Laravel's handling we will not be getting alerts for 
-    `NotFoundHttpException`'s in GCP Error Reporting every time someone 
-    mistypes the URL and gets a 404.
+    Most of the code in `reportToStackdriver()` function is lifted directly 
+    from the `parent::report()` function. We resort to this to retain the 
+    benefit of Laravel's built-in Exception handling. For example, with this 
+    copy-pasted code, thanks to Laravel's handling we will not be getting 
+    alerts for `NotFoundHttpException`'s in Stackdriver Error Reporting every 
+    time someone mistypes the URL and gets a 404.
 
 1.  Now any PHP Exception will be logged to Stackdriver Error Reporting!
 
