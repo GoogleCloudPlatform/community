@@ -415,18 +415,53 @@ You can send error reports to Stackdriver Error Reporting from PHP applications 
 
         use Google\Cloud\ErrorReporting\Bootstrap;
 
-1.  Edit the `report` function in the same file
-    [`app/Exceptions/Handler.php`][app-exceptions-handler-php] as follows:
+1.  Edit the `report` function in the same file `app/Exceptions/Handler.php` as 
+    follows:
 
-        public function report(Exception $exception)
+        public function report(Throwable $e)
         {
             if (isset($_SERVER['GAE_SERVICE'])) {
-                Bootstrap::init();
-                Bootstrap::exceptionHandler($exception);
+                $this->reportToGCP($e);
             } else {
-                parent::report($exception);
+                parent::report($e);
             }
         }
+    
+1.  Below in the same file `app/Exceptions/Handler.php`, implement the function 
+    `reportToGCP()` like so:
+
+        private function reportToGCP(Throwable $e)
+        {
+            $e = $this->mapException($e);
+
+            if ($this->shouldntReport($e)) {
+                return;
+            }
+
+            if (Reflector::isCallable($reportCallable = [$e, 'report'])) {
+                if ($this->container->call($reportCallable) !== false) {
+                    return;
+                }
+            }
+
+            foreach ($this->reportCallbacks as $reportCallback) {
+                if ($reportCallback->handles($e)) {
+                    if ($reportCallback($e) === false) {
+                        return;
+                    }
+                }
+            }
+
+            Bootstrap::init();
+            Bootstrap::exceptionHandler($e);
+        }
+    
+    Most of the code in `reportToGCP()` function is lifted directly from the 
+    `parent::report()` function. We resort to this to retain the benefit of 
+    Laravel's built-in Exception handling. For example, with this copy-pasted 
+    code, thanks to Laravel's handling we will not be getting alerts for 
+    `NotFoundHttpException`'s in GCP Error Reporting every time someone 
+    mistypes the URL and gets a 404.
 
 1.  Now any PHP Exception will be logged to Stackdriver Error Reporting!
 
@@ -505,7 +540,6 @@ to App Engine, e.g., on commit to the `main` branch.
 [app-logging-createstackdriverlogger-php]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/standard/laravel-framework/app/Logging/CreateStackdriverLogger.php
 [config-logging-php]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/standard/laravel-framework/config/logging.php
 [stackdriver-error-reporting-php]:http://googleapis.github.io/google-cloud-php/#/docs/cloud-error-reporting/v0.12.3/errorreporting/readme
-[app-exceptions-handler-php]: https://github.com/GoogleCloudPlatform/php-docs-samples/blob/master/appengine/standard/laravel-framework/app/Exceptions/Handler.php
 [cloud-build]: https://cloud.google.com/cloud-build
 [cloud-secret-manager]: https://cloud.google.com/secret-manager
 [cloud-build-with-secrets]: https://cloud.google.com/cloud-build/docs/securing-builds/use-secrets
