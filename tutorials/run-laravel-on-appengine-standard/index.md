@@ -12,7 +12,7 @@ Brent Shaffer | Developer Programs Engineer | Google
 
 [Laravel][laravel] is an open source web framework for PHP developers that encourages the use of the
 model-view-controller (MVC) pattern.
-At the time of this writing, current version is Laravel 8.
+This tutorial uses Laravel 8.
 
 You can check out [PHP on Google Cloud][php-gcp] to get an
 overview of PHP and learn ways to run PHP apps on Google Cloud.
