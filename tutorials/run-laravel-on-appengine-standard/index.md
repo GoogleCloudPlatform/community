@@ -155,8 +155,13 @@ from laravel.com.
     If your code writes into any storage directory, you should make sure to 
     create the necessary directory structure here.
 
-1.  Modify `composer.json` file by adding a few scripts scripts. Here is an 
-    example result, with the additions detailed below:
+1.  Modify `composer.json` file by adding a few scripts scripts. To do this 
+    automatically, use the following commands:
+
+        composer config scripts.post-autoload-dump "Illuminate\Foundation\ComposerScripts::postAutoloadDump" "mkdir -p bootstrap/cache" "@php artisan package:discover --ansi"
+        composer config scripts.gcp-build "sed -i -e \"s|env('APP_STORAGE', base_path() . '/storage')|'/tmp'|g\" bootstrap/app.php && mkdir -p /tmp/framework/views && mv .env.gae .env && php artisan config:cache && rm -f .env && php artisan route:cache"
+
+    In the end your `"scripts"` section should look similar to this:
 
         "scripts": {
             "post-autoload-dump": [
@@ -173,15 +178,15 @@ from laravel.com.
             "gcp-build": "sed -i -e \"s|env('APP_STORAGE', base_path() . '/storage')|'/tmp'|g\" bootstrap/app.php && mkdir -p /tmp/framework/views && mv .env.gae .env && php artisan config:cache && rm -f .env && php artisan route:cache"
         }
     
-    In `"scripts"` -> `"post-autoload-dump"` add the following script right 
-    before `package:discover` command to ensure that the command has the 
-    directory to write into:
+    In `"scripts"` -> `"post-autoload-dump"` we add the following script right 
+    before `package:discover` command to ensure that the package discovery 
+    command has the directory to write into:
 
         ...
         "mkdir -p bootstrap/cache",
         ...
     
-    In `"scripts"` add the `"gcp-build"` field, which is a (currently 
+    In `"scripts"` we add the `"gcp-build"` field, which is a (currently 
     undocumented) way of running custom logic during deployment to App Engine.
 
         ...
