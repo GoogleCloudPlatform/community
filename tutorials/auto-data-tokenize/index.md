@@ -443,6 +443,7 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 
 ## What's next
 
+* Watch the Youtube video to [Understand the code](https://www.youtube.com/watch?v=S6fYkWvUBDo).
 * Read the companion document about a similar solution that uses BigQuery tables or queries as input:
 [Automatically tokenize sensitive BigQuery data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow] (https://cloud.google.com/community/tutorials/auto-bigquery-tokenize).
 * Learn more about [Cloud DLP](https://cloud.google.com/dlp).
