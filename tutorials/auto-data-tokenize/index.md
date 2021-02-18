@@ -443,8 +443,10 @@ To avoid incurring charges to your Google Cloud account for the resources used i
 
 ## What's next
 
+* Watch the YouTube video to understand the code:
+[Level Up - Automatically tokenize sensitive data with DLP and Dataflow](https://www.youtube.com/watch?v=S6fYkWvUBDo).
 * Read the companion document about a similar solution that uses BigQuery tables or queries as input:
-[Automatically tokenize sensitive BigQuery data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow] (https://cloud.google.com/community/tutorials/auto-bigquery-tokenize).
+[Automatically tokenize sensitive BigQuery data with Cloud Data Loss Prevention, Cloud Key Management Service, and Dataflow](https://cloud.google.com/community/tutorials/auto-bigquery-tokenize).
 * Learn more about [Cloud DLP](https://cloud.google.com/dlp).
 * Learn more about [Cloud KMS](https://cloud.google.com/kms).
 * Learn about [inspecting storage and databases for sensitive data](https://cloud.google.com/dlp/docs/inspecting-storage).
