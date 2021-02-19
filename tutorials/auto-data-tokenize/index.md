@@ -296,7 +296,7 @@ You can use your own file datasets or copy the included demonstration dataset (`
 
 You need to compile all of the modules to build executables for deploying the sample-and-identify and tokenize pipelines.
 
-     gradle buildNeeded shadowJar
+     ./gradlew buildNeeded shadowJar
 
 **Tip**: To skip running the tests, you can add the `-x test` flag.
 
