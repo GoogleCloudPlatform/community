@@ -79,7 +79,7 @@ creation step. The third method involves adding exclusion filters during the sin
     with IP ranges in the format `10.1.0.0/24`.
 
 1.  Run the query.
-1.  Click **Actions** and choose **Create sink** from the menu. 
+1.  Click **Actions**, and choose **Create sink** from the menu. 
 1.  On the **Create logs routing sink** page, name the sink and click **Next**.
 1.  Choose the BigQuery dataset as a destination.
 1.  Click **Create sink**.
@@ -95,7 +95,7 @@ creation step. The third method involves adding exclusion filters during the sin
         (NOT (ip_in_net(jsonPayload.connection.dest_ip, "[SMALL_CLOUD_IP_RANGE_1]") OR ip_in_net(jsonPayload.connection.dest_ip, "[SMALL_CLOUD_IP_RANGE_1]")))
 
 1.  Run the query.
-1.  Click **Actions** and choose **Create sink** from the menu. 
+1.  Click **Actions**, and choose **Create sink** from the menu. 
 1.  On the **Create logs routing sink** page, name the sink and click **Next**.
 1.  Choose the BigQuery dataset as a destination.
 1.  Click **Create sink**.
@@ -113,11 +113,11 @@ creation step. The third method involves adding exclusion filters during the sin
     with IP ranges in the format `10.1.0.0/24`.
 
 1.  Run the query.
-1.  Click **Actions** and choose **Create sink** from the menu. 
+1.  Click **Actions**, and choose **Create sink** from the menu. 
 1.  On the **Create logs routing sink** page, name the sink and click **Next**.
 1.  Choose the BigQuery dataset as a destination.
 1.  Verify that the inclusion filter is the query from step 2, and click **Next**.
-1.  Specify the IP ranges you want to exclude with the exclusion filter:
+1.  Specify the IP ranges that you want to exclude with the exclusion filter:
 
         (ip_in_net(jsonPayload.connection.dest_ip, "[SMALL_CLOUD_IP_RANGE_1]") OR ip_in_net(jsonPayload.connection.dest_ip, "[SMALL_CLOUD_IP_RANGE_2]"))
 
