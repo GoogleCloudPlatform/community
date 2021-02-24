@@ -69,6 +69,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator/) to g
         gcloud services enable cloudbuild.googleapis.com
         gcloud services enable dataflow.googleapis.com
         gcloud services enable ml.googleapis.com
+        gcloud services enable bigquery.googleapis.com
 
 1.  Set the storage bucket name in an environment variable and create the bucket:
 
