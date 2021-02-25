@@ -50,7 +50,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 
 You must set up a Google Cloud project (with billing enabled) to host the resources in this tutorial. For shell commands, Google Cloud Shell is assumed to be the execution environment.
 
-1. Use the Cloud Console to [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project) to host the resources in this tutorial (Pub/Sub for the Asset Inventory Real-time Notifications, Cloud Function). Choose a proper billing account to enable the billing for the project during the creation step. Note the project ID.
+1. Use the Cloud Console to [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project) to host the resources in this tutorial (Pub/Sub for the Asset Inventory Real-time Notifications, Cloud Functions). Choose a proper billing account to enable the billing for the project during the creation step. Note the project ID.
 
 1. [Launch a Cloud Shell session](https://cloud.google.com/shell/docs/launching-cloud-shell#launching_from_the_console) from the Console.
 
@@ -160,8 +160,6 @@ gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="service
 # i.e. this service account can set labels on any GCE VM instances underneath
 #gcloud resource-manager folders add-iam-policy-binding ${FOLDER_ID} --member="serviceAccount:${GCF_SERVICE_ACCOUNT}" --role="organizations/${ORGANIZATION_ID}/roles/ResourceLabelerRole"
 
-# Note if you are going for predefined roles, here are the roles needed
-#gcloud resource-manager folders add-iam-policy-binding ${FOLDER_ID} --member="serviceAccount:${GCF_SERVICE_ACCOUNT}" --role="roles/compute.instanceAdmin.v1"
 ```
 
 ### Enable the APIs in the project issuing the Asset APIs, hosting the Pub/Sub and the Cloud Function
@@ -248,7 +246,16 @@ gcloud asset feeds list --organization ${ORGANIZATION_ID} --format="flattened(fe
 
 ### Deploy the Cloud Function which processes the Asset Inventory Real-time Notifications
 
-Deploy the Cloud Function.
+The [GitHub repository for this tutorial](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler/) includes the complete working source code of the Cloud Function for the tutorial, which you can use as a reference as you customize it for your use case.
+
+Clone the repository.
+
+```bash
+git clone https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler/)
+cd 
+```
+
+Deploy the function
 
 ```bash
 # Confirm you still have the right variable for your GCF_SERVICE_ACCOUNT
