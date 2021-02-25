@@ -83,6 +83,7 @@ FOLDER_ID=<numeric folder id value>
 
 # For demo only - You can use this to create a new folder 
 # (the folder under which the project resources are to be monitored)
+#gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="user:$(gcloud config get-value account)" --role="roles/resourcemanager.folderCreator"
 #FOLDER_ID=$( gcloud resource-manager folders create --display-name="auto-label-folder" --organization=${ORGANIZATION_ID} --format="value('name')" | cut -d"/" -f2 )
 
 echo FOLDER_ID=${FOLDER_ID}
@@ -98,9 +99,10 @@ PROJECT_ID=<The alphanumeric project id>
 PROJECT_ID=$(gcloud config get-value project)
 
 # For demo only - Create a new project under the above folder
-#PROJECT_ID=$(gcloud projects create "resource-labeler-$(date '+%Y%m%d')" --folder=${FOLDER_ID} --format="value('projectId')" )
+#RANDOM_STRING=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 10 | head -n 1)
+#PROJECT_ID=$(gcloud projects create "resource-labeler-${RANDOM_STRING}" --folder=${FOLDER_ID} --format="value('projectId')" )
 # For demo only - Create a new project under the organization
-#PROJECT_ID=$(gcloud projects create "resource-labeler-$(date '+%Y%m%d')" --organization=${ORGANIZATION_ID} --format="value('projectId')" )
+#PROJECT_ID=$(gcloud projects create "resource-labeler-${RANDOM_STRING}" --organization=${ORGANIZATION_ID} --format="value('projectId')" )
 
 # Confirm this PROJECT_ID (alphanumeric) is set correctly
 echo PROJECT_ID=${PROJECT_ID}
@@ -127,6 +129,9 @@ echo GCF_SERVICE_ACCOUNT="${GCF_SERVICE_ACCOUNT}"
 ### Create the IAM role to be used by the Service Account for the Cloud Function
 
 ```bash
+# Assign yourself the permission to create organization roles (if you do not already have it)
+#gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="user:$(gcloud config get-value account)" --role="roles/iam.organizationRoleAdmin"
+
 # Create the custom role on the organization level
 gcloud iam roles create ResourceLabelerRole --organization=${ORGANIZATION_ID} \
   --title "Resource Labeler Role" \
@@ -172,7 +177,7 @@ gcloud services enable cloudasset.googleapis.com pubsub.googleapis.com cloudfunc
 
 ### Add the IAM policy bindings needed on the project having the Pub/Sub and the Cloud Function
 
-Run these commands to allow the execution of the subsequent steps (Pub/Sub, Cloud Function, etc).
+Run these commands to allow the execution of the subsequent steps (Pub/Sub, Cloud Function, etc) by the MEMBER (yourself or another designated personnel).
 
 ```bash
 # Project-level IAM bindings
@@ -238,9 +243,9 @@ gcloud asset feeds create "feed-resources-${ORGANIZATION_ID}" --organization="${
 #gcloud asset feeds create "feed-resources-${FOLDER_ID}" --folder="${FOLDER_ID}" --content-type=resource --asset-types="${ASSET_TYPES}" --pubsub-topic="projects/${PROJECT_ID}/topics/${TOPIC_NAME}" --billing-project ${PROJECT_ID}
 
 # Confirm the feed creation
-gcloud asset feeds list --organization ${ORGANIZATION_ID} --format="flattened(feeds[].name)" 
+gcloud asset feeds list --organization ${ORGANIZATION_ID} --format="flattened(feeds[].name)" --billing-project ${PROJECT_ID}
 # Or if you have been doing it on the folder level:
-#gcloud asset feeds list --folder ${FOLDER_ID} --format="flattened(feeds[].name)"
+#gcloud asset feeds list --folder ${FOLDER_ID} --format="flattened(feeds[].name)" --billing-project ${PROJECT_ID}
 
 ```
 
@@ -248,24 +253,29 @@ gcloud asset feeds list --organization ${ORGANIZATION_ID} --format="flattened(fe
 
 The [GitHub repository for this tutorial](https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler/) includes the complete working source code of the Cloud Function for the tutorial, which you can use as a reference as you customize it for your use case.
 
-Clone the repository.
+Clone the repository and change into the directory containing the Cloud Functions code.
 
 ```bash
 git clone https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler/)
-cd 
+cd GoogleCloudPlatform-community/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler
 ```
 
 Deploy the function
 
 ```bash
-# Confirm you still have the right variable for your GCF_SERVICE_ACCOUNT
+# Confirm you still have the right variables for the deployment
+# This will be used as the service account for the function
+echo PROJECT_ID=${PROJECT_ID}
 echo GCF_SERVICE_ACCOUNT="${GCF_SERVICE_ACCOUNT}"
+echo TOPIC_NAME=${TOPIC_NAME}
 
-# Simply retry if hitting the error for the first time: ERROR: (gcloud.functions.deploy) Failed to upload the function source code to signed url
-gcloud functions deploy gce_vm_auto_labeler --runtime python38 --trigger-topic "${TOPIC_NAME}" --service-account="${GCF_SERVICE_ACCOUNT}" --project ${PROJECT_ID}
+# Deploy the function
+gcloud functions deploy auto_resource_labeler --runtime python38 --trigger-topic "${TOPIC_NAME}" --service-account="${GCF_SERVICE_ACCOUNT}" --project ${PROJECT_ID} --retry
 ```
 
+### Test the labeling triggered by Asset Inventory Real-time Notifications
 
+Now you can test 
 
 ## Cleaning up
 

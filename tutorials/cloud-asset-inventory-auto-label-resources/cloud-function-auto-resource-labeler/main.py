@@ -20,17 +20,20 @@ import json
 import base64
 import re
 
-# This is a Google Cloud Function which can:
-# - Add the necessary labels to a VM
+# This is a Google Cloud Function which can add the necessary labels to
+# GCE VMs
+# GKE Clusters
+# GCS buckets
+# Cloud SQL databases
 
 # Sample deployment command
-# gcloud functions deploy create_notebook --runtime python38 --trigger-topic ${TOPIC_NAME} --service-account="${SERVICE_ACCOUNT}"
+# gcloud functions deploy auto_resource_labeler --runtime python38 --trigger-topic ${TOPIC_NAME} --service-account="${SERVICE_ACCOUNT}" --project ${PROJECT_ID} --retry
 
 # Fine-grained Permissions needed
 # - compute.instances.get
 # - compute.instances.setLabels
 
-def gce_vm_auto_labeler(event, context):
+def auto_resource_labeler(event, context):
 
     # Get the project id.  
     credentials, project_id = google.auth.default()
