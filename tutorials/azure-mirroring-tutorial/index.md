@@ -1,9 +1,9 @@
 ---
-title: Mirroring Azure DevOps repository to Cloud Source Repository
-description: Learn how to analyze information from VPC Flow Logs to estimate the amount of Cloud Interconnect usage by different projects.
+title: Mirroring an Azure DevOps repository to Cloud Source Repository
+description: Learn how to set up mirroring from an Azure DevOps repository to Cloud Source Repository.
 author: manokhina
-tags: Cloud Source Repositories
-date_published: 2021-02-22
+tags: Repositories
+date_published: 2021-02-26
 ---
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
@@ -47,15 +47,15 @@ On the Azure side, you need to have:
    1. In Cloud Source Repositories, go to the [All Repositories](https://source.cloud.google.com/repos) page.
    1. Click the name of your repository.
    1. On the **Add code to your repository** page, under **Select your preferred authentication method**, select **Manually generated credentials**, and then click **Generate and store your Git credentials**.
-   ![image](add_code.png)
+   ![image](https://storage.googleapis.com/gcp-community/tutorials/azure-mirroring-tutorial/add_code.png)
    1. You must complete an OAuth 2.0 authorization flow to generate static credentials. The Cloud Source Repositories site https://source.developers.google.com, which identifies itself as **Google Cloud Development**, requests the credentials on your behalf. First, choose your Google Account:  
-      ![image](choose_account.png)
+      ![image](https://storage.googleapis.com/gcp-community/tutorials/azure-mirroring-tutorial/choose_account.png)
 
    1. The following dialog appears, requesting permission to view and manage your data. If you agree to the request for access, click **Allow**.  
-      ![image](signin.png)
+      ![image](https://storage.googleapis.com/gcp-community/tutorials/azure-mirroring-tutorial/signin.png)
 
    1. On the **Configure Git** page, note the `git-<user>` and the highlighted text area – this will be the token used in the next steps.  
-      ![image](configure_git.png)
+      ![image](https://storage.googleapis.com/gcp-community/tutorials/azure-mirroring-tutorial/configure_git.png)
 
 ## Creating an Azure Pipeline
    1. In the project containing the repo, select **Pipelines**.
