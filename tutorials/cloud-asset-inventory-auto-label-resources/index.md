@@ -133,11 +133,12 @@ echo GCF_SERVICE_ACCOUNT="${GCF_SERVICE_ACCOUNT}"
 #gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="user:$(gcloud config get-value account)" --role="roles/iam.organizationRoleAdmin"
 
 # Create the custom role on the organization level
-PERMISSIONS="compute.instances.get,compute.instances.setLabels,container.clusters.get,container.clusters.update,storage.buckets.get,storage.buckets.update"
+PERMISSIONS="compute.instances.get,compute.instances.setLabels,container.clusters.get,container.clusters.update,storage.buckets.get,storage.buckets.update,cloudsql.instances.get,cloudsql.instances.update"
 gcloud iam roles create ResourceLabelerRole --organization=${ORGANIZATION_ID} --title "Resource Labeler Role" --permissions "${PERMISSIONS}" --stage GA
 
 # Updating the role (e.g. with more permissions) will follow a similar syntax
 # gcloud iam roles update ResourceLabelerRole --organization=${ORGANIZATION_ID} --title "Resource Labeler Role" --permissions "${PERMISSIONS}" --stage GA
+
 ```
 
 ### Add the IAM policy bindings needed on the service account and the folder/organization
@@ -178,7 +179,7 @@ Run this command to enable the required Google Cloud APIs.
 gcloud services enable cloudasset.googleapis.com pubsub.googleapis.com cloudfunctions.googleapis.com cloudbuild.googleapis.com --project ${PROJECT_ID}
 
 # The following APIs are enabled on the same project for simplicity of the function code on the labeling actions
-gcloud services enable compute.googleapis.com container.googleapis.com storage.googleapis.com --project ${PROJECT_ID}
+gcloud services enable compute.googleapis.com container.googleapis.com storage.googleapis.com sqladmin.googleapis.com --project ${PROJECT_ID}
 ```
 
 ### Add the IAM policy bindings needed on the project having the Pub/Sub and the Cloud Function

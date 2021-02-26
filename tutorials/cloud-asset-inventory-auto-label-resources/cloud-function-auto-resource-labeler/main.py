@@ -18,13 +18,16 @@ limitations under the License.
 # Fine-grained permissions needed are in parentheses.
 # GCE VMs - compute.instances.get,compute.instances.setLabels
 # GKE Clusters - container.clusters.get,container.clusters.update
-# GCS buckets - storage.buckets.get
-# Cloud SQL databases
+# GCS buckets - storage.buckets.get,storage.buckets.update
+# Cloud SQL databases - cloudsql.instances.get,cloudsql.instances.update
+
+
 
 # Sample deployment command
 # gcloud functions deploy auto_resource_labeler --runtime python38 --trigger-topic ${TOPIC_NAME} --service-account="${SERVICE_ACCOUNT}" --project ${PROJECT_ID} --retry
 
 from googleapiclient import discovery
+from googleapiclient.errors import HttpError
 import google.auth
 import json
 import base64
@@ -33,6 +36,7 @@ import re
 COMPUTE_INSTANCE_LABEL_KEY="hostname"
 CONTAINER_CLUSTER_LABEL_KEY="cluster"
 STORAGE_BUCKET_LABEL_KEY="bucket"
+SQLADMIN_INSTANCE_LABEL_KEY="instance"
 
 # Label GCE VMs
 # https://cloud.google.com/compute/docs/instances/instance-life-cycle
@@ -43,7 +47,7 @@ def label_compute_instance(asset_name,asset_resource_data_status):
         label_key=COMPUTE_INSTANCE_LABEL_KEY
 
         # Here is a sample asset_name
-        # "//compute.googleapis.com/projects/pure-album-286220/zones/us-central1-a/instances/instance-4"
+        # "//compute.googleapis.com/projects/project-id-286220/zones/us-central1-a/instances/instance-4"
 
         # Extract the properties from the asset name
         pattern = re.compile(r".*\/projects\/(?P<project_id>.*?)\/zones\/(?P<zone>.*?)\/instances\/(?P<instance_id>.*?)$", re.VERBOSE)
@@ -55,12 +59,24 @@ def label_compute_instance(asset_name,asset_resource_data_status):
 
         # Retrieve the existing labels from the resource
         service=discovery.build('compute', 'v1')
-        service_get_response=service.instances().get(
-            project=project_id,
-            zone=zone,
-            instance=instance_id
-        ).execute()
-        print({"service_get_response":json.dumps(service_get_response)})
+        service_get_response={}
+        try:
+            service_get_response=service.instances().get(
+                project=project_id,
+                zone=zone,
+                instance=instance_id
+            ).execute()
+            print({"service_get_response":json.dumps(service_get_response)})
+        except HttpError as exception:
+            if exception.resp["status"] == "404":
+                # exit gracefully if encountering 404
+                # One reason is due to the GCE VMs created by GKE Autopilot clusters, 
+                # which generate GCE Instance notifications but are not available via computer API
+                print("Cannot find asset_name={} . Exiting gracefully.".format(asset_name))
+                return
+            else:
+                raise exception
+
 
         labelFingerprint=service_get_response["labelFingerprint"]
         labels={}
@@ -71,7 +87,6 @@ def label_compute_instance(asset_name,asset_resource_data_status):
 
         if label_key in labels and labels[label_key] == instance_id:
             print("The same label key-value already exists.")
-            pass
         else:
             # Use the instance_id as the label value
             labels[label_key]=instance_id
@@ -98,7 +113,7 @@ def label_container_cluster(asset_name,asset_resource_data_status):
         label_key=CONTAINER_CLUSTER_LABEL_KEY
 
         # Here is a sample asset_name
-        # "//container.googleapis.com/projects/psychic-era-305922/locations/us-central1/clusters/autopilot-cluster-1"
+        # "//container.googleapis.com/projects/project-id-305922/locations/us-central1/clusters/autopilot-cluster-1"
 
         # Replace /zones/ with /locations/ for further processing
         harmonized_asset_name=asset_name.replace("/zones/","/locations/")
@@ -117,10 +132,21 @@ def label_container_cluster(asset_name,asset_resource_data_status):
 
         # Add the necessary labels to the resource
         service=discovery.build('container', 'v1')
-        service_get_response=service.projects().locations().clusters().get(
-            name=name,
-        ).execute()
-        print({"service_get_response":json.dumps(service_get_response)})
+        service_get_response={}
+        try:
+            service_get_response=service.projects().locations().clusters().get(
+                name=name,
+            ).execute()
+            print({"service_get_response":json.dumps(service_get_response)})
+        except HttpError as exception:
+            if exception.resp["status"] == "404":
+                # exit gracefully if encountering 404
+                # One reason is due to the GCE VMs created by GKE Autopilot clusters, 
+                # which generate GCE Instance notifications but are not available via computer API
+                print("Cannot find name={} . Exiting gracefully.".format(name))
+                return
+            else:
+                raise exception
 
         labelFingerprint=service_get_response["labelFingerprint"]
         labels={}
@@ -131,7 +157,6 @@ def label_container_cluster(asset_name,asset_resource_data_status):
 
         if label_key in labels and labels[label_key] == cluster:
             print("The same label key-value already exists.")
-            pass
         else:
             labels[label_key]=cluster
 
@@ -152,7 +177,7 @@ def label_storage_bucket(asset_name):
     label_key=STORAGE_BUCKET_LABEL_KEY
 
     # Here is a sample asset_name
-    # "//storage.googleapis.com/psychic-era-305922-gcs"
+    # "//storage.googleapis.com/project-id-305922-gcs"
 
     # Extract the full name for the API request
     pattern = re.compile(r"^\/\/storage.googleapis.com\/(?P<bucket>.*)$", re.VERBOSE)
@@ -162,10 +187,21 @@ def label_storage_bucket(asset_name):
 
     # Add the necessary labels to the resource
     service=discovery.build('storage', 'v1')
-    service_get_response=service.buckets().get(
-        bucket=bucket,
-    ).execute()
-    print({"service_get_response":json.dumps(service_get_response)})
+    service_get_response={}
+    try:
+        service_get_response=service.buckets().get(
+            bucket=bucket,
+        ).execute()
+        print({"service_get_response":json.dumps(service_get_response)})
+    except HttpError as exception:
+        if exception.resp["status"] == "404":
+            # exit gracefully if encountering 404
+            # One reason is due to the GCE VMs created by GKE Autopilot clusters, 
+            # which generate GCE Instance notifications but are not available via computer API
+            print("Cannot find bucket={} . Exiting gracefully.".format(bucket))
+            return
+        else:
+            raise exception
 
     etag=service_get_response["etag"]
     labels={}
@@ -176,7 +212,6 @@ def label_storage_bucket(asset_name):
 
     if label_key in labels and labels[label_key] == bucket:
         print("The same label key-value already exists.")
-        pass
     else:
         labels[label_key]=bucket
         service_set_labels_response = service.buckets().patch(
@@ -187,6 +222,67 @@ def label_storage_bucket(asset_name):
         ).execute()
         print("Finished setting labels on {}".format(bucket))
         print({"service_set_labels_response":service_set_labels_response})
+
+
+# Label Cloud SQL Instance
+# https://cloud.google.com/sql/docs/sqlserver/label-instance
+def label_sqladmin_instance(asset_name,asset_resource_data_state):
+
+    if asset_resource_data_state == "RUNNABLE":
+        label_key=SQLADMIN_INSTANCE_LABEL_KEY
+
+        # Here is a sample asset_name
+        # "//cloudsql.googleapis.com/projects/project-id-305922/instances/test3"
+
+        # Extract the properties from the asset name
+        pattern = re.compile(r".*\/projects\/(?P<project_id>.*?)\/instances\/(?P<instance_id>.*?)$", re.VERBOSE)
+        match = pattern.match(asset_name)
+
+        project_id = match.group("project_id")
+        instance_id = match.group("instance_id")
+
+        # Retrieve the existing labels from the resource
+        service=discovery.build('sqladmin', 'v1beta4')
+        service_get_response={}
+        try:
+            service_get_response=service.instances().get(
+                project=project_id,
+                instance=instance_id
+            ).execute()
+            print({"service_get_response":json.dumps(service_get_response)})
+        except HttpError as exception:
+            if exception.resp["status"] == "404":
+                # exit gracefully if encountering 404
+                # One reason is due to the GCE VMs created by GKE Autopilot clusters, 
+                # which generate GCE Instance notifications but are not available via computer API
+                print("Cannot find asset_name={} . Exiting gracefully.".format(asset_name))
+                return
+            else:
+                raise exception
+
+
+        etag=service_get_response["etag"]
+        userLabels={}
+        if "settings" in service_get_response and "userLabels" in service_get_response["settings"]:
+            userLabels=service_get_response["settings"]["userLabels"]
+
+        print("Current etag={} userLabels={}".format(etag,json.dumps(userLabels)))
+
+        if label_key in userLabels and userLabels[label_key] == instance_id:
+            print("The same label key-value already exists.")
+        else:
+            userLabels[label_key]=instance_id
+            service_set_labels_response = service.instances().patch(
+                project=project_id,
+                instance=instance_id,
+                body={
+                    "settings":{
+                        "userLabels":userLabels
+                    }
+                }
+            ).execute()
+            print("Finished setting labels on {}".format(asset_name))
+            print({"service_set_labels_response":service_set_labels_response})
 
 def auto_resource_labeler(event, context):
 
@@ -232,8 +328,11 @@ def auto_resource_labeler(event, context):
                     label_storage_bucket(asset_name)
                 else:
                     print("Ignored asset_type={} asset_name={}".format(asset_type,asset_name))
-            elif asset_type == "container.googleapis.com/Cluster":
-                label_container_cluster(asset_name,asset_resource_data_status)
+            elif asset_type == "sqladmin.googleapis.com/Instance":
+                # get the state of the resource
+                asset_resource_data_state=message_object["asset"]["resource"]["data"]["state"] 
+                print("asset_resource_data_state={}".format(asset_resource_data_state))
+                label_sqladmin_instance(asset_name,asset_resource_data_state)
             else:
                 print("Ignored asset_type={} asset_name={}".format(asset_type,asset_name))
 
