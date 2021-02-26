@@ -27,7 +27,8 @@ persistence_location /tmp/mosquitto/
 # cleansession true
 remote_clientid projects/CONFIG_PROJECT_ID/locations/CONFIG_LOCATION/registries/CONFIG_REGISTRY/devices/CONFIG_DEVICE_ID
 local_clientid projects/CONFIG_PROJECT_ID/locations/CONFIG_LOCATION/registries/CONFIG_REGISTRY/devices/CONFIG_DEVICE_ID
-
+bind_address 0.0.0.0
+allow_anonymous true
 start_type automatic
 notifications false
 log_type all
