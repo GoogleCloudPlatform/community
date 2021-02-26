@@ -44,7 +44,7 @@ Here are the components supported by the sample auto-labeling function and their
 * [Cloud Storage](https://cloud.google.com/storage/pricing)
 * [Cloud SQL](https://cloud.google.com/sql/pricing)
 
-You can choose to launch the smallest instance to minimize the cost for testing, and remove them afterwards after the testing. Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage, especially if you want to run your testing environment for an extended period of time.
+You can choose to launch the smallest instance (f1-micro for GCE VM) to minimize the cost for testing, and remove them afterwards after the testing. Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage, especially if you want to run your testing environment for an extended period of time.
 
 ## Before you begin
 
@@ -96,7 +96,7 @@ echo FOLDER_ID=${FOLDER_ID}
 PROJECT_ID=<The alphanumeric project id>
 
 # Run this if you have already selected the project you want to use, and want to use the setting from the Cloud Shell's gcloud environment
-PROJECT_ID=$(gcloud config get-value project)
+#PROJECT_ID=$(gcloud config get-value project)
 
 # For demo only - Create a new project under the above folder
 #RANDOM_STRING=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 10 | head -n 1)
@@ -233,7 +233,7 @@ gcloud pubsub topics add-iam-policy-binding "${TOPIC_NAME}" --member "serviceAcc
 
 ### Create an Asset Feed for the organization or the folder
 
-Specify the asset types can be found on this [page](https://cloud.google.com/asset-inventory/docs/supported-asset-types). These are the 4 types supported by the sample Cloud Function in this tutorial.
+Specify the asset types. The supported ones can be found on this [page](https://cloud.google.com/asset-inventory/docs/supported-asset-types). These are the 4 types supported by the sample Cloud Function in this tutorial.
 
 ```bash
 ASSET_TYPES="compute.googleapis.com/Instance,container.googleapis.com/Cluster,sqladmin.googleapis.com/Instance,storage.googleapis.com/Bucket"
@@ -295,7 +295,7 @@ Notifications are only sent upon changes on the resource or policy metadata of t
 
 ## Known Issues
 
-* GKE Autopilot Clusters will generate Compute Instance notifications that cannot be processed by the Cloud Function. This results in errors in the logs, but will not affect the other features of the sample code.
+* GKE Autopilot Clusters will generate Compute Instance notifications that cannot be processed by the Cloud Function. This results in 404 errors when trying to retrieve the existing labels.  The current sample code handles by exiting gracefully when encountering any 404 errors.
 
 ## Cleaning up
 
