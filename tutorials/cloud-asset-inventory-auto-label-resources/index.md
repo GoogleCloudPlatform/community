@@ -286,6 +286,8 @@ Now you can test the creation of the supported resources under your organization
 
 * GCE VMs are labeled when transitioning into PROVISIONING state.
 * GKE clusters are labeled when transitioning into RUNNING state.
+* GCS buckets are labled when coming from priorAssetState=DOES_NOT_EXIST.
+* Cloud SQL instances are labeled when transitioning into RUNNABLE state. It may take a few minutes for the labels to be effective.
 
 ## Considerations
 
