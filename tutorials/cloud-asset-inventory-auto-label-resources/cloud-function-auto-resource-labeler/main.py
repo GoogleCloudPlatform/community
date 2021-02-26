@@ -14,24 +14,179 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+# This is a Google Cloud Function which can add the necessary labels to these resources.
+# Fine-grained permissions needed are in parentheses.
+# GCE VMs - compute.instances.get,compute.instances.setLabels
+# GKE Clusters - container.clusters.get,container.clusters.update
+# GCS buckets - storage.buckets.get
+# Cloud SQL databases
+
+# Sample deployment command
+# gcloud functions deploy auto_resource_labeler --runtime python38 --trigger-topic ${TOPIC_NAME} --service-account="${SERVICE_ACCOUNT}" --project ${PROJECT_ID} --retry
+
 from googleapiclient import discovery
 import google.auth
 import json
 import base64
 import re
 
-# This is a Google Cloud Function which can add the necessary labels to
-# GCE VMs
-# GKE Clusters
-# GCS buckets
-# Cloud SQL databases
+COMPUTE_INSTANCE_LABEL_KEY="hostname"
+CONTAINER_CLUSTER_LABEL_KEY="cluster"
+STORAGE_BUCKET_LABEL_KEY="bucket"
 
-# Sample deployment command
-# gcloud functions deploy auto_resource_labeler --runtime python38 --trigger-topic ${TOPIC_NAME} --service-account="${SERVICE_ACCOUNT}" --project ${PROJECT_ID} --retry
+# Label GCE VMs
+# https://cloud.google.com/compute/docs/instances/instance-life-cycle
+def label_compute_instance(asset_name,asset_resource_data_status):
 
-# Fine-grained Permissions needed
-# - compute.instances.get
-# - compute.instances.setLabels
+    # Process only when it is "PROVISIONING"
+    if asset_resource_data_status == "PROVISIONING":
+        label_key=COMPUTE_INSTANCE_LABEL_KEY
+
+        # Here is a sample asset_name
+        # "//compute.googleapis.com/projects/pure-album-286220/zones/us-central1-a/instances/instance-4"
+
+        # Extract the properties from the asset name
+        pattern = re.compile(r".*\/projects\/(?P<project_id>.*?)\/zones\/(?P<zone>.*?)\/instances\/(?P<instance_id>.*?)$", re.VERBOSE)
+        match = pattern.match(asset_name)
+
+        project_id = match.group("project_id")
+        zone = match.group("zone")
+        instance_id = match.group("instance_id")
+
+        # Retrieve the existing labels from the resource
+        service=discovery.build('compute', 'v1')
+        service_get_response=service.instances().get(
+            project=project_id,
+            zone=zone,
+            instance=instance_id
+        ).execute()
+        print({"service_get_response":json.dumps(service_get_response)})
+
+        labelFingerprint=service_get_response["labelFingerprint"]
+        labels={}
+        if "labels" in service_get_response:
+            labels=service_get_response["labels"]
+
+        print("Current labelFingerprint={} labels={}".format(labelFingerprint,json.dumps(labels)))
+
+        if label_key in labels and labels[label_key] == instance_id:
+            print("The same label key-value already exists.")
+            pass
+        else:
+            # Use the instance_id as the label value
+            labels[label_key]=instance_id
+
+            service_set_labels_response = service.instances().setLabels(
+                project=project_id,
+                zone=zone,
+                instance=instance_id,
+                body={
+                    "labels":labels,
+                    "labelFingerprint":labelFingerprint
+                }
+            ).execute()
+            print("Finished setting labels on {}".format(instance_id))
+            print({"service_set_labels_response":service_set_labels_response})
+
+
+# Label GKE Clusters
+# https://cloud.google.com/kubernetes-engine/docs/how-to/creating-managing-labels
+# Labeling is not allowed while the cluster is being created
+def label_container_cluster(asset_name,asset_resource_data_status):
+    # Process when it is "RUNNING"
+    if asset_resource_data_status == "RUNNING":
+        label_key=CONTAINER_CLUSTER_LABEL_KEY
+
+        # Here is a sample asset_name
+        # "//container.googleapis.com/projects/psychic-era-305922/locations/us-central1/clusters/autopilot-cluster-1"
+
+        # Replace /zones/ with /locations/ for further processing
+        harmonized_asset_name=asset_name.replace("/zones/","/locations/")
+
+        # Extract the properties from the asset name
+        pattern = re.compile(r".*\/clusters\/(?P<cluster>.*?)$", re.VERBOSE)
+        match = pattern.match(harmonized_asset_name)
+
+        cluster = match.group("cluster")
+
+        # Extract the full name for the API request
+        pattern = re.compile(r"^\/\/container.googleapis.com\/(?P<name>.*)$", re.VERBOSE)
+        match = pattern.match(harmonized_asset_name)
+
+        name = match.group("name")
+
+        # Add the necessary labels to the resource
+        service=discovery.build('container', 'v1')
+        service_get_response=service.projects().locations().clusters().get(
+            name=name,
+        ).execute()
+        print({"service_get_response":json.dumps(service_get_response)})
+
+        labelFingerprint=service_get_response["labelFingerprint"]
+        labels={}
+        if "resourceLabels" in service_get_response:
+            labels=service_get_response["resourceLabels"]
+
+        print("Current labelFingerprint={} resourceLabels={}".format(labelFingerprint,json.dumps(labels)))
+
+        if label_key in labels and labels[label_key] == cluster:
+            print("The same label key-value already exists.")
+            pass
+        else:
+            labels[label_key]=cluster
+
+            service_set_labels_response = service.projects().locations().clusters().setResourceLabels(
+                name=name,
+                body={
+                    "resourceLabels":labels,
+                    "labelFingerprint":labelFingerprint
+                }
+            ).execute()
+            print("Finished setting labels on {}".format(cluster))
+            print({"service_set_labels_response":service_set_labels_response})
+
+
+# Label Storage buckets
+# https://cloud.google.com/storage/docs/using-bucket-labels
+def label_storage_bucket(asset_name):
+    label_key=STORAGE_BUCKET_LABEL_KEY
+
+    # Here is a sample asset_name
+    # "//storage.googleapis.com/psychic-era-305922-gcs"
+
+    # Extract the full name for the API request
+    pattern = re.compile(r"^\/\/storage.googleapis.com\/(?P<bucket>.*)$", re.VERBOSE)
+    match = pattern.match(asset_name)
+
+    bucket = match.group("bucket")
+
+    # Add the necessary labels to the resource
+    service=discovery.build('storage', 'v1')
+    service_get_response=service.buckets().get(
+        bucket=bucket,
+    ).execute()
+    print({"service_get_response":json.dumps(service_get_response)})
+
+    etag=service_get_response["etag"]
+    labels={}
+    if "labels" in service_get_response:
+        labels=service_get_response["labels"]
+
+    print("Current etag={} labels={}".format(etag,json.dumps(labels)))
+
+    if label_key in labels and labels[label_key] == bucket:
+        print("The same label key-value already exists.")
+        pass
+    else:
+        labels[label_key]=bucket
+        service_set_labels_response = service.buckets().patch(
+            bucket=bucket,
+            body={
+                "labels":labels
+            }
+        ).execute()
+        print("Finished setting labels on {}".format(bucket))
+        print({"service_set_labels_response":service_set_labels_response})
 
 def auto_resource_labeler(event, context):
 
@@ -48,65 +203,39 @@ def auto_resource_labeler(event, context):
         # Convert the string to object
         message_object=json.loads(message)
 
-        # Parse the minimal properties for branching
-        asset_name=message_object["asset"]["name"] # "name": "//compute.googleapis.com/projects/pure-album-286220/zones/us-central1-a/instances/instance-4",
-        asset_type=message_object["asset"]["assetType"] # "compute.googleapis.com/Instance"
-        print('asset_name={}'.format(asset_name))
-        print('asset_type={}'.format(asset_type))
+        # Parse the minimal properties for branching of the labeling logic
+        asset_name=message_object["asset"]["name"]
+        asset_type=message_object["asset"]["assetType"]
 
+        # skip all the deletion notifications (of any asset types)
         if "deleted" in message_object and message_object["deleted"]==True:
-            # skip all the deletion (of any asset types)
             print("Ignored deleted resource. asset_type={} asset_name={}".format(asset_type,asset_name))
             pass
 
-        # GCE VM
-        elif asset_type == "compute.googleapis.com/Instance":
-
-            # https://cloud.google.com/compute/docs/instances/instance-life-cycle
-            asset_resource_data_status=message_object["asset"]["resource"]["data"]["status"] # "PROVISIONING"
-            print('asset_resource_data_status={}'.format(asset_resource_data_status))
-
-            # Process only when it is "PROVISIONING"
-            if asset_resource_data_status == "PROVISIONING":
-
-                # Parse the properties
-                pattern = re.compile(r".*\/projects\/(?P<project_id>.*?)\/zones\/(?P<zone>.*?)\/instances\/(?P<instance_id>.*?)$", re.VERBOSE)
-                match = pattern.match(asset_name)
-
-                project_id = match.group("project_id")
-                zone = match.group("zone")
-                instance_id = match.group("instance_id")
-
-                # Add the necessary labels to the compute instance
-                compute_service=discovery.build('compute', 'v1')
-                compute_get_response=compute_service.instances().get(
-                    project=project_id,
-                    zone=zone,
-                    instance=instance_id
-                ).execute()
-                print({"compute_get_response":json.dumps(compute_get_response)})
-
-                labelFingerprint=compute_get_response["labelFingerprint"]
-                labels={}
-                if "labels" in compute_get_response:
-                    labels=compute_get_response["labels"]
-
-                print("labelFingerprint={} labels={}".format(labelFingerprint,json.dumps(labels)))
-                labels["gce_vm_name"]=instance_id
-
-                compute_set_labels_response = compute_service.instances().setLabels(
-                    project=project_id,
-                    zone=zone,
-                    instance=instance_id,
-                    body={
-                        "labels":labels,
-                        "labelFingerprint":labelFingerprint
-                    }
-                ).execute()
-                print({"compute_set_labels_response":compute_set_labels_response})
-
+        # else (not deleted)
         else:
-            print("Ignored asset_type={} asset_name={}".format(asset_type,asset_name))
+            print("Got notification on asset_type={} asset_name={}".format(asset_type,asset_name))
+
+            # Handle the various supported asset types
+            if asset_type == "compute.googleapis.com/Instance":
+                # get the status of the resource
+                asset_resource_data_status=message_object["asset"]["resource"]["data"]["status"] 
+                print("asset_resource_data_status={}".format(asset_resource_data_status))
+                label_compute_instance(asset_name,asset_resource_data_status)
+            elif asset_type == "container.googleapis.com/Cluster":
+                # get the status of the resource
+                asset_resource_data_status=message_object["asset"]["resource"]["data"]["status"] 
+                print("asset_resource_data_status={}".format(asset_resource_data_status))
+                label_container_cluster(asset_name,asset_resource_data_status)
+            elif asset_type == "storage.googleapis.com/Bucket":
+                if "priorAssetState" in message_object and message_object["priorAssetState"]=="DOES_NOT_EXIST":
+                    label_storage_bucket(asset_name)
+                else:
+                    print("Ignored asset_type={} asset_name={}".format(asset_type,asset_name))
+            elif asset_type == "container.googleapis.com/Cluster":
+                label_container_cluster(asset_name,asset_resource_data_status)
+            else:
+                print("Ignored asset_type={} asset_name={}".format(asset_type,asset_name))
 
         return 'Labeled resource {}'.format(asset_name)
 

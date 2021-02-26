@@ -37,14 +37,14 @@ This tutorial uses these components of Google Cloud as the labeling mechanism. H
 * [Cloud Pub/Sub](https://cloud.google.com/pubsub/pricing)
 * [Cloud Functions](https://cloud.google.com/functions/pricing)
 
-Here are the components supported by the sample auto-labeling function. Here are the links to the pricing information of these resources if you want to launch them for actual testing and want to review the pricing. You can choose to launch the smallest instance to minimize the cost for testing, and remove them afterwards after the testing.
+Here are the components supported by the sample auto-labeling function and their pricing information.
 
 * [Cloud Engine](https://cloud.google.com/compute/vm-instance-pricing)
 * [Kubernetes Engine](https://cloud.google.com/kubernetes-engine/pricing)
 * [Cloud Storage](https://cloud.google.com/storage/pricing)
 * [Cloud SQL](https://cloud.google.com/sql/pricing)
 
-Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage, especially if you want to run your tutorial environment for an extended period of time.
+You can choose to launch the smallest instance to minimize the cost for testing, and remove them afterwards after the testing. Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage, especially if you want to run your testing environment for an extended period of time.
 
 ## Before you begin
 
@@ -133,9 +133,11 @@ echo GCF_SERVICE_ACCOUNT="${GCF_SERVICE_ACCOUNT}"
 #gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="user:$(gcloud config get-value account)" --role="roles/iam.organizationRoleAdmin"
 
 # Create the custom role on the organization level
-gcloud iam roles create ResourceLabelerRole --organization=${ORGANIZATION_ID} \
-  --title "Resource Labeler Role" \
-  --permissions compute.instances.get,compute.instances.setLabels --stage GA
+PERMISSIONS="compute.instances.get,compute.instances.setLabels,container.clusters.get,container.clusters.update,storage.buckets.get,storage.buckets.update"
+gcloud iam roles create ResourceLabelerRole --organization=${ORGANIZATION_ID} --title "Resource Labeler Role" --permissions "${PERMISSIONS}" --stage GA
+
+# Updating the role (e.g. with more permissions) will follow a similar syntax
+# gcloud iam roles update ResourceLabelerRole --organization=${ORGANIZATION_ID} --title "Resource Labeler Role" --permissions "${PERMISSIONS}" --stage GA
 ```
 
 ### Add the IAM policy bindings needed on the service account and the folder/organization
@@ -172,7 +174,11 @@ gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="service
 Run this command to enable the required Google Cloud APIs.
 
 ```bash
+# These are the required APIs for the labeling pipeline itself
 gcloud services enable cloudasset.googleapis.com pubsub.googleapis.com cloudfunctions.googleapis.com cloudbuild.googleapis.com --project ${PROJECT_ID}
+
+# The following APIs are enabled on the same project for simplicity of the function code on the labeling actions
+gcloud services enable compute.googleapis.com container.googleapis.com storage.googleapis.com --project ${PROJECT_ID}
 ```
 
 ### Add the IAM policy bindings needed on the project having the Pub/Sub and the Cloud Function
@@ -256,11 +262,11 @@ The [GitHub repository for this tutorial](https://github.com/GoogleCloudPlatform
 Clone the repository and change into the directory containing the Cloud Functions code.
 
 ```bash
-git clone https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler/)
+git clone https://github.com/GoogleCloudPlatform/community/tree/master/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler/
 cd GoogleCloudPlatform-community/tutorials/cloud-asset-inventory-auto-label-resources/cloud-function-auto-resource-labeler
 ```
 
-Deploy the function
+Deploy the function.
 
 ```bash
 # Confirm you still have the right variables for the deployment
@@ -275,7 +281,18 @@ gcloud functions deploy auto_resource_labeler --runtime python38 --trigger-topic
 
 ### Test the labeling triggered by Asset Inventory Real-time Notifications
 
-Now you can test 
+Now you can test the creation of the supported resources under your organization (or folder) to observe the labeling in action.
+
+* GCE VMs are labeled when transitioning into PROVISIONING state.
+* GKE clusters are labeled when transitioning into RUNNING state.
+
+## Considerations
+
+Notifications are only sent upon changes on the resource or policy metadata of the resource. Any existing resources (e.g. existing VMs) that are already deployed will not be acted upon by this solution.  A separate exercise needs to be performed to have the same actions on those existing resources.
+
+## Known Issues
+
+* GKE Autopilot Clusters will generate Compute Instance notifications that cannot be processed by the Cloud Function. This results in errors in the logs, but will not affect the other features of the sample code.
 
 ## Cleaning up
 
