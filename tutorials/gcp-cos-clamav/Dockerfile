@@ -5,10 +5,9 @@ RUN apk add --no-cache \
     python3 py3-pip \
   && pip3 install --upgrade pip
 # Image specific layers under this line
-RUN apk add --no-cache fcron clamav rsyslog wget clamav-libunrar
+RUN apk add --no-cache clamav rsyslog wget clamav-libunrar
 RUN mkdir -p /logs /data
 RUN echo `date`: File created >> /logs/clamscan.log
-RUN chmod +r /etc/fcron/*
 
 COPY conf /etc/clamav-custom
 COPY start.py /start.py

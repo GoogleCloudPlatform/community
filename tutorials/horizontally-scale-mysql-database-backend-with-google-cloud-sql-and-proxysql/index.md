@@ -371,7 +371,7 @@ distribution.
 
 1.  Declare rules with the following SQL queries:
 
-        INSERT INTO mysql_rules (rule_id, active, match_digest, destination_hostgroup, apply) VALUES (1,1,'^SELECT.*FOR UPDATE',0,1), (2,1,'^SELECT',1,1);
+        INSERT INTO mysql_query_rules (rule_id, active, match_digest, destination_hostgroup, apply) VALUES (1,1,'^SELECT.*FOR UPDATE',0,1), (2,1,'^SELECT',1,1);
         LOAD MYSQL RULES TO RUNTIME;
         SAVE MYSQL RULES TO DISK;
 
