@@ -16,7 +16,9 @@ GCP firewall configuration is SSH port open to the world. If you manage your ins
 you can create a restricted firewall rule restricting access  from GCP Identity Aware Proxy IP address range.
 
 What is the Identity Aware Proxy IP address range?
-If you create an instance and connect to it using the SSH Button in GCP Console
+
+When you create an GCP instance and connect to it using the SSH Button in GCP Console
+
 ![Demo Animation](ssh-to-vm.png?raw=true)
 
 
