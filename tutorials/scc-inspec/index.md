@@ -1,6 +1,6 @@
 ---
 title: Integrating InSpec and Security Command Center
-description: Learn how to programmatically add InSpec test results to Security Command Center
+description: Learn how to programmatically add InSpec test results to Security Command Center.
 author: jtangney
 tags: Security Command Center, InSpec
 date_published: 2021-03-02
