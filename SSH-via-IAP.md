@@ -15,14 +15,16 @@ Creating an instance in GCP and connecting to it via SSH is really straightforwa
 GCP firewall configuration is SSH port open to the world. If you manage your instances via GCP console or gcloud command 
 you can create a restricted firewall rule restricting access  from GCP Identity Aware Proxy IP address range.
 
-What is the Identity Aware Proxy IP address range?
+# What is the Identity Aware Proxy IP address range?
 
 When you create an GCP instance and connect to it using the SSH Button in GCP Console
 
-![Demo Animation](ssh-to-vm.png?raw=true)
+![SSH button](ssh-to-vm.png?raw=true)
 
 
 Check SSH Client Ip address connected to the instance
+
+![SSH client IP Address](check-ssh-client.png?raw=true)
 
 
 Your SSH connection will be in the range 35.235.240.0/20 This range is the Pool of IP address used by IAP to proxy the connection 
