@@ -17,7 +17,7 @@ you can create a restricted firewall rule restricting access  from GCP Identity 
 
 What is the Identity Aware Proxy IP address range?
 If you create an instance and connect to it using the SSH Button in GCP Console
-
+![Demo Animation](../assets/demo.gif?raw=true)
 
 
 Check SSH Client Ip address connected to the instance
