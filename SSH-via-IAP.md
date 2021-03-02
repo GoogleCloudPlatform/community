@@ -32,3 +32,5 @@ from your browser to your instance. So right know you can create a more restrict
 in consequence only controlled users via IAP will be able to hit SSH port into the VMs via IAP
 
 If you are using the default VPC remove the firewall rule "default-allow-ssh"and create a new restrictive SSH firewall rule.  
+![Firewall Rule](fw-rule-ssh.png?raw=true)
+
