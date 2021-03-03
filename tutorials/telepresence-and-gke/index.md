@@ -1,6 +1,6 @@
 ---
 title: Develop Golang Microservices on GKE with Telepresence
-description: A cloud development environment powered by GKE and Telepresence
+description: A cloud development environment powered by GKE and Telepresence.
 author: datawire
 tags: kubernetes, gke, telepresence
 date_published: 2021-03-03
