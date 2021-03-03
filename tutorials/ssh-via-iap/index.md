@@ -7,6 +7,7 @@ date_published: 2021-03-02
 ---
 
 Erike Souza | Community Editor | Google
+
 Reviewed by Renato Marcovitti
 
 <p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
