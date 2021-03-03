@@ -1,131 +1,96 @@
 ---
-title: Tutorial template
-description: Replace with a description of your tutorial, focusing on what the reader will learn.
-author: github-username-for-author,github-username-for-other-author
-tags: replace, with, tags, not, in, title, or, description
-date_published: 2020-04-28
+title: Develop Golang Microservices on GKE with Telepresence
+description: A cloud development environment powered by GKE and Telepresence
+author: datawire
+tags: kubernetes, gke, telepresence
+date_published: 2021-03-03
 ---
+Kubernetes, microservices, and cloud native architectures have quickly become the new standard for software development. These technologies promise faster, more efficient processes for development teams, but the truth is the learning curve is often very steep, especially for application developers. In the transition from the monolith to microservices, the techniques that once worked so well for application developers - local development, debugging, etc. become nearly impossible with new application architectures and oftentimes, it’s up to the application developers to find solutions. First, developers must learn how to change their development processes. Then, they have to find the right tools for the job. The whole process can become daunting very quickly. 
 
-Todd Kopriva | Community Editor | Google
+One of the more common cloud native development workflows looks like this: 
+Package code as a container 
+Push the container to the Google Container Registry 
+Deploy the changes
+Wait for CI to run to see them live 
+This workflow seems to work for larger, infrequent changes, but for small, fast changes it introduces a lot of wait time. You should be able to see the results of your changes immediately. 
 
-<p style="background-color:#D9EFFC;"><i>Contributed by the Google Cloud community. Not official Google documentation.</i></p>
-<p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
+In this tutorial, we'll set up a local development environment for a Golang microservice in GKE . Instead of waiting through the old fashioned development workflow, we'll use [Telepresence](http://www.getambassador.io/products/telepresence/), an open source Cloud Native Computing Foundation project, to see the results of our change right away. Let’s get started! 
 
-To begin creating a tutorial, copy the Markdown source for this tutorial template into your blank Markdown file. Replace the explanatory text and examples with 
-your own tutorial content. Not all documents will use all of the sections described in this template. For example, a conceptual document or code walkthrough
-might not include the "Costs" or "Cleaning up" sections. For more information, see the 
-[style guide](https://cloud.google.com/community/tutorials/styleguide) and [contribution guide](https://cloud.google.com/community/tutorials/write).
+## Step 1: Set up our Sample Application with the Go microservice
 
-Replace the placeholders in the metadata at the top of the Markdown file with your own values. Follow the guidance provided by the placeholder values for spacing
-and punctuation.
+For our example, we'll make code changes to the Go Microservice running between the front-end Java service and a backend datastore. We'll start by deploying a sample microservice application consisting of 3 services:
+* **VeryLargeJavaService**: A memory-intensive service written in Java that generates the front-end graphics and web pages for our application
+* **DataProcessingService**: A Golang service that manages requests for information between the two services.
+* **VeryLargeDataStore**: A large datastore service that contains the sample data for our Edgey Corp store.
+Note: We've called these VeryLarge services to emphasize the fact that your local environment may not have enough CPU and RAM, or you may just not want to pay for all that extra overhead. But don't worry this sample app is actually pretty small.
+![](https://cdn-images-1.medium.com/max/3200/0*7J_48_5o8juPX5E6)
+In this architecture diagram, you'll notice that requests from users are routed through an ingress controller to our services. For simplicity's sake, we'll skip the step of [deploying an ingress controller](https://www.getambassador.io/docs/latest/topics/install/install-ambassador-oss/#kubernetes-yaml) in this tutorial. If you're ready to use Telepresence in your own setup and need a simple way to set up an ingress controller, we recommend checking out the [Ambassador Edge Stack](https://www.getambassador.io/products/edge-stack/) which can be easily configured with the [K8s Initializer](https://app.getambassador.io/initializer).
+Let's start off by deploying the sample application to a GKE cluster:
+	```sh
+	kubectl apply -f [https://raw.githubusercontent.com/datawire/edgey-corp-go/main/k8s-config/edgey-corp-web-app-no-mapping.yaml](https://raw.githubusercontent.com/datawire/edgey-corp-go/main/k8s-config/edgey-corp-web-app-no-mapping.yaml)
+	```
+## Step 2: Configure your local development environment to work with the Go Microservice
 
-The first line after the metadata should be your name and an optional job description and organization affiliation.
+We'll need to grab all the code for our local development environment so that we can edit the `DataProcessingService` service. As shown in the architecture diagram, the `DataProcessingService` is dependent on a connection to both  `VeryLargeJavaService` and the `VeryLargeDataStore`, so in order to make a change to this service, we'll need to exchange data with these other services as well. Let's get started!
+1. Clone the repository for this application from GitHub.
+   `git clone [https://github.com/datawire/edgey-corp-go.git](https://github.com/datawire/edgey-corp-go.git)`
+2. Change directories into the DataProcessingService
+   `cd edgey-corp-go/DataProcessingService`
+3. Start the Go server:
+   go build main.go && ./main
+4. See your service running!
+   `10:23:41 app | Welcome to the DataProcessingGoService!`
+5. In another terminal window, curl localhost:3000/color to see that the service is returning blue.
+	```sh
+	$ curl localhost:3000/color
+	"blue"
+	```
+## Step 3: Use Telepresence to connect our environment to the GKE cluster
 
-After that is one of two banners that indicates whether the document was contributed by a Google employee. Just leave one banner and delete the other one.
+Telepresence creates a bidirectional network connection between your local development and the Kubernetes cluster to enable [fast, efficient Kubernetes development](https://www.getambassador.io/use-case/local-kubernetes-development/).
+1. Download Telepresence (~60MB):
+	```sh
+	# Mac OS X
+	sudo curl -fL [https://app.getambassador.io/download/tel2/darwin/amd64/latest/telepresence](https://app.getambassador.io/download/tel2/darwin/amd64/latest/telepresence) -o /usr/local/bin/telepresence
+	#Linux
+	sudo curl -fL https://app.getambassador.io/download/tel2/linux/amd64/latest/telepresence -o /usr/local/bin/telepresence
+	```
+2. Make the binary executable
+   `$ sudo chmod a+x /usr/loca/bin/telepresence`
+3. Test Telepresence by connecting to the remote cluster
+   `$ telepresence connect`
+4. Send a request to the Kubernetes API server:
+	```sh
+	$ curl -ik [https://kubernetes.default.svc.cluster.local](https://kubernetes.default.svc.cluster.local)
+	HTTP/1.1 401 Unauthorized
+	Cache-Control: no-cache, private
+	Content-Type: application/json
+	Www-Authenticate: Basic realm="kubernetes-master"
+	Date: Tue, 09 Feb 2021 23:21:51 GMT
+   ```
 
-The first paragraph or two of the tutorial should tell the reader the following:
+Great! You've successfully configured Telepresence. Now Telepresence is intercepting requests you're making to the Kubernetes API server, and routing over its direct connection to GKE.
 
-  * Who the tutorial is for
-  * What they will learn from the tutorial
-  * What prerequisite knowledge they need for the tutorial
+## Step 4: Intercept connections to your local Golang Service
 
-Don't use a heading like **Overview** or **Introduction**. Just get right to it.
+An intercept is a routing rule for Telepresence. We can create an intercept to route traffic intended for the `DataProcessingService` in the cluster and instead route all of the traffic to the *local* version of the `DataProcessingService` running on port 3000.
 
-## Objectives
+1. Create the intercept
+   telepresence intercept dataprocessingservice — port 3000
+2. Access the the sample application directly with Telepresence. Visit [http://verylargejavaservice:8080](http://verylargejavaservice:8080). Again, Telepresence is intercepting network requests intended for GKE and routes them appropriately.
+3. Next, let's make some updates to our Go microservice. Open edgey-corp-go/DataProcessingService/main.go and change the value of the color variable from blue to orange. Save the file, stop the previous server instance and start it again with go build main.go && ./main.
+4. Refresh your browser and see how the color has changed from blue to orange!
 
-Give the reader a high-level summary of what steps they take during the tutorial. This information is often most effective as a short bulleted list.
+That's it! Using Telepresence we quickly went from editing our local Go service to testing these change with the application as a whole. When you compare it to the original process of building and deploying after every change, it's very easy to see how much time you can save especially as we make more complex changes or run even larger services.
 
-### Example: Objectives
+## Learn More about Telepresence
 
-*   Create a service account with limited access.
-*   Create a Cloud Function that triggers on HTTP.
-*   Create a Cloud Scheduler job that targets an HTTP endpoint.
-*   Run the Cloud Scheduler job. 
-*   Verify success of the job.
+Today, we've learned how to use Telepresence to rapidly iterate on a Golang microservice running in Kubernetes. Now, instead of waiting for slow local development processes, we can iterate quickly with an instant feedback loop and a productive cloud native development environment.
+If you want to learn more about Telepresence, check out the following resources:
+* [Read the docs](https://www.getambassador.io/docs/latest/telepresence/quick-start/qs-go/)
+* Watch the [demo video](https://www.youtube.com/watch?v=W_a3aErN3NU)
+* Read more about [Intercepts](https://www.getambassador.io/docs/latest/telepresence/howtos/intercepts/#intercepts)
+* Learn about [Preview URLs](https://www.getambassador.io/docs/pre-release/telepresence/howtos/preview-urls/#collaboration-with-preview-urls) for easy collaboration with teammates
+* [Join our Slack channel](https://d6e.co/slack) to connect with the Telepresence community
 
-## Costs
 
-Tell the reader which technologies the tutorial uses and what it costs to use them.
-
-For Google Cloud services, link to the preconfigured [pricing calculator](https://cloud.google.com/products/calculator/) if possible.
-
-If there are no costs to be incurred, state that.
-
-### Example: Costs 
-
-This tutorial uses billable components of Google Cloud, including the following:
-
-*   [Cloud Functions](https://cloud.google.com/functions)
-*   [Cloud Scheduler](https://cloud.google.com/scheduler)
-*   [App Engine](https://cloud.google.com/appengine/docs/flexible/python)
-
-Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
-
-## Before you begin
-
-Give a numbered sequence of procedural steps that the reader must take to set up their environment before getting into the main tutorial.
-
-Don't assume anything about the reader's environment. You can include simple installation instructions of only a few steps, but provide links to installation
-instructions for anything more complex.
-
-### Example: Before you begin
-
-This tutorial assumes that you're using the Microsoft Windows operating system.
-
-1.  Create an account with the BigQuery free tier. See
-    [this video from Google](https://www.youtube.com/watch?v=w4mzE--sprY&list=PLIivdWyY5sqI6Jd0SbqviEgoA853EvDsq&index=2) for detailed instructions.
-1.  Create a Google Cloud project in the [Cloud Console](https://console.cloud.google.com/).
-1.  Install [DBeaver Community for Windows](https://dbeaver.io/download/).
-
-## Tutorial body
-
-Break the tutorial body into as many sections and subsections as needed, with concise headings.
-
-### Use short numbered lists for procedures
-
-Use numbered lists of steps for procedures. Each action that the reader must take should be its own step. Start each step with the action, such as *Click*, 
-*Run*, or *Enter*.
-
-Keep procedures to 7 steps or less, if possible. If a procedure is longer than 7 steps, consider how it might be separated into sub-procedures, each in its
-own subsection.
-
-### Provide context, but don't overdo the screenshots
-
-Provide context and explain what's going on.
-
-Use screenshots only when they help the reader. Don't provide a screenshot for every step.
-
-Help the reader to recognize what success looks like along the way. For example, describing the result of a step helps the reader to feel like they're doing
-it right and helps them know things are working so far.
-
-## Cleaning up
-
-Tell the reader how to shut down what they built to avoid incurring further costs.
-
-### Example: Cleaning up
-
-To avoid incurring charges to your Google Cloud account for the resources used in this tutorial, you can delete the project.
-
-Deleting a project has the following consequences:
-
-- If you used an existing project, you'll also delete any other work that you've done in the project.
-- You can't reuse the project ID of a deleted project. If you created a custom project ID that you plan to use in the
-  future, delete the resources inside the project instead. This ensures that URLs that use the project ID, such as
-  an `appspot.com` URL, remain available.
-
-To delete a project, do the following:
-
-1.  In the Cloud Console, go to the [Projects page](https://console.cloud.google.com/iam-admin/projects).
-1.  In the project list, select the project you want to delete and click **Delete**.
-1.  In the dialog, type the project ID, and then click **Shut down** to delete the project.
-
-## What's next
-
-Tell the reader what they should read or watch next if they're interested in learning more.
-
-### Example: What's next
-
-- Watch this tutorial's [Google Cloud Level Up episode on YouTube](https://youtu.be/uBzp5xGSZ6o).
-- Learn more about [AI on Google Cloud](https://cloud.google.com/solutions/ai/).
-- Learn more about [Cloud developer tools](https://cloud.google.com/products/tools).
-- Try out other Google Cloud features for yourself. Have a look at our [tutorials](https://cloud.google.com/docs/tutorials).
