@@ -13,7 +13,7 @@ Erike Souza | Community Editor | Google
 
 ## Objectives
 
-Explain how we connect from our browser or Google SDK (gcloud command) into VM instances
+Explain how to connect from our browser or Google SDK (gcloud command) into VM instances without using an external IP address, bastion host or NAT
 
 ## Connecting to the instance
 
