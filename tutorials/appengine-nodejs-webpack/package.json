@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "express": "4.14.1",
-    "pug": "2.0.0-beta11",
+    "pug": ">=3.0.1",
     "webpack": "2.2.1"
   }
 }
