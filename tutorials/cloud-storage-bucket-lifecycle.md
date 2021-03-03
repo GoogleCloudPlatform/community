@@ -26,7 +26,7 @@ using various storage classes.
 Note that Nearline Storage and Coldline Storage classes have cheaper storage costs, but both have data retrieval charges.
 If your data is frequently accessed, it may be cheaper to keep it in the Standard Storage class.
 
-## Add a lifecyle rule to automatically change the storage class
+## Add a lifecycle rule to automatically change the storage class
 
 1.  Navigate to the [**Storage > Browser** page](https://console.cloud.google.com/storage/browser) in the Cloud Console.
 
