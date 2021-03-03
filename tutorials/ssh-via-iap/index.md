@@ -17,13 +17,12 @@ Explain how we connect from our browser or Google SDK (gcloud command) into VM i
 
 ## Connecting to the instance
 
-Create an instance in GCP and connect to it via SSH is really straightforward and secure in GCP. But one thing that normally I see in some 
-GCP firewall configuration is SSH port open to the world. If you manage your instances using SSH via GCP console or gcloud command 
+Creating an instance in GCP and connecting to it via SSH is really straightforward and secure in GCP. But one thing that normally I see in some 
+GCP firewall configurations is the SSH port open to the world. If you manage your instances using SSH via GCP console or gcloud command 
 you can create a firewall rule restricting access only from GCP Identity Aware Proxy IP address range.
 
 # What is the Identity Aware Proxy IP address range?
 
-Lets learn what is that:
 Create an GCP instance and connect to it using the SSH Button in GCP Console
 
 ![SSH button](ssh-to-vm.png?raw=true)
@@ -35,8 +34,8 @@ Check the SSH Client Ip address connected to the instance
 
 
 The Client IP address in the SSH connection will be part of the range 35.235.240.0/20. This range is the Pool of IP address used by IAP to proxy the connection 
-from your browser to your instance. So, you can create a more restrictive VPC firewall rule allowing SSH only from this IP address range
-in consequence only controlled users via IAP will be able to hit SSH port into the VMs via IAP
+from your browser to your instance. So, you can create a more restrictive VPC firewall rule allowing SSH only from this IP address range and as a
+consequence only controlled users via IAP will be able to hit the SSH port on VMs via IAP
 
 If you are using the default VPC remove the firewall rule "default-allow-ssh"and create a new restrictive SSH firewall rule.  
 ![Firewall Rule](fw-rule-ssh.png?raw=true)
