@@ -22,7 +22,7 @@ Use the [pricing calculator](https://cloud.google.com/products/calculator) to ge
 For this tutorial, you need a Google Cloud [project](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects). You can create a
 new one, or select a project that you have already created.
 
-1.  Creating a Google Cloud project.
+1.  Create a Google Cloud project.
 1.  Enable billing for the project.
 1.  Enable the [Cloud Source Repositories API](https://cloud.google.com/source-repositories/docs/apis).
 
@@ -32,14 +32,15 @@ On the Azure side, you need to have an Azure DevOps account and an [Azure DevOps
 
 1.  Install the [Mirror Git Repository extension](https://marketplace.visualstudio.com/items?itemName=swellaby.mirror-git-repository) for your Azure
     organization.
-1.  In the [Google Cloud Console](https://console.cloud.google.com/), open Cloud Shell and create the Git repository in Cloud Source Repositories that will be
-    the mirror of the Azure repository:  
+1.  In the Google Cloud Console, [open Cloud Shell](https://cloud.google.com/shell/docs/using-cloud-shell#starting_a_new_session).
+1.  In Cloud Shell, create the Git repository in Cloud Source Repositories that will be the mirror of the Azure repository:  
 
         gcloud source repos create azure-csr-mirror
 
 ## Generating static credentials
 
-In order for Azure Repos to push to your Git repository to Cloud Source Repositories, you must generate static credentials for Cloud Source Repositories.
+In order for Azure Repos to push to your Git repository to Cloud Source Repositories, you must complete an OAuth 2.0 authorization flow to generate static
+credentials for Cloud Source Repositories.
 
 **Important**: The generated credentials are tied to the Google Account used to create them. Mirroring stops working if the Google Account is closed or loses 
 access rights to the Git repository in Cloud Source Repositories.
@@ -50,52 +51,72 @@ access rights to the Git repository in Cloud Source Repositories.
     **Generate and store your Git credentials**.
     
     ![image](https://storage.googleapis.com/gcp-community/tutorials/azure-mirroring-tutorial/add_code.png)
-1.  You must complete an OAuth 2.0 authorization flow to generate static credentials. The Cloud Source Repositories site
-    https://source.developers.google.com, which identifies itself as **Google Cloud Development**, requests the credentials on your behalf. First, choose your 
-    Google Account:
+    
+    The Cloud Source Repositories site (`https://source.developers.google.com`), which identifies itself as **Google Cloud Development**, requests the 
+    credentials on your behalf.
+    
+1.  Choose your Google Account in the **Sign in with Google** dialog:
     
     ![image](https://storage.googleapis.com/gcp-community/tutorials/azure-mirroring-tutorial/choose_account.png)
-
-1.  The following dialog appears, requesting permission to view and manage your data. If you agree to the request for access, click **Allow**.  
     
+    The following dialog appears, requesting permission to view and manage your data. 
+
     ![image](https://storage.googleapis.com/gcp-community/tutorials/azure-mirroring-tutorial/signin.png)
 
-1.  On the **Configure Git** page, note the `git-<user>` and the highlighted text area – this will be the token used in the next steps.  
+1.  If you agree to the request for access, click **Allow**.
+
+1.  On the **Configure Git** page, note the `git-[USERNAME]` and the highlighted text area. This will be the token used in the next steps.  
     
     ![image](https://storage.googleapis.com/gcp-community/tutorials/azure-mirroring-tutorial/configure_git.png)
 
-## Creating an Azure Pipeline
+## Creating an Azure pipeline
 
-1.  In the project containing the repo, select **Pipelines**.
-1.  Select **Create Pipeline**.
+1.  In the project containing the repository, select **Pipelines**.
+
+1.  Select **Create pipeline**.
+
 1.  Select **Use the classic editor** to create a pipeline without YAML.
-1.  Select **Azure Repos Git** as a source for code. Click Continue.
-1.  On the top of the page, select **Empty job** as a template. 
+
+1.  Select **Azure Repos Git** as a source for code. Click **Continue**.
+
+1.  At the top of the page, select **Empty job** as a template. 
+
 1.  Rename the pipeline to **Clone to Cloud Source Repo**.
+
 1.  Click **+** Next to **Agent job 1** to add the task. Find the **Mirror Git Repository** task and add it to the pipeline.
-1.  Click on the task appearing in the left pane. Change display name if needed.
-1.  In the **Source Git Repository** field paste the link to your Azure repository:
-    [https://dev.azure.com/{your-organisanion}/{project-name}/_git/{project-name}](https://dev.azure.com/couk/test/_git/test).
-1.  In the **Source Repository - Personal Access Token** field paste the token created using
+
+1.  Click the task in the left pane. Change its display name if needed.
+
+1.  In the **Source Git Repository** field, paste the link to your Azure repository: 
+    `https://dev.azure.com/[YOUR_ORGANIZATION]/[PROJECT_NAME]/_git/[PROJECT_NAME]`
+
+1.  A personal access token (PAT) is used as an alternative password to authenticate into Azure DevOps. In the **Source Repository - Personal Access Token** 
+    field, paste the token created using the procedure in the 
     [Use personal access tokens](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=preview-page#create-personal-access-tokens-to-authenticate-access)
-    article. A personal access token (PAT) is used as an alternate password to authenticate into Azure DevOps. 
-1.  In the **Destination Git Repository** field, paste the URL of your Cloud Source repository:
-    [https://source.developers.google.com/p/{project-id}/r/{repo-name}](https://source.developers.google.com/p/ier-pso-asset/r/{repo-name).
-1.  Get the user name and the token generated in the **Configure Git** section in Cloud Source Repo and insert it to the **Destination personal access token** 
-    field in the following way:
+    article.
+
+1.  In the **Destination Git Repository** field, paste the URL of your repository in Cloud Source Repositories:
+    `https://source.developers.google.com/p/[PROJECT_ID]/r/[REPOSITORY_NAME]`
+
+1.  Get the username and the token generated in the **Configure Git** section in Cloud Source Repositories and insert it to the
+    **Destination personal access token** field as follows:
     
-        git-<user>:<token>
+        git-[USERNAME]:[TOKEN]
         
-    In the token, replace the slash signs with its encoded variant – `%2F`. So if your username is user and your token starts with `1//...`, the token to
-    be inserted is `git-user:1%2F%2F...`.
+    In the token, replace the slash signs with its encoded variant, `%2F`. So if your username is `user` and your token starts with `1//...`, the token to
+    be inserted is the following: `git-user:1%2F%2F...`
     
 1.  Click **Save & Queue**.
-1.  Add comment (optional).
+
+1.  (Optionally, add a comment.
+
 1.  Click **Save & Run**.
-1.  You will be redirected to the pipeline page, in the Jobs tab you will see your job running. When it finishes running, you will see the status **Success** 
-    near the job name. 
-1.  In Cloud Source Repositories, go to the [All repositories page](https://source.cloud.google.com/repos). Click the name of your repository, in our case it's
-    azure-csr-mirror. Click to the "main" branch. The files and commit history from the original repository should appear.
+
+1.  You are redirected to the pipeline page, where you can see your job running in the **Jobs** tab. When it finishes running, you will see the status 
+    **Success** near the job name. 
+1.  In Cloud Source Repositories, go to the [**All repositories** page](https://source.cloud.google.com/repos).
+1.  Click the name of your repository, which in this example is `azure-csr-mirror`.
+1.  Click to the `main` branch. The files and commit history from the original repository should appear.
 
    **Note**: If you want to do this regularly, note that service account keys expire after 30 days. Ensure that there is an established process of 
    maintaining and regular rotation of keys.
