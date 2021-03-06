@@ -108,7 +108,7 @@ access rights to the Git repository in Cloud Source Repositories.
     
 1.  Click **Save & Queue**.
 
-1.  (Optionally, add a comment.
+1.  Optionally, add a comment.
 
 1.  Click **Save & Run**.
 
