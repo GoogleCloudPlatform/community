@@ -6,6 +6,8 @@ tags: Repositories
 date_published: 2021-03-05
 ---
 
+Anastasiia Manokhina | Strategic Cloud Engineer | Google
+
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
 This tutorial shows how to set up mirroring from an Azure DevOps repository to Cloud Source Repositories.
