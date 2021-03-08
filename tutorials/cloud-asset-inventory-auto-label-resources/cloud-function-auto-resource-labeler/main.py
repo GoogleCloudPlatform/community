@@ -16,9 +16,9 @@ limitations under the License.
 
 # This is a Google Cloud Function which can add the necessary labels to these resources.
 # Fine-grained permissions needed are in parentheses.
-# GCE VMs - compute.instances.get,compute.instances.setLabels
+# Compute Engine VMs - compute.instances.get,compute.instances.setLabels
 # GKE Clusters - container.clusters.get,container.clusters.update
-# GCS buckets - storage.buckets.get,storage.buckets.update
+# Google Cloud Storage buckets - storage.buckets.get,storage.buckets.update
 # Cloud SQL databases - cloudsql.instances.get,cloudsql.instances.update
 
 
@@ -38,7 +38,7 @@ CONTAINER_CLUSTER_LABEL_KEY="cluster"
 STORAGE_BUCKET_LABEL_KEY="bucket"
 SQLADMIN_INSTANCE_LABEL_KEY="instance"
 
-# Label GCE VMs
+# Label Compute Engine VMs
 # https://cloud.google.com/compute/docs/instances/instance-life-cycle
 def label_compute_instance(asset_name,asset_resource_data_status):
 
@@ -70,8 +70,8 @@ def label_compute_instance(asset_name,asset_resource_data_status):
         except HttpError as exception:
             if exception.resp["status"] == "404":
                 # exit gracefully if encountering 404
-                # One reason is due to the GCE VMs created by GKE Autopilot clusters, 
-                # which generate GCE Instance notifications but are not available via computer API
+                # One reason is due to the Compute Engine VMs created by GKE Autopilot clusters, 
+                # which generate Compute Engine Instance notifications but are not available via computer API
                 print("Cannot find asset_name={} . Exiting gracefully.".format(asset_name))
                 return
             else:
@@ -141,8 +141,8 @@ def label_container_cluster(asset_name,asset_resource_data_status):
         except HttpError as exception:
             if exception.resp["status"] == "404":
                 # exit gracefully if encountering 404
-                # One reason is due to the GCE VMs created by GKE Autopilot clusters, 
-                # which generate GCE Instance notifications but are not available via computer API
+                # One reason is due to the Compute Engine VMs created by GKE Autopilot clusters, 
+                # which generate Compute Engine Instance notifications but are not available via computer API
                 print("Cannot find name={} . Exiting gracefully.".format(name))
                 return
             else:
@@ -171,7 +171,7 @@ def label_container_cluster(asset_name,asset_resource_data_status):
             print({"service_set_labels_response":service_set_labels_response})
 
 
-# Label Storage buckets
+# Label Cloud Storage buckets
 # https://cloud.google.com/storage/docs/using-bucket-labels
 def label_storage_bucket(asset_name):
     label_key=STORAGE_BUCKET_LABEL_KEY
@@ -196,8 +196,8 @@ def label_storage_bucket(asset_name):
     except HttpError as exception:
         if exception.resp["status"] == "404":
             # exit gracefully if encountering 404
-            # One reason is due to the GCE VMs created by GKE Autopilot clusters, 
-            # which generate GCE Instance notifications but are not available via computer API
+            # One reason is due to the Compute Engine VMs created by GKE Autopilot clusters, 
+            # which generate Compute Engine Instance notifications but are not available via computer API
             print("Cannot find bucket={} . Exiting gracefully.".format(bucket))
             return
         else:
@@ -224,7 +224,7 @@ def label_storage_bucket(asset_name):
         print({"service_set_labels_response":service_set_labels_response})
 
 
-# Label Cloud SQL Instance
+# Label Cloud SQL instance
 # https://cloud.google.com/sql/docs/sqlserver/label-instance
 def label_sqladmin_instance(asset_name,asset_resource_data_state):
 
@@ -253,8 +253,8 @@ def label_sqladmin_instance(asset_name,asset_resource_data_state):
         except HttpError as exception:
             if exception.resp["status"] == "404":
                 # exit gracefully if encountering 404
-                # One reason is due to the GCE VMs created by GKE Autopilot clusters, 
-                # which generate GCE Instance notifications but are not available via computer API
+                # One reason is due to the Compute Engine VMs created by GKE Autopilot clusters, 
+                # which generate Compute Engine Instance notifications but are not available via computer API
                 print("Cannot find asset_name={} . Exiting gracefully.".format(asset_name))
                 return
             else:
