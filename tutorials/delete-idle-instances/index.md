@@ -34,7 +34,7 @@ The following diagram shows a high-level overview of the solution:
 The overall flow is the following:
 
 1.  A Cloud Scheduler cron job is triggered regularly (for example, once a day). The Cloud Scheduler configuration specifies the label of the 
-    pool of VMs to target and whether or not they should be deleted, using the following format: `'{"label":"env=test,action=flag"}'`.  If the configuration is empty
+    pool of VMs to target and whether or not they should be deleted, using the following format: `'{"label":"env=test,action=mark"}'`.  If the configuration is empty
     `{}`, all VMs are considered targets.
 1.  When the cron job is triggered, Cloud Scheduler calls a Cloud Function with the payload.
 1.  Each time the function is triggered, it does the following: 
@@ -99,7 +99,7 @@ Run the commands in this section in Cloud Shell.
         gcloud iam service-accounts create scheduler-sa --display-name "Cloud Scheduler service account"
         export SCHEDULER_SA=scheduler-sa@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com
 
-1.  Assign an IAM role that will allow this service account to invoke Cloud Functions and
+1.  Assign the IAM roles needed to allow this service account to invoke Cloud Functions and
     administer Compute Engine recommendations and instances:
 
         gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT} \
@@ -112,7 +112,7 @@ Run the commands in this section in Cloud Shell.
           --member serviceAccount:${SCHEDULER_SA} \
           --role roles/recommender.computeAdmin
 
-1.  Deploy the Cloud Function that will clean up instances:
+1.  Deploy the Cloud Function that will mark idle instances:
 
         gcloud functions deploy mark_idle_instances --trigger-http --region us-central1 --runtime=nodejs12 \
           --service-account ${SCHEDULER_SA} --entry-point=deleteIdleInstances --no-allow-unauthenticated
@@ -143,12 +143,7 @@ Note: The Cloud Function runs with the default App Engine service account, which
         gcloud compute instances create idle-test --zone=us-central1-a \
           --machine-type=n1-standard-1 --labels=env=test
 
-1.  Create a second test instance labeled `env=test` with deletion enabled:
-
-        gcloud compute instances create deletion-test --zone=us-central1-a \
-          --machine-type=n1-standard-1 --labels=env=test,delete=true
-
-1.  Check that the new instances have started successfully.
+1.  Check that the new instance has started successfully.
 
         gcloud compute instances list --format='table(name,status,labels.list())'
 
@@ -157,12 +152,10 @@ Note: The Cloud Function runs with the default App Engine service account, which
         gcloud compute instances list --format='table(name,status,labels.list())'
 
     The `idle-test` instance should be shown as `RUNNING` with the label `delete=true` now applied.
-    The `deletion-test` instance should have been automatically deleted.  (It may still be listed
-    with `STATUS` of `TERMINATED`.)
 
 1.  List instances marked for deletion.
 
-    gcloud compute instances list --filter='labels.delete=true' --format='value(name)'
+        gcloud compute instances list --filter='labels.delete=true' --format='value(name)'
 
 1.  Review the instances marked for deletion, and optionally run the following command to delete them:
 
