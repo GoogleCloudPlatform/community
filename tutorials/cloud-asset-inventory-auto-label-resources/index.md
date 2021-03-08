@@ -1,35 +1,46 @@
 ---
-title: Label resources automatically based on Cloud Asset Inventory Real-time Notifications
-description: Learn how to trigger actions automatically based on Cloud Asset Inventory Real-time Notifications.  In this tutorial, automatic-labeling of GCE VMs, GKE, Cloud SQL and GCS buckets will be done upon creation across any projects in the selected folder or organization.
+title: Label resources automatically based on Cloud Asset Inventory real-time notifications
+description: Learn how to trigger actions automatically based on Cloud Asset Inventory real-time notifications.
 author: kylgoog
 tags: asset-inventory,cloud-asset-inventory,labeling
-date_published: 2021-02-25
+date_published: 2021-03-10
 ---
 
 KaYun Lam | Customer Engineer | Google
 
 <p style="background-color:#CAFACA;"><i>Contributed by Google employees.</i></p>
 
-[Cloud Asset Inventory](https://cloud.google.com/asset-inventory) allows the set up of [real-time notification](https://cloud.google.com/asset-inventory/docs/monitoring-asset-changes) on asset config change. This is convenient when a set of common tasks need to be done upon resource creation or modification, which is a common scenario for governance of cloud resources in enterprises.  
+[Cloud Asset Inventory](https://cloud.google.com/asset-inventory) allows the setup of
+[real-time notifications](https://cloud.google.com/asset-inventory/docs/monitoring-asset-changes) when asset configuration changes occur. This is convenient when
+a set of common tasks needs to be done upon resource creation or modification, which is a common scenario for governance of cloud resources in enterprises.  
 
-In this tutorial, automatic-labeling of GCE VMs, GKE, Cloud SQL and GCS buckets will be done upon creation across any projects in the selected folder or organization. You will first set up Cloud Pub/Sub topic to get real-time updates on the creation of any of the above asset config changes (GCE VMs, GKE, Cloud SQL, GCS). You will then deploy a sample Cloud Function to perform the labeling of resources automatically using the resource names in near real-time. This particular example is useful if more fine-grained visibility is needed on the Google Cloud [billing reports](https://cloud.google.com/billing/docs/how-to/reports) or [Billing Export to BigQuery](https://cloud.google.com/billing/docs/how-to/export-data-bigquery), in which the data can be [filtered by labels](https://cloud.google.com/billing/docs/how-to/bq-examples#query-with-labels).
+In this tutorial, automatic labeling of Compute Engine VMs, Google Kubernetes Engine (GKE) clusters, Cloud SQL instances, and Cloud Storage buckets is done upon
+creation of these assets across any projects in the selected folder or organization. You set up a Cloud Pub/Sub topic to get real-time updates on changes to 
+configurations for any of these assets. You then deploy a Cloud Function to perform the labeling of resources automatically using the resource names in near real 
+time.  This example is useful if more fine-grained visibility is needed on
+[Google Cloud Billing reports](https://cloud.google.com/billing/docs/how-to/reports) or
+[Cloud Billing export to BigQuery](https://cloud.google.com/billing/docs/how-to/export-data-bigquery), in which the data can be
+[filtered by labels](https://cloud.google.com/billing/docs/how-to/bq-examples#query-with-labels).
 
 ![Diagram](https://storage.googleapis.com/gcp-community/tutorials/cloud-asset-inventory-auto-label-resources/cloud-asset-inventory-auto-label-resources.png)
 
-To complete this tutorial, IAM permissions on the organization or folder levels are required. Shell commands are used throughout the steps. Programming skills on Google Cloud Functions is required to customize the actions to be automatically performed in your situation (e.g. some actions other than automatic labeling).
+To complete this tutorial, you need IAM permissions at the organization or folder level. This tutorial requires a basic understanding of using shell commands.
+To customize Cloud Functions to automatically perform actions other than automatic labeling, you need some basic programming ability.
 
 ## Resources to be automatically labeled
 
-Here are the GCP resources to be automatically labeled in this tutorial.  
+The following Google Cloud resources are automatically labeled in this tutorial: 
 
-* GCE VM - Labels will be applied to newly created VMs.
-* GKE cluster - Cluster labels will be applied to newly created GKE clusters. The labels will be propagated down to the individual resources as described on this [link](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-managing-labels#about_labeling_clusters).
-* GCS bucket - Labels will be applied to newly created buckets.
-* Cloud SQL - Labels will be applied to newly created Cloud SQL instance.
+* **Compute Engine VM**: Labels are applied to newly created VMs.
+* **GKE cluster**: Cluster labels are applied to newly created GKE clusters. The labels are
+  [propagated down to the individual resources](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-managing-labels#about_labeling_clusters).
+* **Cloud Storage bucket**: Labels are applied to newly created buckets.
+* **Cloud SQL instance**: Labels are applied to newly created Cloud SQL instances.
 
-All the labeling operations will be done while preserving the other labels that are already set (e.g. if they are already specified during creation).
+All of the labeling operations are done while preserving the other labels that are already set, such as labels that are specified during creation.
 
-If a label with the exact same key already exists (e.g. it's specified manually with the exact same key during creation), the code in this tutorial will override that existing label value.
+If a label with the exact same key already exists—for example, because the label was specified manually with the exact same key during asset creation—then the
+code in this tutorial overrides that existing label value.
 
 ## Costs
 
