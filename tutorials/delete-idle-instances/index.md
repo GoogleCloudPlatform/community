@@ -119,7 +119,7 @@ Run the commands in this section in Cloud Shell.
 
 Note: The Cloud Function runs with the default App Engine service account, which has Project `editor` rights allowing it
 
-1.  Configure Cloud Scheduler to push a message containing the target label every day to the Pub/Sub topic `idle-instances`:
+1.  Configure Cloud Scheduler to invoke the Cloud Function once per day:
 
         gcloud scheduler jobs create http mark-idle-instances-job --schedule="0 0 * * *" \
           --uri "https://us-central1-${GOOGLE_CLOUD_PROJECT}.cloudfunctions.net/mark_idle_instances" \
@@ -173,5 +173,4 @@ that you created to prevent further billing for them on your account.
 
 - You can delete the Cloud Scheduler job on the [**Cloud Scheduler** page](https://console.cloud.google.com/cloudscheduler) in the Cloud Console.
 
-- You can delete the Cloud Pub/Sub topic and associated subscriptions on the [**Pub/Sub** page](https://console.cloud.google.com/cloudpubsub/topic/list) of the 
-  Cloud Console.
+- You can delete the Cloud Function on the [**Cloud Functions** page](https://console.cloud.google.com/functions) in the Cloud Console.
