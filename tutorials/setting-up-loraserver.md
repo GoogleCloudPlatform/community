@@ -322,7 +322,7 @@ You can close the Cloud Shell.
 
 ## Install LoRa Server
 
-When you have succesfully completed the previous steps, then your gateway is
+When you have successfully completed the previous steps, then your gateway is
 connected to the IoT Core MQTT bridge, all the LoRa (App) Server 
 requirements are set up and is it time to install [LoRa Server](https://www.loraserver.io/loraserver/) and
 [LoRa App Server](https://www.loraserver.io/lora-app-server/).

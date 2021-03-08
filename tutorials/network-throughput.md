@@ -64,7 +64,7 @@ dependent on factors such as latency and distance. You need to consider these re
 simple assumptions.
 
 For example, the speed of light traveling in a vacuum is around 300,000 km/s, but the speed of light through the fiber-optic
-cable that makes up most of the internet is approximatey 200,000 km/s.
+cable that makes up most of the internet is approximately 200,000 km/s.
 
 Another important consideration is that the distance between two virtual machines (VMs) isn't normally a straight line, but
 is instead a complex maze of connections, increasing the total distance traveled. This is analogous to the fact that the
