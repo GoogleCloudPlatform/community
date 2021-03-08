@@ -14,7 +14,7 @@ KaYun Lam | Customer Engineer | Google
 
 In this tutorial, automatic-labeling of GCE VMs, GKE, Cloud SQL and GCS buckets will be done upon creation across any projects in the selected folder or organization. You will first set up Cloud Pub/Sub topic to get real-time updates on the creation of any of the above asset config changes (GCE VMs, GKE, Cloud SQL, GCS). You will then deploy a sample Cloud Function to perform the labeling of resources automatically using the resource names in near real-time. This particular example is useful if more fine-grained visibility is needed on the Google Cloud [billing reports](https://cloud.google.com/billing/docs/how-to/reports) or [Billing Export to BigQuery](https://cloud.google.com/billing/docs/how-to/export-data-bigquery), in which the data can be [filtered by labels](https://cloud.google.com/billing/docs/how-to/bq-examples#query-with-labels).
 
-![Diagram](diagram/cloud-asset-inventory-auto-label-resources.png)
+![Diagram](https://storage.googleapis.com/gcp-community/tutorials/cloud-asset-inventory-auto-label-resources/cloud-asset-inventory-auto-label-resources.png)
 
 To complete this tutorial, IAM permissions on the organization or folder levels are required. Shell commands are used throughout the steps. Programming skills on Google Cloud Functions is required to customize the actions to be automatically performed in your situation (e.g. some actions other than automatic labeling).
 
