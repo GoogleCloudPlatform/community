@@ -44,88 +44,89 @@ code in this tutorial overrides that existing label value.
 
 ## Costs
 
-This tutorial uses these components of Google Cloud as the labeling mechanism. Here are the links to the pricing information of the components:
+The labeling mechanism in this tutorial uses the following billable components of Google Cloud:
 
 * [Cloud Asset Inventory](https://cloud.google.com/asset-inventory/pricing)
 * [Cloud Pub/Sub](https://cloud.google.com/pubsub/pricing)
 * [Cloud Functions](https://cloud.google.com/functions/pricing)
 
-Here are the components supported by the sample auto-labeling function and their pricing information.
+The labeling function in this tutorial monitors changes to configurations for the following billable components of Google Cloud:
 
 * [Cloud Engine](https://cloud.google.com/compute/vm-instance-pricing)
-* [Kubernetes Engine](https://cloud.google.com/kubernetes-engine/pricing)
+* [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/pricing)
 * [Cloud Storage](https://cloud.google.com/storage/pricing)
 * [Cloud SQL](https://cloud.google.com/sql/pricing)
 
-You can choose to launch the smallest instance (f1-micro for GCE VM) to minimize the cost for testing, and remove them afterwards after the testing. Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage, especially if you want to run your testing environment for an extended period of time.
+You can choose to use a Compute Engine VM instance of the smallest machine type (`f1-micro`) to minimize the cost for testing, and you can delete resources after
+the testing. Use the [pricing calculator](https://cloud.google.com/products/calculator) to generate a cost estimate based on your projected usage.
 
 ## Before you begin
 
-You must set up a Google Cloud project (with billing enabled) to host the resources in this tutorial. For shell commands, Google Cloud Shell is assumed to be the execution environment.
+You must set up a Google Cloud project (with billing enabled) to host the resources in this tutorial. This tutorial uses Cloud Shell to run shell commands.
 
-1. Use the Cloud Console to [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project) to host the resources in this tutorial (Pub/Sub for the Asset Inventory Real-time Notifications, Cloud Functions). Choose a proper billing account to enable the billing for the project during the creation step. Note the project ID.
+1.  Use the Cloud Console to [create a new project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project) to host the 
+    Pub/Sub and Cloud Functions resources in this tutorial. Choose a billing account to enable billing for the project. Note the project ID; you use it in a 
+    later step.
 
-1. [Launch a Cloud Shell session](https://cloud.google.com/shell/docs/launching-cloud-shell#launching_from_the_console) from the Console.
+1. In the Cloud Console, [activate Cloud Shell](https://cloud.google.com/shell/docs/launching-cloud-shell#launching_from_the_console).
 
-## Steps
+## Set up the auto-labeling system
 
-### Set up the ORGANIZATION_ID environment variable
+### Set the organization ID environment variable
 
-You will need the Organization ID. If you do not have it handy, you can use the following command to determine it.
+1.  Set the `ORGANIZATION_ID` environment, using the Google Cloud project ID as input:
 
-```bash
-# Get the organization id based on the $GOOGLE_CLOUD_PROJECT 
-ORGANIZATION_ID=$(gcloud projects get-ancestors ${GOOGLE_CLOUD_PROJECT} --format="csv[no-heading](id,type)" | grep ",organization$" | cut -d"," -f1 )
+        ORGANIZATION_ID=$(gcloud projects get-ancestors ${GOOGLE_CLOUD_PROJECT} --format="csv[no-heading](id,type)" | grep ",organization$" | cut -d"," -f1 )
 
-# You should be able to see ORGANIZATION_ID=numeric_value as the output.
-echo ORGANIZATION_ID=${ORGANIZATION_ID}
-```
+1.  Check the organization ID numerical value:
 
-### (Optional) Determine the folder under which we want to monitor the asset changes
+        echo ORGANIZATION_ID=${ORGANIZATION_ID}
 
-This tutorial works on either the folder or organization level.
+### (Optional) Determine the folder under which to monitor the asset changes
 
-* "Organization level" means those resources created in any projects under the **organization** will be acted upon (automatically labeled in this tutorial).
-* "Folder level" means those resources created in any projects under the **folder** will be acted upon (automatically labeled in this tutorial).
+You can use the mechanism in this tutorial to automatically label resources created in any projects in a specified organization or in any projects in a specified
+folder. 
 
-Ignore this subsection if you are going to monitor asset changes across the organization.
+You can ignore this section if you want to monitor asset changes across the organization. You only need to use the instructions in this section if 
+you want monitor asset changes in a specified folder.
 
-```bash
-# Set your folder id to the folder you want to monitor
-FOLDER_ID=<numeric folder id value>
+1.  Set your folder ID to the folder that you want to monitor:
 
-# For demo only - You can use this to create a new folder 
-# (the folder under which the project resources are to be monitored)
-#gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="user:$(gcloud config get-value account)" --role="roles/resourcemanager.folderCreator"
-#FOLDER_ID=$( gcloud resource-manager folders create --display-name="auto-label-folder" --organization=${ORGANIZATION_ID} --format="value('name')" | cut -d"/" -f2 )
+        FOLDER_ID=[NUMERIC_FOLDER_ID_VALUE]
 
-echo FOLDER_ID=${FOLDER_ID}
-```
+1.  Create a new folder under which the project resources are to be monitored:
 
-### Set the variables for the project hosting the Asset Pub/Sub and the Cloud Function
+        gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="user:$(gcloud config get-value account)" --role="roles/resourcemanager.folderCreator"
 
-```bash
-# Set your project id to the project you want to use (the project that hosts the Pub/Sub and the Clouf Function)
-PROJECT_ID=<The alphanumeric project id>
+        FOLDER_ID=$( gcloud resource-manager folders create --display-name="auto-label-folder" --organization=${ORGANIZATION_ID} --format="value('name')" | cut -d"/" -f2 )
 
-# Run this if you have already selected the project you want to use, and want to use the setting from the Cloud Shell's gcloud environment
-#PROJECT_ID=$(gcloud config get-value project)
+1.  Check the folder ID:
 
-# For demo only - Create a new project under the above folder
-#RANDOM_STRING=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 10 | head -n 1)
-#PROJECT_ID=$(gcloud projects create "resource-labeler-${RANDOM_STRING}" --folder=${FOLDER_ID} --format="value('projectId')" )
-# For demo only - Create a new project under the organization
-#PROJECT_ID=$(gcloud projects create "resource-labeler-${RANDOM_STRING}" --organization=${ORGANIZATION_ID} --format="value('projectId')" )
+        echo FOLDER_ID=${FOLDER_ID}
 
-# Confirm this PROJECT_ID (alphanumeric) is set correctly
-echo PROJECT_ID=${PROJECT_ID}
+### Set the variables for the project hosting the Pub/Sub and the Cloud Functions resources
 
-# Retrieve the numeric project number for the project id
-PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} --format="value(project_number)")
-echo PROJECT_NUMBER=${PROJECT_NUMBER}
-```
+1.  Set your project ID to the project you want to use to host the Pub/Sub and the Cloud Functions resources:
 
-### Create the Service Account for the Cloud Function
+        PROJECT_ID=[ALPHANUMERIC_PROJECT_ID]
+
+    If you have already selected the project that you want to use, you can instead use the setting from the Cloud Shell `gcloud` environment:
+    
+        PROJECT_ID=$(gcloud config get-value project)
+
+1.  Confirm that the `PROJECT_ID` alphanumeric value is set correctly:
+
+        echo PROJECT_ID=${PROJECT_ID}
+
+1.  Retrieve the project number, using the project ID as input:
+
+        PROJECT_NUMBER=$(gcloud projects describe ${PROJECT_ID} --format="value(project_number)")
+        
+1.  Confirm that the `PROJECT_NUMBER` value is set correctly:
+
+        echo PROJECT_NUMBER=${PROJECT_NUMBER}
+
+### Create the service account for the Cloud Function
 
 ```bash
 # Create a service account to be used by the Cloud Function (which sets the GCE VM labels)
@@ -293,7 +294,7 @@ echo TOPIC_NAME=${TOPIC_NAME}
 gcloud functions deploy auto_resource_labeler --runtime python38 --trigger-topic "${TOPIC_NAME}" --service-account="${GCF_SERVICE_ACCOUNT}" --project ${PROJECT_ID} --retry
 ```
 
-### Test the labeling triggered by Asset Inventory Real-time Notifications
+## Test the labeling triggered by Asset Inventory Real-time Notifications
 
 Now you can test the creation of the supported resources under your organization (or folder) to observe the labeling in action.
 
