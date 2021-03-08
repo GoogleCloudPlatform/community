@@ -34,16 +34,19 @@ The following diagram shows a high-level overview of the solution:
 The overall flow is the following:
 
 1.  A Cloud Scheduler cron job is triggered regularly (for example, once a day). The Cloud Scheduler configuration specifies the label of the 
-    pool of VMs to target and whether or not they should be deleted, using the following format: `'{"label":"env=test,delete=false"}'`
-1.  When the cron job is triggered, Cloud Scheduler pushes a message with the label payload to a Pub/Sub topic.
-1.  A Cloud Function is subscribed to the Pub/Sub topic. Each time the function is triggered, it does the following: 
+    pool of VMs to target and whether or not they should be deleted, using the following format: `'{"label":"env=test,action=flag"}'`.  If the configuration is empty
+    `{}`, all VMs are considered targets.
+1.  When the cron job is triggered, Cloud Scheduler calls a Cloud Function with the payload.
+1.  Each time the function is triggered, it does the following: 
     1.  The Idle VM Recommender is queried for a list of idle Compute Engine instances.
     1.  The list is filtered for instances that have the target label.
     1.  Iterates through the instances and does the following: 
-        1.  If the Cloud Scheduler configuration included the label `delete=true`, the target is immediately deleted and the recommendation status is set to `SUCCEEDED`.
+        1.  If the Cloud Scheduler configuration included the label `action=stop`, the target is immediately stopped and the recommendation status is set to `SUCCEEDED`.
+        1.  If the Cloud Scheduler configuration included the label `action=delete`, the target is immediately deleted and the recommendation status is set to `SUCCEEDED`.
         1.  Otherwise, the label `delete=true` is applied to the instance and the recommendation status is set to `CLAIMED`.
 
-Note: By default, this solution only tags potential idle instances instead of deleting them.  The list of tagged instances can be obtained by checking recommendation status or searching for instances with the label.
+
+Note: By default, potential idle instances are only labeled.  The list of labeled instances can be obtained by checking recommendation status or searching for instances with the label.
 
 ## Costs
 
@@ -51,7 +54,6 @@ This tutorial uses the following Google Cloud components:
 
 *   Compute Engine
 *   Cloud Scheduler
-*   Pub/Sub
 *   Cloud Functions
 *   Recommender API
 
@@ -78,7 +80,7 @@ Note: The following steps create a new project and new VMs, so idle VM recommend
 
             gcloud services enable appengine.googleapis.com cloudbuild.googleapis.com \
               cloudfunctions.googleapis.com cloudscheduler.googleapis.com compute.googleapis.com \
-              pubsub.googleapis.com recommender.googleapis.com
+              recommender.googleapis.com
     
 ## Set up the automated cleanup code
 
@@ -92,27 +94,40 @@ Run the commands in this section in Cloud Shell.
 
         cd community/tutorials/delete-idle-instances
 	
-1.  Create the Pub/Sub topic that you will push messages to:
+1.  Create a service account for Cloud Scheduler to use:
 
-        gcloud pubsub topics create idle-instances
+        gcloud iam service-accounts create scheduler-sa --display-name "Cloud Scheduler service account"
+        export SCHEDULER_SA=scheduler-sa@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com
 
-    You can verify that the Pub/Sub topic has been created with the following command:
-    
-        gcloud pubsub topics list
-	
-    Topics also appear on the [Pub/Sub **Topics** page](https://console.cloud.google.com/cloudpubsub/topic/list) in the Cloud Console.
+1.  Assign an IAM role that will allow this service account to invoke Cloud Functions and
+    administer Compute Engine recommendations and instances:
 
-1.  Deploy the Cloud Function that will monitor the Pub/Sub topic and clean up instances:
+        gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT} \
+          --member serviceAccount:${SCHEDULER_SA} \
+          --role roles/cloudfunctions.invoker
+        gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT} \
+          --member serviceAccount:${SCHEDULER_SA} \
+          --role roles/compute.instanceAdmin
+        gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT} \
+          --member serviceAccount:${SCHEDULER_SA} \
+          --role roles/recommender.computeAdmin
 
-        gcloud functions deploy mark-idle-instances --trigger-topic=idle-instances --runtime=nodejs12 --entry-point=deleteIdleInstances
+1.  Deploy the Cloud Function that will clean up instances:
+
+        gcloud functions deploy mark_idle_instances --trigger-http --region us-central1 --runtime=nodejs12 \
+          --service-account ${SCHEDULER_SA} --entry-point=deleteIdleInstances --no-allow-unauthenticated
+
+Note: The Cloud Function runs with the default App Engine service account, which has Project `editor` rights allowing it
 
 1.  Configure Cloud Scheduler to push a message containing the target label every day to the Pub/Sub topic `idle-instances`:
 
-        gcloud scheduler jobs create pubsub mark-idle-instances-job --schedule="0 0 * * *" \
-          --topic=idle-instances --message-body='{"label":"env=test"}'
+        gcloud scheduler jobs create http mark-idle-instances-job --schedule="0 0 * * *" \
+          --uri "https://us-central1-${GOOGLE_CLOUD_PROJECT}.cloudfunctions.net/mark_idle_instances" \
+          --http-method POST --oidc-service-account-email ${SCHEDULER_SA} \
+          --message-body='{"label":"env=test"}'
 
     The schedule is specified in [unix-cron format](https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules).
-    `0 0 * * *` means that the jobs runs at 0:00 (midnight) every day of the month, every month, and every day of the week.  More simply put, the job runs once per day.
+    `0 0 * * *` means that the jobs runs at 0:00 (midnight) UTC every day of the month, every month, and every day of the week.  More simply put, the job runs once per day.
 
     You can verify that the job has been created with the following command:
 

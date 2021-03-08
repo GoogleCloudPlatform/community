@@ -17,20 +17,20 @@ const Compute = require('@google-cloud/compute');
 const compute = new Compute();
 
 /**
- * List usage recommendations for a given product.
- * @param {string} project
- * @param {string} recommenderName
+ * Mark, stop or delete idle instances.
+ *
+ * @param {Object} req Cloud Function request context.
+ * @param {Object} res Cloud Function response context.
  */
-exports.deleteIdleInstances = async (event, context, callback) => {
-  const options = _validateOptions(
-    JSON.parse(Buffer.from(event.data, 'base64').toString())
-  );
+exports.deleteIdleInstances = async (req, res) => {
+  const options = _validateOptions(req.body);
   const zones = await _getZonesWithVMs(compute, options.label);
   if (zones.length === 0) {
-    return Promise.reject(new Error(`No VMs matching label ${options.label} found.`));
+    throw new Error(`No VMs matching label ${options.label} found.`);
   }
   await _scanRecommendations(zones, options);
-  callback();
+  res.send(200);
+  res.end();
 };
 
 /**
@@ -41,10 +41,12 @@ exports.deleteIdleInstances = async (event, context, callback) => {
  */
 function _validateOptions (options) {
   if (options.label) {
-    let key, value = options.label.split('=');
-    options.label.key = value;
+    const parts = options.label.split('=');
+    if (parts.length < 2) {
+      throw new Error(`Label ${options.label} is not a key=value pair.`)
+    }
+    options.label.key = parts[1];
   }
-  options.delete = (options.delete === 'true');
   return options;
 }
 
@@ -88,14 +90,22 @@ async function _scanRecommendations (zones, options) {
             const [zone, name] = _extractZoneAndName(operation);
             const [labels, fingerprint] = await compute.zone(zone).vm(name).getLabels();
             if (!options.label || options.label.key in labels) {
-              if (options.delete) {
-                await compute.zone(zone).vm(name).get();
-                await recommender.markRecommendationSucceeded(recommendation);
-                console.info(`Deleted instance ${name} in zone ${zone}`);
-              } else {
-                await compute.zone(zone).vm(name).setLabels({ delete: 'true' }, fingerprint);
-                await recommender.markRecommendationClaimed(recommendation);
-                console.info(`Unused instance ${name} in zone ${zone} marked for deletion`);
+              switch (options.action) {
+                case 'delete':
+                  await compute.zone(zone).vm(name).delete();
+                  await recommender.markRecommendationSucceeded(recommendation);
+                  console.info(`Deleted instance ${name} in zone ${zone}`);
+                  break;
+                case 'stop':
+                  await compute.zone(zone).vm(name).stop();
+                  await recommender.markRecommendationSucceeded(recommendation);
+                  console.info(`Stopped instance ${name} in zone ${zone}`);
+                  break;
+                default:
+                  await compute.zone(zone).vm(name).setLabels({ delete: 'true' }, fingerprint);
+                  await recommender.markRecommendationClaimed(recommendation);
+                  console.info(`Unused instance ${name} in zone ${zone} marked for deletion`);
+                  break;
               }
             } else {
               console.info(`Unused instance ${name} in zone ${zone} recommended for deletion but does not match label ${options.label}`);
@@ -108,4 +118,3 @@ async function _scanRecommendations (zones, options) {
   }
   return recommendations;
 }
-
