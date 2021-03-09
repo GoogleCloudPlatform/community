@@ -43,7 +43,7 @@ function _validateOptions (options) {
   if (options.label) {
     const parts = options.label.split('=');
     if (parts.length < 2) {
-      throw new Error(`Label ${options.label} is not a key=value pair.`)
+      throw new Error(`Label ${options.label} is not a key=value pair.`);
     }
     options.label.key = parts[1];
   }
