@@ -128,32 +128,34 @@ you want monitor asset changes in a specified folder.
 
 ### Create the service account for the Cloud Function
 
-```bash
-# Create a service account to be used by the Cloud Function (which sets the GCE VM labels)
-# Currently, "The service account being deployed must have been created in the same project as the function it is attached to."
-# <https://cloud.google.com/functions/docs/securing/function-identity#per-function_identity>
-SERVICE_ACCOUNT_PROJECT_ID=${PROJECT_ID}
+1.  Create a service account to be used by the Cloud Function that sets the Compute Engine VM labels:
 
-GCF_SERVICE_ACCOUNT_NAME="resource-labeler-sa"
-gcloud iam service-accounts create "${GCF_SERVICE_ACCOUNT_NAME}" --project ${SERVICE_ACCOUNT_PROJECT_ID}
-GCF_SERVICE_ACCOUNT="${GCF_SERVICE_ACCOUNT_NAME}@${SERVICE_ACCOUNT_PROJECT_ID}.iam.gserviceaccount.com"
-echo GCF_SERVICE_ACCOUNT="${GCF_SERVICE_ACCOUNT}"
-```
+        SERVICE_ACCOUNT_PROJECT_ID=${PROJECT_ID}
 
-### Create the IAM role to be used by the Service Account for the Cloud Function
+        GCF_SERVICE_ACCOUNT_NAME="resource-labeler-sa"
+        gcloud iam service-accounts create "${GCF_SERVICE_ACCOUNT_NAME}" --project ${SERVICE_ACCOUNT_PROJECT_ID}
+        GCF_SERVICE_ACCOUNT="${GCF_SERVICE_ACCOUNT_NAME}@${SERVICE_ACCOUNT_PROJECT_ID}.iam.gserviceaccount.com"
 
-```bash
-# Assign yourself the permission to create organization roles (if you do not already have it)
-#gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="user:$(gcloud config get-value account)" --role="roles/iam.organizationRoleAdmin"
+        echo GCF_SERVICE_ACCOUNT="${GCF_SERVICE_ACCOUNT}"
 
-# Create the custom role on the organization level
-PERMISSIONS="compute.instances.get,compute.instances.setLabels,container.clusters.get,container.clusters.update,storage.buckets.get,storage.buckets.update,cloudsql.instances.get,cloudsql.instances.update"
-gcloud iam roles create ResourceLabelerRole --organization=${ORGANIZATION_ID} --title "Resource Labeler Role" --permissions "${PERMISSIONS}" --stage GA
+    **Note**: The service account must be created in the same project as the function that it's attached to. For more information, see
+    [this page](https://cloud.google.com/functions/docs/securing/function-identity#per-function_identity).
 
-# Updating the role (e.g. with more permissions) will follow a similar syntax
-# gcloud iam roles update ResourceLabelerRole --organization=${ORGANIZATION_ID} --title "Resource Labeler Role" --permissions "${PERMISSIONS}" --stage GA
 
-```
+### Create the IAM role to be used by the service account for the Cloud Function
+
+1.  Assign yourself the permission to create organization roles, if you do not already have it:
+
+        gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="user:$(gcloud config get-value account)" --role="roles/iam.organizationRoleAdmin"
+
+1.  Create the custom role at the organization level:
+
+        PERMISSIONS="compute.instances.get,compute.instances.setLabels,container.clusters.get,container.clusters.update,storage.buckets.get,storage.buckets.update,cloudsql.instances.get,cloudsql.instances.update"
+        gcloud iam roles create ResourceLabelerRole --organization=${ORGANIZATION_ID} --title "Resource Labeler Role" --permissions "${PERMISSIONS}" --stage GA
+
+**Note**: If you need to update the role with more permissions, you do so with a similar syntax:
+
+    gcloud iam roles update ResourceLabelerRole --organization=${ORGANIZATION_ID} --title "Resource Labeler Role" --permissions "${PERMISSIONS}" --stage GA
 
 ### Add the IAM policy bindings needed on the service account and the folder/organization
 
