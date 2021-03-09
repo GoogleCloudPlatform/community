@@ -295,7 +295,7 @@ It may take a few minutes for the labels to be effective.
 * Cloud Storage buckets are labled when coming from `priorAssetState=DOES_NOT_EXIST`.
 * Cloud SQL instances are labeled when transitioning into the `RUNNABLE` state.
 
-## Considerations
+## Limitations and known issues
 
 Notifications are only sent upon changes on the resource or policy metadata of the resource. Any existing resources (such as existing VM instances) that are
 already deployed are not acted upon by this solution. You can perform a separate exercise to have the same actions on those existing resources.
