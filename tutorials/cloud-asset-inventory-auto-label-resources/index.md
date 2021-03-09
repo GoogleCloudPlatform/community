@@ -157,50 +157,49 @@ you want monitor asset changes in a specified folder.
 
     gcloud iam roles update ResourceLabelerRole --organization=${ORGANIZATION_ID} --title "Resource Labeler Role" --permissions "${PERMISSIONS}" --stage GA
 
-### Add the IAM policy bindings needed on the service account and the folder/organization
+### Add the IAM policy bindings needed on the service account and the folder or organization
 
-```bash
-# Retrieve your own username from the environment
-MEMBER="user:$(gcloud config get-value account)"
+1.  Retrieve your own username from the environment:
 
-# Set it manually if a separation of duty is required (i.e. someone else will be setting up the Pub/Sub and the cloud function
-# MEMBER="user:username@domain.com"
-echo ${MEMBER}
+        MEMBER="user:$(gcloud config get-value account)"
 
-# 1. Service Account IAM bindings
-# The MEMBER needs the permission to use the service account in order to deploy the Cloud Function
-gcloud iam service-accounts add-iam-policy-binding "${GCF_SERVICE_ACCOUNT}" --member="${MEMBER}" --role="roles/iam.serviceAccountUser" --project "${SERVICE_ACCOUNT_PROJECT_ID}"
+    If a separation of duty is required (that is, someone else will be setting up the Pub/Sub and Cloud Functions resources), then you can set this manually:
+    
+        MEMBER="user:username@example.com"
 
-# 2. Org-level IAM bindings (i.e. monitoring the asset changes org-wide)
-# Needed for the MEMBER to create the asset feed
-gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="${MEMBER}" --role="roles/cloudasset.owner"
-gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="serviceAccount:${GCF_SERVICE_ACCOUNT}" --role="organizations/${ORGANIZATION_ID}/roles/ResourceLabelerRole"
+1.  Service Account IAM bindings: Give the `MEMBER` user permission to use the service account in order to deploy the Cloud Function:
 
-# (Alternative) 2. Folder-level IAM bindings (on the folder under which the assets (e.g. GCE VMs) are to be monitored)
+        gcloud iam service-accounts add-iam-policy-binding "${GCF_SERVICE_ACCOUNT}" --member="${MEMBER}" --role="roles/iam.serviceAccountUser" --project "${SERVICE_ACCOUNT_PROJECT_ID}"
 
-# Needed for the MEMBER to create the asset feed
-#gcloud resource-manager folders add-iam-policy-binding ${FOLDER_ID} --member="${MEMBER}" --role="roles/cloudasset.owner"
-# Grant the role to the service account on the folder level
-# i.e. this service account can set labels on any GCE VM instances underneath
-#gcloud resource-manager folders add-iam-policy-binding ${FOLDER_ID} --member="serviceAccount:${GCF_SERVICE_ACCOUNT}" --role="organizations/${ORGANIZATION_ID}/roles/ResourceLabelerRole"
+1.  Give the `MEMBER` user permission to create the asset feed, using one or the other of the following sets of commands, depending on whether you want
+    to monitor at the organization level or the folder level:
 
-```
+    - Organization-level IAM bindings:
 
-### Enable the APIs in the project issuing the Asset APIs, hosting the Pub/Sub and the Cloud Function
+          gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="${MEMBER}" --role="roles/cloudasset.owner"
+          gcloud organizations add-iam-policy-binding ${ORGANIZATION_ID} --member="serviceAccount:${GCF_SERVICE_ACCOUNT}" --role="organizations/${ORGANIZATION_ID}/roles/ResourceLabelerRole"
 
-Run this command to enable the required Google Cloud APIs.
+    - Folder-level IAM bindings on the folder under which the assets (such as Compute Engine VMs) are to be monitored:
 
-```bash
-# These are the required APIs for the labeling pipeline itself
-gcloud services enable cloudasset.googleapis.com pubsub.googleapis.com cloudfunctions.googleapis.com cloudbuild.googleapis.com --project ${PROJECT_ID}
+          gcloud resource-manager folders add-iam-policy-binding ${FOLDER_ID} --member="${MEMBER}" --role="roles/cloudasset.owner"
+          gcloud resource-manager folders add-iam-policy-binding ${FOLDER_ID} --member="serviceAccount:${GCF_SERVICE_ACCOUNT}" --role="organizations/${ORGANIZATION_ID}/roles/ResourceLabelerRole"
 
-# The following APIs are enabled on the same project for simplicity of the function code on the labeling actions
-gcloud services enable compute.googleapis.com container.googleapis.com storage.googleapis.com sqladmin.googleapis.com --project ${PROJECT_ID}
-```
 
-### Add the IAM policy bindings needed on the project having the Pub/Sub and the Cloud Function
+### Enable the APIs in the project issuing the Asset APIs, hosting the Pub/Sub and Cloud Functions resources
 
-Run these commands to allow the execution of the subsequent steps (Pub/Sub, Cloud Function, etc) by the MEMBER (yourself or another designated personnel).
+Enable the required Google Cloud APIs.
+
+1.  Enable the APIs for the labeling pipeline:
+
+        gcloud services enable cloudasset.googleapis.com pubsub.googleapis.com cloudfunctions.googleapis.com cloudbuild.googleapis.com --project ${PROJECT_ID}
+
+1.  Enable the APIs for the monitored services for simplicity of the function code on the labeling actions:
+
+        gcloud services enable compute.googleapis.com container.googleapis.com storage.googleapis.com sqladmin.googleapis.com --project ${PROJECT_ID}
+
+### Add the IAM policy bindings needed on the project hosting the Pub/Sub and Cloud Functions resources
+
+These commands allow the execution of the subsequent steps (Pub/Sub, Cloud Function, etc) by the MEMBER (yourself or another designated personnel).
 
 ```bash
 # Project-level IAM bindings
