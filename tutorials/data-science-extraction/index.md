@@ -71,10 +71,10 @@ convenience, we've cached a copy of the zip files in a
 
 * [Download][aesop1.zip] the first audio file, to use while writing and testing
   your preprocessing functions.
-* You can also browse the whole collection of audio files [here][aesop-gcs].
+* You can also browse the whole collection of audio files [here][librivox-archives].
 
-[aesop1.zip]: https://storage.cloud.google.com/data-science-getting-started/aesop_fables_volume_one_librivox_64kb_mp3.zip
-[aesop-gcs]: https://console.cloud.google.com/storage/browser/data-science-getting-started/?project=_
+[aesop1.zip]: https://archive.org/download/aesop_fables_volume_one_librivox/aesop_fables_volume_one_librivox_64kb_mp3.zip
+[librivox-archives]: https://archive.org/download/aesop_fables_volume_one_librivox
 [storage]: /storage
 
 ## Convert the file

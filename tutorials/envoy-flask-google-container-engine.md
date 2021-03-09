@@ -33,7 +33,7 @@ You need a Google Cloud account to set up a Kubernetes Engine cluster. Visit the
 
 You need `kubectl`, the Kubernetes command-line interface, to work with Kubernetes Engine. On macOS you can use
 `brew install kubernetes-cli`. Otherwise, follow the
-[Kubernetes installation intructions](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+[Kubernetes installation instructions](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
 
 ### Docker
 

@@ -1,6 +1,6 @@
 ---
 title: Monitoring data from IoT devices with Go and Grafana
-description: Learn how to set up a serveless monitoring environment on Google Cloud for IoT devices.
+description: Learn how to set up a serverless monitoring environment on Google Cloud for IoT devices.
 author: leozz37
 tags: Cloud Run, Golang, Prometheus, Grafana, IoT, data, metrics
 date_published: 2020-10-30

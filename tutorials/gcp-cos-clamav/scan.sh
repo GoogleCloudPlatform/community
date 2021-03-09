@@ -7,15 +7,7 @@ if [ -f "$LOCK" ];then
   exit
 else
   touch $LOCK
-  echo `date` Starting scan |tee -a /logs/clamscan.log
-  clamscan \
-    --verbose \
-    --stdout \
-    --log=/logs/clamscan.log \
-    --recursive \
-    --exclude=/host-fs/dev \
-    --exclude=/host-fs/sys \
-    --exclude=/host-fs/var/lib/docker \
-    /host-fs
+  echo `date` Starting scan
+  clamdscan --multiscan /host-fs
   rm $LOCK
 fi

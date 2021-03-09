@@ -1,9 +1,6 @@
 <img src="https://avatars2.githubusercontent.com/u/2810941?v=3&s=96" alt="Google Cloud logo" title="Google Cloud" align="right" height="96" width="96"/>
 
-# Google Cloud Community [![Build][build_badge]][build_link]
-
-[build_badge]: https://img.shields.io/circleci/project/github/GoogleCloudPlatform/community/master.svg?style=flat
-[build_link]: https://circleci.com/gh/GoogleCloudPlatform/community
+# Google Cloud Community
 
 This repository holds the content submitted to the
 [Google Cloud Community site](https://cloud.google.com/community/).
